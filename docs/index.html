@@ -1,1 +1,429 @@
+<!DOCTYPE html>
+<html lang="en" class="">
 
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sa11y - accessibility quality assurance assistant - Ryerson University</title>
+  <link rel="stylesheet" href="assets/main.css" type="text/css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+</head>
+
+<body>
+  <div class="resGlobalHeader">
+    <div class="global-header-top">
+      <div class="container">
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="res-global-header">
+              <a id="skip-to-main" class="btn btn-default" href="#main-content">Skip to Main Content</a>
+              <nav aria-label="global" class="navbar navbar-default">
+                <div class="container-fluid">
+                  <div class="navbar-header">
+                    <a class="navbar-brand" href="https://www.ryerson.ca/"> <img src="assets/ryerson_logo.svg" alt="Ryerson University">
+                    </a>
+                  </div>
+                </div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="res-local-header-wrapper" role="banner">
+    <div class="container">
+      <div class="resLocalHeader">
+        <div class="res-local-header">
+          <div class="row template-local-header">
+            <div class="local-header-section col-xs-12">
+              <div class="res-local-header">
+                <div class="row template-local-header">
+                  <div class="local-header-section col-xs-12">
+                    <h1 class="site-heading text-center">
+                      <span style="font-size:4em">Sa11y</span>
+                      <span class="text-center" style="font-size:1em!important;display:block;">accessibility quality assurance assistant</span>
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <article>
+    <div class="resHorizontalNavigation">
+      <div class="container">
+        <div class="row">
+          <div class="col-xs-12">
+            <nav aria-label="primary" class="navbar res-horizontal-navigation">
+              <ul class="nav navbar-nav">
+                <li>
+                  <a href="#features">
+                    Features
+                  </a>
+                </li>
+
+                <li>
+                  <a href="#demo">
+                    Demo
+                  </a>
+                </li>
+
+                <li>
+                  <a href="#install">
+                    Install
+                  </a>
+                </li>
+                <li>
+                  <a href="#acknowledgements">
+                    Acknowledgements
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row template-content">
+      <main id="mainContent" class="content-area-section col-sm-12">
+        <div class="sr-only" id="main-content" tabindex="-1">You are now in the main content area</div>
+
+
+        <section class="sa11y-hero">
+          <div class="container">
+            <p class="hero-p text-center">Sa11y is an <strong>accessibility quality assurance</strong> tool that <strong>visually highlights</strong> common accessibility and usability issues. Geared towards content authors, Sa11y indicates errors or
+              warnings at the source with a simple tooltip on how to fix.</p>
+          </div>
+        </section>
+
+
+        <section>
+          <div class="container pt40">
+            <div class="row">
+              <div class="col-sm-6">
+                <h2 id="features">Features <i class="fa fa-star" aria-hidden="true"></i></h2>
+                <p>Sa11y works as a simple in-page checker that is designed to be easily customized and integrated into any content management system (CMS) to facilitate good accessibility practices. Sa11y works best in a templated <abbr
+                    title="Content Management System">CMS</abbr> environment, although can also work as a bookmarklet. Sa11y is <strong>not</strong> a comprehensive code analysis tool.</p>
+                <ul>
+                  <li>Over 30 test conditions.</li>
+                  <li>Easy, intuitive tooltips to explain issues.</li>
+                  <li>Free and open source.</li>
+                  <li>No complex API or integrations.</li>
+                  <li>Simple rule sets.</li>
+                  <li>Easily customizable: add your own rulesets.</li>
+                </ul>
+              </div>
+
+              <div class="col-sm-6 text-center p20">
+                <h3 class="pt40">Designed for content editors</h3>
+                <img src="assets/coder-vs-comms.svg" alt="Illustration of a gauge pointing to a content editor instead of a web developer." />
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+
+        <section>
+          <div class="container">
+            <h3 class="pt30">States</h3>
+            <p>Sa11y has three simple states.</p>
+            <div class="row">
+              <div class="col-sm-4 text-center">
+                <img class="responsive-img" width="90%" src="assets/sa11y-error.png" alt="">
+                <h4>Errors</h4>
+                <p class="p20">Accessibility and usability issues are detected. Sa11y highlights common WCAG 2.1 Level A and AA accessibility issues.</p>
+              </div>
+
+              <div class="col-sm-4 text-center">
+                <img class="responsive-img" width="90%" src="assets/sa11y-warning.png" alt="">
+                <h4>Warnings</h4>
+                <p class="p20">Warns you of potential accessibility or usability issues, and prompts you to manually review an element.</p>
+              </div>
+
+              <div class="col-sm-4 text-center">
+                <img class="responsive-img" width="90%" src="assets/sa11y-no-errors.png" alt="">
+                <h4>Pass</h4>
+                <p class="p20">No apparent accessibility or usability issues are detected. A "thumbs up" to let you know you're good.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div class="container">
+            <h3 class="pt30">Show Outline</h3>
+            <p>The Show Outline button displays the page's heading structure, similar to the table of contents for a book. The page outline gives you a visual idea of how each part is interconnected. Headings should always be structured in a way that
+              conveys hierarchy.</p>
+
+            <div class="row">
+              <div class="col-md-6 text-center">
+                <img class="responsive-img" width="70%" src="assets/outline-errors.png" alt="Screenshot of the Page Outline panel with hierarchy issues.">
+              </div>
+              <div class="col-md-6 text-center">
+                <img class="responsive-img" width="70%" src="assets/outline-no-errors.png" alt="Screenshot of the Page Outline panel with a clean, good heading hierarchy.">
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <section class="pb80">
+          <div class="container">
+            <h3>Rulesets</h3>
+            <p>Sa11y checks for the following issues and warnings.</p>
+            <!-- This excellent accordion panel created by Scott O'Hara https://github.com/scottaohara/a11y_accordions-->
+            <div data-aria-accordion data-multi data-transition data-default="none" id="accGen">
+
+              <h4 data-aria-accordion-heading>
+                Errors
+              </h4>
+              <div data-aria-accordion-panel>
+                <ul>
+                  <li>14 alternative text conditions.</li>
+                  <li>Non-descript hyperlinks (i.e. Click here, learn more).</li>
+                  <li>Tables missing headers <kbd>&lt;th&gt;</kbd>.</li>
+                  <li>Tables with empty headers.</li>
+                  <li>Tables using semantic headings (H1, H2) instead of table headings <kbd>&lt;th&gt;</kbd>.</li>
+                  <li>Headings that skip levels.</li>
+                  <li>Headings that are too long.</li>
+                  <ul>
+                    <li><strong>Note:</strong> this is not a WCAG 2.1 failure.</li>
+                  </ul>
+                  <li>Heading structure does not start with an H1.</li>
+                  <li>Blockquotes incorrectly used as headings.</li>
+                  <li>Text contrast.</li>
+                  <li>Inputs missing labels.</li>
+                  <li>Page language not declared.</li>
+                  <li>Detect duplicate <kbd>id</kbd> attributes.</li>
+                </ul>
+              </div>
+
+              <h4 data-aria-accordion-heading>
+                Warnings
+              </h4>
+              <div data-aria-accordion-panel>
+                <p>Warning messages may prompt you to <strong>manually review</strong> the element, provide <strong>suggestions to improve</strong> the usability/accessibility, or warn you of accessibility issues that <strong>cannot be
+                    programatically detected.</strong></p>
+                <ul>
+                  <li>Images used as hyperlinks: review alternative text describes link location.</li>
+                  <li>Detects ALL CAPS/uppercase.</li>
+                  <li>Contrast that cannot be programatically determined, such as text with an image background.</li>
+                  <li>Warning message on video widgets to provide closed captions.</li>
+                  <li>Warning message on SoundCloud widgets to provide transcripts.</li>
+                  <li>Warning message on all PDF links.</li>
+                  <li>Warning message to discourage excessive use of links that open in new window.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="sa11y-demo text-center" id="demo">
+          <div class="container pb30">
+
+            <div class="pb30">
+              <h2>Demo <i class="fa fa-laptop" aria-hidden="true"></i>
+              </h2>
+              <p>Click the toggle to get started. Navigate to different pages to view all three states. Once enabled, Sa11y will remain on even when navigating to different pages. Simply click the same button to turn off Sa11y.</p>
+            </div>
+
+            <a id="skippy-demo" class="vhs-only vhs-only-focusable" href="#install">
+              <span class="skiplink-text">Skip iFrame Demo</span><span class="fa fa-level-down" aria-hidden="true"></span>
+            </a>
+
+            <!-- CSS Laptop effect by https://codepen.io/Jeffen/pen/NqBXzb -->
+            <div class="laptop-container">
+              <div class="laptop">
+
+                <iframe title="Sa11y website demonstration inside an iFrame." class="laptop-iframe sa11y-exclude" src="examples/full-list.html">
+                  <p class="text-white">Your browser does not support iframes. <a href="examples/full-list.html">View the demo in a new tab.</a></p>
+                </iframe>
+
+              </div>
+              <div class="base" aria-hidden="true"></div>
+            </div>
+
+            <a class="mobile-view-only" href="examples/full-list.html" target="_blank">View the demo in a new tab!</a>
+
+          </div>
+        </section>
+
+
+        <section class="pb80 pt40">
+          <div class="container">
+            <h2 id="install">Install <i class="fa fa-wrench" aria-hidden="true"></i>
+            </h2>
+            <p></p>
+
+            <h3 class="pt20">Bookmarklet</h3>
+            <p>Sa11y is intended to be customized for various CMSs, however it's also available as a bookmarklet. It can be used in any desktop browser. Simply drag the button below into your bookmarks bar. Click the bookmark on any webpage.</p>
+
+            <div class="resButtons section pt20">
+              <div class="res-buttons">
+                <div class="buttonDefault">
+                  <div class="row pb15">
+                    <div class="row-height">
+                      <div class="col col-xs-12 col-sm-6 outside-full-height">
+                        <div class="inside inside-full-height">
+                          <a class="btn btn-default btn-block btn-sa11y" href="#">
+                            <span class="fa fa-bookmark" aria-hidden="true"></span> <span>Sa11y</span>
+                          </a>
+                        </div>
+                      </div>
+                      <div class="col col-xs-12 col-sm-6 outside-full-height">
+                        <div class="inside inside-full-height">
+                          <a class="btn btn-default btn-block btn-sa11y" href="#">
+                            <span class="fa fa-bookmark" aria-hidden="true"></span> <span>Sa11y without contrast checker</span>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <h3 class="pt20">For developers and web administrators</h3>
+            <!-- This excellent accordion panel created by Scott O'Hara https://github.com/scottaohara/a11y_accordions-->
+            <div data-aria-accordion data-multi data-transition data-default="none" id="accGen2">
+
+              <h4 data-aria-accordion-heading>
+                Installation
+              </h4>
+              <div data-aria-accordion-panel>
+                <p class="pb20">Sa11y relies on jQuery and works best using a tooltip library that features a positioning system. Positioning systems ensure that tooltips are never hidden by conflicting CSS styling such as
+                  <kbd>overflow:hidden;</kbd>. This version of Sa11y was built with <a href="https://atomiks.github.io/tippyjs/">Tippy.js</a>, a highly customizable tooltip library.</p>
+
+                <p>To install on your website, insert Sa11y right after the jQuery script tag, and right before the closing <kbd>&lt;/body&gt;</kbd> tag. Include both Tippy.js and Popper.js before Sa11y. Visit <a
+                    href="https://atomiks.github.io/tippyjs/getting-started/">Tippy.js Getting Started page to grab the latest version.</a></p>
+
+                <h5 class="pt20">Example installation:</h5>
+                <pre><code class="language-html">//jQuery Slim 3x
+&lt;script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+  integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8="
+  crossorigin="anonymous"&gt;&lt;/script&gt;
+
+//Tippy.js CDN (Tooltip library)
+&lt;script src="https://unpkg.com/popper.js@1"&gt;&lt;/script&gt;
+&lt;script src="https://unpkg.com/tippy.js@4"&gt;&lt;/script&gt;
+
+//Sa11y
+&lt;script src="sa11y.min.js"&gt;&lt;/script&gt;</code></pre>
+
+                <h6 class="pt20">Accessibility notice:</h6>
+                <p>This version appends tooltips to the end of the <kbd>body</kbd> by default to ensure tooltips do not get hidden by conflicting CSS styling. If you customize the tooltips to include interactive content, please read documentation on
+                  <a href="https://atomiks.github.io/tippyjs/accessibility/#creating-accessible-interactive-tooltips">creating accessible interactive tooltips for keyboard users.</a></p>
+
+                <h5 class="pt20">Bootstrap-based websites</h5>
+                <p>Bootstrap versions 3 and 4 already include tooltips/popovers powered by Poppers.js positioning library. For performance reasons, you can replace the HTML tippy.js markup with Bootstrap's tooltip markup.</p>
+              </div>
+
+
+              <h4 data-aria-accordion-heading>
+                Create your own rule sets
+              </h4>
+              <div data-aria-accordion-panel>
+                <p>Create your own conditions and rule sets to strategically enforce your organization's accessibility, usability, or web style guidelines.</p>
+
+                <ol>
+                  <li>Create your condition.</li>
+                  <li>Add <kbd>this.anyWarning = true;</kbd> or <kbd>this.noErrors = false;</kbd> to indicate Warning or Error state.</li>
+                  <li>Add respective CSS classes.</li>
+                </ol>
+
+                <h5 class="pt20">Example: Warn content editors of overusing a component.</h5>
+                <p>The example condition detects if more than one announcement is detected on a page. If it detects more than one instance of the <kbd>.announcement-component</kbd> CSS class, it will be indicated as a warning. Using jQuery's
+                  <kbd>gt:(0)</kbd> selector, the warning button will only appear on every instance except the first component.</p>
+                <p></p>
+
+                <div class="pt20">
+                  <pre><code class="language-js">var checkAnnouncement = $('.announcement-component').length;
+
+if (checkAnnouncement > 1) {
+
+    this.anyWarning = true;
+
+    WarningMessage = </code><code class="language-html">'More than one Announcement component found! The Announcement
+    component should be used strategically and sparingly. It should be used to get
+    attention or warn users about something important. Misuse of this component makes
+    it less effective or impactful. Secondly, this component is semantically
+    labeled as an Announcement for people who use screen readers.'</code>
+    <code class="language-js">
+    $('.announcement-component:gt(0)').addClass("sa11y-warning-border");
+    $('.announcement-component:gt(0)').before(WarningPopupStart + WarningMessage + WarningPopupEnd);
+
+}</code></pre>
+                </div>
+              </div>
+            </div>
+
+
+            <h2 id="acknowledgements" class="pt40">Acknowledgements <i class="fa fa-users" aria-hidden="true"></i>
+            </h2>
+            <p>Created by <a href="https://www.ryerson.ca/dmp">Digital Media Projects</a>, <a href="https://www.ryerson.ca/ccs">Computing and Communication Services (CCS)</a> at Ryerson University in Toronto, Canada.</p>
+            <p>Development, design and testing by:</p>
+            <ul>
+              <li><a href="https://ca.linkedin.com/in/adamchaboryk">Adam Chaboryk,</a> IT accessibility specialist</li>
+              <li><a href="https://www.linkedin.com/in/b1luong">Benjamin Luong,</a> web accessibility assistant</li>
+              <li><a href="https://www.linkedin.com/in/arshad-mohamed">Arshad Mohammed,</a> web accessibility assistant</li>
+              <li><a href="https://ca.linkedin.com/in/kylepadernilla">Kyle Padernilla,</a> web accessibility assistant</li>
+            </ul>
+
+            <h3 class="pt30">Built with</h3>
+            <ul>
+              <li>Sa11y is an adaptation of <a href="https://khan.github.io/tota11y/">Tota11y by Khan Academy.</a></li>
+              <li>Tooltip library by <a href="https://atomiks.github.io/tippyjs/">Tippy.js</a></li>
+              <li><a href="https://www.jqueryscript.net/other/color-contrast-checker.html">jQuery contrast plugin</a> was created by jasonday.</li>
+              <li>The icons are made by <a href="https://fontawesome.com/">Font Awesome.</a></li>
+              <li>Powered with <a href="https://jquery.com/">jQuery.</a></li>
+            </ul>
+            <h3 class="pt30">License</h3>
+            <p>Sa11y is MIT licensed.</p>
+            <h2 id="contact" class="pt40">Contact <i class="fa fa-envelope" aria-hidden="true"></i>
+            </h2>
+            <p>If you have any questions or feedback, please email <a href="mailto:adam.chaboryk@ryerson.ca">adam.chaboryk@ryerson.ca</a></p>
+          </div>
+        </section>
+      </main>
+    </div>
+  </article>
+
+
+  <div class="resGlobalFooter">
+    <footer class="resGlobalFooter" aria-label="global">
+      <div class="res-local-footer-wrapper" aria-label="local">
+        <div class="container">
+          <div class="resLocalFooter">
+            <div class="res-local-footer">
+              <div class="row template-local-footer">
+                <div class="col-xs-12 text-center">
+                <img src="assets/RU-DMP-CCS.svg" alt="Logo for Digital Media Projects, Computing and Communications Services (CCS)." class="pt30 pb30" width="36%">
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="top-middle-container">
+        <div class="container">
+          <div class="row footer-top">
+            <div class="col-sm-12 text-center">
+              <strong>Ryerson University</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+  <script src="assets/script.min.js"></script>
+</body>
+
+</html>
