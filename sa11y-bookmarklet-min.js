@@ -825,7 +825,7 @@ function Sa11y() {
         });
 
         //Error: Find all links pointing to development environment. Customize as needed.
-        let $badDevLinks = $("body").find("a[href^='https://www.dev.'], a[href*='wp-admin']");
+        let $badDevLinks = $("body").find("a[href^='https://www.dev.'], a[href*='wp-admin']").not(".sa11y-exclude");
         $badDevLinks.each((i, el) => {
             let $el = $(el);
             this.noErrors = false;
