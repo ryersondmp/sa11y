@@ -468,7 +468,7 @@ function Sa11y() {
                 }
             },
             check: function () {
-                $('*:visible').each(function () {
+                $('*:visible').not('.sa11y-exclude').not('.sa11y-exclude *').each(function () {
                     var $this = $(this),
                         color = $this.css('color'),
                         background = contrast.getBackground($this),
@@ -567,7 +567,6 @@ function Sa11y() {
             ContrastWarning = "<div class='tippy-heading'>Warning</div> The contrast of this text is unknown and needs to be manually reviewed. Ensure the text and the background have strong contrasting colours. The contrast ratio should be at least 4.5:1 for normal text and 3:1 for large text. <hr class='tippy-tool-hr' aria-hidden='true'>Please review contrast of the following text:<br> <span class='sa11y-bold'>" + nodetext + "</span>"
             $(name).addClass('sa11y-warning-border').before('<div><button class="sa11y-link-warning-btn" data-tippy-content="' + ContrastWarning + '" data-tippy-allowHTML="true">' + WarningIcon + '</button></div>');
         });
-
     };
 
     /*======================== INPUTS MODULE =======================*/
@@ -719,7 +718,6 @@ function Sa11y() {
                     $el.closest('a').before('<div class="tippy-left"><button class="sa11y-warning-btn" data-tippy-content="' + AnchorLinkAndAlt + '" data-tippy-allowHTML="true">' + WarningIcon + '</button></div>');
                 }
 
-
                 // Image error if alt text is too long.
                 else if (text.length > 160) {
                     this.noErrors = false;
@@ -825,7 +823,7 @@ function Sa11y() {
         });
 
         //Error: Find all links pointing to development environment. Customize as needed.
-        let $badDevLinks = $("body").find("a[href^='https://www.dev.'], a[href*='wp-admin']").not(".sa11y-exclude");
+        let $badDevLinks = $("body").find("a[href^='https://www.dev.'], a[href*='wp-admin']");
         $badDevLinks.each((i, el) => {
             let $el = $(el);
             this.noErrors = false;
@@ -934,6 +932,7 @@ function Sa11y() {
             $('#sa11y-container').after("<div class='sa11y-error-message'>" + ErrorIcon + "<br> Remove <span class='sa11y-bold'>user-scalable=&quot;no&quot;</span> paramater from the meta element to allow zooming. This can be very problematic for people with low vision!</div>");
         }
 
+        //Example: A really simply test case to see if a component is used more than once. Delete or change class.
         var checkAnnouncement = $('.announcement-component').length;
         if (checkAnnouncement > 1) {
             this.anyWarning = true;
