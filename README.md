@@ -25,7 +25,7 @@ Development, design and testing by:
 ### Built with
 - Sa11y is an adaptation of [Tota11y by Khan Academy.](https://github.com/Khan/tota11y)
 - Tooltip library by [Tippy.js](https://github.com/atomiks/tippyjs)
-- [jQuery contrast plugin](https://github.com/jasonday/color-contrast) was created by [jasonday.](https://github.com/jasonday)
+- [jQuery contrast plugin](https://github.com/jasonday/color-contrast) was created by jasonday.
 - The icons are made by [FontAwesome.](https://github.com/FortAwesome/Font-Awesome)
 - Powered with jQuery.
 
