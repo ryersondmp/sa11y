@@ -18,7 +18,7 @@ Sa11y works as a simple in-page checker that is designed to be easily customized
 Created by Digital Media Projects, Computing and Communication Services (CCS) at Ryerson University in Toronto, Canada.
 
 Development, design and testing by:
-- [Adam Chaboryk](https://github.com/adamchaboryk), IT accessibility specialist
+- @adamchaboryk, IT accessibility specialist
 - Benjamin Luong, web accessibility assistant
 - Arshad Mohammed, web accessibility assistant
 - Kyle Padernilla, web accessibility assistant
