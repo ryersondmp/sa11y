@@ -1,4 +1,5 @@
 ![Sa11y, the accessibility quality assurance tool.](https://repository-images.githubusercontent.com/246069937/4c2fdc00-621d-11ea-8a9b-48644d498a04)
+
 # Sa11y
 Sa11y is an accessibility quality assurance tool that visually highlights common accessibility and usability issues. Geared towards content authors, Sa11y indicates errors or warnings at the source with a simple tooltip on how to fix.
 
