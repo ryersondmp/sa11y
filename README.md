@@ -11,7 +11,7 @@ Sa11y works as a simple in-page checker that is designed to be easily customized
 - Easily customizable: add your own rulesets.
 
 ## Documentation and Demo
-[View project website and demo](https://ryersondmp.github.io/sa11y/)
+:arrow_right: [View project website and demo](https://ryersondmp.github.io/sa11y/)
 
 ## Acknowledgements
 Created by Digital Media Projects, Computing and Communication Services (CCS) at Ryerson University in Toronto, Canada.
