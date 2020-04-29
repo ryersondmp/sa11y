@@ -10,7 +10,7 @@ Sa11y works as a simple in-page checker that is designed to be easily customized
 - Simple rule sets.
 - Easily customizable: add your own rulesets.
 
-## Project website & demo
+## Documentation and Demo
 [View project website and demo](https://ryersondmp.github.io/sa11y/)
 
 ## Acknowledgements
