@@ -123,7 +123,7 @@ function Sa11y() {
             trigger: 'mouseenter focus',
             arrow: true,
             theme: 'sa11y-theme',
-            appendTo: 'document.body'
+            appendTo: document.body
         });
 
     };
