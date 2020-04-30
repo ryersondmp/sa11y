@@ -273,7 +273,7 @@
                     <div class="row-height">
                       <div class="col col-xs-12 col-sm-6 outside-full-height">
                         <div class="inside inside-full-height">
-                          <a class="btn btn-default btn-block btn-sa11y sa11y-exclude" href="javascript:(function(){document.body.appendChild(document.createElement('script')).src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js';document.body.appendChild(document.createElement('script')).src='https://unpkg.com/@popperjs/core@2';document.body.appendChild(document.createElement('script')).src='https://unpkg.com/tippy.js@6';document.body.appendChild(document.createElement('script')).src='https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/sa11y.min.js'})();">
+                          <a class="btn btn-default btn-block btn-sa11y sa11y-exclude" href="javascript:void((function(doc){var vendorJS=document.createElement('script');vendorJS.src='https://unpkg.com/@popperjs/core@2';var appJS=document.createElement('script');appJS.src='https://unpkg.com/tippy.js@6';var envJS=document.createElement('script');envJS.src='https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/sa11y.min.js';document.body.appendChild(vendorJS);vendorJS.onload=vendorJS.onreadystatechange=function(){document.body.appendChild(appJS);appJS.onload=appJS.onreadystatechange=function(){document.body.appendChild(envJS)}};document.body.appendChild(document.createElement('script')).src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js'})(document))">
                             <span class="fa fa-bookmark" aria-hidden="true"></span> <span>Sa11y</span>
                           </a>
                         </div>
@@ -321,8 +321,8 @@
 &lt;script src="https://unpkg.com/popper.js@1"&gt;&lt;/script&gt;
 &lt;script src="https://unpkg.com/tippy.js@4"&gt;&lt;/script&gt;
 
-//Sa11y
-&lt;script src="sa11y.min.js"&gt;&lt;/script&gt;</code></pre>
+//Sa11y - (Pull source code from Github)
+&lt;script src="sa11y.js"&gt;&lt;/script&gt;</code></pre>
 
                 <h6 class="pt20">Accessibility notice:</h6>
                 <p>This version appends tooltips to the end of the <kbd>body</kbd> by default to ensure tooltips do not get hidden by conflicting CSS styling. If you customize the tooltips to include interactive content, please read documentation on

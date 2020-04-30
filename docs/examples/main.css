@@ -11,6 +11,11 @@ main a:hover,
 main a:focus {
     text-decoration: none!important
 }
+.btn-primary {
+    color: #fff!important;
+    background-color:#245ec5!important;
+    border-color:#245ec5!important;
+  }
 
 .list-group-item.active {
     color: white!important;
