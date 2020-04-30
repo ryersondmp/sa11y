@@ -738,7 +738,7 @@ function Sa11y() {
 
     // Checks if text is not descriptive and returns the word(s) that are making the text inaccessible.
     this.containsAltTextStopWords = function (textContent) {
-        let stopWords = [".png", "DSC", ".jpg", ".jpeg", "image of", "graphic of", "picture of", "alt", "placeholder"];
+        let stopWords = [".png", "DSC", ".jpg", ".jpeg", "image of", "graphic of", "picture of", " alt ", "placeholder"];
         var hit = null;
         $.each(stopWords, function (index, word) {
             if (textContent.toLowerCase().indexOf(word) >= 0) {
