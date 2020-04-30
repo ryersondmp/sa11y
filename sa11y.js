@@ -122,7 +122,8 @@ function Sa11y() {
             interactive: true,
             trigger: 'mouseenter focus',
             arrow: true,
-            theme: 'sa11y-theme'
+            theme: 'sa11y-theme',
+            appendTo: 'document.body'
         });
 
     };
