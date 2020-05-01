@@ -13,6 +13,20 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+.label-default {
+  display: inline;
+    padding: .3em .6em .3em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25em;
+    background-color:#525252;
+}
+
 a.btn.btn-default.btn-block.btn-sa11y {font-size:1.2em;}
 a.btn.btn-default.btn-block.btn-sa11y:focus {background:black;border-color: black;}
 
