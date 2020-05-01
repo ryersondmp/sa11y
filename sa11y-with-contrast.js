@@ -319,14 +319,15 @@ function Sa11y() {
 
         let $links = $("body").find("a").not(".sa11y-exclude");
 
-        /* Example: Find all links within the main content area, and exclude all links with the class.*/
+        /* Mini function if you need to exclude any text contained with a span. We created this function to ignore automatically appended sr-only text for external links and document filetypes.
 
-        //Mini function if you need to exclude any text contained with a span.
         $.fn.ignore = function(sel){
           return this.clone().find(sel||">*").remove().end();
         };
-        /* Example: If you need to ignore any text within <span class="sr-only">test</span>.
+
+        Example: If you need to ignore any text within <span class="sr-only">test</span>.
             $el.ignore("span.sr-only").text().trim();
+
         */
 
         $links.each((i, el) => {
@@ -338,10 +339,10 @@ function Sa11y() {
             var hastabindex = $el.attr("tabindex");
 
             // error is any words that are making this link text inaccessible.
-            var error = this.containsLinkTextStopWords($el.ignore("span.sr-only").text().trim());
+            var error = this.containsLinkTextStopWords($el.text().trim());
 
             // Tests to see if this link is empty
-            if ($el.children().length == 0 && $el.attr('href') !== undefined && $el.ignore("span.sr-only").text().length == 0 && $el.is(':visible')) {
+            if ($el.children().length == 0 && $el.attr('href') !== undefined && $el.text().length == 0 && $el.is(':visible')) {
                 this.noErrors = false;
                 linkErrorMessage = "<div class='tippy-heading'>Error</div> Found an empty hyperlink without any text!"
                 $el.addClass("sa11y-link-text-fail");
