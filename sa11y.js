@@ -86,7 +86,9 @@ function Sa11y() {
         "<div id='sa11y-warnings' role='alert' class='sa11y-panel-header'><div class='sa11y-th-img'>" + PanelWarningIcon + "</div><div class='sa11y-td-msg'>No accessibility errors found, but please check warnings!</div></div>"
 
         +
-        "<div id='sa11y-errors-found' role='alert' class='sa11y-panel-header'><div class='sa11y-th-img'>" + PanelErrorIcon + "</div><div class='sa11y-td-msg'>Accessibility errors found!<br><a href='https://www.w3.org/WAI/tutorials/' target='_blank'>Need help?</a></div></div>"
+
+        //Add a link to your own help page or documentation.
+        "<div id='sa11y-errors-found' role='alert' class='sa11y-panel-header'><div class='sa11y-th-img'>" + PanelErrorIcon + "</div><div class='sa11y-td-msg'>Accessibility errors found!<!--<br><a href='https://www.w3.org/WAI/tutorials/' target='_blank'>Need help?</a>--></div></div>"
 
         +
         "<button type='button' aria-expanded='false' id='sa11y-summary-toggle'>Show Outline</button>"
@@ -324,7 +326,7 @@ function Sa11y() {
 
         Example: If you need to ignore any text within <span class="sr-only">test</span>.
             $el.ignore("span.sr-only").text().trim();
-            
+
         */
 
         $links.each((i, el) => {
