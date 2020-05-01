@@ -341,7 +341,7 @@ function Sa11y() {
             var error = this.containsLinkTextStopWords($el.ignore("span.sr-only").text().trim());
 
             // Tests to see if this link is empty
-            if ($el.children().length == 0 && $el.ignore("span.sr-only").text().length == 0 && $el.is(':visible')) {
+            if ($el.children().length == 0 && $el.attr('href') !== undefined && $el.ignore("span.sr-only").text().length == 0 && $el.is(':visible')) {
                 this.noErrors = false;
                 linkErrorMessage = "<div class='tippy-heading'>Error</div> Found an empty hyperlink without any text!"
                 $el.addClass("sa11y-link-text-fail");
