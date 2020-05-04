@@ -203,6 +203,7 @@ function Sa11y() {
         $body.find(".sa11y-link-text-fail").removeClass("sa11y-link-text-fail");
 
         //Remove buttons
+        $body.find(".tippy-left").remove();
         $body.find(".tippy-left-inline").remove();
         $body.find(".sa11y-error-btn").remove();
         $body.find(".sa11y-error-text-btn").remove();
