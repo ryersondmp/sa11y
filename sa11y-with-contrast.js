@@ -39,7 +39,7 @@ function Sa11y() {
                 this.onkeyup = null;
             }
         });
-
+        
     });
 
     /* Templated SVG icons from FontAwesome 5 for better cross-browser support and minimize conflicting libraries. */
