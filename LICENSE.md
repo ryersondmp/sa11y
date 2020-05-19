@@ -1,9 +1,11 @@
 # Sa11y - the accessibility quality assurance assistant
+Created by Digital Media Projects, Computing and Communication Services (CCS) at Ryerson University in Toronto, Canada.
 
-    Adam Chaboryk, IT Accessibility Specialist
-    Benjamin Luong, Web Accessibility Assistant
-    Arshad Mohammed, Web Accessibility Assistant
-    Kyle Padernilla, Web Accessibility Assistant
+Development, design and testing by:
+* Adam Chaboryk, IT Accessibility Specialist
+* Benjamin Luong, Web Accessibility Assistant
+* Arshad Mohammed, Web Accessibility Assistant
+* Kyle Padernilla, Web Accessibility Assistant
        
 ## MIT License (MIT)
 
