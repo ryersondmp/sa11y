@@ -971,4 +971,4 @@ function Sa11y() {
 } //End of function sa11y()
 
 /*========================== License ============================*/
-/* View license & acknowledgements: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md */
+/* Copyright (c) 2020 Ryerson University. View license & acknowledgements: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md */
