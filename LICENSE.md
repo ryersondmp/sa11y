@@ -1,4 +1,4 @@
-# Sa11y - the accessibility quality assurance assistant
+# Sa11y | License
 Created by Digital Media Projects, Computing and Communication Services (CCS) at Ryerson University in Toronto, Canada.
 
 Development, design and testing by:
