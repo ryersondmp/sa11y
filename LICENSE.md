@@ -66,4 +66,4 @@ The colour contrast jQuery plugin was created by jasonday (MIT license).
 https://www.jqueryscript.net/other/color-contrast-checker.html
 
 ## Powered by jQuery
-Powered by jQuery (MIT License). https://github.com/jquery/jquery
+Powered by jQuery (MIT license). https://github.com/jquery/jquery
