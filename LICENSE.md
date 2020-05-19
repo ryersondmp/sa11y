@@ -64,3 +64,6 @@ The SVG icons used in this project are created by Font Awesome. View FontAwesome
 ## Color Contrast Checker created by jasonday
 The colour contrast jQuery plugin was created by jasonday (MIT license).
 https://www.jqueryscript.net/other/color-contrast-checker.html
+
+## Powered by jQuery
+Powered by jQuery (MIT License). https://github.com/jquery/jquery
