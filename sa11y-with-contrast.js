@@ -39,7 +39,7 @@ function Sa11y() {
                 this.onkeyup = null;
             }
         });
-        
+
     });
 
     /* Templated SVG icons from FontAwesome 5 for better cross-browser support and minimize conflicting libraries. */
@@ -127,6 +127,7 @@ function Sa11y() {
             trigger: 'mouseenter click',
             arrow: true,
             theme: 'sa11y-theme',
+            allowHTML: true,
             appendTo: document.body
         });
 
@@ -206,8 +207,8 @@ function Sa11y() {
         $body.find(".sa11y-link-text-fail").removeClass("sa11y-link-text-fail");
 
         //Remove buttons
-        $body.find(".tippy-left").remove();
-        $body.find(".tippy-left-inline").remove();
+        $body.find(".sa11y-instance").remove();
+        $body.find(".sa11y-instance-inline").remove();
         $body.find(".sa11y-error-btn").remove();
         $body.find(".sa11y-error-text-btn").remove();
         $body.find(".sa11y-link-warning-btn").remove();
@@ -276,7 +277,7 @@ function Sa11y() {
             if (error != null && $el.closest("a").length > 0) {
                 this.noErrors = false;
                 $el.addClass("sa11y-headings-fail");
-                $el.closest('a').after('<div class="tippy-left"><button class="sa11y-error-text-btn" data-tippy-content="' + error + '" data-tippy-allowHTML="true">' + ErrorIcon + '</button></div>');
+                $el.closest('a').after('<div class="sa11y-instance"><button class="sa11y-error-text-btn" data-tippy-content="' + error + '" >' + ErrorIcon + '</button></div>');
                 var li = "<li class='sa11y-outline-" + level + " sa11y-red-text'><span class='sa11y-bold'><span aria-hidden='true'>&times;</span><span class='sr-only'>Error</span> H" + level + ":</span> " + $el.text() + "</li>"; //Generate page outline.
                 $("#sa11y-outline-list").append(li); //Generate page outline.
             }
@@ -285,7 +286,7 @@ function Sa11y() {
             else if (error != null) {
                 this.noErrors = false;
                 $el.addClass("sa11y-headings-fail");
-                $el.before('<div class="tippy-left"><button class="sa11y-error-text-btn" data-tippy-content="' + error + '" data-tippy-allowHTML="true">' + ErrorIcon + '</button></div>');
+                $el.before('<div class="sa11y-instance"><button class="sa11y-error-text-btn" data-tippy-content="' + error + '" >' + ErrorIcon + '</button></div>');
                 var li = "<li class='sa11y-outline-" + level + " sa11y-red-text'><span class='sa11y-bold'><span aria-hidden='true'>&times;</span><span class='sr-only'>Error</span> H" + level + ":</span> " + $el.text() + "</li>"; //Generate page outline.
                 $("#sa11y-outline-list").append(li); //Generate page outline.
             } else if (error == null) {
@@ -349,7 +350,7 @@ function Sa11y() {
                 this.noErrors = false;
                 linkErrorMessage = "<div class='tippy-heading'>Error</div> Found an empty hyperlink without any text!"
                 $el.addClass("sa11y-link-text-fail");
-                $el.after('<div class="tippy-left-inline"><button class="sa11y-error-text-btn" data-tippy-content="' + linkErrorMessage + '" data-tippy-allowHTML="true">' + ErrorIcon + '</button></div>');
+                $el.after('<div class="sa11y-instance-inline"><button class="sa11y-error-text-btn" data-tippy-content="' + linkErrorMessage + '" >' + ErrorIcon + '</button></div>');
             }
             // if link contains any link text stop words, then it fails.
             else if (error != null) {
@@ -357,17 +358,17 @@ function Sa11y() {
                 if (hasarialabelledby != null) {
                     var acclinkname = document.getElementById(hasarialabelledby).textContent;
                     var linkHasAriaLabelledby = "<div class='tippy-heading'>Good</div> The descriptive label for this link is: <span class='sa11y-bold'>" + linktext + " " + acclinkname + "</span>"
-                    $el.after('<div class="tippy-left-inline"><button class="sa11y-text-pass-btn" data-tippy-content="' + linkHasAriaLabelledby + '" data-tippy-allowHTML="true">' + PassIcon + '</button></div>');
+                    $el.after('<div class="sa11y-instance-inline"><button class="sa11y-text-pass-btn" data-tippy-content="' + linkHasAriaLabelledby + '" >' + PassIcon + '</button></div>');
                 } else if (hasarialabel != null) {
                     linkHasAriaLabel = "<div class='tippy-heading'>Good</div> The descriptive label for this link is: <span class='sa11y-bold'>" + hasarialabel + "</span>"
-                    $el.after('<div class="tippy-left-inline"><button class="sa11y-text-pass-btn" data-tippy-content="' + linkHasAriaLabel + '" data-tippy-allowHTML="true">' + PassIcon + '</button></div>');
+                    $el.after('<div class="sa11y-instance-inline"><button class="sa11y-text-pass-btn" data-tippy-content="' + linkHasAriaLabel + '" >' + PassIcon + '</button></div>');
                 } else if (hasariahidden == "true" && hastabindex == "-1") {
                     //do nothing.
                 } else {
                     this.noErrors = false;
                     $el.addClass("sa11y-link-text-fail");
                     stopWordMessage = "<div class='tippy-heading'>Error</div> Link text may not be descriptive enough, consider changing word: <span class='sa11y-red-text sa11y-bold'>" + error + "</span><hr aria-hidden='true' class='tippy-tool-hr'><span class='sa11y-bold'>Tip!</span> Link text should always be unique and meaningful so it could be understood out of context."
-                    $el.after('<div class="tippy-left-inline"><button class="sa11y-error-text-btn" data-tippy-content="' + stopWordMessage + '" data-tippy-allowHTML="true">' + ErrorIcon + '</button></div>');
+                    $el.after('<div class="sa11y-instance-inline"><button class="sa11y-error-text-btn" data-tippy-content="' + stopWordMessage + '" >' + ErrorIcon + '</button></div>');
                 }
             }
 
@@ -562,7 +563,7 @@ function Sa11y() {
             var nodetext = name[0].textContent;
             this.noErrors = false;
             ContrastError = "<div class='tippy-heading'>Error</div> " + cdetail + " does not have enough contrast with the background. The contrast ratio should be at least 4.5:1 for normal text and 3:1 for large text. <hr class='tippy-tool-hr' aria-hidden='true'> The contrast ratio is <span class='sa11y-red-text sa11y-bold'>" + cratio + "</span> for the following text: <span class='sa11y-bold sa11y-red-text'>" + nodetext + "</span>"
-            $(name).addClass("sa11y-error-border").before('<div><button class="sa11y-error-text-btn" data-tippy-content="' + ContrastError + '" data-tippy-allowHTML="true">' + ErrorIcon + '</button></div>');
+            $(name).addClass("sa11y-error-border").before('<div><button class="sa11y-error-text-btn" data-tippy-content="' + ContrastError + '" >' + ErrorIcon + '</button></div>');
         });
 
         $.each(contrastErrors.warnings, (index, item) => {
@@ -570,7 +571,7 @@ function Sa11y() {
             var nodetext = name[0].textContent;
             this.anyWarning = true;
             ContrastWarning = "<div class='tippy-heading'>Warning</div> The contrast of this text is unknown and needs to be manually reviewed. Ensure the text and the background have strong contrasting colours. The contrast ratio should be at least 4.5:1 for normal text and 3:1 for large text. <hr class='tippy-tool-hr' aria-hidden='true'>Please review contrast of the following text:<br> <span class='sa11y-bold'>" + nodetext + "</span>"
-            $(name).addClass('sa11y-warning-border').before('<div><button class="sa11y-link-warning-btn" data-tippy-content="' + ContrastWarning + '" data-tippy-allowHTML="true">' + WarningIcon + '</button></div>');
+            $(name).addClass('sa11y-warning-border').before('<div><button class="sa11y-link-warning-btn" data-tippy-content="' + ContrastWarning + '" >' + WarningIcon + '</button></div>');
         });
     };
 
@@ -594,7 +595,7 @@ function Sa11y() {
                 this.noErrors = false;
                 $el.addClass("sa11y-error-border");
                 MissingLabelError = "<div class='tippy-heading'>Error</div> There is no label associated with this input. Please add an <kbd>id</kbd> to this input, and add a matching <kbd>for</kbd> attribute to the label."
-                $el.after('<div class="tippy-left-inline"><button class="sa11y-error-text-btn" data-tippy-content="' + MissingLabelError + '" data-tippy-allowHTML="true">' + ErrorIcon + '</button></div>');
+                $el.after('<div class="sa11y-instance-inline"><button class="sa11y-error-text-btn" data-tippy-content="' + MissingLabelError + '" >' + ErrorIcon + '</button></div>');
             } else if ($el.attr('aria-label')) {
                 /*Optional: add pass border.*/
             } else if ($el.prev().is("label")) {
@@ -606,7 +607,7 @@ function Sa11y() {
                     this.noErrors = false;
                     $el.addClass("sa11y-error-border");
                     NoForAttributeError = "<div class='tippy-heading'>Error</div> There is no label associated with this input. Add a <kbd>for</kbd> attribute to the label that matches the <kbd>id</kbd> of this input. <hr class='tippy-tool-hr' aria-hidden='true'> The ID for this input is: <span class='sa11y-bold'>id=&#34;" + $el.attr('id') + "&#34;</span>"
-                    $el.after('<div class="tippy-left-inline"><button class="sa11y-error-text-btn" data-tippy-content="' + NoForAttributeError + '" data-tippy-allowHTML="true">' + ErrorIcon + '</button></div>');
+                    $el.after('<div class="sa11y-instance-inline"><button class="sa11y-error-text-btn" data-tippy-content="' + NoForAttributeError + '" >' + ErrorIcon + '</button></div>');
                 }
             }
         });
@@ -647,11 +648,11 @@ function Sa11y() {
                     if ($el.parents("a").text().trim().length > 1) {
                         $el.addClass("sa11y-error-border");
                         missingAltLinkButHasTextError = "<div class='tippy-heading'>Error</div> Image is being used as a hyperlink with surrounding text, although the alt attribute should be marked as decorative or null."
-                        $el.closest("a").before('<div class="tippy-left"><button class="sa11y-error-btn" data-tippy-content="' + missingAltLinkButHasTextError + '" data-tippy-allowHTML="true">' + ErrorIcon + '</button></div>');
+                        $el.closest("a").before('<div class="sa11y-instance-inline"><button class="sa11y-error-btn" data-tippy-content="' + missingAltLinkButHasTextError + '" >' + ErrorIcon + '</button></div>');
                     } else if ($el.parents("a").text().trim().length == 0) {
                         $el.addClass("sa11y-error-border");
                         missingAltLinkError = "<div class='tippy-heading'>Error</div> Image is being used as a hyperlink but is missing alt text! Please ensure alt text describes where the link takes you."
-                        $el.closest('a').before('<div class="tippy-left"><button class="sa11y-error-btn" data-tippy-content="' + missingAltLinkError + '" data-tippy-allowHTML="true">' + ErrorIcon + '</button></div>');
+                        $el.closest('a').before('<div class="sa11y-instance-inline"><button class="sa11y-error-btn" data-tippy-content="' + missingAltLinkError + '" >' + ErrorIcon + '</button></div>');
                     }
 
                 }
@@ -659,7 +660,7 @@ function Sa11y() {
                 else {
                     $el.addClass("sa11y-error-border");
                     generalAltText = "<div class='tippy-heading'>Error</div> Missing alt text! If the image conveys a story, a mood or important information - be sure to describe the image."
-                    $el.before('<div class="tippy-left"><button class="sa11y-error-btn" data-tippy-content="' + generalAltText + '" data-tippy-allowHTML="true">' + ErrorIcon + '</button></div>');
+                    $el.before('<div class="sa11y-instance"><button class="sa11y-error-btn" data-tippy-content="' + generalAltText + '" >' + ErrorIcon + '</button></div>');
                 }
             }
 
@@ -675,28 +676,28 @@ function Sa11y() {
                     $el.addClass("sa11y-error-border");
                     LinkedImageHasBadAltWord = "<div class='tippy-heading'>Error</div> Detected poor alt text in hyperlinked image. Ensure alt text describes destination of link, not a literal description of the picture. Remove word: <span class='sa11y-red-text sa11y-bold'>" + error + "</span>. <hr aria-hidden='true' class='tippy-tool-hr'> The alt text for this image is: <span class='sa11y-bold'>" + altText + "</span>"
 
-                    $el.closest('a').before('<div class="tippy-left"><button class="sa11y-error-btn" data-tippy-content="' + LinkedImageHasBadAltWord + '" data-tippy-allowHTML="true">' + ErrorIcon + '</button></div>');
+                    $el.closest('a').before('<div class="sa11y-instance-inline"><button class="sa11y-error-btn" data-tippy-content="' + LinkedImageHasBadAltWord + '" >' + ErrorIcon + '</button></div>');
                 } else if (error != null) {
                     this.noErrors = false;
                     $el.addClass("sa11y-error-border");
                     AltHasBadWord = "<div class='tippy-heading'>Error</div> Poor alt text found. It is not necessary to include words like <em>image</em>, <em>graphic</em> or the file extension. Consider removing the word: <span class='sa11y-red-text sa11y-bold'>" + error + "</span>. <hr aria-hidden='true' class='tippy-tool-hr'> The alt text for this image is: <span class='sa11y-bold'>" + altText + "</span>"
-                    $el.before('<div class="tippy-left"><button class="sa11y-error-btn" data-tippy-content="' + AltHasBadWord + '" data-tippy-allowHTML="true">' + ErrorIcon + '</button></div>');
+                    $el.before('<div class="sa11y-instance-inline"><button class="sa11y-error-btn" data-tippy-content="' + AltHasBadWord + '" >' + ErrorIcon + '</button></div>');
                 } else if (text == "" && $el.parents().is("a[href]")) {
                     if ($el.parents("a").text().trim().length == 0) {
                         this.noErrors = false;
                         $el.addClass("sa11y-error-border");
                         ImageLinkNullAltNoText = "<div class='tippy-heading'>Error</div> Image within hyperlink is marked as decorative and there is no link text. Please add alt text to image that describes destination of link."
-                        $el.closest('a').before('<div class="tippy-left"><button class="sa11y-error-btn" data-tippy-content="' + ImageLinkNullAltNoText + '" data-tippy-allowHTML="true">' + ErrorIcon + '</button></div>');
+                        $el.closest('a').before('<div class="sa11y-instance-inline"><button class="sa11y-error-btn" data-tippy-content="' + ImageLinkNullAltNoText + '" >' + ErrorIcon + '</button></div>');
                     } else {
                         LinkHasAltMessage = "<div class='tippy-heading'>Good</div> Image is marked as decorative, although the hyperlink is using the surrounding text as a descriptive label."
-                        $el.closest('a').before('<div class="tippy-left"><button class="sa11y-pass-btn" data-tippy-content="' + LinkHasAltMessage + '" data-tippy-allowHTML="true">' + PassIcon + '</button></div>');
+                        $el.closest('a').before('<div class="sa11y-instance-inline"><button class="sa11y-pass-btn" data-tippy-content="' + LinkHasAltMessage + '" >' + PassIcon + '</button></div>');
                     }
                 }
 
                 // Image warning if it is decorative and is not a link.
                 else if (text == "" && $el.parents().not("a[href]")) {
                     decorativePassMessage = "<div class='tippy-heading'>Good</div> Image marked as <span class='sa11y-bold'>decorative.</span> However, if the image conveys a story, a mood or important information - be sure to add alt text."
-                    $el.before('<div class="tippy-left"><button class="sa11y-pass-btn" data-tippy-content="' + decorativePassMessage + '" data-tippy-allowHTML="true">' + PassIcon + '</button></div>');
+                    $el.before('<div class="sa11y-instance"><button class="sa11y-pass-btn" data-tippy-content="' + decorativePassMessage + '" >' + PassIcon + '</button></div>');
                 }
 
                 // Image warning if it is a link and contains an alt text.
@@ -704,7 +705,7 @@ function Sa11y() {
                     this.noErrors = false;
                     $el.addClass("sa11y-error-border");
                     HyperlinkAltLengthWarning = "<div class='tippy-heading'>Error</div> Alt text description on hyperlinked image is <span class='sa11y-bold'>too long</span>. The alt text on hyperlinked images should describe where the link takes you, not a literal description of the image. <span class='sa11y-bold'>Consider using the title of the page it links to as the alt text.</span> <hr aria-hidden='true' class='tippy-tool-hr'> The alt text is <span class='sa11y-red-text sa11y-bold'>" + altLength + "</span> characters: <span class='sa11y-red-text sa11y-bold'>" + altText + "</span>"
-                    $el.closest('a').before('<div class="tippy-left"><button class="sa11y-error-btn" data-tippy-content="' + HyperlinkAltLengthWarning + '" data-tippy-allowHTML="true">' + ErrorIcon + '</button></div>');
+                    $el.closest('a').before('<div class="sa11y-instance-inline"><button class="sa11y-error-btn" data-tippy-content="' + HyperlinkAltLengthWarning + '" >' + ErrorIcon + '</button></div>');
                 }
 
                 // Image warning if it is a link and contains an alt text.
@@ -712,7 +713,7 @@ function Sa11y() {
                     this.anyWarning = true;
                     $el.addClass("sa11y-warning-border");
                     ImageLinkAltTextWarning = "<div class='tippy-heading'>Please Review</div> Image link contains alt text, although please ensure alt text describes the destination page. <span class='sa11y-bold'>Consider using the title of the page it links to as the alt text.</span> Does the alt text describe where the link takes you? <hr aria-hidden='true' class='tippy-tool-hr'>Alt text: <span class='sa11y-bold'>" + altText + "</span>"
-                    $el.closest('a').before('<div class="tippy-left"><button class="sa11y-warning-btn" data-tippy-content="' + ImageLinkAltTextWarning + '" data-tippy-allowHTML="true">' + WarningIcon + '</button></div>');
+                    $el.closest('a').before('<div class="sa11y-instance-inline"><button class="sa11y-warning-btn" data-tippy-content="' + ImageLinkAltTextWarning + '" >' + WarningIcon + '</button></div>');
                 }
 
                 // Image warning if it is a link, contains alt text AND surrounding link text.
@@ -720,7 +721,7 @@ function Sa11y() {
                     this.anyWarning = true;
                     $el.addClass("sa11y-warning-border");
                     AnchorLinkAndAlt = "<div class='tippy-heading'>Please Review</div> Image link contains <span class='sa11y-bold'>both alt text and surrounding link text.</span> If this image is decorative and is being used as a functional link to another page, consider marking the image as decorative or null - the surrounding link text should suffice. <hr aria-hidden='true' class='tippy-tool-hr'>Alt text: <span class='sa11y-bold'>" + altText + "</span>"
-                    $el.closest('a').before('<div class="tippy-left"><button class="sa11y-warning-btn" data-tippy-content="' + AnchorLinkAndAlt + '" data-tippy-allowHTML="true">' + WarningIcon + '</button></div>');
+                    $el.closest('a').before('<div class="sa11y-instance-inline"><button class="sa11y-warning-btn" data-tippy-content="' + AnchorLinkAndAlt + '" >' + WarningIcon + '</button></div>');
                 }
 
                 // Image error if alt text is too long.
@@ -728,13 +729,13 @@ function Sa11y() {
                     this.anyWarning = true;
                     $el.addClass("sa11y-warning-border");
                     AltTooLong = "<div class='tippy-heading'>Warning</div> Alt text description is <span class='sa11y-bold'>too long</span>. Alt text should be concise, yet meaningful like a <em>tweet</em> (around 100 characters). If this is a complex image or a graph, consider putting the long description of the image in text below or in an accordion component. <hr aria-hidden='true' class='tippy-tool-hr'> The alt text is <span class='sa11y-red-text sa11y-bold'>" + altLength + "</span> characters: <span class='sa11y-red-text sa11y-bold'>" + altText + "</span>"
-                    $el.before('<div class="tippy-left"><button class="sa11y-warning-btn" data-tippy-content="' + AltTooLong + '" data-tippy-allowHTML="true">' + WarningIcon + '</button></div>');
+                    $el.before('<div class="sa11y-instance"><button class="sa11y-warning-btn" data-tippy-content="' + AltTooLong + '" >' + WarningIcon + '</button></div>');
                 }
 
                 // Image pass if it contains alt text.
                 else if (text != "") {
                     PassAltMessage = "<div class='tippy-heading'>Good</div> The alt text for this image is: <span class='sa11y-bold'>" + altText + "</span>"
-                    $el.before('<div class="tippy-left"><button class="sa11y-pass-btn" data-tippy-content="' + PassAltMessage + '" data-tippy-allowHTML="true">' + PassIcon + '</button></div>');
+                    $el.before('<div class="sa11y-instance"><button class="sa11y-pass-btn" data-tippy-content="' + PassAltMessage + '" >' + PassIcon + '</button></div>');
                 }
             }
         });
@@ -774,7 +775,7 @@ function Sa11y() {
             this.anyWarning = true;
             $el.addClass("sa11y-warning-border");
             MissingCaptionsWarning = "<div class='tippy-heading'>Warning</div> Please ensure <span class='sa11y-bold'>all videos have closed captioning.</span> Providing captions for all audio and video content is a mandatory Level A requirement. Captions are meant to support people who are D/deaf or hard-of-hearing."
-            $el.before('<div><button class="sa11y-warning-btn" data-tippy-content="' + MissingCaptionsWarning + '" data-tippy-allowHTML="true">' + WarningIcon + '</button></div>');
+            $el.before('<div><button class="sa11y-warning-btn" data-tippy-content="' + MissingCaptionsWarning + '" >' + WarningIcon + '</button></div>');
         });
 
         //Warning: Make sure all podcasts have captions.
@@ -783,7 +784,7 @@ function Sa11y() {
             this.anyWarning = true;
             soundcloudWarning.addClass("sa11y-warning-border");
             SoundCloudMessage = "<div class='tippy-heading'>Warning</div> Please ensure to provide a <span class='sa11y-bold'>transcript for all podcasts.</span> Providing transcripts for audio content is a mandatory Level A requirement. Transcripts are meant to support people who are D/deaf or hard-of-hearing, but can benefit everyone. Consider placing the transcript below or within an accordion panel."
-            soundcloudWarning.before('<div><button class="sa11y-warning-btn" data-tippy-content="' + SoundCloudMessage + '" data-tippy-allowHTML="true">' + WarningIcon + '</button></div>');
+            soundcloudWarning.before('<div><button class="sa11y-warning-btn" data-tippy-content="' + SoundCloudMessage + '" >' + WarningIcon + '</button></div>');
         }
 
         //Warning: Check Google Data Studio widget.
@@ -792,7 +793,7 @@ function Sa11y() {
             this.anyWarning = true;
             dataStudioWarning.addClass("sa11y-warning-border");
             dataStudioWarningMessage = "<div class='tippy-heading'>Error</div> Google Data Studio widgets can be problematic for people who use a keyboard to navigate and people who have difficulty perceiving visual content. Please <span class='sa11y-bold'>provide a text alternative</span> immediately below the Data Studio frame."
-            dataStudioWarning.before('<div><button class="sa11y-warning-btn" data-tippy-content="' + dataStudioWarningMessage + '" data-tippy-allowHTML="true">' + WarningIcon + '</button></div>');
+            dataStudioWarning.before('<div><button class="sa11y-warning-btn" data-tippy-content="' + dataStudioWarningMessage + '" >' + WarningIcon + '</button></div>');
         }
 
         //Warning: Discourage use of Twitter timelines.
@@ -804,7 +805,7 @@ function Sa11y() {
                 this.anyWarning = true;
                 $el.addClass("sa11y-text-warning");
                 twittererror = "<div class='tippy-heading'>Warning</div> The default Twitter timeline may cause accessibility issues for keyboard users. Secondly, the inline scrolling of the Twitter timeline may cause usability issues for mobile. It's recommended to add the following data attributes to the embed code. <hr aria-hidden='true' class='tippy-tool-hr'><span class='sa11y-bold'>It's recommended to:</span><ul><li>Add <kbd>data-tweet-limit=&#34;2&#34;</kbd> to limit the amount of tweets.</li><li>Add <kbd>data-chrome=&#34;nofooter noheader&#34;</kbd> to remove the widget's header and footer.</li></ul>"
-                $el.before('<div><button class="sa11y-link-warning-btn" data-tippy-content="' + twittererror + '" data-tippy-allowHTML="true">' + WarningIcon + '</button></div>');
+                $el.before('<div><button class="sa11y-link-warning-btn" data-tippy-content="' + twittererror + '" >' + WarningIcon + '</button></div>');
             }
         });
 
@@ -823,7 +824,7 @@ function Sa11y() {
                 this.anyWarning = true;
                 $el.addClass("sa11y-text-warning");
                 WarningNewTab = "<div class='tippy-heading'>Warning</div> Please use <span class='sa11y-bold'>target=&ldquo;_blank&rdquo;</span> sparingly. Opening links in new tabs or windows can be very disorienting for people, especially for people who have difficulty perceiving visual content. Secondly, it's not always a good practice to control a user's experience or make decisions for them. Alert the user that the link opens in a new window within the link text."
-                $el.first().after('<div class="tippy-left-inline"><button class="sa11y-link-warning-btn" data-tippy-content="' + WarningNewTab + '" data-tippy-allowHTML="true">' + WarningIcon + '</button></div>');
+                $el.first().after('<div class="sa11y-instance-inline"><button class="sa11y-link-warning-btn" data-tippy-content="' + WarningNewTab + '" >' + WarningIcon + '</button></div>');
             }
         });
 
@@ -834,7 +835,7 @@ function Sa11y() {
             this.noErrors = false;
             $el.addClass("sa11y-link-text-fail");
             BadLinkMessage = "<div class='tippy-heading'>Error</div> Bad link found. Link appears to point to a development environment. Make sure the link does not contain <em>dev</em> or <em>wp-admin</em> in the URL. <hr aria-hidden='true' class='tippy-tool-hr'>This link points to: <br><span class='sa11y-bold sa11y-red-text'>" + el + "</span>"
-            $el.after('<div class="tippy-left-inline"><button class="sa11y-error-text-btn" data-tippy-content="' + BadLinkMessage + '" data-tippy-allowHTML="true">' + ErrorIcon + '</button></div>');
+            $el.after('<div class="sa11y-instance-inline"><button class="sa11y-error-text-btn" data-tippy-content="' + BadLinkMessage + '" >' + ErrorIcon + '</button></div>');
         });
 
         //Warning: Find all PDFs. Although only append warning icon to first PDF on page.
@@ -845,7 +846,7 @@ function Sa11y() {
             checkPDF.addClass("sa11y-text-warning");
             checkPDF.has("img").removeClass("sa11y-text-warning");
             WarningPDFMessage = "<div class='tippy-heading'>Warning</div> PDF files are considered web content and must be made accessible as well. If this file is a form, consider using Google Forms as an accessible alternative. If this PDF file is a document, consider converting it into a web page instead. Otherwise, please <span class='sa11y-bold'>check file for accessibility in Acrobat DC.</span>"
-            firstPDF.after('<div class="tippy-left-inline"><button class="sa11y-link-warning-btn" data-tippy-content="' + WarningPDFMessage + '" data-tippy-allowHTML="true">' + WarningIcon + '</button></div>');
+            firstPDF.after('<div class="sa11y-instance-inline"><button class="sa11y-link-warning-btn" data-tippy-content="' + WarningPDFMessage + '" >' + WarningIcon + '</button></div>');
         }
 
         //Warning: Detect uppercase. For each element, if it contains more than 4 uppercase words than indicate warning. Uppercase word is anything that is more than 3 characters.
@@ -862,7 +863,7 @@ function Sa11y() {
 
                 UppercaseWarningMessage = "<div class='tippy-heading'>Warning</div>ALL CAPS DETECTED. It is best practice to avoid typing sentences or phrases in ALL CAPITALS. Lengthy segments of capitalized content is more difficult to read and it may seem like you are SHOUTING. Secondly, some screen readers may interpret all capital text as an acronym. <hr class='tippy-tool-hr' aria-hidden='true'> If this word is an acronym, please ignore this warning. But be sure to also provide the expanded form of the acronym at least once on the page."
 
-                $this.before('<div class="tippy-left"><button class="sa11y-link-warning-btn" data-tippy-content="' + UppercaseWarningMessage + '" data-tippy-allowHTML="true">' + WarningIcon + '</button></div>');
+                $this.before('<div class="sa11y-instance"><button class="sa11y-link-warning-btn" data-tippy-content="' + UppercaseWarningMessage + '" >' + WarningIcon + '</button></div>');
             }
         });
 
@@ -874,7 +875,7 @@ function Sa11y() {
                 this.noErrors = false;
                 $el.addClass("sa11y-error-border")
                 BlockquoteError = "<div class='tippy-heading'>Error</div> Blockquotes should be used for quotes only. They should never be used as headings. Please replace with a semantic heading (e.g. Heading 2 or Heading 3)."
-                $el.before('<div class="tippy-left"><button class="sa11y-error-text-btn" data-tippy-content="' + BlockquoteError + '" data-tippy-allowHTML="true">' + ErrorIcon + '</button></div>');
+                $el.before('<div class="sa11y-instance"><button class="sa11y-error-text-btn" data-tippy-content="' + BlockquoteError + '" >' + ErrorIcon + '</button></div>');
             }
         });
 
@@ -888,13 +889,13 @@ function Sa11y() {
                 this.noErrors = false;
                 $el.addClass("sa11y-error-border");
                 MissingHeadingsError = "<div class='tippy-heading'>Error</div> Missing table headers! Accessible tables need HTML markup that indicates header cells and data cells which defines their relationship. This information provides context to people who use assistive technology. Tables should be used for tabular data only."
-                $el.before('<div class="tippy-left"><button class="sa11y-error-text-btn" data-tippy-content="' + MissingHeadingsError + '" data-tippy-allowHTML="true">' + ErrorIcon + '</button></div>');
+                $el.before('<div class="sa11y-instance"><button class="sa11y-error-text-btn" data-tippy-content="' + MissingHeadingsError + '" >' + ErrorIcon + '</button></div>');
             }
             if (findHeadingTags.length > 0) {
                 findHeadingTags.addClass("sa11y-headings-fail");
                 findHeadingTags.parent().addClass("sa11y-error-border");
                 SemanticHeadingTableError = "<div class='tippy-heading'>Error</div> Semantic headings such as Heading 2 or Heading 3 should only be used for sections of content; <span class='sa11y-bold'>not</span> in HTML tables. Indicate table headings using the <span class='sa11y-bold'>th</span> element instead."
-                findHeadingTags.before('<div class="tippy-left"><button class="sa11y-error-text-btn" data-tippy-content="' + SemanticHeadingTableError + '" data-tippy-allowHTML="true">' + ErrorIcon + '</button></div>');
+                findHeadingTags.before('<div class="sa11y-instance"><button class="sa11y-error-text-btn" data-tippy-content="' + SemanticHeadingTableError + '" >' + ErrorIcon + '</button></div>');
             }
         });
 
@@ -905,7 +906,7 @@ function Sa11y() {
             if ($el.text().trim().length < 1) {
                 $el.addClass("sa11y-error-border");
                 EmptyTableHeaderError = "<div class='tippy-heading'>Error</div> Empty table header found! Table headers should <em>never</em> be empty. It is important to designate row and/or column headers to convey their relationship. This information provides context to people who use assistive technology. Please keep in mind that tables should be used for tabular data only."
-                $el.append('<div class="tippy-left"><button class="sa11y-error-text-btn" data-tippy-content="' + EmptyTableHeaderError + '" data-tippy-allowHTML="true">' + ErrorIcon + '</button></div>');
+                $el.append('<div class="sa11y-instance"><button class="sa11y-error-text-btn" data-tippy-content="' + EmptyTableHeaderError + '" >' + ErrorIcon + '</button></div>');
             }
         });
 
@@ -918,7 +919,7 @@ function Sa11y() {
                 this.noErrors = false;
                 $(this).addClass("sa11y-link-text-fail");
                 duplicateIDMessage = "<div class='tippy-heading'>Error</div> Found <span class='sa11y-bold'>duplicate ID</span>. Duplicate ID errors are known to cause problems for assistive technologies when they are trying to interact with content. <hr aria-hidden='true' class='tippy-tool-hr'>Please remove or change the following ID: <span class='sa11y-bold sa11y-red-text'>" + this.id + "</span>"
-                $(this).before('<div class="tippy-left-inline"><button class="sa11y-error-text-btn" data-tippy-content="' + duplicateIDMessage + '" data-tippy-allowHTML="true">' + ErrorIcon + '</button></div>');
+                $(this).before('<div class="sa11y-instance-inline"><button class="sa11y-error-text-btn" data-tippy-content="' + duplicateIDMessage + '" >' + ErrorIcon + '</button></div>');
             }
             ids[this.id] = 1;
         });
@@ -930,7 +931,7 @@ function Sa11y() {
             $('#sa11y-container').after("<div class='sa11y-error-message'>" + ErrorIcon + "<br> Page language not declared! Please <a href='https://www.w3.org/International/questions/qa-html-language-declarations' target='_blank'>declare language on HTML tag.<span class='sr-only'>(opens new window)</span></a></div>");
         }
 
-        //Error: Missing language tag.
+        //Error: Never set user-scalable to 0.
         var userScalable = $("meta").attr("user-scalable");
         if (userScalable == "no" || userScalable == "0" || $("meta[content~='user-scalable=no']").length > 0) {
             this.noErrors = false;
@@ -943,7 +944,7 @@ function Sa11y() {
             this.anyWarning = true;
             WarningMessageAnnounce = "<div class='tippy-heading'>Warning</div> More than one <strong>Announcement component</strong> found! The Announcement component should be used strategically and sparingly. It should be used to get attention or warn users about something important. Misuse of this component makes it less effective or impactful. This component is semantically labeled as an Announcement for people who use screen readers."
             $('.announcement-component:gt(0)').addClass("sa11y-warning-border");
-            $('.announcement-component:gt(0)').before('<div class="tippy-left"><button class="sa11y-link-warning-btn" data-tippy-content="' + WarningMessageAnnounce + '" data-tippy-allowHTML="true">' + WarningIcon + '</button></div>');
+            $('.announcement-component:gt(0)').before('<div class="sa11y-instance"><button class="sa11y-link-warning-btn" data-tippy-content="' + WarningMessageAnnounce + '" >' + WarningIcon + '</button></div>');
         }
     }
 
@@ -954,7 +955,7 @@ function Sa11y() {
 
     /* Custom Tippy Style */
     var tippystyle = document.createElement('style');
-    tippystyle.innerHTML = ".tippy-box *{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif!important}.tippy-box[data-theme~='sa11y-theme']{background-color:white!important;color:#333333!important;padding:8px!important;font-size:15px!important;box-shadow: 0 0 20px 4px rgba(154, 161, 177, 0.15),0 4px 80px -8px rgba(36, 40, 47, 0.25),0 4px 4px -2px rgba(91, 94, 105, 0.15)!important;font-weight: normal!important;}.tippy-heading{font-size:17px!important;font-weight:600!important;}.tippy-box[data-theme~='sa11y-theme'][data-placement^='top']>.tippy-arrow::before{border-top-color:white}.tippy-box[data-theme~='sa11y-theme'][data-placement^='bottom']>.tippy-arrow::before{border-bottom-color:white}.tippy-box[data-theme~='sa11y-theme'][data-placement^='left']>.tippy-arrow::before{border-left-color:white}.tippy-box[data-theme~='sa11y-theme'][data-placement^='right']>.tippy-arrow::before{border-right-color:white}.tippy-left-inline{text-align:left!important;display:inline-block!important}";
+    tippystyle.innerHTML = ".tippy-box *{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif!important}.tippy-box[data-theme~='sa11y-theme']{background-color:white!important;color:#333333!important;padding:8px!important;font-size:15px!important;box-shadow: 0 0 20px 4px rgba(154, 161, 177, 0.15),0 4px 80px -8px rgba(36, 40, 47, 0.25),0 4px 4px -2px rgba(91, 94, 105, 0.15)!important;font-weight: normal!important;}.tippy-heading{font-size:17px!important;font-weight:600!important;}.tippy-box[data-theme~='sa11y-theme'][data-placement^='top']>.tippy-arrow::before{border-top-color:white}.tippy-box[data-theme~='sa11y-theme'][data-placement^='bottom']>.tippy-arrow::before{border-bottom-color:white}.tippy-box[data-theme~='sa11y-theme'][data-placement^='left']>.tippy-arrow::before{border-left-color:white}.tippy-box[data-theme~='sa11y-theme'][data-placement^='right']>.tippy-arrow::before{border-right-color:white}.sa11y-instance-inline{text-align:left!important;display:inline-block!important}";
     $('head').prepend(tippystyle);
 
     //Add focus state to main toggle button to accommodate custom checkbox button.

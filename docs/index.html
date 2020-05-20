@@ -8,6 +8,7 @@
   <meta name="description" content="Sa11y is an accessibility quality assurance tool that visually highlights common accessibility and usability issues.">
   <link rel="stylesheet" href="assets/main.css" type="text/css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdn.plyr.io/3.6.2/plyr.css" />
 </head>
 
 <body>
@@ -290,7 +291,6 @@
             </div>
 
             <h3 class="pt20">For developers and web administrators</h3>
-
             <ul class="pt20 pb20">
               <li>Pull <a href="https://github.com/ryersondmp/sa11y">Sa11y's source code on Github <span class="fa fa-github" aria-hidden="true"></span></a></li>
               <li>View a demonstration of <a href="https://ryersondmp.github.io/sa11y/examples/full-list.html">All Rulesets</a> in action.
@@ -361,12 +361,25 @@ if (checkAnnouncement > 1) {
     it less effective or impactful. Secondly, this component is semantically
     labeled as an Announcement for people who use screen readers.'</code>
     <code class="language-js">
-    $('.announcement-component:gt(0)').addClass("sa11y-warning-border");
-    $('.announcement-component:gt(0)').before(WarningPopupStart + WarningMessage + WarningPopupEnd);
-
+      $('.announcement-component:gt(0)').addClass("sa11y-warning-border");
+      $('.announcement-component:gt(0)').before('&lt;div class="sa11y-instance"&gt;&lt;button class="sa11y-link-warning-btn" data-tippy-content="' + WarningMessage + '" &gt;' + WarningIcon + '&lt;/button&gt;&lt;/div&gt;');
 }</code></pre>
                 </div>
               </div>
+
+              <!-- <h4 data-aria-accordion-heading>
+                Case Study: Sa11y at Ryerson University
+              </h4>
+              <div data-aria-accordion-panel>
+                <p>Sa11y was originally developed as an in-page accessibility checker customized for Ryerson University's content management system. With over 1000 website editors and over 40, 000 web pages; ensuring brand consistency, usability and website accessibility poses its challenges. In an effort to stray away from expensive cloud-based accessibility tools and enforce accessibility best practices in an easy, effortless way - we made Sa11y.</p>
+
+                <h5 class="pt20">Customized for our CMS and content editors</h5>
+                <p>Not all CMSs and components are made equally. Our integration of Sa11y was customized to work with our existing library of components. Sa11y does not flag issues on components that are already accessible, or areas of a page that are not customizable (such as the global header and footer areas). This means zero false positives. Content editors only see issues they are responsible for.</p>
+
+                <h5 class="pt20">Custom rulesets</h5>
+                <p>Creating custom rulesets is easy. We use Sa11y to highlight usability issues specific to our template. For example: flagging server-validated forms nested within an accordion panel, warning content editors to enable the "Open all/Close all" button on an accordion component with too many panels, and more.</p>
+              </div>-->
+
             </div>
 
 
@@ -428,5 +441,9 @@ if (checkAnnouncement > 1) {
     </footer>
   </div>
   <script src="assets/script.min.js"></script>
+  <script src="https://cdn.plyr.io/3.6.2/plyr.js"></script>
+  <script>
+  const player = new Plyr('#player');
+  </script>
 </body>
 </html>
