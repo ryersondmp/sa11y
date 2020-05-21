@@ -4,11 +4,25 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sa11y - accessibility quality assurance assistant - Ryerson University</title>
-  <meta name="description" content="Sa11y is an accessibility quality assurance tool that visually highlights common accessibility and usability issues.">
   <link rel="stylesheet" href="assets/main.css" type="text/css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
   <link rel="stylesheet" href="https://cdn.plyr.io/3.6.2/plyr.css" />
+  <!-- Primary Meta Tags -->
+  <title>Sa11y - accessibility quality assurance assistant - Ryerson University</title>
+  <meta name="title" content="Sa11y - accessibility quality assurance assistant - Ryerson University">
+  <meta name="description" content="Sa11y is an accessibility quality assurance tool that visually highlights common accessibility and usability issues.">
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ryersondmp.github.io/sa11y/">
+  <meta property="og:title" content="Sa11y - accessibility quality assurance assistant - Ryerson University">
+  <meta property="og:description" content="Sa11y is an accessibility quality assurance tool that visually highlights common accessibility and usability issues.">
+  <meta property="og:image" content="https://ryersondmp.github.io/sa11y/assets/github-banner.png">
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://ryersondmp.github.io/sa11y/">
+  <meta property="twitter:title" content="Sa11y - accessibility quality assurance assistant - Ryerson University">
+  <meta property="twitter:description" content="Sa11y is an accessibility quality assurance tool that visually highlights common accessibility and usability issues.">
+  <meta property="twitter:image" content="https://ryersondmp.github.io/sa11y/assets/github-banner.png">
 </head>
 
 <body>
@@ -272,14 +286,16 @@
                     <div class="row-height">
                       <div class="col col-xs-12 col-sm-6 outside-full-height">
                         <div class="inside inside-full-height">
-                          <a class="btn btn-default btn-block btn-sa11y sa11y-exclude" href="javascript:void((function(doc){document.body.appendChild(document.createElement('script')).src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js';var popperJS=document.createElement('script');popperJS.src='https://unpkg.com/@popperjs/core@2';var tippyJS=document.createElement('script');tippyJS.src='https://unpkg.com/tippy.js@6';var sa11yJS=document.createElement('script');sa11yJS.src='https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/sa11y.js';document.body.appendChild(popperJS);popperJS.onload=popperJS.onreadystatechange=function(){document.body.appendChild(tippyJS);tippyJS.onload=tippyJS.onreadystatechange=function(){document.body.appendChild(sa11yJS)}}})(document))">
+                          <a class="btn btn-default btn-block btn-sa11y sa11y-exclude"
+                            href="javascript:void((function(doc){document.body.appendChild(document.createElement('script')).src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js';var popperJS=document.createElement('script');popperJS.src='https://unpkg.com/@popperjs/core@2';var tippyJS=document.createElement('script');tippyJS.src='https://unpkg.com/tippy.js@6';var sa11yJS=document.createElement('script');sa11yJS.src='https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/sa11y.js';document.body.appendChild(popperJS);popperJS.onload=popperJS.onreadystatechange=function(){document.body.appendChild(tippyJS);tippyJS.onload=tippyJS.onreadystatechange=function(){document.body.appendChild(sa11yJS)}}})(document))">
                             <span class="fa fa-bookmark" aria-hidden="true"></span> <span>Sa11y</span>
                           </a>
                         </div>
                       </div>
                       <div class="col col-xs-12 col-sm-6 outside-full-height">
                         <div class="inside inside-full-height">
-                          <a class="btn btn-default btn-block btn-sa11y" href="javascript:void((function(doc){document.body.appendChild(document.createElement('script')).src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js';var popperJS=document.createElement('script');popperJS.src='https://unpkg.com/@popperjs/core@2';var tippyJS=document.createElement('script');tippyJS.src='https://unpkg.com/tippy.js@6';var sa11yJS=document.createElement('script');sa11yJS.src='https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/sa11y-with-contrast.js';document.body.appendChild(popperJS);popperJS.onload=popperJS.onreadystatechange=function(){document.body.appendChild(tippyJS);tippyJS.onload=tippyJS.onreadystatechange=function(){document.body.appendChild(sa11yJS)}}})(document))">
+                          <a class="btn btn-default btn-block btn-sa11y"
+                            href="javascript:void((function(doc){document.body.appendChild(document.createElement('script')).src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js';var popperJS=document.createElement('script');popperJS.src='https://unpkg.com/@popperjs/core@2';var tippyJS=document.createElement('script');tippyJS.src='https://unpkg.com/tippy.js@6';var sa11yJS=document.createElement('script');sa11yJS.src='https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/sa11y-with-contrast.js';document.body.appendChild(popperJS);popperJS.onload=popperJS.onreadystatechange=function(){document.body.appendChild(tippyJS);tippyJS.onload=tippyJS.onreadystatechange=function(){document.body.appendChild(sa11yJS)}}})(document))">
                             <span class="fa fa-paint-brush" aria-hidden="true"></span> <span>Sa11y with contrast checker</span>
                           </a>
                         </div>
@@ -443,7 +459,8 @@ if (checkAnnouncement > 1) {
   <script src="assets/script.min.js"></script>
   <script src="https://cdn.plyr.io/3.6.2/plyr.js"></script>
   <script>
-  const player = new Plyr('#player');
+    const player = new Plyr('#player');
   </script>
 </body>
+
 </html>
