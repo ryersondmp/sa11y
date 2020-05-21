@@ -1,4 +1,4 @@
-![Sa11y, the accessibility quality assurance tool.](https://repository-images.githubusercontent.com/246069937/4c2fdc00-621d-11ea-8a9b-48644d498a04)
+![Sa11y, the accessibility quality assurance tool.](https://github.com/ryersondmp/sa11y/blob/master/docs/assets/github-banner.png?raw=true)
 
 # Sa11y
 Sa11y works as a simple in-page checker that is designed to be easily customized and integrated into any content management system (CMS) to facilitate good accessibility practices. Sa11y works best in a templated CMS environment, although can also work as a bookmarklet. Sa11y is not a comprehensive code analysis tool.
