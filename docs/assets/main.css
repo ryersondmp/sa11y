@@ -971,7 +971,6 @@ a.mobile-view-only:hover, a.mobile-view-only:focus {
       align-items: center;
       justify-content: center;
       box-shadow: 0 0 0 1px #d1d2d4;
-      overflow-y:scroll!important;
      -webkit-overflow-scrolling:touch !important;
 }
 
