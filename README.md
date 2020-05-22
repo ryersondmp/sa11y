@@ -13,7 +13,7 @@ Sa11y works as a simple in-page checker that is designed to be easily customized
 :arrow_right: [View project website and demo](https://ryersondmp.github.io/sa11y/)
 
 ## Contact
-Have a question? Email: adam.chaboryk@ryerson.ca
+Have a question about Sa11y? Email: adam.chaboryk@ryerson.ca
 
 ## Acknowledgements
 Created by Digital Media Projects, Computing and Communication Services (CCS) at Ryerson University in Toronto, Canada.
