@@ -71,7 +71,7 @@ function Sa11y() {
     var sa11ycontainer = document.createElement("div");
     sa11ycontainer.setAttribute("id", "sa11y-container");
     //Main button uses checkbox input to pass value for localstorage.
-    sa11ycontainer.innerHTML = "<label class='sa11y-main-toggle-style' for='sa11y-checkbox'>" + MainToggleIcon + "<span class='sr-only'>Check Accessibility</span></label><input class='sa11y-hide-native-checkbox' id='sa11y-checkbox' type='checkbox' name='start-sa11y'>"
+    sa11ycontainer.innerHTML = "<input class='sa11y-hide-native-checkbox' id='sa11y-checkbox' type='checkbox' name='start-sa11y'><label class='sa11y-main-toggle-style' for='sa11y-checkbox'>" + MainToggleIcon + "<span class='sr-only'>Check Accessibility</span></label>"
 
         +
         "<div id='sa11y-panel' class='sa11y-panel'>"
