@@ -585,9 +585,9 @@ function Sa11y() {
         }
     };
 
-    /* Outlines inaccessible link texts with a red border and a tooltip for remediation solution. */
+    /* Outlines inaccessible input and form fields. */
     this.outlineLabels = function () {
-        let $inputs = $(this.workingDoc.querySelectorAll("input"));
+        let $inputs = $("input").not("input:hidden");
         $inputs.each((i, el) => {
             let $el = $(el);
 
