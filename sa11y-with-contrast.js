@@ -849,23 +849,24 @@ function Sa11y() {
             firstPDF.after('<div class="sa11y-instance-inline"><button class="sa11y-link-warning-btn" data-tippy-content="' + WarningPDFMessage + '" >' + WarningIcon + '</button></div>');
         }
 
-        //Warning: Detect uppercase. For each element, if it contains more than 4 uppercase words than indicate warning. Uppercase word is anything that is more than 3 characters.
-        $('h1, h2, h3, h4, h5, h6, p, li:not([class^="sa11y"]), span, blockquote').each(function () {
-            var $this = $(this);
-            var uppercasePattern = /(?!<a[^>]*?>)([A-Z]{3,})(?![^<]*?<\/a>)/g;
-            var detectUpperCase = $this.text().match(uppercasePattern);
+        //Warning: Detect uppercase.
+        let $uppercaseDetection = $('h1, h2, h3, h4, h5, h6, p, li:not([class^="sa11y"]), span, blockquote');
 
-            if (detectUpperCase && detectUpperCase.length > 4) {
-                this.anyWarning = true;
-                var beforePattern = "<span class='sa11y-uppercase-warning'>";
-                var afterPattern = "</span>"
-                $(this).html($(this).html().replace(uppercasePattern, beforePattern + "$1" + afterPattern));
+        var uppercaseWarning = '<div class="tippy-heading">Warning</div> ALL CAPS DETECTED. Avoid typing sentences or phrases in ALL CAPITALS. Some screen readers interpret all capital text as an acronym and will read each letter individually. Additionally, all caps are more difficult to read and give the appearance of SHOUTING.'
 
-                UppercaseWarningMessage = "<div class='tippy-heading'>Warning</div>ALL CAPS DETECTED. It is best practice to avoid typing sentences or phrases in ALL CAPITALS. Lengthy segments of capitalized content is more difficult to read and it may seem like you are SHOUTING. Secondly, some screen readers may interpret all capital text as an acronym. <hr class='tippy-tool-hr' aria-hidden='true'> If this word is an acronym, please ignore this warning. But be sure to also provide the expanded form of the acronym at least once on the page."
+        var uppercasePattern = /(?!<a[^>]*?>)(\b[A-Z]['!:A-Z\s]{15,}|\b[A-Z]{15,}\b)(?![^<]*?<\/a>)/g;
 
-                $this.before('<div class="sa11y-instance"><button class="sa11y-link-warning-btn" data-tippy-content="' + UppercaseWarningMessage + '" >' + WarningIcon + '</button></div>');
-            }
+        var replaceUppercase = "<span class='sa11y-uppercase-warning'>$1</span><button class='sa11y-link-warning-btn' data-toggle='popover' title='Warning' data-html='true' data-content='"+uppercaseWarning+"'>" + WarningIcon + "</button>";
+
+        var replaceUppercase = "<span class='sa11y-uppercase-warning'>$1</span><button class='sa11y-link-warning-btn' data-tippy-content='" + uppercaseWarning + "'>"+WarningIcon+"</button>"
+
+        $uppercaseDetection.each(function(){
+            $(this).html($(this).html().replace(uppercasePattern,replaceUppercase));
         });
+
+        if ($(".sa11y-uppercase-warning").length > 0) {
+          this.anyWarning = true;
+        };
 
         //Check for blockquotes used as headings. If it's less than 25 characters - it's definitely not a quote.
         let $blockquotes = $(this.workingDoc.getElementsByTagName("blockquote"));
