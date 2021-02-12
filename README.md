@@ -17,7 +17,7 @@ Sa11y works as a simple in-page checker that is designed to be easily customized
     * Enhancement: Error, Warning and Pass buttons are slightly smaller, but still adhere to WCAG AAA Target Size.
     * Enhancement: The summarized list of headings under "Page Outline" now only display a single number without H prefix.
     * Enhancement: Updated PDF warning to include types of issues experienced with PDF and general remediation advice.
-    * Bug fixes: Custom styling for <hr> element within tooltips, added selector to webkit-scrollbar.
+    * Bug fixes: Custom styling for HR element within tooltips, added selector to webkit-scrollbar.
 
 ## Contact
 Have a question or any feedback? Please email: adam.chaboryk@ryerson.ca
