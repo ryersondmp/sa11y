@@ -18,6 +18,7 @@ Sa11y works as a simple in-page checker that is designed to be easily customized
     * Enhancement: The summarized list of headings under "Page Outline" now only display a single number without H prefix.
     * Enhancement: Updated PDF warning to include types of issues experienced with PDF and general remediation advice.
     * Enhancement: Warning to provide transcript for audio content now detects multiple providors: soundcloud, simplecast, podbean, buzzsprout, blubrry, transistor, fusebox, libsyn.
+    * Enhancement: Added Tableau to data visualization detection ruleset and updated tooltip verbiage.
     * Bug fixes: Custom styling for HR element within tooltips, added selector to webkit-scrollbar.
 
 ## Contact
