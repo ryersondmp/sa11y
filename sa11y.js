@@ -606,7 +606,7 @@ function Sa11y() {
         });
 
         //Warning: Make sure all podcasts have captions.
-        var soundcloudWarning = $('audio, iframe[src*="soundcloud.com"]');
+        var soundcloudWarning = $('audio, iframe[src*="soundcloud.com"], iframe[src*="simplecast.com"], iframe[src*="podbean.com"], iframe[src*="buzzsprout.com"], iframe[src*="blubrry.com"], iframe[src*="transistor.fm"], iframe[src*="fusebox.fm"], iframe[src*="libsyn.com"]');
         if (soundcloudWarning.length > 0) {
             this.anyWarning = true;
             soundcloudWarning.addClass("sa11y-warning-border");
@@ -614,12 +614,12 @@ function Sa11y() {
             soundcloudWarning.before('<div><button class="sa11y-warning-btn" data-tippy-content="' + SoundCloudMessage + '" >' + WarningIcon + '</button></div>');
         }
 
-        //Warning: Check Google Data Studio widget.
-        var dataStudioWarning = $('iframe[src*="datastudio.google.com"]');
+        //Warning: Check Google Data Studio/Tableau widget.
+        var dataStudioWarning = $('iframe[src*="datastudio.google.com"], iframe[src*="tableau"]');
         if (dataStudioWarning.length > 0) {
             this.anyWarning = true;
             dataStudioWarning.addClass("sa11y-warning-border");
-            dataStudioWarningMessage = "<div class='tippy-heading'>Error</div> Google Data Studio widgets can be problematic for people who use a keyboard to navigate and people who have difficulty perceiving visual content. Please <span class='sa11y-bold'>provide a text alternative</span> immediately below the Data Studio frame."
+            dataStudioWarningMessage = "<div class='tippy-heading'>Warning</div> Data visualization widgets like this are often problematic for people who use a keyboard or screen reader to navigate, and can present significant difficulties for people with low vision or colorblindness. It's recommended to provide the same information in an alternative (text or table) format below the widget."
             dataStudioWarning.before('<div><button class="sa11y-warning-btn" data-tippy-content="' + dataStudioWarningMessage + '" >' + WarningIcon + '</button></div>');
         }
 
