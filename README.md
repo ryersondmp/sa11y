@@ -12,6 +12,12 @@ Sa11y works as a simple in-page checker that is designed to be easily customized
 ## Documentation and Demo
 :arrow_right: [View project website and demo](https://ryersondmp.github.io/sa11y/)
 
+## Updates
+* 12-02-2021
+    * Error, Warning and Pass buttons are slightly smaller, but still adhere to WCAG AAA Target Size.
+    * The summarized list of headings under "Page Outline" now only display a single number without H prefix.
+    * Updated PDF warning to include types of issues experienced with PDF and general remediation advice.
+
 ## Contact
 Have a question or any feedback? Please email: adam.chaboryk@ryerson.ca
 
