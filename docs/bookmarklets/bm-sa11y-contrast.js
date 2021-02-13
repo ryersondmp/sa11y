@@ -1,3 +1,4 @@
+/* This is a crude method to ensure bookmarklets will never break in the future (e.g. addition or removal of scripts), and to assist with version control. */
 
 /* Append sa11y.css */
 var sa11ycss = document.createElement("link");
@@ -12,7 +13,7 @@ popperJS.src = "https://unpkg.com/@popperjs/core@2";
 var tippyJS = document.createElement("script");
 tippyJS.src = "https://unpkg.com/tippy.js@6";
 var sa11yJS = document.createElement("script");
-sa11yJS.src = "https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@main-v1.1/sa11y.js";
+sa11yJS.src = "https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@main-v1.1/sa11y-with-contrast.js";
 document.body.appendChild(popperJS);
 popperJS.onload = popperJS.onreadystatechange = function() {
   document.body.appendChild(tippyJS);
