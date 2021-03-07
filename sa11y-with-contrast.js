@@ -1,19 +1,19 @@
 var Sa11y = new Sa11y();
 
 function Sa11y() {
-    /* When checked, save to LocalStorage. Keeps checker active when navigating between pages until it is toggled off. Added setTimeout function to (unscientifically) give a little time to load any other content or slow post-rendered JS, iFrames, etc. */
 
+    /* When checked, save to LocalStorage. Keeps checker active when navigating between pages until it is toggled off. Added setTimeout function to (unscientifically) give a little time to load any other content or slow post-rendered JS, iFrames, etc. */
     $(function () {
 
       var sa11yToggle = $('#sa11y-toggle');
       sa11yToggle.addClass(localStorage.enableSa11y);
       sa11yToggle.on('click',function(){
-          if (localStorage.enableSa11y != "sa11y-on" ) {
+          if (localStorage.enableSa11y != "sa11y-on") {
              localStorage.enableSa11y = "sa11y-on";
-             sa11yToggle.addClass("sa11y-on", true ).attr("aria-expanded","true");
+             sa11yToggle.addClass("sa11y-on", true).attr("aria-expanded","true");
              Sa11y.checkAll();
           } else {
-             sa11yToggle.removeClass("sa11y-on", false ).attr("aria-expanded","false").removeClass("loading-sa11y");
+             sa11yToggle.removeClass("sa11y-on", false).attr("aria-expanded","false").removeClass("loading-sa11y");
              localStorage.enableSa11y = "";
              Sa11y.checkAll();
           }
@@ -36,6 +36,37 @@ function Sa11y() {
                 this.onkeyup = null;
             }
         });
+
+          const theme = localStorage.getItem('sa11y-theme');
+       		if (theme === "sa11y-midnight") {
+       			document.documentElement.setAttribute('data-sa11y-theme', 'sa11y-midnight');
+       		}
+       		const userPrefers = getComputedStyle(document.documentElement).getPropertyValue('content');
+       		if (theme === "sa11y-midnight") {
+       			$('#theme-switcher').text('Lights on');
+       		} else if (theme === "sa11y-daylight") {
+       			$('#theme-switcher').text('Lights off');
+       		} else if (userPrefers === "sa11y-midnight") {
+       			document.documentElement.setAttribute('data-sa11y-theme', 'sa11y-midnight');
+       			window.localStorage.setItem('sa11y-theme', 'sa11y-midnight');
+       			$('#theme-switcher').text('Lights on');
+       		} else {
+       			document.documentElement.setAttribute('data-sa11y-theme', 'sa11y-daylight');
+       			window.localStorage.setItem('sa11y-theme', 'sa11y-daylight');
+       			$('#theme-switcher').text('Lights off');
+       		}
+     		 $('#theme-switcher').on('click',function(){
+       			let currentMode = document.documentElement.getAttribute('data-sa11y-theme');
+       			if (currentMode === "sa11y-midnight") {
+       				document.documentElement.setAttribute('data-sa11y-theme', 'sa11y-daylight');
+       				window.localStorage.setItem('sa11y-theme', 'sa11y-daylight');
+       				$('#theme-switcher').text('Lights off');
+       			} else {
+       				document.documentElement.setAttribute('data-sa11y-theme', 'sa11y-midnight');
+       				window.localStorage.setItem('sa11y-theme', 'sa11y-midnight');
+       				$('#theme-switcher').text('Lights on');
+       			}
+        });
     });
 
     var MainToggleIcon = "<svg role='img' focusable='false' width='35px' height='35px' aria-hidden='true' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='#ffffff' d='M256 48c114.953 0 208 93.029 208 208 0 114.953-93.029 208-208 208-114.953 0-208-93.029-208-208 0-114.953 93.029-208 208-208m0-40C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 56C149.961 64 64 149.961 64 256s85.961 192 192 192 192-85.961 192-192S362.039 64 256 64zm0 44c19.882 0 36 16.118 36 36s-16.118 36-36 36-36-16.118-36-36 16.118-36 36-36zm117.741 98.023c-28.712 6.779-55.511 12.748-82.14 15.807.851 101.023 12.306 123.052 25.037 155.621 3.617 9.26-.957 19.698-10.217 23.315-9.261 3.617-19.699-.957-23.316-10.217-8.705-22.308-17.086-40.636-22.261-78.549h-9.686c-5.167 37.851-13.534 56.208-22.262 78.549-3.615 9.255-14.05 13.836-23.315 10.217-9.26-3.617-13.834-14.056-10.217-23.315 12.713-32.541 24.185-54.541 25.037-155.621-26.629-3.058-53.428-9.027-82.141-15.807-8.6-2.031-13.926-10.648-11.895-19.249s10.647-13.926 19.249-11.895c96.686 22.829 124.283 22.783 220.775 0 8.599-2.03 17.218 3.294 19.249 11.895 2.029 8.601-3.297 17.219-11.897 19.249z'/></svg>";
@@ -53,6 +84,8 @@ function Sa11y() {
         '<div id="sa11y-panel-content"><div class="sa11y-panel-icon"></div><div id="sa11y-panel-text"><span id="sa11y-status"></span></div></div>'
         +
         '<button type="button" aria-expanded="false" id="sa11y-summary-toggle">Show Outline</button>'
+        //+
+        //'<button class="btn btn-primary" id="theme-switcher"></button>'
         +
         '</div>';
     $('body').prepend(sa11ycontainer);
@@ -117,7 +150,7 @@ function Sa11y() {
     };
 
     $("#sa11y-summary-toggle").click(function () {
-        $(this).toggleClass("sa11y-btn-active");
+        $(this).toggleClass("sa11y-summary-toggle-active");
         $("#sa11y-page-outline").toggleClass("sa11y-active");
         $(this).text(function (i, v) {
             return v === 'Show Outline' ? 'Hide Outline' : 'Show Outline'
@@ -224,7 +257,7 @@ function Sa11y() {
                 this.noErrors = false;
                 $el.addClass("sa11y-error-heading");
                 $el.closest('a').after(start + errorBtnText + error + end);
-                var li = "<li class='sa11y-outline-" + level + " sa11y-red-text'><span class='sa11y-badge sa11y-error-badge'><span aria-hidden='true'>&times;</span><span class='sa11y-visually-hidden'>Error</span> " + level + "</span> <span class='sa11y-outline-list-item'>" + $el.text() + "</span></li>";
+                var li = "<li class='sa11y-outline-" + level + "'><span class='sa11y-badge sa11y-error-badge'><span aria-hidden='true'>&times;</span><span class='sa11y-visually-hidden'>Error</span> " + level + "</span> <span class='sa11y-outline-list-item sa11y-red-text sa11y-bold'>" + $el.text() + "</span></li>";
                 //Generate page outline.
                 $("#sa11y-outline-list").append(li); //Generate page outline.
             }
@@ -234,7 +267,7 @@ function Sa11y() {
                 this.noErrors = false;
                 $el.addClass("sa11y-error-heading");
                 $el.before(start + errorBtnText + error + end);
-                var li = "<li class='sa11y-outline-" + level + " sa11y-red-text'><span class='sa11y-badge sa11y-error-badge'><span aria-hidden='true'>&times;</span><span class='sa11y-visually-hidden'>Error</span> " + level + "</span> <span class='sa11y-outline-list-item'>" + $el.text() + "</span></li>"; //Generate page outline.
+                var li = "<li class='sa11y-outline-" + level + "'><span class='sa11y-badge sa11y-error-badge'><span aria-hidden='true'>&times;</span><span class='sa11y-visually-hidden'>Error</span> " + level + "</span> <span class='sa11y-outline-list-item sa11y-red-text sa11y-bold'>" + $el.text() + "</span></li>"; //Generate page outline.
                 $("#sa11y-outline-list").append(li); //Generate page outline.
             } else if (error == null) {
                 var li = "<li class='sa11y-outline-" + level + "'><span class='sa11y-badge'>" + level + "</span> <span class='sa11y-outline-list-item'>" + $el.text() + "</span></li>"; //Generate page outline.
@@ -266,7 +299,6 @@ function Sa11y() {
     };
 
     this.outlineLinkText = function () {
-
 
         let $links = $("body").find("a").not(".sa11y-exclude");
 
@@ -658,7 +690,7 @@ function Sa11y() {
                 else if (text != "" && $el.parents().is("a") && $el.parents("a").text().trim().length == 0) {
                     this.anyWarning = true;
                     $el.addClass("sa11y-warning-border");
-                    ImageLinkAltTextWarning = "<div class='sa11y-header-text'>Please Review</div> Image link contains alt text, although please ensure alt text describes the destination page. <span class='sa11y-bold'>Consider using the title of the page it links to as the alt text.</span> Does the alt text describe where the link takes you? <hr aria-hidden='true' class='sa11y-hr'>Alt text: <span class='sa11y-bold'>" + altText + "</span>"
+                    ImageLinkAltTextWarning = "Image link contains alt text, although please ensure alt text describes the destination page. <span class='sa11y-bold'>Consider using the title of the page it links to as the alt text.</span> Does the alt text describe where the link takes you? <hr aria-hidden='true' class='sa11y-hr'>Alt text: <span class='sa11y-bold'>" + altText + "</span>"
                     $el.closest('a').before(startInline + warningBtn + ImageLinkAltTextWarning + end);
                 }
 
@@ -666,7 +698,7 @@ function Sa11y() {
                 else if (text != "" && $el.parents().is("a") && $el.parents("a").text().trim().length > 1) {
                     this.anyWarning = true;
                     $el.addClass("sa11y-warning-border");
-                    AnchorLinkAndAlt = "<div class='sa11y-header-text'>Please Review</div> Image link contains <span class='sa11y-bold'>both alt text and surrounding link text.</span> If this image is decorative and is being used as a functional link to another page, consider marking the image as decorative or null - the surrounding link text should suffice. <hr aria-hidden='true' class='sa11y-hr'>Alt text: <span class='sa11y-bold'>" + altText + "</span>"
+                    AnchorLinkAndAlt = "Image link contains <span class='sa11y-bold'>both alt text and surrounding link text.</span> If this image is decorative and is being used as a functional link to another page, consider marking the image as decorative or null - the surrounding link text should suffice. <hr aria-hidden='true' class='sa11y-hr'>Alt text: <span class='sa11y-bold'>" + altText + "</span>"
                     $el.closest('a').before(startInline + warningBtn + AnchorLinkAndAlt + end);
                 }
 
