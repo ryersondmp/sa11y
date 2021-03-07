@@ -2,126 +2,13 @@ var Sa11y = new Sa11y();
 
 function Sa11y() {
 
-    /* When checked, save to LocalStorage. Keeps checker active when navigating between pages until it is toggled off. Added setTimeout function to (unscientifically) give a little time to load any other content or slow post-rendered JS, iFrames, etc. */
-    $(function () {
+    let sa11yCheckRoot = "aside";
 
-      var sa11yToggle = $('#sa11y-toggle');
-      sa11yToggle.addClass(localStorage.enableSa11y);
-      sa11yToggle.on('click',function(){
-          if (localStorage.enableSa11y != "sa11y-on") {
-             localStorage.enableSa11y = "sa11y-on";
-             sa11yToggle.addClass("sa11y-on", true).attr("aria-expanded","true");
-             Sa11y.checkAll();
-          } else {
-             sa11yToggle.removeClass("sa11y-on", false).attr("aria-expanded","false").removeClass("loading-sa11y");
-             localStorage.enableSa11y = "";
-             Sa11y.checkAll();
-          }
-       });
-
-       if (sa11yToggle.hasClass("sa11y-on")) {
-         sa11yToggle.toggleClass("loading-sa11y").attr("aria-expanded","true");
-         setTimeout(function () {
-             Sa11y.checkAll();
-         }, 1200);
-       }
-
-        //Escape key to shutdown.
-        $('body').keyup(function (escape) {
-            if (escape.keyCode == 27 && $('#sa11y-panel').hasClass('sa11y-active')) {
-                tippy.hideAll()
-                localStorage.enableSa11y = "";
-                Sa11y.checkAll();
-            } else {
-                this.onkeyup = null;
-            }
-        });
-
-          const theme = localStorage.getItem('sa11y-theme');
-       		if (theme === "sa11y-midnight") {
-       			document.documentElement.setAttribute('data-sa11y-theme', 'sa11y-midnight');
-       		}
-       		const userPrefers = getComputedStyle(document.documentElement).getPropertyValue('content');
-       		if (theme === "sa11y-midnight") {
-       			$('#theme-switcher').text('Lights on');
-       		} else if (theme === "sa11y-daylight") {
-       			$('#theme-switcher').text('Lights off');
-       		} else if (userPrefers === "sa11y-midnight") {
-       			document.documentElement.setAttribute('data-sa11y-theme', 'sa11y-midnight');
-       			window.localStorage.setItem('sa11y-theme', 'sa11y-midnight');
-       			$('#theme-switcher').text('Lights on');
-       		} else {
-       			document.documentElement.setAttribute('data-sa11y-theme', 'sa11y-daylight');
-       			window.localStorage.setItem('sa11y-theme', 'sa11y-daylight');
-       			$('#theme-switcher').text('Lights off');
-       		}
-     		 $('#theme-switcher').on('click',function(){
-       			let currentMode = document.documentElement.getAttribute('data-sa11y-theme');
-       			if (currentMode === "sa11y-midnight") {
-       				document.documentElement.setAttribute('data-sa11y-theme', 'sa11y-daylight');
-       				window.localStorage.setItem('sa11y-theme', 'sa11y-daylight');
-       				$('#theme-switcher').text('Lights off');
-       			} else {
-       				document.documentElement.setAttribute('data-sa11y-theme', 'sa11y-midnight');
-       				window.localStorage.setItem('sa11y-theme', 'sa11y-midnight');
-       				$('#theme-switcher').text('Lights on');
-       			}
-        });
-    });
-
-    var MainToggleIcon = "<svg role='img' focusable='false' width='35px' height='35px' aria-hidden='true' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='#ffffff' d='M256 48c114.953 0 208 93.029 208 208 0 114.953-93.029 208-208 208-114.953 0-208-93.029-208-208 0-114.953 93.029-208 208-208m0-40C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 56C149.961 64 64 149.961 64 256s85.961 192 192 192 192-85.961 192-192S362.039 64 256 64zm0 44c19.882 0 36 16.118 36 36s-16.118 36-36 36-36-16.118-36-36 16.118-36 36-36zm117.741 98.023c-28.712 6.779-55.511 12.748-82.14 15.807.851 101.023 12.306 123.052 25.037 155.621 3.617 9.26-.957 19.698-10.217 23.315-9.261 3.617-19.699-.957-23.316-10.217-8.705-22.308-17.086-40.636-22.261-78.549h-9.686c-5.167 37.851-13.534 56.208-22.262 78.549-3.615 9.255-14.05 13.836-23.315 10.217-9.26-3.617-13.834-14.056-10.217-23.315 12.713-32.541 24.185-54.541 25.037-155.621-26.629-3.058-53.428-9.027-82.141-15.807-8.6-2.031-13.926-10.648-11.895-19.249s10.647-13.926 19.249-11.895c96.686 22.829 124.283 22.783 220.775 0 8.599-2.03 17.218 3.294 19.249 11.895 2.029 8.601-3.297 17.219-11.897 19.249z'/></svg>";
-
-    var sa11ycontainer = document.createElement("div");
-    sa11ycontainer.setAttribute("id", "sa11y-container");
-    sa11ycontainer.setAttribute("role","region");
-    sa11ycontainer.setAttribute("aria-label","Accessibility Checker");
-    sa11ycontainer.innerHTML = '<button type="button" aria-expanded="false" id="sa11y-toggle">' + MainToggleIcon + '<span class="sa11y-visually-hidden">Toggle Accessibility Checker</span></button>'
-        +
-        '<div id="sa11y-panel">'
-        +
-        '<div id="sa11y-page-outline"><span id="page-outline-header" class="sa11y-header-text">Page outline</span><ul id="sa11y-outline-list" tabindex="-1" aria-labelledby="page-outline-header"></ul></div>'
-        +
-        '<div id="sa11y-panel-content"><div class="sa11y-panel-icon"></div><div id="sa11y-panel-text"><span id="sa11y-status"></span></div></div>'
-        +
-        '<button type="button" aria-expanded="false" id="sa11y-summary-toggle">Show Outline</button>'
-        //+
-        //'<button class="btn btn-primary" id="theme-switcher"></button>'
-        +
-        '</div>';
-    $('body').prepend(sa11ycontainer);
-
-    // Templated buttons to make it easier to swap tooltip libraries.
-    var start = '<div class="sa11y-spotted">',
-    startInline = '<div class="sa11y-spotted-inline">';
-
-    var ErrorHeader = "<div class='sa11y-header-text'>Error</div>",
-    WarningHeader = "<div class='sa11y-header-text'>Warning</div>",
-    PassHeader = "<div class='sa11y-header-text'>Good</div>";
-
-    var errorBtn = '<button type="button" aria-label="Error" class="sa11y-error-btn" data-tippy-content="' + ErrorHeader,
-    errorBtnText = '<button type="button" aria-label="Error" class="sa11y-error-btn-text" data-tippy-content="' + ErrorHeader,
-    warningBtn = '<button type="button" aria-label="Warning" class="sa11y-warning-btn" data-tippy-content="' + WarningHeader,
-    warningBtnText = '<button type="button" aria-label="Warning" class="sa11y-warning-btn-text" data-tippy-content="' + WarningHeader,
-    passBtn = '<button type="button" aria-label="Good" class="sa11y-pass-btn" data-tippy-content="' + PassHeader,
-    passBtnText = '<button type="button" aria-label="Good" class="sa11y-pass-btn-text" data-tippy-content="' + PassHeader;
-
-    var end = '"></button></div>';
-
-    // States of the outlines, used to toggle the outlines.
-    this.showingHeaders = false;
-    this.showingLinkText = false;
-    this.showingContrast = false;
-    this.showingLabels = false;
-    this.showingAltText = false;
-    this.showingQA = false;
-
-    // State of errors on page. Used to toggle pass message.
-    this.noErrors = true;
-    this.anyWarning = false;
-    this.panelActive = false;
-
-    // Toggles the outline of all headers, link texts, and images.
-    this.checkAll = function () {
+    this.checkAll = async function () {
+        this.errorCount = 0;
+        this.warningCount = 0;
+        this.checkRoot = $(sa11yCheckRoot);
+        this.findElements();
         this.checkHeaders();
         this.checkLinkText();
         this.checkContrast();
@@ -146,9 +33,32 @@ function Sa11y() {
             allowHTML: true,
             appendTo: document.body
         });
-
     };
 
+    //Icon on the main toggle. Easy to replace.
+    var MainToggleIcon = "<svg role='img' focusable='false' width='35px' height='35px' aria-hidden='true' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='#ffffff' d='M256 48c114.953 0 208 93.029 208 208 0 114.953-93.029 208-208 208-114.953 0-208-93.029-208-208 0-114.953 93.029-208 208-208m0-40C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 56C149.961 64 64 149.961 64 256s85.961 192 192 192 192-85.961 192-192S362.039 64 256 64zm0 44c19.882 0 36 16.118 36 36s-16.118 36-36 36-36-16.118-36-36 16.118-36 36-36zm117.741 98.023c-28.712 6.779-55.511 12.748-82.14 15.807.851 101.023 12.306 123.052 25.037 155.621 3.617 9.26-.957 19.698-10.217 23.315-9.261 3.617-19.699-.957-23.316-10.217-8.705-22.308-17.086-40.636-22.261-78.549h-9.686c-5.167 37.851-13.534 56.208-22.262 78.549-3.615 9.255-14.05 13.836-23.315 10.217-9.26-3.617-13.834-14.056-10.217-23.315 12.713-32.541 24.185-54.541 25.037-155.621-26.629-3.058-53.428-9.027-82.141-15.807-8.6-2.031-13.926-10.648-11.895-19.249s10.647-13.926 19.249-11.895c96.686 22.829 124.283 22.783 220.775 0 8.599-2.03 17.218 3.294 19.249 11.895 2.029 8.601-3.297 17.219-11.897 19.249z'/></svg>";
+
+    var sa11ycontainer = document.createElement("div");
+    sa11ycontainer.setAttribute("id", "sa11y-container");
+    sa11ycontainer.setAttribute("role","region");
+    sa11ycontainer.setAttribute("aria-label","Accessibility Checker");
+    sa11ycontainer.innerHTML = '<button type="button" aria-expanded="false" id="sa11y-toggle">' + MainToggleIcon + '<span class="sa11y-visually-hidden">Toggle Accessibility Checker</span></button>'
+        +
+        '<div id="sa11y-panel">'
+        +
+        '<div id="sa11y-page-outline"><span id="page-outline-header" class="sa11y-header-text">Page outline</span><ul id="sa11y-outline-list" tabindex="-1" aria-labelledby="page-outline-header"></ul></div>'
+        +
+        '<div id="sa11y-panel-content"><div class="sa11y-panel-icon"></div><div id="sa11y-panel-text"><span id="sa11y-status"></span></div></div>'
+        +
+        '<button type="button" aria-expanded="false" id="sa11y-summary-toggle">Show Outline</button>'
+        //+
+        //'<button class="btn btn-primary" id="theme-switcher"></button>'
+        +
+        '</div>';
+
+    $('body').prepend(sa11ycontainer);
+
+    //Show Page Outline
     $("#sa11y-summary-toggle").click(function () {
         $(this).toggleClass("sa11y-summary-toggle-active");
         $("#sa11y-page-outline").toggleClass("sa11y-active");
@@ -161,76 +71,157 @@ function Sa11y() {
         $("#sa11y-outline-list").focus();
     });
 
-    this.displayPanel = function () {
-        if (this.noErrors) {
-            $("#sa11y-panel").addClass("sa11y-active");
+    // Templated buttons to make it easier to swap tooltip libraries.
+    var start = '<div class="sa11y-spotted">',
+    startInline = '<div class="sa11y-spotted-inline">';
 
-            if (this.anyWarning) {
-                $("#sa11y-panel-content").addClass("sa11y-warnings");
-                $("#sa11y-status").text("Please review warnings.");
-            } else if (!this.anyWarning) {
-                $("#sa11y-panel-content").addClass("sa11y-pass");
-                $("#sa11y-status").text("No accessibility errors found.");
-            }
-        } else {
-            $("#sa11y-panel").addClass("sa11y-active");
+    var ErrorHeader = "<div class='sa11y-header-text'>Error</div>",
+    WarningHeader = "<div class='sa11y-header-text'>Warning</div>",
+    PassHeader = "<div class='sa11y-header-text'>Good</div>";
+
+    var errorBtn = '<button type="button" aria-label="Error" class="sa11y-error-btn" data-tippy-content="' + ErrorHeader,
+    errorBtnText = '<button type="button" aria-label="Error" class="sa11y-error-btn-text" data-tippy-content="' + ErrorHeader,
+    warningBtn = '<button type="button" aria-label="Warning" class="sa11y-warning-btn" data-tippy-content="' + WarningHeader,
+    warningBtnText = '<button type="button" aria-label="Warning" class="sa11y-warning-btn-text" data-tippy-content="' + WarningHeader,
+    passBtn = '<button type="button" aria-label="Good" class="sa11y-pass-btn" data-tippy-content="' + PassHeader,
+    passBtnText = '<button type="button" aria-label="Good" class="sa11y-pass-btn-text" data-tippy-content="' + PassHeader;
+
+    var end = '"></button></div>';
+
+    this.displayPanel = function () {
+    let totalCount = this.errorCount + this.warningCount;
+    $("#sa11y-panel").addClass("sa11y-active");
+      if (totalCount > 0) {
+          if (this.errorCount > 0) {
+            $("#sa11y-status").text(totalCount === 1 ? 'One accessibility issue detected.' : totalCount + ' accessibility issues detected.');
             $("#sa11y-panel-content").addClass("sa11y-errors");
-            $("#sa11y-status").text("Accessibility errors found.");
-        }
-    }
+          }
+          else if (this.warningCount > 0) {
+            $("#sa11y-status").text(totalCount === 1 ? 'Please review warning.' : 'Please review ' + totalCount + ' warnings.');
+            $("#sa11y-panel-content").addClass("sa11y-warnings");
+          }
+      }
+      else {
+        $("#sa11y-panel-content").addClass("sa11y-pass");
+        $("#sa11y-status").text("No accessibility errors found.");
+      }
+  };
 
     // Resets all changes made by the tool. Removing outlines and additional spans.
     this.reset = function () {
         this.clearEverything();
-        this.showingAltText = false;
-        this.showingHeaders = false;
-        this.showingLinkText = false;
-        this.showingContrast = false;
-        this.showingLabels = false;
-        this.showingQA = false;
-        this.noErrors = true; //Reset page to "no errors" instead of refreshing page.
-        this.anyWarning = false;
+        $("#sa11y-panel-content").removeClass();
+        $("#sa11y-status").text();
+    };
+
+    //Find and cache.
+    if (typeof (sa11yCheckRoot) !== 'string' || $(sa11yCheckRoot).length === 0) {
+      sa11yCheckRoot = 'body';
+    }
+
+    this.findElements = function () {
+          this.$p = this.checkRoot.find('p').not(this.containerIgnore);
+          this.$h = this.checkRoot.find("h1, h2, h3, h4, h5, h6, [role='heading'][aria-level]").not(this.containerIgnore);
+          this.$img = this.checkRoot.find("img").not(this.imageIgnore);
+          this.$iframe = this.checkRoot.find("iframe").not(this.containerIgnore);
+          this.$table = this.checkRoot.find("table").not(this.containerIgnore);
+          this.$videos = this.checkRoot.find("video, iframe[src*='youtube.com'], iframe[src*='vimeo.com'], iframe[src*='yuja.com'], iframe[src*='panopto.com']").not(this.containerIgnore);
     };
 
     this.clearEverything = function () {
-        var $body = $("body");
+        this.checkRoot.find(".sa11y-error-border").removeClass("sa11y-error-border");
+        this.checkRoot.find(".sa11y-error-heading").removeClass("sa11y-error-heading");
+        this.checkRoot.find(".sa11y-error-message").remove();
+        this.checkRoot.find(".sa11y-error-text").removeClass("sa11y-error-text");
 
-        $body.find(".sa11y-error-border").removeClass("sa11y-error-border");
-        $body.find(".sa11y-error-heading").removeClass("sa11y-error-heading");
-        $body.find(".sa11y-error-message").remove();
-        $body.find(".sa11y-error-text").removeClass("sa11y-error-text");
+        this.checkRoot.find(".sa11y-warning-border").removeClass("sa11y-warning-border");
+        this.checkRoot.find(".sa11y-warning-text").removeClass("sa11y-warning-text");
+        this.checkRoot.find(".sa11y-warning-uppercase").contents().unwrap();
 
-        $body.find(".sa11y-warning-border").removeClass("sa11y-warning-border");
-        $body.find(".sa11y-warning-text").removeClass("sa11y-warning-text");
-        $body.find(".sa11y-warning-uppercase").contents().unwrap();
-
-        $body.find(".sa11y-spotted").remove();
-        $body.find(".sa11y-spotted-inline").remove();
-        $body.find(".sa11y-heading-label").remove();
-        $body.find("#sa11y-panel").removeClass("sa11y-active");
-        $body.find("#sa11y-outline-list li").remove();
+        this.checkRoot.find(".sa11y-spotted").remove();
+        this.checkRoot.find(".sa11y-spotted-inline").remove();
+        this.checkRoot.find(".sa11y-heading-label").remove();
+        this.checkRoot.find("#sa11y-panel").removeClass("sa11y-active");
+        this.checkRoot.find("#sa11y-outline-list li").remove();
     }
 
+    //Misc functions.
+    $(function () {
+
+      //Keeps checker active when navigating between pages until it is toggled off.
+      var sa11yToggle = $('#sa11y-toggle');
+      sa11yToggle.addClass(localStorage.enableSa11y);
+      sa11yToggle.on('click',function(){
+          if (localStorage.enableSa11y != "sa11y-on") {
+             localStorage.enableSa11y = "sa11y-on";
+             sa11yToggle.addClass("sa11y-on", true).attr("aria-expanded","true");
+             Sa11y.checkAll();
+          } else {
+             sa11yToggle.removeClass("sa11y-on", false).attr("aria-expanded","false").removeClass("loading-sa11y");
+             localStorage.enableSa11y = "";
+             Sa11y.checkAll();
+          }
+       });
+
+       // Crudely give a little time to load any other content or slow post-rendered JS, iFrames, etc.
+       if (sa11yToggle.hasClass("sa11y-on")) {
+         sa11yToggle.toggleClass("loading-sa11y").attr("aria-expanded","true");
+         setTimeout(function () {
+             Sa11y.checkAll();
+         }, 1200);
+       }
+
+        //Escape key to shutdown.
+        $('body').keyup(function (escape) {
+            if (escape.keyCode == 27 && $('#sa11y-panel').hasClass('sa11y-active')) {
+                tippy.hideAll()
+                localStorage.enableSa11y = "";
+                Sa11y.checkAll();
+            } else {
+                this.onkeyup = null;
+            }
+        });
+
+        //Dark mode, because why not.
+          const theme = localStorage.getItem('sa11y-theme');
+          if (theme === "sa11y-midnight") {
+            document.documentElement.setAttribute('data-sa11y-theme', 'sa11y-midnight');
+          }
+          const userPrefers = getComputedStyle(document.documentElement).getPropertyValue('content');
+          if (theme === "sa11y-midnight") {
+            $('#theme-switcher').text('Lights on');
+          } else if (theme === "sa11y-daylight") {
+            $('#theme-switcher').text('Lights off');
+          } else if (userPrefers === "sa11y-midnight") {
+            document.documentElement.setAttribute('data-sa11y-theme', 'sa11y-midnight');
+            window.localStorage.setItem('sa11y-theme', 'sa11y-midnight');
+            $('#theme-switcher').text('Lights on');
+          } else {
+            document.documentElement.setAttribute('data-sa11y-theme', 'sa11y-daylight');
+            window.localStorage.setItem('sa11y-theme', 'sa11y-daylight');
+            $('#theme-switcher').text('Lights off');
+          }
+         $('#theme-switcher').on('click',function(){
+            let currentMode = document.documentElement.getAttribute('data-sa11y-theme');
+            if (currentMode === "sa11y-midnight") {
+              document.documentElement.setAttribute('data-sa11y-theme', 'sa11y-daylight');
+              window.localStorage.setItem('sa11y-theme', 'sa11y-daylight');
+              $('#theme-switcher').text('Lights off');
+            } else {
+              document.documentElement.setAttribute('data-sa11y-theme', 'sa11y-midnight');
+              window.localStorage.setItem('sa11y-theme', 'sa11y-midnight');
+              $('#theme-switcher').text('Lights on');
+            }
+        });
+    });
+
     /*================== HEADING STRUCTURE MODULE ===================*/
-
     this.checkHeaders = function () {
-        if (this.showingHeaders) {
-            this.clearEverything();
-            this.showingHeaders = false;
-        } else {
-            this.outlineHeaders();
-            this.showingHeaders = true;
-        }
-    };
 
-    this.outlineHeaders = function () {
-
-        // Fetch all headers from the working document.
-        let $headings = $("h1, h2, h3, h4, h5, h6");
         let prevLevel;
 
         // Test each header level for accessibility issues.
-        $headings.each((i, el) => {
+        this.$h.each((i, el) => {
             let $el = $(el);
             let level = +$el.prop("tagName").slice(1);
             let error = null;
@@ -254,7 +245,7 @@ function Sa11y() {
 
             //If the heading error is within a hyperlink, make sure to append button after anchor tag.
             if (error != null && $el.closest("a").length > 0) {
-                this.noErrors = false;
+                this.errorCount++;
                 $el.addClass("sa11y-error-heading");
                 $el.closest('a').after(start + errorBtnText + error + end);
                 var li = "<li class='sa11y-outline-" + level + "'><span class='sa11y-badge sa11y-error-badge'><span aria-hidden='true'>&times;</span><span class='sa11y-visually-hidden'>Error</span> " + level + "</span> <span class='sa11y-outline-list-item sa11y-red-text sa11y-bold'>" + $el.text() + "</span></li>";
@@ -264,7 +255,7 @@ function Sa11y() {
 
             // Outline element based on error.
             else if (error != null) {
-                this.noErrors = false;
+                this.errorCount++;
                 $el.addClass("sa11y-error-heading");
                 $el.before(start + errorBtnText + error + end);
                 var li = "<li class='sa11y-outline-" + level + "'><span class='sa11y-badge sa11y-error-badge'><span aria-hidden='true'>&times;</span><span class='sa11y-visually-hidden'>Error</span> " + level + "</span> <span class='sa11y-outline-list-item sa11y-red-text sa11y-bold'>" + $el.text() + "</span></li>"; //Generate page outline.
@@ -286,21 +277,10 @@ function Sa11y() {
     };
 
     /*====================== LINK TEXT MODULE =======================*/
-
-    // Toggles the outline of all inaccessible link texts.
     this.checkLinkText = function () {
-        if (this.showingLinkText) {
-            this.clearEverything();
-            this.showingLinkText = false;
-        } else {
-            this.outlineLinkText();
-            this.showingLinkText = true;
-        }
-    };
 
-    this.outlineLinkText = function () {
-
-        let $links = $("body").find("a").not(".sa11y-exclude");
+        let $links = this.checkRoot.find("a[href]").not(this.linkIgnore);
+        //let $links = $("body").find("a").not(".sa11y-exclude");
 
         /* Mini function if you need to exclude any text contained with a span. We created this function to ignore automatically appended sr-only text for external links and document filetypes.
 
@@ -326,7 +306,7 @@ function Sa11y() {
 
             // Tests to see if this link is empty
             if ($el.children().length == 0 && $el.attr('href') !== undefined && $el.text().length == 0 && $el.is(':visible')) {
-                this.noErrors = false;
+                this.errorCount++;
                 LinkErrorMessage = "Found an empty hyperlink without any text!"
                 $el.addClass("sa11y-error-text");
                 $el.after(startInline + errorBtnText + LinkErrorMessage + end);
@@ -344,7 +324,7 @@ function Sa11y() {
                 } else if (hasariahidden == "true" && hastabindex == "-1") {
                     //do nothing.
                 } else {
-                    this.noErrors = false;
+                    this.errorCount++;
                     $el.addClass("sa11y-error-text");
                     StopWordMessage = "Link text may not be descriptive enough, consider changing word: <span class='sa11y-red-text sa11y-bold'>" + error + "</span><hr aria-hidden='true' class='sa11y-hr'><span class='sa11y-bold'>Tip!</span> Link text should always be unique and meaningful so it could be understood out of context."
                     $el.after(startInline + errorBtnText + StopWordMessage + end);
@@ -383,18 +363,7 @@ function Sa11y() {
     };
 
     /*======================== CONTRAST MODULE =======================*/
-    /* Thanks to jasonday for this plugin https://www.jqueryscript.net/other/color-contrast-checker.html */
     this.checkContrast = function () {
-        if (this.showingContrast) {
-            this.showingContrast = false;
-        } else {
-            this.outlineContrast();
-            this.showingContrast = true;
-        }
-    };
-
-    // Outlines inaccessible link texts with a red border and a tooltip for remediation solution.
-    this.outlineContrast = function () {
 
         var contrastErrors = {
             errors: [],
@@ -539,7 +508,7 @@ function Sa11y() {
             var cratio = item.ratio;
             var nodename = name[0].nodeName;
             var nodetext = name[0].textContent;
-            this.noErrors = false;
+            this.errorCount++;
             ContrastError = "" + cdetail + " does not have enough contrast with the background. The contrast ratio should be at least 4.5:1 for normal text and 3:1 for large text. <hr class='sa11y-hr' aria-hidden='true'> The contrast ratio is <span class='sa11y-red-text sa11y-bold'>" + cratio + "</span> for the following text: <span class='sa11y-bold sa11y-red-text'>" + nodetext + "</span>"
             $(name).before(start + errorBtnText + ContrastError + end);
         });
@@ -547,30 +516,20 @@ function Sa11y() {
         $.each(contrastErrors.warnings, (index, item) => {
             var name = item.name;
             var nodetext = name[0].textContent;
-            this.anyWarning = true;
+            this.warningCount++;
             ContrastWarning = "The contrast of this text is unknown and needs to be manually reviewed. Ensure the text and the background have strong contrasting colours. The contrast ratio should be at least 4.5:1 for normal text and 3:1 for large text. <hr class='sa11y-hr' aria-hidden='true'>Please review contrast of the following text:<br> <span class='sa11y-bold'>" + nodetext + "</span>"
-            $(name).addClass('sa11y-warning-border').before(start + warningBtnText + end);
+            $(name).addClass('sa11y-warning-border').before(start + warningBtnText + ContrastWarning + end);
         });
     };
 
     /*======================== INPUTS MODULE =======================*/
     this.checkLabels = function () {
-        if (this.showingLabels) {
-            this.showingLabels = false;
-        } else {
-            this.outlineLabels();
-            this.showingLabels = true;
-        }
-    };
-
-    /* Outlines inaccessible input and form fields. */
-    this.outlineLabels = function () {
         let $inputs = $("input").not("input:hidden");
         $inputs.each((i, el) => {
             let $el = $(el);
 
             if (!$el.attr('id') && !$el.attr('aria-label') && !$el.attr('aria-labelledby')) {
-                this.noErrors = false;
+                this.errorCount++;
                 $el.addClass("sa11y-error-border");
                 MissingLabelError = "There is no label associated with this input. Please add an <kbd>id</kbd> to this input, and add a matching <kbd>for</kbd> attribute to the label."
                 $el.after(startInline + errorBtnText + MissingLabelError + end);
@@ -582,7 +541,7 @@ function Sa11y() {
                 if (label.attr('for') == $el.attr('id')) {
                     /*Optional: add pass border.*/
                 } else {
-                    this.noErrors = false;
+                    this.errorCount++;
                     $el.addClass("sa11y-error-border");
                     NoForAttributeError = "There is no label associated with this input. Add a <kbd>for</kbd> attribute to the label that matches the <kbd>id</kbd> of this input. <hr class='sa11y-hr' aria-hidden='true'> The ID for this input is: <span class='sa11y-bold'>id=&#34;" + $el.attr('id') + "&#34;</span>"
                     $el.after(startInline + errorBtnText + NoForAttributeError + end);
@@ -592,31 +551,16 @@ function Sa11y() {
     };
 
     /*================== ALTERNATIVE TEXT MODULE ====================*/
-
-    // Toggles the outline of images.
     this.checkAltText = function () {
-        if (this.showingAltText) {
-            this.clearEverything();
-            this.showingAltText = false;
-        } else {
-            this.outlineAltText();
-            this.showingAltText = true;
-        }
-    };
-
-    this.outlineAltText = function () {
-
-        let $images = $("body").find("img").not(".sa11y-exclude");
-        /* Example: Find all images within the main content area only, and exclude images containing a path.*/
 
         // Test each image for alternative text.
-        $images.each((i, el) => {
+        this.$img.each((i, el) => {
             let $el = $(el);
             let text = $el.attr("alt");
 
             // Checks to see if image contains an alt attribute. If not, then image fails.
             if (text == undefined) {
-                this.noErrors = false;
+                this.errorCount++;
 
                 // Image fails if it is used as a link and is missing an alt attribute.
                 //if ($el.parent().prop("tagName") == "A") {
@@ -650,19 +594,19 @@ function Sa11y() {
 
                 // Image fails if a stop word was found
                 if (error != null && $el.parents().is("a[href]")) {
-                    this.noErrors = false;
+                    this.errorCount++;
                     $el.addClass("sa11y-error-border");
                     LinkedImageHasBadAltWord = "Detected poor alt text in hyperlinked image. Ensure alt text describes destination of link, not a literal description of the picture. Remove word: <span class='sa11y-red-text sa11y-bold'>" + error + "</span>. <hr aria-hidden='true' class='sa11y-hr'> The alt text for this image is: <span class='sa11y-bold'>" + altText + "</span>"
 
                     $el.closest('a').before(startInline + errorBtn + LinkedImageHasBadAltWord + end);
                 } else if (error != null) {
-                    this.noErrors = false;
+                    this.errorCount++;
                     $el.addClass("sa11y-error-border");
                     AltHasBadWord = "Poor alt text found. It is not necessary to include words like <em>image</em>, <em>graphic</em> or the file extension. Consider removing the word: <span class='sa11y-red-text sa11y-bold'>" + error + "</span>. <hr aria-hidden='true' class='sa11y-hr'> The alt text for this image is: <span class='sa11y-bold'>" + altText + "</span>"
                     $el.before(startInline + errorBtn + AltHasBadWord + end);
                 } else if (text == "" && $el.parents().is("a[href]")) {
                     if ($el.parents("a").text().trim().length == 0) {
-                        this.noErrors = false;
+                        this.errorCount++;
                         $el.addClass("sa11y-error-border");
                         ImageLinkNullAltNoText = "Image within hyperlink is marked as decorative and there is no link text. Please add alt text to image that describes destination of link."
                         $el.closest('a').before(startInline + errorBtn + ImageLinkNullAltNoText + end);
@@ -680,7 +624,7 @@ function Sa11y() {
 
                 // Image warning if it is a link and contains an alt text.
                 else if (text.length > 160 && $el.parents().is("a")) {
-                    this.noErrors = false;
+                    this.errorCount++;
                     $el.addClass("sa11y-error-border");
                     HyperlinkAltLengthWarning = "Alt text description on hyperlinked image is <span class='sa11y-bold'>too long</span>. The alt text on hyperlinked images should describe where the link takes you, not a literal description of the image. <span class='sa11y-bold'>Consider using the title of the page it links to as the alt text.</span> <hr aria-hidden='true' class='sa11y-hr'> The alt text is <span class='sa11y-red-text sa11y-bold'>" + altLength + "</span> characters: <span class='sa11y-red-text sa11y-bold'>" + altText + "</span>"
                     $el.closest('a').before(startInline + errorBtn + HyperlinkAltLengthWarning + end);
@@ -688,7 +632,7 @@ function Sa11y() {
 
                 // Image warning if it is a link and contains an alt text.
                 else if (text != "" && $el.parents().is("a") && $el.parents("a").text().trim().length == 0) {
-                    this.anyWarning = true;
+                    this.warningCount++;
                     $el.addClass("sa11y-warning-border");
                     ImageLinkAltTextWarning = "Image link contains alt text, although please ensure alt text describes the destination page. <span class='sa11y-bold'>Consider using the title of the page it links to as the alt text.</span> Does the alt text describe where the link takes you? <hr aria-hidden='true' class='sa11y-hr'>Alt text: <span class='sa11y-bold'>" + altText + "</span>"
                     $el.closest('a').before(startInline + warningBtn + ImageLinkAltTextWarning + end);
@@ -696,7 +640,7 @@ function Sa11y() {
 
                 // Image warning if it is a link, contains alt text AND surrounding link text.
                 else if (text != "" && $el.parents().is("a") && $el.parents("a").text().trim().length > 1) {
-                    this.anyWarning = true;
+                    this.warningCount++;
                     $el.addClass("sa11y-warning-border");
                     AnchorLinkAndAlt = "Image link contains <span class='sa11y-bold'>both alt text and surrounding link text.</span> If this image is decorative and is being used as a functional link to another page, consider marking the image as decorative or null - the surrounding link text should suffice. <hr aria-hidden='true' class='sa11y-hr'>Alt text: <span class='sa11y-bold'>" + altText + "</span>"
                     $el.closest('a').before(startInline + warningBtn + AnchorLinkAndAlt + end);
@@ -704,7 +648,7 @@ function Sa11y() {
 
                 // Image error if alt text is too long.
                 else if (text.length > 160) {
-                    this.anyWarning = true;
+                    this.warningCount++;
                     $el.addClass("sa11y-warning-border");
                     AltTooLong = "Alt text description is <span class='sa11y-bold'>too long</span>. Alt text should be concise, yet meaningful like a <em>tweet</em> (around 100 characters). If this is a complex image or a graph, consider putting the long description of the image in text below or in an accordion component. <hr aria-hidden='true' class='sa11y-hr'> The alt text is <span class='sa11y-red-text sa11y-bold'>" + altLength + "</span> characters: <span class='sa11y-red-text sa11y-bold'>" + altText + "</span>"
                     $el.before(start + warningBtn + AltTooLong + end);
@@ -733,24 +677,12 @@ function Sa11y() {
     };
 
     /*================== QUALITY ASSURANCE MODULE ===================*/
-
-    this.checkQA = function () {
-        if (this.showingQA) {
-            this.clearEverything();
-            this.showingQA = false;
-        } else {
-            this.outlineQA();
-            this.showingQA = true;
-        }
-    };
-
-    this.outlineQA = function () {
+     this.checkQA = function () {
 
         //Warn users to provide captions for videos.
-        let $findVideos = $("video, iframe[src*='youtube.com'], iframe[src*='vimeo.com']");
-        $findVideos.each((i, el) => {
+        this.$videos.each((i, el) => {
             let $el = $(el);
-            this.anyWarning = true;
+            this.warningCount++;
             $el.addClass("sa11y-warning-border");
             MissingCaptionsWarning = "Please ensure <span class='sa11y-bold'>all videos have closed captioning.</span> Providing captions for all audio and video content is a mandatory Level A requirement. Captions are meant to support people who are D/deaf or hard-of-hearing."
             $el.before(start + warningBtn + MissingCaptionsWarning + end);
@@ -759,7 +691,7 @@ function Sa11y() {
         //Warning: Make sure all podcasts have captions.
         var soundcloudWarning = $('audio, iframe[src*="soundcloud.com"], iframe[src*="simplecast.com"], iframe[src*="podbean.com"], iframe[src*="buzzsprout.com"], iframe[src*="blubrry.com"], iframe[src*="transistor.fm"], iframe[src*="fusebox.fm"], iframe[src*="libsyn.com"]');
         if (soundcloudWarning.length > 0) {
-            this.anyWarning = true;
+            this.warningCount++;
             soundcloudWarning.addClass("sa11y-warning-border");
             SoundCloudMessage = "Please ensure to provide a <span class='sa11y-bold'>transcript for all podcasts.</span> Providing transcripts for audio content is a mandatory Level A requirement. Transcripts are meant to support people who are D/deaf or hard-of-hearing, but can benefit everyone. Consider placing the transcript below or within an accordion panel."
             soundcloudWarning.before(start + warningBtn + SoundCloudMessage + end);
@@ -768,7 +700,7 @@ function Sa11y() {
         //Warning: Check Google Data Studio/Tableau widget.
         var dataStudioWarning = $('iframe[src*="datastudio.google.com"], iframe[src*="tableau"]');
         if (dataStudioWarning.length > 0) {
-            this.anyWarning = true;
+            this.warningCount++;
             dataStudioWarning.addClass("sa11y-warning-border");
             DataStudioWarningMessage = "Data visualization widgets like this are often problematic for people who use a keyboard or screen reader to navigate, and can present significant difficulties for people with low vision or colorblindness. It's recommended to provide the same information in an alternative (text or table) format below the widget."
             dataStudioWarning.before(start + warningBtn + DataStudioWarningMessage + end);
@@ -780,7 +712,7 @@ function Sa11y() {
             let $el = $(el);
             var numberofTweets = $el.contents().find(".timeline-TweetList-tweet").length;
             if (numberofTweets > 3) {
-                this.anyWarning = true;
+                this.warningCount++;
                 $el.addClass("sa11y-warning-text");
                 TwitterError = "The default Twitter timeline may cause accessibility issues for keyboard users. Secondly, the inline scrolling of the Twitter timeline may cause usability issues for mobile. It's recommended to add the following data attributes to the embed code. <hr aria-hidden='true' class='sa11y-hr'><span class='sa11y-bold'>It's recommended to:</span><ul><li>Add <kbd>data-tweet-limit=&#34;2&#34;</kbd> to limit the amount of tweets.</li><li>Add <kbd>data-chrome=&#34;nofooter noheader&#34;</kbd> to remove the widget's header and footer.</li></ul>"
                 $el.before(start + warningBtnText + TwitterError + end);
@@ -799,7 +731,7 @@ function Sa11y() {
             });
 
             if ($el && !containsPassWordsNewWindow) {
-                this.anyWarning = true;
+                this.warningCount++;
                 $el.addClass("sa11y-warning-text");
                 WarningNewTab = "Please use <span class='sa11y-bold'>target=&ldquo;_blank&rdquo;</span> sparingly. Opening links in new tabs or windows can be very disorienting for people, especially for people who have difficulty perceiving visual content. Secondly, it's not always a good practice to control a user's experience or make decisions for them. Alert the user that the link opens in a new window within the link text."
                 $el.first().after(startInline + warningBtnText + WarningNewTab + end);
@@ -810,7 +742,7 @@ function Sa11y() {
         let $badDevLinks = $("body").find("a[href^='https://www.dev.'], a[href*='wp-admin']");
         $badDevLinks.each((i, el) => {
             let $el = $(el);
-            this.noErrors = false;
+            this.errorCount++;
             $el.addClass("sa11y-error-text");
             BadLinkMessage = "Bad link found. Link appears to point to a development environment. Make sure the link does not contain <em>dev</em> or <em>wp-admin</em> in the URL. <hr aria-hidden='true' class='sa11y-hr'>This link points to: <br><span class='sa11y-bold sa11y-red-text'>" + el + "</span>"
             $el.after(startInline + errorBtnText + BadLinkMessage + end);
@@ -820,7 +752,7 @@ function Sa11y() {
         var checkPDF = $("a[href$='.pdf']");
         let firstPDF = $("a[href$='.pdf']:first");
         if (checkPDF.length > 0) {
-            this.anyWarning = true;
+            this.warningCount++;
             checkPDF.addClass("sa11y-warning-text");
             checkPDF.has("img").removeClass("sa11y-warning-text");
             WarningPDFMessage = "PDFs are considered web content and must be made accessible as well. PDFs often contain issues for people who use screen readers (missing structural tags or missing form field labels) and people with low vision (text does not reflow when enlarged). If this PDF is a form, consider using an accessible HTML form as an alternative. If this PDF is a document, consider converting it into a web page. Otherwise, please <span class='sa11y-bold'>check PDF for accessibility in Acrobat DC.</span>"
@@ -841,7 +773,7 @@ function Sa11y() {
         });
 
         if ($(".sa11y-warning-uppercase").length > 0) {
-          this.anyWarning = true;
+          this.warningCount++;
         };
 
         //Check for blockquotes used as headings. If it's less than 25 characters - it's definitely not a quote.
@@ -849,7 +781,7 @@ function Sa11y() {
         $blockquotes.each((i, el) => {
             let $el = $(el);
             if ($el.text().trim().length < 25) {
-                this.noErrors = false;
+                this.errorCount++;
                 $el.addClass("sa11y-error-border")
                 BlockquoteError = "Blockquotes should be used for quotes only. They should never be used as headings. Please replace with a semantic heading (e.g. Heading 2 or Heading 3)."
                 $el.before(start + errorBtnText + BlockquoteError + end);
@@ -857,13 +789,14 @@ function Sa11y() {
         });
 
         //Check if a table has a table header.
-        let $tablesCheck = $("body").find("table");
-        $tablesCheck.each((i, el) => {
+        //let $tablesCheck = $("body").find("table");
+        this.$table.each((i, el) => {
             let $el = $(el);
             let findTHeaders = $el.find("th");
             let findHeadingTags = $el.find("h1, h2, h3, h4, h5, h6");
+
             if (findTHeaders.length == 0) {
-                this.noErrors = false;
+                this.errorCount++;
                 $el.addClass("sa11y-error-border");
                 MissingHeadingsError = "Missing table headers! Accessible tables need HTML markup that indicates header cells and data cells which defines their relationship. This information provides context to people who use assistive technology. Tables should be used for tabular data only."
                 $el.before(start + errorBtnText + MissingHeadingsError + end);
@@ -874,26 +807,25 @@ function Sa11y() {
                 SemanticHeadingTableError = "Semantic headings such as Heading 2 or Heading 3 should only be used for sections of content; <span class='sa11y-bold'>not</span> in HTML tables. Indicate table headings using the <span class='sa11y-bold'>th</span> element instead."
                 findHeadingTags.before(start + errorBtnText + SemanticHeadingTableError + end);
             }
-        });
 
-        //Make sure all table headers are not empty.
-        let $thCheck = $("th");
-        $thCheck.each((i, el) => {
-            let $el = $(el);
-            if ($el.text().trim().length < 1) {
-                $el.addClass("sa11y-error-border");
-                EmptyTableHeaderError = "Empty table header found! Table headers should <em>never</em> be empty. It is important to designate row and/or column headers to convey their relationship. This information provides context to people who use assistive technology. Please keep in mind that tables should be used for tabular data only."
-                $el.append(start + errorBtnText + EmptyTableHeaderError + end);
+            findTHeaders.each(function () {
+            let $th = $(this);
+            if ($th.text().trim().length < 1) {
+              this.errorCount++;
+              findTHeaders.addClass("sa11y-error-border");
+              EmptyTableHeaderError = "Empty table header found! Table headers should <em>never</em> be empty. It is important to designate row and/or column headers to convey their relationship. This information provides context to people who use assistive technology. Please keep in mind that tables should be used for tabular data only."
+              findTHeaders.append(start + errorBtnText + EmptyTableHeaderError + end);
             }
+          });
         });
 
         //Error: Check for duplicate IDs.
         var ids = {};
         var found = false;
-        $('[id]').each(function () {
+        this.checkRoot.find('[id]').each(function () {
             if (this.id && ids[this.id]) {
                 found = true;
-                this.noErrors = false;
+                this.errorCount++;
                 $(this).addClass("sa11y-error-text");
                 DuplicateIDMessage = "Found <span class='sa11y-bold'>duplicate ID</span>. Duplicate ID errors are known to cause problems for assistive technologies when they are trying to interact with content. <hr aria-hidden='true' class='sa11y-hr'>Please remove or change the following ID: <span class='sa11y-bold sa11y-red-text'>" + this.id + "</span>"
                 $(this).before(startInline + errorBtnText + DuplicateIDMessage + end);
@@ -902,23 +834,23 @@ function Sa11y() {
         });
 
         //Error: Missing language tag. Lang should be at least 2 characters.
-        var lang = $("html").attr("lang");
+        var lang = this.checkRoot.find("html").attr("lang");
         if ($("html").attr("lang") == undefined || $("html").attr("lang").length < 2) {
-            this.noErrors = false;
+            this.errorCount++;
             $('#sa11y-container').after("<div class='sa11y-error-message'><span class='sa11y-visually-hidden'>Error:</span> Page language not declared! Please <a href='https://www.w3.org/International/questions/qa-html-language-declarations' target='_blank'>declare language on HTML tag.<span class='sa11y-visually-hidden'>(opens new window)</span></a></div>");
         }
 
         //Error: Never set user-scalable to 0.
-        var userScalable = $("meta").attr("user-scalable");
+        var userScalable = this.checkRoot.find("meta").attr("user-scalable");
         if (userScalable == "no" || userScalable == "0" || $("meta[content~='user-scalable=no']").length > 0) {
-            this.noErrors = false;
+            this.errorCount++;
             $('#sa11y-container').after("<div class='sa11y-error-message'><span class='sa11y-visually-hidden'>Error:</span> Remove <span class='sa11y-bold'>user-scalable=&quot;no&quot;</span> paramater from the meta element to allow zooming. This can be very problematic for people with low vision!</div>");
         }
 
         //Example ruleset. Be creative.
-        var checkAnnouncement = $('.announcement-component').length;
+        var checkAnnouncement = this.checkRoot.find('.announcement-component').length;
         if (checkAnnouncement > 1) {
-            this.anyWarning = true;
+            this.warningCount++;
             WarningMessage = 'More than one Announcement component found! The Announcement component should be used strategically and sparingly. It should be used to get attention or warn users about something important. Misuse of this component makes it less effective or impactful. Secondly, this component is semantically labeled as an Announcement for people who use screen readers.'
           $('.announcement-component:gt(0)').addClass("sa11y-warning-border");
           $('.announcement-component:gt(0)').before(start + warningBtn + WarningMessage + end);

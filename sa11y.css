@@ -38,7 +38,7 @@
   --sa11y-panel-bg-secondary: #072c7c;
   --sa11y-panel-bg-splitter: #0038ae;
   --sa11y-panel-secondary: #a3c1ff;
-  --sa11y-panel-secondary-hover: #000000;
+  --sa11y-panel-secondary-hover: rgb(0 0 0 / 40%);
 }
 
 @media (prefers-color-scheme: dark) {
