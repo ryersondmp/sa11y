@@ -45,6 +45,9 @@
     body {
       content: "sa11y-midnight";
     }
+    [data-sa11y-theme="sa11y-midnight"] .sa11y-errors .sa11y-panel-icon {
+      filter: brightness(1.7);
+    }
 }
 
 /*===== Main button ===== */
@@ -60,7 +63,8 @@
   padding: 10px !important;
   position: fixed !important;
   right: 15px !important;
-  width: fit-content !important;
+  width: 55px !important;
+  height: 55px !important;
   transition: all 0.2s ease-in-out !important;
   z-index: 99999 !important;
 }
@@ -393,6 +397,14 @@ button#sa11y-summary-toggle:focus-visible {
     color: var(--sa11y-panel-primary) !important;
     font-size: var(--sa11y-large-text);
     font-weight: 600 !important;
+}
+
+.sa11y-kbd {
+    padding: .2rem .4rem !important;
+    font-size: 87.5% !important;
+    color: #fff !important;
+    background-color: #212529 !important;
+    border-radius: .2rem !important;
 }
 
 /* Link, text, and image outlines */
