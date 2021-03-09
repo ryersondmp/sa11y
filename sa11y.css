@@ -349,6 +349,8 @@ button.sa11y-warning-btn-text:focus {
 #sa11y-outline-list .sa11y-outline-6 {
     margin-left: 75px !important;
 }
+
+#sa11y-settings-content,
 #sa11y-outline-list {
     border-bottom: 1px solid var(--sa11y-panel-bg-splitter) !important;
     list-style-type: none !important;

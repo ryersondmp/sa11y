@@ -11,8 +11,8 @@ let sa11yLanguageCode = "en", //Language code, e.g. "fr"
 
 //Inclusions and exclusions
 let sa11yContainerIgnore = ".sa11y-ignore, #sa11y-container"; //Ignore specific regions.
-let sa11yOutlineIgnore = "h1.jumbotron-heading"; //Exclude headings from outline panel.
-let sa11yHeaderIgnore = "h1.jumbotron-heading"; //Ignore specific headings.
+let sa11yOutlineIgnore = ""; //Exclude headings from outline panel.
+let sa11yHeaderIgnore = ""; //Ignore specific headings. E.g. "h1.jumbotron-heading"
 let sa11yImageIgnore = ""; //Ignore specific images.
 let sa11yLinkIgnore = ""; //Ignore specific links.
 
@@ -66,12 +66,10 @@ function Sa11y() {
     '<div id="sa11y-panel">'
 
       +
-      '<div id="sa11y-outline-panel"><div id="sa11y-outline-header" class="sa11y-header-text" tabindex="-1">Page outline</div><ul id="sa11y-outline-list"></ul></div>'
+      '<div id="sa11y-outline-panel"><div id="sa11y-outline-header" class="sa11y-header-text" tabindex="-1">Page outline</div><hr class="sa11y-hr"><ul id="sa11y-outline-list"></ul></div>'
 
       +
-      '<div id="sa11y-settings-panel"><div id="sa11y-settings-header" class="sa11y-header-text" tabindex="-1">Settings</div><button class="btn btn-primary" id="theme-toggle"></button>'
-      +
-      '</div>'
+      '<div id="sa11y-settings-panel"><div id="sa11y-settings-header" class="sa11y-header-text" tabindex="-1">Settings</div><div id="sa11y-settings-content"><hr class="sa11y-hr"><button class="btn btn-primary" id="theme-toggle"></button><hr class="sa11y-hr"><div class="sa11y-header-text">About Sa11y</div><span>Maintained by Adam Chaboryk at Ryerson University.</span></div></div>'
 
       +
       '<div id="sa11y-panel-content"><div class="sa11y-panel-icon"></div><div id="sa11y-panel-text"><span id="sa11y-status"></span></div></div>'
@@ -100,6 +98,7 @@ function Sa11y() {
     //Remove settings panel
     $("#sa11y-settings-panel").removeClass("sa11y-active");
     $settingsToggle.removeClass('sa11y-settings-active');
+    $settingsToggle.attr('aria-expanded', 'false');
     localStorage.removeItem('Sa11ySettingsState');
   });
 
@@ -123,12 +122,14 @@ function Sa11y() {
 
     //Remove outline panel
     $("#sa11y-outline-panel").removeClass("sa11y-active");
-    $outlineToggle.removeClass('sa11y-settings-active');
+    $outlineToggle.removeClass('sa11y-outline-active');
+    $outlineToggle.attr('aria-expanded', 'false');
+    $outlineToggle.text('Show Outline');
     localStorage.removeItem('Sa11yOutlineState');
   });
 
   if (localStorage.getItem("Sa11ySettingsState") !== null) {
-    $("#sa11y-outline-panel").addClass('sa11y-active');
+    $("#sa11y-settings-panel").addClass('sa11y-active');
     $settingsToggle.attr('aria-expanded', 'true');
     $settingsToggle.addClass('sa11y-settings-active');
   }
