@@ -66,63 +66,21 @@ function Sa11y() {
     '<div id="sa11y-panel">'
 
       +
-      '<div id="sa11y-outline-panel"><div id="sa11y-outline-header" class="sa11y-header-text" tabindex="-1">Page outline</div><hr class="sa11y-hr"><ul id="sa11y-outline-list"></ul></div>'
+      '<div id="sa11y-outline-panel"><div id="sa11y-outline-header" class="sa11y-header-text" tabindex="-1">Page outline</div><ul id="sa11y-outline-list"></ul></div>'
 
       +
-      '<div id="sa11y-settings-panel"><div id="sa11y-settings-header" class="sa11y-header-text" tabindex="-1">Settings</div><div id="sa11y-settings-content"><hr class="sa11y-hr"><div class="sa11y-panel-controls"><button class="btn btn-sm btn-primary" id="theme-toggle"></button><button class="btn btn-sm btn-primary">Contrast</button></div><div class="sa11y-header-text">About Sa11y</div><span></span></div></div>'
+      '<div id="sa11y-settings-panel"><div id="sa11y-settings-header" class="sa11y-header-text" tabindex="-1">Settings</div><div id="sa11y-settings-content"><div class="sa11y-panel-controls"><button class="btn btn-sm btn-primary" id="theme-toggle"></button></div><div class="sa11y-header-text">About Sa11y</div><span></span></div></div>'
 
       +
       '<div id="sa11y-panel-content"><div class="sa11y-panel-icon"></div><div id="sa11y-panel-text"><span id="sa11y-status"></span></div></div>'
 
       +
-      '<div id="sa11y-panel-controls"><button type="button" aria-expanded="false" id="sa11y-outline-toggle">Show Outline</button><button type="button" aria-expanded="false" id="sa11y-settings-toggle">Show Settings</button><div>&nbsp;&nbsp;</div></div>'
+      '<div id="sa11y-panel-controls"><button type="button" aria-expanded="false" id="sa11y-outline-toggle">Show Outline</button><button type="button" aria-expanded="false" id="sa11y-settings-toggle">Show Settings</button><div aria-hidden="true">&nbsp;&nbsp;</div></div>'
 
     +
     '</div>';
 
   $('body').prepend(sa11ycontainer);
-
-  //Show outline panel
-  let $outlineToggle = $("#sa11y-outline-toggle");
-  $outlineToggle.click(function() {
-    $(this).toggleClass("sa11y-outline-active");
-    $("#sa11y-outline-panel").toggleClass("sa11y-active");
-    $(this).text(function(i, v) {
-      return v === 'Show Outline' ? 'Hide Outline' : 'Show Outline'
-    });
-    $(this).attr('aria-expanded', function(i, attr) {
-      return attr == 'true' ? 'false' : 'true'
-    });
-    $("#sa11y-outline-header").focus();
-
-    //Remove settings panel
-    $("#sa11y-settings-panel").removeClass("sa11y-active");
-    $settingsToggle.removeClass('sa11y-settings-active');
-    $settingsToggle.attr('aria-expanded', 'false');
-    $settingsToggle.text('Show Settings')
-  });
-
-  //Show settings panel
-  let $settingsToggle = $("#sa11y-settings-toggle");
-  $settingsToggle.click(function() {
-    $(this).toggleClass("sa11y-settings-active");
-    $("#sa11y-settings-panel").toggleClass("sa11y-active");
-    $(this).text(function(i, v) {
-      return v === 'Show Settings' ? 'Hide Settings' : 'Show Settings'
-    });
-    $(this).attr('aria-expanded', function(i, attr) {
-      return attr == 'true' ? 'false' : 'true'
-    });
-    $("#sa11y-settings-header").focus();
-
-    //Remove outline panel
-    $("#sa11y-outline-panel").removeClass("sa11y-active");
-    $outlineToggle.removeClass('sa11y-outline-active');
-    $outlineToggle.attr('aria-expanded', 'false');
-    $outlineToggle.text('Show Outline');
-    $(".sa11y-heading-label").remove();
-  });
-
 
   // Templated buttons to make it easier to swap tooltip libraries. If you're swapping libraries, you should only need to swap out "data-tippy-content". E.g. Bootstrap is data-toggle="tooltip"
   var start = '<div class="sa11y-instance">',
@@ -163,6 +121,47 @@ function Sa11y() {
       $("#sa11y-panel-content").addClass("sa11y-pass");
       $("#sa11y-status").text("No accessibility errors found.");
     }
+
+     //Show outline panel
+    let $outlineToggle = $("#sa11y-outline-toggle");
+    $outlineToggle.click(function() {
+      $(this).toggleClass("sa11y-outline-active");
+      $("#sa11y-outline-panel").toggleClass("sa11y-active");
+      $(this).text(function(i, v) {
+        return v === 'Show Outline' ? 'Hide Outline' : 'Show Outline'
+      });
+      $(this).attr('aria-expanded', function(i, attr) {
+        return attr == 'true' ? 'false' : 'true'
+      });
+      $("#sa11y-outline-header").focus();
+
+      //Remove settings panel
+      $("#sa11y-settings-panel").removeClass("sa11y-active");
+      $settingsToggle.removeClass('sa11y-settings-active');
+      $settingsToggle.attr('aria-expanded', 'false');
+      $settingsToggle.text('Show Settings')
+    });
+
+    //Show settings panel
+    let $settingsToggle = $("#sa11y-settings-toggle");
+    $settingsToggle.click(function() {
+      $(this).toggleClass("sa11y-settings-active");
+      $("#sa11y-settings-panel").toggleClass("sa11y-active");
+      $(this).text(function(i, v) {
+        return v === 'Show Settings' ? 'Hide Settings' : 'Show Settings'
+      });
+      $(this).attr('aria-expanded', function(i, attr) {
+        return attr == 'true' ? 'false' : 'true'
+      });
+      $("#sa11y-settings-header").focus();
+
+      //Remove outline panel
+      $("#sa11y-outline-panel").removeClass("sa11y-active");
+      $outlineToggle.removeClass('sa11y-outline-active');
+      $outlineToggle.attr('aria-expanded', 'false');
+      $outlineToggle.text('Show Outline');
+      $(".sa11y-heading-label").remove();
+    });
   };
 
   // Resets all changes made by the tool.
@@ -181,7 +180,6 @@ function Sa11y() {
     this.$img = this.checkRoot.find("img").not(this.imageIgnore);
     this.$iframe = this.checkRoot.find("iframe").not(this.containerIgnore);
     this.$table = this.checkRoot.find("table").not(this.containerIgnore);
-
     Sa11y.$contrast = this.checkRoot.find('*:visible').not('.sa11y-exclude *').not('#sa11y-container *').not(this.containerIgnore);
   };
 
@@ -878,15 +876,13 @@ function Sa11y() {
     });
 
 
-    //Warning: Detect uppercase. To-do: fix.
-
-    /*
+    //Warning: Detect uppercase.
     let $queryUppercase = this.checkRoot.find('h1, h2, h3, h4, h5, h6, p, li:not([class^="sa11y"]), blockquote').not(this.containerIgnore);
 
     $queryUppercase.each(function () {
           let $this = $(this);
 
-          var UppercaseWarning = 'ALL CAPS DETECTED. Avoid typing sentences or phrases in ALL CAPITALS. Some screen readers interpret all capital text as an acronym and will read each letter individually. Additionally, all caps are more difficult to read and give the appearance of SHOUTING.'
+          var UppercaseWarning = 'All caps detected. Avoid typing sentences or phrases in uppercase. Some screen readers may interpret all capital text as an acronym and will read each letter individually. Additionally, all caps are more difficult to read and give the appearance of SHOUTING.'
 
           var uppercasePattern = /(?!<a[^>]*?>)(\b[A-Z]['!:A-Z\s]{15,}|\b[A-Z]{15,}\b)(?![^<]*?<\/a>)/g;
 
@@ -899,7 +895,7 @@ function Sa11y() {
           if ($(".sa11y-warning-uppercase").length > 0) {
             this.warningCount++;
           };
-    }); */
+    });
 
     //Tables check.
     this.$table.each((i, el) => {
