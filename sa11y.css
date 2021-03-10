@@ -430,7 +430,7 @@ button.sa11y-warning-btn-text:focus {
     color: var(--sa11y-panel-primary) !important;
     font-size: var(--sa11y-large-text) !important;
     font-weight: 600 !important;
-    padding-bottom: 3px !important;
+    margin-bottom: 3px !important;
 }
 
 .sa11y-kbd {
@@ -506,6 +506,9 @@ button.sa11y-warning-btn-text:focus {
 .sa11y-error-message a:focus {
     text-decoration: none !important;
 }
+span.sa11y-label-visible {
+    visibility: visible !important;
+}
 
 span.sa11y-heading-label {
   background-color: #777678 !important;
@@ -517,6 +520,7 @@ span.sa11y-heading-label {
   margin: -5px 0 0 5px !important;
   padding: 3px !important;
   position: absolute !important;
+  visibility: hidden;
 }
 
 /*===== Animations ===== */

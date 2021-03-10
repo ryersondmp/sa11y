@@ -79,8 +79,7 @@ function Sa11y() {
 
     +
     '</div>';
-
-  $('body').prepend(sa11ycontainer);
+    $('body').prepend(sa11ycontainer);
 
   // Templated buttons to make it easier to swap tooltip libraries. If you're swapping libraries, you should only need to swap out "data-tippy-content". E.g. Bootstrap is data-toggle="tooltip"
   var start = '<div class="sa11y-instance">',
@@ -134,6 +133,7 @@ function Sa11y() {
         return attr == 'true' ? 'false' : 'true'
       });
       $("#sa11y-outline-header").focus();
+      $(".sa11y-heading-label").toggleClass("sa11y-label-visible");
 
       //Remove settings panel
       $("#sa11y-settings-panel").removeClass("sa11y-active");
@@ -160,7 +160,7 @@ function Sa11y() {
       $outlineToggle.removeClass('sa11y-outline-active');
       $outlineToggle.attr('aria-expanded', 'false');
       $outlineToggle.text('Show Outline');
-      $(".sa11y-heading-label").remove();
+      $(".sa11y-heading-label").removeClass("sa11y-label-visible");
     });
   };
 
@@ -176,7 +176,7 @@ function Sa11y() {
   //Find and cache.
   this.findElements = function() {
     this.$p = this.checkRoot.find("p").not(this.containerIgnore);
-    this.$h = this.checkRoot.find("h1, h2, h3, h4, h5, h6, [role='heading'][aria-level]").not(this.containerIgnore);
+    this.$h = this.checkRoot.find("h1, h2, h3, h4, h5, h6, [role='heading'][aria-level]").not(":hidden").not(this.containerIgnore);
     this.$img = this.checkRoot.find("img").not(this.imageIgnore);
     this.$iframe = this.checkRoot.find("iframe").not(this.containerIgnore);
     this.$table = this.checkRoot.find("table").not(this.containerIgnore);
@@ -368,6 +368,8 @@ function Sa11y() {
 
       if ($el.not(sa11yOutlineIgnore).length !== 0) {
 
+        $el.not(sa11yOutlineIgnore).append(" <span class='sa11y-heading-label'>H" + level + "</span> ");
+
         if (error != null && $el.closest("a").length > 0) {
           this.errorCount++;
           $el.addClass("sa11y-error-heading");
@@ -382,14 +384,6 @@ function Sa11y() {
           $("#sa11y-outline-list").append(li);
         }
       }
-
-      $("#sa11y-outline-toggle").on( "click", function() {
-        if ($(this).attr('aria-expanded') == 'true') {
-          $el.not(sa11yOutlineIgnore).append(" <span class='sa11y-heading-label'>H" + level + "</span> ");
-        } else if ($(this).attr('aria-expanded') == 'false') {
-          $(".sa11y-heading-label").remove();
-        }
-      });
 
     });
 
@@ -702,7 +696,7 @@ function Sa11y() {
 
       // If alt attribute is present, further tests are done.
       else {
-        let altText = text.replace(/'/g, "&#39;"); //Prevent tooltip from breaking.
+        let altText = Sa11y.sanitizeForHTML(text); //Prevent tooltip from breaking.
         let error = this.containsAltTextStopWords(altText);
         let altLength = text.length;
 
@@ -781,6 +775,22 @@ function Sa11y() {
     });
     return hit;
   };
+
+  this.sanitizeForHTML = function (string) {
+    let entityMap = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;',
+      '/': '&#x2F;',
+      '`': '&#x60;',
+      '=': '&#x3D;'
+    };
+    return String(string).replace(/[&<>"'`=\/]/g, function (s) {
+      return entityMap[s];
+    });
+  }
 
   /*================== QUALITY ASSURANCE MODULE ===================*/
   this.checkQA = function() {
