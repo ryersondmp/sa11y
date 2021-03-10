@@ -13,6 +13,9 @@ Sa11y works as a simple in-page checker that is designed to be easily customized
 :arrow_right: [View project website and demo](https://ryersondmp.github.io/sa11y/)
 
 ## Updates
+* 10-03-2021
+    * Sa11y V2 is coming soon! We're currently in the process of refactoring our code base. Our goal is to make Sa11y easy to customize and implement across various content management systems and themes. We'll also be adding a few nifty features and rulesets. Stay tuned! - Adam
+
 * 12-02-2021
     * Enhancement: Error, Warning and Pass buttons are slightly smaller, but still adhere to WCAG AAA Target Size.
     * Enhancement: The summarized list of headings under "Page Outline" now only display a single number without H prefix.
