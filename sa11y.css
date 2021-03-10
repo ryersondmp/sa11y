@@ -21,7 +21,7 @@
 }
 /* SVG icons by FontAwesome 5: https://fontawesome.com/license/free */
 
-html, html[data-theme="light"] {
+html, html[data-sa11y-theme="light"] {
     --sa11y-red-text: #d30017;
     --sa11y-panel-badge: #e9e9e9;
     --sa11y-panel-primary: #333333;
@@ -30,9 +30,10 @@ html, html[data-theme="light"] {
     --sa11y-panel-bg-splitter: #d7d7d7;
     --sa11y-panel-secondary: #4d4d4d;
     --sa11y-panel-secondary-hover: #0077c8;
+    --sa11y-panel-toggle-active: #c6c6c6;
 }
 
-html[data-theme="dark"] {
+html[data-sa11y-theme="dark"] {
   --sa11y-red-text: #fe5b5f;
   --sa11y-panel-badge: #3500c4;
   --sa11y-panel-primary: #dde8ff;
@@ -41,10 +42,11 @@ html[data-theme="dark"] {
   --sa11y-panel-bg-splitter: #0038ae;
   --sa11y-panel-secondary: #a3c1ff;
   --sa11y-panel-secondary-hover: rgb(0 0 0 / 40%);
-	}
+  --sa11y-panel-toggle-active: #0a2051;
+}
 
 @media (prefers-color-scheme: dark) {
-	html, html[data-theme="dark"] {
+	html, html[data-sa11y-theme="dark"] {
     --sa11y-red-text: #fe5b5f;
     --sa11y-panel-badge: #3500c4;
     --sa11y-panel-primary: #dde8ff;
@@ -53,9 +55,10 @@ html[data-theme="dark"] {
     --sa11y-panel-bg-splitter: #0038ae;
     --sa11y-panel-secondary: #a3c1ff;
     --sa11y-panel-secondary-hover: rgb(0 0 0 / 40%);
+    --sa11y-panel-toggle-active: #0a2051;
 	}
 
-	html[data-theme="light"] {
+	html[data-sa11y-theme="light"] {
       --sa11y-red-text: #d30017;
       --sa11y-panel-badge: #e9e9e9;
       --sa11y-panel-primary: #333333;
@@ -64,6 +67,7 @@ html[data-theme="dark"] {
       --sa11y-panel-bg-splitter: #d7d7d7;
       --sa11y-panel-secondary: #4d4d4d;
       --sa11y-panel-secondary-hover: #0077c8;
+      --sa11y-panel-toggle-active: #c6c6c6;
 	}
 }
 
@@ -118,24 +122,14 @@ html[data-theme="dark"] {
 }
 
 /* Main focus style */
-button.sa11y-pass-btn:focus,
-button.sa11y-pass-btn-text:focus,
-button.sa11y-warning-btn:focus,
-button.sa11y-warning-btn-text:focus,
-button.sa11y-error-btn:focus,
-button.sa11y-error-btn-text:focus,
+button.sa11y-btn:focus,
 #sa11y-container button#sa11y-toggle:focus {
     outline: 0 !important;
     box-shadow: 0 0 0 5px var(--sa11y-focus-color) !important;
 }
 
 /*===== Error, Warning, Pass buttons ===== */
-button.sa11y-error-btn,
-button.sa11y-error-btn-text,
-button.sa11y-pass-btn,
-button.sa11y-pass-btn-text,
-button.sa11y-warning-btn,
-button.sa11y-warning-btn-text {
+button.sa11y-btn {
   border-radius: 50% !important;
   box-shadow: 0 0 16px 0 #0000004f !important;
   cursor: pointer !important;
@@ -146,7 +140,6 @@ button.sa11y-warning-btn-text {
   padding: 0px !important;
   position: absolute !important;
   transition: all 0.2s ease-in-out !important;
-  vertical-align: middle !important;
   width: 44px !important;
   font-size: 0 !important;
   z-index: 8888 !important;
@@ -374,7 +367,14 @@ button.sa11y-warning-btn-text:focus {
 #sa11y-outline-list::-webkit-scrollbar-thumb {
     border-radius: 5px;
     background-color: rgba(0, 0, 0, 0.5);
-    -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+}
+
+#sa11y-settings-toggle.sa11y-settings-active,
+#sa11y-settings-toggle:hover,
+#sa11y-outline-toggle.sa11y-outline-active,
+#sa11y-outline-toggle:hover {
+    box-shadow: inset 0 0 30px var(--sa11y-panel-toggle-active) !important;
 }
 
 #sa11y-container #sa11y-settings-toggle,
@@ -399,14 +399,6 @@ button.sa11y-warning-btn-text:focus {
   padding: 0px !important;
   width: 100% !important;
 }
-
-#sa11y-settings-toggle.sa11y-settings-active,
-#sa11y-settings-toggle:hover,
-#sa11y-outline-toggle.sa11y-outline-active,
-#sa11y-outline-toggle:hover {
-    box-shadow: inset 0 0 6px var(--sa11y-panel-secondary-hover) !important;
-}
-
 
 /* Keyboard focus state */
 #sa11y-settings-toggle:focus-visible,
@@ -436,8 +428,9 @@ button.sa11y-warning-btn-text:focus {
 
 .sa11y-header-text {
     color: var(--sa11y-panel-primary) !important;
-    font-size: var(--sa11y-large-text);
+    font-size: var(--sa11y-large-text) !important;
     font-weight: 600 !important;
+    padding-bottom: 3px !important;
 }
 
 .sa11y-kbd {
@@ -591,7 +584,7 @@ span.sa11y-heading-label {
 
 /*===== Tooltip additions ===== */
 
-.sa11y-spotted-inline {
+.sa11y-instance-inline {
     text-align: left !important;
     display: inline-block !important;
 }

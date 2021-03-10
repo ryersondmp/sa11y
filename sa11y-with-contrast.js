@@ -2,7 +2,7 @@
 let sa11yCheckRoot = "body"; //Use "main" for main content.
 
 //Language of Sa11y. Some global variables to help translate.
-let sa11yLanguageCode = "en", //Language code, e.g. "fr"
+let sa11yLangCode = "en", //Language code, e.g. "fr"
   sa11yMainToggleLang = "Toggle Accessibility Checker",
   sa11yContainerLang = "Accessibility Checker",
   sa11yErrorLang = "Error", //Erreur
@@ -17,7 +17,7 @@ let sa11yImageIgnore = ""; //Ignore specific images.
 let sa11yLinkIgnore = ""; //Ignore specific links.
 
 if (window.navigator.userAgent.match(/MSIE|Trident/) === null) {
-    var Sa11y = new Sa11y(); // Sorry IE
+    var Sa11y = new Sa11y(); //No IE support.
 }
 
 function Sa11y() {
@@ -43,7 +43,7 @@ function Sa11y() {
     }
 
     //Initialize tippy.js
-    tippy('[data-tippy-content]', {
+    tippy('.sa11y-btn', {
       interactive: true,
       trigger: 'mouseenter click',
       arrow: true,
@@ -59,7 +59,7 @@ function Sa11y() {
   var sa11ycontainer = document.createElement("div");
   sa11ycontainer.setAttribute("id", "sa11y-container");
   sa11ycontainer.setAttribute("role", "region");
-  sa11ycontainer.setAttribute("lang", sa11yLanguageCode);
+  sa11ycontainer.setAttribute("lang", sa11yLangCode);
   sa11ycontainer.setAttribute("aria-label", sa11yContainerLang);
   sa11ycontainer.innerHTML = '<button type="button" aria-expanded="false" id="sa11y-toggle">' + MainToggleIcon + '<span class="sa11y-visually-hidden">' + sa11yMainToggleLang + '</span></button>' +
 
@@ -69,13 +69,13 @@ function Sa11y() {
       '<div id="sa11y-outline-panel"><div id="sa11y-outline-header" class="sa11y-header-text" tabindex="-1">Page outline</div><hr class="sa11y-hr"><ul id="sa11y-outline-list"></ul></div>'
 
       +
-      '<div id="sa11y-settings-panel"><div id="sa11y-settings-header" class="sa11y-header-text" tabindex="-1">Settings</div><div id="sa11y-settings-content"><hr class="sa11y-hr"><button class="btn btn-primary" id="theme-toggle"></button><hr class="sa11y-hr"><div class="sa11y-header-text">About Sa11y</div><span>Maintained by Adam Chaboryk at Ryerson University.</span></div></div>'
+      '<div id="sa11y-settings-panel"><div id="sa11y-settings-header" class="sa11y-header-text" tabindex="-1">Settings</div><div id="sa11y-settings-content"><hr class="sa11y-hr"><div class="sa11y-panel-controls"><button class="btn btn-sm btn-primary" id="theme-toggle"></button><button class="btn btn-sm btn-primary">Contrast</button></div><div class="sa11y-header-text">About Sa11y</div><span></span></div></div>'
 
       +
       '<div id="sa11y-panel-content"><div class="sa11y-panel-icon"></div><div id="sa11y-panel-text"><span id="sa11y-status"></span></div></div>'
 
       +
-      '<div id="sa11y-panel-controls"><button type="button" aria-expanded="false" id="sa11y-outline-toggle">Show Outline</button><button type="button" aria-expanded="false" id="sa11y-settings-toggle">Settings</button></div>'
+      '<div id="sa11y-panel-controls"><button type="button" aria-expanded="false" id="sa11y-outline-toggle">Show Outline</button><button type="button" aria-expanded="false" id="sa11y-settings-toggle">Show Settings</button><div>&nbsp;&nbsp;</div></div>'
 
     +
     '</div>';
@@ -99,25 +99,20 @@ function Sa11y() {
     $("#sa11y-settings-panel").removeClass("sa11y-active");
     $settingsToggle.removeClass('sa11y-settings-active');
     $settingsToggle.attr('aria-expanded', 'false');
-    localStorage.removeItem('Sa11ySettingsState');
+    $settingsToggle.text('Show Settings')
   });
-
-  if (localStorage.getItem("Sa11yOutlineState") !== null) {
-    $("#sa11y-outline-panel").addClass('sa11y-active');
-    $outlineToggle.attr('aria-expanded', 'true');
-    $outlineToggle.text('Hide Outline');
-    $outlineToggle.addClass('sa11y-outline-active');
-  }
 
   //Show settings panel
   let $settingsToggle = $("#sa11y-settings-toggle");
   $settingsToggle.click(function() {
     $(this).toggleClass("sa11y-settings-active");
     $("#sa11y-settings-panel").toggleClass("sa11y-active");
+    $(this).text(function(i, v) {
+      return v === 'Show Settings' ? 'Hide Settings' : 'Show Settings'
+    });
     $(this).attr('aria-expanded', function(i, attr) {
       return attr == 'true' ? 'false' : 'true'
     });
-
     $("#sa11y-settings-header").focus();
 
     //Remove outline panel
@@ -125,44 +120,34 @@ function Sa11y() {
     $outlineToggle.removeClass('sa11y-outline-active');
     $outlineToggle.attr('aria-expanded', 'false');
     $outlineToggle.text('Show Outline');
-    localStorage.removeItem('Sa11yOutlineState');
+    $(".sa11y-heading-label").remove();
   });
 
-  if (localStorage.getItem("Sa11ySettingsState") !== null) {
-    $("#sa11y-settings-panel").addClass('sa11y-active');
-    $settingsToggle.attr('aria-expanded', 'true');
-    $settingsToggle.addClass('sa11y-settings-active');
-  }
 
-  if ($("#sa11y-settings-panel").hasClass('sa11y-active')) {
-    localStorage.setItem('Sa11ySettingsState', 'active');
-  } else {
-    $("#sa11y-settings-panel").removeClass("sa11y-active");
-    localStorage.removeItem('Sa11ySettingsState');
-  }
+  // Templated buttons to make it easier to swap tooltip libraries. If you're swapping libraries, you should only need to swap out "data-tippy-content". E.g. Bootstrap is data-toggle="tooltip"
+  var start = '<div class="sa11y-instance">',
+    startInline = '<div class="sa11y-instance-inline">';
 
-  // Templated buttons to make it easier to swap tooltip libraries.
-  var start = '<div class="sa11y-spotted">',
-    startInline = '<div class="sa11y-spotted-inline">';
+  //Start of tooltip container which includes header text.
+  var errorHeader = "<div lang='"+sa11yLangCode+"'><div class='sa11y-header-text'>"+sa11yErrorLang+"</div>",
+    warningHeader = "<div lang='"+sa11yLangCode+"'><div class='sa11y-header-text'>"+sa11yWarningLang+"</div>",
+    passHeader = "<div lang='"+sa11yLangCode+"'><div class='sa11y-header-text'>"+sa11yPassLang+"</div>";
 
-  var errorHeader = "<div class='sa11y-header-text'>"+sa11yErrorLang+"</div>",
-    warningHeader = "<div class='sa11y-header-text'>"+sa11yWarningLang+"</div>",
-    passHeader = "<div class='sa11y-header-text'>"+sa11yPassLang+"</div>";
+  //Start of button.
+  var errorBtn = '<button type="button" aria-label="'+sa11yErrorLang+'" class="sa11y-btn sa11y-error-btn" data-tippy-content="' + errorHeader,
+    errorBtnText = '<button type="button" aria-label="'+sa11yErrorLang+'" class="sa11y-btn sa11y-error-btn-text" data-tippy-content="' + errorHeader,
+    warningBtn = '<button type="button" aria-label="'+sa11yWarningLang+'" class="sa11y-btn sa11y-warning-btn" data-tippy-content="' + warningHeader,
+    warningBtnText = '<button type="button" aria-label="'+sa11yWarningLang+'" class="sa11y-btn sa11y-warning-btn-text" data-tippy-content="' + warningHeader,
+    passBtn = '<button type="button" aria-label="'+sa11yPassLang+'" class="sa11y-btn sa11y-pass-btn" data-tippy-content="' + passHeader,
+    passBtnText = '<button type="button" aria-label="'+sa11yPassLang+'" class="sa11y-btn sa11y-pass-btn-text" data-tippy-content="' + passHeader;
 
-  var errorBtn = '<button type="button" aria-label="'+sa11yErrorLang+'" class="sa11y-error-btn" data-tippy-content="' + errorHeader,
-    errorBtnText = '<button type="button" aria-label="'+sa11yErrorLang+'" class="sa11y-error-btn-text" data-tippy-content="' + errorHeader,
-    warningBtn = '<button type="button" aria-label="'+sa11yWarningLang+'" class="sa11y-warning-btn" data-tippy-content="' + warningHeader,
-    warningBtnText = '<button type="button" aria-label="'+sa11yWarningLang+'" class="sa11y-warning-btn-text" data-tippy-content="' + warningHeader,
-    passBtn = '<button type="button" aria-label="'+sa11yPassLang+'" class="sa11y-pass-btn" data-tippy-content="' + passHeader,
-    passBtnText = '<button type="button" aria-label="'+sa11yPassLang+'" class="sa11y-pass-btn-text" data-tippy-content="' + passHeader;
-
-  var end = '"></button></div>';
+  var end = '</div>"></button></div>'; //End of tooltip content, button, instance.
 
   //Full width error banners appended to top of page.
-  var errorMessageStart = '<div class="sa11y-error-message-container"><div class="sa11y-error-message" lang="' + sa11yLanguageCode + '"><span class="sa11y-visually-hidden">' + sa11yErrorLang + '</span> ',
+  var errorMessageStart = '<div class="sa11y-error-message-container"><div class="sa11y-error-message" lang="' + sa11yLangCode + '"><span class="sa11y-visually-hidden">' + sa11yErrorLang + '</span> ',
     errorMessageEnd = '</div></div>'
 
-
+  //Build main panel.
   this.displayPanel = function() {
     let totalCount = this.errorCount + this.warningCount;
     $("#sa11y-panel").addClass("sa11y-active");
@@ -180,7 +165,7 @@ function Sa11y() {
     }
   };
 
-  // Resets all changes made by the tool. Removing outlines and additional spans.
+  // Resets all changes made by the tool.
   this.reset = function() {
     this.clearEverything();
     this.errorCount = 0;
@@ -253,8 +238,8 @@ function Sa11y() {
     this.checkRoot.find(".sa11y-warning-text").removeClass("sa11y-warning-text");
     this.checkRoot.find(".sa11y-warning-uppercase").contents().unwrap();
 
-    this.checkRoot.find(".sa11y-spotted").remove();
-    this.checkRoot.find(".sa11y-spotted-inline").remove();
+    this.checkRoot.find(".sa11y-instance").remove();
+    this.checkRoot.find(".sa11y-instance-inline").remove();
     this.checkRoot.find(".sa11y-heading-label").remove();
     this.checkRoot.find("#sa11y-panel").removeClass("sa11y-active");
     this.checkRoot.find("#sa11y-outline-list li").remove();
@@ -288,7 +273,7 @@ function Sa11y() {
     }
 
     //Escape key to shutdown.
-    $('html').keyup(function(escape) {
+    $(document).keyup(function(escape) {
       if (escape.keyCode == 27 && $('#sa11y-panel').hasClass('sa11y-active')) {
         tippy.hideAll()
         localStorage.enableSa11y = "";
@@ -298,9 +283,9 @@ function Sa11y() {
       }
     });
 
-    //Dark mode, because why not. Credits: https://derekkedziora.com/blog/dark-mode-revisited
+    //Dark mode. Credits: https://derekkedziora.com/blog/dark-mode-revisited
     let systemInitiatedDark = window.matchMedia("(prefers-color-scheme: dark)");
-    let theme = sessionStorage.getItem('theme');
+    let theme = sessionStorage.getItem('sa11y-theme');
     if (systemInitiatedDark.matches) {
       $("#theme-toggle").text("Light");
     } else {
@@ -309,43 +294,43 @@ function Sa11y() {
 
     function prefersColorTest(systemInitiatedDark) {
       if (systemInitiatedDark.matches) {
-        $("html").attr('data-theme', 'dark');
+        $("html").attr('data-sa11y-theme', 'dark');
         $("#theme-toggle").text("Light");
-        sessionStorage.setItem('theme', '');
+        sessionStorage.setItem('sa11y-theme', '');
       } else {
-        $("html").attr('data-theme', 'light');
+        $("html").attr('data-sa11y-theme', 'light');
         $("#theme-toggle").text("Dark");
-        sessionStorage.setItem('theme', '');
+        sessionStorage.setItem('sa11y-theme', '');
       }
     }
     systemInitiatedDark.addListener(prefersColorTest);
     $("#theme-toggle").click(function() {
-      let theme = sessionStorage.getItem('theme');
+      let theme = sessionStorage.getItem('sa11y-theme');
       if (theme === "dark") {
-        $("html").attr('data-theme', 'light');
-        sessionStorage.setItem('theme', 'light');
+        $("html").attr('data-sa11y-theme', 'light');
+        sessionStorage.setItem('sa11y-theme', 'light');
         $("#theme-toggle").text("Dark");
       } else if (theme === "light") {
-        $("html").attr('data-theme', 'dark');
-        sessionStorage.setItem('theme', 'dark');
+        $("html").attr('data-sa11y-theme', 'dark');
+        sessionStorage.setItem('sa11y-theme', 'dark');
         $("#theme-toggle").text("Light");
       } else if (systemInitiatedDark.matches) {
-        $("html").attr('data-theme', 'light');
-        sessionStorage.setItem('theme', 'light');
+        $("html").attr('data-sa11y-theme', 'light');
+        sessionStorage.setItem('sa11y-theme', 'light');
         $("theme-toggle").text("Dark");
       } else {
-        $("html").attr('data-theme', 'dark');
-        sessionStorage.setItem('theme', 'dark');
+        $("html").attr('data-sa11y-theme', 'dark');
+        sessionStorage.setItem('sa11y-theme', 'dark');
         $("#theme-toggle").text("Light");
       }
     });
     if (theme === "dark") {
-      $("html").attr('data-theme', 'dark');
-      sessionStorage.setItem('theme', 'dark');
+      $("html").attr('data-sa11y-theme', 'dark');
+      sessionStorage.setItem('sa11y-theme', 'dark');
       $("#theme-toggle").text("Light");
     } else if (theme === "light") {
-      $("html").attr('data-theme', 'light');
-      sessionStorage.setItem('theme', 'light');
+      $("html").attr('data-sa11y-theme', 'light');
+      sessionStorage.setItem('sa11y-theme', 'light');
       $("theme-toggle").text("Dark");
     }
 
@@ -400,22 +385,13 @@ function Sa11y() {
         }
       }
 
-      $("#sa11y-outline-toggle").click(function() {
+      $("#sa11y-outline-toggle").on( "click", function() {
         if ($(this).attr('aria-expanded') == 'true') {
           $el.not(sa11yOutlineIgnore).append(" <span class='sa11y-heading-label'>H" + level + "</span> ");
-        } else {
+        } else if ($(this).attr('aria-expanded') == 'false') {
           $(".sa11y-heading-label").remove();
         }
       });
-
-      if ($("#sa11y-outline-panel").hasClass('sa11y-active')) {
-        localStorage.setItem('Sa11yOutlineState', 'active');
-        $el.not(sa11yOutlineIgnore).append(" <span class='sa11y-heading-label'>H" + level + "</span> ");
-      } else {
-        $("#sa11y-outline-panel").removeClass("sa11y-active");
-        localStorage.removeItem('Sa11yOutlineState');
-        $(".sa11y-heading-label").remove();
-      }
 
     });
 
@@ -423,7 +399,7 @@ function Sa11y() {
     let $h1 = this.checkRoot.find("h1, [role='heading'][aria-level='1']").not(this.containerIgnore);
     if ($h1.length === 0) {
       this.errorCount++;
-      $("#sa11y-outline-header").after("<div class='sa11y-spotted'><span class='sa11y-badge sa11y-error-badge'><span aria-hidden='true'>&#10007;</span><span class='sa11y-visually-hidden'>" + sa11yErrorLang + "</span></span> <span class='sa11y-red-text sa11y-bold'>Missing Heading 1!</span></div>");
+      $("#sa11y-outline-header").after("<div class='sa11y-instance'><span class='sa11y-badge sa11y-error-badge'><span aria-hidden='true'>&#10007;</span><span class='sa11y-visually-hidden'>" + sa11yErrorLang + "</span></span> <span class='sa11y-red-text sa11y-bold'>Missing Heading 1!</span></div>");
 
       MissingHeading1Message = "Missing Heading 1. Heading 1 should be the start of the main content section, and is the main heading that describes the overall purpose of the page. Learn more about <a href='https://www.w3.org/WAI/tutorials/page-structure/headings/' target='_blank'>Heading Structure.<span class='sa11y-visually-hidden'> (Opens in new tab)</span></a>"
       $('#sa11y-container').after(errorMessageStart + MissingHeading1Message + errorMessageEnd);
@@ -787,7 +763,7 @@ function Sa11y() {
           this.warningCount++;
           $el.addClass("sa11y-warning-border");
           AltTooLongMessage = "Alt text description is <span class='sa11y-bold'>too long</span>. Alt text should be concise, yet meaningful like a <em>tweet</em> (around 100 characters). If this is a complex image or a graph, consider putting the long description of the image in text below or in an accordion component. <hr aria-hidden='true' class='sa11y-hr'> The alt text is <span class='sa11y-red-text sa11y-bold'>" + altLength + "</span> characters: <span class='sa11y-red-text sa11y-bold'>" + altText + "</span>"
-          $el.before(start + warningBtn + AltTooLongMessahe + end);
+          $el.before(start + warningBtn + AltTooLongMessage + end);
         } else if (text != "") {
           PassAltMessage = "The alt text for this image is: <span class='sa11y-bold'>" + altText + "</span>"
           $el.before(start + passBtn + PassAltMessage + end);
