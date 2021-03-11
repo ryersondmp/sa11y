@@ -55,15 +55,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ## Tippy.js by Atomiks
-The awesome tooltip library was created by Atomiks (MIT license). View Tippy.js:
-https://github.com/atomiks/tippyjs
+The awesome tooltip library was created by [https://github.com/atomiks/tippyjs](Atomiks) (MIT license). View Tippy.js: https://github.com/atomiks/tippyjs/blob/master/LICENSE
 
 ## Icons by Font Awesome
-The SVG icons used in this project are created by Font Awesome. View FontAwesome's license: https://fontawesome.com/license/free
+The SVG icons used in this project are created by Font Awesome. View [https://fontawesome.com/license/free](FontAwesome's license.)
 
 ## Color Contrast Checker created by jasonday
-The colour contrast jQuery plugin was created by jasonday (MIT license).
-https://www.jqueryscript.net/other/color-contrast-checker.html
+The awesome colour contrast jQuery plugin was created by [https://github.com/jasonday](@jasonday). Apache License 2.0: https://github.com/jasonday/color-contrast/blob/master/LICENSE
 
 ## Powered by jQuery
 Powered by jQuery (MIT license). https://github.com/jquery/jquery
