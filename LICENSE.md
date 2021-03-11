@@ -30,7 +30,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ## tota11y by Khan Academy
-Various parts of Sa11y is adapted from https://github.com/Khan/tota11y
+Various parts of Sa11y is adapted from [Tota11y by Khan Academy.](https://github.com/Khan/tota11y)
 
 The MIT License (MIT)
 
