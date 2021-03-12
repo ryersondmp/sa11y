@@ -367,7 +367,6 @@ button.sa11y-warning-btn-text:focus {
 #sa11y-outline-list::-webkit-scrollbar-thumb {
     border-radius: 5px;
     background-color: rgba(0, 0, 0, 0.5);
-    box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
 }
 
 #sa11y-settings-toggle.sa11y-settings-active,
