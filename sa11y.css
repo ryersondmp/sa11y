@@ -283,20 +283,29 @@ button.sa11y-warning-btn-text:focus {
 }
 
 /* Outline and settings Panel */
-#sa11y-settings-panel.sa11y-active,
-#sa11y-outline-panel.sa11y-active {
-    display: table !important;
-    opacity: 1 !important;
-}
-
 #sa11y-settings-panel,
 #sa11y-outline-panel {
-  opacity: 0;
-  display: none;
-  padding: 10px 15px 0 15px !important;
-  padding-bottom: 0px !important;
-  transition: all 0.6s ease;
-  width: 100% !important;
+    display: none;
+    opacity: 0;
+}
+
+#sa11y-settings-panel.sa11y-active,
+#sa11y-outline-panel.sa11y-active {
+    display: block !important;
+    opacity: 1 !important;
+}
+#sa11y-settings-header,
+#sa11y-outline-header {
+    padding: 10px 15px 0px 15px !important;
+}
+
+#sa11y-settings-content,
+#sa11y-outline-content {
+    border-bottom: 1px solid var(--sa11y-panel-bg-splitter) !important;
+    max-height: 350px !important;
+    padding: 0px 15px 10px 15px !important;
+    overflow-y: auto !important;
+    width: 100% !important;
 }
 
 #sa11y-settings-panel,
@@ -343,23 +352,20 @@ button.sa11y-warning-btn-text:focus {
     margin-left: 75px !important;
 }
 
-#sa11y-settings-content,
 #sa11y-outline-list {
-    border-bottom: 1px solid var(--sa11y-panel-bg-splitter) !important;
     list-style-type: none !important;
-    margin: 0 !important;
-    max-height: 350px !important;
-    outline: 0 !important;
-    overflow-y: auto !important;
-    padding: 0 0 10px 0px !important;
-}
-#sa11y-outline-list li,
-#sa11y-outline-list ul {
-    font-size: var(--sa11y-normal-text) !important;
-    margin-bottom: 0px !important;
-    margin-top: 0px !important;
+    margin: 5px 0px !important;
     padding: 0 !important;
 }
+
+#sa11y-outline-list li {
+    font-size: var(--sa11y-normal-text) !important;
+    margin-bottom: 0 !important;
+    margin-top: 0 !important;
+    padding: 0 !important;
+}
+
+/* To-do: fix dark mode */
 #sa11y-outline-list::-webkit-scrollbar {
     -webkit-appearance: none;
     width: 7px;
@@ -399,13 +405,25 @@ button.sa11y-warning-btn-text:focus {
   width: 100% !important;
 }
 
-/* Keyboard focus state */
+#sa11y-settings-options {
+    list-style-type: none !important;
+    margin: 0 !important;
+    padding-left: 7px !important;
+}
+
+#sa11y-settings-options li {
+    padding-bottom: 5px !important;
+    padding-top: 5px !important;
+}
+
+/* To-do: Keyboard focus state */
 #sa11y-settings-toggle:focus-visible,
 #sa11y-outline-toggle:focus-visible {
   outline: 0 !important;
   box-shadow: inset 0 0 0 4px var(--sa11y-focus-color) !important;
 }
 
+#sa11y-container [tabindex='0']:focus-visible,
 #sa11y-container [tabindex='-1']:focus-visible {
   outline: 0 !important;
   box-shadow: 0 0 0 4px var(--sa11y-focus-color) !important;

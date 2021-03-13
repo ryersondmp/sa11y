@@ -17,7 +17,7 @@ let sa11yHeaderIgnore = ""; //Ignore specific headings. E.g. "h1.jumbotron-headi
 let sa11yImageIgnore = ""; //Ignore specific images.
 let sa11yLinkIgnore = ""; //Ignore specific links.
 
-// Use variables to avoid spellig mistakes in strings
+// Use variables to avoid spelling mistakes in strings.
 const ERROR = "Error",
     WARNING = "Warning",
     PASS = "Pass";
@@ -76,26 +76,64 @@ class Sa11y {
         var MainToggleIcon =
             "<svg role='img' focusable='false' width='35px' height='35px' aria-hidden='true' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='#ffffff' d='M256 48c114.953 0 208 93.029 208 208 0 114.953-93.029 208-208 208-114.953 0-208-93.029-208-208 0-114.953 93.029-208 208-208m0-40C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 56C149.961 64 64 149.961 64 256s85.961 192 192 192 192-85.961 192-192S362.039 64 256 64zm0 44c19.882 0 36 16.118 36 36s-16.118 36-36 36-36-16.118-36-36 16.118-36 36-36zm117.741 98.023c-28.712 6.779-55.511 12.748-82.14 15.807.851 101.023 12.306 123.052 25.037 155.621 3.617 9.26-.957 19.698-10.217 23.315-9.261 3.617-19.699-.957-23.316-10.217-8.705-22.308-17.086-40.636-22.261-78.549h-9.686c-5.167 37.851-13.534 56.208-22.262 78.549-3.615 9.255-14.05 13.836-23.315 10.217-9.26-3.617-13.834-14.056-10.217-23.315 12.713-32.541 24.185-54.541 25.037-155.621-26.629-3.058-53.428-9.027-82.141-15.807-8.6-2.031-13.926-10.648-11.895-19.249s10.647-13.926 19.249-11.895c96.686 22.829 124.283 22.783 220.775 0 8.599-2.03 17.218 3.294 19.249 11.895 2.029 8.601-3.297 17.219-11.897 19.249z'/></svg>";
 
-        // TODO: Simplify this
-        var sa11ycontainer = document.createElement("div");
-        sa11ycontainer.setAttribute("id", "sa11y-container");
-        sa11ycontainer.setAttribute("role", "region");
-        sa11ycontainer.setAttribute("lang", sa11yLangCode);
-        sa11ycontainer.setAttribute("aria-label", sa11yContainerLang);
-        sa11ycontainer.innerHTML =
-            '<button type="button" aria-expanded="false" id="sa11y-toggle">' +
-            MainToggleIcon +
-            '<span class="sa11y-visually-hidden">' +
-            sa11yMainToggleLang +
-            "</span></button>" +
-            '<div id="sa11y-panel">' +
-            '<div id="sa11y-outline-panel"><div id="sa11y-outline-header" class="sa11y-header-text" tabindex="-1">Page outline</div><ul id="sa11y-outline-list"></ul></div>' +
-            '<div id="sa11y-settings-panel"><div id="sa11y-settings-header" class="sa11y-header-text" tabindex="-1">Settings</div><div id="sa11y-settings-content"><div class="sa11y-panel-controls"><button class="btn btn-sm btn-primary" id="theme-toggle"></button></div><div class="sa11y-header-text">About Sa11y</div><span></span></div></div>' +
-            '<div id="sa11y-panel-content"><div class="sa11y-panel-icon"></div><div id="sa11y-panel-text"><span id="sa11y-status"></span></div></div>' +
-            '<div id="sa11y-panel-controls"><button type="button" aria-expanded="false" id="sa11y-outline-toggle">Show Outline</button><button type="button" aria-expanded="false" id="sa11y-settings-toggle">Show Settings</button><div aria-hidden="true">&nbsp;&nbsp;</div></div>' +
-            "</div>";
+// TODO: Simplify this
+var sa11ycontainer = document.createElement("div");
+sa11ycontainer.setAttribute("id", "sa11y-container");
+sa11ycontainer.setAttribute("role", "region");
+sa11ycontainer.setAttribute("lang", sa11yLangCode);
+sa11ycontainer.setAttribute("aria-label", sa11yContainerLang);
+sa11ycontainer.innerHTML =
+    '<button type="button" aria-expanded="false" id="sa11y-toggle">' + MainToggleIcon + '<span class="sa11y-visually-hidden">' + sa11yMainToggleLang + '</span></button>' + 
+            
+    //Start of main container.
+    '<div id="sa11y-panel">' +
 
-        $("body").prepend(sa11ycontainer);
+    //Page Outline tab.
+    '<div id="sa11y-outline-panel">' +
+        '<div id="sa11y-outline-header" class="sa11y-header-text"><span tabindex="-1">Page outline</span></div>' +
+        '<div id="sa11y-outline-content">' +
+            '<ul id="sa11y-outline-list"></ul>' +
+        '</div>' +
+    '</div>' +
+
+    //Settings tab.
+    '<div id="sa11y-settings-panel">' +
+    '<div id="sa11y-settings-header" class="sa11y-header-text"><span tabindex="-1">Settings</span></div>' +
+        '<div id="sa11y-settings-content">' +
+            `<ul id="sa11y-settings-options">  
+                <li>
+                    <span id="check-contrast">Check contrast</span>
+                    <button aria-labelledby="check-contrast">
+                        Off
+                    </button>
+                </li>
+                <li>
+                    <span id="dark-mode">Dark mode</span>
+                    <button aria-labelledby="dark-mode" id="sa11y-theme-toggle"></button>
+                </li>
+                <li>
+                    <span id="readability">Readability</span>
+                    <button aria-labelledby="readability" id="readability-toggle">On</button>
+                </li>
+            </ul>
+            <hr class="sa11y-hr" aria-hidden="true">` +
+
+            '<div class="sa11y-header-text">About Sa11y</div>' +
+            '<span>Sa11y is not a comprehensive code analysis tool.</span>' +
+
+        '</div>'+
+    '</div>' +
+                    
+        //Main panel that conveys state of page.
+        '<div id="sa11y-panel-content"><div class="sa11y-panel-icon"></div><div id="sa11y-panel-text"><span id="sa11y-status"></span></div></div>' +
+
+        //Show Outline & Show Settings button.
+        '<div id="sa11y-panel-controls"><button type="button" aria-expanded="false" id="sa11y-outline-toggle">Show Outline</button><button type="button" aria-expanded="false" id="sa11y-settings-toggle">Show Settings</button><div aria-hidden="true">&nbsp;&nbsp;</div></div>' + 
+
+    //End of main container.
+    '</div>';
+
+$("body").prepend(sa11ycontainer);
 
         // JQuery
         $(() => {
@@ -150,52 +188,64 @@ class Sa11y {
             let systemInitiatedDark = window.matchMedia(
                 "(prefers-color-scheme: dark)"
             );
+            let $sa11yTheme = $("#sa11y-theme-toggle");
             let theme = sessionStorage.getItem("sa11y-theme");
             if (systemInitiatedDark.matches) {
-                $("#theme-toggle").text("Light");
+                $sa11yTheme.text("On");
+                $sa11yTheme.attr("aria-pressed","true");
             } else {
-                $("#theme-toggle").text("Dark");
+                $sa11yTheme.text("Off");
+                $sa11yTheme.attr("aria-pressed","false");
             }
             function prefersColorTest(systemInitiatedDark) {
                 if (systemInitiatedDark.matches) {
                     $("html").attr("data-sa11y-theme", "dark");
-                    $("#theme-toggle").text("Light");
+                    $sa11yTheme.text("On");
+                    $sa11yTheme.attr("aria-pressed","true");
                     sessionStorage.setItem("sa11y-theme", "");
                 } else {
                     $("html").attr("data-sa11y-theme", "light");
-                    $("#theme-toggle").text("Dark");
+                    $sa11yTheme.text("Off");
+                    $sa11yTheme.attr("aria-pressed","false");
                     sessionStorage.setItem("sa11y-theme", "");
                 }
             }
+            
             systemInitiatedDark.addListener(prefersColorTest);
-            $("#theme-toggle").click(function () {
+            $sa11yTheme.click(function () {
                 let theme = sessionStorage.getItem("sa11y-theme");
                 if (theme === "dark") {
                     $("html").attr("data-sa11y-theme", "light");
                     sessionStorage.setItem("sa11y-theme", "light");
-                    $("#theme-toggle").text("Dark");
+                    $sa11yTheme.text("Off");
+                    $sa11yTheme.attr("aria-pressed","false");
                 } else if (theme === "light") {
                     $("html").attr("data-sa11y-theme", "dark");
                     sessionStorage.setItem("sa11y-theme", "dark");
-                    $("#theme-toggle").text("Light");
+                    $sa11yTheme.text("On");
+                    $sa11yTheme.attr("aria-pressed","true");
                 } else if (systemInitiatedDark.matches) {
                     $("html").attr("data-sa11y-theme", "light");
                     sessionStorage.setItem("sa11y-theme", "light");
-                    $("theme-toggle").text("Dark");
+                    $sa11yTheme.text("Off");
+                    $sa11yTheme.attr("aria-pressed","false");
                 } else {
                     $("html").attr("data-sa11y-theme", "dark");
                     sessionStorage.setItem("sa11y-theme", "dark");
-                    $("#theme-toggle").text("Light");
+                    $sa11yTheme.text("On");
+                    $sa11yTheme.attr("aria-pressed","true");
                 }
             });
             if (theme === "dark") {
                 $("html").attr("data-sa11y-theme", "dark");
                 sessionStorage.setItem("sa11y-theme", "dark");
-                $("#theme-toggle").text("Light");
+                $sa11yTheme.text("On");
+                $sa11yTheme.attr("aria-pressed","true");
             } else if (theme === "light") {
                 $("html").attr("data-sa11y-theme", "light");
                 sessionStorage.setItem("sa11y-theme", "light");
-                $("theme-toggle").text("Dark");
+                $sa11yTheme.text("Off");
+                $sa11yTheme.attr("aria-pressed","false");
             }
         });
     }
@@ -1210,7 +1260,7 @@ class Sa11y {
             $(this).attr("aria-expanded", function (i, attr) {
                 return attr == "true" ? "false" : "true";
             });
-            $("#sa11y-outline-header").focus();
+            $("#sa11y-outline-header > span").focus();
             $(".sa11y-heading-label").toggleClass("sa11y-label-visible");
 
             //Remove settings panel
@@ -1218,6 +1268,11 @@ class Sa11y {
             $settingsToggle.removeClass("sa11y-settings-active");
             $settingsToggle.attr("aria-expanded", "false");
             $settingsToggle.text("Show Settings");
+
+            //Keyboard accessibility fix for scrollable panel content.
+            if ($("#sa11y-outline-list").height() > 350) {
+                    $("#sa11y-outline-list").attr("tabindex","0");
+            }
         });
 
         //Show settings panel
@@ -1233,7 +1288,7 @@ class Sa11y {
             $(this).attr("aria-expanded", function (i, attr) {
                 return attr == "true" ? "false" : "true";
             });
-            $("#sa11y-settings-header").focus();
+            $("#sa11y-settings-header > span").focus();
 
             //Remove outline panel
             $("#sa11y-outline-panel").removeClass("sa11y-active");
@@ -1241,6 +1296,11 @@ class Sa11y {
             $outlineToggle.attr("aria-expanded", "false");
             $outlineToggle.text("Show Outline");
             $(".sa11y-heading-label").removeClass("sa11y-label-visible");
+
+            //Keyboard accessibility fix for scrollable panel content.
+            if ($("#sa11y-settings-content").height() > 350) {
+                $("#sa11y-settings-content").attr("tabindex","0");
+            }
         });
     };
 
@@ -1271,7 +1331,7 @@ class Sa11y {
         this.root.find("#sa11y-panel").removeClass("sa11y-active");
         this.root.find("#sa11y-outline-list li").remove();
     };
-}
+}   
 
 if (window.navigator.userAgent.match(/MSIE|Trident/) === null) {
     console.log("sally!");
