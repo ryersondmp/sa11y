@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <!-- saved from url=(0049)https://getbootstrap.com/docs/4.3/examples/album/ -->
 <html lang="en">
-
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -9,18 +8,14 @@
   <link rel="stylesheet" href="main.css"/>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha256-UzFD2WYH2U1dQpKDjjZK72VtPeWP50NoJjd26rnAdUI=" crossorigin="anonymous" />
-  <!-- Main stylesheet for Sa11y -->
   <link rel="stylesheet" href="../../sa11y.css"/>
 </head>
-
 <body>
   <header>
-
     <div class="sa11y-website-frame-message">
       <p style="display:none;" id="iframe-check"><a class="sa11y-exclude" href="full-list.html" target="_blank">Open this page in a new tab for a better experience.</a> <span class="fas fa-external-link-alt" aria-hidden="true"></span></p>
       <p style="display:none;" id="newtabonly">Viewing demo in a new tab. <a href="../index.html#demo">Go back to documentation.</a></p>
     </div>
-
     <div class="navbar navbar-dark bg-dark shadow-sm">
       <div class="container d-flex justify-content-between">
         <span class="d-flex align-items-center text-white">
@@ -37,38 +32,45 @@
   </header>
 
   <main>
-
     <section class="jumbotron text-center">
       <div class="container">
         <h1 class="jumbotron-heading">All Rulesets</h1>
         <p class="lead">This page explains and demonstrates all conditions and rulesets. Navigate between different pages to view all three states (Errors, Warnings and No Errors).</p>
-
       </div>
     </section>
 
     <div class="album py-5 bg-light">
       <div class="container">
-
         <div class="row">
           <div class="col-md-2">
-
             <div id="list-example" class="list-group sticky-top">
               <strong class="mt-1 mb-2">On this page:</strong>
-              <a class="list-group-item list-group-item-action" href="#list-item-0">Headings</a>
-              <a class="list-group-item list-group-item-action" href="#list-item-1">Images</a>
-              <a class="list-group-item list-group-item-action" href="#list-item-2">Links</a>
-              <a class="list-group-item list-group-item-action" href="#list-item-3">Tables</a>
-              <a class="list-group-item list-group-item-action" href="#list-item-4">Contrast</a>
-              <a class="list-group-item list-group-item-action" href="#list-item-5">Inputs</a>
-              <a class="list-group-item list-group-item-action" href="#list-item-6">Other</a>
-              <a class="list-group-item list-group-item-action" href="#list-item-7">Content</a>
+              <a class="list-group-item list-group-item-action" href="#list-item-0">Updates</a>
+              <a class="list-group-item list-group-item-action" href="#list-item-1">Headings</a>
+              <a class="list-group-item list-group-item-action" href="#list-item-2">Images</a>
+              <a class="list-group-item list-group-item-action" href="#list-item-3">Links</a>
+              <a class="list-group-item list-group-item-action" href="#list-item-4">Tables</a>
+              <a class="list-group-item list-group-item-action" href="#list-item-5">Contrast</a>
+              <a class="list-group-item list-group-item-action" href="#list-item-6">Inputs</a>
+              <a class="list-group-item list-group-item-action" href="#list-item-7">Other</a>
+              <a class="list-group-item list-group-item-action" href="#list-item-8">Content</a>
             </div>
           </div>
 
           <div class="col-md-10">
             <div data-spy="scroll" data-target="#list-example" data-offset="0" class="scrollspy-example">
 
-              <h2 id="list-item-0">Headings</h2>
+              
+              <h2 id="list-item-0">Updates and changes</h2>
+              <h3 class="h5">Sa11y V2 - March 2021</h3>
+              <ul>
+                <li><strong>Change:</strong> Heading ruleset changes.</li>
+                <li>Ruleset testing for duplicate <kbd>id</kbd> is removed. This error is usually corrected by a developer.</li>
+              </ul>
+
+              <hr aria-hidden="true" class="mb-5 mt-5">
+
+              <h2 id="list-item-1">Headings</h2>
               <p>Sa11y's heading structure ruleset has the following conditions:</p>
               <ul class="mb-4">
                 <li>The first heading on a page must be a <kbd>&lt;h1&gt;</kbd>.</li>
@@ -79,7 +81,7 @@
                 <li>Blockquotes must not be used as headings.</li>
               </ul>
 
-              <h3>The first heading on a page must be a Heading 1</h3>
+              <h3 style="text-decoration: underline overline dotted red;">The first heading on a page must be a Heading 1</h3>
               <p class="mb-4">Sa11y's heading structure ruleset is based on the condition that the first heading on a page must be a Heading 1. However, it is technically not a WCAG failure if it is not. Please refer to <a
                   href="https://www.w3.org/TR/WCAG20-TECHS/H42.html">Technique H42: Using h1-h6 to identify headings.</a> Please visit the demo to view this condition in action.</p>
 
@@ -133,7 +135,7 @@
 
               <hr class="pb-3">
 
-              <h2 id="list-item-1">Images</h2>
+              <h2 id="list-item-2">Images</h2>
               <h3 class="pb-3 pt-3">Images without hyperlinks</h3>
               <div class="row">
                 <div class="col-md-4 d-flex">
@@ -225,7 +227,7 @@
                 <div class="col-md-4 d-flex">
                   <div class="card mb-4 shadow-sm flex-fill">
                     <a href="#"><img src="image-examples/zebra.jpg" width="100%"
-                        alt="Zebras are several species of African equids (horse family) united by their distinctive black-and-white striped coats. Their stripes come in different patterns, unique to each individual. They are generally social animals that live in small harems to large herds. Unlike their closest relatives, horses and donkeys, zebras have never been truly domesticated. Source: Wikipedia."
+                        alt="Zebras are several species of African equids (horse family) united by their distinctive black-and-white striped coats. Their stripes come in different patterns, unique to each individual. They are generally social animals that live in small harems to large herds. Unlike their closest relatives, horses & donkeys, zebras have never been truly domesticated. Source: Wikipedia."
                         class="w-100"></a>
                     <div class="card-body">
                       <p class="card-text">Condition 10: Hyperlinked image text that is too long.</p>
@@ -354,7 +356,7 @@
               </div>
 
               <hr class="pb-3">
-              <h2 id="list-item-3">Tables</h2>
+              <h2 id="list-item-4">Tables</h2>
               <p>There are 3 simple accessibility tests for a table.</p>
               <ol>
                 <li>Table must contain at least one table heading or <kbd>th</kbd></li>
@@ -487,7 +489,7 @@
               </div>
 
               <hr class="pb-3">
-              <h2 id="list-item-4">Contrast</h2>
+              <h2 id="list-item-5">Contrast</h2>
               <p><a href="https://www.jqueryscript.net/other/color-contrast-checker.html">jQuery contrast plugin</a> was created by jasonday. To prevent false positives, a simple condition was added to exclude any elements whose width and height is
                 less than 1px and contains <kbd>overflow:hidden;</kbd>. Some contrast plugins falsely indicate visually hidden text for screenreaders as a contrast fail.</p>
 
@@ -521,7 +523,7 @@
               </div>
 
               <hr class="pb-3">
-              <h2 id="list-item-5">Inputs</h2>
+              <h2 id="list-item-6">Inputs</h2>
               <p>Accessibility tests for form inputs.</p>
               <div class="ml-5 mb-5">
                 <div class="row">
@@ -554,29 +556,15 @@
 
 
               <hr class="pb-3">
-              <h2 id="list-item-6">Other</h2>
+              <h2 id="list-item-7">Other</h2>
               <p>Other accessibility checks that are easy to test for.</p>
 
               <h3 class="pt-3">Page language</h3>
               <p>Checks for presence of <kbd>lang</kbd> attribute on <kbd>&lt;html&gt;</kbd> tag. If attribute is missing, an error banner will be appended at the top of the page. View this error in action on the <a href="errors.html">Errors
                   page.</a></p>
 
-              <h3 class="pt-3">Duplicate IDs</h3>
-              <p>Checks for presence of duplicate <kbd>id</kbd> attributes (unique identifier).</p>
-
-              <div class="ml-5">
-                <h4>Example</h4>
-                <p>Two inputs with the same <kbd>id</kbd>.</p>
-                <div class="row">
-                  <div class="col-md-6"><input type="text" aria-label="blueberry" id="blueberry" /></div>
-                  <div class="col-md-6"><input type="text" aria-label="raspberry" id="blueberry" /></div>
-                </div>
-
-              </div>
-
-
               <hr class="pb-3">
-              <h2 id="list-item-7">Content</h2>
+              <h2 id="list-item-8">Content</h2>
 
               <h3 class="pt-3">Warning for PDF</h3>
               <p>A warning is added to any hyperlinks that have a <kbd>.pdf</kbd> file extension. A warning icon is only appended to the first PDF detected on the page to avoid overwhelming a content author. All other PDF links are visually
@@ -681,7 +669,6 @@
                   CSS Selector Reference,</a> customize this condition to add your own.</p>
               <p class="ml-5">For example, a hyperlink that points to wp-admin incorrectly: <a href="https://www.ryerson.ca/wp-admin/">About Ryerson</a></p>
 
-
             </div>
           </div>
         </div>
@@ -689,15 +676,12 @@
 
       </div>
     </div>
-
-
-    <div class="album py-5 bg-dark" style="color:white;">
-      <div class="container">
-      </div>
-    </div>
-
-
   </main>
+  <footer class="text-muted sa11y-ignore">
+      <div class="container">
+        <p>Customize Sa11y to target specific regions of a page only. For example, <a href="#">this</a> link will be ignored. If a content editor can't edit it, don't scan it.</p>
+      </div>
+  </footer>
 
   <!-- Bootstrap + Jquery -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -708,7 +692,7 @@
   <script src="https://unpkg.com/tippy.js@6"></script>
 
   <!--Sa11y (Use sa11y.js to exclude contrast checks)-->
-  <script src="../../sa11y-with-contrast.js"></script>
+  <script src="../../sa11y-v2.js"></script>
 
   <script>
     $(document).ready(function() {
@@ -730,5 +714,4 @@
   </script>
   <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </body>
-
 </html>

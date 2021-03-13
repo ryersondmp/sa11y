@@ -326,6 +326,7 @@ class Sa11y {
                     <span class='sa11y-red-text sa11y-bold'>Heading ${level}</span>.`;
             } else if ($el.text().trim().length < 1) {
                 error = "Empty heading found! Please remove empty header tags.";
+                $el.addClass("sa11y-error-text");
             } else if ($el.text().trim().length > 170) {
                 error = `Heading is too long! Headings are used to organize content and convey structure. They should be brief, clear, informative and unique. Please keep headings less than 160 characters (no more than a sentence).<hr aria-hidden='true' class='sa11y-hr'>Character count: 
                     <span class='sa11y-bold sa11y-red-text'>${headingLength}</span>.`;
@@ -429,6 +430,7 @@ class Sa11y {
                 "view",
                 "view our",
                 "read more",
+                "read",
                 ".",
                 ",",
                 ":",
@@ -808,8 +810,7 @@ class Sa11y {
                         $el.closest("a").before(
                             ButtonInserter(
                                 ERROR,
-                                MissingAltLinkButHasTextMessage,
-                                true
+                                MissingAltLinkButHasTextMessage
                             )
                         );
                     } else if ($el.parents("a").text().trim().length == 0) {
@@ -817,7 +818,7 @@ class Sa11y {
                         let MissingAltLinkMessage =
                             "Image is being used as a hyperlink but is missing alt text! Please ensure alt text describes where the link takes you.";
                         $el.closest("a").before(
-                            ButtonInserter(ERROR, MissingAltLinkMessage, true)
+                            ButtonInserter(ERROR, MissingAltLinkMessage)
                         );
                     }
                 }
@@ -826,7 +827,7 @@ class Sa11y {
                     $el.addClass("sa11y-error-border");
                     let MissingAltMessage =
                         "Missing alt text! If the image conveys a story, a mood or important information - be sure to describe the image.";
-                    $el.before(ButtonInserter(ERROR, MissingAltMessage, true));
+                    $el.before(ButtonInserter(ERROR, MissingAltMessage));
                 }
             }
 
@@ -845,7 +846,7 @@ class Sa11y {
                         <hr aria-hidden='true' class='sa11y-hr'> 
                         The alt text for this image is: <span class='sa11y-bold'>${altText}</span>`;
                     $el.closest("a").before(
-                        ButtonInserter(ERROR, LinkImageBadAltMessage, true)
+                        ButtonInserter(ERROR, LinkImageBadAltMessage)
                     );
                 } else if (error != null) {
                     this.errorCount++;
@@ -855,7 +856,7 @@ class Sa11y {
                         <hr aria-hidden='true' class='sa11y-hr'> 
                         The alt text for this image is: <span class='sa11y-bold'>${altText} </span>`;
                     $el.before(
-                        ButtonInserter(ERROR, AltHasBadWordMessage, true)
+                        ButtonInserter(ERROR, AltHasBadWordMessage)
                     );
                 } else if (text == "" && $el.parents().is("a[href]")) {
                     if ($el.parents("a").text().trim().length == 0) {
@@ -866,15 +867,14 @@ class Sa11y {
                         $el.closest("a").before(
                             ButtonInserter(
                                 ERROR,
-                                ImageLinkNullAltNoTextMessage,
-                                true
+                                ImageLinkNullAltNoTextMessage
                             )
                         );
                     } else {
                         let LinkHasAltMessage =
                             "Image is marked as decorative, although the hyperlink is using the surrounding text as a descriptive label.";
                         $el.closest("a").before(
-                            ButtonInserter(PASS, LinkHasAltMessage, true)
+                            ButtonInserter(PASS, LinkHasAltMessage)
                         );
                     }
                 }
@@ -897,7 +897,7 @@ class Sa11y {
                         The alt text is <span class='sa11y-red-text sa11y-bold'>${altLength}</span> characters: 
                         <span class='sa11y-red-text sa11y-bold'>${altText}</span>`;
                     $el.closest("a").before(
-                        ButtonInserter(ERROR, HyperlinkAltLengthMessage, true)
+                        ButtonInserter(ERROR, HyperlinkAltLengthMessage)
                     );
                 }
 
@@ -915,7 +915,7 @@ class Sa11y {
                         <hr aria-hidden='true' class='sa11y-hr'>
                         Alt text: <span class='sa11y-bold'>${altText} </span>`;
                     $el.closest("a").before(
-                        ButtonInserter(WARNING, ImageLinkAltTextMessage, true)
+                        ButtonInserter(WARNING, ImageLinkAltTextMessage)
                     );
                 }
 
@@ -930,7 +930,7 @@ class Sa11y {
                     let AnchorLinkAndAltMessage = `Image link contains <span class='sa11y-bold'>both alt text and surrounding link text.</span> If this image is decorative and is being used as a functional link to another page, consider marking the image as decorative or null - the surrounding link text should suffice. <hr aria-hidden='true' class='sa11y-hr'>
                         Alt text: <span class='sa11y-bold'>${altText}</span>`;
                     $el.closest("a").before(
-                        ButtonInserter(WARNING, AnchorLinkAndAltMessage, true)
+                        ButtonInserter(WARNING, AnchorLinkAndAltMessage)
                     );
                 } else if (text.length > 160) {
                     this.warningCount++;
@@ -939,11 +939,10 @@ class Sa11y {
                     If this is a complex image or a graph, consider putting the long description of the image in text below or in an accordion component. 
                     <hr aria-hidden='true' class='sa11y-hr'> 
                     The alt text is <span class='sa11y-red-text sa11y-bold'> ${altLength}</span> characters: 
-                    <span class='sa11y-red-text sa11y-bold'>${altText} </span>`;
+                    <span class='sa11y-red-text sa11y-bold'>${altText}</span>`;
                     $el.before(ButtonInserter(WARNING, AltTooLongMessage));
                 } else if (text != "") {
-                    PassAltMessage = `The alt text for this image is: <span class='sa11y-bold'>${altText}</span>`;
-
+                    let PassAltMessage = `The alt text for this image is: <span class='sa11y-bold'>${altText}</span>`;
                     $el.before(ButtonInserter(PASS, PassAltMessage));
                 }
             }
@@ -1048,7 +1047,7 @@ class Sa11y {
                 "Bad link found. Link appears to point to a development environment. Make sure the link does not contain <em>dev</em> or <em>wp-admin</em> in the URL. <hr aria-hidden='true' class='sa11y-hr'>This link points to: <br><span class='sa11y-bold sa11y-red-text'>" +
                 el +
                 "</span>";
-            $el.after(ButtonInserter(ERROR, BadLinkMessage));
+            $el.after(ButtonInserter(ERROR, BadLinkMessage, true));
         });
 
         //Warning: Find all PDFs. Although only append warning icon to first PDF on page.
@@ -1064,7 +1063,7 @@ class Sa11y {
             checkPDF.has("img").removeClass("sa11y-warning-text");
             let PDFMessage =
                 "PDFs are considered web content and must be made accessible as well. PDFs often contain issues for people who use screen readers (missing structural tags or missing form field labels) and people with low vision (text does not reflow when enlarged). If this PDF is a form, consider using an accessible HTML form as an alternative. If this PDF is a document, consider converting it into a web page. Otherwise, please <span class='sa11y-bold'>check PDF for accessibility in Acrobat DC.</span>";
-            firstPDF.after(ButtonInserter(WARNING, PDFMessage));
+            firstPDF.after(ButtonInserter(WARNING, PDFMessage, true));
         }
 
         //Find blockquotes used as headers.
@@ -1092,7 +1091,7 @@ class Sa11y {
         $queryUppercase.each(function () {
             let $this = $(this);
 
-            var UppercaseWarning =
+            let UppercaseWarning =
                 "All caps detected. Avoid typing sentences or phrases in uppercase. Some screen readers may interpret all capital text as an acronym and will read each letter individually. Additionally, all caps are more difficult to read and give the appearance of SHOUTING.";
 
             var uppercasePattern = /(?!<a[^>]*?>)(\b[A-Z]['!:A-Z\s]{15,}|\b[A-Z]{15,}\b)(?![^<]*?<\/a>)/g;
@@ -1106,11 +1105,10 @@ class Sa11y {
                     $(this).html().replace(uppercasePattern, replaceUppercase)
                 );
             });
-
-            if ($(".sa11y-warning-uppercase").length > 0) {
-                this.warningCount++;
-            }
         });
+        if ($(".sa11y-warning-uppercase").length > 0) {
+            this.warningCount++;
+        }
 
         //Tables check.
         this.$table.each((i, el) => {
@@ -1121,14 +1119,14 @@ class Sa11y {
             if (findTHeaders.length == 0) {
                 this.errorCount++;
                 $el.addClass("sa11y-error-border");
-                MissingHeadingsError =
+                let MissingHeadingsError =
                     "Missing table headers! Accessible tables need HTML markup that indicates header cells and data cells which defines their relationship. This information provides context to people who use assistive technology. Tables should be used for tabular data only.";
                 $el.before(ButtonInserter(ERROR, MissingHeadingsError));
             }
             if (findHeadingTags.length > 0) {
                 findHeadingTags.addClass("sa11y-error-heading");
                 findHeadingTags.parent().addClass("sa11y-error-border");
-                SemanticHeadingTableError =
+                let SemanticHeadingTableError =
                     "Semantic headings such as Heading 2 or Heading 3 should only be used for sections of content; <span class='sa11y-bold'>not</span> in HTML tables. Indicate table headings using the <span class='sa11y-bold'>th</span> element instead.";
                 findHeadingTags.before(
                     ButtonInserter(ERROR, SemanticHeadingTableError)
@@ -1139,7 +1137,7 @@ class Sa11y {
                 if ($th.text().trim().length < 1) {
                     this.errorCount++;
                     findTHeaders.addClass("sa11y-error-border");
-                    EmptyTableHeaderError =
+                    let EmptyTableHeaderError =
                         "Empty table header found! Table headers should <em>never</em> be empty. It is important to designate row and/or column headers to convey their relationship. This information provides context to people who use assistive technology. Please keep in mind that tables should be used for tabular data only.";
                     findTHeaders.append(
                         ButtonInserter(ERROR, EmptyTableHeaderError)
@@ -1148,38 +1146,17 @@ class Sa11y {
             });
         });
 
-        //Error: Check for duplicate IDs.
-        let $checkDuplicateIDs = this.root
-            .find("[id]")
-            .not(this.containerIgnore);
-        $checkDuplicateIDs.each(function () {
-            var ids = {};
-            var found = false;
-
-            if (this.id && ids[this.id]) {
-                found = true;
-                this.errorCount++;
-                $(this).addClass("sa11y-error-text");
-                DuplicateIDMessage =
-                    "Found <span class='sa11y-bold'>duplicate ID</span>. Duplicate ID errors are known to cause problems for assistive technologies when they are trying to interact with content. <hr aria-hidden='true' class='sa11y-hr'>Please remove or change the following ID: <span class='sa11y-bold sa11y-red-text'>" +
-                    this.id +
-                    "</span>";
-                $(this).before(ButtonInserter(ERROR, DuplicateIDMessage, true));
-            }
-            ids[this.id] = 1;
-        });
-
         //Error: Missing language tag. Lang should be at least 2 characters.
-        var lang = this.root.find("html").attr("lang");
+        var lang = $("html").attr("lang");
         if (
-            $("html").attr("lang") == undefined ||
-            $("html").attr("lang").length < 2
+            lang == undefined ||
+            lang.length < 2
         ) {
             this.errorCount++;
             let PageLanguageMessage =
                 "Page language not declared! Please <a href='https://www.w3.org/International/questions/qa-html-language-declarations' target='_blank'>declare language on HTML tag.<span class='sa11y-visually-hidden'> (opens new tab)</span></a>";
             $("#sa11y-container").after(
-                ButtonInserter(ERROR, PageLanguageMessage)
+                ErrorBannerInsert(PageLanguageMessage)
             );
         }
 
@@ -1197,6 +1174,7 @@ class Sa11y {
             );
         }
     };
+    
     displayPanel = () => {
         let totalCount = this.errorCount + this.warningCount;
         $("#sa11y-panel").addClass("sa11y-active");
