@@ -31,6 +31,8 @@ html, html[data-sa11y-theme="light"] {
     --sa11y-panel-secondary: #4d4d4d;
     --sa11y-panel-secondary-hover: #0077c8;
     --sa11y-panel-toggle-active: #c6c6c6;
+    --sa11y-setting-switch-bg-on: #7acb91;
+    --sa11y-setting-switch-bg-off: #bfbfbf;
 }
 
 html[data-sa11y-theme="dark"] {
@@ -42,7 +44,9 @@ html[data-sa11y-theme="dark"] {
   --sa11y-panel-bg-splitter: #0038ae;
   --sa11y-panel-secondary: #a3c1ff;
   --sa11y-panel-secondary-hover: rgb(0 0 0 / 40%);
-  --sa11y-panel-toggle-active: #0a2051;
+  --sa11y-panel-toggle-active: #000000;
+  --sa11y-setting-switch-bg-on: #7acb91;
+  --sa11y-setting-switch-bg-off: #bfbfbf;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -55,7 +59,9 @@ html[data-sa11y-theme="dark"] {
     --sa11y-panel-bg-splitter: #0038ae;
     --sa11y-panel-secondary: #a3c1ff;
     --sa11y-panel-secondary-hover: rgb(0 0 0 / 40%);
-    --sa11y-panel-toggle-active: #0a2051;
+    --sa11y-panel-toggle-active: #000000;
+    --sa11y-setting-switch-bg-on: #7acb91;
+    --sa11y-setting-switch-bg-off: #bfbfbf;
 	}
 
 	html[data-sa11y-theme="light"] {
@@ -68,6 +74,8 @@ html[data-sa11y-theme="dark"] {
       --sa11y-panel-secondary: #4d4d4d;
       --sa11y-panel-secondary-hover: #0077c8;
       --sa11y-panel-toggle-active: #c6c6c6;
+      --sa11y-setting-switch-bg-on: #7acb91;
+      --sa11y-setting-switch-bg-off: #bfbfbf;
 	}
 }
 
@@ -204,6 +212,11 @@ button.sa11y-warning-btn-text:focus {
     font-family: var(--sa11y-font-face) !important;
     line-height: 23px !important;
     text-transform: none !important;
+}
+
+#sa11y-container label {
+    display: inline-block !important;
+    margin: 0 !important;
 }
 
 #sa11y-container #sa11y-panel {
@@ -414,6 +427,48 @@ button.sa11y-warning-btn-text:focus {
 #sa11y-settings-options li {
     padding-bottom: 5px !important;
     padding-top: 5px !important;
+}
+
+#sa11y-settings-options li {
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    align-items: center;
+  }
+  
+  #sa11y-settings-options li+li {
+    border-top: 1px solid !important;
+    border-color: var(--sa11y-panel-bg-splitter) !important;
+  }
+
+/* Toggle buttons within Settings panel. */
+.sa11y-settings-switch {
+    border-radius: 5px !important;
+    border: 0 !important;
+    cursor: pointer !important;
+    margin: 3px !important;
+    padding: 3px 10px !important;
+    width: 50px;
+    position: relative !important; 
+}
+
+.sa11y-settings-switch[aria-pressed="false"] {
+    background: var(--sa11y-setting-switch-bg-off);
+}
+
+.sa11y-settings-switch[aria-pressed="true"] {
+    background: var(--sa11y-setting-switch-bg-on);
+}
+
+/* Increase target size of toggle switches */
+.sa11y-settings-switch:after {
+    content:'';
+    position: absolute;
+    top:-8px; 
+    bottom:-8px; 
+    left:-8px; 
+    right:-8px; 
 }
 
 /* To-do: Keyboard focus state */

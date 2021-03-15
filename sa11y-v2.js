@@ -103,23 +103,21 @@ sa11ycontainer.innerHTML =
             `<ul id="sa11y-settings-options">  
                 <li>
                     <span id="check-contrast">Check contrast</span>
-                    <button aria-labelledby="check-contrast">
-                        Off
-                    </button>
+                    <button aria-labelledby="check-contrast" class="sa11y-settings-switch" aria-pressed="false">Off</button>
                 </li>
                 <li>
-                    <span id="dark-mode">Dark mode</span>
-                    <button aria-labelledby="dark-mode" id="sa11y-theme-toggle"></button>
+                    <label id="dark-mode" for="sa11y-theme-toggle">Dark mode</label>
+                    <button id="sa11y-theme-toggle" aria-labelledby="dark-mode" class="sa11y-settings-switch"></button>
                 </li>
                 <li>
                     <span id="readability">Readability</span>
-                    <button aria-labelledby="readability" id="readability-toggle">On</button>
+                    <button id="readability-toggle" aria-labelledby="readability" class="sa11y-settings-switch" aria-pressed="false">Off</button>
                 </li>
             </ul>
             <hr class="sa11y-hr" aria-hidden="true">` +
 
             '<div class="sa11y-header-text">About Sa11y</div>' +
-            '<span>Sa11y is not a comprehensive code analysis tool.</span>' +
+            '<div>Sa11y is an accessibility quality assurance tool that visually highlights common content related issues. It is not a comprehensive code analysis tool. Created at Ryerson University in Toronto, Canada.</div>' +
 
         '</div>'+
     '</div>' +
@@ -193,20 +191,24 @@ $("body").prepend(sa11ycontainer);
             if (systemInitiatedDark.matches) {
                 $sa11yTheme.text("On");
                 $sa11yTheme.attr("aria-pressed","true");
+                $(".sa11y-setting-switch").addClass("sa11y-setting-switch-selected");
             } else {
                 $sa11yTheme.text("Off");
                 $sa11yTheme.attr("aria-pressed","false");
+                $(".sa11y-setting-switch").removeClass("sa11y-setting-switch-selected");
             }
             function prefersColorTest(systemInitiatedDark) {
                 if (systemInitiatedDark.matches) {
                     $("html").attr("data-sa11y-theme", "dark");
                     $sa11yTheme.text("On");
                     $sa11yTheme.attr("aria-pressed","true");
+                    $(".sa11y-setting-switch").addClass("sa11y-setting-switch-selected");
                     sessionStorage.setItem("sa11y-theme", "");
                 } else {
                     $("html").attr("data-sa11y-theme", "light");
                     $sa11yTheme.text("Off");
                     $sa11yTheme.attr("aria-pressed","false");
+                    $(".sa11y-setting-switch").removeClass("sa11y-setting-switch-selected");
                     sessionStorage.setItem("sa11y-theme", "");
                 }
             }
@@ -219,21 +221,25 @@ $("body").prepend(sa11ycontainer);
                     sessionStorage.setItem("sa11y-theme", "light");
                     $sa11yTheme.text("Off");
                     $sa11yTheme.attr("aria-pressed","false");
+                    $(".sa11y-setting-switch").removeClass("sa11y-setting-switch-selected");
                 } else if (theme === "light") {
                     $("html").attr("data-sa11y-theme", "dark");
                     sessionStorage.setItem("sa11y-theme", "dark");
                     $sa11yTheme.text("On");
                     $sa11yTheme.attr("aria-pressed","true");
+                    $(".sa11y-setting-switch").addClass("sa11y-setting-switch-selected");
                 } else if (systemInitiatedDark.matches) {
                     $("html").attr("data-sa11y-theme", "light");
                     sessionStorage.setItem("sa11y-theme", "light");
                     $sa11yTheme.text("Off");
                     $sa11yTheme.attr("aria-pressed","false");
+                    $(".sa11y-setting-switch").removeClass("sa11y-setting-switch-selected");
                 } else {
                     $("html").attr("data-sa11y-theme", "dark");
                     sessionStorage.setItem("sa11y-theme", "dark");
                     $sa11yTheme.text("On");
                     $sa11yTheme.attr("aria-pressed","true");
+                    $(".sa11y-setting-switch").addClass("sa11y-setting-switch-selected");
                 }
             });
             if (theme === "dark") {
@@ -241,11 +247,13 @@ $("body").prepend(sa11ycontainer);
                 sessionStorage.setItem("sa11y-theme", "dark");
                 $sa11yTheme.text("On");
                 $sa11yTheme.attr("aria-pressed","true");
+                $(".sa11y-setting-switch").addClass("sa11y-setting-switch-selected");
             } else if (theme === "light") {
                 $("html").attr("data-sa11y-theme", "light");
                 sessionStorage.setItem("sa11y-theme", "light");
                 $sa11yTheme.text("Off");
                 $sa11yTheme.attr("aria-pressed","false");
+                $(".sa11y-setting-switch").removeClass("sa11y-setting-switch-selected");
             }
         });
     }
