@@ -35,7 +35,6 @@ function ButtonInserter(type, content, inline = false) {
     };
     // TODO: Discuss Throwing Errors.
     if (!ValidTypes.has(type)) {
-        console.log(type);
         throw Error;
     }
     return `
@@ -63,7 +62,6 @@ function ErrorBannerInsert(content) {
     </div>`;
 }
 
-console.log("hello");
 class Sa11y {
     constructor() {
         this.containerIgnore = sa11yContainerIgnore;
@@ -76,34 +74,41 @@ class Sa11y {
         var MainToggleIcon =
             "<svg role='img' focusable='false' width='35px' height='35px' aria-hidden='true' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='#ffffff' d='M256 48c114.953 0 208 93.029 208 208 0 114.953-93.029 208-208 208-114.953 0-208-93.029-208-208 0-114.953 93.029-208 208-208m0-40C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 56C149.961 64 64 149.961 64 256s85.961 192 192 192 192-85.961 192-192S362.039 64 256 64zm0 44c19.882 0 36 16.118 36 36s-16.118 36-36 36-36-16.118-36-36 16.118-36 36-36zm117.741 98.023c-28.712 6.779-55.511 12.748-82.14 15.807.851 101.023 12.306 123.052 25.037 155.621 3.617 9.26-.957 19.698-10.217 23.315-9.261 3.617-19.699-.957-23.316-10.217-8.705-22.308-17.086-40.636-22.261-78.549h-9.686c-5.167 37.851-13.534 56.208-22.262 78.549-3.615 9.255-14.05 13.836-23.315 10.217-9.26-3.617-13.834-14.056-10.217-23.315 12.713-32.541 24.185-54.541 25.037-155.621-26.629-3.058-53.428-9.027-82.141-15.807-8.6-2.031-13.926-10.648-11.895-19.249s10.647-13.926 19.249-11.895c96.686 22.829 124.283 22.783 220.775 0 8.599-2.03 17.218 3.294 19.249 11.895 2.029 8.601-3.297 17.219-11.897 19.249z'/></svg>";
 
-// TODO: Simplify this
-var sa11ycontainer = document.createElement("div");
-sa11ycontainer.setAttribute("id", "sa11y-container");
-sa11ycontainer.setAttribute("role", "region");
-sa11ycontainer.setAttribute("lang", sa11yLangCode);
-sa11ycontainer.setAttribute("aria-label", sa11yContainerLang);
-sa11ycontainer.innerHTML =
-    '<button type="button" aria-expanded="false" id="sa11y-toggle">' + MainToggleIcon + '<span class="sa11y-visually-hidden">' + sa11yMainToggleLang + '</span></button>' + 
-            
-    //Start of main container.
-    '<div id="sa11y-panel">' +
-
-    //Page Outline tab.
-    '<div id="sa11y-outline-panel">' +
-        '<div id="sa11y-outline-header" class="sa11y-header-text"><span tabindex="-1">Page outline</span></div>' +
-        '<div id="sa11y-outline-content">' +
+        // TODO: Simplify this
+        var sa11ycontainer = document.createElement("div");
+        sa11ycontainer.setAttribute("id", "sa11y-container");
+        sa11ycontainer.setAttribute("role", "region");
+        sa11ycontainer.setAttribute("lang", sa11yLangCode);
+        sa11ycontainer.setAttribute("aria-label", sa11yContainerLang);
+        let loadContrastPerference =
+            localStorage.getItem("sa11y-contrastCheck") === "On";
+        sa11ycontainer.innerHTML =
+            //Start of main container.
+            '<div id="sa11y-panel">' +
+            //Page Outline tab.
+            '<div id="sa11y-outline-panel">' +
+            '<div id="sa11y-outline-header" class="sa11y-header-text"><span tabindex="-1">Page outline</span></div>' +
+            '<div id="sa11y-outline-content">' +
             '<ul id="sa11y-outline-list"></ul>' +
-        '</div>' +
-    '</div>' +
-
-    //Settings tab.
-    '<div id="sa11y-settings-panel">' +
-    '<div id="sa11y-settings-header" class="sa11y-header-text"><span tabindex="-1">Settings</span></div>' +
-        '<div id="sa11y-settings-content">' +
+            "</div>" +
+            "</div>" +
+            //Settings tab.
+            '<div id="sa11y-settings-panel">' +
+            '<div id="sa11y-settings-header" class="sa11y-header-text"><span tabindex="-1">Settings</span></div>' +
+            '<div id="sa11y-settings-content">' +
             `<ul id="sa11y-settings-options">  
                 <li>
                     <span id="check-contrast">Check contrast</span>
-                    <button aria-labelledby="check-contrast" class="sa11y-settings-switch" aria-pressed="false">Off</button>
+                    <button id="sa11y-contrastCheck-toggle" 
+                    aria-labelledby="check-contrast" 
+                    class="sa11y-settings-switch ${
+                        loadContrastPerference
+                            ? "sa11y-setting-switch-selected"
+                            : ""
+                    }" 
+                    aria-pressed="${loadContrastPerference ? "true" : "false"}">
+                        ${loadContrastPerference ? "On" : "Off"}
+                    </button>
                 </li>
                 <li>
                     <label id="dark-mode" for="sa11y-theme-toggle">Dark mode</label>
@@ -111,27 +116,27 @@ sa11ycontainer.innerHTML =
                 </li>
                 <li>
                     <span id="readability">Readability</span>
-                    <button id="readability-toggle" aria-labelledby="readability" class="sa11y-settings-switch" aria-pressed="false">Off</button>
+                    <button id="sa11y-readability" aria-labelledby="readability" class="sa11y-settings-switch" aria-pressed="false">Off</button>
                 </li>
             </ul>
             <hr class="sa11y-hr" aria-hidden="true">` +
-
             '<div class="sa11y-header-text">About Sa11y</div>' +
-            '<div>Sa11y is an accessibility quality assurance tool that visually highlights common content related issues. It is not a comprehensive code analysis tool. Created at Ryerson University in Toronto, Canada.</div>' +
+            "<div>Sa11y is an accessibility quality assurance tool that visually highlights common content related issues. It is not a comprehensive code analysis tool. Created at Ryerson University in Toronto, Canada.</div>" +
+            "</div>" +
+            "</div>" +
+            //Main panel that conveys state of page.
+            '<div id="sa11y-panel-content"><div class="sa11y-panel-icon"></div><div id="sa11y-panel-text"><span id="sa11y-status"></span></div></div>' +
+            //Show Outline & Show Settings button.
+            '<div id="sa11y-panel-controls"><button type="button" aria-expanded="false" id="sa11y-outline-toggle">Show Outline</button><button type="button" aria-expanded="false" id="sa11y-settings-toggle">Show Settings</button><div aria-hidden="true">&nbsp;&nbsp;</div></div>' +
+            //End of main container.
+            "</div>" +
+            '<button type="button" aria-expanded="false" id="sa11y-toggle">' +
+            MainToggleIcon +
+            '<span class="sa11y-visually-hidden">' +
+            sa11yMainToggleLang +
+            '</span><div id="sa11y-toggle-notif"><div id="sa11y-toggle-number"></div></div></button>';
 
-        '</div>'+
-    '</div>' +
-                    
-        //Main panel that conveys state of page.
-        '<div id="sa11y-panel-content"><div class="sa11y-panel-icon"></div><div id="sa11y-panel-text"><span id="sa11y-status"></span></div></div>' +
-
-        //Show Outline & Show Settings button.
-        '<div id="sa11y-panel-controls"><button type="button" aria-expanded="false" id="sa11y-outline-toggle">Show Outline</button><button type="button" aria-expanded="false" id="sa11y-settings-toggle">Show Settings</button><div aria-hidden="true">&nbsp;&nbsp;</div></div>' + 
-
-    //End of main container.
-    '</div>';
-
-$("body").prepend(sa11ycontainer);
+        $("body").prepend(sa11ycontainer);
 
         // JQuery
         $(() => {
@@ -140,31 +145,39 @@ $("body").prepend(sa11ycontainer);
 
             //Keeps checker active when navigating between pages until it is toggled off.
             var sa11yToggle = $("#sa11y-toggle");
-            sa11yToggle.addClass(localStorage.enableSa11y);
-            sa11yToggle.on("click", () => {
-                if (localStorage.enableSa11y != "sa11y-on") {
-                    localStorage.enableSa11y = "sa11y-on";
+            // sa11yToggle.addClass(sessionStorage.enableSa11y);
+            sa11yToggle.click(() => {
+                if (sa11yToggle.attr("aria-expanded") === "true") {
+                    // sessionStorage.enableSa11y = "sa11y-on";
                     sa11yToggle
-                        .addClass("sa11y-on", true)
-                        .attr("aria-expanded", "true");
-                    this.checkAll();
+                        .removeClass("sa11y-on")
+                        .attr("aria-expanded", "false");
+
+                    this.reset();
                 } else {
+                    // sessionStorage.enableSa11y = "";
+
                     sa11yToggle
-                        .removeClass("sa11y-on", false)
-                        .attr("aria-expanded", "false")
-                        .removeClass("loading-sa11y");
-                    localStorage.enableSa11y = "";
+                        .addClass("sa11y-on")
+                        .attr("aria-expanded", "true");
+
                     this.checkAll();
                 }
             });
 
-            // Crudely give a little time to load any other content or slow post-rendered JS, iFrames, etc.
+            // TODO: Crudely give a little time to load any other content or slow post-rendered JS, iFrames, etc.
+            // Not sure if this is ever called.
             if (sa11yToggle.hasClass("sa11y-on")) {
-                sa11yToggle
-                    .toggleClass("loading-sa11y")
-                    .attr("aria-expanded", "true");
+                sa11yToggle.toggleClass("loading-sa11y");
+                sa11yToggle.attr("aria-expanded", "true");
                 setTimeout(this.checkAll, 1200);
             }
+
+            $(document).ready(() => {
+                // Updates badge counter
+                this.checkAll();
+                this.reset();
+            });
 
             //Escape key to shutdown.
             $(document).keyup((escape) => {
@@ -173,13 +186,58 @@ $("body").prepend(sa11ycontainer);
                     $("#sa11y-panel").hasClass("sa11y-active")
                 ) {
                     tippy.hideAll();
-                    localStorage.enableSa11y = "";
+                    sessionStorage.enableSa11y = "";
                     this.checkAll();
                 } else {
                     this.onkeyup = null;
                 }
             });
 
+            // ----------------------------------------------------------------------
+            // Toggle Readability
+            // ----------------------------------------------------------------------
+            let $sa11yReadability = $("#sa11y-readability");
+            $sa11yReadability.on("click", function () {
+                if (
+                    sessionStorage.getItem("sa11y-readability") === null ||
+                    sessionStorage.getItem("sa11y-readability") === "off"
+                ) {
+                    sessionStorage.setItem("sa11y-readability", "on");
+                    $sa11yReadability.text("On");
+                    $sa11yReadability.attr("aria-pressed", "true");
+                    $sa11yReadability.addClass("sa11y-setting-switch-selected");
+                } else {
+                    sessionStorage.setItem("sa11y-readability", "off");
+                    $sa11yReadability.text("Off");
+                    $sa11yReadability.attr("aria-pressed", "false");
+                    $sa11yReadability.removeClass(
+                        "sa11y-setting-switch-selected"
+                    );
+                }
+            });
+            // ----------------------------------------------------------------------
+            // Toggle Contrast Check
+            // ----------------------------------------------------------------------
+            let $sa11yContrastCheck = $("#sa11y-contrastCheck-toggle");
+            $sa11yContrastCheck.click(() => {
+                // Turn on
+                if (localStorage.getItem("sa11y-contrastCheck") === "On") {
+                    localStorage.setItem("sa11y-contrastCheck", "off");
+                    $sa11yContrastCheck.text("Off");
+                    $sa11yContrastCheck.attr("aria-pressed", "false");
+                    $sa11yContrastCheck.removeClass(
+                        "sa11y-setting-switch-selected"
+                    );
+                } else {
+                    localStorage.setItem("sa11y-contrastCheck", "On");
+                    $sa11yContrastCheck.text("On");
+                    $sa11yContrastCheck.attr("aria-pressed", "true");
+                    $sa11yContrastCheck.addClass(
+                        "sa11y-setting-switch-selected"
+                    );
+                    // Turn off
+                }
+            });
             // ----------------------------------------------------------------------
             // Dark Mode. Credits: https://derekkedziora.com/blog/dark-mode-revisited
             // ----------------------------------------------------------------------
@@ -190,29 +248,37 @@ $("body").prepend(sa11ycontainer);
             let theme = sessionStorage.getItem("sa11y-theme");
             if (systemInitiatedDark.matches) {
                 $sa11yTheme.text("On");
-                $sa11yTheme.attr("aria-pressed","true");
-                $(".sa11y-setting-switch").addClass("sa11y-setting-switch-selected");
+                $sa11yTheme.attr("aria-pressed", "true");
+                $(".sa11y-setting-switch").addClass(
+                    "sa11y-setting-switch-selected"
+                );
             } else {
                 $sa11yTheme.text("Off");
-                $sa11yTheme.attr("aria-pressed","false");
-                $(".sa11y-setting-switch").removeClass("sa11y-setting-switch-selected");
+                $sa11yTheme.attr("aria-pressed", "false");
+                $(".sa11y-setting-switch").removeClass(
+                    "sa11y-setting-switch-selected"
+                );
             }
             function prefersColorTest(systemInitiatedDark) {
                 if (systemInitiatedDark.matches) {
                     $("html").attr("data-sa11y-theme", "dark");
                     $sa11yTheme.text("On");
-                    $sa11yTheme.attr("aria-pressed","true");
-                    $(".sa11y-setting-switch").addClass("sa11y-setting-switch-selected");
+                    $sa11yTheme.attr("aria-pressed", "true");
+                    $(".sa11y-setting-switch").addClass(
+                        "sa11y-setting-switch-selected"
+                    );
                     sessionStorage.setItem("sa11y-theme", "");
                 } else {
                     $("html").attr("data-sa11y-theme", "light");
                     $sa11yTheme.text("Off");
-                    $sa11yTheme.attr("aria-pressed","false");
-                    $(".sa11y-setting-switch").removeClass("sa11y-setting-switch-selected");
+                    $sa11yTheme.attr("aria-pressed", "false");
+                    $(".sa11y-setting-switch").removeClass(
+                        "sa11y-setting-switch-selected"
+                    );
                     sessionStorage.setItem("sa11y-theme", "");
                 }
             }
-            
+
             systemInitiatedDark.addListener(prefersColorTest);
             $sa11yTheme.click(function () {
                 let theme = sessionStorage.getItem("sa11y-theme");
@@ -220,40 +286,52 @@ $("body").prepend(sa11ycontainer);
                     $("html").attr("data-sa11y-theme", "light");
                     sessionStorage.setItem("sa11y-theme", "light");
                     $sa11yTheme.text("Off");
-                    $sa11yTheme.attr("aria-pressed","false");
-                    $(".sa11y-setting-switch").removeClass("sa11y-setting-switch-selected");
+                    $sa11yTheme.attr("aria-pressed", "false");
+                    $(".sa11y-setting-switch").removeClass(
+                        "sa11y-setting-switch-selected"
+                    );
                 } else if (theme === "light") {
                     $("html").attr("data-sa11y-theme", "dark");
                     sessionStorage.setItem("sa11y-theme", "dark");
                     $sa11yTheme.text("On");
-                    $sa11yTheme.attr("aria-pressed","true");
-                    $(".sa11y-setting-switch").addClass("sa11y-setting-switch-selected");
+                    $sa11yTheme.attr("aria-pressed", "true");
+                    $(".sa11y-setting-switch").addClass(
+                        "sa11y-setting-switch-selected"
+                    );
                 } else if (systemInitiatedDark.matches) {
                     $("html").attr("data-sa11y-theme", "light");
                     sessionStorage.setItem("sa11y-theme", "light");
                     $sa11yTheme.text("Off");
-                    $sa11yTheme.attr("aria-pressed","false");
-                    $(".sa11y-setting-switch").removeClass("sa11y-setting-switch-selected");
+                    $sa11yTheme.attr("aria-pressed", "false");
+                    $(".sa11y-setting-switch").removeClass(
+                        "sa11y-setting-switch-selected"
+                    );
                 } else {
                     $("html").attr("data-sa11y-theme", "dark");
                     sessionStorage.setItem("sa11y-theme", "dark");
                     $sa11yTheme.text("On");
-                    $sa11yTheme.attr("aria-pressed","true");
-                    $(".sa11y-setting-switch").addClass("sa11y-setting-switch-selected");
+                    $sa11yTheme.attr("aria-pressed", "true");
+                    $(".sa11y-setting-switch").addClass(
+                        "sa11y-setting-switch-selected"
+                    );
                 }
             });
             if (theme === "dark") {
                 $("html").attr("data-sa11y-theme", "dark");
                 sessionStorage.setItem("sa11y-theme", "dark");
                 $sa11yTheme.text("On");
-                $sa11yTheme.attr("aria-pressed","true");
-                $(".sa11y-setting-switch").addClass("sa11y-setting-switch-selected");
+                $sa11yTheme.attr("aria-pressed", "true");
+                $(".sa11y-setting-switch").addClass(
+                    "sa11y-setting-switch-selected"
+                );
             } else if (theme === "light") {
                 $("html").attr("data-sa11y-theme", "light");
                 sessionStorage.setItem("sa11y-theme", "light");
                 $sa11yTheme.text("Off");
-                $sa11yTheme.attr("aria-pressed","false");
-                $(".sa11y-setting-switch").removeClass("sa11y-setting-switch-selected");
+                $sa11yTheme.attr("aria-pressed", "false");
+                $(".sa11y-setting-switch").removeClass(
+                    "sa11y-setting-switch-selected"
+                );
             }
         });
     }
@@ -265,19 +343,19 @@ $("body").prepend(sa11ycontainer);
         this.findElements();
         this.checkHeaders();
         this.checkLinkText();
-        this.checkContrast();
+        if (localStorage.getItem("sa11y-contrastCheck") === "On") {
+            this.checkContrast();
+        }
         this.checkLabels();
         this.checkAltText();
         this.checkQA();
 
         if (this.panelActive) {
             this.reset();
-            this.panelActive = false;
         } else {
             this.displayPanel();
-            this.panelActive = true;
         }
-
+        $("#sa11y-toggle-number").html(this.errorCount);
         //Initialize tippy.js
         tippy(".sa11y-btn", {
             interactive: true,
@@ -913,9 +991,7 @@ $("body").prepend(sa11ycontainer);
                         Consider removing the word: <span class='sa11y-red-text sa11y-bold'>${error}</span>. 
                         <hr aria-hidden='true' class='sa11y-hr'> 
                         The alt text for this image is: <span class='sa11y-bold'>${altText} </span>`;
-                    $el.before(
-                        ButtonInserter(ERROR, AltHasBadWordMessage)
-                    );
+                    $el.before(ButtonInserter(ERROR, AltHasBadWordMessage));
                 } else if (text == "" && $el.parents().is("a[href]")) {
                     if ($el.parents("a").text().trim().length == 0) {
                         this.errorCount++;
@@ -923,10 +999,7 @@ $("body").prepend(sa11ycontainer);
                         let ImageLinkNullAltNoTextMessage =
                             "Image within hyperlink is marked as decorative and there is no link text. Please add alt text to image that describes destination of link.";
                         $el.closest("a").before(
-                            ButtonInserter(
-                                ERROR,
-                                ImageLinkNullAltNoTextMessage
-                            )
+                            ButtonInserter(ERROR, ImageLinkNullAltNoTextMessage)
                         );
                     } else {
                         let LinkHasAltMessage =
@@ -1206,16 +1279,11 @@ $("body").prepend(sa11ycontainer);
 
         //Error: Missing language tag. Lang should be at least 2 characters.
         var lang = $("html").attr("lang");
-        if (
-            lang == undefined ||
-            lang.length < 2
-        ) {
+        if (lang == undefined || lang.length < 2) {
             this.errorCount++;
             let PageLanguageMessage =
                 "Page language not declared! Please <a href='https://www.w3.org/International/questions/qa-html-language-declarations' target='_blank'>declare language on HTML tag.<span class='sa11y-visually-hidden'> (opens new tab)</span></a>";
-            $("#sa11y-container").after(
-                ErrorBannerInsert(PageLanguageMessage)
-            );
+            $("#sa11y-container").after(ErrorBannerInsert(PageLanguageMessage));
         }
 
         //Example ruleset. Be creative.
@@ -1232,46 +1300,52 @@ $("body").prepend(sa11ycontainer);
             );
         }
     };
-    
+
     displayPanel = () => {
+        this.panelActive = true;
         let totalCount = this.errorCount + this.warningCount;
         $("#sa11y-panel").addClass("sa11y-active");
-        if (totalCount > 0) {
-            if (this.errorCount > 0) {
-                $("#sa11y-status").text(
-                    totalCount === 1
-                        ? "One accessibility issue detected."
-                        : totalCount + " accessibility issues detected."
-                );
-                $("#sa11y-panel-content").addClass("sa11y-errors");
-            } else if (this.warningCount > 0) {
-                $("#sa11y-status").text(
-                    totalCount === 1
-                        ? "Please review warning."
-                        : "Please review " + totalCount + " warnings."
-                );
-                $("#sa11y-panel-content").addClass("sa11y-warnings");
-            }
+
+        if (totalCount > 0 && this.errorCount > 0) {
+            $("#sa11y-status").text(
+                totalCount === 1
+                    ? "One accessibility issue detected."
+                    : totalCount + " accessibility issues detected."
+            );
+            $("#sa11y-panel-content").addClass("sa11y-errors");
+            // $("#sa11y-toggle").attr("issue", "error");
+        } else if (totalCount > 0 && this.warningCount > 0) {
+            $("#sa11y-status").text(
+                totalCount === 1
+                    ? "Please review warning."
+                    : "Please review " + totalCount + " warnings."
+            );
+            $("#sa11y-panel-content").addClass("sa11y-warnings");
+            // $("#sa11y-toggle").attr("issue", "warning");
         } else {
             $("#sa11y-panel-content").addClass("sa11y-pass");
             $("#sa11y-status").text("No accessibility errors found.");
+            // $("#sa11y-toggle").attr("issue", "pass");
         }
 
         //Show outline panel
         let $outlineToggle = $("#sa11y-outline-toggle");
-        $outlineToggle.click(function () {
-            $(this).toggleClass("sa11y-outline-active");
-            $("#sa11y-outline-panel").toggleClass("sa11y-active");
-            $(this).text(function (i, v) {
-                return v === "Show Outline" ? "Hide Outline" : "Show Outline";
-            });
-            $(this).attr("aria-expanded", function (i, attr) {
-                return attr == "true" ? "false" : "true";
-            });
+        $outlineToggle.click(() => {
+            if ($outlineToggle.attr("aria-expanded") == "true") {
+                $outlineToggle.removeClass("sa11y-outline-active");
+                $("#sa11y-outline-panel").removeClass("sa11y-active");
+                $outlineToggle.text("Show Outline");
+                $outlineToggle.attr("aria-expanded", "false");
+            } else {
+                $outlineToggle.addClass("sa11y-outline-active");
+                $("#sa11y-outline-panel").addClass("sa11y-active");
+                $outlineToggle.text("Hide Outline");
+                $outlineToggle.attr("aria-expanded", "true");
+            }
             $("#sa11y-outline-header > span").focus();
             $(".sa11y-heading-label").toggleClass("sa11y-label-visible");
 
-            //Remove settings panel
+            // Close the settings panel (or enforce that its still closed)
             $("#sa11y-settings-panel").removeClass("sa11y-active");
             $settingsToggle.removeClass("sa11y-settings-active");
             $settingsToggle.attr("aria-expanded", "false");
@@ -1279,25 +1353,26 @@ $("body").prepend(sa11ycontainer);
 
             //Keyboard accessibility fix for scrollable panel content.
             if ($("#sa11y-outline-list").height() > 350) {
-                    $("#sa11y-outline-list").attr("tabindex","0");
+                $("#sa11y-outline-list").attr("tabindex", "0");
             }
         });
 
         //Show settings panel
         let $settingsToggle = $("#sa11y-settings-toggle");
         $settingsToggle.click(function () {
-            $(this).toggleClass("sa11y-settings-active");
-            $("#sa11y-settings-panel").toggleClass("sa11y-active");
-            $(this).text(function (i, v) {
-                return v === "Show Settings"
-                    ? "Hide Settings"
-                    : "Show Settings";
-            });
-            $(this).attr("aria-expanded", function (i, attr) {
-                return attr == "true" ? "false" : "true";
-            });
-            $("#sa11y-settings-header > span").focus();
+            if ($settingsToggle.attr("aria-expanded") === "true") {
+                $settingsToggle.remove("sa11y-settings-active");
+                $("#sa11y-settings-panel").removeClass("sa11y-active");
+                $settingsToggle.text("Show Settings");
+                $settingsToggle.attr("aria-expanded", "false");
+            } else {
+                $settingsToggle.addClass("sa11y-settings-active");
+                $("#sa11y-settings-panel").addClass("sa11y-active");
+                $settingsToggle.text("Hide Settings");
+                $settingsToggle.attr("aria-expanded", "true");
+            }
 
+            $("#sa11y-settings-header > span").focus();
             //Remove outline panel
             $("#sa11y-outline-panel").removeClass("sa11y-active");
             $outlineToggle.removeClass("sa11y-outline-active");
@@ -1307,17 +1382,18 @@ $("body").prepend(sa11ycontainer);
 
             //Keyboard accessibility fix for scrollable panel content.
             if ($("#sa11y-settings-content").height() > 350) {
-                $("#sa11y-settings-content").attr("tabindex","0");
+                $("#sa11y-settings-content").attr("tabindex", "0");
             }
         });
     };
 
     reset = () => {
+        this.panelActive = false;
         this.clearEverything();
-        this.errorCount = 0;
-        this.warningCount = 0;
         $("#sa11y-panel-content").removeClass();
         $("#sa11y-status").text();
+        $("#sa11y-outline-toggle").off("click");
+        $("#sa11y-settings-toggle").off("click");
     };
     clearEverything = () => {
         this.root.find(".sa11y-error-border").removeClass("sa11y-error-border");
@@ -1339,9 +1415,8 @@ $("body").prepend(sa11ycontainer);
         this.root.find("#sa11y-panel").removeClass("sa11y-active");
         this.root.find("#sa11y-outline-list li").remove();
     };
-}   
+}
 
 if (window.navigator.userAgent.match(/MSIE|Trident/) === null) {
-    console.log("sally!");
     new Sa11y(); //No IE support.
 }
