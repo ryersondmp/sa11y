@@ -107,7 +107,7 @@ button#sa11y-toggle:focus {
     -moz-animation: sa11y-toggle-gradient 3s ease;
     animation: sa11y-toggle-gradient 3s ease;
 }
-
+/* 
 #sa11y-container > .sa11y-active + button#sa11y-toggle[issue="pass"] {
     background-image: linear-gradient(
         to top,
@@ -128,7 +128,7 @@ button#sa11y-toggle:focus {
         var(--sa11y-error),
         var(--sa11y-error-hover)
     );
-}
+} */
 
 #sa11y-container button.sa11y-on {
     background-image: linear-gradient(to bottom, #e040fb, #00bcd4) !important;

@@ -1292,7 +1292,7 @@ class Sa11y {
                     : totalCount + " accessibility issues detected."
             );
             $("#sa11y-panel-content").addClass("sa11y-errors");
-            $("#sa11y-toggle").attr("issue", "error");
+            // $("#sa11y-toggle").attr("issue", "error");
         } else if (totalCount > 0 && this.warningCount > 0) {
             $("#sa11y-status").text(
                 totalCount === 1
@@ -1300,11 +1300,11 @@ class Sa11y {
                     : "Please review " + totalCount + " warnings."
             );
             $("#sa11y-panel-content").addClass("sa11y-warnings");
-            $("#sa11y-toggle").attr("issue", "warning");
+            // $("#sa11y-toggle").attr("issue", "warning");
         } else {
             $("#sa11y-panel-content").addClass("sa11y-pass");
             $("#sa11y-status").text("No accessibility errors found.");
-            $("#sa11y-toggle").attr("issue", "pass");
+            // $("#sa11y-toggle").attr("issue", "pass");
         }
 
         //Show outline panel
