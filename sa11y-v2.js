@@ -35,7 +35,6 @@ function ButtonInserter(type, content, inline = false) {
     };
     // TODO: Discuss Throwing Errors.
     if (!ValidTypes.has(type)) {
-        console.log(type);
         throw Error;
     }
     return `
@@ -124,7 +123,7 @@ class Sa11y {
             MainToggleIcon +
             '<span class="sa11y-visually-hidden">' +
             sa11yMainToggleLang +
-            "</span></button>";
+            '</span><div id="sa11y-toggle-notif"><div id="sa11y-toggle-number"></div></div></button>';
 
         $("body").prepend(sa11ycontainer);
 
@@ -140,25 +139,34 @@ class Sa11y {
                 if (sa11yToggle.attr("aria-expanded") === "true") {
                     // sessionStorage.enableSa11y = "sa11y-on";
                     sa11yToggle
-                        .addClass("sa11y-on", true)
-                        .attr("aria-expanded", "true");
-                    this.checkAll();
+                        .removeClass("sa11y-on")
+                        .attr("aria-expanded", "false");
+
+                    this.reset();
                 } else {
                     // sessionStorage.enableSa11y = "";
+
                     sa11yToggle
-                        .removeClass("sa11y-on", false)
-                        .attr("aria-expanded", "false")
-                        .removeClass("loading-sa11y");
+                        .addClass("sa11y-on")
+                        .attr("aria-expanded", "true");
+
                     this.checkAll();
                 }
             });
 
             // TODO: Crudely give a little time to load any other content or slow post-rendered JS, iFrames, etc.
+            // Not sure if this is ever called.
             if (sa11yToggle.hasClass("sa11y-on")) {
                 sa11yToggle.toggleClass("loading-sa11y");
                 sa11yToggle.attr("aria-expanded", "true");
                 setTimeout(this.checkAll, 1200);
             }
+
+            $(document).ready(() => {
+                // Updates badge counter
+                this.checkAll();
+                this.reset();
+            });
 
             //Escape key to shutdown.
             $(document).keyup((escape) => {
@@ -200,18 +208,22 @@ class Sa11y {
             // Toggle Contrast Check
             // ----------------------------------------------------------------------
             let $sa11yContrastCheck = $("#sa11y-contrastCheck-toggle");
-            $sa11yContrastCheck.on("click", function () {
+            $sa11yContrastCheck.click(() => {
+                // Turn on
                 if (
                     sessionStorage.getItem("sa11y-contrastCheck") === null ||
                     sessionStorage.getItem("sa11y-contrastCheck") === "off"
                 ) {
+                    this.contrast = true;
                     sessionStorage.setItem("sa11y-contrastCheck", "on");
                     $sa11yContrastCheck.text("On");
                     $sa11yContrastCheck.attr("aria-pressed", "true");
                     $sa11yContrastCheck.addClass(
                         "sa11y-setting-switch-selected"
                     );
+                    // Turn off
                 } else {
+                    this.contrast = false;
                     sessionStorage.setItem("sa11y-contrastCheck", "off");
                     $sa11yContrastCheck.text("Off");
                     $sa11yContrastCheck.attr("aria-pressed", "false");
@@ -325,18 +337,19 @@ class Sa11y {
         this.findElements();
         this.checkHeaders();
         this.checkLinkText();
-        this.checkContrast();
+        if (this.contrast) {
+            this.checkContrast();
+        }
         this.checkLabels();
         this.checkAltText();
         this.checkQA();
+
         if (this.panelActive) {
             this.reset();
-            this.panelActive = false;
         } else {
             this.displayPanel();
-            this.panelActive = true;
         }
-
+        $("#sa11y-toggle-number").html(this.errorCount);
         //Initialize tippy.js
         tippy(".sa11y-btn", {
             interactive: true,
@@ -1283,8 +1296,10 @@ class Sa11y {
     };
 
     displayPanel = () => {
+        this.panelActive = true;
         let totalCount = this.errorCount + this.warningCount;
         $("#sa11y-panel").addClass("sa11y-active");
+
         if (totalCount > 0 && this.errorCount > 0) {
             $("#sa11y-status").text(
                 totalCount === 1
@@ -1367,9 +1382,8 @@ class Sa11y {
     };
 
     reset = () => {
+        this.panelActive = false;
         this.clearEverything();
-        this.errorCount = 0;
-        this.warningCount = 0;
         $("#sa11y-panel-content").removeClass();
         $("#sa11y-status").text();
         $("#sa11y-outline-toggle").off("click");
@@ -1398,6 +1412,5 @@ class Sa11y {
 }
 
 if (window.navigator.userAgent.match(/MSIE|Trident/) === null) {
-    console.log("sally!");
     new Sa11y(); //No IE support.
 }

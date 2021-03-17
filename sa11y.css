@@ -130,6 +130,26 @@ button#sa11y-toggle:focus {
     );
 } */
 
+#sa11y-toggle-notif {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    width: 20px;
+    height: 20px;
+    font-size: 11px;
+    line-height: 1;
+    background-color: var(--sa11y-error-hover);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 100px;
+}
+#sa11y-toggle-notif > div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
 #sa11y-container button.sa11y-on {
     background-image: linear-gradient(to bottom, #e040fb, #00bcd4) !important;
 }
