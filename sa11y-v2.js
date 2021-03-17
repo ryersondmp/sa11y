@@ -182,6 +182,52 @@ $("body").prepend(sa11ycontainer);
             });
 
             // ----------------------------------------------------------------------
+            // Toggle Readability
+            // ----------------------------------------------------------------------
+            let $sa11yReadability = $("#sa11y-readability");
+            $sa11yReadability.on("click", function () {
+                if (
+                    sessionStorage.getItem("sa11y-readability") === null ||
+                    sessionStorage.getItem("sa11y-readability") === "off"
+                ) {
+                    sessionStorage.setItem("sa11y-readability", "on");
+                    $sa11yReadability.text("On");
+                    $sa11yReadability.attr("aria-pressed", "true");
+                    $sa11yReadability.addClass("sa11y-setting-switch-selected");
+                } else {
+                    sessionStorage.setItem("sa11y-readability", "off");
+                    $sa11yReadability.text("Off");
+                    $sa11yReadability.attr("aria-pressed", "false");
+                    $sa11yReadability.removeClass(
+                        "sa11y-setting-switch-selected"
+                    );
+                }
+            });
+            // ----------------------------------------------------------------------
+            // Toggle Contrast Check
+            // ----------------------------------------------------------------------
+            let $sa11yContrastCheck = $("#sa11y-contrastCheck-toggle");
+            $sa11yContrastCheck.on("click", function () {
+                if (
+                    sessionStorage.getItem("sa11y-contrastCheck") === null ||
+                    sessionStorage.getItem("sa11y-contrastCheck") === "off"
+                ) {
+                    sessionStorage.setItem("sa11y-contrastCheck", "on");
+                    $sa11yContrastCheck.text("On");
+                    $sa11yContrastCheck.attr("aria-pressed", "true");
+                    $sa11yContrastCheck.addClass(
+                        "sa11y-setting-switch-selected"
+                    );
+                } else {
+                    sessionStorage.setItem("sa11y-contrastCheck", "off");
+                    $sa11yContrastCheck.text("Off");
+                    $sa11yContrastCheck.attr("aria-pressed", "false");
+                    $sa11yContrastCheck.removeClass(
+                        "sa11y-setting-switch-selected"
+                    );
+                }
+            });
+            // ----------------------------------------------------------------------
             // Dark Mode. Credits: https://derekkedziora.com/blog/dark-mode-revisited
             // ----------------------------------------------------------------------
             let systemInitiatedDark = window.matchMedia(
