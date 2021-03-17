@@ -140,20 +140,21 @@ $("body").prepend(sa11ycontainer);
 
             //Keeps checker active when navigating between pages until it is toggled off.
             var sa11yToggle = $("#sa11y-toggle");
-            sa11yToggle.addClass(localStorage.enableSa11y);
-            sa11yToggle.on("click", () => {
-                if (localStorage.enableSa11y != "sa11y-on") {
-                    localStorage.enableSa11y = "sa11y-on";
+            // sa11yToggle.addClass(sessionStorage.enableSa11y);
+            sa11yToggle.click(() => {
+                console.log("main button clicked!");
+                if (sa11yToggle.attr("aria-expanded") === "true") {
+                    // sessionStorage.enableSa11y = "sa11y-on";
                     sa11yToggle
                         .addClass("sa11y-on", true)
                         .attr("aria-expanded", "true");
                     this.checkAll();
                 } else {
+                    // sessionStorage.enableSa11y = "";
                     sa11yToggle
                         .removeClass("sa11y-on", false)
                         .attr("aria-expanded", "false")
                         .removeClass("loading-sa11y");
-                    localStorage.enableSa11y = "";
                     this.checkAll();
                 }
             });
@@ -161,8 +162,8 @@ $("body").prepend(sa11ycontainer);
             // Crudely give a little time to load any other content or slow post-rendered JS, iFrames, etc.
             if (sa11yToggle.hasClass("sa11y-on")) {
                 sa11yToggle
-                    .toggleClass("loading-sa11y")
-                    .attr("aria-expanded", "true");
+                sa11yToggle.toggleClass("loading-sa11y");
+                sa11yToggle.attr("aria-expanded", "true");
                 setTimeout(this.checkAll, 1200);
             }
 
@@ -173,7 +174,7 @@ $("body").prepend(sa11ycontainer);
                     $("#sa11y-panel").hasClass("sa11y-active")
                 ) {
                     tippy.hideAll();
-                    localStorage.enableSa11y = "";
+                    sessionStorage.enableSa11y = "";
                     this.checkAll();
                 } else {
                     this.onkeyup = null;
