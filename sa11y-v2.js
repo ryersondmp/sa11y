@@ -82,11 +82,6 @@ class Sa11y {
         sa11ycontainer.setAttribute("lang", sa11yLangCode);
         sa11ycontainer.setAttribute("aria-label", sa11yContainerLang);
         sa11ycontainer.innerHTML =
-            '<button type="button" aria-expanded="false" id="sa11y-toggle">' +
-            MainToggleIcon +
-            '<span class="sa11y-visually-hidden">' +
-            sa11yMainToggleLang +
-            "</span></button>" +
             //Start of main container.
             '<div id="sa11y-panel">' +
             //Page Outline tab.
@@ -124,7 +119,12 @@ class Sa11y {
             //Show Outline & Show Settings button.
             '<div id="sa11y-panel-controls"><button type="button" aria-expanded="false" id="sa11y-outline-toggle">Show Outline</button><button type="button" aria-expanded="false" id="sa11y-settings-toggle">Show Settings</button><div aria-hidden="true">&nbsp;&nbsp;</div></div>' +
             //End of main container.
-            "</div>";
+            "</div>" +
+            '<button type="button" aria-expanded="false" id="sa11y-toggle">' +
+            MainToggleIcon +
+            '<span class="sa11y-visually-hidden">' +
+            sa11yMainToggleLang +
+            "</span></button>";
 
         $("body").prepend(sa11ycontainer);
 
@@ -1285,25 +1285,26 @@ class Sa11y {
     displayPanel = () => {
         let totalCount = this.errorCount + this.warningCount;
         $("#sa11y-panel").addClass("sa11y-active");
-        if (totalCount > 0) {
-            if (this.errorCount > 0) {
-                $("#sa11y-status").text(
-                    totalCount === 1
-                        ? "One accessibility issue detected."
-                        : totalCount + " accessibility issues detected."
-                );
-                $("#sa11y-panel-content").addClass("sa11y-errors");
-            } else if (this.warningCount > 0) {
-                $("#sa11y-status").text(
-                    totalCount === 1
-                        ? "Please review warning."
-                        : "Please review " + totalCount + " warnings."
-                );
-                $("#sa11y-panel-content").addClass("sa11y-warnings");
-            }
+        if (totalCount > 0 && this.errorCount > 0) {
+            $("#sa11y-status").text(
+                totalCount === 1
+                    ? "One accessibility issue detected."
+                    : totalCount + " accessibility issues detected."
+            );
+            $("#sa11y-panel-content").addClass("sa11y-errors");
+            $("#sa11y-toggle").attr("issue", "error");
+        } else if (totalCount > 0 && this.warningCount > 0) {
+            $("#sa11y-status").text(
+                totalCount === 1
+                    ? "Please review warning."
+                    : "Please review " + totalCount + " warnings."
+            );
+            $("#sa11y-panel-content").addClass("sa11y-warnings");
+            $("#sa11y-toggle").attr("issue", "warning");
         } else {
             $("#sa11y-panel-content").addClass("sa11y-pass");
             $("#sa11y-status").text("No accessibility errors found.");
+            $("#sa11y-toggle").attr("issue", "pass");
         }
 
         //Show outline panel

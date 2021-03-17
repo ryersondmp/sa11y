@@ -104,6 +104,27 @@ html[data-sa11y-theme="dark"] {
     animation: sa11y-toggle-gradient 3s ease;
 }
 
+    background-image: linear-gradient(
+        to top,
+        var(--sa11y-pass),
+        var(--sa11y-pass-hover)
+    );
+}
+#sa11y-container > .sa11y-active + button#sa11y-toggle[issue="warning"] {
+    background-image: linear-gradient(
+        to top,
+        var(--sa11y-warning-svg-color),
+        var(--sa11y-warning-svg-color)
+    );
+}
+#sa11y-container > .sa11y-active button#sa11y-toggle[issue="error"] {
+    background-image: linear-gradient(
+        to top,
+        var(--sa11y-error),
+        var(--sa11y-error-hover)
+    );
+}
+
 #sa11y-container button.sa11y-on {
     background-image: linear-gradient(to bottom, #e040fb, #00bcd4) !important;
 }
