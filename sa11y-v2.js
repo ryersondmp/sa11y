@@ -80,6 +80,8 @@ class Sa11y {
         sa11ycontainer.setAttribute("role", "region");
         sa11ycontainer.setAttribute("lang", sa11yLangCode);
         sa11ycontainer.setAttribute("aria-label", sa11yContainerLang);
+        let loadContrastPerference =
+            localStorage.getItem("sa11y-contrastCheck") === "On";
         sa11ycontainer.innerHTML =
             //Start of main container.
             '<div id="sa11y-panel">' +
@@ -97,7 +99,16 @@ class Sa11y {
             `<ul id="sa11y-settings-options">  
                 <li>
                     <span id="check-contrast">Check contrast</span>
-                    <button id="sa11y-contrastCheck-toggle" aria-labelledby="check-contrast" class="sa11y-settings-switch" aria-pressed="false">Off</button>
+                    <button id="sa11y-contrastCheck-toggle" 
+                    aria-labelledby="check-contrast" 
+                    class="sa11y-settings-switch ${
+                        loadContrastPerference
+                            ? "sa11y-setting-switch-selected"
+                            : ""
+                    }" 
+                    aria-pressed="${loadContrastPerference ? "true" : "false"}">
+                        ${loadContrastPerference ? "On" : "Off"}
+                    </button>
                 </li>
                 <li>
                     <label id="dark-mode" for="sa11y-theme-toggle">Dark mode</label>
@@ -210,26 +221,21 @@ class Sa11y {
             let $sa11yContrastCheck = $("#sa11y-contrastCheck-toggle");
             $sa11yContrastCheck.click(() => {
                 // Turn on
-                if (
-                    sessionStorage.getItem("sa11y-contrastCheck") === null ||
-                    sessionStorage.getItem("sa11y-contrastCheck") === "off"
-                ) {
-                    this.contrast = true;
-                    sessionStorage.setItem("sa11y-contrastCheck", "on");
+                if (localStorage.getItem("sa11y-contrastCheck") === "On") {
+                    localStorage.setItem("sa11y-contrastCheck", "off");
+                    $sa11yContrastCheck.text("Off");
+                    $sa11yContrastCheck.attr("aria-pressed", "false");
+                    $sa11yContrastCheck.removeClass(
+                        "sa11y-setting-switch-selected"
+                    );
+                } else {
+                    localStorage.setItem("sa11y-contrastCheck", "On");
                     $sa11yContrastCheck.text("On");
                     $sa11yContrastCheck.attr("aria-pressed", "true");
                     $sa11yContrastCheck.addClass(
                         "sa11y-setting-switch-selected"
                     );
                     // Turn off
-                } else {
-                    this.contrast = false;
-                    sessionStorage.setItem("sa11y-contrastCheck", "off");
-                    $sa11yContrastCheck.text("Off");
-                    $sa11yContrastCheck.attr("aria-pressed", "false");
-                    $sa11yContrastCheck.removeClass(
-                        "sa11y-setting-switch-selected"
-                    );
                 }
             });
             // ----------------------------------------------------------------------
@@ -337,7 +343,7 @@ class Sa11y {
         this.findElements();
         this.checkHeaders();
         this.checkLinkText();
-        if (this.contrast) {
+        if (localStorage.getItem("sa11y-contrastCheck") === "On") {
             this.checkContrast();
         }
         this.checkLabels();
