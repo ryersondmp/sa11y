@@ -144,20 +144,25 @@ class Sa11y {
             var sa11yToggle = $('#sa11y-toggle');
             // sa11yToggle.addClass(sessionStorage.enableSa11y);
             sa11yToggle.click(() => {
-                if (sa11yToggle.attr('aria-expanded') === 'true') {
+                if (localStorage.getItem('sa11y-panel') === 'open') {
+                    localStorage.setItem('sa11y-panel', 'close');
                     // sessionStorage.enableSa11y = "sa11y-on";
                     sa11yToggle.removeClass('sa11y-on').attr('aria-expanded', 'false');
 
                     this.reset();
                 } else {
                     // sessionStorage.enableSa11y = "";
-
+                    localStorage.setItem('sa11y-panel', 'open');
                     sa11yToggle.addClass('sa11y-on').attr('aria-expanded', 'true');
 
                     this.checkAll();
                 }
             });
 
+            // if its saved to be open, leave it open:
+            if (localStorage.getItem('sa11y-panel') === 'open') {
+                sa11yToggle.addClass('sa11y-on').attr('aria-expanded', 'true');
+            }
             // TODO: Crudely give a little time to load any other content or slow post-rendered JS, iFrames, etc.
             // Not sure if this is ever called.
             if (sa11yToggle.hasClass('sa11y-on')) {
