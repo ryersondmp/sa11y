@@ -131,12 +131,14 @@ class Sa11y {
             MainToggleIcon +
             '<span class="sa11y-visually-hidden">' +
             sa11yMainToggleLang +
-            '</span><div id="sa11y-toggle-notif"><div id="sa11y-toggle-number"></div></div></button>';
+            '</span><div id="sa11y-toggle-notif"  style="display: none;"><div id="sa11y-toggle-number"></div></div></button>';
 
         $('body').prepend(sa11ycontainer);
 
         // JQuery
         $(() => {
+            // HIde notification
+
             //To-do: Figure out what to do with this guy.
             this.loadGlobals();
 
@@ -322,7 +324,12 @@ class Sa11y {
         } else {
             this.displayPanel();
         }
-        $('#sa11y-toggle-number').html(this.errorCount);
+        if (this.errorCount === 0) {
+            $('#sa11y-toggle-notif').hide();
+        } else {
+            $('#sa11y-toggle-notif').show();
+            $('#sa11y-toggle-number').html(this.errorCount);
+        }
         //Initialize tippy.js
         tippy('.sa11y-btn', {
             interactive: true,
