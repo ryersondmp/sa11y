@@ -1186,27 +1186,28 @@ class Sa11y {
         this.panelActive = true;
         let totalCount = this.errorCount + this.warningCount;
         $('#sa11y-panel').addClass('sa11y-active');
-
-        if (totalCount > 0 && this.errorCount > 0) {
+        if (this.errorCount > 0 && this.warningCount > 0) {
+            $('#sa11y-panel-content').addClass('sa11y-errors');
+            $('#sa11y-status').text(
+                `${this.errorCount} accessibility errors and ${this.warningCount} warnings detected`,
+            );
+        } else if (this.errorCount > 0) {
+            $('#sa11y-panel-content').addClass('sa11y-errors');
             $('#sa11y-status').text(
                 totalCount === 1
                     ? 'One accessibility issue detected.'
                     : totalCount + ' accessibility issues detected.',
             );
-            $('#sa11y-panel-content').addClass('sa11y-errors');
-            // $("#sa11y-toggle").attr("issue", "error");
-        } else if (totalCount > 0 && this.warningCount > 0) {
+        } else if (this.warningCount > 0) {
+            $('#sa11y-panel-content').addClass('sa11y-warnings');
             $('#sa11y-status').text(
                 totalCount === 1
                     ? 'Please review warning.'
                     : 'Please review ' + totalCount + ' warnings.',
             );
-            $('#sa11y-panel-content').addClass('sa11y-warnings');
-            // $("#sa11y-toggle").attr("issue", "warning");
         } else {
             $('#sa11y-panel-content').addClass('sa11y-pass');
             $('#sa11y-status').text('No accessibility errors found.');
-            // $("#sa11y-toggle").attr("issue", "pass");
         }
 
         //Show outline panel
