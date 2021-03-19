@@ -56,7 +56,6 @@ function ButtonInserter(type, content, inline = false) {
 function ErrorBannerInsert(content) {
     return `<div class="sa11y-error-message-container">
         <div class="sa11y-error-message" lang="${sa11yLangCode}">
-            <span class="sa11y-visually-hidden">${sa11yErrorLang}</span> 
             ${content}
         </div>
     </div>`;
@@ -83,7 +82,7 @@ class Sa11y {
         let loadContrastPreference = localStorage.getItem('sa11y-contrastCheck') === 'On';
         sa11ycontainer.innerHTML =
 
-            '<button type="button" aria-expanded="false" id="sa11y-toggle">' + MainToggleIcon + '<span class="sa11y-visually-hidden">' + sa11yMainToggleLang + '</span><div id="sa11y-toggle-notif"  style="display: none;"><div id="sa11y-toggle-number"></div></div></button>' +
+            '<button type="button" aria-expanded="false" id="sa11y-toggle" aria-describedby="sa11y-toggle-notif">' + MainToggleIcon + '<span class="sa11y-visually-hidden">' + sa11yMainToggleLang + '</span><div id="sa11y-toggle-notif"  style="display: none;"><span id="sa11y-toggle-number"></span><span class="sa11y-visually-hidden">errors detected.</span></div></button>' +
 
             //Start of main container.
             '<div id="sa11y-panel">' +
@@ -139,7 +138,6 @@ class Sa11y {
 
         // JQuery
         $(() => {
-            // HIde notification
 
             //To-do: Figure out what to do with this guy.
             this.loadGlobals();
@@ -326,12 +324,14 @@ class Sa11y {
         } else {
             this.displayPanel();
         }
+
         if (this.errorCount === 0) {
             $('#sa11y-toggle-notif').hide();
         } else {
             $('#sa11y-toggle-notif').show();
             $('#sa11y-toggle-number').html(this.errorCount);
         }
+
         //Initialize tippy.js
         tippy('.sa11y-btn', {
             interactive: true,
@@ -342,7 +342,8 @@ class Sa11y {
             appendTo: document.body,
         });
     };
-    // TODO: Do something with load globals
+
+    /* Thanks to John Jameson, Princeton University, for loadGlobal and findElements function. */
     loadGlobals = () => {
         // Look for a content container
         if (typeof sa11yCheckRoot !== 'string' || $(sa11yCheckRoot).length === 0) {
@@ -387,7 +388,6 @@ class Sa11y {
     };
 
     //Find and cache.
-    //Searched for elements that can cause errors
     findElements = () => {
         let { root, containerIgnore, imageIgnore } = this;
         this.$p = root.find('p').not(containerIgnore);
@@ -472,12 +472,11 @@ class Sa11y {
         let $h1 = this.root.find("h1, [role='heading'][aria-level='1']").not(this.containerIgnore);
         if ($h1.length === 0) {
             this.errorCount++;
+
+            //To-do: Make this a little prettier
             $('#sa11y-outline-header').after(
-                `<div class='sa11y-instance'>
-                    <span class='sa11y-badge sa11y-error-badge'>
-                        <span aria-hidden='true'>&#10007;</span>
-                        <span class='sa11y-visually-hidden'>${sa11yErrorLang}</span>
-                    </span> 
+                `<div class='sa11y-instance sa11y-missing-h1'>
+                    <span class='sa11y-badge sa11y-error-badge'><span aria-hidden='true'>&#10007;</span><span class='sa11y-visually-hidden'>${sa11yErrorLang}</span></span> 
                     <span class='sa11y-red-text sa11y-bold'>Missing Heading 1!</span>
                 </div>`,
             );

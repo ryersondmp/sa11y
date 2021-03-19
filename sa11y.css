@@ -382,6 +382,12 @@ button.sa11y-warning-btn-text:focus {
     color: var(--sa11y-red-text) !important;
 }
 
+#sa11y-container .sa11y-missing-h1 {
+    margin: 0 15px 0 15px;
+    padding: 2px;
+    border: 2px dashed var(--sa11y-red-text);
+}
+
 #sa11y-container .sa11y-badge {
     background-color: var(--sa11y-panel-badge) !important;
     border-radius: 10px !important;
@@ -612,11 +618,11 @@ button.sa11y-warning-btn-text:focus {
 }
 
 .sa11y-error-message:before {
-    content: var(--sa11y-error-svg);
-    height: 24px;
-    margin: 10px 10px 10px 10px;
-    vertical-align: middle;
-    width: 24px;
+    content: var(--sa11y-error-svg) / "Error" !important;
+    height: 24px !important;
+    margin: 10px 10px 10px 10px !important;
+    vertical-align: middle !important;
+    width: 24px !important;
 }
 
 .sa11y-error-message a {
