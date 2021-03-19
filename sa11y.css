@@ -132,11 +132,11 @@ button#sa11y-toggle:focus {
 
 #sa11y-toggle-notif {
     position: absolute;
-    right: 0px;
-    top: 0px;
+    right: -3px;
+    top: -3px;
     width: 20px;
     height: 20px;
-    font-size: 11px;
+    font-size: 13px;
     line-height: 1;
     background-color: var(--sa11y-error-hover);
     display: flex;
@@ -325,7 +325,7 @@ button.sa11y-warning-btn-text:focus {
 .sa11y-warnings .sa11y-panel-icon {
     height: 30px !important;
     margin-right: 10px !important;
-    width: 30px !important;
+    width: 35px !important;
 }
 
 .sa11y-errors .sa11y-panel-icon {

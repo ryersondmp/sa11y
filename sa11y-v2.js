@@ -80,8 +80,11 @@ class Sa11y {
         sa11ycontainer.setAttribute('role', 'region');
         sa11ycontainer.setAttribute('lang', sa11yLangCode);
         sa11ycontainer.setAttribute('aria-label', sa11yContainerLang);
-        let loadContrastPerference = localStorage.getItem('sa11y-contrastCheck') === 'On';
+        let loadContrastPreference = localStorage.getItem('sa11y-contrastCheck') === 'On';
         sa11ycontainer.innerHTML =
+
+            '<button type="button" aria-expanded="false" id="sa11y-toggle">' + MainToggleIcon + '<span class="sa11y-visually-hidden">' + sa11yMainToggleLang + '</span><div id="sa11y-toggle-notif"  style="display: none;"><div id="sa11y-toggle-number"></div></div></button>' +
+
             //Start of main container.
             '<div id="sa11y-panel">' +
             //Page Outline tab.
@@ -91,6 +94,7 @@ class Sa11y {
             '<ul id="sa11y-outline-list"></ul>' +
             '</div>' +
             '</div>' +
+
             //Settings tab.
             '<div id="sa11y-settings-panel">' +
             '<div id="sa11y-settings-header" class="sa11y-header-text"><span tabindex="-1">Settings</span></div>' +
@@ -101,10 +105,10 @@ class Sa11y {
                     <button id="sa11y-contrastCheck-toggle" 
                     aria-labelledby="check-contrast" 
                     class="sa11y-settings-switch ${
-                        loadContrastPerference ? 'sa11y-setting-switch-selected' : ''
+                        loadContrastPreference ? 'sa11y-setting-switch-selected' : ''
                     }" 
-                    aria-pressed="${loadContrastPerference ? 'true' : 'false'}">
-                        ${loadContrastPerference ? 'On' : 'Off'}
+                    aria-pressed="${loadContrastPreference ? 'true' : 'false'}">
+                        ${loadContrastPreference ? 'On' : 'Off'}
                     </button>
                 </li>
                 <li>
@@ -121,17 +125,15 @@ class Sa11y {
             '<div>Sa11y is an accessibility quality assurance tool that visually highlights common content related issues. It is not a comprehensive code analysis tool. Created at Ryerson University in Toronto, Canada.</div>' +
             '</div>' +
             '</div>' +
+
             //Main panel that conveys state of page.
             '<div id="sa11y-panel-content"><div class="sa11y-panel-icon"></div><div id="sa11y-panel-text"><span id="sa11y-status"></span></div></div>' +
+
             //Show Outline & Show Settings button.
             '<div id="sa11y-panel-controls"><button type="button" aria-expanded="false" id="sa11y-outline-toggle">Show Outline</button><button type="button" aria-expanded="false" id="sa11y-settings-toggle">Show Settings</button><div aria-hidden="true">&nbsp;&nbsp;</div></div>' +
+
             //End of main container.
-            '</div>' +
-            '<button type="button" aria-expanded="false" id="sa11y-toggle">' +
-            MainToggleIcon +
-            '<span class="sa11y-visually-hidden">' +
-            sa11yMainToggleLang +
-            '</span><div id="sa11y-toggle-notif"  style="display: none;"><div id="sa11y-toggle-number"></div></div></button>';
+            '</div>';
 
         $('body').prepend(sa11ycontainer);
 
@@ -383,8 +385,9 @@ class Sa11y {
             this.headerIgnore = sa11yContainerIgnore;
         }
     };
+
     //Find and cache.
-    // Searched for elements that can cause errors
+    //Searched for elements that can cause errors
     findElements = () => {
         let { root, containerIgnore, imageIgnore } = this;
         this.$p = root.find('p').not(containerIgnore);
@@ -479,7 +482,7 @@ class Sa11y {
                 </div>`,
             );
 
-            MissingHeading1Message =
+            let MissingHeading1Message =
                 "Missing Heading 1. Heading 1 should be the start of the main content section, and is the main heading that describes the overall purpose of the page. Learn more about <a href='https://www.w3.org/WAI/tutorials/page-structure/headings/' target='_blank'>Heading Structure.<span class='sa11y-visually-hidden'> (Opens in new tab)</span></a>";
             $('#sa11y-container').after(ErrorBannerInsert(MissingHeading1Message));
         }
@@ -516,8 +519,6 @@ class Sa11y {
                 'learn more',
                 'learn',
                 'more',
-                'register',
-                'register now',
                 'this page',
                 'check out',
                 'learn to',
@@ -1186,24 +1187,40 @@ class Sa11y {
         this.panelActive = true;
         let totalCount = this.errorCount + this.warningCount;
         $('#sa11y-panel').addClass('sa11y-active');
-        if (this.errorCount > 0 && this.warningCount > 0) {
+
+        if (this.errorCount === 1 && this.warningCount === 1) {
             $('#sa11y-panel-content').addClass('sa11y-errors');
             $('#sa11y-status').text(
-                `${this.errorCount} accessibility errors and ${this.warningCount} warnings detected`,
+                `1 accessibility error and 1 warning detected.`,
+            );
+        } else if (this.errorCount === 1 && this.warningCount > 0) {
+            $('#sa11y-panel-content').addClass('sa11y-errors');
+            $('#sa11y-status').text(
+                `1 accessibility error and ${this.warningCount} warnings detected.`,
+            );
+        } else if (this.errorCount > 0 && this.warningCount === 1) {
+            $('#sa11y-panel-content').addClass('sa11y-errors');
+            $('#sa11y-status').text(
+                `${this.errorCount} accessibility errors and 1 warning detected.`,
+            );
+        } else if (this.errorCount > 0 && this.warningCount > 0) {
+            $('#sa11y-panel-content').addClass('sa11y-errors');
+            $('#sa11y-status').text(
+                `${this.errorCount} accessibility errors and ${this.warningCount} warnings detected.`,
             );
         } else if (this.errorCount > 0) {
             $('#sa11y-panel-content').addClass('sa11y-errors');
             $('#sa11y-status').text(
-                totalCount === 1
-                    ? 'One accessibility issue detected.'
-                    : totalCount + ' accessibility issues detected.',
+                this.errorCount === 1
+                    ? '1 accessibility issue detected.'
+                    : this.errorCount + ' accessibility issues detected.',
             );
         } else if (this.warningCount > 0) {
             $('#sa11y-panel-content').addClass('sa11y-warnings');
             $('#sa11y-status').text(
                 totalCount === 1
                     ? 'Please review warning.'
-                    : 'Please review ' + totalCount + ' warnings.',
+                    : 'Please review ' + this.warningCount + ' warnings.',
             );
         } else {
             $('#sa11y-panel-content').addClass('sa11y-pass');
