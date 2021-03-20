@@ -106,9 +106,7 @@ class Sa11y {
                     class="sa11y-settings-switch ${
                         loadContrastPreference ? 'sa11y-setting-switch-selected' : ''
                     }" 
-                    aria-pressed="${loadContrastPreference ? 'true' : 'false'}">
-                        ${loadContrastPreference ? 'On' : 'Off'}
-                    </button>
+                    aria-pressed="${loadContrastPreference ? 'true' : 'false'}">${loadContrastPreference ? 'On' : 'Off'}</button>
                 </li>
                 <li>
                     <label id="dark-mode" for="sa11y-theme-toggle">Dark mode</label>
@@ -1259,7 +1257,7 @@ class Sa11y {
         let $settingsToggle = $('#sa11y-settings-toggle');
         $settingsToggle.click(function () {
             if ($settingsToggle.attr('aria-expanded') === 'true') {
-                $settingsToggle.remove('sa11y-settings-active');
+                $settingsToggle.removeClass('sa11y-settings-active');
                 $('#sa11y-settings-panel').removeClass('sa11y-active');
                 $settingsToggle.text('Show Settings');
                 $settingsToggle.attr('aria-expanded', 'false');
