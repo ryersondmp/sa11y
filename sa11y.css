@@ -114,6 +114,7 @@ button#sa11y-toggle:focus {
     -moz-animation: sa11y-toggle-gradient 3s ease;
     animation: sa11y-toggle-gradient 3s ease;
 }
+
 /* 
 #sa11y-container > .sa11y-active + button#sa11y-toggle[issue="pass"] {
     background-image: linear-gradient(
@@ -145,7 +146,8 @@ button#sa11y-toggle:focus {
     height: 20px;
     font-size: 13px;
     line-height: 1;
-    background-color: var(--sa11y-error-hover);
+    color: #ffffff;
+    background-color: #EB0000;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -293,6 +295,7 @@ button.sa11y-warning-btn-text:focus {
     visibility: hidden;
     width: 310px !important;
     z-index: 8890 !important;
+    transition: background 0.2s !important;
 }
 
 #sa11y-panel-content {
@@ -373,7 +376,7 @@ button.sa11y-warning-btn-text:focus {
 #sa11y-settings-content,
 #sa11y-outline-content {
     border-bottom: 1px solid var(--sa11y-panel-bg-splitter) !important;
-    max-height: 350px !important;
+    max-height: 320px !important;
     padding: 0px 15px 10px 15px !important;
     overflow-y: auto !important;
     width: 100% !important;
@@ -405,11 +408,10 @@ button.sa11y-warning-btn-text:focus {
     min-width: 10px !important;
     padding: 2px 5px !important;
     text-align: center !important;
-    vertical-align: middle !important;
     white-space: nowrap !important;
 }
 #sa11y-container .sa11y-error-badge {
-    background: var(--sa11y-panel-error) !important;
+    background: var(--sa11y-error) !important;
     color: var(--sa11y-error-text) !important;
 }
 
@@ -442,16 +444,23 @@ button.sa11y-warning-btn-text:focus {
     padding: 0 !important;
 }
 
-/* To-do: fix dark mode */
-#sa11y-outline-list::-webkit-scrollbar {
-    -webkit-appearance: none;
+/* Scroll bar */
+#sa11y-settings-content::-webkit-scrollbar,
+#sa11y-outline-content::-webkit-scrollbar {
     width: 7px;
+  }
+#sa11y-settings-content,
+#sa11y-outline-content {
+    scrollbar-width: thin;
+    scrollbar-color: var(--sa11y-panel-bg-splitter);
 }
-#sa11y-outline-list::-webkit-scrollbar-thumb {
-    border-radius: 5px;
-    background-color: rgba(0, 0, 0, 0.5);
+#sa11y-settings-content::-webkit-scrollbar-thumb,
+#sa11y-outline-content::-webkit-scrollbar-thumb {
+    background-color: var(--sa11y-panel-bg-splitter);
+    border-radius: 6px;
 }
 
+/* Setting & Outline toggles */
 #sa11y-settings-toggle.sa11y-settings-active,
 #sa11y-settings-toggle:hover,
 #sa11y-outline-toggle.sa11y-outline-active,
@@ -480,6 +489,7 @@ button.sa11y-warning-btn-text:focus {
     outline: 0 !important;
     padding: 0px !important;
     width: 100% !important;
+    transition: background 0.2s;
 }
 
 #sa11y-settings-options {

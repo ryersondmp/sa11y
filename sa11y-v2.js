@@ -100,7 +100,7 @@ class Sa11y {
             '<div id="sa11y-settings-content">' +
             `<ul id="sa11y-settings-options">  
                 <li>
-                    <span id="check-contrast">Check contrast</span>
+                    <label id="check-contrast" for="sa11y-contrastCheck-toggle">Check contrast</label>
                     <button id="sa11y-contrastCheck-toggle" 
                     aria-labelledby="check-contrast" 
                     class="sa11y-settings-switch ${
@@ -113,7 +113,7 @@ class Sa11y {
                     <button id="sa11y-theme-toggle" aria-labelledby="dark-mode" class="sa11y-settings-switch"></button>
                 </li>
                 <li>
-                    <span id="readability">Readability</span>
+                    <label id="readability" for="sa11y-readability">Readability <span class="sa11y-badge">AAA</span></label>
                     <button id="sa11y-readability" aria-labelledby="readability" class="sa11y-settings-switch" aria-pressed="false">Off</button>
                 </li>
             </ul>
