@@ -80,9 +80,10 @@ class Sa11y {
         sa11ycontainer.setAttribute('lang', sa11yLangCode);
         sa11ycontainer.setAttribute('aria-label', sa11yContainerLang);
         let loadContrastPreference = localStorage.getItem('sa11y-contrastCheck') === 'On';
+        let loadReadabilityPreference = localStorage.getItem('sa11y-readabilityCheck') === 'On';
         sa11ycontainer.innerHTML =
 
-            '<button type="button" aria-expanded="false" id="sa11y-toggle" aria-describedby="sa11y-toggle-notif">' + MainToggleIcon + '<span class="sa11y-visually-hidden">' + sa11yMainToggleLang + '</span><div id="sa11y-toggle-notif"  style="display: none;"><span id="sa11y-toggle-number"></span><span class="sa11y-visually-hidden">errors detected.</span></div></button>' +
+            '<button type="button" aria-expanded="false" id="sa11y-toggle" aria-describedby="sa11y-notification-badge">' + MainToggleIcon + '<span class="sa11y-visually-hidden">' + sa11yMainToggleLang + '</span><div id="sa11y-notification-badge"  style="display: none;"><span id="sa11y-notification-count"></span><span class="sa11y-visually-hidden">errors detected.</span></div></button>' +
 
             //Start of main container.
             '<div id="sa11y-panel">' +
@@ -92,6 +93,7 @@ class Sa11y {
             '<div id="sa11y-outline-content">' +
             '<ul id="sa11y-outline-list"></ul>' +
             '</div>' +
+            '<div id="sa11y-readability-panel"></div>' +
             '</div>' +
 
             //Settings tab.
@@ -103,9 +105,7 @@ class Sa11y {
                     <label id="check-contrast" for="sa11y-contrastCheck-toggle">Check contrast</label>
                     <button id="sa11y-contrastCheck-toggle" 
                     aria-labelledby="check-contrast" 
-                    class="sa11y-settings-switch ${
-                        loadContrastPreference ? 'sa11y-setting-switch-selected' : ''
-                    }" 
+                    class="sa11y-settings-switch ${loadContrastPreference ? 'sa11y-setting-switch-selected' : ''}" 
                     aria-pressed="${loadContrastPreference ? 'true' : 'false'}">${loadContrastPreference ? 'On' : 'Off'}</button>
                 </li>
                 <li>
@@ -113,13 +113,11 @@ class Sa11y {
                     <button id="sa11y-theme-toggle" aria-labelledby="dark-mode" class="sa11y-settings-switch"></button>
                 </li>
                 <li>
-                    <label id="readability" for="sa11y-readability">Readability <span class="sa11y-badge">AAA</span></label>
-                    <button id="sa11y-readability" aria-labelledby="readability" class="sa11y-settings-switch" aria-pressed="false">Off</button>
+                    <label id="check-readability" for="sa11y-readabilityCheck-toggle">Readability <span class="sa11y-badge">AAA</span></label>
+                    <button id="sa11y-readabilityCheck-toggle" aria-labelledby="check-readability" class="sa11y-settings-switch ${loadReadabilityPreference ? 'sa11y-setting-switch-selected' : ''}" 
+                    aria-pressed="${loadReadabilityPreference ? 'true' : 'false'}">${loadReadabilityPreference ? 'On' : 'Off'}</button>
                 </li>
-            </ul>
-            <hr class="sa11y-hr" aria-hidden="true">` +
-            '<div class="sa11y-header-text">About Sa11y</div>' +
-            '<div>Sa11y is an accessibility quality assurance tool that visually highlights common content related issues. It is not a comprehensive code analysis tool. Created at Ryerson University in Toronto, Canada.</div>' +
+            </ul>` +
             '</div>' +
             '</div>' +
 
@@ -146,29 +144,24 @@ class Sa11y {
             sa11yToggle.click(() => {
                 if (localStorage.getItem('sa11y-panel') === 'open') {
                     localStorage.setItem('sa11y-panel', 'close');
-                    // sessionStorage.enableSa11y = "sa11y-on";
                     sa11yToggle.removeClass('sa11y-on').attr('aria-expanded', 'false');
-
                     this.reset();
                 } else {
-                    // sessionStorage.enableSa11y = "";
                     localStorage.setItem('sa11y-panel', 'open');
                     sa11yToggle.addClass('sa11y-on').attr('aria-expanded', 'true');
-
                     this.checkAll();
                 }
             });
 
-            // if its saved to be open, leave it open:
+            //Remember to leave it open:
             if (localStorage.getItem('sa11y-panel') === 'open') {
                 sa11yToggle.addClass('sa11y-on').attr('aria-expanded', 'true');
             }
-            // TODO: Crudely give a little time to load any other content or slow post-rendered JS, iFrames, etc.
-            // Not sure if this is ever called.
+            //Crudely give a little time to load any other content or slow post-rendered JS, iFrames, etc.
             if (sa11yToggle.hasClass('sa11y-on')) {
                 sa11yToggle.toggleClass('loading-sa11y');
                 sa11yToggle.attr('aria-expanded', 'true');
-                setTimeout(this.checkAll, 1200);
+                setTimeout(this.checkAll, 500);
             }
 
             $(document).ready(() => {
@@ -191,21 +184,18 @@ class Sa11y {
             // ----------------------------------------------------------------------
             // Toggle Readability
             // ----------------------------------------------------------------------
-            let $sa11yReadability = $('#sa11y-readability');
-            $sa11yReadability.on('click', function () {
-                if (
-                    sessionStorage.getItem('sa11y-readability') === null ||
-                    sessionStorage.getItem('sa11y-readability') === 'off'
-                ) {
-                    sessionStorage.setItem('sa11y-readability', 'on');
-                    $sa11yReadability.text('On');
-                    $sa11yReadability.attr('aria-pressed', 'true');
-                    $sa11yReadability.addClass('sa11y-setting-switch-selected');
+            let $sa11yReadabilityCheck = $('#sa11y-readabilityCheck-toggle');
+            $sa11yReadabilityCheck.click(() => {
+                if (localStorage.getItem('sa11y-readabilityCheck') === 'On') {
+                    localStorage.setItem('sa11y-readabilityCheck', 'off');
+                    $sa11yReadabilityCheck.text('Off');
+                    $sa11yReadabilityCheck.attr('aria-pressed', 'false');
+                    $sa11yReadabilityCheck.removeClass('sa11y-setting-switch-selected');
                 } else {
-                    sessionStorage.setItem('sa11y-readability', 'off');
-                    $sa11yReadability.text('Off');
-                    $sa11yReadability.attr('aria-pressed', 'false');
-                    $sa11yReadability.removeClass('sa11y-setting-switch-selected');
+                    localStorage.setItem('sa11y-readabilityCheck', 'On');
+                    $sa11yReadabilityCheck.text('On');
+                    $sa11yReadabilityCheck.attr('aria-pressed', 'true');
+                    $sa11yReadabilityCheck.addClass('sa11y-setting-switch-selected');
                 }
             });
             // ----------------------------------------------------------------------
@@ -306,7 +296,6 @@ class Sa11y {
         this.errorCount = 0;
         this.warningCount = 0;
         this.root = $(sa11yCheckRoot);
-        // hhere -----
         this.findElements();
         this.checkHeaders();
         this.checkLinkText();
@@ -315,6 +304,9 @@ class Sa11y {
         }
         this.checkLabels();
         this.checkAltText();
+        if (localStorage.getItem('sa11y-readabilityCheck') === 'On') {
+            this.checkReadability();
+        }
         this.checkQA();
 
         if (this.panelActive) {
@@ -323,11 +315,16 @@ class Sa11y {
             this.displayPanel();
         }
 
-        if (this.errorCount === 0) {
-            $('#sa11y-toggle-notif').hide();
+        let totalCount = this.errorCount + this.warningCount;
+        if (totalCount === 0) {
+            $('#sa11y-notification-badge').hide();
+        } else if (this.warningCount > 0 && this.errorCount === 0) {
+            $('#sa11y-notification-badge').show();
+            $('#sa11y-notification-badge').addClass("sa11y-notification-badge-warning");
+            $('#sa11y-notification-count').html(this.warningCount);
         } else {
-            $('#sa11y-toggle-notif').show();
-            $('#sa11y-toggle-number').html(this.errorCount);
+            $('#sa11y-notification-badge').show();
+            $('#sa11y-notification-count').html(totalCount);
         }
 
         //Initialize tippy.js
@@ -601,6 +598,8 @@ class Sa11y {
             }
         });
     };
+
+    /*====================== CONTRAST MODULE =======================*/
     checkContrast = () => {
         var contrastErrors = {
             errors: [],
@@ -983,6 +982,153 @@ class Sa11y {
             }
         });
     };
+
+    /*====================== READABILITY MODULE =======================*/
+    checkReadability = () => {
+
+        function number_of_syllables(wordCheck) {
+            wordCheck = wordCheck.toLowerCase().replace('.','').replace('\n','');
+            if(wordCheck.length <= 3) {
+                return 1;
+            }
+            wordCheck = wordCheck.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
+            wordCheck = wordCheck.replace(/^y/, '');
+            var syllable_string = wordCheck.match(/[aeiouy]{1,2}/g);
+  
+            if(!!syllable_string){
+                var syllables = syllable_string.length;
+            }else{
+                syllables=0;
+            }
+            return syllables;
+        }
+  
+        let paragraphtext = this.root.find("main p").not(this.containerIgnore).not("blockquote").text();
+  
+        var words_raw = paragraphtext.replace(/[.!?-]+/g,' ').split(' ');
+        var words = 0;
+        for (var i = 0; i < words_raw.length; i++) {
+            if(words_raw[i]!=0){
+                words = words + 1;
+            }
+        }
+  
+        var sentences_raw = paragraphtext.split(/[.!?]+/);
+        var sentences = 0;
+        for (var i = 0; i < sentences_raw.length; i++) {
+            if(sentences_raw[i]!=''){
+                sentences = sentences + 1;
+            }
+        }
+  
+        var total_syllables = 0;
+        var syllables1 = 0;
+        var syllables2 = 0;
+        for (var i = 0; i < words_raw.length; i++) {
+            if(words_raw[i]!=0){
+                var syllable_count = number_of_syllables(words_raw[i]);
+                if(syllable_count==1){
+                    syllables1 = syllables1 + 1;
+                }
+                if(syllable_count==2){
+                    syllables2 = syllables2 + 1;
+                }
+                total_syllables = total_syllables + syllable_count;
+            }
+        }
+  
+        var characters = paragraphtext.replace(/[.!?|\s]+/g,'').length;
+        var pollysyllables = (words-(syllables1+syllables2));
+        var flesch_reading_ease = 206.835 - (1.015 * words/sentences) - (84.6 * total_syllables/words)
+  
+        if(flesch_reading_ease > 100){
+            flesch_reading_ease = 100;
+        } else if(flesch_reading_ease < 0) {
+            flesch_reading_ease = 0;
+        }
+  
+        var flesch_kincaid_grade_level = (0.39 * words/sentences) + (11.8 * total_syllables/words) - 15.9;
+        var gunning_fog_index = (words/sentences + 100*(pollysyllables/words)) * 0.4;
+        var automated_readability_index = 4.71 * (characters/words) + 0.5 * (words/sentences) - 21.43;
+        var smog = 1.0430 * Math.sqrt(pollysyllables*30/sentences) + 3.1291
+        var coleman_liau = 0.0588 * (100*characters/words) - 0.296 * (100*sentences/words) - 15.8;
+        var scoreMsg ='';
+  
+        scoreMsg = scoreMsg + '[Detailed] Readability score of main content area. Please note text within a list is ignored.'
+        scoreMsg = scoreMsg + '\n\n';
+        scoreMsg = scoreMsg + 'Flesch Reading Ease: ' + flesch_reading_ease.toFixed(1);
+        scoreMsg = scoreMsg + '\nWCAG 2.0 Level AAA requires 60 or greater.'
+        scoreMsg = scoreMsg + '\n\n';
+        scoreMsg = scoreMsg + 'Grade Level Average: ' + ((flesch_kincaid_grade_level + gunning_fog_index + automated_readability_index + coleman_liau + (sentences>=30?smog:0))/(sentences>=30?5:4)).toFixed(1);
+        scoreMsg = scoreMsg + '\n\n';
+        scoreMsg = scoreMsg + '(Flesch-Kincaid): ' + flesch_kincaid_grade_level.toFixed(1);
+        scoreMsg = scoreMsg + '\n';
+        scoreMsg = scoreMsg + '(Gunning-Fog): ' + gunning_fog_index.toFixed(1);
+        scoreMsg = scoreMsg + '\n';
+        scoreMsg = scoreMsg + '(Automated Readability): ' + automated_readability_index.toFixed(1);
+        scoreMsg = scoreMsg + '\n';
+        scoreMsg = scoreMsg + '(Colemane-Liau): ' + coleman_liau.toFixed(1);
+        scoreMsg = scoreMsg + '\n';
+        scoreMsg = scoreMsg + (sentences>=30?'(SMOG): ' + smog.toFixed(1) + '\n\n':'');
+        scoreMsg = scoreMsg + 'WCAG 2.0 Level AAA requires grade 9 or lower.';
+        scoreMsg = scoreMsg + '\n\n';
+        scoreMsg = scoreMsg + 'Words: ' + words;
+        scoreMsg = scoreMsg + '\n';
+        scoreMsg = scoreMsg + 'Complex Words: ' + Math.round(100*((words-(syllables1+syllables2))/words)) +'%';
+        scoreMsg = scoreMsg + '\n';
+        scoreMsg = scoreMsg + 'Sentences: ' + sentences;
+        scoreMsg = scoreMsg + '\n';
+        scoreMsg = scoreMsg + 'Words Per Sentence: ' + (words/sentences).toFixed(1);
+        scoreMsg = scoreMsg + '\n';
+        scoreMsg = scoreMsg + 'Syllables: ' + total_syllables;
+        scoreMsg = scoreMsg + '\n';
+        scoreMsg = scoreMsg + 'Characters: ' + characters;
+        console.log(scoreMsg);
+
+
+        let readingDifficulty = "";
+        let readabilityDetails = "";
+        let notEnoughContent = "";
+
+             if (words > 30) {
+                var fleschScore = flesch_reading_ease.toFixed(1);
+                var avgWordsPerSentence = (words/sentences).toFixed(1);
+                
+                //WCAG AAA pass if greater than 60
+                if (fleschScore >= 0 && fleschScore < 30) {
+                    readingDifficulty = '<span class="sa11y-readability-score">Very difficult</span>';
+                } else if (fleschScore > 31 && fleschScore < 49) {
+                    readingDifficulty = '<span class="sa11y-readability-score">Difficult</span>';
+                } else if (fleschScore > 50 && fleschScore < 60) {
+                    readingDifficulty = '<span class="sa11y-readability-score">Fairly difficult</span>';
+                } else {
+                    readingDifficulty = '<span class="sa11y-readability-score">Good</span>';
+                } 
+
+                readabilityDetails = `
+                <ul id="sa11y-readability-details">
+                    <li><span class='sa11y-bold'>Average words per sentence:</span> ` + avgWordsPerSentence + `</li>
+                    <li><span class='sa11y-bold'>Complex words:</span> ` + Math.round(100*((words-(syllables1+syllables2))/words)) + `%</li>
+                    <li><span class='sa11y-bold'>Words:</span> ` + words + `</li>
+                </ul>`
+
+            } else {
+                fleschScore = "";
+                readingDifficulty = "";
+                readabilityDetails = "";
+                notEnoughContent = "Not enough content to calculate readability score.";
+            } 
+
+            let sa11yReadabilityPanel = document.createElement('div');
+            sa11yReadabilityPanel.setAttribute('id', 'sa11y-readability-content');
+            sa11yReadabilityPanel.innerHTML = `
+                <span class="sa11y-header-text">Readability</span>
+                ${fleschScore} ${readingDifficulty} ${readabilityDetails} ${notEnoughContent}
+                `;
+            $("#sa11y-readability-panel").prepend(sa11yReadabilityPanel);
+  
+    }
+    /*====================== QUALITY ASSURANCE MODULE =======================*/
     checkQA = () => {
         var $videos = this.root
             .find(
@@ -1374,6 +1520,7 @@ class Sa11y {
         this.root.find('.sa11y-heading-label').remove();
         this.root.find('#sa11y-panel').removeClass('sa11y-active');
         this.root.find('#sa11y-outline-list li').remove();
+        this.root.find("#sa11y-readability-content").remove();
     };
 }
 

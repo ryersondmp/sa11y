@@ -115,30 +115,13 @@ button#sa11y-toggle:focus {
     animation: sa11y-toggle-gradient 3s ease;
 }
 
-/* 
-#sa11y-container > .sa11y-active + button#sa11y-toggle[issue="pass"] {
-    background-image: linear-gradient(
-        to top,
-        var(--sa11y-pass),
-        var(--sa11y-pass-hover)
-    );
+.sa11y-notification-badge-warning {
+    color: var(--sa11y-warning-text) !important;
+    background-color: var(--sa11y-warning-hover) !important;
+    border: 1px solid var(--sa11y-warning) !important;
 }
-#sa11y-container > .sa11y-active + button#sa11y-toggle[issue="warning"] {
-    background-image: linear-gradient(
-        to top,
-        var(--sa11y-warning-svg-color),
-        var(--sa11y-warning-svg-color)
-    );
-}
-#sa11y-container > .sa11y-active + button#sa11y-toggle[issue="error"] {
-    background-image: linear-gradient(
-        to top,
-        var(--sa11y-error),
-        var(--sa11y-error-hover)
-    );
-} */
 
-#sa11y-toggle-notif {
+#sa11y-notification-badge {
     position: absolute;
     right: -3px;
     top: -3px;
@@ -146,14 +129,14 @@ button#sa11y-toggle:focus {
     height: 20px;
     font-size: 13px;
     line-height: 1;
+    display: flex;
     color: #ffffff;
     background-color: #EB0000;
-    display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 100px;
 }
-#sa11y-toggle-notif > div {
+#sa11y-notification-badge > div {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -175,8 +158,8 @@ button#sa11y-toggle:focus {
     border: 4px solid rgba(255, 255, 255, 0.9);
     border-top: 4px solid transparent;
     border-bottom: 4px solid transparent;
-    -webkit-animation: sa11y-rotate 2s ease;
-    animation: sa11y-rotate 2s ease;
+    -webkit-animation: sa11y-rotate 1.5s ease;
+    animation: sa11y-rotate 1.5s ease;
     animation-fill-mode: forwards;
 }
 
@@ -371,6 +354,26 @@ button.sa11y-warning-btn-text:focus {
 #sa11y-settings-header,
 #sa11y-outline-header {
     padding: 10px 15px 0px 15px !important;
+}
+
+#sa11y-readability-content {
+    border-bottom: 1px solid var(--sa11y-panel-bg-splitter) !important;
+    padding: 10px 15px 10px 15px !important;
+    width: 100% !important;
+    color: var(--sa11y-panel-primary) !important;
+}
+
+#sa11y-readability-details {
+    list-style-type: none !important;
+    margin: 5px 0px !important;
+    padding: 0 !important;
+    white-space: wrap !important;
+}
+#sa11y-readability-details li {
+    display: inline !important;
+    font-size: var(--sa11y-normal-text) !important;
+    padding: 0px 10px 0px 0px !important;
+    margin: 0 !important;
 }
 
 #sa11y-settings-content,
@@ -635,18 +638,29 @@ button.sa11y-warning-btn-text:focus {
 .sa11y-warning-border {
     outline: 5px solid var(--sa11y-warning) !important;
 }
+
+.sa11y-readability-score,
+.sa11y-warning-text,
+.sa11y-warning-uppercase,
 .sa11y-error-text {
-    background-color: var(--sa11y-error) !important;
     border-radius: 0.25em !important;
-    color: var(--sa11y-error-text) !important;
     padding: 5px !important;
 }
+
+.sa11y-readability-score {
+    background-color: var(--sa11y-panel-badge) !important;
+    color: var(--sa11y-panel-primary) !important;
+}
+
+.sa11y-error-text {
+    background-color: var(--sa11y-error) !important;
+    color: var(--sa11y-error-text) !important;
+}
+
 .sa11y-warning-text,
 .sa11y-warning-uppercase {
     background-color: var(--sa11y-warning) !important;
-    border-radius: 0.25em !important;
     color: var(--sa11y-warning-text) !important;
-    padding: 5px !important;
 }
 
 .sa11y-error-message-container {
