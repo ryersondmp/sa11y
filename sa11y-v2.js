@@ -1168,6 +1168,73 @@ class Sa11y {
             $('#sa11y-container').after(ErrorBannerInsert(PageLanguageMessage));
         }
 
+        //Excessive bolding or italics.  
+        let $strongitalics = this.root.find('strong, em').not(this.containerIgnore);
+        $strongitalics.each((i, el) => {
+            let $el = $(el);
+            if ($el.text().length > 400) {
+                this.warningCount++;
+                let BoldItalicsMessage = "Bold and italic tags have semantic meaning, and should <span class='sa11y-bold'>not</span> be used to highlight entire paragraphs. Bolded text should be used to provide strong <span class='sa11y-bold'>emphasis</span> on a word or phrase. Italics should be used to highlight proper names (i.e. book and article titles), foreign words, quotes. Long quotes should be formatted as a blockquote."
+                $el.before(ButtonInserter(WARNING, BoldItalicsMessage));
+            }
+        });
+
+        /* Thanks to John Jameson from PrincetonU for this ruleset! */
+        // Detect paragraphs that should be lists: a. A. a) A) * - -- •.
+        let activeMatch = "";
+        let prefixDecrement = {
+            b: "a",
+            B: "A",
+            2: "1"
+        };
+        let prefixMatch = /a\.|a\)|A\.|A\)|1\.|1\)|\*\s|-\s|--|•\s|→\s|✓\s|✔\s|✗\s|✖\s|✘\s|❯\s|›\s|»\s/;
+        let decrement = function (el) {
+            return el.replace(/^b|^B|^2/, function (match) {
+            return prefixDecrement[match];
+            });
+        };
+        this.$p.each(function (i, el) {
+            let $first = $(el);
+            let hit = false;
+            // Grab first two characters.
+            let firstPrefix = $first.text().substring(0, 2);
+            if (firstPrefix.trim().length > 0 && firstPrefix !== activeMatch && firstPrefix.match(prefixMatch)) {
+            // We have a prefix and a possible hit
+            // Split p by carriage return if present and compare.
+            let hasBreak = $first.html().indexOf("<br>");
+            if (hasBreak !== -1) {
+                let subParagraph = $first.html().substring(hasBreak + 4).trim();
+                let subPrefix = subParagraph.substring(0, 2);
+                if (firstPrefix === decrement(subPrefix)) {
+                hit = true;
+                }
+            }
+            // Decrement the second p prefix and compare .
+            if (!hit) {
+                let $second = $(el).next('p');
+                if ($second) {
+                let secondPrefix = decrement($first.next().text().substring(0, 2));
+                if (firstPrefix === secondPrefix) {
+                    hit = true;
+                }
+                }
+            } else if (hit) {
+                this.warningCount++;
+                let ShouldBeListMessage = "Are you trying to create a list? Possible list item detected: <span class='sa11y-bold sa11y-red-text'>"+ firstPrefix + "</span><hr class='sa11y-hr' aria-hidden='true'> Make sure to use semantic lists by using the bullet or number formatting buttons instead. When using a semantic list, assistive technologies are able to convey information such as the total number of items and the relative position of each item in the list. Learn more about <a href='https://www.w3.org/WAI/tutorials/page-structure/content/#lists' target='_blank'>semantic lists. <span class='sr-only'>(opens in new window)</span></a>"
+                $first.before(ButtonInserter(WARNING, ShouldBeListMessage));
+                $first.addClass("sa11y-fake-list");
+                activeMatch = firstPrefix;
+            } else {
+                activeMatch = "";
+            }
+            } else {
+            activeMatch = "";
+            }
+        });
+        if ($(".sa11y-fake-list").length > 0) {
+            this.warningCount++;
+        }
+
         //Example ruleset. Be creative.
         let $checkAnnouncement = this.root.find('.announcement-component').not(this.containerIgnore)
             .length;
@@ -1300,6 +1367,7 @@ class Sa11y {
         this.root.find('.sa11y-warning-border').removeClass('sa11y-warning-border');
         this.root.find('.sa11y-warning-text').removeClass('sa11y-warning-text');
         this.root.find('.sa11y-warning-uppercase').contents().unwrap();
+        this.root.find('p').removeClass('sa11y-fake-list');
 
         this.root.find('.sa11y-instance').remove();
         this.root.find('.sa11y-instance-inline').remove();

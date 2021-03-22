@@ -475,7 +475,7 @@ button.sa11y-warning-btn-text:focus {
     border-bottom: 0 !important;
     border-top: 1px solid var(--sa11y-panel-bg-splitter) !important;
     border-left: 0 !important;
-    border-right: 0 !important;
+    border-right: 1px solid var(--sa11y-panel-bg-splitter) !important;
     border-radius: 0 !important;
     color: var(--sa11y-panel-secondary) !important;
     cursor: pointer !important;
