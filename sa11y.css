@@ -365,9 +365,9 @@ button.sa11y-warning-btn-text:focus {
 
 #sa11y-readability-details {
     list-style-type: none !important;
-    margin: 5px 0px !important;
+    margin: 0 !important;
     padding: 0 !important;
-    white-space: wrap !important;
+    white-space: normal !important;
 }
 #sa11y-readability-details li {
     display: inline !important;
