@@ -140,23 +140,23 @@ class Sa11y {
 
             //Keeps checker active when navigating between pages until it is toggled off.
             var sa11yToggle = $('#sa11y-toggle');
-            // sa11yToggle.addClass(sessionStorage.enableSa11y);
             sa11yToggle.click(() => {
-                if (localStorage.getItem('sa11y-panel') === 'open') {
-                    localStorage.setItem('sa11y-panel', 'close');
+                if (localStorage.getItem('sa11y-panel') === 'opened') {
+                    localStorage.setItem('sa11y-panel', 'closed');
                     sa11yToggle.removeClass('sa11y-on').attr('aria-expanded', 'false');
                     this.reset();
                 } else {
-                    localStorage.setItem('sa11y-panel', 'open');
+                    localStorage.setItem('sa11y-panel', 'opened');
                     sa11yToggle.addClass('sa11y-on').attr('aria-expanded', 'true');
                     this.checkAll();
                 }
             });
 
-            //Remember to leave it open:
-            if (localStorage.getItem('sa11y-panel') === 'open') {
+            //Remember to leave it open
+            if (localStorage.getItem('sa11y-panel') === 'opened') {
                 sa11yToggle.addClass('sa11y-on').attr('aria-expanded', 'true');
             }
+
             //Crudely give a little time to load any other content or slow post-rendered JS, iFrames, etc.
             if (sa11yToggle.hasClass('sa11y-on')) {
                 sa11yToggle.toggleClass('loading-sa11y');
@@ -1443,16 +1443,18 @@ class Sa11y {
                 $('#sa11y-outline-panel').removeClass('sa11y-active');
                 $outlineToggle.text('Show Outline');
                 $outlineToggle.attr('aria-expanded', 'false');
+                localStorage.setItem('sa11y-outline', 'closed');
             } else {
                 $outlineToggle.addClass('sa11y-outline-active');
                 $('#sa11y-outline-panel').addClass('sa11y-active');
                 $outlineToggle.text('Hide Outline');
                 $outlineToggle.attr('aria-expanded', 'true');
+                localStorage.setItem('sa11y-outline', 'opened');
             }
             $('#sa11y-outline-header > span').focus();
             $('.sa11y-heading-label').toggleClass('sa11y-label-visible');
 
-            // Close the settings panel (or enforce that its still closed)
+            //Close Settings panel when Show Outline is active.
             $('#sa11y-settings-panel').removeClass('sa11y-active');
             $settingsToggle.removeClass('sa11y-settings-active');
             $settingsToggle.attr('aria-expanded', 'false');
@@ -1463,6 +1465,14 @@ class Sa11y {
                 $('#sa11y-outline-list').attr('tabindex', '0');
             }
         });
+
+        //Remember to leave outline open
+        if (localStorage.getItem('sa11y-outline') === 'opened') {
+            $outlineToggle.addClass('sa11y-outline-active');
+            $('#sa11y-outline-panel').addClass('sa11y-active');
+            $outlineToggle.text('Hide Outline');
+            $outlineToggle.attr('aria-expanded', 'true');
+        }
 
         //Show settings panel
         let $settingsToggle = $('#sa11y-settings-toggle');
@@ -1480,12 +1490,14 @@ class Sa11y {
             }
 
             $('#sa11y-settings-header > span').focus();
-            //Remove outline panel
+            
+            //Close Show Outline panel when Settings is active.
             $('#sa11y-outline-panel').removeClass('sa11y-active');
             $outlineToggle.removeClass('sa11y-outline-active');
             $outlineToggle.attr('aria-expanded', 'false');
             $outlineToggle.text('Show Outline');
             $('.sa11y-heading-label').removeClass('sa11y-label-visible');
+            localStorage.setItem('sa11y-outline', 'closed');
 
             //Keyboard accessibility fix for scrollable panel content.
             if ($('#sa11y-settings-content').height() > 350) {
