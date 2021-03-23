@@ -39,6 +39,7 @@ html[data-sa11y-theme="light"] {
     --sa11y-panel-toggle-active: #c6c6c6;
     --sa11y-setting-switch-bg-on: #21b5ff;
     --sa11y-setting-switch-bg-off: #757575;
+    --sa11y-hyperlink: #004c9b;
 }
 
 html[data-sa11y-theme="dark"] {
@@ -54,6 +55,7 @@ html[data-sa11y-theme="dark"] {
     --sa11y-panel-toggle-active: #000000;
     --sa11y-setting-switch-bg-on: #21b5ff;
     --sa11y-setting-switch-bg-off: #bfbfbf;
+    --sa11y-hyperlink: #64b2ff;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -71,6 +73,7 @@ html[data-sa11y-theme="dark"] {
         --sa11y-panel-toggle-active: #000000;
         --sa11y-setting-switch-bg-on: #21b5ff;
         --sa11y-setting-switch-bg-off: #bfbfbf;
+        --sa11y-hyperlink: #64b2ff;
     }
 
     html[data-sa11y-theme="light"] {
@@ -86,6 +89,7 @@ html[data-sa11y-theme="dark"] {
         --sa11y-panel-toggle-active: #c6c6c6;
         --sa11y-setting-switch-bg-on: #21b5ff;
         --sa11y-setting-switch-bg-off: #757575;
+        --sa11y-hyperlink: #004c9b;
     }
 }
 
@@ -294,7 +298,7 @@ button.sa11y-warning-btn-text:focus {
 
 #sa11y-container #sa11y-panel a {
     border-bottom: 0px !important;
-    color: #004c9b !important;
+    color: var(--sa11y-hyperlink) !important;
     text-decoration: underline !important;
 }
 #sa11y-container #sa11y-panel a:hover,
@@ -356,30 +360,10 @@ button.sa11y-warning-btn-text:focus {
     padding: 10px 15px 0px 15px !important;
 }
 
-#sa11y-readability-content {
-    border-bottom: 1px solid var(--sa11y-panel-bg-splitter) !important;
-    padding: 10px 15px 10px 15px !important;
-    width: 100% !important;
-    color: var(--sa11y-panel-primary) !important;
-}
-
-#sa11y-readability-details {
-    list-style-type: none !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    white-space: normal !important;
-}
-#sa11y-readability-details li {
-    display: inline !important;
-    font-size: var(--sa11y-normal-text) !important;
-    padding: 0px 10px 0px 0px !important;
-    margin: 0 !important;
-}
-
 #sa11y-settings-content,
 #sa11y-outline-content {
     border-bottom: 1px solid var(--sa11y-panel-bg-splitter) !important;
-    max-height: 320px !important;
+    max-height: 300px !important;
     padding: 0px 15px 10px 15px !important;
     overflow-y: auto !important;
     width: 100% !important;
@@ -445,6 +429,32 @@ button.sa11y-warning-btn-text:focus {
     margin-bottom: 0 !important;
     margin-top: 0 !important;
     padding: 0 !important;
+}
+
+/* Readability panel */
+.sa11y-readability-level {
+    padding-left: 10px !important;
+    display: inline-block !important;
+}
+
+#sa11y-readability-content {
+    border-bottom: 1px solid var(--sa11y-panel-bg-splitter) !important;
+    padding: 10px 15px 10px 15px !important;
+    width: 100% !important;
+    color: var(--sa11y-panel-primary) !important;
+}
+
+#sa11y-readability-details {
+    list-style-type: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    white-space: normal !important;
+}
+#sa11y-readability-details li {
+    display: inline !important;
+    font-size: var(--sa11y-normal-text) !important;
+    padding: 0px 10px 0px 0px !important;
+    margin: 0 !important;
 }
 
 /* Scroll bar */
@@ -613,11 +623,11 @@ button.sa11y-warning-btn-text:focus {
 }
 
 .sa11y-kbd {
-    padding: 0.2rem 0.4rem !important;
+    padding: 0.2em 0.4em !important;
     font-size: 87.5% !important;
     color: #fff !important;
     background-color: #212529 !important;
-    border-radius: 0.2rem !important;
+    border-radius: 0.2em !important;
 }
 
 /* Link, text, and image outlines */
@@ -650,6 +660,7 @@ button.sa11y-warning-btn-text:focus {
 .sa11y-readability-score {
     background-color: var(--sa11y-panel-badge) !important;
     color: var(--sa11y-panel-primary) !important;
+    margin-left: 5px !important;
 }
 
 .sa11y-error-text {
@@ -795,6 +806,16 @@ span.sa11y-heading-label {
 
 .tippy-box * {
     font-family: var(--sa11y-font-face) !important;
+}
+
+.tippy-box[data-theme~="sa11y-theme"] a {
+    color: var(--sa11y-hyperlink) !important;
+    text-decoration: underline;
+}
+
+.tippy-box[data-theme~="sa11y-theme"] a:hover,
+.tippy-box[data-theme~="sa11y-theme"] a:focus  {
+    text-decoration: none !important;
 }
 
 .tippy-box[data-theme~="sa11y-theme"] {

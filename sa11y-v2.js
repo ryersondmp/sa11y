@@ -105,7 +105,7 @@ class Sa11y {
                     <label id="check-contrast" for="sa11y-contrastCheck-toggle">Check contrast</label>
                     <button id="sa11y-contrastCheck-toggle" 
                     aria-labelledby="check-contrast" 
-                    class="sa11y-settings-switch ${loadContrastPreference ? 'sa11y-setting-switch-selected' : ''}" 
+                    class="sa11y-settings-switch" 
                     aria-pressed="${loadContrastPreference ? 'true' : 'false'}">${loadContrastPreference ? 'On' : 'Off'}</button>
                 </li>
                 <li>
@@ -114,7 +114,7 @@ class Sa11y {
                 </li>
                 <li>
                     <label id="check-readability" for="sa11y-readabilityCheck-toggle">Readability <span class="sa11y-badge">AAA</span></label>
-                    <button id="sa11y-readabilityCheck-toggle" aria-labelledby="check-readability" class="sa11y-settings-switch ${loadReadabilityPreference ? 'sa11y-setting-switch-selected' : ''}" 
+                    <button id="sa11y-readabilityCheck-toggle" aria-labelledby="check-readability" class="sa11y-settings-switch" 
                     aria-pressed="${loadReadabilityPreference ? 'true' : 'false'}">${loadReadabilityPreference ? 'On' : 'Off'}</button>
                 </li>
             </ul>` +
@@ -190,12 +190,12 @@ class Sa11y {
                     localStorage.setItem('sa11y-readabilityCheck', 'off');
                     $sa11yReadabilityCheck.text('Off');
                     $sa11yReadabilityCheck.attr('aria-pressed', 'false');
-                    $sa11yReadabilityCheck.removeClass('sa11y-setting-switch-selected');
+                    $("#sa11y-readability-content").remove();
                 } else {
                     localStorage.setItem('sa11y-readabilityCheck', 'On');
                     $sa11yReadabilityCheck.text('On');
                     $sa11yReadabilityCheck.attr('aria-pressed', 'true');
-                    $sa11yReadabilityCheck.addClass('sa11y-setting-switch-selected');
+                    this.checkReadability();
                 }
             });
             // ----------------------------------------------------------------------
@@ -203,18 +203,14 @@ class Sa11y {
             // ----------------------------------------------------------------------
             let $sa11yContrastCheck = $('#sa11y-contrastCheck-toggle');
             $sa11yContrastCheck.click(() => {
-                // Turn on
                 if (localStorage.getItem('sa11y-contrastCheck') === 'On') {
                     localStorage.setItem('sa11y-contrastCheck', 'off');
                     $sa11yContrastCheck.text('Off');
                     $sa11yContrastCheck.attr('aria-pressed', 'false');
-                    $sa11yContrastCheck.removeClass('sa11y-setting-switch-selected');
                 } else {
                     localStorage.setItem('sa11y-contrastCheck', 'On');
                     $sa11yContrastCheck.text('On');
                     $sa11yContrastCheck.attr('aria-pressed', 'true');
-                    $sa11yContrastCheck.addClass('sa11y-setting-switch-selected');
-                    // Turn off
                 }
             });
             // ----------------------------------------------------------------------
@@ -226,24 +222,20 @@ class Sa11y {
             if (systemInitiatedDark.matches) {
                 $sa11yTheme.text('On');
                 $sa11yTheme.attr('aria-pressed', 'true');
-                $('.sa11y-setting-switch').addClass('sa11y-setting-switch-selected');
             } else {
                 $sa11yTheme.text('Off');
                 $sa11yTheme.attr('aria-pressed', 'false');
-                $('.sa11y-setting-switch').removeClass('sa11y-setting-switch-selected');
             }
             function prefersColorTest(systemInitiatedDark) {
                 if (systemInitiatedDark.matches) {
                     $('html').attr('data-sa11y-theme', 'dark');
                     $sa11yTheme.text('On');
                     $sa11yTheme.attr('aria-pressed', 'true');
-                    $('.sa11y-setting-switch').addClass('sa11y-setting-switch-selected');
                     sessionStorage.setItem('sa11y-theme', '');
                 } else {
                     $('html').attr('data-sa11y-theme', 'light');
                     $sa11yTheme.text('Off');
                     $sa11yTheme.attr('aria-pressed', 'false');
-                    $('.sa11y-setting-switch').removeClass('sa11y-setting-switch-selected');
                     sessionStorage.setItem('sa11y-theme', '');
                 }
             }
@@ -256,25 +248,21 @@ class Sa11y {
                     sessionStorage.setItem('sa11y-theme', 'light');
                     $sa11yTheme.text('Off');
                     $sa11yTheme.attr('aria-pressed', 'false');
-                    $('.sa11y-setting-switch').removeClass('sa11y-setting-switch-selected');
                 } else if (theme === 'light') {
                     $('html').attr('data-sa11y-theme', 'dark');
                     sessionStorage.setItem('sa11y-theme', 'dark');
                     $sa11yTheme.text('On');
                     $sa11yTheme.attr('aria-pressed', 'true');
-                    $('.sa11y-setting-switch').addClass('sa11y-setting-switch-selected');
                 } else if (systemInitiatedDark.matches) {
                     $('html').attr('data-sa11y-theme', 'light');
                     sessionStorage.setItem('sa11y-theme', 'light');
                     $sa11yTheme.text('Off');
                     $sa11yTheme.attr('aria-pressed', 'false');
-                    $('.sa11y-setting-switch').removeClass('sa11y-setting-switch-selected');
                 } else {
                     $('html').attr('data-sa11y-theme', 'dark');
                     sessionStorage.setItem('sa11y-theme', 'dark');
                     $sa11yTheme.text('On');
                     $sa11yTheme.attr('aria-pressed', 'true');
-                    $('.sa11y-setting-switch').addClass('sa11y-setting-switch-selected');
                 }
             });
             if (theme === 'dark') {
@@ -282,13 +270,11 @@ class Sa11y {
                 sessionStorage.setItem('sa11y-theme', 'dark');
                 $sa11yTheme.text('On');
                 $sa11yTheme.attr('aria-pressed', 'true');
-                $('.sa11y-setting-switch').addClass('sa11y-setting-switch-selected');
             } else if (theme === 'light') {
                 $('html').attr('data-sa11y-theme', 'light');
                 sessionStorage.setItem('sa11y-theme', 'light');
                 $sa11yTheme.text('Off');
                 $sa11yTheme.attr('aria-pressed', 'false');
-                $('.sa11y-setting-switch').removeClass('sa11y-setting-switch-selected');
             }
         });
     }
@@ -390,6 +376,7 @@ class Sa11y {
             .find("h1, h2, h3, h4, h5, h6, [role='heading'][aria-level]")
             .not(':hidden')
             .not(containerIgnore);
+        this.$mainPandLi = root.find("main p, main li, [role='main'] p, [role='main'] li").not(containerIgnore);
         this.$img = root.find('img').not(imageIgnore);
         this.$iframe = root.find('iframe').not(containerIgnore);
         this.$table = root.find('table').not(containerIgnore);
@@ -585,8 +572,8 @@ class Sa11y {
                         <span class='sa11y-bold'> ${linktext} ${acclinkname}</span>`;
                     $el.after(ButtonInserter(PASS, LinkHasAriaLabelledbyMessage, true));
                 } else if (hasarialabel != null) {
-                    let inkHasAriaLabelMessage = `The descriptive label for this link is: <span class='sa11y-bold'>${hasarialabel} </span>`;
-                    $el.after(ButtonInserter(PASS, LinkHasAriaLabelledbyMessage, true));
+                    let LinkHasAriaLabelMessage = `The descriptive label for this link is: <span class='sa11y-bold'>${hasarialabel} </span>`;
+                    $el.after(ButtonInserter(PASS, LinkHasAriaLabelMessage, true));
                 } else if (hasariahidden == 'true' && hastabindex == '-1') {
                     //do nothing.
                 } else {
@@ -986,6 +973,14 @@ class Sa11y {
     /*====================== READABILITY MODULE =======================*/
     checkReadability = () => {
 
+         //Crude hack to add a period to the end of list items to make a complete sentence.
+         $('main li, [role="main"] li').each(function() {
+            var endOfList = $(this), listText = endOfList.text();
+            if (listText.charAt(listText.length-1) !== '.') {
+                $('main li, [role="main"] li').append('<span class="sa11y-readability-period sa11y-visually-hidden">.</span>');
+            }
+        });
+
         function number_of_syllables(wordCheck) {
             wordCheck = wordCheck.toLowerCase().replace('.','').replace('\n','');
             if(wordCheck.length <= 3) {
@@ -997,13 +992,13 @@ class Sa11y {
   
             if(!!syllable_string){
                 var syllables = syllable_string.length;
-            }else{
+            } else{
                 syllables=0;
             }
             return syllables;
         }
   
-        let paragraphtext = this.root.find("main p").not(this.containerIgnore).not("blockquote").text();
+        let paragraphtext = this.$mainPandLi.not("blockquote").text();
   
         var words_raw = paragraphtext.replace(/[.!?-]+/g,' ').split(' ');
         var words = 0;
@@ -1085,7 +1080,6 @@ class Sa11y {
         scoreMsg = scoreMsg + 'Characters: ' + characters;
         console.log(scoreMsg);
 
-
         let readingDifficulty = "";
         let readabilityDetails = "";
         let notEnoughContent = "";
@@ -1112,6 +1106,11 @@ class Sa11y {
                     <li><span class='sa11y-bold'>Words:</span> ` + words + `</li>
                 </ul>`
 
+            } else if (this.$mainPandLi.length === 0) {
+                fleschScore = "";
+                readingDifficulty = "";
+                readabilityDetails = "";
+                notEnoughContent = 'Please identify the <a href="https://www.w3.org/WAI/tutorials/page-structure/regions/#main-content" target="_blank">main content region to calculate readability. <span class="sa11y-visually-hidden">(opens new tab)</span></a>';
             } else {
                 fleschScore = "";
                 readingDifficulty = "";
@@ -1123,10 +1122,9 @@ class Sa11y {
             sa11yReadabilityPanel.setAttribute('id', 'sa11y-readability-content');
             sa11yReadabilityPanel.innerHTML = `
                 <span class="sa11y-header-text">Readability</span>
-                ${fleschScore} ${readingDifficulty} ${readabilityDetails} ${notEnoughContent}
+                <div class="sa11y-readability-level">${fleschScore} ${readingDifficulty}</div> ${readabilityDetails} ${notEnoughContent}
                 `;
             $("#sa11y-readability-panel").prepend(sa11yReadabilityPanel);
-  
     }
     /*====================== QUALITY ASSURANCE MODULE =======================*/
     checkQA = () => {
@@ -1310,7 +1308,7 @@ class Sa11y {
         if (lang == undefined || lang.length < 2) {
             this.errorCount++;
             let PageLanguageMessage =
-                "Page language not declared! Please <a href='https://www.w3.org/International/questions/qa-html-language-declarations' target='_blank'>declare language on HTML tag.<span class='sa11y-visually-hidden'> (opens new tab)</span></a>";
+                "Page language not declared! Please <a href='https://www.w3.org/International/questions/qa-html-language-declarations' target='_blank'>declare language on HTML tag. <span class='sa11y-visually-hidden'>(opens new tab)</span></a>";
             $('#sa11y-container').after(ErrorBannerInsert(PageLanguageMessage));
         }
 
@@ -1366,7 +1364,7 @@ class Sa11y {
                 }
             } else if (hit) {
                 this.warningCount++;
-                let ShouldBeListMessage = "Are you trying to create a list? Possible list item detected: <span class='sa11y-bold sa11y-red-text'>"+ firstPrefix + "</span><hr class='sa11y-hr' aria-hidden='true'> Make sure to use semantic lists by using the bullet or number formatting buttons instead. When using a semantic list, assistive technologies are able to convey information such as the total number of items and the relative position of each item in the list. Learn more about <a href='https://www.w3.org/WAI/tutorials/page-structure/content/#lists' target='_blank'>semantic lists. <span class='sr-only'>(opens in new window)</span></a>"
+                let ShouldBeListMessage = "Are you trying to create a list? Possible list item detected: <span class='sa11y-bold sa11y-red-text'>"+ firstPrefix + "</span><hr class='sa11y-hr' aria-hidden='true'> Make sure to use semantic lists by using the bullet or number formatting buttons instead. When using a semantic list, assistive technologies are able to convey information such as the total number of items and the relative position of each item in the list. Learn more about <a href='https://www.w3.org/WAI/tutorials/page-structure/content/#lists' target='_blank'>semantic lists. <span class='sa11y-visually-hidden'>(opens new tab)</span></a>"
                 $first.before(ButtonInserter(WARNING, ShouldBeListMessage));
                 $first.addClass("sa11y-fake-list");
                 activeMatch = firstPrefix;
@@ -1521,6 +1519,7 @@ class Sa11y {
         this.root.find('#sa11y-panel').removeClass('sa11y-active');
         this.root.find('#sa11y-outline-list li').remove();
         this.root.find("#sa11y-readability-content").remove();
+        this.root.find(".sa11y-readability-period").remove();
     };
 }
 
