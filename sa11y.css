@@ -262,6 +262,7 @@ button.sa11y-warning-btn-text:focus {
 #sa11y-container label {
     display: inline-block !important;
     margin: 0 !important;
+    width: 180px !important;
 }
 
 #sa11y-container #sa11y-panel.sa11y-active {

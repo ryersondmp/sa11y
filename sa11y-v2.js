@@ -1189,6 +1189,8 @@ class Sa11y {
             .not("a[href$='.docx']")
             .not('#sa11y-container a')
             .not('.sa11y-exclude');
+
+        //To-do: Adam to improve verbiage. Make clear that this is AAA.
         $linksTargetBlank.each((i, el) => {
             let $el = $(el);
 
@@ -1201,7 +1203,7 @@ class Sa11y {
                 this.warningCount++;
                 $el.addClass('sa11y-warning-text');
                 let NewTabMessage =
-                    "Please use <span class='sa11y-bold'>target=&ldquo;_blank&rdquo;</span> sparingly. Opening links in new tabs or windows can be very disorienting for people, especially for people who have difficulty perceiving visual content. Secondly, it's not always a good practice to control a user's experience or make decisions for them. Alert the user that the link opens in a new window within the link text.";
+                    "Link opens in new tab or window without warning. Opening links in new tabs or windows can be disorienting, especially for people who have difficulty perceiving visual content. Secondly, it's not always a good practice to control a user's experience or make decisions for them. Alert the user that the link opens in a new window within the link text.";
                 $el.first().after(ButtonInserter(WARNING, NewTabMessage, true));
             }
         });
