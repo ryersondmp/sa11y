@@ -29,9 +29,10 @@ Created by Digital Media Projects, Computing and Communication Services (CCS) at
 
 Development, design and testing by:
 - [Adam Chaboryk](https://github.com/adamchaboryk), IT accessibility specialist
-- Benjamin Luong, web accessibility assistant
-- Arshad Mohammed, web accessibility assistant
-- Kyle Padernilla, web accessibility assistant
+- Benjamin Luong, Web Accessibility & Usability Assistant (2016/2017)
+- Arshad Mohammed, Web Accessibility & Usability Assistant (2018/2019)
+- Kyle Padernilla, Web Accessibility & Usability Assistant (2019/2020)
+- Farhan Mohammed, Web Accessibility & Usability Assistant (2020/2021)
 
 ### Built with
 - Sa11y is an adaptation of [Tota11y by Khan Academy.](https://github.com/Khan/tota11y)
