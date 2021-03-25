@@ -22,7 +22,7 @@ Sa11y works as a simple in-page checker that is designed to be easily customized
     * Bug fixes: Custom styling for HR element within tooltips, added selector to webkit-scrollbar.
 
 ## Contact or feedback
-Have a question or any feedback? Create a create a [issue.](https://github.com/ryersondmp/sa11y/issues) or email: adam.chaboryk@ryerson.ca
+Have a question or any feedback? Submit it as an [issue](https://github.com/ryersondmp/sa11y/issues) or email: adam.chaboryk@ryerson.ca
 
 ## Acknowledgements
 Development lead by [Adam Chaboryk](https://github.com/adamchaboryk), IT accessibility specialist, Digital Media Projects, Computing and Communication Services (CCS) at Ryerson University in Toronto, Canada.
