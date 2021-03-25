@@ -21,18 +21,16 @@ Sa11y works as a simple in-page checker that is designed to be easily customized
     * Enhancement: Added Tableau to data visualization detection ruleset and updated tooltip verbiage.
     * Bug fixes: Custom styling for HR element within tooltips, added selector to webkit-scrollbar.
 
-## Contact
-Have a question or any feedback? Please email: adam.chaboryk@ryerson.ca
+## Contact or feedback
+Have a question or any feedback? Create a create a [issue.](https://github.com/ryersondmp/sa11y/issues) or email: adam.chaboryk@ryerson.ca
 
 ## Acknowledgements
-Created by Digital Media Projects, Computing and Communication Services (CCS) at Ryerson University in Toronto, Canada.
+Development lead by [Adam Chaboryk](https://github.com/adamchaboryk), IT accessibility specialist, Digital Media Projects, Computing and Communication Services (CCS) at Ryerson University in Toronto, Canada.
 
-Development, design and testing by:
-- [Adam Chaboryk](https://github.com/adamchaboryk), IT accessibility specialist
-- Benjamin Luong, Web Accessibility & Usability Assistant (2016/2017)
-- Arshad Mohammed, Web Accessibility & Usability Assistant (2018/2019)
-- Kyle Padernilla, Web Accessibility & Usability Assistant (2019/2020)
-- Farhan Mohammed, Web Accessibility & Usability Assistant (2020/2021)
+- Benjamin Luong, web accessibility & usability assistant (2016/2017)
+- Arshad Mohammed, web accessibility & usability assistant (2018/2019)
+- Kyle Padernilla, web accessibility & usability assistant (2019/2020)
+- Farhan Mohammed, web accessibility & usability assistant (2020/2021)
 
 ### Built with
 - Sa11y is an adaptation of [Tota11y by Khan Academy.](https://github.com/Khan/tota11y)
