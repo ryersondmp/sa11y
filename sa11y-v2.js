@@ -83,7 +83,7 @@ class Sa11y {
         let loadReadabilityPreference = localStorage.getItem('sa11y-readabilityCheck') === 'On';
         sa11ycontainer.innerHTML =
 
-            '<button type="button" aria-expanded="false" id="sa11y-toggle" aria-describedby="sa11y-notification-badge">' + MainToggleIcon + '<span class="sa11y-visually-hidden">' + sa11yMainToggleLang + '</span><div id="sa11y-notification-badge"  style="display: none;"><span id="sa11y-notification-count"></span><span class="sa11y-visually-hidden">errors detected.</span></div></button>' +
+            '<button type="button" aria-expanded="false" id="sa11y-toggle" aria-describedby="sa11y-notification-badge">' + MainToggleIcon + '<span class="sa11y-visually-hidden">' + sa11yMainToggleLang + '</span><div id="sa11y-notification-badge" style="display: none;"><span id="sa11y-notification-count"></span><span class="sa11y-visually-hidden">errors detected.</span></div></button>' +
 
             //Start of main container.
             '<div id="sa11y-panel">' +
@@ -1474,6 +1474,7 @@ class Sa11y {
             $('#sa11y-outline-panel').addClass('sa11y-active');
             $outlineToggle.text('Hide Outline');
             $outlineToggle.attr('aria-expanded', 'true');
+            $('.sa11y-heading-label').toggleClass('sa11y-label-visible');
         }
 
         //Show settings panel
