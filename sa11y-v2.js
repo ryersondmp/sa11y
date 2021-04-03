@@ -61,6 +61,9 @@ function ErrorBannerInsert(content) {
     </div>`;
 }
 
+/* Self-invoking anonymous function, alternative to jQuery.noConflict() */
+(function($) {
+
 class Sa11y {
     constructor() {
         this.containerIgnore = sa11yContainerIgnore;
@@ -1570,3 +1573,5 @@ class Sa11y {
 if (window.navigator.userAgent.match(/MSIE|Trident/) === null) {
     new Sa11y(); //No IE support.
 }
+
+})(jQuery); //End of jQuery noConflict.
