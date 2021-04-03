@@ -61,9 +61,6 @@ function ErrorBannerInsert(content) {
     </div>`;
 }
 
-/* Self-invoking anonymous function, alternative to jQuery.noConflict() */
-(function($) {
-
 class Sa11y {
     constructor() {
         this.containerIgnore = sa11yContainerIgnore;
@@ -187,7 +184,6 @@ class Sa11y {
             // ----------------------------------------------------------------------
             // Toggle Readability
             // ----------------------------------------------------------------------
-
             let $sa11yReadabilityCheck = $('#sa11y-readabilityCheck-toggle');
             $sa11yReadabilityCheck.click(() => {
                 if (localStorage.getItem('sa11y-readabilityCheck') === 'On') {
@@ -202,7 +198,7 @@ class Sa11y {
                     this.checkReadability();
                 }
             });
-
+            
             // ----------------------------------------------------------------------
             // Toggle Contrast Check
             // ----------------------------------------------------------------------
@@ -390,13 +386,11 @@ class Sa11y {
         this.$table = root.find('table').not(containerIgnore);
         this.$contrast = root
             .find('*:visible')
-            .not('.sa11y-ignore *')
+            .not('.sa11y-exclude *')
             .not('#sa11y-container *')
             .not(containerIgnore);
     };
-
     /*================== HEADING STRUCTURE MODULE ===================*/
-    
     checkHeaders = async () => {
         let prevLevel;
         this.$h.each((i, el) => {
@@ -1220,7 +1214,7 @@ class Sa11y {
             .not("a[href$='.pdf']")
             .not("a[href$='.docx']")
             .not('#sa11y-container a')
-            .not('.sa11y-ignore');
+            .not('.sa11y-exclude');
 
         //To-do: Adam to improve verbiage. Make clear that this is AAA.
         $linksTargetBlank.each((i, el) => {
@@ -1573,5 +1567,3 @@ class Sa11y {
 if (window.navigator.userAgent.match(/MSIE|Trident/) === null) {
     new Sa11y(); //No IE support.
 }
-
-})(jQuery); //End of jQuery noConflict.
