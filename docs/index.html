@@ -33,7 +33,7 @@
         <div class="row">
           <div class="col-xs-12">
             <div class="res-global-header">
-              <a id="skip-to-main" class="btn btn-default sa11y-exclude" href="#main-content">Skip to Main Content</a>
+              <a id="skip-to-main" class="btn btn-default sa11y-ignore" href="#main-content">Skip to Main Content</a>
               <nav aria-label="global" class="navbar navbar-default">
                 <div class="container-fluid">
                   <div class="navbar-header">
@@ -301,13 +301,13 @@
             </a>
 
             <!-- CSS Laptop effect by https://codepen.io/Jeffen/pen/NqBXzb -->
-            <div class="laptop-container sa11y-exclude">
-              <div class="laptop sa11y-exclude">
+            <div class="laptop-container sa11y-ignore">
+              <div class="laptop sa11y-ignore">
 
-                <iframe title="Sa11y website demonstration inside an iFrame." class="laptop-iframe sa11y-exclude" src="examples/errors.html"></iframe>
+                <iframe title="Sa11y website demonstration inside an iFrame." class="laptop-iframe sa11y-ignore" src="examples/errors.html"></iframe>
 
               </div>
-              <div class="base sa11y-exclude" aria-hidden="true"></div>
+              <div class="base sa11y-ignore" aria-hidden="true"></div>
             </div>
 
             <a class="mobile-view-only" href="examples/errors.html" target="_blank">View the demo in a new tab!</a>
@@ -332,7 +332,7 @@
                     <div class="row-height">
                       <div class="col col-xs-12 col-sm-6 outside-full-height">
                         <div class="inside inside-full-height">
-                          <a class="btn btn-default btn-block btn-sa11y sa11y-exclude"
+                          <a class="btn btn-default btn-block btn-sa11y sa11y-ignore"
                             href="javascript:void((function(doc){document.body.appendChild(document.createElement('script')).src='https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@main-v1.1/bookmarklet/bm-sa11y-v2.js';})(document))">
                             <span class="fa fa-bookmark" aria-hidden="true"></span> <span>Sa11y</span>
                           </a>
@@ -367,7 +367,9 @@
                 <p>To install on your website, insert Sa11y right after the jQuery script tag, and right before the closing <kbd>&lt;/body&gt;</kbd> tag. Include both Tippy.js and Popper.js before Sa11y.</p>
 
                 <h5 class="pt20">Example installation:</h5>
-                <pre><code class="language-html sa11y-exclude">//jQuery Slim 3x
+                
+                <div class="sa11y-ignore">
+                <pre><code class="language-html">//jQuery Slim 3x
 &lt;script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
   integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8="
   crossorigin="anonymous"&gt;&lt;/script&gt;
@@ -379,6 +381,8 @@
 //Sa11y (grab the latest code from GitHub)
 &lt;link rel="stylesheet" href="sa11y.css"/&gt;
 &lt;script src="sa11y.js"&gt;&lt;/script&gt;</code></pre>
+
+</div>
 
                 <h6 class="pt20">Accessibility notice:</h6>
                 <p>This version appends tooltips to the end of the <kbd>body</kbd> by default to ensure tooltips do not get hidden by conflicting CSS styling. If you customize the tooltips to include interactive content, please read documentation on
@@ -406,6 +410,7 @@
                 <p></p>
 
                 <div class="pt20">
+                  <div class="sa11y-ignore">
                   <pre><code class="language-js">let $checkAnnouncement = this.root.find('.announcement-component').not(this.containerIgnore).length;
         if ($checkAnnouncement > 1) {
             this.warningCount++;
@@ -415,7 +420,7 @@
                 Secondly, this component is semantically labeled as an Announcement for people who use screen readers.'</code><code class="language-js">;
             $('.announcement-component:gt(0)').addClass('sa11y-warning-border');
             $('.announcement-component:gt(0)').before(ButtonInserter(WARNING, WarningMessage));
-        }</code></pre>
+        }</code></pre></div>
   
                 </div>
               </div>
@@ -478,6 +483,7 @@
     </footer>
   </div>
   <script src="assets/script.min.js"></script>
+  
 </body>
 
 </html>

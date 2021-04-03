@@ -390,7 +390,7 @@ class Sa11y {
         this.$table = root.find('table').not(containerIgnore);
         this.$contrast = root
             .find('*:visible')
-            .not('.sa11y-exclude *')
+            .not('.sa11y-ignore *')
             .not('#sa11y-container *')
             .not(containerIgnore);
     };
@@ -1220,7 +1220,7 @@ class Sa11y {
             .not("a[href$='.pdf']")
             .not("a[href$='.docx']")
             .not('#sa11y-container a')
-            .not('.sa11y-exclude');
+            .not('.sa11y-ignore');
 
         //To-do: Adam to improve verbiage. Make clear that this is AAA.
         $linksTargetBlank.each((i, el) => {
