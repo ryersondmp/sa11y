@@ -1,0 +1,31 @@
+{
+    "name": "sa11y",
+    "version": "1.0.0",
+    "description": "![Sa11y, the accessibility quality assurance tool.](https://raw.githubusercontent.com/ryersondmp/sa11y/master/docs/assets/github-banner.png)",
+    "main": "sa11y-v2.js",
+    "directories": {
+        "doc": "docs"
+    },
+    "scripts": {
+        "build": "webpack"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ryersondmp/sa11y.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/ryersondmp/sa11y/issues"
+    },
+    "homepage": "https://github.com/ryersondmp/sa11y#readme",
+    "devDependencies": {
+        "babel-loader": "^8.2.2",
+        "css-loader": "^5.2.0",
+        "style-loader": "^2.0.0",
+        "svg-inline-loader": "^0.8.2",
+        "webpack": "^5.28.0",
+        "webpack-cli": "^4.6.0"
+    }
+}
