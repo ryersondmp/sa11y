@@ -184,6 +184,7 @@ class Sa11y {
             // ----------------------------------------------------------------------
             // Toggle Readability
             // ----------------------------------------------------------------------
+
             let $sa11yReadabilityCheck = $('#sa11y-readabilityCheck-toggle');
             $sa11yReadabilityCheck.click(() => {
                 if (localStorage.getItem('sa11y-readabilityCheck') === 'On') {
@@ -198,9 +199,11 @@ class Sa11y {
                     this.checkReadability();
                 }
             });
+
             // ----------------------------------------------------------------------
             // Toggle Contrast Check
             // ----------------------------------------------------------------------
+
             let $sa11yContrastCheck = $('#sa11y-contrastCheck-toggle');
             $sa11yContrastCheck.click(() => {
                 if (localStorage.getItem('sa11y-contrastCheck') === 'On') {
@@ -213,9 +216,11 @@ class Sa11y {
                     $sa11yContrastCheck.attr('aria-pressed', 'true');
                 }
             });
+
             // ----------------------------------------------------------------------
             // Dark Mode. Credits: https://derekkedziora.com/blog/dark-mode-revisited
             // ----------------------------------------------------------------------
+            
             let systemInitiatedDark = window.matchMedia('(prefers-color-scheme: dark)');
             let $sa11yTheme = $('#sa11y-theme-toggle');
             let theme = sessionStorage.getItem('sa11y-theme');
@@ -386,7 +391,9 @@ class Sa11y {
             .not('#sa11y-container *')
             .not(containerIgnore);
     };
+
     /*================== HEADING STRUCTURE MODULE ===================*/
+    
     checkHeaders = async () => {
         let prevLevel;
         this.$h.each((i, el) => {
@@ -473,13 +480,13 @@ class Sa11y {
     checkLinkText = function () {
         /* Mini function if you need to exclude any text contained with a span. We created this function to ignore automatically appended sr-only text for external links and document filetypes.
 
-    $.fn.ignore = function(sel){
-      return this.clone().find(sel||">*").remove().end();
-    };
+        $.fn.ignore = function(sel){
+        return this.clone().find(sel||">*").remove().end();
+        };
 
     
-    Example: If you need to ignore any text within <span class="sr-only">test</span>.
-    $el.ignore("span.sr-only").text().trim(); */
+        Example: If you need to ignore any text within <span class="sr-only">test</span>.
+        $el.ignore("span.sr-only").text().trim(); */
 
         // Checks if text is not descriptive and returns the word(s) that are making the text inaccessible.
         //showStopper words will always flag an issue if contained in a hyperlink.
@@ -798,26 +805,35 @@ class Sa11y {
 
     /*================== ALTERNATIVE TEXT MODULE ====================*/
     checkAltText = () => {
-        let containsAltTextStopWords = (textContent) => {
-            let stopWords = [
-                '.png',
-                'DSC',
-                '.jpg',
-                '.jpeg',
-                'image of',
-                'graphic of',
-                'picture of',
-                'placeholder',
+        
+        this.containsAltTextStopWords = function (alt) {
+            let altUrl = [
+                ".png", 
+                ".jpg", 
+                ".jpeg", 
+                ".gif",
+                ".tiff"
             ];
-            var hit = null;
-            $.each(stopWords, function (index, word) {
-                if (textContent.toLowerCase().indexOf(word) >= 0) {
-                    hit = word;
-                    return word;
-                }
+            let susWords = [
+                "image of", 
+                "graphic of", 
+                "picture of", 
+                "placeholder",
+                "photo of"
+            ];
+            let hit = [null, null];
+            $.each(altUrl, function (index, word) {
+              if (alt.toLowerCase().indexOf(word) >= 0) {
+                hit[0] = word;
+              }
+            });
+            $.each(susWords, function (index, word) {
+              if (alt.toLowerCase().indexOf(word) >= 0) {
+                hit[1] = word;
+              }
             });
             return hit;
-        };
+          };
         let sanitizeForHTML = (string) => {
             let entityMap = {
                 '&': '&amp;',
@@ -836,9 +852,9 @@ class Sa11y {
         // Test each image for alternative text.
         this.$img.each((i, el) => {
             let $el = $(el);
-            let text = $el.attr('alt');
+            let alt = $el.attr('alt');
 
-            if (text == undefined) {
+            if (alt == undefined) {
                 this.errorCount++;
 
                 // Image fails if it is used as a link and is missing an alt attribute.
@@ -869,28 +885,41 @@ class Sa11y {
 
             // If alt attribute is present, further tests are done.
             else {
-                let altText = sanitizeForHTML(text); //Prevent tooltip from breaking.
-                let error = containsAltTextStopWords(altText);
-                let altLength = text.length;
+                let altText = sanitizeForHTML(alt); //Prevent tooltip from breaking.
+                let error = this.containsAltTextStopWords(altText);
+                let altLength = alt.length;
 
                 // Image fails if a stop word was found.
-                if (error != null && $el.parents().is('a[href]')) {
+                if (error[0] != null && $el.parents().is('a[href]')) {
                     this.errorCount++;
                     $el.addClass('sa11y-error-border');
-                    let LinkImageBadAltMessage = `Detected poor alt text in hyperlinked image. Ensure alt text describes destination of link, not a literal description of the picture. 
-                        Remove word: <span class='sa11y-red-text sa11y-bold'>${error}</span>. 
+                    let LinkImageBadAltMessage = `Detected file extension within alt text. Ensure the alt text describes destination of link, not a literal description of the picture. Remove: <span class='sa11y-red-text sa11y-bold'>${error[0]}</span>. <hr aria-hidden='true' class='sa11y-hr'> The alt text for this image is: <span class='sa11y-bold'>${altText}</span>`;
+                    $el.closest('a').before(ButtonInserter(ERROR, LinkImageBadAltMessage));
+                } else if (error[1] != null && $el.parents().is('a[href]')) {
+                    this.warningCount++;
+                    $el.addClass('sa11y-warning-border');
+                    let LinkImageSusAltMessage = `Detected redundant alt text. Ensure the alt text describes destination of link, not a literal description of the picture. 
+                        Consider removing word: <span class='sa11y-red-text sa11y-bold'>${error[1]}</span>. 
                         <hr aria-hidden='true' class='sa11y-hr'> 
                         The alt text for this image is: <span class='sa11y-bold'>${altText}</span>`;
-                    $el.closest('a').before(ButtonInserter(ERROR, LinkImageBadAltMessage));
-                } else if (error != null) {
+                    $el.closest('a').before(ButtonInserter(WARNING, LinkImageSusAltMessage));
+                } else if (error[0] != null) {
                     this.errorCount++;
                     $el.addClass('sa11y-error-border');
-                    let AltHasBadWordMessage = `Poor alt text found. It is not necessary to include words like <em>image</em>, <em>graphic</em> or the file extension. 
-                        Consider removing the word: <span class='sa11y-red-text sa11y-bold'>${error}</span>. 
+                    let AltHasBadWordMessage = `Detected file extension within alt text. If the image conveys a story, a mood or important information - be sure to describe the image. 
+                        Remove: <span class='sa11y-red-text sa11y-bold'>${error[0]}</span>. 
                         <hr aria-hidden='true' class='sa11y-hr'> 
                         The alt text for this image is: <span class='sa11y-bold'>${altText} </span>`;
                     $el.before(ButtonInserter(ERROR, AltHasBadWordMessage));
-                } else if (text == '' && $el.parents().is('a[href]')) {
+                } else if (error[1] != null) {
+                    this.warningCount++;
+                    $el.addClass('sa11y-warning-border');
+                    let AltHasSusWordMessage = `Detected redundant alt text. It is not necessary to include words like <em>image</em>, <em>graphic</em> or the file extension. 
+                        Consider removing the word: <span class='sa11y-red-text sa11y-bold'>${error[1]}</span>. 
+                        <hr aria-hidden='true' class='sa11y-hr'> 
+                        The alt text for this image is: <span class='sa11y-bold'>${altText} </span>`;
+                    $el.before(ButtonInserter(WARNING, AltHasSusWordMessage));
+                }else if (alt == '' && $el.parents().is('a[href]')) {
                     if ($el.parents('a').text().trim().length == 0) {
                         this.errorCount++;
                         $el.addClass('sa11y-error-border');
@@ -907,14 +936,14 @@ class Sa11y {
                 }
 
                 //Decorative alt and not a link.
-                else if (text == '' && $el.parents().not('a[href]')) {
+                else if (alt == '' && $el.parents().not('a[href]')) {
                     let DecorativeMessage =
                         "Image marked as <span class='sa11y-bold'>decorative.</span> However, if the image conveys a story, a mood or important information - be sure to add alt text.";
                     $el.before(ButtonInserter(PASS, DecorativeMessage));
                 }
 
                 //Link and contains alt text.
-                else if (text.length > 160 && $el.parents().is('a')) {
+                else if (alt.length > 160 && $el.parents().is('a')) {
                     this.errorCount++;
                     $el.addClass('sa11y-error-border');
                     let HyperlinkAltLengthMessage = `Alt text description on hyperlinked image is <span class='sa11y-bold'>too long</span>. 
@@ -928,7 +957,7 @@ class Sa11y {
 
                 //Link and contains an alt text.
                 else if (
-                    text != '' &&
+                    alt != '' &&
                     $el.parents().is('a') &&
                     $el.parents('a').text().trim().length == 0
                 ) {
@@ -944,7 +973,7 @@ class Sa11y {
 
                 //Contains alt text & surrounding link text.
                 else if (
-                    text != '' &&
+                    alt != '' &&
                     $el.parents().is('a') &&
                     $el.parents('a').text().trim().length > 1
                 ) {
@@ -953,7 +982,7 @@ class Sa11y {
                     let AnchorLinkAndAltMessage = `Image link contains <span class='sa11y-bold'>both alt text and surrounding link text.</span> If this image is decorative and is being used as a functional link to another page, consider marking the image as decorative or null - the surrounding link text should suffice. <hr aria-hidden='true' class='sa11y-hr'>
                         Alt text: <span class='sa11y-bold'>${altText}</span>`;
                     $el.closest('a').before(ButtonInserter(WARNING, AnchorLinkAndAltMessage));
-                } else if (text.length > 160) {
+                } else if (alt.length > 160) {
                     this.warningCount++;
                     $el.addClass('sa11y-warning-border');
                     let AltTooLongMessage = `Alt text description is <span class='sa11y-bold'>too long</span>. Alt text should be concise, yet meaningful like a <em>tweet</em> (around 100 characters). 
@@ -962,7 +991,7 @@ class Sa11y {
                     The alt text is <span class='sa11y-red-text sa11y-bold'> ${altLength}</span> characters: 
                     <span class='sa11y-red-text sa11y-bold'>${altText}</span>`;
                     $el.before(ButtonInserter(WARNING, AltTooLongMessage));
-                } else if (text != '') {
+                } else if (alt != '') {
                     let PassAltMessage = `The alt text for this image is: <span class='sa11y-bold'>${altText}</span>`;
                     $el.before(ButtonInserter(PASS, PassAltMessage));
                 }

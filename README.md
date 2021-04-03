@@ -25,12 +25,13 @@ Sa11y works as a simple in-page checker that is designed to be easily customized
 Have a question or any feedback? Submit it as an [issue](https://github.com/ryersondmp/sa11y/issues) or email: adam.chaboryk@ryerson.ca
 
 ## Acknowledgements
-Development lead by [Adam Chaboryk](https://github.com/adamchaboryk), IT accessibility specialist, Digital Media Projects, Computing and Communication Services (CCS) at Ryerson University in Toronto, Canada.
+Development lead by [Adam Chaboryk](https://github.com/adamchaboryk), IT Accessibility Specialist, Digital Media Projects, Computing and Communication Services (CCS) at Ryerson University in Toronto, Canada. 
 
-- Benjamin Luong, web accessibility & usability assistant (2016/2017)
-- Arshad Mohammed, web accessibility & usability assistant (2018/2019)
-- Kyle Padernilla, web accessibility & usability assistant (2019/2020)
-- Farhan Mohammed, web accessibility & usability assistant (2020/2021)
+### Development and testing 
+- Farhan Mohammed, Web Accessibility &amp; Usability Assistant, Ryerson University (2020/2021)
+- Kyle Padernilla, Web Accessibility &amp; Usability Assistant, Ryerson University (2019/2020)
+- Arshad Mohammed, Web Accessibility &amp; Usability Assistant, Ryerson University (2018/2019)
+- Benjamin Luong, Web Accessibility &amp; Usability Assistant, Ryerson University (2016/2017)
 
 ### Built with
 - Sa11y is an adaptation of [Tota11y by Khan Academy.](https://github.com/Khan/tota11y)
@@ -38,6 +39,3 @@ Development lead by [Adam Chaboryk](https://github.com/adamchaboryk), IT accessi
 - [jQuery contrast plugin](https://github.com/jasonday/color-contrast) was created by jasonday.
 - The icons are made by [FontAwesome.](https://github.com/FortAwesome/Font-Awesome)
 - Powered with jQuery.
-
-## License
-Sa11y is MIT licensed.

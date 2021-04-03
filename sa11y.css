@@ -261,6 +261,8 @@ button.sa11y-warning-btn-text:focus {
 
 #sa11y-container label {
     display: inline-block !important;
+    font-weight: normal !important;
+    font-size: var(--sa11y-normal-text) !important;
     margin: 0 !important;
     width: 180px !important;
 }
@@ -535,6 +537,7 @@ button.sa11y-warning-btn-text:focus {
     border-radius: 5px !important;
     border: 0 !important;
     cursor: pointer !important;
+    font-size: var( --sa11y-normal-text) !important;
     margin: 0 !important;
     padding: 7px 10px !important;
     position: relative !important;
@@ -726,6 +729,7 @@ span.sa11y-heading-label {
     padding: 3px !important;
     position: absolute !important;
     visibility: hidden;
+    z-index: 999 !important;
 }
 
 /*===== Animations ===== */

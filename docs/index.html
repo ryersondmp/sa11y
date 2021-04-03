@@ -132,11 +132,13 @@
                   <li>No complex API or integrations.</li>
                   <li>Simple rule sets.</li>
                   <li>Easily customizable: add your own rulesets.</li>
+                  <li>Automatic: checks content in the background.</li>
+                  <li>Dark mode.</li>
                 </ul>
               </div>
 
               <div class="col-sm-6 text-center p20">
-                <h3 class="pt40">Designed for content editors</h3>
+                <h3 class="pt40">Made for content editors</h3>
                 <img src="assets/images/coder-vs-comms.svg" alt="Illustration of a gauge pointing to a content editor instead of a web developer." />
               </div>
 
@@ -168,14 +170,81 @@
                 <p class="p20">No apparent accessibility or usability issues are detected. A "thumbs up" to let you know you're good.</p>
               </div>
             </div>
+             <!-- This excellent accordion panel created by Scott O'Hara https://github.com/scottaohara/a11y_accordions-->
+             <div data-aria-accordion data-multi data-transition data-default="none" id="accGen">
+              <h4 data-aria-accordion-heading>
+                View all rulesets
+              </h4>
+              <div data-aria-accordion-panel>
+                <p>Sa11y checks for the following content related issues and warnings.</p>
+                <div class="row">
+                  <div class="col-md-6">
+                    <h5>Errors</h5>
+                    <ul>
+                      <li>Images
+                        <ul>
+                          <li>Missing alternative text.</li>
+                          <li>Alternative text contains a file extension.</li>
+                        </ul>
+                      </li>
+    
+                      <li>Links
+                        <ul>
+                          <li>Nondescript link text like "learn more" or "click here".</li>
+                          <li>Empty hyperlinks.</li>
+                        </ul>
+                      </li>
+    
+                      <li>Tables
+                        <ul>
+                          <li>Missing table headers.</li>
+                          <li>Empty table headers.</li>
+                          <li>Table contains semantic headings.</li>
+                        </ul>
+                      </li>
+                      
+                      <li>Headings
+                        <ul>
+                          <li>Headings that skip levels.</li>
+                          <li>Blockquotes incorrectly used as headings.</li>
+                          <li>Page does not start with a Heading 1 or Heading 2.</li>
+                          <li>Empty headings.</li>
+                          <li>Missing Heading 1.</li>
+                          <li>Headings that are too long (Not a WCAG 2.1 requirement).</li>
+                        </ul>
+                      </li>
+                      <li>Poor text contrast.</li>
+                      <li>Inputs missing labels.</li>
+                      <li>Page language not declared.</li>
+                    </ul>
+                  </div>
+                  <div class="col-md-6">
+                    <h5>Warnings</h5>
+                    <ul>
+                      <li>Images
+                        <ul>
+                          <li>Hyperlinked images: ensure alt text describes link location.</li>
+                          <li>Images containing redundant words in alt text like "image of" or "graphic of".</li>
+                        </ul>
+                      </li>
+                      <li>Use of ALL CAPS/Uppercase.</li>
+                      <li>Contrast that cannot be programatically determined, such as text with an image background.</li>
+                      <li>Closed captions for videos.</li>
+                      <li>Transcripts for podcasts and audio content.</li>
+                      <li>Check PDF for accessibility or recommend to convert into HTML.</li>
+                      <li>Links that open in a new tab or window without warning (WCAG 2.1 AAA)</li>
+                    </ul>
+                  </div>
+                </div>             
+              </div>
+            </div>
           </div>
         </section>
 
         <section>
           <div class="container">
             <h3 class="pt30">Show Outline</h3>
-            <p>The Show Outline button displays the page's heading structure, similar to the table of contents for a book. The page outline gives you a visual idea of how each part is interconnected. Headings should always be structured in a way that
-              conveys hierarchy.</p>
+            <p>The Show Outline button displays the page's heading structure, similar to the table of contents for a book. The page outline gives you a visual idea of how each part is interconnected.</p>
 
             <div class="row">
               <div class="col-md-6 text-center">
@@ -191,52 +260,30 @@
 
         <section class="pb80">
           <div class="container">
-            <h3>Rulesets</h3>
-            <p>Sa11y checks for the following issues and warnings.</p>
-            <!-- This excellent accordion panel created by Scott O'Hara https://github.com/scottaohara/a11y_accordions-->
-            <div data-aria-accordion data-multi data-transition data-default="none" id="accGen">
+            <h3>Readability</h3>
+            <p>Sa11y can calculate the readability score from all paragraph and list content within the main content area. A good readability score is an indication that your writing is understandable and easy to digest. It is based on the average length of sentences and words on your page, using a formula known as the <a href="https://en.wikipedia.org/wiki/Flesch%E2%80%93Kincaid_readability_tests#Flesch_reading_ease">Flesch reading-ease test (Wikipedia).</a></p>
 
+            <div data-aria-accordion data-multi data-transition data-default="none" id="readability">
               <h4 data-aria-accordion-heading>
-                Errors
+                Important notes about readability score
               </h4>
               <div data-aria-accordion-panel>
-                <ul>
-                  <li>14 alternative text conditions.</li>
-                  <li>Non-descript hyperlinks (i.e. Click here, learn more).</li>
-                  <li>Tables missing headers <kbd>&lt;th&gt;</kbd>.</li>
-                  <li>Tables with empty headers.</li>
-                  <li>Tables using semantic headings (H1, H2) instead of table headings <kbd>&lt;th&gt;</kbd>.</li>
-                  <li>Headings that skip levels.</li>
-                  <li>Headings that are too long.</li>
-                  <ul>
-                    <li><strong>Note:</strong> this is not a WCAG 2.1 failure.</li>
-                  </ul>
-                  <li>Heading structure does not start with an H1.</li>
-                  <li>Blockquotes incorrectly used as headings.</li>
-                  <li>Text contrast.</li>
-                  <li>Inputs missing labels.</li>
-                  <li>Page language not declared.</li>
-                  <li>Detect duplicate <kbd>id</kbd> attributes.</li>
-                </ul>
-              </div>
+                <p>A "good" reading score is between 60 and 100. Sometimes it may be difficult to achieve a good readability score. Most of your pages may say "difficult".</p>
 
-              <h4 data-aria-accordion-heading>
-                Warnings
-              </h4>
-              <div data-aria-accordion-panel>
-                <p>Warning messages may prompt you to <strong>manually review</strong> the element, provide <strong>suggestions to improve</strong> the usability/accessibility, or warn you of accessibility issues that <strong>cannot be
-                    programatically detected.</strong></p>
-                <ul>
-                  <li>Images used as hyperlinks: review alternative text describes link location.</li>
-                  <li>Detects ALL CAPS/uppercase.</li>
-                  <li>Contrast that cannot be programatically determined, such as text with an image background.</li>
-                  <li>Warning message on video widgets to provide closed captions.</li>
-                  <li>Warning message on SoundCloud widgets to provide transcripts.</li>
-                  <li>Warning message on all PDF links.</li>
-                  <li>Warning message to discourage excessive use of links that open in new window.</li>
+                <h5>Tips to improve score</h5>
+                <ul> 
+                  <li>Keep sentences around 15 words on average.</li> 
+                  <li>Avoid sentences greater than 25 words.</li>
+                  <li>Split long sentences up, or use bullet points.</li>
+                  <li>Avoid complex words or words with many syllables.</li> 
                 </ul>
+                
+                <h5>Technical details about readability score</h5>
+                <p>Sa11y calculates the readability score based on all paragraph (&lt;p&gt; tags) and list content (&lt;li&gt; tags) within the main (&lt;main&gt; or &lt;role='main'&gt;) content area. If no main content is present, it will not calculate a score. A low score does not affect the pass or fail state of Sa11y. The readability score is for reference only.</p>
+
               </div>
             </div>
+           
           </div>
         </section>
 
@@ -274,7 +321,9 @@
             <h2 id="install">Install <i class="fa fa-wrench" aria-hidden="true"></i></h2>
 
             <h3 class="pt20">Bookmarklet <span class="label-default">Experimental</span></h3>
-            <p>Sa11y is intended to be customized for various CMSs, however it's also available as a bookmarklet. It can be used in any desktop browser. Simply drag the button below into your bookmarks bar. Click the bookmark on any webpage.</p>
+            <p>Simply drag the button below into your bookmarks bar. Click the bookmark on any webpage.</p>
+
+            <p><strong>Note:</strong> it may take a few seconds to load because the code is being injected into the page you are browsing. Secondly, bookmarklets do not work on all websites because of security policies that block external code.</p>
 
             <div class="resButtons section pt20">
               <div class="res-buttons">
@@ -298,8 +347,10 @@
             </div>
 
             <h3 class="pt20">For developers and web administrators</h3>
-            <ul class="pt20 pb20">
-              <li>Pull <a href="https://github.com/ryersondmp/sa11y">Sa11y's source code on Github <span class="fa fa-github" aria-hidden="true"></span></a></li>
+            <p>Sa11y works best in a templated <abbr
+              title="Content Management System">CMS</abbr> environments. Create your own conditions and rulesets to strategically enforce your organization's accessibility, usability, or web style guidelines. Customize Sa11y to target specific areas of the page (e.g. <kbd>main</kbd> content area only) - don't highlight issues content editors can't fix! Add exclusions to ignore false positives or prevent Sa11y from highlighting content within social media widgets or other iFrame content.</p>
+            <ul class="pb20">
+              <li>Fork or contribute: <a href="https://github.com/ryersondmp/sa11y">Sa11y on Github <span class="fa fa-github" aria-hidden="true"></span></a></li>
               <li>View a demonstration of <a href="https://ryersondmp.github.io/sa11y/examples/full-list.html">All Rulesets</a> in action.
             </ul>
 
@@ -313,8 +364,7 @@
                 <p class="pb20">Sa11y relies on jQuery and works best using a tooltip library that features a positioning system. Positioning systems ensure that tooltips are never hidden by conflicting CSS styling such as
                   <kbd>overflow:hidden;</kbd>. This version of Sa11y was built with <a href="https://atomiks.github.io/tippyjs/">Tippy.js</a>, a highly customizable tooltip library.</p>
 
-                <p>To install on your website, insert Sa11y right after the jQuery script tag, and right before the closing <kbd>&lt;/body&gt;</kbd> tag. Include both Tippy.js and Popper.js before Sa11y. Visit <a
-                    href="https://atomiks.github.io/tippyjs/">Tippy.js Getting Started page to grab the latest version.</a></p>
+                <p>To install on your website, insert Sa11y right after the jQuery script tag, and right before the closing <kbd>&lt;/body&gt;</kbd> tag. Include both Tippy.js and Popper.js before Sa11y.</p>
 
                 <h5 class="pt20">Example installation:</h5>
                 <pre><code class="language-html sa11y-exclude">//jQuery Slim 3x
@@ -326,7 +376,8 @@
 &lt;script src="https://unpkg.com/@popperjs/core@2"&gt;&lt;/script&gt;
 &lt;script src="https://unpkg.com/tippy.js@6"&gt;&lt;/script&gt;
 
-//Sa11y - (Pull source code from Github)
+//Sa11y (grab the latest code from GitHub)
+&lt;link rel="stylesheet" href="sa11y.css"/&gt;
 &lt;script src="sa11y.js"&gt;&lt;/script&gt;</code></pre>
 
                 <h6 class="pt20">Accessibility notice:</h6>
@@ -342,12 +393,11 @@
                 Create your own rule sets
               </h4>
               <div data-aria-accordion-panel>
-                <p>Create your own conditions and rule sets to strategically enforce your organization's accessibility, usability, or web style guidelines.</p>
-
                 <ol>
                   <li>Create your condition.</li>
-                  <li>Add <kbd>this.anyWarning = true;</kbd> or <kbd>this.noErrors = false;</kbd> to indicate Warning or Error state.</li>
+                  <li>Add <kbd>this.warningCount++;</kbd> or <kbd>this.errorCount++;</kbd> to indicate Warning or Error state.</li>
                   <li>Add respective CSS classes.</li>
+                  <li>Add warning or error button before element using <kbd>ButtonInserter</kbd> function.</li>
                 </ol>
 
                 <h5 class="pt20">Example: Warn content editors of overusing a component.</h5>
@@ -356,21 +406,17 @@
                 <p></p>
 
                 <div class="pt20">
-                  <pre><code class="language-js">var checkAnnouncement = $('.announcement-component').length;
-
-if (checkAnnouncement > 1) {
-
-    this.anyWarning = true;
-
-    WarningMessage = </code><code class="language-html">'More than one Announcement component found! The Announcement
-    component should be used strategically and sparingly. It should be used to get
-    attention or warn users about something important. Misuse of this component makes
-    it less effective or impactful. Secondly, this component is semantically
-    labeled as an Announcement for people who use screen readers.'</code>
-    <code class="language-js">
-      $('.announcement-component:gt(0)').addClass("sa11y-warning-border");
-      $('.announcement-component:gt(0)').before('&lt;div class="sa11y-instance"&gt;&lt;button class="sa11y-link-warning-btn" data-tippy-content="' + WarningMessage + '" &gt;' + WarningIcon + '&lt;/button&gt;&lt;/div&gt;');
-}</code></pre>
+                  <pre><code class="language-js">let $checkAnnouncement = this.root.find('.announcement-component').not(this.containerIgnore).length;
+        if ($checkAnnouncement > 1) {
+            this.warningCount++;
+            let WarningMessage = </code><code class="language-html">
+                'More than one Announcement component found! The Announcement component should be used strategically and sparingly. 
+                It should be used to get attention or warn users about something important. Misuse of this component makes it less effective or impactful. 
+                Secondly, this component is semantically labeled as an Announcement for people who use screen readers.'</code><code class="language-js">;
+            $('.announcement-component:gt(0)').addClass('sa11y-warning-border');
+            $('.announcement-component:gt(0)').before(ButtonInserter(WARNING, WarningMessage));
+        }</code></pre>
+  
                 </div>
               </div>
             </div>

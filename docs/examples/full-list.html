@@ -45,50 +45,28 @@
           <div class="col-md-2">
             <div id="list-example" class="list-group sticky-top">
               <strong class="mt-1 mb-2">On this page:</strong>
-              <a class="list-group-item list-group-item-action" href="#list-item-0">Updates</a>
-              <a class="list-group-item list-group-item-action" href="#list-item-1">Headings</a>
-              <a class="list-group-item list-group-item-action" href="#list-item-2">Images</a>
-              <a class="list-group-item list-group-item-action" href="#list-item-3">Links</a>
-              <a class="list-group-item list-group-item-action" href="#list-item-4">Tables</a>
-              <a class="list-group-item list-group-item-action" href="#list-item-5">Contrast</a>
-              <a class="list-group-item list-group-item-action" href="#list-item-6">Inputs</a>
-              <a class="list-group-item list-group-item-action" href="#list-item-7">Other</a>
-              <a class="list-group-item list-group-item-action" href="#list-item-8">Content</a>
+              <a class="list-group-item list-group-item-action" href="#list-item-0">Headings</a>
+              <a class="list-group-item list-group-item-action" href="#list-item-1">Images</a>
+              <a class="list-group-item list-group-item-action" href="#list-item-2">Links</a>
+              <a class="list-group-item list-group-item-action" href="#list-item-3">Tables</a>
+              <a class="list-group-item list-group-item-action" href="#list-item-4">Contrast</a>
+              <a class="list-group-item list-group-item-action" href="#list-item-5">Inputs</a>
+              <a class="list-group-item list-group-item-action" href="#list-item-6">Other</a>
+              <a class="list-group-item list-group-item-action" href="#list-item-7">Content</a>
             </div>
           </div>
 
           <div class="col-md-10">
             <div data-spy="scroll" data-target="#list-example" data-offset="0" class="scrollspy-example">
-
-              
-              <h2 id="list-item-0">Updates and changes</h2>
-              <h3 class="h5">Sa11y V2 - March 2021</h3>
-              <ul>
-                <li><strong>Change:</strong> Heading ruleset changes.</li>
-                <li>Ruleset testing for duplicate <kbd>id</kbd> is removed. This error is usually corrected by a developer.</li>
-              </ul>
-
-              <hr aria-hidden="true" class="mb-5 mt-5">
-
-              <h2 id="list-item-1">Headings</h2>
+              <h2 id="list-item-0">Headings</h2>
               <p>Sa11y's heading structure ruleset has the following conditions:</p>
               <ul class="mb-4">
-                <li>The first heading on a page must be a <kbd>&lt;h1&gt;</kbd>.</li>
                 <li>There must only be one <kbd>&lt;h1&gt;</kbd> on a page.</li>
                 <li>Headings must not skip levels.</li>
                 <li>Headings must not be empty.</li>
                 <li>Headings must not exceed 160 characters.</li>
                 <li>Blockquotes must not be used as headings.</li>
               </ul>
-
-              <h3 style="text-decoration: underline overline dotted red;">The first heading on a page must be a Heading 1</h3>
-              <p class="mb-4">Sa11y's heading structure ruleset is based on the condition that the first heading on a page must be a Heading 1. However, it is technically not a WCAG failure if it is not. Please refer to <a
-                  href="https://www.w3.org/TR/WCAG20-TECHS/H42.html">Technique H42: Using h1-h6 to identify headings.</a> Please visit the demo to view this condition in action.</p>
-
-              <h3>There must only be one Heading 1 on a page</h3>
-              <div class="ml-5 mt-4 mb-5">
-                <h1 style="font-size:1.3rem!important;color:#7e7e7e;">Example #1 - This is a Heading 1</h1>
-              </div>
 
               <h2 aria-hidden="true" class="sr-only">Intentionally hidden heading.</h2>
 
@@ -107,14 +85,14 @@
 
               <h3>Headings that are too long</h3>
               <p>If a heading is greater than 160 characters it will be flagged as an error. This condition was created to prevent content authors from using headings for visual aesthetics instead of good hierarchy.</p>
-              <p><strong>Note:</strong> This condition is not a WCAG 2.1 criterion. The 160 character limit is arbitrary and empirically derived.</p>
+              <p><strong>Note:</strong> This condition is <strong>not</strong> a WCAG 2.1 criterion. The 160 character limit is arbitrary.</p>
 
               <h4 class="ml-5" style="color:#7e7e7e;">Example #1: Integer ut quam ut nibh tristique bibendum eget sit amet ex. Sed elementum mauris neque, vitae consectetur tellus pellentesque vel. Pellentesque consequat orci.</h4>
 
               <h3 class="pt-3">Blockquotes used as headings</h3>
               <p>This error might be common in content management systems where there are templated components. Sometimes content authors may use a component for visual aesthetics. For example, a stylized blockquote in place of a semantic header.</p>
 
-              <p><strong>Note:</strong> This condition is not a WCAG 2.1 criterion. The 25 character limit is arbitrary and empirically derived.</p>
+              <p><strong>Note:</strong> This condition is <strong>not</strong> a WCAG 2.1 criterion. The 25 character limit is arbitrary.</p>
 
               <div class="ml-5 mt-4 mb-5">
 
@@ -135,7 +113,7 @@
 
               <hr class="pb-3">
 
-              <h2 id="list-item-2">Images</h2>
+              <h2 id="list-item-1">Images</h2>
               <h3 class="pb-3 pt-3">Images without hyperlinks</h3>
               <div class="row">
                 <div class="col-md-4 d-flex">
@@ -160,7 +138,7 @@
                   <div class="card mb-4 shadow-sm flex-fill">
                     <img src="image-examples/birdy.jpg" width="100%" alt="An image of a bird.">
                     <div class="card-body">
-                      <p class="card-text">Condition 3: Image whose alt text contains a stop word.</p>
+                      <p class="card-text">Condition 3: Image whose alt text contains a suspicious stop word.</p>
                     </div>
                   </div>
                 </div>
@@ -184,6 +162,16 @@
                     </div>
                   </div>
                 </div>
+
+                <div class="col-md-4 d-flex">
+                  <div class="card mb-4 shadow-sm flex-fill">
+                    <img src="image-examples/birdy.jpg" width="100%" alt="birdy.jpg">
+                    <div class="card-body">
+                      <p class="card-text">Condition 6: Image whose alt text contains a file extension.</p>
+                    </div>
+                  </div>
+                </div>
+
               </div>
 
               <h3 class="pb-3 pt-3">Images with hyperlinks</h3>
@@ -356,7 +344,7 @@
               </div>
 
               <hr class="pb-3">
-              <h2 id="list-item-4">Tables</h2>
+              <h2 id="list-item-3">Tables</h2>
               <p>There are 3 simple accessibility tests for a table.</p>
               <ol>
                 <li>Table must contain at least one table heading or <kbd>th</kbd></li>
@@ -489,7 +477,7 @@
               </div>
 
               <hr class="pb-3">
-              <h2 id="list-item-5">Contrast</h2>
+              <h2 id="list-item-4">Contrast</h2>
               <p><a href="https://www.jqueryscript.net/other/color-contrast-checker.html">jQuery contrast plugin</a> was created by jasonday. To prevent false positives, a simple condition was added to exclude any elements whose width and height is
                 less than 1px and contains <kbd>overflow:hidden;</kbd>. Some contrast plugins falsely indicate visually hidden text for screenreaders as a contrast fail.</p>
 
@@ -523,7 +511,7 @@
               </div>
 
               <hr class="pb-3">
-              <h2 id="list-item-6">Inputs</h2>
+              <h2 id="list-item-5">Inputs</h2>
               <p>Accessibility tests for form inputs.</p>
               <div class="ml-5 mb-5">
                 <div class="row">
@@ -556,7 +544,7 @@
 
 
               <hr class="pb-3">
-              <h2 id="list-item-7">Other</h2>
+              <h2 id="list-item-6">Other</h2>
               <p>Other accessibility checks that are easy to test for.</p>
 
               <h3 class="pt-3">Page language</h3>
@@ -564,7 +552,7 @@
                   page.</a></p>
 
               <hr class="pb-3">
-              <h2 id="list-item-8">Content</h2>
+              <h2 id="list-item-7">Content</h2>
 
               <h3 class="pt-3">Warning for PDF</h3>
               <p>A warning is added to any hyperlinks that have a <kbd>.pdf</kbd> file extension. A warning icon is only appended to the first PDF detected on the page to avoid overwhelming a content author. All other PDF links are visually
@@ -606,7 +594,7 @@
 
 
               <h3 class="pt-3">Warning for uppercase text</h3>
-              <p>This warning is to discourage the use of uppercase text. This is not a WCAG 2.1 requirement, however based on research it is a strongly discouraged practice for readability. Secondly, some capitalized words may be mistaken for an
+              <p>This warning is to discourage the use of uppercase text. This is <strong>not</strong> a WCAG 2.1 requirement, however based on research it is a strongly discouraged practice for readability. Secondly, some capitalized words may be mistaken for an
                 acronym and ready out character by character with a screen reader.</p>
               <p>This condition uses regex to find uppercase words that are at least 3 characters in length, however it will only be indicated as a warning if at least 5 uppercase words within an element is found. It only checks for uppercase words
                 within the following elements: h1, h2, h3, h4, h5, h6, p, li, span, blockquote.</p>

@@ -51,7 +51,8 @@ main a:focus {
 
 .sa11y-website-frame-message a:hover,
 .sa11y-website-frame-message a:focus {
-    text-decoration: none
+    text-decoration: none;
+    color: white;
 }
 
 .sa11y-website-frame-message p {
