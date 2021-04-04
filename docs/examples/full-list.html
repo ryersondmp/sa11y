@@ -274,8 +274,7 @@
               <h2 id="list-item-2">Links</h2>
 
               <h3>Stop words</h3>
-              <p>If hyperlinks contain <strong>any</strong> of the following words or characters within a hyperlink, it will be flagged as an error. Stop words: <kbd>click here</kbd> <kbd>&lt;</kbd> <kbd>&gt;</kbd> <kbd>http://</kbd>
-                <kbd>https://</kbd> <kbd>.aspx</kbd> <kbd>.html</kbd> <kbd>.php</kbd></p>
+              <p>If hyperlinks contain <strong>any</strong> of the following words or characters within a hyperlink, it will be flagged as an error.</p>
 
               <div class="ml-5 pt-4 mb-5">
                 <div class="row pb-2">
@@ -289,14 +288,21 @@
                     <a href="#" class="btn btn-primary">About Ryerson ></a>
                   </div>
                 </div>
-                <h4 class="pt-4">Example 3</h4>
-                <p>It's also very annoying to hear a really long URL being read out character-by-character using a screen reader. <a href="#">https://www.ryerson.ca/programs/undergraduate/accounting-finance/</a></p>
+
+                <div class="row pb-2">
+                  <div class="col-md-6">
+                    <h4 class="pt-4">Example 3</h4>
+                    <p>It's also very annoying to hear a really long URL being read out character-by-character using a screen reader. <a href="#">https://www.ryerson.ca/programs/undergraduate/accounting-finance/</a></p>
+                  </div>
+                  <div class="col-md-6">
+                    <h4 class="pt-4">Example 4</h4>
+                    <p>Although if the URL is not too long, let's not flag it. <a href="#">https://www.ryerson.ca/programs</a></p>
+                  </div>
+                </div>                
               </div>
 
               <h3>Partial stop words</h3>
-              <p>If the following words are used as the hyperlink text alone, it will be flagged as an error. If used with other text, it will <strong>not</strong> be flagged as an error. Partial stop words: <kbd>learn more</kbd> <kbd>register</kbd>
-                <kbd>register now</kbd> <kbd>learn</kbd> <kbd>more</kbd> <kbd>this page</kbd> <kbd>check out</kbd> <kbd>learn to</kbd> <kbd>view</kbd> <kbd>view our</kbd> <kbd>read more</kbd> <kbd>.</kbd> <kbd>,</kbd> <kbd>:</kbd> <kbd>page</kbd>
-                <kbd>this page</kbd> <kbd>download</kbd> <kbd>form</kbd> <kbd>link</kbd> <kbd>here</kbd> <kbd>this</kbd></p>
+              <p>If the following words are used as the hyperlink text alone, it will be flagged as an error. If used with other text, it will <strong>not</strong> be flagged as an error.</p>
 
               <div class="ml-5 pt-4 mb-5">
                 <div class="row">
@@ -650,6 +656,11 @@
                 </div>
               </div>
 
+              <h3 class="pt-3">Detect fake lists</h3>
+              <p>Thanks to <a href="https://itmaybejj.github.io/editoria11y/">John Jameson (Editoria11y)</a> for this check.</p>
+              <p>a) Sometimes people will manually create a list<br>
+              b) using fake list prefixes<br>
+            c) instead of using a semantic list.</p>
 
               <h3 class="pt-3">Detect bad links</h3>
               <p>Customize this condition to create an error for any links that point to a development environment. This does <strong>not</strong> detect dead (404) links. Using <a href="https://www.w3schools.com/cssref/css_selectors.asp">W3Schools

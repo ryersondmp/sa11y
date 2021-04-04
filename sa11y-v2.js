@@ -175,7 +175,11 @@ class Sa11y {
                 if (escape.keyCode == 27 && $('#sa11y-panel').hasClass('sa11y-active')) {
                     tippy.hideAll();
                     sessionStorage.enableSa11y = '';
-                    this.checkAll();
+                    sa11yToggle
+                        .attr('aria-expanded', 'false')
+                        .removeClass('sa11y-on')
+                        .click();
+                    this.reset();
                 } else {
                     this.onkeyup = null;
                 }
@@ -209,10 +213,14 @@ class Sa11y {
                     localStorage.setItem('sa11y-contrastCheck', 'off');
                     $sa11yContrastCheck.text('Off');
                     $sa11yContrastCheck.attr('aria-pressed', 'false');
+                    this.reset();
+                    this.checkAll();
                 } else {
                     localStorage.setItem('sa11y-contrastCheck', 'On');
                     $sa11yContrastCheck.text('On');
                     $sa11yContrastCheck.attr('aria-pressed', 'true');
+                    this.reset();
+                    this.checkAll();
                 }
             });
 
@@ -412,7 +420,7 @@ class Sa11y {
                     to 
                     <span class='sa11y-red-text sa11y-bold'>Heading ${level}</span>.`;
             } else if ($el.text().trim().length < 1) {
-                error = 'Empty heading found! Please remove empty header tags.';
+                error = `Detected empty heading! To fix, delete this line or change its format from <span class='sa11y-red-text sa11y-bold'>Heading ${level}</span> to <span class='sa11y-bold'>Normal</span> or <span class='sa11y-bold'>Paragraph</span>.`;
                 $el.addClass('sa11y-error-text');
             } else if ($el.text().trim().length > 170) {
                 error = `Heading is too long! Headings are used to organize content and convey structure. They should be brief, clear, informative and unique. Please keep headings less than 160 characters (no more than a sentence).<hr aria-hidden='true' class='sa11y-hr'>Character count: 
@@ -485,46 +493,68 @@ class Sa11y {
         Example: If you need to ignore any text within <span class="sr-only">test</span>.
         $el.ignore("span.sr-only").text().trim(); */
 
-        // Checks if text is not descriptive and returns the word(s) that are making the text inaccessible.
-        //showStopper words will always flag an issue if contained in a hyperlink.
-        //partialStopWords will only be flagged as an issue if it's the only hyperlink text.
+        let containsLongUrl = function(textContent) {
+            let urlText = [
+                "http",
+                ".asp",
+                ".htm",
+                ".php",
+                ".edu/",
+                ".com/"
+            ];
+
+            var hit = null;
+            $.each(urlText, function (index, word) {
+                if (textContent.toLowerCase().indexOf(word) >= 0) {
+                    hit = word;
+                    return false;
+                }
+            });
+            return hit;
+        }
+
+        /* Checks if text is not descriptive and returns the word(s) that are making the text inaccessible. stopWords will always flag an issue if contained in a hyperlink. partialStopWords will only be flagged as an issue if it's the only hyperlink text. */
         let containsLinkTextStopWords = function (textContent) {
             let stopWords = [
-                'click here',
-                '<',
-                '>',
-                'http://',
-                'https://',
-                '.aspx',
-                '.html',
-                '.php',
-                'here.',
+                "click here",
+                "< ",
+                " >"
             ];
-            let partialStopWords = [
-                'learn more',
-                'learn',
-                'more',
-                'this page',
-                'check out',
-                'learn to',
-                'view',
-                'view our',
-                'read more',
-                'read',
-                '.',
-                ',',
-                ':',
-                'page',
-                'this page',
-                'download',
-                'form',
-                'link',
-                'here',
-                'this',
-            ];
-            var hit = null;
 
-            // TODO: Check if this actually returns false.
+            let partialStopWords = [
+                "click",
+                "click here to learn more",
+                "check out",
+                "download",
+                "download here",
+                "find out",
+                "find out more",
+                "form",
+                "here",
+                "info",
+                "information",
+                "link",
+                "learn",
+                "learn more",
+                "learn to",
+                "more",
+                "page",
+                "paper",
+                "read more",
+                "read",
+                "read this",
+                "this",
+                "this page",
+                "this website",
+                "view",
+                "view our",
+                "website",
+                ".",
+                ",",
+                ":"
+            ];
+
+            var hit = null;
 
             // First check for show stoppers.
             $.each(stopWords, function (index, word) {
@@ -552,12 +582,13 @@ class Sa11y {
 
         $links.each((i, el) => {
             let $el = $(el);
-            var linktext = $el.text();
-            var hasarialabelledby = $el.attr('aria-labelledby');
-            var hasarialabel = $el.attr('aria-label');
-            var hasariahidden = $el.attr('aria-hidden');
-            var hastabindex = $el.attr('tabindex');
+            var linkText = $el.text();
+            var hasAriaLabelledBy = $el.attr('aria-labelledby');
+            var hasAriaLabel = $el.attr('aria-label');
+            var hasAriaHidden = $el.attr('aria-hidden');
+            var hasTabIndex = $el.attr('tabindex');
             var error = containsLinkTextStopWords($el.text().trim());
+            var errorURL = containsLongUrl($el.text().trim());
 
             if (
                 $el.children().length == 0 &&
@@ -566,27 +597,37 @@ class Sa11y {
                 $el.is(':visible')
             ) {
                 this.errorCount++;
-                let LinkErrorMessage = 'Found an empty hyperlink without any text!';
+                let LinkErrorMessage = 'Remove empty hyperlinks without any text.';
                 $el.addClass('sa11y-error-text');
                 $el.after(ButtonInserter(ERROR, LinkErrorMessage, true));
-            } else if (error != null) {
-                if (hasarialabelledby != null) {
-                    var acclinkname = document.getElementById(hasarialabelledby).textContent;
+            } 
+            
+            else if (error != null) {
+                if (hasAriaLabelledBy != null) {
+                    var acclinkname = document.getElementById(hasAriaLabelledBy).textContent;
                     var LinkHasAriaLabelledbyMessage = `The descriptive label for this link is:
-                        <span class='sa11y-bold'> ${linktext} ${acclinkname}</span>`;
+                        <span class='sa11y-bold'> ${linkText} ${acclinkname}</span>`;
                     $el.after(ButtonInserter(PASS, LinkHasAriaLabelledbyMessage, true));
-                } else if (hasarialabel != null) {
-                    let LinkHasAriaLabelMessage = `The descriptive label for this link is: <span class='sa11y-bold'>${hasarialabel} </span>`;
+                } else if (hasAriaLabel != null) {
+                    let LinkHasAriaLabelMessage = `The descriptive label for this link is: <span class='sa11y-bold'>${hasAriaLabel} </span>`;
                     $el.after(ButtonInserter(PASS, LinkHasAriaLabelMessage, true));
-                } else if (hasariahidden == 'true' && hastabindex == '-1') {
+                } else if (hasAriaHidden == 'true' && hasTabIndex == '-1') {
                     //do nothing.
                 } else {
                     this.errorCount++;
                     $el.addClass('sa11y-error-text');
-                    let StopWordMessage = `Link text may not be descriptive enough, consider changing word: <span class='sa11y-red-text sa11y-bold'>${error}</span><hr aria-hidden='true' class='sa11y-hr'><span class='sa11y-bold'>Tip!</span> Link text should always be unique and meaningful so it could be understood out of context.`;
+                    let StopWordMessage = `Link text may not be descriptive enough out of context: <span class='sa11y-red-text sa11y-bold'>${error}</span><hr aria-hidden='true' class='sa11y-hr'><span class='sa11y-bold'>Tip!</span> Link text should always be clear, unique, and meaningful. Avoid common words like &quot;click here&quot; or &quot;learn more&quot;.`;
                     $el.after(ButtonInserter(ERROR, StopWordMessage, true));
                 }
             }
+
+            else if (errorURL != null && linkText.length > 40) {
+                this.warningCount++;
+                $el.addClass('sa11y-warning-text');
+                let LinkStopWordMessage = "Longer, less intelligible URLs used as link text might  be difficult to listen to with assistive technology. In most cases, it is better to use human-readable text instead of the URL. Short URLs (such as a site's homepage) are okay.<hr aria-hidden='true' class='sa11y-hr'><span class='sa11y-bold'>Tip!</span> Link text should always be clear, unique, and meaningful so it could be understood out of context.";
+                $el.after(ButtonInserter(WARNING, LinkStopWordMessage, true));
+            } 
+
         });
     };
 
@@ -783,14 +824,17 @@ class Sa11y {
                     "There is no label associated with this input. Please add an <span class='sa11y-kbd'>id</span> to this input, and add a matching <span class='sa11y-kbd'>for</span> attribute to the label.";
                 $el.after(ButtonInserter(ERROR, MissingLabelMessage, true));
             } else if ($el.attr('aria-label')) {
-                /*Optional: add pass border.*/
-            } else if ($el.prev().is('label')) {
+                this.warningCount++;
+                $el.addClass("sa11y-warning-border");
+                let AriaLabelInputMessage = "Detected an <span class='sa11y-kbd'>aria-label</span> with this input, although make sure there is a visible label too."
+                $el.after(ButtonInserter(WARNING, AriaLabelInputMessage, true));
+            } else if ($el.prev().is("label")) {
                 let label = $el.prev();
-                if (label.attr('for') == $el.attr('id')) {
-                    /*Optional: add pass border.*/
+                if (label.attr("for") == $el.attr("id")) {
+                    /* Optional: add pass border. */
                 } else {
                     this.errorCount++;
-                    $el.addClass('sa11y-error-border');
+                    $el.addClass("sa11y-error-border");
                     let NoForAttributeMessage = `There is no label associated with this input. Add a <span class='sa11y-kbd'>for</span> attribute to the label that matches the <span class='sa11y-kbd'>id</span> of this input. <hr class='sa11y-hr' aria-hidden='true'> The ID for this input is: <span class='sa11y-bold'>id=&#34;${$el.attr(
                         'id',
                     )}&#34;</span>`;

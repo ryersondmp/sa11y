@@ -103,6 +103,7 @@ html[data-sa11y-theme="dark"] {
     color: white !important;
     cursor: pointer !important;
     margin: 0px !important;
+    overflow: visible !important;
     padding: 10px !important;
     position: fixed !important;
     right: 15px !important;
@@ -260,6 +261,7 @@ button.sa11y-warning-btn-text:focus {
 }
 
 #sa11y-container label {
+    color: var(--sa11y-panel-primary) !important;
     display: inline-block !important;
     font-weight: normal !important;
     font-size: var(--sa11y-normal-text) !important;
@@ -630,8 +632,7 @@ button.sa11y-warning-btn-text:focus {
 }
 
 .sa11y-kbd {
-    padding: 0.2em 0.4em !important;
-    font-size: 87.5% !important;
+    padding: 0.1em 0.3em !important;
     color: #fff !important;
     background-color: #212529 !important;
     border-radius: 0.2em !important;
