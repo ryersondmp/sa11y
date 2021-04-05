@@ -2,6 +2,9 @@ export default function displayPanels(issueCount) {
     let errorCount = issueCount["error"];
     let warningCount = issueCount["warning"];
     let totalCount = errorCount + warningCount;
+    let $outlineToggle = $("#sa11y-outline-toggle");
+    let $settingsToggle = $("#sa11y-settings-toggle");
+
     $("#sa11y-panel").addClass("sa11y-active");
     if (totalCount > 0) {
         if (errorCount > 0) {
@@ -24,7 +27,6 @@ export default function displayPanels(issueCount) {
         $("#sa11y-status").text("No accessibility errors found.");
     }
     //Show outline panel
-    let $outlineToggle = $("#sa11y-outline-toggle");
     $outlineToggle.click(() => {
         if ($outlineToggle.attr("aria-expanded") == "true") {
             $outlineToggle.removeClass("sa11y-outline-active");
@@ -64,7 +66,6 @@ export default function displayPanels(issueCount) {
     }
 
     //Show settings panel
-    let $settingsToggle = $("#sa11y-settings-toggle");
     $settingsToggle.click(function () {
         if ($settingsToggle.attr("aria-expanded") === "true") {
             $settingsToggle.removeClass("sa11y-settings-active");
