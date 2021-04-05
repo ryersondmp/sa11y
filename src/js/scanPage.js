@@ -77,6 +77,19 @@ export default async function scanPage(elemToIgnore) {
     //     $("#sa11y-notification-badge").show();
     //     $("#sa11y-notification-count").html(totalCount);
     // }t
+    let totalCount = issueCount["error"] + issueCount["warning"];
+    if (totalCount === 0) {
+        $("#sa11y-notification-badge").hide();
+    } else if (this.warningCount > 0 && this.errorCount === 0) {
+        $("#sa11y-notification-badge").show();
+        $("#sa11y-notification-badge").addClass(
+            "sa11y-notification-badge-warning"
+        );
+        $("#sa11y-notification-count").html(this.warningCount);
+    } else {
+        $("#sa11y-notification-badge").show();
+        $("#sa11y-notification-count").html(totalCount);
+    }
 
     // Initizlize tippy
     tippy(".sa11y-btn", {
