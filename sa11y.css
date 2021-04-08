@@ -255,6 +255,7 @@ button.sa11y-warning-btn-text:focus {
 }
 
 /*===== Main panel/container ===== */
+
 #sa11y-container * {
     font-family: var(--sa11y-font-face) !important;
     line-height: 23px !important;
@@ -325,7 +326,7 @@ button.sa11y-warning-btn-text:focus {
 
 #sa11y-status {
     color: var(--sa11y-panel-primary) !important;
-    font-size: var(--sa11y-large-text);
+    font-size: var(--sa11y-large-text) !important;
 }
 
 .sa11y-errors .sa11y-panel-icon,
@@ -391,9 +392,9 @@ button.sa11y-warning-btn-text:focus {
 }
 
 #sa11y-container .sa11y-missing-h1 {
-    margin: 0 15px 0 15px;
-    padding: 2px;
-    border: 2px dashed var(--sa11y-red-text);
+    margin: 0 15px 0 15px !important;
+    padding: 2px !important;
+    border: 2px dashed var(--sa11y-red-text) !important;
 }
 
 #sa11y-container .sa11y-badge {
@@ -472,17 +473,17 @@ button.sa11y-warning-btn-text:focus {
 /* Scroll bar */
 #sa11y-settings-content::-webkit-scrollbar,
 #sa11y-outline-content::-webkit-scrollbar {
-    width: 7px;
+    width: 7px !important;
   }
 #sa11y-settings-content,
 #sa11y-outline-content {
-    scrollbar-width: thin;
-    scrollbar-color: var(--sa11y-panel-bg-splitter);
+    scrollbar-width: thin !important;
+    scrollbar-color: var(--sa11y-panel-bg-splitter) !important;
 }
 #sa11y-settings-content::-webkit-scrollbar-thumb,
 #sa11y-outline-content::-webkit-scrollbar-thumb {
-    background-color: var(--sa11y-panel-bg-splitter);
-    border-radius: 6px;
+    background-color: var(--sa11y-panel-bg-splitter) !important;
+    border-radius: 6px !important;
 }
 
 /* Setting & Outline toggles */
@@ -514,7 +515,7 @@ button.sa11y-warning-btn-text:focus {
     outline: 0 !important;
     padding: 0px !important;
     width: 100% !important;
-    transition: background 0.2s;
+    transition: background 0.2s !important;
 }
 
 #sa11y-settings-options {
@@ -523,9 +524,9 @@ button.sa11y-warning-btn-text:focus {
 }
 
 #sa11y-settings-options li {
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
+    align-items: center !important;
+    display: flex !important;
+    justify-content: space-between !important;
     padding: 1px 0px 1px 0px !important;
     list-style-type: none !important;
 }
@@ -614,15 +615,15 @@ button.sa11y-warning-btn-text:focus {
 /* Misc */
 .sa11y-visually-hidden {
     border: 0;
-    clip: rect(1px, 1px, 1px, 1px);
-    clip-path: inset(50%);
-    display: block;
-    height: 1px;
-    overflow: hidden;
-    padding: 0;
-    position: absolute;
-    width: 1px;
-    white-space: nowrap;
+    clip: rect(1px, 1px, 1px, 1px) !important;
+    clip-path: inset(50%) !important;
+    display: block !important;
+    height: 1px !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    position: absolute !important;
+    width: 1px !important;
+    white-space: nowrap !important;
 }
 
 .sa11y-header-text {

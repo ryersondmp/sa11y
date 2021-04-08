@@ -83,7 +83,7 @@ class Sa11y {
         let loadReadabilityPreference = localStorage.getItem('sa11y-readabilityCheck') === 'On';
         sa11ycontainer.innerHTML =
 
-            '<button type="button" aria-expanded="false" id="sa11y-toggle" aria-describedby="sa11y-notification-badge">' + MainToggleIcon + '<span class="sa11y-visually-hidden">' + sa11yMainToggleLang + '</span><div id="sa11y-notification-badge" style="display: none;"><span id="sa11y-notification-count"></span><span class="sa11y-visually-hidden">errors detected.</span></div></button>' +
+            '<button type="button" aria-expanded="false" id="sa11y-toggle" aria-describedby="sa11y-notification-badge">' + MainToggleIcon + '<span class="sa11y-visually-hidden">' + sa11yMainToggleLang + '</span><div id="sa11y-notification-badge" style="display: none;"><span id="sa11y-notification-count"></span></div></button>' +
 
             //Start of main container.
             '<div id="sa11y-panel">' +
@@ -320,9 +320,11 @@ class Sa11y {
             $('#sa11y-notification-badge').show();
             $('#sa11y-notification-badge').addClass("sa11y-notification-badge-warning");
             $('#sa11y-notification-count').html(this.warningCount);
+            $('#sa11y-notification-count').attr("aria-label", this.warningCount + " warnings detected.")
         } else {
             $('#sa11y-notification-badge').show();
             $('#sa11y-notification-count').html(totalCount);
+            $('#sa11y-notification-count').attr("aria-label", totalCount + " errors detected.")
         }
 
         //Initialize tippy.js
@@ -1129,7 +1131,7 @@ class Sa11y {
         var coleman_liau = 0.0588 * (100*characters/words) - 0.296 * (100*sentences/words) - 15.8;
         var scoreMsg ='';
   
-        scoreMsg = scoreMsg + '[Detailed] Readability score of main content area. Please note text within a list is ignored.'
+        scoreMsg = scoreMsg + '[Detailed] Readability score of main content area.'
         scoreMsg = scoreMsg + '\n\n';
         scoreMsg = scoreMsg + 'Flesch Reading Ease: ' + flesch_reading_ease.toFixed(1);
         scoreMsg = scoreMsg + '\nWCAG 2.0 Level AAA requires 60 or greater.'
@@ -1147,24 +1149,26 @@ class Sa11y {
         scoreMsg = scoreMsg + (sentences>=30?'(SMOG): ' + smog.toFixed(1) + '\n\n':'');
         scoreMsg = scoreMsg + 'WCAG 2.0 Level AAA requires grade 9 or lower.';
         scoreMsg = scoreMsg + '\n\n';
-        scoreMsg = scoreMsg + 'Words: ' + words;
-        scoreMsg = scoreMsg + '\n';
-        scoreMsg = scoreMsg + 'Complex Words: ' + Math.round(100*((words-(syllables1+syllables2))/words)) +'%';
-        scoreMsg = scoreMsg + '\n';
-        scoreMsg = scoreMsg + 'Sentences: ' + sentences;
-        scoreMsg = scoreMsg + '\n';
-        scoreMsg = scoreMsg + 'Words Per Sentence: ' + (words/sentences).toFixed(1);
-        scoreMsg = scoreMsg + '\n';
-        scoreMsg = scoreMsg + 'Syllables: ' + total_syllables;
-        scoreMsg = scoreMsg + '\n';
-        scoreMsg = scoreMsg + 'Characters: ' + characters;
+        scoreMsg = scoreMsg + 'Words: ' + words + ' | Complex Words: ' + Math.round(100*((words-(syllables1+syllables2))/words)) +'%' + ' | Sentences: ' + sentences + ' | Words Per Sentence: ' + (words/sentences).toFixed(1) + ' | Syllables: ' + total_syllables + ' | Characters: ' + characters;
         console.log(scoreMsg);
 
         let readingDifficulty = "";
         let readabilityDetails = "";
         let notEnoughContent = "";
 
-             if (words > 30) {
+        $("main, [role='main']")
+
+            if ($("main, [role='main']").length === 0) {
+                fleschScore = "";
+                readingDifficulty = "";
+                readabilityDetails = "";
+                notEnoughContent = 'Please identify the <a href="https://www.w3.org/WAI/tutorials/page-structure/regions/#main-content" target="_blank">main content region to calculate readability score. <span class="sa11y-visually-hidden">(opens new tab)</span></a>';
+             } else if (this.$mainPandLi.length === 0) {
+                fleschScore = "";
+                readingDifficulty = "";
+                readabilityDetails = "";
+                notEnoughContent = `No paragraph <span class="sa11y-badge">&lt;p&gt;</span> or list content <span class="sa11y-badge">&lt;li&gt;</span> detected within main content area.`;
+             } else if (words > 30) {
                 var fleschScore = flesch_reading_ease.toFixed(1);
                 var avgWordsPerSentence = (words/sentences).toFixed(1);
                 
@@ -1186,11 +1190,6 @@ class Sa11y {
                     <li><span class='sa11y-bold'>Words:</span> ` + words + `</li>
                 </ul>`
 
-            } else if (this.$mainPandLi.length === 0) {
-                fleschScore = "";
-                readingDifficulty = "";
-                readabilityDetails = "";
-                notEnoughContent = 'Please identify the <a href="https://www.w3.org/WAI/tutorials/page-structure/regions/#main-content" target="_blank">main content region to calculate readability. <span class="sa11y-visually-hidden">(opens new tab)</span></a>';
             } else {
                 fleschScore = "";
                 readingDifficulty = "";
