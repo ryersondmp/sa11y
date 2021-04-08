@@ -71,11 +71,9 @@ class Sa11y {
         let loadReadabilityPreference =
             localStorage.getItem("sa11y-readabilityCheck") === "On";
         sa11ycontainer.innerHTML =
-            '<button type="button" aria-expanded="false" id="sa11y-toggle" aria-describedby="sa11y-notification-badge">' +
-            MainToggleIcon +
-            '<span class="sa11y-visually-hidden">' +
-            sa11yMainToggleLang +
-            '</span><div id="sa11y-notification-badge" style="display: none;"><span id="sa11y-notification-count"></span><span class="sa11y-visually-hidden">errors detected.</span></div></button>' +
+
+            '<button type="button" aria-expanded="false" id="sa11y-toggle" aria-describedby="sa11y-notification-badge">' + MainToggleIcon + '<span class="sa11y-visually-hidden">' + sa11yMainToggleLang + '</span><div id="sa11y-notification-badge" style="display: none;"><span id="sa11y-notification-count"></span></div></button>' +
+
             //Start of main container.
             '<div id="sa11y-panel">' +
             //Page Outline tab.
@@ -316,14 +314,14 @@ class Sa11y {
         if (totalCount === 0) {
             $("#sa11y-notification-badge").hide();
         } else if (this.warningCount > 0 && this.errorCount === 0) {
-            $("#sa11y-notification-badge").show();
-            $("#sa11y-notification-badge").addClass(
-                "sa11y-notification-badge-warning"
-            );
-            $("#sa11y-notification-count").html(this.warningCount);
+            $('#sa11y-notification-badge').show();
+            $('#sa11y-notification-badge').addClass("sa11y-notification-badge-warning");
+            $('#sa11y-notification-count').html(this.warningCount);
+            $('#sa11y-notification-count').attr("aria-label", this.warningCount + " warnings detected.")
         } else {
-            $("#sa11y-notification-badge").show();
-            $("#sa11y-notification-count").html(totalCount);
+            $('#sa11y-notification-badge').show();
+            $('#sa11y-notification-count').html(totalCount);
+            $('#sa11y-notification-count').attr("aria-label", totalCount + " errors detected.")
         }
 
         //Initialize tippy.js
@@ -893,12 +891,12 @@ class Sa11y {
                     );
                 }
             }
+Seperation
         });
     };
     // ============================================================
     // QA
     // ============================================================
-    /*====================== QUALITY ASSURANCE MODULE =======================*/
     checkQA = () => {
         // Stores the corresponding issue text
         const M = IM["QA"];
