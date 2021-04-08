@@ -127,12 +127,17 @@ class Sa11y {
                 setTimeout(500);
             }
 
+            // Prescan wehn doumcnet is ready
             $(document).ready(() => {
                 // Updates badge counter
                 ScanPage(this.displayPanel);
                 Reset();
             });
-
+            // Scan again after 2s for slow loading frames
+            // setTimeout(async () => {
+            //     await ScanPage(this.displayPanel);
+            //     Reset();
+            // }, 2000);
             //Escape key to shutdown.
             $(document).keyup((escape) => {
                 if (
@@ -163,7 +168,8 @@ class Sa11y {
                     localStorage.setItem("sa11y-readabilityCheck", "On");
                     $sa11yReadabilityCheck.text("On");
                     $sa11yReadabilityCheck.attr("aria-pressed", "true");
-                    this.checkReadability();
+                    Reset();
+                    ScanPage(this.displayPanel);
                 }
             });
 
@@ -177,14 +183,14 @@ class Sa11y {
                     localStorage.setItem("sa11y-contrastCheck", "off");
                     $sa11yContrastCheck.text("Off");
                     $sa11yContrastCheck.attr("aria-pressed", "false");
-                    this.reset();
-                    this.checkAll();
+                    Reset();
+                    ScanPage(this.displayPanel);
                 } else {
                     localStorage.setItem("sa11y-contrastCheck", "On");
                     $sa11yContrastCheck.text("On");
                     $sa11yContrastCheck.attr("aria-pressed", "true");
-                    this.reset();
-                    this.checkAll();
+                    Reset();
+                    ScanPage(this.displayPanel);
                 }
             });
 
@@ -263,7 +269,7 @@ class Sa11y {
         let totalCount = errorCount + warningCount;
         let $outlineToggle = $("#sa11y-outline-toggle");
         let $settingsToggle = $("#sa11y-settings-toggle");
-
+        console.log(errorCount, warningCount);
         $("#sa11y-panel").addClass("sa11y-active");
 
         if (errorCount === 1 && warningCount === 1) {
@@ -281,7 +287,7 @@ class Sa11y {
             $("#sa11y-status").text(
                 `${errorCount} accessibility errors and 1 warning detected.`
             );
-        } else if (this.errorCount > 0 && warningCount > 0) {
+        } else if (errorCount > 0 && warningCount > 0) {
             $("#sa11y-panel-content").addClass("sa11y-errors");
             $("#sa11y-status").text(
                 `${errorCount} accessibility errors and ${warningCount} warnings detected.`

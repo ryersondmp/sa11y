@@ -37,6 +37,9 @@ function ButtonInserter(type, content, inline = false) {
 }
 
 function ErrorBannerInsert(content) {
+    if (content && {}.toString.call(content) === "[object Function]") {
+        content = content();
+    }
     return `<div class="sa11y-error-message-container">
         <div class="sa11y-error-message" lang="${sa11yLangCode}">
             ${content}
@@ -1350,16 +1353,16 @@ function ScanPage(displayPanel) {
     this.checkLabels();
     this.checkAltText();
     this.checkQA();
-
     if (localStorage.getItem("sa11y-readabilityCheck") === "On") {
         this.checkReadability();
     }
     if (localStorage.getItem("sa11y-contrastCheck") === "On") {
-        this.checkContrast();
+        // this.checkContrast();
     }
 
+    console.log("PREDISPLAY PLANEL", this.errorCount, this.warningCount);
     // Open panel
-    displayPanel(errorCount, warningCount);
+    displayPanel(this.errorCount, this.warningCount);
 
     let totalCount = this.errorCount + this.warningCount;
     if (totalCount === 0) {
