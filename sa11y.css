@@ -140,6 +140,7 @@ button#sa11y-toggle:focus {
     justify-content: center;
     align-items: center;
     border-radius: 100px;
+    font-weight: normal;
 }
 #sa11y-notification-badge > div {
     position: absolute;
@@ -258,6 +259,8 @@ button.sa11y-warning-btn-text:focus {
     font-family: var(--sa11y-font-face) !important;
     line-height: 23px !important;
     text-transform: none !important;
+    letter-spacing: normal !important;
+    text-shadow: none !important;
 }
 
 #sa11y-container label {
@@ -427,13 +430,13 @@ button.sa11y-warning-btn-text:focus {
 }
 
 #sa11y-outline-list {
-    list-style-type: none !important;
     margin: 0 !important;
     padding: 0 !important;
 }
 
 #sa11y-outline-list li {
     font-size: var(--sa11y-normal-text) !important;
+    list-style-type: none !important;
     margin-bottom: 0 !important;
     margin-top: 0 !important;
     padding: 0 !important;
@@ -461,8 +464,9 @@ button.sa11y-warning-btn-text:focus {
 #sa11y-readability-details li {
     display: inline !important;
     font-size: var(--sa11y-normal-text) !important;
-    padding: 0px 10px 0px 0px !important;
+    list-style-type: none !important;
     margin: 0 !important;
+    padding: 0px 10px 0px 0px !important;
 }
 
 /* Scroll bar */
@@ -514,19 +518,16 @@ button.sa11y-warning-btn-text:focus {
 }
 
 #sa11y-settings-options {
-    list-style-type: none !important;
     margin: 0 !important;
     padding-left: 5px !important;
 }
 
 #sa11y-settings-options li {
-    list-style: none;
+    align-items: center;
     display: flex;
     justify-content: space-between;
-    padding: 0;
-    align-items: center;
-    padding-bottom: 1px !important;
-    padding-top: 1px !important;
+    padding: 1px 0px 1px 0px !important;
+    list-style-type: none !important;
 }
 
 #sa11y-settings-options li + li {
@@ -726,11 +727,15 @@ span.sa11y-heading-label {
     color: white !important;
     font-family: var(--sa11y-font-face) !important;
     font-size: var(--sa11y-normal-text) !important;
+    font-weight: 500 !important;
+    line-height: normal !important;
+    letter-spacing: normal !important;
     margin: -5px 0 0 5px !important;
     padding: 3px !important;
     position: absolute !important;
     visibility: hidden;
-    z-index: 999 !important;
+    text-shadow: none !important;
+    z-index: 2 !important;
 }
 
 /*===== Animations ===== */

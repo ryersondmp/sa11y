@@ -502,7 +502,8 @@
                   <div class="col-md-6">
                     <h3>Example 3 - Form input</h3>
                     <p>Input's text color is too low.</p>
-                    <input type="text" aria-label="Poor Contrast" style="color:coral">
+                    <label for="contrastinput">Name</label>
+                    <input id="contrastinput" type="text" style="color:coral" value="Adam">
                   </div>
                   <div class="col-md-6">
                     <h3>Example 4 - Warning</h3>
@@ -511,7 +512,6 @@
                       <p class="background-image white" style="color:white">Text on background image requires manual review</p>
                     </div>
                   </div>
-
                 </div>
               </div>
 
@@ -522,12 +522,12 @@
                 <div class="row">
                   <div class="col-md-6">
                     <h3>Example 1</h3>
-                    <p>Input without a label or missing <kbd>id</kbd>.</p>
+                    <p>Error: Input without a label or missing <kbd>id</kbd>.</p>
                     <input type="text" />
                   </div>
                   <div class="col-md-6">
                     <h3>Example 2</h3>
-                    <p>Input with ID, although previous label does not have a <kbd>for</kbd> attribute.</p>
+                    <p>Error: Input with ID, although previous label does not have a <kbd>for</kbd> attribute.</p>
                     <label>Name</label>
                     <input type="text" id="asdfg" />
                   </div>
@@ -535,14 +535,33 @@
                 <div class="row mt-4">
                   <div class="col-md-6">
                     <h3>Example 3</h3>
-                    <p>Inputs using <kbd>aria-label</kbd> pass. However if you are a developer, it's not recommended to use this method since there is no visual label.</p>
+                    <p>Warning: Input is using <kbd>aria-label</kbd>. It is not recommended to use this method since there is no visual label.</p>
                     <input aria-label="Invisible aria label" type="text" />
                   </div>
                   <div class="col-md-6">
                     <h3>Example 4</h3>
-                    <p>Pass. Input has <kbd>id</kbd> and label has corresponding <kbd>for</kbd> attribute.</p>
+                    <p>Pass: Input has <kbd>id</kbd> and label has corresponding <kbd>for</kbd> attribute.</p>
                     <label for="asdfgh">Address</label>
                     <input type="text" id="asdfgh" />
+                  </div>
+                </div>
+                <div class="row mt-4">
+                  <div class="col-md-6">
+                    <h3>Example 5</h3>
+                    <p>Warning: Input where <kbd>type='reset'</kbd>.</p>
+                    <input type="reset"/>
+                  </div>
+                  <div class="col-md-6">
+                    <h3>Example 6</h3>
+                    <p>Pass: Input where <kbd>type='submit'</kbd></p>
+                    <input type="submit" />
+                  </div>
+                </div>
+                <div class="row mt-4">
+                  <div class="col-md-6">
+                    <h3>Example 7</h3>
+                    <p>Pass: Input where <kbd>type='button'</kbd>.</p>
+                    <input type="button" value="Input Button"/>
                   </div>
                 </div>
               </div>

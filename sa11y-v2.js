@@ -621,11 +621,13 @@ class Sa11y {
                 }
             }
 
-            else if (errorURL != null && linkText.length > 40) {
-                this.warningCount++;
-                $el.addClass('sa11y-warning-text');
-                let LinkStopWordMessage = "Longer, less intelligible URLs used as link text might  be difficult to listen to with assistive technology. In most cases, it is better to use human-readable text instead of the URL. Short URLs (such as a site's homepage) are okay.<hr aria-hidden='true' class='sa11y-hr'><span class='sa11y-bold'>Tip!</span> Link text should always be clear, unique, and meaningful so it could be understood out of context.";
-                $el.after(ButtonInserter(WARNING, LinkStopWordMessage, true));
+            else if (errorURL != null) {
+                if (linkText.length > 40) {
+                    this.warningCount++;
+                    $el.addClass('sa11y-warning-text');
+                    let LinkStopWordMessage = `Longer, less intelligible URLs used as link text might  be difficult to listen to with assistive technology. In most cases, it is better to use human-readable text instead of the URL. Short URLs (such as a site's homepage) are okay.<hr aria-hidden='true' class='sa11y-hr'><span class='sa11y-bold'>Tip!</span> Link text should always be clear, unique, and meaningful so it could be understood out of context.`;
+                    $el.after(ButtonInserter(WARNING, LinkStopWordMessage, true));
+                }  
             } 
 
         });
@@ -817,7 +819,15 @@ class Sa11y {
         $inputs.each((i, el) => {
             let $el = $(el);
 
-            if (!$el.attr('id') && !$el.attr('aria-label') && !$el.attr('aria-labelledby')) {
+            if ($el.attr('type') === 'submit' || $el.attr('type') === 'button') {
+                //Do nothing
+            } else if ($el.attr('type') === 'reset') {
+                this.warningCount++;
+                let InputResetMessage = 
+                    "Reset buttons should <span class='sa11y-bold'>not</span> be used unless specifically needed, because they are easy to activate by mistake.<hr aria-hidden='true'> <span class='sa11y-bold'>Tip!</span> Learn why <a href='https://www.nngroup.com/articles/reset-and-cancel-buttons/' target='_blank'>Reset and Cancel buttons pose usability issues. <span class='sa11y-visually-hidden'>(opens new tab)</span></a>"
+                $el.addClass("sa11y-warning-border");
+                $el.after(ButtonInserter(WARNING, InputResetMessage, true));
+            } else if (!$el.attr('id') && !$el.attr('aria-label') && !$el.attr('aria-labelledby')) {
                 this.errorCount++;
                 $el.addClass('sa11y-error-border');
                 let MissingLabelMessage =
