@@ -43,7 +43,7 @@ function ErrorBannerInsert(content) {
         content = content();
     }
     return `<div class="sa11y-error-message-container">
-        <div class="sa11y-error-message" lang="${sa11yLangCode}">
+        <div role="region" aria-label="${ERROR}" class="sa11y-error-message" lang="${sa11yLangCode}">
             ${content}
         </div>
     </div>`;
@@ -75,6 +75,7 @@ class Sa11y {
             localStorage.getItem("sa11y-readabilityCheck") === "On";
         sa11ycontainer.innerHTML =
 
+        //Main toggle button.
         `<button type="button" aria-expanded="false" id="sa11y-toggle" aria-describedby="sa11y-notification-badge" aria-label="${sa11yMainToggle}">
             ${MainToggleIcon} 
             <div id="sa11y-notification-badge" style="display: none;">
@@ -83,7 +84,7 @@ class Sa11y {
         </button>` +
 
         //Start of main container.
-        '<div id="sa11y-panel">' +
+        `<div id="sa11y-panel">` +
             
             //Page Outline tab.
             `<div id="sa11y-outline-panel">
@@ -152,7 +153,7 @@ class Sa11y {
             </div>` +
 
             //End of main container.
-            "</div>";
+            `</div>`;
 
         $("body").prepend(sa11ycontainer);
 
@@ -725,10 +726,20 @@ class Sa11y {
                 "image of",
                 "graphic of",
                 "picture of",
-                "placeholder",
                 "photo of",
             ];
-            let hit = [null, null];
+
+            let placeholderStopWords = [
+                "alt",
+                "image",
+                "decorative",
+                "photo",
+                "placeholder",
+                "placeholder image",
+                "spacer"
+            ];
+
+            let hit = [null, null, null];
             $.each(altUrl, function (index, word) {
                 if (alt.toLowerCase().indexOf(word) >= 0) {
                     hit[0] = word;
@@ -739,6 +750,15 @@ class Sa11y {
                     hit[1] = word;
                 }
             });
+            $.each(placeholderStopWords, function (index, word) {
+                if (
+                    alt.length === word.length &&
+                    alt.toLowerCase().indexOf(word) >= 0
+                ) {
+                    hit[2] = word;
+                }
+            });
+
             return hit;
         };
         let sanitizeForHTML = (string) => {
@@ -816,6 +836,15 @@ class Sa11y {
                             M["linkImageSusAltMessage"](altText, error[1])
                         )
                     );
+                } else if (error[2] != null && $el.parents().is("a[href]")) {
+                    this.errorCount++;
+                    $el.addClass("sa11y-error-border");
+                    $el.closest("a").before(
+                        ButtonInserter(
+                            ERROR,
+                            M["linkImagePlaceholderAltMessage"](altText)
+                        )
+                    );
                 } else if (error[0] != null) {
                     this.errorCount++;
                     $el.addClass("sa11y-error-border");
@@ -834,7 +863,18 @@ class Sa11y {
                             M["altHasSusWordMessage"](altText, error[1])
                         )
                     );
-                } else if (alt == "" && $el.parents().is("a[href]")) {
+                } else if (error[2] != null) {
+                    this.errorCount++;
+                    $el.addClass("sa11y-error-border");
+                    $el.before(
+                        ButtonInserter(
+                            ERROR,
+                            M["altPlaceholderMessage"](altText)
+                        )
+                    );
+                }
+                
+                else if ((alt == "" || alt == " ") && $el.parents().is("a[href]")) {
                     if ($el.parents("a").text().trim().length == 0) {
                         this.errorCount++;
                         $el.addClass("sa11y-error-border");

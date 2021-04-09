@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<!-- saved from url=(0049)https://getbootstrap.com/docs/4.3/examples/album/ -->
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>All Rulesets - Sa11y Demo</title>
+  <link rel="stylesheet" href="main.css"/>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha256-UzFD2WYH2U1dQpKDjjZK72VtPeWP50NoJjd26rnAdUI=" crossorigin="anonymous" />
+</head>
+<body>
+  <header>
+    <div class="sa11y-website-frame-message">
+      <p style="display:none;" id="iframe-check"><a class="sa11y-exclude" href="full-list.html" target="_blank">Open this page in a new tab for a better experience.</a> <span class="fas fa-external-link-alt" aria-hidden="true"></span></p>
+      <p style="display:none;" id="newtabonly">Viewing demo in a new tab. <a href="../index.html#demo">Go back to documentation.</a></p>
+    </div>
+    <div class="navbar navbar-dark bg-dark shadow-sm">
+      <div class="container d-flex justify-content-between">
+        <span class="d-flex align-items-center text-white">
+          <strong>Sa11y Demo</strong>
+        </span>
+        <nav class="nav nav-masthead justify-content-center">
+          <a class="nav-link" href="errors.html">Errors</a>
+          <a class="nav-link" href="warnings.html">Warnings</a>
+          <a class="nav-link" href="pass.html">No Errors</a>
+          <div class="dropdown show">
+            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              All Rulesets
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
+              <a class="dropdown-item" href="headings-images.html">Headings &amp; Images</a>
+              <a class="dropdown-item active" href="links-tables.html">Links &amp; Tables</a>
+              <a class="dropdown-item" href="contrast-labels.html">Contrast &amp; Labels</a>
+              <a class="dropdown-item" href="other.html">Other</a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="jumbotron text-center">
+      <div class="container">
+        <h1 class="jumbotron-heading">Links &amp; Tables</h1>
+      </div>
+    </section>
+
+    <div class="album py-5 bg-light">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-2">
+            <div id="list-example" class="list-group sticky-top">
+              <strong class="mt-1 mb-2">On this page:</strong>
+              <a class="list-group-item list-group-item-action" href="#list-item-2">Links</a>
+              <a class="list-group-item list-group-item-action" href="#list-item-3">Tables</a>
+            </div>
+          </div>
+
+          <div class="col-md-10">
+            <div data-spy="scroll" data-target="#list-example" data-offset="0" class="scrollspy-example">
+              
+              <h2 id="list-item-2">Links</h2>
+
+              <h3>Stop words</h3>
+              <p>If hyperlinks contain <strong>any</strong> of the following words or characters within a hyperlink, it will be flagged as an error.</p>
+
+              <div class="ml-5 pt-4 mb-5">
+                <div class="row pb-2">
+                  <div class="col-md-6">
+                    <h4>Example 1</h4>
+                    <p>Hyperlink contains descriptive text, although it will still be flagged as an issue since 'click here' is a stop word: <br><a href="#">Click here to view Ryerson's programs</a></p>
+                  </div>
+                  <div class="col-md-6">
+                    <h4>Example 2</h4>
+                    <p>It's very common for content authors to use HTML symbols for visual aesthetics, especially on a button link.</p>
+                    <a href="#" class="btn btn-primary">About Ryerson ></a>
+                  </div>
+                </div>
+
+                <div class="row pb-2">
+                  <div class="col-md-6">
+                    <h4 class="pt-4">Example 3</h4>
+                    <p>It's also very annoying to hear a really long URL being read out character-by-character using a screen reader. <a href="#">https://www.ryerson.ca/programs/undergraduate/accounting-finance/</a></p>
+                  </div>
+                  <div class="col-md-6">
+                    <h4 class="pt-4">Example 4</h4>
+                    <p>Although if the URL is not too long, let's not flag it. <a href="#">https://www.ryerson.ca/programs</a></p>
+                  </div>
+                </div>                
+              </div>
+
+              <h3>Partial stop words</h3>
+              <p>If the following words are used as the hyperlink text alone, it will be flagged as an error. If used with other text, it will <strong>not</strong> be flagged as an error.</p>
+
+              <div class="ml-5 pt-4 mb-5">
+                <div class="row">
+                  <div class="col-md-6">
+                    <h4>Example 1</h4>
+                    <p>Using any of the words above on it's own will result in an error since it's not descriptive enough.</p>
+                    <a href="#" class="btn btn-primary">Learn more</a>
+                  </div>
+                  <div class="col-md-6">
+                    <h4>Example 2</h4>
+                    <p>However if used with additional text, it will not be flagged as an error.</p>
+                    <a href="#" class="btn btn-primary">Learn more about Ryerson</a>
+                  </div>
+                </div>
+                <h4 class="pt-4">Example 3</h4>
+                <p>Just another example of a partial stop word being used in a sentence. Visit <a href="#"><strong>this page</strong></a> to learn more about our history, or you can visit <a href="#"><strong>this page</strong> to learn about the
+                    future.</a></p>
+              </div>
+
+              <h3>Hyperlinks with ARIA</h3>
+              <p>Hyperlinks featuring an <kbd>aria-label</kbd> or <kbd>aria-labelledby</kbd> attribute will be indicated as a pass and show the accessible label conveyed to assistive technology.</p>
+
+              <div class="pt-4 pb-5 ml-5">
+                <div class="row">
+                  <div class="col-md-6">
+                    <h4>Example 1</h4>
+                    <p>The following link uses an ARIA label.</p>
+                    <a href="#" class="btn btn-primary" aria-label="Learn more about Ryerson.">Learn more</a>
+                  </div>
+                  <div class="col-md-6">
+                    <h4>Example 2</h4>
+                    <p>The following link uses an ARIA labelledby attribute.</p>
+                    <a href="#" class="btn btn-primary" aria-labelledby="linkexample">Learn more</a>
+                    <div class="sr-only" id="linkexample">about Adam.</div>
+                  </div>
+                </div>
+                <div class="row pt-4">
+                  <div class="col-md-12">
+                    <h4>Example 3</h4>
+                    <p>Links containing both <kbd>aria-hidden="true"</kbd> and <kbd>tabindex="-1"</kbd> will be ignored. This condition assumes developer wants to hide a duplicate visual call-to-action.</p>
+                    <a href="#" class="btn btn-primary" aria-hidden="true" tabindex="-1">Learn more</a>
+                  </div>
+                </div>
+              </div>
+
+              <hr class="pb-3">
+              <h2 id="list-item-3">Tables</h2>
+              <p>There are 3 simple accessibility tests for a table.</p>
+              <ol>
+                <li>Table must contain at least one table heading or <kbd>th</kbd></li>
+                <li>Table must not contain an empty table heading or empty <kbd>th</kbd></li>
+                <li>Table must not contain any semantic headings (H1, H2, H3...)</li>
+              </ol>
+              <div class="ml-5">
+
+                <h3 class="pt-3">Example 1 - Pass</h3>
+                <table class="table pt-3">
+                  <tbody>
+                    <tr class="table-primary">
+                      <th>Event Name</th>
+                      <th>Time</th>
+                      <th>Location</th>
+                    </tr>
+
+                    <tr>
+                      <td>Keynote</td>
+                      <td>9:00 AM</td>
+                      <td>Auditorium</td>
+                    </tr>
+
+                    <tr>
+                      <td>Lunch</td>
+                      <td>12:00 PM</td>
+                      <td>Skyline Room</td>
+                    </tr>
+
+                    <tr>
+                      <td>Closing Dinner</td>
+                      <td>5:00 PM</td>
+                      <td>Metropolitan Room</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+
+                <h3 class="pt-3">Example 2 - Missing table headers</h3>
+                <table class="table">
+                  <tbody>
+                    <tr class="table-primary">
+                      <td>Event Name</td>
+                      <td>Time</td>
+                      <td>Location</td>
+                    </tr>
+
+                    <tr>
+                      <td>Keynote</td>
+                      <td>9:00 AM</td>
+                      <td>Auditorium</td>
+                    </tr>
+
+                    <tr>
+                      <td>Lunch</td>
+                      <td>12:00 PM</td>
+                      <td>Skyline Room</td>
+                    </tr>
+
+                    <tr>
+                      <td>Closing Dinner</td>
+                      <td>5:00 PM</td>
+                      <td>Metropolitan Room</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <h3 class="pt-3">Example 3 - Table containing empty table header</h3>
+                <table class="table">
+                  <tbody>
+                    <tr class="table-primary">
+                      <th></th>
+                      <th>Time</th>
+                      <th>Location</th>
+                    </tr>
+
+                    <tr>
+                      <td>Keynote</td>
+                      <td>9:00 AM</td>
+                      <td>Auditorium</td>
+                    </tr>
+
+                    <tr>
+                      <td>Lunch</td>
+                      <td>12:00 PM</td>
+                      <td>Skyline Room</td>
+                    </tr>
+
+                    <tr>
+                      <td>Closing Dinner</td>
+                      <td>5:00 PM</td>
+                      <td>Metropolitan Room</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <h3 class="pt-3">Example 4 - Table containing semantic headings</h3>
+                <table class="table">
+                  <tbody>
+                    <tr class="table-primary">
+                      <th>
+                        <h4 style="font-size:1.2em!important">Event</h4>
+                      </th>
+                      <th>
+                        <h4 style="font-size:1.2em!important">Time</h4>
+                      </th>
+                      <th>
+                        <h4 style="font-size:1.2em!important">Location</h4>
+                      </th>
+                    </tr>
+                    <tr>
+                      <td>Keynote</td>
+                      <td>9:00 AM</td>
+                      <td>Auditorium</td>
+                    </tr>
+
+                    <tr>
+                      <td>Lunch</td>
+                      <td>12:00 PM</td>
+                      <td>Skyline Room</td>
+                    </tr>
+
+                    <tr>
+                      <td>Closing Dinner</td>
+                      <td>5:00 PM</td>
+                      <td>Metropolitan Room</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </main>
+  <footer class="text-muted sa11y-ignore">
+      <div class="container">
+        <p>Customize Sa11y to target specific regions of a page only. For example, <a href="#">this</a> link will be ignored. If a content editor can't edit it, don't scan it.</p>
+      </div>
+  </footer>
+
+  <!-- Bootstrap + Jquery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+  <!-- Tippy.js CDN scripts -->
+  <script src="https://unpkg.com/@popperjs/core@2"></script>
+  <script src="https://unpkg.com/tippy.js@6"></script>
+
+  <!--Sa11y-->
+  <link rel="stylesheet" href="../../sa11y.css"/>
+  <script src="../../sa11y-constant.js"></script>
+  <script src="../../sa11y-v2.js"></script>
+
+  <script>
+    $(document).ready(function() {
+      if (window.top == window) {
+        $("#iframe-check").remove();
+      } else {
+        $("#iframe-check").css("display", "block")
+      }
+
+      if (window.top != window) {
+        $("#newtabonly").css("display", "none")
+      } else {
+        $("#newtabonly").css("display", "block")
+      }
+      $('body').scrollspy({
+        target: '#list-example'
+      })
+    });
+  </script>
+  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</body>
+</html>
