@@ -3,14 +3,13 @@ let sa11yCheckRoot = "body"; //Use "main" for main content.
 
 //Language of Sa11y. Some global variables to help translate.
 let sa11yLangCode = "en", //Language code, e.g. "fr"
-    sa11yMainToggleLang = "Toggle Accessibility Checker",
+    sa11yMainToggle = "Toggle Accessibility Checker",
     sa11yContainerLang = "Accessibility Checker",
     sa11yErrorLang = "Error", //Erreur
     sa11yWarningLang = "Warning", //Attention
     sa11yPassLang = "Good"; //Bon
 
 //Inclusions and exclusions
-// TODO: make these ignores consistent.
 let sa11yContainerIgnore = ".sa11y-ignore, #sa11y-container"; //Ignore specific regions.
 let sa11yOutlineIgnore = ""; //Exclude headings from outline panel.
 let sa11yHeaderIgnore = ""; //Ignore specific headings. E.g. "h1.jumbotron-heading"
@@ -24,8 +23,7 @@ const ERROR = "Error",
 
 // IM - Issue Message
 const IM = {
-    // h for headers
-    h: {
+    headings: {
         nonconsecLevel: (
             prevLevel,
             level
@@ -35,14 +33,12 @@ const IM = {
             `Detected empty heading! To fix, delete this line or change its format from <span class='sa11y-red-text sa11y-bold'>Heading ${level}</span> to <span class='sa11y-bold'>Normal</span> or <span class='sa11y-bold'>Paragraph</span>.`,
         headingTooLong: (
             headingLength
-        ) => `Heading is too long! Headings are used to organize content and convey structure. They should be brief, clear, informative and unique. Please keep headings less than 160 characters (no more than a sentence).<hr aria-hidden='true' class='sa11y-hr'>Character count: 
-        <span class='sa11y-bold sa11y-red-text'>${headingLength}</span>.`,
+        ) => `Heading is too long! Headings are used to organize content and convey structure. They should be brief, clear, informative and unique. Please keep headings less than 160 characters (no more than a sentence).<hr aria-hidden='true' class='sa11y-hr'>Character count: <span class='sa11y-bold sa11y-red-text'>${headingLength}</span>.`,
         firstHeading: () =>
             `First heading on page should usually be a Heading 1 or Heading 2. Heading 1 should be the start of the main content section, and is the main heading that describes the overall purpose of the page. Learn more about <a href='https://www.w3.org/WAI/tutorials/page-structure/headings/' target='_blank'>Heading Structure.<span class='sa11y-visually-hidden'> (Opens in new tab)</span></a>`,
         missingHeadingOne: () =>
             "Missing Heading 1. Heading 1 should be the start of the main content section, and is the main heading that describes the overall purpose of the page. Learn more about <a href='https://www.w3.org/WAI/tutorials/page-structure/headings/' target='_blank'>Heading Structure.<span class='sa11y-visually-hidden'> (Opens in new tab)</span></a>",
     },
-    // Link Text
     linktext: {
         linkErrorMessage: () => "Remove empty hyperlinks without any text.",
         linkHasAriaLabelledbyMessage: (linkText, acclinkname) =>
@@ -54,8 +50,7 @@ const IM = {
         linkStopWordMessage: () =>
             "Longer, less intelligible URLs used as link text might  be difficult to listen to with assistive technology. In most cases, it is better to use human-readable text instead of the URL. Short URLs (such as a site's homepage) are okay.<hr aria-hidden='true' class='sa11y-hr'><span class='sa11y-bold'>Tip!</span> Link text should always be clear, unique, and meaningful so it could be understood out of context.",
     },
-    // alt text
-    at: {
+    images: {
         missingAltLinkButHasTextMessage: () =>
             "Image is being used as a hyperlink with surrounding text, although the alt attribute should be marked as decorative or null.",
         missingAltLinkMessage: () =>
@@ -73,12 +68,12 @@ const IM = {
             altText,
             error
         ) => `Detected file extension within alt text. If the image conveys a story, a mood or important information - be sure to describe the image. 
-        Remove: <span class='sa11y-red-text sa11y-bold'>${error}</span>. <hr aria-hidden='true' class='sa11y-hr'> The alt text for this image is: <span class='sa11y-bold'>${altText} </span>`,
+        Remove: <span class='sa11y-red-text sa11y-bold'>${error}</span>. <hr aria-hidden='true' class='sa11y-hr'> The alt text for this image is: <span class='sa11y-bold'>${altText}</span>`,
         altHasSusWordMessage: (
             altText,
             error
         ) => `Detected redundant alt text. It is not necessary to include words like <em>image</em>, <em>graphic</em> or the file extension. 
-        Consider removing the word: <span class='sa11y-red-text sa11y-bold'>${error}</span>. <hr aria-hidden='true' class='sa11y-hr'> The alt text for this image is: <span class='sa11y-bold'>${altText} </span>`,
+        Consider removing the word: <span class='sa11y-red-text sa11y-bold'>${error}</span>. <hr aria-hidden='true' class='sa11y-hr'> The alt text for this image is: <span class='sa11y-bold'>${altText}</span>`,
         imageLinkNullAltNoTextMessage: () =>
             "Image within hyperlink is marked as decorative and there is no link text. Please add alt text to image that describes destination of link.",
         linkHasAltMessage: () =>
@@ -100,7 +95,7 @@ const IM = {
         <span class='sa11y-bold'>Consider using the title of the page it links to as the alt text.</span>
         Does the alt text describe where the link takes you? 
         <hr aria-hidden='true' class='sa11y-hr'>
-        Alt text: <span class='sa11y-bold'>${altText} </span>`,
+        Alt text: <span class='sa11y-bold'>${altText}</span>`,
         anchorLinkAndAltMessage: (
             altText
         ) => `Image link contains <span class='sa11y-bold'>both alt text and surrounding link text.</span> If this image is decorative and is being used as a functional link to another page, consider marking the image as decorative or null - the surrounding link text should suffice. <hr aria-hidden='true' class='sa11y-hr'>
@@ -111,12 +106,14 @@ const IM = {
         ) => `Alt text description is <span class='sa11y-bold'>too long</span>. Alt text should be concise, yet meaningful like a <em>tweet</em> (around 100 characters). 
         If this is a complex image or a graph, consider putting the long description of the image in text below or in an accordion component. 
         <hr aria-hidden='true' class='sa11y-hr'> 
-        The alt text is <span class='sa11y-red-text sa11y-bold'> ${altLength}</span> characters: 
+        The alt text is <span class='sa11y-red-text sa11y-bold'>${altLength}</span> characters: 
         <span class='sa11y-red-text sa11y-bold'>${altText}</span>`,
         passAlt: (altText) =>
             `The alt text for this image is: <span class='sa11y-bold'>${altText}</span>`,
     },
     labels: {
+        inputResetMessage: () => 
+            "Reset buttons should <span class='sa11y-bold'>not</span> be used unless specifically needed, because they are easy to activate by mistake.<hr aria-hidden='true' class='sa11y-hr'> <span class='sa11y-bold'>Tip!</span> Learn why <a href='https://www.nngroup.com/articles/reset-and-cancel-buttons/' target='_blank'>Reset and Cancel buttons pose usability issues. <span class='sa11y-visually-hidden'>(opens new tab)</span></a>",
         missingLabelMessage: () =>
             "There is no label associated with this input. Please add an <span class='sa11y-kbd'>id</span> to this input, and add a matching <span class='sa11y-kbd'>for</span> attribute to the label.",
         ariaLabelInputMessage: () =>
@@ -143,7 +140,7 @@ const IM = {
             "Blockquotes should be used for quotes only. They should never be used as headings. Please replace with a semantic heading (e.g. Heading 2 or Heading 3).",
         uppercaseWarning: () =>
             "All caps detected. Avoid typing sentences or phrases in uppercase. Some screen readers may interpret all capital text as an acronym and will read each letter individually. Additionally, all caps are more difficult to read and give the appearance of SHOUTING.",
-        table: {
+        tables: {
             missingHeadings: () =>
                 "Missing table headers! Accessible tables need HTML markup that indicates header cells and data cells which defines their relationship. This information provides context to people who use assistive technology. Tables should be used for tabular data only.",
             semanticHeading: () =>
@@ -156,8 +153,7 @@ const IM = {
         pageLanguageMessage: () =>
             "Page language not declared! Please <a href='https://www.w3.org/International/questions/qa-html-language-declarations' target='_blank'>declare language on HTML tag. <span class='sa11y-visually-hidden'>(opens new tab)</span></a>",
         shouldBeList: (firstPrefix) =>
-            `Are you trying to create a list? Possible list item detected: <span class='sa11y-bold sa11y-red-text'>
-            ${firstPrefix}</span><hr class='sa11y-hr' aria-hidden='true'> Make sure to use semantic lists by using the bullet or number formatting buttons instead. When using a semantic list, assistive technologies are able to convey information such as the total number of items and the relative position of each item in the list. Learn more about <a href='https://www.w3.org/WAI/tutorials/page-structure/content/#lists' target='_blank'>semantic lists. <span class='sa11y-visually-hidden'>(opens new tab)</span></a>`,
+            `Are you trying to create a list? Possible list item detected: <span class='sa11y-bold sa11y-red-text'>${firstPrefix}</span><hr class='sa11y-hr' aria-hidden='true'> Make sure to use semantic lists by using the bullet or number formatting buttons instead. When using a semantic list, assistive technologies are able to convey information such as the total number of items and the relative position of each item in the list. Learn more about <a href='https://www.w3.org/WAI/tutorials/page-structure/content/#lists' target='_blank'>semantic lists. <span class='sa11y-visually-hidden'>(opens new tab)</span></a>`,
         announcementWarning: () =>
             "More than one Announcement component found! The Announcement component should be used strategically and sparingly. It should be used to get attention or warn users about something important. Misuse of this component makes it less effective or impactful. Secondly, this component is semantically labeled as an Announcement for people who use screen readers.",
     },
@@ -168,9 +164,9 @@ const IM = {
             nodetext
         ) => `${cdetail} does not have enough contrast with the background. 
         The contrast ratio should be at least 4.5:1 for normal text and 3:1 for large text. <hr class='sa11y-hr' aria-hidden='true'> 
-        The contrast ratio is <span class='sa11y-red-text sa11y-bold'> ${cratio}</span> for the following text: 
-        <span class='sa11y-bold sa11y-red-text'>${nodetext} </span>`,
+        The contrast ratio is <span class='sa11y-red-text sa11y-bold'>${cratio}</span> for the following text: 
+        <span class='sa11y-bold sa11y-red-text'>${nodetext}</span>`,
         warningM: (nodetext) =>
-            `The contrast of this text is unknown and needs to be manually reviewed. Ensure the text and the background have strong contrasting colours. The contrast ratio should be at least 4.5:1 for normal text and 3:1 for large text. <hr class='sa11y-hr' aria-hidden='true'>Please review contrast of the following text:<br> <span class='sa11y-bold'>  ${nodetext} </span>`,
+            `The contrast of this text is unknown and needs to be manually reviewed. Ensure the text and the background have strong contrasting colours. The contrast ratio should be at least 4.5:1 for normal text and 3:1 for large text. <hr class='sa11y-hr' aria-hidden='true'>Please review contrast of the following text:<br> <span class='sa11y-bold'>${nodetext}</span>`,
     },
 };

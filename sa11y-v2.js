@@ -21,8 +21,9 @@ function ButtonInserter(type, content, inline = false) {
     }
     return `
         <div class=${inline ? "sa11y-instance-inline" : "sa11y-instance"}>
-            <button   
-            aria-label=${ButtonLang[type]} 
+            <button
+            type="button"   
+            aria-label="${ButtonLang[type]}" 
             class="sa11y-btn 
             sa11y-${CSSName[type]}-btn${inline ? "-text" : ""}" 
             data-tippy-content="<div lang='${sa11yLangCode}'>
@@ -68,29 +69,42 @@ class Sa11y {
         sa11ycontainer.setAttribute("aria-label", sa11yContainerLang);
         let loadContrastPreference =
             localStorage.getItem("sa11y-contrastCheck") === "On";
+        let loadLabelsPreference =
+            localStorage.getItem("sa11y-labelsCheck") === "On";
         let loadReadabilityPreference =
             localStorage.getItem("sa11y-readabilityCheck") === "On";
         sa11ycontainer.innerHTML =
 
-            '<button type="button" aria-expanded="false" id="sa11y-toggle" aria-describedby="sa11y-notification-badge">' + MainToggleIcon + '<span class="sa11y-visually-hidden">' + sa11yMainToggleLang + '</span><div id="sa11y-notification-badge" style="display: none;"><span id="sa11y-notification-count"></span></div></button>' +
+        `<button type="button" aria-expanded="false" id="sa11y-toggle" aria-describedby="sa11y-notification-badge" aria-label="${sa11yMainToggle}">
+            ${MainToggleIcon} 
+            <div id="sa11y-notification-badge" style="display: none;">
+                <span id="sa11y-notification-count"></span>
+            </div>
+        </button>` +
 
-            //Start of main container.
-            '<div id="sa11y-panel">' +
+        //Start of main container.
+        '<div id="sa11y-panel">' +
+            
             //Page Outline tab.
-            '<div id="sa11y-outline-panel">' +
-            '<div id="sa11y-outline-header" class="sa11y-header-text"><span tabindex="-1">Page outline</span></div>' +
-            '<div id="sa11y-outline-content">' +
-            '<ul id="sa11y-outline-list"></ul>' +
-            "</div>" +
-            '<div id="sa11y-readability-panel"></div>' +
-            "</div>" +
+            `<div id="sa11y-outline-panel">
+                <div id="sa11y-outline-header" class="sa11y-header-text">
+                    <span tabindex="-1">Page outline</span>
+                </div>
+            <div id="sa11y-outline-content">
+                <ul id="sa11y-outline-list"></ul>
+            </div>
+            <div id="sa11y-readability-panel"></div>
+            </div>` +
+
             //Settings tab.
-            '<div id="sa11y-settings-panel">' +
-            '<div id="sa11y-settings-header" class="sa11y-header-text"><span tabindex="-1">Settings</span></div>' +
-            '<div id="sa11y-settings-content">' +
-            `<ul id="sa11y-settings-options">  
+           `<div id="sa11y-settings-panel">
+            <div id="sa11y-settings-header" class="sa11y-header-text">
+                <span tabindex="-1">Settings</span>
+            </div>
+            <div id="sa11y-settings-content">
+            <ul id="sa11y-settings-options">  
                 <li>
-                    <label id="check-contrast" for="sa11y-contrastCheck-toggle">Check contrast</label>
+                    <label id="check-contrast" for="sa11y-contrastCheck-toggle">Contrast</label>
                     <button id="sa11y-contrastCheck-toggle" 
                     aria-labelledby="check-contrast" 
                     class="sa11y-settings-switch" 
@@ -103,19 +117,40 @@ class Sa11y {
                     <button id="sa11y-theme-toggle" aria-labelledby="dark-mode" class="sa11y-settings-switch"></button>
                 </li>
                 <li>
+                    <label id="check-labels" for="sa11y-labelsCheck-toggle">Form labels</label>
+                    <button id="sa11y-labelsCheck-toggle" aria-labelledby="check-labels" class="sa11y-settings-switch" 
+                    aria-pressed="${
+                        loadLabelsPreference ? "true" : "false"
+                    }">${loadLabelsPreference ? "On" : "Off"}</button>
+                </li>
+                <li>
                     <label id="check-readability" for="sa11y-readabilityCheck-toggle">Readability <span class="sa11y-badge">AAA</span></label>
                     <button id="sa11y-readabilityCheck-toggle" aria-labelledby="check-readability" class="sa11y-settings-switch" 
                     aria-pressed="${
                         loadReadabilityPreference ? "true" : "false"
                     }">${loadReadabilityPreference ? "On" : "Off"}</button>
                 </li>
-            </ul>` +
-            "</div>" +
-            "</div>" +
+            </ul>
+            </div>
+            </div>` 
+            +
             //Main panel that conveys state of page.
-            '<div id="sa11y-panel-content"><div class="sa11y-panel-icon"></div><div id="sa11y-panel-text"><span id="sa11y-status"></span></div></div>' +
+            `<div id="sa11y-panel-content">
+                <div class="sa11y-panel-icon"></div>
+                <div id="sa11y-panel-text"><span id="sa11y-status"></span></div>
+            </div>` +
+
             //Show Outline & Show Settings button.
-            '<div id="sa11y-panel-controls"><button type="button" aria-expanded="false" id="sa11y-outline-toggle">Show Outline</button><button type="button" aria-expanded="false" id="sa11y-settings-toggle">Show Settings</button><div aria-hidden="true">&nbsp;&nbsp;</div></div>' +
+            `<div id="sa11y-panel-controls">
+                <button type="button" aria-expanded="false" id="sa11y-outline-toggle">
+                    Show Outline
+                </button>
+                <button type="button" aria-expanded="false" id="sa11y-settings-toggle">
+                    Show Settings
+                </button>
+                <div aria-hidden="true">&nbsp;&nbsp;</div> 
+            </div>` +
+
             //End of main container.
             "</div>";
 
@@ -220,6 +255,26 @@ class Sa11y {
             });
 
             // ----------------------------------------------------------------------
+            // Labels Check
+            // ----------------------------------------------------------------------
+            let $sa11yLabelsCheck = $("#sa11y-labelsCheck-toggle");
+            $sa11yLabelsCheck.click(async () => {
+                if (localStorage.getItem("sa11y-labelsCheck") === "On") {
+                    localStorage.setItem("sa11y-labelsCheck", "off");
+                    $sa11yLabelsCheck.text("Off");
+                    $sa11yLabelsCheck.attr("aria-pressed", "false");
+                    this.reset(false);
+                    await this.checkAll();
+                } else {
+                    localStorage.setItem("sa11y-labelsCheck", "On");
+                    $sa11yLabelsCheck.text("On");
+                    $sa11yLabelsCheck.attr("aria-pressed", "true");
+                    this.reset(false);
+                    await this.checkAll();
+                }
+            });
+
+            // ----------------------------------------------------------------------
             // Dark Mode. Credits: https://derekkedziora.com/blog/dark-mode-revisited
             // ----------------------------------------------------------------------
 
@@ -294,14 +349,20 @@ class Sa11y {
         this.findElements();
         this.checkHeaders();
         this.checkLinkText();
+
         if (localStorage.getItem("sa11y-contrastCheck") === "On") {
             this.checkContrast();
         }
-        this.checkLabels();
+
+        if (localStorage.getItem("sa11y-labelsCheck") === "On") {
+            this.checkLabels();
+        }
+        
         this.checkAltText();
         if (localStorage.getItem("sa11y-readabilityCheck") === "On") {
             this.checkReadability();
         }
+
         this.checkQA();
 
         if (this.panelActive) {
@@ -433,14 +494,14 @@ class Sa11y {
             let error = null;
 
             if (level - prevLevel > 1 && i !== 0) {
-                error = IM["h"]["nonconsecLevel"](prevLevel, level);
+                error = IM["headings"]["nonconsecLevel"](prevLevel, level);
             } else if ($el.text().trim().length < 1) {
-                error = IM["h"]["emptyHeading"](level);
+                error = IM["headings"]["emptyHeading"](level);
                 $el.addClass("sa11y-error-text");
             } else if ($el.text().trim().length > 170) {
-                error = IM["h"]["headingTooLong"](headingLength);
+                error = IM["headings"]["headingTooLong"](headingLength);
             } else if (i === 0 && level !== 1 && level !== 2) {
-                error = IM["h"]["firstHeading"];
+                error = IM["headings"]["firstHeading"];
             }
 
             prevLevel = level;
@@ -500,16 +561,16 @@ class Sa11y {
     // ============================================================
     // LinkText
     // ============================================================
+
     checkLinkText = function () {
         /* Mini function if you need to exclude any text contained with a span. We created this function to ignore automatically appended sr-only text for external links and document filetypes.
 
-    $.fn.ignore = function(sel){
-    return this.clone().find(sel||">*").remove().end();
-    };
+        $.fn.ignore = function(sel){
+        return this.clone().find(sel||">*").remove().end();
+        };
 
-
-    Example: If you need to ignore any text within <span class="sr-only">test</span>.
-    $el.ignore("span.sr-only").text().trim(); */
+        Example: If you need to ignore any text within <span class="sr-only">test</span>.
+        $el.ignore("span.sr-only").text().trim(); */
 
         let containsLongUrl = function (textContent) {
             let urlText = ["http", ".asp", ".htm", ".php", ".edu/", ".com/"];
@@ -638,13 +699,13 @@ class Sa11y {
                         ButtonInserter(ERROR, M["stopWordMessage"](error), true)
                     );
                 }
-            } else if (errorURL != null && linkText.length > 40) {
-                this.warningCount++;
+            } else if (errorURL != null) {
+                if (linkText.length > 40) {
+                    this.warningCount++;
                 $el.addClass("sa11y-warning-text");
-                $el.after(
-                    ButtonInserter(WARNING, M["linkStopWordMessage"], true)
-                );
-            }
+                $el.after(ButtonInserter(WARNING, M["linkStopWordMessage"], true));
+                }  
+            } 
         });
     };
 
@@ -653,7 +714,13 @@ class Sa11y {
     // ============================================================
     checkAltText = () => {
         this.containsAltTextStopWords = function (alt) {
-            let altUrl = [".png", ".jpg", ".jpeg", ".gif", ".tiff"];
+            let altUrl = [
+                ".png", 
+                ".jpg", 
+                ".jpeg", 
+                ".gif", 
+                ".tiff"
+            ];
             let susWords = [
                 "image of",
                 "graphic of",
@@ -690,7 +757,7 @@ class Sa11y {
             });
         };
         // Stores the corresponding issue text to alternative text
-        const M = IM["at"];
+        const M = IM["images"];
         // Test each image for alternative text.
         this.$img.each((i, el) => {
             let $el = $(el);
@@ -859,7 +926,15 @@ class Sa11y {
             let $el = $(el);
             const M = IM["labels"];
 
-            if (
+
+            if ($el.attr('type') === 'submit' || $el.attr('type') === 'button') {
+                //Do nothing
+            } else if ($el.attr('type') === 'reset') {
+                this.warningCount++;
+                $el.addClass("sa11y-warning-border");
+                $el.after(ButtonInserter(WARNING, M["inputResetMessage"], true));
+            }
+            else if (
                 !$el.attr("id") &&
                 !$el.attr("aria-label") &&
                 !$el.attr("aria-labelledby")
@@ -891,7 +966,6 @@ class Sa11y {
                     );
                 }
             }
-Seperation
         });
     };
     // ============================================================
@@ -1056,14 +1130,14 @@ Seperation
                 this.errorCount++;
                 $el.addClass("sa11y-error-border");
                 $el.before(
-                    ButtonInserter(ERROR, M["table"]["missingHeadings"])
+                    ButtonInserter(ERROR, M["tables"]["missingHeadings"])
                 );
             }
             if (findHeadingTags.length > 0) {
                 findHeadingTags.addClass("sa11y-error-heading");
                 findHeadingTags.parent().addClass("sa11y-error-border");
                 findHeadingTags.before(
-                    ButtonInserter(ERROR, M["table"]["semanticHeading"])
+                    ButtonInserter(ERROR, M["tables"]["semanticHeading"])
                 );
             }
             findTHeaders.each(function () {
@@ -1072,7 +1146,7 @@ Seperation
                     this.errorCount++;
                     findTHeaders.addClass("sa11y-error-border");
                     findTHeaders.append(
-                        ButtonInserter(ERROR, M["table"]["emptyHeading"])
+                        ButtonInserter(ERROR, M["tables"]["emptyHeading"])
                     );
                 }
             });
@@ -1379,224 +1453,162 @@ Seperation
         });
     };
 
-    // ============================================================
-    // Readability
-    // ============================================================
-    checkReadability = () => {
-        //Crude hack to add a period to the end of list items to make a complete sentence.
-        $('main li, [role="main"] li').each(function () {
-            var endOfList = $(this),
-                listText = endOfList.text();
-            if (listText.charAt(listText.length - 1) !== ".") {
-                $('main li, [role="main"] li').append(
-                    '<span class="sa11y-readability-period sa11y-visually-hidden">.</span>'
-                );
-            }
-        });
+ // ============================================================
+ // Readability
+ // ============================================================
 
-        function number_of_syllables(wordCheck) {
-            wordCheck = wordCheck
-                .toLowerCase()
-                .replace(".", "")
-                .replace("\n", "");
-            if (wordCheck.length <= 3) {
-                return 1;
-            }
-            wordCheck = wordCheck.replace(
-                /(?:[^laeiouy]es|ed|[^laeiouy]e)$/,
-                ""
-            );
-            wordCheck = wordCheck.replace(/^y/, "");
-            var syllable_string = wordCheck.match(/[aeiouy]{1,2}/g);
+ checkReadability = () => {
 
-            if (!!syllable_string) {
-                var syllables = syllable_string.length;
-            } else {
-                syllables = 0;
-            }
-            return syllables;
-        }
+    //Crude hack to add a period to the end of list items to make a complete sentence.
+    $('main li, [role="main"] li').each(function() {
+       var endOfList = $(this), listText = endOfList.text();
+       if (listText.charAt(listText.length-1) !== '.') {
+           $('main li, [role="main"] li').append('<span class="sa11y-readability-period sa11y-visually-hidden">.</span>');
+       }
+   });
 
-        let paragraphtext = this.$mainPandLi.not("blockquote").text();
+   function number_of_syllables(wordCheck) {
+       wordCheck = wordCheck.toLowerCase().replace('.','').replace('\n','');
+       if(wordCheck.length <= 3) {
+           return 1;
+       }
+       wordCheck = wordCheck.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
+       wordCheck = wordCheck.replace(/^y/, '');
+       var syllable_string = wordCheck.match(/[aeiouy]{1,2}/g);
 
-        var words_raw = paragraphtext.replace(/[.!?-]+/g, " ").split(" ");
-        var words = 0;
-        for (var i = 0; i < words_raw.length; i++) {
-            if (words_raw[i] != 0) {
-                words = words + 1;
-            }
-        }
+       if(!!syllable_string){
+           var syllables = syllable_string.length;
+       } else{
+           syllables=0;
+       }
+       return syllables;
+   }
 
-        var sentences_raw = paragraphtext.split(/[.!?]+/);
-        var sentences = 0;
-        for (var i = 0; i < sentences_raw.length; i++) {
-            if (sentences_raw[i] != "") {
-                sentences = sentences + 1;
-            }
-        }
+   let paragraphtext = this.$mainPandLi.not("blockquote").text();
 
-        var total_syllables = 0;
-        var syllables1 = 0;
-        var syllables2 = 0;
-        for (var i = 0; i < words_raw.length; i++) {
-            if (words_raw[i] != 0) {
-                var syllable_count = number_of_syllables(words_raw[i]);
-                if (syllable_count == 1) {
-                    syllables1 = syllables1 + 1;
-                }
-                if (syllable_count == 2) {
-                    syllables2 = syllables2 + 1;
-                }
-                total_syllables = total_syllables + syllable_count;
-            }
-        }
+   var words_raw = paragraphtext.replace(/[.!?-]+/g,' ').split(' ');
+   var words = 0;
+   for (var i = 0; i < words_raw.length; i++) {
+       if(words_raw[i]!=0){
+           words = words + 1;
+       }
+   }
 
-        var characters = paragraphtext.replace(/[.!?|\s]+/g, "").length;
-        var pollysyllables = words - (syllables1 + syllables2);
-        var flesch_reading_ease =
-            206.835 -
-            (1.015 * words) / sentences -
-            (84.6 * total_syllables) / words;
+   var sentences_raw = paragraphtext.split(/[.!?]+/);
+   var sentences = 0;
+   for (var i = 0; i < sentences_raw.length; i++) {
+       if(sentences_raw[i]!=''){
+           sentences = sentences + 1;
+       }
+   }
 
-        if (flesch_reading_ease > 100) {
-            flesch_reading_ease = 100;
-        } else if (flesch_reading_ease < 0) {
-            flesch_reading_ease = 0;
-        }
+   var total_syllables = 0;
+   var syllables1 = 0;
+   var syllables2 = 0;
+   for (var i = 0; i < words_raw.length; i++) {
+       if(words_raw[i]!=0){
+           var syllable_count = number_of_syllables(words_raw[i]);
+           if(syllable_count==1){
+               syllables1 = syllables1 + 1;
+           }
+           if(syllable_count==2){
+               syllables2 = syllables2 + 1;
+           }
+           total_syllables = total_syllables + syllable_count;
+       }
+   }
 
-        var flesch_kincaid_grade_level =
-            (0.39 * words) / sentences +
-            (11.8 * total_syllables) / words -
-            15.9;
-        var gunning_fog_index =
-            (words / sentences + 100 * (pollysyllables / words)) * 0.4;
-        var automated_readability_index =
-            4.71 * (characters / words) + 0.5 * (words / sentences) - 21.43;
-        var smog =
-            1.043 * Math.sqrt((pollysyllables * 30) / sentences) + 3.1291;
-        var coleman_liau =
-            0.0588 * ((100 * characters) / words) -
-            0.296 * ((100 * sentences) / words) -
-            15.8;
-        var scoreMsg = "";
+   var characters = paragraphtext.replace(/[.!?|\s]+/g,'').length;
+   var pollysyllables = (words-(syllables1+syllables2));
+   var flesch_reading_ease = 206.835 - (1.015 * words/sentences) - (84.6 * total_syllables/words)
 
-        scoreMsg =
-            scoreMsg +
-            "[Detailed] Readability score of main content area. Please note text within a list is ignored.";
-        scoreMsg = scoreMsg + "\n\n";
-        scoreMsg =
-            scoreMsg + "Flesch Reading Ease: " + flesch_reading_ease.toFixed(1);
-        scoreMsg = scoreMsg + "\nWCAG 2.0 Level AAA requires 60 or greater.";
-        scoreMsg = scoreMsg + "\n\n";
-        scoreMsg =
-            scoreMsg +
-            "Grade Level Average: " +
-            (
-                (flesch_kincaid_grade_level +
-                    gunning_fog_index +
-                    automated_readability_index +
-                    coleman_liau +
-                    (sentences >= 30 ? smog : 0)) /
-                (sentences >= 30 ? 5 : 4)
-            ).toFixed(1);
-        scoreMsg = scoreMsg + "\n\n";
-        scoreMsg =
-            scoreMsg +
-            "(Flesch-Kincaid): " +
-            flesch_kincaid_grade_level.toFixed(1);
-        scoreMsg = scoreMsg + "\n";
-        scoreMsg = scoreMsg + "(Gunning-Fog): " + gunning_fog_index.toFixed(1);
-        scoreMsg = scoreMsg + "\n";
-        scoreMsg =
-            scoreMsg +
-            "(Automated Readability): " +
-            automated_readability_index.toFixed(1);
-        scoreMsg = scoreMsg + "\n";
-        scoreMsg = scoreMsg + "(Colemane-Liau): " + coleman_liau.toFixed(1);
-        scoreMsg = scoreMsg + "\n";
-        scoreMsg =
-            scoreMsg +
-            (sentences >= 30 ? "(SMOG): " + smog.toFixed(1) + "\n\n" : "");
-        scoreMsg = scoreMsg + "WCAG 2.0 Level AAA requires grade 9 or lower.";
-        scoreMsg = scoreMsg + "\n\n";
-        scoreMsg = scoreMsg + "Words: " + words;
-        scoreMsg = scoreMsg + "\n";
-        scoreMsg =
-            scoreMsg +
-            "Complex Words: " +
-            Math.round(100 * ((words - (syllables1 + syllables2)) / words)) +
-            "%";
-        scoreMsg = scoreMsg + "\n";
-        scoreMsg = scoreMsg + "Sentences: " + sentences;
-        scoreMsg = scoreMsg + "\n";
-        scoreMsg =
-            scoreMsg + "Words Per Sentence: " + (words / sentences).toFixed(1);
-        scoreMsg = scoreMsg + "\n";
-        scoreMsg = scoreMsg + "Syllables: " + total_syllables;
-        scoreMsg = scoreMsg + "\n";
-        scoreMsg = scoreMsg + "Characters: " + characters;
-        console.log(scoreMsg);
+   if(flesch_reading_ease > 100){
+       flesch_reading_ease = 100;
+   } else if(flesch_reading_ease < 0) {
+       flesch_reading_ease = 0;
+   }
 
-        let readingDifficulty = "";
-        let readabilityDetails = "";
-        let notEnoughContent = "";
+   var flesch_kincaid_grade_level = (0.39 * words/sentences) + (11.8 * total_syllables/words) - 15.9;
+   var gunning_fog_index = (words/sentences + 100*(pollysyllables/words)) * 0.4;
+   var automated_readability_index = 4.71 * (characters/words) + 0.5 * (words/sentences) - 21.43;
+   var smog = 1.0430 * Math.sqrt(pollysyllables*30/sentences) + 3.1291
+   var coleman_liau = 0.0588 * (100*characters/words) - 0.296 * (100*sentences/words) - 15.8;
+   var scoreMsg ='';
 
-        if (words > 30) {
-            var fleschScore = flesch_reading_ease.toFixed(1);
-            var avgWordsPerSentence = (words / sentences).toFixed(1);
+   scoreMsg = scoreMsg + '[Detailed] Readability score of main content area.'
+   scoreMsg = scoreMsg + '\n\n';
+   scoreMsg = scoreMsg + 'Flesch Reading Ease: ' + flesch_reading_ease.toFixed(1);
+   scoreMsg = scoreMsg + '\nWCAG 2.0 Level AAA requires 60 or greater.'
+   scoreMsg = scoreMsg + '\n\n';
+   scoreMsg = scoreMsg + 'Grade Level Average: ' + ((flesch_kincaid_grade_level + gunning_fog_index + automated_readability_index + coleman_liau + (sentences>=30?smog:0))/(sentences>=30?5:4)).toFixed(1);
+   scoreMsg = scoreMsg + '\n\n';
+   scoreMsg = scoreMsg + '(Flesch-Kincaid): ' + flesch_kincaid_grade_level.toFixed(1);
+   scoreMsg = scoreMsg + '\n';
+   scoreMsg = scoreMsg + '(Gunning-Fog): ' + gunning_fog_index.toFixed(1);
+   scoreMsg = scoreMsg + '\n';
+   scoreMsg = scoreMsg + '(Automated Readability): ' + automated_readability_index.toFixed(1);
+   scoreMsg = scoreMsg + '\n';
+   scoreMsg = scoreMsg + '(Colemane-Liau): ' + coleman_liau.toFixed(1);
+   scoreMsg = scoreMsg + '\n';
+   scoreMsg = scoreMsg + (sentences>=30?'(SMOG): ' + smog.toFixed(1) + '\n\n':'');
+   scoreMsg = scoreMsg + 'WCAG 2.0 Level AAA requires grade 9 or lower.';
+   scoreMsg = scoreMsg + '\n\n';
+   scoreMsg = scoreMsg + 'Words: ' + words + ' | Complex Words: ' + Math.round(100*((words-(syllables1+syllables2))/words)) +'%' + ' | Sentences: ' + sentences + ' | Words Per Sentence: ' + (words/sentences).toFixed(1) + ' | Syllables: ' + total_syllables + ' | Characters: ' + characters;
+   console.log(scoreMsg);
 
-            //WCAG AAA pass if greater than 60
-            if (fleschScore >= 0 && fleschScore < 30) {
-                readingDifficulty =
-                    '<span class="sa11y-readability-score">Very difficult</span>';
-            } else if (fleschScore > 31 && fleschScore < 49) {
-                readingDifficulty =
-                    '<span class="sa11y-readability-score">Difficult</span>';
-            } else if (fleschScore > 50 && fleschScore < 60) {
-                readingDifficulty =
-                    '<span class="sa11y-readability-score">Fairly difficult</span>';
-            } else {
-                readingDifficulty =
-                    '<span class="sa11y-readability-score">Good</span>';
-            }
+   let readingDifficulty = "";
+   let readabilityDetails = "";
+   let notEnoughContent = "";
 
-            readabilityDetails =
-                `
-                <ul id="sa11y-readability-details">
-                    <li><span class='sa11y-bold'>Average words per sentence:</span> ` +
-                avgWordsPerSentence +
-                `</li>
-                    <li><span class='sa11y-bold'>Complex words:</span> ` +
-                Math.round(
-                    100 * ((words - (syllables1 + syllables2)) / words)
-                ) +
-                `%</li>
-                    <li><span class='sa11y-bold'>Words:</span> ` +
-                words +
-                `</li>
-                </ul>`;
+   $("main, [role='main']")
+
+       if ($("main, [role='main']").length === 0) {
+           fleschScore = "";
+           readingDifficulty = "";
+           readabilityDetails = "";
+           notEnoughContent = 'Please identify the <a href="https://www.w3.org/WAI/tutorials/page-structure/regions/#main-content" target="_blank">main content region to calculate readability score. <span class="sa11y-visually-hidden">(opens new tab)</span></a>';
         } else if (this.$mainPandLi.length === 0) {
-            fleschScore = "";
-            readingDifficulty = "";
-            readabilityDetails = "";
-            notEnoughContent =
-                'Please identify the <a href="https://www.w3.org/WAI/tutorials/page-structure/regions/#main-content" target="_blank">main content region to calculate readability. <span class="sa11y-visually-hidden">(opens new tab)</span></a>';
-        } else {
-            fleschScore = "";
-            readingDifficulty = "";
-            readabilityDetails = "";
-            notEnoughContent =
-                "Not enough content to calculate readability score.";
-        }
+           fleschScore = "";
+           readingDifficulty = "";
+           readabilityDetails = "";
+           notEnoughContent = `No paragraph <span class="sa11y-badge">&lt;p&gt;</span> or list content <span class="sa11y-badge">&lt;li&gt;</span> detected within main content area.`;
+        } else if (words > 30) {
+           var fleschScore = flesch_reading_ease.toFixed(1);
+           var avgWordsPerSentence = (words/sentences).toFixed(1);
+           
+           //WCAG AAA pass if greater than 60
+           if (fleschScore >= 0 && fleschScore < 30) {
+               readingDifficulty = '<span class="sa11y-readability-score">Very difficult</span>';
+           } else if (fleschScore > 31 && fleschScore < 49) {
+               readingDifficulty = '<span class="sa11y-readability-score">Difficult</span>';
+           } else if (fleschScore > 50 && fleschScore < 60) {
+               readingDifficulty = '<span class="sa11y-readability-score">Fairly difficult</span>';
+           } else {
+               readingDifficulty = '<span class="sa11y-readability-score">Good</span>';
+           } 
 
-        let sa11yReadabilityPanel = document.createElement("div");
-        sa11yReadabilityPanel.setAttribute("id", "sa11y-readability-content");
-        sa11yReadabilityPanel.innerHTML = `
-                <span class="sa11y-header-text">Readability</span>
-                <div class="sa11y-readability-level">${fleschScore} ${readingDifficulty}</div> ${readabilityDetails} ${notEnoughContent}
-                `;
-        $("#sa11y-readability-panel").prepend(sa11yReadabilityPanel);
-    };
+           readabilityDetails = `
+           <ul id="sa11y-readability-details">
+               <li><span class='sa11y-bold'>Average words per sentence:</span> ` + avgWordsPerSentence + `</li>
+               <li><span class='sa11y-bold'>Complex words:</span> ` + Math.round(100*((words-(syllables1+syllables2))/words)) + `%</li>
+               <li><span class='sa11y-bold'>Words:</span> ` + words + `</li>
+           </ul>`
+
+       } else {
+           fleschScore = "";
+           readingDifficulty = "";
+           readabilityDetails = "";
+           notEnoughContent = "Not enough content to calculate readability score.";
+       } 
+
+       let sa11yReadabilityPanel = document.createElement('div');
+       sa11yReadabilityPanel.setAttribute('id', 'sa11y-readability-content');
+       sa11yReadabilityPanel.innerHTML = `
+           <span class="sa11y-header-text">Readability</span>
+           <div class="sa11y-readability-level">${fleschScore} ${readingDifficulty}</div> ${readabilityDetails} ${notEnoughContent}
+           `;
+       $("#sa11y-readability-panel").prepend(sa11yReadabilityPanel);
+    }
 
     // ============================================================
 
