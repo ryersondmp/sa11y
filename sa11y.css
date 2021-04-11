@@ -180,80 +180,6 @@ button.sa11y-btn:focus,
     box-shadow: 0 0 0 5px var(--sa11y-focus-color) !important;
 }
 
-/*===== Error, Warning, Pass buttons ===== */
-button.sa11y-btn {
-    border-radius: 50% !important;
-    box-shadow: 0 0 16px 0 #0000004f !important;
-    cursor: pointer !important;
-    display: block !important;
-    height: 44px !important;
-    line-height: normal !important;
-    min-width: 0 !important;
-    padding: 0px !important;
-    position: absolute !important;
-    transition: all 0.2s ease-in-out !important;
-    width: 44px !important;
-    font-size: 0 !important;
-    z-index: 8888 !important;
-}
-
-button.sa11y-error-btn,
-button.sa11y-pass-btn,
-button.sa11y-warning-btn {
-    margin: 10px !important;
-}
-
-button.sa11y-error-btn-text,
-button.sa11y-pass-btn-text,
-button.sa11y-warning-btn-text {
-    margin: -30px 10px !important;
-}
-
-/* Error */
-button.sa11y-error-btn,
-button.sa11y-error-btn-text {
-    background: 50% 50% var(--sa11y-error) var(--sa11y-error-svg) no-repeat !important;
-    background-size: 24px !important;
-    background-color: var(--sa11y-error) !important;
-    border: 1px solid var(--sa11y-error) !important;
-}
-button.sa11y-error-btn:hover,
-button.sa11y-error-btn:focus,
-button.sa11y-error-btn-text:hover,
-button.sa11y-error-btn-text:focus {
-    background-color: var(--sa11y-error-hover) !important;
-}
-
-/* Pass button */
-button.sa11y-pass-btn,
-button.sa11y-pass-btn-text {
-    background: 50% 50% var(--sa11y-pass) var(--sa11y-pass-svg) no-repeat !important;
-    background-size: 24px !important;
-    background-color: var(--sa11y-pass) !important;
-    border: 1px solid var(--sa11y-pass) !important;
-}
-button.sa11y-pass-btn:hover,
-button.sa11y-pass-btn:focus,
-button.sa11y-pass-btn-text:hover,
-button.sa11y-pass-btn-text:focus {
-    background-color: var(--sa11y-pass-hover) !important;
-}
-
-/* Warning button */
-button.sa11y-warning-btn,
-button.sa11y-warning-btn-text {
-    background: 50% 50% var(--sa11y-warning) var(--sa11y-warning-svg) no-repeat !important;
-    background-size: 28px !important;
-    background-color: var(--sa11y-warning) !important;
-    border: 1px solid var(--sa11y-warning) !important;
-}
-button.sa11y-warning-btn:hover,
-button.sa11y-warning-btn:focus,
-button.sa11y-warning-btn-text:hover,
-button.sa11y-warning-btn-text:focus {
-    background-color: var(--sa11y-warning-hover) !important;
-}
-
 /*===== Main panel/container ===== */
 
 #sa11y-container * {
@@ -262,6 +188,7 @@ button.sa11y-warning-btn-text:focus {
     text-transform: none !important;
     letter-spacing: normal !important;
     text-shadow: none !important;
+    direction: ltr !important;
 }
 
 #sa11y-container label {
@@ -610,6 +537,81 @@ button.sa11y-warning-btn-text:focus {
 #sa11y-container [tabindex="-1"]:focus-visible {
     outline: transparent solid 2px !important;
     box-shadow: 0 0 0 4px var(--sa11y-focus-color) !important;
+}
+
+
+/*===== Error, Warning, Pass buttons ===== */
+button.sa11y-btn {
+    border-radius: 50% !important;
+    box-shadow: 0 0 16px 0 #0000004f !important;
+    cursor: pointer !important;
+    display: block !important;
+    height: 44px !important;
+    line-height: normal !important;
+    min-width: 0 !important;
+    padding: 0px !important;
+    position: absolute !important;
+    transition: all 0.2s ease-in-out !important;
+    width: 44px !important;
+    font-size: 0 !important;
+    z-index: 8888 !important;
+}
+
+button.sa11y-error-btn,
+button.sa11y-pass-btn,
+button.sa11y-warning-btn {
+    margin: 10px !important;
+}
+
+button.sa11y-error-btn-text,
+button.sa11y-pass-btn-text,
+button.sa11y-warning-btn-text {
+    margin: -30px 10px !important;
+}
+
+/* Error */
+button.sa11y-error-btn,
+button.sa11y-error-btn-text {
+    background: 50% 50% var(--sa11y-error) var(--sa11y-error-svg) no-repeat !important;
+    background-size: 24px !important;
+    background-color: var(--sa11y-error) !important;
+    border: 1px solid var(--sa11y-error) !important;
+}
+button.sa11y-error-btn:hover,
+button.sa11y-error-btn:focus,
+button.sa11y-error-btn-text:hover,
+button.sa11y-error-btn-text:focus {
+    background-color: var(--sa11y-error-hover) !important;
+}
+
+/* Pass button */
+button.sa11y-pass-btn,
+button.sa11y-pass-btn-text {
+    background: 50% 50% var(--sa11y-pass) var(--sa11y-pass-svg) no-repeat !important;
+    background-size: 24px !important;
+    background-color: var(--sa11y-pass) !important;
+    border: 1px solid var(--sa11y-pass) !important;
+}
+button.sa11y-pass-btn:hover,
+button.sa11y-pass-btn:focus,
+button.sa11y-pass-btn-text:hover,
+button.sa11y-pass-btn-text:focus {
+    background-color: var(--sa11y-pass-hover) !important;
+}
+
+/* Warning button */
+button.sa11y-warning-btn,
+button.sa11y-warning-btn-text {
+    background: 50% 50% var(--sa11y-warning) var(--sa11y-warning-svg) no-repeat !important;
+    background-size: 28px !important;
+    background-color: var(--sa11y-warning) !important;
+    border: 1px solid var(--sa11y-warning) !important;
+}
+button.sa11y-warning-btn:hover,
+button.sa11y-warning-btn:focus,
+button.sa11y-warning-btn-text:hover,
+button.sa11y-warning-btn-text:focus {
+    background-color: var(--sa11y-warning-hover) !important;
 }
 
 /* Misc */
