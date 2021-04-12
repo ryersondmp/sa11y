@@ -13,9 +13,9 @@ popperJS.src = "https://unpkg.com/@popperjs/core@2";
 var tippyJS = document.createElement("script");
 tippyJS.src = "https://unpkg.com/tippy.js@6";
 var sa11yJS1 = document.createElement("script");
-sa11yJS.src = "https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@main-v1.1/sa11y-constant.js";
+sa11yJS1.src = "https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@main-v1.1/sa11y-constant.js";
 var sa11yJS2 = document.createElement("script");
-sa11yJS.src = "https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@main-v1.1/sa11y-v2.js";
+sa11yJS2.src = "https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@main-v1.1/sa11y-v2.js";
 document.body.appendChild(popperJS);
 popperJS.onload = popperJS.onreadystatechange = function() {
   document.body.appendChild(tippyJS);
