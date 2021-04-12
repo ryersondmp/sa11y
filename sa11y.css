@@ -48,7 +48,7 @@ html[data-sa11y-theme="dark"] {
     --sa11y-panel-primary: #dde8ff;
     --sa11y-panel-bg: #0a2051;
     --sa11y-panel-bg-secondary: #072c7c;
-    --sa11y-panel-bg-splitter: #0038ae;
+    --sa11y-panel-bg-splitter: #0041c9;
     --sa11y-panel-error: #ff0000;
     --sa11y-panel-secondary: #a3c1ff;
     --sa11y-panel-secondary-hover: rgb(0 0 0 / 40%);
@@ -66,7 +66,7 @@ html[data-sa11y-theme="dark"] {
         --sa11y-panel-primary: #dde8ff;
         --sa11y-panel-bg: #0a2051;
         --sa11y-panel-bg-secondary: #072c7c;
-        --sa11y-panel-bg-splitter: #0038ae;
+        --sa11y-panel-bg-splitter: #0041c9;
         --sa11y-panel-error: #ff0000;
         --sa11y-panel-secondary: #a3c1ff;
         --sa11y-panel-secondary-hover: rgb(0 0 0 / 40%);
@@ -93,6 +93,41 @@ html[data-sa11y-theme="dark"] {
     }
 }
 
+@media screen and (-ms-high-contrast: active) {
+    #sa11y-container button:focus,
+    #sa11y-container [tabindex="0"]:focus,
+    #sa11y-container [tabindex="-1"]:focus {
+        outline: transparent solid 2px !important;
+    }  
+}
+
+/* Reset. Keep specificity high to avoid conflicting CSS. */
+#sa11y-container h1,
+#sa11y-container h2,
+#sa11y-container div,
+#sa11y-container p,
+#sa11y-container span,
+#sa11y-container ol,
+#sa11y-container ul,
+#sa11y-container li,
+#sa11y-container a,
+#sa11y-container label,
+#sa11y-container button {
+    all: unset;
+    box-sizing: border-box !important;
+}
+
+#sa11y-container *::before,
+#sa11y-container *:before,
+#sa11y-container *::after,
+#sa11y-container *:after {
+    all: unset;
+}
+
+#sa11y-container div {
+    display: block;
+}
+
 /*===== Main button ===== */
 #sa11y-container #sa11y-toggle {
     background-image: linear-gradient(to top, #e040fb, #00bcd4);
@@ -113,41 +148,43 @@ html[data-sa11y-theme="dark"] {
     z-index: 99999 !important;
 }
 
-#sa11y-container button#sa11y-toggle:hover,
-button#sa11y-toggle:focus {
+#sa11y-container #sa11y-toggle:hover, 
+#sa11y-container #sa11y-toggle:focus {
     -webkit-animation: sa11y-toggle-gradient 3s ease;
     -moz-animation: sa11y-toggle-gradient 3s ease;
     animation: sa11y-toggle-gradient 3s ease;
 }
 
-.sa11y-notification-badge-warning {
-    color: var(--sa11y-warning-text) !important;
+#sa11y-container .sa11y-notification-badge-warning {
     background-color: var(--sa11y-warning-hover) !important;
     border: 1px solid var(--sa11y-warning) !important;
+    color: var(--sa11y-warning-text) !important;
 }
 
-#sa11y-notification-badge {
-    position: absolute;
-    right: -3px;
-    top: -3px;
-    width: 20px;
-    height: 20px;
-    font-size: 13px;
-    line-height: 1;
-    display: flex;
-    color: #ffffff;
+#sa11y-container #sa11y-notification-badge {
+    justify-content: center !important;
+    align-items: center !important;
     background-color: #EB0000;
-    justify-content: center;
-    align-items: center;
-    border-radius: 100px;
-    font-weight: normal;
+    border-radius: 100px !important;
+    color: #ffffff;
+    display: flex;
+    font-weight: normal !important;
+    font-size: 13px !important;
+    height: 20px !important;
+    line-height: 1 !important;
+    position: absolute !important;
+    right: -3px !important;
+    top: -3px !important;
+    width: 20px !important;
 }
-#sa11y-notification-badge > div {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+
+#sa11y-container #sa11y-notification-badge > div {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
 }
+
 #sa11y-container button.sa11y-on {
     background-image: linear-gradient(to bottom, #e040fb, #00bcd4) !important;
 }
@@ -174,9 +211,9 @@ button#sa11y-toggle:focus {
 }
 
 /* Main focus style */
-button.sa11y-btn:focus,
+#sa11y-container button.sa11y-btn:focus,
 #sa11y-container button#sa11y-toggle:focus {
-    outline: transparent solid 2px !important;
+    outline: 0 !important;
     box-shadow: 0 0 0 5px var(--sa11y-focus-color) !important;
 }
 
@@ -185,9 +222,6 @@ button.sa11y-btn:focus,
 #sa11y-container * {
     font-family: var(--sa11y-font-face) !important;
     line-height: 23px !important;
-    text-transform: none !important;
-    letter-spacing: normal !important;
-    text-shadow: none !important;
     direction: ltr !important;
 }
 
@@ -230,14 +264,14 @@ button.sa11y-btn:focus,
     transition: background 0.2s !important;
 }
 
-#sa11y-panel-content {
+#sa11y-container #sa11y-panel-content {
     align-items: center !important;
     color: var(--sa11y-panel-primary) !important;
     display: flex !important;
     padding: 10px 20px 10px 10px !important;
 }
 
-#sa11y-panel-controls {
+#sa11y-container #sa11y-panel-controls {
     display: flex !important;
 }
 
@@ -251,70 +285,70 @@ button.sa11y-btn:focus,
     text-decoration: none !important;
 }
 
-#sa11y-status {
+#sa11y-container #sa11y-status {
     color: var(--sa11y-panel-primary) !important;
     font-size: var(--sa11y-large-text) !important;
 }
 
-.sa11y-errors .sa11y-panel-icon,
-.sa11y-pass .sa11y-panel-icon,
-.sa11y-warnings .sa11y-panel-icon {
+#sa11y-container .sa11y-errors .sa11y-panel-icon,
+#sa11y-container .sa11y-pass .sa11y-panel-icon,
+#sa11y-container .sa11y-warnings .sa11y-panel-icon {
     height: 30px !important;
     margin-right: 10px !important;
     width: 35px !important;
 }
 
-.sa11y-errors .sa11y-panel-icon {
+#sa11y-container .sa11y-errors .sa11y-panel-icon {
     background: var(--sa11y-panel-error) !important;
     mask: var(--sa11y-error-svg) center no-repeat !important;
     -webkit-mask: var(--sa11y-error-svg) center no-repeat !important;
 }
 
-.sa11y-pass .sa11y-panel-icon {
+#sa11y-container .sa11y-pass .sa11y-panel-icon {
     background: var(--sa11y-pass) !important;
     mask: var(--sa11y-pass-svg) center no-repeat !important;
     -webkit-mask: var(--sa11y-pass-svg) center no-repeat !important;
 }
 
-.sa11y-warnings .sa11y-panel-icon {
+#sa11y-container .sa11y-warnings .sa11y-panel-icon {
     background: var(--sa11y-warning-svg-color) !important;
     mask: var(--sa11y-warning-svg) center no-repeat !important;
     -webkit-mask: var(--sa11y-warning-svg) center no-repeat !important;
 }
 
 /* Outline and settings Panel */
-#sa11y-settings-panel,
-#sa11y-outline-panel {
+#sa11y-container #sa11y-readability-panel,
+#sa11y-container #sa11y-settings-panel,
+#sa11y-container #sa11y-outline-panel {
     display: none;
     opacity: 0;
 }
-
-#sa11y-settings-panel.sa11y-active,
-#sa11y-outline-panel.sa11y-active {
+#sa11y-container #sa11y-readability-panel.sa11y-active,
+#sa11y-container #sa11y-settings-panel.sa11y-active,
+#sa11y-container #sa11y-outline-panel.sa11y-active {
     display: block !important;
     opacity: 1 !important;
 }
-#sa11y-settings-header,
-#sa11y-outline-header {
+#sa11y-container #sa11y-settings-header,
+#sa11y-container #sa11y-outline-header {
     padding: 10px 15px 0px 15px !important;
 }
 
-#sa11y-settings-content,
-#sa11y-outline-content {
+#sa11y-container #sa11y-settings-content,
+#sa11y-container #sa11y-outline-content {
     border-bottom: 1px solid var(--sa11y-panel-bg-splitter) !important;
     max-height: 250px !important;
     padding: 0px 15px 10px 15px !important;
     overflow-y: auto !important;
-    width: 100% !important;
 }
 
-#sa11y-settings-panel,
-#sa11y-outline-panel .sa11y-outline-list-item {
+#sa11y-container #sa11y-settings-panel,
+#sa11y-container #sa11y-outline-panel .sa11y-outline-list-item {
     color: var(--sa11y-panel-primary) !important;
 }
 
-#sa11y-settings-panel .sa11y-red-text,
-#sa11y-outline-panel .sa11y-outline-list-item.sa11y-red-text {
+#sa11y-container #sa11y-settings-panel .sa11y-red-text,
+#sa11y-container #sa11y-outline-panel .sa11y-outline-list-item.sa11y-red-text {
     color: var(--sa11y-red-text) !important;
 }
 
@@ -341,28 +375,29 @@ button.sa11y-btn:focus,
     color: var(--sa11y-error-text) !important;
 }
 
-#sa11y-outline-list .sa11y-outline-2 {
+#sa11y-container #sa11y-outline-list .sa11y-outline-2 {
     margin-left: 15px !important;
 }
-#sa11y-outline-list .sa11y-outline-3 {
+#sa11y-container #sa11y-outline-list .sa11y-outline-3 {
     margin-left: 30px !important;
 }
-#sa11y-outline-list .sa11y-outline-4 {
+#sa11y-container #sa11y-outline-list .sa11y-outline-4 {
     margin-left: 45px !important;
 }
-#sa11y-outline-list .sa11y-outline-5 {
+#sa11y-container #sa11y-outline-list .sa11y-outline-5 {
     margin-left: 60px !important;
 }
-#sa11y-outline-list .sa11y-outline-6 {
+#sa11y-container #sa11y-outline-list .sa11y-outline-6 {
     margin-left: 75px !important;
 }
 
-#sa11y-outline-list {
+#sa11y-container #sa11y-outline-list {
     margin: 0 !important;
     padding: 0 !important;
 }
 
-#sa11y-outline-list li {
+#sa11y-container #sa11y-outline-list li {
+    display: block !important; 
     font-size: var(--sa11y-normal-text) !important;
     list-style-type: none !important;
     margin-bottom: 0 !important;
@@ -371,26 +406,26 @@ button.sa11y-btn:focus,
 }
 
 /* Readability panel */
-.sa11y-readability-level {
+#sa11y-container .sa11y-readability-level {
     padding-left: 10px !important;
     display: inline-block !important;
 }
 
-#sa11y-readability-content {
+#sa11y-container #sa11y-readability-content {
     border-bottom: 1px solid var(--sa11y-panel-bg-splitter) !important;
+    color: var(--sa11y-panel-primary) !important;
     padding: 10px 15px 10px 15px !important;
     width: 100% !important;
-    color: var(--sa11y-panel-primary) !important;
 }
 
-#sa11y-readability-details {
+#sa11y-container #sa11y-readability-details {
     list-style-type: none !important;
     margin: 0 !important;
     padding: 0 !important;
     white-space: normal !important;
 }
-#sa11y-readability-details li {
-    display: inline !important;
+#sa11y-container #sa11y-readability-details li {
+    display: inline-block !important;
     font-size: var(--sa11y-normal-text) !important;
     list-style-type: none !important;
     margin: 0 !important;
@@ -398,26 +433,27 @@ button.sa11y-btn:focus,
 }
 
 /* Scroll bar */
-#sa11y-settings-content::-webkit-scrollbar,
-#sa11y-outline-content::-webkit-scrollbar {
+#sa11y-container #sa11y-settings-content::-webkit-scrollbar,
+#sa11y-container #sa11y-outline-content::-webkit-scrollbar {
     width: 7px !important;
   }
-#sa11y-settings-content,
-#sa11y-outline-content {
+
+#sa11y-container #sa11y-settings-content,
+#sa11y-container #sa11y-outline-content {
     scrollbar-width: thin !important;
     scrollbar-color: var(--sa11y-panel-bg-splitter) !important;
 }
-#sa11y-settings-content::-webkit-scrollbar-thumb,
-#sa11y-outline-content::-webkit-scrollbar-thumb {
+#sa11y-container #sa11y-settings-content::-webkit-scrollbar-thumb,
+#sa11y-container #sa11y-outline-content::-webkit-scrollbar-thumb {
     background-color: var(--sa11y-panel-bg-splitter) !important;
     border-radius: 6px !important;
 }
 
 /* Setting & Outline toggles */
-#sa11y-settings-toggle.sa11y-settings-active,
-#sa11y-settings-toggle:hover,
-#sa11y-outline-toggle.sa11y-outline-active,
-#sa11y-outline-toggle:hover {
+#sa11y-container #sa11y-settings-toggle.sa11y-settings-active,
+#sa11y-container #sa11y-settings-toggle:hover,
+#sa11y-container #sa11y-outline-toggle.sa11y-outline-active,
+#sa11y-container #sa11y-outline-toggle:hover {
     filter: brightness(0.9) !important;
 }
 
@@ -439,18 +475,14 @@ button.sa11y-btn:focus,
     line-height: 0 !important;
     margin: 0px !important;
     opacity: 1 !important;
-    outline: transparent solid 2px !important;
+    outline: 0 !important;
     padding: 0px !important;
     width: 100% !important;
     transition: background 0.2s !important;
+    text-align: center !important;
 }
 
-#sa11y-settings-options {
-    margin: 0 !important;
-    padding-left: 5px !important;
-}
-
-#sa11y-settings-options li {
+#sa11y-container #sa11y-settings-options li {
     align-items: center !important;
     display: flex !important;
     justify-content: space-between !important;
@@ -458,17 +490,18 @@ button.sa11y-btn:focus,
     list-style-type: none !important;
 }
 
-#sa11y-settings-options li + li {
+#sa11y-container #sa11y-settings-options li + li {
     border-top: 1px solid !important;
     border-color: var(--sa11y-panel-bg-splitter) !important;
 }
 
 /* Toggle buttons within Settings panel. */
-.sa11y-settings-switch {
+#sa11y-container .sa11y-settings-switch {
     border-radius: 5px !important;
     border: 0 !important;
     cursor: pointer !important;
     font-size: var( --sa11y-normal-text) !important;
+    font-weight: normal !important;
     margin: 0 !important;
     padding: 7px 10px !important;
     position: relative !important;
@@ -478,8 +511,8 @@ button.sa11y-btn:focus,
     height: 45px !important;
 }
 
-.sa11y-settings-switch[aria-pressed="true"]:after,
-.sa11y-settings-switch[aria-pressed="false"]:after {
+#sa11y-container .sa11y-settings-switch[aria-pressed="true"]:after,
+#sa11y-container .sa11y-settings-switch[aria-pressed="false"]:after {
     content: "" !important;
     display: inline-block !important;
     height: 27px !important;
@@ -488,54 +521,57 @@ button.sa11y-btn:focus,
     width: 27px !important;
 }
 
-.sa11y-settings-switch[aria-pressed="true"]:after {
+#sa11y-container .sa11y-settings-switch[aria-pressed="true"]:after {
     background: var(--sa11y-setting-switch-bg-on) !important;
     mask: var(--sa11y-setting-switch-on-svg) center no-repeat !important;
     -webkit-mask: var(--sa11y-setting-switch-on-svg) center no-repeat !important;
 }
 
-.sa11y-settings-switch[aria-pressed="false"]:after {
+#sa11y-container .sa11y-settings-switch[aria-pressed="false"]:after {
     background: var(--sa11y-setting-switch-bg-off) !important;
     mask: var(--sa11y-setting-switch-off-svg) center no-repeat !important;
     -webkit-mask: var(--sa11y-setting-switch-off-svg) center no-repeat !important;
 }
 
 /* Default keyboard focus */
-.sa11y-settings-switch:focus,
-#sa11y-settings-toggle:focus,
-#sa11y-outline-toggle:focus {
-    outline: transparent solid 2px !important;
+#sa11y-container .sa11y-settings-switch:focus,
+#sa11y-container #sa11y-settings-toggle:focus,
+#sa11y-container #sa11y-outline-toggle:focus {
+    outline: 0 !important;
     box-shadow: inset 0 0 0 4px var(--sa11y-focus-color) !important;
 }
+button.sa11y-btn:focus,
 #sa11y-container [tabindex="0"]:focus,
 #sa11y-container [tabindex="-1"]:focus {
-    outline: transparent solid 2px !important;
+    outline: 0 !important;
     box-shadow: 0 0 0 4px var(--sa11y-focus-color) !important;
 }
 
 /* Remove default focus styles for mouse users ONLY if :focus-visible is supported. */
-.sa11y-settings-switch:focus:not(:focus-visible),
-#sa11y-settings-toggle:focus:not(:focus-visible),
-#sa11y-outline-toggle:focus:not(:focus-visible) {
-    outline: transparent solid 2px !important;
+#sa11y-container .sa11y-settings-switch:focus:not(:focus-visible),
+#sa11y-container #sa11y-settings-toggle:focus:not(:focus-visible),
+#sa11y-container #sa11y-outline-toggle:focus:not(:focus-visible) {
+    outline: 0 !important;
     box-shadow: none !important;
 }
+button.sa11y-btn:focus,
 #sa11y-container [tabindex="0"]:focus:not(:focus-visible),
 #sa11y-container [tabindex="-1"]:focus:not(:focus-visible) {
-    outline: transparent solid 2px !important;
+    outline: 0 !important;
     box-shadow: none !important;
 }
 
 /* :focus-visible supported */
-.sa11y-settings-switch:focus-visible,
-#sa11y-settings-toggle:focus-visible,
-#sa11y-outline-toggle:focus-visible {
-    outline: transparent solid 2px !important;
+#sa11y-container .sa11y-settings-switch:focus-visible,
+#sa11y-container #sa11y-settings-toggle:focus-visible,
+#sa11y-container #sa11y-outline-toggle:focus-visible {
+    outline: 0 !important;
     box-shadow: inset 0 0 0 4px var(--sa11y-focus-color) !important;
 }
+button.sa11y-btn:focus,
 #sa11y-container [tabindex="0"]:focus-visible,
 #sa11y-container [tabindex="-1"]:focus-visible {
-    outline: transparent solid 2px !important;
+    outline: 0 !important;
     box-shadow: 0 0 0 4px var(--sa11y-focus-color) !important;
 }
 
@@ -628,17 +664,23 @@ button.sa11y-warning-btn-text:focus {
     white-space: nowrap !important;
 }
 
+.sa11y-header-text-inline,
 .sa11y-header-text {
     color: var(--sa11y-panel-primary) !important;
+    display: block !important;
     font-size: var(--sa11y-large-text) !important;
     font-weight: 600 !important;
     margin-bottom: 3px !important;
 }
 
+.sa11y-header-text-inline {
+    display: inline-block !important;
+}
+
 .sa11y-kbd {
     padding: 0.1em 0.3em !important;
-    color: #fff !important;
-    background-color: #212529 !important;
+    color: var(--sa11y-panel-primary) !important;
+    background-color: var(--sa11y-panel-badge) !important;
     border-radius: 0.2em !important;
 }
 
@@ -661,12 +703,16 @@ button.sa11y-warning-btn-text:focus {
     outline: 5px solid var(--sa11y-warning) !important;
 }
 
+p#sa11y-readability-info {
+    margin-left: 10px;
+}
+
 .sa11y-readability-score,
 .sa11y-warning-text,
 .sa11y-warning-uppercase,
 .sa11y-error-text {
     border-radius: 0.25em !important;
-    padding: 5px !important;
+    padding: 2px 5px !important;
 }
 
 .sa11y-readability-score {

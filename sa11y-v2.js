@@ -60,19 +60,22 @@ class Sa11y {
         //Icon on the main toggle. Easy to replace.
         var MainToggleIcon =
             "<svg role='img' focusable='false' width='35px' height='35px' aria-hidden='true' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='#ffffff' d='M256 48c114.953 0 208 93.029 208 208 0 114.953-93.029 208-208 208-114.953 0-208-93.029-208-208 0-114.953 93.029-208 208-208m0-40C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 56C149.961 64 64 149.961 64 256s85.961 192 192 192 192-85.961 192-192S362.039 64 256 64zm0 44c19.882 0 36 16.118 36 36s-16.118 36-36 36-36-16.118-36-36 16.118-36 36-36zm117.741 98.023c-28.712 6.779-55.511 12.748-82.14 15.807.851 101.023 12.306 123.052 25.037 155.621 3.617 9.26-.957 19.698-10.217 23.315-9.261 3.617-19.699-.957-23.316-10.217-8.705-22.308-17.086-40.636-22.261-78.549h-9.686c-5.167 37.851-13.534 56.208-22.262 78.549-3.615 9.255-14.05 13.836-23.315 10.217-9.26-3.617-13.834-14.056-10.217-23.315 12.713-32.541 24.185-54.541 25.037-155.621-26.629-3.058-53.428-9.027-82.141-15.807-8.6-2.031-13.926-10.648-11.895-19.249s10.647-13.926 19.249-11.895c96.686 22.829 124.283 22.783 220.775 0 8.599-2.03 17.218 3.294 19.249 11.895 2.029 8.601-3.297 17.219-11.897 19.249z'/></svg>";
-
-        // TODO: Simplify this
+        
         var sa11ycontainer = document.createElement("div");
         sa11ycontainer.setAttribute("id", "sa11y-container");
         sa11ycontainer.setAttribute("role", "region");
         sa11ycontainer.setAttribute("lang", sa11yLangCode);
         sa11ycontainer.setAttribute("aria-label", sa11yContainerLang);
+
         let loadContrastPreference =
             localStorage.getItem("sa11y-contrastCheck") === "On";
+
         let loadLabelsPreference =
             localStorage.getItem("sa11y-labelsCheck") === "On";
+
         let loadReadabilityPreference =
             localStorage.getItem("sa11y-readabilityCheck") === "On";
+
         sa11ycontainer.innerHTML =
 
         //Main toggle button.
@@ -89,18 +92,28 @@ class Sa11y {
             //Page Outline tab.
             `<div id="sa11y-outline-panel">
                 <div id="sa11y-outline-header" class="sa11y-header-text">
-                    <span tabindex="-1">Page outline</span>
+                    <h2 tabindex="-1">Page outline</h2>
                 </div>
-            <div id="sa11y-outline-content">
-                <ul id="sa11y-outline-list"></ul>
-            </div>
-            <div id="sa11y-readability-panel"></div>
-            </div>` +
+                <div id="sa11y-outline-content">
+                    <ul id="sa11y-outline-list"></ul>
+                </div>` +
+
+                //Readability tab.
+                `<div id="sa11y-readability-panel">
+                    <div id="sa11y-readability-content">
+                        <h2 class="sa11y-header-text-inline">Readability</h2>
+                        <p id="sa11y-readability-info"></p>
+                        <ul id="sa11y-readability-details"></ul>
+                    </div>
+                </div>` +
+
+            //End of Page Outline tab.
+            `</div>` +
 
             //Settings tab.
            `<div id="sa11y-settings-panel">
             <div id="sa11y-settings-header" class="sa11y-header-text">
-                <span tabindex="-1">Settings</span>
+                <h2 tabindex="-1">Settings</h2>
             </div>
             <div id="sa11y-settings-content">
             <ul id="sa11y-settings-options">  
@@ -138,7 +151,7 @@ class Sa11y {
             //Main panel that conveys state of page.
             `<div id="sa11y-panel-content">
                 <div class="sa11y-panel-icon"></div>
-                <div id="sa11y-panel-text"><span id="sa11y-status"></span></div>
+                <div id="sa11y-panel-text"><p id="sa11y-status"></p></div>
             </div>` +
 
             //Show Outline & Show Settings button.
@@ -220,19 +233,27 @@ class Sa11y {
             // Toggle Readability
             // ----------------------------------------------------------------------
             let $sa11yReadabilityCheck = $("#sa11y-readabilityCheck-toggle");
-            $sa11yReadabilityCheck.click(() => {
+            $sa11yReadabilityCheck.click(async () => {
                 if (localStorage.getItem("sa11y-readabilityCheck") === "On") {
                     localStorage.setItem("sa11y-readabilityCheck", "off");
                     $sa11yReadabilityCheck.text("Off");
                     $sa11yReadabilityCheck.attr("aria-pressed", "false");
-                    $("#sa11y-readability-content").remove();
+                    $("#sa11y-readability-panel").removeClass("sa11y-active");
+                    this.reset(false);
+                    await this.checkAll();
                 } else {
                     localStorage.setItem("sa11y-readabilityCheck", "On");
                     $sa11yReadabilityCheck.text("On");
                     $sa11yReadabilityCheck.attr("aria-pressed", "true");
-                    this.checkReadability();
+                    $("#sa11y-readability-panel").addClass("sa11y-active");
+                    this.reset(false);
+                    await this.checkAll();
                 }
             });
+            
+            if (localStorage.getItem("sa11y-readabilityCheck") === "On") {
+                $("#sa11y-readability-panel").addClass("sa11y-active");
+            }
 
             // ----------------------------------------------------------------------
             // Toggle Contrast Check
@@ -457,7 +478,6 @@ class Sa11y {
     // ============================================================
     findElements = () => {
         let { root, containerIgnore, imageIgnore } = this;
-        console.log(root);
         this.$p = root.find("p").not(containerIgnore);
         this.$h = root
             .find("h1, h2, h3, h4, h5, h6, [role='heading'][aria-level]")
@@ -970,7 +990,7 @@ class Sa11y {
             if ($el.attr('type') === 'submit' || $el.attr('type') === 'button') {
                 //Do nothing
             } 
-            
+
             //Implicit labels.
             else if ($el.parents().is("label")) {
                 if ($el.parents("label").text().trim().length !== 0) {
@@ -1602,58 +1622,49 @@ class Sa11y {
    scoreMsg = scoreMsg + 'Words: ' + words + ' | Complex Words: ' + Math.round(100*((words-(syllables1+syllables2))/words)) +'%' + ' | Sentences: ' + sentences + ' | Words Per Sentence: ' + (words/sentences).toFixed(1) + ' | Syllables: ' + total_syllables + ' | Characters: ' + characters;
    console.log(scoreMsg);
 
-   let readingDifficulty = "";
-   let readabilityDetails = "";
-   let notEnoughContent = "";
+   const M = IM["readability"];
+   
+        if ($("main, [role='main']").length === 0) {
+           $("#sa11y-readability-info").html(M["missingMainContentMessage"]);
+        } 
 
-   $("main, [role='main']")
-
-       if ($("main, [role='main']").length === 0) {
-           fleschScore = "";
-           readingDifficulty = "";
-           readabilityDetails = "";
-           notEnoughContent = 'Please identify the <a href="https://www.w3.org/WAI/tutorials/page-structure/regions/#main-content" target="_blank">main content region to calculate readability score. <span class="sa11y-visually-hidden">(opens new tab)</span></a>';
-        } else if (this.$mainPandLi.length === 0) {
-           fleschScore = "";
-           readingDifficulty = "";
-           readabilityDetails = "";
-           notEnoughContent = `No paragraph <span class="sa11y-badge">&lt;p&gt;</span> or list content <span class="sa11y-badge">&lt;li&gt;</span> detected within main content area.`;
-        } else if (words > 30) {
+        else if (this.$mainPandLi.length === 0) {
+            $("#sa11y-readability-info").html(M["noPorLiMessage"]);
+        } 
+        
+        else if (words > 30) {
            var fleschScore = flesch_reading_ease.toFixed(1);
            var avgWordsPerSentence = (words/sentences).toFixed(1);
+           var complexWords = Math.round(100*((words-(syllables1+syllables2))/words));
            
            //WCAG AAA pass if greater than 60
            if (fleschScore >= 0 && fleschScore < 30) {
-               readingDifficulty = '<span class="sa11y-readability-score">Very difficult</span>';
-           } else if (fleschScore > 31 && fleschScore < 49) {
-               readingDifficulty = '<span class="sa11y-readability-score">Difficult</span>';
-           } else if (fleschScore > 50 && fleschScore < 60) {
-               readingDifficulty = '<span class="sa11y-readability-score">Fairly difficult</span>';
-           } else {
-               readingDifficulty = '<span class="sa11y-readability-score">Good</span>';
+            $("#sa11y-readability-info").html(
+                `<span>${fleschScore}</span> <span class="sa11y-readability-score">Very difficult</span>`);
+           } 
+           else if (fleschScore > 31 && fleschScore < 49) {
+            $("#sa11y-readability-info").html(
+                `<span>${fleschScore}</span> <span class="sa11y-readability-score">Difficult</span>`);
+           } 
+           else if (fleschScore > 50 && fleschScore < 60) {
+            $("#sa11y-readability-info").html(
+                `<span>${fleschScore}</span> <span class="sa11y-readability-score">Fairly difficult</span>`);
+           }   
+           else {
+            $("#sa11y-readability-info").html(
+                `<span>${fleschScore}</span> <span class="sa11y-readability-score">Good</span>`);
            } 
 
-           readabilityDetails = `
-           <ul id="sa11y-readability-details">
-               <li><span class='sa11y-bold'>Average words per sentence:</span> ` + avgWordsPerSentence + `</li>
-               <li><span class='sa11y-bold'>Complex words:</span> ` + Math.round(100*((words-(syllables1+syllables2))/words)) + `%</li>
-               <li><span class='sa11y-bold'>Words:</span> ` + words + `</li>
-           </ul>`
-
+        $("#sa11y-readability-details").html(`
+            <li><span class='sa11y-bold'>Average words per sentence:</span> ` + avgWordsPerSentence + `</li>
+            <li><span class='sa11y-bold'>Complex words:</span> ` + complexWords + `%</li>
+            <li><span class='sa11y-bold'>Words:</span> ` + words + `</li>
+        `);
+ 
        } else {
-           fleschScore = "";
-           readingDifficulty = "";
-           readabilityDetails = "";
-           notEnoughContent = "Not enough content to calculate readability score.";
-       } 
+        $("#sa11y-readability-info").text(M["notEnoughContentMessage"]);
+       }
 
-       let sa11yReadabilityPanel = document.createElement('div');
-       sa11yReadabilityPanel.setAttribute('id', 'sa11y-readability-content');
-       sa11yReadabilityPanel.innerHTML = `
-           <span class="sa11y-header-text">Readability</span>
-           <div class="sa11y-readability-level">${fleschScore} ${readingDifficulty}</div> ${readabilityDetails} ${notEnoughContent}
-           `;
-       $("#sa11y-readability-panel").prepend(sa11yReadabilityPanel);
     }
 
     // ============================================================
@@ -1718,7 +1729,9 @@ class Sa11y {
                 $outlineToggle.attr("aria-expanded", "true");
                 localStorage.setItem("sa11y-outline", "opened");
             }
-            $("#sa11y-outline-header > span").focus();
+            
+            $("#sa11y-outline-header > h2").get(0).focus();
+            
             $(".sa11y-heading-label").toggleClass("sa11y-label-visible");
 
             //Close Settings panel when Show Outline is active.
@@ -1744,7 +1757,7 @@ class Sa11y {
 
         //Show settings panel
         let $settingsToggle = $("#sa11y-settings-toggle");
-        $settingsToggle.click(function () {
+        $settingsToggle.click(() => {
             if ($settingsToggle.attr("aria-expanded") === "true") {
                 $settingsToggle.removeClass("sa11y-settings-active");
                 $("#sa11y-settings-panel").removeClass("sa11y-active");
@@ -1757,7 +1770,7 @@ class Sa11y {
                 $settingsToggle.attr("aria-expanded", "true");
             }
 
-            $("#sa11y-settings-header > span").focus();
+            $("#sa11y-settings-header > h2").get(0).focus();
 
             //Close Show Outline panel when Settings is active.
             $("#sa11y-outline-panel").removeClass("sa11y-active");
@@ -1799,8 +1812,8 @@ class Sa11y {
         this.root.find(".sa11y-instance-inline").remove();
         this.root.find(".sa11y-heading-label").remove();
         this.root.find("#sa11y-outline-list li").remove();
-        this.root.find("#sa11y-readability-content").remove();
         this.root.find(".sa11y-readability-period").remove();
+        this.root.find("#sa11y-readability-info span, #sa11y-readability-details li").remove();
 
         if (restartPanel) {
             $("#sa11y-panel-content").removeClass();

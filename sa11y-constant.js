@@ -260,8 +260,8 @@ const IM = {
         announcementWarning: () =>
             `More than one Announcement component found! The Announcement component should be used strategically and sparingly. It should be used to get attention or warn users about something important. Misuse of this component makes it less effective or impactful. Secondly, this component is semantically labeled as an Announcement for people who use screen readers.`,
     },
-    contrast: {
 
+    contrast: {
         errorM: (
             cdetail,
             cratio,
@@ -279,4 +279,16 @@ const IM = {
             <br>
             <span class='sa11y-bold'>${nodetext}</span>`,
     },
+
+    readability: {
+        missingMainContentMessage: () =>
+        `Please identify the <a href="https://www.w3.org/WAI/tutorials/page-structure/regions/#main-content" target="_blank">main content region to calculate readability score. ${newTab}</a>`,
+
+        noPorLiMessage: () =>
+        `No paragraph <span class="sa11y-badge">&lt;p&gt;</span> or list content <span class="sa11y-badge">&lt;li&gt;</span> detected within main content area.`,
+
+        notEnoughContentMessage: () =>
+        `Not enough content to calculate readability score.`
+
+    }
 };
