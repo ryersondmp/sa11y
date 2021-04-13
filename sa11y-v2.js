@@ -73,6 +73,9 @@ class Sa11y {
         let loadLabelsPreference =
             localStorage.getItem("sa11y-labelsCheck") === "On";
 
+        let loadChangeRequestPreference =
+            localStorage.getItem("sa11y-changerequestCheck") === "On";
+
         let loadReadabilityPreference =
             localStorage.getItem("sa11y-readabilityCheck") === "On";
 
@@ -87,10 +90,10 @@ class Sa11y {
         </button>` +
 
         //Start of main container.
-        `<div id="sa11y-panel">` +
+        `<div id="sa11y-panel" role="tablist" aria-labelledby="sa11y-outline-header">` +
             
             //Page Outline tab.
-            `<div id="sa11y-outline-panel">
+            `<div id="sa11y-outline-panel" role="tabpanel">
                 <div id="sa11y-outline-header" class="sa11y-header-text">
                     <h2 tabindex="-1">Page outline</h2>
                 </div>
@@ -111,12 +114,16 @@ class Sa11y {
             `</div>` +
 
             //Settings tab.
-           `<div id="sa11y-settings-panel">
+           `<div id="sa11y-settings-panel" role="tabpanel" aria-labelledby="sa11y-settings-header">
             <div id="sa11y-settings-header" class="sa11y-header-text">
                 <h2 tabindex="-1">Settings</h2>
             </div>
             <div id="sa11y-settings-content">
             <ul id="sa11y-settings-options">  
+                <li>
+                    <label id="dark-mode" for="sa11y-theme-toggle">Dark mode</label>
+                    <button id="sa11y-theme-toggle" aria-labelledby="dark-mode" class="sa11y-settings-switch"></button>
+                </li>
                 <li>
                     <label id="check-contrast" for="sa11y-contrastCheck-toggle">Contrast</label>
                     <button id="sa11y-contrastCheck-toggle" 
@@ -127,15 +134,18 @@ class Sa11y {
                     }">${loadContrastPreference ? "On" : "Off"}</button>
                 </li>
                 <li>
-                    <label id="dark-mode" for="sa11y-theme-toggle">Dark mode</label>
-                    <button id="sa11y-theme-toggle" aria-labelledby="dark-mode" class="sa11y-settings-switch"></button>
-                </li>
-                <li>
                     <label id="check-labels" for="sa11y-labelsCheck-toggle">Form labels</label>
                     <button id="sa11y-labelsCheck-toggle" aria-labelledby="check-labels" class="sa11y-settings-switch" 
                     aria-pressed="${
                         loadLabelsPreference ? "true" : "false"
                     }">${loadLabelsPreference ? "On" : "Off"}</button>
+                </li>
+                <li>
+                    <label id="check-changerequest" for="sa11y-changerequest-toggle">Change on request <span class="sa11y-badge">AAA</span></label>
+                    <button id="sa11y-changerequest-toggle" aria-labelledby="check-changerequest" class="sa11y-settings-switch" 
+                    aria-pressed="${
+                        loadChangeRequestPreference ? "true" : "false"
+                    }">${loadChangeRequestPreference ? "On" : "Off"}</button>
                 </li>
                 <li>
                     <label id="check-readability" for="sa11y-readabilityCheck-toggle">Readability <span class="sa11y-badge">AAA</span></label>
@@ -297,6 +307,26 @@ class Sa11y {
             });
 
             // ----------------------------------------------------------------------
+            // Labels Check
+            // ----------------------------------------------------------------------
+            let $sa11yChangeRequestCheck = $("#sa11y-changerequest-toggle");
+            $sa11yChangeRequestCheck.click(async () => {
+                if (localStorage.getItem("sa11y-changerequestCheck") === "On") {
+                    localStorage.setItem("sa11y-changerequestCheck", "off");
+                    $sa11yChangeRequestCheck.text("Off");
+                    $sa11yChangeRequestCheck.attr("aria-pressed", "false");
+                    this.reset(false);
+                    await this.checkAll();
+                } else {
+                    localStorage.setItem("sa11y-changerequestCheck", "On");
+                    $sa11yChangeRequestCheck.text("On");
+                    $sa11yChangeRequestCheck.attr("aria-pressed", "true");
+                    this.reset(false);
+                    await this.checkAll();
+                }
+            });
+
+            // ----------------------------------------------------------------------
             // Dark Mode. Credits: https://derekkedziora.com/blog/dark-mode-revisited
             // ----------------------------------------------------------------------
 
@@ -371,6 +401,7 @@ class Sa11y {
         this.findElements();
         this.checkHeaders();
         this.checkLinkText();
+        this.checkAltText();
 
         if (localStorage.getItem("sa11y-contrastCheck") === "On") {
             this.checkContrast();
@@ -379,8 +410,11 @@ class Sa11y {
         if (localStorage.getItem("sa11y-labelsCheck") === "On") {
             this.checkLabels();
         }
+
+        if (localStorage.getItem("sa11y-changerequestCheck") === "On") {
+            this.checkChangeOnRequest();
+        }
         
-        this.checkAltText();
         if (localStorage.getItem("sa11y-readabilityCheck") === "On") {
             this.checkReadability();
         }
@@ -593,25 +627,10 @@ class Sa11y {
         Example: If you need to ignore any text within <span class="sr-only">test</span>.
         $el.ignore("span.sr-only").text().trim(); */
 
-        let containsLongUrl = function (textContent) {
-            let urlText = ["http", ".asp", ".htm", ".php", ".edu/", ".com/"];
-
-            var hit = null;
-            $.each(urlText, function (index, word) {
-                if (textContent.toLowerCase().indexOf(word) >= 0) {
-                    hit = word;
-                    return false;
-                }
-            });
-            return hit;
-        };
-
-        /* Checks if text is not descriptive and returns the word(s) that are making the text inaccessible. stopWords will always flag an issue if contained in a hyperlink. partialStopWords will only be flagged as an issue if it's the only hyperlink text. */
         let containsLinkTextStopWords = function (textContent) {
-            let stopWords = ["click here", "< ", " >"];
-
             let partialStopWords = [
                 "click",
+                "click here",
                 "click here to learn more",
                 "check out",
                 "download",
@@ -642,44 +661,52 @@ class Sa11y {
                 ",",
                 ":",
             ];
+            let warningWords = ["< ", " >", "click here"];
+            let urlText = ["http", ".asp", ".htm", ".php", ".edu/", ".com/"];
 
-            var hit = null;
+            let hit = [null, null, null];
 
-            // First check for show stoppers.
-            $.each(stopWords, function (index, word) {
-                if (textContent.toLowerCase().indexOf(word) >= 0) {
-                    hit = word;
+            // Flag partial stop words.
+            $.each(partialStopWords, function (index, word) {
+                if (
+                    textContent.length === word.length &&
+                    textContent.toLowerCase().indexOf(word) >= 0
+                ) {
+                    hit[0] = word;
                     return false;
                 }
             });
-
-            // If no partial words were found, then check for total words.
-            if (hit == null) {
-                $.each(partialStopWords, function (index, word) {
-                    if (
-                        textContent.length === word.length &&
-                        textContent.toLowerCase().indexOf(word) >= 0
-                    ) {
-                        hit = word;
-                        return false;
-                    }
-                });
-            }
+    
+            // Other warnings we want to add.
+            $.each(warningWords, function (index, word) {
+                if (textContent.toLowerCase().indexOf(word) >= 0) {
+                    hit[1] = word;
+                    return false;
+                }
+            });
+            
+            // Flag link text containing URLs.
+            $.each(urlText, function (index, word) {
+                if (textContent.toLowerCase().indexOf(word) >= 0) {
+                    hit[2] = word;
+                    return false;
+                }
+            });
             return hit;
         };
+
         let $links = this.root.find("a[href]").not(this.linkIgnore);
-        // Stores the text for each issue
+        
         const M = IM["linktext"];
+        
         $links.each((i, el) => {
             let $el = $(el);
             var linkText = $el.text();
             var hasAriaLabelledBy = $el.attr("aria-labelledby");
             var hasAriaLabel = $el.attr("aria-label");
-            var hasAriaHidden = $el.attr("aria-hidden");
-            var hasTabIndex = $el.attr("tabindex");
             var error = containsLinkTextStopWords($el.text().trim());
-            var errorURL = containsLongUrl($el.text().trim());
 
+            //Flag empty hyperlinks
             if (
                 $el.children().length == 0 &&
                 $el.attr("href") !== undefined &&
@@ -689,10 +716,11 @@ class Sa11y {
                 this.errorCount++;
                 $el.addClass("sa11y-error-text");
                 $el.after(ButtonInserter(ERROR, M["linkErrorMessage"], true));
-            } else if (error != null) {
+            } 
+            
+            else if (error[0] != null) {
                 if (hasAriaLabelledBy != null) {
-                    var acclinkname = document.getElementById(hasAriaLabelledBy)
-                        .textContent;
+                    var acclinkname = $("#"+hasAriaLabelledBy).text();
                     $el.after(
                         ButtonInserter(
                             PASS,
@@ -711,18 +739,26 @@ class Sa11y {
                             true
                         )
                     );
-                } else if (hasAriaHidden == "true" && hasTabIndex == "-1") {
+                } else if ($el.attr("aria-hidden") == "true" && $el.attr("tabindex") == "-1") {
                     //do nothing.
                 } else {
                     this.errorCount++;
                     $el.addClass("sa11y-error-text");
                     $el.after(
-                        ButtonInserter(ERROR, M["stopWordMessage"](error), true)
+                        ButtonInserter(ERROR, M["stopWordMessage"](error[0]), true)
                     );
                 }
-            } else if (errorURL != null) {
+            } 
+            
+            else if (error[1] != null) {
+                this.warningCount++;
+                $el.addClass("sa11y-warning-text");
+                $el.after(ButtonInserter(WARNING, M["linkBestPractices"](error[1]), true));
+            }
+
+            else if (error[2] != null) {
                 if (linkText.length > 40) {
-                    this.warningCount++;
+                this.warningCount++;
                 $el.addClass("sa11y-warning-text");
                 $el.after(ButtonInserter(WARNING, M["linkStopWordMessage"], true));
                 }  
@@ -1096,33 +1132,6 @@ class Sa11y {
             }
         });
 
-        // Warn users of TARGET BLANK within main content.
-        let $linksTargetBlank = this.root
-            .find("a[target='_blank']")
-            .not(this.linkIgnore)
-            .not("a[href$='.pdf']")
-            .not("a[href$='.docx']")
-            .not("#sa11y-container a")
-            .not(".sa11y-exclude");
-
-        //To-do: Adam to improve verbiage. Make clear that this is AAA.
-        $linksTargetBlank.each((i, el) => {
-            let $el = $(el);
-
-            var passWordsNewWindow = ["new tab", "new window"];
-            var containsPassWordsNewWindow = passWordsNewWindow.some(function (
-                pass
-            ) {
-                return $el.text().toLowerCase().indexOf(pass) >= 0;
-            });
-
-            if ($el && !containsPassWordsNewWindow) {
-                this.warningCount++;
-                $el.addClass("sa11y-warning-text");
-                $el.first().after(ButtonInserter(WARNING, M["newTab"], true));
-            }
-        });
-
         //Error: Find all links pointing to development environment. Customize as needed.
         let $badDevLinks = this.root
             .find("a[href^='https://www.dev.'], a[href*='wp-admin']")
@@ -1317,6 +1326,42 @@ class Sa11y {
             );
         }
     };
+
+    // ============================================================
+    // Change on request
+    // ============================================================
+    checkChangeOnRequest = () => {
+
+        const M = IM["changeOnRequest"];
+
+        // Warn users of TARGET BLANK within main content.
+        let $linksTargetBlank = this.root
+            .find("a[target='_blank']")
+            .not(this.linkIgnore)
+            .not("a[href$='.pdf']")
+            .not("a[href$='.docx']")
+            .not("#sa11y-container a")
+            .not(".sa11y-exclude");
+
+        //To-do: Adam to improve verbiage. Make clear that this is AAA.
+        $linksTargetBlank.each((i, el) => {
+            let $el = $(el);
+
+            var passWordsNewWindow = ["new tab", "new window"];
+            var containsPassWordsNewWindow = passWordsNewWindow.some(function (
+                pass
+            ) {
+                return $el.text().toLowerCase().indexOf(pass) >= 0;
+            });
+
+            if ($el && !containsPassWordsNewWindow) {
+                this.warningCount++;
+                $el.addClass("sa11y-warning-text");
+                $el.first().after(ButtonInserter(WARNING, M["newTab"], true));
+            }
+        });
+    }
+
     // ============================================================
     // Contrast
     // ============================================================

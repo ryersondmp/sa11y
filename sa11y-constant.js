@@ -32,17 +32,18 @@ const IM = {
         nonconsecLevel: (
             prevLevel,
             level
-        ) => `Non-consecutive heading level used. Headings should never skip levels, or go from 
-        <span class='sa11y-bold'>Heading ${prevLevel}</span> to <span class='sa11y-red-text sa11y-bold'>Heading ${level}</span>.`,
+        ) => 
+            `Non-consecutive heading level used. Headings should never skip levels, or go from <span class='sa11y-bold'>Heading ${prevLevel}</span> to <span class='sa11y-red-text sa11y-bold'>Heading ${level}</span>.`,
 
         emptyHeading: (level) =>
             `Detected empty heading! To fix, delete this line or change its format from <span class='sa11y-red-text sa11y-bold'>Heading ${level}</span> to <span class='sa11y-bold'>Normal</span> or <span class='sa11y-bold'>Paragraph</span>.`,
 
         headingTooLong: (
             headingLength
-        ) => `Heading is too long! Headings are used to organize content and convey structure. They should be brief, clear, informative and unique. Please keep headings less than 160 characters (no more than a sentence).
-        ${hr}
-        Character count: <span class='sa11y-bold sa11y-red-text'>${headingLength}</span>.`,
+        ) => 
+            `Heading is too long! Headings are used to organize content and convey structure. They should be brief, clear, informative and unique. Please keep headings less than 160 characters (no more than a sentence).
+            ${hr}
+            Character count: <span class='sa11y-bold sa11y-red-text'>${headingLength}</span>.`,
 
         firstHeading: () =>
             `First heading on page should usually be a Heading 1 or Heading 2. Heading 1 should be the start of the main content section, and is the main heading that describes the overall purpose of the page. Learn more about <a href='https://www.w3.org/WAI/tutorials/page-structure/headings/' target='_blank'>Heading Structure. ${newTab}</a>`,
@@ -64,6 +65,15 @@ const IM = {
             `Link text may not be descriptive enough out of context: <span class='sa11y-red-text sa11y-bold'>${error}</span>
             ${hr}
             <span class='sa11y-bold'>Tip!</span> Link text should always be clear, unique, and meaningful. Avoid common words like &quot;click here&quot; or &quot;learn more&quot;.`,
+
+        linkBestPractices: (error) =>
+            `Consider replacing link text: <span class='sa11y-red-text sa11y-bold'>${error}</span>
+            ${hr}
+            <ul>
+                <li>&quot;Click here&quot; places focus on mouse mechanics, when many people do not use a mouse or may be viewing this website on a mobile device. Consider using a different verb that relates to the task.</li>
+                <li>Avoid using HTML symbols as call to actions unless they are hidden to assistive technologies.</li>
+            </ul>
+            `,
 
         linkStopWordMessage: () =>
             `Longer, less intelligible URLs used as link text might  be difficult to listen to with assistive technology. In most cases, it is better to use human-readable text instead of the URL. Short URLs (such as a site's homepage) are okay.
@@ -210,9 +220,6 @@ const IM = {
                     <li>Add <span class='sa11y-kbd'>data-chrome=&#34;nofooter noheader&#34;</span> to remove the widget's header and footer.</li>
                 </ul>`,
 
-        newTab: () =>
-            `Link opens in new tab or window without warning. Opening links in new tabs or windows can be disorienting, especially for people who have difficulty perceiving visual content. Secondly, it's not always a good practice to control a user's experience or make decisions for them. Alert the user that the link opens in a new window within the link text.`,
-
         badLink: (el) =>
             `Bad link found. Link appears to point to a development environment. Make sure the link does not contain <em>dev</em> or <em>wp-admin</em> in the URL. 
             ${hr}
@@ -259,6 +266,11 @@ const IM = {
 
         announcementWarning: () =>
             `More than one Announcement component found! The Announcement component should be used strategically and sparingly. It should be used to get attention or warn users about something important. Misuse of this component makes it less effective or impactful. Secondly, this component is semantically labeled as an Announcement for people who use screen readers.`,
+    },
+
+    changeOnRequest: {
+        newTab: () =>
+            `Link opens in new tab or window without warning. Opening links in new tabs or windows can be disorienting, especially for people who have difficulty perceiving visual content. Secondly, it's not always a good practice to control a user's experience or make decisions for them. Alert the user that the link opens in a new window within the link text.`,
     },
 
     contrast: {

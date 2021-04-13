@@ -102,6 +102,9 @@ html[data-sa11y-theme="dark"] {
 }
 
 /* Reset. Keep specificity high to avoid conflicting CSS. */
+.sa11y-instance,
+.sa11y-instance-inline,
+.sa11y-error-message-container,
 #sa11y-container h1,
 #sa11y-container h2,
 #sa11y-container div,
@@ -112,11 +115,20 @@ html[data-sa11y-theme="dark"] {
 #sa11y-container li,
 #sa11y-container a,
 #sa11y-container label,
-#sa11y-container button {
+#sa11y-container button,
+#sa11y-container svg {
     all: unset;
     box-sizing: border-box !important;
 }
 
+.sa11y-instance *::before,
+.sa11y-instance-inline *:before,
+.sa11y-instance *::after,
+.sa11y-instance-inline *:after,
+.sa11y-error-message-container *::before,
+.sa11y-error-message-container *:before,
+.sa11y-error-message-container *::after,
+.sa11y-error-message-container *:after,
 #sa11y-container *::before,
 #sa11y-container *:before,
 #sa11y-container *::after,
@@ -127,6 +139,22 @@ html[data-sa11y-theme="dark"] {
 #sa11y-container div {
     display: block;
 }
+
+#sa11y-container * {
+    font-family: var(--sa11y-font-face) !important;
+    line-height: 23px !important;
+    direction: ltr !important;
+}
+
+#sa11y-container p,
+#sa11y-container ol,
+#sa11y-container ul,
+#sa11y-container li,
+#sa11y-container label {
+    font-size: var(--sa11y-normal-text) !important;
+}
+
+
 
 /*===== Main button ===== */
 #sa11y-container #sa11y-toggle {
@@ -218,18 +246,10 @@ html[data-sa11y-theme="dark"] {
 }
 
 /*===== Main panel/container ===== */
-
-#sa11y-container * {
-    font-family: var(--sa11y-font-face) !important;
-    line-height: 23px !important;
-    direction: ltr !important;
-}
-
 #sa11y-container label {
     color: var(--sa11y-panel-primary) !important;
     display: inline-block !important;
     font-weight: normal !important;
-    font-size: var(--sa11y-normal-text) !important;
     margin: 0 !important;
     width: 180px !important;
 }
@@ -398,7 +418,6 @@ html[data-sa11y-theme="dark"] {
 
 #sa11y-container #sa11y-outline-list li {
     display: block !important; 
-    font-size: var(--sa11y-normal-text) !important;
     list-style-type: none !important;
     margin-bottom: 0 !important;
     margin-top: 0 !important;
@@ -426,7 +445,6 @@ html[data-sa11y-theme="dark"] {
 }
 #sa11y-container #sa11y-readability-details li {
     display: inline-block !important;
-    font-size: var(--sa11y-normal-text) !important;
     list-style-type: none !important;
     margin: 0 !important;
     padding: 0px 10px 0px 0px !important;
@@ -707,33 +725,36 @@ p#sa11y-readability-info {
     margin-left: 10px;
 }
 
-.sa11y-readability-score,
-.sa11y-warning-text,
-.sa11y-warning-uppercase,
-.sa11y-error-text {
-    border-radius: 0.25em !important;
-    padding: 2px 5px !important;
-}
-
 .sa11y-readability-score {
     background-color: var(--sa11y-panel-badge) !important;
     color: var(--sa11y-panel-primary) !important;
     margin-left: 5px !important;
+    border-radius: 0.25em !important;
+    padding: 2px 5px !important;
 }
 
+a.sa11y-error-text,
 .sa11y-error-text {
+    border-radius: 0.25em !important;
+    border-color: transparent !important;
+    box-shadow: 0 0 0 4px var(--sa11y-error) !important;
     background-color: var(--sa11y-error) !important;
     color: var(--sa11y-error-text) !important;
 }
 
+a.sa11y-warning-text,
 .sa11y-warning-text,
 .sa11y-warning-uppercase {
+    border-radius: 0.25em !important;
+    border-color: transparent !important;
+    box-shadow: 0 0 0 4px var(--sa11y-warning) !important;
     background-color: var(--sa11y-warning) !important;
     color: var(--sa11y-warning-text) !important;
 }
 
 .sa11y-error-message-container {
     background-color: var(--sa11y-error) !important;
+    display: block !important;
 }
 /* Full width panels */
 .sa11y-error-message {
@@ -855,6 +876,9 @@ span.sa11y-heading-label {
 }
 
 /*===== Tooltip additions ===== */
+.sa11y-instance {
+    display: block !important;
+}
 
 .sa11y-instance-inline {
     text-align: left !important;
@@ -871,8 +895,13 @@ span.sa11y-heading-label {
 
 /*===== Custom tippy theme for Sa11y ===== */
 
-.tippy-box * {
+.tippy-box[data-theme~="sa11y-theme"] * {
     font-family: var(--sa11y-font-face) !important;
+}
+
+.tippy-box[data-theme~="sa11y-theme"] ul {
+    padding-inline-start: 20px !important;
+    margin: 0 !important;
 }
 
 .tippy-box[data-theme~="sa11y-theme"] a {
