@@ -69,16 +69,16 @@ class Sa11y {
         sa11ycontainer.setAttribute("aria-label", sa11yContainerLang);
 
         let loadContrastPreference =
-            localStorage.getItem("sa11y-contrastCheck") === "On";
+            localStorage.getItem("sa11y-remember-contrast") === "On";
 
         let loadLabelsPreference =
-            localStorage.getItem("sa11y-labelsCheck") === "On";
+            localStorage.getItem("sa11y-remember-labels") === "On";
 
         let loadChangeRequestPreference =
-            localStorage.getItem("sa11y-changerequestCheck") === "On";
+            localStorage.getItem("sa11y-remember-links-advanced") === "On";
 
         let loadReadabilityPreference =
-            localStorage.getItem("sa11y-readabilityCheck") === "On";
+            localStorage.getItem("sa11y-remember-readability") === "On";
 
         sa11ycontainer.innerHTML =
 
@@ -122,12 +122,8 @@ class Sa11y {
             <div id="sa11y-settings-content">
             <ul id="sa11y-settings-options">  
                 <li>
-                    <label id="dark-mode" for="sa11y-theme-toggle">Dark mode</label>
-                    <button id="sa11y-theme-toggle" aria-labelledby="dark-mode" class="sa11y-settings-switch"></button>
-                </li>
-                <li>
-                    <label id="check-contrast" for="sa11y-contrastCheck-toggle">Contrast</label>
-                    <button id="sa11y-contrastCheck-toggle" 
+                    <label id="check-contrast" for="sa11y-contrast-toggle">Contrast</label>
+                    <button id="sa11y-contrast-toggle" 
                     aria-labelledby="check-contrast" 
                     class="sa11y-settings-switch" 
                     aria-pressed="${
@@ -135,25 +131,29 @@ class Sa11y {
                     }">${loadContrastPreference ? "On" : "Off"}</button>
                 </li>
                 <li>
-                    <label id="check-labels" for="sa11y-labelsCheck-toggle">Form labels</label>
-                    <button id="sa11y-labelsCheck-toggle" aria-labelledby="check-labels" class="sa11y-settings-switch" 
+                    <label id="check-labels" for="sa11y-labels-toggle">Form labels</label>
+                    <button id="sa11y-labels-toggle" aria-labelledby="check-labels" class="sa11y-settings-switch" 
                     aria-pressed="${
                         loadLabelsPreference ? "true" : "false"
                     }">${loadLabelsPreference ? "On" : "Off"}</button>
                 </li>
                 <li>
-                    <label id="check-changerequest" for="sa11y-changerequest-toggle">Links (new tab) <span class="sa11y-badge">AAA</span></label>
-                    <button id="sa11y-changerequest-toggle" aria-labelledby="check-changerequest" class="sa11y-settings-switch" 
+                    <label id="check-changerequest" for="sa11y-links-advanced-toggle">Links (Advanced) <span class="sa11y-badge">AAA</span></label>
+                    <button id="sa11y-links-advanced-toggle" aria-labelledby="check-changerequest" class="sa11y-settings-switch" 
                     aria-pressed="${
                         loadChangeRequestPreference ? "true" : "false"
                     }">${loadChangeRequestPreference ? "On" : "Off"}</button>
                 </li>
                 <li>
-                    <label id="check-readability" for="sa11y-readabilityCheck-toggle">Readability <span class="sa11y-badge">AAA</span></label>
-                    <button id="sa11y-readabilityCheck-toggle" aria-labelledby="check-readability" class="sa11y-settings-switch" 
+                    <label id="check-readability" for="sa11y-readability-toggle">Readability <span class="sa11y-badge">AAA</span></label>
+                    <button id="sa11y-readability-toggle" aria-labelledby="check-readability" class="sa11y-settings-switch" 
                     aria-pressed="${
                         loadReadabilityPreference ? "true" : "false"
                     }">${loadReadabilityPreference ? "On" : "Off"}</button>
+                </li>
+                <li>
+                    <label id="dark-mode" for="sa11y-theme-toggle">Dark mode</label>
+                    <button id="sa11y-theme-toggle" aria-labelledby="dark-mode" class="sa11y-settings-switch"></button>
                 </li>
             </ul>
             </div>
@@ -188,14 +188,14 @@ class Sa11y {
             //Keeps checker active when navigating between pages until it is toggled off.
             var sa11yToggle = $("#sa11y-toggle");
             sa11yToggle.click(() => {
-                if (localStorage.getItem("sa11y-panel") === "opened") {
-                    localStorage.setItem("sa11y-panel", "closed");
+                if (localStorage.getItem("sa11y-remember-panel") === "Opened") {
+                    localStorage.setItem("sa11y-remember-panel", "Closed");
                     sa11yToggle
                         .removeClass("sa11y-on")
                         .attr("aria-expanded", "false");
                     this.reset();
                 } else {
-                    localStorage.setItem("sa11y-panel", "opened");
+                    localStorage.setItem("sa11y-remember-panel", "Opened");
                     sa11yToggle
                         .addClass("sa11y-on")
                         .attr("aria-expanded", "true");
@@ -204,7 +204,7 @@ class Sa11y {
             });
 
             //Remember to leave it open
-            if (localStorage.getItem("sa11y-panel") === "opened") {
+            if (localStorage.getItem("sa11y-remember-panel") === "Opened") {
                 sa11yToggle.addClass("sa11y-on").attr("aria-expanded", "true");
             }
 
@@ -228,7 +228,6 @@ class Sa11y {
                     $("#sa11y-panel").hasClass("sa11y-active")
                 ) {
                     tippy.hideAll();
-                    sessionStorage.enableSa11y = "";
                     sa11yToggle
                         .attr("aria-expanded", "false")
                         .removeClass("sa11y-on")
@@ -259,17 +258,17 @@ class Sa11y {
             // ----------------------------------------------------------------------
             // Toggle Readability
             // ----------------------------------------------------------------------
-            let $sa11yReadabilityCheck = $("#sa11y-readabilityCheck-toggle");
+            let $sa11yReadabilityCheck = $("#sa11y-readability-toggle");
             $sa11yReadabilityCheck.click(async () => {
-                if (localStorage.getItem("sa11y-readabilityCheck") === "On") {
-                    localStorage.setItem("sa11y-readabilityCheck", "off");
+                if (localStorage.getItem("sa11y-remember-readability") === "On") {
+                    localStorage.setItem("sa11y-remember-readability", "Off");
                     $sa11yReadabilityCheck.text("Off");
                     $sa11yReadabilityCheck.attr("aria-pressed", "false");
                     $("#sa11y-readability-panel").removeClass("sa11y-active");
                     this.reset(false);
                     await this.checkAll();
                 } else {
-                    localStorage.setItem("sa11y-readabilityCheck", "On");
+                    localStorage.setItem("sa11y-remember-readability", "On");
                     $sa11yReadabilityCheck.text("On");
                     $sa11yReadabilityCheck.attr("aria-pressed", "true");
                     $("#sa11y-readability-panel").addClass("sa11y-active");
@@ -278,7 +277,7 @@ class Sa11y {
                 }
             });
             
-            if (localStorage.getItem("sa11y-readabilityCheck") === "On") {
+            if (localStorage.getItem("sa11y-remember-readability") === "On") {
                 $("#sa11y-readability-panel").addClass("sa11y-active");
             }
 
@@ -286,16 +285,16 @@ class Sa11y {
             // Toggle Contrast Check
             // ----------------------------------------------------------------------
 
-            let $sa11yContrastCheck = $("#sa11y-contrastCheck-toggle");
+            let $sa11yContrastCheck = $("#sa11y-contrast-toggle");
             $sa11yContrastCheck.click(async () => {
-                if (localStorage.getItem("sa11y-contrastCheck") === "On") {
-                    localStorage.setItem("sa11y-contrastCheck", "off");
+                if (localStorage.getItem("sa11y-remember-contrast") === "On") {
+                    localStorage.setItem("sa11y-remember-contrast", "Off");
                     $sa11yContrastCheck.text("Off");
                     $sa11yContrastCheck.attr("aria-pressed", "false");
                     this.reset(false);
                     await this.checkAll();
                 } else {
-                    localStorage.setItem("sa11y-contrastCheck", "On");
+                    localStorage.setItem("sa11y-remember-contrast", "On");
                     $sa11yContrastCheck.text("On");
                     $sa11yContrastCheck.attr("aria-pressed", "true");
                     this.reset(false);
@@ -306,16 +305,16 @@ class Sa11y {
             // ----------------------------------------------------------------------
             // Labels Check
             // ----------------------------------------------------------------------
-            let $sa11yLabelsCheck = $("#sa11y-labelsCheck-toggle");
+            let $sa11yLabelsCheck = $("#sa11y-labels-toggle");
             $sa11yLabelsCheck.click(async () => {
-                if (localStorage.getItem("sa11y-labelsCheck") === "On") {
-                    localStorage.setItem("sa11y-labelsCheck", "off");
+                if (localStorage.getItem("sa11y-remember-labels") === "On") {
+                    localStorage.setItem("sa11y-remember-labels", "Off");
                     $sa11yLabelsCheck.text("Off");
                     $sa11yLabelsCheck.attr("aria-pressed", "false");
                     this.reset(false);
                     await this.checkAll();
                 } else {
-                    localStorage.setItem("sa11y-labelsCheck", "On");
+                    localStorage.setItem("sa11y-remember-labels", "On");
                     $sa11yLabelsCheck.text("On");
                     $sa11yLabelsCheck.attr("aria-pressed", "true");
                     this.reset(false);
@@ -326,16 +325,16 @@ class Sa11y {
             // ----------------------------------------------------------------------
             // Labels Check
             // ----------------------------------------------------------------------
-            let $sa11yChangeRequestCheck = $("#sa11y-changerequest-toggle");
+            let $sa11yChangeRequestCheck = $("#sa11y-links-advanced-toggle");
             $sa11yChangeRequestCheck.click(async () => {
-                if (localStorage.getItem("sa11y-changerequestCheck") === "On") {
-                    localStorage.setItem("sa11y-changerequestCheck", "off");
+                if (localStorage.getItem("sa11y-remember-links-advanced") === "On") {
+                    localStorage.setItem("sa11y-remember-links-advanced", "Off");
                     $sa11yChangeRequestCheck.text("Off");
                     $sa11yChangeRequestCheck.attr("aria-pressed", "false");
                     this.reset(false);
                     await this.checkAll();
                 } else {
-                    localStorage.setItem("sa11y-changerequestCheck", "On");
+                    localStorage.setItem("sa11y-remember-links-advanced", "On");
                     $sa11yChangeRequestCheck.text("On");
                     $sa11yChangeRequestCheck.attr("aria-pressed", "true");
                     this.reset(false);
@@ -351,7 +350,7 @@ class Sa11y {
                 "(prefers-color-scheme: dark)"
             );
             let $sa11yTheme = $("#sa11y-theme-toggle");
-            let theme = sessionStorage.getItem("sa11y-theme");
+            let theme = localStorage.getItem("sa11y-remember-theme");
             if (systemInitiatedDark.matches) {
                 $sa11yTheme.text("On");
                 $sa11yTheme.attr("aria-pressed", "true");
@@ -364,48 +363,48 @@ class Sa11y {
                     $("html").attr("data-sa11y-theme", "dark");
                     $sa11yTheme.text("On");
                     $sa11yTheme.attr("aria-pressed", "true");
-                    sessionStorage.setItem("sa11y-theme", "");
+                    localStorage.setItem("sa11y-remember-theme", "");
                 } else {
                     $("html").attr("data-sa11y-theme", "light");
                     $sa11yTheme.text("Off");
                     $sa11yTheme.attr("aria-pressed", "false");
-                    sessionStorage.setItem("sa11y-theme", "");
+                    localStorage.setItem("sa11y-remember-theme", "");
                 }
             }
 
             systemInitiatedDark.addListener(prefersColorTest);
             $sa11yTheme.click(function () {
-                let theme = sessionStorage.getItem("sa11y-theme");
+                let theme = localStorage.getItem("sa11y-remember-theme");
                 if (theme === "dark") {
                     $("html").attr("data-sa11y-theme", "light");
-                    sessionStorage.setItem("sa11y-theme", "light");
+                    localStorage.setItem("sa11y-remember-theme", "light");
                     $sa11yTheme.text("Off");
                     $sa11yTheme.attr("aria-pressed", "false");
                 } else if (theme === "light") {
                     $("html").attr("data-sa11y-theme", "dark");
-                    sessionStorage.setItem("sa11y-theme", "dark");
+                    localStorage.setItem("sa11y-remember-theme", "dark");
                     $sa11yTheme.text("On");
                     $sa11yTheme.attr("aria-pressed", "true");
                 } else if (systemInitiatedDark.matches) {
                     $("html").attr("data-sa11y-theme", "light");
-                    sessionStorage.setItem("sa11y-theme", "light");
+                    localStorage.setItem("sa11y-remember-theme", "light");
                     $sa11yTheme.text("Off");
                     $sa11yTheme.attr("aria-pressed", "false");
                 } else {
                     $("html").attr("data-sa11y-theme", "dark");
-                    sessionStorage.setItem("sa11y-theme", "dark");
+                    localStorage.setItem("sa11y-remember-theme", "dark");
                     $sa11yTheme.text("On");
                     $sa11yTheme.attr("aria-pressed", "true");
                 }
             });
             if (theme === "dark") {
                 $("html").attr("data-sa11y-theme", "dark");
-                sessionStorage.setItem("sa11y-theme", "dark");
+                localStorage.setItem("sa11y-remember-theme", "dark");
                 $sa11yTheme.text("On");
                 $sa11yTheme.attr("aria-pressed", "true");
             } else if (theme === "light") {
                 $("html").attr("data-sa11y-theme", "light");
-                sessionStorage.setItem("sa11y-theme", "light");
+                localStorage.setItem("sa11y-remember-theme", "light");
                 $sa11yTheme.text("Off");
                 $sa11yTheme.attr("aria-pressed", "false");
             }
@@ -425,19 +424,19 @@ class Sa11y {
         this.checkLinkText();
         this.checkAltText();
 
-        if (localStorage.getItem("sa11y-contrastCheck") === "On") {
+        if (localStorage.getItem("sa11y-remember-contrast") === "On") {
             this.checkContrast();
         }
 
-        if (localStorage.getItem("sa11y-labelsCheck") === "On") {
+        if (localStorage.getItem("sa11y-remember-labels") === "On") {
             this.checkLabels();
         }
 
-        if (localStorage.getItem("sa11y-changerequestCheck") === "On") {
-            this.checkChangeOnRequest();
+        if (localStorage.getItem("sa11y-remember-links-advanced") === "On") {
+            this.checkLinksAdvanced();
         }
         
-        if (localStorage.getItem("sa11y-readabilityCheck") === "On") {
+        if (localStorage.getItem("sa11y-remember-readability") === "On") {
             this.checkReadability();
         }
 
@@ -606,13 +605,13 @@ class Sa11y {
                 $("#sa11y-outline-panel").removeClass("sa11y-active");
                 $outlineToggle.text("Show Outline");
                 $outlineToggle.attr("aria-expanded", "false");
-                localStorage.setItem("sa11y-outline", "closed");
+                localStorage.setItem("sa11y-remember-outline", "Closed");
             } else {
                 $outlineToggle.addClass("sa11y-outline-active");
                 $("#sa11y-outline-panel").addClass("sa11y-active");
                 $outlineToggle.text("Hide Outline");
                 $outlineToggle.attr("aria-expanded", "true");
-                localStorage.setItem("sa11y-outline", "opened");
+                localStorage.setItem("sa11y-remember-outline", "Opened");
             }
             
             $("#sa11y-outline-header > h2").get(0).focus();
@@ -632,7 +631,7 @@ class Sa11y {
         });
 
         //Remember to leave outline open
-        if (localStorage.getItem("sa11y-outline") === "opened") {
+        if (localStorage.getItem("sa11y-remember-outline") === "Opened") {
             $outlineToggle.addClass("sa11y-outline-active");
             $("#sa11y-outline-panel").addClass("sa11y-active");
             $outlineToggle.text("Hide Outline");
@@ -663,7 +662,7 @@ class Sa11y {
             $outlineToggle.attr("aria-expanded", "false");
             $outlineToggle.text("Show Outline");
             $(".sa11y-heading-label").removeClass("sa11y-label-visible");
-            localStorage.setItem("sa11y-outline", "closed");
+            localStorage.setItem("sa11y-remember-outline", "Closed");
 
             //Keyboard accessibility fix for scrollable panel content.
             if ($("#sa11y-settings-content").height() > 350) {
@@ -1523,11 +1522,11 @@ class Sa11y {
     };
 
     // ============================================================
-    // Rulesets: Change on request
+    // Rulesets: Links (Advanced) - Detect target[_blank]
     // ============================================================
-    checkChangeOnRequest = () => {
+    checkLinksAdvanced = () => {
 
-        const M = IM["changeOnRequest"];
+        const M = IM["linksAdvanced"];
 
         // Warn users of TARGET BLANK within main content.
         let $linksTargetBlank = this.root

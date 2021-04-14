@@ -273,7 +273,7 @@ const IM = {
             `More than one Announcement component found! The Announcement component should be used strategically and sparingly. It should be used to get attention or warn users about something important. Misuse of this component makes it less effective or impactful. Secondly, this component is semantically labeled as an Announcement for people who use screen readers.`,
     },
 
-    changeOnRequest: {
+    linksAdvanced: {
         newTab: () =>
             `Link opens in new tab or window without warning. Opening links in new tabs or windows can be disorienting, especially for people who have difficulty perceiving visual content. Secondly, it's not always a good practice to control a user's experience or make decisions for them. Alert the user that the link opens in a new window within the link text.`,
     },
