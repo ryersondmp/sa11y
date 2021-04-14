@@ -63,7 +63,28 @@
               
               <h2 id="list-item-2">Links</h2>
 
-              <h3>Stop words</h3>
+              <h3>Partial stop words</h3>
+              <p>If the following words are used as the hyperlink text alone, it will be flagged as an error. If used with other text, it will <strong>not</strong> be flagged as an error.</p>
+
+              <div class="ml-5 pt-4 mb-5">
+                <div class="row">
+                  <div class="col-md-6">
+                    <h4>Example 1</h4>
+                    <p>Using any of the words above on it's own will result in an error since it's not descriptive enough.</p>
+                    <a href="#" class="btn btn-primary">Learn more</a>
+                  </div>
+                  <div class="col-md-6">
+                    <h4>Example 2</h4>
+                    <p>However if used with additional text, it will not be flagged as an error.</p>
+                    <a href="#" class="btn btn-primary">Learn more about Ryerson</a>
+                  </div>
+                </div>
+                <h4 class="pt-4">Example 3</h4>
+                <p>Just another example of a partial stop word being used in a sentence. Visit <a href="#"><strong>this page</strong></a> to learn more about our history, or you can visit <a href="#"><strong>this page</strong> to learn about the
+                    future.</a></p>
+              </div>
+
+              <h3>Link text best practices</h3>
               <p>If hyperlinks contain <strong>any</strong> of the following words or characters within a hyperlink, it will be flagged as an error.</p>
 
               <div class="ml-5 pt-4 mb-5">
@@ -89,27 +110,6 @@
                     <p>Although if the URL is not too long, let's not flag it. <a href="#">https://www.ryerson.ca/programs</a></p>
                   </div>
                 </div>                
-              </div>
-
-              <h3>Partial stop words</h3>
-              <p>If the following words are used as the hyperlink text alone, it will be flagged as an error. If used with other text, it will <strong>not</strong> be flagged as an error.</p>
-
-              <div class="ml-5 pt-4 mb-5">
-                <div class="row">
-                  <div class="col-md-6">
-                    <h4>Example 1</h4>
-                    <p>Using any of the words above on it's own will result in an error since it's not descriptive enough.</p>
-                    <a href="#" class="btn btn-primary">Learn more</a>
-                  </div>
-                  <div class="col-md-6">
-                    <h4>Example 2</h4>
-                    <p>However if used with additional text, it will not be flagged as an error.</p>
-                    <a href="#" class="btn btn-primary">Learn more about Ryerson</a>
-                  </div>
-                </div>
-                <h4 class="pt-4">Example 3</h4>
-                <p>Just another example of a partial stop word being used in a sentence. Visit <a href="#"><strong>this page</strong></a> to learn more about our history, or you can visit <a href="#"><strong>this page</strong> to learn about the
-                    future.</a></p>
               </div>
 
               <h3>Hyperlinks with ARIA</h3>

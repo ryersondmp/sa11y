@@ -1,3 +1,4 @@
+
 function ButtonInserter(type, content, inline = false) {
     ValidTypes = new Set([ERROR, WARNING, PASS]);
     ButtonLang = {
@@ -141,7 +142,7 @@ class Sa11y {
                     }">${loadLabelsPreference ? "On" : "Off"}</button>
                 </li>
                 <li>
-                    <label id="check-changerequest" for="sa11y-changerequest-toggle">Change on request <span class="sa11y-badge">AAA</span></label>
+                    <label id="check-changerequest" for="sa11y-changerequest-toggle">Links (new tab) <span class="sa11y-badge">AAA</span></label>
                     <button id="sa11y-changerequest-toggle" aria-labelledby="check-changerequest" class="sa11y-settings-switch" 
                     aria-pressed="${
                         loadChangeRequestPreference ? "true" : "false"
@@ -182,7 +183,6 @@ class Sa11y {
 
         // JQuery
         $(() => {
-            //To-do: Figure out what to do with this guy.
             this.loadGlobals();
 
             //Keeps checker active when navigating between pages until it is toggled off.
@@ -238,6 +238,23 @@ class Sa11y {
                     this.onkeyup = null;
                 }
             });
+
+            //Help clean up HTML characters
+            this.sanitizeForHTML = function (string) {
+                let entityMap = {
+                    "&": "&amp;",
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    '"': "&quot;",
+                    "'": "&#39;",
+                    "/": "&#x2F;",
+                    "`": "&#x60;",
+                    "=": "&#x3D;",
+                };
+                return String(string).replace(/[&<>"'`=\/]/g, function (s) {
+                    return entityMap[s];
+                });
+            };
 
             // ----------------------------------------------------------------------
             // Toggle Readability
@@ -394,7 +411,12 @@ class Sa11y {
             }
         });
     }
-    checkAll = async (refreshPanel = true) => {
+
+    // ----------------------------------------------------------------------
+    // Check all & initialize tooltips
+    // ----------------------------------------------------------------------
+    
+    checkAll = async () => {
         this.errorCount = 0;
         this.warningCount = 0;
         this.root = $(sa11yCheckRoot);
@@ -429,14 +451,14 @@ class Sa11y {
 
         let totalCount = this.errorCount + this.warningCount;
         if (totalCount === 0) {
-            $("#sa11y-notification-badge").hide();
+            $("#sa11y-notification-badge").css("display", "none");
         } else if (this.warningCount > 0 && this.errorCount === 0) {
-            $('#sa11y-notification-badge').show();
+            $('#sa11y-notification-badge').css("display", "flex");
             $('#sa11y-notification-badge').addClass("sa11y-notification-badge-warning");
             $('#sa11y-notification-count').html(this.warningCount);
             $('#sa11y-notification-count').attr("aria-label", this.warningCount + " warnings detected.")
         } else {
-            $('#sa11y-notification-badge').show();
+            $('#sa11y-notification-badge').css("display", "flex");
             $('#sa11y-notification-count').html(totalCount);
             $('#sa11y-notification-count').attr("aria-label", totalCount + " errors detected.")
         }
@@ -453,8 +475,8 @@ class Sa11y {
     };
 
     // ============================================================
-    // loadGlobals
-    // Stores the list of elements to ignore based on configuration
+    // Stores the list of elements to ignore based on configuration.
+    // Credits to John Jameson, PrincetonU for this snippet. 
     // ============================================================
     loadGlobals = () => {
         // Look for a content container
@@ -507,7 +529,6 @@ class Sa11y {
     };
 
     // ============================================================
-    // findElements
     // Finds all elements and caches them
     // ============================================================
     findElements = () => {
@@ -530,13 +551,174 @@ class Sa11y {
             .not(containerIgnore);
     };
 
+    // ----------------------------------------------------------------------
+    // Display panel
+    // ----------------------------------------------------------------------
+    displayPanel = () => {
+        this.panelActive = true;
+        let totalCount = this.errorCount + this.warningCount;
+        $("#sa11y-panel").addClass("sa11y-active");
+
+        if (this.errorCount === 1 && this.warningCount === 1) {
+            $("#sa11y-panel-content").addClass("sa11y-errors");
+            $("#sa11y-status").text(
+                `1 accessibility error and 1 warning detected.`
+            );
+        } else if (this.errorCount === 1 && this.warningCount > 0) {
+            $("#sa11y-panel-content").addClass("sa11y-errors");
+            $("#sa11y-status").text(
+                `1 accessibility error and ${this.warningCount} warnings detected.`
+            );
+        } else if (this.errorCount > 0 && this.warningCount === 1) {
+            $("#sa11y-panel-content").addClass("sa11y-errors");
+            $("#sa11y-status").text(
+                `${this.errorCount} accessibility errors and 1 warning detected.`
+            );
+        } else if (this.errorCount > 0 && this.warningCount > 0) {
+            $("#sa11y-panel-content").addClass("sa11y-errors");
+            $("#sa11y-status").text(
+                `${this.errorCount} accessibility errors and ${this.warningCount} warnings detected.`
+            );
+        } else if (this.errorCount > 0) {
+            $("#sa11y-panel-content").addClass("sa11y-errors");
+            $("#sa11y-status").text(
+                this.errorCount === 1
+                    ? "1 accessibility issue detected."
+                    : this.errorCount + " accessibility issues detected."
+            );
+        } else if (this.warningCount > 0) {
+            $("#sa11y-panel-content").addClass("sa11y-warnings");
+            $("#sa11y-status").text(
+                totalCount === 1
+                    ? "Please review warning."
+                    : "Please review " + this.warningCount + " warnings."
+            );
+        } else {
+            $("#sa11y-panel-content").addClass("sa11y-pass");
+            $("#sa11y-status").text("No accessibility errors found.");
+        }
+
+        //Show outline panel
+        let $outlineToggle = $("#sa11y-outline-toggle");
+        $outlineToggle.click(() => {
+            if ($outlineToggle.attr("aria-expanded") == "true") {
+                $outlineToggle.removeClass("sa11y-outline-active");
+                $("#sa11y-outline-panel").removeClass("sa11y-active");
+                $outlineToggle.text("Show Outline");
+                $outlineToggle.attr("aria-expanded", "false");
+                localStorage.setItem("sa11y-outline", "closed");
+            } else {
+                $outlineToggle.addClass("sa11y-outline-active");
+                $("#sa11y-outline-panel").addClass("sa11y-active");
+                $outlineToggle.text("Hide Outline");
+                $outlineToggle.attr("aria-expanded", "true");
+                localStorage.setItem("sa11y-outline", "opened");
+            }
+            
+            $("#sa11y-outline-header > h2").get(0).focus();
+            
+            $(".sa11y-heading-label").toggleClass("sa11y-label-visible");
+
+            //Close Settings panel when Show Outline is active.
+            $("#sa11y-settings-panel").removeClass("sa11y-active");
+            $settingsToggle.removeClass("sa11y-settings-active");
+            $settingsToggle.attr("aria-expanded", "false");
+            $settingsToggle.text("Show Settings");
+
+            //Keyboard accessibility fix for scrollable panel content.
+            if ($("#sa11y-outline-list").height() > 350) {
+                $("#sa11y-outline-list").attr("tabindex", "0");
+            }
+        });
+
+        //Remember to leave outline open
+        if (localStorage.getItem("sa11y-outline") === "opened") {
+            $outlineToggle.addClass("sa11y-outline-active");
+            $("#sa11y-outline-panel").addClass("sa11y-active");
+            $outlineToggle.text("Hide Outline");
+            $outlineToggle.attr("aria-expanded", "true");
+            $(".sa11y-heading-label").toggleClass("sa11y-label-visible");
+        }
+
+        //Show settings panel
+        let $settingsToggle = $("#sa11y-settings-toggle");
+        $settingsToggle.click(() => {
+            if ($settingsToggle.attr("aria-expanded") === "true") {
+                $settingsToggle.removeClass("sa11y-settings-active");
+                $("#sa11y-settings-panel").removeClass("sa11y-active");
+                $settingsToggle.text("Show Settings");
+                $settingsToggle.attr("aria-expanded", "false");
+            } else {
+                $settingsToggle.addClass("sa11y-settings-active");
+                $("#sa11y-settings-panel").addClass("sa11y-active");
+                $settingsToggle.text("Hide Settings");
+                $settingsToggle.attr("aria-expanded", "true");
+            }
+
+            $("#sa11y-settings-header > h2").get(0).focus();
+
+            //Close Show Outline panel when Settings is active.
+            $("#sa11y-outline-panel").removeClass("sa11y-active");
+            $outlineToggle.removeClass("sa11y-outline-active");
+            $outlineToggle.attr("aria-expanded", "false");
+            $outlineToggle.text("Show Outline");
+            $(".sa11y-heading-label").removeClass("sa11y-label-visible");
+            localStorage.setItem("sa11y-outline", "closed");
+
+            //Keyboard accessibility fix for scrollable panel content.
+            if ($("#sa11y-settings-content").height() > 350) {
+                $("#sa11y-settings-content").attr("tabindex", "0");
+            }
+        });
+    };
+
     // ============================================================
-    // Headers
+    // Reset Sa11y
+    // ============================================================
+    reset = (restartPanel = true) => {
+        this.panelActive = false;
+        this.clearEverything();
+        $("#sa11y-status").text();
+        $("#sa11y-outline-toggle").off("click");
+        $("#sa11y-settings-toggle").off("click");
+
+        this.root.find(".sa11y-error-border").removeClass("sa11y-error-border");
+        this.root
+            .find(".sa11y-error-heading")
+            .removeClass("sa11y-error-heading");
+        this.root.find(".sa11y-error-message-container").remove();
+        this.root.find(".sa11y-error-text").removeClass("sa11y-error-text");
+
+        this.root
+            .find(".sa11y-warning-border")
+            .removeClass("sa11y-warning-border");
+        this.root.find(".sa11y-warning-text").removeClass("sa11y-warning-text");
+        this.root.find(".sa11y-warning-uppercase").contents().unwrap();
+        this.root.find("p").removeClass("sa11y-fake-list");
+
+        this.root.find(".sa11y-instance").remove();
+        this.root.find(".sa11y-instance-inline").remove();
+        this.root.find(".sa11y-heading-label").remove();
+        this.root.find("#sa11y-outline-list li").remove();
+        this.root.find(".sa11y-readability-period").remove();
+        this.root.find("#sa11y-readability-info span, #sa11y-readability-details li").remove();
+
+        if (restartPanel) {
+            $("#sa11y-panel-content").removeClass();
+            this.root.find("#sa11y-panel").removeClass("sa11y-active");
+        }
+    };
+    clearEverything = () => {};
+
+    // ============================================================
+    // Rulesets: Check Headings
     // ============================================================
     checkHeaders = async () => {
         let prevLevel;
         this.$h.each((i, el) => {
             let $el = $(el);
+            let text = $el.text();
+            let htext = this.sanitizeForHTML(text);
             let level;
 
             if ($el.attr("aria-level")) {
@@ -563,14 +745,14 @@ class Sa11y {
 
             let li = `<li class='sa11y-outline-${level}'>
                 <span class='sa11y-badge'>${level}</span> 
-                <span class='sa11y-outline-list-item'>${$el.text()}</span>
+                <span class='sa11y-outline-list-item'>${htext}</span>
             </li>`;
 
             let liError = `<li class='sa11y-outline-${level}'>
                 <span class='sa11y-badge sa11y-error-badge'>
                 <span aria-hidden='true'>&#10007;</span>
                 <span class='sa11y-visually-hidden'>${sa11yErrorLang}</span> ${level}</span> 
-                <span class='sa11y-outline-list-item sa11y-red-text sa11y-bold'>${$el.text()}</span>
+                <span class='sa11y-outline-list-item sa11y-red-text sa11y-bold'>${htext}</span>
             </li>`;
 
             if ($el.not(sa11yOutlineIgnore).length !== 0) {
@@ -600,7 +782,6 @@ class Sa11y {
         if ($h1.length === 0) {
             this.errorCount++;
 
-            //To-do: Make this a little prettier
             $("#sa11y-outline-header").after(
                 `<div class='sa11y-instance sa11y-missing-h1'>
                     <span class='sa11y-badge sa11y-error-badge'><span aria-hidden='true'>&#10007;</span><span class='sa11y-visually-hidden'>${sa11yErrorLang}</span></span> 
@@ -614,7 +795,7 @@ class Sa11y {
     };
 
     // ============================================================
-    // LinkText
+    // Rulesets: Link text
     // ============================================================
 
     checkLinkText = function () {
@@ -631,6 +812,7 @@ class Sa11y {
             let partialStopWords = [
                 "click",
                 "click here",
+                "click here for more",
                 "click here to learn more",
                 "check out",
                 "download",
@@ -661,8 +843,38 @@ class Sa11y {
                 ",",
                 ":",
             ];
-            let warningWords = ["< ", " >", "click here"];
-            let urlText = ["http", ".asp", ".htm", ".php", ".edu/", ".com/"];
+
+            let warningWords = [
+                "< ", 
+                " >", 
+                "click here"
+            ];
+
+            let urlText = [
+                "http", 
+                ".asp", 
+                ".htm", 
+                ".php", 
+                ".edu/", 
+                ".com/", 
+                ".net/", 
+                ".org/", 
+                ".us/", 
+                ".ca/",
+                ".de/",
+                ".icu/",
+                ".uk/",
+                ".ru/",
+                ".info/",
+                ".top/",
+                ".xyz/",
+                ".tk/",
+                ".cn/",
+                ".ga/",
+                ".cf/",
+                ".nl/",
+                ".io/"
+            ];
 
             let hit = [null, null, null];
 
@@ -767,7 +979,7 @@ class Sa11y {
     };
 
     // ============================================================
-    // Alternative text
+    // Ruleset: Alternative text
     // ============================================================
     checkAltText = () => {
         this.containsAltTextStopWords = function (alt) {
@@ -817,21 +1029,7 @@ class Sa11y {
 
             return hit;
         };
-        let sanitizeForHTML = (string) => {
-            let entityMap = {
-                "&": "&amp;",
-                "<": "&lt;",
-                ">": "&gt;",
-                '"': "&quot;",
-                "'": "&#39;",
-                "/": "&#x2F;",
-                "`": "&#x60;",
-                "=": "&#x3D;",
-            };
-            return String(string).replace(/[&<>"'`=\/]/g, function (s) {
-                return entityMap[s];
-            });
-        };
+        
         // Stores the corresponding issue text to alternative text
         const M = IM["images"];
         // Test each image for alternative text.
@@ -869,7 +1067,7 @@ class Sa11y {
 
             // If alt attribute is present, further tests are done.
             else {
-                let altText = sanitizeForHTML(alt); //Prevent tooltip from breaking.
+                let altText = this.sanitizeForHTML(alt); //Prevent tooltip from breaking.
                 let error = this.containsAltTextStopWords(altText);
                 let altLength = alt.length;
 
@@ -1011,7 +1209,7 @@ class Sa11y {
     };
 
     // ============================================================
-    // Labels
+    // Rulesets: Labels
     // ============================================================
     checkLabels = () => {
         let $inputs = this.root
@@ -1070,8 +1268,9 @@ class Sa11y {
             }
         });
     };
+
     // ============================================================
-    // QA
+    // Rulesets: QA
     // ============================================================
     checkQA = () => {
         // Stores the corresponding issue text
@@ -1082,13 +1281,11 @@ class Sa11y {
                 "video, iframe[src*='youtube.com'], iframe[src*='vimeo.com'], iframe[src*='yuja.com'], iframe[src*='panopto.com']"
             )
             .not(this.containerIgnore);
-
         $videos.each((i, el) => {
             let $el = $(el);
             this.warningCount++;
-            // Fix: Is this supposed to be $videos.addClass or $el.addClass?
-            $videos.addClass("sa11y-warning-border");
-            $videos.first().before(ButtonInserter(WARNING, M["video"]));
+            $el.addClass("sa11y-warning-border");
+            $el.first().before(ButtonInserter(WARNING, M["video"]));
         });
 
         let $audio = this.root
@@ -1099,9 +1296,8 @@ class Sa11y {
         $audio.each((i, el) => {
             let $el = $(el);
             this.warningCount++;
-            // Fix: Is this supposed to be $audio.addClass or $el.addClass?
-            $audio.addClass("sa11y-warning-border");
-            $audio.first().before(ButtonInserter(WARNING, M["audio"]));
+            $el.addClass("sa11y-warning-border");
+            $el.first().before(ButtonInserter(WARNING, M["audio"]));
         });
 
         let $dataviz = this.root
@@ -1112,9 +1308,8 @@ class Sa11y {
         $dataviz.each((i, el) => {
             let $el = $(el);
             this.warningCount++;
-            // Fix: Is this supposed to be $dataviz.addClass or $el.addClass?
-            $dataviz.addClass("sa11y-warning-border");
-            $dataviz.first().before(ButtonInserter(WARNING, M["dataViz"]));
+            $el.addClass("sa11y-warning-border");
+            $el.first().before(ButtonInserter(WARNING, M["dataViz"]));
         });
 
         let $twitterWarning = this.root
@@ -1328,7 +1523,7 @@ class Sa11y {
     };
 
     // ============================================================
-    // Change on request
+    // Rulesets: Change on request
     // ============================================================
     checkChangeOnRequest = () => {
 
@@ -1347,7 +1542,7 @@ class Sa11y {
         $linksTargetBlank.each((i, el) => {
             let $el = $(el);
 
-            var passWordsNewWindow = ["new tab", "new window"];
+            var passWordsNewWindow = ["new tab", "new window", "external"];
             var containsPassWordsNewWindow = passWordsNewWindow.some(function (
                 pass
             ) {
@@ -1363,7 +1558,7 @@ class Sa11y {
     }
 
     // ============================================================
-    // Contrast
+    // Rulesets: Contrast
     // ============================================================
     checkContrast = () => {
         var contrastErrors = {
@@ -1565,9 +1760,8 @@ class Sa11y {
     };
 
  // ============================================================
- // Readability
+ // Rulesets: Readability
  // ============================================================
-
  checkReadability = () => {
 
     //Crude hack to add a period to the end of list items to make a complete sentence.
@@ -1711,163 +1905,9 @@ class Sa11y {
        }
 
     }
-
-    // ============================================================
-
-    displayPanel = () => {
-        this.panelActive = true;
-        let totalCount = this.errorCount + this.warningCount;
-        $("#sa11y-panel").addClass("sa11y-active");
-
-        if (this.errorCount === 1 && this.warningCount === 1) {
-            $("#sa11y-panel-content").addClass("sa11y-errors");
-            $("#sa11y-status").text(
-                `1 accessibility error and 1 warning detected.`
-            );
-        } else if (this.errorCount === 1 && this.warningCount > 0) {
-            $("#sa11y-panel-content").addClass("sa11y-errors");
-            $("#sa11y-status").text(
-                `1 accessibility error and ${this.warningCount} warnings detected.`
-            );
-        } else if (this.errorCount > 0 && this.warningCount === 1) {
-            $("#sa11y-panel-content").addClass("sa11y-errors");
-            $("#sa11y-status").text(
-                `${this.errorCount} accessibility errors and 1 warning detected.`
-            );
-        } else if (this.errorCount > 0 && this.warningCount > 0) {
-            $("#sa11y-panel-content").addClass("sa11y-errors");
-            $("#sa11y-status").text(
-                `${this.errorCount} accessibility errors and ${this.warningCount} warnings detected.`
-            );
-        } else if (this.errorCount > 0) {
-            $("#sa11y-panel-content").addClass("sa11y-errors");
-            $("#sa11y-status").text(
-                this.errorCount === 1
-                    ? "1 accessibility issue detected."
-                    : this.errorCount + " accessibility issues detected."
-            );
-        } else if (this.warningCount > 0) {
-            $("#sa11y-panel-content").addClass("sa11y-warnings");
-            $("#sa11y-status").text(
-                totalCount === 1
-                    ? "Please review warning."
-                    : "Please review " + this.warningCount + " warnings."
-            );
-        } else {
-            $("#sa11y-panel-content").addClass("sa11y-pass");
-            $("#sa11y-status").text("No accessibility errors found.");
-        }
-
-        //Show outline panel
-        let $outlineToggle = $("#sa11y-outline-toggle");
-        $outlineToggle.click(() => {
-            if ($outlineToggle.attr("aria-expanded") == "true") {
-                $outlineToggle.removeClass("sa11y-outline-active");
-                $("#sa11y-outline-panel").removeClass("sa11y-active");
-                $outlineToggle.text("Show Outline");
-                $outlineToggle.attr("aria-expanded", "false");
-                localStorage.setItem("sa11y-outline", "closed");
-            } else {
-                $outlineToggle.addClass("sa11y-outline-active");
-                $("#sa11y-outline-panel").addClass("sa11y-active");
-                $outlineToggle.text("Hide Outline");
-                $outlineToggle.attr("aria-expanded", "true");
-                localStorage.setItem("sa11y-outline", "opened");
-            }
-            
-            $("#sa11y-outline-header > h2").get(0).focus();
-            
-            $(".sa11y-heading-label").toggleClass("sa11y-label-visible");
-
-            //Close Settings panel when Show Outline is active.
-            $("#sa11y-settings-panel").removeClass("sa11y-active");
-            $settingsToggle.removeClass("sa11y-settings-active");
-            $settingsToggle.attr("aria-expanded", "false");
-            $settingsToggle.text("Show Settings");
-
-            //Keyboard accessibility fix for scrollable panel content.
-            if ($("#sa11y-outline-list").height() > 350) {
-                $("#sa11y-outline-list").attr("tabindex", "0");
-            }
-        });
-
-        //Remember to leave outline open
-        if (localStorage.getItem("sa11y-outline") === "opened") {
-            $outlineToggle.addClass("sa11y-outline-active");
-            $("#sa11y-outline-panel").addClass("sa11y-active");
-            $outlineToggle.text("Hide Outline");
-            $outlineToggle.attr("aria-expanded", "true");
-            $(".sa11y-heading-label").toggleClass("sa11y-label-visible");
-        }
-
-        //Show settings panel
-        let $settingsToggle = $("#sa11y-settings-toggle");
-        $settingsToggle.click(() => {
-            if ($settingsToggle.attr("aria-expanded") === "true") {
-                $settingsToggle.removeClass("sa11y-settings-active");
-                $("#sa11y-settings-panel").removeClass("sa11y-active");
-                $settingsToggle.text("Show Settings");
-                $settingsToggle.attr("aria-expanded", "false");
-            } else {
-                $settingsToggle.addClass("sa11y-settings-active");
-                $("#sa11y-settings-panel").addClass("sa11y-active");
-                $settingsToggle.text("Hide Settings");
-                $settingsToggle.attr("aria-expanded", "true");
-            }
-
-            $("#sa11y-settings-header > h2").get(0).focus();
-
-            //Close Show Outline panel when Settings is active.
-            $("#sa11y-outline-panel").removeClass("sa11y-active");
-            $outlineToggle.removeClass("sa11y-outline-active");
-            $outlineToggle.attr("aria-expanded", "false");
-            $outlineToggle.text("Show Outline");
-            $(".sa11y-heading-label").removeClass("sa11y-label-visible");
-            localStorage.setItem("sa11y-outline", "closed");
-
-            //Keyboard accessibility fix for scrollable panel content.
-            if ($("#sa11y-settings-content").height() > 350) {
-                $("#sa11y-settings-content").attr("tabindex", "0");
-            }
-        });
-    };
-
-    reset = (restartPanel = true) => {
-        this.panelActive = false;
-        this.clearEverything();
-        $("#sa11y-status").text();
-        $("#sa11y-outline-toggle").off("click");
-        $("#sa11y-settings-toggle").off("click");
-
-        this.root.find(".sa11y-error-border").removeClass("sa11y-error-border");
-        this.root
-            .find(".sa11y-error-heading")
-            .removeClass("sa11y-error-heading");
-        this.root.find(".sa11y-error-message-container").remove();
-        this.root.find(".sa11y-error-text").removeClass("sa11y-error-text");
-
-        this.root
-            .find(".sa11y-warning-border")
-            .removeClass("sa11y-warning-border");
-        this.root.find(".sa11y-warning-text").removeClass("sa11y-warning-text");
-        this.root.find(".sa11y-warning-uppercase").contents().unwrap();
-        this.root.find("p").removeClass("sa11y-fake-list");
-
-        this.root.find(".sa11y-instance").remove();
-        this.root.find(".sa11y-instance-inline").remove();
-        this.root.find(".sa11y-heading-label").remove();
-        this.root.find("#sa11y-outline-list li").remove();
-        this.root.find(".sa11y-readability-period").remove();
-        this.root.find("#sa11y-readability-info span, #sa11y-readability-details li").remove();
-
-        if (restartPanel) {
-            $("#sa11y-panel-content").removeClass();
-            this.root.find("#sa11y-panel").removeClass("sa11y-active");
-        }
-    };
-    clearEverything = () => {};
 }
 
+//No IE support.
 if (window.navigator.userAgent.match(/MSIE|Trident/) === null) {
-    new Sa11y(); //No IE support.
+    new Sa11y(); 
 }

@@ -228,7 +228,12 @@ const IM = {
             <span class='sa11y-bold sa11y-red-text'>${el}</span>`,
 
         pdf: () =>
-            `PDFs are considered web content and must be made accessible as well. PDFs often contain issues for people who use screen readers (missing structural tags or missing form field labels) and people with low vision (text does not reflow when enlarged). If this PDF is a form, consider using an accessible HTML form as an alternative. If this PDF is a document, consider converting it into a web page. Otherwise, please <span class='sa11y-bold'>check PDF for accessibility in Acrobat DC.</span>`,
+            `PDFs are considered web content and must be made accessible as well. PDFs often contain issues for people who use screen readers (missing structural tags or missing form field labels) and people with low vision (text does not reflow when enlarged). 
+            <ul>
+                <li>If this is a form, consider using an accessible HTML form as an alternative.</li>
+                <li>If this is a document, consider converting it into a web page.</li>
+            </ul>
+            Otherwise, please <a href='https://www.adobe.com/accessibility/products/acrobat/using-acrobat-pro-accessibility-checker.html' target='_blank'>check PDF for accessibility in Acrobat DC. ${newTab}</a>`,
 
         blockquoteMessage: () =>
             `Blockquotes should be used for quotes only. They should never be used as headings. Please replace with a semantic heading (e.g. Heading 2 or Heading 3).`,

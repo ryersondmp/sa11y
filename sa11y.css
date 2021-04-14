@@ -154,7 +154,14 @@ html[data-sa11y-theme="dark"] {
     font-size: var(--sa11y-normal-text) !important;
 }
 
+.sa11y-instance {
+    display: block !important;
+}
 
+.sa11y-instance-inline {
+    text-align: left !important;
+    display: inline-block !important;
+}
 
 /*===== Main button ===== */
 #sa11y-container #sa11y-toggle {
@@ -876,15 +883,6 @@ span.sa11y-heading-label {
 }
 
 /*===== Tooltip additions ===== */
-.sa11y-instance {
-    display: block !important;
-}
-
-.sa11y-instance-inline {
-    text-align: left !important;
-    display: inline-block !important;
-}
-
 .sa11y-hr {
     padding: 0 !important;
     margin: 10px 0 !important;
@@ -900,8 +898,12 @@ span.sa11y-heading-label {
 }
 
 .tippy-box[data-theme~="sa11y-theme"] ul {
-    padding-inline-start: 20px !important;
     margin: 0 !important;
+    padding: 5px 10px 0px 20px !important;
+}
+
+.tippy-box[data-theme~="sa11y-theme"] li {
+    padding-bottom: 5px !important;
 }
 
 .tippy-box[data-theme~="sa11y-theme"] a {
