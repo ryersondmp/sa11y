@@ -4,7 +4,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>All Rulesets - Sa11y Demo</title>
+  <title>Links &amp; Tables - All Rulesets - Sa11y Demo</title>
   <link rel="stylesheet" href="main.css"/>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha256-UzFD2WYH2U1dQpKDjjZK72VtPeWP50NoJjd26rnAdUI=" crossorigin="anonymous" />
@@ -79,9 +79,18 @@
                     <a href="#" class="btn btn-primary">Learn more about Ryerson</a>
                   </div>
                 </div>
-                <h4 class="pt-4">Example 3</h4>
-                <p>Just another example of a partial stop word being used in a sentence. Visit <a href="#"><strong>this page</strong></a> to learn more about our history, or you can visit <a href="#"><strong>this page</strong> to learn about the
+                <div class="row mt-3">
+                  <div class="col-md-6">
+                    <h4 class="pt-4">Example 3</h4>
+                    <p>Just another example of a partial stop word being used in a sentence. Visit <a href="#"><strong>this page</strong></a> to learn more about our history, or you can visit <a href="#"><strong>this page</strong> to learn about the
                     future.</a></p>
+                  </div>
+                  <div class="col-md-6">
+                    <h4 class="pt-4">Example 4</h4>
+                    <p>Empty hyperlink <a href="#"></a> and sometimes single characters get linked<a href="#">.</a></p>
+                  </div>
+                </div>
+                
               </div>
 
               <h3>Link text best practices</h3>
@@ -132,8 +141,54 @@
                 <div class="row pt-4">
                   <div class="col-md-12">
                     <h4>Example 3</h4>
-                    <p>Links containing both <kbd>aria-hidden="true"</kbd> and <kbd>tabindex="-1"</kbd> will be ignored. This condition assumes developer wants to hide a duplicate visual call-to-action.</p>
+                    <p>Links with aria-hidden are always ignored.</p>
                     <a href="#" class="btn btn-primary" aria-hidden="true" tabindex="-1">Learn more</a>
+                  </div>
+                </div>
+              </div>
+
+              <h3>Links (Advanced)</h3>
+              <div class="pt-4 pb-5 ml-5">
+                <h4>Links that open in a new tab without warning (with ARIA)</h4>
+                <div class="row">
+                  <div class="col-md-6">
+                    <h5>Example 1</h5>
+                    <p>aria-label with warning text.</p>
+                    <a href="#" target="_blank" class="btn btn-primary" aria-label="Learn more about Ryerson. Opens new tab.">Learn more</a>
+                  </div>
+                  <div class="col-md-6">
+                    <h5>Example 2</h5>
+                    <p>aria-labelledby with warning text.</p>
+                    <a href="#" target="_blank" class="btn btn-primary" aria-labelledby="linkexample2">Learn more</a>
+                    <div class="sr-only" id="linkexample2">about Adam. Opens new window.</div>
+                  </div>
+                </div>
+                <div class="row mt-3">
+                  <div class="col-md-6">
+                    <h5>Example 3</h5>
+                    <p>Warning: aria-label without warning text.</p>
+                    <a href="#" target="_blank" class="btn btn-primary" aria-label="Learn more about Ryerson.">Learn more</a>
+                  </div>
+                  <div class="col-md-6">
+                    <h5>Example 4</h5>
+                    <p>Warning: aria-labelledby without warning text.</p>
+                    <a href="#" target="_blank" class="btn btn-primary" aria-labelledby="linkexample3">Learn more</a>
+                    <div class="sr-only" id="linkexample3">about Adam.</div>
+                  </div>
+                </div>
+
+                <h4 class="pt-4">Links to PDF and other files without warning</h4>
+                <div class="row">
+                  <div class="col-md-6">
+                    <h5>Example 1</h5>
+                    <p>Contains file type within link text.</p>
+                    <p>View the <a href="#asd.pdf" target="_blank">Final Report (PDF)</a></p>
+                  </div>
+                  <div class="col-md-6">
+                    <h5>Example 2</h5>
+                    <p>Does not contain file type within link text.</p>
+                    <p>View the <a href="#asd.pdf" target="_blank">Final Report</a></p>
+                  </div>
                   </div>
                 </div>
               </div>

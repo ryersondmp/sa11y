@@ -55,10 +55,10 @@ const IM = {
     linktext: {
         linkErrorMessage: () => "Remove empty hyperlinks without any text.",
 
-        linkHasAriaLabelledbyMessage: (linkText, acclinkname) =>
+        linkHasAriaLabelledby: (linkText, acclinkname) =>
             `The descriptive label for this link is: <span class='sa11y-bold'>${linkText} ${acclinkname}</span>`,
 
-        linkHasAriaLabelMessage: (hasAriaLabel) =>
+        linkHasAriaLabel: (hasAriaLabel) =>
             `The descriptive label for this link is: <span class='sa11y-bold'>${hasAriaLabel}</span>`,
 
         stopWordMessage: (error) =>
@@ -79,6 +79,17 @@ const IM = {
             `Longer, less intelligible URLs used as link text might  be difficult to listen to with assistive technology. In most cases, it is better to use human-readable text instead of the URL. Short URLs (such as a site's homepage) are okay.
             ${hr}
             <span class='sa11y-bold'>Tip!</span> Link text should always be clear, unique, and meaningful so it could be understood out of context.`,
+    },
+
+    linksAdvanced: {
+        newTabWarning: () =>
+            `Link opens in new tab or window without warning. Doing so can be disorienting, especially for people who have difficulty perceiving visual content. Secondly, it's not always a good practice to control someone's experience or make decisions for them. Indicate that the link opens in a new window within the link text.
+            ${hr}
+            <span class='sa11y-bold'>Tip!</span> Learn best practices: <a href='https://www.nngroup.com/articles/new-browser-windows-and-tabs/'>opening links in new browser windows and tabs.</a>`,
+        fileTypeWarning: () =>
+            `Link points to a PDF or downloadable file (e.g. MP3, Zip, Word Doc) without warning. Indicate the file type within the link text. If it's a large file, consider including the file size.
+            ${hr}
+            <span class='sa11y-bold'>Example:</span> Executive Report (PDF, 3MB)`
     },
 
     images: {
@@ -212,7 +223,7 @@ const IM = {
             `Data visualization widgets like this are often problematic for people who use a keyboard or screen reader to navigate, and can present significant difficulties for people with low vision or colorblindness. It's recommended to provide the same information in an alternative (text or table) format below the widget.`,
 
         twitter: () =>
-            `The default Twitter timeline may cause accessibility issues for keyboard users. Secondly, the inline scrolling of the Twitter timeline may cause usability issues for mobile. It's recommended to add the following data attributes to the embed code. 
+            `The default Twitter timeline may cause accessibility issues for people who use a keyboard to navigate. Secondly, the inline scrolling of the Twitter timeline may cause usability issues for mobile. It's recommended to add the following data attributes to the embed code. 
             ${hr}
             <span class='sa11y-bold'>It's recommended to:</span>
                 <ul>
@@ -270,12 +281,7 @@ const IM = {
             Make sure to use semantic lists by using the bullet or number formatting buttons instead. When using a semantic list, assistive technologies are able to convey information such as the total number of items and the relative position of each item in the list. Learn more about <a href='https://www.w3.org/WAI/tutorials/page-structure/content/#lists' target='_blank'>semantic lists. ${newTab}</a>`,
 
         announcementWarning: () =>
-            `More than one Announcement component found! The Announcement component should be used strategically and sparingly. It should be used to get attention or warn users about something important. Misuse of this component makes it less effective or impactful. Secondly, this component is semantically labeled as an Announcement for people who use screen readers.`,
-    },
-
-    linksAdvanced: {
-        newTab: () =>
-            `Link opens in new tab or window without warning. Opening links in new tabs or windows can be disorienting, especially for people who have difficulty perceiving visual content. Secondly, it's not always a good practice to control a user's experience or make decisions for them. Alert the user that the link opens in a new window within the link text.`,
+            `More than one Announcement component found! The Announcement component should be used strategically and sparingly. It should be used to get attention or indicate that something is important. Misuse of this component makes it less effective or impactful. Secondly, this component is semantically labeled as an Announcement for people who use screen readers.`,
     },
 
     contrast: {

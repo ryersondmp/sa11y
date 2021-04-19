@@ -109,54 +109,52 @@ class Sa11y {
                         <p id="sa11y-readability-info"></p>
                         <ul id="sa11y-readability-details"></ul>
                     </div>
-                </div>` +
-
-            //End of Page Outline tab.
-            `</div>` +
+                </div>
+            </div>` + //End of Page Outline tab.
 
             //Settings tab.
            `<div id="sa11y-settings-panel" role="tabpanel" aria-labelledby="sa11y-settings-header">
-            <div id="sa11y-settings-header" class="sa11y-header-text">
-                <h2 tabindex="-1">Settings</h2>
-            </div>
-            <div id="sa11y-settings-content">
-            <ul id="sa11y-settings-options">  
-                <li>
-                    <label id="check-contrast" for="sa11y-contrast-toggle">Contrast</label>
-                    <button id="sa11y-contrast-toggle" 
-                    aria-labelledby="check-contrast" 
-                    class="sa11y-settings-switch" 
-                    aria-pressed="${
-                        loadContrastPreference ? "true" : "false"
-                    }">${loadContrastPreference ? "On" : "Off"}</button>
-                </li>
-                <li>
-                    <label id="check-labels" for="sa11y-labels-toggle">Form labels</label>
-                    <button id="sa11y-labels-toggle" aria-labelledby="check-labels" class="sa11y-settings-switch" 
-                    aria-pressed="${
-                        loadLabelsPreference ? "true" : "false"
-                    }">${loadLabelsPreference ? "On" : "Off"}</button>
-                </li>
-                <li>
-                    <label id="check-changerequest" for="sa11y-links-advanced-toggle">Links (Advanced) <span class="sa11y-badge">AAA</span></label>
-                    <button id="sa11y-links-advanced-toggle" aria-labelledby="check-changerequest" class="sa11y-settings-switch" 
-                    aria-pressed="${
-                        loadChangeRequestPreference ? "true" : "false"
-                    }">${loadChangeRequestPreference ? "On" : "Off"}</button>
-                </li>
-                <li>
-                    <label id="check-readability" for="sa11y-readability-toggle">Readability <span class="sa11y-badge">AAA</span></label>
-                    <button id="sa11y-readability-toggle" aria-labelledby="check-readability" class="sa11y-settings-switch" 
-                    aria-pressed="${
-                        loadReadabilityPreference ? "true" : "false"
-                    }">${loadReadabilityPreference ? "On" : "Off"}</button>
-                </li>
-                <li>
-                    <label id="dark-mode" for="sa11y-theme-toggle">Dark mode</label>
-                    <button id="sa11y-theme-toggle" aria-labelledby="dark-mode" class="sa11y-settings-switch"></button>
-                </li>
-            </ul>
-            </div>
+                <div id="sa11y-settings-header" class="sa11y-header-text">
+                    <h2 tabindex="-1">Settings</h2>
+                </div>
+                <div id="sa11y-settings-content">
+                    <ul id="sa11y-settings-options">  
+                        <li>
+                            <label id="check-contrast" for="sa11y-contrast-toggle">Contrast</label>
+                            <button id="sa11y-contrast-toggle" 
+                            aria-labelledby="check-contrast" 
+                            class="sa11y-settings-switch" 
+                            aria-pressed="${
+                                loadContrastPreference ? "true" : "false"
+                            }">${loadContrastPreference ? "On" : "Off"}</button>
+                        </li>
+                        <li>
+                            <label id="check-labels" for="sa11y-labels-toggle">Form labels</label>
+                            <button id="sa11y-labels-toggle" aria-labelledby="check-labels" class="sa11y-settings-switch" 
+                            aria-pressed="${
+                                loadLabelsPreference ? "true" : "false"
+                            }">${loadLabelsPreference ? "On" : "Off"}</button>
+                        </li>
+                        <li>
+                            <label id="check-changerequest" for="sa11y-links-advanced-toggle">Links (Advanced) <span class="sa11y-badge">AAA</span></label>
+                            <button id="sa11y-links-advanced-toggle" aria-labelledby="check-changerequest" class="sa11y-settings-switch" 
+                            aria-pressed="${
+                                loadChangeRequestPreference ? "true" : "false"
+                            }">${loadChangeRequestPreference ? "On" : "Off"}</button>
+                        </li>
+                        <li>
+                            <label id="check-readability" for="sa11y-readability-toggle">Readability <span class="sa11y-badge">AAA</span></label>
+                            <button id="sa11y-readability-toggle" aria-labelledby="check-readability" class="sa11y-settings-switch" 
+                            aria-pressed="${
+                                loadReadabilityPreference ? "true" : "false"
+                            }">${loadReadabilityPreference ? "On" : "Off"}</button>
+                        </li>
+                        <li>
+                            <label id="dark-mode" for="sa11y-theme-toggle">Dark mode</label>
+                            <button id="sa11y-theme-toggle" aria-labelledby="dark-mode" class="sa11y-settings-switch"></button>
+                        </li>
+                    </ul>
+                </div>
             </div>` 
             +
             //Main panel that conveys state of page.
@@ -176,8 +174,8 @@ class Sa11y {
                 <div aria-hidden="true">&nbsp;&nbsp;</div> 
             </div>` +
 
-            //End of main container.
-            `</div>`;
+        //End of main container.
+        `</div>`;
 
         $("body").prepend(sa11ycontainer);
 
@@ -238,7 +236,7 @@ class Sa11y {
                 }
             });
 
-            //Help clean up HTML characters
+            //Helper: Help clean up HTML characters for tooltips and outline panel.
             this.sanitizeForHTML = function (string) {
                 let entityMap = {
                     "&": "&amp;",
@@ -254,6 +252,30 @@ class Sa11y {
                     return entityMap[s];
                 });
             };
+
+            //Helper: Handle ARIA labels for Link Text module.
+            this.computeAriaLabel = function ($el) {
+                if ($el.is("[aria-label]")) {
+                    return $el.attr("aria-label");
+                }
+                else if ($el.is("[aria-labelledby]")) {
+                    let target = $el.attr("aria-labelledby");
+                    if (target.length > 0) {
+                        target = "#" + target;
+                        target = target.replace(/ /g, ", #");
+                        let returnText = "";
+                        $(target).each(function () {
+                            returnText += $(this).text() + " ";
+                        });
+                    return returnText;
+                    } else {
+                        return "";
+                    }
+                } else {
+                    return "noAria";
+                }
+            };
+        
 
             // ----------------------------------------------------------------------
             // Toggle Readability
@@ -932,32 +954,19 @@ class Sa11y {
             else if (error[0] != null) {
                 if (hasAriaLabelledBy != null) {
                     var acclinkname = $("#"+hasAriaLabelledBy).text();
-                    $el.after(
-                        ButtonInserter(
-                            PASS,
-                            M["linkHasAriaLabelledbyMessage"](
-                                linkText,
-                                acclinkname
-                            ),
-                            true
-                        )
+                    $el.before(
+                        ButtonInserter(PASS, M["linkHasAriaLabelledby"](linkText, acclinkname), true)
                     );
                 } else if (hasAriaLabel != null) {
-                    $el.after(
-                        ButtonInserter(
-                            PASS,
-                            M["linkHasAriaLabelMessage"](hasAriaLabel),
-                            true
-                        )
+                    $el.before(
+                        ButtonInserter(PASS, M["linkHasAriaLabel"](hasAriaLabel), true)
                     );
                 } else if ($el.attr("aria-hidden") == "true" && $el.attr("tabindex") == "-1") {
-                    //do nothing.
+                    //Do nothing.
                 } else {
                     this.errorCount++;
                     $el.addClass("sa11y-error-text");
-                    $el.after(
-                        ButtonInserter(ERROR, M["stopWordMessage"](error[0]), true)
-                    );
+                    $el.after(ButtonInserter(ERROR, M["stopWordMessage"](error[0]), true));
                 }
             } 
             
@@ -978,6 +987,104 @@ class Sa11y {
     };
 
     // ============================================================
+    // Rulesets: Links (Advanced) - Detect target[_blank]
+    // ============================================================
+    checkLinksAdvanced = () => {
+
+        const M = IM["linksAdvanced"];
+
+        let $linksTargetBlank = this.root
+            .find("a[href]")
+            .not(this.linkIgnore)
+            .not("#sa11y-container a")
+            .not(".sa11y-exclude");
+
+        $linksTargetBlank.each((i, el) => {
+            let $el = $(el);
+            let linkText = this.computeAriaLabel($el);
+
+            var newWindowPhrases = [
+                "external",
+                "new tab", 
+                "new window", 
+                "pop-up", 
+                "pop up"
+            ];
+
+            var fileTypeMatch = $el.filter(`
+                a[href$='.pdf'], 
+                a[href$='.doc'], 
+                a[href$='.zip'], 
+                a[href$='.mp3'], 
+                a[href$='.txt'], 
+                a[href$='.exe'], 
+                a[href$='.dmg'], 
+                a[href$='.rtf'],
+                a[href$='.pptx'],
+                a[href$='.ppt'],
+                a[href$='.xls'],
+                a[href$='.xlsx'],
+                a[href$='.csv'],
+                a[href$='.mp4'],
+                a[href$='.mov'],
+                a[href$='.avi']
+            `).length;
+
+            var fileTypePhrases = [
+                "document",
+                "pdf",
+                "doc",
+                "docx",
+                "word",
+                "mp3",
+                "ppt",
+                "pptx",
+                "powerpoint",
+                "txt",
+                "exe",
+                "dmg",
+                "rtf",
+                "install",
+                "windows",
+                "macos",
+                "spreadsheet",
+                "csv",
+                "xls",
+                "xlsx",
+                "video",
+                "mp4",
+                "mov",
+                "avi"
+            ];
+            
+            if (linkText === 'noAria') {
+                linkText = $el.text();
+            }
+
+            var containsNewWindowPhrases = newWindowPhrases.some(function(pass) {
+                return linkText.toLowerCase().indexOf(pass) >= 0;
+            });
+
+            var containsFileTypePhrases = fileTypePhrases.some(function(pass) {
+                return linkText.toLowerCase().indexOf(pass) >= 0;
+            });
+
+            if ($el.attr("target") === "_blank" && fileTypeMatch === 0 && !containsNewWindowPhrases) {
+                this.warningCount++;
+                $el.addClass("sa11y-warning-text");
+                $el.after(ButtonInserter(WARNING, M["newTabWarning"], true));
+            }
+
+            if (fileTypeMatch === 1 && !containsFileTypePhrases) {
+                this.warningCount++;
+                $el.addClass("sa11y-warning-text");
+                $el.before(ButtonInserter(WARNING, M["fileTypeWarning"], true));
+            }
+            
+        });
+    }
+
+    // ============================================================
     // Ruleset: Alternative text
     // ============================================================
     checkAltText = () => {
@@ -987,7 +1094,8 @@ class Sa11y {
                 ".jpg", 
                 ".jpeg", 
                 ".gif", 
-                ".tiff"
+                ".tiff",
+                ".svg"
             ];
             let susWords = [
                 "image of",
@@ -1522,41 +1630,6 @@ class Sa11y {
     };
 
     // ============================================================
-    // Rulesets: Links (Advanced) - Detect target[_blank]
-    // ============================================================
-    checkLinksAdvanced = () => {
-
-        const M = IM["linksAdvanced"];
-
-        // Warn users of TARGET BLANK within main content.
-        let $linksTargetBlank = this.root
-            .find("a[target='_blank']")
-            .not(this.linkIgnore)
-            .not("a[href$='.pdf']")
-            .not("a[href$='.docx']")
-            .not("#sa11y-container a")
-            .not(".sa11y-exclude");
-
-        //To-do: Adam to improve verbiage. Make clear that this is AAA.
-        $linksTargetBlank.each((i, el) => {
-            let $el = $(el);
-
-            var passWordsNewWindow = ["new tab", "new window", "external"];
-            var containsPassWordsNewWindow = passWordsNewWindow.some(function (
-                pass
-            ) {
-                return $el.text().toLowerCase().indexOf(pass) >= 0;
-            });
-
-            if ($el && !containsPassWordsNewWindow) {
-                this.warningCount++;
-                $el.addClass("sa11y-warning-text");
-                $el.first().after(ButtonInserter(WARNING, M["newTab"], true));
-            }
-        });
-    }
-
-    // ============================================================
     // Rulesets: Contrast
     // ============================================================
     checkContrast = () => {
@@ -1764,10 +1837,10 @@ class Sa11y {
  checkReadability = () => {
 
     //Crude hack to add a period to the end of list items to make a complete sentence.
-    $('main li, [role="main"] li').each(function() {
+    $("main li, [role='main'] li").each(function() {
        var endOfList = $(this), listText = endOfList.text();
-       if (listText.charAt(listText.length-1) !== '.') {
-           $('main li, [role="main"] li').append('<span class="sa11y-readability-period sa11y-visually-hidden">.</span>');
+       if (listText.charAt(listText.length-1) !== ".") {
+           $("main li, [role='main'] li").append('<span class="sa11y-readability-period sa11y-visually-hidden">.</span>');
        }
    });
 
