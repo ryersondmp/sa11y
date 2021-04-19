@@ -557,13 +557,12 @@ class Sa11y {
         this.$p = root.find("p").not(containerIgnore);
         this.$h = root
             .find("h1, h2, h3, h4, h5, h6, [role='heading'][aria-level]")
-            .not(":hidden")
             .not(containerIgnore);
         this.$mainPandLi = root
             .find("main p, main li, [role='main'] p, [role='main'] li")
             .not(containerIgnore);
-        this.$img = root.find("img").not(imageIgnore).not(":hidden");
-        this.$iframe = root.find("iframe").not(containerIgnore).not(":hidden");
+        this.$img = root.find("img").not(imageIgnore);
+        this.$iframe = root.find("iframe").not(containerIgnore);
         this.$table = root.find("table").not(containerIgnore);
         this.$contrast = root
             .find("*:visible")
