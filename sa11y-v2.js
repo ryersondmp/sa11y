@@ -517,9 +517,9 @@ class Sa11y {
                     containerSelectors[i] + " *, " + containerSelectors[i];
             }
             sa11yContainerIgnore =
-                "[aria-hidden]" + separator + containerSelectors.join();
+                "[aria-hidden='true']" + separator + containerSelectors.join();
         } else {
-            sa11yContainerIgnore = "[aria-hidden]";
+            sa11yContainerIgnore = "[aria-hidden='true']";
         }
         this.containerIgnore = sa11yContainerIgnore;
         // Images ignore defaults plus presentation role.
@@ -541,7 +541,7 @@ class Sa11y {
             sa11yLinkIgnore +
             sa11yContainerIgnore +
             separator +
-            "[aria-hidden]";
+            "[aria-hidden='true']";
         if (sa11yHeaderIgnore.length > 0) {
             this.headerIgnore += separator + sa11yContainerIgnore;
         } else {
@@ -562,8 +562,8 @@ class Sa11y {
         this.$mainPandLi = root
             .find("main p, main li, [role='main'] p, [role='main'] li")
             .not(containerIgnore);
-        this.$img = root.find("img").not(imageIgnore);
-        this.$iframe = root.find("iframe").not(containerIgnore);
+        this.$img = root.find("img").not(imageIgnore).not(":hidden");
+        this.$iframe = root.find("iframe").not(containerIgnore).not(":hidden");
         this.$table = root.find("table").not(containerIgnore);
         this.$contrast = root
             .find("*:visible")

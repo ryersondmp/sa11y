@@ -149,7 +149,7 @@
 
               <h3>Links (Advanced)</h3>
               <div class="pt-4 pb-5 ml-5">
-                <h4>Links that open in a new tab without warning (with ARIA)</h4>
+                <h4>Links that open in a new tab without warning</h4>
                 <div class="row">
                   <div class="col-md-6">
                     <h5>Example 1</h5>
@@ -176,6 +176,18 @@
                     <div class="sr-only" id="linkexample3">about Adam.</div>
                   </div>
                 </div>
+                <div class="row mt-3">
+                  <div class="col-md-6">
+                    <h5>Example 5</h5>
+                    <p>Warning: Plain text example.</p>
+                    <p>Learn more about <a href="https://www.google.com" target="_blank">Google.</a></p>
+                  </div>
+                  <div class="col-md-6">
+                    <h5>Example 6</h5>
+                    <p>Pass: Plain text example with visually hidden warning.</p>
+                    <p>Learn more about <a href="https://www.google.com" target="_blank">Google.<span class="sr-only"> (Opens new tab).</span></a></p>
+                  </div>
+                </div>
 
                 <h4 class="pt-4">Links to PDF and other files without warning</h4>
                 <div class="row">
@@ -186,7 +198,7 @@
                   </div>
                   <div class="col-md-6">
                     <h5>Example 2</h5>
-                    <p>Does not contain file type within link text.</p>
+                    <p>Warning: Does not contain file type within link text.</p>
                     <p>View the <a href="#asd.pdf" target="_blank">Final Report</a></p>
                   </div>
                   </div>
