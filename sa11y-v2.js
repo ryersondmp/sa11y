@@ -493,6 +493,14 @@ class Sa11y {
             allowHTML: true,
             appendTo: document.body,
         });
+
+        //Detect parent containers that have hidden overflow.
+        $(".sa11y-btn").parents().each(function() {
+            if ($(this).css("overflow") === "hidden") {
+                $(this).addClass("sa11y-overflow")
+            }
+        });
+
     };
 
     // ============================================================
@@ -702,6 +710,9 @@ class Sa11y {
         $("#sa11y-outline-toggle").off("click");
         $("#sa11y-settings-toggle").off("click");
 
+        this.root.find(".sa11y-overflow").removeClass("sa11y-overflow");
+        this.root.find(".sa11y-fake-heading").removeClass("sa11y-fake-heading");
+
         this.root.find(".sa11y-error-border").removeClass("sa11y-error-border");
         this.root
             .find(".sa11y-error-heading")
@@ -819,15 +830,6 @@ class Sa11y {
     // ============================================================
 
     checkLinkText = function () {
-        /* Mini function if you need to exclude any text contained with a span. We created this function to ignore automatically appended sr-only text for external links and document filetypes.
-
-        $.fn.ignore = function(sel){
-        return this.clone().find(sel||">*").remove().end();
-        };
-
-        Example: If you need to ignore any text within <span class="sr-only">test</span>.
-        $el.ignore("span.sr-only").text().trim(); */
-
         let containsLinkTextStopWords = function (textContent) {
             let partialStopWords = [
                 "click",
@@ -927,6 +929,22 @@ class Sa11y {
             return hit;
         };
 
+        /* Mini function if you need to exclude any text contained with a span. We created this function to ignore automatically appended sr-only text for external links and document filetypes.
+
+        $.fn.ignore = function(sel){
+            return this.clone().find(sel||">*").remove().end();
+        };
+
+        $el.ignore("span.sr-only").text().trim();
+            
+        Example: <a href="#">learn more <span class="sr-only">(external)</span></a>
+        
+        This function will ignore the text "(external)", and correctly flag this link as an error for non descript link text. */
+
+        $.fn.ignore = function(sel){
+            return this.clone().find(sel||">*").remove().end();
+        };
+
         let $links = this.root.find("a[href]").not(this.linkIgnore);
         
         const M = IM["linktext"];
@@ -936,7 +954,7 @@ class Sa11y {
             var linkText = $el.text();
             var hasAriaLabelledBy = $el.attr("aria-labelledby");
             var hasAriaLabel = $el.attr("aria-label");
-            var error = containsLinkTextStopWords($el.text().trim());
+            var error = containsLinkTextStopWords($el.ignore("noscript").text().trim());
 
             //Flag empty hyperlinks
             if (
@@ -1110,7 +1128,8 @@ class Sa11y {
                 "photo",
                 "placeholder",
                 "placeholder image",
-                "spacer"
+                "spacer",
+                "."
             ];
 
             let hit = [null, null, null];
@@ -1252,8 +1271,10 @@ class Sa11y {
                 }
 
                 //Decorative alt and not a link.
-                else if (alt == "" && $el.parents().not("a[href]")) {
-                    $el.before(ButtonInserter(PASS, M["decorativeMessage"]));
+                else if ((alt == "" || alt == " ") && $el.parents().not("a[href]")) {
+                    this.warningCount++;
+                    $el.addClass("sa11y-warning-border");
+                    $el.before(ButtonInserter(WARNING, M["decorativeMessage"]));
                 }
 
                 //Link and contains alt text.
@@ -1358,15 +1379,23 @@ class Sa11y {
                 this.errorCount++;
                 $el.addClass("sa11y-error-border");
                 $el.after(ButtonInserter(ERROR, M["missingLabelMessage"], true));
-            } else if ($el.attr("aria-label")) {
+            } 
+            
+            /* Could be a warning potentially. Removed for now.
+            else if ($el.attr("aria-label")) {
                 this.warningCount++;
                 $el.addClass("sa11y-warning-border");
                 $el.after(ButtonInserter(WARNING, M["ariaLabelInputMessage"], true));
-            } else if ($el.prev().is("label")) {
+            } */
+            
+            else if ($el.prev().is("label")) {
                 let label = $el.prev();
+                
                 if (label.attr("for") == $el.attr("id")) {
                     /* Optional: add pass border. */
-                } else {
+                } 
+                
+                else {
                     this.errorCount++;
                     $el.addClass("sa11y-error-border");
                     $el.after(ButtonInserter(ERROR, M["noForAttributeMessage"]($el.attr("id")),true));
@@ -1480,8 +1509,8 @@ class Sa11y {
 
         $queryUppercase.each(function () {
             let $this = $(this);
-
-            var uppercasePattern = /(?!<a[^>]*?>)(\b[A-Z]['!:A-Z\s]{15,}|\b[A-Z]{15,}\b)(?![^<]*?<\/a>)/g;
+            
+            var uppercasePattern = /(?!<a[^>]*?>)(\b[A-Z]['!;,:A-Z\s]{15,}|\b[A-Z]{15,}\b)(?![^<]*?<\/a>)/g;
             var replaceUppercase =
                 '<span class="sa11y-warning-uppercase">$1</span>' +
                 ButtonInserter(WARNING, M["uppercaseWarning"], true);
@@ -1518,10 +1547,10 @@ class Sa11y {
             }
             findTHeaders.each(function () {
                 let $th = $(this);
-                if ($th.text().trim().length < 1) {
+                if ($th.text().trim().length == 0) {
                     this.errorCount++;
-                    findTHeaders.addClass("sa11y-error-border");
-                    findTHeaders.append(
+                    $th.addClass("sa11y-error-border");
+                    $th.append(
                         ButtonInserter(ERROR, M["tables"]["emptyHeading"])
                     );
                 }
@@ -1548,6 +1577,22 @@ class Sa11y {
                 $el.before(ButtonInserter(WARNING, M["badItalics"]));
             }
         });
+
+        // Warning: Detect fake headings.
+        this.$p.each((i, el) => {
+            let $el = $(el);
+            var $fakeHeading = $el.has("strong").filter(function() {
+                return $(this).contents().length === 1;
+            });
+        
+            if ($fakeHeading.text().length <= 25) {
+                $fakeHeading.addClass("sa11y-fake-heading");
+                $fakeHeading.before(ButtonInserter(WARNING, M["fakeHeading"], true));
+            }
+        });
+        if ($(".sa11y-fake-heading").length > 0) {
+            this.warningCount++;
+        }
 
         /* Thanks to John Jameson from PrincetonU for this ruleset! */
         // Detect paragraphs that should be lists: a. A. a) A) * - -- •.
@@ -1597,7 +1642,8 @@ class Sa11y {
                             hit = true;
                         }
                     }
-                } else if (hit) {
+                }
+                if (hit) {
                     this.warningCount++;
                     $first.before(
                         ButtonInserter(WARNING, M["shouldBeList"](firstPrefix))

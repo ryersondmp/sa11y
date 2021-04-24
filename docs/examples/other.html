@@ -55,12 +55,11 @@
               <strong class="mt-1 mb-2">On this page:</strong>
               <a class="list-group-item list-group-item-action" href="#list-item-0">Page language</a>
               <a class="list-group-item list-group-item-action" href="#list-item-1">PDF content</a>
-              <a class="list-group-item list-group-item-action" href="#list-item-2">Links that open in a new tab/window</a>
-              <a class="list-group-item list-group-item-action" href="#list-item-3">Uppercase text</a>
-              <a class="list-group-item list-group-item-action" href="#list-item-4">Audio and video</a>
-              <a class="list-group-item list-group-item-action" href="#list-item-5">Social media widgets</a>
-              <a class="list-group-item list-group-item-action" href="#list-item-6">Detect specific links</a>
-              <a class="list-group-item list-group-item-action" href="#list-item-7">Fake list</a>
+              <a class="list-group-item list-group-item-action" href="#list-item-2">Uppercase text</a>
+              <a class="list-group-item list-group-item-action" href="#list-item-3">Audio and video</a>
+              <a class="list-group-item list-group-item-action" href="#list-item-4">Social media widgets</a>
+              <a class="list-group-item list-group-item-action" href="#list-item-5">Detect specific links</a>
+              <a class="list-group-item list-group-item-action" href="#list-item-6">Fake list</a>
             </div>
           </div>
 
@@ -86,27 +85,6 @@
 
               <p>People who use screen readers are not warned when a page opens in a new window. This may cause confusion if they try to go back a page. Secondly, it's not good practice to control a user's experience or make decisions for them.</p>
 
-              <div class="ml-5">
-                <h3>Relevant articles</h3>
-                <ul>
-                  <li><strong>Usability:</strong> <a href="https://www.smashingmagazine.com/2008/07/should-links-open-in-new-windows/">Should links open in new windows?</a> (Source: Smashing Magazine)</li>
-                  <li><strong>Usability:</strong> <a href="https://www.webcredible.com/blog/beware-opening-links-new-window/">Beware of opening links in a new window.</a> (Source: webcredible)</li>
-                  <li><strong>Accessibility:</strong> <a href="https://www.w3.org/TR/WCAG20-TECHS/G200.html">Opening new windows and tabs from a link only when necessary.</a> (Source: W3/WCAG 2.1)</li>
-                  <li><strong>Accessibility:</strong> <a href="https://www.w3.org/TR/WCAG20-TECHS/G201.html">Giving users advanced warning when opening a new window.</a> (Source: W3/WCAG 2.1)</li>
-                </ul>
-
-                <h3>Example</h3>
-                <p>All 5 links below contain <kbd>target="_blank"</kbd>.</p>
-                <ul>
-                  <li class="pb-2"><a href="#" target="_blank">Example #1 <i class="fas fa-external-link-alt"></i></a></li>
-                  <li class="pb-2"><a href="#" target="_blank">Example #2 - opens new tab. <i class="fas fa-external-link-alt"></i></a> - contains "new tab" within hyperlink text.</li>
-                  <li class="pb-2"><a href="#" target="_blank">Example #3 - opens new window. <i class="fas fa-external-link-alt"></i></a> - contains "new window" within hyperlink text.</li>
-                  <li class="pb-2"><a href="#" target="_blank">Example #4 <i class="fas fa-external-link-alt"></i><span class="sr-only">opens new tab</span></a> - contains visually hidden "new tab" within hyperlink text.</li>
-                  <li class="pb-2"><a href="#" target="_blank">Example #5 <i class="fas fa-external-link-alt"></i><span class="sr-only">opens new window</span></a> - contains visually hidden "new window" within hyperlink text.</li>
-                </ul>
-              </div>
-
-
               <h2 id="list-item-3" class="pt-3">Uppercase text</h2>
               <p>This warning is to discourage the use of uppercase text. This is <strong>not</strong> a WCAG 2.1 requirement, however based on research it is a strongly discouraged practice for readability. Secondly, some capitalized words may be mistaken for an
                 acronym and ready out character by character with a screen reader.</p>
@@ -120,13 +98,12 @@
                 </div>
                 <div class="col-md-6">
                   <h3>Example #2</h3>
-                  <p>FOR EXAMPLE, THIS WILL not be flagged.</p>
+                  <p>FOR EXAMPLE, this WILL NOT be flagged.</p>
                 </div>
                 <div class="col-md-12">
                   <h3>Example #3</h3>
                   <ul>
                     <li>UPPERCASE TEXT WITHIN BULLETS will be flagged too.</li>
-                    <li>UPPERCASE text WITHIN BULLETS will be FLAGGED TOO.</li>
                   </ul>
                 </div>
               </div>
@@ -144,8 +121,7 @@
                 <div class="col-md-6">
                   <h3>Example #2 - Audio</h3>
                   <p>This condition tests for the presense of an HTML <kbd>&lt;audio&gt;</kbd> tag and <a href="https://soundcloud.com/">SoundCloud.</a></p>
-                  <iframe width="100%" height="315" scrolling="no" frameborder="no" allow="autoplay"
-                    src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/243919829&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
+                  <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/158888399&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
                 </div>
               </div>
 
@@ -171,10 +147,14 @@
               <p class="ml-5">For example, a hyperlink that points to wp-admin incorrectly: <a href="https://www.ryerson.ca/wp-admin/">About Ryerson</a></p>
 
               <h2 id="list-item-7" class="pt-3">Fake list content</h2>
-              <p>Thanks to <a href="https://itmaybejj.github.io/editoria11y/">John Jameson (Editoria11y)</a> for this check.</p>
               <p>a) Sometimes people will manually create a list<br>
               b) using fake list prefixes<br>
               c) instead of using a semantic list.</p>
+
+              <h3>Another fake list</h3>
+              <p>a. Apples</p>
+              <p>b. Bananas</p>
+              <p>c. Pears</p>
 
             </div>
           </div>

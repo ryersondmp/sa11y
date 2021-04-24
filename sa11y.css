@@ -1,7 +1,7 @@
 :root {
     --sa11y-font-face: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
         "Helvetica Neue", Arial, "FontAwesome", sans-serif;
-    --sa11y-large-text: 17px;
+    --sa11y-large-text: 16px;
     --sa11y-normal-text: 15px;
     --sa11y-focus-color: rgb(0 208 255 / 75%);
 
@@ -161,6 +161,11 @@ html[data-sa11y-theme="dark"] {
 .sa11y-instance-inline {
     text-align: left !important;
     display: inline-block !important;
+}
+
+.sa11y-overflow {
+    overflow: visible !important;
+    height: auto !important;
 }
 
 /*===== Main button ===== */
@@ -364,8 +369,11 @@ html[data-sa11y-theme="dark"] {
 #sa11y-container #sa11y-settings-content,
 #sa11y-container #sa11y-outline-content {
     border-bottom: 1px solid var(--sa11y-panel-bg-splitter) !important;
-    max-height: 250px !important;
     padding: 0px 15px 10px 15px !important;
+}
+
+#sa11y-container #sa11y-outline-content {
+    max-height: 250px !important;
     overflow-y: auto !important;
 }
 
@@ -507,6 +515,7 @@ html[data-sa11y-theme="dark"] {
     text-align: center !important;
 }
 
+#sa11y-container #sa11y-other-options li,
 #sa11y-container #sa11y-settings-options li {
     align-items: center !important;
     display: flex !important;
@@ -515,6 +524,7 @@ html[data-sa11y-theme="dark"] {
     list-style-type: none !important;
 }
 
+#sa11y-container #sa11y-other-options li + li,
 #sa11y-container #sa11y-settings-options li + li {
     border-top: 1px solid !important;
     border-color: var(--sa11y-panel-bg-splitter) !important;
