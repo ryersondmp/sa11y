@@ -99,22 +99,64 @@
               <div class="ml-5 mt-4 mb-5">
 
                 <h4>Example #1</h4>
-                <p>If a blockquote is less than 25 characters it will be flagged as an error.</p>
+                <p>If a blockquote is less than 25 characters it will be flagged as an warning.</p>
 
                 <blockquote class="blockquote">
-                  <p class="mb-0">Lorem ipsum dolor sit am</p>
+                  <p class="mb-0">About the team</p>
                 </blockquote>
+                <p>Donec metus urna, pharetra vel ipsum id, egestas ultrices sapien. Nullam viverra vitae turpis quis consequat. Fusce porttitor urna in ipsum ornare pulvinar. Donec sed sagittis ex. Vivamus vel eros ac augue tempor faucibus sit amet in lacus. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aliquam tincidunt metus sem, ac sagittis diam semper sit amet. Vestibulum porttitor vel velit ut finibus. Praesent mauris enim, faucibus ut interdum sed, feugiat in metus.</p>
 
                 <h4>Example #2</h4>
                 <p>A blockquote greater than 25 characters will not be flagged as an error.</p>
                 <blockquote class="blockquote">
-                  <p class="mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                  <p class="mb-0">"To be, or not to be, that is the question."</p>
                 </blockquote>
               </div>
 
-              <div class="ml-5 mt-4 mb-5">
-                  <p><strong>Fake heading</strong></p>
-                  <p><strong>Fake heading Lorem ipsum dolor sit amet, consectetur adipiscing elit.</strong></p>
+              <h3>Bolded text used as headings</h3>
+              <div class="mt-4 mb-5">
+
+                  <h4>Algorithm 1</h4>
+                  <p>Bolded text as heading. We're looking for paragraph tags that look like this: <kbd><span style="color:#00c4ff;font-weight:600;">&lt;p&gt;&lt;strong&gt;</span>Some text<span style="color:#00c4ff;font-weight:600;">&lt;/strong&gt;&lt;/p&gt;</span></kbd></p>
+
+                  <div class="ml-5">
+                  <p><strong>About us</strong></p>
+                  <p>Paragraph that only contains strong elements. If the text length is less than 25, flag as warning. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis tristique sollicitudin nibh. Etiam erat velit scelerisque in dictum non consectetur. Augue lacus viverra vitae congue eu consequat. Egestas maecenas pharetra convallis posuere morbi leo urna.</p>
+
+                  <p><strong>This shouldn't be flagged since it's long and not necessarily a heading. It could just be a big block of bolded text. It is over 120 characters.</strong></p>
+                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis tristique sollicitudin nibh. Etiam erat velit scelerisque in dictum non consectetur. Augue lacus viverra vitae congue eu consequat. Egestas maecenas pharetra convallis posuere morbi leo urna.</p>
+                  </div>
+
+                  <h4>Algorithm 2</h4>
+                  <p>Bolded text as heading with line breaks. We're looking for paragraph tags that start with strong tag, and have a line break either before the closing strong tag or after. It will only flag paragraphs that have more than 300 characters.</p>
+
+                  
+                  <h5>Example 1</h5>
+                  <p><kbd><span style="color:#00c4ff;font-weight:600;">&lt;p&gt;&lt;strong&gt;</span>Fake heading<span style="color:#00c4ff;font-weight:600;">&lt;br&gt;&lt;/strong&gt;</span> Followed by some text.&lt;/p&gt;</kbd></p>
+                  
+                  <div class="ml-5">
+                  <p><strong>About us<br></strong>Will not be flagged because it's a small paragraph. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis tristique sollicitudin nibh.</p>
+
+                  <p><strong>Ryerson University Central Receiving<br></strong> 105 Bond Street<br> Toronto, ON<br> M5B 2K3</p>
+
+                  <p><strong>This won't be flagged either since this bolded text is long and not necessarily a heading. It could just be a big block of bolded text. It is over 120 characters.<br></strong>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis tristique sollicitudin nibh. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis tristique sollicitudin nibh. Etiam erat velit scelerisque in dictum non consectetur. Augue lacus viverra vitae congue eu consequat. Egestas maecenas pharetra convallis posuere morbi leo urna.</p>
+
+                  <p><strong>This will be flagged!<br></strong> Because it's a pretty substantial paragraph. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis tristique sollicitudin nibh. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis tristique sollicitudin nibh. Etiam erat velit scelerisque in dictum non consectetur. Augue lacus viverra vitae congue eu consequat. Egestas maecenas pharetra convallis posuere morbi leo urna.</p>
+
+                  </div>
+
+                  <h5>Example 2</h5>
+                  <p><kbd><span style="color:#00c4ff;font-weight:600;">&lt;p&gt;&lt;strong&gt;</span>Fake heading<span style="color:#00c4ff;font-weight:600;">&lt;/strong&gt;&lt;br&gt;</span> Followed by some text.&lt;/p&gt;</kbd></p>
+                  
+                  <div class="ml-5">
+                  <p><strong>About us</strong><br>Will not be flagged because it's a small paragraph. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis tristique sollicitudin nibh.</p>
+
+                  <p><strong>Ryerson University Central Receiving</strong><br> 105 Bond Street<br> Toronto, ON<br> M5B 2K3</p>
+
+                  <p><strong>This won't be flagged either since this bolded text is long and not necessarily a heading. It could just be a big block of bolded text. It is over 120 characters.</strong><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis tristique sollicitudin nibh. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis tristique sollicitudin nibh. Etiam erat velit scelerisque in dictum non consectetur. Augue lacus viverra vitae congue eu consequat. Egestas maecenas pharetra convallis posuere morbi leo urna.</p>
+
+                  <p><strong>This will be flagged!</strong><br> Because it's a pretty substantial paragraph. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis tristique sollicitudin nibh. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis tristique sollicitudin nibh. Etiam erat velit scelerisque in dictum non consectetur. Augue lacus viverra vitae congue eu consequat. Egestas maecenas pharetra convallis posuere morbi leo urna.</p>
+                </div>
               </div>
 
               <hr class="pb-3">

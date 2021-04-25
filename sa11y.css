@@ -28,6 +28,7 @@
 html,
 html[data-sa11y-theme="light"] {
     --sa11y-red-text: #d30017;
+    --sa11y-yellow-text: #966F0D;
     --sa11y-panel-badge: #e9e9e9;
     --sa11y-panel-primary: #333333;
     --sa11y-panel-bg: white;
@@ -44,6 +45,7 @@ html[data-sa11y-theme="light"] {
 
 html[data-sa11y-theme="dark"] {
     --sa11y-red-text: #fe5b5f;
+    --sa11y-yellow-text: #ffc800;
     --sa11y-panel-badge: #3500c4;
     --sa11y-panel-primary: #dde8ff;
     --sa11y-panel-bg: #0a2051;
@@ -62,6 +64,7 @@ html[data-sa11y-theme="dark"] {
     html,
     html[data-sa11y-theme="dark"] {
         --sa11y-red-text: #fe5b5f;
+        --sa11y-yellow-text: #ffc800;
         --sa11y-panel-badge: #3500c4;
         --sa11y-panel-primary: #dde8ff;
         --sa11y-panel-bg: #0a2051;
@@ -78,6 +81,7 @@ html[data-sa11y-theme="dark"] {
 
     html[data-sa11y-theme="light"] {
         --sa11y-red-text: #d30017;
+        --sa11y-yellow-text: #966F0D;
         --sa11y-panel-badge: #e9e9e9;
         --sa11y-panel-primary: #333333;
         --sa11y-panel-bg: white;
@@ -379,7 +383,7 @@ html[data-sa11y-theme="dark"] {
 
 #sa11y-container #sa11y-settings-panel,
 #sa11y-container #sa11y-outline-panel .sa11y-outline-list-item {
-    color: var(--sa11y-panel-primary) !important;
+    color: var(--sa11y-panel-primary);
 }
 
 #sa11y-container #sa11y-settings-panel .sa11y-red-text,
@@ -408,6 +412,11 @@ html[data-sa11y-theme="dark"] {
 #sa11y-container .sa11y-error-badge {
     background: var(--sa11y-error) !important;
     color: var(--sa11y-error-text) !important;
+}
+
+#sa11y-container .sa11y-warning-badge {
+    background: var(--sa11y-yellow-text) !important;
+    color: var(--sa11y-panel-bg) !important;
 }
 
 #sa11y-container #sa11y-outline-list .sa11y-outline-2 {
@@ -738,6 +747,11 @@ button.sa11y-warning-btn-text:focus {
     font-family: var(--sa11y-font-face) !important;
     font-size: var(--sa11y-normal-text) !important;
 }
+.sa11y-yellow-text {
+    color: var(--sa11y-yellow-text) !important;
+    font-family: var(--sa11y-font-face) !important;
+    font-size: var(--sa11y-normal-text) !important;
+}
 .sa11y-error-heading {
     color: var(--sa11y-error) !important;
 }
@@ -814,7 +828,7 @@ a.sa11y-warning-text,
     text-decoration: none !important;
 }
 span.sa11y-label-visible {
-    visibility: visible !important;
+    display: inline-block !important;
 }
 
 span.sa11y-heading-label {
@@ -830,7 +844,7 @@ span.sa11y-heading-label {
     margin: -5px 0 0 5px !important;
     padding: 3px !important;
     position: absolute !important;
-    visibility: hidden;
+    display: none;
     text-shadow: none !important;
     z-index: 2 !important;
 }

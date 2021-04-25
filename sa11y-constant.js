@@ -240,19 +240,24 @@ const IM = {
             <br>
             <span class='sa11y-bold sa11y-red-text'>${el}</span>`,
 
-        fakeHeading: () => 
-            `Is this a heading? A line of bold text might look like a heading, but someone using a screen reader cannot tell that it is important or jump to its content. Bolded text should never replace semantic headings (Heading 2 to Heading 6).`,
+        fakeHeading: (boldtext) => 
+            `Is this a heading? <span class='sa11y-bold sa11y-red-text'>${boldtext}</span>
+            ${hr}
+            A line of bold text might look like a heading, but someone using a screen reader cannot tell that it is important or jump to its content. Bolded text should never replace semantic headings (Heading 2 to Heading 6).
+            `,
 
-        pdf: () =>
+        pdf: (pdfCount) =>
             `PDFs are considered web content and must be made accessible as well. PDFs often contain issues for people who use screen readers (missing structural tags or missing form field labels) and people with low vision (text does not reflow when enlarged). 
             <ul>
                 <li>If this is a form, consider using an accessible HTML form as an alternative.</li>
                 <li>If this is a document, consider converting it into a web page.</li>
             </ul>
-            Otherwise, please <a href='https://www.adobe.com/accessibility/products/acrobat/using-acrobat-pro-accessibility-checker.html' target='_blank'>check PDF for accessibility in Acrobat DC. ${newTab}</a>`,
+            Otherwise, please check <span class='sa11y-bold sa11y-red-text'>${pdfCount}</span> <a href='https://www.adobe.com/accessibility/products/acrobat/using-acrobat-pro-accessibility-checker.html' target='_blank'>PDF(s) for accessibility in Acrobat DC. ${newTab}</a>`,
 
-        blockquoteMessage: () =>
-            `Blockquotes should be used for quotes only. They should never be used as headings. Please replace with a semantic heading (e.g. Heading 2 or Heading 3).`,
+        blockquoteMessage: (bqHeadingText) =>
+            `Is this a heading? <span class='sa11y-bold sa11y-red-text'>${bqHeadingText}</span> 
+            ${hr}
+            Blockquotes should be used for quotes only. If this is intended to be a heading, change this blockquote to a semantic heading (e.g. Heading 2 or Heading 3).`,
 
         uppercaseWarning: () =>
             `All caps detected. Avoid typing sentences or phrases in uppercase. Some screen readers may interpret all capital text as an acronym and will read each letter individually. Additionally, all caps are more difficult to read and give the appearance of SHOUTING.`,

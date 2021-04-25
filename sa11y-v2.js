@@ -760,47 +760,80 @@ class Sa11y {
 
             let headingLength = $el.text().trim().length;
             let error = null;
+            let warning = null;
 
             if (level - prevLevel > 1 && i !== 0) {
                 error = IM["headings"]["nonconsecLevel"](prevLevel, level);
             } else if ($el.text().trim().length < 1) {
                 error = IM["headings"]["emptyHeading"](level);
                 $el.addClass("sa11y-error-text");
-            } else if ($el.text().trim().length > 170) {
-                error = IM["headings"]["headingTooLong"](headingLength);
             } else if (i === 0 && level !== 1 && level !== 2) {
                 error = IM["headings"]["firstHeading"];
+            } else if ($el.text().trim().length > 170) {
+                warning = IM["headings"]["headingTooLong"](headingLength);
             }
 
             prevLevel = level;
 
-            let li = `<li class='sa11y-outline-${level}'>
+            let li = 
+            `<li class='sa11y-outline-${level}'>
                 <span class='sa11y-badge'>${level}</span> 
                 <span class='sa11y-outline-list-item'>${htext}</span>
             </li>`;
 
-            let liError = `<li class='sa11y-outline-${level}'>
+            let liError = 
+            `<li class='sa11y-outline-${level}'>
                 <span class='sa11y-badge sa11y-error-badge'>
                 <span aria-hidden='true'>&#10007;</span>
                 <span class='sa11y-visually-hidden'>${sa11yErrorLang}</span> ${level}</span> 
                 <span class='sa11y-outline-list-item sa11y-red-text sa11y-bold'>${htext}</span>
             </li>`;
 
+            let liWarning = 
+            `<li class='sa11y-outline-${level}'>
+                <span class='sa11y-badge sa11y-warning-badge'>
+                <span aria-hidden='true'>&#x3f;</span>
+                <span class='sa11y-visually-hidden'>${sa11yWarningLang}</span> ${level}</span> 
+                <span class='sa11y-outline-list-item sa11y-yellow-text sa11y-bold'>${htext}</span>
+            </li>`;
+
             if ($el.not(sa11yOutlineIgnore).length !== 0) {
+
+                //Append heading labels.
                 $el.not(sa11yOutlineIgnore).append(
                     `<span class='sa11y-heading-label'>H${level}</span>`
                 );
+
+                //Heading errors
                 if (error != null && $el.closest("a").length > 0) {
                     this.errorCount++;
                     $el.addClass("sa11y-error-heading");
                     $el.closest("a").after(ButtonInserter(ERROR, error, true));
                     $("#sa11y-outline-list").append(liError);
-                } else if (error != null) {
+                }
+                
+                else if (error != null) {
                     this.errorCount++;
                     $el.addClass("sa11y-error-heading");
                     $el.before(ButtonInserter(ERROR, error, true));
                     $("#sa11y-outline-list").append(liError);
-                } else if (error == null) {
+                }
+
+                //Heading warnings
+                else if (warning != null && $el.closest("a").length > 0) {
+                    this.warningCount++;
+                    $el.closest("a").after(ButtonInserter(WARNING, warning, true));
+                    $("#sa11y-outline-list").append(liWarning);
+                }
+
+                else if (warning != null) {
+                    this.warningCount++;
+                    $el.before(ButtonInserter(WARNING, warning, true));
+                    $("#sa11y-outline-list").append(liWarning);
+                }
+                
+                //Not an error or warning
+                else if (error == null || warning == null) {
                     $("#sa11y-outline-list").append(li);
                 }
             }
@@ -1476,29 +1509,17 @@ class Sa11y {
         //Warning: Find all PDFs. Although only append warning icon to first PDF on page.
         let checkPDF = this.root
             .find("a[href$='.pdf']")
-            .not(this.containerIgnore);
+            .not(this.containerIgnore);   
         let firstPDF = this.root
             .find("a[href$='.pdf']:first")
             .not(this.containerIgnore);
+        let pdfCount = checkPDF.length;
         if (checkPDF.length > 0) {
             this.warningCount++;
             checkPDF.addClass("sa11y-warning-text");
             checkPDF.has("img").removeClass("sa11y-warning-text");
-            firstPDF.after(ButtonInserter(WARNING, M["pdf"], true));
+            firstPDF.after(ButtonInserter(WARNING, M["pdf"](pdfCount), true));
         }
-
-        //Find blockquotes used as headers.
-        let $blockquotes = this.root
-            .find("blockquote")
-            .not(this.containerIgnore);
-        $blockquotes.each((i, el) => {
-            let $el = $(el);
-            if ($el.text().trim().length < 25) {
-                this.errorCount++;
-                $el.addClass("sa11y-error-border");
-                $el.before(ButtonInserter(ERROR, M["blockquoteMessage"]));
-            }
-        });
 
         //Warning: Detect uppercase.
         let $queryUppercase = this.root
@@ -1578,16 +1599,56 @@ class Sa11y {
             }
         });
 
+
+        //Find blockquotes used as headers.
+        let $blockquotes = this.root
+            .find("blockquote")
+            .not(this.containerIgnore);
+        $blockquotes.each((i, el) => {
+            let $el = $(el);
+            let bqHeadingText = $el.text();
+            if (bqHeadingText.trim().length < 25) {
+                this.warningCount++;
+                $el.addClass("sa11y-warning-border");
+                $el.before(ButtonInserter(WARNING, M["blockquoteMessage"](bqHeadingText)));
+            }
+        });
+
         // Warning: Detect fake headings.
         this.$p.each((i, el) => {
             let $el = $(el);
-            var $fakeHeading = $el.has("strong").filter(function() {
+            let brAfter = $el.html().indexOf("</strong><br>");
+            let brBefore = $el.html().indexOf("<br></strong>");
+
+            //Check paragraphs greater than x characters.
+            if ($el && $el.text().trim().length >= 300) {
+                var firstChild = $el.contents()[0];
+
+                //If paragraph starts with <strong> tag and ends with <br>.
+                if ($(firstChild).is('strong') && (brBefore !== -1 || brAfter !== -1)) {
+                    let boldtext = $el.find("strong").text();
+
+                    if ($el && boldtext.length <= 120) {
+                        $el.find("strong").addClass("sa11y-fake-heading");
+                        $el.before(
+                            ButtonInserter(WARNING, M["fakeHeading"](boldtext))
+                        );
+                    }
+                }
+            }
+
+            //If paragraph only contains <p><strong>...</strong></p>.
+            let $fakeHeading = $el.has("strong").filter(function() {
                 return $(this).contents().length === 1;
             });
-        
-            if ($fakeHeading.text().length <= 25) {
+
+            //Although only flag if less than 120 characters (typical heading length).
+            if ($fakeHeading.text().length <= 120) {
+                let boldtext = $fakeHeading.text();
                 $fakeHeading.addClass("sa11y-fake-heading");
-                $fakeHeading.before(ButtonInserter(WARNING, M["fakeHeading"], true));
+                $fakeHeading.before(
+                    ButtonInserter(WARNING, M["fakeHeading"](boldtext))
+                );
             }
         });
         if ($(".sa11y-fake-heading").length > 0) {
