@@ -63,7 +63,7 @@ html[data-sa11y-theme="dark"] {
 @media (prefers-color-scheme: dark) {
     html,
     html[data-sa11y-theme="dark"] {
-        --sa11y-red-text: #fe5b5f;
+        --sa11y-red-text: #ff6c6f;
         --sa11y-yellow-text: #ffc800;
         --sa11y-panel-badge: #3500c4;
         --sa11y-panel-primary: #dde8ff;

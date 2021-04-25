@@ -853,8 +853,10 @@ class Sa11y {
                 </div>`
             );
 
-            let issueText = IM["h"]["missingHeadingOne"];
-            $("#sa11y-container").after(ErrorBannerInsert(issueText));
+            $("#sa11y-container").after(
+                ErrorBannerInsert(IM["headings"]["missingHeadingOne"])
+            );
+
         }
     };
 
