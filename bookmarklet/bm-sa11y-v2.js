@@ -21,6 +21,7 @@ sa11yJS1.src = "https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@main-v1.1/sa11y-con
 var sa11yJS2 = document.createElement("script");
 sa11yJS2.src = "https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@main-v1.1/sa11y-v2.js";
 
+/* Queue in the right order. */
 document.body.appendChild(popperJS);
 
 popperJS.onload = popperJS.onreadystatechange = function() {

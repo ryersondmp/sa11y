@@ -206,11 +206,9 @@
                       <li>Headings
                         <ul>
                           <li>Headings that skip levels.</li>
-                          <li>Blockquotes incorrectly used as headings.</li>
                           <li>Page does not start with a Heading 1 or Heading 2.</li>
                           <li>Empty headings.</li>
                           <li>Missing Heading 1.</li>
-                          <li>Headings that are too long (Not a WCAG 2.1 requirement).</li>
                         </ul>
                       </li>
                       <li>Poor text contrast.</li>
@@ -221,6 +219,13 @@
                   <div class="col-md-6">
                     <h5>Warnings</h5>
                     <ul>
+                      <li>Headings
+                        <ul>
+                          <li>Blockquotes incorrectly used as headings.</li>
+                          <li>Headings that are too long (Not a WCAG 2.1 requirement).</li>
+                          <li>Bolded text used as headings.</li>
+                        </ul>
+                      </li>
                       <li>Images
                         <ul>
                           <li>Hyperlinked images: ensure alt text describes link location.</li>
@@ -369,10 +374,8 @@
                 <h5 class="pt20">Example installation:</h5>
                 
                 <div class="sa11y-ignore">
-                <pre><code class="language-html">//jQuery Slim 3x
-&lt;script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-  integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8="
-  crossorigin="anonymous"&gt;&lt;/script&gt;
+                <pre><code class="language-html">//Latest jQuery
+&lt;script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"&gt;&lt;/script&gt;
 
 //Tippy.js v6 CDN (Tooltip library)
 &lt;script src="https://unpkg.com/@popperjs/core@2"&gt;&lt;/script&gt;
@@ -425,7 +428,6 @@
                 </div>
               </div>
             </div>
-
 
             <h2 id="acknowledgements" class="pt40">Acknowledgements <i class="fa fa-users" aria-hidden="true"></i>
             </h2>
@@ -484,5 +486,4 @@
   </div>
   <script src="assets/script.min.js"></script>
 </body>
-
 </html>

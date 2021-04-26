@@ -275,11 +275,10 @@ class Sa11y {
                     return "noAria";
                 }
             };
-        
 
             // ----------------------------------------------------------------------
             // Toggle Readability
-            // ----------------------------------------------------------------------
+            //----------------------------------------------------------------------
             let $sa11yReadabilityCheck = $("#sa11y-readability-toggle");
             $sa11yReadabilityCheck.click(async () => {
                 if (localStorage.getItem("sa11y-remember-readability") === "On") {
@@ -571,7 +570,7 @@ class Sa11y {
             .not(containerIgnore);
         this.$img = root.find("img").not(imageIgnore);
         this.$iframe = root.find("iframe").not(containerIgnore);
-        this.$table = root.find("table").not(containerIgnore);
+        this.$table = root.find("table").not("[role='presentation']").not(containerIgnore);
         this.$contrast = root
             .find("*:visible")
             .not(".sa11y-exclude *")
@@ -724,7 +723,7 @@ class Sa11y {
             .find(".sa11y-warning-border")
             .removeClass("sa11y-warning-border");
         this.root.find(".sa11y-warning-text").removeClass("sa11y-warning-text");
-        this.root.find(".sa11y-warning-uppercase").contents().unwrap();
+        this.root.find(".sa11y-warning-uppercase").removeClass("sa11y-warning-uppercase");
         this.root.find("p").removeClass("sa11y-fake-list");
 
         this.root.find(".sa11y-instance").remove();
@@ -999,7 +998,7 @@ class Sa11y {
                 $el.is(":visible")
             ) {
                 this.errorCount++;
-                $el.addClass("sa11y-error-text");
+                $el.addClass("sa11y-error-border");
                 $el.after(ButtonInserter(ERROR, M["linkErrorMessage"], true));
             } 
             
@@ -1523,26 +1522,16 @@ class Sa11y {
             firstPDF.after(ButtonInserter(WARNING, M["pdf"](pdfCount), true));
         }
 
-        //Warning: Detect uppercase.
-        let $queryUppercase = this.root
-            .find(
-                'h1, h2, h3, h4, h5, h6, p, li:not([class^="sa11y"]), blockquote'
-            )
-            .not(this.containerIgnore);
-
-        $queryUppercase.each(function () {
+        // Warning: Detect uppercase. 
+        this.root.find('h1, h2, h3, h4, h5, h6, p, li:not([class^="sa11y"]), blockquote').not(this.containerIgnore).each(function () {
             let $this = $(this);
-            
-            var uppercasePattern = /(?!<a[^>]*?>)(\b[A-Z]['!;,:A-Z\s]{15,}|\b[A-Z]{15,}\b)(?![^<]*?<\/a>)/g;
-            var replaceUppercase =
-                '<span class="sa11y-warning-uppercase">$1</span>' +
-                ButtonInserter(WARNING, M["uppercaseWarning"], true);
+            let uppercasePattern = /(?!<a[^>]*?>)(\b[A-Z]['!;,:A-Z\s]{15,}|\b[A-Z]{15,}\b)(?![^<]*?<\/a>)/g;          
+            let detectUpperCase = $this.text().match(uppercasePattern);
 
-            $this.each(function () {
-                $(this).html(
-                    $(this).html().replace(uppercasePattern, replaceUppercase)
-                );
-            });
+            if (detectUpperCase) {
+                $this.addClass("sa11y-warning-uppercase");
+                $this.before(ButtonInserter(WARNING, M["uppercaseWarning"]));
+            }
         });
         if ($(".sa11y-warning-uppercase").length > 0) {
             this.warningCount++;
@@ -1941,36 +1930,36 @@ class Sa11y {
 
  // ============================================================
  // Rulesets: Readability
+ // Adapted from Greg Kraus' readability script: https://accessibility.oit.ncsu.edu/it-accessibility-at-nc-state/developers/tools/readability-bookmarklet/
  // ============================================================
  checkReadability = () => {
 
     //Crude hack to add a period to the end of list items to make a complete sentence.
     $("main li, [role='main'] li").each(function() {
-       var endOfList = $(this), listText = endOfList.text();
-       if (listText.charAt(listText.length-1) !== ".") {
-           $("main li, [role='main'] li").append('<span class="sa11y-readability-period sa11y-visually-hidden">.</span>');
-       }
-   });
+        var endOfList = $(this), listText = endOfList.text();
+        if (listText.charAt(listText.length-1) !== ".") {
+            $("main li, [role='main'] li").append('<span class="sa11y-readability-period sa11y-visually-hidden">.</span>');
+        }
+    });
 
-   function number_of_syllables(wordCheck) {
-       wordCheck = wordCheck.toLowerCase().replace('.','').replace('\n','');
-       if(wordCheck.length <= 3) {
-           return 1;
-       }
+    // Compute syllables: http://stackoverflow.com/questions/5686483/how-to-compute-number-of-syllables-in-a-word-in-javascript
+    function number_of_syllables(wordCheck) {
+        wordCheck = wordCheck.toLowerCase().replace('.','').replace('\n','');
+        if (wordCheck.length <= 3) {
+            return 1;
+    }
        wordCheck = wordCheck.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
        wordCheck = wordCheck.replace(/^y/, '');
        var syllable_string = wordCheck.match(/[aeiouy]{1,2}/g);
 
-       if(!!syllable_string){
-           var syllables = syllable_string.length;
-       } else{
-           syllables=0;
-       }
-       return syllables;
-   }
+        if (!!syllable_string) {
+            var syllables = syllable_string.length;
+        } else{
+            syllables = 0;
+        } return syllables;
+        }
 
    let paragraphtext = this.$mainPandLi.not("blockquote").text();
-
    var words_raw = paragraphtext.replace(/[.!?-]+/g,' ').split(' ');
    var words = 0;
    for (var i = 0; i < words_raw.length; i++) {
@@ -1987,64 +1976,34 @@ class Sa11y {
        }
    }
 
-   var total_syllables = 0;
-   var syllables1 = 0;
-   var syllables2 = 0;
-   for (var i = 0; i < words_raw.length; i++) {
-       if(words_raw[i]!=0){
-           var syllable_count = number_of_syllables(words_raw[i]);
-           if(syllable_count==1){
-               syllables1 = syllables1 + 1;
-           }
-           if(syllable_count==2){
-               syllables2 = syllables2 + 1;
-           }
-           total_syllables = total_syllables + syllable_count;
-       }
-   }
+    var total_syllables = 0;
+    var syllables1 = 0;
+    var syllables2 = 0;
+    for (var i = 0; i < words_raw.length; i++) {
+        if(words_raw[i]!=0){
+            var syllable_count = number_of_syllables(words_raw[i]);
+            if(syllable_count==1){
+                syllables1 = syllables1 + 1;
+            }
+            if(syllable_count==2){
+                syllables2 = syllables2 + 1;
+            }
+            total_syllables = total_syllables + syllable_count;
+        }
+    }
 
-   var characters = paragraphtext.replace(/[.!?|\s]+/g,'').length;
-   var pollysyllables = (words-(syllables1+syllables2));
-   var flesch_reading_ease = 206.835 - (1.015 * words/sentences) - (84.6 * total_syllables/words)
+    var flesch_reading_ease = 206.835 - (1.015 * words/sentences) - (84.6 * total_syllables/words);
 
-   if(flesch_reading_ease > 100){
-       flesch_reading_ease = 100;
-   } else if(flesch_reading_ease < 0) {
+    if (flesch_reading_ease > 100){
+        flesch_reading_ease = 100;
+    } else if (flesch_reading_ease < 0) {
        flesch_reading_ease = 0;
-   }
-
-   var flesch_kincaid_grade_level = (0.39 * words/sentences) + (11.8 * total_syllables/words) - 15.9;
-   var gunning_fog_index = (words/sentences + 100*(pollysyllables/words)) * 0.4;
-   var automated_readability_index = 4.71 * (characters/words) + 0.5 * (words/sentences) - 21.43;
-   var smog = 1.0430 * Math.sqrt(pollysyllables*30/sentences) + 3.1291
-   var coleman_liau = 0.0588 * (100*characters/words) - 0.296 * (100*sentences/words) - 15.8;
-   var scoreMsg ='';
-
-   scoreMsg = scoreMsg + '[Detailed] Readability score of main content area.'
-   scoreMsg = scoreMsg + '\n\n';
-   scoreMsg = scoreMsg + 'Flesch Reading Ease: ' + flesch_reading_ease.toFixed(1);
-   scoreMsg = scoreMsg + '\nWCAG 2.0 Level AAA requires 60 or greater.'
-   scoreMsg = scoreMsg + '\n\n';
-   scoreMsg = scoreMsg + 'Grade Level Average: ' + ((flesch_kincaid_grade_level + gunning_fog_index + automated_readability_index + coleman_liau + (sentences>=30?smog:0))/(sentences>=30?5:4)).toFixed(1);
-   scoreMsg = scoreMsg + '\n\n';
-   scoreMsg = scoreMsg + '(Flesch-Kincaid): ' + flesch_kincaid_grade_level.toFixed(1);
-   scoreMsg = scoreMsg + '\n';
-   scoreMsg = scoreMsg + '(Gunning-Fog): ' + gunning_fog_index.toFixed(1);
-   scoreMsg = scoreMsg + '\n';
-   scoreMsg = scoreMsg + '(Automated Readability): ' + automated_readability_index.toFixed(1);
-   scoreMsg = scoreMsg + '\n';
-   scoreMsg = scoreMsg + '(Colemane-Liau): ' + coleman_liau.toFixed(1);
-   scoreMsg = scoreMsg + '\n';
-   scoreMsg = scoreMsg + (sentences>=30?'(SMOG): ' + smog.toFixed(1) + '\n\n':'');
-   scoreMsg = scoreMsg + 'WCAG 2.0 Level AAA requires grade 9 or lower.';
-   scoreMsg = scoreMsg + '\n\n';
-   scoreMsg = scoreMsg + 'Words: ' + words + ' | Complex Words: ' + Math.round(100*((words-(syllables1+syllables2))/words)) +'%' + ' | Sentences: ' + sentences + ' | Words Per Sentence: ' + (words/sentences).toFixed(1) + ' | Syllables: ' + total_syllables + ' | Characters: ' + characters;
-   console.log(scoreMsg);
+    }
 
    const M = IM["readability"];
    
         if ($("main, [role='main']").length === 0) {
-           $("#sa11y-readability-info").html(M["missingMainContentMessage"]);
+            $("#sa11y-readability-info").html(M["missingMainContentMessage"]);
         } 
 
         else if (this.$mainPandLi.length === 0) {
@@ -2074,16 +2033,15 @@ class Sa11y {
                 `<span>${fleschScore}</span> <span class="sa11y-readability-score">Good</span>`);
            } 
 
-        $("#sa11y-readability-details").html(`
-            <li><span class='sa11y-bold'>Average words per sentence:</span> ` + avgWordsPerSentence + `</li>
-            <li><span class='sa11y-bold'>Complex words:</span> ` + complexWords + `%</li>
-            <li><span class='sa11y-bold'>Words:</span> ` + words + `</li>
-        `);
- 
-       } else {
-        $("#sa11y-readability-info").text(M["notEnoughContentMessage"]);
-       }
-
+            $("#sa11y-readability-details").html(`
+                <li><span class='sa11y-bold'>Average words per sentence:</span> ` + avgWordsPerSentence + `</li>
+                <li><span class='sa11y-bold'>Complex words:</span> ` + complexWords + `%</li>
+                <li><span class='sa11y-bold'>Words:</span> ` + words + `</li>
+            `);
+        } 
+        else {
+            $("#sa11y-readability-info").text(M["notEnoughContentMessage"]);
+        }
     }
 }
 

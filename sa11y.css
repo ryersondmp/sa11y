@@ -169,7 +169,6 @@ html[data-sa11y-theme="dark"] {
 
 .sa11y-overflow {
     overflow: visible !important;
-    height: auto !important;
 }
 
 /*===== Main button ===== */
@@ -784,8 +783,7 @@ a.sa11y-error-text,
 }
 
 a.sa11y-warning-text,
-.sa11y-warning-text,
-.sa11y-warning-uppercase {
+.sa11y-warning-text {
     border-radius: 0.25em !important;
     border-color: transparent !important;
     box-shadow: 0 0 0 4px var(--sa11y-warning) !important;
@@ -846,7 +844,7 @@ span.sa11y-heading-label {
     position: absolute !important;
     display: none;
     text-shadow: none !important;
-    z-index: 2 !important;
+    z-index: 200 !important;
 }
 
 /*===== Animations ===== */
