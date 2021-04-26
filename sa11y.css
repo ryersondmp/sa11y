@@ -148,6 +148,8 @@ html[data-sa11y-theme="dark"] {
     font-family: var(--sa11y-font-face) !important;
     line-height: 23px !important;
     direction: ltr !important;
+    word-break: normal !important;
+    -webkit-font-smoothing: auto !important;
 }
 
 #sa11y-container p,
