@@ -148,7 +148,6 @@ html[data-sa11y-theme="dark"] {
     font-family: var(--sa11y-font-face) !important;
     line-height: 23px !important;
     direction: ltr !important;
-    word-break: normal !important;
     -webkit-font-smoothing: auto !important;
 }
 
@@ -158,6 +157,8 @@ html[data-sa11y-theme="dark"] {
 #sa11y-container li,
 #sa11y-container label {
     font-size: var(--sa11y-normal-text) !important;
+    font-weight: normal;
+    word-break: normal !important;
 }
 
 .sa11y-instance {
@@ -784,6 +785,7 @@ a.sa11y-error-text,
     color: var(--sa11y-error-text) !important;
 }
 
+.sa11y-warning-uppercase,
 a.sa11y-warning-text,
 .sa11y-warning-text {
     border-radius: 0.25em !important;
@@ -929,6 +931,8 @@ span.sa11y-heading-label {
 
 .tippy-box[data-theme~="sa11y-theme"] * {
     font-family: var(--sa11y-font-face) !important;
+    -webkit-font-smoothing: auto !important;
+    font-weight: normal;
 }
 
 .tippy-box[data-theme~="sa11y-theme"] ul {

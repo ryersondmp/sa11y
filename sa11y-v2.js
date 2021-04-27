@@ -219,6 +219,27 @@ class Sa11y {
                 this.reset();
             });
 
+            //https://stackoverflow.com/questions/6390341/how-to-detect-if-url-has-changed-after-hash-in-javascript
+            history.pushState = ( f => function pushState(){
+                var ret = f.apply(this, arguments);
+                window.dispatchEvent(new Event('pushstate'));
+                window.dispatchEvent(new Event('locationchange'));
+                return ret;
+            })(history.pushState);
+            
+            history.replaceState = ( f => function replaceState(){
+                var ret = f.apply(this, arguments);
+                window.dispatchEvent(new Event('replacestate'));
+                window.dispatchEvent(new Event('locationchange'));
+                return ret;
+            })(history.replaceState);
+            
+            window.addEventListener('popstate',()=>{
+                window.dispatchEvent(new Event('locationchange'))
+                this.checkAll();
+                this.reset();
+            });
+
             //Escape key to shutdown.
             $(document).keyup((escape) => {
                 if (
@@ -711,6 +732,8 @@ class Sa11y {
 
         this.root.find(".sa11y-overflow").removeClass("sa11y-overflow");
         this.root.find(".sa11y-fake-heading").removeClass("sa11y-fake-heading");
+        this.root.find(".sa11y-warning-uppercase").contents().unwrap();
+        this.root.find(".sa11y-warning-uppercase").removeClass("sa11y-warning-uppercase");
 
         this.root.find(".sa11y-error-border").removeClass("sa11y-error-border");
         this.root
@@ -723,7 +746,6 @@ class Sa11y {
             .find(".sa11y-warning-border")
             .removeClass("sa11y-warning-border");
         this.root.find(".sa11y-warning-text").removeClass("sa11y-warning-text");
-        this.root.find(".sa11y-warning-uppercase").removeClass("sa11y-warning-uppercase");
         this.root.find("p").removeClass("sa11y-fake-list");
 
         this.root.find(".sa11y-instance").remove();
@@ -1522,20 +1544,22 @@ class Sa11y {
             firstPDF.after(ButtonInserter(WARNING, M["pdf"](pdfCount), true));
         }
 
-        /* Warning: Detect uppercase. 
-        this.root.find('h1, h2, h3, h4, h5, h6, p, li:not([class^="sa11y"]), blockquote').not(this.containerIgnore).each(function () {
+        //Warning: Detect uppercase. 
+        this.root.find('h1, h2, h3, h4, h5, h6, p, li:not([class^="sa11y"]), blockquote')
+        .not(this.containerIgnore)
+        .each(function () {
             let $this = $(this);
-            let uppercasePattern = /(?!<a[^>]*?>)(\b[A-Z]['!;,:A-Z\s]{15,}|\b[A-Z]{15,}\b)(?![^<]*?<\/a>)/g;          
-            let detectUpperCase = $this.text().match(uppercasePattern);
+            var uppercasePattern = /(?!<a[^>]*?>)(\b[A-Z][',!:A-Z\s]{15,}|\b[A-Z]{15,}\b)(?![^<]*?<\/a>)/g;
 
-            if (detectUpperCase) {
-                $this.addClass("sa11y-warning-uppercase");
-                $this.before(ButtonInserter(WARNING, M["uppercaseWarning"]));
-            }
+            var html = $this.html(); 
+            $this.html(html.replace(uppercasePattern, '<span class="sa11y-warning-uppercase">$1</span>'));
         });
+    
+        $(".sa11y-warning-uppercase").after(ButtonInserter(WARNING, M["uppercaseWarning"], true));
+
         if ($(".sa11y-warning-uppercase").length > 0) {
             this.warningCount++;
-        } */
+        }
 
         //Tables check.
         this.$table.each((i, el) => {

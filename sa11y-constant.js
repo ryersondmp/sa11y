@@ -220,7 +220,7 @@ const IM = {
             `Please ensure to provide a <span class='sa11y-bold'>transcript for all podcasts.</span> Providing transcripts for audio content is a mandatory Level A requirement. Transcripts support people who are D/deaf or hard-of-hearing, but can benefit everyone. Consider placing the transcript below or within an accordion panel.`,
 
         dataViz: () =>
-            `Data visualization widgets like this are often problematic for people who use a keyboard or screen reader to navigate, and can present significant difficulties for people with low vision or colorblindness. It's recommended to provide the same information in an alternative (text or table) format below the widget.
+            `Data visualization widgets like this are often problematic for people who use a keyboard or screen reader to navigate, and can present significant difficulties for people who have low vision or colorblindness. It's recommended to provide the same information in an alternative (text or table) format below the widget.
             ${hr}
             Learn more about <a href='https://www.w3.org/WAI/tutorials/images/complex/' target='_blank'>complex images. ${newTab}</a>`,
 
@@ -247,7 +247,7 @@ const IM = {
             `,
 
         pdf: (pdfCount) =>
-            `PDFs are considered web content and must be made accessible as well. PDFs often contain issues for people who use screen readers (missing structural tags or missing form field labels) and people with low vision (text does not reflow when enlarged). 
+            `PDFs are considered web content and must be made accessible as well. PDFs often contain issues for people who use screen readers (missing structural tags or missing form field labels) and people who have low vision (text does not reflow when enlarged). 
             <ul>
                 <li>If this is a form, consider using an accessible HTML form as an alternative.</li>
                 <li>If this is a document, consider converting it into a web page.</li>
