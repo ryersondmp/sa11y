@@ -177,7 +177,8 @@ class Sa11y {
         //End of main container.
         `</div>`;
 
-        $("body").prepend(sa11ycontainer);
+        var pagebody = document.getElementsByTagName("BODY")[0];              
+        pagebody.prepend(sa11ycontainer);
 
         // JQuery
         $(() => {
@@ -709,30 +710,32 @@ class Sa11y {
         $("#sa11y-outline-toggle").off("click");
         $("#sa11y-settings-toggle").off("click");
 
-        this.root.find(".sa11y-overflow").removeClass("sa11y-overflow");
-        this.root.find(".sa11y-fake-heading").removeClass("sa11y-fake-heading");
-        this.root.find(".sa11y-warning-uppercase").contents().unwrap();
-        this.root.find(".sa11y-warning-uppercase").removeClass("sa11y-warning-uppercase");
-
+        //Errors
         this.root.find(".sa11y-error-border").removeClass("sa11y-error-border");
-        this.root
-            .find(".sa11y-error-heading")
-            .removeClass("sa11y-error-heading");
+        this.root.find(".sa11y-error-heading").removeClass("sa11y-error-heading");
         this.root.find(".sa11y-error-message-container").remove();
         this.root.find(".sa11y-error-text").removeClass("sa11y-error-text");
 
-        this.root
-            .find(".sa11y-warning-border")
-            .removeClass("sa11y-warning-border");
+        //Warnings
+        this.root.find(".sa11y-warning-border").removeClass("sa11y-warning-border");
         this.root.find(".sa11y-warning-text").removeClass("sa11y-warning-text");
         this.root.find("p").removeClass("sa11y-fake-list");
+        this.root.find(".sa11y-warning-uppercase").contents().unwrap();
+        this.root.find(".sa11y-warning-uppercase").removeClass("sa11y-warning-uppercase");
 
+        //Remove buttons
         this.root.find(".sa11y-instance").remove();
         this.root.find(".sa11y-instance-inline").remove();
+
+        //Etc
         this.root.find(".sa11y-heading-label").remove();
         this.root.find("#sa11y-outline-list li").remove();
         this.root.find(".sa11y-readability-period").remove();
         this.root.find("#sa11y-readability-info span, #sa11y-readability-details li").remove();
+        this.root.find(".sa11y-overflow").removeClass("sa11y-overflow");
+        this.root.find(".sa11y-fake-heading").removeClass("sa11y-fake-heading");
+        this.root.find(".sa11y-pass-border").removeClass("sa11y-pass-border");
+        
 
         if (restartPanel) {
             $("#sa11y-panel-content").removeClass();
@@ -993,14 +996,27 @@ class Sa11y {
 
             //Flag empty hyperlinks
             if (
-                $el.children().length == 0 &&
                 $el.attr("href") !== undefined &&
-                $el.text().length == 0 &&
-                $el.is(":visible")
+                $el.text().trim().length == 0
             ) {
-                this.errorCount++;
-                $el.addClass("sa11y-error-border");
-                $el.after(ButtonInserter(ERROR, M["linkErrorMessage"], true));
+                if (hasAriaLabel != null) {
+                    $el.addClass("sa11y-pass-border")
+                    $el.before(
+                        ButtonInserter(PASS, M["linkHasAriaLabel"](hasAriaLabel), true)
+                    );
+                } 
+                else if (hasAriaLabelledBy != null) {
+                    var acclinkname = $("#"+hasAriaLabelledBy).text();
+                    $el.addClass("sa11y-pass-border")
+                    $el.before(
+                        ButtonInserter(PASS, M["linkHasAriaLabelledby"](linkText, acclinkname), true)
+                    );
+                } 
+                else {
+                    this.errorCount++;
+                    $el.addClass("sa11y-error-border");
+                    $el.after(ButtonInserter(ERROR, M["linkErrorMessage"], true));
+                }
             } 
             
             else if (error[0] != null) {
@@ -1554,6 +1570,7 @@ class Sa11y {
                 );
             }
             if (findHeadingTags.length > 0) {
+                this.errorCount++;
                 findHeadingTags.addClass("sa11y-error-heading");
                 findHeadingTags.parent().addClass("sa11y-error-border");
                 findHeadingTags.before(

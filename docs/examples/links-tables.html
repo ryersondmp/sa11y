@@ -88,6 +88,7 @@
                   <div class="col-md-6">
                     <h4 class="pt-4">Example 4</h4>
                     <p>Empty hyperlink <a href="#"></a> and sometimes single characters get linked<a href="#">.</a></p>
+                    <p>Empty hyperlink without text <a href="#" target="_blank"><i class="fab fa-instagram"></i></a> (happens a lot with icon fonts) - but if there's an ARIA label, it's ok! <a href="#" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a></p>
                   </div>
                 </div>
                 
@@ -214,7 +215,7 @@
 
               <hr class="pb-3">
               <h2 id="list-item-3">Tables</h2>
-              <p>There are 3 simple accessibility tests for a table.</p>
+              <p>There are 3 simple accessibility tests for a table. Tables with <kbd>role=&apos;presentation&apos;</kbd> will be ignored.</p>
               <ol>
                 <li>Table must contain at least one table heading or <kbd>th</kbd></li>
                 <li>Table must not contain an empty table heading or empty <kbd>th</kbd></li>

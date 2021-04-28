@@ -763,6 +763,9 @@ button.sa11y-warning-btn-text:focus {
 .sa11y-warning-border {
     outline: 5px solid var(--sa11y-warning) !important;
 }
+.sa11y-pass-border {
+    outline: 5px solid var(--sa11y-pass) !important;
+}
 
 p#sa11y-readability-info {
     margin-left: 10px;
