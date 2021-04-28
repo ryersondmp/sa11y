@@ -999,7 +999,10 @@ class Sa11y {
                 $el.attr("href") !== undefined &&
                 $el.text().trim().length == 0
             ) {
-                if (hasAriaLabel != null) {
+                if ($el.find('img').length) {
+                    // Do nothing
+                }
+                else if (hasAriaLabel != null) {
                     $el.addClass("sa11y-pass-border")
                     $el.before(
                         ButtonInserter(PASS, M["linkHasAriaLabel"](hasAriaLabel), true)
@@ -1012,10 +1015,15 @@ class Sa11y {
                         ButtonInserter(PASS, M["linkHasAriaLabelledby"](linkText, acclinkname), true)
                     );
                 } 
-                else {
+                else if ($el.children().length == 0) {
                     this.errorCount++;
                     $el.addClass("sa11y-error-border");
                     $el.after(ButtonInserter(ERROR, M["linkErrorMessage"], true));
+                } 
+                else {
+                    this.errorCount++;
+                    $el.addClass("sa11y-error-border");
+                    $el.after(ButtonInserter(ERROR, M["emptyLinkNoLabel"], true));
                 }
             } 
             

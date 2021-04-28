@@ -53,7 +53,16 @@ const IM = {
     },
 
     linktext: {
-        linkErrorMessage: () => "Remove empty hyperlinks without any text.",
+        linkErrorMessage: () => 
+            `Remove empty hyperlinks without any text.`,
+
+        emptyLinkNoLabel: () => 
+            `Hyperlink does not have discernable text that is visible to screen readers and other assistive technology. To fix:
+            <ul>
+                <li>Add some concise text that describes where the link takes you.</li>
+                <li>If it's an <a href='https://a11y-101.com/development/icons-and-links' target='_blank'>icon link,${newTab}</a> it is likely missing a descriptive label.</li>
+                <li>If you think this link is an error due to a copy/paste bug, consider deleting it.</li>
+            </ul>`,
 
         linkHasAriaLabelledby: (linkText, acclinkname) =>
             `The descriptive label for this link is: <span class='sa11y-bold'>${linkText} ${acclinkname}</span>`,
