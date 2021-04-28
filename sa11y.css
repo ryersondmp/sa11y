@@ -191,7 +191,7 @@ html[data-sa11y-theme="dark"] {
     width: 55px !important;
     height: 55px !important;
     transition: all 0.2s ease-in-out !important;
-    z-index: 99999 !important;
+    z-index: 9999999999 !important;
 }
 
 #sa11y-container #sa11y-toggle:hover, 

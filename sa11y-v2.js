@@ -1002,17 +1002,17 @@ class Sa11y {
                 if ($el.find('img').length) {
                     // Do nothing
                 }
-                else if (hasAriaLabel != null) {
-                    $el.addClass("sa11y-pass-border")
-                    $el.before(
-                        ButtonInserter(PASS, M["linkHasAriaLabel"](hasAriaLabel), true)
-                    );
-                } 
                 else if (hasAriaLabelledBy != null) {
                     var acclinkname = $("#"+hasAriaLabelledBy).text();
                     $el.addClass("sa11y-pass-border")
                     $el.before(
                         ButtonInserter(PASS, M["linkHasAriaLabelledby"](linkText, acclinkname), true)
+                    );
+                } 
+                else if (hasAriaLabel != null) {
+                    $el.addClass("sa11y-pass-border")
+                    $el.before(
+                        ButtonInserter(PASS, M["linkHasAriaLabel"](hasAriaLabel), true)
                     );
                 } 
                 else if ($el.children().length == 0) {
