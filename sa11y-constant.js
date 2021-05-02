@@ -64,11 +64,11 @@ const IM = {
                 <li>If you think this link is an error due to a copy/paste bug, consider deleting it.</li>
             </ul>`,
 
-        linkHasAriaLabelledby: (linkText, acclinkname) =>
-            `The descriptive label for this link is: <span class='sa11y-bold'>${linkText} ${acclinkname}</span>`,
+        linkHasAriaLabelledby: (linkText) =>
+            `The descriptive label for this link is: <span class='sa11y-bold'>${linkText}</span>`,
 
-        linkHasAriaLabel: (hasAriaLabel) =>
-            `The descriptive label for this link is: <span class='sa11y-bold'>${hasAriaLabel}</span>`,
+        linkHasAriaLabel: (linkText) =>
+            `The descriptive label for this link is: <span class='sa11y-bold'>${linkText}</span>`,
 
         stopWordMessage: (error) =>
             `Link text may not be descriptive enough out of context: <span class='sa11y-red-text sa11y-bold'>${error}</span>

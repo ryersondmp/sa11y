@@ -254,25 +254,29 @@ class Sa11y {
                 });
             };
 
+            //Mini ignore function.
+            $.fn.ignore = function(sel){
+                return this.clone().find(sel||">*").remove().end();
+            };
             //Helper: Handle ARIA labels for Link Text module.
             this.computeAriaLabel = function ($el) {
                 if ($el.is("[aria-label]")) {
                     return $el.attr("aria-label");
                 }
                 else if ($el.is("[aria-labelledby]")) {
-                    let target = $el.attr("aria-labelledby");
+                    let target = $el.attr("aria-labelledby").split(/\s+/);
                     if (target.length > 0) {
-                        target = "#" + target;
-                        target = target.replace(/ /g, ", #");
                         let returnText = "";
-                        $(target).each(function () {
-                            returnText += $(this).text() + " ";
+                        $.each($(target), function(i, el){
+                            returnText += $("#" + el).ignore("span.sa11y-heading-label").text() + " ";
                         });
-                    return returnText;
-                    } else {
+                        return returnText;
+                    } 
+                    else {
                         return "";
                     }
-                } else {
+                } 
+                else {
                     return "noAria";
                 }
             };
@@ -989,10 +993,16 @@ class Sa11y {
         
         $links.each((i, el) => {
             let $el = $(el);
-            var linkText = $el.text();
+            let linkText = this.computeAriaLabel($el);
+
             var hasAriaLabelledBy = $el.attr("aria-labelledby");
             var hasAriaLabel = $el.attr("aria-label");
+            
             var error = containsLinkTextStopWords($el.ignore("noscript").text().trim());
+            
+            if (linkText === 'noAria') {
+                linkText = $el.text();
+            }
 
             //Flag empty hyperlinks
             if (
@@ -1003,16 +1013,15 @@ class Sa11y {
                     // Do nothing
                 }
                 else if (hasAriaLabelledBy != null) {
-                    var acclinkname = $("#"+hasAriaLabelledBy).text();
                     $el.addClass("sa11y-pass-border")
                     $el.before(
-                        ButtonInserter(PASS, M["linkHasAriaLabelledby"](linkText, acclinkname), true)
+                        ButtonInserter(PASS, M["linkHasAriaLabelledby"](linkText), true)
                     );
                 } 
                 else if (hasAriaLabel != null) {
                     $el.addClass("sa11y-pass-border")
                     $el.before(
-                        ButtonInserter(PASS, M["linkHasAriaLabel"](hasAriaLabel), true)
+                        ButtonInserter(PASS, M["linkHasAriaLabel"](linkText), true)
                     );
                 } 
                 else if ($el.children().length == 0) {
@@ -1029,9 +1038,8 @@ class Sa11y {
             
             else if (error[0] != null) {
                 if (hasAriaLabelledBy != null) {
-                    var acclinkname = $("#"+hasAriaLabelledBy).text();
                     $el.before(
-                        ButtonInserter(PASS, M["linkHasAriaLabelledby"](linkText, acclinkname), true)
+                        ButtonInserter(PASS, M["linkHasAriaLabelledby"](linkText), true)
                     );
                 } else if (hasAriaLabel != null) {
                     $el.before(
@@ -1547,6 +1555,7 @@ class Sa11y {
             firstPDF.after(ButtonInserter(WARNING, M["pdf"](pdfCount), true));
         }
 
+        /* OLD
         //Warning: Detect uppercase. 
         this.root.find('h1, h2, h3, h4, h5, h6, p, li:not([class^="sa11y"]), blockquote')
         .not(this.containerIgnore)
@@ -1562,7 +1571,22 @@ class Sa11y {
 
         if ($(".sa11y-warning-uppercase").length > 0) {
             this.warningCount++;
-        }
+        } */
+
+        //New: Warning: Detect uppercase.
+        this.root.find('h1, h2, h3, h4, h5, h6, p, li:not([class^="sa11y"]), blockquote')
+        .not(this.containerIgnore).each(function () {
+            let $this = $(this);
+            let uppercasePattern = /([A-Z]{2,}[ ])([A-Z]{2,}[ ])([A-Z]{2,}[ ])([A-Z]{2,})/g;
+     
+            let detectUpperCase = $this.text().match(uppercasePattern);
+    
+            if (detectUpperCase && detectUpperCase[0].length > 10) {
+                this.warningCount++;
+                $(this)
+                .before(ButtonInserter(WARNING, M["uppercaseWarning"], true));
+            }
+        });
 
         //Tables check.
         this.$table.each((i, el) => {

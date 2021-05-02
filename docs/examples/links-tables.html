@@ -88,8 +88,20 @@
                   <div class="col-md-6">
                     <h4 class="pt-4">Example 4</h4>
                     <p>Empty hyperlink <a href="#"></a> and sometimes single characters get linked<a href="#">.</a></p>
-                    <p>Empty hyperlink without text <a href="#" target="_blank"><i class="fab fa-instagram"></i></a> (happens a lot with icon fonts) - but if there's an ARIA label, it's ok! <a href="#" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a></p>
                   </div>
+                </div>
+                <div class="row mt-3">
+                  <div class="col-md-6">
+                    <h4 class="pt-4">Example 5</h4>
+                    <h5 id="insta">Instagram</h5>
+                    <p>Fail: It's common to see hyperlinks around icon fonts without text. Here's an example of one <a href="#" target="_blank"><i class="fab fa-instagram"></i></a></p>
+
+                    <p>Pass: Here's one with an ARIA label.
+                    <a href="#" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a></p>
+
+                    <p>Pass: Using an aria-labelledby attribute connected to the previous heading above: <a href="#" target="_blank" aria-labelledby="insta"><i class="fab fa-instagram"></i></a></p>
+                  </div>
+                  <div class="col-md-6"></div>
                 </div>
                 
               </div>
@@ -122,7 +134,7 @@
                 </div>                
               </div>
 
-              <h3>Hyperlinks with ARIA</h3>
+              <h3 id="hyperlinks-with-aria">Hyperlinks with ARIA</h3>
               <p>Hyperlinks featuring an <kbd>aria-label</kbd> or <kbd>aria-labelledby</kbd> attribute will be indicated as a pass and show the accessible label conveyed to assistive technology.</p>
 
               <div class="pt-4 pb-5 ml-5">
@@ -133,17 +145,21 @@
                     <a href="#" class="btn btn-primary" aria-label="Learn more about Ryerson.">Learn more</a>
                   </div>
                   <div class="col-md-6">
-                    <h4>Example 2</h4>
+                    <h4 id="linkexample">Example 2</h4>
                     <p>The following link uses an ARIA labelledby attribute.</p>
-                    <a href="#" class="btn btn-primary" aria-labelledby="linkexample">Learn more</a>
-                    <div class="sr-only" id="linkexample">about Adam.</div>
+                    <a href="#" class="btn btn-primary" aria-labelledby="learnmore hyperlinks-with-aria" id="learnmore">Learn more</a>
                   </div>
                 </div>
                 <div class="row pt-4">
-                  <div class="col-md-12">
+                  <div class="col-md-6">
                     <h4>Example 3</h4>
                     <p>Links with aria-hidden are always ignored.</p>
                     <a href="#" class="btn btn-primary" aria-hidden="true" tabindex="-1">Learn more</a>
+                  </div>
+                  <div class="col-md-6">
+                    <h4 id="ex4">Example 4</h4>
+                    <p>ARIA labelledby attribute doesn't start with visible label.</p>
+                    <a href="#" class="btn btn-primary" aria-labelledby="ex4 thix" id="thix">Learn more</a>
                   </div>
                 </div>
               </div>
@@ -165,10 +181,10 @@
                     <a href="#" target="_blank" class="btn btn-primary" aria-label="Learn more about Ryerson. Opens new tab.">Learn more</a>
                   </div>
                   <div class="col-md-6">
-                    <h5>Example 2</h5>
+                    <h5 id="example2">Example 2</h5>
                     <p>aria-labelledby with warning text.</p>
-                    <a href="#" target="_blank" class="btn btn-primary" aria-labelledby="linkexample2">Learn more</a>
-                    <div class="sr-only" id="linkexample2">about Adam. Opens new window.</div>
+                    <a href="#" target="_blank" class="btn btn-primary" aria-labelledby="learnmore2 example2 newwindow" id="learnmore2">Learn more</a>
+                    <div style="display:none" id="newwindow">(Opens new window)</div>
                   </div>
                 </div>
                 <div class="row mt-3">
@@ -178,10 +194,9 @@
                     <a href="#" target="_blank" class="btn btn-primary" aria-label="Learn more about Ryerson.">Learn more</a>
                   </div>
                   <div class="col-md-6">
-                    <h5>Example 4</h5>
+                    <h5 id="x4">Example 4</h5>
                     <p>Warning: aria-labelledby without warning text.</p>
-                    <a href="#" target="_blank" class="btn btn-primary" aria-labelledby="linkexample3">Learn more</a>
-                    <div class="sr-only" id="linkexample3">about Adam.</div>
+                    <a href="#" target="_blank" class="btn btn-primary" aria-labelledby="learn4 x4" id="learn4">Learn more</a>
                   </div>
                 </div>
                 <div class="row mt-3">
