@@ -1573,7 +1573,7 @@ class Sa11y {
             this.warningCount++;
         } */
 
-        //New: Warning: Detect uppercase.
+        /* New: Warning: Detect uppercase.
         this.root.find('h1, h2, h3, h4, h5, h6, p, li:not([class^="sa11y"]), blockquote')
         .not(this.containerIgnore).each(function () {
             let $this = $(this);
@@ -1586,7 +1586,7 @@ class Sa11y {
                 $(this)
                 .before(ButtonInserter(WARNING, M["uppercaseWarning"], true));
             }
-        });
+        }); */
 
         //Tables check.
         this.$table.each((i, el) => {
