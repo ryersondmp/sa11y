@@ -128,41 +128,39 @@
       <p>Customize Sa11y to target specific regions of a page only. For example, <a href="#">this</a> link will be ignored. If a content editor can't edit it, don't scan it.</p>
     </div>
   </footer>
+ <!-- Bootstrap + Jquery -->
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
+ <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
-   <!-- Bootstrap + Jquery -->
-   <script
-   src="https://code.jquery.com/jquery-3.6.0.slim.min.js"
-   integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI="
-   crossorigin="anonymous"></script>
-   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
- 
-   <!-- Tippy.js CDN scripts -->
-   <script src="https://unpkg.com/@popperjs/core@2"></script>
-   <script src="https://unpkg.com/tippy.js@6"></script>
- 
-   <!--Sa11y-->
-  <link rel="stylesheet" href="../../sa11y.css"/>
-  <script src="../../sa11y-constant.js"></script>
-  <script src="../../sa11y-v2.js"></script>
+<script>
+$(document).ready(function() {
+   if (window.top == window) {
+     $("#iframe-check").remove();
+   } else {
+      $("#iframe-check").css("display","block")
+   }
 
-  <script>
-    $(document).ready(function() {
-      if (window.top == window) {
-        $("#iframe-check").remove();
-      } else {
-        $("#iframe-check").css("display", "block")
-      }
+   if (window.top != window) {
+     $("#newtabonly").css("display","none")
+   } else {
+      $("#newtabonly").css("display","block")
+   }
+   $('body').scrollspy({ target: '#list-example' })
+});
+</script>
 
-      if (window.top != window) {
-        $("#newtabonly").css("display", "none");
-      } else {
-        $("#newtabonly").css("display", "block");
-      }
-      $('body').scrollspy({
-        target: '#list-example'
-      })
-    });
-  </script>
+<!--Jquery (Yes, loaded a second time on purpose...)-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<!-- Tippy.js CDN scripts -->
+<script src="https://unpkg.com/@popperjs/core@2"></script>
+<script src="https://unpkg.com/tippy.js@6"></script>
+
+<!--Sa11y-->
+<link rel="stylesheet" href="../../sa11y.css"/>
+<script src="../../sa11y-constant.js"></script>
+<script src="../../sa11y-v2.js"></script>
+
 </body>
 
 </html>

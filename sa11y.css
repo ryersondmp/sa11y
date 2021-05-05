@@ -196,9 +196,9 @@ html[data-sa11y-theme="dark"] {
 
 #sa11y-container #sa11y-toggle:hover, 
 #sa11y-container #sa11y-toggle:focus {
-    -webkit-animation: sa11y-toggle-gradient 3s ease;
-    -moz-animation: sa11y-toggle-gradient 3s ease;
-    animation: sa11y-toggle-gradient 3s ease;
+    -webkit-animation: sa11y-toggle-gradient 3s ease !important;
+    -moz-animation: sa11y-toggle-gradient 3s ease !important;
+    animation: sa11y-toggle-gradient 3s ease !important;
 }
 
 #sa11y-container .sa11y-notification-badge-warning {
