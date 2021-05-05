@@ -1558,7 +1558,7 @@ class Sa11y {
             firstPDF.after(ButtonInserter(WARNING, M["pdf"](pdfCount), true));
         }
 
-        /* (Old) Warning: Detect uppercase. 
+        //(Old) Warning: Detect uppercase. 
         this.root.find('h1, h2, h3, h4, h5, h6, p, li:not([class^="sa11y"]), blockquote')
         .not(this.containerIgnore)
         .each(function () {
@@ -1573,9 +1573,9 @@ class Sa11y {
 
         if ($j(".sa11y-warning-uppercase").length > 0) {
             this.warningCount++;
-        } */
+        }
 
-        // New: Warning: Detect uppercase.
+        /* New: Warning: Detect uppercase.
         this.root.find('h1, h2, h3, h4, h5, h6, p, li:not([class^="sa11y"]), blockquote')
         .not(this.containerIgnore).each(function () {
             let $this = $j(this);
@@ -1588,7 +1588,7 @@ class Sa11y {
                 $j(this)
                 .before(ButtonInserter(WARNING, M["uppercaseWarning"], true));
             }
-        });
+        }); */
 
         //Tables check.
         this.$table.each((i, el) => {
