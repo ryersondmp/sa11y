@@ -162,6 +162,9 @@ const IM = {
         decorativeMessage: () =>
             `Image marked as <span class='sa11y-bold'>decorative</span> and will be ignored by assistive technology. If the image conveys a story, mood or important information - be sure to add alt text.`,
 
+        hyperlinkedImageAriaHidden: () => 
+            `Hyperlink around image has <span class='sa11y-kbd'>aria-hidden=&quot;true&quot;</span> but is still keyboard focusable. If you are intending to hide a redundant or duplicate hyperlink, add <span class='sa11y-kbd'>tabindex=&quot;-1&quot;</span> as well.`,
+
         hyperlinkAltLengthMessage: (
             altText,
             altLength

@@ -1,7 +1,7 @@
 //Avoid conflicts with other jQuery instances.
 $j = jQuery.noConflict();
 
-function ButtonInserter(type, content, inline = false) {
+function ButtonInserter(type, content, inline = false, image = false) {
     ValidTypes = new Set([ERROR, WARNING, PASS]);
     ButtonLang = {
         [ERROR]: sa11yErrorLang,
@@ -22,13 +22,14 @@ function ButtonInserter(type, content, inline = false) {
         // if it is, call it and get the value.
         content = content();
     }
+    
     return `
         <div class=${inline ? "sa11y-instance-inline" : "sa11y-instance"}>
             <button
             type="button"   
             aria-label="${ButtonLang[type]}" 
             class="sa11y-btn 
-            sa11y-${CSSName[type]}-btn${inline ? "-text" : ""}" 
+            sa11y-${CSSName[type]}-btn${inline ? "-text" : ""}${image ? "-image" : ""}" 
             data-tippy-content="<div lang='${sa11yLangCode}'>
                 <div class='sa11y-header-text'>${ButtonLang[type]}
                 </div>
@@ -36,8 +37,7 @@ function ButtonInserter(type, content, inline = false) {
             </div>
         "> 
         </button>
-        </div>
-        `;
+        </div>`;
 }
 function ErrorBannerInsert(content) {
     // Check if content is a function
@@ -51,6 +51,14 @@ function ErrorBannerInsert(content) {
         </div>
     </div>`;
 }
+
+/*
+function ImageAltInsert(content) {
+    if (content && {}.toString.call(content) === "[object Function]") {
+        content = content();
+    }
+    return `<div class="sa11y-alt" aria-hidden="true">${content}</div>`;
+} */
 
 class Sa11y {
     constructor() {
@@ -744,6 +752,10 @@ class Sa11y {
         this.root.find(".sa11y-fake-heading").removeClass("sa11y-fake-heading");
         this.root.find(".sa11y-pass-border").removeClass("sa11y-pass-border");
         
+        //Alt inserter
+        this.root.find(".sa11y-alt-wrap").contents().unwrap();
+        this.root.find(".sa11y-image-center").remove();
+        
 
         if (restartPanel) {
             $j("#sa11y-panel-content").removeClass();
@@ -819,27 +831,27 @@ class Sa11y {
                 if (error != null && $el.closest("a").length > 0) {
                     this.errorCount++;
                     $el.addClass("sa11y-error-heading");
-                    $el.closest("a").after(ButtonInserter(ERROR, error, true));
+                    $el.closest("a").after(ButtonInserter(ERROR, error));
                     $j("#sa11y-outline-list").append(liError);
                 }
                 
                 else if (error != null) {
                     this.errorCount++;
                     $el.addClass("sa11y-error-heading");
-                    $el.before(ButtonInserter(ERROR, error, true));
+                    $el.before(ButtonInserter(ERROR, error));
                     $j("#sa11y-outline-list").append(liError);
                 }
 
                 //Heading warnings
                 else if (warning != null && $el.closest("a").length > 0) {
                     this.warningCount++;
-                    $el.closest("a").after(ButtonInserter(WARNING, warning, true));
+                    $el.closest("a").after(ButtonInserter(WARNING, warning));
                     $j("#sa11y-outline-list").append(liWarning);
                 }
 
                 else if (warning != null) {
                     this.warningCount++;
-                    $el.before(ButtonInserter(WARNING, warning, true));
+                    $el.before(ButtonInserter(WARNING, warning));
                     $j("#sa11y-outline-list").append(liWarning);
                 }
                 
@@ -1231,32 +1243,47 @@ class Sa11y {
         this.$img.each((i, el) => {
             let $el = $j(el);
             let alt = $el.attr("alt");
+            //let width = $el.innerWidth() + 'px';
+            //let height = $el.innerHeight() + 'px';
+            /* let inject = "<div class='sa11y-image-center' " +
+                "style='width:" + width + " !important;height:" + height + " !important;'></div>";
+            */
+
+            //Wrap each image.
+            if ($el.parents().is("a[href]")) {
+                //$el.before(inject);
+                $el.parents("a").wrap('<div class="sa11y-alt-wrap" />');
+            } else {
+                //$el.before(inject);
+                $el.wrap('<div class="sa11y-alt-wrap" />');
+            }
 
             if (alt == undefined) {
                 this.errorCount++;
 
                 // Image fails if it is used as a link and is missing an alt attribute.
                 if ($el.parents().is("a[href]")) {
+
                     //Image contains both hyperlink
                     if ($el.parents("a").text().trim().length > 1) {
                         $el.addClass("sa11y-error-border");
-                        $el.closest("a").before(
+                        $el.before(
                             ButtonInserter(
                                 ERROR,
-                                M["missingAltLinkButHasTextMessage"]
+                                M["missingAltLinkButHasTextMessage"], false, true
                             )
                         );
                     } else if ($el.parents("a").text().trim().length == 0) {
                         $el.addClass("sa11y-error-border");
-                        $el.closest("a").before(
-                            ButtonInserter(ERROR, M["missingAltLinkMessage"])
+                        $el.before(
+                            ButtonInserter(ERROR, M["missingAltLinkMessage"], false, true)
                         );
                     }
                 }
                 // General failure message if image is missing alt.
                 else {
                     $el.addClass("sa11y-error-border");
-                    $el.before(ButtonInserter(ERROR, M["missingAltMessage"]));
+                    $el.before(ButtonInserter(ERROR, M["missingAltMessage"], false, true));
                 }
             }
 
@@ -1273,7 +1300,7 @@ class Sa11y {
                     $el.closest("a").before(
                         ButtonInserter(
                             ERROR,
-                            M["linkImageBadAltMessage"](altText, error[0])
+                            M["linkImageBadAltMessage"](altText, error[0]), false, true
                         )
                     );
                 } else if (error[1] != null && $el.parents().is("a[href]")) {
@@ -1282,7 +1309,7 @@ class Sa11y {
                     $el.closest("a").before(
                         ButtonInserter(
                             WARNING,
-                            M["linkImageSusAltMessage"](altText, error[1])
+                            M["linkImageSusAltMessage"](altText, error[1]), false, true
                         )
                     );
                 } else if (error[2] != null && $el.parents().is("a[href]")) {
@@ -1291,7 +1318,7 @@ class Sa11y {
                     $el.closest("a").before(
                         ButtonInserter(
                             ERROR,
-                            M["linkImagePlaceholderAltMessage"](altText)
+                            M["linkImagePlaceholderAltMessage"](altText), false, true
                         )
                     );
                 } else if (error[0] != null) {
@@ -1300,7 +1327,7 @@ class Sa11y {
                     $el.before(
                         ButtonInserter(
                             ERROR,
-                            M["altHasBadWordMessage"](altText, error[0])
+                            M["altHasBadWordMessage"](altText, error[0]), false, true
                         )
                     );
                 } else if (error[1] != null) {
@@ -1309,7 +1336,7 @@ class Sa11y {
                     $el.before(
                         ButtonInserter(
                             WARNING,
-                            M["altHasSusWordMessage"](altText, error[1])
+                            M["altHasSusWordMessage"](altText, error[1]), false, true
                         )
                     );
                 } else if (error[2] != null) {
@@ -1318,24 +1345,40 @@ class Sa11y {
                     $el.before(
                         ButtonInserter(
                             ERROR,
-                            M["altPlaceholderMessage"](altText)
+                            M["altPlaceholderMessage"](altText), false, true
                         )
                     );
                 }
-                
+
                 else if ((alt == "" || alt == " ") && $el.parents().is("a[href]")) {
-                    if ($el.parents("a").text().trim().length == 0) {
+                    
+                if ($el.parents("a").attr("tabindex") == "-1" && $el.parents("a").attr("aria-hidden") == "true") {
+                    //Do nothing.
+                }
+
+                else if ($el.parents("a").attr("aria-hidden") == "true") {
+                    this.errorCount++;
+                    $el.addClass("sa11y-error-border");
+                    $el.closest("a").before(
+                        ButtonInserter(
+                            ERROR, M["hyperlinkedImageAriaHidden"], false, true
+                        )
+                    );
+                }
+                    
+                else if ($el.parents("a").text().trim().length == 0) {
                         this.errorCount++;
                         $el.addClass("sa11y-error-border");
                         $el.closest("a").before(
                             ButtonInserter(
                                 ERROR,
-                                M["imageLinkNullAltNoTextMessage"]
+                                M["imageLinkNullAltNoTextMessage"], false, true
                             )
                         );
-                    } else {
+                    } 
+                    else {
                         $el.closest("a").before(
-                            ButtonInserter(PASS, M["linkHasAltMessage"])
+                            ButtonInserter(PASS, M["linkHasAltMessage"], false, true)
                         );
                     }
                 }
@@ -1344,7 +1387,7 @@ class Sa11y {
                 else if ((alt == "" || alt == " ") && $el.parents().not("a[href]")) {
                     this.warningCount++;
                     $el.addClass("sa11y-warning-border");
-                    $el.before(ButtonInserter(WARNING, M["decorativeMessage"]));
+                    $el.before(ButtonInserter(WARNING, M["decorativeMessage"], false, true));
                 }
 
                 //Link and contains alt text.
@@ -1354,7 +1397,7 @@ class Sa11y {
                     $el.closest("a").before(
                         ButtonInserter(
                             ERROR,
-                            M["hyperlinkAltLengthMessage"](altText, altLength)
+                            M["hyperlinkAltLengthMessage"](altText, altLength), false, true
                         )
                     );
                 }
@@ -1370,7 +1413,7 @@ class Sa11y {
                     $el.closest("a").before(
                         ButtonInserter(
                             WARNING,
-                            M["imageLinkAltTextMessage"](altText)
+                            M["imageLinkAltTextMessage"](altText), false, true
                         )
                     );
                 }
@@ -1386,7 +1429,7 @@ class Sa11y {
                     $el.closest("a").before(
                         ButtonInserter(
                             WARNING,
-                            M["anchorLinkAndAltMessage"](altText)
+                            M["anchorLinkAndAltMessage"](altText), false, true
                         )
                     );
                 } else if (alt.length > 160) {
@@ -1395,15 +1438,19 @@ class Sa11y {
                     $el.before(
                         ButtonInserter(
                             WARNING,
-                            M["altTooLongMessage"](altText, altLength)
+                            M["altTooLongMessage"](altText, altLength), false, true
                         )
                     );
                 } else if (alt != "") {
-                    $el.before(ButtonInserter(PASS, M["passAlt"](altText)));
+                    $el.before(ButtonInserter(PASS, M["passAlt"](altText), false, true));
                 }
             }
         });
     };
+
+    checkAltTextMode = () => {
+
+    }
 
     // ============================================================
     // Rulesets: Labels
@@ -1644,7 +1691,6 @@ class Sa11y {
             }
         });
 
-
         //Find blockquotes used as headers.
         let $blockquotes = this.root
             .find("blockquote")
@@ -1674,7 +1720,7 @@ class Sa11y {
                     let boldtext = $el.find("strong").text();
 
                     if ($el && boldtext.length <= 120) {
-                        $el.find("strong").addClass("sa11y-fake-heading");
+                        $el.find("strong").addClass("sa11y-fake-heading sa11y-error-heading");
                         $el.before(
                             ButtonInserter(WARNING, M["fakeHeading"](boldtext))
                         );
@@ -1682,19 +1728,20 @@ class Sa11y {
                 }
             }
 
-            //If paragraph only contains <p><strong>...</strong></p>.
-            let $fakeHeading = $el.has("strong").filter(function() {
-                return $j(this).contents().length === 1;
+            // If paragraph only contains <p><strong>...</strong></p>.
+            let $fakeHeading = $el.filter(function() {
+                return /^<(strong)>.+<\/\1>$/.test($j.trim($j(this).html()));
             });
 
             //Although only flag if less than 120 characters (typical heading length).
             if ($fakeHeading.text().length <= 120) {
                 let boldtext = $fakeHeading.text();
-                $fakeHeading.addClass("sa11y-fake-heading");
-                $fakeHeading.before(
-                    ButtonInserter(WARNING, M["fakeHeading"](boldtext))
+                $fakeHeading.addClass("sa11y-fake-heading sa11y-error-heading");
+                $fakeHeading.find("strong").after(
+                    ButtonInserter(WARNING, M["fakeHeading"](boldtext), true)
                 );
             }
+
         });
         if ($j(".sa11y-fake-heading").length > 0) {
             this.warningCount++;
@@ -1989,7 +2036,7 @@ class Sa11y {
  checkReadability = () => {
 
     //Crude hack to add a period to the end of list items to make a complete sentence.
-    $j("main li, [role='main'] li").each(function() {
+    this.$mainPandLi.each(function() {
         var endOfList = $j(this), listText = endOfList.text();
         if (listText.charAt(listText.length-1) !== ".") {
             $j("main li, [role='main'] li").append('<span class="sa11y-readability-period sa11y-visually-hidden">.</span>');
