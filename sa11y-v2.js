@@ -755,7 +755,6 @@ class Sa11y {
         //Alt inserter
         this.root.find(".sa11y-alt-wrap").contents().unwrap();
         this.root.find(".sa11y-image-center").remove();
-        
 
         if (restartPanel) {
             $j("#sa11y-panel-content").removeClass();
@@ -831,7 +830,7 @@ class Sa11y {
                 if (error != null && $el.closest("a").length > 0) {
                     this.errorCount++;
                     $el.addClass("sa11y-error-heading");
-                    $el.closest("a").after(ButtonInserter(ERROR, error));
+                    $el.closest("a").after(ButtonInserter(ERROR, error, true));
                     $j("#sa11y-outline-list").append(liError);
                 }
                 
@@ -1243,19 +1242,15 @@ class Sa11y {
         this.$img.each((i, el) => {
             let $el = $j(el);
             let alt = $el.attr("alt");
-            //let width = $el.innerWidth() + 'px';
-            //let height = $el.innerHeight() + 'px';
-            /* let inject = "<div class='sa11y-image-center' " +
-                "style='width:" + width + " !important;height:" + height + " !important;'></div>";
-            */
-
+            let width = $el.innerWidth() + 'px';
+            let height = $el.innerHeight() + 'px';
+            let inject = `<div class="sa11y-image-center" style="width:` + width + `!important;height:` + height + `!important;"></div>`;
+            
             //Wrap each image.
             if ($el.parents().is("a[href]")) {
-                //$el.before(inject);
-                $el.parents("a").wrap('<div class="sa11y-alt-wrap" />');
+                $el.parents("a").before(inject);
             } else {
-                //$el.before(inject);
-                $el.wrap('<div class="sa11y-alt-wrap" />');
+                $el.before(inject);
             }
 
             if (alt == undefined) {
@@ -1267,7 +1262,7 @@ class Sa11y {
                     //Image contains both hyperlink
                     if ($el.parents("a").text().trim().length > 1) {
                         $el.addClass("sa11y-error-border");
-                        $el.before(
+                        $el.closest("a").prev(".sa11y-image-center").append(
                             ButtonInserter(
                                 ERROR,
                                 M["missingAltLinkButHasTextMessage"], false, true
@@ -1275,7 +1270,7 @@ class Sa11y {
                         );
                     } else if ($el.parents("a").text().trim().length == 0) {
                         $el.addClass("sa11y-error-border");
-                        $el.before(
+                        $el.closest("a").prev(".sa11y-image-center").append(
                             ButtonInserter(ERROR, M["missingAltLinkMessage"], false, true)
                         );
                     }
@@ -1283,7 +1278,7 @@ class Sa11y {
                 // General failure message if image is missing alt.
                 else {
                     $el.addClass("sa11y-error-border");
-                    $el.before(ButtonInserter(ERROR, M["missingAltMessage"], false, true));
+                    $el.prev(".sa11y-image-center").append(ButtonInserter(ERROR, M["missingAltMessage"], false, true));
                 }
             }
 
@@ -1297,7 +1292,7 @@ class Sa11y {
                 if (error[0] != null && $el.parents().is("a[href]")) {
                     this.errorCount++;
                     $el.addClass("sa11y-error-border");
-                    $el.closest("a").before(
+                    $el.closest("a").prev(".sa11y-image-center").append(
                         ButtonInserter(
                             ERROR,
                             M["linkImageBadAltMessage"](altText, error[0]), false, true
@@ -1306,7 +1301,7 @@ class Sa11y {
                 } else if (error[1] != null && $el.parents().is("a[href]")) {
                     this.warningCount++;
                     $el.addClass("sa11y-warning-border");
-                    $el.closest("a").before(
+                    $el.closest("a").prev(".sa11y-image-center").append(
                         ButtonInserter(
                             WARNING,
                             M["linkImageSusAltMessage"](altText, error[1]), false, true
@@ -1315,7 +1310,7 @@ class Sa11y {
                 } else if (error[2] != null && $el.parents().is("a[href]")) {
                     this.errorCount++;
                     $el.addClass("sa11y-error-border");
-                    $el.closest("a").before(
+                    $el.closest("a").prev(".sa11y-image-center").append(
                         ButtonInserter(
                             ERROR,
                             M["linkImagePlaceholderAltMessage"](altText), false, true
@@ -1324,7 +1319,7 @@ class Sa11y {
                 } else if (error[0] != null) {
                     this.errorCount++;
                     $el.addClass("sa11y-error-border");
-                    $el.before(
+                    $el.prev(".sa11y-image-center").append(
                         ButtonInserter(
                             ERROR,
                             M["altHasBadWordMessage"](altText, error[0]), false, true
@@ -1333,7 +1328,7 @@ class Sa11y {
                 } else if (error[1] != null) {
                     this.warningCount++;
                     $el.addClass("sa11y-warning-border");
-                    $el.before(
+                    $el.prev(".sa11y-image-center").append(
                         ButtonInserter(
                             WARNING,
                             M["altHasSusWordMessage"](altText, error[1]), false, true
@@ -1342,7 +1337,7 @@ class Sa11y {
                 } else if (error[2] != null) {
                     this.errorCount++;
                     $el.addClass("sa11y-error-border");
-                    $el.before(
+                    $el.prev(".sa11y-image-center").append(
                         ButtonInserter(
                             ERROR,
                             M["altPlaceholderMessage"](altText), false, true
@@ -1359,7 +1354,7 @@ class Sa11y {
                 else if ($el.parents("a").attr("aria-hidden") == "true") {
                     this.errorCount++;
                     $el.addClass("sa11y-error-border");
-                    $el.closest("a").before(
+                    $el.closest("a").prev(".sa11y-image-center").append(
                         ButtonInserter(
                             ERROR, M["hyperlinkedImageAriaHidden"], false, true
                         )
@@ -1369,7 +1364,7 @@ class Sa11y {
                 else if ($el.parents("a").text().trim().length == 0) {
                         this.errorCount++;
                         $el.addClass("sa11y-error-border");
-                        $el.closest("a").before(
+                        $el.closest("a").prev(".sa11y-image-center").append(
                             ButtonInserter(
                                 ERROR,
                                 M["imageLinkNullAltNoTextMessage"], false, true
@@ -1377,7 +1372,7 @@ class Sa11y {
                         );
                     } 
                     else {
-                        $el.closest("a").before(
+                        $el.closest("a").prev(".sa11y-image-center").append(
                             ButtonInserter(PASS, M["linkHasAltMessage"], false, true)
                         );
                     }
@@ -1387,14 +1382,14 @@ class Sa11y {
                 else if ((alt == "" || alt == " ") && $el.parents().not("a[href]")) {
                     this.warningCount++;
                     $el.addClass("sa11y-warning-border");
-                    $el.before(ButtonInserter(WARNING, M["decorativeMessage"], false, true));
+                    $el.prev(".sa11y-image-center").append(ButtonInserter(WARNING, M["decorativeMessage"], false, true));
                 }
 
                 //Link and contains alt text.
                 else if (alt.length > 160 && $el.parents().is("a")) {
                     this.errorCount++;
                     $el.addClass("sa11y-error-border");
-                    $el.closest("a").before(
+                    $el.closest("a").prev(".sa11y-image-center").append(
                         ButtonInserter(
                             ERROR,
                             M["hyperlinkAltLengthMessage"](altText, altLength), false, true
@@ -1410,7 +1405,7 @@ class Sa11y {
                 ) {
                     this.warningCount++;
                     $el.addClass("sa11y-warning-border");
-                    $el.closest("a").before(
+                    $el.closest("a").prev(".sa11y-image-center").append(
                         ButtonInserter(
                             WARNING,
                             M["imageLinkAltTextMessage"](altText), false, true
@@ -1426,7 +1421,7 @@ class Sa11y {
                 ) {
                     this.warningCount++;
                     $el.addClass("sa11y-warning-border");
-                    $el.closest("a").before(
+                    $el.closest("a").prev(".sa11y-image-center").append(
                         ButtonInserter(
                             WARNING,
                             M["anchorLinkAndAltMessage"](altText), false, true
@@ -1435,23 +1430,19 @@ class Sa11y {
                 } else if (alt.length > 160) {
                     this.warningCount++;
                     $el.addClass("sa11y-warning-border");
-                    $el.before(
+                    $el.prev(".sa11y-image-center").append(
                         ButtonInserter(
                             WARNING,
                             M["altTooLongMessage"](altText, altLength), false, true
                         )
                     );
                 } else if (alt != "") {
-                    $el.before(ButtonInserter(PASS, M["passAlt"](altText), false, true));
+                    $el.prev(".sa11y-image-center").append(ButtonInserter(PASS, M["passAlt"](altText), false, true));
                 }
             }
         });
     };
-
-    checkAltTextMode = () => {
-
-    }
-
+    
     // ============================================================
     // Rulesets: Labels
     // ============================================================
