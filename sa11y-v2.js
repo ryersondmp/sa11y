@@ -481,6 +481,7 @@ class Sa11y {
         let totalCount = this.errorCount + this.warningCount;
         if (totalCount === 0) {
             $j("#sa11y-notification-badge").css("display", "none");
+            $j('#sa11y-notification-count').attr("aria-label", "");
         } else if (this.warningCount > 0 && this.errorCount === 0) {
             $j('#sa11y-notification-badge').css("display", "flex");
             $j('#sa11y-notification-badge').addClass("sa11y-notification-badge-warning");
@@ -597,26 +598,31 @@ class Sa11y {
 
         if (this.errorCount === 1 && this.warningCount === 1) {
             $j("#sa11y-panel-content").addClass("sa11y-errors");
+            $j("#sa11y-panel-content").removeClass("sa11y-pass");
             $j("#sa11y-status").text(
                 `1 accessibility error and 1 warning detected.`
             );
         } else if (this.errorCount === 1 && this.warningCount > 0) {
             $j("#sa11y-panel-content").addClass("sa11y-errors");
+            $j("#sa11y-panel-content").removeClass("sa11y-pass");
             $j("#sa11y-status").text(
                 `1 accessibility error and ${this.warningCount} warnings detected.`
             );
         } else if (this.errorCount > 0 && this.warningCount === 1) {
             $j("#sa11y-panel-content").addClass("sa11y-errors");
+            $j("#sa11y-panel-content").removeClass("sa11y-pass");
             $j("#sa11y-status").text(
                 `${this.errorCount} accessibility errors and 1 warning detected.`
             );
         } else if (this.errorCount > 0 && this.warningCount > 0) {
             $j("#sa11y-panel-content").addClass("sa11y-errors");
+            $j("#sa11y-panel-content").removeClass("sa11y-pass");
             $j("#sa11y-status").text(
                 `${this.errorCount} accessibility errors and ${this.warningCount} warnings detected.`
             );
         } else if (this.errorCount > 0) {
             $j("#sa11y-panel-content").addClass("sa11y-errors");
+            $j("#sa11y-panel-content").removeClass("sa11y-pass");
             $j("#sa11y-status").text(
                 this.errorCount === 1
                     ? "1 accessibility issue detected."
@@ -624,6 +630,7 @@ class Sa11y {
             );
         } else if (this.warningCount > 0) {
             $j("#sa11y-panel-content").addClass("sa11y-warnings");
+            $j("#sa11y-panel-content").removeClass("sa11y-pass");
             $j("#sa11y-status").text(
                 totalCount === 1
                     ? "Please review warning."
@@ -1435,7 +1442,7 @@ class Sa11y {
     // ============================================================
     checkLabels = () => {
         let $inputs = this.root
-            .find("input")
+            .find("input, select, textarea")
             .not(this.containerIgnore)
             .not("input:hidden");
         $inputs.each((i, el) => {

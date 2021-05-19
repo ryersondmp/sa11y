@@ -115,7 +115,7 @@
                 <div class="row mt-4">
                   <div class="col-md-6">
                     <h3>Example 3</h3>
-                    <p>Pass: Input is using <kbd>aria-label</kbd>. It is not recommended to use this method since there is no visual label.</p>
+                    <p>Warning: Input is using <kbd>aria-label</kbd>. It is not recommended to use this method since there is no visual label.</p>
                     <input aria-label="Invisible aria label" type="text" />
                   </div>
                   <div class="col-md-6">
@@ -159,6 +159,33 @@
                       <label>
                         <input type="text"/>
                       </label>
+                  </div>
+                  <div class="col-md-6">
+                    <h3>Example 10</h3>
+                    <p>Fail: Select without corresponding label.</p>
+                    <label>Choose a car:</label>
+                    <select name="cars">
+                      <option value="volvo">Volvo</option>
+                      <option value="saab">Saab</option>
+                      <option value="mercedes">Mercedes</option>
+                      <option value="audi">Audi</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row mt-4">
+                  <div class="col-md-6">
+                    <h3>Example 11</h3>
+                    <p>Fail: Textarea missing label.</p>
+                    <label>Feedback</label>
+                    <textarea rows="2" cols="50">
+                    </textarea>
+                  </div>
+                  <div class="col-md-6">
+                    <h3>Example 12</h3>
+                    <p>Pass: Textarea has label.</p>
+                    <label for="review">Review of W3Schools:</label>
+                    <textarea id="review" rows="2" cols="50">
+                    </textarea>
                   </div>
                 </div>
               </div>
