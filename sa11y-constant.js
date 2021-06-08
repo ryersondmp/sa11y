@@ -64,10 +64,7 @@ const IM = {
                 <li>If you think this link is an error due to a copy/paste bug, consider deleting it.</li>
             </ul>`,
 
-        linkHasAriaLabelledby: (linkText) =>
-            `The descriptive label for this link is: <span class='sa11y-bold'>${linkText}</span>`,
-
-        linkHasAriaLabel: (linkText) =>
+        linkLabel: (linkText) =>
             `The descriptive label for this link is: <span class='sa11y-bold'>${linkText}</span>`,
 
         stopWordMessage: (error) =>
@@ -95,10 +92,16 @@ const IM = {
             `Link opens in new tab or window without warning. Doing so can be disorienting, especially for people who have difficulty perceiving visual content. Secondly, it's not always a good practice to control someone's experience or make decisions for them. Indicate that the link opens in a new window within the link text.
             ${hr}
             <span class='sa11y-bold'>Tip!</span> Learn best practices: <a href='https://www.nngroup.com/articles/new-browser-windows-and-tabs/'>opening links in new browser windows and tabs.</a>`,
+
         fileTypeWarning: () =>
             `Link points to a PDF or downloadable file (e.g. MP3, Zip, Word Doc) without warning. Indicate the file type within the link text. If it's a large file, consider including the file size.
             ${hr}
-            <span class='sa11y-bold'>Example:</span> Executive Report (PDF, 3MB)`
+            <span class='sa11y-bold'>Example:</span> Executive Report (PDF, 3MB)`,
+            
+        linkIdenticalName: (linkText) => 
+            `Link has identical text as another link, although it points to a different page. Multiple links with the same text may cause confusion for people who use screen readers. Consider making the following link more descriptive to help distinguish it from other links: <span class='sa11y-red-text sa11y-bold'>${linkText}</span>
+            ${hr}
+            <span class='sa11y-bold'>Example:</span> Apply <em>for the XYZ Award.</em>`
     },
 
     images: {

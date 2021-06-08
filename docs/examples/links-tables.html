@@ -66,7 +66,7 @@
               <h3>Partial stop words</h3>
               <p>If the following words are used as the hyperlink text alone, it will be flagged as an error. If used with other text, it will <strong>not</strong> be flagged as an error.</p>
 
-              <div class="ml-5 pt-4 mb-5">
+              <div class="ml-5 pt-4">
                 <div class="row">
                   <div class="col-md-6">
                     <h4>Example 1</h4>
@@ -90,23 +90,24 @@
                     <p>Empty hyperlink <a href="#"></a> and sometimes single characters get linked<a href="#">.</a></p>
                   </div>
                 </div>
-                <div class="row mt-3">
-                  <div class="col-md-6">
-                    <h4 class="pt-4">Example 5</h4>
-                    <h5 id="insta">Instagram</h5>
-                    <p>Fail: It's common to see hyperlinks around icon fonts without text. Here's an example of one <a href="#" target="_blank"><i class="fab fa-instagram"></i></a></p>
+              </div>
+              <div class="row mt-3">
+                <div class="col-md-6">
+                  <h3 class="pt-4">Empty hyperlinks</h3>
+                  <h4 id="insta">Instagram</h4>
+                  <p>Fail: It's common to see hyperlinks around icon fonts without text. Here's an example of one <a href="#" target="_blank"><i class="fab fa-instagram"></i></a></p>
 
-                    <p>Pass: Here's one with an ARIA label.
-                    <a href="#" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a></p>
+                  <p>Pass: Here's one with an ARIA label.
+                  <a href="#" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a></p>
 
-                    <p>Pass: Using an aria-labelledby attribute connected to the previous heading above: <a href="#" target="_blank" aria-labelledby="insta"><i class="fab fa-instagram"></i></a></p>
-                  </div>
-                  <div class="col-md-6"></div>
+                  <p>Pass: Using an aria-labelledby attribute connected to the previous heading above: <a href="#" target="_blank" aria-labelledby="insta"><i class="fab fa-instagram"></i></a></p>
+
+                  <p>Pass: Using title attribute: <a href="#" target="_blank" title="Facebook"><i class="fab fa-facebook"></i></a></p>
                 </div>
-                
+                <div class="col-md-6"></div>
               </div>
 
-              <h3>Link text best practices</h3>
+              <h3 class="pt-4">Link text best practices</h3>
               <p>If hyperlinks contain <strong>any</strong> of the following words or characters within a hyperlink, it will be flagged as an error.</p>
 
               <div class="ml-5 pt-4 mb-5">
@@ -209,6 +210,15 @@
                     <h5>Example 6</h5>
                     <p>Pass: Plain text example with visually hidden warning.</p>
                     <p>Learn more about <a href="https://www.google.com" target="_blank">Google.<span class="sr-only"> (Opens new tab).</span></a></p>
+                  </div>
+                </div>
+
+                <h4 class="pt-4" id="zxc">Links with identical names should have equivalent purpose</h4>
+                <div class="row">
+                  <div class="col-md-12">
+                    <p><a href="#asd">Oranges</a> and <a href="#asd">Oranges</a>: will pass because they point to the same URI.</p>
+                    <p><a href="#fasdf">document</a> and <a href="#fsdgdgd">Document</a> and <a href="#xcs">document</a>: will fail because they have the same link text but different URIs.</p>
+                    <p><a href="#fasdf" aria-labelledby="fasdf zxc" id="fasdf">Learn more</a> and <a href="#fsdgdgd" aria-labelledby="fsdgdgd zxc" id="fsdgdgd">Learn more</a>: will fail because the accessible name is the same but point to different URIs.</p>
                   </div>
                 </div>
 

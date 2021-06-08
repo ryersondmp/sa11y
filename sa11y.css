@@ -959,6 +959,10 @@ span.sa11y-heading-label {
     font-weight: normal;
 }
 
+.tippy-box[data-theme~="sa11y-theme"] *:not(.sa11y-header-text) {
+    font-size: var(--sa11y-normal-text) !important;
+}  
+
 .tippy-box[data-theme~="sa11y-theme"] ul {
     margin: 0 !important;
     padding: 5px 10px 0px 20px !important;
@@ -982,7 +986,6 @@ span.sa11y-heading-label {
     background-color: var(--sa11y-panel-bg) !important;
     color: var(--sa11y-panel-primary) !important;
     padding: 8px !important;
-    font-size: var(--sa11y-normal-text) !important;
     box-shadow: 0 0 20px 4px rgba(154, 161, 177, 0.15),
         0 4px 80px -8px rgba(36, 40, 47, 0.25),
         0 4px 4px -2px rgba(91, 94, 105, 0.15) !important;

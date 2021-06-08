@@ -182,8 +182,6 @@ class Sa11y {
         var pagebody = document.getElementsByTagName("BODY")[0];              
         pagebody.prepend(sa11ycontainer);
 
-        
-
         // JQuery
         $j(() => {
             this.loadGlobals();
@@ -502,6 +500,22 @@ class Sa11y {
             allowHTML: true,
             appendTo: document.body,
         });
+        
+
+        $j('.sa11y-panel-icon').on('click', function(){
+            $j('.sa11y-btn').each(function() {
+
+                $j(this).addClass("sa11y-tooltip-show");
+
+                var pos = $j(this).offset().top;
+                if ($j(window).scrollTop() < pos) {
+                    $j('html, body').animate({
+                        scrollTop: pos
+                    }, 300);
+                    return false;
+                }
+            });
+        });
 
         //Detect parent containers that have hidden overflow.
         $j(".sa11y-btn").parents().each(function() {
@@ -597,47 +611,41 @@ class Sa11y {
         $j("#sa11y-panel").addClass("sa11y-active");
 
         if (this.errorCount === 1 && this.warningCount === 1) {
-            $j("#sa11y-panel-content").addClass("sa11y-errors");
-            $j("#sa11y-panel-content").removeClass("sa11y-pass");
+            $j("#sa11y-panel-content").attr("class", "sa11y-errors");
             $j("#sa11y-status").text(
                 `1 accessibility error and 1 warning detected.`
             );
         } else if (this.errorCount === 1 && this.warningCount > 0) {
-            $j("#sa11y-panel-content").addClass("sa11y-errors");
-            $j("#sa11y-panel-content").removeClass("sa11y-pass");
+            $j("#sa11y-panel-content").attr("class", "sa11y-errors");
             $j("#sa11y-status").text(
                 `1 accessibility error and ${this.warningCount} warnings detected.`
             );
         } else if (this.errorCount > 0 && this.warningCount === 1) {
-            $j("#sa11y-panel-content").addClass("sa11y-errors");
-            $j("#sa11y-panel-content").removeClass("sa11y-pass");
+            $j("#sa11y-panel-content").attr("class", "sa11y-errors");
             $j("#sa11y-status").text(
                 `${this.errorCount} accessibility errors and 1 warning detected.`
             );
         } else if (this.errorCount > 0 && this.warningCount > 0) {
-            $j("#sa11y-panel-content").addClass("sa11y-errors");
-            $j("#sa11y-panel-content").removeClass("sa11y-pass");
+            $j("#sa11y-panel-content").attr("class", "sa11y-errors");
             $j("#sa11y-status").text(
                 `${this.errorCount} accessibility errors and ${this.warningCount} warnings detected.`
             );
         } else if (this.errorCount > 0) {
-            $j("#sa11y-panel-content").addClass("sa11y-errors");
-            $j("#sa11y-panel-content").removeClass("sa11y-pass");
+            $j("#sa11y-panel-content").attr("class", "sa11y-errors");
             $j("#sa11y-status").text(
                 this.errorCount === 1
                     ? "1 accessibility issue detected."
                     : this.errorCount + " accessibility issues detected."
             );
         } else if (this.warningCount > 0) {
-            $j("#sa11y-panel-content").addClass("sa11y-warnings");
-            $j("#sa11y-panel-content").removeClass("sa11y-pass");
+            $j("#sa11y-panel-content").attr("class", "sa11y-warnings");
             $j("#sa11y-status").text(
                 totalCount === 1
                     ? "Please review warning."
                     : "Please review " + this.warningCount + " warnings."
             );
         } else {
-            $j("#sa11y-panel-content").addClass("sa11y-pass");
+            $j("#sa11y-panel-content").attr("class", "sa11y-pass");
             $j("#sa11y-status").text("No accessibility errors found.");
         }
 
@@ -1012,6 +1020,7 @@ class Sa11y {
 
             var hasAriaLabelledBy = $el.attr("aria-labelledby");
             var hasAriaLabel = $el.attr("aria-label");
+            var hasTitle = $el.attr("title");
             
             var error = containsLinkTextStopWords($el.ignore("noscript").text().trim());
             
@@ -1030,15 +1039,22 @@ class Sa11y {
                 else if (hasAriaLabelledBy != null) {
                     $el.addClass("sa11y-pass-border")
                     $el.before(
-                        ButtonInserter(PASS, M["linkHasAriaLabelledby"](linkText), true)
+                        ButtonInserter(PASS, M["linkLabel"](linkText), true)
                     );
                 } 
                 else if (hasAriaLabel != null) {
                     $el.addClass("sa11y-pass-border")
                     $el.before(
-                        ButtonInserter(PASS, M["linkHasAriaLabel"](linkText), true)
+                        ButtonInserter(PASS, M["linkLabel"](linkText), true)
                     );
                 } 
+                else if (hasTitle != null) {
+                    let linkText = $el.attr("title");
+                    $el.addClass("sa11y-pass-border")
+                    $el.before(
+                        ButtonInserter(PASS, M["linkLabel"](linkText), true)
+                    );
+                }
                 else if ($el.children().length == 0) {
                     this.errorCount++;
                     $el.addClass("sa11y-error-border");
@@ -1054,11 +1070,11 @@ class Sa11y {
             else if (error[0] != null) {
                 if (hasAriaLabelledBy != null) {
                     $el.before(
-                        ButtonInserter(PASS, M["linkHasAriaLabelledby"](linkText), true)
+                        ButtonInserter(PASS, M["linkLabel"](linkText), true)
                     );
                 } else if (hasAriaLabel != null) {
                     $el.before(
-                        ButtonInserter(PASS, M["linkHasAriaLabel"](hasAriaLabel), true)
+                        ButtonInserter(PASS, M["linkLabel"](hasAriaLabel), true)
                     );
                 } else if ($el.attr("aria-hidden") == "true" && $el.attr("tabindex") == "-1") {
                     //Do nothing.
@@ -1086,7 +1102,7 @@ class Sa11y {
     };
 
     // ============================================================
-    // Rulesets: Links (Advanced) - Detect target[_blank]
+    // Rulesets: Links (Advanced)
     // ============================================================
     checkLinksAdvanced = () => {
 
@@ -1098,6 +1114,7 @@ class Sa11y {
             .not("#sa11y-container a")
             .not(".sa11y-exclude");
 
+        var seen = {};
         $linksTargetBlank.each((i, el) => {
             let $el = $j(el);
             let linkText = this.computeAriaLabel($el);
@@ -1160,10 +1177,29 @@ class Sa11y {
                 linkText = $el.text();
             }
 
+            //Links with identical accessible names have equivalent purpose.
+            var linkTextTrimmed = linkText.trim().toLowerCase();
+            var href = $el.attr("href");
+            if (seen[linkTextTrimmed]) {
+                if (seen[href]) {
+                    //Nothing
+                } else {
+                    this.errorCount++;
+                    $el.addClass("sa11y-error-text");
+                    $el.after(ButtonInserter(ERROR, M["linkIdenticalName"](linkText), true));
+                }
+            }
+            else {
+                seen[linkTextTrimmed] = true;
+                seen[href] = true;
+            }
+            
+            //New tab or new window.
             var containsNewWindowPhrases = newWindowPhrases.some(function(pass) {
                 return linkText.toLowerCase().indexOf(pass) >= 0;
             });
 
+            //Link that points to a file type indicates that it does.
             var containsFileTypePhrases = fileTypePhrases.some(function(pass) {
                 return linkText.toLowerCase().indexOf(pass) >= 0;
             });
@@ -1814,6 +1850,7 @@ class Sa11y {
 
     // ============================================================
     // Rulesets: Contrast
+    // Color contrast plugin by jasonday: https://github.com/jasonday/color-contrast
     // ============================================================
     checkContrast = () => {
         var contrastErrors = {
@@ -1990,6 +2027,10 @@ class Sa11y {
             },
         };
 
+        $j.fn.ignore = function(sel){
+            return this.clone().find(sel||">*").remove().end();
+        };
+        
         contrast.check();
         const { errorM, warningM } = IM["contrast"];
         $j.each(contrastErrors.errors, (index, item) => {
@@ -1997,20 +2038,20 @@ class Sa11y {
             var cdetail = item.detail;
             var cratio = item.ratio;
             // var nodename = name[0].nodeName;
-            var nodetext = name[0].textContent;
+            var nodetext = name.ignore("span.sa11y-heading-label").text();
             this.errorCount++;
             $j(name).before(
-                ButtonInserter(ERROR, errorM(cdetail, cratio, nodetext), true)
+                ButtonInserter(ERROR, errorM(cdetail, cratio, nodetext))
             );
         });
 
         $j.each(contrastErrors.warnings, (index, item) => {
             var name = item.name;
-            var nodetext = name[0].textContent;
+            var nodetext = name.ignore("span.sa11y-heading-label").text();
             this.warningCount++;
-            $j(name)
-                .addClass("sa11y-warning-border")
-                .before(ButtonInserter(WARNING, warningM(nodetext), true));
+            $j(name).before(
+                ButtonInserter(WARNING, warningM(nodetext))
+            );
         });
     };
 
