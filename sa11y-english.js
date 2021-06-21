@@ -1,25 +1,128 @@
-//Global defaults. Use commas to seperate classes or elements.
-let sa11yCheckRoot = "body"; //Use "main" for main content.
+/* Global defaults & Localization */
+/* Language: English */
+
+//Target area to scan.
+const sa11yCheckRoot = "body"; //E.g. "main" for main content.
+
+//Inclusions and exclusions. Use commas to seperate classes or elements.
+let sa11yContainerIgnore = ".sa11y-ignore, #sa11y-container", //Ignore specific regions.
+    sa11yOutlineIgnore = "", //Exclude headings from outline panel.
+    sa11yHeaderIgnore = "", //Ignore specific headings. E.g. "h1.jumbotron-heading"
+    sa11yImageIgnore = "", //Ignore specific images.
+    sa11yLinkIgnore = ""; //Ignore specific links.
 
 //Language of Sa11y. Some global variables to help translate.
-let sa11yLangCode = "en", //Language code, e.g. "fr"
+const sa11yLangCode = "en", //Language code, e.g. "fr"
     sa11yMainToggle = "Toggle Accessibility Checker",
-    sa11yContainerLang = "Accessibility Checker",
-    sa11yErrorLang = "Error", //Erreur
-    sa11yWarningLang = "Warning", //Attention
-    sa11yPassLang = "Good"; //Bon
+    sa11yContainerLabel = "Accessibility Checker",
+    sa11yError = "Error", //Erreur
+    sa11yWarning = "Warning", //Attention
+    sa11yGood = "Good", //Bon
+    sa11yOn = "On",
+    sa11yOff = "Off",
+    sa11yShowOutline = "Show Outline",
+    sa11yHideOutline = "Hide Outline",
+    sa11yShowSettings = "Show Settings",
+    sa11yHideSettings = "Hide Settings",
+    sa11yPageOutline = "Page outline",
+    sa11ySettings = "Settings",
+    sa11yContrast = "Contrast",
+    sa11yFormLabels = "Form labels",
+    sa11yLinksAdvanced = "Links (Advanced)",
+    sa11yDarkMode = "Dark Mode";
 
-//Inclusions and exclusions
-let sa11yContainerIgnore = ".sa11y-ignore, #sa11y-container"; //Ignore specific regions.
-let sa11yOutlineIgnore = ""; //Exclude headings from outline panel.
-let sa11yHeaderIgnore = ""; //Ignore specific headings. E.g. "h1.jumbotron-heading"
-let sa11yImageIgnore = ""; //Ignore specific images.
-let sa11yLinkIgnore = ""; //Ignore specific links.
+//Readability panel translations.
+const sa11yReadability = "Readability",
+    sa11yReadabilityLang = "en", //Supported: en = English, fr = French, es = Spanish
+    sa11yAvgWordPerSentence = "Average words per sentence:",
+    sa11yComplexWords = "Complex words:",
+    sa11yTotalWords = "Words:",
+    sa11yVeryDifficultReadability = "Very difficult",
+    sa11yDifficultReadability = "Difficult",
+    sa11yFairlyDifficultReadability = "Fairly difficult",
+    sa11yGoodReadability = "Good";
 
-// Use variables to avoid spelling mistakes in strings.
-const ERROR = "Error",
-    WARNING = "Warning",
-    PASS = "Pass";
+//Panel status
+const PanelStatus = {
+    status1: () => `1 accessibility error and 1 warning detected.`,
+    status2: (warningCount) => `1 accessibility error and ${warningCount} warnings detected.`,
+    status3: (errorCount) => `${errorCount} accessibility errors and 1 warning detected.`,
+    status4: (errorCount, warningCount) => `${errorCount} accessibility errors and ${warningCount} warnings detected.`,
+    status5: () => `1 accessibility error detected.`,
+    status6: (errorCount) => `${errorCount} accessibility errors detected.`,
+    status7: () => `Please review warning.`,
+    status8: (warningCount) => `Please review ${warningCount} warnings.`,
+    status9: () => `No accessibility errors found.`
+}
+
+//Alt Text stop words
+const susWords = [
+    "image of",
+    "graphic of",
+    "picture of",
+    "photo of",
+];
+const placeholderStopWords = [
+    "alt",
+    "image",
+    "decorative",
+    "photo",
+    "placeholder",
+    "placeholder image",
+    "spacer",
+    "."
+];
+
+//Link Text stop words
+const partialStopWords = [
+    "click",
+    "click here",
+    "click here for more",
+    "click here to learn more",
+    "check out",
+    "download",
+    "download here",
+    "find out",
+    "find out more",
+    "form",
+    "here",
+    "info",
+    "information",
+    "link",
+    "learn",
+    "learn more",
+    "learn to",
+    "more",
+    "page",
+    "paper",
+    "read more",
+    "read",
+    "read this",
+    "this",
+    "this page",
+    "this website",
+    "view",
+    "view our",
+    "website",
+    ".",
+    ",",
+    ":",
+];
+
+const warningWords = [
+    "< ", 
+    " >", 
+    "click here"
+];
+
+//Link Text (Advanced)
+const newWindowPhrases = [
+    "external",
+    "new tab", 
+    "new window", 
+    "pop-up", 
+    "pop up"
+];
 
 //Tooltip formatting shortcuts
 const hr = `<hr aria-hidden='true' class='sa11y-hr'>`;
@@ -53,6 +156,7 @@ const IM = {
     },
 
     linktext: {
+
         linkErrorMessage: () => 
             `Remove empty hyperlinks without any text.`,
 
@@ -88,6 +192,7 @@ const IM = {
     },
 
     linksAdvanced: {
+
         newTabWarning: () =>
             `Link opens in new tab or window without warning. Doing so can be disorienting, especially for people who have difficulty perceiving visual content. Secondly, it's not always a good practice to control someone's experience or make decisions for them. Indicate that the link opens in a new window within the link text.
             ${hr}
@@ -99,12 +204,13 @@ const IM = {
             <span class='sa11y-bold'>Example:</span> Executive Report (PDF, 3MB)`,
             
         linkIdenticalName: (linkText) => 
-            `Link has identical text as another link, although it points to a different page. Multiple links with the same text may cause confusion for people who use screen readers. Consider making the following link more descriptive to help distinguish it from other links: <span class='sa11y-red-text sa11y-bold'>${linkText}</span>
+            `Link has identical text as another link, although it points to a different page. Multiple links with the same text may cause confusion for people who use screen readers.
             ${hr}
-            <span class='sa11y-bold'>Example:</span> Apply <em>for the XYZ Award.</em>`
+            Consider making the following link more descriptive to help distinguish it from other links: <span class='sa11y-red-text sa11y-bold'>${linkText}</span>`
     },
 
     images: {
+
         missingAltLinkButHasTextMessage: () =>
             `Image is being used as a hyperlink with surrounding text, although the alt attribute should be marked as decorative or null.`,
 
@@ -210,6 +316,7 @@ const IM = {
 
     },
     labels: {
+
         inputResetMessage: () => 
             `Reset buttons should <span class='sa11y-bold'>not</span> be used unless specifically needed, because they are easy to activate by mistake.
             ${hr} 
@@ -278,6 +385,7 @@ const IM = {
             `Detected all caps. Some screen readers may interpret all caps text as an acronym and will read each letter individually. Additionally, some people find all caps more difficult to read and it may give the appearance of SHOUTING.`,
 
         tables: {
+
             missingHeadings: () =>
                 `Missing table headers! Accessible tables need HTML markup that indicates header cells and data cells which defines their relationship. This information provides context to people who use assistive technology. Tables should be used for tabular data only.
                 ${hr}
@@ -310,6 +418,7 @@ const IM = {
     },
 
     contrast: {
+
         errorM: (
             cdetail,
             cratio,
@@ -329,6 +438,7 @@ const IM = {
     },
 
     readability: {
+
         missingMainContentMessage: () =>
         `Please identify the <a href="https://www.w3.org/WAI/tutorials/page-structure/regions/#main-content" target="_blank">main content region to calculate readability score. ${newTab}</a>`,
 

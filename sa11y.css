@@ -5,9 +5,9 @@
     --sa11y-normal-text: 15px;
     --sa11y-focus-color: rgb(0 208 255 / 75%);
 
-    --sa11y-pass: #36844e;
-    --sa11y-pass-hover: #38a459;
-    --sa11y-pass-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24px' height='24px' role='img' focusable='false' aria-hidden='true' viewBox='0 0 512 512'%3E%3Cpath fill='%23ffffff' d='M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z'%3E%3C/path%3E%3C/svg%3E");
+    --sa11y-good: #36844e;
+    --sa11y-good-hover: #38a459;
+    --sa11y-good-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24px' height='24px' role='img' focusable='false' aria-hidden='true' viewBox='0 0 512 512'%3E%3Cpath fill='%23ffffff' d='M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z'%3E%3C/path%3E%3C/svg%3E");
 
     --sa11y-warning: #ffc800;
     --sa11y-warning-hover: #ffd226;
@@ -329,7 +329,7 @@ html[data-sa11y-theme="dark"] {
 }
 
 #sa11y-container .sa11y-errors .sa11y-panel-icon,
-#sa11y-container .sa11y-pass .sa11y-panel-icon,
+#sa11y-container .sa11y-good .sa11y-panel-icon,
 #sa11y-container .sa11y-warnings .sa11y-panel-icon {
     height: 30px !important;
     margin-right: 10px !important;
@@ -342,10 +342,10 @@ html[data-sa11y-theme="dark"] {
     -webkit-mask: var(--sa11y-error-svg) center no-repeat !important;
 }
 
-#sa11y-container .sa11y-pass .sa11y-panel-icon {
-    background: var(--sa11y-pass) !important;
-    mask: var(--sa11y-pass-svg) center no-repeat !important;
-    -webkit-mask: var(--sa11y-pass-svg) center no-repeat !important;
+#sa11y-container .sa11y-good .sa11y-panel-icon {
+    background: var(--sa11y-good) !important;
+    mask: var(--sa11y-good-svg) center no-repeat !important;
+    -webkit-mask: var(--sa11y-good-svg) center no-repeat !important;
 }
 
 #sa11y-container .sa11y-warnings .sa11y-panel-icon {
@@ -438,6 +438,7 @@ html[data-sa11y-theme="dark"] {
 }
 
 #sa11y-container #sa11y-outline-list {
+    display: block;
     margin: 0 !important;
     padding: 0 !important;
 }
@@ -650,13 +651,13 @@ button.sa11y-btn:after {
 }
 
 button.sa11y-error-btn,
-button.sa11y-pass-btn,
+button.sa11y-good-btn,
 button.sa11y-warning-btn {
     margin: 10px !important;
 }
 
 button.sa11y-error-btn-text,
-button.sa11y-pass-btn-text,
+button.sa11y-good-btn-text,
 button.sa11y-warning-btn-text {
     margin: -30px 10px !important;
 }
@@ -677,18 +678,18 @@ button.sa11y-error-btn-text:focus {
 }
 
 /* Pass button */
-button.sa11y-pass-btn,
-button.sa11y-pass-btn-text {
-    background: 50% 50% var(--sa11y-pass) var(--sa11y-pass-svg) no-repeat !important;
+button.sa11y-good-btn,
+button.sa11y-good-btn-text {
+    background: 50% 50% var(--sa11y-good) var(--sa11y-good-svg) no-repeat !important;
     background-size: 20px !important;
-    background-color: var(--sa11y-pass) !important;
-    border: 1px solid var(--sa11y-pass) !important;
+    background-color: var(--sa11y-good) !important;
+    border: 1px solid var(--sa11y-good) !important;
 }
-button.sa11y-pass-btn:hover,
-button.sa11y-pass-btn:focus,
-button.sa11y-pass-btn-text:hover,
-button.sa11y-pass-btn-text:focus {
-    background-color: var(--sa11y-pass-hover) !important;
+button.sa11y-good-btn:hover,
+button.sa11y-good-btn:focus,
+button.sa11y-good-btn-text:hover,
+button.sa11y-good-btn-text:focus {
+    background-color: var(--sa11y-good-hover) !important;
 }
 
 /* Warning button */
@@ -784,8 +785,8 @@ button.sa11y-warning-btn-text:focus {
 .sa11y-warning-border {
     outline: 5px solid var(--sa11y-warning) !important;
 }
-.sa11y-pass-border {
-    outline: 5px solid var(--sa11y-pass) !important;
+.sa11y-good-border {
+    outline: 5px solid var(--sa11y-good) !important;
 }
 
 p#sa11y-readability-info {

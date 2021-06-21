@@ -2,16 +2,11 @@
 $j = jQuery.noConflict();
 
 function ButtonInserter(type, content, inline = false) {
-    ValidTypes = new Set([ERROR, WARNING, PASS]);
-    ButtonLang = {
-        [ERROR]: sa11yErrorLang,
-        [WARNING]: sa11yWarningLang,
-        [PASS]: sa11yPassLang,
-    };
+    ValidTypes = new Set([sa11yError, sa11yWarning, sa11yGood]);
     CSSName = {
-        [ERROR]: "error",
-        [WARNING]: "warning",
-        [PASS]: "pass",
+        [sa11yError]: "error",
+        [sa11yWarning]: "warning",
+        [sa11yGood]: "good",
     };
     // TODO: Discuss Throwing Errors.
     if (!ValidTypes.has(type)) {
@@ -27,11 +22,11 @@ function ButtonInserter(type, content, inline = false) {
         <div class=${inline ? "sa11y-instance-inline" : "sa11y-instance"}>
             <button
             type="button"   
-            aria-label="${ButtonLang[type]}" 
+            aria-label="${[type]}" 
             class="sa11y-btn 
             sa11y-${CSSName[type]}-btn${inline ? "-text" : ""}" 
             data-tippy-content="<div lang='${sa11yLangCode}'>
-                <div class='sa11y-header-text'>${ButtonLang[type]}
+                <div class='sa11y-header-text'>${[type]}
                 </div>
                 ${content} 
             </div>
@@ -46,7 +41,7 @@ function ErrorBannerInsert(content) {
         content = content();
     }
     return `<div class="sa11y-error-message-container">
-        <div role="region" aria-label="${ERROR}" class="sa11y-error-message" lang="${sa11yLangCode}">
+        <div role="region" aria-label="${sa11yError}" class="sa11y-error-message" lang="${sa11yLangCode}">
             ${content}
         </div>
     </div>`;
@@ -61,14 +56,14 @@ class Sa11y {
         this.linkIgnore = sa11yLinkIgnore;
 
         //Icon on the main toggle. Easy to replace.
-        var MainToggleIcon =
+        const MainToggleIcon =
             "<svg role='img' focusable='false' width='35px' height='35px' aria-hidden='true' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='#ffffff' d='M256 48c114.953 0 208 93.029 208 208 0 114.953-93.029 208-208 208-114.953 0-208-93.029-208-208 0-114.953 93.029-208 208-208m0-40C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 56C149.961 64 64 149.961 64 256s85.961 192 192 192 192-85.961 192-192S362.039 64 256 64zm0 44c19.882 0 36 16.118 36 36s-16.118 36-36 36-36-16.118-36-36 16.118-36 36-36zm117.741 98.023c-28.712 6.779-55.511 12.748-82.14 15.807.851 101.023 12.306 123.052 25.037 155.621 3.617 9.26-.957 19.698-10.217 23.315-9.261 3.617-19.699-.957-23.316-10.217-8.705-22.308-17.086-40.636-22.261-78.549h-9.686c-5.167 37.851-13.534 56.208-22.262 78.549-3.615 9.255-14.05 13.836-23.315 10.217-9.26-3.617-13.834-14.056-10.217-23.315 12.713-32.541 24.185-54.541 25.037-155.621-26.629-3.058-53.428-9.027-82.141-15.807-8.6-2.031-13.926-10.648-11.895-19.249s10.647-13.926 19.249-11.895c96.686 22.829 124.283 22.783 220.775 0 8.599-2.03 17.218 3.294 19.249 11.895 2.029 8.601-3.297 17.219-11.897 19.249z'/></svg>";
         
-        var sa11ycontainer = document.createElement("div");
+        const sa11ycontainer = document.createElement("div");
         sa11ycontainer.setAttribute("id", "sa11y-container");
         sa11ycontainer.setAttribute("role", "region");
         sa11ycontainer.setAttribute("lang", sa11yLangCode);
-        sa11ycontainer.setAttribute("aria-label", sa11yContainerLang);
+        sa11ycontainer.setAttribute("aria-label", sa11yContainerLabel);
 
         let loadContrastPreference =
             localStorage.getItem("sa11y-remember-contrast") === "On";
@@ -98,7 +93,7 @@ class Sa11y {
             //Page Outline tab.
             `<div id="sa11y-outline-panel" role="tabpanel">
                 <div id="sa11y-outline-header" class="sa11y-header-text">
-                    <h2 tabindex="-1">Page outline</h2>
+                    <h2 tabindex="-1">${sa11yPageOutline}</h2>
                 </div>
                 <div id="sa11y-outline-content">
                     <ul id="sa11y-outline-list"></ul>
@@ -107,7 +102,7 @@ class Sa11y {
                 //Readability tab.
                 `<div id="sa11y-readability-panel">
                     <div id="sa11y-readability-content">
-                        <h2 class="sa11y-header-text-inline">Readability</h2>
+                        <h2 class="sa11y-header-text-inline">${sa11yReadability}</h2>
                         <p id="sa11y-readability-info"></p>
                         <ul id="sa11y-readability-details"></ul>
                     </div>
@@ -117,42 +112,42 @@ class Sa11y {
             //Settings tab.
            `<div id="sa11y-settings-panel" role="tabpanel" aria-labelledby="sa11y-settings-header">
                 <div id="sa11y-settings-header" class="sa11y-header-text">
-                    <h2 tabindex="-1">Settings</h2>
+                    <h2 tabindex="-1">${sa11ySettings}</h2>
                 </div>
                 <div id="sa11y-settings-content">
                     <ul id="sa11y-settings-options">  
                         <li>
-                            <label id="check-contrast" for="sa11y-contrast-toggle">Contrast</label>
+                            <label id="check-contrast" for="sa11y-contrast-toggle">${sa11yContrast}</label>
                             <button id="sa11y-contrast-toggle" 
                             aria-labelledby="check-contrast" 
                             class="sa11y-settings-switch" 
                             aria-pressed="${
                                 loadContrastPreference ? "true" : "false"
-                            }">${loadContrastPreference ? "On" : "Off"}</button>
+                            }">${loadContrastPreference ? sa11yOn : sa11yOff}</button>
                         </li>
                         <li>
-                            <label id="check-labels" for="sa11y-labels-toggle">Form labels</label>
+                            <label id="check-labels" for="sa11y-labels-toggle">${sa11yFormLabels}</label>
                             <button id="sa11y-labels-toggle" aria-labelledby="check-labels" class="sa11y-settings-switch" 
                             aria-pressed="${
                                 loadLabelsPreference ? "true" : "false"
-                            }">${loadLabelsPreference ? "On" : "Off"}</button>
+                            }">${loadLabelsPreference ? sa11yOn : sa11yOff}</button>
                         </li>
                         <li>
-                            <label id="check-changerequest" for="sa11y-links-advanced-toggle">Links (Advanced) <span class="sa11y-badge">AAA</span></label>
+                            <label id="check-changerequest" for="sa11y-links-advanced-toggle">${sa11yLinksAdvanced} <span class="sa11y-badge">AAA</span></label>
                             <button id="sa11y-links-advanced-toggle" aria-labelledby="check-changerequest" class="sa11y-settings-switch" 
                             aria-pressed="${
                                 loadChangeRequestPreference ? "true" : "false"
-                            }">${loadChangeRequestPreference ? "On" : "Off"}</button>
+                            }">${loadChangeRequestPreference ? sa11yOn : sa11yOff}</button>
                         </li>
                         <li>
-                            <label id="check-readability" for="sa11y-readability-toggle">Readability <span class="sa11y-badge">AAA</span></label>
+                            <label id="check-readability" for="sa11y-readability-toggle">${sa11yReadability} <span class="sa11y-badge">AAA</span></label>
                             <button id="sa11y-readability-toggle" aria-labelledby="check-readability" class="sa11y-settings-switch" 
                             aria-pressed="${
                                 loadReadabilityPreference ? "true" : "false"
-                            }">${loadReadabilityPreference ? "On" : "Off"}</button>
+                            }">${loadReadabilityPreference ? sa11yOn : sa11yOff}</button>
                         </li>
                         <li>
-                            <label id="dark-mode" for="sa11y-theme-toggle">Dark mode</label>
+                            <label id="dark-mode" for="sa11y-theme-toggle">${sa11yDarkMode}</label>
                             <button id="sa11y-theme-toggle" aria-labelledby="dark-mode" class="sa11y-settings-switch"></button>
                         </li>
                     </ul>
@@ -162,16 +157,16 @@ class Sa11y {
             //Main panel that conveys state of page.
             `<div id="sa11y-panel-content">
                 <div class="sa11y-panel-icon"></div>
-                <div id="sa11y-panel-text"><p id="sa11y-status"></p></div>
+                <div id="sa11y-panel-text"><p id="sa11y-status" aria-live="polite"></p></div>
             </div>` +
 
             //Show Outline & Show Settings button.
-            `<div id="sa11y-panel-controls">
-                <button type="button" aria-expanded="false" id="sa11y-outline-toggle">
-                    Show Outline
+            `<div id="sa11y-panel-controls" role="tablist" aria-orientation="horizontal">
+                <button type="button" role="tab" aria-expanded="false" id="sa11y-outline-toggle" aria-controls="sa11y-outline-panel">
+                    ${sa11yShowOutline}
                 </button>
-                <button type="button" aria-expanded="false" id="sa11y-settings-toggle">
-                    Show Settings
+                <button type="button" role="tab" aria-expanded="false" id="sa11y-settings-toggle" aria-controls="sa11y-settings-panel">
+                    ${sa11yShowSettings}
                 </button>
                 <div aria-hidden="true">&nbsp;&nbsp;</div> 
             </div>` +
@@ -179,7 +174,7 @@ class Sa11y {
         //End of main container.
         `</div>`;
 
-        var pagebody = document.getElementsByTagName("BODY")[0];              
+        const pagebody = document.getElementsByTagName("BODY")[0];              
         pagebody.prepend(sa11ycontainer);
 
         // JQuery
@@ -187,7 +182,7 @@ class Sa11y {
             this.loadGlobals();
 
             //Keeps checker active when navigating between pages until it is toggled off.
-            var sa11yToggle = $j("#sa11y-toggle");
+            const sa11yToggle = $j("#sa11y-toggle");
             sa11yToggle.click(() => {
                 if (localStorage.getItem("sa11y-remember-panel") === "Opened") {
                     localStorage.setItem("sa11y-remember-panel", "Closed");
@@ -290,14 +285,14 @@ class Sa11y {
             $sa11yReadabilityCheck.click(async () => {
                 if (localStorage.getItem("sa11y-remember-readability") === "On") {
                     localStorage.setItem("sa11y-remember-readability", "Off");
-                    $sa11yReadabilityCheck.text("Off");
+                    $sa11yReadabilityCheck.text(`${sa11yOff}`);
                     $sa11yReadabilityCheck.attr("aria-pressed", "false");
                     $j("#sa11y-readability-panel").removeClass("sa11y-active");
                     this.reset(false);
                     await this.checkAll();
                 } else {
                     localStorage.setItem("sa11y-remember-readability", "On");
-                    $sa11yReadabilityCheck.text("On");
+                    $sa11yReadabilityCheck.text(`${sa11yOn}`);
                     $sa11yReadabilityCheck.attr("aria-pressed", "true");
                     $j("#sa11y-readability-panel").addClass("sa11y-active");
                     this.reset(false);
@@ -317,13 +312,13 @@ class Sa11y {
             $sa11yContrastCheck.click(async () => {
                 if (localStorage.getItem("sa11y-remember-contrast") === "On") {
                     localStorage.setItem("sa11y-remember-contrast", "Off");
-                    $sa11yContrastCheck.text("Off");
+                    $sa11yContrastCheck.text(`${sa11yOff}`);
                     $sa11yContrastCheck.attr("aria-pressed", "false");
                     this.reset(false);
                     await this.checkAll();
                 } else {
                     localStorage.setItem("sa11y-remember-contrast", "On");
-                    $sa11yContrastCheck.text("On");
+                    $sa11yContrastCheck.text(`${sa11yOn}`);
                     $sa11yContrastCheck.attr("aria-pressed", "true");
                     this.reset(false);
                     await this.checkAll();
@@ -337,13 +332,13 @@ class Sa11y {
             $sa11yLabelsCheck.click(async () => {
                 if (localStorage.getItem("sa11y-remember-labels") === "On") {
                     localStorage.setItem("sa11y-remember-labels", "Off");
-                    $sa11yLabelsCheck.text("Off");
+                    $sa11yLabelsCheck.text(`${sa11yOff}`);
                     $sa11yLabelsCheck.attr("aria-pressed", "false");
                     this.reset(false);
                     await this.checkAll();
                 } else {
                     localStorage.setItem("sa11y-remember-labels", "On");
-                    $sa11yLabelsCheck.text("On");
+                    $sa11yLabelsCheck.text(`${sa11yOn}`);
                     $sa11yLabelsCheck.attr("aria-pressed", "true");
                     this.reset(false);
                     await this.checkAll();
@@ -357,13 +352,13 @@ class Sa11y {
             $sa11yChangeRequestCheck.click(async () => {
                 if (localStorage.getItem("sa11y-remember-links-advanced") === "On") {
                     localStorage.setItem("sa11y-remember-links-advanced", "Off");
-                    $sa11yChangeRequestCheck.text("Off");
+                    $sa11yChangeRequestCheck.text(`${sa11yOff}`);
                     $sa11yChangeRequestCheck.attr("aria-pressed", "false");
                     this.reset(false);
                     await this.checkAll();
                 } else {
                     localStorage.setItem("sa11y-remember-links-advanced", "On");
-                    $sa11yChangeRequestCheck.text("On");
+                    $sa11yChangeRequestCheck.text(`${sa11yOn}`);
                     $sa11yChangeRequestCheck.attr("aria-pressed", "true");
                     this.reset(false);
                     await this.checkAll();
@@ -380,21 +375,21 @@ class Sa11y {
             let $sa11yTheme = $j("#sa11y-theme-toggle");
             let theme = localStorage.getItem("sa11y-remember-theme");
             if (systemInitiatedDark.matches) {
-                $sa11yTheme.text("On");
+                $sa11yTheme.text(`${sa11yOn}`);
                 $sa11yTheme.attr("aria-pressed", "true");
             } else {
-                $sa11yTheme.text("Off");
+                $sa11yTheme.text(`${sa11yOff}`);
                 $sa11yTheme.attr("aria-pressed", "false");
             }
             function prefersColorTest(systemInitiatedDark) {
                 if (systemInitiatedDark.matches) {
                     $j("html").attr("data-sa11y-theme", "dark");
-                    $sa11yTheme.text("On");
+                    $sa11yTheme.text(`${sa11yOn}`);
                     $sa11yTheme.attr("aria-pressed", "true");
                     localStorage.setItem("sa11y-remember-theme", "");
                 } else {
                     $j("html").attr("data-sa11y-theme", "light");
-                    $sa11yTheme.text("Off");
+                    $sa11yTheme.text(`${sa11yOff}`);
                     $sa11yTheme.attr("aria-pressed", "false");
                     localStorage.setItem("sa11y-remember-theme", "");
                 }
@@ -406,34 +401,34 @@ class Sa11y {
                 if (theme === "dark") {
                     $j("html").attr("data-sa11y-theme", "light");
                     localStorage.setItem("sa11y-remember-theme", "light");
-                    $sa11yTheme.text("Off");
+                    $sa11yTheme.text(`${sa11yOff}`);
                     $sa11yTheme.attr("aria-pressed", "false");
                 } else if (theme === "light") {
                     $j("html").attr("data-sa11y-theme", "dark");
                     localStorage.setItem("sa11y-remember-theme", "dark");
-                    $sa11yTheme.text("On");
+                    $sa11yTheme.text(`${sa11yOn}`);
                     $sa11yTheme.attr("aria-pressed", "true");
                 } else if (systemInitiatedDark.matches) {
                     $j("html").attr("data-sa11y-theme", "light");
                     localStorage.setItem("sa11y-remember-theme", "light");
-                    $sa11yTheme.text("Off");
+                    $sa11yTheme.text(`${sa11yOff}`);
                     $sa11yTheme.attr("aria-pressed", "false");
                 } else {
                     $j("html").attr("data-sa11y-theme", "dark");
                     localStorage.setItem("sa11y-remember-theme", "dark");
-                    $sa11yTheme.text("On");
+                    $sa11yTheme.text(`${sa11yOn}`);
                     $sa11yTheme.attr("aria-pressed", "true");
                 }
             });
             if (theme === "dark") {
                 $j("html").attr("data-sa11y-theme", "dark");
                 localStorage.setItem("sa11y-remember-theme", "dark");
-                $sa11yTheme.text("On");
+                $sa11yTheme.text(`${sa11yOn}`);
                 $sa11yTheme.attr("aria-pressed", "true");
             } else if (theme === "light") {
                 $j("html").attr("data-sa11y-theme", "light");
                 localStorage.setItem("sa11y-remember-theme", "light");
-                $sa11yTheme.text("Off");
+                $sa11yTheme.text(`${sa11yOff}`);
                 $sa11yTheme.attr("aria-pressed", "false");
             }
         });
@@ -491,13 +486,16 @@ class Sa11y {
             $j('#sa11y-notification-count').attr("aria-label", totalCount + " errors detected.")
         }
 
-        //Initialize tippy.js
+        //Initialize tippy.js - Although you can also swap this with Bootstrap's tooltip library for example.
         tippy(".sa11y-btn", {
             interactive: true,
             trigger: "mouseenter click",
             arrow: true,
             theme: "sa11y-theme",
             allowHTML: true,
+            aria: {
+                content: 'describedby',
+              },
             appendTo: document.body,
         });
         
@@ -608,45 +606,47 @@ class Sa11y {
     displayPanel = () => {
         this.panelActive = true;
         let totalCount = this.errorCount + this.warningCount;
+        let warningCount = this.warningCount;
+        let errorCount = this.errorCount;
         $j("#sa11y-panel").addClass("sa11y-active");
 
         if (this.errorCount === 1 && this.warningCount === 1) {
             $j("#sa11y-panel-content").attr("class", "sa11y-errors");
             $j("#sa11y-status").text(
-                `1 accessibility error and 1 warning detected.`
+                PanelStatus["status1"]
             );
         } else if (this.errorCount === 1 && this.warningCount > 0) {
             $j("#sa11y-panel-content").attr("class", "sa11y-errors");
             $j("#sa11y-status").text(
-                `1 accessibility error and ${this.warningCount} warnings detected.`
+                PanelStatus["status2"](warningCount)
             );
         } else if (this.errorCount > 0 && this.warningCount === 1) {
             $j("#sa11y-panel-content").attr("class", "sa11y-errors");
             $j("#sa11y-status").text(
-                `${this.errorCount} accessibility errors and 1 warning detected.`
+                PanelStatus["status3"](errorCount)
             );
         } else if (this.errorCount > 0 && this.warningCount > 0) {
             $j("#sa11y-panel-content").attr("class", "sa11y-errors");
             $j("#sa11y-status").text(
-                `${this.errorCount} accessibility errors and ${this.warningCount} warnings detected.`
+                PanelStatus["status4"](errorCount, warningCount)
             );
         } else if (this.errorCount > 0) {
             $j("#sa11y-panel-content").attr("class", "sa11y-errors");
             $j("#sa11y-status").text(
                 this.errorCount === 1
-                    ? "1 accessibility issue detected."
-                    : this.errorCount + " accessibility issues detected."
+                    ? PanelStatus["status5"]
+                    : PanelStatus["status6"](errorCount)
             );
         } else if (this.warningCount > 0) {
             $j("#sa11y-panel-content").attr("class", "sa11y-warnings");
             $j("#sa11y-status").text(
                 totalCount === 1
-                    ? "Please review warning."
-                    : "Please review " + this.warningCount + " warnings."
+                    ? PanelStatus["status7"]
+                    : PanelStatus["status8"](warningCount)
             );
         } else {
-            $j("#sa11y-panel-content").attr("class", "sa11y-pass");
-            $j("#sa11y-status").text("No accessibility errors found.");
+            $j("#sa11y-panel-content").attr("class", "sa11y-good");
+            $j("#sa11y-status").text(PanelStatus["status9"]);
         }
 
         //Show outline panel
@@ -655,13 +655,13 @@ class Sa11y {
             if ($outlineToggle.attr("aria-expanded") == "true") {
                 $outlineToggle.removeClass("sa11y-outline-active");
                 $j("#sa11y-outline-panel").removeClass("sa11y-active");
-                $outlineToggle.text("Show Outline");
+                $outlineToggle.text(`${sa11yShowOutline}`);
                 $outlineToggle.attr("aria-expanded", "false");
                 localStorage.setItem("sa11y-remember-outline", "Closed");
             } else {
                 $outlineToggle.addClass("sa11y-outline-active");
                 $j("#sa11y-outline-panel").addClass("sa11y-active");
-                $outlineToggle.text("Hide Outline");
+                $outlineToggle.text(`${sa11yHideOutline}`);
                 $outlineToggle.attr("aria-expanded", "true");
                 localStorage.setItem("sa11y-remember-outline", "Opened");
             }
@@ -674,10 +674,10 @@ class Sa11y {
             $j("#sa11y-settings-panel").removeClass("sa11y-active");
             $settingsToggle.removeClass("sa11y-settings-active");
             $settingsToggle.attr("aria-expanded", "false");
-            $settingsToggle.text("Show Settings");
+            $settingsToggle.text(`${sa11yShowSettings}`);
 
             //Keyboard accessibility fix for scrollable panel content.
-            if ($j("#sa11y-outline-list").height() > 350) {
+            if ($j("#sa11y-outline-list").height() > 250) {
                 $j("#sa11y-outline-list").attr("tabindex", "0");
             }
         });
@@ -686,9 +686,14 @@ class Sa11y {
         if (localStorage.getItem("sa11y-remember-outline") === "Opened") {
             $outlineToggle.addClass("sa11y-outline-active");
             $j("#sa11y-outline-panel").addClass("sa11y-active");
-            $outlineToggle.text("Hide Outline");
+            $outlineToggle.text(`${sa11yHideOutline}`);
             $outlineToggle.attr("aria-expanded", "true");
             $j(".sa11y-heading-label").toggleClass("sa11y-label-visible");
+
+            //Keyboard accessibility fix for scrollable panel content.
+            if ($j("#sa11y-outline-list").height() > 250) {
+                $j("#sa11y-outline-list").attr("tabindex", "0");
+            }
         }
 
         //Show settings panel
@@ -697,12 +702,12 @@ class Sa11y {
             if ($settingsToggle.attr("aria-expanded") === "true") {
                 $settingsToggle.removeClass("sa11y-settings-active");
                 $j("#sa11y-settings-panel").removeClass("sa11y-active");
-                $settingsToggle.text("Show Settings");
+                $settingsToggle.text(`${sa11yShowSettings}`);
                 $settingsToggle.attr("aria-expanded", "false");
             } else {
                 $settingsToggle.addClass("sa11y-settings-active");
                 $j("#sa11y-settings-panel").addClass("sa11y-active");
-                $settingsToggle.text("Hide Settings");
+                $settingsToggle.text(`${sa11yHideSettings}`);
                 $settingsToggle.attr("aria-expanded", "true");
             }
 
@@ -712,13 +717,34 @@ class Sa11y {
             $j("#sa11y-outline-panel").removeClass("sa11y-active");
             $outlineToggle.removeClass("sa11y-outline-active");
             $outlineToggle.attr("aria-expanded", "false");
-            $outlineToggle.text("Show Outline");
+            $outlineToggle.text(`${sa11yShowOutline}`);
             $j(".sa11y-heading-label").removeClass("sa11y-label-visible");
             localStorage.setItem("sa11y-remember-outline", "Closed");
 
             //Keyboard accessibility fix for scrollable panel content.
             if ($j("#sa11y-settings-content").height() > 350) {
                 $j("#sa11y-settings-content").attr("tabindex", "0");
+            }
+            
+        });
+
+        //Enhanced keyboard accessibility for panel.
+        $('[role=tablist]').keydown(function(e) {
+            if (e.keyCode == 37) {
+                $("[aria-expanded=true]").prev().click().focus();
+                e.preventDefault();
+            }
+            if (e.keyCode == 38) {
+                $("[aria-expanded=true]").prev().click().focus();
+                e.preventDefault();
+            }
+            if (e.keyCode == 39) {
+                $("[aria-expanded=true]").next().click().focus();
+                e.preventDefault();
+            }
+            if (e.keyCode == 40) {
+                $("[aria-expanded=true]").next().click().focus();
+                e.preventDefault();
             }
         });
     };
@@ -757,7 +783,7 @@ class Sa11y {
         this.root.find("#sa11y-readability-info span, #sa11y-readability-details li").remove();
         this.root.find(".sa11y-overflow").removeClass("sa11y-overflow");
         this.root.find(".sa11y-fake-heading").removeClass("sa11y-fake-heading");
-        this.root.find(".sa11y-pass-border").removeClass("sa11y-pass-border");
+        this.root.find(".sa11y-good-border").removeClass("sa11y-good-border");
         
         //Alt inserter
         this.root.find(".sa11y-alt-wrap").contents().unwrap();
@@ -815,7 +841,7 @@ class Sa11y {
             `<li class='sa11y-outline-${level}'>
                 <span class='sa11y-badge sa11y-error-badge'>
                 <span aria-hidden='true'>&#10007;</span>
-                <span class='sa11y-visually-hidden'>${sa11yErrorLang}</span> ${level}</span> 
+                <span class='sa11y-visually-hidden'>${sa11yError}</span> ${level}</span> 
                 <span class='sa11y-outline-list-item sa11y-red-text sa11y-bold'>${htext}</span>
             </li>`;
 
@@ -823,7 +849,7 @@ class Sa11y {
             `<li class='sa11y-outline-${level}'>
                 <span class='sa11y-badge sa11y-warning-badge'>
                 <span aria-hidden='true'>&#x3f;</span>
-                <span class='sa11y-visually-hidden'>${sa11yWarningLang}</span> ${level}</span> 
+                <span class='sa11y-visually-hidden'>${sa11yWarning}</span> ${level}</span> 
                 <span class='sa11y-outline-list-item sa11y-yellow-text sa11y-bold'>${htext}</span>
             </li>`;
 
@@ -838,27 +864,27 @@ class Sa11y {
                 if (error != null && $el.closest("a").length > 0) {
                     this.errorCount++;
                     $el.addClass("sa11y-error-heading");
-                    $el.closest("a").after(ButtonInserter(ERROR, error, true));
+                    $el.closest("a").after(ButtonInserter(sa11yError, error, true));
                     $j("#sa11y-outline-list").append(liError);
                 }
                 
                 else if (error != null) {
                     this.errorCount++;
                     $el.addClass("sa11y-error-heading");
-                    $el.before(ButtonInserter(ERROR, error));
+                    $el.before(ButtonInserter(sa11yError, error));
                     $j("#sa11y-outline-list").append(liError);
                 }
 
                 //Heading warnings
                 else if (warning != null && $el.closest("a").length > 0) {
                     this.warningCount++;
-                    $el.closest("a").after(ButtonInserter(WARNING, warning));
+                    $el.closest("a").after(ButtonInserter(sa11yWarning, warning));
                     $j("#sa11y-outline-list").append(liWarning);
                 }
 
                 else if (warning != null) {
                     this.warningCount++;
-                    $el.before(ButtonInserter(WARNING, warning));
+                    $el.before(ButtonInserter(sa11yWarning, warning));
                     $j("#sa11y-outline-list").append(liWarning);
                 }
                 
@@ -878,7 +904,7 @@ class Sa11y {
 
             $j("#sa11y-outline-header").after(
                 `<div class='sa11y-instance sa11y-missing-h1'>
-                    <span class='sa11y-badge sa11y-error-badge'><span aria-hidden='true'>&#10007;</span><span class='sa11y-visually-hidden'>${sa11yErrorLang}</span></span> 
+                    <span class='sa11y-badge sa11y-error-badge'><span aria-hidden='true'>&#10007;</span><span class='sa11y-visually-hidden'>${sa11yError}</span></span> 
                     <span class='sa11y-red-text sa11y-bold'>Missing Heading 1!</span>
                 </div>`
             );
@@ -896,47 +922,6 @@ class Sa11y {
 
     checkLinkText = function () {
         let containsLinkTextStopWords = function (textContent) {
-            let partialStopWords = [
-                "click",
-                "click here",
-                "click here for more",
-                "click here to learn more",
-                "check out",
-                "download",
-                "download here",
-                "find out",
-                "find out more",
-                "form",
-                "here",
-                "info",
-                "information",
-                "link",
-                "learn",
-                "learn more",
-                "learn to",
-                "more",
-                "page",
-                "paper",
-                "read more",
-                "read",
-                "read this",
-                "this",
-                "this page",
-                "this website",
-                "view",
-                "view our",
-                "website",
-                ".",
-                ",",
-                ":",
-            ];
-
-            let warningWords = [
-                "< ", 
-                " >", 
-                "click here"
-            ];
-
             let urlText = [
                 "http", 
                 ".asp", 
@@ -1037,65 +1022,65 @@ class Sa11y {
                     // Do nothing
                 }
                 else if (hasAriaLabelledBy != null) {
-                    $el.addClass("sa11y-pass-border")
+                    $el.addClass("sa11y-good-border")
                     $el.before(
-                        ButtonInserter(PASS, M["linkLabel"](linkText), true)
+                        ButtonInserter(sa11yGood, M["linkLabel"](linkText), true)
                     );
                 } 
                 else if (hasAriaLabel != null) {
-                    $el.addClass("sa11y-pass-border")
+                    $el.addClass("sa11y-good-border")
                     $el.before(
-                        ButtonInserter(PASS, M["linkLabel"](linkText), true)
+                        ButtonInserter(sa11yGood, M["linkLabel"](linkText), true)
                     );
                 } 
                 else if (hasTitle != null) {
                     let linkText = $el.attr("title");
-                    $el.addClass("sa11y-pass-border")
+                    $el.addClass("sa11y-good-border")
                     $el.before(
-                        ButtonInserter(PASS, M["linkLabel"](linkText), true)
+                        ButtonInserter(sa11yGood, M["linkLabel"](linkText), true)
                     );
                 }
                 else if ($el.children().length == 0) {
                     this.errorCount++;
                     $el.addClass("sa11y-error-border");
-                    $el.after(ButtonInserter(ERROR, M["linkErrorMessage"], true));
+                    $el.after(ButtonInserter(sa11yError, M["linkErrorMessage"], true));
                 } 
                 else {
                     this.errorCount++;
                     $el.addClass("sa11y-error-border");
-                    $el.after(ButtonInserter(ERROR, M["emptyLinkNoLabel"], true));
+                    $el.after(ButtonInserter(sa11yError, M["emptyLinkNoLabel"], true));
                 }
             } 
             
             else if (error[0] != null) {
                 if (hasAriaLabelledBy != null) {
                     $el.before(
-                        ButtonInserter(PASS, M["linkLabel"](linkText), true)
+                        ButtonInserter(sa11yGood, M["linkLabel"](linkText), true)
                     );
                 } else if (hasAriaLabel != null) {
                     $el.before(
-                        ButtonInserter(PASS, M["linkLabel"](hasAriaLabel), true)
+                        ButtonInserter(sa11yGood, M["linkLabel"](hasAriaLabel), true)
                     );
                 } else if ($el.attr("aria-hidden") == "true" && $el.attr("tabindex") == "-1") {
                     //Do nothing.
                 } else {
                     this.errorCount++;
                     $el.addClass("sa11y-error-text");
-                    $el.after(ButtonInserter(ERROR, M["stopWordMessage"](error[0]), true));
+                    $el.after(ButtonInserter(sa11yError, M["stopWordMessage"](error[0]), true));
                 }
             } 
             
             else if (error[1] != null) {
                 this.warningCount++;
                 $el.addClass("sa11y-warning-text");
-                $el.after(ButtonInserter(WARNING, M["linkBestPractices"](error[1]), true));
+                $el.after(ButtonInserter(sa11yWarning, M["linkBestPractices"](error[1]), true));
             }
 
             else if (error[2] != null) {
                 if (linkText.length > 40) {
                 this.warningCount++;
                 $el.addClass("sa11y-warning-text");
-                $el.after(ButtonInserter(WARNING, M["linkStopWordMessage"], true));
+                $el.after(ButtonInserter(sa11yWarning, M["linkStopWordMessage"], true));
                 }  
             } 
         });
@@ -1119,15 +1104,7 @@ class Sa11y {
             let $el = $j(el);
             let linkText = this.computeAriaLabel($el);
 
-            var newWindowPhrases = [
-                "external",
-                "new tab", 
-                "new window", 
-                "pop-up", 
-                "pop up"
-            ];
-
-            var fileTypeMatch = $el.filter(`
+            const fileTypeMatch = $el.filter(`
                 a[href$='.pdf'], 
                 a[href$='.doc'], 
                 a[href$='.zip'], 
@@ -1146,7 +1123,7 @@ class Sa11y {
                 a[href$='.avi']
             `).length;
 
-            var fileTypePhrases = [
+            const fileTypePhrases = [
                 "document",
                 "pdf",
                 "doc",
@@ -1186,7 +1163,7 @@ class Sa11y {
                 } else {
                     this.errorCount++;
                     $el.addClass("sa11y-error-text");
-                    $el.after(ButtonInserter(ERROR, M["linkIdenticalName"](linkText), true));
+                    $el.after(ButtonInserter(sa11yError, M["linkIdenticalName"](linkText), true));
                 }
             }
             else {
@@ -1207,13 +1184,13 @@ class Sa11y {
             if ($el.attr("target") === "_blank" && fileTypeMatch === 0 && !containsNewWindowPhrases) {
                 this.warningCount++;
                 $el.addClass("sa11y-warning-text");
-                $el.after(ButtonInserter(WARNING, M["newTabWarning"], true));
+                $el.after(ButtonInserter(sa11yWarning, M["newTabWarning"], true));
             }
 
             if (fileTypeMatch === 1 && !containsFileTypePhrases) {
                 this.warningCount++;
                 $el.addClass("sa11y-warning-text");
-                $el.before(ButtonInserter(WARNING, M["fileTypeWarning"], true));
+                $el.before(ButtonInserter(sa11yWarning, M["fileTypeWarning"], true));
             }
             
         });
@@ -1231,22 +1208,6 @@ class Sa11y {
                 ".gif", 
                 ".tiff",
                 ".svg"
-            ];
-            let susWords = [
-                "image of",
-                "graphic of",
-                "picture of",
-                "photo of",
-            ];
-            let placeholderStopWords = [
-                "alt",
-                "image",
-                "decorative",
-                "photo",
-                "placeholder",
-                "placeholder image",
-                "spacer",
-                "."
             ];
 
             let hit = [null, null, null];
@@ -1288,23 +1249,23 @@ class Sa11y {
                     //Image contains both hyperlink
                     if ($el.parents("a").text().trim().length > 1) {
                         $el.addClass("sa11y-error-border");
-                        $el.before(
+                        $el.closest("a").before(
                             ButtonInserter(
-                                ERROR,
+                                sa11yError,
                                 M["missingAltLinkButHasTextMessage"], false, true
                             )
                         );
                     } else if ($el.parents("a").text().trim().length == 0) {
                         $el.addClass("sa11y-error-border");
-                        $el.before(
-                            ButtonInserter(ERROR, M["missingAltLinkMessage"], false, true)
+                        $el.closest("a").before(
+                            ButtonInserter(sa11yError, M["missingAltLinkMessage"], false, true)
                         );
                     }
                 }
                 // General failure message if image is missing alt.
                 else {
                     $el.addClass("sa11y-error-border");
-                    $el.before(ButtonInserter(ERROR, M["missingAltMessage"], false, true));
+                    $el.before(ButtonInserter(sa11yError, M["missingAltMessage"], false, true));
                 }
             }
 
@@ -1320,7 +1281,7 @@ class Sa11y {
                     $el.addClass("sa11y-error-border");
                     $el.closest("a").before(
                         ButtonInserter(
-                            ERROR,
+                            sa11yError,
                             M["linkImageBadAltMessage"](altText, error[0]), false, true
                         )
                     );
@@ -1329,7 +1290,7 @@ class Sa11y {
                     $el.addClass("sa11y-warning-border");
                     $el.closest("a").before(
                         ButtonInserter(
-                            WARNING,
+                            sa11yWarning,
                             M["linkImageSusAltMessage"](altText, error[1]), false, true
                         )
                     );
@@ -1338,7 +1299,7 @@ class Sa11y {
                     $el.addClass("sa11y-error-border");
                     $el.closest("a").before(
                         ButtonInserter(
-                            ERROR,
+                            sa11yError,
                             M["linkImagePlaceholderAltMessage"](altText), false, true
                         )
                     );
@@ -1347,7 +1308,7 @@ class Sa11y {
                     $el.addClass("sa11y-error-border");
                     $el.before(
                         ButtonInserter(
-                            ERROR,
+                            sa11yError,
                             M["altHasBadWordMessage"](altText, error[0]), false, true
                         )
                     );
@@ -1356,7 +1317,7 @@ class Sa11y {
                     $el.addClass("sa11y-warning-border");
                     $el.before(
                         ButtonInserter(
-                            WARNING,
+                            sa11yWarning,
                             M["altHasSusWordMessage"](altText, error[1]), false, true
                         )
                     );
@@ -1365,7 +1326,7 @@ class Sa11y {
                     $el.addClass("sa11y-error-border");
                     $el.before(
                         ButtonInserter(
-                            ERROR,
+                            sa11yError,
                             M["altPlaceholderMessage"](altText), false, true
                         )
                     );
@@ -1382,7 +1343,7 @@ class Sa11y {
                     $el.addClass("sa11y-error-border");
                     $el.closest("a").before(
                         ButtonInserter(
-                            ERROR, M["hyperlinkedImageAriaHidden"], false, true
+                            sa11yError, M["hyperlinkedImageAriaHidden"], false, true
                         )
                     );
                 }
@@ -1392,14 +1353,14 @@ class Sa11y {
                         $el.addClass("sa11y-error-border");
                         $el.closest("a").before(
                             ButtonInserter(
-                                ERROR,
+                                sa11yError,
                                 M["imageLinkNullAltNoTextMessage"], false, true
                             )
                         );
                     } 
                     else {
                         $el.closest("a").before(
-                            ButtonInserter(PASS, M["linkHasAltMessage"], false, true)
+                            ButtonInserter(sa11yGood, M["linkHasAltMessage"], false, true)
                         );
                     }
                 }
@@ -1408,16 +1369,16 @@ class Sa11y {
                 else if ((alt == "" || alt == " ") && $el.parents().not("a[href]")) {
                     this.warningCount++;
                     $el.addClass("sa11y-warning-border");
-                    $el.before(ButtonInserter(WARNING, M["decorativeMessage"], false, true));
+                    $el.before(ButtonInserter(sa11yWarning, M["decorativeMessage"], false, true));
                 }
 
                 //Link and contains alt text.
-                else if (alt.length > 160 && $el.parents().is("a")) {
-                    this.errorCount++;
-                    $el.addClass("sa11y-error-border");
+                else if (alt.length > 250 && $el.parents().is("a")) {
+                    this.warningCount++;
+                    $el.addClass("sa11y-warning-border");
                     $el.closest("a").before(
                         ButtonInserter(
-                            ERROR,
+                            sa11yWarning,
                             M["hyperlinkAltLengthMessage"](altText, altLength), false, true
                         )
                     );
@@ -1433,7 +1394,7 @@ class Sa11y {
                     $el.addClass("sa11y-warning-border");
                     $el.closest("a").before(
                         ButtonInserter(
-                            WARNING,
+                            sa11yWarning,
                             M["imageLinkAltTextMessage"](altText), false, true
                         )
                     );
@@ -1449,29 +1410,25 @@ class Sa11y {
                     $el.addClass("sa11y-warning-border");
                     $el.closest("a").before(
                         ButtonInserter(
-                            WARNING,
+                            sa11yWarning,
                             M["anchorLinkAndAltMessage"](altText), false, true
                         )
                     );
-                } else if (alt.length > 160) {
+                } else if (alt.length > 250) {
                     this.warningCount++;
                     $el.addClass("sa11y-warning-border");
                     $el.before(
                         ButtonInserter(
-                            WARNING,
+                            sa11yWarning,
                             M["altTooLongMessage"](altText, altLength), false, true
                         )
                     );
                 } else if (alt != "") {
-                    $el.before(ButtonInserter(PASS, M["passAlt"](altText), false, true));
+                    $el.before(ButtonInserter(sa11yGood, M["passAlt"](altText), false, true));
                 }
             }
         });
     };
-
-    checkAltTextMode = () => {
-
-    }
 
     // ============================================================
     // Rulesets: Labels
@@ -1497,7 +1454,7 @@ class Sa11y {
                 } else {
                     this.errorCount++;
                     $el.addClass("sa11y-error-border");
-                    $el.after(ButtonInserter(ERROR, M["missingLabelMessage"], true));
+                    $el.after(ButtonInserter(sa11yError, M["missingLabelMessage"], true));
                 }
             }
             
@@ -1505,7 +1462,7 @@ class Sa11y {
             else if ($el.attr('type') === 'reset') {
                 this.warningCount++;
                 $el.addClass("sa11y-warning-border");
-                $el.after(ButtonInserter(WARNING, M["inputResetMessage"], true));
+                $el.after(ButtonInserter(sa11yWarning, M["inputResetMessage"], true));
             }
 
             //If input doesn't have ID or aria.
@@ -1516,14 +1473,14 @@ class Sa11y {
             ) {
                 this.errorCount++;
                 $el.addClass("sa11y-error-border");
-                $el.after(ButtonInserter(ERROR, M["missingLabelMessage"], true));
+                $el.after(ButtonInserter(sa11yError, M["missingLabelMessage"], true));
             } 
             
             /* Could be a warning potentially. Removed for now.
             else if ($el.attr("aria-label")) {
                 this.warningCount++;
                 $el.addClass("sa11y-warning-border");
-                $el.after(ButtonInserter(WARNING, M["ariaLabelInputMessage"], true));
+                $el.after(ButtonInserter(sa11yWarning, M["ariaLabelInputMessage"], true));
             } */
             
             else if ($el.prev().is("label")) {
@@ -1536,7 +1493,7 @@ class Sa11y {
                 else {
                     this.errorCount++;
                     $el.addClass("sa11y-error-border");
-                    $el.after(ButtonInserter(ERROR, M["noForAttributeMessage"]($el.attr("id")),true));
+                    $el.after(ButtonInserter(sa11yError, M["noForAttributeMessage"]($el.attr("id")),true));
                 }
             }
         });
@@ -1549,7 +1506,7 @@ class Sa11y {
         // Stores the corresponding issue text
         const M = IM["QA"];
 
-        var $videos = this.root
+        const $videos = this.root
             .find(
                 "video, iframe[src*='youtube.com'], iframe[src*='vimeo.com'], iframe[src*='yuja.com'], iframe[src*='panopto.com']"
             )
@@ -1558,7 +1515,7 @@ class Sa11y {
             let $el = $j(el);
             this.warningCount++;
             $el.addClass("sa11y-warning-border");
-            $el.first().before(ButtonInserter(WARNING, M["video"]));
+            $el.first().before(ButtonInserter(sa11yWarning, M["video"]));
         });
 
         let $audio = this.root
@@ -1570,7 +1527,7 @@ class Sa11y {
             let $el = $j(el);
             this.warningCount++;
             $el.addClass("sa11y-warning-border");
-            $el.first().before(ButtonInserter(WARNING, M["audio"]));
+            $el.first().before(ButtonInserter(sa11yWarning, M["audio"]));
         });
 
         let $dataviz = this.root
@@ -1582,7 +1539,7 @@ class Sa11y {
             let $el = $j(el);
             this.warningCount++;
             $el.addClass("sa11y-warning-border");
-            $el.first().before(ButtonInserter(WARNING, M["dataViz"]));
+            $el.first().before(ButtonInserter(sa11yWarning, M["dataViz"]));
         });
 
         let $twitterWarning = this.root
@@ -1596,7 +1553,7 @@ class Sa11y {
             if (numberofTweets > 3) {
                 this.warningCount++;
                 $el.addClass("sa11y-warning-text");
-                $el.before(ButtonInserter(WARNING, M["twitter"]));
+                $el.before(ButtonInserter(sa11yWarning, M["twitter"]));
             }
         });
 
@@ -1608,7 +1565,7 @@ class Sa11y {
             let $el = $j(el);
             this.errorCount++;
             $el.addClass("sa11y-error-text");
-            $el.after(ButtonInserter(ERROR, M["badLink"](el), true));
+            $el.after(ButtonInserter(sa11yError, M["badLink"](el), true));
         });
 
         //Warning: Find all PDFs. Although only append warning icon to first PDF on page.
@@ -1623,7 +1580,7 @@ class Sa11y {
             this.warningCount++;
             checkPDF.addClass("sa11y-warning-text");
             checkPDF.has("img").removeClass("sa11y-warning-text");
-            firstPDF.after(ButtonInserter(WARNING, M["pdf"](pdfCount), true));
+            firstPDF.after(ButtonInserter(sa11yWarning, M["pdf"](pdfCount), true));
         }
 
         //(Old) Warning: Detect uppercase. 
@@ -1637,7 +1594,7 @@ class Sa11y {
             $this.html(html.replace(uppercasePattern, '<span class="sa11y-warning-uppercase">$1</span>'));
         });
     
-        $j(".sa11y-warning-uppercase").after(ButtonInserter(WARNING, M["uppercaseWarning"], true));
+        $j(".sa11y-warning-uppercase").after(ButtonInserter(sa11yWarning, M["uppercaseWarning"], true));
 
         if ($j(".sa11y-warning-uppercase").length > 0) {
             this.warningCount++;
@@ -1654,7 +1611,7 @@ class Sa11y {
             if (detectUpperCase && detectUpperCase[0].length > 10) {
                 this.warningCount++;
                 $j(this)
-                .before(ButtonInserter(WARNING, M["uppercaseWarning"], true));
+                .before(ButtonInserter(sa11yWarning, M["uppercaseWarning"], true));
             }
         }); */
 
@@ -1668,7 +1625,7 @@ class Sa11y {
                 this.errorCount++;
                 $el.addClass("sa11y-error-border");
                 $el.before(
-                    ButtonInserter(ERROR, M["tables"]["missingHeadings"])
+                    ButtonInserter(sa11yError, M["tables"]["missingHeadings"])
                 );
             }
             if (findHeadingTags.length > 0) {
@@ -1676,7 +1633,7 @@ class Sa11y {
                 findHeadingTags.addClass("sa11y-error-heading");
                 findHeadingTags.parent().addClass("sa11y-error-border");
                 findHeadingTags.before(
-                    ButtonInserter(ERROR, M["tables"]["semanticHeading"])
+                    ButtonInserter(sa11yError, M["tables"]["semanticHeading"])
                 );
             }
             findTHeaders.each(function () {
@@ -1685,14 +1642,14 @@ class Sa11y {
                     this.errorCount++;
                     $th.addClass("sa11y-error-border");
                     $th.append(
-                        ButtonInserter(ERROR, M["tables"]["emptyHeading"])
+                        ButtonInserter(sa11yError, M["tables"]["emptyHeading"])
                     );
                 }
             });
         });
 
         //Error: Missing language tag. Lang should be at least 2 characters.
-        var lang = $j("html").attr("lang");
+        const lang = $j("html").attr("lang");
         if (lang == undefined || lang.length < 2) {
             this.errorCount++;
             $j("#sa11y-container").after(
@@ -1708,7 +1665,7 @@ class Sa11y {
             let $el = $j(el);
             if ($el.text().length > 400) {
                 this.warningCount++;
-                $el.before(ButtonInserter(WARNING, M["badItalics"]));
+                $el.before(ButtonInserter(sa11yWarning, M["badItalics"]));
             }
         });
 
@@ -1722,7 +1679,7 @@ class Sa11y {
             if (bqHeadingText.trim().length < 25) {
                 this.warningCount++;
                 $el.addClass("sa11y-warning-border");
-                $el.before(ButtonInserter(WARNING, M["blockquoteMessage"](bqHeadingText)));
+                $el.before(ButtonInserter(sa11yWarning, M["blockquoteMessage"](bqHeadingText)));
             }
         });
 
@@ -1743,7 +1700,7 @@ class Sa11y {
                     if ($el && boldtext.length <= 120) {
                         $el.find("strong").addClass("sa11y-fake-heading sa11y-error-heading");
                         $el.before(
-                            ButtonInserter(WARNING, M["fakeHeading"](boldtext))
+                            ButtonInserter(sa11yWarning, M["fakeHeading"](boldtext))
                         );
                     }
                 }
@@ -1759,7 +1716,7 @@ class Sa11y {
                 let boldtext = $fakeHeading.text();
                 $fakeHeading.addClass("sa11y-fake-heading sa11y-error-heading");
                 $fakeHeading.find("strong").after(
-                    ButtonInserter(WARNING, M["fakeHeading"](boldtext), true)
+                    ButtonInserter(sa11yWarning, M["fakeHeading"](boldtext), true)
                 );
             }
 
@@ -1820,7 +1777,7 @@ class Sa11y {
                 if (hit) {
                     this.warningCount++;
                     $first.before(
-                        ButtonInserter(WARNING, M["shouldBeList"](firstPrefix))
+                        ButtonInserter(sa11yWarning, M["shouldBeList"](firstPrefix))
                     );
                     $first.addClass("sa11y-fake-list");
                     activeMatch = firstPrefix;
@@ -1843,7 +1800,7 @@ class Sa11y {
             this.warningCount++;
             $j(".announcement-component:gt(0)").addClass("sa11y-warning-border");
             $j(".announcement-component:gt(0)").before(
-                ButtonInserter(WARNING, M["announcementWarning"])
+                ButtonInserter(sa11yWarning, M["announcementWarning"])
             );
         }
     };
@@ -2041,7 +1998,7 @@ class Sa11y {
             var nodetext = name.ignore("span.sa11y-heading-label").text();
             this.errorCount++;
             $j(name).before(
-                ButtonInserter(ERROR, errorM(cdetail, cratio, nodetext))
+                ButtonInserter(sa11yError, errorM(cdetail, cratio, nodetext))
             );
         });
 
@@ -2050,7 +2007,7 @@ class Sa11y {
             var nodetext = name.ignore("span.sa11y-heading-label").text();
             this.warningCount++;
             $j(name).before(
-                ButtonInserter(WARNING, warningM(nodetext))
+                ButtonInserter(sa11yWarning, warningM(nodetext))
             );
         });
     };
@@ -2119,7 +2076,25 @@ class Sa11y {
         }
     }
 
-    var flesch_reading_ease = 206.835 - (1.015 * words/sentences) - (84.6 * total_syllables/words);
+    var characters = paragraphtext.replace(/[.!?|\s]+/g,'').length;
+
+    
+    //Reference: https://core.ac.uk/download/pdf/6552422.pdf
+    //Reference: https://github.com/Yoast/YoastSEO.js/issues/267
+
+    let flesch_reading_ease;
+    if (sa11yReadabilityLang === "en") {
+        flesch_reading_ease = 206.835 - (1.015 * words/sentences) - (84.6 * total_syllables/words);
+    } 
+    
+    else if (sa11yReadabilityLang === "fr") {
+        //French (Kandel & Moles)
+        flesch_reading_ease = 207 - (1.015 * words/sentences) - (73.6 * total_syllables/words);
+    } 
+
+    else if (sa11yReadabilityLang === "es") {
+        flesch_reading_ease = 206.84 - (1.02 * words/sentences) - (0.60 * (100 * total_syllables/words));
+    }
 
     if (flesch_reading_ease > 100){
         flesch_reading_ease = 100;
@@ -2145,25 +2120,25 @@ class Sa11y {
            //WCAG AAA pass if greater than 60
            if (fleschScore >= 0 && fleschScore < 30) {
             $j("#sa11y-readability-info").html(
-                `<span>${fleschScore}</span> <span class="sa11y-readability-score">Very difficult</span>`);
+                `<span>${fleschScore}</span> <span class="sa11y-readability-score">${sa11yVeryDifficultReadability}</span>`);
            } 
            else if (fleschScore > 31 && fleschScore < 49) {
             $j("#sa11y-readability-info").html(
-                `<span>${fleschScore}</span> <span class="sa11y-readability-score">Difficult</span>`);
+                `<span>${fleschScore}</span> <span class="sa11y-readability-score">${sa11yDifficultReadability}</span>`);
            } 
            else if (fleschScore > 50 && fleschScore < 60) {
             $j("#sa11y-readability-info").html(
-                `<span>${fleschScore}</span> <span class="sa11y-readability-score">Fairly difficult</span>`);
+                `<span>${fleschScore}</span> <span class="sa11y-readability-score">${sa11yFairlyDifficultReadability}</span>`);
            }   
            else {
             $j("#sa11y-readability-info").html(
-                `<span>${fleschScore}</span> <span class="sa11y-readability-score">Good</span>`);
+                `<span>${fleschScore}</span> <span class="sa11y-readability-score">${sa11yGoodReadability}</span>`);
            } 
 
             $j("#sa11y-readability-details").html(`
-                <li><span class='sa11y-bold'>Average words per sentence:</span> ` + avgWordsPerSentence + `</li>
-                <li><span class='sa11y-bold'>Complex words:</span> ` + complexWords + `%</li>
-                <li><span class='sa11y-bold'>Words:</span> ` + words + `</li>
+                <li><span class='sa11y-bold'>${sa11yAvgWordPerSentence}</span> ` + avgWordsPerSentence + `</li>
+                <li><span class='sa11y-bold'>${sa11yComplexWords}</span> ` + complexWords + `%</li>
+                <li><span class='sa11y-bold'>${sa11yTotalWords}</span> ` + words + `</li>
             `);
         } 
         else {
