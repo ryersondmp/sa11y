@@ -16,7 +16,7 @@ var tippyJS = document.createElement("script");
 tippyJS.src = "https://unpkg.com/tippy.js@6";
 
 var sa11yJS1 = document.createElement("script");
-sa11yJS1.src = "https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@main-v1.1/sa11y-constant.js";
+sa11yJS1.src = "https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@main-v1.1/sa11y-english.js";
 
 var sa11yJS2 = document.createElement("script");
 sa11yJS2.src = "https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@main-v1.1/sa11y-v2.js";
