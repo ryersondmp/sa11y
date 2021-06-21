@@ -731,19 +731,19 @@ class Sa11y {
         //Enhanced keyboard accessibility for panel.
         $('[role=tablist]').keydown(function(e) {
             if (e.keyCode == 37) {
-                $("[aria-expanded=true]").prev().click().focus();
+                $("[aria-expanded=true], [aria-expanded=false]").prev().focus();
                 e.preventDefault();
             }
             if (e.keyCode == 38) {
-                $("[aria-expanded=true]").prev().click().focus();
+                $("[aria-expanded=true], [aria-expanded=false]").prev().focus();
                 e.preventDefault();
             }
             if (e.keyCode == 39) {
-                $("[aria-expanded=true]").next().click().focus();
+                $("[aria-expanded=true], [aria-expanded=false]").next().focus();
                 e.preventDefault();
             }
             if (e.keyCode == 40) {
-                $("[aria-expanded=true]").next().click().focus();
+                $("[aria-expanded=true], [aria-expanded=false]").next().focus();
                 e.preventDefault();
             }
         });
