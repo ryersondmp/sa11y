@@ -88,10 +88,10 @@ class Sa11y {
         </button>` +
 
         //Start of main container.
-        `<div id="sa11y-panel" role="tablist" aria-labelledby="sa11y-outline-header">` +
+        `<div id="sa11y-panel">` +
             
             //Page Outline tab.
-            `<div id="sa11y-outline-panel" role="tabpanel">
+            `<div id="sa11y-outline-panel" role="tabpanel" aria-labelledby="sa11y-outline-header">
                 <div id="sa11y-outline-header" class="sa11y-header-text">
                     <h2 tabindex="-1">${sa11yPageOutline}</h2>
                 </div>
