@@ -443,7 +443,7 @@ class Sa11y {
         this.warningCount = 0;
         this.root = $j(sa11yCheckRoot);
         this.findElements();
-        this.checkHeaders();
+        this.checkHeaders()
         this.checkLinkText();
         this.checkAltText();
 
@@ -1104,6 +1104,10 @@ class Sa11y {
             let $el = $j(el);
             let linkText = this.computeAriaLabel($el);
 
+            if (linkText === 'noAria') {
+                linkText = $el.text();
+            }
+
             const fileTypeMatch = $el.filter(`
                 a[href$='.pdf'], 
                 a[href$='.doc'], 
@@ -1149,23 +1153,31 @@ class Sa11y {
                 "mov",
                 "avi"
             ];
-            
-            if (linkText === 'noAria') {
-                linkText = $el.text();
-            }
 
             //Links with identical accessible names have equivalent purpose.
-            var linkTextTrimmed = linkText.trim().toLowerCase();
+            
+            //If link has an image, process alt attribute,
+            //To-do: Kinda hacky. Doesn't return it in correct order.
+            var alt = $el.find("img").attr("alt");
+            if (alt === undefined) {
+                alt = "";
+            }
+            
+            //Return link text and image's alt text.
+            var linkTextTrimmed = linkText.trim().toLowerCase() + " " + alt;
             var href = $el.attr("href");
-            if (seen[linkTextTrimmed]) {
+            
+            if (seen[linkTextTrimmed] && linkTextTrimmed.length !== 0) {
                 if (seen[href]) {
                     //Nothing
-                } else {
+                }
+                else {
+                    linkText = linkTextTrimmed;
                     this.errorCount++;
                     $el.addClass("sa11y-error-text");
                     $el.after(ButtonInserter(sa11yError, M["linkIdenticalName"](linkText), true));
                 }
-            }
+            } 
             else {
                 seen[linkTextTrimmed] = true;
                 seen[href] = true;

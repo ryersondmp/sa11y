@@ -62,8 +62,8 @@ https://github.com/atomiks/tippyjs
 The SVG icons used in this project are created by Font Awesome. View FontAwesome's license: https://fontawesome.com/license/free
 
 ## Color Contrast Checker created by jasonday
-The colour contrast jQuery plugin was created by jasonday (MIT license).
-https://www.jqueryscript.net/other/color-contrast-checker.html
+The colour contrast jQuery plugin was created by Jason Day (MIT license).
+https://github.com/jasonday/color-contrast
 
 ## Powered by jQuery
 Powered by jQuery (MIT license). https://github.com/jquery/jquery
