@@ -20,6 +20,8 @@ const sa11yLangCode = "en", //Language code, e.g. "fr"
     sa11yGood = "Good", //Bon
     sa11yOn = "On",
     sa11yOff = "Off",
+    sa11yAlertText = "Alert",
+    sa11yAlertClose = "Close",
     sa11yShowOutline = "Show Outline",
     sa11yHideOutline = "Hide Outline",
     sa11yShowSettings = "Show Settings",
@@ -52,7 +54,8 @@ const PanelStatus = {
     status6: (errorCount) => `${errorCount} accessibility errors detected.`,
     status7: () => `Please review warning.`,
     status8: (warningCount) => `Please review ${warningCount} warnings.`,
-    status9: () => `No accessibility errors found.`
+    status9: () => `No accessibility errors found.`,
+    notVisibleAlert: () => `The error or warning you are trying to view is currently not visible; it may be hidden or inside of an accordion or tab component.`
 }
 
 //Alt Text stop words

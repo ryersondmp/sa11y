@@ -34,14 +34,24 @@ function ButtonInserter(type, content, inline = false) {
         </button>
         </div>`;
 }
-function ErrorBannerInsert(content) {
+function BannerInserter(type, content) {
+    ValidTypes = new Set([sa11yError, sa11yWarning, sa11yGood]);
+    CSSName = {
+        [sa11yError]: "error",
+        [sa11yWarning]: "warning",
+        [sa11yGood]: "good",
+    };
+    // TODO: Discuss Throwing Errors.
+    if (!ValidTypes.has(type)) {
+        throw Error;
+    }
     // Check if content is a function
     if (content && {}.toString.call(content) === "[object Function]") {
         // if it is, call it and get the value.
         content = content();
     }
-    return `<div class="sa11y-error-message-container">
-        <div role="region" aria-label="${sa11yError}" class="sa11y-error-message" lang="${sa11yLangCode}">
+    return `<div class="sa11y-${CSSName[type]}-message-container">
+        <div role="region" aria-label="${[type]}" class="sa11y-${CSSName[type]}-message" lang="${sa11yLangCode}">
             ${content}
         </div>
     </div>`;
@@ -49,11 +59,14 @@ function ErrorBannerInsert(content) {
 
 class Sa11y {
     constructor() {
+
+        /* To-do: Delete?
         this.containerIgnore = sa11yContainerIgnore;
         this.outlineIgnore = sa11yOutlineIgnore;
         this.headerIgnore = sa11yHeaderIgnore;
         this.ignore = sa11yImageIgnore;
         this.linkIgnore = sa11yLinkIgnore;
+        */
 
         //Icon on the main toggle. Easy to replace.
         const MainToggleIcon =
@@ -154,9 +167,19 @@ class Sa11y {
                 </div>
             </div>` 
             +
+
+            //Console warning messages.
+            `<div id="sa11y-panel-alert">
+                <div class="sa11y-header-text">
+                    <button id="sa11y-close-alert" class="sa11y-close-btn" aria-label="${sa11yAlertClose}" aria-describedby="sa11y-alert-heading sa11y-panel-alert-text"></button>
+                    <h2 id="sa11y-alert-heading">${sa11yAlertText}</h2>
+                </div>
+                <div id="sa11y-panel-alert-text"></div>
+            </div>` + 
+
             //Main panel that conveys state of page.
             `<div id="sa11y-panel-content">
-                <div class="sa11y-panel-icon"></div>
+                <button id="sa11y-cycle-toggle" type="button" aria-label="Go to issue."><div class="sa11y-panel-icon"></div></button>
                 <div id="sa11y-panel-text"><p id="sa11y-status" aria-live="polite"></p></div>
             </div>` +
 
@@ -486,7 +509,9 @@ class Sa11y {
             $j('#sa11y-notification-count').attr("aria-label", totalCount + " errors detected.")
         }
 
+        
         //Initialize tippy.js - Although you can also swap this with Bootstrap's tooltip library for example.
+        
         tippy(".sa11y-btn", {
             interactive: true,
             trigger: "mouseenter click",
@@ -498,30 +523,13 @@ class Sa11y {
               },
             appendTo: document.body,
         });
-        
-
-        $j('.sa11y-panel-icon').on('click', function(){
-            $j('.sa11y-btn').each(function() {
-
-                $j(this).addClass("sa11y-tooltip-show");
-
-                var pos = $j(this).offset().top;
-                if ($j(window).scrollTop() < pos) {
-                    $j('html, body').animate({
-                        scrollTop: pos
-                    }, 300);
-                    return false;
-                }
-            });
-        });
-
+       
         //Detect parent containers that have hidden overflow.
         $j(".sa11y-btn").parents().each(function() {
             if ($j(this).css("overflow") === "hidden") {
                 $j(this).addClass("sa11y-overflow")
             }
         });
-
     };
 
     // ============================================================
@@ -649,6 +657,14 @@ class Sa11y {
             $j("#sa11y-status").text(PanelStatus["status9"]);
         }
 
+        let $closeAlertToggle = $j("#sa11y-close-alert");
+        $closeAlertToggle.click(() => {
+            $j("#sa11y-panel-alert").removeClass("sa11y-active");
+            $j("#sa11y-panel-alert-text").empty();
+            $j(".sa11y-pulse-border").removeClass("sa11y-pulse-border");
+            $j("#sa11y-cycle-toggle").focus();
+        });
+
         //Show outline panel
         let $outlineToggle = $j("#sa11y-outline-toggle");
         $outlineToggle.click(() => {
@@ -747,6 +763,48 @@ class Sa11y {
                 e.preventDefault();
             }
         });
+
+        // ============================================================
+        // Jump to issue button
+        // ============================================================
+        let sa11yBtnLocation = 0;
+        const findSa11yBtn = $j(".sa11y-btn").length;
+
+        if (findSa11yBtn === 0) {
+            $j("#sa11y-cycle-toggle").prop("disabled", true);
+            $j("#sa11y-cycle-toggle").attr("style", "cursor: default !important;");
+        }
+               
+        $j("#sa11y-cycle-toggle").click(function(){
+            let pos = $j('.sa11y-btn').eq(sa11yBtnLocation).offset().top - 100;
+
+            if (pos >= 1) {
+                $j('html,body').animate({
+                    scrollTop: pos}, 
+                300);
+            }
+
+            else if (pos <= 0) {
+                pos = $j('.sa11y-btn').parent().closest(':visible').eq(sa11yBtnLocation).offset().top - 100;
+       
+                $j('html,body').animate({
+                    scrollTop: pos}, 
+                300);
+       
+                $j("#sa11y-panel-alert").addClass("sa11y-active");
+                $j("#sa11y-panel-alert-text").text(PanelStatus["notVisibleAlert"]);
+                $j(".sa11y-btn:hidden").each(function() { 
+                    $j(this).parent().closest(':visible').addClass("sa11y-pulse-border");
+                });
+                $j("#sa11y-close-alert").focus();
+            }
+
+            sa11yBtnLocation += 1;
+       
+            if (sa11yBtnLocation >= findSa11yBtn) {
+                sa11yBtnLocation = 0;
+            }
+        });
     };
 
     // ============================================================
@@ -758,7 +816,7 @@ class Sa11y {
         $j("#sa11y-status").text();
         $j("#sa11y-outline-toggle").off("click");
         $j("#sa11y-settings-toggle").off("click");
-
+        
         //Errors
         this.root.find(".sa11y-error-border").removeClass("sa11y-error-border");
         this.root.find(".sa11y-error-heading").removeClass("sa11y-error-heading");
@@ -784,11 +842,10 @@ class Sa11y {
         this.root.find(".sa11y-overflow").removeClass("sa11y-overflow");
         this.root.find(".sa11y-fake-heading").removeClass("sa11y-fake-heading");
         this.root.find(".sa11y-good-border").removeClass("sa11y-good-border");
-        
-        //Alt inserter
-        this.root.find(".sa11y-alt-wrap").contents().unwrap();
-        this.root.find(".sa11y-image-center").remove();
-        
+        this.root.find(".sa11y-console-warning-message-container").remove();
+        this.root.find(".sa11y-pulse-border").removeClass("sa11y-pulse-border");
+        this.root.find("#sa11y-panel-alert").removeClass("sa11y-active");
+        this.root.find("#sa11y-panel-alert-text").empty();
 
         if (restartPanel) {
             $j("#sa11y-panel-content").removeClass();
@@ -910,7 +967,7 @@ class Sa11y {
             );
 
             $j("#sa11y-container").after(
-                ErrorBannerInsert(IM["headings"]["missingHeadingOne"])
+                BannerInserter(sa11yError, IM["headings"]["missingHeadingOne"])
             );
 
         }
@@ -1665,7 +1722,7 @@ class Sa11y {
         if (lang == undefined || lang.length < 2) {
             this.errorCount++;
             $j("#sa11y-container").after(
-                ErrorBannerInsert(M["pageLanguageMessage"])
+                BannerInserter(sa11yError, M["pageLanguageMessage"])
             );
         }
 
