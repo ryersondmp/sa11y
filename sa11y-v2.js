@@ -179,7 +179,9 @@ class Sa11y {
 
             //Main panel that conveys state of page.
             `<div id="sa11y-panel-content">
-                <button id="sa11y-cycle-toggle" type="button" aria-label="Go to issue."><div class="sa11y-panel-icon"></div></button>
+                <button id="sa11y-cycle-toggle" type="button" aria-label="Go to issue.">
+                    <div class="sa11y-panel-icon"></div>
+                </button>
                 <div id="sa11y-panel-text"><p id="sa11y-status" aria-live="polite"></p></div>
             </div>` +
 
@@ -514,7 +516,7 @@ class Sa11y {
         
         tippy(".sa11y-btn", {
             interactive: true,
-            trigger: "mouseenter click",
+            trigger: "mouseenter click focusin",
             arrow: true,
             theme: "sa11y-theme",
             allowHTML: true,
@@ -776,31 +778,32 @@ class Sa11y {
         }
                
         $j("#sa11y-cycle-toggle").click(function(){
-            let pos = $j('.sa11y-btn').eq(sa11yBtnLocation).offset().top - 100;
+            let pos = $j('.sa11y-btn').eq(sa11yBtnLocation).closest(':visible').offset().top - 300;
+            let posi = $j('.sa11y-btn').eq(sa11yBtnLocation).offset().top;
 
             if (pos >= 1) {
                 $j('html,body').animate({
                     scrollTop: pos}, 
                 300);
-            }
 
-            else if (pos <= 0) {
-                pos = $j('.sa11y-btn').parent().closest(':visible').eq(sa11yBtnLocation).offset().top - 100;
-       
-                $j('html,body').animate({
-                    scrollTop: pos}, 
-                300);
-       
-                $j("#sa11y-panel-alert").addClass("sa11y-active");
-                $j("#sa11y-panel-alert-text").text(PanelStatus["notVisibleAlert"]);
                 $j(".sa11y-btn:hidden").each(function() { 
                     $j(this).parent().closest(':visible').addClass("sa11y-pulse-border");
                 });
+
+                $j('.sa11y-btn').get(sa11yBtnLocation).focus();
+
+                if (posi <= 0) {
+                    $j("#sa11y-panel-alert").addClass("sa11y-active");
+                    $j("#sa11y-panel-alert-text").text(PanelStatus["notVisibleAlert"]);
+                    $j("#sa11y-close-alert").focus();
+                }
+            }
+            else {
+                $j("#sa11y-panel-alert").addClass("sa11y-active");
+                $j("#sa11y-panel-alert-text").text(PanelStatus["notVisibleAlert"]);
                 $j("#sa11y-close-alert").focus();
             }
-
             sa11yBtnLocation += 1;
-       
             if (sa11yBtnLocation >= findSa11yBtn) {
                 sa11yBtnLocation = 0;
             }

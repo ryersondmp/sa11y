@@ -9,18 +9,18 @@
     --sa11y-good: #36844e;
     --sa11y-good-hover: #38a459;
     --sa11y-good-text: white;
-    --sa11y-good-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24px' height='24px' role='img' focusable='false' aria-hidden='true' viewBox='0 0 512 512'%3E%3Cpath fill='%23ffffff' d='M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z'%3E%3C/path%3E%3C/svg%3E");
+    --sa11y-good-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='25px' height='25px' role='img' focusable='false' aria-hidden='true' viewBox='0 0 512 512'%3E%3Cpath fill='%23ffffff' d='M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z'%3E%3C/path%3E%3C/svg%3E");
 
     --sa11y-warning: #ffc800;
     --sa11y-warning-hover: #ffd226;
     --sa11y-warning-text: black;
-    --sa11y-warning-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24px' height='24px' role='img' focusable='false' aria-hidden='true' viewBox='0 0 512 512'%3E%3Cpath fill='%23505050' d='M504 256c0 136.997-111.043 248-248 248S8 392.997 8 256C8 119.083 119.043 8 256 8s248 111.083 248 248zM262.655 90c-54.497 0-89.255 22.957-116.549 63.758-3.536 5.286-2.353 12.415 2.715 16.258l34.699 26.31c5.205 3.947 12.621 3.008 16.665-2.122 17.864-22.658 30.113-35.797 57.303-35.797 20.429 0 45.698 13.148 45.698 32.958 0 14.976-12.363 22.667-32.534 33.976C247.128 238.528 216 254.941 216 296v4c0 6.627 5.373 12 12 12h56c6.627 0 12-5.373 12-12v-1.333c0-28.462 83.186-29.647 83.186-106.667 0-58.002-60.165-102-116.531-102zM256 338c-25.365 0-46 20.635-46 46 0 25.364 20.635 46 46 46s46-20.636 46-46c0-25.365-20.635-46-46-46z'/%3E%3C/svg%3E");
+    --sa11y-warning-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='25px' height='25px' role='img' focusable='false' aria-hidden='true' viewBox='0 0 512 512'%3E%3Cpath fill='%23505050' d='M504 256c0 136.997-111.043 248-248 248S8 392.997 8 256C8 119.083 119.043 8 256 8s248 111.083 248 248zM262.655 90c-54.497 0-89.255 22.957-116.549 63.758-3.536 5.286-2.353 12.415 2.715 16.258l34.699 26.31c5.205 3.947 12.621 3.008 16.665-2.122 17.864-22.658 30.113-35.797 57.303-35.797 20.429 0 45.698 13.148 45.698 32.958 0 14.976-12.363 22.667-32.534 33.976C247.128 238.528 216 254.941 216 296v4c0 6.627 5.373 12 12 12h56c6.627 0 12-5.373 12-12v-1.333c0-28.462 83.186-29.647 83.186-106.667 0-58.002-60.165-102-116.531-102zM256 338c-25.365 0-46 20.635-46 46 0 25.364 20.635 46 46 46s46-20.636 46-46c0-25.365-20.635-46-46-46z'/%3E%3C/svg%3E");
     --sa11y-warning-svg-color: #d39c00;
 
     --sa11y-error: #d30017;
     --sa11y-error-hover: #ff0000;
     --sa11y-error-text: white;
-    --sa11y-error-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' role='img' focusable='false' aria-hidden='true' viewBox='0 0 576 576' width='24px' height='24px'%3E%3Cpath fill='%23ffffff' d='M569.517 440.013C587.975 472.007 564.806 512 527.94 512H48.054c-36.937 0-59.999-40.055-41.577-71.987L246.423 23.985c18.467-32.009 64.72-31.951 83.154 0l239.94 416.028zM288 354c-25.405 0-46 20.595-46 46s20.595 46 46 46 46-20.595 46-46-20.595-46-46-46zm-43.673-165.346l7.418 136c.347 6.364 5.609 11.346 11.982 11.346h48.546c6.373 0 11.635-4.982 11.982-11.346l7.418-136c.375-6.874-5.098-12.654-11.982-12.654h-63.383c-6.884 0-12.356 5.78-11.981 12.654z'%3E%3C/path%3E%3C/svg%3E");
+    --sa11y-error-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' role='img' focusable='false' aria-hidden='true' viewBox='0 0 576 576' width='25px' height='25px'%3E%3Cpath fill='%23ffffff' d='M569.517 440.013C587.975 472.007 564.806 512 527.94 512H48.054c-36.937 0-59.999-40.055-41.577-71.987L246.423 23.985c18.467-32.009 64.72-31.951 83.154 0l239.94 416.028zM288 354c-25.405 0-46 20.595-46 46s20.595 46 46 46 46-20.595 46-46-20.595-46-46-46zm-43.673-165.346l7.418 136c.347 6.364 5.609 11.346 11.982 11.346h48.546c6.373 0 11.635-4.982 11.982-11.346l7.418-136c.375-6.874-5.098-12.654-11.982-12.654h-63.383c-6.884 0-12.356 5.78-11.981 12.654z'%3E%3C/path%3E%3C/svg%3E");
 
     --sa11y-setting-switch-on-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' aria-hidden='true' focusable='false' role='img' viewBox='0 0 576 512'%3E%3Cpath fill='%23000000' d='M384 64H192C86 64 0 150 0 256s86 192 192 192h192c106 0 192-86 192-192S490 64 384 64zm0 320c-70.8 0-128-57.3-128-128 0-70.8 57.3-128 128-128 70.8 0 128 57.3 128 128 0 70.8-57.3 128-128 128z'/%3E%3C/svg%3E");
     --sa11y-setting-switch-off-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' aria-hidden='true' focusable='false' role='img' viewBox='0 0 576 512'%3E%3Cpath fill='%23000000' d='M384 64H192C85.961 64 0 149.961 0 256s85.961 192 192 192h192c106.039 0 192-85.961 192-192S490.039 64 384 64zM64 256c0-70.741 57.249-128 128-128 70.741 0 128 57.249 128 128 0 70.741-57.249 128-128 128-70.741 0-128-57.249-128-128zm320 128h-48.905c65.217-72.858 65.236-183.12 0-256H384c70.741 0 128 57.249 128 128 0 70.74-57.249 128-128 128z'/%3E%3C/svg%3E");
@@ -344,7 +344,7 @@ html[data-sa11y-theme="dark"] {
 #sa11y-container .sa11y-errors .sa11y-panel-icon,
 #sa11y-container .sa11y-good .sa11y-panel-icon,
 #sa11y-container .sa11y-warnings .sa11y-panel-icon {
-    height: 30px !important;
+    height: 35px !important;
     width: 35px !important;
 }
 
@@ -517,15 +517,17 @@ html[data-sa11y-theme="dark"] {
     overflow: visible !important;
     margin-right: 10px !important;
     position: relative !important;
+    width: 35px !important;
+    height: 35px !important;
 }
 
 #sa11y-container #sa11y-cycle-toggle:before {
-    content: "";
-    left: -7px;
-    right: -7px;
-    bottom: -7px;
-    top: -7px;
-    position: absolute;
+    content: "" !important;
+    left: -7px !important;
+    right: -7px !important;
+    bottom: -7px !important;
+    top: -7px !important;
+    position: absolute !important;
 }
 
 /* Setting & Outline toggles */
@@ -987,7 +989,7 @@ span.sa11y-heading-label {
 /* Pulse border: https://codepen.io/olam/pen/zcqea */
 .sa11y-pulse-border {
     box-shadow: 0 0 0 var(--sa11y-focus-color);
-    animation: pulse 3s infinite;
+    animation: pulse 2s infinite;
 }
 .sa11y-pulse-border:hover, .sa11y-pulse-border:focus {
     animation: none;
