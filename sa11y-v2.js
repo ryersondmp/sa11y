@@ -179,7 +179,7 @@ class Sa11y {
 
             //Main panel that conveys state of page.
             `<div id="sa11y-panel-content">
-                <button id="sa11y-cycle-toggle" type="button" aria-label="Go to issue.">
+                <button id="sa11y-cycle-toggle" type="button" aria-label="${sa11yShortcutSR}">
                     <div class="sa11y-panel-icon"></div>
                 </button>
                 <div id="sa11y-panel-text"><p id="sa11y-status" aria-live="polite"></p></div>
@@ -240,6 +240,22 @@ class Sa11y {
                 // Updates badge counter
                 this.checkAll();
                 this.reset();
+            });
+
+            //Tippy tooltip for jump-to button.
+            tippy('#sa11y-cycle-toggle', {
+                content: `<div style="text-align:center">${sa11yShortcutTooltip} &raquo;<br><span class="sa11y-shortcut-icon"></span></div>`,
+                allowHTML: true,
+                delay: 900,
+                trigger: "mouseenter focusin",
+                arrow: true,
+                placement: 'top',
+                theme: "sa11y-theme",
+                aria: {
+                    content: null,
+                    expanded: false,
+                },
+                appendTo: document.body,
             });
 
             //Escape key to shutdown.
@@ -510,7 +526,6 @@ class Sa11y {
             $j('#sa11y-notification-count').html(totalCount);
             $j('#sa11y-notification-count').attr("aria-label", totalCount + " errors detected.")
         }
-
         
         //Initialize tippy.js - Although you can also swap this with Bootstrap's tooltip library for example.
         
@@ -525,7 +540,7 @@ class Sa11y {
               },
             appendTo: document.body,
         });
-       
+
         //Detect parent containers that have hidden overflow.
         $j(".sa11y-btn").parents().each(function() {
             if ($j(this).css("overflow") === "hidden") {
@@ -769,15 +784,31 @@ class Sa11y {
         // ============================================================
         // Jump to issue button
         // ============================================================
+
         let sa11yBtnLocation = 0;
         const findSa11yBtn = $j(".sa11y-btn").length;
 
+        //Disable jump to issue button if there's no buttons to view.
         if (findSa11yBtn === 0) {
             $j("#sa11y-cycle-toggle").prop("disabled", true);
             $j("#sa11y-cycle-toggle").attr("style", "cursor: default !important;");
         }
-               
-        $j("#sa11y-cycle-toggle").click(function(){
+
+        //Jump to issue using keyboard shortcut.
+        document.onkeyup = function(e) {
+            if (e.altKey && e.code == "Period") {
+                jumpToIssue();
+                e.preventDefault();
+            }
+        };
+        
+        //Jump to issue using click.
+        $j("#sa11y-cycle-toggle").off().on('click', function(){
+            jumpToIssue();
+        });
+        
+        const jumpToIssue = function() {
+            //Calculate location of both visible and hidden buttons.
             let pos = $j('.sa11y-btn').eq(sa11yBtnLocation).closest(':visible').offset().top - 300;
             let posi = $j('.sa11y-btn').eq(sa11yBtnLocation).offset().top;
 
@@ -792,6 +823,7 @@ class Sa11y {
 
                 $j('.sa11y-btn').get(sa11yBtnLocation).focus();
 
+                //If location is less than 0 = hidden element (e.g. display:none);
                 if (posi <= 0) {
                     $j("#sa11y-panel-alert").addClass("sa11y-active");
                     $j("#sa11y-panel-alert-text").text(PanelStatus["notVisibleAlert"]);
@@ -803,11 +835,12 @@ class Sa11y {
                 $j("#sa11y-panel-alert-text").text(PanelStatus["notVisibleAlert"]);
                 $j("#sa11y-close-alert").focus();
             }
+
             sa11yBtnLocation += 1;
             if (sa11yBtnLocation >= findSa11yBtn) {
                 sa11yBtnLocation = 0;
             }
-        });
+        };
     };
 
     // ============================================================

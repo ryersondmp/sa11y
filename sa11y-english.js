@@ -31,7 +31,9 @@ const sa11yLangCode = "en", //Language code, e.g. "fr"
     sa11yContrast = "Contrast",
     sa11yFormLabels = "Form labels",
     sa11yLinksAdvanced = "Links (Advanced)",
-    sa11yDarkMode = "Dark Mode";
+    sa11yDarkMode = "Dark Mode",
+    sa11yShortcutSR = "Skip to issue. Keyboard shortcut: Alt period",
+    sa11yShortcutTooltip = "Skip to issue";
 
 //Readability panel translations.
 const sa11yReadability = "Readability",
