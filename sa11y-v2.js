@@ -534,6 +534,7 @@ class Sa11y {
             trigger: "mouseenter click focusin",
             arrow: true,
             theme: "sa11y-theme",
+            placement: 'bottom',
             allowHTML: true,
             aria: {
                 content: 'describedby',
@@ -809,7 +810,7 @@ class Sa11y {
         
         const jumpToIssue = function() {
             //Calculate location of both visible and hidden buttons.
-            let pos = $j('.sa11y-btn').eq(sa11yBtnLocation).closest(':visible').offset().top - 300;
+            let pos = $j('.sa11y-btn').eq(sa11yBtnLocation).closest(':visible').offset().top - 50;
             let posi = $j('.sa11y-btn').eq(sa11yBtnLocation).offset().top;
 
             if (pos >= 1) {
