@@ -1,3 +1,12 @@
+/*----------------------------------------------------------------------
+Sa11y: the accessibility quality assurance assistant.                
+Author: Development led by Adam Chaboryk at Ryerson University.
+All acknowledgements: https://github.com/ryersondmp/sa11y
+License: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
+Copyright (c) 2020 - 2021 Ryerson University
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+----------------------------------------------------------------------*/
+
 :root {
     --sa11y-font-face: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
         "Helvetica Neue", Arial, "FontAwesome", sans-serif;
@@ -318,10 +327,21 @@ html[data-sa11y-theme="dark"] {
     align-items: center !important;
     color: var(--sa11y-panel-primary) !important;
     padding: 15px 20px 15px 15px !important;
+    max-height: 200px !important;
+    overflow-y: auto !important;
 }
 
+#sa11y-container #sa11y-panel-alert-preview,
 #sa11y-container #sa11y-panel-alert-text {
     font-size: var(--sa11y-normal-text) !important;
+}
+
+#sa11y-container #sa11y-panel-alert-preview {
+    background: var(--sa11y-panel-bg-secondary) !important;
+    border: 1px dashed var(--sa11y-panel-bg-splitter) !important;
+    border-radius: 5px !important;
+    padding: 10px !important;
+    margin-top: 15px !important;
 }
 
 #sa11y-container #sa11y-panel-content {
@@ -513,16 +533,19 @@ html[data-sa11y-theme="dark"] {
 }
 
 /* Scroll bar */
+#sa11y-container #sa11y-panel-alert::-webkit-scrollbar,
 #sa11y-container #sa11y-settings-content::-webkit-scrollbar,
 #sa11y-container #sa11y-outline-content::-webkit-scrollbar {
     width: 7px !important;
   }
 
+#sa11y-container #sa11y-panel-alert,
 #sa11y-container #sa11y-settings-content,
 #sa11y-container #sa11y-outline-content {
     scrollbar-width: thin !important;
     scrollbar-color: var(--sa11y-panel-bg-splitter) !important;
 }
+#sa11y-container #sa11y-panel-alert::-webkit-scrollbar-thumb,
 #sa11y-container #sa11y-settings-content::-webkit-scrollbar-thumb,
 #sa11y-container #sa11y-outline-content::-webkit-scrollbar-thumb {
     background-color: var(--sa11y-panel-bg-splitter) !important;

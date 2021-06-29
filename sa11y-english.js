@@ -1,3 +1,12 @@
+/*----------------------------------------------------------------------
+Sa11y: the accessibility quality assurance assistant.                
+Author: Development led by Adam Chaboryk at Ryerson University.
+All acknowledgements: https://github.com/ryersondmp/sa11y
+License: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
+Copyright (c) 2020 - 2021 Ryerson University
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+----------------------------------------------------------------------*/
+
 /* Global defaults & Localization */
 /* Language: English */
 
@@ -58,7 +67,7 @@ const PanelStatus = {
     status7: () => `Please review warning.`,
     status8: (warningCount) => `Please review ${warningCount} warnings.`,
     status9: () => `No accessibility errors found.`,
-    notVisibleAlert: () => `The error or warning you are trying to view is currently not visible; it may be hidden or inside of an accordion or tab component.`
+    notVisibleAlert: () => `The error or warning you are trying to view is currently not visible; it may be hidden or inside of an accordion or tab component. Here's a preview:`
 }
 
 //Alt Text stop words
@@ -67,6 +76,9 @@ const susWords = [
     "graphic of",
     "picture of",
     "photo of",
+    "An image",
+    "A image",
+    "A photo"
 ];
 const placeholderStopWords = [
     "alt",
