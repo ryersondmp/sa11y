@@ -9,11 +9,12 @@ let sa11yContainerIgnore = ".sa11y-ignore, #sa11y-container", //Ignore specific 
     sa11yOutlineIgnore = "", //Exclude headings from outline panel.
     sa11yHeaderIgnore = "", //Ignore specific headings. E.g. "h1.jumbotron-heading"
     sa11yImageIgnore = "", //Ignore specific images.
-    sa11yLinkIgnore = ""; //Ignore specific links.
+    sa11yLinkIgnore = "", //Ignore specific links.
+    sa11yLinkIgnoreSpan = "span.sr-only-example"; //Ignore specific classes within links. Example: <a href="#">learn more <span class="sr-only-example">(opens new tab)</span></a>.
 
 //Language of Sa11y. Some global variables to help translate.
 const sa11yLangCode = "en", //Language code, e.g. "fr"
-    sa11yMainToggle = "Toggle Accessibility Checker",
+    sa11yMainToggleLabel = "Toggle Accessibility Checker",
     sa11yContainerLabel = "Accessibility Checker",
     sa11yError = "Error", //Erreur
     sa11yWarning = "Warning", //Attention
@@ -91,6 +92,7 @@ const partialStopWords = [
     "find out more",
     "form",
     "here",
+    "here.",
     "info",
     "information",
     "link",
@@ -105,7 +107,9 @@ const partialStopWords = [
     "read this",
     "this",
     "this page",
+    "this page.",
     "this website",
+    "this website.",
     "view",
     "view our",
     "website",
@@ -127,6 +131,36 @@ const newWindowPhrases = [
     "new window", 
     "pop-up", 
     "pop up"
+];
+
+//Link Text (Advanced). Only some items in list would need to be translated.
+const fileTypePhrases = [
+    "document",
+    "pdf",
+    "doc",
+    "docx",
+    "word",
+    "mp3",
+    "ppt",
+    "text",
+    "pptx",
+    "powerpoint",
+    "txt",
+    "exe",
+    "dmg",
+    "rtf",
+    "install",
+    "windows",
+    "macos",
+    "spreadsheet",
+    "worksheet",
+    "csv",
+    "xls",
+    "xlsx",
+    "video",
+    "mp4",
+    "mov",
+    "avi"
 ];
 
 //Tooltip formatting shortcuts
@@ -158,6 +192,8 @@ const IM = {
 
         missingHeadingOne: () =>
             `Missing Heading 1. Heading 1 should be the start of the main content section, and is the main heading that describes the overall purpose of the page. Learn more about <a href='https://www.w3.org/WAI/tutorials/page-structure/headings/' target='_blank'>Heading Structure. ${newTab}</a>`,
+
+        missingHeadingOnePanelText: `Missing Heading 1!`,
     },
 
     linktext: {
