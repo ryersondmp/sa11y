@@ -100,7 +100,7 @@ class Sa11y {
         //Main toggle button.
         `<button type="button" aria-expanded="false" id="sa11y-toggle" aria-describedby="sa11y-notification-badge" aria-label="${sa11yMainToggleLabel}" disabled>
             ${MainToggleIcon} 
-            <div id="sa11y-notification-badge" style="display: none;">
+            <div id="sa11y-notification-badge">
                 <span id="sa11y-notification-count"></span>
             </div>
         </button>` +
@@ -244,12 +244,17 @@ class Sa11y {
                     .removeClass("sa11y-on")
                     .attr("aria-expanded", "false");
                 this.resetAll();
+                this.updateBadge();
+
             } else {
                 localStorage.setItem("sa11y-remember-panel", "Opened");
                 sa11yToggle
                     .addClass("sa11y-on")
                     .attr("aria-expanded", "true");
                 this.checkAll();
+                
+                //Don't show badge when panel is opened.
+                $("#sa11y-notification-badge").css("display", "none");
             }
         });
 
@@ -598,7 +603,12 @@ class Sa11y {
         }
         this.initializeTooltips();
         this.detectOverflow();
-        this.updateBadge();
+
+        //Don't show badge when panel is opened.
+        if ($(".sa11y-on").length == 0) {
+            this.updateBadge();
+        }
+        
     };
 
     // ============================================================
@@ -690,11 +700,11 @@ class Sa11y {
         } else if (this.warningCount > 0 && this.errorCount === 0) {
             $('#sa11y-notification-badge').css("display", "flex");
             $('#sa11y-notification-badge').addClass("sa11y-notification-badge-warning");
-            $('#sa11y-notification-count').html(this.warningCount);
+            $('#sa11y-notification-count').text(this.warningCount);
             $('#sa11y-notification-count').attr("aria-label", this.warningCount + " warnings detected.")
         } else {
             $('#sa11y-notification-badge').css("display", "flex");
-            $('#sa11y-notification-count').html(totalCount);
+            $('#sa11y-notification-count').text(totalCount);
             $('#sa11y-notification-count').attr("aria-label", totalCount + " errors detected.")
         }
     }
@@ -913,6 +923,7 @@ class Sa11y {
                 $("#sa11y-panel-alert-text").text(PanelStatus["notVisibleAlert"]);
                 $("#sa11y-panel-alert-preview").html($(".sa11y-btn")[sa11yBtnLocation].getAttribute('data-tippy-content'));
                 $("#sa11y-close-alert").focus();
+
             } else if (posi > 1) {
                 $("#sa11y-panel-alert").removeClass("sa11y-active");
                 $(".sa11y-pulse-border").removeClass("sa11y-pulse-border");

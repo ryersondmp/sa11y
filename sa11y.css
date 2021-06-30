@@ -177,6 +177,7 @@ html[data-sa11y-theme="dark"] {
     font-size: var(--sa11y-normal-text) !important;
     font-weight: normal;
     word-break: normal !important;
+    letter-spacing: unset !important;
 }
 
 .sa11y-instance {
@@ -231,7 +232,7 @@ html[data-sa11y-theme="dark"] {
     background-color: #EB0000;
     border-radius: 100px !important;
     color: #ffffff;
-    display: flex;
+    display: none;
     font-weight: normal !important;
     font-size: 13px !important;
     height: 20px !important;
@@ -1125,6 +1126,7 @@ span.sa11y-heading-label {
     font-family: var(--sa11y-font-face) !important;
     -webkit-font-smoothing: auto !important;
     font-weight: normal;
+    letter-spacing: unset !important;
 }
 
 .tippy-box[data-theme~="sa11y-theme"] *:not(.sa11y-header-text) {
