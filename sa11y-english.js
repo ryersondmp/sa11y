@@ -22,7 +22,7 @@ let sa11yContainerIgnore = ".sa11y-ignore, #sa11y-container", //Ignore specific 
 /* Localization. Language: English */
 //Language of Sa11y. Some global variables to help translate.
 const sa11yLangCode = "en", //Language code, e.g. "fr"
-    sa11yMainToggleLabel = "Toggle Accessibility Checker",
+    sa11yMainToggleLabel = "Accessibility Checker",
     sa11yContainerLabel = "Accessibility Checker",
     sa11yError = "Error", //Erreur
     sa11yWarning = "Warning", //Attention
@@ -109,6 +109,7 @@ const partialAltStopWords = [
     "link",
     "learn",
     "learn more",
+    "learn more.",
     "learn to",
     "more",
     "page",

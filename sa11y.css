@@ -291,6 +291,7 @@ html[data-sa11y-theme="dark"] {
     font-weight: normal !important;
     margin: 0 !important;
     width: 180px !important;
+    cursor: pointer !important;
 }
 
 #sa11y-container #sa11y-panel.sa11y-active {
@@ -310,7 +311,7 @@ html[data-sa11y-theme="dark"] {
         0 4px 80px -8px rgba(36, 40, 47, 0.25),
         0 4px 4px -2px rgba(91, 94, 105, 0.15) !important;
     opacity: 0;
-    overflow: hidden !important;
+    overflow: visible !important;
     position: fixed !important;
     right: 45px !important;
     text-align: left !important;
@@ -585,7 +586,11 @@ html[data-sa11y-theme="dark"] {
 #sa11y-container #sa11y-settings-toggle:hover,
 #sa11y-container #sa11y-outline-toggle.sa11y-outline-active,
 #sa11y-container #sa11y-outline-toggle:hover {
-    filter: brightness(0.9) !important;
+    background-color: var(--sa11y-shortcut-hover) !important;
+}
+
+#sa11y-container #sa11y-outline-toggle {
+    border-radius: 0px 0px 0px 5px !important;
 }
 
 #sa11y-container #sa11y-settings-toggle,
@@ -596,7 +601,6 @@ html[data-sa11y-theme="dark"] {
     border-top: 1px solid var(--sa11y-panel-bg-splitter) !important;
     border-left: 0 !important;
     border-right: 1px solid var(--sa11y-panel-bg-splitter) !important;
-    border-radius: 0 !important;
     color: var(--sa11y-panel-secondary) !important;
     cursor: pointer !important;
     display: block !important;
@@ -608,9 +612,21 @@ html[data-sa11y-theme="dark"] {
     opacity: 1 !important;
     outline: 0 !important;
     padding: 0px !important;
+    position: relative !important;
     width: 100% !important;
     transition: background 0.2s !important;
     text-align: center !important;
+}
+
+/* Accessibility: Increase target size. */
+#sa11y-container #sa11y-settings-toggle:before,
+#sa11y-container #sa11y-outline-toggle:before {
+    position: absolute !important;
+    content: '' !important;
+    top: -7px !important;
+    bottom: -8px !important;
+    left: 0px !important;
+    right: 0px !important;
 }
 
 #sa11y-container #sa11y-other-options li,

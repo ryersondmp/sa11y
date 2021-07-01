@@ -28,9 +28,6 @@ html {
     background-color:#525252;
 }
 
-a.btn.btn-default.btn-block.btn-sa11y {font-size:1.2em;}
-a.btn.btn-default.btn-block.btn-sa11y:focus {background:black;border-color: black;}
-
 body {
   margin: 0;
 }
@@ -330,6 +327,9 @@ a:focus {
 figure {
   margin: 0;
 }
+.text-center {
+  text-align: center;
+}
 img {
   vertical-align: middle;
 }
@@ -410,6 +410,26 @@ hr {
     padding-top: 70px;
     padding-bottom: 70px;
     background-color: #00a9ef;
+}
+
+.btn-sa11y {
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: normal;
+  text-align: center;
+  vertical-align: middle;
+  color: white !important;
+  background: #004c9b;           
+  padding: 10px 20px;
+  margin: 1em;
+  font-size: 1.2em;
+  line-height: 1.42857143;
+  border-radius: 4px;
+  text-decoration: none !important;
+}
+
+a.btn-sa11y:hover, a.btn-sa11y:focus {
+  background: black;
 }
 
 h1,

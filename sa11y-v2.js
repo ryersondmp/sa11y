@@ -609,10 +609,7 @@ class Sa11y {
         //Don't show badge when panel is opened.
         if ($(".sa11y-on").length == 0) {
             this.updateBadge();
-        }
-
-        console.log("How many")
-        
+        }        
     };
 
     // ============================================================

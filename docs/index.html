@@ -36,7 +36,7 @@
               <div aria-label="global" class="navbar navbar-default">
                 <div class="container-fluid">
                   <div class="navbar-header">
-                    <a class="navbar-brand" href="https://www.ryerson.ca/"> <img src="assets/images/ryerson_logo.svg" alt="Ryerson University">
+                    <a class="navbar-brand" href="https://www.ryerson.ca/"> <img src="assets/images/ryerson_logo.svg" alt="Ryerson University homepage.">
                     </a>
                   </div>
                 </div>
@@ -123,7 +123,7 @@
               <div class="col-sm-6">
                 <h2 id="features">Features <i class="fa fa-star" aria-hidden="true"></i></h2>
                 <p>Sa11y works as a simple in-page checker that is designed to be easily customized and integrated into any content management system (CMS) to facilitate good accessibility practices. Sa11y works best in a templated <abbr
-                    title="Content Management System">CMS</abbr> environment, although is also available as a bookmarklet.</p>
+                    title="Content Management System">CMS</abbr> environment, although is also available as a bookmarklet. Sa11y is <em>not</em> a comprehensive code analysis tool. Sa11y exclusively highlights content issues.</p>
                 <ul>
                   <li>Over 50 test conditions.</li>
                   <li>Easy, intuitive tooltips to explain issues.</li>
@@ -134,7 +134,6 @@
                   <li>Additional (optional) rulechecks: Contrast, form labels, readability, links.</li>
                   <li>Dark mode.</li>
                 </ul>
-                <p><strong>Note:</strong> Sa11y is <em>not</em> a comprehensive code analysis tool. Sa11y exclusively highlights content issues.</p>
               </div>
 
               <div class="col-sm-6 text-center p20">
@@ -154,7 +153,7 @@
 
             <div class="row">
               <div class="col-sm-8">
-                <p>Sa11y does a quick scan on page load. If there are any errors or warnings, the toggle will display a notification badge with the <strong>total</strong> number of issues detected. Red indicates errors, while yellow indicates there are warnings only. Content authors should be encouraged to activate Sa11y even if there are no notifications!</p> 
+                <p>Sa11y does a quick scan on page load. If there are any errors or warnings, the toggle will display a notification badge with the total number of issues detected. Red indicates errors, while yellow indicates there are warnings only. Content authors should be encouraged to enable Sa11y even if there are no notifications!</p> 
               </div>
               <div class="col-sm-4 text-center">
                 <img loading="lazy" width="250" class="responsive-img" src="assets/images/notification.png" alt="Three Sa11y toggles: one with a red notification badge, one with a yellow badge, and one without any badge."/>
@@ -187,7 +186,7 @@
              <!-- This excellent accordion panel created by Scott O'Hara https://github.com/scottaohara/a11y_accordions-->
              <div data-aria-accordion data-multi data-transition data-default="none" id="accGen">
               <h4 data-aria-accordion-heading>
-                View all rulesets
+                View all checks
               </h4>
               <div data-aria-accordion-panel>
                 <p>Sa11y checks for the following content related issues and warnings.</p>
@@ -291,10 +290,10 @@
             <p>Sa11y has four optional checks and a dark mode setting that can be enabled in the "Show Settings" tab. Although these checks are "optional", it does not imply they are not important! Depending on the website theme, plugin, or <abbr
               title="Content Management System">CMS</abbr>, they may not need to be tested for every time. For example, some form plugins automatically provide a label for each form input.</p>
             <div class="row">
-              <div class="col-md-6 text-center">
-                <img loading="lazy" class="responsive-img" width="1000" src="assets/images/settings-panel.png" alt="Screenshot of settings panel in dark mode showing optional toggles for contrast, form labels, links (advanced), readability and dark mode. Screenshot also includes a tooltip warning about links that open in a new tab without warning which is part of the Links (Advanced) module.">
+              <div class="col-md-8 text-center">
+                <img loading="lazy" class="responsive-img" width="1000" src="assets/images/settings-panel.png" alt="Screenshot of settings panel in dark mode showing toggles for contrast, form labels, links (advanced), readability and dark mode. There is also a tooltip warning about links that open in a new tab without warning.">
               </div>
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <ul>
                   <li><strong>Contrast</strong>
                       <ul>
@@ -378,128 +377,71 @@
             <h2 id="install">Install <i class="fa fa-wrench" aria-hidden="true"></i></h2>
 
             <h3 class="pt20">Bookmarklet <span class="label-default">Experimental</span></h3>
-            <p>Simply drag the button below into your bookmarks bar. Click the bookmark on any webpage.</p>
+            <p><i class="fa fa-info-circle" aria-hidden="true"></i>
+               Please note that bookmarklets do not work on all websites because of security policies that block external code. Secondly, it may take a few seconds to load because the code is being injected into the page you are browsing.</p>
+            
+            <ol>
+              <li>Simply drag the "Sa11y" button below into your bookmarks bar.</li>
+              <li>Click the bookmark on any webpage.</li>
+            </ol>
 
-            <p><strong>Note:</strong> it may take a few seconds to load because the code is being injected into the page you are browsing. Secondly, bookmarklets do not work on all websites because of security policies that block external code.</p>
+            <a class="btn-sa11y" href="javascript:void((function(doc){document.body.appendChild(document.createElement('script')).src='https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@main-v1.1/bookmarklet/sa11y-en.js';})(document))"><span class="fa fa-bookmark" aria-hidden="true"></span> <span>Sa11y</span></a>
 
-            <div class="resButtons section pt20">
-              <div class="res-buttons">
-                <div class="buttonDefault">
-                  <div class="row pb15">
-                    <div class="row-height">
-                      <div class="col col-xs-12 col-sm-6 outside-full-height">
-                        <div class="inside inside-full-height">
-                          <a class="btn btn-default btn-block btn-sa11y sa11y-ignore"
-                            href="javascript:void((function(doc){document.body.appendChild(document.createElement('script')).src='https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@main-v1.1/bookmarklet/bm-sa11y-v2.js';})(document))">
-                            <span class="fa fa-bookmark" aria-hidden="true"></span> <span>Sa11y</span>
-                          </a>
-                        </div>
-                      </div>
-                      <div class="col col-xs-12 col-sm-6 outside-full-height">
-                      </div>
-                    </div>
-                  </div>
-                </div>
+          
+            <h3 id="how" class="pt20">How to use</h3>
+            <p>Click the toggle in the bottom right corner. If using assistive technology, the button is labeled "Accessibility Checker".</p>
+
+            <div class="row">
+              <div class="col-md-6">
+                <h4 class="pt20"><i class="fa fa-lightbulb-o" aria-hidden="true"></i> <strong>Tip #1</strong></h4>
+                <p>Use the "Skip to issue" button to quickly cycle through all errors, warnings, or "good" buttons. The tooltip will automatically open. You can also press <kbd>alt</kbd> <kbd aria-label="period">.</kbd> with a keyboard.</p>
+              </div>
+              <div class="col-md-6 text-center">
+                <img loading="lazy" class="responsive-img" width="500" src="assets/images/skip-to-issue.png" alt="Screenshot of Skip to issue. Keyboard shortcut: Alt period.">
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-5">
+                <h4 class="pt20"><i class="fa fa-lightbulb-o" aria-hidden="true"></i> <strong>Tip #2</strong></h4>
+                <p>Sa11y also checks hidden content. If you don't see an error or warning button, use the "Skip to issue" button to find it. An alert will pop-up with a preview of the issue message.</p>
+              </div>
+              <div class="col-md-6 text-center">
+                <img loading="lazy" class="responsive-img" width="500" src="assets/images/hidden-content-alert.png" alt="Screenshot showing an alert stating that the error or warning may be hidden in an accordion or tab component.">
               </div>
             </div>
 
             <h3 class="pt20">For developers and web administrators</h3>
             <p>Sa11y works best in a templated <abbr
               title="Content Management System">CMS</abbr> environments. Create your own conditions and rulesets to strategically enforce your organization's accessibility, usability, or web style guidelines. Customize Sa11y to target specific areas of the page (e.g. <kbd>main</kbd> content area only) - don't highlight issues content authors can't fix! Add exclusions to ignore false positives or prevent Sa11y from highlighting content within social media widgets or other iFrame content.</p>
-            <ul class="pb20">
+            <ul class="pb10">
               <li>Fork or contribute: <a href="https://github.com/ryersondmp/sa11y">Sa11y on Github <span class="fa fa-github" aria-hidden="true"></span></a></li>
-              <li>View a demonstration of <a href="https://ryersondmp.github.io/sa11y/examples/full-list.html">All Rulesets</a> in action.
-            </ul>
+              <li>View a demonstration of <a href="https://ryersondmp.github.io/sa11y/examples/full-list.html">All Rulesets</a> in action.</li>
+              <li>View installation and configuration notes on GitHub.</li>
+            </ul>      
 
-            <!-- This excellent accordion panel created by Scott O'Hara https://github.com/scottaohara/a11y_accordions-->
-            <div data-aria-accordion data-multi data-transition data-default="none" id="accGen2">
-
-              <h4 data-aria-accordion-heading>
-                Installation
-              </h4>
-              <div data-aria-accordion-panel>
-                <p class="pb20">Sa11y relies on jQuery and works best using a tooltip library that features a positioning system. Positioning systems ensure that tooltips are never hidden by conflicting CSS styling such as
-                  <kbd>overflow:hidden;</kbd>. This version of Sa11y was built with <a href="https://atomiks.github.io/tippyjs/">Tippy.js</a>, a highly customizable tooltip library.</p>
-
-                <p>To install on your website, insert Sa11y right after the jQuery script tag, and right before the closing <kbd>&lt;/body&gt;</kbd> tag. Include both Tippy.js and Popper.js before Sa11y. Sa11y consists of three files.</p>
-                <ul>
-                  <li><strong>sa11y.css:</strong> The main stylesheet. Should be included in the &lt;head&gt; of the document (if possible).</li>
-                  <li><strong>sa11y-english.js:</strong> Global configurations and exclusions go here. All text strings and tooltip messages are located here for easy translation.</li>
-                  <li><strong>sa11y-v2.js:</strong> Contains all logic and rulesets.</li>
-                </ul>
-
-                <h5 class="pt20">Example installation:</h5>
-                
-                <div class="sa11y-ignore">
-                <pre><code class="language-html">//Latest jQuery
-&lt;script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"&gt;&lt;/script&gt;
-
-//Tippy.js v6 CDN (Tooltip library)
-&lt;script src="https://unpkg.com/@popperjs/core@2"&gt;&lt;/script&gt;
-&lt;script src="https://unpkg.com/tippy.js@6"&gt;&lt;/script&gt;
-
-//Sa11y (grab the latest code from GitHub). Do not use CDN.
-&lt;link rel="stylesheet" href="sa11y.css"/&gt;
-&lt;script src="sa11y-english.js"&gt;&lt;/script&gt;
-&lt;script src="sa11y-v2.js"&gt;&lt;/script&gt;</code></pre>
-
-</div>
-
-                <h6 class="pt20">Accessibility notice:</h6>
-                <p>This version appends tooltips to the end of the <kbd>body</kbd> by default to ensure tooltips do not get hidden by conflicting CSS styling. If you customize the tooltips to include interactive content, please read documentation on
-                  <a href="https://atomiks.github.io/tippyjs/v6/accessibility/#interactivity">creating accessible interactive tooltips for keyboard users.</a></p>
-
-                <h5 class="pt20">Bootstrap-based websites</h5>
-                <p>Bootstrap versions 3 and 4 already include tooltips/popovers powered by Poppers.js positioning library. For performance reasons, you can replace the HTML tippy.js markup with Bootstrap's tooltip markup.</p>
-              </div>
-
-
-              <h4 data-aria-accordion-heading>
-                Create your own rule sets
-              </h4>
-              <div data-aria-accordion-panel>
-                <ol>
-                  <li>Create your condition (within the QA module for example).</li>
-                  <li>Add <kbd>this.warningCount++;</kbd> or <kbd>this.errorCount++;</kbd> to update Warning or Error count.</li>
-                  <li>Add respective CSS classes.</li>
-                  <li>Add warning or error button before (or after) element using <kbd>ButtonInserter</kbd> function, followed by the type <kbd>sa11yError</kbd>, <kbd>sa11yWarning</kbd>, <kbd>sa11yGood</kbd>. Finally, reference your tooltip message.</li>
-                </ol>
-
-                <h5 class="pt20">Example: Warn content authors of overusing a component.</h5>
-                <p>The example condition detects if more than one announcement is detected on a page. If it detects more than one instance of the <kbd>.announcement-component</kbd> CSS class, it will be indicated as a warning. Using jQuery's
-                  <kbd>gt:(0)</kbd> selector, the warning button will only appear on every instance except the first component. <kbd>M['WarningMessage']</kbd> represents a string or any text for the tooltip.</p>
-
-                <div class="pt20">
-                  <div class="sa11y-ignore">
-                  <pre><code class="language-js">let $checkAnnouncement = this.root.find('.announcement-component').not(this.containerIgnore).length;
-        if ($checkAnnouncement > 1) {
-            this.warningCount++;</code><code class="language-js">;
-            $('.announcement-component:gt(0)').addClass('sa11y-warning-border');
-            $('.announcement-component:gt(0)').before(ButtonInserter(sa11yWarning, M['WarningMessage']));
-        }</code></pre></div>
-  
-                </div>
-              </div>
-            </div>
-
-            <h2 id="acknowledgements" class="pt40">Acknowledgements <i class="fa fa-users" aria-hidden="true"></i>
+            <h2 id="acknowledgements" class="pt20">Acknowledgements <i class="fa fa-users" aria-hidden="true"></i>
             </h2>
             <p>Development lead by <a href="https://ca.linkedin.com/in/adamchaboryk">Adam Chaboryk,</a> IT accessibility specialist, Digital Media Projects, Computing and Communication Services (CCS) at Ryerson University in Toronto, Canada.</p>
+
+            <h3 class="pt20">Previous contributors</h3>
             <ul>
-              <li><a href="https://www.linkedin.com/in/b1luong">Benjamin Luong,</a> web accessibility & usability assistant (2016/2017)</li>
-              <li><a href="https://www.linkedin.com/in/arshad-mohamed">Arshad Mohammed,</a> web accessibility & usability assistant (2018/2019)</li>
-              <li><a href="https://ca.linkedin.com/in/kylepadernilla">Kyle Padernilla,</a> web accessibility & usability assistant (2019/2020)</li>
               <li><a href="https://ca.linkedin.com/in/farhanhmd">Farhan Mohammed,</a> web accessibility & usability assistant (2020/2021)</li>
+              <li><a href="https://ca.linkedin.com/in/kylepadernilla">Kyle Padernilla,</a> web accessibility & usability assistant (2019/2020)</li>
+              <li><a href="https://www.linkedin.com/in/arshad-mohamed">Arshad Mohammed,</a> web accessibility & usability assistant (2018/2019)</li>
+              <li><a href="https://www.linkedin.com/in/b1luong">Benjamin Luong,</a> web accessibility & usability assistant (2016/2017)</li>
             </ul>
 
-            <h3 class="pt30">Built with</h3>
+            <h3 class="pt20">Other thanks</h3>
             <ul>
               <li>Sa11y is an adaptation of <a href="https://khan.github.io/tota11y/">Tota11y by Khan Academy.</a></li>
-              <li>Tooltip library by <a href="https://atomiks.github.io/tippyjs/">Tippy.js</a></li>
-              <li><a href="https://www.jqueryscript.net/other/color-contrast-checker.html">jQuery contrast plugin</a> was created by jasonday.</li>
-              <li>The readability feature is adapted from a <a href="https://accessibility.oit.ncsu.edu/it-accessibility-at-nc-state/developers/tools/readability-bookmarklet/">Readability Bookmarklet created by Greg Kraus at North Carolina State University.</a></li>
+              <li>Tooltip library powered by <a href="https://github.com/atomiks/tippyjs">Tippy.js</a></li>
+              <li><a href="https://github.com/jasonday/color-contrast">Colour contrast</a> plugin created by Jason Day.</li>
+              <li>The readability feature is adapted from a <a href="https://accessibility.oit.ncsu.edu/it-accessibility-at-nc-state/developers/tools/readability-bookmarklet/">Readability Bookmarklet</a> created by Greg Kraus at North Carolina State University.</li>
               <li>The icons are made by <a href="https://fontawesome.com/">Font Awesome.</a></li>
-              <li>Powered with <a href="https://jquery.com/">jQuery.</a></li>
+              <li>Sa11y is built with <a href="https://jquery.com/">jQuery.</a></li>
+              <li>John Jameson (Princeton University) maintains a fork of Sa11y called <a href="https://github.com/itmaybejj/editoria11y">Editoria11y</a> which is available as a turnkey Drupal module. Lots of code has been exchanged between both libraries!</li>
+              <li>The "Skip to content" button on this page is a great open source script called <a href="https://github.com/paypal/skipto">SkipTo.</a></li>
             </ul>
             <h3 class="pt30">License</h3>
             <p>Sa11y is MIT licensed.</p>
@@ -531,7 +473,7 @@
         <div class="container">
           <div class="row footer-top">
             <div class="col-sm-12 text-center">
-              <strong>Ryerson University</strong>
+              <strong>© Ryerson University</strong>
             </div>
           </div>
         </div>
@@ -551,9 +493,15 @@
     border-width: 0 2px 2px 2px !important;
     border-color: #6b6b6b !important;
   }
+  .anchorjs-link {
+    text-decoration: none !important;
+  }
   </style>
-  <!--Fantastic SkipTo plugin: https://github.com/paypal/skipto-->
+  <!-- SkipTo plugin: https://github.com/paypal/skipto-->
   <script src="https://cdn.disability.illinois.edu/skipto.min.js"></script>
+  <!-- AnchorJs plugin: https://www.bryanbraun.com/anchorjs/-->
+  <script src="https://cdn.jsdelivr.net/npm/anchor-js/anchor.min.js"></script>
+
   <script>
     var SkipToConfig =  {
       'settings': {
@@ -567,7 +515,7 @@
         }
       }
     };
+    anchors.add();
     </script>
-
 </body>
 </html>
