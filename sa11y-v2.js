@@ -213,7 +213,6 @@ class Sa11y {
         
         //500ms to let the page settle down (e.g. slow loading JavaScript components).
         setTimeout(() => {
-                
                 $(document).ready(() => {
                     $("#sa11y-toggle").prop("disabled", false);
                     
@@ -223,9 +222,12 @@ class Sa11y {
                     this.sanitizeHTMLandComputeARIA();
                     this.initializeJumpToIssueTooltip();
 
-                    //To-do: This needs to be completely re-thinked. On document.ready, it crudely checks the page and resets everything, except for the badge counter. Need to figure out a way to update badge counter without painting entire page with error buttons.
-                    this.checkAll();
-                    this.resetAll();
+                    //To-do: Yes, this is total crap and needs to be re-thinked. On document.ready, it crudely checks/annotates the page, and then instantly clears/resets everything except for the badge counter. Need to figure out a way to update badge counter without painting entire page with error buttons.
+                    if (localStorage.getItem("sa11y-remember-panel") === "Closed") {
+                        this.checkAll();
+                        this.resetAll();
+                    } 
+
                 });
         }, 500);
     }
@@ -608,6 +610,8 @@ class Sa11y {
         if ($(".sa11y-on").length == 0) {
             this.updateBadge();
         }
+
+        console.log("How many")
         
     };
 
@@ -1111,7 +1115,7 @@ class Sa11y {
             let hit = [null, null, null];
 
             // Flag partial stop words.
-            $.each(partialStopWords, function (index, word) {
+            $.each(partialAltStopWords, function (index, word) {
                 if (
                     textContent.length === word.length &&
                     textContent.toLowerCase().indexOf(word) >= 0
@@ -1122,7 +1126,7 @@ class Sa11y {
             });
     
             // Other warnings we want to add.
-            $.each(warningWords, function (index, word) {
+            $.each(warningAltWords, function (index, word) {
                 if (textContent.toLowerCase().indexOf(word) >= 0) {
                     hit[1] = word;
                     return false;
@@ -1360,12 +1364,12 @@ class Sa11y {
                     hit[0] = word;
                 }
             });
-            $.each(susWords, function (index, word) {
+            $.each(suspiciousAltWords, function (index, word) {
                 if (alt.toLowerCase().indexOf(word) == 0) {
                     hit[1] = word;
                 }
             });
-            $.each(placeholderStopWords, function (index, word) {
+            $.each(placeholderAltStopWords, function (index, word) {
                 if (
                     alt.length === word.length &&
                     alt.toLowerCase().indexOf(word) >= 0
@@ -1956,47 +1960,37 @@ class Sa11y {
     checkContrast = () => {
         var contrastErrors = {
             errors: [],
-            warnings: [],
+            warnings: []
         };
         var contrast = {
             // Parse rgb(r, g, b) and rgba(r, g, b, a) strings into an array.
             // Adapted from https://github.com/gka/chroma.js
-            parseRgb: (css) => {
+            parseRgb: function (css) {
                 var i, m, rgb, _i, _j;
-                if (
-                    (m = css.match(
-                        /rgb\(\s*(\-?\d+),\s*(\-?\d+)\s*,\s*(\-?\d+)\s*\)/
-                    ))
-                ) {
+                if (m = css.match(/rgb\(\s*(\-?\d+),\s*(\-?\d+)\s*,\s*(\-?\d+)\s*\)/)) {
                     rgb = m.slice(1, 4);
                     for (i = _i = 0; _i <= 2; i = ++_i) {
                         rgb[i] = +rgb[i];
                     }
                     rgb[3] = 1;
-                } else if (
-                    (m = css.match(
-                        /rgba\(\s*(\-?\d+),\s*(\-?\d+)\s*,\s*(\-?\d+)\s*,\s*([01]|[01]?\.\d+)\)/
-                    ))
-                ) {
+                } else if (m = css.match(/rgba\(\s*(\-?\d+),\s*(\-?\d+)\s*,\s*(\-?\d+)\s*,\s*([01]|[01]?\.\d+)\)/)) {
                     rgb = m.slice(1, 5);
                     for (i = _j = 0; _j <= 3; i = ++_j) {
                         rgb[i] = +rgb[i];
                     }
                 }
+                //console.log(rgb);
                 return rgb;
+                
             },
             // Based on http://www.w3.org/TR/WCAG20/#relativeluminancedef
             relativeLuminance: function (c) {
                 var lum = [];
                 for (var i = 0; i < 3; i++) {
                     var v = c[i] / 255;
-                    lum.push(
-                        v < 0.03928
-                            ? v / 12.92
-                            : Math.pow((v + 0.055) / 1.055, 2.4)
-                    );
+                    lum.push(v < 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
                 }
-                return 0.2126 * lum[0] + 0.7152 * lum[1] + 0.0722 * lum[2];
+                return (0.2126 * lum[0]) + (0.7152 * lum[1]) + (0.0722 * lum[2]);
             },
             // Based on http://www.w3.org/TR/WCAG20/#contrast-ratiodef
             contrastRatio: function (x, y) {
@@ -2004,158 +1998,144 @@ class Sa11y {
                 var l2 = contrast.relativeLuminance(contrast.parseRgb(y));
                 return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
             },
-            // Based on http://jsfiddle.net/Y4uDL/
+            
             getBackground: function (el) {
-                var bgColor = el.css("background-color");
-                var bgImage = el.css("background-image");
-
-                if (
-                    bgColor !== "rgba(0, 0, 0, 0)" &&
-                    bgColor !== "transparent" &&
-                    bgImage === "none"
-                ) {
+                var styles = getComputedStyle(el),
+                    bgColor = styles.backgroundColor,
+                    bgImage = styles.backgroundImage,
+                    rgb = contrast.parseRgb(bgColor) + '',
+                    alpha = rgb.split(',');
+                
+                // if background has alpha transparency, flag manual check
+                if(alpha[3] < 1 && alpha[3] > 0) {
+                    return "alpha";
+                }
+                
+                // if element has no background image, or transparent background (alpha == 0) return bgColor
+                if (bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent' && bgImage === "none" && alpha[3] !== '0') {
                     return bgColor;
                 } else if (bgImage !== "none") {
                     return "image";
                 }
-
-                if (el.is("html")) {
-                    return "rgb(255, 255, 255)";
+                
+                // retest if not returned above
+                if (el.tagName === 'HTML') {
+                    return 'rgb(255, 255, 255)';
                 } else {
-                    return contrast.getBackground(el.parent());
+                    return contrast.getBackground(el.parentNode);
                 }
             },
-            check: () => {
-                this.$contrast.each(function () {
-                    var $this = $(this);
-                    var color = $this.css("color");
-                    var background = contrast.getBackground($this);
-                    var htmlTag = $this[0].tagName;
-                    var textCheck = $this
-                        .clone()
-                        .children()
-                        .remove()
-                        .end()
-                        .text();
-                    var ratingString;
-                    var fontSizeString;
-                    var failed;
-
-                    if (htmlTag === "SVG") {
-                        var fill = $this.css("fill");
-                        var ratio =
-                            Math.round(
-                                contrast.contrastRatio(fill, background) * 100
-                            ) / 100;
-                        var ratioText = ratio + ":1";
-                        if (ratio < 3) {
-                            failed = true;
-                            fontSizeString = "svg fill";
-                            ratingString = "fail";
-                        }
-                    } else if (
-                        $.trim(textCheck).length ||
-                        htmlTag === "INPUT" ||
-                        htmlTag === "SELECT" ||
-                        htmlTag === "TEXTAREA"
-                    ) {
-                        // Background image needs to be manually reviewed
-                        if (background === "image") {
-                            var ratioText = "unknown";
-                            ratingString = "Needs manual review";
-                            fontSizeString = "N/A";
-                            failed = true;
-                        } else {
-                            var ratio =
-                                    Math.round(
-                                        contrast.contrastRatio(
-                                            color,
-                                            background
-                                        ) * 100
-                                    ) / 100,
-                                ratioText = ratio + ":1",
-                                fontSize = parseInt($this.css("fontSize")),
-                                fontWeight = $this.css("fontWeight");
-
-                            /* Unscientific condition of ignoring visually hidden screen reader text. If width and height of element is less than 1px and overflow is set to hidden, do not run contrast check on it...*/
-                            if (
-                                ($this.width() <= 1 || $this.height() <= 1) &&
-                                $this.css("overflow") == "hidden"
-                            ) {
-                            } else if (
-                                fontSize >= 18 ||
-                                (fontSize >= 14 && fontWeight >= 700)
-                            ) {
-                                fontSizeString = "Large scale text";
-                                if (ratio < 3) {
-                                    ratingString = "fail";
-                                    failed = true;
-                                } else {
-                                    ratingString = "pass";
-                                    failed = false;
+            // check visibility - based on jQuery method
+            isVisible: function (el) {
+                return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
+            },
+            check: function () {
+                // resets results
+                contrastErrors = {
+                    errors: [],
+                    warnings: []
+                };
+                var elements = document.querySelectorAll('*');
+                for (var i = 0; i < elements.length; i++) {
+                    (function (n) {
+                        var elem = elements[n];
+                        // test if visible
+                        if (contrast.isVisible(elem)) {
+                            var style = getComputedStyle(elem),
+                                color = style.color,
+                                fill = style.fill,
+                                fontSize = parseInt(style.fontSize),
+                                pointSize = fontSize * 3/4,
+                                fontWeight = style.fontWeight,
+                                htmlTag = elem.tagName,
+                                background = contrast.getBackground(elem),
+                                textString = [].reduce.call(elem.childNodes, function (a, b) {
+                                    return a + (b.nodeType === 3 ? b.textContent : '');
+                                }, ''),
+                                text = textString.trim(),
+                                ratio,
+                                error,
+                                warning;
+        
+                            if (htmlTag === "SVG") {
+                                ratio = Math.round(contrast.contrastRatio(fill, background) * 100) / 100;
+                                if(ratio < 3) {
+                                    error = {
+                                        elem: elem,
+                                        ratio: ratio + ':1'
+                                    }
+                                    contrastErrors.errors.push(error);
                                 }
-                            } else {
-                                fontSizeString = "Normal scale body text";
-                                if (ratio < 4.5) {
-                                    ratingString = "fail";
-                                    failed = true;
+                            } else if (text.length || htmlTag === "INPUT" || htmlTag === "SELECT" || htmlTag === "TEXTAREA") {
+                                // does element have a background image - needs to be manually reviewed
+                                if (background === "image") {
+                                    warning = {
+                                        elem: elem
+                                    }
+                                    contrastErrors.warnings.push(warning)
+                                } else if(background === "alpha"){
+                                    warning = {
+                                        elem: elem
+                                    }
+                                    contrastErrors.warnings.push(warning)
                                 } else {
-                                    ratingString = "pass";
-                                    failed = false;
+                                    ratio = Math.round(contrast.contrastRatio(color, background) * 100) / 100;
+                                    if (pointSize >= 18 || (pointSize >= 14 && fontWeight >= 700)) {
+                                        if (ratio < 3) {
+                                            error = {
+                                                elem: elem,
+                                                ratio: ratio + ':1'
+                                            }
+                                            contrastErrors.errors.push(error);
+                                        }
+                                    } else {
+                                        if (ratio < 4.5) {
+                                            error = {
+                                                elem: elem,
+                                                ratio: ratio + ':1'
+                                            }
+                                            contrastErrors.errors.push(error);
+                                        }
+                                    }
                                 }
                             }
                         }
-                    }
-
-                    // highlight the element in the DOM and log the element, contrast ratio and failure for testing in console
-                    if (failed) {
-                        var error = {};
-                        error = {
-                            name: $this,
-                            ratio: ratioText,
-                            detail: fontSizeString,
-                            status: ratingString,
-                        };
-                        if (ratingString === "fail") {
-                            contrastErrors.errors.push(error);
-                        } else if (ratingString === "Needs manual review") {
-                            contrastErrors.warnings.push(error);
-                        }
-                    }
-                });
-
+                    })(i);
+                }        
                 return contrastErrors;
-            },
-        };
-
+            } 
+        }
+ 
+        //Script above is mostly intact. Sa11y's implementation code:
         $.fn.ignore = function(sel){
             return this.clone().find(sel||">*").remove().end();
         };
-        
+
         contrast.check();
+            
         const { errorM, warningM } = IM["contrast"];
+
         $.each(contrastErrors.errors, (index, item) => {
-            var name = item.name;
-            var cdetail = item.detail;
+            var name = item.elem;
             var cratio = item.ratio;
-            // var nodename = name[0].nodeName;
-            var nodetext = name.ignore("span.sa11y-heading-label").text();
+            var nodetext = $(name).ignore("span.sa11y-heading-label").text();
+
             this.errorCount++;
             $(name).before(
-                ButtonInserter(sa11yError, errorM(cdetail, cratio, nodetext))
+                ButtonInserter(sa11yError, errorM(cratio, nodetext))
             );
         });
 
         $.each(contrastErrors.warnings, (index, item) => {
-            var name = item.name;
-            var nodetext = name.ignore("span.sa11y-heading-label").text();
+            var name = item.elem;
+            var nodetext = $(name).ignore("span.sa11y-heading-label").text();
+
             this.warningCount++;
             $(name).before(
                 ButtonInserter(sa11yWarning, warningM(nodetext))
             );
         });
-    };
-
+    }
  // ============================================================
  // Rulesets: Readability
  // Adapted from Greg Kraus' readability script: https://accessibility.oit.ncsu.edu/it-accessibility-at-nc-state/developers/tools/readability-bookmarklet/

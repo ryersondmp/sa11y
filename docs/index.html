@@ -33,15 +33,14 @@
         <div class="row">
           <div class="col-xs-12">
             <div class="res-global-header">
-              <a id="skip-to-main" class="btn btn-default sa11y-ignore" href="#main-content">Skip to Main Content</a>
-              <nav aria-label="global" class="navbar navbar-default">
+              <div aria-label="global" class="navbar navbar-default">
                 <div class="container-fluid">
                   <div class="navbar-header">
                     <a class="navbar-brand" href="https://www.ryerson.ca/"> <img src="assets/images/ryerson_logo.svg" alt="Ryerson University">
                     </a>
                   </div>
                 </div>
-              </nav>
+              </div>
             </div>
           </div>
         </div>
@@ -124,21 +123,22 @@
               <div class="col-sm-6">
                 <h2 id="features">Features <i class="fa fa-star" aria-hidden="true"></i></h2>
                 <p>Sa11y works as a simple in-page checker that is designed to be easily customized and integrated into any content management system (CMS) to facilitate good accessibility practices. Sa11y works best in a templated <abbr
-                    title="Content Management System">CMS</abbr> environment, although can also work as a bookmarklet. Sa11y is <strong>not</strong> a comprehensive code analysis tool.</p>
+                    title="Content Management System">CMS</abbr> environment, although is also available as a bookmarklet.</p>
                 <ul>
-                  <li>Over 30 test conditions.</li>
+                  <li>Over 50 test conditions.</li>
                   <li>Easy, intuitive tooltips to explain issues.</li>
                   <li>Free and open source.</li>
-                  <li>No complex API or integrations.</li>
-                  <li>Simple rule sets.</li>
+                  <li>Low tech: No complex API or integrations.</li>
                   <li>Easily customizable: add your own rulesets.</li>
-                  <li>Automatic: checks content in the background.</li>
+                  <li>Automatic: checks content on page load.</li>
+                  <li>Additional (optional) rulechecks: Contrast, form labels, readability, links.</li>
                   <li>Dark mode.</li>
                 </ul>
+                <p><strong>Note:</strong> Sa11y is <em>not</em> a comprehensive code analysis tool. Sa11y exclusively highlights content issues.</p>
               </div>
 
               <div class="col-sm-6 text-center p20">
-                <h3 class="pt40">Made for content editors</h3>
+                <h3 class="pt40">Made for content authors</h3>
                 <img src="assets/images/coder-vs-comms.svg" alt="Illustration of a gauge pointing to a content editor instead of a web developer." />
               </div>
 
@@ -149,23 +149,37 @@
 
         <section>
           <div class="container">
+
+            <h3 class="pt30">Automatic</h3>
+
+            <div class="row">
+              <div class="col-sm-8">
+                <p>Sa11y does a quick scan on page load. If there are any errors or warnings, the toggle will display a notification badge with the <strong>total</strong> number of issues detected. Red indicates errors, while yellow indicates there are warnings only. Content authors should be encouraged to activate Sa11y even if there are no notifications!</p> 
+              </div>
+              <div class="col-sm-4 text-center">
+                <img loading="lazy" width="250" class="responsive-img" src="assets/images/notification.png" alt="Three Sa11y toggles: one with a red notification badge, one with a yellow badge, and one without any badge."/>
+              </div>
+            </div>
+            
+            
+
             <h3 class="pt30">States</h3>
             <p>Sa11y has three simple states.</p>
             <div class="row">
               <div class="col-sm-4 text-center">
-                <img class="responsive-img" width="340" src="assets/images/sa11y-error.png" alt="Screenshot of error panel that says accessibility errors found!">
+                <img loading="lazy" class="responsive-img" width="500" src="assets/images/sa11y-error.png" alt="Screenshot of error panel that says accessibility errors found!">
                 <h4>Errors</h4>
                 <p class="p20">Accessibility and usability issues are detected. Sa11y highlights common WCAG 2.1 Level A and AA accessibility issues.</p>
               </div>
 
               <div class="col-sm-4 text-center">
-                <img class="responsive-img" width="340" src="assets/images/sa11y-warning.png" alt="Screenshot of warning panel that says no accessibility errors found, but please check warnings.">
+                <img loading="lazy" class="responsive-img" width="500" src="assets/images/sa11y-warning.png" alt="Screenshot of warning panel that says no accessibility errors found, but please check warnings.">
                 <h4>Warnings</h4>
                 <p class="p20">Warns you of potential accessibility or usability issues, and prompts you to manually review an element.</p>
               </div>
 
               <div class="col-sm-4 text-center">
-                <img class="responsive-img" width="340" src="assets/images/sa11y-no-errors.png" alt="Screenshot of pass panel that says no accessibility errors found.">
+                <img loading="lazy" class="responsive-img" width="500" src="assets/images/sa11y-no-errors.png" alt="Screenshot of pass panel that says no accessibility errors found.">
                 <h4>Pass</h4>
                 <p class="p20">No apparent accessibility or usability issues are detected. A "thumbs up" to let you know you're good.</p>
               </div>
@@ -184,7 +198,8 @@
                       <li>Images
                         <ul>
                           <li>Missing alternative text.</li>
-                          <li>Alternative text contains a file extension.</li>
+                          <li>Alt text contains a file extension.</li>
+                          <li>Alt text contains only placeholder text.</li>
                         </ul>
                       </li>
     
@@ -192,6 +207,7 @@
                         <ul>
                           <li>Nondescript link text like "learn more" or "click here".</li>
                           <li>Empty hyperlinks.</li>
+                          <li>Links that only contain an icon font without an accessible name or label.</li>
                         </ul>
                       </li>
     
@@ -237,7 +253,13 @@
                       <li>Closed captions for videos.</li>
                       <li>Transcripts for podcasts and audio content.</li>
                       <li>Check PDF for accessibility or recommend to convert into HTML.</li>
-                      <li>Links that open in a new tab or window without warning (WCAG 2.1 AAA)</li>
+                      <li>Links (Advanced)
+                        <ul>
+                          <li>Links that open in a new tab without warning.</li>
+                          <li>Links with identical names should have equivalent purpose.</li>
+                          <li>Links to PDF and other files without warning.</li>
+                        </ul>
+                      </li>
                     </ul>
                   </div>
                 </div>             
@@ -253,10 +275,10 @@
 
             <div class="row">
               <div class="col-md-6 text-center">
-                <img class="responsive-img" width="400" src="assets/images/outline-errors.png" alt="Screenshot of the Page Outline panel with hierarchy issues.">
+                <img loading="lazy" class="responsive-img" width="500" src="assets/images/outline-errors.png" alt="Screenshot of the Page Outline panel with hierarchy issues.">
               </div>
               <div class="col-md-6 text-center">
-                <img class="responsive-img" width="400" src="assets/images/outline-no-errors.png" alt="Screenshot of the Page Outline panel with a clean, good heading hierarchy.">
+                <img loading="lazy" class="responsive-img" width="500" src="assets/images/outline-no-errors.png" alt="Screenshot of the Page Outline panel with a clean, good heading hierarchy.">
               </div>
             </div>
           </div>
@@ -265,17 +287,49 @@
 
         <section class="pb80">
           <div class="container">
-            <h3>Readability</h3>
-            <p>Sa11y can calculate the readability score from all paragraph and list content within the main content area. A good readability score is an indication that your writing is understandable and easy to digest. It is based on the average length of sentences and words on your page, using a formula known as the <a href="https://en.wikipedia.org/wiki/Flesch%E2%80%93Kincaid_readability_tests#Flesch_reading_ease">Flesch reading-ease test (Wikipedia).</a></p>
+            <h3 class="pt30">Show Settings: additional checks</h3>
+            <p>Sa11y has four optional checks and a dark mode setting that can be enabled in the "Show Settings" tab. Although these checks are "optional", it does not imply they are not important! Depending on the website theme, plugin, or <abbr
+              title="Content Management System">CMS</abbr>, they may not need to be tested for every time. For example, some form plugins automatically provide a label for each form input.</p>
+            <div class="row">
+              <div class="col-md-6 text-center">
+                <img loading="lazy" class="responsive-img" width="1000" src="assets/images/settings-panel.png" alt="Screenshot of settings panel in dark mode showing optional toggles for contrast, form labels, links (advanced), readability and dark mode. Screenshot also includes a tooltip warning about links that open in a new tab without warning which is part of the Links (Advanced) module.">
+              </div>
+              <div class="col-md-6">
+                <ul>
+                  <li><strong>Contrast</strong>
+                      <ul>
+                          <li>Checks the contrast of various text elements.</li>
+                      </ul>
+                  </li>
+                  <li><strong>Form labels</strong>
+                    <ul>
+                      <li>Checks all form inputs for a corresponding label.</li>
+                      <li>Usability recommendation to remove "Reset" buttons on forms.</li>
+                      </ul>
+                  </li>
+                  <li><strong>Links (Advanced)</strong>
+                      <ul>
+                          <li>Links that open in a new tab without warning.</li>
+                          <li>Links with identical names should have equivalent purpose.</li>
+                          <li>Links to PDF and other files without warning.</li>
+                      </ul>
+                  </li>
+                  <li><strong>Readability</strong>
+                    <ul><li>Estimates the readability score of the main content area.</li></ul>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-7">
+                <h3>Readability</h3>
+                <p>Sa11y can <strong>estimate</strong> the readability score from all paragraph and list content within the <strong>main</strong> content area. A good readability score is an indication that your writing is understandable and easy to digest. It is based on the average length of sentences and words on your page, using a formula known as the <a href="https://en.wikipedia.org/wiki/Flesch%E2%80%93Kincaid_readability_tests#Flesch_reading_ease">Flesch reading-ease test (Wikipedia).</a></p>
+                
+                <p>A "good" reading score is between 60 and 100. Sometimes it may be difficult to achieve a good readability score. Most of your pages may say "difficult". Remember that this feature is only used to <strong>estimate</strong> the readability of your content. It should only be used as a <strong>reference,</strong> and not an indication of conformance.</p>
 
-            <div data-aria-accordion data-multi data-transition data-default="none" id="readability">
-              <h4 data-aria-accordion-heading>
-                Important notes about readability score
-              </h4>
-              <div data-aria-accordion-panel>
-                <p>A "good" reading score is between 60 and 100. Sometimes it may be difficult to achieve a good readability score. Most of your pages may say "difficult".</p>
+                <p>You can enable the readability feature in the settings panel.</p>
 
-                <h5>Tips to improve score</h5>
+                <h4>Tips to improve score</h4>
                 <ul> 
                   <li>Keep sentences around 15 words on average.</li> 
                   <li>Avoid sentences greater than 25 words.</li>
@@ -283,12 +337,14 @@
                   <li>Avoid complex words or words with many syllables.</li> 
                 </ul>
                 
-                <h5>Technical details about readability score</h5>
-                <p>Sa11y calculates the readability score based on all paragraph (&lt;p&gt; tags) and list content (&lt;li&gt; tags) within the main (&lt;main&gt; or &lt;role='main'&gt;) content area. If no main content is present, it will not calculate a score. A low score does not affect the pass or fail state of Sa11y. The readability score is for reference only.</p>
-
+                <h4>Technical details about readability score</h4>
+                <p>Sa11y calculates the readability score based on all paragraph (&lt;p&gt; tags) and list content (&lt;li&gt; tags) within the main (&lt;main&gt; or &lt;role='main'&gt;) content area. If no main content is present, it will not calculate a score. A low score does not affect the pass or fail state of Sa11y. This feature works for English content only.</p>
+              
+              </div>
+              <div class="col-md-5">
+                <img loading="lazy" class="responsive-img" width="500" src="assets/images/readability.png" alt="Screenshot of the Readability panel within Page Outline.">
               </div>
             </div>
-           
           </div>
         </section>
 
@@ -304,17 +360,13 @@
             <a id="skippy-demo" class="vhs-only vhs-only-focusable" href="#install">
               <span class="skiplink-text">Skip iFrame Demo</span><span class="fa fa-level-down" aria-hidden="true"></span>
             </a>
-
             <!-- CSS Laptop effect by https://codepen.io/Jeffen/pen/NqBXzb -->
             <div class="laptop-container sa11y-ignore">
               <div class="laptop sa11y-ignore">
-
-                <iframe title="Sa11y website demonstration inside an iFrame." class="laptop-iframe sa11y-ignore" src="examples/errors.html"></iframe>
-
+                <iframe loading="lazy" title="Sa11y website demonstration inside an iFrame." class="laptop-iframe sa11y-ignore" src="examples/errors.html"></iframe>
               </div>
               <div class="base sa11y-ignore" aria-hidden="true"></div>
             </div>
-
             <a class="mobile-view-only" href="examples/errors.html" target="_blank">View the demo in a new tab!</a>
 
           </div>
@@ -353,7 +405,7 @@
 
             <h3 class="pt20">For developers and web administrators</h3>
             <p>Sa11y works best in a templated <abbr
-              title="Content Management System">CMS</abbr> environments. Create your own conditions and rulesets to strategically enforce your organization's accessibility, usability, or web style guidelines. Customize Sa11y to target specific areas of the page (e.g. <kbd>main</kbd> content area only) - don't highlight issues content editors can't fix! Add exclusions to ignore false positives or prevent Sa11y from highlighting content within social media widgets or other iFrame content.</p>
+              title="Content Management System">CMS</abbr> environments. Create your own conditions and rulesets to strategically enforce your organization's accessibility, usability, or web style guidelines. Customize Sa11y to target specific areas of the page (e.g. <kbd>main</kbd> content area only) - don't highlight issues content authors can't fix! Add exclusions to ignore false positives or prevent Sa11y from highlighting content within social media widgets or other iFrame content.</p>
             <ul class="pb20">
               <li>Fork or contribute: <a href="https://github.com/ryersondmp/sa11y">Sa11y on Github <span class="fa fa-github" aria-hidden="true"></span></a></li>
               <li>View a demonstration of <a href="https://ryersondmp.github.io/sa11y/examples/full-list.html">All Rulesets</a> in action.
@@ -369,7 +421,12 @@
                 <p class="pb20">Sa11y relies on jQuery and works best using a tooltip library that features a positioning system. Positioning systems ensure that tooltips are never hidden by conflicting CSS styling such as
                   <kbd>overflow:hidden;</kbd>. This version of Sa11y was built with <a href="https://atomiks.github.io/tippyjs/">Tippy.js</a>, a highly customizable tooltip library.</p>
 
-                <p>To install on your website, insert Sa11y right after the jQuery script tag, and right before the closing <kbd>&lt;/body&gt;</kbd> tag. Include both Tippy.js and Popper.js before Sa11y.</p>
+                <p>To install on your website, insert Sa11y right after the jQuery script tag, and right before the closing <kbd>&lt;/body&gt;</kbd> tag. Include both Tippy.js and Popper.js before Sa11y. Sa11y consists of three files.</p>
+                <ul>
+                  <li><strong>sa11y.css:</strong> The main stylesheet. Should be included in the &lt;head&gt; of the document (if possible).</li>
+                  <li><strong>sa11y-english.js:</strong> Global configurations and exclusions go here. All text strings and tooltip messages are located here for easy translation.</li>
+                  <li><strong>sa11y-v2.js:</strong> Contains all logic and rulesets.</li>
+                </ul>
 
                 <h5 class="pt20">Example installation:</h5>
                 
@@ -381,9 +438,10 @@
 &lt;script src="https://unpkg.com/@popperjs/core@2"&gt;&lt;/script&gt;
 &lt;script src="https://unpkg.com/tippy.js@6"&gt;&lt;/script&gt;
 
-//Sa11y (grab the latest code from GitHub)
+//Sa11y (grab the latest code from GitHub). Do not use CDN.
 &lt;link rel="stylesheet" href="sa11y.css"/&gt;
-&lt;script src="sa11y.js"&gt;&lt;/script&gt;</code></pre>
+&lt;script src="sa11y-english.js"&gt;&lt;/script&gt;
+&lt;script src="sa11y-v2.js"&gt;&lt;/script&gt;</code></pre>
 
 </div>
 
@@ -401,28 +459,23 @@
               </h4>
               <div data-aria-accordion-panel>
                 <ol>
-                  <li>Create your condition.</li>
-                  <li>Add <kbd>this.warningCount++;</kbd> or <kbd>this.errorCount++;</kbd> to indicate Warning or Error state.</li>
+                  <li>Create your condition (within the QA module for example).</li>
+                  <li>Add <kbd>this.warningCount++;</kbd> or <kbd>this.errorCount++;</kbd> to update Warning or Error count.</li>
                   <li>Add respective CSS classes.</li>
-                  <li>Add warning or error button before element using <kbd>ButtonInserter</kbd> function.</li>
+                  <li>Add warning or error button before (or after) element using <kbd>ButtonInserter</kbd> function, followed by the type <kbd>sa11yError</kbd>, <kbd>sa11yWarning</kbd>, <kbd>sa11yGood</kbd>. Finally, reference your tooltip message.</li>
                 </ol>
 
-                <h5 class="pt20">Example: Warn content editors of overusing a component.</h5>
+                <h5 class="pt20">Example: Warn content authors of overusing a component.</h5>
                 <p>The example condition detects if more than one announcement is detected on a page. If it detects more than one instance of the <kbd>.announcement-component</kbd> CSS class, it will be indicated as a warning. Using jQuery's
-                  <kbd>gt:(0)</kbd> selector, the warning button will only appear on every instance except the first component.</p>
-                <p></p>
+                  <kbd>gt:(0)</kbd> selector, the warning button will only appear on every instance except the first component. <kbd>M['WarningMessage']</kbd> represents a string or any text for the tooltip.</p>
 
                 <div class="pt20">
                   <div class="sa11y-ignore">
                   <pre><code class="language-js">let $checkAnnouncement = this.root.find('.announcement-component').not(this.containerIgnore).length;
         if ($checkAnnouncement > 1) {
-            this.warningCount++;
-            let WarningMessage = </code><code class="language-html">
-                'More than one Announcement component found! The Announcement component should be used strategically and sparingly. 
-                It should be used to get attention or warn users about something important. Misuse of this component makes it less effective or impactful. 
-                Secondly, this component is semantically labeled as an Announcement for people who use screen readers.'</code><code class="language-js">;
+            this.warningCount++;</code><code class="language-js">;
             $('.announcement-component:gt(0)').addClass('sa11y-warning-border');
-            $('.announcement-component:gt(0)').before(ButtonInserter(WARNING, WarningMessage));
+            $('.announcement-component:gt(0)').before(ButtonInserter(sa11yWarning, M['WarningMessage']));
         }</code></pre></div>
   
                 </div>
@@ -444,6 +497,7 @@
               <li>Sa11y is an adaptation of <a href="https://khan.github.io/tota11y/">Tota11y by Khan Academy.</a></li>
               <li>Tooltip library by <a href="https://atomiks.github.io/tippyjs/">Tippy.js</a></li>
               <li><a href="https://www.jqueryscript.net/other/color-contrast-checker.html">jQuery contrast plugin</a> was created by jasonday.</li>
+              <li>The readability feature is adapted from a <a href="https://accessibility.oit.ncsu.edu/it-accessibility-at-nc-state/developers/tools/readability-bookmarklet/">Readability Bookmarklet created by Greg Kraus at North Carolina State University.</a></li>
               <li>The icons are made by <a href="https://fontawesome.com/">Font Awesome.</a></li>
               <li>Powered with <a href="https://jquery.com/">jQuery.</a></li>
             </ul>
@@ -465,7 +519,7 @@
               <div class="row template-local-footer">
                 <div class="col-sm-4 text-center">&nbsp;</div>
                 <div class="col-sm-4 text-center">
-                  <img src="assets/images/RU-DMP-CCS.svg" alt="Logo for Digital Media Projects, Computing and Communications Services (CCS)." class="pt30 pb30" width="360">
+                  <img loading="lazy" src="assets/images/RU-DMP-CCS.svg" alt="Logo for Digital Media Projects, Computing and Communications Services (CCS)." class="pt30 pb30" width="360">
                 </div>
                 <div class="col-sm-4 text-center">&nbsp;</div>
               </div>
@@ -485,5 +539,35 @@
     </footer>
   </div>
   <script src="assets/script.min.js"></script>
+
+  <style>
+  .skip-to [role=menuitem] .label {
+    padding-left: 4px;
+  }
+  .skip-to [role=menu] {
+    border-color: #6b6b6b !important;
+  }
+  .skip-to button {
+    border-width: 0 2px 2px 2px !important;
+    border-color: #6b6b6b !important;
+  }
+  </style>
+  <!--Fantastic SkipTo plugin: https://github.com/paypal/skipto-->
+  <script src="https://cdn.disability.illinois.edu/skipto.min.js"></script>
+  <script>
+    var SkipToConfig =  {
+      'settings': {
+        'skipTo': {
+          landmarks: 'main, [role="main"], nav',
+          headings: 'main h1, main h2, main h3',
+          accesskey: 'S',
+          colorTheme: 'default',
+          buttonLabel: 'Skip to content',
+          focusBorderColor: '#5bc2f4',
+        }
+      }
+    };
+    </script>
+
 </body>
 </html>

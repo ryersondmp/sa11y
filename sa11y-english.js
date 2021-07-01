@@ -7,9 +7,7 @@ Copyright (c) 2020 - 2021 Ryerson University
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 ----------------------------------------------------------------------*/
 
-/* Global defaults & Localization */
-/* Language: English */
-
+/* Global defaults */
 //Target area to scan.
 const sa11yCheckRoot = "body"; //E.g. "main" for main content.
 
@@ -21,6 +19,7 @@ let sa11yContainerIgnore = ".sa11y-ignore, #sa11y-container", //Ignore specific 
     sa11yLinkIgnore = "", //Ignore specific links.
     sa11yLinkIgnoreSpan = "span.sr-only-example"; //Ignore specific classes within links. Example: <a href="#">learn more <span class="sr-only-example">(opens new tab)</span></a>.
 
+/* Localization. Language: English */
 //Language of Sa11y. Some global variables to help translate.
 const sa11yLangCode = "en", //Language code, e.g. "fr"
     sa11yMainToggleLabel = "Toggle Accessibility Checker",
@@ -71,7 +70,7 @@ const PanelStatus = {
 }
 
 //Alt Text stop words
-const susWords = [
+const suspiciousAltWords = [
     "image of",
     "graphic of",
     "picture of",
@@ -80,7 +79,7 @@ const susWords = [
     "A image",
     "A photo"
 ];
-const placeholderStopWords = [
+const placeholderAltStopWords = [
     "alt",
     "image",
     "decorative",
@@ -92,7 +91,7 @@ const placeholderStopWords = [
 ];
 
 //Link Text stop words
-const partialStopWords = [
+const partialAltStopWords = [
     "click",
     "click here",
     "click here for more",
@@ -130,7 +129,7 @@ const partialStopWords = [
     ":",
 ];
 
-const warningWords = [
+const warningAltWords = [
     "< ", 
     " >", 
     "click here"
@@ -471,13 +470,12 @@ const IM = {
     },
 
     contrast: {
-
+        
         errorM: (
-            cdetail,
             cratio,
             nodetext
         ) => 
-            `${cdetail} does not have enough contrast with the background. 
+            `This text does not have enough contrast with the background. 
             The contrast ratio should be at least 4.5:1 for normal text and 3:1 for large text. 
             ${hr} 
             The contrast ratio is <span class='sa11y-red-text sa11y-bold'>${cratio}</span> for the following text: 
