@@ -3,12 +3,12 @@
 # Sa11y
 Sa11y works as a simple in-page checker that is designed to be easily customized and integrated into any content management system (CMS) to facilitate good accessibility practices. Sa11y works best in a templated CMS environment, although is also available as a bookmarklet. Sa11y is _not_ a comprehensive code analysis tool. Sa11y exclusively highlights content issues.
 - Over 50 test conditions.
-- Easy, intuitive tooltips to explain issues.
 - Free and open source.
+- Concise tooltips explain issues right at the source.
 - Low tech: No complex API or integrations.
 - Easily customizable: add your custom rulesets.
 - Automatic: checks content on page load.
-- Additional (toggleable) checks: Contrast, form labels, readability, links.
+- Additional (toggleable) checks: Contrast, form labels, readability, links (Advanced).
 - Dark mode.
 
 ## Demo and bookmarklet 
@@ -28,7 +28,7 @@ Development is lead and maintained by [Adam Chaboryk](https://github.com/adamcha
 - Arshad Mohammed, Web Accessibility &amp; Usability Assistant, Ryerson University (2018/2019)
 - Benjamin Luong, Web Accessibility &amp; Usability Assistant, Ryerson University (2016/2017)
 
-### Other thanks
+### Other acknowledgements
 - Sa11y is an adaptation of [Tota11y by Khan Academy.](https://github.com/Khan/tota11y)
 - Tooltip library by [Tippy.js](https://github.com/atomiks/tippyjs)
 - [color-contrast](https://github.com/jasonday/color-contrast) script was created by Jason Day.
@@ -38,16 +38,16 @@ Development is lead and maintained by [Adam Chaboryk](https://github.com/adamcha
 - John Jameson (Princeton University) maintains a fork of Sa11y called [Editoria11y](https://github.com/itmaybejj/editoria11y/) which is available as a turnkey Drupal module. Lots of code has been exchanged between both libraries!
 
 # For developers and web administrators
-Sa11y works best in a templated CMS environments. Create custom conditions and checks to strategically enforce your organization's accessibility, usability, or web style guidelines. Customize Sa11y to target specific areas of the page (e.g. main content area only) - don't highlight issues content authors can't fix! Add exclusions to ignore false positives or prevent Sa11y from highlighting content within social media widgets or other iFrame content.
+Sa11y works best in a templated CMS environments. Create custom conditions and checks to strategically enforce your organization's accessibility, usability, or web style guidelines. Customize Sa11y to target specific areas of the page (e.g. `main` content area only) - don't highlight issues content authors can't fix! Add exclusions to ignore false positives or prevent Sa11y from highlighting content within social media widgets or other iFrame content.
 
 ## Installation
-Sa11y relies on jQuery and works best using a tooltip library that features a positioning system. Positioning systems ensure that tooltips are never hidden by conflicting CSS styling such as `overflow: hidden;`. This version of Sa11y was built with Tippy.js, a highly customizable tooltip library.
+Sa11y relies on jQuery and works best using a tooltip library that features a positioning system. Positioning systems ensure that tooltips are never hidden by conflicting CSS styling such as `overflow: hidden;`. This version of Sa11y was built with [Tippy.js](https://github.com/atomiks/tippyjs), a highly customizable tooltip library.
 
-To install on your website, insert Sa11y right after the jQuery script tag, and right before the closing `</body>` tag. Include both Tippy.js and Popper.js before Sa11y. Sa11y consists of three files.
+To install on your website, insert Sa11y right after the jQuery script tag, and right before the closing `</body>` tag. Include both Tippy.js and Popper.js before Sa11y. Sa11y consists of three files (located in `/src/`).
 
 - *sa11y.css*: The main stylesheet. Should be included in the `<head>` of the document (if possible).
 - *sa11y-english.js*: Global configurations and exclusions go here. All text strings and tooltip messages are located here for easy translation.
-- *sa11y-v2.js*: Contains all logic and rulesets.
+- *sa11y.js*: Contains all logic and rulesets.
 
 ### Example installation:
 ```html
@@ -114,7 +114,7 @@ Sa11y 2.0 is a complete rewrite from scratch.
 ## Past updates (Version 1.0)
 * 12-02-2021
     * Enhancement: Error, Warning and Pass buttons are slightly smaller, but still adhere to WCAG AAA Target Size.
-    * Enhancement: The summarized list of headings under "Page Outline" now only display a single number without H prefix.
+    * Enhancement: The summarized list of headings under "Page Outline" now only display a single number without "H" prefix.
     * Enhancement: Updated PDF warning to include types of issues experienced with PDF and general remediation advice.
     * Enhancement: Warning to provide a transcript for audio content now detects multiple providers: Soundcloud, Simplecast, Podbean, Buzzsprout, Blubrry, transistor, fusebox, Libsyn.
     * Enhancement: Added Tableau to data visualization detection ruleset and updated tooltip verbiage.

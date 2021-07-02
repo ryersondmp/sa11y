@@ -1,3 +1,5 @@
+/* THIS VERSION OF SA11Y IS RETIRED. PLEASE REFER TO /SRC/ FOR LATEST. */
+
 var Sa11y = new Sa11y();
 
 function Sa11y() {
