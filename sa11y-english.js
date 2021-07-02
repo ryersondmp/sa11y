@@ -131,17 +131,17 @@ const partialAltStopWords = [
 ];
 
 const warningAltWords = [
-    "< ", 
-    " >", 
+    "< ",
+    " >",
     "click here"
 ];
 
 //Link Text (Advanced)
 const newWindowPhrases = [
     "external",
-    "new tab", 
-    "new window", 
-    "pop-up", 
+    "new tab",
+    "new window",
+    "pop-up",
     "pop up"
 ];
 
@@ -184,18 +184,18 @@ const IM = {
     headings: {
 
         nonconsecLevel: (
-            prevLevel,
-            level
-        ) => 
+                prevLevel,
+                level
+            ) =>
             `Non-consecutive heading level used. Headings should never skip levels, or go from <span class='sa11y-bold'>Heading ${prevLevel}</span> to <span class='sa11y-red-text sa11y-bold'>Heading ${level}</span>.`,
 
         emptyHeading: (level) =>
             `Detected empty heading! To fix, delete this line or change its format from <span class='sa11y-red-text sa11y-bold'>Heading ${level}</span> to <span class='sa11y-bold'>Normal</span> or <span class='sa11y-bold'>Paragraph</span>.`,
 
         headingTooLong: (
-            headingLength
-        ) => 
-            `Heading is too long! Headings are used to organize content and convey structure. They should be brief, clear, informative and unique. Please keep headings less than 160 characters (no more than a sentence).
+                headingLength
+            ) =>
+            `Heading is too long! Headings should be used to organize content and convey structure. They should be brief, clear, informative and unique. Please keep headings less than 160 characters (no more than a sentence).
             ${hr}
             Character count: <span class='sa11y-bold sa11y-red-text'>${headingLength}</span>.`,
 
@@ -210,10 +210,10 @@ const IM = {
 
     linktext: {
 
-        linkErrorMessage: () => 
+        linkErrorMessage: () =>
             `Remove empty hyperlinks without any text.`,
 
-        emptyLinkNoLabel: () => 
+        emptyLinkNoLabel: () =>
             `Hyperlink does not have discernable text that is visible to screen readers and other assistive technology. To fix:
             <ul>
                 <li>Add some concise text that describes where the link takes you.</li>
@@ -239,7 +239,7 @@ const IM = {
             `,
 
         linkStopWordMessage: () =>
-            `Longer, less intelligible URLs used as link text might  be difficult to listen to with assistive technology. In most cases, it is better to use human-readable text instead of the URL. Short URLs (such as a site's homepage) are okay.
+            `Longer, less intelligible URLs used as link text might be difficult to listen to with assistive technology. In most cases, it is better to use human-readable text instead of the URL. Short URLs (such as a site's homepage) are okay.
             ${hr}
             <span class='sa11y-bold'>Tip!</span> Link text should always be clear, unique, and meaningful so it could be understood out of context.`,
     },
@@ -255,8 +255,8 @@ const IM = {
             `Link points to a PDF or downloadable file (e.g. MP3, Zip, Word Doc) without warning. Indicate the file type within the link text. If it's a large file, consider including the file size.
             ${hr}
             <span class='sa11y-bold'>Example:</span> Executive Report (PDF, 3MB)`,
-            
-        linkIdenticalName: (linkText) => 
+
+        linkIdenticalName: (linkText) =>
             `Link has identical text as another link, although it points to a different page. Multiple links with the same text may cause confusion for people who use screen readers.
             ${hr}
             Consider making the following link more descriptive to help distinguish it from other links: <span class='sa11y-red-text sa11y-bold'>${linkText}</span>`
@@ -269,47 +269,47 @@ const IM = {
 
         missingAltLinkMessage: () =>
             `Image is being used as a hyperlink but is missing alt text! Please ensure alt text describes where the link takes you.`,
-            
+
         missingAltMessage: () =>
             `Missing alt text! If the image conveys a story, a mood or important information - be sure to describe the image.`,
 
         linkImageBadAltMessage: (altText, error) =>
-            `Detected file extension within alt text. Ensure the alt text describes destination of link, not a literal description of the picture. Remove: <span class='sa11y-red-text sa11y-bold'>${error}</span>.
+            `Detected file extension within alt text. Ensure the alt text describes the destination of the link, not a literal description of the picture. Remove: <span class='sa11y-red-text sa11y-bold'>${error}</span>.
             ${hr}
             The alt text for this image is: <span class='sa11y-bold'>${altText}</span>`,
 
         linkImageSusAltMessage: (
-            altText,
-            error
-        ) => 
+                altText,
+                error
+            ) =>
             `Detected redundant alt text. Ensure the alt text describes destination of link, not a literal description of the picture. 
             Consider removing word: <span class='sa11y-red-text sa11y-bold'>${error}</span>. 
             ${hr} 
             The alt text for this image is: <span class='sa11y-bold'>${altText}</span>`,
 
         altHasBadWordMessage: (
-            altText,
-            error
-        ) => 
+                altText,
+                error
+            ) =>
             `Detected file extension within alt text. If the image conveys a story, a mood or important information - be sure to describe the image. 
             Remove: <span class='sa11y-red-text sa11y-bold'>${error}</span>.
             ${hr} 
             The alt text for this image is: <span class='sa11y-bold'>${altText}</span>`,
 
         altPlaceholderMessage: (
-            altText
-        ) => 
+                altText
+            ) =>
             `Detected non-descript or placeholder alternative text. Replace the following alternative text with something more meaningful: <span class='sa11y-bold sa11y-red-text'>${altText}</span>.`,
 
         linkImagePlaceholderAltMessage: (
-            altText
-        ) => 
+                altText
+            ) =>
             `Detected non-descript or placeholder alternative text within hyperlinked image. Ensure the alt text describes destination of link, not a literal description of the picture. Replace the following alternative text: <span class='sa11y-bold sa11y-red-text'>${altText}</span>.`,
 
         altHasSusWordMessage: (
-            altText,
-            error
-        ) => 
+                altText,
+                error
+            ) =>
             `Detected redundant alt text. It is not necessary to include words like <em>image</em>, <em>graphic</em> or the file extension. 
             Consider removing the word: <span class='sa11y-red-text sa11y-bold'>${error}</span>.
             ${hr}
@@ -324,13 +324,13 @@ const IM = {
         decorativeMessage: () =>
             `Image marked as <span class='sa11y-bold'>decorative</span> and will be ignored by assistive technology. If the image conveys a story, mood or important information - be sure to add alt text.`,
 
-        hyperlinkedImageAriaHidden: () => 
+        hyperlinkedImageAriaHidden: () =>
             `Hyperlink around image has <span class='sa11y-kbd'>aria-hidden=&quot;true&quot;</span> but is still keyboard focusable. If you are intending to hide a redundant or duplicate hyperlink, add <span class='sa11y-kbd'>tabindex=&quot;-1&quot;</span> as well.`,
 
         hyperlinkAltLengthMessage: (
-            altText,
-            altLength
-        ) => 
+                altText,
+                altLength
+            ) =>
             `Alt text description on hyperlinked image is <span class='sa11y-bold'>too long</span>. 
             The alt text on hyperlinked images should describe where the link takes you, not a literal description of the image. 
             <span class='sa11y-bold'>Consider using the title of the page it links to as the alt text.</span> 
@@ -339,8 +339,8 @@ const IM = {
             <span class='sa11y-red-text sa11y-bold'>${altText}</span>`,
 
         imageLinkAltTextMessage: (
-            altText
-        ) => 
+                altText
+            ) =>
             `Image link contains alt text, although please ensure alt text describes the destination page. 
             <span class='sa11y-bold'>Consider using the title of the page it links to as the alt text.</span>
             Does the alt text describe where the link takes you? 
@@ -348,18 +348,18 @@ const IM = {
             Alt text: <span class='sa11y-bold'>${altText}</span>`,
 
         anchorLinkAndAltMessage: (
-            altText
-        ) => 
+                altText
+            ) =>
             `Image link contains <span class='sa11y-bold'>both alt text and surrounding link text.</span> If this image is decorative and is being used as a functional link to another page, consider marking the image as decorative or null - the surrounding link text should suffice. 
             ${hr}
             Alt text: <span class='sa11y-bold'>${altText}</span>`,
 
         altTooLongMessage: (
-            altText,
-            altLength
-        ) => 
+                altText,
+                altLength
+            ) =>
             `Alt text description is <span class='sa11y-bold'>too long</span>. Alt text should be concise, yet meaningful like a <em>tweet</em> (around 100 characters). 
-            If this is a complex image or a graph, consider putting the long description of the image in text below or in an accordion component. 
+            If this is a complex image or a graph, consider putting the long description of the image in the text below or an accordion component. 
             ${hr} 
             The alt text is <span class='sa11y-red-text sa11y-bold'>${altLength}</span> characters: 
             <span class='sa11y-red-text sa11y-bold'>${altText}</span>`,
@@ -370,7 +370,7 @@ const IM = {
     },
     labels: {
 
-        inputResetMessage: () => 
+        inputResetMessage: () =>
             `Reset buttons should <span class='sa11y-bold'>not</span> be used unless specifically needed, because they are easy to activate by mistake.
             ${hr} 
             <span class='sa11y-bold'>Tip!</span> Learn why <a href='https://www.nngroup.com/articles/reset-and-cancel-buttons/' target='_blank'>Reset and Cancel buttons pose usability issues. ${newTab}</a>`,
@@ -415,7 +415,7 @@ const IM = {
             <br>
             <span class='sa11y-bold sa11y-red-text'>${el}</span>`,
 
-        fakeHeading: (boldtext) => 
+        fakeHeading: (boldtext) =>
             `Is this a heading? <span class='sa11y-bold sa11y-red-text'>${boldtext}</span>
             ${hr}
             A line of bold text might look like a heading, but someone using a screen reader cannot tell that it is important or jump to its content. Bolded text should never replace semantic headings (Heading 2 to Heading 6).
@@ -471,11 +471,11 @@ const IM = {
     },
 
     contrast: {
-        
+
         errorM: (
-            cratio,
-            nodetext
-        ) => 
+                cratio,
+                nodetext
+            ) =>
             `This text does not have enough contrast with the background. 
             The contrast ratio should be at least 4.5:1 for normal text and 3:1 for large text. 
             ${hr} 
@@ -492,13 +492,13 @@ const IM = {
     readability: {
 
         missingMainContentMessage: () =>
-        `Please identify the <a href="https://www.w3.org/WAI/tutorials/page-structure/regions/#main-content" target="_blank">main content region to calculate readability score. ${newTab}</a>`,
+            `Please identify the <a href="https://www.w3.org/WAI/tutorials/page-structure/regions/#main-content" target="_blank">main content region to calculate readability score. ${newTab}</a>`,
 
         noPorLiMessage: () =>
-        `No paragraph <span class="sa11y-badge">&lt;p&gt;</span> or list content <span class="sa11y-badge">&lt;li&gt;</span> detected within main content area.`,
+            `No paragraph <span class="sa11y-badge">&lt;p&gt;</span> or list content <span class="sa11y-badge">&lt;li&gt;</span> detected within main content area.`,
 
         notEnoughContentMessage: () =>
-        `Not enough content to calculate readability score.`
+            `Not enough content to calculate readability score.`
 
     }
 };

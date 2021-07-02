@@ -1,19 +1,26 @@
 <!DOCTYPE html>
 <!-- saved from url=(0049)https://getbootstrap.com/docs/4.3/examples/album/ -->
 <html lang="en">
+
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>All Rulesets - Sa11y Demo</title>
-  <link rel="stylesheet" href="main.css"/>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha256-UzFD2WYH2U1dQpKDjjZK72VtPeWP50NoJjd26rnAdUI=" crossorigin="anonymous" />
+  <link rel="stylesheet" href="main.css" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css"
+    integrity="sha256-UzFD2WYH2U1dQpKDjjZK72VtPeWP50NoJjd26rnAdUI=" crossorigin="anonymous" />
 </head>
+
 <body>
   <header>
     <div class="sa11y-website-frame-message">
-      <p style="display:none;" id="iframe-check"><a class="sa11y-exclude" href="other.html" target="_blank">Open this page in a new tab for a better experience.</a> <span class="fas fa-external-link-alt" aria-hidden="true"></span></p>
-      <p style="display:none;" id="newtabonly">Viewing demo in a new tab. <a href="../index.html#demo">Go back to documentation.</a></p>
+      <p style="display:none;" id="iframe-check"><a class="sa11y-exclude" href="other.html" target="_blank">Open this
+          page in a new tab for a better experience.</a> <span class="fas fa-external-link-alt"
+          aria-hidden="true"></span></p>
+      <p style="display:none;" id="newtabonly">Viewing demo in a new tab. <a href="../index.html#demo">Go back to
+          documentation.</a></p>
     </div>
     <div class="navbar navbar-dark bg-dark shadow-sm">
       <div class="container d-flex justify-content-between">
@@ -25,7 +32,8 @@
           <a class="nav-link" href="warnings.html">Warnings</a>
           <a class="nav-link" href="pass.html">No Errors</a>
           <div class="dropdown show">
-            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               All Rulesets
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
@@ -67,23 +75,34 @@
             <div data-spy="scroll" data-target="#list-example" data-offset="0" class="scrollspy-example">
 
               <h2 id="list-item-0">Page language</h2>
-              <p>Checks for presence of <kbd>lang</kbd> attribute on <kbd>&lt;html&gt;</kbd> tag. If attribute is missing, an error banner will be appended at the top of the page. View this error in action on the <a href="errors.html">Errors page.</a></p>
+              <p>Checks for presence of <kbd>lang</kbd> attribute on <kbd>&lt;html&gt;</kbd> tag. If attribute is
+                missing, an error banner will be appended at the top of the page. View this error in action on the <a
+                  href="errors.html">Errors page.</a></p>
 
               <h2 id="list-item-1">PDF content</h2>
-              <p>A warning is added to any hyperlinks that have a <kbd>.pdf</kbd> file extension. A warning icon is only appended to the first PDF detected on the page to avoid overwhelming a content author. All other PDF links are visually highlighted. For example:</p>
+              <p>A warning is added to any hyperlinks that have a <kbd>.pdf</kbd> file extension. A warning icon is only
+                appended to the first PDF detected on the page to avoid overwhelming a content author. All other PDF
+                links are visually highlighted. For example:</p>
 
               <div class="ml-5">
                 <ul>
-                  <li class="pb-2">Download the <a href="#.pdf">Admissions Handbook <span class="sr-only">(PDF)</span><i aria-hidden="true" class="far fa-file-pdf"></i></a></li>
-                  <li class="pb-2"><a href="#.pdf">Course Outline <span class="sr-only">(PDF)</span><i aria-hidden="true" class="far fa-file-pdf"></i></a></li>
-                  <li class="pb-2"><a href="#.pdf">Cheatsheet <span class="sr-only">(PDF)</span><i aria-hidden="true" class="far fa-file-pdf"></i></a></li>
+                  <li class="pb-2">Download the <a href="#.pdf">Admissions Handbook <span class="sr-only">(PDF)</span><i
+                        aria-hidden="true" class="far fa-file-pdf"></i></a></li>
+                  <li class="pb-2"><a href="#.pdf">Course Outline <span class="sr-only">(PDF)</span><i
+                        aria-hidden="true" class="far fa-file-pdf"></i></a></li>
+                  <li class="pb-2"><a href="#.pdf">Cheatsheet <span class="sr-only">(PDF)</span><i aria-hidden="true"
+                        class="far fa-file-pdf"></i></a></li>
                 </ul>
               </div>
 
               <h2 id="list-item-2" class="pt-3">Uppercase text</h2>
-              <p>This warning is to discourage the use of uppercase text. This is <strong>not</strong> a WCAG 2.1 requirement, however based on research it is a strongly discouraged practice for readability. Secondly, some capitalized words may be mistaken for an
+              <p>This warning is to discourage the use of uppercase text. This is <strong>not</strong> a WCAG 2.1
+                requirement, however based on research it is a strongly discouraged practice for readability. Secondly,
+                some capitalized words may be mistaken for an
                 acronym and ready out character by character with a screen reader.</p>
-              <p>This condition uses regex to find uppercase words that are at least 3 characters in length, however it will only be indicated as a warning if at least 5 uppercase words within an element is found. It only checks for uppercase words
+              <p>This condition uses regex to find uppercase words that are at least 3 characters in length, however it
+                will only be indicated as a warning if at least 5 uppercase words within an element is found. It only
+                checks for uppercase words
                 within the following elements: h1, h2, h3, h4, h5, h6, p, li, span, blockquote.</p>
 
               <div class="row pt-3 ml-5">
@@ -105,46 +124,64 @@
 
 
               <h2 id="list-item-3" class="pt-3">Audio and video</h2>
-              <p>This condition is meant to act as a friendly reminder. Videos will recieve a warning to ensure captions are available. Audio will recieve a warning to ensure the podcast/audio has a transcript. This condition does
-                <strong>not</strong> test whether captions or transcripts are present. Customize this condition by adding your own media streaming sources.</p>
+              <p>This condition is meant to act as a friendly reminder. Videos will recieve a warning to ensure captions
+                are available. Audio will recieve a warning to ensure the podcast/audio has a transcript. This condition
+                does
+                <strong>not</strong> test whether captions or transcripts are present. Customize this condition by
+                adding your own media streaming sources.</p>
               <div class="row pt-1 ml-5">
                 <div class="col-md-6">
                   <h3>Example #1 - Video</h3>
-                  <p>This condition tests for the presence of an HTML <kbd>&lt;video&gt;</kbd> tag, YouTube and Vimeo.</p>
-                  <iframe class="embed-responsive" width="560" height="315" src="https://www.youtube.com/embed/HgzGwKwLmgM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                  <p>This condition tests for the presence of an HTML <kbd>&lt;video&gt;</kbd> tag, YouTube and Vimeo.
+                  </p>
+                  <iframe class="embed-responsive" width="560" height="315"
+                    src="https://www.youtube.com/embed/HgzGwKwLmgM" frameborder="0"
+                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
                 </div>
                 <div class="col-md-6">
                   <h3>Example #2 - Audio</h3>
-                  <p>This condition tests for the presense of an HTML <kbd>&lt;audio&gt;</kbd> tag and <a href="https://soundcloud.com/">SoundCloud.</a></p>
-                  <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/158888399&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
+                  <p>This condition tests for the presense of an HTML <kbd>&lt;audio&gt;</kbd> tag and <a
+                      href="https://soundcloud.com/">SoundCloud.</a></p>
+                  <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay"
+                    src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/158888399&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
                 </div>
               </div>
 
 
               <h2 id="list-item-4" class="pt-3">Social media widgets</h2>
-              <p>This condition is meant to encourage users to optimize the default Twitter widget for accessibility and usability. This condition might be helpful in large organizations (like a University or College) where there are many social
+              <p>This condition is meant to encourage users to optimize the default Twitter widget for accessibility and
+                usability. This condition might be helpful in large organizations (like a University or College) where
+                there are many social
                 media channels. This condition is not based on WCAG 2.0, however is strongly recommended.</p>
-                <p>Multiple widgets take time to load. Wait for page to load completely before enabling Sa11y.</p>
-                <div class="row pt-3 ml-5">
-                  <div class="col-md-6">
-                    <h3>Example #1</h3>
-                    <p>Default Twitter widget embed code.</p><a class="twitter-timeline" data-height="300" data-width="330" href="https://twitter.com/TwitterDev?ref_src=twsrc%5Etfw"><span class="sr-only">Tweets by TwitterDev</span></a>
-                  </div>
-                  <div class="col-md-6">
-                    <h3>Example #2</h3>
-                    <p>Optimized Twitter widget.</p><a data-tweet-limit="1" class="twitter-timeline" data-chrome="nofooter noheader" href="https://twitter.com/TwitterDev?ref_src=twsrc%5Etfw"><span class="sr-only">Tweets by TwitterDev</span></a>
-                  </div>
+              <p>Multiple widgets take time to load. Wait for page to load completely before enabling Sa11y.</p>
+              <div class="row pt-3 ml-5">
+                <div class="col-md-6">
+                  <h3>Example #1</h3>
+                  <p>Default Twitter widget embed code.</p><a class="twitter-timeline" data-height="300"
+                    data-width="330" href="https://twitter.com/TwitterDev?ref_src=twsrc%5Etfw"><span
+                      class="sr-only">Tweets by TwitterDev</span></a>
                 </div>
+                <div class="col-md-6">
+                  <h3>Example #2</h3>
+                  <p>Optimized Twitter widget.</p><a data-tweet-limit="1" class="twitter-timeline"
+                    data-chrome="nofooter noheader" href="https://twitter.com/TwitterDev?ref_src=twsrc%5Etfw"><span
+                      class="sr-only">Tweets by TwitterDev</span></a>
+                </div>
+              </div>
 
               <h2 id="list-item-5" class="pt-3">Detect specific links</h2>
-              <p>Customize this condition to create an error for any links that point to a development environment. This does <strong>not</strong> detect dead (404) links. Using <a href="https://www.w3schools.com/cssref/css_selectors.asp">W3Schools
+              <p>Customize this condition to create an error for any links that point to a development environment. This
+                does <strong>not</strong> detect dead (404) links. Using <a
+                  href="https://www.w3schools.com/cssref/css_selectors.asp">W3Schools
                   CSS Selector Reference,</a> customize this condition to add your own.</p>
-              <p class="ml-5">For example, a hyperlink that points to wp-admin incorrectly: <a href="https://www.ryerson.ca/wp-admin/">About Ryerson</a></p>
+              <p class="ml-5">For example, a hyperlink that points to wp-admin incorrectly: <a
+                  href="https://www.ryerson.ca/wp-admin/">About Ryerson</a></p>
 
               <h2 id="list-item-6" class="pt-3">Fake list content</h2>
               <p>a) Sometimes people will manually create a list<br>
-              b) using fake list prefixes<br>
-              c) instead of using a semantic list.</p>
+                b) using fake list prefixes<br>
+                c) instead of using a semantic list.</p>
 
               <h3>Another fake list</h3>
               <p>a. Apples</p>
@@ -160,42 +197,48 @@
     </div>
   </main>
   <footer class="text-muted sa11y-ignore">
-      <div class="container">
-        <p>Customize Sa11y to target specific regions of a page only. For example, <a href="#">this</a> link will be ignored. If a content editor can't edit it, don't scan it.</p>
-      </div>
+    <div class="container">
+      <p>Customize Sa11y to target specific regions of a page only. For example, <a href="#">this</a> link will be
+        ignored. If a content editor can't edit it, don't scan it.</p>
+    </div>
   </footer>
 
- <!-- Bootstrap + Jquery -->
- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <!-- Bootstrap + Jquery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+  </script>
 
-<script>
-$(document).ready(function() {
-   if (window.top == window) {
-     $("#iframe-check").remove();
-   } else {
-      $("#iframe-check").css("display","block")
-   }
+  <script>
+    $(document).ready(function () {
+      if (window.top == window) {
+        $("#iframe-check").remove();
+      } else {
+        $("#iframe-check").css("display", "block")
+      }
 
-   if (window.top != window) {
-     $("#newtabonly").css("display","none")
-   } else {
-      $("#newtabonly").css("display","block")
-   }
-   $('body').scrollspy({ target: '#list-example' })
-});
-</script>
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-<!--Jquery (Yes, loaded a second time on purpose...)-->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+      if (window.top != window) {
+        $("#newtabonly").css("display", "none")
+      } else {
+        $("#newtabonly").css("display", "block")
+      }
+      $('body').scrollspy({
+        target: '#list-example'
+      })
+    });
+  </script>
+  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+  <!--Jquery (Yes, loaded a second time on purpose...)-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-<!-- Tippy.js CDN scripts -->
-<script src="https://unpkg.com/@popperjs/core@2"></script>
-<script src="https://unpkg.com/tippy.js@6"></script>
+  <!-- Tippy.js CDN scripts -->
+  <script src="https://unpkg.com/@popperjs/core@2"></script>
+  <script src="https://unpkg.com/tippy.js@6"></script>
 
-<!--Sa11y-->
-<link rel="stylesheet" href="../../sa11y.css"/>
-<script src="../../sa11y-english.js"></script>
-<script src="../../sa11y-v2.js"></script>
+  <!--Sa11y-->
+  <link rel="stylesheet" href="../../sa11y.css" />
+  <script src="../../sa11y-english.js"></script>
+  <script src="../../sa11y-v2.js"></script>
 </body>
+
 </html>

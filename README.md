@@ -6,9 +6,9 @@ Sa11y works as a simple in-page checker that is designed to be easily customized
 - Easy, intuitive tooltips to explain issues.
 - Free and open source.
 - Low tech: No complex API or integrations.
-- Easily customizable: add your own rulesets.
+- Easily customizable: add your custom rulesets.
 - Automatic: checks content on page load.
-- Additional (toggleable) rulechecks: Contrast, form labels, readability, links.
+- Additional (toggleable) checks: Contrast, form labels, readability, links.
 - Dark mode.
 
 ## Demo and bookmarklet 
@@ -38,10 +38,10 @@ Development is lead and maintained by [Adam Chaboryk](https://github.com/adamcha
 - John Jameson (Princeton University) maintains a fork of Sa11y called [Editoria11y](https://github.com/itmaybejj/editoria11y/) which is available as a turnkey Drupal module. Lots of code has been exchanged between both libraries!
 
 # For developers and web administrators
-Sa11y works best in a templated CMS environments. Create your own conditions and rulesets to strategically enforce your organization's accessibility, usability, or web style guidelines. Customize Sa11y to target specific areas of the page (e.g. main content area only) - don't highlight issues content authors can't fix! Add exclusions to ignore false positives or prevent Sa11y from highlighting content within social media widgets or other iFrame content.
+Sa11y works best in a templated CMS environments. Create custom conditions and checks to strategically enforce your organization's accessibility, usability, or web style guidelines. Customize Sa11y to target specific areas of the page (e.g. main content area only) - don't highlight issues content authors can't fix! Add exclusions to ignore false positives or prevent Sa11y from highlighting content within social media widgets or other iFrame content.
 
 ## Installation
-Sa11y relies on jQuery and works best using a tooltip library that features a positioning system. Positioning systems ensure that tooltips are never hidden by conflicting CSS styling such as `overflow:hidden;`. This version of Sa11y was built with Tippy.js, a highly customizable tooltip library.
+Sa11y relies on jQuery and works best using a tooltip library that features a positioning system. Positioning systems ensure that tooltips are never hidden by conflicting CSS styling such as `overflow: hidden;`. This version of Sa11y was built with Tippy.js, a highly customizable tooltip library.
 
 To install on your website, insert Sa11y right after the jQuery script tag, and right before the closing `</body>` tag. Include both Tippy.js and Popper.js before Sa11y. Sa11y consists of three files.
 
@@ -66,7 +66,7 @@ To install on your website, insert Sa11y right after the jQuery script tag, and 
 
 #### Other notes
 - This version appends tooltips to the end of the body by default to ensure tooltips do not get hidden by conflicting CSS styling. If you customize the tooltips to include interactive content, please read [Tippy.js documentation on creating accessible interactive tooltips for keyboard users.](https://atomiks.github.io/tippyjs/v6/accessibility/#interactivity)
-- Using a Bootstrap powered template? Versions 3+ already include a tooltip library powered by Poppers.js positioning library. For performance reasons, you can replace the Tippy.js markup with Bootstrap's tooltip markup.
+- Using a Bootstrap-powered template? Versions 3+ already include a tooltip library powered by Poppers.js positioning library. For performance reasons, you can replace the Tippy.js markup with Bootstrap's tooltip markup.
 
 ### Create your own rule sets
 1. Create your condition (within the QA module for example.
@@ -91,8 +91,8 @@ if ($checkAnnouncement.length > 1) {
 # Update log
 List of latest features and updates.
 
-## What's new in Sa11y V2?
-Sa11y 2.0 is a complete re-write from scratch. 
+## What's new in Sa11y 2.0?
+Sa11y 2.0 is a complete rewrite from scratch. 
 
 * 20+ additional test conditions (or tooltip messages).
 * Revised rulesets for _closer_ alignment with WCAG 2.1 criteria.
@@ -104,18 +104,18 @@ Sa11y 2.0 is a complete re-write from scratch.
     * Large target sizes. All buttons have a clickable area that is at least 44px by 44px.
     * Better keyboard support. Left and right arrow to switch between Show Outline and Show Settings. 
 * Bug fixes: Correct calculation of accessible name when links have `aria-describedby` attribute.
-* Bug fixes: Revised rulesets to minimize amount of false positives. 
+* Bug fixes: Revised rulesets to minimize the number of false positives. 
 * Bug fixes: Better CSS properties to ensure Sa11y displays consistently across any website.
 * Developer enhancements: Completely refactored.
-    * Seperated into 3 files for easier development, customization, and localization.
+    * Separated into 3 files for easier development, customization, and localization.
     * Global configuration settings (located in `sa11y-english.js`) to make it easier to customize.
     * Way less _spaghetti_ code...
 
-## Past updates (V1)
+## Past updates (Version 1.0)
 * 12-02-2021
     * Enhancement: Error, Warning and Pass buttons are slightly smaller, but still adhere to WCAG AAA Target Size.
     * Enhancement: The summarized list of headings under "Page Outline" now only display a single number without H prefix.
     * Enhancement: Updated PDF warning to include types of issues experienced with PDF and general remediation advice.
-    * Enhancement: Warning to provide transcript for audio content now detects multiple providers: soundcloud, simplecast, podbean, buzzsprout, blubrry, transistor, fusebox, libsyn.
+    * Enhancement: Warning to provide a transcript for audio content now detects multiple providers: Soundcloud, Simplecast, Podbean, Buzzsprout, Blubrry, transistor, fusebox, Libsyn.
     * Enhancement: Added Tableau to data visualization detection ruleset and updated tooltip verbiage.
     * Bug fixes: Custom styling for HR element within tooltips, added selector to webkit-scrollbar.
