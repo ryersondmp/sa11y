@@ -321,7 +321,7 @@ jQuery.noConflict();
                 sa11yImageIgnore +
                 this.containerIgnore +
                 separator +
-                "[role='presentation']";
+                "[role='presentation'], [src^='https://trck.youvisit.com']";
 
             this.headerIgnore = sa11yHeaderIgnore;
             // Links ignore defaults plus sa11y links.
@@ -1927,7 +1927,7 @@ jQuery.noConflict();
                 this.warningCount++;
                 $(".announcement-component:gt(0)").addClass("sa11y-warning-border");
                 $(".announcement-component:gt(0)").before(
-                    Sa11yAnnotate(sa11yWarning, M["announcementWarning"])
+                    Sa11yAnnotate(sa11yWarning, M["announcementWarningMessage"])
                 );
             }
         };
