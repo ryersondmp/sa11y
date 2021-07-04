@@ -11,6 +11,8 @@ Sa11y works as a simple in-page checker that is designed to be easily customized
 - Additional (toggleable) checks: Contrast, form labels, readability, links (Advanced).
 - Dark mode.
 
+Read [Sa11y 2.0 release notes.](https://github.com/ryersondmp/sa11y/releases/tag/2.0)
+
 ## Demo and bookmarklet 
 :arrow_right: [View project website and demo](https://ryersondmp.github.io/sa11y/) or grab the latest [bookmarklet.](https://ryersondmp.github.io/sa11y/#install)
 
@@ -88,33 +90,3 @@ Have a question or any feedback? Submit it as an [issue](https://github.com/ryer
 
 # Update log
 List of latest features and updates.
-
-## What's new in Sa11y 2.0?
-Sa11y 2.0 is a complete rewrite from scratch. 
-
-* 20+ additional test conditions (or tooltip messages).
-* Revised rulesets for _closer_ alignment with WCAG 2.1 criteria.
-* New "Settings" panel with 4 toggleable checks (Contrast, Form labels, Readability, Links (Advanced)).
-* New "Skip to issue" button. Click the icon on the main panel to jump between Sa11y's error, warning, or "good" buttons. Also available as a keyboard shortcut: `alt + .` 
-    * If a button is hidden or not within the viewport, Sa11y will alert you by displaying the tooltip message within the panel, and also add a border to the item's visible parent.
-* Dark mode. Automatically changes based on system preferences. 
-* Accessibility enhancements:
-    * Large target sizes. All buttons have a clickable area that is at least 44px by 44px.
-    * Better keyboard support. Left and right arrow to switch between Show Outline and Show Settings. 
-* Bug fixes: Correct calculation of accessible name when links have `aria-describedby` attribute.
-* Bug fixes: Revised rulesets to minimize the number of false positives. 
-* Bug fixes: Better CSS properties to ensure Sa11y displays consistently across any website.
-* Developer enhancements: Completely refactored.
-    * Separated into 3 files for easier development, customization, and localization.
-    * Global configuration settings (located in `sa11y-english.js`) to make it easier to customize.
-    * Uses jQuery's latest slim build.
-    * Way less _spaghetti_ code...
-
-## Past updates (Version 1.0)
-* 12-02-2021
-    * Enhancement: Error, Warning and Pass buttons are slightly smaller, but still adhere to WCAG AAA Target Size.
-    * Enhancement: The summarized list of headings under "Page Outline" now only display a single number without "H" prefix.
-    * Enhancement: Updated PDF warning to include types of issues experienced with PDF and general remediation advice.
-    * Enhancement: Warning to provide a transcript for audio content now detects multiple providers: Soundcloud, Simplecast, Podbean, Buzzsprout, Blubrry, transistor, fusebox, Libsyn.
-    * Enhancement: Added Tableau to data visualization detection ruleset and updated tooltip verbiage.
-    * Bug fixes: Custom styling for HR element within tooltips, added selector to webkit-scrollbar.
