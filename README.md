@@ -87,6 +87,3 @@ Development is lead and maintained by [Adam Chaboryk](https://github.com/adamcha
 
 ## Contact
 Have a question or any feedback? Submit it as an [issue](https://github.com/ryersondmp/sa11y/issues) or email: [adam.chaboryk@ryerson.ca](mailto:adam.chaboryk)
-
-# Update log
-List of latest features and updates.
