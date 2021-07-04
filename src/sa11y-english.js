@@ -66,9 +66,9 @@ const sa11ySuspiciousAltWords = [
     "graphic of",
     "picture of",
     "photo of",
-    "An image",
-    "A image",
-    "A photo"
+    "an image of",
+    "a image",
+    "a photo"
 ];
 const sa11yPlaceholderAltStopWords = [
     "alt",
@@ -275,7 +275,7 @@ const sa11yIM = {
                 altText,
                 error
             ) =>
-            `Redundant alt text found. Ensure the alt text describes destination of link, not a literal description of the picture. 
+            `Redundant alt text found. Ensure the alt text describes the destination of the link, not a literal description of the picture. 
             Consider removing the word: <span class='sa11y-red-text sa11y-bold'>${error}</span>. 
             ${sa11yHr} 
             The alt text for this image is: <span class='sa11y-bold'>${altText}</span>`,
@@ -297,7 +297,7 @@ const sa11yIM = {
         linkImagePlaceholderAltMessage: (
                 altText
             ) =>
-            `Non-descript or placeholder alt text within a linked image found. Ensure the alt text describes destination of link, not a literal description of the picture. Replace the following alt text: <span class='sa11y-bold sa11y-red-text'>${altText}</span>.`,
+            `Non-descript or placeholder alt text within a linked image found. Ensure the alt text describes the destination of the link, not a literal description of the picture. Replace the following alt text: <span class='sa11y-bold sa11y-red-text'>${altText}</span>.`,
 
         altHasSusWordMessage: (
                 altText,
@@ -309,7 +309,7 @@ const sa11yIM = {
             The alt text for this image is: <span class='sa11y-bold'>${altText}</span>`,
 
         imageLinkNullAltNoTextMessage: () =>
-            `Image within link is marked as decorative and there is no link text. Please add alt text to image that describes destination of link.`,
+            `Image within link is marked as decorative and there is no link text. Please add alt text to the image that describes the destination of the link.`,
 
         linkHasAltMessage: () =>
             `Image is marked as decorative, although the link is using the surrounding text as a descriptive label.`,
