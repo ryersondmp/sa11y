@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<!-- saved from url=(0049)https://getbootstrap.com/docs/4.3/examples/album/ -->
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Links &amp; Tables - All Rulesets - Sa11y Demo</title>
+  <link rel="stylesheet" href="main.css" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css"
+    integrity="sha256-UzFD2WYH2U1dQpKDjjZK72VtPeWP50NoJjd26rnAdUI=" crossorigin="anonymous" />
+</head>
+
+<body>
+  <header>
+    <div class="sa11y-website-frame-message">
+      <p style="display:none;" id="iframe-check"><a class="sa11y-exclude" href="links-tables.html" target="_blank">Open
+          this page in a new tab for a better experience.</a> <span class="fas fa-external-link-alt"
+          aria-hidden="true"></span></p>
+      <p style="display:none;" id="newtabonly">Viewing demo in a new tab. <a href="../index.html#demo">Go back to
+          documentation.</a></p>
+    </div>
+    <div class="navbar navbar-dark bg-dark shadow-sm">
+      <div class="container d-flex justify-content-between">
+        <span class="d-flex align-items-center text-white">
+          <strong>Sa11y Demo</strong>
+        </span>
+        <nav class="nav nav-masthead justify-content-center sa11y-ignore">
+          <a class="nav-link" href="errors.html">Errors</a>
+          <a class="nav-link" href="warnings.html">Warnings</a>
+          <a class="nav-link" href="pass.html">No Errors</a>
+          <div class="dropdown show">
+            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              All Rulesets
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
+              <a class="dropdown-item" href="headings-images.html">Headings &amp; Images</a>
+              <a class="dropdown-item active" href="links-tables.html">Links &amp; Tables</a>
+              <a class="dropdown-item" href="contrast-labels.html">Contrast &amp; Labels</a>
+              <a class="dropdown-item" href="other.html">Other</a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="jumbotron text-center">
+      <div class="container">
+        <h1 class="jumbotron-heading">Links &amp; Tables</h1>
+      </div>
+    </section>
+
+    <div class="album py-5 bg-light">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-2">
+            <div id="list-example" class="list-group sticky-top">
+              <strong class="mt-1 mb-2">On this page:</strong>
+              <a class="list-group-item list-group-item-action sa11y-ignore" href="#list-item-2">Links</a>
+              <a class="list-group-item list-group-item-action" href="#list-item-3">Tables</a>
+            </div>
+          </div>
+
+          <div class="col-md-10">
+            <div data-spy="scroll" data-target="#list-example" data-offset="0" class="scrollspy-example">
+
+              <h2 id="list-item-2">Links</h2>
+
+              <h3>Partial stop words</h3>
+              <p>If the following words are used as the hyperlink text alone, it will be flagged as an error. If used
+                with other text, it will <strong>not</strong> be flagged as an error.</p>
+
+              <div class="ml-5 pt-4">
+                <div class="row">
+                  <div class="col-md-6">
+                    <h4>Example 1</h4>
+                    <p>Using any of the words above on it's own will result in an error since it's not descriptive
+                      enough.</p>
+                    <a href="#" class="btn btn-primary">Learn more</a>
+                  </div>
+                  <div class="col-md-6">
+                    <h4>Example 2</h4>
+                    <p>However if used with additional text, it will not be flagged as an error.</p>
+                    <a href="#" class="btn btn-primary">Learn more about Ryerson</a>
+                  </div>
+                </div>
+                <div class="row mt-3">
+                  <div class="col-md-6">
+                    <h4 class="pt-4">Example 3</h4>
+                    <p>Just another example of a partial stop word being used in a sentence. Visit <a
+                        href="#"><strong>this page</strong></a> to learn more about our history, or you can visit <a
+                        href="#"><strong>this page</strong> to learn about the
+                        future.</a></p>
+                  </div>
+                  <div class="col-md-6">
+                    <h4 class="pt-4">Example 4</h4>
+                    <p>Empty hyperlink <a href="#"></a> and sometimes single characters get linked<a href="#">.</a></p>
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-3">
+                <div class="col-md-6">
+                  <h3 class="pt-4">Empty hyperlinks</h3>
+                  <h4 id="insta">Instagram</h4>
+                  <p>Fail: It's common to see hyperlinks around icon fonts without text. Here's an example of one <a
+                      href="#" target="_blank"><i class="fab fa-instagram"></i></a></p>
+
+                  <p>Pass: Here's one with an ARIA label.
+                    <a href="#" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a></p>
+
+                  <p>Pass: Using an aria-labelledby attribute connected to the previous heading above: <a href="#"
+                      target="_blank" aria-labelledby="insta"><i class="fab fa-instagram"></i></a></p>
+
+                  <p>Pass: Using title attribute: <a href="#" target="_blank" title="Facebook"><i
+                        class="fab fa-facebook"></i></a></p>
+                </div>
+                <div class="col-md-6"></div>
+              </div>
+
+              <h3 class="pt-4">Link text best practices</h3>
+              <p>If hyperlinks contain <strong>any</strong> of the following words or characters within a hyperlink, it
+                will be flagged as an error.</p>
+
+              <div class="ml-5 pt-4 mb-5">
+                <div class="row pb-2">
+                  <div class="col-md-6">
+                    <h4>Example 1</h4>
+                    <p>Hyperlink contains descriptive text, although it will still be flagged as an issue since 'click
+                      here' is a stop word: <br><a href="#">Click here to view Ryerson's programs</a></p>
+                  </div>
+                  <div class="col-md-6">
+                    <h4>Example 2</h4>
+                    <p>It's very common for content authors to use HTML symbols for visual aesthetics, especially on a
+                      button link.</p>
+                    <a href="#" class="btn btn-primary">About Ryerson ></a>
+                  </div>
+                </div>
+
+                <div class="row pb-2">
+                  <div class="col-md-6">
+                    <h4 class="pt-4">Example 3</h4>
+                    <p>It's also very annoying to hear a really long URL being read out character-by-character using a
+                      screen reader. <a href="#">https://www.ryerson.ca/programs/undergraduate/accounting-finance/</a>
+                    </p>
+                  </div>
+                  <div class="col-md-6">
+                    <h4 class="pt-4">Example 4</h4>
+                    <p>Although if the URL is not too long, let's not flag it. <a
+                        href="#">https://www.ryerson.ca/programs</a></p>
+                  </div>
+                </div>
+              </div>
+
+              <h3 id="hyperlinks-with-aria">Hyperlinks with ARIA</h3>
+              <p>Hyperlinks featuring an <kbd>aria-label</kbd> or <kbd>aria-labelledby</kbd> attribute will be indicated
+                as a pass and show the accessible label conveyed to assistive technology.</p>
+
+              <div class="pt-4 pb-5 ml-5">
+                <div class="row">
+                  <div class="col-md-6">
+                    <h4>Example 1</h4>
+                    <p>The following link uses an ARIA label.</p>
+                    <a href="#" class="btn btn-primary" aria-label="Learn more about Ryerson.">Learn more</a>
+                  </div>
+                  <div class="col-md-6">
+                    <h4 id="linkexample">Example 2</h4>
+                    <p>The following link uses an ARIA labelledby attribute.</p>
+                    <a href="#" class="btn btn-primary" aria-labelledby="learnmore of hyperlinks-with-aria"
+                      id="learnmore">Learn more</a>
+                  </div>
+                </div>
+                <div class="row pt-4">
+                  <div class="col-md-6">
+                    <h4>Example 3</h4>
+                    <p>Links with aria-hidden are always ignored.</p>
+                    <a href="#" class="btn btn-primary" aria-hidden="true" tabindex="-1">Learn more</a>
+                  </div>
+                  <div class="col-md-6">
+                    <h4 id="ex4">Example 4</h4>
+                    <p>ARIA labelledby attribute doesn't start with visible label.</p>
+                    <a href="#" class="btn btn-primary" aria-labelledby="thix ex4" id="thix">Learn more</a>
+                  </div>
+                </div>
+              </div>
+
+              <h3>Links (Advanced)</h3>
+              <ul>
+                <li><strong>Usability:</strong> <a
+                    href="https://www.smashingmagazine.com/2008/07/should-links-open-in-new-windows/">Should links open
+                    in new windows?</a> (Source: Smashing Magazine)</li>
+                <li><strong>Usability:</strong> <a
+                    href="https://www.webcredible.com/blog/beware-opening-links-new-window/">Beware of opening links in
+                    a new window.</a> (Source: webcredible)</li>
+                <li><strong>Accessibility:</strong> <a href="https://www.w3.org/TR/WCAG20-TECHS/G200.html">Opening new
+                    windows and tabs from a link only when necessary.</a> (Source: W3/WCAG 2.1)</li>
+                <li><strong>Accessibility:</strong> <a href="https://www.w3.org/TR/WCAG20-TECHS/G201.html">Giving users
+                    advanced warning when opening a new window.</a> (Source: W3/WCAG 2.1)</li>
+              </ul>
+              <div class="pt-4 pb-5 ml-5">
+                <h4>Links that open in a new tab without warning</h4>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <h5>Example 1</h5>
+                    <p>aria-label with warning text.</p>
+                    <a href="#" target="_blank" class="btn btn-primary"
+                      aria-label="Learn more about Ryerson. Opens new tab.">Learn more</a>
+                  </div>
+                  <div class="col-md-6">
+                    <h5 id="example2">Example 2</h5>
+                    <p>aria-labelledby with warning text.</p>
+                    <a href="#" target="_blank" class="btn btn-primary" aria-labelledby="learnmore2 example2 newwindow"
+                      id="learnmore2">Learn more</a>
+                    <div style="display:none" id="newwindow">(Opens new window)</div>
+                  </div>
+                </div>
+                <div class="row mt-3">
+                  <div class="col-md-6">
+                    <h5>Example 3</h5>
+                    <p>Warning: aria-label without warning text.</p>
+                    <a href="#" target="_blank" class="btn btn-primary" aria-label="Learn more about Ryerson.">Learn
+                      more</a>
+                  </div>
+                  <div class="col-md-6">
+                    <h5 id="x4">Example 4</h5>
+                    <p>Warning: aria-labelledby without warning text.</p>
+                    <a href="#" target="_blank" class="btn btn-primary" aria-labelledby="learn4 x4" id="learn4">Learn
+                      more</a>
+                  </div>
+                </div>
+                <div class="row mt-3">
+                  <div class="col-md-6">
+                    <h5>Example 5</h5>
+                    <p>Warning: Plain text example.</p>
+                    <p>Learn more about <a href="https://www.google.com" target="_blank">Google.</a></p>
+                  </div>
+                  <div class="col-md-6">
+                    <h5>Example 6</h5>
+                    <p>Pass: Plain text example with visually hidden warning.</p>
+                    <p>Learn more about <a href="https://www.google.com" target="_blank">Google.<span class="sr-only">
+                          (Opens new tab).</span></a></p>
+                  </div>
+                </div>
+
+                <h4 class="pt-4" id="zxc">Links with identical names should have equivalent purpose</h4>
+                <div class="row">
+                  <div class="col-md-12">
+                    <p><a href="#asd">Oranges</a> and <a href="#asd">Oranges</a>: will pass because they point to the
+                      same URI.</p>
+                    <p><a href="#fasdf">document</a> and <a href="#fsdgdgd">Document</a> and <a
+                        href="#xcs">document</a>: will fail because they have the same link text but different URIs.</p>
+                    <p><a href="#fasdf" aria-labelledby="fasdf zxc" id="fasdf">Learn more</a> and <a href="#fsdgdgd"
+                        aria-labelledby="fsdgdgd zxc" id="fsdgdgd">Learn more</a>: will fail because the accessible name
+                      is the same but point to different URIs.</p>
+                  </div>
+                </div>
+
+                <h4 class="pt-4">Links to PDF and other files without warning</h4>
+                <div class="row">
+                  <div class="col-md-6">
+                    <h5>Example 1</h5>
+                    <p>Contains file type within link text.</p>
+                    <p>View the <a href="#asd.pdf" target="_blank">Final Report (PDF)</a></p>
+                  </div>
+                  <div class="col-md-6">
+                    <h5>Example 2</h5>
+                    <p>Warning: Does not contain file type within link text.</p>
+                    <p>View the <a href="#asd.pdf" target="_blank">Final Report</a></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <hr class="pb-3">
+            <h2 id="list-item-3">Tables</h2>
+            <p>There are 3 simple accessibility tests for a table. Tables with <kbd>role=&apos;presentation&apos;</kbd>
+              will be ignored.</p>
+            <ol>
+              <li>Table must contain at least one table heading or <kbd>th</kbd></li>
+              <li>Table must not contain an empty table heading or empty <kbd>th</kbd></li>
+              <li>Table must not contain any semantic headings (H1, H2, H3...)</li>
+            </ol>
+            <div class="ml-5">
+
+              <h3 class="pt-3">Example 1 - Pass</h3>
+              <table class="table pt-3">
+                <tbody>
+                  <tr class="table-primary">
+                    <th>Event Name</th>
+                    <th>Time</th>
+                    <th>Location</th>
+                  </tr>
+
+                  <tr>
+                    <td>Keynote</td>
+                    <td>9:00 AM</td>
+                    <td>Auditorium</td>
+                  </tr>
+
+                  <tr>
+                    <td>Lunch</td>
+                    <td>12:00 PM</td>
+                    <td>Skyline Room</td>
+                  </tr>
+
+                  <tr>
+                    <td>Closing Dinner</td>
+                    <td>5:00 PM</td>
+                    <td>Metropolitan Room</td>
+                  </tr>
+                </tbody>
+              </table>
+
+
+              <h3 class="pt-3">Example 2 - Missing table headers</h3>
+              <table class="table">
+                <tbody>
+                  <tr class="table-primary">
+                    <td>Event Name</td>
+                    <td>Time</td>
+                    <td>Location</td>
+                  </tr>
+
+                  <tr>
+                    <td>Keynote</td>
+                    <td>9:00 AM</td>
+                    <td>Auditorium</td>
+                  </tr>
+
+                  <tr>
+                    <td>Lunch</td>
+                    <td>12:00 PM</td>
+                    <td>Skyline Room</td>
+                  </tr>
+
+                  <tr>
+                    <td>Closing Dinner</td>
+                    <td>5:00 PM</td>
+                    <td>Metropolitan Room</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <h3 class="pt-3">Example 3 - Table containing empty table header</h3>
+              <table class="table">
+                <tbody>
+                  <tr class="table-primary">
+                    <th></th>
+                    <th>Time</th>
+                    <th>Location</th>
+                  </tr>
+
+                  <tr>
+                    <td>Keynote</td>
+                    <td>9:00 AM</td>
+                    <td>Auditorium</td>
+                  </tr>
+
+                  <tr>
+                    <td>Lunch</td>
+                    <td>12:00 PM</td>
+                    <td>Skyline Room</td>
+                  </tr>
+
+                  <tr>
+                    <td>Closing Dinner</td>
+                    <td>5:00 PM</td>
+                    <td>Metropolitan Room</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <h3 class="pt-3">Example 4 - Table containing semantic headings</h3>
+              <table class="table">
+                <tbody>
+                  <tr class="table-primary">
+                    <th>
+                      <h4 style="font-size:1.2em!important">Event</h4>
+                    </th>
+                    <th>
+                      <h4 style="font-size:1.2em!important">Time</h4>
+                    </th>
+                    <th>
+                      <h4 style="font-size:1.2em!important">Location</h4>
+                    </th>
+                  </tr>
+                  <tr>
+                    <td>Keynote</td>
+                    <td>9:00 AM</td>
+                    <td>Auditorium</td>
+                  </tr>
+
+                  <tr>
+                    <td>Lunch</td>
+                    <td>12:00 PM</td>
+                    <td>Skyline Room</td>
+                  </tr>
+
+                  <tr>
+                    <td>Closing Dinner</td>
+                    <td>5:00 PM</td>
+                    <td>Metropolitan Room</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+    </div>
+  </main>
+  <footer class="text-muted sa11y-ignore">
+    <div class="container">
+      <p>Customize Sa11y to target specific regions of a page only. For example, <a href="#">this</a> link will be
+        ignored. If a content editor can't edit it, don't scan it.</p>
+    </div>
+  </footer>
+
+  <!-- Bootstrap + Jquery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+  </script>
+
+  <script>
+    $(document).ready(function () {
+      if (window.top == window) {
+        $("#iframe-check").remove();
+      } else {
+        $("#iframe-check").css("display", "block")
+      }
+
+      if (window.top != window) {
+        $("#newtabonly").css("display", "none")
+      } else {
+        $("#newtabonly").css("display", "block")
+      }
+      $('body').scrollspy({
+        target: '#list-example'
+      })
+    });
+  </script>
+
+  <!--Jquery (Yes, loaded a second time on purpose...)-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.slim.min.js"></script>
+
+  <!-- Tippy.js CDN scripts -->
+  <script src="https://unpkg.com/@popperjs/core@2"></script>
+  <script src="https://unpkg.com/tippy.js@6"></script>
+
+  <!--Sa11y-->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/src/sa11y.min.css" />
+  <script src="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/src/sa11y-english.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/src/sa11y.min.js"></script>
+</body>
+
+</html>
