@@ -14,9 +14,6 @@ Sa11y works as a simple in-page checker that is designed to be easily customized
 ## Demo and bookmarklet 
 :arrow_right: [View project website and demo](https://ryersondmp.github.io/sa11y/) or grab the latest [bookmarklet.](https://ryersondmp.github.io/sa11y/#install)
 
-# For developers and web administrators
-Sa11y works best in a templated CMS environments. Create custom conditions and checks to strategically enforce your organization's accessibility, usability, or web style guidelines. Customize Sa11y to target specific areas of the page (e.g. `main` content area only) - don't highlight issues content authors can't fix! Add exclusions to ignore false positives or prevent Sa11y from highlighting content within social media widgets or other iFrame content.
-
 ## Installation
 Sa11y relies on jQuery and works best using a tooltip library that features a positioning system. Positioning systems ensure that tooltips are never hidden by conflicting CSS styling such as `overflow: hidden;`. This version of Sa11y was built with [Tippy.js](https://github.com/atomiks/tippyjs), a highly customizable tooltip library.
 

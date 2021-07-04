@@ -24,7 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ## tota11y by Khan Academy
-Various parts of Sa11y is adapted from https://github.com/Khan/tota11y
+Various parts of Sa11y is adapted from [Tota11y by Khan Academy.](https://github.com/Khan/tota11y)
 
 The MIT License (MIT)
 
@@ -49,7 +49,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ## Tippy.js by Atomiks
-
 MIT License
 
 Copyright (c) 2017-present atomiks
@@ -75,11 +74,10 @@ SOFTWARE.
 https://github.com/atomiks/tippyjs/blob/master/LICENSE
 
 ## Icons by Font Awesome
-The SVG icons used in this project are created by Font Awesome. View FontAwesome's license: https://fontawesome.com/license/free
+The SVG icons used in this project are created by Font Awesome. View [FontAwesome's license.](https://fontawesome.com/license/free)
 
-## Color Contrast Checker created by jasonday
-The colour contrast jQuery plugin was created by Jason Day (MIT license).
-https://github.com/jasonday/color-contrast
+## Color Contrast plugin
+The [colour contrast plugin](https://github.com/jasonday/color-contrast) (MIT license) was created by Jason Day.
 
 ## Powered by jQuery
-Powered by jQuery (MIT license). https://github.com/jquery/jquery
+Powered by [jQuery (MIT license).](https://github.com/jquery/jquery)
