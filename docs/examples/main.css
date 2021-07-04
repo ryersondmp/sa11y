@@ -2,7 +2,7 @@
     margin-bottom: 0rem!important
 }
 
-main a {
+main a, footer a {
     color: #0065d1!important;
     text-decoration: underline !important;
 }
@@ -51,7 +51,8 @@ main a:focus {
 
 .sa11y-website-frame-message a:hover,
 .sa11y-website-frame-message a:focus {
-    text-decoration: none
+    text-decoration: none;
+    color: white;
 }
 
 .sa11y-website-frame-message p {
@@ -81,6 +82,11 @@ a.list-group-item {
 
 a {
     color: #0067d6;
+}
+
+footer {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
 }
 
 .announcement-component {

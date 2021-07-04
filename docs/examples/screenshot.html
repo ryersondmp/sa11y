@@ -3,6 +3,23 @@
 <html lang="en">
 
 <head>
+  <style>
+    main * {
+     
+    }
+    main {
+      background: #ebebeb;
+    }
+    body #sa11y-container #sa11y-toggle {
+      bottom: 90px !important;
+      right: 100px !important;
+    }
+    body #sa11y-container #sa11y-panel {
+      bottom: 100px !important;
+      right: 127px !important;
+    }
+    
+  </style>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Warnings - Sa11y Demo</title>
@@ -14,54 +31,18 @@
 </head>
 
 <body>
-  <header>
-
-    <div class="sa11y-website-frame-message">
-      <p style="display:none;" id="iframe-check"><a class="sa11y-exclude" href="warnings.htm" target="_blank">Open this
-          page in a new tab for a better experience.</a> <span class="fas fa-external-link-alt"
-          aria-hidden="true"></span></p>
-      <p style="display:none;" id="newtabonly">Viewing demo in a new tab. <a href="../index.html#demo">Go back to
-          documentation.</a></p>
-    </div>
-
-    <div class="navbar navbar-dark bg-dark shadow-sm">
-      <div class="container d-flex justify-content-between">
-        <span class="d-flex align-items-center text-white">
-          <h2 class="h6">Sa11y Demo</h2>
-        </span>
-        <nav class="nav nav-masthead justify-content-center sa11y-ignore">
-          <a class="nav-link" href="errors.html">Errors</a>
-          <a class="nav-link" href="warnings.html">Warnings</a>
-          <a class="nav-link" href="pass.html">No Errors</a>
-          <div class="dropdown show">
-            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              All Rulesets
-            </a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
-              <a class="dropdown-item" href="headings-images.html">Headings &amp; Images</a>
-              <a class="dropdown-item" href="links-tables.html">Links &amp; Tables</a>
-              <a class="dropdown-item" href="contrast-labels.html">Contrast &amp; Labels</a>
-              <a class="dropdown-item" href="other.html">Other</a>
-            </div>
-          </div>
-        </nav>
-      </div>
-    </div>
-  </header>
-
+  
   <main>
 
-    <section class="jumbotron text-center">
+    <section class="text-center">
       <div class="container">
-        <h1 class="jumbotron-heading">Warnings</h1>
+        <h2 class="jumbotron-heading">Main navigation</h2>
+        <h1 class="jumbotron-heading">Undergraduate Programs</h1>
         <p class="lead">A typical page with accessibility or usability warnings.</p>
-        <p><small>The sample text below is from <a href="https://en.wikipedia.org/wiki/Bear">Wikipedia:
-              Bear.</a></small></p>
       </div>
     </section>
 
-    <div class="album py-5 bg-light">
+    <div class="album py-5">
       <div class="container">
         <div class="row">
           <div class="col-md-4 d-flex">
@@ -77,6 +58,10 @@
               </div>
             </div>
           </div>
+    
+          <h2>Approved Students</h2>
+          <h3>Missed the Virtual Open House?</h3>
+          <h2>Faculties</h2>
           <div class="col-md-8 ">
             <p>Bears are carnivoran mammals of the family Ursidae. They are classified as <a
                 href="https://en.wikipedia.org/wiki/Caniforms" target="_blank">caniforms (opens in new window)</a>, or
@@ -101,25 +86,16 @@
       </div>
     </div>
 
-    <div class="album py-5 bg-light">
+    <div class="album py-5" style="background-color: #ebebeb;">
       <div class="container">
 
-        <section aria-label="Announcement" class="announcement-component mb-5">
-          <h2 class="h3"><span aria-hidden="true" class="icon fa fa-exclamation-triangle mr-2"></span>Announcement</h2>
-          This is an example announcement component used to get someone's attention. It should only be used for really
-          important announcements.
-        </section>
-
-
-        <h3>Taxonomy</h3>
-
-        <div id="accordion" class="pt-3 pb-3">
+        <div id="accordion" class="pt-3 pb-3" style="margin-bottom:2000px;">
           <div class="card">
             <div class="card-header" id="headingOne">
               <h3 class="mb-0">
                 <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseOne"
                   aria-expanded="false" aria-controls="collapseOne">
-                  Collapsible Group Item #1
+                  Faculty of Arts
                 </button>
               </h3>
             </div>
@@ -140,7 +116,7 @@
               <h3 class="mb-0">
                 <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo"
                   aria-expanded="false" aria-controls="collapseTwo">
-                  Collapsible Group Item #2
+                  Faculty of Community Services
                 </button>
               </h3>
             </div>
@@ -160,7 +136,7 @@
               <h3 class="mb-0">
                 <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree"
                   aria-expanded="false" aria-controls="collapseThree">
-                  Collapsible Group Item #3
+                  Faculty of Engineering and Architectural Science
                 </button>
               </h3>
             </div>
@@ -183,7 +159,8 @@
             </div>
           </div>
         </div>
-
+        <h3>Faculty of Science</h3>
+        <h3>Ted Rogers School of Management</h3>
         <div class="row">
           <div class="col-md-6">
             <p>The FAMILY URSIDAE IS ONE OF THE NINE families in the suborder Caniformia, or "doglike" carnivorans,
@@ -199,10 +176,7 @@
               those of procyonids, which supports the inclusion of these two species in Ursidae rather than in
               Procyonidae, where they had been placed
               by some earlier authorities.</p>
-            <p>- bears<br>
-              - beats<br>
-              - battlestar galactica
-            </p>
+           
           </div>
           <div class="col-md-6">
           </div>
@@ -219,7 +193,7 @@
           are known from the Oligocene, including Amphicticeps and Amphicynodon.</p>
 
         <h2>Size</h2>
-        <p><em>The raccoon-sized, dog-like Cephalogale is the oldest-known member of the subfamily Hemicyoninae, which
+        <p>The raccoon-sized, dog-like Cephalogale is the oldest-known member of the subfamily Hemicyoninae, which
             first appeared during the middle Oligocene in Eurasia about 30 Mya.[15] The subfamily includes the younger
             genera Phoberocyon (20–15
             Mya), and Plithocyon (15–7 Mya). A Cephalogale-like species gave rise to the genus Ursavus during the early
@@ -230,14 +204,7 @@
             likely via the species
             Ursavus elmensis. Based on genetic and morphological data, the Ailuropodinae (pandas) were the first to
             diverge from other living bears about 19 Mya, although no fossils of this group have been found before about
-            5 Mya.</em></p>
-
-        <section aria-label="Announcement" class="announcement-component mb-5">
-          Although sometimes someone may use this component ineffectively, or for visual aesthetics. Mostly an issue in
-          templated environments or content management systems. You can create your own conditions and rule sets to
-          strategically enforce your organization's accessibility, usability, or web style guidelines. The following
-          example discourages overuse of a component.
-        </section>
+            5 Mya.</p>
       </div>
     </div>
 
@@ -280,9 +247,10 @@
   <script src="https://unpkg.com/tippy.js@6"></script>
 
   <!--Sa11y-->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/src/sa11y.min.css" />
-  <script src="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/src/sa11y-english.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/src/sa11y.min.js"></script>
+  <link rel="stylesheet" href="../../src/sa11y.css" />
+  <script src="../../src/sa11y-english.js"></script>
+  <script src="../../src/sa11y.js"></script>
+
 </body>
 
 </html>
