@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!-- saved from url=(0049)https://getbootstrap.com/docs/4.3/examples/album/ -->
-<html lang="en">
+<html>
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -208,7 +208,7 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
     integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
   </script>
-
+<script src="https://cdn.jsdelivr.net/npm/anchor-js/anchor.min.js"></script>
   <script>
     $(document).ready(function () {
       if (window.top == window) {
@@ -226,19 +226,20 @@
         target: '#list-example'
       })
     });
+    anchors.add();
   </script>
   <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
   <!--Jquery (Yes, loaded a second time on purpose...)-->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.slim.min.js"></script>
 
   <!-- Tippy.js CDN scripts -->
   <script src="https://unpkg.com/@popperjs/core@2"></script>
   <script src="https://unpkg.com/tippy.js@6"></script>
 
   <!--Sa11y-->
-  <link rel="stylesheet" href="../../sa11y.css" />
-  <script src="../../sa11y-english.js"></script>
-  <script src="../../sa11y-v2.js"></script>
+  <link rel="stylesheet" href="../../src/sa11y.css" />
+  <script src="../../src/sa11y-english.js"></script>
+  <script src="../../src/sa11y.js"></script>
 </body>
 
 </html>

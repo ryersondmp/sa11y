@@ -14,29 +14,6 @@ Sa11y works as a simple in-page checker that is designed to be easily customized
 ## Demo and bookmarklet 
 :arrow_right: [View project website and demo](https://ryersondmp.github.io/sa11y/) or grab the latest [bookmarklet.](https://ryersondmp.github.io/sa11y/#install)
 
-## Contact
-Have a question or any feedback? Submit it as an [issue](https://github.com/ryersondmp/sa11y/issues) or email: [adam.chaboryk@ryerson.ca](mailto:adam.chaboryk)
-
-Want to help make Sa11y better? Consider [contributing](https://github.com/ryersondmp/sa11y/blob/master/CONTRIBUTING.md)!
-
-## Acknowledgements
-Development is lead and maintained by [Adam Chaboryk](https://github.com/adamchaboryk), IT Accessibility Specialist, Digital Media Projects, Computing and Communication Services (CCS) at Ryerson University in Toronto, Canada. 
-
-### Previous contributors
-- Farhan Mohammed, Web Accessibility &amp; Usability Assistant, Ryerson University (2020/2021)
-- Kyle Padernilla, Web Accessibility &amp; Usability Assistant, Ryerson University (2019/2020)
-- Arshad Mohammed, Web Accessibility &amp; Usability Assistant, Ryerson University (2018/2019)
-- Benjamin Luong, Web Accessibility &amp; Usability Assistant, Ryerson University (2016/2017)
-
-### Other acknowledgements
-- Sa11y is an adaptation of [Tota11y by Khan Academy.](https://github.com/Khan/tota11y)
-- Tooltip library by [Tippy.js](https://github.com/atomiks/tippyjs)
-- [color-contrast](https://github.com/jasonday/color-contrast) script was created by Jason Day.
-- Readability feature is an adaptation of the [Readability Bookmarklet](https://accessibility.oit.ncsu.edu/it-accessibility-at-nc-state/developers/tools/readability-bookmarklet/) created by Greg Kraus at North Carolina State University.
-- The icons are created by [FontAwesome.](https://github.com/FortAwesome/Font-Awesome)
-- Sa11y is built with jQuery.
-- John Jameson (Princeton University) maintains a fork of Sa11y called [Editoria11y](https://github.com/itmaybejj/editoria11y/) which is available as a turnkey Drupal module. Lots of code has been exchanged between both libraries!
-
 # For developers and web administrators
 Sa11y works best in a templated CMS environments. Create custom conditions and checks to strategically enforce your organization's accessibility, usability, or web style guidelines. Customize Sa11y to target specific areas of the page (e.g. `main` content area only) - don't highlight issues content authors can't fix! Add exclusions to ignore false positives or prevent Sa11y from highlighting content within social media widgets or other iFrame content.
 
@@ -45,14 +22,14 @@ Sa11y relies on jQuery and works best using a tooltip library that features a po
 
 To install on your website, insert Sa11y right after the jQuery script tag, and right before the closing `</body>` tag. Include both Tippy.js and Popper.js before Sa11y. Sa11y consists of three files (located in `/src/`).
 
-- *sa11y.css*: The main stylesheet. Should be included in the `<head>` of the document (if possible).
-- *sa11y-english.js*: Global configurations and exclusions go here. All text strings and tooltip messages are located here for easy translation.
-- *sa11y.js*: Contains all logic and rulesets.
+- **sa11y.css**: The main stylesheet. Should be included in the `<head>` of the document (if possible).
+- **sa11y-english.js**: Global configurations and exclusions go here. All text strings and tooltip messages are located here for easy translation.
+- **sa11y.js**: Contains all logic and rulesets.
 
 ### Example installation:
 ```html
-//Latest jQuery
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+//Latest jQuery (Bookmarklet uses jQuery slim build)
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.slim.min.js"></script>
 
 //Tippy.js v6 CDN (tooltip library)
 <script src="https://unpkg.com/@popperjs/core@2"></script>
@@ -72,10 +49,10 @@ To install on your website, insert Sa11y right after the jQuery script tag, and 
 1. Create your condition (within the QA module for example.
 2. Add `this.warningCount++;` or `this.errorCount++;` to update warning or error count.
 3. Add respective CSS classes.
-4. Add warning or error button before (or after) element using the `ButtonInserter` function, followed by the type `sa11yError`, `sa11yWarning`, `sa11yGood`. Finally, reference your tooltip message.
+4. Add warning or error button before (or after) element using the `Sa11yAnnotate` function, followed by the type `sa11yError`, `sa11yWarning`, `sa11yGood`. Finally, reference your tooltip message.
 
 #### Example: Warn content authors of overusing a component.
-The example condition detects if more than one announcement is detected on a page. If it detects more than one instance of the .announcement-component CSS class, it will be indicated as a warning. Using jQuery's `gt:(0)` selector, the warning button will only appear on every instance except the first component. `M['WarningMessage']` represents a string (tooltip message).
+The example condition detects if more than one announcement is detected on a page. If it detects more than one instance of the .announcement-component CSS class, it will be indicated as a warning. Using jQuery's `gt:(0)` selector, the warning button will only appear on every instance except the first component. `M['announcementWarningMessage']` represents a string (tooltip message).
 
 ```javascript
 let $checkAnnouncement = this.root.find('.announcement-component').not(this.containerIgnore);
@@ -83,10 +60,34 @@ if ($checkAnnouncement.length > 1) {
     this.warningCount++;;
     $('.announcement-component:gt(0)').addClass('sa11y-warning-border');
     $('.announcement-component:gt(0)').before(
-            ButtonInserter(sa11yWarning, M['WarningMessage'])
+            Sa11yAnnotate(sa11yWarning, M['announcementWarningMessage'])
         );
 }
 ```
+
+## Contributing
+Want to help make Sa11y better? Consider [contributing](https://github.com/ryersondmp/sa11y/blob/master/CONTRIBUTING.md)!
+
+# Acknowledgements
+Development is lead and maintained by [Adam Chaboryk](https://github.com/adamchaboryk), IT Accessibility Specialist, Digital Media Projects, Computing and Communication Services (CCS) at Ryerson University in Toronto, Canada. 
+
+### Previous contributors
+- Farhan Mohammed, Web Accessibility &amp; Usability Assistant, Ryerson University (2020/2021)
+- Kyle Padernilla, Web Accessibility &amp; Usability Assistant, Ryerson University (2019/2020)
+- Arshad Mohammed, Web Accessibility &amp; Usability Assistant, Ryerson University (2018/2019)
+- Benjamin Luong, Web Accessibility &amp; Usability Assistant, Ryerson University (2016/2017)
+
+### Other acknowledgements
+- Sa11y is an adaptation of [Tota11y by Khan Academy.](https://github.com/Khan/tota11y)
+- Tooltip library by [Tippy.js](https://github.com/atomiks/tippyjs)
+- [color-contrast](https://github.com/jasonday/color-contrast) script was created by Jason Day.
+- Readability feature is an adaptation of the [Readability Bookmarklet](https://accessibility.oit.ncsu.edu/it-accessibility-at-nc-state/developers/tools/readability-bookmarklet/) created by Greg Kraus at North Carolina State University.
+- The icons are created by [FontAwesome.](https://github.com/FortAwesome/Font-Awesome)
+- Sa11y is built with jQuery.
+- John Jameson (Princeton University) maintains a fork of Sa11y called [Editoria11y](https://github.com/itmaybejj/editoria11y/) which is available as a turnkey Drupal module. Sa11y and Editoria11y share a lot of code!
+
+## Contact
+Have a question or any feedback? Submit it as an [issue](https://github.com/ryersondmp/sa11y/issues) or email: [adam.chaboryk@ryerson.ca](mailto:adam.chaboryk)
 
 # Update log
 List of latest features and updates.
@@ -109,6 +110,7 @@ Sa11y 2.0 is a complete rewrite from scratch.
 * Developer enhancements: Completely refactored.
     * Separated into 3 files for easier development, customization, and localization.
     * Global configuration settings (located in `sa11y-english.js`) to make it easier to customize.
+    * Uses jQuery's latest slim build.
     * Way less _spaghetti_ code...
 
 ## Past updates (Version 1.0)

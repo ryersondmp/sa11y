@@ -3,7 +3,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="assets/main.css" type="text/css">
+  <link rel="stylesheet" href="assets/main.min.css" type="text/css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
   <!-- Primary Meta Tags -->
@@ -36,15 +36,26 @@
         <div class="row">
           <div class="col-xs-12">
             <div class="res-global-header">
-              <div aria-label="global" class="navbar navbar-default">
+              <nav aria-label="global" class="navbar navbar-default">
                 <div class="container-fluid">
                   <div class="navbar-header">
-                    <a class="navbar-brand" href="https://www.ryerson.ca/"> <img src="assets/images/ryerson_logo.svg"
+                    <a class="navbar-brand" href="https://www.ryerson.ca/"><img src="assets/images/ryerson_logo.svg"
                         alt="Ryerson University homepage.">
                     </a>
                   </div>
+                  <div class="navbar-content">
+                    <div class="navbar-right">
+                      <ul id="gh-other-content" class="nav navbar-nav navbar-left">
+                        <li>
+                          <a href="https://github.com/ryersondmp/sa11y">
+                            <i class="fa fa-github" aria-hidden="true"></i> View on GitHub
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </nav>
             </div>
           </div>
         </div>
@@ -59,8 +70,8 @@
             <div class="local-header-section col-xs-12">
               <div class="res-local-header">
                 <div class="row template-local-header">
-                  <div class="local-header-section col-xs-12">
-                    <h1 class="site-heading text-center">
+                  <div class="local-header-section col-xs-12 text-center">
+                    <h1 class="site-heading">
                       <span style="font-size:4em">Sa11y</span>
                       <span class="text-center" style="font-size:1em!important;display:block;">accessibility quality
                         assurance assistant</span>
@@ -114,10 +125,7 @@
       <div class="sr-only" id="main-content" tabindex="-1">You are now in the main content area</div>
       <div class="sa11y-hero">
         <div class="container">
-          <p class="hero-p text-center">Sa11y is an <strong>accessibility quality assurance</strong> tool that
-            <strong>visually highlights</strong> common accessibility and usability issues. Geared towards content
-            authors, Sa11y indicates errors or
-            warnings at the source with a simple tooltip on how to fix.</p>
+          <p class="hero-p text-center">Sa11y is an <strong>accessibility quality assurance</strong> tool that <strong>visually highlights</strong> common accessibility and usability issues. Geared towards content authors, Sa11y indicates errors or warnings at the source with a simple tooltip on how to fix.</p>
         </div>
       </div>
       <section>
@@ -125,11 +133,7 @@
           <div class="row">
             <div class="col-sm-6">
               <h2 id="features">Features <i class="fa fa-star" aria-hidden="true"></i></h2>
-              <p>Sa11y works as a simple in-page checker that is designed to be easily customized and integrated into
-                any content management system (CMS) to facilitate good accessibility practices. Sa11y works best in a
-                templated <abbr title="Content Management System">CMS</abbr> environment, although is also available as
-                a bookmarklet. Sa11y is <em>not</em> a comprehensive code analysis tool. Sa11y exclusively highlights
-                content issues.</p>
+              <p>Sa11y works as a simple in-page checker that is designed to be easily customized and integrated into any content management system (CMS) to facilitate good accessibility practices. Sa11y works best in a templated <abbr title="Content Management System">CMS</abbr> environment, although is also available as a bookmarklet. Sa11y is <em>not</em> a comprehensive code analysis tool. Sa11y exclusively highlights content issues.</p>
               <ul>
                 <li>Over 50 test conditions.</li>
                 <li>Free and open source.</li>
@@ -144,7 +148,7 @@
             <div class="col-sm-6 text-center p20">
               <h3 class="pt40">Made for content authors</h3>
               <img src="assets/images/coder-vs-comms.svg"
-                alt="Illustration of a gauge pointing to a content editor instead of a web developer." />
+                alt="Illustration of a gauge pointing to a content author instead of a web developer." />
             </div>
           </div>
         </div>
@@ -154,14 +158,11 @@
           <h3 class="pt30">Automatic</h3>
           <div class="row">
             <div class="col-sm-8">
-              <p>Sa11y does a quick scan on page load. If there are any errors or warnings, the toggle will display a
-                notification badge with the total number of issues detected. Red indicates errors, while yellow
-                indicates there are warnings only. Content authors should be encouraged to enable Sa11y even if there
-                are no notifications!</p>
+              <p>Sa11y does a quick scan on page load. If there are any errors or warnings, the toggle will display a notification badge with the total number of issues detected. Red indicates errors, while yellow indicates there are warnings only. Content authors should be encouraged to enable Sa11y even if there are no notifications!</p>
             </div>
             <div class="col-sm-4 text-center">
               <img loading="lazy" width="250" class="responsive-img" src="assets/images/notification.png"
-                alt="Three Sa11y toggles: one with a red notification badge, one with a yellow badge, and one without any badge." />
+                alt="Three Sa11y toggles: one with a red notification badge, one yellow, and one without any badge." />
             </div>
           </div>
           <h3 class="pt30">States</h3>
@@ -169,24 +170,21 @@
           <div class="row">
             <div class="col-sm-4 text-center">
               <img loading="lazy" class="responsive-img" width="500" src="assets/images/sa11y-error.png"
-                alt="Screenshot of error panel that says accessibility errors found!">
+                alt="Screenshot of panel that shows: 7 accessibility errors and 1 warning detected!">
               <h4>Errors</h4>
-              <p class="p20">Accessibility and usability issues are detected. Sa11y highlights common WCAG 2.1 Level A
-                and AA accessibility issues.</p>
+              <p class="p20">Accessibility and usability issues are detected. Sa11y highlights common WCAG 2.1 Level A and AA accessibility issues.</p>
             </div>
             <div class="col-sm-4 text-center">
               <img loading="lazy" class="responsive-img" width="500" src="assets/images/sa11y-warning.png"
-                alt="Screenshot of warning panel that says no accessibility errors found, but please check warnings.">
+                alt="Screenshot of panel that shows: Please review warning.">
               <h4>Warnings</h4>
-              <p class="p20">Warns you of potential accessibility or usability issues, and prompts you to manually
-                review an element.</p>
+              <p class="p20">Warns you of potential accessibility or usability issues, and prompts you to manually review an element.</p>
             </div>
             <div class="col-sm-4 text-center">
               <img loading="lazy" class="responsive-img" width="500" src="assets/images/sa11y-no-errors.png"
-                alt="Screenshot of pass panel that says no accessibility errors found.">
+                alt="Screenshot of panel that shows: No accessibility errors found.">
               <h4>Pass</h4>
-              <p class="p20">No apparent accessibility or usability issues are detected. A "thumbs up" to let you know
-                you're good.</p>
+              <p class="p20">No apparent accessibility or usability issues are detected. A "thumbs up" to let you know you're good.</p>
             </div>
           </div>
           <!-- This excellent accordion panel created by Scott O'Hara https://github.com/scottaohara/a11y_accordions-->
@@ -272,8 +270,7 @@
       <section>
         <div class="container">
           <h3 class="pt30">Show Outline</h3>
-          <p>The Show Outline button displays the page's heading structure, similar to the table of contents for a book.
-            The page outline gives you a visual idea of how each part is interconnected.</p>
+          <p>The Show Outline button displays the page's heading structure, similar to the table of contents for a book. The page outline gives you a visual idea of how each part is interconnected.</p>
 
           <div class="row">
             <div class="col-md-6 text-center">
@@ -290,10 +287,7 @@
       <section class="pb80">
         <div class="container">
           <h3 class="pt30">Show Settings: additional checks</h3>
-          <p>Sa11y has four optional checks and a dark mode setting that can be enabled in the "Show Settings" tab.
-            Although these checks are "optional", it does not imply they are not important! Depending on the website
-            theme, plugin, or <abbr title="Content Management System">CMS</abbr>, they may not need to be tested for
-            every time. For example, some form plugins automatically provide a label for each form input.</p>
+          <p>Sa11y has four optional checks and a dark mode setting that can be enabled in the "Show Settings" tab. Although these checks are "optional", it does not imply they are not important! Depending on the website theme, plugin, or <abbr title="Content Management System">CMS</abbr>, they may not need to be tested for every time. For example, some form plugins automatically provide a label for each form input.</p>
           <div class="row">
             <div class="col-md-8 text-center">
               <img loading="lazy" class="responsive-img" width="1000" src="assets/images/settings-panel.png"
@@ -330,17 +324,9 @@
           <div class="row">
             <div class="col-md-7">
               <h3>Readability</h3>
-              <p>Sa11y can <strong>estimate</strong> the readability score from all paragraph and list content within
-                the <strong>main</strong> content area. A good readability score is an indication that your writing is
-                understandable and easy to digest. It is based on the average length of sentences and words on your
-                page, using a formula known as the <a
-                  href="https://en.wikipedia.org/wiki/Flesch%E2%80%93Kincaid_readability_tests#Flesch_reading_ease">Flesch
-                  reading-ease test (Wikipedia).</a></p>
+              <p>Sa11y can <strong>estimate</strong> the readability score from all paragraph and list content within the <strong>main</strong> content area. A good readability score is an indication that your writing is understandable and easy to digest. It is based on the average length of sentences and words on your page, using a formula known as the <a href="https://en.wikipedia.org/wiki/Flesch%E2%80%93Kincaid_readability_tests#Flesch_reading_ease">Flesch reading-ease test (Wikipedia).</a></p>
 
-              <p>A "good" reading score is between 60 and 100. Sometimes it may be difficult to achieve a good
-                readability score. Most of your pages may say "difficult". Remember that this feature is only used to
-                <strong>estimate</strong> the readability of your content. It should only be used as a
-                <strong>reference,</strong> and not an indication of conformance.</p>
+              <p>A "good" reading score is between 60 and 100. Sometimes it may be difficult to achieve a good readability score. Most of your pages may say "difficult". Remember that this feature is only used to <strong>estimate</strong> the readability of your content. It should only be used as a <strong>reference,</strong> and not an indication of conformance.</p>
 
               <p>You can enable the readability feature in the settings panel.</p>
 
@@ -353,10 +339,7 @@
               </ul>
 
               <h4>Technical details about readability score</h4>
-              <p>Sa11y calculates the readability score based on all paragraph (&lt;p&gt; tags) and list content
-                (&lt;li&gt; tags) within the main (&lt;main&gt; or &lt;role='main'&gt;) content area. If no main content
-                is present, it will not calculate a score. A low score does not affect the pass or fail state of Sa11y.
-                This feature works for English content only.</p>
+              <p>Sa11y calculates the readability score based on all paragraph (&lt;p&gt; tags) and list content (&lt;li&gt; tags) within the main (&lt;main&gt; or &lt;role='main'&gt;) content area. If no main content is present, it will not calculate a score. A low score does not affect the pass or fail state of Sa11y. This feature works for English content only.</p>
 
             </div>
             <div class="col-md-5">
@@ -373,9 +356,7 @@
           <div class="pb30">
             <h2>Demo <i class="fa fa-laptop" aria-hidden="true"></i>
             </h2>
-            <p class="lead">Click the toggle to get started. Navigate to different pages to view all three states. Once
-              enabled, Sa11y will remain on even when navigating to different pages. Simply click the same button to
-              turn off Sa11y.</p>
+            <p class="lead">Click the toggle to get started. Navigate to different pages to view all three states. Once enabled, Sa11y will remain on even when navigating to different pages. Simply click the same button to turn off Sa11y.</p>
           </div>
 
           <a id="skippy-demo" class="vhs-only vhs-only-focusable" href="#install">
@@ -398,10 +379,7 @@
           <h2 id="install">Install <i class="fa fa-wrench" aria-hidden="true"></i></h2>
 
           <h3 class="pt20">Bookmarklet <span class="label-default">Experimental</span></h3>
-          <p><i class="fa fa-info-circle" aria-hidden="true"></i>
-            Please note that bookmarklets do not work on all websites because of security policies that block external
-            code. Secondly, it may take a few seconds to load because the code is being injected into the page you are
-            browsing.</p>
+          <p><i class="fa fa-info-circle" aria-hidden="true"></i> Please note that bookmarklets do not work on all websites because of security policies that block external code. Secondly, it may take a few seconds to load because the code is being injected into the page you are browsing.</p>
 
           <ol>
             <li>Simply drag the "Sa11y" button below into your bookmarks bar.</li>
@@ -413,40 +391,25 @@
               class="fa fa-bookmark" aria-hidden="true"></span> <span>Sa11y</span></a>
 
           <h3 id="how" class="pt20">How to use</h3>
-          <p>Click the toggle in the bottom right corner. If using assistive technology, the button is labeled
-            "Accessibility Checker".</p>
+          <p>Click the toggle in the bottom right corner. If using assistive technology, the button is labeled "Check Accessibility".</p>
 
           <div class="row">
-            <div class="col-md-6">
-              <h4 class="pt20"><i class="fa fa-lightbulb-o" aria-hidden="true"></i> <strong>Tip #1</strong></h4>
-              <p>Use the "Skip to issue" button to quickly cycle through all errors, warnings, or "good" buttons. The
-                tooltip will automatically open. You can also press <kbd>alt</kbd> <kbd aria-label="period">.</kbd> with
-                a keyboard.</p>
+            <div class="col-md-6" style="padding: 20px;">
+              <h4 class="pt20"><i class="fa fa-lightbulb-o" aria-hidden="true"></i> Tip #1</h4>
+              <p>Use the "Skip to issue" button to quickly cycle through all errors, warnings, or "good" buttons. The tooltip will automatically open. You can also press <kbd>alt</kbd> <kbd aria-label="period">.</kbd> with a keyboard.</p>
+              
             </div>
-            <div class="col-md-6 text-center">
-              <img loading="lazy" class="responsive-img" width="500" src="assets/images/skip-to-issue.png"
-                alt="Screenshot of Skip to issue. Keyboard shortcut: Alt period.">
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-5">
-              <h4 class="pt20"><i class="fa fa-lightbulb-o" aria-hidden="true"></i> <strong>Tip #2</strong></h4>
-              <p>Sa11y also checks hidden content. If you don't see an error or warning button, use the "Skip to issue"
-                button to find it. An alert will pop-up with a preview of the issue message.</p>
-            </div>
-            <div class="col-md-6 text-center">
-              <img loading="lazy" class="responsive-img" width="500" src="assets/images/hidden-content-alert.png"
-                alt="Screenshot showing an alert stating that the error or warning may be hidden in an accordion or tab component.">
+            <div class="col-md-6" style="padding: 20px;">
+              <h4 class="pt20"><i class="fa fa-lightbulb-o" aria-hidden="true"></i> Tip #2</h4>
+              <p>Sa11y also checks hidden content. If you don't see an error or warning button, use the "Skip to issue" button to find it. An alert will pop-up with a preview of the issue message. If you do not know what the alert is referencing, it might be a false positive or an issue that a developer might need to fix.</p>
             </div>
           </div>
+          <div class="text-center">
+            <img loading="lazy" class="responsive-img" width="800" src="assets/images/skip-to-issue.png"
+              alt="Screenshot of Skip to issue button and an alert stating that the item may be hidden in an accordion or tab component."></div>
 
           <h3 class="pt20">For developers and web administrators</h3>
-          <p>Sa11y works best in a templated <abbr title="Content Management System">CMS</abbr> environments. Create
-            your own conditions and rulesets to strategically enforce your organization's accessibility, usability, or
-            web style guidelines. Customize Sa11y to target specific areas of the page (e.g. <kbd>main</kbd> content
-            area only) - don't highlight issues content authors can't fix! Add exclusions to ignore false positives or
-            prevent Sa11y from highlighting content within social media widgets or other iFrame content.</p>
+          <p>Sa11y works best in a templated <abbr title="Content Management System">CMS</abbr> environments. Create your own conditions and rulesets to strategically enforce your organization's accessibility, usability, or web style guidelines. Customize Sa11y to target specific areas of the page (e.g. <kbd>main</kbd> content area only) - don't highlight issues content authors can't fix! Add exclusions to ignore false positives or prevent Sa11y from highlighting content within social media widgets or other iFrame content.</p>
           <ul class="pb10">
             <li>Fork or contribute: <a href="https://github.com/ryersondmp/sa11y">Sa11y on Github <span
                   class="fa fa-github" aria-hidden="true"></span></a></li>
@@ -457,9 +420,7 @@
 
           <h2 id="acknowledgements" class="pt20">Acknowledgements <i class="fa fa-users" aria-hidden="true"></i>
           </h2>
-          <p>Development lead by <a href="https://ca.linkedin.com/in/adamchaboryk">Adam Chaboryk,</a> IT accessibility
-            specialist, Digital Media Projects, Computing and Communication Services (CCS) at Ryerson University in
-            Toronto, Canada.</p>
+          <p>Development lead by <a href="https://ca.linkedin.com/in/adamchaboryk">Adam Chaboryk,</a> IT accessibility specialist, Digital Media Projects, Computing and Communication Services (CCS) at Ryerson University in Toronto, Canada.</p>
 
           <h3 class="pt20">Previous contributors</h3>
           <ul>
@@ -485,13 +446,19 @@
             <li>The icons are made by <a href="https://fontawesome.com/">Font Awesome.</a></li>
             <li>Sa11y is built with <a href="https://jquery.com/">jQuery.</a></li>
             <li>John Jameson (Princeton University) maintains a fork of Sa11y called <a
-                href="https://github.com/itmaybejj/editoria11y">Editoria11y</a> which is available as a turnkey Drupal
-              module. Lots of code has been exchanged between both libraries!</li>
+                href="https://github.com/itmaybejj/editoria11y">Editoria11y</a> which is available as a turnkey Drupal module. Sa11y and Editoria11y share a lot of code!</li>
             <li>The "Skip to content" button on this page is a great open source script called <a
                 href="https://github.com/paypal/skipto">SkipTo.</a></li>
           </ul>
-          <h3 class="pt30">License</h3>
-          <p>Sa11y is MIT licensed.</p>
+
+          <h3 class="pt20">Featured</h3>
+          <ul>
+            <li>Trusted by <a href="https://www.queensu.ca/webpublish/resources/accessibility">Queen's University,</a> <a href="https://uit.stanford.edu/accessibility/testing/browser-plugins">Stanford University,</a> <a href="https://laurentian.ca/web/accessibility#:~:text=Sa11y">Laurentian University,</a> and Victoria Island University</li>
+            <li>Adapted by <a href="https://accessibility.princeton.edu/news/introducing-editoria11y#:~:text=Sa11y">Princeton University</a></li>
+            <li>Featured on <a href="https://www.digitala11y.com/accessibility-bookmarklets-testing/">DigitalA11y Blog</a>, <a href="https://www.a11yproject.com/resources/#:~:text=Sa11y">The A11Y Project</a>, and the <a href="https://www.w3.org/WAI/ER/tools/#sa11y">W3C's Web Accessibility Evaluation Tools List!</a></li>
+          </ul>
+
+          
           <h2 id="contact" class="pt40">Contact <i class="fa fa-envelope" aria-hidden="true"></i>
           </h2>
           <p>If you have any questions or feedback, please email <a

@@ -7,7 +7,7 @@ var bodyheader = document.getElementsByTagName("head")[0];
 bodyheader.appendChild(sa11ycss);
 
 /* Append jQuery, Poppers.js, Tippy.js, and Sa11y in specific order. */
-document.body.appendChild(document.createElement("script")).src = "https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js";
+document.body.appendChild(document.createElement("script")).src = "https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.slim.min.js";
 
 var popperJS = document.createElement("script");
 popperJS.src = "https://unpkg.com/@popperjs/core@2";

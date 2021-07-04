@@ -6076,11 +6076,7 @@ fieldset[disabled] .btn-danger.active {
 .nav-tabs > li:last-child {
   border-right: 0;
 }
-.nav > li > a:focus,
-.nav > li > a:hover {
-  background-color: #003368;
-  border: 1px solid #003368;
-}
+
 .ellipsis {
   max-width: 100%;
   overflow: hidden;

@@ -5,6 +5,7 @@ Want to help make Sa11y better? There are many ways you can contribute.
 - Submit a bug fix.
 - Propose new features or rulesets.
 - Discuss existing rulesets. 
+- Help translate into other languages.
 - Provide feedback or a testimonial!
 
 ## How to report bugs
@@ -33,7 +34,8 @@ Pull requests should be used for “heavy-duty” changes to the code base. Alth
 2. Add comments to your code.
 3. Thoroughly test your code.
 4. Make sure your code lints.
-5. Create a pull request.
+5. Make sure your code does not introduce any accessibility barriers.
+6. Create a pull request!
 
 ## License
 By contributing, you agree that your contributions will be licensed under the same [license as Sa11y.](https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md)

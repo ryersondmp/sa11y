@@ -1,16 +1,7 @@
-/*----------------------------------------------------------------------
-Sa11y: the accessibility quality assurance assistant.                
-Author: Development led by Adam Chaboryk at Ryerson University.
-All acknowledgements: https://github.com/ryersondmp/sa11y
-License: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
-Copyright (c) 2020 - 2021 Ryerson University
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-----------------------------------------------------------------------*/
-
 //----------------------------------------------------------------------
 // Templating for Error, Warning and Pass buttons.
 //----------------------------------------------------------------------
-function ButtonInserter(type, content, inline = false) {
+function Sa11yAnnotate(type, content, inline = false) {
     ValidTypes = new Set([sa11yError, sa11yWarning, sa11yGood]);
     CSSName = {
         [sa11yError]: "error",
@@ -47,7 +38,7 @@ function ButtonInserter(type, content, inline = false) {
 //----------------------------------------------------------------------
 // Templating for full-width banners.
 //----------------------------------------------------------------------
-function BannerInserter(type, content) {
+function Sa11yAnnotateBanner(type, content) {
     ValidTypes = new Set([sa11yError, sa11yWarning, sa11yGood]);
     CSSName = {
         [sa11yError]: "error",
@@ -202,7 +193,7 @@ jQuery.noConflict();
                 <button type="button" role="tab" aria-expanded="false" id="sa11y-settings-toggle" aria-controls="sa11y-settings-panel">
                     ${sa11yShowSettings}
                 </button>
-                <div aria-hidden="true">&nbsp;&nbsp;</div> 
+                <div style="width:35px"></div> 
             </div>` +
 
                 //End of main container.
@@ -307,7 +298,7 @@ jQuery.noConflict();
                 sa11yCheckRoot = "body";
             }
             // Combine default and custom ignores.
-            let separator = ", ";
+            const separator = ", ";
             // Container ignores apply to self and children.
             if (sa11yContainerIgnore.length > 0) {
                 let containerSelectors = sa11yContainerIgnore.split(",");
@@ -316,9 +307,10 @@ jQuery.noConflict();
                         containerSelectors[i] + " *, " + containerSelectors[i];
                 }
                 sa11yContainerIgnore =
-                    "[aria-hidden='true']" + separator + containerSelectors.join();
+                    "[aria-hidden='true'], #sa11y-container *, .sa11y-instance *" + separator + containerSelectors.join();
             } else {
-                sa11yContainerIgnore = "[aria-hidden='true']";
+                sa11yContainerIgnore = 
+                    "[aria-hidden='true'], #sa11y-container *, .sa11y-instance *";
             }
             this.containerIgnore = sa11yContainerIgnore;
             // Images ignore defaults plus presentation role.
@@ -340,7 +332,7 @@ jQuery.noConflict();
                 sa11yLinkIgnore +
                 sa11yContainerIgnore +
                 separator +
-                "[aria-hidden='true']";
+                "[aria-hidden='true'], .anchorjs-link";
             if (sa11yHeaderIgnore.length > 0) {
                 this.headerIgnore += separator + sa11yContainerIgnore;
             } else {
@@ -721,47 +713,56 @@ jQuery.noConflict();
             let errorCount = this.errorCount;
 
             this.buildPanel();
-            this.jumpToIssue();
 
+            this.skipToIssue();
+            $("#sa11y-cycle-toggle").prop("disabled", false);
+            $("#sa11y-cycle-toggle").attr("style", "cursor: pointer !important;");
+            
             $("#sa11y-panel").addClass("sa11y-active");
+            
 
             if (this.errorCount === 1 && this.warningCount === 1) {
                 $("#sa11y-panel-content").attr("class", "sa11y-errors");
                 $("#sa11y-status").text(
-                    PanelStatus["status1"]
+                    sa11yPanelStatus["status1"]
                 );
             } else if (this.errorCount === 1 && this.warningCount > 0) {
                 $("#sa11y-panel-content").attr("class", "sa11y-errors");
                 $("#sa11y-status").text(
-                    PanelStatus["status2"](warningCount)
+                    sa11yPanelStatus["status2"](warningCount)
                 );
             } else if (this.errorCount > 0 && this.warningCount === 1) {
                 $("#sa11y-panel-content").attr("class", "sa11y-errors");
                 $("#sa11y-status").text(
-                    PanelStatus["status3"](errorCount)
+                    sa11yPanelStatus["status3"](errorCount)
                 );
             } else if (this.errorCount > 0 && this.warningCount > 0) {
                 $("#sa11y-panel-content").attr("class", "sa11y-errors");
                 $("#sa11y-status").text(
-                    PanelStatus["status4"](errorCount, warningCount)
+                    sa11yPanelStatus["status4"](errorCount, warningCount)
                 );
             } else if (this.errorCount > 0) {
                 $("#sa11y-panel-content").attr("class", "sa11y-errors");
                 $("#sa11y-status").text(
                     this.errorCount === 1 ?
-                    PanelStatus["status5"] :
-                    PanelStatus["status6"](errorCount)
+                    sa11yPanelStatus["status5"] :
+                    sa11yPanelStatus["status6"](errorCount)
                 );
             } else if (this.warningCount > 0) {
                 $("#sa11y-panel-content").attr("class", "sa11y-warnings");
                 $("#sa11y-status").text(
                     totalCount === 1 ?
-                    PanelStatus["status7"] :
-                    PanelStatus["status8"](warningCount)
+                    sa11yPanelStatus["status7"] :
+                    sa11yPanelStatus["status8"](warningCount)
                 );
             } else {
                 $("#sa11y-panel-content").attr("class", "sa11y-good");
-                $("#sa11y-status").text(PanelStatus["status9"]);
+                $("#sa11y-status").text(sa11yPanelStatus["status9"]);
+
+                if ($(".sa11y-btn").length === 0) {
+                    $("#sa11y-cycle-toggle").prop("disabled", true);
+                    $("#sa11y-cycle-toggle").attr("style", "cursor: default !important;");
+                }
             }
         };
 
@@ -877,57 +878,75 @@ jQuery.noConflict();
         }
 
         // ============================================================
-        // Main panel: Jump to issue button.
+        // Main panel: Skip to issue button.
         // ============================================================
-        jumpToIssue = () => {
+
+        skipToIssue = () => {
+
+            /* Polyfill for scrollTo. scrollTo instead of .animate(), so Sa11y could use jQuery slim build. Credit: https://stackoverflow.com/a/67108752 & https://github.com/iamdustan/smoothscroll */
+            var reducedMotionQuery = false;
+            var scrollBehavior = "smooth";
+            if (!('scrollBehavior' in document.documentElement.style)) {
+                var js = document.createElement('script');
+                js.src = "https://cdn.jsdelivr.net/npm/smoothscroll-polyfill@0.4.4/dist/smoothscroll.min.js";
+                document.head.appendChild(js);
+            }
+            if (!(document.documentMode)) {
+                if (typeof window.matchMedia === "function") {
+                    reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+                }
+                if (!reducedMotionQuery || reducedMotionQuery.matches) {
+                    scrollBehavior = "auto";
+                }
+            }
+
             let sa11yBtnLocation = 0;
             const findSa11yBtn = $(".sa11y-btn").length;
-
-            //Disable jump to issue button if there's no buttons to view.
-            if (findSa11yBtn === 0) {
-                $("#sa11y-cycle-toggle").prop("disabled", true);
-                $("#sa11y-cycle-toggle").attr("style", "cursor: default !important;");
-            }
 
             //Jump to issue using keyboard shortcut.
             document.onkeyup = function (e) {
                 if (e.altKey && e.code == "Period") {
-                    jumpToIssueToggle();
+                    skipToIssueToggle();
                     e.preventDefault();
                 }
             };
 
             //Jump to issue using click.
             $("#sa11y-cycle-toggle").off().on("click", function () {
-                jumpToIssueToggle();
+                skipToIssueToggle();
             });
 
-            const jumpToIssueToggle = function () {
+            const skipToIssueToggle = function () {
                 //Calculate location of both visible and hidden buttons.
-                let pos = $(".sa11y-btn").eq(sa11yBtnLocation).closest(":visible").offset().top - 50;
-                let posi = $(".sa11y-btn").eq(sa11yBtnLocation).offset().top;
+                let visiblePosition = $(".sa11y-btn").eq(sa11yBtnLocation).closest(":visible").offset().top - 50;
+                let hiddenPosition = $(".sa11y-btn").eq(sa11yBtnLocation).offset().top;
 
-                if (pos >= 1) {
-                    $("html,body").animate({
-                            scrollTop: pos
-                        },
-                        300);
+                if (visiblePosition >= 1) {
+
+                    setTimeout(function() { 
+                        window.scrollTo({
+                            top: visiblePosition,
+                            behavior: scrollBehavior
+                        });
+                    },1);
 
                     $(".sa11y-btn:hidden").each(function () {
                         $(this).parent().closest(":visible").addClass("sa11y-pulse-border");
                     });
 
                     $(".sa11y-btn").get(sa11yBtnLocation).focus();
+                } else {
+                    $(".sa11y-btn").get(sa11yBtnLocation).focus();
                 }
 
                 //If location is less than 0 = hidden element (e.g. display:none);
-                if (posi <= 0) {
+                if (hiddenPosition <= 0) {
                     $("#sa11y-panel-alert").addClass("sa11y-active");
-                    $("#sa11y-panel-alert-text").text(PanelStatus["notVisibleAlert"]);
+                    $("#sa11y-panel-alert-text").text(sa11yPanelStatus["notVisibleAlert"]);
                     $("#sa11y-panel-alert-preview").html($(".sa11y-btn")[sa11yBtnLocation].getAttribute('data-tippy-content'));
                     $("#sa11y-close-alert").focus();
 
-                } else if (posi > 1) {
+                } else if (hiddenPosition > 1) {
                     $("#sa11y-panel-alert").removeClass("sa11y-active");
                     $(".sa11y-pulse-border").removeClass("sa11y-pulse-border");
                 }
@@ -968,7 +987,7 @@ jQuery.noConflict();
         // ============================================================
         // Rulesets: Check Headings
         // ============================================================
-        checkHeaders = async () => {
+        checkHeaders = () => {
             let prevLevel;
             this.$h.each((i, el) => {
                 let $el = $(el);
@@ -987,14 +1006,14 @@ jQuery.noConflict();
                 let warning = null;
 
                 if (level - prevLevel > 1 && i !== 0) {
-                    error = IM["headings"]["nonconsecLevel"](prevLevel, level);
+                    error = sa11yIM["headings"]["nonConsecutiveHeadingLevel"](prevLevel, level);
                 } else if ($el.text().trim().length < 1) {
-                    error = IM["headings"]["emptyHeading"](level);
+                    error = sa11yIM["headings"]["emptyHeading"](level);
                     $el.addClass("sa11y-error-text");
                 } else if (i === 0 && level !== 1 && level !== 2) {
-                    error = IM["headings"]["firstHeading"];
+                    error = sa11yIM["headings"]["firstHeading"];
                 } else if ($el.text().trim().length > 170) {
-                    warning = IM["headings"]["headingTooLong"](headingLength);
+                    warning = sa11yIM["headings"]["longHeading"](headingLength);
                 }
 
                 prevLevel = level;
@@ -1032,23 +1051,23 @@ jQuery.noConflict();
                     if (error != null && $el.closest("a").length > 0) {
                         this.errorCount++;
                         $el.addClass("sa11y-error-heading");
-                        $el.closest("a").after(ButtonInserter(sa11yError, error, true));
+                        $el.closest("a").after(Sa11yAnnotate(sa11yError, error, true));
                         $("#sa11y-outline-list").append(liError);
                     } else if (error != null) {
                         this.errorCount++;
                         $el.addClass("sa11y-error-heading");
-                        $el.before(ButtonInserter(sa11yError, error));
+                        $el.before(Sa11yAnnotate(sa11yError, error));
                         $("#sa11y-outline-list").append(liError);
                     }
 
                     //Heading warnings
                     else if (warning != null && $el.closest("a").length > 0) {
                         this.warningCount++;
-                        $el.closest("a").after(ButtonInserter(sa11yWarning, warning));
+                        $el.closest("a").after(Sa11yAnnotate(sa11yWarning, warning));
                         $("#sa11y-outline-list").append(liWarning);
                     } else if (warning != null) {
                         this.warningCount++;
-                        $el.before(ButtonInserter(sa11yWarning, warning));
+                        $el.before(Sa11yAnnotate(sa11yWarning, warning));
                         $("#sa11y-outline-list").append(liWarning);
                     }
 
@@ -1069,12 +1088,12 @@ jQuery.noConflict();
                 $("#sa11y-outline-header").after(
                     `<div class='sa11y-instance sa11y-missing-h1'>
                     <span class='sa11y-badge sa11y-error-badge'><span aria-hidden='true'>&#10007;</span><span class='sa11y-visually-hidden'>${sa11yError}</span></span> 
-                    <span class='sa11y-red-text sa11y-bold'>${IM["headings"]["missingHeadingOnePanelText"]}</span>
+                    <span class='sa11y-red-text sa11y-bold'>${sa11yIM["headings"]["missingHeadingOnePanelText"]}</span>
                 </div>`
                 );
 
                 $("#sa11y-container").after(
-                    BannerInserter(sa11yError, IM["headings"]["missingHeadingOne"])
+                    Sa11yAnnotateBanner(sa11yError, sa11yIM["headings"]["missingHeadingOne"])
                 );
             }
         };
@@ -1113,7 +1132,7 @@ jQuery.noConflict();
                 let hit = [null, null, null];
 
                 // Flag partial stop words.
-                $.each(partialAltStopWords, function (index, word) {
+                $.each(sa11yPartialAltStopWords, function (index, word) {
                     if (
                         textContent.length === word.length &&
                         textContent.toLowerCase().indexOf(word) >= 0
@@ -1124,7 +1143,7 @@ jQuery.noConflict();
                 });
 
                 // Other warnings we want to add.
-                $.each(warningAltWords, function (index, word) {
+                $.each(sa11yWarningAltWords, function (index, word) {
                     if (textContent.toLowerCase().indexOf(word) >= 0) {
                         hit[1] = word;
                         return false;
@@ -1159,7 +1178,7 @@ jQuery.noConflict();
 
             let $links = this.root.find("a[href]").not(this.linkIgnore);
 
-            const M = IM["linktext"];
+            const M = sa11yIM["linktext"];
 
             $links.each((i, el) => {
                 let $el = $(el);
@@ -1185,53 +1204,53 @@ jQuery.noConflict();
                     } else if (hasAriaLabelledBy != null) {
                         $el.addClass("sa11y-good-border")
                         $el.before(
-                            ButtonInserter(sa11yGood, M["linkLabel"](linkText), true)
+                            Sa11yAnnotate(sa11yGood, M["linkLabel"](linkText), true)
                         );
                     } else if (hasAriaLabel != null) {
                         $el.addClass("sa11y-good-border")
                         $el.before(
-                            ButtonInserter(sa11yGood, M["linkLabel"](linkText), true)
+                            Sa11yAnnotate(sa11yGood, M["linkLabel"](linkText), true)
                         );
                     } else if (hasTitle != null) {
                         let linkText = $el.attr("title");
                         $el.addClass("sa11y-good-border")
                         $el.before(
-                            ButtonInserter(sa11yGood, M["linkLabel"](linkText), true)
+                            Sa11yAnnotate(sa11yGood, M["linkLabel"](linkText), true)
                         );
                     } else if ($el.children().length == 0) {
                         this.errorCount++;
                         $el.addClass("sa11y-error-border");
-                        $el.after(ButtonInserter(sa11yError, M["linkErrorMessage"], true));
+                        $el.after(Sa11yAnnotate(sa11yError, M["emptyLink"], true));
                     } else {
                         this.errorCount++;
                         $el.addClass("sa11y-error-border");
-                        $el.after(ButtonInserter(sa11yError, M["emptyLinkNoLabel"], true));
+                        $el.after(Sa11yAnnotate(sa11yError, M["emptyLinkNoLabel"], true));
                     }
                 } else if (error[0] != null) {
                     if (hasAriaLabelledBy != null) {
                         $el.before(
-                            ButtonInserter(sa11yGood, M["linkLabel"](linkText), true)
+                            Sa11yAnnotate(sa11yGood, M["linkLabel"](linkText), true)
                         );
                     } else if (hasAriaLabel != null) {
                         $el.before(
-                            ButtonInserter(sa11yGood, M["linkLabel"](hasAriaLabel), true)
+                            Sa11yAnnotate(sa11yGood, M["linkLabel"](hasAriaLabel), true)
                         );
                     } else if ($el.attr("aria-hidden") == "true" && $el.attr("tabindex") == "-1") {
                         //Do nothing.
                     } else {
                         this.errorCount++;
                         $el.addClass("sa11y-error-text");
-                        $el.after(ButtonInserter(sa11yError, M["stopWordMessage"](error[0]), true));
+                        $el.after(Sa11yAnnotate(sa11yError, M["linkStopWordMessage"](error[0]), true));
                     }
                 } else if (error[1] != null) {
                     this.warningCount++;
                     $el.addClass("sa11y-warning-text");
-                    $el.after(ButtonInserter(sa11yWarning, M["linkBestPractices"](error[1]), true));
+                    $el.after(Sa11yAnnotate(sa11yWarning, M["linkBestPractices"](error[1]), true));
                 } else if (error[2] != null) {
                     if (linkText.length > 40) {
                         this.warningCount++;
                         $el.addClass("sa11y-warning-text");
-                        $el.after(ButtonInserter(sa11yWarning, M["linkStopWordMessage"], true));
+                        $el.after(Sa11yAnnotate(sa11yWarning, M["linkURL"], true));
                     }
                 }
             });
@@ -1242,7 +1261,7 @@ jQuery.noConflict();
         // ============================================================
         checkLinksAdvanced = () => {
 
-            const M = IM["linksAdvanced"];
+            const M = sa11yIM["linksAdvanced"];
 
             let $linksTargetBlank = this.root
                 .find("a[href]")
@@ -1297,7 +1316,7 @@ jQuery.noConflict();
                     } else {
                         this.warningCount++;
                         $el.addClass("sa11y-warning-text");
-                        $el.after(ButtonInserter(sa11yWarning, M["linkIdenticalName"](linkText), true));
+                        $el.after(Sa11yAnnotate(sa11yWarning, M["linkIdenticalName"](linkText), true));
                     }
                 } else {
                     seen[linkTextTrimmed] = true;
@@ -1305,25 +1324,25 @@ jQuery.noConflict();
                 }
 
                 //New tab or new window.
-                var containsNewWindowPhrases = newWindowPhrases.some(function (pass) {
+                var containsNewWindowPhrases = sa11yNewWindowPhrases.some(function (pass) {
                     return linkText.toLowerCase().indexOf(pass) >= 0;
                 });
 
                 //Link that points to a file type indicates that it does.
-                var containsFileTypePhrases = fileTypePhrases.some(function (pass) {
+                var containsFileTypePhrases = sa11yFileTypePhrases.some(function (pass) {
                     return linkText.toLowerCase().indexOf(pass) >= 0;
                 });
 
                 if ($el.attr("target") === "_blank" && fileTypeMatch === 0 && !containsNewWindowPhrases) {
                     this.warningCount++;
                     $el.addClass("sa11y-warning-text");
-                    $el.after(ButtonInserter(sa11yWarning, M["newTabWarning"], true));
+                    $el.after(Sa11yAnnotate(sa11yWarning, M["newTabWarning"], true));
                 }
 
                 if (fileTypeMatch === 1 && !containsFileTypePhrases) {
                     this.warningCount++;
                     $el.addClass("sa11y-warning-text");
-                    $el.before(ButtonInserter(sa11yWarning, M["fileTypeWarning"], true));
+                    $el.before(Sa11yAnnotate(sa11yWarning, M["fileTypeWarning"], true));
                 }
             });
         }
@@ -1348,12 +1367,12 @@ jQuery.noConflict();
                         hit[0] = word;
                     }
                 });
-                $.each(suspiciousAltWords, function (index, word) {
+                $.each(sa11ySuspiciousAltWords, function (index, word) {
                     if (alt.toLowerCase().indexOf(word) == 0) {
                         hit[1] = word;
                     }
                 });
-                $.each(placeholderAltStopWords, function (index, word) {
+                $.each(sa11yPlaceholderAltStopWords, function (index, word) {
                     if (
                         alt.length === word.length &&
                         alt.toLowerCase().indexOf(word) >= 0
@@ -1366,7 +1385,7 @@ jQuery.noConflict();
             };
 
             // Stores the corresponding issue text to alternative text
-            const M = IM["images"];
+            const M = sa11yIM["images"];
             // Test each image for alternative text.
             this.$img.each((i, el) => {
                 let $el = $(el);
@@ -1382,7 +1401,7 @@ jQuery.noConflict();
                         if ($el.parents("a").text().trim().length > 1) {
                             $el.addClass("sa11y-error-border");
                             $el.closest("a").before(
-                                ButtonInserter(
+                                Sa11yAnnotate(
                                     sa11yError,
                                     M["missingAltLinkButHasTextMessage"], false, true
                                 )
@@ -1390,14 +1409,14 @@ jQuery.noConflict();
                         } else if ($el.parents("a").text().trim().length == 0) {
                             $el.addClass("sa11y-error-border");
                             $el.closest("a").before(
-                                ButtonInserter(sa11yError, M["missingAltLinkMessage"], false, true)
+                                Sa11yAnnotate(sa11yError, M["missingAltLinkMessage"], false, true)
                             );
                         }
                     }
                     // General failure message if image is missing alt.
                     else {
                         $el.addClass("sa11y-error-border");
-                        $el.before(ButtonInserter(sa11yError, M["missingAltMessage"], false, true));
+                        $el.before(Sa11yAnnotate(sa11yError, M["missingAltMessage"], false, true));
                     }
                 }
 
@@ -1412,7 +1431,7 @@ jQuery.noConflict();
                         this.errorCount++;
                         $el.addClass("sa11y-error-border");
                         $el.closest("a").before(
-                            ButtonInserter(
+                            Sa11yAnnotate(
                                 sa11yError,
                                 M["linkImageBadAltMessage"](altText, error[0]), false, true
                             )
@@ -1421,7 +1440,7 @@ jQuery.noConflict();
                         this.warningCount++;
                         $el.addClass("sa11y-warning-border");
                         $el.closest("a").before(
-                            ButtonInserter(
+                            Sa11yAnnotate(
                                 sa11yWarning,
                                 M["linkImageSusAltMessage"](altText, error[1]), false, true
                             )
@@ -1430,7 +1449,7 @@ jQuery.noConflict();
                         this.errorCount++;
                         $el.addClass("sa11y-error-border");
                         $el.closest("a").before(
-                            ButtonInserter(
+                            Sa11yAnnotate(
                                 sa11yError,
                                 M["linkImagePlaceholderAltMessage"](altText), false, true
                             )
@@ -1439,7 +1458,7 @@ jQuery.noConflict();
                         this.errorCount++;
                         $el.addClass("sa11y-error-border");
                         $el.before(
-                            ButtonInserter(
+                            Sa11yAnnotate(
                                 sa11yError,
                                 M["altHasBadWordMessage"](altText, error[0]), false, true
                             )
@@ -1448,7 +1467,7 @@ jQuery.noConflict();
                         this.warningCount++;
                         $el.addClass("sa11y-warning-border");
                         $el.before(
-                            ButtonInserter(
+                            Sa11yAnnotate(
                                 sa11yWarning,
                                 M["altHasSusWordMessage"](altText, error[1]), false, true
                             )
@@ -1457,7 +1476,7 @@ jQuery.noConflict();
                         this.errorCount++;
                         $el.addClass("sa11y-error-border");
                         $el.before(
-                            ButtonInserter(
+                            Sa11yAnnotate(
                                 sa11yError,
                                 M["altPlaceholderMessage"](altText), false, true
                             )
@@ -1470,7 +1489,7 @@ jQuery.noConflict();
                             this.errorCount++;
                             $el.addClass("sa11y-error-border");
                             $el.closest("a").before(
-                                ButtonInserter(
+                                Sa11yAnnotate(
                                     sa11yError, M["hyperlinkedImageAriaHidden"], false, true
                                 )
                             );
@@ -1478,14 +1497,14 @@ jQuery.noConflict();
                             this.errorCount++;
                             $el.addClass("sa11y-error-border");
                             $el.closest("a").before(
-                                ButtonInserter(
+                                Sa11yAnnotate(
                                     sa11yError,
                                     M["imageLinkNullAltNoTextMessage"], false, true
                                 )
                             );
                         } else {
                             $el.closest("a").before(
-                                ButtonInserter(sa11yGood, M["linkHasAltMessage"], false, true)
+                                Sa11yAnnotate(sa11yGood, M["linkHasAltMessage"], false, true)
                             );
                         }
                     }
@@ -1494,7 +1513,7 @@ jQuery.noConflict();
                     else if ((alt == "" || alt == " ") && $el.parents().not("a[href]")) {
                         this.warningCount++;
                         $el.addClass("sa11y-warning-border");
-                        $el.before(ButtonInserter(sa11yWarning, M["decorativeMessage"], false, true));
+                        $el.before(Sa11yAnnotate(sa11yWarning, M["decorativeMessage"], false, true));
                     }
 
                     //Link and contains alt text.
@@ -1502,7 +1521,7 @@ jQuery.noConflict();
                         this.warningCount++;
                         $el.addClass("sa11y-warning-border");
                         $el.closest("a").before(
-                            ButtonInserter(
+                            Sa11yAnnotate(
                                 sa11yWarning,
                                 M["hyperlinkAltLengthMessage"](altText, altLength), false, true
                             )
@@ -1518,7 +1537,7 @@ jQuery.noConflict();
                         this.warningCount++;
                         $el.addClass("sa11y-warning-border");
                         $el.closest("a").before(
-                            ButtonInserter(
+                            Sa11yAnnotate(
                                 sa11yWarning,
                                 M["imageLinkAltTextMessage"](altText), false, true
                             )
@@ -1534,7 +1553,7 @@ jQuery.noConflict();
                         this.warningCount++;
                         $el.addClass("sa11y-warning-border");
                         $el.closest("a").before(
-                            ButtonInserter(
+                            Sa11yAnnotate(
                                 sa11yWarning,
                                 M["anchorLinkAndAltMessage"](altText), false, true
                             )
@@ -1543,13 +1562,13 @@ jQuery.noConflict();
                         this.warningCount++;
                         $el.addClass("sa11y-warning-border");
                         $el.before(
-                            ButtonInserter(
+                            Sa11yAnnotate(
                                 sa11yWarning,
                                 M["altTooLongMessage"](altText, altLength), false, true
                             )
                         );
                     } else if (alt != "") {
-                        $el.before(ButtonInserter(sa11yGood, M["passAlt"](altText), false, true));
+                        $el.before(Sa11yAnnotate(sa11yGood, M["passAlt"](altText), false, true));
                     }
                 }
             });
@@ -1565,7 +1584,7 @@ jQuery.noConflict();
                 .not("input:hidden");
             $inputs.each((i, el) => {
                 let $el = $(el);
-                const M = IM["labels"];
+                const M = sa11yIM["labels"];
 
                 //If button type is submit or button: pass
                 if ($el.attr("type") === "submit" || $el.attr("type") === "button") {
@@ -1579,7 +1598,7 @@ jQuery.noConflict();
                     } else {
                         this.errorCount++;
                         $el.addClass("sa11y-error-border");
-                        $el.after(ButtonInserter(sa11yError, M["missingLabelMessage"], true));
+                        $el.after(Sa11yAnnotate(sa11yError, M["missingLabelMessage"], true));
                     }
                 }
 
@@ -1587,7 +1606,7 @@ jQuery.noConflict();
                 else if ($el.attr("type") === "reset") {
                     this.warningCount++;
                     $el.addClass("sa11y-warning-border");
-                    $el.after(ButtonInserter(sa11yWarning, M["inputResetMessage"], true));
+                    $el.after(Sa11yAnnotate(sa11yWarning, M["inputResetMessage"], true));
                 }
 
                 //If input doesn't have ID or aria.
@@ -1598,14 +1617,14 @@ jQuery.noConflict();
                 ) {
                     this.errorCount++;
                     $el.addClass("sa11y-error-border");
-                    $el.after(ButtonInserter(sa11yError, M["missingLabelMessage"], true));
+                    $el.after(Sa11yAnnotate(sa11yError, M["missingLabelMessage"], true));
                 }
 
                 /* Could be a warning potentially. Removed for now.
                 else if ($el.attr("aria-label")) {
                     this.warningCount++;
                     $el.addClass("sa11y-warning-border");
-                    $el.after(ButtonInserter(sa11yWarning, M["ariaLabelInputMessage"], true));
+                    $el.after(Sa11yAnnotate(sa11yWarning, M["ariaLabelInputMessage"], true));
                 } */
                 else if ($el.prev().is("label")) {
                     let label = $el.prev();
@@ -1615,7 +1634,7 @@ jQuery.noConflict();
                     } else {
                         this.errorCount++;
                         $el.addClass("sa11y-error-border");
-                        $el.after(ButtonInserter(sa11yError, M["noForAttributeMessage"]($el.attr("id")), true));
+                        $el.after(Sa11yAnnotate(sa11yError, M["noForAttributeMessage"]($el.attr("id")), true));
                     }
                 }
             });
@@ -1626,7 +1645,7 @@ jQuery.noConflict();
         // ============================================================
         checkQA = () => {
             // Stores the corresponding issue text
-            const M = IM["QA"];
+            const M = sa11yIM["QA"];
 
             const $videos = this.root
                 .find(
@@ -1637,7 +1656,7 @@ jQuery.noConflict();
                 let $el = $(el);
                 this.warningCount++;
                 $el.addClass("sa11y-warning-border");
-                $el.first().before(ButtonInserter(sa11yWarning, M["video"]));
+                $el.first().before(Sa11yAnnotate(sa11yWarning, M["video"]));
             });
 
             let $audio = this.root
@@ -1649,7 +1668,7 @@ jQuery.noConflict();
                 let $el = $(el);
                 this.warningCount++;
                 $el.addClass("sa11y-warning-border");
-                $el.first().before(ButtonInserter(sa11yWarning, M["audio"]));
+                $el.first().before(Sa11yAnnotate(sa11yWarning, M["audio"]));
             });
 
             let $dataviz = this.root
@@ -1661,7 +1680,7 @@ jQuery.noConflict();
                 let $el = $(el);
                 this.warningCount++;
                 $el.addClass("sa11y-warning-border");
-                $el.first().before(ButtonInserter(sa11yWarning, M["dataViz"]));
+                $el.first().before(Sa11yAnnotate(sa11yWarning, M["dataViz"]));
             });
 
             let $twitterWarning = this.root
@@ -1675,7 +1694,7 @@ jQuery.noConflict();
                 if (numberofTweets > 3) {
                     this.warningCount++;
                     $el.addClass("sa11y-warning-text");
-                    $el.before(ButtonInserter(sa11yWarning, M["twitter"]));
+                    $el.before(Sa11yAnnotate(sa11yWarning, M["twitter"]));
                 }
             });
 
@@ -1687,7 +1706,7 @@ jQuery.noConflict();
                 let $el = $(el);
                 this.errorCount++;
                 $el.addClass("sa11y-error-text");
-                $el.after(ButtonInserter(sa11yError, M["badLink"](el), true));
+                $el.after(Sa11yAnnotate(sa11yError, M["badLink"](el), true));
             });
 
             //Warning: Find all PDFs. Although only append warning icon to first PDF on page.
@@ -1702,10 +1721,10 @@ jQuery.noConflict();
                 this.warningCount++;
                 checkPDF.addClass("sa11y-warning-text");
                 checkPDF.has("img").removeClass("sa11y-warning-text");
-                firstPDF.after(ButtonInserter(sa11yWarning, M["pdf"](pdfCount), true));
+                firstPDF.after(Sa11yAnnotate(sa11yWarning, M["pdf"](pdfCount), true));
             }
 
-            //(Old) Warning: Detect uppercase. 
+            //Warning: Detect uppercase. 
             this.root.find("h1, h2, h3, h4, h5, h6, p, li:not([class^='sa11y']), blockquote")
                 .not(this.containerIgnore)
                 .each(function () {
@@ -1716,26 +1735,11 @@ jQuery.noConflict();
                     $this.html(html.replace(uppercasePattern, "<span class='sa11y-warning-uppercase'>$1</span>"));
                 });
 
-            $(".sa11y-warning-uppercase").after(ButtonInserter(sa11yWarning, M["uppercaseWarning"], true));
+            $(".sa11y-warning-uppercase").after(Sa11yAnnotate(sa11yWarning, M["uppercaseWarning"], true));
 
             if ($(".sa11y-warning-uppercase").length > 0) {
                 this.warningCount++;
             }
-
-            /* New: Warning: Detect uppercase.
-        this.root.find('h1, h2, h3, h4, h5, h6, p, li:not([class^="sa11y"]), blockquote')
-        .not(this.containerIgnore).each(function () {
-            let $this = $(this);
-            let uppercasePattern = /([A-Z]{2,}[ ])([A-Z]{2,}[ ])([A-Z]{2,}[ ])([A-Z]{2,})/g;
-     
-            let detectUpperCase = $this.text().match(uppercasePattern);
-    
-            if (detectUpperCase && detectUpperCase[0].length > 10) {
-                this.warningCount++;
-                $(this)
-                .before(ButtonInserter(sa11yWarning, M["uppercaseWarning"], true));
-            }
-        }); */
 
             //Tables check.
             this.$table.each((i, el) => {
@@ -1747,7 +1751,7 @@ jQuery.noConflict();
                     this.errorCount++;
                     $el.addClass("sa11y-error-border");
                     $el.before(
-                        ButtonInserter(sa11yError, M["tables"]["missingHeadings"])
+                        Sa11yAnnotate(sa11yError, M["tables"]["missingHeadings"])
                     );
                 }
                 if (findHeadingTags.length > 0) {
@@ -1755,7 +1759,7 @@ jQuery.noConflict();
                     findHeadingTags.addClass("sa11y-error-heading");
                     findHeadingTags.parent().addClass("sa11y-error-border");
                     findHeadingTags.before(
-                        ButtonInserter(sa11yError, M["tables"]["semanticHeading"])
+                        Sa11yAnnotate(sa11yError, M["tables"]["semanticHeading"])
                     );
                 }
                 findTHeaders.each(function () {
@@ -1764,7 +1768,7 @@ jQuery.noConflict();
                         this.errorCount++;
                         $th.addClass("sa11y-error-border");
                         $th.append(
-                            ButtonInserter(sa11yError, M["tables"]["emptyHeading"])
+                            Sa11yAnnotate(sa11yError, M["tables"]["emptyHeading"])
                         );
                     }
                 });
@@ -1775,7 +1779,7 @@ jQuery.noConflict();
             if (lang == undefined || lang.length < 2) {
                 this.errorCount++;
                 $("#sa11y-container").after(
-                    BannerInserter(sa11yError, M["pageLanguageMessage"])
+                    Sa11yAnnotateBanner(sa11yError, M["pageLanguageMessage"])
                 );
             }
 
@@ -1787,7 +1791,7 @@ jQuery.noConflict();
                 let $el = $(el);
                 if ($el.text().length > 400) {
                     this.warningCount++;
-                    $el.before(ButtonInserter(sa11yWarning, M["badItalics"]));
+                    $el.before(Sa11yAnnotate(sa11yWarning, M["badItalics"]));
                 }
             });
 
@@ -1801,7 +1805,7 @@ jQuery.noConflict();
                 if (bqHeadingText.trim().length < 25) {
                     this.warningCount++;
                     $el.addClass("sa11y-warning-border");
-                    $el.before(ButtonInserter(sa11yWarning, M["blockquoteMessage"](bqHeadingText)));
+                    $el.before(Sa11yAnnotate(sa11yWarning, M["blockquoteMessage"](bqHeadingText)));
                 }
             });
 
@@ -1822,7 +1826,7 @@ jQuery.noConflict();
                         if ($el && boldtext.length <= 120) {
                             $el.find("strong").addClass("sa11y-fake-heading sa11y-error-heading");
                             $el.before(
-                                ButtonInserter(sa11yWarning, M["fakeHeading"](boldtext))
+                                Sa11yAnnotate(sa11yWarning, M["fakeHeading"](boldtext))
                             );
                         }
                     }
@@ -1840,7 +1844,7 @@ jQuery.noConflict();
                     let boldtext = $fakeHeading.text();
                     $fakeHeading.addClass("sa11y-fake-heading sa11y-error-heading");
                     $fakeHeading.find("strong").after(
-                        ButtonInserter(sa11yWarning, M["fakeHeading"](boldtext), true)
+                        Sa11yAnnotate(sa11yWarning, M["fakeHeading"](boldtext), true)
                     );
                 }
 
@@ -1901,7 +1905,7 @@ jQuery.noConflict();
                     if (hit) {
                         this.warningCount++;
                         $first.before(
-                            ButtonInserter(sa11yWarning, M["shouldBeList"](firstPrefix))
+                            Sa11yAnnotate(sa11yWarning, M["shouldBeList"](firstPrefix))
                         );
                         $first.addClass("sa11y-fake-list");
                         activeMatch = firstPrefix;
@@ -1924,7 +1928,7 @@ jQuery.noConflict();
                 this.warningCount++;
                 $(".announcement-component:gt(0)").addClass("sa11y-warning-border");
                 $(".announcement-component:gt(0)").before(
-                    ButtonInserter(sa11yWarning, M["announcementWarning"])
+                    Sa11yAnnotate(sa11yWarning, M["announcementWarning"])
                 );
             }
         };
@@ -2090,9 +2094,9 @@ jQuery.noConflict();
             contrast.check();
 
             const {
-                errorM,
-                warningM
-            } = IM["contrast"];
+                errorMessage,
+                warningMessage
+            } = sa11yIM["contrast"];
 
             $.each(contrastErrors.errors, (index, item) => {
                 var name = item.elem;
@@ -2101,7 +2105,7 @@ jQuery.noConflict();
 
                 this.errorCount++;
                 $(name).before(
-                    ButtonInserter(sa11yError, errorM(cratio, nodetext))
+                    Sa11yAnnotate(sa11yError, errorMessage(cratio, nodetext))
                 );
             });
 
@@ -2111,7 +2115,7 @@ jQuery.noConflict();
 
                 this.warningCount++;
                 $(name).before(
-                    ButtonInserter(sa11yWarning, warningM(nodetext))
+                    Sa11yAnnotate(sa11yWarning, warningMessage(nodetext))
                 );
             });
         }
@@ -2202,7 +2206,7 @@ jQuery.noConflict();
                 flesch_reading_ease = 0;
             }
 
-            const M = IM["readability"];
+            const M = sa11yIM["readability"];
 
             if ($("main, [role='main']").length === 0) {
                 $("#sa11y-readability-info").html(M["missingMainContentMessage"]);
@@ -2246,3 +2250,12 @@ jQuery.noConflict();
 
     //End of jQuery.noConflict mode.
 })(jQuery)
+
+/*----------------------------------------------------------------------
+Sa11y: the accessibility quality assurance assistant.                
+Author: Development led by Adam Chaboryk at Ryerson University.
+All acknowledgements and contributors: https://github.com/ryersondmp/sa11y
+License: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
+Copyright (c) 2020 - 2021 Ryerson University
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+----------------------------------------------------------------------*/
