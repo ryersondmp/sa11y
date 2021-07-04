@@ -7,6 +7,7 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
+
 html {
   font-family: sans-serif;
   -ms-text-size-adjust: 100%;
@@ -15,7 +16,7 @@ html {
 
 .label-default {
   display: inline;
-    padding: .3em .6em .3em;
+    padding: .1em .2em .1em;
     font-size: 75%;
     font-weight: 700;
     line-height: 1;
@@ -26,9 +27,6 @@ html {
     border-radius: .25em;
     background-color:#525252;
 }
-
-a.btn.btn-default.btn-block.btn-sa11y {font-size:1.2em;}
-a.btn.btn-default.btn-block.btn-sa11y:focus {background:black;border-color: black;}
 
 body {
   margin: 0;
@@ -329,6 +327,9 @@ a:focus {
 figure {
   margin: 0;
 }
+.text-center {
+  text-align: center;
+}
 img {
   vertical-align: middle;
 }
@@ -409,6 +410,26 @@ hr {
     padding-top: 70px;
     padding-bottom: 70px;
     background-color: #00a9ef;
+}
+
+.btn-sa11y {
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: normal;
+  text-align: center;
+  vertical-align: middle;
+  color: white !important;
+  background: #004c9b;           
+  padding: 10px 20px;
+  margin: 1em;
+  font-size: 1.2em;
+  line-height: 1.42857143;
+  border-radius: 4px;
+  text-decoration: none !important;
+}
+
+a.btn-sa11y:hover, a.btn-sa11y:focus {
+  background: black;
 }
 
 h1,
@@ -528,11 +549,11 @@ h6,
 }
 p {
   margin: 0 0 10px;
-  font-size:1.1em;
+  font-size:1em;
 }
 
 li {
-    font-size:1.1em;
+    font-size:1em;
 }
 .lead {
   margin-bottom: 20px;
@@ -6055,11 +6076,7 @@ fieldset[disabled] .btn-danger.active {
 .nav-tabs > li:last-child {
   border-right: 0;
 }
-.nav > li > a:focus,
-.nav > li > a:hover {
-  background-color: #003368;
-  border: 1px solid #003368;
-}
+
 .ellipsis {
   max-width: 100%;
   overflow: hidden;
@@ -7050,62 +7067,7 @@ h1.headingHidden-edit:after {
   margin-top: 0;
   margin-bottom: 30px;
 }
-.right-sidebar-section > .content > .resText:first-child > .res-text > h1:first-child,
-.left-sidebar-section > .content > .resText:first-child > .res-text > h1:first-child,
-.content-area-section > .content > .resText:first-child > .res-text > h1:first-child,
-.right-sidebar-section > .content > .resTitle:first-child > h1:first-child,
-.left-sidebar-section > .content > .resTitle:first-child > h1:first-child,
-.content-area-section > .content > .resTitle:first-child > h1:first-child,
-.right-sidebar-section > .content > .resHtmlSnippet:first-child > .res-html-snippet > h1:first-child,
-.left-sidebar-section > .content > .resHtmlSnippet:first-child > .res-html-snippet > h1:first-child,
-.content-area-section > .content > .resHtmlSnippet:first-child > .res-html-snippet > h1:first-child,
-.right-sidebar-section > .content > .resText:first-child > .res-text > h2:first-child,
-.left-sidebar-section > .content > .resText:first-child > .res-text > h2:first-child,
-.content-area-section > .content > .resText:first-child > .res-text > h2:first-child,
-.right-sidebar-section > .content > .resTitle:first-child > h2:first-child,
-.left-sidebar-section > .content > .resTitle:first-child > h2:first-child,
-.content-area-section > .content > .resTitle:first-child > h2:first-child,
-.right-sidebar-section > .content > .resHtmlSnippet:first-child > .res-html-snippet > h2:first-child,
-.left-sidebar-section > .content > .resHtmlSnippet:first-child > .res-html-snippet > h2:first-child,
-.content-area-section > .content > .resHtmlSnippet:first-child > .res-html-snippet > h2:first-child,
-.right-sidebar-section > .content > .resText:first-child > .res-text > h3:first-child,
-.left-sidebar-section > .content > .resText:first-child > .res-text > h3:first-child,
-.content-area-section > .content > .resText:first-child > .res-text > h3:first-child,
-.right-sidebar-section > .content > .resTitle:first-child > h3:first-child,
-.left-sidebar-section > .content > .resTitle:first-child > h3:first-child,
-.content-area-section > .content > .resTitle:first-child > h3:first-child,
-.right-sidebar-section > .content > .resHtmlSnippet:first-child > .res-html-snippet > h3:first-child,
-.left-sidebar-section > .content > .resHtmlSnippet:first-child > .res-html-snippet > h3:first-child,
-.content-area-section > .content > .resHtmlSnippet:first-child > .res-html-snippet > h3:first-child,
-.right-sidebar-section > .content > .resText:first-child > .res-text > h4:first-child,
-.left-sidebar-section > .content > .resText:first-child > .res-text > h4:first-child,
-.content-area-section > .content > .resText:first-child > .res-text > h4:first-child,
-.right-sidebar-section > .content > .resTitle:first-child > h4:first-child,
-.left-sidebar-section > .content > .resTitle:first-child > h4:first-child,
-.content-area-section > .content > .resTitle:first-child > h4:first-child,
-.right-sidebar-section > .content > .resHtmlSnippet:first-child > .res-html-snippet > h4:first-child,
-.left-sidebar-section > .content > .resHtmlSnippet:first-child > .res-html-snippet > h4:first-child,
-.content-area-section > .content > .resHtmlSnippet:first-child > .res-html-snippet > h4:first-child,
-.right-sidebar-section > .content > .resText:first-child > .res-text > h5:first-child,
-.left-sidebar-section > .content > .resText:first-child > .res-text > h5:first-child,
-.content-area-section > .content > .resText:first-child > .res-text > h5:first-child,
-.right-sidebar-section > .content > .resTitle:first-child > h5:first-child,
-.left-sidebar-section > .content > .resTitle:first-child > h5:first-child,
-.content-area-section > .content > .resTitle:first-child > h5:first-child,
-.right-sidebar-section > .content > .resHtmlSnippet:first-child > .res-html-snippet > h5:first-child,
-.left-sidebar-section > .content > .resHtmlSnippet:first-child > .res-html-snippet > h5:first-child,
-.content-area-section > .content > .resHtmlSnippet:first-child > .res-html-snippet > h5:first-child,
-.right-sidebar-section > .content > .resText:first-child > .res-text > h6:first-child,
-.left-sidebar-section > .content > .resText:first-child > .res-text > h6:first-child,
-.content-area-section > .content > .resText:first-child > .res-text > h6:first-child,
-.right-sidebar-section > .content > .resTitle:first-child > h6:first-child,
-.left-sidebar-section > .content > .resTitle:first-child > h6:first-child,
-.content-area-section > .content > .resTitle:first-child > h6:first-child,
-.right-sidebar-section > .content > .resHtmlSnippet:first-child > .res-html-snippet > h6:first-child,
-.left-sidebar-section > .content > .resHtmlSnippet:first-child > .res-html-snippet > h6:first-child,
-.content-area-section > .content > .resHtmlSnippet:first-child > .res-html-snippet > h6:first-child {
-  margin-top: 0 !important;
-}
+
 @media screen and (max-width: 992px) {
   h1 {
     font-size: 2.1em;
@@ -7198,90 +7160,7 @@ body > footer.res-local-footer-wrapper ul {
 body > footer.res-local-footer-wrapper li {
   margin-bottom: 5px;
 }
-/* Default Component Spacing */
-body > .container > .row > .left-sidebar-section div[class*="res"]:not([class^="res-"]),
-body > .container > .row > .content-area-section div[class*="res"]:not([class^="res-"]),
-body > .container > .row > .right-sidebar-section div[class*="res"]:not([class^="res-"]),
-body > .container > .row > .left-sidebar-section form,
-body > .container > .row > .content-area-section form,
-body > .container > .row > .right-sidebar-section form {
-  margin-bottom: 30px;
-}
-body > .container > .row > .left-sidebar-section blockquote.style2,
-body > .container > .row > .content-area-section blockquote.style2,
-body > .container > .row > .right-sidebar-section blockquote.style2 {
-  margin-top: 0 !important;
-  margin-bottom: 39px !important;
-}
-body > .container > .row > .left-sidebar-section div.resThreeColEven,
-body > .container > .row > .content-area-section div.resThreeColEven,
-body > .container > .row > .right-sidebar-section div.resThreeColEven,
-body > .container > .row > .left-sidebar-section div.resTwoColEven,
-body > .container > .row > .content-area-section div.resTwoColEven,
-body > .container > .row > .right-sidebar-section div.resTwoColEven,
-body > .container > .row > .left-sidebar-section div.resTwoColOneTwo,
-body > .container > .row > .content-area-section div.resTwoColOneTwo,
-body > .container > .row > .right-sidebar-section div.resTwoColOneTwo,
-body > .container > .row > .left-sidebar-section div.resTwoColTwoOne,
-body > .container > .row > .content-area-section div.resTwoColTwoOne,
-body > .container > .row > .right-sidebar-section div.resTwoColTwoOne,
-body > .container > .row > .left-sidebar-section div.resFlow,
-body > .container > .row > .content-area-section div.resFlow,
-body > .container > .row > .right-sidebar-section div.resFlow,
-body > .container > .row > .left-sidebar-section div.embed-responsive,
-body > .container > .row > .content-area-section div.embed-responsive,
-body > .container > .row > .right-sidebar-section div.embed-responsive,
-body > .container > .row > .left-sidebar-section div.resVerticalNavigation,
-body > .container > .row > .content-area-section div.resVerticalNavigation,
-body > .container > .row > .right-sidebar-section div.resVerticalNavigation,
-body > .container > .row > .left-sidebar-section div.resTabs form,
-body > .container > .row > .content-area-section div.resTabs form,
-body > .container > .row > .right-sidebar-section div.resTabs form,
-body > .container > .row > .left-sidebar-section div.resImageText div.thumbnail,
-body > .container > .row > .content-area-section div.resImageText div.thumbnail,
-body > .container > .row > .right-sidebar-section div.resImageText div.thumbnail,
-body > .container > .row > .left-sidebar-section div.resVideoText div.thumbnail,
-body > .container > .row > .content-area-section div.resVideoText div.thumbnail,
-body > .container > .row > .right-sidebar-section div.resVideoText div.thumbnail,
-body > .container > .row > .left-sidebar-section div.resPageHeading,
-body > .container > .row > .content-area-section div.resPageHeading,
-body > .container > .row > .right-sidebar-section div.resPageHeading,
-body > .container > .row > .left-sidebar-section div.stackContentMain,
-body > .container > .row > .content-area-section div.stackContentMain,
-body > .container > .row > .right-sidebar-section div.stackContentMain,
-body > .container > .row > .left-sidebar-section div.resList,
-body > .container > .row > .content-area-section div.resList,
-body > .container > .row > .right-sidebar-section div.resList {
-  margin: 0 !important;
-}
-body > .container > .row > .left-sidebar-section div.resTabs div[class*="res"]:not([class^="res-"]):nth-last-child(2),
-body > .container > .row > .content-area-section div.resTabs div[class*="res"]:not([class^="res-"]):nth-last-child(2),
-body > .container > .row > .right-sidebar-section div.resTabs div[class*="res"]:not([class^="res-"]):nth-last-child(2) {
-  margin: 0 !important;
-}
-body > .res-local-footer-wrapper div[class*="res"]:not([class^="res-"]),
-body > .res-local-footer-wrapper form {
-  margin-bottom: 30px;
-}
-body > .res-local-footer-wrapper blockquote.style2 {
-  margin-top: 0 !important;
-  margin-bottom: 39px !important;
-}
-body > .res-local-footer-wrapper div.resThreeColEven,
-body > .res-local-footer-wrapper div.resTwoColEven,
-body > .res-local-footer-wrapper div.resTwoColOneTwo,
-body > .res-local-footer-wrapper div.resTwoColTwoOne,
-body > .res-local-footer-wrapper div.resFlow,
-body > .res-local-footer-wrapper div.embed-responsive,
-body > .res-local-footer-wrapper div.resVerticalNavigation,
-body > .res-local-footer-wrapper div.resTabs form,
-body > .res-local-footer-wrapper div.resImageText div.thumbnail,
-body > .res-local-footer-wrapper div.resVideoText div.thumbnail,
-body > .res-local-footer-wrapper div.resPageHeading,
-body > .res-local-footer-wrapper div.stackContentMain,
-body > .res-local-footer-wrapper div.resLocalFooter {
-  margin: 0 !important;
-}
+
 /* Accessibility */
 div:not(.x-window) a,
 div:not(.x-window) input,
@@ -7384,4 +7263,5 @@ div:not(.x-window) .uneditable-input:focus:active {
 
 .externalLink .fa-external-link {
   margin-left: 5px;
+}
 }

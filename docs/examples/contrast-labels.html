@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<!-- saved from url=(0049)https://getbootstrap.com/docs/4.3/examples/album/ -->
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Contrast &amp; Labels - All Rulesets - Sa11y Demo</title>
+  <link rel="stylesheet" href="main.css"/>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha256-UzFD2WYH2U1dQpKDjjZK72VtPeWP50NoJjd26rnAdUI=" crossorigin="anonymous" />
+</head>
+<body>
+  <header>
+    <div class="sa11y-website-frame-message">
+      <p style="display:none;" id="iframe-check"><a class="sa11y-exclude" href="contrast-labels.html" target="_blank">Open this page in a new tab for a better experience.</a> <span class="fas fa-external-link-alt" aria-hidden="true"></span></p>
+      <p style="display:none;" id="newtabonly">Viewing demo in a new tab. <a href="../index.html#demo">Go back to documentation.</a></p>
+    </div>
+    <div class="navbar navbar-dark bg-dark shadow-sm">
+      <div class="container d-flex justify-content-between">
+        <span class="d-flex align-items-center text-white">
+          <strong>Sa11y Demo</strong>
+        </span>
+        <nav class="nav nav-masthead justify-content-center sa11y-ignore">
+          <a class="nav-link" href="errors.html">Errors</a>
+          <a class="nav-link" href="warnings.html">Warnings</a>
+          <a class="nav-link" href="pass.html">No Errors</a>
+          <div class="dropdown show">
+            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              All Rulesets
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
+              <a class="dropdown-item" href="headings-images.html">Headings &amp; Images</a>
+              <a class="dropdown-item" href="links-tables.html">Links &amp; Tables</a>
+              <a class="dropdown-item active" href="contrast-labels.html">Contrast &amp; Labels</a>
+              <a class="dropdown-item" href="other.html">Other</a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="jumbotron text-center">
+      <div class="container">
+        <h1 class="jumbotron-heading">Contrast &amp; Labels</h1>
+        <p class="lead">Make sure to enable <strong>Contrast</strong> and <strong>Form Labels</strong> within Sa11y's settings.</p>
+      </div>
+    </section>
+
+    <div class="album py-5 bg-light">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-2">
+            <div id="list-example" class="list-group sticky-top">
+              <strong class="mt-1 mb-2">On this page:</strong>
+              <a class="list-group-item list-group-item-action" href="#list-item-4">Contrast</a>
+              <a class="list-group-item list-group-item-action" href="#list-item-5">Labels</a>
+            </div>
+          </div>
+
+          <div class="col-md-10">
+            <div data-spy="scroll" data-target="#list-example" data-offset="0" class="scrollspy-example">
+              
+              <h2 id="list-item-4">Contrast</h2>
+              <p><a href="https://www.jqueryscript.net/other/color-contrast-checker.html">jQuery contrast plugin</a> was created by jasonday. To prevent false positives, a simple condition was added to exclude any elements whose width and height is
+                less than 1px and contains <kbd>overflow:hidden;</kbd>. Some contrast plugins falsely indicate visually hidden text for screenreaders as a contrast fail.</p>
+
+              <p>Tooltips will indicate whether it's large or normal size text, including the snippet of text that fails.</p>
+              <div class="ml-5 mt-4 mb-5">
+                <div class="row">
+                  <div class="col-md-6">
+                    <h3>Example 1 - Normal text</h3>
+                    <p style="color:coral">This colour fails at normal size.</p>
+                  </div>
+                  <div class="col-md-6">
+                    <h3>Example 2 - Large text</h3>
+                    <h4 style="color:coral;font-size:1.5em">This colour also fails at a large size.</h4>
+                  </div>
+                </div>
+                <div class="row mt-3">
+                  <div class="col-md-6">
+                    <h3>Example 3 - Form input</h3>
+                    <p>Input's text color is too low.</p>
+                    <label for="contrastinput">Name</label>
+                    <input id="contrastinput" type="text" style="color:coral" value="Adam">
+                  </div>
+                  <div class="col-md-6">
+                    <h3>Example 4 - Warning</h3>
+                    <p>Warnings for text that uses CSS backgrounds.</p>
+                    <div class="example">
+                      <h4 class="background-image white" style="color:white">Text on background image requires manual review</h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <hr class="pb-3">
+              <h2 id="list-item-5">Inputs</h2>
+              <p>Accessibility tests for form inputs.</p>
+              <div class="ml-5 mb-5">
+                <div class="row">
+                  <div class="col-md-6">
+                    <h3>Example 1</h3>
+                    <p>Error: Input without a label or missing <kbd>id</kbd>.</p>
+                    <input type="text" />
+                  </div>
+                  <div class="col-md-6">
+                    <h3>Example 2</h3>
+                    <p>Error: Input with ID, although previous label does not have a <kbd>for</kbd> attribute.</p>
+                    <label>Name</label>
+                    <input type="text" id="asdfg" />
+                  </div>
+                </div>
+                <div class="row mt-4">
+                  <div class="col-md-6">
+                    <h3>Example 3</h3>
+                    <p>Warning: Input is using <kbd>aria-label</kbd>. It is not recommended to use this method since there is no visual label.</p>
+                    <input aria-label="Invisible aria label" type="text" />
+                  </div>
+                  <div class="col-md-6">
+                    <h3>Example 4</h3>
+                    <p>Pass: Input has <kbd>id</kbd> and label has corresponding <kbd>for</kbd> attribute.</p>
+                    <label for="asdfgh">Address</label>
+                    <input type="text" id="asdfgh" />
+                  </div>
+                </div>
+                <div class="row mt-4">
+                  <div class="col-md-6">
+                    <h3>Example 5</h3>
+                    <p>Warning: Input where <kbd>type='reset'</kbd>.</p>
+                    <input type="reset"/>
+                  </div>
+                  <div class="col-md-6">
+                    <h3>Example 6</h3>
+                    <p>Pass: Input where <kbd>type='submit'</kbd></p>
+                    <input type="submit" />
+                  </div>
+                </div>
+                <div class="row mt-4">
+                  <div class="col-md-6">
+                    <h3>Example 7</h3>
+                    <p>Pass: Input where <kbd>type='button'</kbd>.</p>
+                    <input type="button" value="Input Button"/>
+                  </div>
+                  <div class="col-md-6">
+                    <h3>Example 8</h3>
+                    <p>Pass: Implicit labels. <kbd>&lt;label&gt;First name: &lt;input type="text"/&gt;&lt;label&gt;</kbd> </p>
+                      <label>
+                        First name:
+                        <input type="text"/>
+                      </label>
+                  </div>
+                </div>
+                <div class="row mt-4">
+                  <div class="col-md-6">
+                    <h3>Example 9</h3>
+                    <p>Fail: Implicit labels without text. <kbd>&lt;label&gt;&lt;input type="text"/&gt;&lt;label&gt;</kbd> </p>
+                      <label>
+                        <input type="text"/>
+                      </label>
+                  </div>
+                  <div class="col-md-6">
+                    <h3>Example 10</h3>
+                    <p>Fail: Select without corresponding label.</p>
+                    <label>Choose a car:</label>
+                    <select name="cars">
+                      <option value="volvo">Volvo</option>
+                      <option value="saab">Saab</option>
+                      <option value="mercedes">Mercedes</option>
+                      <option value="audi">Audi</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row mt-4">
+                  <div class="col-md-6">
+                    <h3>Example 11</h3>
+                    <p>Fail: Textarea missing label.</p>
+                    <label>Feedback</label>
+                    <textarea rows="2" cols="50">
+                    </textarea>
+                  </div>
+                  <div class="col-md-6">
+                    <h3>Example 12</h3>
+                    <p>Pass: Textarea has label.</p>
+                    <label for="review">Review of W3Schools:</label>
+                    <textarea id="review" rows="2" cols="50">
+                    </textarea>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </main>
+  <footer class="text-muted sa11y-ignore">
+      <div class="container">
+        <p>Customize Sa11y to target specific regions of a page only. For example, <a href="#">this</a> link will be ignored. If a content editor can't edit it, don't scan it.</p>
+      </div>
+  </footer>
+ <!-- Bootstrap + Jquery -->
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
+ <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+<script>
+$(document).ready(function() {
+   if (window.top == window) {
+     $("#iframe-check").remove();
+   } else {
+      $("#iframe-check").css("display","block")
+   }
+
+   if (window.top != window) {
+     $("#newtabonly").css("display","none")
+   } else {
+      $("#newtabonly").css("display","block")
+   }
+   $('body').scrollspy({ target: '#list-example' })
+});
+</script>
+
+  <!--Jquery (Yes, loaded a second time on purpose...)-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.slim.min.js"></script>
+
+  <!-- Tippy.js CDN scripts -->
+  <script src="https://unpkg.com/@popperjs/core@2"></script>
+  <script src="https://unpkg.com/tippy.js@6"></script>
+
+  <!--Sa11y-->
+  <link rel="stylesheet" href="../../src/sa11y.css" />
+  <script src="../../src/sa11y-english.js"></script>
+  <script src="../../src/sa11y.js"></script>
+</body>
+</html>

@@ -1,3 +1,6 @@
+/* !!! WARNING !!! DATE: JULY 3, 2021: */
+/* THIS VERSION OF SA11Y IS RETIRED. PLEASE REFER TO /SRC/ FOR LATEST. */
+
 var Sa11y = new Sa11y();
 
 function Sa11y() {
@@ -89,6 +92,14 @@ function Sa11y() {
 
         //Add a link to your own help page or documentation.
         "<div id='sa11y-errors-found' role='alert' class='sa11y-panel-header'><div class='sa11y-th-img'>" + PanelErrorIcon + "</div><div class='sa11y-td-msg'>Accessibility errors found!<!--<br><a href='https://www.w3.org/WAI/tutorials/' target='_blank'>Need help?</a>--></div></div>"
+
+        + 
+        `<div class='sa11y-panel-header'>
+            <div style="text-align:center"><strong>Sa11y 2.0 is here!</strong> 🎉 <br>Please drag and drop the button below to your bookmarks bar. Learn more <a href="https://ryersondmp.github.io/sa11y/" target="_blank">about the update.</a></div>
+
+            <div style="text-align:center"><a style="display:inline-block;margin-bottom:0;font-weight:400;text-align:center;vertical-align:middle;color:white!important;background:#004c9b;padding:8px 15px;margin:15px;font-size:20px;line-height:1.42857143;border-radius:4px;text-decoration:none!important;" href="javascript:void((function(doc){document.body.appendChild(document.createElement('script')).src='https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/bookmarklet/sa11y-en.js';})(document))">Sa11y</a>
+            </div>
+        </div>`
 
         +
         "<button type='button' aria-expanded='false' id='sa11y-summary-toggle'>Show Outline</button>"
