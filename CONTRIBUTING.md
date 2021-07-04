@@ -12,7 +12,7 @@ Want to help make Sa11y better? There are many ways you can contribute.
 Report bugs by creating a new [issue.](https://github.com/ryersondmp/sa11y/issues) If you do not have a GitHub account, feel free to email [adam.chaboryk@ryerson.ca](mailto:adam.chaboryk@ryerson.ca) 
 
 When creating an issue, try to: 
-- Provide a detailed summary of the issue. 
+- Provide a detailed summary of the issue and screenshot if possible.
 - If possible, provide the URL where Sa11y didn't work properly. 
 - Provide specific steps to reproduce the issue.
 

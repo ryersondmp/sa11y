@@ -57,7 +57,7 @@ The example condition detects if more than one announcement is detected on a pag
 ```javascript
 let $checkAnnouncement = this.root.find('.announcement-component').not(this.containerIgnore);
 if ($checkAnnouncement.length > 1) {
-    this.warningCount++;;
+    this.warningCount++;
     $('.announcement-component:gt(0)').addClass('sa11y-warning-border');
     $('.announcement-component:gt(0)').before(
             Sa11yAnnotate(sa11yWarning, M['announcementWarningMessage'])
@@ -83,7 +83,7 @@ Development is lead and maintained by [Adam Chaboryk](https://github.com/adamcha
 - [color-contrast](https://github.com/jasonday/color-contrast) script was created by Jason Day.
 - Readability feature is an adaptation of the [Readability Bookmarklet](https://accessibility.oit.ncsu.edu/it-accessibility-at-nc-state/developers/tools/readability-bookmarklet/) created by Greg Kraus at North Carolina State University.
 - The icons are created by [FontAwesome.](https://github.com/FortAwesome/Font-Awesome)
-- Sa11y is built with jQuery.
+- Sa11y is built with jQuery (Slim build).
 - John Jameson (Princeton University) maintains a fork of Sa11y called [Editoria11y](https://github.com/itmaybejj/editoria11y/) which is available as a turnkey Drupal module. Sa11y and Editoria11y share a lot of code!
 
 ## Contact
@@ -101,7 +101,7 @@ Sa11y 2.0 is a complete rewrite from scratch.
 * New "Skip to issue" button. Click the icon on the main panel to jump between Sa11y's error, warning, or "good" buttons. Also available as a keyboard shortcut: `alt + .` 
     * If a button is hidden or not within the viewport, Sa11y will alert you by displaying the tooltip message within the panel, and also add a border to the item's visible parent.
 * Dark mode. Automatically changes based on system preferences. 
-* Accessibility enhancements
+* Accessibility enhancements:
     * Large target sizes. All buttons have a clickable area that is at least 44px by 44px.
     * Better keyboard support. Left and right arrow to switch between Show Outline and Show Settings. 
 * Bug fixes: Correct calculation of accessible name when links have `aria-describedby` attribute.

@@ -1,5 +1,5 @@
 # Sa11y - License
-Created by Digital Media Projects, Computing and Communication Services (CCS) at Ryerson University in Toronto, Canada.
+Development led by Adam Chaboryk, IT Accessibility Specialist, Digital Media Projects, Computing and Communication Services (CCS) at Ryerson University in Toronto, Canada.
 
 ## MIT License (MIT)
 
