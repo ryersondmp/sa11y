@@ -57,6 +57,8 @@ const sa11yPanelStatus = {
     status7: () => `Please review warning.`,
     status8: (warningCount) => `Please review ${warningCount} warnings.`,
     status9: () => `No accessibility errors found.`,
+    status10: (warningCount) => `${warningCount} <span class="sa11y-visually-hidden">warnings found.</span>`,
+    status11: (totalCount) => `${totalCount} <span class="sa11y-visually-hidden">total issues found.</span>`,
     notVisibleAlert: () => `The item you are trying to view is not visible; it may be hidden or inside of an accordion or tab component. Here's a preview:`
 }
 

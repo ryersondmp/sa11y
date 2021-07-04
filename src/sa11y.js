@@ -688,18 +688,17 @@ jQuery.noConflict();
         // ============================================================
         updateBadge = () => {
             let totalCount = this.errorCount + this.warningCount;
+            let warningCount = this.warningCount;
             if (totalCount === 0) {
                 $("#sa11y-notification-badge").css("display", "none");
-                $('#sa11y-notification-count').attr("aria-label", "");
             } else if (this.warningCount > 0 && this.errorCount === 0) {
                 $('#sa11y-notification-badge').css("display", "flex");
                 $('#sa11y-notification-badge').addClass("sa11y-notification-badge-warning");
-                $('#sa11y-notification-count').text(this.warningCount);
-                $('#sa11y-notification-count').attr("aria-label", this.warningCount + " warnings detected.")
+                $('#sa11y-notification-count').html(`${sa11yPanelStatus["status10"](warningCount)}`);
             } else {
                 $('#sa11y-notification-badge').css("display", "flex");
-                $('#sa11y-notification-count').text(totalCount);
-                $('#sa11y-notification-count').attr("aria-label", totalCount + " errors detected.")
+                $('#sa11y-notification-badge').removeClass("sa11y-notification-badge-warning");
+                $('#sa11y-notification-count').html(`${sa11yPanelStatus["status11"](totalCount)}`);
             }
         }
 
