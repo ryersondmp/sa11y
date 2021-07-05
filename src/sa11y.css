@@ -330,6 +330,10 @@ html[data-sa11y-theme="dark"] {
 #sa11y-container #sa11y-panel-alert-preview,
 #sa11y-container #sa11y-panel-alert-text {
     font-size: var(--sa11y-normal-text) !important;
+    font-weight: normal !important;
+    font-family: var(--sa11y-font-face) !important;
+    font-size: var(--sa11y-normal-text) !important;
+    line-height: 22px !important;
 }
 
 #sa11y-container #sa11y-panel-alert-preview {
