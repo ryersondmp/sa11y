@@ -173,7 +173,7 @@ jQuery.noConflict();
                     <button id="sa11y-close-alert" class="sa11y-close-btn" aria-label="${sa11yAlertClose}" aria-describedby="sa11y-alert-heading sa11y-panel-alert-text"></button>
                     <h2 id="sa11y-alert-heading">${sa11yAlertText}</h2>
                 </div>
-                <div id="sa11y-panel-alert-text"></div>
+                <p id="sa11y-panel-alert-text"></p>
                 <div id="sa11y-panel-alert-preview"></div>
             </div>` +
 
