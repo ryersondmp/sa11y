@@ -199,6 +199,9 @@ const sa11yIM = {
 
         missingHeadingOne: () =>
             `Missing Heading 1. Heading 1 should be the start of the main content area, and is the main heading that describes the overall purpose of the page. Learn more about <a href='https://www.w3.org/WAI/tutorials/page-structure/headings/' target='_blank'>Heading Structure. ${sa11yNewTab}</a>`,
+        
+        emptyHeadingWithImage: (level) => 
+            `Heading has no text, but contains an image. If this is not a heading, change its format from <span class='sa11y-red-text sa11y-bold'>Heading ${level}</span> to <span class='sa11y-bold'>Normal</span> or <span class='sa11y-bold'>Paragraph</span>. Otherwise, please add alt text to the image if it is not decorative.`,
 
         missingHeadingOnePanelText: `Missing Heading 1!`,
     },

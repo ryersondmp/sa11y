@@ -94,11 +94,11 @@ jQuery.noConflict();
 
                 //Main toggle button.
                 `<button type="button" aria-expanded="false" id="sa11y-toggle" aria-describedby="sa11y-notification-badge" aria-label="${sa11yMainToggleLabel}" disabled>
-            ${MainToggleIcon} 
-            <div id="sa11y-notification-badge">
-                <span id="sa11y-notification-count"></span>
-            </div>
-        </button>` +
+                    ${MainToggleIcon} 
+                    <div id="sa11y-notification-badge">
+                        <span id="sa11y-notification-count"></span>
+                    </div>
+                </button>` +
 
                 //Start of main container.
                 `<div id="sa11y-panel">` +
@@ -205,19 +205,21 @@ jQuery.noConflict();
             //Put before document.ready because of CSS flicker when dark mode is enabled.
             this.settingPanelToggles();
 
+            // Preload before CheckAll function.
+            $(document).ready(() => {
+                this.loadGlobals();
+                this.sa11yMainToggle();
+                this.sanitizeHTMLandComputeARIA();
+                this.initializeJumpToIssueTooltip();
+            });
+
             //500ms to let the page settle down (e.g. slow loading JavaScript components).
             setTimeout(() => {
                 $(document).ready(() => {
                     $("#sa11y-toggle").prop("disabled", false);
 
-                    // Preload before CheckAll function.
-                    this.loadGlobals();
-                    this.sa11yMainToggle();
-                    this.sanitizeHTMLandComputeARIA();
-                    this.initializeJumpToIssueTooltip();
-
                     //To-do: Yes, this is total crap and needs to be re-thinked. On document.ready, it crudely checks/annotates the page, and then instantly clears/resets everything except for the badge counter. Need to figure out a way to update badge counter without painting entire page with error buttons.
-                    if (localStorage.getItem("sa11y-remember-panel") === "Closed") {
+                    if (localStorage.getItem("sa11y-remember-panel") === "Closed" || localStorage.getItem("sa11y-remember-panel") === null) {
                         this.checkAll();
                         this.resetAll();
                     }
@@ -366,6 +368,33 @@ jQuery.noConflict();
             $.fn.ignore = function (sel) {
                 return this.clone().find(sel || ">*").remove().end();
             };
+
+            //Helper: Compute alt text on images within a text node.
+            this.computeTextNodeWithImage = function ($el) {
+                let returnText = "";
+                //No image, has text.
+                if ($el.find("img").length === 0 && $el.text().trim().length > 1) {
+                    returnText = $el.text().trim();
+                } 
+                //Has image, no text.
+                else if ($el.find("img").length && $el.text().trim().length === 0) {
+                    let imgalt = $el.find("img").attr("alt");
+                    if (imgalt == undefined || imgalt == " " || imgalt == "") {
+                        returnText = " ";
+                    } else if ($el.find("img").attr("alt") !== undefined) {
+                        returnText = imgalt;
+                    }
+                } 
+                //Has image and text. 
+                //To-do: This is a hack? Any way to do this better?
+                else if ($el.find("img").length && $el.text().trim().length) {    
+                    $el.find("img").each(function(){
+                       $(this).clone().insertAfter($(this)).replaceWith(" <span class='sa11y-clone-image-text' aria-hidden='true'>" + $(this).attr('alt') + "</span> ");
+                    });
+                    returnText = $el.text().trim();
+                }
+                return returnText;
+            }
 
             //Helper: Handle ARIA labels for Link Text module.
             this.computeAriaLabel = function ($el) {
@@ -644,6 +673,7 @@ jQuery.noConflict();
             this.root.find(".sa11y-pulse-border").removeClass("sa11y-pulse-border");
             this.root.find("#sa11y-panel-alert").removeClass("sa11y-active");
             this.root.find("#sa11y-panel-alert-text").empty();
+            this.root.find(".sa11y-clone-image-text").remove();
 
             if (restartPanel) {
                 $("#sa11y-panel-content").removeClass();
@@ -990,7 +1020,7 @@ jQuery.noConflict();
             let prevLevel;
             this.$h.each((i, el) => {
                 let $el = $(el);
-                let text = $el.text();
+                let text = this.computeTextNodeWithImage($el);
                 let htext = this.sanitizeForHTML(text);
                 let level;
 
@@ -1006,9 +1036,17 @@ jQuery.noConflict();
 
                 if (level - prevLevel > 1 && i !== 0) {
                     error = sa11yIM["headings"]["nonConsecutiveHeadingLevel"](prevLevel, level);
-                } else if ($el.text().trim().length < 1) {
-                    error = sa11yIM["headings"]["emptyHeading"](level);
-                    $el.addClass("sa11y-error-text");
+                } else if ($el.text().trim().length == 0) {
+                    if ($el.find("img").length) {
+                        const imgalt = $el.find("img").attr("alt");
+                        if (imgalt == undefined || imgalt == " " || imgalt == "") {
+                            error = sa11yIM["headings"]["emptyHeadingWithImage"](level)
+                            $el.addClass("sa11y-error-text");
+                        }
+                    } else {
+                        error = sa11yIM["headings"]["emptyHeading"](level);
+                        $el.addClass("sa11y-error-text");
+                    }
                 } else if (i === 0 && level !== 1 && level !== 2) {
                     error = sa11yIM["headings"]["firstHeading"];
                 } else if ($el.text().trim().length > 170) {
@@ -1278,23 +1316,23 @@ jQuery.noConflict();
                 }
 
                 const fileTypeMatch = $el.filter(`
-                a[href$='.pdf'], 
-                a[href$='.doc'], 
-                a[href$='.zip'], 
-                a[href$='.mp3'], 
-                a[href$='.txt'], 
-                a[href$='.exe'], 
-                a[href$='.dmg'], 
-                a[href$='.rtf'],
-                a[href$='.pptx'],
-                a[href$='.ppt'],
-                a[href$='.xls'],
-                a[href$='.xlsx'],
-                a[href$='.csv'],
-                a[href$='.mp4'],
-                a[href$='.mov'],
-                a[href$='.avi']
-            `).length;
+                    a[href$='.pdf'], 
+                    a[href$='.doc'], 
+                    a[href$='.zip'], 
+                    a[href$='.mp3'], 
+                    a[href$='.txt'], 
+                    a[href$='.exe'], 
+                    a[href$='.dmg'], 
+                    a[href$='.rtf'],
+                    a[href$='.pptx'],
+                    a[href$='.ppt'],
+                    a[href$='.xls'],
+                    a[href$='.xlsx'],
+                    a[href$='.csv'],
+                    a[href$='.mp4'],
+                    a[href$='.mov'],
+                    a[href$='.avi']
+                `).length;
 
                 //Links with identical accessible names have equivalent purpose.
 
@@ -1692,7 +1730,7 @@ jQuery.noConflict();
                     .find(".timeline-TweetList-tweet").length;
                 if (numberofTweets > 3) {
                     this.warningCount++;
-                    $el.addClass("sa11y-warning-text");
+                    $el.addClass("sa11y-warning-border");
                     $el.before(Sa11yAnnotate(sa11yWarning, M["twitter"]));
                 }
             });

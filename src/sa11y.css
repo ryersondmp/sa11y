@@ -109,8 +109,8 @@ html[data-sa11y-theme="dark"] {
 }
 
 @media screen and (-ms-high-contrast: active) {
-
     #sa11y-container button:focus,
+    #sa11y-container #sa11y-panel a:focus,
     #sa11y-container [tabindex="0"]:focus,
     #sa11y-container [tabindex="-1"]:focus {
         outline: transparent solid 2px !important;
@@ -270,6 +270,7 @@ html[data-sa11y-theme="dark"] {
 }
 
 /* Main focus styles */
+#sa11y-container #sa11y-panel a:focus,
 #sa11y-container .sa11y-close-btn:focus,
 #sa11y-container #sa11y-cycle-toggle:focus,
 #sa11y-container button.sa11y-btn:focus,
@@ -332,7 +333,6 @@ html[data-sa11y-theme="dark"] {
     font-size: var(--sa11y-normal-text) !important;
     font-weight: normal !important;
     font-family: var(--sa11y-font-face) !important;
-    font-size: var(--sa11y-normal-text) !important;
     line-height: 22px !important;
 }
 
@@ -359,6 +359,7 @@ html[data-sa11y-theme="dark"] {
     border-bottom: 0px !important;
     color: var(--sa11y-hyperlink) !important;
     text-decoration: underline !important;
+    cursor: pointer !important;
 }
 
 #sa11y-container #sa11y-panel a:hover,
@@ -799,9 +800,12 @@ button.sa11y-btn:after {
     padding: 7px !important;
 }
 
-button.sa11y-error-btn,
-button.sa11y-good-btn,
+/* To prevent overlap. */
 button.sa11y-warning-btn {
+    margin: 20px;
+}
+button.sa11y-good-btn,
+button.sa11y-error-btn {
     margin: 10px !important;
 }
 
@@ -1094,6 +1098,11 @@ span.sa11y-heading-label {
     }
 }
 
+/* ===== Helper ===== */
+.sa11y-clone-image-text {
+    display: none !important;
+}
+
 /*===== Animations ===== */
 
 @-webkit-keyframes sa11y-toggle-gradient {
@@ -1184,36 +1193,27 @@ span.sa11y-heading-label {
 
 /*===== Custom tippy theme for Sa11y ===== */
 
+/* Hacky CSS reset to ensure maximum compatibility. */
+.tippy-box[data-theme~="sa11y-theme"][role=tooltip] {
+    all: unset;
+    animation: inherit;
+    box-sizing: border-box !important;
+}
+.tippy-box[data-theme~="sa11y-theme"][role=tooltip][data-animation="fade"][data-state="hidden"] {
+    opacity: 0;
+}
+.tippy-box[data-theme~="sa11y-theme"][data-inertia][data-state="visible"] {
+    transition-timing-function: cubic-bezier(0.54, 1.5, 0.38, 1.11);
+}
+
+/* Tooltip content */
 .tippy-box[data-theme~="sa11y-theme"] * {
     font-family: var(--sa11y-font-face) !important;
+    line-height: 22px !important;
     -webkit-font-smoothing: auto !important;
-    font-weight: normal;
     letter-spacing: unset !important;
 }
-
-.tippy-box[data-theme~="sa11y-theme"] *:not(.sa11y-header-text) {
-    font-size: var(--sa11y-normal-text) !important;
-}
-
-.tippy-box[data-theme~="sa11y-theme"] ul {
-    margin: 0 !important;
-    padding: 5px 10px 0px 20px !important;
-}
-
-.tippy-box[data-theme~="sa11y-theme"] li {
-    padding-bottom: 5px !important;
-}
-
-.tippy-box[data-theme~="sa11y-theme"] a {
-    color: var(--sa11y-hyperlink) !important;
-    text-decoration: underline;
-}
-
-.tippy-box[data-theme~="sa11y-theme"] a:hover,
-.tippy-box[data-theme~="sa11y-theme"] a:focus {
-    text-decoration: none !important;
-}
-
+.tippy-box[data-theme~="sa11y-theme"][role=tooltip],
 .tippy-box[data-theme~="sa11y-theme"] {
     background-color: var(--sa11y-panel-bg) !important;
     color: var(--sa11y-panel-primary) !important;
@@ -1222,20 +1222,43 @@ span.sa11y-heading-label {
         0 4px 80px -8px rgba(36, 40, 47, 0.25),
         0 4px 4px -2px rgba(91, 94, 105, 0.15) !important;
     font-weight: normal !important;
+    display: block;
+    border-radius: 4px;
+    outline: 0;
+    transition-property: transform, visibility, opacity;
+}
+.tippy-box[data-theme~="sa11y-theme"] *:not(.sa11y-header-text):not(.sa11y-bold) {
+    font-size: var(--sa11y-normal-text) !important;
+}
+.tippy-box[data-theme~="sa11y-theme"] *:not(.sa11y-header-text):not(.sa11y-bold) {
+    font-weight: normal !important;
+}
+.tippy-box[data-theme~="sa11y-theme"] ul {
+    margin: 0 !important;
+    padding: 5px 10px 0px 20px !important;
+}
+.tippy-box[data-theme~="sa11y-theme"] li {
+    padding-bottom: 5px !important;
+}
+.tippy-box[data-theme~="sa11y-theme"] a {
+    color: var(--sa11y-hyperlink) !important;
+    text-decoration: underline;
+}
+.tippy-box[data-theme~="sa11y-theme"] a:hover,
+.tippy-box[data-theme~="sa11y-theme"] a:focus {
+    text-decoration: none !important;
 }
 
+/* Arrows */
 .tippy-box[data-theme~="sa11y-theme"][data-placement^="top"]>.tippy-arrow::before {
     border-top-color: var(--sa11y-panel-bg) !important;
 }
-
 .tippy-box[data-theme~="sa11y-theme"][data-placement^="bottom"]>.tippy-arrow::before {
     border-bottom-color: var(--sa11y-panel-bg) !important;
 }
-
 .tippy-box[data-theme~="sa11y-theme"][data-placement^="left"]>.tippy-arrow::before {
     border-left-color: var(--sa11y-panel-bg) !important;
 }
-
 .tippy-box[data-theme~="sa11y-theme"][data-placement^="right"]>.tippy-arrow::before {
     border-right-color: var(--sa11y-panel-bg) !important;
 }
