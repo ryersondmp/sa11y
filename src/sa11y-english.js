@@ -1,6 +1,13 @@
-/* Global defaults */
+/* ----------------------------- */
+/*         Global defaults       */
+/* ----------------------------- */
+
 //Target area to scan.
-const sa11yCheckRoot = "body"; //E.g. "main" for main content.
+let sa11yCheckRoot = ""; //Default: body. Use "main" for main content.
+
+//Readability configuration.
+let sa11yReadabilityRoot = ""; //Default: main, [role='main'].
+const sa11yReadabilityLang = "en"; //Supported: en = English, fr = French, es = Spanish
 
 //Inclusions and exclusions. Use commas to seperate classes or elements.
 let sa11yContainerIgnore = ".sa11y-ignore", //Ignore specific regions.
@@ -10,7 +17,10 @@ let sa11yContainerIgnore = ".sa11y-ignore", //Ignore specific regions.
     sa11yLinkIgnore = "", //Ignore specific links.
     sa11yLinkIgnoreSpan = "span.sr-only-example"; //Ignore specific classes within links. Example: <a href="#">learn more <span class="sr-only-example">(opens new tab)</span></a>.
 
-/* Localization. Language: English */
+/* ------------------------------ */
+/*           Localization         */
+/* ------------------------------ */
+
 //Language of Sa11y. Some global variables to help translate.
 const sa11yLangCode = "en", //Language code, e.g. "fr"
     sa11yMainToggleLabel = "Check Accessibility",
@@ -37,7 +47,6 @@ const sa11yLangCode = "en", //Language code, e.g. "fr"
 
 //Readability panel translations.
 const sa11yReadability = "Readability",
-    sa11yReadabilityLang = "en", //Supported: en = English, fr = French, es = Spanish
     sa11yAvgWordPerSentence = "Average words per sentence:",
     sa11yComplexWords = "Complex words:",
     sa11yTotalWords = "Words:",
@@ -62,15 +71,18 @@ const sa11yPanelStatus = {
     notVisibleAlert: () => `The item you are trying to view is not visible; it may be hidden or inside of an accordion or tab component. Here's a preview:`
 }
 
-//Alt Text stop words
+//Alt Text stop words.
 const sa11ySuspiciousAltWords = [
     "image of",
-    "graphic of",
-    "picture of",
-    "photo of",
     "an image of",
-    "a image",
-    "a photo"
+    "graphic of",
+    "a graphic of",
+    "picture of",
+    "a picture of",
+    "photo of",
+    "a photo of",
+    "pic of",
+    "a pic of"
 ];
 const sa11yPlaceholderAltStopWords = [
     "alt",
@@ -383,6 +395,9 @@ const sa11yIM = {
             `There is no label associated with this input. Add a <span class='sa11y-kbd'>for</span> attribute to the label that matches the <span class='sa11y-kbd'>id</span> of this input. 
             ${sa11yHr} 
             The ID for this input is: <span class='sa11y-bold'>id=&#34;${t}&#34;</span>`,
+
+        missingImageInputMessage: () => 
+            `Image button is missing alt text. Please add alt text to provide an accessible name. For example: <em>Search</em> or <em>Submit</em>.`,
     },
 
     QA: {
@@ -493,7 +508,7 @@ const sa11yIM = {
             `Please identify the <a href="https://www.w3.org/WAI/tutorials/page-structure/regions/#main-content" target="_blank">main content region to calculate readability score. ${sa11yNewTab}</a>`,
 
         noPorLiMessage: () =>
-            `No paragraph <span class="sa11y-badge">&lt;p&gt;</span> or list content <span class="sa11y-badge">&lt;li&gt;</span> found within main content area.`,
+            `Unable to calculate readability score. No paragraph <span class="sa11y-badge">&lt;p&gt;</span> or list content <span class="sa11y-badge">&lt;li&gt;</span> found.`,
 
         notEnoughContentMessage: () =>
             `Not enough content to calculate readability score.`

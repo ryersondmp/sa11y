@@ -54,7 +54,7 @@ function Sa11yAnnotateBanner(type, content) {
         // if it is, call it and get the value.
         content = content();
     }
-    return `<div class="sa11y-${CSSName[type]}-message-container">
+    return `<div class="sa11y-instance sa11y-${CSSName[type]}-message-container">
         <div role="region" aria-label="${[type]}" class="sa11y-${CSSName[type]}-message" lang="${sa11yLangCode}">
             ${content}
         </div>
@@ -292,15 +292,20 @@ jQuery.noConflict();
         // Credits to John Jameson, PrincetonU for this snippet. 
         // ============================================================
         loadGlobals = () => {
+    
             // Look for a content container
-            if (
-                typeof sa11yCheckRoot !== "string" ||
-                $(sa11yCheckRoot).length === 0
-            ) {
+            if (typeof sa11yCheckRoot !== "string" || $(sa11yCheckRoot).length === 0) {
                 sa11yCheckRoot = "body";
             }
+
+            // Readability
+            if (typeof sa11yReadabilityRoot !== "string" || $(sa11yReadabilityRoot).length === 0) {
+                sa11yReadabilityRoot = "main, [role='main']";
+            }
+
             // Combine default and custom ignores.
             const separator = ", ";
+
             // Container ignores apply to self and children.
             if (sa11yContainerIgnore.length > 0) {
                 let containerSelectors = sa11yContainerIgnore.split(",");
@@ -593,6 +598,7 @@ jQuery.noConflict();
             this.errorCount = 0;
             this.warningCount = 0;
             this.root = $(sa11yCheckRoot);
+            this.readabilityRoot = $(sa11yReadabilityRoot);
 
             this.findElements();
 
@@ -640,44 +646,56 @@ jQuery.noConflict();
         resetAll = (restartPanel = true) => {
             this.panelActive = false;
             this.clearEverything();
-            $("#sa11y-status").text();
+
             $("#sa11y-outline-toggle").off("click");
             $("#sa11y-settings-toggle").off("click");
 
             //Errors
-            this.root.find(".sa11y-error-border").removeClass("sa11y-error-border");
-            this.root.find(".sa11y-error-heading").removeClass("sa11y-error-heading");
-            this.root.find(".sa11y-error-message-container").remove();
-            this.root.find(".sa11y-error-text").removeClass("sa11y-error-text");
+            document.querySelectorAll('.sa11y-error-border').forEach((el) => el.classList.remove('sa11y-error-border'));
+            document.querySelectorAll('.sa11y-error-heading').forEach((el) => el.classList.remove('sa11y-error-heading'));
+            document.querySelectorAll('.sa11y-error-text').forEach((el) => el.classList.remove('sa11y-error-text'));
 
             //Warnings
-            this.root.find(".sa11y-warning-border").removeClass("sa11y-warning-border");
-            this.root.find(".sa11y-warning-text").removeClass("sa11y-warning-text");
-            this.root.find("p").removeClass("sa11y-fake-list");
-            this.root.find(".sa11y-warning-uppercase").contents().unwrap();
-            this.root.find(".sa11y-warning-uppercase").removeClass("sa11y-warning-uppercase");
+            document.querySelectorAll('.sa11y-warning-border').forEach((el) => el.classList.remove('sa11y-warning-border'));
+            document.querySelectorAll('.sa11y-warning-text').forEach((el) => el.classList.remove('sa11y-warning-text'));
+            document.querySelectorAll('p').forEach((el) => el.classList.remove('sa11y-fake-list'));
+            document.querySelectorAll('.sa11y-warning-uppercase').forEach((el) => el.classList.remove('sa11y-warning-uppercase'));
 
-            //Remove buttons
-            this.root.find(".sa11y-instance").remove();
-            this.root.find(".sa11y-instance-inline").remove();
+            //Unwrap uppercase highlight.
+            var el = document.getElementsByClassName(".sa11y-warning-uppercase");
+            Array.prototype.forEach.call(el, function() {
+                var parent = elem.parentNode;
+                while (el.firstChild) parent.insertBefore(el.firstChild, el);
+                parent.removeChild(el);
+            });
+
+            //Remove
+            document.querySelectorAll(`
+                .sa11y-instance,
+                .sa11y-instance-inline,
+                .sa11y-heading-label,
+                #sa11y-outline-list li,
+                .sa11y-readability-period,
+                #sa11y-readability-info span,
+                #sa11y-readability-details li,
+                .sa11y-clone-image-text
+            `).forEach(e => e.parentNode.removeChild(e));
 
             //Etc
-            this.root.find(".sa11y-heading-label").remove();
-            this.root.find("#sa11y-outline-list li").remove();
-            this.root.find(".sa11y-readability-period").remove();
-            this.root.find("#sa11y-readability-info span, #sa11y-readability-details li").remove();
-            this.root.find(".sa11y-overflow").removeClass("sa11y-overflow");
-            this.root.find(".sa11y-fake-heading").removeClass("sa11y-fake-heading");
-            this.root.find(".sa11y-good-border").removeClass("sa11y-good-border");
-            this.root.find(".sa11y-console-warning-message-container").remove();
-            this.root.find(".sa11y-pulse-border").removeClass("sa11y-pulse-border");
-            this.root.find("#sa11y-panel-alert").removeClass("sa11y-active");
-            this.root.find("#sa11y-panel-alert-text").empty();
-            this.root.find(".sa11y-clone-image-text").remove();
+            document.querySelectorAll('.sa11y-overflow').forEach((el) => el.classList.remove('sa11y-overflow'));
+            document.querySelectorAll('.sa11y-fake-heading').forEach((el) => el.classList.remove('sa11y-fake-heading'));
+            document.querySelectorAll('.sa11y-good-border').forEach((el) => el.classList.remove('sa11y-good-border'));
+            document.querySelectorAll('.sa11y-pulse-border').forEach((el) => el.classList.remove('sa11y-pulse-border'));
+            document.querySelector('#sa11y-panel-alert').classList.remove("sa11y-active")
+
+            var empty = document.querySelector('#sa11y-panel-alert-text');
+            while(empty.firstChild) empty.removeChild(empty.firstChild);
+
+            var clearStatus = document.querySelector('#sa11y-status');
+            while(clearStatus.firstChild) clearStatus.removeChild(clearStatus.firstChild)
 
             if (restartPanel) {
-                $("#sa11y-panel-content").removeClass();
-                this.root.find("#sa11y-panel").removeClass("sa11y-active");
+                document.querySelector('#sa11y-panel').classList.remove("sa11y-active");
             }
         };
         clearEverything = () => {};
@@ -993,6 +1011,7 @@ jQuery.noConflict();
         findElements = () => {
             let {
                 root,
+                readabilityRoot,
                 containerIgnore,
                 imageIgnore
             } = this;
@@ -1000,17 +1019,16 @@ jQuery.noConflict();
             this.$h = root
                 .find("h1, h2, h3, h4, h5, h6, [role='heading'][aria-level]")
                 .not(containerIgnore);
-            this.$mainPandLi = root
-                .find("main p, main li, [role='main'] p, [role='main'] li")
+            this.$readability = readabilityRoot
+                .find("p, li")
                 .not(containerIgnore);
             this.$img = root.find("img").not(imageIgnore);
             this.$iframe = root.find("iframe").not(containerIgnore);
             this.$table = root.find("table").not("[role='presentation']").not(containerIgnore);
-            this.$contrast = root
-                .find("*:visible")
-                .not(".sa11y-exclude *")
-                .not("#sa11y-container *")
-                .not(containerIgnore);
+            
+            const container = document.querySelector(sa11yCheckRoot);
+            this.$contrast = container.querySelectorAll("*:not("+containerIgnore+")");
+            
         };
 
         // ============================================================
@@ -1639,6 +1657,20 @@ jQuery.noConflict();
                     }
                 }
 
+                //Inputs where type="image".
+                else if ($el.attr("type") === "image") {
+                    let imgalt = $el.attr("alt");
+                    if (imgalt == undefined || imgalt == "" || imgalt == " ") {
+                        if ($el.attr("aria-label") !== undefined) {
+                            //Good.
+                        } else {
+                            this.errorCount++;
+                            $el.addClass("sa11y-error-border");
+                            $el.after(Sa11yAnnotate(sa11yError, M["missingImageInputMessage"], true));
+                        }
+                    } 
+                }
+
                 //Recommendation to remove reset buttons.
                 else if ($el.attr("type") === "reset") {
                     this.warningCount++;
@@ -1979,6 +2011,7 @@ jQuery.noConflict();
                 errors: [],
                 warnings: []
             };
+            let elements = this.$contrast;
             var contrast = {
                 // Parse rgb(r, g, b) and rgba(r, g, b, a) strings into an array.
                 // Adapted from https://github.com/gka/chroma.js
@@ -1996,7 +2029,6 @@ jQuery.noConflict();
                             rgb[i] = +rgb[i];
                         }
                     }
-                    //console.log(rgb);
                     return rgb;
 
                 },
@@ -2052,12 +2084,12 @@ jQuery.noConflict();
                         errors: [],
                         warnings: []
                     };
-                    var elements = document.querySelectorAll('*');
+                    
                     for (var i = 0; i < elements.length; i++) {
                         (function (n) {
                             var elem = elements[n];
-                            // test if visible
-                            if (contrast.isVisible(elem)) {
+                            // test if visible. Although we want invisible too.
+                            if (contrast /* .isVisible(elem) */) {
                                 var style = getComputedStyle(elem),
                                     color = style.color,
                                     fill = style.fill,
@@ -2163,11 +2195,11 @@ jQuery.noConflict();
         checkReadability = () => {
 
             //Crude hack to add a period to the end of list items to make a complete sentence.
-            this.$mainPandLi.each(function () {
+            this.$readability.each(function () {
                 var endOfList = $(this),
                     listText = endOfList.text();
                 if (listText.charAt(listText.length - 1) !== ".") {
-                    $("main li, [role='main'] li").append("<span class='sa11y-readability-period sa11y-visually-hidden'>.</span>");
+                    $("li").append("<span class='sa11y-readability-period sa11y-visually-hidden'>.</span>");
                 }
             });
 
@@ -2189,7 +2221,7 @@ jQuery.noConflict();
                 return syllables;
             }
 
-            let paragraphtext = this.$mainPandLi.not("blockquote").text();
+            let paragraphtext = this.$readability.not("blockquote").text();
             var words_raw = paragraphtext.replace(/[.!?-]+/g, ' ').split(' ');
             var words = 0;
             for (var i = 0; i < words_raw.length; i++) {
@@ -2247,7 +2279,7 @@ jQuery.noConflict();
 
             if ($("main, [role='main']").length === 0) {
                 $("#sa11y-readability-info").html(M["missingMainContentMessage"]);
-            } else if (this.$mainPandLi.length === 0) {
+            } else if (this.$readability.length === 0) {
                 $("#sa11y-readability-info").html(M["noPorLiMessage"]);
             } else if (words > 30) {
                 var fleschScore = flesch_reading_ease.toFixed(1);
