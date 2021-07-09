@@ -306,6 +306,16 @@ jQuery.noConflict();
             // Combine default and custom ignores.
             const separator = ", ";
 
+            // Ignore specific classes within links.
+            if (sa11yLinkIgnoreSpan.length > 0) {
+                let sa11yLinkIgnoreSpanSelectors = sa11yLinkIgnoreSpan.split(",");
+                sa11yLinkIgnoreSpan =
+                    "noscript" + separator + sa11yLinkIgnoreSpanSelectors.join();
+            } else {
+                sa11yLinkIgnoreSpan = 
+                    "noscript";
+            }
+
             // Container ignores apply to self and children.
             if (sa11yContainerIgnore.length > 0) {
                 let containerSelectors = sa11yContainerIgnore.split(",");
@@ -405,7 +415,9 @@ jQuery.noConflict();
             this.computeAriaLabel = function ($el) {
                 if ($el.is("[aria-label]")) {
                     return $el.attr("aria-label");
-                } else if ($el.is("[aria-labelledby]")) {
+                } 
+                
+                else if ($el.is("[aria-labelledby]")) {
                     let target = $el.attr("aria-labelledby").split(/\s+/);
                     if (target.length > 0) {
                         let returnText = "";
@@ -416,7 +428,30 @@ jQuery.noConflict();
                     } else {
                         return "";
                     }
-                } else {
+                } 
+                
+                //Children of element.
+                else if ($el.children().is("[aria-label]")) {
+                    return $el.children().attr("aria-label");
+                } 
+                
+                else if ($el.children().is("[title]")) {
+                    return $el.children().attr("title");
+                }
+                else if ($el.children().is("[aria-labelledby]")) {
+                    let target = $el.children().attr("aria-labelledby").split(/\s+/);
+                    if (target.length > 0) {
+                        let returnText = "";
+                        $.each($(target), function (i, el) {
+                            returnText += $("#" + el).ignore("span.sa11y-heading-label").text() + " ";
+                        });
+                        return returnText;
+                    } else {
+                        return "";
+                    }
+                }
+                
+                else {
                     return "noAria";
                 }
             };
@@ -661,6 +696,10 @@ jQuery.noConflict();
             document.querySelectorAll('p').forEach((el) => el.classList.remove('sa11y-fake-list'));
             document.querySelectorAll('.sa11y-warning-uppercase').forEach((el) => el.classList.remove('sa11y-warning-uppercase'));
 
+            //Good
+            document.querySelectorAll('.sa11y-good-border').forEach((el) => el.classList.remove('sa11y-good-border'));
+            document.querySelectorAll('.sa11y-good-text').forEach((el) => el.classList.remove('sa11y-good-text'));
+
             //Unwrap uppercase highlight.
             var el = document.getElementsByClassName(".sa11y-warning-uppercase");
             Array.prototype.forEach.call(el, function() {
@@ -684,7 +723,6 @@ jQuery.noConflict();
             //Etc
             document.querySelectorAll('.sa11y-overflow').forEach((el) => el.classList.remove('sa11y-overflow'));
             document.querySelectorAll('.sa11y-fake-heading').forEach((el) => el.classList.remove('sa11y-fake-heading'));
-            document.querySelectorAll('.sa11y-good-border').forEach((el) => el.classList.remove('sa11y-good-border'));
             document.querySelectorAll('.sa11y-pulse-border').forEach((el) => el.classList.remove('sa11y-pulse-border'));
             document.querySelector('#sa11y-panel-alert').classList.remove("sa11y-active")
 
@@ -1027,8 +1065,7 @@ jQuery.noConflict();
             this.$table = root.find("table").not("[role='presentation']").not(containerIgnore);
             
             const container = document.querySelector(sa11yCheckRoot);
-            this.$contrast = container.querySelectorAll("*:not("+containerIgnore+")");
-            
+            this.$contrast = Array.from(container.querySelectorAll("*")).filter(item => !item.querySelector(containerIgnore));
         };
 
         // ============================================================
@@ -1242,8 +1279,11 @@ jQuery.noConflict();
                 var hasAriaLabelledBy = $el.attr("aria-labelledby");
                 var hasAriaLabel = $el.attr("aria-label");
                 var hasTitle = $el.attr("title");
+                var childAriaLabelledBy = $el.children().attr("aria-labelledby");
+                var childAriaLabel = $el.children().attr("aria-label");
+                var childTitle = $el.children().attr("title");
 
-                var error = containsLinkTextStopWords($el.ignore("noscript, " + sa11yLinkIgnoreSpan).text().trim());
+                var error = containsLinkTextStopWords($el.ignore(sa11yLinkIgnoreSpan).text().trim());
 
                 if (linkText === "noAria") {
                     linkText = $el.text();
@@ -1256,30 +1296,32 @@ jQuery.noConflict();
                 ) {
                     if ($el.find("img").length) {
                         // Do nothing
-                    } else if (hasAriaLabelledBy != null) {
-                        $el.addClass("sa11y-good-border")
-                        $el.before(
-                            Sa11yAnnotate(sa11yGood, M["linkLabel"](linkText), true)
-                        );
-                    } else if (hasAriaLabel != null) {
-                        $el.addClass("sa11y-good-border")
+                    } else if (hasAriaLabelledBy != null || hasAriaLabel != null) {
+                        $el.addClass("sa11y-good-border sa11y-good-text")
                         $el.before(
                             Sa11yAnnotate(sa11yGood, M["linkLabel"](linkText), true)
                         );
                     } else if (hasTitle != null) {
                         let linkText = $el.attr("title");
-                        $el.addClass("sa11y-good-border")
+                        $el.addClass("sa11y-good-border sa11y-good-text")
                         $el.before(
                             Sa11yAnnotate(sa11yGood, M["linkLabel"](linkText), true)
                         );
-                    } else if ($el.children().length == 0) {
-                        this.errorCount++;
-                        $el.addClass("sa11y-error-border");
-                        $el.after(Sa11yAnnotate(sa11yError, M["emptyLink"], true));
+                    } else if ($el.children().length) {
+                        if (childAriaLabelledBy != null || childAriaLabel != null || childTitle != null) {
+                            $el.addClass("sa11y-good-border sa11y-good-text")
+                            $el.before(
+                                Sa11yAnnotate(sa11yGood, M["linkLabel"](linkText), true)
+                            );
+                        } else {
+                            this.errorCount++;
+                            $el.addClass("sa11y-error-border sa11y-error-text");
+                            $el.after(Sa11yAnnotate(sa11yError, M["emptyLinkNoLabel"], true));
+                        }
                     } else {
                         this.errorCount++;
-                        $el.addClass("sa11y-error-border");
-                        $el.after(Sa11yAnnotate(sa11yError, M["emptyLinkNoLabel"], true));
+                        $el.addClass("sa11y-error-border sa11y-error-text");
+                        $el.after(Sa11yAnnotate(sa11yError, M["emptyLink"], true));
                     }
                 } else if (error[0] != null) {
                     if (hasAriaLabelledBy != null) {

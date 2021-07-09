@@ -942,6 +942,15 @@ p#sa11y-readability-info {
     padding: 2px 5px !important;
 }
 
+a.sa11y-good-text,
+.sa11y-good-text {
+    border-radius: 0.25em !important;
+    border-color: transparent !important;
+    box-shadow: 0 0 0 4px var(--sa11y-good) !important;
+    background-color: var(--sa11y-good) !important;
+    color: var(--sa11y-good-text) !important;
+}
+
 a.sa11y-error-text,
 .sa11y-error-text {
     border-radius: 0.25em !important;
