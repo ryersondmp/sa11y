@@ -57,33 +57,22 @@ const sa11yReadability = "Readability",
 
 //Panel status
 const sa11yPanelStatus = {
-    status1: () => `1 accessibility error and 1 warning found.`,
+    status1: `1 accessibility error and 1 warning found.`,
     status2: (warningCount) => `1 accessibility error and ${warningCount} warnings found.`,
     status3: (errorCount) => `${errorCount} accessibility errors and 1 warning found.`,
     status4: (errorCount, warningCount) => `${errorCount} accessibility errors and ${warningCount} warnings found.`,
-    status5: () => `1 accessibility error found.`,
+    status5: `1 accessibility error found.`,
     status6: (errorCount) => `${errorCount} accessibility errors found.`,
-    status7: () => `Please review warning.`,
+    status7: `Please review warning.`,
     status8: (warningCount) => `Please review ${warningCount} warnings.`,
-    status9: () => `No accessibility errors found.`,
+    status9: `No accessibility errors found.`,
     status10: (warningCount) => `${warningCount} <span class="sa11y-visually-hidden">warnings found.</span>`,
     status11: (totalCount) => `${totalCount} <span class="sa11y-visually-hidden">total issues found.</span>`,
-    notVisibleAlert: () => `The item you are trying to view is not visible; it may be hidden or inside of an accordion or tab component. Here's a preview:`
+    notVisibleAlert: `The item you are trying to view is not visible; it may be hidden or inside of an accordion or tab component. Here's a preview:`
 }
 
 //Alt Text stop words.
-const sa11ySuspiciousAltWords = [
-    "image of",
-    "an image of",
-    "graphic of",
-    "a graphic of",
-    "picture of",
-    "a picture of",
-    "photo of",
-    "a photo of",
-    "pic of",
-    "a pic of"
-];
+const sa11ySuspiciousAltWords = ["image", "graphic", "picture", "photo"];
 const sa11yPlaceholderAltStopWords = [
     "alt",
     "image",
@@ -284,7 +273,7 @@ const sa11yIM = {
             `Missing alt text! If the image conveys a story, mood, or important information - be sure to describe the image.`,
 
         linkImageBadAltMessage: (altText, error) =>
-            `File extension within the alt text found. Ensure the alt text describes the destination of the link, not a literal description of the picture. Remove: <span class='sa11y-red-text sa11y-bold'>${error}</span>.
+            `File extension within the alt text found. Ensure the alt text describes the destination of the link, not a literal description of the image. Remove: <span class='sa11y-red-text sa11y-bold'>${error}</span>.
             ${sa11yHr}
             The alt text for this image is: <span class='sa11y-bold'>${altText}</span>`,
 
@@ -292,8 +281,7 @@ const sa11yIM = {
                 altText,
                 error
             ) =>
-            `Redundant alt text found. Ensure the alt text describes the destination of the link, not a literal description of the picture. 
-            Consider removing the word: <span class='sa11y-red-text sa11y-bold'>${error}</span>. 
+            `Assistive technologies already indicate that this is an image, so &quot;<span class='sa11y-red-text sa11y-bold'>${error}</span>&quot; or &quot;${error} of&quot; may be redundant. Ensure the alt text describes the destination of the link, not a literal description of the image.
             ${sa11yHr} 
             The alt text for this image is: <span class='sa11y-bold'>${altText}</span>`,
 
@@ -314,14 +302,13 @@ const sa11yIM = {
         linkImagePlaceholderAltMessage: (
                 altText
             ) =>
-            `Non-descript or placeholder alt text within a linked image found. Ensure the alt text describes the destination of the link, not a literal description of the picture. Replace the following alt text: <span class='sa11y-bold sa11y-red-text'>${altText}</span>.`,
+            `Non-descript or placeholder alt text within a linked image found. Ensure the alt text describes the destination of the link, not a literal description of the image. Replace the following alt text: <span class='sa11y-bold sa11y-red-text'>${altText}</span>.`,
 
         altHasSusWordMessage: (
                 altText,
                 error
             ) =>
-            `Redundant alt text found. It is not necessary to include words like <em>image</em>, <em>graphic,</em> or the file extension. 
-            Consider removing the word: <span class='sa11y-red-text sa11y-bold'>${error}</span>.
+            `Assistive technologies already indicate that this is an image, so &quot;<span class='sa11y-red-text sa11y-bold'>${error}</span>&quot; or &quot;${error} of&quot; may be redundant.
             ${sa11yHr}
             The alt text for this image is: <span class='sa11y-bold'>${altText}</span>`,
 

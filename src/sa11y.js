@@ -216,7 +216,7 @@ jQuery.noConflict();
             //500ms to let the page settle down (e.g. slow loading JavaScript components).
             setTimeout(() => {
                 $(document).ready(() => {
-                    $("#sa11y-toggle").prop("disabled", false);
+                    document.getElementById("sa11y-toggle").disabled = false;
 
                     //To-do: Yes, this is total crap and needs to be re-thinked. On document.ready, it crudely checks/annotates the page, and then instantly clears/resets everything except for the badge counter. Need to figure out a way to update badge counter without painting entire page with error buttons.
                     if (localStorage.getItem("sa11y-remember-panel") === "Closed" || localStorage.getItem("sa11y-remember-panel") === null) {
@@ -234,56 +234,56 @@ jQuery.noConflict();
         sa11yMainToggle = () => {
 
             //Keeps checker active when navigating between pages until it is toggled off.
-            const sa11yToggle = $("#sa11y-toggle");
-            sa11yToggle.click(() => {
+            const sa11yToggle = document.getElementById("sa11y-toggle");
+            sa11yToggle.addEventListener('click', (e) => {
                 if (localStorage.getItem("sa11y-remember-panel") === "Opened") {
                     localStorage.setItem("sa11y-remember-panel", "Closed");
-                    sa11yToggle
-                        .removeClass("sa11y-on")
-                        .attr("aria-expanded", "false");
+                    sa11yToggle.classList.remove("sa11y-on")
+                    sa11yToggle.setAttribute("aria-expanded", "false");
                     this.resetAll();
                     this.updateBadge();
-
+                    e.preventDefault();
                 } else {
                     localStorage.setItem("sa11y-remember-panel", "Opened");
-                    sa11yToggle
-                        .addClass("sa11y-on")
-                        .attr("aria-expanded", "true");
+                    sa11yToggle.classList.add("sa11y-on");
+                    sa11yToggle.setAttribute("aria-expanded", "true");
                     this.checkAll();
-
                     //Don't show badge when panel is opened.
-                    $("#sa11y-notification-badge").css("display", "none");
+                    document.getElementById("sa11y-notification-badge").style.display = 'none';
+                    e.preventDefault();
                 }
             });
 
             //Remember to leave it open
             if (localStorage.getItem("sa11y-remember-panel") === "Opened") {
-                sa11yToggle.addClass("sa11y-on").attr("aria-expanded", "true");
+                sa11yToggle.classList.add("sa11y-on");
+                sa11yToggle.setAttribute("aria-expanded", "true");
             }
 
             //Crudely give a little time to load any other content or slow post-rendered JS, iFrames, etc.
-            if (sa11yToggle.hasClass("sa11y-on")) {
-                sa11yToggle.toggleClass("loading-sa11y");
-                sa11yToggle.attr("aria-expanded", "true");
+            if (sa11yToggle.classList.contains("sa11y-on")) {
+                sa11yToggle.classList.toggle("loading-sa11y");
+                sa11yToggle.setAttribute("aria-expanded", "true");
                 setTimeout(this.checkAll, 500);
             }
 
             //Escape key to shutdown.
-            $(document).keyup((escape) => {
-                if (
-                    escape.keyCode == 27 &&
-                    $("#sa11y-panel").hasClass("sa11y-active")
-                ) {
-                    tippy.hideAll();
-                    sa11yToggle
-                        .attr("aria-expanded", "false")
-                        .removeClass("sa11y-on")
-                        .click();
-                    this.resetAll();
+            document.onkeydown = function(evt) {
+                evt = evt || window.event;
+                var isEscape = false;
+                if ("key" in evt) {
+                    isEscape = (evt.key === "Escape" || evt.key === "Esc");
                 } else {
-                    this.onkeyup = null;
+                    isEscape = (evt.keyCode === 27);
                 }
-            });
+                if (isEscape && document.getElementById("sa11y-panel").classList.contains("sa11y-active")) {
+                    tippy.hideAll();
+                    sa11yToggle.setAttribute("aria-expanded", "false");
+                    sa11yToggle.classList.remove("sa11y-on");
+                    sa11yToggle.click();
+                    this.resetAll();
+                } 
+            }; 
         }
 
         // ============================================================
@@ -416,7 +416,6 @@ jQuery.noConflict();
                 if ($el.is("[aria-label]")) {
                     return $el.attr("aria-label");
                 } 
-                
                 else if ($el.is("[aria-labelledby]")) {
                     let target = $el.attr("aria-labelledby").split(/\s+/);
                     if (target.length > 0) {
@@ -429,12 +428,10 @@ jQuery.noConflict();
                         return "";
                     }
                 } 
-                
                 //Children of element.
                 else if ($el.children().is("[aria-label]")) {
                     return $el.children().attr("aria-label");
                 } 
-                
                 else if ($el.children().is("[title]")) {
                     return $el.children().attr("title");
                 }
@@ -450,7 +447,6 @@ jQuery.noConflict();
                         return "";
                     }
                 }
-                
                 else {
                     return "noAria";
                 }
@@ -461,148 +457,149 @@ jQuery.noConflict();
         // Setting's panel: Additional ruleset toggles.
         //----------------------------------------------------------------------
         settingPanelToggles = () => {
-
             //Toggle: Contrast
-            let $sa11yContrastCheck = $("#sa11y-contrast-toggle");
-            $sa11yContrastCheck.click(async () => {
+            const $sa11yContrastCheck = document.getElementById("sa11y-contrast-toggle");
+            $sa11yContrastCheck.onclick = async () => {
                 if (localStorage.getItem("sa11y-remember-contrast") === "On") {
                     localStorage.setItem("sa11y-remember-contrast", "Off");
-                    $sa11yContrastCheck.text(`${sa11yOff}`);
-                    $sa11yContrastCheck.attr("aria-pressed", "false");
+                    $sa11yContrastCheck.textContent = `${sa11yOff}`;
+                    $sa11yContrastCheck.setAttribute("aria-pressed", "false");
                     this.resetAll(false);
                     await this.checkAll();
                 } else {
                     localStorage.setItem("sa11y-remember-contrast", "On");
-                    $sa11yContrastCheck.text(`${sa11yOn}`);
-                    $sa11yContrastCheck.attr("aria-pressed", "true");
+                    $sa11yContrastCheck.textContent = `${sa11yOn}`;
+                    $sa11yContrastCheck.setAttribute("aria-pressed", "true");
                     this.resetAll(false);
                     await this.checkAll();
                 }
-            });
+            };
 
             //Toggle: Form labels
-            let $sa11yLabelsCheck = $("#sa11y-labels-toggle");
-            $sa11yLabelsCheck.click(async () => {
+            const $sa11yLabelsCheck = document.getElementById("sa11y-labels-toggle");
+            $sa11yLabelsCheck.onclick = async () => {
                 if (localStorage.getItem("sa11y-remember-labels") === "On") {
                     localStorage.setItem("sa11y-remember-labels", "Off");
-                    $sa11yLabelsCheck.text(`${sa11yOff}`);
-                    $sa11yLabelsCheck.attr("aria-pressed", "false");
+                    $sa11yLabelsCheck.textContent = `${sa11yOff}`;
+                    $sa11yLabelsCheck.setAttribute("aria-pressed", "false");
                     this.resetAll(false);
                     await this.checkAll();
                 } else {
                     localStorage.setItem("sa11y-remember-labels", "On");
-                    $sa11yLabelsCheck.text(`${sa11yOn}`);
-                    $sa11yLabelsCheck.attr("aria-pressed", "true");
+                    $sa11yLabelsCheck.textContent = `${sa11yOn}`;
+                    $sa11yLabelsCheck.setAttribute("aria-pressed", "true");
                     this.resetAll(false);
                     await this.checkAll();
                 }
-            });
+            };
 
             //Toggle: Links (Advanced)
-            let $sa11yChangeRequestCheck = $("#sa11y-links-advanced-toggle");
-            $sa11yChangeRequestCheck.click(async () => {
+            const $sa11yChangeRequestCheck = document.getElementById("sa11y-links-advanced-toggle");
+            $sa11yChangeRequestCheck.onclick = async () => {
                 if (localStorage.getItem("sa11y-remember-links-advanced") === "On") {
                     localStorage.setItem("sa11y-remember-links-advanced", "Off");
-                    $sa11yChangeRequestCheck.text(`${sa11yOff}`);
-                    $sa11yChangeRequestCheck.attr("aria-pressed", "false");
+                    $sa11yChangeRequestCheck.textContent = `${sa11yOff}`;
+                    $sa11yChangeRequestCheck.setAttribute("aria-pressed", "false");
                     this.resetAll(false);
                     await this.checkAll();
                 } else {
                     localStorage.setItem("sa11y-remember-links-advanced", "On");
-                    $sa11yChangeRequestCheck.text(`${sa11yOn}`);
-                    $sa11yChangeRequestCheck.attr("aria-pressed", "true");
+                    $sa11yChangeRequestCheck.textContent = `${sa11yOn}`;
+                    $sa11yChangeRequestCheck.setAttribute("aria-pressed", "true");
                     this.resetAll(false);
                     await this.checkAll();
                 }
-            });
+            };
 
             //Toggle: Readability
-            let $sa11yReadabilityCheck = $("#sa11y-readability-toggle");
-            $sa11yReadabilityCheck.click(async () => {
+            const $sa11yReadabilityCheck = document.getElementById("sa11y-readability-toggle");
+            $sa11yReadabilityCheck.onclick = async () => {
                 if (localStorage.getItem("sa11y-remember-readability") === "On") {
                     localStorage.setItem("sa11y-remember-readability", "Off");
-                    $sa11yReadabilityCheck.text(`${sa11yOff}`);
-                    $sa11yReadabilityCheck.attr("aria-pressed", "false");
-                    $("#sa11y-readability-panel").removeClass("sa11y-active");
+                    $sa11yReadabilityCheck.textContent = `${sa11yOff}`;
+                    $sa11yReadabilityCheck.setAttribute("aria-pressed", "false");
+                    document.getElementById("sa11y-readability-panel").classList.remove("sa11y-active");
                     this.resetAll(false);
                     await this.checkAll();
                 } else {
                     localStorage.setItem("sa11y-remember-readability", "On");
-                    $sa11yReadabilityCheck.text(`${sa11yOn}`);
-                    $sa11yReadabilityCheck.attr("aria-pressed", "true");
-                    $("#sa11y-readability-panel").addClass("sa11y-active");
+                    $sa11yReadabilityCheck.textContent = `${sa11yOn}`;
+                    $sa11yReadabilityCheck.setAttribute("aria-pressed", "true");
+                    document.getElementById("sa11y-readability-panel").classList.add("sa11y-active");
                     this.resetAll(false);
                     await this.checkAll();
                 }
-            });
+            };
 
             if (localStorage.getItem("sa11y-remember-readability") === "On") {
-                $("#sa11y-readability-panel").addClass("sa11y-active");
+                document.getElementById("sa11y-readability-panel").classList.add("sa11y-active");
             }
 
             //Toggle: Dark mode. (Credits: https://derekkedziora.com/blog/dark-mode-revisited)
+            
             let systemInitiatedDark = window.matchMedia(
                 "(prefers-color-scheme: dark)"
             );
-            let $sa11yTheme = $("#sa11y-theme-toggle");
-            let theme = localStorage.getItem("sa11y-remember-theme");
+            const $sa11yTheme = document.getElementById("sa11y-theme-toggle");
+            const html = document.querySelector("html");
+            const theme = localStorage.getItem("sa11y-remember-theme");
             if (systemInitiatedDark.matches) {
-                $sa11yTheme.text(`${sa11yOn}`);
-                $sa11yTheme.attr("aria-pressed", "true");
+                $sa11yTheme.textContent = `${sa11yOn}`;
+                $sa11yTheme.setAttribute("aria-pressed", "true");
             } else {
-                $sa11yTheme.text(`${sa11yOff}`);
-                $sa11yTheme.attr("aria-pressed", "false");
+                $sa11yTheme.textContent = `${sa11yOff}`;
+                $sa11yTheme.setAttribute("aria-pressed", "false");
             }
 
             function prefersColorTest(systemInitiatedDark) {
                 if (systemInitiatedDark.matches) {
-                    $("html").attr("data-sa11y-theme", "dark");
-                    $sa11yTheme.text(`${sa11yOn}`);
-                    $sa11yTheme.attr("aria-pressed", "true");
+                    html.setAttribute("data-sa11y-theme", "dark");
+                    $sa11yTheme.textContent = `${sa11yOn}`;
+                    $sa11yTheme.setAttribute("aria-pressed", "true");
                     localStorage.setItem("sa11y-remember-theme", "");
                 } else {
-                    $("html").attr("data-sa11y-theme", "light");
-                    $sa11yTheme.text(`${sa11yOff}`);
-                    $sa11yTheme.attr("aria-pressed", "false");
+                    html.setAttribute("data-sa11y-theme", "light");
+                    $sa11yTheme.textContent = `${sa11yOff}`;
+                    $sa11yTheme.setAttribute("aria-pressed", "false");
                     localStorage.setItem("sa11y-remember-theme", "");
                 }
             }
 
             systemInitiatedDark.addListener(prefersColorTest);
-            $sa11yTheme.click(function () {
-                let theme = localStorage.getItem("sa11y-remember-theme");
+            $sa11yTheme.onclick = async () => {
+                const theme = localStorage.getItem("sa11y-remember-theme");
                 if (theme === "dark") {
-                    $("html").attr("data-sa11y-theme", "light");
+                    html.setAttribute("data-sa11y-theme", "light");
                     localStorage.setItem("sa11y-remember-theme", "light");
-                    $sa11yTheme.text(`${sa11yOff}`);
-                    $sa11yTheme.attr("aria-pressed", "false");
+                    $sa11yTheme.textContent = `${sa11yOff}`;
+                    $sa11yTheme.setAttribute("aria-pressed", "false");
                 } else if (theme === "light") {
-                    $("html").attr("data-sa11y-theme", "dark");
+                    html.setAttribute("data-sa11y-theme", "dark");
                     localStorage.setItem("sa11y-remember-theme", "dark");
-                    $sa11yTheme.text(`${sa11yOn}`);
-                    $sa11yTheme.attr("aria-pressed", "true");
+                    $sa11yTheme.textContent = `${sa11yOn}`;
+                    $sa11yTheme.setAttribute("aria-pressed", "true");
                 } else if (systemInitiatedDark.matches) {
-                    $("html").attr("data-sa11y-theme", "light");
+                    html.setAttribute("data-sa11y-theme", "light");
                     localStorage.setItem("sa11y-remember-theme", "light");
-                    $sa11yTheme.text(`${sa11yOff}`);
-                    $sa11yTheme.attr("aria-pressed", "false");
+                    $sa11yTheme.textContent = `${sa11yOff}`;
+                    $sa11yTheme.setAttribute("aria-pressed", "false");
                 } else {
-                    $("html").attr("data-sa11y-theme", "dark");
+                    html.setAttribute("data-sa11y-theme", "dark");
                     localStorage.setItem("sa11y-remember-theme", "dark");
-                    $sa11yTheme.text(`${sa11yOn}`);
-                    $sa11yTheme.attr("aria-pressed", "true");
+                    $sa11yTheme.textContent = `${sa11yOn}`;
+                    $sa11yTheme.setAttribute("aria-pressed", "true");
                 }
-            });
+            };
             if (theme === "dark") {
-                $("html").attr("data-sa11y-theme", "dark");
+                html.setAttribute("data-sa11y-theme", "dark");
                 localStorage.setItem("sa11y-remember-theme", "dark");
-                $sa11yTheme.text(`${sa11yOn}`);
-                $sa11yTheme.attr("aria-pressed", "true");
+                $sa11yTheme.textContent = `${sa11yOn}`;
+                $sa11yTheme.setAttribute("aria-pressed", "true");
             } else if (theme === "light") {
-                $("html").attr("data-sa11y-theme", "light");
+                html.setAttribute("data-sa11y-theme", "light");
                 localStorage.setItem("sa11y-remember-theme", "light");
-                $sa11yTheme.text(`${sa11yOff}`);
-                $sa11yTheme.attr("aria-pressed", "false");
+                $sa11yTheme.textContent = `${sa11yOff}`;
+                $sa11yTheme.setAttribute("aria-pressed", "false");
             }
         }
 
@@ -670,7 +667,7 @@ jQuery.noConflict();
             this.detectOverflow();
 
             //Don't show badge when panel is opened.
-            if ($(".sa11y-on").length == 0) {
+            if (document.getElementsByClassName("sa11y-on").length == 0) {
                 this.updateBadge();
             }
         };
@@ -682,8 +679,14 @@ jQuery.noConflict();
             this.panelActive = false;
             this.clearEverything();
 
-            $("#sa11y-outline-toggle").off("click");
-            $("#sa11y-settings-toggle").off("click");
+            //Remove eventListeners on the Show Outline and Show Panel toggles.
+            const $outlineToggle = document.getElementById("sa11y-outline-toggle");
+            const resetOutline = $outlineToggle.cloneNode(true);
+            $outlineToggle.parentNode.replaceChild(resetOutline, $outlineToggle);
+
+            const $settingsToggle = document.getElementById("sa11y-settings-toggle");
+            const resetSettings = $settingsToggle.cloneNode(true);
+            $settingsToggle.parentNode.replaceChild(resetSettings, $settingsToggle);
 
             //Errors
             document.querySelectorAll('.sa11y-error-border').forEach((el) => el.classList.remove('sa11y-error-border'));
@@ -694,19 +697,12 @@ jQuery.noConflict();
             document.querySelectorAll('.sa11y-warning-border').forEach((el) => el.classList.remove('sa11y-warning-border'));
             document.querySelectorAll('.sa11y-warning-text').forEach((el) => el.classList.remove('sa11y-warning-text'));
             document.querySelectorAll('p').forEach((el) => el.classList.remove('sa11y-fake-list'));
-            document.querySelectorAll('.sa11y-warning-uppercase').forEach((el) => el.classList.remove('sa11y-warning-uppercase'));
+            let allcaps = document.querySelectorAll('.sa11y-warning-uppercase');
+            allcaps.forEach(el => el.outerHTML = el.innerHTML);
 
             //Good
             document.querySelectorAll('.sa11y-good-border').forEach((el) => el.classList.remove('sa11y-good-border'));
             document.querySelectorAll('.sa11y-good-text').forEach((el) => el.classList.remove('sa11y-good-text'));
-
-            //Unwrap uppercase highlight.
-            var el = document.getElementsByClassName(".sa11y-warning-uppercase");
-            Array.prototype.forEach.call(el, function() {
-                var parent = elem.parentNode;
-                while (el.firstChild) parent.insertBefore(el.firstChild, el);
-                parent.removeChild(el);
-            });
 
             //Remove
             document.querySelectorAll(`
@@ -718,7 +714,7 @@ jQuery.noConflict();
                 #sa11y-readability-info span,
                 #sa11y-readability-details li,
                 .sa11y-clone-image-text
-            `).forEach(e => e.parentNode.removeChild(e));
+            `).forEach(el => el.parentNode.removeChild(el));
 
             //Etc
             document.querySelectorAll('.sa11y-overflow').forEach((el) => el.classList.remove('sa11y-overflow'));
@@ -762,10 +758,23 @@ jQuery.noConflict();
         // Detect parent containers that have hidden overflow.
         // ============================================================
         detectOverflow = () => {
-            $(".sa11y-btn").parents().each(function () {
-                if ($(this).css("overflow") === "hidden") {
-                    $(this).addClass("sa11y-overflow")
+            const findParentWithOverflow = ($el, property, value) => {
+            while($el !== null) {
+                const style = window.getComputedStyle($el);
+                const propValue = style.getPropertyValue(property);
+                        if (propValue === value) {
+                            return $el;
+                        }
+                    $el = $el.parentElement;
                 }
+                return null;
+            };
+            const $findButtons = document.querySelectorAll('.sa11y-btn');
+            $findButtons.forEach(function ($el) {
+                const overflowing = findParentWithOverflow($el, 'overflow', 'hidden');
+                if (overflowing !== null) {
+                    overflowing.classList.add('sa11y-overflow');
+                }                
             });
         }
 
@@ -775,16 +784,17 @@ jQuery.noConflict();
         updateBadge = () => {
             let totalCount = this.errorCount + this.warningCount;
             let warningCount = this.warningCount;
+            const notifBadge = document.getElementById("sa11y-notification-badge");
             if (totalCount === 0) {
-                $("#sa11y-notification-badge").css("display", "none");
+                notifBadge.style.display = "none";
             } else if (this.warningCount > 0 && this.errorCount === 0) {
-                $('#sa11y-notification-badge').css("display", "flex");
-                $('#sa11y-notification-badge').addClass("sa11y-notification-badge-warning");
-                $('#sa11y-notification-count').html(`${sa11yPanelStatus["status10"](warningCount)}`);
+                notifBadge.style.display = "flex";
+                notifBadge.classList.add("sa11y-notification-badge-warning");
+                document.getElementById('sa11y-notification-count').innerHTML = `${sa11yPanelStatus["status10"](warningCount)}`;
             } else {
-                $('#sa11y-notification-badge').css("display", "flex");
-                $('#sa11y-notification-badge').removeClass("sa11y-notification-badge-warning");
-                $('#sa11y-notification-count').html(`${sa11yPanelStatus["status11"](totalCount)}`);
+                notifBadge.style.display = "flex";
+                notifBadge.classList.remove("sa11y-notification-badge-warning");
+                document.getElementById('sa11y-notification-count').innerHTML = `${sa11yPanelStatus["status11"](totalCount)}`;
             }
         }
 
@@ -800,53 +810,57 @@ jQuery.noConflict();
             this.buildPanel();
 
             this.skipToIssue();
-            $("#sa11y-cycle-toggle").prop("disabled", false);
-            $("#sa11y-cycle-toggle").attr("style", "cursor: pointer !important;");
+
+            const $sa11ySkipBtn = document.getElementById("sa11y-cycle-toggle");
+
+            $sa11ySkipBtn.disabled = false;
+            $sa11ySkipBtn.setAttribute("style", "cursor: pointer !important;");
             
-            $("#sa11y-panel").addClass("sa11y-active");
-            
+            const $sa11yPanel = document.getElementById("sa11y-panel");
+            $sa11yPanel.classList.add("sa11y-active");
+
+            const $panelContent = document.getElementById("sa11y-panel-content");
+            const $sa11yStatus = document.getElementById("sa11y-status");
+            const $findButtons = document.querySelectorAll('.sa11y-btn');
 
             if (this.errorCount === 1 && this.warningCount === 1) {
-                $("#sa11y-panel-content").attr("class", "sa11y-errors");
-                $("#sa11y-status").text(
-                    sa11yPanelStatus["status1"]
-                );
-            } else if (this.errorCount === 1 && this.warningCount > 0) {
-                $("#sa11y-panel-content").attr("class", "sa11y-errors");
-                $("#sa11y-status").text(
-                    sa11yPanelStatus["status2"](warningCount)
-                );
-            } else if (this.errorCount > 0 && this.warningCount === 1) {
-                $("#sa11y-panel-content").attr("class", "sa11y-errors");
-                $("#sa11y-status").text(
-                    sa11yPanelStatus["status3"](errorCount)
-                );
-            } else if (this.errorCount > 0 && this.warningCount > 0) {
-                $("#sa11y-panel-content").attr("class", "sa11y-errors");
-                $("#sa11y-status").text(
-                    sa11yPanelStatus["status4"](errorCount, warningCount)
-                );
-            } else if (this.errorCount > 0) {
-                $("#sa11y-panel-content").attr("class", "sa11y-errors");
-                $("#sa11y-status").text(
-                    this.errorCount === 1 ?
+                $panelContent.setAttribute("class", "sa11y-errors");
+                $sa11yStatus.textContent = `${sa11yPanelStatus["status1"]}`;
+            } 
+            else if (this.errorCount === 1 && this.warningCount > 0) {
+                $panelContent.setAttribute("class", "sa11y-errors");
+                $sa11yStatus.textContent = `${sa11yPanelStatus["status2"](warningCount)}`;
+            } 
+            else if (this.errorCount > 0 && this.warningCount === 1) {
+                $panelContent.setAttribute("class", "sa11y-errors");
+                $sa11yStatus.textContent = `${sa11yPanelStatus["status3"](errorCount)}`;
+            } 
+            else if (this.errorCount > 0 && this.warningCount > 0) {
+                $panelContent.setAttribute("class", "sa11y-errors");
+                $sa11yStatus.textContent = `${sa11yPanelStatus["status4"](errorCount, warningCount)}`;
+            } 
+            else if (this.errorCount > 0) {
+                $panelContent.setAttribute("class", "sa11y-errors");
+                $sa11yStatus.textContent = `${this.errorCount === 1 ?
                     sa11yPanelStatus["status5"] :
                     sa11yPanelStatus["status6"](errorCount)
-                );
-            } else if (this.warningCount > 0) {
-                $("#sa11y-panel-content").attr("class", "sa11y-warnings");
-                $("#sa11y-status").text(
+                }`;
+            } 
+            else if (this.warningCount > 0) {
+                $panelContent.setAttribute("class", "sa11y-warnings");
+                $sa11yStatus.textContent = `${
                     totalCount === 1 ?
                     sa11yPanelStatus["status7"] :
                     sa11yPanelStatus["status8"](warningCount)
-                );
-            } else {
-                $("#sa11y-panel-content").attr("class", "sa11y-good");
-                $("#sa11y-status").text(sa11yPanelStatus["status9"]);
+                }`;
+            } 
+            else {
+                $panelContent.setAttribute("class", "sa11y-good");
+                $sa11yStatus.textContent = `${sa11yPanelStatus["status9"]}`;
 
-                if ($(".sa11y-btn").length === 0) {
-                    $("#sa11y-cycle-toggle").prop("disabled", true);
-                    $("#sa11y-cycle-toggle").attr("style", "cursor: default !important;");
+                if ($findButtons.length === 0) {
+                    $sa11ySkipBtn.disabled = true;
+                    $sa11ySkipBtn.setAttribute("style", "cursor: default !important;");
                 }
             }
         };
@@ -855,110 +869,146 @@ jQuery.noConflict();
         // Main panel: Build Show Outline and Settings tabs.
         // ----------------------------------------------------------------------
         buildPanel = () => {
+            
+            const $outlineToggle = document.getElementById("sa11y-outline-toggle");
+            const $outlinePanel = document.getElementById("sa11y-outline-panel");
+            const $outlineList = document.getElementById("sa11y-outline-list");
+
+            const $settingsToggle = document.getElementById("sa11y-settings-toggle");
+            const $settingsPanel = document.getElementById("sa11y-settings-panel");
+            const $settingsContent = document.getElementById("sa11y-settings-content");
+
+            const $headingAnnotations = document.querySelectorAll(".sa11y-heading-label");
+            
             //Show outline panel
-            let $outlineToggle = $("#sa11y-outline-toggle");
-            $outlineToggle.click(() => {
-                if ($outlineToggle.attr("aria-expanded") == "true") {
-                    $outlineToggle.removeClass("sa11y-outline-active");
-                    $("#sa11y-outline-panel").removeClass("sa11y-active");
-                    $outlineToggle.text(`${sa11yShowOutline}`);
-                    $outlineToggle.attr("aria-expanded", "false");
+            $outlineToggle.addEventListener('click', (e) => {
+                if ($outlineToggle.getAttribute("aria-expanded") == "true") {
+                    $outlineToggle.classList.remove("sa11y-outline-active");
+                    $outlinePanel.classList.remove("sa11y-active");
+                    $outlineToggle.textContent = `${sa11yShowOutline}`;
+                    $outlineToggle.setAttribute("aria-expanded", "false");
                     localStorage.setItem("sa11y-remember-outline", "Closed");
                 } else {
-                    $outlineToggle.addClass("sa11y-outline-active");
-                    $("#sa11y-outline-panel").addClass("sa11y-active");
-                    $outlineToggle.text(`${sa11yHideOutline}`);
-                    $outlineToggle.attr("aria-expanded", "true");
+                    $outlineToggle.classList.add("sa11y-outline-active");
+                    $outlinePanel.classList.add("sa11y-active");
+                    $outlineToggle.textContent = `${sa11yHideOutline}`;
+                    $outlineToggle.setAttribute("aria-expanded", "true");
                     localStorage.setItem("sa11y-remember-outline", "Opened");
                 }
 
-                $("#sa11y-outline-header > h2").get(0).focus();
+                //Set focus on Page Outline heading for accessibility.
+                document.querySelector("#sa11y-outline-header > h2").focus();
 
-                $(".sa11y-heading-label").toggleClass("sa11y-label-visible");
-
+                //Show heading level annotations.
+                $headingAnnotations.forEach(($el) => $el.classList.toggle("sa11y-label-visible"));
+                
                 //Close Settings panel when Show Outline is active.
-                $("#sa11y-settings-panel").removeClass("sa11y-active");
-                $settingsToggle.removeClass("sa11y-settings-active");
-                $settingsToggle.attr("aria-expanded", "false");
-                $settingsToggle.text(`${sa11yShowSettings}`);
+                $settingsPanel.classList.remove("sa11y-active");
+                $settingsToggle.classList.remove("sa11y-settings-active");
+                $settingsToggle.setAttribute("aria-expanded", "false");
+                $settingsToggle.textContent = `${sa11yShowSettings}`;
 
                 //Keyboard accessibility fix for scrollable panel content.
-                if ($("#sa11y-outline-list").height() > 250) {
-                    $("#sa11y-outline-list").attr("tabindex", "0");
+                if ($outlineList.clientHeight > 250) {
+                    $outlineList.setAttribute("tabindex", "0");
                 }
             });
 
             //Remember to leave outline open
             if (localStorage.getItem("sa11y-remember-outline") === "Opened") {
-                $outlineToggle.addClass("sa11y-outline-active");
-                $("#sa11y-outline-panel").addClass("sa11y-active");
-                $outlineToggle.text(`${sa11yHideOutline}`);
-                $outlineToggle.attr("aria-expanded", "true");
-                $(".sa11y-heading-label").toggleClass("sa11y-label-visible");
-
+                $outlineToggle.classList.add("sa11y-outline-active");
+                $outlinePanel.classList.add("sa11y-active");
+                $outlineToggle.textContent = `${sa11yHideOutline}`;
+                $outlineToggle.setAttribute("aria-expanded", "true");
+                $headingAnnotations.forEach(($el) => $el.classList.toggle("sa11y-label-visible"));
                 //Keyboard accessibility fix for scrollable panel content.
-                if ($("#sa11y-outline-list").height() > 250) {
-                    $("#sa11y-outline-list").attr("tabindex", "0");
+                if ($outlineList.clientHeight > 250) {
+                    $outlineList.setAttribute("tabindex", "0");
                 }
             }
 
             //Show settings panel
-            let $settingsToggle = $("#sa11y-settings-toggle");
-            $settingsToggle.click(() => {
-                if ($settingsToggle.attr("aria-expanded") === "true") {
-                    $settingsToggle.removeClass("sa11y-settings-active");
-                    $("#sa11y-settings-panel").removeClass("sa11y-active");
-                    $settingsToggle.text(`${sa11yShowSettings}`);
-                    $settingsToggle.attr("aria-expanded", "false");
+            $settingsToggle.addEventListener('click', (e) => {
+                if ($settingsToggle.getAttribute("aria-expanded") === "true") {
+                    $settingsToggle.classList.remove("sa11y-settings-active");
+                    $settingsPanel.classList.remove("sa11y-active");
+                    $settingsToggle.textContent = `${sa11yShowSettings}`;
+                    $settingsToggle.setAttribute("aria-expanded", "false");
                 } else {
-                    $settingsToggle.addClass("sa11y-settings-active");
-                    $("#sa11y-settings-panel").addClass("sa11y-active");
-                    $settingsToggle.text(`${sa11yHideSettings}`);
-                    $settingsToggle.attr("aria-expanded", "true");
+                    $settingsToggle.classList.add("sa11y-settings-active");
+                    $settingsPanel.classList.add("sa11y-active");
+                    $settingsToggle.textContent = `${sa11yHideSettings}`;
+                    $settingsToggle.setAttribute("aria-expanded", "true");
                 }
 
-                $("#sa11y-settings-header > h2").get(0).focus();
+                //Set focus on Settings heading for accessibility.
+                document.querySelector("#sa11y-settings-header > h2").focus();
 
                 //Close Show Outline panel when Settings is active.
-                $("#sa11y-outline-panel").removeClass("sa11y-active");
-                $outlineToggle.removeClass("sa11y-outline-active");
-                $outlineToggle.attr("aria-expanded", "false");
-                $outlineToggle.text(`${sa11yShowOutline}`);
-                $(".sa11y-heading-label").removeClass("sa11y-label-visible");
+                $outlinePanel.classList.remove("sa11y-active");
+                $outlineToggle.classList.remove("sa11y-outline-active");
+                $outlineToggle.setAttribute("aria-expanded", "false");
+                $outlineToggle.textContent = `${sa11yShowOutline}`;
+                $headingAnnotations.forEach(($el) => $el.classList.remove("sa11y-label-visible"));
                 localStorage.setItem("sa11y-remember-outline", "Closed");
 
                 //Keyboard accessibility fix for scrollable panel content.
-                if ($("#sa11y-settings-content").height() > 350) {
-                    $("#sa11y-settings-content").attr("tabindex", "0");
+                if ($settingsContent.clientHeight > 350) {
+                    $settingsContent.setAttribute("tabindex", "0");
                 }
             });
 
             //Enhanced keyboard accessibility for panel.
-            $("[role=tablist]").keydown(function (e) {
-                if (e.keyCode == 37) {
-                    $("[aria-expanded=true], [aria-expanded=false]").prev().focus();
-                    e.preventDefault();
+            document.getElementById('sa11y-panel-controls').addEventListener('keydown', function(e) {
+            const $tab = document.querySelectorAll('#sa11y-outline-toggle[role=tab], #sa11y-settings-toggle[role=tab]');
+                if (e.key === 'ArrowRight') {
+                    for (let i = 0; i < $tab.length; i++) {
+                        if ($tab[i].getAttribute('aria-expanded') === "true" || $tab[i].getAttribute('aria-expanded') === "false") {
+                            $tab[i+1].focus();
+                            e.preventDefault();
+                            break;
+                        }
+                    }
                 }
-                if (e.keyCode == 38) {
-                    $("[aria-expanded=true], [aria-expanded=false]").prev().focus();
-                    e.preventDefault();
+                if (e.key === 'ArrowDown') {
+                    for (let i = 0; i < $tab.length; i++) {
+                        if ($tab[i].getAttribute('aria-expanded') === "true" || $tab[i].getAttribute('aria-expanded') === "false") {
+                            $tab[i+1].focus();
+                            e.preventDefault();
+                            break;
+                        }
+                    }
                 }
-                if (e.keyCode == 39) {
-                    $("[aria-expanded=true], [aria-expanded=false]").next().focus();
-                    e.preventDefault();
+                if (e.key === 'ArrowLeft') {
+                    for (let i = $tab.length-1; i > 0; i--) {
+                        if ($tab[i].getAttribute('aria-expanded') === "true" || $tab[i].getAttribute('aria-expanded') === "false") {
+                            $tab[i-1].focus();
+                            e.preventDefault();
+                            break;
+                        }
+                    }
                 }
-                if (e.keyCode == 40) {
-                    $("[aria-expanded=true], [aria-expanded=false]").next().focus();
-                    e.preventDefault();
+                if (e.key === 'ArrowUp') {
+                    for (let i = $tab.length-1; i > 0; i--) {
+                        if ($tab[i].getAttribute('aria-expanded') === "true" || $tab[i].getAttribute('aria-expanded') === "false") {
+                            $tab[i-1].focus();
+                            e.preventDefault();
+                            break;
+                        }
+                    }
                 }
             });
 
-            let $closeAlertToggle = $("#sa11y-close-alert");
-            $closeAlertToggle.click(() => {
-                $("#sa11y-panel-alert").removeClass("sa11y-active");
-                $("#sa11y-panel-alert-text").empty();
-                $(".sa11y-pulse-border").removeClass("sa11y-pulse-border");
-                $("#sa11y-cycle-toggle").focus();
+            const $closeAlertToggle = document.getElementById("sa11y-close-alert");
+            const $alertPanel = document.getElementById("sa11y-panel-alert");
+            const $alertText = document.getElementById("sa11y-panel-alert-text");
+            const $sa11ySkipBtn = document.getElementById("sa11y-cycle-toggle");
+
+            $closeAlertToggle.addEventListener('click', () => {
+                $alertPanel.classList.remove("sa11y-active");
+                while($alertText.firstChild) $alertText.removeChild($alertText.firstChild);
+                document.querySelectorAll('.sa11y-pulse-border').forEach((el) => el.classList.remove('sa11y-pulse-border'));
+                $sa11ySkipBtn.focus();
             });
         }
 
@@ -967,7 +1017,6 @@ jQuery.noConflict();
         // ============================================================
 
         skipToIssue = () => {
-
             /* Polyfill for scrollTo. scrollTo instead of .animate(), so Sa11y could use jQuery slim build. Credit: https://stackoverflow.com/a/67108752 & https://github.com/iamdustan/smoothscroll */
             var reducedMotionQuery = false;
             var scrollBehavior = "smooth";
@@ -986,7 +1035,7 @@ jQuery.noConflict();
             }
 
             let sa11yBtnLocation = 0;
-            const findSa11yBtn = $(".sa11y-btn").length;
+            const findSa11yBtn = document.querySelectorAll(".sa11y-btn").length;
 
             //Jump to issue using keyboard shortcut.
             document.onkeyup = function (e) {
@@ -1053,6 +1102,7 @@ jQuery.noConflict();
                 containerIgnore,
                 imageIgnore
             } = this;
+            
             this.$p = root.find("p").not(containerIgnore);
             this.$h = root
                 .find("h1, h2, h3, h4, h5, h6, [role='heading'][aria-level]")
@@ -1465,7 +1515,7 @@ jQuery.noConflict();
                     }
                 });
                 $.each(sa11ySuspiciousAltWords, function (index, word) {
-                    if (alt.toLowerCase().indexOf(word) == 0) {
+                    if (alt.toLowerCase().indexOf(word) >= 0) {
                         hit[1] = word;
                     }
                 });
@@ -1477,7 +1527,6 @@ jQuery.noConflict();
                         hit[2] = word;
                     }
                 });
-
                 return hit;
             };
 
@@ -2238,10 +2287,9 @@ jQuery.noConflict();
 
             //Crude hack to add a period to the end of list items to make a complete sentence.
             this.$readability.each(function () {
-                var endOfList = $(this),
-                    listText = endOfList.text();
+                var listText = $(this).text();
                 if (listText.charAt(listText.length - 1) !== ".") {
-                    $("li").append("<span class='sa11y-readability-period sa11y-visually-hidden'>.</span>");
+                    $(this).append("<span class='sa11y-readability-period sa11y-visually-hidden'>.</span>");
                 }
             });
 
