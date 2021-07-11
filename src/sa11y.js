@@ -1035,7 +1035,7 @@ jQuery.noConflict();
             }
 
             let sa11yBtnLocation = 0;
-            const findSa11yBtn = document.querySelectorAll(".sa11y-btn").length;
+            const findSa11yBtn = $(".sa11y-btn").length;
 
             //Jump to issue using keyboard shortcut.
             document.onkeyup = function (e) {
@@ -1046,8 +1046,10 @@ jQuery.noConflict();
             };
 
             //Jump to issue using click.
-            $("#sa11y-cycle-toggle").off().on("click", function () {
+            const $skipToggle = document.getElementById("sa11y-cycle-toggle");
+            $skipToggle.addEventListener('click', (e) => {
                 skipToIssueToggle();
+                e.preventDefault();
             });
 
             const skipToIssueToggle = function () {
@@ -1102,7 +1104,6 @@ jQuery.noConflict();
                 containerIgnore,
                 imageIgnore
             } = this;
-            
             this.$p = root.find("p").not(containerIgnore);
             this.$h = root
                 .find("h1, h2, h3, h4, h5, h6, [role='heading'][aria-level]")
