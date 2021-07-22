@@ -1041,20 +1041,20 @@ a.sa11y-warning-text,
 .sa11y-good-message:before {
     height: 24px !important;
     margin: 10px 10px 10px 10px !important;
-    vertical-align: middle !important;
     width: 24px !important;
+    vertical-align: middle !important;
 }
 
 .sa11y-error-message:before {
-    content: var(--sa11y-error-svg) / "Error" !important;
+    content: var(--sa11y-error-svg) !important;
 }
 
 .sa11y-warning-message:before {
-    content: var(--sa11y-warning-svg) / "Warning" !important;
+    content: var(--sa11y-warning-svg) !important;
 }
 
 .sa11y-good-message:before {
-    content: var(--sa11y-good-svg) / "Good" !important;
+    content: var(--sa11y-good-svg) !important;
 }
 
 /*===== Heading label ===== */

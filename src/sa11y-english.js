@@ -15,7 +15,8 @@ let sa11yContainerIgnore = ".sa11y-ignore", //Ignore specific regions.
     sa11yHeaderIgnore = "", //Ignore specific headings. E.g. "h1.jumbotron-heading"
     sa11yImageIgnore = "", //Ignore specific images.
     sa11yLinkIgnore = "", //Ignore specific links.
-    sa11yLinkIgnoreSpan = "span.sr-only-example"; //Ignore specific classes within links. Example: <a href="#">learn more <span class="sr-only-example">(opens new tab)</span></a>.
+    sa11yLinkIgnoreSpan = "span.sr-only-example", //Ignore specific classes within links. Example: <a href="#">learn more <span class="sr-only-example">(opens new tab)</span></a>.
+    sa11yLinksToFlag = "a[href^='https://www.dev.'], a[href*='wp-admin']"; //Links you don't want your content editors pointing to (e.g. development environments).
 
 /* ------------------------------ */
 /*           Localization         */
@@ -368,15 +369,17 @@ const sa11yIM = {
     labels: {
 
         inputResetMessage: () =>
-            `Reset buttons should <span class='sa11y-bold'>not</span> be used unless specifically needed, because they are easy to activate by mistake.
+            `Reset buttons should <span class='sa11y-bold'>not</span> be used unless specifically needed because they are easy to activate by mistake.
             ${sa11yHr} 
             <span class='sa11y-bold'>Tip!</span> Learn why <a href='https://www.nngroup.com/articles/reset-and-cancel-buttons/' target='_blank'>Reset and Cancel buttons pose usability issues. ${sa11yNewTab}</a>`,
 
         missingLabelMessage: () =>
             `There is no label associated with this input. Please add an <span class='sa11y-kbd'>id</span> to this input, and add a matching <span class='sa11y-kbd'>for</span> attribute to the label.`,
 
-        ariaLabelInputMessage: () =>
-            `Found an <span class='sa11y-kbd'>aria-label</span> with this input, although make sure there is a visible label too.`,
+        ariaLabelInputMessage: (ariaLabel) =>
+            `Input has an accessible name, although please ensure there is a visible label too. 
+            ${sa11yHr} 
+            The accessible name for this input is: <span class='sa11y-bold'>${ariaLabel}</span>`,
 
         noForAttributeMessage: (t) =>
             `There is no label associated with this input. Add a <span class='sa11y-kbd'>for</span> attribute to the label that matches the <span class='sa11y-kbd'>id</span> of this input. 

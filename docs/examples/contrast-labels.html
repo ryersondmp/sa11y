@@ -114,9 +114,9 @@
                 </div>
                 <div class="row mt-4">
                   <div class="col-md-6">
-                    <h3>Example 3</h3>
-                    <p>Warning: Input is using <kbd>aria-label</kbd>. It is not recommended to use this method since there is no visual label.</p>
-                    <input aria-label="Invisible aria label" type="text" />
+                    <h3 id="ex3">Example 3</h3>
+                    <p id="ex3para">Warning: Input is using aria-label or aria-labelledby. Warn user to ensure there is a visible label.</p>
+                    <input aria-labelledby="ex3 ex3para" type="text" />
                   </div>
                   <div class="col-md-6">
                     <h3>Example 4</h3>
@@ -195,6 +195,21 @@
                     <p>Fail: Input where <kbd>type="image"</kbd> and doesn't have alt text or aria-label.</p>
                     <label for="q">Search:</label><input type="text" name="q" id="q"><input type="image" alt=" " width="20" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Vector_search_icon.svg/1280px-Vector_search_icon.svg.png" class="">
                   </div>
+                  <div class="col-md-6">
+                    <h3>Example 14</h3>
+                    <p>Pass: Input has an "id" that that matches the "for" on a label, after the input.</p>
+                    <input type="text" id="asd"/><br>
+                    <label for="asd">Label after input</label>
+                  </div>
+                </div>
+
+                <div class="row mt-4">
+                  <div class="col-md-6">
+                    <h3>Example 15</h3>
+                    <p>Pass: Input has <kbd>title</kbd> attribute for accessible name.</p>
+                    <input type="text" title="Phone number"><br><br>
+                    <input type="text" title="Address">
+                  </div>
                   <div class="col-md-6"></div>
                 </div>
 
@@ -244,5 +259,6 @@ $(document).ready(function() {
  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/src/sa11y.min.css" />
  <script src="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/src/sa11y-english.min.js"></script>
  <script src="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/src/sa11y.min.js"></script>
+ 
 </body>
 </html>
