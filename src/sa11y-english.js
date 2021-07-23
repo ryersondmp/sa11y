@@ -493,14 +493,10 @@ const sa11yIM = {
     },
 
     readability: {
-
-        missingMainContentMessage: () =>
-            `Please identify the <a href="https://www.w3.org/WAI/tutorials/page-structure/regions/#main-content" target="_blank">main content region to calculate readability score. ${sa11yNewTab}</a>`,
-
-        noPorLiMessage: () =>
+        noPorLiMessage:
             `Unable to calculate readability score. No paragraph <span class="sa11y-badge">&lt;p&gt;</span> or list content <span class="sa11y-badge">&lt;li&gt;</span> found.`,
 
-        notEnoughContentMessage: () =>
+        notEnoughContentMessage:
             `Not enough content to calculate readability score.`
     }
 };

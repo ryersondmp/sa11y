@@ -1139,13 +1139,9 @@ jQuery.noConflict();
                 readabilityRoot,
                 containerIgnore
             } = this;
-
             this.$p = root.find("p").not(containerIgnore);
             this.$h = root
                 .find("h1, h2, h3, h4, h5, h6, [role='heading'][aria-level]")
-                .not(containerIgnore);
-            this.$readability = readabilityRoot
-                .find("p, li")
                 .not(containerIgnore);
         };
 
@@ -1560,7 +1556,10 @@ jQuery.noConflict();
             // Stores the corresponding issue text to alternative text
             const M = sa11yIM["images"];
             const container = document.querySelector(sa11yCheckRoot);
-            const $img = Array.from(container.querySelectorAll("img")).filter(item => !item.querySelector(this.imageIgnore));
+            
+            const images = Array.from(container.querySelectorAll("img"));
+            const excludeimages = Array.from(container.querySelectorAll(this.imageIgnore));        
+            const $img = images.filter($el => !excludeimages.includes($el));
 
             $img.forEach(($el) => { 
                 let alt = $el.getAttribute("alt")
@@ -1762,11 +1761,14 @@ jQuery.noConflict();
         // Rulesets: QA
         // ============================================================
         checkQA = () => {
-            const container = document.querySelector(sa11yCheckRoot);
+            
             const M = sa11yIM["QA"];
-
+            const container = document.querySelector(sa11yCheckRoot);
+            const containerexclusions = Array.from(container.querySelectorAll(this.containerIgnore));
+            
             //Warning: Video content.
-            const $videos = Array.from(container.querySelectorAll("video, iframe[src*='youtube.com'], iframe[src*='vimeo.com'], iframe[src*='yuja.com'], iframe[src*='panopto.com']")).filter(item => !item.querySelector(this.containerIgnore));
+            const $findvideos = Array.from(container.querySelectorAll("video, iframe[src*='youtube.com'], iframe[src*='vimeo.com'], iframe[src*='yuja.com'], iframe[src*='panopto.com']"));
+            const $videos = $findvideos.filter($el => !containerexclusions.includes($el));
             $videos.forEach(($el) => {
                 this.warningCount++;
                 $el.classList.add("sa11y-warning-border");
@@ -1774,7 +1776,8 @@ jQuery.noConflict();
             });
 
             //Warning: Audio content.
-            const $audio = Array.from(container.querySelectorAll("audio, iframe[src*='soundcloud.com'], iframe[src*='simplecast.com'], iframe[src*='podbean.com'], iframe[src*='buzzsprout.com'], iframe[src*='blubrry.com'], iframe[src*='transistor.fm'], iframe[src*='fusebox.fm'], iframe[src*='libsyn.com']")).filter(item => !item.querySelector(this.containerIgnore));
+            const $findaudio = Array.from(container.querySelectorAll("audio, iframe[src*='soundcloud.com'], iframe[src*='simplecast.com'], iframe[src*='podbean.com'], iframe[src*='buzzsprout.com'], iframe[src*='blubrry.com'], iframe[src*='transistor.fm'], iframe[src*='fusebox.fm'], iframe[src*='libsyn.com']"));
+            const $audio = $findaudio.filter($el => !containerexclusions.includes($el));
             $audio.forEach(($el) => {
                 this.warningCount++;
                 $el.classList.add("sa11y-warning-border");
@@ -1782,7 +1785,8 @@ jQuery.noConflict();
             });
 
             //Warning: Data visualizations. 
-            const $dataviz = Array.from(container.querySelectorAll("iframe[src*='datastudio.google.com'], iframe[src*='tableau']")).filter(item => !item.querySelector(this.containerIgnore));
+            const $finddataviz = Array.from(container.querySelectorAll("iframe[src*='datastudio.google.com'], iframe[src*='tableau']"));
+            const $dataviz = $finddataviz.filter($el => !containerexclusions.includes($el));
             $dataviz.forEach(($el) => {
                 this.warningCount++;
                 $el.classList.add("sa11y-warning-border");
@@ -1790,7 +1794,8 @@ jQuery.noConflict();
             });
 
             //Warning: Twitter timelines that are too long.
-            const $twitter = Array.from(container.querySelectorAll("iframe.twitter-timeline")).filter(item => !item.querySelector(this.containerIgnore));
+            const $findtwitter = Array.from(container.querySelectorAll("iframe.twitter-timeline"));
+            const $twitter = $findtwitter.filter($el => !containerexclusions.includes($el));
             $twitter.forEach(($el) => {
                 const tweets = $el.contentWindow.document.body.querySelectorAll('.timeline-TweetList-tweet');
                 if (tweets.length > 3) {
@@ -1801,7 +1806,8 @@ jQuery.noConflict();
             });
 
             //Error: Find all links pointing to development environment.
-            const $badDevLinks = Array.from(container.querySelectorAll(sa11yLinksToFlag)).filter(item => !item.querySelector(this.containerIgnore));
+            const $findbadDevLinks = Array.from(container.querySelectorAll(sa11yLinksToFlag));
+            const $badDevLinks = $findbadDevLinks.filter($el => !containerexclusions.includes($el));
             $badDevLinks.forEach(($el) => {
                 this.errorCount++;
                 $el.classList.add("sa11y-error-text");
@@ -1824,7 +1830,8 @@ jQuery.noConflict();
             }
 
             //Warning: Detect uppercase. 
-            const $allcaps = Array.from(container.querySelectorAll("h1, h2, h3, h4, h5, h6, p, li:not([class^='sa11y']), blockquote")).filter(item => !item.querySelector(this.containerIgnore));
+            const $findallcaps = Array.from(container.querySelectorAll("h1, h2, h3, h4, h5, h6, p, li:not([class^='sa11y']), blockquote"));
+            const $allcaps = $findallcaps.filter($el => !containerexclusions.includes($el));
             $allcaps.forEach(function ($el) {
                 var uppercasePattern = /(?!<a[^>]*?>)(\b[A-Z][',!:A-Z\s]{15,}|\b[A-Z]{15,}\b)(?![^<]*?<\/a>)/g;
 
@@ -1843,7 +1850,8 @@ jQuery.noConflict();
             }
 
             //Tables check.
-            const $tables = Array.from(container.querySelectorAll("table:not([role='presentation'])")).filter(item => !item.querySelector(this.containerIgnore));
+            const $findtables = Array.from(container.querySelectorAll("table:not([role='presentation'])"));
+            const $tables = $findtables.filter($el => !containerexclusions.includes($el));
             $tables.forEach(($el) => {
                 let findTHeaders = $el.querySelectorAll("th");
                 let findHeadingTags = $el.querySelectorAll("h1, h2, h3, h4, h5, h6");
@@ -1882,7 +1890,8 @@ jQuery.noConflict();
             }
 
             //Excessive bolding or italics.
-            const $strongitalics = Array.from(container.querySelectorAll("strong, em")).filter(item => !item.querySelector(this.containerIgnore));
+            const $findstrongitalics = Array.from(container.querySelectorAll("strong, em"));
+            const $strongitalics = $findstrongitalics.filter($el => !containerexclusions.includes($el));
             $strongitalics.forEach(($el) => {
                 if ($el.textContent.trim().length > 400) {
                     this.warningCount++;
@@ -1891,7 +1900,8 @@ jQuery.noConflict();
             });
 
             //Find blockquotes used as headers.
-            const $blockquotes = Array.from(container.querySelectorAll("blockquote")).filter(item => !item.querySelector(this.containerIgnore));
+            const $findblockquotes = Array.from(container.querySelectorAll("blockquote"));
+            const $blockquotes = $findblockquotes.filter($el => !containerexclusions.includes($el));
             $blockquotes.forEach(($el, i) => {
                 let bqHeadingText = $el.textContent;
                 if (bqHeadingText.trim().length < 25) {
@@ -2032,7 +2042,10 @@ jQuery.noConflict();
         checkContrast = () => {
 
             const container = document.querySelector(sa11yCheckRoot);
-            const $contrast = Array.from(container.querySelectorAll("* > :not(.sa11y-heading-label)")).filter(item => !item.querySelector(this.containerIgnore));
+            const containerexclusions = Array.from(container.querySelectorAll(this.containerIgnore));
+            
+            const $findcontrast = Array.from(container.querySelectorAll("* > :not(.sa11y-heading-label)"));
+            const $contrast = $findcontrast.filter($el => !containerexclusions.includes($el));
 
             var contrastErrors = {
                 errors: [],
@@ -2223,11 +2236,17 @@ jQuery.noConflict();
         // ============================================================
         checkReadability = () => {
 
+            const container = document.querySelector(sa11yReadabilityRoot);
+            const containerexclusions = Array.from(container.querySelectorAll(this.containerIgnore));
+            
+            const $findreadability = Array.from(container.querySelectorAll("p, li"));
+            const $readability = $findreadability.filter($el => !containerexclusions.includes($el));
+
             //Crude hack to add a period to the end of list items to make a complete sentence.
-            this.$readability.each(function () {
-                var listText = $(this).text();
+            $readability.forEach($el => {
+                var listText = $el.textContent;
                 if (listText.charAt(listText.length - 1) !== ".") {
-                    $(this).append("<span class='sa11y-readability-period sa11y-visually-hidden'>.</span>");
+                    $el.insertAdjacentHTML("beforeend", "<span class='sa11y-readability-period sa11y-visually-hidden'>.</span>");
                 }
             });
 
@@ -2249,7 +2268,15 @@ jQuery.noConflict();
                 return syllables;
             }
 
-            let paragraphtext = this.$readability.not("blockquote").text();
+            var readabilityarray = [];
+            for (var i = 0; i < $readability.length; i++) {
+            var current = $readability[i];
+                if (current.textContent.replace(/ |\n/g,'') !== '') {
+                    readabilityarray.push(current.textContent);
+                }
+            } 
+
+            let paragraphtext = readabilityarray.join(' ').trim().toString();
             var words_raw = paragraphtext.replace(/[.!?-]+/g, ' ').split(' ');
             var words = 0;
             for (var i = 0; i < words_raw.length; i++) {
@@ -2282,8 +2309,7 @@ jQuery.noConflict();
                 }
             }
 
-            var characters = paragraphtext.replace(/[.!?|\s]+/g, '').length;
-
+            //var characters = paragraphtext.replace(/[.!?|\s]+/g, '').length;
             //Reference: https://core.ac.uk/download/pdf/6552422.pdf
             //Reference: https://github.com/Yoast/YoastSEO.js/issues/267
 
@@ -2304,38 +2330,40 @@ jQuery.noConflict();
             }
 
             const M = sa11yIM["readability"];
+            const $readabilityinfo = document.getElementById("sa11y-readability-info");
 
-            if ($("main, [role='main']").length === 0) {
-                $("#sa11y-readability-info").html(M["missingMainContentMessage"]);
-            } else if (this.$readability.length === 0) {
-                $("#sa11y-readability-info").html(M["noPorLiMessage"]);
-            } else if (words > 30) {
+            if (paragraphtext.length === 0) {
+                $readabilityinfo.innerHTML = M["noPorLiMessage"];
+            } 
+            else if (words > 30) {
                 var fleschScore = flesch_reading_ease.toFixed(1);
                 var avgWordsPerSentence = (words / sentences).toFixed(1);
                 var complexWords = Math.round(100 * ((words - (syllables1 + syllables2)) / words));
 
                 //WCAG AAA pass if greater than 60
                 if (fleschScore >= 0 && fleschScore < 30) {
-                    $("#sa11y-readability-info").html(
-                        `<span>${fleschScore}</span> <span class="sa11y-readability-score">${sa11yVeryDifficultReadability}</span>`);
+                    $readabilityinfo.innerHTML =
+                        `<span>${fleschScore}</span> <span class="sa11y-readability-score">${sa11yVeryDifficultReadability}</span>`;
+
                 } else if (fleschScore > 31 && fleschScore < 49) {
-                    $("#sa11y-readability-info").html(
-                        `<span>${fleschScore}</span> <span class="sa11y-readability-score">${sa11yDifficultReadability}</span>`);
+                    $readabilityinfo.innerHTML =
+                        `<span>${fleschScore}</span> <span class="sa11y-readability-score">${sa11yDifficultReadability}</span>`;
+
                 } else if (fleschScore > 50 && fleschScore < 60) {
-                    $("#sa11y-readability-info").html(
-                        `<span>${fleschScore}</span> <span class="sa11y-readability-score">${sa11yFairlyDifficultReadability}</span>`);
+                    $readabilityinfo.innerHTML =
+                        `<span>${fleschScore}</span> <span class="sa11y-readability-score">${sa11yFairlyDifficultReadability}</span>`;
                 } else {
-                    $("#sa11y-readability-info").html(
-                        `<span>${fleschScore}</span> <span class="sa11y-readability-score">${sa11yGoodReadability}</span>`);
+                    $readabilityinfo.innerHTML =
+                        `<span>${fleschScore}</span> <span class="sa11y-readability-score">${sa11yGoodReadability}</span>`;
                 }
 
-                $("#sa11y-readability-details").html(`
-                <li><span class='sa11y-bold'>${sa11yAvgWordPerSentence}</span> ` + avgWordsPerSentence + `</li>
-                <li><span class='sa11y-bold'>${sa11yComplexWords}</span> ` + complexWords + `%</li>
-                <li><span class='sa11y-bold'>${sa11yTotalWords}</span> ` + words + `</li>
-            `);
-            } else {
-                $("#sa11y-readability-info").text(M["notEnoughContentMessage"]);
+                document.getElementById("sa11y-readability-details").innerHTML = 
+                `<li><span class='sa11y-bold'>${sa11yAvgWordPerSentence}</span> ${avgWordsPerSentence}</li>
+                <li><span class='sa11y-bold'>${sa11yComplexWords}</span> ${complexWords}%</li>
+                <li><span class='sa11y-bold'>${sa11yTotalWords}</span> ${words}</li>`;
+            } 
+            else {
+                $readabilityinfo.textContent = M["notEnoughContentMessage"];
             }
         }
     }
