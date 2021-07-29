@@ -68,6 +68,7 @@
               <a class="list-group-item list-group-item-action" href="#list-item-4">Social media widgets</a>
               <a class="list-group-item list-group-item-action" href="#list-item-5">Detect specific links</a>
               <a class="list-group-item list-group-item-action" href="#list-item-6">Fake list</a>
+              <a class="list-group-item list-group-item-action" href="#list-item-7">iFrames</a>
             </div>
           </div>
 
@@ -130,23 +131,59 @@
                 adding your own media streaming sources.</p>
               <div class="row pt-1 ml-5">
                 <div class="col-md-6">
-                  <h3>Example #1 - Video</h3>
+                  <h3 class="h4">Example #1 - Video</h3>
                   <p>This condition tests for the presence of an HTML <kbd>&lt;video&gt;</kbd> tag, YouTube and Vimeo.
                   </p>
                   <iframe class="embed-responsive" width="560" height="315"
-                    src="https://www.youtube.com/embed/HgzGwKwLmgM" frameborder="0"
+                    src="https://www.youtube.com/embed/HgzGwKwLmgM" title="Queen - Don't stop me now." frameborder="0"
                     allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
                     allowfullscreen></iframe>
                 </div>
                 <div class="col-md-6">
-                  <h3>Example #2 - Audio</h3>
+                  <h3 class="h4">Example #2 - Audio</h3>
                   <p>This condition tests for the presense of an HTML <kbd>&lt;audio&gt;</kbd> tag and <a
                       href="https://soundcloud.com/">SoundCloud.</a></p>
-                  <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay"
+                  <iframe class="embed-responsive-item" title="SoundCloud widget" width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay"
                     src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/158888399&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
                 </div>
               </div>
 
+              <div class="row pt-3 ml-5">
+                <div class="col-md-6">
+                  <h3 class="h4">Example #3 - HTML Video</h3>
+                  <video class="embed-responsive" width="320" height="240" controls>
+                    <source src="https://www.w3schools.com/html/movie.mp4" type="video/mp4">
+                    <source src="https://www.w3schools.com/html/movie.ogg" type="video/ogg">
+                    Your browser does not support the video tag.
+                  </video>
+                  <p><small>Video Source: W3Schools</small></p>
+                </div>
+                <div class="col-md-6">
+                  <h3 class="h4">Example #4 - HTML Video with Track/CC</h3>
+                  <p>Pass: has a <kbd>&lt;track&gt;</kbd> element.</p>
+                    <video class="embed-responsive" width="300" controls
+                      src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/friday.mp4">
+                    <track default kind="captions"
+                          srclang="en"
+                          src="friday.vtt" />
+                    Sorry, your browser doesn't support embedded videos.
+                  </video>
+                  <p><small>Video Source: MDN WebDocs</small></p>
+                </div>
+              </div>
+
+              <div class="row pt-3 ml-5">
+                <div class="col-md-6">
+                  <h3 class="h4">Example #5 - HTML Audio</h3>
+                  <audio controls>
+                    <source src="https://www.w3schools.com/html/horse.ogg" type="audio/ogg">
+                    <source src="https://www.w3schools.com/html/horse.mp3" type="audio/mpeg">
+                  Your browser does not support the audio element.
+                  </audio>
+                  <p><small>Video Source: W3Schools</small></p>
+                </div>
+                <div class="col-md-6"></div>
+              </div>
 
               <h2 id="list-item-4" class="pt-3">Social media widgets</h2>
               <p>This condition is meant to encourage users to optimize the default Twitter widget for accessibility and
@@ -157,13 +194,13 @@
               <div class="row pt-3 ml-5">
                 <div class="col-md-6">
                   <h3>Example #1</h3>
-                  <p>Default Twitter widget embed code.</p><a class="twitter-timeline" data-height="300"
+                  <p>Default Twitter widget embed code.</p><a class="twitter-timeline" title="Tweets by TwitterDev" data-height="300"
                     data-width="330" href="https://twitter.com/TwitterDev?ref_src=twsrc%5Etfw"><span
                       class="sr-only">Tweets by TwitterDev</span></a>
                 </div>
                 <div class="col-md-6">
                   <h3>Example #2</h3>
-                  <p>Optimized Twitter widget.</p><a data-tweet-limit="1" class="twitter-timeline"
+                  <p>Optimized Twitter widget.</p><a data-tweet-limit="1" title="Tweets by TwitterDev" class="twitter-timeline"
                     data-chrome="nofooter noheader" href="https://twitter.com/TwitterDev?ref_src=twsrc%5Etfw"><span
                       class="sr-only">Tweets by TwitterDev</span></a>
                 </div>
@@ -187,6 +224,21 @@
               <p>b. Bananas</p>
               <p>c. Pears</p>
 
+              <h2 id="list-item-7" class="pt-3">iFrames</h2>
+              <p>iFrames that are explicity hidden (e.g. <kbd>display:none</kbd>) are ignored.</p>
+              <div class="row pt-3">
+                <div class="col-md-6">
+                  <h3 class="h4">Missing title on iFrame</h3>
+                  <iframe loading="lazy" width="100%" height="315"
+                  src="https://www.youtube.com/embed/yMDOin3yWhU" frameborder="0"
+                  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen></iframe>
+                </div>
+                <div class="col-md-6">
+                  <h3 class="h4">Generic iFrame Warning</h3>
+                  <div class="fb-page" data-href="https://www.facebook.com/facebook" data-tabs="timeline" data-width="" data-height="300" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"><blockquote cite="https://www.facebook.com/facebook" class="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/facebook">Facebook</a></blockquote></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -228,6 +280,8 @@
     anchors.add();
   </script>
   <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+  <div id="fb-root"></div>
+  <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v11.0" nonce="erE7GmIs"></script>
   <!--Jquery (Yes, loaded a second time on purpose...)-->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.slim.min.js"></script>
 
@@ -235,10 +289,14 @@
   <script src="https://unpkg.com/@popperjs/core@2"></script>
   <script src="https://unpkg.com/tippy.js@6"></script>
 
- <!--Sa11y-->
+<!--Sa11y-->
  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/src/sa11y.min.css" />
  <script src="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/src/sa11y-english.min.js"></script>
  <script src="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/src/sa11y.min.js"></script>
+
+ <!--<link rel="stylesheet" href="../../src/sa11y.css" />
+ <script src="../../src/sa11y-english.js"></script>
+ <script src="../../src/sa11y.js"></script>-->
 </body>
 
 </html>

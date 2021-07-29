@@ -72,6 +72,13 @@ const sa11yPanelStatus = {
     notVisibleAlert: `The item you are trying to view is not visible; it may be hidden or inside of an accordion or tab component. Here's a preview:`
 }
 
+//Embedded content.
+const $sa11yVideos = "video, [src*='youtube.com'], [src*='vimeo.com'], [src*='yuja.com'], [src*='panopto.com']",
+$sa11yAudio = "audio, [src*='soundcloud.com'], [src*='simplecast.com'], [src*='podbean.com'], [src*='buzzsprout.com'], [src*='blubrry.com'], [src*='transistor.fm'], [src*='fusebox.fm'], [src*='libsyn.com']",
+$sa11yDataViz = "[src*='datastudio.google.com'], [src*='tableau']",
+$sa11yTwitter = "[id^='twitter-widget']",
+$sa11yAllEmbeddedContent = $sa11yVideos + ", " + $sa11yAudio + ", " + $sa11yDataViz + ", " + $sa11yTwitter;
+
 //Alt Text stop words.
 const sa11ySuspiciousAltWords = ["image", "graphic", "picture", "photo"];
 const sa11yPlaceholderAltStopWords = [
@@ -264,13 +271,13 @@ const sa11yIM = {
 
     images: {
 
-        missingAltLinkButHasTextMessage: () =>
+        missingAltLinkButHasTextMessage: 
             `Image is being used as a link with surrounding text, although the alt attribute should be marked as decorative or null.`,
 
-        missingAltLinkMessage: () =>
+        missingAltLinkMessage:
             `Image is being used as a link but is missing alt text! Please ensure alt text describes where the link takes you.`,
 
-        missingAltMessage: () =>
+        missingAltMessage: 
             `Missing alt text! If the image conveys a story, mood, or important information - be sure to describe the image.`,
 
         linkImageBadAltMessage: (altText, error) =>
@@ -278,57 +285,41 @@ const sa11yIM = {
             ${sa11yHr}
             The alt text for this image is: <span class='sa11y-bold'>${altText}</span>`,
 
-        linkImageSusAltMessage: (
-                altText,
-                error
-            ) =>
+        linkImageSusAltMessage: (altText, error) =>
             `Assistive technologies already indicate that this is an image, so &quot;<span class='sa11y-red-text sa11y-bold'>${error}</span>&quot; or &quot;${error} of&quot; may be redundant. Ensure the alt text describes the destination of the link, not a literal description of the image.
             ${sa11yHr} 
             The alt text for this image is: <span class='sa11y-bold'>${altText}</span>`,
 
-        altHasBadWordMessage: (
-                altText,
-                error
-            ) =>
+        altHasBadWordMessage: (altText, error) =>
             `File extension within the alt text found. If the image conveys a story, mood, or important information - be sure to describe the image. 
             Remove: <span class='sa11y-red-text sa11y-bold'>${error}</span>.
             ${sa11yHr} 
             The alt text for this image is: <span class='sa11y-bold'>${altText}</span>`,
 
-        altPlaceholderMessage: (
-                altText
-            ) =>
+        altPlaceholderMessage: (altText) =>
             `Non-descript or placeholder alt text found. Replace the following alt text with something more meaningful: <span class='sa11y-bold sa11y-red-text'>${altText}</span>.`,
 
-        linkImagePlaceholderAltMessage: (
-                altText
-            ) =>
+        linkImagePlaceholderAltMessage: (altText) =>
             `Non-descript or placeholder alt text within a linked image found. Ensure the alt text describes the destination of the link, not a literal description of the image. Replace the following alt text: <span class='sa11y-bold sa11y-red-text'>${altText}</span>.`,
 
-        altHasSusWordMessage: (
-                altText,
-                error
-            ) =>
+        altHasSusWordMessage: (altText, error) =>
             `Assistive technologies already indicate that this is an image, so &quot;<span class='sa11y-red-text sa11y-bold'>${error}</span>&quot; or &quot;${error} of&quot; may be redundant.
             ${sa11yHr}
             The alt text for this image is: <span class='sa11y-bold'>${altText}</span>`,
 
-        imageLinkNullAltNoTextMessage: () =>
+        imageLinkNullAltNoTextMessage: 
             `Image within link is marked as decorative and there is no link text. Please add alt text to the image that describes the destination of the link.`,
 
-        linkHasAltMessage: () =>
+        linkHasAltMessage: 
             `Image is marked as decorative, although the link is using the surrounding text as a descriptive label.`,
 
-        decorativeMessage: () =>
+        decorativeMessage: 
             `Image is marked as <span class='sa11y-bold'>decorative</span> and will be ignored by assistive technology. If the image conveys a story, mood or important information - be sure to add alt text.`,
 
-        hyperlinkedImageAriaHidden: () =>
+        hyperlinkedImageAriaHidden: 
             `Link around image has <span class='sa11y-kbd'>aria-hidden=&quot;true&quot;</span> but is still keyboard focusable. If you are intending to hide a redundant or duplicate link, add <span class='sa11y-kbd'>tabindex=&quot;-1&quot;</span> as well.`,
 
-        hyperlinkAltLengthMessage: (
-                altText,
-                altLength
-            ) =>
+        hyperlinkAltLengthMessage: (altText, altLength) =>
             `Alt text description on a linked image is <span class='sa11y-bold'>too long</span>. 
             The alt text on linked images should describe where the link takes you, not a literal description of the image. 
             <span class='sa11y-bold'>Consider using the title of the page it links to as the alt text.</span> 
@@ -336,26 +327,19 @@ const sa11yIM = {
             The alt text is <span class='sa11y-red-text sa11y-bold'>${altLength}</span> characters: 
             <span class='sa11y-red-text sa11y-bold'>${altText}</span>`,
 
-        imageLinkAltTextMessage: (
-                altText
-            ) =>
+        imageLinkAltTextMessage: (altText) =>
             `Image link contains alt text, although please ensure alt text describes the destination page. 
             <span class='sa11y-bold'>Consider using the title of the page it links to as the alt text.</span>
             Does the alt text describe where the link takes you? 
             ${sa11yHr}
             Alt text: <span class='sa11y-bold'>${altText}</span>`,
 
-        anchorLinkAndAltMessage: (
-                altText
-            ) =>
+        anchorLinkAndAltMessage: (altText) =>
             `Image link contains <span class='sa11y-bold'>both alt text and surrounding link text.</span> If this image is decorative and is being used as a functional link to another page, consider marking the image as decorative or null - the surrounding link text should suffice. 
             ${sa11yHr}
             Alt text: <span class='sa11y-bold'>${altText}</span>`,
 
-        altTooLongMessage: (
-                altText,
-                altLength
-            ) =>
+        altTooLongMessage: (altText, altLength) =>
             `Alt text description is <span class='sa11y-bold'>too long</span>. Alt text should be concise, yet meaningful like a <em>tweet</em> (around 100 characters). 
             If this is a complex image or a graph, consider putting the long description of the image in the text below or an accordion component. 
             ${sa11yHr} 
@@ -368,12 +352,12 @@ const sa11yIM = {
     },
     labels: {
 
-        inputResetMessage: () =>
+        inputResetMessage: 
             `Reset buttons should <span class='sa11y-bold'>not</span> be used unless specifically needed because they are easy to activate by mistake.
             ${sa11yHr} 
             <span class='sa11y-bold'>Tip!</span> Learn why <a href='https://www.nngroup.com/articles/reset-and-cancel-buttons/' target='_blank'>Reset and Cancel buttons pose usability issues. ${sa11yNewTab}</a>`,
 
-        missingLabelMessage: () =>
+        missingLabelMessage: 
             `There is no label associated with this input. Please add an <span class='sa11y-kbd'>id</span> to this input, and add a matching <span class='sa11y-kbd'>for</span> attribute to the label.`,
 
         ariaLabelInputMessage: (ariaLabel) =>
@@ -386,30 +370,40 @@ const sa11yIM = {
             ${sa11yHr} 
             The ID for this input is: <span class='sa11y-bold'>id=&#34;${t}&#34;</span>`,
 
-        missingImageInputMessage: () => 
+        missingImageInputMessage: 
             `Image button is missing alt text. Please add alt text to provide an accessible name. For example: <em>Search</em> or <em>Submit</em>.`,
     },
 
-    QA: {
-        video: () =>
+    embeddedContent: {
+
+        video: 
             `Please ensure <span class='sa11y-bold'>all videos have closed captioning.</span> Providing captions for all audio and video content is a mandatory Level A requirement. Captions support people who are D/deaf or hard-of-hearing.`,
 
-        audio: () =>
+        audio: 
             `Please ensure to provide a <span class='sa11y-bold'>transcript for all podcasts.</span> Providing transcripts for audio content is a mandatory Level A requirement. Transcripts support people who are D/deaf or hard-of-hearing, but can benefit everyone. Consider placing the transcript below or within an accordion panel.`,
 
-        dataViz: () =>
+        dataViz: 
             `Data visualization widgets like this are often problematic for people who use a keyboard or screen reader to navigate, and can present significant difficulties for people who have low vision or colorblindness. It's recommended to provide the same information in an alternative (text or table) format below the widget.
             ${sa11yHr}
             Learn more about <a href='https://www.w3.org/WAI/tutorials/images/complex/' target='_blank'>complex images. ${sa11yNewTab}</a>`,
 
-        twitter: () =>
+        twitter: 
             `The default Twitter timeline may cause accessibility issues for people who use a keyboard to navigate. Secondly, the inline scrolling of the Twitter timeline may cause usability issues for mobile. It's recommended to add the following data attributes to the embed code. 
             ${sa11yHr}
             <span class='sa11y-bold'>It's recommended to:</span>
-                <ul>
-                    <li>Add <span class='sa11y-kbd'>data-tweet-limit=&#34;2&#34;</span> to limit the amount of tweets.</li>
-                    <li>Add <span class='sa11y-kbd'>data-chrome=&#34;nofooter noheader&#34;</span> to remove the widget's header and footer.</li>
-                </ul>`,
+            <ul>
+                <li>Add <span class='sa11y-kbd'>data-tweet-limit=&#34;2&#34;</span> to limit the amount of tweets.</li>
+                <li>Add <span class='sa11y-kbd'>data-chrome=&#34;nofooter noheader&#34;</span> to remove the widget's header and footer.</li>
+            </ul>`,
+
+        missingEmbedTitle: 
+            `Embedded content requires an accessible name that describes its contents. Please provide a unique <span class='sa11y-kbd'>title</span> or <span class='sa11y-kbd'>aria-label</span> attribute on the <span class='sa11y-kbd'>iframe</span> element. Learn more about <a href='https://dequeuniversity.com/tips/provide-iframe-titles' target='_blank'>iFrames. ${sa11yNewTab}</a>`,
+
+        generalEmbedWarning: 
+            `Unable to check embedded content. Please make sure that images have alt text, videos have captions, text has sufficient contrast, and interactive components are <a href='https://webaim.org/techniques/keyboard/' target='_blank'>keyboard accessible. ${sa11yNewTab}</a>`,
+    },
+
+    QA: {
 
         badLink: (el) =>
             `Bad link found. Link appears to point to a development environment. Make sure the link does not contain <em>dev</em> or <em>wp-admin</em> in the URL. 
@@ -437,31 +431,31 @@ const sa11yIM = {
             ${sa11yHr}
             Blockquotes should be used for quotes only. If this is intended to be a heading, change this blockquote to a semantic heading (e.g. Heading 2 or Heading 3).`,
 
-        uppercaseWarning: () =>
+        uppercaseWarning: 
             `Found all caps. Some screen readers may interpret all caps text as an acronym and will read each letter individually. Additionally, some people find all caps more difficult to read and it may give the appearance of SHOUTING.`,
 
         tables: {
 
-            missingHeadings: () =>
+            missingHeadings: 
                 `Missing table headers! Accessible tables need HTML markup that indicates header cells and data cells which defines their relationship. This information provides context to people who use assistive technology. Tables should be used for tabular data only.
                 ${sa11yHr}
                 Learn more about <a href='https://www.w3.org/WAI/tutorials/tables/' target='_blank'>accessible tables. ${sa11yNewTab}</a>`,
 
-            semanticHeading: () =>
+            semanticHeading: 
                 `Semantic headings such as Heading 2 or Heading 3 should only be used for sections of content; <span class='sa11y-bold'>not</span> in HTML tables. Indicate table headings using the <span class='sa11y-bold'>th</span> element instead.
                 ${sa11yHr}
                 Learn more about <a href='https://www.w3.org/WAI/tutorials/tables/' target='_blank'>accessible tables. ${sa11yNewTab}</a>`,
 
-            emptyHeading: () =>
+            emptyHeading: 
                 `Empty table header found! Table headers should <em>never</em> be empty. It is important to designate row and/or column headers to convey their relationship. This information provides context to people who use assistive technology. Please keep in mind that tables should be used for tabular data only.
                 ${sa11yHr}
                 Learn more about <a href='https://www.w3.org/WAI/tutorials/tables/' target='_blank'>accessible tables. ${sa11yNewTab}</a>`,
         },
 
-        badItalics: () =>
+        badItalics: 
             `Bold and italic tags have semantic meaning, and should <span class='sa11y-bold'>not</span> be used to highlight entire paragraphs. Bolded text should be used to provide strong <span class='sa11y-bold'>emphasis</span> on a word or phrase. Italics should be used to highlight proper names (i.e. book and article titles), foreign words, quotes. Long quotes should be formatted as a blockquote.`,
 
-        pageLanguageMessage: () =>
+        pageLanguageMessage: 
             `Page language not declared! Please <a href='https://www.w3.org/International/questions/qa-html-language-declarations' target='_blank'>declare language on HTML tag. ${sa11yNewTab}</a>`,
 
         shouldBeList: (firstPrefix) =>
@@ -469,16 +463,13 @@ const sa11yIM = {
             ${sa11yHr} 
             Make sure to use semantic lists by using the bullet or number formatting buttons instead. When using a semantic list, assistive technologies are able to convey information such as the total number of items and the relative position of each item in the list. Learn more about <a href='https://www.w3.org/WAI/tutorials/page-structure/content/#lists' target='_blank'>semantic lists. ${sa11yNewTab}</a>`,
 
-        announcementWarningMessage: () =>
+        announcementWarningMessage: 
             `More than one Announcement component found! The Announcement component should be used strategically and sparingly. It should be used to get attention or indicate that something is important. Misuse of this component makes it less effective or impactful. Secondly, this component is semantically labeled as an Announcement for people who use screen readers.`,
     },
 
     contrast: {
 
-        errorMessage: (
-                cratio,
-                nodetext
-            ) =>
+        errorMessage: (cratio, nodetext) =>
             `This text does not have enough contrast with the background. 
             The contrast ratio should be at least 4.5:1 for normal text and 3:1 for large text. 
             ${sa11yHr} 

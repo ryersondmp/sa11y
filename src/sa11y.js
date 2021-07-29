@@ -264,7 +264,7 @@ jQuery.noConflict();
             if (sa11yToggle.classList.contains("sa11y-on")) {
                 sa11yToggle.classList.toggle("loading-sa11y");
                 sa11yToggle.setAttribute("aria-expanded", "true");
-                setTimeout(this.checkAll, 500);
+                setTimeout(this.checkAll, 800);
             }
 
             //Escape key to shutdown.
@@ -656,6 +656,7 @@ jQuery.noConflict();
                 this.checkReadability();
             }
 
+            this.checkEmbeddedContent();
             this.checkQA();
 
             //Update panel
@@ -1136,7 +1137,6 @@ jQuery.noConflict();
         findElements = () => {
             let {
                 root,
-                readabilityRoot,
                 containerIgnore
             } = this;
             this.$p = root.find("p").not(containerIgnore);
@@ -1758,26 +1758,32 @@ jQuery.noConflict();
         };
 
         // ============================================================
-        // Rulesets: QA
+        // Rulesets: Embedded content.
         // ============================================================
-        checkQA = () => {
-            
-            const M = sa11yIM["QA"];
+        checkEmbeddedContent = () => {
+
+            const M = sa11yIM["embeddedContent"];
             const container = document.querySelector(sa11yCheckRoot);
             const containerexclusions = Array.from(container.querySelectorAll(this.containerIgnore));
-            
+
+            const $findiframes = Array.from(container.querySelectorAll("iframe, audio, video"));
+            const $iframes = $findiframes.filter($el => !containerexclusions.includes($el));
+
             //Warning: Video content.
-            const $findvideos = Array.from(container.querySelectorAll("video, iframe[src*='youtube.com'], iframe[src*='vimeo.com'], iframe[src*='yuja.com'], iframe[src*='panopto.com']"));
-            const $videos = $findvideos.filter($el => !containerexclusions.includes($el));
+            const $videos = $iframes.filter($el => $el.matches($sa11yVideos));
             $videos.forEach(($el) => {
-                this.warningCount++;
-                $el.classList.add("sa11y-warning-border");
-                $el.insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yWarning, M["video"]));
+                let track = $el.getElementsByTagName('TRACK');
+                if ($el.tagName === "VIDEO" && track.length) {
+
+                } else {
+                    this.warningCount++;
+                    $el.classList.add("sa11y-warning-border");
+                    $el.insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yWarning, M["video"]));
+                }
             });
 
             //Warning: Audio content.
-            const $findaudio = Array.from(container.querySelectorAll("audio, iframe[src*='soundcloud.com'], iframe[src*='simplecast.com'], iframe[src*='podbean.com'], iframe[src*='buzzsprout.com'], iframe[src*='blubrry.com'], iframe[src*='transistor.fm'], iframe[src*='fusebox.fm'], iframe[src*='libsyn.com']"));
-            const $audio = $findaudio.filter($el => !containerexclusions.includes($el));
+            const $audio = $iframes.filter($el => $el.matches($sa11yAudio));
             $audio.forEach(($el) => {
                 this.warningCount++;
                 $el.classList.add("sa11y-warning-border");
@@ -1785,8 +1791,7 @@ jQuery.noConflict();
             });
 
             //Warning: Data visualizations. 
-            const $finddataviz = Array.from(container.querySelectorAll("iframe[src*='datastudio.google.com'], iframe[src*='tableau']"));
-            const $dataviz = $finddataviz.filter($el => !containerexclusions.includes($el));
+            const $dataviz = $iframes.filter($el => $el.matches($sa11yDataViz));
             $dataviz.forEach(($el) => {
                 this.warningCount++;
                 $el.classList.add("sa11y-warning-border");
@@ -1794,8 +1799,7 @@ jQuery.noConflict();
             });
 
             //Warning: Twitter timelines that are too long.
-            const $findtwitter = Array.from(container.querySelectorAll("iframe.twitter-timeline"));
-            const $twitter = $findtwitter.filter($el => !containerexclusions.includes($el));
+            const $twitter = $iframes.filter($el => $el.matches($sa11yTwitter));
             $twitter.forEach(($el) => {
                 const tweets = $el.contentWindow.document.body.querySelectorAll('.timeline-TweetList-tweet');
                 if (tweets.length > 3) {
@@ -1804,6 +1808,68 @@ jQuery.noConflict();
                     $el.insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yWarning, M["twitter"]));
                 }
             });
+
+            //Error: iFrame is missing accessible name.
+            $iframes.forEach(($el) => {
+                if ($el.tagName === "VIDEO" || 
+                    $el.tagName === "AUDIO" || 
+                    $el.getAttribute("aria-hidden") === "true" || 
+                    $el.getAttribute("hidden") !== null || 
+                    $el.style.display == 'none' || 
+                    $el.getAttribute("role") === "presentation") 
+                    {
+                        //Ignore if hidden.
+                    }
+                else if ($el.getAttribute("title") === null || $el.getAttribute("title") === '') { 
+                    if ($el.getAttribute("aria-label") === null || $el.getAttribute("aria-label") === '') {
+                        if ($el.getAttribute("aria-labelledby") === null) {
+                            //Make sure red error border takes precedence 
+                            if ($el.classList.contains("sa11y-warning-border")) {
+                                $el.classList.remove("sa11y-warning-border");  
+                            }
+                            this.errorCount++;
+                            $el.classList.add("sa11y-error-border");
+                            $el.insertAdjacentHTML('beforebegin',
+                                Sa11yAnnotate(sa11yError, M["missingEmbedTitle"])
+                            );
+                        }
+                    }
+                }   
+                else {
+                    //Nothing
+                }
+            });
+
+            const $embeddedcontent = $iframes.filter($el => !$el.matches($sa11yAllEmbeddedContent));
+            $embeddedcontent.forEach($el => {
+                if ($el.tagName === "VIDEO" || 
+                    $el.tagName === "AUDIO" || 
+                    $el.getAttribute("aria-hidden") === "true" || 
+                    $el.getAttribute("hidden") !== null || 
+                    $el.style.display == 'none' || 
+                    $el.getAttribute("role") === "presentation" ||
+                    $el.getAttribute("tabindex") === "-1")
+                    {
+                        //Ignore if hidden.
+                    }
+                else {
+                    this.warningCount++;
+                    $el.classList.add("sa11y-warning-border");
+                    $el.insertAdjacentHTML('beforebegin',
+                        Sa11yAnnotate(sa11yWarning, M["generalEmbedWarning"])
+                    );
+                }
+            });
+        }
+
+        // ============================================================
+        // Rulesets: QA
+        // ============================================================
+        checkQA = () => {
+            
+            const M = sa11yIM["QA"];
+            const container = document.querySelector(sa11yCheckRoot);
+            const containerexclusions = Array.from(container.querySelectorAll(this.containerIgnore));
 
             //Error: Find all links pointing to development environment.
             const $findbadDevLinks = Array.from(container.querySelectorAll(sa11yLinksToFlag));
