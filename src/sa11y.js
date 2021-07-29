@@ -1978,45 +1978,49 @@ jQuery.noConflict();
             });
 
             // Warning: Detect fake headings.
-            this.$p.each((i, el) => {
-                let $el = $(el);
-                let brAfter = $el.html().indexOf("</strong><br>");
-                let brBefore = $el.html().indexOf("<br></strong>");
+            const $findp = Array.from(container.querySelectorAll("p"));
+            const $p = $findp.filter($el => !containerexclusions.includes($el));
+            $p.forEach(($el, i) => {
+                let brAfter = $el.innerHTML.indexOf("</strong><br>");
+                let brBefore = $el.innerHTML.indexOf("<br></strong>");
 
                 //Check paragraphs greater than x characters.
-                if ($el && $el.text().trim().length >= 300) {
-                    var firstChild = $el.contents()[0];
+                if ($el && $el.textContent.trim().length >= 300) {
+                    var firstChild = $el.firstChild;
 
                     //If paragraph starts with <strong> tag and ends with <br>.
-                    if ($(firstChild).is("strong") && (brBefore !== -1 || brAfter !== -1)) {
-                        let boldtext = $el.find("strong").text();
+                    if (firstChild.tagName === "STRONG" && (brBefore !== -1 || brAfter !== -1)) {
+                        let boldtext = firstChild.textContent;
 
                         if ($el && boldtext.length <= 120) {
-                            $el.find("strong").addClass("sa11y-fake-heading sa11y-error-heading");
-                            $el.before(
+                            firstChild.classList.add("sa11y-fake-heading", "sa11y-error-heading");
+                            $el.insertAdjacentHTML('beforebegin',
                                 Sa11yAnnotate(sa11yWarning, M["fakeHeading"](boldtext))
                             );
                         }
                     }
                 }
-
+            
                 // If paragraph only contains <p><strong>...</strong></p>.
-                let $fakeHeading = $el.filter(function () {
-                    return /^<(strong)>.+<\/\1>$/.test($.trim($(this).html()));
-                });
-
-                //Although only flag if it:
-                // 1) Has less than 120 characters (typical heading length).
-                // 2) The previous element is not a heading.
-                if ($fakeHeading.text().length <= 120 && $fakeHeading.prev(this.$h).length !== 1 && $fakeHeading.next(this.$p).length == 1) {
-                    let boldtext = $fakeHeading.text();
-                    $fakeHeading.addClass("sa11y-fake-heading sa11y-error-heading");
-                    $fakeHeading.find("strong").after(
-                        Sa11yAnnotate(sa11yWarning, M["fakeHeading"](boldtext), true)
-                    );
+                if (/^<(strong)>.+<\/\1>$/.test($el.innerHTML.trim())) {
+                    //Although only flag if it:
+                    // 1) Has less than 120 characters (typical heading length).
+                    // 2) The previous element is not a heading.
+                    const prevElement = $el.previousElementSibling;
+                    const tagName = "";
+                    if (prevElement !== null) {
+                        tagName = prevElement.tagName;
+                    }
+                    if ($el.textContent.length <= 120 && tagName.charAt(0) !== "H") {
+                        let boldtext = $el.textContent;
+                        $el.classList.add("sa11y-fake-heading", "sa11y-error-heading");
+                        $el.firstChild.insertAdjacentHTML("afterend",
+                            Sa11yAnnotate(sa11yWarning, M["fakeHeading"](boldtext), true)
+                        );
+                    }
                 }
-
             });
+            
             if ($(".sa11y-fake-heading").length > 0) {
                 this.warningCount++;
             }
