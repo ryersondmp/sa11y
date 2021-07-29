@@ -300,7 +300,7 @@ jQuery.noConflict();
 
             // Readability
             if (typeof sa11yReadabilityRoot !== "string" || $(sa11yReadabilityRoot).length === 0) {
-                sa11yReadabilityRoot = "main, [role='main']";
+                sa11yReadabilityRoot = "body";
             }
 
             // Combine default and custom ignores.
