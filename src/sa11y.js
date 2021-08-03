@@ -2093,15 +2093,13 @@ jQuery.noConflict();
             }
 
             //Example ruleset. Be creative.
-            let $checkAnnouncement = this.root
-                .find(".announcement-component")
-                .not(this.containerIgnore)
+            let $checkAnnouncement = Array.from(document.querySelectorAll(".announcement-component")).filter($el => !containerexclusions.includes($el));
             if ($checkAnnouncement.length > 1) {
                 this.warningCount++;
-                $(".announcement-component:gt(0)").addClass("sa11y-warning-border");
-                $(".announcement-component:gt(0)").before(
-                    Sa11yAnnotate(sa11yWarning, M["announcementWarningMessage"])
-                );
+                for (let i = 1; i < $checkAnnouncement.length; i++) {
+                    $checkAnnouncement[i].classList.add("sa11y-warning-border");
+                    $checkAnnouncement[i].insertAdjacentHTML("beforebegin", Sa11yAnnotate(sa11yWarning, M["announcementWarningMessage"]));
+                }
             }
         };
 
