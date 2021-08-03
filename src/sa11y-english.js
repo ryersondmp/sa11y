@@ -6,7 +6,7 @@
 let sa11yCheckRoot = ""; //Default: body. Use "main" for main content.
 
 //Readability configuration.
-let sa11yReadabilityRoot = ""; //Default: main, [role='main'].
+let sa11yReadabilityRoot = ""; //Default: body. Use "main" for main content.
 const sa11yReadabilityLang = "en"; //Supported: en = English, fr = French, es = Spanish
 
 //Inclusions and exclusions. Use commas to seperate classes or elements.

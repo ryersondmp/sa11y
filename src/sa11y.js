@@ -1058,8 +1058,12 @@ jQuery.noConflict();
 
                 //Calculate location of both visible and hidden buttons.
                 const $findButtons = document.querySelectorAll('.sa11y-btn');
+                const $alertPanel = document.getElementById("sa11y-panel-alert");
+                const $alertText = document.getElementById("sa11y-panel-alert-text");
+                const $alertPanelPreview = document.getElementById("sa11y-panel-alert-preview");
+                const $closeAlertToggle = document.getElementById("sa11y-close-alert");
 
-                /* To-do: Convert rest of Skip-to-issue button to vanilla Js.
+                //Mini function: Find visibible parent of hidden element.
                 const findVisibleParent = ($el, property, value) => {
                     while($el !== null) {
                         const style = window.getComputedStyle($el);
@@ -1071,59 +1075,58 @@ jQuery.noConflict();
                         }
                         return null;
                     };
-                
-                let test;
-                $findButtons.forEach(function ($el) {
-                    const overflowing = findVisibleParent($el, 'display', 'none');
-                    if (overflowing !== null) {
-                        test = overflowing.previousElementSibling;
-                    }       
-                });
-                console.log(test) */
 
-                let visiblePosition = $(".sa11y-btn").eq(sa11yBtnLocation).closest(":visible").offset().top - 50;
+                //Mini function: Calculate top of element. 
+                const offset = ($el) => {
+                    var rect = $el.getBoundingClientRect(),
+                    scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    return { top: rect.top + scrollTop}
+                }
+            
+                //'offsetTop' will always return 0 if element is hidden. We rely on offsetTop to determine if element is hidden, although we use 'getBoundingClientRect' to set the scroll position. 
+                let scrollPosition;
+                let offsetTopPosition = $findButtons[sa11yBtnLocation].offsetTop;
+                if (offsetTopPosition == 0) {
+                    let visiblePosition = findVisibleParent($findButtons[sa11yBtnLocation], 'display', 'none');
+                    scrollPosition = offset(visiblePosition.previousElementSibling).top - 50;
+                } else {
+                    scrollPosition = offset($findButtons[sa11yBtnLocation]).top - 50;
+                }
 
-                let hiddenPosition = $findButtons[sa11yBtnLocation].offsetTop;
-
-                //let hiddenPosition = $(".sa11y-btn").eq(sa11yBtnLocation).offset().top;
-
-                if (visiblePosition >= 1) {
+                //Scroll to element if offsetTop is less than or equal to 0.
+                if (offsetTopPosition >= 0) {
                     setTimeout(function() { 
                         window.scrollTo({
-                            top: visiblePosition,
+                            top: scrollPosition,
                             behavior: scrollBehavior
                         });
-                    },1);
+                    }, 1);
 
-                    $(".sa11y-btn:hidden").each(function () {
-                        $(this).parent().closest(":visible").addClass("sa11y-pulse-border");
+                    //Add pulsing border to visible parent of hidden element.
+                    $findButtons.forEach(function ($el) {
+                        const overflowing = findVisibleParent($el, 'display', 'none');
+                        if (overflowing !== null) {
+                            let hiddenparent = overflowing.previousElementSibling;
+                            hiddenparent.classList.add("sa11y-pulse-border")
+                        }       
                     });
-
                     $findButtons[sa11yBtnLocation].focus();
                 } 
                 else {
                     $findButtons[sa11yBtnLocation].focus();
                 }
 
-                const $alertPanel = document.getElementById("sa11y-panel-alert");
-                const $alertText = document.getElementById("sa11y-panel-alert-text");
-                const $alertPanelPreview = document.getElementById("sa11y-panel-alert-preview");
-                const $closeAlertToggle = document.getElementById("sa11y-close-alert");
-
-                //If location is less than 0 = hidden element (e.g. display:none);
-                if (hiddenPosition == 0) {
+                //Alert if element is hidden.
+                if (offsetTopPosition == 0) {
                     $alertPanel.classList.add("sa11y-active");
                     $alertText.textContent = `${sa11yPanelStatus["notVisibleAlert"]}`;
-
                     $alertPanelPreview.innerHTML = $findButtons[sa11yBtnLocation].getAttribute('data-tippy-content');
-                    
-                    $closeAlertToggle.focus();
-
-                } else if (hiddenPosition < 1) {
+                } else if (offsetTopPosition < 1) {
                     $alertPanel.classList.remove("sa11y-active");
-                    document.querySelectorAll('.sa11y-pulse-border').forEach((el) => el.classList.remove('sa11y-pulse-border'));
+                    document.querySelectorAll('.sa11y-pulse-border').forEach(($el) => $el.classList.remove('sa11y-pulse-border'));
                 }
 
+                //Reset index so it scrolls back to top of page.
                 sa11yBtnLocation += 1;
                 if (sa11yBtnLocation >= findSa11yBtn) {
                     sa11yBtnLocation = 0;
