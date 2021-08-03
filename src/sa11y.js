@@ -2035,11 +2035,13 @@ jQuery.noConflict();
                     return prefixDecrement[match];
                 });
             };
-            this.$p.each(function (i, el) {
-                let $first = $(el);
+
+            const $findp = Array.from(container.querySelectorAll("p"));
+            const $p = $findp.filter($el => !containerexclusions.includes($el));
+            $p.forEach((el, i) => {
                 let hit = false;
                 // Grab first two characters.
-                let firstPrefix = $first.text().substring(0, 2);
+                let firstPrefix = el.textContent.substring(0,2);
                 if (
                     firstPrefix.trim().length > 0 &&
                     firstPrefix !== activeMatch &&
@@ -2047,10 +2049,10 @@ jQuery.noConflict();
                 ) {
                     // We have a prefix and a possible hit
                     // Split p by carriage return if present and compare.
-                    let hasBreak = $first.html().indexOf("<br>");
+                    let hasBreak = el.innerHTML.indexOf("<br>");
                     if (hasBreak !== -1) {
-                        let subParagraph = $first
-                            .html()
+                        let subParagraph = el
+                            .innerHTML
                             .substring(hasBreak + 4)
                             .trim();
                         let subPrefix = subParagraph.substring(0, 2);
@@ -2063,7 +2065,7 @@ jQuery.noConflict();
                         let $second = $(el).next("p");
                         if ($second) {
                             let secondPrefix = decrement(
-                                $first.next().text().substring(0, 2)
+                                el.nextElementSibling.textContent.substring(0, 2)
                             );
                             if (firstPrefix === secondPrefix) {
                                 hit = true;
@@ -2072,10 +2074,8 @@ jQuery.noConflict();
                     }
                     if (hit) {
                         this.warningCount++;
-                        $first.before(
-                            Sa11yAnnotate(sa11yWarning, M["shouldBeList"](firstPrefix))
-                        );
-                        $first.addClass("sa11y-fake-list");
+                        el.insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yWarning, M["shouldBeList"](firstPrefix)), false, true);
+                        el.classList.add("sa11y-fake-list");
                         activeMatch = firstPrefix;
                     } else {
                         activeMatch = "";
