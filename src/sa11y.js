@@ -386,27 +386,29 @@ jQuery.noConflict();
 
             //Helper: Compute alt text on images within a text node.
             this.computeTextNodeWithImage = function ($el) {
+                $el = $el.get(0); //Remove when calling function no longer uses jQuery
+                const imgArray = Array.from($el.querySelectorAll("img"));
                 let returnText = "";
                 //No image, has text.
-                if ($el.find("img").length === 0 && $el.text().trim().length > 1) {
-                    returnText = $el.text().trim();
+                if (imgArray.length === 0 && $el.textContent.trim().length > 1) {
+                    returnText = $el.textContent.trim();
                 } 
                 //Has image, no text.
-                else if ($el.find("img").length && $el.text().trim().length === 0) {
-                    let imgalt = $el.find("img").attr("alt");
+                else if (imgArray.length && $el.textContent.trim().length === 0) {
+                    let imgalt = imgArray[0].getAttribute("alt");
                     if (imgalt == undefined || imgalt == " " || imgalt == "") {
                         returnText = " ";
-                    } else if ($el.find("img").attr("alt") !== undefined) {
+                    } else if (imgalt !== undefined) {
                         returnText = imgalt;
                     }
                 } 
                 //Has image and text. 
                 //To-do: This is a hack? Any way to do this better?
-                else if ($el.find("img").length && $el.text().trim().length) {    
-                    $el.find("img").each(function(){
-                       $(this).clone().insertAfter($(this)).replaceWith(" <span class='sa11y-clone-image-text' aria-hidden='true'>" + $(this).attr('alt') + "</span> ");
+                else if (imgArray.length && $el.textContent.trim().length) {
+                    imgArray.forEach(element => {
+                        element.insertAdjacentHTML("afterend", " <span class='sa11y-clone-image-text' aria-hidden='true'>" + imgArray[0].getAttribute("alt") + "</span> ")
                     });
-                    returnText = $el.text().trim();
+                    returnText = $el.textContent.trim();
                 }
                 return returnText;
             }
