@@ -386,7 +386,6 @@ jQuery.noConflict();
 
             //Helper: Compute alt text on images within a text node.
             this.computeTextNodeWithImage = function ($el) {
-                $el = $el.get(0); //Remove when calling function no longer uses jQuery
                 const imgArray = Array.from($el.querySelectorAll("img"));
                 let returnText = "";
                 //No image, has text.
@@ -1155,99 +1154,103 @@ jQuery.noConflict();
         // ============================================================
         checkHeaders = () => {
             let prevLevel;
-            this.$h.each((i, el) => {
-                let $el = $(el);
-                let text = this.computeTextNodeWithImage($el);
+            const headingArray = Array.from(this.$h); //remove this when findElements is converted to pure js (this.$h should be an array of headings and not jQuery object)
+
+            headingArray.forEach((el, i) => {
+                let text = this.computeTextNodeWithImage(el);
                 let htext = this.sanitizeForHTML(text);
                 let level;
 
-                if ($el.attr("aria-level")) {
-                    level = +$el.attr("aria-level");
+                if (el.getAttribute("aria-level")) {
+                    level = +el.getAttribute("aria-level");
                 } else {
-                    level = +$el[0].tagName.slice(1);
+                    level = +el.tagName.slice(1);
                 }
 
-                let headingLength = $el.text().trim().length;
+                let headingLength = el.textContent.trim().length;
                 let error = null;
                 let warning = null;
 
                 if (level - prevLevel > 1 && i !== 0) {
                     error = sa11yIM["headings"]["nonConsecutiveHeadingLevel"](prevLevel, level);
-                } else if ($el.text().trim().length == 0) {
-                    if ($el.find("img").length) {
-                        const imgalt = $el.find("img").attr("alt");
+                } else if (el.textContent.trim().length == 0) {
+                    if (el.querySelectorAll("img").length) {
+                        const imgalt = el.querySelector("img").getAttribute("alt");
                         if (imgalt == undefined || imgalt == " " || imgalt == "") {
                             error = sa11yIM["headings"]["emptyHeadingWithImage"](level)
-                            $el.addClass("sa11y-error-text");
+                            el.classList.add("sa11y-error-text");
                         }
                     } else {
                         error = sa11yIM["headings"]["emptyHeading"](level);
-                        $el.addClass("sa11y-error-text");
+                        el.classList.add("sa11y-error-text");
                     }
                 } else if (i === 0 && level !== 1 && level !== 2) {
                     error = sa11yIM["headings"]["firstHeading"];
-                } else if ($el.text().trim().length > 170) {
+                } else if (el.textContent.trim().length > 170) {
                     warning = sa11yIM["headings"]["longHeading"](headingLength);
                 }
 
                 prevLevel = level;
 
                 let li =
-                    `<li class='sa11y-outline-${level}'>
-                <span class='sa11y-badge'>${level}</span> 
-                <span class='sa11y-outline-list-item'>${htext}</span>
-            </li>`;
+                        `<li class='sa11y-outline-${level}'>
+                    <span class='sa11y-badge'>${level}</span> 
+                    <span class='sa11y-outline-list-item'>${htext}</span>
+                </li>`;
+    
+                    let liError =
+                        `<li class='sa11y-outline-${level}'>
+                    <span class='sa11y-badge sa11y-error-badge'>
+                    <span aria-hidden='true'>&#10007;</span>
+                    <span class='sa11y-visually-hidden'>${sa11yError}</span> ${level}</span> 
+                    <span class='sa11y-outline-list-item sa11y-red-text sa11y-bold'>${htext}</span>
+                </li>`;
+    
+                    let liWarning =
+                        `<li class='sa11y-outline-${level}'>
+                    <span class='sa11y-badge sa11y-warning-badge'>
+                    <span aria-hidden='true'>&#x3f;</span>
+                    <span class='sa11y-visually-hidden'>${sa11yWarning}</span> ${level}</span> 
+                    <span class='sa11y-outline-list-item sa11y-yellow-text sa11y-bold'>${htext}</span>
+                </li>`;
 
-                let liError =
-                    `<li class='sa11y-outline-${level}'>
-                <span class='sa11y-badge sa11y-error-badge'>
-                <span aria-hidden='true'>&#10007;</span>
-                <span class='sa11y-visually-hidden'>${sa11yError}</span> ${level}</span> 
-                <span class='sa11y-outline-list-item sa11y-red-text sa11y-bold'>${htext}</span>
-            </li>`;
+                let ignoreArray = [];
+                if (sa11yOutlineIgnore) {
+                    ignoreArray = Array.from(document.querySelectorAll(sa11yOutlineIgnore));
+                }
 
-                let liWarning =
-                    `<li class='sa11y-outline-${level}'>
-                <span class='sa11y-badge sa11y-warning-badge'>
-                <span aria-hidden='true'>&#x3f;</span>
-                <span class='sa11y-visually-hidden'>${sa11yWarning}</span> ${level}</span> 
-                <span class='sa11y-outline-list-item sa11y-yellow-text sa11y-bold'>${htext}</span>
-            </li>`;
-
-                if ($el.not(sa11yOutlineIgnore).length !== 0) {
+                if (!ignoreArray.includes(el)) {
 
                     //Append heading labels.
-                    $el.not(sa11yOutlineIgnore).append(
-                        `<span class='sa11y-heading-label'>H${level}</span>`
-                    );
+                    el.insertAdjacentHTML("beforeend", `<span class='sa11y-heading-label'>H${level}</span>`);
 
                     //Heading errors
-                    if (error != null && $el.closest("a").length > 0) {
+                    if (error != null && el.closest("a") != null) {
                         this.errorCount++;
-                        $el.addClass("sa11y-error-heading");
-                        $el.closest("a").after(Sa11yAnnotate(sa11yError, error, true));
-                        $("#sa11y-outline-list").append(liError);
+                        el.classList.add("sa11y-error-heading");
+                        el.closest("a").insertAdjacentHTML("afterend", Sa11yAnnotate(sa11yError, error, true));
+                        document.querySelector("#sa11y-outline-list").insertAdjacentHTML("beforeend", liError);
                     } else if (error != null) {
                         this.errorCount++;
-                        $el.addClass("sa11y-error-heading");
-                        $el.before(Sa11yAnnotate(sa11yError, error));
-                        $("#sa11y-outline-list").append(liError);
+                        el.classList.add("sa11y-error-heading");
+                        el.insertAdjacentHTML("beforebegin", Sa11yAnnotate(sa11yError, error));
+                        document.querySelector("#sa11y-outline-list").insertAdjacentHTML("beforeend", liError);
                     }
 
                     //Heading warnings
-                    else if (warning != null && $el.closest("a").length > 0) {
+                    else if (warning != null && el.closest("a") != null) {
                         this.warningCount++;
-                        $el.closest("a").after(Sa11yAnnotate(sa11yWarning, warning));
-                        $("#sa11y-outline-list").append(liWarning);
+                        el.closest("a").insertAdjacentHTML("afterend", Sa11yAnnotate(sa11yWarning, warning));
+                        document.querySelector("#sa11y-outline-list").insertAdjacentHTML("beforeend", liWarning);
                     } else if (warning != null) {
                         this.warningCount++;
-                        $el.before(Sa11yAnnotate(sa11yWarning, warning));
-                        $("#sa11y-outline-list").append(liWarning);
+                        el.insertAdjacentHTML("beforebegin", Sa11yAnnotate(sa11yWarning, warning));
+                        document.querySelector("#sa11y-outline-list").insertAdjacentHTML("beforeend", liWarning);
                     }
 
                     //Not an error or warning
                     else if (error == null || warning == null) {
-                        $("#sa11y-outline-list").append(li);
+                        document.querySelector("#sa11y-outline-list").insertAdjacentHTML("beforeend", li);
                     }
                 }
             });
