@@ -414,36 +414,45 @@ jQuery.noConflict();
 
             //Helper: Handle ARIA labels for Link Text module.
             this.computeAriaLabel = function ($el) {
-                               
-                if ($el.is("[aria-label]")) {
-                    return $el.attr("aria-label");
+                const el = $el.get(0); //remove when calling functions are converted
+                
+                if (el.matches("[aria-label]")) {
+                    return el.getAttribute("aria-label");
                 } 
-                else if ($el.is("[aria-labelledby]")) {
-                    let target = $el.attr("aria-labelledby").split(/\s+/);
+                else if (el.matches("[aria-labelledby]")) {
+                    let target = el.getAttribute("aria-labelledby").split(/\s+/);
                     if (target.length > 0) {
                         let returnText = "";
-                        $.each($(target), function (i, el) {
-                            returnText += $("#" + el).ignore("span.sa11y-heading-label").text() + " ";
-                        });
+                        target.forEach((x) => {
+                            if (document.querySelector("#" + x) === null) {
+                                returnText += " ";
+                            } else {
+                                returnText += document.querySelector("#" + x).firstChild.nodeValue + " ";
+                            }
+                        })
                         return returnText;
                     } else {
                         return "";
                     }
                 } 
                 //Children of element.
-                else if ($el.children().is("[aria-label]")) {
-                    return $el.children().attr("aria-label");
+                else if (Array.from(el.children).filter(x => x.matches("[aria-label]")).length > 0) {
+                    return Array.from(el.children)[0].getAttribute("aria-label");
                 } 
-                else if ($el.children().is("[title]")) {
-                    return $el.children().attr("title");
+                else if (Array.from(el.children).filter(x => x.matches("[title]")).length > 0) {
+                    return Array.from(el.children)[0].getAttribute("title");
                 }
-                else if ($el.children().is("[aria-labelledby]")) {
-                    let target = $el.children().attr("aria-labelledby").split(/\s+/);
+                else if (Array.from(el.children).filter(x => x.matches("[aria-labelledby]")).length > 0) {
+                    let target = Array.from(el.children)[0].getAttribute("aria-labelledby").split(/\s+/);
                     if (target.length > 0) {
                         let returnText = "";
-                        $.each($(target), function (i, el) {
-                            returnText += $("#" + el).ignore("span.sa11y-heading-label").text() + " ";
-                        });
+                        target.forEach((x) => {
+                            if (document.querySelector("#" + x) === null) {
+                                returnText += " ";
+                            } else {
+                                returnText += document.querySelector("#" + x).firstChild.nodeValue + " ";
+                            }
+                        })
                         return returnText;
                     } else {
                         return "";
@@ -1139,14 +1148,21 @@ jQuery.noConflict();
         // Finds all elements and caches them
         // ============================================================
         findElements = () => {
-            let {
-                root,
-                containerIgnore
-            } = this;
-            this.$p = root.find("p").not(containerIgnore);
-            this.$h = root
-                .find("h1, h2, h3, h4, h5, h6, [role='heading'][aria-level]")
-                .not(containerIgnore);
+            const allHeadings = Array.from(document.querySelectorAll("h1, h2, h3, h4, h5, h6, [role='heading'][aria-level]"));
+            const allPs = Array.from(document.querySelectorAll("p"));
+
+            const containerExclusions = Array.from(document.querySelectorAll(this.containerIgnore));
+
+            this.$h = allHeadings.filter(heading => !containerExclusions.includes(heading))
+            this.$p = allPs.filter(p => !containerExclusions.includes(p))
+            // let {
+            //     root,
+            //     containerIgnore
+            // } = this;
+            // this.$p = root.find("p").not(containerIgnore);
+            // this.$h = root
+            //     .find("h1, h2, h3, h4, h5, h6, [role='heading'][aria-level]")
+            //     .not(containerIgnore);
         };
 
         // ============================================================
@@ -1154,9 +1170,8 @@ jQuery.noConflict();
         // ============================================================
         checkHeaders = () => {
             let prevLevel;
-            const headingArray = Array.from(this.$h); //remove this when findElements is converted to pure js (this.$h should be an array of headings and not jQuery object)
 
-            headingArray.forEach((el, i) => {
+            this.$h.forEach((el, i) => {
                 let text = this.computeTextNodeWithImage(el);
                 let htext = this.sanitizeForHTML(text);
                 let level;
@@ -2047,7 +2062,7 @@ jQuery.noConflict();
                     return prefixDecrement[match];
                 });
             };
-            this.$p.each(function (i, el) {
+            this.$p.forEach(function (el, i) {
                 let $first = $(el);
                 let hit = false;
                 // Grab first two characters.
