@@ -386,63 +386,73 @@ jQuery.noConflict();
 
             //Helper: Compute alt text on images within a text node.
             this.computeTextNodeWithImage = function ($el) {
+                const imgArray = Array.from($el.querySelectorAll("img"));
                 let returnText = "";
                 //No image, has text.
-                if ($el.find("img").length === 0 && $el.text().trim().length > 1) {
-                    returnText = $el.text().trim();
+                if (imgArray.length === 0 && $el.textContent.trim().length > 1) {
+                    returnText = $el.textContent.trim();
                 } 
                 //Has image, no text.
-                else if ($el.find("img").length && $el.text().trim().length === 0) {
-                    let imgalt = $el.find("img").attr("alt");
+                else if (imgArray.length && $el.textContent.trim().length === 0) {
+                    let imgalt = imgArray[0].getAttribute("alt");
                     if (imgalt == undefined || imgalt == " " || imgalt == "") {
                         returnText = " ";
-                    } else if ($el.find("img").attr("alt") !== undefined) {
+                    } else if (imgalt !== undefined) {
                         returnText = imgalt;
                     }
                 } 
                 //Has image and text. 
                 //To-do: This is a hack? Any way to do this better?
-                else if ($el.find("img").length && $el.text().trim().length) {    
-                    $el.find("img").each(function(){
-                       $(this).clone().insertAfter($(this)).replaceWith(" <span class='sa11y-clone-image-text' aria-hidden='true'>" + $(this).attr('alt') + "</span> ");
+                else if (imgArray.length && $el.textContent.trim().length) {
+                    imgArray.forEach(element => {
+                        element.insertAdjacentHTML("afterend", " <span class='sa11y-clone-image-text' aria-hidden='true'>" + imgArray[0].getAttribute("alt") + "</span> ")
                     });
-                    returnText = $el.text().trim();
+                    returnText = $el.textContent.trim();
                 }
                 return returnText;
             }
 
             //Helper: Handle ARIA labels for Link Text module.
             this.computeAriaLabel = function ($el) {
-                               
-                if ($el.is("[aria-label]")) {
-                    return $el.attr("aria-label");
+                const el = $el.get(0); //remove when calling functions are converted
+                
+                if (el.matches("[aria-label]")) {
+                    return el.getAttribute("aria-label");
                 } 
-                else if ($el.is("[aria-labelledby]")) {
-                    let target = $el.attr("aria-labelledby").split(/\s+/);
+                else if (el.matches("[aria-labelledby]")) {
+                    let target = el.getAttribute("aria-labelledby").split(/\s+/);
                     if (target.length > 0) {
                         let returnText = "";
-                        $.each($(target), function (i, el) {
-                            returnText += $("#" + el).ignore("span.sa11y-heading-label").text() + " ";
-                        });
+                        target.forEach((x) => {
+                            if (document.querySelector("#" + x) === null) {
+                                returnText += " ";
+                            } else {
+                                returnText += document.querySelector("#" + x).firstChild.nodeValue + " ";
+                            }
+                        })
                         return returnText;
                     } else {
                         return "";
                     }
                 } 
                 //Children of element.
-                else if ($el.children().is("[aria-label]")) {
-                    return $el.children().attr("aria-label");
+                else if (Array.from(el.children).filter(x => x.matches("[aria-label]")).length > 0) {
+                    return Array.from(el.children)[0].getAttribute("aria-label");
                 } 
-                else if ($el.children().is("[title]")) {
-                    return $el.children().attr("title");
+                else if (Array.from(el.children).filter(x => x.matches("[title]")).length > 0) {
+                    return Array.from(el.children)[0].getAttribute("title");
                 }
-                else if ($el.children().is("[aria-labelledby]")) {
-                    let target = $el.children().attr("aria-labelledby").split(/\s+/);
+                else if (Array.from(el.children).filter(x => x.matches("[aria-labelledby]")).length > 0) {
+                    let target = Array.from(el.children)[0].getAttribute("aria-labelledby").split(/\s+/);
                     if (target.length > 0) {
                         let returnText = "";
-                        $.each($(target), function (i, el) {
-                            returnText += $("#" + el).ignore("span.sa11y-heading-label").text() + " ";
-                        });
+                        target.forEach((x) => {
+                            if (document.querySelector("#" + x) === null) {
+                                returnText += " ";
+                            } else {
+                                returnText += document.querySelector("#" + x).firstChild.nodeValue + " ";
+                            }
+                        })
                         return returnText;
                     } else {
                         return "";
@@ -1138,14 +1148,21 @@ jQuery.noConflict();
         // Finds all elements and caches them
         // ============================================================
         findElements = () => {
-            let {
-                root,
-                containerIgnore
-            } = this;
-            this.$p = root.find("p").not(containerIgnore);
-            this.$h = root
-                .find("h1, h2, h3, h4, h5, h6, [role='heading'][aria-level]")
-                .not(containerIgnore);
+            const allHeadings = Array.from(document.querySelectorAll("h1, h2, h3, h4, h5, h6, [role='heading'][aria-level]"));
+            const allPs = Array.from(document.querySelectorAll("p"));
+
+            const containerExclusions = Array.from(document.querySelectorAll(this.containerIgnore));
+
+            this.$h = allHeadings.filter(heading => !containerExclusions.includes(heading))
+            this.$p = allPs.filter(p => !containerExclusions.includes(p))
+            // let {
+            //     root,
+            //     containerIgnore
+            // } = this;
+            // this.$p = root.find("p").not(containerIgnore);
+            // this.$h = root
+            //     .find("h1, h2, h3, h4, h5, h6, [role='heading'][aria-level]")
+            //     .not(containerIgnore);
         };
 
         // ============================================================
@@ -1153,99 +1170,102 @@ jQuery.noConflict();
         // ============================================================
         checkHeaders = () => {
             let prevLevel;
-            this.$h.each((i, el) => {
-                let $el = $(el);
-                let text = this.computeTextNodeWithImage($el);
+
+            this.$h.forEach((el, i) => {
+                let text = this.computeTextNodeWithImage(el);
                 let htext = this.sanitizeForHTML(text);
                 let level;
 
-                if ($el.attr("aria-level")) {
-                    level = +$el.attr("aria-level");
+                if (el.getAttribute("aria-level")) {
+                    level = +el.getAttribute("aria-level");
                 } else {
-                    level = +$el[0].tagName.slice(1);
+                    level = +el.tagName.slice(1);
                 }
 
-                let headingLength = $el.text().trim().length;
+                let headingLength = el.textContent.trim().length;
                 let error = null;
                 let warning = null;
 
                 if (level - prevLevel > 1 && i !== 0) {
                     error = sa11yIM["headings"]["nonConsecutiveHeadingLevel"](prevLevel, level);
-                } else if ($el.text().trim().length == 0) {
-                    if ($el.find("img").length) {
-                        const imgalt = $el.find("img").attr("alt");
+                } else if (el.textContent.trim().length == 0) {
+                    if (el.querySelectorAll("img").length) {
+                        const imgalt = el.querySelector("img").getAttribute("alt");
                         if (imgalt == undefined || imgalt == " " || imgalt == "") {
                             error = sa11yIM["headings"]["emptyHeadingWithImage"](level)
-                            $el.addClass("sa11y-error-text");
+                            el.classList.add("sa11y-error-text");
                         }
                     } else {
                         error = sa11yIM["headings"]["emptyHeading"](level);
-                        $el.addClass("sa11y-error-text");
+                        el.classList.add("sa11y-error-text");
                     }
                 } else if (i === 0 && level !== 1 && level !== 2) {
                     error = sa11yIM["headings"]["firstHeading"];
-                } else if ($el.text().trim().length > 170) {
+                } else if (el.textContent.trim().length > 170) {
                     warning = sa11yIM["headings"]["longHeading"](headingLength);
                 }
 
                 prevLevel = level;
 
                 let li =
-                    `<li class='sa11y-outline-${level}'>
-                <span class='sa11y-badge'>${level}</span> 
-                <span class='sa11y-outline-list-item'>${htext}</span>
-            </li>`;
+                        `<li class='sa11y-outline-${level}'>
+                    <span class='sa11y-badge'>${level}</span> 
+                    <span class='sa11y-outline-list-item'>${htext}</span>
+                </li>`;
+    
+                    let liError =
+                        `<li class='sa11y-outline-${level}'>
+                    <span class='sa11y-badge sa11y-error-badge'>
+                    <span aria-hidden='true'>&#10007;</span>
+                    <span class='sa11y-visually-hidden'>${sa11yError}</span> ${level}</span> 
+                    <span class='sa11y-outline-list-item sa11y-red-text sa11y-bold'>${htext}</span>
+                </li>`;
+    
+                    let liWarning =
+                        `<li class='sa11y-outline-${level}'>
+                    <span class='sa11y-badge sa11y-warning-badge'>
+                    <span aria-hidden='true'>&#x3f;</span>
+                    <span class='sa11y-visually-hidden'>${sa11yWarning}</span> ${level}</span> 
+                    <span class='sa11y-outline-list-item sa11y-yellow-text sa11y-bold'>${htext}</span>
+                </li>`;
 
-                let liError =
-                    `<li class='sa11y-outline-${level}'>
-                <span class='sa11y-badge sa11y-error-badge'>
-                <span aria-hidden='true'>&#10007;</span>
-                <span class='sa11y-visually-hidden'>${sa11yError}</span> ${level}</span> 
-                <span class='sa11y-outline-list-item sa11y-red-text sa11y-bold'>${htext}</span>
-            </li>`;
+                let ignoreArray = [];
+                if (sa11yOutlineIgnore) {
+                    ignoreArray = Array.from(document.querySelectorAll(sa11yOutlineIgnore));
+                }
 
-                let liWarning =
-                    `<li class='sa11y-outline-${level}'>
-                <span class='sa11y-badge sa11y-warning-badge'>
-                <span aria-hidden='true'>&#x3f;</span>
-                <span class='sa11y-visually-hidden'>${sa11yWarning}</span> ${level}</span> 
-                <span class='sa11y-outline-list-item sa11y-yellow-text sa11y-bold'>${htext}</span>
-            </li>`;
-
-                if ($el.not(sa11yOutlineIgnore).length !== 0) {
+                if (!ignoreArray.includes(el)) {
 
                     //Append heading labels.
-                    $el.not(sa11yOutlineIgnore).append(
-                        `<span class='sa11y-heading-label'>H${level}</span>`
-                    );
+                    el.insertAdjacentHTML("beforeend", `<span class='sa11y-heading-label'>H${level}</span>`);
 
                     //Heading errors
-                    if (error != null && $el.closest("a").length > 0) {
+                    if (error != null && el.closest("a") != null) {
                         this.errorCount++;
-                        $el.addClass("sa11y-error-heading");
-                        $el.closest("a").after(Sa11yAnnotate(sa11yError, error, true));
-                        $("#sa11y-outline-list").append(liError);
+                        el.classList.add("sa11y-error-heading");
+                        el.closest("a").insertAdjacentHTML("afterend", Sa11yAnnotate(sa11yError, error, true));
+                        document.querySelector("#sa11y-outline-list").insertAdjacentHTML("beforeend", liError);
                     } else if (error != null) {
                         this.errorCount++;
-                        $el.addClass("sa11y-error-heading");
-                        $el.before(Sa11yAnnotate(sa11yError, error));
-                        $("#sa11y-outline-list").append(liError);
+                        el.classList.add("sa11y-error-heading");
+                        el.insertAdjacentHTML("beforebegin", Sa11yAnnotate(sa11yError, error));
+                        document.querySelector("#sa11y-outline-list").insertAdjacentHTML("beforeend", liError);
                     }
 
                     //Heading warnings
-                    else if (warning != null && $el.closest("a").length > 0) {
+                    else if (warning != null && el.closest("a") != null) {
                         this.warningCount++;
-                        $el.closest("a").after(Sa11yAnnotate(sa11yWarning, warning));
-                        $("#sa11y-outline-list").append(liWarning);
+                        el.closest("a").insertAdjacentHTML("afterend", Sa11yAnnotate(sa11yWarning, warning));
+                        document.querySelector("#sa11y-outline-list").insertAdjacentHTML("beforeend", liWarning);
                     } else if (warning != null) {
                         this.warningCount++;
-                        $el.before(Sa11yAnnotate(sa11yWarning, warning));
-                        $("#sa11y-outline-list").append(liWarning);
+                        el.insertAdjacentHTML("beforebegin", Sa11yAnnotate(sa11yWarning, warning));
+                        document.querySelector("#sa11y-outline-list").insertAdjacentHTML("beforeend", liWarning);
                     }
 
                     //Not an error or warning
                     else if (error == null || warning == null) {
-                        $("#sa11y-outline-list").append(li);
+                        document.querySelector("#sa11y-outline-list").insertAdjacentHTML("beforeend", li);
                     }
                 }
             });
@@ -2042,7 +2062,7 @@ jQuery.noConflict();
                     return prefixDecrement[match];
                 });
             };
-            this.$p.each(function (i, el) {
+            this.$p.forEach(function (el, i) {
                 let $first = $(el);
                 let hit = false;
                 // Grab first two characters.
