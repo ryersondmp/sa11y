@@ -1148,29 +1148,76 @@ jQuery.noConflict();
         // Finds all elements and caches them
         // ============================================================
         findElements = () => {
-            const allHeadings = Array.from(document.querySelectorAll("h1, h2, h3, h4, h5, h6, [role='heading'][aria-level]"));
-            const allPs = Array.from(document.querySelectorAll("p"));
-
+            const container = document.querySelector(sa11yCheckRoot);
             const containerExclusions = Array.from(document.querySelectorAll(this.containerIgnore));
 
-            this.$h = allHeadings.filter(heading => !containerExclusions.includes(heading))
-            this.$p = allPs.filter(p => !containerExclusions.includes(p))
-            // let {
-            //     root,
-            //     containerIgnore
-            // } = this;
-            // this.$p = root.find("p").not(containerIgnore);
-            // this.$h = root
-            //     .find("h1, h2, h3, h4, h5, h6, [role='heading'][aria-level]")
-            //     .not(containerIgnore);
+            //Contrast
+            const $findcontrast = Array.from(container.querySelectorAll("* > :not(.sa11y-heading-label)"));
+            this.$contrast = $findcontrast.filter($el => !containerExclusions.includes($el));
+
+            //Readability
+            const $findreadability = Array.from(container.querySelectorAll("p, li"));
+            this.$readability = $findreadability.filter($el => !containerExclusions.includes($el));
+
+            //Headings
+            const allHeadings = Array.from(document.querySelectorAll("h1, h2, h3, h4, h5, h6, [role='heading'][aria-level]"));
+            this.$h = allHeadings.filter(heading => !containerExclusions.includes(heading));
+
+            const allH1 = Array.from(document.querySelectorAll("h1, [role='heading'][aria-level='1']"));
+            this.$h1 = allH1.filter(heading => !containerExclusions.includes(heading));
+
+            //Links
+            const $findlinks = Array.from(container.querySelectorAll("a[href]"));
+            this.$links = $findlinks.filter($el => !containerExclusions.includes($el));
+
+            //Inputs
+            const $findinputs = Array.from(container.querySelectorAll("input, select, textarea"));
+            this.$inputs = $findinputs.filter($el => !containerExclusions.includes($el));
+
+            //Images
+            const images = Array.from(container.querySelectorAll("img"));
+            const excludeimages = Array.from(container.querySelectorAll(this.imageIgnore));        
+            this.$img = images.filter($el => !excludeimages.includes($el));
+
+            //iFrames
+            const $findiframes = Array.from(container.querySelectorAll("iframe, audio, video"));
+            this.$iframes = $findiframes.filter($el => !containerExclusions.includes($el));
+            this.$videos = this.$iframes.filter($el => $el.matches($sa11yVideos));
+            this.$audio = this.$iframes.filter($el => $el.matches($sa11yAudio));
+            this.$dataviz = this.$iframes.filter($el => $el.matches($sa11yDataViz));
+            this.$twitter = this.$iframes.filter($el => $el.matches($sa11yTwitter));
+            this.$embeddedcontent = this.$iframes.filter($el => !$el.matches($sa11yAllEmbeddedContent));
+
+            //QA
+            const $findstrongitalics = Array.from(container.querySelectorAll("strong, em"));
+            this.$strongitalics = $findstrongitalics.filter($el => !containerExclusions.includes($el));
+
+            const $findbadDevLinks = Array.from(container.querySelectorAll(sa11yLinksToFlag));
+            this.$badDevLinks = $findbadDevLinks.filter($el => !containerExclusions.includes($el));
+
+            const $findPDFs = Array.from(container.querySelectorAll("a[href$='.pdf']"));
+            this.$checkPDF = $findPDFs.filter($el => !containerExclusions.includes($el));
+
+            const $findtables = Array.from(container.querySelectorAll("table:not([role='presentation'])"));
+            this.$tables = $findtables.filter($el => !containerExclusions.includes($el));
+
+            this.lang = document.querySelector("html").getAttribute("lang");
+
+            const $findblockquotes = Array.from(container.querySelectorAll("blockquote"));
+            this.$blockquotes = $findblockquotes.filter($el => !containerExclusions.includes($el));
+
+            const $findp = Array.from(container.querySelectorAll("p"));
+            this.$p = $findp.filter($el => !containerExclusions.includes($el));
+
+            const $findallcaps = Array.from(container.querySelectorAll("h1, h2, h3, h4, h5, h6, p, li:not([class^='sa11y']), blockquote"));
+            this.$allcaps = $findallcaps.filter($el => !containerExclusions.includes($el));
         };
 
         // ============================================================
         // Rulesets: Check Headings
         // ============================================================
-        checkHeaders = () => {
+        checkHeaders = () => { 
             let prevLevel;
-
             this.$h.forEach((el, i) => {
                 let text = this.computeTextNodeWithImage(el);
                 let htext = this.sanitizeForHTML(text);
@@ -1271,22 +1318,16 @@ jQuery.noConflict();
             });
 
             //Check to see there is at least one H1 on the page.
-            let $h1 = this.root
-                .find("h1, [role='heading'][aria-level='1']")
-                .not(this.containerIgnore);
-            if ($h1.length === 0) {
+            if (this.$h1.length === 0) {
                 this.errorCount++;
 
-                $("#sa11y-outline-header").after(
-                    `<div class='sa11y-instance sa11y-missing-h1'>
+                const updateH1Outline = 
+                `<div class='sa11y-instance sa11y-missing-h1'>
                     <span class='sa11y-badge sa11y-error-badge'><span aria-hidden='true'>&#10007;</span><span class='sa11y-visually-hidden'>${sa11yError}</span></span> 
                     <span class='sa11y-red-text sa11y-bold'>${sa11yIM["headings"]["missingHeadingOnePanelText"]}</span>
                 </div>`
-                );
-
-                $("#sa11y-container").after(
-                    Sa11yAnnotateBanner(sa11yError, sa11yIM["headings"]["missingHeadingOne"])
-                );
+                document.getElementById("sa11y-outline-header").insertAdjacentHTML("afterend", updateH1Outline);
+                document.getElementById("sa11y-container").insertAdjacentHTML("afterend", Sa11yAnnotateBanner(sa11yError, sa11yIM["headings"]["missingHeadingOne"]));
             }
         };
 
@@ -1369,6 +1410,7 @@ jQuery.noConflict();
             };
 
             let $links = this.root.find("a[href]").not(this.linkIgnore);
+
             const M = sa11yIM["linktext"];
 
             $links.each((i, el) => {
@@ -1578,13 +1620,8 @@ jQuery.noConflict();
 
             // Stores the corresponding issue text to alternative text
             const M = sa11yIM["images"];
-            const container = document.querySelector(sa11yCheckRoot);
-            
-            const images = Array.from(container.querySelectorAll("img"));
-            const excludeimages = Array.from(container.querySelectorAll(this.imageIgnore));        
-            const $img = images.filter($el => !excludeimages.includes($el));
 
-            $img.forEach(($el) => { 
+            this.$img.forEach(($el) => { 
                 let alt = $el.getAttribute("alt")
                 if (alt == undefined) {    
                     if ($el.closest('a[href]')) {
@@ -1752,8 +1789,8 @@ jQuery.noConflict();
                 }
                 //Implicit labels.
                 else if (
-                    $el.parents().is("label") && 
-                    $el.parents("label").text().trim().length !== 0
+                    $el.closest("label") && 
+                    $el.closest("label").text().trim().length !== 0
                     ) {
                     //Do nothing if label has text.
                 }
@@ -1786,15 +1823,9 @@ jQuery.noConflict();
         checkEmbeddedContent = () => {
 
             const M = sa11yIM["embeddedContent"];
-            const container = document.querySelector(sa11yCheckRoot);
-            const containerexclusions = Array.from(container.querySelectorAll(this.containerIgnore));
-
-            const $findiframes = Array.from(container.querySelectorAll("iframe, audio, video"));
-            const $iframes = $findiframes.filter($el => !containerexclusions.includes($el));
 
             //Warning: Video content.
-            const $videos = $iframes.filter($el => $el.matches($sa11yVideos));
-            $videos.forEach(($el) => {
+            this.$videos.forEach($el => {
                 let track = $el.getElementsByTagName('TRACK');
                 if ($el.tagName === "VIDEO" && track.length) {
 
@@ -1806,24 +1837,21 @@ jQuery.noConflict();
             });
 
             //Warning: Audio content.
-            const $audio = $iframes.filter($el => $el.matches($sa11yAudio));
-            $audio.forEach(($el) => {
+            this.$audio.forEach($el => {
                 this.warningCount++;
                 $el.classList.add("sa11y-warning-border");
                 $el.insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yWarning, M["audio"]));
             });
 
             //Warning: Data visualizations. 
-            const $dataviz = $iframes.filter($el => $el.matches($sa11yDataViz));
-            $dataviz.forEach(($el) => {
+            this.$dataviz.forEach($el => {
                 this.warningCount++;
                 $el.classList.add("sa11y-warning-border");
                 $el.insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yWarning, M["dataviz"]));
             });
 
             //Warning: Twitter timelines that are too long.
-            const $twitter = $iframes.filter($el => $el.matches($sa11yTwitter));
-            $twitter.forEach(($el) => {
+            this.$twitter.forEach($el => {
                 const tweets = $el.contentWindow.document.body.querySelectorAll('.timeline-TweetList-tweet');
                 if (tweets.length > 3) {
                     this.warningCount++;
@@ -1833,7 +1861,7 @@ jQuery.noConflict();
             });
 
             //Error: iFrame is missing accessible name.
-            $iframes.forEach(($el) => {
+            this.$iframes.forEach($el => {
                 if ($el.tagName === "VIDEO" || 
                     $el.tagName === "AUDIO" || 
                     $el.getAttribute("aria-hidden") === "true" || 
@@ -1863,8 +1891,7 @@ jQuery.noConflict();
                 }
             });
 
-            const $embeddedcontent = $iframes.filter($el => !$el.matches($sa11yAllEmbeddedContent));
-            $embeddedcontent.forEach($el => {
+            this.$embeddedcontent.forEach($el => {
                 if ($el.tagName === "VIDEO" || 
                     $el.tagName === "AUDIO" || 
                     $el.getAttribute("aria-hidden") === "true" || 
@@ -1891,57 +1918,40 @@ jQuery.noConflict();
         checkQA = () => {
             
             const M = sa11yIM["QA"];
-            const container = document.querySelector(sa11yCheckRoot);
-            const containerexclusions = Array.from(container.querySelectorAll(this.containerIgnore));
+
+            //Warning: Excessive bolding or italics.
+            this.$strongitalics.forEach($el => {
+                let strongItalicsText = $el.textContent.trim().length;                
+                if (strongItalicsText > 400) {
+                    this.warningCount++;
+                    $el.insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yWarning, M["badItalics"]));
+                }
+            });
 
             //Error: Find all links pointing to development environment.
-            const $findbadDevLinks = Array.from(container.querySelectorAll(sa11yLinksToFlag));
-            const $badDevLinks = $findbadDevLinks.filter($el => !containerexclusions.includes($el));
-            $badDevLinks.forEach(($el) => {
+            this.$badDevLinks.forEach($el => {
                 this.errorCount++;
                 $el.classList.add("sa11y-error-text");
                 $el.insertAdjacentHTML('afterend', Sa11yAnnotate(sa11yError, M["badLink"]($el), true));
             });
+            
+            //Warning: Find all PDFs.
+            this.$checkPDF.forEach(($el, i) => {
+                let pdfCount = this.$checkPDF.length;
 
-            //Warning: Find all PDFs. Although only append warning icon to first PDF on page.
-            let checkPDF = this.root
-                .find("a[href$='.pdf']")
-                .not(this.containerIgnore);
-            let firstPDF = this.root
-                .find("a[href$='.pdf']:first")
-                .not(this.containerIgnore);
-            let pdfCount = checkPDF.length;
-            if (checkPDF.length > 0) {
-                this.warningCount++;
-                checkPDF.addClass("sa11y-warning-text");
-                checkPDF.has("img").removeClass("sa11y-warning-text");
-                firstPDF.after(Sa11yAnnotate(sa11yWarning, M["pdf"](pdfCount), true));
-            }
-
-            //Warning: Detect uppercase. 
-            const $findallcaps = Array.from(container.querySelectorAll("h1, h2, h3, h4, h5, h6, p, li:not([class^='sa11y']), blockquote"));
-            const $allcaps = $findallcaps.filter($el => !containerexclusions.includes($el));
-            $allcaps.forEach(function ($el) {
-                var uppercasePattern = /(?!<a[^>]*?>)(\b[A-Z][',!:A-Z\s]{15,}|\b[A-Z]{15,}\b)(?![^<]*?<\/a>)/g;
-
-                var html = $el.innerHTML;
-                $el.innerHTML = html.replace(uppercasePattern, "<span class='sa11y-warning-uppercase'>$1</span>");
+                //Highlight all PDFs.
+                if (pdfCount > 0) {
+                    this.warningCount++;
+                    $el.classList.add("sa11y-warning-text");
+                }
+                //Only append warning button to first PDF.
+                if ($el && i == 0) {
+                    $el.insertAdjacentHTML('afterend', Sa11yAnnotate(sa11yWarning, M["pdf"](pdfCount), true));
+                }
             });
-
-            const $warningUppercase = document.querySelectorAll(".sa11y-warning-uppercase");
-
-            $warningUppercase.forEach(($el) => {
-                $el.insertAdjacentHTML('afterend', Sa11yAnnotate(sa11yWarning, M["uppercaseWarning"], true));
-            });
-
-            if ($warningUppercase.length > 0) {
-                this.warningCount++;
-            }
-
+            
             //Tables check.
-            const $findtables = Array.from(container.querySelectorAll("table:not([role='presentation'])"));
-            const $tables = $findtables.filter($el => !containerexclusions.includes($el));
-            $tables.forEach(($el) => {
+            this.$tables.forEach($el => {
                 let findTHeaders = $el.querySelectorAll("th");
                 let findHeadingTags = $el.querySelectorAll("h1, h2, h3, h4, h5, h6");
                 if (findTHeaders.length == 0) {
@@ -1953,7 +1963,7 @@ jQuery.noConflict();
                 }
                 if (findHeadingTags.length > 0) {
                     this.errorCount++;
-                    findHeadingTags.forEach(($el) => {
+                    findHeadingTags.forEach($el => {
                         $el.classList.add("sa11y-error-heading");
                         $el.parentNode.classList.add("sa11y-error-border");
                         $el.insertAdjacentHTML('beforebegin',
@@ -1961,7 +1971,7 @@ jQuery.noConflict();
                         );
                     });                        
                 }
-                findTHeaders.forEach(($el) => {
+                findTHeaders.forEach($el => {
                     if ($el.textContent.trim().length == 0) {
                         this.errorCount++;
                         $el.classList.add("sa11y-error-border");
@@ -1971,27 +1981,14 @@ jQuery.noConflict();
             });
 
             //Error: Missing language tag. Lang should be at least 2 characters.
-            const lang = document.querySelector("html").getAttribute("lang");
-            if (lang == undefined || lang.length < 2) {
+            if (this.lang == undefined || this.lang.length < 2) {
                 this.errorCount++;  
                 const sa11yContainer = document.getElementById("sa11y-container");
                 sa11yContainer.insertAdjacentHTML('afterend', Sa11yAnnotateBanner(sa11yError, M["pageLanguageMessage"]));
             }
 
-            //Excessive bolding or italics.
-            const $findstrongitalics = Array.from(container.querySelectorAll("strong, em"));
-            const $strongitalics = $findstrongitalics.filter($el => !containerexclusions.includes($el));
-            $strongitalics.forEach(($el) => {
-                if ($el.textContent.trim().length > 400) {
-                    this.warningCount++;
-                    $el.insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yWarning, M["badItalics"]));
-                }
-            });
-
-            //Find blockquotes used as headers.
-            const $findblockquotes = Array.from(container.querySelectorAll("blockquote"));
-            const $blockquotes = $findblockquotes.filter($el => !containerexclusions.includes($el));
-            $blockquotes.forEach(($el, i) => {
+            //Warning: Find blockquotes used as headers.
+            this.$blockquotes.forEach($el => {
                 let bqHeadingText = $el.textContent;
                 if (bqHeadingText.trim().length < 25) {
                     this.warningCount++;
@@ -2001,9 +1998,7 @@ jQuery.noConflict();
             });
 
             // Warning: Detect fake headings.
-            const $findp = Array.from(container.querySelectorAll("p"));
-            const $p = $findp.filter($el => !containerexclusions.includes($el));
-            $p.forEach(($el, i) => {
+            this.$p.forEach($el => {
                 let brAfter = $el.innerHTML.indexOf("</strong><br>");
                 let brBefore = $el.innerHTML.indexOf("<br></strong>");
 
@@ -2044,7 +2039,7 @@ jQuery.noConflict();
                 }
             });
             
-            if ($(".sa11y-fake-heading").length > 0) {
+            if (document.querySelectorAll(".sa11y-fake-heading").length > 0) {
                 this.warningCount++;
             }
 
@@ -2062,22 +2057,19 @@ jQuery.noConflict();
                     return prefixDecrement[match];
                 });
             };
-            this.$p.forEach(function (el, i) {
-                let $first = $(el);
+
+            this.$p.forEach($el => {
                 let hit = false;
-                // Grab first two characters.
-                let firstPrefix = $first.text().substring(0, 2);
+                let firstPrefix = $el.textContent.substring(0,2);
                 if (
                     firstPrefix.trim().length > 0 &&
                     firstPrefix !== activeMatch &&
                     firstPrefix.match(prefixMatch)
-                ) {
-                    // We have a prefix and a possible hit
-                    // Split p by carriage return if present and compare.
-                    let hasBreak = $first.html().indexOf("<br>");
+                ) { 
+                    let hasBreak = $el.innerHTML.indexOf("<br>");
                     if (hasBreak !== -1) {
-                        let subParagraph = $first
-                            .html()
+                        let subParagraph = $el
+                            .innerHTML
                             .substring(hasBreak + 4)
                             .trim();
                         let subPrefix = subParagraph.substring(0, 2);
@@ -2085,38 +2077,64 @@ jQuery.noConflict();
                             hit = true;
                         }
                     }
+
+                    var getNextSibling = function (elem, selector) {
+                        var sibling = elem.nextElementSibling;
+                        if (!selector) return sibling;
+                        while (sibling) {
+                            if (sibling.matches(selector)) return sibling;
+                            sibling = sibling.nextElementSibling
+                        }
+                    
+                    };
+
                     // Decrement the second p prefix and compare .
                     if (!hit) {
-                        let $second = $(el).next("p");
+                        let $second = getNextSibling($el, 'p');
                         if ($second) {
                             let secondPrefix = decrement(
-                                $first.next().text().substring(0, 2)
-                            );
-                            if (firstPrefix === secondPrefix) {
-                                hit = true;
+                                $el.nextElementSibling.textContent.substring(0, 2)
+                                );
+                                if (firstPrefix === secondPrefix) {
+                                    hit = true;
+                                }
                             }
                         }
-                    }
-                    if (hit) {
-                        this.warningCount++;
-                        $first.before(
-                            Sa11yAnnotate(sa11yWarning, M["shouldBeList"](firstPrefix))
-                        );
-                        $first.addClass("sa11y-fake-list");
-                        activeMatch = firstPrefix;
+                        if (hit) {
+                            this.warningCount++;
+
+                            $el.insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yWarning, M["shouldBeList"](firstPrefix)), false, true);
+                            $el.classList.add("sa11y-fake-list");
+                            activeMatch = firstPrefix;
+                        } else {
+                            activeMatch = "";
+                        }
                     } else {
                         activeMatch = "";
                     }
-                } else {
-                    activeMatch = "";
+                });
+                if (document.querySelectorAll(".sa11y-fake-list").length > 0) {
+                    this.warningCount++;
                 }
+
+            //Warning: Detect uppercase. 
+            this.$allcaps.forEach($el => {
+                var uppercasePattern = /(?!<a[^>]*?>)(\b[A-Z][',!:A-Z\s]{15,}|\b[A-Z]{15,}\b)(?![^<]*?<\/a>)/g;
+                var html = $el.innerHTML;
+                $el.innerHTML = html.replace(uppercasePattern, "<span class='sa11y-warning-uppercase'>$1</span>");
             });
-            if ($(".sa11y-fake-list").length > 0) {
+
+            const $warningUppercase = document.querySelectorAll(".sa11y-warning-uppercase");
+            $warningUppercase.forEach($el => {
+                $el.insertAdjacentHTML('afterend', Sa11yAnnotate(sa11yWarning, M["uppercaseWarning"], true));
+            });
+
+            if ($warningUppercase.length > 0) {
                 this.warningCount++;
             }
 
             //Example ruleset. Be creative.
-            let $checkAnnouncement = Array.from(document.querySelectorAll(".announcement-component")).filter($el => !containerexclusions.includes($el));
+            let $checkAnnouncement = document.querySelectorAll(".announcement-component");
             if ($checkAnnouncement.length > 1) {
                 this.warningCount++;
                 for (let i = 1; i < $checkAnnouncement.length; i++) {
@@ -2131,19 +2149,12 @@ jQuery.noConflict();
         // Color contrast plugin by jasonday: https://github.com/jasonday/color-contrast
         // ============================================================
         checkContrast = () => {
-
-            const container = document.querySelector(sa11yCheckRoot);
-            const containerexclusions = Array.from(container.querySelectorAll(this.containerIgnore));
-            
-            const $findcontrast = Array.from(container.querySelectorAll("* > :not(.sa11y-heading-label)"));
-            const $contrast = $findcontrast.filter($el => !containerexclusions.includes($el));
-
             var contrastErrors = {
                 errors: [],
                 warnings: []
             };
 
-            let elements = $contrast;
+            let elements = this.$contrast;
             var contrast = {
                 // Parse rgb(r, g, b) and rgba(r, g, b, a) strings into an array.
                 // Adapted from https://github.com/gka/chroma.js
@@ -2327,17 +2338,13 @@ jQuery.noConflict();
         // ============================================================
         checkReadability = () => {
 
-            const container = document.querySelector(sa11yReadabilityRoot);
-            const containerexclusions = Array.from(container.querySelectorAll(this.containerIgnore));
-            
-            const $findreadability = Array.from(container.querySelectorAll("p, li"));
-            const $readability = $findreadability.filter($el => !containerexclusions.includes($el));
-
             //Crude hack to add a period to the end of list items to make a complete sentence.
-            $readability.forEach($el => {
+            this.$readability.forEach($el => {
                 var listText = $el.textContent;
-                if (listText.charAt(listText.length - 1) !== ".") {
-                    $el.insertAdjacentHTML("beforeend", "<span class='sa11y-readability-period sa11y-visually-hidden'>.</span>");
+                if (listText.length >= 120) {
+                    if (listText.charAt(listText.length - 1) !== ".") {
+                        $el.insertAdjacentHTML("beforeend", "<span class='sa11y-readability-period sa11y-visually-hidden'>.</span>");
+                    }
                 }
             });
 
@@ -2360,8 +2367,8 @@ jQuery.noConflict();
             }
 
             var readabilityarray = [];
-            for (var i = 0; i < $readability.length; i++) {
-            var current = $readability[i];
+            for (var i = 0; i < this.$readability.length; i++) {
+            var current = this.$readability[i];
                 if (current.textContent.replace(/ |\n/g,'') !== '') {
                     readabilityarray.push(current.textContent);
                 }
