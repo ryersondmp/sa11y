@@ -1,537 +1,538 @@
 <!DOCTYPE html>
-<!-- saved from url=(0049)https://getbootstrap.com/docs/4.3/examples/album/ -->
+<!-- saved from url=(0057)https://getbootstrap.com/docs/5.1/examples/navbar-static/ -->
 <html lang="en">
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Headings &amp; Images - All Rulesets - Sa11y Demo</title>
-  <link rel="stylesheet" href="main.css" />
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css"
-    integrity="sha256-UzFD2WYH2U1dQpKDjjZK72VtPeWP50NoJjd26rnAdUI=" crossorigin="anonymous" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Headings & Images - Sa11y Demo</title>
+  <link rel="canonical" href="https://getbootstrap.com/docs/5.1/examples/navbar-static/">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link href="main.css" rel="stylesheet">
+  <meta name="theme-color" content="#7952b3">
+
 </head>
 
 <body>
   <header>
     <div class="sa11y-website-frame-message">
-      <p style="display:none;" id="iframe-check"><a class="sa11y-exclude" href="headings-images.html"
-          target="_blank">Open this page in a new tab for a better experience.</a> <span
-          class="fas fa-external-link-alt" aria-hidden="true"></span></p>
+      <p style="display:none;" id="iframe-check"><a class="sa11y-exclude" href="warnings.html" target="_blank">Open this
+          page in a new tab for a better experience.</a> <span class="fas fa-external-link-alt"
+          aria-hidden="true"></span></p>
       <p style="display:none;" id="newtabonly">Viewing demo in a new tab. <a href="../index.html#demo">Go back to
           documentation.</a></p>
     </div>
-    <div class="navbar navbar-dark bg-dark shadow-sm">
-      <div class="container d-flex justify-content-between">
-        <span class="d-flex align-items-center text-white">
-          <strong>Sa11y Demo</strong>
-        </span>
-        <nav class="nav nav-masthead justify-content-center sa11y-ignore">
-          <a class="nav-link" href="errors.html">Errors</a>
-          <a class="nav-link" href="warnings.html">Warnings</a>
-          <a class="nav-link" href="pass.html">No Errors</a>
-          <div class="dropdown show">
-            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              All Rulesets
-            </a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
-              <a class="dropdown-item active" href="headings-images.html">Headings &amp; Images</a>
-              <a class="dropdown-item" href="links-tables.html">Links &amp; Tables</a>
-              <a class="dropdown-item" href="contrast-labels.html">Contrast &amp; Labels</a>
-              <a class="dropdown-item" href="other.html">Other</a>
-            </div>
-          </div>
-        </nav>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+      <div class="container">
+        <span class="navbar-brand mb-0 h1">Sa11y Demo <span class="badge bg-info text-dark">2.1</span></span>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+          aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <ul class="navbar-nav ms-auto mb-2 mb-md-0">
+            <li class="nav-item">
+              <a class="nav-link" href="errors.html">Errors</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="warnings.html">Warnings</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="pass.html">No Errors</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                All Rulesets
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item active" aria-current="page" href="headings-images.html">Headings &amp; Images</a></li>
+                <li><a class="dropdown-item" href="links-tables.html">Links &amp; Tables</a></li>
+                <li><a class="dropdown-item" href="contrast-labels.html">Contrast &amp; Labels</a></li>
+                <li><a class="dropdown-item" href="other.html">Other</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+  <main>
+    <div class="container">
+      <div class="bg-light p-5 mb-5 rounded text-center">
+        <h1>Headings & Images</h1>
       </div>
     </div>
-  </header>
-
-  <main>
-    <section class="jumbotron text-center">
-      <div class="container">
-        <h1 class="jumbotron-heading">Headings &amp; Images</h1>
-      </div>
-    </section>
-
-    <div class="album py-5 bg-light">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-2">
-            <div id="list-example" class="list-group sticky-top">
-              <strong class="mt-1 mb-2">On this page:</strong>
-              <a class="list-group-item list-group-item-action" href="#list-item-0">Headings</a>
-              <a class="list-group-item list-group-item-action" href="#list-item-1">Images</a>
-            </div>
-          </div>
-
-          <div class="col-md-10">
-            <div data-spy="scroll" data-target="#list-example" data-offset="0" class="scrollspy-example">
-              <h2 id="list-item-0">Headings</h2>
-              <p>Sa11y's heading structure ruleset has the following conditions:</p>
-              <ul class="mb-4">
-                <li>There must only be one <kbd>&lt;h1&gt;</kbd> on a page.</li>
-                <li>Headings must not skip levels.</li>
-                <li>Headings must not be empty.</li>
-                <li>Headings must not exceed 160 characters.</li>
-                <li>Blockquotes must not be used as headings.</li>
-              </ul>
-
-              <h2 aria-hidden="true" class="sr-only">Intentionally hidden heading.</h2>
-
-              <h3>Headings must not skip levels</h3>
-              <p>Headings should be structured in a way that conveys hierarchy. This condition is based on WCAG 2.1 <a
-                  href="https://www.w3.org/TR/WCAG20-TECHS/H42.html">Technique H42: Using h1-h6 to identify
-                  headings.</a></p>
-
-              <div class="ml-5 mt-4 mb-5">
-                <h5 style="color:#7e7e7e;">Example #1 - This heading skips a level.</h5>
-                <p>This error is also visually reflected in the "Show Outline" feature.</p>
-              </div>
-
-              <h3>Headings must not be empty</h3>
-              <p>This error sometimes happens in content management systems or WYSIWYG editors. For example when a
-                content author accidently presses the Enter key twice or sometimes intentionally for more spacing.</p>
-
-              <h4 class="ml-5" style="height:20px;"></h4>
-
-              <h3>Headings that are too long</h3>
-              <p>If a heading is greater than 160 characters it will be flagged as an error. This condition was created
-                to prevent content authors from using headings for visual aesthetics instead of good hierarchy.</p>
-              <p><strong>Note:</strong> This condition is <strong>not</strong> a WCAG 2.1 criterion. The 160 character
-                limit is arbitrary.</p>
-
-              <h4 class="ml-5" style="color:#7e7e7e;">Example #1: Integer ut quam ut nibh tristique bibendum eget sit
-                amet ex. Sed elementum mauris neque, vitae consectetur tellus pellentesque vel. Pellentesque consequat
-                orci.</h4>
-
-              <h3 class="pt-3">Blockquotes used as headings</h3>
-              <p>This error might be common in content management systems where there are templated components.
-                Sometimes content authors may use a component for visual aesthetics. For example, a stylized blockquote
-                in place of a semantic header.</p>
-
-              <p><strong>Note:</strong> This condition is <strong>not</strong> a WCAG 2.1 criterion. The 25 character
-                limit is arbitrary.</p>
-
-              <div class="ml-5 mt-4 mb-5">
-
-                <h4>Example #1</h4>
-                <p>If a blockquote is less than 25 characters it will be flagged as an warning.</p>
-
-                <blockquote class="blockquote">
-                  <p class="mb-0">About the team</p>
-                </blockquote>
-                <p>Donec metus urna, pharetra vel ipsum id, egestas ultrices sapien. Nullam viverra vitae turpis quis
-                  consequat. Fusce porttitor urna in ipsum ornare pulvinar. Donec sed sagittis ex. Vivamus vel eros ac
-                  augue tempor faucibus sit amet in lacus. Orci varius natoque penatibus et magnis dis parturient
-                  montes, nascetur ridiculus mus. Aliquam tincidunt metus sem, ac sagittis diam semper sit amet.
-                  Vestibulum porttitor vel velit ut finibus. Praesent mauris enim, faucibus ut interdum sed, feugiat in
-                  metus.</p>
-
-                <h4>Example #2</h4>
-                <p>A blockquote greater than 25 characters will not be flagged as an error.</p>
-                <blockquote class="blockquote">
-                  <p class="mb-0">"To be, or not to be, that is the question."</p>
-                </blockquote>
-              </div>
-
-              <h3>Empty heading contains a decorative image</h3>
-              <div class="row">
-                <div class="col-md-4"><h4><img width="120" src="../assets/images/ryerson_logo.svg"
-                  alt=" "></h4>
-                <p>This will show up in the Page Outline as an error/empty</p></div>
-                <div class="col-md-8"><h4><img width="120" src="../assets/images/ryerson_logo.svg"
-                    alt="Ryerson University"></h4>
-                    <p>This alt text for this image will show up in the Page Outline.</p></div>
-              </div>
-              
-
-              <h3>Bolded text used as headings</h3>
-              <div class="mt-4 mb-5">
-
-                <h4>Algorithm 1</h4>
-                <p>Bolded text as heading. We're looking for paragraph tags that look like this: <kbd><span
-                      style="color:#00c4ff;font-weight:600;">&lt;p&gt;&lt;strong&gt;</span>Some text<span
-                      style="color:#00c4ff;font-weight:600;">&lt;/strong&gt;&lt;/p&gt;</span></kbd></p>
-
-                <div class="ml-5">
-                  <p><strong>About us</strong></p>
-                  <p>Paragraph that only contains strong elements. If the text length is less than 25, flag as warning.
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
-                    et dolore magna aliqua. Elit duis tristique sollicitudin nibh. Etiam erat velit scelerisque in
-                    dictum non consectetur. Augue lacus viverra vitae congue eu consequat. Egestas maecenas pharetra
-                    convallis posuere morbi leo urna.</p>
-
-                  <p><strong>This shouldn't be flagged since it's long and not necessarily a heading. It could just be a
-                      big block of bolded text. It is over 120 characters.</strong></p>
-                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
-                    et dolore magna aliqua. Elit duis tristique sollicitudin nibh. Etiam erat velit scelerisque in
-                    dictum non consectetur. Augue lacus viverra vitae congue eu consequat. Egestas maecenas pharetra
-                    convallis posuere morbi leo urna.</p>
-                </div>
-
-                <h4>Algorithm 2</h4>
-                <p>Bolded text as heading with line breaks. We're looking for paragraph tags that start with strong tag,
-                  and have a line break either before the closing strong tag or after. It will only flag paragraphs that
-                  have more than 300 characters.</p>
-
-
-                <h5>Example 1</h5>
-                <p><kbd><span style="color:#00c4ff;font-weight:600;">&lt;p&gt;&lt;strong&gt;</span>Fake heading<span
-                      style="color:#00c4ff;font-weight:600;">&lt;br&gt;&lt;/strong&gt;</span> Followed by some
-                    text.&lt;/p&gt;</kbd></p>
-
-                <div class="ml-5">
-                  <p><strong>About us<br></strong>Will not be flagged because it's a small paragraph. Lorem ipsum dolor
-                    sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua. Elit duis tristique sollicitudin nibh.</p>
-
-                  <p><strong>Ryerson University Central Receiving<br></strong> 105 Bond Street<br> Toronto, ON<br> M5B
-                    2K3</p>
-
-                  <p><strong>This won't be flagged either since this bolded text is long and not necessarily a heading.
-                      It could just be a big block of bolded text. It is over 120 characters.<br></strong>Lorem ipsum
-                    dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-                    magna aliqua. Elit duis tristique sollicitudin nibh. Lorem ipsum dolor sit amet, consectetur
-                    adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis
-                    tristique sollicitudin nibh. Etiam erat velit scelerisque in dictum non consectetur. Augue lacus
-                    viverra vitae congue eu consequat. Egestas maecenas pharetra convallis posuere morbi leo urna.</p>
-
-                  <p><strong>This will be flagged!<br></strong> Because it's a pretty substantial paragraph. Lorem ipsum
-                    dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-                    magna aliqua. Elit duis tristique sollicitudin nibh. Lorem ipsum dolor sit amet, consectetur
-                    adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis
-                    tristique sollicitudin nibh. Etiam erat velit scelerisque in dictum non consectetur. Augue lacus
-                    viverra vitae congue eu consequat. Egestas maecenas pharetra convallis posuere morbi leo urna.</p>
-
-                </div>
-
-                <h5>Example 2</h5>
-                <p><kbd><span style="color:#00c4ff;font-weight:600;">&lt;p&gt;&lt;strong&gt;</span>Fake heading<span
-                      style="color:#00c4ff;font-weight:600;">&lt;/strong&gt;&lt;br&gt;</span> Followed by some
-                    text.&lt;/p&gt;</kbd></p>
-
-                <div class="ml-5">
-                  <p><strong>About us</strong><br>Will not be flagged because it's a small paragraph. Lorem ipsum dolor
-                    sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua. Elit duis tristique sollicitudin nibh.</p>
-
-                  <p><strong>Ryerson University Central Receiving</strong><br> 105 Bond Street<br> Toronto, ON<br> M5B
-                    2K3</p>
-
-                  <p><strong>This won't be flagged either since this bolded text is long and not necessarily a heading.
-                      It could just be a big block of bolded text. It is over 120 characters.</strong><br>Lorem ipsum
-                    dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-                    magna aliqua. Elit duis tristique sollicitudin nibh. Lorem ipsum dolor sit amet, consectetur
-                    adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis
-                    tristique sollicitudin nibh. Etiam erat velit scelerisque in dictum non consectetur. Augue lacus
-                    viverra vitae congue eu consequat. Egestas maecenas pharetra convallis posuere morbi leo urna.</p>
-
-                  <p><strong>This will be flagged!</strong><br> Because it's a pretty substantial paragraph. Lorem ipsum
-                    dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-                    magna aliqua. Elit duis tristique sollicitudin nibh. Lorem ipsum dolor sit amet, consectetur
-                    adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis
-                    tristique sollicitudin nibh. Etiam erat velit scelerisque in dictum non consectetur. Augue lacus
-                    viverra vitae congue eu consequat. Egestas maecenas pharetra convallis posuere morbi leo urna.</p>
-                </div>
-              </div>
-
-              <hr class="pb-3">
-
-              <h2 id="list-item-1">Images</h2>
-              <h3 class="pb-3 pt-3">Images without hyperlinks</h3>
-              <div class="row">
-                <div class="col-md-4 d-flex">
-                  <div class="card mb-4 shadow-sm flex-fill">
-                    <img src="image-examples/nambia-desert.jpg" width="100%"
-                      alt="Large mountains of sand in the Nambian desert.">
-                    <div class="card-body">
-                      <p class="card-text">Condition 1: Image containing alt text.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-md-4 d-flex">
-                  <div class="card mb-4 shadow-sm flex-fill">
-                    <img src="image-examples/panama-beach.jpg" width="100%">
-                    <div class="card-body">
-                      <p class="card-text">Condition 2: Image missing alt text.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-md-4 d-flex">
-                  <div class="card mb-4 shadow-sm flex-fill">
-                    <img src="image-examples/birdy.jpg" width="100%" alt="An image of a bird.">
-                    <div class="card-body">
-                      <p class="card-text">Condition 3: Image whose alt text contains a suspicious stop word.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-md-4 d-flex">
-                  <div class="card mb-4 shadow-sm flex-fill">
-                    <img src="image-examples/amsterdam.jpg" width="100%" alt>
-                    <div class="card-body">
-                      <p class="card-text">Condition 4: Image that is marked as decorative.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-md-4 d-flex">
-                  <div class="card mb-4 shadow-sm flex-fill">
-                    <img src="image-examples/amsterdam.jpg" width="100%" alt=" ">
-                    <div class="card-body">
-                      <p class="card-text">Condition 5: Image that is marked as decorative using empty space (alt=&quot;
-                        &quot;).</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-md-4 d-flex">
-                  <div class="card mb-4 shadow-sm flex-fill">
-                    <img src="image-examples/zebra.jpg" width="100%"
-                      alt="Zebras are several species of African equids (horse family) united by their distinctive black-and-white striped coats. Their stripes come in different patterns, unique to each individual. They are generally social animals that live in small harems to large herds. Unlike their closest relatives, horses and donkeys, zebras have never been truly domesticated. Source: Wikipedia.">
-                    <div class="card-body">
-                      <p class="card-text">Condition 6: Alt text that is too long.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-md-4 d-flex">
-                  <div class="card mb-4 shadow-sm flex-fill">
-                    <img src="image-examples/birdy.jpg" width="100%" alt="birdy.jpg">
-                    <div class="card-body">
-                      <p class="card-text">Condition 7: Image whose alt text contains a file extension.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-md-4 d-flex">
-                  <div class="card mb-4 shadow-sm flex-fill">
-                    <img src="image-examples/amsterdam.jpg" width="100%" alt="image">
-                    <div class="card-body">
-                      <p class="card-text">Condition 8: Image whose alt text contains a non descript word, or
-                        placeholder text.</p>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-
-              <h3 class="pb-3 pt-3">Images with hyperlinks</h3>
-              <div class="row">
-                <div class="col-md-4 d-flex">
-                  <div class="card mb-4 shadow-sm flex-fill">
-                    <a href="#"><img src="image-examples/nambia-desert.jpg" width="100%"
-                        alt="Large mountains of sand in the Nambian desert." class="w-100">
-                      <noscript><img src="https://fsc-ccf.ca/wp-content/uploads/2019/07/Ryerson-rgb-1.png"
-                          alt="Ryerson University"></noscript>
-                    </a>
-                    <div class="card-body">
-                      <p class="card-text">Condition 9: Hyperlinked image containing alt text.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-md-4 d-flex">
-                  <div class="card mb-4 shadow-sm flex-fill">
-                    <a href="#"><img src="image-examples/panama-beach.jpg" width="100%" class="w-100"></a>
-                    <div class="card-body">
-                      <p class="card-text">Condition 10: Hyperlinked image missing alt text.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-md-4 d-flex">
-                  <div class="card mb-4 shadow-sm flex-fill">
-                    <a href="#"><img src="image-examples/birdy.jpg" width="100%" alt="An image of a bird."
-                        class="w-100"></a>
-                    <div class="card-body">
-                      <p class="card-text">Condition 11: Hyperlinked image whose alt text contains a stop word.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-md-4 d-flex">
-                  <div class="card mb-4 shadow-sm flex-fill">
-                    <a href="#"><img src="image-examples/amsterdam.jpg" width="100%" alt class="w-100"></a>
-                    <div class="card-body">
-                      <p class="card-text">Condition 12: Hyperlinked image that is marked as decorative.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-md-4 d-flex">
-                  <div class="card mb-4 shadow-sm flex-fill">
-                    <a href="#"><img src="image-examples/amsterdam.jpg" width="100%" alt=" " class="w-100"></a>
-                    <div class="card-body">
-                      <p class="card-text">Condition 13: Hyperlinked image that is marked as decorative using empty
-                        space (alt=&quot; &quot;).</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-md-4 d-flex">
-                  <div class="card mb-4 shadow-sm flex-fill">
-                    <a href="#"><img src="image-examples/zebra.jpg" width="100%"
-                        alt="Zebras are several species of African equids (horse family) united by their distinctive black-and-white striped coats. Their stripes come in different patterns, unique to each individual. They are generally social animals that live in small harems to large herds. Unlike their closest relatives, horses & donkeys, zebras have never been truly domesticated. Source: Wikipedia."
-                        class="w-100"></a>
-                    <div class="card-body">
-                      <p class="card-text">Condition 14: Hyperlinked image text that is too long.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-md-4 d-flex">
-                  <div class="card mb-4 shadow-sm flex-fill text-center">
-                    <a href="#" style="background-color:#e2e2e2"><img src="image-examples/tiger.jpg" width="100%" alt
-                        class="w-100"><span class="text-center lead">Learn more about Tigers</span></a>
-                    <div class="card-body">
-                      <p class="card-text">Condition 15: Hyperlinked image with null alt text, although contains
-                        surrounding link text <strong>below image.</strong></p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-md-4 d-flex">
-                  <div class="card mb-4 shadow-sm flex-fill text-center">
-                    <a href="#" style="background-color:#e2e2e2"><span class="text-center lead">Learn more about
-                        Tigers</span><img src="image-examples/tiger.jpg" width="100%" alt class="w-100"></a>
-                    <div class="card-body">
-                      <p class="card-text">Condition 16: Hyperlinked image with null alt text, although contains
-                        surrounding link text <strong>above image.</strong></p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-md-4 d-flex">
-                  <div class="card mb-4 shadow-sm flex-fill text-center">
-                    <a href="#" style="background-color:#e2e2e2"><img src="image-examples/flower.jpg" width="100%"
-                        class="w-100"><span class="text-center lead">Learn more about Dahlias</span></a>
-                    <div class="card-body">
-                      <p class="card-text">Condition 17: Hyperlinked image with <strong>missing</strong> alt text and
-                        contains surrounding link text.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-md-4 d-flex">
-                  <div class="card mb-4 shadow-sm flex-fill text-center">
-                    <a href="#" style="background-color:#e2e2e2"><img src="image-examples/fiat.jpg"
-                        alt="Fix it again Tony!" width="100%" class="w-100"><span class="text-center lead">Learn more
-                        about Fiat.</span></a>
-                    <div class="card-body">
-                      <p class="card-text">Condition 18: Hyperlinked image that <strong>contains both alt text and link
-                          text.</strong></p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-md-4 d-flex">
-                  <div class="card mb-4 shadow-sm flex-fill text-center">
-                    <a href="#" style="background-color:#e2e2e2"><img src="image-examples/canary.jpg" alt width="100%"
-                        class="w-100">
-                      <h5>Learn more about the Canary Islands</h5>
-                    </a>
-                    <div class="card-body">
-                      <p class="card-text">Condition 19: Hyperlinked image containing an incorrect heading level. The
-                        error is appended after the hyperlink to prevent nesting a button inside hyperlink.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-md-4 d-flex">
-                  <div class="card mb-4 shadow-sm flex-fill">
-                    <a href="#"><img src="image-examples/amsterdam.jpg" width="100%" alt="image"></a>
-                    <div class="card-body">
-                      <p class="card-text">Condition 20: Hyperlinked image whose alt text contains a non descript word,
-                        or placeholder text.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-md-4 d-flex">
-                  <div class="card mb-4 shadow-sm flex-fill text-center">
-                    <a href="#" aria-hidden="true" tabindex="-1"><img src="image-examples/flower.jpg" alt width="100%"
-                        class="w-100"></a>
-                    <div class="card-body">
-                      <p class="card-text">Condition 21: Hyperlinked image where anchor has aria-hidden=&quot;true&quot;
-                        and tabindex=&quot;-1&quot;</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-md-4 d-flex">
-                  <div class="card mb-4 shadow-sm flex-fill text-center">
-                    <a href="#" aria-hidden="true"><img src="image-examples/fiat.jpg" alt width="100%"
-                        class="w-100"></a>
-                    <div class="card-body">
-                      <p class="card-text">Condition 22: Hyperlinked image where anchor has
-                        aria-hidden=&quot;true&quot;.</p>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-2">
+          <div id="list-example" class="list-group sticky-top">
+            <strong class="mt-1 mb-2">On this page:</strong>
+            <a class="list-group-item list-group-item-action" href="#list-item-0">Headings</a>
+            <a class="list-group-item list-group-item-action" href="#list-item-1">Images</a>
           </div>
         </div>
 
+        <div class="col-md-10">
+          <div data-spy="scroll" data-target="#list-example" data-offset="0" class="scrollspy-example">
+            <h2 id="list-item-0">Headings</h2>
+            <p>Sa11y's heading structure ruleset has the following conditions:</p>
+            <ul class="mb-4">
+              <li>There must only be one <kbd>&lt;h1&gt;</kbd> on a page.</li>
+              <li>Headings must not skip levels.</li>
+              <li>Headings must not be empty.</li>
+              <li>Headings must not exceed 160 characters.</li>
+              <li>Blockquotes must not be used as headings.</li>
+            </ul>
 
+            <h2 aria-hidden="true" class="sr-only">Intentionally hidden heading.</h2>
+
+            <h3>Headings must not skip levels</h3>
+            <p>Headings should be structured in a way that conveys hierarchy. This condition is based on WCAG 2.1 <a
+                href="https://www.w3.org/TR/WCAG20-TECHS/H42.html">Technique H42: Using h1-h6 to identify
+                headings.</a></p>
+
+            <div class="ml-5 mt-4 mb-5">
+              <h5 style="color:#7e7e7e;">Example #1 - This heading skips a level.</h5>
+              <p>This error is also visually reflected in the "Show Outline" feature.</p>
+            </div>
+
+            <h3>Headings must not be empty</h3>
+            <p>This error sometimes happens in content management systems or WYSIWYG editors. For example when a
+              content author accidently presses the Enter key twice or sometimes intentionally for more spacing.</p>
+
+            <h4 class="ml-5" style="height:20px;"></h4>
+
+            <h3>Headings that are too long</h3>
+            <p>If a heading is greater than 160 characters it will be flagged as an error. This condition was created
+              to prevent content authors from using headings for visual aesthetics instead of good hierarchy.</p>
+            <p><strong>Note:</strong> This condition is <strong>not</strong> a WCAG 2.1 criterion. The 160 character
+              limit is arbitrary.</p>
+
+            <h4 class="ml-5" style="color:#7e7e7e;">Example #1: Integer ut quam ut nibh tristique bibendum eget sit
+              amet ex. Sed elementum mauris neque, vitae consectetur tellus pellentesque vel. Pellentesque consequat
+              orci.</h4>
+
+            <h3 class="pt-3">Blockquotes used as headings</h3>
+            <p>This error might be common in content management systems where there are templated components.
+              Sometimes content authors may use a component for visual aesthetics. For example, a stylized blockquote
+              in place of a semantic header.</p>
+
+            <p><strong>Note:</strong> This condition is <strong>not</strong> a WCAG 2.1 criterion. The 25 character
+              limit is arbitrary.</p>
+
+            <div class="ml-5 mt-4 mb-5">
+
+              <h4>Example #1</h4>
+              <p>If a blockquote is less than 25 characters it will be flagged as an warning.</p>
+
+              <blockquote class="blockquote">
+                <p class="mb-0">About the team</p>
+              </blockquote>
+              <p>Donec metus urna, pharetra vel ipsum id, egestas ultrices sapien. Nullam viverra vitae turpis quis
+                consequat. Fusce porttitor urna in ipsum ornare pulvinar. Donec sed sagittis ex. Vivamus vel eros ac
+                augue tempor faucibus sit amet in lacus. Orci varius natoque penatibus et magnis dis parturient
+                montes, nascetur ridiculus mus. Aliquam tincidunt metus sem, ac sagittis diam semper sit amet.
+                Vestibulum porttitor vel velit ut finibus. Praesent mauris enim, faucibus ut interdum sed, feugiat in
+                metus.</p>
+
+              <h4>Example #2</h4>
+              <p>A blockquote greater than 25 characters will not be flagged as an error.</p>
+              <blockquote class="blockquote">
+                <p class="mb-0">"To be, or not to be, that is the question."</p>
+              </blockquote>
+            </div>
+
+            <h3>Empty heading contains a decorative image</h3>
+            <div class="row">
+              <div class="col-md-4"><h4><img width="120" src="../assets/images/ryerson_logo.svg"
+                alt=" "></h4>
+              <p>This will show up in the Page Outline as an error/empty</p></div>
+              <div class="col-md-8"><h4><img width="120" src="../assets/images/ryerson_logo.svg"
+                  alt="Ryerson University"></h4>
+                  <p>This alt text for this image will show up in the Page Outline.</p></div>
+            </div>
+            
+
+            <h3>Bolded text used as headings</h3>
+            <div class="mt-4 mb-5">
+
+              <h4>Algorithm 1</h4>
+              <p>Bolded text as heading. We're looking for paragraph tags that look like this: <kbd><span
+                    style="color:#00c4ff;font-weight:600;">&lt;p&gt;&lt;strong&gt;</span>Some text<span
+                    style="color:#00c4ff;font-weight:600;">&lt;/strong&gt;&lt;/p&gt;</span></kbd></p>
+
+              <div class="ml-5">
+                <p><strong>About us</strong></p>
+                <p>Paragraph that only contains strong elements. If the text length is less than 25, flag as warning.
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+                  et dolore magna aliqua. Elit duis tristique sollicitudin nibh. Etiam erat velit scelerisque in
+                  dictum non consectetur. Augue lacus viverra vitae congue eu consequat. Egestas maecenas pharetra
+                  convallis posuere morbi leo urna.</p>
+
+                <p><strong>This shouldn't be flagged since it's long and not necessarily a heading. It could just be a
+                    big block of bolded text. It is over 120 characters.</strong></p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+                  et dolore magna aliqua. Elit duis tristique sollicitudin nibh. Etiam erat velit scelerisque in
+                  dictum non consectetur. Augue lacus viverra vitae congue eu consequat. Egestas maecenas pharetra
+                  convallis posuere morbi leo urna.</p>
+              </div>
+
+              <h4>Algorithm 2</h4>
+              <p>Bolded text as heading with line breaks. We're looking for paragraph tags that start with strong tag,
+                and have a line break either before the closing strong tag or after. It will only flag paragraphs that
+                have more than 300 characters.</p>
+
+
+              <h5>Example 1</h5>
+              <p><kbd><span style="color:#00c4ff;font-weight:600;">&lt;p&gt;&lt;strong&gt;</span>Fake heading<span
+                    style="color:#00c4ff;font-weight:600;">&lt;br&gt;&lt;/strong&gt;</span> Followed by some
+                  text.&lt;/p&gt;</kbd></p>
+
+              <div class="ml-5">
+                <p><strong>About us<br></strong>Will not be flagged because it's a small paragraph. Lorem ipsum dolor
+                  sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                  aliqua. Elit duis tristique sollicitudin nibh.</p>
+
+                <p><strong>Ryerson University Central Receiving<br></strong> 105 Bond Street<br> Toronto, ON<br> M5B
+                  2K3</p>
+
+                <p><strong>This won't be flagged either since this bolded text is long and not necessarily a heading.
+                    It could just be a big block of bolded text. It is over 120 characters.<br></strong>Lorem ipsum
+                  dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+                  magna aliqua. Elit duis tristique sollicitudin nibh. Lorem ipsum dolor sit amet, consectetur
+                  adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis
+                  tristique sollicitudin nibh. Etiam erat velit scelerisque in dictum non consectetur. Augue lacus
+                  viverra vitae congue eu consequat. Egestas maecenas pharetra convallis posuere morbi leo urna.</p>
+
+                <p><strong>This will be flagged!<br></strong> Because it's a pretty substantial paragraph. Lorem ipsum
+                  dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+                  magna aliqua. Elit duis tristique sollicitudin nibh. Lorem ipsum dolor sit amet, consectetur
+                  adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis
+                  tristique sollicitudin nibh. Etiam erat velit scelerisque in dictum non consectetur. Augue lacus
+                  viverra vitae congue eu consequat. Egestas maecenas pharetra convallis posuere morbi leo urna.</p>
+
+              </div>
+
+              <h5>Example 2</h5>
+              <p><kbd><span style="color:#00c4ff;font-weight:600;">&lt;p&gt;&lt;strong&gt;</span>Fake heading<span
+                    style="color:#00c4ff;font-weight:600;">&lt;/strong&gt;&lt;br&gt;</span> Followed by some
+                  text.&lt;/p&gt;</kbd></p>
+
+              <div class="ml-5">
+                <p><strong>About us</strong><br>Will not be flagged because it's a small paragraph. Lorem ipsum dolor
+                  sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                  aliqua. Elit duis tristique sollicitudin nibh.</p>
+
+                <p><strong>Ryerson University Central Receiving</strong><br> 105 Bond Street<br> Toronto, ON<br> M5B
+                  2K3</p>
+
+                <p><strong>This won't be flagged either since this bolded text is long and not necessarily a heading.
+                    It could just be a big block of bolded text. It is over 120 characters.</strong><br>Lorem ipsum
+                  dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+                  magna aliqua. Elit duis tristique sollicitudin nibh. Lorem ipsum dolor sit amet, consectetur
+                  adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis
+                  tristique sollicitudin nibh. Etiam erat velit scelerisque in dictum non consectetur. Augue lacus
+                  viverra vitae congue eu consequat. Egestas maecenas pharetra convallis posuere morbi leo urna.</p>
+
+                <p><strong>This will be flagged!</strong><br> Because it's a pretty substantial paragraph. Lorem ipsum
+                  dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+                  magna aliqua. Elit duis tristique sollicitudin nibh. Lorem ipsum dolor sit amet, consectetur
+                  adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis
+                  tristique sollicitudin nibh. Etiam erat velit scelerisque in dictum non consectetur. Augue lacus
+                  viverra vitae congue eu consequat. Egestas maecenas pharetra convallis posuere morbi leo urna.</p>
+              </div>
+            </div>
+
+            <hr class="pb-3">
+
+            <h2 id="list-item-1">Images</h2>
+            <h3 class="pb-3 pt-3">Images without hyperlinks</h3>
+            <div class="row">
+              <div class="col-md-4 d-flex">
+                <div class="card mb-4 shadow-sm flex-fill">
+                  <img src="image-examples/nambia-desert.jpg" width="100%"
+                    alt="Large mountains of sand in the Nambian desert.">
+                  <div class="card-body">
+                    <p class="card-text">Condition 1: Image containing alt text.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4 d-flex">
+                <div class="card mb-4 shadow-sm flex-fill">
+                  <img src="image-examples/panama-beach.jpg" width="100%">
+                  <div class="card-body">
+                    <p class="card-text">Condition 2: Image missing alt text.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4 d-flex">
+                <div class="card mb-4 shadow-sm flex-fill">
+                  <img src="image-examples/birdy.jpg" width="100%" alt="An image of a bird.">
+                  <div class="card-body">
+                    <p class="card-text">Condition 3: Image whose alt text contains a suspicious stop word.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4 d-flex">
+                <div class="card mb-4 shadow-sm flex-fill">
+                  <img src="image-examples/amsterdam.jpg" width="100%" alt>
+                  <div class="card-body">
+                    <p class="card-text">Condition 4: Image that is marked as decorative.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4 d-flex">
+                <div class="card mb-4 shadow-sm flex-fill">
+                  <img src="image-examples/amsterdam.jpg" width="100%" alt=" ">
+                  <div class="card-body">
+                    <p class="card-text">Condition 5: Image that is marked as decorative using empty space (alt=&quot;
+                      &quot;).</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4 d-flex">
+                <div class="card mb-4 shadow-sm flex-fill">
+                  <img src="image-examples/zebra.jpg" width="100%"
+                    alt="Zebras are several species of African equids (horse family) united by their distinctive black-and-white striped coats. Their stripes come in different patterns, unique to each individual. They are generally social animals that live in small harems to large herds. Unlike their closest relatives, horses and donkeys, zebras have never been truly domesticated. Source: Wikipedia.">
+                  <div class="card-body">
+                    <p class="card-text">Condition 6: Alt text that is too long.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4 d-flex">
+                <div class="card mb-4 shadow-sm flex-fill">
+                  <img src="image-examples/birdy.jpg" width="100%" alt="birdy.jpg">
+                  <div class="card-body">
+                    <p class="card-text">Condition 7: Image whose alt text contains a file extension.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4 d-flex">
+                <div class="card mb-4 shadow-sm flex-fill">
+                  <img src="image-examples/amsterdam.jpg" width="100%" alt="image">
+                  <div class="card-body">
+                    <p class="card-text">Condition 8: Image whose alt text contains a non descript word, or
+                      placeholder text.</p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <h3 class="pb-3 pt-3">Images with hyperlinks</h3>
+            <div class="row">
+              <div class="col-md-4 d-flex">
+                <div class="card mb-4 shadow-sm flex-fill">
+                  <a href="#"><img src="image-examples/nambia-desert.jpg" width="100%"
+                      alt="Large mountains of sand in the Nambian desert." class="w-100">
+                    <noscript><img src="https://fsc-ccf.ca/wp-content/uploads/2019/07/Ryerson-rgb-1.png"
+                        alt="Ryerson University"></noscript>
+                  </a>
+                  <div class="card-body">
+                    <p class="card-text">Condition 9: Hyperlinked image containing alt text.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4 d-flex">
+                <div class="card mb-4 shadow-sm flex-fill">
+                  <a href="#"><img src="image-examples/panama-beach.jpg" width="100%" class="w-100"></a>
+                  <div class="card-body">
+                    <p class="card-text">Condition 10: Hyperlinked image missing alt text.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4 d-flex">
+                <div class="card mb-4 shadow-sm flex-fill">
+                  <a href="#"><img src="image-examples/birdy.jpg" width="100%" alt="An image of a bird."
+                      class="w-100"></a>
+                  <div class="card-body">
+                    <p class="card-text">Condition 11: Hyperlinked image whose alt text contains a stop word.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4 d-flex">
+                <div class="card mb-4 shadow-sm flex-fill">
+                  <a href="#"><img src="image-examples/amsterdam.jpg" width="100%" alt class="w-100"></a>
+                  <div class="card-body">
+                    <p class="card-text">Condition 12: Hyperlinked image that is marked as decorative.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4 d-flex">
+                <div class="card mb-4 shadow-sm flex-fill">
+                  <a href="#"><img src="image-examples/amsterdam.jpg" width="100%" alt=" " class="w-100"></a>
+                  <div class="card-body">
+                    <p class="card-text">Condition 13: Hyperlinked image that is marked as decorative using empty
+                      space (alt=&quot; &quot;).</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4 d-flex">
+                <div class="card mb-4 shadow-sm flex-fill">
+                  <a href="#"><img src="image-examples/zebra.jpg" width="100%"
+                      alt="Zebras are several species of African equids (horse family) united by their distinctive black-and-white striped coats. Their stripes come in different patterns, unique to each individual. They are generally social animals that live in small harems to large herds. Unlike their closest relatives, horses & donkeys, zebras have never been truly domesticated. Source: Wikipedia."
+                      class="w-100"></a>
+                  <div class="card-body">
+                    <p class="card-text">Condition 14: Hyperlinked image text that is too long.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4 d-flex">
+                <div class="card mb-4 shadow-sm flex-fill text-center">
+                  <a href="#" style="background-color:#e2e2e2"><img src="image-examples/tiger.jpg" width="100%" alt
+                      class="w-100"><span class="text-center lead">Learn more about Tigers</span></a>
+                  <div class="card-body">
+                    <p class="card-text">Condition 15: Hyperlinked image with null alt text, although contains
+                      surrounding link text <strong>below image.</strong></p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4 d-flex">
+                <div class="card mb-4 shadow-sm flex-fill text-center">
+                  <a href="#" style="background-color:#e2e2e2"><span class="text-center lead">Learn more about
+                      Tigers</span><img src="image-examples/tiger.jpg" width="100%" alt class="w-100"></a>
+                  <div class="card-body">
+                    <p class="card-text">Condition 16: Hyperlinked image with null alt text, although contains
+                      surrounding link text <strong>above image.</strong></p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4 d-flex">
+                <div class="card mb-4 shadow-sm flex-fill text-center">
+                  <a href="#" style="background-color:#e2e2e2"><img src="image-examples/flower.jpg" width="100%"
+                      class="w-100"><span class="text-center lead">Learn more about Dahlias</span></a>
+                  <div class="card-body">
+                    <p class="card-text">Condition 17: Hyperlinked image with <strong>missing</strong> alt text and
+                      contains surrounding link text.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4 d-flex">
+                <div class="card mb-4 shadow-sm flex-fill text-center">
+                  <a href="#" style="background-color:#e2e2e2"><img src="image-examples/fiat.jpg"
+                      alt="Fix it again Tony!" width="100%" class="w-100"><span class="text-center lead">Learn more
+                      about Fiat.</span></a>
+                  <div class="card-body">
+                    <p class="card-text">Condition 18: Hyperlinked image that <strong>contains both alt text and link
+                        text.</strong></p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4 d-flex">
+                <div class="card mb-4 shadow-sm flex-fill text-center">
+                  <a href="#" style="background-color:#e2e2e2"><img src="image-examples/canary.jpg" alt width="100%"
+                      class="w-100">
+                    <h5>Learn more about the Canary Islands</h5>
+                  </a>
+                  <div class="card-body">
+                    <p class="card-text">Condition 19: Hyperlinked image containing an incorrect heading level. The
+                      error is appended after the hyperlink to prevent nesting a button inside hyperlink.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4 d-flex">
+                <div class="card mb-4 shadow-sm flex-fill">
+                  <a href="#"><img src="image-examples/amsterdam.jpg" width="100%" alt="image"></a>
+                  <div class="card-body">
+                    <p class="card-text">Condition 20: Hyperlinked image whose alt text contains a non descript word,
+                      or placeholder text.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4 d-flex">
+                <div class="card mb-4 shadow-sm flex-fill text-center">
+                  <a href="#" aria-hidden="true" tabindex="-1"><img src="image-examples/flower.jpg" alt width="100%"
+                      class="w-100"></a>
+                  <div class="card-body">
+                    <p class="card-text">Condition 21: Hyperlinked image where anchor has aria-hidden=&quot;true&quot;
+                      and tabindex=&quot;-1&quot;</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4 d-flex">
+                <div class="card mb-4 shadow-sm flex-fill text-center">
+                  <a href="#" aria-hidden="true"><img src="image-examples/fiat.jpg" alt width="100%"
+                      class="w-100"></a>
+                  <div class="card-body">
+                    <p class="card-text">Condition 22: Hyperlinked image where anchor has
+                      aria-hidden=&quot;true&quot;.</p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </main>
-  <footer class="text-muted sa11y-ignore">
+  <footer class="sa11y-ignore d-flex flex-wrap bg-dark text-white justify-content-between align-items-center py-5 mt-4">
     <div class="container">
-      <p>Customize Sa11y to target specific regions of a page only. For example, <a href="#">this</a> link will be
-        ignored. If a content editor can't edit it, don't scan it.</p>
-    </div>
+    <span class="text-muted">Customize Sa11y to target specific regions of a page only. For example, this non-descript <a href="#">link</a> will be ignored. If a content editor can't edit it, don't scan it. Purposely super low contrast for testing purposes.</span>
+  </div>
   </footer>
-  <!-- Bootstrap + Jquery -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
-  </script>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+    integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous">
+  </script>
   <script>
-    $(document).ready(function () {
-      if (window.top == window) {
-        $("#iframe-check").remove();
-      } else {
-        $("#iframe-check").css("display", "block")
-      }
+    document.addEventListener(
+      'DOMContentLoaded',
+      (e) => {
+        const iframe = document.getElementById("iframe-check"),
+          newTabOnly = document.getElementById("newtabonly");
 
-      if (window.top != window) {
-        $("#newtabonly").css("display", "none")
-      } else {
-        $("#newtabonly").css("display", "block")
-      }
-      $('body').scrollspy({
-        target: '#list-example'
-      })
-    });
+        if (window.top == window) {
+          iframe.remove();
+        } else {
+          iframe.style.display = "block";
+        }
+
+        if (window.top != window) {
+          newTabOnly.style.display = "none";
+        } else {
+          newTabOnly.style.display = "block";
+        }
+      });
   </script>
-
-  <!--Jquery (Yes, loaded a second time on purpose...)-->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.slim.min.js"></script>
 
   <!-- Tippy.js CDN scripts -->
   <script src="https://unpkg.com/@popperjs/core@2"></script>
   <script src="https://unpkg.com/tippy.js@6"></script>
 
-<!--
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/src/sa11y.min.css" />
-  <script src="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/src/sa11y-english.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/src/sa11y.min.js"></script>
+  <!--
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/src/sa11y.min.css" />
+ <script src="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/src/sa11y-english.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/src/sa11y.min.js"></script>
 -->
 
-<!--Sa11y-->
-<link rel="stylesheet" href="../../src/sa11y.css" />
-<script src="../../src/sa11y-english.js"></script>
-<script src="../../src/sa11y.js"></script>
- 
+  <!--Sa11y-->
+  <link rel="stylesheet" href="../../src/sa11y.css" />
+  <script src="../../src/sa11y-english.js"></script>
+  <script src="../../src/sa11y.js"></script>
+
 </body>
 
 </html>

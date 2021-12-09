@@ -8,10 +8,11 @@ function Sa11yAnnotate(type, content, inline = false) {
         [sa11yWarning]: "warning",
         [sa11yGood]: "good",
     };
-    // TODO: Discuss Throwing Errors.
+
     if (!ValidTypes.has(type)) {
-        throw Error;
+        throw Error(`Invalid type [${type}] for annotation`);
     }
+
     // Check if content is a function
     if (content && {}.toString.call(content) === "[object Function]") {
         // if it is, call it and get the value.
@@ -45,9 +46,9 @@ function Sa11yAnnotateBanner(type, content) {
         [sa11yWarning]: "warning",
         [sa11yGood]: "good",
     };
-    // TODO: Discuss Throwing Errors.
+
     if (!ValidTypes.has(type)) {
-        throw Error;
+        throw Error(`Invalid type [${type}] for annotation`);
     }
     // Check if content is a function
     if (content && {}.toString.call(content) === "[object Function]") {
@@ -61,9 +62,7 @@ function Sa11yAnnotateBanner(type, content) {
     </div>`;
 }
 
-//Encapsulate jQuery to avoid conflicts.
-jQuery.noConflict();
-(function ($) {
+(function () {
 
     class Sa11y {
         constructor() {
@@ -205,27 +204,18 @@ jQuery.noConflict();
             //Put before document.ready because of CSS flicker when dark mode is enabled.
             this.settingPanelToggles();
 
-            // Preload before CheckAll function.
-            $(document).ready(() => {
+            window.addEventListener('load', () => {
                 this.loadGlobals();
                 this.sa11yMainToggle();
                 this.sanitizeHTMLandComputeARIA();
                 this.initializeJumpToIssueTooltip();
+
+                document.getElementById("sa11y-toggle").disabled = false;
+                if (localStorage.getItem("sa11y-remember-panel") === "Closed" || !localStorage.getItem("sa11y-remember-panel")) {
+                    this.panelActive = true;
+                    this.checkAll();
+                }
             });
-
-            //500ms to let the page settle down (e.g. slow loading JavaScript components).
-            setTimeout(() => {
-                $(document).ready(() => {
-                    document.getElementById("sa11y-toggle").disabled = false;
-
-                    //To-do: Yes, this is total crap and needs to be re-thinked. On document.ready, it crudely checks/annotates the page, and then instantly clears/resets everything except for the badge counter. Need to figure out a way to update badge counter without painting entire page with error buttons.
-                    if (localStorage.getItem("sa11y-remember-panel") === "Closed" || localStorage.getItem("sa11y-remember-panel") === null) {
-                        this.checkAll();
-                        this.resetAll();
-                    }
-
-                });
-            }, 500);
         }
 
         //----------------------------------------------------------------------
@@ -236,6 +226,7 @@ jQuery.noConflict();
             //Keeps checker active when navigating between pages until it is toggled off.
             const sa11yToggle = document.getElementById("sa11y-toggle");
             sa11yToggle.addEventListener('click', (e) => {
+
                 if (localStorage.getItem("sa11y-remember-panel") === "Opened") {
                     localStorage.setItem("sa11y-remember-panel", "Closed");
                     sa11yToggle.classList.remove("sa11y-on")
@@ -268,7 +259,7 @@ jQuery.noConflict();
             }
 
             //Escape key to shutdown.
-            document.onkeydown = function(evt) {
+            document.onkeydown = (evt) => {
                 evt = evt || window.event;
                 var isEscape = false;
                 if ("key" in evt) {
@@ -282,8 +273,8 @@ jQuery.noConflict();
                     sa11yToggle.classList.remove("sa11y-on");
                     sa11yToggle.click();
                     this.resetAll();
-                } 
-            }; 
+                }
+            }
         }
 
         // ============================================================
@@ -292,14 +283,14 @@ jQuery.noConflict();
         // Credits to John Jameson, PrincetonU for this snippet. 
         // ============================================================
         loadGlobals = () => {
-    
+
             // Look for a content container
-            if (typeof sa11yCheckRoot !== "string" || $(sa11yCheckRoot).length === 0) {
+            if (typeof sa11yCheckRoot !== "string" || !sa11yCheckRoot) {
                 sa11yCheckRoot = "body";
             }
 
             // Readability
-            if (typeof sa11yReadabilityRoot !== "string" || $(sa11yReadabilityRoot).length === 0) {
+            if (typeof sa11yReadabilityRoot !== "string" || !sa11yReadabilityRoot) {
                 sa11yReadabilityRoot = "body";
             }
 
@@ -312,7 +303,7 @@ jQuery.noConflict();
                 sa11yLinkIgnoreSpan =
                     "noscript" + separator + sa11yLinkIgnoreSpanSelectors.join();
             } else {
-                sa11yLinkIgnoreSpan = 
+                sa11yLinkIgnoreSpan =
                     "noscript";
             }
 
@@ -326,7 +317,7 @@ jQuery.noConflict();
                 sa11yContainerIgnore =
                     "[aria-hidden='true'], #sa11y-container *, .sa11y-instance *" + separator + containerSelectors.join();
             } else {
-                sa11yContainerIgnore = 
+                sa11yContainerIgnore =
                     "[aria-hidden='true'], #sa11y-container *, .sa11y-instance *";
             }
             this.containerIgnore = sa11yContainerIgnore;
@@ -379,9 +370,19 @@ jQuery.noConflict();
                 });
             };
 
-            //Mini ignore function.
+            /* Mini ignore function.
             $.fn.ignore = function (sel) {
                 return this.clone().find(sel || ">*").remove().end();
+            }; */
+
+            /* This function will ignore the text "(external)", and correctly flag this link as an error for non descript link text. */
+            const fnIgnore = (element, selector) => {
+                const $clone = element.cloneNode(true);
+                const $excluded = Array.from(selector ? $clone.querySelectorAll(selector) : $clone.children);
+                $excluded.forEach(($c) => {
+                    $c.parentElement.removeChild($c);
+                });
+                return $clone;
             };
 
             //Helper: Compute alt text on images within a text node.
@@ -391,7 +392,7 @@ jQuery.noConflict();
                 //No image, has text.
                 if (imgArray.length === 0 && $el.textContent.trim().length > 1) {
                     returnText = $el.textContent.trim();
-                } 
+                }
                 //Has image, no text.
                 else if (imgArray.length && $el.textContent.trim().length === 0) {
                     let imgalt = imgArray[0].getAttribute("alt");
@@ -400,7 +401,7 @@ jQuery.noConflict();
                     } else if (imgalt !== undefined) {
                         returnText = imgalt;
                     }
-                } 
+                }
                 //Has image and text. 
                 //To-do: This is a hack? Any way to do this better?
                 else if (imgArray.length && $el.textContent.trim().length) {
@@ -413,13 +414,11 @@ jQuery.noConflict();
             }
 
             //Helper: Handle ARIA labels for Link Text module.
-            this.computeAriaLabel = function ($el) {
-                const el = $el.get(0); //remove when calling functions are converted
-                
+            this.computeAriaLabel = function (el) {
+
                 if (el.matches("[aria-label]")) {
                     return el.getAttribute("aria-label");
-                } 
-                else if (el.matches("[aria-labelledby]")) {
+                } else if (el.matches("[aria-labelledby]")) {
                     let target = el.getAttribute("aria-labelledby").split(/\s+/);
                     if (target.length > 0) {
                         let returnText = "";
@@ -434,15 +433,13 @@ jQuery.noConflict();
                     } else {
                         return "";
                     }
-                } 
+                }
                 //Children of element.
                 else if (Array.from(el.children).filter(x => x.matches("[aria-label]")).length > 0) {
                     return Array.from(el.children)[0].getAttribute("aria-label");
-                } 
-                else if (Array.from(el.children).filter(x => x.matches("[title]")).length > 0) {
+                } else if (Array.from(el.children).filter(x => x.matches("[title]")).length > 0) {
                     return Array.from(el.children)[0].getAttribute("title");
-                }
-                else if (Array.from(el.children).filter(x => x.matches("[aria-labelledby]")).length > 0) {
+                } else if (Array.from(el.children).filter(x => x.matches("[aria-labelledby]")).length > 0) {
                     let target = Array.from(el.children)[0].getAttribute("aria-labelledby").split(/\s+/);
                     if (target.length > 0) {
                         let returnText = "";
@@ -457,8 +454,7 @@ jQuery.noConflict();
                     } else {
                         return "";
                     }
-                }
-                else {
+                } else {
                     return "noAria";
                 }
             };
@@ -547,7 +543,7 @@ jQuery.noConflict();
             }
 
             //Toggle: Dark mode. (Credits: https://derekkedziora.com/blog/dark-mode-revisited)
-            
+
             let systemInitiatedDark = window.matchMedia(
                 "(prefers-color-scheme: dark)"
             );
@@ -640,8 +636,8 @@ jQuery.noConflict();
         checkAll = async () => {
             this.errorCount = 0;
             this.warningCount = 0;
-            this.root = $(sa11yCheckRoot);
-            this.readabilityRoot = $(sa11yReadabilityRoot);
+            this.root = document.querySelector(sa11yCheckRoot);
+            this.readabilityRoot = document.querySelector(sa11yReadabilityRoot);
 
             this.findElements();
 
@@ -679,7 +675,7 @@ jQuery.noConflict();
             this.detectOverflow();
 
             //Don't show badge when panel is opened.
-            if (document.getElementsByClassName("sa11y-on").length == 0) {
+            if (!document.getElementsByClassName("sa11y-on").length) {
                 this.updateBadge();
             }
         };
@@ -735,10 +731,10 @@ jQuery.noConflict();
             document.querySelector('#sa11y-panel-alert').classList.remove("sa11y-active")
 
             var empty = document.querySelector('#sa11y-panel-alert-text');
-            while(empty.firstChild) empty.removeChild(empty.firstChild);
+            while (empty.firstChild) empty.removeChild(empty.firstChild);
 
             var clearStatus = document.querySelector('#sa11y-status');
-            while(clearStatus.firstChild) clearStatus.removeChild(clearStatus.firstChild)
+            while (clearStatus.firstChild) clearStatus.removeChild(clearStatus.firstChild)
 
             if (restartPanel) {
                 document.querySelector('#sa11y-panel').classList.remove("sa11y-active");
@@ -771,12 +767,12 @@ jQuery.noConflict();
         // ============================================================
         detectOverflow = () => {
             const findParentWithOverflow = ($el, property, value) => {
-            while($el !== null) {
-                const style = window.getComputedStyle($el);
-                const propValue = style.getPropertyValue(property);
-                        if (propValue === value) {
-                            return $el;
-                        }
+                while ($el !== null) {
+                    const style = window.getComputedStyle($el);
+                    const propValue = style.getPropertyValue(property);
+                    if (propValue === value) {
+                        return $el;
+                    }
                     $el = $el.parentElement;
                 }
                 return null;
@@ -786,7 +782,7 @@ jQuery.noConflict();
                 const overflowing = findParentWithOverflow($el, 'overflow', 'hidden');
                 if (overflowing !== null) {
                     overflowing.classList.add('sa11y-overflow');
-                }                
+                }
             });
         }
 
@@ -827,7 +823,7 @@ jQuery.noConflict();
 
             $sa11ySkipBtn.disabled = false;
             $sa11ySkipBtn.setAttribute("style", "cursor: pointer !important;");
-            
+
             const $sa11yPanel = document.getElementById("sa11y-panel");
             $sa11yPanel.classList.add("sa11y-active");
 
@@ -838,35 +834,29 @@ jQuery.noConflict();
             if (this.errorCount === 1 && this.warningCount === 1) {
                 $panelContent.setAttribute("class", "sa11y-errors");
                 $sa11yStatus.textContent = `${sa11yPanelStatus["status1"]}`;
-            } 
-            else if (this.errorCount === 1 && this.warningCount > 0) {
+            } else if (this.errorCount === 1 && this.warningCount > 0) {
                 $panelContent.setAttribute("class", "sa11y-errors");
                 $sa11yStatus.textContent = `${sa11yPanelStatus["status2"](warningCount)}`;
-            } 
-            else if (this.errorCount > 0 && this.warningCount === 1) {
+            } else if (this.errorCount > 0 && this.warningCount === 1) {
                 $panelContent.setAttribute("class", "sa11y-errors");
                 $sa11yStatus.textContent = `${sa11yPanelStatus["status3"](errorCount)}`;
-            } 
-            else if (this.errorCount > 0 && this.warningCount > 0) {
+            } else if (this.errorCount > 0 && this.warningCount > 0) {
                 $panelContent.setAttribute("class", "sa11y-errors");
                 $sa11yStatus.textContent = `${sa11yPanelStatus["status4"](errorCount, warningCount)}`;
-            } 
-            else if (this.errorCount > 0) {
+            } else if (this.errorCount > 0) {
                 $panelContent.setAttribute("class", "sa11y-errors");
                 $sa11yStatus.textContent = `${this.errorCount === 1 ?
                     sa11yPanelStatus["status5"] :
                     sa11yPanelStatus["status6"](errorCount)
                 }`;
-            } 
-            else if (this.warningCount > 0) {
+            } else if (this.warningCount > 0) {
                 $panelContent.setAttribute("class", "sa11y-warnings");
                 $sa11yStatus.textContent = `${
                     totalCount === 1 ?
                     sa11yPanelStatus["status7"] :
                     sa11yPanelStatus["status8"](warningCount)
                 }`;
-            } 
-            else {
+            } else {
                 $panelContent.setAttribute("class", "sa11y-good");
                 $sa11yStatus.textContent = `${sa11yPanelStatus["status9"]}`;
 
@@ -881,7 +871,7 @@ jQuery.noConflict();
         // Main panel: Build Show Outline and Settings tabs.
         // ----------------------------------------------------------------------
         buildPanel = () => {
-            
+
             const $outlineToggle = document.getElementById("sa11y-outline-toggle");
             const $outlinePanel = document.getElementById("sa11y-outline-panel");
             const $outlineList = document.getElementById("sa11y-outline-list");
@@ -891,7 +881,7 @@ jQuery.noConflict();
             const $settingsContent = document.getElementById("sa11y-settings-content");
 
             const $headingAnnotations = document.querySelectorAll(".sa11y-heading-label");
-            
+
             //Show outline panel
             $outlineToggle.addEventListener('click', (e) => {
                 if ($outlineToggle.getAttribute("aria-expanded") == "true") {
@@ -913,7 +903,7 @@ jQuery.noConflict();
 
                 //Show heading level annotations.
                 $headingAnnotations.forEach(($el) => $el.classList.toggle("sa11y-label-visible"));
-                
+
                 //Close Settings panel when Show Outline is active.
                 $settingsPanel.classList.remove("sa11y-active");
                 $settingsToggle.classList.remove("sa11y-settings-active");
@@ -971,12 +961,12 @@ jQuery.noConflict();
             });
 
             //Enhanced keyboard accessibility for panel.
-            document.getElementById('sa11y-panel-controls').addEventListener('keydown', function(e) {
-            const $tab = document.querySelectorAll('#sa11y-outline-toggle[role=tab], #sa11y-settings-toggle[role=tab]');
+            document.getElementById('sa11y-panel-controls').addEventListener('keydown', function (e) {
+                const $tab = document.querySelectorAll('#sa11y-outline-toggle[role=tab], #sa11y-settings-toggle[role=tab]');
                 if (e.key === 'ArrowRight') {
                     for (let i = 0; i < $tab.length; i++) {
                         if ($tab[i].getAttribute('aria-expanded') === "true" || $tab[i].getAttribute('aria-expanded') === "false") {
-                            $tab[i+1].focus();
+                            $tab[i + 1].focus();
                             e.preventDefault();
                             break;
                         }
@@ -985,25 +975,25 @@ jQuery.noConflict();
                 if (e.key === 'ArrowDown') {
                     for (let i = 0; i < $tab.length; i++) {
                         if ($tab[i].getAttribute('aria-expanded') === "true" || $tab[i].getAttribute('aria-expanded') === "false") {
-                            $tab[i+1].focus();
+                            $tab[i + 1].focus();
                             e.preventDefault();
                             break;
                         }
                     }
                 }
                 if (e.key === 'ArrowLeft') {
-                    for (let i = $tab.length-1; i > 0; i--) {
+                    for (let i = $tab.length - 1; i > 0; i--) {
                         if ($tab[i].getAttribute('aria-expanded') === "true" || $tab[i].getAttribute('aria-expanded') === "false") {
-                            $tab[i-1].focus();
+                            $tab[i - 1].focus();
                             e.preventDefault();
                             break;
                         }
                     }
                 }
                 if (e.key === 'ArrowUp') {
-                    for (let i = $tab.length-1; i > 0; i--) {
+                    for (let i = $tab.length - 1; i > 0; i--) {
                         if ($tab[i].getAttribute('aria-expanded') === "true" || $tab[i].getAttribute('aria-expanded') === "false") {
-                            $tab[i-1].focus();
+                            $tab[i - 1].focus();
                             e.preventDefault();
                             break;
                         }
@@ -1018,7 +1008,7 @@ jQuery.noConflict();
 
             $closeAlertToggle.addEventListener('click', () => {
                 $alertPanel.classList.remove("sa11y-active");
-                while($alertText.firstChild) $alertText.removeChild($alertText.firstChild);
+                while ($alertText.firstChild) $alertText.removeChild($alertText.firstChild);
                 document.querySelectorAll('.sa11y-pulse-border').forEach((el) => el.classList.remove('sa11y-pulse-border'));
                 $sa11ySkipBtn.focus();
             });
@@ -1029,7 +1019,7 @@ jQuery.noConflict();
         // ============================================================
 
         skipToIssue = () => {
-            /* Polyfill for scrollTo. scrollTo instead of .animate(), so Sa11y could use jQuery slim build. Credit: https://stackoverflow.com/a/67108752 & https://github.com/iamdustan/smoothscroll */
+            /* Polyfill for scrollTo. Credit: https://stackoverflow.com/a/67108752 & https://github.com/iamdustan/smoothscroll */
             var reducedMotionQuery = false;
             var scrollBehavior = "smooth";
             if (!('scrollBehavior' in document.documentElement.style)) {
@@ -1047,15 +1037,15 @@ jQuery.noConflict();
             }
 
             let sa11yBtnLocation = 0;
-            const findSa11yBtn = $(".sa11y-btn").length;
+            const findSa11yBtn = document.querySelectorAll(".sa11y-btn").length;
 
             //Jump to issue using keyboard shortcut.
-            document.onkeyup = function (e) {
+            document.addEventListener('keyup', (e) => {
                 if (e.altKey && e.code == "Period") {
                     skipToIssueToggle();
                     e.preventDefault();
                 }
-            };
+            });
 
             //Jump to issue using click.
             const $skipToggle = document.getElementById("sa11y-cycle-toggle");
@@ -1075,28 +1065,30 @@ jQuery.noConflict();
 
                 //Mini function: Find visibible parent of hidden element.
                 const findVisibleParent = ($el, property, value) => {
-                    while($el !== null) {
+                    while ($el !== null) {
                         const style = window.getComputedStyle($el);
                         const propValue = style.getPropertyValue(property);
-                                if (propValue === value) {
-                                    return $el;
-                                }
-                            $el = $el.parentElement;
+                        if (propValue === value) {
+                            return $el;
                         }
-                        return null;
-                    };
+                        $el = $el.parentElement;
+                    }
+                    return null;
+                };
 
                 //Mini function: Calculate top of element. 
                 const offset = ($el) => {
                     var rect = $el.getBoundingClientRect(),
-                    scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                    return { top: rect.top + scrollTop}
+                        scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    return {
+                        top: rect.top + scrollTop
+                    }
                 }
-            
+
                 //'offsetTop' will always return 0 if element is hidden. We rely on offsetTop to determine if element is hidden, although we use 'getBoundingClientRect' to set the scroll position. 
                 let scrollPosition;
                 let offsetTopPosition = $findButtons[sa11yBtnLocation].offsetTop;
-                if (offsetTopPosition == 0) {
+                if (offsetTopPosition === 0) {
                     let visiblePosition = findVisibleParent($findButtons[sa11yBtnLocation], 'display', 'none');
                     scrollPosition = offset(visiblePosition.previousElementSibling).top - 50;
                 } else {
@@ -1105,7 +1097,7 @@ jQuery.noConflict();
 
                 //Scroll to element if offsetTop is less than or equal to 0.
                 if (offsetTopPosition >= 0) {
-                    setTimeout(function() { 
+                    setTimeout(function () {
                         window.scrollTo({
                             top: scrollPosition,
                             behavior: scrollBehavior
@@ -1118,19 +1110,19 @@ jQuery.noConflict();
                         if (overflowing !== null) {
                             let hiddenparent = overflowing.previousElementSibling;
                             hiddenparent.classList.add("sa11y-pulse-border")
-                        }       
+                        }
                     });
                     $findButtons[sa11yBtnLocation].focus();
-                } 
-                else {
+                } else {
                     $findButtons[sa11yBtnLocation].focus();
                 }
 
                 //Alert if element is hidden.
-                if (offsetTopPosition == 0) {
+                if (offsetTopPosition === 0) {
                     $alertPanel.classList.add("sa11y-active");
                     $alertText.textContent = `${sa11yPanelStatus["notVisibleAlert"]}`;
                     $alertPanelPreview.innerHTML = $findButtons[sa11yBtnLocation].getAttribute('data-tippy-content');
+                    $closeAlertToggle.focus();
                 } else if (offsetTopPosition < 1) {
                     $alertPanel.classList.remove("sa11y-active");
                     document.querySelectorAll('.sa11y-pulse-border').forEach(($el) => $el.classList.remove('sa11y-pulse-border'));
@@ -1176,7 +1168,7 @@ jQuery.noConflict();
 
             //Images
             const images = Array.from(container.querySelectorAll("img"));
-            const excludeimages = Array.from(container.querySelectorAll(this.imageIgnore));        
+            const excludeimages = Array.from(container.querySelectorAll(this.imageIgnore));
             this.$img = images.filter($el => !excludeimages.includes($el));
 
             //iFrames
@@ -1216,60 +1208,60 @@ jQuery.noConflict();
         // ============================================================
         // Rulesets: Check Headings
         // ============================================================
-        checkHeaders = () => { 
+        checkHeaders = () => {
             let prevLevel;
-            this.$h.forEach((el, i) => {
-                let text = this.computeTextNodeWithImage(el);
+            this.$h.forEach(($el, i) => {
+                let text = this.computeTextNodeWithImage($el);
                 let htext = this.sanitizeForHTML(text);
                 let level;
 
-                if (el.getAttribute("aria-level")) {
-                    level = +el.getAttribute("aria-level");
+                if ($el.getAttribute("aria-level")) {
+                    level = +$el.getAttribute("aria-level");
                 } else {
-                    level = +el.tagName.slice(1);
+                    level = +$el.tagName.slice(1);
                 }
 
-                let headingLength = el.textContent.trim().length;
+                let headingLength = $el.textContent.trim().length;
                 let error = null;
                 let warning = null;
 
                 if (level - prevLevel > 1 && i !== 0) {
                     error = sa11yIM["headings"]["nonConsecutiveHeadingLevel"](prevLevel, level);
-                } else if (el.textContent.trim().length == 0) {
-                    if (el.querySelectorAll("img").length) {
-                        const imgalt = el.querySelector("img").getAttribute("alt");
+                } else if ($el.textContent.trim().length == 0) {
+                    if ($el.querySelectorAll("img").length) {
+                        const imgalt = $el.querySelector("img").getAttribute("alt");
                         if (imgalt == undefined || imgalt == " " || imgalt == "") {
                             error = sa11yIM["headings"]["emptyHeadingWithImage"](level)
-                            el.classList.add("sa11y-error-text");
+                            $el.classList.add("sa11y-error-text");
                         }
                     } else {
                         error = sa11yIM["headings"]["emptyHeading"](level);
-                        el.classList.add("sa11y-error-text");
+                        $el.classList.add("sa11y-error-text");
                     }
                 } else if (i === 0 && level !== 1 && level !== 2) {
                     error = sa11yIM["headings"]["firstHeading"];
-                } else if (el.textContent.trim().length > 170) {
+                } else if ($el.textContent.trim().length > 170) {
                     warning = sa11yIM["headings"]["longHeading"](headingLength);
                 }
 
                 prevLevel = level;
 
                 let li =
-                        `<li class='sa11y-outline-${level}'>
+                    `<li class='sa11y-outline-${level}'>
                     <span class='sa11y-badge'>${level}</span> 
                     <span class='sa11y-outline-list-item'>${htext}</span>
                 </li>`;
-    
-                    let liError =
-                        `<li class='sa11y-outline-${level}'>
+
+                let liError =
+                    `<li class='sa11y-outline-${level}'>
                     <span class='sa11y-badge sa11y-error-badge'>
                     <span aria-hidden='true'>&#10007;</span>
                     <span class='sa11y-visually-hidden'>${sa11yError}</span> ${level}</span> 
                     <span class='sa11y-outline-list-item sa11y-red-text sa11y-bold'>${htext}</span>
                 </li>`;
-    
-                    let liWarning =
-                        `<li class='sa11y-outline-${level}'>
+
+                let liWarning =
+                    `<li class='sa11y-outline-${level}'>
                     <span class='sa11y-badge sa11y-warning-badge'>
                     <span aria-hidden='true'>&#x3f;</span>
                     <span class='sa11y-visually-hidden'>${sa11yWarning}</span> ${level}</span> 
@@ -1281,32 +1273,32 @@ jQuery.noConflict();
                     ignoreArray = Array.from(document.querySelectorAll(sa11yOutlineIgnore));
                 }
 
-                if (!ignoreArray.includes(el)) {
+                if (!ignoreArray.includes($el)) {
 
                     //Append heading labels.
-                    el.insertAdjacentHTML("beforeend", `<span class='sa11y-heading-label'>H${level}</span>`);
+                    $el.insertAdjacentHTML("beforeend", `<span class='sa11y-heading-label'>H${level}</span>`);
 
                     //Heading errors
-                    if (error != null && el.closest("a") != null) {
+                    if (error != null && $el.closest("a") != null) {
                         this.errorCount++;
-                        el.classList.add("sa11y-error-heading");
-                        el.closest("a").insertAdjacentHTML("afterend", Sa11yAnnotate(sa11yError, error, true));
+                        $el.classList.add("sa11y-error-heading");
+                        $el.closest("a").insertAdjacentHTML("afterend", Sa11yAnnotate(sa11yError, error, true));
                         document.querySelector("#sa11y-outline-list").insertAdjacentHTML("beforeend", liError);
                     } else if (error != null) {
                         this.errorCount++;
-                        el.classList.add("sa11y-error-heading");
-                        el.insertAdjacentHTML("beforebegin", Sa11yAnnotate(sa11yError, error));
+                        $el.classList.add("sa11y-error-heading");
+                        $el.insertAdjacentHTML("beforebegin", Sa11yAnnotate(sa11yError, error));
                         document.querySelector("#sa11y-outline-list").insertAdjacentHTML("beforeend", liError);
                     }
 
                     //Heading warnings
-                    else if (warning != null && el.closest("a") != null) {
+                    else if (warning != null && $el.closest("a") != null) {
                         this.warningCount++;
-                        el.closest("a").insertAdjacentHTML("afterend", Sa11yAnnotate(sa11yWarning, warning));
+                        $el.closest("a").insertAdjacentHTML("afterend", Sa11yAnnotate(sa11yWarning, warning));
                         document.querySelector("#sa11y-outline-list").insertAdjacentHTML("beforeend", liWarning);
                     } else if (warning != null) {
                         this.warningCount++;
-                        el.insertAdjacentHTML("beforebegin", Sa11yAnnotate(sa11yWarning, warning));
+                        $el.insertAdjacentHTML("beforebegin", Sa11yAnnotate(sa11yWarning, warning));
                         document.querySelector("#sa11y-outline-list").insertAdjacentHTML("beforeend", liWarning);
                     }
 
@@ -1321,8 +1313,8 @@ jQuery.noConflict();
             if (this.$h1.length === 0) {
                 this.errorCount++;
 
-                const updateH1Outline = 
-                `<div class='sa11y-instance sa11y-missing-h1'>
+                const updateH1Outline =
+                    `<div class='sa11y-instance sa11y-missing-h1'>
                     <span class='sa11y-badge sa11y-error-badge'><span aria-hidden='true'>&#10007;</span><span class='sa11y-visually-hidden'>${sa11yError}</span></span> 
                     <span class='sa11y-red-text sa11y-bold'>${sa11yIM["headings"]["missingHeadingOnePanelText"]}</span>
                 </div>`
@@ -1334,8 +1326,8 @@ jQuery.noConflict();
         // ============================================================
         // Rulesets: Link text
         // ============================================================
-        checkLinkText = function () {
-            let containsLinkTextStopWords = function (textContent) {
+        checkLinkText = () => {
+            const containsLinkTextStopWords = function (textContent) {
                 let urlText = [
                     "http",
                     ".asp",
@@ -1365,7 +1357,7 @@ jQuery.noConflict();
                 let hit = [null, null, null];
 
                 // Flag partial stop words.
-                $.each(sa11yPartialAltStopWords, function (index, word) {
+                sa11yPartialAltStopWords.forEach((word) => {
                     if (
                         textContent.length === word.length &&
                         textContent.toLowerCase().indexOf(word) >= 0
@@ -1376,7 +1368,7 @@ jQuery.noConflict();
                 });
 
                 // Other warnings we want to add.
-                $.each(sa11yWarningAltWords, function (index, word) {
+                sa11yWarningAltWords.forEach((word) => {
                     if (textContent.toLowerCase().indexOf(word) >= 0) {
                         hit[1] = word;
                         return false;
@@ -1384,7 +1376,7 @@ jQuery.noConflict();
                 });
 
                 // Flag link text containing URLs.
-                $.each(urlText, function (index, word) {
+                urlText.forEach((word) => {
                     if (textContent.toLowerCase().indexOf(word) >= 0) {
                         hit[2] = word;
                         return false;
@@ -1394,101 +1386,118 @@ jQuery.noConflict();
             };
 
             /* Mini function if you need to exclude any text contained with a span. We created this function to ignore automatically appended sr-only text for external links and document filetypes.
+            
+            const fnIgnore();
 
-            $.fn.ignore = function(sel){
-                return this.clone().find(sel||">*").remove().end();
-            };
-
-            $el.ignore("span.sr-only").text().trim();
-                
             Example: <a href="#">learn more <span class="sr-only">(external)</span></a>
             
-            This function will ignore the text "(external)", and correctly flag this link as an error for non descript link text. */
+            This function will ignore the text "(external)", and correctly flag this link as an error for non descript link text.
+            */
 
-            $.fn.ignore = function (sel) {
-                return this.clone().find(sel || ">*").remove().end();
+            const fnIgnore = (element, selector) => {
+                const $clone = element.cloneNode(true);
+                const $excluded = Array.from(selector ? $clone.querySelectorAll(selector) : $clone.children);
+                $excluded.forEach(($c) => {
+                    $c.parentElement.removeChild($c);
+                });
+                return $clone;
             };
-
-            let $links = this.root.find("a[href]").not(this.linkIgnore);
 
             const M = sa11yIM["linktext"];
 
-            $links.each((i, el) => {
-                let $el = $(el);
-                let linkText = this.computeAriaLabel($el);
+            this.$links.forEach((el) => {
+                let linkText = this.computeAriaLabel(el);
+                let hasAriaLabelledBy = el.getAttribute('aria-labelledby');
+                let hasAriaLabel = el.getAttribute('aria-label');
+                let hasTitle = el.getAttribute('title');
+                let childAriaLabelledBy = null;
+                let childAriaLabel = null;
+                let childTitle = null;
 
-                var hasAriaLabelledBy = $el.attr("aria-labelledby");
-                var hasAriaLabel = $el.attr("aria-label");
-                var hasTitle = $el.attr("title");
-                var childAriaLabelledBy = $el.children().attr("aria-labelledby");
-                var childAriaLabel = $el.children().attr("aria-label");
-                var childTitle = $el.children().attr("title");
+                if (el.children.length) {
+                    let $firstChild = el.children[0];
+                    childAriaLabelledBy = $firstChild.getAttribute('aria-labelledby');
+                    childAriaLabel = $firstChild.getAttribute('aria-label');
+                    childTitle = $firstChild.getAttribute('title');
+                }
 
-                var error = containsLinkTextStopWords($el.ignore(sa11yLinkIgnoreSpan).text().trim());
+                let error = containsLinkTextStopWords(fnIgnore(el, sa11yLinkIgnoreSpan).textContent.trim());
 
-                if (linkText === "noAria") {
-                    linkText = $el.text();
+                if (linkText === 'noAria') {
+                    linkText = el.textContent;
                 }
 
                 //Flag empty hyperlinks
-                if (
-                    $el.attr("href") !== undefined &&
-                    $el.text().trim().length == 0
-                ) {
-                    if ($el.find("img").length) {
+                if (el.getAttribute('href') && !el.textContent.trim()) {
+                    if (el.querySelectorAll('img').length) {
                         // Do nothing
-                    } else if (hasAriaLabelledBy != null || hasAriaLabel != null) {
-                        $el.addClass("sa11y-good-border")
-                        $el.before(
+                    } else if (hasAriaLabelledBy || hasAriaLabel) {
+                        el.classList.add("sa11y-good-border")
+                        el.insertAdjacentHTML(
+                            'beforebegin',
                             Sa11yAnnotate(sa11yGood, M["linkLabel"](linkText), true)
                         );
-                    } else if (hasTitle != null) {
-                        let linkText = $el.attr("title");
-                        $el.addClass("sa11y-good-border")
-                        $el.before(
+                    } else if (hasTitle) {
+                        let linkText = hasTitle;
+                        el.classList.add("sa11y-good-border")
+                        el.insertAdjacentHTML(
+                            'beforebegin',
                             Sa11yAnnotate(sa11yGood, M["linkLabel"](linkText), true)
                         );
-                    } else if ($el.children().length) {
-                        if (childAriaLabelledBy != null || childAriaLabel != null || childTitle != null) {
-                            $el.addClass("sa11y-good-border");
-                            $el.before(
+                    } else if (el.children.length) {
+                        if (childAriaLabelledBy || childAriaLabel || childTitle) {
+                            el.classList.add("sa11y-good-border");
+                            el.insertAdjacentHTML(
+                                'beforebegin',
                                 Sa11yAnnotate(sa11yGood, M["linkLabel"](linkText), true)
                             );
                         } else {
                             this.errorCount++;
-                            $el.addClass("sa11y-error-border");
-                            $el.after(Sa11yAnnotate(sa11yError, M["emptyLinkNoLabel"], true));
+                            el.classList.add("sa11y-error-border");
+                            el.insertAdjacentHTML(
+                                'afterend',
+                                Sa11yAnnotate(sa11yError, M["emptyLinkNoLabel"], true));
                         }
                     } else {
                         this.errorCount++;
-                        $el.addClass("sa11y-error-border");
-                        $el.after(Sa11yAnnotate(sa11yError, M["emptyLink"], true));
+                        el.classList.add("sa11y-error-border");
+                        el.insertAdjacentHTML(
+                            'afterend',
+                            Sa11yAnnotate(sa11yError, M["emptyLink"], true));
                     }
                 } else if (error[0] != null) {
-                    if (hasAriaLabelledBy != null) {
-                        $el.before(
+                    if (hasAriaLabelledBy) {
+                        el.insertAdjacentHTML(
+                            'beforebegin',
                             Sa11yAnnotate(sa11yGood, M["linkLabel"](linkText), true)
                         );
-                    } else if (hasAriaLabel != null) {
-                        $el.before(
+                    } else if (hasAriaLabel) {
+                        el.insertAdjacentHTML(
+                            'beforebegin',
                             Sa11yAnnotate(sa11yGood, M["linkLabel"](hasAriaLabel), true)
                         );
-                    } else if ($el.attr("aria-hidden") == "true" && $el.attr("tabindex") == "-1") {
+                    } else if (el.getAttribute('aria-hidden') === 'true' && el.getAttribute('tabindex') === '-1') {
                         //Do nothing.
                     } else {
                         this.errorCount++;
-                        $el.addClass("sa11y-error-text");
-                        $el.after(Sa11yAnnotate(sa11yError, M["linkStopWordMessage"](error[0]), true));
+                        el.classList.add("sa11y-error-text");
+                        el.insertAdjacentHTML(
+                            'afterend',
+                            Sa11yAnnotate(sa11yError, M["linkStopWordMessage"](error[0]), true));
                     }
                 } else if (error[1] != null) {
                     this.warningCount++;
-                    $el.addClass("sa11y-warning-text");
-                    $el.after(Sa11yAnnotate(sa11yWarning, M["linkBestPractices"](error[1]), true));
+                    el.classList.add("sa11y-warning-text");
+                    el.insertAdjacentHTML(
+                        'afterend',
+                        Sa11yAnnotate(sa11yWarning, M["linkBestPractices"](error[1]), true));
                 } else if (error[2] != null) {
                     if (linkText.length > 40) {
                         this.warningCount++;
-                        $el.addClass("sa11y-warning-text");
-                        $el.after(Sa11yAnnotate(sa11yWarning, M["linkURL"], true));
+                        el.classList.add("sa11y-warning-text");
+                        el.insertAdjacentHTML(
+                            'afterend',
+                            Sa11yAnnotate(sa11yWarning, M["linkURL"], true));
                     }
                 }
             });
@@ -1498,32 +1507,23 @@ jQuery.noConflict();
         // Rulesets: Links (Advanced)
         // ============================================================
         checkLinksAdvanced = () => {
-
             const M = sa11yIM["linksAdvanced"];
+            let seen = {};
+            this.$links.forEach((el) => {
+                let linkText = this.computeAriaLabel(el);
 
-            let $linksTargetBlank = this.root
-                .find("a[href]")
-                .not(this.linkIgnore)
-                .not("#sa11y-container a")
-                .not(".sa11y-exclude");
-
-            var seen = {};
-            $linksTargetBlank.each((i, el) => {
-                let $el = $(el);
-                let linkText = this.computeAriaLabel($el);
-
-                if (linkText === "noAria") {
-                    linkText = $el.text();
+                if (linkText === 'noAria') {
+                    linkText = el.textContent;
                 }
 
-                const fileTypeMatch = $el.filter(`
-                    a[href$='.pdf'], 
-                    a[href$='.doc'], 
-                    a[href$='.zip'], 
-                    a[href$='.mp3'], 
-                    a[href$='.txt'], 
-                    a[href$='.exe'], 
-                    a[href$='.dmg'], 
+                const fileTypeMatch = el.matches(`
+                    a[href$='.pdf'],
+                    a[href$='.doc'],
+                    a[href$='.zip'],
+                    a[href$='.mp3'],
+                    a[href$='.txt'],
+                    a[href$='.exe'],
+                    a[href$='.dmg'],
                     a[href$='.rtf'],
                     a[href$='.pptx'],
                     a[href$='.ppt'],
@@ -1533,28 +1533,28 @@ jQuery.noConflict();
                     a[href$='.mp4'],
                     a[href$='.mov'],
                     a[href$='.avi']
-                `).length;
+                `);
 
                 //Links with identical accessible names have equivalent purpose.
 
                 //If link has an image, process alt attribute,
                 //To-do: Kinda hacky. Doesn't return accessible name of link in correct order.
-                var alt = $el.find("img").attr("alt");
-                if (alt === undefined) {
-                    alt = "";
-                }
+                const $img = el.querySelector('img');
+                let alt = $img ? ($img.getAttribute('alt') || '') : '';
 
                 //Return link text and image's alt text.
-                var linkTextTrimmed = linkText.trim().toLowerCase() + " " + alt;
-                var href = $el.attr("href");
+                let linkTextTrimmed = linkText.trim().toLowerCase() + " " + alt;
+                let href = el.getAttribute("href");
 
                 if (seen[linkTextTrimmed] && linkTextTrimmed.length !== 0) {
                     if (seen[href]) {
                         //Nothing
                     } else {
                         this.warningCount++;
-                        $el.addClass("sa11y-warning-text");
-                        $el.after(Sa11yAnnotate(sa11yWarning, M["linkIdenticalName"](linkText), true));
+                        el.classList.add("sa11y-warning-text");
+                        el.insertAdjacentHTML(
+                            'afterend',
+                            Sa11yAnnotate(sa11yWarning, M["linkIdenticalName"](linkText), true));
                     }
                 } else {
                     seen[linkTextTrimmed] = true;
@@ -1562,25 +1562,29 @@ jQuery.noConflict();
                 }
 
                 //New tab or new window.
-                var containsNewWindowPhrases = sa11yNewWindowPhrases.some(function (pass) {
+                const containsNewWindowPhrases = sa11yNewWindowPhrases.some(function (pass) {
                     return linkText.toLowerCase().indexOf(pass) >= 0;
                 });
 
                 //Link that points to a file type indicates that it does.
-                var containsFileTypePhrases = sa11yFileTypePhrases.some(function (pass) {
+                const containsFileTypePhrases = sa11yFileTypePhrases.some(function (pass) {
                     return linkText.toLowerCase().indexOf(pass) >= 0;
                 });
 
-                if ($el.attr("target") === "_blank" && fileTypeMatch === 0 && !containsNewWindowPhrases) {
+                if (el.getAttribute("target") === "_blank" && !fileTypeMatch && !containsNewWindowPhrases) {
                     this.warningCount++;
-                    $el.addClass("sa11y-warning-text");
-                    $el.after(Sa11yAnnotate(sa11yWarning, M["newTabWarning"], true));
+                    el.classList.add("sa11y-warning-text");
+                    el.insertAdjacentHTML(
+                        'afterend',
+                        Sa11yAnnotate(sa11yWarning, M["newTabWarning"], true));
                 }
 
                 if (fileTypeMatch === 1 && !containsFileTypePhrases) {
                     this.warningCount++;
-                    $el.addClass("sa11y-warning-text");
-                    $el.before(Sa11yAnnotate(sa11yWarning, M["fileTypeWarning"], true));
+                    el.classList.add("sa11y-warning-text");
+                    el.insertAdjacentHTML(
+                        'beforebegin',
+                        Sa11yAnnotate(sa11yWarning, M["fileTypeWarning"], true));
                 }
             });
         }
@@ -1621,95 +1625,85 @@ jQuery.noConflict();
             // Stores the corresponding issue text to alternative text
             const M = sa11yIM["images"];
 
-            this.$img.forEach(($el) => { 
+            this.$img.forEach(($el) => {
                 let alt = $el.getAttribute("alt")
-                if (alt == undefined) {    
+                if (alt == undefined) {
                     if ($el.closest('a[href]')) {
                         if ($el.closest('a[href]').textContent.trim().length > 1) {
                             $el.classList.add("sa11y-error-border");
                             $el.closest('a[href]').insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yError, M["missingAltLinkButHasTextMessage"], false, true));
-                        } 
-                        else if ($el.closest('a[href]').textContent.trim().length == 0) {
+                        } else if ($el.closest('a[href]').textContent.trim().length == 0) {
                             $el.classList.add("sa11y-error-border");
                             $el.closest('a[href]').insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yError, M["missingAltLinkMessage"], false, true));
                         }
-                    }    
+                    }
                     // General failure message if image is missing alt.
                     else {
                         $el.classList.add("sa11y-error-border");
                         $el.insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yError, M["missingAltMessage"], false, true));
-                    }         
+                    }
                 }
                 // If alt attribute is present, further tests are done.
                 else {
                     let altText = this.sanitizeForHTML(alt); //Prevent tooltip from breaking.
                     let error = this.containsAltTextStopWords(altText);
                     let altLength = alt.length;
-                 
+
                     // Image fails if a stop word was found.
                     if (error[0] != null && $el.closest("a[href]")) {
                         this.errorCount++;
                         $el.classList.add("sa11y-error-border");
                         $el.closest("a[href]").insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yError, M["linkImageBadAltMessage"](altText, error[0]), false, true));
-                    }
-                    else if (error[2] != null && $el.closest("a[href]")) {
+                    } else if (error[2] != null && $el.closest("a[href]")) {
                         this.errorCount++;
                         $el.classList.add("sa11y-error-border");
                         $el.closest("a[href]").insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yError, M["linkImagePlaceholderAltMessage"](altText), false, true));
-                    }
-                    else if (error[1] != null && $el.closest("a[href]")) {
+                    } else if (error[1] != null && $el.closest("a[href]")) {
                         this.warningCount++;
                         $el.classList.add("sa11y-warning-border");
                         $el.closest("a[href]").insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yWarning, M["linkImageSusAltMessage"](altText, error[1]), false, true));
-                    }
-                    else if (error[0] != null) {
+                    } else if (error[0] != null) {
                         this.errorCount++;
                         $el.classList.add("sa11y-error-border");
                         $el.insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yError, M["altHasBadWordMessage"](altText, error[0]), false, true));
-                    }
-                    else if (error[2] != null) {
+                    } else if (error[2] != null) {
                         this.errorCount++;
                         $el.classList.add("sa11y-error-border");
                         $el.insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yError, M["altPlaceholderMessage"](altText), false, true));
-                    }
-                    else if (error[1] != null) {
+                    } else if (error[1] != null) {
                         this.warningCount++;
                         $el.classList.add("sa11y-warning-border");
                         $el.insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yWarning, M["altHasSusWordMessage"](altText, error[1]), false, true));
-                    } 
-                    else if ((alt == "" || alt == " ") && $el.closest("a[href]")) {
+                    } else if ((alt == "" || alt == " ") && $el.closest("a[href]")) {
                         if ($el.closest("a[href]").getAttribute("tabindex") == "-1" && $el.closest("a[href]").getAttribute("aria-hidden") == "true") {
                             //Do nothing.
-                        } 
-                        else if ($el.closest("a[href]").getAttribute("aria-hidden") == "true") {
+                        } else if ($el.closest("a[href]").getAttribute("aria-hidden") == "true") {
                             this.errorCount++;
                             $el.classList.add("sa11y-error-border");
                             $el.closest("a[href]").insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yError, M["hyperlinkedImageAriaHidden"], false, true));
-                        } 
-                        else if ($el.closest("a[href]").textContent.trim().length == 0) {
+                        } else if ($el.closest("a[href]").textContent.trim().length == 0) {
                             this.errorCount++;
                             $el.classList.add("sa11y-error-border");
                             $el.closest("a[href]").insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yError, M["imageLinkNullAltNoTextMessage"], false, true));
-                        } 
-                        else {
+                        } else {
                             $el.closest("a[href]").insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yGood, M["linkHasAltMessage"], false, true));
                         }
                     }
-                    
+
                     //Link and contains alt text.
                     else if (alt.length > 250 && $el.closest("a[href]")) {
                         this.warningCount++;
                         $el.classList.add("sa11y-warning-border");
                         $el.closest("a[href]").insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yWarning, M["hyperlinkAltLengthMessage"](altText, altLength), false, true));
                     }
-                    
+
                     //Link and contains an alt text.
                     else if (alt != "" && $el.closest("a[href]") && $el.closest("a[href]").textContent.trim().length == 0) {
                         this.warningCount++;
                         $el.classList.add("sa11y-warning-border");
                         $el.closest("a[href]").insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yWarning, M["imageLinkAltTextMessage"](altText), false, true));
                     }
-                    
+
                     //Contains alt text & surrounding link text.
                     else if (alt != "" && $el.closest("a[href]") && $el.closest("a[href]").textContent.trim().length > 1) {
                         this.warningCount++;
@@ -1722,14 +1716,11 @@ jQuery.noConflict();
                         this.warningCount++;
                         $el.classList.add("sa11y-warning-border");
                         $el.insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yWarning, M["decorativeMessage"], false, true));
-                    }
-                    
-                    else if (alt.length > 250) {
+                    } else if (alt.length > 250) {
                         this.warningCount++;
                         $el.classList.add("sa11y-warning-border");
                         $el.insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yWarning, M["altTooLongMessage"](altText, altLength), false, true));
-                    } 
-                    else if (alt != "") {
+                    } else if (alt != "") {
                         $el.insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yGood, M["passAlt"](altText), false, true));
                     }
                 }
@@ -1741,78 +1732,87 @@ jQuery.noConflict();
         // ============================================================
         checkLabels = () => {
 
-            let $inputs = this.root
-                .find("input, select, textarea")
-                .not(this.containerIgnore)
-                .not("input:hidden");
-
-            $inputs.each((i, el) => {
-                let $el = $(el);
-                let ariaLabel = this.computeAriaLabel($el);
+            this.$inputs.forEach((el) => {
+                let ariaLabel = this.computeAriaLabel(el);
+                const type = el.getAttribute('type')
                 const M = sa11yIM["labels"];
 
                 //If button type is submit or button: pass
-                if ($el.attr("type") === "submit" || $el.attr("type") === "button" || $el.attr("type") === "hidden") {
+                if (type === "submit" || type === "button" || type === "hidden") {
                     //Do nothing
                 }
                 //Inputs where type="image".
-                else if ($el.attr("type") === "image") {
-                    let imgalt = $el.attr("alt");
-                    if (imgalt == undefined || imgalt == "" || imgalt == " ") {
-                        if ($el.attr("aria-label") !== undefined) {
+                else if (type === "image") {
+                    let imgalt = el.getAttribute("alt");
+                    if (!imgalt || imgalt === ' ') {
+                        if (el.getAttribute("aria-label")) {
                             //Good.
                         } else {
                             this.errorCount++;
-                            $el.addClass("sa11y-error-border");
-                            $el.after(Sa11yAnnotate(sa11yError, M["missingImageInputMessage"], true));
+                            el.classList.add("sa11y-error-border");
+                            el.insertAdjacentHTML(
+                                'afterend',
+                                Sa11yAnnotate(sa11yError, M["missingImageInputMessage"], true));
                         }
-                    } 
+                    }
                 }
                 //Recommendation to remove reset buttons.
-                else if ($el.attr("type") === "reset") {
+                else if (type === "reset") {
                     this.warningCount++;
-                    $el.addClass("sa11y-warning-border");
-                    $el.after(Sa11yAnnotate(sa11yWarning, M["inputResetMessage"], true));
+                    el.classList.add("sa11y-warning-border");
+                    el.insertAdjacentHTML(
+                        'afterend',
+                        Sa11yAnnotate(sa11yWarning, M["inputResetMessage"], true));
                 }
                 //Uses ARIA. Warn them to ensure there's a visible label.
-                else if ($el.attr("aria-label") || $el.attr("aria-labelledby") || $el.attr("title")) {
-                    if ($el.attr("title")) {
-                        let ariaLabel = $el.attr("title");
+                else if (el.getAttribute("aria-label") || el.getAttribute("aria-labelledby") || el.getAttribute("title")) {
+                    if (el.getAttribute("title")) {
+                        let ariaLabel = el.getAttribute("title");
                         this.warningCount++;
-                        $el.addClass("sa11y-warning-border");
-                        $el.after(Sa11yAnnotate(sa11yWarning, M["ariaLabelInputMessage"](ariaLabel), true));
+                        el.classList.add("sa11y-warning-border");
+                        el.insertAdjacentHTML(
+                            'afterend',
+                            Sa11yAnnotate(sa11yWarning, M["ariaLabelInputMessage"](ariaLabel), true));
                     } else {
                         this.warningCount++;
-                        $el.addClass("sa11y-warning-border");
-                        $el.after(Sa11yAnnotate(sa11yWarning, M["ariaLabelInputMessage"](ariaLabel), true));
+                        el.classList.add("jooa11y-warning-border");
+                        el.insertAdjacentHTML(
+                            'afterend',
+                            Sa11yAnnotate(sa11yWarning, M["ariaLabelInputMessage"](ariaLabel), true));
                     }
                 }
                 //Implicit labels.
-                else if (
-                    $el.closest("label") && 
-                    $el.closest("label").text().trim().length !== 0
-                    ) {
+                else if (el.closest('label') && el.closest('label').textContent.trim()) {
                     //Do nothing if label has text.
                 }
                 //Has an ID but doesn't have a matching FOR attribute.
-                else if ($el.attr("id") && ($el.prevAll().is("label")) || $el.nextAll().is("label")) {
-                    let prevlabel = $el.prevAll("label");
-                    let nextlabel = $el.nextAll("label");
-                    if (
-                        (prevlabel.attr("for") === $el.attr("id")) || 
-                        (nextlabel.attr("for") === $el.attr("id"))
-                        ) {
-                        //Do nothing.
-                    } else {
+                else if (el.getAttribute("id") &&
+                    Array.from(el.parentElement.children).filter($c => $c.nodeName === 'LABEL').length
+                ) {
+                    const $labels = Array.from(el.parentElement.children).filter($c => $c.nodeName === 'LABEL');
+                    let hasFor = false;
+
+                    $labels.forEach(($l) => {
+                        if (hasFor) return;
+
+                        if ($l.getAttribute('for') === el.getAttribute('id')) {
+                            hasFor = true;
+                        }
+                    });
+
+                    if (!hasFor) {
                         this.errorCount++;
-                        $el.addClass("sa11y-error-border");
-                        $el.after(Sa11yAnnotate(sa11yError, M["noForAttributeMessage"]($el.attr("id")), true));
+                        el.classList.add("sa11y-error-border");
+                        el.insertAdjacentHTML(
+                            'afterend',
+                            Sa11yAnnotate(sa11yError, M["noForAttributeMessage"](el.getAttribute('id')), true));
                     }
-                }  
-                else {
+                } else {
                     this.errorCount++;
-                    $el.addClass("sa11y-error-border");
-                    $el.after(Sa11yAnnotate(sa11yError, M["missingLabelMessage"], true));
+                    el.classList.add("sa11y-error-border");
+                    el.insertAdjacentHTML(
+                        'afterend',
+                        Sa11yAnnotate(sa11yError, M["missingLabelMessage"], true));
                 }
             });
         };
@@ -1862,21 +1862,19 @@ jQuery.noConflict();
 
             //Error: iFrame is missing accessible name.
             this.$iframes.forEach($el => {
-                if ($el.tagName === "VIDEO" || 
-                    $el.tagName === "AUDIO" || 
-                    $el.getAttribute("aria-hidden") === "true" || 
-                    $el.getAttribute("hidden") !== null || 
-                    $el.style.display == 'none' || 
-                    $el.getAttribute("role") === "presentation") 
-                    {
-                        //Ignore if hidden.
-                    }
-                else if ($el.getAttribute("title") === null || $el.getAttribute("title") === '') { 
+                if ($el.tagName === "VIDEO" ||
+                    $el.tagName === "AUDIO" ||
+                    $el.getAttribute("aria-hidden") === "true" ||
+                    $el.getAttribute("hidden") !== null ||
+                    $el.style.display == 'none' ||
+                    $el.getAttribute("role") === "presentation") {
+                    //Ignore if hidden.
+                } else if ($el.getAttribute("title") === null || $el.getAttribute("title") === '') {
                     if ($el.getAttribute("aria-label") === null || $el.getAttribute("aria-label") === '') {
                         if ($el.getAttribute("aria-labelledby") === null) {
                             //Make sure red error border takes precedence 
                             if ($el.classList.contains("sa11y-warning-border")) {
-                                $el.classList.remove("sa11y-warning-border");  
+                                $el.classList.remove("sa11y-warning-border");
                             }
                             this.errorCount++;
                             $el.classList.add("sa11y-error-border");
@@ -1885,24 +1883,21 @@ jQuery.noConflict();
                             );
                         }
                     }
-                }   
-                else {
+                } else {
                     //Nothing
                 }
             });
 
             this.$embeddedcontent.forEach($el => {
-                if ($el.tagName === "VIDEO" || 
-                    $el.tagName === "AUDIO" || 
-                    $el.getAttribute("aria-hidden") === "true" || 
-                    $el.getAttribute("hidden") !== null || 
-                    $el.style.display == 'none' || 
+                if ($el.tagName === "VIDEO" ||
+                    $el.tagName === "AUDIO" ||
+                    $el.getAttribute("aria-hidden") === "true" ||
+                    $el.getAttribute("hidden") !== null ||
+                    $el.style.display == 'none' ||
                     $el.getAttribute("role") === "presentation" ||
-                    $el.getAttribute("tabindex") === "-1")
-                    {
-                        //Ignore if hidden.
-                    }
-                else {
+                    $el.getAttribute("tabindex") === "-1") {
+                    //Ignore if hidden.
+                } else {
                     this.warningCount++;
                     $el.classList.add("sa11y-warning-border");
                     $el.insertAdjacentHTML('beforebegin',
@@ -1916,12 +1911,12 @@ jQuery.noConflict();
         // Rulesets: QA
         // ============================================================
         checkQA = () => {
-            
+
             const M = sa11yIM["QA"];
 
             //Warning: Excessive bolding or italics.
             this.$strongitalics.forEach($el => {
-                let strongItalicsText = $el.textContent.trim().length;                
+                let strongItalicsText = $el.textContent.trim().length;
                 if (strongItalicsText > 400) {
                     this.warningCount++;
                     $el.insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yWarning, M["badItalics"]));
@@ -1934,7 +1929,7 @@ jQuery.noConflict();
                 $el.classList.add("sa11y-error-text");
                 $el.insertAdjacentHTML('afterend', Sa11yAnnotate(sa11yError, M["badLink"]($el), true));
             });
-            
+
             //Warning: Find all PDFs.
             this.$checkPDF.forEach(($el, i) => {
                 let pdfCount = this.$checkPDF.length;
@@ -1947,9 +1942,13 @@ jQuery.noConflict();
                 //Only append warning button to first PDF.
                 if ($el && i == 0) {
                     $el.insertAdjacentHTML('afterend', Sa11yAnnotate(sa11yWarning, M["pdf"](pdfCount), true));
+
+                    if ($el.querySelector('img')) {
+                        $el.classList.remove('sa11y-warning-text');
+                    }
                 }
             });
-            
+
             //Tables check.
             this.$tables.forEach($el => {
                 let findTHeaders = $el.querySelectorAll("th");
@@ -1957,9 +1956,9 @@ jQuery.noConflict();
                 if (findTHeaders.length == 0) {
                     this.errorCount++;
                     $el.classList.add("sa11y-error-border");
-                    $el.insertAdjacentHTML('beforebegin', 
-                    Sa11yAnnotate(sa11yError, M["tables"]["missingHeadings"])
-                    ); 
+                    $el.insertAdjacentHTML('beforebegin',
+                        Sa11yAnnotate(sa11yError, M["tables"]["missingHeadings"])
+                    );
                 }
                 if (findHeadingTags.length > 0) {
                     this.errorCount++;
@@ -1969,7 +1968,7 @@ jQuery.noConflict();
                         $el.insertAdjacentHTML('beforebegin',
                             Sa11yAnnotate(sa11yError, M["tables"]["semanticHeading"])
                         );
-                    });                        
+                    });
                 }
                 findTHeaders.forEach($el => {
                     if ($el.textContent.trim().length == 0) {
@@ -1982,7 +1981,7 @@ jQuery.noConflict();
 
             //Error: Missing language tag. Lang should be at least 2 characters.
             if (this.lang == undefined || this.lang.length < 2) {
-                this.errorCount++;  
+                this.errorCount++;
                 const sa11yContainer = document.getElementById("sa11y-container");
                 sa11yContainer.insertAdjacentHTML('afterend', Sa11yAnnotateBanner(sa11yError, M["pageLanguageMessage"]));
             }
@@ -2018,7 +2017,7 @@ jQuery.noConflict();
                         }
                     }
                 }
-            
+
                 // If paragraph only contains <p><strong>...</strong></p>.
                 if (/^<(strong)>.+<\/\1>$/.test($el.innerHTML.trim())) {
                     //Although only flag if it:
@@ -2038,7 +2037,7 @@ jQuery.noConflict();
                     }
                 }
             });
-            
+
             if (document.querySelectorAll(".sa11y-fake-heading").length > 0) {
                 this.warningCount++;
             }
@@ -2060,12 +2059,12 @@ jQuery.noConflict();
 
             this.$p.forEach($el => {
                 let hit = false;
-                let firstPrefix = $el.textContent.substring(0,2);
+                let firstPrefix = $el.textContent.substring(0, 2);
                 if (
                     firstPrefix.trim().length > 0 &&
                     firstPrefix !== activeMatch &&
                     firstPrefix.match(prefixMatch)
-                ) { 
+                ) {
                     let hasBreak = $el.innerHTML.indexOf("<br>");
                     if (hasBreak !== -1) {
                         let subParagraph = $el
@@ -2085,7 +2084,7 @@ jQuery.noConflict();
                             if (sibling.matches(selector)) return sibling;
                             sibling = sibling.nextElementSibling
                         }
-                    
+
                     };
 
                     // Decrement the second p prefix and compare .
@@ -2094,28 +2093,28 @@ jQuery.noConflict();
                         if ($second) {
                             let secondPrefix = decrement(
                                 $el.nextElementSibling.textContent.substring(0, 2)
-                                );
-                                if (firstPrefix === secondPrefix) {
-                                    hit = true;
-                                }
+                            );
+                            if (firstPrefix === secondPrefix) {
+                                hit = true;
                             }
                         }
-                        if (hit) {
-                            this.warningCount++;
+                    }
+                    if (hit) {
+                        this.warningCount++;
 
-                            $el.insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yWarning, M["shouldBeList"](firstPrefix)), false, true);
-                            $el.classList.add("sa11y-fake-list");
-                            activeMatch = firstPrefix;
-                        } else {
-                            activeMatch = "";
-                        }
+                        $el.insertAdjacentHTML('beforebegin', Sa11yAnnotate(sa11yWarning, M["shouldBeList"](firstPrefix)), false, true);
+                        $el.classList.add("sa11y-fake-list");
+                        activeMatch = firstPrefix;
                     } else {
                         activeMatch = "";
                     }
-                });
-                if (document.querySelectorAll(".sa11y-fake-list").length > 0) {
-                    this.warningCount++;
+                } else {
+                    activeMatch = "";
                 }
+            });
+            if (document.querySelectorAll(".sa11y-fake-list").length > 0) {
+                this.warningCount++;
+            }
 
             //Warning: Detect uppercase. 
             this.$allcaps.forEach($el => {
@@ -2217,7 +2216,6 @@ jQuery.noConflict();
                         return contrast.getBackground(el.parentNode);
                     }
                 },
-                // check visibility - based on jQuery method
                 isVisible: function (el) {
                     return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
                 },
@@ -2227,12 +2225,12 @@ jQuery.noConflict();
                         errors: [],
                         warnings: []
                     };
-                    
+
                     for (var i = 0; i < elements.length; i++) {
                         (function (n) {
                             var elem = elements[n];
                             // test if visible. Although we want invisible too.
-                            if (contrast /* .isVisible(elem) */) {
+                            if (contrast /* .isVisible(elem) */ ) {
                                 var style = getComputedStyle(elem),
                                     color = style.color,
                                     fill = style.fill,
@@ -2299,14 +2297,17 @@ jQuery.noConflict();
             }
 
             contrast.check();
-            const {errorMessage, warningMessage} = sa11yIM["contrast"];
+            const {
+                errorMessage,
+                warningMessage
+            } = sa11yIM["contrast"];
 
             contrastErrors.errors.forEach(item => {
                 var name = item.elem;
                 var cratio = item.ratio;
                 var clone = name.cloneNode(true);
                 var removeSa11yHeadingLabel = clone.querySelectorAll('.sa11y-heading-label');
-                for(var i = 0; i < removeSa11yHeadingLabel.length; i++){
+                for (var i = 0; i < removeSa11yHeadingLabel.length; i++) {
                     clone.removeChild(removeSa11yHeadingLabel[i])
                 }
                 var nodetext = clone.textContent;
@@ -2321,7 +2322,7 @@ jQuery.noConflict();
                 var name = item.elem;
                 var clone = name.cloneNode(true);
                 var removeSa11yHeadingLabel = clone.querySelectorAll('.sa11y-heading-label');
-                for(var i = 0; i < removeSa11yHeadingLabel.length; i++){
+                for (var i = 0; i < removeSa11yHeadingLabel.length; i++) {
                     clone.removeChild(removeSa11yHeadingLabel[i])
                 }
                 var nodetext = clone.textContent;
@@ -2368,11 +2369,11 @@ jQuery.noConflict();
 
             var readabilityarray = [];
             for (var i = 0; i < this.$readability.length; i++) {
-            var current = this.$readability[i];
-                if (current.textContent.replace(/ |\n/g,'') !== '') {
+                var current = this.$readability[i];
+                if (current.textContent.replace(/ |\n/g, '') !== '') {
                     readabilityarray.push(current.textContent);
                 }
-            } 
+            }
 
             let paragraphtext = readabilityarray.join(' ').trim().toString();
             var words_raw = paragraphtext.replace(/[.!?-]+/g, ' ').split(' ');
@@ -2432,8 +2433,7 @@ jQuery.noConflict();
 
             if (paragraphtext.length === 0) {
                 $readabilityinfo.innerHTML = M["noPorLiMessage"];
-            } 
-            else if (words > 30) {
+            } else if (words > 30) {
                 var fleschScore = flesch_reading_ease.toFixed(1);
                 var avgWordsPerSentence = (words / sentences).toFixed(1);
                 var complexWords = Math.round(100 * ((words - (syllables1 + syllables2)) / words));
@@ -2455,12 +2455,11 @@ jQuery.noConflict();
                         `<span>${fleschScore}</span> <span class="sa11y-readability-score">${sa11yGoodReadability}</span>`;
                 }
 
-                document.getElementById("sa11y-readability-details").innerHTML = 
-                `<li><span class='sa11y-bold'>${sa11yAvgWordPerSentence}</span> ${avgWordsPerSentence}</li>
+                document.getElementById("sa11y-readability-details").innerHTML =
+                    `<li><span class='sa11y-bold'>${sa11yAvgWordPerSentence}</span> ${avgWordsPerSentence}</li>
                 <li><span class='sa11y-bold'>${sa11yComplexWords}</span> ${complexWords}%</li>
                 <li><span class='sa11y-bold'>${sa11yTotalWords}</span> ${words}</li>`;
-            } 
-            else {
+            } else {
                 $readabilityinfo.textContent = M["notEnoughContentMessage"];
             }
         }
@@ -2470,9 +2469,7 @@ jQuery.noConflict();
     if (window.navigator.userAgent.match(/MSIE|Trident/) === null) {
         new Sa11y();
     }
-
-    //End of jQuery.noConflict mode.
-})(jQuery)
+})();
 
 /*-----------------------------------------------------------------------
 Sa11y: the accessibility quality assurance assistant.                

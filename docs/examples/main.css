@@ -1,10 +1,5 @@
-.jumbotron {
-    margin-bottom: 0rem!important
-}
-
 main a, footer a {
     color: #0065d1!important;
-    text-decoration: underline !important;
 }
 
 main a:hover,
@@ -27,10 +22,14 @@ main a:focus {
     color: white!important
 }
 
+.nav-link.active {
+    font-weight: bold;
+    color: #0dcaf0!important;
+}
 .nav-link:focus,
 .nav-link:hover {
     text-decoration: underline!important;
-    color: aqua!important
+    color: #0dcaf0!important;
 }
 
 .sa11y-website-frame-message {
