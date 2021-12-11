@@ -171,7 +171,7 @@ html[data-sa11y-theme="dark"] {
     font-size: var(--sa11y-normal-text) !important;
     font-weight: normal;
     word-break: normal !important;
-    letter-spacing: unset !important;
+    letter-spacing: normal !important;
 }
 
 .sa11y-instance {
@@ -914,10 +914,6 @@ button.sa11y-warning-btn-text:focus {
     font-size: var(--sa11y-normal-text) !important;
 }
 
-.sa11y-error-heading {
-    color: var(--sa11y-error) !important;
-}
-
 .sa11y-error-border {
     outline: 5px solid var(--sa11y-error) !important;
 }
@@ -1220,7 +1216,7 @@ span.sa11y-heading-label {
     font-family: var(--sa11y-font-face) !important;
     line-height: 22px !important;
     -webkit-font-smoothing: auto !important;
-    letter-spacing: unset !important;
+    letter-spacing: normal !important;
 }
 .tippy-box[data-theme~="sa11y-theme"][role=tooltip],
 .tippy-box[data-theme~="sa11y-theme"] {

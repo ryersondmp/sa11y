@@ -1,5 +1,8 @@
 main a, footer a {
-    color: #0065d1!important;
+    color: #0065d1 !important;
+}
+.card > a {
+    color: #002dac !important;
 }
 
 main a:hover,

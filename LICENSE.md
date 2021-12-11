@@ -78,6 +78,3 @@ The SVG icons used in this project are created by Font Awesome. View [FontAwesom
 
 ## Color Contrast plugin
 The [colour contrast plugin](https://github.com/jasonday/color-contrast) (MIT license) was created by Jason Day.
-
-## Powered by jQuery
-Powered by [jQuery (MIT license).](https://github.com/jquery/jquery)

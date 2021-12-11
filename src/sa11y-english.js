@@ -76,7 +76,7 @@ const sa11yPanelStatus = {
 const $sa11yVideos = "video, [src*='youtube.com'], [src*='vimeo.com'], [src*='yuja.com'], [src*='panopto.com']",
 $sa11yAudio = "audio, [src*='soundcloud.com'], [src*='simplecast.com'], [src*='podbean.com'], [src*='buzzsprout.com'], [src*='blubrry.com'], [src*='transistor.fm'], [src*='fusebox.fm'], [src*='libsyn.com']",
 $sa11yDataViz = "[src*='datastudio.google.com'], [src*='tableau']",
-$sa11yTwitter = "[id^='twitter-widget']",
+$sa11yTwitter = "[class^='twitter-timeline']",
 $sa11yAllEmbeddedContent = $sa11yVideos + ", " + $sa11yAudio + ", " + $sa11yDataViz + ", " + $sa11yTwitter;
 
 //Alt Text stop words.
@@ -315,6 +315,9 @@ const sa11yIM = {
 
         decorativeMessage: 
             `Image is marked as <span class='sa11y-bold'>decorative</span> and will be ignored by assistive technology. If the image conveys a story, mood or important information - be sure to add alt text.`,
+
+        decorativeFigureMessage:
+            `Image is marked as <span class='sa11y-bold'>decorative</span> and will be ignored by assistive technology. Although a <span class='sa11y-bold'>caption</span> was provided, the image should also have alt text. The alt text should provide a concise description of what is in the image. The caption should provide context to relate the image back to the surrounding content, or give attention to a particular piece of information.`,
 
         hyperlinkedImageAriaHidden: 
             `Link around image has <span class='sa11y-kbd'>aria-hidden=&quot;true&quot;</span> but is still keyboard focusable. If you are intending to hide a redundant or duplicate link, add <span class='sa11y-kbd'>tabindex=&quot;-1&quot;</span> as well.`,
