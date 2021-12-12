@@ -1,63 +1,108 @@
 /* ------------------------------ */
-/*           Localization         */
+/*  Localization: English         */
 /* ------------------------------ */
 
-//Language of Sa11y. Some global variables to help translate.
-const sa11yLangCode = "en", //Language code, e.g. "fr"
-    sa11yMainToggleLabel = "Check Accessibility",
-    sa11yContainerLabel = "Accessibility Checker",
-    sa11yError = "Error", //Erreur
-    sa11yWarning = "Warning", //Attention
-    sa11yGood = "Good", //Bon
-    sa11yOn = "On",
-    sa11yOff = "Off",
-    sa11yAlertText = "Alert",
-    sa11yAlertClose = "Close",
-    sa11yShowOutline = "Show Outline",
-    sa11yHideOutline = "Hide Outline",
-    sa11yShowSettings = "Show Settings",
-    sa11yHideSettings = "Hide Settings",
-    sa11yPageOutline = "Page outline",
-    sa11ySettings = "Settings",
-    sa11yContrast = "Contrast",
-    sa11yFormLabels = "Form labels",
-    sa11yLinksAdvanced = "Links (Advanced)",
-    sa11yDarkMode = "Dark Mode",
-    sa11yShortcutSR = "Skip to issue. Keyboard shortcut: Alt period",
-    sa11yShortcutTooltip = "Skip to issue";
-
-//Readability panel translations.
-const sa11yReadability = "Readability",
-    sa11yAvgWordPerSentence = "Average words per sentence:",
-    sa11yComplexWords = "Complex words:",
-    sa11yTotalWords = "Words:",
-    sa11yVeryDifficultReadability = "Very difficult",
-    sa11yDifficultReadability = "Difficult",
-    sa11yFairlyDifficultReadability = "Fairly difficult",
-    sa11yGoodReadability = "Good";
-
-//Panel status
-const sa11yPanelStatus = {
-    status1: `1 accessibility error and 1 warning found.`,
-    status2: (warningCount) => `1 accessibility error and ${warningCount} warnings found.`,
-    status3: (errorCount) => `${errorCount} accessibility errors and 1 warning found.`,
-    status4: (errorCount, warningCount) => `${errorCount} accessibility errors and ${warningCount} warnings found.`,
-    status5: `1 accessibility error found.`,
-    status6: (errorCount) => `${errorCount} accessibility errors found.`,
-    status7: `Please review warning.`,
-    status8: (warningCount) => `Please review ${warningCount} warnings.`,
-    status9: `No accessibility errors found.`,
-    status10: (warningCount) => `${warningCount} <span class="sa11y-visually-hidden">warnings found.</span>`,
-    status11: (totalCount) => `${totalCount} <span class="sa11y-visually-hidden">total issues found.</span>`,
-    notVisibleAlert: `The item you are trying to view is not visible; it may be hidden or inside of an accordion or tab component. Here's a preview:`
-}
-
-//Tooltip formatting shortcuts
+//Tooltip formatting shortcuts.
 const sa11yHr = `<hr aria-hidden='true' class='sa11y-hr'>`;
 const sa11yNewTab = `<span class='sa11y-visually-hidden'>(Opens in new tab)</span>`;
+const sa11yLang = {
 
-// IM - Issue Message
-const sa11yIM = {
+    // Main interface
+    LANG_CODE: 'en',
+    MAIN_TOGGLE_LABEL: 'Check Accessibility',
+    CONTAINER_LABEL: 'Accessibility Checker',
+    ERROR: 'Error',
+    WARNING: 'Warning', 
+    GOOD: 'Good',
+    ON: 'On',
+    OFF: 'Off',
+    ALERT_TEXT: 'Alert',
+    ALERT_CLOSE: 'Close',
+    SHOW_OUTLINE: 'Show Outline',
+    HIDE_OUTLINE: 'Hide Outline',
+    SHOW_SETTINGS: 'Show Settings',
+    HIDE_SETTINGS: 'Hide Settings',
+    PAGE_OUTLINE: 'Page outline',
+    SETTINGS: 'Settings',
+    CONTRAST: 'Contrast',
+    FORM_LABELS: 'Form labels',
+    LINKS_ADVANCED: 'Links (Advanced)',
+    DARK_MODE: 'Dark Mode',
+    SHORTCUT_SCREEN_READER: 'Skip to issue. Keyboard shortcut: Alt period',
+    SHORTCUT_TOOLTIP: 'Skip to issue',
+
+    // Alternative text module stop words
+    SUSPICIOUS_ALT_STOPWORDS: ['image', 'graphic', 'picture', 'photo'],
+    PLACEHOLDER_ALT_STOPWORDS: ['alt', 'image', 'photo', 'decorative', 'photo', 'placeholder', 'placeholder image', 'spacer', '.'],
+    PARTIAL_ALT_STOPWORDS: [
+        'click',
+        'click here',
+        'click here for more',
+        'click here to learn more',
+        'click here to learn more.',
+        'check out',
+        'download',
+        'download here',
+        'download here.',
+        'find out',
+        'find out more',
+        'find out more.',
+        'form',
+        'here',
+        'here.',
+        'info',
+        'information',
+        'link',
+        'learn',
+        'learn more',
+        'learn more.',
+        'learn to',
+        'more',
+        'page',
+        'paper',
+        'read more',
+        'read',
+        'read this',
+        'this',
+        'this page',
+        'this page.',
+        'this website',
+        'this website.',
+        'view',
+        'view our',
+        'website',
+        '.'
+    ],
+    WARNING_ALT_STOPWORDS: ['< ', ' >', 'click here'],
+    NEW_WINDOW_PHRASES: ['external', 'new tab', 'new window', 'pop-up', 'pop up'],
+
+    // Only some items in list would need to be translated.
+    FILE_TYPE_PHRASES: ['document', 'spreadsheet', 'worksheet', 'install', 'video', 'pdf', 'doc',
+        'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'powerpoint', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi'],
+
+    // Panel status
+    STATUS_1: `1 accessibility error and 1 warning found.`,
+    STATUS_2: (warningCount) => `1 accessibility error and ${warningCount} warnings found.`,
+    STATUS_3: (errorCount) => `${errorCount} accessibility errors and 1 warning found.`,
+    STATUS_4: (errorCount, warningCount) => `${errorCount} accessibility errors and ${warningCount} warnings found.`,
+    STATUS_5: `1 accessibility error found.`,
+    STATUS_6: (errorCount) => `${errorCount} accessibility errors found.`,
+    STATUS_7: `Please review warning.`,
+    STATUS_8: (warningCount) => `Please review ${warningCount} warnings.`,
+    STATUS_9: `No accessibility errors found.`,
+    STATUS_10: (warningCount) => `${warningCount} <span class="sa11y-visually-hidden">warnings found.</span>`,
+    STATUS_11: (totalCount) => `${totalCount} <span class="sa11y-visually-hidden">total issues found.</span>`,
+    NOT_VISIBLE_ALERT: `The item you are trying to view is not visible; it may be hidden or inside of an accordion or tab component. Here's a preview:`,
+
+    // Readability
+    LANG_READABILITY: 'Readability',
+    LANG_AVG_SENTENCE: 'Average words per sentence:',
+    LANG_COMPLEX_WORDS: 'Complex words:',
+    LANG_TOTAL_WORDS: 'Words:',
+    LANG_VERY_DIFFICULT: 'Very difficult',
+    LANG_DIFFICULT: 'Difficult',
+    LANG_FAIRLY_DIFFICULT: 'Fairly difficult',
+    LANG_GOOD: 'Good',
 
     //Headings
     HEADING_NON_CONSECUTIVE_LEVEL: (prevLevel, level) =>
@@ -347,5 +392,5 @@ Author: Development led by Adam Chaboryk at Ryerson University.
 All acknowledgements and contributors: https://github.com/ryersondmp/sa11y
 License: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
 Copyright (c) 2020 - 2021 Ryerson University
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+The above copyright notice shall be included in all copies or substantial portions of the Software.
 -----------------------------------------------------------------------*/

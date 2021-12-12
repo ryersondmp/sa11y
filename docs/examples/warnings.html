@@ -220,7 +220,7 @@
       </section>
     </div>
   </main>
-  <footer class="sa11y-ignore d-flex flex-wrap bg-dark text-white justify-content-between align-items-center py-5 mt-5">
+  <footer class="d-flex flex-wrap bg-dark text-white justify-content-between align-items-center py-5 mt-5">
     <div class="container">
     <span class="text-muted">Customize Sa11y to target specific regions of a page only. For example, this non-descript <a href="#">link</a> will be ignored. If a content editor can't edit it, don't scan it. Purposely super low contrast for testing purposes.</span>
   </div>
@@ -264,8 +264,13 @@
   <link rel="stylesheet" href="../../src/sa11y.css" />
   <script src="../../src/sa11y-english.js"></script>
   <script src="../../src/sa11y.js"></script>
+  
   <script type="text/javascript">
-    var sa11y = new Sa11y();
+    var sa11y = new Sa11y({
+      checkRoot: "main",
+      readabilityRoot: "body",
+      exampleQA: true,
+    });
   </script>
 
 </body>
