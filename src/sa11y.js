@@ -18,7 +18,7 @@ class Sa11y {
 			outlineIgnore: '',
 			headerIgnore: '',
 			imageIgnore: '',
-			linkIgnore: '',
+			linkIgnore: 'nav *, [role="navigation"] *',
 			linkIgnoreSpan: '',
 			linksToFlag: '',
 
@@ -61,7 +61,7 @@ class Sa11y {
 			twitterContent: "[class^='twitter-timeline']",
 			embeddedContent: '',
 		};
-		defaultOptions.embeddedContent = `${defaultOptions.videoContent}, ${defaultOptions.audioContent}`;
+		defaultOptions.embeddedContent = `${defaultOptions.videoContent}, ${defaultOptions.audioContent}, ${defaultOptions.dataVizContent}, ${defaultOptions.twitterContent}`;
 		options = {
 			...defaultOptions,
 			...options
@@ -255,25 +255,26 @@ class Sa11y {
 			//Ignore specific regions for readability module.
 			this.readabilityIgnore = this.containerIgnore + ', nav li, [role="navigation"] li';
 			if (options.readabilityIgnore) {
-				this.readabilityIgnore = options.readabilityIgnore + ',' + this.readabilityIgnore;
+				this.readabilityIgnore = options.readabilityIgnore + ', ' + this.readabilityIgnore;
 			}
 
 			// Ignore specific headings
 			this.headerIgnore = this.containerIgnore;
+			
 			if (options.headerIgnore) {
-				this.headerIgnore = options.headerIgnore + ',' + this.headerIgnore;
+				this.headerIgnore = options.headerIgnore + ', ' + this.headerIgnore;
 			}
-
+			console.log(this.headerIgnore)
 			// Ignore specific images.
 			this.imageIgnore = this.containerIgnore + ", [role='presentation'], [src^='https://trck.youvisit.com']";
 			if (options.imageIgnore) {
-				this.imageIgnore = options.imageIgnore + ',' + this.imageIgnore;
+				this.imageIgnore = options.imageIgnore + ', ' + this.imageIgnore;
 			}
 
 			//Ignore specific links
 			this.linkIgnore = this.containerIgnore + ', [aria-hidden="true"], .anchorjs-link';
 			if (options.linkIgnore) {
-				this.linkIgnore = options.linkIgnore + ',' + this.linkIgnore;
+				this.linkIgnore = options.linkIgnore + ', ' + this.linkIgnore;
 			}
 
 			// Ignore specific classes within links.
@@ -698,6 +699,7 @@ class Sa11y {
 			}
 			this.initializeTooltips();
 			this.detectOverflow();
+			this.nudge();
 
 			//Don't show badge when panel is opened.
 			if (!document.getElementsByClassName("sa11y-on").length) {
@@ -805,6 +807,20 @@ class Sa11y {
 				const overflowing = findParentWithOverflow($el, 'overflow', 'hidden');
 				if (overflowing !== null) {
 					overflowing.classList.add('sa11y-overflow');
+				}
+			});
+		}
+		
+		// ============================================================
+		// Nudge buttons if they overlap.
+		// ============================================================
+		this.nudge = () => {
+			const sa11yInstance = document.querySelectorAll('.sa11y-instance, .sa11y-instance-inline');
+			sa11yInstance.forEach(($el) => {
+				const sibling = $el.nextElementSibling;
+				if (sibling !== null && (sibling.classList.contains("sa11y-instance") ||
+				sibling.classList.contains("sa11y-instance-inline"))) {
+					sibling.querySelector("button").setAttribute("style", "margin: -10px -20px !important;");
 				}
 			});
 		}
@@ -1175,14 +1191,16 @@ class Sa11y {
 
 			//Headings
 			const allHeadings = Array.from(document.querySelectorAll("h1, h2, h3, h4, h5, h6, [role='heading'][aria-level]"));
-			this.$h = allHeadings.filter(heading => !containerExclusions.includes(heading));
+			const excludeHeadings = Array.from(container.querySelectorAll(this.headerIgnore));
+			this.$h = allHeadings.filter(heading => !excludeHeadings.includes(heading));
 
 			const allH1 = Array.from(document.querySelectorAll("h1, [role='heading'][aria-level='1']"));
-			this.$h1 = allH1.filter(heading => !containerExclusions.includes(heading));
+			this.$h1 = allH1.filter(heading => !excludeHeadings.includes(heading));
 
 			//Links
 			const $findlinks = Array.from(container.querySelectorAll("a[href]"));
-			this.$links = $findlinks.filter($el => !containerExclusions.includes($el));
+			const excludelinks = Array.from(container.querySelectorAll(this.linkIgnore));
+			this.$links = $findlinks.filter($el => !excludelinks.includes($el));
 
 			//Inputs
 			const $findinputs = Array.from(container.querySelectorAll("input, select, textarea"));
@@ -1249,9 +1267,6 @@ class Sa11y {
 				content = content();
 			}
 
-			// Clean data-tippy-content
-			content = this.sanitizeForHTML(content);
-
 			return `
 				<div class=${inline ? "sa11y-instance-inline" : "sa11y-instance"}>
 					<button
@@ -1288,9 +1303,6 @@ class Sa11y {
 			if (content && {}.toString.call(content) === "[object Function]") {
 				content = content();
 			}
-
-			// Clean data-tippy-content
-			content = this.sanitizeForHTML(content);
 
 			return `<div class="sa11y-instance sa11y-${CSSName[type]}-message-container">
 				<div role="region" aria-label="${[type]}" class="sa11y-${CSSName[type]}-message" lang="${M["LANG_CODE"]}">
@@ -1408,9 +1420,9 @@ class Sa11y {
 				this.errorCount++;
 
 				const updateH1Outline =
-					`<div class='sa11y-instance sa11y-missing-h1'>
+				`<div class='sa11y-instance sa11y-missing-h1'>
                     <span class='sa11y-badge sa11y-error-badge'><span aria-hidden='true'>&#10007;</span><span class='sa11y-visually-hidden'>${M["ERROR"]}</span></span> 
-                    <span class='sa11y-red-text sa11y-bold'>${M["missingHeadingOnePanelText"]}</span>
+                    <span class='sa11y-red-text sa11y-bold'>${M["PANEL_HEADING_MISSING_ONE"]}</span>
                 </div>`
 				document.getElementById("sa11y-outline-header").insertAdjacentHTML("afterend", updateH1Outline);
 				document.getElementById("sa11y-container").insertAdjacentHTML("afterend", this.annotateBanner(M["ERROR"], M["HEADING_MISSING_ONE"]));
@@ -1499,13 +1511,13 @@ class Sa11y {
 
 			this.$links.forEach((el) => {
 				
-				let linkText = this.computeAriaLabel(el);
-				let hasAriaLabelledBy = el.getAttribute('aria-labelledby');
-				let hasAriaLabel = el.getAttribute('aria-label');
-				let hasTitle = el.getAttribute('title');
-				let childAriaLabelledBy = null;
-				let childAriaLabel = null;
-				let childTitle = null;
+				let linkText = this.computeAriaLabel(el),
+					hasAriaLabelledBy = el.getAttribute('aria-labelledby'),
+					hasAriaLabel = el.getAttribute('aria-label'),
+					hasTitle = el.getAttribute('title'),
+					childAriaLabelledBy = null,
+					childAriaLabel = null,
+					childTitle = null;
 
 				if (el.children.length) {
 					let $firstChild = el.children[0];
@@ -1608,6 +1620,44 @@ class Sa11y {
 					linkText = el.textContent;
 				}
 
+				//Links with identical accessible names have equivalent purpose.
+
+				//If link has an image, process alt attribute,
+				//To-do: Kinda hacky. Doesn't return accessible name of link in correct order.
+				const $img = el.querySelector('img');
+				let alt = $img ? ($img.getAttribute('alt') || '') : '';
+
+				//Return link text and image's alt text.
+				let linkTextTrimmed = linkText.trim().toLowerCase() + " " + alt;
+				let href = el.getAttribute("href");
+
+				if (linkText.length !== 0) {
+					if (seen[linkTextTrimmed] && linkTextTrimmed.length !== 0) {
+						if (seen[href]) {
+							//Nothing
+						} else {
+							this.warningCount++;
+							el.classList.add("sa11y-warning-text");
+							el.insertAdjacentHTML(
+								'afterend',
+								this.annotate(M["WARNING"], M["LINK_IDENTICAL_NAME"](linkText), true));
+						}
+					} else {
+						seen[linkTextTrimmed] = true;
+						seen[href] = true;
+					}
+				}
+
+				//New tab or new window.
+				const containsNewWindowPhrases = M["NEW_WINDOW_PHRASES"].some(function (pass) {
+					return linkText.toLowerCase().indexOf(pass) >= 0;
+				});
+
+				//Link that points to a file type indicates that it does.
+				const containsFileTypePhrases = M["FILE_TYPE_PHRASES"].some(function (pass) {
+					return linkText.toLowerCase().indexOf(pass) >= 0;
+				});
+
 				const fileTypeMatch = el.matches(`
 					a[href$='.pdf'],
 					a[href$='.doc'],
@@ -1628,45 +1678,6 @@ class Sa11y {
 					a[href$='.avi']
 				`);
 
-				//Links with identical accessible names have equivalent purpose.
-
-				//If link has an image, process alt attribute,
-				//To-do: Kinda hacky. Doesn't return accessible name of link in correct order.
-				const $img = el.querySelector('img');
-				let alt = $img ? ($img.getAttribute('alt') || '') : '';
-
-				//Return link text and image's alt text.
-				let linkTextTrimmed = linkText.trim().toLowerCase() + " " + alt;
-				let href = el.getAttribute("href");
-
-				if (linkText !== null) {
-					if (seen[linkTextTrimmed] && linkTextTrimmed.length !== 0) {
-						if (seen[href]) {
-							//Nothing
-						} else {
-							this.warningCount++;
-							el.classList.add("sa11y-warning-text");
-							el.insertAdjacentHTML(
-								'afterend',
-								this.annotate(M["WARNING"], M["LINK_IDENTICAL_NAME"](linkText), true));
-						}
-					} else {
-						seen[linkTextTrimmed] = true;
-						seen[href] = true;
-					}
-				}
-
-
-				//New tab or new window.
-				const containsNewWindowPhrases = M["NEW_WINDOW_PHRASES"].some(function (pass) {
-					return linkText.toLowerCase().indexOf(pass) >= 0;
-				});
-
-				//Link that points to a file type indicates that it does.
-				const containsFileTypePhrases = M["FILE_TYPE_PHRASES"].some(function (pass) {
-					return linkText.toLowerCase().indexOf(pass) >= 0;
-				});
-
 				if (el.getAttribute("target") === "_blank" && !fileTypeMatch && !containsNewWindowPhrases) {
 					this.warningCount++;
 					el.classList.add("sa11y-warning-text");
@@ -1675,7 +1686,7 @@ class Sa11y {
 						this.annotate(M["WARNING"], M["NEW_TAB_WARNING"], true));
 				}
 
-				if (fileTypeMatch === 1 && !containsFileTypePhrases) {
+				if (fileTypeMatch && !containsFileTypePhrases) {
 					this.warningCount++;
 					el.classList.add("sa11y-warning-text");
 					el.insertAdjacentHTML(
@@ -1732,7 +1743,7 @@ class Sa11y {
 				
 				let alt = $el.getAttribute("alt");
 
-				if (alt == undefined) {
+				if (alt === null) {
 					if ($el.closest('a[href]')) {
 						if (fnIgnore($el.closest('a[href]'), "noscript").textContent.trim().length >= 1) {
 							$el.classList.add("sa11y-error-border");
@@ -1843,11 +1854,9 @@ class Sa11y {
 		// ============================================================
 		this.checkLabels = () => {
 			this.$inputs.forEach((el) => {
-				
 				let ariaLabel = this.computeAriaLabel(el);
 				const type = el.getAttribute('type');
 				
-
 				//If button type is submit or button: pass
 				if (type === "submit" || type === "button" || type === "hidden") {
 					//Do nothing
@@ -2488,7 +2497,6 @@ class Sa11y {
 					}
 				}
 			});
-			
 			//Compute syllables: http://stackoverflow.com/questions/5686483/how-to-compute-number-of-syllables-in-a-word-in-javascript
 			function number_of_syllables(wordCheck) {
 				wordCheck = wordCheck.toLowerCase().replace('.', '').replace('\n', '');
