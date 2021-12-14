@@ -260,11 +260,15 @@ class Sa11y {
 
 			// Ignore specific headings
 			this.headerIgnore = this.containerIgnore;
-			
 			if (options.headerIgnore) {
 				this.headerIgnore = options.headerIgnore + ', ' + this.headerIgnore;
 			}
-			console.log(this.headerIgnore)
+
+			// Don't add heading label or include in panel.
+			if (options.outlineIgnore) {
+				this.outlineIgnore = options.outlineIgnore + ', #sa11y-container h2';
+			}
+
 			// Ignore specific images.
 			this.imageIgnore = this.containerIgnore + ", [role='presentation'], [src^='https://trck.youvisit.com']";
 			if (options.imageIgnore) {
@@ -1190,12 +1194,12 @@ class Sa11y {
 			this.$readability = $findreadability.filter($el => !containerExclusions.includes($el));
 
 			//Headings
-			const allHeadings = Array.from(document.querySelectorAll("h1, h2, h3, h4, h5, h6, [role='heading'][aria-level]"));
+			const allHeadings = Array.from(container.querySelectorAll("h1, h2, h3, h4, h5, h6, [role='heading'][aria-level]"));
 			const excludeHeadings = Array.from(container.querySelectorAll(this.headerIgnore));
-			this.$h = allHeadings.filter(heading => !excludeHeadings.includes(heading));
+			this.$h = allHeadings.filter($el => !excludeHeadings.includes($el));
 
 			const allH1 = Array.from(document.querySelectorAll("h1, [role='heading'][aria-level='1']"));
-			this.$h1 = allH1.filter(heading => !excludeHeadings.includes(heading));
+			this.$h1 = allH1.filter($el => !excludeHeadings.includes($el));
 
 			//Links
 			const $findlinks = Array.from(container.querySelectorAll("a[href]"));
@@ -1377,7 +1381,7 @@ class Sa11y {
 
 				let ignoreArray = [];
 				if (options.outlineIgnore) {
-					ignoreArray = Array.from(document.querySelectorAll(options.outlineIgnore));
+					ignoreArray = Array.from(document.querySelectorAll(this.outlineIgnore));
 				}
 
 				if (!ignoreArray.includes($el)) {
@@ -1409,7 +1413,7 @@ class Sa11y {
 					}
 
 					//Not an error or warning
-					else if (error == null || warning == null) {
+					else if (error === null || warning === null) {
 						document.querySelector("#sa11y-outline-list").insertAdjacentHTML("beforeend", li);
 					}
 				}
@@ -2278,7 +2282,7 @@ class Sa11y {
 
 			//Example ruleset. Be creative.
 			if (options.exampleQA === true) {
-				let $checkAnnouncement = document.querySelectorAll(".sa11y-announcement-component");
+				let $checkAnnouncement = this.root.querySelectorAll(".sa11y-announcement-component");
 				if ($checkAnnouncement.length > 1) {
 					this.warningCount++;
 					for (let i = 1; i < $checkAnnouncement.length; i++) {

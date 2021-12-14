@@ -132,7 +132,8 @@ html[data-sa11y-theme="dark"] {
 #sa11y-container a,
 #sa11y-container label,
 #sa11y-container button,
-#sa11y-container svg {
+#sa11y-container svg,
+#sa11y-container strong {
     all: unset;
     box-sizing: border-box !important;
 }
@@ -237,7 +238,7 @@ html[data-sa11y-theme="dark"] {
     width: 20px !important;
 }
 
-#sa11y-container #sa11y-notification-badge>div {
+#sa11y-container #sa11y-notification-badge > div {
     position: absolute !important;
     top: 50% !important;
     left: 50% !important;
@@ -1194,6 +1195,7 @@ span.sa11y-heading-label {
     border: none !important;
     background: var(--sa11y-panel-bg-splitter) !important;
     height: 1px !important;
+    opacity: 1 !important;
 }
 
 /*===== Custom tippy theme for Sa11y ===== */
@@ -1232,10 +1234,10 @@ span.sa11y-heading-label {
     outline: 0;
     transition-property: transform, visibility, opacity;
 }
-.tippy-box[data-theme~="sa11y-theme"] *:not(.sa11y-header-text):not(.sa11y-bold) {
+.tippy-box[data-theme~="sa11y-theme"] *:not(.sa11y-header-text):not(.sa11y-bold):not(strong) {
     font-size: var(--sa11y-normal-text) !important;
 }
-.tippy-box[data-theme~="sa11y-theme"] *:not(.sa11y-header-text):not(.sa11y-bold) {
+.tippy-box[data-theme~="sa11y-theme"] *:not(.sa11y-header-text):not(.sa11y-bold):not(strong) {
     font-weight: normal !important;
 }
 .tippy-box[data-theme~="sa11y-theme"] ul {
@@ -1248,6 +1250,9 @@ span.sa11y-heading-label {
 .tippy-box[data-theme~="sa11y-theme"] a {
     color: var(--sa11y-hyperlink) !important;
     text-decoration: underline;
+}
+.tippy-box[data-theme~="sa11y-theme"] strong {
+    font-weight: 600 !important;
 }
 .tippy-box[data-theme~="sa11y-theme"] a:hover,
 .tippy-box[data-theme~="sa11y-theme"] a:focus {
