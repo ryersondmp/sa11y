@@ -497,7 +497,9 @@
   <script src="../../src/sa11y-english.js"></script>
   <script src="../../src/sa11y.js"></script>
   <script type="text/javascript">
-    var sa11y = new Sa11y({
+    const sa11y = new Sa11y({
+      checkRoot: "main",
+      readabilityRoot: "main",
       linkIgnoreSpan: '.sr-only-example',
     });
   </script>

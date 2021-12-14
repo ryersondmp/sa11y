@@ -77,6 +77,7 @@
             <a class="list-group-item list-group-item-action" href="#list-item-5">Detect specific links</a>
             <a class="list-group-item list-group-item-action" href="#list-item-6">Fake list</a>
             <a class="list-group-item list-group-item-action" href="#list-item-7">iFrames</a>
+            <a class="list-group-item list-group-item-action" href="#list-item-8">Duplicate IDs</a>
           </div>
         </div>
 
@@ -250,6 +251,12 @@
                 <div class="fb-page" data-href="https://www.facebook.com/facebook" data-tabs="timeline" data-width="" data-height="300" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"><blockquote cite="https://www.facebook.com/facebook" class="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/facebook">Facebook</a></blockquote></div>
               </div>
             </div>
+
+            <h2 id="list-item-8" class="pt-3">Duplicate IDs</h2>
+            <div class="row pt-3">
+              <p><a href="#" id="x123">Elements</a> with<a href="#" id="x123">matching IDs</a></p>
+            </div>
+
           </div>
         </div>
       </div>
@@ -303,8 +310,11 @@
   <script src="../../src/sa11y-english.js"></script>
   <script src="../../src/sa11y.js"></script>
   <script type="text/javascript">
-    var sa11y = new Sa11y({
+    const sa11y = new Sa11y({
+      checkRoot: "main",
+      readabilityRoot: "main",
       linksToFlag: "a[href^='https://www.dev.'], a[href*='wp-admin']",
+      exampleQA: true
     });
   </script>
 </body>

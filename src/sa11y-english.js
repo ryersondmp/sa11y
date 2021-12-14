@@ -1,3 +1,13 @@
+/*-----------------------------------------------------------------------
+* Sa11y: the accessibility quality assurance assistant.    
+* @version: 2.1.0            
+* @author: Development led by Adam Chaboryk, CPWA at Ryerson University.
+* All acknowledgements and contributors: https://github.com/ryersondmp/sa11y
+* @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
+* Copyright (c) 2020 - 2021 Ryerson University
+* The above copyright notice shall be included in all copies or substantial portions of the Software.
+------------------------------------------------------------------------*/
+
 /* ------------------------------ */
 /*  Localization: English         */
 /* ------------------------------ */
@@ -364,6 +374,11 @@ const sa11yLang = {
     QA_UPPERCASE_WARNING: 
         `Found all caps. Some screen readers may interpret all caps text as an acronym and will read each letter individually. Additionally, some people find all caps more difficult to read and it may give the appearance of SHOUTING.`,
 
+    QA_DUPLICATE_ID: (id) =>
+        `Found <strong>duplicate ID</strong>. Duplicate ID errors are known to cause problems for assistive technologies when they are trying to interact with content.
+        ${sa11yHr} 
+        Please remove or change the following ID: <strong class='sa11y-red-text'>${id}</strong>`,
+
     QA_TOO_MANY_COMPONENTS_EXAMPLE: 
         `More than one Announcement component found! The Announcement component should be used strategically and sparingly. It should be used to get attention or indicate that something is important. Misuse of this component makes it less effective or impactful. Secondly, this component is semantically labeled as an Announcement for people who use screen readers.`,
 
@@ -388,12 +403,3 @@ const sa11yLang = {
     READABILITY_NOT_ENOUGH_CONTENT_MESSAGE: 
         `Not enough content to calculate readability score.`
 };
-
-/*-----------------------------------------------------------------------
-Sa11y: the accessibility quality assurance assistant.                
-Author: Development led by Adam Chaboryk at Ryerson University.
-All acknowledgements and contributors: https://github.com/ryersondmp/sa11y
-License: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
-Copyright (c) 2020 - 2021 Ryerson University
-The above copyright notice shall be included in all copies or substantial portions of the Software.
------------------------------------------------------------------------*/

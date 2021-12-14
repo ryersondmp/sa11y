@@ -1,6 +1,7 @@
 /*-----------------------------------------------------------------------
-* Sa11y: the accessibility quality assurance assistant.                
-* @author: Development led by Adam Chaboryk at Ryerson University.
+* Sa11y: the accessibility quality assurance assistant.    
+* @version: 2.1.0            
+* @author: Development led by Adam Chaboryk, CPWA at Ryerson University.
 * All acknowledgements and contributors: https://github.com/ryersondmp/sa11y
 * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
 * Copyright (c) 2020 - 2021 Ryerson University
@@ -43,6 +44,7 @@ class Sa11y {
 			allCapsQA: true,
 			fakeHeadingsQA: true,
 			fakeListQA: true,
+			duplicateIdQA: true,
 			exampleQA: false,
 
 			//Embedded content rulesets
@@ -2278,6 +2280,24 @@ class Sa11y {
 				if ($warningUppercase.length > 0) {
 					this.warningCount++;
 				}
+			}
+
+			if (options.duplicateIdQA === true) {
+				const ids = this.root.querySelectorAll("[id]");
+				let allIds = {};
+				let found = false;
+				ids.forEach(($el) => {
+					let id = $el.id;
+					if (id) {
+						if (allIds[id] === undefined) {
+							allIds[id] = 1;
+						} else {
+							found = true;
+							$el.classList.add("sa11y-error-border");
+							$el.insertAdjacentHTML('afterend', this.annotate(M["ERROR"], M["QA_DUPLICATE_ID"](id), true));
+						}
+					}
+				});
 			}
 
 			//Example ruleset. Be creative.
