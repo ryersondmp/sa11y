@@ -16,6 +16,7 @@ class Sa11y {
 			//Root area to check and exclusions
 			checkRoot: 'body',
 			containerIgnore: '.sa11y-ignore',
+			contrastIgnore: '.sr-only',
 			outlineIgnore: '',
 			headerIgnore: '',
 			imageIgnore: '',
@@ -254,7 +255,13 @@ class Sa11y {
 			}
 			this.containerIgnore = options.containerIgnore;
 
-			//Ignore specific regions for readability module.
+			// Contrast exclusions
+			this.contrastIgnore = this.containerIgnore + ', .sa11y-heading-label';
+			if (options.contrastIgnore) {
+				this.contrastIgnore = options.contrastIgnore + ', ' + this.contrastIgnore;
+			}
+
+			// Ignore specific regions for readability module.
 			this.readabilityIgnore = this.containerIgnore + ', nav li, [role="navigation"] li';
 			if (options.readabilityIgnore) {
 				this.readabilityIgnore = options.readabilityIgnore + ', ' + this.readabilityIgnore;
@@ -332,9 +339,11 @@ class Sa11y {
 				setTimeout(this.checkAll, 800);
 			}
 
-			//Escape key to shutdown.
+			
 			document.onkeydown = (evt) => {
 				evt = evt || window.event;
+
+				//Escape key to shutdown.
 				let isEscape = false;
 				if ("key" in evt) {
 					isEscape = (evt.key === "Escape" || evt.key === "Esc");
@@ -348,7 +357,16 @@ class Sa11y {
 					sa11yToggle.click();
 					this.resetAll();
 				}
+
+				//Alt + A to enable accessibility checker.
+				if (evt.altKey && evt.code == "KeyA") {
+					const sa11yToggle = document.getElementById("sa11y-toggle");
+					sa11yToggle.click();
+					sa11yToggle.focus();
+					evt.preventDefault();
+				}
 			}
+			
 		}
 
 		// ============================================================
@@ -612,8 +630,16 @@ class Sa11y {
 		// Tooltip for Jump-to-Issue button.
 		//----------------------------------------------------------------------
 		this.skipToIssueTooltip = () => {
+
+			let keyboardShortcut;
+			if (navigator.userAgent.indexOf("Mac") != -1) {
+				keyboardShortcut = `<span class="sa11y-kbd">Option</span> + <span class="sa11y-kbd">S</span>`
+			} else {
+				keyboardShortcut = `<span class="sa11y-kbd">Alt</span> + <span class="sa11y-kbd">S</span>`
+			}
+
 			tippy('#sa11y-cycle-toggle', {
-				content: `<div style="text-align:center">${sa11yLang["SHORTCUT_TOOLTIP"]} &raquo;<br><span class="sa11y-shortcut-icon"></span></div>`,
+				content: `<div style="text-align:center">${sa11yLang["SHORTCUT_TOOLTIP"]} &raquo;<br>${keyboardShortcut}</div>`,
 				allowHTML: true,
 				delay: [900, 0],
 				trigger: "mouseenter focusin",
@@ -1084,7 +1110,7 @@ class Sa11y {
 
 			//Jump to issue using keyboard shortcut.
 			document.addEventListener('keyup', (e) => {
-				if (e.altKey && e.code == "Period") {
+				if (findSa11yBtn && (e.altKey && e.code == "Period" || e.code == "KeyS")) {
 					skipToIssueToggle();
 					e.preventDefault();
 				}
@@ -1180,32 +1206,34 @@ class Sa11y {
 		}
 
 		// ============================================================
-		// Finds all elements and caches them
+		// Finds all elements and cache.
 		// ============================================================
 		this.findElements = () => {
 			const container = document.querySelector(options.checkRoot),
 				readabilityContainer = document.querySelector(options.readabilityRoot),
-				containerExclusions = Array.from(document.querySelectorAll(this.readabilityIgnore));
+				containerExclusions = Array.from(document.querySelectorAll(this.containerIgnore)),
+				readabilityExclusions = Array.from(document.querySelectorAll(this.readabilityIgnore));
 
 			//Contrast
-			const $findcontrast = Array.from(container.querySelectorAll("* > :not(.sa11y-heading-label)"));
-			this.$contrast = $findcontrast.filter($el => !containerExclusions.includes($el));
+			const $findcontrast = Array.from(container.querySelectorAll("*")),
+			excludeContrast = Array.from(container.querySelectorAll(this.contrastIgnore));
+			this.$contrast = $findcontrast.filter($el => !excludeContrast.includes($el));
 
 			//Readability
 			const $findreadability = Array.from(readabilityContainer.querySelectorAll("p, li"));
-			this.$readability = $findreadability.filter($el => !containerExclusions.includes($el));
-
+			this.$readability = $findreadability.filter($el => !readabilityExclusions.includes($el));
+			
 			//Headings
-			const allHeadings = Array.from(container.querySelectorAll("h1, h2, h3, h4, h5, h6, [role='heading'][aria-level]"));
-			const excludeHeadings = Array.from(container.querySelectorAll(this.headerIgnore));
+			const allHeadings = Array.from(container.querySelectorAll("h1, h2, h3, h4, h5, h6, [role='heading'][aria-level]")),
+			excludeHeadings = Array.from(container.querySelectorAll(this.headerIgnore));
 			this.$h = allHeadings.filter($el => !excludeHeadings.includes($el));
 
 			const allH1 = Array.from(document.querySelectorAll("h1, [role='heading'][aria-level='1']"));
 			this.$h1 = allH1.filter($el => !excludeHeadings.includes($el));
 
 			//Links
-			const $findlinks = Array.from(container.querySelectorAll("a[href]"));
-			const excludelinks = Array.from(container.querySelectorAll(this.linkIgnore));
+			const $findlinks = Array.from(container.querySelectorAll("a[href]")),
+			excludelinks = Array.from(container.querySelectorAll(this.linkIgnore));
 			this.$links = $findlinks.filter($el => !excludelinks.includes($el));
 
 			//Inputs
@@ -1213,8 +1241,8 @@ class Sa11y {
 			this.$inputs = $findinputs.filter($el => !containerExclusions.includes($el) && !this.isElementHidden($el));
 
 			//Images
-			const images = Array.from(container.querySelectorAll("img"));
-			const excludeimages = Array.from(container.querySelectorAll(this.imageIgnore));
+			const images = Array.from(container.querySelectorAll("img")),
+			excludeimages = Array.from(container.querySelectorAll(this.imageIgnore));
 			this.$img = images.filter($el => !excludeimages.includes($el));
 
 			//iFrames
@@ -2386,9 +2414,11 @@ class Sa11y {
 						return contrast.getBackground(el.parentNode);
 					}
 				},
+				/*
 				isVisible: function (el) {
 					return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
 				},
+				*/
 				check: function () {
 					// resets results
 					contrastErrors = {
@@ -2400,7 +2430,7 @@ class Sa11y {
 						(function (n) {
 							let elem = elements[n];
 							// test if visible. Although we want invisible too.
-							if (contrast /* .isVisible(elem) */ ) {
+							if (contrast /* .isVisible(elem) */) {
 								let style = getComputedStyle(elem),
 									color = style.color,
 									fill = style.fill,

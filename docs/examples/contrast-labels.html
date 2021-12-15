@@ -81,15 +81,13 @@
         <div class="col-md-10">
           <div>
             <h2 id="list-item-1">Contrast</h2>
-            <p><a href="https://www.jqueryscript.net/other/color-contrast-checker.html">jQuery contrast plugin</a> was created by jasonday. To prevent false positives, a simple condition was added to exclude any elements whose width and height is
-              less than 1px and contains <kbd>overflow:hidden;</kbd>. Some contrast plugins falsely indicate visually hidden text for screenreaders as a contrast fail.</p>
-
+            
             <p>Tooltips will indicate whether it's large or normal size text, including the snippet of text that fails.</p>
             <div class="ml-5 mt-4 mb-5">
               <div class="row">
                 <div class="col-md-6">
                   <h3>Example 1 - Normal text</h3>
-                  <p style="color:coral">This colour fails at normal size.</p>
+                  <p class="sr-only" style="color:coral">This colour fails at normal size.</p>
                 </div>
                 <div class="col-md-6">
                   <h3>Example 2 - Large text</h3>
@@ -282,7 +280,7 @@
   <script src="../../src/sa11y.js"></script>
   <script type="text/javascript">
     const sa11y = new Sa11y({
-      readabilityPlugin: true
+      checkRoot: "main",
     });
   </script>
 </body>
