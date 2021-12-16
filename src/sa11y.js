@@ -133,27 +133,27 @@ class Sa11y {
                     <h2 tabindex="-1">${M["SETTINGS"]}</h2>
                 </div>
                 <div id="sa11y-settings-content">
-                    <ul id="sa11y-settings-options">  
+                    <ul id="sa11y-settings-options"> 
                         <li id="sa11y-contrast-li">
-                            <label id="check-contrast" for="sa11y-contrast-toggle">
+                            <label id="sa11y-check-contrast" for="sa11y-contrast-toggle">
 								${M["CONTRAST"]}
 							</label>
                             <button id="sa11y-contrast-toggle" 
-                            aria-labelledby="check-contrast" 
+                            aria-labelledby="sa11y-check-contrast" 
                             class="sa11y-settings-switch" 
                             aria-pressed="${
                                 loadContrastPreference ? "true" : "false"
                             }">${loadContrastPreference ? M["ON"] : M["OFF"]}</button>
                         </li>
-                        <li id="sa11y-form-labels-li">
-                            <label id="check-labels" for="sa11y-labels-toggle">
+						<li id="sa11y-form-labels-li">
+                            <label id="sa11y-check-labels" for="sa11y-labels-toggle">
 								${M["FORM_LABELS"]}
 							</label>
-                            <button id="sa11y-labels-toggle" aria-labelledby="check-labels" class="sa11y-settings-switch" 
+                            <button id="sa11y-labels-toggle" aria-labelledby="sa11y-check-labels" class="sa11y-settings-switch" 
                             aria-pressed="${
                                 loadLabelsPreference ? "true" : "false"
                             }">${loadLabelsPreference ? M["ON"] : M["OFF"]}</button>
-                        </li>
+                        </li> 
                         <li id="sa11y-links-advanced-li">
                             <label id="check-changerequest" for="sa11y-links-advanced-toggle">
 								${M["LINKS_ADVANCED"]} <span class="sa11y-badge">AAA</span>
@@ -173,10 +173,10 @@ class Sa11y {
                             }">${loadReadabilityPreference ? M["ON"] : M["OFF"]}</button>
                         </li>
                         <li>
-                            <label id="dark-mode" for="sa11y-theme-toggle">
+                            <label id="sa11y-dark-mode" for="sa11y-theme-toggle">
 								${M["DARK_MODE"]}
 							</label>
-                            <button id="sa11y-theme-toggle" aria-labelledby="dark-mode" class="sa11y-settings-switch"></button>
+                            <button id="sa11y-theme-toggle" aria-labelledby="sa11y-dark-mode" class="sa11y-settings-switch"></button>
                         </li>
                     </ul>
                 </div>
@@ -746,6 +746,9 @@ class Sa11y {
 			this.panelActive = false;
 			this.clearEverything();
 
+			const html = document.querySelector("html");
+			html.removeAttribute("data-sa11y-active");
+
 			//Remove eventListeners on the Show Outline and Show Panel toggles.
 			const $outlineToggle = document.getElementById("sa11y-outline-toggle");
 			const resetOutline = $outlineToggle.cloneNode(true);
@@ -889,12 +892,14 @@ class Sa11y {
 			this.skipToIssue();
 
 			const $skipBtn = document.getElementById("sa11y-cycle-toggle");
-
 			$skipBtn.disabled = false;
 			$skipBtn.setAttribute("style", "cursor: pointer !important;");
 
 			const $panel = document.getElementById("sa11y-panel");
 			$panel.classList.add("sa11y-active");
+
+			const html = document.querySelector("html");
+			html.setAttribute("data-sa11y-active", "true");
 
 			const $panelContent = document.getElementById("sa11y-panel-content"),
 				$status = document.getElementById("sa11y-status"),

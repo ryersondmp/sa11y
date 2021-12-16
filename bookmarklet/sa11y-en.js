@@ -41,7 +41,7 @@ document.body.appendChild(popperJS);
       tippyJS.onload = tippyJS.onreadystatechange = function() {
         document.body.appendChild(sa11yJS1);
           sa11yJS1.onload = sa11yJS1.onreadystatechange = function() {
-            const sa11y = new Sa11y();
+            new Sa11y();
           }
       };
   };
