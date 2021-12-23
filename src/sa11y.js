@@ -4,7 +4,7 @@
 * @author: Development led by Adam Chaboryk, CPWA at Ryerson University.
 * All acknowledgements and contributors: https://github.com/ryersondmp/sa11y
 * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
-* Copyright (c) 2020 - 2021 Ryerson University
+* Copyright (c) 2020 - 2022 Ryerson University
 * The above copyright notice shall be included in all copies or substantial portions of the Software.
 ------------------------------------------------------------------------*/
 
@@ -2335,7 +2335,7 @@ class Sa11y {
 
 			//Example ruleset. Be creative.
 			if (options.exampleQA === true) {
-				let $checkAnnouncement = this.root.querySelectorAll(".sa11y-announcement-component");
+				const $checkAnnouncement = this.root.querySelectorAll(".sa11y-announcement-component");
 				if ($checkAnnouncement.length > 1) {
 					this.warningCount++;
 					for (let i = 1; i < $checkAnnouncement.length; i++) {

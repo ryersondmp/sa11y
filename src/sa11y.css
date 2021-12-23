@@ -1,3 +1,12 @@
+/*-----------------------------------------------------------------------
+Sa11y: the accessibility quality assurance assistant.                
+Author: Development led by Adam Chaboryk at Ryerson University.
+All acknowledgements and contributors: https://github.com/ryersondmp/sa11y
+License: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
+Copyright (c) 2020 - 2022 Ryerson University
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+------------------------------------------------------------------------*/
+
 :root {
     --sa11y-font-face: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
         "Helvetica Neue", Arial, "FontAwesome", sans-serif;
@@ -221,9 +230,9 @@ html[data-sa11y-theme="dark"] {
 }
 
 #sa11y-container .sa11y-notification-badge-warning {
-    background-color: var(--sa11y-warning-hover);
-    border: 1px solid var(--sa11y-warning);
-    color: var(--sa11y-warning-text);
+    background-color: var(--sa11y-warning-hover) !important;
+    border: 1px solid var(--sa11y-warning) !important;
+    color: var(--sa11y-warning-text) !important;
 }
 
 #sa11y-container #sa11y-notification-badge {
@@ -236,7 +245,6 @@ html[data-sa11y-theme="dark"] {
     font-weight: normal;
     font-size: 13px;
     height: 20px;
-    line-height: 1;
     position: absolute;
     right: -3px;
     top: -3px;
@@ -1266,11 +1274,3 @@ span.sa11y-heading-label {
     border-right-color: var(--sa11y-panel-bg) !important;
 }
 
-/*-----------------------------------------------------------------------
-Sa11y: the accessibility quality assurance assistant.                
-Author: Development led by Adam Chaboryk at Ryerson University.
-All acknowledgements and contributors: https://github.com/ryersondmp/sa11y
-License: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
-Copyright (c) 2020 - 2021 Ryerson University
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-------------------------------------------------------------------------*/

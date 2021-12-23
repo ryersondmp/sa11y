@@ -4,7 +4,7 @@
 * @author: Development led by Adam Chaboryk, CPWA at Ryerson University.
 * All acknowledgements and contributors: https://github.com/ryersondmp/sa11y
 * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
-* Copyright (c) 2020 - 2021 Ryerson University
+* Copyright (c) 2020 - 2022 Ryerson University
 * The above copyright notice shall be included in all copies or substantial portions of the Software.
 ------------------------------------------------------------------------*/
 
