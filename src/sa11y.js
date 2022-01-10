@@ -220,6 +220,8 @@ class Sa11y {
 			//Put before document.ready because of CSS flicker when dark mode is enabled.
 			this.settingPanelToggles();
 
+			console.log("Sa11y interface loaded.");
+
 			window.addEventListener('load', () => {
 				console.log("Page is fully loaded. Loading Sa11y now.");
 				this.globals();
