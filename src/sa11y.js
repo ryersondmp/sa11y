@@ -222,7 +222,24 @@ class Sa11y {
 
 			console.log("Sa11y interface loaded.");
 
-			window.addEventListener('load', () => {
+			//Swapp load event listener with onreadystatechange
+			document.onreadystatechange = () => {
+				if (document.readyState == "complete") {
+					this.globals();
+					this.mainToggle();
+					this.utilities();
+					this.skipToIssueTooltip();
+					
+					document.getElementById("sa11y-toggle").disabled = false;
+					if (localStorage.getItem("sa11y-remember-panel") === "Closed" || !localStorage.getItem("sa11y-remember-panel")) {
+						this.panelActive = true;
+						this.checkAll();
+						console.log("Sa11y enabled.");
+					}
+				}
+			}
+
+			/* window.addEventListener('load', () => {
 				console.log("Page is fully loaded. Loading Sa11y now.");
 				this.globals();
 				this.mainToggle();
@@ -236,7 +253,7 @@ class Sa11y {
 					this.checkAll();
 					console.log("Sa11y enabled.")
 				}
-			});
+			}); */
 
 		};
 
