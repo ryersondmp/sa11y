@@ -221,15 +221,18 @@ class Sa11y {
 			this.settingPanelToggles();
 
 			window.addEventListener('load', () => {
+				console.log("Page is fully loaded. Loading Sa11y now.");
 				this.globals();
 				this.mainToggle();
 				this.utilities();
 				this.skipToIssueTooltip();
+				
 
 				document.getElementById("sa11y-toggle").disabled = false;
 				if (localStorage.getItem("sa11y-remember-panel") === "Closed" || !localStorage.getItem("sa11y-remember-panel")) {
 					this.panelActive = true;
 					this.checkAll();
+					console.log("Sa11y enabled.")
 				}
 			});
 
