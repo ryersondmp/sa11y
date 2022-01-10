@@ -29,7 +29,9 @@ combine.src = "https://cdn.jsdelivr.net/combine/npm/@popperjs/core@2/dist/umd/po
 
 document.body.appendChild(combine);
 combine.onload = combine.onreadystatechange = function() {
-  setTimeout(function(){
-    const sa11y = new Sa11y();
-  }, 1);
+  document.onreadystatechange = () => {
+    if (document.readyState === 'complete') {
+      const sa11y = new Sa11y();
+    }
+  };
 };
