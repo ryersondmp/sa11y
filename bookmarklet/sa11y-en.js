@@ -28,6 +28,8 @@ const combine = document.createElement("script");
 combine.src = "https://cdn.jsdelivr.net/combine/npm/@popperjs/core@2/dist/umd/popper.min.js,npm/tippy.js@6/dist/tippy.umd.min.js,gh/ryersondmp/sa11y@development/src/sa11y-english.min.js,gh/ryersondmp/sa11y@development/src/sa11y.min.js";
 
 document.body.appendChild(combine);
-  combine.onload = combine.onreadystatechange = function() {
+combine.onload = combine.onreadystatechange = function() {
+  setTimeout(function(){
     const sa11y = new Sa11y();
-  };
+  }, 1);
+};

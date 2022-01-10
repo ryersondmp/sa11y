@@ -14,7 +14,7 @@ Sa11y works as a simple in-page checker that is designed to be easily customized
 - Additional (toggleable) checks: Contrast, form labels, readability, links (Advanced).
 - Dark mode.
 
-Read [Sa11y 2.0 release notes.](https://github.com/ryersondmp/sa11y/releases/tag/2.0)
+Read [Sa11y 2.1 release notes.](https://github.com/ryersondmp/sa11y/releases/tag/2.1)
 
 ## Demo and bookmarklet 
 :arrow_right: [View project website and demo](https://ryersondmp.github.io/sa11y/) or grab the latest [bookmarklet.](https://ryersondmp.github.io/sa11y/#install)
@@ -38,8 +38,9 @@ Sa11y uses [Tippy.js](https://github.com/atomiks/tippyjs), a highly customizable
 <!-- Sa11y (fork the latest code from GitHub) -->
 <script src="sa11y-english.js"></script>
 <script src="sa11y.js"></script>
+
+<!-- Instantiate-->
 <script>
-    //Instantiate
     const sa11y = new Sa11y();
 </script>
 ```
@@ -142,9 +143,10 @@ if ($checkAnnouncement.length > 1) {
 Want to help make Sa11y better? Consider [contributing](https://github.com/ryersondmp/sa11y/blob/master/CONTRIBUTING.md)!
 
 # Acknowledgements
-Development is lead and maintained by [Adam Chaboryk](https://github.com/adamchaboryk), IT Accessibility Specialist, Digital Media Projects, Computing and Communication Services (CCS) at Ryerson University in Toronto, Canada. 
+Development is led and maintained by [Adam Chaboryk](https://github.com/adamchaboryk), IT Accessibility Specialist, Digital Media Projects, Computing and Communication Services (CCS) at Ryerson University in Toronto, Canada. 
 
 ### Previous student contributors
+Developed with the assistance of students from Ryerson University's Computer Science program. 
 - Dylan Le (2021)
 - Janice W. (2021)
 - Farhan Mohammed (2020/2021)
