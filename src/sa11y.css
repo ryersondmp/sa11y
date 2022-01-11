@@ -1235,6 +1235,10 @@ span.sa11y-heading-label {
     outline: 0;
     transition-property: transform, visibility, opacity;
 }
+.tippy-box[data-theme~="sa11y-theme"] > .tippy-content {
+    padding: 5px 9px;
+}
+
 .tippy-box[data-theme~="sa11y-theme"] *:not(.sa11y-header-text):not(.sa11y-bold):not(strong) {
     font-size: var(--sa11y-normal-text) !important;
 }

@@ -220,18 +220,17 @@ class Sa11y {
 			//Put before document.ready because of CSS flicker when dark mode is enabled.
 			this.settingPanelToggles();
 
-			console.log("Sa11y interface loaded.");
-
-			function winLoad(callback) {
+			//Need to evaluate if "load" event took place for bookmarklet version. Otherwise, only call Sa11y once page has loaded.
+			const documentLoadingCheck = (callback) => {
 				if (document.readyState === 'complete') {
 					callback();
 				} else {
 					window.addEventListener("load", callback);
 				}
-			}
-				
-			winLoad(() => {
-				console.log("Page is fully loaded. Loading Sa11y now.");
+			};
+
+			//Once document has fully loaded.
+			documentLoadingCheck(() => {
 				this.globals();
 				this.mainToggle();
 				this.utilities();
@@ -241,24 +240,8 @@ class Sa11y {
 				if (localStorage.getItem("sa11y-remember-panel") === "Closed" || !localStorage.getItem("sa11y-remember-panel")) {
 					this.panelActive = true;
 					this.checkAll();
-					console.log("Sa11y enabled.")
 				}
 			});
-
-				/* window.addEventListener('load', () => {
-					console.log("Page is fully loaded. Loading Sa11y now.");
-					this.globals();
-					this.mainToggle();
-					this.utilities();
-					this.skipToIssueTooltip();
-	
-					document.getElementById("sa11y-toggle").disabled = false;
-					if (localStorage.getItem("sa11y-remember-panel") === "Closed" || !localStorage.getItem("sa11y-remember-panel")) {
-						this.panelActive = true;
-						this.checkAll();
-						console.log("Sa11y enabled.")
-					}
-				}); */
 			
 		};
 
@@ -1895,10 +1878,13 @@ class Sa11y {
 
 					//Decorative alt and not a link.
 					else if (alt === "" || alt === " ") {
-						if ($el.closest("figure") && $el.closest("figure").querySelector("figcaption").textContent.trim().length >= 1) {
-							this.warningCount++;
-							$el.classList.add("sa11y-warning-border");
-							$el.insertAdjacentHTML('beforebegin', this.annotate(M["WARNING"], M["IMAGE_FIGURE_DECORATIVE"], false, true));
+						if ($el.closest("figure")) {
+							const figcaption = $el.closest("figure").querySelector("figcaption");	
+							if (figcaption !== null && figcaption.textContent.trim().length >= 1) {
+								this.warningCount++;
+								$el.classList.add("sa11y-warning-border");
+								$el.insertAdjacentHTML('beforebegin', this.annotate(M["WARNING"], M["IMAGE_FIGURE_DECORATIVE"], false, true));
+							} 
 						} else {
 							this.warningCount++;
 							$el.classList.add("sa11y-warning-border");
@@ -1909,7 +1895,22 @@ class Sa11y {
 						$el.classList.add("sa11y-warning-border");
 						$el.insertAdjacentHTML('beforebegin', this.annotate(M["WARNING"], M["IMAGE_ALT_TOO_LONG"](altText, altLength), false, true));
 					} else if (alt !== "") {
-						$el.insertAdjacentHTML('beforebegin', this.annotate(M["GOOD"], M["IMAGE_PASS"](altText), false, true));
+
+						//Figure element has same alt and caption text.
+						if ($el.closest("figure")) {
+							const figcaption = $el.closest("figure").querySelector("figcaption");	
+							if (figcaption !== null && 
+								(figcaption.textContent.trim().toLowerCase === altText.trim().toLowerCase)
+							) {
+								this.warningCount++;
+								$el.classList.add("sa11y-warning-border");
+								$el.insertAdjacentHTML('beforebegin', this.annotate(M["WARNING"], M["IMAGE_FIGURE_DUPLICATE_ALT"](altText), false, true));
+							}
+						}
+						//If image has alt text - pass!
+						else {
+							$el.insertAdjacentHTML('beforebegin', this.annotate(M["GOOD"], M["IMAGE_PASS"](altText), false, true));
+						}
 					}
 				}
 			});
@@ -2231,7 +2232,7 @@ class Sa11y {
 						// 1) Has less than 120 characters (typical heading length).
 						// 2) The previous element is not a heading.
 						const prevElement = $el.previousElementSibling;
-						const tagName = "";
+						let tagName = "";
 						if (prevElement !== null) {
 							tagName = prevElement.tagName;
 						}

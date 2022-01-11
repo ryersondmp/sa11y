@@ -257,7 +257,18 @@ const sa11yLang = {
         <ul>
             <li>The alt text should provide a concise description of what is in the image.</li>
             <li>The caption should usually provide context to relate the image back to the surrounding content, or give attention to a particular piece of information.</li>
-        <ul>`,
+        </ul>
+        Learn more: <a href='https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element' target='_blank'>alt versus figcaption. ${sa11yNewTab}</a>`,
+
+    IMAGE_FIGURE_DUPLICATE_ALT: (altText) =>  
+        `Do not use the exact same words for both the alt and caption text. Screen readers will announce the information twice.
+        <ul>
+            <li>The alt text should provide a concise description of what is in the image.</li>
+            <li>The caption should usually provide context to relate the image back to the surrounding content, or give attention to a particular piece of information.</li>
+        </ul>
+        Learn more: <a href='https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element' target='_blank'>alt versus figcaption. ${sa11yNewTab}</a>
+        ${sa11yHr}
+        <strong>Alt text:</strong> ${altText}`,
 
     IMAGE_DECORATIVE: 
         `Image is marked as <strong>decorative</strong> and will be ignored by assistive technology. If the image conveys a story, mood or important information - be sure to add alt text.`,
