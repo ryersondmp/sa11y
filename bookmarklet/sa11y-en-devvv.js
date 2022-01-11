@@ -25,7 +25,7 @@ bodyheader.appendChild(sa11ycss);
 
 /* Queue Poppers.js, Tippy.js, and Sa11y. Thanks to JSDeliver for this cool combine feature! */
 const combine = document.createElement("script");
-combine.src = "https://cdn.jsdelivr.net/combine/npm/@popperjs/core@2/dist/umd/popper.min.js,npm/tippy.js@6/dist/tippy.umd.min.js,gh/ryersondmp/sa11y@development/src/sa11y-english.min.js,gh/ryersondmp/sa11y@development/src/sa11y.js";
+combine.src = "https://cdn.jsdelivr.net/combine/npm/@popperjs/core@2/dist/umd/popper.min.js,npm/tippy.js@6/dist/tippy.umd.min.js,gh/ryersondmp/sa11y@development/src/sa11y-english.min.js,gh/ryersondmp/sa11y@development/src/sa11y-dev.js";
 
 document.body.appendChild(combine);
 combine.onload = combine.onreadystatechange = function() {
