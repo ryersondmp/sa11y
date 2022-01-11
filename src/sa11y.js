@@ -246,7 +246,6 @@ class Sa11y {
 				this.utilities();
 				this.skipToIssueTooltip();
 				
-
 				document.getElementById("sa11y-toggle").disabled = false;
 				if (localStorage.getItem("sa11y-remember-panel") === "Closed" || !localStorage.getItem("sa11y-remember-panel")) {
 					this.panelActive = true;
