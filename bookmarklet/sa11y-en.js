@@ -13,6 +13,15 @@
 /* ------------------------------ */
 
 /* TO DO REMOVE @DEVELOPMENT FROM URL BEFORE COMMITTING TO MAIN */
+/* TO DO REMOVE @DEVELOPMENT FROM URL BEFORE COMMITTING TO MAIN */
+/* TO DO REMOVE @DEVELOPMENT FROM URL BEFORE COMMITTING TO MAIN */
+/* TO DO REMOVE @DEVELOPMENT FROM URL BEFORE COMMITTING TO MAIN */
+/* TO DO REMOVE @DEVELOPMENT FROM URL BEFORE COMMITTING TO MAIN */
+/* TO DO REMOVE @DEVELOPMENT FROM URL BEFORE COMMITTING TO MAIN */
+/* TO DO REMOVE @DEVELOPMENT FROM URL BEFORE COMMITTING TO MAIN */
+/* TO DO REMOVE @DEVELOPMENT FROM URL BEFORE COMMITTING TO MAIN */
+/* TO DO REMOVE @DEVELOPMENT FROM URL BEFORE COMMITTING TO MAIN */
+/* TO DO REMOVE @DEVELOPMENT FROM URL BEFORE COMMITTING TO MAIN */
 
 /* Append sa11y.css */
 const sa11ycss = document.createElement("link");
@@ -29,7 +38,5 @@ combine.src = "https://cdn.jsdelivr.net/combine/npm/@popperjs/core@2/dist/umd/po
 
 document.body.appendChild(combine);
 combine.onload = combine.onreadystatechange = function() {
-  setTimeout(function(){
     new Sa11y();
-  }, 100);
 };

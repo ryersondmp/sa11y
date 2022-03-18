@@ -23,6 +23,7 @@ class Sa11y {
 			linkIgnore: 'nav *, [role="navigation"] *',
 			linkIgnoreSpan: '',
 			linksToFlag: '',
+			nonConsecutiveHeadingIsError: true,
 
 			//Readability
 			readabilityPlugin: true,
@@ -33,7 +34,7 @@ class Sa11y {
 			//Other plugins
 			contrastPlugin: true,
 			formLabelsPlugin: true,
-			linksAdvancedPlugin: true,
+			linksAdvancedPlugin: true,			
 
 			//QA rulesets
 			badLinksQA: true,
@@ -46,6 +47,7 @@ class Sa11y {
 			fakeHeadingsQA: true,
 			fakeListQA: true,
 			duplicateIdQA: true,
+			underlinedTextQA: true,
 			exampleQA: false,
 
 			//Embedded content rulesets
@@ -58,10 +60,10 @@ class Sa11y {
 			embeddedContentGeneral: true,
 
 			//Embedded content
-			videoContent: "video, [src*='youtube.com'], [src*='vimeo.com'], [src*='yuja.com'], [src*='panopto.com']",
-			audioContent: "audio, [src*='soundcloud.com'], [src*='simplecast.com'], [src*='podbean.com'], [src*='buzzsprout.com'], [src*='blubrry.com'], [src*='transistor.fm'], [src*='fusebox.fm'], [src*='libsyn.com']",
-			dataVizContent: "[src*='datastudio.google.com'], [src*='tableau']",
-			twitterContent: "[class^='twitter-timeline']",
+			videoContent: "youtube.com, vimeo.com, yuja.com, panopto.com",
+			audioContent: "soundcloud.com, simplecast.com, podbean.com, buzzsprout.com, blubrry.com, transistor.fm, fusebox.fm, libsyn.com",
+			dataVizContent: "datastudio.google.com, tableau",
+			twitterContent: "twitter-timeline",
 			embeddedContent: '',
 		};
 		defaultOptions.embeddedContent = `${defaultOptions.videoContent}, ${defaultOptions.audioContent}, ${defaultOptions.dataVizContent}, ${defaultOptions.twitterContent}`;
@@ -197,7 +199,10 @@ class Sa11y {
                 <button id="sa11y-cycle-toggle" type="button" aria-label="${M["SHORTCUT_SCREEN_READER"]}">
                     <div class="sa11y-panel-icon"></div>
                 </button>
-                <div id="sa11y-panel-text"><p id="sa11y-status" aria-live="polite"></p></div>
+                <div id="sa11y-panel-text">
+					<h1 class="sa11y-header-text">${M["PANEL_HEADING"]}</h1>
+					<p id="sa11y-status" aria-live="polite"></p>
+				</div>
             </div>` +
 
 				//Show Outline & Show Settings button.
@@ -208,7 +213,7 @@ class Sa11y {
                 <button type="button" role="tab" aria-expanded="false" id="sa11y-settings-toggle" aria-controls="sa11y-settings-panel">
                     ${M["SHOW_SETTINGS"]}
                 </button>
-                <div style="width:35px"></div> 
+                <div style="width:40px;"></div> 
             </div>` +
 
 				//End of main container.
@@ -252,16 +257,17 @@ class Sa11y {
 				options.readabilityRoot = options.checkRoot;
 			}
 
+			/* Exclusions */
 			// Container ignores apply to self and children.
 			if (options.containerIgnore) {
 				let containerSelectors = options.containerIgnore.split(',').map((el) => {
 					return `${el} *, ${el}`
 				});
 
-				options.containerIgnore = "[aria-hidden='true'], #sa11y-container *, .sa11y-instance *, " + containerSelectors.join(", ");
+				options.containerIgnore = "[aria-hidden='true'], #sa11y-container *, .sa11y-instance *, #wpadminbar *, " + containerSelectors.join(", ");
 			} else {
 				options.containerIgnore =
-					"[aria-hidden='true'], #sa11y-container *, .sa11y-instance *";
+					"[aria-hidden='true'], #sa11y-container *, .sa11y-instance *, #wpadminbar *";
 			}
 			this.containerIgnore = options.containerIgnore;
 
@@ -311,6 +317,62 @@ class Sa11y {
 					"noscript";
 			}
 
+			/* Embedded content sources */
+			// Video sources.
+			if (options.videoContent) {
+				let videoContent = options.videoContent.split(/\s*[\s,]\s*/).map((el) => {
+					return `[src*='${el}']`
+				});
+				options.videoContent = "video, " + videoContent.join(", ");
+			} else {
+				options.videoContent = 
+					"video";
+			}			
+
+			// Audio sources.
+			if (options.audioContent) {
+				let audioContent = options.audioContent.split(/\s*[\s,]\s*/).map((el) => {
+					return `[src*='${el}']`
+				});
+				options.audioContent = "audio, " + audioContent.join(", ");
+			} else {
+				options.audioContent = 
+					"audio";
+			}
+
+			// Data viz sources.
+			if (options.dataVizContent) {
+				let dataVizContent = options.dataVizContent.split(/\s*[\s,]\s*/).map((el) => {
+					return `[src*='${el}']`
+				});
+				options.dataVizContent = dataVizContent.join(", ");
+			} else {
+				options.dataVizContent = 
+					"datastudio.google.com, tableau";
+			}
+
+			// Twitter timeline sources.
+			if (options.twitterContent) {
+				let twitterContent = options.twitterContent.split(/\s*[\s,]\s*/).map((el) => {
+					return `[class*='${el}']`
+				});
+				options.twitterContent = twitterContent.join(", ");
+			} else {
+				options.twitterContent = 
+					"twitter-timeline";
+			}
+
+			// Embedded content all
+			if (options.embeddedContent) {
+				let embeddedContent = options.embeddedContent.split(/\s*[\s,]\s*/).map((el) => {
+					if (el === "twitter-timeline") {
+						return `[class*='${el}']`
+					} else {
+						return `[src*='${el}']`
+					}
+				});
+				options.embeddedContent = embeddedContent.join(", ");
+			}
 		};
 
 		this.mainToggle = () => {
@@ -392,6 +454,13 @@ class Sa11y {
 					return compStyles.getPropertyValue('display') === 'none';
 				}
 			};
+
+			//Helper: Escape HTML, encode HTML symbols.
+			this.escapeHTML = (text) => {
+				const $div = document.createElement('div');
+				$div.textContent = text;
+				return $div.innerHTML.replaceAll('"', '&quot;').replaceAll("'", '&#039;').replaceAll("`", '&#x60;');
+			}
 
 			//Helper: Help clean up HTML characters for tooltips and outline panel.
 			this.sanitizeForHTML = function (string) {
@@ -670,7 +739,25 @@ class Sa11y {
 		this.checkAll = async () => {
 			this.errorCount = 0;
 			this.warningCount = 0;
-			this.root = document.querySelector(options.checkRoot);
+
+			//Error handling. If specified selector doesn't exist on page.
+			const rootTarget = document.querySelector(options.checkRoot);
+			if (!rootTarget) {
+
+				//If target root can't be found, scan the body of page instead.
+				this.root = document.querySelector("body");
+
+				//Send an alert to panel.
+				const $alertPanel = document.getElementById("sa11y-panel-alert"),
+					$alertText = document.getElementById("sa11y-panel-alert-text");
+				
+				const root = options.checkRoot;
+				$alertText.innerHTML = `${M["ERROR_MISSING_ROOT_TARGET"](root)}`;
+				$alertPanel.classList.add("sa11y-active");
+				
+			} else {
+				this.root = document.querySelector(options.checkRoot);
+			}
 
 			this.findElements();
 
@@ -801,11 +888,17 @@ class Sa11y {
 			document.querySelectorAll('.sa11y-pulse-border').forEach((el) => el.classList.remove('sa11y-pulse-border'));
 			document.querySelector('#sa11y-panel-alert').classList.remove("sa11y-active")
 
+			//Alert within panel.
 			let empty = document.querySelector('#sa11y-panel-alert-text');
 			while (empty.firstChild) empty.removeChild(empty.firstChild);
 
+			let emptyPreview = document.querySelector("#sa11y-panel-alert-preview");
+			while (emptyPreview.firstChild) emptyPreview.removeChild(emptyPreview.firstChild);
+			emptyPreview.classList.remove("sa11y-panel-alert-preview");
+
+			//Main panel warning and error count.
 			let clearStatus = document.querySelector('#sa11y-status');
-			while (clearStatus.firstChild) clearStatus.removeChild(clearStatus.firstChild)
+			while (clearStatus.firstChild) clearStatus.removeChild(clearStatus.firstChild);
 
 			if (restartPanel) {
 				document.querySelector('#sa11y-panel').classList.remove("sa11y-active");
@@ -883,11 +976,11 @@ class Sa11y {
 			} else if (this.warningCount > 0 && this.errorCount === 0) {
 				notifBadge.style.display = "flex";
 				notifBadge.classList.add("sa11y-notification-badge-warning");
-				document.getElementById('sa11y-notification-count').innerHTML = `${M["STATUS_10"](warningCount)}`;
+				document.getElementById('sa11y-notification-count').innerHTML = `${M["PANEL_ICON_WARNINGS"](warningCount)}`;
 			} else {
 				notifBadge.style.display = "flex";
 				notifBadge.classList.remove("sa11y-notification-badge-warning");
-				document.getElementById('sa11y-notification-count').innerHTML = `${M["STATUS_11"](totalCount)}`;
+				document.getElementById('sa11y-notification-count').innerHTML = `${M["PANEL_ICON_TOTAL"](totalCount)}`;
 			}
 		}
 
@@ -916,34 +1009,21 @@ class Sa11y {
 				$findButtons = document.querySelectorAll('.sa11y-btn'),
 				M = sa11yLang;
 
-			if (this.errorCount === 1 && this.warningCount === 1) {
+			if (this.errorCount > 0 && this.warningCount > 0) {
 				$panelContent.setAttribute("class", "sa11y-errors");
-				$status.textContent = `${M["STATUS_1"]}`;
-			} else if (this.errorCount === 1 && this.warningCount > 0) {
+				$status.innerHTML = `${M["PANEL_STATUS_BOTH"](this.errorCount, this.warningCount)}`;
+			}
+			else if (this.errorCount > 0) {
 				$panelContent.setAttribute("class", "sa11y-errors");
-				$status.textContent = `${M["STATUS_2"](this.warningCount)}`;
-			} else if (this.errorCount > 0 && this.warningCount === 1) {
-				$panelContent.setAttribute("class", "sa11y-errors");
-				$status.textContent = `${M["STATUS_3"](this.errorCount)}`;
-			} else if (this.errorCount > 0 && this.warningCount > 0) {
-				$panelContent.setAttribute("class", "sa11y-errors");
-				$status.textContent = `${M["STATUS_4"](this.errorCount, this.warningCount)}`;
-			} else if (this.errorCount > 0) {
-				$panelContent.setAttribute("class", "sa11y-errors");
-				$status.textContent = `${this.errorCount === 1 ?
-                    M["STATUS_5"] :
-                    M["STATUS_6"](errorCount)
-                }`;
-			} else if (this.warningCount > 0) {
+				$status.innerHTML = `${M["PANEL_STATUS_ERRORS"](this.errorCount)}`;
+			}
+			else if (this.warningCount > 0) {
 				$panelContent.setAttribute("class", "sa11y-warnings");
-				$status.textContent = `${
-                    totalCount === 1 ?
-                    M["STATUS_7"] :
-                    M["STATUS_8"](this.warningCount)
-                }`;
-			} else {
+				$status.innerHTML = `${M["PANEL_STATUS_WARNINGS"](this.warningCount)}`;
+			}
+			else {
 				$panelContent.setAttribute("class", "sa11y-good");
-				$status.textContent = `${M["STATUS_9"]}`;
+				$status.textContent = `${M["PANEL_STATUS_NONE"]}`;
 
 				if ($findButtons.length === 0) {
 					$skipBtn.disabled = true;
@@ -1193,7 +1273,7 @@ class Sa11y {
 						const overflowing = findVisibleParent($el, 'display', 'none');
 						if (overflowing !== null) {
 							let hiddenparent = overflowing.previousElementSibling;
-							hiddenparent.classList.add("sa11y-pulse-border")
+							hiddenparent.classList.add("sa11y-pulse-border");
 						}
 					});
 					$findButtons[sa11yBtnLocation].focus();
@@ -1205,6 +1285,7 @@ class Sa11y {
 				if (offsetTopPosition === 0) {
 					$alertPanel.classList.add("sa11y-active");
 					$alertText.textContent = `${sa11yLang["NOT_VISIBLE_ALERT"]}`;
+					$alertPanelPreview.classList.add("sa11y-panel-alert-preview");
 					$alertPanelPreview.innerHTML = $findButtons[sa11yBtnLocation].getAttribute('data-tippy-content');
 					$closeAlertToggle.focus();
 				} else if (offsetTopPosition < 1) {
@@ -1224,9 +1305,25 @@ class Sa11y {
 		// Finds all elements and cache.
 		// ============================================================
 		this.findElements = () => {
-			const container = document.querySelector(options.checkRoot),
-				readabilityContainer = document.querySelector(options.readabilityRoot),
-				containerExclusions = Array.from(document.querySelectorAll(this.containerIgnore)),
+
+			let container = document.querySelector(options.checkRoot),
+				readabilityContainer = document.querySelector(options.readabilityRoot);
+
+			//Error handling. If target area does not exist, scan body.
+			if (!container) {
+				container = document.querySelector("body");
+			} else {
+				container = document.querySelector(options.checkRoot);
+			}
+
+			if (!readabilityContainer) {
+				readabilityContainer = document.querySelector("body");
+			} else {
+				readabilityContainer = document.querySelector(options.readabilityRoot);
+			}
+
+			//Exclusions constants
+			const containerExclusions = Array.from(document.querySelectorAll(this.containerIgnore)),
 				readabilityExclusions = Array.from(document.querySelectorAll(this.readabilityIgnore));
 
 			//Contrast
@@ -1235,7 +1332,15 @@ class Sa11y {
 			this.$contrast = $findcontrast.filter($el => !excludeContrast.includes($el));
 
 			//Readability
-			const $findreadability = Array.from(readabilityContainer.querySelectorAll("p, li"));
+			let $findreadability = Array.from(readabilityContainer.querySelectorAll("p, li"));
+
+			//Error handling for readability.
+			if (!$findreadability) {
+				
+			} else {
+				$findreadability = Array.from(readabilityContainer.querySelectorAll("p, li"));
+			}
+
 			this.$readability = $findreadability.filter($el => !readabilityExclusions.includes($el));
 			
 			//Headings
@@ -1316,6 +1421,9 @@ class Sa11y {
 				content = content();
 			}
 
+			// Escape content, it is need because it used inside data-tippy-content=""
+			content = this.escapeHTML(content);
+
 			return `
 				<div class=${inline ? "sa11y-instance-inline" : "sa11y-instance"}>
 					<button
@@ -1382,7 +1490,11 @@ class Sa11y {
 					warning = null;
 
 				if (level - prevLevel > 1 && i !== 0) {
-					error = M["HEADING_NON_CONSECUTIVE_LEVEL"](prevLevel, level);
+					if (options.nonConsecutiveHeadingIsError === true) {
+						error = M["HEADING_NON_CONSECUTIVE_LEVEL"](prevLevel, level);
+					} else {
+						warning = M["HEADING_NON_CONSECUTIVE_LEVEL"](prevLevel, level);
+					}
 				} else if ($el.textContent.trim().length == 0) {
 					if ($el.querySelectorAll("img").length) {
 						const imgalt = $el.querySelector("img").getAttribute("alt");
@@ -2343,6 +2455,7 @@ class Sa11y {
 				}
 			}
 
+			//Error: Duplicate IDs
 			if (options.duplicateIdQA === true) {
 				const ids = this.root.querySelectorAll("[id]");
 				let allIds = {};
@@ -2360,6 +2473,24 @@ class Sa11y {
 					}
 				});
 			}
+
+			//Warning: Flag underline text.
+			if (options.underlinedTextQA === true) {
+				const underline = Array.from(this.root.querySelectorAll('u'));
+				underline.forEach(($el) => {
+					this.warningCount++;
+					$el.insertAdjacentHTML("beforebegin", this.annotate(M["WARNING"], M["QA_TEXT_UNDERLINE_WARNING"]));
+				});
+				const computed = Array.from(this.root.querySelectorAll('h1, h2, h3, h4, h5, h6, p, div, span, li, blockquote'));
+				computed.forEach(($el) => {
+					let style = getComputedStyle($el),
+					decoration = style.textDecorationLine;
+					if (decoration === 'underline') {
+						this.warningCount++;
+						$el.insertAdjacentHTML("beforebegin", this.annotate(M["WARNING"], M["QA_TEXT_UNDERLINE_WARNING"]));
+					}
+				});
+			};
 
 			//Example ruleset. Be creative.
 			if (options.exampleQA === true) {

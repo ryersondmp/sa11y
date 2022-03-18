@@ -91,18 +91,17 @@ const sa11yLang = {
         'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'powerpoint', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi'],
 
     // Panel status
-    STATUS_1: `1 accessibility error and 1 warning found.`,
-    STATUS_2: (warningCount) => `1 accessibility error and ${warningCount} warnings found.`,
-    STATUS_3: (errorCount) => `${errorCount} accessibility errors and 1 warning found.`,
-    STATUS_4: (errorCount, warningCount) => `${errorCount} accessibility errors and ${warningCount} warnings found.`,
-    STATUS_5: `1 accessibility error found.`,
-    STATUS_6: (errorCount) => `${errorCount} accessibility errors found.`,
-    STATUS_7: `Please review warning.`,
-    STATUS_8: (warningCount) => `Please review ${warningCount} warnings.`,
-    STATUS_9: `No accessibility errors found.`,
-    STATUS_10: (warningCount) => `${warningCount} <span class="sa11y-visually-hidden">warnings found.</span>`,
-    STATUS_11: (totalCount) => `${totalCount} <span class="sa11y-visually-hidden">total issues found.</span>`,
+    PANEL_HEADING: `Accessibility check`,
+    PANEL_STATUS_BOTH: (errorCount, warningCount) => `Errors <span class="sa11y-panel-count sa11y-margin-right">${errorCount}</span> Warnings <span class="sa11y-panel-count">${warningCount}</span>`,
+    PANEL_STATUS_ERRORS: (errorCount) => `Errors <span class="sa11y-panel-count">${errorCount}</span>`,
+    PANEL_STATUS_WARNINGS: (warningCount) => `Warnings <span class="sa11y-panel-count">${warningCount}</span>`,
+    PANEL_STATUS_NONE: `No errors found.`,
+    PANEL_ICON_WARNINGS: (warningCount) => `${warningCount} <span class="sa11y-visually-hidden">warnings found.</span>`,
+    PANEL_ICON_TOTAL: (totalCount) => `${totalCount} <span class="sa11y-visually-hidden">total issues found.</span>`,
     NOT_VISIBLE_ALERT: `The item you are trying to view is not visible; it may be hidden or inside of an accordion or tab component. Here's a preview:`,
+    
+    // Error handling.
+    ERROR_MISSING_ROOT_TARGET: (root) => `The full page was checked for accessibility because the target area <span class="sa11y-kbd">${root}</span> does not exist.`,
 
     // Readability
     LANG_READABILITY: 'Readability',
@@ -390,6 +389,9 @@ const sa11yLang = {
         ${sa11yHr} 
         Please remove or change the following ID: <strong class='sa11y-red-text'>${id}</strong>`,
 
+    QA_TEXT_UNDERLINE_WARNING: 
+        `Underlined text can be confused with links. Consider using a different style such as &lt;em&gt;<em>emphasis</em>&lt;/em&gt;.`,
+
     QA_TOO_MANY_COMPONENTS_EXAMPLE: 
         `More than one Announcement component found! The Announcement component should be used strategically and sparingly. It should be used to get attention or indicate that something is important. Misuse of this component makes it less effective or impactful. Secondly, this component is semantically labeled as an Announcement for people who use screen readers.`,
 
@@ -413,4 +415,5 @@ const sa11yLang = {
 
     READABILITY_NOT_ENOUGH_CONTENT_MESSAGE: 
         `Not enough content to calculate readability score.`
+
 };

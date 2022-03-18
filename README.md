@@ -70,6 +70,7 @@ Note: You can only pass [CSS selectors](https://www.w3schools.com/cssref/css_sel
 | `linkIgnore` | 'nav *, [role="navigation"] *' | Ignore specific links on the page.|
 | `linkIgnoreSpan` | ' ' | Ignore specific content within a link. e.g. Refer to "Warning" page within demo for an example.|
 | `linksToFlag` | ' ' | Flag URLs that you do not want your content editors linking to. E.g. 'a[href*="wp-admin"]'|
+| `nonConsecutiveHeadingIsError` | true | Boolean. Set to `false` if you would like skipped headings to be flagged as a warning instead.|
 
 #### Readability module
 | Prop | Default | Description |
@@ -111,10 +112,9 @@ Note: You can only pass [CSS selectors](https://www.w3schools.com/cssref/css_sel
 | `embeddedContentDataViz` | true | Warning about data visualizations.|
 | `embeddedContentTitles` | true | Warning about iFrame missing a descriptive title or accessible name.|
 | `embeddedContentGeneral` | true | General warning about unknown iFrame content.|
-| `videoContent` | "video, [src*='youtube.com'], [src*='vimeo.com'], [src*='yuja.com'], [src*='panopto.com']" | Common video players. |
-| `audioContent` | "audio, [src*='soundcloud.com'], [src*='simplecast.com'], [src*='podbean.com'], [src*='buzzsprout.com'], [src*='blubrry.com'], [src*='transistor.fm'], [src*='fusebox.fm'], [src*='libsyn.com']" | Common podcast widgets or audio players. |
-| `dataVizContent` | "[src*='datastudio.google.com'], [src*='tableau']" | Common data visualization widgets. |
-| `twitterContent` | "[class^='twitter-timeline']" | Twitter timeline. |
+| `videoContent` | "video, youtube.com, vimeo.com, yuja.com, panopto.com" | Common video players. |
+| `audioContent` | "audio, soundcloud.com, simplecast.com, podbean.com, buzzsprout.com, blubrry.com, transistor.fm, fusebox.fm, libsyn.com" | Common podcast widgets or audio players. |
+| `dataVizContent` | "datastudio.google.com, tableau" | Common data visualization widgets. |
 
 #### Other notes
 - This version appends tooltips to the end of the body by default to ensure tooltips do not get hidden by conflicting CSS styling. If you customize the tooltips to include interactive content, please read [Tippy.js documentation on creating accessible interactive tooltips for keyboard users.](https://atomiks.github.io/tippyjs/v6/accessibility/#interactivity)
@@ -140,7 +140,7 @@ if ($checkAnnouncement.length > 1) {
 ```
 
 ## Contributing
-Want to help make Sa11y better? Consider [contributing](https://github.com/ryersondmp/sa11y/blob/master/CONTRIBUTING.md)!
+Want to help translate or improve Sa11y? Consider [contributing](https://github.com/ryersondmp/sa11y/blob/master/CONTRIBUTING.md)! 
 
 # Acknowledgements
 Development is led and maintained by [Adam Chaboryk](https://github.com/adamchaboryk), IT Accessibility Specialist, Digital Media Projects, Computing and Communication Services (CCS) at Ryerson University in Toronto, Canada. 
@@ -168,8 +168,4 @@ Developed with the assistance of students from Ryerson University's Computer Sci
 Have a question or any feedback? Submit it as an [issue](https://github.com/ryersondmp/sa11y/issues) or email: [adam.chaboryk@ryerson.ca](mailto:adam.chaboryk)
 
 # Privacy statement
-No personal data is *ever* collected when you use Sa11y. No tracking, no analytics, no cookies, no third party content. 
-
-Sa11y only uses your browser’s local storage to remember the state of optional rulesets and other features you enable. For example: when you enable the Readability check or display the Page Outline panel, it will remain enabled while you browse other pages until you turn it off.
-
-Sa11y is open source and has been adapted by many developers. Your privacy is guaranteed when you use the official repository or plugins.
+No personal data is *ever* collected when you use Sa11y. No tracking, no analytics, no cookies, no third party content. Sa11y only uses your browser’s local storage to remember the state of optional rulesets and other features you enable. For example, when you enable the Readability check or display the Page Outline panel, it will remain enabled while you browse other pages until you turn it off.

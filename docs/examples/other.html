@@ -131,6 +131,43 @@
               </div>
             </div>
 
+            <div class="row pt-3">
+              <div class="col-sm-12">
+              <h2>Underlined text</h2>
+              <p>This warning is to discourage the use of underlined text as it is easily confused with links.</p>
+              <p>This condition checks for underlined text created with &lt;u&gt; markup and css styles
+              within the following elements: h1, h2, h3, h4, h5, h6, p, li, span, blockquote.</p>
+              </div>
+            </div>
+            <div class="row pt-3 ms-5">
+              <div class="col-md-6">
+                <h3>Example #1</h3>
+                
+            <p style="text-decoration-line: underline;">For example this will be flagged.</p>
+              </div>
+              <div class="col-md-6">
+                
+            <h3 style="text-decoration:1px solid black underline">Example #2</h3>
+                <p>This heading will be flagged.</p>
+              </div>
+              <div class="col-md-6">
+              <h3>Example #3</h3>
+                <ul>
+                  
+            <li style="text-decoration:1px solid coral underline">Underlined text wihin lists will be flagged too.</li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <h3>Example #4</h3>
+                <p><a href="#">Linked text</a> will not be flagged.</p>
+              </div>
+              <div class="col-md-12">
+                <h3>Example #5</h3>
+                <p>Text 
+            <u>&lt;u&gt;underlined&lt;/u&gt;</u> this way will be flagged.</p>
+              </div>
+            </div>
+
 
             <h2 id="list-item-3" class="pt-3">Audio and video</h2>
             <p>This condition is meant to act as a friendly reminder. Videos will recieve a warning to ensure captions

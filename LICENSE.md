@@ -2,7 +2,7 @@
 
 The development of Sa11y is led by Adam Chaboryk, IT Accessibility Specialist, Digital Media Projects, Computing and Communication Services (CCS) at Ryerson University in Toronto, Canada. Sa11y is released under the GNU GPL v2.0 license. Previous versions of Sa11y (v2.0 and below) were released under the MIT license. 
 
-Copyright (c) 2020 - 2022. Ryerson University.
+Copyright © 2020 - 2022. Ryerson University. All rights reserved.
 
 ## GNU General Public License
 
