@@ -1,67 +1,69 @@
 <!DOCTYPE html>
-<!-- saved from url=(0049)https://getbootstrap.com/docs/4.3/examples/album/ -->
+<!-- saved from url=(0057)https://getbootstrap.com/docs/5.1/examples/navbar-static/ -->
 <html lang="en">
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Errors - Sa11y Demo</title>
-  <link rel="stylesheet" href="main.css" />
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css"
-    integrity="sha256-UzFD2WYH2U1dQpKDjjZK72VtPeWP50NoJjd26rnAdUI=" crossorigin="anonymous" />
-</head>
+  <link rel="canonical" href="https://getbootstrap.com/docs/5.1/examples/navbar-static/">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link href="main.css" rel="stylesheet">
+  <meta name="theme-color" content="#7952b3">
 
+</head>
 <body>
   <header>
-
     <div class="sa11y-website-frame-message">
-      <p style="display:none;" id="iframe-check"><a class="sa11y-exclude" href="errors.html" target="_blank">Open this
+      <p style="display:none;" id="iframe-check"><a class="sa11y-exclude" href="warnings.html" target="_blank">Open this
           page in a new tab for a better experience.</a> <span class="fas fa-external-link-alt"
           aria-hidden="true"></span></p>
       <p style="display:none;" id="newtabonly">Viewing demo in a new tab. <a href="../index.html#demo">Go back to
           documentation.</a></p>
     </div>
-
-    <div class="navbar navbar-dark bg-dark shadow-sm">
-      <div class="container d-flex justify-content-between">
-        <span class="d-flex align-items-center text-white">
-          <strong>Sa11y Demo</strong>
-        </span>
-        <nav class="nav nav-masthead justify-content-center sa11y-ignore">
-          <a class="nav-link active" href="errors.html">Errors</a>
-          <a class="nav-link" href="warnings.html">Warnings</a>
-          <a class="nav-link" href="pass.html">No Errors</a>
-          <div class="dropdown show">
-            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              All Rulesets
-            </a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
-              <a class="dropdown-item" href="headings-images.html">Headings &amp; Images</a>
-              <a class="dropdown-item" href="links-tables.html">Links &amp; Tables</a>
-              <a class="dropdown-item" href="contrast-labels.html">Contrast &amp; Labels</a>
-              <a class="dropdown-item" href="other.html">Other</a>
-            </div>
-          </div>
-        </nav>
-      </div>
-    </div>
-  </header>
-
-  <main>
-
-    <section class="jumbotron text-center">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
       <div class="container">
-        <h1 class="jumbotron-heading">Errors</h1>
-        <p class="lead">A typical page with a few errors!</p>
-        <p><small>The sample text below is from <a href="https://en.wikipedia.org/wiki/Bear">Wikipedia:
-              Bear.</a></small></p>
+        <span class="navbar-brand mb-0 h1">Sa11y Demo <span class="badge bg-info text-dark">2.1</span></span>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+          aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <ul class="navbar-nav ms-auto mb-2 mb-md-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="errors.html">Errors</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="warnings.html">Warnings</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="pass.html">No Errors</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                All Rulesets
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="headings-images.html">Headings &amp; Images</a></li>
+                <li><a class="dropdown-item" href="links-tables.html">Links &amp; Tables</a></li>
+                <li><a class="dropdown-item" href="contrast-labels.html">Contrast &amp; Labels</a></li>
+                <li><a class="dropdown-item" href="other.html">Other</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
       </div>
-    </section>
-
-    <div class="album py-5 bg-light">
+    </nav>
+  </header>
+  <main>
+    <div class="container">
+      <div class="bg-light p-5 mb-5 rounded text-center">
+        <h1>Errors</h1>
+        <p class="lead">A typical page with a few errors!</p>
+        <small>The sample text below is from <a href="https://en.wikipedia.org/wiki/Bear">Wikipedia: Bear.</a></small>
+      </div>
       <div class="container">
         <div class="row">
           <div class="col-md-4 d-flex">
@@ -162,48 +164,56 @@
       </div>
     </div>
   </main>
-  <footer class="text-muted sa11y-ignore">
+  <footer class="sa11y-ignore d-flex flex-wrap bg-dark text-white justify-content-between align-items-center py-5 mt-5">
     <div class="container">
-      <p>Customize Sa11y to target specific regions of a page only. For example, <a href="#">this</a> link will be
-        ignored. If a content editor can't edit it, don't scan it.</p>
+    <span class="text-muted">Customize Sa11y to target specific regions of a page only. For example, this non-descript <a href="#">link</a> will be ignored. If a content editor can't edit it, don't scan it. Purposely super low contrast for testing purposes.</span>
     </div>
   </footer>
 
-  <!-- Bootstrap + Jquery -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+    integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous">
   </script>
-
   <script>
-    $(document).ready(function () {
-      if (window.top == window) {
-        $("#iframe-check").remove();
-      } else {
-        $("#iframe-check").css("display", "block")
-      }
+    document.addEventListener(
+      'DOMContentLoaded',
+      (e) => {
+        const iframe = document.getElementById("iframe-check"),
+          newTabOnly = document.getElementById("newtabonly");
 
-      if (window.top != window) {
-        $("#newtabonly").css("display", "none")
-      } else {
-        $("#newtabonly").css("display", "block")
-      }
-    });
+        if (window.top == window) {
+          iframe.remove();
+        } else {
+          iframe.style.display = "block";
+        }
+
+        if (window.top != window) {
+          newTabOnly.style.display = "none";
+        } else {
+          newTabOnly.style.display = "block";
+        }
+      });
   </script>
-
-  <!--Jquery (Yes, loaded a second time on purpose...)-->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.slim.min.js"></script>
 
   <!-- Tippy.js CDN scripts -->
   <script src="https://unpkg.com/@popperjs/core@2"></script>
   <script src="https://unpkg.com/tippy.js@6"></script>
- 
-<!--Sa11y-->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/src/sa11y.min.css" />
-<script src="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/src/sa11y-english.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/src/sa11y.min.js"></script>
- 
+
+   <!--Sa11y CDN-->
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/src/sa11y.min.css" />
+ <script src="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/src/sa11y-english.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/src/sa11y.min.js"></script>
+
+  <!--Development mode 
+    <link rel="stylesheet" href="../../src/sa11y.css" />
+    <script src="../../src/sa11y-english.js"></script>
+    <script src="../../src/sa11y.js"></script>
+  -->
+  
+  <script type="text/javascript">
+    const sa11y = new Sa11y({
+      
+    });
+  </script>
 </body>
 
 </html>
-

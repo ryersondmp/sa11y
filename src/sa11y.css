@@ -1,3 +1,12 @@
+/*-----------------------------------------------------------------------
+Sa11y: the accessibility quality assurance assistant.                
+Author: Development led by Adam Chaboryk at Ryerson University.
+All acknowledgements and contributors: https://github.com/ryersondmp/sa11y
+License: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
+Copyright (c) 2020 - 2022 Ryerson University
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+------------------------------------------------------------------------*/
+
 :root {
     --sa11y-font-face: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
         "Helvetica Neue", Arial, "FontAwesome", sans-serif;
@@ -25,11 +34,9 @@
     --sa11y-setting-switch-on-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' aria-hidden='true' focusable='false' role='img' viewBox='0 0 576 512'%3E%3Cpath fill='%23000000' d='M384 64H192C86 64 0 150 0 256s86 192 192 192h192c106 0 192-86 192-192S490 64 384 64zm0 320c-70.8 0-128-57.3-128-128 0-70.8 57.3-128 128-128 70.8 0 128 57.3 128 128 0 70.8-57.3 128-128 128z'/%3E%3C/svg%3E");
     --sa11y-setting-switch-off-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' aria-hidden='true' focusable='false' role='img' viewBox='0 0 576 512'%3E%3Cpath fill='%23000000' d='M384 64H192C85.961 64 0 149.961 0 256s85.961 192 192 192h192c106.039 0 192-85.961 192-192S490.039 64 384 64zM64 256c0-70.741 57.249-128 128-128 70.741 0 128 57.249 128 128 0 70.741-57.249 128-128 128-70.741 0-128-57.249-128-128zm320 128h-48.905c65.217-72.858 65.236-183.12 0-256H384c70.741 0 128 57.249 128 128 0 70.74-57.249 128-128 128z'/%3E%3C/svg%3E");
     --sa11y-close-btn-svg: url("data:image/svg+xml,%3Csvg width='20px' height='20px' aria-hidden='true' focusable='false' role='img' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 352 512'%3E%3Cpath fill='%23000000' d='M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z'%3E%3C/path%3E%3C/svg%3E");
-    --sa11y-shortcut-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' viewBox='0 0 351 123'%3E%3Cdefs%3E%3Cstyle%3E .cls-1 %7B fill-rule: evenodd; %7D %3C/style%3E%3C/defs%3E%3Cpath class='cls-1' d='M10-.022H152.1a10,10,0,0,1,10,10V112.906a10,10,0,0,1-10,10H10a10,10,0,0,1-10-10V9.978A10,10,0,0,1,10-.022Zm111.91,81q0.647,0.63,3.956.63,0.493,0,1.046-.019T128,81.53v8.131l-5.135.191q-7.683.267-10.5-2.672-1.826-1.87-1.825-5.764V55.8h-5.781V48.051h5.781V36.446h10.725V48.051H128V55.8h-6.732V77.789Q121.264,80.347,121.91,80.976ZM87.6,33.01H98.444V89.279H87.6V33.01Zm-22.887,44.7H44.073l-3.8,11.567H28.02L48.032,33.01H61.286L81.12,89.279h-12.7ZM54.535,45.875L47.26,68.016H61.617ZM199-.022H341.1a10,10,0,0,1,10,10V112.906a10,10,0,0,1-10,10H199a10,10,0,0,1-10-10V9.978A10,10,0,0,1,199-.022ZM249.987,60.49V50.708l29.407-10.481L249.987,29.809V19.991l41.228,15.82v8.929Zm25.446,44.535H264.747V94.514h10.686v10.511Z'/%3E%3C/svg%3E");
 }
 
 /* SVG icons by FontAwesome 5: https://fontawesome.com/license/free */
-/* --sa11y-shortcut-svg (Alt + .) SVG was created by Adam Chaboryk, MIT license. */
 
 html,
 html[data-sa11y-theme="light"] {
@@ -132,7 +139,8 @@ html[data-sa11y-theme="dark"] {
 #sa11y-container a,
 #sa11y-container label,
 #sa11y-container button,
-#sa11y-container svg {
+#sa11y-container svg,
+#sa11y-container strong {
     all: unset;
     box-sizing: border-box !important;
 }
@@ -171,7 +179,7 @@ html[data-sa11y-theme="dark"] {
     font-size: var(--sa11y-normal-text) !important;
     font-weight: normal;
     word-break: normal !important;
-    letter-spacing: unset !important;
+    letter-spacing: normal !important;
 }
 
 .sa11y-instance {
@@ -189,7 +197,7 @@ html[data-sa11y-theme="dark"] {
 
 /*===== Main button ===== */
 #sa11y-container #sa11y-toggle {
-    background-image: linear-gradient(to top, #e040fb, #00bcd4);
+    background-image: linear-gradient(to top, #e040fb, #00bcd4) !important;
     background-size: 150% 150% !important;
     border: 0 !important;
     border-radius: 50px !important;
@@ -200,7 +208,7 @@ html[data-sa11y-theme="dark"] {
     overflow: visible !important;
     padding: 10px !important;
     position: fixed !important;
-    right: 15px !important;
+    right: 18px !important;
     width: 55px !important;
     height: 55px !important;
     transition: all 0.2s ease-in-out !important;
@@ -209,9 +217,16 @@ html[data-sa11y-theme="dark"] {
 
 #sa11y-container #sa11y-toggle:hover,
 #sa11y-container #sa11y-toggle:focus {
-    -webkit-animation: sa11y-toggle-gradient 3s ease !important;
-    -moz-animation: sa11y-toggle-gradient 3s ease !important;
-    animation: sa11y-toggle-gradient 3s ease !important;
+    -webkit-animation: sa11y-toggle-gradient 3s ease;
+    -moz-animation: sa11y-toggle-gradient 3s ease;
+    animation: sa11y-toggle-gradient 3s ease;
+}
+
+#sa11y-container #sa11y-toggle:disabled:hover,
+#sa11y-container #sa11y-toggle:disabled:focus {
+    -webkit-animation: none !important;
+    -moz-animation: none !important;
+    animation: none !important;
 }
 
 #sa11y-container .sa11y-notification-badge-warning {
@@ -230,14 +245,13 @@ html[data-sa11y-theme="dark"] {
     font-weight: normal !important;
     font-size: 13px !important;
     height: 20px !important;
-    line-height: 1 !important;
     position: absolute !important;
     right: -3px !important;
     top: -3px !important;
     width: 20px !important;
 }
 
-#sa11y-container #sa11y-notification-badge>div {
+#sa11y-container #sa11y-notification-badge > div {
     position: absolute !important;
     top: 50% !important;
     left: 50% !important;
@@ -249,24 +263,24 @@ html[data-sa11y-theme="dark"] {
 }
 
 #sa11y-container .loading-sa11y::before {
-    content: "";
-    position: absolute;
-    display: inline-block;
-    box-sizing: border-box;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    margin: -10px;
+    content: "" !important;
+    position: absolute !important;
+    display: inline-block !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 50% !important;
+    margin: -10px !important;
     border: 4px solid rgba(255, 255, 255, 0.9);
-    border-top: 4px solid transparent;
-    border-bottom: 4px solid transparent;
+    border-top: 4px solid transparent !important;
+    border-bottom: 4px solid transparent !important;
     -webkit-animation: sa11y-rotate 1.5s ease;
     animation: sa11y-rotate 1.5s ease;
     animation-fill-mode: forwards;
 }
 
 #sa11y-toggle svg path {
-    fill: var(--sa11y-panel-bg) !important;
+    fill: var(--sa11y-panel-bg);
 }
 
 /* Main focus styles */
@@ -290,17 +304,17 @@ html[data-sa11y-theme="dark"] {
 }
 
 #sa11y-container #sa11y-panel.sa11y-active {
-    height: auto;
-    opacity: 1;
-    visibility: visible;
-    transform: scale(1);
-    transition: transform .2s, opacity .2s !important;
-    transform-origin: bottom right !important;
+    height: auto !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: scale(1) !important;
+    transition: transform .2s, opacity .2s;
+    transform-origin: bottom right;
 }
 
 #sa11y-container #sa11y-panel {
     background: var(--sa11y-panel-bg) !important;
-    border-radius: 0.25em !important;
+    border-radius: 4px !important;
     bottom: 25px !important;
     box-shadow: 0 0 20px 4px rgba(154, 161, 177, 0.15),
         0 4px 80px -8px rgba(36, 40, 47, 0.25),
@@ -311,12 +325,12 @@ html[data-sa11y-theme="dark"] {
     right: 42px !important;
     text-align: left !important;
     transform-origin: 100% 100% !important;
-    transition: transform 0.2s, opacity 0.2s !important;
+    transition: transform 0.2s, opacity 0.2s;
     transform: scale(0);
     visibility: hidden;
     width: 310px !important;
     z-index: 8890 !important;
-    transition: background 0.2s !important;
+    transition: background 0.2s;
 }
 
 #sa11y-container #sa11y-panel-alert {
@@ -336,7 +350,7 @@ html[data-sa11y-theme="dark"] {
     line-height: 22px !important;
 }
 
-#sa11y-container #sa11y-panel-alert-preview {
+#sa11y-container .sa11y-panel-alert-preview {
     background: var(--sa11y-panel-bg-secondary) !important;
     border: 1px dashed var(--sa11y-panel-bg-splitter) !important;
     border-radius: 5px !important;
@@ -397,17 +411,6 @@ html[data-sa11y-theme="dark"] {
     -webkit-mask: var(--sa11y-warning-svg) center no-repeat !important;
 }
 
-/* Shortcut icon */
-.sa11y-shortcut-icon {
-    height: 20px !important;
-    width: 50px !important;
-    display: inline-block !important;
-    margin-top: 5px !important;
-    background: var(--sa11y-panel-primary) !important;
-    mask: var(--sa11y-shortcut-svg) center no-repeat !important;
-    -webkit-mask: var(--sa11y-shortcut-svg) center no-repeat !important;
-}
-
 /* Outline and settings Panel */
 #sa11y-container #sa11y-panel-alert,
 #sa11y-container #sa11y-readability-panel,
@@ -448,7 +451,7 @@ html[data-sa11y-theme="dark"] {
 
 #sa11y-container #sa11y-settings-panel .sa11y-red-text,
 #sa11y-container #sa11y-outline-panel .sa11y-outline-list-item.sa11y-red-text {
-    color: var(--sa11y-red-text) !important;
+    color: var(--sa11y-red-text);
 }
 
 #sa11y-container .sa11y-missing-h1 {
@@ -462,7 +465,7 @@ html[data-sa11y-theme="dark"] {
     border-radius: 10px !important;
     color: var(--sa11y-panel-primary) !important;
     display: inline !important;
-    font-size: 12px !important;
+    font-size: 13px !important;
     font-weight: 700 !important;
     min-width: 10px !important;
     padding: 2px 5px !important;
@@ -501,7 +504,7 @@ html[data-sa11y-theme="dark"] {
 }
 
 #sa11y-container #sa11y-outline-list {
-    display: block;
+    display: block !important;
     margin: 0 !important;
     padding: 0 !important;
 }
@@ -622,7 +625,7 @@ html[data-sa11y-theme="dark"] {
     padding: 0 !important;
     position: relative !important;
     width: 100% !important;
-    transition: background 0.2s !important;
+    transition: background 0.2s;
     text-align: center !important;
 }
 
@@ -637,24 +640,23 @@ html[data-sa11y-theme="dark"] {
     right: 0 !important;
 }
 
-#sa11y-container #sa11y-other-options li,
 #sa11y-container #sa11y-settings-options li {
     align-items: center !important;
     display: flex !important;
     justify-content: space-between !important;
     padding: 1px 0 1px 0 !important;
     list-style-type: none !important;
+    border-bottom: 1px solid !important;
+    border-color: var(--sa11y-panel-bg-splitter) !important;
 }
 
-#sa11y-container #sa11y-other-options li+li,
-#sa11y-container #sa11y-settings-options li+li {
-    border-top: 1px solid !important;
-    border-color: var(--sa11y-panel-bg-splitter) !important;
+#sa11y-container #sa11y-settings-options li:last-child {
+    border: none !important;
 }
 
 /* Close button within panel. */
 #sa11y-container .sa11y-close-btn {
-    float: right;
+    float: right !important;
     border-radius: 50% !important;
     border: 0 !important;
     cursor: pointer !important;
@@ -675,12 +677,12 @@ html[data-sa11y-theme="dark"] {
 }
 
 #sa11y-container .sa11y-close-btn:after {
-    content: "";
-    left: -7px;
-    right: -7px;
-    bottom: -7px;
-    top: -7px;
-    position: absolute;
+    content: "" !important;
+    left: -7px !important;
+    right: -7px !important;
+    bottom: -7px !important;
+    top: -7px !important;
+    position: absolute !important;
 }
 
 #sa11y-container .sa11y-close-btn:after {
@@ -701,8 +703,9 @@ html[data-sa11y-theme="dark"] {
     position: relative !important;
     background: none !important;
     color: var(--sa11y-panel-primary) !important;
-    width: 80px !important;
-    height: 45px !important;
+    width: 95px !important;
+    height: 44px !important;
+    text-align: right !important;
 }
 
 #sa11y-container .sa11y-settings-switch[aria-pressed="true"]:after,
@@ -731,8 +734,8 @@ html[data-sa11y-theme="dark"] {
 #sa11y-container .sa11y-settings-switch:focus,
 #sa11y-container #sa11y-settings-toggle:focus,
 #sa11y-container #sa11y-outline-toggle:focus {
-    outline: 0 !important;
-    box-shadow: inset 0 0 0 4px var(--sa11y-focus-color) !important;
+    outline: 0;
+    box-shadow: inset 0 0 0 4px var(--sa11y-focus-color);
 }
 
 button.sa11y-btn:focus,
@@ -746,8 +749,8 @@ button.sa11y-btn:focus,
 #sa11y-container .sa11y-settings-switch:focus:not(:focus-visible),
 #sa11y-container #sa11y-settings-toggle:focus:not(:focus-visible),
 #sa11y-container #sa11y-outline-toggle:focus:not(:focus-visible) {
-    outline: 0 !important;
-    box-shadow: none !important;
+    outline: 0;
+    box-shadow: none;
 }
 
 button.sa11y-btn:focus,
@@ -761,8 +764,8 @@ button.sa11y-btn:focus,
 #sa11y-container .sa11y-settings-switch:focus-visible,
 #sa11y-container #sa11y-settings-toggle:focus-visible,
 #sa11y-container #sa11y-outline-toggle:focus-visible {
-    outline: 0 !important;
-    box-shadow: inset 0 0 0 4px var(--sa11y-focus-color) !important;
+    outline: 0;
+    box-shadow: inset 0 0 0 4px var(--sa11y-focus-color);
 }
 
 button.sa11y-btn:focus,
@@ -802,7 +805,7 @@ button.sa11y-btn:after {
 
 /* To prevent overlap. */
 button.sa11y-warning-btn {
-    margin: 20px;
+    margin: 20px !important;
 }
 button.sa11y-good-btn,
 button.sa11y-error-btn {
@@ -865,7 +868,7 @@ button.sa11y-warning-btn-text:focus {
 
 /* Misc */
 .sa11y-visually-hidden {
-    border: 0;
+    border: 0 !important;
     clip: rect(1px, 1px, 1px, 1px) !important;
     clip-path: inset(50%) !important;
     display: block !important;
@@ -891,10 +894,14 @@ button.sa11y-warning-btn-text:focus {
 }
 
 .sa11y-kbd {
-    padding: 0.1em 0.3em !important;
+    padding: 1.6px 4.8px !important;
     color: var(--sa11y-panel-primary) !important;
     background-color: var(--sa11y-panel-badge) !important;
-    border-radius: 0.2em !important;
+    border-radius: 3.2px !important;
+}
+
+.sa11y-margin-right {
+    margin-right: 10px !important;
 }
 
 /* Link, text, and image outlines */
@@ -914,10 +921,6 @@ button.sa11y-warning-btn-text:focus {
     font-size: var(--sa11y-normal-text) !important;
 }
 
-.sa11y-error-heading {
-    color: var(--sa11y-error) !important;
-}
-
 .sa11y-error-border {
     outline: 5px solid var(--sa11y-error) !important;
 }
@@ -930,21 +933,30 @@ button.sa11y-warning-btn-text:focus {
     outline: 5px solid var(--sa11y-good) !important;
 }
 
-p#sa11y-readability-info {
-    margin-left: 10px;
+#sa11y-readability-info {
+    margin-left: 10px !important;
 }
 
-.sa11y-readability-score {
+#sa11y-container .sa11y-readability-score {
     background-color: var(--sa11y-panel-badge) !important;
     color: var(--sa11y-panel-primary) !important;
     margin-left: 5px !important;
-    border-radius: 0.25em !important;
+    border-radius: 4px !important;
+    padding: 2px 5px !important;
+}
+
+#sa11y-container .sa11y-panel-count {
+    background-color: var(--sa11y-panel-badge) !important;
+    color: var(--sa11y-panel-primary) !important;
+    font-size: 15px !important;
+    margin-left: 1px !important;
+    border-radius: 4px !important;
     padding: 2px 5px !important;
 }
 
 a.sa11y-good-text,
 .sa11y-good-text {
-    border-radius: 0.25em !important;
+    border-radius: 4px !important;
     border-color: transparent !important;
     box-shadow: 0 0 0 4px var(--sa11y-good) !important;
     background-color: var(--sa11y-good) !important;
@@ -1065,7 +1077,7 @@ span.sa11y-label-visible {
 
 span.sa11y-heading-label {
     background-color: #777678 !important;
-    background-image: linear-gradient(to bottom right, #b629ce, #16aec2);
+    background-image: linear-gradient(to bottom right, #b629ce, #16aec2) !important;
     border-radius: 3px !important;
     color: white !important;
     font-family: var(--sa11y-font-face) !important;
@@ -1198,6 +1210,7 @@ span.sa11y-heading-label {
     border: none !important;
     background: var(--sa11y-panel-bg-splitter) !important;
     height: 1px !important;
+    opacity: 1 !important;
 }
 
 /*===== Custom tippy theme for Sa11y ===== */
@@ -1220,7 +1233,7 @@ span.sa11y-heading-label {
     font-family: var(--sa11y-font-face) !important;
     line-height: 22px !important;
     -webkit-font-smoothing: auto !important;
-    letter-spacing: unset !important;
+    letter-spacing: normal !important;
 }
 .tippy-box[data-theme~="sa11y-theme"][role=tooltip],
 .tippy-box[data-theme~="sa11y-theme"] {
@@ -1231,15 +1244,19 @@ span.sa11y-heading-label {
         0 4px 80px -8px rgba(36, 40, 47, 0.25),
         0 4px 4px -2px rgba(91, 94, 105, 0.15) !important;
     font-weight: normal !important;
-    display: block;
-    border-radius: 4px;
-    outline: 0;
+    display: block !important;
+    border-radius: 4px !important;
+    outline: 0 !important;
     transition-property: transform, visibility, opacity;
 }
-.tippy-box[data-theme~="sa11y-theme"] *:not(.sa11y-header-text):not(.sa11y-bold) {
+.tippy-box[data-theme~="sa11y-theme"] > .tippy-content {
+    padding: 5px 9px !important;
+}
+
+.tippy-box[data-theme~="sa11y-theme"] *:not(.sa11y-header-text):not(.sa11y-bold):not(strong) {
     font-size: var(--sa11y-normal-text) !important;
 }
-.tippy-box[data-theme~="sa11y-theme"] *:not(.sa11y-header-text):not(.sa11y-bold) {
+.tippy-box[data-theme~="sa11y-theme"] *:not(.sa11y-header-text):not(.sa11y-bold):not(strong) {
     font-weight: normal !important;
 }
 .tippy-box[data-theme~="sa11y-theme"] ul {
@@ -1252,6 +1269,9 @@ span.sa11y-heading-label {
 .tippy-box[data-theme~="sa11y-theme"] a {
     color: var(--sa11y-hyperlink) !important;
     text-decoration: underline;
+}
+.tippy-box[data-theme~="sa11y-theme"] strong {
+    font-weight: 600 !important;
 }
 .tippy-box[data-theme~="sa11y-theme"] a:hover,
 .tippy-box[data-theme~="sa11y-theme"] a:focus {
@@ -1272,11 +1292,3 @@ span.sa11y-heading-label {
     border-right-color: var(--sa11y-panel-bg) !important;
 }
 
-/*-----------------------------------------------------------------------
-Sa11y: the accessibility quality assurance assistant.                
-Author: Development led by Adam Chaboryk at Ryerson University.
-All acknowledgements and contributors: https://github.com/ryersondmp/sa11y
-License: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
-Copyright (c) 2020 - 2021 Ryerson University
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-------------------------------------------------------------------------*/

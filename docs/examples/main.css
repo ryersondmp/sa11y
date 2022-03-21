@@ -1,10 +1,8 @@
-.jumbotron {
-    margin-bottom: 0rem!important
-}
-
 main a, footer a {
-    color: #0065d1!important;
-    text-decoration: underline !important;
+    color: #0065d1 !important;
+}
+.card > a {
+    color: #002dac !important;
 }
 
 main a:hover,
@@ -27,10 +25,14 @@ main a:focus {
     color: white!important
 }
 
+.nav-link.active {
+    font-weight: bold;
+    color: #0dcaf0!important;
+}
 .nav-link:focus,
 .nav-link:hover {
     text-decoration: underline!important;
-    color: aqua!important
+    color: #0dcaf0!important;
 }
 
 .sa11y-website-frame-message {
@@ -89,7 +91,7 @@ footer {
     padding-bottom: 3rem;
 }
 
-.announcement-component {
+.sa11y-announcement-component {
     border: 3px solid #5BC2F4;
     background-color: #ffffff;
     border: 3px solid #004C9B;
