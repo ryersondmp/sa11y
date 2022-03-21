@@ -149,7 +149,7 @@ Development is led and maintained by [Adam Chaboryk](https://github.com/adamchab
 ### Previous student contributors
 Developed with the assistance of students from Ryerson University's Computer Science program. 
 - Dylan Le (2021)
-- Janice W. (2021)
+- Janice Wong (2021)
 - Farhan Mohammed (2020/2021)
 - Kyle Padernilla (2019/2020)
 - Arshad Mohammed (2018/2019)
