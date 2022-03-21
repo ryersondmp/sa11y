@@ -259,9 +259,16 @@ class Sa11y {
 
 			// Supported readability languages. Turn module off if not supported.
 			const supportedLang = ["en", "fr", "es", "de", "nl", "it"],
-				pageLang = document.querySelector("html").getAttribute("lang").toLowerCase();
-			if (!supportedLang.some(el => pageLang.includes(el))) {
+				pageLang = document.querySelector("html").getAttribute("lang");
+
+			// If lang attribute is missing.
+			if (!pageLang) {
 				options.readabilityPlugin = false;
+			} else {
+				const pageLangLowerCase = pageLang.toLowerCase();
+				if (!supportedLang.some(el => pageLangLowerCase.includes(el))) {
+					options.readabilityPlugin = false;
+				}
 			}
 
 			/* Exclusions */
