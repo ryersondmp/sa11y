@@ -14,7 +14,7 @@ Sa11y works as a simple in-page checker that is designed to be easily customized
 - Additional (toggleable) checks: Contrast, form labels, readability, links (Advanced).
 - Dark mode.
 
-Read [Sa11y 2.1 release notes.](https://github.com/ryersondmp/sa11y/releases/tag/2.1)
+Read [Sa11y 2.1 release notes.](https://github.com/ryersondmp/sa11y/releases/tag/2.1.0)
 
 ## Demo and bookmarklet 
 :arrow_right: [View project website and demo](https://ryersondmp.github.io/sa11y/) or grab the latest [bookmarklet.](https://ryersondmp.github.io/sa11y/#install)
