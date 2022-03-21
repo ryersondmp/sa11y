@@ -100,6 +100,7 @@ Note: You can only pass [CSS selectors](https://www.w3schools.com/cssref/css_sel
 | `fakeHeadingsQA` |  true | Warning about bolded text used as headings. Uses regex. Set to `false` if problematic. |
 | `fakeListQA` | true | Warning about non-semantic lists. |
 | `duplicateIdQA` | true | Error if duplicate IDs are found. |
+| `underlinedTextQA` | true | Warning for &lt;u&gt;underlined&lt;u&gt; text. |
 | `exampleQA` | false | Example ruleset used to warn over use of a component. Visit Warnings page within demo for example. |
 
 #### Embedded content rulesets (iFrames)
@@ -162,7 +163,7 @@ Developed with the assistance of students from Ryerson University's Computer Sci
 - The icons are created by [FontAwesome.](https://github.com/FortAwesome/Font-Awesome)
 - John Jameson (Princeton University) maintains a fork of Sa11y called [Editoria11y](https://github.com/itmaybejj/editoria11y/) which is available as a turnkey Drupal module. Sa11y and Editoria11y share a lot of code!
 - Sa11y's bookmarklet is hosted on [jsDelivr](https://www.jsdelivr.com/) - an awesome free CDN for open source projects.
-- Brian Teeman and the Joomla team who assisted with the vanilla JavaScript port. Sa11y is included in Joomla 4.1 and later - no installation necessary! 
+- Brian Teeman and the Joomla team who assisted with the vanilla JavaScript port. Sa11y is included in [Joomla 4.1](https://www.joomla.org/announcements/release-news/5855-joomla-4-1-0-stable-new-standards-in-accessible-website-design.html) and later - no installation necessary! 
 
 # Contact
 Have a question or any feedback? Submit it as an [issue](https://github.com/ryersondmp/sa11y/issues) or email: [adam.chaboryk@ryerson.ca](mailto:adam.chaboryk)
