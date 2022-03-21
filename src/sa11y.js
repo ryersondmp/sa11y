@@ -252,9 +252,16 @@ class Sa11y {
 
 		this.globals = () => {
 
-			//Readability root
+			// Readability root
 			if (!options.readabilityRoot) {
 				options.readabilityRoot = options.checkRoot;
+			}
+
+			// Supported readability languages. Turn module off if not supported.
+			const supportedLang = ["en", "fr", "es", "de", "nl", "it"],
+				pageLang = document.querySelector("html").getAttribute("lang").toLowerCase();
+			if (!supportedLang.some(el => pageLang.includes(el))) {
+				options.readabilityPlugin = false;
 			}
 
 			/* Exclusions */
@@ -410,7 +417,6 @@ class Sa11y {
 				sa11yToggle.setAttribute("aria-expanded", "true");
 				setTimeout(this.checkAll, 800);
 			}
-
 			
 			document.onkeydown = (evt) => {
 				evt = evt || window.event;
@@ -797,7 +803,6 @@ class Sa11y {
 				const linksAdvancedLi = document.getElementById("sa11y-links-advanced-li");
 				linksAdvancedLi.setAttribute("style", "display: none !important;");
 				localStorage.setItem("sa11y-remember-links-advanced", "Off");
-
 			}
 			
 			// Readability plugin
@@ -806,11 +811,11 @@ class Sa11y {
 					this.checkReadability();
 				}
 			} else {
-				const readabilityLi = document.getElementById("sa11y-readability-li");
+				const readabilityLi = document.getElementById("sa11y-readability-li"),
+					readabilityPanel = document.getElementById("sa11y-readability-panel");
 				readabilityLi.setAttribute("style", "display: none !important;");
-				const readabilityPanel = document.getElementById("sa11y-readability-panel");
 				readabilityPanel.classList.remove("sa11y-active");
-				localStorage.setItem("sa11y-remember-readability", "Off");
+				//localStorage.setItem("sa11y-remember-readability", "Off");
 			}
 			
 			//Embedded content plugin
@@ -989,7 +994,6 @@ class Sa11y {
 		// ----------------------------------------------------------------------
 		this.updatePanel = () => {
 			this.panelActive = true;
-			let totalCount = this.errorCount + this.warningCount;
 
 			this.buildPanel();
 			this.skipToIssue();
@@ -2479,6 +2483,7 @@ class Sa11y {
 				const underline = Array.from(this.root.querySelectorAll('u'));
 				underline.forEach(($el) => {
 					this.warningCount++;
+					$el.classList.add("sa11y-warning-text");
 					$el.insertAdjacentHTML("beforebegin", this.annotate(M["WARNING"], M["QA_TEXT_UNDERLINE_WARNING"]));
 				});
 				const computed = Array.from(this.root.querySelectorAll('h1, h2, h3, h4, h5, h6, p, div, span, li, blockquote'));
@@ -2487,6 +2492,7 @@ class Sa11y {
 					decoration = style.textDecorationLine;
 					if (decoration === 'underline') {
 						this.warningCount++;
+						$el.classList.add("sa11y-warning-text");
 						$el.insertAdjacentHTML("beforebegin", this.annotate(M["WARNING"], M["QA_TEXT_UNDERLINE_WARNING"]));
 					}
 				});
@@ -2782,10 +2788,15 @@ class Sa11y {
 			if (options.readabilityLang === "en") {
 				flesch_reading_ease = 206.835 - (1.015 * words / sentences) - (84.6 * total_syllables / words);
 			} else if (options.readabilityLang === "fr") {
-				//French (Kandel & Moles)
 				flesch_reading_ease = 207 - (1.015 * words / sentences) - (73.6 * total_syllables / words);
 			} else if (options.readabilityLang === "es") {
 				flesch_reading_ease = 206.84 - (1.02 * words / sentences) - (0.60 * (100 * total_syllables / words));
+			} else if (options.readabilityLang === "de") {
+				flesch_reading_ease = 180 - (words / sentences) - (58.5 * (total_syllables / words));
+			} else if (options.readabilityLang === "nl") {
+				flesch_reading_ease = 206.84 - (0.77 * (100 * total_syllables / words)) - (0.93 * (words / sentences));
+			} else if (options.readabilityLang === "it") {
+				flesch_reading_ease = 217 - (1.3 * (words / sentences)) - (0.6 * (100 * total_syllables / words));
 			}
 
 			if (flesch_reading_ease > 100) {
