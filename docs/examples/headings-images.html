@@ -504,6 +504,26 @@
                   </div>
                 </div>
               </div>
+              
+              <div class="col-md-4 d-flex">
+                <div class="card mb-4 shadow-sm flex-fill text-center">
+                  <a href="#" target="_blank"><img src="image-examples/fiat.jpg"
+                      alt="Fix it again Tony!" width="100%" class="w-100"></a>
+                  <div class="card-body">
+                    <p class="card-text">Condition 25: Hyperlinked image that opens in new tab.
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4 d-flex">
+                <div class="card mb-4 shadow-sm flex-fill text-center">
+                  <a href="#" target="_blank"><img src="image-examples/amsterdam.jpg"
+                      alt="Two zebras. Opens in new tab." width="100%" class="w-100"></a>
+                  <div class="card-body">
+                    <p class="card-text">Condition 26: Hyperlinked image that opens in new tab. Alt text indicates link opens in new window.
+                  </div>
+                </div>
+              </div>
 
               <div class="col-md-4 d-flex">
                 <div class="card mb-4 shadow-sm flex-fill">
@@ -555,21 +575,19 @@
   <script src="https://unpkg.com/@popperjs/core@2"></script>
   <script src="https://unpkg.com/tippy.js@6"></script>
 
-   <!--Sa11y CDN-->
-   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@2.1.1/src/sa11y.min.css" />
-   <script src="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@2.1.1/src/sa11y-english.min.js"></script>
-   <script src="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@2.1.1/src/sa11y.min.js"></script>
+    <!--Sa11y CDN-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@2.1.2/src/sa11y.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@2.1.2/src/sa11y-english.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@2.1.2/src/sa11y.min.js"></script>
+ 
+   <!--Development mode
+   <link rel="stylesheet" href="../../src/sa11y.css" />
+   <script src="../../src/sa11y-english.js"></script>
+   <script src="../../src/sa11y.js"></script>
+   -->
 
-  <!--Development mode 
-    <link rel="stylesheet" href="../../src/sa11y.css" />
-    <script src="../../src/sa11y-english.js"></script>
-    <script src="../../src/sa11y.js"></script>
-  -->
-  
   <script type="text/javascript">
-    const sa11y = new Sa11y({
-      
-    });
+    const sa11y = new Sa11y();
   </script>
 </body>
 

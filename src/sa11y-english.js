@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------------
 * Sa11y: the accessibility quality assurance assistant.    
-* @version: 2.1.0            
+* @version: 2.1.2            
 * @author: Development led by Adam Chaboryk, CPWA at Ryerson University.
 * All acknowledgements and contributors: https://github.com/ryersondmp/sa11y
 * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
@@ -362,7 +362,7 @@ const sa11yLang = {
         Learn more about <a href='https://www.w3.org/WAI/tutorials/tables/' target='_blank'>accessible tables. ${sa11yNewTab}</a>`,
 
     TABLES_SEMANTIC_HEADING: 
-        `Semantic headings such as Heading 2 or Heading 3 should only be used for sections of content; <strong>not</strong> in HTML tables. Indicate table headings using the <strong>th</strong> element instead.
+        `Semantic headings such as Heading 2 or Heading 3 should only be used for sections of content; <strong>not</strong> in HTML tables. Indicate table headings using the <span class='sa11y-kbd'>&lt;th&gt;</span> element instead.
         ${sa11yHr}
         Learn more about <a href='https://www.w3.org/WAI/tutorials/tables/' target='_blank'>accessible tables. ${sa11yNewTab}</a>`,
 

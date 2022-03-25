@@ -71,6 +71,9 @@ Note: You can only pass [CSS selectors](https://www.w3schools.com/cssref/css_sel
 | `linkIgnoreSpan` | ' ' | Ignore specific content within a link. e.g. Refer to "Warning" page within demo for an example.|
 | `linksToFlag` | ' ' | Flag URLs that you do not want your content editors linking to. E.g. 'a[href*="wp-admin"]'|
 | `nonConsecutiveHeadingIsError` | true | Boolean. Set to `false` if you would like skipped headings to be flagged as a warning instead.|
+|`flagLongHeadings`| true | Boolean. Flag headings longer than 170 characters. Not a WCAG criterion, hence optional prop to turn off.|
+| `showGoodLinkButton` | true | Boolean. Show "Good" buttons on link that have ARIA and show accessible name of link.|
+| `detectSPArouting` | true | Boolean. Detect page URL changes and re-check the page, whether it's an in-page link or page change within an SPA. Uses the [popstate event](https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event).|
 
 #### Readability module
 | Prop | Default | Description |
