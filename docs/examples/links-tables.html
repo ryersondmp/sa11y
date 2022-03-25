@@ -265,10 +265,14 @@
               <div class="row pt-4">
                 <div class="col-md-6">
                   <h4>Example 5</h4>
-                  <p>Testing complex accessible name computation.</p>
+                  <p>Testing complex accessible name computation. Child with aria-label.</p>
                   <a href="#" class="btn btn-primary">Learn more <span aria-label="external link"></span></a>
                 </div>
                 <div class="col-md-6">
+                  <h4>Example 6</h4>
+                  <p>Testing complex accessible name computation. Child with aria-labelledby.</p>
+                  <a href="#" class="btn btn-primary">Learn more <span aria-labelledby="ex4 ari"></span></a>
+                  <span style="display:none" id="ari">Aria-Labelledby attribute.</span>
                 </div>
               </div>
             </div>

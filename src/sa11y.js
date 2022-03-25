@@ -570,14 +570,14 @@ class Sa11y {
 				} else if (Array.from(el.children).filter(x => x.matches("[aria-label]")).length > 0) {
 					let child = Array.from(el.childNodes);
 					let returnText = "";
-
+					
 					// Process each child within node.
 					child.forEach((x) => {
 						if (x.nodeType === 1) {
 							if (x.ariaLabel === null) {
-								returnText += x.textContent;
+								returnText += x.innerText;
 							} else {
-								returnText += x.ariaLabel;
+								returnText += x.getAttribute('aria-label');
 							}
 						} else {
 							returnText += x.nodeValue;
@@ -592,7 +592,7 @@ class Sa11y {
 						if (x.nodeType === 3) {
 							returnText += x.nodeValue;
 						} else {
-							let target = x.attributes[0].nodeValue.split(/\s+/);
+							let target = x.getAttribute('aria-labelledby').split(/\s+/);
 							if (target.length > 0) {
 								let returnAria = "";
 								target.forEach((x) => {
@@ -2088,7 +2088,6 @@ class Sa11y {
 		this.checkLabels = () => {
 			this.$inputs.forEach((el) => {
 				let ariaLabel = this.computeAriaLabel(el);
-				console.log(ariaLabel)
 				const type = el.getAttribute('type');
 
 				//If button type is submit or button: pass
