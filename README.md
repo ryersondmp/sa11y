@@ -73,7 +73,7 @@ Note: You can only pass [CSS selectors](https://www.w3schools.com/cssref/css_sel
 | `nonConsecutiveHeadingIsError` | true | Boolean. Set to `false` if you would like skipped headings to be flagged as a warning instead.|
 |`flagLongHeadings`| true | Boolean. Flag headings longer than 170 characters. Not a WCAG criterion, hence optional prop to turn off.|
 | `showGoodLinkButton` | true | Boolean. Show "Good" buttons on link that have ARIA and show accessible name of link.|
-| `detectSPArouting` | false | Boolean. Detect page URL changes and re-check the page, whether it's an in-page link or page change within an SPA. Uses the [popstate event](https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event).|
+| `detectSPArouting` | false | Boolean. Detect URL changes and re-scan. This prop is intended for the bookmarklet to improve usability when testing single page applications (SPA).|
 
 #### Readability module
 | Prop | Default | Description |
