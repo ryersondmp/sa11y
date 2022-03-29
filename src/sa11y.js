@@ -252,7 +252,35 @@ class Sa11y {
 
 				// Feature to detect page changes (e.g. SPAs).
 				if (options.detectSPArouting === true) {
-					let url = location.href;
+
+					let currentLocation = document.location.href;
+					const observer = new MutationObserver(async (mutationList) => {
+					if (currentLocation !== document.location.href) {
+						// location changed!
+						currentLocation = document.location.href;
+
+						console.log("URL CHANGED:" + currentLocation)
+							if (localStorage.getItem("sa11y-remember-panel") === "Closed" || !localStorage.getItem("sa11y-remember-panel")) {
+								this.panelActive = true;
+								this.checkAll();
+							}
+							//Async scan while panel is open.
+							if (this.panelActive === true) {
+								this.resetAll(false);
+								await this.checkAll();
+							}
+					}
+					});
+
+					observer.observe(
+					document.querySelector("body"),
+					{
+						childList: true,
+						subtree: false
+					});
+
+
+					/*let url = location.href;
 					document.body.addEventListener('blur', async () => {
 						requestAnimationFrame(async () => {
 						if (url !== location.href) {
@@ -267,7 +295,7 @@ class Sa11y {
 							}
 						}
 						});
-					}, true);
+					}, true);*/
 				}
 			});
 		};
