@@ -253,7 +253,7 @@ class Sa11y {
 				// Feature to detect page changes (e.g. SPAs).
 				if (options.detectSPArouting === true) {
 					let url = location.href;
-					document.body.addEventListener('click', async () => {
+					document.body.addEventListener('blur', async () => {
 						requestAnimationFrame(async () => {
 						if (url !== location.href) {
 							if (localStorage.getItem("sa11y-remember-panel") === "Closed" || !localStorage.getItem("sa11y-remember-panel")) {
