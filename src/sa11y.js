@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------------
 * Sa11y: the accessibility quality assurance assistant.    
-* @version: 2.1.2            
+* @version: 2.1.4            
 * @author: Development led by Adam Chaboryk, CPWA at Ryerson University.
 * All acknowledgements and contributors: https://github.com/ryersondmp/sa11y
 * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
@@ -2399,7 +2399,7 @@ class Sa11y {
 							let boldtext = firstChild.textContent;
 
 							if (!/[*]$/.test(boldtext) && !$el.closest("table") && boldtext.length <= 120) {
-								firstChild.classList.add("sa11y-fake-heading", "sa11y-warning-border");
+								$el.classList.add("sa11y-fake-heading", "sa11y-warning-border");
 								$el.insertAdjacentHTML('beforebegin',
 									this.annotate(M["WARNING"], M["QA_FAKE_HEADING"](boldtext))
 								);
@@ -2423,7 +2423,7 @@ class Sa11y {
 						if (!/[*]$/.test(boldtext) && !$el.closest("table") && boldtext.length <= 120 && tagName.charAt(0) !== "H") {
 							let boldtext = $el.textContent;
 							$el.classList.add("sa11y-fake-heading", "sa11y-warning-border");
-							$el.firstChild.insertAdjacentHTML("afterend",
+							$el.insertAdjacentHTML("afterend",
 								this.annotate(M["WARNING"], M["QA_FAKE_HEADING"](boldtext), true)
 							);
 						}
