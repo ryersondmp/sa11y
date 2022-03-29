@@ -23,9 +23,11 @@ bodyheader.appendChild(sa11ycss);
 
 /* Queue Poppers.js, Tippy.js, and Sa11y. Thanks to JSDeliver for this cool combine feature! */
 const combine = document.createElement("script");
-combine.src = "https://cdn.jsdelivr.net/combine/npm/@popperjs/core@2/dist/umd/popper.min.js,npm/tippy.js@6/dist/tippy.umd.min.js,gh/ryersondmp/sa11y@2.1.3/src/sa11y-english.min.js,gh/ryersondmp/sa11y@2.1.3/src/sa11y.min.js";
+combine.src = "https://cdn.jsdelivr.net/combine/npm/@popperjs/core@2/dist/umd/popper.min.js,npm/tippy.js@6/dist/tippy.umd.min.js,gh/ryersondmp/sa11y@development-2.1.x/src/sa11y-english.min.js,gh/ryersondmp/sa11y@development-2.1.x/src/sa11y.min.js";
 
 document.body.appendChild(combine);
 combine.onload = combine.onreadystatechange = function() {
-    new Sa11y();
+    new Sa11y({
+        detectSPArouting: true
+    });
 };

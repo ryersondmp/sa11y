@@ -26,7 +26,7 @@ class Sa11y {
 			nonConsecutiveHeadingIsError: true,
 			flagLongHeadings: true,
 			showGoodLinkButton: true,
-			detectSPArouting: true,
+			detectSPArouting: false,
 
 			//Readability
 			readabilityPlugin: true,
@@ -252,18 +252,22 @@ class Sa11y {
 
 				// Feature to detect page changes (e.g. SPAs).
 				if (options.detectSPArouting === true) {
-					window.addEventListener('popstate', async () => {
-						//Update badge if panel is closed. 	
-						if (localStorage.getItem("sa11y-remember-panel") === "Closed" || !localStorage.getItem("sa11y-remember-panel")) {
-							this.panelActive = true;
-							this.checkAll();
+					let url = location.href;
+					document.body.addEventListener('click', async () => {
+						requestAnimationFrame(async () => {
+						if (url !== location.href) {
+							if (localStorage.getItem("sa11y-remember-panel") === "Closed" || !localStorage.getItem("sa11y-remember-panel")) {
+								this.panelActive = true;
+								this.checkAll();
+							}
+							//Async scan while panel is open.
+							if (this.panelActive === true) {
+								this.resetAll(false);
+								await this.checkAll();
+							}
 						}
-						//Async scan while panel is open.
-						if (this.panelActive === true) {
-							this.resetAll(false);
-							await this.checkAll();
-						}
-					});
+						});
+					}, true);
 				}
 			});
 		};
