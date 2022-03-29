@@ -252,38 +252,10 @@ class Sa11y {
 
 				// Feature to detect page changes (e.g. SPAs).
 				if (options.detectSPArouting === true) {
-
-					let currentLocation = document.location.href;
-					const observer = new MutationObserver(async (mutationList) => {
-					if (currentLocation !== document.location.href) {
-						// location changed!
-						currentLocation = document.location.href;
-
-						console.log("URL CHANGED:" + currentLocation)
-							if (localStorage.getItem("sa11y-remember-panel") === "Closed" || !localStorage.getItem("sa11y-remember-panel")) {
-								this.panelActive = true;
-								this.checkAll();
-							}
-							//Async scan while panel is open.
-							if (this.panelActive === true) {
-								this.resetAll(false);
-								await this.checkAll();
-							}
-					}
-					});
-
-					observer.observe(
-					document.querySelector("body"),
-					{
-						childList: true,
-						subtree: false
-					});
-
-
-					/*let url = location.href;
-					document.body.addEventListener('blur', async () => {
-						requestAnimationFrame(async () => {
-						if (url !== location.href) {
+					let url = window.location.href;
+					const checkURL = this.debounce(async () => {
+						if (url !== window.location.href) {
+							//If panel is closed.
 							if (localStorage.getItem("sa11y-remember-panel") === "Closed" || !localStorage.getItem("sa11y-remember-panel")) {
 								this.panelActive = true;
 								this.checkAll();
@@ -294,8 +266,8 @@ class Sa11y {
 								await this.checkAll();
 							}
 						}
-						});
-					}, true);*/
+					}, 250);
+					window.addEventListener('mousemove', checkURL);
 				}
 			});
 		};
@@ -568,6 +540,17 @@ class Sa11y {
 					returnText = $el.textContent.trim();
 				}
 				return returnText;
+			}
+			
+			//Utility: https://www.joshwcomeau.com/snippets/javascript/debounce/
+			this.debounce = (callback, wait) => {
+				let timeoutId = null;
+				return (...args) => {
+					window.clearTimeout(timeoutId);
+					timeoutId = window.setTimeout(() => {
+						callback.apply(null, args);
+					}, wait);
+				};
 			}
 
 			//Helper: Used to ignore child elements within an anchor.
