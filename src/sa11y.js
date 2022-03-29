@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------------
 * Sa11y: the accessibility quality assurance assistant.    
-* @version: 2.1.2            
+* @version: 2.1.4            
 * @author: Development led by Adam Chaboryk, CPWA at Ryerson University.
 * All acknowledgements and contributors: https://github.com/ryersondmp/sa11y
 * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
@@ -26,7 +26,7 @@ class Sa11y {
 			nonConsecutiveHeadingIsError: true,
 			flagLongHeadings: true,
 			showGoodLinkButton: true,
-			detectSPArouting: true,
+			detectSPArouting: false,
 
 			//Readability
 			readabilityPlugin: true,
@@ -252,18 +252,22 @@ class Sa11y {
 
 				// Feature to detect page changes (e.g. SPAs).
 				if (options.detectSPArouting === true) {
-					window.addEventListener('popstate', async () => {
-						//Update badge if panel is closed. 	
-						if (localStorage.getItem("sa11y-remember-panel") === "Closed" || !localStorage.getItem("sa11y-remember-panel")) {
-							this.panelActive = true;
-							this.checkAll();
+					let url = window.location.href;
+					const checkURL = this.debounce(async () => {
+						if (url !== window.location.href) {
+							//If panel is closed.
+							if (localStorage.getItem("sa11y-remember-panel") === "Closed" || !localStorage.getItem("sa11y-remember-panel")) {
+								this.panelActive = true;
+								this.checkAll();
+							}
+							//Async scan while panel is open.
+							if (this.panelActive === true) {
+								this.resetAll(false);
+								await this.checkAll();
+							}
 						}
-						//Async scan while panel is open.
-						if (this.panelActive === true) {
-							this.resetAll(false);
-							await this.checkAll();
-						}
-					});
+					}, 250);
+					window.addEventListener('mousemove', checkURL);
 				}
 			});
 		};
@@ -536,6 +540,17 @@ class Sa11y {
 					returnText = $el.textContent.trim();
 				}
 				return returnText;
+			}
+			
+			//Utility: https://www.joshwcomeau.com/snippets/javascript/debounce/
+			this.debounce = (callback, wait) => {
+				let timeoutId = null;
+				return (...args) => {
+					window.clearTimeout(timeoutId);
+					timeoutId = window.setTimeout(() => {
+						callback.apply(null, args);
+					}, wait);
+				};
 			}
 
 			//Helper: Used to ignore child elements within an anchor.
@@ -2384,7 +2399,7 @@ class Sa11y {
 							let boldtext = firstChild.textContent;
 
 							if (!/[*]$/.test(boldtext) && !$el.closest("table") && boldtext.length <= 120) {
-								firstChild.classList.add("sa11y-fake-heading", "sa11y-warning-border");
+								$el.classList.add("sa11y-fake-heading", "sa11y-warning-border");
 								$el.insertAdjacentHTML('beforebegin',
 									this.annotate(M["WARNING"], M["QA_FAKE_HEADING"](boldtext))
 								);
@@ -2408,7 +2423,7 @@ class Sa11y {
 						if (!/[*]$/.test(boldtext) && !$el.closest("table") && boldtext.length <= 120 && tagName.charAt(0) !== "H") {
 							let boldtext = $el.textContent;
 							$el.classList.add("sa11y-fake-heading", "sa11y-warning-border");
-							$el.firstChild.insertAdjacentHTML("afterend",
+							$el.insertAdjacentHTML("afterend",
 								this.annotate(M["WARNING"], M["QA_FAKE_HEADING"](boldtext), true)
 							);
 						}
