@@ -504,6 +504,18 @@
                   </div>
                 </div>
               </div>
+
+              <div class="col-md-4 d-flex">
+                <div class="card mb-4 shadow-sm flex-fill">
+                  <figure>
+                    <img src="image-examples/zebra.jpg" alt="two zebras" width="100%">
+                    <figcaption style="background:lightblue;font-size:80%;text-align: center;">Black and white photo of two zebras.</figcaption>
+                  </figure>
+                  <div class="card-body">
+                    <p class="card-text">Condition 24B: Figure element with different alt and caption text.</p>
+                  </div>
+                </div>
+              </div>
               
               <div class="col-md-4 d-flex">
                 <div class="card mb-4 shadow-sm flex-fill text-center">
@@ -550,45 +562,9 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
     integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous">
   </script>
-  <script>
-    document.addEventListener(
-      'DOMContentLoaded',
-      (e) => {
-        const iframe = document.getElementById("iframe-check"),
-          newTabOnly = document.getElementById("newtabonly");
 
-        if (window.top == window) {
-          iframe.remove();
-        } else {
-          iframe.style.display = "block";
-        }
-
-        if (window.top != window) {
-          newTabOnly.style.display = "none";
-        } else {
-          newTabOnly.style.display = "block";
-        }
-      });
-  </script>
-
-  <!-- Tippy.js CDN scripts -->
-  <script src="https://unpkg.com/@popperjs/core@2"></script>
-  <script src="https://unpkg.com/tippy.js@6"></script>
-
-    <!--Sa11y CDN-->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@2.1.4/src/sa11y.min.css" />
-    <script src="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@2.1.4/src/sa11y-english.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@2.1.4/src/sa11y.min.js"></script>
- 
-   <!--Development mode
-   <link rel="stylesheet" href="../../src/sa11y.css" />
-   <script src="../../src/sa11y-english.js"></script>
-   <script src="../../src/sa11y.js"></script>
-   -->
-
-  <script type="text/javascript">
-    const sa11y = new Sa11y();
-  </script>
+   <!--To easily switch between production and development mode.-->
+   <script src="sa11y-docs-cdn.js"></script>
 </body>
 
 </html>

@@ -303,8 +303,7 @@
             </div>
 
             <h2 id="list-item-9" class="pt-3">Detecting URL changes</h2>
-            <p>This is not a ruleset. This is a demo of a nifty feature to find errors or warnings after detecting a URL
-              change on the same page. For example, single page applications (SPA). A non-descript link will be appended
+            <p>This is not a ruleset. This is a demo of a nifty feature to find errors or warnings after detecting a URL change on the same page. For example, single page applications (SPA). A non-descript link will be appended
               to the page 1 second after the page is fully loaded. It will not recieve an error flag initially. This
               feature is based on <a
                 href="https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event">popstate event</a> to
@@ -346,50 +345,8 @@
   <script async="" defer="" crossorigin="anonymous"
     src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v11.0" nonce="erE7GmIs"></script>
 
-  <script>
-    document.addEventListener(
-      'DOMContentLoaded',
-      (e) => {
-        const iframe = document.getElementById("iframe-check"),
-          newTabOnly = document.getElementById("newtabonly");
-
-        if (window.top == window) {
-          iframe.remove();
-        } else {
-          iframe.style.display = "block";
-        }
-
-        if (window.top != window) {
-          newTabOnly.style.display = "none";
-        } else {
-          newTabOnly.style.display = "block";
-        }
-      });
-  </script>
-
-  <!-- Tippy.js CDN scripts -->
-  <script src="https://unpkg.com/@popperjs/core@2"></script>
-  <script src="https://unpkg.com/tippy.js@6"></script>
-
-  <!--Sa11y CDN-->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@2.1.4/src/sa11y.min.css" />
-  <script src="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@2.1.4/src/sa11y-english.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@2.1.4/src/sa11y.min.js"></script>
-
- <!--Development mode 
- <link rel="stylesheet" href="../../src/sa11y.css" />
- <script src="../../src/sa11y-english.js"></script>
- <script src="../../src/sa11y.js"></script>-->
-
-  <script type="text/javascript">
-    const sa11y = new Sa11y({
-      checkRoot: "main",
-      readabilityRoot: "main",
-      linksToFlag: "a[href^='https://www.dev.'], a[href*='wp-admin']",
-      exampleQA: true,
-      detectSPArouting: true
-    });
-  </script>
+  <!--To easily switch between production and development mode.-->
+  <script src="sa11y-docs-cdn.js"></script>
+  
 </body>
-
 </html>

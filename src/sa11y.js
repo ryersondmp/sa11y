@@ -268,6 +268,7 @@ class Sa11y {
 						}
 					}, 250);
 					window.addEventListener('mousemove', checkURL);
+					window.addEventListener('keydown', checkURL);
 				}
 			});
 		};
@@ -2079,13 +2080,16 @@ class Sa11y {
 
 						//Figure element has same alt and caption text.
 						if ($el.closest("figure")) {
-							const figcaption = $el.closest("figure").querySelector("figcaption");
-							if (figcaption !== null &&
-								(figcaption.textContent.trim().toLowerCase === altText.trim().toLowerCase)
-							) {
+							let figcaption = $el.closest("figure").querySelector("figcaption").textContent,
+								figcaptionlowercase = figcaption.trim().toLowerCase(),
+								altTextlowercase = altText.trim().toLowerCase();
+
+							if (figcaption !== null && (figcaptionlowercase === altTextlowercase)) {
 								this.warningCount++;
 								$el.classList.add("sa11y-warning-border");
 								$el.insertAdjacentHTML('beforebegin', this.annotate(M["WARNING"], M["IMAGE_FIGURE_DUPLICATE_ALT"](altText), false, true));
+							} else {
+								$el.insertAdjacentHTML('beforebegin', this.annotate(M["GOOD"], M["IMAGE_PASS"](altText), false, true));
 							}
 						}
 						//If image has alt text - pass!
