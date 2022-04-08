@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------------
 * Sa11y: the accessibility quality assurance assistant.    
-* @version: 2.1.5            
+* @version: 2.1.6            
 * @author: Development led by Adam Chaboryk, CPWA at Ryerson University.
 * All acknowledgements and contributors: https://github.com/ryersondmp/sa11y
 * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
@@ -2158,15 +2158,12 @@ class Sa11y {
 					//Do nothing if label has text.
 				}
 				//Has an ID but doesn't have a matching FOR attribute.
-				else if (el.getAttribute("id") &&
-					Array.from(el.parentElement.children).filter($c => $c.nodeName === 'LABEL').length
-				) {
-					const $labels = Array.from(el.parentElement.children).filter($c => $c.nodeName === 'LABEL');
+				else if (el.getAttribute("id")) {
+					const $labels = this.root.querySelectorAll("label");
 					let hasFor = false;
 
 					$labels.forEach(($l) => {
 						if (hasFor) return;
-
 						if ($l.getAttribute('for') === el.getAttribute('id')) {
 							hasFor = true;
 						}

@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------------
 * Sa11y: the accessibility quality assurance assistant.    
-* @version: 2.1.5            
+* @version: 2.1.6            
 * @author: Development led by Adam Chaboryk, CPWA at Ryerson University.
 * All acknowledgements and contributors: https://github.com/ryersondmp/sa11y
 * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
@@ -331,7 +331,7 @@ const sa11yLang = {
 
     // Quality assurance
     QA_BAD_LINK: (el) =>
-        `Bad link found. Link appears to point to a development environment. Make sure the link does not contain <em>dev</em> or <em>wp-admin</em> in the URL. 
+        `Bad link found. Link appears to point to a development environment.
         ${sa11yHr}
         This link points to:
         <br>
