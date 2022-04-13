@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------------
 * Sa11y: the accessibility quality assurance assistant.    
-* @version: 2.1.6            
+* @version: 2.1.7            
 * @author: Development led by Adam Chaboryk, CPWA at Ryerson University.
 * All acknowledgements and contributors: https://github.com/ryersondmp/sa11y
 * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
@@ -88,7 +88,7 @@ const sa11yLang = {
 
     // Only some items in list would need to be translated.
     FILE_TYPE_PHRASES: ['document', 'spreadsheet', 'worksheet', 'install', 'video', 'pdf', 'doc',
-        'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'powerpoint', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi'],
+        'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'powerpoint', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'],
 
     // Panel status
     PANEL_HEADING: `Accessibility check`,
@@ -390,10 +390,7 @@ const sa11yLang = {
         Please remove or change the following ID: <strong class='sa11y-red-text'>${id}</strong>`,
 
     QA_TEXT_UNDERLINE_WARNING: 
-        `Underlined text can be confused with links. Consider using a different style such as &lt;em&gt;<em>emphasis</em>&lt;/em&gt;.`,
-
-    QA_TOO_MANY_COMPONENTS_EXAMPLE: 
-        `More than one Announcement component found! The Announcement component should be used strategically and sparingly. It should be used to get attention or indicate that something is important. Misuse of this component makes it less effective or impactful. Secondly, this component is semantically labeled as an Announcement for people who use screen readers.`,
+        `Underlined text can be confused with links. Consider using a different style such as &lt;strong&gt;<strong>strong importance</strong>&lt;/strong&gt; or &lt;em&gt;<em>emphasis</em>&lt;/em&gt;.`,
 
     CONTRAST_ERROR: (cratio, nodetext) =>
         `This text does not have enough contrast with the background. The contrast ratio should be at least 4.5:1 for normal text and 3:1 for large text. 

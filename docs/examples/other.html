@@ -264,8 +264,8 @@
               does <strong>not</strong> detect dead (404) links. Using <a
                 href="https://www.w3schools.com/cssref/css_selectors.asp">W3Schools
                 CSS Selector Reference,</a> customize this condition to add your own.</p>
-            <p class="ml-5">For example, a hyperlink that points to wp-admin incorrectly: <a
-                href="https://www.ryerson.ca/wp-admin/">About Ryerson</a></p>
+            <p class="ml-5">For example, an absolute hyperlink that incorrectly to a development or test environment: <a
+                href="https://www.dev.example.com/">About example.com</a></p>
 
             <h2 id="list-item-6" class="pt-3">Fake list content</h2>
             <p>a) Sometimes people will manually create a list<br>
@@ -312,15 +312,20 @@
               navigation links. It will then get flagged as an error.</p>
             <div class="row pt-3">
               <p id="demo"></p>
+              <p id="demo2"></p>
             </div>
 
             <script>
               window.addEventListener('load', (event) => {
                 const myTimeout = setTimeout(myGreeting, 1000);
+                const myTimeout2 = setTimeout(myGreeting2, 6000);
 
                 function myGreeting() {
                   document.getElementById("demo").innerHTML = `<a href="#">click here</a>`;
                   document.getElementById("demo").setAttribute("style", "color:#ebebeb;");
+                }
+                function myGreeting2() {
+                  document.getElementById("demo2").innerHTML = `<a href="#">click here</a>`;
                 }
               });
             </script>

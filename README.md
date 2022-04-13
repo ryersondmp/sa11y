@@ -9,7 +9,7 @@ Sa11y works as a simple in-page checker that is designed to be easily customized
 - Free and open source.
 - Concise tooltips explain issues right at the source.
 - Low tech: No complex API or integrations. Vanilla JavaScript. Minimal dependencies. 
-- Easily customizable: add your custom rulesets.
+- Easily customizable: add custom checks.
 - Automatic: checks content on page load.
 - Additional (toggleable) checks: Contrast, form labels, readability, links (Advanced).
 - Dark mode.
@@ -20,11 +20,12 @@ Read [Sa11y 2.1 release notes.](https://github.com/ryersondmp/sa11y/releases/tag
 :arrow_right: [View project website and demo](https://ryersondmp.github.io/sa11y/) or grab the latest [bookmarklet.](https://ryersondmp.github.io/sa11y/#install)
 
 ## Installation
-Sa11y uses [Tippy.js](https://github.com/atomiks/tippyjs), a highly customizable tooltip library that features a positioning system. To install on your website, insert Sa11y right before the closing `</body>` tag. Include both Tippy.js and Popper.js before Sa11y. Sa11y consists of three files (located in `/src/`).
+Sa11y uses [Tippy.js](https://github.com/atomiks/tippyjs), a highly customizable tooltip library that features a positioning system. To install on your website, insert Sa11y right before the closing `</body>` tag. Include both Tippy.js and Popper.js before Sa11y. Sa11y consists of four files (located in `/src/`).
 
 - **sa11y.css**: The main stylesheet. Should be included in the `<head>` of the document (if possible).
 - **sa11y-english.js**: All text strings and tooltip messages are located here for easy translation.
-- **sa11y.js**: Contains all logic and rulesets.
+- **sa11y.js**: Contains all logic and checks.
+- (Optional) **sa11y-custom-checks.js**: All text strings and logic for any custom checks created by <strong>you.</strong>
 
 ### Example installation:
 ```html
@@ -36,6 +37,7 @@ Sa11y uses [Tippy.js](https://github.com/atomiks/tippyjs), a highly customizable
 <script src="https://unpkg.com/tippy.js@6"></script>
 
 <!-- Sa11y (fork the latest code from GitHub) -->
+<script src="sa11y-custom-checks.js"></script>
 <script src="sa11y-english.js"></script>
 <script src="sa11y.js"></script>
 
@@ -74,6 +76,8 @@ Note: You can only pass [CSS selectors](https://www.w3schools.com/cssref/css_sel
 |`flagLongHeadings`| true | Boolean. Flag headings longer than 170 characters. Not a WCAG criterion, hence optional prop to turn off.|
 | `showGoodLinkButton` | true | Boolean. Show "Good" buttons on link that have ARIA and show accessible name of link.|
 | `detectSPArouting` | false | Boolean. Detect URL changes and re-scan. This prop is intended for the bookmarklet to improve usability when testing single page applications (SPA).|
+| `customChecks` | false | Boolean. If you add your own custom checks via `sa11y-custom.js`, set this prop to `true`.|
+| `doNotRun` |' '| Using a comma seperated list, provide selectors to unique pages where you do **not** want Sa11y to check. |
 
 #### Readability module
 | Prop | Default | Description |
@@ -83,14 +87,14 @@ Note: You can only pass [CSS selectors](https://www.w3schools.com/cssref/css_sel
 | `readabilityLang` | 'en' | Default is English. Currently supports French and Spanish. |
 | `readabilityIgnore` | ' ' | Ignore specific content from readability check. Hard default excludes list (&lt;li&gt;) tags within navigation landmarks.|
 
-#### Toggleable rulesets in Settings panel
+#### Toggleable checks in Settings panel
 | Prop | Default | Description |
 | :--- | :--- | :--- |
 | `contrastPlugin` | true | Set to `false` to turn off and hide contrast check from Settings panel. |
 | `formLabelsPlugin` | true | Set to `false` to turn off and hide Form labels check from Settings panel. |
 | `linksAdvancedPlugin` | true | Set to `false` to turn off and hide Links (Advanced) check from Settings panel. |
 
-#### Default QA (quality assurance) rulesets 
+#### Default QA (quality assurance) checks 
 | Prop | Default | Description |
 | :--- | :--- | :--- |
 | `badLinksQA` | true | Flag URLs that you do not want your content editors linking to. Refer to `linksToFlag` prop.|
@@ -104,9 +108,8 @@ Note: You can only pass [CSS selectors](https://www.w3schools.com/cssref/css_sel
 | `fakeListQA` | true | Warning about non-semantic lists. |
 | `duplicateIdQA` | true | Error if duplicate IDs are found. |
 | `underlinedTextQA` | true | Warning for &lt;u&gt;underlined&lt;u&gt; text. |
-| `exampleQA` | false | Example ruleset used to warn over use of a component. Visit Warnings page within demo for example. |
 
-#### Embedded content rulesets (iFrames)
+#### Embedded content checks (iFrames)
 | Prop | Default | Description |
 | :--- | :--- | :--- |
 | `embeddedContentAll` | true | Set to `false` to ignore all iFrames.|
@@ -124,21 +127,21 @@ Note: You can only pass [CSS selectors](https://www.w3schools.com/cssref/css_sel
 - This version appends tooltips to the end of the body by default to ensure tooltips do not get hidden by conflicting CSS styling. If you customize the tooltips to include interactive content, please read [Tippy.js documentation on creating accessible interactive tooltips for keyboard users.](https://atomiks.github.io/tippyjs/v6/accessibility/#interactivity)
 
 ### Create your own rule sets
-1. Create your condition (within the QA module for example).
-2. Add `this.warningCount++;` or `this.errorCount++;` to update warning or error count.
+1. Create your condition (within `sa11y-custom-checks.js`).
+2. Add `Sa11y.warningCount++;` or `Sa11y.errorCount++;` to update warning or error count.
 3. Add respective CSS classes.
-4. Add warning or error button before (or after) element using the `this.annotate` function, followed by the type `ERROR`, `WARNING`, `GOOD`. Finally, reference your tooltip message.
+4. Add warning or error button before (or after) element using the `Sa11y.annotate` function, followed by the type `ERROR`, `WARNING`, `GOOD`. Finally, reference your tooltip message.
 
 #### Example: Warn content authors of overusing a component.
-The example condition detects if more than one announcement is detected on a page. If it detects more than one instance of the .announcement-component CSS class, it will be indicated as a warning. The warning button will only appear on every instance except the first component. `M['QA_TOO_MANY_COMPONENTS_EXAMPLE']` represents a string (tooltip message).
+The example condition detects if more than one announcement is detected on a page. If it detects more than one instance of the .announcement-component CSS class, it will be indicated as a warning. The warning button will only appear on every instance except the first component. `C['QA_TOO_MANY_COMPONENTS_EXAMPLE']` represents a string (tooltip message).
 
 ```javascript
-const $checkAnnouncement = document.querySelectorAll(".announcement-component");
+const $checkAnnouncement = Sa11y.root.querySelectorAll(".announcement-component");
 if ($checkAnnouncement.length > 1) {
-    this.warningCount++;
+    Sa11y.warningCount++;
     for (let i = 1; i < $checkAnnouncement.length; i++) {
         $checkAnnouncement[i].classList.add("sa11y-warning-border");
-        $checkAnnouncement[i].insertAdjacentHTML("beforebegin", this.annotate(M["WARNING"], M["QA_TOO_MANY_COMPONENTS_EXAMPLE"]));
+        $checkAnnouncement[i].insertAdjacentHTML("beforebegin", Sa11y.annotate(M["WARNING"], C["QA_TOO_MANY_COMPONENTS_EXAMPLE"]));
     }
 }
 ```
@@ -172,4 +175,4 @@ Developed with the assistance of students from Ryerson University's Computer Sci
 Have a question or any feedback? Submit it as an [issue](https://github.com/ryersondmp/sa11y/issues) or email: [adam.chaboryk@ryerson.ca](mailto:adam.chaboryk)
 
 # Privacy statement
-No personal data is *ever* collected when you use Sa11y. No tracking, no analytics, no cookies, no third party content. Sa11y only uses your browser’s local storage to remember the state of optional rulesets and other features you enable. For example, when you enable the Readability check or display the Page Outline panel, it will remain enabled while you browse other pages until you turn it off.
+No personal data is *ever* collected when you use Sa11y. No tracking, no analytics, no cookies, no third party content. Sa11y only uses your browser’s local storage to remember the state of optional checks and other features you enable. For example, when you enable the Readability check or display the Page Outline panel, it will remain enabled while you browse other pages until you turn it off.

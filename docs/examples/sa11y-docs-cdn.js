@@ -1,28 +1,29 @@
-//Switch to false for development mode.
-const production = true;
+const production = true; //Switch to false for development mode.
+const v = "2.1.7"; //Version
 
 /* Production mode */
 if (production === true) {
 
     const sa11ycss = document.createElement("link");
     sa11ycss.setAttribute("rel", "stylesheet");
-    sa11ycss.setAttribute("href", "https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@2.1.6/src/sa11y.min.css");
+    sa11ycss.setAttribute("href", "https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@${v}/src/sa11y.min.css");
     sa11ycss.setAttribute("type", "text/css");
 
     const bodyheader = document.getElementsByTagName("head")[0];
     bodyheader.appendChild(sa11ycss);
 
     const combine = document.createElement("script");
-    combine.src = "https://cdn.jsdelivr.net/combine/npm/@popperjs/core@2/dist/umd/popper.min.js,npm/tippy.js@6/dist/tippy.umd.min.js,gh/ryersondmp/sa11y@2.1.6/src/sa11y-english.min.js,gh/ryersondmp/sa11y@2.1.6/src/sa11y.min.js";
+    combine.src = `https://cdn.jsdelivr.net/combine/npm/@popperjs/core@2/dist/umd/popper.min.js,npm/tippy.js@6/dist/tippy.umd.min.js,gh/ryersondmp/sa11y@${v}/src/sa11y-english.min.js,gh/ryersondmp/sa11y@${v}/src/sa11y-custom-checks.min.js,gh/ryersondmp/sa11y@${v}/src/sa11y.min.js`;
 
+    console.log(combine.src)
     document.body.appendChild(combine);
     combine.onload = combine.onreadystatechange = function() {
         new Sa11y({
             checkRoot: "main",
             readabilityRoot: "main",
-            linksToFlag: "a[href^='https://www.dev.'], a[href*='wp-admin']",
-            exampleQA: true,
-            detectSPArouting: true,
+            linksToFlag: "a[href^='https://www.dev.']",
+            customChecks: true,
+            detectSPArouting: true
         });
     };
 } 
@@ -61,13 +62,20 @@ else {
             document.body.appendChild(sa11yDev);  
 
             sa11yDev.onload = sa11yDev.onreadystatechange = function() {
+
+                // Abstracted custom rulesets
+                const sa11yCustom = document.createElement("script");
+                sa11yCustom.src = "../../src/sa11y-custom-checks.js";
+                document.body.appendChild(sa11yCustom);  
+
                 new Sa11y({
-                    checkRoot: "main",
-                    readabilityRoot: "main",
-                    linksToFlag: "a[href^='https://www.dev.'], a[href*='wp-admin']",
-                    exampleQA: true,
+                    checkRoot: 'main',
+                    readabilityRoot: 'main',
+                    linksToFlag: 'a[href^="https://www.dev."]',
+                    customChecks: true,
                     linkIgnoreSpan: '.sr-only-example',
                     detectSPArouting: true,
+                    doNotRun: '[data-sa11y-hide]'
                 });
             }
         }

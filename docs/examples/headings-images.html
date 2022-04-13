@@ -146,12 +146,19 @@
 
             <h3>Empty heading contains a decorative image</h3>
             <div class="row">
-              <div class="col-md-4"><h4><img width="120" src="../assets/images/ryerson_logo.svg"
-                alt=" "></h4>
-              <p>This will show up in the Page Outline as an error/empty</p></div>
-              <div class="col-md-8"><h4><img width="120" src="../assets/images/ryerson_logo.svg"
+              <div class="col-md-4">
+                <h4><img width="120" src="../assets/images/ryerson_logo.svg" alt=" "></h4>
+                <p>This will show up in the Page Outline as an error/empty. Decorative image.</p>
+              </div>
+              <div class="col-md-4">
+                <h4><img width="120" src="../assets/images/ryerson_logo.svg"></h4>
+                <p>This will show up in the Page Outline as an error/empty. No alt.</p>
+              </div>
+              <div class="col-md-4">
+                <h4><img width="120" src="../assets/images/ryerson_logo.svg"
                   alt="Ryerson University"></h4>
-                  <p>This alt text for this image will show up in the Page Outline.</p></div>
+                  <p>This alt text for this image will show up in the Page Outline.</p>
+              </div>
             </div>
             
 
@@ -482,6 +489,8 @@
                 </div>
               </div>
 
+              <h3>Other image tests</h3>
+
               <div class="col-md-4 d-flex">
                 <div class="card mb-4 shadow-sm flex-fill text-center">
                   <figure id="attachment_28" aria-describedby="caption-attachment-28"><img src="image-examples/nambia-desert.jpg" alt="" width="100%">
@@ -513,6 +522,40 @@
                   </figure>
                   <div class="card-body">
                     <p class="card-text">Condition 24B: Figure element with different alt and caption text.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4 d-flex">
+                <div class="card mb-4 shadow-sm flex-fill">
+                  <figure>
+                    <img src="image-examples/zebra.jpg" alt="two zebras black and white" width="100%">
+                  </figure>
+                  <div class="card-body">
+                    <p class="card-text">Condition 24C: Figure element no figcaption.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4 d-flex">
+                <div class="card mb-4 shadow-sm flex-fill">
+                  <a href="#"><figure>
+                    <img src="image-examples/zebra.jpg" alt="two zebras black and white" width="100%">
+                  </figure></a>
+                  <div class="card-body">
+                    <p class="card-text">Condition 24D: Hyperlinked figure element no figcaption.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4 d-flex">
+                <div class="card mb-4 shadow-sm flex-fill">
+                  <a href="#"><figure>
+                    <img src="image-examples/zebra.jpg" alt="two zebras black and white" width="100%">
+                    <figcaption style="background:lightblue;font-size:80%;text-align: center;">Black and white photo of two zebras.</figcaption>
+                  </figure></a>
+                  <div class="card-body">
+                    <p class="card-text">Condition 24D: Hyperlinked figure element with figcaption.</p>
                   </div>
                 </div>
               </div>

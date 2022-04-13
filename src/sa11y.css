@@ -1090,6 +1090,7 @@ span.sa11y-heading-label {
     position: absolute !important;
     display: none;
     text-shadow: none !important;
+    -webkit-text-fill-color: white !important;
     z-index: 200 !important;
 }
 
