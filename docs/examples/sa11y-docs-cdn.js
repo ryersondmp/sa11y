@@ -1,5 +1,5 @@
 const production = true; //Switch to false for development mode.
-const v = "2.1.7"; //Version
+const v = "2.1.8"; //Version
 
 /* Production mode */
 if (production === true) {
@@ -15,7 +15,6 @@ if (production === true) {
     const combine = document.createElement("script");
     combine.src = `https://cdn.jsdelivr.net/combine/npm/@popperjs/core@2/dist/umd/popper.min.js,npm/tippy.js@6/dist/tippy.umd.min.js,gh/ryersondmp/sa11y@${v}/src/sa11y-english.min.js,gh/ryersondmp/sa11y@${v}/src/sa11y-custom-checks.min.js,gh/ryersondmp/sa11y@${v}/src/sa11y.min.js`;
 
-    console.log(combine.src)
     document.body.appendChild(combine);
     combine.onload = combine.onreadystatechange = function() {
         new Sa11y({
@@ -37,7 +36,6 @@ else {
     warningMode.innerText = "Development mode";
     const body = document.getElementsByTagName("body")[0];
     body.appendChild(warningMode);
-
 
     const sa11ycss = document.createElement("link");
     sa11ycss.setAttribute("rel", "stylesheet");

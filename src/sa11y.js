@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------------
 * Sa11y: the accessibility quality assurance assistant.    
-* @version: 2.1.7            
+* @version: 2.1.8            
 * @author: Development led by Adam Chaboryk, CPWA at Ryerson University.
 * All acknowledgements and contributors: https://github.com/ryersondmp/sa11y
 * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
@@ -297,15 +297,15 @@ class Sa11y {
 					return `${el} *, ${el}`
 				});
 
-				options.containerIgnore = "[aria-hidden='true'], #sa11y-container *, .sa11y-instance *, #wpadminbar *, " + containerSelectors.join(", ");
+				options.containerIgnore = "[aria-hidden], #sa11y-container *, #wpadminbar *, " + containerSelectors.join(", ");
 			} else {
 				options.containerIgnore =
-					"[aria-hidden='true'], #sa11y-container *, .sa11y-instance *, #wpadminbar *";
+					"[aria-hidden], #sa11y-container *, #wpadminbar *";
 			}
 			this.containerIgnore = options.containerIgnore;
 
 			// Contrast exclusions
-			this.contrastIgnore = this.containerIgnore + ', .sa11y-heading-label';
+			this.contrastIgnore = this.containerIgnore + ', .sa11y-heading-label, script';
 			if (options.contrastIgnore) {
 				this.contrastIgnore = options.contrastIgnore + ', ' + this.contrastIgnore;
 			}
@@ -551,7 +551,7 @@ class Sa11y {
 			}
 
 			//Helper: Used to ignore child elements within an anchor.
-			this.fnIgnore = (element, selector) => {
+			Sa11y.fnIgnore = (element, selector) => {
 				const $clone = element.cloneNode(true);
 				const $excluded = Array.from(selector ? $clone.querySelectorAll(selector) : $clone.children);
 				$excluded.forEach(($c) => {
@@ -624,8 +624,6 @@ class Sa11y {
 						}
 					});
 					return returnText;
-				} else if (el.matches("[title]")) {
-					return el.getAttribute("title");
 				} else {
 					return "noAria";
 				}
@@ -1777,7 +1775,8 @@ class Sa11y {
 					hasAriaLabelledBy = el.getAttribute('aria-labelledby'),
 					hasAriaLabel = el.getAttribute('aria-label'),
 					childAriaLabelledBy = null,
-					childAriaLabel = null;
+					childAriaLabel = null,
+					hasTitle = el.getAttribute('title');
 
 				if (el.children.length) {
 					let $firstChild = el.children[0];
@@ -1807,7 +1806,7 @@ class Sa11y {
 
 				let linkTextTrimmed = linkText.replace(/\s+/g, ' ').trim(),
 					error = containsLinkTextStopWords(
-						this.fnIgnore(el, options.linkIgnoreSpan).textContent.trim()
+						Sa11y.fnIgnore(el, options.linkIgnoreSpan).textContent.trim()
 					);
 
 				if (el.querySelectorAll('img').length) {
@@ -1817,8 +1816,11 @@ class Sa11y {
 				// Flag empty hyperlinks.
 				else if (el.getAttribute('href') && !linkTextTrimmed) {
 
+					if (el && hasTitle) {
+						//If empty but has title attribute.
+					}
 					// Has child elements (e.g. SVG or SPAN) <a><i></i></a>
-					if (el.children.length) {
+					else if (el.children.length) {
 						Sa11y.errorCount++;
 						el.classList.add("sa11y-error-border");
 						el.insertAdjacentHTML('afterend', Sa11y.annotate(M["ERROR"], M["LINK_EMPTY_LINK_NO_LABEL"], true));
@@ -2022,10 +2024,10 @@ class Sa11y {
 
 				if (alt === null) {
 					if ($el.closest('a[href]')) {
-						if (this.fnIgnore($el.closest('a[href]'), "noscript").textContent.trim().length >= 1) {
+						if (Sa11y.fnIgnore($el.closest('a[href]'), "noscript").textContent.trim().length >= 1) {
 							$el.classList.add("sa11y-error-border");
 							$el.closest('a[href]').insertAdjacentHTML('beforebegin', Sa11y.annotate(M["ERROR"], M["MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE"], false, true));
-						} else if (this.fnIgnore($el.closest('a[href]'), "noscript").textContent.trim().length === 0) {
+						} else if (Sa11y.fnIgnore($el.closest('a[href]'), "noscript").textContent.trim().length === 0) {
 							$el.classList.add("sa11y-error-border");
 							$el.closest('a[href]').insertAdjacentHTML('beforebegin', Sa11y.annotate(M["ERROR"], M["MISSING_ALT_LINK_MESSAGE"], false, true));
 						}
@@ -2074,7 +2076,7 @@ class Sa11y {
 							Sa11y.errorCount++;
 							$el.classList.add("sa11y-error-border");
 							$el.closest("a[href]").insertAdjacentHTML('beforebegin', Sa11y.annotate(M["ERROR"], M["LINK_IMAGE_ARIA_HIDDEN"], false, true));
-						} else if (this.fnIgnore($el.closest('a[href]'), "noscript").textContent.trim().length === 0) {
+						} else if (Sa11y.fnIgnore($el.closest('a[href]'), "noscript").textContent.trim().length === 0) {
 							Sa11y.errorCount++;
 							$el.classList.add("sa11y-error-border");
 							$el.closest("a[href]").insertAdjacentHTML('beforebegin', Sa11y.annotate(M["ERROR"], M["LINK_IMAGE_NO_ALT_TEXT"], false, true));
@@ -2091,14 +2093,14 @@ class Sa11y {
 					}
 
 					//Link and contains an alt text.
-					else if (alt != "" && $el.closest("a[href]") && this.fnIgnore($el.closest('a[href]'), "noscript").textContent.trim().length === 0) {
+					else if (alt != "" && $el.closest("a[href]") && Sa11y.fnIgnore($el.closest('a[href]'), "noscript").textContent.trim().length === 0) {
 						Sa11y.warningCount++;
 						$el.classList.add("sa11y-warning-border");
 						$el.closest("a[href]").insertAdjacentHTML('beforebegin', Sa11y.annotate(M["WARNING"], M["LINK_IMAGE_ALT_WARNING"](altText), false, true));
 					}
 
 					//Contains alt text & surrounding link text.
-					else if (alt !== "" && $el.closest("a[href]") && this.fnIgnore($el.closest('a[href]'), "noscript").textContent.trim().length >= 1) {
+					else if (alt !== "" && $el.closest("a[href]") && Sa11y.fnIgnore($el.closest('a[href]'), "noscript").textContent.trim().length >= 1) {
 						Sa11y.warningCount++;
 						$el.classList.add("sa11y-warning-border");
 						$el.closest("a[href]").insertAdjacentHTML('beforebegin', Sa11y.annotate(M["WARNING"], M["LINK_IMAGE_ALT_AND_TEXT_WARNING"](altText), false, true));
@@ -2155,9 +2157,10 @@ class Sa11y {
 			this.$inputs.forEach((el) => {
 				let ariaLabel = this.computeAriaLabel(el);
 				const type = el.getAttribute('type');
+				const tabindex = el.getAttribute('tabindex');
 
 				//If button type is submit or button: pass
-				if (type === "submit" || type === "button" || type === "hidden") {
+				if (type === "submit" || type === "button" || type === "hidden" || tabindex === "-1") {
 					//Do nothing
 				}
 				//Inputs where type="image".
@@ -2778,7 +2781,7 @@ class Sa11y {
 					clone.removeChild(removeSa11yHeadingLabel[i])
 				}
 
-				let nodetext = clone.textContent;
+				let nodetext = Sa11y.fnIgnore(clone, "script").textContent;
 				Sa11y.errorCount++;
 
 				if (name.tagName === "INPUT") {
@@ -2799,7 +2802,7 @@ class Sa11y {
 				for (let i = 0; i < removeSa11yHeadingLabel.length; i++) {
 					clone.removeChild(removeSa11yHeadingLabel[i])
 				}
-				let nodetext = clone.textContent;
+				let nodetext = Sa11y.fnIgnore(clone, "script").textContent;
 
 				Sa11y.warningCount++;
 				name.insertAdjacentHTML('beforebegin',

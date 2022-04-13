@@ -88,6 +88,8 @@
                 <div class="col-md-6">
                   <h3>Example 1 - Normal text</h3>
                   <p style="color:coral">This colour fails at normal size.</p>
+                  <p style="display:none">The year is generated via document.write - pre V2.1.7 would include the script tag as text within the tooltip.</p>
+                  <p style="color:aqua"><script>document.write(new Date().getFullYear())</script></p>
                 </div>
                 <div class="col-md-6">
                   <h3>Example 2 - Large text</h3>
@@ -225,7 +227,11 @@
                   <input type="text" title="Phone number"><br><br>
                   <input type="text" title="Address">
                 </div>
-                <div class="col-md-6"></div>
+                <div class="col-md-6">
+                  <h3>Example 16</h3>
+                  <p>Input has tabindex of -1.</p>
+                  <input type="text" aria-hidden="true">
+                </div>
               </div>
             </div>
           </div>

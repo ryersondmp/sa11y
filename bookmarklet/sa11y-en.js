@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------------
 * Sa11y: the accessibility quality assurance assistant.    
-* @version: 2.1.7            
+* @version: 2.1.8            
 * @author: Development led by Adam Chaboryk, CPWA at Ryerson University.
 * All acknowledgements and contributors: https://github.com/ryersondmp/sa11y
 * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
@@ -12,7 +12,7 @@
 /*  Bookmarklet: English          */
 /* ------------------------------ */
 
-const v = "2.1.7"; //Version
+const v = "2.1.8"; //Version
 
 /* Append sa11y.css */
 const sa11ycss = document.createElement("link");
