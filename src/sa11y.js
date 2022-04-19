@@ -53,6 +53,7 @@ class Sa11y {
 			fakeListQA: true,
 			duplicateIdQA: true,
 			underlinedTextQA: true,
+			pageTitleQA: true,
 
 			//Embedded content rulesets
 			embeddedContentAll: true,
@@ -1300,7 +1301,7 @@ class Sa11y {
 			}
 
 			let sa11yBtnLocation = 0;
-			const findSa11yBtn = document.querySelectorAll(".sa11y-btn").length;
+			const findSa11yBtn = document.querySelectorAll("[data-sa11y-annotation]").length;
 
 			//Jump to issue using keyboard shortcut.
 			document.addEventListener('keyup', (e) => {
@@ -1320,7 +1321,7 @@ class Sa11y {
 			const skipToIssueToggle = function () {
 
 				//Calculate location of both visible and hidden buttons.
-				const $findButtons = document.querySelectorAll('.sa11y-btn'),
+				const $findButtons = document.querySelectorAll("[data-sa11y-annotation]"),
 					$alertPanel = document.getElementById("sa11y-panel-alert"),
 					$alertText = document.getElementById("sa11y-panel-alert-text"),
 					$alertPanelPreview = document.getElementById("sa11y-panel-alert-preview"),
@@ -1354,12 +1355,17 @@ class Sa11y {
 				if (offsetTopPosition === 0) {
 					let visiblePosition = findVisibleParent($findButtons[sa11yBtnLocation], 'display', 'none');
 
-					// Since @2.1.7: Error handling when previousElementSibling doesn't exist.
-					if (!!visiblePosition.previousElementSibling) {
-						scrollPosition = offset(visiblePosition.previousElementSibling).top - 150;
-					} else {
-						scrollPosition = offset(visiblePosition.parentNode).top - 150;
-					}
+					//Since 2.1.8 - Sometimes visiblePosition returns null.
+					if (!!visiblePosition) {
+						//Get as close to the hidden parent as possible.
+						let prevSibling = visiblePosition.previousElementSibling;
+						let parentNode = visiblePosition.parentNode;
+						if (!!prevSibling) {
+							scrollPosition = offset(prevSibling).top - 150;
+						} else {
+							scrollPosition = offset(parentNode).top - 150;
+						}
+					} 
 				} else {
 					scrollPosition = offset($findButtons[sa11yBtnLocation]).top - 150;
 				}
@@ -1538,6 +1544,7 @@ class Sa11y {
 			return `
 				<div class=${inline ? "sa11y-instance-inline" : "sa11y-instance"}>
 					<button
+					data-sa11y-annotation
 					type="button"   
 					aria-label="${[type]}" 
 					class="sa11y-btn 
@@ -1573,7 +1580,7 @@ class Sa11y {
 			}
 
 			return `<div class="sa11y-instance sa11y-${CSSName[type]}-message-container">
-				<div role="region" aria-label="${[type]}" class="sa11y-${CSSName[type]}-message" lang="${M["LANG_CODE"]}">
+				<div role="region" data-sa11y-annotation tabindex="-1" aria-label="${[type]}" class="sa11y-${CSSName[type]}-message" lang="${M["LANG_CODE"]}">
 					${content}
 				</div>
 			</div>`;
@@ -1804,9 +1811,12 @@ class Sa11y {
 					}
 				}
 
-				let linkTextTrimmed = linkText.replace(/\s+/g, ' ').trim(),
-					error = containsLinkTextStopWords(
-						Sa11y.fnIgnore(el, options.linkIgnoreSpan).textContent.trim()
+				let linkTextTrimmed = linkText.replace(/\s+/g, ' ').trim();
+				let error = containsLinkTextStopWords(
+						Sa11y.fnIgnore(el, options.linkIgnoreSpan) //Ignore child containing element.
+						.textContent //Grab the text content.
+						.replace(/[^A-Za-z0-9., ]/g, '') //Remove any special characters except commas, period, and space. 
+						.trim()
 					);
 
 				if (el.querySelectorAll('img').length) {
@@ -2025,15 +2035,18 @@ class Sa11y {
 				if (alt === null) {
 					if ($el.closest('a[href]')) {
 						if (Sa11y.fnIgnore($el.closest('a[href]'), "noscript").textContent.trim().length >= 1) {
+							Sa11y.errorCount++;
 							$el.classList.add("sa11y-error-border");
 							$el.closest('a[href]').insertAdjacentHTML('beforebegin', Sa11y.annotate(M["ERROR"], M["MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE"], false, true));
 						} else if (Sa11y.fnIgnore($el.closest('a[href]'), "noscript").textContent.trim().length === 0) {
+							Sa11y.errorCount++;
 							$el.classList.add("sa11y-error-border");
 							$el.closest('a[href]').insertAdjacentHTML('beforebegin', Sa11y.annotate(M["ERROR"], M["MISSING_ALT_LINK_MESSAGE"], false, true));
 						}
 					}
 					// General failure message if image is missing alt.
 					else {
+						Sa11y.errorCount++;
 						$el.classList.add("sa11y-error-border");
 						$el.insertAdjacentHTML('beforebegin', Sa11y.annotate(M["ERROR"], M["MISSING_ALT_MESSAGE"], false, true));
 					}
@@ -2450,9 +2463,9 @@ class Sa11y {
 							let boldtext = firstChild.textContent;
 
 							if (!/[*]$/.test(boldtext) && !$el.closest("table") && boldtext.length <= 120) {
-								$el.classList.add("sa11y-fake-heading", "sa11y-warning-border");
+								firstChild.classList.add("sa11y-fake-heading", "sa11y-warning-border");
 								$el.insertAdjacentHTML('beforebegin',
-									Sa11y.annotate(M["WARNING"], M["QA_FAKE_HEADING"](boldtext))
+									Sa11y.annotate(M["WARNING"], M["QA_FAKE_HEADING"](boldtext), true)
 								);
 							}
 						}
@@ -2474,7 +2487,7 @@ class Sa11y {
 						if (!/[*]$/.test(boldtext) && !$el.closest("table") && boldtext.length <= 120 && tagName.charAt(0) !== "H") {
 							let boldtext = $el.textContent;
 							$el.classList.add("sa11y-fake-heading", "sa11y-warning-border");
-							$el.insertAdjacentHTML("afterend",
+							$el.insertAdjacentHTML("beforebegin",
 								Sa11y.annotate(M["WARNING"], M["QA_FAKE_HEADING"](boldtext), true)
 							);
 						}
@@ -2586,6 +2599,7 @@ class Sa11y {
 							allIds[id] = 1;
 						} else {
 							found = true;
+							Sa11y.errorCount++;
 							$el.classList.add("sa11y-error-border");
 							$el.insertAdjacentHTML('afterend', Sa11y.annotate(M["ERROR"], M["QA_DUPLICATE_ID"](id), true));
 						}
@@ -2612,6 +2626,20 @@ class Sa11y {
 					}
 				});
 			};
+
+			//Error: Page is missing meta title.
+			if (options.pageTitleQA === true) {
+				const $title = document.querySelector("title");
+				if (!$title || $title.textContent.trim().length == 0) {
+					Sa11y.errorCount++;
+					const sa11yContainer = document.getElementById("sa11y-container");
+					sa11yContainer.insertAdjacentHTML(
+						"afterend", 
+						Sa11y.annotateBanner(M["ERROR"], 
+						M["QA_PAGE_TITLE"])
+					);
+				}
+			}
 		};
 
 		// ============================================================

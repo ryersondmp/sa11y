@@ -1,5 +1,5 @@
 const production = true; //Switch to false for development mode.
-const v = "2.1.8"; //Version
+const v = "2.1.9"; //Version
 
 /* Production mode */
 if (production === true) {
@@ -18,9 +18,11 @@ if (production === true) {
     document.body.appendChild(combine);
     combine.onload = combine.onreadystatechange = function() {
         new Sa11y({
-            checkRoot: "main",
+            checkRoot: "body",
             readabilityRoot: "main",
+            containerIgnore: 'footer',
             linksToFlag: "a[href^='https://www.dev.']",
+            linkIgnoreSpan: '.sr-only-example',
             customChecks: true,
             detectSPArouting: true
         });
@@ -67,8 +69,9 @@ else {
                 document.body.appendChild(sa11yCustom);  
 
                 new Sa11y({
-                    checkRoot: 'main',
+                    checkRoot: 'body',
                     readabilityRoot: 'main',
+                    containerIgnore: 'footer',
                     linksToFlag: 'a[href^="https://www.dev."]',
                     customChecks: true,
                     linkIgnoreSpan: '.sr-only-example',

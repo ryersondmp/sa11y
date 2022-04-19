@@ -126,10 +126,10 @@ const sa11yLang = {
         Character count: <strong class='sa11y-red-text'>${headingLength}</strong>`,
 
     HEADING_FIRST: 
-        `The first heading on a page should usually be a Heading 1 or Heading 2. Heading 1 should be the start of the main content section, and is the main heading that describes the overall purpose of the page. Learn more about <a href='https://www.w3.org/WAI/tutorials/page-structure/headings/' target='_blank'>Heading Structure. ${sa11yNewTab}</a>`,
+        `The first heading on a page should usually be a Heading 1 or Heading 2. Heading 1 should be the start of the main content section, and is the main heading that describes the overall purpose of the page. Learn more about <a href='https://www.w3.org/WAI/tutorials/page-structure/headings/' target='_blank' rel='noopener noreferrer'>Heading Structure. ${sa11yNewTab}</a>`,
 
     HEADING_MISSING_ONE: 
-        `Missing Heading 1. Heading 1 should be the start of the main content area, and is the main heading that describes the overall purpose of the page. Learn more about <a href='https://www.w3.org/WAI/tutorials/page-structure/headings/' target='_blank'>Heading Structure. ${sa11yNewTab}</a>`,
+        `Missing Heading 1. Heading 1 should be the start of the main content area, and is the main heading that describes the overall purpose of the page. Learn more about <a href='https://www.w3.org/WAI/tutorials/page-structure/headings/' target='_blank' rel='noopener noreferrer'>Heading Structure. ${sa11yNewTab}</a>`,
 
     HEADING_EMPTY_WITH_IMAGE: (level) =>
         `Heading has no text, but contains an image. If this is not a heading, change its format from <strong class='sa11y-red-text'>Heading ${level}</strong> to <strong>Normal</strong> or <strong>Paragraph</strong>. Otherwise, please add alt text to the image if it is not decorative.`,
@@ -145,7 +145,7 @@ const sa11yLang = {
         `Link does not have discernable text that is visible to screen readers and other assistive technology. To fix:
         <ul>
             <li>Add some concise text that describes where the link takes you.</li>
-            <li>If it is an <a href='https://a11y-101.com/development/icons-and-links' target='_blank'>icon link or SVG,${sa11yNewTab}</a> it is likely missing a descriptive label.</li>
+            <li>If it is an <a href='https://a11y-101.com/development/icons-and-links' target='_blank' rel='noopener noreferrer'>icon link or SVG,${sa11yNewTab}</a> it is likely missing a descriptive label.</li>
             <li>If you think this link is an error due to a copy/paste bug, consider deleting it.</li>
         </ul>`,
 
@@ -257,7 +257,7 @@ const sa11yLang = {
             <li>The alt text should provide a concise description of what is in the image.</li>
             <li>The caption should usually provide context to relate the image back to the surrounding content, or give attention to a particular piece of information.</li>
         </ul>
-        Learn more: <a href='https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element' target='_blank'>alt versus figcaption. ${sa11yNewTab}</a>`,
+        Learn more: <a href='https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element' target='_blank' rel='noopener noreferrer'>alt versus figcaption. ${sa11yNewTab}</a>`,
 
     IMAGE_FIGURE_DUPLICATE_ALT: (altText) =>  
         `Do not use the exact same words for both the alt and caption text. Screen readers will announce the information twice.
@@ -265,7 +265,7 @@ const sa11yLang = {
             <li>The alt text should provide a concise description of what is in the image.</li>
             <li>The caption should usually provide context to relate the image back to the surrounding content, or give attention to a particular piece of information.</li>
         </ul>
-        Learn more: <a href='https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element' target='_blank'>alt versus figcaption. ${sa11yNewTab}</a>
+        Learn more: <a href='https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element' target='_blank' rel='noopener noreferrer'>alt versus figcaption. ${sa11yNewTab}</a>
         ${sa11yHr}
         <strong>Alt text:</strong> ${altText}`,
 
@@ -287,7 +287,7 @@ const sa11yLang = {
     LABELS_INPUT_RESET_MESSAGE: 
         `Reset buttons should <strong>not</strong> be used unless specifically needed because they are easy to activate by mistake.
         ${sa11yHr} 
-        <strong>Tip!</strong> Learn why <a href='https://www.nngroup.com/articles/reset-and-cancel-buttons/' target='_blank'>Reset and Cancel buttons pose usability issues. ${sa11yNewTab}</a>`,
+        <strong>Tip!</strong> Learn why <a href='https://www.nngroup.com/articles/reset-and-cancel-buttons/' target='_blank' rel='noopener noreferrer'>Reset and Cancel buttons pose usability issues. ${sa11yNewTab}</a>`,
 
     LABELS_ARIA_LABEL_INPUT_MESSAGE: (ariaLabel) =>
         `Input has an accessible name, although please ensure there is a visible label too. 
@@ -312,7 +312,7 @@ const sa11yLang = {
     EMBED_DATA_VIZ: 
         `Data visualization widgets like this are often problematic for people who use a keyboard or screen reader to navigate, and can present significant difficulties for people who have low vision or colorblindness. It's recommended to provide the same information in an alternative (text or table) format below the widget.
         ${sa11yHr}
-        Learn more about <a href='https://www.w3.org/WAI/tutorials/images/complex/' target='_blank'>complex images. ${sa11yNewTab}</a>`,
+        Learn more about <a href='https://www.w3.org/WAI/tutorials/images/complex/' target='_blank' rel='noopener noreferrer'>complex images. ${sa11yNewTab}</a>`,
 
     EMBED_TWITTER: 
         `The default Twitter timeline may cause accessibility issues for people who use a keyboard to navigate. Secondly, the inline scrolling of the Twitter timeline may cause usability issues for mobile. It's recommended to add the following data attributes to the embed code. 
@@ -324,10 +324,10 @@ const sa11yLang = {
         </ul>`,
 
     EMBED_MISSING_TITLE: 
-        `Embedded content requires an accessible name that describes its contents. Please provide a unique <span class='sa11y-kbd'>title</span> or <span class='sa11y-kbd'>aria-label</span> attribute on the <span class='sa11y-kbd'>iframe</span> element. Learn more about <a href='https://dequeuniversity.com/tips/provide-iframe-titles' target='_blank'>iFrames. ${sa11yNewTab}</a>`,
+        `Embedded content requires an accessible name that describes its contents. Please provide a unique <span class='sa11y-kbd'>title</span> or <span class='sa11y-kbd'>aria-label</span> attribute on the <span class='sa11y-kbd'>iframe</span> element. Learn more about <a href='https://dequeuniversity.com/tips/provide-iframe-titles' target='_blank' rel='noopener noreferrer'>iFrames. ${sa11yNewTab}</a>`,
 
     EMBED_GENERAL_WARNING: 
-        `Unable to check embedded content. Please make sure that images have alt text, videos have captions, text has sufficient contrast, and interactive components are <a href='https://webaim.org/techniques/keyboard/' target='_blank'>keyboard accessible. ${sa11yNewTab}</a>`,
+        `Unable to check embedded content. Please make sure that images have alt text, videos have captions, text has sufficient contrast, and interactive components are <a href='https://webaim.org/techniques/keyboard/' target='_blank' rel='noopener noreferrer'>keyboard accessible. ${sa11yNewTab}</a>`,
 
     // Quality assurance
     QA_BAD_LINK: (el) =>
@@ -346,10 +346,13 @@ const sa11yLang = {
             <li>If this is a form, consider using an accessible HTML form as an alternative.</li>
             <li>If this is a document, consider converting it into a web page.</li>
         </ul>
-        Otherwise, please check <strong class='sa11y-red-text'>${pdfCount}</strong> <a href='https://www.adobe.com/accessibility/products/acrobat/using-acrobat-pro-accessibility-checker.html' target='_blank'>PDF(s) for accessibility in Acrobat DC. ${sa11yNewTab}</a>`,
+        Otherwise, please check <strong class='sa11y-red-text'>${pdfCount}</strong> <a href='https://www.adobe.com/accessibility/products/acrobat/using-acrobat-pro-accessibility-checker.html' target='_blank' rel='noopener noreferrer'>PDF(s) for accessibility in Acrobat DC. ${sa11yNewTab}</a>`,
 
     QA_PAGE_LANGUAGE: 
-        `Page language not declared! Please <a href='https://www.w3.org/International/questions/qa-html-language-declarations' target='_blank'>declare language on HTML tag. ${sa11yNewTab}</a>`,
+        `Page language not declared! Please <a href='https://www.w3.org/International/questions/qa-html-language-declarations' target='_blank' rel='noopener noreferrer'>declare language on HTML tag. ${sa11yNewTab}</a>`,
+
+    QA_PAGE_TITLE: 
+        `Missing page title! Please provide a <a href='https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title' target='_blank' rel='noopener noreferrer'>page title. ${sa11yNewTab}</a>`,
 
     QA_BLOCKQUOTE_MESSAGE: (bqHeadingText) =>
         `Is this a heading? <strong class='sa11y-red-text'>${bqHeadingText}</strong> 
@@ -359,17 +362,17 @@ const sa11yLang = {
     TABLES_MISSING_HEADINGS: 
         `Missing table headers! Accessible tables need HTML markup that indicates header cells and data cells which defines their relationship. This information provides context to people who use assistive technology. Tables should be used for tabular data only.
         ${sa11yHr}
-        Learn more about <a href='https://www.w3.org/WAI/tutorials/tables/' target='_blank'>accessible tables. ${sa11yNewTab}</a>`,
+        Learn more about <a href='https://www.w3.org/WAI/tutorials/tables/' target='_blank' rel='noopener noreferrer'>accessible tables. ${sa11yNewTab}</a>`,
 
     TABLES_SEMANTIC_HEADING: 
         `Semantic headings such as Heading 2 or Heading 3 should only be used for sections of content; <strong>not</strong> in HTML tables. Indicate table headings using the <span class='sa11y-kbd'>&lt;th&gt;</span> element instead.
         ${sa11yHr}
-        Learn more about <a href='https://www.w3.org/WAI/tutorials/tables/' target='_blank'>accessible tables. ${sa11yNewTab}</a>`,
+        Learn more about <a href='https://www.w3.org/WAI/tutorials/tables/' target='_blank' rel='noopener noreferrer'>accessible tables. ${sa11yNewTab}</a>`,
 
     TABLES_EMPTY_HEADING: 
         `Empty table header found! Table headers should <em>never</em> be empty. It is important to designate row and/or column headers to convey their relationship. This information provides context to people who use assistive technology. Please keep in mind that tables should be used for tabular data only.
         ${sa11yHr}
-        Learn more about <a href='https://www.w3.org/WAI/tutorials/tables/' target='_blank'>accessible tables. ${sa11yNewTab}</a>`,
+        Learn more about <a href='https://www.w3.org/WAI/tutorials/tables/' target='_blank' rel='noopener noreferrer'>accessible tables. ${sa11yNewTab}</a>`,
 
     QA_FAKE_HEADING: (boldtext) =>
         `Is this a heading? <strong class='sa11y-red-text'>${boldtext}</strong>
@@ -379,7 +382,7 @@ const sa11yLang = {
     QA_SHOULD_BE_LIST: (firstPrefix) =>
         `Are you trying to create a list? Possible list item found: <strong class='sa11y-red-text'>${firstPrefix}</strong>
         ${sa11yHr} 
-        Make sure to use semantic lists by using the bullet or number formatting buttons instead. When using a semantic list, assistive technologies are able to convey information such as the total number of items and the relative position of each item in the list. Learn more about <a href='https://www.w3.org/WAI/tutorials/page-structure/content/#lists' target='_blank'>semantic lists. ${sa11yNewTab}</a>`,
+        Make sure to use semantic lists by using the bullet or number formatting buttons instead. When using a semantic list, assistive technologies are able to convey information such as the total number of items and the relative position of each item in the list. Learn more about <a href='https://www.w3.org/WAI/tutorials/page-structure/content/#lists' target='_blank' rel='noopener noreferrer'>semantic lists. ${sa11yNewTab}</a>`,
 
     QA_UPPERCASE_WARNING: 
         `Found all caps. Some screen readers may interpret all caps text as an acronym and will read each letter individually. Additionally, some people find all caps more difficult to read and it may give the appearance of SHOUTING.`,

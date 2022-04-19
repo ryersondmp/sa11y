@@ -739,6 +739,7 @@ html[data-sa11y-theme="dark"] {
 }
 
 button.sa11y-btn:focus,
+[data-sa11y-annotation][tabindex="-1"]:focus,
 #sa11y-container [tabindex="0"]:focus,
 #sa11y-container [tabindex="-1"]:focus {
     outline: 0 !important;
@@ -999,7 +1000,7 @@ a.sa11y-warning-text,
     font-family: var(--sa11y-font-face) !important;
     font-size: var(--sa11y-normal-text) !important;
     line-height: 22px !important;
-    margin: 0 auto !important;
+    margin: 1px auto !important;
     padding: 10px 0 7px 0 !important;
     text-align: center !important;
     max-width: 900px !important;

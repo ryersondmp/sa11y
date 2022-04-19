@@ -108,6 +108,7 @@ Note: You can only pass [CSS selectors](https://www.w3schools.com/cssref/css_sel
 | `fakeListQA` | true | Warning about non-semantic lists. |
 | `duplicateIdQA` | true | Error if duplicate IDs are found. |
 | `underlinedTextQA` | true | Warning for &lt;u&gt;underlined&lt;u&gt; text. |
+| `pageTitleQA` | true | Error for missing meta page `<title>`. |
 
 #### Embedded content checks (iFrames)
 | Prop | Default | Description |
