@@ -16,16 +16,9 @@
 
 <body>
   <header>
-    <div class="sa11y-website-frame-message">
-      <p style="display:none;" id="iframe-check"><a class="sa11y-exclude" href="warnings.html" target="_blank">Open this
-          page in a new tab for a better experience.</a> <span class="fas fa-external-link-alt"
-          aria-hidden="true"></span></p>
-      <p style="display:none;" id="newtabonly">Viewing demo in a new tab. <a href="../index.html#demo">Go back to
-          documentation.</a></p>
-    </div>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
       <div class="container">
-        <span class="navbar-brand mb-0 h1">Sa11y Demo <span class="badge bg-info text-dark">2.1</span></span>
+        <span class="navbar-brand mb-0 h1">Sa11y Demo <span id="v" class="badge bg-info text-dark"></span></span>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
           aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -33,25 +26,25 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
           <ul class="navbar-nav ms-auto mb-2 mb-md-0">
             <li class="nav-item">
+              <a class="nav-link" href="index.html">Everything</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="toggleable.html">Toggleable</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="custom.html">Custom checks</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="other.html">Other</a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" href="errors.html">Errors</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="warnings.html">Warnings</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="pass.html">No Errors</a>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-                aria-expanded="false">
-                All Rulesets
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="headings-images.html">Headings &amp; Images</a></li>
-                <li><a class="dropdown-item" href="links-tables.html">Links &amp; Tables</a></li>
-                <li><a class="dropdown-item" href="contrast-labels.html">Contrast &amp; Labels</a></li>
-                <li><a class="dropdown-item" href="other.html">Other</a></li>
-              </ul>
+              <a class="nav-link active" aria-current="page" href="pass.html">Good</a>
             </li>
           </ul>
         </div>
@@ -60,7 +53,7 @@
   </header>
   <main>
     <div class="container">
-      <div class="bg-light p-5 mb-5 rounded text-center">
+      <div class="p-5 mb-5 rounded text-center">
         <h1>No errors</h1>
         <p class="lead">A page without any errors!</p>
         <small>The sample text below is from <a href="https://en.wikipedia.org/wiki/Bear">Wikipedia: Bear.</a></small>
@@ -72,8 +65,7 @@
         <div class="col-md-4 d-flex">
           <div class="card mb-4 shadow-sm flex-fill">
             <a href="https://en.wikipedia.org/wiki/Bear"><img
-                src="https://upload.wikimedia.org/wikipedia/commons/7/71/2010-kodiak-bear-1.jpg" alt
-                class="img-fluid">
+                src="https://upload.wikimedia.org/wikipedia/commons/7/71/2010-kodiak-bear-1.jpg" alt class="img-fluid">
               <div class="card-body">
                 <p class="card-text">Learn more about Bears on Wikipedia <span class="fa fa-chevron-right"></span></p>
               </div>
@@ -163,16 +155,16 @@
   </main>
   <footer class="sa11y-ignore d-flex flex-wrap bg-dark text-white justify-content-between align-items-center py-5 mt-5">
     <div class="container">
-    <span class="text-muted">Customize Sa11y to target specific regions of a page only. For example, this non-descript <a href="#">link</a> will be ignored. If a content editor can't edit it, don't scan it. Purposely super low contrast for testing purposes.</span>
-  </div>
+      <span class="text-muted">This footer area is ignored. If a content editor can't fix it, don't scan it. <a
+          href="#">link</a> will be ignored.</span>
+    </div>
   </footer>
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
     integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous">
   </script>
 
   <!--To easily switch between production and development mode.-->
-  <script src="sa11y-docs-cdn.js"></script>
+  <script src="sa11y-demo-cdn.js"></script>
 </body>
 
 </html>

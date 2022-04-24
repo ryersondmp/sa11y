@@ -999,9 +999,9 @@ a.sa11y-warning-text,
 .sa11y-good-message {
     font-family: var(--sa11y-font-face) !important;
     font-size: var(--sa11y-normal-text) !important;
-    line-height: 22px !important;
+    line-height: 20px !important;
     margin: 1px auto !important;
-    padding: 10px 0 7px 0 !important;
+    padding: 10px 0 10px 0 !important;
     text-align: center !important;
     max-width: 900px !important;
 }

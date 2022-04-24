@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------------
 * Sa11y: the accessibility quality assurance assistant.    
-* @version: 2.1.9            
+* @version: 2.2.0            
 * @author: Development led by Adam Chaboryk, CPWA at Ryerson University.
 * All acknowledgements and contributors: https://github.com/ryersondmp/sa11y
 * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
@@ -57,6 +57,7 @@ const sa11yLang = {
         'find out',
         'find out more',
         'find out more.',
+        'find out more >',
         'form',
         'here',
         'here.',
@@ -66,11 +67,14 @@ const sa11yLang = {
         'learn',
         'learn more',
         'learn more.',
+        'learn more >',
         'learn to',
         'more',
+        'more >',
         'page',
         'paper',
         'read more',
+        'read more >',
         'read',
         'read this',
         'this',
