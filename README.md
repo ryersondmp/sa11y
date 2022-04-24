@@ -5,6 +5,7 @@
 
 * [Project website](https://sa11y.netlify.app/) 🌐
 * [Developer documentation](https://sa11y.netlify.app/developers/) 📓
+* [Demo](https://ryersondmp.github.io/sa11y/demo/) 🚀
 * [Report an issue](https://github.com/ryersondmp/sa11y/issues) 🐜
 * [Install the WordPress plugin](https://wordpress.org/plugins/sa11y/) 💻
 * [WordPress plugin development repo](https://github.com/ryersondmp/sa11y-wp) 🛠
