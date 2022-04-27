@@ -1,10 +1,10 @@
 /*-----------------------------------------------------------------------
-* Sa11y: the accessibility quality assurance assistant.    
-* @version: 2.2.0            
-* @author: Development led by Adam Chaboryk, CPWA at Ryerson University.
-* All acknowledgements and contributors: https://github.com/ryersondmp/sa11y
+* Sa11y, the accessibility quality assurance assistant.    
+* @version: 2.2.1            
+* @author: Development led by Adam Chaboryk, CPWA
+* @acknowledgements: https://sa11y.netlify.app/acknowledgements/
 * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
-* Copyright (c) 2020 - 2022 Ryerson University
+* Copyright (c) 2020 - 2022 Toronto Metropolitan University (formerly Ryerson University).
 * The above copyright notice shall be included in all copies or substantial portions of the Software.
 ------------------------------------------------------------------------*/
 
@@ -39,7 +39,7 @@ class Sa11y {
 			contrastPlugin: true,
 			formLabelsPlugin: true,
 			linksAdvancedPlugin: true,
-			customChecks: false,
+			customChecks: true,
 
 			//QA rulesets
 			badLinksQA: true,
@@ -298,10 +298,10 @@ class Sa11y {
 					return `${el} *, ${el}`
 				});
 
-				options.containerIgnore = "[aria-hidden], #sa11y-container *, #wpadminbar *, " + containerSelectors.join(", ");
+				options.containerIgnore = "[aria-hidden], [data-tippy-root] *, #sa11y-container *, #wpadminbar *, " + containerSelectors.join(", ");
 			} else {
 				options.containerIgnore =
-					"[aria-hidden], #sa11y-container *, #wpadminbar *";
+					"[aria-hidden], [data-tippy-root] *, #sa11y-container *, #wpadminbar *";
 			}
 			this.containerIgnore = options.containerIgnore;
 
@@ -1816,10 +1816,10 @@ class Sa11y {
 				let error = containsLinkTextStopWords(
 						Sa11y.fnIgnore(el, options.linkIgnoreSpan) //Ignore child containing element.
 						.textContent //Grab the text content.
-						.replace(/[^A-Za-z0-9.,>< ]/g, '') //Remove any special characters except commas, period, and space. 
+						.replace(/[!*?↣↳→↓»↴]/g, '') //Remove CTA characters
 						.trim()
 					);
-
+					
 				if (el.querySelectorAll('img').length) {
 					// Do nothing. Don't overlap with Alt Text module.
 				}
@@ -2503,7 +2503,7 @@ class Sa11y {
 			}
 
 			// Warning: Detect paragraphs that should be lists.
-			// Thanks to John Jameson from PrincetonU for this ruleset!
+			// Thanks to John Jameson from PrincetonU for this ruleset! 
 			if (options.fakeListQA === true) {
 				Sa11y.$p.forEach($el => {
 					let activeMatch = "";
@@ -2511,10 +2511,12 @@ class Sa11y {
 						b: "a",
 						B: "A",
 						2: "1",
+						б: "а",
+						Б: "А"
 					};
-					let prefixMatch = /a\.|a\)|A\.|A\)|1\.|1\)|\*\s|-\s|--|•\s|→\s|✓\s|✔\s|✗\s|✖\s|✘\s|❯\s|›\s|»\s/;
+					let prefixMatch = /a\.|a\)|A\.|A\)|а\.|а\)|А\.|А\)|1\.|1\)|\*\s|-\s|--|•\s|→\s|✓\s|✔\s|✗\s|✖\s|✘\s|❯\s|›\s|»\s/;
 					let decrement = function (el) {
-						return el.replace(/^b|^B|^2/, function (match) {
+						return el.replace(/^b|^B|^б|^Б|^2/, function (match) {
 							return prefixDecrement[match];
 						});
 					};

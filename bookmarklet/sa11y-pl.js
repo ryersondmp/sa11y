@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------------
-* Sa11y: the accessibility quality assurance assistant.   
-* Bookmarklet: English 
+* Sa11y: the accessibility quality assurance assistant. 
+* Bookmarklet: Polish
 * @author: Development led by Adam Chaboryk, CPWA
 * @acknowledgements: https://sa11y.netlify.app/acknowledgements/
 * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
@@ -21,7 +21,7 @@ bodyheader.appendChild(sa11ycss);
 
 /* Queue Poppers.js, Tippy.js, and Sa11y. Thanks to JSDeliver for this cool combine feature! */
 const combine = document.createElement("script");
-combine.src = `https://cdn.jsdelivr.net/combine/npm/@popperjs/core@2/dist/umd/popper.min.js,npm/tippy.js@6/dist/tippy.umd.min.js,gh/ryersondmp/sa11y@${v}/src/sa11y-english.min.js,gh/ryersondmp/sa11y@${v}/src/sa11y.min.js`;
+combine.src = `https://cdn.jsdelivr.net/combine/npm/@popperjs/core@2/dist/umd/popper.min.js,npm/tippy.js@6/dist/tippy.umd.min.js,gh/ryersondmp/sa11y@${v}/src/languages/sa11y-pl.min.js,gh/ryersondmp/sa11y@${v}/src/sa11y.min.js`;
 
 document.body.appendChild(combine);
 combine.onload = combine.onreadystatechange = function() {

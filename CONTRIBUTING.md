@@ -21,6 +21,9 @@ Some of Sa11y's rulesets are based on best practices or are inspired by commonly
 
 If you would like to discuss an existing ruleset, please create a new [issue.](https://github.com/ryersondmp/sa11y/issues) Provide any references or sources if you are proposing a new ruleset or would like to change an existing one.
 
+## Translations
+Translations may either be contributed back to the repository with a pull request, or translated files can be returned to: [adam.chaboryk@ryerson.ca](mailto:adam.chaboryk)
+
 ## How to contribute code
 There's a couple of ways you can contribute code.
 

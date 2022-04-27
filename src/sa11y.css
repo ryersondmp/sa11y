@@ -1,10 +1,10 @@
 /*-----------------------------------------------------------------------
-Sa11y: the accessibility quality assurance assistant.                
-Author: Development led by Adam Chaboryk at Ryerson University.
-All acknowledgements and contributors: https://github.com/ryersondmp/sa11y
-License: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
-Copyright (c) 2020 - 2022 Ryerson University
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+* Sa11y, the accessibility quality assurance assistant.    
+* @author: Development led by Adam Chaboryk, CPWA
+* @acknowledgements: https://sa11y.netlify.app/acknowledgements/
+* @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
+* Copyright (c) 2020 - 2022 Toronto Metropolitan University (formerly Ryerson University).
+* The above copyright notice shall be included in all copies or substantial portions of the Software.
 ------------------------------------------------------------------------*/
 
 :root {
@@ -328,7 +328,7 @@ html[data-sa11y-theme="dark"] {
     transition: transform 0.2s, opacity 0.2s;
     transform: scale(0);
     visibility: hidden;
-    width: 310px !important;
+    width: 320px;
     z-index: 8890 !important;
     transition: background 0.2s;
 }
@@ -703,7 +703,7 @@ html[data-sa11y-theme="dark"] {
     position: relative !important;
     background: none !important;
     color: var(--sa11y-panel-primary) !important;
-    width: 95px !important;
+    width: 95px;
     height: 44px !important;
     text-align: right !important;
 }
@@ -1295,3 +1295,12 @@ span.sa11y-heading-label {
 .tippy-box[data-theme~="sa11y-theme"][data-placement^="right"]>.tippy-arrow::before {
     border-right-color: var(--sa11y-panel-bg) !important;
 }
+
+/* i18n */
+#sa11y-container[lang]:not([lang='en']) #sa11y-panel {
+    width: 340px !important;
+}
+#sa11y-container[lang]:not([lang='en']) .sa11y-settings-switch {
+    width: 135px !important;
+}
+

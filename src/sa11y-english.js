@@ -1,16 +1,13 @@
 /*-----------------------------------------------------------------------
-* Sa11y: the accessibility quality assurance assistant.    
-* @version: 2.2.0            
-* @author: Development led by Adam Chaboryk, CPWA at Ryerson University.
-* All acknowledgements and contributors: https://github.com/ryersondmp/sa11y
+* Sa11y, the accessibility quality assurance assistant.    
+* @version: 2.2.1     
+* @language: English        
+* @author: Development led by Adam Chaboryk, CPWA
+* @acknowledgements: https://sa11y.netlify.app/acknowledgements/
 * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
-* Copyright (c) 2020 - 2022 Ryerson University
+* Copyright (c) 2020 - 2022 Toronto Metropolitan University (formerly Ryerson University).
 * The above copyright notice shall be included in all copies or substantial portions of the Software.
 ------------------------------------------------------------------------*/
-
-/* ------------------------------ */
-/*  Localization: English         */
-/* ------------------------------ */
 
 //Tooltip formatting shortcuts.
 const sa11yHr = `<hr aria-hidden='true' class='sa11y-hr'>`;
