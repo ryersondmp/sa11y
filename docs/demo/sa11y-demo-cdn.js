@@ -3,7 +3,7 @@
 /* FOR LOCAL DEVELOPMENT: Switch to false. */
 
 const production = true;
-const v = "2.2.1"; //Version
+const v = "2.2.2"; //Version
 
 /* FOR LOCAL DEVELOPMENT: Switch to false. */
 /* FOR LOCAL DEVELOPMENT: Switch to false. */
@@ -48,13 +48,13 @@ if (production === false) {
         const sa11yDevEnglish = document.createElement("script");
 
         if (url.indexOf("pl") > -1) {
-            sa11yDevEnglish.src = "../../../src/languages/sa11y-pl.js";
+            sa11yDevEnglish.src = "../../../src/lang/pl.js";
         } else if (url.indexOf("fr") > -1) {
-            sa11yDevEnglish.src = "../../../src/languages/sa11y-fr-ca.js";
+            sa11yDevEnglish.src = "../../../src/lang/fr-ca.js";
         } else if (url.indexOf("ua") > -1) {
-            sa11yDevEnglish.src = "../../../src/languages/sa11y-ua.js";
+            sa11yDevEnglish.src = "../../../src/lang/ua.js";
         } else {
-            sa11yDevEnglish.src = "../../../src/sa11y-english.js";
+            sa11yDevEnglish.src = "../../../src/lang/en.js";
         }
         
         document.body.appendChild(sa11yDevEnglish);
@@ -97,13 +97,13 @@ else {
     const combine = document.createElement("script");
 
     if (url.indexOf("pl") > -1) {
-        combine.src = `https://cdn.jsdelivr.net/combine/npm/@popperjs/core@2/dist/umd/popper.min.js,npm/tippy.js@6/dist/tippy.umd.min.js,gh/ryersondmp/sa11y@${v}/src/languages/sa11y-pl.min.js,gh/ryersondmp/sa11y@${v}/src/sa11y-custom-checks.min.js,gh/ryersondmp/sa11y@${v}/src/sa11y.min.js`;
+        combine.src = `https://cdn.jsdelivr.net/combine/npm/@popperjs/core@2/dist/umd/popper.min.js,npm/tippy.js@6/dist/tippy.umd.min.js,gh/ryersondmp/sa11y@${v}/src/lang/pl.min.js,gh/ryersondmp/sa11y@${v}/src/sa11y-custom-checks.min.js,gh/ryersondmp/sa11y@${v}/src/sa11y.min.js`;
     } else if (url.indexOf("fr") > -1) {
-        combine.src = `https://cdn.jsdelivr.net/combine/npm/@popperjs/core@2/dist/umd/popper.min.js,npm/tippy.js@6/dist/tippy.umd.min.js,gh/ryersondmp/sa11y@${v}/src/languages/sa11y-fr-ca.min.js,gh/ryersondmp/sa11y@${v}/src/sa11y-custom-checks.min.js,gh/ryersondmp/sa11y@${v}/src/sa11y.min.js`;
+        combine.src = `https://cdn.jsdelivr.net/combine/npm/@popperjs/core@2/dist/umd/popper.min.js,npm/tippy.js@6/dist/tippy.umd.min.js,gh/ryersondmp/sa11y@${v}/src/lang/fr-ca.min.js,gh/ryersondmp/sa11y@${v}/src/sa11y-custom-checks.min.js,gh/ryersondmp/sa11y@${v}/src/sa11y.min.js`;
     } else if (url.indexOf("ua") > -1) {
-        combine.src = `https://cdn.jsdelivr.net/combine/npm/@popperjs/core@2/dist/umd/popper.min.js,npm/tippy.js@6/dist/tippy.umd.min.js,gh/ryersondmp/sa11y@${v}/src/languages/sa11y-ua.min.js,gh/ryersondmp/sa11y@${v}/src/sa11y-custom-checks.min.js,gh/ryersondmp/sa11y@${v}/src/sa11y.min.js`;
+        combine.src = `https://cdn.jsdelivr.net/combine/npm/@popperjs/core@2/dist/umd/popper.min.js,npm/tippy.js@6/dist/tippy.umd.min.js,gh/ryersondmp/sa11y@${v}/src/lang/ua.min.js,gh/ryersondmp/sa11y@${v}/src/sa11y-custom-checks.min.js,gh/ryersondmp/sa11y@${v}/src/sa11y.min.js`;
     } else {
-        combine.src = `https://cdn.jsdelivr.net/combine/npm/@popperjs/core@2/dist/umd/popper.min.js,npm/tippy.js@6/dist/tippy.umd.min.js,gh/ryersondmp/sa11y@${v}/src/sa11y-english.min.js,gh/ryersondmp/sa11y@${v}/src/sa11y-custom-checks.min.js,gh/ryersondmp/sa11y@${v}/src/sa11y.min.js`;
+        combine.src = `https://cdn.jsdelivr.net/combine/npm/@popperjs/core@2/dist/umd/popper.min.js,npm/tippy.js@6/dist/tippy.umd.min.js,gh/ryersondmp/sa11y@${v}/src/lang/en.min.js,gh/ryersondmp/sa11y@${v}/src/sa11y-custom-checks.min.js,gh/ryersondmp/sa11y@${v}/src/sa11y.min.js`;
     }
 
     document.body.appendChild(combine);
