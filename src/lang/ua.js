@@ -1,6 +1,5 @@
 /*-----------------------------------------------------------------------
 * Sa11y, the accessibility quality assurance assistant.    
-* @version: 2.2.2      
 * @language: Ukrainian (translation sponsored by Adam Chaboryk)   
 * @author: Development led by Adam Chaboryk, CPWA
 * @acknowledgements: https://sa11y.netlify.app/acknowledgements/

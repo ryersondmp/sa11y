@@ -3,7 +3,7 @@
 /* FOR LOCAL DEVELOPMENT: Switch to false. */
 
 const production = true;
-const v = "2.2.2"; //Version
+const v = "2.2.3"; //Version
 
 /* FOR LOCAL DEVELOPMENT: Switch to false. */
 /* FOR LOCAL DEVELOPMENT: Switch to false. */

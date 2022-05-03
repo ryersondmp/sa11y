@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------------
 * Sa11y, the accessibility quality assurance assistant.    
-* @version: 2.2.2            
+* @version: 2.2.3            
 * @author: Development led by Adam Chaboryk, CPWA
 * @acknowledgements: https://sa11y.netlify.app/acknowledgements/
 * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
@@ -248,7 +248,7 @@ class Sa11y {
                     <div class="sa11y-panel-icon"></div>
                 </button>
                 <div id="sa11y-panel-text">
-					<h1 class="sa11y-header-text">${M["PANEL_HEADING"]}</h1>
+					<h1 class="sa11y-visually-hidden">${M["PANEL_HEADING"]}</h1>
 					<p id="sa11y-status" aria-live="polite"></p>
 				</div>
             </div>` +
@@ -629,6 +629,28 @@ class Sa11y {
 					return "noAria";
 				}
 			};
+
+			//Mini function: Find visibible parent of hidden element.
+			Sa11y.findVisibleParent = ($el, property, value) => {
+				while ($el !== null) {
+					const style = window.getComputedStyle($el);
+					const propValue = style.getPropertyValue(property);
+					if (propValue === value) {
+						return $el;
+					}
+					$el = $el.parentElement;
+				}
+				return null;
+			};
+
+			//Mini function: Calculate top of element. 
+			Sa11y.offsetTop = ($el) => {
+				let rect = $el.getBoundingClientRect(),
+					scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+				return {
+					top: rect.top + scrollTop
+				}
+			}
 		}
 
 		//----------------------------------------------------------------------
@@ -1283,6 +1305,7 @@ class Sa11y {
 		// ============================================================
 
 		this.skipToIssue = () => {
+
 			/* Safari Polyfill for scrollTo. Credit: https://stackoverflow.com/a/67108752 & https://github.com/iamdustan/smoothscroll */
 			let reducedMotionQuery = false;
 			let scrollBehavior = "smooth";
@@ -1300,122 +1323,122 @@ class Sa11y {
 				}
 			}
 
-			let sa11yBtnLocation = 0;
-			const findSa11yBtn = document.querySelectorAll("[data-sa11y-annotation]").length;
+			//Constants
+			const $findButtons = document.querySelectorAll("[data-sa11y-annotation]"),
+				$alertPanel = document.getElementById("sa11y-panel-alert"),
+				$alertText = document.getElementById("sa11y-panel-alert-text"),
+				$alertPanelPreview = document.getElementById("sa11y-panel-alert-preview"),
+				$skipToggle = document.getElementById("sa11y-cycle-toggle"),
+				$closeAlertToggle = document.getElementById("sa11y-close-alert"),
+				findSa11yBtn = document.querySelectorAll("[data-sa11y-annotation]").length;
 
 			//Jump to issue using keyboard shortcut.
 			document.addEventListener('keyup', (e) => {
 				if (findSa11yBtn && (e.altKey && e.code == "Period" || e.code == "KeyS")) {
-					skipToIssueToggle();
+					next();
+					e.preventDefault();
+				}
+			});
+
+			//Previous issue keyboard shortcut.
+			document.addEventListener('keyup', (e) => {
+				if (findSa11yBtn && (e.altKey && e.code == "Comma" || e.code == "KeyW")) {
+					prev();
 					e.preventDefault();
 				}
 			});
 
 			//Jump to issue using click.
-			const $skipToggle = document.getElementById("sa11y-cycle-toggle");
 			$skipToggle.addEventListener('click', (e) => {
-				skipToIssueToggle();
+				next();
 				e.preventDefault();
 			});
 
-			const skipToIssueToggle = function () {
-
-				//Calculate location of both visible and hidden buttons.
-				const $findButtons = document.querySelectorAll("[data-sa11y-annotation]"),
-					$alertPanel = document.getElementById("sa11y-panel-alert"),
-					$alertText = document.getElementById("sa11y-panel-alert-text"),
-					$alertPanelPreview = document.getElementById("sa11y-panel-alert-preview"),
-					$closeAlertToggle = document.getElementById("sa11y-close-alert");
-
-				//Mini function: Find visibible parent of hidden element.
-				const findVisibleParent = ($el, property, value) => {
-					while ($el !== null) {
-						const style = window.getComputedStyle($el);
-						const propValue = style.getPropertyValue(property);
-						if (propValue === value) {
-							return $el;
-						}
-						$el = $el.parentElement;
-					}
-					return null;
-				};
-
-				//Mini function: Calculate top of element. 
-				const offset = ($el) => {
-					let rect = $el.getBoundingClientRect(),
-						scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-					return {
-						top: rect.top + scrollTop
-					}
-				}
-
-				//'offsetTop' will always return 0 if element is hidden. We rely on offsetTop to determine if element is hidden, although we use 'getBoundingClientRect' to set the scroll position. 
-				let scrollPosition;
-				let offsetTopPosition = $findButtons[sa11yBtnLocation].offsetTop;
+			//Find scroll position.
+			const scrollPosition = ($el) => {
+				let offsetTopPosition = $el.offsetTop;
 				if (offsetTopPosition === 0) {
-					let visiblePosition = findVisibleParent($findButtons[sa11yBtnLocation], 'display', 'none');
+					let visiblePosition = Sa11y.findVisibleParent($el, 'display', 'none');
+					generateAlert();
 
-					//Since 2.1.8 - Sometimes visiblePosition returns null.
 					if (!!visiblePosition) {
 						//Get as close to the hidden parent as possible.
 						let prevSibling = visiblePosition.previousElementSibling;
 						let parentNode = visiblePosition.parentNode;
 						if (!!prevSibling) {
-							scrollPosition = offset(prevSibling).top - 150;
+							return $el = Sa11y.offsetTop(prevSibling).top - 150;
 						} else {
-							scrollPosition = offset(parentNode).top - 150;
+							return $el = Sa11y.offsetTop(parentNode).top - 150;
 						}
 					} 
 				} else {
-					scrollPosition = offset($findButtons[sa11yBtnLocation]).top - 150;
+					removeAlert();
+					return $el = Sa11y.offsetTop($el).top - 150;
 				}
+			}
 
-				//Scroll to element if offsetTop is less than or equal to 0.
-				if (offsetTopPosition >= 0) {
-					setTimeout(function () {
-						window.scrollTo({
-							top: scrollPosition,
-							behavior: scrollBehavior
-						});
-					}, 1);
-
-					//Add pulsing border to visible parent of hidden element.
-					$findButtons.forEach(function ($el) {
-						const overflowing = findVisibleParent($el, 'display', 'none');
-						if (overflowing !== null) {
-							let hiddenparent = overflowing.previousElementSibling;
-
-							// Since @2.1.7: Error handling when previousElementSibling doesn't exist.
-							if (!!hiddenparent) {
-								hiddenparent.classList.add("sa11y-pulse-border");
-							} else {
-								overflowing.parentNode.classList.add("sa11y-pulse-border");
-							}
+			//Add pulsing border to visible parent of hidden element.
+			const hiddenParent = () => {
+				$findButtons.forEach($el => {
+					const overflowing = Sa11y.findVisibleParent($el, 'display', 'none');
+					if (overflowing !== null) {
+						let hiddenparent = overflowing.previousElementSibling;
+						if (!!hiddenparent) {
+							hiddenparent.classList.add("sa11y-pulse-border");
+						} else {
+							overflowing.parentNode.classList.add("sa11y-pulse-border");
 						}
+					}
+				});
+			}
+
+			let i = -1;
+
+			//Skip to next.
+			const next = () => {
+				i++;
+				let $el = $findButtons[i];
+				let scrollPos = scrollPosition($el);
+				window.scrollTo({
+					top: scrollPos, 
+					behavior: scrollBehavior
+				});
+				if (i >= findSa11yBtn - 1) {
+					i = -1;
+				}
+				hiddenParent();
+				$el.focus();
+			}
+
+			//Skip to previous.
+			const prev = () => {
+				i = Math.max(0, --i);
+				let $el = $findButtons[i];
+				if (!!$el) {
+					let scrollPos = scrollPosition($el);
+					window.scrollTo({
+						top: scrollPos, 
+						behavior: scrollBehavior
 					});
-					$findButtons[sa11yBtnLocation].focus();
-				} else {
-					$findButtons[sa11yBtnLocation].focus();
+					hiddenParent();
+					$el.focus();
 				}
+			}
 
-				//Alert if element is hidden.
-				if (offsetTopPosition === 0) {
-					$alertPanel.classList.add("sa11y-active");
-					$alertText.textContent = `${M["NOT_VISIBLE_ALERT"]}`;
-					$alertPanelPreview.classList.add("sa11y-panel-alert-preview");
-					$alertPanelPreview.innerHTML = $findButtons[sa11yBtnLocation].getAttribute('data-tippy-content');
-					$closeAlertToggle.focus();
-				} else if (offsetTopPosition < 1) {
-					$alertPanel.classList.remove("sa11y-active");
-					document.querySelectorAll('.sa11y-pulse-border').forEach(($el) => $el.classList.remove('sa11y-pulse-border'));
-				}
+			//Alert if tooltip is hidden.
+			const generateAlert = () => {
+				$alertPanel.classList.add("sa11y-active");
+				$alertText.textContent = `${M["NOT_VISIBLE_ALERT"]}`;
+				$alertPanelPreview.classList.add("sa11y-panel-alert-preview");
+				$alertPanelPreview.innerHTML = $findButtons[i].getAttribute('data-tippy-content');
+				$closeAlertToggle.focus();
+			}
 
-				//Reset index so it scrolls back to top of page.
-				sa11yBtnLocation += 1;
-				if (sa11yBtnLocation >= findSa11yBtn) {
-					sa11yBtnLocation = 0;
-				}
-			};
+			//Remove alert.
+			const removeAlert = () => {
+				$alertPanel.classList.remove("sa11y-active");
+				document.querySelectorAll('.sa11y-pulse-border').forEach(($el) => $el.classList.remove('sa11y-pulse-border'));
+			}
 		}
 
 		// ============================================================
