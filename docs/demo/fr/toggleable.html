@@ -11,6 +11,9 @@
       integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
     <meta name="theme-color" content="#7952b3">
+    <link rel="shortcut icon" type="image/jpg" href="../assets/favicon.ico"/>
+    <link href="../assets/main.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../assets/css/sa11y.min.css"/>
 </head>
 <body>
   <header>
@@ -73,11 +76,11 @@
           <div class="example">
             <div class="row">
               <div class="col-md-6">
-                
+
 				<p style="color: coral">Cette couleur échoue à la taille normale.</p>
               </div>
               <div class="col-md-6">
-                
+
 				<p style="color: aqua">
                   <script>
                     document.write("Generated via document.write()")
@@ -89,20 +92,20 @@
 
           <h3>Grand texte</h3>
           <div class="example">
-            
+
 				<h4 style="color:coral;font-size:1.5em">Cette couleur échoue également à une grande taille.</h4>
           </div>
 
           <h3>Saisie de texte</h3>
           <div class="example">
             <label for="contrastinput">Nom</label>
-            
+
 				<input id="contrastinput" type="text" style="color:coral">
           </div>
 
           <h3>Images d'arrière-plan</h3>
           <div class="example">
-            
+
 				<h4 class="background-image white" style="color:white">Le texte sur l'image d'arrière-plan nécessite une révision manuelle</h4>
           </div>
 
@@ -114,14 +117,14 @@
           <h4>Entrée sans étiquette ou manquante<code>id</code></h4>
           <div class="example">
             <input type="text" >
-				
+
           </div>
 
           <h4>Entrée avec ID bien que l'étiquette n'ait pas d' <code>for</code>attribut</h4>
           <div class="example">
             <label>Nom</label>
             <input type="text" id="asdfg" >
-				
+
           </div>
 
           <h4>Libellés implicites sans texte</h4>
@@ -129,7 +132,7 @@
           <div class="example">
             <label>
               <input type="text" >
-				
+
             </label>
           </div>
 
@@ -137,7 +140,7 @@
           <div class="example">
             <label>Retour</label>
             <textarea rows="2" cols="50" ></textarea>
-				
+
           </div>
 
           <h4><code>&lt;select&gt;</code>sans étiquette</h4>
@@ -149,14 +152,14 @@
               <option value="mercedes">Mercedes</option>
               <option value="audi">Audi</option>
             </select>
-				
+
           </div>
 
           <h4>Entrée où <code>type="image"</code>n'a pas de nom accessible</h4>
           <div class="example">
             <label for="q">Recherche:</label>
             <input type="text" id="q"><input type="image" alt=" " width="20" src="./Contrôles basculables - Démo Sa11y_files/1280px-Vector_search_icon.svg.png" >
-				
+
           </div>
 
           <h3>Avertissements</h3>
@@ -166,17 +169,17 @@
               <div class="col-md-4">
                 <h5>label-aria</h5>
                 <input aria-label="Prénom" id="vv" type="text" >
-				
+
               </div>
               <div class="col-md-4">
                 <h5>aria-labelledby</h5>
                 <input aria-labelledby="vv" type="text" >
-				
+
               </div>
               <div class="col-md-4">
                 <h5>Titre</h5>
                 <input type="text" title="Numéro de téléphone" >
-				
+
               </div>
             </div>
           </div>
@@ -184,7 +187,7 @@
           <h4>Entrée qui est<code>type='reset'</code></h4>
           <div class="example">
             <input type="reset" >
-				
+
           </div>
 
           <h3>Passer</h3>
@@ -238,7 +241,7 @@
             <ul>
               <li>Texte brut&nbsp;: <a href="#" target="_blank" >commentaires</a>
 				</li>
-              <li>Label ARIA : 
+              <li>Label ARIA :
 				<a href="#" target="_blank" aria-label="Amorcer" ><i class="bi bi-bootstrap-fill"></i></a>
 				</li>
               <li>Lien vide avec l'attribut title&nbsp;:<a href="#" title="Boutique" target="_blank" ><i class="bi bi-shop"></i></a>
@@ -250,9 +253,9 @@
           <div class="example">
             <ul>
               <li>Texte brut&nbsp;: <a href="#" target="_blank">Commentaires (ouvre un nouvel onglet)</a></li>
-              <li>Label ARIA : 
+              <li>Label ARIA :
 				<a href="#" target="_blank" aria-label="Bootstrap (Ouvre un nouvel onglet)"><i class="bi bi-bootstrap-fill"></i></a></li>
-              <li>Enfant labellisé ARIA : 
+              <li>Enfant labellisé ARIA :
 				 <a href="#" target="_blank">Retour d'expérience<i aria-label="(Ouvre un nouvel onglet)" class="bi bi-box-arrow-up-right"></i></a></li>
               <li>Lien vide avec l'attribut title&nbsp;:<a href="#" title="Boutique (Ouvre un nouvel onglet)" target="_blank"><i class="bi bi-shop"></i></a></li>
             </ul>
@@ -277,8 +280,8 @@
             <div class="col-md-4">
               <div class="example">
                 <p>Même nom de lien mais emplacements différents&nbsp;:
-                  
-				<a href="https://www.github.com/" aria-label="GitHub"><i class="bi bi-github"></i></a>et 
+
+				<a href="https://www.github.com/" aria-label="GitHub"><i class="bi bi-github"></i></a>et
 				<a href="https://bitbucket.org/" aria-label="GitHub" ><i class="bi bi-github"></i></a>
 				</p>
               </div>
@@ -289,7 +292,7 @@
           <div class="row">
             <div class="col-md-4">
               <div class="example">
-                
+
 				<a href="#asd.zip" >Actifs de marque</a>
               </div>
             </div>
@@ -300,7 +303,7 @@
             </div>
             <div class="col-md-4">
               <div class="example">
-                
+
 				<a href="#asd.zip">Actifs de marque<i aria-label="(.Zip *: français)" class="bi bi-file-earmark-zip"></i></a>
               </div>
             </div>
@@ -320,8 +323,8 @@
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
   </script>
 
-  <!--To easily switch between production and development mode.-->
-  <script src="../sa11y-demo-cdn.js"></script>
+ <!-- Sa11y -->
+  <script type="module" src="../script.js"></script>
 </body>
 
 </html>
