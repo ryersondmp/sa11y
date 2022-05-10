@@ -8,7 +8,7 @@
 * The above copyright notice shall be included in all copies or substantial portions of the Software.
 ------------------------------------------------------------------------*/
 
-const v = "2.2.4"; //Version
+const v = "npmprep"; //Version
 
 /* Append sa11y.css */
 const sa11ycss = document.createElement("link");

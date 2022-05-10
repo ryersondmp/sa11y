@@ -31,7 +31,7 @@
       DARK_MODE: 'Mode sombre',
       SHORTCUT_SCREEN_READER: 'Passer à l’édition. Raccourci clavier: Alt et point',
       SHORTCUT_TOOLTIP: 'Passer à l’édition',
-      NEW_TAB: '(Ouvrir dans un nouvel onglet)',
+      NEW_TAB: 'Ouvrir dans un nouvel onglet',
       PANEL_HEADING: 'Vérification d’accessibilité',
       PANEL_STATUS_NONE: 'Aucune erreur trouvée.',
       PANEL_ICON_WARNINGS: 'avertissement(s) trouvé(s).',

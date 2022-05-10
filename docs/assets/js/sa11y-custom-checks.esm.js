@@ -1,4 +1,4 @@
-class Sa11yCustomChecks {
+class CustomChecks {
   check() {
     /* Add custom rulesets below. */
 
@@ -22,7 +22,7 @@ class Sa11yCustomChecks {
 
     /* Example custom check #2 */
     const $checkAccordions = Sa11y.root.querySelectorAll('.sa11y-accordion-example');
-    $checkAccordions.forEach($el => {
+    $checkAccordions.forEach(($el) => {
       const checkForm = $el.querySelector('form');
       if (!!checkForm && checkForm.length) {
         $el.classList.add('sa11y-error-border');
@@ -34,4 +34,4 @@ class Sa11yCustomChecks {
   }
 }
 
-export { Sa11yCustomChecks as default };
+export { CustomChecks as default };
