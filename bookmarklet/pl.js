@@ -1,5 +1,5 @@
 /*-----------------------------------------------------------------------
-* Sa11y: the accessibility quality assurance assistant. 
+* Sa11y: the accessibility quality assurance assistant.
 * Bookmarklet: Polish
 * @author: Development led by Adam Chaboryk, CPWA
 * @acknowledgements: https://sa11y.netlify.app/acknowledgements/
@@ -8,7 +8,7 @@
 * The above copyright notice shall be included in all copies or substantial portions of the Software.
 ------------------------------------------------------------------------*/
 
-const v = "2.2.3"; //Version
+const v = "2.2.4"; //Version
 
 /* Append sa11y.css */
 const sa11ycss = document.createElement("link");

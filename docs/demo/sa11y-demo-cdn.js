@@ -3,7 +3,7 @@
 /* FOR LOCAL DEVELOPMENT: Switch to false. */
 
 const production = true;
-const v = "2.2.3"; //Version
+const v = "2.2.4"; //Version
 
 /* FOR LOCAL DEVELOPMENT: Switch to false. */
 /* FOR LOCAL DEVELOPMENT: Switch to false. */
@@ -14,7 +14,7 @@ const webV = document.getElementById("v");
 webV.innerHTML = v;
 
 //Demo page styling.
-const bodyheader = document.getElementsByTagName("head")[0]; 
+const bodyheader = document.getElementsByTagName("head")[0];
 const style = document.createElement("link");
 const url = window.location.href;
 
@@ -56,7 +56,7 @@ if (production === false) {
         } else {
             sa11yDevEnglish.src = "../../../src/lang/en.js";
         }
-        
+
         document.body.appendChild(sa11yDevEnglish);
 
         sa11yDevEnglish.onload = sa11yDevEnglish.onreadystatechange = function () {

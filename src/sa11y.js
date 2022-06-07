@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------------
-* Sa11y, the accessibility quality assurance assistant.    
-* @version: 2.2.3            
+* Sa11y, the accessibility quality assurance assistant.
+* @version: 2.2.4
 * @author: Development led by Adam Chaboryk, CPWA
 * @acknowledgements: https://sa11y.netlify.app/acknowledgements/
 * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
@@ -79,7 +79,7 @@ class Sa11y {
 		const M = sa11yLang;
 
 		this.initialize = () => {
-			
+
 			//Do not run Sa11y if any supplied elements detected on page.
 			const checkRunPrevent = () => {
 				return options.doNotRun.trim().length > 0 ? document.querySelector(options.doNotRun) : false;
@@ -95,14 +95,13 @@ class Sa11y {
 			};
 
 			if (!checkRunPrevent()) {
-				//Put before document.ready because of CSS flicker when dark mode is enabled.
-				this.buildSa11yUI();
-				this.settingPanelToggles();
 				this.globals();
 				this.utilities();
 
 				//Once document has fully loaded.
 				documentLoadingCheck(() => {
+					this.buildSa11yUI();
+					this.settingPanelToggles();
 					this.mainToggle();
 					this.skipToIssueTooltip();
 					this.detectPageChanges();
@@ -111,7 +110,7 @@ class Sa11y {
 					if (typeof Sa11yCustomChecks !== 'undefined') {
 						this.customChecks = new Sa11yCustomChecks;
 					}
-					
+
 					//Check page once page is done loading.
 					document.getElementById("sa11y-toggle").disabled = false;
 					if (localStorage.getItem("sa11y-remember-panel") === "Closed" || !localStorage.getItem("sa11y-remember-panel")) {
@@ -149,7 +148,7 @@ class Sa11y {
 
 				//Main toggle button.
 				`<button type="button" aria-expanded="false" id="sa11y-toggle" aria-describedby="sa11y-notification-badge" aria-label="${M["MAIN_TOGGLE_LABEL"]}" disabled>
-                    ${MainToggleIcon} 
+                    ${MainToggleIcon}
                     <div id="sa11y-notification-badge">
                         <span id="sa11y-notification-count"></span>
                     </div>
@@ -183,14 +182,14 @@ class Sa11y {
                     <h2 tabindex="-1">${M["SETTINGS"]}</h2>
                 </div>
                 <div id="sa11y-settings-content">
-                    <ul id="sa11y-settings-options"> 
+                    <ul id="sa11y-settings-options">
                         <li id="sa11y-contrast-li">
                             <label id="sa11y-check-contrast" for="sa11y-contrast-toggle">
 								${M["CONTRAST"]}
 							</label>
-                            <button id="sa11y-contrast-toggle" 
-                            aria-labelledby="sa11y-check-contrast" 
-                            class="sa11y-settings-switch" 
+                            <button id="sa11y-contrast-toggle"
+                            aria-labelledby="sa11y-check-contrast"
+                            class="sa11y-settings-switch"
                             aria-pressed="${
                                 loadContrastPreference ? "true" : "false"
                             }">${loadContrastPreference ? M["ON"] : M["OFF"]}</button>
@@ -199,16 +198,16 @@ class Sa11y {
                             <label id="sa11y-check-labels" for="sa11y-labels-toggle">
 								${M["FORM_LABELS"]}
 							</label>
-                            <button id="sa11y-labels-toggle" aria-labelledby="sa11y-check-labels" class="sa11y-settings-switch" 
+                            <button id="sa11y-labels-toggle" aria-labelledby="sa11y-check-labels" class="sa11y-settings-switch"
                             aria-pressed="${
                                 loadLabelsPreference ? "true" : "false"
                             }">${loadLabelsPreference ? M["ON"] : M["OFF"]}</button>
-                        </li> 
+                        </li>
                         <li id="sa11y-links-advanced-li">
                             <label id="check-changerequest" for="sa11y-links-advanced-toggle">
 								${M["LINKS_ADVANCED"]} <span class="sa11y-badge">AAA</span>
 							</label>
-                            <button id="sa11y-links-advanced-toggle" aria-labelledby="check-changerequest" class="sa11y-settings-switch" 
+                            <button id="sa11y-links-advanced-toggle" aria-labelledby="check-changerequest" class="sa11y-settings-switch"
                             aria-pressed="${
                                 loadChangeRequestPreference ? "true" : "false"
                             }">${loadChangeRequestPreference ? M["ON"] : M["OFF"]}</button>
@@ -217,7 +216,7 @@ class Sa11y {
                             <label id="check-readability" for="sa11y-readability-toggle">
 								${M["LANG_READABILITY"]} <span class="sa11y-badge">AAA</span>
 							</label>
-                            <button id="sa11y-readability-toggle" aria-labelledby="check-readability" class="sa11y-settings-switch" 
+                            <button id="sa11y-readability-toggle" aria-labelledby="check-readability" class="sa11y-settings-switch"
                             aria-pressed="${
                                 loadReadabilityPreference ? "true" : "false"
                             }">${loadReadabilityPreference ? M["ON"] : M["OFF"]}</button>
@@ -261,7 +260,7 @@ class Sa11y {
                 <button type="button" role="tab" aria-expanded="false" id="sa11y-settings-toggle" aria-controls="sa11y-settings-panel">
                     ${M["SHOW_SETTINGS"]}
                 </button>
-                <div style="width:40px;"></div> 
+                <div style="width:40px;"></div>
             </div>` +
 
 			//End of main container.
@@ -529,7 +528,7 @@ class Sa11y {
 						returnText = imgalt;
 					}
 				}
-				//Has image and text. 
+				//Has image and text.
 				//To-do: This is a hack? Any way to do this better?
 				else if (imgArray.length && $el.textContent.trim().length) {
 					imgArray.forEach(element => {
@@ -539,7 +538,7 @@ class Sa11y {
 				}
 				return returnText;
 			}
-			
+
 			//Utility: https://www.joshwcomeau.com/snippets/javascript/debounce/
 			Sa11y.debounce = (callback, wait) => {
 				let timeoutId = null;
@@ -586,7 +585,7 @@ class Sa11y {
 				} else if (Array.from(el.children).filter(x => x.matches("[aria-label]")).length > 0) {
 					let child = Array.from(el.childNodes);
 					let returnText = "";
-					
+
 					// Process each child within node.
 					child.forEach((x) => {
 						if (x.nodeType === 1) {
@@ -643,7 +642,7 @@ class Sa11y {
 				return null;
 			};
 
-			//Mini function: Calculate top of element. 
+			//Mini function: Calculate top of element.
 			Sa11y.offsetTop = ($el) => {
 				let rect = $el.getBoundingClientRect(),
 					scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -1370,7 +1369,7 @@ class Sa11y {
 						} else {
 							return $el = Sa11y.offsetTop(parentNode).top - 150;
 						}
-					} 
+					}
 				} else {
 					removeAlert();
 					return $el = Sa11y.offsetTop($el).top - 150;
@@ -1400,7 +1399,7 @@ class Sa11y {
 				let $el = $findButtons[i];
 				let scrollPos = scrollPosition($el);
 				window.scrollTo({
-					top: scrollPos, 
+					top: scrollPos,
 					behavior: scrollBehavior
 				});
 				if (i >= findSa11yBtn - 1) {
@@ -1417,7 +1416,7 @@ class Sa11y {
 				if (!!$el) {
 					let scrollPos = scrollPosition($el);
 					window.scrollTo({
-						top: scrollPos, 
+						top: scrollPos,
 						behavior: scrollBehavior
 					});
 					hiddenParent();
@@ -1569,16 +1568,16 @@ class Sa11y {
 				<div class=${inline ? "sa11y-instance-inline" : "sa11y-instance"}>
 					<button
 					data-sa11y-annotation
-					type="button"   
-					aria-label="${[type]}" 
-					class="sa11y-btn 
-					sa11y-${CSSName[type]}-btn${inline ? "-text" : ""}" 
+					type="button"
+					aria-label="${[type]}"
+					class="sa11y-btn
+					sa11y-${CSSName[type]}-btn${inline ? "-text" : ""}"
 					data-tippy-content="<div lang='${M["LANG_CODE"]}'>
 						<div class='sa11y-header-text'>${[type]}
 						</div>
-						${content} 
+						${content}
 					</div>
-				"> 
+				">
 				</button>
 				</div>`;
 		};
@@ -1658,7 +1657,7 @@ class Sa11y {
 
 				let li =
 					`<li class='sa11y-outline-${level}'>
-                    <span class='sa11y-badge'>${level}</span> 
+                    <span class='sa11y-badge'>${level}</span>
                     <span class='sa11y-outline-list-item'>${htext}</span>
                 </li>`;
 
@@ -1666,7 +1665,7 @@ class Sa11y {
 					`<li class='sa11y-outline-${level}'>
                     <span class='sa11y-badge sa11y-error-badge'>
                     <span aria-hidden='true'>&#10007;</span>
-                    <span class='sa11y-visually-hidden'>${M["ERROR"]}</span> ${level}</span> 
+                    <span class='sa11y-visually-hidden'>${M["ERROR"]}</span> ${level}</span>
                     <span class='sa11y-outline-list-item sa11y-red-text sa11y-bold'>${htext}</span>
                 </li>`;
 
@@ -1674,7 +1673,7 @@ class Sa11y {
 					`<li class='sa11y-outline-${level}'>
                     <span class='sa11y-badge sa11y-warning-badge'>
                     <span aria-hidden='true'>&#x3f;</span>
-                    <span class='sa11y-visually-hidden'>${M["WARNING"]}</span> ${level}</span> 
+                    <span class='sa11y-visually-hidden'>${M["WARNING"]}</span> ${level}</span>
                     <span class='sa11y-outline-list-item sa11y-yellow-text sa11y-bold'>${htext}</span>
                 </li>`;
 
@@ -1723,7 +1722,7 @@ class Sa11y {
 
 				const updateH1Outline =
 					`<div class='sa11y-instance sa11y-missing-h1'>
-                    <span class='sa11y-badge sa11y-error-badge'><span aria-hidden='true'>&#10007;</span><span class='sa11y-visually-hidden'>${M["ERROR"]}</span></span> 
+                    <span class='sa11y-badge sa11y-error-badge'><span aria-hidden='true'>&#10007;</span><span class='sa11y-visually-hidden'>${M["ERROR"]}</span></span>
                     <span class='sa11y-red-text sa11y-bold'>${M["PANEL_HEADING_MISSING_ONE"]}</span>
                 </div>`
 				document.getElementById("sa11y-outline-header").insertAdjacentHTML("afterend", updateH1Outline);
@@ -1842,7 +1841,7 @@ class Sa11y {
 						.replace(/[!*?↣↳→↓»↴]/g, '') //Remove CTA characters
 						.trim()
 					);
-					
+
 				if (el.querySelectorAll('img').length) {
 					// Do nothing. Don't overlap with Alt Text module.
 				}
@@ -1933,7 +1932,7 @@ class Sa11y {
 					//Plain text content.
 					linkText = el.textContent.trim();
 
-					//If an image exists within the link. 
+					//If an image exists within the link.
 					if ($img) {
 
 						//Check if there's aria on the image.
@@ -2171,8 +2170,8 @@ class Sa11y {
 						if ($el.closest("figure")) {
 							const figcaption = $el.closest("figure").querySelector("figcaption");
 
-							if (!!figcaption && 
-								(figcaption.textContent.trim().toLowerCase() ===  
+							if (!!figcaption &&
+								(figcaption.textContent.trim().toLowerCase() ===
 								altText.trim().toLowerCase())
 							) {
 								Sa11y.warningCount++;
@@ -2340,7 +2339,7 @@ class Sa11y {
 					} else if ($el.getAttribute("title") === null || $el.getAttribute("title") === '') {
 						if ($el.getAttribute("aria-label") === null || $el.getAttribute("aria-label") === '') {
 							if ($el.getAttribute("aria-labelledby") === null) {
-								//Make sure red error border takes precedence 
+								//Make sure red error border takes precedence
 								if ($el.classList.contains("sa11y-warning-border")) {
 									$el.classList.remove("sa11y-warning-border");
 								}
@@ -2526,7 +2525,7 @@ class Sa11y {
 			}
 
 			// Warning: Detect paragraphs that should be lists.
-			// Thanks to John Jameson from PrincetonU for this ruleset! 
+			// Thanks to John Jameson from PrincetonU for this ruleset!
 			if (options.fakeListQA === true) {
 				Sa11y.$p.forEach($el => {
 					let activeMatch = "";
@@ -2598,7 +2597,7 @@ class Sa11y {
 				});
 			}
 
-			//Warning: Detect uppercase. 
+			//Warning: Detect uppercase.
 			if (options.allCapsQA === true) {
 				Sa11y.$allCaps.forEach($el => {
 					let uppercasePattern = /(?!<a[^>]*?>)(\b[A-Z][',!:A-Z\s]{15,}|\b[A-Z]{15,}\b)(?![^<]*?<\/a>)/g;
@@ -2662,8 +2661,8 @@ class Sa11y {
 				if (!$title || $title.textContent.trim().length == 0) {
 					Sa11y.errorCount++;
 					Sa11y.panel.insertAdjacentHTML(
-						"afterend", 
-						Sa11y.annotateBanner(M["ERROR"], 
+						"afterend",
+						Sa11y.annotateBanner(M["ERROR"],
 						M["QA_PAGE_TITLE"])
 					);
 				}
@@ -2975,21 +2974,21 @@ class Sa11y {
 				//WCAG AAA pass if greater than 60
 				if (fleschScore >= 0 && fleschScore < 30) {
 					$readabilityinfo.innerHTML =
-						`<span>${fleschScore}</span> 
+						`<span>${fleschScore}</span>
 						<span class="sa11y-readability-score">${M["LANG_VERY_DIFFICULT"]}</span>`;
 
 				} else if (fleschScore > 31 && fleschScore < 49) {
 					$readabilityinfo.innerHTML =
-						`<span>${fleschScore}</span> 
+						`<span>${fleschScore}</span>
 						<span class="sa11y-readability-score">${M["LANG_DIFFICULT"]}</span>`;
 
 				} else if (fleschScore > 50 && fleschScore < 60) {
 					$readabilityinfo.innerHTML =
-						`<span>${fleschScore}</span> 
+						`<span>${fleschScore}</span>
 						<span class="sa11y-readability-score">${M["LANG_FAIRLY_DIFFICULT"]}</span>`;
 				} else {
 					$readabilityinfo.innerHTML =
-						`<span>${fleschScore}</span> 
+						`<span>${fleschScore}</span>
 						<span class="sa11y-readability-score">${M["LANG_GOOD"]}</span>`;
 				}
 
