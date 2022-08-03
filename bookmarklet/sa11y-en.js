@@ -24,7 +24,8 @@ combine.src = `https://cdn.jsdelivr.net/combine/gh/ryersondmp/sa11y@${v}/dist/js
 
 document.body.appendChild(combine);
 combine.onload = combine.onreadystatechange = function() {
-    new Sa11y({
-        detectSPArouting: true
+    Sa11y.Lang.addI18n(Sa11yLangEn.strings);
+    new Sa11y.Sa11y({
+        detectSPArouting: true,
     });
 };
