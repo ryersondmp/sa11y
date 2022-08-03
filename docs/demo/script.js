@@ -1,4 +1,5 @@
 import { Sa11y, Lang } from '../assets/js/sa11y.esm.js';
+import CustomChecks from '../assets/js/sa11y-custom-checks.esm.js';
 
 // Translations
 import Sa11yLangEn from '../assets/js/lang/en.js';
@@ -25,6 +26,7 @@ if (url.indexOf("pl") > -1) {
 
 // Instantiate
 const sa11y = new Sa11y({
+  customChecks: new CustomChecks,
   checkRoot: "body",
   readabilityRoot: "main",
   containerIgnore: 'footer',

@@ -163,8 +163,25 @@
     integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous">
   </script>
 
- <!-- Sa11y -->
-  <script type="module" src="../script.js"></script>
+<!-- Sa11y - Module -->
+<!--<script type="module" src="../script.js"></script>-->
+
+<!-- Sa11y - Regular script -->
+<script src="/dist/js/sa11y.umd.min.js"></script>
+<script src="/dist/js/lang/en.umd.js"></script>
+<script>
+  // Instantiate
+  Sa11y.Lang.addI18n(Sa11yLangEn.strings);
+  const sa11y = new Sa11y.Sa11y({
+    checkRoot: "body",
+    readabilityRoot: "main",
+    containerIgnore: 'footer',
+    linksToFlag: "a[href^='https://www.dev.']",
+    linkIgnoreSpan: '.sr-only-example',
+    detectSPArouting: true,
+  });
+</script>
+
 </body>
 
 </html>

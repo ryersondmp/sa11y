@@ -19,7 +19,6 @@ sa11ycss.setAttribute("type", "text/css");
 const bodyheader = document.getElementsByTagName("head")[0];
 bodyheader.appendChild(sa11ycss);
 
-/* Queue Poppers.js, Tippy.js, and Sa11y. Thanks to JSDeliver for this cool combine feature! */
 const combine = document.createElement("script");
 combine.src = `https://cdn.jsdelivr.net/combine/gh/ryersondmp/sa11y@${v}/dist/js/lang/fr.js,gh/ryersondmp/sa11y@${v}/dist/js/sa11y.esm.min.js`;
 

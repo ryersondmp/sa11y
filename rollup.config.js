@@ -76,9 +76,9 @@ export default [
       }),
     ],
     output: [
-      { file: 'dist/js/sa11y-custom-checks.umd.js', format: 'umd', name: 'Sa11yCustomChecks' },
+      { file: 'dist/js/sa11y-custom-checks.umd.js', format: 'umd', name: 'CustomChecks' },
       {
-        file: 'dist/js/sa11y-custom-checks.umd.min.js', format: 'umd', name: 'Sa11yCustomChecks', plugins: [terser()],
+        file: 'dist/js/sa11y-custom-checks.umd.min.js', format: 'umd', name: 'CustomChecks', plugins: [terser()],
       },
     ],
   },
