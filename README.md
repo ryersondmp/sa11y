@@ -58,11 +58,11 @@ To install on your website, insert Sa11y right before the closing </body> tag. S
 <link rel="stylesheet" href="css/sa11y.css"/>
 
 <!-- JavaScript -->
-<script src="/dist/js/sa11y.umd.min.js" defer></script>
-<script src="/dist/js/lang/en.umd.js" defer></script>
+<script src="/dist/js/sa11y.umd.min.js"></script>
+<script src="/dist/js/lang/en.umd.js"></script>
 
 <!-- Optional: Custom checks -->
-<script src="/dist/js/sa11y-custom-checks.umd.min.js" defer></script>
+<script src="/dist/js/sa11y-custom-checks.umd.min.js"></script>
 
 <!-- Instantiate -->
 <script>
