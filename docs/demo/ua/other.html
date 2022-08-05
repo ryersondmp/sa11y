@@ -4,11 +4,14 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Інший - Sa11y Демо</title>
-  
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
   <meta name="theme-color" content="#7952b3">
+  <link rel="shortcut icon" type="image/jpg" href="../assets/favicon.ico"/>
+  <link href="../assets/main.css" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/sa11y.min.css"/>
 </head>
 <body>
   <header>
@@ -83,7 +86,7 @@
                 <div class="example h-100">
                   <h4>iFrame з джерелом відео</h4>
                   <div class="ratio ratio-16x9">
-                    
+
 				<iframe class="embed-responsive" width="560" height="315" src="https://www.youtube.com/embed/HgzGwKwLmgM" title="Королева - Не зупиняй мене зараз." frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
                   </div>
                 </div>
@@ -92,7 +95,7 @@
                 <div class="example h-100">
                   <h4>Відео не має <code>&lt;track&gt;</code>елемента</h4>
                   <div class="ratio ratio-16x9">
-                    
+
 				<video width="320" height="240" controls="" class="">
                       <source src="https://www.w3schools.com/html/movie.mp4" type="video/mp4">
                       <source src="https://www.w3schools.com/html/movie.ogg" type="video/ogg">
@@ -122,7 +125,7 @@
                 <div class="example h-100">
                   <h4>iFrame з джерелом звуку</h4>
                   <div class="ratio ratio-16x9">
-                    
+
 				<iframe title="Віджет SoundCloud" width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/158888399&amp;color=%23ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;show_teaser=true&amp;visual=true" class=""></iframe>
                   </div>
                 </div>
@@ -130,7 +133,7 @@
               <div class="col-md-6">
                 <div class="example h-100">
                   <h4><code>&lt;audio&gt;</code>джерело</h4>
-                  
+
 				<audio controls="" class="">
                     <source src="https://www.w3schools.com/html/horse.ogg" type="audio/ogg">
                     <source src="https://www.w3schools.com/html/horse.mp3" type="audio/mpeg">
@@ -152,7 +155,7 @@
                   <a class="twitter-timeline" title="Tweets by TwitterDev" data-height="300" data-width="330"
                     href="https://twitter.com/TwitterDev?ref_src=twsrc%5Etfw"><span class="sr-only">Tweets by
                       TwitterDev</span></a>
-                      
+
                 </div>
               </div>
               <div class="col-md-4">
@@ -180,8 +183,8 @@
               <div class="col-md-6">
                 <div class="example h-100">
                   <h3 class="h5">Відсутня назва на iFrame</h3>
-                  
-				
+
+
 				<iframe loading="lazy" width="100%" height="315" src="https://www.youtube.com/embed/yMDOin3yWhU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" class=""></iframe>
                 </div>
               </div>
@@ -202,7 +205,7 @@
 
             <h2 id="list-item-4" class="pt-3">Виявлення змін URL</h2>
             <p>Це не набір правил. Це демонстрація чудової функції для пошуку помилок або попереджень після виявлення
-              
+
 				 зміни URL-адреси на тій самій сторінці. Наприклад, односторінкові програми (SPA). Посилання без опису буде додано до сторінки через 1 секунду після повного завантаження сторінки. Спочатку він не отримає позначку про помилку.</p>
             <p><strong>Щоб перевірити:</strong> дочекайтеся завантаження посилання «натисніть тут». Потім натисніть будь-яке з навігаційних посилань бічної панелі. Тоді це буде позначено як помилка.</p>
             <div class="row">
@@ -250,8 +253,8 @@
   <script async="" defer="" crossorigin="anonymous"
     src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v11.0" nonce="erE7GmIs"></script>
 
-  <!--To easily switch between production and development mode.-->
-  <script src="../sa11y-demo-cdn.js"></script>
+ <!-- Sa11y -->
+  <script type="module" src="../script.js"></script>
 
 </body>
 

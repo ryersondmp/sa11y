@@ -5,10 +5,13 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Other - Sa11y Demo</title>
-  
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <meta name="theme-color" content="#7952b3">
+  <link rel="shortcut icon" type="image/jpg" href="../assets/favicon.ico"/>
+  <link href="../assets/main.css" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/sa11y.min.css"/>
 </head>
 
 <body>
@@ -211,9 +214,7 @@
             <hr class="mt-5">
 
             <h2 id="list-item-4" class="pt-3">Detecting URL changes</h2>
-            <p>This is not a ruleset. This is a demo of a nifty feature to find errors or warnings after detecting a URL
-              change on the same page. For example, single page applications (SPA). A non-descript link will be appended
-              to the page 1 second after the page is fully loaded. It will not recieve an error flag initially.</p>
+            <p>This is not a ruleset. This is a demo of a nifty feature to find errors or warnings after detecting a URL change on the same page. For example, single page applications (SPA). A non-descript link will be appended to the page 1 second after the page is fully loaded. It will not recieve an error flag initially.</p>
             <p><strong>To test:</strong> Wait for the "click here" link to load. Then click on any of the sidebar
               navigation links. It will then get flagged as an error.</p>
             <div class="row">
@@ -262,8 +263,8 @@
   <script async="" defer="" crossorigin="anonymous"
     src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v11.0" nonce="erE7GmIs"></script>
 
-  <!--To easily switch between production and development mode.-->
-  <script src="../sa11y-demo-cdn.js"></script>
+ <!-- Sa11y -->
+  <script type="module" src="../script.js"></script>
 
 </body>
 

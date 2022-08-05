@@ -8,24 +8,24 @@
 * The above copyright notice shall be included in all copies or substantial portions of the Software.
 ------------------------------------------------------------------------*/
 
-const v = "2.2.4"; //Version
+const version = "2.3.0"; //Version
 
 /* Append sa11y.css */
 const sa11ycss = document.createElement("link");
 sa11ycss.setAttribute("rel", "stylesheet");
-sa11ycss.setAttribute("href", `https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@${v}/src/sa11y.min.css`);
+sa11ycss.setAttribute("href", `https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@${version}/dist/css/sa11y.min.css`);
 sa11ycss.setAttribute("type", "text/css");
 
 const bodyheader = document.getElementsByTagName("head")[0];
 bodyheader.appendChild(sa11ycss);
 
-/* Queue Poppers.js, Tippy.js, and Sa11y. Thanks to JSDeliver for this cool combine feature! */
 const combine = document.createElement("script");
-combine.src = `https://cdn.jsdelivr.net/combine/npm/@popperjs/core@2/dist/umd/popper.min.js,npm/tippy.js@6/dist/tippy.umd.min.js,gh/ryersondmp/sa11y@${v}/src/lang/en.min.js,gh/ryersondmp/sa11y@${v}/src/sa11y.min.js`;
+combine.src = `https://cdn.jsdelivr.net/combine/gh/ryersondmp/sa11y@${version}/dist/js/lang/en.umd.js,gh/ryersondmp/sa11y@${version}/dist/js/sa11y.umd.min.js`;
 
 document.body.appendChild(combine);
 combine.onload = combine.onreadystatechange = function() {
-    new Sa11y({
-        detectSPArouting: true
+    Sa11y.Lang.addI18n(Sa11yLangEn.strings);
+    new Sa11y.Sa11y({
+        detectSPArouting: true,
     });
 };

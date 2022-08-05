@@ -4,11 +4,14 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Можливість перемикання - Sa11y Демо</title>
-  
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
   <meta name="theme-color" content="#7952b3">
+  <link rel="shortcut icon" type="image/jpg" href="../assets/favicon.ico"/>
+  <link href="../assets/main.css" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/sa11y.min.css"/>
 </head>
 <body>
   <header>
@@ -72,11 +75,11 @@
           <div class="example">
             <div class="row">
               <div class="col-md-6">
-                
+
 				<p style="color: coral">Цей колір не підходить для нормального розміру.</p>
               </div>
               <div class="col-md-6">
-                
+
 				<p style="color: aqua">
                   <script>
                     document.write("Generated via document.write()")
@@ -88,20 +91,20 @@
 
           <h3>Великий текст</h3>
           <div class="example">
-            
+
 				<h4 style="color:coral;font-size:1.5em">Цей колір також не підходить для великого розміру.</h4>
           </div>
 
           <h3>Введення тексту</h3>
           <div class="example">
             <label for="contrastinput">Ім'я</label>
-            
+
 				<input id="contrastinput" type="text" style="color:coral">
           </div>
 
           <h3>Фонові зображення</h3>
           <div class="example">
-            
+
 				<h4 class="background-image white" style="color:white">Текст на фоновому зображенні потребує ручної перевірки</h4>
           </div>
 
@@ -113,14 +116,14 @@
           <h4>Введіть без мітки або відсутні<code>id</code></h4>
           <div class="example">
             <input type="text" class="">
-				
+
           </div>
 
           <h4>Введіть із ідентифікатором, хоча мітка не має <code>for</code>атрибута</h4>
           <div class="example">
             <label>Ім'я</label>
             <input type="text" id="asdfg" class="">
-				
+
           </div>
 
           <h4>Неявні мітки без тексту</h4>
@@ -128,7 +131,7 @@
           <div class="example">
             <label>
               <input type="text" class="">
-				
+
             </label>
           </div>
 
@@ -136,7 +139,7 @@
           <div class="example">
             <label>Зворотній зв'язок</label>
             <textarea rows="2" cols="50" class=""></textarea>
-				
+
           </div>
 
           <h4><code>&lt;select&gt;</code>без етикетки</h4>
@@ -148,14 +151,14 @@
               <option value="mercedes">Мерседес</option>
               <option value="audi">Audi</option>
             </select>
-				
+
           </div>
 
           <h4>Введіть де <code>type="image"</code>, не має доступного імені</h4>
           <div class="example">
             <label for="q">Пошук:</label>
             <input type="text" id="q"><input type="image" alt=" " width="20" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Vector_search_icon.svg/1280px-Vector_search_icon.svg.png" class="">
-				
+
           </div>
 
           <h3>Попередження</h3>
@@ -165,17 +168,17 @@
               <div class="col-md-4">
                 <h5>aria-label</h5>
                 <input aria-label="Ім'я" id="vv" type="text" class="">
-				
+
               </div>
               <div class="col-md-4">
                 <h5>aria-labelledby</h5>
                 <input aria-labelledby="vv" type="text" class="">
-				
+
               </div>
               <div class="col-md-4">
                 <h5>title</h5>
                 <input type="text" title="Номер телефону" class="">
-				
+
               </div>
             </div>
           </div>
@@ -183,7 +186,7 @@
           <h4>Input that is <code>type='reset'</code></h4>
           <div class="example">
             <input type="reset" class="">
-				
+
           </div>
 
           <h3>Pass</h3>
@@ -237,7 +240,7 @@
             <ul>
               <li>Plain text: <a href="#" target="_blank" class="">Feedback</a>
 				</li>
-              <li>ARIA label: 
+              <li>ARIA label:
 				<a href="#" target="_blank" aria-label="Bootstrap" class=""><i class="bi bi-bootstrap-fill"></i></a>
 				</li>
               <li>Empty link with title attribute: <a href="#" title="Магазин" target="_blank" class=""><i class="bi bi-shop"></i></a>
@@ -249,9 +252,9 @@
           <div class="example">
             <ul>
               <li>Plain text: <a href="#" target="_blank">Feedback (opens new tab)</a></li>
-              <li>ARIA label: 
+              <li>ARIA label:
 				<a href="#" target="_blank" aria-label="Bootstrap (відкриває нову вкладку)"><i class="bi bi-bootstrap-fill"></i></a></li>
-              <li>Child with ARIA label: 
+              <li>Child with ARIA label:
 				<a href="#" target="_blank">Feedback <i aria-label="(Відкриває нову вкладку)" class="bi bi-box-arrow-up-right"></i></a></li>
               <li>Empty link with title attribute: <a href="#" title="Магазин (Відкриває нову вкладку)" target="_blank"><i class="bi bi-shop"></i></a></li>
             </ul>
@@ -276,8 +279,8 @@
             <div class="col-md-4">
               <div class="example">
                 <p>Та сама назва посилання, але різні розташування:
-                  
-				<a href="https://www.github.com" aria-label="GitHub"><i class="bi bi-github"></i></a>і 
+
+				<a href="https://www.github.com" aria-label="GitHub"><i class="bi bi-github"></i></a>і
 				<a href="https://bitbucket.org/" aria-label="GitHub" class=""><i class="bi bi-github"></i></a>
 				</p>
               </div>
@@ -288,7 +291,7 @@
           <div class="row">
             <div class="col-md-4">
               <div class="example">
-                
+
 				<a href="#asd.zip" class="">Брендингові активи</a>
               </div>
             </div>
@@ -299,7 +302,7 @@
             </div>
             <div class="col-md-4">
               <div class="example">
-                
+
 				<a href="#asd.zip">Брендингові активи<i aria-label="(.zip)" class="bi bi-file-earmark-zip"></i></a>
               </div>
             </div>
@@ -319,8 +322,8 @@
     integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous">
   </script>
 
-  <!--To easily switch between production and development mode.-->
-  <script src="../sa11y-demo-cdn.js"></script>
+ <!-- Sa11y -->
+  <script type="module" src="../script.js"></script>
 </body>
 
 </html>

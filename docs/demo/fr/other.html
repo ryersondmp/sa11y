@@ -11,6 +11,9 @@
       integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
     <meta name="theme-color" content="#7952b3">
+    <link rel="shortcut icon" type="image/jpg" href="../assets/favicon.ico"/>
+    <link href="../assets/main.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../assets/css/sa11y.min.css"/>
 </head>
 <body>
   <header>
@@ -85,7 +88,7 @@
                 <div class="example h-100">
                   <h4>iFrame avec source vidéo</h4>
                   <div class="ratio ratio-16x9">
-                    
+
                     <iframe class="embed-responsive" width="560" height="315"
                     src="https://www.youtube.com/embed/HgzGwKwLmgM" title="Queen - Don't stop me now." frameborder="0"
                     allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
@@ -97,7 +100,7 @@
                 <div class="example h-100">
                   <h4>La vidéo n'a pas d' <code>&lt;track&gt;</code>élément</h4>
                   <div class="ratio ratio-16x9">
-                    
+
 				<video width="320" height="240" controls="" class="">
                       <source src="https://www.w3schools.com/html/movie.mp4" type="video/mp4">
                       <source src="https://www.w3schools.com/html/movie.ogg" type="video/ogg">
@@ -127,7 +130,7 @@
                 <div class="example h-100">
                   <h4>iFrame avec source audio</h4>
                   <div class="ratio ratio-16x9">
-                    
+
                     <iframe title="SoundCloud widget" width="100%" height="300" scrolling="no" frameborder="no"
                     allow="autoplay"
                     src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/158888399&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
@@ -137,7 +140,7 @@
               <div class="col-md-6">
                 <div class="example h-100">
                   <h4><code>&lt;audio&gt;</code>la source</h4>
-                  
+
 				<audio controls="" class="">
                     <source src="https://www.w3schools.com/html/horse.ogg" type="audio/ogg">
                     <source src="https://www.w3schools.com/html/horse.mp3" type="audio/mpeg">
@@ -186,8 +189,8 @@
               <div class="col-md-6">
                 <div class="example h-100">
                   <h3 class="h5">Missing title on iFrame</h3>
-                  
-				
+
+
 				          <iframe loading="lazy" width="100%" height="315" src="./other_files/yMDOin3yWhU.html" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" class=""></iframe>
                 </div>
               </div>
@@ -205,7 +208,7 @@
 
             <h2 id="list-item-4" class="pt-3">Detecting URL changes</h2>
             <p>This is not a ruleset. This is a demo of a nifty feature to find errors or warnings after detecting a URL
-              
+
 				change on the same page. For example, single page applications (SPA). A non-descript link will be appended
               to the page 1 second after the page is fully loaded. It will not recieve an error flag initially.</p>
             <p><strong>To test:</strong> Wait for the "click here" link to load. Then click on any of the sidebar
@@ -258,7 +261,7 @@
 
 
 <!--To easily switch between production and development mode.-->
-<script src="../sa11y-demo-cdn.js"></script>
+<script type="module" src="../script.js"></script>
 </body>
 
 </html>
