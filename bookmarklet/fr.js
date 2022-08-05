@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------------
 * Sa11y: the accessibility quality assurance assistant.
-* Bookmarklet: Ukrainian
+* Bookmarklet: French
 * @author: Development led by Adam Chaboryk, CPWA
 * @acknowledgements: https://sa11y.netlify.app/acknowledgements/
 * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
