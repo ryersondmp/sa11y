@@ -20,7 +20,7 @@ const bodyheader = document.getElementsByTagName("head")[0];
 bodyheader.appendChild(sa11ycss);
 
 const combine = document.createElement("script");
-combine.src = `https://cdn.jsdelivr.net/combine/gh/ryersondmp/sa11y@${version}/dist/js/lang/fr.js,gh/ryersondmp/sa11y@${version}/dist/js/sa11y.esm.min.js`;
+combine.src = `https://cdn.jsdelivr.net/combine/gh/ryersondmp/sa11y@${version}/dist/js/lang/fr.umd.js,gh/ryersondmp/sa11y@${version}/dist/js/sa11y.umd.min.js`;
 
 document.body.appendChild(combine);
 combine.onload = combine.onreadystatechange = function() {
