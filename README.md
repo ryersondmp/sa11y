@@ -29,6 +29,9 @@ To install on your website, insert Sa11y right before the closing </body> tag. S
 - **sa11y.js** - Contains all logic.
 - **(Optional) sa11y-custom-checks.js** - Any custom checks created by you.
 
+### NPM
+`npm i sa11y`
+
 ### Example installation (modules)
 ````
 <!-- Stylesheet -->
