@@ -9,7 +9,6 @@
 substantial portions of the Software.
 ------------------------------------------------------------------------*/
 import tippy from 'tippy.js';
-// import CustomChecks from './sa11y-custom-checks.js';
 
 /* Translation object */
 const Lang = {

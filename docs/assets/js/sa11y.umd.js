@@ -3304,7 +3304,6 @@
   * The above copyright notice shall be included in all copies or
   substantial portions of the Software.
   ------------------------------------------------------------------------*/
-  // import CustomChecks from './sa11y-custom-checks.js';
 
   /* Translation object */
   const Lang = {
