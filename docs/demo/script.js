@@ -12,6 +12,9 @@ const v = "2.3.0";
 const webV = document.getElementById("v");
 webV.innerHTML = v;
 
+// Custom checks for English demo pages only.
+let customChecks = false;
+
 // Set translations
 const url = window.location.href;
 if (url.indexOf("pl") > -1) {
@@ -22,13 +25,14 @@ if (url.indexOf("pl") > -1) {
   Lang.addI18n(Sa11yLangUa.strings);
 } else {
   Lang.addI18n(Sa11yLangEn.strings);
+  customChecks = new CustomChecks;
 }
 
 // Instantiate
 const sa11y = new Sa11y({
-  customChecks: new CustomChecks,
-  checkRoot: "body",
-  readabilityRoot: "main",
+  customChecks: customChecks,
+  checkRoot: 'body',
+  readabilityRoot: 'main',
   containerIgnore: 'footer',
   linksToFlag: "a[href^='https://www.dev.']",
   linkIgnoreSpan: '.sr-only-example',

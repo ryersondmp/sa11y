@@ -1181,16 +1181,6 @@ span.sa11y-heading-label {
     opacity: 0 !important;
   }
 }
-/*===== Tooltip additions ===== */
-.sa11y-hr {
-  padding: 0 !important;
-  margin: 10px 0 !important;
-  border: none !important;
-  background: var(--sa11y-panel-bg-splitter) !important;
-  height: 1px !important;
-  opacity: 1 !important;
-}
-
 /* ===== Fallback: Default Tippy.js styling. ==== */
 .tippy-box[data-animation=fade][data-state=hidden] {
   opacity: 0;
@@ -1361,6 +1351,15 @@ span.sa11y-heading-label {
 
 .tippy-box[data-theme~=sa11y-theme] strong {
   font-weight: 600 !important;
+}
+
+.tippy-box[data-theme~=sa11y-theme] hr {
+  padding: 0 !important;
+  margin: 10px 0 !important;
+  border: none !important;
+  background: var(--sa11y-panel-bg-splitter) !important;
+  height: 1px !important;
+  opacity: 1 !important;
 }
 
 .tippy-box[data-theme~=sa11y-theme] a:hover,

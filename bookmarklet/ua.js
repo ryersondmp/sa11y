@@ -8,23 +8,24 @@
 * The above copyright notice shall be included in all copies or substantial portions of the Software.
 ------------------------------------------------------------------------*/
 
-const v = "2.2.4"; //Version
+const version = "2.3.0"; //Version
 
 /* Append sa11y.css */
 const sa11ycss = document.createElement("link");
 sa11ycss.setAttribute("rel", "stylesheet");
-sa11ycss.setAttribute("href", `https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@${v}/dist/css/sa11y.min.css`);
+sa11ycss.setAttribute("href", `https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@${version}/dist/css/sa11y.min.css`);
 sa11ycss.setAttribute("type", "text/css");
 
 const bodyheader = document.getElementsByTagName("head")[0];
 bodyheader.appendChild(sa11ycss);
 
 const combine = document.createElement("script");
-combine.src = `https://cdn.jsdelivr.net/combine/gh/ryersondmp/sa11y@${v}/dist/js/lang/ua.js,gh/ryersondmp/sa11y@${v}/dist/js/sa11y.esm.min.js`;
+combine.src = `https://cdn.jsdelivr.net/combine/gh/ryersondmp/sa11y@${version}/dist/js/lang/ua.js,gh/ryersondmp/sa11y@${version}/dist/js/sa11y.esm.min.js`;
 
 document.body.appendChild(combine);
 combine.onload = combine.onreadystatechange = function() {
-    new Sa11y({
-        detectSPArouting: true
+    Sa11y.Lang.addI18n(Sa11yLangUa.strings);
+    new Sa11y.Sa11y({
+        detectSPArouting: true,
     });
 };

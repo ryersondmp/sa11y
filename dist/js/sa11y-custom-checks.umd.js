@@ -17,6 +17,7 @@
       /* Note: Strings should match language file. */
       const ERROR = 'Error';
       const WARNING = 'Warning';
+      // const GOOD = 'Good';
 
       /* Add custom rulesets below. */
 
