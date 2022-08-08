@@ -3296,7 +3296,7 @@
 
   /*-----------------------------------------------------------------------
   * Sa11y, the accessibility quality assurance assistant.
-  * @version: 2.3.0
+  * @version: 2.3.1
   * @author: Development led by Adam Chaboryk, CPWA
   * @acknowledgements: https://this.netlify.app/acknowledgements/
   * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
