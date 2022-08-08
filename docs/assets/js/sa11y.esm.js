@@ -3290,7 +3290,7 @@ tippy.setDefaultProps({
 
 /*-----------------------------------------------------------------------
 * Sa11y, the accessibility quality assurance assistant.
-* @version: 2.3.0
+* @version: 2.3.2
 * @author: Development led by Adam Chaboryk, CPWA
 * @acknowledgements: https://this.netlify.app/acknowledgements/
 * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
@@ -4348,7 +4348,6 @@ class Sa11y {
     // ============================================================
     this.updateBadge = () => {
       const totalCount = this.errorCount + this.warningCount;
-      const { warningCount } = Sa11y;
       const notifBadge = document.getElementById('sa11y-notification-badge');
       const notifCount = document.getElementById('sa11y-notification-count');
       const notifText = document.getElementById('sa11y-notification-text');
@@ -4358,7 +4357,7 @@ class Sa11y {
       } else if (this.warningCount > 0 && this.errorCount === 0) {
         notifBadge.style.display = 'flex';
         notifBadge.classList.add('sa11y-notification-badge-warning');
-        notifCount.innerText = `${warningCount}`;
+        notifCount.innerText = `${this.warningCount}`;
         notifText.innerText = `${Lang._('PANEL_ICON_WARNINGS')}`;
       } else {
         notifBadge.style.display = 'flex';
