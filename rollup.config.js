@@ -142,6 +142,20 @@ export default [
       { file: 'dist/js/lang/ua.umd.js', format: 'umd', name: 'Sa11yLangUa' },
     ],
   },
+  {
+    input: 'src/js/lang/sv.js',
+    plugins: [nodeResolve()],
+    output: [
+      { file: 'dist/js/lang/sv.js', format: 'esm' },
+    ],
+  },
+  {
+    input: 'src/js/lang/sv.js',
+    plugins: [nodeResolve()],
+    output: [
+      { file: 'dist/js/lang/sv.umd.js', format: 'umd', name: 'Sa11yLangSv' },
+    ],
+  },
   // SCSS files
   {
     input: 'src/scss/sa11y.scss',
