@@ -40,12 +40,12 @@ export declare class Sa11y {
     duplicateIdQA?: boolean;
     underlinedTextQA?: boolean;
     pageTitleQA?: boolean;
+		subscriptQA?: boolean;
   
     // Embedded content rulesets
     embeddedContentAll?: boolean;
     embeddedContentAudio?: boolean;
     embeddedContentVideo?: boolean;
-    embeddedContentTwitter?: boolean;
     embeddedContentDataViz?: boolean;
     embeddedContentTitles?: boolean;
     embeddedContentGeneral?: boolean;
@@ -186,7 +186,6 @@ export declare type Sa11yLang = {
     EMBED_VIDEO: string;
     EMBED_AUDIO: string;
     EMBED_DATA_VIZ: string;
-    EMBED_TWITTER: string;
     EMBED_MISSING_TITLE: string;
     EMBED_GENERAL_WARNING: string;
 
@@ -202,6 +201,7 @@ export declare type Sa11yLang = {
     QA_UPPERCASE_WARNING: string;
     QA_DUPLICATE_ID: string;
     QA_TEXT_UNDERLINE_WARNING: string;
+		QA_SUBSCRIPT_WARNING: string;
 
     // Tables
     TABLES_MISSING_HEADINGS: string;
