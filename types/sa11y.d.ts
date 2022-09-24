@@ -67,13 +67,13 @@ export declare const Lang: {
   translate(string: string): string
 };
 
-export const LangEn: Sa11yLang;
+export declare const LangEn: Sa11yLang;
 
-export const LangFr: Sa11yLang;
+export declare const LangFr: Sa11yLang;
 
-export const LangPl: Sa11yLang;
+export declare const LangPl: Sa11yLang;
 
-export const LangUa: Sa11yLang;
+export declare const LangUa: Sa11yLang;
 
 export declare type Sa11yLang = {
   strings: {
