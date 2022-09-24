@@ -1,11 +1,11 @@
 {
   "name": "sa11y",
-  "version": "2.3.2",
+  "version": "2.3.3",
   "description": "Sa11y is an accessibility quality assurance tool that visually highlights common accessibility and usability issues. Geared towards content authors, Sa11y straightforwardly identifies errors or warnings at the source with a simple tooltip on how to fix them.",
   "main": "./index.js",
   "types": "./types/sa11y.d.ts",
   "author": "Adam Chaboryk, Toronto Metropolitan University",
-  "email" : "adam.chaboryk@ryerson.ca",
+  "email": "adam.chaboryk@ryerson.ca",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ryersondmp/sa11y.git"
@@ -56,6 +56,7 @@
     "stylelint-scss": "^3.19.0"
   },
   "dependencies": {
+    "caniuse-lite": "^1.0.30001393",
     "tippy.js": "^6.3.7"
   }
 }

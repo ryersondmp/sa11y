@@ -3296,7 +3296,7 @@
 
   /*-----------------------------------------------------------------------
   * Sa11y, the accessibility quality assurance assistant.
-  * @version: 2.3.2
+  * @version: 2.3.3
   * @author: Development led by Adam Chaboryk, CPWA
   * @acknowledgements: https://this.netlify.app/acknowledgements/
   * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
@@ -3371,12 +3371,12 @@
         duplicateIdQA: true,
         underlinedTextQA: true,
         pageTitleQA: true,
+        subscriptQA: true,
 
         // Embedded content rulesets
         embeddedContentAll: true,
         embeddedContentAudio: true,
         embeddedContentVideo: true,
-        embeddedContentTwitter: true,
         embeddedContentDataViz: true,
         embeddedContentTitles: true,
         embeddedContentGeneral: true,
@@ -3385,10 +3385,9 @@
         videoContent: 'youtube.com, vimeo.com, yuja.com, panopto.com',
         audioContent: 'soundcloud.com, simplecast.com, podbean.com, buzzsprout.com, blubrry.com, transistor.fm, fusebox.fm, libsyn.com',
         dataVizContent: 'datastudio.google.com, tableau',
-        twitterContent: 'twitter-timeline',
         embeddedContent: '',
       };
-      defaultOptions.embeddedContent = `${defaultOptions.videoContent}, ${defaultOptions.audioContent}, ${defaultOptions.dataVizContent}, ${defaultOptions.twitterContent}`;
+      defaultOptions.embeddedContent = `${defaultOptions.videoContent}, ${defaultOptions.audioContent}, ${defaultOptions.dataVizContent}`;
 
       const option = {
         ...defaultOptions,
@@ -3435,7 +3434,7 @@
 
             // Check page once page is done loading.
             document.getElementById('sa11y-toggle').disabled = false;
-            if (localStorage.getItem('sa11y-remember-panel') === 'Closed' || !localStorage.getItem('sa11y-remember-panel')) {
+            if (this.store.getItem('sa11y-remember-panel') === 'Closed' || !this.store.getItem('sa11y-remember-panel')) {
               this.panelActive = true;
               this.checkAll();
             }
@@ -3453,10 +3452,10 @@
         sa11ycontainer.setAttribute('lang', Lang._('LANG_CODE'));
         sa11ycontainer.setAttribute('aria-label', Lang._('CONTAINER_LABEL'));
 
-        const loadContrastPreference = localStorage.getItem('sa11y-remember-contrast') === 'On';
-        const loadLabelsPreference = localStorage.getItem('sa11y-remember-labels') === 'On';
-        const loadChangeRequestPreference = localStorage.getItem('sa11y-remember-links-advanced') === 'On';
-        const loadReadabilityPreference = localStorage.getItem('sa11y-remember-readability') === 'On';
+        const loadContrastPreference = this.store.getItem('sa11y-remember-contrast') === 'On';
+        const loadLabelsPreference = this.store.getItem('sa11y-remember-labels') === 'On';
+        const loadChangeRequestPreference = this.store.getItem('sa11y-remember-links-advanced') === 'On';
+        const loadReadabilityPreference = this.store.getItem('sa11y-remember-readability') === 'On';
 
         sa11ycontainer.innerHTML = `<button type="button" aria-expanded="false" id="sa11y-toggle" aria-describedby="sa11y-notification-badge" aria-label="${Lang._('MAIN_TOGGLE_LABEL')}" disabled>
                     ${MainToggleIcon}
@@ -3474,7 +3473,7 @@
                     <h2 tabindex="-1">${Lang._('PAGE_OUTLINE')}</h2>
                 </div>
                 <div id="sa11y-outline-content">
-                    <ul id="sa11y-outline-list"></ul>
+                    <ul id="sa11y-outline-list" tabindex="0" role="list" aria-label="${Lang._('PAGE_OUTLINE')}"></ul>
                 </div>`
 
           // Readability tab.
@@ -3660,22 +3659,9 @@
           option.dataVizContent = 'datastudio.google.com, tableau';
         }
 
-        // Twitter timeline sources.
-        if (option.twitterContent) {
-          const twitterContent = option.twitterContent.split(/\s*[\s,]\s*/).map((el) => `[class*='${el}']`);
-          option.twitterContent = twitterContent.join(', ');
-        } else {
-          option.twitterContent = 'twitter-timeline';
-        }
-
         // Embedded content all
         if (option.embeddedContent) {
-          const embeddedContent = option.embeddedContent.split(/\s*[\s,]\s*/).map((el) => {
-            if (el === 'twitter-timeline') {
-              return `[class*='${el}']`;
-            }
-            return `[src*='${el}']`;
-          });
+          const embeddedContent = option.embeddedContent.split(/\s*[\s,]\s*/).map((el) => `[src*='${el}']`);
           option.embeddedContent = embeddedContent.join(', ');
         }
       };
@@ -3684,15 +3670,15 @@
         // Keeps checker active when navigating between pages until it is toggled off.
         const sa11yToggle = document.getElementById('sa11y-toggle');
         sa11yToggle.addEventListener('click', (e) => {
-          if (localStorage.getItem('sa11y-remember-panel') === 'Opened') {
-            localStorage.setItem('sa11y-remember-panel', 'Closed');
+          if (this.store.getItem('sa11y-remember-panel') === 'Opened') {
+            this.store.setItem('sa11y-remember-panel', 'Closed');
             sa11yToggle.classList.remove('sa11y-on');
             sa11yToggle.setAttribute('aria-expanded', 'false');
             this.resetAll();
             this.updateBadge();
             e.preventDefault();
           } else {
-            localStorage.setItem('sa11y-remember-panel', 'Opened');
+            this.store.setItem('sa11y-remember-panel', 'Opened');
             sa11yToggle.classList.add('sa11y-on');
             sa11yToggle.setAttribute('aria-expanded', 'true');
             this.checkAll();
@@ -3703,7 +3689,7 @@
         });
 
         // Remember to leave it open
-        if (localStorage.getItem('sa11y-remember-panel') === 'Opened') {
+        if (this.store.getItem('sa11y-remember-panel') === 'Opened') {
           sa11yToggle.classList.add('sa11y-on');
           sa11yToggle.setAttribute('aria-expanded', 'true');
         }
@@ -3717,15 +3703,7 @@
 
         document.onkeydown = (e) => {
           const evt = e || window.event;
-
-          // Escape key to shutdown.
-          let isEscape = false;
-          if ('key' in evt) {
-            isEscape = (evt.key === 'Escape' || evt.key === 'Esc');
-          } else {
-            isEscape = (evt.keyCode === 27);
-          }
-          if (isEscape && document.getElementById('sa11y-panel').classList.contains('sa11y-active')) {
+          if (evt.key === 'Escape' && document.getElementById('sa11y-panel').classList.contains('sa11y-active')) {
             sa11yToggle.setAttribute('aria-expanded', 'false');
             sa11yToggle.classList.remove('sa11y-on');
             sa11yToggle.click();
@@ -3918,6 +3896,29 @@
             top: rect.top + scrollTop,
           };
         };
+
+        // Utility: Custom localStorage utility with fallback to sessionStorage.
+        this.store = {
+          getItem(key) {
+            try {
+              if (localStorage.getItem(key) === null) {
+                return sessionStorage.getItem(key);
+              }
+              return localStorage.getItem(key);
+            } catch (error) {
+              // Cookies totally disabled.
+              return false;
+            }
+          },
+          setItem(key, value) {
+            try {
+              localStorage.setItem(key, value);
+            } catch (error) {
+              sessionStorage.setItem(key, value);
+            }
+            return true;
+          },
+        };
       };
 
       //----------------------------------------------------------------------
@@ -3927,14 +3928,14 @@
         // Toggle: Contrast
         const $contrastToggle = document.getElementById('sa11y-contrast-toggle');
         $contrastToggle.onclick = async () => {
-          if (localStorage.getItem('sa11y-remember-contrast') === 'On') {
-            localStorage.setItem('sa11y-remember-contrast', 'Off');
+          if (this.store.getItem('sa11y-remember-contrast') === 'On') {
+            this.store.setItem('sa11y-remember-contrast', 'Off');
             $contrastToggle.textContent = `${Lang._('OFF')}`;
             $contrastToggle.setAttribute('aria-pressed', 'false');
             this.resetAll(false);
             await this.checkAll();
           } else {
-            localStorage.setItem('sa11y-remember-contrast', 'On');
+            this.store.setItem('sa11y-remember-contrast', 'On');
             $contrastToggle.textContent = `${Lang._('ON')}`;
             $contrastToggle.setAttribute('aria-pressed', 'true');
             this.resetAll(false);
@@ -3945,14 +3946,14 @@
         // Toggle: Form labels
         const $labelsToggle = document.getElementById('sa11y-labels-toggle');
         $labelsToggle.onclick = async () => {
-          if (localStorage.getItem('sa11y-remember-labels') === 'On') {
-            localStorage.setItem('sa11y-remember-labels', 'Off');
+          if (this.store.getItem('sa11y-remember-labels') === 'On') {
+            this.store.setItem('sa11y-remember-labels', 'Off');
             $labelsToggle.textContent = `${Lang._('OFF')}`;
             $labelsToggle.setAttribute('aria-pressed', 'false');
             this.resetAll(false);
             await this.checkAll();
           } else {
-            localStorage.setItem('sa11y-remember-labels', 'On');
+            this.store.setItem('sa11y-remember-labels', 'On');
             $labelsToggle.textContent = `${Lang._('ON')}`;
             $labelsToggle.setAttribute('aria-pressed', 'true');
             this.resetAll(false);
@@ -3963,14 +3964,14 @@
         // Toggle: Links (Advanced)
         const $linksToggle = document.getElementById('sa11y-links-advanced-toggle');
         $linksToggle.onclick = async () => {
-          if (localStorage.getItem('sa11y-remember-links-advanced') === 'On') {
-            localStorage.setItem('sa11y-remember-links-advanced', 'Off');
+          if (this.store.getItem('sa11y-remember-links-advanced') === 'On') {
+            this.store.setItem('sa11y-remember-links-advanced', 'Off');
             $linksToggle.textContent = `${Lang._('OFF')}`;
             $linksToggle.setAttribute('aria-pressed', 'false');
             this.resetAll(false);
             await this.checkAll();
           } else {
-            localStorage.setItem('sa11y-remember-links-advanced', 'On');
+            this.store.setItem('sa11y-remember-links-advanced', 'On');
             $linksToggle.textContent = `${Lang._('ON')}`;
             $linksToggle.setAttribute('aria-pressed', 'true');
             this.resetAll(false);
@@ -3981,15 +3982,15 @@
         // Toggle: Readability
         const $readabilityToggle = document.getElementById('sa11y-readability-toggle');
         $readabilityToggle.onclick = async () => {
-          if (localStorage.getItem('sa11y-remember-readability') === 'On') {
-            localStorage.setItem('sa11y-remember-readability', 'Off');
+          if (this.store.getItem('sa11y-remember-readability') === 'On') {
+            this.store.setItem('sa11y-remember-readability', 'Off');
             $readabilityToggle.textContent = `${Lang._('OFF')}`;
             $readabilityToggle.setAttribute('aria-pressed', 'false');
             document.getElementById('sa11y-readability-panel').classList.remove('sa11y-active');
             this.resetAll(false);
             await this.checkAll();
           } else {
-            localStorage.setItem('sa11y-remember-readability', 'On');
+            this.store.setItem('sa11y-remember-readability', 'On');
             $readabilityToggle.textContent = `${Lang._('ON')}`;
             $readabilityToggle.setAttribute('aria-pressed', 'true');
             document.getElementById('sa11y-readability-panel').classList.add('sa11y-active');
@@ -3998,14 +3999,14 @@
           }
         };
 
-        if (localStorage.getItem('sa11y-remember-readability') === 'On') {
+        if (this.store.getItem('sa11y-remember-readability') === 'On') {
           document.getElementById('sa11y-readability-panel').classList.add('sa11y-active');
         }
 
         // Toggle: Dark mode. (Credits: https://derekkedziora.com/blog/dark-mode-revisited)
         const systemInitiatedDark = window.matchMedia('(prefers-color-scheme: dark)');
         const $themeToggle = document.getElementById('sa11y-theme-toggle');
-        const theme = localStorage.getItem('sa11y-remember-theme');
+        const theme = this.store.getItem('sa11y-remember-theme');
         const html = document.querySelector('html');
 
         if (systemInitiatedDark.matches) {
@@ -4021,48 +4022,48 @@
             html.setAttribute('data-sa11y-theme', 'dark');
             $themeToggle.textContent = `${Lang._('ON')}`;
             $themeToggle.setAttribute('aria-pressed', 'true');
-            localStorage.setItem('sa11y-remember-theme', '');
+            this.store.setItem('sa11y-remember-theme', '');
           } else {
             html.setAttribute('data-sa11y-theme', 'light');
             $themeToggle.textContent = `${Lang._('OFF')}`;
             $themeToggle.setAttribute('aria-pressed', 'false');
-            localStorage.setItem('sa11y-remember-theme', '');
+            this.store.setItem('sa11y-remember-theme', '');
           }
         };
 
         systemInitiatedDark.addEventListener('change', prefersColorTest);
         $themeToggle.onclick = async () => {
-          const theme = localStorage.getItem('sa11y-remember-theme');
+          const theme = this.store.getItem('sa11y-remember-theme');
           if (theme === 'dark') {
             html.setAttribute('data-sa11y-theme', 'light');
-            localStorage.setItem('sa11y-remember-theme', 'light');
+            this.store.setItem('sa11y-remember-theme', 'light');
             $themeToggle.textContent = `${Lang._('OFF')}`;
             $themeToggle.setAttribute('aria-pressed', 'false');
           } else if (theme === 'light') {
             html.setAttribute('data-sa11y-theme', 'dark');
-            localStorage.setItem('sa11y-remember-theme', 'dark');
+            this.store.setItem('sa11y-remember-theme', 'dark');
             $themeToggle.textContent = `${Lang._('ON')}`;
             $themeToggle.setAttribute('aria-pressed', 'true');
           } else if (systemInitiatedDark.matches) {
             html.setAttribute('data-sa11y-theme', 'light');
-            localStorage.setItem('sa11y-remember-theme', 'light');
+            this.store.setItem('sa11y-remember-theme', 'light');
             $themeToggle.textContent = `${Lang._('OFF')}`;
             $themeToggle.setAttribute('aria-pressed', 'false');
           } else {
             html.setAttribute('data-sa11y-theme', 'dark');
-            localStorage.setItem('sa11y-remember-theme', 'dark');
+            this.store.setItem('sa11y-remember-theme', 'dark');
             $themeToggle.textContent = `${Lang._('ON')}`;
             $themeToggle.setAttribute('aria-pressed', 'true');
           }
         };
         if (theme === 'dark') {
           html.setAttribute('data-sa11y-theme', 'dark');
-          localStorage.setItem('sa11y-remember-theme', 'dark');
+          this.store.setItem('sa11y-remember-theme', 'dark');
           $themeToggle.textContent = `${Lang._('ON')}`;
           $themeToggle.setAttribute('aria-pressed', 'true');
         } else if (theme === 'light') {
           html.setAttribute('data-sa11y-theme', 'light');
-          localStorage.setItem('sa11y-remember-theme', 'light');
+          this.store.setItem('sa11y-remember-theme', 'light');
           $themeToggle.textContent = `${Lang._('OFF')}`;
           $themeToggle.setAttribute('aria-pressed', 'false');
         }
@@ -4082,7 +4083,7 @@
         tippy('#sa11y-cycle-toggle', {
           content: `<div style="text-align:center">${Lang._('SHORTCUT_TOOLTIP')} &raquo;<br>${keyboardShortcut}</div>`,
           allowHTML: true,
-          delay: [900, 0],
+          delay: [200, 0],
           trigger: 'mouseenter focusin',
           arrow: true,
           placement: 'top',
@@ -4105,7 +4106,7 @@
           const checkURL = this.debounce(async () => {
             if (url !== window.location.href) {
               // If panel is closed.
-              if (localStorage.getItem('sa11y-remember-panel') === 'Closed' || !localStorage.getItem('sa11y-remember-panel')) {
+              if (this.store.getItem('sa11y-remember-panel') === 'Closed' || !this.store.getItem('sa11y-remember-panel')) {
                 this.panelActive = true;
                 this.checkAll();
               }
@@ -4156,40 +4157,40 @@
 
         // Contrast plugin
         if (option.contrastPlugin === true) {
-          if (localStorage.getItem('sa11y-remember-contrast') === 'On') {
+          if (this.store.getItem('sa11y-remember-contrast') === 'On') {
             this.checkContrast();
           }
         } else {
           const contrastLi = document.getElementById('sa11y-contrast-li');
           contrastLi.setAttribute('style', 'display: none !important;');
-          localStorage.setItem('sa11y-remember-contrast', 'Off');
+          this.store.setItem('sa11y-remember-contrast', 'Off');
         }
 
         // Form labels plugin
         if (option.formLabelsPlugin === true) {
-          if (localStorage.getItem('sa11y-remember-labels') === 'On') {
+          if (this.store.getItem('sa11y-remember-labels') === 'On') {
             this.checkLabels();
           }
         } else {
           const formLabelsLi = document.getElementById('sa11y-form-labels-li');
           formLabelsLi.setAttribute('style', 'display: none !important;');
-          localStorage.setItem('sa11y-remember-labels', 'Off');
+          this.store.setItem('sa11y-remember-labels', 'Off');
         }
 
         // Links (Advanced) plugin
         if (option.linksAdvancedPlugin === true) {
-          if (localStorage.getItem('sa11y-remember-links-advanced') === 'On') {
+          if (this.store.getItem('sa11y-remember-links-advanced') === 'On') {
             this.checkLinksAdvanced();
           }
         } else {
           const linksAdvancedLi = document.getElementById('sa11y-links-advanced-li');
           linksAdvancedLi.setAttribute('style', 'display: none !important;');
-          localStorage.setItem('sa11y-remember-links-advanced', 'Off');
+          this.store.setItem('sa11y-remember-links-advanced', 'Off');
         }
 
         // Readability plugin
         if (option.readabilityPlugin === true) {
-          if (localStorage.getItem('sa11y-remember-readability') === 'On') {
+          if (this.store.getItem('sa11y-remember-readability') === 'On') {
             this.checkReadability();
           }
         } else {
@@ -4197,7 +4198,6 @@
           const readabilityPanel = document.getElementById('sa11y-readability-panel');
           readabilityLi.setAttribute('style', 'display: none !important;');
           readabilityPanel.classList.remove('sa11y-active');
-          // localStorage.setItem("sa11y-remember-readability", "Off");
         }
 
         // Embedded content plugin
@@ -4384,7 +4384,6 @@
 
         const $skipBtn = document.getElementById('sa11y-cycle-toggle');
         $skipBtn.disabled = false;
-        $skipBtn.setAttribute('style', 'cursor: pointer !important;');
 
         const $panel = document.getElementById('sa11y-panel');
         $panel.classList.add('sa11y-active');
@@ -4411,7 +4410,6 @@
 
           if ($findButtons.length === 0) {
             $skipBtn.disabled = true;
-            $skipBtn.setAttribute('style', 'cursor: default !important;');
           }
         }
       };
@@ -4435,13 +4433,13 @@
             $outlinePanel.classList.remove('sa11y-active');
             $outlineToggle.textContent = `${Lang._('SHOW_OUTLINE')}`;
             $outlineToggle.setAttribute('aria-expanded', 'false');
-            localStorage.setItem('sa11y-remember-outline', 'Closed');
+            this.store.setItem('sa11y-remember-outline', 'Closed');
           } else {
             $outlineToggle.classList.add('sa11y-outline-active');
             $outlinePanel.classList.add('sa11y-active');
             $outlineToggle.textContent = `${Lang._('HIDE_OUTLINE')}`;
             $outlineToggle.setAttribute('aria-expanded', 'true');
-            localStorage.setItem('sa11y-remember-outline', 'Opened');
+            this.store.setItem('sa11y-remember-outline', 'Opened');
           }
 
           // Set focus on Page Outline heading for accessibility.
@@ -4463,19 +4461,55 @@
         });
 
         // Remember to leave outline open
-        if (localStorage.getItem('sa11y-remember-outline') === 'Opened') {
+        if (this.store.getItem('sa11y-remember-outline') === 'Opened') {
           $outlineToggle.classList.add('sa11y-outline-active');
           $outlinePanel.classList.add('sa11y-active');
           $outlineToggle.textContent = `${Lang._('HIDE_OUTLINE')}`;
           $outlineToggle.setAttribute('aria-expanded', 'true');
           $headingAnnotations.forEach(($el) => $el.classList.toggle('sa11y-label-visible'));
-          // Keyboard accessibility fix for scrollable panel content.
-          if ($outlineList.clientHeight > 250) {
-            $outlineList.setAttribute('tabindex', '0');
-            $outlineList.setAttribute('aria-label', `${Lang._('PAGE_OUTLINE')}`);
-            $outlineList.setAttribute('role', 'region');
-          }
         }
+
+        // Roving tabindex menu for page outline.
+        // Thanks to Srijan for this snippet! https://blog.srij.dev/roving-tabindex-from-scratch
+        const children = Array.from($outlineList.querySelectorAll('a'));
+        let current = 0;
+        const handleKeyDown = (e) => {
+          if (!['ArrowUp', 'ArrowDown', 'Space'].includes(e.code)) return;
+          if (e.code === 'Space') {
+            children[current].click();
+            return;
+          }
+          const selected = children[current];
+          selected.setAttribute('tabindex', -1);
+          let next;
+          if (e.code === 'ArrowDown') {
+            next = current + 1;
+            if (current === children.length - 1) {
+              next = 0;
+            }
+          } else if ((e.code === 'ArrowUp')) {
+            next = current - 1;
+            if (current === 0) {
+              next = children.length - 1;
+            }
+          }
+          children[next].setAttribute('tabindex', 0);
+          children[next].focus();
+          current = next;
+
+          e.preventDefault();
+        };
+        $outlineList.addEventListener('focus', () => {
+          if (children.length > 0) {
+            $outlineList.setAttribute('tabindex', -1);
+            children[current].setAttribute('tabindex', 0);
+            children[current].focus();
+          }
+          $outlineList.addEventListener('keydown', handleKeyDown);
+        });
+        $outlineList.addEventListener('blur', () => {
+          $outlineList.removeEventListener('keydown', handleKeyDown);
+        });
 
         // Show settings panel
         $settingsToggle.addEventListener('click', () => {
@@ -4500,7 +4534,7 @@
           $outlineToggle.setAttribute('aria-expanded', 'false');
           $outlineToggle.textContent = `${Lang._('SHOW_OUTLINE')}`;
           $headingAnnotations.forEach(($el) => $el.classList.remove('sa11y-label-visible'));
-          localStorage.setItem('sa11y-remember-outline', 'Closed');
+          this.store.setItem('sa11y-remember-outline', 'Closed');
 
           // Keyboard accessibility fix for scrollable panel content.
           if ($settingsContent.clientHeight > 350) {
@@ -4771,7 +4805,6 @@
         this.$videos = this.$iframes.filter(($el) => $el.matches(option.videoContent));
         this.$audio = this.$iframes.filter(($el) => $el.matches(option.audioContent));
         this.$dataviz = this.$iframes.filter(($el) => $el.matches(option.dataVizContent));
-        this.$twitter = this.$iframes.filter(($el) => $el.matches(option.twitterContent));
         this.$embeddedContent = this.$iframes.filter(($el) => !$el.matches(option.embeddedContent));
 
         // QA
@@ -4934,22 +4967,28 @@
           prevLevel = level;
 
           const li = `<li class='sa11y-outline-${level}'>
+                  <a href="#sa11y-h${i}" tabindex="-1">
                     <span class='sa11y-badge'>${level}</span>
                     <span class='sa11y-outline-list-item'>${htext}</span>
+                  </a>
                 </li>`;
 
           const liError = `<li class='sa11y-outline-${level}'>
+                  <a href="#sa11y-h${i}" tabindex="-1">
                     <span class='sa11y-badge sa11y-error-badge'>
                     <span aria-hidden='true'>&#10007;</span>
                     <span class='sa11y-visually-hidden'>${Lang._('ERROR')}</span> ${level}</span>
                     <span class='sa11y-outline-list-item sa11y-red-text sa11y-bold'>${htext}</span>
+                  </a>
                 </li>`;
 
           const liWarning = `<li class='sa11y-outline-${level}'>
+                  <a href="#sa11y-h${i}" tabindex="-1">
                     <span class='sa11y-badge sa11y-warning-badge'>
                     <span aria-hidden='true'>&#x3f;</span>
                     <span class='sa11y-visually-hidden'>${Lang._('WARNING')}</span> ${level}</span>
                     <span class='sa11y-outline-list-item sa11y-yellow-text sa11y-bold'>${htext}</span>
+                  </a>
                 </li>`;
 
           let ignoreArray = [];
@@ -4957,27 +4996,28 @@
             ignoreArray = Array.from(document.querySelectorAll(this.outlineIgnore));
           }
 
+          const outline = document.querySelector('#sa11y-outline-list');
           if (!ignoreArray.includes($el)) {
             // Append heading labels.
-            $el.insertAdjacentHTML('beforeend', `<span class='sa11y-heading-label'>H${level}</span>`);
+            $el.insertAdjacentHTML('beforeend', `<span id="sa11y-h${i}" class='sa11y-heading-label'>H${level}</span>`);
 
             // Heading errors
             if (error !== null && $el.closest('a') !== null) {
               $el.classList.add('sa11y-error-border');
               $el.closest('a').insertAdjacentHTML('afterend', this.annotate(ERROR, error, true));
-              document.querySelector('#sa11y-outline-list').insertAdjacentHTML('beforeend', liError);
+              outline.insertAdjacentHTML('beforeend', liError);
             } else if (error !== null) {
               $el.classList.add('sa11y-error-border');
               $el.insertAdjacentHTML('beforebegin', this.annotate(ERROR, error));
-              document.querySelector('#sa11y-outline-list').insertAdjacentHTML('beforeend', liError);
+              outline.insertAdjacentHTML('beforeend', liError);
             } else if (warning !== null && $el.closest('a') !== null) {
               $el.closest('a').insertAdjacentHTML('afterend', this.annotate(WARNING, warning));
-              document.querySelector('#sa11y-outline-list').insertAdjacentHTML('beforeend', liWarning);
+              outline.insertAdjacentHTML('beforeend', liWarning);
             } else if (warning !== null) {
               $el.insertAdjacentHTML('beforebegin', this.annotate(WARNING, warning));
-              document.querySelector('#sa11y-outline-list').insertAdjacentHTML('beforeend', liWarning);
+              outline.insertAdjacentHTML('beforeend', liWarning);
             } else if (error === null || warning === null) {
-              document.querySelector('#sa11y-outline-list').insertAdjacentHTML('beforeend', li);
+              outline.insertAdjacentHTML('beforeend', li);
             }
           }
         });
@@ -5300,8 +5340,8 @@
             const error = this.containsAltTextStopWords(altText);
             const altLength = alt.length;
 
-            // Image fails if a stop word was found.
-            if (error[0] !== null && $el.closest('a[href]')) {
+            if ($el.closest('a[href]') && $el.closest('a[href]').getAttribute('tabindex') === '-1' && $el.closest('a[href]').getAttribute('aria-hidden') === 'true') ; else if (error[0] !== null && $el.closest('a[href]')) {
+              // Image fails if a stop word was found.
               $el.classList.add('sa11y-error-border');
               $el.closest('a[href]').insertAdjacentHTML('beforebegin', this.annotate(ERROR, Lang.sprintf('LINK_IMAGE_BAD_ALT_MESSAGE', error[0], altText)));
             } else if (error[2] !== null && $el.closest('a[href]')) {
@@ -5461,17 +5501,6 @@
           this.$dataviz.forEach(($el) => {
             $el.classList.add('sa11y-warning-border');
             $el.insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang._('EMBED_DATA_VIZ')));
-          });
-        }
-
-        // Warning: Twitter timelines that are too long.
-        if (option.embeddedContentTwitter === true) {
-          this.$twitter.forEach(($el) => {
-            const tweets = $el.contentWindow.document.body.querySelectorAll('.timeline-TweetList-tweet');
-            if (tweets.length > 3) {
-              $el.classList.add('sa11y-warning-border');
-              $el.insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang._('EMBED_TWITTER')));
-            }
           });
         }
 
@@ -5765,6 +5794,17 @@
           if (!$title || $title.textContent.trim().length === 0) {
             this.panel.insertAdjacentHTML('afterend', this.annotateBanner(ERROR, Lang._('QA_PAGE_TITLE')));
           }
+        }
+
+        // Warning: Find inappropriate use of <sup> and <sub> tags.
+        if (option.subscriptQA === true) {
+          const $subscript = this.root.querySelectorAll('sup, sub');
+          $subscript.forEach(($el) => {
+            if ($el.textContent.trim().length >= 80) {
+              $el.classList.add('sa11y-warning-text');
+              $el.insertAdjacentHTML('afterend', this.annotate(WARNING, Lang._('QA_SUBSCRIPT_WARNING'), true));
+            }
+          });
         }
       };
 

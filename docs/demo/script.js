@@ -8,7 +8,7 @@ import Sa11yLangPl from '../assets/js/lang/pl.js';
 import Sa11yLangUa from '../assets/js/lang/ua.js';
 
 // Sa11y's version.
-const v = "2.3.1";
+const v = "2.3.3";
 const webV = document.getElementById("v");
 webV.innerHTML = v;
 
