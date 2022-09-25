@@ -1,4 +1,4 @@
-export default {
+var sv = {
   // Swedish
   strings: {
     LANG_CODE: 'sv',
@@ -183,3 +183,5 @@ export default {
     CONTRAST_INPUT_ERROR: 'Text i detta inmatningsfält har inte tillräcklig kontrast mot bakgrunden. Kontrastförhållandet bör vara minst 4,5:1 för normal text och 3:1 för stor text. <hr> Kontrastförhållande: <strong {r}>%(cratio)</strong>',
   },
 };
+
+export { sv as default };
