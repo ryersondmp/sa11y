@@ -34,8 +34,6 @@ const Lang = {
 };
 
 class Sa11yCustomChecks {
-	sa11y;
-
 	setSa11y(sa11y) {
     this.sa11y = sa11y;
   }

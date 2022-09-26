@@ -1,4 +1,4 @@
-import { Sa11yCustomChecks } from "./sa11y";
+import { Sa11yCustomChecks } from './sa11y';
 
 export default class CustomChecks extends Sa11yCustomChecks {
   check() {
