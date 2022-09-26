@@ -88,7 +88,7 @@ import "sa11y/dist/css/sa11y.css";
 
 Lang.addI18n(LangEn.strings);
 const sa11y = new Sa11y({
-  customChecks: new CustomChecks(), // Optional
+  customChecks: new CustomChecks, // Optional
   checkRoot: "body",
   readabilityRoot: "main",
 });
@@ -96,19 +96,9 @@ const sa11y = new Sa11y({
 // -------------------------------------------------------------
 
 // src/your-custom-checks.ts
-import type { Sa11y, Sa11yCustomChecks } from "sa11y";
+import { Sa11yCustomChecks } from "sa11y";
 
-export default class CustomChecks implements Sa11yCustomChecks {
-  sa11y: Sa11y;
-
-  constructor(sa11y: Sa11y) {
-    this.sa11y = sa11y;
-  }
-
-  setSa11y(sa11y: Sa11y) {
-    this.sa11y = sa11y;
-  }
-
+export default class CustomChecks extends Sa11yCustomChecks {
   check() {
     /**
      * Add custom checks here. For more details, see:
