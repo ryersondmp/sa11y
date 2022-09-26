@@ -56,6 +56,47 @@ export declare class Sa11y {
     dataVizContent?: string;
     embeddedContent?: string;
   })
+
+	initialize: () => void;
+	buildSa11yUI: () => void;
+	globals: () => void;
+	mainToggle: () => void;
+	utilities: () => void;
+	isElementHidden: ($el: HTMLElement) => boolean;
+	escapeHTML: (text: string) => string;
+	sanitizeForHTML: (string: string) => string;
+	computeTextNodeWithImage: ($el: HTMLElement) => string;
+	debounce: (callback: () => unknown, wait: number) => () => unknown;
+	fnIgnore: (element: HTMLElement, selector: string) => HTMLElement;
+	computeAriaLabel: (el: HTMLElement) => string;
+	findVisibleParent: (element: HTMLElement, property: string, value: string) => HTMLElement | null
+	offsetTop: ($el: HTMLElement) => { top:number };
+	settingPanelToggles: () => void;
+	skipToIssueTooltip: () => void;
+	detectPageChanges: () => void;
+	checkAll: () => Promise<void>;
+	resetAll: (restartPanel?: boolean) => void;
+	clearEverything: () => void;
+	initializeTooltips: () => void;
+	detectOverflow: () => void;
+	nudge: () => void;
+	updateBadge: () => void;
+	updatePanel: () => void;
+	buildPanel: () => void;
+	skipToIssue: () => void;
+	findElements: () => void;
+	annotate: (type: 'Error' | 'Warning' | 'Good', content: string, inline?: boolean) => string;
+	annotateBanner: (type: 'Error' | 'Warning' | 'Good', content: string) => string;
+	checkHeaders: () => void;
+	checkLinkText: () => void
+	checkLinksAdvanced: () => void;
+	checkAltText: () => void;
+	containsAltTextStopWords: (alt: string) => Array<string|null>;
+	checkLabels: () => void;
+	checkEmbeddedContent: () => void;
+	checkQA: () => void;
+	checkContrast: () => void;
+	checkReadability: () => void;
 }
 
 export declare const Lang: {
