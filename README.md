@@ -78,6 +78,20 @@ To install on your website, insert Sa11y right before the closing </body> tag. S
 </script>
 ````
 
+### Example installation (Typescript)
+````typescript
+import { Sa11y, Lang, LangEn } from "sa11y";
+import CustomChecks from "path/to/your/custom-checks";
+import "sa11y/dist/css/sa11y.css";
+
+Lang.addI18n(LangEn.strings);
+const sa11y = new Sa11y({
+	customChecks: new CustomChecks, // Optional
+	checkRoot: "body",
+	readabilityRoot: "main",
+})
+````
+
 ### CDN
 Please visit [developer documentation](https://sa11y.netlify.app/developers/) for CDN installation instructions.
 
