@@ -295,11 +295,11 @@ export declare type Sa11yLang = {
 };
 
 export declare class Sa11yCustomChecks {
-	sa11y: Sa11y
+	sa11y: Sa11y;
 
-	constructor(sa11y: Sa11y)
+	constructor(sa11y: Sa11y);
 
-  setSa11y(sa11y: Sa11y): void
+  setSa11y(sa11y: Sa11y): void;
 
-  check(): void
+  check(): void;
 }
