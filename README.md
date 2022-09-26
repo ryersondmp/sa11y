@@ -33,11 +33,11 @@ To install on your website, insert Sa11y right before the closing </body> tag. S
 `npm i sa11y`
 
 ### Example installation (modules)
-````
+````html
 <!-- Stylesheet -->
 <link rel="stylesheet" href="css/sa11y.css"/>
 
-<!-- JavaScript >
+<!-- JavaScript -->
 <script type="module">
   import { Sa11y, Lang } from '../assets/js/sa11y.esm.js';
   import Sa11yLangEn from '../assets/js/lang/en.js';
@@ -56,7 +56,7 @@ To install on your website, insert Sa11y right before the closing </body> tag. S
 ````
 
 ### Example installation (regular script)
-````
+````html
 <!-- Stylesheet -->
 <link rel="stylesheet" href="css/sa11y.css"/>
 
@@ -76,6 +76,22 @@ To install on your website, insert Sa11y right before the closing </body> tag. S
     readabilityRoot: "main",
   });
 </script>
+````
+
+### Example installation (Typescript)
+````typescript
+// src/your-script.ts
+
+import { Sa11y, Lang, LangEn } from "sa11y";
+import CustomChecks from "path/to/your/custom-checks";
+import "sa11y/dist/css/sa11y.css";
+
+Lang.addI18n(LangEn.strings);
+const sa11y = new Sa11y({
+	customChecks: new CustomChecks, // Optional
+	checkRoot: "body",
+	readabilityRoot: "main",
+})
 ````
 
 ### CDN
