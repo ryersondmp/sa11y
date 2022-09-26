@@ -1,5 +1,4 @@
 export declare class Sa11y {
-	panelActive: boolean;
 	containerIgnore: string;
 	contrastIgnore: string;
 	readabilityIgnore: string;
