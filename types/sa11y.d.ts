@@ -255,7 +255,7 @@ export declare type Sa11yLang = {
   },
 };
 
-export declare class CustomChecks {
+export declare class Sa11yCustomChecks {
 	sa11y: Sa11y
 
 	constructor(sa11y: Sa11y)

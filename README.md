@@ -83,7 +83,7 @@ To install on your website, insert Sa11y right before the closing </body> tag. S
 // src/your-script.ts
 
 import { Sa11y, Lang, LangEn } from "sa11y";
-import CustomChecks from "path/to/your/custom-checks";
+import CustomChecks from "./your-custom-checks";
 import "sa11y/dist/css/sa11y.css";
 
 Lang.addI18n(LangEn.strings);
@@ -92,6 +92,31 @@ const sa11y = new Sa11y({
 	checkRoot: "body",
 	readabilityRoot: "main",
 })
+
+// -------------------------------------------------------------
+
+// src/your-custom-checks.ts
+import type { Sa11y, Sa11yCustomChecks } from 'sa11y';
+
+export default class CustomChecks implements Sa11yCustomChecks {
+	sa11y: Sa11y;
+
+  constructor(sa11y: Sa11y) {
+    this.sa11y = sa11y;
+  }
+
+  setSa11y(sa11y: Sa11y) {
+    this.sa11y = sa11y;
+  }
+
+  check() {
+		/* 
+			Add custom checks here. For more details, see:
+			- ./src/js/sa11y-custom-checks.js
+			- https://sa11y.netlify.app/developers/custom-checks/
+		*/
+  }
+}
 ````
 
 ### CDN
