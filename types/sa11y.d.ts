@@ -1,4 +1,43 @@
 export declare class Sa11y {
+	panelActive: boolean;
+	containerIgnore: string;
+	contrastIgnore: string;
+	readabilityIgnore: string;
+	headerIgnore: string;
+	outlineIgnore: string;
+	imageIgnore: string;
+	linkIgnore: string;
+	store: {
+		getItem: (key: string) => string;
+		setItem: (key: string, value: string) => boolean;
+	}
+	panelActive: boolean;
+	errorCount: number;
+	warningCount: number;
+	root: HTMLElement;
+	panel: HTMLElement;
+
+	$contrast: Array<HTMLElement>;
+	$readability: Array<HTMLElement>;
+	$h: Array<HTMLHeadingElement>;
+	$h1: Array<HTMLHeadingElement>;
+	$links: Array<HTMLAnchorElement>;
+	$inputs: Array<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>;
+	$img: Array<HTMLImageElement>;
+	$iframes: Array<HTMLIFrameElement | HTMLAudioElement | HTMLVideoElement>;
+	$videos: Array<HTMLIFrameElement | HTMLAudioElement | HTMLVideoElement>;
+	$audio: Array<HTMLIFrameElement | HTMLAudioElement | HTMLVideoElement>;
+	$dataviz: Array<HTMLIFrameElement | HTMLAudioElement | HTMLVideoElement>;
+	$embeddedContent: Array<HTMLIFrameElement | HTMLAudioElement | HTMLVideoElement>;
+	$strongitalics: Array<HTMLElement>;
+	$badDevLinks: Array<HTMLElement>;
+	$checkPDF: Array<HTMLAnchorElement>;
+	$tables: Array<HTMLTableElement>;
+	$lang: string | null;
+	$blockquotes: Array<HTMLQuoteElement>;
+	$p: Array<HTMLParagraphElement>;
+	$allCaps: Array<HTMLElement>;
+
   constructor(options?: {
     checkRoot?: string;
     containerIgnore?: string;
