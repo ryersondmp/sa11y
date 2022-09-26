@@ -214,3 +214,13 @@ export declare type Sa11yLang = {
     CONTRAST_INPUT_ERROR: string;
   },
 };
+
+export declare class CustomChecks {
+	sa11y: Sa11y
+
+	constructor(sa11y: Sa11y): void
+
+  setSa11y(sa11y: Sa11y): void
+
+  check(): void
+}
