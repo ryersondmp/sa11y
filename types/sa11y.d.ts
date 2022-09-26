@@ -64,7 +64,7 @@ export declare class Sa11y {
     contrastPlugin?: boolean;
     formLabelsPlugin?: boolean;
     linksAdvancedPlugin?: boolean;
-    customChecks?: boolean;
+    customChecks?: Sa11yCustomChecks;
   
     // QA rulesets
     badLinksQA?: boolean;
