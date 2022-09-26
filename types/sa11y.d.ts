@@ -218,7 +218,7 @@ export declare type Sa11yLang = {
 export declare class CustomChecks {
 	sa11y: Sa11y
 
-	constructor(sa11y: Sa11y): void
+	constructor(sa11y: Sa11y)
 
   setSa11y(sa11y: Sa11y): void
 
