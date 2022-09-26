@@ -37,62 +37,62 @@ export declare class Sa11y {
 	$p: Array<HTMLParagraphElement>;
 	$allCaps: Array<HTMLElement>;
 
-	constructor(options ? : {
-		checkRoot ? : string;
-		containerIgnore ? : string;
-		contrastIgnore ? : string;
-		outlineIgnore ? : string;
-		headerIgnore ? : string;
-		imageIgnore ? : string;
-		linkIgnore ? : string;
-		linkIgnoreSpan ? : string;
-		linksToFlag ? : string;
-		nonConsecutiveHeadingIsError ? : boolean;
-		flagLongHeadings ? : boolean;
-		showGoodLinkButton ? : boolean;
-		detectSPArouting ? : boolean;
-		doNotRun ? : string;
+	constructor(options?: {
+		checkRoot?: string;
+		containerIgnore?: string;
+		contrastIgnore?: string;
+		outlineIgnore?: string;
+		headerIgnore?: string;
+		imageIgnore?: string;
+		linkIgnore?: string;
+		linkIgnoreSpan?: string;
+		linksToFlag?: string;
+		nonConsecutiveHeadingIsError?: boolean;
+		flagLongHeadings?: boolean;
+		showGoodLinkButton?: boolean;
+		detectSPArouting?: boolean;
+		doNotRun?: string;
 
 		// Readability
-		readabilityPlugin ? : boolean;
-		readabilityRoot ? : string;
-		readabilityLang ? : 'en' | 'fr' | 'es' | 'de' | 'nl' | 'it';
-		readabilityIgnore ? : string;
+		readabilityPlugin?: boolean;
+		readabilityRoot?: string;
+		readabilityLang?: 'en' | 'fr' | 'es' | 'de' | 'nl' | 'it';
+		readabilityIgnore?: string;
 
 		// Other plugins
-		contrastPlugin ? : boolean;
-		formLabelsPlugin ? : boolean;
-		linksAdvancedPlugin ? : boolean;
-		customChecks ? : Sa11yCustomChecks;
+		contrastPlugin?: boolean;
+		formLabelsPlugin?: boolean;
+		linksAdvancedPlugin?: boolean;
+		customChecks?: Sa11yCustomChecks;
 
 		// QA rulesets
-		badLinksQA ? : boolean;
-		strongItalicsQA ? : boolean;
-		pdfQA ? : boolean;
-		langQA ? : boolean;
-		blockquotesQA ? : boolean;
-		tablesQA ? : boolean;
-		allCapsQA ? : boolean;
-		fakeHeadingsQA ? : boolean;
-		fakeListQA ? : boolean;
-		duplicateIdQA ? : boolean;
-		underlinedTextQA ? : boolean;
-		pageTitleQA ? : boolean;
-		subscriptQA ? : boolean;
+		badLinksQA?: boolean;
+		strongItalicsQA?: boolean;
+		pdfQA?: boolean;
+		langQA?: boolean;
+		blockquotesQA?: boolean;
+		tablesQA?: boolean;
+		allCapsQA?: boolean;
+		fakeHeadingsQA?: boolean;
+		fakeListQA?: boolean;
+		duplicateIdQA?: boolean;
+		underlinedTextQA?: boolean;
+		pageTitleQA?: boolean;
+		subscriptQA?: boolean;
 
 		// Embedded content rulesets
-		embeddedContentAll ? : boolean;
-		embeddedContentAudio ? : boolean;
-		embeddedContentVideo ? : boolean;
-		embeddedContentDataViz ? : boolean;
-		embeddedContentTitles ? : boolean;
-		embeddedContentGeneral ? : boolean;
+		embeddedContentAll?: boolean;
+		embeddedContentAudio?: boolean;
+		embeddedContentVideo?: boolean;
+		embeddedContentDataViz?: boolean;
+		embeddedContentTitles?: boolean;
+		embeddedContentGeneral?: boolean;
 
 		// Embedded content
-		videoContent ? : string;
-		audioContent ? : string;
-		dataVizContent ? : string;
-		embeddedContent ? : string;
+		videoContent?: string;
+		audioContent?: string;
+		dataVizContent?: string;
+		embeddedContent?: string;
 	})
 
 	initialize: () => void;
@@ -115,7 +115,7 @@ export declare class Sa11y {
 	skipToIssueTooltip: () => void;
 	detectPageChanges: () => void;
 	checkAll: () => Promise<void>;
-	resetAll: (restartPanel ? : boolean) => void;
+	resetAll: (restartPanel?: boolean) => void;
 	clearEverything: () => void;
 	initializeTooltips: () => void;
 	detectOverflow: () => void;
@@ -125,7 +125,7 @@ export declare class Sa11y {
 	buildPanel: () => void;
 	skipToIssue: () => void;
 	findElements: () => void;
-	annotate: (type: 'Error' | 'Warning' | 'Good', content: string, inline ? : boolean) => string;
+	annotate: (type: 'Error' | 'Warning' | 'Good', content: string, inline?: boolean) => string;
 	annotateBanner: (type: 'Error' | 'Warning' | 'Good', content: string) => string;
 	checkHeaders: () => void;
 	checkLinkText: () => void
