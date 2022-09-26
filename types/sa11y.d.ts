@@ -54,7 +54,6 @@ export declare class Sa11y {
     videoContent?: string;
     audioContent?: string;
     dataVizContent?: string;
-    twitterContent?: string;
     embeddedContent?: string;
   })
 }
