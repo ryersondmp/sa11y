@@ -80,6 +80,8 @@ To install on your website, insert Sa11y right before the closing </body> tag. S
 
 ### Example installation (Typescript)
 ````typescript
+// src/your-script.ts
+
 import { Sa11y, Lang, LangEn } from "sa11y";
 import CustomChecks from "path/to/your/custom-checks";
 import "sa11y/dist/css/sa11y.css";
