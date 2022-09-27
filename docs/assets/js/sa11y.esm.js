@@ -3322,6 +3322,14 @@ const Lang = {
   },
 };
 
+class Sa11yCustomChecks {
+  setSa11y(sa11y) {
+    this.sa11y = sa11y;
+  }
+
+  check() {}
+}
+
 class Sa11y {
   constructor(options) {
     const defaultOptions = {
@@ -3561,7 +3569,7 @@ class Sa11y {
       }
 
       // Supported readability languages. Turn module off if not supported.
-      const supportedLang = ['en', 'fr', 'es', 'de', 'nl', 'it'];
+      const supportedLang = ['en', 'fr', 'es', 'de', 'nl', 'it', 'sv', 'fi', 'da', 'no', 'nb', 'nn'];
       const pageLang = document.querySelector('html').getAttribute('lang');
 
       // If lang attribute is missing.
@@ -4253,6 +4261,8 @@ class Sa11y {
       const allcaps = document.querySelectorAll('.sa11y-warning-uppercase');
       allcaps.forEach((el) => el.outerHTML = el.innerHTML);
 
+      document.getElementById('sa11y-readability-info').innerHTML = '';
+
       // Remove
       document.querySelectorAll(`
                 .sa11y-instance,
@@ -4260,7 +4270,6 @@ class Sa11y {
                 .sa11y-heading-label,
                 #sa11y-outline-list li,
                 .sa11y-readability-period,
-                #sa11y-readability-info span,
                 #sa11y-readability-details li,
                 .sa11y-clone-image-text
             `).forEach((el) => el.parentNode.removeChild(el));
@@ -4293,7 +4302,7 @@ class Sa11y {
         interactive: true,
         trigger: 'mouseenter click focusin', // Focusin trigger to ensure "Jump to issue" button displays tooltip.
         arrow: true,
-        delay: [200, 0], // Slight delay to ensure mouse doesn't quickly trigger and hide tooltip.
+        delay: [100, 0], // Slight delay to ensure mouse doesn't quickly trigger and hide tooltip.
         theme: 'sa11y-theme',
         placement: 'auto-start',
         allowHTML: true,
@@ -5994,26 +6003,8 @@ class Sa11y {
           }
         }
       });
-      // Compute syllables: http://stackoverflow.com/questions/5686483/how-to-compute-number-of-syllables-in-a-word-in-javascript
-      const numberOfSyllables = (el) => {
-        let wordCheck = el;
-        wordCheck = wordCheck.toLowerCase().replace('.', '').replace('\n', '');
-        if (wordCheck.length <= 3) {
-          return 1;
-        }
-        wordCheck = wordCheck.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
-        wordCheck = wordCheck.replace(/^y/, '');
-        const syllableString = wordCheck.match(/[aeiouy]{1,2}/g);
-        let syllables = 0;
 
-        const syllString = !!syllableString;
-        if (syllString) {
-          syllables = syllableString.length;
-        }
-
-        return syllables;
-      };
-
+      // Combine all page text.
       const readabilityarray = [];
       for (let i = 0; i < this.$readability.length; i++) {
         const current = this.$readability[i];
@@ -6021,97 +6012,169 @@ class Sa11y {
           readabilityarray.push(current.textContent);
         }
       }
+      const pageText = readabilityarray.join(' ').trim().toString();
 
-      const paragraphtext = readabilityarray.join(' ').trim().toString();
-      const wordsRaw = paragraphtext.replace(/[.!?-]+/g, ' ').split(' ');
-      let words = 0;
-      for (let i = 0; i < wordsRaw.length; i++) {
-        // eslint-disable-next-line eqeqeq
-        if (wordsRaw[i] != 0) {
-          words += 1;
-        }
-      }
-
-      const sentenceRaw = paragraphtext.split(/[.!?]+/);
-      let sentences = 0;
-      for (let i = 0; i < sentenceRaw.length; i++) {
-        if (sentenceRaw[i] !== '') {
-          sentences += 1;
-        }
-      }
-
-      let totalSyllables = 0;
-      let syllables1 = 0;
-      let syllables2 = 0;
-      for (let i = 0; i < wordsRaw.length; i++) {
-        // eslint-disable-next-line eqeqeq
-        if (wordsRaw[i] != 0) {
-          const syllableCount = numberOfSyllables(wordsRaw[i]);
-          if (syllableCount === 1) {
-            syllables1 += 1;
+      /* Flesch Reading Ease for English, French, German, Dutch, and Italian.
+        Reference: https://core.ac.uk/download/pdf/6552422.pdf
+        Reference: https://github.com/Yoast/YoastSEO.js/issues/267 */
+      if (['en', 'fr', 'de', 'nl', 'it'].includes(option.readabilityLang)) {
+        // Compute syllables: http://stackoverflow.com/questions/5686483/how-to-compute-number-of-syllables-in-a-word-in-javascript
+        const numberOfSyllables = (el) => {
+          let wordCheck = el;
+          wordCheck = wordCheck.toLowerCase().replace('.', '').replace('\n', '');
+          if (wordCheck.length <= 3) {
+            return 1;
           }
-          if (syllableCount === 2) {
-            syllables2 += 1;
+          wordCheck = wordCheck.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
+          wordCheck = wordCheck.replace(/^y/, '');
+          const syllableString = wordCheck.match(/[aeiouy]{1,2}/g);
+          let syllables = 0;
+
+          const syllString = !!syllableString;
+          if (syllString) {
+            syllables = syllableString.length;
           }
-          totalSyllables += syllableCount;
+          return syllables;
+        };
+
+        // Words
+        const wordsRaw = pageText.replace(/[.!?-]+/g, ' ').split(' ');
+        let words = 0;
+        for (let i = 0; i < wordsRaw.length; i++) {
+        // eslint-disable-next-line eqeqeq
+          if (wordsRaw[i] != 0) {
+            words += 1;
+          }
         }
-      }
 
-      // let characters = paragraphtext.replace(/[.!?|\s]+/g, '').length;
-      // Reference: https://core.ac.uk/download/pdf/6552422.pdf
-      // Reference: https://github.com/Yoast/YoastSEO.js/issues/267
+        // Sentences
+        const sentenceRaw = pageText.split(/[.!?]+/);
+        let sentences = 0;
+        for (let i = 0; i < sentenceRaw.length; i++) {
+          if (sentenceRaw[i] !== '') {
+            sentences += 1;
+          }
+        }
 
-      let flesch;
-      if (option.readabilityLang === 'en') {
-        flesch = 206.835 - (1.015 * (words / sentences)) - (84.6 * (totalSyllables / words));
-      } else if (option.readabilityLang === 'fr') {
-        flesch = 207 - (1.015 * (words / sentences)) - (73.6 * (totalSyllables / words));
-      } else if (option.readabilityLang === 'es') {
-        flesch = 206.84 - (1.02 * (words / sentences)) - (0.60 * (100 * (totalSyllables / words)));
-      } else if (option.readabilityLang === 'de') {
-        flesch = 180 - (words / sentences) - (58.5 * (totalSyllables / words));
-      } else if (option.readabilityLang === 'nl') {
-        flesch = 206.84 - (0.77 * (100 * (totalSyllables / words))) - (0.93 * (words / sentences));
-      } else if (option.readabilityLang === 'it') {
-        flesch = 217 - (1.3 * (words / sentences)) - (0.6 * (100 * (totalSyllables / words)));
-      }
+        // Syllables
+        let totalSyllables = 0;
+        let syllables1 = 0;
+        let syllables2 = 0;
+        for (let i = 0; i < wordsRaw.length; i++) {
+        // eslint-disable-next-line eqeqeq
+          if (wordsRaw[i] != 0) {
+            const syllableCount = numberOfSyllables(wordsRaw[i]);
+            if (syllableCount === 1) {
+              syllables1 += 1;
+            }
+            if (syllableCount === 2) {
+              syllables2 += 1;
+            }
+            totalSyllables += syllableCount;
+          }
+        }
 
-      if (flesch > 100) {
-        flesch = 100;
-      } else if (flesch < 0) {
-        flesch = 0;
-      }
+        let flesch = false;
+        if (option.readabilityLang === 'en') {
+          flesch = 206.835 - (1.015 * (words / sentences)) - (84.6 * (totalSyllables / words));
+        } else if (option.readabilityLang === 'fr') {
+          flesch = 207 - (1.015 * (words / sentences)) - (73.6 * (totalSyllables / words));
+        } else if (option.readabilityLang === 'es') {
+          flesch = 206.84 - (1.02 * (words / sentences)) - (0.60 * (100 * (totalSyllables / words)));
+        } else if (option.readabilityLang === 'de') {
+          flesch = 180 - (words / sentences) - (58.5 * (totalSyllables / words));
+        } else if (option.readabilityLang === 'nl') {
+          flesch = 206.84 - (0.77 * (100 * (totalSyllables / words))) - (0.93 * (words / sentences));
+        } else if (option.readabilityLang === 'it') {
+          flesch = 217 - (1.3 * (words / sentences)) - (0.6 * (100 * (totalSyllables / words)));
+        }
 
-      const $readabilityinfo = document.getElementById('sa11y-readability-info');
+        // Update panel.
+        const $readabilityinfo = document.getElementById('sa11y-readability-info');
 
-      if (paragraphtext.length === 0) {
-        $readabilityinfo.innerHTML = Lang._('READABILITY_NO_P_OR_LI_MESSAGE');
-      } else if (words > 30) {
-        const fleschScore = flesch.toFixed(1);
-        const avgWordsPerSentence = (words / sentences).toFixed(1);
-        const complexWords = Math.round(100 * ((words - (syllables1 + syllables2)) / words));
+        if (pageText.length === 0) {
+          $readabilityinfo.innerHTML = Lang._('READABILITY_NO_P_OR_LI_MESSAGE');
+        } else if (words > 30) {
+          // Score must be between 0 and 100%.
+          if (flesch > 100) {
+            flesch = 100;
+          } else if (flesch < 0) {
+            flesch = 0;
+          }
 
-        // WCAG AAA pass if greater than 60
-        if (fleschScore >= 0 && fleschScore < 30) {
-          $readabilityinfo.innerHTML = `<span>${fleschScore}</span> <span class="sa11y-readability-score">${Lang._('LANG_VERY_DIFFICULT')}</span>`;
-        } else if (fleschScore > 31 && fleschScore < 49) {
-          $readabilityinfo.innerHTML = `<span>${fleschScore}</span> <span class="sa11y-readability-score">${Lang._('LANG_DIFFICULT')}</span>`;
-        } else if (fleschScore > 50 && fleschScore < 60) {
-          $readabilityinfo.innerHTML = `<span>${fleschScore}</span> <span class="sa11y-readability-score">${Lang._('LANG_FAIRLY_DIFFICULT')}</span>`;
+          const fleschScore = flesch.toFixed(1);
+          const avgWordsPerSentence = (words / sentences).toFixed(1);
+          const complexWords = Math.round(100 * ((words - (syllables1 + syllables2)) / words));
+
+          // Flesch score: WCAG AAA pass if greater than 60
+          if (fleschScore >= 0 && fleschScore < 30) {
+            $readabilityinfo.innerHTML = `${fleschScore} <span class="sa11y-readability-score">${Lang._('LANG_VERY_DIFFICULT')}</span>`;
+          } else if (fleschScore > 31 && fleschScore < 49) {
+            $readabilityinfo.innerHTML = `${fleschScore} <span class="sa11y-readability-score">${Lang._('LANG_DIFFICULT')}</span>`;
+          } else if (fleschScore > 50 && fleschScore < 60) {
+            $readabilityinfo.innerHTML = `${fleschScore} <span class="sa11y-readability-score">${Lang._('LANG_FAIRLY_DIFFICULT')}</span>`;
+          } else {
+            $readabilityinfo.innerHTML = `${fleschScore} <span class="sa11y-readability-score">${Lang._('LANG_GOOD')}</span>`;
+          }
+          // Flesch details
+          document.getElementById('sa11y-readability-details').innerHTML = `
+          <li><strong>${Lang._('LANG_AVG_SENTENCE')}</strong> ${avgWordsPerSentence}</li>
+          <li><strong>${Lang._('LANG_COMPLEX_WORDS')}</strong> ${complexWords}%</li>
+          <li><strong>${Lang._('LANG_TOTAL_WORDS')}</strong> ${words}</li>`;
         } else {
-          $readabilityinfo.innerHTML = `<span>${fleschScore}</span> <span class="sa11y-readability-score">${Lang._('LANG_GOOD')}</span>`;
+          $readabilityinfo.textContent = Lang._('READABILITY_NOT_ENOUGH_CONTENT_MESSAGE');
         }
+      }
 
-        document.getElementById('sa11y-readability-details').innerHTML = `<li>
-        <span class='sa11y-bold'>${Lang._('LANG_AVG_SENTENCE')}</span> ${avgWordsPerSentence}</li>
-        <li><span class='sa11y-bold'>${Lang._('LANG_COMPLEX_WORDS')}</span> ${complexWords}%</li>
-        <li><span class='sa11y-bold'>${Lang._('LANG_TOTAL_WORDS')}</span> ${words}</li>`;
-      } else {
-        $readabilityinfo.textContent = Lang._('READABILITY_NOT_ENOUGH_CONTENT_MESSAGE');
+      /* Lix: Danish, Finnish, Norwegian (Bokmål & Nynorsk), Swedish. To-do: More research needed.
+      Reference: https://www.simoahava.com/analytics/calculate-readability-scores-for-content/#commento-58ac602191e5c6dc391015c5a6933cf3e4fc99d1dc92644024c331f1ee9b6093 */
+      if (['sv', 'fi', 'da', 'no', 'nb', 'nn'].includes(option.readabilityLang)) {
+        const calculateLix = (text) => {
+          const lixWords = () => text.replace(/[-'.]/ig, '').split(/[^a-zA-ZöäåÖÄÅÆæØø0-9]/g).filter(Boolean);
+          const splitSentences = () => {
+            const splitter = /\?|!|\.|\n/g;
+            const arrayOfSentences = text.split(splitter).filter(Boolean);
+            return arrayOfSentences;
+          };
+          const wordCount = lixWords().length;
+          const longWordsCount = lixWords().filter((wordsArray) => wordsArray.length > 6).length;
+          const sentenceCount = splitSentences().length;
+          const score = Math.round((wordCount / sentenceCount) + ((longWordsCount * 100) / wordCount));
+          const avgWordsPerSentence = (wordCount / sentenceCount).toFixed(1);
+          const complexWords = Math.round(100 * (longWordsCount / wordCount));
+          return {
+            score, avgWordsPerSentence, complexWords, wordCount,
+          };
+        };
+
+        // Update panel.
+        const $readabilityinfo = document.getElementById('sa11y-readability-info');
+        const lix = calculateLix(pageText);
+
+        if (pageText.length === 0) {
+          $readabilityinfo.innerHTML = Lang._('READABILITY_NO_P_OR_LI_MESSAGE');
+        } else if (lix.wordCount > 30) {
+          if (lix.score >= 0 && lix.score < 35) {
+            $readabilityinfo.innerHTML = `${lix.score} <span class="sa11y-readability-score">${Lang._('LANG_GOOD')}</span>`;
+          } else if (lix.score > 36 && lix.score < 44) {
+            $readabilityinfo.innerHTML = `${lix.score} <span class="sa11y-readability-score">${Lang._('LANG_FAIRLY_DIFFICULT')}</span>`;
+          } else if (lix.score > 45 && lix.score < 54) {
+            $readabilityinfo.innerHTML = `${lix.score} <span class="sa11y-readability-score">${Lang._('LANG_DIFFICULT')}</span>`;
+          } else {
+            $readabilityinfo.innerHTML = `${lix.score} <span class="sa11y-readability-score">${Lang._('LANG_VERY_DIFFICULT')}</span>`;
+          }
+          // LIX details
+          document.getElementById('sa11y-readability-details').innerHTML = `
+            <li><strong>${Lang._('LANG_AVG_SENTENCE')}</strong> ${lix.avgWordsPerSentence}</li>
+            <li><strong>${Lang._('LANG_COMPLEX_WORDS')}</strong> ${lix.complexWords}%</li>
+            <li><strong>${Lang._('LANG_TOTAL_WORDS')}</strong> ${lix.wordCount}</li>`;
+        } else {
+          $readabilityinfo.textContent = Lang._('READABILITY_NOT_ENOUGH_CONTENT_MESSAGE');
+        }
       }
     };
     this.initialize();
   }
 }
 
-export { Lang, Sa11y };
+export { Lang, Sa11y, Sa11yCustomChecks };

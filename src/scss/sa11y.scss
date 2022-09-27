@@ -339,6 +339,10 @@ html[data-sa11y-theme="dark"] {
   transition: background 0.2s;
 }
 
+#sa11y-container #sa11y-panel strong {
+  font-weight: 600 !important;
+}
+
 #sa11y-container #sa11y-panel-alert {
   border-bottom: 1px solid var(--sa11y-panel-bg-splitter) !important;
   align-items: center !important;
@@ -1354,7 +1358,7 @@ span.sa11y-heading-label {
   width: 135px;
 }
 #sa11y-container:lang(en) #sa11y-panel {
-  width: 295px !important;
+  width: 305px !important;
 }
 #sa11y-container:lang(en) .sa11y-settings-switch {
   width: 95px !important;
