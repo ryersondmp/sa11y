@@ -2079,7 +2079,7 @@ class Sa11y {
             $el.closest('a[href]').insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang.sprintf('LINK_IMAGE_SUS_ALT_MESSAGE', error[1], altText)));
           } else if (error[0] !== null) {
             $el.classList.add('sa11y-error-border');
-            $el.insertAdjacentHTML('beforebegin', this.annotate(ERROR, Lang.sprintf('LINK_ALT_HAS_BAD_WORD_MESSAGE', altText, error[0])));
+            $el.insertAdjacentHTML('beforebegin', this.annotate(ERROR, Lang.sprintf('LINK_ALT_HAS_BAD_WORD_MESSAGE', error[0], altText)));
           } else if (error[2] !== null) {
             $el.classList.add('sa11y-error-border');
             $el.insertAdjacentHTML('beforebegin', this.annotate(ERROR, Lang.sprintf('ALT_PLACEHOLDER_MESSAGE', altText)));
