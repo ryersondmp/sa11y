@@ -56,7 +56,7 @@ export declare class Sa11y {
 		// Readability
 		readabilityPlugin?: boolean;
 		readabilityRoot?: string;
-		readabilityLang?: 'en' | 'fr' | 'es' | 'de' | 'nl' | 'it';
+		readabilityLang?: 'en' | 'fr' | 'es' | 'de' | 'nl' | 'it' | 'sv' | 'fi' | 'da' | 'no' | 'nb' | 'nn';
 		readabilityIgnore?: string;
 
 		// Other plugins

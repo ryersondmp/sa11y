@@ -10,13 +10,11 @@ substantial portions of the Software.
 ------------------------------------------------------------------------*/
 
 class Sa11yCustomChecks {
-	sa11y;
-
-	setSa11y(sa11y) {
+  setSa11y(sa11y) {
     this.sa11y = sa11y;
   }
 
-	check() {}
+  check() {}
 }
 
 class CustomChecks extends Sa11yCustomChecks {
