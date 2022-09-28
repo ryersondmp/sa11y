@@ -155,6 +155,8 @@ export declare const LangPl: Sa11yLang;
 
 export declare const LangUa: Sa11yLang;
 
+export declare const LangSv: Sa11yLang;
+
 export declare type Sa11yLang = {
 	strings: {
 		LANG_CODE: string;

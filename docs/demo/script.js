@@ -6,6 +6,7 @@ import Sa11yLangEn from '../assets/js/lang/en.js';
 import Sa11yLangFr from '../assets/js/lang/fr.js';
 import Sa11yLangPl from '../assets/js/lang/pl.js';
 import Sa11yLangUa from '../assets/js/lang/ua.js';
+import SallyLangSv from '../assets/js/lang/sv.js';
 
 // Sa11y's version.
 const v = "2.3.3";
@@ -26,8 +27,7 @@ if (url.indexOf("pl") > -1) {
 } else if (url.indexOf("ua") > -1) {
   Lang.addI18n(Sa11yLangUa.strings);
 } else if (url.indexOf("sv") > -1) {
-  //To-do: Swap with Swedish translation when complete.
-  Lang.addI18n(Sa11yLangEn.strings);
+	Lang.addI18n(SallyLangSv.strings);
   readabilityISO = 'sv';
 } else {
   Lang.addI18n(Sa11yLangEn.strings);
