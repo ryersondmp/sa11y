@@ -36,8 +36,8 @@
       PANEL_STATUS_NONE: 'Inga fel hittades.',
       PANEL_ICON_WARNINGS: 'varningar hittades.',
       PANEL_ICON_TOTAL: 'totala problem hittades.',
-      NOT_VISIBLE_ALERT: 'Objektet du försöker visa är inte synligt; den kan vara gömd eller inuti ett dragspel eller en flikkomponent. Här är en förhandsvisning:',
-      ERROR_MISSING_ROOT_TARGET: 'Hela sidan kontrollerades för tillgänglighet eftersom målområdet <code>%(root)</code> inte existerar.',
+      NOT_VISIBLE_ALERT: 'Objektet du försöker visa är inte synligt: det kan vara gömt eller finnas inuti en dragspelskomponent eller en flikkomponent. Här är en förhandsvisning:',
+      ERROR_MISSING_ROOT_TARGET: 'Hela sidan kontrolleras för tillgänglighet eftersom målområdet <code>%(root)</code> inte existerar.',
 
       // Alternative text module stop words
       SUSPICIOUS_ALT_STOPWORDS: ['bild', 'grafik', 'fotografi', 'foto'],
@@ -101,7 +101,7 @@
 
       // Readability
       LANG_READABILITY: 'Läsbarhet',
-      LANG_AVG_SENTENCE: 'Genomsnittliga ord per mening:',
+      LANG_AVG_SENTENCE: 'Genomsnittligt antal ord per mening:',
       LANG_COMPLEX_WORDS: 'Komplexa ord:',
       LANG_TOTAL_WORDS: 'Ord:',
       LANG_VERY_DIFFICULT: 'Mycket svårt',

@@ -95,7 +95,7 @@ export default {
 
     // Readability
     LANG_READABILITY: 'Läsbarhet',
-    LANG_AVG_SENTENCE: 'Genomsnittlig mängd ord per mening:',
+    LANG_AVG_SENTENCE: 'Genomsnittligt antal ord per mening:',
     LANG_COMPLEX_WORDS: 'Komplexa ord:',
     LANG_TOTAL_WORDS: 'Ord:',
     LANG_VERY_DIFFICULT: 'Mycket svårt',
