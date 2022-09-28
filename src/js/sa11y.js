@@ -8,7 +8,7 @@
 * The above copyright notice shall be included in all copies or
 substantial portions of the Software.
 ------------------------------------------------------------------------*/
-// eslint-disable-next-line max-classes-per-file
+
 import tippy from 'tippy.js';
 
 /* Translation object */
@@ -499,7 +499,7 @@ class Sa11y {
         return (...args) => {
           window.clearTimeout(timeoutId);
           timeoutId = window.setTimeout(() => {
-            callback.apply(null, args);
+            callback(...args);
           }, wait);
         };
       };
@@ -720,7 +720,6 @@ class Sa11y {
       // Toggle: Dark mode. (Credits: https://derekkedziora.com/blog/dark-mode-revisited)
       const systemInitiatedDark = window.matchMedia('(prefers-color-scheme: dark)');
       const $themeToggle = document.getElementById('sa11y-theme-toggle');
-      const theme = this.store.getItem('sa11y-remember-theme');
       const html = document.querySelector('html');
 
       if (systemInitiatedDark.matches) {
@@ -770,6 +769,7 @@ class Sa11y {
           $themeToggle.setAttribute('aria-pressed', 'true');
         }
       };
+      const theme = this.store.getItem('sa11y-remember-theme');
       if (theme === 'dark') {
         html.setAttribute('data-sa11y-theme', 'dark');
         this.store.setItem('sa11y-remember-theme', 'dark');
@@ -971,6 +971,8 @@ class Sa11y {
       resetClass(['sa11y-error-border', 'sa11y-error-text', 'sa11y-warning-border', 'sa11y-warning-text', 'sa11y-good-border', 'sa11y-good-text', 'sa11y-overflow', 'sa11y-fake-heading', 'sa11y-pulse-border', 'sa11y-fake-list']);
 
       const allcaps = document.querySelectorAll('.sa11y-warning-uppercase');
+
+      // eslint-disable-next-line no-param-reassign, no-return-assign
       allcaps.forEach((el) => el.outerHTML = el.innerHTML);
 
       document.getElementById('sa11y-readability-info').innerHTML = '';
@@ -2366,7 +2368,7 @@ class Sa11y {
           findTHeaders.forEach(($b) => {
             if ($b.textContent.trim().length === 0) {
               $b.classList.add('sa11y-error-border');
-              $b.innerHTML = this.annotate(ERROR, Lang._('TABLES_EMPTY_HEADING'));
+              $b.insertAdjacentHTML('afterbegin', this.annotate(ERROR, Lang._('TABLES_EMPTY_HEADING')));
             }
           });
         });
@@ -2501,14 +2503,12 @@ class Sa11y {
       if (option.duplicateIdQA === true) {
         const ids = this.root.querySelectorAll('[id]');
         const allIds = {};
-        let found = false;
         ids.forEach(($el) => {
           const { id } = $el;
           if (id) {
             if (allIds[id] === undefined) {
               allIds[id] = 1;
             } else {
-              found = true;
               $el.classList.add('sa11y-error-border');
               $el.insertAdjacentHTML('afterend', this.annotate(ERROR, Lang.sprintf('QA_DUPLICATE_ID', id), true));
             }
@@ -2558,6 +2558,7 @@ class Sa11y {
     // Rulesets: Contrast
     // Color contrast plugin by jasonday: https://github.com/jasonday/color-contrast
     // ============================================================
+    /* eslint-disable */
     this.checkContrast = () => {
       let contrastErrors = {
         errors: [],
@@ -2574,14 +2575,12 @@ class Sa11y {
           let rgb;
           let f;
           let k;
-          // eslint-disable-next-line no-useless-escape
           if (m = css.match(/rgb\(\s*(\-?\d+),\s*(\-?\d+)\s*,\s*(\-?\d+)\s*\)/)) {
             rgb = m.slice(1, 4);
             for (i = f = 0; f <= 2; i = ++f) {
               rgb[i] = +rgb[i];
             }
             rgb[3] = 1;
-          // eslint-disable-next-line no-useless-escape
           } else if (m = css.match(/rgba\(\s*(\-?\d+),\s*(\-?\d+)\s*,\s*(\-?\d+)\s*,\s*([01]|[01]?\.\d+)\)/)) {
             rgb = m.slice(1, 5);
             for (i = k = 0; k <= 3; i = ++k) {
@@ -2732,6 +2731,7 @@ class Sa11y {
         name.insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang.sprintf('CONTRAST_WARNING', nodetext)));
       });
     };
+    /* eslint-disable */
     // ============================================================
     // Rulesets: Readability
     // Adapted from Greg Kraus' readability script: https://accessibility.oit.ncsu.edu/it-accessibility-at-nc-state/developers/tools/readability-bookmarklet/
@@ -2897,11 +2897,11 @@ class Sa11y {
         if (pageText.length === 0) {
           $readabilityinfo.innerHTML = Lang._('READABILITY_NO_P_OR_LI_MESSAGE');
         } else if (lix.wordCount > 30) {
-          if (lix.score >= 0 && lix.score < 35) {
+          if (lix.score >= 0 && lix.score < 39) {
             $readabilityinfo.innerHTML = `${lix.score} <span class="sa11y-readability-score">${Lang._('LANG_GOOD')}</span>`;
-          } else if (lix.score > 36 && lix.score < 44) {
+          } else if (lix.score > 40 && lix.score < 50) {
             $readabilityinfo.innerHTML = `${lix.score} <span class="sa11y-readability-score">${Lang._('LANG_FAIRLY_DIFFICULT')}</span>`;
-          } else if (lix.score > 45 && lix.score < 54) {
+          } else if (lix.score > 51 && lix.score < 61) {
             $readabilityinfo.innerHTML = `${lix.score} <span class="sa11y-readability-score">${Lang._('LANG_DIFFICULT')}</span>`;
           } else {
             $readabilityinfo.innerHTML = `${lix.score} <span class="sa11y-readability-score">${Lang._('LANG_VERY_DIFFICULT')}</span>`;

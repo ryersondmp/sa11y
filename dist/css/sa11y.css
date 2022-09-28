@@ -92,7 +92,6 @@ html[data-sa11y-theme=dark] {
     --sa11y-hyperlink: #64b2ff;
     --sa11y-shortcut-hover: #093698;
   }
-
   html[data-sa11y-theme=light] {
     --sa11y-red-text: #d30017;
     --sa11y-yellow-text: #966F0D;
@@ -803,7 +802,7 @@ button.sa11y-btn:focus,
 /*===== Error, Warning, Pass buttons ===== */
 button.sa11y-btn {
   border-radius: 50% !important;
-  box-shadow: 0 0 16px 0 #0000004f !important;
+  box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.3098039216) !important;
   cursor: pointer !important;
   display: block !important;
   height: 36px !important;
@@ -1210,7 +1209,6 @@ span.sa11y-heading-label {
     transition: none !important;
     transform: none !important;
   }
-
   #sa11y-container .loading-sa11y::before {
     animation: none !important;
     opacity: 0 !important;
