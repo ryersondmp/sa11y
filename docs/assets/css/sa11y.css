@@ -8,9 +8,10 @@
 ------------------------------------------------------------------------*/
 :root {
   --sa11y-font-face: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-      "Helvetica Neue", Arial, "FontAwesome", sans-serif;
+      "Helvetica Neue", Arial, "FontAwesome", "Font Awesome 5 Free", "Font Awesome 5 Pro", "Font Awesome 6 Free", "Font Awesome 6 Pro", sans-serif;
   --sa11y-large-text: 16px;
   --sa11y-normal-text: 15px;
+  --sa11y-small-text: 12px;
   --sa11y-focus-color: rgba(0, 208, 255, 0.75);
   --sa11y-pulse-color: rgba(0, 208, 255, 0);
   --sa11y-good: #36844e;
@@ -37,6 +38,7 @@ html[data-sa11y-theme=light] {
   --sa11y-red-text: #d30017;
   --sa11y-yellow-text: #966F0D;
   --sa11y-panel-badge: #e9e9e9;
+  --sa11y-panel-outline-hover: rgba(233, 233, 233, 0.8);
   --sa11y-panel-primary: #333333;
   --sa11y-panel-bg: white;
   --sa11y-panel-bg-secondary: #f6f6f6;
@@ -55,6 +57,7 @@ html[data-sa11y-theme=dark] {
   --sa11y-red-text: #fe5b5f;
   --sa11y-yellow-text: #ffc800;
   --sa11y-panel-badge: #3500c4;
+  --sa11y-panel-outline-hover: rgba(53, 0, 196, 0.8);
   --sa11y-panel-primary: #dde8ff;
   --sa11y-panel-bg: #0a2051;
   --sa11y-panel-bg-secondary: #072c7c;
@@ -75,6 +78,7 @@ html[data-sa11y-theme=dark] {
     --sa11y-red-text: #ff6c6f;
     --sa11y-yellow-text: #ffc800;
     --sa11y-panel-badge: #3500c4;
+    --sa11y-panel-outline-hover: rgba(53, 0, 196, 0.8);
     --sa11y-panel-primary: #dde8ff;
     --sa11y-panel-bg: #0a2051;
     --sa11y-panel-bg-secondary: #072c7c;
@@ -88,11 +92,11 @@ html[data-sa11y-theme=dark] {
     --sa11y-hyperlink: #64b2ff;
     --sa11y-shortcut-hover: #093698;
   }
-
   html[data-sa11y-theme=light] {
     --sa11y-red-text: #d30017;
     --sa11y-yellow-text: #966F0D;
     --sa11y-panel-badge: #e9e9e9;
+    --sa11y-panel-outline-hover: rgba(233, 233, 233, 0.8);
     --sa11y-panel-primary: #333333;
     --sa11y-panel-bg: white;
     --sa11y-panel-bg-secondary: #f6f6f6;
@@ -323,6 +327,10 @@ html[data-sa11y-theme=dark] {
   transition: background 0.2s;
 }
 
+#sa11y-container #sa11y-panel strong {
+  font-weight: 600 !important;
+}
+
 #sa11y-container #sa11y-panel-alert {
   border-bottom: 1px solid var(--sa11y-panel-bg-splitter) !important;
   align-items: center !important;
@@ -359,7 +367,7 @@ html[data-sa11y-theme=dark] {
   display: flex !important;
 }
 
-#sa11y-container #sa11y-panel a {
+#sa11y-container #sa11y-panel a:not(#sa11y-outline-list a) {
   border-bottom: 0 !important;
   color: var(--sa11y-hyperlink) !important;
   text-decoration: underline !important;
@@ -502,9 +510,27 @@ html[data-sa11y-theme=dark] {
 #sa11y-container #sa11y-outline-list li {
   display: block !important;
   list-style-type: none !important;
-  margin-bottom: 0 !important;
+  margin-bottom: 3px !important;
   margin-top: 0 !important;
   padding: 0 !important;
+}
+
+#sa11y-container #sa11y-outline-list li:first-child {
+  margin-top: 5px !important;
+}
+
+#sa11y-container #sa11y-outline-list a {
+  text-decoration: none !important;
+  display: block;
+  cursor: pointer;
+}
+
+#sa11y-outline-list li a:hover,
+#sa11y-outline-list li a:focus {
+  background: var(--sa11y-panel-outline-hover);
+  box-shadow: 0 0 0 2px var(--sa11y-panel-outline-hover);
+  border-radius: 5px;
+  display: block;
 }
 
 /* Readability panel */
@@ -557,15 +583,23 @@ html[data-sa11y-theme=dark] {
 
 /* Jump to issue button */
 #sa11y-container #sa11y-cycle-toggle {
+  background: var(--sa11y-panel-bg-secondary) !important;
   border: 0 !important;
   border-radius: 50px !important;
+  box-shadow: 0 0 0 1px var(--sa11y-panel-bg-splitter) !important;
   cursor: pointer !important;
   overflow: visible !important;
   margin-right: 10px !important;
   position: relative !important;
   width: 35px !important;
   height: 35px !important;
-  transition: all 0.2s ease-in-out !important;
+  transition: all 0.1s ease-in-out !important;
+}
+
+#sa11y-container #sa11y-cycle-toggle:disabled {
+  box-shadow: none !important;
+  background: none !important;
+  cursor: default !important;
 }
 
 #sa11y-container #sa11y-cycle-toggle:before {
@@ -768,7 +802,7 @@ button.sa11y-btn:focus,
 /*===== Error, Warning, Pass buttons ===== */
 button.sa11y-btn {
   border-radius: 50% !important;
-  box-shadow: 0 0 16px 0 #0000004f !important;
+  box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.3098039216) !important;
   cursor: pointer !important;
   display: block !important;
   height: 36px !important;
@@ -1175,7 +1209,6 @@ span.sa11y-heading-label {
     transition: none !important;
     transform: none !important;
   }
-
   #sa11y-container .loading-sa11y::before {
     animation: none !important;
     opacity: 0 !important;
@@ -1327,8 +1360,12 @@ span.sa11y-heading-label {
   padding: 5px 9px !important;
 }
 
-.tippy-box[data-theme~=sa11y-theme] *:not(.sa11y-header-text):not(.sa11y-bold):not(strong) {
+.tippy-box[data-theme~=sa11y-theme] *:not(.sa11y-header-text):not(.sa11y-bold):not(strong):not(sub):not(sup) {
   font-size: var(--sa11y-normal-text) !important;
+}
+
+.tippy-box[data-theme~=sa11y-theme] > sub, sup {
+  font-size: var(--sa11y-small-text) !important;
 }
 
 .tippy-box[data-theme~=sa11y-theme] *:not(.sa11y-header-text):not(.sa11y-bold):not(strong):not(.sa11y-red-text) {
@@ -1386,7 +1423,7 @@ span.sa11y-heading-label {
 
 /* i18n - Panel width */
 #sa11y-container #sa11y-panel {
-  width: 340px;
+  width: 345px;
 }
 
 #sa11y-container .sa11y-settings-switch {
@@ -1394,7 +1431,7 @@ span.sa11y-heading-label {
 }
 
 #sa11y-container:lang(en) #sa11y-panel {
-  width: 295px !important;
+  width: 305px !important;
 }
 
 #sa11y-container:lang(en) .sa11y-settings-switch {

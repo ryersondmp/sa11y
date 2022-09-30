@@ -164,38 +164,57 @@
   var min = Math.min;
   var round = Math.round;
 
-  function getBoundingClientRect(element, includeScale) {
+  function getUAString() {
+    var uaData = navigator.userAgentData;
+
+    if (uaData != null && uaData.brands) {
+      return uaData.brands.map(function (item) {
+        return item.brand + "/" + item.version;
+      }).join(' ');
+    }
+
+    return navigator.userAgent;
+  }
+
+  function isLayoutViewport() {
+    return !/^((?!chrome|android).)*safari/i.test(getUAString());
+  }
+
+  function getBoundingClientRect(element, includeScale, isFixedStrategy) {
     if (includeScale === void 0) {
       includeScale = false;
     }
 
-    var rect = element.getBoundingClientRect();
+    if (isFixedStrategy === void 0) {
+      isFixedStrategy = false;
+    }
+
+    var clientRect = element.getBoundingClientRect();
     var scaleX = 1;
     var scaleY = 1;
 
-    if (isHTMLElement(element) && includeScale) {
-      var offsetHeight = element.offsetHeight;
-      var offsetWidth = element.offsetWidth; // Do not attempt to divide by 0, otherwise we get `Infinity` as scale
-      // Fallback to 1 in case both values are `0`
-
-      if (offsetWidth > 0) {
-        scaleX = round(rect.width) / offsetWidth || 1;
-      }
-
-      if (offsetHeight > 0) {
-        scaleY = round(rect.height) / offsetHeight || 1;
-      }
+    if (includeScale && isHTMLElement(element)) {
+      scaleX = element.offsetWidth > 0 ? round(clientRect.width) / element.offsetWidth || 1 : 1;
+      scaleY = element.offsetHeight > 0 ? round(clientRect.height) / element.offsetHeight || 1 : 1;
     }
 
+    var _ref = isElement$1(element) ? getWindow(element) : window,
+        visualViewport = _ref.visualViewport;
+
+    var addVisualOffsets = !isLayoutViewport() && isFixedStrategy;
+    var x = (clientRect.left + (addVisualOffsets && visualViewport ? visualViewport.offsetLeft : 0)) / scaleX;
+    var y = (clientRect.top + (addVisualOffsets && visualViewport ? visualViewport.offsetTop : 0)) / scaleY;
+    var width = clientRect.width / scaleX;
+    var height = clientRect.height / scaleY;
     return {
-      width: rect.width / scaleX,
-      height: rect.height / scaleY,
-      top: rect.top / scaleY,
-      right: rect.right / scaleX,
-      bottom: rect.bottom / scaleY,
-      left: rect.left / scaleX,
-      x: rect.left / scaleX,
-      y: rect.top / scaleY
+      width: width,
+      height: height,
+      top: y,
+      right: x + width,
+      bottom: y + height,
+      left: x,
+      x: x,
+      y: y
     };
   }
 
@@ -290,8 +309,8 @@
 
 
   function getContainingBlock(element) {
-    var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
-    var isIE = navigator.userAgent.indexOf('Trident') !== -1;
+    var isFirefox = /firefox/i.test(getUAString());
+    var isIE = /Trident/i.test(getUAString());
 
     if (isIE && isHTMLElement(element)) {
       // In IE 9, 10 and 11 fixed elements containing block is always established by the viewport
@@ -303,6 +322,10 @@
     }
 
     var currentNode = getParentNode(element);
+
+    if (isShadowRoot(currentNode)) {
+      currentNode = currentNode.host;
+    }
 
     while (isHTMLElement(currentNode) && ['html', 'body'].indexOf(getNodeName(currentNode)) < 0) {
       var css = getComputedStyle$1(currentNode); // This is non-exhaustive but covers the most common CSS properties that
@@ -527,7 +550,7 @@
 
       if (placement === top || (placement === left || placement === right) && variation === end) {
         sideY = bottom;
-        var offsetY = isFixed && win.visualViewport ? win.visualViewport.height : // $FlowFixMe[prop-missing]
+        var offsetY = isFixed && offsetParent === win && win.visualViewport ? win.visualViewport.height : // $FlowFixMe[prop-missing]
         offsetParent[heightProp];
         y -= offsetY - popperRect.height;
         y *= gpuAcceleration ? 1 : -1;
@@ -535,7 +558,7 @@
 
       if (placement === left || (placement === top || placement === bottom) && variation === end) {
         sideX = right;
-        var offsetX = isFixed && win.visualViewport ? win.visualViewport.width : // $FlowFixMe[prop-missing]
+        var offsetX = isFixed && offsetParent === win && win.visualViewport ? win.visualViewport.width : // $FlowFixMe[prop-missing]
         offsetParent[widthProp];
         x -= offsetX - popperRect.width;
         x *= gpuAcceleration ? 1 : -1;
@@ -708,31 +731,21 @@
     return getBoundingClientRect(getDocumentElement(element)).left + getWindowScroll(element).scrollLeft;
   }
 
-  function getViewportRect(element) {
+  function getViewportRect(element, strategy) {
     var win = getWindow(element);
     var html = getDocumentElement(element);
     var visualViewport = win.visualViewport;
     var width = html.clientWidth;
     var height = html.clientHeight;
     var x = 0;
-    var y = 0; // NB: This isn't supported on iOS <= 12. If the keyboard is open, the popper
-    // can be obscured underneath it.
-    // Also, `html.clientHeight` adds the bottom bar height in Safari iOS, even
-    // if it isn't open, so if this isn't available, the popper will be detected
-    // to overflow the bottom of the screen too early.
+    var y = 0;
 
     if (visualViewport) {
       width = visualViewport.width;
-      height = visualViewport.height; // Uses Layout Viewport (like Chrome; Safari does not currently)
-      // In Chrome, it returns a value very close to 0 (+/-) but contains rounding
-      // errors due to floating point numbers, so we need to check precision.
-      // Safari returns a number <= 0, usually < -1 when pinch-zoomed
-      // Feature detection fails in mobile emulation mode in Chrome.
-      // Math.abs(win.innerWidth / visualViewport.scale - visualViewport.width) <
-      // 0.001
-      // Fallback here: "Not Safari" userAgent
+      height = visualViewport.height;
+      var layoutViewport = isLayoutViewport();
 
-      if (!/^((?!chrome|android).)*safari/i.test(navigator.userAgent)) {
+      if (layoutViewport || !layoutViewport && strategy === 'fixed') {
         x = visualViewport.offsetLeft;
         y = visualViewport.offsetTop;
       }
@@ -826,8 +839,8 @@
     });
   }
 
-  function getInnerBoundingClientRect(element) {
-    var rect = getBoundingClientRect(element);
+  function getInnerBoundingClientRect(element, strategy) {
+    var rect = getBoundingClientRect(element, false, strategy === 'fixed');
     rect.top = rect.top + element.clientTop;
     rect.left = rect.left + element.clientLeft;
     rect.bottom = rect.top + element.clientHeight;
@@ -839,8 +852,8 @@
     return rect;
   }
 
-  function getClientRectFromMixedType(element, clippingParent) {
-    return clippingParent === viewport ? rectToClientRect(getViewportRect(element)) : isElement$1(clippingParent) ? getInnerBoundingClientRect(clippingParent) : rectToClientRect(getDocumentRect(getDocumentElement(element)));
+  function getClientRectFromMixedType(element, clippingParent, strategy) {
+    return clippingParent === viewport ? rectToClientRect(getViewportRect(element, strategy)) : isElement$1(clippingParent) ? getInnerBoundingClientRect(clippingParent, strategy) : rectToClientRect(getDocumentRect(getDocumentElement(element)));
   } // A "clipping parent" is an overflowable container with the characteristic of
   // clipping (or hiding) overflowing elements with a position different from
   // `initial`
@@ -863,18 +876,18 @@
   // clipping parents
 
 
-  function getClippingRect(element, boundary, rootBoundary) {
+  function getClippingRect(element, boundary, rootBoundary, strategy) {
     var mainClippingParents = boundary === 'clippingParents' ? getClippingParents(element) : [].concat(boundary);
     var clippingParents = [].concat(mainClippingParents, [rootBoundary]);
     var firstClippingParent = clippingParents[0];
     var clippingRect = clippingParents.reduce(function (accRect, clippingParent) {
-      var rect = getClientRectFromMixedType(element, clippingParent);
+      var rect = getClientRectFromMixedType(element, clippingParent, strategy);
       accRect.top = max(rect.top, accRect.top);
       accRect.right = min(rect.right, accRect.right);
       accRect.bottom = min(rect.bottom, accRect.bottom);
       accRect.left = max(rect.left, accRect.left);
       return accRect;
-    }, getClientRectFromMixedType(element, firstClippingParent));
+    }, getClientRectFromMixedType(element, firstClippingParent, strategy));
     clippingRect.width = clippingRect.right - clippingRect.left;
     clippingRect.height = clippingRect.bottom - clippingRect.top;
     clippingRect.x = clippingRect.left;
@@ -955,6 +968,8 @@
     var _options = options,
         _options$placement = _options.placement,
         placement = _options$placement === void 0 ? state.placement : _options$placement,
+        _options$strategy = _options.strategy,
+        strategy = _options$strategy === void 0 ? state.strategy : _options$strategy,
         _options$boundary = _options.boundary,
         boundary = _options$boundary === void 0 ? clippingParents : _options$boundary,
         _options$rootBoundary = _options.rootBoundary,
@@ -969,7 +984,7 @@
     var altContext = elementContext === popper ? reference : popper;
     var popperRect = state.rects.popper;
     var element = state.elements[altBoundary ? altContext : elementContext];
-    var clippingClientRect = getClippingRect(isElement$1(element) ? element : element.contextElement || getDocumentElement(state.elements.popper), boundary, rootBoundary);
+    var clippingClientRect = getClippingRect(isElement$1(element) ? element : element.contextElement || getDocumentElement(state.elements.popper), boundary, rootBoundary, strategy);
     var referenceClientRect = getBoundingClientRect(state.elements.reference);
     var popperOffsets = computeOffsets({
       reference: referenceClientRect,
@@ -1483,7 +1498,7 @@
     var isOffsetParentAnElement = isHTMLElement(offsetParent);
     var offsetParentIsScaled = isHTMLElement(offsetParent) && isElementScaled(offsetParent);
     var documentElement = getDocumentElement(offsetParent);
-    var rect = getBoundingClientRect(elementOrVirtualElement, offsetParentIsScaled);
+    var rect = getBoundingClientRect(elementOrVirtualElement, offsetParentIsScaled, isFixed);
     var scroll = {
       scrollLeft: 0,
       scrollTop: 0
@@ -3296,7 +3311,7 @@
 
   /*-----------------------------------------------------------------------
   * Sa11y, the accessibility quality assurance assistant.
-  * @version: 2.3.2
+  * @version: 2.3.3
   * @author: Development led by Adam Chaboryk, CPWA
   * @acknowledgements: https://this.netlify.app/acknowledgements/
   * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
@@ -3327,6 +3342,14 @@
       return this.langStrings[string] || string;
     },
   };
+
+  class Sa11yCustomChecks {
+    setSa11y(sa11y) {
+      this.sa11y = sa11y;
+    }
+
+    check() {}
+  }
 
   class Sa11y {
     constructor(options) {
@@ -3371,12 +3394,12 @@
         duplicateIdQA: true,
         underlinedTextQA: true,
         pageTitleQA: true,
+        subscriptQA: true,
 
         // Embedded content rulesets
         embeddedContentAll: true,
         embeddedContentAudio: true,
         embeddedContentVideo: true,
-        embeddedContentTwitter: true,
         embeddedContentDataViz: true,
         embeddedContentTitles: true,
         embeddedContentGeneral: true,
@@ -3385,10 +3408,9 @@
         videoContent: 'youtube.com, vimeo.com, yuja.com, panopto.com',
         audioContent: 'soundcloud.com, simplecast.com, podbean.com, buzzsprout.com, blubrry.com, transistor.fm, fusebox.fm, libsyn.com',
         dataVizContent: 'datastudio.google.com, tableau',
-        twitterContent: 'twitter-timeline',
         embeddedContent: '',
       };
-      defaultOptions.embeddedContent = `${defaultOptions.videoContent}, ${defaultOptions.audioContent}, ${defaultOptions.dataVizContent}, ${defaultOptions.twitterContent}`;
+      defaultOptions.embeddedContent = `${defaultOptions.videoContent}, ${defaultOptions.audioContent}, ${defaultOptions.dataVizContent}`;
 
       const option = {
         ...defaultOptions,
@@ -3435,7 +3457,7 @@
 
             // Check page once page is done loading.
             document.getElementById('sa11y-toggle').disabled = false;
-            if (localStorage.getItem('sa11y-remember-panel') === 'Closed' || !localStorage.getItem('sa11y-remember-panel')) {
+            if (this.store.getItem('sa11y-remember-panel') === 'Closed' || !this.store.getItem('sa11y-remember-panel')) {
               this.panelActive = true;
               this.checkAll();
             }
@@ -3453,10 +3475,10 @@
         sa11ycontainer.setAttribute('lang', Lang._('LANG_CODE'));
         sa11ycontainer.setAttribute('aria-label', Lang._('CONTAINER_LABEL'));
 
-        const loadContrastPreference = localStorage.getItem('sa11y-remember-contrast') === 'On';
-        const loadLabelsPreference = localStorage.getItem('sa11y-remember-labels') === 'On';
-        const loadChangeRequestPreference = localStorage.getItem('sa11y-remember-links-advanced') === 'On';
-        const loadReadabilityPreference = localStorage.getItem('sa11y-remember-readability') === 'On';
+        const loadContrastPreference = this.store.getItem('sa11y-remember-contrast') === 'On';
+        const loadLabelsPreference = this.store.getItem('sa11y-remember-labels') === 'On';
+        const loadChangeRequestPreference = this.store.getItem('sa11y-remember-links-advanced') === 'On';
+        const loadReadabilityPreference = this.store.getItem('sa11y-remember-readability') === 'On';
 
         sa11ycontainer.innerHTML = `<button type="button" aria-expanded="false" id="sa11y-toggle" aria-describedby="sa11y-notification-badge" aria-label="${Lang._('MAIN_TOGGLE_LABEL')}" disabled>
                     ${MainToggleIcon}
@@ -3474,7 +3496,7 @@
                     <h2 tabindex="-1">${Lang._('PAGE_OUTLINE')}</h2>
                 </div>
                 <div id="sa11y-outline-content">
-                    <ul id="sa11y-outline-list"></ul>
+                    <ul id="sa11y-outline-list" tabindex="0" role="list" aria-label="${Lang._('PAGE_OUTLINE')}"></ul>
                 </div>`
 
           // Readability tab.
@@ -3568,7 +3590,7 @@
         }
 
         // Supported readability languages. Turn module off if not supported.
-        const supportedLang = ['en', 'fr', 'es', 'de', 'nl', 'it'];
+        const supportedLang = ['en', 'fr', 'es', 'de', 'nl', 'it', 'sv', 'fi', 'da', 'no', 'nb', 'nn'];
         const pageLang = document.querySelector('html').getAttribute('lang');
 
         // If lang attribute is missing.
@@ -3660,22 +3682,9 @@
           option.dataVizContent = 'datastudio.google.com, tableau';
         }
 
-        // Twitter timeline sources.
-        if (option.twitterContent) {
-          const twitterContent = option.twitterContent.split(/\s*[\s,]\s*/).map((el) => `[class*='${el}']`);
-          option.twitterContent = twitterContent.join(', ');
-        } else {
-          option.twitterContent = 'twitter-timeline';
-        }
-
         // Embedded content all
         if (option.embeddedContent) {
-          const embeddedContent = option.embeddedContent.split(/\s*[\s,]\s*/).map((el) => {
-            if (el === 'twitter-timeline') {
-              return `[class*='${el}']`;
-            }
-            return `[src*='${el}']`;
-          });
+          const embeddedContent = option.embeddedContent.split(/\s*[\s,]\s*/).map((el) => `[src*='${el}']`);
           option.embeddedContent = embeddedContent.join(', ');
         }
       };
@@ -3684,15 +3693,15 @@
         // Keeps checker active when navigating between pages until it is toggled off.
         const sa11yToggle = document.getElementById('sa11y-toggle');
         sa11yToggle.addEventListener('click', (e) => {
-          if (localStorage.getItem('sa11y-remember-panel') === 'Opened') {
-            localStorage.setItem('sa11y-remember-panel', 'Closed');
+          if (this.store.getItem('sa11y-remember-panel') === 'Opened') {
+            this.store.setItem('sa11y-remember-panel', 'Closed');
             sa11yToggle.classList.remove('sa11y-on');
             sa11yToggle.setAttribute('aria-expanded', 'false');
             this.resetAll();
             this.updateBadge();
             e.preventDefault();
           } else {
-            localStorage.setItem('sa11y-remember-panel', 'Opened');
+            this.store.setItem('sa11y-remember-panel', 'Opened');
             sa11yToggle.classList.add('sa11y-on');
             sa11yToggle.setAttribute('aria-expanded', 'true');
             this.checkAll();
@@ -3703,7 +3712,7 @@
         });
 
         // Remember to leave it open
-        if (localStorage.getItem('sa11y-remember-panel') === 'Opened') {
+        if (this.store.getItem('sa11y-remember-panel') === 'Opened') {
           sa11yToggle.classList.add('sa11y-on');
           sa11yToggle.setAttribute('aria-expanded', 'true');
         }
@@ -3717,15 +3726,7 @@
 
         document.onkeydown = (e) => {
           const evt = e || window.event;
-
-          // Escape key to shutdown.
-          let isEscape = false;
-          if ('key' in evt) {
-            isEscape = (evt.key === 'Escape' || evt.key === 'Esc');
-          } else {
-            isEscape = (evt.keyCode === 27);
-          }
-          if (isEscape && document.getElementById('sa11y-panel').classList.contains('sa11y-active')) {
+          if (evt.key === 'Escape' && document.getElementById('sa11y-panel').classList.contains('sa11y-active')) {
             sa11yToggle.setAttribute('aria-expanded', 'false');
             sa11yToggle.classList.remove('sa11y-on');
             sa11yToggle.click();
@@ -3807,7 +3808,7 @@
           return (...args) => {
             window.clearTimeout(timeoutId);
             timeoutId = window.setTimeout(() => {
-              callback.apply(null, args);
+              callback(...args);
             }, wait);
           };
         };
@@ -3918,6 +3919,29 @@
             top: rect.top + scrollTop,
           };
         };
+
+        // Utility: Custom localStorage utility with fallback to sessionStorage.
+        this.store = {
+          getItem(key) {
+            try {
+              if (localStorage.getItem(key) === null) {
+                return sessionStorage.getItem(key);
+              }
+              return localStorage.getItem(key);
+            } catch (error) {
+              // Cookies totally disabled.
+              return false;
+            }
+          },
+          setItem(key, value) {
+            try {
+              localStorage.setItem(key, value);
+            } catch (error) {
+              sessionStorage.setItem(key, value);
+            }
+            return true;
+          },
+        };
       };
 
       //----------------------------------------------------------------------
@@ -3927,14 +3951,14 @@
         // Toggle: Contrast
         const $contrastToggle = document.getElementById('sa11y-contrast-toggle');
         $contrastToggle.onclick = async () => {
-          if (localStorage.getItem('sa11y-remember-contrast') === 'On') {
-            localStorage.setItem('sa11y-remember-contrast', 'Off');
+          if (this.store.getItem('sa11y-remember-contrast') === 'On') {
+            this.store.setItem('sa11y-remember-contrast', 'Off');
             $contrastToggle.textContent = `${Lang._('OFF')}`;
             $contrastToggle.setAttribute('aria-pressed', 'false');
             this.resetAll(false);
             await this.checkAll();
           } else {
-            localStorage.setItem('sa11y-remember-contrast', 'On');
+            this.store.setItem('sa11y-remember-contrast', 'On');
             $contrastToggle.textContent = `${Lang._('ON')}`;
             $contrastToggle.setAttribute('aria-pressed', 'true');
             this.resetAll(false);
@@ -3945,14 +3969,14 @@
         // Toggle: Form labels
         const $labelsToggle = document.getElementById('sa11y-labels-toggle');
         $labelsToggle.onclick = async () => {
-          if (localStorage.getItem('sa11y-remember-labels') === 'On') {
-            localStorage.setItem('sa11y-remember-labels', 'Off');
+          if (this.store.getItem('sa11y-remember-labels') === 'On') {
+            this.store.setItem('sa11y-remember-labels', 'Off');
             $labelsToggle.textContent = `${Lang._('OFF')}`;
             $labelsToggle.setAttribute('aria-pressed', 'false');
             this.resetAll(false);
             await this.checkAll();
           } else {
-            localStorage.setItem('sa11y-remember-labels', 'On');
+            this.store.setItem('sa11y-remember-labels', 'On');
             $labelsToggle.textContent = `${Lang._('ON')}`;
             $labelsToggle.setAttribute('aria-pressed', 'true');
             this.resetAll(false);
@@ -3963,14 +3987,14 @@
         // Toggle: Links (Advanced)
         const $linksToggle = document.getElementById('sa11y-links-advanced-toggle');
         $linksToggle.onclick = async () => {
-          if (localStorage.getItem('sa11y-remember-links-advanced') === 'On') {
-            localStorage.setItem('sa11y-remember-links-advanced', 'Off');
+          if (this.store.getItem('sa11y-remember-links-advanced') === 'On') {
+            this.store.setItem('sa11y-remember-links-advanced', 'Off');
             $linksToggle.textContent = `${Lang._('OFF')}`;
             $linksToggle.setAttribute('aria-pressed', 'false');
             this.resetAll(false);
             await this.checkAll();
           } else {
-            localStorage.setItem('sa11y-remember-links-advanced', 'On');
+            this.store.setItem('sa11y-remember-links-advanced', 'On');
             $linksToggle.textContent = `${Lang._('ON')}`;
             $linksToggle.setAttribute('aria-pressed', 'true');
             this.resetAll(false);
@@ -3981,15 +4005,15 @@
         // Toggle: Readability
         const $readabilityToggle = document.getElementById('sa11y-readability-toggle');
         $readabilityToggle.onclick = async () => {
-          if (localStorage.getItem('sa11y-remember-readability') === 'On') {
-            localStorage.setItem('sa11y-remember-readability', 'Off');
+          if (this.store.getItem('sa11y-remember-readability') === 'On') {
+            this.store.setItem('sa11y-remember-readability', 'Off');
             $readabilityToggle.textContent = `${Lang._('OFF')}`;
             $readabilityToggle.setAttribute('aria-pressed', 'false');
             document.getElementById('sa11y-readability-panel').classList.remove('sa11y-active');
             this.resetAll(false);
             await this.checkAll();
           } else {
-            localStorage.setItem('sa11y-remember-readability', 'On');
+            this.store.setItem('sa11y-remember-readability', 'On');
             $readabilityToggle.textContent = `${Lang._('ON')}`;
             $readabilityToggle.setAttribute('aria-pressed', 'true');
             document.getElementById('sa11y-readability-panel').classList.add('sa11y-active');
@@ -3998,14 +4022,13 @@
           }
         };
 
-        if (localStorage.getItem('sa11y-remember-readability') === 'On') {
+        if (this.store.getItem('sa11y-remember-readability') === 'On') {
           document.getElementById('sa11y-readability-panel').classList.add('sa11y-active');
         }
 
         // Toggle: Dark mode. (Credits: https://derekkedziora.com/blog/dark-mode-revisited)
         const systemInitiatedDark = window.matchMedia('(prefers-color-scheme: dark)');
         const $themeToggle = document.getElementById('sa11y-theme-toggle');
-        const theme = localStorage.getItem('sa11y-remember-theme');
         const html = document.querySelector('html');
 
         if (systemInitiatedDark.matches) {
@@ -4021,48 +4044,49 @@
             html.setAttribute('data-sa11y-theme', 'dark');
             $themeToggle.textContent = `${Lang._('ON')}`;
             $themeToggle.setAttribute('aria-pressed', 'true');
-            localStorage.setItem('sa11y-remember-theme', '');
+            this.store.setItem('sa11y-remember-theme', '');
           } else {
             html.setAttribute('data-sa11y-theme', 'light');
             $themeToggle.textContent = `${Lang._('OFF')}`;
             $themeToggle.setAttribute('aria-pressed', 'false');
-            localStorage.setItem('sa11y-remember-theme', '');
+            this.store.setItem('sa11y-remember-theme', '');
           }
         };
 
         systemInitiatedDark.addEventListener('change', prefersColorTest);
         $themeToggle.onclick = async () => {
-          const theme = localStorage.getItem('sa11y-remember-theme');
+          const theme = this.store.getItem('sa11y-remember-theme');
           if (theme === 'dark') {
             html.setAttribute('data-sa11y-theme', 'light');
-            localStorage.setItem('sa11y-remember-theme', 'light');
+            this.store.setItem('sa11y-remember-theme', 'light');
             $themeToggle.textContent = `${Lang._('OFF')}`;
             $themeToggle.setAttribute('aria-pressed', 'false');
           } else if (theme === 'light') {
             html.setAttribute('data-sa11y-theme', 'dark');
-            localStorage.setItem('sa11y-remember-theme', 'dark');
+            this.store.setItem('sa11y-remember-theme', 'dark');
             $themeToggle.textContent = `${Lang._('ON')}`;
             $themeToggle.setAttribute('aria-pressed', 'true');
           } else if (systemInitiatedDark.matches) {
             html.setAttribute('data-sa11y-theme', 'light');
-            localStorage.setItem('sa11y-remember-theme', 'light');
+            this.store.setItem('sa11y-remember-theme', 'light');
             $themeToggle.textContent = `${Lang._('OFF')}`;
             $themeToggle.setAttribute('aria-pressed', 'false');
           } else {
             html.setAttribute('data-sa11y-theme', 'dark');
-            localStorage.setItem('sa11y-remember-theme', 'dark');
+            this.store.setItem('sa11y-remember-theme', 'dark');
             $themeToggle.textContent = `${Lang._('ON')}`;
             $themeToggle.setAttribute('aria-pressed', 'true');
           }
         };
+        const theme = this.store.getItem('sa11y-remember-theme');
         if (theme === 'dark') {
           html.setAttribute('data-sa11y-theme', 'dark');
-          localStorage.setItem('sa11y-remember-theme', 'dark');
+          this.store.setItem('sa11y-remember-theme', 'dark');
           $themeToggle.textContent = `${Lang._('ON')}`;
           $themeToggle.setAttribute('aria-pressed', 'true');
         } else if (theme === 'light') {
           html.setAttribute('data-sa11y-theme', 'light');
-          localStorage.setItem('sa11y-remember-theme', 'light');
+          this.store.setItem('sa11y-remember-theme', 'light');
           $themeToggle.textContent = `${Lang._('OFF')}`;
           $themeToggle.setAttribute('aria-pressed', 'false');
         }
@@ -4082,7 +4106,7 @@
         tippy('#sa11y-cycle-toggle', {
           content: `<div style="text-align:center">${Lang._('SHORTCUT_TOOLTIP')} &raquo;<br>${keyboardShortcut}</div>`,
           allowHTML: true,
-          delay: [900, 0],
+          delay: [200, 0],
           trigger: 'mouseenter focusin',
           arrow: true,
           placement: 'top',
@@ -4105,7 +4129,7 @@
           const checkURL = this.debounce(async () => {
             if (url !== window.location.href) {
               // If panel is closed.
-              if (localStorage.getItem('sa11y-remember-panel') === 'Closed' || !localStorage.getItem('sa11y-remember-panel')) {
+              if (this.store.getItem('sa11y-remember-panel') === 'Closed' || !this.store.getItem('sa11y-remember-panel')) {
                 this.panelActive = true;
                 this.checkAll();
               }
@@ -4156,40 +4180,40 @@
 
         // Contrast plugin
         if (option.contrastPlugin === true) {
-          if (localStorage.getItem('sa11y-remember-contrast') === 'On') {
+          if (this.store.getItem('sa11y-remember-contrast') === 'On') {
             this.checkContrast();
           }
         } else {
           const contrastLi = document.getElementById('sa11y-contrast-li');
           contrastLi.setAttribute('style', 'display: none !important;');
-          localStorage.setItem('sa11y-remember-contrast', 'Off');
+          this.store.setItem('sa11y-remember-contrast', 'Off');
         }
 
         // Form labels plugin
         if (option.formLabelsPlugin === true) {
-          if (localStorage.getItem('sa11y-remember-labels') === 'On') {
+          if (this.store.getItem('sa11y-remember-labels') === 'On') {
             this.checkLabels();
           }
         } else {
           const formLabelsLi = document.getElementById('sa11y-form-labels-li');
           formLabelsLi.setAttribute('style', 'display: none !important;');
-          localStorage.setItem('sa11y-remember-labels', 'Off');
+          this.store.setItem('sa11y-remember-labels', 'Off');
         }
 
         // Links (Advanced) plugin
         if (option.linksAdvancedPlugin === true) {
-          if (localStorage.getItem('sa11y-remember-links-advanced') === 'On') {
+          if (this.store.getItem('sa11y-remember-links-advanced') === 'On') {
             this.checkLinksAdvanced();
           }
         } else {
           const linksAdvancedLi = document.getElementById('sa11y-links-advanced-li');
           linksAdvancedLi.setAttribute('style', 'display: none !important;');
-          localStorage.setItem('sa11y-remember-links-advanced', 'Off');
+          this.store.setItem('sa11y-remember-links-advanced', 'Off');
         }
 
         // Readability plugin
         if (option.readabilityPlugin === true) {
-          if (localStorage.getItem('sa11y-remember-readability') === 'On') {
+          if (this.store.getItem('sa11y-remember-readability') === 'On') {
             this.checkReadability();
           }
         } else {
@@ -4197,7 +4221,6 @@
           const readabilityPanel = document.getElementById('sa11y-readability-panel');
           readabilityLi.setAttribute('style', 'display: none !important;');
           readabilityPanel.classList.remove('sa11y-active');
-          // localStorage.setItem("sa11y-remember-readability", "Off");
         }
 
         // Embedded content plugin
@@ -4257,7 +4280,11 @@
         resetClass(['sa11y-error-border', 'sa11y-error-text', 'sa11y-warning-border', 'sa11y-warning-text', 'sa11y-good-border', 'sa11y-good-text', 'sa11y-overflow', 'sa11y-fake-heading', 'sa11y-pulse-border', 'sa11y-fake-list']);
 
         const allcaps = document.querySelectorAll('.sa11y-warning-uppercase');
+
+        // eslint-disable-next-line no-param-reassign, no-return-assign
         allcaps.forEach((el) => el.outerHTML = el.innerHTML);
+
+        document.getElementById('sa11y-readability-info').innerHTML = '';
 
         // Remove
         document.querySelectorAll(`
@@ -4266,7 +4293,6 @@
                 .sa11y-heading-label,
                 #sa11y-outline-list li,
                 .sa11y-readability-period,
-                #sa11y-readability-info span,
                 #sa11y-readability-details li,
                 .sa11y-clone-image-text
             `).forEach((el) => el.parentNode.removeChild(el));
@@ -4299,7 +4325,7 @@
           interactive: true,
           trigger: 'mouseenter click focusin', // Focusin trigger to ensure "Jump to issue" button displays tooltip.
           arrow: true,
-          delay: [200, 0], // Slight delay to ensure mouse doesn't quickly trigger and hide tooltip.
+          delay: [100, 0], // Slight delay to ensure mouse doesn't quickly trigger and hide tooltip.
           theme: 'sa11y-theme',
           placement: 'auto-start',
           allowHTML: true,
@@ -4384,7 +4410,6 @@
 
         const $skipBtn = document.getElementById('sa11y-cycle-toggle');
         $skipBtn.disabled = false;
-        $skipBtn.setAttribute('style', 'cursor: pointer !important;');
 
         const $panel = document.getElementById('sa11y-panel');
         $panel.classList.add('sa11y-active');
@@ -4411,7 +4436,6 @@
 
           if ($findButtons.length === 0) {
             $skipBtn.disabled = true;
-            $skipBtn.setAttribute('style', 'cursor: default !important;');
           }
         }
       };
@@ -4435,13 +4459,13 @@
             $outlinePanel.classList.remove('sa11y-active');
             $outlineToggle.textContent = `${Lang._('SHOW_OUTLINE')}`;
             $outlineToggle.setAttribute('aria-expanded', 'false');
-            localStorage.setItem('sa11y-remember-outline', 'Closed');
+            this.store.setItem('sa11y-remember-outline', 'Closed');
           } else {
             $outlineToggle.classList.add('sa11y-outline-active');
             $outlinePanel.classList.add('sa11y-active');
             $outlineToggle.textContent = `${Lang._('HIDE_OUTLINE')}`;
             $outlineToggle.setAttribute('aria-expanded', 'true');
-            localStorage.setItem('sa11y-remember-outline', 'Opened');
+            this.store.setItem('sa11y-remember-outline', 'Opened');
           }
 
           // Set focus on Page Outline heading for accessibility.
@@ -4463,19 +4487,55 @@
         });
 
         // Remember to leave outline open
-        if (localStorage.getItem('sa11y-remember-outline') === 'Opened') {
+        if (this.store.getItem('sa11y-remember-outline') === 'Opened') {
           $outlineToggle.classList.add('sa11y-outline-active');
           $outlinePanel.classList.add('sa11y-active');
           $outlineToggle.textContent = `${Lang._('HIDE_OUTLINE')}`;
           $outlineToggle.setAttribute('aria-expanded', 'true');
           $headingAnnotations.forEach(($el) => $el.classList.toggle('sa11y-label-visible'));
-          // Keyboard accessibility fix for scrollable panel content.
-          if ($outlineList.clientHeight > 250) {
-            $outlineList.setAttribute('tabindex', '0');
-            $outlineList.setAttribute('aria-label', `${Lang._('PAGE_OUTLINE')}`);
-            $outlineList.setAttribute('role', 'region');
-          }
         }
+
+        // Roving tabindex menu for page outline.
+        // Thanks to Srijan for this snippet! https://blog.srij.dev/roving-tabindex-from-scratch
+        const children = Array.from($outlineList.querySelectorAll('a'));
+        let current = 0;
+        const handleKeyDown = (e) => {
+          if (!['ArrowUp', 'ArrowDown', 'Space'].includes(e.code)) return;
+          if (e.code === 'Space') {
+            children[current].click();
+            return;
+          }
+          const selected = children[current];
+          selected.setAttribute('tabindex', -1);
+          let next;
+          if (e.code === 'ArrowDown') {
+            next = current + 1;
+            if (current === children.length - 1) {
+              next = 0;
+            }
+          } else if ((e.code === 'ArrowUp')) {
+            next = current - 1;
+            if (current === 0) {
+              next = children.length - 1;
+            }
+          }
+          children[next].setAttribute('tabindex', 0);
+          children[next].focus();
+          current = next;
+
+          e.preventDefault();
+        };
+        $outlineList.addEventListener('focus', () => {
+          if (children.length > 0) {
+            $outlineList.setAttribute('tabindex', -1);
+            children[current].setAttribute('tabindex', 0);
+            children[current].focus();
+          }
+          $outlineList.addEventListener('keydown', handleKeyDown);
+        });
+        $outlineList.addEventListener('blur', () => {
+          $outlineList.removeEventListener('keydown', handleKeyDown);
+        });
 
         // Show settings panel
         $settingsToggle.addEventListener('click', () => {
@@ -4500,7 +4560,7 @@
           $outlineToggle.setAttribute('aria-expanded', 'false');
           $outlineToggle.textContent = `${Lang._('SHOW_OUTLINE')}`;
           $headingAnnotations.forEach(($el) => $el.classList.remove('sa11y-label-visible'));
-          localStorage.setItem('sa11y-remember-outline', 'Closed');
+          this.store.setItem('sa11y-remember-outline', 'Closed');
 
           // Keyboard accessibility fix for scrollable panel content.
           if ($settingsContent.clientHeight > 350) {
@@ -4771,7 +4831,6 @@
         this.$videos = this.$iframes.filter(($el) => $el.matches(option.videoContent));
         this.$audio = this.$iframes.filter(($el) => $el.matches(option.audioContent));
         this.$dataviz = this.$iframes.filter(($el) => $el.matches(option.dataVizContent));
-        this.$twitter = this.$iframes.filter(($el) => $el.matches(option.twitterContent));
         this.$embeddedContent = this.$iframes.filter(($el) => !$el.matches(option.embeddedContent));
 
         // QA
@@ -4934,22 +4993,28 @@
           prevLevel = level;
 
           const li = `<li class='sa11y-outline-${level}'>
+                  <a href="#sa11y-h${i}" tabindex="-1">
                     <span class='sa11y-badge'>${level}</span>
                     <span class='sa11y-outline-list-item'>${htext}</span>
+                  </a>
                 </li>`;
 
           const liError = `<li class='sa11y-outline-${level}'>
+                  <a href="#sa11y-h${i}" tabindex="-1">
                     <span class='sa11y-badge sa11y-error-badge'>
                     <span aria-hidden='true'>&#10007;</span>
                     <span class='sa11y-visually-hidden'>${Lang._('ERROR')}</span> ${level}</span>
                     <span class='sa11y-outline-list-item sa11y-red-text sa11y-bold'>${htext}</span>
+                  </a>
                 </li>`;
 
           const liWarning = `<li class='sa11y-outline-${level}'>
+                  <a href="#sa11y-h${i}" tabindex="-1">
                     <span class='sa11y-badge sa11y-warning-badge'>
                     <span aria-hidden='true'>&#x3f;</span>
                     <span class='sa11y-visually-hidden'>${Lang._('WARNING')}</span> ${level}</span>
                     <span class='sa11y-outline-list-item sa11y-yellow-text sa11y-bold'>${htext}</span>
+                  </a>
                 </li>`;
 
           let ignoreArray = [];
@@ -4957,27 +5022,28 @@
             ignoreArray = Array.from(document.querySelectorAll(this.outlineIgnore));
           }
 
+          const outline = document.querySelector('#sa11y-outline-list');
           if (!ignoreArray.includes($el)) {
             // Append heading labels.
-            $el.insertAdjacentHTML('beforeend', `<span class='sa11y-heading-label'>H${level}</span>`);
+            $el.insertAdjacentHTML('beforeend', `<span id="sa11y-h${i}" class='sa11y-heading-label'>H${level}</span>`);
 
             // Heading errors
             if (error !== null && $el.closest('a') !== null) {
               $el.classList.add('sa11y-error-border');
               $el.closest('a').insertAdjacentHTML('afterend', this.annotate(ERROR, error, true));
-              document.querySelector('#sa11y-outline-list').insertAdjacentHTML('beforeend', liError);
+              outline.insertAdjacentHTML('beforeend', liError);
             } else if (error !== null) {
               $el.classList.add('sa11y-error-border');
               $el.insertAdjacentHTML('beforebegin', this.annotate(ERROR, error));
-              document.querySelector('#sa11y-outline-list').insertAdjacentHTML('beforeend', liError);
+              outline.insertAdjacentHTML('beforeend', liError);
             } else if (warning !== null && $el.closest('a') !== null) {
               $el.closest('a').insertAdjacentHTML('afterend', this.annotate(WARNING, warning));
-              document.querySelector('#sa11y-outline-list').insertAdjacentHTML('beforeend', liWarning);
+              outline.insertAdjacentHTML('beforeend', liWarning);
             } else if (warning !== null) {
               $el.insertAdjacentHTML('beforebegin', this.annotate(WARNING, warning));
-              document.querySelector('#sa11y-outline-list').insertAdjacentHTML('beforeend', liWarning);
+              outline.insertAdjacentHTML('beforeend', liWarning);
             } else if (error === null || warning === null) {
-              document.querySelector('#sa11y-outline-list').insertAdjacentHTML('beforeend', li);
+              outline.insertAdjacentHTML('beforeend', li);
             }
           }
         });
@@ -5300,8 +5366,8 @@
             const error = this.containsAltTextStopWords(altText);
             const altLength = alt.length;
 
-            // Image fails if a stop word was found.
-            if (error[0] !== null && $el.closest('a[href]')) {
+            if ($el.closest('a[href]') && $el.closest('a[href]').getAttribute('tabindex') === '-1' && $el.closest('a[href]').getAttribute('aria-hidden') === 'true') ; else if (error[0] !== null && $el.closest('a[href]')) {
+              // Image fails if a stop word was found.
               $el.classList.add('sa11y-error-border');
               $el.closest('a[href]').insertAdjacentHTML('beforebegin', this.annotate(ERROR, Lang.sprintf('LINK_IMAGE_BAD_ALT_MESSAGE', error[0], altText)));
             } else if (error[2] !== null && $el.closest('a[href]')) {
@@ -5312,7 +5378,7 @@
               $el.closest('a[href]').insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang.sprintf('LINK_IMAGE_SUS_ALT_MESSAGE', error[1], altText)));
             } else if (error[0] !== null) {
               $el.classList.add('sa11y-error-border');
-              $el.insertAdjacentHTML('beforebegin', this.annotate(ERROR, Lang.sprintf('LINK_ALT_HAS_BAD_WORD_MESSAGE', altText, error[0])));
+              $el.insertAdjacentHTML('beforebegin', this.annotate(ERROR, Lang.sprintf('LINK_ALT_HAS_BAD_WORD_MESSAGE', error[0], altText)));
             } else if (error[2] !== null) {
               $el.classList.add('sa11y-error-border');
               $el.insertAdjacentHTML('beforebegin', this.annotate(ERROR, Lang.sprintf('ALT_PLACEHOLDER_MESSAGE', altText)));
@@ -5464,17 +5530,6 @@
           });
         }
 
-        // Warning: Twitter timelines that are too long.
-        if (option.embeddedContentTwitter === true) {
-          this.$twitter.forEach(($el) => {
-            const tweets = $el.contentWindow.document.body.querySelectorAll('.timeline-TweetList-tweet');
-            if (tweets.length > 3) {
-              $el.classList.add('sa11y-warning-border');
-              $el.insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang._('EMBED_TWITTER')));
-            }
-          });
-        }
-
         // Error: iFrame is missing accessible name.
         if (option.embeddedContentTitles === true) {
           this.$iframes.forEach(($el) => {
@@ -5593,7 +5648,7 @@
             findTHeaders.forEach(($b) => {
               if ($b.textContent.trim().length === 0) {
                 $b.classList.add('sa11y-error-border');
-                $b.innerHTML = this.annotate(ERROR, Lang._('TABLES_EMPTY_HEADING'));
+                $b.insertAdjacentHTML('afterbegin', this.annotate(ERROR, Lang._('TABLES_EMPTY_HEADING')));
               }
             });
           });
@@ -5766,12 +5821,24 @@
             this.panel.insertAdjacentHTML('afterend', this.annotateBanner(ERROR, Lang._('QA_PAGE_TITLE')));
           }
         }
+
+        // Warning: Find inappropriate use of <sup> and <sub> tags.
+        if (option.subscriptQA === true) {
+          const $subscript = this.root.querySelectorAll('sup, sub');
+          $subscript.forEach(($el) => {
+            if ($el.textContent.trim().length >= 80) {
+              $el.classList.add('sa11y-warning-text');
+              $el.insertAdjacentHTML('afterend', this.annotate(WARNING, Lang._('QA_SUBSCRIPT_WARNING'), true));
+            }
+          });
+        }
       };
 
       // ============================================================
       // Rulesets: Contrast
       // Color contrast plugin by jasonday: https://github.com/jasonday/color-contrast
       // ============================================================
+      /* eslint-disable */
       this.checkContrast = () => {
         let contrastErrors = {
           errors: [],
@@ -5788,14 +5855,12 @@
             let rgb;
             let f;
             let k;
-            // eslint-disable-next-line no-useless-escape
             if (m = css.match(/rgb\(\s*(\-?\d+),\s*(\-?\d+)\s*,\s*(\-?\d+)\s*\)/)) {
               rgb = m.slice(1, 4);
               for (i = f = 0; f <= 2; i = ++f) {
                 rgb[i] = +rgb[i];
               }
               rgb[3] = 1;
-            // eslint-disable-next-line no-useless-escape
             } else if (m = css.match(/rgba\(\s*(\-?\d+),\s*(\-?\d+)\s*,\s*(\-?\d+)\s*,\s*([01]|[01]?\.\d+)\)/)) {
               rgb = m.slice(1, 5);
               for (i = k = 0; k <= 3; i = ++k) {
@@ -5946,6 +6011,7 @@
           name.insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang.sprintf('CONTRAST_WARNING', nodetext)));
         });
       };
+      /* eslint-disable */
       // ============================================================
       // Rulesets: Readability
       // Adapted from Greg Kraus' readability script: https://accessibility.oit.ncsu.edu/it-accessibility-at-nc-state/developers/tools/readability-bookmarklet/
@@ -5960,26 +6026,8 @@
             }
           }
         });
-        // Compute syllables: http://stackoverflow.com/questions/5686483/how-to-compute-number-of-syllables-in-a-word-in-javascript
-        const numberOfSyllables = (el) => {
-          let wordCheck = el;
-          wordCheck = wordCheck.toLowerCase().replace('.', '').replace('\n', '');
-          if (wordCheck.length <= 3) {
-            return 1;
-          }
-          wordCheck = wordCheck.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
-          wordCheck = wordCheck.replace(/^y/, '');
-          const syllableString = wordCheck.match(/[aeiouy]{1,2}/g);
-          let syllables = 0;
 
-          const syllString = !!syllableString;
-          if (syllString) {
-            syllables = syllableString.length;
-          }
-
-          return syllables;
-        };
-
+        // Combine all page text.
         const readabilityarray = [];
         for (let i = 0; i < this.$readability.length; i++) {
           const current = this.$readability[i];
@@ -5987,93 +6035,165 @@
             readabilityarray.push(current.textContent);
           }
         }
+        const pageText = readabilityarray.join(' ').trim().toString();
 
-        const paragraphtext = readabilityarray.join(' ').trim().toString();
-        const wordsRaw = paragraphtext.replace(/[.!?-]+/g, ' ').split(' ');
-        let words = 0;
-        for (let i = 0; i < wordsRaw.length; i++) {
-          // eslint-disable-next-line eqeqeq
-          if (wordsRaw[i] != 0) {
-            words += 1;
-          }
-        }
-
-        const sentenceRaw = paragraphtext.split(/[.!?]+/);
-        let sentences = 0;
-        for (let i = 0; i < sentenceRaw.length; i++) {
-          if (sentenceRaw[i] !== '') {
-            sentences += 1;
-          }
-        }
-
-        let totalSyllables = 0;
-        let syllables1 = 0;
-        let syllables2 = 0;
-        for (let i = 0; i < wordsRaw.length; i++) {
-          // eslint-disable-next-line eqeqeq
-          if (wordsRaw[i] != 0) {
-            const syllableCount = numberOfSyllables(wordsRaw[i]);
-            if (syllableCount === 1) {
-              syllables1 += 1;
+        /* Flesch Reading Ease for English, French, German, Dutch, and Italian.
+          Reference: https://core.ac.uk/download/pdf/6552422.pdf
+          Reference: https://github.com/Yoast/YoastSEO.js/issues/267 */
+        if (['en', 'fr', 'de', 'nl', 'it'].includes(option.readabilityLang)) {
+          // Compute syllables: http://stackoverflow.com/questions/5686483/how-to-compute-number-of-syllables-in-a-word-in-javascript
+          const numberOfSyllables = (el) => {
+            let wordCheck = el;
+            wordCheck = wordCheck.toLowerCase().replace('.', '').replace('\n', '');
+            if (wordCheck.length <= 3) {
+              return 1;
             }
-            if (syllableCount === 2) {
-              syllables2 += 1;
+            wordCheck = wordCheck.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
+            wordCheck = wordCheck.replace(/^y/, '');
+            const syllableString = wordCheck.match(/[aeiouy]{1,2}/g);
+            let syllables = 0;
+
+            const syllString = !!syllableString;
+            if (syllString) {
+              syllables = syllableString.length;
             }
-            totalSyllables += syllableCount;
+            return syllables;
+          };
+
+          // Words
+          const wordsRaw = pageText.replace(/[.!?-]+/g, ' ').split(' ');
+          let words = 0;
+          for (let i = 0; i < wordsRaw.length; i++) {
+          // eslint-disable-next-line eqeqeq
+            if (wordsRaw[i] != 0) {
+              words += 1;
+            }
           }
-        }
 
-        // let characters = paragraphtext.replace(/[.!?|\s]+/g, '').length;
-        // Reference: https://core.ac.uk/download/pdf/6552422.pdf
-        // Reference: https://github.com/Yoast/YoastSEO.js/issues/267
+          // Sentences
+          const sentenceRaw = pageText.split(/[.!?]+/);
+          let sentences = 0;
+          for (let i = 0; i < sentenceRaw.length; i++) {
+            if (sentenceRaw[i] !== '') {
+              sentences += 1;
+            }
+          }
 
-        let flesch;
-        if (option.readabilityLang === 'en') {
-          flesch = 206.835 - (1.015 * (words / sentences)) - (84.6 * (totalSyllables / words));
-        } else if (option.readabilityLang === 'fr') {
-          flesch = 207 - (1.015 * (words / sentences)) - (73.6 * (totalSyllables / words));
-        } else if (option.readabilityLang === 'es') {
-          flesch = 206.84 - (1.02 * (words / sentences)) - (0.60 * (100 * (totalSyllables / words)));
-        } else if (option.readabilityLang === 'de') {
-          flesch = 180 - (words / sentences) - (58.5 * (totalSyllables / words));
-        } else if (option.readabilityLang === 'nl') {
-          flesch = 206.84 - (0.77 * (100 * (totalSyllables / words))) - (0.93 * (words / sentences));
-        } else if (option.readabilityLang === 'it') {
-          flesch = 217 - (1.3 * (words / sentences)) - (0.6 * (100 * (totalSyllables / words)));
-        }
+          // Syllables
+          let totalSyllables = 0;
+          let syllables1 = 0;
+          let syllables2 = 0;
+          for (let i = 0; i < wordsRaw.length; i++) {
+          // eslint-disable-next-line eqeqeq
+            if (wordsRaw[i] != 0) {
+              const syllableCount = numberOfSyllables(wordsRaw[i]);
+              if (syllableCount === 1) {
+                syllables1 += 1;
+              }
+              if (syllableCount === 2) {
+                syllables2 += 1;
+              }
+              totalSyllables += syllableCount;
+            }
+          }
 
-        if (flesch > 100) {
-          flesch = 100;
-        } else if (flesch < 0) {
-          flesch = 0;
-        }
+          let flesch = false;
+          if (option.readabilityLang === 'en') {
+            flesch = 206.835 - (1.015 * (words / sentences)) - (84.6 * (totalSyllables / words));
+          } else if (option.readabilityLang === 'fr') {
+            flesch = 207 - (1.015 * (words / sentences)) - (73.6 * (totalSyllables / words));
+          } else if (option.readabilityLang === 'es') {
+            flesch = 206.84 - (1.02 * (words / sentences)) - (0.60 * (100 * (totalSyllables / words)));
+          } else if (option.readabilityLang === 'de') {
+            flesch = 180 - (words / sentences) - (58.5 * (totalSyllables / words));
+          } else if (option.readabilityLang === 'nl') {
+            flesch = 206.84 - (0.77 * (100 * (totalSyllables / words))) - (0.93 * (words / sentences));
+          } else if (option.readabilityLang === 'it') {
+            flesch = 217 - (1.3 * (words / sentences)) - (0.6 * (100 * (totalSyllables / words)));
+          }
 
-        const $readabilityinfo = document.getElementById('sa11y-readability-info');
+          // Update panel.
+          const $readabilityinfo = document.getElementById('sa11y-readability-info');
 
-        if (paragraphtext.length === 0) {
-          $readabilityinfo.innerHTML = Lang._('READABILITY_NO_P_OR_LI_MESSAGE');
-        } else if (words > 30) {
-          const fleschScore = flesch.toFixed(1);
-          const avgWordsPerSentence = (words / sentences).toFixed(1);
-          const complexWords = Math.round(100 * ((words - (syllables1 + syllables2)) / words));
+          if (pageText.length === 0) {
+            $readabilityinfo.innerHTML = Lang._('READABILITY_NO_P_OR_LI_MESSAGE');
+          } else if (words > 30) {
+            // Score must be between 0 and 100%.
+            if (flesch > 100) {
+              flesch = 100;
+            } else if (flesch < 0) {
+              flesch = 0;
+            }
 
-          // WCAG AAA pass if greater than 60
-          if (fleschScore >= 0 && fleschScore < 30) {
-            $readabilityinfo.innerHTML = `<span>${fleschScore}</span> <span class="sa11y-readability-score">${Lang._('LANG_VERY_DIFFICULT')}</span>`;
-          } else if (fleschScore > 31 && fleschScore < 49) {
-            $readabilityinfo.innerHTML = `<span>${fleschScore}</span> <span class="sa11y-readability-score">${Lang._('LANG_DIFFICULT')}</span>`;
-          } else if (fleschScore > 50 && fleschScore < 60) {
-            $readabilityinfo.innerHTML = `<span>${fleschScore}</span> <span class="sa11y-readability-score">${Lang._('LANG_FAIRLY_DIFFICULT')}</span>`;
+            const fleschScore = flesch.toFixed(1);
+            const avgWordsPerSentence = (words / sentences).toFixed(1);
+            const complexWords = Math.round(100 * ((words - (syllables1 + syllables2)) / words));
+
+            // Flesch score: WCAG AAA pass if greater than 60
+            if (fleschScore >= 0 && fleschScore < 30) {
+              $readabilityinfo.innerHTML = `${fleschScore} <span class="sa11y-readability-score">${Lang._('LANG_VERY_DIFFICULT')}</span>`;
+            } else if (fleschScore > 31 && fleschScore < 49) {
+              $readabilityinfo.innerHTML = `${fleschScore} <span class="sa11y-readability-score">${Lang._('LANG_DIFFICULT')}</span>`;
+            } else if (fleschScore > 50 && fleschScore < 60) {
+              $readabilityinfo.innerHTML = `${fleschScore} <span class="sa11y-readability-score">${Lang._('LANG_FAIRLY_DIFFICULT')}</span>`;
+            } else {
+              $readabilityinfo.innerHTML = `${fleschScore} <span class="sa11y-readability-score">${Lang._('LANG_GOOD')}</span>`;
+            }
+            // Flesch details
+            document.getElementById('sa11y-readability-details').innerHTML = `
+          <li><strong>${Lang._('LANG_AVG_SENTENCE')}</strong> ${avgWordsPerSentence}</li>
+          <li><strong>${Lang._('LANG_COMPLEX_WORDS')}</strong> ${complexWords}%</li>
+          <li><strong>${Lang._('LANG_TOTAL_WORDS')}</strong> ${words}</li>`;
           } else {
-            $readabilityinfo.innerHTML = `<span>${fleschScore}</span> <span class="sa11y-readability-score">${Lang._('LANG_GOOD')}</span>`;
+            $readabilityinfo.textContent = Lang._('READABILITY_NOT_ENOUGH_CONTENT_MESSAGE');
           }
+        }
 
-          document.getElementById('sa11y-readability-details').innerHTML = `<li>
-        <span class='sa11y-bold'>${Lang._('LANG_AVG_SENTENCE')}</span> ${avgWordsPerSentence}</li>
-        <li><span class='sa11y-bold'>${Lang._('LANG_COMPLEX_WORDS')}</span> ${complexWords}%</li>
-        <li><span class='sa11y-bold'>${Lang._('LANG_TOTAL_WORDS')}</span> ${words}</li>`;
-        } else {
-          $readabilityinfo.textContent = Lang._('READABILITY_NOT_ENOUGH_CONTENT_MESSAGE');
+        /* Lix: Danish, Finnish, Norwegian (Bokmål & Nynorsk), Swedish. To-do: More research needed.
+        Reference: https://www.simoahava.com/analytics/calculate-readability-scores-for-content/#commento-58ac602191e5c6dc391015c5a6933cf3e4fc99d1dc92644024c331f1ee9b6093 */
+        if (['sv', 'fi', 'da', 'no', 'nb', 'nn'].includes(option.readabilityLang)) {
+          const calculateLix = (text) => {
+            const lixWords = () => text.replace(/[-'.]/ig, '').split(/[^a-zA-ZöäåÖÄÅÆæØø0-9]/g).filter(Boolean);
+            const splitSentences = () => {
+              const splitter = /\?|!|\.|\n/g;
+              const arrayOfSentences = text.split(splitter).filter(Boolean);
+              return arrayOfSentences;
+            };
+            const wordCount = lixWords().length;
+            const longWordsCount = lixWords().filter((wordsArray) => wordsArray.length > 6).length;
+            const sentenceCount = splitSentences().length;
+            const score = Math.round((wordCount / sentenceCount) + ((longWordsCount * 100) / wordCount));
+            const avgWordsPerSentence = (wordCount / sentenceCount).toFixed(1);
+            const complexWords = Math.round(100 * (longWordsCount / wordCount));
+            return {
+              score, avgWordsPerSentence, complexWords, wordCount,
+            };
+          };
+
+          // Update panel.
+          const $readabilityinfo = document.getElementById('sa11y-readability-info');
+          const lix = calculateLix(pageText);
+
+          if (pageText.length === 0) {
+            $readabilityinfo.innerHTML = Lang._('READABILITY_NO_P_OR_LI_MESSAGE');
+          } else if (lix.wordCount > 30) {
+            if (lix.score >= 0 && lix.score < 39) {
+              $readabilityinfo.innerHTML = `${lix.score} <span class="sa11y-readability-score">${Lang._('LANG_GOOD')}</span>`;
+            } else if (lix.score > 40 && lix.score < 50) {
+              $readabilityinfo.innerHTML = `${lix.score} <span class="sa11y-readability-score">${Lang._('LANG_FAIRLY_DIFFICULT')}</span>`;
+            } else if (lix.score > 51 && lix.score < 61) {
+              $readabilityinfo.innerHTML = `${lix.score} <span class="sa11y-readability-score">${Lang._('LANG_DIFFICULT')}</span>`;
+            } else {
+              $readabilityinfo.innerHTML = `${lix.score} <span class="sa11y-readability-score">${Lang._('LANG_VERY_DIFFICULT')}</span>`;
+            }
+            // LIX details
+            document.getElementById('sa11y-readability-details').innerHTML = `
+            <li><strong>${Lang._('LANG_AVG_SENTENCE')}</strong> ${lix.avgWordsPerSentence}</li>
+            <li><strong>${Lang._('LANG_COMPLEX_WORDS')}</strong> ${lix.complexWords}%</li>
+            <li><strong>${Lang._('LANG_TOTAL_WORDS')}</strong> ${lix.wordCount}</li>`;
+          } else {
+            $readabilityinfo.textContent = Lang._('READABILITY_NOT_ENOUGH_CONTENT_MESSAGE');
+          }
         }
       };
       this.initialize();
@@ -6082,6 +6202,7 @@
 
   exports.Lang = Lang;
   exports.Sa11y = Sa11y;
+  exports.Sa11yCustomChecks = Sa11yCustomChecks;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

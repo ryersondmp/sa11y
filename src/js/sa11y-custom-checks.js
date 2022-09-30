@@ -1,12 +1,6 @@
-export default class CustomChecks {
-  constructor(sa11y) {
-    this.sa11y = sa11y;
-  }
+import { Sa11yCustomChecks } from './sa11y';
 
-  setSa11y(sa11y) {
-    this.sa11y = sa11y;
-  }
-
+export default class CustomChecks extends Sa11yCustomChecks {
   check() {
     /* Note: Strings should match language file. */
     const ERROR = 'Error';

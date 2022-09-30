@@ -4,15 +4,26 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.CustomChecks = factory());
 })(this, (function () { 'use strict';
 
-  class CustomChecks {
-    constructor(sa11y) {
-      this.sa11y = sa11y;
-    }
+  /*-----------------------------------------------------------------------
+  * Sa11y, the accessibility quality assurance assistant.
+  * @version: 2.3.3
+  * @author: Development led by Adam Chaboryk, CPWA
+  * @acknowledgements: https://this.netlify.app/acknowledgements/
+  * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
+  * Copyright (c) 2020 - 2022 Toronto Metropolitan University (formerly Ryerson University).
+  * The above copyright notice shall be included in all copies or
+  substantial portions of the Software.
+  ------------------------------------------------------------------------*/
 
+  class Sa11yCustomChecks {
     setSa11y(sa11y) {
       this.sa11y = sa11y;
     }
 
+    check() {}
+  }
+
+  class CustomChecks extends Sa11yCustomChecks {
     check() {
       /* Note: Strings should match language file. */
       const ERROR = 'Error';

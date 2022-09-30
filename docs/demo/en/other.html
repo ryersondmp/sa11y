@@ -65,7 +65,6 @@
             <strong class="mt-1 mb-2">On this page:</strong>
             <a class="list-group-item list-group-item-action" href="#list-item-0">Page language</a>
             <a class="list-group-item list-group-item-action" href="#list-item-1">Audio and video</a>
-            <a class="list-group-item list-group-item-action" href="#list-item-2">Twitter widgets</a>
             <a class="list-group-item list-group-item-action" href="#list-item-3">iFrames</a>
             <a class="list-group-item list-group-item-action" href="#list-item-4">Detecting URL changes</a>
           </div>
@@ -118,7 +117,7 @@
                   <div class="ratio ratio-16x9">
                     <video width="300" controls
                       src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/friday.mp4">
-                      <track default kind="captions" srclang="en" src="assets/friday.vtt" />
+                      <track default kind="captions" srclang="en" src="../assets/friday.vtt" />
                       Sorry, your browser doesn't support embedded videos.
                     </video>
                   </div>
@@ -151,41 +150,6 @@
                 </div>
               </div>
             </div>
-
-            <hr class="mt-5">
-
-            <h2 id="list-item-2">Twitter widgets</h2>
-            <p>This condition is meant to encourage users to optimize the default Twitter widget for accessibility and
-              usability. This condition might be helpful in large organizations (like a University or College) where
-              there are many social media channels. This condition is not based on WCAG 2.0, however is strongly
-              recommended.</p>
-            <div class="row">
-              <div class="col-md-4">
-                <div class="example">
-                  <h3 class="h5">Default Twitter widget</h3>
-                  <a class="twitter-timeline" title="Tweets by TwitterDev" data-height="300" data-width="330"
-                    href="https://twitter.com/TwitterDev?ref_src=twsrc%5Etfw"><span class="sr-only">Tweets by
-                      TwitterDev</span></a>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="example">
-                  <h3 class="h5">Optimized Twitter widget</h3>
-                  <a data-tweet-limit="1" title="Tweets by TwitterDev" class="twitter-timeline"
-                    data-chrome="nofooter noheader" href="https://twitter.com/TwitterDev?ref_src=twsrc%5Etfw"><span
-                      class="sr-only">Tweets by
-                      TwitterDev</span></a>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="example">
-                  <h3 class="h5">Other Twitter widget</h3>
-                  <a href="https://twitter.com/intent/tweet?button_hashtag=LoveTwitter&ref_src=twsrc%5Etfw"
-                    class="twitter-hashtag-button" data-show-count="false">Tweet #LoveTwitter</a>
-                </div>
-              </div>
-            </div>
-
             <hr class="mt-5">
 
             <h2 id="list-item-3" class="pt-3">General iFrames</h2>
@@ -207,6 +171,29 @@
                     <blockquote cite="https://www.facebook.com/facebook" class="fb-xfbml-parse-ignore"><a
                         href="https://www.facebook.com/facebook">Facebook</a></blockquote>
                   </div>
+                </div>
+              </div>
+            </div>
+            <div class="row pt-4">
+              <div class="col-md-4">
+                <div class="example">
+                  <a class="twitter-timeline" title="Tweets by TwitterDev" data-height="300" data-width="330"
+                    href="https://twitter.com/TwitterDev?ref_src=twsrc%5Etfw"><span class="sr-only">Tweets by
+                      TwitterDev</span></a>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="example">
+                  <a data-tweet-limit="1" title="Tweets by TwitterDev" class="twitter-timeline test"
+                    data-chrome="nofooter noheader" href="https://twitter.com/TwitterDev?ref_src=twsrc%5Etfw"><span
+                      class="sr-only">Tweets by
+                      TwitterDev</span></a>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="example">
+                  <a href="https://twitter.com/intent/tweet?button_hashtag=LoveTwitter&ref_src=twsrc%5Etfw"
+                    class="twitter-hashtag-button" data-show-count="false">Tweet #LoveTwitter</a>
                 </div>
               </div>
             </div>

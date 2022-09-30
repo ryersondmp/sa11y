@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------------
 * Sa11y: the accessibility quality assurance assistant.
-* Bookmarklet: Polish
+* Bookmarklet: Swedish
 * @author: Development led by Adam Chaboryk, CPWA
 * @acknowledgements: https://sa11y.netlify.app/acknowledgements/
 * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
@@ -20,11 +20,11 @@ const bodyheader = document.getElementsByTagName("head")[0];
 bodyheader.appendChild(sa11ycss);
 
 const combine = document.createElement("script");
-combine.src = `https://cdn.jsdelivr.net/combine/gh/ryersondmp/sa11y@${version}/dist/js/lang/pl.umd.js,gh/ryersondmp/sa11y@${version}/dist/js/sa11y.umd.min.js`;
+combine.src = `https://cdn.jsdelivr.net/combine/gh/ryersondmp/sa11y@${version}/dist/js/lang/sv.umd.js,gh/ryersondmp/sa11y@${version}/dist/js/sa11y.umd.min.js`;
 
 document.body.appendChild(combine);
 combine.onload = combine.onreadystatechange = function() {
-    Sa11y.Lang.addI18n(Sa11yLangPl.strings);
+    Sa11y.Lang.addI18n(Sa11yLangSv.strings);
     new Sa11y.Sa11y({
         detectSPArouting: true,
     });

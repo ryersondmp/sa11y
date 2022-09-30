@@ -8,11 +8,12 @@
 	  "class-methods-use-this": "off",
 	  "import/prefer-default-export": "off",
 	  "import/extensions": "off",
+		"max-classes-per-file": "off",
 	  "no-plusplus": [
 		"error",
-		{
-		  "allowForLoopAfterthoughts": true
-		}
+			{
+				"allowForLoopAfterthoughts": true
+			}
 	  ]
 	}
   }
