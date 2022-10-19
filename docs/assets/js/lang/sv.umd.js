@@ -38,6 +38,7 @@
       PANEL_ICON_TOTAL: 'totala problem hittades.',
       NOT_VISIBLE_ALERT: 'Objektet du försöker visa är inte synligt: det kan vara gömt eller finnas inuti en dragspelskomponent eller en flikkomponent. Här är en förhandsvisning:',
       ERROR_MISSING_ROOT_TARGET: 'Hela sidan kontrolleras för tillgänglighet eftersom målområdet <code>%(root)</code> inte existerar.',
+      HEADING_NOT_VISIBLE_ALERT: 'Rubriken är inte synlig; den kan vara gömd eller inuti ett dragspel eller en flikkomponent.',
 
       // Alternative text module stop words
       SUSPICIOUS_ALT_STOPWORDS: ['bild', 'grafik', 'fotografi', 'foto'],
@@ -83,7 +84,7 @@
         'detta',
         'den här sidan',
         'den här sidan.',
-  			'denna sida',
+        'denna sida',
         'denna sida.',
         'den här webbplatsen',
         'den här webbplatsen.',
@@ -149,7 +150,7 @@
       LINK_IMAGE_LONG_ALT: 'Alternativ textbeskrivning för en länkad bild är <strong>för lång</strong>. Alt-text för länkade bilder ska beskriva vart länken tar dig, inte vara en bokstavlig beskrivning av bilden. <strong>Överväg att använda titeln på sidan den länkar till som alt-text.</strong> <hr> <strong>Alt-text (<span {r}>%(altLength)</span> tecken):</ stark> %(altText)',
       LINK_IMAGE_ALT_WARNING: 'Bildlänken innehåller alt-text, men se till att alt-texten beskriver destinationssidan. <strong>Överväg att använda titeln på sidan den länkar till som alt-text.</strong> Beskriver alt-texten vart länken tar dig? <hr> <strong>Alt-text:</strong> %(altText)',
       LINK_IMAGE_ALT_AND_TEXT_WARNING: 'Bildlänken innehåller <strong>både alt-text och omgivande länktext.</strong> Om den här bilden är dekorativ och används som en funktionell länk till en annan sida, överväg att markera bilden som dekorativ eller null - den omgivande länktexten bör räcka. <hr> <strong>Alt-text:</strong> %(altText)',
-      IMAGE_FIGURE_DECORATIVE: 'Bilden är markerad som <strong>dekorativ</strong> och kommer att ignoreras av hjälpmedel. <hr> Även om en <strong>textning</strong> tillhandahölls, bör bilden också ha alternativ text i de flesta fall. <ul <li>Alt-texten ska ge en kortfattad beskrivning av vad som finns i bilden.</li><li>Texten ska vanligtvis ge ett sammanhang för att relatera bilden till det omgivande innehållet, eller ge uppmärksamhet åt viss information.</li></ul>Läs mer: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt kontra figcaption.</a>',
+      IMAGE_FIGURE_DECORATIVE: 'Bilden är markerad som <strong>dekorativ</strong> och kommer att ignoreras av hjälpmedel. <hr> Även om en <strong>textning</strong> tillhandahölls, bör bilden också ha alternativ text i de flesta fall. <ul><li>Alt-texten ska ge en kortfattad beskrivning av vad som finns i bilden.</li><li>Texten ska vanligtvis ge ett sammanhang för att relatera bilden till det omgivande innehållet, eller ge uppmärksamhet åt viss information.</li></ul>Läs mer: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt kontra figcaption.</a>',
       IMAGE_FIGURE_DUPLICATE_ALT: 'Använd inte exakt samma ord för både alt- och bildtext. Skärmläsare kommer då att förmedla samma information två gånger.<ul><li>Alt-texten ska ge en kortfattad beskrivning av vad som finns i bilden.</li><li>Tillskriften ska vanligtvis ge sammanhang för att relatera bilden tillbaka till omgivningen innehåll eller ge uppmärksamhet åt en viss information.</li></ul> Läs mer: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element" >alt kontra figcaption.</a> <hr> <strong>Alt-text:</strong> %(altText)',
       IMAGE_DECORATIVE: 'Bilden är markerad som <strong>dekorativ</strong> och kommer att ignoreras av hjälpmedel. Om bilden förmedlar en historia, stämning eller annan viktig information – se till att lägga till alt-text.',
       IMAGE_ALT_TOO_LONG: 'Alt-texten är <strong>för lång</strong>. Alt-text ska vara kortfattad men meningsfull som en <em>tweet</em> (cirka 100 tecken). Om detta är en komplex bild eller en graf, överväg att lägga in den längre beskrivningen av bilden i under bilden, eller i en dragspelskomponent. <hr> <strong>Alt-text (<span {r}>%(altLength)</span> tecken):</strong> %(altText)',
@@ -181,7 +182,7 @@
       QA_UPPERCASE_WARNING: 'Hittade text med enbart versaler. Vissa skärmläsare kan tolka versalskrift som en akronym och läser varje bokstav individuellt. Dessutom upplever vissa personer att det är svårare att läsa versalskrift och det kan se ut som att avsändaren SKRIKER.',
       QA_DUPLICATE_ID: 'Hittade <strong>duplicerat ID</strong>. Dubbletterade ID:n är kända för att orsaka problem för hjälpmedelsverktyg när de försöker interagera med innehåll. <hr> Ta bort eller ändra följande ID: <strong {r}>%(id)</strong>',
       QA_TEXT_UNDERLINE_WARNING: 'Understruken text kan förväxlas med länkar. Överväg att använda en annan stil som <code>&lt;strong&gt;</code><strong>fetstil</strong><code>&lt;/strong&gt;</code> eller <code>&lt;em&gt;</code ><em>kursiv</em><code>&lt;/em&gt;</code>.',
-  		QA_SUBSCRIPT_WARNING: 'Formateringsalternativen nedsänkt och upphöjd text bör endast användas för att ändra textens position för typografiska konventioner eller standarder. Det bör <strong>inte</strong> endast användas för presentations- eller utseendeändamål. Att formatera hela meningar ställer till läsbarhetsproblem. Lämpliga användningsfall inkluderar visning av exponenter, ordningstal som 4<sup>th</sup> istället för fjärde och kemiska formler (t.ex. H<sub>2</sub>O).',
+      QA_SUBSCRIPT_WARNING: 'Formateringsalternativen nedsänkt och upphöjd text bör endast användas för att ändra textens position för typografiska konventioner eller standarder. Det bör <strong>inte</strong> endast användas för presentations- eller utseendeändamål. Att formatera hela meningar ställer till läsbarhetsproblem. Lämpliga användningsfall inkluderar visning av exponenter, ordningstal som 4<sup>th</sup> istället för fjärde och kemiska formler (t.ex. H<sub>2</sub>O).',
 
       // Tables
       TABLES_MISSING_HEADINGS: 'Tabellrubriker saknas! Tillgänglighetsanpassade tabeller behöver HTML-markup som indikerar rubrikceller och dataceller, vilket definierar deras relation. Informationen ger sammanhang till personer som använder hjälpmedelsverktyg. Tabeller bör endast användas för tabelldata. <hr> Läs mer om <a href="https://www.w3.org/WAI/tutorials/tables/">tillgängliga tabeller.</a>',

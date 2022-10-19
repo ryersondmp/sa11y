@@ -202,8 +202,9 @@
 
             <h2 id="list-item-4" class="pt-3">Detecting URL changes</h2>
             <p>This is not a ruleset. This is a demo of a nifty feature to find errors or warnings after detecting a URL change on the same page. For example, single page applications (SPA). A non-descript link will be appended to the page 1 second after the page is fully loaded. It will not recieve an error flag initially.</p>
-            <p><strong>To test:</strong> Wait for the "click here" link to load. Then click on any of the sidebar
-              navigation links. It will then get flagged as an error.</p>
+            <p><strong>To test:</strong> Wait for the "click here" link to load. Then:</p>
+            <button id="btn-test" class="btn btn-sm btn-primary m-1"></button>
+
             <div class="row">
               <div class="col-md-6">
                 <div class="example text-center">
@@ -216,22 +217,6 @@
                 </div>
               </div>
             </div>
-
-            <script>
-              window.addEventListener('load', (event) => {
-                const myTimeout = setTimeout(test, 1000);
-                const myTimeout2 = setTimeout(test2, 6000);
-
-                function test() {
-                  document.getElementById("demo").innerHTML = `<a href="#">click here</a>`;
-                }
-
-                function test2() {
-                  document.getElementById("demo2").innerHTML = `<a href="#">learn more</a>`;
-                }
-              });
-            </script>
-
           </div>
         </div>
       </div>
@@ -252,6 +237,30 @@
 
  <!-- Sa11y -->
   <script type="module" src="../script.js"></script>
+
+  <!-- Misc -->
+  <script>
+    window.addEventListener('load', (event) => {
+      const myTimeout = setTimeout(test, 1000);
+      const myTimeout2 = setTimeout(test2, 6000);
+
+      function test() {
+        document.getElementById("demo").innerHTML = `<a href="#">click here</a>`;
+      }
+
+      function test2() {
+        document.getElementById("demo2").innerHTML = `<a href="#">learn more</a>`;
+      }
+    });
+
+    const btn = document.getElementById("btn-test");
+    btn.textContent = "click me to change URL";
+    btn.addEventListener("click", (e) => {
+      window.history.replaceState('test', 'Home', 'index.html');
+      const reset = () => {window.history.replaceState('test1', 'Other', 'other.html')};
+      setTimeout(reset, 1000);
+    }, false);
+  </script>
 
 </body>
 

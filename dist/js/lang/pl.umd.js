@@ -38,6 +38,7 @@
       PANEL_ICON_TOTAL: 'ogółem wykrytych problemów.',
       NOT_VISIBLE_ALERT: 'Element, który próbujesz wyświetlić, nie jest widoczny; może być ukryty lub znajdować się wewnątrz akordeonu lub karty. Tutaj jest podgląd:',
       ERROR_MISSING_ROOT_TARGET: 'Sprawdzono dostępność całej strony, ponieważ obszar docelowy nie istnieje: <code>%(root)</code>',
+      HEADING_NOT_VISIBLE_ALERT: 'Nagłówek nie jest widoczny; może być ukryty lub wewnątrz komponentu akordeonu lub tabulatora.',
 
       // Alternative text module stop words
       SUSPICIOUS_ALT_STOPWORDS: ['obraz', 'grafika', 'zdjęcie', 'rysunek', 'fotografia', 'foto', 'image', 'graphic', 'picture', 'photo'],

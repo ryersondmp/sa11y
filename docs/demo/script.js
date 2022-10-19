@@ -9,7 +9,7 @@ import Sa11yLangUa from '../assets/js/lang/ua.js';
 import SallyLangSv from '../assets/js/lang/sv.js';
 
 // Sa11y's version.
-const v = "2.3.3";
+const v = "2.3.4";
 const webV = document.getElementById("v");
 webV.innerHTML = v;
 
@@ -39,6 +39,8 @@ if (url.indexOf("pl") > -1) {
 const sa11y = new Sa11y({
   customChecks: customChecks,
   checkRoot: 'body',
+  headerIgnore: '.ignore-this-heading',
+  contrastIgnore: '.card-footer *',
   readabilityRoot: 'main',
   readabilityLang: readabilityISO,
   containerIgnore: 'footer',
@@ -46,3 +48,6 @@ const sa11y = new Sa11y({
   linkIgnoreSpan: '.sr-only-example',
   detectSPArouting: true,
 });
+
+
+
