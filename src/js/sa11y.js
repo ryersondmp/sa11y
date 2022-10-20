@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------------
 * Sa11y, the accessibility quality assurance assistant.
-* @version: 2.3.4
+* @version: 2.3.5
 * @author: Development led by Adam Chaboryk, CPWA
 * @acknowledgements: https://this.netlify.app/acknowledgements/
 * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
@@ -1470,6 +1470,8 @@ class Sa11y {
         let root;
         if (rootType === 'readability') {
           root = document.querySelector(option.readabilityRoot);
+        } else if (rootType === 'document') {
+          root = document;
         } else {
           root = document.querySelector(option.checkRoot);
         }
@@ -1486,7 +1488,7 @@ class Sa11y {
       this.contrast = find('*', this.contrastIgnore);
       this.images = find('img', this.imageIgnore);
       this.headings = find('h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]', this.headerIgnore);
-      this.headingOne = find('h1, [role="heading"][aria-level="1"]', this.headerIgnore);
+      this.headingOne = find('h1, [role="heading"][aria-level="1"]', this.headerIgnore, 'document');
       this.links = find('a[href]', this.linkIgnore);
       this.readability = find('p, li', this.readabilityIgnore, 'readability');
 

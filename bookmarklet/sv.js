@@ -8,7 +8,7 @@
 * The above copyright notice shall be included in all copies or substantial portions of the Software.
 ------------------------------------------------------------------------*/
 
-const version = "2.3.4"; //Version
+const version = "2.3.5"; //Version
 
 if (typeof Sa11y !== "object") {
     /* Append sa11y.css */

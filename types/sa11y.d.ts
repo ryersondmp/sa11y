@@ -16,26 +16,29 @@ export declare class Sa11y {
 	root: HTMLElement;
 	panel: HTMLElement;
 
-	$contrast: Array<HTMLElement>;
-	$readability: Array<HTMLElement>;
-	$h: Array<HTMLHeadingElement>;
-	$h1: Array<HTMLHeadingElement>;
-	$links: Array<HTMLAnchorElement>;
-	$inputs: Array<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>;
-	$img: Array<HTMLImageElement>;
-	$iframes: Array<HTMLIFrameElement | HTMLAudioElement | HTMLVideoElement>;
-	$videos: Array<HTMLIFrameElement | HTMLAudioElement | HTMLVideoElement>;
-	$audio: Array<HTMLIFrameElement | HTMLAudioElement | HTMLVideoElement>;
-	$dataviz: Array<HTMLIFrameElement | HTMLAudioElement | HTMLVideoElement>;
-	$embeddedContent: Array<HTMLIFrameElement | HTMLAudioElement | HTMLVideoElement>;
-	$strongitalics: Array<HTMLElement>;
-	$badDevLinks: Array<HTMLElement>;
-	$checkPDF: Array<HTMLAnchorElement>;
-	$tables: Array<HTMLTableElement>;
-	$lang: string | null;
-	$blockquotes: Array<HTMLQuoteElement>;
-	$p: Array<HTMLParagraphElement>;
-	$allCaps: Array<HTMLElement>;
+	contrast: Array<HTMLElement>;
+	images: Array<HTMLImageElement>;
+	headings: Array<HTMLHeadingElement>;
+	headingOne: Array<HTMLHeadingElement>;
+	links: Array<HTMLAnchorElement>;
+	readability: Array<HTMLElement>;
+
+	language: string | null;
+	paragraphs: Array<HTMLParagraphElement>;
+	lists: Array<HTMLLIElement>;
+	spans: Array<HTMLSpanElement>;
+	blockquotes: Array<HTMLQuoteElement>;
+	tables: Array<HTMLTableElement>;
+	pdf: Array<HTMLAnchorElement>;
+	strongitalics: Array<HTMLElement>;
+	inputs: Array<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>;
+	customErrorLinks: Array<HTMLElement>;
+
+	iframes: Array<HTMLIFrameElement | HTMLAudioElement | HTMLVideoElement>;
+	videos: Array<HTMLIFrameElement | HTMLAudioElement | HTMLVideoElement>;
+	audio: Array<HTMLIFrameElement | HTMLAudioElement | HTMLVideoElement>;
+	datavisualizations: Array<HTMLIFrameElement | HTMLAudioElement | HTMLVideoElement>;
+	embeddedContent: Array<HTMLIFrameElement | HTMLAudioElement | HTMLVideoElement>;
 
 	constructor(options?: {
 		checkRoot?: string;
@@ -106,17 +109,21 @@ export declare class Sa11y {
 	computeTextNodeWithImage: ($el: HTMLElement) => string;
 	debounce: (callback: () => unknown, wait: number) => () => unknown;
 	fnIgnore: (element: HTMLElement, selector: string) => HTMLElement;
-	computeAriaLabel: (el: HTMLElement) => string;
-	findVisibleParent: (element: HTMLElement, property: string, value: string) => HTMLElement | null
+	computeAriaLabel: ($el: HTMLElement) => string;
+	findVisibleParent: (element: HTMLElement, property: string, value: string) => HTMLElement | null;
 	offsetTop: ($el: HTMLElement) => {
 		top: number
 	};
+	addPulse: ($el: HTMLElement) => HTMLElement;
+	createAlert: (alertMessage: HTMLElement, errorPreview: HTMLElement) => HTMLElement | HTMLElement;
+	removeAlert: () => void;
+	getText: ($el: HTMLElement) => string;
+	getNextSibling: (elem: HTMLElement, selector: string) => HTMLElement;
 	settingPanelToggles: () => void;
 	skipToIssueTooltip: () => void;
 	detectPageChanges: () => void;
 	checkAll: () => Promise<void>;
 	resetAll: (restartPanel?: boolean) => void;
-	clearEverything: () => void;
 	initializeTooltips: () => void;
 	detectOverflow: () => void;
 	nudge: () => void;
@@ -125,6 +132,7 @@ export declare class Sa11y {
 	buildPanel: () => void;
 	skipToIssue: () => void;
 	findElements: () => void;
+	find: (selectors: string, exclude: string, rootTypealert: string) => Array;
 	annotate: (type: 'Error' | 'Warning' | 'Good', content: string, inline?: boolean) => string;
 	annotateBanner: (type: 'Error' | 'Warning' | 'Good', content: string) => string;
 	checkHeaders: () => void;
@@ -190,6 +198,7 @@ export declare type Sa11yLang = {
 		PANEL_ICON_TOTAL: string;
 		NOT_VISIBLE_ALERT: string;
 		ERROR_MISSING_ROOT_TARGET: string;
+		HEADING_NOT_VISIBLE_ALERT: string;
 
 		// Alternative text module stop words
 		SUSPICIOUS_ALT_STOPWORDS: Array<string>;

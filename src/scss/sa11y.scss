@@ -171,6 +171,7 @@ html[data-sa11y-theme="dark"] {
   display: block;
 }
 
+.sa11y-error-message-container *,
 #sa11y-container * {
   font-family: var(--sa11y-font-face) !important;
   line-height: 22px !important;
@@ -178,6 +179,7 @@ html[data-sa11y-theme="dark"] {
   -webkit-font-smoothing: auto !important;
 }
 
+.sa11y-error-message-container *,
 #sa11y-container p,
 #sa11y-container ol,
 #sa11y-container ul,
@@ -1056,7 +1058,6 @@ a.sa11y-warning-text,
   display: block !important;
   font-family: var(--sa11y-font-face) !important;
   font-size: var(--sa11y-normal-text) !important;
-  line-height: 18px !important;
   margin: -5px auto 0 auto !important;
   padding: 10px 0 !important;
   text-align: center !important;
