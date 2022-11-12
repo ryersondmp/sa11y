@@ -23,8 +23,13 @@ export default class CustomChecks extends Sa11yCustomChecks {
     const $checkAnnouncement = document.querySelectorAll('.sa11y-announcement-component');
     if ($checkAnnouncement.length > 1) {
       for (let i = 1; i < $checkAnnouncement.length; i++) {
-        $checkAnnouncement[i].classList.add('sa11y-warning-border');
-        $checkAnnouncement[i].insertAdjacentHTML('beforebegin', this.sa11y.annotate(WARNING, C.ANNOUNCEMENT_MESSAGE));
+        this.sa11y.found.push({
+          element: $checkAnnouncement[i],
+          type: WARNING,
+          content: C.ANNOUNCEMENT_MESSAGE,
+          inline: false,
+          position: 'beforebegin',
+        });
       }
     }
 
@@ -33,8 +38,13 @@ export default class CustomChecks extends Sa11yCustomChecks {
     $checkAccordions.forEach(($el) => {
       const checkForm = $el.querySelector('form');
       if (!!checkForm && checkForm.length) {
-        $el.classList.add('sa11y-error-border');
-        $el.insertAdjacentHTML('beforebegin', this.sa11y.annotate(ERROR, C.ACCORDION_FORM_MESSAGE));
+        this.sa11y.found.push({
+          element: $el,
+          type: ERROR,
+          content: C.ACCORDION_FORM_MESSAGE,
+          inline: false,
+          position: 'beforebegin',
+        });
       }
     });
 

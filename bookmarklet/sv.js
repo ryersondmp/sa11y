@@ -1,14 +1,14 @@
-/*-----------------------------------------------------------------------
-* Sa11y: the accessibility quality assurance assistant.
-* Bookmarklet: Swedish
-* @author: Development led by Adam Chaboryk, CPWA
-* @acknowledgements: https://sa11y.netlify.app/acknowledgements/
-* @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
-* Copyright (c) 2020 - 2022 Toronto Metropolitan University
-* The above copyright notice shall be included in all copies or substantial portions of the Software.
-------------------------------------------------------------------------*/
+/**
+ * Sa11y, the accessibility quality assurance assistant.
+ * @language Swedish
+ * @author: Development led by Adam Chaboryk, CPWA. <adam.chaboryk@ryerson.ca>
+ * @link License: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
+ * @link Acknowledgements: https://this.netlify.app/acknowledgements/
+ * @copyright (c) 2020 - 2022 Toronto Metropolitan University (formerly Ryerson University).
+ * The above copyright notice shall be included in all copies or substantial portions of the Software.
+*/
 
-const version = "2.3.5"; //Version
+const version = "2.3.6"; //Version
 
 if (typeof Sa11y !== "object") {
     /* Append sa11y.css */

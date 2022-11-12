@@ -8,6 +8,10 @@ h3:not(.example h3, .accordion-header) {
     margin-top: 40px;
 }
 
+h4:not(.example h4, .accordion-header) {
+    margin-top: 30px;
+}
+
 .navbar {
     padding-top: 60px;
     padding-bottom: 40px;

@@ -9,7 +9,7 @@ import Sa11yLangUa from '../assets/js/lang/ua.js';
 import SallyLangSv from '../assets/js/lang/sv.js';
 
 // Sa11y's version.
-const v = "2.3.5";
+const v = "2.3.6";
 const webV = document.getElementById("v");
 webV.innerHTML = v;
 

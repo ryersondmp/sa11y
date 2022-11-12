@@ -3303,16 +3303,15 @@ tippy.setDefaultProps({
   render: render
 });
 
-/*-----------------------------------------------------------------------
-* Sa11y, the accessibility quality assurance assistant.
-* @version: 2.3.5
-* @author: Development led by Adam Chaboryk, CPWA
-* @acknowledgements: https://this.netlify.app/acknowledgements/
-* @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
-* Copyright (c) 2020 - 2022 Toronto Metropolitan University (formerly Ryerson University).
-* The above copyright notice shall be included in all copies or
-substantial portions of the Software.
-------------------------------------------------------------------------*/
+/**
+ * Sa11y, the accessibility quality assurance assistant.
+ * @version: 2.3.6
+ * @author: Development led by Adam Chaboryk, CPWA. <adam.chaboryk@ryerson.ca>
+ * @link License: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
+ * @link Acknowledgements: https://this.netlify.app/acknowledgements/
+ * @copyright (c) 2020 - 2022 Toronto Metropolitan University (formerly Ryerson University).
+ * The above copyright notice shall be included in all copies or substantial portions of the Software.
+*/
 
 /* Translation object */
 const Lang = {
@@ -3362,6 +3361,7 @@ class Sa11y {
       showGoodLinkButton: true,
       detectSPArouting: false,
       doNotRun: '',
+      dismissAnnotations: true,
 
       // Readability
       readabilityPlugin: true,
@@ -3415,6 +3415,7 @@ class Sa11y {
     const ERROR = Lang._('ERROR');
     const WARNING = Lang._('WARNING');
     const GOOD = Lang._('GOOD');
+    this.html = document.querySelector('html');
 
     this.initialize = () => {
       // Do not run Sa11y if any supplied elements detected on page.
@@ -3439,7 +3440,8 @@ class Sa11y {
         // Once document has fully loaded.
         documentLoadingCheck(() => {
           this.buildSa11yUI();
-          this.settingPanelToggles();
+          this.settingsPanelToggles();
+          this.initializePanelToggles();
           this.mainToggle();
           this.skipToIssueTooltip();
           this.detectPageChanges();
@@ -3450,10 +3452,12 @@ class Sa11y {
           }
 
           // Check page once page is done loading.
-          document.getElementById('sa11y-toggle').disabled = false;
+          this.toggle.disabled = false;
           if (this.store.getItem('sa11y-remember-panel') === 'Closed' || !this.store.getItem('sa11y-remember-panel')) {
-            this.panelActive = true;
+            this.panelActive = false;
             this.checkAll();
+          } else {
+            this.panelActive = true;
           }
         });
       }
@@ -3463,118 +3467,174 @@ class Sa11y {
       // Icon on the main toggle.
       const MainToggleIcon = "<svg role='img' focusable='false' width='35px' height='35px' aria-hidden='true' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='#ffffff' d='M256 48c114.953 0 208 93.029 208 208 0 114.953-93.029 208-208 208-114.953 0-208-93.029-208-208 0-114.953 93.029-208 208-208m0-40C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 56C149.961 64 64 149.961 64 256s85.961 192 192 192 192-85.961 192-192S362.039 64 256 64zm0 44c19.882 0 36 16.118 36 36s-16.118 36-36 36-36-16.118-36-36 16.118-36 36-36zm117.741 98.023c-28.712 6.779-55.511 12.748-82.14 15.807.851 101.023 12.306 123.052 25.037 155.621 3.617 9.26-.957 19.698-10.217 23.315-9.261 3.617-19.699-.957-23.316-10.217-8.705-22.308-17.086-40.636-22.261-78.549h-9.686c-5.167 37.851-13.534 56.208-22.262 78.549-3.615 9.255-14.05 13.836-23.315 10.217-9.26-3.617-13.834-14.056-10.217-23.315 12.713-32.541 24.185-54.541 25.037-155.621-26.629-3.058-53.428-9.027-82.141-15.807-8.6-2.031-13.926-10.648-11.895-19.249s10.647-13.926 19.249-11.895c96.686 22.829 124.283 22.783 220.775 0 8.599-2.03 17.218 3.294 19.249 11.895 2.029 8.601-3.297 17.219-11.897 19.249z'/></svg>";
 
-      const sa11ycontainer = document.createElement('div');
-      sa11ycontainer.setAttribute('id', 'sa11y-container');
-      sa11ycontainer.setAttribute('role', 'region');
-      sa11ycontainer.setAttribute('lang', Lang._('LANG_CODE'));
-      sa11ycontainer.setAttribute('aria-label', Lang._('CONTAINER_LABEL'));
+      const container = document.createElement('div');
+      container.setAttribute('id', 'sa11y-container');
+      container.setAttribute('role', 'region');
+      container.setAttribute('lang', Lang._('LANG_CODE'));
+      container.setAttribute('aria-label', Lang._('CONTAINER_LABEL'));
 
-      const loadContrastPreference = this.store.getItem('sa11y-remember-contrast') === 'On';
-      const loadLabelsPreference = this.store.getItem('sa11y-remember-labels') === 'On';
-      const loadChangeRequestPreference = this.store.getItem('sa11y-remember-links-advanced') === 'On';
-      const loadReadabilityPreference = this.store.getItem('sa11y-remember-readability') === 'On';
+      const rememberContrast = this.store.getItem('sa11y-remember-contrast') === 'On';
+      const rememberFormLabels = this.store.getItem('sa11y-remember-labels') === 'On';
+      const rememberLinksAdvanced = this.store.getItem('sa11y-remember-links-advanced') === 'On';
+      const rememberReadability = this.store.getItem('sa11y-remember-readability') === 'On';
 
-      sa11ycontainer.innerHTML = `<button type="button" aria-expanded="false" id="sa11y-toggle" aria-describedby="sa11y-notification-badge" aria-label="${Lang._('MAIN_TOGGLE_LABEL')}" disabled>
-                    ${MainToggleIcon}
-                    <div id="sa11y-notification-badge">
-                        <span id="sa11y-notification-count"></span>
-                        <span id="sa11y-notification-text" class="sa11y-visually-hidden"></span>
-                    </div>
-                </button>`
+      container.innerHTML = `
+        <button type="button" aria-expanded="false" id="sa11y-toggle" aria-describedby="sa11y-notification-badge" aria-label="${Lang._('MAIN_TOGGLE_LABEL')}" disabled>
+          ${MainToggleIcon}
+          <div id="sa11y-notification-badge">
+            <span id="sa11y-notification-count"></span>
+            <span id="sa11y-notification-text" class="sa11y-visually-hidden"></span>
+          </div>
+        </button>`
+
         // Start of main container.
         + '<div id="sa11y-panel">'
 
         // Page Outline tab.
         + `<div id="sa11y-outline-panel" role="tabpanel" aria-labelledby="sa11y-outline-header">
-                <div id="sa11y-outline-header" class="sa11y-header-text">
-                    <h2 tabindex="-1">${Lang._('PAGE_OUTLINE')}</h2>
-                </div>
-                <div id="sa11y-outline-content">
-                    <ul id="sa11y-outline-list" tabindex="0" role="list" aria-label="${Lang._('PAGE_OUTLINE')}"></ul>
-                </div>`
-
-        // Readability tab.
-        + `<div id="sa11y-readability-panel">
-                    <div id="sa11y-readability-content">
-                        <h2 class="sa11y-header-text-inline">${Lang._('LANG_READABILITY')}</h2>
-                        <p id="sa11y-readability-info"></p>
-                        <ul id="sa11y-readability-details"></ul>
-                    </div>
-                </div>
-            </div>`// End of Page Outline tab.
+            <div id="sa11y-outline-header" class="sa11y-header-text">
+              <h2 tabindex="-1">${Lang._('PAGE_OUTLINE')}</h2>
+            </div>
+            <div id="sa11y-outline-content">
+              <ul id="sa11y-outline-list" tabindex="0" role="list" aria-label="${Lang._('PAGE_OUTLINE')}"></ul>
+            </div>
+            <div id="sa11y-readability-panel">
+              <div id="sa11y-readability-content">
+                <h2 class="sa11y-header-text-inline">${Lang._('LANG_READABILITY')}</h2>
+                <p id="sa11y-readability-info"></p>
+                <ul id="sa11y-readability-details"></ul>
+              </div>
+            </div>
+          </div>`
 
         // Settings tab.
         + `<div id="sa11y-settings-panel" role="tabpanel" aria-labelledby="sa11y-settings-header">
-                <div id="sa11y-settings-header" class="sa11y-header-text">
-                    <h2 tabindex="-1">${Lang._('SETTINGS')}</h2>
-                </div>
-                <div id="sa11y-settings-content">
-                    <ul id="sa11y-settings-options">
-                        <li id="sa11y-contrast-li">
-                            <label id="sa11y-check-contrast" for="sa11y-contrast-toggle">${Lang._('CONTRAST')}</label>
-                            <button id="sa11y-contrast-toggle"
-                            aria-labelledby="sa11y-check-contrast"
-                            class="sa11y-settings-switch"
-                            aria-pressed="${loadContrastPreference ? 'true' : 'false'}">${loadContrastPreference ? Lang._('ON') : Lang._('OFF')}</button></li>
-                        <li id="sa11y-form-labels-li">
-                            <label id="sa11y-check-labels" for="sa11y-labels-toggle">${Lang._('FORM_LABELS')}</label>
-                            <button id="sa11y-labels-toggle" aria-labelledby="sa11y-check-labels" class="sa11y-settings-switch"
-                            aria-pressed="${loadLabelsPreference ? 'true' : 'false'}">${loadLabelsPreference ? Lang._('ON') : Lang._('OFF')}</button>
-                        </li>
-                        <li id="sa11y-links-advanced-li">
-                            <label id="check-changerequest" for="sa11y-links-advanced-toggle">${Lang._('LINKS_ADVANCED')} <span class="sa11y-badge">AAA</span></label>
-                            <button id="sa11y-links-advanced-toggle" aria-labelledby="check-changerequest" class="sa11y-settings-switch"
-                            aria-pressed="${loadChangeRequestPreference ? 'true' : 'false'}">${loadChangeRequestPreference ? Lang._('ON') : Lang._('OFF')}</button>
-                        </li>
-                        <li id="sa11y-readability-li">
-                            <label id="check-readability" for="sa11y-readability-toggle">${Lang._('LANG_READABILITY')} <span class="sa11y-badge">AAA</span></label>
-                            <button id="sa11y-readability-toggle" aria-labelledby="check-readability" class="sa11y-settings-switch"
-                            aria-pressed="${loadReadabilityPreference ? 'true' : 'false'}">${loadReadabilityPreference ? Lang._('ON') : Lang._('OFF')}</button>
-                        </li>
-                        <li>
-                            <label id="sa11y-dark-mode" for="sa11y-theme-toggle">${Lang._('DARK_MODE')}</label>
-                            <button id="sa11y-theme-toggle" aria-labelledby="sa11y-dark-mode" class="sa11y-settings-switch"></button>
-                        </li>
-                    </ul>
-                </div>
-            </div>`
+            <div id="sa11y-settings-header" class="sa11y-header-text">
+              <h2 tabindex="-1">${Lang._('SETTINGS')}</h2>
+            </div>
+            <div id="sa11y-settings-content">
+              <ul id="sa11y-settings-options">
+                <li id="sa11y-contrast-item">
+                  <label id="sa11y-check-contrast" for="sa11y-contrast-toggle">${Lang._('CONTRAST')}</label>
+                  <button id="sa11y-contrast-toggle"
+                    aria-labelledby="sa11y-check-contrast"
+                    class="sa11y-settings-switch"
+                    aria-pressed="${rememberContrast ? 'true' : 'false'}">${rememberContrast ? Lang._('ON') : Lang._('OFF')}
+                  </button>
+                </li>
+                <li id="sa11y-form-labels-item">
+                  <label id="sa11y-check-labels" for="sa11y-labels-toggle">${Lang._('FORM_LABELS')}</label>
+                  <button id="sa11y-labels-toggle"
+                    aria-labelledby="sa11y-check-labels"
+                    class="sa11y-settings-switch"
+                    aria-pressed="${rememberFormLabels ? 'true' : 'false'}">${rememberFormLabels ? Lang._('ON') : Lang._('OFF')}
+                  </button>
+                </li>
+                <li id="sa11y-links-advanced-item">
+                  <label id="check-changerequest" for="sa11y-links-advanced-toggle">${Lang._('LINKS_ADVANCED')} <span class="sa11y-badge">AAA</span></label>
+                  <button id="sa11y-links-advanced-toggle"
+                    aria-labelledby="check-changerequest"
+                    class="sa11y-settings-switch"
+                    aria-pressed="${rememberLinksAdvanced ? 'true' : 'false'}">${rememberLinksAdvanced ? Lang._('ON') : Lang._('OFF')}</button>
+                </li>
+                <li id="sa11y-readability-item">
+                  <label id="check-readability" for="sa11y-readability-toggle">${Lang._('LANG_READABILITY')} <span class="sa11y-badge">AAA</span></label>
+                  <button id="sa11y-readability-toggle"
+                    aria-labelledby="check-readability"
+                    class="sa11y-settings-switch"
+                    aria-pressed="${rememberReadability ? 'true' : 'false'}">${rememberReadability ? Lang._('ON') : Lang._('OFF')}
+                  </button>
+                </li>
+                <li>
+                  <label id="sa11y-dark-mode" for="sa11y-theme-toggle">${Lang._('DARK_MODE')}</label>
+                  <button id="sa11y-theme-toggle"
+                    aria-labelledby="sa11y-dark-mode"
+                    class="sa11y-settings-switch">
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>`
 
-          // Console warning messages.
-          + `<div id="sa11y-panel-alert">
-                <div class="sa11y-header-text">
-                    <button id="sa11y-close-alert" class="sa11y-close-btn" aria-label="${Lang._('ALERT_CLOSE')}" aria-describedby="sa11y-alert-heading sa11y-panel-alert-text"></button>
-                    <h2 id="sa11y-alert-heading">${Lang._('ALERT_TEXT')}</h2>
-                </div>
-                <p id="sa11y-panel-alert-text"></p>
-                <div id="sa11y-panel-alert-preview"></div>
-            </div>`
+      // Console warning messages.
+      + `<div id="sa11y-panel-alert">
+          <div class="sa11y-header-text">
+              <button id="sa11y-close-alert" class="sa11y-close-btn" aria-label="${Lang._('ALERT_CLOSE')}" aria-describedby="sa11y-alert-heading sa11y-panel-alert-text"></button>
+              <h2 id="sa11y-alert-heading">${Lang._('ALERT_TEXT')}</h2>
+          </div>
+          <p id="sa11y-panel-alert-text"></p>
+          <div id="sa11y-panel-alert-preview"></div>
+        </div>`
 
-        // Main panel that conveys state of page.
-        + `<div id="sa11y-panel-content">
-                <button id="sa11y-cycle-toggle" type="button" aria-label="${Lang._('SHORTCUT_SCREEN_READER')}">
-                    <div class="sa11y-panel-icon"></div>
-                </button>
-                <div id="sa11y-panel-text"><h1 class="sa11y-visually-hidden">${Lang._('PANEL_HEADING')}</h1>
-                <p id="sa11y-status" aria-live="polite"></p>
-                </div>
-            </div>`
+      // Main panel that conveys state of page.
+      + `<div id="sa11y-panel-content">
+          <button id="sa11y-cycle-toggle" type="button" aria-label="${Lang._('SHORTCUT_SCREEN_READER')}">
+              <div class="sa11y-panel-icon"></div>
+          </button>
+          <div id="sa11y-panel-text"><h1 class="sa11y-visually-hidden">${Lang._('PANEL_HEADING')}</h1>
+            <p id="sa11y-status" aria-live="polite"></p>
+          </div>
+        </div>`
 
-        // Show Outline & Show Settings button.
-        + `<div id="sa11y-panel-controls" role="tablist" aria-orientation="horizontal">
-                <button type="button" role="tab" aria-expanded="false" id="sa11y-outline-toggle" aria-controls="sa11y-outline-panel">
-                    ${Lang._('SHOW_OUTLINE')}
-                </button>
-                <button type="button" role="tab" aria-expanded="false" id="sa11y-settings-toggle" aria-controls="sa11y-settings-panel">
-                    ${Lang._('SHOW_SETTINGS')}
-                </button>
-                <div style="width:40px;"></div>
-            </div>`
+      // Show Outline & Show Settings button.
+      + `<div id="sa11y-panel-controls" role="tablist" aria-orientation="horizontal">
+          <button type="button" role="tab" aria-expanded="false" id="sa11y-outline-toggle" aria-controls="sa11y-outline-panel">
+            ${Lang._('SHOW_OUTLINE')}
+          </button>
+          <button type="button" role="tab" aria-expanded="false" id="sa11y-settings-toggle" aria-controls="sa11y-settings-panel">
+            ${Lang._('SHOW_SETTINGS')}
+          </button>
+          <div style="width:40px;"></div>
+        </div>`
 
       // End of main container.
       + '</div>';
 
-      const pagebody = document.getElementsByTagName('BODY')[0];
-      pagebody.prepend(sa11ycontainer);
+      // Append before closing body tag.
+      document.body.appendChild(container);
+
+      // Constants available for use after control panel is constructed.
+      this.container = document.getElementById('sa11y-container');
+      this.panel = document.getElementById('sa11y-panel');
+      this.panelContent = document.getElementById('sa11y-panel-content');
+      this.panelControls = document.getElementById('sa11y-panel-controls');
+      this.outlinePanel = document.getElementById('sa11y-outline-panel');
+      this.outlineList = document.getElementById('sa11y-outline-list');
+      this.outlineHeader = document.getElementById('sa11y-outline-header');
+      this.notificationBadge = document.getElementById('sa11y-notification-badge');
+      this.notificationCount = document.getElementById('sa11y-notification-count');
+      this.notificationText = document.getElementById('sa11y-notification-text');
+      this.status = document.getElementById('sa11y-status');
+
+      // Settings
+      this.settingsPanel = document.getElementById('sa11y-settings-panel');
+      this.settingsContent = document.getElementById('sa11y-settings-content');
+      this.contrastToggle = document.getElementById('sa11y-contrast-toggle');
+      this.labelsToggle = document.getElementById('sa11y-labels-toggle');
+      this.linksToggle = document.getElementById('sa11y-links-advanced-toggle');
+      this.readabilityToggle = document.getElementById('sa11y-readability-toggle');
+      this.themeToggle = document.getElementById('sa11y-theme-toggle');
+      this.contrastItem = document.getElementById('sa11y-contrast-item');
+      this.formLabelsItem = document.getElementById('sa11y-form-labels-item');
+      this.linksAdvacedItem = document.getElementById('sa11y-links-advanced-item');
+      this.readabilityItem = document.getElementById('sa11y-readability-item');
+
+      // Buttons
+      this.toggle = document.getElementById('sa11y-toggle');
+      this.outlineToggle = document.getElementById('sa11y-outline-toggle');
+      this.settingToggle = document.getElementById('sa11y-settings-toggle');
+      this.skipButton = document.getElementById('sa11y-cycle-toggle');
+
+      // Alerts
+      this.alertPanel = document.getElementById('sa11y-panel-alert');
+      this.alertText = document.getElementById('sa11y-panel-alert-text');
+      this.alertPreview = document.getElementById('sa11y-panel-alert-preview');
+      this.closeAlert = document.getElementById('sa11y-close-alert');
+
+      // Readability
+      this.readabilityInfo = document.getElementById('sa11y-readability-info');
+      this.readabilityPanel = document.getElementById('sa11y-readability-panel');
+      this.readabilityDetails = document.getElementById('sa11y-readability-details');
     };
 
     this.globals = () => {
@@ -3585,9 +3645,9 @@ class Sa11y {
 
       // Supported readability languages. Turn module off if not supported.
       const supportedLang = ['en', 'fr', 'es', 'de', 'nl', 'it', 'sv', 'fi', 'da', 'no', 'nb', 'nn'];
-      const pageLang = document.querySelector('html').getAttribute('lang');
+      const pageLang = this.html.getAttribute('lang');
 
-      // If lang attribute is missing.
+      // If lang attribute is missing, turn off readability plugin.
       if (!pageLang) {
         option.readabilityPlugin = false;
       } else {
@@ -3631,7 +3691,7 @@ class Sa11y {
       }
 
       // Ignore specific images.
-      this.imageIgnore = `${this.containerIgnore}, [role='presentation'], [src^='https://trck.youvisit.com']`;
+      this.imageIgnore = `${this.containerIgnore}, [role='presentation']`;
       if (option.imageIgnore) {
         this.imageIgnore = `${option.imageIgnore}, ${this.imageIgnore}`;
       }
@@ -3691,118 +3751,150 @@ class Sa11y {
 
     this.mainToggle = () => {
       // Keeps checker active when navigating between pages until it is toggled off.
-      const sa11yToggle = document.getElementById('sa11y-toggle');
-      sa11yToggle.addEventListener('click', (e) => {
+      this.toggle.addEventListener('click', (e) => {
         if (this.store.getItem('sa11y-remember-panel') === 'Opened') {
           this.store.setItem('sa11y-remember-panel', 'Closed');
-          sa11yToggle.classList.remove('sa11y-on');
-          sa11yToggle.setAttribute('aria-expanded', 'false');
+          this.toggle.classList.remove('sa11y-on');
+          this.toggle.setAttribute('aria-expanded', 'false');
           this.resetAll();
           this.updateBadge();
           e.preventDefault();
         } else {
           this.store.setItem('sa11y-remember-panel', 'Opened');
-          sa11yToggle.classList.add('sa11y-on');
-          sa11yToggle.setAttribute('aria-expanded', 'true');
+          this.toggle.classList.add('sa11y-on');
+          this.toggle.setAttribute('aria-expanded', 'true');
           this.checkAll();
           // Don't show badge when panel is opened.
-          document.getElementById('sa11y-notification-badge').style.display = 'none';
+          this.notificationBadge.style.display = 'none';
           e.preventDefault();
         }
       });
 
       // Remember to leave it open
       if (this.store.getItem('sa11y-remember-panel') === 'Opened') {
-        sa11yToggle.classList.add('sa11y-on');
-        sa11yToggle.setAttribute('aria-expanded', 'true');
+        this.toggle.classList.add('sa11y-on');
+        this.toggle.setAttribute('aria-expanded', 'true');
       }
 
       // Crudely give time to load any other content or slow post-rendered JS, iFrames, etc.
-      if (sa11yToggle.classList.contains('sa11y-on')) {
-        sa11yToggle.classList.toggle('loading-sa11y');
-        sa11yToggle.setAttribute('aria-expanded', 'true');
+      if (this.toggle.classList.contains('sa11y-on')) {
+        this.toggle.classList.toggle('loading-sa11y');
+        this.toggle.setAttribute('aria-expanded', 'true');
         setTimeout(this.checkAll, 400);
       }
 
       document.onkeydown = (e) => {
         const evt = e || window.event;
-        if (evt.key === 'Escape' && document.getElementById('sa11y-panel').classList.contains('sa11y-active')) {
-          sa11yToggle.setAttribute('aria-expanded', 'false');
-          sa11yToggle.classList.remove('sa11y-on');
-          sa11yToggle.click();
+        if (evt.key === 'Escape' && this.panel.classList.contains('sa11y-active')) {
+          this.toggle.setAttribute('aria-expanded', 'false');
+          this.toggle.classList.remove('sa11y-on');
+          this.toggle.click();
           this.resetAll();
         }
 
         // Alt + A to enable accessibility checker.
         if (evt.altKey && evt.code === 'KeyA') {
-          sa11yToggle.click();
-          sa11yToggle.focus();
+          this.toggle.click();
+          this.toggle.focus();
           evt.preventDefault();
         }
       };
     };
 
     // ============================================================
-    // Helpers: Sanitize HTML and compute ARIA for hyperlinks
+    // Utilities: Various utilities.
     // ============================================================
     this.utilities = () => {
-      this.isElementHidden = ($el) => {
-        if ($el.getAttribute('hidden') || ($el.offsetWidth === 0 && $el.offsetHeight === 0)) {
+      /**
+       * Utility: Check if element is hidden.
+       * @param  {Node} element The element.
+       * @return {Boolean}
+      */
+      this.isElementHidden = (element) => {
+        if (element.getAttribute('hidden') || (element.offsetWidth === 0 && element.offsetHeight === 0)) {
           return true;
         }
-        const compStyles = getComputedStyle($el);
+        const compStyles = getComputedStyle(element);
         return compStyles.getPropertyValue('display') === 'none';
       };
 
-      // Helper: Escape HTML, encode HTML symbols.
+      /**
+       * Utility: Check if element is hidden (display: none) OR visually hidden (.sr-only)
+       * @param  {Node} element Node to test.
+       * @return {Boolean} boolean.
+      */
+      this.isElementVisuallyHiddenOrHidden = (element) => {
+        if (element.getAttribute('hidden') || (element.offsetWidth === 0 && element.offsetHeight === 0) || (element.clientHeight === 1 && element.clientWidth === 1)) {
+          return true;
+        }
+        const compStyles = getComputedStyle(element);
+        return compStyles.getPropertyValue('display') === 'none';
+      };
+
+      /**
+       * Utility: Escape HTML, encode HTML symbols.
+       * @param  {String} text  The user-submitted string.
+       * @return {String} text The encoded string.
+      */
       this.escapeHTML = (text) => {
         const $div = document.createElement('div');
         $div.textContent = text;
         return $div.innerHTML.replaceAll('"', '&quot;').replaceAll("'", '&#039;').replaceAll('`', '&#x60;');
       };
 
-      // Helper: Help clean up HTML characters for tooltips and outline panel.
-      this.sanitizeForHTML = (string) => {
-        const entityMap = {
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          "'": '&#39;',
-          '/': '&#x2F;',
-          '`': '&#x60;',
-          '=': '&#x3D;',
-        };
-        return String(string).replace(/[&<>"'`=/]/g, (s) => entityMap[s]);
-      };
+      /**
+       * Utility: Sanitize and encode all HTML in a user-submitted string
+       * @link https://portswigger.net/web-security/cross-site-scripting/preventing
+       * @param  {String} str  The user-submitted string.
+       * @return {String} str  The sanitized string.
+      */
+      this.sanitizeHTML = (str) => str.replace(/[^\w. ]/gi, (c) => `&#${c.charCodeAt(0)};`);
 
-      // Helper: Compute alt text on images within a text node.
-      this.computeTextNodeWithImage = ($el) => {
-        const imgArray = Array.from($el.querySelectorAll('img'));
+      /**
+       * Utility: Unicode encoder for escaping.
+       * @link https://portswigger.net/web-security/cross-site-scripting/preventing
+       * @param  {String} str  The sanitized string.
+       * @return {String} str  The encoded string.
+      */
+      this.jsEscape = (str) => String(str).replace(/[^\w. ]/gi, (c) => `\\u${(`0000${c.charCodeAt(0).toString(16)}`).slice(-4)}`);
+
+      /**
+       * Utility: Compute alt text on images within a text node.
+       * @param  {Node} element  Element to check.
+       * @return {String} str  Return text back.
+      */
+      this.computeTextNodeWithImage = (element) => {
+        const textContent = this.getText(element);
+        const imgArray = Array.from(element.querySelectorAll('img'));
         let returnText = '';
         // No image, has text.
-        if (imgArray.length === 0 && $el.textContent.trim().length > 1) {
-          returnText = $el.textContent.trim();
-        } else if (imgArray.length && $el.textContent.trim().length === 0) {
+        if (imgArray.length === 0 && textContent.length > 1) {
+          returnText = textContent;
+        } else if (imgArray.length && textContent.length === 0) {
           // Has image.
           const imgalt = imgArray[0].getAttribute('alt');
           if (!imgalt || imgalt === ' ' || imgalt === '') {
-            returnText = ' ';
+            returnText = '';
           } else if (imgalt !== undefined) {
             returnText = imgalt;
           }
-        } else if (imgArray.length && $el.textContent.trim().length) {
+        } else if (imgArray.length && textContent.length) {
           // Has image and text.
           // To-do: This is a hack? Any way to do this better?
-          imgArray.forEach((element) => {
-            element.insertAdjacentHTML('afterend', ` <span class='sa11y-clone-image-text' aria-hidden='true'>${imgArray[0].getAttribute('alt')}</span>`);
+          imgArray.forEach((img) => {
+            img.insertAdjacentHTML('afterend', ` <span class='sa11y-clone-image-text' aria-hidden='true'>${imgArray[0].getAttribute('alt')}</span>`);
           });
-          returnText = $el.textContent.trim();
+          returnText = textContent;
         }
         return returnText;
       };
 
-      // Utility: https://www.joshwcomeau.com/snippets/javascript/debounce/
+      /**
+       * Utility: Debounce
+       * @link https://www.joshwcomeau.com/snippets/javascript/debounce/
+       * @callback callback
+       * @argument {wait}
+      */
       this.debounce = (callback, wait) => {
         let timeoutId = null;
         return (...args) => {
@@ -3813,7 +3905,12 @@ class Sa11y {
         };
       };
 
-      // Helper: Used to ignore child elements within an anchor.
+      /**
+       * Utility: Used to ignore child elements within an anchor.
+       * @param  {Node} element  Element to target.
+       * @param  {Node} selector Element to ignore.
+       * @return {Node} Returns back element excluding the ignored node.
+      */
       this.fnIgnore = (element, selector) => {
         const $clone = element.cloneNode(true);
         const $exclude = Array.from(selector ? $clone.querySelectorAll(selector) : $clone.children);
@@ -3823,15 +3920,20 @@ class Sa11y {
         return $clone;
       };
 
-      // Helper: Handle ARIA labels for Link Text module.
-      this.computeAriaLabel = ($el) => {
+      /**
+       * Utility: Compute accessible name for elements with ARIA.
+       * @param  {Node} element  Element to target.
+       * @return {String} Returns a string back with the computed accessible name.
+      */
+      this.computeAriaLabel = (element) => {
         // aria-label
-        if ($el.matches('[aria-label]')) {
-          return $el.getAttribute('aria-label');
+        if (element.matches('[aria-label]')) {
+          return element.getAttribute('aria-label');
         }
-        // aria-labeledby.
-        if ($el.matches('[aria-labelledby]')) {
-          const target = $el.getAttribute('aria-labelledby').split(/\s+/);
+
+        // aria-labeledby
+        if (element.matches('[aria-labelledby]')) {
+          const target = element.getAttribute('aria-labelledby').split(/\s+/);
           if (target.length > 0) {
             let returnText = '';
             target.forEach((x) => {
@@ -3846,17 +3948,18 @@ class Sa11y {
             });
             return returnText;
           }
-          return '';
         }
+
         // Child with aria-label
-        if (Array.from($el.children).filter((x) => x.matches('[aria-label]')).length > 0) {
-          const child = Array.from($el.childNodes);
+        if (Array.from(element.children).filter((x) => x.matches('[aria-label]')).length > 0) {
+          const child = Array.from(element.childNodes);
           let returnText = '';
 
           // Process each child within node.
           child.forEach((x) => {
             if (x.nodeType === 1) {
-              if (x.ariaLabel === null) {
+              // Ignore HTML comments and make sure label is not null.
+              if (x.nodeType === 3 || x.ariaLabel === null) {
                 returnText += x.innerText;
               } else {
                 returnText += x.getAttribute('aria-label');
@@ -3867,14 +3970,15 @@ class Sa11y {
           });
           return returnText;
         }
+
         // Child with aria-labelledby
-        if (Array.from($el.children).filter((x) => x.matches('[aria-labelledby]')).length > 0) {
-          const child = Array.from($el.childNodes);
+        if (Array.from(element.children).filter((x) => x.matches('[aria-labelledby]')).length > 0) {
+          const child = Array.from(element.childNodes);
           let returnText = '';
 
           // Process each child within node.
           child.forEach((y) => {
-            if (y.nodeType === 8) ; else if (y.nodeType === 3) {
+            if (y.nodeType === 8) ; else if (y.nodeType === 3 || y.getAttribute('aria-labelledby') === null) {
               returnText += y.nodeValue;
             } else {
               const target = y.getAttribute('aria-labelledby').split(/\s+/);
@@ -3890,14 +3994,21 @@ class Sa11y {
                 returnText += returnAria;
               }
             }
-            return '';
           });
           return returnText;
         }
+
+        // Return if noAria;
         return 'noAria';
       };
 
-      // Mini function: Find visibible parent of hidden element.
+      /**
+       * Utility: Find visible parent of hidden element.
+       * @param  {Node} element  Element to target.
+       * @param  {String} property  CSS property. E.g. 'display'
+       * @param  {String} value CSS value. E.g. 'none'
+       * @return {Node} Returns parent node of element that is visible.
+      */
       this.findVisibleParent = (element, property, value) => {
         let $el = element;
         while ($el !== null) {
@@ -3911,16 +4022,25 @@ class Sa11y {
         return null;
       };
 
-      // Mini function: Calculate top of element.
-      this.offsetTop = ($el) => {
-        const rect = $el.getBoundingClientRect();
+      /**
+       * Utility: Calculate top of element.
+       * @param  {Node} element  Element to target.
+       * @return {Number} Returns number.
+      */
+      this.offsetTop = (element) => {
+        const rect = element.getBoundingClientRect();
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
         return {
           top: rect.top + scrollTop,
         };
       };
 
-      // Utility: Custom localStorage utility with fallback to sessionStorage.
+      /**
+       * Utility: Local storage with fall back to session storage.
+       * @param  {String} key
+       * @param  {string} value
+       * @return {String} Return key.
+      */
       this.store = {
         getItem(key) {
           try {
@@ -3943,58 +4063,67 @@ class Sa11y {
         },
       };
 
-      // Utility: Add & remove pulsing border.
-      this.addPulse = ($el) => {
+      /**
+       * Utility: Add & remove pulsing border for wayfinding.
+       * @param  {Node} element Element to add border too.
+      */
+      this.addPulse = (element) => {
         const border = 'sa11y-pulse-border';
         document.querySelectorAll(`.${border}`).forEach((el) => el.classList.remove(border));
-        $el.classList.add(border);
+        element.classList.add(border);
         setTimeout(() => {
-          $el.classList.remove(border);
+          element.classList.remove(border);
         }, 2500);
       };
 
-      // Utility: Send an alert to main panel.
+      /**
+       * Utility: Send an alert to main panel.
+       * @param  {String} alertMessage The message you'd to show in the alert.
+       * @param  {String} errorPreview An optional secondary message or preview of the element.
+      */
       this.createAlert = (alertMessage, errorPreview) => {
-        const $alertPanel = document.getElementById('sa11y-panel-alert');
-        const $alertText = document.getElementById('sa11y-panel-alert-text');
-        const $alertPreview = document.getElementById('sa11y-panel-alert-preview');
-        const $closeAlertToggle = document.getElementById('sa11y-close-alert');
-        const $skipBtn = document.getElementById('sa11y-cycle-toggle');
-
-        $alertPanel.classList.add('sa11y-active');
-        $alertText.innerHTML = alertMessage;
+        this.alertPanel.classList.add('sa11y-active');
+        this.alertText.innerHTML = alertMessage;
         if (errorPreview) {
-          $alertPreview.classList.add('sa11y-panel-alert-preview');
-          $alertPreview.innerHTML = errorPreview;
+          this.alertPreview.classList.add('sa11y-panel-alert-preview');
+          this.alertPreview.innerHTML = errorPreview;
         }
         setTimeout(() => {
-          $closeAlertToggle.focus();
+          this.closeAlert.focus();
         }, 500);
 
         // Closing alert sets focus back to Skip to Issue toggle.
-        $closeAlertToggle.addEventListener('click', () => {
+        this.closeAlert.addEventListener('click', () => {
           this.removeAlert();
-          $skipBtn.focus();
+          this.skipButton.focus();
         });
       };
 
-      // Utility: Destory alert.
+      /**
+       * Utility: Call this function without any parameters to remove any alerts in the panel.
+      */
       this.removeAlert = () => {
-        const $alertPanel = document.getElementById('sa11y-panel-alert');
-        const $alertText = document.getElementById('sa11y-panel-alert-text');
-        const $alertPreview = document.getElementById('sa11y-panel-alert-preview');
-        $alertPanel.classList.remove('sa11y-active');
-        $alertPreview.classList.remove('sa11y-panel-alert-preview');
-        while ($alertText.firstChild) $alertText.removeChild($alertText.firstChild);
-        while ($alertPreview.firstChild) $alertPreview.removeChild($alertPreview.firstChild);
+        this.alertPanel.classList.remove('sa11y-active');
+        this.alertPreview.classList.remove('sa11y-panel-alert-preview');
+        while (this.alertText.firstChild) this.alertText.removeChild(this.alertText.firstChild);
+        while (this.alertPreview.firstChild) this.alertPreview.removeChild(this.alertPreview.firstChild);
       };
 
-      // Utility: Replace newlines and double spaces with a single space.
-      this.getText = ($el) => $el.textContent.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
+      /**
+       * Utility: Replace newlines and double spaces with a single space.
+       * @param {Node} element
+       * @return {String} Returns plain text string.
+      */
+      this.getText = (element) => element.textContent.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
 
-      // Utility: Get next sibling.
-      this.getNextSibling = (elem, selector) => {
-        let sibling = elem.nextElementSibling;
+      /**
+       * Utility: Get next sibling of an element that matches a selector.
+       * @param {Node} element The node to start from.
+       * @param {String} selector The element you are looking for.
+       * @return {Node} Return.
+      */
+      this.getNextSibling = (element, selector) => {
+        let sibling = element.nextElementSibling;
         if (!selector) return sibling;
         while (sibling) {
           if (sibling.matches(selector)) return sibling;
@@ -4002,153 +4131,166 @@ class Sa11y {
         }
         return '';
       };
+
+      /**
+       * Utility: Prepare tooltips. Applies additional markup for tooltips.
+       * @param {String} message The node to start from.
+       * @return {String} Returns string ready for output.
+      */
+      this.prepTooltip = (message) => message
+        .replaceAll(/<hr>/g, '<hr aria-hidden="true">')
+        .replaceAll(/<a[\s]href=/g, '<a target="_blank" rel="noopener noreferrer" href=')
+        .replaceAll(/<\/a>/g, `<span class="sa11y-visually-hidden"> (${Lang._('NEW_TAB')})</span></a>`)
+        .replaceAll(/{r}/g, 'class="sa11y-red-text"');
+
+      /**
+       * Utility: Prepare dismiss key.
+       * @param {String} text The node to start from.
+       * @return {String} Returns 256 character string without spaces.
+      */
+      this.prepareDismissal = (text) => String(text).substring(0, 256).replace(/\s/g, '');
     };
 
     //----------------------------------------------------------------------
     // Setting's panel: Additional ruleset toggles.
     //----------------------------------------------------------------------
-    this.settingPanelToggles = () => {
+    this.settingsPanelToggles = () => {
       // Toggle: Contrast
-      const $contrastToggle = document.getElementById('sa11y-contrast-toggle');
-      $contrastToggle.onclick = async () => {
+      this.contrastToggle.onclick = async () => {
         if (this.store.getItem('sa11y-remember-contrast') === 'On') {
           this.store.setItem('sa11y-remember-contrast', 'Off');
-          $contrastToggle.textContent = `${Lang._('OFF')}`;
-          $contrastToggle.setAttribute('aria-pressed', 'false');
+          this.contrastToggle.textContent = `${Lang._('OFF')}`;
+          this.contrastToggle.setAttribute('aria-pressed', 'false');
           this.resetAll(false);
           await this.checkAll();
         } else {
           this.store.setItem('sa11y-remember-contrast', 'On');
-          $contrastToggle.textContent = `${Lang._('ON')}`;
-          $contrastToggle.setAttribute('aria-pressed', 'true');
+          this.contrastToggle.textContent = `${Lang._('ON')}`;
+          this.contrastToggle.setAttribute('aria-pressed', 'true');
           this.resetAll(false);
           await this.checkAll();
         }
       };
 
       // Toggle: Form labels
-      const $labelsToggle = document.getElementById('sa11y-labels-toggle');
-      $labelsToggle.onclick = async () => {
+      this.labelsToggle.onclick = async () => {
         if (this.store.getItem('sa11y-remember-labels') === 'On') {
           this.store.setItem('sa11y-remember-labels', 'Off');
-          $labelsToggle.textContent = `${Lang._('OFF')}`;
-          $labelsToggle.setAttribute('aria-pressed', 'false');
+          this.labelsToggle.textContent = `${Lang._('OFF')}`;
+          this.labelsToggle.setAttribute('aria-pressed', 'false');
           this.resetAll(false);
           await this.checkAll();
         } else {
           this.store.setItem('sa11y-remember-labels', 'On');
-          $labelsToggle.textContent = `${Lang._('ON')}`;
-          $labelsToggle.setAttribute('aria-pressed', 'true');
+          this.labelsToggle.textContent = `${Lang._('ON')}`;
+          this.labelsToggle.setAttribute('aria-pressed', 'true');
           this.resetAll(false);
           await this.checkAll();
         }
       };
 
       // Toggle: Links (Advanced)
-      const $linksToggle = document.getElementById('sa11y-links-advanced-toggle');
-      $linksToggle.onclick = async () => {
+      this.linksToggle.onclick = async () => {
         if (this.store.getItem('sa11y-remember-links-advanced') === 'On') {
           this.store.setItem('sa11y-remember-links-advanced', 'Off');
-          $linksToggle.textContent = `${Lang._('OFF')}`;
-          $linksToggle.setAttribute('aria-pressed', 'false');
+          this.linksToggle.textContent = `${Lang._('OFF')}`;
+          this.linksToggle.setAttribute('aria-pressed', 'false');
           this.resetAll(false);
           await this.checkAll();
         } else {
           this.store.setItem('sa11y-remember-links-advanced', 'On');
-          $linksToggle.textContent = `${Lang._('ON')}`;
-          $linksToggle.setAttribute('aria-pressed', 'true');
+          this.linksToggle.textContent = `${Lang._('ON')}`;
+          this.linksToggle.setAttribute('aria-pressed', 'true');
           this.resetAll(false);
           await this.checkAll();
         }
       };
 
       // Toggle: Readability
-      const $readabilityToggle = document.getElementById('sa11y-readability-toggle');
-      $readabilityToggle.onclick = async () => {
+      this.readabilityToggle.onclick = async () => {
         if (this.store.getItem('sa11y-remember-readability') === 'On') {
           this.store.setItem('sa11y-remember-readability', 'Off');
-          $readabilityToggle.textContent = `${Lang._('OFF')}`;
-          $readabilityToggle.setAttribute('aria-pressed', 'false');
-          document.getElementById('sa11y-readability-panel').classList.remove('sa11y-active');
+          this.readabilityToggle.textContent = `${Lang._('OFF')}`;
+          this.readabilityToggle.setAttribute('aria-pressed', 'false');
+          this.readabilityPanel.classList.remove('sa11y-active');
           this.resetAll(false);
           await this.checkAll();
         } else {
           this.store.setItem('sa11y-remember-readability', 'On');
-          $readabilityToggle.textContent = `${Lang._('ON')}`;
-          $readabilityToggle.setAttribute('aria-pressed', 'true');
-          document.getElementById('sa11y-readability-panel').classList.add('sa11y-active');
+          this.readabilityToggle.textContent = `${Lang._('ON')}`;
+          this.readabilityToggle.setAttribute('aria-pressed', 'true');
+          this.readabilityPanel.classList.add('sa11y-active');
           this.resetAll(false);
           await this.checkAll();
         }
       };
 
       if (this.store.getItem('sa11y-remember-readability') === 'On') {
-        document.getElementById('sa11y-readability-panel').classList.add('sa11y-active');
+        this.readabilityPanel.classList.add('sa11y-active');
       }
 
-      // Toggle: Dark mode. (Credits: https://derekkedziora.com/blog/dark-mode-revisited)
+      /**
+       * Dark Mode
+       * Credits: Derek Kedziora
+       * @link https://derekkedziora.com/blog/dark-mode-revisited
+      */
       const systemInitiatedDark = window.matchMedia('(prefers-color-scheme: dark)');
-      const $themeToggle = document.getElementById('sa11y-theme-toggle');
-      const html = document.querySelector('html');
-
       if (systemInitiatedDark.matches) {
-        $themeToggle.textContent = `${Lang._('ON')}`;
-        $themeToggle.setAttribute('aria-pressed', 'true');
+        this.themeToggle.textContent = `${Lang._('ON')}`;
+        this.themeToggle.setAttribute('aria-pressed', 'true');
       } else {
-        $themeToggle.textContent = `${Lang._('OFF')}`;
-        $themeToggle.setAttribute('aria-pressed', 'false');
+        this.themeToggle.textContent = `${Lang._('OFF')}`;
+        this.themeToggle.setAttribute('aria-pressed', 'false');
       }
-
       const prefersColorTest = () => {
         if (systemInitiatedDark.matches) {
-          html.setAttribute('data-sa11y-theme', 'dark');
-          $themeToggle.textContent = `${Lang._('ON')}`;
-          $themeToggle.setAttribute('aria-pressed', 'true');
+          this.html.setAttribute('data-sa11y-theme', 'dark');
+          this.themeToggle.textContent = `${Lang._('ON')}`;
+          this.themeToggle.setAttribute('aria-pressed', 'true');
           this.store.setItem('sa11y-remember-theme', '');
         } else {
-          html.setAttribute('data-sa11y-theme', 'light');
-          $themeToggle.textContent = `${Lang._('OFF')}`;
-          $themeToggle.setAttribute('aria-pressed', 'false');
+          this.html.setAttribute('data-sa11y-theme', 'light');
+          this.themeToggle.textContent = `${Lang._('OFF')}`;
+          this.themeToggle.setAttribute('aria-pressed', 'false');
           this.store.setItem('sa11y-remember-theme', '');
         }
       };
-
       systemInitiatedDark.addEventListener('change', prefersColorTest);
-      $themeToggle.onclick = async () => {
+      this.themeToggle.onclick = async () => {
         const theme = this.store.getItem('sa11y-remember-theme');
         if (theme === 'dark') {
-          html.setAttribute('data-sa11y-theme', 'light');
+          this.html.setAttribute('data-sa11y-theme', 'light');
           this.store.setItem('sa11y-remember-theme', 'light');
-          $themeToggle.textContent = `${Lang._('OFF')}`;
-          $themeToggle.setAttribute('aria-pressed', 'false');
+          this.themeToggle.textContent = `${Lang._('OFF')}`;
+          this.themeToggle.setAttribute('aria-pressed', 'false');
         } else if (theme === 'light') {
-          html.setAttribute('data-sa11y-theme', 'dark');
+          this.html.setAttribute('data-sa11y-theme', 'dark');
           this.store.setItem('sa11y-remember-theme', 'dark');
-          $themeToggle.textContent = `${Lang._('ON')}`;
-          $themeToggle.setAttribute('aria-pressed', 'true');
+          this.themeToggle.textContent = `${Lang._('ON')}`;
+          this.themeToggle.setAttribute('aria-pressed', 'true');
         } else if (systemInitiatedDark.matches) {
-          html.setAttribute('data-sa11y-theme', 'light');
+          this.html.setAttribute('data-sa11y-theme', 'light');
           this.store.setItem('sa11y-remember-theme', 'light');
-          $themeToggle.textContent = `${Lang._('OFF')}`;
-          $themeToggle.setAttribute('aria-pressed', 'false');
+          this.themeToggle.textContent = `${Lang._('OFF')}`;
+          this.themeToggle.setAttribute('aria-pressed', 'false');
         } else {
-          html.setAttribute('data-sa11y-theme', 'dark');
+          this.html.setAttribute('data-sa11y-theme', 'dark');
           this.store.setItem('sa11y-remember-theme', 'dark');
-          $themeToggle.textContent = `${Lang._('ON')}`;
-          $themeToggle.setAttribute('aria-pressed', 'true');
+          this.themeToggle.textContent = `${Lang._('ON')}`;
+          this.themeToggle.setAttribute('aria-pressed', 'true');
         }
       };
       const theme = this.store.getItem('sa11y-remember-theme');
       if (theme === 'dark') {
-        html.setAttribute('data-sa11y-theme', 'dark');
+        this.html.setAttribute('data-sa11y-theme', 'dark');
         this.store.setItem('sa11y-remember-theme', 'dark');
-        $themeToggle.textContent = `${Lang._('ON')}`;
-        $themeToggle.setAttribute('aria-pressed', 'true');
+        this.themeToggle.textContent = `${Lang._('ON')}`;
+        this.themeToggle.setAttribute('aria-pressed', 'true');
       } else if (theme === 'light') {
-        html.setAttribute('data-sa11y-theme', 'light');
+        this.html.setAttribute('data-sa11y-theme', 'light');
         this.store.setItem('sa11y-remember-theme', 'light');
-        $themeToggle.textContent = `${Lang._('OFF')}`;
-        $themeToggle.setAttribute('aria-pressed', 'false');
+        this.themeToggle.textContent = `${Lang._('OFF')}`;
+        this.themeToggle.setAttribute('aria-pressed', 'false');
       }
     };
 
@@ -4192,7 +4334,7 @@ class Sa11y {
           if (url !== window.location.href.split('#')[0]) {
             // If panel is closed.
             if (this.store.getItem('sa11y-remember-panel') === 'Closed' || !this.store.getItem('sa11y-remember-panel')) {
-              this.panelActive = true;
+              this.panelActive = false;
               this.checkAll();
             }
             // Async scan while panel is open.
@@ -4213,17 +4355,11 @@ class Sa11y {
     // Check all
     // ----------------------------------------------------------------------
     this.checkAll = async () => {
+      this.found = [];
+      this.headingOutline = [];
       this.errorCount = 0;
       this.warningCount = 0;
-
-      // Error handling. If specified selector doesn't exist on page, scan the body of page instead.
-      const rootTarget = document.querySelector(option.checkRoot);
-      if (!rootTarget) {
-        this.root = document.querySelector('body');
-        this.createAlert(`${Lang.sprintf('ERROR_MISSING_ROOT_TARGET', option.checkRoot)}`);
-      } else {
-        this.root = document.querySelector(option.checkRoot);
-      }
+      this.dismissedCount = 0;
 
       this.findElements();
 
@@ -4231,58 +4367,11 @@ class Sa11y {
       this.checkHeaders();
       this.checkLinkText();
       this.checkAltText();
-
-      // Contrast plugin
-      if (option.contrastPlugin === true) {
-        if (this.store.getItem('sa11y-remember-contrast') === 'On') {
-          this.checkContrast();
-        }
-      } else {
-        const contrastLi = document.getElementById('sa11y-contrast-li');
-        contrastLi.setAttribute('style', 'display: none !important;');
-        this.store.setItem('sa11y-remember-contrast', 'Off');
-      }
-
-      // Form labels plugin
-      if (option.formLabelsPlugin === true) {
-        if (this.store.getItem('sa11y-remember-labels') === 'On') {
-          this.checkLabels();
-        }
-      } else {
-        const formLabelsLi = document.getElementById('sa11y-form-labels-li');
-        formLabelsLi.setAttribute('style', 'display: none !important;');
-        this.store.setItem('sa11y-remember-labels', 'Off');
-      }
-
-      // Links (Advanced) plugin
-      if (option.linksAdvancedPlugin === true) {
-        if (this.store.getItem('sa11y-remember-links-advanced') === 'On') {
-          this.checkLinksAdvanced();
-        }
-      } else {
-        const linksAdvancedLi = document.getElementById('sa11y-links-advanced-li');
-        linksAdvancedLi.setAttribute('style', 'display: none !important;');
-        this.store.setItem('sa11y-remember-links-advanced', 'Off');
-      }
-
-      // Readability plugin
-      if (option.readabilityPlugin === true) {
-        if (this.store.getItem('sa11y-remember-readability') === 'On') {
-          this.checkReadability();
-        }
-      } else {
-        const readabilityLi = document.getElementById('sa11y-readability-li');
-        const readabilityPanel = document.getElementById('sa11y-readability-panel');
-        readabilityLi.setAttribute('style', 'display: none !important;');
-        readabilityPanel.classList.remove('sa11y-active');
-      }
-
-      // Embedded content plugin
-      if (option.embeddedContentAll === true) {
-        this.checkEmbeddedContent();
-      }
-
-      // QA module checks.
+      this.checkContrast();
+      this.checkLabels();
+      this.checkLinksAdvanced();
+      this.checkReadability();
+      this.checkEmbeddedContent();
       this.checkQA();
 
       // Custom checks abstracted to seperate class.
@@ -4290,78 +4379,87 @@ class Sa11y {
         option.customChecks.check();
       }
 
-      // Update panel
-      if (this.panelActive) {
-        this.resetAll();
-      } else {
-        this.updatePanel();
-      }
-      this.initializeTooltips();
-      this.detectOverflow();
-      this.nudge();
+      // Count number of issues on page.
+      this.updateCount();
 
-      // Don't show badge when panel is opened.
-      if (!document.getElementsByClassName('sa11y-on').length) {
+      // Update panel
+      if (this.panelActive === true) {
+        // Annotate the page
+        this.found.forEach(($el, i) => {
+          Object.assign($el, { id: i });
+          this.annotate($el.element, $el.type, $el.content, $el.inline, $el.position, $el.id);
+        });
+        this.initializeTooltips();
+
+        // Initialize panel.
+        this.generatePageOutline();
+        this.updateStatus();
+
+        setTimeout(() => {
+          this.dismissAnnotations();
+          this.detectOverflow();
+          this.nudge();
+        }, 0);
+      } else {
+        this.resetAll();
         this.updateBadge();
       }
+    };
+
+    // ============================================================
+    // Count number of errors and warnings on page.
+    // ============================================================
+    this.updateCount = () => {
+      this.found.forEach(($el, i) => {
+        const issue = this.found[i].type;
+        if (issue === ERROR) {
+          this.errorCount += 1;
+        } else if (issue === WARNING) {
+          this.warningCount += 1;
+        }
+      });
     };
 
     // ============================================================
     // Reset all
     // ============================================================
     this.resetAll = (restartPanel = true) => {
-      this.panelActive = false;
-
-      const html = document.querySelector('html');
-      html.removeAttribute('data-sa11y-active');
-
-      // Remove eventListeners on the Show Outline and Show Panel toggles.
-      const $outlineToggle = document.getElementById('sa11y-outline-toggle');
-      const resetOutline = $outlineToggle.cloneNode(true);
-      $outlineToggle.parentNode.replaceChild(resetOutline, $outlineToggle);
-
-      const $settingsToggle = document.getElementById('sa11y-settings-toggle');
-      const resetSettings = $settingsToggle.cloneNode(true);
-      $settingsToggle.parentNode.replaceChild(resetSettings, $settingsToggle);
+      this.panelActive = true;
+      this.html.removeAttribute('data-sa11y-active');
 
       // Reset all classes on elements.
       const resetClass = ($el) => {
-        $el.forEach((x) => {
-          document.querySelectorAll(`.${x}`).forEach((y) => y.classList.remove(x));
-        });
+        $el.forEach((x) => document.querySelectorAll(`.${x}`).forEach((y) => y.classList.remove(x)));
       };
-      resetClass(['sa11y-error-border', 'sa11y-error-text', 'sa11y-warning-border', 'sa11y-warning-text', 'sa11y-good-border', 'sa11y-good-text', 'sa11y-overflow', 'sa11y-fake-heading']);
+      resetClass(['sa11y-error-border', 'sa11y-error-text', 'sa11y-warning-border', 'sa11y-warning-text', 'sa11y-good-border', 'sa11y-good-text', 'sa11y-overflow']);
 
-      const dataAttr = document.querySelectorAll('[data-sa11y-parent]');
-      dataAttr.forEach(($el) => { $el.removeAttribute('data-sa11y-parent'); });
+      // Reset all data attributes.
+      const resetAttributes = ($el) => {
+        $el.forEach((x) => document.querySelectorAll(`[${x}]`).forEach((y) => y.removeAttribute(x)));
+      };
+      resetAttributes(['data-sa11y-parent', 'data-sa11y-error', 'data-sa11y-warning', 'data-sa11y-error-inline', 'data-sa11y-warning-inline']);
 
-      const allcaps = document.querySelectorAll('.sa11y-warning-uppercase');
-      // eslint-disable-next-line no-param-reassign, no-return-assign
-      allcaps.forEach(($el) => $el.outerHTML = $el.innerHTML);
+      this.readabilityInfo.innerHTML = '';
 
-      document.getElementById('sa11y-readability-info').innerHTML = '';
-
-      // Remove
       document.querySelectorAll(`
-                .sa11y-element,
-                .sa11y-instance,
-                .sa11y-instance-inline,
-                .sa11y-heading-label,
-                #sa11y-outline-list li,
-                .sa11y-readability-period,
-                #sa11y-readability-details li,
-                .sa11y-clone-image-text
-            `).forEach(($el) => $el.parentNode.removeChild($el));
+        .sa11y-element,
+        .sa11y-instance,
+        .sa11y-instance-inline,
+        .sa11y-heading-label,
+        #sa11y-outline-list li,
+        .sa11y-readability-period,
+        #sa11y-readability-details li,
+        .sa11y-clone-image-text
+      `).forEach(($el) => $el.parentNode.removeChild($el));
 
-      // Alert within panel.
+      // Remove any active alerts.
       this.removeAlert();
 
       // Main panel warning and error count.
-      const clearStatus = document.querySelector('#sa11y-status');
-      while (clearStatus.firstChild) clearStatus.removeChild(clearStatus.firstChild);
+      while (this.status.firstChild) this.status.removeChild(this.status.firstChild);
 
       if (restartPanel) {
-        document.querySelector('#sa11y-panel').classList.remove('sa11y-active');
+        this.panel.classList.remove('sa11y-active');
       }
     };
 
@@ -4369,7 +4467,20 @@ class Sa11y {
     // Initialize tooltips for error/warning/pass buttons: (Tippy.js)
     // ============================================================
     this.initializeTooltips = () => {
-      tippy('.sa11y-btn', {
+      // Hide on Escape key.
+      const hideOnEsc = {
+        name: 'hideOnEsc',
+        defaultValue: true,
+        fn({ hide }) {
+          const onKeyDown = (event) => { if (event.keyCode === 27) { hide(); } };
+          return {
+            onShow() { document.addEventListener('keydown', onKeyDown); },
+            onHide() { document.removeEventListener('keydown', onKeyDown); },
+          };
+        },
+      };
+      // Main Tippy instance
+      this.tippy = tippy('.sa11y-btn', {
         interactive: true,
         trigger: 'mouseenter click focusin', // Focusin trigger to ensure "Jump to issue" button displays tooltip.
         arrow: true,
@@ -4382,7 +4493,51 @@ class Sa11y {
         },
         appendTo: document.body,
         zIndex: 2147483645,
+        plugins: [hideOnEsc],
       });
+    };
+
+    // ============================================================
+    // TO-DO: Dismissals system.
+    // ============================================================
+    this.dismissAnnotations = () => {
+      if (option.dismissAnnotations === true) {
+        const dismiss = (event) => {
+          const element = event.target;
+          if (element.tagName === 'BUTTON' && element.classList.contains('sa11y-dismiss')) {
+            const tip = element.closest('[data-tippy-root]');
+            const tipID = parseInt(tip.getAttribute('id').replace(/\D/g, ''), 10);
+            const tipObj = this.tippy.find(($el) => $el.id === tipID);
+            const instanceID = parseInt(tipObj.reference.getAttribute('data-sa11y-annotation'), 10);
+
+            const object = this.found.find(($el) => $el.id === instanceID);
+            Object.assign(object, { dismissed: true });
+
+            // Remove warning border.
+            const resetAttributes = ($el) => {
+              $el.forEach((x) => {
+                document.querySelectorAll(`[${x}="${instanceID}"]`).forEach((y) => y.removeAttribute(x));
+              });
+            };
+            resetAttributes(['data-sa11y-warning', 'data-sa11y-warning-inline']);
+
+            // If warning is regarding PDFs...
+            if (object.content.includes('PDF') === true) {
+              const x = 'data-sa11y-warning-inline';
+              document.querySelectorAll(`[${x}="pdf"]`).forEach((y) => y.removeAttribute(x));
+            }
+
+            // Remove annotation.
+            const btn = document.querySelector(`[data-sa11y-annotation="${instanceID}"]`);
+            const instance = btn.closest('.sa11y-instance, .sa11y-instance-inline');
+            instance.remove();
+
+            // Remove tooltip.
+            tip.remove();
+          }
+        };
+        document.addEventListener('click', dismiss);
+      }
     };
 
     // ============================================================
@@ -4401,8 +4556,8 @@ class Sa11y {
         }
         return null;
       };
-      const $findButtons = document.querySelectorAll('.sa11y-btn');
-      $findButtons.forEach(($el) => {
+      const annotations = document.querySelectorAll('.sa11y-btn');
+      annotations.forEach(($el) => {
         const overflowing = findParentWithOverflow($el, 'overflow', 'hidden');
         if (overflowing !== null) {
           overflowing.classList.add('sa11y-overflow');
@@ -4414,12 +4569,18 @@ class Sa11y {
     // Nudge buttons if they overlap.
     // ============================================================
     this.nudge = () => {
-      const sa11yInstance = document.querySelectorAll('.sa11y-instance, .sa11y-instance-inline');
-      sa11yInstance.forEach(($el) => {
+      const classes = '.sa11y-instance, .sa11y-instance-inline';
+      const instance = document.querySelectorAll(classes);
+      instance.forEach(($el) => {
         const sibling = $el.nextElementSibling;
-        if (sibling !== null
-          && (sibling.classList.contains('sa11y-instance') || sibling.classList.contains('sa11y-instance-inline'))) {
-          sibling.querySelector('button').setAttribute('style', 'margin: -10px -20px !important;');
+        const css = 'margin: -10px -20px !important;';
+
+        // If sibling contains any sa11y markup.
+        if (sibling !== null && (sibling.classList.contains('sa11y') || sibling.hasAttribute('data-sa11y-error') || sibling.hasAttribute('data-sa11y-warning'))) {
+          // Append css only if sibling is a button annotation.
+          if (sibling.querySelector('.sa11y-btn') !== null) {
+            sibling.querySelector('.sa11y-btn').setAttribute('style', css);
+          }
         }
       });
     };
@@ -4429,62 +4590,49 @@ class Sa11y {
     // ============================================================
     this.updateBadge = () => {
       const totalCount = this.errorCount + this.warningCount;
-      const notifBadge = document.getElementById('sa11y-notification-badge');
-      const notifCount = document.getElementById('sa11y-notification-count');
-      const notifText = document.getElementById('sa11y-notification-text');
-
       if (totalCount === 0) {
-        notifBadge.style.display = 'none';
+        this.notificationBadge.style.display = 'none';
       } else if (this.warningCount > 0 && this.errorCount === 0) {
-        notifBadge.style.display = 'flex';
-        notifBadge.classList.add('sa11y-notification-badge-warning');
-        notifCount.innerText = `${this.warningCount}`;
-        notifText.innerText = `${Lang._('PANEL_ICON_WARNINGS')}`;
+        this.notificationBadge.style.display = 'flex';
+        this.notificationBadge.classList.add('sa11y-notification-badge-warning');
+        this.notificationCount.innerText = `${this.warningCount}`;
+        this.notificationText.innerText = `${Lang._('PANEL_ICON_WARNINGS')}`;
       } else {
-        notifBadge.style.display = 'flex';
-        notifBadge.classList.remove('sa11y-notification-badge-warning');
-        notifCount.innerText = `${totalCount}`;
-        notifText.innerText = Lang._('PANEL_ICON_TOTAL');
+        this.notificationBadge.style.display = 'flex';
+        this.notificationBadge.classList.remove('sa11y-notification-badge-warning');
+        this.notificationCount.innerText = `${totalCount}`;
+        this.notificationText.innerText = Lang._('PANEL_ICON_TOTAL');
       }
     };
 
     // ----------------------------------------------------------------------
     // Main panel: Display and update panel.
     // ----------------------------------------------------------------------
-    this.updatePanel = () => {
-      this.panelActive = true;
-
-      this.buildPanel();
+    this.updateStatus = () => {
+      // initialize Skip to issue toggle.
       this.skipToIssue();
 
-      const $skipBtn = document.getElementById('sa11y-cycle-toggle');
-      $skipBtn.disabled = false;
-
-      const $panel = document.getElementById('sa11y-panel');
-      $panel.classList.add('sa11y-active');
-
-      const html = document.querySelector('html');
-      html.setAttribute('data-sa11y-active', 'true');
-
-      const $panelContent = document.getElementById('sa11y-panel-content');
-      const $status = document.getElementById('sa11y-status');
-      const $findButtons = document.querySelectorAll('.sa11y-btn');
+      this.skipButton.disabled = false;
+      this.panel.classList.add('sa11y-active');
+      this.html.setAttribute('data-sa11y-active', 'true');
 
       if (this.errorCount > 0 && this.warningCount > 0) {
-        $panelContent.setAttribute('class', 'sa11y-errors');
-        $status.innerHTML = `${Lang._('ERRORS')} <span class="sa11y-panel-count sa11y-margin-right">${this.errorCount}</span> ${Lang._('WARNINGS')} <span class="sa11y-panel-count">${this.warningCount}</span>`;
+        this.panelContent.setAttribute('class', 'sa11y-errors');
+        this.status.innerHTML = `${Lang._('ERRORS')} <span class="sa11y-panel-count sa11y-margin-right">${this.errorCount}</span> ${Lang._('WARNINGS')} <span class="sa11y-panel-count" id="sa11y-warning-count">${this.warningCount}</span>`;
       } else if (this.errorCount > 0) {
-        $panelContent.setAttribute('class', 'sa11y-errors');
-        $status.innerHTML = `${Lang._('ERRORS')} <span class="sa11y-panel-count">${this.errorCount}</span>`;
+        this.panelContent.setAttribute('class', 'sa11y-errors');
+        this.status.innerHTML = `${Lang._('ERRORS')} <span class="sa11y-panel-count">${this.errorCount}</span>`;
       } else if (this.warningCount > 0) {
-        $panelContent.setAttribute('class', 'sa11y-warnings');
-        $status.innerHTML = `${Lang._('WARNINGS')} <span class="sa11y-panel-count">${this.warningCount}</span>`;
+        this.panelContent.setAttribute('class', 'sa11y-warnings');
+        this.status.innerHTML = `${Lang._('WARNINGS')} <span class="sa11y-panel-count" id="sa11y-warning-count">${this.warningCount}</span>`;
       } else {
-        $panelContent.setAttribute('class', 'sa11y-good');
-        $status.textContent = `${Lang._('PANEL_STATUS_NONE')}`;
+        this.panelContent.setAttribute('class', 'sa11y-good');
+        this.status.textContent = `${Lang._('PANEL_STATUS_NONE')}`;
 
-        if ($findButtons.length === 0) {
-          $skipBtn.disabled = true;
+        // If there are no button annotations, disable the Skip-to-Toggle switch.
+        const buttonAnnotations = document.querySelectorAll('.sa11y-btn');
+        if (buttonAnnotations.length === 0) {
+          this.skipButton.disabled = true;
         }
       }
     };
@@ -4492,134 +4640,86 @@ class Sa11y {
     // ----------------------------------------------------------------------
     // Main panel: Build Show Outline and Settings tabs.
     // ----------------------------------------------------------------------
-    this.buildPanel = () => {
-      const $outlineToggle = document.getElementById('sa11y-outline-toggle');
-      const $outlinePanel = document.getElementById('sa11y-outline-panel');
-      const $outlineList = document.getElementById('sa11y-outline-list');
-      const $settingsToggle = document.getElementById('sa11y-settings-toggle');
-      const $settingsPanel = document.getElementById('sa11y-settings-panel');
-      const $settingsContent = document.getElementById('sa11y-settings-content');
-      const $headingAnnotations = document.querySelectorAll('.sa11y-heading-label');
-
+    this.initializePanelToggles = () => {
       // Show outline panel
-      $outlineToggle.addEventListener('click', () => {
-        if ($outlineToggle.getAttribute('aria-expanded') === 'true') {
-          $outlineToggle.classList.remove('sa11y-outline-active');
-          $outlinePanel.classList.remove('sa11y-active');
-          $outlineToggle.textContent = `${Lang._('SHOW_OUTLINE')}`;
-          $outlineToggle.setAttribute('aria-expanded', 'false');
+      this.outlineToggle.addEventListener('click', () => {
+        if (this.outlineToggle.getAttribute('aria-expanded') === 'true') {
+          this.outlineToggle.classList.remove('sa11y-outline-active');
+          this.outlinePanel.classList.remove('sa11y-active');
+          this.outlineToggle.textContent = `${Lang._('SHOW_OUTLINE')}`;
+          this.outlineToggle.setAttribute('aria-expanded', 'false');
           this.store.setItem('sa11y-remember-outline', 'Closed');
         } else {
-          $outlineToggle.classList.add('sa11y-outline-active');
-          $outlinePanel.classList.add('sa11y-active');
-          $outlineToggle.textContent = `${Lang._('HIDE_OUTLINE')}`;
-          $outlineToggle.setAttribute('aria-expanded', 'true');
+          this.outlineToggle.classList.add('sa11y-outline-active');
+          this.outlinePanel.classList.add('sa11y-active');
+          this.outlineToggle.textContent = `${Lang._('HIDE_OUTLINE')}`;
+          this.outlineToggle.setAttribute('aria-expanded', 'true');
           this.store.setItem('sa11y-remember-outline', 'Opened');
         }
 
         // Set focus on Page Outline heading for accessibility.
         document.querySelector('#sa11y-outline-header > h2').focus();
 
-        // Show heading level annotations.
+        // Toggle visibility of heading labels.
+        const $headingAnnotations = document.querySelectorAll('.sa11y-heading-label');
         $headingAnnotations.forEach(($el) => $el.classList.toggle('sa11y-label-visible'));
 
         // Close Settings panel when Show Outline is active.
-        $settingsPanel.classList.remove('sa11y-active');
-        $settingsToggle.classList.remove('sa11y-settings-active');
-        $settingsToggle.setAttribute('aria-expanded', 'false');
-        $settingsToggle.textContent = `${Lang._('SHOW_SETTINGS')}`;
+        this.settingsPanel.classList.remove('sa11y-active');
+        this.settingToggle.classList.remove('sa11y-settings-active');
+        this.settingToggle.setAttribute('aria-expanded', 'false');
+        this.settingToggle.textContent = `${Lang._('SHOW_SETTINGS')}`;
 
         // Keyboard accessibility fix for scrollable panel content.
-        if ($outlineList.clientHeight > 250) {
-          $outlineList.setAttribute('tabindex', '0');
+        if (this.outlineList.clientHeight > 250) {
+          this.outlineList.setAttribute('tabindex', '0');
         }
       });
 
       // Remember to leave outline open
       if (this.store.getItem('sa11y-remember-outline') === 'Opened') {
-        $outlineToggle.classList.add('sa11y-outline-active');
-        $outlinePanel.classList.add('sa11y-active');
-        $outlineToggle.textContent = `${Lang._('HIDE_OUTLINE')}`;
-        $outlineToggle.setAttribute('aria-expanded', 'true');
-        $headingAnnotations.forEach(($el) => $el.classList.toggle('sa11y-label-visible'));
+        this.outlineToggle.classList.add('sa11y-outline-active');
+        this.outlinePanel.classList.add('sa11y-active');
+        this.outlineToggle.textContent = `${Lang._('HIDE_OUTLINE')}`;
+        this.outlineToggle.setAttribute('aria-expanded', 'true');
       }
 
-      // Roving tabindex menu for page outline.
-      // Thanks to Srijan for this snippet! https://blog.srij.dev/roving-tabindex-from-scratch
-      const children = Array.from($outlineList.querySelectorAll('a'));
-      let current = 0;
-      const handleKeyDown = (e) => {
-        if (!['ArrowUp', 'ArrowDown', 'Space'].includes(e.code)) return;
-        if (e.code === 'Space') {
-          children[current].click();
-          return;
-        }
-        const selected = children[current];
-        selected.setAttribute('tabindex', -1);
-        let next;
-        if (e.code === 'ArrowDown') {
-          next = current + 1;
-          if (current === children.length - 1) {
-            next = 0;
-          }
-        } else if ((e.code === 'ArrowUp')) {
-          next = current - 1;
-          if (current === 0) {
-            next = children.length - 1;
-          }
-        }
-        children[next].setAttribute('tabindex', 0);
-        children[next].focus();
-        current = next;
-        e.preventDefault();
-      };
-      $outlineList.addEventListener('focus', () => {
-        if (children.length > 0) {
-          $outlineList.setAttribute('tabindex', -1);
-          children[current].setAttribute('tabindex', 0);
-          children[current].focus();
-        }
-        $outlineList.addEventListener('keydown', handleKeyDown);
-      });
-      $outlineList.addEventListener('blur', () => {
-        $outlineList.removeEventListener('keydown', handleKeyDown);
-      });
-
       // Show settings panel
-      $settingsToggle.addEventListener('click', () => {
-        if ($settingsToggle.getAttribute('aria-expanded') === 'true') {
-          $settingsToggle.classList.remove('sa11y-settings-active');
-          $settingsPanel.classList.remove('sa11y-active');
-          $settingsToggle.textContent = `${Lang._('SHOW_SETTINGS')}`;
-          $settingsToggle.setAttribute('aria-expanded', 'false');
+      this.settingToggle.addEventListener('click', () => {
+        if (this.settingToggle.getAttribute('aria-expanded') === 'true') {
+          this.settingToggle.classList.remove('sa11y-settings-active');
+          this.settingsPanel.classList.remove('sa11y-active');
+          this.settingToggle.textContent = `${Lang._('SHOW_SETTINGS')}`;
+          this.settingToggle.setAttribute('aria-expanded', 'false');
         } else {
-          $settingsToggle.classList.add('sa11y-settings-active');
-          $settingsPanel.classList.add('sa11y-active');
-          $settingsToggle.textContent = `${Lang._('HIDE_SETTINGS')}`;
-          $settingsToggle.setAttribute('aria-expanded', 'true');
+          this.settingToggle.classList.add('sa11y-settings-active');
+          this.settingsPanel.classList.add('sa11y-active');
+          this.settingToggle.textContent = `${Lang._('HIDE_SETTINGS')}`;
+          this.settingToggle.setAttribute('aria-expanded', 'true');
         }
 
         // Set focus on Settings heading for accessibility.
         document.querySelector('#sa11y-settings-header > h2').focus();
 
         // Close Show Outline panel when Settings is active.
-        $outlinePanel.classList.remove('sa11y-active');
-        $outlineToggle.classList.remove('sa11y-outline-active');
-        $outlineToggle.setAttribute('aria-expanded', 'false');
-        $outlineToggle.textContent = `${Lang._('SHOW_OUTLINE')}`;
+        this.outlinePanel.classList.remove('sa11y-active');
+        this.outlineToggle.classList.remove('sa11y-outline-active');
+        this.outlineToggle.setAttribute('aria-expanded', 'false');
+        this.outlineToggle.textContent = `${Lang._('SHOW_OUTLINE')}`;
+        const $headingAnnotations = document.querySelectorAll('.sa11y-heading-label');
         $headingAnnotations.forEach(($el) => $el.classList.remove('sa11y-label-visible'));
         this.store.setItem('sa11y-remember-outline', 'Closed');
 
         // Keyboard accessibility fix for scrollable panel content.
-        if ($settingsContent.clientHeight > 350) {
-          $settingsContent.setAttribute('tabindex', '0');
-          $settingsContent.setAttribute('aria-label', `${Lang._('SETTINGS')}`);
-          $settingsContent.setAttribute('role', 'region');
+        if (this.settingsContent.clientHeight > 350) {
+          this.settingsContent.setAttribute('tabindex', '0');
+          this.settingsContent.setAttribute('aria-label', `${Lang._('SETTINGS')}`);
+          this.settingsContent.setAttribute('role', 'region');
         }
       });
 
       // Enhanced keyboard accessibility for panel.
-      document.getElementById('sa11y-panel-controls').addEventListener('keydown', (e) => {
+      this.panelControls.addEventListener('keydown', (e) => {
         const $tab = document.querySelectorAll('#sa11y-outline-toggle[role=tab], #sa11y-settings-toggle[role=tab]');
         if (e.key === 'ArrowRight') {
           for (let i = 0; i < $tab.length; i++) {
@@ -4666,14 +4766,13 @@ class Sa11y {
 
     this.skipToIssue = () => {
       // Constants
-      const $findButtons = document.querySelectorAll('[data-sa11y-annotation]');
-      const $skipToggle = document.getElementById('sa11y-cycle-toggle');
-      const findSa11yBtn = document.querySelectorAll('[data-sa11y-annotation]').length;
+      const annotations = document.querySelectorAll('[data-sa11y-annotation]');
+      const annotationsLength = annotations.length;
       let i = -1;
 
       // Add pulsing border to visible parent of hidden element.
       const hiddenParent = () => {
-        $findButtons.forEach(($el) => {
+        annotations.forEach(($el) => {
           const overflowing = this.findVisibleParent($el, 'display', 'none');
           if (overflowing !== null) {
             const hiddenparent = overflowing.previousElementSibling;
@@ -4693,7 +4792,7 @@ class Sa11y {
           const visiblePosition = this.findVisibleParent($el, 'display', 'none');
 
           // Alert if tooltip is hidden.
-          const tooltip = $findButtons[i].getAttribute('data-tippy-content');
+          const tooltip = annotations[i].getAttribute('data-tippy-content');
           this.createAlert(`${Lang._('NOT_VISIBLE_ALERT')}`, tooltip);
 
           if (visiblePosition) {
@@ -4707,20 +4806,20 @@ class Sa11y {
           }
         }
         this.removeAlert();
-        $skipToggle.focus();
+        this.skipButton.focus();
         return this.offsetTop($el).top - 150;
       };
 
       // Skip to next.
       const next = () => {
         i += 1;
-        const $el = $findButtons[i];
+        const $el = annotations[i];
         const scrollPos = scrollPosition($el);
         window.scrollTo({
           top: scrollPos,
           behavior: `${this.scrollBehaviour}`,
         });
-        if (i >= findSa11yBtn - 1) {
+        if (i >= annotationsLength - 1) {
           i = -1;
         }
         hiddenParent();
@@ -4730,7 +4829,7 @@ class Sa11y {
       // Skip to previous.
       const prev = () => {
         i = Math.max(0, i -= 1);
-        const $el = $findButtons[i];
+        const $el = annotations[i];
         if ($el) {
           const scrollPos = scrollPosition($el);
           window.scrollTo({
@@ -4745,15 +4844,15 @@ class Sa11y {
       // Jump to issue using keyboard shortcut.
       document.addEventListener('keyup', (e) => {
         e.preventDefault();
-        if (findSa11yBtn && (e.altKey && (e.code === 'Period' || e.code === 'KeyS'))) {
+        if (annotationsLength && (e.altKey && (e.code === 'Period' || e.code === 'KeyS'))) {
           next();
-        } else if (findSa11yBtn && (e.altKey && (e.code === 'Comma' || e.code === 'KeyW'))) {
+        } else if (annotationsLength && (e.altKey && (e.code === 'Comma' || e.code === 'KeyW'))) {
           prev();
         }
       });
 
       // Jump to issue using click.
-      $skipToggle.addEventListener('click', (e) => {
+      this.skipButton.addEventListener('click', (e) => {
         e.preventDefault();
         next();
       });
@@ -4763,21 +4862,28 @@ class Sa11y {
     // Finds all elements and cache.
     // ============================================================
     this.findElements = () => {
-      // Sa11y's panel container
-      this.panel = document.getElementById('sa11y-container');
-
-      // Query DOM.
+      /**
+      * Find elements.
+        * @param {Selector} selector: Element you would like to find.
+        * @param {String} exclude: Elements you want to ignore.
+        * @param {String} rootType: Select which root to search(document/readabilityRoot/checkRoot).
+        * @return {Array} Returns array of elements.
+      */
       const find = (selectors, exclude, rootType) => {
         let root;
-        if (rootType === 'readability') {
-          root = document.querySelector(option.readabilityRoot);
-        } else if (rootType === 'document') {
+        if (rootType === 'document') {
           root = document;
+        } else if (rootType === 'readability') {
+          root = document.querySelector(option.readabilityRoot);
         } else {
           root = document.querySelector(option.checkRoot);
+          this.root = root; // Root for custom checks.
         }
         if (!root) {
-          root = document.querySelector('body');
+          // If custom root does not exist.
+          root = document.body;
+          this.root = document.body; // Root for custom checks.
+          this.createAlert(`${Lang.sprintf('ERROR_MISSING_ROOT_TARGET', option.checkRoot)}`);
         }
         const exclusions = Array.from(document.querySelectorAll(exclude));
         const queryDOM = Array.from(root.querySelectorAll(selectors));
@@ -4794,7 +4900,6 @@ class Sa11y {
       this.readability = find('p, li', this.readabilityIgnore, 'readability');
 
       // Quality assurance module.
-      this.language = document.querySelector('html').getAttribute('lang');
       this.paragraphs = find('p', this.containerIgnore);
       this.lists = find('li', this.containerIgnore);
       this.spans = find('span', this.containerIgnore);
@@ -4803,6 +4908,11 @@ class Sa11y {
       this.pdf = find('a[href$=".pdf"]', this.containerIgnore);
       this.strongitalics = find('strong, em', this.containerIgnore);
       this.inputs = find('input, select, textarea', this.containerIgnore);
+      this.ids = find('[id]', this.containerIgnore, 'document');
+      this.underlines = find('u', this.containerIgnore);
+      this.subscripts = find('sup, sub', this.containerIgnore);
+      this.labels = find('label', this.containerIgnore);
+      this.language = this.html.getAttribute('lang');
       this.customErrorLinks = option.linksToFlag ? find(option.linksToFlag, this.containerIgnore) : [];
 
       // iFrames
@@ -4813,57 +4923,191 @@ class Sa11y {
       this.embeddedContent = this.iframes.filter(($el) => !$el.matches(option.embeddedContent));
     };
 
-    //----------------------------------------------------------------------
-    // Templating for Error, Warning and Pass buttons.
-    //----------------------------------------------------------------------
-    this.annotate = (type, content, inline = false) => {
-      let message = content;
-
-      const validTypes = [
-        ERROR,
-        WARNING,
-        GOOD,
-      ];
-
-      if (validTypes.indexOf(type) === -1) {
-        throw Error(`Invalid type [${type}] for annotation`);
+    /**
+     * Create Page Outline.
+    */
+    this.generatePageOutline = () => {
+      //  Missing Heading 1 in document.body (update Page Outline).
+      if (this.headingOne.length === 0) {
+        const updateH1Outline = `
+          <div class="sa11y-instance sa11y-missing-h1">
+            <span class="sa11y-badge sa11y-error-badge"><span aria-hidden="true">!</span><span class="sa11y-visually-hidden">${ERROR}</span></span>
+            <span class='sa11y-red-text sa11y-bold'>${Lang._('PANEL_HEADING_MISSING_ONE')}</span>
+          </div>`;
+        this.outlineHeader.insertAdjacentHTML('afterend', updateH1Outline);
       }
 
-      // Update error or warning count.
-      [type].forEach(($el) => {
-        if ($el === ERROR) {
-          this.errorCount += 1;
-        } else if ($el === WARNING) {
-          this.warningCount += 1;
+      // Create a single array that gets appended to heading outline, instead of creating a new HTML element everytime you iterate through each object.
+      const outlineArray = [];
+
+      // Iterate through object that contains all headings (and error type).
+      this.headingOutline.forEach((obj) => {
+        const $el = obj.element;
+        const level = obj.headingLevel;
+        const headingText = obj.text;
+        const i = obj.index;
+        const issue = obj.type;
+        const visibility = obj.hidden;
+        const parent = obj.visibleParent;
+
+        // Filter out specified headings in outlineIgnore prop.
+        let ignoreArray = [];
+        if (option.outlineIgnore) {
+          ignoreArray = Array.from(document.querySelectorAll(this.outlineIgnore));
+        }
+        if (!ignoreArray.includes($el)) {
+          // Indicate if heading is totally hidden or visually hidden.
+          const visibleIcon = (visibility === true) ? '<span class="sa11y-hidden-icon"></span><span class="sa11y-visually-hidden">Hidden</span>' : '';
+          const visibleStatus = (visibility === true) ? 'class="sa11y-hidden-h"' : '';
+
+          let append;
+          if (issue === ERROR) {
+            append = `
+            <li class="sa11y-outline-${level}">
+              <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
+                <span class="sa11y-badge sa11y-error-badge">
+                <span aria-hidden="true">${visibleIcon} &#33;</span>
+                <span class="sa11y-visually-hidden">${Lang._('ERROR')}</span> ${level}</span>
+                <strong class="sa11y-outline-list-item sa11y-red-text">${headingText}</strong>
+              </a>
+            </li>`;
+            outlineArray.push(append);
+          } else if (issue === WARNING) {
+            append = `
+            <li class="sa11y-outline-${level}">
+              <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
+                <span class="sa11y-badge sa11y-warning-badge">
+                <span aria-hidden="true">${visibleIcon} &#x3f;</span>
+                <span class="sa11y-visually-hidden">${Lang._('WARNING')}</span> ${level}</span>
+                <strong class="sa11y-outline-list-item sa11y-yellow-text">${headingText}</strong>
+              </a>
+            </li>`;
+            outlineArray.push(append);
+          } else {
+            append = `
+            <li class="sa11y-outline-${level}">
+              <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
+                <span class="sa11y-badge">${visibleIcon} ${level}</span>
+                <span class="sa11y-outline-list-item">${headingText}</span>
+              </a>
+            </li>`;
+            outlineArray.push(append);
+          }
+        }
+
+        // Append heading labels.
+        // If heading is in a hidden container, place the anchor just before it's most visible parent.
+        const create = document.createElement('span');
+        create.classList.add('sa11y-heading-label');
+        create.innerHTML = `H${level}`;
+
+        if (parent !== null) {
+          $el.insertAdjacentElement('beforeend', create);
+          const hiddenParent = parent.previousElementSibling;
+          const anchor = `<span class="sa11y-element" id="sa11y-h${i}"></span>`;
+          if (hiddenParent) {
+            hiddenParent.insertAdjacentHTML('beforebegin', anchor);
+            hiddenParent.setAttribute('data-sa11y-parent', `h${i}`);
+          } else {
+            parent.parentNode.insertAdjacentHTML('beforebegin', anchor);
+            parent.parentNode.setAttribute('data-sa11y-parent', `h${i}`);
+          }
+        } else {
+          // If the heading isn't hidden, then append id on visible label.
+          create.setAttribute('id', `sa11y-h${i}`);
+          $el.insertAdjacentElement('beforeend', create);
+        }
+
+        // Make heading labels visible when panel is open.
+        if (this.store.getItem('sa11y-remember-outline') === 'Opened') {
+          create.classList.add('sa11y-label-visible');
         }
       });
 
-      const CSSName = {
-        [validTypes[0]]: 'error',
-        [validTypes[1]]: 'warning',
-        [validTypes[2]]: 'good',
-      };
+      // Append headings to Page Outline.
+      this.outlineList.innerHTML = outlineArray.join(' ');
 
-      // Make translations easier.
-      message = message
-        .replaceAll(/<hr>/g, '<hr aria-hidden="true">')
-        .replaceAll(/<a[\s]href=/g, '<a target="_blank" rel="noopener noreferrer" href=')
-        .replaceAll(/<\/a>/g, `<span class="sa11y-visually-hidden"> (${Lang._('NEW_TAB')})</span></a>`)
-        .replaceAll(/{r}/g, 'class="sa11y-red-text"');
+      // Make clickable!
+      setTimeout(() => {
+        const children = Array.from(this.outlineList.querySelectorAll('a'));
+        children.forEach(($el, i) => {
+        // Make Page Outline clickable.
+          const outlineLink = document.getElementById(`sa11y-link-${i}`);
+          const hID = document.getElementById(`sa11y-h${i}`);
+          const hParent = document.querySelector(`[data-sa11y-parent="h${i}"]`);
+          const smooth = () => hID.scrollIntoView({ behavior: `${this.scrollBehaviour}`, block: 'center' });
+          const pulse = () => ((hParent !== null) ? this.addPulse(hParent) : this.addPulse($el));
+          const smoothPulse = (e) => {
+            if ((e.type === 'keyup' && e.code === 'Enter') || e.type === 'click') {
+              smooth();
+              pulse();
+              if (outlineLink.classList.contains('sa11y-hidden-h')) {
+                this.createAlert(`${Lang._('HEADING_NOT_VISIBLE_ALERT')}`);
+              } else if (this.alertPanel.classList.contains('sa11y-active')) {
+                this.removeAlert();
+              }
+            }
+            e.preventDefault();
+          };
+          outlineLink.addEventListener('click', smoothPulse, false);
+          outlineLink.addEventListener('keyup', smoothPulse, false);
+        });
 
-      message = this.escapeHTML(message);
-
-      return `<div class=${inline ? 'sa11y-instance-inline' : 'sa11y-instance'}>
-                <button data-sa11y-annotation type="button" aria-label="${[type]}" class="sa11y-btn sa11y-${CSSName[type]}-btn${inline ? '-text' : ''}" data-tippy-content="<div lang='${Lang._('LANG_CODE')}'><div class='sa11y-header-text'>${[type]}</div>${message}</div>"></button>
-              </div>`;
+        /**
+         * Roving tabindex menu for page outline.
+         * Thanks to Srijan for this snippet!
+         * @link https://blog.srij.dev/roving-tabindex-from-scratch
+        */
+        let current = 0;
+        const handleKeyDown = (e) => {
+          if (!['ArrowUp', 'ArrowDown', 'Space'].includes(e.code)) return;
+          if (e.code === 'Space') {
+            children[current].click();
+            return;
+          }
+          const selected = children[current];
+          selected.setAttribute('tabindex', -1);
+          let next;
+          if (e.code === 'ArrowDown') {
+            next = current + 1;
+            if (current === children.length - 1) {
+              next = 0;
+            }
+          } else if ((e.code === 'ArrowUp')) {
+            next = current - 1;
+            if (current === 0) {
+              next = children.length - 1;
+            }
+          }
+          children[next].setAttribute('tabindex', 0);
+          children[next].focus();
+          current = next;
+          e.preventDefault();
+        };
+        this.outlineList.addEventListener('focus', () => {
+          if (children.length > 0) {
+            this.outlineList.setAttribute('tabindex', -1);
+            children[current].setAttribute('tabindex', 0);
+            children[current].focus();
+          }
+          this.outlineList.addEventListener('keydown', handleKeyDown);
+        });
+        this.outlineList.addEventListener('blur', () => {
+          this.outlineList.removeEventListener('keydown', handleKeyDown);
+        });
+      }, 0);
     };
 
-    //----------------------------------------------------------------------
-    // Templating for full-width banners.
-    //----------------------------------------------------------------------
-    this.annotateBanner = (type, content) => {
-      let message = content;
-
+    /**
+      * Create annotation buttons.
+      * @param {Node} element: The node or issue element.
+      * @param {String} type: The type of issue (ERROR, WARNING, GOOD).
+      * @param {String} content: The tooltip message.
+      * @param {Boolean} inline: Whether the annotation should be displayed inline with text.
+      * @param {String} position: Position of annotation (beforebegin, afterbegin, e.g.).
+      * @param {Number} index: Index or order of issue.
+    */
+    this.annotate = (element, type, content, inline = false, position, index) => {
       const validTypes = [
         ERROR,
         WARNING,
@@ -4873,6 +5117,16 @@ class Sa11y {
       if (validTypes.indexOf(type) === -1) {
         throw Error(`Invalid type [${type}] for annotation`);
       }
+      // Add unique ID and styles to annotation and marked element.
+      [type].forEach(($el) => {
+        if ($el === ERROR && element !== undefined) {
+          const errorAttr = (inline ? 'data-sa11y-error-inline' : 'data-sa11y-error');
+          element.setAttribute(errorAttr, index);
+        } else if ($el === WARNING) {
+          const warningAttr = (inline ? 'data-sa11y-warning-inline' : 'data-sa11y-warning');
+          element.setAttribute(warningAttr, index);
+        }
+      });
 
       const CSSName = {
         [validTypes[0]]: 'error',
@@ -4880,26 +5134,44 @@ class Sa11y {
         [validTypes[2]]: 'good',
       };
 
-      // Update error or warning count.
-      [type].forEach(($el) => {
-        if ($el === ERROR) {
-          this.errorCount += 1;
-        } else if ($el === WARNING) {
-          this.warningCount += 1;
+      // Prepare tooltip content (tooltip formatting).
+      let message = content;
+      message = this.prepTooltip(message);
+
+      // Add dismiss button if prop enabled.
+      const dismiss = (option.dismissAnnotations === true && CSSName[type] === 'warning') ? "<button class='sa11y-dismiss'>Dismiss</button>" : '';
+
+      const create = document.createElement('div');
+
+      // Full width banners.
+      if (element === undefined) {
+        create.setAttribute('class', `sa11y-instance sa11y-${CSSName[type]}-message-container`);
+        create.innerHTML = `
+          <div role="region" data-sa11y-annotation="${index}" tabindex="-1" aria-label="${[type]}" class="sa11y-${CSSName[type]}-message" lang="${Lang._('LANG_CODE')}">
+            ${message}
+          </div>
+        `;
+        document.body.insertAdjacentElement('afterbegin', create);
+      } else {
+        // Button annotations.
+        create.classList.add(`${inline ? 'sa11y-instance-inline' : 'sa11y-instance'}`);
+        create.innerHTML = `
+        <button data-sa11y-annotation="${index}" type="button" aria-label="${[type]}" class="sa11y-btn sa11y-${CSSName[type]}-btn${inline ? '-text' : ''}" data-tippy-content="
+            <div lang='${Lang._('LANG_CODE')}'>
+              <div class='sa11y-header-text'>${[type]}</div>
+                ${this.escapeHTML(message)}
+              </div>
+            ${dismiss}">
+          </button>
+        `;
+
+        // Make sure annotations always appended outside of interactive elements.
+        let location = element.closest('a, button');
+        if (!location) {
+          location = element;
         }
-      });
-
-      // Check if content is a function & make translations easier.
-      if (message && {}.toString.call(message) === '[object Function]') {
-        message = message
-          .replaceAll(/<hr>/g, '<hr aria-hidden="true">')
-          .replaceAll(/<a[\s]href=/g, '<a target="_blank" rel="noopener noreferrer" href=')
-          .replaceAll(/<\/a>/g, `<span class="sa11y-visually-hidden"> (${Lang._('NEW_TAB')})</span></a>`)
-          .replaceAll(/{r}/g, 'class="sa11y-red-text"');
-        message = this.escapeHTML(message);
+        location.insertAdjacentElement(position, create);
       }
-
-      return `<div class="sa11y-instance sa11y-${CSSName[type]}-message-container"><div role="region" data-sa11y-annotation tabindex="-1" aria-label="${[type]}" class="sa11y-${CSSName[type]}-message" lang="${Lang._('LANG_CODE')}">${message}</div></div>`;
     };
 
     // ============================================================
@@ -4909,7 +5181,7 @@ class Sa11y {
       let prevLevel;
       this.headings.forEach(($el, i) => {
         const text = this.computeTextNodeWithImage($el);
-        const htext = this.sanitizeForHTML(text);
+        const headingText = this.sanitizeHTML(text);
         let level;
 
         if ($el.getAttribute('aria-level')) {
@@ -4917,151 +5189,99 @@ class Sa11y {
         } else {
           level = +$el.tagName.slice(1);
         }
+        level = parseInt(level, 10);
 
-        const headingLength = $el.textContent.trim().length;
+        const headingLength = headingText.length;
         let error = null;
         let warning = null;
 
         if (level - prevLevel > 1 && i !== 0) {
           if (option.nonConsecutiveHeadingIsError === true) {
             error = Lang.sprintf('HEADING_NON_CONSECUTIVE_LEVEL', prevLevel, level);
+            this.found.push({
+              element: $el,
+              type: ERROR,
+              content: error,
+              inline: false,
+              position: 'beforebegin',
+            });
           } else {
             warning = Lang.sprintf('HEADING_NON_CONSECUTIVE_LEVEL', prevLevel, level);
+            this.found.push({
+              element: $el,
+              type: WARNING,
+              content: warning,
+              inline: false,
+              position: 'beforebegin',
+            });
           }
-        } else if ($el.textContent.trim().length === 0) {
+        } else if (headingLength === 0) {
           if ($el.querySelectorAll('img').length) {
             const imgalt = $el.querySelector('img').getAttribute('alt');
             if (imgalt === null || imgalt === ' ' || imgalt === '') {
               error = Lang.sprintf('HEADING_EMPTY_WITH_IMAGE', level);
-              $el.classList.add('sa11y-error-text');
+              this.found.push({
+                element: $el,
+                type: ERROR,
+                content: error,
+                inline: false,
+                position: 'beforebegin',
+              });
             }
           } else {
             error = Lang.sprintf('HEADING_EMPTY', level);
-            $el.classList.add('sa11y-error-text');
+            this.found.push({
+              element: $el,
+              type: ERROR,
+              content: error,
+              inline: false,
+              position: 'beforebegin',
+            });
           }
         } else if (i === 0 && level !== 1 && level !== 2) {
           error = Lang._('HEADING_FIRST');
-        } else if ($el.textContent.trim().length > 170 && option.flagLongHeadings === true) {
+          this.found.push({
+            element: $el,
+            type: ERROR,
+            content: error,
+            inline: false,
+            position: 'beforebegin',
+          });
+        } else if (headingLength > 170 && option.flagLongHeadings === true) {
           warning = Lang.sprintf('HEADING_LONG', headingLength);
+          this.found.push({
+            element: $el,
+            type: WARNING,
+            content: warning,
+            inline: false,
+            position: 'beforebegin',
+          });
         }
-
         prevLevel = level;
 
-        // Indicate if heading is totally hidden or visually hidden.
-        const headingHidden = this.isElementHidden($el);
-        const visibleIcon = (headingHidden === true || ($el.clientHeight === 1 && $el.clientWidth === 1)) ? '<span class="sa11y-hidden-icon"></span><span class="sa11y-visually-hidden">Hidden</span>' : '';
-        const visibleStatus = (headingHidden === true || ($el.clientHeight === 1 && $el.clientWidth === 1)) ? 'class="sa11y-hidden-h"' : '';
-
-        // Normal heading.
-        const li = `<li class='sa11y-outline-${level}'>
-                  <a id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
-                    <span class='sa11y-badge'>${visibleIcon} ${level}</span>
-                    <span class='sa11y-outline-list-item'>${htext}</span>
-                  </a>
-                </li>`;
-
-        // Error heading.
-        const liError = `<li class='sa11y-outline-${level}'>
-                  <a id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
-                    <span class='sa11y-badge sa11y-error-badge'>
-                    <span aria-hidden='true'>${visibleIcon} &#33;</span>
-                    <span class='sa11y-visually-hidden'>${Lang._('ERROR')}</span> ${level}</span>
-                    <span class='sa11y-outline-list-item sa11y-red-text sa11y-bold'>${htext}</span>
-                  </a>
-                </li>`;
-
-        // Warning heading.
-        const liWarning = `<li class='sa11y-outline-${level}'>
-                  <a id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
-                    <span class='sa11y-badge sa11y-warning-badge'>
-                    <span aria-hidden='true'>${visibleIcon} &#x3f;</span>
-                    <span class='sa11y-visually-hidden'>${Lang._('WARNING')}</span> ${level}</span>
-                    <span class='sa11y-outline-list-item sa11y-yellow-text sa11y-bold'>${htext}</span>
-                  </a>
-                </li>`;
-
-        let ignoreArray = [];
-        if (option.outlineIgnore) {
-          ignoreArray = Array.from(document.querySelectorAll(this.outlineIgnore));
-        }
-
-        const outline = document.querySelector('#sa11y-outline-list');
-        if (!ignoreArray.includes($el)) {
-          // Append annotations & update panel.
-          if (error !== null && $el.closest('a') !== null) {
-            $el.classList.add('sa11y-error-border');
-            $el.closest('a').insertAdjacentHTML('afterend', this.annotate(ERROR, error, true));
-            outline.insertAdjacentHTML('beforeend', liError);
-          } else if (error !== null) {
-            $el.classList.add('sa11y-error-border');
-            $el.insertAdjacentHTML('beforebegin', this.annotate(ERROR, error));
-            outline.insertAdjacentHTML('beforeend', liError);
-          } else if (warning !== null && $el.closest('a') !== null) {
-            $el.closest('a').insertAdjacentHTML('afterend', this.annotate(WARNING, warning));
-            outline.insertAdjacentHTML('beforeend', liWarning);
-          } else if (warning !== null) {
-            $el.insertAdjacentHTML('beforebegin', this.annotate(WARNING, warning));
-            outline.insertAdjacentHTML('beforeend', liWarning);
-          } else if (error === null || warning === null) {
-            outline.insertAdjacentHTML('beforeend', li);
-          }
-        }
-
-        const sa11yToggle = document.getElementById('sa11y-toggle');
-        if (sa11yToggle.classList.contains('sa11y-on')) {
-          // Append heading labels. Although if the heading is in a hidden container, place the anchor just before it's most visible parent.
-          const hiddenH = this.findVisibleParent($el, 'display', 'none');
-          const plainHeadingLabel = `<span class="sa11y-heading-label">H${level}</span>`;
-          const anchor = `<span class="sa11y-element" id="sa11y-h${i}"></span>`;
-          if (hiddenH !== null) {
-            const hiddenParent = hiddenH.previousElementSibling;
-            $el.insertAdjacentHTML('beforeend', plainHeadingLabel);
-            if (hiddenParent) {
-              hiddenParent.insertAdjacentHTML('beforebegin', anchor);
-              hiddenParent.setAttribute('data-sa11y-parent', `h${i}`);
-            } else {
-              hiddenH.parentNode.insertAdjacentHTML('beforebegin', anchor);
-              hiddenH.parentNode.setAttribute('data-sa11y-parent', `h${i}`);
-            }
-          } else {
-            // If the heading isn't hidden, then append id on visible label.
-            $el.insertAdjacentHTML('beforeend', `<span id="sa11y-h${i}" class="sa11y-heading-label">H${level}</span>`);
-          }
-
-          // Make Page Outline clickable.
-          setTimeout(() => {
-            const outlineLink = document.getElementById(`sa11y-link-${i}`);
-            const alertActive = document.getElementById('sa11y-panel-alert');
-            const hID = document.getElementById(`sa11y-h${i}`);
-            const hParent = document.querySelector(`[data-sa11y-parent="h${i}"]`);
-            const smooth = () => hID.scrollIntoView({ behavior: `${this.scrollBehaviour}`, block: 'center' });
-            const pulse = () => ((hParent !== null) ? this.addPulse(hParent) : this.addPulse($el));
-            const smoothPulse = (e) => {
-              if ((e.type === 'keyup' && e.code === 'Enter') || e.type === 'click') {
-                smooth();
-                pulse();
-                if (outlineLink.classList.contains('sa11y-hidden-h')) {
-                  this.createAlert(`${Lang._('HEADING_NOT_VISIBLE_ALERT')}`);
-                } else if (alertActive.classList.contains('sa11y-active')) {
-                  this.removeAlert();
-                }
-              }
-              e.preventDefault();
-            };
-            outlineLink.addEventListener('click', smoothPulse, false);
-            outlineLink.addEventListener('keyup', smoothPulse, false);
-          }, 50);
+        const hiddenHeading = this.isElementVisuallyHiddenOrHidden($el);
+        const parent = this.findVisibleParent($el, 'display', 'none');
+        // Create an object for heading outline panel.
+        if (error !== null) {
+          this.headingOutline.push({
+            element: $el, headingLevel: level, text: headingText, index: i, type: ERROR, hidden: hiddenHeading, visibleParent: parent,
+          });
+        } else if (warning !== null) {
+          this.headingOutline.push({
+            element: $el, headingLevel: level, text: headingText, index: i, type: WARNING, hidden: hiddenHeading, visibleParent: parent,
+          });
+        } else if (error === null || warning === null) {
+          this.headingOutline.push({
+            element: $el, headingLevel: level, text: headingText, index: i, hidden: hiddenHeading, visibleParent: parent,
+          });
         }
       });
-
-      // Check to see there is at least one H1 on the page.
+      // Missing Heading 1
       if (this.headingOne.length === 0) {
-        const updateH1Outline = `<div class='sa11y-instance sa11y-missing-h1'>
-                    <span class='sa11y-badge sa11y-error-badge'><span aria-hidden='true'>!</span><span class='sa11y-visually-hidden'>${Lang._('ERROR')}</span></span>
-                    <span class='sa11y-red-text sa11y-bold'>${Lang._('PANEL_HEADING_MISSING_ONE')}</span>
-                </div>`;
-        document.getElementById('sa11y-outline-header').insertAdjacentHTML('afterend', updateH1Outline);
-        this.panel.insertAdjacentHTML('afterend', this.annotateBanner(ERROR, Lang._('HEADING_MISSING_ONE')));
+        this.found.push({
+          type: ERROR,
+          content: Lang._('HEADING_MISSING_ONE'),
+        });
       }
     };
 
@@ -5171,49 +5391,74 @@ class Sa11y {
           // Flag empty hyperlinks.
           if ($el && hasTitle) ; else if ($el.children.length) {
             // Has child elements (e.g. SVG or SPAN) <a><i></i></a>
-            $el.classList.add('sa11y-error-border');
-            $el.insertAdjacentHTML('afterend', this.annotate(ERROR, Lang._('LINK_EMPTY_LINK_NO_LABEL'), true));
+            this.found.push({
+              element: $el,
+              type: ERROR,
+              content: Lang._('LINK_EMPTY_LINK_NO_LABEL'),
+              inline: true,
+              position: 'afterend',
+            });
           } else {
             // Completely empty <a></a>
-            $el.classList.add('sa11y-error-border');
-            $el.insertAdjacentHTML('afterend', this.annotate(ERROR, Lang._('LINK_EMPTY'), true));
+            this.found.push({
+              element: $el,
+              type: ERROR,
+              content: Lang._('LINK_EMPTY'),
+              inline: true,
+              position: 'afterend',
+            });
           }
         } else if (error[0] != null) {
           // Contains stop words.
           if (hasAriaLabelledBy || hasAriaLabel || childAriaLabelledBy || childAriaLabel) {
             if (option.showGoodLinkButton === true) {
-              $el.insertAdjacentHTML(
-                'beforebegin',
-                this.annotate(GOOD, Lang.sprintf('LINK_LABEL', linkText), true),
-              );
+              this.found.push({
+                element: $el,
+                type: GOOD,
+                content: Lang.sprintf('LINK_LABEL', linkText),
+                inline: true,
+                position: 'afterend',
+              });
             }
           } else if ($el.getAttribute('aria-hidden') === 'true' && $el.getAttribute('tabindex') === '-1') ; else {
-            $el.classList.add('sa11y-error-text');
-            $el.insertAdjacentHTML(
-              'afterend',
-              this.annotate(ERROR, Lang.sprintf('LINK_STOPWORD', error[0]), true),
-            );
+            this.found.push({
+              element: $el,
+              type: ERROR,
+              content: Lang.sprintf('LINK_STOPWORD', error[0]),
+              inline: true,
+              position: 'afterend',
+            });
           }
         } else if (error[1] != null) {
           // Contains warning words.
-          $el.classList.add('sa11y-warning-text');
-          $el.insertAdjacentHTML(
-            'afterend',
-            this.annotate(WARNING, Lang.sprintf('LINK_BEST_PRACTICES', error[1]), true),
-          );
+          this.found.push({
+            element: $el,
+            type: WARNING,
+            content: Lang.sprintf('LINK_BEST_PRACTICES', error[1]),
+            inline: true,
+            position: 'beforebegin',
+          });
         } else if (error[2] != null) {
           // Contains URL in link text.
           if (linkText.length > 40) {
-            $el.classList.add('sa11y-warning-text');
-            $el.insertAdjacentHTML('afterend', this.annotate(WARNING, Lang._('LINK_URL'), true));
+            this.found.push({
+              element: $el,
+              type: WARNING,
+              content: Lang._('LINK_URL'),
+              inline: true,
+              position: 'beforebegin',
+            });
           }
         } else if (hasAriaLabelledBy || hasAriaLabel || childAriaLabelledBy || childAriaLabel) {
           // If the link has any ARIA, append a "Good" link button.
           if (option.showGoodLinkButton === true) {
-            $el.insertAdjacentHTML(
-              'beforebegin',
-              this.annotate(GOOD, Lang.sprintf('LINK_LABEL', linkText), true),
-            );
+            this.found.push({
+              element: $el,
+              type: GOOD,
+              content: Lang.sprintf('LINK_LABEL', linkText),
+              inline: true,
+              position: 'afterend',
+            });
           }
         }
       });
@@ -5223,96 +5468,110 @@ class Sa11y {
     // Rulesets: Links (Advanced)
     // ============================================================
     this.checkLinksAdvanced = () => {
-      const seen = {};
-      this.links.forEach(($el) => {
-        let linkText = this.computeAriaLabel($el);
-        const $img = $el.querySelector('img');
+      if (option.linksAdvancedPlugin === true) {
+        if (this.store.getItem('sa11y-remember-links-advanced') === 'On') {
+          const seen = {};
+          this.links.forEach(($el) => {
+            let linkText = this.computeAriaLabel($el);
+            const $img = $el.querySelector('img');
 
-        if (linkText === 'noAria') {
-          // Plain text content.
-          linkText = this.getText($el);
+            if (linkText === 'noAria') {
+              // Plain text content.
+              linkText = this.getText($el);
 
-          // If an image exists within the link.
-          if ($img) {
-            // Check if there's aria on the image.
-            const imgText = this.computeAriaLabel($img);
-            if (imgText !== 'noAria') {
-              linkText += imgText;
-            } else {
-              // No aria? Process alt on image.
-              linkText += $img ? ($img.getAttribute('alt') || '') : '';
+              // If an image exists within the link.
+              if ($img) {
+                // Check if there's aria on the image.
+                const imgText = this.computeAriaLabel($img);
+                if (imgText !== 'noAria') {
+                  linkText += imgText;
+                } else {
+                  // No aria? Process alt on image.
+                  linkText += $img ? ($img.getAttribute('alt') || '') : '';
+                }
+              }
             }
-          }
-        }
 
-        // Remove whitespace, special characters, etc.
-        const linkTextTrimmed = linkText.replace(/'|"|-|\.|\s+/g, '').toLowerCase();
+            // Remove whitespace, special characters, etc.
+            const linkTextTrimmed = linkText.replace(/'|"|-|\.|\s+/g, '').toLowerCase();
 
-        // Links with identical accessible names have equivalent purpose.
-        const href = $el.getAttribute('href');
+            // Links with identical accessible names have equivalent purpose.
+            const href = $el.getAttribute('href');
 
-        if (linkText.length !== 0) {
-          if (seen[linkTextTrimmed] && linkTextTrimmed.length !== 0) {
-            if (seen[href]) ; else {
-              $el.classList.add('sa11y-warning-text');
-              $el.insertAdjacentHTML(
-                'afterend',
-                this.annotate(WARNING, Lang.sprintf('LINK_IDENTICAL_NAME', linkText), true),
-              );
+            if (linkText.length !== 0) {
+              if (seen[linkTextTrimmed] && linkTextTrimmed.length !== 0) {
+                if (seen[href]) ; else {
+                  this.found.push({
+                    element: $el,
+                    type: WARNING,
+                    content: Lang.sprintf('LINK_IDENTICAL_NAME', linkText),
+                    inline: true,
+                    position: 'beforebegin',
+                  });
+                }
+              } else {
+                seen[linkTextTrimmed] = true;
+                seen[href] = true;
+              }
             }
-          } else {
-            seen[linkTextTrimmed] = true;
-            seen[href] = true;
-          }
+
+            // New tab or new window.
+            const containsNewWindowPhrases = Lang._('NEW_WINDOW_PHRASES').some((pass) => {
+              if (linkText.trim().length === 0 && !!$el.getAttribute('title')) {
+                linkText = $el.getAttribute('title');
+              }
+              return linkText.toLowerCase().indexOf(pass) >= 0;
+            });
+
+            // Link that points to a file type indicates that it does.
+            const containsFileTypePhrases = Lang._('FILE_TYPE_PHRASES').some((pass) => linkText.toLowerCase().indexOf(pass) >= 0);
+
+            const fileTypeMatch = $el.matches(`
+              a[href$='.pdf'],
+              a[href$='.doc'],
+              a[href$='.docx'],
+              a[href$='.zip'],
+              a[href$='.mp3'],
+              a[href$='.txt'],
+              a[href$='.exe'],
+              a[href$='.dmg'],
+              a[href$='.rtf'],
+              a[href$='.pptx'],
+              a[href$='.ppt'],
+              a[href$='.xls'],
+              a[href$='.xlsx'],
+              a[href$='.csv'],
+              a[href$='.mp4'],
+              a[href$='.mov'],
+              a[href$='.avi']
+            `);
+
+            if ($el.getAttribute('target') === '_blank' && !fileTypeMatch && !containsNewWindowPhrases) {
+              this.found.push({
+                element: $el,
+                type: WARNING,
+                content: Lang._('NEW_TAB_WARNING'),
+                inline: true,
+                position: 'beforebegin',
+              });
+            }
+
+            if (fileTypeMatch && !containsFileTypePhrases) {
+              this.found.push({
+                element: $el,
+                type: WARNING,
+                content: Lang._('FILE_TYPE_WARNING'),
+                inline: true,
+                position: 'beforebegin',
+              });
+            }
+          });
         }
-
-        // New tab or new window.
-        const containsNewWindowPhrases = Lang._('NEW_WINDOW_PHRASES').some((pass) => {
-          if (linkText.trim().length === 0 && !!$el.getAttribute('title')) {
-            linkText = $el.getAttribute('title');
-          }
-          return linkText.toLowerCase().indexOf(pass) >= 0;
-        });
-
-        // Link that points to a file type indicates that it does.
-        const containsFileTypePhrases = Lang._('FILE_TYPE_PHRASES').some((pass) => linkText.toLowerCase().indexOf(pass) >= 0);
-
-        const fileTypeMatch = $el.matches(`
-          a[href$='.pdf'],
-          a[href$='.doc'],
-          a[href$='.docx'],
-          a[href$='.zip'],
-          a[href$='.mp3'],
-          a[href$='.txt'],
-          a[href$='.exe'],
-          a[href$='.dmg'],
-          a[href$='.rtf'],
-          a[href$='.pptx'],
-          a[href$='.ppt'],
-          a[href$='.xls'],
-          a[href$='.xlsx'],
-          a[href$='.csv'],
-          a[href$='.mp4'],
-          a[href$='.mov'],
-          a[href$='.avi']
-        `);
-
-        if ($el.getAttribute('target') === '_blank' && !fileTypeMatch && !containsNewWindowPhrases) {
-          $el.classList.add('sa11y-warning-text');
-          $el.insertAdjacentHTML(
-            'afterend',
-            this.annotate(WARNING, Lang._('NEW_TAB_WARNING'), true),
-          );
-        }
-
-        if (fileTypeMatch && !containsFileTypePhrases) {
-          $el.classList.add('sa11y-warning-text');
-          $el.insertAdjacentHTML(
-            'beforebegin',
-            this.annotate(WARNING, Lang._('FILE_TYPE_WARNING'), true),
-          );
-        }
-      });
+      } else {
+        // Hide Links Advanced toggle if prop is set to false.
+        this.linksAdvacedItem.setAttribute('style', 'display: none !important;');
+        this.store.setItem('sa11y-remember-links-advanced', 'Off');
+      }
     };
 
     // ============================================================
@@ -5354,96 +5613,209 @@ class Sa11y {
         if (alt === null) {
           if ($el.closest('a[href]')) {
             if (this.fnIgnore($el.closest('a[href]'), 'noscript').textContent.trim().length >= 1) {
-              $el.classList.add('sa11y-error-border');
-              $el.closest('a[href]').insertAdjacentHTML('beforebegin', this.annotate(ERROR, Lang._('MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE')));
+              this.found.push({
+                element: $el,
+                type: ERROR,
+                content: Lang._('MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE'),
+                inline: false,
+                position: 'beforebegin',
+              });
             } else if (this.fnIgnore($el.closest('a[href]'), 'noscript').textContent.trim().length === 0) {
-              $el.classList.add('sa11y-error-border');
-              $el.closest('a[href]').insertAdjacentHTML('beforebegin', this.annotate(ERROR, Lang._('MISSING_ALT_LINK_MESSAGE')));
+              this.found.push({
+                element: $el,
+                type: ERROR,
+                content: Lang._('MISSING_ALT_LINK_MESSAGE'),
+                inline: false,
+                position: 'beforebegin',
+              });
             }
           } else {
             // General failure message if image is missing alt.
-            $el.classList.add('sa11y-error-border');
-            $el.insertAdjacentHTML('beforebegin', this.annotate(ERROR, Lang._('MISSING_ALT_MESSAGE')));
+            this.found.push({
+              element: $el,
+              type: ERROR,
+              content: Lang._('MISSING_ALT_MESSAGE'),
+              inline: false,
+              position: 'beforebegin',
+            });
           }
         } else {
           // If alt attribute is present, further tests are done.
-          const altText = this.sanitizeForHTML(alt); // Prevent tooltip from breaking.
+          const altText = this.sanitizeHTML(alt); // Prevent tooltip from breaking.
           const error = this.containsAltTextStopWords(altText);
           const altLength = alt.length;
 
           if ($el.closest('a[href]') && $el.closest('a[href]').getAttribute('tabindex') === '-1' && $el.closest('a[href]').getAttribute('aria-hidden') === 'true') ; else if (error[0] !== null && $el.closest('a[href]')) {
             // Image fails if a stop word was found.
-            $el.classList.add('sa11y-error-border');
-            $el.closest('a[href]').insertAdjacentHTML('beforebegin', this.annotate(ERROR, Lang.sprintf('LINK_IMAGE_BAD_ALT_MESSAGE', error[0], altText)));
+            this.found.push({
+              element: $el,
+              type: ERROR,
+              content: Lang.sprintf('LINK_IMAGE_BAD_ALT_MESSAGE', error[0], altText),
+              inline: false,
+              position: 'beforebegin',
+            });
           } else if (error[2] !== null && $el.closest('a[href]')) {
-            $el.classList.add('sa11y-error-border');
-            $el.closest('a[href]').insertAdjacentHTML('beforebegin', this.annotate(ERROR, Lang.sprintf('LINK_IMAGE_PLACEHOLDER_ALT_MESSAGE', altText)));
+            this.found.push({
+              element: $el,
+              type: ERROR,
+              content: Lang.sprintf('LINK_IMAGE_PLACEHOLDER_ALT_MESSAGE', altText),
+              inline: false,
+              position: 'beforebegin',
+            });
           } else if (error[1] !== null && $el.closest('a[href]')) {
-            $el.classList.add('sa11y-warning-border');
-            $el.closest('a[href]').insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang.sprintf('LINK_IMAGE_SUS_ALT_MESSAGE', error[1], altText)));
+            this.found.push({
+              element: $el,
+              type: WARNING,
+              content: Lang.sprintf('LINK_IMAGE_SUS_ALT_MESSAGE', error[1], altText),
+              inline: false,
+              position: 'beforebegin',
+            });
           } else if (error[0] !== null) {
-            $el.classList.add('sa11y-error-border');
-            $el.insertAdjacentHTML('beforebegin', this.annotate(ERROR, Lang.sprintf('LINK_ALT_HAS_BAD_WORD_MESSAGE', error[0], altText)));
+            this.found.push({
+              element: $el,
+              type: ERROR,
+              content: Lang.sprintf('LINK_ALT_HAS_BAD_WORD_MESSAGE', error[0], altText),
+              inline: false,
+              position: 'beforebegin',
+            });
           } else if (error[2] !== null) {
-            $el.classList.add('sa11y-error-border');
-            $el.insertAdjacentHTML('beforebegin', this.annotate(ERROR, Lang.sprintf('ALT_PLACEHOLDER_MESSAGE', altText)));
+            this.found.push({
+              element: $el,
+              type: ERROR,
+              content: Lang.sprintf('ALT_PLACEHOLDER_MESSAGE', altText),
+              inline: false,
+              position: 'beforebegin',
+            });
           } else if (error[1] !== null) {
-            $el.classList.add('sa11y-warning-border');
-            $el.insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang.sprintf('ALT_HAS_SUS_WORD', error[1], altText)));
+            this.found.push({
+              element: $el,
+              type: WARNING,
+              content: Lang.sprintf('ALT_HAS_SUS_WORD', error[1], altText),
+              inline: false,
+              position: 'beforebegin',
+            });
           } else if ((alt === '' || alt === ' ') && $el.closest('a[href]')) {
             if ($el.closest('a[href]').getAttribute('tabindex') === '-1' && $el.closest('a[href]').getAttribute('aria-hidden') === 'true') ; else if ($el.closest('a[href]').getAttribute('aria-hidden') === 'true') {
-              $el.classList.add('sa11y-error-border');
-              $el.closest('a[href]').insertAdjacentHTML('beforebegin', this.annotate(ERROR, Lang._('LINK_IMAGE_ARIA_HIDDEN')));
+              this.found.push({
+                element: $el,
+                type: ERROR,
+                content: Lang._('LINK_IMAGE_ARIA_HIDDEN'),
+                inline: false,
+                position: 'beforebegin',
+              });
             } else if (this.fnIgnore($el.closest('a[href]'), 'noscript').textContent.trim().length === 0) {
-              $el.classList.add('sa11y-error-border');
-              $el.closest('a[href]').insertAdjacentHTML('beforebegin', this.annotate(ERROR, Lang._('LINK_IMAGE_NO_ALT_TEXT')));
+              this.found.push({
+                element: $el,
+                type: ERROR,
+                content: Lang._('LINK_IMAGE_NO_ALT_TEXT'),
+                inline: false,
+                position: 'beforebegin',
+              });
             } else {
-              $el.closest('a[href]').insertAdjacentHTML('beforebegin', this.annotate(GOOD, Lang._('LINK_IMAGE_HAS_TEXT')));
+              this.found.push({
+                element: $el,
+                type: GOOD,
+                content: Lang._('LINK_IMAGE_HAS_TEXT'),
+                inline: false,
+                position: 'beforebegin',
+              });
             }
           } else if (alt.length > 250 && $el.closest('a[href]')) {
             // Link and contains alt text.
-            $el.classList.add('sa11y-warning-border');
-            $el.closest('a[href]').insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang.sprintf('LINK_IMAGE_LONG_ALT', altLength, altText)));
+            this.found.push({
+              element: $el,
+              type: WARNING,
+              content: Lang.sprintf('LINK_IMAGE_LONG_ALT', altLength, altText),
+              inline: false,
+              position: 'beforebegin',
+            });
           } else if (alt !== '' && $el.closest('a[href]') && this.fnIgnore($el.closest('a[href]'), 'noscript').textContent.trim().length === 0) {
             // Link and contains an alt text.
-            $el.classList.add('sa11y-warning-border');
-            $el.closest('a[href]').insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang.sprintf('LINK_IMAGE_ALT_WARNING', altText)));
+            this.found.push({
+              element: $el,
+              type: WARNING,
+              content: Lang.sprintf('LINK_IMAGE_ALT_WARNING', altText),
+              inline: false,
+              position: 'beforebegin',
+            });
           } else if (alt !== '' && $el.closest('a[href]') && this.fnIgnore($el.closest('a[href]'), 'noscript').textContent.trim().length >= 1) {
             // Contains alt text & surrounding link text.
-            $el.classList.add('sa11y-warning-border');
-            $el.closest('a[href]').insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT_WARNING', altText)));
+            this.found.push({
+              element: $el,
+              type: WARNING,
+              content: Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT_WARNING', altText),
+              inline: false,
+              position: 'beforebegin',
+            });
           } else if (alt === '' || alt === ' ') {
             // Decorative alt and not a link.
             if ($el.closest('figure')) {
               const figcaption = $el.closest('figure').querySelector('figcaption');
               if (figcaption !== null && figcaption.textContent.trim().length >= 1) {
-                $el.classList.add('sa11y-warning-border');
-                $el.insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang._('IMAGE_FIGURE_DECORATIVE')));
+                this.found.push({
+                  element: $el,
+                  type: WARNING,
+                  content: Lang._('IMAGE_FIGURE_DECORATIVE'),
+                  inline: false,
+                  position: 'beforebegin',
+                });
               } else {
-                $el.classList.add('sa11y-warning-border');
-                $el.insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang._('IMAGE_DECORATIVE')));
+                this.found.push({
+                  element: $el,
+                  type: WARNING,
+                  content: Lang._('IMAGE_DECORATIVE'),
+                  inline: false,
+                  position: 'beforebegin',
+                });
               }
             } else {
-              $el.classList.add('sa11y-warning-border');
-              $el.insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang._('IMAGE_DECORATIVE')));
+              this.found.push({
+                element: $el,
+                type: WARNING,
+                content: Lang._('IMAGE_DECORATIVE'),
+                inline: false,
+                position: 'beforebegin',
+              });
             }
           } else if (alt.length > 250) {
-            $el.classList.add('sa11y-warning-border');
-            $el.insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang.sprintf('IMAGE_ALT_TOO_LONG', altLength, altText)));
+            this.found.push({
+              element: $el,
+              type: WARNING,
+              content: Lang.sprintf('IMAGE_ALT_TOO_LONG', altLength, altText),
+              inline: false,
+              position: 'beforebegin',
+            });
           } else if (alt !== '') {
             // Figure element has same alt and caption text.
             if ($el.closest('figure')) {
               const figcaption = $el.closest('figure').querySelector('figcaption');
               if (!!figcaption
                 && (figcaption.textContent.trim().toLowerCase() === altText.trim().toLowerCase())) {
-                $el.classList.add('sa11y-warning-border');
-                $el.insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang.sprintf('IMAGE_FIGURE_DUPLICATE_ALT', altText)));
+                this.found.push({
+                  element: $el,
+                  type: WARNING,
+                  content: Lang.sprintf('IMAGE_FIGURE_DUPLICATE_ALT', altText),
+                  inline: false,
+                  position: 'beforebegin',
+                });
               } else {
-                $el.insertAdjacentHTML('beforebegin', this.annotate(GOOD, Lang.sprintf('IMAGE_PASS', altText)));
+                this.found.push({
+                  element: $el,
+                  type: GOOD,
+                  content: Lang.sprintf('IMAGE_PASS', altText),
+                  inline: false,
+                  position: 'beforebegin',
+                });
               }
             } else {
               // If image has alt text - pass!
-              $el.insertAdjacentHTML('beforebegin', this.annotate(GOOD, Lang.sprintf('IMAGE_PASS', altText)));
+              this.found.push({
+                element: $el,
+                type: GOOD,
+                content: Lang.sprintf('IMAGE_PASS', altText),
+                inline: false,
+                position: 'beforebegin',
+              });
             }
           }
         }
@@ -5454,130 +5826,194 @@ class Sa11y {
     // Rulesets: Labels
     // ============================================================
     this.checkLabels = () => {
-      this.inputs.forEach(($el) => {
-        // Ignore hidden inputs.
-        if (this.isElementHidden($el) !== true) {
-          let ariaLabel = this.computeAriaLabel($el);
-          const type = $el.getAttribute('type');
-          const tabindex = $el.getAttribute('tabindex');
+      if (option.formLabelsPlugin === true) {
+        if (this.store.getItem('sa11y-remember-labels') === 'On') {
+          this.inputs.forEach(($el) => {
+            // Ignore hidden inputs.
+            if (this.isElementHidden($el) !== true) {
+              let ariaLabel = this.computeAriaLabel($el);
+              const type = $el.getAttribute('type');
+              const tabindex = $el.getAttribute('tabindex');
 
-          // If button type is submit or button: pass
-          if (type === 'submit' || type === 'button' || type === 'hidden' || tabindex === '-1') ; else if (type === 'image') {
-            // Inputs where type="image".
-            const imgalt = $el.getAttribute('alt');
-            if (!imgalt || imgalt === ' ') {
-              if ($el.getAttribute('aria-label')) ; else {
-                $el.classList.add('sa11y-error-border');
-                $el.insertAdjacentHTML('afterend', this.annotate(ERROR, Lang._('LABELS_MISSING_IMAGE_INPUT_MESSAGE'), true));
+              // If button type is submit or button: pass
+              if (type === 'submit' || type === 'button' || type === 'hidden' || tabindex === '-1') ; else if (type === 'image') {
+                // Inputs where type="image".
+                const imgalt = $el.getAttribute('alt');
+                if (!imgalt || imgalt === ' ') {
+                  if ($el.getAttribute('aria-label')) ; else {
+                    this.found.push({
+                      element: $el,
+                      type: ERROR,
+                      content: Lang._('LABELS_MISSING_IMAGE_INPUT_MESSAGE'),
+                      inline: false,
+                      position: 'beforebegin',
+                    });
+                  }
+                }
+              } else if (type === 'reset') {
+                // Recommendation to remove reset buttons.
+                this.found.push({
+                  element: $el,
+                  type: WARNING,
+                  content: Lang._('LABELS_INPUT_RESET_MESSAGE'),
+                  inline: false,
+                  position: 'beforebegin',
+                });
+              } else if ($el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby') || $el.getAttribute('title')) {
+                // Uses ARIA. Warn them to ensure there's a visible label.
+                if ($el.getAttribute('title')) {
+                  ariaLabel = $el.getAttribute('title');
+                  this.found.push({
+                    element: $el,
+                    type: WARNING,
+                    content: Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', ariaLabel),
+                    inline: false,
+                    position: 'beforebegin',
+                  });
+                } else {
+                  this.found.push({
+                    element: $el,
+                    type: WARNING,
+                    content: Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', ariaLabel),
+                    inline: false,
+                    position: 'beforebegin',
+                  });
+                }
+              } else if ($el.closest('label') && $el.closest('label').textContent.trim()) ; else if ($el.getAttribute('id')) {
+                // Has an ID but doesn't have a matching FOR attribute.
+                let hasFor = false;
+
+                this.labels.forEach(($l) => {
+                  if (hasFor) return;
+                  if ($l.getAttribute('for') === $el.getAttribute('id')) {
+                    hasFor = true;
+                  }
+                });
+
+                if (!hasFor) {
+                  const id = $el.getAttribute('id');
+                  this.found.push({
+                    element: $el,
+                    type: ERROR,
+                    content: Lang.sprintf('LABELS_NO_FOR_ATTRIBUTE_MESSAGE', id),
+                    inline: false,
+                    position: 'beforebegin',
+                  });
+                }
+              } else {
+                this.found.push({
+                  element: $el,
+                  type: ERROR,
+                  content: Lang._('LABELS_MISSING_LABEL_MESSAGE'),
+                  inline: false,
+                  position: 'beforebegin',
+                });
               }
             }
-          } else if (type === 'reset') {
-            // Recommendation to remove reset buttons.
-            $el.classList.add('sa11y-warning-border');
-            $el.insertAdjacentHTML('afterend', this.annotate(WARNING, Lang._('LABELS_INPUT_RESET_MESSAGE'), true));
-          } else if ($el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby') || $el.getAttribute('title')) {
-            // Uses ARIA. Warn them to ensure there's a visible label.
-            if ($el.getAttribute('title')) {
-              ariaLabel = $el.getAttribute('title');
-              $el.classList.add('sa11y-warning-border');
-              $el.insertAdjacentHTML('afterend', this.annotate(WARNING, Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', ariaLabel), true));
-            } else {
-              $el.classList.add('sa11y-warning-border');
-              $el.insertAdjacentHTML('afterend', this.annotate(WARNING, Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', ariaLabel), true));
-            }
-          } else if ($el.closest('label') && $el.closest('label').textContent.trim()) ; else if ($el.getAttribute('id')) {
-            // Has an ID but doesn't have a matching FOR attribute.
-            const $labels = this.root.querySelectorAll('label');
-            let hasFor = false;
-
-            $labels.forEach(($l) => {
-              if (hasFor) return;
-              if ($l.getAttribute('for') === $el.getAttribute('id')) {
-                hasFor = true;
-              }
-            });
-
-            if (!hasFor) {
-              $el.classList.add('sa11y-error-border');
-              const id = $el.getAttribute('id');
-              $el.insertAdjacentHTML('afterend', this.annotate(ERROR, Lang.sprintf('LABELS_NO_FOR_ATTRIBUTE_MESSAGE', id), true));
-            }
-          } else {
-            $el.classList.add('sa11y-error-border');
-            $el.insertAdjacentHTML('afterend', this.annotate(ERROR, Lang._('LABELS_MISSING_LABEL_MESSAGE'), true));
-          }
+          });
         }
-      });
+      } else {
+        // Turn off Form Labels plugin if prop is set to false.
+        this.formLabelsItem.setAttribute('style', 'display: none !important;');
+        this.store.setItem('sa11y-remember-labels', 'Off');
+      }
     };
 
     // ============================================================
     // Rulesets: Embedded content.
     // ============================================================
     this.checkEmbeddedContent = () => {
-      // Warning: Audio content.
-      if (option.embeddedContentAudio === true) {
-        this.audio.forEach(($el) => {
-          $el.classList.add('sa11y-warning-border');
-          $el.insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang._('EMBED_AUDIO')));
-        });
-      }
+      if (option.embeddedContentAll === true) {
+        // Warning: Audio content.
+        if (option.embeddedContentAudio === true) {
+          this.audio.forEach(($el) => {
+            this.found.push({
+              element: $el,
+              type: WARNING,
+              content: Lang._('EMBED_AUDIO'),
+              inline: false,
+              position: 'beforebegin',
+            });
+          });
+        }
 
-      // Warning: Video content.
-      if (option.embeddedContentVideo === true) {
-        this.videos.forEach(($el) => {
-          const track = $el.getElementsByTagName('TRACK');
-          if ($el.tagName === 'VIDEO' && track.length) ; else {
-            $el.classList.add('sa11y-warning-border');
-            $el.insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang._('EMBED_VIDEO')));
-          }
-        });
-      }
+        // Warning: Video content.
+        if (option.embeddedContentVideo === true) {
+          this.videos.forEach(($el) => {
+            const track = $el.getElementsByTagName('TRACK');
+            if ($el.tagName === 'VIDEO' && track.length) ; else {
+              this.found.push({
+                element: $el,
+                type: WARNING,
+                content: Lang._('EMBED_VIDEO'),
+                inline: false,
+                position: 'beforebegin',
+              });
+            }
+          });
+        }
 
-      // Warning: Data visualizations.
-      if (option.embeddedContentDataViz === true) {
-        this.datavisualizations.forEach(($el) => {
-          $el.classList.add('sa11y-warning-border');
-          $el.insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang._('EMBED_DATA_VIZ')));
-        });
-      }
+        // Warning: Data visualizations.
+        if (option.embeddedContentDataViz === true) {
+          this.datavisualizations.forEach(($el) => {
+            this.found.push({
+              element: $el,
+              type: WARNING,
+              content: Lang._('EMBED_DATA_VIZ'),
+              inline: false,
+              position: 'beforebegin',
+            });
+          });
+        }
 
-      // Error: iFrame is missing accessible name.
-      if (option.embeddedContentTitles === true) {
-        this.iframes.forEach(($el) => {
-          if ($el.tagName === 'VIDEO'
+        // Error: iFrame is missing accessible name.
+        if (option.embeddedContentTitles === true) {
+          this.iframes.forEach(($el) => {
+            if ($el.tagName === 'VIDEO'
           || $el.tagName === 'AUDIO'
           || $el.getAttribute('aria-hidden') === 'true'
           || $el.getAttribute('hidden') !== null
           || $el.style.display === 'none'
           || $el.getAttribute('role') === 'presentation') ; else if ($el.getAttribute('title') === null || $el.getAttribute('title') === '') {
-            if ($el.getAttribute('aria-label') === null || $el.getAttribute('aria-label') === '') {
-              if ($el.getAttribute('aria-labelledby') === null) {
-                // Make sure red error border takes precedence
-                if ($el.classList.contains('sa11y-warning-border')) {
-                  $el.classList.remove('sa11y-warning-border');
+              if ($el.getAttribute('aria-label') === null || $el.getAttribute('aria-label') === '') {
+                if ($el.getAttribute('aria-labelledby') === null) {
+                // TO-DO: Make sure red error border takes precedence
+                  if ($el.classList.contains('sa11y-warning-border')) {
+                    $el.classList.remove('sa11y-warning-border');
+                  }
+                  this.found.push({
+                    element: $el,
+                    type: ERROR,
+                    content: Lang._('EMBED_MISSING_TITLE'),
+                    inline: false,
+                    position: 'beforebegin',
+                  });
                 }
-                $el.classList.add('sa11y-error-border');
-                $el.insertAdjacentHTML('beforebegin', this.annotate(ERROR, Lang._('EMBED_MISSING_TITLE')));
               }
-            }
-          } else ;
-        });
-      }
+            } else ;
+          });
+        }
 
-      // Warning: general warning for iFrames
-      if (option.embeddedContentGeneral === true) {
-        this.embeddedContent.forEach(($el) => {
-          if ($el.tagName === 'VIDEO'
+        // Warning: general warning for iFrames
+        if (option.embeddedContentGeneral === true) {
+          this.embeddedContent.forEach(($el) => {
+            if ($el.tagName === 'VIDEO'
           || $el.tagName === 'AUDIO'
           || $el.getAttribute('aria-hidden') === 'true'
           || $el.getAttribute('hidden') !== null
           || $el.style.display === 'none'
           || $el.getAttribute('role') === 'presentation'
           || $el.getAttribute('tabindex') === '-1') ; else {
-            $el.classList.add('sa11y-warning-border');
-            $el.insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang._('EMBED_GENERAL_WARNING')));
-          }
-        });
+              this.found.push({
+                element: $el,
+                type: WARNING,
+                content: Lang._('EMBED_GENERAL_WARNING'),
+                inline: false,
+                position: 'beforebegin',
+              });
+            }
+          });
+        }
       }
     };
 
@@ -5588,8 +6024,13 @@ class Sa11y {
       // Error: Find all links pointing to development environment.
       if (option.badLinksQA === true) {
         this.customErrorLinks.forEach(($el) => {
-          $el.classList.add('sa11y-error-text');
-          $el.insertAdjacentHTML('afterend', this.annotate(ERROR, Lang.sprintf('QA_BAD_LINK', $el), true));
+          this.found.push({
+            element: $el,
+            type: ERROR,
+            content: Lang.sprintf('QA_BAD_LINK', $el),
+            inline: true,
+            position: 'beforebegin',
+          });
         });
       }
 
@@ -5598,8 +6039,13 @@ class Sa11y {
         this.strongitalics.forEach(($el) => {
           const strongItalicsText = $el.textContent.trim().length;
           if (strongItalicsText > 400) {
-            $el.insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang._('QA_BAD_ITALICS')));
-            $el.parentNode.classList.add('sa11y-warning-border');
+            this.found.push({
+              element: $el.parentNode,
+              type: WARNING,
+              content: Lang._('QA_BAD_ITALICS'),
+              inline: false,
+              position: 'beforebegin',
+            });
           }
         });
       }
@@ -5611,14 +6057,17 @@ class Sa11y {
 
           // Highlight all PDFs.
           if (pdfCount > 0) {
-            $el.classList.add('sa11y-warning-text');
+            $el.setAttribute('data-sa11y-warning-inline', 'pdf');
           }
           // Only append warning button to first PDF.
           if ($el && i === 0) {
-            $el.insertAdjacentHTML('afterend', this.annotate(WARNING, Lang.sprintf('QA_PDF', pdfCount), true));
-            if ($el.querySelector('img')) {
-              $el.classList.remove('sa11y-warning-text');
-            }
+            this.found.push({
+              element: $el,
+              type: WARNING,
+              content: Lang.sprintf('QA_PDF', pdfCount),
+              inline: true,
+              position: 'beforebegin',
+            });
           }
         });
       }
@@ -5626,7 +6075,10 @@ class Sa11y {
       // Error: Missing language tag. Lang should be at least 2 characters.
       if (option.langQA === true) {
         if (!this.language || this.language.length < 2) {
-          this.panel.insertAdjacentHTML('afterend', this.annotateBanner(ERROR, Lang._('QA_PAGE_LANGUAGE')));
+          this.found.push({
+            type: ERROR,
+            content: Lang._('QA_PAGE_LANGUAGE'),
+          });
         }
       }
 
@@ -5635,8 +6087,13 @@ class Sa11y {
         this.blockquotes.forEach(($el) => {
           const bqHeadingText = $el.textContent;
           if (bqHeadingText.trim().length < 25) {
-            $el.classList.add('sa11y-warning-border');
-            $el.insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang.sprintf('QA_BLOCKQUOTE_MESSAGE', bqHeadingText)));
+            this.found.push({
+              element: $el,
+              type: WARNING,
+              content: Lang.sprintf('QA_BLOCKQUOTE_MESSAGE', bqHeadingText),
+              inline: false,
+              position: 'beforebegin',
+            });
           }
         });
       }
@@ -5647,66 +6104,127 @@ class Sa11y {
           const findTHeaders = $el.querySelectorAll('th');
           const findHeadingTags = $el.querySelectorAll('h1, h2, h3, h4, h5, h6');
           if (findTHeaders.length === 0) {
-            $el.classList.add('sa11y-error-border');
-            $el.insertAdjacentHTML('beforebegin',
-              this.annotate(ERROR, Lang._('TABLES_MISSING_HEADINGS')));
+            this.found.push({
+              element: $el,
+              type: ERROR,
+              content: Lang._('TABLES_MISSING_HEADINGS'),
+              inline: false,
+              position: 'beforebegin',
+            });
           }
           if (findHeadingTags.length > 0) {
             findHeadingTags.forEach(($a) => {
-              $a.classList.add('sa11y-error-border');
-              $a.insertAdjacentHTML('beforebegin', this.annotate(ERROR, Lang._('TABLES_SEMANTIC_HEADING')));
+              this.found.push({
+                element: $a,
+                type: ERROR,
+                content: Lang._('TABLES_SEMANTIC_HEADING'),
+                inline: false,
+                position: 'beforebegin',
+              });
             });
           }
           findTHeaders.forEach(($b) => {
             if ($b.textContent.trim().length === 0) {
-              $b.classList.add('sa11y-error-border');
-              $b.insertAdjacentHTML('afterbegin', this.annotate(ERROR, Lang._('TABLES_EMPTY_HEADING')));
+              this.found.push({
+                element: $b,
+                type: ERROR,
+                content: Lang._('TABLES_EMPTY_HEADING'),
+                inline: false,
+                position: 'afterbegin',
+              });
             }
           });
         });
       }
 
-      // Warning: Detect fake headings.
+      /* Warning: Detect fake headings.
+        To prevent excessive warnings:
+        1) Parent element must not be a heading, blockquote, or table.
+        2) Must be between 4 and 120 characters (typical heading length).
+        3) Doesn't contain the following characters: .;?! (assuming it's a sentence)
+        4) The previous element is not a semantic heading.
+      */
       if (option.fakeHeadingsQA === true) {
         this.paragraphs.forEach(($el) => {
           const brAfter = $el.innerHTML.indexOf('</strong><br>');
           const brBefore = $el.innerHTML.indexOf('<br></strong>');
+          const ignoreElements = 'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level], blockquote';
+          const ignoreParents = ignoreElements.concat(', table');
+          const getTexted = this.getText($el);
           let boldtext;
 
           // Check paragraphs greater than x characters.
-          if ($el && $el.textContent.trim().length >= 300) {
+          if ($el && getTexted.length >= 300) {
             const { firstChild } = $el;
 
             // If paragraph starts with <strong> tag and ends with <br>.
             if (firstChild.tagName === 'STRONG' && (brBefore !== -1 || brAfter !== -1)) {
-              boldtext = firstChild.textContent;
+              boldtext = this.getText(firstChild);
+              const maybeSentence = boldtext.match(/[.;?!"]/) !== null;
 
-              if (!/[*]$/.test(boldtext) && !$el.closest('table') && boldtext.length <= 120) {
-                firstChild.classList.add('sa11y-fake-heading', 'sa11y-warning-border');
-                $el.insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang.sprintf('QA_FAKE_HEADING', boldtext)));
+              if (
+                !/[*]$/.test(boldtext)
+                && !$el.closest(ignoreParents)
+                && (boldtext.length >= 4 && boldtext.length <= 120)
+                && maybeSentence === false
+              ) {
+                this.found.push({
+                  element: firstChild,
+                  type: WARNING,
+                  content: Lang.sprintf('QA_FAKE_HEADING', boldtext),
+                  inline: false,
+                  position: 'beforebegin',
+                });
               }
             }
           }
 
           // If paragraph only contains <p><strong>...</strong></p>.
           if (/^<(strong)>.+<\/\1>$/.test($el.innerHTML.trim())) {
-            // Although only flag if it:
-            // 1) Has less than 120 characters (typical heading length).
-            // 2) The previous element is not a heading.
-            const prevElement = $el.previousElementSibling;
-            let tagName = '';
-            boldtext = $el.textContent;
+            boldtext = getTexted;
+            const prevSibling = $el.previousElementSibling;
+            const maybeSentence = boldtext.match(/[.;?!"]/) !== null;
 
-            if (prevElement !== null) {
-              tagName = prevElement.tagName;
-            }
-
-            if (!/[*]$/.test(boldtext) && !$el.closest('table') && boldtext.length <= 120 && tagName.charAt(0) !== 'H') {
-              $el.classList.add('sa11y-fake-heading', 'sa11y-warning-border');
-              $el.insertAdjacentHTML('beforebegin',
-                this.annotate(WARNING, Lang.sprintf('QA_FAKE_HEADING', boldtext)));
+            if (prevSibling !== null && prevSibling.matches(ignoreElements)) ; else if (
+              !/[*]$/.test(boldtext)
+              && (boldtext.length >= 4 && boldtext.length <= 120)
+              && !$el.closest(ignoreParents)
+              && maybeSentence === false
+            ) {
+              this.found.push({
+                element: $el,
+                type: WARNING,
+                content: Lang.sprintf('QA_FAKE_HEADING', boldtext),
+                inline: false,
+                position: 'beforebegin',
+              });
             }
           }
+
+          // Find pretend paragraph headings
+          const computeLargeParagraphs = ($elem) => {
+            const size = getComputedStyle($elem).fontSize.replace('px', '');
+            const ignore = 'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level], blockquote';
+            const getText = this.getText($elem);
+            const prevSibling = $elem.previousElementSibling;
+            const maybeSentence = getText.match(/[.;?!"]/) !== null;
+
+            if (prevSibling !== null && prevSibling.matches(ignore)) ; else if (
+              size >= 24
+              && !$elem.closest(ignore)
+              && (getText.length >= 4 && getText.length <= 120)
+              && maybeSentence === false
+            ) {
+              this.found.push({
+                element: $elem,
+                type: WARNING,
+                content: Lang.sprintf('QA_FAKE_HEADING', getText),
+                inline: false,
+                position: 'beforebegin',
+              });
+            }
+          };
+          computeLargeParagraphs($el);
         });
       }
 
@@ -5754,8 +6272,13 @@ class Sa11y {
               }
             }
             if (hit) {
-              $el.insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang.sprintf('QA_SHOULD_BE_LIST', firstPrefix)));
-              $el.classList.add('sa11y-warning-border');
+              this.found.push({
+                element: $el,
+                type: WARNING,
+                content: Lang.sprintf('QA_SHOULD_BE_LIST', firstPrefix),
+                inline: false,
+                position: 'beforebegin',
+              });
               activeMatch = firstPrefix;
             } else {
               activeMatch = '';
@@ -5782,16 +6305,17 @@ class Sa11y {
           }
           const uppercasePattern = /([A-Z]{2,}[ ])([A-Z]{2,}[ ])([A-Z]{2,}[ ])([A-Z]{2,})/g;
           const detectUpperCase = thisText.match(uppercasePattern);
+          const dismissKey = this.prepareDismissal(thisText);
 
           if (detectUpperCase && detectUpperCase[0].length > 10) {
-            const parentClickable = $el.closest('a, button');
-            if (parentClickable) {
-              parentClickable.insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang._('QA_UPPERCASE_WARNING')));
-              parentClickable.classList.add('sa11y-warning-border');
-            } else {
-              $el.classList.add('sa11y-warning-border');
-              $el.insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang._('QA_UPPERCASE_WARNING')));
-            }
+            this.found.push({
+              element: $el,
+              type: WARNING,
+              content: Lang._('QA_UPPERCASE_WARNING'),
+              inline: false,
+              position: 'beforebegin',
+              dismiss: dismissKey,
+            });
           }
         };
         this.paragraphs.forEach(($el) => checkCaps($el));
@@ -5802,16 +6326,20 @@ class Sa11y {
 
       // Error: Duplicate IDs
       if (option.duplicateIdQA === true) {
-        const ids = Array.from(this.root.querySelectorAll('[id]'));
         const allIds = {};
-        ids.forEach(($el) => {
+        this.ids.forEach(($el) => {
           const { id } = $el;
           if (id) {
             if (allIds[id] === undefined) {
               allIds[id] = 1;
             } else {
-              $el.classList.add('sa11y-error-border');
-              $el.insertAdjacentHTML('afterend', this.annotate(ERROR, Lang.sprintf('QA_DUPLICATE_ID', id), true));
+              this.found.push({
+                element: $el,
+                type: ERROR,
+                content: Lang.sprintf('QA_DUPLICATE_ID', id),
+                inline: true,
+                position: 'beforebegin',
+              });
             }
           }
         });
@@ -5820,18 +6348,33 @@ class Sa11y {
       // Warning: Flag underline text.
       if (option.underlinedTextQA === true) {
         // Find all <u> tags.
-        const underline = Array.from(this.root.querySelectorAll('u'));
-        underline.forEach(($el) => {
-          $el.classList.add('sa11y-warning-text');
-          $el.insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang._('QA_TEXT_UNDERLINE_WARNING'), true));
+        this.underlines.forEach(($el) => {
+          const text = this.getText($el);
+          const dismissKey = this.prepareDismissal(text);
+          this.found.push({
+            element: $el,
+            type: WARNING,
+            content: Lang._('QA_TEXT_UNDERLINE_WARNING'),
+            inline: true,
+            position: 'beforebegin',
+            dismiss: dismissKey,
+          });
         });
         // Find underline based on computed style.
         const computeUnderline = ($el) => {
           const style = getComputedStyle($el);
           const decoration = style.textDecorationLine;
+          const text = this.getText($el);
+          const dismissKey = this.prepareDismissal(text);
           if (decoration === 'underline') {
-            $el.classList.add('sa11y-warning-text');
-            $el.insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang._('QA_TEXT_UNDERLINE_WARNING')));
+            this.found.push({
+              element: $el,
+              type: WARNING,
+              content: Lang._('QA_TEXT_UNDERLINE_WARNING'),
+              inline: false,
+              position: 'beforebegin',
+              dismiss: dismissKey,
+            });
           }
         };
         this.paragraphs.forEach(($el) => computeUnderline($el));
@@ -5845,147 +6388,142 @@ class Sa11y {
       if (option.pageTitleQA === true) {
         const $title = document.querySelector('title');
         if (!$title || $title.textContent.trim().length === 0) {
-          this.panel.insertAdjacentHTML('afterend', this.annotateBanner(ERROR, Lang._('QA_PAGE_TITLE')));
+          this.found.push({
+            type: ERROR,
+            content: Lang._('QA_PAGE_TITLE'),
+          });
         }
       }
 
       // Warning: Find inappropriate use of <sup> and <sub> tags.
       if (option.subscriptQA === true) {
-        const $subscript = Array.from(this.root.querySelectorAll('sup, sub'));
-        $subscript.forEach(($el) => {
-          if ($el.textContent.trim().length >= 80) {
-            $el.classList.add('sa11y-warning-text');
-            $el.insertAdjacentHTML('afterend', this.annotate(WARNING, Lang._('QA_SUBSCRIPT_WARNING'), true));
+        this.subscripts.forEach(($el) => {
+          const text = this.getText($el);
+          const dismissKey = this.prepareDismissal(text);
+          if (text.length >= 80) {
+            this.found.push({
+              element: $el,
+              type: WARNING,
+              content: Lang._('QA_SUBSCRIPT_WARNING'),
+              inline: true,
+              position: 'beforebegin',
+              dismiss: dismissKey,
+            });
           }
         });
       }
     };
 
-    // ============================================================
-    // Rulesets: Contrast
-    // Color contrast plugin by jasonday: https://github.com/jasonday/color-contrast
-    // ============================================================
+    /**
+     * Rulesets: Contrast
+     * Color contrast plugin by Jason Day.
+     * @link https://github.com/jasonday/color-contrast
+     * @link https://github.com/gka/chroma.js (Parse RGB)
+    */
     /* eslint-disable */
     this.checkContrast = () => {
-      let contrastErrors = {
-        errors: [],
-        warnings: [],
-      };
-
-      const elements = this.contrast;
-      const contrast = {
-        // Parse rgb(r, g, b) and rgba(r, g, b, a) strings into an array.
-        // Adapted from https://github.com/gka/chroma.js
-        parseRgb(css) {
-          let i;
-          let m;
-          let rgb;
-          let f;
-          let k;
-          if (m = css.match(/rgb\(\s*(\-?\d+),\s*(\-?\d+)\s*,\s*(\-?\d+)\s*\)/)) {
-            rgb = m.slice(1, 4);
-            for (i = f = 0; f <= 2; i = ++f) {
-              rgb[i] = +rgb[i];
-            }
-            rgb[3] = 1;
-          } else if (m = css.match(/rgba\(\s*(\-?\d+),\s*(\-?\d+)\s*,\s*(\-?\d+)\s*,\s*([01]|[01]?\.\d+)\)/)) {
-            rgb = m.slice(1, 5);
-            for (i = k = 0; k <= 3; i = ++k) {
-              rgb[i] = +rgb[i];
-            }
-          }
-          return rgb;
-        },
-        // Based on http://www.w3.org/TR/WCAG20/#relativeluminancedef
-        relativeLuminance(c) {
-          const lum = [];
-          for (let i = 0; i < 3; i++) {
-            const v = c[i] / 255;
-            // eslint-disable-next-line no-restricted-properties
-            lum.push(v < 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
-          }
-          return (0.2126 * lum[0]) + (0.7152 * lum[1]) + (0.0722 * lum[2]);
-        },
-        // Based on http://www.w3.org/TR/WCAG20/#contrast-ratiodef
-        contrastRatio(x, y) {
-          const l1 = contrast.relativeLuminance(contrast.parseRgb(x));
-          const l2 = contrast.relativeLuminance(contrast.parseRgb(y));
-          return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
-        },
-
-        getBackground(el) {
-          const styles = getComputedStyle(el);
-          const bgColor = styles.backgroundColor;
-          const bgImage = styles.backgroundImage;
-          const rgb = `${contrast.parseRgb(bgColor)}`;
-          const alpha = rgb.split(',');
-
-          // if background has alpha transparency, flag manual check
-          if (alpha[3] < 1 && alpha[3] > 0) {
-            return 'alpha';
-          }
-
-          // if element has no background image, or transparent return bgColor
-          if (bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent' && bgImage === 'none' && alpha[3] !== '0') {
-            return bgColor;
-          } if (bgImage !== 'none') {
-            return 'image';
-          }
-
-          // retest if not returned above
-          if (el.tagName === 'HTML') {
-            return 'rgb(255, 255, 255)';
-          }
-          return contrast.getBackground(el.parentNode);
-        },
-        check() {
-          // resets results
-          contrastErrors = {
+      if (option.contrastPlugin === true) {
+        if (this.store.getItem('sa11y-remember-contrast') === 'On') {
+          let contrastErrors = {
             errors: [],
             warnings: [],
           };
 
-          for (let i = 0; i < elements.length; i++) {
-            const elem = elements[i];
-            if (contrast) {
-              const style = getComputedStyle(elem);
-              const { color } = style;
-              const { fill } = style;
-              const fontSize = parseInt(style.fontSize, 10);
-              const pointSize = fontSize * (3 / 4);
-              const { fontWeight } = style;
-              const htmlTag = elem.tagName;
-              const background = contrast.getBackground(elem);
-              const textString = [].reduce.call(elem.childNodes, (a, b) => a + (b.nodeType === 3 ? b.textContent : ''), '');
-              const text = textString.trim();
-              let ratio;
-              let error;
-              let warning;
-
-              if (htmlTag === 'SVG') {
-                ratio = Math.round(contrast.contrastRatio(fill, background) * 100) / 100;
-                if (ratio < 3) {
-                  error = {
-                    elem,
-                    ratio: `${ratio}:1`,
-                  };
-                  contrastErrors.errors.push(error);
+          const elements = this.contrast;
+          const contrast = {
+            // Parse rgb(r, g, b) and rgba(r, g, b, a) strings into an array.
+            parseRgb(css) {
+              let i;
+              let m;
+              let rgb;
+              let f;
+              let k;
+              if (m = css.match(/rgb\(\s*(\-?\d+),\s*(\-?\d+)\s*,\s*(\-?\d+)\s*\)/)) {
+                rgb = m.slice(1, 4);
+                for (i = f = 0; f <= 2; i = ++f) {
+                  rgb[i] = +rgb[i];
                 }
-              } else if (text.length || htmlTag === 'INPUT' || htmlTag === 'SELECT' || htmlTag === 'TEXTAREA') {
-                // does element have a background image - needs to be manually reviewed
-                if (background === 'image') {
-                  warning = {
-                    elem,
-                  };
-                  contrastErrors.warnings.push(warning);
-                } else if (background === 'alpha') {
-                  warning = {
-                    elem,
-                  };
-                  contrastErrors.warnings.push(warning);
-                } else {
-                  ratio = Math.round(contrast.contrastRatio(color, background) * 100) / 100;
-                  if (pointSize >= 18 || (pointSize >= 14 && fontWeight >= 700)) {
+                rgb[3] = 1;
+              } else if (m = css.match(/rgba\(\s*(\-?\d+),\s*(\-?\d+)\s*,\s*(\-?\d+)\s*,\s*([01]|[01]?\.\d+)\)/)) {
+                rgb = m.slice(1, 5);
+                for (i = k = 0; k <= 3; i = ++k) {
+                  rgb[i] = +rgb[i];
+                }
+              }
+              return rgb;
+            },
+            /**
+             * Based on @link http://www.w3.org/TR/WCAG20/#relativeluminancedef
+            */
+            relativeLuminance(c) {
+              const lum = [];
+              for (let i = 0; i < 3; i++) {
+                const v = c[i] / 255;
+                // eslint-disable-next-line no-restricted-properties
+                lum.push(v < 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
+              }
+              return (0.2126 * lum[0]) + (0.7152 * lum[1]) + (0.0722 * lum[2]);
+            },
+            /**
+             * Based on @link http://www.w3.org/TR/WCAG20/#contrast-ratiodef
+            */
+            contrastRatio(x, y) {
+              const l1 = contrast.relativeLuminance(contrast.parseRgb(x));
+              const l2 = contrast.relativeLuminance(contrast.parseRgb(y));
+              return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+            },
+
+            getBackground(el) {
+              const styles = getComputedStyle(el);
+              const bgColor = styles.backgroundColor;
+              const bgImage = styles.backgroundImage;
+              const rgb = `${contrast.parseRgb(bgColor)}`;
+              const alpha = rgb.split(',');
+
+              // if background has alpha transparency, flag manual check
+              if (alpha[3] < 1 && alpha[3] > 0) {
+                return 'alpha';
+              }
+
+              // if element has no background image, or transparent return bgColor
+              if (bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent' && bgImage === 'none' && alpha[3] !== '0') {
+                return bgColor;
+              } if (bgImage !== 'none') {
+                return 'image';
+              }
+
+              // retest if not returned above
+              if (el.tagName === 'HTML') {
+                return 'rgb(255, 255, 255)';
+              }
+              return contrast.getBackground(el.parentNode);
+            },
+            check() {
+              // resets results
+              contrastErrors = {
+                errors: [],
+                warnings: [],
+              };
+
+              for (let i = 0; i < elements.length; i++) {
+                const elem = elements[i];
+                if (contrast) {
+                  const style = getComputedStyle(elem);
+                  const { color } = style;
+                  const { fill } = style;
+                  const fontSize = parseInt(style.fontSize, 10);
+                  const pointSize = fontSize * (3 / 4);
+                  const { fontWeight } = style;
+                  const htmlTag = elem.tagName;
+                  const background = contrast.getBackground(elem);
+                  const textString = [].reduce.call(elem.childNodes, (a, b) => a + (b.nodeType === 3 ? b.textContent : ''), '');
+                  const text = textString.trim();
+                  let ratio;
+                  let error;
+                  let warning;
+
+                  if (htmlTag === 'SVG') {
+                    ratio = Math.round(contrast.contrastRatio(fill, background) * 100) / 100;
                     if (ratio < 3) {
                       error = {
                         elem,
@@ -5993,236 +6531,293 @@ class Sa11y {
                       };
                       contrastErrors.errors.push(error);
                     }
-                  } else if (ratio < 4.5) {
-                    error = {
-                      elem,
-                      ratio: `${ratio}:1`,
-                    };
-                    contrastErrors.errors.push(error);
+                  } else if (text.length || htmlTag === 'INPUT' || htmlTag === 'SELECT' || htmlTag === 'TEXTAREA') {
+                    // does element have a background image - needs to be manually reviewed
+                    if (background === 'image') {
+                      warning = {
+                        elem,
+                      };
+                      contrastErrors.warnings.push(warning);
+                    } else if (background === 'alpha') {
+                      warning = {
+                        elem,
+                      };
+                      contrastErrors.warnings.push(warning);
+                    } else {
+                      ratio = Math.round(contrast.contrastRatio(color, background) * 100) / 100;
+                      if (pointSize >= 18 || (pointSize >= 14 && fontWeight >= 700)) {
+                        if (ratio < 3) {
+                          error = {
+                            elem,
+                            ratio: `${ratio}:1`,
+                          };
+                          contrastErrors.errors.push(error);
+                        }
+                      } else if (ratio < 4.5) {
+                        error = {
+                          elem,
+                          ratio: `${ratio}:1`,
+                        };
+                        contrastErrors.errors.push(error);
+                      }
+                    }
                   }
                 }
               }
+              return contrastErrors;
+            },
+          };
+
+          contrast.check();
+
+          contrastErrors.errors.forEach((item) => {
+            const name = item.elem;
+            const cratio = item.ratio;
+            const clone = name.cloneNode(true);
+            const removeSa11yHeadingLabel = clone.querySelectorAll('.sa11y-heading-label');
+            for (let i = 0; i < removeSa11yHeadingLabel.length; i++) {
+              clone.removeChild(removeSa11yHeadingLabel[i]);
             }
-          }
-          return contrastErrors;
-        },
-      };
 
-      contrast.check();
+            const nodetext = this.fnIgnore(clone, 'script').textContent;
+            if (name.tagName === 'INPUT') {
+              this.found.push({
+                element: name,
+                type: ERROR,
+                content: Lang.sprintf('CONTRAST_INPUT_ERROR', cratio),
+                inline: false,
+                position: 'beforebegin',
+              });
+            } else {
+              this.found.push({
+                element: name,
+                type: ERROR,
+                content: Lang.sprintf('CONTRAST_ERROR', cratio, nodetext),
+                inline: false,
+                position: 'beforebegin',
+              });
+            }
+          });
 
-      contrastErrors.errors.forEach((item) => {
-        const name = item.elem;
-        const cratio = item.ratio;
-        const clone = name.cloneNode(true);
-        const removeSa11yHeadingLabel = clone.querySelectorAll('.sa11y-heading-label');
-        for (let i = 0; i < removeSa11yHeadingLabel.length; i++) {
-          clone.removeChild(removeSa11yHeadingLabel[i]);
+          contrastErrors.warnings.forEach((item) => {
+            const name = item.elem;
+            const clone = name.cloneNode(true);
+            const removeSa11yHeadingLabel = clone.querySelectorAll('.sa11y-heading-label');
+            for (let i = 0; i < removeSa11yHeadingLabel.length; i++) {
+              clone.removeChild(removeSa11yHeadingLabel[i]);
+            }
+            const nodetext = this.fnIgnore(clone, 'script').textContent;
+            this.found.push({
+              element: name,
+              type: WARNING,
+              content: Lang.sprintf('CONTRAST_WARNING', nodetext),
+              inline: false,
+              position: 'beforebegin',
+            });
+          });
         }
-
-        const nodetext = this.fnIgnore(clone, 'script').textContent;
-        if (name.tagName === 'INPUT') {
-          name.insertAdjacentHTML('beforebegin', this.annotate(ERROR, Lang.sprintf('CONTRAST_INPUT_ERROR', cratio)));
-        } else {
-          name.insertAdjacentHTML('beforebegin', this.annotate(ERROR, Lang.sprintf('CONTRAST_ERROR', cratio, nodetext)));
-        }
-      });
-
-      contrastErrors.warnings.forEach((item) => {
-        const name = item.elem;
-        const clone = name.cloneNode(true);
-        const removeSa11yHeadingLabel = clone.querySelectorAll('.sa11y-heading-label');
-        for (let i = 0; i < removeSa11yHeadingLabel.length; i++) {
-          clone.removeChild(removeSa11yHeadingLabel[i]);
-        }
-        const nodetext = this.fnIgnore(clone, 'script').textContent;
-        name.insertAdjacentHTML('beforebegin', this.annotate(WARNING, Lang.sprintf('CONTRAST_WARNING', nodetext)));
-      });
+      } else {
+        // Hide Contrast toggle if prop is set to false.
+        this.contrastItem.setAttribute('style', 'display: none !important;');
+        this.store.setItem('sa11y-remember-contrast', 'Off');
+      }
     };
     /* eslint-disable */
-    // ============================================================
-    // Rulesets: Readability
-    // Adapted from Greg Kraus' readability script: https://accessibility.oit.ncsu.edu/it-accessibility-at-nc-state/developers/tools/readability-bookmarklet/
-    // ============================================================
+
+    /**
+     * Rulesets: Readability
+     * Adapted from Greg Kraus. References for other non-english languages included below.
+     * @link https://accessibility.oit.ncsu.edu/it-accessibility-at-nc-state/developers/tools/readability-bookmarklet/
+     * @link https://core.ac.uk/download/pdf/6552422.pdf
+     * @link https://github.com/Yoast/YoastSEO.js/issues/267
+     * @link http://stackoverflow.com/questions/5686483/how-to-compute-number-of-syllables-in-a-word-in-javascript
+     * @link https://www.simoahava.com/analytics/calculate-readability-scores-for-content/#commento-58ac602191e5c6dc391015c5a6933cf3e4fc99d1dc92644024c331f1ee9b6093
+    */
     this.checkReadability = () => {
-      // Crude hack to add a period to the end of list items to make a complete sentence.
-      this.readability.forEach(($el) => {
-        const listText = $el.textContent;
-        if (listText.length >= 120) {
-          if (listText.charAt(listText.length - 1) !== '.') {
-            $el.insertAdjacentHTML('beforeend', "<span class='sa11y-readability-period sa11y-visually-hidden'>.</span>");
-          }
-        }
-      });
-
-      // Combine all page text.
-      const readabilityarray = [];
-      for (let i = 0; i < this.readability.length; i++) {
-        const current = this.readability[i];
-        if (this.getText(current) !== '') {
-          readabilityarray.push(current.textContent);
-        }
-      }
-      const pageText = readabilityarray.join(' ').trim().toString();
-
-      /* Flesch Reading Ease for English, French, German, Dutch, and Italian.
-        Reference: https://core.ac.uk/download/pdf/6552422.pdf
-        Reference: https://github.com/Yoast/YoastSEO.js/issues/267 */
-      if (['en', 'fr', 'de', 'nl', 'it'].includes(option.readabilityLang)) {
-        // Compute syllables: http://stackoverflow.com/questions/5686483/how-to-compute-number-of-syllables-in-a-word-in-javascript
-        const numberOfSyllables = (el) => {
-          let wordCheck = el;
-          wordCheck = wordCheck.toLowerCase().replace('.', '').replace('\n', '');
-          if (wordCheck.length <= 3) {
-            return 1;
-          }
-          wordCheck = wordCheck.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
-          wordCheck = wordCheck.replace(/^y/, '');
-          const syllableString = wordCheck.match(/[aeiouy]{1,2}/g);
-          let syllables = 0;
-
-          const syllString = !!syllableString;
-          if (syllString) {
-            syllables = syllableString.length;
-          }
-          return syllables;
-        };
-
-        // Words
-        const wordsRaw = pageText.replace(/[.!?-]+/g, ' ').split(' ');
-        let words = 0;
-        for (let i = 0; i < wordsRaw.length; i++) {
-        // eslint-disable-next-line eqeqeq
-          if (wordsRaw[i] != 0) {
-            words += 1;
-          }
-        }
-
-        // Sentences
-        const sentenceRaw = pageText.split(/[.!?]+/);
-        let sentences = 0;
-        for (let i = 0; i < sentenceRaw.length; i++) {
-          if (sentenceRaw[i] !== '') {
-            sentences += 1;
-          }
-        }
-
-        // Syllables
-        let totalSyllables = 0;
-        let syllables1 = 0;
-        let syllables2 = 0;
-        for (let i = 0; i < wordsRaw.length; i++) {
-        // eslint-disable-next-line eqeqeq
-          if (wordsRaw[i] != 0) {
-            const syllableCount = numberOfSyllables(wordsRaw[i]);
-            if (syllableCount === 1) {
-              syllables1 += 1;
+      if (option.readabilityPlugin === true) {
+        if (this.store.getItem('sa11y-remember-readability') === 'On') {
+          // Crude hack to add a period to the end of list items to make a complete sentence.
+          this.readability.forEach(($el) => {
+            const listText = $el.textContent;
+            if (listText.length >= 120) {
+              if (listText.charAt(listText.length - 1) !== '.') {
+                $el.insertAdjacentHTML('beforeend', "<span class='sa11y-readability-period sa11y-visually-hidden'>.</span>");
+              }
             }
-            if (syllableCount === 2) {
-              syllables2 += 1;
+          });
+
+          // Combine all page text.
+          const readabilityarray = [];
+          for (let i = 0; i < this.readability.length; i++) {
+            const current = this.readability[i];
+            const getText = this.getText(current);
+            if (getText !== '') {
+              readabilityarray.push(getText);
             }
-            totalSyllables += syllableCount;
+          }
+          const pageText = readabilityarray.join(' ').toString();
+
+          /* Flesch Reading Ease for English, French, German, Dutch, and Italian. */
+          if (['en', 'fr', 'de', 'nl', 'it'].includes(option.readabilityLang)) {
+            // Compute syllables
+            const numberOfSyllables = (el) => {
+              let wordCheck = el;
+              wordCheck = wordCheck.toLowerCase().replace('.', '').replace('\n', '');
+              if (wordCheck.length <= 3) {
+                return 1;
+              }
+              wordCheck = wordCheck.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
+              wordCheck = wordCheck.replace(/^y/, '');
+              const syllableString = wordCheck.match(/[aeiouy]{1,2}/g);
+              let syllables = 0;
+
+              const syllString = !!syllableString;
+              if (syllString) {
+                syllables = syllableString.length;
+              }
+              return syllables;
+            };
+
+            // Words
+            const wordsRaw = pageText.replace(/[.!?-]+/g, ' ').split(' ');
+            let words = 0;
+            for (let i = 0; i < wordsRaw.length; i++) {
+            // eslint-disable-next-line eqeqeq
+              if (wordsRaw[i] != 0) {
+                words += 1;
+              }
+            }
+
+            // Sentences
+            const sentenceRaw = pageText.split(/[.!?]+/);
+            let sentences = 0;
+            for (let i = 0; i < sentenceRaw.length; i++) {
+              if (sentenceRaw[i] !== '') {
+                sentences += 1;
+              }
+            }
+
+            // Syllables
+            let totalSyllables = 0;
+            let syllables1 = 0;
+            let syllables2 = 0;
+            for (let i = 0; i < wordsRaw.length; i++) {
+            // eslint-disable-next-line eqeqeq
+              if (wordsRaw[i] != 0) {
+                const syllableCount = numberOfSyllables(wordsRaw[i]);
+                if (syllableCount === 1) {
+                  syllables1 += 1;
+                }
+                if (syllableCount === 2) {
+                  syllables2 += 1;
+                }
+                totalSyllables += syllableCount;
+              }
+            }
+
+            let flesch = false;
+            if (option.readabilityLang === 'en') {
+              flesch = 206.835 - (1.015 * (words / sentences)) - (84.6 * (totalSyllables / words));
+            } else if (option.readabilityLang === 'fr') {
+              flesch = 207 - (1.015 * (words / sentences)) - (73.6 * (totalSyllables / words));
+            } else if (option.readabilityLang === 'es') {
+              flesch = 206.84 - (1.02 * (words / sentences)) - (0.60 * (100 * (totalSyllables / words)));
+            } else if (option.readabilityLang === 'de') {
+              flesch = 180 - (words / sentences) - (58.5 * (totalSyllables / words));
+            } else if (option.readabilityLang === 'nl') {
+              flesch = 206.84 - (0.77 * (100 * (totalSyllables / words))) - (0.93 * (words / sentences));
+            } else if (option.readabilityLang === 'it') {
+              flesch = 217 - (1.3 * (words / sentences)) - (0.6 * (100 * (totalSyllables / words)));
+            }
+
+            if (pageText.length === 0) {
+              this.readabilityInfo.innerHTML = Lang._('READABILITY_NO_P_OR_LI_MESSAGE');
+            } else if (words > 30) {
+              // Score must be between 0 and 100%.
+              if (flesch > 100) {
+                flesch = 100;
+              } else if (flesch < 0) {
+                flesch = 0;
+              }
+
+              const fleschScore = flesch.toFixed(1);
+              const avgWordsPerSentence = (words / sentences).toFixed(1);
+              const complexWords = Math.round(100 * ((words - (syllables1 + syllables2)) / words));
+
+              // Flesch score: WCAG AAA pass if greater than 60
+              if (fleschScore >= 0 && fleschScore < 30) {
+                this.readabilityInfo.innerHTML = `${fleschScore} <span class="sa11y-readability-score">${Lang._('LANG_VERY_DIFFICULT')}</span>`;
+              } else if (fleschScore > 31 && fleschScore < 49) {
+                this.readabilityInfo.innerHTML = `${fleschScore} <span class="sa11y-readability-score">${Lang._('LANG_DIFFICULT')}</span>`;
+              } else if (fleschScore > 50 && fleschScore < 60) {
+                this.readabilityInfo.innerHTML = `${fleschScore} <span class="sa11y-readability-score">${Lang._('LANG_FAIRLY_DIFFICULT')}</span>`;
+              } else {
+                this.readabilityInfo.innerHTML = `${fleschScore} <span class="sa11y-readability-score">${Lang._('LANG_GOOD')}</span>`;
+              }
+              // Flesch details
+              this.readabilityDetails.innerHTML = `
+              <li><strong>${Lang._('LANG_AVG_SENTENCE')}</strong> ${avgWordsPerSentence}</li>
+              <li><strong>${Lang._('LANG_COMPLEX_WORDS')}</strong> ${complexWords}%</li>
+              <li><strong>${Lang._('LANG_TOTAL_WORDS')}</strong> ${words}</li>`;
+            } else {
+              this.readabilityInfo.textContent = Lang._('READABILITY_NOT_ENOUGH_CONTENT_MESSAGE');
+            }
+          }
+
+          /* Lix: Danish, Finnish, Norwegian (Bokmål & Nynorsk), Swedish. */
+          if (['sv', 'fi', 'da', 'no', 'nb', 'nn'].includes(option.readabilityLang)) {
+            const calculateLix = (text) => {
+              const lixWords = () => text.replace(/[-'.]/ig, '').split(/[^a-zA-ZöäåÖÄÅÆæØø0-9]/g).filter(Boolean);
+              const splitSentences = () => {
+                const splitter = /\?|!|\.|\n/g;
+                const arrayOfSentences = text.split(splitter).filter(Boolean);
+                return arrayOfSentences;
+              };
+              const wordCount = lixWords().length;
+              const longWordsCount = lixWords().filter((wordsArray) => wordsArray.length > 6).length;
+              const sentenceCount = splitSentences().length;
+              const score = Math.round((wordCount / sentenceCount) + ((longWordsCount * 100) / wordCount));
+              const avgWordsPerSentence = (wordCount / sentenceCount).toFixed(1);
+              const complexWords = Math.round(100 * (longWordsCount / wordCount));
+              return {
+                score, avgWordsPerSentence, complexWords, wordCount,
+              };
+            };
+
+            // Update panel.
+            const lix = calculateLix(pageText);
+
+            if (pageText.length === 0) {
+              this.readabilityInfo.innerHTML = Lang._('READABILITY_NO_P_OR_LI_MESSAGE');
+            } else if (lix.wordCount > 30) {
+              if (lix.score >= 0 && lix.score < 39) {
+                this.readabilityInfo.innerHTML = `${lix.score} <span class="sa11y-readability-score">${Lang._('LANG_GOOD')}</span>`;
+              } else if (lix.score > 40 && lix.score < 50) {
+                this.readabilityInfo.innerHTML = `${lix.score} <span class="sa11y-readability-score">${Lang._('LANG_FAIRLY_DIFFICULT')}</span>`;
+              } else if (lix.score > 51 && lix.score < 61) {
+                this.readabilityInfo.innerHTML = `${lix.score} <span class="sa11y-readability-score">${Lang._('LANG_DIFFICULT')}</span>`;
+              } else {
+                this.readabilityInfo.innerHTML = `${lix.score} <span class="sa11y-readability-score">${Lang._('LANG_VERY_DIFFICULT')}</span>`;
+              }
+
+              // LIX details
+              this.readabilityDetails.innerHTML = `
+                <li><strong>${Lang._('LANG_AVG_SENTENCE')}</strong> ${lix.avgWordsPerSentence}</li>
+                <li><strong>${Lang._('LANG_COMPLEX_WORDS')}</strong> ${lix.complexWords}%</li>
+                <li><strong>${Lang._('LANG_TOTAL_WORDS')}</strong> ${lix.wordCount}</li>`;
+            } else {
+              this.readabilityInfo.textContent = Lang._('READABILITY_NOT_ENOUGH_CONTENT_MESSAGE');
+            }
           }
         }
-
-        let flesch = false;
-        if (option.readabilityLang === 'en') {
-          flesch = 206.835 - (1.015 * (words / sentences)) - (84.6 * (totalSyllables / words));
-        } else if (option.readabilityLang === 'fr') {
-          flesch = 207 - (1.015 * (words / sentences)) - (73.6 * (totalSyllables / words));
-        } else if (option.readabilityLang === 'es') {
-          flesch = 206.84 - (1.02 * (words / sentences)) - (0.60 * (100 * (totalSyllables / words)));
-        } else if (option.readabilityLang === 'de') {
-          flesch = 180 - (words / sentences) - (58.5 * (totalSyllables / words));
-        } else if (option.readabilityLang === 'nl') {
-          flesch = 206.84 - (0.77 * (100 * (totalSyllables / words))) - (0.93 * (words / sentences));
-        } else if (option.readabilityLang === 'it') {
-          flesch = 217 - (1.3 * (words / sentences)) - (0.6 * (100 * (totalSyllables / words)));
-        }
-
-        // Update panel.
-        const $readabilityinfo = document.getElementById('sa11y-readability-info');
-
-        if (pageText.length === 0) {
-          $readabilityinfo.innerHTML = Lang._('READABILITY_NO_P_OR_LI_MESSAGE');
-        } else if (words > 30) {
-          // Score must be between 0 and 100%.
-          if (flesch > 100) {
-            flesch = 100;
-          } else if (flesch < 0) {
-            flesch = 0;
-          }
-
-          const fleschScore = flesch.toFixed(1);
-          const avgWordsPerSentence = (words / sentences).toFixed(1);
-          const complexWords = Math.round(100 * ((words - (syllables1 + syllables2)) / words));
-
-          // Flesch score: WCAG AAA pass if greater than 60
-          if (fleschScore >= 0 && fleschScore < 30) {
-            $readabilityinfo.innerHTML = `${fleschScore} <span class="sa11y-readability-score">${Lang._('LANG_VERY_DIFFICULT')}</span>`;
-          } else if (fleschScore > 31 && fleschScore < 49) {
-            $readabilityinfo.innerHTML = `${fleschScore} <span class="sa11y-readability-score">${Lang._('LANG_DIFFICULT')}</span>`;
-          } else if (fleschScore > 50 && fleschScore < 60) {
-            $readabilityinfo.innerHTML = `${fleschScore} <span class="sa11y-readability-score">${Lang._('LANG_FAIRLY_DIFFICULT')}</span>`;
-          } else {
-            $readabilityinfo.innerHTML = `${fleschScore} <span class="sa11y-readability-score">${Lang._('LANG_GOOD')}</span>`;
-          }
-          // Flesch details
-          document.getElementById('sa11y-readability-details').innerHTML = `
-          <li><strong>${Lang._('LANG_AVG_SENTENCE')}</strong> ${avgWordsPerSentence}</li>
-          <li><strong>${Lang._('LANG_COMPLEX_WORDS')}</strong> ${complexWords}%</li>
-          <li><strong>${Lang._('LANG_TOTAL_WORDS')}</strong> ${words}</li>`;
-        } else {
-          $readabilityinfo.textContent = Lang._('READABILITY_NOT_ENOUGH_CONTENT_MESSAGE');
-        }
-      }
-
-      /* Lix: Danish, Finnish, Norwegian (Bokmål & Nynorsk), Swedish. To-do: More research needed.
-      Reference: https://www.simoahava.com/analytics/calculate-readability-scores-for-content/#commento-58ac602191e5c6dc391015c5a6933cf3e4fc99d1dc92644024c331f1ee9b6093 */
-      if (['sv', 'fi', 'da', 'no', 'nb', 'nn'].includes(option.readabilityLang)) {
-        const calculateLix = (text) => {
-          const lixWords = () => text.replace(/[-'.]/ig, '').split(/[^a-zA-ZöäåÖÄÅÆæØø0-9]/g).filter(Boolean);
-          const splitSentences = () => {
-            const splitter = /\?|!|\.|\n/g;
-            const arrayOfSentences = text.split(splitter).filter(Boolean);
-            return arrayOfSentences;
-          };
-          const wordCount = lixWords().length;
-          const longWordsCount = lixWords().filter((wordsArray) => wordsArray.length > 6).length;
-          const sentenceCount = splitSentences().length;
-          const score = Math.round((wordCount / sentenceCount) + ((longWordsCount * 100) / wordCount));
-          const avgWordsPerSentence = (wordCount / sentenceCount).toFixed(1);
-          const complexWords = Math.round(100 * (longWordsCount / wordCount));
-          return {
-            score, avgWordsPerSentence, complexWords, wordCount,
-          };
-        };
-
-        // Update panel.
-        const $readabilityinfo = document.getElementById('sa11y-readability-info');
-        const lix = calculateLix(pageText);
-
-        if (pageText.length === 0) {
-          $readabilityinfo.innerHTML = Lang._('READABILITY_NO_P_OR_LI_MESSAGE');
-        } else if (lix.wordCount > 30) {
-          if (lix.score >= 0 && lix.score < 39) {
-            $readabilityinfo.innerHTML = `${lix.score} <span class="sa11y-readability-score">${Lang._('LANG_GOOD')}</span>`;
-          } else if (lix.score > 40 && lix.score < 50) {
-            $readabilityinfo.innerHTML = `${lix.score} <span class="sa11y-readability-score">${Lang._('LANG_FAIRLY_DIFFICULT')}</span>`;
-          } else if (lix.score > 51 && lix.score < 61) {
-            $readabilityinfo.innerHTML = `${lix.score} <span class="sa11y-readability-score">${Lang._('LANG_DIFFICULT')}</span>`;
-          } else {
-            $readabilityinfo.innerHTML = `${lix.score} <span class="sa11y-readability-score">${Lang._('LANG_VERY_DIFFICULT')}</span>`;
-          }
-          // LIX details
-          document.getElementById('sa11y-readability-details').innerHTML = `
-            <li><strong>${Lang._('LANG_AVG_SENTENCE')}</strong> ${lix.avgWordsPerSentence}</li>
-            <li><strong>${Lang._('LANG_COMPLEX_WORDS')}</strong> ${lix.complexWords}%</li>
-            <li><strong>${Lang._('LANG_TOTAL_WORDS')}</strong> ${lix.wordCount}</li>`;
-        } else {
-          $readabilityinfo.textContent = Lang._('READABILITY_NOT_ENOUGH_CONTENT_MESSAGE');
-        }
+      } else {
+        // Hide Readability toggle and panel if prop is set to false.
+        this.readabilityItem.setAttribute('style', 'display: none !important;');
+        this.readabilityPanel.classList.remove('sa11y-active');
       }
     };
+
+    // Initialize Sa11y.
     this.initialize();
   }
 }

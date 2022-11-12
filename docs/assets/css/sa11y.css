@@ -1,11 +1,11 @@
-/*-----------------------------------------------------------------------
-* Sa11y, the accessibility quality assurance assistant.
-* @author: Development led by Adam Chaboryk, CPWA
-* @acknowledgements: https://sa11y.netlify.app/acknowledgements/
-* @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
-* Copyright (c) 2020 - 2022 Toronto Metropolitan University (formerly Ryerson University).
-* The above copyright notice shall be included in all copies or substantial portions of the Software.
-------------------------------------------------------------------------*/
+/**
+ * Sa11y, the accessibility quality assurance assistant.
+ * @author: Development led by Adam Chaboryk, CPWA. <adam.chaboryk@ryerson.ca>
+ * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
+ * @acknowledgements: https://this.netlify.app/acknowledgements/
+ * @copyright (c) 2020 - 2022 Toronto Metropolitan University (formerly Ryerson University).
+ * The above copyright notice shall be included in all copies or substantial portions of the Software.
+*/
 :root {
   --sa11y-font-face: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
       "Helvetica Neue", Arial, "FontAwesome", "Font Awesome 5 Free", "Font Awesome 5 Pro", "Font Awesome 6 Free", "Font Awesome 6 Pro", sans-serif;
@@ -274,7 +274,7 @@ html[data-sa11y-theme=dark] {
   border-top: 4px solid transparent !important;
   border-bottom: 4px solid transparent !important;
   -webkit-animation: sa11y-rotate 1.5s ease;
-  animation: sa11y-rotate 1.5s ease;
+  animation: sa11y-rotate 1s ease;
   animation-fill-mode: forwards;
 }
 
@@ -971,10 +971,12 @@ button.sa11y-warning-btn-text:focus {
   font-size: var(--sa11y-normal-text) !important;
 }
 
+[data-sa11y-error],
 .sa11y-error-border {
   outline: 5px solid var(--sa11y-error) !important;
 }
 
+[data-sa11y-warning],
 .sa11y-warning-border {
   outline: 5px solid var(--sa11y-warning) !important;
 }
@@ -1013,6 +1015,7 @@ a.sa11y-good-text,
   color: var(--sa11y-good-text) !important;
 }
 
+[data-sa11y-error-inline],
 a.sa11y-error-text,
 .sa11y-error-text {
   border-radius: 0.25em !important;
@@ -1022,7 +1025,7 @@ a.sa11y-error-text,
   color: var(--sa11y-error-text) !important;
 }
 
-.sa11y-warning-uppercase,
+[data-sa11y-warning-inline],
 a.sa11y-warning-text,
 .sa11y-warning-text {
   border-radius: 0.25em !important;
@@ -1095,7 +1098,9 @@ a.sa11y-warning-text,
 .sa11y-warning-message a:focus,
 .sa11y-good-message a:hover,
 .sa11y-good-message a:focus {
+  box-shadow: 0 0 0 5px var(--sa11y-focus-color) !important;
   text-decoration: none !important;
+  cursor: pointer;
 }
 
 .sa11y-error-message:before,
@@ -1129,10 +1134,11 @@ span.sa11y-label-visible {
 span.sa11y-heading-label {
   background-color: #777678 !important;
   background-image: linear-gradient(to bottom right, #b629ce, #16aec2) !important;
-  border-radius: 3px !important;
+  border-radius: 5px !important;
+  border: 1px solid #36a5c3 !important;
   color: white !important;
   font-family: var(--sa11y-font-face) !important;
-  font-size: var(--sa11y-normal-text) !important;
+  font-size: var(--sa11y-large-text) !important;
   font-weight: 500 !important;
   line-height: normal !important;
   letter-spacing: normal !important;
@@ -1140,7 +1146,7 @@ span.sa11y-heading-label {
   padding: 3px !important;
   position: absolute !important;
   display: none;
-  text-shadow: none !important;
+  text-shadow: 1px 1px black !important;
   -webkit-text-fill-color: white !important;
   z-index: 200 !important;
 }
@@ -1427,6 +1433,16 @@ span.sa11y-heading-label {
 .tippy-box[data-theme~=sa11y-theme] a:hover,
 .tippy-box[data-theme~=sa11y-theme] a:focus {
   text-decoration: none !important;
+}
+
+.tippy-box[data-theme~=sa11y-theme] button {
+  background: var(--sa11y-panel-bg-secondary) !important;
+  border: 1px solid var(--sa11y-panel-bg-splitter) !important;
+  border-radius: 5px !important;
+  color: var(--sa11y-panel-primary) !important;
+  display: block !important;
+  margin: 6px 5px 5px 0 !important;
+  cursor: pointer;
 }
 
 /* Arrows */

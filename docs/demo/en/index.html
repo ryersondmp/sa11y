@@ -104,6 +104,8 @@
           <div class="example">
             <h4>Is a heading really a heading if it's a long sentence? Or is a content author just going for visual
               aesthetics? Headings longer than 160 characters will be flagged as a warning.</h4>
+              <hr>
+            <a href="#"><h4>What about hyperlinked headings? Is a heading really a heading if it's a long sentence? Or is a content author just going for visual aesthetics? Headings longer than 160 characters will be flagged as a warning.</h4></a>
           </div>
 
           <h3>Blockquotes used as headings</h3>
@@ -121,7 +123,7 @@
           </div>
 
           <h3>Heading contains an image without alt text</h3>
-          <p class="small">Expected: <span class="badge bg-danger">Error</span></p>
+          <p class="small">Expected: <span class="badge bg-danger">2 errors</span></p>
           <div class="example">
             <h4><img src="../assets/placeholder.svg" width="100"></h4>
           </div>
@@ -147,9 +149,7 @@
           </div>
 
           <div class="example">
-            <p><strong>This shouldn't be flagged since it's long and not necessarily a heading. It could just be a big
-                block
-                of bolded text. It is over 120 characters.</strong></p>
+            <p><strong>This shouldn't be flagged since it's long and not necessarily a heading but just a bolded sentence for extra emphasis.</strong></p>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
               dolore
               magna aliqua. Elit duis tristique sollicitudin nibh. Etiam erat velit scelerisque in dictum non
@@ -167,7 +167,7 @@
           <h4>Warning</h4>
           <div class="example">
             <p class="small">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
-            <p><strong>This will be flagged!</strong><br> Because it's a pretty substantial paragraph. Lorem ipsum
+            <p><strong>This will be flagged</strong><br> Because it's a pretty substantial paragraph. Lorem ipsum
               dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
               aliqua. Elit duis tristique sollicitudin nibh. Lorem ipsum dolor sit amet, consectetur adipiscing elit,
               sed do
@@ -178,7 +178,18 @@
               pharetra convallis posuere morbi leo urna.</p>
           </div>
 
-          <h4>Pass</h4>
+          <div class="example">
+            <p><strong>This will not be flagged. Has punctuation, maybe sentence?</strong><br> Lorem ipsum
+              dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+              aliqua. Elit duis tristique sollicitudin nibh. Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+              sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis tristique sollicitudin nibh. Etiam
+              erat
+              velit scelerisque in dictum non consectetur. Augue lacus viverra vitae congue eu consequat. Egestas
+              maecenas
+              pharetra convallis posuere morbi leo urna.</p>
+          </div>
+
           <div class="example">
             <p><strong>About us</strong><br>Will not be flagged because it's a small paragraph. Lorem ipsum dolor sit
               amet,
@@ -196,15 +207,44 @@
           </div>
 
           <div class="example">
-            <p><strong>This won't be flagged either since this bolded text is long and not necessarily a heading. It
-                could
-                just be a big block of bolded text. It is over 120 characters.</strong><br>Lorem ipsum dolor sit amet,
+            <p><strong>This won't be flagged either since this line of text is over 120 characters and not necessarily a heading it could just be a long sentence that was bolded for emphasis</strong><br>Lorem ipsum dolor sit amet,
               consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis
               tristique sollicitudin nibh. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
               tempor
               incididunt ut labore et dolore magna aliqua. Elit duis tristique sollicitudin nibh. Etiam erat velit
               scelerisque in dictum non consectetur. Augue lacus viverra vitae congue eu consequat. Egestas maecenas
               pharetra convallis posuere morbi leo urna.</p>
+          </div>
+
+          <h3>Large paragraph text pretending to be a heading</h3>
+          <p>If a paragraph tag has a font size of at least 25px.</p>
+          <div class="example">
+            <div class="row">
+              <div class="col-md-6">
+                <p style="font-size: 24px">About us</p>
+                <p><strong>Expected:</strong> <span class="badge bg-warning text-dark">Warning</span></p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ut consectetur arcu, vitae luctus lacus. Ut euismod arcu sed leo porta suscipit. Donec maximus eleifend diam vel pulvinar. Sed turpis mauris, eleifend et volutpat non, varius nec leo. Donec nec ligula in dui elementum venenatis.</p>
+              </div>
+              <div class="col-md-6">
+                <p style="font-size: 24px">How are you doing?</p>
+                <span><strong>Expected:</strong> nothing.</span>
+                <p>Since it has punctuation, assume it's not a heading. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ut consectetur arcu, vitae luctus lacus. Ut euismod arcu sed leo porta suscipit.</p>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <h4>A subheading before</h4>
+                <p style="font-size: 24px">About us</p>
+                <span><strong>Expected:</strong> nothing.</span>
+                <p>Previous sibling element is a heading, so don't tag. This is to prevent false positives or excessive annotations on the page. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+              </div>
+              <div class="col-md-6">
+                <h4><p style="font-size: 24px">About us</p></h4>
+                <span><strong>Expected:</strong> nothing.</span>
+                <p>A paragraph with 24px text nested within a Heading 4. This should not get flagged. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ut consectetur arcu, vitae luctus lacus.</p>
+              </div>
+            </div>
           </div>
 
           <hr class="mt-5">
@@ -635,6 +675,21 @@
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill text-center">
+                <h3 hidden>Ignore me</h3>
+                <button>
+                  <img src="../assets/placeholder.svg" alt width="100%" class="w-100">
+                  <h6>Learn more about the Canary Islands</h6>
+                </button>
+                <div class="card-body">
+                  <p class="card-text">Hyperlinked image contains skipped heading. Error is appended after the hyperlink to prevent nesting button inside hyperlink.</p>
+                </div>
+                <div class="card-footer">
+                  <p class="card-text">Expected: <br><span class="badge bg-success">Pass</span> & <span class="badge bg-danger">Error</span></p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 d-flex">
+              <div class="card mb-4 shadow-sm flex-fill text-center">
                 <a href="#" target="_blank"><img src="../assets/placeholder.svg" alt="Fix it again Tony!" width="100%"
                     class="w-100"></a>
                 <div class="card-body">
@@ -889,6 +944,26 @@
             <a href="#" class="btn btn-primary" aria-hidden="true">Learn more</a>
           </div>
 
+          <h4>Miscellaneous testing</h4>
+          <p>Other weird test cases.</p>
+          <div class="example">
+            <div class="row">
+              <div class="col-md-6">
+                <p>Link that has an SVG with a &lt;title&gt;foo&lt;/title&gt; tag.<br/> <strong>Expected:</strong> No annotation.</p>
+                <a href="#">
+                  <span class="bg-info">Learn more</span>
+                  <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" role="image" aria-labelledby="azxc">
+                    <!--! Font Awesome Pro 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
+                    <title id="azxc">about testing</title>
+                    <path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/>
+                  </svg>
+                </a>
+              </div>
+              <div class="col-md-6">
+              </div>
+            </div>
+          </div>
+
           <hr class="mt-5">
           <h2 id="list-item-4">Tables</h2>
           <h3>Proper table</h3>
@@ -1042,14 +1117,15 @@
             to find uppercase words that are at least 3 characters in length, however it will only be indicated as a
             warning if at least 5 uppercase words within an element is found. It only checks for uppercase words within
             the following elements: h1, h2, h3, h4, h5, h6, p, li, blockquote.</p>
-            <p class="small">Expected: <span class="badge bg-warning text-dark">3 warnings</span></p>
+            <p class="small">Expected: <span class="badge bg-warning text-dark">4 warnings</span></p>
           <div class="example">
             <p>FOR EXAMPLE, THIS WILL BE FLAGGED.</p>
             <p>FOR EXAMPLE, this WILL NOT be flagged.</p>
             <ul>
               <li>UPPERCASE TEXT WITHIN BULLETS will be flagged too.</li>
             </ul>
-            <h3>LET'S NOT FORGET ABOUT HEADINGS TOO!</h3>
+            <h3 class="mb-4">LET'S NOT FORGET ABOUT HEADINGS TOO!</h3>
+            <p><a href="#asdajfks" class="btn btn-primary">UPPERCASE TEXT WITHIN HYPERLINKS</button></a>
           </div>
 
           <h3>Underlined text</h3>
