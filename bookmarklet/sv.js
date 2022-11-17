@@ -2,8 +2,8 @@
  * Sa11y, the accessibility quality assurance assistant.
  * @language Swedish
  * @author: Development led by Adam Chaboryk, CPWA. <adam.chaboryk@ryerson.ca>
- * @link License: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
- * @link Acknowledgements: https://this.netlify.app/acknowledgements/
+ * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
+ * @acknowledgements https://sa11y.netlify.app/acknowledgements/
  * @copyright (c) 2020 - 2022 Toronto Metropolitan University (formerly Ryerson University).
  * The above copyright notice shall be included in all copies or substantial portions of the Software.
 */

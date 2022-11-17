@@ -9,8 +9,7 @@ export default class CustomChecks extends Sa11yCustomChecks {
 
     /* Add custom rulesets below. */
 
-    /* Custom messages for tooltips. */
-
+    /* Custom tooltips messages */
     const C = {
       ANNOUNCEMENT_MESSAGE:
         'More than one Announcement component found! The Announcement component should be used strategically and sparingly. It should be used to get attention or indicate that something is important. Misuse of this component makes it less effective or impactful. Secondly, this component is semantically labeled as an Announcement for people who use screen readers.',
@@ -23,12 +22,14 @@ export default class CustomChecks extends Sa11yCustomChecks {
     const $checkAnnouncement = document.querySelectorAll('.sa11y-announcement-component');
     if ($checkAnnouncement.length > 1) {
       for (let i = 1; i < $checkAnnouncement.length; i++) {
-        this.sa11y.found.push({
+        const key = this.sa11y.prepareDismissal($checkAnnouncement[i].textContent);
+        this.sa11y.results.push({
           element: $checkAnnouncement[i],
           type: WARNING,
           content: C.ANNOUNCEMENT_MESSAGE,
           inline: false,
           position: 'beforebegin',
+          dismiss: key,
         });
       }
     }
@@ -38,7 +39,7 @@ export default class CustomChecks extends Sa11yCustomChecks {
     $checkAccordions.forEach(($el) => {
       const checkForm = $el.querySelector('form');
       if (!!checkForm && checkForm.length) {
-        this.sa11y.found.push({
+        this.sa11y.results.push({
           element: $el,
           type: ERROR,
           content: C.ACCORDION_FORM_MESSAGE,

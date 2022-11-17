@@ -3307,8 +3307,8 @@ tippy.setDefaultProps({
  * Sa11y, the accessibility quality assurance assistant.
  * @version: 2.3.6
  * @author: Development led by Adam Chaboryk, CPWA. <adam.chaboryk@ryerson.ca>
- * @link License: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
- * @link Acknowledgements: https://this.netlify.app/acknowledgements/
+ * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
+ * @acknowledgements https://sa11y.netlify.app/acknowledgements/
  * @copyright (c) 2020 - 2022 Toronto Metropolitan University (formerly Ryerson University).
  * The above copyright notice shall be included in all copies or substantial portions of the Software.
 */
@@ -3411,10 +3411,11 @@ class Sa11y {
       ...options,
     };
 
-    // Global constants for annotations.
+    // Global constants.
     const ERROR = Lang._('ERROR');
     const WARNING = Lang._('WARNING');
     const GOOD = Lang._('GOOD');
+    const currentPage = window.location.pathname;
     this.html = document.querySelector('html');
 
     this.initialize = () => {
@@ -3445,6 +3446,7 @@ class Sa11y {
           this.mainToggle();
           this.skipToIssueTooltip();
           this.detectPageChanges();
+          this.dismissAnnotations();
 
           // Pass Sa11y instance to custom checker
           if (option.customChecks && option.customChecks.setSa11y) {
@@ -3553,6 +3555,9 @@ class Sa11y {
                   </button>
                 </li>
               </ul>
+              <div id="sa11y-dismissed-content">
+                <button id="sa11y-dismiss-button"></button>
+              </div>
             </div>
           </div>`
 
@@ -3569,9 +3574,10 @@ class Sa11y {
       // Main panel that conveys state of page.
       + `<div id="sa11y-panel-content">
           <button id="sa11y-cycle-toggle" type="button" aria-label="${Lang._('SHORTCUT_SCREEN_READER')}">
-              <div class="sa11y-panel-icon"></div>
+            <div class="sa11y-panel-icon"></div>
           </button>
-          <div id="sa11y-panel-text"><h1 class="sa11y-visually-hidden">${Lang._('PANEL_HEADING')}</h1>
+          <div id="sa11y-panel-text">
+            <h1 class="sa11y-visually-hidden">${Lang._('PANEL_HEADING')}</h1>
             <p id="sa11y-status" aria-live="polite"></p>
           </div>
         </div>`
@@ -3604,6 +3610,8 @@ class Sa11y {
       this.notificationBadge = document.getElementById('sa11y-notification-badge');
       this.notificationCount = document.getElementById('sa11y-notification-count');
       this.notificationText = document.getElementById('sa11y-notification-text');
+      this.dismissedContent = document.getElementById('sa11y-dismissed-content');
+      this.dismissedBadge = document.getElementById('sa11y-dismissed-badge');
       this.status = document.getElementById('sa11y-status');
 
       // Settings
@@ -3624,6 +3632,7 @@ class Sa11y {
       this.outlineToggle = document.getElementById('sa11y-outline-toggle');
       this.settingToggle = document.getElementById('sa11y-settings-toggle');
       this.skipButton = document.getElementById('sa11y-cycle-toggle');
+      this.dismissButton = document.getElementById('sa11y-dismiss-button');
 
       // Alerts
       this.alertPanel = document.getElementById('sa11y-panel-alert');
@@ -4061,6 +4070,14 @@ class Sa11y {
           }
           return true;
         },
+        removeItem(key) {
+          try {
+            localStorage.removeItem(key);
+          } catch (error) {
+            sessionStorage.removeItem(key);
+          }
+          return true;
+        },
       };
 
       /**
@@ -4148,7 +4165,7 @@ class Sa11y {
        * @param {String} text The node to start from.
        * @return {String} Returns 256 character string without spaces.
       */
-      this.prepareDismissal = (text) => String(text).substring(0, 256).replace(/\s/g, '');
+      this.prepareDismissal = (text) => String(text).substring(0, 256);
     };
 
     //----------------------------------------------------------------------
@@ -4328,10 +4345,10 @@ class Sa11y {
     this.detectPageChanges = () => {
       // Feature to detect page changes (e.g. SPAs).
       if (option.detectSPArouting === true) {
-        let url = window.location.href.split('#')[0];
+        let url = currentPage;
 
         const checkURL = this.debounce(async () => {
-          if (url !== window.location.href.split('#')[0]) {
+          if (url !== currentPage) {
             // If panel is closed.
             if (this.store.getItem('sa11y-remember-panel') === 'Closed' || !this.store.getItem('sa11y-remember-panel')) {
               this.panelActive = false;
@@ -4343,7 +4360,7 @@ class Sa11y {
               await this.checkAll();
             }
             // Performance: New URL becomes current.
-            url = window.location.href;
+            url = window.location.pathname;
           }
         }, 250);
         window.addEventListener('mousemove', checkURL);
@@ -4355,18 +4372,27 @@ class Sa11y {
     // Check all
     // ----------------------------------------------------------------------
     this.checkAll = async () => {
-      this.found = [];
+      this.results = [];
       this.headingOutline = [];
       this.errorCount = 0;
       this.warningCount = 0;
-      this.dismissedCount = 0;
 
+      // Get dismissed items and re-parse back into object.
+      this.dismissed = this.store.getItem('sa11y-dismissed');
+      this.dismissed = this.dismissed ? JSON.parse(this.dismissed) : [];
+
+      // Get count and show dismiss panel.
+      const dismissCount = this.dismissed.filter((item) => item.href === currentPage).length;
+      if (dismissCount) this.dismissedContent.classList.add('sa11y-active');
+      this.dismissButton.innerText = Lang.sprintf('PANEL_DISMISS_BUTTON', dismissCount);
+
+      // Find all elements on the page.
       this.findElements();
 
       // Ruleset checks
       this.checkHeaders();
       this.checkLinkText();
-      this.checkAltText();
+      this.checkImages();
       this.checkContrast();
       this.checkLabels();
       this.checkLinksAdvanced();
@@ -4379,13 +4405,21 @@ class Sa11y {
         option.customChecks.check();
       }
 
+      // Return element from results array that matches dismiss key and dismiss url. Then filter through matched objects.
+      const findKey = this.dismissed.map((e) => {
+        const found = this.results.find((f) => (e.key.includes(f.dismiss) && e.href === currentPage));
+        if (found === undefined) return '';
+        return found;
+      });
+      this.results = this.results.filter((issue) => !findKey.find((e) => e.dismiss === issue.dismiss));
+
       // Count number of issues on page.
       this.updateCount();
 
       // Update panel
       if (this.panelActive === true) {
-        // Annotate the page
-        this.found.forEach(($el, i) => {
+        // Paint the page with annotations.
+        this.results.forEach(($el, i) => {
           Object.assign($el, { id: i });
           this.annotate($el.element, $el.type, $el.content, $el.inline, $el.position, $el.id);
         });
@@ -4395,8 +4429,8 @@ class Sa11y {
         this.generatePageOutline();
         this.updateStatus();
 
+        // Extras.
         setTimeout(() => {
-          this.dismissAnnotations();
           this.detectOverflow();
           this.nudge();
         }, 0);
@@ -4410,8 +4444,8 @@ class Sa11y {
     // Count number of errors and warnings on page.
     // ============================================================
     this.updateCount = () => {
-      this.found.forEach(($el, i) => {
-        const issue = this.found[i].type;
+      this.results.forEach(($el, i) => {
+        const issue = this.results[i].type;
         if (issue === ERROR) {
           this.errorCount += 1;
         } else if (issue === WARNING) {
@@ -4498,45 +4532,53 @@ class Sa11y {
     };
 
     // ============================================================
-    // TO-DO: Dismissals system.
+    // Dismiss feature.
     // ============================================================
     this.dismissAnnotations = () => {
       if (option.dismissAnnotations === true) {
-        const dismiss = (event) => {
+        // Hide annotation upon click on dismiss button on warning.
+        const dismiss = async (event) => {
+          // Get dismissed array from localStorage.
+          let existingEntries = JSON.parse(this.store.getItem('sa11y-dismissed'));
+
           const element = event.target;
-          if (element.tagName === 'BUTTON' && element.classList.contains('sa11y-dismiss')) {
-            const tip = element.closest('[data-tippy-root]');
-            const tipID = parseInt(tip.getAttribute('id').replace(/\D/g, ''), 10);
-            const tipObj = this.tippy.find(($el) => $el.id === tipID);
-            const instanceID = parseInt(tipObj.reference.getAttribute('data-sa11y-annotation'), 10);
+          if (element.tagName === 'BUTTON' && element.hasAttribute('data-sa11y-dismiss')) {
+            // Find corresponding issue within main issues object and mark as dismissed.
+            const dismissItem = parseInt(element.getAttribute('data-sa11y-dismiss'), 10);
+            const object = this.results.find(($el) => $el.id === dismissItem);
 
-            const object = this.found.find(($el) => $el.id === instanceID);
-            Object.assign(object, { dismissed: true });
+            // If no existing entries, create empty array to iterate on.
+            if (existingEntries === null) existingEntries = [];
 
-            // Remove warning border.
-            const resetAttributes = ($el) => {
-              $el.forEach((x) => {
-                document.querySelectorAll(`[${x}="${instanceID}"]`).forEach((y) => y.removeAttribute(x));
-              });
+            // Dismissal object.
+            const dismissalDetails = {
+              key: object.dismiss,
+              href: currentPage,
             };
-            resetAttributes(['data-sa11y-warning', 'data-sa11y-warning-inline']);
 
-            // If warning is regarding PDFs...
-            if (object.content.includes('PDF') === true) {
-              const x = 'data-sa11y-warning-inline';
-              document.querySelectorAll(`[${x}="pdf"]`).forEach((y) => y.removeAttribute(x));
-            }
+            this.store.setItem('sa11y-dismiss-item', JSON.stringify(dismissalDetails));
+            existingEntries.push(dismissalDetails);
+            this.store.setItem('sa11y-dismissed', JSON.stringify(existingEntries));
+            this.store.removeItem('sa11y-dismiss-item'); // Remove temporary storage item.
+            this.dismissedContent.classList.add('sa11y-active'); // Make panel active.
 
-            // Remove annotation.
-            const btn = document.querySelector(`[data-sa11y-annotation="${instanceID}"]`);
-            const instance = btn.closest('.sa11y-instance, .sa11y-instance-inline');
-            instance.remove();
+            element.closest('[data-tippy-root]').remove(); // Remove tooltip.
 
-            // Remove tooltip.
-            tip.remove();
+            // Async scan upon dismiss.
+            this.resetAll(false);
+            await this.checkAll();
           }
         };
-        document.addEventListener('click', dismiss);
+        document.addEventListener('click', dismiss, false);
+
+        // Restore hidden alerts on the CURRENT page only.
+        this.dismissButton.onclick = async () => {
+          const filtered = this.dismissed.filter((item) => item.href !== currentPage);
+          this.store.setItem('sa11y-dismissed', JSON.stringify(filtered));
+          this.dismissedContent.classList.remove('sa11y-active');
+          this.resetAll(false);
+          await this.checkAll();
+        };
       }
     };
 
@@ -4940,6 +4982,16 @@ class Sa11y {
       // Create a single array that gets appended to heading outline, instead of creating a new HTML element everytime you iterate through each object.
       const outlineArray = [];
 
+      // Find all dismissed headings and update headingOutline array.
+      const findDismissedHeadings = this.dismissed.map((e) => {
+        const found = this.headingOutline.find((f) => (e.key.includes(f.dismiss) && e.href === currentPage));
+        if (found === undefined) return '';
+        return found;
+      });
+      findDismissedHeadings.forEach(($el) => {
+        Object.assign($el, { dismissedHeading: true });
+      });
+
       // Iterate through object that contains all headings (and error type).
       this.headingOutline.forEach((obj) => {
         const $el = obj.element;
@@ -4949,6 +5001,7 @@ class Sa11y {
         const issue = obj.type;
         const visibility = obj.hidden;
         const parent = obj.visibleParent;
+        const dismissed = obj.dismissedHeading;
 
         // Filter out specified headings in outlineIgnore prop.
         let ignoreArray = [];
@@ -4972,7 +5025,7 @@ class Sa11y {
               </a>
             </li>`;
             outlineArray.push(append);
-          } else if (issue === WARNING) {
+          } else if (issue === WARNING && !dismissed) {
             append = `
             <li class="sa11y-outline-${level}">
               <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
@@ -5034,9 +5087,10 @@ class Sa11y {
         // Make Page Outline clickable.
           const outlineLink = document.getElementById(`sa11y-link-${i}`);
           const hID = document.getElementById(`sa11y-h${i}`);
+          const h = hID.parentElement;
           const hParent = document.querySelector(`[data-sa11y-parent="h${i}"]`);
           const smooth = () => hID.scrollIntoView({ behavior: `${this.scrollBehaviour}`, block: 'center' });
-          const pulse = () => ((hParent !== null) ? this.addPulse(hParent) : this.addPulse($el));
+          const pulse = () => ((hParent !== null) ? this.addPulse(hParent) : this.addPulse(h));
           const smoothPulse = (e) => {
             if ((e.type === 'keyup' && e.code === 'Enter') || e.type === 'click') {
               smooth();
@@ -5139,7 +5193,7 @@ class Sa11y {
       message = this.prepTooltip(message);
 
       // Add dismiss button if prop enabled.
-      const dismiss = (option.dismissAnnotations === true && CSSName[type] === 'warning') ? "<button class='sa11y-dismiss'>Dismiss</button>" : '';
+      const dismiss = (option.dismissAnnotations === true && CSSName[type] === 'warning') ? `<button data-sa11y-dismiss='${index}'>${Lang._('DISMISS')}</button>` : '';
 
       const create = document.createElement('div');
 
@@ -5182,8 +5236,8 @@ class Sa11y {
       this.headings.forEach(($el, i) => {
         const text = this.computeTextNodeWithImage($el);
         const headingText = this.sanitizeHTML(text);
-        let level;
 
+        let level;
         if ($el.getAttribute('aria-level')) {
           level = +$el.getAttribute('aria-level');
         } else {
@@ -5198,7 +5252,7 @@ class Sa11y {
         if (level - prevLevel > 1 && i !== 0) {
           if (option.nonConsecutiveHeadingIsError === true) {
             error = Lang.sprintf('HEADING_NON_CONSECUTIVE_LEVEL', prevLevel, level);
-            this.found.push({
+            this.results.push({
               element: $el,
               type: ERROR,
               content: error,
@@ -5207,12 +5261,14 @@ class Sa11y {
             });
           } else {
             warning = Lang.sprintf('HEADING_NON_CONSECUTIVE_LEVEL', prevLevel, level);
-            this.found.push({
+            const key = this.prepareDismissal(level + headingText);
+            this.results.push({
               element: $el,
               type: WARNING,
               content: warning,
               inline: false,
               position: 'beforebegin',
+              dismiss: key,
             });
           }
         } else if (headingLength === 0) {
@@ -5220,7 +5276,7 @@ class Sa11y {
             const imgalt = $el.querySelector('img').getAttribute('alt');
             if (imgalt === null || imgalt === ' ' || imgalt === '') {
               error = Lang.sprintf('HEADING_EMPTY_WITH_IMAGE', level);
-              this.found.push({
+              this.results.push({
                 element: $el,
                 type: ERROR,
                 content: error,
@@ -5230,7 +5286,7 @@ class Sa11y {
             }
           } else {
             error = Lang.sprintf('HEADING_EMPTY', level);
-            this.found.push({
+            this.results.push({
               element: $el,
               type: ERROR,
               content: error,
@@ -5240,7 +5296,7 @@ class Sa11y {
           }
         } else if (i === 0 && level !== 1 && level !== 2) {
           error = Lang._('HEADING_FIRST');
-          this.found.push({
+          this.results.push({
             element: $el,
             type: ERROR,
             content: error,
@@ -5249,12 +5305,14 @@ class Sa11y {
           });
         } else if (headingLength > 170 && option.flagLongHeadings === true) {
           warning = Lang.sprintf('HEADING_LONG', headingLength);
-          this.found.push({
+          const key = this.prepareDismissal(level + headingText);
+          this.results.push({
             element: $el,
             type: WARNING,
             content: warning,
             inline: false,
             position: 'beforebegin',
+            dismiss: key,
           });
         }
         prevLevel = level;
@@ -5267,8 +5325,9 @@ class Sa11y {
             element: $el, headingLevel: level, text: headingText, index: i, type: ERROR, hidden: hiddenHeading, visibleParent: parent,
           });
         } else if (warning !== null) {
+          const key = this.prepareDismissal(level + headingText);
           this.headingOutline.push({
-            element: $el, headingLevel: level, text: headingText, index: i, type: WARNING, hidden: hiddenHeading, visibleParent: parent,
+            element: $el, headingLevel: level, text: headingText, index: i, type: WARNING, hidden: hiddenHeading, visibleParent: parent, dismiss: key,
           });
         } else if (error === null || warning === null) {
           this.headingOutline.push({
@@ -5278,7 +5337,7 @@ class Sa11y {
       });
       // Missing Heading 1
       if (this.headingOne.length === 0) {
-        this.found.push({
+        this.results.push({
           type: ERROR,
           content: Lang._('HEADING_MISSING_ONE'),
         });
@@ -5391,7 +5450,7 @@ class Sa11y {
           // Flag empty hyperlinks.
           if ($el && hasTitle) ; else if ($el.children.length) {
             // Has child elements (e.g. SVG or SPAN) <a><i></i></a>
-            this.found.push({
+            this.results.push({
               element: $el,
               type: ERROR,
               content: Lang._('LINK_EMPTY_LINK_NO_LABEL'),
@@ -5400,7 +5459,7 @@ class Sa11y {
             });
           } else {
             // Completely empty <a></a>
-            this.found.push({
+            this.results.push({
               element: $el,
               type: ERROR,
               content: Lang._('LINK_EMPTY'),
@@ -5412,7 +5471,7 @@ class Sa11y {
           // Contains stop words.
           if (hasAriaLabelledBy || hasAriaLabel || childAriaLabelledBy || childAriaLabel) {
             if (option.showGoodLinkButton === true) {
-              this.found.push({
+              this.results.push({
                 element: $el,
                 type: GOOD,
                 content: Lang.sprintf('LINK_LABEL', linkText),
@@ -5421,7 +5480,7 @@ class Sa11y {
               });
             }
           } else if ($el.getAttribute('aria-hidden') === 'true' && $el.getAttribute('tabindex') === '-1') ; else {
-            this.found.push({
+            this.results.push({
               element: $el,
               type: ERROR,
               content: Lang.sprintf('LINK_STOPWORD', error[0]),
@@ -5430,29 +5489,33 @@ class Sa11y {
             });
           }
         } else if (error[1] != null) {
+          const key = this.prepareDismissal(`link: ${linkText} ${error[1]}`);
           // Contains warning words.
-          this.found.push({
+          this.results.push({
             element: $el,
             type: WARNING,
             content: Lang.sprintf('LINK_BEST_PRACTICES', error[1]),
             inline: true,
             position: 'beforebegin',
+            dismiss: key,
           });
         } else if (error[2] != null) {
+          const key = this.prepareDismissal(`link: ${linkText} ${error[2]}`);
           // Contains URL in link text.
           if (linkText.length > 40) {
-            this.found.push({
+            this.results.push({
               element: $el,
               type: WARNING,
               content: Lang._('LINK_URL'),
               inline: true,
               position: 'beforebegin',
+              dismiss: key,
             });
           }
         } else if (hasAriaLabelledBy || hasAriaLabel || childAriaLabelledBy || childAriaLabel) {
           // If the link has any ARIA, append a "Good" link button.
           if (option.showGoodLinkButton === true) {
-            this.found.push({
+            this.results.push({
               element: $el,
               type: GOOD,
               content: Lang.sprintf('LINK_LABEL', linkText),
@@ -5501,12 +5564,14 @@ class Sa11y {
             if (linkText.length !== 0) {
               if (seen[linkTextTrimmed] && linkTextTrimmed.length !== 0) {
                 if (seen[href]) ; else {
-                  this.found.push({
+                  const key = this.prepareDismissal(`link: ${linkTextTrimmed}`);
+                  this.results.push({
                     element: $el,
                     type: WARNING,
                     content: Lang.sprintf('LINK_IDENTICAL_NAME', linkText),
                     inline: true,
                     position: 'beforebegin',
+                    dismiss: key,
                   });
                 }
               } else {
@@ -5546,23 +5611,27 @@ class Sa11y {
               a[href$='.avi']
             `);
 
-            if ($el.getAttribute('target') === '_blank' && !fileTypeMatch && !containsNewWindowPhrases) {
-              this.found.push({
+            if (linkTextTrimmed.length !== 0 && $el.getAttribute('target') === '_blank' && !fileTypeMatch && !containsNewWindowPhrases) {
+              const key = this.prepareDismissal(`link: ${linkTextTrimmed}`);
+              this.results.push({
                 element: $el,
                 type: WARNING,
                 content: Lang._('NEW_TAB_WARNING'),
                 inline: true,
                 position: 'beforebegin',
+                dismiss: key,
               });
             }
 
-            if (fileTypeMatch && !containsFileTypePhrases) {
-              this.found.push({
+            if (linkTextTrimmed.length !== 0 && fileTypeMatch && !containsFileTypePhrases) {
+              const key = this.prepareDismissal(`link: ${linkTextTrimmed}`);
+              this.results.push({
                 element: $el,
                 type: WARNING,
                 content: Lang._('FILE_TYPE_WARNING'),
                 inline: true,
                 position: 'beforebegin',
+                dismiss: key,
               });
             }
           });
@@ -5577,7 +5646,7 @@ class Sa11y {
     // ============================================================
     // Ruleset: Alternative text
     // ============================================================
-    this.checkAltText = () => {
+    this.checkImages = () => {
       this.containsAltTextStopWords = (alt) => {
         const altUrl = [
           '.png',
@@ -5613,7 +5682,7 @@ class Sa11y {
         if (alt === null) {
           if ($el.closest('a[href]')) {
             if (this.fnIgnore($el.closest('a[href]'), 'noscript').textContent.trim().length >= 1) {
-              this.found.push({
+              this.results.push({
                 element: $el,
                 type: ERROR,
                 content: Lang._('MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE'),
@@ -5621,7 +5690,7 @@ class Sa11y {
                 position: 'beforebegin',
               });
             } else if (this.fnIgnore($el.closest('a[href]'), 'noscript').textContent.trim().length === 0) {
-              this.found.push({
+              this.results.push({
                 element: $el,
                 type: ERROR,
                 content: Lang._('MISSING_ALT_LINK_MESSAGE'),
@@ -5631,7 +5700,7 @@ class Sa11y {
             }
           } else {
             // General failure message if image is missing alt.
-            this.found.push({
+            this.results.push({
               element: $el,
               type: ERROR,
               content: Lang._('MISSING_ALT_MESSAGE'),
@@ -5644,10 +5713,11 @@ class Sa11y {
           const altText = this.sanitizeHTML(alt); // Prevent tooltip from breaking.
           const error = this.containsAltTextStopWords(altText);
           const altLength = alt.length;
+          const baseSrc = $el.getAttribute('src').split('?')[0];
 
           if ($el.closest('a[href]') && $el.closest('a[href]').getAttribute('tabindex') === '-1' && $el.closest('a[href]').getAttribute('aria-hidden') === 'true') ; else if (error[0] !== null && $el.closest('a[href]')) {
             // Image fails if a stop word was found.
-            this.found.push({
+            this.results.push({
               element: $el,
               type: ERROR,
               content: Lang.sprintf('LINK_IMAGE_BAD_ALT_MESSAGE', error[0], altText),
@@ -5655,7 +5725,7 @@ class Sa11y {
               position: 'beforebegin',
             });
           } else if (error[2] !== null && $el.closest('a[href]')) {
-            this.found.push({
+            this.results.push({
               element: $el,
               type: ERROR,
               content: Lang.sprintf('LINK_IMAGE_PLACEHOLDER_ALT_MESSAGE', altText),
@@ -5663,15 +5733,17 @@ class Sa11y {
               position: 'beforebegin',
             });
           } else if (error[1] !== null && $el.closest('a[href]')) {
-            this.found.push({
+            const key = this.prepareDismissal(`link: ${baseSrc} ${altText} ${error[1]}`);
+            this.results.push({
               element: $el,
               type: WARNING,
               content: Lang.sprintf('LINK_IMAGE_SUS_ALT_MESSAGE', error[1], altText),
               inline: false,
               position: 'beforebegin',
+              dismiss: key,
             });
           } else if (error[0] !== null) {
-            this.found.push({
+            this.results.push({
               element: $el,
               type: ERROR,
               content: Lang.sprintf('LINK_ALT_HAS_BAD_WORD_MESSAGE', error[0], altText),
@@ -5679,7 +5751,7 @@ class Sa11y {
               position: 'beforebegin',
             });
           } else if (error[2] !== null) {
-            this.found.push({
+            this.results.push({
               element: $el,
               type: ERROR,
               content: Lang.sprintf('ALT_PLACEHOLDER_MESSAGE', altText),
@@ -5687,16 +5759,18 @@ class Sa11y {
               position: 'beforebegin',
             });
           } else if (error[1] !== null) {
-            this.found.push({
+            const key = this.prepareDismissal(baseSrc + altText + error[1]);
+            this.results.push({
               element: $el,
               type: WARNING,
               content: Lang.sprintf('ALT_HAS_SUS_WORD', error[1], altText),
               inline: false,
               position: 'beforebegin',
+              dismiss: key,
             });
           } else if ((alt === '' || alt === ' ') && $el.closest('a[href]')) {
             if ($el.closest('a[href]').getAttribute('tabindex') === '-1' && $el.closest('a[href]').getAttribute('aria-hidden') === 'true') ; else if ($el.closest('a[href]').getAttribute('aria-hidden') === 'true') {
-              this.found.push({
+              this.results.push({
                 element: $el,
                 type: ERROR,
                 content: Lang._('LINK_IMAGE_ARIA_HIDDEN'),
@@ -5704,7 +5778,7 @@ class Sa11y {
                 position: 'beforebegin',
               });
             } else if (this.fnIgnore($el.closest('a[href]'), 'noscript').textContent.trim().length === 0) {
-              this.found.push({
+              this.results.push({
                 element: $el,
                 type: ERROR,
                 content: Lang._('LINK_IMAGE_NO_ALT_TEXT'),
@@ -5712,7 +5786,7 @@ class Sa11y {
                 position: 'beforebegin',
               });
             } else {
-              this.found.push({
+              this.results.push({
                 element: $el,
                 type: GOOD,
                 content: Lang._('LINK_IMAGE_HAS_TEXT'),
@@ -5721,69 +5795,83 @@ class Sa11y {
               });
             }
           } else if (alt.length > 250 && $el.closest('a[href]')) {
+            const key = this.prepareDismissal(baseSrc + altText + alt.length);
             // Link and contains alt text.
-            this.found.push({
+            this.results.push({
               element: $el,
               type: WARNING,
               content: Lang.sprintf('LINK_IMAGE_LONG_ALT', altLength, altText),
               inline: false,
               position: 'beforebegin',
+              dismiss: key,
             });
           } else if (alt !== '' && $el.closest('a[href]') && this.fnIgnore($el.closest('a[href]'), 'noscript').textContent.trim().length === 0) {
+            const key = this.prepareDismissal(`image link: ${baseSrc} ${altText}`);
             // Link and contains an alt text.
-            this.found.push({
+            this.results.push({
               element: $el,
               type: WARNING,
               content: Lang.sprintf('LINK_IMAGE_ALT_WARNING', altText),
               inline: false,
               position: 'beforebegin',
+              dismiss: key,
             });
           } else if (alt !== '' && $el.closest('a[href]') && this.fnIgnore($el.closest('a[href]'), 'noscript').textContent.trim().length >= 1) {
+            const key = this.prepareDismissal(`image link: ${baseSrc} ${altText}`);
             // Contains alt text & surrounding link text.
-            this.found.push({
+            this.results.push({
               element: $el,
               type: WARNING,
               content: Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT_WARNING', altText),
               inline: false,
               position: 'beforebegin',
+              dismiss: key,
             });
           } else if (alt === '' || alt === ' ') {
             // Decorative alt and not a link.
             if ($el.closest('figure')) {
               const figcaption = $el.closest('figure').querySelector('figcaption');
               if (figcaption !== null && figcaption.textContent.trim().length >= 1) {
-                this.found.push({
+                const key = this.prepareDismissal(`decorative: ${baseSrc}`);
+                this.results.push({
                   element: $el,
                   type: WARNING,
                   content: Lang._('IMAGE_FIGURE_DECORATIVE'),
                   inline: false,
                   position: 'beforebegin',
+                  dismiss: key,
                 });
               } else {
-                this.found.push({
+                const key = this.prepareDismissal(`decorative: ${baseSrc}`);
+                this.results.push({
                   element: $el,
                   type: WARNING,
                   content: Lang._('IMAGE_DECORATIVE'),
                   inline: false,
                   position: 'beforebegin',
+                  dismiss: key,
                 });
               }
             } else {
-              this.found.push({
+              const key = this.prepareDismissal(`decorative: ${baseSrc}`);
+              this.results.push({
                 element: $el,
                 type: WARNING,
                 content: Lang._('IMAGE_DECORATIVE'),
                 inline: false,
                 position: 'beforebegin',
+                dismiss: key,
               });
             }
           } else if (alt.length > 250) {
-            this.found.push({
+            const key = this.prepareDismissal(baseSrc + altText + alt.length);
+            this.results.push({
               element: $el,
               type: WARNING,
               content: Lang.sprintf('IMAGE_ALT_TOO_LONG', altLength, altText),
               inline: false,
               position: 'beforebegin',
+              dismiss: key,
             });
           } else if (alt !== '') {
             // Figure element has same alt and caption text.
@@ -5791,15 +5879,17 @@ class Sa11y {
               const figcaption = $el.closest('figure').querySelector('figcaption');
               if (!!figcaption
                 && (figcaption.textContent.trim().toLowerCase() === altText.trim().toLowerCase())) {
-                this.found.push({
+                const key = this.prepareDismissal(`figure: ${baseSrc} ${altText}`);
+                this.results.push({
                   element: $el,
                   type: WARNING,
                   content: Lang.sprintf('IMAGE_FIGURE_DUPLICATE_ALT', altText),
                   inline: false,
                   position: 'beforebegin',
+                  dismiss: key,
                 });
               } else {
-                this.found.push({
+                this.results.push({
                   element: $el,
                   type: GOOD,
                   content: Lang.sprintf('IMAGE_PASS', altText),
@@ -5809,7 +5899,7 @@ class Sa11y {
               }
             } else {
               // If image has alt text - pass!
-              this.found.push({
+              this.results.push({
                 element: $el,
                 type: GOOD,
                 content: Lang.sprintf('IMAGE_PASS', altText),
@@ -5841,7 +5931,7 @@ class Sa11y {
                 const imgalt = $el.getAttribute('alt');
                 if (!imgalt || imgalt === ' ') {
                   if ($el.getAttribute('aria-label')) ; else {
-                    this.found.push({
+                    this.results.push({
                       element: $el,
                       type: ERROR,
                       content: Lang._('LABELS_MISSING_IMAGE_INPUT_MESSAGE'),
@@ -5852,31 +5942,37 @@ class Sa11y {
                 }
               } else if (type === 'reset') {
                 // Recommendation to remove reset buttons.
-                this.found.push({
+                const key = this.prepareDismissal(`input: ${ariaLabel}`);
+                this.results.push({
                   element: $el,
                   type: WARNING,
                   content: Lang._('LABELS_INPUT_RESET_MESSAGE'),
                   inline: false,
                   position: 'beforebegin',
+                  dismiss: key,
                 });
               } else if ($el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby') || $el.getAttribute('title')) {
                 // Uses ARIA. Warn them to ensure there's a visible label.
                 if ($el.getAttribute('title')) {
                   ariaLabel = $el.getAttribute('title');
-                  this.found.push({
+                  const key = this.prepareDismissal(`input: ${ariaLabel}`);
+                  this.results.push({
                     element: $el,
                     type: WARNING,
                     content: Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', ariaLabel),
                     inline: false,
                     position: 'beforebegin',
+                    dismiss: key,
                   });
                 } else {
-                  this.found.push({
+                  const key = this.prepareDismissal(`input: ${ariaLabel}`);
+                  this.results.push({
                     element: $el,
                     type: WARNING,
                     content: Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', ariaLabel),
                     inline: false,
                     position: 'beforebegin',
+                    dismiss: key,
                   });
                 }
               } else if ($el.closest('label') && $el.closest('label').textContent.trim()) ; else if ($el.getAttribute('id')) {
@@ -5892,7 +5988,7 @@ class Sa11y {
 
                 if (!hasFor) {
                   const id = $el.getAttribute('id');
-                  this.found.push({
+                  this.results.push({
                     element: $el,
                     type: ERROR,
                     content: Lang.sprintf('LABELS_NO_FOR_ATTRIBUTE_MESSAGE', id),
@@ -5901,7 +5997,7 @@ class Sa11y {
                   });
                 }
               } else {
-                this.found.push({
+                this.results.push({
                   element: $el,
                   type: ERROR,
                   content: Lang._('LABELS_MISSING_LABEL_MESSAGE'),
@@ -5927,12 +6023,14 @@ class Sa11y {
         // Warning: Audio content.
         if (option.embeddedContentAudio === true) {
           this.audio.forEach(($el) => {
-            this.found.push({
+            const key = this.prepareDismissal($el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src'));
+            this.results.push({
               element: $el,
               type: WARNING,
               content: Lang._('EMBED_AUDIO'),
               inline: false,
               position: 'beforebegin',
+              dismiss: key,
             });
           });
         }
@@ -5942,12 +6040,14 @@ class Sa11y {
           this.videos.forEach(($el) => {
             const track = $el.getElementsByTagName('TRACK');
             if ($el.tagName === 'VIDEO' && track.length) ; else {
-              this.found.push({
+              const key = this.prepareDismissal($el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src'));
+              this.results.push({
                 element: $el,
                 type: WARNING,
                 content: Lang._('EMBED_VIDEO'),
                 inline: false,
                 position: 'beforebegin',
+                dismiss: key,
               });
             }
           });
@@ -5956,12 +6056,14 @@ class Sa11y {
         // Warning: Data visualizations.
         if (option.embeddedContentDataViz === true) {
           this.datavisualizations.forEach(($el) => {
-            this.found.push({
+            const key = this.prepareDismissal($el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src'));
+            this.results.push({
               element: $el,
               type: WARNING,
               content: Lang._('EMBED_DATA_VIZ'),
               inline: false,
               position: 'beforebegin',
+              dismiss: key,
             });
           });
         }
@@ -5970,18 +6072,18 @@ class Sa11y {
         if (option.embeddedContentTitles === true) {
           this.iframes.forEach(($el) => {
             if ($el.tagName === 'VIDEO'
-          || $el.tagName === 'AUDIO'
-          || $el.getAttribute('aria-hidden') === 'true'
-          || $el.getAttribute('hidden') !== null
-          || $el.style.display === 'none'
-          || $el.getAttribute('role') === 'presentation') ; else if ($el.getAttribute('title') === null || $el.getAttribute('title') === '') {
+              || $el.tagName === 'AUDIO'
+              || $el.getAttribute('aria-hidden') === 'true'
+              || $el.getAttribute('hidden') !== null
+              || $el.style.display === 'none'
+              || $el.getAttribute('role') === 'presentation') ; else if ($el.getAttribute('title') === null || $el.getAttribute('title') === '') {
               if ($el.getAttribute('aria-label') === null || $el.getAttribute('aria-label') === '') {
                 if ($el.getAttribute('aria-labelledby') === null) {
-                // TO-DO: Make sure red error border takes precedence
+                  // TO-DO: Make sure red error border takes precedence
                   if ($el.classList.contains('sa11y-warning-border')) {
                     $el.classList.remove('sa11y-warning-border');
                   }
-                  this.found.push({
+                  this.results.push({
                     element: $el,
                     type: ERROR,
                     content: Lang._('EMBED_MISSING_TITLE'),
@@ -5998,18 +6100,20 @@ class Sa11y {
         if (option.embeddedContentGeneral === true) {
           this.embeddedContent.forEach(($el) => {
             if ($el.tagName === 'VIDEO'
-          || $el.tagName === 'AUDIO'
-          || $el.getAttribute('aria-hidden') === 'true'
-          || $el.getAttribute('hidden') !== null
-          || $el.style.display === 'none'
-          || $el.getAttribute('role') === 'presentation'
-          || $el.getAttribute('tabindex') === '-1') ; else {
-              this.found.push({
+              || $el.tagName === 'AUDIO'
+              || $el.getAttribute('aria-hidden') === 'true'
+              || $el.getAttribute('hidden') !== null
+              || $el.style.display === 'none'
+              || $el.getAttribute('role') === 'presentation'
+              || $el.getAttribute('tabindex') === '-1') ; else {
+              const key = this.prepareDismissal($el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src'));
+              this.results.push({
                 element: $el,
                 type: WARNING,
                 content: Lang._('EMBED_GENERAL_WARNING'),
                 inline: false,
                 position: 'beforebegin',
+                dismiss: key,
               });
             }
           });
@@ -6024,7 +6128,7 @@ class Sa11y {
       // Error: Find all links pointing to development environment.
       if (option.badLinksQA === true) {
         this.customErrorLinks.forEach(($el) => {
-          this.found.push({
+          this.results.push({
             element: $el,
             type: ERROR,
             content: Lang.sprintf('QA_BAD_LINK', $el),
@@ -6038,13 +6142,15 @@ class Sa11y {
       if (option.strongItalicsQA === true) {
         this.strongitalics.forEach(($el) => {
           const strongItalicsText = $el.textContent.trim().length;
+          const key = this.prepareDismissal($el.tagName + $el.textContent);
           if (strongItalicsText > 400) {
-            this.found.push({
+            this.results.push({
               element: $el.parentNode,
               type: WARNING,
               content: Lang._('QA_BAD_ITALICS'),
               inline: false,
               position: 'beforebegin',
+              dismiss: key,
             });
           }
         });
@@ -6054,19 +6160,23 @@ class Sa11y {
       if (option.pdfQA === true) {
         this.pdf.forEach(($el, i) => {
           const pdfCount = this.pdf.length;
+          const href = $el.getAttribute('href');
+          const key = this.prepareDismissal(`pdf: ${href}`);
 
-          // Highlight all PDFs.
-          if (pdfCount > 0) {
+          // Highlight PDFs that are not dismissed.
+          if (pdfCount && !this.dismissed.filter((e) => e.key === key).length) {
             $el.setAttribute('data-sa11y-warning-inline', 'pdf');
           }
+
           // Only append warning button to first PDF.
           if ($el && i === 0) {
-            this.found.push({
+            this.results.push({
               element: $el,
               type: WARNING,
               content: Lang.sprintf('QA_PDF', pdfCount),
               inline: true,
               position: 'beforebegin',
+              dismiss: key,
             });
           }
         });
@@ -6075,7 +6185,7 @@ class Sa11y {
       // Error: Missing language tag. Lang should be at least 2 characters.
       if (option.langQA === true) {
         if (!this.language || this.language.length < 2) {
-          this.found.push({
+          this.results.push({
             type: ERROR,
             content: Lang._('QA_PAGE_LANGUAGE'),
           });
@@ -6087,12 +6197,14 @@ class Sa11y {
         this.blockquotes.forEach(($el) => {
           const bqHeadingText = $el.textContent;
           if (bqHeadingText.trim().length < 25) {
-            this.found.push({
+            const key = this.prepareDismissal(`${$el.tagName}: ${bqHeadingText}`);
+            this.results.push({
               element: $el,
               type: WARNING,
               content: Lang.sprintf('QA_BLOCKQUOTE_MESSAGE', bqHeadingText),
               inline: false,
               position: 'beforebegin',
+              dismiss: key,
             });
           }
         });
@@ -6104,7 +6216,7 @@ class Sa11y {
           const findTHeaders = $el.querySelectorAll('th');
           const findHeadingTags = $el.querySelectorAll('h1, h2, h3, h4, h5, h6');
           if (findTHeaders.length === 0) {
-            this.found.push({
+            this.results.push({
               element: $el,
               type: ERROR,
               content: Lang._('TABLES_MISSING_HEADINGS'),
@@ -6114,7 +6226,7 @@ class Sa11y {
           }
           if (findHeadingTags.length > 0) {
             findHeadingTags.forEach(($a) => {
-              this.found.push({
+              this.results.push({
                 element: $a,
                 type: ERROR,
                 content: Lang._('TABLES_SEMANTIC_HEADING'),
@@ -6125,7 +6237,7 @@ class Sa11y {
           }
           findTHeaders.forEach(($b) => {
             if ($b.textContent.trim().length === 0) {
-              this.found.push({
+              this.results.push({
                 element: $b,
                 type: ERROR,
                 content: Lang._('TABLES_EMPTY_HEADING'),
@@ -6168,12 +6280,14 @@ class Sa11y {
                 && (boldtext.length >= 4 && boldtext.length <= 120)
                 && maybeSentence === false
               ) {
-                this.found.push({
+                const key = this.prepareDismissal(`bold: ${boldtext}`);
+                this.results.push({
                   element: firstChild,
                   type: WARNING,
                   content: Lang.sprintf('QA_FAKE_HEADING', boldtext),
                   inline: false,
                   position: 'beforebegin',
+                  dismiss: key,
                 });
               }
             }
@@ -6184,19 +6298,20 @@ class Sa11y {
             boldtext = getTexted;
             const prevSibling = $el.previousElementSibling;
             const maybeSentence = boldtext.match(/[.;?!"]/) !== null;
-
             if (prevSibling !== null && prevSibling.matches(ignoreElements)) ; else if (
               !/[*]$/.test(boldtext)
               && (boldtext.length >= 4 && boldtext.length <= 120)
               && !$el.closest(ignoreParents)
               && maybeSentence === false
             ) {
-              this.found.push({
+              const key = this.prepareDismissal(`bold: ${boldtext}`);
+              this.results.push({
                 element: $el,
                 type: WARNING,
                 content: Lang.sprintf('QA_FAKE_HEADING', boldtext),
                 inline: false,
                 position: 'beforebegin',
+                dismiss: key,
               });
             }
           }
@@ -6215,12 +6330,14 @@ class Sa11y {
               && (getText.length >= 4 && getText.length <= 120)
               && maybeSentence === false
             ) {
-              this.found.push({
+              const key = this.prepareDismissal(`bold: ${getText}`);
+              this.results.push({
                 element: $elem,
                 type: WARNING,
                 content: Lang.sprintf('QA_FAKE_HEADING', getText),
                 inline: false,
                 position: 'beforebegin',
+                dismiss: key,
               });
             }
           };
@@ -6244,6 +6361,7 @@ class Sa11y {
           const decrement = (el) => el.replace(/^b|^B|^б|^Б|^2/, (match) => prefixDecrement[match]);
           let hit = false;
           const firstPrefix = $el.textContent.substring(0, 2);
+
           if (
             firstPrefix.trim().length > 0
             && firstPrefix !== activeMatch
@@ -6272,12 +6390,14 @@ class Sa11y {
               }
             }
             if (hit) {
-              this.found.push({
+              const key = this.prepareDismissal(`list: ${$el.textContent}`);
+              this.results.push({
                 element: $el,
                 type: WARNING,
                 content: Lang.sprintf('QA_SHOULD_BE_LIST', firstPrefix),
                 inline: false,
                 position: 'beforebegin',
+                dismiss: key,
               });
               activeMatch = firstPrefix;
             } else {
@@ -6305,16 +6425,16 @@ class Sa11y {
           }
           const uppercasePattern = /([A-Z]{2,}[ ])([A-Z]{2,}[ ])([A-Z]{2,}[ ])([A-Z]{2,})/g;
           const detectUpperCase = thisText.match(uppercasePattern);
-          const dismissKey = this.prepareDismissal(thisText);
 
           if (detectUpperCase && detectUpperCase[0].length > 10) {
-            this.found.push({
+            const key = this.prepareDismissal(`uppercase: ${thisText}`);
+            this.results.push({
               element: $el,
               type: WARNING,
               content: Lang._('QA_UPPERCASE_WARNING'),
               inline: false,
               position: 'beforebegin',
-              dismiss: dismissKey,
+              dismiss: key,
             });
           }
         };
@@ -6333,7 +6453,7 @@ class Sa11y {
             if (allIds[id] === undefined) {
               allIds[id] = 1;
             } else {
-              this.found.push({
+              this.results.push({
                 element: $el,
                 type: ERROR,
                 content: Lang.sprintf('QA_DUPLICATE_ID', id),
@@ -6350,14 +6470,14 @@ class Sa11y {
         // Find all <u> tags.
         this.underlines.forEach(($el) => {
           const text = this.getText($el);
-          const dismissKey = this.prepareDismissal(text);
-          this.found.push({
+          const key = this.prepareDismissal(`underline: ${text}`);
+          this.results.push({
             element: $el,
             type: WARNING,
             content: Lang._('QA_TEXT_UNDERLINE_WARNING'),
             inline: true,
             position: 'beforebegin',
-            dismiss: dismissKey,
+            dismiss: key,
           });
         });
         // Find underline based on computed style.
@@ -6365,15 +6485,15 @@ class Sa11y {
           const style = getComputedStyle($el);
           const decoration = style.textDecorationLine;
           const text = this.getText($el);
-          const dismissKey = this.prepareDismissal(text);
           if (decoration === 'underline') {
-            this.found.push({
+            const key = this.prepareDismissal(`underline: ${text}`);
+            this.results.push({
               element: $el,
               type: WARNING,
               content: Lang._('QA_TEXT_UNDERLINE_WARNING'),
               inline: false,
               position: 'beforebegin',
-              dismiss: dismissKey,
+              dismiss: key,
             });
           }
         };
@@ -6388,7 +6508,7 @@ class Sa11y {
       if (option.pageTitleQA === true) {
         const $title = document.querySelector('title');
         if (!$title || $title.textContent.trim().length === 0) {
-          this.found.push({
+          this.results.push({
             type: ERROR,
             content: Lang._('QA_PAGE_TITLE'),
           });
@@ -6399,15 +6519,15 @@ class Sa11y {
       if (option.subscriptQA === true) {
         this.subscripts.forEach(($el) => {
           const text = this.getText($el);
-          const dismissKey = this.prepareDismissal(text);
           if (text.length >= 80) {
-            this.found.push({
+            const key = this.prepareDismissal(`${$el.tagName} ${text}`);
+            this.results.push({
               element: $el,
               type: WARNING,
               content: Lang._('QA_SUBSCRIPT_WARNING'),
               inline: true,
               position: 'beforebegin',
-              dismiss: dismissKey,
+              dismiss: key,
             });
           }
         });
@@ -6581,7 +6701,7 @@ class Sa11y {
 
             const nodetext = this.fnIgnore(clone, 'script').textContent;
             if (name.tagName === 'INPUT') {
-              this.found.push({
+              this.results.push({
                 element: name,
                 type: ERROR,
                 content: Lang.sprintf('CONTRAST_INPUT_ERROR', cratio),
@@ -6589,7 +6709,7 @@ class Sa11y {
                 position: 'beforebegin',
               });
             } else {
-              this.found.push({
+              this.results.push({
                 element: name,
                 type: ERROR,
                 content: Lang.sprintf('CONTRAST_ERROR', cratio, nodetext),
@@ -6607,12 +6727,14 @@ class Sa11y {
               clone.removeChild(removeSa11yHeadingLabel[i]);
             }
             const nodetext = this.fnIgnore(clone, 'script').textContent;
-            this.found.push({
+            const key = this.prepareDismissal(`contrast: ${nodetext}`);
+            this.results.push({
               element: name,
               type: WARNING,
               content: Lang.sprintf('CONTRAST_WARNING', nodetext),
               inline: false,
               position: 'beforebegin',
+              dismiss: key,
             });
           });
         }

@@ -39,6 +39,8 @@
       NOT_VISIBLE_ALERT: 'The item you are trying to view is not visible; it may be hidden or inside of an accordion or tab component. Here is a preview:',
       ERROR_MISSING_ROOT_TARGET: 'The full page was checked for accessibility because the target area <code>%(root)</code> does not exist.',
       HEADING_NOT_VISIBLE_ALERT: 'Heading is not visible; it may be hidden or inside of an accordion or tab component.',
+      PANEL_DISMISS_BUTTON: 'Show %(dismissCount) dismissed warnings',
+      DISMISS: 'Dismiss',
 
       // Alternative text module stop words
       SUSPICIOUS_ALT_STOPWORDS: ['image', 'graphic', 'picture', 'photo'],
