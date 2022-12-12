@@ -3349,7 +3349,7 @@ class Sa11y {
     const defaultOptions = {
       checkRoot: 'body',
       containerIgnore: '.sa11y-ignore',
-      contrastIgnore: '.sr-only',
+      contrastIgnore: '.sr-only, [role="menu"] *',
       outlineIgnore: '',
       headerIgnore: '',
       imageIgnore: '',
@@ -3362,6 +3362,8 @@ class Sa11y {
       detectSPArouting: false,
       doNotRun: '',
       dismissAnnotations: true,
+      appendTooltips: document.body,
+      headless: false,
 
       // Readability
       readabilityPlugin: true,
@@ -3440,26 +3442,34 @@ class Sa11y {
 
         // Once document has fully loaded.
         documentLoadingCheck(() => {
-          this.buildSa11yUI();
-          this.settingsPanelToggles();
-          this.initializePanelToggles();
-          this.mainToggle();
-          this.skipToIssueTooltip();
-          this.detectPageChanges();
-          this.dismissAnnotations();
+          if (option.headless === false) {
+            this.buildSa11yUI();
+            this.settingsPanelToggles();
+            this.initializePanelToggles();
+            this.mainToggle();
+            this.skipToIssueTooltip();
+            this.detectPageChanges();
+            this.dismissAnnotations();
 
-          // Pass Sa11y instance to custom checker
-          if (option.customChecks && option.customChecks.setSa11y) {
-            option.customChecks.setSa11y(this);
-          }
+            // Pass Sa11y instance to custom checks.
+            if (option.customChecks && option.customChecks.setSa11y) {
+              option.customChecks.setSa11y(this);
+            }
 
-          // Check page once page is done loading.
-          this.toggle.disabled = false;
-          if (this.store.getItem('sa11y-remember-panel') === 'Closed' || !this.store.getItem('sa11y-remember-panel')) {
-            this.panelActive = false;
-            this.checkAll();
+            // Check page once page is done loading.
+            this.toggle.disabled = false;
+            if (this.store.getItem('sa11y-remember-panel') === 'Closed' || !this.store.getItem('sa11y-remember-panel')) {
+              this.panelActive = false;
+              this.checkAll();
+            } else {
+              this.panelActive = true;
+            }
           } else {
-            this.panelActive = true;
+            // Headless mode: Perform all checks without loading UI.
+            if (option.customChecks && option.customChecks.setSa11y) {
+              option.customChecks.setSa11y(this);
+            }
+            this.checkAll();
           }
         });
       }
@@ -3555,9 +3565,6 @@ class Sa11y {
                   </button>
                 </li>
               </ul>
-              <div id="sa11y-dismissed-content">
-                <button id="sa11y-dismiss-button"></button>
-              </div>
             </div>
           </div>`
 
@@ -3573,8 +3580,13 @@ class Sa11y {
 
       // Main panel that conveys state of page.
       + `<div id="sa11y-panel-content">
-          <button id="sa11y-cycle-toggle" type="button" aria-label="${Lang._('SHORTCUT_SCREEN_READER')}">
+          <button id="sa11y-skip-button" type="button">
             <div class="sa11y-panel-icon"></div>
+            <span class="sa11y-visually-hidden">${Lang._('SHORTCUT_SCREEN_READER')}</span>
+          </button>
+          <button id="sa11y-dismiss-button" type="button">
+            <div class="sa11y-dismiss-icon"></div>
+            <span id="sa11y-dismiss-tooltip" class="sa11y-visually-hidden"></span>
           </button>
           <div id="sa11y-panel-text">
             <h1 class="sa11y-visually-hidden">${Lang._('PANEL_HEADING')}</h1>
@@ -3610,7 +3622,6 @@ class Sa11y {
       this.notificationBadge = document.getElementById('sa11y-notification-badge');
       this.notificationCount = document.getElementById('sa11y-notification-count');
       this.notificationText = document.getElementById('sa11y-notification-text');
-      this.dismissedContent = document.getElementById('sa11y-dismissed-content');
       this.dismissedBadge = document.getElementById('sa11y-dismissed-badge');
       this.status = document.getElementById('sa11y-status');
 
@@ -3631,8 +3642,9 @@ class Sa11y {
       this.toggle = document.getElementById('sa11y-toggle');
       this.outlineToggle = document.getElementById('sa11y-outline-toggle');
       this.settingToggle = document.getElementById('sa11y-settings-toggle');
-      this.skipButton = document.getElementById('sa11y-cycle-toggle');
-      this.dismissButton = document.getElementById('sa11y-dismiss-button');
+      this.skipButton = document.getElementById('sa11y-skip-button');
+      this.restoreDismissButton = document.getElementById('sa11y-dismiss-button');
+      this.dismissTooltip = document.getElementById('sa11y-dismiss-tooltip');
 
       // Alerts
       this.alertPanel = document.getElementById('sa11y-panel-alert');
@@ -4034,7 +4046,7 @@ class Sa11y {
       /**
        * Utility: Calculate top of element.
        * @param  {Node} element  Element to target.
-       * @return {Number} Returns number.
+       * @return {Number} Returns number greater than 0!
       */
       this.offsetTop = (element) => {
         const rect = element.getBoundingClientRect();
@@ -4322,14 +4334,30 @@ class Sa11y {
         keyboardShortcut = '<span class="sa11y-kbd">Alt</span> + <span class="sa11y-kbd">S</span>';
       }
 
-      tippy('#sa11y-cycle-toggle', {
-        content: `<div style="text-align:center">${Lang._('SHORTCUT_TOOLTIP')} &raquo;<br>${keyboardShortcut}</div>`,
+      tippy('#sa11y-skip-button', {
+        content: `${Lang._('SHORTCUT_TOOLTIP')} &raquo; ${keyboardShortcut}`,
         allowHTML: true,
         delay: [500, 0],
         trigger: 'mouseenter focusin',
         arrow: true,
         placement: 'top',
         theme: 'sa11y-theme',
+        maxWidth: 165,
+        aria: {
+          content: null,
+          expanded: false,
+        },
+        appendTo: document.body,
+        zIndex: 2147483645,
+      });
+
+      this.dismissTippy = tippy(this.restoreDismissButton, {
+        delay: [500, 0],
+        trigger: 'mouseenter focusin',
+        arrow: true,
+        placement: 'top',
+        theme: 'sa11y-theme',
+        maxWidth: 165,
         aria: {
           content: null,
           expanded: false,
@@ -4377,14 +4405,18 @@ class Sa11y {
       this.errorCount = 0;
       this.warningCount = 0;
 
-      // Get dismissed items and re-parse back into object.
-      this.dismissed = this.store.getItem('sa11y-dismissed');
-      this.dismissed = this.dismissed ? JSON.parse(this.dismissed) : [];
+      // Find and get all dismissed elements (if not headless).
+      if (option.headless === false) {
+        // Get dismissed items and re-parse back into object.
+        this.dismissed = this.store.getItem('sa11y-dismissed');
+        this.dismissed = this.dismissed ? JSON.parse(this.dismissed) : [];
 
-      // Get count and show dismiss panel.
-      const dismissCount = this.dismissed.filter((item) => item.href === currentPage).length;
-      if (dismissCount) this.dismissedContent.classList.add('sa11y-active');
-      this.dismissButton.innerText = Lang.sprintf('PANEL_DISMISS_BUTTON', dismissCount);
+        // Get count and show dismiss panel.
+        this.dismissCount = this.dismissed.filter((item) => item.href === currentPage).length;
+        if (this.dismissCount) this.restoreDismissButton.classList.add('sa11y-active');
+        this.dismissTooltip.innerText = Lang.sprintf('PANEL_DISMISS_BUTTON', this.dismissCount);
+        this.dismissTippy.setContent(Lang.sprintf('PANEL_DISMISS_BUTTON', this.dismissCount));
+      }
 
       // Find all elements on the page.
       this.findElements();
@@ -4405,38 +4437,40 @@ class Sa11y {
         option.customChecks.check();
       }
 
-      // Return element from results array that matches dismiss key and dismiss url. Then filter through matched objects.
-      const findKey = this.dismissed.map((e) => {
-        const found = this.results.find((f) => (e.key.includes(f.dismiss) && e.href === currentPage));
-        if (found === undefined) return '';
-        return found;
-      });
-      this.results = this.results.filter((issue) => !findKey.find((e) => e.dismiss === issue.dismiss));
-
-      // Count number of issues on page.
-      this.updateCount();
-
-      // Update panel
-      if (this.panelActive === true) {
-        // Paint the page with annotations.
-        this.results.forEach(($el, i) => {
-          Object.assign($el, { id: i });
-          this.annotate($el.element, $el.type, $el.content, $el.inline, $el.position, $el.id);
+      if (option.headless === false) {
+        // Return element from results array that matches dismiss key and dismiss url. Then filter through matched objects.
+        const findKey = this.dismissed.map((e) => {
+          const found = this.results.find((f) => (e.key.includes(f.dismiss) && e.href === currentPage));
+          if (found === undefined) return '';
+          return found;
         });
-        this.initializeTooltips();
+        this.results = this.results.filter((issue) => !findKey.find((e) => e.dismiss === issue.dismiss));
 
-        // Initialize panel.
-        this.generatePageOutline();
-        this.updateStatus();
+        // Count number of issues on page.
+        this.updateCount();
 
-        // Extras.
-        setTimeout(() => {
-          this.detectOverflow();
-          this.nudge();
-        }, 0);
-      } else {
-        this.resetAll();
-        this.updateBadge();
+        // Update panel
+        if (this.panelActive === true) {
+          // Paint the page with annotations.
+          this.results.forEach(($el, i) => {
+            Object.assign($el, { id: i });
+            this.annotate($el.element, $el.type, $el.content, $el.inline, $el.position, $el.id);
+          });
+          this.initializeTooltips();
+
+          // Initialize panel.
+          this.generatePageOutline();
+          this.updateStatus();
+
+          // Extras.
+          setTimeout(() => {
+            this.detectOverflow();
+            this.nudge();
+          }, 0);
+        } else {
+          this.resetAll();
+          this.updateBadge();
+        }
       }
     };
 
@@ -4489,6 +4523,9 @@ class Sa11y {
       // Remove any active alerts.
       this.removeAlert();
 
+      // Remove EventListeners
+      document.removeEventListener('keyup', this.shortcutAltS);
+
       // Main panel warning and error count.
       while (this.status.firstChild) this.status.removeChild(this.status.firstChild);
 
@@ -4514,20 +4551,28 @@ class Sa11y {
         },
       };
       // Main Tippy instance
-      this.tippy = tippy('.sa11y-btn', {
+      const annotations = tippy('.sa11y-btn', {
         interactive: true,
-        trigger: 'mouseenter click focusin', // Focusin trigger to ensure "Jump to issue" button displays tooltip.
+        trigger: 'mouseenter click', // Focusin trigger to ensure "Jump to issue" button displays tooltip.
         arrow: true,
-        delay: [100, 0], // Slight delay to ensure mouse doesn't quickly trigger and hide tooltip.
+        delay: [200, 400], // Slight delay to ensure mouse doesn't quickly trigger and hide tooltip.
         theme: 'sa11y-theme',
-        placement: 'auto-start',
+        placement: 'right-start',
         allowHTML: true,
         aria: {
           content: 'describedby',
+          expanded: 'auto',
         },
-        appendTo: document.body,
+        appendTo: option.appendTooltips,
         zIndex: 2147483645,
         plugins: [hideOnEsc],
+        onShow(instance) {
+          annotations.forEach((popper) => {
+            if (popper !== instance.popper) {
+              popper.hide();
+            }
+          });
+        },
       });
     };
 
@@ -4536,12 +4581,13 @@ class Sa11y {
     // ============================================================
     this.dismissAnnotations = () => {
       if (option.dismissAnnotations === true) {
-        // Hide annotation upon click on dismiss button on warning.
-        const dismiss = async (event) => {
+        // 1) Hide annotation upon click on dismiss button on warning.
+        document.addEventListener('click', async (e) => {
           // Get dismissed array from localStorage.
           let existingEntries = JSON.parse(this.store.getItem('sa11y-dismissed'));
+          const element = e.target;
 
-          const element = event.target;
+          // Make sure event listener is attached to dismiss button.
           if (element.tagName === 'BUTTON' && element.hasAttribute('data-sa11y-dismiss')) {
             // Find corresponding issue within main issues object and mark as dismissed.
             const dismissItem = parseInt(element.getAttribute('data-sa11y-dismiss'), 10);
@@ -4560,22 +4606,36 @@ class Sa11y {
             existingEntries.push(dismissalDetails);
             this.store.setItem('sa11y-dismissed', JSON.stringify(existingEntries));
             this.store.removeItem('sa11y-dismiss-item'); // Remove temporary storage item.
-            this.dismissedContent.classList.add('sa11y-active'); // Make panel active.
+            this.restoreDismissButton.classList.add('sa11y-active'); // Make panel active.
 
-            element.closest('[data-tippy-root]').remove(); // Remove tooltip.
+            // Remove tooltip.
+            if (element.closest('[data-tippy-root]') !== null) {
+              element.closest('[data-tippy-root]').remove();
+            }
+
+            this.dismissPosition = object.id;
 
             // Async scan upon dismiss.
             this.resetAll(false);
             await this.checkAll();
           }
-        };
-        document.addEventListener('click', dismiss, false);
+        }, false);
 
-        // Restore hidden alerts on the CURRENT page only.
-        this.dismissButton.onclick = async () => {
+        // Keyboard a11y: Dismiss with Option + D.
+        document.addEventListener('keyup', (e) => {
+          const evt = e || window.event;
+          const dismissBtn = document.querySelector('[data-sa11y-dismiss]');
+          if (dismissBtn !== null && evt.altKey && evt.code === 'KeyD') {
+            dismissBtn.click();
+          }
+        }, false);
+
+        // 2) Restore hidden alerts on the CURRENT page only.
+        this.restoreDismissButton.onclick = async () => {
           const filtered = this.dismissed.filter((item) => item.href !== currentPage);
           this.store.setItem('sa11y-dismissed', JSON.stringify(filtered));
-          this.dismissedContent.classList.remove('sa11y-active');
+          this.restoreDismissButton.classList.remove('sa11y-active');
+          this.dismissTippy.hide(); // Prevent flash of tooltip.
           this.resetAll(false);
           await this.checkAll();
         };
@@ -4657,6 +4717,7 @@ class Sa11y {
       this.skipButton.disabled = false;
       this.panel.classList.add('sa11y-active');
       this.html.setAttribute('data-sa11y-active', 'true');
+      this.skipButton.setAttribute('style', 'display: block');
 
       if (this.errorCount > 0 && this.warningCount > 0) {
         this.panelContent.setAttribute('class', 'sa11y-errors');
@@ -4668,9 +4729,13 @@ class Sa11y {
         this.panelContent.setAttribute('class', 'sa11y-warnings');
         this.status.innerHTML = `${Lang._('WARNINGS')} <span class="sa11y-panel-count" id="sa11y-warning-count">${this.warningCount}</span>`;
       } else {
-        this.panelContent.setAttribute('class', 'sa11y-good');
-        this.status.textContent = `${Lang._('PANEL_STATUS_NONE')}`;
-
+        if (this.dismissCount > 0) {
+          this.status.innerHTML = `${Lang._('DISMISSED')} <span class="sa11y-panel-count">${this.dismissCount}</span>`;
+          this.skipButton.setAttribute('style', 'display: none');
+        } else {
+          this.panelContent.setAttribute('class', 'sa11y-good');
+          this.status.innerHTML = `${Lang._('PANEL_STATUS_NONE')}`;
+        }
         // If there are no button annotations, disable the Skip-to-Toggle switch.
         const buttonAnnotations = document.querySelectorAll('.sa11y-btn');
         if (buttonAnnotations.length === 0) {
@@ -4807,10 +4872,24 @@ class Sa11y {
     // ============================================================
 
     this.skipToIssue = () => {
-      // Constants
-      const annotations = document.querySelectorAll('[data-sa11y-annotation]');
+      // Assign value to each annotation based on DOM order.
+      const results = document.querySelectorAll('[data-sa11y-annotation]');
+      results.forEach(($el, i) => {
+        $el.setAttribute('data-sa11y-position', i);
+      });
+
+      const annotations = document.querySelectorAll('[data-sa11y-position]');
       const annotationsLength = annotations.length;
-      let i = -1;
+      const dismissed = document.querySelector(`[data-sa11y-annotation="${this.dismissPosition - 1}"]`);
+
+      // Starting annotation.
+      let i;
+      if (dismissed !== null) {
+        const dismissedPosition = parseInt(dismissed.getAttribute('data-sa11y-position'), 10);
+        i = dismissedPosition - 1;
+      } else {
+        i = -1;
+      }
 
       // Add pulsing border to visible parent of hidden element.
       const hiddenParent = () => {
@@ -4834,6 +4913,7 @@ class Sa11y {
           const visiblePosition = this.findVisibleParent($el, 'display', 'none');
 
           // Alert if tooltip is hidden.
+          hiddenParent();
           const tooltip = annotations[i].getAttribute('data-tippy-content');
           this.createAlert(`${Lang._('NOT_VISIBLE_ALERT')}`, tooltip);
 
@@ -4854,22 +4934,48 @@ class Sa11y {
 
       // Skip to next.
       const next = () => {
+        // Close whatever tooltip is open before opening up another.
+        const activeButton = document.querySelector('.sa11y-btn[aria-expanded=true]');
+        if (activeButton) {
+          const pos = parseInt(activeButton.getAttribute('data-sa11y-position'), 10);
+          activeButton.click();
+          i = pos;
+        }
+
         i += 1;
+
+        // Get scroll position of most visible element.
         const $el = annotations[i];
-        const scrollPos = scrollPosition($el);
-        window.scrollTo({
-          top: scrollPos,
-          behavior: `${this.scrollBehaviour}`,
-        });
+        if ($el) {
+          const scrollPos = scrollPosition($el);
+          window.scrollTo({
+            top: scrollPos,
+            behavior: `${this.scrollBehaviour}`,
+          });
+
+          // Don't set focus or activate tooltip if not visible.
+          if ($el.offsetTop !== 0) {
+            $el.focus();
+            $el.click();
+          }
+        }
+
+        // Max number of annotations on page.
         if (i >= annotationsLength - 1) {
           i = -1;
         }
-        hiddenParent();
-        $el.focus();
       };
 
       // Skip to previous.
       const prev = () => {
+        // Close whatever tooltip is open before opening up another.
+        const activeButton = document.querySelector('.sa11y-btn[aria-expanded=true]');
+        if (activeButton) {
+          const pos = parseInt(activeButton.getAttribute('data-sa11y-position'), 10);
+          activeButton.click();
+          i = pos;
+        }
+
         i = Math.max(0, i -= 1);
         const $el = annotations[i];
         if ($el) {
@@ -4878,26 +4984,28 @@ class Sa11y {
             top: scrollPos,
             behavior: `${this.scrollBehaviour}`,
           });
-          hiddenParent();
-          $el.focus();
+
+          // Don't set focus or activate tooltip if not visible.
+          if ($el.offsetTop !== 0) {
+            $el.focus();
+            $el.click();
+          }
         }
       };
 
       // Jump to issue using keyboard shortcut.
-      document.addEventListener('keyup', (e) => {
+      this.shortcutAltS = (e) => {
         e.preventDefault();
         if (annotationsLength && (e.altKey && (e.code === 'Period' || e.code === 'KeyS'))) {
           next();
         } else if (annotationsLength && (e.altKey && (e.code === 'Comma' || e.code === 'KeyW'))) {
           prev();
         }
-      });
+      };
+      document.addEventListener('keyup', this.shortcutAltS, false);
 
       // Jump to issue using click.
-      this.skipButton.addEventListener('click', (e) => {
-        e.preventDefault();
-        next();
-      });
+      this.skipButton.addEventListener('click', next, false);
     };
 
     // ============================================================
@@ -5193,7 +5301,7 @@ class Sa11y {
       message = this.prepTooltip(message);
 
       // Add dismiss button if prop enabled.
-      const dismiss = (option.dismissAnnotations === true && CSSName[type] === 'warning') ? `<button data-sa11y-dismiss='${index}'>${Lang._('DISMISS')}</button>` : '';
+      const dismiss = (option.dismissAnnotations === true && CSSName[type] === 'warning') ? `<button data-sa11y-dismiss='${index}' type='button'>${Lang._('DISMISS')}</button>` : '';
 
       const create = document.createElement('div');
 
@@ -6121,9 +6229,9 @@ class Sa11y {
       }
     };
 
-    // ============================================================
-    // Rulesets: QA
-    // ============================================================
+    /**
+     * Rulesets: Quality assurance (QA) checks.
+    */
     this.checkQA = () => {
       // Error: Find all links pointing to development environment.
       if (option.badLinksQA === true) {
@@ -6164,7 +6272,7 @@ class Sa11y {
           const key = this.prepareDismissal(`pdf: ${href}`);
 
           // Highlight PDFs that are not dismissed.
-          if (pdfCount && !this.dismissed.filter((e) => e.key === key).length) {
+          if (pdfCount && this.dismissed !== undefined && !this.dismissed.filter((e) => e.key === key).length) {
             $el.setAttribute('data-sa11y-warning-inline', 'pdf');
           }
 
@@ -6638,11 +6746,14 @@ class Sa11y {
                   const background = contrast.getBackground(elem);
                   const textString = [].reduce.call(elem.childNodes, (a, b) => a + (b.nodeType === 3 ? b.textContent : ''), '');
                   const text = textString.trim();
+                  const clip = window.getComputedStyle(elem).clip.replace(/\s/g, '');
+                  const width = parseFloat(window.getComputedStyle(elem).width);
+                  const height = parseFloat(window.getComputedStyle(elem).height);
                   let ratio;
                   let error;
                   let warning;
 
-                  if (htmlTag === 'SVG') {
+                  if ((width === 1 && height === 1) && (clip === "rect(0,0,0,0)" || clip === "rect(1px,1px,1px,1px)")) ; else if (htmlTag === 'SVG') {
                     ratio = Math.round(contrast.contrastRatio(fill, background) * 100) / 100;
                     if (ratio < 3) {
                       error = {
@@ -6652,8 +6763,8 @@ class Sa11y {
                       contrastErrors.errors.push(error);
                     }
                   } else if (text.length || htmlTag === 'INPUT' || htmlTag === 'SELECT' || htmlTag === 'TEXTAREA') {
-                    // does element have a background image - needs to be manually reviewed
-                    if (background === 'image') {
+                    const type = elem.getAttribute('type');
+                    if (type === 'range' || type === 'color') ; else if (background === 'image') {
                       warning = {
                         elem,
                       };

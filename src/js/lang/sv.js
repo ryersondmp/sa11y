@@ -33,6 +33,9 @@ export default {
     NOT_VISIBLE_ALERT: 'Objektet du försöker visa är inte synligt: det kan vara gömt eller finnas inuti en dragspelskomponent eller en flikkomponent. Här är en förhandsvisning:',
     ERROR_MISSING_ROOT_TARGET: 'Hela sidan kontrolleras för tillgänglighet eftersom målområdet <code>%(root)</code> inte existerar.',
     HEADING_NOT_VISIBLE_ALERT: 'Rubriken är inte synlig; den kan vara gömd eller inuti ett dragspel eller en flikkomponent.',
+    PANEL_DISMISS_BUTTON: 'Visa %(dismissCount) avvisade varningar',
+    DISMISS: 'Avfärda',
+    DISMISSED: 'Avvisade varningar',
 
     // Alternative text module stop words
     SUSPICIOUS_ALT_STOPWORDS: ['bild', 'grafik', 'fotografi', 'foto'],
@@ -105,8 +108,6 @@ export default {
     LANG_GOOD: 'Bra',
     READABILITY_NO_P_OR_LI_MESSAGE: 'Det går inte att beräkna läsbarhetspoäng. Inget stycke <code>&lt;p&gt;</code> eller listinnehåll <code>&lt;li&gt;</code> hittades.',
     READABILITY_NOT_ENOUGH_CONTENT_MESSAGE: 'Inte tillräckligt innehåll för att beräkna läsbarhetspoäng.',
-    PANEL_DISMISS_BUTTON: 'Visa %(dismissCount) avvisade varningar',
-    DISMISS: 'Avfärda',
 
     // Headings
     HEADING_NON_CONSECUTIVE_LEVEL: 'Icke-konsekutiv rubriknivå används. Rubriker bör aldrig hoppa över nivåer eller gå från <strong>Rubrik %(prevLevel)</strong> till <strong {r}>Rubrik %(level)</strong>.',

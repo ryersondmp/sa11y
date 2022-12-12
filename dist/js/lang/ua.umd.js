@@ -41,6 +41,7 @@
       HEADING_NOT_VISIBLE_ALERT: 'Заголовок не видно; він може бути прихованим або всередині акордеона чи вкладки.',
       PANEL_DISMISS_BUTTON: 'Показати %(dismissCount) відхилених попередження',
       DISMISS: 'Відхилити',
+      DISMISSED: 'Відхилених попередження',
 
       // Alternative text module stop words
       SUSPICIOUS_ALT_STOPWORDS: ['зображення', 'графічний об’єкт', 'малюнок', 'фото'],

@@ -40,7 +40,8 @@
       ERROR_MISSING_ROOT_TARGET: 'L\'accessibilité de la page entière a été vérifiée, car la zone cible <code><code>%(root)</code> n\'existe pas.',
       HEADING_NOT_VISIBLE_ALERT: 'L\'en-tête n\'est pas visible ; il peut être caché ou à l\'intérieur d\'un accordéon ou d\'un composant d\'onglet.',
       PANEL_DISMISS_BUTTON: 'Afficher %(dismissCount) avertissements ignorés',
-      DISMISS: 'Rejeter',
+      DISMISS: 'Ignorer',
+      DISMISSED: 'Avertissements ignorés',
 
       // Alternative text module stop words
       SUSPICIOUS_ALT_STOPWORDS: ['image', 'illustration', 'photo', 'photographie'],

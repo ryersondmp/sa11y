@@ -35,6 +35,7 @@ var pl = {
     HEADING_NOT_VISIBLE_ALERT: 'Nagłówek nie jest widoczny; może być ukryty lub wewnątrz komponentu akordeonu lub tabulatora.',
     PANEL_DISMISS_BUTTON: 'Pokaż %(dismissCount) odrzucone ostrzeżenia',
     DISMISS: 'Odrzucać',
+    DISMISSED: 'Odrzucone ostrzeżenia',
 
     // Alternative text module stop words
     SUSPICIOUS_ALT_STOPWORDS: ['obraz', 'grafika', 'zdjęcie', 'rysunek', 'fotografia', 'foto', 'image', 'graphic', 'picture', 'photo'],

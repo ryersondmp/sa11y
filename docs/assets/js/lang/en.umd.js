@@ -29,7 +29,7 @@
       FORM_LABELS: 'Form labels',
       LINKS_ADVANCED: 'Links (Advanced)',
       DARK_MODE: 'Dark mode',
-      SHORTCUT_SCREEN_READER: 'Skip to issue. Keyboard shortcut: Alt period',
+      SHORTCUT_SCREEN_READER: 'Skip to issue. Keyboard shortcut: Alt S',
       SHORTCUT_TOOLTIP: 'Skip to issue',
       NEW_TAB: 'Opens new tab',
       PANEL_HEADING: 'Accessibility check',
@@ -41,6 +41,7 @@
       HEADING_NOT_VISIBLE_ALERT: 'Heading is not visible; it may be hidden or inside of an accordion or tab component.',
       PANEL_DISMISS_BUTTON: 'Show %(dismissCount) dismissed warnings',
       DISMISS: 'Dismiss',
+      DISMISSED: 'Dismissed warnings',
 
       // Alternative text module stop words
       SUSPICIOUS_ALT_STOPWORDS: ['image', 'graphic', 'picture', 'photo'],
