@@ -50,5 +50,3 @@ const sa11y = new Sa11y({
   headless: false,
   dismissAnnotations: true,
 });
-
-

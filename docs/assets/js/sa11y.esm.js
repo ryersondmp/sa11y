@@ -3324,6 +3324,8 @@ const Lang = {
   },
   sprintf(string, ...args) {
     let transString = this._(string);
+    transString = this.prepHTML(transString);
+
     if (args && args.length) {
       args.forEach((arg) => {
         transString = transString.replace(/%\([a-zA-z]+\)/, arg);
@@ -3333,6 +3335,12 @@ const Lang = {
   },
   translate(string) {
     return this.langStrings[string] || string;
+  },
+  prepHTML($el) {
+    return $el.replaceAll(/<hr>/g, '<hr aria-hidden="true">')
+      .replaceAll(/<a[\s]href=/g, '<a target="_blank" rel="noopener noreferrer" href=')
+      .replaceAll(/<\/a>/g, `<span class="sa11y-visually-hidden"> (${Lang._('NEW_TAB')})</span></a>`)
+      .replaceAll(/{r}/g, 'class="sa11y-red-text"');
   },
 };
 
@@ -4162,17 +4170,6 @@ class Sa11y {
       };
 
       /**
-       * Utility: Prepare tooltips. Applies additional markup for tooltips.
-       * @param {String} message The node to start from.
-       * @return {String} Returns string ready for output.
-      */
-      this.prepTooltip = (message) => message
-        .replaceAll(/<hr>/g, '<hr aria-hidden="true">')
-        .replaceAll(/<a[\s]href=/g, '<a target="_blank" rel="noopener noreferrer" href=')
-        .replaceAll(/<\/a>/g, `<span class="sa11y-visually-hidden"> (${Lang._('NEW_TAB')})</span></a>`)
-        .replaceAll(/{r}/g, 'class="sa11y-red-text"');
-
-      /**
        * Utility: Prepare dismiss key.
        * @param {String} text The node to start from.
        * @return {String} Returns 256 character string without spaces.
@@ -4457,8 +4454,6 @@ class Sa11y {
             this.annotate($el.element, $el.type, $el.content, $el.inline, $el.position, $el.id);
           });
           this.initializeTooltips();
-
-          // Initialize panel.
           this.generatePageOutline();
           this.updateStatus();
 
@@ -4602,6 +4597,9 @@ class Sa11y {
               href: currentPage,
             };
 
+            const item = document.querySelector(`[data-sa11y-annotation='${object.id}']`);
+            this.latestDismissed = item.getAttribute('data-sa11y-position');
+
             this.store.setItem('sa11y-dismiss-item', JSON.stringify(dismissalDetails));
             existingEntries.push(dismissalDetails);
             this.store.setItem('sa11y-dismissed', JSON.stringify(existingEntries));
@@ -4612,8 +4610,6 @@ class Sa11y {
             if (element.closest('[data-tippy-root]') !== null) {
               element.closest('[data-tippy-root]').remove();
             }
-
-            this.dismissPosition = object.id;
 
             // Async scan upon dismiss.
             this.resetAll(false);
@@ -4632,10 +4628,10 @@ class Sa11y {
 
         // 2) Restore hidden alerts on the CURRENT page only.
         this.restoreDismissButton.onclick = async () => {
+          this.dismissTippy.hide(); // Prevent flash of tooltip.
           const filtered = this.dismissed.filter((item) => item.href !== currentPage);
           this.store.setItem('sa11y-dismissed', JSON.stringify(filtered));
           this.restoreDismissButton.classList.remove('sa11y-active');
-          this.dismissTippy.hide(); // Prevent flash of tooltip.
           this.resetAll(false);
           await this.checkAll();
         };
@@ -4880,14 +4876,16 @@ class Sa11y {
 
       const annotations = document.querySelectorAll('[data-sa11y-position]');
       const annotationsLength = annotations.length;
-      const dismissed = document.querySelector(`[data-sa11y-annotation="${this.dismissPosition - 1}"]`);
 
-      // Starting annotation.
       let i;
-      if (dismissed !== null) {
-        const dismissedPosition = parseInt(dismissed.getAttribute('data-sa11y-position'), 10);
-        i = dismissedPosition - 1;
+      if (this.latestDismissed !== undefined) {
+        // Start from last dismissed element.
+        i = this.latestDismissed - 1;
+      } else if (this.activeAnnotation !== undefined) {
+        // Start from latest opened tooltip.
+        i = this.activeAnnotation;
       } else {
+        // Start from first tooltip.
         i = -1;
       }
 
@@ -4937,9 +4935,9 @@ class Sa11y {
         // Close whatever tooltip is open before opening up another.
         const activeButton = document.querySelector('.sa11y-btn[aria-expanded=true]');
         if (activeButton) {
-          const pos = parseInt(activeButton.getAttribute('data-sa11y-position'), 10);
+          this.activeAnnotation = parseInt(activeButton.getAttribute('data-sa11y-position'), 10);
           activeButton.click();
-          i = pos;
+          i = this.activeAnnotation;
         }
 
         i += 1;
@@ -5296,10 +5294,6 @@ class Sa11y {
         [validTypes[2]]: 'good',
       };
 
-      // Prepare tooltip content (tooltip formatting).
-      let message = content;
-      message = this.prepTooltip(message);
-
       // Add dismiss button if prop enabled.
       const dismiss = (option.dismissAnnotations === true && CSSName[type] === 'warning') ? `<button data-sa11y-dismiss='${index}' type='button'>${Lang._('DISMISS')}</button>` : '';
 
@@ -5310,7 +5304,7 @@ class Sa11y {
         create.setAttribute('class', `sa11y-instance sa11y-${CSSName[type]}-message-container`);
         create.innerHTML = `
           <div role="region" data-sa11y-annotation="${index}" tabindex="-1" aria-label="${[type]}" class="sa11y-${CSSName[type]}-message" lang="${Lang._('LANG_CODE')}">
-            ${message}
+            ${content}
           </div>
         `;
         document.body.insertAdjacentElement('afterbegin', create);
@@ -5321,7 +5315,7 @@ class Sa11y {
         <button data-sa11y-annotation="${index}" type="button" aria-label="${[type]}" class="sa11y-btn sa11y-${CSSName[type]}-btn${inline ? '-text' : ''}" data-tippy-content="
             <div lang='${Lang._('LANG_CODE')}'>
               <div class='sa11y-header-text'>${[type]}</div>
-                ${this.escapeHTML(message)}
+                ${this.escapeHTML(content)}
               </div>
             ${dismiss}">
           </button>
@@ -5447,7 +5441,7 @@ class Sa11y {
       if (this.headingOne.length === 0) {
         this.results.push({
           type: ERROR,
-          content: Lang._('HEADING_MISSING_ONE'),
+          content: Lang.sprintf('HEADING_MISSING_ONE'),
         });
       }
     };
@@ -5561,7 +5555,7 @@ class Sa11y {
             this.results.push({
               element: $el,
               type: ERROR,
-              content: Lang._('LINK_EMPTY_LINK_NO_LABEL'),
+              content: Lang.sprintf('LINK_EMPTY_LINK_NO_LABEL'),
               inline: true,
               position: 'afterend',
             });
@@ -5570,7 +5564,7 @@ class Sa11y {
             this.results.push({
               element: $el,
               type: ERROR,
-              content: Lang._('LINK_EMPTY'),
+              content: Lang.sprintf('LINK_EMPTY'),
               inline: true,
               position: 'afterend',
             });
@@ -5614,7 +5608,7 @@ class Sa11y {
             this.results.push({
               element: $el,
               type: WARNING,
-              content: Lang._('LINK_URL'),
+              content: Lang.sprintf('LINK_URL'),
               inline: true,
               position: 'beforebegin',
               dismiss: key,
@@ -5640,7 +5634,7 @@ class Sa11y {
     // ============================================================
     this.checkLinksAdvanced = () => {
       if (option.linksAdvancedPlugin === true) {
-        if (this.store.getItem('sa11y-remember-links-advanced') === 'On') {
+        if (this.store.getItem('sa11y-remember-links-advanced') === 'On' || option.headless === true) {
           const seen = {};
           this.links.forEach(($el) => {
             let linkText = this.computeAriaLabel($el);
@@ -5724,7 +5718,7 @@ class Sa11y {
               this.results.push({
                 element: $el,
                 type: WARNING,
-                content: Lang._('NEW_TAB_WARNING'),
+                content: Lang.sprintf('NEW_TAB_WARNING'),
                 inline: true,
                 position: 'beforebegin',
                 dismiss: key,
@@ -5736,7 +5730,7 @@ class Sa11y {
               this.results.push({
                 element: $el,
                 type: WARNING,
-                content: Lang._('FILE_TYPE_WARNING'),
+                content: Lang.sprintf('FILE_TYPE_WARNING'),
                 inline: true,
                 position: 'beforebegin',
                 dismiss: key,
@@ -5793,7 +5787,7 @@ class Sa11y {
               this.results.push({
                 element: $el,
                 type: ERROR,
-                content: Lang._('MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE'),
+                content: Lang.sprintf('MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE'),
                 inline: false,
                 position: 'beforebegin',
               });
@@ -5801,7 +5795,7 @@ class Sa11y {
               this.results.push({
                 element: $el,
                 type: ERROR,
-                content: Lang._('MISSING_ALT_LINK_MESSAGE'),
+                content: Lang.sprintf('MISSING_ALT_LINK_MESSAGE'),
                 inline: false,
                 position: 'beforebegin',
               });
@@ -5811,7 +5805,7 @@ class Sa11y {
             this.results.push({
               element: $el,
               type: ERROR,
-              content: Lang._('MISSING_ALT_MESSAGE'),
+              content: Lang.sprintf('MISSING_ALT_MESSAGE'),
               inline: false,
               position: 'beforebegin',
             });
@@ -5881,7 +5875,7 @@ class Sa11y {
               this.results.push({
                 element: $el,
                 type: ERROR,
-                content: Lang._('LINK_IMAGE_ARIA_HIDDEN'),
+                content: Lang.sprintf('LINK_IMAGE_ARIA_HIDDEN'),
                 inline: false,
                 position: 'beforebegin',
               });
@@ -5889,7 +5883,7 @@ class Sa11y {
               this.results.push({
                 element: $el,
                 type: ERROR,
-                content: Lang._('LINK_IMAGE_NO_ALT_TEXT'),
+                content: Lang.sprintf('LINK_IMAGE_NO_ALT_TEXT'),
                 inline: false,
                 position: 'beforebegin',
               });
@@ -5897,7 +5891,7 @@ class Sa11y {
               this.results.push({
                 element: $el,
                 type: GOOD,
-                content: Lang._('LINK_IMAGE_HAS_TEXT'),
+                content: Lang.sprintf('LINK_IMAGE_HAS_TEXT'),
                 inline: false,
                 position: 'beforebegin',
               });
@@ -5944,7 +5938,7 @@ class Sa11y {
                 this.results.push({
                   element: $el,
                   type: WARNING,
-                  content: Lang._('IMAGE_FIGURE_DECORATIVE'),
+                  content: Lang.sprintf('IMAGE_FIGURE_DECORATIVE'),
                   inline: false,
                   position: 'beforebegin',
                   dismiss: key,
@@ -5954,7 +5948,7 @@ class Sa11y {
                 this.results.push({
                   element: $el,
                   type: WARNING,
-                  content: Lang._('IMAGE_DECORATIVE'),
+                  content: Lang.sprintf('IMAGE_DECORATIVE'),
                   inline: false,
                   position: 'beforebegin',
                   dismiss: key,
@@ -5965,7 +5959,7 @@ class Sa11y {
               this.results.push({
                 element: $el,
                 type: WARNING,
-                content: Lang._('IMAGE_DECORATIVE'),
+                content: Lang.sprintf('IMAGE_DECORATIVE'),
                 inline: false,
                 position: 'beforebegin',
                 dismiss: key,
@@ -6025,7 +6019,7 @@ class Sa11y {
     // ============================================================
     this.checkLabels = () => {
       if (option.formLabelsPlugin === true) {
-        if (this.store.getItem('sa11y-remember-labels') === 'On') {
+        if (this.store.getItem('sa11y-remember-labels') === 'On' || option.headless === true) {
           this.inputs.forEach(($el) => {
             // Ignore hidden inputs.
             if (this.isElementHidden($el) !== true) {
@@ -6042,7 +6036,7 @@ class Sa11y {
                     this.results.push({
                       element: $el,
                       type: ERROR,
-                      content: Lang._('LABELS_MISSING_IMAGE_INPUT_MESSAGE'),
+                      content: Lang.sprintf('LABELS_MISSING_IMAGE_INPUT_MESSAGE'),
                       inline: false,
                       position: 'beforebegin',
                     });
@@ -6054,7 +6048,7 @@ class Sa11y {
                 this.results.push({
                   element: $el,
                   type: WARNING,
-                  content: Lang._('LABELS_INPUT_RESET_MESSAGE'),
+                  content: Lang.sprintf('LABELS_INPUT_RESET_MESSAGE'),
                   inline: false,
                   position: 'beforebegin',
                   dismiss: key,
@@ -6108,7 +6102,7 @@ class Sa11y {
                 this.results.push({
                   element: $el,
                   type: ERROR,
-                  content: Lang._('LABELS_MISSING_LABEL_MESSAGE'),
+                  content: Lang.sprintf('LABELS_MISSING_LABEL_MESSAGE'),
                   inline: false,
                   position: 'beforebegin',
                 });
@@ -6135,7 +6129,7 @@ class Sa11y {
             this.results.push({
               element: $el,
               type: WARNING,
-              content: Lang._('EMBED_AUDIO'),
+              content: Lang.sprintf('EMBED_AUDIO'),
               inline: false,
               position: 'beforebegin',
               dismiss: key,
@@ -6152,7 +6146,7 @@ class Sa11y {
               this.results.push({
                 element: $el,
                 type: WARNING,
-                content: Lang._('EMBED_VIDEO'),
+                content: Lang.sprintf('EMBED_VIDEO'),
                 inline: false,
                 position: 'beforebegin',
                 dismiss: key,
@@ -6168,7 +6162,7 @@ class Sa11y {
             this.results.push({
               element: $el,
               type: WARNING,
-              content: Lang._('EMBED_DATA_VIZ'),
+              content: Lang.sprintf('EMBED_DATA_VIZ'),
               inline: false,
               position: 'beforebegin',
               dismiss: key,
@@ -6194,7 +6188,7 @@ class Sa11y {
                   this.results.push({
                     element: $el,
                     type: ERROR,
-                    content: Lang._('EMBED_MISSING_TITLE'),
+                    content: Lang.sprintf('EMBED_MISSING_TITLE'),
                     inline: false,
                     position: 'beforebegin',
                   });
@@ -6218,7 +6212,7 @@ class Sa11y {
               this.results.push({
                 element: $el,
                 type: WARNING,
-                content: Lang._('EMBED_GENERAL_WARNING'),
+                content: Lang.sprintf('EMBED_GENERAL_WARNING'),
                 inline: false,
                 position: 'beforebegin',
                 dismiss: key,
@@ -6255,7 +6249,7 @@ class Sa11y {
             this.results.push({
               element: $el.parentNode,
               type: WARNING,
-              content: Lang._('QA_BAD_ITALICS'),
+              content: Lang.sprintf('QA_BAD_ITALICS'),
               inline: false,
               position: 'beforebegin',
               dismiss: key,
@@ -6295,7 +6289,7 @@ class Sa11y {
         if (!this.language || this.language.length < 2) {
           this.results.push({
             type: ERROR,
-            content: Lang._('QA_PAGE_LANGUAGE'),
+            content: Lang.sprintf('QA_PAGE_LANGUAGE'),
           });
         }
       }
@@ -6327,7 +6321,7 @@ class Sa11y {
             this.results.push({
               element: $el,
               type: ERROR,
-              content: Lang._('TABLES_MISSING_HEADINGS'),
+              content: Lang.sprintf('TABLES_MISSING_HEADINGS'),
               inline: false,
               position: 'beforebegin',
             });
@@ -6337,7 +6331,7 @@ class Sa11y {
               this.results.push({
                 element: $a,
                 type: ERROR,
-                content: Lang._('TABLES_SEMANTIC_HEADING'),
+                content: Lang.sprintf('TABLES_SEMANTIC_HEADING'),
                 inline: false,
                 position: 'beforebegin',
               });
@@ -6348,7 +6342,7 @@ class Sa11y {
               this.results.push({
                 element: $b,
                 type: ERROR,
-                content: Lang._('TABLES_EMPTY_HEADING'),
+                content: Lang.sprintf('TABLES_EMPTY_HEADING'),
                 inline: false,
                 position: 'afterbegin',
               });
@@ -6539,7 +6533,7 @@ class Sa11y {
             this.results.push({
               element: $el,
               type: WARNING,
-              content: Lang._('QA_UPPERCASE_WARNING'),
+              content: Lang.sprintf('QA_UPPERCASE_WARNING'),
               inline: false,
               position: 'beforebegin',
               dismiss: key,
@@ -6582,7 +6576,7 @@ class Sa11y {
           this.results.push({
             element: $el,
             type: WARNING,
-            content: Lang._('QA_TEXT_UNDERLINE_WARNING'),
+            content: Lang.sprintf('QA_TEXT_UNDERLINE_WARNING'),
             inline: true,
             position: 'beforebegin',
             dismiss: key,
@@ -6598,7 +6592,7 @@ class Sa11y {
             this.results.push({
               element: $el,
               type: WARNING,
-              content: Lang._('QA_TEXT_UNDERLINE_WARNING'),
+              content: Lang.sprintf('QA_TEXT_UNDERLINE_WARNING'),
               inline: false,
               position: 'beforebegin',
               dismiss: key,
@@ -6618,7 +6612,7 @@ class Sa11y {
         if (!$title || $title.textContent.trim().length === 0) {
           this.results.push({
             type: ERROR,
-            content: Lang._('QA_PAGE_TITLE'),
+            content: Lang.sprintf('QA_PAGE_TITLE'),
           });
         }
       }
@@ -6632,7 +6626,7 @@ class Sa11y {
             this.results.push({
               element: $el,
               type: WARNING,
-              content: Lang._('QA_SUBSCRIPT_WARNING'),
+              content: Lang.sprintf('QA_SUBSCRIPT_WARNING'),
               inline: true,
               position: 'beforebegin',
               dismiss: key,
@@ -6651,7 +6645,7 @@ class Sa11y {
     /* eslint-disable */
     this.checkContrast = () => {
       if (option.contrastPlugin === true) {
-        if (this.store.getItem('sa11y-remember-contrast') === 'On') {
+        if (this.store.getItem('sa11y-remember-contrast') === 'On' || option.headless === true) {
           let contrastErrors = {
             errors: [],
             warnings: [],
@@ -6963,42 +6957,39 @@ class Sa11y {
               flesch = 217 - (1.3 * (words / sentences)) - (0.6 * (100 * (totalSyllables / words)));
             }
 
-            if (pageText.length === 0) {
-              this.readabilityInfo.innerHTML = Lang._('READABILITY_NO_P_OR_LI_MESSAGE');
-            } else if (words > 30) {
-              // Score must be between 0 and 100%.
-              if (flesch > 100) {
-                flesch = 100;
-              } else if (flesch < 0) {
-                flesch = 0;
-              }
-
-              const fleschScore = flesch.toFixed(1);
-              const avgWordsPerSentence = (words / sentences).toFixed(1);
-              const complexWords = Math.round(100 * ((words - (syllables1 + syllables2)) / words));
-
-              // Flesch score: WCAG AAA pass if greater than 60
-              if (fleschScore >= 0 && fleschScore < 30) {
-                this.readabilityInfo.innerHTML = `${fleschScore} <span class="sa11y-readability-score">${Lang._('LANG_VERY_DIFFICULT')}</span>`;
-              } else if (fleschScore > 31 && fleschScore < 49) {
-                this.readabilityInfo.innerHTML = `${fleschScore} <span class="sa11y-readability-score">${Lang._('LANG_DIFFICULT')}</span>`;
-              } else if (fleschScore > 50 && fleschScore < 60) {
-                this.readabilityInfo.innerHTML = `${fleschScore} <span class="sa11y-readability-score">${Lang._('LANG_FAIRLY_DIFFICULT')}</span>`;
-              } else {
-                this.readabilityInfo.innerHTML = `${fleschScore} <span class="sa11y-readability-score">${Lang._('LANG_GOOD')}</span>`;
-              }
-              // Flesch details
-              this.readabilityDetails.innerHTML = `
-              <li><strong>${Lang._('LANG_AVG_SENTENCE')}</strong> ${avgWordsPerSentence}</li>
-              <li><strong>${Lang._('LANG_COMPLEX_WORDS')}</strong> ${complexWords}%</li>
-              <li><strong>${Lang._('LANG_TOTAL_WORDS')}</strong> ${words}</li>`;
-            } else {
-              this.readabilityInfo.textContent = Lang._('READABILITY_NOT_ENOUGH_CONTENT_MESSAGE');
+            // Score must be between 0 and 100%.
+            if (flesch > 100) {
+              flesch = 100;
+            } else if (flesch < 0) {
+              flesch = 0;
             }
-          }
 
-          /* Lix: Danish, Finnish, Norwegian (Bokmål & Nynorsk), Swedish. */
-          if (['sv', 'fi', 'da', 'no', 'nb', 'nn'].includes(option.readabilityLang)) {
+            // Compute scores.
+            const fleschScore = flesch.toFixed(1);
+            const avgWordsPerSentence = (words / sentences).toFixed(1);
+            const complexWords = Math.round(100 * ((words - (syllables1 + syllables2)) / words));
+
+            let difficulty;
+            if (fleschScore >= 0 && fleschScore < 30) {
+              difficulty = Lang._('LANG_VERY_DIFFICULT');
+            } else if (fleschScore > 31 && fleschScore < 49) {
+              difficulty = Lang._('LANG_DIFFICULT');
+            } else if (fleschScore > 50 && fleschScore < 60) {
+              difficulty = Lang._('LANG_FAIRLY_DIFFICULT');
+            } else {
+              difficulty = Lang._('LANG_GOOD');
+            }
+
+            // Create object for headless mode.
+            this.readabilityResults = {
+              score: fleschScore,
+              averageWordsPerSentence: avgWordsPerSentence,
+              complexWords: complexWords,
+              difficultyLevel: difficulty,
+              wordCount: words,
+            };
+          } else if (['sv', 'fi', 'da', 'no', 'nb', 'nn'].includes(option.readabilityLang)) {
+            /* Lix: Danish, Finnish, Norwegian (Bokmål & Nynorsk), Swedish. */
             const calculateLix = (text) => {
               const lixWords = () => text.replace(/[-'.]/ig, '').split(/[^a-zA-ZöäåÖÄÅÆæØø0-9]/g).filter(Boolean);
               const splitSentences = () => {
@@ -7012,41 +7003,66 @@ class Sa11y {
               const score = Math.round((wordCount / sentenceCount) + ((longWordsCount * 100) / wordCount));
               const avgWordsPerSentence = (wordCount / sentenceCount).toFixed(1);
               const complexWords = Math.round(100 * (longWordsCount / wordCount));
+
+              let difficulty;
+              if (score >= 0 && score < 39) {
+                difficulty = Lang._('LANG_GOOD');
+              } else if (score > 40 && score < 50) {
+                difficulty = Lang._('LANG_FAIRLY_DIFFICULT');
+              } else if (score > 51 && score < 61) {
+                difficulty = Lang._('LANG_DIFFICULT');
+              } else {
+                difficulty = Lang._('LANG_VERY_DIFFICULT');
+              }
               return {
-                score, avgWordsPerSentence, complexWords, wordCount,
+                score, difficulty, avgWordsPerSentence, complexWords, wordCount,
               };
             };
 
-            // Update panel.
+            // Compute LIX
             const lix = calculateLix(pageText);
 
+            // Create object for headless mode.
+            this.readabilityResults = {
+              score: lix.score,
+              averageWordsPerSentence: lix.avgWordsPerSentence,
+              complexWords: lix.complexWords,
+              difficultyLevel: lix.difficulty,
+              wordCount: lix.wordCount,
+            };
+          }
+
+          // Update main panel if not in headless mode.
+          if (option.headless === false) {
             if (pageText.length === 0) {
               this.readabilityInfo.innerHTML = Lang._('READABILITY_NO_P_OR_LI_MESSAGE');
-            } else if (lix.wordCount > 30) {
-              if (lix.score >= 0 && lix.score < 39) {
-                this.readabilityInfo.innerHTML = `${lix.score} <span class="sa11y-readability-score">${Lang._('LANG_GOOD')}</span>`;
-              } else if (lix.score > 40 && lix.score < 50) {
-                this.readabilityInfo.innerHTML = `${lix.score} <span class="sa11y-readability-score">${Lang._('LANG_FAIRLY_DIFFICULT')}</span>`;
-              } else if (lix.score > 51 && lix.score < 61) {
-                this.readabilityInfo.innerHTML = `${lix.score} <span class="sa11y-readability-score">${Lang._('LANG_DIFFICULT')}</span>`;
-              } else {
-                this.readabilityInfo.innerHTML = `${lix.score} <span class="sa11y-readability-score">${Lang._('LANG_VERY_DIFFICULT')}</span>`;
-              }
+            } else if (this.readabilityResults.wordCount > 30) {
+              this.readabilityInfo.innerHTML = `${this.readabilityResults.score} <span class="sa11y-readability-score">${this.readabilityResults.difficultyLevel}</span>`;
 
-              // LIX details
               this.readabilityDetails.innerHTML = `
-                <li><strong>${Lang._('LANG_AVG_SENTENCE')}</strong> ${lix.avgWordsPerSentence}</li>
-                <li><strong>${Lang._('LANG_COMPLEX_WORDS')}</strong> ${lix.complexWords}%</li>
-                <li><strong>${Lang._('LANG_TOTAL_WORDS')}</strong> ${lix.wordCount}</li>`;
+                <li>
+                  <strong>${Lang._('LANG_AVG_SENTENCE')}</strong>
+                  ${this.readabilityResults.averageWordsPerSentence}
+                </li>
+                <li>
+                  <strong>${Lang._('LANG_COMPLEX_WORDS')}</strong>
+                  ${this.readabilityResults.complexWords}%
+                </li>
+                <li>
+                  <strong>${Lang._('LANG_TOTAL_WORDS')}</strong>
+                  ${this.readabilityResults.wordCount}
+                </li>`;
             } else {
               this.readabilityInfo.textContent = Lang._('READABILITY_NOT_ENOUGH_CONTENT_MESSAGE');
             }
           }
         }
       } else {
-        // Hide Readability toggle and panel if prop is set to false.
-        this.readabilityItem.setAttribute('style', 'display: none !important;');
-        this.readabilityPanel.classList.remove('sa11y-active');
+        if (option.headless === false) {
+          // Hide Readability toggle and panel if prop is set to false.
+          this.readabilityItem.setAttribute('style', 'display: none !important;');
+          this.readabilityPanel.classList.remove('sa11y-active');
+        }
       }
     };
 
