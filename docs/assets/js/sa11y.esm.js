@@ -3372,6 +3372,7 @@ class Sa11y {
       dismissAnnotations: true,
       appendTooltips: document.body,
       headless: false,
+      selectorPath: false,
 
       // Readability
       readabilityPlugin: true,
@@ -4175,6 +4176,35 @@ class Sa11y {
        * @return {String} Returns 256 character string without spaces.
       */
       this.prepareDismissal = (text) => String(text).substring(0, 256);
+
+      /**
+       * Utility: Generate CSS selector path of element.
+       * @param {Node} element the element's node.
+       * @link https://www.geeksforgeeks.org/how-to-create-a-function-generateselector-to-generate-css-selector-path-of-a-dom-element/
+       * @link https://dev.to/aniket_chauhan/generate-a-css-selector-path-of-a-dom-element-4aim
+      */
+      this.generateSelectorPath = (element) => {
+        const selectorPath = [];
+        let pathSelector;
+        let target = element;
+        while (target.tagName) {
+          let i = 0;
+          if (target.parentNode) {
+            const { children } = target.parentNode;
+            while (i < children.length && children[i] !== target) {
+              i += 1;
+            }
+          }
+          const { className } = target;
+          const idName = target.id;
+          pathSelector = target.localName
+                          + (className ? `.${className}` : '')
+                          + (idName ? `#${idName}` : '');
+          selectorPath.unshift(pathSelector + (i > 0 ? `:nth-child(${i + 1})` : ''));
+          target = target.parentNode;
+        }
+        return selectorPath.join(' > ');
+      };
     };
 
     //----------------------------------------------------------------------
@@ -4434,6 +4464,16 @@ class Sa11y {
         option.customChecks.check();
       }
 
+      // Optional: Generate CSS selector path of element.
+      if (option.selectorPath === true) {
+        this.results.forEach(($el) => {
+          if ($el.element !== undefined) {
+            const path = this.generateSelectorPath($el.element);
+            Object.assign($el, { cssPath: path });
+          }
+        });
+      }
+
       if (option.headless === false) {
         // Return element from results array that matches dismiss key and dismiss url. Then filter through matched objects.
         const findKey = this.dismissed.map((e) => {
@@ -4550,7 +4590,7 @@ class Sa11y {
         interactive: true,
         trigger: 'mouseenter click', // Focusin trigger to ensure "Jump to issue" button displays tooltip.
         arrow: true,
-        delay: [200, 400], // Slight delay to ensure mouse doesn't quickly trigger and hide tooltip.
+        delay: [0, 400], // Slight delay to ensure mouse doesn't quickly trigger and hide tooltip.
         theme: 'sa11y-theme',
         placement: 'right-start',
         allowHTML: true,
@@ -4569,6 +4609,15 @@ class Sa11y {
           });
         },
       });
+      // TO-DO: Custom focus solution for accessibility tooltips.
+      document.addEventListener('click', (e) => {
+        const element = e.target;
+        if (element.tagName === 'BUTTON' && element.hasAttribute('data-sa11y-annotation')) {
+          setTimeout(() => {
+            document.querySelector('[data-tippy-root] > [tabindex="-1"]').focus();
+          }, 500);
+        }
+      }, false);
     };
 
     // ============================================================
@@ -4713,7 +4762,7 @@ class Sa11y {
       this.skipButton.disabled = false;
       this.panel.classList.add('sa11y-active');
       this.html.setAttribute('data-sa11y-active', 'true');
-      this.skipButton.setAttribute('style', 'display: block');
+      this.skipButton.classList.add('sa11y-active');
 
       if (this.errorCount > 0 && this.warningCount > 0) {
         this.panelContent.setAttribute('class', 'sa11y-errors');
@@ -4727,7 +4776,7 @@ class Sa11y {
       } else {
         if (this.dismissCount > 0) {
           this.status.innerHTML = `${Lang._('DISMISSED')} <span class="sa11y-panel-count">${this.dismissCount}</span>`;
-          this.skipButton.setAttribute('style', 'display: none');
+          this.skipButton.classList.remove('sa11y-active');
         } else {
           this.panelContent.setAttribute('class', 'sa11y-good');
           this.status.innerHTML = `${Lang._('PANEL_STATUS_NONE')}`;
@@ -5303,23 +5352,32 @@ class Sa11y {
       if (element === undefined) {
         create.setAttribute('class', `sa11y-instance sa11y-${CSSName[type]}-message-container`);
         create.innerHTML = `
-          <div role="region" data-sa11y-annotation="${index}" tabindex="-1" aria-label="${[type]}" class="sa11y-${CSSName[type]}-message" lang="${Lang._('LANG_CODE')}">
-            ${content}
-          </div>
-        `;
+          <div
+            role="region"
+            data-sa11y-annotation="${index}"
+            tabindex="-1"
+            aria-label="${[type]}"
+            class="sa11y-${CSSName[type]}-message"
+            lang="${Lang._('LANG_CODE')}">
+              ${content}
+          </div>`;
         document.body.insertAdjacentElement('afterbegin', create);
       } else {
         // Button annotations.
         create.classList.add(`${inline ? 'sa11y-instance-inline' : 'sa11y-instance'}`);
         create.innerHTML = `
-        <button data-sa11y-annotation="${index}" type="button" aria-label="${[type]}" class="sa11y-btn sa11y-${CSSName[type]}-btn${inline ? '-text' : ''}" data-tippy-content="
-            <div lang='${Lang._('LANG_CODE')}'>
+        <button
+          data-sa11y-annotation="${index}"
+          type="button"
+          aria-label="${[type]}"
+          class="sa11y-btn sa11y-${CSSName[type]}-btn${inline ? '-text' : ''}"
+          data-tippy-content=
+            "<div lang='${Lang._('LANG_CODE')}'>
               <div class='sa11y-header-text'>${[type]}</div>
                 ${this.escapeHTML(content)}
-              </div>
-            ${dismiss}">
-          </button>
-        `;
+                ${dismiss}
+            </div>"
+        ></button>`;
 
         // Make sure annotations always appended outside of interactive elements.
         let location = element.closest('a, button');
