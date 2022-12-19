@@ -343,7 +343,6 @@ html[data-sa11y-theme=dark] {
   display: none;
   opacity: 0;
   /* Dismiss button for issues */
-  /* Close button within panel. */
 }
 #sa11y-container #sa11y-panel-alert.sa11y-active {
   display: block !important;
@@ -376,10 +375,14 @@ html[data-sa11y-theme=dark] {
 #sa11y-container #sa11y-panel-alert button[data-sa11y-dismiss]:hover, #sa11y-container #sa11y-panel-alert button[data-sa11y-dismiss]:focus {
   background: var(--sa11y-shortcut-hover) !important;
 }
-#sa11y-container #sa11y-panel-alert .sa11y-close-btn {
+
+/**
+ * Close button
+ * ========================================================================= */
+.sa11y-close-btn {
   float: right !important;
   border-radius: 50% !important;
-  border: 0 !important;
+  border: 1px solid var(--sa11y-panel-bg-splitter) !important;
   cursor: pointer !important;
   font-size: var(--sa11y-normal-text) !important;
   font-weight: normal !important;
@@ -387,14 +390,14 @@ html[data-sa11y-theme=dark] {
   position: relative !important;
   background: none !important;
   color: var(--sa11y-panel-primary) !important;
-  width: 30px !important;
-  height: 30px !important;
+  width: 32px !important;
+  height: 32px !important;
   transition: all 0.2s ease-in-out !important;
 }
-#sa11y-container #sa11y-panel-alert .sa11y-close-btn:hover, #sa11y-container #sa11y-panel-alert .sa11y-close-btn:focus {
+.sa11y-close-btn:hover, .sa11y-close-btn:focus {
   background-color: var(--sa11y-shortcut-hover) !important;
 }
-#sa11y-container #sa11y-panel-alert .sa11y-close-btn:after {
+.sa11y-close-btn:after {
   content: "" !important;
   left: -7px !important;
   right: -7px !important;
@@ -855,7 +858,8 @@ html[data-sa11y-theme=dark] {
   box-shadow: inset 0 0 0 4px var(--sa11y-focus-color);
 }
 #sa11y-container [tabindex="0"]:focus,
-#sa11y-container [tabindex="-1"]:focus #sa11y-close-alert:focus,
+#sa11y-container [tabindex="-1"]:focus,
+#sa11y-container #sa11y-close-alert:focus,
 #sa11y-container #sa11y-skip-button:focus,
 #sa11y-container #sa11y-dismiss-button:focus,
 #sa11y-container #sa11y-toggle:focus,
@@ -864,6 +868,7 @@ html[data-sa11y-theme=dark] {
   box-shadow: 0 0 0 5px var(--sa11y-focus-color) !important;
 }
 
+button.sa11y-btn:active,
 button.sa11y-btn:focus,
 [data-sa11y-annotation][tabindex="-1"]:focus {
   outline: 0 !important;
@@ -873,6 +878,7 @@ button.sa11y-btn:focus,
 /* Tooltip focus styles */
 .tippy-box[data-theme~=sa11y-theme] a:focus,
 .tippy-box[data-theme~=sa11y-theme] button:focus,
+.tippy-box[data-theme~=sa11y-theme] button:active,
 .tippy-box[data-theme~=sa11y-theme][tabindex="-1"]:focus {
   outline: 0 !important;
   box-shadow: 0 0 0 5px var(--sa11y-focus-color) !important;
@@ -1431,6 +1437,9 @@ a.sa11y-warning-text,
   transition-property: transform, visibility, opacity;
   /* Arrows */
 }
+.tippy-box[data-theme~=sa11y-theme] .sa11y-annotation-tooltip {
+  min-width: 240px;
+}
 .tippy-box[data-theme~=sa11y-theme] *:not(code) {
   font-family: var(--sa11y-font-face) !important;
   line-height: 22px !important;
@@ -1490,13 +1499,16 @@ a.sa11y-warning-text,
   height: 1px !important;
   opacity: 1 !important;
 }
+.tippy-box[data-theme~=sa11y-theme] button.sa11y-close-btn {
+  margin: 0 !important;
+}
 .tippy-box[data-theme~=sa11y-theme] button {
   background: var(--sa11y-panel-bg-secondary) !important;
   border: 1px solid var(--sa11y-button-outline) !important;
-  border-radius: 5px !important;
+  border-radius: 5px;
   color: var(--sa11y-panel-primary) !important;
-  display: block !important;
-  margin: 10px 5px 5px 0 !important;
+  display: block;
+  margin: 10px 5px 5px 0;
   cursor: pointer !important;
   padding: 4px 8px !important;
 }

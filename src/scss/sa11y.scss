@@ -395,39 +395,41 @@ html[data-sa11y-theme="dark"] {
       background: var(--sa11y-shortcut-hover)!important;
     }
   }
+}
 
-  /* Close button within panel. */
-  .sa11y-close-btn {
-    float: right !important;
-    border-radius: 50% !important;
-    border: 0 !important;
-    cursor: pointer !important;
-    font-size: var(--sa11y-normal-text) !important;
-    font-weight: normal !important;
-    margin: 0 !important;
-    position: relative !important;
-    background: none !important;
-    color: var(--sa11y-panel-primary) !important;
-    width: 30px !important;
-    height: 30px !important;
-    transition: all .2s ease-in-out !important;
+/**
+ * Close button
+ * ========================================================================= */
+.sa11y-close-btn {
+  float: right !important;
+  border-radius: 50% !important;
+  border: 1px solid var(--sa11y-panel-bg-splitter) !important;
+  cursor: pointer !important;
+  font-size: var(--sa11y-normal-text) !important;
+  font-weight: normal !important;
+  margin: 0 !important;
+  position: relative !important;
+  background: none !important;
+  color: var(--sa11y-panel-primary) !important;
+  width: 32px !important;
+  height: 32px !important;
+  transition: all .2s ease-in-out !important;
 
-    &:hover,
-    &:focus {
-      background-color: var(--sa11y-shortcut-hover) !important;
-    }
+  &:hover,
+  &:focus {
+    background-color: var(--sa11y-shortcut-hover) !important;
+  }
 
-    &:after {
-      content: "" !important;
-      left: -7px !important;
-      right: -7px !important;
-      bottom: -7px !important;
-      top: -7px !important;
-      position: absolute !important;
-      background: var(--sa11y-setting-switch-bg-off) !important;
-      mask: var(--sa11y-close-btn-svg) center no-repeat !important;
-      -webkit-mask: var(--sa11y-close-btn-svg) center no-repeat !important;
-    }
+  &:after {
+    content: "" !important;
+    left: -7px !important;
+    right: -7px !important;
+    bottom: -7px !important;
+    top: -7px !important;
+    position: absolute !important;
+    background: var(--sa11y-setting-switch-bg-off) !important;
+    mask: var(--sa11y-close-btn-svg) center no-repeat !important;
+    -webkit-mask: var(--sa11y-close-btn-svg) center no-repeat !important;
   }
 }
 
@@ -936,7 +938,7 @@ html[data-sa11y-theme="dark"] {
   }
 
   [tabindex="0"]:focus,
-  [tabindex="-1"]:focus
+  [tabindex="-1"]:focus,
   #sa11y-close-alert:focus,
   #sa11y-skip-button:focus,
   #sa11y-dismiss-button:focus,
@@ -947,6 +949,7 @@ html[data-sa11y-theme="dark"] {
   }
 }
 
+button.sa11y-btn:active,
 button.sa11y-btn:focus,
 [data-sa11y-annotation][tabindex="-1"]:focus {
   outline: 0 !important;
@@ -956,6 +959,7 @@ button.sa11y-btn:focus,
 /* Tooltip focus styles */
 .tippy-box[data-theme~="sa11y-theme"] a:focus,
 .tippy-box[data-theme~="sa11y-theme"] button:focus,
+.tippy-box[data-theme~="sa11y-theme"] button:active,
 .tippy-box[data-theme~="sa11y-theme"][tabindex='-1']:focus {
   outline: 0 !important;
   box-shadow: 0 0 0 5px var(--sa11y-focus-color) !important;
@@ -1440,6 +1444,10 @@ a.sa11y-warning-text,
   outline: 0 !important;
   transition-property: transform, visibility, opacity;
 
+  .sa11y-annotation-tooltip {
+    min-width: 240px;
+  }
+
   *:not(code) {
     font-family: var(--sa11y-font-face) !important;
     line-height: 22px !important;
@@ -1514,13 +1522,17 @@ a.sa11y-warning-text,
     opacity: 1 !important;
   }
 
+  button.sa11y-close-btn {
+    margin: 0 !important;
+  }
+
   button {
     background: var(--sa11y-panel-bg-secondary) !important;
     border: 1px solid var(--sa11y-button-outline) !important;
-    border-radius: 5px !important;
+    border-radius: 5px;
     color: var(--sa11y-panel-primary) !important;
-    display: block !important;
-    margin: 10px 5px 5px 0 !important;
+    display: block;
+    margin: 10px 5px 5px 0;
     cursor: pointer !important;
     padding: 4px 8px !important;
 

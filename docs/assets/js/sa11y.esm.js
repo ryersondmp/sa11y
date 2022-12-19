@@ -3370,7 +3370,6 @@ class Sa11y {
       detectSPArouting: false,
       doNotRun: '',
       dismissAnnotations: true,
-      appendTooltips: document.body,
       headless: false,
       selectorPath: false,
 
@@ -4205,6 +4204,31 @@ class Sa11y {
         }
         return selectorPath.join(' > ');
       };
+
+      /**
+       * Utility: Trap focus of elements within a contained area.
+       * @param {String} element The element where you'd like to trap keyboard focus.
+       * @author Hidde de Vries
+       * @link https://hidde.blog/using-javascript-to-trap-focus-in-an-element/
+      */
+      Sa11y.trapFocus = (element) => {
+        const focusable = element.querySelectorAll('a[href]:not([disabled]), button:not([disabled])');
+        const firstFocusable = focusable[0];
+        const lastFocusable = focusable[focusable.length - 1];
+        element.addEventListener('keydown', (e) => {
+          const isTabPressed = (e.key === 'Tab' || e.keyCode === 9);
+          if (!isTabPressed) return;
+          if (e.shiftKey) {
+            if (document.activeElement === firstFocusable) {
+              lastFocusable.focus();
+              e.preventDefault();
+            }
+          } else if (document.activeElement === lastFocusable) {
+            firstFocusable.focus();
+            e.preventDefault();
+          }
+        });
+      };
     };
 
     //----------------------------------------------------------------------
@@ -4598,26 +4622,39 @@ class Sa11y {
           content: 'describedby',
           expanded: 'auto',
         },
-        appendTo: option.appendTooltips,
+        appendTo: document.body,
         zIndex: 2147483645,
         plugins: [hideOnEsc],
         onShow(instance) {
+          const openedTooltip = instance.popper;
           annotations.forEach((popper) => {
-            if (popper !== instance.popper) {
+            // Hide previously opened tooltip.
+            if (popper !== openedTooltip) {
               popper.hide();
             }
           });
+
+          // Close button for tooltip.
+          openedTooltip.querySelector('.sa11y-close-btn').addEventListener('click', () => {
+            instance.hide();
+            instance.reference.focus();
+          });
+        },
+        onTrigger(instance, event) {
+          if (event.type === 'click') {
+            setTimeout(() => {
+              instance.popper.querySelector('.sa11y-close-btn').focus();
+            }, 0);
+            Sa11y.trapFocus(instance.popper);
+          }
+        },
+        onHide(instance) {
+          const openedTooltip = instance.popper;
+          openedTooltip.querySelector('.sa11y-close-btn').removeEventListener('click', () => {
+            instance.hide();
+          });
         },
       });
-      // TO-DO: Custom focus solution for accessibility tooltips.
-      document.addEventListener('click', (e) => {
-        const element = e.target;
-        if (element.tagName === 'BUTTON' && element.hasAttribute('data-sa11y-annotation')) {
-          setTimeout(() => {
-            document.querySelector('[data-tippy-root] > [tabindex="-1"]').focus();
-          }, 500);
-        }
-      }, false);
     };
 
     // ============================================================
@@ -4663,15 +4700,6 @@ class Sa11y {
             // Async scan upon dismiss.
             this.resetAll(false);
             await this.checkAll();
-          }
-        }, false);
-
-        // Keyboard a11y: Dismiss with Option + D.
-        document.addEventListener('keyup', (e) => {
-          const evt = e || window.event;
-          const dismissBtn = document.querySelector('[data-sa11y-dismiss]');
-          if (dismissBtn !== null && evt.altKey && evt.code === 'KeyD') {
-            dismissBtn.click();
           }
         }, false);
 
@@ -5372,7 +5400,8 @@ class Sa11y {
           aria-label="${[type]}"
           class="sa11y-btn sa11y-${CSSName[type]}-btn${inline ? '-text' : ''}"
           data-tippy-content=
-            "<div lang='${Lang._('LANG_CODE')}'>
+            "<div lang='${Lang._('LANG_CODE')}' class='sa11y-annotation-tooltip'>
+              <button class='sa11y-close-btn' aria-label='${Lang._('ALERT_CLOSE')}'></button>
               <div class='sa11y-header-text'>${[type]}</div>
                 ${this.escapeHTML(content)}
                 ${dismiss}
