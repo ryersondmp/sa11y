@@ -41,6 +41,33 @@ const Lang = {
   },
 };
 
+class Sa11yWrapper extends HTMLElement {
+  connectedCallback() {
+    this.attachShadow({ mode: 'open' });
+
+    const styles = document.getElementById('sa11y-styles');
+    this.shadowRoot.appendChild(styles.content.cloneNode(true));
+  }
+}
+
+class Sa11yHeadingLabel extends HTMLElement {
+  connectedCallback() {
+    this.attachShadow({ mode: 'open' });
+
+    const styles = document.getElementById('sa11y-styles');
+    this.shadowRoot.appendChild(styles.content.cloneNode(true));
+  }
+}
+
+class Sa11yInstance extends HTMLElement {
+  connectedCallback() {
+    this.attachShadow({ mode: 'open' });
+
+    const styles = document.getElementById('sa11y-styles');
+    this.shadowRoot.appendChild(styles.content.cloneNode(true));
+  }
+}
+
 class Sa11yCustomChecks {
   setSa11y(sa11y) {
     this.sa11y = sa11y;
@@ -313,54 +340,63 @@ class Sa11y {
       // End of main container.
       + '</div>';
 
+      customElements.define('sa11y-wrapper', Sa11yWrapper);
+      customElements.define('sa11y-heading-label', Sa11yHeadingLabel);
+      customElements.define('sa11y-instance', Sa11yInstance);
+
+      const wrapper = document.createElement('sa11y-wrapper');
+
       // Append before closing body tag.
-      document.body.appendChild(container);
+      document.body.appendChild(wrapper);
+
+      this.uiRoot = wrapper.shadowRoot;
+      this.uiRoot.appendChild(container);
 
       // Constants available for use after control panel is constructed.
-      this.container = document.getElementById('sa11y-container');
-      this.panel = document.getElementById('sa11y-panel');
-      this.panelContent = document.getElementById('sa11y-panel-content');
-      this.panelControls = document.getElementById('sa11y-panel-controls');
-      this.outlinePanel = document.getElementById('sa11y-outline-panel');
-      this.outlineList = document.getElementById('sa11y-outline-list');
-      this.outlineHeader = document.getElementById('sa11y-outline-header');
-      this.notificationBadge = document.getElementById('sa11y-notification-badge');
-      this.notificationCount = document.getElementById('sa11y-notification-count');
-      this.notificationText = document.getElementById('sa11y-notification-text');
-      this.dismissedBadge = document.getElementById('sa11y-dismissed-badge');
-      this.status = document.getElementById('sa11y-status');
+      this.container = container;
+      this.panel = this.uiRoot.getElementById('sa11y-panel');
+      this.panelContent = this.uiRoot.getElementById('sa11y-panel-content');
+      this.panelControls = this.uiRoot.getElementById('sa11y-panel-controls');
+      this.outlinePanel = this.uiRoot.getElementById('sa11y-outline-panel');
+      this.outlineList = this.uiRoot.getElementById('sa11y-outline-list');
+      this.outlineHeader = this.uiRoot.getElementById('sa11y-outline-header');
+      this.notificationBadge = this.uiRoot.getElementById('sa11y-notification-badge');
+      this.notificationCount = this.uiRoot.getElementById('sa11y-notification-count');
+      this.notificationText = this.uiRoot.getElementById('sa11y-notification-text');
+      this.dismissedBadge = this.uiRoot.getElementById('sa11y-dismissed-badge');
+      this.status = this.uiRoot.getElementById('sa11y-status');
 
       // Settings
-      this.settingsPanel = document.getElementById('sa11y-settings-panel');
-      this.settingsContent = document.getElementById('sa11y-settings-content');
-      this.contrastToggle = document.getElementById('sa11y-contrast-toggle');
-      this.labelsToggle = document.getElementById('sa11y-labels-toggle');
-      this.linksToggle = document.getElementById('sa11y-links-advanced-toggle');
-      this.readabilityToggle = document.getElementById('sa11y-readability-toggle');
-      this.themeToggle = document.getElementById('sa11y-theme-toggle');
-      this.contrastItem = document.getElementById('sa11y-contrast-item');
-      this.formLabelsItem = document.getElementById('sa11y-form-labels-item');
-      this.linksAdvacedItem = document.getElementById('sa11y-links-advanced-item');
-      this.readabilityItem = document.getElementById('sa11y-readability-item');
+      this.settingsPanel = this.uiRoot.getElementById('sa11y-settings-panel');
+      this.settingsContent = this.uiRoot.getElementById('sa11y-settings-content');
+      this.contrastToggle = this.uiRoot.getElementById('sa11y-contrast-toggle');
+      this.labelsToggle = this.uiRoot.getElementById('sa11y-labels-toggle');
+      this.linksToggle = this.uiRoot.getElementById('sa11y-links-advanced-toggle');
+      this.readabilityToggle = this.uiRoot.getElementById('sa11y-readability-toggle');
+      this.themeToggle = this.uiRoot.getElementById('sa11y-theme-toggle');
+      this.contrastItem = this.uiRoot.getElementById('sa11y-contrast-item');
+      this.formLabelsItem = this.uiRoot.getElementById('sa11y-form-labels-item');
+      this.linksAdvacedItem = this.uiRoot.getElementById('sa11y-links-advanced-item');
+      this.readabilityItem = this.uiRoot.getElementById('sa11y-readability-item');
 
       // Buttons
-      this.toggle = document.getElementById('sa11y-toggle');
-      this.outlineToggle = document.getElementById('sa11y-outline-toggle');
-      this.settingToggle = document.getElementById('sa11y-settings-toggle');
-      this.skipButton = document.getElementById('sa11y-skip-button');
-      this.restoreDismissButton = document.getElementById('sa11y-dismiss-button');
-      this.dismissTooltip = document.getElementById('sa11y-dismiss-tooltip');
+      this.toggle = this.uiRoot.getElementById('sa11y-toggle');
+      this.outlineToggle = this.uiRoot.getElementById('sa11y-outline-toggle');
+      this.settingToggle = this.uiRoot.getElementById('sa11y-settings-toggle');
+      this.skipButton = this.uiRoot.getElementById('sa11y-skip-button');
+      this.restoreDismissButton = this.uiRoot.getElementById('sa11y-dismiss-button');
+      this.dismissTooltip = this.uiRoot.getElementById('sa11y-dismiss-tooltip');
 
       // Alerts
-      this.alertPanel = document.getElementById('sa11y-panel-alert');
-      this.alertText = document.getElementById('sa11y-panel-alert-text');
-      this.alertPreview = document.getElementById('sa11y-panel-alert-preview');
-      this.closeAlert = document.getElementById('sa11y-close-alert');
+      this.alertPanel = this.uiRoot.getElementById('sa11y-panel-alert');
+      this.alertText = this.uiRoot.getElementById('sa11y-panel-alert-text');
+      this.alertPreview = this.uiRoot.getElementById('sa11y-panel-alert-preview');
+      this.closeAlert = this.uiRoot.getElementById('sa11y-close-alert');
 
       // Readability
-      this.readabilityInfo = document.getElementById('sa11y-readability-info');
-      this.readabilityPanel = document.getElementById('sa11y-readability-panel');
-      this.readabilityDetails = document.getElementById('sa11y-readability-details');
+      this.readabilityInfo = this.uiRoot.getElementById('sa11y-readability-info');
+      this.readabilityPanel = this.uiRoot.getElementById('sa11y-readability-panel');
+      this.readabilityDetails = this.uiRoot.getElementById('sa11y-readability-details');
     };
 
     this.globals = () => {
@@ -387,14 +423,14 @@ class Sa11y {
       // Container ignores apply to self and children.
       if (option.containerIgnore) {
         const containerSelectors = option.containerIgnore.split(',').map(($el) => `${$el} *, ${$el}`);
-        option.containerIgnore = `[aria-hidden], [data-tippy-root] *, #sa11y-container *, #wpadminbar *, ${containerSelectors.join(', ')}`;
+        option.containerIgnore = `[aria-hidden], #wpadminbar *, ${containerSelectors.join(', ')}`;
       } else {
-        option.containerIgnore = '[aria-hidden], [data-tippy-root] *, #sa11y-container *, #wpadminbar *';
+        option.containerIgnore = '[aria-hidden], #wpadminbar *';
       }
       this.containerIgnore = option.containerIgnore;
 
       // Contrast exclusions
-      this.contrastIgnore = `${this.containerIgnore}, .sa11y-heading-label, script`;
+      this.contrastIgnore = `${this.containerIgnore}, script`;
       if (option.contrastIgnore) {
         this.contrastIgnore = `${option.contrastIgnore}, ${this.contrastIgnore}`;
       }
@@ -413,7 +449,7 @@ class Sa11y {
 
       // Don't add heading label or include in panel.
       if (option.outlineIgnore) {
-        this.outlineIgnore = `${option.outlineIgnore}, #sa11y-container h1, #sa11y-container h2`;
+        this.outlineIgnore = option.outlineIgnore;
       }
 
       // Ignore specific images.
@@ -1269,9 +1305,8 @@ class Sa11y {
 
       document.querySelectorAll(`
         .sa11y-element,
-        .sa11y-instance,
-        .sa11y-instance-inline,
-        .sa11y-heading-label,
+        sa11y-instance,
+        sa11y-heading-label,
         #sa11y-outline-list li,
         .sa11y-readability-period,
         #sa11y-readability-details li,
@@ -1308,8 +1343,10 @@ class Sa11y {
           };
         },
       };
+
+      const buttons = Array.from(document.querySelectorAll('sa11y-instance')).map((elt) => elt.shadowRoot.querySelector('.sa11y-btn'));
       // Main Tippy instance
-      const annotations = tippy('.sa11y-btn', {
+      const annotations = tippy(buttons, {
         interactive: true,
         trigger: 'mouseenter click', // Focusin trigger to ensure "Jump to issue" button displays tooltip.
         arrow: true,
@@ -1321,7 +1358,7 @@ class Sa11y {
           content: 'describedby',
           expanded: 'auto',
         },
-        appendTo: document.body,
+        appendTo: 'parent',
         zIndex: 2147483645,
         plugins: [hideOnEsc],
         onShow(instance) {
@@ -1537,11 +1574,14 @@ class Sa11y {
         }
 
         // Set focus on Page Outline heading for accessibility.
-        document.querySelector('#sa11y-outline-header > h2').focus();
+        this.uiRoot.querySelector('#sa11y-outline-header > h2').focus();
 
         // Toggle visibility of heading labels.
-        const $headingAnnotations = document.querySelectorAll('.sa11y-heading-label');
-        $headingAnnotations.forEach(($el) => $el.classList.toggle('sa11y-label-visible'));
+        const $headingAnnotations = document.querySelectorAll('sa11y-heading-label');
+        $headingAnnotations.forEach(($el) => {
+          // eslint-disable-next-line no-param-reassign
+          $el.hidden = !$el.hidden;
+        });
 
         // Close Settings panel when Show Outline is active.
         this.settingsPanel.classList.remove('sa11y-active');
@@ -1578,15 +1618,17 @@ class Sa11y {
         }
 
         // Set focus on Settings heading for accessibility.
-        document.querySelector('#sa11y-settings-header > h2').focus();
+        this.uiRoot.querySelector('#sa11y-settings-header > h2').focus();
 
         // Close Show Outline panel when Settings is active.
         this.outlinePanel.classList.remove('sa11y-active');
         this.outlineToggle.classList.remove('sa11y-outline-active');
         this.outlineToggle.setAttribute('aria-expanded', 'false');
         this.outlineToggle.textContent = `${Lang._('SHOW_OUTLINE')}`;
-        const $headingAnnotations = document.querySelectorAll('.sa11y-heading-label');
-        $headingAnnotations.forEach(($el) => $el.classList.remove('sa11y-label-visible'));
+        const $headingAnnotations = document.querySelectorAll('sa11y-heading-label');
+        $headingAnnotations.forEach(($el) => {
+          $el.hidden = true;
+        });
         this.store.setItem('sa11y-remember-outline', 'Closed');
 
         // Keyboard accessibility fix for scrollable panel content.
@@ -1932,9 +1974,8 @@ class Sa11y {
 
         // Append heading labels.
         // If heading is in a hidden container, place the anchor just before it's most visible parent.
-        const create = document.createElement('span');
-        create.classList.add('sa11y-heading-label');
-        create.innerHTML = `H${level}`;
+        const create = document.createElement('sa11y-heading-label');
+        create.hidden = true;
 
         if (parent !== null) {
           $el.insertAdjacentElement('beforeend', create);
@@ -1953,9 +1994,14 @@ class Sa11y {
           $el.insertAdjacentElement('beforeend', create);
         }
 
+        const content = document.createElement('span');
+        content.classList.add('sa11y-heading-label');
+        content.innerHTML = `H${level}`;
+        create.shadowRoot.appendChild(content);
+
         // Make heading labels visible when panel is open.
         if (this.store.getItem('sa11y-remember-outline') === 'Opened') {
-          create.classList.add('sa11y-label-visible');
+          create.hidden = false;
         }
       });
 
@@ -1967,7 +2013,7 @@ class Sa11y {
         const children = Array.from(this.outlineList.querySelectorAll('a'));
         children.forEach(($el, i) => {
         // Make Page Outline clickable.
-          const outlineLink = document.getElementById(`sa11y-link-${i}`);
+          const outlineLink = this.uiRoot.getElementById(`sa11y-link-${i}`);
           const hID = document.getElementById(`sa11y-h${i}`);
           const h = hID.parentElement;
           const hParent = document.querySelector(`[data-sa11y-parent="h${i}"]`);
@@ -2073,6 +2119,7 @@ class Sa11y {
       // Add dismiss button if prop enabled.
       const dismiss = (option.dismissAnnotations === true && CSSName[type] === 'warning') ? `<button data-sa11y-dismiss='${index}' type='button'>${Lang._('DISMISS')}</button>` : '';
 
+      const instance = document.createElement('sa11y-instance');
       const create = document.createElement('div');
 
       // Full width banners.
@@ -2088,7 +2135,8 @@ class Sa11y {
             lang="${Lang._('LANG_CODE')}">
               ${content}
           </div>`;
-        document.body.insertAdjacentElement('afterbegin', create);
+        document.body.insertAdjacentElement('afterbegin', instance);
+        instance.shadowRoot.appendChild(create);
       } else {
         // Button annotations.
         create.classList.add(`${inline ? 'sa11y-instance-inline' : 'sa11y-instance'}`);
@@ -2112,7 +2160,8 @@ class Sa11y {
         if (!location) {
           location = element;
         }
-        location.insertAdjacentElement(position, create);
+        location.insertAdjacentElement(position, instance);
+        instance.shadowRoot.appendChild(create);
       }
     };
 
@@ -3620,7 +3669,7 @@ class Sa11y {
             const name = item.elem;
             const cratio = item.ratio;
             const clone = name.cloneNode(true);
-            const removeSa11yHeadingLabel = clone.querySelectorAll('.sa11y-heading-label');
+            const removeSa11yHeadingLabel = clone.querySelectorAll('sa11y-heading-label');
             for (let i = 0; i < removeSa11yHeadingLabel.length; i++) {
               clone.removeChild(removeSa11yHeadingLabel[i]);
             }
@@ -3648,7 +3697,7 @@ class Sa11y {
           contrastErrors.warnings.forEach((item) => {
             const name = item.elem;
             const clone = name.cloneNode(true);
-            const removeSa11yHeadingLabel = clone.querySelectorAll('.sa11y-heading-label');
+            const removeSa11yHeadingLabel = clone.querySelectorAll('sa11y-heading-label');
             for (let i = 0; i < removeSa11yHeadingLabel.length; i++) {
               clone.removeChild(removeSa11yHeadingLabel[i]);
             }
