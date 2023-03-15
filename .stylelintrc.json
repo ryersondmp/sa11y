@@ -6,6 +6,15 @@
 	"rules": {
 	  "declaration-bang-space-before": "always",
 	  "declaration-bang-space-after": "never",
+		"declaration-property-value-allowed-list": {
+			"clear": ["both", "none"],
+			"float": ["inline-start", "inline-end", "none", "unset"],
+			"text-align": ["start", "end", "center"]
+		},
+		"property-disallowed-list": [
+			"/left/",
+			"/right/"
+		],
 	  "color-named": "never",
 	  "declaration-block-no-duplicate-properties": true,
 	  "block-no-empty": true,

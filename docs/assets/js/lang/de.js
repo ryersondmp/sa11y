@@ -1,4 +1,4 @@
-export default {
+var de = {
   // German
   strings: {
     LANG_CODE: 'de',
@@ -216,3 +216,5 @@ export default {
     CONTRAST_INPUT_ERROR: 'Der Text in dieser Eingabe hat nicht genügend Kontrast zum Hintergrund. Das Kontrastverhältnis sollte mindestens 4,5:1 für normalen Text und 3:1 für großen Text betragen. <hr> Kontrastverhältnis: <strong {r}>%(cratio)</strong>',
   },
 };
+
+export { de as default };

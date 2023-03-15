@@ -3516,13 +3516,16 @@
           // Start of main container.
           + '<div id="sa11y-panel">'
 
+          // Full width banner errors.
+          + '<div id="sa11y-page-errors"></div>'
+
           // Page Outline tab.
           + `<div id="sa11y-outline-panel" role="tabpanel" aria-labelledby="sa11y-outline-header">
             <div id="sa11y-outline-header" class="sa11y-header-text">
-              <h2 tabindex="-1">${Lang._('PAGE_OUTLINE')}</h2>
+              <h2 tabindex="-1">${Lang._('OUTLINE')}</h2>
             </div>
             <div id="sa11y-outline-content">
-              <ul id="sa11y-outline-list" tabindex="0" role="list" aria-label="${Lang._('PAGE_OUTLINE')}"></ul>
+              <ul id="sa11y-outline-list" tabindex="0" role="list" aria-label="${Lang._('OUTLINE')}"></ul>
             </div>
             <div id="sa11y-readability-panel">
               <div id="sa11y-readability-content">
@@ -3545,16 +3548,14 @@
                   <button id="sa11y-contrast-toggle"
                     aria-labelledby="sa11y-check-contrast"
                     class="sa11y-settings-switch"
-                    aria-pressed="${rememberContrast ? 'true' : 'false'}">${rememberContrast ? Lang._('ON') : Lang._('OFF')}
-                  </button>
+                    aria-pressed="${rememberContrast ? 'true' : 'false'}">${rememberContrast ? Lang._('ON') : Lang._('OFF')}</button>
                 </li>
                 <li id="sa11y-form-labels-item">
                   <label id="sa11y-check-labels" for="sa11y-labels-toggle">${Lang._('FORM_LABELS')}</label>
                   <button id="sa11y-labels-toggle"
                     aria-labelledby="sa11y-check-labels"
                     class="sa11y-settings-switch"
-                    aria-pressed="${rememberFormLabels ? 'true' : 'false'}">${rememberFormLabels ? Lang._('ON') : Lang._('OFF')}
-                  </button>
+                    aria-pressed="${rememberFormLabels ? 'true' : 'false'}">${rememberFormLabels ? Lang._('ON') : Lang._('OFF')}</button>
                 </li>
                 <li id="sa11y-links-advanced-item">
                   <label id="check-changerequest" for="sa11y-links-advanced-toggle">${Lang._('LINKS_ADVANCED')} <span class="sa11y-badge">AAA</span></label>
@@ -3568,15 +3569,13 @@
                   <button id="sa11y-readability-toggle"
                     aria-labelledby="check-readability"
                     class="sa11y-settings-switch"
-                    aria-pressed="${rememberReadability ? 'true' : 'false'}">${rememberReadability ? Lang._('ON') : Lang._('OFF')}
-                  </button>
+                    aria-pressed="${rememberReadability ? 'true' : 'false'}">${rememberReadability ? Lang._('ON') : Lang._('OFF')}</button>
                 </li>
                 <li>
                   <label id="sa11y-dark-mode" for="sa11y-theme-toggle">${Lang._('DARK_MODE')}</label>
                   <button id="sa11y-theme-toggle"
                     aria-labelledby="sa11y-dark-mode"
-                    class="sa11y-settings-switch">
-                  </button>
+                    class="sa11y-settings-switch"></button>
                 </li>
               </ul>
             </div>
@@ -3611,10 +3610,10 @@
         // Show Outline & Show Settings button.
         + `<div id="sa11y-panel-controls" role="tablist" aria-orientation="horizontal">
           <button type="button" role="tab" aria-expanded="false" id="sa11y-outline-toggle" aria-controls="sa11y-outline-panel">
-            ${Lang._('SHOW_OUTLINE')}
+            ${Lang._('OUTLINE')}
           </button>
           <button type="button" role="tab" aria-expanded="false" id="sa11y-settings-toggle" aria-controls="sa11y-settings-panel">
-            ${Lang._('SHOW_SETTINGS')}
+            ${Lang._('SETTINGS')}
           </button>
           <div style="width:40px;"></div>
         </div>`
@@ -3972,7 +3971,9 @@
             if (target.length > 0) {
               let returnText = '';
               target.forEach((x) => {
-                const targetSelector = document.querySelector(`#${x}`);
+                // Escape special chars.
+                const id = x.replaceAll('.', '\\.').replaceAll('[', '\\[').replaceAll(']', '\\]');
+                const targetSelector = document.querySelector(`#${id}`);
                 if (targetSelector === null) {
                   returnText += ' ';
                 } else if (targetSelector.hasAttribute('aria-label')) {
@@ -4020,10 +4021,12 @@
                 if (target.length > 0) {
                   let returnAria = '';
                   target.forEach((z) => {
-                    if (document.querySelector(`#${z}`) === null) {
+                    // Escape special chars.
+                    const id = z.replaceAll('.', '\\.').replaceAll('[', '\\[').replaceAll(']', '\\]');
+                    if (document.querySelector(`#${id}`) === null) {
                       returnAria += ' ';
                     } else {
-                      returnAria += `${document.querySelector(`#${z}`).firstChild.nodeValue} `;
+                      returnAria += `${document.querySelector(`#${id}`).firstChild.nodeValue} `;
                     }
                   });
                   returnText += returnAria;
@@ -4800,7 +4803,7 @@
 
         if (this.errorCount > 0 && this.warningCount > 0) {
           this.panelContent.setAttribute('class', 'sa11y-errors');
-          this.status.innerHTML = `${Lang._('ERRORS')} <span class="sa11y-panel-count sa11y-margin-right">${this.errorCount}</span> ${Lang._('WARNINGS')} <span class="sa11y-panel-count" id="sa11y-warning-count">${this.warningCount}</span>`;
+          this.status.innerHTML = `${Lang._('ERRORS')} <span class="sa11y-panel-count">${this.errorCount}</span> ${Lang._('WARNINGS')} <span class="sa11y-panel-count" id="sa11y-warning-count">${this.warningCount}</span>`;
         } else if (this.errorCount > 0) {
           this.panelContent.setAttribute('class', 'sa11y-errors');
           this.status.innerHTML = `${Lang._('ERRORS')} <span class="sa11y-panel-count">${this.errorCount}</span>`;
@@ -4832,13 +4835,11 @@
           if (this.outlineToggle.getAttribute('aria-expanded') === 'true') {
             this.outlineToggle.classList.remove('sa11y-outline-active');
             this.outlinePanel.classList.remove('sa11y-active');
-            this.outlineToggle.textContent = `${Lang._('SHOW_OUTLINE')}`;
             this.outlineToggle.setAttribute('aria-expanded', 'false');
             this.store.setItem('sa11y-remember-outline', 'Closed');
           } else {
             this.outlineToggle.classList.add('sa11y-outline-active');
             this.outlinePanel.classList.add('sa11y-active');
-            this.outlineToggle.textContent = `${Lang._('HIDE_OUTLINE')}`;
             this.outlineToggle.setAttribute('aria-expanded', 'true');
             this.store.setItem('sa11y-remember-outline', 'Opened');
           }
@@ -4854,7 +4855,6 @@
           this.settingsPanel.classList.remove('sa11y-active');
           this.settingToggle.classList.remove('sa11y-settings-active');
           this.settingToggle.setAttribute('aria-expanded', 'false');
-          this.settingToggle.textContent = `${Lang._('SHOW_SETTINGS')}`;
 
           // Keyboard accessibility fix for scrollable panel content.
           if (this.outlineList.clientHeight > 250) {
@@ -4866,7 +4866,6 @@
         if (this.store.getItem('sa11y-remember-outline') === 'Opened') {
           this.outlineToggle.classList.add('sa11y-outline-active');
           this.outlinePanel.classList.add('sa11y-active');
-          this.outlineToggle.textContent = `${Lang._('HIDE_OUTLINE')}`;
           this.outlineToggle.setAttribute('aria-expanded', 'true');
         }
 
@@ -4875,12 +4874,10 @@
           if (this.settingToggle.getAttribute('aria-expanded') === 'true') {
             this.settingToggle.classList.remove('sa11y-settings-active');
             this.settingsPanel.classList.remove('sa11y-active');
-            this.settingToggle.textContent = `${Lang._('SHOW_SETTINGS')}`;
             this.settingToggle.setAttribute('aria-expanded', 'false');
           } else {
             this.settingToggle.classList.add('sa11y-settings-active');
             this.settingsPanel.classList.add('sa11y-active');
-            this.settingToggle.textContent = `${Lang._('HIDE_SETTINGS')}`;
             this.settingToggle.setAttribute('aria-expanded', 'true');
           }
 
@@ -4891,7 +4888,6 @@
           this.outlinePanel.classList.remove('sa11y-active');
           this.outlineToggle.classList.remove('sa11y-outline-active');
           this.outlineToggle.setAttribute('aria-expanded', 'false');
-          this.outlineToggle.textContent = `${Lang._('SHOW_OUTLINE')}`;
           const $headingAnnotations = document.querySelectorAll('.sa11y-heading-label');
           $headingAnnotations.forEach(($el) => $el.classList.remove('sa11y-label-visible'));
           this.store.setItem('sa11y-remember-outline', 'Closed');
@@ -5158,16 +5154,6 @@
        * Create Page Outline.
       */
       this.generatePageOutline = () => {
-        //  Missing Heading 1 in document.body (update Page Outline).
-        if (this.headingOne.length === 0) {
-          const updateH1Outline = `
-          <div class="sa11y-instance sa11y-missing-h1">
-            <span class="sa11y-badge sa11y-error-badge"><span aria-hidden="true">!</span><span class="sa11y-visually-hidden">${ERROR}</span></span>
-            <span class='sa11y-red-text sa11y-bold'>${Lang._('PANEL_HEADING_MISSING_ONE')}</span>
-          </div>`;
-          this.outlineHeader.insertAdjacentHTML('afterend', updateH1Outline);
-        }
-
         // Create a single array that gets appended to heading outline, instead of creating a new HTML element everytime you iterate through each object.
         const outlineArray = [];
 
@@ -5382,20 +5368,16 @@
 
         const create = document.createElement('div');
 
-        // Full width banners.
         if (element === undefined) {
-          create.setAttribute('class', `sa11y-instance sa11y-${CSSName[type]}-message-container`);
+          // Page errors displayed to main panel.
+          create.setAttribute('class', 'sa11y-instance');
           create.innerHTML = `
-          <div
-            role="region"
-            data-sa11y-annotation="${index}"
-            tabindex="-1"
-            aria-label="${[type]}"
-            class="sa11y-${CSSName[type]}-message"
-            lang="${Lang._('LANG_CODE')}">
-              ${content}
+          <div data-sa11y-annotation="${index}" tabindex="-1" class="sa11y-page-error-text">
+          <div class="sa11y-header-text"><h2>${[type]}</h2></div>
+            ${content}
           </div>`;
-          document.body.insertAdjacentElement('afterbegin', create);
+          const beforeOutline = document.querySelector('#sa11y-page-errors');
+          beforeOutline.insertAdjacentElement('afterbegin', create);
         } else {
           // Button annotations.
           create.classList.add(`${inline ? 'sa11y-instance-inline' : 'sa11y-instance'}`);
@@ -5407,7 +5389,7 @@
           class="sa11y-btn sa11y-${CSSName[type]}-btn${inline ? '-text' : ''}"
           data-tippy-content=
             "<div lang='${Lang._('LANG_CODE')}' class='sa11y-annotation-tooltip'>
-              <button class='sa11y-close-btn' aria-label='${Lang._('ALERT_CLOSE')}'></button>
+              <button class='sa11y-close-btn sa11y-close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button>
               <div class='sa11y-header-text'>${[type]}</div>
                 ${this.escapeHTML(content)}
                 ${dismiss}
