@@ -14,16 +14,56 @@ export declare class Sa11y {
 	errorCount: number;
 	warningCount: number;
 	root: HTMLElement;
-	panel: HTMLElement;
 
+	// Panel constants
+	container: HTMLElement;
+	panel: HTMLElement;
+	panelContent: HTMLElement;
+	panelControls: HTMLElement;
+	outlinePanel: HTMLElement;
+	outlineList: HTMLElement;
+	outlineHeader: HTMLElement;
+	notificationBadge: HTMLElement;
+	notificationCount: HTMLElement;
+	notificationText: HTMLElement;
+	dismissedBadge: HTMLElement;
+	status: HTMLElement;
+	// Settings
+	settingsPanel: HTMLElement;
+	settingsContent: HTMLElement;
+	contrastToggle: HTMLElement;
+	labelsToggle: HTMLElement;
+	linksToggle: HTMLElement;
+	readabilityToggle: HTMLElement;
+	themeToggle: HTMLElement;
+	contrastItem: HTMLElement;
+	formLabelsItem: HTMLElement;
+	linksAdvacedItem: HTMLElement;
+	readabilityItem: HTMLElement;
+	// Buttons
+	toggle: HTMLElement;
+	outlineToggle: HTMLElement;
+	settingToggle: HTMLElement;
+	skipButton: HTMLElement;
+	restoreDismissButton: HTMLElement;
+	dismissTooltip: HTMLElement;
+	// Alerts
+	alertPanel: HTMLElement;
+	alertText: HTMLElement;
+	alertPreview: HTMLElement;
+	closeAlert: HTMLElement;
+	// Readability
+	readabilityInfo: HTMLElement;
+	readabilityPanel: HTMLElement;
+	readabilityDetails: HTMLElement;
+
+	// Find elements
 	contrast: Array<HTMLElement>;
 	images: Array<HTMLImageElement>;
 	headings: Array<HTMLHeadingElement>;
 	headingOne: Array<HTMLHeadingElement>;
 	links: Array<HTMLAnchorElement>;
 	readability: Array<HTMLElement>;
-
-	language: string | null;
 	paragraphs: Array<HTMLParagraphElement>;
 	lists: Array<HTMLLIElement>;
 	spans: Array<HTMLSpanElement>;
@@ -32,8 +72,12 @@ export declare class Sa11y {
 	pdf: Array<HTMLAnchorElement>;
 	strongitalics: Array<HTMLElement>;
 	inputs: Array<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>;
+	ids: Array<HTMLElement>;
+	underlines: Array<HTMLElement>;
+	subscripts: Array<HTMLElement>;
+	labels: Array<HTMLElement>;
+	language: string | null;
 	customErrorLinks: Array<HTMLElement>;
-
 	iframes: Array<HTMLIFrameElement | HTMLAudioElement | HTMLVideoElement>;
 	videos: Array<HTMLIFrameElement | HTMLAudioElement | HTMLVideoElement>;
 	audio: Array<HTMLIFrameElement | HTMLAudioElement | HTMLVideoElement>;
@@ -55,6 +99,9 @@ export declare class Sa11y {
 		showGoodLinkButton?: boolean;
 		detectSPArouting?: boolean;
 		doNotRun?: string;
+		dismissAnnotations?: boolean;
+		headless?: boolean;
+		selectorPath?: boolean;
 
 		// Readability
 		readabilityPlugin?: boolean;
@@ -103,38 +150,49 @@ export declare class Sa11y {
 	globals: () => void;
 	mainToggle: () => void;
 	utilities: () => void;
-	isElementHidden: ($el: HTMLElement) => boolean;
-	escapeHTML: (text: string) => string;
-	sanitizeForHTML: (string: string) => string;
-	computeTextNodeWithImage: ($el: HTMLElement) => string;
+
+	// Utilities
+	isElementHidden: (element: HTMLElement) => boolean;
+	isElementVisuallyHiddenOrHidden: (element: HTMLElement) => boolean;
+	escapeHTML: (string: string) => string;
+	sanitizeHTML: (string: string) => string;
+	jsEscape: (string: string) => string;
+	computeTextNodeWithImage: (element: HTMLElement) => string;
 	debounce: (callback: () => unknown, wait: number) => () => unknown;
 	fnIgnore: (element: HTMLElement, selector: string) => HTMLElement;
-	computeAriaLabel: ($el: HTMLElement) => string;
+	computeAriaLabel: (element: HTMLElement) => string;
 	findVisibleParent: (element: HTMLElement, property: string, value: string) => HTMLElement | null;
-	offsetTop: ($el: HTMLElement) => {
+	offsetTop: (element: HTMLElement) => {
 		top: number
 	};
-	addPulse: ($el: HTMLElement) => HTMLElement;
+	addPulse: (element: HTMLElement) => HTMLElement;
 	createAlert: (alertMessage: HTMLElement, errorPreview: HTMLElement) => HTMLElement | HTMLElement;
 	removeAlert: () => void;
-	getText: ($el: HTMLElement) => string;
-	getNextSibling: (elem: HTMLElement, selector: string) => HTMLElement;
+	getText: (element: HTMLElement) => string;
+	getNextSibling: (element: HTMLElement, selector: string) => HTMLElement;
+	prepareDismissal: (string: string) => string;
+	generateSelectorPath: (element: HTMLElement) => string;
+	trapFocus: (element: HTMLElement) => void;
+
 	settingPanelToggles: () => void;
 	skipToIssueTooltip: () => void;
 	detectPageChanges: () => void;
 	checkAll: () => Promise<void>;
+	updateCount: () => void;
 	resetAll: (restartPanel?: boolean) => void;
 	initializeTooltips: () => void;
+	dismissAnnotations: () => void;
 	detectOverflow: () => void;
 	nudge: () => void;
 	updateBadge: () => void;
-	updatePanel: () => void;
-	buildPanel: () => void;
+	updateStatus: () => void;
+	initializePanelToggles: () => void;
+	buildSa11yUI: () => void;
 	skipToIssue: () => void;
 	findElements: () => void;
-	find: (selectors: string, exclude: string, rootTypealert: string) => Array;
+	find: (selectors: string, exclude: string, rootType: string) => Array;
+	generatePageOutline: () => void;
 	annotate: (type: 'Error' | 'Warning' | 'Good', content: string, inline?: boolean) => string;
-	annotateBanner: (type: 'Error' | 'Warning' | 'Good', content: string) => string;
 	checkHeaders: () => void;
 	checkLinkText: () => void
 	checkLinksAdvanced: () => void;
@@ -165,6 +223,8 @@ export declare const LangUa: Sa11yLang;
 
 export declare const LangSv: Sa11yLang;
 
+export declare const LangDe: Sa11yLang;
+
 export declare type Sa11yLang = {
 	strings: {
 		LANG_CODE: string;
@@ -179,11 +239,7 @@ export declare type Sa11yLang = {
 		OFF: string;
 		ALERT_TEXT: string;
 		ALERT_CLOSE: string;
-		SHOW_OUTLINE: string;
-		HIDE_OUTLINE: string;
-		SHOW_SETTINGS: string;
-		HIDE_SETTINGS: string;
-		PAGE_OUTLINE: string;
+		OUTLINE: string;
 		SETTINGS: string;
 		CONTRAST: string;
 		FORM_LABELS: string;
@@ -199,11 +255,14 @@ export declare type Sa11yLang = {
 		NOT_VISIBLE_ALERT: string;
 		ERROR_MISSING_ROOT_TARGET: string;
 		HEADING_NOT_VISIBLE_ALERT: string;
+		PANEL_DISMISS_BUTTON: string;
+		DISMISS: string;
+		DISMISSED: string;
 
 		// Alternative text module stop words
 		SUSPICIOUS_ALT_STOPWORDS: Array<string>;
 		PLACEHOLDER_ALT_STOPWORDS: Array<string>;
-		PARTIAL_ALT_STOPWORDS: Array<string > ,
+		PARTIAL_ALT_STOPWORDS: Array<string>,
 		WARNING_ALT_STOPWORDS: Array<string>;
 		NEW_WINDOW_PHRASES: Array<string>;
 
@@ -305,11 +364,3 @@ export declare type Sa11yLang = {
 		CONTRAST_INPUT_ERROR: string;
 	},
 };
-
-export declare class Sa11yCustomChecks {
-	sa11y: Sa11y;
-
-	setSa11y(sa11y: Sa11y): void;
-
-	check(): void;
-}

@@ -1,4 +1,4 @@
-export { Sa11y, Lang, Sa11yCustomChecks } from './dist/js/sa11y.esm';
+export { Sa11y, Lang } from './dist/js/sa11y.esm';
 export { default as LangDe } from './dist/js/lang/de';
 export { default as LangEn } from './dist/js/lang/en';
 export { default as LangFr } from './dist/js/lang/fr';

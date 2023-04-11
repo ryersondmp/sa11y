@@ -11,6 +11,186 @@ import { mkdir, writeFile } from 'fs/promises';
 import { dirname } from 'path';
 
 export default [
+  // SCSS files
+  {
+    input: 'src/scss/sa11y.scss',
+    plugins: [sass({
+      output: false,
+      processor: (css) => {
+        postcss()
+          .process(css, { from: undefined })
+          .then(async (result) => {
+            const path = 'dist/css/sa11y.css';
+            const pathMin = 'dist/css/sa11y.min.css';
+
+            if (!existsSync(dirname(path))) {
+              await mkdir(dirname(path), { recursive: true });
+            }
+            await writeFile(path, result.css, { encoding: 'utf8' });
+
+            postcss([cssnano])
+              .process(result.css, { from: undefined })
+              .then(async (result) => {
+                if (!existsSync(dirname(pathMin))) {
+                  await mkdir(dirname(pathMin), { recursive: true });
+                }
+                await writeFile(pathMin, result.css, { encoding: 'utf8' });
+              });
+          });
+        return '';
+      },
+    })],
+  },
+  // Control panel
+  {
+    input: 'src/scss/control-panel.scss',
+    plugins: [sass({
+      output: false,
+      processor: (css) => {
+        postcss()
+          .process(css, { from: undefined })
+          .then(async (result) => {
+            const path = 'dist/css/control-panel.css';
+            const pathMin = 'dist/css/control-panel.min.css';
+
+            if (!existsSync(dirname(path))) {
+              await mkdir(dirname(path), { recursive: true });
+            }
+            await writeFile(path, result.css, { encoding: 'utf8' });
+
+            postcss([cssnano])
+              .process(result.css, { from: undefined })
+              .then(async (result) => {
+                if (!existsSync(dirname(pathMin))) {
+                  await mkdir(dirname(pathMin), { recursive: true });
+                }
+                await writeFile(pathMin, result.css, { encoding: 'utf8' });
+              });
+          });
+        return '';
+      },
+    })],
+  },
+  // Control panel
+  {
+    input: 'src/scss/shared.scss',
+    plugins: [sass({
+      output: false,
+      processor: (css) => {
+        postcss()
+          .process(css, { from: undefined })
+          .then(async (result) => {
+            const path = 'dist/css/shared.css';
+            const pathMin = 'dist/css/shared.min.css';
+
+            if (!existsSync(dirname(path))) {
+              await mkdir(dirname(path), { recursive: true });
+            }
+            await writeFile(path, result.css, { encoding: 'utf8' });
+
+            postcss([cssnano])
+              .process(result.css, { from: undefined })
+              .then(async (result) => {
+                if (!existsSync(dirname(pathMin))) {
+                  await mkdir(dirname(pathMin), { recursive: true });
+                }
+                await writeFile(pathMin, result.css, { encoding: 'utf8' });
+              });
+          });
+        return '';
+      },
+    })],
+  },
+  // Annotations
+  {
+    input: 'src/scss/annotations.scss',
+    plugins: [sass({
+      output: false,
+      processor: (css) => {
+        postcss()
+          .process(css, { from: undefined })
+          .then(async (result) => {
+            const path = 'dist/css/annotations.css';
+            const pathMin = 'dist/css/annotations.min.css';
+
+            if (!existsSync(dirname(path))) {
+              await mkdir(dirname(path), { recursive: true });
+            }
+            await writeFile(path, result.css, { encoding: 'utf8' });
+
+            postcss([cssnano])
+              .process(result.css, { from: undefined })
+              .then(async (result) => {
+                if (!existsSync(dirname(pathMin))) {
+                  await mkdir(dirname(pathMin), { recursive: true });
+                }
+                await writeFile(pathMin, result.css, { encoding: 'utf8' });
+              });
+          });
+        return '';
+      },
+    })],
+  },
+  // Annotations
+  {
+    input: 'src/scss/tooltips.scss',
+    plugins: [sass({
+      output: false,
+      processor: (css) => {
+        postcss()
+          .process(css, { from: undefined })
+          .then(async (result) => {
+            const path = 'dist/css/tooltips.css';
+            const pathMin = 'dist/css/tooltips.min.css';
+
+            if (!existsSync(dirname(path))) {
+              await mkdir(dirname(path), { recursive: true });
+            }
+            await writeFile(path, result.css, { encoding: 'utf8' });
+
+            postcss([cssnano])
+              .process(result.css, { from: undefined })
+              .then(async (result) => {
+                if (!existsSync(dirname(pathMin))) {
+                  await mkdir(dirname(pathMin), { recursive: true });
+                }
+                await writeFile(pathMin, result.css, { encoding: 'utf8' });
+              });
+          });
+        return '';
+      },
+    })],
+  },
+  // Global utilies injected into all shadowDOMs
+  {
+    input: 'src/scss/global-utilities.scss',
+    plugins: [sass({
+      output: false,
+      processor: (css) => {
+        postcss()
+          .process(css, { from: undefined })
+          .then(async (result) => {
+            const path = 'dist/css/global-utilities.css';
+            const pathMin = 'dist/css/global-utilities.min.css';
+
+            if (!existsSync(dirname(path))) {
+              await mkdir(dirname(path), { recursive: true });
+            }
+            await writeFile(path, result.css, { encoding: 'utf8' });
+
+            postcss([cssnano])
+              .process(result.css, { from: undefined })
+              .then(async (result) => {
+                if (!existsSync(dirname(pathMin))) {
+                  await mkdir(dirname(pathMin), { recursive: true });
+                }
+                await writeFile(pathMin, result.css, { encoding: 'utf8' });
+              });
+          });
+        return '';
+      },
+    })],
+  },
   // ES6 standalone files
   {
     input: 'src/js/sa11y.js',
@@ -44,42 +224,6 @@ export default [
       { file: 'dist/js/sa11y.umd.js', format: 'umd', name: 'Sa11y' },
       {
         file: 'dist/js/sa11y.umd.min.js', format: 'umd', name: 'Sa11y', plugins: [terser()],
-      },
-    ],
-  },
-  // Custom checks ESM
-  {
-    input: 'src/js/sa11y-custom-checks.js',
-    plugins: [
-      nodeResolve(),
-      css(),
-      replace({
-        preventAssignment: true,
-        'process.env.NODE_ENV': JSON.stringify('production'),
-      }),
-    ],
-    output: [
-      { file: 'dist/js/sa11y-custom-checks.esm.js', format: 'esm' },
-      {
-        file: 'dist/js/sa11y-custom-checks.esm.min.js', format: 'esm', plugins: [terser()],
-      },
-    ],
-  },
-  // Custom checks
-  {
-    input: 'src/js/sa11y-custom-checks.js',
-    plugins: [
-      nodeResolve(),
-      css(),
-      replace({
-        preventAssignment: true,
-        'process.env.NODE_ENV': JSON.stringify('production'),
-      }),
-    ],
-    output: [
-      { file: 'dist/js/sa11y-custom-checks.umd.js', format: 'umd', name: 'CustomChecks' },
-      {
-        file: 'dist/js/sa11y-custom-checks.umd.min.js', format: 'umd', name: 'CustomChecks', plugins: [terser()],
       },
     ],
   },
@@ -172,36 +316,6 @@ export default [
     output: [
       { file: 'dist/js/lang/de.umd.js', format: 'umd', name: 'Sa11yLangDe' },
     ],
-  },
-  // SCSS files
-  {
-    input: 'src/scss/sa11y.scss',
-    plugins: [sass({
-      output: false,
-      processor: (css) => {
-        postcss()
-          .process(css, { from: undefined })
-          .then(async (result) => {
-            const path = 'dist/css/sa11y.css';
-            const pathMin = 'dist/css/sa11y.min.css';
-
-            if (!existsSync(dirname(path))) {
-              await mkdir(dirname(path), { recursive: true });
-            }
-            await writeFile(path, result.css, { encoding: 'utf8' });
-
-            postcss([cssnano])
-              .process(result.css, { from: undefined })
-              .then(async (result) => {
-                if (!existsSync(dirname(pathMin))) {
-                  await mkdir(dirname(pathMin), { recursive: true });
-                }
-                await writeFile(pathMin, result.css, { encoding: 'utf8' });
-              });
-          });
-        return '';
-      },
-    })],
   },
 
 ];

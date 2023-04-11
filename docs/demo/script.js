@@ -1,5 +1,4 @@
 import { Sa11y, Lang } from '../assets/js/sa11y.esm.js';
-import CustomChecks from '../assets/js/sa11y-custom-checks.esm.js';
 
 // Translations
 import Sa11yLangEn from '../assets/js/lang/en.js';
@@ -15,7 +14,6 @@ const webV = document.getElementById("v");
 webV.innerHTML = v;
 
 // Custom checks for English demo pages only.
-let customChecks = false;
 let readabilityISO = false;
 
 // Set translations
@@ -28,20 +26,20 @@ if (url.indexOf("/pl/") > -1) {
 } else if (url.indexOf("/ua/") > -1) {
   Lang.addI18n(Sa11yLangUa.strings);
 } else if (url.indexOf("/sv/") > -1) {
-	Lang.addI18n(SallyLangSv.strings);
+  Lang.addI18n(SallyLangSv.strings);
   readabilityISO = 'sv';
 } else if (url.indexOf("/de/") > -1) {
-	Lang.addI18n(SallyLangDe.strings);
+  Lang.addI18n(SallyLangDe.strings);
   readabilityISO = 'de';
 } else {
   Lang.addI18n(Sa11yLangEn.strings);
-  customChecks = new CustomChecks;
   readabilityISO = 'en';
 }
 
 // Instantiate
 const sa11y = new Sa11y({
-  customChecks: customChecks,
+  customChecks: true,
+  videoContent: 'youtube.com, vimeo.com, yuja.com, panopto.com, torontomu.ca',
   checkRoot: 'body',
   headerIgnore: '.ignore-this-heading',
   contrastIgnore: '.card-footer *, #player *',
@@ -53,5 +51,9 @@ const sa11y = new Sa11y({
   detectSPArouting: true,
   headless: false,
   dismissAnnotations: true,
-  selectorPath: false
+  selectorPath: true,
+  checkAllHideToggles: false,
+  contrastPlugin: true,
+  shadowComponents: '',
+  autoDetectShadowComponents: true
 });

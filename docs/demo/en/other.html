@@ -9,9 +9,9 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <meta name="theme-color" content="#7952b3">
-  <link rel="shortcut icon" type="image/jpg" href="../assets/favicon.ico"/>
+  <link rel="shortcut icon" type="image/jpg" href="../assets/favicon.ico" />
   <link href="../assets/main.css" rel="stylesheet">
-  <link rel="stylesheet" href="../../assets/css/sa11y.min.css"/>
+  <link rel="stylesheet" href="../../assets/css/sa11y.min.css" />
 </head>
 
 <body>
@@ -141,6 +141,20 @@
                 </div>
               </div>
             </div>
+            <div class="row mt-5">
+              <div class="col-md-4">
+                <div class="example h-100">
+                  <h4>iFrame with video source</h4>
+                  <div class="ratio ratio-16x9">
+                    <iframe title='Embedded Media titled: The Next Chapter' width="560" height="315"
+                      src="https://stream.torontomu.ca/V/Video?v=580978&node=2242356&a=184831508&preload=false"
+                      frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen loading="lazy"></iframe>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4"></div>
+              <div class="col-md-4"></div>
+            </div>
 
             <h3>Audio</h3>
             <div class="row">
@@ -217,7 +231,9 @@
             <hr class="mt-5">
 
             <h2 id="list-item-4" class="pt-3">Detecting URL changes</h2>
-            <p>This is not a ruleset. This is a demo of a nifty feature to find errors or warnings after detecting a URL change on the same page. For example, single page applications (SPA). A non-descript link will be appended to the page 1 second after the page is fully loaded. It will not recieve an error flag initially.</p>
+            <p>This is not a ruleset. This is a demo of a nifty feature to find errors or warnings after detecting a URL
+              change on the same page. For example, single page applications (SPA). A non-descript link will be appended
+              to the page 1 second after the page is fully loaded. It will not recieve an error flag initially.</p>
             <p><strong>To test:</strong> Wait for the "click here" link to load. Then:</p>
             <button id="btn-test" class="btn btn-sm btn-primary m-1"></button>
 
@@ -247,11 +263,11 @@
   <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
     integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous">
-  </script>
+    </script>
   <script async="" defer="" crossorigin="anonymous"
     src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v11.0" nonce="erE7GmIs"></script>
 
- <!-- Sa11y -->
+  <!-- Sa11y -->
   <script type="module" src="../script.js"></script>
 
   <!-- Misc -->
@@ -273,7 +289,7 @@
     btn.textContent = "click me to change URL";
     btn.addEventListener("click", (e) => {
       window.history.replaceState('test', 'Home', 'index.html');
-      const reset = () => {window.history.replaceState('test1', 'Other', 'other.html')};
+      const reset = () => { window.history.replaceState('test1', 'Other', 'other.html') };
       setTimeout(reset, 1000);
     }, false);
   </script>

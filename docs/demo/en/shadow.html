@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Warnings - Sa11y Demo</title>
+</head>
+
+<body>
+  <header>
+    <h1 id="editoria11y-demo">Editoria11y Unit Tests</h1>
+  </header>
+  <main>
+
+    <section id="headings">
+
+      <h2 id="heading-tests">Headings</h2>
+      <h3>Outline structure &amp; empty headings.</h3>
+
+      <div class="positive">skipped heading<h6 id="this-h6-should-have-been-an-h3">Skipped heading level</h6>
+      </div>
+
+      <h3>Empty headings</h3>
+      <div class="positive" id="hidden-handler">space character (with hidden handler)
+        <h4> </h4>
+      </div>
+      <div class="positive">empty alt
+        <h4><img alt=""
+            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120'%3E%3Crect width='240' height='120' fill='%23cccccc'%3E%3C/rect%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='26px' fill='%23333333'%3EImage%3C/text%3E%3C/svg%3E">
+        </h4>
+      </div>
+      <div class="positive">null alt
+        <h4><img
+            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120'%3E%3Crect width='240' height='120' fill='%23cccccc'%3E%3C/rect%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='26px' fill='%23333333'%3EImage%3C/text%3E%3C/svg%3E">
+        </h4>
+      </div>
+      <div class="positive">empty linked heading
+        <a href="#">
+          <h4></h4>
+        </a>
+      </div>
+
+      <div class="positive">
+        <h4 id="a-very-long-heading">Suspiciously long heading. Headings should not be used for emphasis, but rather for
+          a document outline, so if you find yourself talking this much, this probably is being used for visual
+          formatting, not a heading.</h4>
+      </div>
+
+      <div class="positive">
+        <h4>Skipped and empty heading (duplicate alert check)</h4>
+        <h6></h6>
+      </div>
+
+      <h3>Heading hidden from screen readers</h3>
+      <div class="negative">
+        <p>This should be excluded from the outline.</p>
+        <h6 style="display:none;">This should not be visible in the page outline</h6>
+      </div>
+
+      <h3>Possible fake headings</h3>
+
+      <div class="positive">
+        <blockquote>Short quote needs check</blockquote>
+      </div>
+
+      <blockquote class="negative">Longer quotes are OK and should not be flagged.</blockquote>
+
+      <p class="positive"><strong>All &lt;strong&gt; paragraph needs manual check</strong></p>
+
+      <p class="negative">You can aggregate Posts by a specific category and display the posts in a grid or in a
+        standard list layout. In the example below, we created a Post Category named
+        <strong>Announcement</strong>&nbsp;and used the Post List Block to list Posts<strong> </strong>tagged with
+        the<strong> Announcement</strong> category.
+      </p>
+
+      <p class="positive"><b>All &lt;b&gt;old paragraph needs manual check</b></p>
+
+      <p class="positive"> <strong>Short lines with <span>spans</span>, &nbsp;non-breaking whitespace should still be
+          flagged </strong></p>
+
+      <p class="todo-positive"> <strong>Short bold line</strong><br>With a carriage return.</p>
+
+
+      <p class="negative"><strong>Headings with certain punctuation are assumed to be sentences, and not flagged.
+          (!?)</strong></p>
+
+      <p class="negative">
+        <strong>A bold paragraph of very many characters is probably not a heading and probably shouldn't be flagged
+          even if it does not end in a period</strong>
+      </p>
+
+
+    </section>
+
+
+    <section>
+      <h2 id="text-alternatives">Image Text alternatives</h2>
+
+      <h3 id="image-with-no-alt-attribute-at-all">Image with no alt attribute at all</h3>
+
+      <p>Screen readers end up reading this as a filename.</p>
+
+      <p class="positive"><img
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120'%3E%3Crect width='240' height='120' fill='%23cccccc'%3E%3C/rect%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='26px' fill='%23333333'%3EImage%3C/text%3E%3C/svg%3E">
+      </p>
+
+      <h3 id="image-marked-as-decorative-with-an-empty-alt">Image marked as decorative with an empty alt</h3>
+
+      <p>This might be OK; flagged as needing manual review.</p>
+
+      <p class="positive"><img alt=""
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120'%3E%3Crect width='240' height='120' fill='%23cccccc'%3E%3C/rect%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='26px' fill='%23333333'%3EImage%3C/text%3E%3C/svg%3E">
+      </p>
+
+      <h3 id="image-with-an-invalid-alt-attribute">Image with an invalid alt attribute</h3>
+
+      <p>E.g., <code class="language-plaintext highlighter-rouge">alt="'"</code></p>
+
+      <p class="positive"><img alt="'"
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120'%3E%3Crect width='240' height='120' fill='%23cccccc'%3E%3C/rect%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='26px' fill='%23333333'%3EImage%3C/text%3E%3C/svg%3E">
+      </p>
+
+      <h3 id="image-with-a-filename-as-an-alt">Image with a filename as an alt</h3>
+
+      <p class="positive"><img alt="filename.jpg"
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120'%3E%3Crect width='240' height='120' fill='%23cccccc'%3E%3C/rect%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='26px' fill='%23333333'%3EImage%3C/text%3E%3C/svg%3E">
+      </p>
+
+      <h3 id="image-with-redundant-text-in-its-alt">Image with redundant text in its alt</h3>
+
+      <p>E.g., “image of.”</p>
+
+      <p class="positive"><img alt="Image of a photo of a picture."
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120'%3E%3Crect width='240' height='120' fill='%23cccccc'%3E%3C/rect%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='26px' fill='%23333333'%3EImage%3C/text%3E%3C/svg%3E">
+      </p>
+
+      <h3 id="image-with-very-long-alt-text">Image with very long alt text</h3>
+
+      <p class="positive"><img
+          alt="Alt text should be brief. Screen readers cannot jump from sentence to sentence in alt text, so listeners just hear one monster pile of text and if they miss something they have to start over."
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120'%3E%3Crect width='240' height='120' fill='%23cccccc'%3E%3C/rect%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='26px' fill='%23333333'%3EImage%3C/text%3E%3C/svg%3E">
+      </p>
+
+      <h3 id="images-in-links-where-the-alt-text-may-be-describing-the-image-instead-of-the-link">Images in links where
+        the alt text may be describing the image instead of the link</h3>
+
+      <p class="positive"><a href="https://www.youtube.com/watch?v=DLzxrzFCyOs">This link has text and an image.<img
+            alt="A lovely gray box"
+            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120'%3E%3Crect width='240' height='120' fill='%23cccccc'%3E%3C/rect%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='26px' fill='%23333333'%3EImage%3C/text%3E%3C/svg%3E"></a>
+      </p>
+
+      <h3 id="images-ignored">Ignored images</h3>
+      <p class="negative">Aria hidden image <img aria-hidden
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120'%3E%3Crect width='240' height='120' fill='%23cccccc'%3E%3C/rect%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='26px' fill='%23333333'%3EImage%3C/text%3E%3C/svg%3E">
+      </p>
+      <p class="negative">Aria labelled image <img aria-label="test"
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120'%3E%3Crect width='240' height='120' fill='%23cccccc'%3E%3C/rect%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='26px' fill='%23333333'%3EImage%3C/text%3E%3C/svg%3E">
+      </p>
+
+
+    </section>
+    <section>
+      <h2>Figures</h2>
+      <figure>
+        <img class="todo-positive" alt=""
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120'%3E%3Crect width='240' height='120' fill='%23cccccc'%3E%3C/rect%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='26px' fill='%23333333'%3EImage%3C/text%3E%3C/svg%3E">
+        <figcaption>Figcaption with empty image alt</figcaption>
+      </figure>
+      <figure class="todo-positive">
+        <img alt="Figcaption is the same as alt"
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120'%3E%3Crect width='240' height='120' fill='%23cccccc'%3E%3C/rect%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='26px' fill='%23333333'%3EImage%3C/text%3E%3C/svg%3E">
+        <figcaption>Figcaption is the same as alt</figcaption>
+      </figure>
+    </section>
+    <h3 id="embeds">Embeds</h3>
+
+    <p>Flagged as manual check needed for captioning:</p>
+    <hr>
+    <div class="positive">YouTube</div>
+    <hr>
+    <div class="positive">HTML5 video<video></video></div>
+
+    <hr>
+    <div class="positive">
+      <div id="embed" style="width: 50%; height: 4rem; background: aquamarine;">E.g., a social media feed</div>
+    </div>
+
+    <!--<iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" width="300" height="240" frameborder="0"></iframe>-->
+    [iframe commented out during development]
+    <p>Also flagged: embedded audio and social media.</p>
+
+    <h2 id="meaningful-links">Meaningful Links</h2>
+
+    <h3 id="links-with-no-text-at-all">Links with no text at all</h3>
+
+    <p class="positive"><a href="https://www.youtube.com/watch?v=DLzxrzFCyOs"></a> No characters</p>
+    <p class="positive"><a href="#"> </a> Space character</p>
+    <p class="positive">Image with deadspace: <a href="#"><img alt="'"
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120'%3E%3Crect width='240' height='120' fill='%23cccccc'%3E%3C/rect%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='26px' fill='%23333333'%3EImage%3C/text%3E%3C/svg%3E"
+          class=""></a></p>
+
+    <h3 id="links-titled-with-a-url">Links titled with a URL</h3>
+
+    <p class="positive"><a
+        href="https://www.youtube.com/watch?v=DLzxrzFCyOs">https://www.youtube.com/watch?v=DLzxrzFCyOs</a></p>
+
+    <h3 id="links-only-titled-with-generic-text">Links only titled with generic text</h3>
+
+    <p>“Click here,” “learn more,” “download,” etc.</p>
+
+    <p class="positive"><a href="https://www.youtube.com/watch?v=DLzxrzFCyOs">Click here</a></p>
+
+    <p class="positive">Link with ignored substring: <a href="https://www.youtube.com/watch?v=DLzxrzFCyOs">Click here
+        (opens in new window)</a></p>
+
+    <p class="negative"><a href="https://www.youtube.com/watch?v=DLzxrzFCyOs">A great video</a></p>
+
+    <h3 id="links-that-open-in-a-new-window-without-an-external-link-icon-or-text-warning">Links that open in a new
+      window without an external link icon or text warning</h3>
+
+    <p class="positive"><a href="https://www.youtube.com/watch?v=DLzxrzFCyOs" target="_blank">An informative video.</a>
+    </p>
+
+    <p class="negative">Link with inner download icon with aria-label: <a
+        href="https://www.youtube.com/watch?v=DLzxrzFCyOs" target="_blank">Click here <span
+          aria-label="download">^</span></a></p>
+
+    <p class="negative"><a href="https://www.youtube.com/watch?v=DLzxrzFCyOs" target="_blank">An informative video
+        (opens in new window).</a></p>
+
+    <h3 id="links-to-a-documents">Links to a documents</h3>
+
+    <p>Note that you can set what Editoria11y should look for in your preferences file. By default it checks for PDF and
+      DOC files.</p>
+
+    <p class="positive"><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ#.pdf" class="">A fake PDF link.</a></p>
+    <p class="positive"><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ#2.pdf" class="">A fake PDF link with a
+        different url.</a></p>
+
+    <h3>Silent but interactive links</h3>
+
+    <p class="todo-positive"><a href="#" aria-hidden="true">Aria-hidden links without a negative tabindex.</a></p>
+
+    <p class="todo-positive"><a href="#"><span aria-hidden="true">Link with all text content aria-hidden.</span></a></p>
+
+    <p class="positive"><a href="#"><img alt=""
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120'%3E%3Crect width='240' height='120' fill='%23cccccc'%3E%3C/rect%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='26px' fill='%23333333'%3EImage%3C/text%3E%3C/svg%3E">
+      </a> linked image with empty alt.</p>
+    <p class="positive"><a href="#"><img
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120'%3E%3Crect width='240' height='120' fill='%23cccccc'%3E%3C/rect%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='26px' fill='%23333333'%3EImage%3C/text%3E%3C/svg%3E">
+      </a> linked image with no alt.</p>
+
+    <p class="positive"><a href="#"><img alt="'"
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120'%3E%3Crect width='240' height='120' fill='%23cccccc'%3E%3C/rect%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='26px' fill='%23333333'%3EImage%3C/text%3E%3C/svg%3E"></a>
+      Linked image with an unpronounceable (unvoiced characters) alt text.</p>
+
+    <p class="positive"><a href="#"><img alt="http://jpg.gif"
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120'%3E%3Crect width='240' height='120' fill='%23cccccc'%3E%3C/rect%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='26px' fill='%23333333'%3EImage%3C/text%3E%3C/svg%3E">
+      </a> linked image with filename.</p>
+    <p class="positive"><a href="#"><img alt="click here"
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120'%3E%3Crect width='240' height='120' fill='%23cccccc'%3E%3C/rect%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='26px' fill='%23333333'%3EImage%3C/text%3E%3C/svg%3E">
+      </a> linked image with click here.</p>
+    <p class="positive"><a href="#"><img
+          alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120'%3E%3Crect width='240' height='120' fill='%23cccccc'%3E%3C/rect%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='26px' fill='%23333333'%3EImage%3C/text%3E%3C/svg%3E">
+      </a> linked image with giant alt.</p>
+    <p class="positive"><a href="#">Link text with image text<img alt="a butterfly"
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120'%3E%3Crect width='240' height='120' fill='%23cccccc'%3E%3C/rect%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='26px' fill='%23333333'%3EImage%3C/text%3E%3C/svg%3E"></a>
+    </p>
+    <p class="negative"><a href="#">Link text with text and empty image text<img alt=""
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120'%3E%3Crect width='240' height='120' fill='%23cccccc'%3E%3C/rect%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='26px' fill='%23333333'%3EImage%3C/text%3E%3C/svg%3E"></a>
+    </p>
+    <h3>
+      Links with accessible text added programmatically
+    </h3>
+    <p>These should all pass.</p>
+    <ul>
+      <li class="negative">Title <a href="#" title="text is in the title"></a></li>
+      <li class="negative">Aria-label [todo] <a href="#" id="aria-test" aria-label="Aria label"></a></li>
+      <li class="negative">Aria-label overriding [todo]<a href="#" aria-label="Aria label">Click here</a></li>
+      <li class="negative">Aria-labelledby [todo]<a href="#" aria-labelledby="aria-test"></a></li>
+    </ul>
+
+
+
+    <h2 id="tables">Tables</h2>
+
+    <h3 id="tables-without-valid-headers">Tables without valid headers</h3>
+
+    <table class="positive">
+      <tbody>
+        <tr>
+          <td>A table without a TH header is invalid</td>
+          <td class="positive">
+            <h4>Outline headers do not count</h4>
+          </td>
+          <td class="negative">
+            <p><strong>Disable should be content header test inside tables</strong></p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="empty-table-header-cells">Empty table header cells</h3>
+
+    <table>
+      <tbody>
+        <tr>
+          <th>Empty table heading cells will also be flagged:</th>
+          <th class="positive"> &nbsp;</th>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 id="legibility">Legibility</h2>
+
+    <h3 id="lists">Lists</h3>
+
+    <div>
+      <p>a. Fake lists</p>
+      <p>b. use letters or numbers.</p>
+      <p>c. rather than real formatting.</p>
+    </div>
+    <div>
+      <p class="positive">1. Fake lists<br>2. Sometimes use<br>BR instead of P tags.</p>
+    </div>
+    <div>
+      <p class="positive">* Fake lists</p>
+      <p class="negative">* Should only</p>
+      <p class="negative">* be flagged</p>
+      <p class="negative">* one time.</p>
+    </div>
+    <div>
+      <p class="positive">1. This is split</p>
+      <hr>
+      <p>2. with HR</p>
+      <hr>
+      <p>3. but non-contiguous p are detected.</p>
+    </div>
+    <div class="todo-positive">
+      <p>1. Failing test. This has rich text after the BR<br><a href="#"><strong>2.</strong> Fancy.</a></p>
+    </div>
+    <div class="negative">
+      <p>1. This has nothing after the BR<br></p>
+    </div>
+    <div class="negative">
+      <p></p>
+    </div>
+    <div class="negative">
+      <p>1.</p>
+    </div>
+
+    <h3 id="caps-lock">Caps lock</h3>
+
+    <div class="positive">
+      <p>SEVERAL WORDS IN A ROW OF CAPS LOCK TEXT WILL TRIGGER A MANUAL CHECK WARNING.</p>
+    </div>
+
+    <section class="shadow-root">
+      <h2 id="shadow-root-1">Shadow root handling 1</h2>
+    </section>
+    <section class="shadow-root">
+      <h2 id="shadow-root-2">Shadow root handling 2</h2>
+    </section>
+    <section class="shadow-root-no-hits">
+      <div>This shadow component has no elements to find.</div>
+    </section>
+
+
+
+    <section id="recursion">
+      <h2 id="recursion-tests">JS Recursion handling</h2>
+      <div class="positive">
+        <a href="#">
+          <h4>Alert within a link should be drawn outside the link.</h4>
+        </a>
+      </div>
+      <ul>
+        <li><span class="negative">Caps lock test should not flag LI parent</span>
+          <ul class="positive">
+            <li>ONLY THE INTERIOR LI SHOULD BE FLAGGED</li>
+          </ul>
+        </li>
+      </ul>
+      <table class="positive">
+        <tr>
+          <td>
+            <h4>ALL CAPS HEADING OUTLINE IN TABLE OUT OF ORDER SHOULD HAVE 3 HITS</h4>
+          </td>
+        </tr>
+      </table>
+    </section>
+
+    <section class="shadow-root">
+      <h2 id="shadow-root-3">Shadow root handling 3</h2>
+    </section>
+  </main>
+  <footer>
+    <div class="negative">
+      <h6>Heading level skip in footer should not be flagged.</h6>
+    </div>
+  </footer>
+
+
+  <div hidden>
+    <script>
+      class shadowTest extends HTMLElement {
+        constructor() {
+          super();
+        }
+        connectedCallback() {
+          if (!this.initialized) {
+            const shadow = this.attachShadow({ mode: 'open' });
+            let wrapper = document.createElement('div');
+            wrapper.setAttribute('class', 'wrapper');
+            let style = document.createElement('style');
+            style.innerHTML = `
+
+              h4, p {margin: 60px;}
+            `;
+
+            wrapper.innerHTML = `
+            <h4>Header skip in the shadow DOM</h4>
+            <p>ALL CAPS IN THE SHADOW DOM</p>
+            <p style="color:#ffa3a3">contrast issues</p>
+            `
+            shadow.appendChild(style);
+            shadow.appendChild(wrapper);
+            this.initialized = true;
+          }
+        }
+      }
+      customElements.define('shadow-test', shadowTest);
+      class shadowTestNoHits extends HTMLElement {
+        constructor() {
+          super();
+        }
+        connectedCallback() {
+          if (!this.initialized) {
+            const shadow = this.attachShadow({ mode: 'open' });
+            let wrapper = document.createElement('div');
+            wrapper.setAttribute('class', 'wrapper');
+            shadow.appendChild(wrapper);
+            this.initialized = true;
+          }
+        }
+      }
+      customElements.define('shadow-test-no-hits', shadowTestNoHits);
+
+      document.querySelectorAll('.shadow-root').forEach((el) => {
+        let testShadowElement = document.createElement('shadow-test');
+        el.append(testShadowElement);
+        el.append('hi');
+      })
+
+      document.querySelectorAll('.shadow-root-no-hits').forEach((el) => {
+        let testShadowElement2 = document.createElement('shadow-test-no-hits');
+        el.append(testShadowElement2);
+      });
+
+
+    </script>
+    <style>
+      main {
+        position: relative;
+        z-index: 0;
+      }
+
+      /*footer { position: fixed; z-index: 1; bottom: 0; left: 0; right: 0; background: silver;}*/
+    </style>
+    <link rel="stylesheet" href="../../assets/css/sa11y.min.css" />
+    <script type="module" src="../script.js"></script>
+    <div id="v"></div>
+  </div>
+
+</body>
+
+</html>
