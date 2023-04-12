@@ -32,12 +32,9 @@ export class TooltipComponent extends HTMLElement {
 
     const buttons = [];
     Elements.Annotations.Array.forEach((annotation) => {
-      // Ignore .page-error(s) appended to control panel.
-      if (!annotation.classList.contains('page-error')) {
-        const annotationButtons = annotation.shadowRoot.querySelectorAll('.sa11y-btn');
-        if (annotationButtons) {
-          buttons.push(...Array.from(annotationButtons));
-        }
+      const annotationButtons = annotation.shadowRoot.querySelectorAll('.sa11y-btn');
+      if (annotationButtons) {
+        buttons.push(...Array.from(annotationButtons));
       }
     });
 

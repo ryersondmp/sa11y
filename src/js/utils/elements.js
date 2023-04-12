@@ -141,11 +141,7 @@ const Elements = (function myElements() {
   /* ***************** */
   const Annotations = {};
   function initializeAnnotations() {
-    const pageErrors = Constants.Panel.panel.querySelectorAll('.page-error');
-    const pageAnnotations = find('sa11y-annotation, .page-error', 'root');
-
-    Annotations.Array = Array.from(pageErrors).concat(Array.from(pageAnnotations));
-
+    Annotations.Array = find('sa11y-annotation', 'root');
     Annotations.Array.forEach((annotation, i) => {
       annotation.setAttribute('data-sa11y-position', i);
     });

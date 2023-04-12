@@ -70,11 +70,13 @@ export function annotate(
 
   if (element === undefined) {
     // Page errors displayed to main panel.
+    create.setAttribute('tabindex', '-1');
+    create.classList.add('page-error');
     create.innerHTML = `
-      <div tabindex="-1" class="page-error">
-        <div class="header-text"><h2>${[type]}</h2></div>
-        ${content}
-      </div>`;
+        <div class="header-text">
+          <h2>${[type]}</h2>
+        </div>
+        ${content}`;
     Constants.Panel.pageErrors.insertAdjacentElement('afterbegin', create);
   } else {
     // Button annotations.

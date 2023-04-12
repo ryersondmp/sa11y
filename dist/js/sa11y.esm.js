@@ -1014,11 +1014,7 @@ const Elements = (function myElements() {
   /* ***************** */
   const Annotations = {};
   function initializeAnnotations() {
-    const pageErrors = Constants.Panel.panel.querySelectorAll('.page-error');
-    const pageAnnotations = find('sa11y-annotation, .page-error', 'root');
-
-    Annotations.Array = Array.from(pageErrors).concat(Array.from(pageAnnotations));
-
+    Annotations.Array = find('sa11y-annotation', 'root');
     Annotations.Array.forEach((annotation, i) => {
       annotation.setAttribute('data-sa11y-position', i);
     });
@@ -5222,12 +5218,9 @@ class TooltipComponent extends HTMLElement {
 
     const buttons = [];
     Elements.Annotations.Array.forEach((annotation) => {
-      // Ignore .page-error(s) appended to control panel.
-      if (!annotation.classList.contains('page-error')) {
-        const annotationButtons = annotation.shadowRoot.querySelectorAll('.sa11y-btn');
-        if (annotationButtons) {
-          buttons.push(...Array.from(annotationButtons));
-        }
+      const annotationButtons = annotation.shadowRoot.querySelectorAll('.sa11y-btn');
+      if (annotationButtons) {
+        buttons.push(...Array.from(annotationButtons));
       }
     });
 
@@ -5403,11 +5396,13 @@ function annotate(
 
   if (element === undefined) {
     // Page errors displayed to main panel.
+    create.setAttribute('tabindex', '-1');
+    create.classList.add('page-error');
     create.innerHTML = `
-      <div tabindex="-1" class="page-error">
-        <div class="header-text"><h2>${[type]}</h2></div>
-        ${content}
-      </div>`;
+        <div class="header-text">
+          <h2>${[type]}</h2>
+        </div>
+        ${content}`;
     Constants.Panel.pageErrors.insertAdjacentElement('afterbegin', create);
   } else {
     // Button annotations.
@@ -5566,19 +5561,26 @@ const getScrollPosition = ($el) => {
 
 let index = -1;
 
-const goToNext = () => {
+const determineIndex = () => {
+  // Index of last dismissed item.
+  const latestDismissed = store.getItem('sa11y-latest-dismissed');
+  if (latestDismissed !== null) index = parseInt(latestDismissed, 10) - 1;
+  store.removeItem('sa11y-latest-dismissed');
+
+  // Index of last opened tooltip.
   const opened = find('[data-sa11y-opened]', 'root');
   if (opened[0]) index = parseInt(opened[0].getAttribute('data-sa11y-position'), 10);
-  if (index >= Elements.Annotations.Array.length - 1) index = -1;
+};
 
-  const annotation = Elements.Annotations.Array[index + 1];
+const goToNext = () => {
+  determineIndex();
+  const issues = Elements.Annotations.Array;
 
-  let button;
-  if (annotation.classList.contains('page-error')) {
-    button = Constants.Panel.panel.querySelector('.page-error');
-  } else {
-    button = annotation.shadowRoot.querySelector('button');
-  }
+  // Go back to first issue.
+  if (index >= issues.length - 1) index = -1;
+
+  const annotation = issues[index + 1];
+  const button = annotation.shadowRoot.querySelector('button');
   const scrollPos = getScrollPosition(button);
 
   window.scrollTo({
@@ -5593,20 +5595,10 @@ const goToNext = () => {
 
   // Increase position by 1.
   index += 1;
-
-  // Reset to -1 once last button is reached.
-  const latestDismissed = store.getItem('sa11y-latest-dismissed');
-  if (latestDismissed !== null) index = latestDismissed - 1;
 };
 
 const goToPrev = () => {
-  // Go to next annotation from the most recently clicked.
-  const opened = find('[data-sa11y-opened]', 'root');
-  if (opened[0]) index = parseInt(opened[0].getAttribute('data-sa11y-position'), 10);
-
-  // If index is -1, it means that it cycled back to the first annotation. This is needed for when user wants to go to previous annotation from the very last annotation on the page.
-  if (index === -1) index = Elements.Annotations.Array.length - 1;
-
+  determineIndex();
   if (index > 0) {
     const button = Elements.Annotations.Array[index - 1].shadowRoot.querySelector('button');
     const scrollPos = getScrollPosition(button);
@@ -5623,6 +5615,9 @@ const goToPrev = () => {
 
     // Decrease position by 1
     index -= 1;
+
+    // If index is -1, it means that it cycled back to the first annotation. This is needed for when user wants to go to previous annotation from the very last annotation on the page.
+    if (index === -1) index = Elements.Annotations.Array.length - 1;
   }
 };
 
@@ -5634,15 +5629,6 @@ function keyboardShortcut(e) {
     e.preventDefault();
     goToPrev();
   }
-
-  // Reset to -1 if trying to go before first button.
-  const latestDismissed = store.getItem('sa11y-latest-dismissed');
-  if (latestDismissed !== null) {
-    index = latestDismissed - 1;
-  }
-
-  // Remove latest dismissed.
-  store.removeItem('sa11y-latest-dismissed');
 }
 
 function handleSkipButton() {
