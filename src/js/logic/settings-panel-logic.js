@@ -4,77 +4,93 @@ import Lang from '../utils/lang';
 
 export default function settingsPanelToggles(checkAll, resetAll) {
   // Toggle: Contrast
-  Constants.Panel.contrastToggle.onclick = async () => {
-    if (store.getItem('sa11y-remember-contrast') === 'On') {
-      store.setItem('sa11y-remember-contrast', 'Off');
-      Constants.Panel.contrastToggle.textContent = `${Lang._('OFF')}`;
-      Constants.Panel.contrastToggle.setAttribute('aria-pressed', 'false');
-      resetAll(false);
-      await checkAll();
-    } else {
-      store.setItem('sa11y-remember-contrast', 'On');
-      Constants.Panel.contrastToggle.textContent = `${Lang._('ON')}`;
-      Constants.Panel.contrastToggle.setAttribute('aria-pressed', 'true');
-      resetAll(false);
-      await checkAll();
-    }
-  };
+  if (Constants.Global.contrastPlugin === true) {
+    Constants.Panel.contrastToggle.onclick = async () => {
+      if (store.getItem('sa11y-remember-contrast') === 'On') {
+        store.setItem('sa11y-remember-contrast', 'Off');
+        Constants.Panel.contrastToggle.textContent = `${Lang._('OFF')}`;
+        Constants.Panel.contrastToggle.setAttribute('aria-pressed', 'false');
+        resetAll(false);
+        await checkAll();
+      } else {
+        store.setItem('sa11y-remember-contrast', 'On');
+        Constants.Panel.contrastToggle.textContent = `${Lang._('ON')}`;
+        Constants.Panel.contrastToggle.setAttribute('aria-pressed', 'true');
+        resetAll(false);
+        await checkAll();
+      }
+    };
+  } else {
+    store.setItem('sa11y-remember-contrast', 'Off');
+  }
 
   // Toggle: Form labels
-  Constants.Panel.labelsToggle.onclick = async () => {
-    if (store.getItem('sa11y-remember-labels') === 'On') {
-      store.setItem('sa11y-remember-labels', 'Off');
-      Constants.Panel.labelsToggle.textContent = `${Lang._('OFF')}`;
-      Constants.Panel.labelsToggle.setAttribute('aria-pressed', 'false');
-      resetAll(false);
-      await checkAll();
-    } else {
-      store.setItem('sa11y-remember-labels', 'On');
-      Constants.Panel.labelsToggle.textContent = `${Lang._('ON')}`;
-      Constants.Panel.labelsToggle.setAttribute('aria-pressed', 'true');
-      resetAll(false);
-      await checkAll();
-    }
-  };
+  if (Constants.Global.formLabelsPlugin === true) {
+    Constants.Panel.labelsToggle.onclick = async () => {
+      if (store.getItem('sa11y-remember-labels') === 'On') {
+        store.setItem('sa11y-remember-labels', 'Off');
+        Constants.Panel.labelsToggle.textContent = `${Lang._('OFF')}`;
+        Constants.Panel.labelsToggle.setAttribute('aria-pressed', 'false');
+        resetAll(false);
+        await checkAll();
+      } else {
+        store.setItem('sa11y-remember-labels', 'On');
+        Constants.Panel.labelsToggle.textContent = `${Lang._('ON')}`;
+        Constants.Panel.labelsToggle.setAttribute('aria-pressed', 'true');
+        resetAll(false);
+        await checkAll();
+      }
+    };
+  } else {
+    store.setItem('sa11y-remember-labels', 'Off');
+  }
 
   // Toggle: Links (Advanced)
-  Constants.Panel.linksToggle.onclick = async () => {
-    if (store.getItem('sa11y-remember-links-advanced') === 'On') {
-      store.setItem('sa11y-remember-links-advanced', 'Off');
-      Constants.Panel.linksToggle.textContent = `${Lang._('OFF')}`;
-      Constants.Panel.linksToggle.setAttribute('aria-pressed', 'false');
-      resetAll(false);
-      await checkAll();
-    } else {
-      store.setItem('sa11y-remember-links-advanced', 'On');
-      Constants.Panel.linksToggle.textContent = `${Lang._('ON')}`;
-      Constants.Panel.linksToggle.setAttribute('aria-pressed', 'true');
-      resetAll(false);
-      await checkAll();
-    }
-  };
+  if (Constants.Global.linksAdvancedPlugin === true) {
+    Constants.Panel.linksToggle.onclick = async () => {
+      if (store.getItem('sa11y-remember-links-advanced') === 'On') {
+        store.setItem('sa11y-remember-links-advanced', 'Off');
+        Constants.Panel.linksToggle.textContent = `${Lang._('OFF')}`;
+        Constants.Panel.linksToggle.setAttribute('aria-pressed', 'false');
+        resetAll(false);
+        await checkAll();
+      } else {
+        store.setItem('sa11y-remember-links-advanced', 'On');
+        Constants.Panel.linksToggle.textContent = `${Lang._('ON')}`;
+        Constants.Panel.linksToggle.setAttribute('aria-pressed', 'true');
+        resetAll(false);
+        await checkAll();
+      }
+    };
+  } else {
+    store.setItem('sa11y-remember-links-advanced', 'Off');
+  }
 
   // Toggle: Readability
-  Constants.Panel.readabilityToggle.onclick = async () => {
-    if (store.getItem('sa11y-remember-readability') === 'On') {
-      store.setItem('sa11y-remember-readability', 'Off');
-      Constants.Panel.readabilityToggle.textContent = `${Lang._('OFF')}`;
-      Constants.Panel.readabilityToggle.setAttribute('aria-pressed', 'false');
-      Constants.Panel.readability.classList.remove('active');
-      resetAll(false);
-      await checkAll();
-    } else {
-      store.setItem('sa11y-remember-readability', 'On');
-      Constants.Panel.readabilityToggle.textContent = `${Lang._('ON')}`;
-      Constants.Panel.readabilityToggle.setAttribute('aria-pressed', 'true');
-      Constants.Panel.readability.classList.add('active');
-      resetAll(false);
-      await checkAll();
-    }
-  };
+  if (Constants.Global.readabilityPlugin === true) {
+    Constants.Panel.readabilityToggle.onclick = async () => {
+      if (store.getItem('sa11y-remember-readability') === 'On') {
+        store.setItem('sa11y-remember-readability', 'Off');
+        Constants.Panel.readabilityToggle.textContent = `${Lang._('OFF')}`;
+        Constants.Panel.readabilityToggle.setAttribute('aria-pressed', 'false');
+        Constants.Panel.readability.classList.remove('active');
+        resetAll(false);
+        await checkAll();
+      } else {
+        store.setItem('sa11y-remember-readability', 'On');
+        Constants.Panel.readabilityToggle.textContent = `${Lang._('ON')}`;
+        Constants.Panel.readabilityToggle.setAttribute('aria-pressed', 'true');
+        Constants.Panel.readability.classList.add('active');
+        resetAll(false);
+        await checkAll();
+      }
+    };
 
-  if (store.getItem('sa11y-remember-readability') === 'On') {
-    Constants.Panel.readability.classList.add('active');
+    if (store.getItem('sa11y-remember-readability') === 'On') {
+      Constants.Panel.readability.classList.add('active');
+    }
+  } else {
+    store.setItem('sa11y-remember-readability', 'Off');
   }
 
   /**
@@ -139,5 +155,23 @@ export default function settingsPanelToggles(checkAll, resetAll) {
     store.setItem('sa11y-remember-theme', 'light');
     Constants.Panel.themeToggle.textContent = `${Lang._('OFF')}`;
     Constants.Panel.themeToggle.setAttribute('aria-pressed', 'false');
+  }
+
+  /* Colour filters */
+  if (Constants.Global.colourFilterPlugin === true) {
+    Constants.Panel.colourFilterSelect.addEventListener('change', () => {
+      const option = parseInt(Constants.Panel.colourFilterSelect.value, 10);
+      if (option === 1) {
+        Constants.Global.Root.setAttribute('data-sa11y-filter', 'protanopia');
+      } else if (option === 2) {
+        Constants.Global.Root.setAttribute('data-sa11y-filter', 'deuteranopia');
+      } else if (option === 3) {
+        Constants.Global.Root.setAttribute('data-sa11y-filter', 'tritanopia');
+      } else if (option === 4) {
+        Constants.Global.Root.setAttribute('data-sa11y-filter', 'achromatopsia');
+      } else {
+        Constants.Global.Root.removeAttribute('data-sa11y-filter');
+      }
+    });
   }
 }

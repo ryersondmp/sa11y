@@ -575,6 +575,22 @@ button[data-sa11y-dismiss]:hover, button[data-sa11y-dismiss]:focus {
   -webkit-mask: var(--sa11y-setting-switch-off-svg) center no-repeat;
 }
 
+select {
+  border: 0;
+  border-radius: 5px;
+  box-shadow: 0 0 0 2px var(--sa11y-setting-switch-bg-off);
+  cursor: pointer;
+  font-size: var(--sa11y-normal-text);
+  font-weight: normal;
+  padding: 0;
+  position: relative;
+  background: none;
+  color: var(--sa11y-panel-primary);
+  height: 25px;
+  text-align: end;
+  vertical-align: middle;
+}
+
 #settings-options li {
   align-items: center;
   display: flex;
@@ -586,6 +602,12 @@ button[data-sa11y-dismiss]:hover, button[data-sa11y-dismiss]:focus {
 }
 #settings-options li:last-child {
   border: none;
+}
+
+#colour-filter-item label,
+#colour-filter-item select {
+  margin-top: 10px;
+  margin-bottom: 9px;
 }
 
 hr {

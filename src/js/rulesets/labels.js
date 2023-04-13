@@ -3,15 +3,13 @@ import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 
-export default function checkLabels(
-  results,
-  formLabelsPlugin,
-  headless,
-  checkAllHideToggles,
-) {
-  if (formLabelsPlugin === true) {
-    const rememberLabels = Utils.store.getItem('sa11y-remember-labels') === 'On';
-    if (rememberLabels || headless === true || checkAllHideToggles === true) {
+export default function checkLabels(results) {
+  if (Constants.Global.formLabelsPlugin === true) {
+    if (
+      Utils.store.getItem('sa11y-remember-labels') === 'On'
+      || Constants.Global.headless === true
+      || Constants.Global.checkAllHideToggles === true
+    ) {
       Elements.Found.Inputs.forEach(($el) => {
         // Ignore hidden inputs.
         if (Utils.isElementHidden($el) !== true) {
@@ -109,10 +107,6 @@ export default function checkLabels(
         }
       });
     }
-  } else {
-    // Turn off Form Labels plugin if prop is set to false.
-    Constants.Panel.labelsItem.setAttribute('style', 'display: none !important;');
-    Utils.store.setItem('sa11y-remember-labels', 'Off');
   }
   return { results };
 }

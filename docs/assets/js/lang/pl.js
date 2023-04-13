@@ -33,6 +33,13 @@ var pl = {
     DISMISS: 'Odrzucać',
     DISMISSED: 'Odrzucone ostrzeżenia',
 
+    // Color filters
+    COLOUR_FILTER: 'Filtr kolorów',
+    PROTANOPIA: 'Protanopia',
+    DEUTERANOPIA: 'Deuteranopia',
+    TRITANOPIA: 'Tritanopia',
+    ACHROMATOPSIA: 'Achromatopsja',
+
     // Alternative text module stop words
     SUSPICIOUS_ALT_STOPWORDS: ['obraz', 'grafika', 'zdjęcie', 'rysunek', 'fotografia', 'foto', 'image', 'graphic', 'picture', 'photo'],
     PLACEHOLDER_ALT_STOPWORDS: [

@@ -267,3 +267,35 @@ html[data-sa11y-theme=dark] {
     animation: none !important;
   }
 }
+/* https: //github.com/DaltonLens/libDaltonLens/blob/master/svg/cvd_svg_filters.html */
+[data-sa11y-filter=protanopia] *:not(sa11y-control-panel, sa11y-tooltips, sa11y-dismiss-tooltip, sa11y-annotation) {
+  -webkit-filter: url(#sa11y-protanopia);
+  -moz-filter: url(#sa11y-protanopia);
+  -ms-filter: url(#sa11y-protanopia);
+  -o-filter: url(#sa11y-protanopia);
+  filter: url(#sa11y-protanopia);
+}
+
+[data-sa11y-filter=deuteranopia] *:not(sa11y-control-panel, sa11y-tooltips, sa11y-dismiss-tooltip, sa11y-annotation) {
+  -webkit-filter: url(#sa11y-deuteranopia);
+  -moz-filter: url(#sa11y-deuteranopia);
+  -ms-filter: url(#sa11y-deuteranopia);
+  -o-filter: url(#sa11y-deuteranopia);
+  filter: url(#sa11y-deuteranopia);
+}
+
+[data-sa11y-filter=tritanopia] *:not(sa11y-control-panel, sa11y-tooltips, sa11y-dismiss-tooltip, sa11y-annotation) {
+  -webkit-filter: url(#sa11y-tritanopia);
+  -moz-filter: url(#sa11y-tritanopia);
+  -ms-filter: url(#sa11y-tritanopia);
+  -o-filter: url(#sa11y-tritanopia);
+  filter: url(#sa11y-tritanopia);
+}
+
+[data-sa11y-filter=achromatopsia] *:not(sa11y-control-panel, sa11y-tooltips, sa11y-dismiss-tooltip, sa11y-annotation) {
+  -webkit-filter: grayscale(1);
+  -moz-filter: grayscale(1);
+  -ms-filter: grayscale(1);
+  -o-filter: grayscale(1);
+  filter: grayscale(1);
+}

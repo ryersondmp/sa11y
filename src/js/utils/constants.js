@@ -6,13 +6,32 @@ const Constants = (function myConstants() {
   /* Global constants */
   /* **************** */
   const Global = {};
-  function initializeGlobal(checkRoot) {
+  function initializeGlobal(
+    checkRoot,
+    contrastPlugin,
+    formLabelsPlugin,
+    readabilityPlugin,
+    linksAdvancedPlugin,
+    colourFilterPlugin,
+    checkAllHideToggles,
+    headless,
+  ) {
     Global.ERROR = Lang._('ERROR');
     Global.WARNING = Lang._('WARNING');
     Global.GOOD = Lang._('GOOD');
     Global.currentPage = window.location.pathname;
     Global.html = document.querySelector('html');
+    Global.headless = headless;
 
+    // Toggleable plugins
+    Global.contrastPlugin = contrastPlugin;
+    Global.formLabelsPlugin = formLabelsPlugin;
+    Global.readabilityPlugin = readabilityPlugin;
+    Global.linksAdvancedPlugin = linksAdvancedPlugin;
+    Global.colourFilterPlugin = colourFilterPlugin;
+    Global.checkAllHideToggles = checkAllHideToggles;
+
+    // Root element to check.
     Global.Root = document.querySelector(checkRoot);
     if (!checkRoot) {
       Global.Root = document.querySelector('body');
@@ -59,6 +78,9 @@ const Constants = (function myConstants() {
     Panel.linksItem = Sa11yPanel.getElementById('links-advanced-item');
     Panel.readabilityItem = Sa11yPanel.getElementById('readability-item');
 
+    Panel.colourFilterItem = Sa11yPanel.getElementById('colour-filter-item');
+    Panel.colourFilterSelect = Sa11yPanel.getElementById('colour-filter');
+
     // Buttons
     Panel.toggle = Sa11yPanel.getElementById('toggle');
     Panel.outlineToggle = Sa11yPanel.getElementById('outline-toggle');
@@ -85,11 +107,9 @@ const Constants = (function myConstants() {
   const Readability = {};
   function initializeReadability(
     readabilityRoot,
-    readabilityPlugin,
     readabilityLang,
   ) {
     Readability.Lang = readabilityLang;
-    Readability.Plugin = readabilityPlugin;
 
     Readability.Root = document.querySelector(readabilityRoot);
     if (!readabilityRoot) {

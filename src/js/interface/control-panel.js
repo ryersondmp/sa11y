@@ -7,11 +7,6 @@ import panelStyles from '../../../dist/css/control-panel.min.css';
 import sharedStyles from '../../../dist/css/shared.min.css';
 
 export default class ControlPanel extends HTMLElement {
-  constructor(checkAllHideTogglesOption) {
-    super();
-    this.checkAllHideToggles = checkAllHideTogglesOption;
-  }
-
   connectedCallback() {
     this.attachShadow({ mode: 'open' });
 
@@ -37,8 +32,58 @@ export default class ControlPanel extends HTMLElement {
 
     // If admin wants users to check everything, without toggleable checks.
     const hide = 'class="hide"';
-    const checkAll = this.checkAllHideToggles === true;
+    const checkAll = Constants.Global.checkAllHideToggles === true;
 
+    /* TOGGLEABLE PLUGINS */
+    const contrastPlugin = (Constants.Global.contrastPlugin === true) ? `
+      <li id="contrast-item" ${checkAll ? hide : ''}>
+        <label id="check-contrast" for="contrast-toggle">${Lang._('CONTRAST')}</label>
+        <button id="contrast-toggle"
+          aria-labelledby="check-contrast"
+          class="switch"
+          aria-pressed="${rememberContrast ? 'true' : 'false'}">${rememberContrast ? Lang._('ON') : Lang._('OFF')}</button>
+      </li>` : '';
+
+    const formLabelsPlugin = (Constants.Global.formLabelsPlugin === true) ? `
+      <li id="form-labels-item" ${checkAll ? hide : ''}>
+        <label id="check-labels" for="labels-toggle">${Lang._('FORM_LABELS')}</label>
+        <button id="labels-toggle"
+          aria-labelledby="check-labels"
+          class="switch"
+          aria-pressed="${rememberFormLabels ? 'true' : 'false'}">${rememberFormLabels ? Lang._('ON') : Lang._('OFF')}</button>
+      </li>` : '';
+
+    const linksAdvancedPlugin = (Constants.Global.linksAdvancedPlugin === true) ? `
+      <li id="links-advanced-item" ${checkAll ? hide : ''}>
+        <label id="check-changerequest" for="links-advanced-toggle">${Lang._('LINKS_ADVANCED')} <span class="badge">AAA</span></label>
+        <button id="links-advanced-toggle"
+          aria-labelledby="check-changerequest"
+          class="switch"
+          aria-pressed="${rememberLinksAdvanced ? 'true' : 'false'}">${rememberLinksAdvanced ? Lang._('ON') : Lang._('OFF')}</button>
+      </li>` : '';
+
+    const readabilityPlugin = (Constants.Global.readabilityPlugin === true) ? `
+      <li id="readability-item">
+        <label id="check-readability" for="readability-toggle">${Lang._('LANG_READABILITY')} <span class="badge">AAA</span></label>
+        <button id="readability-toggle"
+          aria-labelledby="check-readability"
+          class="switch"
+          aria-pressed="${rememberReadability ? 'true' : 'false'}">${rememberReadability ? Lang._('ON') : Lang._('OFF')}</button>
+      </li>` : '';
+
+    const colourFilterPlugin = (Constants.Global.colourFilterPlugin === true) ? `
+      <li id="colour-filter-item">
+        <label id="colour-filter-mode" for="colour-filter">${Lang._('COLOUR_FILTER')}</label>
+        <select id="colour-filter">
+          <option value="0">${Lang._('OFF')}</option>
+          <option value="1">${Lang._('PROTANOPIA')}</option>
+          <option value="2">${Lang._('DEUTERANOPIA')}</option>
+          <option value="3">${Lang._('TRITANOPIA')}</option>
+          <option value="4">${Lang._('ACHROMATOPSIA')}</option>
+        </select>
+      </li>` : '';
+
+    /* MAIN CONTAINER */
     container.innerHTML = `
       <button type="button" aria-expanded="false" id="toggle" aria-describedby="notification-badge" aria-label="${Lang._('MAIN_TOGGLE_LABEL')}" disabled>
         ${MainToggleIcon}
@@ -78,40 +123,17 @@ export default class ControlPanel extends HTMLElement {
           </div>
           <div id="settings-content">
             <ul id="settings-options">
-              <li id="contrast-item" ${checkAll ? hide : ''}>
-                <label id="check-contrast" for="contrast-toggle">${Lang._('CONTRAST')}</label>
-                <button id="contrast-toggle"
-                  aria-labelledby="check-contrast"
-                  class="switch"
-                  aria-pressed="${rememberContrast ? 'true' : 'false'}">${rememberContrast ? Lang._('ON') : Lang._('OFF')}</button>
-              </li>
-              <li id="form-labels-item" ${checkAll ? hide : ''}>
-                <label id="check-labels" for="labels-toggle">${Lang._('FORM_LABELS')}</label>
-                <button id="labels-toggle"
-                  aria-labelledby="check-labels"
-                  class="switch"
-                  aria-pressed="${rememberFormLabels ? 'true' : 'false'}">${rememberFormLabels ? Lang._('ON') : Lang._('OFF')}</button>
-              </li>
-              <li id="links-advanced-item" ${checkAll ? hide : ''}>
-                <label id="check-changerequest" for="links-advanced-toggle">${Lang._('LINKS_ADVANCED')} <span class="badge">AAA</span></label>
-                <button id="links-advanced-toggle"
-                  aria-labelledby="check-changerequest"
-                  class="switch"
-                  aria-pressed="${rememberLinksAdvanced ? 'true' : 'false'}">${rememberLinksAdvanced ? Lang._('ON') : Lang._('OFF')}</button>
-              </li>
-              <li id="readability-item">
-                <label id="check-readability" for="readability-toggle">${Lang._('LANG_READABILITY')} <span class="badge">AAA</span></label>
-                <button id="readability-toggle"
-                  aria-labelledby="check-readability"
-                  class="switch"
-                  aria-pressed="${rememberReadability ? 'true' : 'false'}">${rememberReadability ? Lang._('ON') : Lang._('OFF')}</button>
-              </li>
-              <li>
+              ${contrastPlugin}
+              ${formLabelsPlugin}
+              ${linksAdvancedPlugin}
+              ${readabilityPlugin}
+              <li id="dark-mode-item">
                 <label id="dark-mode" for="theme-toggle">${Lang._('DARK_MODE')}</label>
                 <button id="theme-toggle"
                   aria-labelledby="dark-mode"
                   class="switch"></button>
               </li>
+              ${colourFilterPlugin}
             </ul>
           </div>
         </div>`

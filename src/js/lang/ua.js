@@ -33,6 +33,13 @@ export default {
     DISMISS: 'Відхилити',
     DISMISSED: 'Відхилених попередження',
 
+    // Color filters
+    COLOUR_FILTER: 'Фільтр кольорів',
+    PROTANOPIA: 'Протанопія',
+    DEUTERANOPIA: 'Девтеранопія',
+    TRITANOPIA: 'Тританопія',
+    ACHROMATOPSIA: 'Ахроматопсія',
+
     // Alternative text module stop words
     SUSPICIOUS_ALT_STOPWORDS: ['зображення', 'графічний об’єкт', 'малюнок', 'фото'],
     PLACEHOLDER_ALT_STOPWORDS: ['alt', 'зображення', 'фото', 'декоративне', 'фотографія', 'заповнювач', 'зображення-заповнювач', 'роздільник'],

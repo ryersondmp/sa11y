@@ -3,15 +3,13 @@ import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 
-export default function checkLinksAdvanced(
-  results,
-  linksAdvancedPlugin,
-  headless,
-  checkAllHideToggles,
-) {
-  if (linksAdvancedPlugin === true) {
-    const rememberLinksAdv = Utils.store.getItem('sa11y-remember-links-advanced') === 'On';
-    if (rememberLinksAdv || headless === true || checkAllHideToggles === true) {
+export default function checkLinksAdvanced(results) {
+  if (Constants.Global.linksAdvancedPlugin === true) {
+    if (
+      Utils.store.getItem('sa11y-remember-links-advanced') === 'On'
+      || Constants.Global.headless === true
+      || Constants.Global.checkAllHideToggles === true
+    ) {
       const seen = {};
       Elements.Found.Links.forEach(($el) => {
         let linkText = Utils.computeAccessibleName($el);
@@ -117,10 +115,6 @@ export default function checkLinksAdvanced(
         }
       });
     }
-  } else {
-    // Hide Links Advanced toggle if prop is set to false.
-    Constants.Panel.linksItem.setAttribute('style', 'display: none !important;');
-    Utils.store.setItem('sa11y-remember-links-advanced', 'Off');
   }
   return results;
 }

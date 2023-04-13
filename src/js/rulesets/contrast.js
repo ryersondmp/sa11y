@@ -9,15 +9,13 @@ import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 
-export default function checkContrast(
-  results,
-  contrastPlugin,
-  headless,
-  checkAllHideToggles,
-) {
-  if (contrastPlugin === true) {
-    const rememberContrast = Utils.store.getItem('sa11y-remember-contrast') === 'On';
-    if (rememberContrast || headless === true || checkAllHideToggles === true) {
+export default function checkContrast(results) {
+  if (Constants.Global.contrastPlugin === true) {
+    if (
+      Utils.store.getItem('sa11y-remember-contrast') === 'On'
+      || Constants.Global.headless === true
+      || Constants.Global.checkAllHideToggles === true
+    ) {
       let contrastErrors = {
         errors: [],
         warnings: [],
@@ -224,10 +222,6 @@ export default function checkContrast(
         });
       });
     }
-  } else {
-    // Hide Contrast toggle if prop is set to false.
-    Constants.Panel.contrastItem.setAttribute('style', 'display: none !important;');
-    Utils.store.setItem('sa11y-remember-contrast', 'Off');
   }
   return results;
 };

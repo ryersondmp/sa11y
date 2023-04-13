@@ -29,6 +29,7 @@ const defaultOptions = {
   contrastPlugin: true,
   formLabelsPlugin: true,
   linksAdvancedPlugin: true,
+  colourFilterPlugin: true,
   customChecks: true,
   checkAllHideToggles: false,
 
@@ -93,8 +94,8 @@ const Lang = {
 };
 
 /**
- * Utility: Checks whether the document has finished loading.
- * @param {Function} callback - The function to execute once the document has finished loading.
+ * Checks if the document has finished loading, and if so, immediately calls the provided callback function. Otherwise, waits for the 'load' event to fire and then calls the callback function.
+ * @param {function} callback - The callback function to be called when the document finishes loading.
  */
 function documentLoadingCheck(callback) {
   if (document.readyState === 'complete') {
@@ -105,10 +106,10 @@ function documentLoadingCheck(callback) {
 }
 
 /**
- * Utility: Check if element is hidden (display: none) OR visually hidden (.sr-only)
- * @param  {Node} element Node to test.
- * @return {Boolean} boolean.
-*/
+ * Checks if an element is visually hidden or hidden based on its attributes and styles.
+ * @param {HTMLElement} element - The element to check for visibility.
+ * @returns {boolean} - `true` if the element is visually hidden or hidden, `false` otherwise.
+ */
 function isElementVisuallyHiddenOrHidden(element) {
   if (element.getAttribute('hidden') || (element.offsetWidth === 0 && element.offsetHeight === 0) || (element.clientHeight === 1 && element.clientWidth === 1)) {
     return true;
@@ -118,10 +119,10 @@ function isElementVisuallyHiddenOrHidden(element) {
 }
 
 /**
- * Utility: Check if element is hidden.
- * @param  {Node} element The element.
- * @return {Boolean}
-*/
+ * Checks if an element is hidden based on its attributes and styles.
+ * @param {HTMLElement} element - The element to check for visibility.
+ * @returns {boolean} - `true` if the element is hidden, `false` otherwise.
+ */
 function isElementHidden(element) {
   if (element.getAttribute('hidden') || (element.offsetWidth === 0 && element.offsetHeight === 0)) {
     return true;
@@ -131,10 +132,10 @@ function isElementHidden(element) {
 }
 
 /**
- * Utility: Escape HTML, encode HTML symbols.
- * @param  {String} string  The user-submitted string.
- * @return {String} string The encoded string.
-*/
+ * Escapes HTML special characters in a string.
+ * @param {string} string - The string to escape.
+ * @returns {string} - The escaped string with HTML special characters replaced by their corresponding entities.
+ */
 function escapeHTML(string) {
   const $div = document.createElement('div');
   $div.textContent = string;
@@ -142,29 +143,29 @@ function escapeHTML(string) {
 }
 
 /**
- * Utility: Sanitize and encode all HTML in a user-submitted string
+ * Sanitizes an HTML string by replacing special characters with their corresponding HTML entities.
+ * @param {string} string - The HTML string to sanitize.
+ * @returns {string} - The sanitized HTML string with special characters replaced by their corresponding entities.
  * @link https://portswigger.net/web-security/cross-site-scripting/preventing
- * @param  {String} string  The user-submitted string.
- * @return {String} string  The sanitized string.
-*/
+ */
 function sanitizeHTML(string) {
   return string.replace(/[^\w. ]/gi, (c) => `&#${c.charCodeAt(0)};`);
 }
 
 /**
- * Utility: Replace newlines and double spaces with a single space.
- * @param {Node} element
- * @return {String} Returns plain text string.
-*/
+ * Retrieves the text content of an HTML element and removes extra whitespaces and line breaks.
+ * @param {HTMLElement} element - The HTML element to retrieve the text content from.
+ * @returns {string} - The text content of the HTML element with extra whitespaces and line breaks removed.
+ */
 function getText(element) {
   return element.textContent.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
 }
 
 /**
- * Utility: Compute alt text on images within a text node.
- * @param  {Node} element  Element to check.
- * @return {String} str  Return text back.
-*/
+ * Compute alt text on images within a text node.
+ * @param {HTMLElement} element - The HTML element to compute the text content from.
+ * @returns {string} - The computed text content of the HTML element, considering alt text of images if present.
+ */
 function computeTextNodeWithImage(element) {
   const textContent = getText(element);
   const imgArray = Array.from(element.querySelectorAll('img'));
@@ -192,11 +193,13 @@ function computeTextNodeWithImage(element) {
 }
 
 /**
- * Utility: Debounce
+ * Debounces a callback function, ensuring it is only executed after a certain wait period
+ * has passed since the last invocation.
+ * @param {function} callback - The callback function to debounce.
+ * @param {number} wait - The wait period in milliseconds before the callback function is executed.
+ * @returns {function} - The debounced function.
  * @link https://www.joshwcomeau.com/snippets/javascript/debounce/
- * @callback callback
- * @argument {wait}
-*/
+ */
 function debounce$2(callback, wait) {
   let timeoutId = null;
   return (...args) => {
@@ -208,11 +211,11 @@ function debounce$2(callback, wait) {
 }
 
 /**
- * Utility: Used to ignore child elements within an anchor.
- * @param  {Node} element  Element to target.
- * @param  {Node} selector Element to ignore.
- * @return {Node} Returns back element excluding the ignored node.
-*/
+ * Creates a clone of an element while ignoring specified elements or elements matching a selector.
+ * @param {Element} element - The element to clone.
+ * @param {string} selector - The selector to match elements to be excluded from the clone. Optional.
+ * @returns {Element} - The cloned element with excluded elements removed.
+ */
 function fnIgnore(element, selector) {
   const $clone = element.cloneNode(true);
   const $exclude = Array.from(selector ? $clone.querySelectorAll(selector) : $clone.children);
@@ -223,10 +226,10 @@ function fnIgnore(element, selector) {
 }
 
 /**
- * Utility: Compute accessible name for elements with ARIA.
- * @param  {Node} element  Element to target.
- * @return {String} Returns a string back with the computed accessible name.
-*/
+ * Computes the accessible name of an element based on various aria-* attributes.
+ * @param {Element} element - The element for which the accessible name needs to be computed.
+ * @returns {string} - The computed accessible name of the element.
+ */
 function computeAccessibleName(element) {
   // aria-label
   if (element.matches('[aria-label]')) {
@@ -305,12 +308,12 @@ function computeAccessibleName(element) {
 }
 
 /**
- * Utility: Find visible parent of hidden element.
- * @param  {Node} element  Element to target.
- * @param  {String} property  CSS property. E.g. 'display'
- * @param  {String} value CSS value. E.g. 'none'
- * @return {Node} Returns parent node of element that is visible.
-*/
+ * Finds the visible parent of an element that matches a given CSS property and value.
+ * @param {Element} element - The element for which the visible parent needs to be found.
+ * @param {string} property - The CSS property to match against.
+ * @param {string} value - The value of the CSS property to match against.
+ * @returns {Element|null} - The visible parent element that matches the given property and value, or null if not found.
+ */
 function findVisibleParent(element, property, value) {
   let $el = element;
   while ($el !== null) {
@@ -325,10 +328,10 @@ function findVisibleParent(element, property, value) {
 }
 
 /**
- * Utility: Calculate top of element.
- * @param  {Node} element  Element to target.
- * @return {Number} Returns number greater than 0!
-*/
+ * Calculates the offset top of an element relative to the viewport.
+ * @param {Element} element - The element for which the offset top needs to be calculated.
+ * @returns {Object} - An object with a `top` property that represents the offset top of the element relative to the viewport.
+ */
 function offsetTop(element) {
   const rect = element.getBoundingClientRect();
   const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -338,7 +341,7 @@ function offsetTop(element) {
 }
 
 /**
- * Utility: Local storage with fall back to session storage.
+ * A utility object for handling storage operations using localStorage and sessionStorage.
  * @param  {String} key
  * @param  {string} value
  * @return {String} Return key.
@@ -374,9 +377,9 @@ const store = {
 };
 
 /**
- * Utility: Add & remove pulsing border for wayfinding.
- * @param  {Node} element Element to add border too.
-*/
+ * Adds a pulsing border effect to an element for 2.5 seconds.
+ * @param {Element} element - The element to which the pulsing border effect needs to be added.
+ */
 function addPulse(element) {
   const border = 'data-sa11y-pulse-border';
   element.setAttribute(border, '');
@@ -386,11 +389,11 @@ function addPulse(element) {
 }
 
 /**
- * Utility: Get next sibling of an element that matches a selector.
- * @param {Node} element The node to start from.
- * @param {String} selector The element you are looking for.
- * @return {Node} Return.
-*/
+ * Gets the next sibling element that matches the given selector, or the next sibling element if no selector is provided.
+ * @param {HTMLElement} element - The DOM element whose next sibling to retrieve.
+ * @param {string} selector - The optional selector to filter the next siblings. If not provided, the next sibling element will be returned regardless of its type.
+ * @returns {HTMLElement|string} - The next sibling element that matches the given selector, or the next sibling element if no selector is provided. If no matching sibling is found, an empty string is returned.
+ */
 function getNextSibling(element, selector) {
   let sibling = element.nextElementSibling;
   if (!selector) return sibling;
@@ -402,17 +405,18 @@ function getNextSibling(element, selector) {
 }
 
 /**
- * Utility: Prepare dismiss key.
- * @param {String} string The node to start from.
- * @return {String} Returns 256 character string without spaces.
-*/
+ * Prepares a string for dismissal by truncating it to a maximum of 256 characters.
+ * @param {string} string - The string to be prepared for dismissal.
+ * @returns {string} - The truncated string with a maximum of 256 characters.
+ */
 function prepareDismissal(string) {
   return String(string).substring(0, 256);
 }
 
 /**
- * Utility: Generate CSS selector path of element. Only traverses one level deep. Replace with proper library if needed.
- * @param {Node} element the element's node.
+ * Generates a selector path for the given DOM element.
+ * @param {Element} element - The DOM element for which to generate the selector path.
+ * @returns {string} - The selector path as a string.
  * @link https://www.geeksforgeeks.org/how-to-create-a-function-generateselector-to-generate-css-selector-path-of-a-dom-element/
  * @link https://dev.to/aniket_chauhan/generate-a-css-selector-path-of-a-dom-element-4aim
 */
@@ -445,8 +449,9 @@ function generateSelectorPath(element) {
 }
 
 /**
- * Utility: Trap focus of elements within a contained area.
- * @param {String} element The element where you'd like to trap keyboard focus.
+ * Traps focus within an element by looping focus back to the beginning or end
+ * when the Tab key is pressed.
+ * @param {Element} element - The DOM element to trap focus within.
  * @author Hidde de Vries
  * @link https://hidde.blog/using-javascript-to-trap-focus-in-an-element/
 */
@@ -474,8 +479,10 @@ function trapFocus(element) {
 }
 
 /**
- * Utility: Call this function without any parameters to remove any alerts in the panel.
-*/
+ * Removes the alert from the Sa11y control panel by clearing its content and removing CSS classes.
+ * @description This function clears the content of the alert element and removes CSS classes 'active' from the main alert element, and 'panel-alert-preview' from the alert preview element.
+ * @returns {void}
+ */
 function removeAlert() {
   const Sa11yPanel = document.querySelector('sa11y-control-panel').shadowRoot;
   const alert = Sa11yPanel.getElementById('panel-alert');
@@ -489,10 +496,11 @@ function removeAlert() {
 }
 
 /**
- * Utility: Send an alert to main panel.
- * @param  {String} alertMessage The message you'd to show in the alert.
- * @param  {String} errorPreview An optional secondary message or preview of the element.
-*/
+ * Creates an alert in the Sa11y control panel with the given alert message and error preview.
+ * @param {string} alertMessage - The alert message to be displayed.
+ * @param {string} errorPreview - The error preview to be displayed (optional).
+ * @returns {void}
+ */
 function createAlert(alertMessage, errorPreview) {
   const Sa11yPanel = document.querySelector('sa11y-control-panel').shadowRoot;
   const alert = Sa11yPanel.getElementById('panel-alert');
@@ -583,13 +591,32 @@ const Constants = (function myConstants() {
   /* Global constants */
   /* **************** */
   const Global = {};
-  function initializeGlobal(checkRoot) {
+  function initializeGlobal(
+    checkRoot,
+    contrastPlugin,
+    formLabelsPlugin,
+    readabilityPlugin,
+    linksAdvancedPlugin,
+    colourFilterPlugin,
+    checkAllHideToggles,
+    headless,
+  ) {
     Global.ERROR = Lang._('ERROR');
     Global.WARNING = Lang._('WARNING');
     Global.GOOD = Lang._('GOOD');
     Global.currentPage = window.location.pathname;
     Global.html = document.querySelector('html');
+    Global.headless = headless;
 
+    // Toggleable plugins
+    Global.contrastPlugin = contrastPlugin;
+    Global.formLabelsPlugin = formLabelsPlugin;
+    Global.readabilityPlugin = readabilityPlugin;
+    Global.linksAdvancedPlugin = linksAdvancedPlugin;
+    Global.colourFilterPlugin = colourFilterPlugin;
+    Global.checkAllHideToggles = checkAllHideToggles;
+
+    // Root element to check.
     Global.Root = document.querySelector(checkRoot);
     if (!checkRoot) {
       Global.Root = document.querySelector('body');
@@ -636,6 +663,9 @@ const Constants = (function myConstants() {
     Panel.linksItem = Sa11yPanel.getElementById('links-advanced-item');
     Panel.readabilityItem = Sa11yPanel.getElementById('readability-item');
 
+    Panel.colourFilterItem = Sa11yPanel.getElementById('colour-filter-item');
+    Panel.colourFilterSelect = Sa11yPanel.getElementById('colour-filter');
+
     // Buttons
     Panel.toggle = Sa11yPanel.getElementById('toggle');
     Panel.outlineToggle = Sa11yPanel.getElementById('outline-toggle');
@@ -662,11 +692,9 @@ const Constants = (function myConstants() {
   const Readability = {};
   function initializeReadability(
     readabilityRoot,
-    readabilityPlugin,
     readabilityLang,
   ) {
     Readability.Lang = readabilityLang;
-    Readability.Plugin = readabilityPlugin;
 
     Readability.Root = document.querySelector(readabilityRoot);
     if (!readabilityRoot) {
@@ -819,12 +847,12 @@ const Constants = (function myConstants() {
 }());
 
 /**
-* Find elements.
-  * @param {Selector} selector: Element you would like to find.
-  * @param {String} rootElement: Select which root to search(document/readabilityRoot/root).
-  * @param {String} exclude: Elements you want to ignore.
-  * @return {Array} Returns array of elements.
-*/
+ * Finds elements in the DOM that match the given selector, within the specified root element, and excluding any specified elements.
+ * @param {string} selector - The CSS selector to match elements against.
+ * @param {string} desiredRoot - The root element to start the search from. Can be one of 'document', 'readability', 'root', or a custom selector for the desired root element.
+ * @param {string} exclude - Elements to exclude from the search, specified as a CSS selector (optional).
+ * @returns {Array} - An array of elements that match the given selector.
+ */
 function find(selector, desiredRoot, exclude) {
   let root;
   if (desiredRoot === 'document') {
@@ -1125,6 +1153,67 @@ function dismissAnnotations(
   }
 }
 
+/**
+ * DaltonLens SVG filters to simulate color vision deficiencies
+ *
+ * https://daltonlens.org/opensource-cvd-simulation/ for a
+ * discussion of the various methods.
+ * The various matrices were generated from DaltonLens-Python.
+ * It is very important for these filters to get applied in
+ * linearRGB, which is supposed to be the default, but never
+ * hurts to specify it explicitly.
+*/
+
+function addColourFilters(colourFilterPlugin) {
+  if (colourFilterPlugin === true) {
+    if (Constants.Global.headless === false) {
+      const svg = document.createElement('div');
+      svg.id = 'sa11y-colour-filters';
+      svg.style.display = 'none';
+      svg.setAttribute('aria-hidden', 'true');
+      svg.innerHTML = `
+        <!-- DaltonLens SVG filters to simulate color vision deficiencies -->
+        <svg>
+          <filter id="sa11y-protanopia" color-interpolation-filters="linearRGB">
+            <feColorMatrix type="matrix" in="SourceGraphic" values="
+                0.10889,0.89111,-0.00000,0,0
+                0.10889,0.89111,0.00000,0,0
+                0.00447,-0.00447,1.00000,0,0
+                0,0,0,1,0"
+            />
+          </filter>
+          <filter id="sa11y-deuteranopia" color-interpolation-filters="linearRGB">
+            <feColorMatrix type="matrix" in="SourceGraphic" values="
+                0.29031,0.70969,-0.00000,0,0
+                0.29031,0.70969,-0.00000,0,0
+                -0.02197,0.02197,1.00000,0,0
+                0,0,0,1,0"
+            />
+          </filter>
+          <filter id="sa11y-tritanopia" color-interpolation-filters="linearRGB">
+            <feColorMatrix type="matrix" in="SourceGraphic" result="ProjectionOnPlane1" values="
+                1.01354, 0.14268, -0.15622, 0, 0
+                -0.01181, 0.87561, 0.13619, 0, 0
+                0.07707, 0.81208, 0.11085, 0, 0
+                7.92482, -5.66475, -2.26007, 1, -0.2"
+            />
+            <feComponentTransfer in="ProjectionOnPlane1" result="ProjectionOnPlane1">
+                <feFuncA type="discrete" tableValues="0 0 0 0 1"/>
+            </feComponentTransfer>
+            <feColorMatrix type="matrix" in="SourceGraphic" result="ProjectionOnPlane2" values="
+                0.93337, 0.19999, -0.13336, 0, 0
+                0.05809, 0.82565, 0.11626, 0, 0
+                -0.37923, 1.13825, 0.24098, 0, 0
+                0,0,0,1,0"
+            />
+            <feBlend in="ProjectionOnPlane1" in2="ProjectionOnPlane2" mode="normal"/>
+          </filter>
+        </svg>`;
+      document.body.appendChild(svg);
+    }
+  }
+}
+
 function mainToggle(checkAll, resetAll) {
   // Keeps checker active when navigating between pages until it is toggled off.
   Constants.Panel.toggle.addEventListener('click', (e) => {
@@ -1174,16 +1263,11 @@ function mainToggle(checkAll, resetAll) {
   };
 }
 
-var panelStyles = "a,button,code,div,h1,h2,kbd,label,li,ol,p,span,strong,svg,ul{all:unset;box-sizing:border-box!important}:after,:before{all:unset}div{display:block}*{-webkit-font-smoothing:auto!important;font-family:var(--sa11y-font-face)!important;line-height:22px!important}label,li,ol,p,ul{font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;word-break:normal}.sa11y-overflow{overflow:auto}#toggle{background-image:linear-gradient(0deg,#e040fb,#00bcd4);background-size:150% 150%;border:0;border-radius:50px;bottom:15px;color:#fff;cursor:pointer;height:55px;inset-inline-end:18px;margin:0;overflow:visible;padding:10px;position:fixed;transition:all .2s ease-in-out;width:55px;z-index:2147483644}#toggle:focus,#toggle:hover{-webkit-animation:sa11y-toggle-gradient 3s ease;-moz-animation:sa11y-toggle-gradient 3s ease;animation:sa11y-toggle-gradient 3s ease}#toggle:disabled:focus,#toggle:disabled:hover{-webkit-animation:none;-moz-animation:none;animation:none}#toggle svg path{fill:var(--sa11y-panel-bg)}#toggle.on{background-image:linear-gradient(180deg,#e040fb,#00bcd4)}#notification-badge{align-items:center;background-color:#eb0000;border-radius:100px;color:#fff;display:none;font-size:13px;font-weight:400;height:20px;justify-content:center;position:absolute;right:-3px;top:-3px;width:20px}#notification-badge.notification-badge-warning{background-color:var(--sa11y-warning-hover);border:1px solid var(--sa11y-warning);color:var(--sa11y-warning-text)}#panel{background:var(--sa11y-panel-bg);border-radius:4px;bottom:25px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15);inset-inline-end:42px;opacity:0;overflow:visible;position:fixed;transform:scale(0);transform-origin:100% 100%;transition:transform .2s,opacity .2s;transition:background .2s;visibility:hidden;width:345px;z-index:2147483643}#panel.active{height:auto;opacity:1;transform:scale(1);transform-origin:bottom right;transition:transform .2s,opacity .2s;visibility:visible}h2{display:block;font-size:var(--sa11y-large-text);margin-bottom:3px}h2,strong{font-weight:600}a:not(#outline-list a){border-bottom:0;color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none}#panel-controls{border-radius:0 0 4px 4px;display:flex;overflow:hidden}label{color:var(--sa11y-panel-primary);cursor:pointer;display:inline-block;font-weight:400;margin:0;width:100%}[dir=rtl] #panel.active{transform-origin:bottom left!important}#page-errors{align-items:center;color:var(--sa11y-panel-primary)}.page-error{border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:block;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px;margin:5px;padding:10px}.page-error[tabindex=\"-1\"]:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color)!important}#panel-alert{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-primary);display:none;max-height:200px;opacity:0;overflow-y:auto;padding:15px 20px 15px 15px}#panel-alert.active{display:block;opacity:1}#panel-alert-preview .close-tooltip{display:none}#panel-alert-preview,#panel-alert-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}.panel-alert-preview{background:var(--sa11y-panel-bg-secondary);border:1px dashed var(--sa11y-panel-bg-splitter);border-radius:5px;margin-top:15px;padding:10px}button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg);border:1px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}button[data-sa11y-dismiss]:focus,button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}#panel-content{align-items:center;color:var(--sa11y-panel-primary);display:flex;padding:6px}#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{height:35px;width:35px}#panel-content.errors .panel-icon{background:var(--sa11y-panel-error);mask:var(--sa11y-error-svg) center no-repeat;-webkit-mask:var(--sa11y-error-svg) center no-repeat}#panel-content.good .panel-icon{background:var(--sa11y-good);mask:var(--sa11y-good-svg) center no-repeat;-webkit-mask:var(--sa11y-good-svg) center no-repeat}#panel-content.warnings .panel-icon{background:var(--sa11y-warning-svg-color);mask:var(--sa11y-warning-svg) center no-repeat;-webkit-mask:var(--sa11y-warning-svg) center no-repeat;transform:scaleX(var(--sa11y-icon-direction))}#status{font-size:var(--sa11y-large-text)}#status,.panel-count{color:var(--sa11y-panel-primary)}.panel-count{background-color:var(--sa11y-panel-badge);border-radius:4px;font-size:15px;font-weight:400;margin-left:4px;margin-right:4px;padding:2px 5px}.dismiss-icon{background:var(--sa11y-setting-switch-bg-off);display:inline-block;height:24px;margin-bottom:-4px;mask:var(--sa11y-dismiss-icon) center no-repeat;-webkit-mask:var(--sa11y-dismiss-icon) center no-repeat;width:24px}#dismiss-button,#skip-button{background:var(--sa11y-panel-bg-secondary);border:0;border-radius:50px;box-shadow:0 0 0 1px var(--sa11y-button-outline);cursor:pointer;display:none;height:35px;margin-inline-end:10px;margin-inline-start:2px;overflow:visible;position:relative;text-align:center;transition:all .1s ease-in-out;width:35px}#dismiss-button.active,#skip-button.active{display:block}#dismiss-button:disabled,#skip-button:disabled{background:none;box-shadow:none;cursor:default}#dismiss-button:before,#skip-button:before{bottom:-7px;content:\"\";left:-7px;position:absolute;right:-7px;top:-7px}#dismiss-button:focus:not(:disabled),#dismiss-button:hover:not(:disabled),#skip-button:focus:not(:disabled),#skip-button:hover:not(:disabled){background-color:var(--sa11y-shortcut-hover)}#outline-panel,#settings-panel{color:var(--sa11y-panel-primary);display:none;opacity:0}#outline-panel.active,#settings-panel.active{display:block;opacity:1}.panel-header{padding:10px 15px 0}#outline-content,#settings-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);padding:0 15px 10px}#outline-content{max-height:250px;overflow-y:auto}#outline-panel .outline-list-item.sa11y-red-text,#settings-panel .sa11y-red-text{color:var(--sa11y-red-text)}.badge{background-color:var(--sa11y-panel-badge);border-radius:10px;color:var(--sa11y-panel-primary);display:inline;font-size:13px;font-weight:700;min-width:10px;padding:2px 5px;text-align:center;white-space:nowrap}.error-badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.warning-badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.hidden-icon{background:var(--sa11y-panel-primary);display:inline-block;height:16px;margin-bottom:-3px;mask:var(--sa11y-hidden-icon-svg) center no-repeat;-webkit-mask:var(--sa11y-hidden-icon-svg) center no-repeat;width:16px}.error-badge .hidden-icon{background:var(--sa11y-error-text)}.warning-badge .hidden-icon{background:var(--sa11y-panel-bg)}.missing-h1{border:2px dashed var(--sa11y-red-text);margin:0 15px;padding:2px}#outline-list{display:block;margin:0;padding:0}#outline-list li{display:block;list-style-type:none;margin-bottom:3px;margin-top:0;padding:0}#outline-list li:first-child{margin-top:5px}#outline-list a{cursor:pointer;display:block;text-decoration:none}#outline-list li a:focus,#outline-list li a:hover{background:var(--sa11y-panel-outline-hover);border-radius:5px;box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);display:block}#outline-list .outline-2{margin-inline-start:15px}#outline-list .outline-3{margin-inline-start:30px}#outline-list .outline-4{margin-inline-start:45px}#outline-list .outline-5{margin-inline-start:60px}#outline-list .outline-6{margin-inline-start:75px}#outline-toggle,#settings-toggle{background:var(--sa11y-panel-bg-secondary);background-color:var(--sa11y-panel-bg-secondary);border-bottom:0;border-inline-end:1px solid var(--sa11y-panel-bg-splitter);border-top:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-secondary);cursor:pointer;display:block;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;line-height:0;margin:0;opacity:1;outline:0;padding:0;position:relative;text-align:center;transition:background .2s;width:100%}#outline-toggle:before,#settings-toggle:before{bottom:-8px;content:\"\";left:0;position:absolute;right:0;top:-7px}#outline-toggle.outline-active,#outline-toggle.settings-active,#outline-toggle:hover,#settings-toggle.outline-active,#settings-toggle.settings-active,#settings-toggle:hover{background-color:var(--sa11y-shortcut-hover)}#outline-toggle.outline-active,#outline-toggle.settings-active,#settings-toggle.outline-active,#settings-toggle.settings-active{font-weight:500}#settings-panel .switch{background:none;border:0;border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:44px;margin:0;padding:7px 10px;position:relative;text-align:end;width:105px}#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{content:\"\";display:inline-block;height:27px;margin:0 4px 4px;vertical-align:middle;width:27px}#settings-panel .switch[aria-pressed=true]:after{background:var(--sa11y-setting-switch-bg-on);mask:var(--sa11y-setting-switch-on-svg) center no-repeat;-webkit-mask:var(--sa11y-setting-switch-on-svg) center no-repeat}#settings-panel .switch[aria-pressed=false]:after{background:var(--sa11y-setting-switch-bg-off);mask:var(--sa11y-setting-switch-off-svg) center no-repeat;-webkit-mask:var(--sa11y-setting-switch-off-svg) center no-repeat}#settings-options li{align-items:center;border-bottom:1px solid;border-color:var(--sa11y-panel-bg-splitter);display:flex;justify-content:space-between;list-style-type:none;padding:1px 0}#settings-options li:last-child,hr{border:none}hr{background:var(--sa11y-panel-bg-splitter);height:1px;margin:10px 0;opacity:1;padding:0}#readability-panel{display:none;opacity:0}#readability-panel.active{display:block;opacity:1}#readability-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-primary);padding:10px 15px;width:100%}#readability-details{list-style-type:none;margin:0;padding:0;white-space:normal}#readability-details li{display:inline-block;list-style-type:none;margin:0;padding-inline-end:10px}.readability-score{background-color:var(--sa11y-panel-badge);border-radius:4px;color:var(--sa11y-panel-primary);margin-inline-start:5px;padding:2px 5px}#readability-info{margin-inline-start:10px}#outline-content::-webkit-scrollbar,#panel-alert::-webkit-scrollbar,#settings-content::-webkit-scrollbar{width:7px}#outline-content,#panel-alert,#settings-content{scrollbar-color:var(--sa11y-panel-bg-splitter);scrollbar-width:thin}#outline-content::-webkit-scrollbar-thumb,#panel-alert::-webkit-scrollbar-thumb,#settings-content::-webkit-scrollbar-thumb{background-color:var(--sa11y-panel-bg-splitter);border-radius:6px}@keyframes sa11y-toggle-gradient{0%{background-position:50% 0}50%{background-position:50% 100%}to{background-position:50% 0}}@media (prefers-reduced-motion:reduce){*{animation:none!important;transform:none!important;transition:none!important}}#container:lang(en) #panel{width:305px}#container:lang(fr) .switch,#container:lang(ua) .switch{width:205px}";
+var panelStyles = "a,button,code,div,h1,h2,kbd,label,li,ol,p,span,strong,svg,ul{all:unset;box-sizing:border-box!important}:after,:before{all:unset}div{display:block}*{-webkit-font-smoothing:auto!important;font-family:var(--sa11y-font-face)!important;line-height:22px!important}label,li,ol,p,ul{font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;word-break:normal}.sa11y-overflow{overflow:auto}#toggle{background-image:linear-gradient(0deg,#e040fb,#00bcd4);background-size:150% 150%;border:0;border-radius:50px;bottom:15px;color:#fff;cursor:pointer;height:55px;inset-inline-end:18px;margin:0;overflow:visible;padding:10px;position:fixed;transition:all .2s ease-in-out;width:55px;z-index:2147483644}#toggle:focus,#toggle:hover{-webkit-animation:sa11y-toggle-gradient 3s ease;-moz-animation:sa11y-toggle-gradient 3s ease;animation:sa11y-toggle-gradient 3s ease}#toggle:disabled:focus,#toggle:disabled:hover{-webkit-animation:none;-moz-animation:none;animation:none}#toggle svg path{fill:var(--sa11y-panel-bg)}#toggle.on{background-image:linear-gradient(180deg,#e040fb,#00bcd4)}#notification-badge{align-items:center;background-color:#eb0000;border-radius:100px;color:#fff;display:none;font-size:13px;font-weight:400;height:20px;justify-content:center;position:absolute;right:-3px;top:-3px;width:20px}#notification-badge.notification-badge-warning{background-color:var(--sa11y-warning-hover);border:1px solid var(--sa11y-warning);color:var(--sa11y-warning-text)}#panel{background:var(--sa11y-panel-bg);border-radius:4px;bottom:25px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15);inset-inline-end:42px;opacity:0;overflow:visible;position:fixed;transform:scale(0);transform-origin:100% 100%;transition:transform .2s,opacity .2s;transition:background .2s;visibility:hidden;width:345px;z-index:2147483643}#panel.active{height:auto;opacity:1;transform:scale(1);transform-origin:bottom right;transition:transform .2s,opacity .2s;visibility:visible}h2{display:block;font-size:var(--sa11y-large-text);margin-bottom:3px}h2,strong{font-weight:600}a:not(#outline-list a){border-bottom:0;color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none}#panel-controls{border-radius:0 0 4px 4px;display:flex;overflow:hidden}label{color:var(--sa11y-panel-primary);cursor:pointer;display:inline-block;font-weight:400;margin:0;width:100%}[dir=rtl] #panel.active{transform-origin:bottom left!important}#page-errors{align-items:center;color:var(--sa11y-panel-primary)}.page-error{border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:block;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px;margin:5px;padding:10px}.page-error[tabindex=\"-1\"]:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color)!important}#panel-alert{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-primary);display:none;max-height:200px;opacity:0;overflow-y:auto;padding:15px 20px 15px 15px}#panel-alert.active{display:block;opacity:1}#panel-alert-preview .close-tooltip{display:none}#panel-alert-preview,#panel-alert-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}.panel-alert-preview{background:var(--sa11y-panel-bg-secondary);border:1px dashed var(--sa11y-panel-bg-splitter);border-radius:5px;margin-top:15px;padding:10px}button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg);border:1px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}button[data-sa11y-dismiss]:focus,button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}#panel-content{align-items:center;color:var(--sa11y-panel-primary);display:flex;padding:6px}#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{height:35px;width:35px}#panel-content.errors .panel-icon{background:var(--sa11y-panel-error);mask:var(--sa11y-error-svg) center no-repeat;-webkit-mask:var(--sa11y-error-svg) center no-repeat}#panel-content.good .panel-icon{background:var(--sa11y-good);mask:var(--sa11y-good-svg) center no-repeat;-webkit-mask:var(--sa11y-good-svg) center no-repeat}#panel-content.warnings .panel-icon{background:var(--sa11y-warning-svg-color);mask:var(--sa11y-warning-svg) center no-repeat;-webkit-mask:var(--sa11y-warning-svg) center no-repeat;transform:scaleX(var(--sa11y-icon-direction))}#status{font-size:var(--sa11y-large-text)}#status,.panel-count{color:var(--sa11y-panel-primary)}.panel-count{background-color:var(--sa11y-panel-badge);border-radius:4px;font-size:15px;font-weight:400;margin-left:4px;margin-right:4px;padding:2px 5px}.dismiss-icon{background:var(--sa11y-setting-switch-bg-off);display:inline-block;height:24px;margin-bottom:-4px;mask:var(--sa11y-dismiss-icon) center no-repeat;-webkit-mask:var(--sa11y-dismiss-icon) center no-repeat;width:24px}#dismiss-button,#skip-button{background:var(--sa11y-panel-bg-secondary);border:0;border-radius:50px;box-shadow:0 0 0 1px var(--sa11y-button-outline);cursor:pointer;display:none;height:35px;margin-inline-end:10px;margin-inline-start:2px;overflow:visible;position:relative;text-align:center;transition:all .1s ease-in-out;width:35px}#dismiss-button.active,#skip-button.active{display:block}#dismiss-button:disabled,#skip-button:disabled{background:none;box-shadow:none;cursor:default}#dismiss-button:before,#skip-button:before{bottom:-7px;content:\"\";left:-7px;position:absolute;right:-7px;top:-7px}#dismiss-button:focus:not(:disabled),#dismiss-button:hover:not(:disabled),#skip-button:focus:not(:disabled),#skip-button:hover:not(:disabled){background-color:var(--sa11y-shortcut-hover)}#outline-panel,#settings-panel{color:var(--sa11y-panel-primary);display:none;opacity:0}#outline-panel.active,#settings-panel.active{display:block;opacity:1}.panel-header{padding:10px 15px 0}#outline-content,#settings-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);padding:0 15px 10px}#outline-content{max-height:250px;overflow-y:auto}#outline-panel .outline-list-item.sa11y-red-text,#settings-panel .sa11y-red-text{color:var(--sa11y-red-text)}.badge{background-color:var(--sa11y-panel-badge);border-radius:10px;color:var(--sa11y-panel-primary);display:inline;font-size:13px;font-weight:700;min-width:10px;padding:2px 5px;text-align:center;white-space:nowrap}.error-badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.warning-badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.hidden-icon{background:var(--sa11y-panel-primary);display:inline-block;height:16px;margin-bottom:-3px;mask:var(--sa11y-hidden-icon-svg) center no-repeat;-webkit-mask:var(--sa11y-hidden-icon-svg) center no-repeat;width:16px}.error-badge .hidden-icon{background:var(--sa11y-error-text)}.warning-badge .hidden-icon{background:var(--sa11y-panel-bg)}.missing-h1{border:2px dashed var(--sa11y-red-text);margin:0 15px;padding:2px}#outline-list{display:block;margin:0;padding:0}#outline-list li{display:block;list-style-type:none;margin-bottom:3px;margin-top:0;padding:0}#outline-list li:first-child{margin-top:5px}#outline-list a{cursor:pointer;display:block;text-decoration:none}#outline-list li a:focus,#outline-list li a:hover{background:var(--sa11y-panel-outline-hover);border-radius:5px;box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);display:block}#outline-list .outline-2{margin-inline-start:15px}#outline-list .outline-3{margin-inline-start:30px}#outline-list .outline-4{margin-inline-start:45px}#outline-list .outline-5{margin-inline-start:60px}#outline-list .outline-6{margin-inline-start:75px}#outline-toggle,#settings-toggle{background:var(--sa11y-panel-bg-secondary);background-color:var(--sa11y-panel-bg-secondary);border-bottom:0;border-inline-end:1px solid var(--sa11y-panel-bg-splitter);border-top:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-secondary);cursor:pointer;display:block;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;line-height:0;margin:0;opacity:1;outline:0;padding:0;position:relative;text-align:center;transition:background .2s;width:100%}#outline-toggle:before,#settings-toggle:before{bottom:-8px;content:\"\";left:0;position:absolute;right:0;top:-7px}#outline-toggle.outline-active,#outline-toggle.settings-active,#outline-toggle:hover,#settings-toggle.outline-active,#settings-toggle.settings-active,#settings-toggle:hover{background-color:var(--sa11y-shortcut-hover)}#outline-toggle.outline-active,#outline-toggle.settings-active,#settings-toggle.outline-active,#settings-toggle.settings-active{font-weight:500}#settings-panel .switch{background:none;border:0;border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:44px;margin:0;padding:7px 10px;position:relative;text-align:end;width:105px}#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{content:\"\";display:inline-block;height:27px;margin:0 4px 4px;vertical-align:middle;width:27px}#settings-panel .switch[aria-pressed=true]:after{background:var(--sa11y-setting-switch-bg-on);mask:var(--sa11y-setting-switch-on-svg) center no-repeat;-webkit-mask:var(--sa11y-setting-switch-on-svg) center no-repeat}#settings-panel .switch[aria-pressed=false]:after{background:var(--sa11y-setting-switch-bg-off);mask:var(--sa11y-setting-switch-off-svg) center no-repeat;-webkit-mask:var(--sa11y-setting-switch-off-svg) center no-repeat}select{background:none;border:0;border-radius:5px;box-shadow:0 0 0 2px var(--sa11y-setting-switch-bg-off);color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:25px;padding:0;position:relative;text-align:end;vertical-align:middle}#settings-options li{align-items:center;border-bottom:1px solid;border-color:var(--sa11y-panel-bg-splitter);display:flex;justify-content:space-between;list-style-type:none;padding:1px 0}#settings-options li:last-child{border:none}#colour-filter-item label,#colour-filter-item select{margin-bottom:9px;margin-top:10px}hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}#readability-panel{display:none;opacity:0}#readability-panel.active{display:block;opacity:1}#readability-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-primary);padding:10px 15px;width:100%}#readability-details{list-style-type:none;margin:0;padding:0;white-space:normal}#readability-details li{display:inline-block;list-style-type:none;margin:0;padding-inline-end:10px}.readability-score{background-color:var(--sa11y-panel-badge);border-radius:4px;color:var(--sa11y-panel-primary);margin-inline-start:5px;padding:2px 5px}#readability-info{margin-inline-start:10px}#outline-content::-webkit-scrollbar,#panel-alert::-webkit-scrollbar,#settings-content::-webkit-scrollbar{width:7px}#outline-content,#panel-alert,#settings-content{scrollbar-color:var(--sa11y-panel-bg-splitter);scrollbar-width:thin}#outline-content::-webkit-scrollbar-thumb,#panel-alert::-webkit-scrollbar-thumb,#settings-content::-webkit-scrollbar-thumb{background-color:var(--sa11y-panel-bg-splitter);border-radius:6px}@keyframes sa11y-toggle-gradient{0%{background-position:50% 0}50%{background-position:50% 100%}to{background-position:50% 0}}@media (prefers-reduced-motion:reduce){*{animation:none!important;transform:none!important;transition:none!important}}#container:lang(en) #panel{width:305px}#container:lang(fr) .switch,#container:lang(ua) .switch{width:205px}";
 
-var sharedStyles = ".visually-hidden{clip:rect(1px,1px,1px,1px);border:0;clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}.hide{display:none!important}.header-text,.header-text-inline,h2{color:var(--sa11y-panel-primary);display:block;font-size:var(--sa11y-large-text);font-weight:600;margin-bottom:3px}.header-text-inline{display:inline-block!important}#container code,#container kbd,.kbd{background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);padding:1.6px 4.8px}#container code{font-family:monospace}.bold{font-weight:600}.red-text{color:var(--sa11y-red-text)}.red-text,.yellow-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text)}.yellow-text{color:var(--sa11y-yellow-text)}.close-btn{background:none;border:1px solid var(--sa11y-button-outline);border-radius:50%;color:var(--sa11y-panel-primary);cursor:pointer;float:var(--sa11y-float-rtl);font-size:var(--sa11y-normal-text);font-weight:400;height:32px;margin:0;position:relative;transition:all .2s ease-in-out;width:32px}.close-btn:focus,.close-btn:hover{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{background:var(--sa11y-setting-switch-bg-off);bottom:-7px;content:\"\";left:-7px;mask:var(--sa11y-close-btn-svg) center no-repeat;-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute;right:-7px;top:-7px}@media screen and (-ms-high-contrast:active){#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,button.sa11y-btn:active,button.sa11y-btn:focus{outline:2px solid transparent}}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:not(#settings-toggle):not(#outline-toggle):not(.switch):focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #outline-toggle:focus,#container #settings-toggle:focus,#container .switch:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:active,.tippy-box[data-theme~=sa11y-theme] button:focus,button.sa11y-btn:active,button.sa11y-btn:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #outline-toggle:focus:not(:focus-visible),#container #settings-toggle:focus:not(:focus-visible),#container [tabindex=\"-1\"]:focus:not(:focus-visible),#container [tabindex=\"0\"]:focus:not(:focus-visible),#container button:focus:not(:focus-visible){box-shadow:none;outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible){box-shadow:none;outline:0}#container [tabindex=\"-1\"]:focus-visible,#container [tabindex=\"0\"]:focus-visible,#container a:focus-visible,#container button:not(#settings-toggle):not(#outline-toggle):not(.switch):focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #outline-toggle:focus-visible,#container #settings-toggle:focus-visible,#container .switch:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus-visible,.tippy-box[data-theme~=sa11y-theme] a:focus-visible,.tippy-box[data-theme~=sa11y-theme] button:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}";
+var sharedStyles = ".visually-hidden{clip:rect(1px,1px,1px,1px);border:0;clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}.hide{display:none!important}.header-text,.header-text-inline,h2{color:var(--sa11y-panel-primary);display:block;font-size:var(--sa11y-large-text);font-weight:600;margin-bottom:3px}.header-text-inline{display:inline-block!important}#container code,#container kbd,.kbd{background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);padding:1.6px 4.8px}#container code{font-family:monospace}.bold{font-weight:600}.red-text{color:var(--sa11y-red-text)}.red-text,.yellow-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text)}.yellow-text{color:var(--sa11y-yellow-text)}.close-btn{background:none;border:1px solid var(--sa11y-button-outline);border-radius:50%;color:var(--sa11y-panel-primary);cursor:pointer;float:var(--sa11y-float-rtl);font-size:var(--sa11y-normal-text);font-weight:400;height:32px;margin:0;position:relative;transition:all .2s ease-in-out;width:32px}.close-btn:focus,.close-btn:hover{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{background:var(--sa11y-setting-switch-bg-off);bottom:-7px;content:\"\";left:-7px;mask:var(--sa11y-close-btn-svg) center no-repeat;-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute;right:-7px;top:-7px}@media screen and (-ms-high-contrast:active){#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container select:focus,button.sa11y-btn:active,button.sa11y-btn:focus{outline:2px solid transparent}}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:not(#settings-toggle):not(#outline-toggle):not(.switch):focus,#container select:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #outline-toggle:focus,#container #settings-toggle:focus,#container .switch:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:active,.tippy-box[data-theme~=sa11y-theme] button:focus,button.sa11y-btn:active,button.sa11y-btn:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #outline-toggle:focus:not(:focus-visible),#container #settings-toggle:focus:not(:focus-visible),#container [tabindex=\"-1\"]:focus:not(:focus-visible),#container [tabindex=\"0\"]:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container select:focus:not(:focus-visible){box-shadow:none;outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible){box-shadow:none;outline:0}#container [tabindex=\"-1\"]:focus-visible,#container [tabindex=\"0\"]:focus-visible,#container a:focus-visible,#container button:not(#settings-toggle):not(#outline-toggle):not(.switch):focus-visible,#container select:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #outline-toggle:focus-visible,#container #settings-toggle:focus-visible,#container .switch:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus-visible,.tippy-box[data-theme~=sa11y-theme] a:focus-visible,.tippy-box[data-theme~=sa11y-theme] button:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}";
 
 class ControlPanel extends HTMLElement {
-  constructor(checkAllHideTogglesOption) {
-    super();
-    this.checkAllHideToggles = checkAllHideTogglesOption;
-  }
-
   connectedCallback() {
     this.attachShadow({ mode: 'open' });
 
@@ -1209,8 +1293,58 @@ class ControlPanel extends HTMLElement {
 
     // If admin wants users to check everything, without toggleable checks.
     const hide = 'class="hide"';
-    const checkAll = this.checkAllHideToggles === true;
+    const checkAll = Constants.Global.checkAllHideToggles === true;
 
+    /* TOGGLEABLE PLUGINS */
+    const contrastPlugin = (Constants.Global.contrastPlugin === true) ? `
+      <li id="contrast-item" ${checkAll ? hide : ''}>
+        <label id="check-contrast" for="contrast-toggle">${Lang._('CONTRAST')}</label>
+        <button id="contrast-toggle"
+          aria-labelledby="check-contrast"
+          class="switch"
+          aria-pressed="${rememberContrast ? 'true' : 'false'}">${rememberContrast ? Lang._('ON') : Lang._('OFF')}</button>
+      </li>` : '';
+
+    const formLabelsPlugin = (Constants.Global.formLabelsPlugin === true) ? `
+      <li id="form-labels-item" ${checkAll ? hide : ''}>
+        <label id="check-labels" for="labels-toggle">${Lang._('FORM_LABELS')}</label>
+        <button id="labels-toggle"
+          aria-labelledby="check-labels"
+          class="switch"
+          aria-pressed="${rememberFormLabels ? 'true' : 'false'}">${rememberFormLabels ? Lang._('ON') : Lang._('OFF')}</button>
+      </li>` : '';
+
+    const linksAdvancedPlugin = (Constants.Global.linksAdvancedPlugin === true) ? `
+      <li id="links-advanced-item" ${checkAll ? hide : ''}>
+        <label id="check-changerequest" for="links-advanced-toggle">${Lang._('LINKS_ADVANCED')} <span class="badge">AAA</span></label>
+        <button id="links-advanced-toggle"
+          aria-labelledby="check-changerequest"
+          class="switch"
+          aria-pressed="${rememberLinksAdvanced ? 'true' : 'false'}">${rememberLinksAdvanced ? Lang._('ON') : Lang._('OFF')}</button>
+      </li>` : '';
+
+    const readabilityPlugin = (Constants.Global.readabilityPlugin === true) ? `
+      <li id="readability-item">
+        <label id="check-readability" for="readability-toggle">${Lang._('LANG_READABILITY')} <span class="badge">AAA</span></label>
+        <button id="readability-toggle"
+          aria-labelledby="check-readability"
+          class="switch"
+          aria-pressed="${rememberReadability ? 'true' : 'false'}">${rememberReadability ? Lang._('ON') : Lang._('OFF')}</button>
+      </li>` : '';
+
+    const colourFilterPlugin = (Constants.Global.colourFilterPlugin === true) ? `
+      <li id="colour-filter-item">
+        <label id="colour-filter-mode" for="colour-filter">${Lang._('COLOUR_FILTER')}</label>
+        <select id="colour-filter">
+          <option value="0">${Lang._('OFF')}</option>
+          <option value="1">${Lang._('PROTANOPIA')}</option>
+          <option value="2">${Lang._('DEUTERANOPIA')}</option>
+          <option value="3">${Lang._('TRITANOPIA')}</option>
+          <option value="4">${Lang._('ACHROMATOPSIA')}</option>
+        </select>
+      </li>` : '';
+
+    /* MAIN CONTAINER */
     container.innerHTML = `
       <button type="button" aria-expanded="false" id="toggle" aria-describedby="notification-badge" aria-label="${Lang._('MAIN_TOGGLE_LABEL')}" disabled>
         ${MainToggleIcon}
@@ -1250,40 +1384,17 @@ class ControlPanel extends HTMLElement {
           </div>
           <div id="settings-content">
             <ul id="settings-options">
-              <li id="contrast-item" ${checkAll ? hide : ''}>
-                <label id="check-contrast" for="contrast-toggle">${Lang._('CONTRAST')}</label>
-                <button id="contrast-toggle"
-                  aria-labelledby="check-contrast"
-                  class="switch"
-                  aria-pressed="${rememberContrast ? 'true' : 'false'}">${rememberContrast ? Lang._('ON') : Lang._('OFF')}</button>
-              </li>
-              <li id="form-labels-item" ${checkAll ? hide : ''}>
-                <label id="check-labels" for="labels-toggle">${Lang._('FORM_LABELS')}</label>
-                <button id="labels-toggle"
-                  aria-labelledby="check-labels"
-                  class="switch"
-                  aria-pressed="${rememberFormLabels ? 'true' : 'false'}">${rememberFormLabels ? Lang._('ON') : Lang._('OFF')}</button>
-              </li>
-              <li id="links-advanced-item" ${checkAll ? hide : ''}>
-                <label id="check-changerequest" for="links-advanced-toggle">${Lang._('LINKS_ADVANCED')} <span class="badge">AAA</span></label>
-                <button id="links-advanced-toggle"
-                  aria-labelledby="check-changerequest"
-                  class="switch"
-                  aria-pressed="${rememberLinksAdvanced ? 'true' : 'false'}">${rememberLinksAdvanced ? Lang._('ON') : Lang._('OFF')}</button>
-              </li>
-              <li id="readability-item">
-                <label id="check-readability" for="readability-toggle">${Lang._('LANG_READABILITY')} <span class="badge">AAA</span></label>
-                <button id="readability-toggle"
-                  aria-labelledby="check-readability"
-                  class="switch"
-                  aria-pressed="${rememberReadability ? 'true' : 'false'}">${rememberReadability ? Lang._('ON') : Lang._('OFF')}</button>
-              </li>
-              <li>
+              ${contrastPlugin}
+              ${formLabelsPlugin}
+              ${linksAdvancedPlugin}
+              ${readabilityPlugin}
+              <li id="dark-mode-item">
                 <label id="dark-mode" for="theme-toggle">${Lang._('DARK_MODE')}</label>
                 <button id="theme-toggle"
                   aria-labelledby="dark-mode"
                   class="switch"></button>
               </li>
+              ${colourFilterPlugin}
             </ul>
           </div>
         </div>`
@@ -1338,77 +1449,93 @@ class ControlPanel extends HTMLElement {
 
 function settingsPanelToggles(checkAll, resetAll) {
   // Toggle: Contrast
-  Constants.Panel.contrastToggle.onclick = async () => {
-    if (store.getItem('sa11y-remember-contrast') === 'On') {
-      store.setItem('sa11y-remember-contrast', 'Off');
-      Constants.Panel.contrastToggle.textContent = `${Lang._('OFF')}`;
-      Constants.Panel.contrastToggle.setAttribute('aria-pressed', 'false');
-      resetAll(false);
-      await checkAll();
-    } else {
-      store.setItem('sa11y-remember-contrast', 'On');
-      Constants.Panel.contrastToggle.textContent = `${Lang._('ON')}`;
-      Constants.Panel.contrastToggle.setAttribute('aria-pressed', 'true');
-      resetAll(false);
-      await checkAll();
-    }
-  };
+  if (Constants.Global.contrastPlugin === true) {
+    Constants.Panel.contrastToggle.onclick = async () => {
+      if (store.getItem('sa11y-remember-contrast') === 'On') {
+        store.setItem('sa11y-remember-contrast', 'Off');
+        Constants.Panel.contrastToggle.textContent = `${Lang._('OFF')}`;
+        Constants.Panel.contrastToggle.setAttribute('aria-pressed', 'false');
+        resetAll(false);
+        await checkAll();
+      } else {
+        store.setItem('sa11y-remember-contrast', 'On');
+        Constants.Panel.contrastToggle.textContent = `${Lang._('ON')}`;
+        Constants.Panel.contrastToggle.setAttribute('aria-pressed', 'true');
+        resetAll(false);
+        await checkAll();
+      }
+    };
+  } else {
+    store.setItem('sa11y-remember-contrast', 'Off');
+  }
 
   // Toggle: Form labels
-  Constants.Panel.labelsToggle.onclick = async () => {
-    if (store.getItem('sa11y-remember-labels') === 'On') {
-      store.setItem('sa11y-remember-labels', 'Off');
-      Constants.Panel.labelsToggle.textContent = `${Lang._('OFF')}`;
-      Constants.Panel.labelsToggle.setAttribute('aria-pressed', 'false');
-      resetAll(false);
-      await checkAll();
-    } else {
-      store.setItem('sa11y-remember-labels', 'On');
-      Constants.Panel.labelsToggle.textContent = `${Lang._('ON')}`;
-      Constants.Panel.labelsToggle.setAttribute('aria-pressed', 'true');
-      resetAll(false);
-      await checkAll();
-    }
-  };
+  if (Constants.Global.formLabelsPlugin === true) {
+    Constants.Panel.labelsToggle.onclick = async () => {
+      if (store.getItem('sa11y-remember-labels') === 'On') {
+        store.setItem('sa11y-remember-labels', 'Off');
+        Constants.Panel.labelsToggle.textContent = `${Lang._('OFF')}`;
+        Constants.Panel.labelsToggle.setAttribute('aria-pressed', 'false');
+        resetAll(false);
+        await checkAll();
+      } else {
+        store.setItem('sa11y-remember-labels', 'On');
+        Constants.Panel.labelsToggle.textContent = `${Lang._('ON')}`;
+        Constants.Panel.labelsToggle.setAttribute('aria-pressed', 'true');
+        resetAll(false);
+        await checkAll();
+      }
+    };
+  } else {
+    store.setItem('sa11y-remember-labels', 'Off');
+  }
 
   // Toggle: Links (Advanced)
-  Constants.Panel.linksToggle.onclick = async () => {
-    if (store.getItem('sa11y-remember-links-advanced') === 'On') {
-      store.setItem('sa11y-remember-links-advanced', 'Off');
-      Constants.Panel.linksToggle.textContent = `${Lang._('OFF')}`;
-      Constants.Panel.linksToggle.setAttribute('aria-pressed', 'false');
-      resetAll(false);
-      await checkAll();
-    } else {
-      store.setItem('sa11y-remember-links-advanced', 'On');
-      Constants.Panel.linksToggle.textContent = `${Lang._('ON')}`;
-      Constants.Panel.linksToggle.setAttribute('aria-pressed', 'true');
-      resetAll(false);
-      await checkAll();
-    }
-  };
+  if (Constants.Global.linksAdvancedPlugin === true) {
+    Constants.Panel.linksToggle.onclick = async () => {
+      if (store.getItem('sa11y-remember-links-advanced') === 'On') {
+        store.setItem('sa11y-remember-links-advanced', 'Off');
+        Constants.Panel.linksToggle.textContent = `${Lang._('OFF')}`;
+        Constants.Panel.linksToggle.setAttribute('aria-pressed', 'false');
+        resetAll(false);
+        await checkAll();
+      } else {
+        store.setItem('sa11y-remember-links-advanced', 'On');
+        Constants.Panel.linksToggle.textContent = `${Lang._('ON')}`;
+        Constants.Panel.linksToggle.setAttribute('aria-pressed', 'true');
+        resetAll(false);
+        await checkAll();
+      }
+    };
+  } else {
+    store.setItem('sa11y-remember-links-advanced', 'Off');
+  }
 
   // Toggle: Readability
-  Constants.Panel.readabilityToggle.onclick = async () => {
-    if (store.getItem('sa11y-remember-readability') === 'On') {
-      store.setItem('sa11y-remember-readability', 'Off');
-      Constants.Panel.readabilityToggle.textContent = `${Lang._('OFF')}`;
-      Constants.Panel.readabilityToggle.setAttribute('aria-pressed', 'false');
-      Constants.Panel.readability.classList.remove('active');
-      resetAll(false);
-      await checkAll();
-    } else {
-      store.setItem('sa11y-remember-readability', 'On');
-      Constants.Panel.readabilityToggle.textContent = `${Lang._('ON')}`;
-      Constants.Panel.readabilityToggle.setAttribute('aria-pressed', 'true');
-      Constants.Panel.readability.classList.add('active');
-      resetAll(false);
-      await checkAll();
-    }
-  };
+  if (Constants.Global.readabilityPlugin === true) {
+    Constants.Panel.readabilityToggle.onclick = async () => {
+      if (store.getItem('sa11y-remember-readability') === 'On') {
+        store.setItem('sa11y-remember-readability', 'Off');
+        Constants.Panel.readabilityToggle.textContent = `${Lang._('OFF')}`;
+        Constants.Panel.readabilityToggle.setAttribute('aria-pressed', 'false');
+        Constants.Panel.readability.classList.remove('active');
+        resetAll(false);
+        await checkAll();
+      } else {
+        store.setItem('sa11y-remember-readability', 'On');
+        Constants.Panel.readabilityToggle.textContent = `${Lang._('ON')}`;
+        Constants.Panel.readabilityToggle.setAttribute('aria-pressed', 'true');
+        Constants.Panel.readability.classList.add('active');
+        resetAll(false);
+        await checkAll();
+      }
+    };
 
-  if (store.getItem('sa11y-remember-readability') === 'On') {
-    Constants.Panel.readability.classList.add('active');
+    if (store.getItem('sa11y-remember-readability') === 'On') {
+      Constants.Panel.readability.classList.add('active');
+    }
+  } else {
+    store.setItem('sa11y-remember-readability', 'Off');
   }
 
   /**
@@ -1473,6 +1600,24 @@ function settingsPanelToggles(checkAll, resetAll) {
     store.setItem('sa11y-remember-theme', 'light');
     Constants.Panel.themeToggle.textContent = `${Lang._('OFF')}`;
     Constants.Panel.themeToggle.setAttribute('aria-pressed', 'false');
+  }
+
+  /* Colour filters */
+  if (Constants.Global.colourFilterPlugin === true) {
+    Constants.Panel.colourFilterSelect.addEventListener('change', () => {
+      const option = parseInt(Constants.Panel.colourFilterSelect.value, 10);
+      if (option === 1) {
+        Constants.Global.Root.setAttribute('data-sa11y-filter', 'protanopia');
+      } else if (option === 2) {
+        Constants.Global.Root.setAttribute('data-sa11y-filter', 'deuteranopia');
+      } else if (option === 3) {
+        Constants.Global.Root.setAttribute('data-sa11y-filter', 'tritanopia');
+      } else if (option === 4) {
+        Constants.Global.Root.setAttribute('data-sa11y-filter', 'achromatopsia');
+      } else {
+        Constants.Global.Root.removeAttribute('data-sa11y-filter');
+      }
+    });
   }
 }
 
@@ -5192,7 +5337,7 @@ tippy.setDefaultProps({
   render: render
 });
 
-var tooltipStyles = "a,button,code,div,h1,h2,kbd,li,ol,p,span,strong,svg,ul{all:unset;box-sizing:border-box!important}div{display:block}:after,:before{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:0}.tippy-box[data-placement^=top]>.tippy-arrow:before{border-top-color:initial;border-width:8px 8px 0;bottom:-7px;left:0;transform-origin:center top}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:0}.tippy-box[data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:initial;border-width:0 8px 8px;left:0;top:-7px;transform-origin:center bottom}.tippy-box[data-placement^=left]>.tippy-arrow{right:0}.tippy-box[data-placement^=left]>.tippy-arrow:before{border-left-color:initial;border-width:8px 0 8px 8px;right:-7px;transform-origin:center left}.tippy-box[data-placement^=right]>.tippy-arrow{left:0}.tippy-box[data-placement^=right]>.tippy-arrow:before{border-right-color:initial;border-width:8px 8px 8px 0;left:-7px;transform-origin:center right}.tippy-arrow{color:#333;height:16px;width:16px}.tippy-arrow:before{border-color:transparent;border-style:solid;content:\"\";position:absolute}.tippy-content{padding:5px 9px;position:relative;z-index:1}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}.tippy-box[data-theme~=sa11y-theme]{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-bg);border-radius:4px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15)!important;color:var(--sa11y-panel-primary);display:block;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px;outline:0;padding:8px;position:relative;transition-property:transform,visibility,opacity}.tippy-box[data-theme~=sa11y-theme] [lang]{min-width:250px}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace}.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);letter-spacing:normal;line-height:22px;padding:1.6px 4.8px}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]{text-align:center}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block-end:0;margin-block-start:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{display:list-item;margin:5px 10px 0 20px;padding-bottom:5px}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] a:hover{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin:0}.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:focus,.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}";
+var tooltipStyles = "a,button,code,div,h1,h2,kbd,li,ol,p,span,strong,svg,ul{all:unset;box-sizing:border-box!important}div{display:block}:after,:before{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:0}.tippy-box[data-placement^=top]>.tippy-arrow:before{border-top-color:initial;border-width:8px 8px 0;bottom:-7px;left:0;transform-origin:center top}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:0}.tippy-box[data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:initial;border-width:0 8px 8px;left:0;top:-7px;transform-origin:center bottom}.tippy-box[data-placement^=left]>.tippy-arrow{right:0}.tippy-box[data-placement^=left]>.tippy-arrow:before{border-left-color:initial;border-width:8px 0 8px 8px;right:-7px;transform-origin:center left}.tippy-box[data-placement^=right]>.tippy-arrow{left:0}.tippy-box[data-placement^=right]>.tippy-arrow:before{border-right-color:initial;border-width:8px 8px 8px 0;left:-7px;transform-origin:center right}.tippy-arrow{color:#333;height:16px;width:16px}.tippy-arrow:before{border-color:transparent;border-style:solid;content:\"\";position:absolute}.tippy-content{padding:5px 9px;position:relative;z-index:1}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}.tippy-box[data-theme~=sa11y-theme]{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-bg);border-radius:4px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15)!important;color:var(--sa11y-panel-primary);display:block;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px;outline:0;padding:8px;position:relative;transition-property:transform,visibility,opacity}.tippy-box[data-theme~=sa11y-theme] [lang]{min-width:280px}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace}.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);letter-spacing:normal;line-height:22px;padding:1.6px 4.8px}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]{text-align:center}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block-end:0;margin-block-start:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{display:list-item;margin:5px 10px 0 20px;padding-bottom:5px}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] a:hover{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin:0}.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:focus,.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}";
 
 class TooltipComponent extends HTMLElement {
   connectedCallback() {
@@ -6224,15 +6369,13 @@ function checkLinkText(results, showGoodLinkButton) {
  * @link https://github.com/gka/chroma.js (Parse RGB)
 */
 
-function checkContrast(
-  results,
-  contrastPlugin,
-  headless,
-  checkAllHideToggles,
-) {
-  if (contrastPlugin === true) {
-    const rememberContrast = store.getItem('sa11y-remember-contrast') === 'On';
-    if (rememberContrast || headless === true || checkAllHideToggles === true) {
+function checkContrast(results) {
+  if (Constants.Global.contrastPlugin === true) {
+    if (
+      store.getItem('sa11y-remember-contrast') === 'On'
+      || Constants.Global.headless === true
+      || Constants.Global.checkAllHideToggles === true
+    ) {
       let contrastErrors = {
         errors: [],
         warnings: [],
@@ -6435,23 +6578,17 @@ function checkContrast(
         });
       });
     }
-  } else {
-    // Hide Contrast toggle if prop is set to false.
-    Constants.Panel.contrastItem.setAttribute('style', 'display: none !important;');
-    store.setItem('sa11y-remember-contrast', 'Off');
   }
   return results;
 }
 
-function checkLabels(
-  results,
-  formLabelsPlugin,
-  headless,
-  checkAllHideToggles,
-) {
-  if (formLabelsPlugin === true) {
-    const rememberLabels = store.getItem('sa11y-remember-labels') === 'On';
-    if (rememberLabels || headless === true || checkAllHideToggles === true) {
+function checkLabels(results) {
+  if (Constants.Global.formLabelsPlugin === true) {
+    if (
+      store.getItem('sa11y-remember-labels') === 'On'
+      || Constants.Global.headless === true
+      || Constants.Global.checkAllHideToggles === true
+    ) {
       Elements.Found.Inputs.forEach(($el) => {
         // Ignore hidden inputs.
         if (isElementHidden($el) !== true) {
@@ -6542,23 +6679,17 @@ function checkLabels(
         }
       });
     }
-  } else {
-    // Turn off Form Labels plugin if prop is set to false.
-    Constants.Panel.labelsItem.setAttribute('style', 'display: none !important;');
-    store.setItem('sa11y-remember-labels', 'Off');
   }
   return { results };
 }
 
-function checkLinksAdvanced(
-  results,
-  linksAdvancedPlugin,
-  headless,
-  checkAllHideToggles,
-) {
-  if (linksAdvancedPlugin === true) {
-    const rememberLinksAdv = store.getItem('sa11y-remember-links-advanced') === 'On';
-    if (rememberLinksAdv || headless === true || checkAllHideToggles === true) {
+function checkLinksAdvanced(results) {
+  if (Constants.Global.linksAdvancedPlugin === true) {
+    if (
+      store.getItem('sa11y-remember-links-advanced') === 'On'
+      || Constants.Global.headless === true
+      || Constants.Global.checkAllHideToggles === true
+    ) {
       const seen = {};
       Elements.Found.Links.forEach(($el) => {
         let linkText = computeAccessibleName($el);
@@ -6662,10 +6793,6 @@ function checkLinksAdvanced(
         }
       });
     }
-  } else {
-    // Hide Links Advanced toggle if prop is set to false.
-    Constants.Panel.linksItem.setAttribute('style', 'display: none !important;');
-    store.setItem('sa11y-remember-links-advanced', 'Off');
   }
   return results;
 }
@@ -6680,11 +6807,9 @@ function checkLinksAdvanced(
  * @link https://www.simoahava.com/analytics/calculate-readability-scores-for-content/#commento-58ac602191e5c6dc391015c5a6933cf3e4fc99d1dc92644024c331f1ee9b6093
 */
 
-function checkReadability(
-  headless,
-) {
+function checkReadability() {
   let readabilityResults;
-  if (Constants.Readability.Plugin === true) {
+  if (Constants.Global.readabilityPlugin === true) {
     const rememberReadability = store.getItem('sa11y-remember-readability') === 'On';
     if (rememberReadability) {
       // Crude hack to add a period to the end of list items to make a complete sentence.
@@ -6857,7 +6982,7 @@ function checkReadability(
       }
 
       // Update main panel if not in headless mode.
-      if (headless === false) {
+      if (Constants.Global.headless === false) {
         if (pageText.length === 0) {
           Constants.Panel.readabilityInfo.innerHTML = Lang._('READABILITY_NO_P_OR_LI_MESSAGE');
         } else if (readabilityResults.wordCount > 30) {
@@ -6880,13 +7005,6 @@ function checkReadability(
           Constants.Panel.readabilityInfo.textContent = Lang._('READABILITY_NOT_ENOUGH_CONTENT_MESSAGE');
         }
       }
-    }
-  } else {
-    // eslint-disable-next-line no-lonely-if
-    if (headless === false) {
-      // Hide Readability toggle and panel if prop is set to false.
-      Constants.Panel.readabilityItem.setAttribute('style', 'display: none !important;');
-      Constants.Panel.readability.classList.remove('active');
     }
   }
   return readabilityResults;
@@ -7514,10 +7632,16 @@ class Sa11y {
         // Initialize global constants and exclusions.
         Constants.initializeGlobal(
           this.option.checkRoot,
+          this.option.contrastPlugin,
+          this.option.formLabelsPlugin,
+          this.option.readabilityPlugin,
+          this.option.linksAdvancedPlugin,
+          this.option.colourFilterPlugin,
+          this.option.checkAllHideToggles,
+          this.option.headless,
         );
         Constants.initializeReadability(
           this.option.readabilityRoot,
-          this.option.readabilityPlugin,
           this.option.readabilityLang,
         );
         Constants.initializeExclusions(
@@ -7544,7 +7668,11 @@ class Sa11y {
             store.removeItem('sa11y-dismissed');
           } else {
             // Build control panel.
-            const controlPanel = new ControlPanel(this.option.checkAllHideToggles);
+            const controlPanel = new ControlPanel(
+              this.option.checkAllHideToggles,
+              this.option.colourFilterPlugin,
+              this.option.readabilityPlugin,
+            );
             document.body.appendChild(controlPanel);
 
             // Initialize control panel.
@@ -7553,6 +7681,10 @@ class Sa11y {
               this.resetAll,
             );
             initializePanelToggles();
+
+            addColourFilters(
+              this.option.colourFilterPlugin,
+            );
 
             // Detect page changes (for SPAs).
             detectPageChanges(
@@ -7626,41 +7758,15 @@ class Sa11y {
         this.option.flagLongHeadings,
         this.headingOutline,
       );
-
       checkLinkText(
         this.results,
         this.option.showGoodLinkButton,
       );
-
-      checkImages(
-        this.results,
-      );
-
-      checkContrast(
-        this.results,
-        this.option.contrastPlugin,
-        this.option.headless,
-        this.option.checkAllHideToggles,
-      );
-
-      checkLabels(
-        this.results,
-        this.option.formLabelsPlugin,
-        this.option.headless,
-        this.option.checkAllHideToggles,
-      );
-
-      checkLinksAdvanced(
-        this.results,
-        this.option.linksAdvancedPlugin,
-        this.option.headless,
-        this.option.checkAllHideToggles,
-      );
-
-      checkReadability(
-        this.option.headless,
-      );
-
+      checkImages(this.results);
+      checkContrast(this.results);
+      checkLabels(this.results);
+      checkLinksAdvanced(this.results);
+      checkReadability();
       checkEmbeddedContent(
         this.results,
         this.option.embeddedContentAll,
@@ -7670,7 +7776,6 @@ class Sa11y {
         this.option.embeddedContentTitles,
         this.option.embeddedContentGeneral,
       );
-
       checkQA(
         this.results,
         this.dismissed,
@@ -7787,9 +7892,7 @@ class Sa11y {
         attributes.forEach((attr) => {
           const reset = find(
             `[${attr}]`,
-            undefined,
-            this.option.checkRoot,
-            this.option.shadowComponents,
+            'document',
           );
           reset.forEach(($el) => {
             $el.removeAttribute(attr);
@@ -7805,6 +7908,7 @@ class Sa11y {
         'data-sa11y-warning-inline',
         'data-sa11y-overflow',
         'data-sa11y-pulse-border',
+        'data-sa11y-filter',
       ]);
 
       // Remove from page.
@@ -7813,7 +7917,6 @@ class Sa11y {
         sa11y-heading-label,
         sa11y-heading-anchor,
         sa11y-tooltips,
-        sa11y-dismiss-tooltip,
         [data-sa11y-readability-period],
         [data-sa11y-clone-image-text],
         .sa11y-css-utilities
@@ -7835,6 +7938,10 @@ class Sa11y {
       // Remove skip-to-issue EventListeners
       removeSkipBtnListeners();
 
+      // Reset colour filters
+      if (this.option.colourFilterPlugin === true) {
+        Constants.Panel.colourFilterSelect.value = 0;
+      }
       // Main panel warning and error count.
       while (Constants.Panel.status.firstChild) Constants.Panel.status.removeChild(Constants.Panel.status.firstChild);
 

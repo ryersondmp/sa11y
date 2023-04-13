@@ -100,6 +100,7 @@ h2,
 @media screen and (-ms-high-contrast: active) {
   #container a:focus,
   #container button:focus,
+  #container select:focus,
   #container [tabindex="0"]:focus,
   #container [tabindex="-1"]:focus {
     outline: transparent solid 2px;
@@ -117,6 +118,7 @@ h2,
 }
 #container [tabindex="0"]:focus,
 #container [tabindex="-1"]:focus,
+#container select:focus,
 #container button:not(#settings-toggle):not(#outline-toggle):not(.switch):focus,
 #container a:focus {
   outline: 0;
@@ -149,6 +151,7 @@ button.sa11y-btn:focus {
 #container [tabindex="0"]:focus:not(:focus-visible),
 #container [tabindex="-1"]:focus:not(:focus-visible),
 #container button:focus:not(:focus-visible),
+#container select:focus:not(:focus-visible),
 #container #settings-toggle:focus:not(:focus-visible),
 #container #outline-toggle:focus:not(:focus-visible) {
   outline: 0;
@@ -167,6 +170,7 @@ button.sa11y-btn:focus {
  **/
 #container a:focus-visible,
 #container button:not(#settings-toggle):not(#outline-toggle):not(.switch):focus-visible,
+#container select:focus-visible,
 #container [tabindex="0"]:focus-visible,
 #container [tabindex="-1"]:focus-visible {
   outline: 0;

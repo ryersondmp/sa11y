@@ -29,6 +29,7 @@ const defaultOptions = {
   contrastPlugin: true,
   formLabelsPlugin: true,
   linksAdvancedPlugin: true,
+  colourFilterPlugin: true,
   customChecks: true,
   checkAllHideToggles: false,
 

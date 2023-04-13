@@ -19,6 +19,7 @@ import Elements from './utils/elements';
 // Extras
 import detectPageChanges from './logic/detect-page-changes';
 import dismissAnnotations from './logic/dismiss-annotations';
+import addColourFilters from './logic/colour-filters';
 
 // Create UI/interface elements
 import mainToggle from './logic/main-toggle-logic';
@@ -71,10 +72,16 @@ class Sa11y {
         // Initialize global constants and exclusions.
         Constants.initializeGlobal(
           this.option.checkRoot,
+          this.option.contrastPlugin,
+          this.option.formLabelsPlugin,
+          this.option.readabilityPlugin,
+          this.option.linksAdvancedPlugin,
+          this.option.colourFilterPlugin,
+          this.option.checkAllHideToggles,
+          this.option.headless,
         );
         Constants.initializeReadability(
           this.option.readabilityRoot,
-          this.option.readabilityPlugin,
           this.option.readabilityLang,
         );
         Constants.initializeExclusions(
@@ -101,7 +108,11 @@ class Sa11y {
             Utils.store.removeItem('sa11y-dismissed');
           } else {
             // Build control panel.
-            const controlPanel = new ControlPanel(this.option.checkAllHideToggles);
+            const controlPanel = new ControlPanel(
+              this.option.checkAllHideToggles,
+              this.option.colourFilterPlugin,
+              this.option.readabilityPlugin,
+            );
             document.body.appendChild(controlPanel);
 
             // Initialize control panel.
@@ -110,6 +121,10 @@ class Sa11y {
               this.resetAll,
             );
             initializePanelToggles();
+
+            addColourFilters(
+              this.option.colourFilterPlugin,
+            );
 
             // Detect page changes (for SPAs).
             detectPageChanges(
@@ -183,41 +198,15 @@ class Sa11y {
         this.option.flagLongHeadings,
         this.headingOutline,
       );
-
       checkLinkText(
         this.results,
         this.option.showGoodLinkButton,
       );
-
-      checkImages(
-        this.results,
-      );
-
-      checkContrast(
-        this.results,
-        this.option.contrastPlugin,
-        this.option.headless,
-        this.option.checkAllHideToggles,
-      );
-
-      checkLabels(
-        this.results,
-        this.option.formLabelsPlugin,
-        this.option.headless,
-        this.option.checkAllHideToggles,
-      );
-
-      checkLinksAdvanced(
-        this.results,
-        this.option.linksAdvancedPlugin,
-        this.option.headless,
-        this.option.checkAllHideToggles,
-      );
-
-      checkReadability(
-        this.option.headless,
-      );
-
+      checkImages(this.results);
+      checkContrast(this.results);
+      checkLabels(this.results);
+      checkLinksAdvanced(this.results);
+      checkReadability();
       checkEmbeddedContent(
         this.results,
         this.option.embeddedContentAll,
@@ -227,7 +216,6 @@ class Sa11y {
         this.option.embeddedContentTitles,
         this.option.embeddedContentGeneral,
       );
-
       checkQA(
         this.results,
         this.dismissed,
@@ -344,9 +332,7 @@ class Sa11y {
         attributes.forEach((attr) => {
           const reset = find(
             `[${attr}]`,
-            undefined,
-            this.option.checkRoot,
-            this.option.shadowComponents,
+            'document',
           );
           reset.forEach(($el) => {
             $el.removeAttribute(attr);
@@ -362,6 +348,7 @@ class Sa11y {
         'data-sa11y-warning-inline',
         'data-sa11y-overflow',
         'data-sa11y-pulse-border',
+        'data-sa11y-filter',
       ]);
 
       // Remove from page.
@@ -370,7 +357,6 @@ class Sa11y {
         sa11y-heading-label,
         sa11y-heading-anchor,
         sa11y-tooltips,
-        sa11y-dismiss-tooltip,
         [data-sa11y-readability-period],
         [data-sa11y-clone-image-text],
         .sa11y-css-utilities
@@ -392,6 +378,10 @@ class Sa11y {
       // Remove skip-to-issue EventListeners
       removeSkipBtnListeners();
 
+      // Reset colour filters
+      if (this.option.colourFilterPlugin === true) {
+        Constants.Panel.colourFilterSelect.value = 0;
+      }
       // Main panel warning and error count.
       while (Constants.Panel.status.firstChild) Constants.Panel.status.removeChild(Constants.Panel.status.firstChild);
 

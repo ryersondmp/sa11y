@@ -52,8 +52,15 @@ const sa11y = new Sa11y({
   headless: false,
   dismissAnnotations: true,
   selectorPath: true,
+
   checkAllHideToggles: false,
+
+  readabilityPlugin: true,
   contrastPlugin: true,
+  formLabelsPlugin: true,
+  colourFilterPlugin: true,
+  linksAdvancedPlugin: true,
+
   shadowComponents: '',
-  autoDetectShadowComponents: true
+  autoDetectShadowComponents: true,
 });

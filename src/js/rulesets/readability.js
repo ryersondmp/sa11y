@@ -12,11 +12,9 @@ import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 
-export default function checkReadability(
-  headless,
-) {
+export default function checkReadability() {
   let readabilityResults;
-  if (Constants.Readability.Plugin === true) {
+  if (Constants.Global.readabilityPlugin === true) {
     const rememberReadability = Utils.store.getItem('sa11y-remember-readability') === 'On';
     if (rememberReadability) {
       // Crude hack to add a period to the end of list items to make a complete sentence.
@@ -189,7 +187,7 @@ export default function checkReadability(
       }
 
       // Update main panel if not in headless mode.
-      if (headless === false) {
+      if (Constants.Global.headless === false) {
         if (pageText.length === 0) {
           Constants.Panel.readabilityInfo.innerHTML = Lang._('READABILITY_NO_P_OR_LI_MESSAGE');
         } else if (readabilityResults.wordCount > 30) {
@@ -212,13 +210,6 @@ export default function checkReadability(
           Constants.Panel.readabilityInfo.textContent = Lang._('READABILITY_NOT_ENOUGH_CONTENT_MESSAGE');
         }
       }
-    }
-  } else {
-    // eslint-disable-next-line no-lonely-if
-    if (headless === false) {
-      // Hide Readability toggle and panel if prop is set to false.
-      Constants.Panel.readabilityItem.setAttribute('style', 'display: none !important;');
-      Constants.Panel.readability.classList.remove('active');
     }
   }
   return readabilityResults;

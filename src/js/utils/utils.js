@@ -1,6 +1,6 @@
 /**
- * Utility: Checks whether the document has finished loading.
- * @param {Function} callback - The function to execute once the document has finished loading.
+ * Checks if the document has finished loading, and if so, immediately calls the provided callback function. Otherwise, waits for the 'load' event to fire and then calls the callback function.
+ * @param {function} callback - The callback function to be called when the document finishes loading.
  */
 export function documentLoadingCheck(callback) {
   if (document.readyState === 'complete') {
@@ -11,10 +11,10 @@ export function documentLoadingCheck(callback) {
 }
 
 /**
- * Utility: Check if element is hidden (display: none) OR visually hidden (.sr-only)
- * @param  {Node} element Node to test.
- * @return {Boolean} boolean.
-*/
+ * Checks if an element is visually hidden or hidden based on its attributes and styles.
+ * @param {HTMLElement} element - The element to check for visibility.
+ * @returns {boolean} - `true` if the element is visually hidden or hidden, `false` otherwise.
+ */
 export function isElementVisuallyHiddenOrHidden(element) {
   if (element.getAttribute('hidden') || (element.offsetWidth === 0 && element.offsetHeight === 0) || (element.clientHeight === 1 && element.clientWidth === 1)) {
     return true;
@@ -24,10 +24,10 @@ export function isElementVisuallyHiddenOrHidden(element) {
 }
 
 /**
- * Utility: Check if element is hidden.
- * @param  {Node} element The element.
- * @return {Boolean}
-*/
+ * Checks if an element is hidden based on its attributes and styles.
+ * @param {HTMLElement} element - The element to check for visibility.
+ * @returns {boolean} - `true` if the element is hidden, `false` otherwise.
+ */
 export function isElementHidden(element) {
   if (element.getAttribute('hidden') || (element.offsetWidth === 0 && element.offsetHeight === 0)) {
     return true;
@@ -37,10 +37,10 @@ export function isElementHidden(element) {
 }
 
 /**
- * Utility: Escape HTML, encode HTML symbols.
- * @param  {String} string  The user-submitted string.
- * @return {String} string The encoded string.
-*/
+ * Escapes HTML special characters in a string.
+ * @param {string} string - The string to escape.
+ * @returns {string} - The escaped string with HTML special characters replaced by their corresponding entities.
+ */
 export function escapeHTML(string) {
   const $div = document.createElement('div');
   $div.textContent = string;
@@ -48,29 +48,29 @@ export function escapeHTML(string) {
 }
 
 /**
- * Utility: Sanitize and encode all HTML in a user-submitted string
+ * Sanitizes an HTML string by replacing special characters with their corresponding HTML entities.
+ * @param {string} string - The HTML string to sanitize.
+ * @returns {string} - The sanitized HTML string with special characters replaced by their corresponding entities.
  * @link https://portswigger.net/web-security/cross-site-scripting/preventing
- * @param  {String} string  The user-submitted string.
- * @return {String} string  The sanitized string.
-*/
+ */
 export function sanitizeHTML(string) {
   return string.replace(/[^\w. ]/gi, (c) => `&#${c.charCodeAt(0)};`);
 }
 
 /**
- * Utility: Replace newlines and double spaces with a single space.
- * @param {Node} element
- * @return {String} Returns plain text string.
-*/
+ * Retrieves the text content of an HTML element and removes extra whitespaces and line breaks.
+ * @param {HTMLElement} element - The HTML element to retrieve the text content from.
+ * @returns {string} - The text content of the HTML element with extra whitespaces and line breaks removed.
+ */
 export function getText(element) {
   return element.textContent.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
 }
 
 /**
- * Utility: Compute alt text on images within a text node.
- * @param  {Node} element  Element to check.
- * @return {String} str  Return text back.
-*/
+ * Compute alt text on images within a text node.
+ * @param {HTMLElement} element - The HTML element to compute the text content from.
+ * @returns {string} - The computed text content of the HTML element, considering alt text of images if present.
+ */
 export function computeTextNodeWithImage(element) {
   const textContent = getText(element);
   const imgArray = Array.from(element.querySelectorAll('img'));
@@ -98,11 +98,13 @@ export function computeTextNodeWithImage(element) {
 }
 
 /**
- * Utility: Debounce
+ * Debounces a callback function, ensuring it is only executed after a certain wait period
+ * has passed since the last invocation.
+ * @param {function} callback - The callback function to debounce.
+ * @param {number} wait - The wait period in milliseconds before the callback function is executed.
+ * @returns {function} - The debounced function.
  * @link https://www.joshwcomeau.com/snippets/javascript/debounce/
- * @callback callback
- * @argument {wait}
-*/
+ */
 export function debounce(callback, wait) {
   let timeoutId = null;
   return (...args) => {
@@ -114,11 +116,11 @@ export function debounce(callback, wait) {
 }
 
 /**
- * Utility: Used to ignore child elements within an anchor.
- * @param  {Node} element  Element to target.
- * @param  {Node} selector Element to ignore.
- * @return {Node} Returns back element excluding the ignored node.
-*/
+ * Creates a clone of an element while ignoring specified elements or elements matching a selector.
+ * @param {Element} element - The element to clone.
+ * @param {string} selector - The selector to match elements to be excluded from the clone. Optional.
+ * @returns {Element} - The cloned element with excluded elements removed.
+ */
 export function fnIgnore(element, selector) {
   const $clone = element.cloneNode(true);
   const $exclude = Array.from(selector ? $clone.querySelectorAll(selector) : $clone.children);
@@ -129,10 +131,10 @@ export function fnIgnore(element, selector) {
 }
 
 /**
- * Utility: Compute accessible name for elements with ARIA.
- * @param  {Node} element  Element to target.
- * @return {String} Returns a string back with the computed accessible name.
-*/
+ * Computes the accessible name of an element based on various aria-* attributes.
+ * @param {Element} element - The element for which the accessible name needs to be computed.
+ * @returns {string} - The computed accessible name of the element.
+ */
 export function computeAccessibleName(element) {
   // aria-label
   if (element.matches('[aria-label]')) {
@@ -213,12 +215,12 @@ export function computeAccessibleName(element) {
 }
 
 /**
- * Utility: Find visible parent of hidden element.
- * @param  {Node} element  Element to target.
- * @param  {String} property  CSS property. E.g. 'display'
- * @param  {String} value CSS value. E.g. 'none'
- * @return {Node} Returns parent node of element that is visible.
-*/
+ * Finds the visible parent of an element that matches a given CSS property and value.
+ * @param {Element} element - The element for which the visible parent needs to be found.
+ * @param {string} property - The CSS property to match against.
+ * @param {string} value - The value of the CSS property to match against.
+ * @returns {Element|null} - The visible parent element that matches the given property and value, or null if not found.
+ */
 export function findVisibleParent(element, property, value) {
   let $el = element;
   while ($el !== null) {
@@ -233,10 +235,10 @@ export function findVisibleParent(element, property, value) {
 }
 
 /**
- * Utility: Calculate top of element.
- * @param  {Node} element  Element to target.
- * @return {Number} Returns number greater than 0!
-*/
+ * Calculates the offset top of an element relative to the viewport.
+ * @param {Element} element - The element for which the offset top needs to be calculated.
+ * @returns {Object} - An object with a `top` property that represents the offset top of the element relative to the viewport.
+ */
 export function offsetTop(element) {
   const rect = element.getBoundingClientRect();
   const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -246,7 +248,7 @@ export function offsetTop(element) {
 }
 
 /**
- * Utility: Local storage with fall back to session storage.
+ * A utility object for handling storage operations using localStorage and sessionStorage.
  * @param  {String} key
  * @param  {string} value
  * @return {String} Return key.
@@ -282,9 +284,9 @@ export const store = {
 };
 
 /**
- * Utility: Add & remove pulsing border for wayfinding.
- * @param  {Node} element Element to add border too.
-*/
+ * Adds a pulsing border effect to an element for 2.5 seconds.
+ * @param {Element} element - The element to which the pulsing border effect needs to be added.
+ */
 export function addPulse(element) {
   const border = 'data-sa11y-pulse-border';
   element.setAttribute(border, '');
@@ -294,11 +296,11 @@ export function addPulse(element) {
 }
 
 /**
- * Utility: Get next sibling of an element that matches a selector.
- * @param {Node} element The node to start from.
- * @param {String} selector The element you are looking for.
- * @return {Node} Return.
-*/
+ * Gets the next sibling element that matches the given selector, or the next sibling element if no selector is provided.
+ * @param {HTMLElement} element - The DOM element whose next sibling to retrieve.
+ * @param {string} selector - The optional selector to filter the next siblings. If not provided, the next sibling element will be returned regardless of its type.
+ * @returns {HTMLElement|string} - The next sibling element that matches the given selector, or the next sibling element if no selector is provided. If no matching sibling is found, an empty string is returned.
+ */
 export function getNextSibling(element, selector) {
   let sibling = element.nextElementSibling;
   if (!selector) return sibling;
@@ -310,17 +312,18 @@ export function getNextSibling(element, selector) {
 }
 
 /**
- * Utility: Prepare dismiss key.
- * @param {String} string The node to start from.
- * @return {String} Returns 256 character string without spaces.
-*/
+ * Prepares a string for dismissal by truncating it to a maximum of 256 characters.
+ * @param {string} string - The string to be prepared for dismissal.
+ * @returns {string} - The truncated string with a maximum of 256 characters.
+ */
 export function prepareDismissal(string) {
   return String(string).substring(0, 256);
 }
 
 /**
- * Utility: Generate CSS selector path of element. Only traverses one level deep. Replace with proper library if needed.
- * @param {Node} element the element's node.
+ * Generates a selector path for the given DOM element.
+ * @param {Element} element - The DOM element for which to generate the selector path.
+ * @returns {string} - The selector path as a string.
  * @link https://www.geeksforgeeks.org/how-to-create-a-function-generateselector-to-generate-css-selector-path-of-a-dom-element/
  * @link https://dev.to/aniket_chauhan/generate-a-css-selector-path-of-a-dom-element-4aim
 */
@@ -353,8 +356,9 @@ export function generateSelectorPath(element) {
 }
 
 /**
- * Utility: Trap focus of elements within a contained area.
- * @param {String} element The element where you'd like to trap keyboard focus.
+ * Traps focus within an element by looping focus back to the beginning or end
+ * when the Tab key is pressed.
+ * @param {Element} element - The DOM element to trap focus within.
  * @author Hidde de Vries
  * @link https://hidde.blog/using-javascript-to-trap-focus-in-an-element/
 */
@@ -382,8 +386,10 @@ export function trapFocus(element) {
 }
 
 /**
- * Utility: Call this function without any parameters to remove any alerts in the panel.
-*/
+ * Removes the alert from the Sa11y control panel by clearing its content and removing CSS classes.
+ * @description This function clears the content of the alert element and removes CSS classes 'active' from the main alert element, and 'panel-alert-preview' from the alert preview element.
+ * @returns {void}
+ */
 export function removeAlert() {
   const Sa11yPanel = document.querySelector('sa11y-control-panel').shadowRoot;
   const alert = Sa11yPanel.getElementById('panel-alert');
@@ -397,10 +403,11 @@ export function removeAlert() {
 }
 
 /**
- * Utility: Send an alert to main panel.
- * @param  {String} alertMessage The message you'd to show in the alert.
- * @param  {String} errorPreview An optional secondary message or preview of the element.
-*/
+ * Creates an alert in the Sa11y control panel with the given alert message and error preview.
+ * @param {string} alertMessage - The alert message to be displayed.
+ * @param {string} errorPreview - The error preview to be displayed (optional).
+ * @returns {void}
+ */
 export function createAlert(alertMessage, errorPreview) {
   const Sa11yPanel = document.querySelector('sa11y-control-panel').shadowRoot;
   const alert = Sa11yPanel.getElementById('panel-alert');

@@ -33,6 +33,13 @@ export default {
     DISMISS: 'Ignorieren',
     DISMISSED: 'Ignorierte Warnungen',
 
+    // Color filters
+    COLOUR_FILTER: 'Farbfilter',
+    PROTANOPIA: 'Protanopie',
+    DEUTERANOPIA: 'Deuteranopie',
+    TRITANOPIA: 'Tritanopie',
+    ACHROMATOPSIA: 'Achromatopsie',
+
     // Alternative text module stop words
     SUSPICIOUS_ALT_STOPWORDS: ['image', 'graphic', 'picture', 'photo', 'foto', 'bild'],
     PLACEHOLDER_ALT_STOPWORDS: ['alt', 'image', 'photo', 'foto', 'bild', 'decorative', 'placeholder', 'platzhalter', 'placeholder image', 'platzhalter bild', 'platzhalter foto', 'platzhalter photo', 'spacer', 'abstand', '.'],

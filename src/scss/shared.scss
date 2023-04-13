@@ -106,6 +106,7 @@ h2,
 
     a:focus,
     button:focus,
+    select:focus,
     [tabindex="0"]:focus,
     [tabindex="-1"]:focus {
       outline: transparent solid 2px;
@@ -126,6 +127,7 @@ h2,
 
   [tabindex="0"]:focus,
   [tabindex="-1"]:focus,
+  select:focus,
   button:not(#settings-toggle):not(#outline-toggle):not(.switch):focus,
   a:focus {
     outline: 0;
@@ -168,6 +170,7 @@ button.sa11y-btn:focus {
   [tabindex="0"]:focus:not(:focus-visible),
   [tabindex="-1"]:focus:not(:focus-visible),
   button:focus:not(:focus-visible),
+  select:focus:not(:focus-visible),
   #settings-toggle:focus:not(:focus-visible),
   #outline-toggle:focus:not(:focus-visible) {
     outline: 0;
@@ -193,6 +196,7 @@ button.sa11y-btn:focus {
 
   a:focus-visible,
   button:not(#settings-toggle):not(#outline-toggle):not(.switch):focus-visible,
+  select:focus-visible,
   [tabindex="0"]:focus-visible,
   [tabindex="-1"]:focus-visible {
     outline: 0;

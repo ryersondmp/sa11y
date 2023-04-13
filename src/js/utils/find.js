@@ -1,12 +1,12 @@
 import Constants from './constants';
 
 /**
-* Find elements.
-  * @param {Selector} selector: Element you would like to find.
-  * @param {String} rootElement: Select which root to search(document/readabilityRoot/root).
-  * @param {String} exclude: Elements you want to ignore.
-  * @return {Array} Returns array of elements.
-*/
+ * Finds elements in the DOM that match the given selector, within the specified root element, and excluding any specified elements.
+ * @param {string} selector - The CSS selector to match elements against.
+ * @param {string} desiredRoot - The root element to start the search from. Can be one of 'document', 'readability', 'root', or a custom selector for the desired root element.
+ * @param {string} exclude - Elements to exclude from the search, specified as a CSS selector (optional).
+ * @returns {Array} - An array of elements that match the given selector.
+ */
 export default function find(selector, desiredRoot, exclude) {
   let root;
   if (desiredRoot === 'document') {

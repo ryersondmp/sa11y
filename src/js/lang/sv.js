@@ -33,6 +33,13 @@ export default {
     DISMISS: 'Avfärda',
     DISMISSED: 'Avvisade varningar',
 
+    // Color filters
+    COLOUR_FILTER: 'Färgfilter',
+    PROTANOPIA: 'Protanopia',
+    DEUTERANOPIA: 'Deuteranopia',
+    TRITANOPIA: 'Tritanopia',
+    ACHROMATOPSIA: 'Achromatopsia',
+
     // Alternative text module stop words
     SUSPICIOUS_ALT_STOPWORDS: ['bild', 'grafik', 'fotografi', 'foto'],
     PLACEHOLDER_ALT_STOPWORDS: ['alt', 'bild', 'foto', 'dekorativ', 'fotografi', 'platshållare', 'platshållarbild', 'mellanlägg', '.'],

@@ -33,6 +33,13 @@ export default {
     DISMISS: 'Ignorer',
     DISMISSED: 'Avertissements ignorés',
 
+    // Color filters
+    COLOUR_FILTER: 'Filtre de couleur',
+    PROTANOPIA: 'Protanopie',
+    DEUTERANOPIA: 'Deutéranopie',
+    TRITANOPIA: 'Tritanopie',
+    ACHROMATOPSIA: 'Achromatopsie',
+
     // Alternative text module stop words
     SUSPICIOUS_ALT_STOPWORDS: ['image', 'illustration', 'photo', 'photographie'],
     PLACEHOLDER_ALT_STOPWORDS: ['alt', 'image', 'photographie', 'décorative', 'photographie', 'support d’affichage', 'support d’affichage d’image', 'séparateur', '.'],
