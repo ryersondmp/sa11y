@@ -6,7 +6,8 @@ import { loadSa11y } from './_loadSa11y';
 const langCode = 'Sv';
 
 function onLoadScript() {
-  Sa11y.Lang.addI18n(Sa11yLang`${langCode}`.strings);
+  const objectKey = `Sa11yLang${langCode}`;
+  Sa11y.Lang.addI18n(window[objectKey].strings);
   new Sa11y.Sa11y({
     detectSPArouting: true,
   });
