@@ -251,7 +251,7 @@ export default [
       }),
     ],
     output: [
-      { file: 'bookmarklet/sa11y-en-test.min.js', format: 'umd', name: 'Sa11y (English)', plugins: [terser()] },
+      { file: 'bookmarklet/sa11y-en-test1.min.js', format: 'umd', name: 'Sa11y (English)', plugins: [terser()] },
     ],
   },
 ];

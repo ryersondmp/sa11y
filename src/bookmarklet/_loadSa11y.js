@@ -14,7 +14,7 @@ export function loadSa11y(onLoadScript, langCode) {
 
   // Append javascript
   const sa11yscript = document.createElement('script');
-  sa11yscript.src = `https://cdn.jsdelivr.net/combine/gh/ryersondmp/sa11y@${version}/dist/js/lang/${langCode}.umd.js,gh/ryersondmp/sa11y@${version}/dist/js/sa11y.umd.min.js`;
+  sa11yscript.src = `https://cdn.jsdelivr.net/combine/gh/ryersondmp/sa11y@${version}/dist/js/lang/${langCode.toLowerCase()}.umd.js,gh/ryersondmp/sa11y@${version}/dist/js/sa11y.umd.min.js`;
   document.body.appendChild(sa11yscript);
   sa11yscript.onload = onLoadScript;
   sa11yscript.onreadystatechange = onLoadScript;
