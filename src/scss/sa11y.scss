@@ -111,7 +111,7 @@ html[data-sa11y-theme="dark"] {
 
 /* https: //github.com/DaltonLens/libDaltonLens/blob/master/svg/cvd_svg_filters.html */
 @mixin not {
-  &:not(sa11y-control-panel, sa11y-tooltips, sa11y-dismiss-tooltip, sa11y-annotation) {
+  &:not(sa11y-control-panel, sa11y-dismiss-tooltip) {
     @content;
   }
 }

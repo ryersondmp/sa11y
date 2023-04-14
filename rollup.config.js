@@ -251,7 +251,67 @@ export default [
       }),
     ],
     output: [
-      { file: 'bookmarklet/sa11y-en-test2.min.js', format: 'umd', name: 'Sa11y (English)', plugins: [terser()] },
+      { file: 'bookmarklet/sa11y-en.js', format: 'umd', name: 'Sa11y (En)', plugins: [terser()] },
+    ],
+  },
+  {
+    input: 'src/bookmarklet/fr.js',
+    plugins: [
+      nodeResolve(),
+      css(),
+      replace({
+        preventAssignment: true,
+        'process.env.NODE_ENV': JSON.stringify('production'),
+        Sa11yVersion: JSON.stringify(pkg.version),
+      }),
+    ],
+    output: [
+      { file: 'bookmarklet/fr.js', format: 'umd', name: 'Sa11y (Fr)', plugins: [terser()] },
+    ],
+  },
+  {
+    input: 'src/bookmarklet/pl.js',
+    plugins: [
+      nodeResolve(),
+      css(),
+      replace({
+        preventAssignment: true,
+        'process.env.NODE_ENV': JSON.stringify('production'),
+        Sa11yVersion: JSON.stringify(pkg.version),
+      }),
+    ],
+    output: [
+      { file: 'bookmarklet/pl.js', format: 'umd', name: 'Sa11y (Pl)', plugins: [terser()] },
+    ],
+  },
+  {
+    input: 'src/bookmarklet/sv.js',
+    plugins: [
+      nodeResolve(),
+      css(),
+      replace({
+        preventAssignment: true,
+        'process.env.NODE_ENV': JSON.stringify('production'),
+        Sa11yVersion: JSON.stringify(pkg.version),
+      }),
+    ],
+    output: [
+      { file: 'bookmarklet/sv.js', format: 'umd', name: 'Sa11y (Sv)', plugins: [terser()] },
+    ],
+  },
+  {
+    input: 'src/bookmarklet/ua.js',
+    plugins: [
+      nodeResolve(),
+      css(),
+      replace({
+        preventAssignment: true,
+        'process.env.NODE_ENV': JSON.stringify('production'),
+        Sa11yVersion: JSON.stringify(pkg.version),
+      }),
+    ],
+    output: [
+      { file: 'bookmarklet/ua.js', format: 'umd', name: 'Sa11y (Ua)', plugins: [terser()] },
     ],
   },
 ];

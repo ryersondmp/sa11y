@@ -121,12 +121,17 @@ const goToPrev = () => {
 };
 
 function keyboardShortcut(e) {
-  if ((e.altKey && e.code === 'KeyS') && Elements.Annotations.Array.length) {
-    e.preventDefault();
-    goToNext();
-  } else if ((e.altKey && e.code === 'KeyW') && Elements.Annotations.Array.length) {
-    e.preventDefault();
-    goToPrev();
+  if (
+    Elements.Annotations.Array.length
+    && !Constants.Panel.skipButton.hasAttribute('disabled')
+  ) {
+    if (e.altKey && e.code === 'KeyS') {
+      e.preventDefault();
+      goToNext();
+    } else if (e.altKey && e.code === 'KeyW') {
+      e.preventDefault();
+      goToPrev();
+    }
   }
 }
 

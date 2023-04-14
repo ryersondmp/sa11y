@@ -1,9 +1,11 @@
 import Constants from '../utils/constants';
-import { store } from '../utils/utils';
+import { store, remove, resetAttributes } from '../utils/utils';
 import Lang from '../utils/lang';
 
 export default function settingsPanelToggles(checkAll, resetAll) {
-  // Toggle: Contrast
+  /**
+   * Toggle: Contrast
+  */
   if (Constants.Global.contrastPlugin === true) {
     Constants.Panel.contrastToggle.onclick = async () => {
       if (store.getItem('sa11y-remember-contrast') === 'On') {
@@ -24,7 +26,9 @@ export default function settingsPanelToggles(checkAll, resetAll) {
     store.setItem('sa11y-remember-contrast', 'Off');
   }
 
-  // Toggle: Form labels
+  /**
+   * Toggle: Form labels
+  */
   if (Constants.Global.formLabelsPlugin === true) {
     Constants.Panel.labelsToggle.onclick = async () => {
       if (store.getItem('sa11y-remember-labels') === 'On') {
@@ -45,7 +49,9 @@ export default function settingsPanelToggles(checkAll, resetAll) {
     store.setItem('sa11y-remember-labels', 'Off');
   }
 
-  // Toggle: Links (Advanced)
+  /**
+   * Toggle: Links (Advanced)
+  */
   if (Constants.Global.linksAdvancedPlugin === true) {
     Constants.Panel.linksToggle.onclick = async () => {
       if (store.getItem('sa11y-remember-links-advanced') === 'On') {
@@ -66,7 +72,9 @@ export default function settingsPanelToggles(checkAll, resetAll) {
     store.setItem('sa11y-remember-links-advanced', 'Off');
   }
 
-  // Toggle: Readability
+  /**
+   * Toggle: Readability
+  */
   if (Constants.Global.readabilityPlugin === true) {
     Constants.Panel.readabilityToggle.onclick = async () => {
       if (store.getItem('sa11y-remember-readability') === 'On') {
@@ -94,7 +102,7 @@ export default function settingsPanelToggles(checkAll, resetAll) {
   }
 
   /**
-   * Dark Mode
+   * Toggle: Dark Mode
    * Credits: Derek Kedziora
    * @link https://derekkedziora.com/blog/dark-mode-revisited
   */
@@ -157,20 +165,40 @@ export default function settingsPanelToggles(checkAll, resetAll) {
     Constants.Panel.themeToggle.setAttribute('aria-pressed', 'false');
   }
 
-  /* Colour filters */
+  /**
+   * Toggle: Colour Filters
+  */
   if (Constants.Global.colourFilterPlugin === true) {
-    Constants.Panel.colourFilterSelect.addEventListener('change', () => {
+    Constants.Panel.colourFilterSelect.addEventListener('change', async () => {
       const option = parseInt(Constants.Panel.colourFilterSelect.value, 10);
-      if (option === 1) {
-        Constants.Global.Root.setAttribute('data-sa11y-filter', 'protanopia');
-      } else if (option === 2) {
-        Constants.Global.Root.setAttribute('data-sa11y-filter', 'deuteranopia');
-      } else if (option === 3) {
-        Constants.Global.Root.setAttribute('data-sa11y-filter', 'tritanopia');
-      } else if (option === 4) {
-        Constants.Global.Root.setAttribute('data-sa11y-filter', 'achromatopsia');
+      const filters = [
+        'protanopia',
+        'deuteranopia',
+        'tritanopia',
+        'achromatopsia',
+      ];
+      if (option >= 1 && option <= 4) {
+        Constants.Global.Root.setAttribute('data-sa11y-filter', filters[option - 1]);
+        // Remove page markup while filters are applied. Otherwise it may confuse content authors.
+        resetAttributes([
+          'data-sa11y-error',
+          'data-sa11y-warning',
+          'data-sa11y-good',
+          'data-sa11y-error-inline',
+          'data-sa11y-warning-inline',
+          'data-sa11y-overflow',
+        ], 'document');
+        remove([
+          'sa11y-annotation',
+          'sa11y-tooltips',
+          'sa11y-heading-label',
+        ], 'document');
+        // Disable skip to issue button.
+        Constants.Panel.skipButton.disabled = true;
       } else {
         Constants.Global.Root.removeAttribute('data-sa11y-filter');
+        resetAll(false);
+        await checkAll();
       }
     });
   }

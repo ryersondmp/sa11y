@@ -1,3 +1,5 @@
+import find from './find';
+
 /**
  * Checks if the document has finished loading, and if so, immediately calls the provided callback function. Otherwise, waits for the 'load' event to fire and then calls the callback function.
  * @param {function} callback - The callback function to be called when the document finishes loading.
@@ -430,5 +432,38 @@ export function createAlert(alertMessage, errorPreview) {
   alertClose.addEventListener('click', () => {
     removeAlert();
     skipButton.focus();
+  });
+}
+
+/**
+ * Finds all data-attributes specified in array, and removes them from the document.
+ * @param {Array<string>} attributes - The array of data-attributes to be reset.
+ * @param {string} root - The root element to search for elements (optional, defaults to 'document').
+ * @returns {void}
+ */
+export function resetAttributes(attributes, root) {
+  attributes.forEach((attr) => {
+    const reset = find(
+      `[${attr}]`,
+      `${root}`,
+    );
+    reset.forEach(($el) => {
+      $el.removeAttribute(attr);
+    });
+  });
+}
+
+/**
+ * Removes the specified elements from the document.
+ * @param {string} root - The root element to search for elements (optional, defaults to 'document').
+ * @returns {void}
+ */
+export function remove(elements, root) {
+  const allElements = find(
+    `${elements}`,
+    `${root}`,
+  );
+  allElements.forEach(($el) => {
+    $el.parentNode.removeChild($el);
   });
 }

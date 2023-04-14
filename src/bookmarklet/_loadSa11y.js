@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
+
 // Version based on package.json
-// const version = Sa11yVersion;
-const version = '3.0.0-development';
+const version = Sa11yVersion;
 
 export function loadSa11y(onLoadScript, langCode) {
   // Append styles

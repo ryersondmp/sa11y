@@ -13,7 +13,6 @@ import defaultOptions from './utils/default-options';
 import Lang from './utils/lang';
 import * as Utils from './utils/utils';
 import Constants from './utils/constants';
-import find from './utils/find';
 import Elements from './utils/elements';
 
 // Extras
@@ -328,18 +327,7 @@ class Sa11y {
       Constants.Global.html.removeAttribute('data-sa11y-active');
 
       // Reset all data attributes.
-      const resetAttributes = (attributes) => {
-        attributes.forEach((attr) => {
-          const reset = find(
-            `[${attr}]`,
-            'document',
-          );
-          reset.forEach(($el) => {
-            $el.removeAttribute(attr);
-          });
-        });
-      };
-      resetAttributes([
+      Utils.resetAttributes([
         'data-sa11y-parent',
         'data-sa11y-error',
         'data-sa11y-warning',
@@ -349,29 +337,28 @@ class Sa11y {
         'data-sa11y-overflow',
         'data-sa11y-pulse-border',
         'data-sa11y-filter',
-      ]);
+      ], 'document');
 
       // Remove from page.
-      const remove = find(
-        `sa11y-annotation,
-        sa11y-heading-label,
-        sa11y-heading-anchor,
-        sa11y-tooltips,
-        [data-sa11y-readability-period],
-        [data-sa11y-clone-image-text],
-        .sa11y-css-utilities
-        `,
-        'document',
-      );
-      remove.forEach(($el) => $el.parentNode.removeChild($el));
+      Utils.remove([
+        'sa11y-annotation',
+        'sa11y-heading-label',
+        'sa11y-heading-anchor',
+        'sa11y-tooltips',
+        '[data-sa11y-readability-period]',
+        '[data-sa11y-clone-image-text]',
+        '.sa11y-css-utilities',
+      ], 'document');
 
       // Remove from panel.
-      Constants.Panel.panel.querySelectorAll(`
-        #page-errors .page-error,
-        #outline-list li,
-        #readability-details li
-      `).forEach(($el) => $el.parentNode.removeChild($el));
+      Utils.remove([
+        '#page-errors .page-error',
+        '#outline-list li',
+        '#readability-details li',
+      ], 'panel');
+
       Constants.Panel.readabilityInfo.innerHTML = '';
+
       // Remove any active alerts from panel.
       Utils.removeAlert();
 

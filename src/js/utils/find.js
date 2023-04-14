@@ -17,6 +17,9 @@ export default function find(selector, desiredRoot, exclude) {
   } else if (desiredRoot === 'root') {
     root = Constants.Global.Root;
     if (!root) root = document.body;
+  } else if (desiredRoot === 'panel') {
+    root = Constants.Panel.panel;
+    if (!root) root = document.body;
   } else {
     root = document.querySelector(desiredRoot);
     if (!root) root = document.body;

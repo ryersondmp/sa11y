@@ -99,6 +99,385 @@
     },
   };
 
+  var styles = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-clone-image-text]{display:none!important}[data-sa11y-readability-period]{clip:rect(1px,1px,1px,1px)!important;border:0!important;clip-path:inset(50%)!important;display:block!important;height:1px!important;overflow:hidden!important;padding:0!important;position:absolute!important;white-space:nowrap!important;width:1px!important}[data-sa11y-error]{outline:5px solid var(--sa11y-error)!important}[data-sa11y-warning]{outline:5px solid var(--sa11y-warning)!important}[data-sa11y-good]{outline:5px solid var(--sa11y-good)!important}[data-sa11y-error-inline]{background-color:var(--sa11y-error)!important;box-shadow:0 0 0 4px var(--sa11y-error)!important;color:var(--sa11y-error-text)!important}[data-sa11y-error-inline],[data-sa11y-warning-inline]{border-color:transparent!important;border-radius:.25em!important}[data-sa11y-warning-inline]{background-color:var(--sa11y-warning)!important;box-shadow:0 0 0 4px var(--sa11y-warning)!important;color:var(--sa11y-warning-text)!important}[data-sa11y-pulse-border]{animation:pulse 2s 3;box-shadow:0;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:focus,[data-sa11y-pulse-border]:hover{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color)}70%{box-shadow:0 0 0 12px var(--sa11y-pulse-color)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}";
+
+  const addStylestoShadow = (component) => {
+    const style = document.createElement('style');
+    style.setAttribute('class', 'sa11y-css-utilities');
+    style.textContent = styles;
+    component.shadowRoot.appendChild(style);
+  };
+
+  function findShadowComponents(
+    checkRoot,
+    autoDetectShadowComponents,
+    shadowComponents,
+  ) {
+    let shadowComponentsElements;
+    if (autoDetectShadowComponents === true) {
+      const rootElement = document.querySelector(checkRoot);
+      let everything;
+      if (!rootElement) {
+        everything = document.body.querySelectorAll('*');
+      } else {
+        everything = rootElement.querySelectorAll('*');
+      }
+
+      const ignored = ['sa11y-heading-label', 'sa11y-heading-anchor', 'sa11y-annotation', 'sa11y-tooltips', 'sa11y-dismiss-tooltip', 'sa11y-control-panel'];
+
+      // Query for open shadow roots.
+      const foundShadows = [];
+      everything.forEach((component) => {
+        if (component.shadowRoot && component.shadowRoot.mode === 'open' && !ignored.includes(component.tagName.toLowerCase())) {
+          foundShadows.push(component);
+
+          // Inject CSS utilities into every shadow DOM.
+          addStylestoShadow(component);
+        }
+      });
+
+      // Return ALL web components on the page.
+      const all = Array.from(foundShadows).map((component) => component.tagName.toLowerCase());
+
+      if (all.length === 1) {
+        shadowComponentsElements = `${all.toString()}`;
+      } else {
+        shadowComponentsElements = all.join(', ');
+      }
+    } else {
+      // If autoDetectShadowComponents is OFF, use provided shadow dom.
+      shadowComponentsElements = shadowComponents || '';
+
+      // Append styles to each provided shadow dom.
+      if (shadowComponentsElements) {
+        const providedShadow = document.querySelectorAll(shadowComponentsElements);
+        providedShadow.forEach((component) => {
+          addStylestoShadow(component);
+        });
+      }
+    }
+    return shadowComponentsElements;
+  }
+
+  const Constants = (function myConstants() {
+    /* **************** */
+    /* Global constants */
+    /* **************** */
+    const Global = {};
+    function initializeGlobal(
+      checkRoot,
+      contrastPlugin,
+      formLabelsPlugin,
+      readabilityPlugin,
+      linksAdvancedPlugin,
+      colourFilterPlugin,
+      checkAllHideToggles,
+      headless,
+    ) {
+      Global.ERROR = Lang._('ERROR');
+      Global.WARNING = Lang._('WARNING');
+      Global.GOOD = Lang._('GOOD');
+      Global.currentPage = window.location.pathname;
+      Global.html = document.querySelector('html');
+      Global.headless = headless;
+
+      // Toggleable plugins
+      Global.contrastPlugin = contrastPlugin;
+      Global.formLabelsPlugin = formLabelsPlugin;
+      Global.readabilityPlugin = readabilityPlugin;
+      Global.linksAdvancedPlugin = linksAdvancedPlugin;
+      Global.colourFilterPlugin = colourFilterPlugin;
+      Global.checkAllHideToggles = checkAllHideToggles;
+
+      // Root element to check.
+      Global.Root = document.querySelector(checkRoot);
+      if (!checkRoot) {
+        Global.Root = document.querySelector('body');
+      }
+
+      // A11y: Determine scroll behaviour
+      let reducedMotion = false;
+      if (typeof window.matchMedia === 'function') {
+        reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      }
+      Global.scrollBehaviour = (!reducedMotion || reducedMotion.matches) ? 'auto' : 'smooth';
+    }
+
+    /* *************** */
+    /* Panel constants */
+    /* *************** */
+    const Panel = {};
+    function initializePanelSelectors() {
+      const Sa11yPanel = document.querySelector('sa11y-control-panel').shadowRoot;
+
+      Panel.panel = Sa11yPanel.getElementById('panel');
+      Panel.content = Sa11yPanel.getElementById('panel-content');
+      Panel.controls = Sa11yPanel.getElementById('panel-controls');
+      Panel.outline = Sa11yPanel.getElementById('outline-panel');
+      Panel.outlineList = Sa11yPanel.getElementById('outline-list');
+      Panel.outlineHeader = Sa11yPanel.getElementById('outline-header');
+      Panel.notifBadge = Sa11yPanel.getElementById('notification-badge');
+      Panel.notifCount = Sa11yPanel.getElementById('notification-count');
+      Panel.notifText = Sa11yPanel.getElementById('notification-text');
+      Panel.status = Sa11yPanel.getElementById('status');
+      Panel.pageErrors = Sa11yPanel.getElementById('page-errors');
+
+      // Settings
+      Panel.settings = Sa11yPanel.getElementById('settings-panel');
+      Panel.settingsHeader = Sa11yPanel.getElementById('settings-header');
+      Panel.settingsContent = Sa11yPanel.getElementById('settings-content');
+      Panel.contrastToggle = Sa11yPanel.getElementById('contrast-toggle');
+      Panel.labelsToggle = Sa11yPanel.getElementById('labels-toggle');
+      Panel.linksToggle = Sa11yPanel.getElementById('links-advanced-toggle');
+      Panel.readabilityToggle = Sa11yPanel.getElementById('readability-toggle');
+      Panel.themeToggle = Sa11yPanel.getElementById('theme-toggle');
+      Panel.contrastItem = Sa11yPanel.getElementById('contrast-item');
+      Panel.labelsItem = Sa11yPanel.getElementById('form-labels-item');
+      Panel.linksItem = Sa11yPanel.getElementById('links-advanced-item');
+      Panel.readabilityItem = Sa11yPanel.getElementById('readability-item');
+
+      Panel.colourFilterItem = Sa11yPanel.getElementById('colour-filter-item');
+      Panel.colourFilterSelect = Sa11yPanel.getElementById('colour-filter');
+
+      // Buttons
+      Panel.toggle = Sa11yPanel.getElementById('toggle');
+      Panel.outlineToggle = Sa11yPanel.getElementById('outline-toggle');
+      Panel.settingsToggle = Sa11yPanel.getElementById('settings-toggle');
+      Panel.skipButton = Sa11yPanel.getElementById('skip-button');
+      Panel.dismissButton = Sa11yPanel.getElementById('dismiss-button');
+      Panel.dismissTooltip = Sa11yPanel.getElementById('dismiss-tooltip');
+
+      // Alerts
+      Panel.alert = Sa11yPanel.getElementById('panel-alert');
+      Panel.alertText = Sa11yPanel.getElementById('panel-alert-text');
+      Panel.alertPreview = Sa11yPanel.getElementById('panel-alert-preview');
+      Panel.alertClose = Sa11yPanel.getElementById('close-alert');
+
+      // Readability
+      Panel.readability = Sa11yPanel.getElementById('readability-panel');
+      Panel.readabilityInfo = Sa11yPanel.getElementById('readability-info');
+      Panel.readabilityDetails = Sa11yPanel.getElementById('readability-details');
+    }
+
+    /* ***************** */
+    /* Readability Setup */
+    /* ***************** */
+    const Readability = {};
+    function initializeReadability(
+      readabilityRoot,
+      readabilityLang,
+    ) {
+      Readability.Lang = readabilityLang;
+
+      Readability.Root = document.querySelector(readabilityRoot);
+      if (!readabilityRoot) {
+        Readability.Root = Global.Root;
+      }
+
+      // Supported readability languages. Turn module off if not supported.
+      const supportedLang = ['en', 'fr', 'es', 'de', 'nl', 'it', 'sv', 'fi', 'da', 'no', 'nb', 'nn'];
+      const pageLang = Constants.Global.html.getAttribute('lang');
+
+      // If lang attribute is missing, turn off readability plugin.
+      if (!pageLang) {
+        Readability.Plugin = false;
+      } else {
+        const pageLangLowerCase = pageLang.toLowerCase();
+        if (!supportedLang.some(($el) => pageLangLowerCase.includes($el))) {
+          Readability.Plugin = false;
+        }
+      }
+    }
+
+    /* **************** */
+    /* Exclusions Setup */
+    /* **************** */
+    const Exclusions = {};
+    function initializeExclusions(
+      containerIgnore,
+      contrastIgnore,
+      readabilityIgnore,
+      headerIgnore,
+      outlineIgnore,
+      imageIgnore,
+      linkIgnore,
+      linkIgnoreSpan,
+    ) {
+      // Main container.
+      if (containerIgnore) {
+        const containerSelectors = containerIgnore.split(',').map(($el) => `${$el} *, ${$el}`);
+        Exclusions.Container = `[aria-hidden], #wpadminbar *, ${containerSelectors.join(', ')}`;
+      } else {
+        Exclusions.Container = '[aria-hidden], #wpadminbar *';
+      }
+
+      // Contrast exclusions
+      Exclusions.Contrast = 'script, style, link';
+      if (contrastIgnore) {
+        Exclusions.Contrast = `${contrastIgnore}, ${Exclusions.Contrast}`;
+      }
+
+      // Ignore specific regions for readability module.
+      Exclusions.Readability = 'nav li, [role="navigation"] li';
+      if (readabilityIgnore) {
+        Exclusions.Readability = `${readabilityIgnore}, ${Exclusions.Readability}`;
+      }
+
+      // Ignore specific headings
+      if (headerIgnore) {
+        Exclusions.Headings = `${headerIgnore}`;
+      }
+
+      // Don't add heading label or include in panel.
+      if (outlineIgnore) {
+        Exclusions.Outline = `${outlineIgnore}`;
+      }
+
+      // Ignore specific images.
+      Exclusions.Images = '[role="presentation"]';
+      if (imageIgnore) {
+        Exclusions.Images = `${imageIgnore}, ${Exclusions.Images}`;
+      }
+
+      // Ignore specific links
+      Exclusions.Links = '[aria-hidden="true"], .anchorjs-link';
+      if (linkIgnore) {
+        Exclusions.Links = `${linkIgnore}, ${Exclusions.Links}`;
+      }
+
+      // Ignore specific classes within links.
+      if (linkIgnoreSpan) {
+        const linkIgnoreSpanSelectors = linkIgnoreSpan.split(',').map(($el) => `${$el} *, ${$el}`);
+        Exclusions.LinkSpan = `noscript, ${linkIgnoreSpanSelectors.join(', ')}`;
+      } else {
+        Exclusions.LinkSpan = 'noscript';
+      }
+    }
+
+    /* ********************** */
+    /* Embedded Content Setup */
+    /* ********************** */
+    const EmbeddedContent = {};
+    function initializeEmbeddedContent(
+      videoContent,
+      audioContent,
+      dataVizContent,
+    ) {
+      // Video sources.
+      if (videoContent) {
+        const videos = videoContent.split(/\s*[\s,]\s*/).map(($el) => `[src*='${$el}']`);
+        EmbeddedContent.Video = `video, ${videos.join(', ')}`;
+      } else {
+        EmbeddedContent.Video = 'video';
+      }
+
+      // Audio sources.
+      if (audioContent) {
+        const audio = audioContent.split(/\s*[\s,]\s*/).map(($el) => `[src*='${$el}']`);
+        EmbeddedContent.Audio = `audio, ${audio.join(', ')}`;
+      } else {
+        EmbeddedContent.Audio = 'audio';
+      }
+
+      // Data viz sources.
+      if (dataVizContent) {
+        const data = dataVizContent.split(/\s*[\s,]\s*/).map(($el) => `[src*='${$el}']`);
+        EmbeddedContent.Visualization = data.join(', ');
+      } else {
+        EmbeddedContent.Visualization = 'datastudio.google.com, tableau';
+      }
+
+      // Embedded content all
+      EmbeddedContent.All = `${EmbeddedContent.Video}, ${EmbeddedContent.Audio}, ${EmbeddedContent.Visualization}`;
+    }
+
+    /* ***************** */
+    /* Shadow Components */
+    /* ***************** */
+    const Shadow = {};
+    function initializeShadowSearch(checkRoot, autoDetectShadowComponents, shadowComponents) {
+      Shadow.Components = findShadowComponents(
+        checkRoot,
+        autoDetectShadowComponents,
+        shadowComponents,
+      );
+    }
+
+    return {
+      initializeGlobal,
+      Global,
+      initializePanelSelectors,
+      Panel,
+      initializeReadability,
+      Readability,
+      initializeExclusions,
+      Exclusions,
+      initializeEmbeddedContent,
+      EmbeddedContent,
+      initializeShadowSearch,
+      Shadow,
+    };
+  }());
+
+  /**
+   * Finds elements in the DOM that match the given selector, within the specified root element, and excluding any specified elements.
+   * @param {string} selector - The CSS selector to match elements against.
+   * @param {string} desiredRoot - The root element to start the search from. Can be one of 'document', 'readability', 'root', or a custom selector for the desired root element.
+   * @param {string} exclude - Elements to exclude from the search, specified as a CSS selector (optional).
+   * @returns {Array} - An array of elements that match the given selector.
+   */
+  function find(selector, desiredRoot, exclude) {
+    let root;
+    if (desiredRoot === 'document') {
+      root = document;
+    } else if (desiredRoot === 'readability') {
+      root = Constants.Readability.Root;
+      if (!root) root = Constants.Global.Root;
+    } else if (desiredRoot === 'root') {
+      root = Constants.Global.Root;
+      if (!root) root = document.body;
+    } else if (desiredRoot === 'panel') {
+      root = Constants.Panel.panel;
+      if (!root) root = document.body;
+    } else {
+      root = document.querySelector(desiredRoot);
+      if (!root) root = document.body;
+    }
+
+    const shadowComponents = Constants.Shadow.Components;
+    const shadow = (shadowComponents) ? `, ${shadowComponents}` : '';
+
+    const exclusions = Constants.Exclusions.Container;
+    const additional = (exclude !== undefined) ? `, ${exclude}` : '';
+
+    /* Logic yoinked from Editoria11y */
+    // 1. Elements array includes web components in the selector to be used as a placeholder.
+    const elements = Array.from(root.querySelectorAll(`:is(${selector}${shadow}):not(${exclusions}${additional})`));
+
+    if (shadowComponents.length) {
+      // 2. Dive into the each shadow root and collect an array of its results.
+      const shadowFind = [];
+      // Remove first comma and whitespace.
+      const prepShadow = shadowComponents.trim().replace(/^,+/, '');
+      elements.forEach((el, i) => {
+        if (el.matches(prepShadow)) {
+          shadowFind[i] = el.shadowRoot.querySelectorAll(`:is(${selector}):not(${exclusions}${additional})`);
+        }
+      });
+      // 3. Replace the placeholder with any hits found in the shadow root.
+      if (shadowFind.length > 0) {
+        for (let index = shadowFind.length - 1; index >= 0; index--) {
+          if (shadowFind[index]) {
+            elements.splice(index, 1, ...shadowFind[index]);
+          }
+        }
+      }
+    }
+
+    // 4. Return the cleaned up array.
+    return elements;
+  }
+
   /**
    * Checks if the document has finished loading, and if so, immediately calls the provided callback function. Otherwise, waits for the 'load' event to fire and then calls the callback function.
    * @param {function} callback - The callback function to be called when the document finishes loading.
@@ -532,380 +911,37 @@
     });
   }
 
-  var styles = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-clone-image-text]{display:none!important}[data-sa11y-readability-period]{clip:rect(1px,1px,1px,1px)!important;border:0!important;clip-path:inset(50%)!important;display:block!important;height:1px!important;overflow:hidden!important;padding:0!important;position:absolute!important;white-space:nowrap!important;width:1px!important}[data-sa11y-error]{outline:5px solid var(--sa11y-error)!important}[data-sa11y-warning]{outline:5px solid var(--sa11y-warning)!important}[data-sa11y-good]{outline:5px solid var(--sa11y-good)!important}[data-sa11y-error-inline]{background-color:var(--sa11y-error)!important;box-shadow:0 0 0 4px var(--sa11y-error)!important;color:var(--sa11y-error-text)!important}[data-sa11y-error-inline],[data-sa11y-warning-inline]{border-color:transparent!important;border-radius:.25em!important}[data-sa11y-warning-inline]{background-color:var(--sa11y-warning)!important;box-shadow:0 0 0 4px var(--sa11y-warning)!important;color:var(--sa11y-warning-text)!important}[data-sa11y-pulse-border]{animation:pulse 2s 3;box-shadow:0;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:focus,[data-sa11y-pulse-border]:hover{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color)}70%{box-shadow:0 0 0 12px var(--sa11y-pulse-color)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}";
-
-  const addStylestoShadow = (component) => {
-    const style = document.createElement('style');
-    style.setAttribute('class', 'sa11y-css-utilities');
-    style.textContent = styles;
-    component.shadowRoot.appendChild(style);
-  };
-
-  function findShadowComponents(
-    checkRoot,
-    autoDetectShadowComponents,
-    shadowComponents,
-  ) {
-    let shadowComponentsElements;
-    if (autoDetectShadowComponents === true) {
-      const rootElement = document.querySelector(checkRoot);
-      let everything;
-      if (!rootElement) {
-        everything = document.body.querySelectorAll('*');
-      } else {
-        everything = rootElement.querySelectorAll('*');
-      }
-
-      const ignored = ['sa11y-heading-label', 'sa11y-heading-anchor', 'sa11y-annotation', 'sa11y-tooltips', 'sa11y-dismiss-tooltip', 'sa11y-control-panel'];
-
-      // Query for open shadow roots.
-      const foundShadows = [];
-      everything.forEach((component) => {
-        if (component.shadowRoot && component.shadowRoot.mode === 'open' && !ignored.includes(component.tagName.toLowerCase())) {
-          foundShadows.push(component);
-
-          // Inject CSS utilities into every shadow DOM.
-          addStylestoShadow(component);
-        }
+  /**
+   * Finds all data-attributes specified in array, and removes them from the document.
+   * @param {Array<string>} attributes - The array of data-attributes to be reset.
+   * @param {string} root - The root element to search for elements (optional, defaults to 'document').
+   * @returns {void}
+   */
+  function resetAttributes(attributes, root) {
+    attributes.forEach((attr) => {
+      const reset = find(
+        `[${attr}]`,
+        `${root}`,
+      );
+      reset.forEach(($el) => {
+        $el.removeAttribute(attr);
       });
-
-      // Return ALL web components on the page.
-      const all = Array.from(foundShadows).map((component) => component.tagName.toLowerCase());
-
-      if (all.length === 1) {
-        shadowComponentsElements = `${all.toString()}`;
-      } else {
-        shadowComponentsElements = all.join(', ');
-      }
-    } else {
-      // If autoDetectShadowComponents is OFF, use provided shadow dom.
-      shadowComponentsElements = shadowComponents || '';
-
-      // Append styles to each provided shadow dom.
-      if (shadowComponentsElements) {
-        const providedShadow = document.querySelectorAll(shadowComponentsElements);
-        providedShadow.forEach((component) => {
-          addStylestoShadow(component);
-        });
-      }
-    }
-    return shadowComponentsElements;
+    });
   }
 
-  const Constants = (function myConstants() {
-    /* **************** */
-    /* Global constants */
-    /* **************** */
-    const Global = {};
-    function initializeGlobal(
-      checkRoot,
-      contrastPlugin,
-      formLabelsPlugin,
-      readabilityPlugin,
-      linksAdvancedPlugin,
-      colourFilterPlugin,
-      checkAllHideToggles,
-      headless,
-    ) {
-      Global.ERROR = Lang._('ERROR');
-      Global.WARNING = Lang._('WARNING');
-      Global.GOOD = Lang._('GOOD');
-      Global.currentPage = window.location.pathname;
-      Global.html = document.querySelector('html');
-      Global.headless = headless;
-
-      // Toggleable plugins
-      Global.contrastPlugin = contrastPlugin;
-      Global.formLabelsPlugin = formLabelsPlugin;
-      Global.readabilityPlugin = readabilityPlugin;
-      Global.linksAdvancedPlugin = linksAdvancedPlugin;
-      Global.colourFilterPlugin = colourFilterPlugin;
-      Global.checkAllHideToggles = checkAllHideToggles;
-
-      // Root element to check.
-      Global.Root = document.querySelector(checkRoot);
-      if (!checkRoot) {
-        Global.Root = document.querySelector('body');
-      }
-
-      // A11y: Determine scroll behaviour
-      let reducedMotion = false;
-      if (typeof window.matchMedia === 'function') {
-        reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-      }
-      Global.scrollBehaviour = (!reducedMotion || reducedMotion.matches) ? 'auto' : 'smooth';
-    }
-
-    /* *************** */
-    /* Panel constants */
-    /* *************** */
-    const Panel = {};
-    function initializePanelSelectors() {
-      const Sa11yPanel = document.querySelector('sa11y-control-panel').shadowRoot;
-
-      Panel.panel = Sa11yPanel.getElementById('panel');
-      Panel.content = Sa11yPanel.getElementById('panel-content');
-      Panel.controls = Sa11yPanel.getElementById('panel-controls');
-      Panel.outline = Sa11yPanel.getElementById('outline-panel');
-      Panel.outlineList = Sa11yPanel.getElementById('outline-list');
-      Panel.outlineHeader = Sa11yPanel.getElementById('outline-header');
-      Panel.notifBadge = Sa11yPanel.getElementById('notification-badge');
-      Panel.notifCount = Sa11yPanel.getElementById('notification-count');
-      Panel.notifText = Sa11yPanel.getElementById('notification-text');
-      Panel.status = Sa11yPanel.getElementById('status');
-      Panel.pageErrors = Sa11yPanel.getElementById('page-errors');
-
-      // Settings
-      Panel.settings = Sa11yPanel.getElementById('settings-panel');
-      Panel.settingsHeader = Sa11yPanel.getElementById('settings-header');
-      Panel.settingsContent = Sa11yPanel.getElementById('settings-content');
-      Panel.contrastToggle = Sa11yPanel.getElementById('contrast-toggle');
-      Panel.labelsToggle = Sa11yPanel.getElementById('labels-toggle');
-      Panel.linksToggle = Sa11yPanel.getElementById('links-advanced-toggle');
-      Panel.readabilityToggle = Sa11yPanel.getElementById('readability-toggle');
-      Panel.themeToggle = Sa11yPanel.getElementById('theme-toggle');
-      Panel.contrastItem = Sa11yPanel.getElementById('contrast-item');
-      Panel.labelsItem = Sa11yPanel.getElementById('form-labels-item');
-      Panel.linksItem = Sa11yPanel.getElementById('links-advanced-item');
-      Panel.readabilityItem = Sa11yPanel.getElementById('readability-item');
-
-      Panel.colourFilterItem = Sa11yPanel.getElementById('colour-filter-item');
-      Panel.colourFilterSelect = Sa11yPanel.getElementById('colour-filter');
-
-      // Buttons
-      Panel.toggle = Sa11yPanel.getElementById('toggle');
-      Panel.outlineToggle = Sa11yPanel.getElementById('outline-toggle');
-      Panel.settingsToggle = Sa11yPanel.getElementById('settings-toggle');
-      Panel.skipButton = Sa11yPanel.getElementById('skip-button');
-      Panel.dismissButton = Sa11yPanel.getElementById('dismiss-button');
-      Panel.dismissTooltip = Sa11yPanel.getElementById('dismiss-tooltip');
-
-      // Alerts
-      Panel.alert = Sa11yPanel.getElementById('panel-alert');
-      Panel.alertText = Sa11yPanel.getElementById('panel-alert-text');
-      Panel.alertPreview = Sa11yPanel.getElementById('panel-alert-preview');
-      Panel.alertClose = Sa11yPanel.getElementById('close-alert');
-
-      // Readability
-      Panel.readability = Sa11yPanel.getElementById('readability-panel');
-      Panel.readabilityInfo = Sa11yPanel.getElementById('readability-info');
-      Panel.readabilityDetails = Sa11yPanel.getElementById('readability-details');
-    }
-
-    /* ***************** */
-    /* Readability Setup */
-    /* ***************** */
-    const Readability = {};
-    function initializeReadability(
-      readabilityRoot,
-      readabilityLang,
-    ) {
-      Readability.Lang = readabilityLang;
-
-      Readability.Root = document.querySelector(readabilityRoot);
-      if (!readabilityRoot) {
-        Readability.Root = Global.Root;
-      }
-
-      // Supported readability languages. Turn module off if not supported.
-      const supportedLang = ['en', 'fr', 'es', 'de', 'nl', 'it', 'sv', 'fi', 'da', 'no', 'nb', 'nn'];
-      const pageLang = Constants.Global.html.getAttribute('lang');
-
-      // If lang attribute is missing, turn off readability plugin.
-      if (!pageLang) {
-        Readability.Plugin = false;
-      } else {
-        const pageLangLowerCase = pageLang.toLowerCase();
-        if (!supportedLang.some(($el) => pageLangLowerCase.includes($el))) {
-          Readability.Plugin = false;
-        }
-      }
-    }
-
-    /* **************** */
-    /* Exclusions Setup */
-    /* **************** */
-    const Exclusions = {};
-    function initializeExclusions(
-      containerIgnore,
-      contrastIgnore,
-      readabilityIgnore,
-      headerIgnore,
-      outlineIgnore,
-      imageIgnore,
-      linkIgnore,
-      linkIgnoreSpan,
-    ) {
-      // Main container.
-      if (containerIgnore) {
-        const containerSelectors = containerIgnore.split(',').map(($el) => `${$el} *, ${$el}`);
-        Exclusions.Container = `[aria-hidden], #wpadminbar *, ${containerSelectors.join(', ')}`;
-      } else {
-        Exclusions.Container = '[aria-hidden], #wpadminbar *';
-      }
-
-      // Contrast exclusions
-      Exclusions.Contrast = 'script, style, link';
-      if (contrastIgnore) {
-        Exclusions.Contrast = `${contrastIgnore}, ${Exclusions.Contrast}`;
-      }
-
-      // Ignore specific regions for readability module.
-      Exclusions.Readability = 'nav li, [role="navigation"] li';
-      if (readabilityIgnore) {
-        Exclusions.Readability = `${readabilityIgnore}, ${Exclusions.Readability}`;
-      }
-
-      // Ignore specific headings
-      if (headerIgnore) {
-        Exclusions.Headings = `${headerIgnore}`;
-      }
-
-      // Don't add heading label or include in panel.
-      if (outlineIgnore) {
-        Exclusions.Outline = `${outlineIgnore}`;
-      }
-
-      // Ignore specific images.
-      Exclusions.Images = '[role="presentation"]';
-      if (imageIgnore) {
-        Exclusions.Images = `${imageIgnore}, ${Exclusions.Images}`;
-      }
-
-      // Ignore specific links
-      Exclusions.Links = '[aria-hidden="true"], .anchorjs-link';
-      if (linkIgnore) {
-        Exclusions.Links = `${linkIgnore}, ${Exclusions.Links}`;
-      }
-
-      // Ignore specific classes within links.
-      if (linkIgnoreSpan) {
-        const linkIgnoreSpanSelectors = linkIgnoreSpan.split(',').map(($el) => `${$el} *, ${$el}`);
-        Exclusions.LinkSpan = `noscript, ${linkIgnoreSpanSelectors.join(', ')}`;
-      } else {
-        Exclusions.LinkSpan = 'noscript';
-      }
-    }
-
-    /* ********************** */
-    /* Embedded Content Setup */
-    /* ********************** */
-    const EmbeddedContent = {};
-    function initializeEmbeddedContent(
-      videoContent,
-      audioContent,
-      dataVizContent,
-    ) {
-      // Video sources.
-      if (videoContent) {
-        const videos = videoContent.split(/\s*[\s,]\s*/).map(($el) => `[src*='${$el}']`);
-        EmbeddedContent.Video = `video, ${videos.join(', ')}`;
-      } else {
-        EmbeddedContent.Video = 'video';
-      }
-
-      // Audio sources.
-      if (audioContent) {
-        const audio = audioContent.split(/\s*[\s,]\s*/).map(($el) => `[src*='${$el}']`);
-        EmbeddedContent.Audio = `audio, ${audio.join(', ')}`;
-      } else {
-        EmbeddedContent.Audio = 'audio';
-      }
-
-      // Data viz sources.
-      if (dataVizContent) {
-        const data = dataVizContent.split(/\s*[\s,]\s*/).map(($el) => `[src*='${$el}']`);
-        EmbeddedContent.Visualization = data.join(', ');
-      } else {
-        EmbeddedContent.Visualization = 'datastudio.google.com, tableau';
-      }
-
-      // Embedded content all
-      EmbeddedContent.All = `${EmbeddedContent.Video}, ${EmbeddedContent.Audio}, ${EmbeddedContent.Visualization}`;
-    }
-
-    /* ***************** */
-    /* Shadow Components */
-    /* ***************** */
-    const Shadow = {};
-    function initializeShadowSearch(checkRoot, autoDetectShadowComponents, shadowComponents) {
-      Shadow.Components = findShadowComponents(
-        checkRoot,
-        autoDetectShadowComponents,
-        shadowComponents,
-      );
-    }
-
-    return {
-      initializeGlobal,
-      Global,
-      initializePanelSelectors,
-      Panel,
-      initializeReadability,
-      Readability,
-      initializeExclusions,
-      Exclusions,
-      initializeEmbeddedContent,
-      EmbeddedContent,
-      initializeShadowSearch,
-      Shadow,
-    };
-  }());
-
   /**
-   * Finds elements in the DOM that match the given selector, within the specified root element, and excluding any specified elements.
-   * @param {string} selector - The CSS selector to match elements against.
-   * @param {string} desiredRoot - The root element to start the search from. Can be one of 'document', 'readability', 'root', or a custom selector for the desired root element.
-   * @param {string} exclude - Elements to exclude from the search, specified as a CSS selector (optional).
-   * @returns {Array} - An array of elements that match the given selector.
+   * Removes the specified elements from the document.
+   * @param {string} root - The root element to search for elements (optional, defaults to 'document').
+   * @returns {void}
    */
-  function find(selector, desiredRoot, exclude) {
-    let root;
-    if (desiredRoot === 'document') {
-      root = document;
-    } else if (desiredRoot === 'readability') {
-      root = Constants.Readability.Root;
-      if (!root) root = Constants.Global.Root;
-    } else if (desiredRoot === 'root') {
-      root = Constants.Global.Root;
-      if (!root) root = document.body;
-    } else {
-      root = document.querySelector(desiredRoot);
-      if (!root) root = document.body;
-    }
-
-    const shadowComponents = Constants.Shadow.Components;
-    const shadow = (shadowComponents) ? `, ${shadowComponents}` : '';
-
-    const exclusions = Constants.Exclusions.Container;
-    const additional = (exclude !== undefined) ? `, ${exclude}` : '';
-
-    /* Logic yoinked from Editoria11y */
-    // 1. Elements array includes web components in the selector to be used as a placeholder.
-    const elements = Array.from(root.querySelectorAll(`:is(${selector}${shadow}):not(${exclusions}${additional})`));
-
-    if (shadowComponents.length) {
-      // 2. Dive into the each shadow root and collect an array of its results.
-      const shadowFind = [];
-      // Remove first comma and whitespace.
-      const prepShadow = shadowComponents.trim().replace(/^,+/, '');
-      elements.forEach((el, i) => {
-        if (el.matches(prepShadow)) {
-          shadowFind[i] = el.shadowRoot.querySelectorAll(`:is(${selector}):not(${exclusions}${additional})`);
-        }
-      });
-      // 3. Replace the placeholder with any hits found in the shadow root.
-      if (shadowFind.length > 0) {
-        for (let index = shadowFind.length - 1; index >= 0; index--) {
-          if (shadowFind[index]) {
-            elements.splice(index, 1, ...shadowFind[index]);
-          }
-        }
-      }
-    }
-
-    // 4. Return the cleaned up array.
-    return elements;
+  function remove(elements, root) {
+    const allElements = find(
+      `${elements}`,
+      `${root}`,
+    );
+    allElements.forEach(($el) => {
+      $el.parentNode.removeChild($el);
+    });
   }
 
   const Elements = (function myElements() {
@@ -1454,7 +1490,9 @@
   }
 
   function settingsPanelToggles(checkAll, resetAll) {
-    // Toggle: Contrast
+    /**
+     * Toggle: Contrast
+    */
     if (Constants.Global.contrastPlugin === true) {
       Constants.Panel.contrastToggle.onclick = async () => {
         if (store.getItem('sa11y-remember-contrast') === 'On') {
@@ -1475,7 +1513,9 @@
       store.setItem('sa11y-remember-contrast', 'Off');
     }
 
-    // Toggle: Form labels
+    /**
+     * Toggle: Form labels
+    */
     if (Constants.Global.formLabelsPlugin === true) {
       Constants.Panel.labelsToggle.onclick = async () => {
         if (store.getItem('sa11y-remember-labels') === 'On') {
@@ -1496,7 +1536,9 @@
       store.setItem('sa11y-remember-labels', 'Off');
     }
 
-    // Toggle: Links (Advanced)
+    /**
+     * Toggle: Links (Advanced)
+    */
     if (Constants.Global.linksAdvancedPlugin === true) {
       Constants.Panel.linksToggle.onclick = async () => {
         if (store.getItem('sa11y-remember-links-advanced') === 'On') {
@@ -1517,7 +1559,9 @@
       store.setItem('sa11y-remember-links-advanced', 'Off');
     }
 
-    // Toggle: Readability
+    /**
+     * Toggle: Readability
+    */
     if (Constants.Global.readabilityPlugin === true) {
       Constants.Panel.readabilityToggle.onclick = async () => {
         if (store.getItem('sa11y-remember-readability') === 'On') {
@@ -1545,7 +1589,7 @@
     }
 
     /**
-     * Dark Mode
+     * Toggle: Dark Mode
      * Credits: Derek Kedziora
      * @link https://derekkedziora.com/blog/dark-mode-revisited
     */
@@ -1608,20 +1652,40 @@
       Constants.Panel.themeToggle.setAttribute('aria-pressed', 'false');
     }
 
-    /* Colour filters */
+    /**
+     * Toggle: Colour Filters
+    */
     if (Constants.Global.colourFilterPlugin === true) {
-      Constants.Panel.colourFilterSelect.addEventListener('change', () => {
+      Constants.Panel.colourFilterSelect.addEventListener('change', async () => {
         const option = parseInt(Constants.Panel.colourFilterSelect.value, 10);
-        if (option === 1) {
-          Constants.Global.Root.setAttribute('data-sa11y-filter', 'protanopia');
-        } else if (option === 2) {
-          Constants.Global.Root.setAttribute('data-sa11y-filter', 'deuteranopia');
-        } else if (option === 3) {
-          Constants.Global.Root.setAttribute('data-sa11y-filter', 'tritanopia');
-        } else if (option === 4) {
-          Constants.Global.Root.setAttribute('data-sa11y-filter', 'achromatopsia');
+        const filters = [
+          'protanopia',
+          'deuteranopia',
+          'tritanopia',
+          'achromatopsia',
+        ];
+        if (option >= 1 && option <= 4) {
+          Constants.Global.Root.setAttribute('data-sa11y-filter', filters[option - 1]);
+          // Remove page markup while filters are applied. Otherwise it may confuse content authors.
+          resetAttributes([
+            'data-sa11y-error',
+            'data-sa11y-warning',
+            'data-sa11y-good',
+            'data-sa11y-error-inline',
+            'data-sa11y-warning-inline',
+            'data-sa11y-overflow',
+          ], 'document');
+          remove([
+            'sa11y-annotation',
+            'sa11y-tooltips',
+            'sa11y-heading-label',
+          ], 'document');
+          // Disable skip to issue button.
+          Constants.Panel.skipButton.disabled = true;
         } else {
           Constants.Global.Root.removeAttribute('data-sa11y-filter');
+          resetAll(false);
+          await checkAll();
         }
       });
     }
@@ -1829,15 +1893,17 @@
         }
       }
 
-      // Append heading labels.
-      // If heading is in a hidden container, place the anchor just before it's most visible parent.
+      /**
+        * Append heading labels.
+      */
       const create = document.createElement('sa11y-heading-label');
+      const anchor = document.createElement('sa11y-heading-anchor');
       create.hidden = true;
 
+      // If heading is in a hidden container, place the anchor just before it's most visible parent.
       if (parent !== null) {
         $el.insertAdjacentElement('beforeend', create);
         const hiddenParent = parent.previousElementSibling;
-        const anchor = document.createElement('sa11y-heading-anchor');
         anchor.setAttribute('id', `sa11y-h${i}`);
         if (hiddenParent) {
           hiddenParent.insertAdjacentElement('beforebegin', anchor);
@@ -1847,11 +1913,15 @@
           parent.parentNode.setAttribute('data-sa11y-parent', `h${i}`);
         }
       } else {
-        // If the heading isn't hidden, then append id on visible label.
-        create.setAttribute('id', `sa11y-h${i}`);
+        // If the heading isn't hidden, append visible label.
         $el.insertAdjacentElement('beforeend', create);
+
+        // Create anchor above visible label.
+        create.insertAdjacentElement('beforebegin', anchor);
+        anchor.setAttribute('id', `sa11y-h${i}`);
       }
 
+      // Populate heading label.
       const content = document.createElement('span');
       content.classList.add('heading-label');
       content.innerHTML = `H${level}`;
@@ -1883,11 +1953,7 @@
         );
 
         const pulseAndScroll = (heading) => {
-          if (heading.tagName.toLowerCase() === 'sa11y-heading-label') {
-            addPulse(heading.parentElement);
-          } else {
-            addPulse(heading);
-          }
+          addPulse(heading.parentElement);
           heading.scrollIntoView({
             behavior: `${Constants.Global.scrollBehaviour}`,
             block: 'center',
@@ -5343,7 +5409,7 @@
     render: render
   });
 
-  var tooltipStyles = "a,button,code,div,h1,h2,kbd,li,ol,p,span,strong,svg,ul{all:unset;box-sizing:border-box!important}div{display:block}:after,:before{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:0}.tippy-box[data-placement^=top]>.tippy-arrow:before{border-top-color:initial;border-width:8px 8px 0;bottom:-7px;left:0;transform-origin:center top}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:0}.tippy-box[data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:initial;border-width:0 8px 8px;left:0;top:-7px;transform-origin:center bottom}.tippy-box[data-placement^=left]>.tippy-arrow{right:0}.tippy-box[data-placement^=left]>.tippy-arrow:before{border-left-color:initial;border-width:8px 0 8px 8px;right:-7px;transform-origin:center left}.tippy-box[data-placement^=right]>.tippy-arrow{left:0}.tippy-box[data-placement^=right]>.tippy-arrow:before{border-right-color:initial;border-width:8px 8px 8px 0;left:-7px;transform-origin:center right}.tippy-arrow{color:#333;height:16px;width:16px}.tippy-arrow:before{border-color:transparent;border-style:solid;content:\"\";position:absolute}.tippy-content{padding:5px 9px;position:relative;z-index:1}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}.tippy-box[data-theme~=sa11y-theme]{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-bg);border-radius:4px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15)!important;color:var(--sa11y-panel-primary);display:block;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px;outline:0;padding:8px;position:relative;transition-property:transform,visibility,opacity}.tippy-box[data-theme~=sa11y-theme] [lang]{min-width:280px}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace}.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);letter-spacing:normal;line-height:22px;padding:1.6px 4.8px}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]{text-align:center}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block-end:0;margin-block-start:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{display:list-item;margin:5px 10px 0 20px;padding-bottom:5px}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] a:hover{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin:0}.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:focus,.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}";
+  var tooltipStyles = "a,button,code,div,h1,h2,kbd,li,ol,p,span,strong,svg,ul{all:unset;box-sizing:border-box!important}div{display:block}:after,:before{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:0}.tippy-box[data-placement^=top]>.tippy-arrow:before{border-top-color:initial;border-width:8px 8px 0;bottom:-7px;left:0;transform-origin:center top}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:0}.tippy-box[data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:initial;border-width:0 8px 8px;left:0;top:-7px;transform-origin:center bottom}.tippy-box[data-placement^=left]>.tippy-arrow{right:0}.tippy-box[data-placement^=left]>.tippy-arrow:before{border-left-color:initial;border-width:8px 0 8px 8px;right:-7px;transform-origin:center left}.tippy-box[data-placement^=right]>.tippy-arrow{left:0}.tippy-box[data-placement^=right]>.tippy-arrow:before{border-right-color:initial;border-width:8px 8px 8px 0;left:-7px;transform-origin:center right}.tippy-arrow{color:#333;height:16px;width:16px}.tippy-arrow:before{border-color:transparent;border-style:solid;content:\"\";position:absolute}.tippy-content{padding:5px 9px;position:relative;z-index:1}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}.tippy-box[data-theme~=sa11y-theme]{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-bg);border-radius:4px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15)!important;color:var(--sa11y-panel-primary);display:block;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px;outline:0;padding:8px;position:relative;transition-property:transform,visibility,opacity}.tippy-box[data-theme~=sa11y-theme] [lang]{min-width:300px}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace}.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);letter-spacing:normal;line-height:22px;padding:1.6px 4.8px}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]{text-align:center}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block-end:0;margin-block-start:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{display:list-item;margin:5px 10px 0 20px;padding-bottom:5px}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] a:hover{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin:0}.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:focus,.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}";
 
   class TooltipComponent extends HTMLElement {
     connectedCallback() {
@@ -5773,12 +5839,17 @@
   };
 
   function keyboardShortcut(e) {
-    if ((e.altKey && e.code === 'KeyS') && Elements.Annotations.Array.length) {
-      e.preventDefault();
-      goToNext();
-    } else if ((e.altKey && e.code === 'KeyW') && Elements.Annotations.Array.length) {
-      e.preventDefault();
-      goToPrev();
+    if (
+      Elements.Annotations.Array.length
+      && !Constants.Panel.skipButton.hasAttribute('disabled')
+    ) {
+      if (e.altKey && e.code === 'KeyS') {
+        e.preventDefault();
+        goToNext();
+      } else if (e.altKey && e.code === 'KeyW') {
+        e.preventDefault();
+        goToPrev();
+      }
     }
   }
 
@@ -7894,17 +7965,6 @@
         Constants.Global.html.removeAttribute('data-sa11y-active');
 
         // Reset all data attributes.
-        const resetAttributes = (attributes) => {
-          attributes.forEach((attr) => {
-            const reset = find(
-              `[${attr}]`,
-              'document',
-            );
-            reset.forEach(($el) => {
-              $el.removeAttribute(attr);
-            });
-          });
-        };
         resetAttributes([
           'data-sa11y-parent',
           'data-sa11y-error',
@@ -7915,29 +7975,28 @@
           'data-sa11y-overflow',
           'data-sa11y-pulse-border',
           'data-sa11y-filter',
-        ]);
+        ], 'document');
 
         // Remove from page.
-        const remove = find(
-          `sa11y-annotation,
-        sa11y-heading-label,
-        sa11y-heading-anchor,
-        sa11y-tooltips,
-        [data-sa11y-readability-period],
-        [data-sa11y-clone-image-text],
-        .sa11y-css-utilities
-        `,
-          'document',
-        );
-        remove.forEach(($el) => $el.parentNode.removeChild($el));
+        remove([
+          'sa11y-annotation',
+          'sa11y-heading-label',
+          'sa11y-heading-anchor',
+          'sa11y-tooltips',
+          '[data-sa11y-readability-period]',
+          '[data-sa11y-clone-image-text]',
+          '.sa11y-css-utilities',
+        ], 'document');
 
         // Remove from panel.
-        Constants.Panel.panel.querySelectorAll(`
-        #page-errors .page-error,
-        #outline-list li,
-        #readability-details li
-      `).forEach(($el) => $el.parentNode.removeChild($el));
+        remove([
+          '#page-errors .page-error',
+          '#outline-list li',
+          '#readability-details li',
+        ], 'panel');
+
         Constants.Panel.readabilityInfo.innerHTML = '';
+
         // Remove any active alerts from panel.
         removeAlert();
 

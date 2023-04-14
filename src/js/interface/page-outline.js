@@ -79,15 +79,17 @@ export default function generatePageOutline(
       }
     }
 
-    // Append heading labels.
-    // If heading is in a hidden container, place the anchor just before it's most visible parent.
+    /**
+      * Append heading labels.
+    */
     const create = document.createElement('sa11y-heading-label');
+    const anchor = document.createElement('sa11y-heading-anchor');
     create.hidden = true;
 
+    // If heading is in a hidden container, place the anchor just before it's most visible parent.
     if (parent !== null) {
       $el.insertAdjacentElement('beforeend', create);
       const hiddenParent = parent.previousElementSibling;
-      const anchor = document.createElement('sa11y-heading-anchor');
       anchor.setAttribute('id', `sa11y-h${i}`);
       if (hiddenParent) {
         hiddenParent.insertAdjacentElement('beforebegin', anchor);
@@ -97,11 +99,15 @@ export default function generatePageOutline(
         parent.parentNode.setAttribute('data-sa11y-parent', `h${i}`);
       }
     } else {
-      // If the heading isn't hidden, then append id on visible label.
-      create.setAttribute('id', `sa11y-h${i}`);
+      // If the heading isn't hidden, append visible label.
       $el.insertAdjacentElement('beforeend', create);
+
+      // Create anchor above visible label.
+      create.insertAdjacentElement('beforebegin', anchor);
+      anchor.setAttribute('id', `sa11y-h${i}`);
     }
 
+    // Populate heading label.
     const content = document.createElement('span');
     content.classList.add('heading-label');
     content.innerHTML = `H${level}`;
@@ -133,11 +139,7 @@ export default function generatePageOutline(
       );
 
       const pulseAndScroll = (heading) => {
-        if (heading.tagName.toLowerCase() === 'sa11y-heading-label') {
-          Utils.addPulse(heading.parentElement);
-        } else {
-          Utils.addPulse(heading);
-        }
+        Utils.addPulse(heading.parentElement);
         heading.scrollIntoView({
           behavior: `${Constants.Global.scrollBehaviour}`,
           block: 'center',
