@@ -9,188 +9,100 @@ import postcss from 'postcss';
 import { existsSync } from 'fs';
 import { mkdir, writeFile } from 'fs/promises';
 import { dirname } from 'path';
+import pkg from './package.json';
+
+/**
+ * Reusable function to process SCSS files.
+ * @param {string} input - Input SCSS file path.
+ * @param {string} output - Output CSS file path.
+ * @param {string} outputMin - Output minified CSS file path.
+ * @returns {Promise<string>} - Empty string.
+ */
+const processSCSS = async (input, output, outputMin) => {
+  const result = await postcss().process(input, { from: undefined });
+  const path = `dist/css/${output}`;
+  const pathMin = `dist/css/${outputMin}`;
+
+  if (!existsSync(dirname(path))) {
+    await mkdir(dirname(path), { recursive: true });
+  }
+  await writeFile(path, result.css, { encoding: 'utf8' });
+
+  const minifiedResult = await postcss([cssnano]).process(result.css, { from: undefined });
+  if (!existsSync(dirname(pathMin))) {
+    await mkdir(dirname(pathMin), { recursive: true });
+  }
+  await writeFile(pathMin, minifiedResult.css, { encoding: 'utf8' });
+  return '';
+};
 
 export default [
-  // SCSS files
+  /* ********************* */
+  /*      SCSS files       */
+  /* ********************* */
   {
     input: 'src/scss/sa11y.scss',
-    plugins: [sass({
-      output: false,
-      processor: (css) => {
-        postcss()
-          .process(css, { from: undefined })
-          .then(async (result) => {
-            const path = 'dist/css/sa11y.css';
-            const pathMin = 'dist/css/sa11y.min.css';
-
-            if (!existsSync(dirname(path))) {
-              await mkdir(dirname(path), { recursive: true });
-            }
-            await writeFile(path, result.css, { encoding: 'utf8' });
-
-            postcss([cssnano])
-              .process(result.css, { from: undefined })
-              .then(async (result) => {
-                if (!existsSync(dirname(pathMin))) {
-                  await mkdir(dirname(pathMin), { recursive: true });
-                }
-                await writeFile(pathMin, result.css, { encoding: 'utf8' });
-              });
-          });
-        return '';
-      },
-    })],
+    plugins: [
+      sass({
+        output: false,
+        processor: (css) => processSCSS(css, 'sa11y.css', 'sa11y.min.css'),
+      }),
+    ],
   },
   // Control panel
   {
     input: 'src/scss/control-panel.scss',
-    plugins: [sass({
-      output: false,
-      processor: (css) => {
-        postcss()
-          .process(css, { from: undefined })
-          .then(async (result) => {
-            const path = 'dist/css/control-panel.css';
-            const pathMin = 'dist/css/control-panel.min.css';
-
-            if (!existsSync(dirname(path))) {
-              await mkdir(dirname(path), { recursive: true });
-            }
-            await writeFile(path, result.css, { encoding: 'utf8' });
-
-            postcss([cssnano])
-              .process(result.css, { from: undefined })
-              .then(async (result) => {
-                if (!existsSync(dirname(pathMin))) {
-                  await mkdir(dirname(pathMin), { recursive: true });
-                }
-                await writeFile(pathMin, result.css, { encoding: 'utf8' });
-              });
-          });
-        return '';
-      },
-    })],
+    plugins: [
+      sass({
+        output: false,
+        processor: (css) => processSCSS(css, 'control-panel.css', 'control-panel.min.css'),
+      }),
+    ],
   },
-  // Control panel
+  // Shared
   {
     input: 'src/scss/shared.scss',
-    plugins: [sass({
-      output: false,
-      processor: (css) => {
-        postcss()
-          .process(css, { from: undefined })
-          .then(async (result) => {
-            const path = 'dist/css/shared.css';
-            const pathMin = 'dist/css/shared.min.css';
-
-            if (!existsSync(dirname(path))) {
-              await mkdir(dirname(path), { recursive: true });
-            }
-            await writeFile(path, result.css, { encoding: 'utf8' });
-
-            postcss([cssnano])
-              .process(result.css, { from: undefined })
-              .then(async (result) => {
-                if (!existsSync(dirname(pathMin))) {
-                  await mkdir(dirname(pathMin), { recursive: true });
-                }
-                await writeFile(pathMin, result.css, { encoding: 'utf8' });
-              });
-          });
-        return '';
-      },
-    })],
+    plugins: [
+      sass({
+        output: false,
+        processor: (css) => processSCSS(css, 'shared.css', 'shared.min.css'),
+      }),
+    ],
   },
   // Annotations
   {
     input: 'src/scss/annotations.scss',
-    plugins: [sass({
-      output: false,
-      processor: (css) => {
-        postcss()
-          .process(css, { from: undefined })
-          .then(async (result) => {
-            const path = 'dist/css/annotations.css';
-            const pathMin = 'dist/css/annotations.min.css';
-
-            if (!existsSync(dirname(path))) {
-              await mkdir(dirname(path), { recursive: true });
-            }
-            await writeFile(path, result.css, { encoding: 'utf8' });
-
-            postcss([cssnano])
-              .process(result.css, { from: undefined })
-              .then(async (result) => {
-                if (!existsSync(dirname(pathMin))) {
-                  await mkdir(dirname(pathMin), { recursive: true });
-                }
-                await writeFile(pathMin, result.css, { encoding: 'utf8' });
-              });
-          });
-        return '';
-      },
-    })],
+    plugins: [
+      sass({
+        output: false,
+        processor: (css) => processSCSS(css, 'annotations.css', 'annotations.min.css'),
+      }),
+    ],
   },
-  // Annotations
+  // Tooltips
   {
     input: 'src/scss/tooltips.scss',
-    plugins: [sass({
-      output: false,
-      processor: (css) => {
-        postcss()
-          .process(css, { from: undefined })
-          .then(async (result) => {
-            const path = 'dist/css/tooltips.css';
-            const pathMin = 'dist/css/tooltips.min.css';
-
-            if (!existsSync(dirname(path))) {
-              await mkdir(dirname(path), { recursive: true });
-            }
-            await writeFile(path, result.css, { encoding: 'utf8' });
-
-            postcss([cssnano])
-              .process(result.css, { from: undefined })
-              .then(async (result) => {
-                if (!existsSync(dirname(pathMin))) {
-                  await mkdir(dirname(pathMin), { recursive: true });
-                }
-                await writeFile(pathMin, result.css, { encoding: 'utf8' });
-              });
-          });
-        return '';
-      },
-    })],
+    plugins: [
+      sass({
+        output: false,
+        processor: (css) => processSCSS(css, 'tooltips.css', 'tooltips.min.css'),
+      }),
+    ],
   },
   // Global utilies injected into all shadowDOMs
   {
     input: 'src/scss/global-utilities.scss',
-    plugins: [sass({
-      output: false,
-      processor: (css) => {
-        postcss()
-          .process(css, { from: undefined })
-          .then(async (result) => {
-            const path = 'dist/css/global-utilities.css';
-            const pathMin = 'dist/css/global-utilities.min.css';
-
-            if (!existsSync(dirname(path))) {
-              await mkdir(dirname(path), { recursive: true });
-            }
-            await writeFile(path, result.css, { encoding: 'utf8' });
-
-            postcss([cssnano])
-              .process(result.css, { from: undefined })
-              .then(async (result) => {
-                if (!existsSync(dirname(pathMin))) {
-                  await mkdir(dirname(pathMin), { recursive: true });
-                }
-                await writeFile(pathMin, result.css, { encoding: 'utf8' });
-              });
-          });
-        return '';
-      },
-    })],
+    plugins: [
+      sass({
+        output: false,
+        processor: (css) => processSCSS(css, 'global-utilities.css', 'global-utilities.min.css'),
+      }),
+    ],
   },
+
+  /* ********************* */
+  /*      Javascript       */
+  /* ********************* */
   // ES6 standalone files
   {
     input: 'src/js/sa11y.js',
@@ -204,9 +116,7 @@ export default [
     ],
     output: [
       { file: 'dist/js/sa11y.esm.js', format: 'esm' },
-      {
-        file: 'dist/js/sa11y.esm.min.js', format: 'esm', plugins: [terser()],
-      },
+      { file: 'dist/js/sa11y.esm.min.js', format: 'esm', plugins: [terser()] },
     ],
   },
   // UMD standalone files
@@ -222,12 +132,15 @@ export default [
     ],
     output: [
       { file: 'dist/js/sa11y.umd.js', format: 'umd', name: 'Sa11y' },
-      {
-        file: 'dist/js/sa11y.umd.min.js', format: 'umd', name: 'Sa11y', plugins: [terser()],
-      },
+      { file: 'dist/js/sa11y.umd.min.js', format: 'umd', name: 'Sa11y', plugins: [terser()] },
     ],
   },
-  // Language files
+
+  /* ********************* */
+  /*    Language files     */
+  /* ********************* */
+
+  // English
   {
     input: 'src/js/lang/en.js',
     plugins: [nodeResolve()],
@@ -242,6 +155,7 @@ export default [
       { file: 'dist/js/lang/en.umd.js', format: 'umd', name: 'Sa11yLangEn' },
     ],
   },
+
   // French
   {
     input: 'src/js/lang/fr.js',
@@ -257,6 +171,7 @@ export default [
       { file: 'dist/js/lang/fr.umd.js', format: 'umd', name: 'Sa11yLangFr' },
     ],
   },
+
   // Polish
   {
     input: 'src/js/lang/pl.js',
@@ -272,6 +187,7 @@ export default [
       { file: 'dist/js/lang/pl.umd.js', format: 'umd', name: 'Sa11yLangPl' },
     ],
   },
+
   // Ukrainian
   {
     input: 'src/js/lang/ua.js',
@@ -287,6 +203,7 @@ export default [
       { file: 'dist/js/lang/ua.umd.js', format: 'umd', name: 'Sa11yLangUa' },
     ],
   },
+
   // Swedish
   {
     input: 'src/js/lang/sv.js',
@@ -302,6 +219,7 @@ export default [
       { file: 'dist/js/lang/sv.umd.js', format: 'umd', name: 'Sa11yLangSv' },
     ],
   },
+
   // German
   {
     input: 'src/js/lang/de.js',
@@ -318,4 +236,22 @@ export default [
     ],
   },
 
+  /* ********************* */
+  /*      Bookmarklets     */
+  /* ********************* */
+  {
+    input: 'src/bookmarklet/sa11y-en.js',
+    plugins: [
+      nodeResolve(),
+      css(),
+      replace({
+        preventAssignment: true,
+        'process.env.NODE_ENV': JSON.stringify('production'),
+        Sa11yVersion: JSON.stringify(pkg.version),
+      }),
+    ],
+    output: [
+      { file: 'bookmarklet/sa11y-en-test.min.js', format: 'umd', name: 'Sa11y (English)', plugins: [terser()] },
+    ],
+  },
 ];
