@@ -45,6 +45,7 @@
       DEUTERANOPIA: 'Deutéranopie',
       TRITANOPIA: 'Tritanopie',
       ACHROMATOPSIA: 'Achromatopsie',
+      COLOUR_FILTER_MESSAGE: 'Recherchez les éléments difficiles à percevoir ou à distinguer des autres couleurs.',
 
       // Alternative text module stop words
       SUSPICIOUS_ALT_STOPWORDS: ['image', 'illustration', 'photo', 'photographie'],

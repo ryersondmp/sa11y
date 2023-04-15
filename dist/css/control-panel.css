@@ -261,6 +261,63 @@ button[data-sa11y-dismiss]:hover, button[data-sa11y-dismiss]:focus {
 /**
  * Main status & icons
  * ========================================================================= */
+#panel-colour-filters {
+  align-items: center;
+  color: var(--sa11y-panel-primary);
+  display: none;
+  font-family: var(--sa11y-font-face);
+  font-size: var(--sa11y-normal-text);
+  font-weight: 400;
+  line-height: 22px;
+}
+#panel-colour-filters.active {
+  display: flex;
+}
+#panel-colour-filters p {
+  padding: 6px;
+  width: 100%;
+}
+#panel-colour-filters[data-colour=protanopia] {
+  border-image: linear-gradient(94deg, rgb(120, 103, 25) 11%, rgb(224, 198, 0) 36%, rgb(224, 198, 0) 47%, rgb(0, 89, 227) 75%, rgb(0, 66, 170) 91%);
+  border-bottom: 6px solid transparent;
+  border-image-slice: 1;
+}
+#panel-colour-filters[data-colour=deuteranopia] {
+  border-image: linear-gradient(270deg, rgb(86, 127, 219) 0%, rgb(164, 162, 141) 48%, rgb(195, 173, 20) 69%, rgb(167, 149, 5) 100%);
+  border-bottom: 6px solid transparent;
+  border-image-slice: 1;
+}
+#panel-colour-filters[data-colour=tritanopia] {
+  border-image: linear-gradient(270deg, rgb(177, 80, 111) 0%, rgb(6, 150, 193) 35%, rgb(243, 169, 186) 70%, rgb(217, 28, 93) 87%, rgb(254, 1, 92) 100%);
+  border-bottom: 6px solid transparent;
+  border-image-slice: 1;
+}
+#panel-colour-filters[data-colour=achromatopsia] {
+  border-image: linear-gradient(270deg, rgb(0, 0, 0) 0%, rgb(167, 167, 167) 50%, rgb(0, 0, 0) 100%);
+  border-bottom: 6px solid transparent;
+  border-image-slice: 1;
+}
+#panel-colour-filters[data-colour=protanopia] .panel-icon {
+  background: var(--sa11y-error);
+}
+#panel-colour-filters[data-colour=deuteranopia] .panel-icon {
+  background: var(--sa11y-good-hover);
+}
+#panel-colour-filters[data-colour=tritanopia] .panel-icon {
+  background: var(--sa11y-hyperlink);
+}
+#panel-colour-filters[data-colour=achromatopsia] .panel-icon {
+  background: linear-gradient(90deg, rgb(56, 164, 89) 15%, rgb(211, 0, 23) 50%, rgb(0, 119, 200) 90%);
+}
+#panel-colour-filters .panel-icon {
+  height: 30px;
+  width: 30px;
+  margin-inline-end: 5px;
+  margin-inline-start: 10px;
+  mask: var(--sa11y-low-vision-icon) center no-repeat;
+  -webkit-mask: var(--sa11y-low-vision-icon) center no-repeat;
+}
+
 #panel-content {
   align-items: center;
   color: var(--sa11y-panel-primary);
@@ -575,7 +632,7 @@ button[data-sa11y-dismiss]:hover, button[data-sa11y-dismiss]:focus {
   -webkit-mask: var(--sa11y-setting-switch-off-svg) center no-repeat;
 }
 
-select {
+#colour-filter-select {
   border: 0;
   border-radius: 5px;
   box-shadow: 0 0 0 2px var(--sa11y-setting-switch-bg-off);
@@ -589,6 +646,10 @@ select {
   height: 25px;
   text-align: end;
   vertical-align: middle;
+}
+
+#colour-filter-select.active {
+  box-shadow: 0 0 0 2px var(--sa11y-setting-switch-bg-on);
 }
 
 #settings-options li {

@@ -275,6 +275,75 @@ button[data-sa11y-dismiss] {
 /**
  * Main status & icons
  * ========================================================================= */
+#panel-colour-filters {
+  align-items: center;
+  color: var(--sa11y-panel-primary);
+  display: none;
+  font-family: var(--sa11y-font-face);
+  font-size: var(--sa11y-normal-text);
+  font-weight: 400;
+  line-height: 22px;
+
+  &.active {
+    display: flex;
+  }
+
+  p {
+    padding: 6px;
+    width: 100%;
+  }
+
+  @mixin border-gradient {
+    border-bottom: 6px solid transparent;
+    border-image-slice: 1;
+  }
+
+  &[data-colour="protanopia"] {
+    border-image: linear-gradient(94deg, rgba(120, 103, 25, 1) 11%, rgba(224, 198, 0, 1) 36%, rgba(224, 198, 0, 1) 47%, rgba(0, 89, 227, 1) 75%, rgba(0, 66, 170, 1) 91%);
+    @include border-gradient;
+  }
+
+  &[data-colour="deuteranopia"] {
+    border-image: linear-gradient(270deg, rgba(86, 127, 219, 1) 0%, rgba(164, 162, 141, 1) 48%, rgba(195, 173, 20, 1) 69%, rgba(167, 149, 5, 1) 100%);
+    @include border-gradient;
+  }
+
+  &[data-colour="tritanopia"] {
+    border-image: linear-gradient(270deg, rgba(177, 80, 111, 1) 0%, rgba(6, 150, 193, 1) 35%, rgba(243, 169, 186, 1) 70%, rgba(217, 28, 93, 1) 87%, rgba(254, 1, 92, 1) 100%);
+    @include border-gradient;
+  }
+
+  &[data-colour="achromatopsia"] {
+    border-image: linear-gradient(270deg, rgba(0, 0, 0, 1) 0%, rgba(167, 167, 167, 1) 50%, rgba(0, 0, 0, 1) 100%);
+    @include border-gradient;
+  }
+
+  &[data-colour="protanopia"] .panel-icon {
+    background: var(--sa11y-error);
+  }
+
+  &[data-colour="deuteranopia"] .panel-icon {
+    background: var(--sa11y-good-hover);
+  }
+
+  &[data-colour="tritanopia"] .panel-icon {
+    background: var(--sa11y-hyperlink);
+  }
+
+  &[data-colour="achromatopsia"] .panel-icon {
+    background: linear-gradient(90deg, rgba(56, 164, 89, 1) 15%, rgba(211, 0, 23, 1) 50%, rgba(0, 119, 200, 1) 90%);
+  }
+
+  .panel-icon {
+    height: 30px;
+    width: 30px;
+    margin-inline-end: 5px;
+    margin-inline-start: 10px;
+    mask: var(--sa11y-low-vision-icon) center no-repeat;
+    -webkit-mask: var(--sa11y-low-vision-icon) center no-repeat;
+  }
+}
+
 #panel-content {
   align-items: center;
   color: var(--sa11y-panel-primary);
@@ -612,7 +681,7 @@ button[data-sa11y-dismiss] {
   }
 }
 
-select {
+#colour-filter-select {
   border: 0;
   border-radius: 5px;
   box-shadow: 0 0 0 2px var(--sa11y-setting-switch-bg-off);
@@ -626,6 +695,10 @@ select {
   height: 25px;
   text-align: end;
   vertical-align: middle;
+}
+
+#colour-filter-select.active {
+  box-shadow: 0 0 0 2px var(--sa11y-setting-switch-bg-on);
 }
 
 #settings-options li {

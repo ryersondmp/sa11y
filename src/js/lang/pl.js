@@ -39,6 +39,7 @@ export default {
     DEUTERANOPIA: 'Deuteranopia',
     TRITANOPIA: 'Tritanopia',
     ACHROMATOPSIA: 'Achromatopsja',
+    COLOUR_FILTER_MESSAGE: 'Sprawdź elementy, które są trudne do zauważenia lub odróżnienia od innych kolorów.',
 
     // Alternative text module stop words
     SUSPICIOUS_ALT_STOPWORDS: ['obraz', 'grafika', 'zdjęcie', 'rysunek', 'fotografia', 'foto', 'image', 'graphic', 'picture', 'photo'],

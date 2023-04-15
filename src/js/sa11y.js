@@ -368,6 +368,8 @@ class Sa11y {
       // Reset colour filters
       if (this.option.colourFilterPlugin === true) {
         Constants.Panel.colourFilterSelect.value = 0;
+        Constants.Panel.colourPanel.classList.remove('active');
+        Constants.Panel.colourFilterSelect.classList.remove('active');
       }
       // Main panel warning and error count.
       while (Constants.Panel.status.firstChild) Constants.Panel.status.removeChild(Constants.Panel.status.firstChild);

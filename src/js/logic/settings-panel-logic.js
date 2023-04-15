@@ -193,10 +193,26 @@ export default function settingsPanelToggles(checkAll, resetAll) {
           'sa11y-tooltips',
           'sa11y-heading-label',
         ], 'document');
+
         // Disable skip to issue button.
         Constants.Panel.skipButton.disabled = true;
+        Constants.Panel.pageErrors.innerHTML = '';
+
+        Constants.Panel.colourFilterSelect.classList.add('active');
+        Constants.Panel.colourPanel.classList.add('active');
+        Constants.Panel.colourPanel.setAttribute('data-colour', filters[option - 1]);
+
+        // Hide error/warning count.
+        Constants.Panel.content.classList.add('hide');
       } else {
         Constants.Global.Root.removeAttribute('data-sa11y-filter');
+
+        Constants.Panel.colourFilterSelect.classList.remove('active');
+        Constants.Panel.colourPanel.classList.remove('active');
+        Constants.Panel.colourPanel.removeAttribute('data-colour');
+
+        // Show error/warning count.
+        Constants.Panel.content.classList.remove('hide');
         resetAll(false);
         await checkAll();
       }

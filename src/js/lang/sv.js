@@ -39,6 +39,7 @@ export default {
     DEUTERANOPIA: 'Deuteranopia',
     TRITANOPIA: 'Tritanopia',
     ACHROMATOPSIA: 'Achromatopsia',
+    COLOUR_FILTER_MESSAGE: 'Kolla efter element som är svåra att uppfatta eller särskilja från andra färger.',
 
     // Alternative text module stop words
     SUSPICIOUS_ALT_STOPWORDS: ['bild', 'grafik', 'fotografi', 'foto'],

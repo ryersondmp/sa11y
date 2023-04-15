@@ -39,6 +39,7 @@ var ua = {
     DEUTERANOPIA: 'Девтеранопія',
     TRITANOPIA: 'Тританопія',
     ACHROMATOPSIA: 'Ахроматопсія',
+    COLOUR_FILTER_MESSAGE: 'Перевірте наявність елементів, які важко сприйняти або виділити на тлі інших кольорів.',
 
     // Alternative text module stop words
     SUSPICIOUS_ALT_STOPWORDS: ['зображення', 'графічний об’єкт', 'малюнок', 'фото'],

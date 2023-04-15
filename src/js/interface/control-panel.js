@@ -74,7 +74,7 @@ export default class ControlPanel extends HTMLElement {
     const colourFilterPlugin = (Constants.Global.colourFilterPlugin === true) ? `
       <li id="colour-filter-item">
         <label id="colour-filter-mode" for="colour-filter">${Lang._('COLOUR_FILTER')}</label>
-        <select id="colour-filter">
+        <select id="colour-filter-select">
           <option value="0">${Lang._('OFF')}</option>
           <option value="1">${Lang._('PROTANOPIA')}</option>
           <option value="2">${Lang._('DEUTERANOPIA')}</option>
@@ -82,6 +82,12 @@ export default class ControlPanel extends HTMLElement {
           <option value="4">${Lang._('ACHROMATOPSIA')}</option>
         </select>
       </li>` : '';
+
+    const colourFilterPanel = (Constants.Global.colourFilterPlugin === true) ? `
+      <div id="panel-colour-filters">
+        <div class="panel-icon"></div>
+        <p>${Lang._('COLOUR_FILTER_MESSAGE')}</p>
+      </div>` : '';
 
     /* MAIN CONTAINER */
     container.innerHTML = `
@@ -147,6 +153,8 @@ export default class ControlPanel extends HTMLElement {
         <p id="panel-alert-text"></p>
         <div id="panel-alert-preview"></div>
       </div>`
+
+      + `${colourFilterPanel}`
 
       // Main panel that conveys state of page.
       + `<div id="panel-content">

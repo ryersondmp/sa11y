@@ -39,6 +39,11 @@ var en = {
     DEUTERANOPIA: 'Deuteranopia',
     TRITANOPIA: 'Tritanopia',
     ACHROMATOPSIA: 'Achromatopsia',
+    RED_BLIND: 'Cannot see colour red.',
+    GREEN_BLIND: 'Cannot see colour green.',
+    BLUE_BLIND: 'Cannot see colour blue.',
+    MONO_BLIND: 'Cannot see red, blue, or green.',
+    COLOUR_FILTER_MESSAGE: 'Check for elements that are difficult to perceive or distinguish against other colours.',
 
     // Alternative text module stop words
     SUSPICIOUS_ALT_STOPWORDS: ['image', 'graphic', 'picture', 'photo'],

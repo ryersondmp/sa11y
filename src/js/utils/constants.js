@@ -77,9 +77,11 @@ const Constants = (function myConstants() {
     Panel.labelsItem = Sa11yPanel.getElementById('form-labels-item');
     Panel.linksItem = Sa11yPanel.getElementById('links-advanced-item');
     Panel.readabilityItem = Sa11yPanel.getElementById('readability-item');
+    Panel.darkModeItem = Sa11yPanel.getElementById('dark-mode-item');
 
+    Panel.colourPanel = Sa11yPanel.getElementById('panel-colour-filters');
     Panel.colourFilterItem = Sa11yPanel.getElementById('colour-filter-item');
-    Panel.colourFilterSelect = Sa11yPanel.getElementById('colour-filter');
+    Panel.colourFilterSelect = Sa11yPanel.getElementById('colour-filter-select');
 
     // Buttons
     Panel.toggle = Sa11yPanel.getElementById('toggle');
