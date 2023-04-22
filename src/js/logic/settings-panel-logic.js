@@ -1,5 +1,5 @@
 import Constants from '../utils/constants';
-import { store, remove, resetAttributes } from '../utils/utils';
+import { store, remove, resetAttributes, createAlert } from '../utils/utils';
 import Lang from '../utils/lang';
 
 export default function settingsPanelToggles(checkAll, resetAll) {
@@ -75,7 +75,7 @@ export default function settingsPanelToggles(checkAll, resetAll) {
   /**
    * Toggle: Readability
   */
-  if (Constants.Global.readabilityPlugin === true) {
+  if (Constants.Readability.Plugin === true) {
     Constants.Panel.readabilityToggle.onclick = async () => {
       if (store.getItem('sa11y-remember-readability') === 'On') {
         store.setItem('sa11y-remember-readability', 'Off');
@@ -97,8 +97,6 @@ export default function settingsPanelToggles(checkAll, resetAll) {
     if (store.getItem('sa11y-remember-readability') === 'On') {
       Constants.Panel.readability.classList.add('active');
     }
-  } else {
-    store.setItem('sa11y-remember-readability', 'Off');
   }
 
   /**
@@ -171,42 +169,63 @@ export default function settingsPanelToggles(checkAll, resetAll) {
   if (Constants.Global.colourFilterPlugin === true) {
     Constants.Panel.colourFilterSelect.addEventListener('change', async () => {
       const option = parseInt(Constants.Panel.colourFilterSelect.value, 10);
+
       const filters = [
         'protanopia',
         'deuteranopia',
         'tritanopia',
-        'achromatopsia',
+        'monochromacy',
       ];
+
+      const icons = [
+        Lang._('RED_EYE'),
+        Lang._('GREEN_EYE'),
+        Lang._('BLUE_EYE'),
+        Lang._('MONO_EYE'),
+      ];
+
       if (option >= 1 && option <= 4) {
-        Constants.Global.Root.setAttribute('data-sa11y-filter', filters[option - 1]);
-        // Remove page markup while filters are applied. Otherwise it may confuse content authors.
-        resetAttributes([
-          'data-sa11y-error',
-          'data-sa11y-warning',
-          'data-sa11y-good',
-          'data-sa11y-error-inline',
-          'data-sa11y-warning-inline',
-          'data-sa11y-overflow',
-        ], 'document');
-        remove([
-          'sa11y-annotation',
-          'sa11y-tooltips',
-          'sa11y-heading-label',
-        ], 'document');
+        if (window.matchMedia('(forced-colors: active)').matches) {
+          createAlert(Lang._('COLOUR_FILTER_HIGH_CONTRAST_MESSAGE'));
+        } else {
+          // Set attributes.
+          Constants.Global.Root.setAttribute('data-sa11y-filter', filters[option - 1]);
+          Constants.Panel.colourFilterIcon.setAttribute('aria-label', icons[option - 1]);
 
-        // Disable skip to issue button.
-        Constants.Panel.skipButton.disabled = true;
-        Constants.Panel.pageErrors.innerHTML = '';
+          // Remove page markup while filters are applied. Otherwise it may confuse content authors.
+          resetAttributes([
+            'data-sa11y-error',
+            'data-sa11y-warning',
+            'data-sa11y-good',
+            'data-sa11y-error-inline',
+            'data-sa11y-warning-inline',
+            'data-sa11y-overflow',
+          ], 'document');
+          remove([
+            'sa11y-annotation',
+            'sa11y-tooltips',
+            'sa11y-heading-label',
+          ], 'document');
 
-        Constants.Panel.colourFilterSelect.classList.add('active');
-        Constants.Panel.colourPanel.classList.add('active');
-        Constants.Panel.colourPanel.setAttribute('data-colour', filters[option - 1]);
+          // Disable skip to issue button.
+          Constants.Panel.skipButton.disabled = true;
+          Constants.Panel.pageIssues.classList.remove('active');
+          Constants.Panel.settingsContent.classList.add('hide-settings-border');
 
-        // Hide error/warning count.
-        Constants.Panel.content.classList.add('hide');
+          // Make panel visible.
+          Constants.Panel.colourFilterSelect.classList.add('active');
+          Constants.Panel.colourPanel.classList.add('active');
+          Constants.Panel.colourPanel.setAttribute('data-colour', filters[option - 1]);
+
+          // Hide error/warning count.
+          Constants.Panel.content.classList.add('hide');
+        }
       } else {
+        // Restore panel.
         Constants.Global.Root.removeAttribute('data-sa11y-filter');
+        Constants.Panel.settingsContent.classList.remove('hide-settings-border');
 
+        // Hide colour filter panel.
         Constants.Panel.colourFilterSelect.classList.remove('active');
         Constants.Panel.colourPanel.classList.remove('active');
         Constants.Panel.colourPanel.removeAttribute('data-colour');

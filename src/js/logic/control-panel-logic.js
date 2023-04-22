@@ -1,5 +1,5 @@
 import Constants from '../utils/constants';
-import { store } from '../utils/utils';
+import { store, isScrollable } from '../utils/utils';
 import Lang from '../utils/lang';
 
 // ----------------------------------------------------------------------
@@ -18,6 +18,7 @@ export default function initializePanelToggles() {
       const $headingAnnotations = document.querySelectorAll('sa11y-heading-label');
       // eslint-disable-next-line no-return-assign, no-param-reassign
       $headingAnnotations.forEach(($el) => $el.hidden = true);
+      isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
     } else {
       Constants.Panel.outlineToggle.classList.add('outline-active');
       Constants.Panel.outline.classList.add('active');
@@ -37,11 +38,7 @@ export default function initializePanelToggles() {
     Constants.Panel.settings.classList.remove('active');
     Constants.Panel.settingsToggle.classList.remove('settings-active');
     Constants.Panel.settingsToggle.setAttribute('aria-expanded', 'false');
-
-    // Keyboard accessibility fix for scrollable panel content.
-    if (Constants.Panel.outlineList.clientHeight > 250) {
-      Constants.Panel.outlineList.setAttribute('tabindex', '0');
-    }
+    isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
   });
 
   // Remember to leave outline open
@@ -49,6 +46,10 @@ export default function initializePanelToggles() {
     Constants.Panel.outlineToggle.classList.add('outline-active');
     Constants.Panel.outline.classList.add('active');
     Constants.Panel.outlineToggle.setAttribute('aria-expanded', 'true');
+
+    setTimeout(() => {
+      isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
+    }, 0);
   }
 
   // Show settings panel
@@ -84,6 +85,16 @@ export default function initializePanelToggles() {
       Constants.Panel.settingsContent.setAttribute('role', 'region');
     }
   });
+
+  // Accessibility: Skip link to Page Issues
+  Constants.Panel.skipToPageIssues.addEventListener('click', () => {
+    Constants.Panel.pageIssuesHeader.focus();
+  });
+
+  // Page issues: add gradient if scrollable list.
+  setTimeout(() => {
+    isScrollable(Constants.Panel.pageIssuesList, Constants.Panel.pageIssuesContent);
+  }, 0);
 
   // Enhanced keyboard accessibility for panel.
   Constants.Panel.controls.addEventListener('keydown', (e) => {

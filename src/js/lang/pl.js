@@ -14,6 +14,7 @@ export default {
     ALERT_TEXT: 'Alert',
     ALERT_CLOSE: 'Zamknij',
     OUTLINE: 'Konspekt strony',
+    PAGE_ISSUES: 'Problemy ze stroną',
     SETTINGS: 'Ustawienia',
     CONTRAST: 'Kontrast',
     FORM_LABELS: 'Etykiety formularzy',
@@ -32,14 +33,20 @@ export default {
     PANEL_DISMISS_BUTTON: 'Pokaż %(dismissCount) odrzucone ostrzeżenia',
     DISMISS: 'Odrzucać',
     DISMISSED: 'Odrzucone ostrzeżenia',
+    SKIP_TO_PAGE_ISSUES: 'Przejdź do problemów ze stroną',
 
     // Color filters
     COLOUR_FILTER: 'Filtr kolorów',
     PROTANOPIA: 'Protanopia',
     DEUTERANOPIA: 'Deuteranopia',
     TRITANOPIA: 'Tritanopia',
-    ACHROMATOPSIA: 'Achromatopsja',
+    MONOCHROMACY: 'Monochromatyzm',
     COLOUR_FILTER_MESSAGE: 'Sprawdź elementy, które są trudne do zauważenia lub odróżnienia od innych kolorów.',
+    RED_EYE: 'Ślepota na kolor czerwony.',
+    GREEN_EYE: 'Ślepota na kolor zielony.',
+    BLUE_EYE: 'Ślepota na kolor niebieski.',
+    MONO_EYE: 'Ślepota na kolor czerwony, zielony i niebieski.',
+    COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Filtry kolorów nie działają w trybie wysokiego kontrastu.',
 
     // Alternative text module stop words
     SUSPICIOUS_ALT_STOPWORDS: ['obraz', 'grafika', 'zdjęcie', 'rysunek', 'fotografia', 'foto', 'image', 'graphic', 'picture', 'photo'],

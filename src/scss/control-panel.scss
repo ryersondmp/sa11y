@@ -1,6 +1,6 @@
-/**
- * Global reset: Keep specificity high to avoid conflicting CSS.
- * ========================================================================= */
+/* ************************************* */
+/*          1. CSS Reset                    */
+/* ************************************* */
 h1,
 h2,
 div,
@@ -33,8 +33,8 @@ div {
 
 * {
   font-family: var(--sa11y-font-face) !important;
-  line-height: 22px !important;
   -webkit-font-smoothing: auto !important;
+  line-height: 22px !important;
 }
 
 p,
@@ -44,34 +44,50 @@ li,
 label {
   font-size: var(--sa11y-normal-text);
   font-weight: normal;
-  word-break: normal;
   letter-spacing: normal;
+  word-break: normal;
 }
 
 .sa11y-overflow {
   overflow: auto;
 }
 
-/**
- * Main toggle
- * ========================================================================= */
+/* ************************************* */
+/*          2. Main toggle               */
+/* ************************************* */
 #toggle {
-  background-image: linear-gradient(to top, #e040fb, #00bcd4);
+  background: linear-gradient(to top, #e040fb, #00bcd4);
+  background-color: var(--sa11y-blue); // Fallback colour.
   background-size: 150% 150%;
-  border: 0;
-  border-radius: 50px;
+  border-radius: 50%;
   bottom: 15px;
   color: white;
   cursor: pointer;
+  height: 55px;
+  inset-inline-end: 18px;
   margin: 0;
   overflow: visible;
-  padding: 10px;
   position: fixed;
-  inset-inline-end: 18px;
-  width: 55px;
-  height: 55px;
   transition: all 0.2s ease-in-out;
+  width: 55px;
   z-index: 2147483644;
+
+  @media screen and (forced-colors: active) {
+    border: 2px solid transparent;
+  }
+
+  svg {
+    width: 35px;
+    height: 35px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+
+    path {
+      fill: var(--sa11y-panel-bg);
+    }
+  }
 
   &:hover,
   &:focus {
@@ -87,30 +103,30 @@ label {
     animation: none;
   }
 
-  svg path {
-    fill: var(--sa11y-panel-bg);
-  }
-
   &.on {
-    background-image: linear-gradient(to bottom, #e040fb, #00bcd4);
+    background: linear-gradient(to bottom, #e040fb, #00bcd4);
+    background-color: var(--sa11y-blue);
   }
 }
 
-/* Notification badge */
+/* ************************************* */
+/*        3. Notification badge          */
+/* ************************************* */
 #notification-badge {
-  justify-content: center;
   align-items: center;
   background-color: #EB0000;
   border-radius: 100px;
   color: #ffffff;
   display: none;
-  font-weight: normal;
   font-size: 13px;
+  font-weight: normal;
   height: 20px;
+  justify-content: center;
   position: absolute;
   right: -3px;
   top: -3px;
   width: 20px;
+  border: 1px solid transparent;
 
   &.notification-badge-warning {
     background-color: var(--sa11y-warning-hover);
@@ -119,9 +135,9 @@ label {
   }
 }
 
-/**
- * Main panel
- * ========================================================================= */
+/* ************************************* */
+/*            4. Main panel              */
+/* ************************************* */
 #panel {
   background: var(--sa11y-panel-bg);
   border-radius: 4px;
@@ -129,28 +145,99 @@ label {
   box-shadow: 0 0 20px 4px rgba(154, 161, 177, 0.15),
     0 4px 80px -8px rgba(36, 40, 47, 0.25),
     0 4px 4px -2px rgba(91, 94, 105, 0.15);
+  inset-inline-end: 42px;
   opacity: 0;
   overflow: visible;
   position: fixed;
-  inset-inline-end: 42px;
+  transform: scale(0);
   transform-origin: 100% 100%;
   transition: transform 0.2s, opacity 0.2s;
-  transform: scale(0);
+  transition: background 0.2s;
   visibility: hidden;
   width: 345px;
-  transition: background 0.2s;
   z-index: 2147483643;
 
   &.active {
     height: auto;
     opacity: 1;
-    visibility: visible;
     transform: scale(1);
-    transition: transform .2s, opacity .2s;
     transform-origin: bottom right;
+    transition: transform .2s, opacity .2s;
+    visibility: visible;
+  }
+
+  @media screen and (forced-colors: active) {
+    border: 2px solid transparent;
   }
 }
 
+[dir=rtl] #panel.active {
+  transform-origin: bottom left !important;
+}
+
+/* ************************************* */
+/*            5. Panel alerts            */
+/* ************************************* */
+#panel-alert {
+  display: none;
+  opacity: 0;
+
+  &.active {
+    display: block;
+    opacity: 1;
+  }
+}
+
+#panel-alert-content {
+  align-items: center;
+  border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
+  color: var(--sa11y-panel-primary);
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 15px 20px 15px 15px;
+  position: relative;
+}
+
+#panel-alert-preview .close-tooltip {
+  display: none;
+}
+
+#panel-alert-preview,
+#panel-alert-text {
+  font-family: var(--sa11y-font-face);
+  font-size: var(--sa11y-normal-text);
+  font-weight: normal;
+  line-height: 22px;
+}
+
+.panel-alert-preview {
+  background: var(--sa11y-panel-bg-secondary);
+  border: 1px dashed var(--sa11y-panel-bg-splitter);
+  border-radius: 5px;
+  margin-top: 15px;
+  padding: 10px;
+}
+
+/* Dismiss button for issues */
+button[data-sa11y-dismiss] {
+  background: var(--sa11y-panel-bg);
+  border: 1px solid var(--sa11y-button-outline);
+  border-radius: 5px;
+  color: var(--sa11y-panel-primary);
+  cursor: pointer;
+  display: block;
+  margin: 10px 5px 5px 0;
+  padding: 4px 8px;
+
+  &:hover,
+  &:focus {
+    background: var(--sa11y-shortcut-hover);
+  }
+}
+
+/* ************************************* */
+/*          6. General styles            */
+/* ************************************* */
 h2 {
   display: block;
   font-size: var(--sa11y-large-text);
@@ -165,8 +252,8 @@ strong {
 a:not(#outline-list a) {
   border-bottom: 0;
   color: var(--sa11y-hyperlink);
-  text-decoration: underline;
   cursor: pointer;
+  text-decoration: underline;
 }
 
 a:hover,
@@ -174,107 +261,444 @@ a:focus {
   text-decoration: none;
 }
 
-#panel-controls {
+hr {
+  background: var(--sa11y-panel-bg-splitter);
+  border: none;
+  height: 1px;
+  margin: 10px 0;
+  opacity: 1;
+  padding: 0;
+}
+
+/* ******************************************** */
+/*  7. Base styling for dismiss & skip buttons  */
+/* ******************************************** */
+#dismiss-button,
+#skip-button {
+  background: var(--sa11y-panel-bg-secondary);
+  border-radius: 50px;
+  border: 1px solid var(--sa11y-button-outline);
+  cursor: pointer;
+  display: none;
+  height: 36px;
+  margin-inline-end: 8px;
+  margin-inline-start: 2px;
+  overflow: visible;
+  position: relative;
+  text-align: center;
+  transition: all 0.1s ease-in-out;
+  width: 36px;
+
+  &.active {
+    display: block;
+  }
+
+  &:disabled {
+    background: none;
+    box-shadow: none;
+    cursor: default;
+  }
+
+  &:before {
+    bottom: -5px;
+    content: "";
+    left: -5px;
+    position: absolute;
+    right: -5px;
+    top: -5px;
+  }
+
+  &:hover:not(:disabled),
+  &:focus:not(:disabled) {
+    background-color: var(--sa11y-shortcut-hover);
+  }
+}
+
+/* Dismiss button */
+.dismiss-icon {
+  background: var(--sa11y-setting-switch-bg-off);
+  display: inline-block;
+  height: 24px;
+  margin-bottom: -4px;
+  mask: var(--sa11y-dismiss-icon) center no-repeat;
+  -webkit-mask: var(--sa11y-dismiss-icon) center no-repeat;
+  width: 24px;
+}
+
+@media screen and (forced-colors: active) {
+  .dismiss-icon {
+    filter: invert(1);
+  }
+}
+
+/* ***************************************** */
+/*  8. Panel status, Skip To Issue, Dismiss  */
+/* ***************************************** */
+#panel-content {
+  align-items: center;
+  color: var(--sa11y-panel-primary);
   display: flex;
+  padding: 6px 6px 6px 6px;
+
+  &.errors .panel-icon,
+  &.good .panel-icon,
+  &.warnings .panel-icon {
+    height: 34px;
+    width: 34px;
+  }
+
+  &.errors .panel-icon {
+    background: var(--sa11y-panel-error);
+    mask: var(--sa11y-error-svg) center no-repeat;
+    -webkit-mask: var(--sa11y-error-svg) center no-repeat;
+    margin-top: -2px;
+  }
+
+  &.good .panel-icon {
+    background: var(--sa11y-good);
+    mask: var(--sa11y-good-svg) center no-repeat;
+    -webkit-mask: var(--sa11y-good-svg) center no-repeat;
+  }
+
+  &.warnings .panel-icon {
+    background: var(--sa11y-warning-svg-color);
+    mask: var(--sa11y-warning-svg) center no-repeat;
+    -webkit-mask: var(--sa11y-warning-svg) center no-repeat;
+    transform: scaleX(var(--sa11y-icon-direction));
+  }
+
+  @media screen and (forced-colors: active) {
+
+    &.errors .panel-icon,
+    &.good .panel-icon,
+    &.warnings .panel-icon {
+      filter: invert(1)
+    }
+  }
+}
+
+#status {
+  color: var(--sa11y-panel-primary);
+  font-size: var(--sa11y-large-text);
+}
+
+.panel-count {
+  background-color: var(--sa11y-panel-badge);
+  border-radius: 4px;
+  color: var(--sa11y-panel-primary);
+  font-size: 15px;
+  font-weight: normal;
+  margin-left: 3px;
+  margin-right: 3px;
+  padding: 2px 4px;
+}
+
+/* ***************************************** */
+/*   9. Outline and Settings shared styles   */
+/* ***************************************** */
+#page-issues,
+#settings-panel,
+#outline-panel {
+  color: var(--sa11y-panel-primary);
+  display: none;
+  opacity: 0;
+}
+
+#page-issues.active,
+#settings-panel.active,
+#outline-panel.active {
+  display: block;
+  opacity: 1;
+}
+
+.panel-header {
+  padding: 10px 15px 0 15px;
+}
+
+#page-issues-content,
+#settings-content,
+#outline-content {
+  border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
+  padding: 0 15px 10px 15px;
+}
+
+#page-issues-content {
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+#outline-content {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+#settings-panel .sa11y-red-text,
+#outline-panel .outline-list-item.sa11y-red-text {
+  color: var(--sa11y-red-text);
+}
+
+/* ***************************************** */
+/*          10. Page Outline list            */
+/* ***************************************** */
+#outline-list {
+  display: block;
+  margin: 0;
+  padding: 0;
+
+  a {
+    cursor: pointer;
+    display: block;
+    text-decoration: none;
+  }
+
+  li {
+    display: block;
+    list-style-type: none;
+    margin-bottom: 3px;
+    margin-top: 0;
+    padding: 0;
+  }
+
+  li:first-child {
+    margin-top: 5px;
+  }
+
+  li a:hover,
+  li a:focus {
+    background: var(--sa11y-panel-outline-hover);
+    border-radius: 5px;
+    box-shadow: 0 0 0 2px var(--sa11y-panel-outline-hover);
+    display: block;
+  }
+
+  .outline-2 {
+    margin-inline-start: 15px;
+  }
+
+  .outline-3 {
+    margin-inline-start: 30px;
+  }
+
+  .outline-4 {
+    margin-inline-start: 45px;
+  }
+
+  .outline-5 {
+    margin-inline-start: 60px;
+  }
+
+  .outline-6 {
+    margin-inline-start: 75px;
+  }
+}
+
+/* **************************************** */
+/*         11. Page Outline extras          */
+/* **************************************** */
+
+/* Badges */
+.badge {
+  background-color: var(--sa11y-panel-badge);
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: var(--sa11y-panel-primary);
+  display: inline;
+  font-size: 13px;
+  font-weight: 700;
+  min-width: 10px;
+  padding: 2px 5px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.error-badge {
+  background: var(--sa11y-error);
+  color: var(--sa11y-error-text);
+}
+
+.warning-badge {
+  background: var(--sa11y-yellow-text);
+  color: var(--sa11y-panel-bg);
+}
+
+/* Hidden icon */
+.hidden-icon {
+  background: var(--sa11y-panel-primary);
+  display: inline-block;
+  height: 16px;
+  margin-bottom: -3px;
+  mask: var(--sa11y-hidden-icon-svg) center no-repeat;
+  -webkit-mask: var(--sa11y-hidden-icon-svg) center no-repeat;
+  width: 16px;
+}
+
+.error-badge .hidden-icon {
+  background: var(--sa11y-error-text);
+}
+
+.warning-badge .hidden-icon {
+  background: var(--sa11y-panel-bg);
+}
+
+@media screen and (forced-colors: active) {
+  .hidden-icon {
+    filter: invert(1);
+  }
+}
+
+/* ***************************************** */
+/*    12. Page Outline & Settings toggles    */
+/* ***************************************** */
+#panel-controls {
   border-radius: 0px 0px 4px 4px;
+  display: flex;
   overflow: hidden;
+}
+
+#settings-toggle,
+#outline-toggle {
+  background: var(--sa11y-panel-bg-secondary);
+  background-color: var(--sa11y-panel-bg-secondary);
+  border-bottom: 0;
+  border-inline-end: 1px solid var(--sa11y-panel-bg-splitter);
+  border-top: 1px solid var(--sa11y-panel-bg-splitter);
+  color: var(--sa11y-panel-secondary);
+  cursor: pointer;
+  display: block;
+  font-size: var(--sa11y-normal-text);
+  font-weight: 400;
+  height: 30px;
+  line-height: 0;
+  margin: 0;
+  opacity: 1;
+  outline: 0;
+  padding: 0;
+  position: relative;
+  text-align: center;
+  transition: background 0.2s;
+  width: 100%;
+
+  /* Accessibility: Increase target size. */
+  &:before {
+    bottom: -8px;
+    content: '';
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: -7px;
+  }
+
+  &:hover,
+  &.settings-active,
+  &.outline-active {
+    background-color: var(--sa11y-shortcut-hover);
+  }
+
+  &.settings-active,
+  &.outline-active {
+    font-weight: 500;
+  }
 }
 
 label {
   color: var(--sa11y-panel-primary);
+  cursor: pointer;
   display: inline-block;
   font-weight: normal;
   margin: 0;
   width: 100%;
-  cursor: pointer;
 }
 
-[dir=rtl] #panel.active {
-  transform-origin: bottom left !important;
-}
+/* ***************************************** */
+/*           13. Settings Panel              */
+/* ***************************************** */
+#settings-panel {
+  .switch {
+    background: none;
+    border: 0;
+    border-radius: 5px;
+    color: var(--sa11y-panel-primary);
+    cursor: pointer;
+    font-size: var(--sa11y-normal-text);
+    font-weight: normal;
+    height: 44px;
+    margin: 0;
+    padding: 7px 10px;
+    position: relative;
+    text-align: end;
+    width: 105px;
 
-/**
- * Page alerts (previously full width page banners)
- * ========================================================================= */
-#page-errors {
-  align-items: center;
-  color: var(--sa11y-panel-primary);
-}
+    &[aria-pressed="true"]:after,
+    &[aria-pressed="false"]:after {
+      content: "";
+      display: inline-block;
+      height: 27px;
+      margin: 0 4px 4px 4px;
+      vertical-align: middle;
+      width: 27px;
+    }
 
-.page-error {
-  border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
-  font-size: var(--sa11y-normal-text);
-  font-weight: normal;
-  font-family: var(--sa11y-font-face);
-  line-height: 22px;
-  display: block;
-  margin: 5px;
-  padding: 10px;
+    &[aria-pressed="true"]:after {
+      background: var(--sa11y-setting-switch-bg-on);
+      mask: var(--sa11y-setting-switch-on-svg) center no-repeat;
+      -webkit-mask: var(--sa11y-setting-switch-on-svg) center no-repeat;
+    }
 
-  &[tabindex='-1']:focus {
-    box-shadow: 0 0 0 5px var(--sa11y-focus-color) !important;
+    &[aria-pressed="false"]:after {
+      background: var(--sa11y-setting-switch-bg-off);
+      mask: var(--sa11y-setting-switch-off-svg) center no-repeat;
+      -webkit-mask: var(--sa11y-setting-switch-off-svg) center no-repeat;
+    }
+
+    @media screen and (forced-colors: active) {
+
+      &[aria-pressed="false"]:after,
+      &[aria-pressed="true"]:after {
+        filter: invert(1);
+      }
+    }
+  }
+
+  #settings-options li {
+    align-items: center;
+    border-bottom: 1px solid;
+    border-color: var(--sa11y-panel-bg-splitter);
+    display: flex;
+    justify-content: space-between;
+    list-style-type: none;
+    padding: 1px 0 1px 0;
+
+    &:last-child {
+      border: none;
+    }
   }
 }
 
-/**
- * Panel alerts
- * ========================================================================= */
-#panel-alert {
-  border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
+/* ************************************* */
+/*            14. Page issues            */
+/* ************************************* */
+#page-issues {
   align-items: center;
   color: var(--sa11y-panel-primary);
-  padding: 15px 20px 15px 15px;
-  max-height: 200px;
-  overflow-y: auto;
-  display: none;
-  opacity: 0;
+}
 
-  &.active {
+#page-issues-list {
+  display: block;
+  margin-top: 4px;
+
+  li {
     display: block;
-    opacity: 1;
+    margin: 0 0 10px;
+  }
+
+  strong {
+    display: block;
   }
 }
 
-#panel-alert-preview .close-tooltip {
-  display: none;
-}
-
-#panel-alert-preview,
-#panel-alert-text {
-  font-size: var(--sa11y-normal-text);
-  font-weight: normal;
-  font-family: var(--sa11y-font-face);
-  line-height: 22px;
-}
-
-.panel-alert-preview {
-  background: var(--sa11y-panel-bg-secondary);
-  border: 1px dashed var(--sa11y-panel-bg-splitter);
-  border-radius: 5px;
-  padding: 10px;
-  margin-top: 15px;
-}
-
-/* Dismiss button for issues */
-button[data-sa11y-dismiss] {
-  background: var(--sa11y-panel-bg);
-  border: 1px solid var(--sa11y-button-outline);
-  border-radius: 5px;
-  color: var(--sa11y-panel-primary);
-  display: block;
-  margin: 10px 5px 5px 0;
-  cursor: pointer;
-  padding: 4px 8px;
-
-  &:hover,
-  &:focus {
-    background: var(--sa11y-shortcut-hover);
-  }
-}
-
-/**
- * Main status & icons
- * ========================================================================= */
+/* ************************************* */
+/*      15. Colour filters plugin        */
+/* ************************************* */
 #panel-colour-filters {
   align-items: center;
   color: var(--sa11y-panel-primary);
@@ -313,13 +737,13 @@ button[data-sa11y-dismiss] {
     @include border-gradient;
   }
 
-  &[data-colour="achromatopsia"] {
+  &[data-colour="monochromacy"] {
     border-image: linear-gradient(270deg, rgba(0, 0, 0, 1) 0%, rgba(167, 167, 167, 1) 50%, rgba(0, 0, 0, 1) 100%);
     @include border-gradient;
   }
 
   &[data-colour="protanopia"] .panel-icon {
-    background: var(--sa11y-error);
+    background: var(--sa11y-panel-error);
   }
 
   &[data-colour="deuteranopia"] .panel-icon {
@@ -327,372 +751,40 @@ button[data-sa11y-dismiss] {
   }
 
   &[data-colour="tritanopia"] .panel-icon {
-    background: var(--sa11y-hyperlink);
+    background: var(--sa11y-blue);
   }
 
-  &[data-colour="achromatopsia"] .panel-icon {
-    background: linear-gradient(90deg, rgba(56, 164, 89, 1) 15%, rgba(211, 0, 23, 1) 50%, rgba(0, 119, 200, 1) 90%);
+  &[data-colour="monochromacy"] .panel-icon {
+    background: linear-gradient(90deg, rgba(56, 164, 89, 1) 20%, red 50%, rgba(0, 119, 200, 1) 80%);
   }
 
   .panel-icon {
     height: 30px;
-    width: 30px;
     margin-inline-end: 5px;
     margin-inline-start: 10px;
     mask: var(--sa11y-low-vision-icon) center no-repeat;
     -webkit-mask: var(--sa11y-low-vision-icon) center no-repeat;
-  }
-}
-
-#panel-content {
-  align-items: center;
-  color: var(--sa11y-panel-primary);
-  display: flex;
-  padding: 6px 6px 6px 6px;
-
-  &.errors .panel-icon,
-  &.good .panel-icon,
-  &.warnings .panel-icon {
-    height: 35px;
-    width: 35px;
+    width: 30px;
   }
 
-  &.errors .panel-icon {
-    background: var(--sa11y-panel-error);
-    mask: var(--sa11y-error-svg) center no-repeat;
-    -webkit-mask: var(--sa11y-error-svg) center no-repeat;
-  }
-
-  &.good .panel-icon {
-    background: var(--sa11y-good);
-    mask: var(--sa11y-good-svg) center no-repeat;
-    -webkit-mask: var(--sa11y-good-svg) center no-repeat;
-  }
-
-  &.warnings .panel-icon {
-    background: var(--sa11y-warning-svg-color);
-    mask: var(--sa11y-warning-svg) center no-repeat;
-    -webkit-mask: var(--sa11y-warning-svg) center no-repeat;
-    transform: scaleX(var(--sa11y-icon-direction));
-  }
-}
-
-#status {
-  color: var(--sa11y-panel-primary);
-  font-size: var(--sa11y-large-text);
-}
-
-.panel-count {
-  background-color: var(--sa11y-panel-badge);
-  color: var(--sa11y-panel-primary);
-  font-weight: normal;
-  font-size: 15px;
-  margin-left: 4px;
-  margin-right: 4px;
-  border-radius: 4px;
-  padding: 2px 5px;
-}
-
-.dismiss-icon {
-  height: 24px;
-  width: 24px;
-  margin-bottom: -4px;
-  display: inline-block;
-  background: var(--sa11y-setting-switch-bg-off);
-  mask: var(--sa11y-dismiss-icon) center no-repeat;
-  -webkit-mask: var(--sa11y-dismiss-icon) center no-repeat;
-}
-
-/* Jump to issue button */
-#dismiss-button,
-#skip-button {
-  background: var(--sa11y-panel-bg-secondary);
-  border: 0;
-  border-radius: 50px;
-  box-shadow: 0 0 0 1px var(--sa11y-button-outline);
-  cursor: pointer;
-  display: none;
-  overflow: visible;
-  position: relative;
-  width: 35px;
-  height: 35px;
-  margin-inline-start: 2px;
-  margin-inline-end: 10px;
-  text-align: center;
-  transition: all 0.1s ease-in-out;
-
-  &.active {
-    display: block;
-  }
-
-  &:disabled {
-    box-shadow: none;
-    background: none;
-    cursor: default;
-  }
-
-  &:before {
-    content: "";
-    left: -7px;
-    right: -7px;
-    bottom: -7px;
-    top: -7px;
-    position: absolute;
-  }
-
-  &:hover:not(:disabled),
-  &:focus:not(:disabled) {
-    background-color: var(--sa11y-shortcut-hover);
-  }
-}
-
-/**
- * Outline and settings Panel: Shared Styles
- * ========================================================================= */
-#settings-panel,
-#outline-panel {
-  color: var(--sa11y-panel-primary);
-  display: none;
-  opacity: 0;
-}
-
-#settings-panel.active,
-#outline-panel.active {
-  display: block;
-  opacity: 1;
-}
-
-.panel-header {
-  padding: 10px 15px 0 15px;
-}
-
-#settings-content,
-#outline-content {
-  border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
-  padding: 0 15px 10px 15px;
-}
-
-#outline-content {
-  max-height: 250px;
-  overflow-y: auto;
-}
-
-#settings-panel .sa11y-red-text,
-#outline-panel .outline-list-item.sa11y-red-text {
-  color: var(--sa11y-red-text);
-}
-
-/**
- * Page Outline panel
- * ========================================================================= */
-
-/* Badges */
-.badge {
-  background-color: var(--sa11y-panel-badge);
-  border-radius: 10px;
-  color: var(--sa11y-panel-primary);
-  display: inline;
-  font-size: 13px;
-  font-weight: 700;
-  min-width: 10px;
-  padding: 2px 5px;
-  text-align: center;
-  white-space: nowrap;
-}
-
-.error-badge {
-  background: var(--sa11y-error);
-  color: var(--sa11y-error-text);
-}
-
-.warning-badge {
-  background: var(--sa11y-yellow-text);
-  color: var(--sa11y-panel-bg);
-}
-
-/* Hidden icon */
-.hidden-icon {
-  height: 16px;
-  width: 16px;
-  margin-bottom: -3px;
-  display: inline-block;
-  background: var(--sa11y-panel-primary);
-  mask: var(--sa11y-hidden-icon-svg) center no-repeat;
-  -webkit-mask: var(--sa11y-hidden-icon-svg) center no-repeat;
-}
-
-.error-badge .hidden-icon {
-  background: var(--sa11y-error-text);
-}
-
-.warning-badge .hidden-icon {
-  background: var(--sa11y-panel-bg);
-}
-
-/* Missing Heading 1*/
-.missing-h1 {
-  margin: 0 15px 0 15px;
-  padding: 2px;
-  border: 2px dashed var(--sa11y-red-text);
-}
-
-
-/* Page outline list */
-#outline-list {
-  display: block;
-  margin: 0;
-  padding: 0;
-
-  li {
-    display: block;
-    list-style-type: none;
-    margin-bottom: 3px;
-    margin-top: 0;
-    padding: 0;
-  }
-
-  li:first-child {
-    margin-top: 5px;
-  }
-
-  a {
-    text-decoration: none;
-    display: block;
-    cursor: pointer;
-  }
-
-  li a:hover,
-  li a:focus {
-    background: var(--sa11y-panel-outline-hover);
-    box-shadow: 0 0 0 2px var(--sa11y-panel-outline-hover);
-    border-radius: 5px;
-    display: block;
-  }
-
-  .outline-2 {
-    margin-inline-start: 15px;
-  }
-
-  .outline-3 {
-    margin-inline-start: 30px;
-  }
-
-  .outline-4 {
-    margin-inline-start: 45px;
-  }
-
-  .outline-5 {
-    margin-inline-start: 60px;
-  }
-
-  .outline-6 {
-    margin-inline-start: 75px;
-  }
-}
-
-/**
- * Setting & Outline toggles
- * ========================================================================= */
-#settings-toggle,
-#outline-toggle {
-  background: var(--sa11y-panel-bg-secondary);
-  background-color: var(--sa11y-panel-bg-secondary);
-  border-bottom: 0;
-  border-top: 1px solid var(--sa11y-panel-bg-splitter);
-  border-inline-end: 1px solid var(--sa11y-panel-bg-splitter);
-  color: var(--sa11y-panel-secondary);
-  cursor: pointer;
-  display: block;
-  font-size: var(--sa11y-normal-text);
-  font-weight: 400;
-  height: 30px;
-  line-height: 0;
-  margin: 0;
-  opacity: 1;
-  outline: 0;
-  padding: 0;
-  position: relative;
-  width: 100%;
-  transition: background 0.2s;
-  text-align: center;
-
-  /* Accessibility: Increase target size. */
-  &:before {
-    position: absolute;
-    content: '';
-    top: -7px;
-    bottom: -8px;
-    left: 0;
-    right: 0;
-  }
-
-  &:hover,
-  &.settings-active,
-  &.outline-active {
-    background-color: var(--sa11y-shortcut-hover);
-  }
-
-  &.settings-active,
-  &.outline-active {
-    font-weight: 500;
-  }
-}
-
-/**
- * Settings panel
- * ========================================================================= */
-#settings-panel {
-  .switch {
-    border-radius: 5px;
-    border: 0;
-    cursor: pointer;
-    font-size: var(--sa11y-normal-text);
-    font-weight: normal;
-    margin: 0;
-    padding: 7px 10px;
-    position: relative;
-    background: none;
-    color: var(--sa11y-panel-primary);
-    height: 44px;
-    text-align: end;
-    width: 105px;
-
-    &[aria-pressed="true"]:after,
-    &[aria-pressed="false"]:after {
-      content: "";
-      display: inline-block;
-      height: 27px;
-      margin: 0 4px 4px 4px;
-      vertical-align: middle;
-      width: 27px;
-    }
-
-    &[aria-pressed="true"]:after {
-      background: var(--sa11y-setting-switch-bg-on);
-      mask: var(--sa11y-setting-switch-on-svg) center no-repeat;
-      -webkit-mask: var(--sa11y-setting-switch-on-svg) center no-repeat;
-    }
-
-    &[aria-pressed="false"]:after {
-      background: var(--sa11y-setting-switch-bg-off);
-      mask: var(--sa11y-setting-switch-off-svg) center no-repeat;
-      -webkit-mask: var(--sa11y-setting-switch-off-svg) center no-repeat;
+  @media screen and (forced-colors: active) {
+    .panel-icon {
+      forced-color-adjust: none;
     }
   }
 }
 
 #colour-filter-select {
-  border: 0;
+  background: none;
+  border: 2px solid var(--sa11y-setting-switch-bg-off);
   border-radius: 5px;
-  box-shadow: 0 0 0 2px var(--sa11y-setting-switch-bg-off);
+  color: var(--sa11y-panel-primary);
   cursor: pointer;
   font-size: var(--sa11y-normal-text);
   font-weight: normal;
+  height: 25px;
   padding: 0;
   position: relative;
-  background: none;
-  color: var(--sa11y-panel-primary);
-  height: 25px;
   text-align: end;
   vertical-align: middle;
 }
@@ -701,38 +793,15 @@ button[data-sa11y-dismiss] {
   box-shadow: 0 0 0 2px var(--sa11y-setting-switch-bg-on);
 }
 
-#settings-options li {
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  padding: 1px 0 1px 0;
-  list-style-type: none;
-  border-bottom: 1px solid;
-  border-color: var(--sa11y-panel-bg-splitter);
-
-  &:last-child {
-    border: none;
-  }
-}
-
 #colour-filter-item label,
 #colour-filter-item select {
-  margin-top: 10px;
   margin-bottom: 9px;
+  margin-top: 10px;
 }
 
-hr {
-  background: var(--sa11y-panel-bg-splitter);
-  border: none;
-  height: 1px;
-  margin: 10px 0;
-  opacity: 1;
-  padding: 0;
-}
-
-/**
- * Readability panel
- * ========================================================================= */
+/* ***************************************** */
+/*            16. Readability                */
+/* ***************************************** */
 #readability-panel {
   display: none;
   opacity: 0;
@@ -766,9 +835,9 @@ hr {
 
 .readability-score {
   background-color: var(--sa11y-panel-badge);
+  border-radius: 4px;
   color: var(--sa11y-panel-primary);
   margin-inline-start: 5px;
-  border-radius: 4px;
   padding: 2px 5px;
 }
 
@@ -776,32 +845,96 @@ hr {
   margin-inline-start: 10px;
 }
 
-/**
- * Scrollbars
- * ========================================================================= */
-#panel-alert::-webkit-scrollbar,
-#settings-content::-webkit-scrollbar,
-#outline-content::-webkit-scrollbar {
+/* ************************************* */
+/*   17. Skip to Page Issues skip link   */
+/* ************************************* */
+
+// Skip to Page Issues initially
+#skip-to-page-issues {
+  display: none;
+}
+
+// Conditional if #page-issues is active
+#page-issues.active~#panel-content #skip-to-page-issues {
+  background: var(--sa11y-panel-bg);
+  border: 0;
+  border-radius: 5px;
+  clip: rect(0, 0, 0, 0);
+  display: block;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+
+  &:focus {
+    clip: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    padding: 5px 7px;
+    white-space: normal;
+    width: auto;
+    z-index: 1;
+  }
+}
+
+/* ***************************************** */
+/*          18. Misc utilities               */
+/* ***************************************** */
+
+// Used to hide bottom border when colour filter is enabled.
+.hide-settings-border {
+  border-bottom: 0 !important;
+  padding: 0 15px 0 15px !important;
+}
+
+/* ***************************************** */
+/*         19. Scrollbar styling             */
+/* ***************************************** */
+::-webkit-scrollbar {
   width: 7px;
 }
 
-#panel-alert,
-#settings-content,
-#outline-content {
-  scrollbar-width: thin;
-  scrollbar-color: var(--sa11y-panel-bg-splitter);
-}
-
-#panel-alert::-webkit-scrollbar-thumb,
-#settings-content::-webkit-scrollbar-thumb,
-#outline-content::-webkit-scrollbar-thumb {
-  background-color: var(--sa11y-panel-bg-splitter);
+::-webkit-scrollbar-thumb {
+  background-color: var(--sa11y-button-outline);
   border-radius: 6px;
 }
 
-/**
- * Animation keyframes
- * ========================================================================= */
+* {
+  scrollbar-color: var(--sa11y-button-outline);
+  scrollbar-width: thin;
+}
+
+.scrollable::before {
+  animation: fade 1s ease-in-out;
+  background-image: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 70%, var(--sa11y-panel-scrollable) 100%);
+  background-position: bottom;
+  bottom: auto;
+  content: "";
+  height: 250px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: auto;
+  transition: opacity 1s ease-in-out;
+  z-index: -1;
+}
+
+#page-issues-content.scrollable::before {
+  height: 160px;
+}
+
+#panel-alert.scrollable::before {
+  height: 200px;
+}
+
+
+/* ***************************************** */
+/*           20. Animations                  */
+/* ***************************************** */
 @keyframes sa11y-toggle-gradient {
   0% {
     background-position: 50% 0%;
@@ -816,21 +949,34 @@ hr {
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation: none !important;
-    transition: none !important;
-    transform: none !important;
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
   }
 }
 
-/* i18n */
-/* Default panel width: English */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* ***************************************** */
+/*     21. Internationalization (i18n)       */
+/* ***************************************** */
+
+// Default panel width: English
 #container:lang(en) #panel {
   width: 305px;
 }
 
-/* Setting switches that need some extra width. */
+// Setting switches that need some extra width.
 #container:lang(ua),
 #container:lang(fr) {
   .switch {

@@ -73,13 +73,13 @@ class Sa11y {
           this.option.checkRoot,
           this.option.contrastPlugin,
           this.option.formLabelsPlugin,
-          this.option.readabilityPlugin,
           this.option.linksAdvancedPlugin,
           this.option.colourFilterPlugin,
           this.option.checkAllHideToggles,
           this.option.headless,
         );
         Constants.initializeReadability(
+          this.option.readabilityPlugin,
           this.option.readabilityRoot,
           this.option.readabilityLang,
         );
@@ -292,7 +292,6 @@ class Sa11y {
           dismissAnnotations(
             this.option.dismissAnnotations,
             this.results,
-            this.dismissTooltip,
             this.dismissed,
             this.checkAll,
             this.resetAll,
@@ -351,13 +350,10 @@ class Sa11y {
       ], 'document');
 
       // Remove from panel.
-      Utils.remove([
-        '#page-errors .page-error',
-        '#outline-list li',
-        '#readability-details li',
-      ], 'panel');
-
+      Constants.Panel.outlineList.innerHTML = '';
+      Constants.Panel.pageIssuesList.innerHTML = '';
       Constants.Panel.readabilityInfo.innerHTML = '';
+      Constants.Panel.readabilityDetails.innerHTML = '';
 
       // Remove any active alerts from panel.
       Utils.removeAlert();

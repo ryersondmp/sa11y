@@ -54,6 +54,9 @@ export default function addColourFilters(colourFilterPlugin) {
             />
             <feBlend in="ProjectionOnPlane1" in2="ProjectionOnPlane2" mode="normal"/>
           </filter>
+          <filter id="sa11y-monochromacy">
+            <feColorMatrix values="0.33 0.33 0.33 0 0                           0.33 0.33 0.33 0 0                           0.33 0.33 0.33 0 0                           0 0 0 1 0"></feColorMatrix>
+          </filter>
         </svg>`;
       document.body.appendChild(svg);
     }

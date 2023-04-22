@@ -411,6 +411,10 @@ export function removeAlert() {
  * @returns {void}
  */
 export function createAlert(alertMessage, errorPreview) {
+  // Clear alert first before creating new one.
+  removeAlert();
+
+  // Constants
   const Sa11yPanel = document.querySelector('sa11y-control-panel').shadowRoot;
   const alert = Sa11yPanel.getElementById('panel-alert');
   const alertText = Sa11yPanel.getElementById('panel-alert-text');
@@ -466,4 +470,18 @@ export function remove(elements, root) {
   allElements.forEach(($el) => {
     $el.parentNode.removeChild($el);
   });
+}
+
+/**
+ * Checks if a scrollable area within a container element is scrollable or not, and applies appropriate CSS classes and attributes. Make sure to add aria-label manually.
+ * @param {Element} scrollArea - The scrollable area element to check.
+ * @param {Element} container - The container element that wraps the scrollable area.
+ */
+export function isScrollable(scrollArea, container) {
+  if (scrollArea.scrollHeight > container.clientHeight) {
+    container.classList.add('scrollable');
+    scrollArea.setAttribute('tabindex', '0');
+  } else {
+    container.classList.remove('scrollable');
+  }
 }

@@ -10,7 +10,6 @@ const Constants = (function myConstants() {
     checkRoot,
     contrastPlugin,
     formLabelsPlugin,
-    readabilityPlugin,
     linksAdvancedPlugin,
     colourFilterPlugin,
     checkAllHideToggles,
@@ -26,7 +25,6 @@ const Constants = (function myConstants() {
     // Toggleable plugins
     Global.contrastPlugin = contrastPlugin;
     Global.formLabelsPlugin = formLabelsPlugin;
-    Global.readabilityPlugin = readabilityPlugin;
     Global.linksAdvancedPlugin = linksAdvancedPlugin;
     Global.colourFilterPlugin = colourFilterPlugin;
     Global.checkAllHideToggles = checkAllHideToggles;
@@ -56,13 +54,19 @@ const Constants = (function myConstants() {
     Panel.content = Sa11yPanel.getElementById('panel-content');
     Panel.controls = Sa11yPanel.getElementById('panel-controls');
     Panel.outline = Sa11yPanel.getElementById('outline-panel');
+    Panel.outlineContent = Sa11yPanel.getElementById('outline-content');
     Panel.outlineList = Sa11yPanel.getElementById('outline-list');
     Panel.outlineHeader = Sa11yPanel.getElementById('outline-header');
     Panel.notifBadge = Sa11yPanel.getElementById('notification-badge');
     Panel.notifCount = Sa11yPanel.getElementById('notification-count');
     Panel.notifText = Sa11yPanel.getElementById('notification-text');
     Panel.status = Sa11yPanel.getElementById('status');
-    Panel.pageErrors = Sa11yPanel.getElementById('page-errors');
+
+    // Page Issues
+    Panel.pageIssues = Sa11yPanel.getElementById('page-issues');
+    Panel.pageIssuesList = Sa11yPanel.getElementById('page-issues-list');
+    Panel.pageIssuesHeader = Sa11yPanel.getElementById('page-issues-header');
+    Panel.pageIssuesContent = Sa11yPanel.getElementById('page-issues-content');
 
     // Settings
     Panel.settings = Sa11yPanel.getElementById('settings-panel');
@@ -82,6 +86,7 @@ const Constants = (function myConstants() {
     Panel.colourPanel = Sa11yPanel.getElementById('panel-colour-filters');
     Panel.colourFilterItem = Sa11yPanel.getElementById('colour-filter-item');
     Panel.colourFilterSelect = Sa11yPanel.getElementById('colour-filter-select');
+    Panel.colourFilterIcon = Sa11yPanel.getElementById('filter-icon');
 
     // Buttons
     Panel.toggle = Sa11yPanel.getElementById('toggle');
@@ -90,6 +95,7 @@ const Constants = (function myConstants() {
     Panel.skipButton = Sa11yPanel.getElementById('skip-button');
     Panel.dismissButton = Sa11yPanel.getElementById('dismiss-button');
     Panel.dismissTooltip = Sa11yPanel.getElementById('dismiss-tooltip');
+    Panel.skipToPageIssues = Sa11yPanel.getElementById('skip-to-page-issues');
 
     // Alerts
     Panel.alert = Sa11yPanel.getElementById('panel-alert');
@@ -108,27 +114,28 @@ const Constants = (function myConstants() {
   /* ***************** */
   const Readability = {};
   function initializeReadability(
+    readabilityPlugin,
     readabilityRoot,
     readabilityLang,
   ) {
     Readability.Lang = readabilityLang;
-
     Readability.Root = document.querySelector(readabilityRoot);
     if (!readabilityRoot) {
       Readability.Root = Global.Root;
     }
 
     // Supported readability languages. Turn module off if not supported.
-    const supportedLang = ['en', 'fr', 'es', 'de', 'nl', 'it', 'sv', 'fi', 'da', 'no', 'nb', 'nn'];
+    const supported = ['en', 'fr', 'es', 'de', 'nl', 'it', 'sv', 'fi', 'da', 'no', 'nb', 'nn'];
     const pageLang = Constants.Global.html.getAttribute('lang');
 
-    // If lang attribute is missing, turn off readability plugin.
     if (!pageLang) {
       Readability.Plugin = false;
     } else {
       const pageLangLowerCase = pageLang.toLowerCase();
-      if (!supportedLang.some(($el) => pageLangLowerCase.includes($el))) {
+      if (!supported.some(($el) => pageLangLowerCase.includes($el))) {
         Readability.Plugin = false;
+      } else {
+        Readability.Plugin = readabilityPlugin;
       }
     }
   }

@@ -20,6 +20,7 @@
       ALERT_TEXT: 'Alerte',
       ALERT_CLOSE: 'Fermer',
       OUTLINE: 'Page du schéma',
+      PAGE_ISSUES: 'Problèmes de pages',
       SETTINGS: 'Paramètres',
       CONTRAST: 'Contraste',
       FORM_LABELS: 'Étiquettes de formulaires',
@@ -38,14 +39,20 @@
       PANEL_DISMISS_BUTTON: 'Afficher %(dismissCount) avertissements ignorés',
       DISMISS: 'Ignorer',
       DISMISSED: 'Avertissements ignorés',
+      SKIP_TO_PAGE_ISSUES: 'Passer aux problèmes de page',
 
       // Color filters
       COLOUR_FILTER: 'Filtre de couleur',
       PROTANOPIA: 'Protanopie',
       DEUTERANOPIA: 'Deutéranopie',
       TRITANOPIA: 'Tritanopie',
-      ACHROMATOPSIA: 'Achromatopsie',
+      MONOCHROMACY: 'Monochromatie',
       COLOUR_FILTER_MESSAGE: 'Recherchez les éléments difficiles à percevoir ou à distinguer des autres couleurs.',
+      RED_EYE: 'Daltonisme rouge.',
+      GREEN_EYE: 'Daltonisme vert.',
+      BLUE_EYE: 'Daltonisme bleu.',
+      MONO_EYE: 'Daltonisme rouge, vert et bleu.',
+      COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Les filtres de couleur ne fonctionnent pas en mode contraste élevé.',
 
       // Alternative text module stop words
       SUSPICIOUS_ALT_STOPWORDS: ['image', 'illustration', 'photo', 'photographie'],

@@ -14,7 +14,7 @@ import Lang from '../utils/lang';
 
 export default function checkReadability() {
   let readabilityResults;
-  if (Constants.Global.readabilityPlugin === true) {
+  if (Constants.Readability.Plugin === true) {
     const rememberReadability = Utils.store.getItem('sa11y-remember-readability') === 'On';
     if (rememberReadability) {
       // Crude hack to add a period to the end of list items to make a complete sentence.

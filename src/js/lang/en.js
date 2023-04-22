@@ -14,6 +14,7 @@ export default {
     ALERT_TEXT: 'Alert',
     ALERT_CLOSE: 'Close',
     OUTLINE: 'Page Outline',
+    PAGE_ISSUES: 'Page Issues',
     SETTINGS: 'Settings',
     CONTRAST: 'Contrast',
     FORM_LABELS: 'Form labels',
@@ -32,18 +33,20 @@ export default {
     PANEL_DISMISS_BUTTON: 'Show %(dismissCount) dismissed warnings',
     DISMISS: 'Dismiss',
     DISMISSED: 'Dismissed warnings',
+    SKIP_TO_PAGE_ISSUES: 'Skip to Page Issues',
 
     // Color filters
     COLOUR_FILTER: 'Colour filter',
     PROTANOPIA: 'Protanopia',
     DEUTERANOPIA: 'Deuteranopia',
     TRITANOPIA: 'Tritanopia',
-    ACHROMATOPSIA: 'Achromatopsia',
-    RED_BLIND: 'Cannot see colour red.',
-    GREEN_BLIND: 'Cannot see colour green.',
-    BLUE_BLIND: 'Cannot see colour blue.',
-    MONO_BLIND: 'Cannot see red, blue, or green.',
+    MONOCHROMACY: 'Monochromacy',
     COLOUR_FILTER_MESSAGE: 'Check for elements that are difficult to perceive or distinguish against other colours.',
+    RED_EYE: 'Red blind.',
+    GREEN_EYE: 'Green blind.',
+    BLUE_EYE: 'Blue blind.',
+    MONO_EYE: 'Red, blue, and green blind.',
+    COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Colour filters do not work in high contrast mode.',
 
     // Alternative text module stop words
     SUSPICIOUS_ALT_STOPWORDS: ['image', 'graphic', 'picture', 'photo'],

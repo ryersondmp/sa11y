@@ -1,5 +1,5 @@
 import Constants from '../utils/constants';
-import { store } from '../utils/utils';
+import { store, isScrollable } from '../utils/utils';
 
 export default function mainToggle(checkAll, resetAll) {
   // Keeps checker active when navigating between pages until it is toggled off.
@@ -22,6 +22,7 @@ export default function mainToggle(checkAll, resetAll) {
       Constants.Panel.toggle.classList.add('on');
       Constants.Panel.toggle.setAttribute('aria-expanded', 'true');
       checkAll();
+      isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
     }
   });
 

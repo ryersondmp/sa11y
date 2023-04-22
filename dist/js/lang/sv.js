@@ -14,6 +14,7 @@ var sv = {
     ALERT_TEXT: 'Varning',
     ALERT_CLOSE: 'Stäng',
     OUTLINE: 'Sidöversikt',
+    PAGE_ISSUES: 'Sidproblem',
     SETTINGS: 'Inställningar',
     CONTRAST: 'Kontrast',
     FORM_LABELS: 'Formuläretiketter',
@@ -32,14 +33,20 @@ var sv = {
     PANEL_DISMISS_BUTTON: 'Visa %(dismissCount) avvisade varningar',
     DISMISS: 'Avfärda',
     DISMISSED: 'Avvisade varningar',
+    SKIP_TO_PAGE_ISSUES: 'Hoppa till sidans problem',
 
     // Color filters
     COLOUR_FILTER: 'Färgfilter',
     PROTANOPIA: 'Protanopia',
     DEUTERANOPIA: 'Deuteranopia',
     TRITANOPIA: 'Tritanopia',
-    ACHROMATOPSIA: 'Achromatopsia',
+    MONOCHROMACY: 'Monokromati',
     COLOUR_FILTER_MESSAGE: 'Kolla efter element som är svåra att uppfatta eller särskilja från andra färger.',
+    RED_EYE: 'Röd färgblindhet.',
+    GREEN_EYE: 'Grön färgblindhet.',
+    BLUE_EYE: 'Blå färgblindhet.',
+    MONO_EYE: 'Röd, grön och blå blindhet.',
+    COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Färgfilter fungerar inte i högkontrastläge.',
 
     // Alternative text module stop words
     SUSPICIOUS_ALT_STOPWORDS: ['bild', 'grafik', 'fotografi', 'foto'],

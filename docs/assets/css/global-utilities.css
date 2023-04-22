@@ -1,5 +1,7 @@
-/* These CSS utilities are injected into every shadow DOM. */
-/* Using data attributes to increase specificity */
+/* **********************************************************/
+/*  These CSS utilities are injected into every shadow DOM. */
+/*      Using data attributes to increase specificity.      */
+/* ******************************************************** */
 [data-sa11y-overflow] {
   overflow: auto !important;
 }
@@ -17,13 +19,13 @@
   overflow: hidden !important;
   padding: 0 !important;
   position: absolute !important;
-  width: 1px !important;
   white-space: nowrap !important;
+  width: 1px !important;
 }
 
-/**
-* Link, text, and image borders
-* ========================================================================= */
+/* ************************************* */
+/*    Links, text, and image borders     */
+/* ************************************* */
 [data-sa11y-error] {
   outline: 5px solid var(--sa11y-error) !important;
 }
@@ -37,22 +39,24 @@
 }
 
 [data-sa11y-error-inline] {
-  border-radius: 0.25em !important;
-  border-color: transparent !important;
-  box-shadow: 0 0 0 4px var(--sa11y-error) !important;
   background-color: var(--sa11y-error) !important;
+  border-color: transparent !important;
+  border-radius: 0.25em !important;
+  box-shadow: 0 0 0 4px var(--sa11y-error) !important;
   color: var(--sa11y-error-text) !important;
 }
 
 [data-sa11y-warning-inline] {
-  border-radius: 0.25em !important;
-  border-color: transparent !important;
-  box-shadow: 0 0 0 4px var(--sa11y-warning) !important;
   background-color: var(--sa11y-warning) !important;
+  border-color: transparent !important;
+  border-radius: 0.25em !important;
+  box-shadow: 0 0 0 4px var(--sa11y-warning) !important;
   color: var(--sa11y-warning-text) !important;
 }
 
-/* Pulsing border: https://codepen.io/olam/pen/zcqea */
+/* *************************************************** */
+/*  Pulsing border: https://codepen.io/olam/pen/zcqea  */
+/* *************************************************** */
 [data-sa11y-pulse-border] {
   animation: pulse 2s 3;
   box-shadow: 0;
@@ -76,5 +80,18 @@
 @media (prefers-reduced-motion: reduce) {
   [data-sa11y-pulse-border] {
     animation: none !important;
+  }
+}
+/* ****************************************************** */
+/*   High contrast mode should preserve outlines colours  */
+/* ****************************************************** */
+@media (forced-colors: active) {
+  [data-sa11y-error],
+  [data-sa11y-warning],
+  [data-sa11y-good],
+  [data-sa11y-error-inline],
+  [data-sa11y-warning-inline],
+  [data-sa11y-pulse-border] {
+    forced-color-adjust: none;
   }
 }

@@ -67,17 +67,13 @@ export function annotate(
   const instance = document.createElement('sa11y-annotation');
   instance.setAttribute('data-sa11y-annotation', index);
   const create = document.createElement('div');
+  const listItem = document.createElement('li');
 
   if (element === undefined) {
     // Page errors displayed to main panel.
-    create.setAttribute('tabindex', '-1');
-    create.classList.add('page-error');
-    create.innerHTML = `
-        <div class="header-text">
-          <h2>${[type]}</h2>
-        </div>
-        ${content}`;
-    Constants.Panel.pageErrors.insertAdjacentElement('afterbegin', create);
+    Constants.Panel.pageIssues.classList.add('active');
+    listItem.innerHTML = `<strong>${[type]}</strong> ${content}`;
+    Constants.Panel.pageIssuesList.insertAdjacentElement('afterbegin', listItem);
   } else {
     // Button annotations.
     create.classList.add(`${inline ? 'instance-inline' : 'instance'}`);

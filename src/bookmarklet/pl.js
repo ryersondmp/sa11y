@@ -1,20 +1,10 @@
-/* eslint-disable no-new */
-/* eslint-disable no-undef */
 /* eslint-disable no-alert */
 import { loadSa11y } from './_loadSa11y';
 
 const langCode = 'Pl';
 
-function onLoadScript() {
-  const objectKey = `Sa11yLang${langCode}`;
-  Sa11y.Lang.addI18n(window[objectKey].strings);
-  new Sa11y.Sa11y({
-    detectSPArouting: true,
-  });
-}
-
 if (typeof Sa11y !== 'object') {
-  loadSa11y(onLoadScript, langCode);
+  loadSa11y(langCode);
 } else {
   alert('Przeciągnij przycisk „Sa11y” na pasek zakładek. Następnie kliknij zakładkę na dowolnej stronie internetowej.');
 }

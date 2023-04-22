@@ -16,7 +16,7 @@ export default class ControlPanel extends HTMLElement {
     this.shadowRoot.appendChild(style);
 
     // Icon for the main toggle.
-    const MainToggleIcon = "<svg role='img' focusable='false' width='35px' height='35px' aria-hidden='true' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='#ffffff' d='M256 48c114.953 0 208 93.029 208 208 0 114.953-93.029 208-208 208-114.953 0-208-93.029-208-208 0-114.953 93.029-208 208-208m0-40C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 56C149.961 64 64 149.961 64 256s85.961 192 192 192 192-85.961 192-192S362.039 64 256 64zm0 44c19.882 0 36 16.118 36 36s-16.118 36-36 36-36-16.118-36-36 16.118-36 36-36zm117.741 98.023c-28.712 6.779-55.511 12.748-82.14 15.807.851 101.023 12.306 123.052 25.037 155.621 3.617 9.26-.957 19.698-10.217 23.315-9.261 3.617-19.699-.957-23.316-10.217-8.705-22.308-17.086-40.636-22.261-78.549h-9.686c-5.167 37.851-13.534 56.208-22.262 78.549-3.615 9.255-14.05 13.836-23.315 10.217-9.26-3.617-13.834-14.056-10.217-23.315 12.713-32.541 24.185-54.541 25.037-155.621-26.629-3.058-53.428-9.027-82.141-15.807-8.6-2.031-13.926-10.648-11.895-19.249s10.647-13.926 19.249-11.895c96.686 22.829 124.283 22.783 220.775 0 8.599-2.03 17.218 3.294 19.249 11.895 2.029 8.601-3.297 17.219-11.897 19.249z'/></svg>";
+    const MainToggleIcon = '<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 48c114.953 0 208 93.029 208 208 0 114.953-93.029 208-208 208-114.953 0-208-93.029-208-208 0-114.953 93.029-208 208-208m0-40C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 56C149.961 64 64 149.961 64 256s85.961 192 192 192 192-85.961 192-192S362.039 64 256 64zm0 44c19.882 0 36 16.118 36 36s-16.118 36-36 36-36-16.118-36-36 16.118-36 36-36zm117.741 98.023c-28.712 6.779-55.511 12.748-82.14 15.807.851 101.023 12.306 123.052 25.037 155.621 3.617 9.26-.957 19.698-10.217 23.315-9.261 3.617-19.699-.957-23.316-10.217-8.705-22.308-17.086-40.636-22.261-78.549h-9.686c-5.167 37.851-13.534 56.208-22.262 78.549-3.615 9.255-14.05 13.836-23.315 10.217-9.26-3.617-13.834-14.056-10.217-23.315 12.713-32.541 24.185-54.541 25.037-155.621-26.629-3.058-53.428-9.027-82.141-15.807-8.6-2.031-13.926-10.648-11.895-19.249s10.647-13.926 19.249-11.895c96.686 22.829 124.283 22.783 220.775 0 8.599-2.03 17.218 3.294 19.249 11.895 2.029 8.601-3.297 17.219-11.897 19.249z"/></svg>';
 
     // Create main container.
     const container = document.createElement('div');
@@ -62,7 +62,7 @@ export default class ControlPanel extends HTMLElement {
           aria-pressed="${rememberLinksAdvanced ? 'true' : 'false'}">${rememberLinksAdvanced ? Lang._('ON') : Lang._('OFF')}</button>
       </li>` : '';
 
-    const readabilityPlugin = (Constants.Global.readabilityPlugin === true) ? `
+    const readabilityPlugin = (Constants.Readability.Plugin === true) ? `
       <li id="readability-item">
         <label id="check-readability" for="readability-toggle">${Lang._('LANG_READABILITY')} <span class="badge">AAA</span></label>
         <button id="readability-toggle"
@@ -79,13 +79,13 @@ export default class ControlPanel extends HTMLElement {
           <option value="1">${Lang._('PROTANOPIA')}</option>
           <option value="2">${Lang._('DEUTERANOPIA')}</option>
           <option value="3">${Lang._('TRITANOPIA')}</option>
-          <option value="4">${Lang._('ACHROMATOPSIA')}</option>
+          <option value="4">${Lang._('MONOCHROMACY')}</option>
         </select>
       </li>` : '';
 
     const colourFilterPanel = (Constants.Global.colourFilterPlugin === true) ? `
-      <div id="panel-colour-filters">
-        <div class="panel-icon"></div>
+      <div id="panel-colour-filters" role="region" aria-labelledby="colour-filter-mode">
+        <div id="filter-icon" class="panel-icon" role="img"></div>
         <p>${Lang._('COLOUR_FILTER_MESSAGE')}</p>
       </div>` : '';
 
@@ -102,8 +102,15 @@ export default class ControlPanel extends HTMLElement {
       // Start of main container.
       + '<div id="panel">'
 
-      // Full width banner errors.
-      + '<div id="page-errors"></div>'
+      // Page issues
+      + `<div id="page-issues">
+          <div class="panel-header">
+            <h2 id="page-issues-header" tabindex="-1">${Lang._('PAGE_ISSUES')}</h2>
+          </div>
+          <div id="page-issues-content">
+            <ul id="page-issues-list" role="list" aria-labelledby="page-issues-header"></ul>
+          </div>
+        </div>`
 
       // Page Outline tab.
       + `<div id="outline-panel" role="tabpanel" aria-labelledby="outline-header">
@@ -111,7 +118,11 @@ export default class ControlPanel extends HTMLElement {
             <h2 id="outline-header" tabindex="-1">${Lang._('OUTLINE')}</h2>
           </div>
           <div id="outline-content">
-            <ul id="outline-list" tabindex="0" role="list" aria-label="${Lang._('OUTLINE')}"></ul>
+            <ul
+              id="outline-list"
+              tabindex="0"
+              role="list"
+              aria-labelledby="outline-header"></ul>
           </div>
           <div id="readability-panel">
             <div id="readability-content">
@@ -145,43 +156,44 @@ export default class ControlPanel extends HTMLElement {
         </div>`
 
       // Console warning messages.
-      + `<div id="panel-alert">
-        <div class="header-text">
-            <button id="close-alert" class="close-btn" aria-label="${Lang._('ALERT_CLOSE')}" aria-describedby="alert-heading panel-alert-text"></button>
-            <h2 id="alert-heading">${Lang._('ALERT_TEXT')}</h2>
-        </div>
-        <p id="panel-alert-text"></p>
-        <div id="panel-alert-preview"></div>
-      </div>`
+      + `<div id="panel-alert" class="scrollable bottom">
+          <div id="panel-alert-content">
+            <div class="header-text">
+              <button id="close-alert" class="close-btn" aria-label="${Lang._('ALERT_CLOSE')}" aria-describedby="alert-heading panel-alert-text"></button>
+              <h2 id="alert-heading">${Lang._('ALERT_TEXT')}</h2>
+            </div>
+            <p id="panel-alert-text"></p>
+            <div id="panel-alert-preview"></div>
+          </div>
+        </div>`
 
       + `${colourFilterPanel}`
 
       // Main panel that conveys state of page.
       + `<div id="panel-content">
-        <button id="skip-button" type="button">
-          <div class="panel-icon"></div>
-          <span class="visually-hidden">${Lang._('SHORTCUT_SCREEN_READER')}</span>
-        </button>
-        <button id="dismiss-button" type="button">
-          <div class="dismiss-icon"></div>
-          <span id="dismiss-tooltip" class="visually-hidden"></span>
-        </button>
-        <div id="panel-text">
-          <h1 class="visually-hidden">${Lang._('PANEL_HEADING')}</h1>
-          <p id="status" aria-live="polite"></p>
-        </div>
-      </div>`
+          <button id="skip-to-page-issues" type="button">
+            ${Lang._('SKIP_TO_PAGE_ISSUES')}
+          </button>
+          <button id="skip-button" type="button">
+            <div class="panel-icon"></div>
+            <span class="visually-hidden">${Lang._('SHORTCUT_SCREEN_READER')}</span>
+          </button>
+          <button id="dismiss-button" type="button">
+            <div class="dismiss-icon"></div>
+            <span id="dismiss-tooltip" class="visually-hidden"></span>
+          </button>
+          <div id="panel-text">
+            <h1 class="visually-hidden">${Lang._('PANEL_HEADING')}</h1>
+            <p id="status" aria-live="polite"></p>
+          </div>
+        </div>`
 
       // Show Outline & Show Settings button.
       + `<div id="panel-controls" role="tablist" aria-orientation="horizontal">
-        <button type="button" role="tab" aria-expanded="false" id="outline-toggle" aria-controls="outline-panel">
-          ${Lang._('OUTLINE')}
-        </button>
-        <button type="button" role="tab" aria-expanded="false" id="settings-toggle" aria-controls="settings-panel">
-          ${Lang._('SETTINGS')}
-        </button>
-        <div style="width:40px;"></div>
-      </div>`
+          <button type="button" role="tab" aria-expanded="false" id="outline-toggle" aria-controls="outline-panel">${Lang._('OUTLINE')}</button>
+          <button type="button" role="tab" aria-expanded="false" id="settings-toggle" aria-controls="settings-panel">${Lang._('SETTINGS')}</button>
+          <div style="width:40px"></div>
+        </div>`
 
       // End of main container.
       + '</div>';

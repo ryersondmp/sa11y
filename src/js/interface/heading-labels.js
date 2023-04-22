@@ -19,8 +19,8 @@ export class HeadingLabel extends HTMLElement {
         color: white;
         display: inline-block;
         font-family: var(--sa11y-font-face);
-        font-size: var(--sa11y-large-text);
         font-weight: 500;
+        font-size: 17px;
         line-height: normal;
         letter-spacing: normal;
         margin: -5px 0 0 5px;
@@ -29,6 +29,11 @@ export class HeadingLabel extends HTMLElement {
         text-shadow: 1px 1px black;
         -webkit-text-fill-color: white;
         z-index: 200;
+      }
+      @media screen and (forced-colors: active) {
+        span.heading-label {
+          border: 2px solid transparent;
+        }
       }`;
     shadow.appendChild(style);
   }

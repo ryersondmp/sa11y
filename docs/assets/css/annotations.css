@@ -1,6 +1,6 @@
-/**
- * Error, Warning, Pass annotations
- * ========================================================================= */
+/* ************************************* */
+/*   Error, Warning, Pass annotations    */
+/* ************************************* */
 .instance {
   display: block;
 }
@@ -15,6 +15,7 @@ button {
   box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.3098039216);
   cursor: pointer;
   display: block;
+  font-size: 0;
   height: 36px;
   line-height: normal;
   min-width: 0;
@@ -22,17 +23,16 @@ button {
   position: absolute;
   transition: all 0.2s ease-in-out;
   width: 36px;
-  font-size: 0;
   z-index: 8888;
 }
 button:after {
   content: "";
-  top: -7px;
-  left: -7px;
   height: 36px;
-  width: 36px;
-  position: absolute;
+  left: -7px;
   padding: 7px;
+  position: absolute;
+  top: -7px;
+  width: 36px;
 }
 
 /* To prevent overlap. */
@@ -54,9 +54,9 @@ button.warning-btn-text {
 /* Error */
 button.error-btn,
 button.error-btn-text {
-  background: 50% 50% var(--sa11y-error) var(--sa11y-error-svg) no-repeat;
-  background-size: 22px;
+  background: 50% 50% var(--sa11y-error-svg) no-repeat;
   background-color: var(--sa11y-error);
+  background-size: 22px;
   border: 1px solid var(--sa11y-error);
 }
 button.error-btn:hover, button.error-btn:focus,
@@ -69,8 +69,8 @@ button.error-btn-text:focus {
 button.good-btn,
 button.good-btn-text {
   background: 50% 50% var(--sa11y-good) var(--sa11y-good-svg) no-repeat;
-  background-size: 20px;
   background-color: var(--sa11y-good);
+  background-size: 20px;
   border: 1px solid var(--sa11y-good);
 }
 button.good-btn:hover, button.good-btn:focus,
@@ -83,8 +83,8 @@ button.good-btn-text:focus {
 button.warning-btn,
 button.warning-btn-text {
   background: 50% 50% var(--sa11y-warning) var(--sa11y-warning-svg) no-repeat;
-  background-size: 24px;
   background-color: var(--sa11y-warning);
+  background-size: 24px;
   border: 1px solid var(--sa11y-warning);
   transform: scaleX(var(--sa11y-icon-direction));
 }
@@ -92,4 +92,22 @@ button.warning-btn:hover, button.warning-btn:focus,
 button.warning-btn-text:hover,
 button.warning-btn-text:focus {
   background-color: var(--sa11y-warning-hover);
+}
+
+/* ************************************* */
+/* Keyboard focus styles for annotations */
+/* ************************************* */
+button.sa11y-btn:active,
+button.sa11y-btn:focus {
+  box-shadow: 0 0 0 5px var(--sa11y-focus-color);
+  outline: 0;
+}
+
+/* High Contrast Mode */
+@media screen and (forced-colors: active) {
+  button.sa11y-btn {
+    border: 1px solid transparent !important;
+    outline: transparent solid 3px !important;
+    forced-color-adjust: none;
+  }
 }

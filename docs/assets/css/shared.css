@@ -1,6 +1,6 @@
-/**
- * Misc utilities
- * ========================================================================= */
+/* ***************************************** */
+/*               Utilities                   */
+/* ***************************************** */
 .visually-hidden {
   border: 0;
   clip: rect(1px, 1px, 1px, 1px);
@@ -10,8 +10,8 @@
   overflow: hidden;
   padding: 0;
   position: absolute;
-  width: 1px;
   white-space: nowrap;
+  width: 1px;
 }
 
 .hide {
@@ -32,16 +32,16 @@ h2,
   display: inline-block !important;
 }
 
-#container code,
-#container kbd,
+code,
+kbd,
 .kbd {
-  padding: 1.6px 4.8px;
-  color: var(--sa11y-panel-primary);
   background-color: var(--sa11y-panel-badge);
   border-radius: 3.2px;
+  color: var(--sa11y-panel-primary);
+  padding: 1.6px 4.8px;
 }
 
-#container code {
+code {
   font-family: monospace;
 }
 
@@ -61,57 +61,49 @@ h2,
   font-size: var(--sa11y-normal-text);
 }
 
-/**
- * Close button
- * ========================================================================= */
+/* ***************************************** */
+/*              Close button                 */
+/* ***************************************** */
 .close-btn {
-  float: var(--sa11y-float-rtl);
-  border-radius: 50%;
+  background: none;
   border: 1px solid var(--sa11y-button-outline);
+  border-radius: 50%;
+  color: var(--sa11y-panel-primary);
   cursor: pointer;
+  float: var(--sa11y-float-rtl);
   font-size: var(--sa11y-normal-text);
   font-weight: normal;
+  height: 32px;
   margin: 0;
   position: relative;
-  background: none;
-  color: var(--sa11y-panel-primary);
-  width: 32px;
-  height: 32px;
   transition: all 0.2s ease-in-out;
+  width: 32px;
 }
 .close-btn:hover, .close-btn:focus {
   background-color: var(--sa11y-shortcut-hover);
 }
 .close-btn:after {
+  background: var(--sa11y-setting-switch-bg-off);
+  bottom: -7px;
   content: "";
   left: -7px;
-  right: -7px;
-  bottom: -7px;
-  top: -7px;
-  position: absolute;
-  background: var(--sa11y-setting-switch-bg-off);
   mask: var(--sa11y-close-btn-svg) center no-repeat;
   -webkit-mask: var(--sa11y-close-btn-svg) center no-repeat;
+  position: absolute;
+  right: -7px;
+  top: -7px;
+}
+@media screen and (forced-colors: active) {
+  .close-btn:after {
+    filter: invert(1);
+  }
 }
 
+/* ************************************************************** */
+/*  Global keyboard focus styles for tooltips and control panel.  */
+/* ************************************************************** */
 /**
- * Global keyboard focus styles
- * ========================================================================= */
-@media screen and (-ms-high-contrast: active) {
-  #container a:focus,
-  #container button:focus,
-  #container select:focus,
-  #container [tabindex="0"]:focus,
-  #container [tabindex="-1"]:focus {
-    outline: transparent solid 2px;
-  }
-  button.sa11y-btn:active,
-  button.sa11y-btn:focus {
-    outline: transparent solid 2px;
-  }
-}
-/**
- * Default focus styles.
+ * A) Default focus styles.
  **/
 #container {
   /* These elements MUST use inset outlines */
@@ -121,32 +113,26 @@ h2,
 #container select:focus,
 #container button:not(#settings-toggle):not(#outline-toggle):not(.switch):focus,
 #container a:focus {
-  outline: 0;
   box-shadow: 0 0 0 5px var(--sa11y-focus-color);
+  outline: 0;
 }
 #container .switch:focus,
 #container #settings-toggle:focus,
 #container #outline-toggle:focus {
-  outline: 0;
   box-shadow: inset 0 0 0 4px var(--sa11y-focus-color);
-}
-
-button.sa11y-btn:active,
-button.sa11y-btn:focus {
   outline: 0;
-  box-shadow: 0 0 0 5px var(--sa11y-focus-color);
 }
 
 .tippy-box[data-theme~=sa11y-theme] a:focus,
 .tippy-box[data-theme~=sa11y-theme] button:focus,
 .tippy-box[data-theme~=sa11y-theme] button:active,
 .tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus {
-  outline: 0;
   box-shadow: 0 0 0 5px var(--sa11y-focus-color);
+  outline: 0;
 }
 
 /**
- * Remove default focus styles for mouse users ONLY if :focus-visible is supported.
+ * B) Remove default focus styles for mouse users ONLY if :focus-visible is supported.
  **/
 #container [tabindex="0"]:focus:not(:focus-visible),
 #container [tabindex="-1"]:focus:not(:focus-visible),
@@ -154,39 +140,59 @@ button.sa11y-btn:focus {
 #container select:focus:not(:focus-visible),
 #container #settings-toggle:focus:not(:focus-visible),
 #container #outline-toggle:focus:not(:focus-visible) {
-  outline: 0;
   box-shadow: none;
+  outline: 0;
 }
 
 .tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),
 .tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible),
 .tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus:not(:focus-visible) {
-  outline: 0;
   box-shadow: none;
+  outline: 0;
 }
 
 /**
- * :focus-visible is supported.
+ * C) :focus-visible is supported.
  **/
 #container a:focus-visible,
 #container button:not(#settings-toggle):not(#outline-toggle):not(.switch):focus-visible,
 #container select:focus-visible,
 #container [tabindex="0"]:focus-visible,
 #container [tabindex="-1"]:focus-visible {
-  outline: 0;
   box-shadow: 0 0 0 5px var(--sa11y-focus-color);
+  outline: 0;
 }
 #container .switch:focus-visible,
 #container #settings-toggle:focus-visible,
 #container #outline-toggle:focus-visible {
-  outline: 0;
   box-shadow: inset 0 0 0 4px var(--sa11y-focus-color);
+  outline: 0;
 }
 
 /* Tooltip focus styles */
 .tippy-box[data-theme~=sa11y-theme] a:focus-visible,
 .tippy-box[data-theme~=sa11y-theme] button:focus-visible,
 .tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus-visible {
-  outline: 0;
   box-shadow: 0 0 0 5px var(--sa11y-focus-color);
+  outline: 0;
+}
+
+/* ***************************************** */
+/*        High contrast focus styles         */
+/* ***************************************** */
+@media screen and (forced-colors: active) {
+  #outline-toggle:focus,
+  #settings-toggle:focus {
+    border: inset 3px solid transparent;
+  }
+  .close-btn:focus {
+    outline: transparent solid 3px !important;
+  }
+  #container a:focus,
+  #container [tabindex="-1"]:focus,
+  #container [tabindex="0"]:focus,
+  #container select:focus,
+  #container button:focus {
+    outline: transparent solid 3px !important;
+  }
 }

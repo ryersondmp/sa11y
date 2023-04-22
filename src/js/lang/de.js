@@ -14,6 +14,7 @@ export default {
     ALERT_TEXT: 'Alarm',
     ALERT_CLOSE: 'Schließen',
     OUTLINE: 'Seitenumriss',
+    PAGE_ISSUES: 'Seitenprobleme',
     SETTINGS: 'Einstellungen',
     CONTRAST: 'Kontrast',
     FORM_LABELS: 'Formular Label',
@@ -32,14 +33,20 @@ export default {
     PANEL_DISMISS_BUTTON: 'Zeige %(dismissCount) ignorierte Warnungen',
     DISMISS: 'Ignorieren',
     DISMISSED: 'Ignorierte Warnungen',
+    SKIP_TO_PAGE_ISSUES: 'Zu Seitenproblemen springen',
 
     // Color filters
     COLOUR_FILTER: 'Farbfilter',
     PROTANOPIA: 'Protanopie',
     DEUTERANOPIA: 'Deuteranopie',
     TRITANOPIA: 'Tritanopie',
-    ACHROMATOPSIA: 'Achromatopsie',
+    MONOCHROMACY: 'Monochromie',
     COLOUR_FILTER_MESSAGE: 'Suchen Sie nach Elementen, die schwer wahrnehmbar oder von anderen Farben zu unterscheiden sind.',
+    RED_EYE: 'Rotblindheit',
+    GREEN_EYE: 'Grünblindheit',
+    BLUE_EYE: 'Blaublindheit',
+    MONO_EYE: 'Rot-, Grün- und Blaublindheit.',
+    COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Farbfilter funktionieren nicht im Hochkontrastmodus.',
 
     // Alternative text module stop words
     SUSPICIOUS_ALT_STOPWORDS: ['image', 'graphic', 'picture', 'photo', 'foto', 'bild'],
@@ -202,7 +209,7 @@ export default {
     // Quality assurance
     QA_BAD_LINK: 'Ungültiger Link gefunden. Link scheint auf eine Entwicklungsumgebung zu verweisen. <hr> Dieser Link verweist auf: <br> <strong {r}>%(el)</strong>',
     QA_BAD_ITALICS: 'Fett- und Kursiv-Tags haben semantische Bedeutung und sollten <strong>nicht</strong> verwendet werden, um ganze Absätze hervorzuheben. Fettgedruckter Text sollte verwendet werden, um ein Wort oder einen Ausdruck stark <strong>zu betonen</strong>. Kursiv sollte verwendet werden, um Eigennamen (z. B. Buch- und Artikeltitel), Fremdwörter, Zitate hervorzuheben. Lange Zitate sollten als Blockquote formatiert werden.',
-    QA_PDF: 'PDFs gelten als Webinhalte und müssen ebenfalls zugänglich gemacht werden. PDFs enthalten oft Probleme für Personen, die Screenreader verwenden (fehlende Struktur-Tags oder fehlende Beschriftungen von Formularfeldern) und Personen mit Sehbehinderung (Text umfließt beim Vergrößern nicht ). <ul><li>Wenn es sich um ein Formular handelt, solltest Du alternativ ein barrierefreies HTML-Formular verwenden.</li><li>Wenn es sich um ein Dokument handelt, solltest Du es in eine Webseite umwandeln.</li></ul >Andernfalls überprüfe bitte <strong {r}>%(pdfCount)</strong> <a href="https://www.adobe.com/accessibility/products/acrobat/using-acrobat-pro-accessibility-checker. html">PDF(s) für Barrierefreiheit in Acrobat DC.</a>',
+    QA_PDF: 'PDFs gelten als Webinhalte und müssen ebenfalls zugänglich gemacht werden. PDFs enthalten oft Probleme für Personen, die Screenreader verwenden (fehlende Struktur-Tags oder fehlende Beschriftungen von Formularfeldern) und Personen mit Sehbehinderung (Text umfließt beim Vergrößern nicht ). <ul><li>Wenn es sich um ein Formular handelt, solltest Du alternativ ein barrierefreies HTML-Formular verwenden.</li><li>Wenn es sich um ein Dokument handelt, solltest Du es in eine Webseite umwandeln.</li></ul >Andernfalls überprüfe bitte <strong {r}>%(pdfCount)</strong> <a href="https://www.adobe.com/accessibility/products/acrobat/using-acrobat-pro-accessibility-checker.html">PDF(s) für Barrierefreiheit in Acrobat DC.</a>',
     QA_PAGE_LANGUAGE: 'Seitensprache nicht angegeben! Bitte <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklariere die Sprache im HTML-Tag.</a>',
     QA_PAGE_TITLE: 'Seitentitel fehlt! Bitte gib einen <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">Seitentitel</a> an.',
     QA_BLOCKQUOTE_MESSAGE: 'Ist das eine Überschrift? <strong {r}>%(bqHeadingText)</strong> <hr> Blockquotes sollten nur für Zitate verwendet werden. Wenn dies eine Überschrift sein soll, ändere dieses Blockquote in eine semantische Überschrift (z. B. Überschrift 2 oder Überschrift 3).',

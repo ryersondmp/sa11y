@@ -8,7 +8,6 @@ import find from '../utils/find';
 export default function dismissAnnotations(
   dismissAnnotationsOption,
   results,
-  dismissTooltip,
   dismissed,
   checkAll,
   resetAll,
@@ -17,11 +16,13 @@ export default function dismissAnnotations(
     // 1) Hide annotation upon click on dismiss button on warning. Dismiss button exists in both tooltip and control panel. Need to add event listeners to both components.
     const tooltips = document.querySelector('sa11y-tooltips').shadowRoot;
     const controlPanel = document.querySelector('sa11y-control-panel').shadowRoot;
+    const dismissTooltipContainer = document.querySelector('sa11y-dismiss-tooltip');
 
     const handleClick = async (e) => {
       // Get dismissed array from localStorage.
       let existingEntries = JSON.parse(store.getItem('sa11y-dismissed'));
       const element = e.target;
+      dismissTooltipContainer.hidden = false;
 
       // Make sure event listener is attached to dismiss button.
       if (element.tagName === 'BUTTON' && element.hasAttribute('data-sa11y-dismiss')) {
@@ -64,7 +65,7 @@ export default function dismissAnnotations(
 
     // 2) Restore hidden alerts on the CURRENT page only.
     Constants.Panel.dismissButton.onclick = async () => {
-      dismissTooltip.object.hide(); // Prevent flash of tooltip.
+      dismissTooltipContainer.hidden = true; // Prevent flash of tooltip.
       const filtered = dismissed.filter((item) => item.href !== Constants.Global.currentPage);
       store.setItem('sa11y-dismissed', JSON.stringify(filtered));
       Constants.Panel.dismissButton.classList.remove('active');

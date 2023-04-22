@@ -14,6 +14,7 @@ export default {
     ALERT_TEXT: 'Попередження',
     ALERT_CLOSE: 'Закрити',
     OUTLINE: 'Контури сторінки',
+    PAGE_ISSUES: 'Проблеми зі сторінкою',
     SETTINGS: 'Налаштування',
     CONTRAST: 'Контраст',
     FORM_LABELS: 'Назви форми',
@@ -32,14 +33,20 @@ export default {
     PANEL_DISMISS_BUTTON: 'Показати %(dismissCount) відхилених попередження',
     DISMISS: 'Відхилити',
     DISMISSED: 'Відхилених попередження',
+    SKIP_TO_PAGE_ISSUES: 'Перейти до сторінки Проблеми',
 
     // Color filters
     COLOUR_FILTER: 'Фільтр кольорів',
     PROTANOPIA: 'Протанопія',
     DEUTERANOPIA: 'Девтеранопія',
     TRITANOPIA: 'Тританопія',
-    ACHROMATOPSIA: 'Ахроматопсія',
+    MONOCHROMACY: 'Монохромність',
     COLOUR_FILTER_MESSAGE: 'Перевірте наявність елементів, які важко сприйняти або виділити на тлі інших кольорів.',
+    RED_EYE: 'Червоний дальтонізм.',
+    GREEN_EYE: 'Зелений дальтонізм.',
+    BLUE_EYE: 'Синій дальтонізм.',
+    MONO_EYE: 'Червона, зелена і синя сліпота.',
+    COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Кольорові фільтри не працюють у режимі високої контрастності.',
 
     // Alternative text module stop words
     SUSPICIOUS_ALT_STOPWORDS: ['зображення', 'графічний об’єкт', 'малюнок', 'фото'],
