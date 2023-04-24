@@ -38,7 +38,7 @@ export default function checkImages(results) {
     const alt = $el.getAttribute('alt');
     if (alt === null) {
       if ($el.closest('a[href]')) {
-        if (Utils.fnIgnore($el.closest('a[href]'), 'noscript').textContent.trim().length >= 1) {
+        if (Utils.fnIgnore($el.closest('a[href]')).textContent.trim().length >= 1) {
           results.push({
             element: $el,
             type: Constants.Global.ERROR,
@@ -46,7 +46,7 @@ export default function checkImages(results) {
             inline: false,
             position: 'beforebegin',
           });
-        } else if (Utils.fnIgnore($el.closest('a[href]'), 'noscript').textContent.trim().length === 0) {
+        } else if (Utils.fnIgnore($el.closest('a[href]')).textContent.trim().length === 0) {
           results.push({
             element: $el,
             type: Constants.Global.ERROR,
@@ -138,7 +138,7 @@ export default function checkImages(results) {
             inline: false,
             position: 'beforebegin',
           });
-        } else if (Utils.fnIgnore($el.closest('a[href]'), 'noscript').textContent.trim().length === 0) {
+        } else if (Utils.fnIgnore($el.closest('a[href]')).textContent.trim().length === 0) {
           results.push({
             element: $el,
             type: Constants.Global.ERROR,
@@ -166,7 +166,7 @@ export default function checkImages(results) {
           position: 'beforebegin',
           dismiss: key,
         });
-      } else if (alt !== '' && $el.closest('a[href]') && Utils.fnIgnore($el.closest('a[href]'), 'noscript').textContent.trim().length === 0) {
+      } else if (alt !== '' && $el.closest('a[href]') && Utils.fnIgnore($el.closest('a[href]')).textContent.trim().length === 0) {
         const key = Utils.prepareDismissal(`image link: ${baseSrc} ${altText}`);
         // Link and contains an alt text.
         results.push({
@@ -177,7 +177,7 @@ export default function checkImages(results) {
           position: 'beforebegin',
           dismiss: key,
         });
-      } else if (alt !== '' && $el.closest('a[href]') && Utils.fnIgnore($el.closest('a[href]'), 'noscript').textContent.trim().length >= 1) {
+      } else if (alt !== '' && $el.closest('a[href]') && Utils.fnIgnore($el.closest('a[href]')).textContent.trim().length >= 1) {
         const key = Utils.prepareDismissal(`image link: ${baseSrc} ${altText}`);
         // Contains alt text & surrounding link text.
         results.push({

@@ -187,7 +187,7 @@ export default function checkContrast(results) {
         const name = item.elem;
         const cratio = item.ratio;
         const clone = name.cloneNode(true);
-        const nodetext = Utils.fnIgnore(clone, 'script').textContent;
+        const nodetext = Utils.fnIgnore(clone, 'script, style').textContent;
         if (name.tagName === 'INPUT') {
           results.push({
             element: name,
@@ -210,7 +210,7 @@ export default function checkContrast(results) {
       contrastErrors.warnings.forEach((item) => {
         const name = item.elem;
         const clone = name.cloneNode(true);
-        const nodetext = Utils.fnIgnore(clone, 'script').textContent;
+        const nodetext = Utils.fnIgnore(clone, 'script, style').textContent;
         const key = Utils.prepareDismissal(`contrast: ${nodetext}`);
         results.push({
           element: name,

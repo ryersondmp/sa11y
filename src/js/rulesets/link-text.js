@@ -100,7 +100,12 @@ export default function checkLinkText(results, showGoodLinkButton) {
       }
     }
 
-    const error = containsLinkTextStopWords(Utils.fnIgnore($el, Constants.Exclusions.LinkSpan).textContent.replace(/[!*?↣↳→↓»↴]/g, '').trim());
+    // Ignore provided linkSpanIgnore prop, <style> tags, and special characters.
+    const error = containsLinkTextStopWords(
+      Utils.fnIgnore(
+        $el, Constants.Exclusions.LinkSpan,
+      ).textContent.replace(/[!*?↣↳→↓»↴]/g, '').trim(),
+    );
 
     if ($el.querySelectorAll('img').length) {
       // Do nothing. Don't overlap with Alt Text module.

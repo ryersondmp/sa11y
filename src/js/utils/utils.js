@@ -124,12 +124,14 @@ export function debounce(callback, wait) {
  * @returns {Element} - The cloned element with excluded elements removed.
  */
 export function fnIgnore(element, selector) {
-  const $clone = element.cloneNode(true);
-  const $exclude = Array.from(selector ? $clone.querySelectorAll(selector) : $clone.children);
-  $exclude.forEach(($c) => {
-    $c.parentElement.removeChild($c);
+  const defaultIgnored = 'noscript, script, style';
+  const ignore = (!selector) ? defaultIgnored : `${defaultIgnored}, ${selector}`;
+  const clone = element.cloneNode(true);
+  const exclude = Array.from(clone.querySelectorAll(ignore));
+  exclude.forEach((c) => {
+    c.parentElement.removeChild(c);
   });
-  return $clone;
+  return clone;
 }
 
 /**

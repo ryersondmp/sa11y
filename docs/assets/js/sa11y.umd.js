@@ -611,12 +611,14 @@
    * @returns {Element} - The cloned element with excluded elements removed.
    */
   function fnIgnore(element, selector) {
-    const $clone = element.cloneNode(true);
-    const $exclude = Array.from(selector ? $clone.querySelectorAll(selector) : $clone.children);
-    $exclude.forEach(($c) => {
-      $c.parentElement.removeChild($c);
+    const defaultIgnored = 'noscript, script, style';
+    const ignore = (!selector) ? defaultIgnored : `${defaultIgnored}, ${selector}`;
+    const clone = element.cloneNode(true);
+    const exclude = Array.from(clone.querySelectorAll(ignore));
+    exclude.forEach((c) => {
+      c.parentElement.removeChild(c);
     });
-    return $clone;
+    return clone;
   }
 
   /**
@@ -6006,7 +6008,7 @@
       const alt = $el.getAttribute('alt');
       if (alt === null) {
         if ($el.closest('a[href]')) {
-          if (fnIgnore($el.closest('a[href]'), 'noscript').textContent.trim().length >= 1) {
+          if (fnIgnore($el.closest('a[href]')).textContent.trim().length >= 1) {
             results.push({
               element: $el,
               type: Constants.Global.ERROR,
@@ -6014,7 +6016,7 @@
               inline: false,
               position: 'beforebegin',
             });
-          } else if (fnIgnore($el.closest('a[href]'), 'noscript').textContent.trim().length === 0) {
+          } else if (fnIgnore($el.closest('a[href]')).textContent.trim().length === 0) {
             results.push({
               element: $el,
               type: Constants.Global.ERROR,
@@ -6102,7 +6104,7 @@
               inline: false,
               position: 'beforebegin',
             });
-          } else if (fnIgnore($el.closest('a[href]'), 'noscript').textContent.trim().length === 0) {
+          } else if (fnIgnore($el.closest('a[href]')).textContent.trim().length === 0) {
             results.push({
               element: $el,
               type: Constants.Global.ERROR,
@@ -6130,7 +6132,7 @@
             position: 'beforebegin',
             dismiss: key,
           });
-        } else if (alt !== '' && $el.closest('a[href]') && fnIgnore($el.closest('a[href]'), 'noscript').textContent.trim().length === 0) {
+        } else if (alt !== '' && $el.closest('a[href]') && fnIgnore($el.closest('a[href]')).textContent.trim().length === 0) {
           const key = prepareDismissal(`image link: ${baseSrc} ${altText}`);
           // Link and contains an alt text.
           results.push({
@@ -6141,7 +6143,7 @@
             position: 'beforebegin',
             dismiss: key,
           });
-        } else if (alt !== '' && $el.closest('a[href]') && fnIgnore($el.closest('a[href]'), 'noscript').textContent.trim().length >= 1) {
+        } else if (alt !== '' && $el.closest('a[href]') && fnIgnore($el.closest('a[href]')).textContent.trim().length >= 1) {
           const key = prepareDismissal(`image link: ${baseSrc} ${altText}`);
           // Contains alt text & surrounding link text.
           results.push({
@@ -6246,7 +6248,8 @@
   ) {
     let prevLevel;
     Elements.Found.Headings.forEach(($el, i) => {
-      const text = computeTextNodeWithImage($el);
+      const ignore = fnIgnore($el); // Ignore unwanted <style>, <script>, etc tags.
+      const text = computeTextNodeWithImage(ignore);
       const headingText = sanitizeHTML(text);
 
       let level;
@@ -6454,7 +6457,12 @@
         }
       }
 
-      const error = containsLinkTextStopWords(fnIgnore($el, Constants.Exclusions.LinkSpan).textContent.replace(/[!*?↣↳→↓»↴]/g, '').trim());
+      // Ignore provided linkSpanIgnore prop, <style> tags, and special characters.
+      const error = containsLinkTextStopWords(
+        fnIgnore(
+          $el, Constants.Exclusions.LinkSpan,
+        ).textContent.replace(/[!*?↣↳→↓»↴]/g, '').trim(),
+      );
 
       if ($el.querySelectorAll('img').length) ; else if ($el.getAttribute('href') && !linkText) {
         // Flag empty hyperlinks.
@@ -6719,7 +6727,7 @@
           const name = item.elem;
           const cratio = item.ratio;
           const clone = name.cloneNode(true);
-          const nodetext = fnIgnore(clone, 'script').textContent;
+          const nodetext = fnIgnore(clone, 'script, style').textContent;
           if (name.tagName === 'INPUT') {
             results.push({
               element: name,
@@ -6742,7 +6750,7 @@
         contrastErrors.warnings.forEach((item) => {
           const name = item.elem;
           const clone = name.cloneNode(true);
-          const nodetext = fnIgnore(clone, 'script').textContent;
+          const nodetext = fnIgnore(clone, 'script, style').textContent;
           const key = prepareDismissal(`contrast: ${nodetext}`);
           results.push({
             element: name,
@@ -7002,7 +7010,8 @@
         const readabilityarray = [];
         for (let i = 0; i < Elements.Found.Readability.length; i++) {
           const current = Elements.Found.Readability[i];
-          const getText$1 = getText(current);
+          const ignore = fnIgnore(current); // Ignore unwanted <script> and <style> tags.
+          const getText$1 = getText(ignore); // Get text.
           if (getText$1 !== '') {
             readabilityarray.push(getText$1);
           }

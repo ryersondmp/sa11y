@@ -1,13 +1,14 @@
 /* eslint-disable no-new */
 /* eslint-disable no-undef */
 
-/* For testing: change production to FALSE */
+/* If TESTING, change production to FALSE */
 const production = false;
 const env = (production === true) ? '' : '-development';
 
 // Version based on package.json
 const version = Sa11yVersion;
 
+// Customize props within this section.
 const onLoadScript = (lang) => {
   const objectKey = `Sa11yLang${lang}`;
   Sa11y.Lang.addI18n(window[objectKey].strings);

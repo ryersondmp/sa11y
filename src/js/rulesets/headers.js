@@ -11,7 +11,8 @@ export default function checkHeaders(
 ) {
   let prevLevel;
   Elements.Found.Headings.forEach(($el, i) => {
-    const text = Utils.computeTextNodeWithImage($el);
+    const ignore = Utils.fnIgnore($el); // Ignore unwanted <style>, <script>, etc tags.
+    const text = Utils.computeTextNodeWithImage(ignore);
     const headingText = Utils.sanitizeHTML(text);
 
     let level;
