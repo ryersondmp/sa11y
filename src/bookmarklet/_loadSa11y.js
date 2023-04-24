@@ -2,7 +2,7 @@
 /* eslint-disable no-undef */
 
 /* If TESTING, change production to FALSE */
-const production = false;
+const production = true;
 const env = (production === true) ? '' : '-development';
 
 // Version based on package.json
@@ -30,7 +30,7 @@ export function loadSa11y(langCode) {
 
   // Append javascript
   const sa11yscript = document.createElement('script');
-  sa11yscript.src = `https://cdn.jsdelivr.net/combine/gh/ryersondmp/sa11y@${version}${env}/dist/js/lang/${langCode.toLowerCase()}.umd.js,gh/ryersondmp/sa11y@${version}${env}/dist/js/sa11y.umd.min.js`;
+  sa11yscript.src = `https://cdn.jsdelivr.net/combine/gh/ryersondmp/sa11y@${version}${env}/dist/js/lang/${langCode.toLowerCase()}.umd.min.js,gh/ryersondmp/sa11y@${version}${env}/dist/js/sa11y.umd.min.js`;
   document.body.appendChild(sa11yscript);
 
   sa11yscript.onload = () => onLoadScript(langCode);

@@ -314,4 +314,19 @@ export default [
       { file: 'bookmarklet/ua.js', format: 'umd', name: 'Sa11y (Ua)', plugins: [terser()] },
     ],
   },
+  {
+    input: 'src/bookmarklet/de.js',
+    plugins: [
+      nodeResolve(),
+      css(),
+      replace({
+        preventAssignment: true,
+        'process.env.NODE_ENV': JSON.stringify('production'),
+        Sa11yVersion: JSON.stringify(pkg.version),
+      }),
+    ],
+    output: [
+      { file: 'bookmarklet/de.js', format: 'umd', name: 'Sa11y (De)', plugins: [terser()] },
+    ],
+  },
 ];
