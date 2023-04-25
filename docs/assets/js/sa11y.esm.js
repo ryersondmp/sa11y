@@ -2361,7 +2361,7 @@ var round = Math.round;
 function getUAString() {
   var uaData = navigator.userAgentData;
 
-  if (uaData != null && uaData.brands) {
+  if (uaData != null && uaData.brands && Array.isArray(uaData.brands)) {
     return uaData.brands.map(function (item) {
       return item.brand + "/" + item.version;
     }).join(' ');
@@ -2680,10 +2680,9 @@ var unsetSides = {
 // Zooming can change the DPR, but it seems to report a value that will
 // cleanly divide the values into the appropriate subpixels.
 
-function roundOffsetsByDPR(_ref) {
+function roundOffsetsByDPR(_ref, win) {
   var x = _ref.x,
       y = _ref.y;
-  var win = window;
   var dpr = win.devicePixelRatio || 1;
   return {
     x: round(x * dpr) / dpr || 0,
@@ -2766,7 +2765,7 @@ function mapToStyles(_ref2) {
   var _ref4 = roundOffsets === true ? roundOffsetsByDPR({
     x: x,
     y: y
-  }) : {
+  }, getWindow(popper)) : {
     x: x,
     y: y
   };
@@ -6873,9 +6872,10 @@ function checkLinksAdvanced(results) {
         let linkText = computeAccessibleName($el);
         const $img = $el.querySelector('img');
 
+        // If link has no ARIA.
         if (linkText === 'noAria') {
-          // Plain text content.
-          linkText = getText($el);
+          linkText = fnIgnore($el, Constants.Exclusions.LinkSpan);
+          linkText = getText(linkText); // Get inner text within anchor.
 
           // If an image exists within the link.
           if ($img) {
@@ -7318,7 +7318,9 @@ function checkQA(
   pageTitleQA,
   subscriptQA,
 ) {
-  // Error: Find all links pointing to development environment.
+  /* *********************************************************** */
+  /*  Error: Find all links pointing to development environment. */
+  /* *********************************************************** */
   if (badLinksQA === true) {
     Elements.Found.CustomErrorLinks.forEach(($el) => {
       results.push({
@@ -7331,7 +7333,9 @@ function checkQA(
     });
   }
 
-  // Warning: Excessive bolding or italics.
+  /* *********************************************************** */
+  /*  Warning: Excessive bolding or italics.                     */
+  /* *********************************************************** */
   if (strongItalicsQA === true) {
     Elements.Found.StrongItalics.forEach(($el) => {
       const strongItalicsText = $el.textContent.trim().length;
@@ -7349,7 +7353,9 @@ function checkQA(
     });
   }
 
-  // Warning: Find all PDFs.
+  /* *********************************************************** */
+  /*  Warning: Find all PDF documents                            */
+  /* *********************************************************** */
   if (pdfQA === true) {
     Elements.Found.Pdf.forEach(($el, i) => {
       const pdfCount = Elements.Found.Pdf.length;
@@ -7380,7 +7386,9 @@ function checkQA(
     });
   }
 
-  // Error: Missing language tag. Lang should be at least 2 characters.
+  /* *************************************************************** */
+  /*  Error: Missing language tag. Lang should be at least 2 chars.  */
+  /* *************************************************************** */
   if (langQA === true) {
     if (!Elements.Found.Language || Elements.Found.Language.length < 2) {
       results.push({
@@ -7390,7 +7398,9 @@ function checkQA(
     }
   }
 
-  // Warning: Find blockquotes used as headers.
+  /* *************************************************************** */
+  /*  Warning: Find blockquotes used as headers.                     */
+  /* *************************************************************** */
   if (blockquotesQA === true) {
     Elements.Found.Blockquotes.forEach(($el) => {
       const bqHeadingText = $el.textContent;
@@ -7408,7 +7418,9 @@ function checkQA(
     });
   }
 
-  // Tables check.
+  /* *************************************************************** */
+  /*  Errors: Check HTML tables for issues.                          */
+  /* *************************************************************** */
   if (tablesQA === true) {
     Elements.Found.Tables.forEach(($el) => {
       const findTHeaders = $el.querySelectorAll('th');
@@ -7447,13 +7459,14 @@ function checkQA(
     });
   }
 
-  /* Warning: Detect fake headings.
-    To prevent excessive warnings:
-    1) Parent element must not be a heading, blockquote, or table.
-    2) Must be between 4 and 120 characters (typical heading length).
-    3) Doesn't contain the following characters: .;?! (assuming it's a sentence)
-    4) The previous element is not a semantic heading.
-  */
+  /* ****************************************************************** */
+  /*  Warning: Detect fake headings                                     */
+  /*  To prevent excessive warnings:                                    */
+  /*  1) Parent element must not be a heading, blockquote, or table.    */
+  /*  2) Must be between 4 and 120 characters (typical heading length). */
+  /*  3) Doesn't contain the following characters: .;?!                 */
+  /*  4) The previous element is not a semantic heading.                */
+  /* ****************************************************************** */
   if (fakeHeadingsQA === true) {
     Elements.Found.Paragraphs.forEach(($el) => {
       const brAfter = $el.innerHTML.indexOf('</strong><br>');
@@ -7543,8 +7556,10 @@ function checkQA(
     });
   }
 
-  // Warning: Detect paragraphs that should be lists.
-  // Thanks to John Jameson from PrincetonU for this ruleset!
+  /* *************************************************************** */
+  /*  Warning: Detect paragraphs that should be lists.               */
+  /*  Thanks to John Jameson from PrincetonU for this ruleset!       */
+  /* *************************************************************** */
   if (fakeListQA === true) {
     Elements.Found.Paragraphs.forEach(($el) => {
       let activeMatch = '';
@@ -7607,7 +7622,9 @@ function checkQA(
     });
   }
 
-  // Warning: Detect uppercase. Updated logic thanks to Editoria11y!
+  /* *************************************************************** */
+  /*  Warning: Detect uppercase text.                                */
+  /* *************************************************************** */
   if (allCapsQA === true) {
     const checkCaps = ($el) => {
       let thisText = '';
@@ -7642,7 +7659,9 @@ function checkQA(
     Elements.Found.Blockquotes.forEach(($el) => checkCaps($el));
   }
 
-  // Error: Duplicate IDs
+  /* *************************************************************** */
+  /*  Error: Duplicate IDs                                           */
+  /* *************************************************************** */
   if (duplicateIdQA === true) {
     const allIds = {};
     Elements.Found.Ids.forEach(($el) => {
@@ -7663,7 +7682,10 @@ function checkQA(
     });
   }
 
-  // Warning: Flag underline text.
+  /* *************************************************************** */
+  /*  Warning: Flag underlined text.                                 */
+  /*  Created by Brian Teeman.                                       */
+  /* *************************************************************** */
   if (underlinedTextQA === true) {
     // Find all <u> tags.
     Elements.Found.Underlines.forEach(($el) => {
@@ -7702,7 +7724,9 @@ function checkQA(
     Elements.Found.Spans.forEach(($el) => computeUnderline($el));
   }
 
-  // Error: Page is missing meta title.
+  /* *************************************************************** */
+  /*  Error: Page is missing meta page <title>                       */
+  /* *************************************************************** */
   if (pageTitleQA === true) {
     const $title = document.querySelector('title');
     if (!$title || $title.textContent.trim().length === 0) {
@@ -7713,7 +7737,9 @@ function checkQA(
     }
   }
 
-  // Warning: Find inappropriate use of <sup> and <sub> tags.
+  /* *************************************************************** */
+  /*  Warning: Find inappropriate use of <sup> and <sub> tags.       */
+  /* *************************************************************** */
   if (subscriptQA === true) {
     Elements.Found.Subscripts.forEach(($el) => {
       const text = getText($el);
@@ -7730,6 +7756,8 @@ function checkQA(
       }
     });
   }
+
+  // Return each object to results array.
   return results;
 }
 
@@ -7791,7 +7819,9 @@ class Sa11y {
       ...options,
     };
 
-    // Initialize Sa11y's script.
+    /* *********************************************************** */
+    /*  Initialize: Start your engines.                            */
+    /* *********************************************************** */
     this.initialize = () => {
       // Do not run Sa11y if any supplied elements detected on page.
       const checkRunPrevent = () => {
@@ -7890,9 +7920,9 @@ class Sa11y {
       }
     };
 
-    // ----------------------------------------------------------------------
-    // Check all: Where all the magic happens.
-    // ----------------------------------------------------------------------
+    /* *********************************************************** */
+    /*  Check All: Where all the magic happens.                    */
+    /* *********************************************************** */
     this.checkAll = async () => {
       this.results = [];
       this.headingOutline = [];
@@ -8059,9 +8089,9 @@ class Sa11y {
       }
     };
 
-    // ============================================================
-    // Reset all
-    // ============================================================
+    /* *********************************************************** */
+    /*  Reset all: Clears everything and resets the panel.         */
+    /* *********************************************************** */
     this.resetAll = (restartPanel = true) => {
       Constants.Global.html.removeAttribute('data-sa11y-active');
 

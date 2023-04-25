@@ -51,7 +51,9 @@ class Sa11y {
       ...options,
     };
 
-    // Initialize Sa11y's script.
+    /* *********************************************************** */
+    /*  Initialize: Start your engines.                            */
+    /* *********************************************************** */
     this.initialize = () => {
       // Do not run Sa11y if any supplied elements detected on page.
       const checkRunPrevent = () => {
@@ -150,9 +152,9 @@ class Sa11y {
       }
     };
 
-    // ----------------------------------------------------------------------
-    // Check all: Where all the magic happens.
-    // ----------------------------------------------------------------------
+    /* *********************************************************** */
+    /*  Check All: Where all the magic happens.                    */
+    /* *********************************************************** */
     this.checkAll = async () => {
       this.results = [];
       this.headingOutline = [];
@@ -319,9 +321,9 @@ class Sa11y {
       }
     };
 
-    // ============================================================
-    // Reset all
-    // ============================================================
+    /* *********************************************************** */
+    /*  Reset all: Clears everything and resets the panel.         */
+    /* *********************************************************** */
     this.resetAll = (restartPanel = true) => {
       Constants.Global.html.removeAttribute('data-sa11y-active');
 

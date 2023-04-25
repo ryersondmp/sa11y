@@ -20,7 +20,9 @@ export default function checkQA(
   pageTitleQA,
   subscriptQA,
 ) {
-  // Error: Find all links pointing to development environment.
+  /* *********************************************************** */
+  /*  Error: Find all links pointing to development environment. */
+  /* *********************************************************** */
   if (badLinksQA === true) {
     Elements.Found.CustomErrorLinks.forEach(($el) => {
       results.push({
@@ -33,7 +35,9 @@ export default function checkQA(
     });
   }
 
-  // Warning: Excessive bolding or italics.
+  /* *********************************************************** */
+  /*  Warning: Excessive bolding or italics.                     */
+  /* *********************************************************** */
   if (strongItalicsQA === true) {
     Elements.Found.StrongItalics.forEach(($el) => {
       const strongItalicsText = $el.textContent.trim().length;
@@ -51,7 +55,9 @@ export default function checkQA(
     });
   }
 
-  // Warning: Find all PDFs.
+  /* *********************************************************** */
+  /*  Warning: Find all PDF documents                            */
+  /* *********************************************************** */
   if (pdfQA === true) {
     Elements.Found.Pdf.forEach(($el, i) => {
       const pdfCount = Elements.Found.Pdf.length;
@@ -82,7 +88,9 @@ export default function checkQA(
     });
   }
 
-  // Error: Missing language tag. Lang should be at least 2 characters.
+  /* *************************************************************** */
+  /*  Error: Missing language tag. Lang should be at least 2 chars.  */
+  /* *************************************************************** */
   if (langQA === true) {
     if (!Elements.Found.Language || Elements.Found.Language.length < 2) {
       results.push({
@@ -92,7 +100,9 @@ export default function checkQA(
     }
   }
 
-  // Warning: Find blockquotes used as headers.
+  /* *************************************************************** */
+  /*  Warning: Find blockquotes used as headers.                     */
+  /* *************************************************************** */
   if (blockquotesQA === true) {
     Elements.Found.Blockquotes.forEach(($el) => {
       const bqHeadingText = $el.textContent;
@@ -110,7 +120,9 @@ export default function checkQA(
     });
   }
 
-  // Tables check.
+  /* *************************************************************** */
+  /*  Errors: Check HTML tables for issues.                          */
+  /* *************************************************************** */
   if (tablesQA === true) {
     Elements.Found.Tables.forEach(($el) => {
       const findTHeaders = $el.querySelectorAll('th');
@@ -149,13 +161,14 @@ export default function checkQA(
     });
   }
 
-  /* Warning: Detect fake headings.
-    To prevent excessive warnings:
-    1) Parent element must not be a heading, blockquote, or table.
-    2) Must be between 4 and 120 characters (typical heading length).
-    3) Doesn't contain the following characters: .;?! (assuming it's a sentence)
-    4) The previous element is not a semantic heading.
-  */
+  /* ****************************************************************** */
+  /*  Warning: Detect fake headings                                     */
+  /*  To prevent excessive warnings:                                    */
+  /*  1) Parent element must not be a heading, blockquote, or table.    */
+  /*  2) Must be between 4 and 120 characters (typical heading length). */
+  /*  3) Doesn't contain the following characters: .;?!                 */
+  /*  4) The previous element is not a semantic heading.                */
+  /* ****************************************************************** */
   if (fakeHeadingsQA === true) {
     Elements.Found.Paragraphs.forEach(($el) => {
       const brAfter = $el.innerHTML.indexOf('</strong><br>');
@@ -249,8 +262,10 @@ export default function checkQA(
     });
   }
 
-  // Warning: Detect paragraphs that should be lists.
-  // Thanks to John Jameson from PrincetonU for this ruleset!
+  /* *************************************************************** */
+  /*  Warning: Detect paragraphs that should be lists.               */
+  /*  Thanks to John Jameson from PrincetonU for this ruleset!       */
+  /* *************************************************************** */
   if (fakeListQA === true) {
     Elements.Found.Paragraphs.forEach(($el) => {
       let activeMatch = '';
@@ -313,7 +328,9 @@ export default function checkQA(
     });
   }
 
-  // Warning: Detect uppercase. Updated logic thanks to Editoria11y!
+  /* *************************************************************** */
+  /*  Warning: Detect uppercase text.                                */
+  /* *************************************************************** */
   if (allCapsQA === true) {
     const checkCaps = ($el) => {
       let thisText = '';
@@ -348,7 +365,9 @@ export default function checkQA(
     Elements.Found.Blockquotes.forEach(($el) => checkCaps($el));
   }
 
-  // Error: Duplicate IDs
+  /* *************************************************************** */
+  /*  Error: Duplicate IDs                                           */
+  /* *************************************************************** */
   if (duplicateIdQA === true) {
     const allIds = {};
     Elements.Found.Ids.forEach(($el) => {
@@ -369,7 +388,10 @@ export default function checkQA(
     });
   }
 
-  // Warning: Flag underline text.
+  /* *************************************************************** */
+  /*  Warning: Flag underlined text.                                 */
+  /*  Created by Brian Teeman.                                       */
+  /* *************************************************************** */
   if (underlinedTextQA === true) {
     // Find all <u> tags.
     Elements.Found.Underlines.forEach(($el) => {
@@ -408,7 +430,9 @@ export default function checkQA(
     Elements.Found.Spans.forEach(($el) => computeUnderline($el));
   }
 
-  // Error: Page is missing meta title.
+  /* *************************************************************** */
+  /*  Error: Page is missing meta page <title>                       */
+  /* *************************************************************** */
   if (pageTitleQA === true) {
     const $title = document.querySelector('title');
     if (!$title || $title.textContent.trim().length === 0) {
@@ -419,7 +443,9 @@ export default function checkQA(
     }
   }
 
-  // Warning: Find inappropriate use of <sup> and <sub> tags.
+  /* *************************************************************** */
+  /*  Warning: Find inappropriate use of <sup> and <sub> tags.       */
+  /* *************************************************************** */
   if (subscriptQA === true) {
     Elements.Found.Subscripts.forEach(($el) => {
       const text = Utils.getText($el);
@@ -436,5 +462,7 @@ export default function checkQA(
       }
     });
   }
+
+  // Return each object to results array.
   return results;
 }

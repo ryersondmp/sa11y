@@ -15,9 +15,10 @@ export default function checkLinksAdvanced(results) {
         let linkText = Utils.computeAccessibleName($el);
         const $img = $el.querySelector('img');
 
+        // If link has no ARIA.
         if (linkText === 'noAria') {
-          // Plain text content.
-          linkText = Utils.getText($el);
+          linkText = Utils.fnIgnore($el, Constants.Exclusions.LinkSpan);
+          linkText = Utils.getText(linkText); // Get inner text within anchor.
 
           // If an image exists within the link.
           if ($img) {
