@@ -15,19 +15,18 @@ export default function findShadowComponents(
   let shadowComponentsElements;
   if (autoDetectShadowComponents === true) {
     const rootElement = document.querySelector(checkRoot);
+    const ignore = 'sa11y-heading-label, sa11y-heading-anchor, sa11y-annotation, sa11y-tooltips, sa11y-dismiss-tooltip, sa11y-control-panel, #sa11y-colour-filters, #sa11y-colour-filters *, script';
     let everything;
     if (!rootElement) {
-      everything = document.body.querySelectorAll('*');
+      everything = document.body.querySelectorAll(`*:not(${ignore})`);
     } else {
-      everything = rootElement.querySelectorAll('*');
+      everything = rootElement.querySelectorAll(`*:not(${ignore})`);
     }
-
-    const ignored = ['sa11y-heading-label', 'sa11y-heading-anchor', 'sa11y-annotation', 'sa11y-tooltips', 'sa11y-dismiss-tooltip', 'sa11y-control-panel'];
 
     // Query for open shadow roots.
     const foundShadows = [];
     everything.forEach((component) => {
-      if (component.shadowRoot && component.shadowRoot.mode === 'open' && !ignored.includes(component.tagName.toLowerCase())) {
+      if (component.shadowRoot && component.shadowRoot.mode === 'open') {
         foundShadows.push(component);
 
         // Inject CSS utilities into every shadow DOM.

@@ -109,11 +109,7 @@ class Sa11y {
             Utils.store.removeItem('sa11y-dismissed');
           } else {
             // Build control panel.
-            const controlPanel = new ControlPanel(
-              this.option.checkAllHideToggles,
-              this.option.colourFilterPlugin,
-              this.option.readabilityPlugin,
-            );
+            const controlPanel = new ControlPanel();
             document.body.appendChild(controlPanel);
 
             // Initialize control panel.
@@ -123,9 +119,7 @@ class Sa11y {
             );
             initializePanelToggles();
 
-            addColourFilters(
-              this.option.colourFilterPlugin,
-            );
+            addColourFilters();
 
             // Detect page changes (for SPAs).
             detectPageChanges(

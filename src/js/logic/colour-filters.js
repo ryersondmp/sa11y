@@ -3,23 +3,19 @@
  *
  * https://daltonlens.org/opensource-cvd-simulation/ for a
  * discussion of the various methods.
- * The various matrices were generated from DaltonLens-Python.
- * It is very important for these filters to get applied in
- * linearRGB, which is supposed to be the default, but never
- * hurts to specify it explicitly.
 */
 import Constants from '../utils/constants';
 
-export default function addColourFilters(colourFilterPlugin) {
-  if (colourFilterPlugin === true) {
+export default function addColourFilters() {
+  if (Constants.Global.colourFilterPlugin === true) {
     if (Constants.Global.headless === false) {
       const svg = document.createElement('div');
       svg.id = 'sa11y-colour-filters';
-      svg.style.display = 'none';
       svg.setAttribute('aria-hidden', 'true');
+      // Note: Do not set 'display: none;' on parent container, otherwise it won't render in Firefox.
       svg.innerHTML = `
         <!-- DaltonLens SVG filters to simulate color vision deficiencies -->
-        <svg>
+        <svg xmlns="http://www.w3.org/2000/svg" style="height: 0; width: 0; padding: 0; margin: 0; line-height: 0;">
           <filter id="sa11y-protanopia" color-interpolation-filters="linearRGB">
             <feColorMatrix type="matrix" in="SourceGraphic" values="
                 0.10889,0.89111,-0.00000,0,0

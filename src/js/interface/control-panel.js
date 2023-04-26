@@ -74,13 +74,15 @@ export default class ControlPanel extends HTMLElement {
     const colourFilterPlugin = (Constants.Global.colourFilterPlugin === true) ? `
       <li id="colour-filter-item">
         <label id="colour-filter-mode" for="colour-filter">${Lang._('COLOUR_FILTER')}</label>
-        <select id="colour-filter-select">
-          <option value="0">${Lang._('OFF')}</option>
-          <option value="1">${Lang._('PROTANOPIA')}</option>
-          <option value="2">${Lang._('DEUTERANOPIA')}</option>
-          <option value="3">${Lang._('TRITANOPIA')}</option>
-          <option value="4">${Lang._('MONOCHROMACY')}</option>
-        </select>
+        <div class="select-dropdown">
+          <select id="colour-filter-select">
+            <option value="0">${Lang._('OFF')}</option>
+            <option value="1">${Lang._('PROTANOPIA')}</option>
+            <option value="2">${Lang._('DEUTERANOPIA')}</option>
+            <option value="3">${Lang._('TRITANOPIA')}</option>
+            <option value="4">${Lang._('MONOCHROMACY')}</option>
+          </select>
+        </div>
       </li>` : '';
 
     const colourFilterPanel = (Constants.Global.colourFilterPlugin === true) ? `
@@ -156,10 +158,15 @@ export default class ControlPanel extends HTMLElement {
         </div>`
 
       // Console warning messages.
-      + `<div id="panel-alert" class="scrollable bottom">
+      + `<div
+          id="panel-alert"
+          class="scrollable"
+          role="alertdialog"
+          aria-labelledby="alert-heading"
+          aria-describedby="panel-alert-text">
           <div id="panel-alert-content">
             <div class="header-text">
-              <button id="close-alert" class="close-btn" aria-label="${Lang._('ALERT_CLOSE')}" aria-describedby="alert-heading panel-alert-text"></button>
+              <button id="close-alert" class="close-btn" aria-label="${Lang._('ALERT_CLOSE')}"></button>
               <h2 id="alert-heading">${Lang._('ALERT_TEXT')}</h2>
             </div>
             <p id="panel-alert-text"></p>

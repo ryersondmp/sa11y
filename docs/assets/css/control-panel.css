@@ -714,7 +714,22 @@ label {
   }
 }
 
+.select-dropdown:after {
+  content: " ";
+  position: absolute;
+  margin-top: 22.5px;
+  inset-inline-end: 25px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid var(--sa11y-setting-switch-bg-off);
+}
+
 #colour-filter-select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
   background: none;
   border: 2px solid var(--sa11y-setting-switch-bg-off);
   border-radius: 5px;
@@ -722,8 +737,9 @@ label {
   cursor: pointer;
   font-size: var(--sa11y-normal-text);
   font-weight: normal;
-  height: 25px;
-  padding: 0;
+  height: 30px;
+  padding-inline-end: 25px;
+  padding-inline-start: 5px;
   position: relative;
   text-align: end;
   vertical-align: middle;
