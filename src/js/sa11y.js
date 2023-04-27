@@ -17,7 +17,7 @@ import Elements from './utils/elements';
 
 // Extras
 import detectPageChanges from './logic/detect-page-changes';
-import dismissAnnotations from './logic/dismiss-annotations';
+import { dismissAnnotationsLogic, dismissAnnotationsButtons } from './logic/dismiss-annotations';
 import addColourFilters from './logic/colour-filters';
 
 // Create UI/interface elements
@@ -155,19 +155,6 @@ class Sa11y {
       this.errorCount = 0;
       this.warningCount = 0;
 
-      // Find and get all dismissed elements (if not headless).
-      if (this.option.headless === false) {
-        // Get dismissed items and re-parse back into object.
-        this.dismissed = Utils.store.getItem('sa11y-dismissed');
-        this.dismissed = this.dismissed ? JSON.parse(this.dismissed) : [];
-
-        // Get count and show dismiss panel.
-        this.dismissCount = this.dismissed.filter((item) => item.href === Constants.Global.currentPage).length;
-        if (this.dismissCount) Constants.Panel.dismissButton.classList.add('active');
-        Constants.Panel.dismissTooltip.innerText = Lang.sprintf('PANEL_DISMISS_BUTTON', this.dismissCount);
-        this.dismissTooltip.object.setContent(Lang.sprintf('PANEL_DISMISS_BUTTON', this.dismissCount));
-      }
-
       // Panel alert if root doesn't exist.
       const root = document.querySelector(this.option.checkRoot);
       if (!root) {
@@ -193,27 +180,13 @@ class Sa11y {
         this.option.flagLongHeadings,
         this.headingOutline,
       );
-      checkLinkText(
-        this.results,
-        this.option.showGoodLinkButton,
-      );
+      checkLinkText(this.results, this.option.showGoodLinkButton);
       checkImages(this.results);
       checkContrast(this.results);
       checkLabels(this.results);
       checkLinksAdvanced(this.results);
-      checkReadability();
-      checkEmbeddedContent(
-        this.results,
-        this.option.embeddedContentAll,
-        this.option.embeddedContentAudio,
-        this.option.embeddedContentVideo,
-        this.option.embeddedContentDataViz,
-        this.option.embeddedContentTitles,
-        this.option.embeddedContentGeneral,
-      );
       checkQA(
         this.results,
-        this.dismissed,
         this.option.badLinksQA,
         this.option.strongItalicsQA,
         this.option.pdfQA,
@@ -228,12 +201,20 @@ class Sa11y {
         this.option.pageTitleQA,
         this.option.subscriptQA,
       );
+      checkEmbeddedContent(
+        this.results,
+        this.option.embeddedContentAll,
+        this.option.embeddedContentAudio,
+        this.option.embeddedContentVideo,
+        this.option.embeddedContentDataViz,
+        this.option.embeddedContentTitles,
+        this.option.embeddedContentGeneral,
+      );
+      checkReadability();
 
       // Custom checks
       if (this.option.customChecks === true) {
-        checkCustom(
-          this.results,
-        );
+        checkCustom(this.results);
       }
 
       // Optional: Generate CSS selector path of element.
@@ -247,19 +228,17 @@ class Sa11y {
       }
 
       if (this.option.headless === false) {
-        // Return element from results array that matches dismiss key and dismiss url. Then filter through matched objects.
-        const findKey = this.dismissed.map((e) => {
-          const found = this.results.find((f) => (e.key.includes(f.dismiss) && e.href === Constants.Global.currentPage));
-          if (found === undefined) return '';
-          return found;
-        });
-        this.results = this.results.filter((issue) => !findKey.find((e) => e.dismiss === issue.dismiss));
+        // Check for dismissed items and update results array.
+        const dismiss = dismissAnnotationsLogic(this.results, this.dismissTooltip);
+        this.results = dismiss.updatedResults;
+        this.dismissed = dismiss.dismissed;
 
-        // Update count
+        // Update count.
         const count = updateCount(this.results, this.errorCount, this.warningCount);
         this.errorCount = count.error;
         this.warningCount = count.warning;
 
+        // Update badge.
         updateBadge(this.errorCount, this.warningCount);
 
         /* If panel is OPENED. */
@@ -285,7 +264,7 @@ class Sa11y {
           const tooltipComponent = new TooltipComponent();
           document.body.appendChild(tooltipComponent);
 
-          dismissAnnotations(
+          dismissAnnotationsButtons(
             this.option.dismissAnnotations,
             this.results,
             this.dismissed,

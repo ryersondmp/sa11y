@@ -5,7 +5,6 @@ import Lang from '../utils/lang';
 
 export default function checkQA(
   results,
-  dismissed,
   badLinksQA,
   strongItalicsQA,
   pdfQA,
@@ -59,32 +58,17 @@ export default function checkQA(
   /*  Warning: Find all PDF documents                            */
   /* *********************************************************** */
   if (pdfQA === true) {
-    Elements.Found.Pdf.forEach(($el, i) => {
-      const pdfCount = Elements.Found.Pdf.length;
+    Elements.Found.Pdf.forEach(($el) => {
       const href = $el.getAttribute('href');
-      const key = Utils.prepareDismissal(`pdf: ${href}`);
-
-      // Highlight PDFs that are not dismissed.
-      if (
-        pdfCount
-        && dismissed !== undefined
-        && !dismissed.filter((e) => e.key === key).length
-        && Utils.store.getItem('sa11y-remember-panel') === 'Opened'
-      ) {
-        $el.setAttribute('data-sa11y-warning-inline', 'pdf');
-      }
-
-      // Only append warning button to first PDF.
-      if ($el && i === 0) {
-        results.push({
-          element: $el,
-          type: Constants.Global.WARNING,
-          content: Lang.sprintf('QA_PDF', pdfCount),
-          inline: true,
-          position: 'beforebegin',
-          dismiss: key,
-        });
-      }
+      const key = Utils.prepareDismissal(`pdf:${href}`);
+      results.push({
+        element: $el,
+        type: Constants.Global.WARNING,
+        content: Lang.sprintf('QA_PDF'),
+        inline: true,
+        position: 'beforebegin',
+        dismiss: key,
+      });
     });
   }
 

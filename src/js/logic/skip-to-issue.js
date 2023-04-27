@@ -1,11 +1,12 @@
-// ============================================================
-// Main panel: Skip to issue button.
-// ============================================================
 import * as Utils from '../utils/utils';
 import find from '../utils/find';
 import Lang from '../utils/lang';
 import Constants from '../utils/constants';
 import Elements from '../utils/elements';
+
+/* ************************************************************ */
+/*  Skip to Issue button logic within panel.                    */
+/* ************************************************************ */
 
 // When annotations are hidden and tooltip message is displayed in control panel, the previous visible tooltip remains. Function is called during getHiddenParent();
 const closeAnyActiveTooltips = () => {

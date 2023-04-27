@@ -1,11 +1,9 @@
-/**
- * DaltonLens SVG filters to simulate color vision deficiencies
- *
- * https://daltonlens.org/opensource-cvd-simulation/ for a
- * discussion of the various methods.
-*/
 import Constants from '../utils/constants';
 
+/* ************************************************************** */
+/*  DaltonLens SVG filters to simulate color vision deficiencies  */
+/*  Source: https://daltonlens.org/opensource-cvd-simulation/     */
+/* ************************************************************** */
 export default function addColourFilters() {
   if (Constants.Global.colourFilterPlugin === true) {
     if (Constants.Global.headless === false) {

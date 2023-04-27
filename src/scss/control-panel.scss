@@ -295,6 +295,7 @@ hr {
 
   &:disabled {
     background: none;
+    border: 0;
     box-shadow: none;
     cursor: default;
   }

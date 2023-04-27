@@ -1,9 +1,9 @@
-//----------------------------------------------------------------------
-// Feature to detect if URL changed for bookmarklet/SPAs.
-//----------------------------------------------------------------------
 import Constants from '../utils/constants';
 import { store, debounce } from '../utils/utils';
 
+/* ******************************************************** */
+/*  Feature to detect if URL changed for bookmarklet/SPAs.  */
+/* ******************************************************** */
 export default function detectPageChanges(detectSPArouting, checkAll, resetAll) {
   // Feature to detect page changes (e.g. SPAs).
   if (detectSPArouting === true) {

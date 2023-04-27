@@ -160,7 +160,6 @@ export default class ControlPanel extends HTMLElement {
       // Console warning messages.
       + `<div
           id="panel-alert"
-          class="scrollable"
           role="alertdialog"
           aria-labelledby="alert-heading"
           aria-describedby="panel-alert-text">

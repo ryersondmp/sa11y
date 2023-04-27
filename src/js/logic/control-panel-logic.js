@@ -2,9 +2,9 @@ import Constants from '../utils/constants';
 import { store, isScrollable } from '../utils/utils';
 import Lang from '../utils/lang';
 
-// ----------------------------------------------------------------------
-// Main panel: Initialize Show Outline and Settings buttons/tabs.
-// ----------------------------------------------------------------------
+/* **************************************************************** */
+/*  Main panel: Initialize Show Outline and Settings buttons/tabs.  */
+/* **************************************************************** */
 export default function initializePanelToggles() {
   // Show outline panel
   Constants.Panel.outlineToggle.addEventListener('click', () => {

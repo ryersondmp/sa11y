@@ -284,6 +284,7 @@ hr {
 #dismiss-button:disabled,
 #skip-button:disabled {
   background: none;
+  border: 0;
   box-shadow: none;
   cursor: default;
 }

@@ -432,12 +432,16 @@ export function createAlert(alertMessage, errorPreview) {
   }
   setTimeout(() => {
     alertClose.focus();
-  }, 500);
+  }, 300);
 
   // Closing alert sets focus back to Skip to Issue toggle.
   alertClose.addEventListener('click', () => {
     removeAlert();
-    skipButton.focus();
+    if (skipButton.hasAttribute('disabled')) {
+      Sa11yPanel.getElementById('toggle').focus();
+    } else {
+      skipButton.focus();
+    }
   });
 }
 

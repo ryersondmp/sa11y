@@ -2,9 +2,9 @@ import Constants from '../utils/constants';
 import { store } from '../utils/utils';
 import Lang from '../utils/lang';
 
-// ============================================================
-// Update warning and error counts on panel.
-// ============================================================
+/* ************************************************************ */
+/*  Update warning and error counts on panel.                   */
+/* ************************************************************ */
 export function updatePanel(dismissCount, errorCount, warningCount) {
   Constants.Panel.skipButton.disabled = false;
   Constants.Panel.panel.classList.add('active');
@@ -36,9 +36,9 @@ export function updatePanel(dismissCount, errorCount, warningCount) {
   }
 }
 
-// ============================================================
-// Update iOS style notification badge on icon.
-// ============================================================
+/* ************************************************************ */
+/*  Update iOS style notification badge on icon.                */
+/* ************************************************************ */
 export function updateBadge(errorCount, warningCount) {
   const totalCount = errorCount + warningCount;
   if (totalCount === 0) {
@@ -63,9 +63,9 @@ export function updateBadge(errorCount, warningCount) {
   }
 }
 
-// ============================================================
-// Count number of errors and warnings on page.
-// ============================================================
+/* ************************************************************ */
+/*  Count number of errors and warnings on page.                */
+/* ************************************************************ */
 export function updateCount(results, error, warning) {
   let updatedErrorCount = error;
   let updatedWarningCount = warning;

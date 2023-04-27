@@ -1,11 +1,44 @@
-// ============================================================
-// Dismiss feature.
-// ============================================================
 import Constants from '../utils/constants';
 import { store } from '../utils/utils';
 import find from '../utils/find';
+import Lang from '../utils/lang';
 
-export default function dismissAnnotations(
+/* ************************************************************ */
+/*  Update results array before painting annotations to page.   */
+/* ************************************************************ */
+export function dismissAnnotationsLogic(results, dismissTooltip) {
+  // Get dismissed items and re-parse back into object.
+  let dismissed = store.getItem('sa11y-dismissed');
+  dismissed = dismissed ? JSON.parse(dismissed) : [];
+
+  // Return element from results array that matches dismiss key and dismiss url. Then filter through matched objects.
+  const findKey = dismissed.map((e) => {
+    const found = results.find((f) => (e.key.includes(f.dismiss) && e.href === Constants.Global.currentPage));
+    if (found === undefined) return '';
+    return found;
+  });
+
+  // Number of dismissed items found on the page.
+  const dismissCount = results.filter((issue) => findKey.find((e) => e.dismiss === issue.dismiss)).length;
+
+  // Update results array (exclude dismissed items).
+  const updatedResults = results.filter((issue) => !findKey.find((e) => e.dismiss === issue.dismiss));
+
+  // Show dismiss button in panel.
+  if (dismissCount >= 1) {
+    Constants.Panel.dismissButton.classList.add('active');
+    Constants.Panel.dismissTooltip.innerText = Lang.sprintf('PANEL_DISMISS_BUTTON', dismissCount);
+    dismissTooltip.object.setContent(Lang.sprintf('PANEL_DISMISS_BUTTON', dismissCount));
+  } else {
+    Constants.Panel.dismissButton.classList.remove('active');
+  }
+  return { dismissed, updatedResults };
+}
+
+/* ************************************************************ */
+/*  Logic for tooltip "Dismiss" buttons & panel restore button  */
+/* ************************************************************ */
+export function dismissAnnotationsButtons(
   dismissAnnotationsOption,
   results,
   dismissed,

@@ -1,6 +1,9 @@
 import Constants from '../utils/constants';
 import { store, isScrollable } from '../utils/utils';
 
+/* ************************************** */
+/*  Initialize main toggle within panel.  */
+/* ************************************** */
 export default function mainToggle(checkAll, resetAll) {
   // Keeps checker active when navigating between pages until it is toggled off.
   Constants.Panel.toggle.addEventListener('click', (e) => {

@@ -2,10 +2,13 @@ import Constants from '../utils/constants';
 import { store, remove, resetAttributes, createAlert } from '../utils/utils';
 import Lang from '../utils/lang';
 
+/* ************************************************************ */
+/*  Initialize all toggle switches within Settings panel.       */
+/* ************************************************************ */
 export default function settingsPanelToggles(checkAll, resetAll) {
-  /**
-   * Toggle: Contrast
-  */
+  /* ***************** */
+  /*  Contrast toggle  */
+  /* ***************** */
   if (Constants.Global.contrastPlugin === true) {
     Constants.Panel.contrastToggle.onclick = async () => {
       if (store.getItem('sa11y-remember-contrast') === 'On') {
@@ -26,9 +29,9 @@ export default function settingsPanelToggles(checkAll, resetAll) {
     store.setItem('sa11y-remember-contrast', 'Off');
   }
 
-  /**
-   * Toggle: Form labels
-  */
+  /* ***************** */
+  /*  Form Labels      */
+  /* ***************** */
   if (Constants.Global.formLabelsPlugin === true) {
     Constants.Panel.labelsToggle.onclick = async () => {
       if (store.getItem('sa11y-remember-labels') === 'On') {
@@ -49,9 +52,9 @@ export default function settingsPanelToggles(checkAll, resetAll) {
     store.setItem('sa11y-remember-labels', 'Off');
   }
 
-  /**
-   * Toggle: Links (Advanced)
-  */
+  /* ****************** */
+  /*  Links (Advanced)  */
+  /* ****************** */
   if (Constants.Global.linksAdvancedPlugin === true) {
     Constants.Panel.linksToggle.onclick = async () => {
       if (store.getItem('sa11y-remember-links-advanced') === 'On') {
@@ -72,9 +75,9 @@ export default function settingsPanelToggles(checkAll, resetAll) {
     store.setItem('sa11y-remember-links-advanced', 'Off');
   }
 
-  /**
-   * Toggle: Readability
-  */
+  /* ****************** */
+  /*  Readability       */
+  /* ****************** */
   if (Constants.Readability.Plugin === true) {
     Constants.Panel.readabilityToggle.onclick = async () => {
       if (store.getItem('sa11y-remember-readability') === 'On') {
@@ -163,9 +166,9 @@ export default function settingsPanelToggles(checkAll, resetAll) {
     Constants.Panel.themeToggle.setAttribute('aria-pressed', 'false');
   }
 
-  /**
-   * Toggle: Colour Filters
-  */
+  /* ****************** */
+  /*  Colour filters    */
+  /* ****************** */
   if (Constants.Global.colourFilterPlugin === true) {
     Constants.Panel.colourFilterSelect.addEventListener('change', async () => {
       const option = parseInt(Constants.Panel.colourFilterSelect.value, 10);
