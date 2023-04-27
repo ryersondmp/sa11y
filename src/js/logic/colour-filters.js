@@ -13,7 +13,7 @@ export default function addColourFilters() {
       // Note: Do not set 'display: none;' on parent container, otherwise it won't render in Firefox.
       svg.innerHTML = `
         <!-- DaltonLens SVG filters to simulate color vision deficiencies -->
-        <svg xmlns="http://www.w3.org/2000/svg" style="height: 0; width: 0; padding: 0; margin: 0; line-height: 0;">
+        <svg id="sa11y-svg-filters" xmlns="http://www.w3.org/2000/svg">
           <filter id="sa11y-protanopia" color-interpolation-filters="linearRGB">
             <feColorMatrix type="matrix" in="SourceGraphic" values="
                 0.10889,0.89111,-0.00000,0,0

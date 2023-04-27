@@ -311,6 +311,15 @@ html[data-sa11y-theme=dark] {
 /*           Colour vision deficiency filters created using DaltonLens library.        */
 /*  https: //github.com/DaltonLens/libDaltonLens/blob/master/svg/cvd_svg_filters.html  */
 /* *********************************************************************************** */
+#sa11y-colour-filters,
+#sa11y-svg-filters {
+  height: 0 !important;
+  width: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  line-height: 0 !important;
+}
+
 [data-sa11y-filter=protanopia] *:not(sa11y-control-panel, sa11y-dismiss-tooltip) {
   -webkit-filter: url(#sa11y-protanopia);
   -moz-filter: url(#sa11y-protanopia);

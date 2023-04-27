@@ -187,7 +187,9 @@ export default function checkContrast(results) {
         const name = item.elem;
         const cratio = item.ratio;
         const clone = name.cloneNode(true);
-        const nodetext = Utils.fnIgnore(clone, 'script, style').textContent;
+        const nodeText = Utils.fnIgnore(clone, 'script, style').textContent;
+        const sanitizedText = Utils.sanitizeHTML(nodeText);
+
         if (name.tagName === 'INPUT') {
           results.push({
             element: name,
@@ -200,7 +202,7 @@ export default function checkContrast(results) {
           results.push({
             element: name,
             type: Constants.Global.ERROR,
-            content: Lang.sprintf('CONTRAST_ERROR', cratio, nodetext),
+            content: Lang.sprintf('CONTRAST_ERROR', cratio, sanitizedText),
             inline: false,
             position: 'beforebegin',
           });
@@ -210,12 +212,15 @@ export default function checkContrast(results) {
       contrastErrors.warnings.forEach((item) => {
         const name = item.elem;
         const clone = name.cloneNode(true);
-        const nodetext = Utils.fnIgnore(clone, 'script, style').textContent;
-        const key = Utils.prepareDismissal(`contrast: ${nodetext}`);
+        const nodeText = Utils.fnIgnore(clone, 'script, style').textContent;
+
+        const key = Utils.prepareDismissal(`contrast:${nodeText}`);
+        const sanitizedText = Utils.sanitizeHTML(nodeText);
+
         results.push({
           element: name,
           type: Constants.Global.WARNING,
-          content: Lang.sprintf('CONTRAST_WARNING', nodetext),
+          content: Lang.sprintf('CONTRAST_WARNING', sanitizedText),
           inline: false,
           position: 'beforebegin',
           dismiss: key,

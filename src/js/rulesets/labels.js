@@ -52,20 +52,22 @@ export default function checkLabels(results) {
             if ($el.getAttribute('title')) {
               ariaLabel = $el.getAttribute('title');
               const key = Utils.prepareDismissal(`input: ${ariaLabel}`);
+              const sanitizedText = Utils.sanitizeHTML(ariaLabel);
               results.push({
                 element: $el,
                 type: Constants.Global.WARNING,
-                content: Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', ariaLabel),
+                content: Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', sanitizedText),
                 inline: false,
                 position: 'beforebegin',
                 dismiss: key,
               });
             } else {
               const key = Utils.prepareDismissal(`input: ${ariaLabel}`);
+              const sanitizedText = Utils.sanitizeHTML(ariaLabel);
               results.push({
                 element: $el,
                 type: Constants.Global.WARNING,
-                content: Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', ariaLabel),
+                content: Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', sanitizedText),
                 inline: false,
                 position: 'beforebegin',
                 dismiss: key,

@@ -91,11 +91,12 @@ export default function checkQA(
     Elements.Found.Blockquotes.forEach(($el) => {
       const bqHeadingText = $el.textContent;
       if (bqHeadingText.trim().length < 25) {
-        const key = Utils.prepareDismissal(`${$el.tagName}: ${bqHeadingText}`);
+        const key = Utils.prepareDismissal(`BLOCKQUOTE:${bqHeadingText}`);
+        const sanitizedText = Utils.sanitizeHTML(bqHeadingText);
         results.push({
           element: $el,
           type: Constants.Global.WARNING,
-          content: Lang.sprintf('QA_BLOCKQUOTE_MESSAGE', bqHeadingText),
+          content: Lang.sprintf('QA_BLOCKQUOTE_MESSAGE', sanitizedText),
           inline: false,
           position: 'beforebegin',
           dismiss: key,
@@ -170,18 +171,18 @@ export default function checkQA(
         if (firstChild.tagName === 'STRONG' && (brBefore !== -1 || brAfter !== -1)) {
           boldtext = Utils.getText(firstChild);
           const maybeSentence = boldtext.match(/[.;?!"]/) !== null;
-
           if (
             !/[*]$/.test(boldtext)
             && !$el.closest(ignoreParents)
             && (boldtext.length >= 4 && boldtext.length <= 120)
             && maybeSentence === false
           ) {
-            const key = Utils.prepareDismissal(`bold: ${boldtext}`);
+            const key = Utils.prepareDismissal(`bold:${boldtext}`);
+            const sanitizedText = Utils.sanitizeHTML(boldtext);
             results.push({
               element: firstChild,
               type: Constants.Global.WARNING,
-              content: Lang.sprintf('QA_FAKE_HEADING', boldtext),
+              content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
               inline: false,
               position: 'beforebegin',
               dismiss: key,
@@ -203,11 +204,12 @@ export default function checkQA(
           && !$el.closest(ignoreParents)
           && maybeSentence === false
         ) {
-          const key = Utils.prepareDismissal(`bold: ${boldtext}`);
+          const key = Utils.prepareDismissal(`bold:${boldtext}`);
+          const sanitizedText = Utils.sanitizeHTML(boldtext);
           results.push({
             element: $el,
             type: Constants.Global.WARNING,
-            content: Lang.sprintf('QA_FAKE_HEADING', boldtext),
+            content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
             inline: false,
             position: 'beforebegin',
             dismiss: key,
@@ -231,11 +233,12 @@ export default function checkQA(
           && (getText.length >= 4 && getText.length <= 120)
           && maybeSentence === false
         ) {
-          const key = Utils.prepareDismissal(`bold: ${getText}`);
+          const key = Utils.prepareDismissal(`bold:${getText}`);
+          const sanitizedText = Utils.sanitizeHTML(getText);
           results.push({
             element: $elem,
             type: Constants.Global.WARNING,
-            content: Lang.sprintf('QA_FAKE_HEADING', getText),
+            content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
             inline: false,
             position: 'beforebegin',
             dismiss: key,
@@ -293,7 +296,7 @@ export default function checkQA(
           }
         }
         if (hit) {
-          const key = Utils.prepareDismissal(`list: ${$el.textContent}`);
+          const key = Utils.prepareDismissal(`list:${$el.textContent}`);
           results.push({
             element: $el,
             type: Constants.Global.WARNING,
@@ -332,7 +335,7 @@ export default function checkQA(
       const detectUpperCase = thisText.match(uppercasePattern);
 
       if (detectUpperCase && detectUpperCase[0].length > 10) {
-        const key = Utils.prepareDismissal(`uppercase: ${thisText}`);
+        const key = Utils.prepareDismissal(`uppercase:${thisText}`);
         results.push({
           element: $el,
           type: Constants.Global.WARNING,
@@ -380,7 +383,7 @@ export default function checkQA(
     // Find all <u> tags.
     Elements.Found.Underlines.forEach(($el) => {
       const text = Utils.getText($el);
-      const key = Utils.prepareDismissal(`underline: ${text}`);
+      const key = Utils.prepareDismissal(`underline:${text}`);
       results.push({
         element: $el,
         type: Constants.Global.WARNING,
@@ -396,7 +399,7 @@ export default function checkQA(
       const decoration = style.textDecorationLine;
       const text = Utils.getText($el);
       if (decoration === 'underline') {
-        const key = Utils.prepareDismissal(`underline: ${text}`);
+        const key = Utils.prepareDismissal(`underline:${text}`);
         results.push({
           element: $el,
           type: Constants.Global.WARNING,

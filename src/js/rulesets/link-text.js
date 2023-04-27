@@ -75,6 +75,7 @@ export default function checkLinkText(results, showGoodLinkButton) {
     let childAriaLabelledBy = null;
     let childAriaLabel = null;
     const hasTitle = $el.getAttribute('title');
+    const href = $el.getAttribute('href');
 
     if ($el.children.length) {
       const $firstChild = $el.children[0];
@@ -109,7 +110,7 @@ export default function checkLinkText(results, showGoodLinkButton) {
 
     if ($el.querySelectorAll('img').length) {
       // Do nothing. Don't overlap with Alt Text module.
-    } else if ($el.getAttribute('href') && !linkText) {
+    } else if (href && !linkText) {
       // Flag empty hyperlinks.
       if ($el && hasTitle) {
         // If empty but has title attribute.
@@ -135,11 +136,12 @@ export default function checkLinkText(results, showGoodLinkButton) {
     } else if (error[0] != null) {
       // Contains stop words.
       if (hasAriaLabelledBy || hasAriaLabel || childAriaLabelledBy || childAriaLabel) {
+        const sanitizedText = Utils.sanitizeHTML(linkText);
         if (showGoodLinkButton === true) {
           results.push({
             element: $el,
             type: Constants.Global.GOOD,
-            content: Lang.sprintf('LINK_LABEL', linkText),
+            content: Lang.sprintf('LINK_LABEL', sanitizedText),
             inline: true,
             position: 'afterend',
           });
@@ -156,7 +158,7 @@ export default function checkLinkText(results, showGoodLinkButton) {
         });
       }
     } else if (error[1] != null) {
-      const key = Utils.prepareDismissal(`link: ${linkText} ${error[1]}`);
+      const key = Utils.prepareDismissal(`link:${linkText}${error[1]}${href}`);
       // Contains warning words.
       results.push({
         element: $el,
@@ -167,7 +169,7 @@ export default function checkLinkText(results, showGoodLinkButton) {
         dismiss: key,
       });
     } else if (error[2] != null) {
-      const key = Utils.prepareDismissal(`link: ${linkText} ${error[2]}`);
+      const key = Utils.prepareDismissal(`link:${linkText}${error[2]}${href}`);
       // Contains URL in link text.
       if (linkText.length > 40) {
         results.push({
@@ -182,10 +184,11 @@ export default function checkLinkText(results, showGoodLinkButton) {
     } else if (hasAriaLabelledBy || hasAriaLabel || childAriaLabelledBy || childAriaLabel) {
       // If the link has any ARIA, append a "Good" link button.
       if (showGoodLinkButton === true) {
+        const sanitizedText = Utils.sanitizeHTML(linkText);
         results.push({
           element: $el,
           type: Constants.Global.GOOD,
-          content: Lang.sprintf('LINK_LABEL', linkText),
+          content: Lang.sprintf('LINK_LABEL', sanitizedText),
           inline: true,
           position: 'afterend',
         });

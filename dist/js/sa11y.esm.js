@@ -1263,7 +1263,7 @@ function addColourFilters() {
       // Note: Do not set 'display: none;' on parent container, otherwise it won't render in Firefox.
       svg.innerHTML = `
         <!-- DaltonLens SVG filters to simulate color vision deficiencies -->
-        <svg xmlns="http://www.w3.org/2000/svg" style="height: 0; width: 0; padding: 0; margin: 0; line-height: 0;">
+        <svg id="sa11y-svg-filters" xmlns="http://www.w3.org/2000/svg">
           <filter id="sa11y-protanopia" color-interpolation-filters="linearRGB">
             <feColorMatrix type="matrix" in="SourceGraphic" values="
                 0.10889,0.89111,-0.00000,0,0
@@ -6462,6 +6462,7 @@ function checkLinkText(results, showGoodLinkButton) {
     let childAriaLabelledBy = null;
     let childAriaLabel = null;
     const hasTitle = $el.getAttribute('title');
+    const href = $el.getAttribute('href');
 
     if ($el.children.length) {
       const $firstChild = $el.children[0];
@@ -6494,7 +6495,7 @@ function checkLinkText(results, showGoodLinkButton) {
       ).textContent.replace(/[!*?↣↳→↓»↴]/g, '').trim(),
     );
 
-    if ($el.querySelectorAll('img').length) ; else if ($el.getAttribute('href') && !linkText) {
+    if ($el.querySelectorAll('img').length) ; else if (href && !linkText) {
       // Flag empty hyperlinks.
       if ($el && hasTitle) ; else if ($el.children.length) {
         // Has child elements (e.g. SVG or SPAN) <a><i></i></a>
@@ -6518,11 +6519,12 @@ function checkLinkText(results, showGoodLinkButton) {
     } else if (error[0] != null) {
       // Contains stop words.
       if (hasAriaLabelledBy || hasAriaLabel || childAriaLabelledBy || childAriaLabel) {
+        const sanitizedText = sanitizeHTML(linkText);
         if (showGoodLinkButton === true) {
           results.push({
             element: $el,
             type: Constants.Global.GOOD,
-            content: Lang.sprintf('LINK_LABEL', linkText),
+            content: Lang.sprintf('LINK_LABEL', sanitizedText),
             inline: true,
             position: 'afterend',
           });
@@ -6537,7 +6539,7 @@ function checkLinkText(results, showGoodLinkButton) {
         });
       }
     } else if (error[1] != null) {
-      const key = prepareDismissal(`link: ${linkText} ${error[1]}`);
+      const key = prepareDismissal(`link:${linkText}${error[1]}${href}`);
       // Contains warning words.
       results.push({
         element: $el,
@@ -6548,7 +6550,7 @@ function checkLinkText(results, showGoodLinkButton) {
         dismiss: key,
       });
     } else if (error[2] != null) {
-      const key = prepareDismissal(`link: ${linkText} ${error[2]}`);
+      const key = prepareDismissal(`link:${linkText}${error[2]}${href}`);
       // Contains URL in link text.
       if (linkText.length > 40) {
         results.push({
@@ -6563,10 +6565,11 @@ function checkLinkText(results, showGoodLinkButton) {
     } else if (hasAriaLabelledBy || hasAriaLabel || childAriaLabelledBy || childAriaLabel) {
       // If the link has any ARIA, append a "Good" link button.
       if (showGoodLinkButton === true) {
+        const sanitizedText = sanitizeHTML(linkText);
         results.push({
           element: $el,
           type: Constants.Global.GOOD,
-          content: Lang.sprintf('LINK_LABEL', linkText),
+          content: Lang.sprintf('LINK_LABEL', sanitizedText),
           inline: true,
           position: 'afterend',
         });
@@ -6757,7 +6760,9 @@ function checkContrast(results) {
         const name = item.elem;
         const cratio = item.ratio;
         const clone = name.cloneNode(true);
-        const nodetext = fnIgnore(clone, 'script, style').textContent;
+        const nodeText = fnIgnore(clone, 'script, style').textContent;
+        const sanitizedText = sanitizeHTML(nodeText);
+
         if (name.tagName === 'INPUT') {
           results.push({
             element: name,
@@ -6770,7 +6775,7 @@ function checkContrast(results) {
           results.push({
             element: name,
             type: Constants.Global.ERROR,
-            content: Lang.sprintf('CONTRAST_ERROR', cratio, nodetext),
+            content: Lang.sprintf('CONTRAST_ERROR', cratio, sanitizedText),
             inline: false,
             position: 'beforebegin',
           });
@@ -6780,12 +6785,15 @@ function checkContrast(results) {
       contrastErrors.warnings.forEach((item) => {
         const name = item.elem;
         const clone = name.cloneNode(true);
-        const nodetext = fnIgnore(clone, 'script, style').textContent;
-        const key = prepareDismissal(`contrast: ${nodetext}`);
+        const nodeText = fnIgnore(clone, 'script, style').textContent;
+
+        const key = prepareDismissal(`contrast:${nodeText}`);
+        const sanitizedText = sanitizeHTML(nodeText);
+
         results.push({
           element: name,
           type: Constants.Global.WARNING,
-          content: Lang.sprintf('CONTRAST_WARNING', nodetext),
+          content: Lang.sprintf('CONTRAST_WARNING', sanitizedText),
           inline: false,
           position: 'beforebegin',
           dismiss: key,
@@ -6841,20 +6849,22 @@ function checkLabels(results) {
             if ($el.getAttribute('title')) {
               ariaLabel = $el.getAttribute('title');
               const key = prepareDismissal(`input: ${ariaLabel}`);
+              const sanitizedText = sanitizeHTML(ariaLabel);
               results.push({
                 element: $el,
                 type: Constants.Global.WARNING,
-                content: Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', ariaLabel),
+                content: Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', sanitizedText),
                 inline: false,
                 position: 'beforebegin',
                 dismiss: key,
               });
             } else {
               const key = prepareDismissal(`input: ${ariaLabel}`);
+              const sanitizedText = sanitizeHTML(ariaLabel);
               results.push({
                 element: $el,
                 type: Constants.Global.WARNING,
-                content: Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', ariaLabel),
+                content: Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', sanitizedText),
                 inline: false,
                 position: 'beforebegin',
                 dismiss: key,
@@ -6936,11 +6946,12 @@ function checkLinksAdvanced(results) {
         if (linkText.length !== 0) {
           if (seen[linkTextTrimmed] && linkTextTrimmed.length !== 0) {
             if (seen[href]) ; else {
-              const key = prepareDismissal(`link: ${linkTextTrimmed}`);
+              const key = prepareDismissal(`link:${linkTextTrimmed}${href}`);
+              const sanitizedText = sanitizeHTML(linkText);
               results.push({
                 element: $el,
                 type: Constants.Global.WARNING,
-                content: Lang.sprintf('LINK_IDENTICAL_NAME', linkText),
+                content: Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText),
                 inline: true,
                 position: 'beforebegin',
                 dismiss: key,
@@ -6984,7 +6995,7 @@ function checkLinksAdvanced(results) {
             `);
 
         if (linkTextTrimmed.length !== 0 && $el.getAttribute('target') === '_blank' && !fileTypeMatch && !containsNewWindowPhrases) {
-          const key = prepareDismissal(`link: ${linkTextTrimmed}`);
+          const key = prepareDismissal(`link:${linkTextTrimmed}${href}`);
           results.push({
             element: $el,
             type: Constants.Global.WARNING,
@@ -6996,7 +7007,7 @@ function checkLinksAdvanced(results) {
         }
 
         if (linkTextTrimmed.length !== 0 && fileTypeMatch && !containsFileTypePhrases) {
-          const key = prepareDismissal(`link: ${linkTextTrimmed}`);
+          const key = prepareDismissal(`link:${linkTextTrimmed}${href}`);
           results.push({
             element: $el,
             type: Constants.Global.WARNING,
@@ -7426,11 +7437,12 @@ function checkQA(
     Elements.Found.Blockquotes.forEach(($el) => {
       const bqHeadingText = $el.textContent;
       if (bqHeadingText.trim().length < 25) {
-        const key = prepareDismissal(`${$el.tagName}: ${bqHeadingText}`);
+        const key = prepareDismissal(`BLOCKQUOTE:${bqHeadingText}`);
+        const sanitizedText = sanitizeHTML(bqHeadingText);
         results.push({
           element: $el,
           type: Constants.Global.WARNING,
-          content: Lang.sprintf('QA_BLOCKQUOTE_MESSAGE', bqHeadingText),
+          content: Lang.sprintf('QA_BLOCKQUOTE_MESSAGE', sanitizedText),
           inline: false,
           position: 'beforebegin',
           dismiss: key,
@@ -7505,18 +7517,18 @@ function checkQA(
         if (firstChild.tagName === 'STRONG' && (brBefore !== -1 || brAfter !== -1)) {
           boldtext = getText(firstChild);
           const maybeSentence = boldtext.match(/[.;?!"]/) !== null;
-
           if (
             !/[*]$/.test(boldtext)
             && !$el.closest(ignoreParents)
             && (boldtext.length >= 4 && boldtext.length <= 120)
             && maybeSentence === false
           ) {
-            const key = prepareDismissal(`bold: ${boldtext}`);
+            const key = prepareDismissal(`bold:${boldtext}`);
+            const sanitizedText = sanitizeHTML(boldtext);
             results.push({
               element: firstChild,
               type: Constants.Global.WARNING,
-              content: Lang.sprintf('QA_FAKE_HEADING', boldtext),
+              content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
               inline: false,
               position: 'beforebegin',
               dismiss: key,
@@ -7536,11 +7548,12 @@ function checkQA(
           && !$el.closest(ignoreParents)
           && maybeSentence === false
         ) {
-          const key = prepareDismissal(`bold: ${boldtext}`);
+          const key = prepareDismissal(`bold:${boldtext}`);
+          const sanitizedText = sanitizeHTML(boldtext);
           results.push({
             element: $el,
             type: Constants.Global.WARNING,
-            content: Lang.sprintf('QA_FAKE_HEADING', boldtext),
+            content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
             inline: false,
             position: 'beforebegin',
             dismiss: key,
@@ -7562,11 +7575,12 @@ function checkQA(
           && (getText$1.length >= 4 && getText$1.length <= 120)
           && maybeSentence === false
         ) {
-          const key = prepareDismissal(`bold: ${getText$1}`);
+          const key = prepareDismissal(`bold:${getText$1}`);
+          const sanitizedText = sanitizeHTML(getText$1);
           results.push({
             element: $elem,
             type: Constants.Global.WARNING,
-            content: Lang.sprintf('QA_FAKE_HEADING', getText$1),
+            content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
             inline: false,
             position: 'beforebegin',
             dismiss: key,
@@ -7624,7 +7638,7 @@ function checkQA(
           }
         }
         if (hit) {
-          const key = prepareDismissal(`list: ${$el.textContent}`);
+          const key = prepareDismissal(`list:${$el.textContent}`);
           results.push({
             element: $el,
             type: Constants.Global.WARNING,
@@ -7663,7 +7677,7 @@ function checkQA(
       const detectUpperCase = thisText.match(uppercasePattern);
 
       if (detectUpperCase && detectUpperCase[0].length > 10) {
-        const key = prepareDismissal(`uppercase: ${thisText}`);
+        const key = prepareDismissal(`uppercase:${thisText}`);
         results.push({
           element: $el,
           type: Constants.Global.WARNING,
@@ -7711,7 +7725,7 @@ function checkQA(
     // Find all <u> tags.
     Elements.Found.Underlines.forEach(($el) => {
       const text = getText($el);
-      const key = prepareDismissal(`underline: ${text}`);
+      const key = prepareDismissal(`underline:${text}`);
       results.push({
         element: $el,
         type: Constants.Global.WARNING,
@@ -7727,7 +7741,7 @@ function checkQA(
       const decoration = style.textDecorationLine;
       const text = getText($el);
       if (decoration === 'underline') {
-        const key = prepareDismissal(`underline: ${text}`);
+        const key = prepareDismissal(`underline:${text}`);
         results.push({
           element: $el,
           type: Constants.Global.WARNING,

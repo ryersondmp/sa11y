@@ -44,11 +44,12 @@ export default function checkLinksAdvanced(results) {
             if (seen[href]) {
               // Nothing
             } else {
-              const key = Utils.prepareDismissal(`link: ${linkTextTrimmed}`);
+              const key = Utils.prepareDismissal(`link:${linkTextTrimmed}${href}`);
+              const sanitizedText = Utils.sanitizeHTML(linkText);
               results.push({
                 element: $el,
                 type: Constants.Global.WARNING,
-                content: Lang.sprintf('LINK_IDENTICAL_NAME', linkText),
+                content: Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText),
                 inline: true,
                 position: 'beforebegin',
                 dismiss: key,
@@ -92,7 +93,7 @@ export default function checkLinksAdvanced(results) {
             `);
 
         if (linkTextTrimmed.length !== 0 && $el.getAttribute('target') === '_blank' && !fileTypeMatch && !containsNewWindowPhrases) {
-          const key = Utils.prepareDismissal(`link: ${linkTextTrimmed}`);
+          const key = Utils.prepareDismissal(`link:${linkTextTrimmed}${href}`);
           results.push({
             element: $el,
             type: Constants.Global.WARNING,
@@ -104,7 +105,7 @@ export default function checkLinksAdvanced(results) {
         }
 
         if (linkTextTrimmed.length !== 0 && fileTypeMatch && !containsFileTypePhrases) {
-          const key = Utils.prepareDismissal(`link: ${linkTextTrimmed}`);
+          const key = Utils.prepareDismissal(`link:${linkTextTrimmed}${href}`);
           results.push({
             element: $el,
             type: Constants.Global.WARNING,
