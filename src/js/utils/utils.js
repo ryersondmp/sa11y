@@ -317,11 +317,11 @@ export function getNextSibling(element, selector) {
 
 /**
  * Prepares a string for dismissal by truncating it to a maximum of 256 characters.
- * @param {string} string - The string to be prepared for dismissal.
+ * @param {string} string - The string to be prepared for dismissal (without special chars).
  * @returns {string} - The truncated string with a maximum of 256 characters.
  */
 export function prepareDismissal(string) {
-  return String(string).substring(0, 256);
+  return String(string).replace(/([^0-9a-zA-Z])/g, '').substring(0, 256);
 }
 
 /**

@@ -31,12 +31,11 @@ export default class ControlPanel extends HTMLElement {
     const rememberReadability = store.getItem('sa11y-remember-readability') === 'On';
 
     // If admin wants users to check everything, without toggleable checks.
-    const hide = 'class="hide"';
     const checkAll = Constants.Global.checkAllHideToggles === true;
 
     /* TOGGLEABLE PLUGINS */
     const contrastPlugin = (Constants.Global.contrastPlugin === true) ? `
-      <li id="contrast-item" ${checkAll ? hide : ''}>
+      <li id="contrast-item" ${checkAll ? 'hidden' : ''}>
         <label id="check-contrast" for="contrast-toggle">${Lang._('CONTRAST')}</label>
         <button id="contrast-toggle"
           aria-labelledby="check-contrast"
@@ -45,7 +44,7 @@ export default class ControlPanel extends HTMLElement {
       </li>` : '';
 
     const formLabelsPlugin = (Constants.Global.formLabelsPlugin === true) ? `
-      <li id="form-labels-item" ${checkAll ? hide : ''}>
+      <li id="form-labels-item" ${checkAll ? 'hidden' : ''}>
         <label id="check-labels" for="labels-toggle">${Lang._('FORM_LABELS')}</label>
         <button id="labels-toggle"
           aria-labelledby="check-labels"
@@ -54,7 +53,7 @@ export default class ControlPanel extends HTMLElement {
       </li>` : '';
 
     const linksAdvancedPlugin = (Constants.Global.linksAdvancedPlugin === true) ? `
-      <li id="links-advanced-item" ${checkAll ? hide : ''}>
+      <li id="links-advanced-item" ${checkAll ? 'hidden' : ''}>
         <label id="check-changerequest" for="links-advanced-toggle">${Lang._('LINKS_ADVANCED')} <span class="badge">AAA</span></label>
         <button id="links-advanced-toggle"
           aria-labelledby="check-changerequest"

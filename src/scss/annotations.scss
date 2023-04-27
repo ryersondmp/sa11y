@@ -110,7 +110,7 @@ button.sa11y-btn:focus {
 @media screen and (forced-colors: active) {
   button.sa11y-btn {
     border: 1px solid transparent !important;
-    outline: transparent solid 3px !important;
     forced-color-adjust: none;
+    outline: transparent solid 3px !important;
   }
 }
