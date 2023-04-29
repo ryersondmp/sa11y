@@ -188,6 +188,11 @@ code {
   .close-btn:focus {
     outline: transparent solid 3px !important;
   }
+  .tippy-box[data-theme~=sa11y-theme] a:focus,
+  .tippy-box[data-theme~=sa11y-theme] button:focus,
+  .tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus {
+    outline: transparent solid 3px !important;
+  }
   #container a:focus,
   #container [tabindex="-1"]:focus,
   #container [tabindex="0"]:focus,

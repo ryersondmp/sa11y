@@ -221,7 +221,7 @@ export default function settingsPanelToggles(checkAll, resetAll) {
           Constants.Panel.colourPanel.setAttribute('data-colour', filters[option - 1]);
 
           // Hide error/warning count.
-          Constants.Panel.content.classList.add('hide');
+          Constants.Panel.content.hidden = true;
         }
       } else {
         // Restore panel.
@@ -234,7 +234,7 @@ export default function settingsPanelToggles(checkAll, resetAll) {
         Constants.Panel.colourPanel.removeAttribute('data-colour');
 
         // Show error/warning count.
-        Constants.Panel.content.classList.remove('hide');
+        Constants.Panel.content.hidden = false;
         resetAll(false);
         await checkAll();
       }

@@ -219,6 +219,17 @@ code {
     outline: transparent solid 3px !important;
   }
 
+  // Tooltips
+  .tippy-box[data-theme~="sa11y-theme"] {
+
+    a:focus,
+    button:focus,
+    [tabindex='-1']:focus {
+      outline: transparent solid 3px !important;
+    }
+  }
+
+  // Control panel
   #container {
 
     a:focus,

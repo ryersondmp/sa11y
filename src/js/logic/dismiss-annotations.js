@@ -8,11 +8,11 @@ import Lang from '../utils/lang';
 /* ************************************************************ */
 export function dismissAnnotationsLogic(results, dismissTooltip) {
   // Get dismissed items and re-parse back into object.
-  let dismissed = store.getItem('sa11y-dismissed');
-  dismissed = dismissed ? JSON.parse(dismissed) : [];
+  let dismissedIssues = store.getItem('sa11y-dismissed');
+  dismissedIssues = dismissedIssues ? JSON.parse(dismissedIssues) : [];
 
   // Return element from results array that matches dismiss key and dismiss url. Then filter through matched objects.
-  const findKey = dismissed.map((e) => {
+  const findKey = dismissedIssues.map((e) => {
     const found = results.find((f) => (e.key.includes(f.dismiss) && e.href === Constants.Global.currentPage));
     if (found === undefined) return '';
     return found;
@@ -32,7 +32,7 @@ export function dismissAnnotationsLogic(results, dismissTooltip) {
   } else {
     Constants.Panel.dismissButton.classList.remove('active');
   }
-  return { dismissed, updatedResults };
+  return { dismissedIssues, updatedResults, dismissCount };
 }
 
 /* ************************************************************ */
@@ -76,11 +76,11 @@ export function dismissAnnotationsButtons(
         const latestDismissed = item[0].getAttribute('data-sa11y-position');
         store.setItem('sa11y-latest-dismissed', latestDismissed);
 
+        // Update dismiss array.
         store.setItem('sa11y-dismiss-item', JSON.stringify(dismissalDetails));
         existingEntries.push(dismissalDetails);
         store.setItem('sa11y-dismissed', JSON.stringify(existingEntries));
         store.removeItem('sa11y-dismiss-item'); // Remove temporary storage item.
-        Constants.Panel.dismissButton.classList.add('active'); // Make panel active.
 
         // Remove tooltip.
         if (element.closest('[data-tippy-root]') !== null) {
@@ -90,6 +90,10 @@ export function dismissAnnotationsButtons(
         // Async scan upon dismiss.
         resetAll(false);
         await checkAll();
+
+        // Reset event listeners.
+        tooltips.removeEventListener('click', handleClick);
+        controlPanel.removeEventListener('click', handleClick);
       }
     };
 

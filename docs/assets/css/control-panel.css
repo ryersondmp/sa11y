@@ -145,7 +145,7 @@ label {
   transition: transform 0.2s, opacity 0.2s;
   transition: background 0.2s;
   visibility: hidden;
-  width: 345px;
+  width: 370px;
   z-index: 2147483643;
 }
 #panel.active {
@@ -246,7 +246,7 @@ a:not(#outline-list a) {
 
 a:hover,
 a:focus {
-  text-decoration: none;
+  text-decoration: none !important;
 }
 
 hr {
@@ -544,16 +544,6 @@ hr {
   text-align: center;
   transition: background 0.2s;
   width: 100%;
-  /* Accessibility: Increase target size. */
-}
-#settings-toggle:before,
-#outline-toggle:before {
-  bottom: -8px;
-  content: "";
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: -7px;
 }
 #settings-toggle:hover, #settings-toggle.settings-active, #settings-toggle.outline-active,
 #outline-toggle:hover,
@@ -914,6 +904,12 @@ label {
 /* ***************************************** */
 #container:lang(en) #panel {
   width: 305px;
+}
+
+#container:lang(pl) #panel,
+#container:lang(de) #panel,
+#container:lang(sv) #panel {
+  width: 335px;
 }
 
 #container:lang(ua) .switch,

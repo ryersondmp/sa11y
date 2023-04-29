@@ -36,9 +36,9 @@
       NOT_VISIBLE_ALERT: 'Element, który próbujesz wyświetlić, nie jest widoczny; może być ukryty lub znajdować się wewnątrz akordeonu lub karty. Tutaj jest podgląd:',
       ERROR_MISSING_ROOT_TARGET: 'Sprawdzono dostępność całej strony, ponieważ obszar docelowy nie istnieje: <code>%(root)</code>',
       HEADING_NOT_VISIBLE_ALERT: 'Nagłówek nie jest widoczny; może być ukryty lub wewnątrz komponentu akordeonu lub tabulatora.',
-      PANEL_DISMISS_BUTTON: 'Pokaż %(dismissCount) odrzucone ostrzeżenia',
-      DISMISS: 'Odrzucać',
-      DISMISSED: 'Odrzucone ostrzeżenia',
+      PANEL_DISMISS_BUTTON: 'Pokaż %(dismissCount) zignorowanych ostrzeżeń',
+      DISMISS: 'Ignoruj',
+      DISMISSED: 'Zignorowano ostrzeżenia',
       SKIP_TO_PAGE_ISSUES: 'Przejdź do problemów ze stroną',
 
       // Color filters

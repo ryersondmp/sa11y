@@ -154,7 +154,7 @@ label {
   transition: transform 0.2s, opacity 0.2s;
   transition: background 0.2s;
   visibility: hidden;
-  width: 345px;
+  width: 370px;
   z-index: 2147483643;
 
   &.active {
@@ -258,7 +258,7 @@ a:not(#outline-list a) {
 
 a:hover,
 a:focus {
-  text-decoration: none;
+  text-decoration: none !important;
 }
 
 hr {
@@ -578,16 +578,6 @@ hr {
   text-align: center;
   transition: background 0.2s;
   width: 100%;
-
-  /* Accessibility: Increase target size. */
-  &:before {
-    bottom: -8px;
-    content: '';
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: -7px;
-  }
 
   &:hover,
   &.settings-active,
@@ -991,6 +981,15 @@ label {
 // Default panel width: English
 #container:lang(en) #panel {
   width: 305px;
+}
+
+// Medium panel width.
+#container:lang(pl),
+#container:lang(de),
+#container:lang(sv) {
+  #panel {
+    width: 335px;
+  }
 }
 
 // Setting switches that need some extra width.

@@ -231,7 +231,8 @@ class Sa11y {
         // Check for dismissed items and update results array.
         const dismiss = dismissAnnotationsLogic(this.results, this.dismissTooltip);
         this.results = dismiss.updatedResults;
-        this.dismissed = dismiss.dismissed;
+        this.dismissed = dismiss.dismissedIssues;
+        this.dismissedCount = dismiss.dismissCount;
 
         // Update count.
         const count = updateCount(this.results, this.errorCount, this.warningCount);
