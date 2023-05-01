@@ -158,7 +158,7 @@ export default function checkLinkText(results, showGoodLinkButton) {
         });
       }
     } else if (error[1] != null) {
-      const key = Utils.prepareDismissal(`link:${linkText}${error[1]}${href}`);
+      const key = Utils.prepareDismissal(`LINK${linkText + error[1] + href}`);
       // Contains warning words.
       results.push({
         element: $el,
@@ -169,7 +169,7 @@ export default function checkLinkText(results, showGoodLinkButton) {
         dismiss: key,
       });
     } else if (error[2] != null) {
-      const key = Utils.prepareDismissal(`link:${linkText}${error[2]}${href}`);
+      const key = Utils.prepareDismissal(`LINK${linkText + error[2] + href}`);
       // Contains URL in link text.
       if (linkText.length > 40) {
         results.push({

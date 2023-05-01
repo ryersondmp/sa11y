@@ -316,7 +316,7 @@ export function getNextSibling(element, selector) {
 }
 
 /**
- * Prepares a string for dismissal by truncating it to a maximum of 256 characters.
+ * Generates a unique key for dismissing items.
  * @param {string} string - The string to be prepared for dismissal (without special chars).
  * @returns {string} - The truncated string with a maximum of 256 characters.
  */

@@ -44,7 +44,7 @@ export default function checkLinksAdvanced(results) {
             if (seen[href]) {
               // Nothing
             } else {
-              const key = Utils.prepareDismissal(`link:${linkTextTrimmed}${href}`);
+              const key = Utils.prepareDismissal(`LINK${linkTextTrimmed + href}`);
               const sanitizedText = Utils.sanitizeHTML(linkText);
               results.push({
                 element: $el,
@@ -93,7 +93,7 @@ export default function checkLinksAdvanced(results) {
             `);
 
         if (linkTextTrimmed.length !== 0 && $el.getAttribute('target') === '_blank' && !fileTypeMatch && !containsNewWindowPhrases) {
-          const key = Utils.prepareDismissal(`link:${linkTextTrimmed}${href}`);
+          const key = Utils.prepareDismissal(`LINK${linkTextTrimmed + href}`);
           results.push({
             element: $el,
             type: Constants.Global.WARNING,
@@ -105,7 +105,7 @@ export default function checkLinksAdvanced(results) {
         }
 
         if (linkTextTrimmed.length !== 0 && fileTypeMatch && !containsFileTypePhrases) {
-          const key = Utils.prepareDismissal(`link:${linkTextTrimmed}${href}`);
+          const key = Utils.prepareDismissal(`LINK${linkTextTrimmed + href}`);
           results.push({
             element: $el,
             type: Constants.Global.WARNING,

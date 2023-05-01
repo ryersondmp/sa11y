@@ -39,7 +39,7 @@ export default function checkHeaders(
         });
       } else {
         warning = Lang.sprintf('HEADING_NON_CONSECUTIVE_LEVEL', prevLevel, level);
-        const key = Utils.prepareDismissal(level + headingText);
+        const key = Utils.prepareDismissal(`HEADING${level + headingText}`);
         results.push({
           element: $el,
           type: Constants.Global.WARNING,
@@ -83,7 +83,7 @@ export default function checkHeaders(
       });
     } else if (headingLength > 170 && flagLongHeadings === true) {
       warning = Lang.sprintf('HEADING_LONG', headingLength);
-      const key = Utils.prepareDismissal(level + headingText);
+      const key = Utils.prepareDismissal(`HEADING${level + headingText}`);
       results.push({
         element: $el,
         type: Constants.Global.WARNING,
@@ -103,7 +103,7 @@ export default function checkHeaders(
         element: $el, headingLevel: level, text: headingText, index: i, type: Constants.Global.ERROR, hidden: hiddenHeading, visibleParent: parent,
       });
     } else if (warning !== null) {
-      const key = Utils.prepareDismissal(level + headingText);
+      const key = Utils.prepareDismissal(`HEADING${level + headingText}`);
       headingOutline.push({
         element: $el, headingLevel: level, text: headingText, index: i, type: Constants.Global.WARNING, hidden: hiddenHeading, visibleParent: parent, dismiss: key,
       });

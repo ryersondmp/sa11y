@@ -60,7 +60,7 @@ export default function checkQA(
   if (pdfQA === true) {
     Elements.Found.Pdf.forEach(($el) => {
       const href = $el.getAttribute('href');
-      const key = Utils.prepareDismissal(`pdf:${href}`);
+      const key = Utils.prepareDismissal(`PDF${href}`);
       results.push({
         element: $el,
         type: Constants.Global.WARNING,
@@ -91,8 +91,8 @@ export default function checkQA(
     Elements.Found.Blockquotes.forEach(($el) => {
       const bqHeadingText = $el.textContent;
       if (bqHeadingText.trim().length < 25) {
-        const key = Utils.prepareDismissal(`BLOCKQUOTE:${bqHeadingText}`);
         const sanitizedText = Utils.sanitizeHTML(bqHeadingText);
+        const key = Utils.prepareDismissal(`BLOCKQUOTE${sanitizedText}`);
         results.push({
           element: $el,
           type: Constants.Global.WARNING,
@@ -177,8 +177,8 @@ export default function checkQA(
             && (boldtext.length >= 4 && boldtext.length <= 120)
             && maybeSentence === false
           ) {
-            const key = Utils.prepareDismissal(`bold:${boldtext}`);
             const sanitizedText = Utils.sanitizeHTML(boldtext);
+            const key = Utils.prepareDismissal(`BOLD${sanitizedText}`);
             results.push({
               element: firstChild,
               type: Constants.Global.WARNING,
@@ -204,8 +204,8 @@ export default function checkQA(
           && !$el.closest(ignoreParents)
           && maybeSentence === false
         ) {
-          const key = Utils.prepareDismissal(`bold:${boldtext}`);
           const sanitizedText = Utils.sanitizeHTML(boldtext);
+          const key = Utils.prepareDismissal(`BOLD${sanitizedText}`);
           results.push({
             element: $el,
             type: Constants.Global.WARNING,
@@ -233,8 +233,8 @@ export default function checkQA(
           && (getText.length >= 4 && getText.length <= 120)
           && maybeSentence === false
         ) {
-          const key = Utils.prepareDismissal(`bold:${getText}`);
           const sanitizedText = Utils.sanitizeHTML(getText);
+          const key = Utils.prepareDismissal(`BOLD${sanitizedText}`);
           results.push({
             element: $elem,
             type: Constants.Global.WARNING,
@@ -296,7 +296,7 @@ export default function checkQA(
           }
         }
         if (hit) {
-          const key = Utils.prepareDismissal(`list:${$el.textContent}`);
+          const key = Utils.prepareDismissal(`LIST${$el.textContent}`);
           results.push({
             element: $el,
             type: Constants.Global.WARNING,
@@ -335,7 +335,7 @@ export default function checkQA(
       const detectUpperCase = thisText.match(uppercasePattern);
 
       if (detectUpperCase && detectUpperCase[0].length > 10) {
-        const key = Utils.prepareDismissal(`uppercase:${thisText}`);
+        const key = Utils.prepareDismissal(`UPPERCASE${thisText}`);
         results.push({
           element: $el,
           type: Constants.Global.WARNING,
@@ -383,7 +383,7 @@ export default function checkQA(
     // Find all <u> tags.
     Elements.Found.Underlines.forEach(($el) => {
       const text = Utils.getText($el);
-      const key = Utils.prepareDismissal(`underline:${text}`);
+      const key = Utils.prepareDismissal(`UNDERLINE${text}`);
       results.push({
         element: $el,
         type: Constants.Global.WARNING,
@@ -399,7 +399,7 @@ export default function checkQA(
       const decoration = style.textDecorationLine;
       const text = Utils.getText($el);
       if (decoration === 'underline') {
-        const key = Utils.prepareDismissal(`underline:${text}`);
+        const key = Utils.prepareDismissal(`UNDERLINE${text}`);
         results.push({
           element: $el,
           type: Constants.Global.WARNING,
@@ -437,7 +437,7 @@ export default function checkQA(
     Elements.Found.Subscripts.forEach(($el) => {
       const text = Utils.getText($el);
       if (text.length >= 80) {
-        const key = Utils.prepareDismissal(`${$el.tagName} ${text}`);
+        const key = Utils.prepareDismissal($el.tagName + text);
         results.push({
           element: $el,
           type: Constants.Global.WARNING,

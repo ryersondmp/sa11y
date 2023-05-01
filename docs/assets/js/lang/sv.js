@@ -30,10 +30,13 @@ var sv = {
     NOT_VISIBLE_ALERT: 'Objektet du försöker visa är inte synligt: det kan vara gömt eller finnas inuti en dragspelskomponent eller en flikkomponent. Här är en förhandsvisning:',
     ERROR_MISSING_ROOT_TARGET: 'Hela sidan kontrolleras för tillgänglighet eftersom målområdet <code>%(root)</code> inte existerar.',
     HEADING_NOT_VISIBLE_ALERT: 'Rubriken är inte synlig; den kan vara gömd eller inuti ett dragspel eller en flikkomponent.',
+    SKIP_TO_PAGE_ISSUES: 'Hoppa till sidans problem',
+
+    // Dismiss
     PANEL_DISMISS_BUTTON: 'Visa %(dismissCount) ignorerade varningar',
     DISMISS: 'Ignorera',
     DISMISSED: 'Ignorerade varningar',
-    SKIP_TO_PAGE_ISSUES: 'Hoppa till sidans problem',
+    DISMISS_REMINDER: 'Observera att varningar bara ignoreras <strong>tillfälligt.</strong> Rensa din webbläsarhistorik och kakor kommer att återställa alla tidigare ignorerade varningar på alla sidor.',
 
     // Color filters
     COLOUR_FILTER: 'Färgfilter',

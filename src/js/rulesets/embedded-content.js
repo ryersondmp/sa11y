@@ -16,7 +16,7 @@ export default function checkEmbeddedContent(
     // Warning: Audio content.
     if (embeddedContentAudio === true) {
       Elements.Found.Audio.forEach(($el) => {
-        const key = Utils.prepareDismissal($el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src'));
+        const key = Utils.prepareDismissal(`IFRAME${$el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src')}`);
         results.push({
           element: $el,
           type: Constants.Global.WARNING,
@@ -35,7 +35,7 @@ export default function checkEmbeddedContent(
         if ($el.tagName === 'VIDEO' && track.length) {
           // Pass if track element found.
         } else {
-          const key = Utils.prepareDismissal($el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src'));
+          const key = Utils.prepareDismissal(`IFRAME${$el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src')}`);
           results.push({
             element: $el,
             type: Constants.Global.WARNING,
@@ -51,7 +51,7 @@ export default function checkEmbeddedContent(
     // Warning: Data visualizations.
     if (embeddedContentDataViz === true) {
       Elements.Found.Visualizations.forEach(($el) => {
-        const key = Utils.prepareDismissal($el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src'));
+        const key = Utils.prepareDismissal(`IFRAME${$el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src')}`);
         results.push({
           element: $el,
           type: Constants.Global.WARNING,
@@ -107,7 +107,7 @@ export default function checkEmbeddedContent(
           || $el.getAttribute('tabindex') === '-1') {
           // Ignore if hidden.
         } else {
-          const key = Utils.prepareDismissal($el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src'));
+          const key = Utils.prepareDismissal(`IFRAME${$el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src')}`);
           results.push({
             element: $el,
             type: Constants.Global.WARNING,

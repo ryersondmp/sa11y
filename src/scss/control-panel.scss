@@ -116,7 +116,7 @@ label {
   align-items: center;
   background-color: #EB0000;
   border: 1px solid transparent;
-  border-radius: 100px;
+  border-radius: 50%;
   color: #ffffff;
   display: none;
   font-size: 13px;
@@ -154,7 +154,6 @@ label {
   transition: transform 0.2s, opacity 0.2s;
   transition: background 0.2s;
   visibility: hidden;
-  width: 370px;
   z-index: 2147483643;
 
   &.active {
@@ -978,7 +977,12 @@ label {
 /*     21. Internationalization (i18n)       */
 /* ***************************************** */
 
-// Default panel width: English
+// Default panel width.
+#panel {
+  width: 375px;
+}
+
+// English
 #container:lang(en) #panel {
   width: 305px;
 }

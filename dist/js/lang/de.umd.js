@@ -36,10 +36,13 @@
       NOT_VISIBLE_ALERT: 'Das Element, das Sie anzeigen möchten, ist nicht sichtbar; es ist möglicherweise ausgeblendet oder befindet sich in einer Akkordeon- oder Registerkartenkomponente. Hier ist eine Vorschau:',
       ERROR_MISSING_ROOT_TARGET: 'Die gesamte Seite wurde auf Barrierefreiheit geprüft, da der Zielbereich <code>%(root)</code> nicht existiert.',
       HEADING_NOT_VISIBLE_ALERT: 'Die Überschrift ist nicht sichtbar; sie kann ausgeblendet sein oder sich innerhalb einer Akkordeon- oder Registerkartenkomponente befinden.',
+      SKIP_TO_PAGE_ISSUES: 'Zu Seitenproblemen springen',
+
+      // Dismiss
       PANEL_DISMISS_BUTTON: 'Zeige %(dismissCount) ignorierte Warnungen',
       DISMISS: 'Ignorieren',
       DISMISSED: 'Ignorierte Warnungen',
-      SKIP_TO_PAGE_ISSUES: 'Zu Seitenproblemen springen',
+      DISMISS_REMINDER: 'Bitte beachten Sie, dass Warnungen nur <strong>vorübergehend</strong> ignoriert werden. Das Löschen des Browserverlaufs und der Cookies stellt alle zuvor ignorierten Warnungen auf allen Seiten wieder her.',
 
       // Color filters
       COLOUR_FILTER: 'Farbfilter',

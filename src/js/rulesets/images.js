@@ -92,7 +92,7 @@ export default function checkImages(results) {
           position: 'beforebegin',
         });
       } else if (error[1] !== null && $el.closest('a[href]')) {
-        const key = Utils.prepareDismissal(`link: ${baseSrc} ${altText} ${error[1]}`);
+        const key = Utils.prepareDismissal(`LINKEDIMAGE${baseSrc + altText + error[1]}`);
         results.push({
           element: $el,
           type: Constants.Global.WARNING,
@@ -118,7 +118,7 @@ export default function checkImages(results) {
           position: 'beforebegin',
         });
       } else if (error[1] !== null) {
-        const key = Utils.prepareDismissal(baseSrc + altText + error[1]);
+        const key = Utils.prepareDismissal(`IMAGE${baseSrc + altText + error[1]}`);
         results.push({
           element: $el,
           type: Constants.Global.WARNING,
@@ -156,7 +156,7 @@ export default function checkImages(results) {
           });
         }
       } else if (alt.length > 250 && $el.closest('a[href]')) {
-        const key = Utils.prepareDismissal(baseSrc + altText + alt.length);
+        const key = Utils.prepareDismissal(`LINKEDIMAGE${baseSrc + altText + alt.length}`);
         // Link and contains alt text.
         results.push({
           element: $el,
@@ -167,7 +167,7 @@ export default function checkImages(results) {
           dismiss: key,
         });
       } else if (alt !== '' && $el.closest('a[href]') && Utils.fnIgnore($el.closest('a[href]')).textContent.trim().length === 0) {
-        const key = Utils.prepareDismissal(`image link: ${baseSrc} ${altText}`);
+        const key = Utils.prepareDismissal(`LINKEDIMAGE${baseSrc + altText}`);
         // Link and contains an alt text.
         results.push({
           element: $el,
@@ -178,7 +178,7 @@ export default function checkImages(results) {
           dismiss: key,
         });
       } else if (alt !== '' && $el.closest('a[href]') && Utils.fnIgnore($el.closest('a[href]')).textContent.trim().length >= 1) {
-        const key = Utils.prepareDismissal(`image link: ${baseSrc} ${altText}`);
+        const key = Utils.prepareDismissal(`LINKEDIMAGE${baseSrc + altText}`);
         // Contains alt text & surrounding link text.
         results.push({
           element: $el,
@@ -193,7 +193,7 @@ export default function checkImages(results) {
         if ($el.closest('figure')) {
           const figcaption = $el.closest('figure').querySelector('figcaption');
           if (figcaption !== null && figcaption.textContent.trim().length >= 1) {
-            const key = Utils.prepareDismissal(`decorative: ${baseSrc}`);
+            const key = Utils.prepareDismissal(`DECORATIVE${baseSrc}`);
             results.push({
               element: $el,
               type: Constants.Global.WARNING,
@@ -203,7 +203,7 @@ export default function checkImages(results) {
               dismiss: key,
             });
           } else {
-            const key = Utils.prepareDismissal(`decorative: ${baseSrc}`);
+            const key = Utils.prepareDismissal(`DECORATIVE${baseSrc}`);
             results.push({
               element: $el,
               type: Constants.Global.WARNING,
@@ -214,7 +214,7 @@ export default function checkImages(results) {
             });
           }
         } else {
-          const key = Utils.prepareDismissal(`decorative: ${baseSrc}`);
+          const key = Utils.prepareDismissal(`DECORATIVE${baseSrc}`);
           results.push({
             element: $el,
             type: Constants.Global.WARNING,
@@ -225,7 +225,7 @@ export default function checkImages(results) {
           });
         }
       } else if (alt.length > 250) {
-        const key = Utils.prepareDismissal(baseSrc + altText + alt.length);
+        const key = Utils.prepareDismissal(`IMAGE${baseSrc + altText + alt.length}`);
         results.push({
           element: $el,
           type: Constants.Global.WARNING,
@@ -240,7 +240,7 @@ export default function checkImages(results) {
           const figcaption = $el.closest('figure').querySelector('figcaption');
           if (!!figcaption
             && (figcaption.textContent.trim().toLowerCase() === altText.trim().toLowerCase())) {
-            const key = Utils.prepareDismissal(`figure: ${baseSrc} ${altText}`);
+            const key = Utils.prepareDismissal(`FIGURE${baseSrc + altText}`);
             results.push({
               element: $el,
               type: Constants.Global.WARNING,

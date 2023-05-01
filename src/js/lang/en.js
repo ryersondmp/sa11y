@@ -30,10 +30,13 @@ export default {
     NOT_VISIBLE_ALERT: 'The item you are trying to view is not visible; it may be hidden or inside of an accordion or tab component. Here is a preview:',
     ERROR_MISSING_ROOT_TARGET: 'The full page was checked for accessibility because the target area <code>%(root)</code> does not exist.',
     HEADING_NOT_VISIBLE_ALERT: 'Heading is not visible; it may be hidden or inside of an accordion or tab component.',
+    SKIP_TO_PAGE_ISSUES: 'Skip to Page Issues',
+
+    // Dismiss
     PANEL_DISMISS_BUTTON: 'Show %(dismissCount) dismissed warnings',
     DISMISS: 'Dismiss',
     DISMISSED: 'Dismissed warnings',
-    SKIP_TO_PAGE_ISSUES: 'Skip to Page Issues',
+    DISMISS_REMINDER: 'Please note that warnings are only <strong>temporarily</strong> dismissed. Clearing your browser history and cookies will restore all previously dismissed warnings across all pages.',
 
     // Color filters
     COLOUR_FILTER: 'Colour filter',

@@ -214,7 +214,7 @@ export default function checkContrast(results) {
         const clone = name.cloneNode(true);
         const nodeText = Utils.fnIgnore(clone, 'script, style').textContent;
 
-        const key = Utils.prepareDismissal(`contrast:${nodeText}`);
+        const key = Utils.prepareDismissal(`CONTRAST${nodeText}`);
         const sanitizedText = Utils.sanitizeHTML(nodeText);
 
         results.push({

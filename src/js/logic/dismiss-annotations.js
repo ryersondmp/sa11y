@@ -1,5 +1,5 @@
 import Constants from '../utils/constants';
-import { store } from '../utils/utils';
+import { store, createAlert } from '../utils/utils';
 import find from '../utils/find';
 import Lang from '../utils/lang';
 
@@ -32,6 +32,7 @@ export function dismissAnnotationsLogic(results, dismissTooltip) {
   } else {
     Constants.Panel.dismissButton.classList.remove('active');
   }
+
   return { dismissedIssues, updatedResults, dismissCount };
 }
 
@@ -94,6 +95,12 @@ export function dismissAnnotationsButtons(
         // Reset event listeners.
         tooltips.removeEventListener('click', handleClick);
         controlPanel.removeEventListener('click', handleClick);
+
+        // Give a one time reminder that dismissed items are temporary.
+        if (existingEntries.length === 1 && !store.getItem('sa11y-dismiss-reminder')) {
+          store.setItem('sa11y-dismiss-reminder', 'received');
+          createAlert(Lang._('DISMISS_REMINDER'));
+        }
       }
     };
 

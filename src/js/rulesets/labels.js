@@ -38,7 +38,7 @@ export default function checkLabels(results) {
             }
           } else if (type === 'reset') {
             // Recommendation to remove reset buttons.
-            const key = Utils.prepareDismissal(`input: ${ariaLabel}`);
+            const key = Utils.prepareDismissal(`INPUT${ariaLabel}`);
             results.push({
               element: $el,
               type: Constants.Global.WARNING,
@@ -51,7 +51,7 @@ export default function checkLabels(results) {
             // Uses ARIA. Warn them to ensure there's a visible label.
             if ($el.getAttribute('title')) {
               ariaLabel = $el.getAttribute('title');
-              const key = Utils.prepareDismissal(`input: ${ariaLabel}`);
+              const key = Utils.prepareDismissal(`INPUT${ariaLabel}`);
               const sanitizedText = Utils.sanitizeHTML(ariaLabel);
               results.push({
                 element: $el,
@@ -62,7 +62,7 @@ export default function checkLabels(results) {
                 dismiss: key,
               });
             } else {
-              const key = Utils.prepareDismissal(`input: ${ariaLabel}`);
+              const key = Utils.prepareDismissal(`INPUT${ariaLabel}`);
               const sanitizedText = Utils.sanitizeHTML(ariaLabel);
               results.push({
                 element: $el,
