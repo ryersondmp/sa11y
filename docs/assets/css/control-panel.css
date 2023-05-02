@@ -1,5 +1,5 @@
 /* ************************************* */
-/*          1. CSS Reset                    */
+/*          1. CSS Reset                 */
 /* ************************************* */
 h1,
 h2,
@@ -71,6 +71,13 @@ label {
   transition: all 0.2s ease-in-out;
   width: 55px;
   z-index: 2147483644;
+}
+#toggle.left, #toggle.top-left {
+  inset-inline-start: 18px;
+}
+#toggle.top-left, #toggle.top-right {
+  bottom: unset;
+  top: 15px;
 }
 @media screen and (forced-colors: active) {
   #toggle {
@@ -147,6 +154,13 @@ label {
   visibility: hidden;
   z-index: 2147483643;
 }
+#panel.left, #panel.top-left {
+  inset-inline-start: 42px;
+}
+#panel.top-right, #panel.top-left {
+  bottom: unset;
+  top: 50px;
+}
 #panel.active {
   height: auto;
   opacity: 1;
@@ -161,8 +175,17 @@ label {
   }
 }
 
+#panel.active.left,
 [dir=rtl] #panel.active {
-  transform-origin: bottom left !important;
+  transform-origin: bottom left;
+}
+
+#panel.active.top-left {
+  transform-origin: top left;
+}
+
+#panel.active.top-right {
+  transform-origin: top right;
 }
 
 /* ************************************* */
@@ -302,6 +325,14 @@ hr {
   background-color: var(--sa11y-shortcut-hover);
 }
 
+#panel.top-left #dismiss-button,
+#panel.top-left #skip-button,
+#panel.left #dismiss-button,
+#panel.left #skip-button {
+  margin-inline-start: 8px;
+  margin-inline-end: 2px;
+}
+
 /* Dismiss button */
 .dismiss-icon {
   background: var(--sa11y-setting-switch-bg-off);
@@ -352,6 +383,11 @@ hr {
   #panel-content.errors .panel-icon, #panel-content.good .panel-icon, #panel-content.warnings .panel-icon {
     filter: invert(1);
   }
+}
+
+#panel.top-left #panel-content,
+#panel.left #panel-content {
+  flex-direction: row-reverse;
 }
 
 #status {
@@ -525,8 +561,7 @@ hr {
 #outline-toggle {
   background: var(--sa11y-panel-bg-secondary);
   background-color: var(--sa11y-panel-bg-secondary);
-  border-bottom: 0;
-  border-inline-end: 1px solid var(--sa11y-panel-bg-splitter);
+  border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
   border-top: 1px solid var(--sa11y-panel-bg-splitter);
   color: var(--sa11y-panel-secondary);
   cursor: pointer;
@@ -554,6 +589,10 @@ hr {
 #outline-toggle.settings-active,
 #outline-toggle.outline-active {
   font-weight: 500;
+}
+
+#outline-toggle {
+  border-inline-end: 1px solid var(--sa11y-panel-bg-splitter);
 }
 
 label {
@@ -655,7 +694,7 @@ label {
   display: flex;
 }
 #panel-colour-filters p {
-  padding: 6px;
+  padding: 6px 20px 6px 6px;
   width: 100%;
 }
 #panel-colour-filters[data-colour=protanopia] {
@@ -796,7 +835,7 @@ label {
   display: none;
 }
 
-#page-issues.active ~ #panel-content #skip-to-page-issues {
+#panel.has-page-issues #skip-to-page-issues {
   background: var(--sa11y-panel-bg);
   border: 0;
   border-radius: 5px;
@@ -810,7 +849,7 @@ label {
   white-space: nowrap;
   width: 1px;
 }
-#page-issues.active ~ #panel-content #skip-to-page-issues:focus {
+#panel.has-page-issues #skip-to-page-issues:focus {
   clip: auto;
   height: auto;
   margin: 0;

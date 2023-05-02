@@ -72,6 +72,7 @@ export function annotate(
   if (element === undefined) {
     // Page errors displayed to main panel.
     Constants.Panel.pageIssues.classList.add('active');
+    Constants.Panel.panel.classList.add('has-page-issues');
     listItem.innerHTML = `<strong>${[type]}</strong> ${content}`;
     Constants.Panel.pageIssuesList.insertAdjacentElement('afterbegin', listItem);
   } else {
@@ -81,6 +82,7 @@ export function annotate(
     <button
       type="button"
       aria-label="${[type]}"
+      aria-haspopup="dialog"
       class="sa11y-btn ${CSSName[type]}-btn${inline ? '-text' : ''}"
       data-tippy-content=
         "<div lang='${Lang._('LANG_CODE')}'>

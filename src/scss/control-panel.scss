@@ -1,5 +1,5 @@
 /* ************************************* */
-/*          1. CSS Reset                    */
+/*          1. CSS Reset                 */
 /* ************************************* */
 h1,
 h2,
@@ -71,6 +71,17 @@ label {
   transition: all 0.2s ease-in-out;
   width: 55px;
   z-index: 2147483644;
+
+  &.left,
+  &.top-left {
+    inset-inline-start: 18px;
+  }
+
+  &.top-left,
+  &.top-right {
+    bottom: unset;
+    top: 15px;
+  }
 
   @media screen and (forced-colors: active) {
     border: 2px solid transparent;
@@ -156,6 +167,17 @@ label {
   visibility: hidden;
   z-index: 2147483643;
 
+  &.left,
+  &.top-left {
+    inset-inline-start: 42px;
+  }
+
+  &.top-right,
+  &.top-left {
+    bottom: unset;
+    top: 50px;
+  }
+
   &.active {
     height: auto;
     opacity: 1;
@@ -170,8 +192,17 @@ label {
   }
 }
 
+#panel.active.left,
 [dir=rtl] #panel.active {
-  transform-origin: bottom left !important;
+  transform-origin: bottom left;
+}
+
+#panel.active.top-left {
+  transform-origin: top left;
+}
+
+#panel.active.top-right {
+  transform-origin: top right;
 }
 
 /* ************************************* */
@@ -314,6 +345,16 @@ hr {
   }
 }
 
+#panel.top-left,
+#panel.left {
+
+  #dismiss-button,
+  #skip-button {
+    margin-inline-start: 8px;
+    margin-inline-end: 2px;
+  }
+}
+
 /* Dismiss button */
 .dismiss-icon {
   background: var(--sa11y-setting-switch-bg-off);
@@ -375,6 +416,11 @@ hr {
       filter: invert(1)
     }
   }
+}
+
+#panel.top-left #panel-content,
+#panel.left #panel-content {
+  flex-direction: row-reverse;
 }
 
 #status {
@@ -559,8 +605,7 @@ hr {
 #outline-toggle {
   background: var(--sa11y-panel-bg-secondary);
   background-color: var(--sa11y-panel-bg-secondary);
-  border-bottom: 0;
-  border-inline-end: 1px solid var(--sa11y-panel-bg-splitter);
+  border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
   border-top: 1px solid var(--sa11y-panel-bg-splitter);
   color: var(--sa11y-panel-secondary);
   cursor: pointer;
@@ -588,6 +633,10 @@ hr {
   &.outline-active {
     font-weight: 500;
   }
+}
+
+#outline-toggle {
+  border-inline-end: 1px solid var(--sa11y-panel-bg-splitter);
 }
 
 label {
@@ -703,7 +752,7 @@ label {
   }
 
   p {
-    padding: 6px;
+    padding: 6px 20px 6px 6px;
     width: 100%;
   }
 
@@ -860,8 +909,8 @@ label {
   display: none;
 }
 
-// Conditional if #page-issues is active
-#page-issues.active~#panel-content #skip-to-page-issues {
+// If panel has page issues, make skip link active.
+#panel.has-page-issues #skip-to-page-issues {
   background: var(--sa11y-panel-bg);
   border: 0;
   border-radius: 5px;

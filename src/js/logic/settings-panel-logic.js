@@ -213,7 +213,11 @@ export default function settingsPanelToggles(checkAll, resetAll) {
           // Disable skip to issue button.
           Constants.Panel.skipButton.disabled = true;
           Constants.Panel.pageIssues.classList.remove('active');
-          Constants.Panel.settingsContent.classList.add('hide-settings-border');
+
+          // Brings select menu closer to the colour filter panel by hiding the Setting's border.
+          if (Constants.Global.panelPosition === 'left' || Constants.Global.panelPosition === 'right') {
+            Constants.Panel.settingsContent.classList.add('hide-settings-border');
+          }
 
           // Make panel visible.
           Constants.Panel.colourFilterSelect.classList.add('active');

@@ -125,6 +125,14 @@ div {
   transition-timing-function: cubic-bezier(0.54, 1.5, 0.38, 1.11);
 }
 
+[role=dialog] {
+  min-width: 300px;
+}
+
+[role=tooltip] {
+  text-align: center;
+}
+
 /* Tooltip content */
 .tippy-box[data-theme~=sa11y-theme] {
   background-color: var(--sa11y-panel-bg);
@@ -145,9 +153,6 @@ div {
   /* ************************************* */
   /*                Arrows                 */
   /* ************************************* */
-}
-.tippy-box[data-theme~=sa11y-theme] [lang] {
-  min-width: 300px;
 }
 .tippy-box[data-theme~=sa11y-theme] code {
   font-family: monospace;

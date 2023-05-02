@@ -14,6 +14,7 @@ const Constants = (function myConstants() {
     colourFilterPlugin,
     checkAllHideToggles,
     headless,
+    panelPosition,
   ) {
     Global.ERROR = Lang._('ERROR');
     Global.WARNING = Lang._('WARNING');
@@ -21,6 +22,7 @@ const Constants = (function myConstants() {
     Global.currentPage = window.location.pathname;
     Global.html = document.querySelector('html');
     Global.headless = headless;
+    Global.panelPosition = panelPosition;
 
     // Toggleable plugins
     Global.contrastPlugin = contrastPlugin;
@@ -41,6 +43,9 @@ const Constants = (function myConstants() {
       reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     }
     Global.scrollBehaviour = (!reducedMotion || reducedMotion.matches) ? 'auto' : 'smooth';
+
+    // i18n
+    Global.langDirection = (Global.html.getAttribute('dir') === 'rtl') ? 'rtl' : 'ltr';
   }
 
   /* *************** */

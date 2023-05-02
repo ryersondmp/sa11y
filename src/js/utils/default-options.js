@@ -18,6 +18,7 @@ const defaultOptions = {
   selectorPath: false,
   shadowComponents: '',
   autoDetectShadowComponents: false,
+  panelPosition: 'right',
 
   // Readability
   readabilityPlugin: true,

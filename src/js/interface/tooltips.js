@@ -47,8 +47,9 @@ export class TooltipComponent extends HTMLElement {
       theme: 'sa11y-theme',
       placement: 'right-start',
       allowHTML: true,
+      role: 'dialog',
       aria: {
-        content: 'describedby',
+        content: null,
         expanded: 'auto',
       },
       appendTo: shadowRoot,
@@ -108,6 +109,7 @@ export class TooltipComponent extends HTMLElement {
       placement: 'top',
       theme: 'sa11y-theme',
       maxWidth: 165,
+      role: 'tooltip',
       aria: {
         content: null,
         expanded: false,
@@ -134,6 +136,7 @@ export class DismissTooltip extends HTMLElement {
       placement: 'top',
       theme: 'sa11y-theme',
       maxWidth: 165,
+      role: 'tooltip',
       aria: {
         content: null,
         expanded: false,

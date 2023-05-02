@@ -79,6 +79,7 @@ class Sa11y {
           this.option.colourFilterPlugin,
           this.option.checkAllHideToggles,
           this.option.headless,
+          this.option.panelPosition,
         );
         Constants.initializeReadability(
           this.option.readabilityPlugin,
@@ -330,6 +331,7 @@ class Sa11y {
       Constants.Panel.pageIssuesList.innerHTML = '';
       Constants.Panel.readabilityInfo.innerHTML = '';
       Constants.Panel.readabilityDetails.innerHTML = '';
+      Constants.Panel.panel.classList.remove('has-page-issues');
 
       // Remove any active alerts from panel.
       Utils.removeAlert();
@@ -342,7 +344,9 @@ class Sa11y {
         Constants.Panel.colourFilterSelect.value = 0;
         Constants.Panel.colourPanel.classList.remove('active');
         Constants.Panel.colourFilterSelect.classList.remove('active');
+        Constants.Panel.content.hidden = false;
       }
+
       // Main panel warning and error count.
       while (Constants.Panel.status.firstChild) Constants.Panel.status.removeChild(Constants.Panel.status.firstChild);
 

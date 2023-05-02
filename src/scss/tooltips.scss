@@ -130,6 +130,15 @@ div {
   }
 }
 
+// Minimum width for annotations.
+[role="dialog"] {
+  min-width: 300px;
+}
+
+[role="tooltip"] {
+  text-align: center;
+}
+
 /* Tooltip content */
 .tippy-box[data-theme~="sa11y-theme"] {
   background-color: var(--sa11y-panel-bg);
@@ -149,11 +158,6 @@ div {
   padding: 8px;
   position: relative;
   transition-property: transform, visibility, opacity;
-
-  // Minimum width for annotations (which have lang attribute present only).
-  [lang] {
-    min-width: 300px;
-  }
 
   code {
     font-family: monospace;

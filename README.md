@@ -11,6 +11,18 @@
 * [WordPress plugin development repo](https://github.com/ryersondmp/sa11y-wp) 🛠
 * [Acknowledgements](https://sa11y.netlify.app/acknowledgements/) 👤
 
+## Features
+- Over 50 checks that encourage quality accessibility.
+  - Checks for issues regarding images, headings, links, form labels, and more.
+  - Toggleable/optional checks: readability analysis, contrast checking, and colour filters.
+- **Automatic:** checks content on page load.
+- **Customizable:** JSON-like props to fine tune the experience for content authors.
+- **Focus on the issues:** Turn off or hide irrelevant checks.
+- **Scalable:** Check every page for accessibility.
+- Support for checking items within web components/shadow DOM and headless checks.
+- Fully encapsulated user interface with dark mode.
+- Offered in various [languages.](https://github.com/ryersondmp/sa11y/tree/master/src/js/lang)
+
 ## Contributing
 Want to help translate or improve Sa11y? Consider [contributing!](https://github.com/ryersondmp/sa11y/blob/master/CONTRIBUTING.md) Translations may either be contributed back to the repository with a pull request, or translated files can be returned to: [adam.chaboryk@torontomu.ca](mailto:adam.chaboryk@torontomu.ca)
 
