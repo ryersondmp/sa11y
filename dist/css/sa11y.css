@@ -313,11 +313,18 @@ html[data-sa11y-theme=dark] {
 /* *********************************************************************************** */
 #sa11y-colour-filters,
 #sa11y-svg-filters {
-  height: 0 !important;
-  width: 0 !important;
   padding: 0 !important;
   margin: 0 !important;
   line-height: 0 !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vh !important;
+  height: 100vh !important;
+  overflow: hidden !important;
+  z-index: -99999 !important;
+  transform-style: preserve-3d !important;
+  transform: translate3d(0, 0, 0) !important;
 }
 
 [data-sa11y-filter=protanopia] *:not(sa11y-control-panel, sa11y-dismiss-tooltip) {

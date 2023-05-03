@@ -56,6 +56,7 @@ label {
 /*          2. Main toggle               */
 /* ************************************* */
 #toggle {
+  align-items: center;
   background: linear-gradient(to top, #e040fb, #00bcd4);
   background-color: var(--sa11y-blue); // Fallback colour.
   background-size: 150% 150%;
@@ -63,8 +64,10 @@ label {
   bottom: 15px;
   color: white;
   cursor: pointer;
+  display: flex;
   height: 55px;
   inset-inline-end: 18px;
+  justify-content: center;
   margin: 0;
   overflow: visible;
   position: fixed;
@@ -89,10 +92,6 @@ label {
 
   svg {
     height: 35px;
-    left: 50%;
-    position: absolute;
-    top: 50%;
-    transform: translateX(-50%) translateY(-50%);
     width: 35px;
 
     path {
