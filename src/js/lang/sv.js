@@ -13,11 +13,8 @@ export default {
     OFF: 'Av',
     ALERT_TEXT: 'Varning',
     ALERT_CLOSE: 'Stäng',
-    SHOW_OUTLINE: 'Visa översikt',
-    HIDE_OUTLINE: 'Göm översikt',
-    SHOW_SETTINGS: 'Visa inställningar',
-    HIDE_SETTINGS: 'Göm inställningar',
-    PAGE_OUTLINE: 'Sidöversikt',
+    OUTLINE: 'Sidöversikt',
+    PAGE_ISSUES: 'Sidproblem',
     SETTINGS: 'Inställningar',
     CONTRAST: 'Kontrast',
     FORM_LABELS: 'Formuläretiketter',
@@ -33,6 +30,26 @@ export default {
     NOT_VISIBLE_ALERT: 'Objektet du försöker visa är inte synligt: det kan vara gömt eller finnas inuti en dragspelskomponent eller en flikkomponent. Här är en förhandsvisning:',
     ERROR_MISSING_ROOT_TARGET: 'Hela sidan kontrolleras för tillgänglighet eftersom målområdet <code>%(root)</code> inte existerar.',
     HEADING_NOT_VISIBLE_ALERT: 'Rubriken är inte synlig; den kan vara gömd eller inuti ett dragspel eller en flikkomponent.',
+    SKIP_TO_PAGE_ISSUES: 'Hoppa till sidans problem',
+
+    // Dismiss
+    PANEL_DISMISS_BUTTON: 'Visa %(dismissCount) ignorerade varningar',
+    DISMISS: 'Ignorera',
+    DISMISSED: 'Ignorerade varningar',
+    DISMISS_REMINDER: 'Observera att varningar bara ignoreras <strong>tillfälligt.</strong> Rensa din webbläsarhistorik och kakor kommer att återställa alla tidigare ignorerade varningar på alla sidor.',
+
+    // Color filters
+    COLOUR_FILTER: 'Färgfilter',
+    PROTANOPIA: 'Protanopia',
+    DEUTERANOPIA: 'Deuteranopia',
+    TRITANOPIA: 'Tritanopia',
+    MONOCHROMACY: 'Monokromati',
+    COLOUR_FILTER_MESSAGE: 'Kolla efter element som är svåra att uppfatta eller särskilja från andra färger.',
+    RED_EYE: 'Röd färgblindhet.',
+    GREEN_EYE: 'Grön färgblindhet.',
+    BLUE_EYE: 'Blå färgblindhet.',
+    MONO_EYE: 'Röd, grön och blå blindhet.',
+    COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Färgfilter fungerar inte i högkontrastläge.',
 
     // Alternative text module stop words
     SUSPICIOUS_ALT_STOPWORDS: ['bild', 'grafik', 'fotografi', 'foto'],
@@ -118,7 +135,7 @@ export default {
     // Links
     LINK_EMPTY: 'Ta bort tomma länkar utan text.',
     LINK_EMPTY_LINK_NO_LABEL: 'Länken har inte urskiljbar text som är synlig för skärmläsare och andra hjälpmedel. För att fixa: <ul><li>Lägg till lite kortfattad text som beskriver vart länken tar dig.</li><li>Om det är en <a href="https://a11y-101.com/development/icons -and-links">ikonlänk eller SVG,</a> saknar den troligen en beskrivande etikett.</li><li>Om du tror att den här länken är ett fel på grund av ett kopierings-/klistra-fel, överväg att ta bort den.</li></ul>',
-    LINK_LABEL: '<strong>Länketikett:</strong> %(linkText)',
+    LINK_LABEL: '<strong>Länketikett:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Länktexten kanske inte är tillräckligt beskrivande ur sitt sammanhang: <strong {r}>%(error)</strong><hr><strong>Tips!</strong> Länktexten ska alltid vara tydlig, unik och meningsfull. Undvik vanliga ord som &quot;klicka här&quot; eller &quot;läs mer&quot;',
     LINK_BEST_PRACTICES: 'Överväg att ersätta länktexten: <strong {r}>%(error)</strong><hr><ul><li>&quot;Klicka här&quot; platser fokuserar på musmekanik, när många människor inte använder en mus eller kanske tittar på den här webbplatsen på en mobil enhet. Överväg att använda ett annat verb som relaterar till uppgiften.</li><li>Undvik att använda HTML-symboler som uppmaning om de inte är dolda för hjälpmedel.</li></ul>',
     LINK_URL: 'Längre, mindre begripliga webbadresser som används som länktext kan vara svåra att lyssna på med hjälpmedel. I de flesta fall är det bättre att använda läsbar text istället för URL:en. Korta webbadresser (som en webbplats startsida) är okej.<hr><strong>Tips!</strong> Länktexten ska alltid vara tydlig, unik och meningsfull så att den kan förstås tagen ur sitt sammanhang.',
@@ -126,7 +143,7 @@ export default {
     // Links advanced
     NEW_TAB_WARNING: 'Länken öppnas i en ny flik eller ett nytt fönster utan förvarning. Att göra det kan vara desorienterande, särskilt för personer som har svårt att uppfatta visuellt innehåll. För det andra är det inte alltid en bra praxis att styra någons erfarenhet eller fatta beslut åt dem. Ange att länken öppnas i ett nytt fönster i länktexten<hr><strong>Tips!</strong> Lär dig bästa praxis: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">att öppna länkar i nya webbläsarfönster och flikar.</a>',
     FILE_TYPE_WARNING: 'Länken pekar till en PDF eller nedladdningsbar fil (t.ex. MP3, Zip, Word Doc) utan förvarning. Ange filtypen i länktexten. Om det är en stor fil, överväg att ta med filstorleken.<hr><strong>Exempel:</strong> Verkställande rapport (PDF, 3MB)',
-    LINK_IDENTICAL_NAME: 'Länken har identisk text som en annan länk, även om den pekar på en annan sida. Flera länkar med samma text kan orsaka förvirring för personer som använder skärmläsare.<hr>Överväg att göra följande länk mer beskrivande för att hjälpa till att skilja den från andra länkar: <strong {r}>%(linkText)</strong>',
+    LINK_IDENTICAL_NAME: 'Länken har identisk text som en annan länk, även om den pekar på en annan sida. Flera länkar med samma text kan orsaka förvirring för personer som använder skärmläsare.<hr>Överväg att göra följande länk mer beskrivande för att hjälpa till att skilja den från andra länkar: <strong {r}>%(sanitizedText)</strong>',
 
     // Images
     MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE: 'Bilden används som en länk med omgivande text, dock borde alt-attributet markeras som dekorativt eller null.',
@@ -145,15 +162,15 @@ export default {
     LINK_IMAGE_ALT_WARNING: 'Bildlänken innehåller alt-text, men se till att alt-texten beskriver destinationssidan. <strong>Överväg att använda titeln på sidan den länkar till som alt-text.</strong> Beskriver alt-texten vart länken tar dig? <hr> <strong>Alt-text:</strong> %(altText)',
     LINK_IMAGE_ALT_AND_TEXT_WARNING: 'Bildlänken innehåller <strong>både alt-text och omgivande länktext.</strong> Om den här bilden är dekorativ och används som en funktionell länk till en annan sida, överväg att markera bilden som dekorativ eller null - den omgivande länktexten bör räcka. <hr> <strong>Alt-text:</strong> %(altText)',
     IMAGE_FIGURE_DECORATIVE: 'Bilden är markerad som <strong>dekorativ</strong> och kommer att ignoreras av hjälpmedel. <hr> Även om en <strong>textning</strong> tillhandahölls, bör bilden också ha alternativ text i de flesta fall. <ul><li>Alt-texten ska ge en kortfattad beskrivning av vad som finns i bilden.</li><li>Texten ska vanligtvis ge ett sammanhang för att relatera bilden till det omgivande innehållet, eller ge uppmärksamhet åt viss information.</li></ul>Läs mer: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt kontra figcaption.</a>',
-    IMAGE_FIGURE_DUPLICATE_ALT: 'Använd inte exakt samma ord för både alt- och bildtext. Skärmläsare kommer då att förmedla samma information två gånger.<ul><li>Alt-texten ska ge en kortfattad beskrivning av vad som finns i bilden.</li><li>Tillskriften ska vanligtvis ge sammanhang för att relatera bilden tillbaka till omgivningen innehåll eller ge uppmärksamhet åt en viss information.</li></ul> Läs mer: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element" >alt kontra figcaption.</a> <hr> <strong>Alt-text:</strong> %(altText)',
+    IMAGE_FIGURE_DUPLICATE_ALT: 'Använd inte exakt samma ord för både alt- och bildtext. Skärmläsare kommer då att förmedla samma information två gånger.<ul><li>Alt-texten ska ge en kortfattad beskrivning av vad som finns i bilden.</li><li>Tillskriften ska vanligtvis ge sammanhang för att relatera bilden tillbaka till omgivningen innehåll eller ge uppmärksamhet åt en viss information.</li></ul> Läs mer: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt kontra figcaption.</a> <hr> <strong>Alt-text:</strong> %(altText)',
     IMAGE_DECORATIVE: 'Bilden är markerad som <strong>dekorativ</strong> och kommer att ignoreras av hjälpmedel. Om bilden förmedlar en historia, stämning eller annan viktig information – se till att lägga till alt-text.',
     IMAGE_ALT_TOO_LONG: 'Alt-texten är <strong>för lång</strong>. Alt-text ska vara kortfattad men meningsfull som en <em>tweet</em> (cirka 100 tecken). Om detta är en komplex bild eller en graf, överväg att lägga in den längre beskrivningen av bilden i under bilden, eller i en dragspelskomponent. <hr> <strong>Alt-text (<span {r}>%(altLength)</span> tecken):</strong> %(altText)',
     IMAGE_PASS: '<strong>Alt-text:</strong> %(altText)',
 
     // Labels
     LABELS_MISSING_IMAGE_INPUT_MESSAGE: 'Bildknappen saknar alternativ text. Lägg till alt-text för att ge knappen ett tillgängligt namn. Till exempel: <em>Sök</em> eller <em>Skicka</em>.',
-    LABELS_INPUT_RESET_MESSAGE: 'Återställningsknappar bör <strong>inte</strong> användas om de inte specifikt behövs, eftersom de är lätta att aktivera av misstag. <hr> <strong>Tips!</strong> Lär dig varför <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Återställ- och Avbryt-knapparna orsakar användbarhetsproblem.< /a>',
-    LABELS_ARIA_LABEL_INPUT_MESSAGE: 'Inmatningsfältet har ett tillgängligt namn, men se till att det även finns en synlig etikett. <hr> Det tillgängliga namnet för detta inmatningsfält är: <strong>%(ariaLabel)</strong>',
+    LABELS_INPUT_RESET_MESSAGE: 'Återställningsknappar bör <strong>inte</strong> användas om de inte specifikt behövs, eftersom de är lätta att aktivera av misstag. <hr> <strong>Tips!</strong> Lär dig varför <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Återställ- och Avbryt-knapparna orsakar användbarhetsproblem.</a>',
+    LABELS_ARIA_LABEL_INPUT_MESSAGE: 'Inmatningsfältet har ett tillgängligt namn, men se till att det även finns en synlig etikett. <hr> Det tillgängliga namnet för detta inmatningsfält är: <strong>%(sanitizedText)</strong>',
     LABELS_NO_FOR_ATTRIBUTE_MESSAGE: 'Det finns ingen etikett associerad med detta inmatningsfält. Lägg till ett <code>for</code>-attribut till etiketten som matchar <code>id</code> för detta inmatningsfält. <hr> ID:t för detta inmatningsfält är: <strong>id=&#34;%(id)&#34;</strong>',
     LABELS_MISSING_LABEL_MESSAGE: 'Det finns ingen etikett associerad med detta inmatningsfält. Vänligen lägg till ett <code>id</code> till denna inmatning och lägg till ett matchande <code>for</code>-attribut till etiketten.',
 
@@ -167,11 +184,11 @@ export default {
     // Quality assurance
     QA_BAD_LINK: 'Dålig länk hittades. Länk verkar peka till en utvecklingsmiljö. <hr> Den här länken pekar på: <br> <strong {r}>%(el)</strong>',
     QA_BAD_ITALICS: 'Feta och kursiva HTML-taggar har semantisk betydelse och bör <strong>inte</strong> användas för att markera hela stycken. Fetstil text bör användas för att ge ett ord eller en fras stark <strong>betoning</strong>. Kursiv stil ska användas för att markera egennamn (d.v.s. bok- och artikeltitlar), främmande ord, citat. Långa citat bör formateras som ett blockcitat.',
-    QA_PDF: 'PDF-filer betraktas som webbinnehåll och måste också göras tillgängliga. PDF-filer är ofta problematiska för personer som använder skärmläsare (till exempel: saknade strukturella taggar eller saknade formulärfältetiketter) och personer som har nedsatt syn (texten anpassar sig inte när den förstoras). <ul><li>Om detta är ett formulär, överväg att använda ett tillgängligt HTML-formulär som ett alternativ.</li><li>Om detta är ett dokument, överväg att konvertera det till en webbsida.</li></ul >Annars kontrollerar du <strong {r}>%(pdfCount)</strong> <a href="https://www.adobe.com/accessibility/products/acrobat/using-acrobat-pro-accessibility-checker. html">PDF(er) för tillgänglighet i Acrobat DC.</a>',
+    QA_PDF: 'Det går inte att kontrollera PDF-filer för tillgänglighet. PDF-filer betraktas som webbinnehåll och måste också göras tillgängliga. PDF-filer är ofta problematiska för personer som använder skärmläsare (till exempel: saknade strukturella taggar eller saknade formulärfältetiketter) och personer som har nedsatt syn (texten anpassar sig inte när den förstoras). <ul><li>Om detta är ett formulär, överväg att använda ett tillgängligt HTML-formulär som ett alternativ.</li><li>Om detta är ett dokument, överväg att konvertera det till en webbsida.</li></ul> Annars kontrollerar du <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF för tillgänglighet i Acrobat DC.</a>',
     QA_PAGE_LANGUAGE: 'Sidspråk är inte inställt! Vänligen <a href="https://www.w3.org/International/questions/qa-html-language-declarations">ställ in språk på HTML-taggen.</a>',
     QA_PAGE_TITLE: 'Sidtitel saknas! Ange en <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">sidtitel.</a>',
-    QA_BLOCKQUOTE_MESSAGE: 'Är detta en rubrik? <strong {r}>%(bqHeadingText)</strong> <hr> Blockcitat bör endast användas för citattecken. Om detta är tänkt att vara en rubrik, ändra detta blockcitat till en semantisk rubrik (t.ex. Rubrik 2 eller Rubrik 3).',
-    QA_FAKE_HEADING: 'Är detta en rubrik? <strong {r}>%(boldtext)</strong> <hr> En rad med fetstil text kan se ut som en rubrik, men någon som använder en skärmläsare kan inte se att den är viktig eller hoppa till innehållet. Fetstil text ska aldrig ersätta semantiska rubriker (Rubrik 2 till Rubrik 6).',
+    QA_BLOCKQUOTE_MESSAGE: 'Är detta en rubrik? <strong {r}>%(sanitizedText)</strong> <hr> Blockcitat bör endast användas för citattecken. Om detta är tänkt att vara en rubrik, ändra detta blockcitat till en semantisk rubrik (t.ex. Rubrik 2 eller Rubrik 3).',
+    QA_FAKE_HEADING: 'Är detta en rubrik? <strong {r}>%(boldtext)</strong> <hr> En rad med fet eller stor text kan se ut som en rubrik, men någon som använder en skärmläsare kan inte se att den är viktig eller hoppa till innehållet. Fet eller stor text ska aldrig ersätta semantiska rubriker (Rubrik 2 till Rubrik 6).',
     QA_SHOULD_BE_LIST: 'Försöker du skapa en lista? Möjligt listobjekt hittat: <strong {r}>%(firstPrefix)</strong> <hr> Se till att använda semantiska listor genom att använda punkt- eller sifferformateringsknapparna istället. När du använder en semantisk lista kan hjälpmedel förmedla information som det totala antalet objekt och den relativa positionen för varje objekt i listan. Läs mer om <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semantiska listor.</a>',
     QA_UPPERCASE_WARNING: 'Hittade text med enbart versaler. Vissa skärmläsare kan tolka versalskrift som en akronym och läser varje bokstav individuellt. Dessutom upplever vissa personer att det är svårare att läsa versalskrift och det kan se ut som att avsändaren SKRIKER.',
     QA_DUPLICATE_ID: 'Hittade <strong>duplicerat ID</strong>. Dubbletterade ID:n är kända för att orsaka problem för hjälpmedelsverktyg när de försöker interagera med innehåll. <hr> Ta bort eller ändra följande ID: <strong {r}>%(id)</strong>',
@@ -184,8 +201,8 @@ export default {
     TABLES_EMPTY_HEADING: 'Tom tabellrubrik hittades! Tabellrubriker får <strong>aldrig</strong> vara tomma. Det är viktigt att ange rad- och/eller kolumnrubriker för att förmedla deras relation. Informationen ger sammanhang till personer som använder hjälpmedelsverktyg. Tänk på att tabeller endast ska användas för tabelldata. <hr> Läs mer om <a href="https://www.w3.org/WAI/tutorials/tables/">tillgängliga tabeller.</a>',
 
     // Contrast
-    CONTRAST_ERROR: 'Denna text har inte tillräcklig kontrast mot bakgrunden. Kontrastförhållandet bör vara minst 4,5:1 för normal text och 3:1 för stor text. <hr> Kontrastförhållandet är <strong {r}>%(cratio)</strong> för följande text: <strong {r}>%(nodetext)</strong>',
-    CONTRAST_WARNING: 'Denna texts är okänd och måste granskas manuellt. Se till att texten och bakgrunden har starka kontrasterande färger. Kontrastförhållandet bör vara minst 4,5:1 för normal text och 3:1 för stor text. <hr> <strong>Granska:</strong> %(nodtext)',
+    CONTRAST_ERROR: 'Denna text har inte tillräcklig kontrast mot bakgrunden. Kontrastförhållandet bör vara minst 4,5:1 för normal text och 3:1 för stor text. <hr> Kontrastförhållandet är <strong {r}>%(cratio)</strong> för följande text: <strong {r}>%(sanitizedText)</strong>',
+    CONTRAST_WARNING: 'Denna texts är okänd och måste granskas manuellt. Se till att texten och bakgrunden har starka kontrasterande färger. Kontrastförhållandet bör vara minst 4,5:1 för normal text och 3:1 för stor text. <hr> <strong>Granska:</strong> %(sanitizedText)',
     CONTRAST_INPUT_ERROR: 'Text i detta inmatningsfält har inte tillräcklig kontrast mot bakgrunden. Kontrastförhållandet bör vara minst 4,5:1 för normal text och 3:1 för stor text. <hr> Kontrastförhållande: <strong {r}>%(cratio)</strong>',
   },
 };

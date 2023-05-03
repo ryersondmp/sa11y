@@ -5,17 +5,21 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Everything - Sa11y Demo</title>
-
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
   <link href="../assets/main.css" rel="stylesheet">
-  <link rel="shortcut icon" type="image/jpg" href="../assets/favicon.ico"/>
-  <link rel="stylesheet" href="../../assets/css/sa11y.min.css"/>
+  <link rel="shortcut icon" type="image/jpg" href="../assets/favicon.ico" />
+  <link rel="stylesheet" href="../../assets/css/sa11y.min.css" />
   <meta name="theme-color" content="#7952b3">
   <style>
-    .badge {font-size: unset;}
-    .card-footer .card-text {font-size: 0.8em;}
+    .badge {
+      font-size: unset;
+    }
+
+    .card-footer .card-text {
+      font-size: 0.8em;
+    }
   </style>
 </head>
 
@@ -51,6 +55,9 @@
             </li>
             <li class="nav-item">
               <a class="nav-link" href="pass.html">Good</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="rtl.html">RTL</a>
             </li>
           </ul>
         </div>
@@ -104,6 +111,12 @@
           <div class="example">
             <h4>Is a heading really a heading if it's a long sentence? Or is a content author just going for visual
               aesthetics? Headings longer than 160 characters will be flagged as a warning.</h4>
+            <hr>
+            <a href="#">
+              <h4>What about hyperlinked headings? Is a heading really a heading if it's a long sentence? Or is a
+                content author just going for visual aesthetics? Headings longer than 160 characters will be flagged as
+                a warning.</h4>
+            </a>
           </div>
 
           <h3>Blockquotes used as headings</h3>
@@ -115,13 +128,14 @@
           </div>
 
           <h3>Empty heading contains a decorative image</h3>
-          <p class="small">Expected: <span class="badge bg-danger">Error</span> and <span class="badge bg-warning text-dark">Warning</span></p>
+          <p class="small">Expected: <span class="badge bg-danger">Error</span> and <span
+              class="badge bg-warning text-dark">Warning</span></p>
           <div class="example">
             <h4><img src="../assets/placeholder.svg" alt width="100"></h4>
           </div>
 
           <h3>Heading contains an image without alt text</h3>
-          <p class="small">Expected: <span class="badge bg-danger">Error</span></p>
+          <p class="small">Expected: <span class="badge bg-danger">2 errors</span></p>
           <div class="example">
             <h4><img src="../assets/placeholder.svg" width="100"></h4>
           </div>
@@ -137,7 +151,7 @@
                 class="text-danger">&lt;/strong&gt;&lt;/p&gt;</strong></code></p>
           <div class="example">
             <p class="small">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
-            <p><strong>About us</strong></p>
+            <p><strong>About the team</strong></p>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
               dolore
               magna aliqua. Elit duis tristique sollicitudin nibh. Etiam erat velit scelerisque in dictum non
@@ -147,9 +161,8 @@
           </div>
 
           <div class="example">
-            <p><strong>This shouldn't be flagged since it's long and not necessarily a heading. It could just be a big
-                block
-                of bolded text. It is over 120 characters.</strong></p>
+            <p><strong>This shouldn't be flagged since it's long and not necessarily a heading but just a bolded
+                sentence for extra emphasis.</strong></p>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
               dolore
               magna aliqua. Elit duis tristique sollicitudin nibh. Etiam erat velit scelerisque in dictum non
@@ -161,13 +174,14 @@
           <h3>Bolded text used as heading with line breaks</h3>
           <p>Looking for something like... <code><strong class="text-danger">&lt;p&gt;&lt;strong&gt;</strong>Fake
               heading<strong class="text-danger">&lt;br&gt;&lt;/strong&gt;</strong> Followed by some
-              text.&lt;/p&gt;</code> This check has been designed to be somewhat forgiving to prevent too many warnings.
+              text.&lt;/p&gt;</code> This check has been designed to be somewhat forgiving to prevent too many
+            warnings.
           </p>
 
           <h4>Warning</h4>
           <div class="example">
             <p class="small">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
-            <p><strong>This will be flagged!</strong><br> Because it's a pretty substantial paragraph. Lorem ipsum
+            <p><strong>This will be flagged</strong><br> Because it's a pretty substantial paragraph. Lorem ipsum
               dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
               aliqua. Elit duis tristique sollicitudin nibh. Lorem ipsum dolor sit amet, consectetur adipiscing elit,
               sed do
@@ -178,7 +192,18 @@
               pharetra convallis posuere morbi leo urna.</p>
           </div>
 
-          <h4>Pass</h4>
+          <div class="example">
+            <p><strong>This will not be flagged. Has punctuation, maybe sentence?</strong><br> Lorem ipsum
+              dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+              aliqua. Elit duis tristique sollicitudin nibh. Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+              sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis tristique sollicitudin nibh. Etiam
+              erat
+              velit scelerisque in dictum non consectetur. Augue lacus viverra vitae congue eu consequat. Egestas
+              maecenas
+              pharetra convallis posuere morbi leo urna.</p>
+          </div>
+
           <div class="example">
             <p><strong>About us</strong><br>Will not be flagged because it's a small paragraph. Lorem ipsum dolor sit
               amet,
@@ -192,19 +217,59 @@
               105 Bond Street<br>
               Toronto,
               ON<br>
-              M5B 2K3</p>
+              M5B 2K3
+            </p>
           </div>
 
           <div class="example">
-            <p><strong>This won't be flagged either since this bolded text is long and not necessarily a heading. It
-                could
-                just be a big block of bolded text. It is over 120 characters.</strong><br>Lorem ipsum dolor sit amet,
+            <p><strong>This won't be flagged either since this line of text is over 120 characters and not necessarily a
+                heading it could just be a long sentence that was bolded for emphasis</strong><br>Lorem ipsum dolor sit
+              amet,
               consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis
               tristique sollicitudin nibh. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
               tempor
               incididunt ut labore et dolore magna aliqua. Elit duis tristique sollicitudin nibh. Etiam erat velit
               scelerisque in dictum non consectetur. Augue lacus viverra vitae congue eu consequat. Egestas maecenas
               pharetra convallis posuere morbi leo urna.</p>
+          </div>
+
+          <h3>Large paragraph text pretending to be a heading</h3>
+          <p>If a paragraph tag has a font size of at least 25px.</p>
+          <div class="example">
+            <div class="row">
+              <div class="col-md-6">
+                <p style="font-size: 24px">About us</p>
+                <p><strong>Expected:</strong> <span class="badge bg-warning text-dark">Warning</span></p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ut consectetur arcu, vitae luctus
+                  lacus. Ut euismod arcu sed leo porta suscipit. Donec maximus eleifend diam vel pulvinar. Sed turpis
+                  mauris, eleifend et volutpat non, varius nec leo. Donec nec ligula in dui elementum venenatis.</p>
+              </div>
+              <div class="col-md-6">
+                <p style="font-size: 24px">How are you doing?</p>
+                <span><strong>Expected:</strong> nothing.</span>
+                <p>Since it has punctuation, assume it's not a heading. Lorem ipsum dolor sit amet, consectetur
+                  adipiscing elit. Curabitur ut consectetur arcu, vitae luctus lacus. Ut euismod arcu sed leo porta
+                  suscipit.</p>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <h4>A subheading before</h4>
+                <p style="font-size: 24px">About us</p>
+                <span><strong>Expected:</strong> nothing.</span>
+                <p>Previous sibling element is a heading, so don't tag. This is to prevent false positives or excessive
+                  annotations on the page. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+              </div>
+              <div class="col-md-6">
+                <h4>
+                  <p style="font-size: 24px">About us</p>
+                </h4>
+                <span><strong>Expected:</strong> nothing.</span>
+                <p>A paragraph with 24px text nested within a Heading 4. This should not get flagged. Lorem ipsum dolor
+                  sit amet, consectetur adipiscing elit. Curabitur ut consectetur arcu, vitae luctus lacus.</p>
+              </div>
+            </div>
           </div>
 
           <hr class="mt-5">
@@ -319,7 +384,8 @@
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill text-center">
                 <a href="#">
-                  <img src="../assets/placeholder.svg" width="100%" alt class="w-100"><span class="text-center lead">Learn more
+                  <img src="../assets/placeholder.svg" width="100%" alt class="w-100"><span
+                    class="text-center lead">Learn more
                     about Tigers</span></a>
                 <div class="card-body">
                   <p class="card-text">Hyperlinked image with null alt text, but has surrounding link text below
@@ -362,7 +428,8 @@
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill">
-                <a href="#"><img src="../assets/placeholder.svg" width="100%" alt="An image of a bird." class="w-100"></a>
+                <a href="#"><img src="../assets/placeholder.svg" width="100%" alt="An image of a bird."
+                    class="w-100"></a>
                 <div class="card-body">
                   <p class="card-text">Hyperlinked image has alt text that contains a stop word.</p>
                 </div>
@@ -438,7 +505,8 @@
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill text-center">
-                <a href="#"><img src="../assets/placeholder.svg" width="100%" class="w-100"><span class="text-center lead">Learn
+                <a href="#"><img src="../assets/placeholder.svg" width="100%" class="w-100"><span
+                    class="text-center lead">Learn
                     more
                     about Dahlias</span></a>
                 <div class="card-body">
@@ -475,7 +543,8 @@
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill text-center">
-                <a href="#" aria-hidden="true"><img src="../assets/placeholder.svg" alt="doggy.jpg" width="100%" class="w-100"></a>
+                <a href="#" aria-hidden="true"><img src="../assets/placeholder.svg" alt="doggy.jpg" width="100%"
+                    class="w-100"></a>
                 <div class="card-body">
                   <p class="card-text">28: Hyperlinked image's alt text contains file extension.</p>
                 </div>
@@ -609,8 +678,8 @@
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill text-center">
-                <a href="#" aria-hidden="true" tabindex="-1"><img src="../assets/placeholder.svg" alt="Testing 123" width="100%"
-                    class="w-100"></a>
+                <a href="#" aria-hidden="true" tabindex="-1"><img src="../assets/placeholder.svg" alt="Testing 123"
+                    width="100%" class="w-100"></a>
                 <div class="card-body">
                   <p class="card-text">Hyperlinked image where anchor has aria-hidden=&quot;true&quot;
                     and tabindex=&quot;-1&quot; and the image has alt text.</p>
@@ -626,10 +695,29 @@
                   <h6>Learn more about the Canary Islands</h6>
                 </a>
                 <div class="card-body">
-                  <p class="card-text">Hyperlinked image contains skipped heading. Error is appended after the hyperlink to prevent nesting button inside hyperlink.</p>
+                  <p class="card-text">Hyperlinked image contains skipped heading. Error is appended after the hyperlink
+                    to prevent nesting button inside hyperlink.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <br><span class="badge bg-success">Pass</span> & <span class="badge bg-danger">Error</span></p>
+                  <p class="card-text">Expected: <br><span class="badge bg-success">Pass</span> & <span
+                      class="badge bg-danger">Error</span></p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 d-flex">
+              <div class="card mb-4 shadow-sm flex-fill text-center">
+                <h3 hidden>Ignore me</h3>
+                <button>
+                  <img src="../assets/placeholder.svg" alt width="100%" class="w-100">
+                  <h6>Learn more about the Canary Islands</h6>
+                </button>
+                <div class="card-body">
+                  <p class="card-text">Hyperlinked image contains skipped heading. Error is appended after the hyperlink
+                    to prevent nesting button inside hyperlink.</p>
+                </div>
+                <div class="card-footer">
+                  <p class="card-text">Expected: <br><span class="badge bg-success">Pass</span> & <span
+                      class="badge bg-danger">Error</span></p>
                 </div>
               </div>
             </div>
@@ -641,14 +729,15 @@
                   <p class="card-text">Hyperlinked image opens in new tab.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-warning text-dark">2 warnings</span> if Links (Advanced) is enabled.</p>
+                  <p class="card-text">Expected: <span class="badge bg-warning text-dark">2 warnings</span> if Links
+                    (Advanced) is enabled.</p>
                 </div>
               </div>
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill text-center">
-                <a href="#" target="_blank"><img src="../assets/placeholder.svg" alt="Two zebras. Opens in new tab." width="100%"
-                    class="w-100"></a>
+                <a href="#" target="_blank"><img src="../assets/placeholder.svg" alt="Two zebras. Opens in new tab."
+                    width="100%" class="w-100"></a>
                 <div class="card-body">
                   <p class="card-text">Hyperlinked image opens in new tab. Alt text indicates link opens in new window.
                   </p>
@@ -705,7 +794,7 @@
           <h3>Partial stop words with exclusions</h3>
           <p>Sometimes a website theme may automatically append text to a link. For example, "(External Link)" will be
             ignored, which will correctly flag this link as an error for not being descriptive enough.</p>
-            <p class="small">Expected: <span class="badge bg-danger">Error</span></p>
+          <p class="small">Expected: <span class="badge bg-danger">Error</span></p>
           <div class="example">
             <a href="#">
               learn more
@@ -778,7 +867,7 @@
                 <a href="#">Click here to view our programs</a>
               </div>
               <div class="col-md-4">
-                <a href="#">Next ></a>
+                <a href="#nextlink123">Next ></a>
               </div>
               <div class="col-md-4">
                 <a href="#">&lt; Previous</a>
@@ -792,7 +881,7 @@
               <div class="col-md-6">
                 <a
                   href="https://sa11y.netlify.app/developers/custom-checks/">https://sa11y.netlify.app/developers/custom-checks/</a>
-                  <p class="small mt-3">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
+                <p class="small mt-3">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
               </div>
               <div class="col-md-6">
                 <a href="https://sa11y.netlify.app">https://sa11y.netlify.app</a>
@@ -805,7 +894,8 @@
             <a href="www.example.com">some link</a> or <a href="www.google.com/">some link</a>
 
             <p class="small mt-3">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
-            <a href="www.example.com">uses aria label</a> or <a href="www.google.com/" aria-label="uses aria label">learn more</a>
+            <a href="www.example.com">uses aria label</a> or <a href="www.google.com/"
+              aria-label="uses aria label">learn more</a>
           </div>
 
           <h3>Hyperlinks with ARIA</h3>
@@ -813,7 +903,7 @@
           <ul>
             <li><strong>Code:</strong> <code>&lt;a href="#" <strong class="text-danger">aria-label="Learn more about
                   Sa11y"</strong>&gt;Learn more&lt;/a&gt;</code></li>
-            <li><strong>Expected result:</strong> Learn more about Sa11y <span class="badge bg-success">Pass</span</li>
+            <li><strong>Expected result:</strong> Learn more about Sa11y <span class="badge bg-success">Pass</span></li>
           </ul>
           <div class="example">
             <a href="#" aria-label="Learn more about Sa11y" class="btn btn-primary">Learn more</a>
@@ -823,7 +913,7 @@
           <ul>
             <li><strong>Code:</strong> <code>&lt;a href="#"&gt;Learn more &lt;span <strong
                   class="text-danger">aria-label="about Sa11y"</strong>&gt;&lt;/span&gt;&lt;/a&gt;</code></li>
-            <li><strong>Expected result:</strong> Learn more about Sa11y <span class="badge bg-success">Pass</span</li>
+            <li><strong>Expected result:</strong> Learn more about Sa11y <span class="badge bg-success">Pass</span></li>
           </ul>
           <div class="example">
             <a href="#" class="btn btn-primary">Learn more <span aria-label="about Sa11y"></span></a>
@@ -835,7 +925,8 @@
                   class="text-danger">aria-label="about Sa11y"</strong>&gt;&lt;/span&gt; &lt;i <strong
                   class="text-danger">aria-label="(External)"</strong> class="bi
                 bi-box-arrow-up-right"&gt;&lt;/i&gt;&lt;/a&gt;</code></li>
-            <li><strong>Expected result:</strong> Learn more about Sa11y (External) <span class="badge bg-success">Pass</span</li>
+            <li><strong>Expected result:</strong> Learn more about Sa11y (External) <span class="badge bg-success">Pass
+              </span></li>
           </ul>
           <div class="example">
             <a href="#" class="btn btn-primary">Learn more <span aria-label="about Sa11y"></span> <i
@@ -848,7 +939,7 @@
             <li><strong>Reference ID:</strong> <code>&lt;span id="app"&gt;apples&lt;/span&gt;</code></li>
             <li><strong>Code:</strong> <code>&lt;a href="#" <strong
                   class="text-danger">aria-labelledby="app"</strong>&gt;Learn more&lt;/a&gt;</code></li>
-            <li><strong>Expected result:</strong> apples <span class="badge bg-success">Pass</span</li>
+            <li><strong>Expected result:</strong> apples <span class="badge bg-success">Pass</span></li>
           </ul>
           <div class="example">
             <a href="#" class="btn btn-primary" aria-labelledby="app">Learn more</a>
@@ -858,10 +949,12 @@
           <span hidden id="ban">and bananas</span>
           <ul>
             <li><strong>Reference IDs:</strong> itself, <code>&lt;span id="app"&gt;apples&lt;/span&gt;</code>,
-              <code>x</code> which does not exist, <code>&lt;span id="ban"&gt;bananas&lt;/span&gt;</code></li>
+              <code>x</code> which does not exist, <code>&lt;span id="ban"&gt;bananas&lt;/span&gt;</code>
+            </li>
             <li><strong>Code:</strong> <code>&lt;a href="#" <strong class="text-danger">id="self" aria-labelledby="self
                   app x ban"</strong>&gt;Learn more about&lt;/a&gt;</code></li>
-            <li><strong>Expected result:</strong> Learn more about apples and bananas <span class="badge bg-success">Pass</span</li>
+            <li><strong>Expected result:</strong> Learn more about apples and bananas <span
+                class="badge bg-success">Pass</span></li>
           </ul>
           <div class="example">
             <a href="#" class="btn btn-primary" id="self" aria-labelledby="self app x ban">Learn more about</a>
@@ -873,7 +966,8 @@
               which does not exist, <code>&lt;span id="ban"&gt;bananas&lt;/span&gt;</code></li>
             <li><strong>Code:</strong> <code>&lt;a href="#"&gt;Learn more &lt;span <strong
                   class="text-danger">aria-labelledby="app x ban"</strong>&gt;&lt;/span&gt;&lt;/a&gt;</code></li>
-            <li><strong>Expected result:</strong> Learn more about apples and bananas <span class="badge bg-success">Pass</span</li>
+            <li><strong>Expected result:</strong> Learn more about apples and bananas <span
+                class="badge bg-success">Pass</span></li>
           </ul>
           <div class="example">
             <a href="#" class="btn btn-primary">Learn more about <span aria-labelledby="app x ban"></span></a>
@@ -887,6 +981,29 @@
           </ul>
           <div class="example">
             <a href="#" class="btn btn-primary" aria-hidden="true">Learn more</a>
+          </div>
+
+          <h4>Miscellaneous testing</h4>
+          <p>Other weird test cases.</p>
+          <div class="example">
+            <div class="row">
+              <div class="col-md-6">
+                <p>Link that has an SVG with a &lt;title&gt;foo&lt;/title&gt; tag.<br /> <strong>Expected:</strong> No
+                  annotation.</p>
+                <a href="#">
+                  <span class="bg-info">Learn more</span>
+                  <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" role="image"
+                    aria-labelledby="azxc">
+                    <!--! Font Awesome Pro 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
+                    <title id="azxc">about testing</title>
+                    <path
+                      d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z" />
+                  </svg>
+                </a>
+              </div>
+              <div class="col-md-6">
+              </div>
+            </div>
           </div>
 
           <hr class="mt-5">
@@ -1023,14 +1140,14 @@
           <p>A warning is added to any hyperlinks that have a <kbd>.pdf</kbd> file extension. A warning icon is only
             appended to the first PDF detected on the page to avoid overwhelming a content author. All other PDF links
             are visually highlighted.</p>
-            <p class="small">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
+          <p class="small">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
           <div class="example">
             <div class="ml-5">
               <ul>
-                <li>Download the <a href="#.pdf" >Admissions Handbook <span class="sr-only">(PDF)</span></a>
+                <li>Download the <a href="#asdgasdg.pdf">Admissions Handbook <span class="sr-only">(PDF)</span></a>
                 </li>
-                <li><a href="#.pdf">Course Outline <span class="sr-only">(PDF)</span></a></li>
-                <li><a href="#.pdf">Cheatsheet <span class="sr-only">(PDF)</span></a></li>
+                <li><a href="#kklkcm.pdf">Course Outline <span class="sr-only">(PDF)</span></a></li>
+                <li><a href="#cxljsljf.pdf">Cheatsheet <span class="sr-only">(PDF)</span></a></li>
               </ul>
             </div>
           </div>
@@ -1042,14 +1159,15 @@
             to find uppercase words that are at least 3 characters in length, however it will only be indicated as a
             warning if at least 5 uppercase words within an element is found. It only checks for uppercase words within
             the following elements: h1, h2, h3, h4, h5, h6, p, li, blockquote.</p>
-            <p class="small">Expected: <span class="badge bg-warning text-dark">3 warnings</span></p>
+          <p class="small">Expected: <span class="badge bg-warning text-dark">4 warnings</span></p>
           <div class="example">
             <p>FOR EXAMPLE, THIS WILL BE FLAGGED.</p>
             <p>FOR EXAMPLE, this WILL NOT be flagged.</p>
             <ul>
               <li>UPPERCASE TEXT WITHIN BULLETS will be flagged too.</li>
             </ul>
-            <h3>LET'S NOT FORGET ABOUT HEADINGS TOO!</h3>
+            <h3 class="mb-4">LET'S NOT FORGET ABOUT HEADINGS TOO!</h3>
+            <p><a href="#asdajfks" class="btn btn-primary">UPPERCASE TEXT WITHIN HYPERLINKS</button></a>
           </div>
 
           <h3>Underlined text</h3>
@@ -1060,7 +1178,7 @@
             <div class="col-md-4">
               <div class="example h-100">
                 <p class="small">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
-                <p style="text-decoration-line: underline;">This will be flagged.</p>
+                <p style="text-decoration-line: underline;">This will be flagged for sure.</p>
               </div>
             </div>
             <div class="col-md-4">
@@ -1089,7 +1207,8 @@
             <div class="col-md-4">
               <div class="example h-100">
                 <p class="small">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
-                <p>What about a <span style="text-decoration:1px solid black underline">span</span> within a paragraph.</p>
+                <p>What about a <span style="text-decoration:1px solid black underline">span</span> within a paragraph.
+                </p>
               </div>
             </div>
             <div class="col-md-4">
@@ -1128,8 +1247,12 @@
           <h3>Subscript and superscript formatting</h3>
           <p class="small">Expected: <span class="badge bg-warning text-dark">2 warnings</span></p>
           <div class="example">
-            <p>A subscript or superscript <sub>is a character that is set slightly below or above the normal line of type, respectively. It is usually smaller than the rest of the text. Subscripts appear at or below the baseline, while superscripts are above. Wikipedia.</sub></p>
-            <p>A subscript or superscript <sup>is a character that is set slightly below or above the normal line of type, respectively. It is usually smaller than the rest of the text. Subscripts appear at or below the baseline, while superscripts are above. Wikipedia.</sup></p>
+            <p>A subscript or superscript <sub>is a character that is set slightly below or above the normal line of
+                type, respectively. It is usually smaller than the rest of the text. Subscripts appear at or below the
+                baseline, while superscripts are above. Wikipedia.</sub></p>
+            <p>A subscript or superscript <sup>is a character that is set slightly below or above the normal line of
+                type, respectively. It is usually smaller than the rest of the text. Subscripts appear at or below the
+                baseline, while superscripts are above. Wikipedia.</sup></p>
           </div>
 
         </div>
@@ -1145,6 +1268,7 @@
   <script type="module" src="../script.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
     integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous">
-  </script>
+    </script>
 </body>
+
 </html>

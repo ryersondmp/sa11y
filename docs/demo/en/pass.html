@@ -9,9 +9,9 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <meta name="theme-color" content="#7952b3">
-  <link rel="shortcut icon" type="image/jpg" href="../assets/favicon.ico"/>
+  <link rel="shortcut icon" type="image/jpg" href="../assets/favicon.ico" />
   <link href="../assets/main.css" rel="stylesheet">
-  <link rel="stylesheet" href="../../assets/css/sa11y.min.css"/>
+  <link rel="stylesheet" href="../../assets/css/sa11y.min.css" />
 </head>
 
 <body>
@@ -46,6 +46,9 @@
             <li class="nav-item">
               <a class="nav-link active" aria-current="page" href="pass.html">Good</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="rtl.html">RTL</a>
+            </li>
           </ul>
         </div>
       </div>
@@ -56,6 +59,7 @@
       <div class="p-5 mb-5 rounded text-center">
         <h1>No errors</h1>
         <p class="lead">A page without any errors!</p>
+        <p>Panel position is placed left via prop <code>panelPosition: 'left'</code></p>
         <small>The sample text below is from <a href="https://en.wikipedia.org/wiki/Bear">Wikipedia: Bear.</a></small>
       </div>
     </div>
@@ -161,26 +165,29 @@
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
     integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous">
+    </script>
+
+  <!-- Sa11y - Module -->
+  <!--<script type="module" src="../script.js"></script>-->
+
+  <!-- Sa11y - Regular script -->
+  <script src="../../assets/js/sa11y.umd.min.js"></script>
+  <script src="../../assets/js/lang/en.umd.js"></script>
+  <script>
+    // Instantiate
+    Sa11y.Lang.addI18n(Sa11yLangEn.strings);
+    const sa11y = new Sa11y.Sa11y({
+      checkRoot: "body",
+      readabilityRoot: "main",
+      containerIgnore: 'footer',
+      linksToFlag: "a[href^='https://www.dev.']",
+      linkIgnoreSpan: '.sr-only-example',
+      detectSPArouting: true,
+      headless: false,
+      selectorPath: true,
+      panelPosition: 'left',
+    });
   </script>
-
-<!-- Sa11y - Module -->
-<!--<script type="module" src="../script.js"></script>-->
-
-<!-- Sa11y - Regular script -->
-<script src="../../assets/js/sa11y.umd.min.js"></script>
-<script src="../../assets/js/lang/en.umd.js"></script>
-<script>
-  // Instantiate
-  Sa11y.Lang.addI18n(Sa11yLangEn.strings);
-  const sa11y = new Sa11y.Sa11y({
-    checkRoot: "body",
-    readabilityRoot: "main",
-    containerIgnore: 'footer',
-    linksToFlag: "a[href^='https://www.dev.']",
-    linkIgnoreSpan: '.sr-only-example',
-    detectSPArouting: true,
-  });
-</script>
 
 </body>
 

@@ -11,23 +11,34 @@
 * [WordPress plugin development repo](https://github.com/ryersondmp/sa11y-wp) 🛠
 * [Acknowledgements](https://sa11y.netlify.app/acknowledgements/) 👤
 
+## Features
+- Over 50 checks that encourage quality accessibility.
+  - Checks for issues regarding images, headings, links, form labels, and more.
+  - Toggleable/optional checks: readability analysis, contrast checking, and colour filters.
+- **Automatic:** checks content on page load.
+- **Customizable:** JSON-like props to fine tune the experience for content authors.
+- **Focus on the issues:** Turn off or hide irrelevant checks.
+- **Scalable:** Check every page for accessibility.
+- Support for checking items within web components/shadow DOM and headless checks.
+- Fully encapsulated user interface with dark mode.
+- Offered in various [languages.](https://github.com/ryersondmp/sa11y/tree/master/src/js/lang)
+
 ## Contributing
-Want to help translate or improve Sa11y? Consider [contributing!](https://github.com/ryersondmp/sa11y/blob/master/CONTRIBUTING.md) Translations may either be contributed back to the repository with a pull request, or translated files can be returned to: [adam.chaboryk@ryerson.ca](mailto:adam.chaboryk)
+Want to help translate or improve Sa11y? Consider [contributing!](https://github.com/ryersondmp/sa11y/blob/master/CONTRIBUTING.md) Translations may either be contributed back to the repository with a pull request, or translated files can be returned to: [adam.chaboryk@torontomu.ca](mailto:adam.chaboryk@torontomu.ca)
 
 ## Contact
-Have a question or any feedback? Email: [adam.chaboryk@ryerson.ca](mailto:adam.chaboryk)
+Have a question or any feedback? Email: [adam.chaboryk@torontomu.ca](mailto:adam.chaboryk@torontomu.ca)
 
 <hr>
 
 ## Install
 Sa11y is a framework-agnostic JavaScript plugin. It's made with vanilla JavaScript and CSS, and its only dependency is Tippy.js - a highly customizable tooltip library that features a positioning system.
 
-To install on your website, insert Sa11y right before the closing </body> tag. Sa11y consists of four files:
+To install on your website, insert Sa11y right before the closing `</body>` tag. Sa11y consists of three files:
 
-- **sa11y.css** - The main stylesheet. Should be included in the <head> of the document (if possible).
+- **sa11y.css** - The main stylesheet. Should be included in the `<head>` of the document (if possible).
 - **lang/en.js** - All text strings and tooltip messages. View [supported languages.](https://sa11y.netlify.app/developers/#languages)
 - **sa11y.js** - Contains all logic.
-- **(Optional) sa11y-custom-checks.js** - Any custom checks created by you.
 
 ### NPM
 `npm i sa11y`
@@ -35,22 +46,20 @@ To install on your website, insert Sa11y right before the closing </body> tag. S
 ### Example installation (modules)
 ````html
 <!-- Stylesheet -->
-<link rel="stylesheet" href="css/sa11y.css"/>
+<link rel="stylesheet" href="css/sa11y.min.css"/>
 
 <!-- JavaScript -->
 <script type="module">
   import { Sa11y, Lang } from '../assets/js/sa11y.esm.js';
   import Sa11yLangEn from '../assets/js/lang/en.js';
-  import CustomChecks from '../assets/js/sa11y-custom-checks.esm.js'; // Optional
 
   // Set translations
   Lang.addI18n(Sa11yLangEn.strings);
 
   // Instantiate
   const sa11y = new Sa11y({
-    customChecks: new CustomChecks, // Optional
     checkRoot: "body",
-    readabilityRoot: "main",
+    // Customize with props.
   });
 </script>
 ````
@@ -58,55 +67,20 @@ To install on your website, insert Sa11y right before the closing </body> tag. S
 ### Example installation (regular script)
 ````html
 <!-- Stylesheet -->
-<link rel="stylesheet" href="css/sa11y.css"/>
+<link rel="stylesheet" href="css/sa11y.min.css"/>
 
 <!-- JavaScript -->
 <script src="/dist/js/sa11y.umd.min.js"></script>
 <script src="/dist/js/lang/en.umd.js"></script>
 
-<!-- Optional: Custom checks -->
-<script src="/dist/js/sa11y-custom-checks.umd.min.js"></script>
-
 <!-- Instantiate -->
 <script>
   Sa11y.Lang.addI18n(Sa11yLangEn.strings);
   const sa11y = new Sa11y.Sa11y({
-    customChecks: new CustomChecks, // Optional
     checkRoot: "body",
-    readabilityRoot: "main",
+    // Customize with props.
   });
 </script>
-````
-
-### Example installation (Typescript)
-````typescript
-// src/your-script.ts
-
-import { Sa11y, Lang, LangEn } from "sa11y";
-import CustomChecks from "./your-custom-checks";
-import "sa11y/dist/css/sa11y.css";
-
-Lang.addI18n(LangEn.strings);
-const sa11y = new Sa11y({
-  customChecks: new CustomChecks, // Optional
-  checkRoot: "body",
-  readabilityRoot: "main",
-});
-
-// -------------------------------------------------------------
-
-// src/your-custom-checks.ts
-import { Sa11yCustomChecks } from "sa11y";
-
-export default class CustomChecks extends Sa11yCustomChecks {
-  check() {
-    /**
-     * Add custom checks here. For more details, see:
-     * - ./src/js/sa11y-custom-checks.js
-     * - https://sa11y.netlify.app/developers/custom-checks/
-     */
-  }
-}
 ````
 
 ### CDN

@@ -1,0 +1,243 @@
+/* ***************************************** */
+/*               Utilities                   */
+/* ***************************************** */
+.visually-hidden {
+  border: 0;
+  clip: rect(1px, 1px, 1px, 1px);
+  clip-path: inset(50%);
+  display: block;
+  height: 1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+h2,
+.header-text-inline,
+.header-text {
+  color: var(--sa11y-panel-primary);
+  display: block;
+  font-size: var(--sa11y-large-text);
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+.header-text-inline {
+  display: inline-block !important;
+}
+
+code,
+kbd,
+.kbd {
+  background-color: var(--sa11y-panel-badge);
+  border-radius: 3.2px;
+  color: var(--sa11y-panel-primary);
+  padding: 1.6px 4.8px;
+}
+
+code {
+  font-family: monospace;
+}
+
+.bold {
+  font-weight: 600;
+}
+
+.red-text {
+  color: var(--sa11y-red-text);
+  font-family: var(--sa11y-font-face);
+  font-size: var(--sa11y-normal-text);
+}
+
+.yellow-text {
+  color: var(--sa11y-yellow-text);
+  font-family: var(--sa11y-font-face);
+  font-size: var(--sa11y-normal-text);
+}
+
+/* ***************************************** */
+/*              Close button                 */
+/* ***************************************** */
+
+.close-btn {
+  background: none;
+  border: 1px solid var(--sa11y-button-outline);
+  border-radius: 50%;
+  color: var(--sa11y-panel-primary);
+  cursor: pointer;
+  float: var(--sa11y-float-rtl);
+  font-size: var(--sa11y-normal-text);
+  font-weight: normal;
+  height: 32px;
+  margin: 0;
+  position: relative;
+  transition: all .2s ease-in-out;
+  width: 32px;
+
+  &:hover,
+  &:focus {
+    background-color: var(--sa11y-shortcut-hover);
+  }
+
+  &:after {
+    background: var(--sa11y-setting-switch-bg-off);
+    bottom: -7px;
+    content: "";
+    left: -7px;
+    mask: var(--sa11y-close-btn-svg) center no-repeat;
+    -webkit-mask: var(--sa11y-close-btn-svg) center no-repeat;
+    position: absolute;
+    right: -7px;
+    top: -7px;
+  }
+
+  @media screen and (forced-colors: active) {
+    &:after {
+      filter: invert(1)
+    }
+  }
+}
+
+/* ************************************************************** */
+/*  Global keyboard focus styles for tooltips and control panel.  */
+/* ************************************************************** */
+
+/**
+ * A) Default focus styles.
+ **/
+#container {
+
+  [tabindex="0"]:focus,
+  [tabindex="-1"]:focus,
+  select:focus,
+  button:not(#settings-toggle):not(#outline-toggle):not(.switch):focus,
+  a:focus {
+    box-shadow: 0 0 0 5px var(--sa11y-focus-color);
+    outline: 0;
+  }
+
+  /* These elements MUST use inset outlines */
+  .switch:focus,
+  #settings-toggle:focus,
+  #outline-toggle:focus {
+    box-shadow: inset 0 0 0 4px var(--sa11y-focus-color);
+    outline: 0;
+  }
+}
+
+// Tooltip focus styles
+.tippy-box[data-theme~="sa11y-theme"] {
+
+  a:focus,
+  button:focus,
+  button:active,
+  [tabindex='-1']:focus {
+    box-shadow: 0 0 0 5px var(--sa11y-focus-color);
+    outline: 0;
+  }
+}
+
+/**
+ * B) Remove default focus styles for mouse users ONLY if :focus-visible is supported.
+ **/
+#container {
+
+  [tabindex="0"]:focus:not(:focus-visible),
+  [tabindex="-1"]:focus:not(:focus-visible),
+  button:focus:not(:focus-visible),
+  select:focus:not(:focus-visible),
+  #settings-toggle:focus:not(:focus-visible),
+  #outline-toggle:focus:not(:focus-visible) {
+    box-shadow: none;
+    outline: 0;
+  }
+}
+
+// Tooltip focus styles
+.tippy-box[data-theme~="sa11y-theme"] {
+
+  a:focus:not(:focus-visible),
+  button:focus:not(:focus-visible),
+  [tabindex='-1']:focus:not(:focus-visible) {
+    box-shadow: none;
+    outline: 0;
+  }
+}
+
+/**
+ * C) :focus-visible is supported.
+ **/
+#container {
+
+  a:focus-visible,
+  button:not(#settings-toggle):not(#outline-toggle):not(.switch):focus-visible,
+  select:focus-visible,
+  [tabindex="0"]:focus-visible,
+  [tabindex="-1"]:focus-visible {
+    box-shadow: 0 0 0 5px var(--sa11y-focus-color);
+    outline: 0;
+  }
+
+  // These elements MUST use inset outlines.
+  .switch:focus-visible,
+  #settings-toggle:focus-visible,
+  #outline-toggle:focus-visible {
+    box-shadow: inset 0 0 0 4px var(--sa11y-focus-color);
+    outline: 0;
+  }
+}
+
+/* Tooltip focus styles */
+.tippy-box[data-theme~="sa11y-theme"] {
+
+  a:focus-visible,
+  button:focus-visible,
+  [tabindex='-1']:focus-visible {
+    box-shadow: 0 0 0 5px var(--sa11y-focus-color);
+    outline: 0;
+  }
+}
+
+/* ***************************************** */
+/*        High contrast focus styles         */
+/* ***************************************** */
+
+@media screen and (forced-colors: active) {
+
+  #outline-toggle:focus,
+  #settings-toggle:focus {
+    border: inset 3px solid transparent;
+  }
+
+  .close-btn:focus {
+    outline: transparent solid 3px !important;
+  }
+
+  // Tooltips
+  .tippy-box[data-theme~="sa11y-theme"] {
+
+    a:focus,
+    button:focus,
+    [tabindex='-1']:focus {
+      outline: transparent solid 3px !important;
+    }
+  }
+
+  // Control panel
+  #container {
+
+    a:focus,
+    [tabindex='-1']:focus,
+    [tabindex='0']:focus,
+    select:focus,
+    button:focus {
+      outline: transparent solid 3px !important;
+    }
+  }
+}

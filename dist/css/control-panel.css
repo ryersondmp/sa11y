@@ -1,0 +1,959 @@
+/* ************************************* */
+/*          1. CSS Reset                 */
+/* ************************************* */
+h1,
+h2,
+div,
+p,
+span,
+ol,
+ul,
+li,
+a,
+label,
+button,
+svg,
+strong,
+kbd,
+code {
+  all: unset;
+  box-sizing: border-box !important;
+}
+
+*::before,
+*:before,
+*::after,
+*:after {
+  all: unset;
+}
+
+div {
+  display: block;
+}
+
+* {
+  font-family: var(--sa11y-font-face) !important;
+  -webkit-font-smoothing: auto !important;
+  line-height: 22px !important;
+}
+
+p,
+ol,
+ul,
+li,
+label {
+  font-size: var(--sa11y-normal-text);
+  font-weight: normal;
+  letter-spacing: normal;
+  word-break: normal;
+}
+
+.sa11y-overflow {
+  overflow: auto;
+}
+
+/* ************************************* */
+/*          2. Main toggle               */
+/* ************************************* */
+#toggle {
+  align-items: center;
+  background: linear-gradient(to top, #e040fb, #00bcd4);
+  background-color: var(--sa11y-blue);
+  background-size: 150% 150%;
+  border-radius: 50%;
+  bottom: 15px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  height: 55px;
+  inset-inline-end: 18px;
+  justify-content: center;
+  margin: 0;
+  overflow: visible;
+  position: fixed;
+  transition: all 0.2s ease-in-out;
+  width: 55px;
+  z-index: 2147483644;
+}
+#toggle.left, #toggle.top-left {
+  inset-inline-start: 18px;
+}
+#toggle.top-left, #toggle.top-right {
+  bottom: unset;
+  top: 15px;
+}
+@media screen and (forced-colors: active) {
+  #toggle {
+    border: 2px solid transparent;
+  }
+}
+#toggle svg {
+  height: 35px;
+  width: 35px;
+}
+#toggle svg path {
+  fill: var(--sa11y-panel-bg);
+}
+#toggle:hover, #toggle:focus {
+  -webkit-animation: sa11y-toggle-gradient 3s ease;
+  -moz-animation: sa11y-toggle-gradient 3s ease;
+  animation: sa11y-toggle-gradient 3s ease;
+}
+#toggle:disabled:hover, #toggle:disabled:focus {
+  -webkit-animation: none;
+  -moz-animation: none;
+  animation: none;
+}
+#toggle.on {
+  background: linear-gradient(to bottom, #e040fb, #00bcd4);
+  background-color: var(--sa11y-blue);
+}
+
+/* ************************************* */
+/*        3. Notification badge          */
+/* ************************************* */
+#notification-badge {
+  align-items: center;
+  background-color: #EB0000;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  color: #ffffff;
+  display: none;
+  font-size: 13px;
+  font-weight: normal;
+  height: 20px;
+  justify-content: center;
+  position: absolute;
+  right: -3px;
+  top: -3px;
+  width: 20px;
+}
+#notification-badge.notification-badge-warning {
+  background-color: var(--sa11y-warning-hover);
+  border: 1px solid var(--sa11y-warning);
+  color: var(--sa11y-warning-text);
+}
+
+/* ************************************* */
+/*            4. Main panel              */
+/* ************************************* */
+#panel {
+  background: var(--sa11y-panel-bg);
+  border-radius: 4px;
+  bottom: 25px;
+  box-shadow: 0 0 20px 4px rgba(154, 161, 177, 0.15), 0 4px 80px -8px rgba(36, 40, 47, 0.25), 0 4px 4px -2px rgba(91, 94, 105, 0.15);
+  inset-inline-end: 42px;
+  opacity: 0;
+  overflow: visible;
+  position: fixed;
+  transform: scale(0);
+  transform-origin: 100% 100%;
+  transition: transform 0.2s, opacity 0.2s;
+  transition: background 0.2s;
+  visibility: hidden;
+  z-index: 2147483643;
+}
+#panel.left, #panel.top-left {
+  inset-inline-start: 42px;
+}
+#panel.top-right, #panel.top-left {
+  bottom: unset;
+  top: 50px;
+}
+#panel.active {
+  height: auto;
+  opacity: 1;
+  transform: scale(1);
+  transform-origin: bottom right;
+  transition: transform 0.2s, opacity 0.2s;
+  visibility: visible;
+}
+@media screen and (forced-colors: active) {
+  #panel {
+    border: 2px solid transparent;
+  }
+}
+
+#panel.active.left,
+[dir=rtl] #panel.active {
+  transform-origin: bottom left;
+}
+
+#panel.active.top-left {
+  transform-origin: top left;
+}
+
+#panel.active.top-right {
+  transform-origin: top right;
+}
+
+/* ************************************* */
+/*            5. Panel alerts            */
+/* ************************************* */
+#panel-alert {
+  display: none;
+  opacity: 0;
+}
+#panel-alert.active {
+  display: block;
+  opacity: 1;
+}
+
+#panel-alert-content {
+  align-items: center;
+  border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
+  color: var(--sa11y-panel-primary);
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 15px 20px 15px 15px;
+  position: relative;
+}
+
+#panel-alert-preview .close-tooltip {
+  display: none;
+}
+
+#panel-alert-preview,
+#panel-alert-text {
+  font-family: var(--sa11y-font-face);
+  font-size: var(--sa11y-normal-text);
+  font-weight: normal;
+  line-height: 22px;
+}
+
+.panel-alert-preview {
+  background: var(--sa11y-panel-bg-secondary);
+  border: 1px dashed var(--sa11y-panel-bg-splitter);
+  border-radius: 5px;
+  margin-top: 15px;
+  padding: 10px;
+}
+
+/* Dismiss button for issues */
+button[data-sa11y-dismiss] {
+  background: var(--sa11y-panel-bg);
+  border: 1px solid var(--sa11y-button-outline);
+  border-radius: 5px;
+  color: var(--sa11y-panel-primary);
+  cursor: pointer;
+  display: block;
+  margin: 10px 5px 5px 0;
+  padding: 4px 8px;
+}
+button[data-sa11y-dismiss]:hover, button[data-sa11y-dismiss]:focus {
+  background: var(--sa11y-shortcut-hover);
+}
+
+/* ************************************* */
+/*          6. General styles            */
+/* ************************************* */
+h2 {
+  display: block;
+  font-size: var(--sa11y-large-text);
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+strong {
+  font-weight: 600;
+}
+
+a:not(#outline-list a) {
+  border-bottom: 0;
+  color: var(--sa11y-hyperlink);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+a:hover,
+a:focus {
+  text-decoration: none !important;
+}
+
+hr {
+  background: var(--sa11y-panel-bg-splitter);
+  border: none;
+  height: 1px;
+  margin: 10px 0;
+  opacity: 1;
+  padding: 0;
+}
+
+/* ******************************************** */
+/*  7. Base styling for dismiss & skip buttons  */
+/* ******************************************** */
+#dismiss-button,
+#skip-button {
+  background: var(--sa11y-panel-bg-secondary);
+  border: 1px solid var(--sa11y-button-outline);
+  border-radius: 50px;
+  cursor: pointer;
+  display: none;
+  height: 36px;
+  margin-inline-end: 8px;
+  margin-inline-start: 2px;
+  overflow: visible;
+  position: relative;
+  text-align: center;
+  transition: all 0.1s ease-in-out;
+  width: 36px;
+}
+#dismiss-button.active,
+#skip-button.active {
+  display: block;
+}
+#dismiss-button:disabled,
+#skip-button:disabled {
+  background: none;
+  border: 0;
+  box-shadow: none;
+  cursor: default;
+}
+#dismiss-button:before,
+#skip-button:before {
+  bottom: -5px;
+  content: "";
+  left: -5px;
+  position: absolute;
+  right: -5px;
+  top: -5px;
+}
+#dismiss-button:hover:not(:disabled), #dismiss-button:focus:not(:disabled),
+#skip-button:hover:not(:disabled),
+#skip-button:focus:not(:disabled) {
+  background-color: var(--sa11y-shortcut-hover);
+}
+
+#panel.top-left #dismiss-button,
+#panel.top-left #skip-button,
+#panel.left #dismiss-button,
+#panel.left #skip-button {
+  margin-inline-start: 8px;
+  margin-inline-end: 2px;
+}
+
+/* Dismiss button */
+.dismiss-icon {
+  background: var(--sa11y-setting-switch-bg-off);
+  display: inline-block;
+  height: 24px;
+  margin-bottom: -4px;
+  mask: var(--sa11y-dismiss-icon) center no-repeat;
+  -webkit-mask: var(--sa11y-dismiss-icon) center no-repeat;
+  width: 24px;
+}
+
+@media screen and (forced-colors: active) {
+  .dismiss-icon {
+    filter: invert(1);
+  }
+}
+/* ***************************************** */
+/*  8. Panel status, Skip To Issue, Dismiss  */
+/* ***************************************** */
+#panel-content {
+  align-items: center;
+  color: var(--sa11y-panel-primary);
+  display: flex;
+  padding: 6px 6px 6px 6px;
+}
+#panel-content.errors .panel-icon, #panel-content.good .panel-icon, #panel-content.warnings .panel-icon {
+  height: 34px;
+  width: 34px;
+}
+#panel-content.errors .panel-icon {
+  background: var(--sa11y-panel-error);
+  margin-top: -2px;
+  mask: var(--sa11y-error-svg) center no-repeat;
+  -webkit-mask: var(--sa11y-error-svg) center no-repeat;
+}
+#panel-content.good .panel-icon {
+  background: var(--sa11y-good);
+  mask: var(--sa11y-good-svg) center no-repeat;
+  -webkit-mask: var(--sa11y-good-svg) center no-repeat;
+}
+#panel-content.warnings .panel-icon {
+  background: var(--sa11y-warning-svg-color);
+  mask: var(--sa11y-warning-svg) center no-repeat;
+  -webkit-mask: var(--sa11y-warning-svg) center no-repeat;
+  transform: scaleX(var(--sa11y-icon-direction));
+}
+@media screen and (forced-colors: active) {
+  #panel-content.errors .panel-icon, #panel-content.good .panel-icon, #panel-content.warnings .panel-icon {
+    filter: invert(1);
+  }
+}
+
+#panel.top-left #panel-content,
+#panel.left #panel-content {
+  flex-direction: row-reverse;
+}
+
+#status {
+  color: var(--sa11y-panel-primary);
+  font-size: var(--sa11y-large-text);
+}
+
+.panel-count {
+  background-color: var(--sa11y-panel-badge);
+  border-radius: 4px;
+  color: var(--sa11y-panel-primary);
+  font-size: 15px;
+  font-weight: normal;
+  margin-left: 3px;
+  margin-right: 3px;
+  padding: 2px 4px;
+}
+
+/* ***************************************** */
+/*   9. Outline and Settings shared styles   */
+/* ***************************************** */
+#page-issues,
+#settings-panel,
+#outline-panel {
+  color: var(--sa11y-panel-primary);
+  display: none;
+  opacity: 0;
+}
+
+#page-issues.active,
+#settings-panel.active,
+#outline-panel.active {
+  display: block;
+  opacity: 1;
+}
+
+.panel-header {
+  padding: 10px 15px 0 15px;
+}
+
+#page-issues-content,
+#settings-content,
+#outline-content {
+  border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
+  padding: 0 15px 10px 15px;
+}
+
+#page-issues-content {
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+#outline-content {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+#settings-panel .sa11y-red-text,
+#outline-panel .outline-list-item.sa11y-red-text {
+  color: var(--sa11y-red-text);
+}
+
+/* ***************************************** */
+/*          10. Page Outline list            */
+/* ***************************************** */
+#outline-list {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+#outline-list a {
+  cursor: pointer;
+  display: block;
+  text-decoration: none;
+}
+#outline-list li {
+  display: block;
+  list-style-type: none;
+  margin-bottom: 3px;
+  margin-top: 0;
+  padding: 0;
+}
+#outline-list li:first-child {
+  margin-top: 5px;
+}
+#outline-list li a:hover,
+#outline-list li a:focus {
+  background: var(--sa11y-panel-outline-hover);
+  border-radius: 5px;
+  box-shadow: 0 0 0 2px var(--sa11y-panel-outline-hover);
+  display: block;
+}
+#outline-list .outline-2 {
+  margin-inline-start: 15px;
+}
+#outline-list .outline-3 {
+  margin-inline-start: 30px;
+}
+#outline-list .outline-4 {
+  margin-inline-start: 45px;
+}
+#outline-list .outline-5 {
+  margin-inline-start: 60px;
+}
+#outline-list .outline-6 {
+  margin-inline-start: 75px;
+}
+
+/* **************************************** */
+/*         11. Page Outline extras          */
+/* **************************************** */
+/* Badges */
+.badge {
+  background-color: var(--sa11y-panel-badge);
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: var(--sa11y-panel-primary);
+  display: inline;
+  font-size: 13px;
+  font-weight: 700;
+  min-width: 10px;
+  padding: 2px 5px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.error-badge {
+  background: var(--sa11y-error);
+  color: var(--sa11y-error-text);
+}
+
+.warning-badge {
+  background: var(--sa11y-yellow-text);
+  color: var(--sa11y-panel-bg);
+}
+
+/* Hidden icon */
+.hidden-icon {
+  background: var(--sa11y-panel-primary);
+  display: inline-block;
+  height: 16px;
+  margin-bottom: -3px;
+  mask: var(--sa11y-hidden-icon-svg) center no-repeat;
+  -webkit-mask: var(--sa11y-hidden-icon-svg) center no-repeat;
+  width: 16px;
+}
+
+.error-badge .hidden-icon {
+  background: var(--sa11y-error-text);
+}
+
+.warning-badge .hidden-icon {
+  background: var(--sa11y-panel-bg);
+}
+
+@media screen and (forced-colors: active) {
+  .hidden-icon {
+    filter: invert(1);
+  }
+}
+/* ***************************************** */
+/*    12. Page Outline & Settings toggles    */
+/* ***************************************** */
+#panel-controls {
+  border-radius: 0px 0px 4px 4px;
+  display: flex;
+  overflow: hidden;
+}
+
+#settings-toggle,
+#outline-toggle {
+  background: var(--sa11y-panel-bg-secondary);
+  background-color: var(--sa11y-panel-bg-secondary);
+  border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
+  border-top: 1px solid var(--sa11y-panel-bg-splitter);
+  color: var(--sa11y-panel-secondary);
+  cursor: pointer;
+  display: block;
+  font-size: var(--sa11y-normal-text);
+  font-weight: 400;
+  height: 30px;
+  line-height: 0;
+  margin: 0;
+  opacity: 1;
+  outline: 0;
+  padding: 0;
+  position: relative;
+  text-align: center;
+  transition: background 0.2s;
+  width: 100%;
+}
+#settings-toggle:hover, #settings-toggle.settings-active, #settings-toggle.outline-active,
+#outline-toggle:hover,
+#outline-toggle.settings-active,
+#outline-toggle.outline-active {
+  background-color: var(--sa11y-shortcut-hover);
+}
+#settings-toggle.settings-active, #settings-toggle.outline-active,
+#outline-toggle.settings-active,
+#outline-toggle.outline-active {
+  font-weight: 500;
+}
+
+#outline-toggle {
+  border-inline-end: 1px solid var(--sa11y-panel-bg-splitter);
+}
+
+label {
+  color: var(--sa11y-panel-primary);
+  cursor: pointer;
+  display: inline-block;
+  font-weight: normal;
+  margin: 0;
+  width: 100%;
+}
+
+/* ***************************************** */
+/*           13. Settings Panel              */
+/* ***************************************** */
+#settings-panel .switch {
+  background: none;
+  border: 0;
+  border-radius: 5px;
+  color: var(--sa11y-panel-primary);
+  cursor: pointer;
+  font-size: var(--sa11y-normal-text);
+  font-weight: normal;
+  height: 44px;
+  margin: 0;
+  padding: 7px 10px;
+  position: relative;
+  text-align: end;
+  width: 105px;
+}
+#settings-panel .switch[aria-pressed=true]:after, #settings-panel .switch[aria-pressed=false]:after {
+  content: "";
+  display: inline-block;
+  height: 27px;
+  margin: 0 4px 4px 4px;
+  vertical-align: middle;
+  width: 27px;
+}
+#settings-panel .switch[aria-pressed=true]:after {
+  background: var(--sa11y-setting-switch-bg-on);
+  mask: var(--sa11y-setting-switch-on-svg) center no-repeat;
+  -webkit-mask: var(--sa11y-setting-switch-on-svg) center no-repeat;
+}
+#settings-panel .switch[aria-pressed=false]:after {
+  background: var(--sa11y-setting-switch-bg-off);
+  mask: var(--sa11y-setting-switch-off-svg) center no-repeat;
+  -webkit-mask: var(--sa11y-setting-switch-off-svg) center no-repeat;
+}
+@media screen and (forced-colors: active) {
+  #settings-panel .switch[aria-pressed=false]:after, #settings-panel .switch[aria-pressed=true]:after {
+    filter: invert(1);
+  }
+}
+#settings-panel #settings-options li {
+  align-items: center;
+  border-bottom: 1px solid;
+  border-color: var(--sa11y-panel-bg-splitter);
+  display: flex;
+  justify-content: space-between;
+  list-style-type: none;
+  padding: 1px 0 1px 0;
+}
+#settings-panel #settings-options li:last-child {
+  border: none;
+}
+
+/* ************************************* */
+/*            14. Page issues            */
+/* ************************************* */
+#page-issues {
+  align-items: center;
+  color: var(--sa11y-panel-primary);
+}
+
+#page-issues-list {
+  display: block;
+  margin-top: 4px;
+}
+#page-issues-list li {
+  display: block;
+  margin: 0 0 10px;
+}
+#page-issues-list strong {
+  display: block;
+}
+
+/* ************************************* */
+/*      15. Colour filters plugin        */
+/* ************************************* */
+#panel-colour-filters {
+  align-items: center;
+  color: var(--sa11y-panel-primary);
+  display: none;
+  font-family: var(--sa11y-font-face);
+  font-size: var(--sa11y-normal-text);
+  font-weight: 400;
+  line-height: 22px;
+}
+#panel-colour-filters.active {
+  display: flex;
+}
+#panel-colour-filters p {
+  padding: 6px 20px 6px 6px;
+  width: 100%;
+}
+#panel-colour-filters[data-colour=protanopia] {
+  border-image: linear-gradient(94deg, rgb(120, 103, 25) 11%, rgb(224, 198, 0) 36%, rgb(224, 198, 0) 47%, rgb(0, 89, 227) 75%, rgb(0, 66, 170) 91%);
+  border-bottom: 6px solid transparent;
+  border-image-slice: 1;
+}
+#panel-colour-filters[data-colour=deuteranopia] {
+  border-image: linear-gradient(270deg, rgb(86, 127, 219) 0%, rgb(164, 162, 141) 48%, rgb(195, 173, 20) 69%, rgb(167, 149, 5) 100%);
+  border-bottom: 6px solid transparent;
+  border-image-slice: 1;
+}
+#panel-colour-filters[data-colour=tritanopia] {
+  border-image: linear-gradient(270deg, rgb(177, 80, 111) 0%, rgb(6, 150, 193) 35%, rgb(243, 169, 186) 70%, rgb(217, 28, 93) 87%, rgb(254, 1, 92) 100%);
+  border-bottom: 6px solid transparent;
+  border-image-slice: 1;
+}
+#panel-colour-filters[data-colour=monochromacy] {
+  border-image: linear-gradient(270deg, rgb(0, 0, 0) 0%, rgb(167, 167, 167) 50%, rgb(0, 0, 0) 100%);
+  border-bottom: 6px solid transparent;
+  border-image-slice: 1;
+}
+#panel-colour-filters[data-colour=protanopia] .panel-icon {
+  background: var(--sa11y-panel-error);
+}
+#panel-colour-filters[data-colour=deuteranopia] .panel-icon {
+  background: var(--sa11y-good-hover);
+}
+#panel-colour-filters[data-colour=tritanopia] .panel-icon {
+  background: var(--sa11y-blue);
+}
+#panel-colour-filters[data-colour=monochromacy] .panel-icon {
+  background: linear-gradient(90deg, rgb(56, 164, 89) 20%, red 50%, rgb(0, 119, 200) 80%);
+}
+#panel-colour-filters .panel-icon {
+  height: 30px;
+  margin-inline-end: 5px;
+  margin-inline-start: 10px;
+  mask: var(--sa11y-low-vision-icon) center no-repeat;
+  -webkit-mask: var(--sa11y-low-vision-icon) center no-repeat;
+  width: 30px;
+}
+@media screen and (forced-colors: active) {
+  #panel-colour-filters .panel-icon {
+    forced-color-adjust: none;
+  }
+}
+
+.select-dropdown:after {
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid var(--sa11y-setting-switch-bg-off);
+  content: " ";
+  height: 0;
+  inset-inline-end: 25px;
+  margin-top: 22.5px;
+  position: absolute;
+  width: 0;
+}
+
+#colour-filter-select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: none;
+  border: 2px solid var(--sa11y-setting-switch-bg-off);
+  border-radius: 5px;
+  color: var(--sa11y-panel-primary);
+  cursor: pointer;
+  font-size: var(--sa11y-normal-text);
+  font-weight: normal;
+  height: 30px;
+  padding-inline-end: 25px;
+  padding-inline-start: 5px;
+  position: relative;
+  text-align: end;
+  vertical-align: middle;
+}
+
+#colour-filter-select.active {
+  box-shadow: 0 0 0 2px var(--sa11y-setting-switch-bg-on);
+}
+
+#colour-filter-item label,
+#colour-filter-item select {
+  margin-bottom: 9px;
+  margin-top: 10px;
+}
+
+/* ***************************************** */
+/*            16. Readability                */
+/* ***************************************** */
+#readability-panel {
+  display: none;
+  opacity: 0;
+}
+#readability-panel.active {
+  display: block;
+  opacity: 1;
+}
+
+#readability-content {
+  border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
+  color: var(--sa11y-panel-primary);
+  padding: 10px 15px 10px 15px;
+  width: 100%;
+}
+
+#readability-details {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  white-space: normal;
+}
+#readability-details li {
+  display: inline-block;
+  list-style-type: none;
+  margin: 0;
+  padding-inline-end: 10px;
+}
+
+.readability-score {
+  background-color: var(--sa11y-panel-badge);
+  border-radius: 4px;
+  color: var(--sa11y-panel-primary);
+  margin-inline-start: 5px;
+  padding: 2px 5px;
+}
+
+#readability-info {
+  margin-inline-start: 10px;
+}
+
+/* ************************************* */
+/*   17. Skip to Page Issues skip link   */
+/* ************************************* */
+#skip-to-page-issues {
+  display: none;
+}
+
+#panel.has-page-issues #skip-to-page-issues {
+  background: var(--sa11y-panel-bg);
+  border: 0;
+  border-radius: 5px;
+  clip: rect(0, 0, 0, 0);
+  display: block;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+#panel.has-page-issues #skip-to-page-issues:focus {
+  clip: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  padding: 5px 7px;
+  white-space: normal;
+  width: auto;
+  z-index: 1;
+}
+
+/* ***************************************** */
+/*          18. Misc utilities               */
+/* ***************************************** */
+.hide-settings-border {
+  border-bottom: 0 !important;
+  padding: 0 15px 0 15px !important;
+}
+
+/* ***************************************** */
+/*         19. Scrollbar styling             */
+/* ***************************************** */
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--sa11y-button-outline);
+  border-radius: 6px;
+}
+
+* {
+  scrollbar-color: var(--sa11y-button-outline);
+  scrollbar-width: thin;
+}
+
+.scrollable::before {
+  animation: fade 1s ease-in-out;
+  background-image: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 70%, var(--sa11y-panel-scrollable) 100%);
+  background-position: bottom;
+  bottom: auto;
+  content: "";
+  height: 250px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: auto;
+  transition: opacity 1s ease-in-out;
+  z-index: -1;
+}
+
+#page-issues-content.scrollable::before {
+  height: 160px;
+}
+
+#panel-alert.scrollable::before {
+  height: 200px;
+}
+
+/* ***************************************** */
+/*           20. Animations                  */
+/* ***************************************** */
+@keyframes sa11y-toggle-gradient {
+  0% {
+    background-position: 50% 0%;
+  }
+  50% {
+    background-position: 50% 100%;
+  }
+  100% {
+    background-position: 50% 0%;
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+/* ***************************************** */
+/*     21. Internationalization (i18n)       */
+/* ***************************************** */
+#panel {
+  width: 375px;
+}
+
+#container:lang(en) #panel {
+  width: 305px;
+}
+
+#container:lang(pl) #panel,
+#container:lang(de) #panel,
+#container:lang(sv) #panel {
+  width: 335px;
+}
+
+#container:lang(ua) .switch,
+#container:lang(fr) .switch {
+  width: 205px;
+}

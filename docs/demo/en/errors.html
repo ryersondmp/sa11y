@@ -7,9 +7,9 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <meta name="theme-color" content="#7952b3">
-  <link rel="shortcut icon" type="image/jpg" href="../assets/favicon.ico"/>
+  <link rel="shortcut icon" type="image/jpg" href="../assets/favicon.ico" />
   <link href="../assets/main.css" rel="stylesheet">
-  <link rel="stylesheet" href="../../assets/css/sa11y.min.css"/>
+  <link rel="stylesheet" href="../../assets/css/sa11y.min.css" />
 </head>
 
 <body>
@@ -44,6 +44,9 @@
             <li class="nav-item">
               <a class="nav-link" href="pass.html">Good</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="rtl.html">RTL</a>
+            </li>
           </ul>
         </div>
       </div>
@@ -68,6 +71,12 @@
               </a>
             </div>
           </div>
+          <p>A subscript or superscript <sub>is a character that is set slightly below or above the normal line of type,
+              respectively. It is usually smaller than the rest of the text. Subscripts appear at or below the baseline,
+              while superscripts are above. Wikipedia.</sub></p>
+          <p>A subscript or superscript <sup>is a character that is set slightly below or above the normal line of type,
+              respectively. It is usually smaller than the rest of the text. Subscripts appear at or below the baseline,
+              while superscripts are above. Wikipedia.</sup></p>
           <div class="col-md-8 ">
             <p>Bears are carnivoran mammals of the family Ursidae. They are classified as caniforms, or doglike
               carnivorans. Although only eight species of bears are extant, they are widespread, appearing in a wide
@@ -77,12 +86,25 @@
               plantigrade paws with five nonretractile claws, and short tails.</p>
 
 
-            <p>While the polar bear is mostly carnivorous, and the giant panda feeds almost entirely on bamboo, the
+            <p>While the <span id="dynid641232a291ff23.73102245">polar bear</span> is mostly carnivorous, and the giant
+              panda feeds almost entirely on bamboo, the
               remaining six species are omnivorous with varied diets. With the exception of courting individuals and
-              mothers with their young, bears are typically solitary animals - <a
-                href="https://en.wikipedia.org/wiki/Solitary_animals">learn more.</a> They may be diurnal or
+              mothers with their young, bears are typically solitary animals -
+              <a href="https://en.wikipedia.org/wiki/Solitary_animals">learn more.
+                <noscript>TESTING TESTING TESTING 123 123 TESTING TESTING TESTING 123 123 TESTING TESTING TESTING 123
+                  123</noscript>
+                <style>
+                  .FAKE-CSS {
+                    color: red;
+                    background: blue;
+                    padding: 5px 5px 5px 5px;
+                  }
+                </style>
+              </a> They may be diurnal or
               nocturnal and have an excellent sense of smell. Despite their heavy build and awkward gait, they are adept
-              runners, climbers, and swimmers. </p>
+              runners, climbers, and swimmers. <a href="https://en.wikipedia.org/wiki/Solitary_animals"
+                aria-labelledby="dynid641232a291ff23.73102245">learn more.</a>
+            </p>
           </div>
         </div>
 
@@ -100,7 +122,8 @@
             the giant panda),</span> Tremarctinae (monotypic with the spectacled bear), and Ursinae (containing six
           species divided into one to three genera, depending on the authority). Nuclear chromosome analysis show that
           the karyotype of the six ursine bears is nearly identical, with each having 74 chromosomes, whereas the giant
-          panda has 42 chromosomes and the spectacled bear 52.</p>
+          panda has 42 chromosomes and the spectacled bear 52.
+        </p>
 
         <div class="row mb-5">
           <div class="col-md-4">
@@ -137,6 +160,7 @@
         <div class="row">
           <div class="col-md-6">
             <h2 class="pt-2">Size</h2>
+            <div class="shadow-root"></div>
             <p>Polar bear (left) and sun bear, the largest and smallest species respectively, on average
               The bear family includes the most massive extant terrestrial members of the order Carnivora.[a] The polar
               bear is considered to be the largest extant species,[39] with adult males weighing 350–700 kg (772–1,543
@@ -165,9 +189,35 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
     integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous">
-  </script>
+    </script>
   <!-- Sa11y -->
   <script type="module" src="../script.js"></script>
+
+  <div hidden>
+    <script>
+      class shadowTest extends HTMLElement {
+        constructor() {
+          super();
+        }
+        connectedCallback() {
+          if (!this.initialized) {
+            const shadow = this.attachShadow({ mode: 'open' });
+            let wrapper = document.createElement('div');
+            wrapper.setAttribute('class', 'wrapper');
+            wrapper.innerHTML = `<h4>Header skip in the shadow DOM</h4><p>ALL CAPS IN THE SHADOW DOM</p>`
+            shadow.appendChild(wrapper);
+            this.initialized = true;
+          }
+        }
+      }
+      customElements.define('shadow-test', shadowTest);
+      document.querySelectorAll('.shadow-root').forEach((el) => {
+        let testShadowElement = document.createElement('shadow-test');
+        el.append(testShadowElement);
+      })
+    </script>
+  </div>
+
 </body>
 
 </html>

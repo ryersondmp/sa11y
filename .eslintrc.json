@@ -1,19 +1,20 @@
 {
 	"extends": "airbnb-base",
 	"env": {
-	  "browser": true
+		"browser": true
 	},
 	"rules": {
 		"max-len": "off",
-	  "class-methods-use-this": "off",
-	  "import/prefer-default-export": "off",
-	  "import/extensions": "off",
+		"class-methods-use-this": "off",
+		"import/prefer-default-export": "off",
+		"import/extensions": "off",
 		"max-classes-per-file": "off",
-	  "no-plusplus": [
-		"error",
+		"object-curly-newline": "off",
+		"no-plusplus": [
+			"error",
 			{
 				"allowForLoopAfterthoughts": true
 			}
-	  ]
+		]
 	}
-  }
+}

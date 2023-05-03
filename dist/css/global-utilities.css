@@ -1,0 +1,97 @@
+/* **********************************************************/
+/*  These CSS utilities are injected into every shadow DOM. */
+/*      Using data attributes to increase specificity.      */
+/* ******************************************************** */
+[data-sa11y-overflow] {
+  overflow: auto !important;
+}
+
+[data-sa11y-clone-image-text] {
+  display: none !important;
+}
+
+[data-sa11y-readability-period] {
+  border: 0 !important;
+  clip: rect(1px, 1px, 1px, 1px) !important;
+  clip-path: inset(50%) !important;
+  display: block !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  position: absolute !important;
+  white-space: nowrap !important;
+  width: 1px !important;
+}
+
+/* ************************************* */
+/*    Links, text, and image borders     */
+/* ************************************* */
+[data-sa11y-error] {
+  outline: 5px solid var(--sa11y-error) !important;
+}
+
+[data-sa11y-warning] {
+  outline: 5px solid var(--sa11y-warning) !important;
+}
+
+[data-sa11y-good] {
+  outline: 5px solid var(--sa11y-good) !important;
+}
+
+[data-sa11y-error-inline] {
+  background-color: var(--sa11y-error) !important;
+  border-color: transparent !important;
+  border-radius: 0.25em !important;
+  box-shadow: 0 0 0 4px var(--sa11y-error) !important;
+  color: var(--sa11y-error-text) !important;
+}
+
+[data-sa11y-warning-inline] {
+  background-color: var(--sa11y-warning) !important;
+  border-color: transparent !important;
+  border-radius: 0.25em !important;
+  box-shadow: 0 0 0 4px var(--sa11y-warning) !important;
+  color: var(--sa11y-warning-text) !important;
+}
+
+/* *************************************************** */
+/*  Pulsing border: https://codepen.io/olam/pen/zcqea  */
+/* *************************************************** */
+[data-sa11y-pulse-border] {
+  animation: pulse 2s 3;
+  box-shadow: 0;
+  outline: 5px solid var(--sa11y-focus-color) !important;
+}
+[data-sa11y-pulse-border]:hover, [data-sa11y-pulse-border]:focus {
+  animation: none;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 5px var(--sa11y-focus-color);
+  }
+  70% {
+    box-shadow: 0 0 0 12px var(--sa11y-pulse-color);
+  }
+  100% {
+    box-shadow: 0 0 0 5px var(--sa11y-pulse-color);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-sa11y-pulse-border] {
+    animation: none !important;
+  }
+}
+/* ****************************************************** */
+/*   High contrast mode should preserve outlines colours  */
+/* ****************************************************** */
+@media (forced-colors: active) {
+  [data-sa11y-error],
+  [data-sa11y-warning],
+  [data-sa11y-good],
+  [data-sa11y-error-inline],
+  [data-sa11y-warning-inline],
+  [data-sa11y-pulse-border] {
+    forced-color-adjust: none;
+  }
+}

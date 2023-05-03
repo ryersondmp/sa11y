@@ -1,43 +1,44 @@
-import { Sa11yCustomChecks } from './sa11y';
+import Constants from './utils/constants';
+import * as Utils from './utils/utils';
+import find from './utils/find';
 
-export default class CustomChecks extends Sa11yCustomChecks {
-  check() {
-    /* Note: Strings should match language file. */
-    const ERROR = 'Error';
-    const WARNING = 'Warning';
-    // const GOOD = 'Good';
+export default function checkCustom(results) {
+  const C = {
+    ANNOUNCEMENT_MESSAGE:
+      'More than one Announcement component found! The Announcement component should be used strategically and sparingly. It should be used to get attention or indicate that something is important. Misuse of this component makes it less effective or impactful. Secondly, this component is semantically labeled as an Announcement for people who use screen readers.',
 
-    /* Add custom rulesets below. */
+    ACCORDION_FORM_MESSAGE:
+      'Do <strong>not nest forms</strong> within the Accordion component. If the form contains validation issues, a person may not see the form feedback since the accordion panel goes back to its original closed state.',
+  };
 
-    /* Custom messages for tooltips. */
-
-    const C = {
-      ANNOUNCEMENT_MESSAGE:
-        'More than one Announcement component found! The Announcement component should be used strategically and sparingly. It should be used to get attention or indicate that something is important. Misuse of this component makes it less effective or impactful. Secondly, this component is semantically labeled as an Announcement for people who use screen readers.',
-
-      ACCORDION_FORM_MESSAGE:
-        'Do <strong>not nest forms</strong> within the Accordion component. If the form contains validation issues, a person may not see the form feedback since the accordion panel goes back to its original closed state.',
-    };
-
-    /* Example #1 */
-    const $checkAnnouncement = document.querySelectorAll('.sa11y-announcement-component');
-    if ($checkAnnouncement.length > 1) {
-      for (let i = 1; i < $checkAnnouncement.length; i++) {
-        $checkAnnouncement[i].classList.add('sa11y-warning-border');
-        $checkAnnouncement[i].insertAdjacentHTML('beforebegin', this.sa11y.annotate(WARNING, C.ANNOUNCEMENT_MESSAGE));
-      }
+  /* Example #1 */
+  const $checkAnnouncement = find('.sa11y-announcement-component', 'root');
+  if ($checkAnnouncement.length > 1) {
+    for (let i = 1; i < $checkAnnouncement.length; i++) {
+      const key = Utils.prepareDismissal($checkAnnouncement[i].textContent);
+      results.push({
+        element: $checkAnnouncement[i],
+        type: Constants.Global.WARNING,
+        content: C.ANNOUNCEMENT_MESSAGE,
+        inline: false,
+        position: 'beforebegin',
+        dismiss: key,
+      });
     }
-
-    /* Example #2  */
-    const $checkAccordions = this.sa11y.root.querySelectorAll('.sa11y-accordion-example');
-    $checkAccordions.forEach(($el) => {
-      const checkForm = $el.querySelector('form');
-      if (!!checkForm && checkForm.length) {
-        $el.classList.add('sa11y-error-border');
-        $el.insertAdjacentHTML('beforebegin', this.sa11y.annotate(ERROR, C.ACCORDION_FORM_MESSAGE));
-      }
-    });
-
-    /* End of custom rulesets.  */
   }
+
+  /* Example #2  */
+  const $checkAccordions = find('.sa11y-accordion-example', 'root');
+  $checkAccordions.forEach(($el) => {
+    const checkForm = $el.querySelector('form');
+    if (!!checkForm && checkForm.length) {
+      results.push({
+        element: $el,
+        type: Constants.Global.ERROR,
+        content: C.ACCORDION_FORM_MESSAGE,
+        inline: false,
+        position: 'beforebegin',
+      });
+    }
+  });
 }

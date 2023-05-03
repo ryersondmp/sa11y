@@ -13,11 +13,8 @@ export default {
     OFF: 'Wył',
     ALERT_TEXT: 'Alert',
     ALERT_CLOSE: 'Zamknij',
-    SHOW_OUTLINE: 'Pokaż konspekt',
-    HIDE_OUTLINE: 'Ukryj konspekt',
-    SHOW_SETTINGS: 'Pokaż ustawienia',
-    HIDE_SETTINGS: 'Ukryj ustawienia',
-    PAGE_OUTLINE: 'Konspekt strony',
+    OUTLINE: 'Konspekt strony',
+    PAGE_ISSUES: 'Problemy ze stroną',
     SETTINGS: 'Ustawienia',
     CONTRAST: 'Kontrast',
     FORM_LABELS: 'Etykiety formularzy',
@@ -33,6 +30,26 @@ export default {
     NOT_VISIBLE_ALERT: 'Element, który próbujesz wyświetlić, nie jest widoczny; może być ukryty lub znajdować się wewnątrz akordeonu lub karty. Tutaj jest podgląd:',
     ERROR_MISSING_ROOT_TARGET: 'Sprawdzono dostępność całej strony, ponieważ obszar docelowy nie istnieje: <code>%(root)</code>',
     HEADING_NOT_VISIBLE_ALERT: 'Nagłówek nie jest widoczny; może być ukryty lub wewnątrz komponentu akordeonu lub tabulatora.',
+    SKIP_TO_PAGE_ISSUES: 'Przejdź do problemów ze stroną',
+
+    // Dismiss
+    PANEL_DISMISS_BUTTON: 'Pokaż %(dismissCount) zignorowanych ostrzeżeń',
+    DISMISS: 'Ignoruj',
+    DISMISSED: 'Zignorowano ostrzeżenia',
+    DISMISS_REMINDER: 'Proszę zauważyć, że ostrzeżenia są ignorowane tylko <strong>tymczasowo.</strong> Wyczyszczenie historii przeglądarki i plików cookie przywróci wszystkie wcześniej ignorowane ostrzeżenia na wszystkich stronach.',
+
+    // Color filters
+    COLOUR_FILTER: 'Filtr kolorów',
+    PROTANOPIA: 'Protanopia',
+    DEUTERANOPIA: 'Deuteranopia',
+    TRITANOPIA: 'Tritanopia',
+    MONOCHROMACY: 'Monochromatyzm',
+    COLOUR_FILTER_MESSAGE: 'Sprawdź elementy, które są trudne do zauważenia lub odróżnienia od innych kolorów.',
+    RED_EYE: 'Ślepota na kolor czerwony.',
+    GREEN_EYE: 'Ślepota na kolor zielony.',
+    BLUE_EYE: 'Ślepota na kolor niebieski.',
+    MONO_EYE: 'Ślepota na kolor czerwony, zielony i niebieski.',
+    COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Filtry kolorów nie działają w trybie wysokiego kontrastu.',
 
     // Alternative text module stop words
     SUSPICIOUS_ALT_STOPWORDS: ['obraz', 'grafika', 'zdjęcie', 'rysunek', 'fotografia', 'foto', 'image', 'graphic', 'picture', 'photo'],
@@ -131,7 +148,7 @@ export default {
     // Links
     LINK_EMPTY: 'Puste łącze bez żadnego tekstu. Usuń je!',
     LINK_EMPTY_LINK_NO_LABEL: 'Łącze nie ma opisowego tekstu, który jest widoczny dla czytników ekranu i innych technologii wspomagających. Aby naprawić:<ul><li>Dodaj zwięzły tekst, który opisuje, dokąd prowadzi łącze.</li><li>Jeśli łączem jest <a href="https://a11y-101.com/development/icons-and-links">ikona lub SVG, </a> prawdopodobnie brakuje mu opisowej etykiety.</li><li>Jeśli uważasz, że to łącze jest błędem spowodowanym błędem kopiuj/wklej, rozważ usunięcie go.</li></ul>',
-    LINK_LABEL: '<strong>Etykieta łącza:</strong> %(linkText)',
+    LINK_LABEL: '<strong>Etykieta łącza:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Tekst łącza może nie być wystarczająco opisowy w kontekście: <strong {r}>%(error)</strong><hr><strong>Porada!</strong> Tekst łącza powinien być zawsze jasny, unikalny i znaczący. Unikaj typowych słów takich jak &quot;kliknij tutaj&quot; lub &quot;czytaj więcej&quot;.',
     LINK_BEST_PRACTICES: 'Rozważ zastąpienie tekstu łącza: <strong {r}>%(error)</strong><hr><ul><li>&bdquo;Kliknij tutaj&rdquo; skupia się na mechanice myszy, podczas gdy wiele osób nie używa myszy lub może przeglądać tę stronę na urządzeniu mobilnym. Rozważ użycie innego czasownika, który odnosi się do zadania.</li><li>Unikaj używania symboli HTML jako wezwań do działania, chyba że są one ukryte dla technologii wspomagających.</li></ul>',
     LINK_URL: 'Dłuższe, mniej zrozumiałe adresy URL używane jako tekst odnośnika mogą być trudne do odsłuchania za pomocą technologii wspomagającej. W&nbsp;większości przypadków zamiast adresu URL lepiej jest używać tekstu czytelnego dla człowieka. Krótkie adresy URL (takie jak głównej strony witryny) są w porządku.<hr><strong>Porada!</strong> Tekst łącza powinien być zawsze jasny, unikalny i znaczący, aby mógł być zrozumiany bez kontekstu.',
@@ -139,7 +156,7 @@ export default {
     // Links advanced
     NEW_TAB_WARNING: 'Łącze otwiera się na nowej karcie lub w oknie bez ostrzeżenia. Może to być dezorientujące, szczególnie dla osób, które mają problemy z&nbsp;odbiorem treści wizualnych. Ponadto, nie zawsze dobrym zwyczajem jest kontrolowanie czyichś doświadczeń lub podejmowanie decyzji za kogoś. Wskaż w tekście łącza, że łącze otwiera się w nowym oknie.<hr><strong>Porada!</strong> Poznaj najlepsze praktyki: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">otwieranie łączy w nowych oknach i kartach przeglądarki.</a>',
     FILE_TYPE_WARNING: 'Łącze wskazuje  bez ostrzeżenia na plik PDF lub plik do pobrania (np. MP3, zip, doc). Wskaż typ pliku w tekście łącza. Jeśli jest to duży plik, rozważ podanie jego rozmiaru.<hr><strong>Przykład:</strong> Raport końcowy (PDF, 3MB)',
-    LINK_IDENTICAL_NAME: 'Łącze ma identyczny tekst jak inne łącze, choć wskazuje na inną stronę. Wiele łączy z takim samym tekstem może powodować zamieszanie u osób korzystających z czytników ekranu.<hr>Rozważ nadanie poniższemu łączu bardziej opisowego charakteru, aby odróżnić je od innych łączy: <strong {r}>%(linkText)</strong>',
+    LINK_IDENTICAL_NAME: 'Łącze ma identyczny tekst jak inne łącze, choć wskazuje na inną stronę. Wiele łączy z takim samym tekstem może powodować zamieszanie u osób korzystających z czytników ekranu.<hr>Rozważ nadanie poniższemu łączu bardziej opisowego charakteru, aby odróżnić je od innych łączy: <strong {r}>%(sanitizedText)</strong>',
 
     // Images
     MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE: 'Obraz jest używany razem z sąsiadującym tekstem jako łącze. Obraz powinien być oznaczony jako dekoracyjny albo atrybut alt obrazu powinien być pusty.',
@@ -166,7 +183,7 @@ export default {
     // Labels
     LABELS_MISSING_IMAGE_INPUT_MESSAGE: 'Przycisk graficzny nie ma tekstu alternatywneego. Dodaj tekst alt, aby zapewnić dostępną nazwę. Na przykład: <em>Szukaj</em> lub <em>Wyślij</em>.',
     LABELS_INPUT_RESET_MESSAGE: 'Przyciski resetowania <strong>nie powinny</strong> być używane, chyba że są specjalnie potrzebne, ponieważ łatwo je aktywować przez pomyłkę.<hr><strong>Porada!</strong> Dowiedz się, dlaczego <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Przyciski Resetuj i Anuluj powodują problemy z użytecznością.</a>',
-    LABELS_ARIA_LABEL_INPUT_MESSAGE: 'Pole danych ma dostępną nazwę (etykietę), ale upewnij się, że etykieta jest również widoczna.<hr>Dostępna nazwa tego pola to: <strong>%(ariaLabel)</strong>',
+    LABELS_ARIA_LABEL_INPUT_MESSAGE: 'Pole danych ma dostępną nazwę (etykietę), ale upewnij się, że etykieta jest również widoczna.<hr>Dostępna nazwa tego pola to: <strong>%(sanitizedText)</strong>',
     LABELS_NO_FOR_ATTRIBUTE_MESSAGE: 'Z tym polem input nie jest skojarzona żadna etykieta (label). Dodaj atrybut <code>for</code> do etykiety z wartością <code>id</code>  pasującą do <code>id</code> tego pola.<hr>ID tego pola to: <strong>id=&#34;%(t)&#34;</strong>',
     LABELS_MISSING_LABEL_MESSAGE: 'Z tym polem input nie jest skojarzona żadna etykieta (label). Dodaj do tego pola danych <code>id</code> i dodaj pasujący atrybut <code>for</code> do etykiety.',
 
@@ -180,11 +197,11 @@ export default {
     // Quality assurance
     QA_BAD_LINK: 'Podejrzane łącze. Łącze wydaje się wskazywać środowisko programistyczne.<hr>Łącze wskazuje na:<br><strong {r}>%(el)</strong>',
     QA_BAD_ITALICS: 'Znaczniki pogrubienia i kursywy mają znaczenie semantyczne i <strong>nie powinny</strong> być używane do wyróżniania całych akapitów. Pogrubiony tekst powinien być używany w celu <strong>silnego podkreślenia słowa lub frazy</strong>. Kursywa powinna być używana do wyróżnienia nazw własnych (np. tytułów książek i artykułów), wyrazów obcych, cytatów. Długie cytaty powinny być sformatowane jako blockquote.',
-    QA_PDF: 'Pliki PDF są uważane za treści internetowe i muszą być również dostępne. Pliki PDF często powodują problemy dla osób korzystających z&nbsp;czytników ekranu (brakujące znaczniki strukturalne lub etykiety pól formularzy) oraz dla osób słabowidzących (tekst nie jest ponownie wyświetlany po powiększeniu).<ul><li>Jeśli jest to formularz, rozważ użycie dostępnego formularza HTML jako alternatywy</li><li>Jeśli jest to dokument, rozważ przekonwertowanie go na stronę internetową.</li></ul>W przeciwnym razie <strong {r}>%(pdfCount)</strong> <a href="https://www.adobe.com/accessibility/products/acrobat/using-acrobat-pro-accessibility-checker.html">sprawdź plik pod kątem dostępności w programie Acrobat DC.</a>',
+    QA_PDF: 'Nie można sprawdzić dostępności pliku PDF. Pliki PDF są uważane za treści internetowe i muszą być również dostępne. Pliki PDF często powodują problemy dla osób korzystających z&nbsp;czytników ekranu (brakujące znaczniki strukturalne lub etykiety pól formularzy) oraz dla osób słabowidzących (tekst nie jest ponownie wyświetlany po powiększeniu).<ul><li>Jeśli jest to formularz, rozważ użycie dostępnego formularza HTML jako alternatywy</li><li>Jeśli jest to dokument, rozważ przekonwertowanie go na stronę internetową.</li></ul> W przeciwnym razie <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">sprawdź plik pod kątem dostępności w programie Acrobat DC.</a>',
     QA_PAGE_LANGUAGE: 'Język strony nie zadeklarowany! <a href="https://www.w3.org/International/questions/qa-html-language-declarations">Zadeklaruj język w znaczniku HTML.</a>',
     QA_PAGE_TITLE: 'Brak tytułu strony! Podaj <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">tytuł strony.</a>',
-    QA_BLOCKQUOTE_MESSAGE: 'Czy to jest nagłówek? <strong {r}>%(bqHeadingText)</strong><hr>Element blockquote powinien być używany tylko do cytatów. Jeśli ma to być nagłówek, zmień ten blockquote na nagłówek semantyczny (np. Nagłówek H2 lub Nagłówek H3).',
-    QA_FAKE_HEADING: 'Czy to jest nagłówek? <strong {r}>%(boldtext)</strong><hr>Wiersz pogrubionego tekstu może wyglądać jak nagłówek, ale osoba korzystająca z czytnika ekranu nie może stwierdzić, że jest on istotny lub przejść do jego treści. Pogrubiony tekst nigdy nie powinien zastępować nagłówków semantycznych (od Nagłówka H2 do Nagłówka H6).',
+    QA_BLOCKQUOTE_MESSAGE: 'Czy to jest nagłówek? <strong {r}>%(sanitizedText)</strong><hr>Element blockquote powinien być używany tylko do cytatów. Jeśli ma to być nagłówek, zmień ten blockquote na nagłówek semantyczny (np. Nagłówek H2 lub Nagłówek H3).',
+    QA_FAKE_HEADING: 'Czy to jest nagłówek? <strong {r}>%(boldtext)</strong> <hr> Wiersz pogrubionego lub dużego tekstu może wyglądać jak nagłówek, ale osoba korzystająca z czytnika ekranu nie może stwierdzić, że jest on istotny lub przejść do jego treści. Pogrubiony lub duży tekst nigdy nie powinien zastępować nagłówków semantycznych (od Nagłówka H2 do Nagłówka H6).',
     QA_SHOULD_BE_LIST: 'Czy próbujesz utworzyć listę? Wykryto możliwe elementy listy: <strong {r}>%(firstPrefix)</strong><hr>Upewnij się, że używasz list semantycznych, zamiast stosowania znaków punktowania (np. myślników) lub liczb. Podczas korzystania z list semantycznych technologie wspomagające są w stanie przekazać takie informacje, jak ogólna liczba elementów i względna pozycja każdego elementu na liście. Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semantycznych listach. </a>',
     QA_UPPERCASE_WARNING: 'Wykryto WSZYSTKIE WIELKIE LITERY. Niektóre czytniki ekranu interpretują cały tekst wielkimi literami jako akronim i będą czytać każdą literę odrębnie. Ponadto, wszystkie wielkie litery są trudniejsze do odczytania i sprawiają wrażenie KRZYKU.',
     QA_DUPLICATE_ID: 'Znaleziono <strong>duplikat ID</strong>. Wiadomo, że błędy zduplikowanego ID powodują problemy dla technologii pomocniczych podczas próby interakcji z treścią.<hr>Usuń lub zmień następujący ID: <strong {r}>%(id)</strong>',
@@ -197,8 +214,8 @@ export default {
     QA_SUBSCRIPT_WARNING: 'Opcji formatowania indeksu dolnego i indeksu górnego należy używać wyłącznie do zmiany pozycji tekstu w celu dostosowania do konwencji lub standardów typograficznych. Powinna <strong>nie</strong> być używana wyłącznie do celów prezentacji lub wyglądu. Formatowanie całych zdań stwarza problemy z czytelnością. Odpowiednie przypadki użycia obejmują wyświetlanie wykładników, liczb porządkowych, takich jak 4<sup>th</sup> zamiast czwartej, oraz wzorów chemicznych (H<sub>2</sub>O).',
 
     // Contrast
-    CONTRAST_ERROR: 'Ten tekst nie ma wystarczającego kontrastu z tłem Współczynnik kontrastu powinien wynosić co najmniej 4,5:1 dla zwykłego tekstu i 3:1 dla dużego tekstu.<hr>Współczynnik kontrastu wynosi <strong {r}>%(cratio)</strong> dla następującego tekstu:<strong {r}>%(nodetext)</strong>',
-    CONTRAST_WARNING: 'Kontrast tego tekstu jest nieznany i wymaga ręcznego przeglądu. Upewnij się, że tekst i tło mają silne kontrastujące kolory. Współczynnik kontrastu powinien wynosić co najmniej 4,5:1 dla zwykłego tekstu i 3:1 dla dużego tekstu.<hr>Sprawdź kontrast następującego tekstu:<br><strong>%(nodetext)</strong>',
+    CONTRAST_ERROR: 'Ten tekst nie ma wystarczającego kontrastu z tłem Współczynnik kontrastu powinien wynosić co najmniej 4,5:1 dla zwykłego tekstu i 3:1 dla dużego tekstu.<hr>Współczynnik kontrastu wynosi <strong {r}>%(cratio)</strong> dla następującego tekstu:<strong {r}>%(sanitizedText)</strong>',
+    CONTRAST_WARNING: 'Kontrast tego tekstu jest nieznany i wymaga ręcznego przeglądu. Upewnij się, że tekst i tło mają silne kontrastujące kolory. Współczynnik kontrastu powinien wynosić co najmniej 4,5:1 dla zwykłego tekstu i 3:1 dla dużego tekstu.<hr>Sprawdź kontrast następującego tekstu:<br><strong>%(sanitizedText)</strong>',
     CONTRAST_INPUT_ERROR: 'Text within this input does not have enough contrast with the background. The contrast ratio should be at least 4.5:1 for normal text and 3:1 for large text.<hr>Contrast ratio: <strong {r}>%(cratio)</strong>',
   },
 };
