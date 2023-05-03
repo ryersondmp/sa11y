@@ -59,7 +59,7 @@ To install on your website, insert Sa11y right before the closing `</body>` tag.
   // Instantiate
   const sa11y = new Sa11y({
     checkRoot: "body",
-    // Customize Sa11y with props.
+    // Customize with props.
   });
 </script>
 ````
@@ -78,7 +78,7 @@ To install on your website, insert Sa11y right before the closing `</body>` tag.
   Sa11y.Lang.addI18n(Sa11yLangEn.strings);
   const sa11y = new Sa11y.Sa11y({
     checkRoot: "body",
-    // Customize Sa11y with props.
+    // Customize with props.
   });
 </script>
 ````

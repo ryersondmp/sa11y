@@ -54,7 +54,7 @@ export function dismissAnnotationsButtons(
 
     const handleClick = async (e) => {
       // Get dismissed array from localStorage.
-      let existingEntries = JSON.parse(store.getItem('sa11y-dismissed'));
+      let savedDismissKeys = JSON.parse(store.getItem('sa11y-dismissed'));
       const element = e.target;
       dismissTooltipContainer.hidden = false;
 
@@ -64,8 +64,12 @@ export function dismissAnnotationsButtons(
         const dismissItem = parseInt(element.getAttribute('data-sa11y-dismiss'), 10);
         const object = results.find(($el) => $el.id === dismissItem);
 
-        // If no existing entries, create empty array to iterate on.
-        if (existingEntries === null) existingEntries = [];
+        if (savedDismissKeys === null) {
+          // Give a one time reminder that dismissed items are temporary.
+          setTimeout(() => createAlert(Lang._('DISMISS_REMINDER')), 0);
+          // If no existing entries, create empty array to iterate on.
+          savedDismissKeys = [];
+        }
 
         // Dismissal object.
         const dismissalDetails = {
@@ -79,8 +83,8 @@ export function dismissAnnotationsButtons(
 
         // Update dismiss array.
         store.setItem('sa11y-dismiss-item', JSON.stringify(dismissalDetails));
-        existingEntries.push(dismissalDetails);
-        store.setItem('sa11y-dismissed', JSON.stringify(existingEntries));
+        savedDismissKeys.push(dismissalDetails);
+        store.setItem('sa11y-dismissed', JSON.stringify(savedDismissKeys));
         store.removeItem('sa11y-dismiss-item'); // Remove temporary storage item.
 
         // Remove tooltip.
@@ -95,12 +99,6 @@ export function dismissAnnotationsButtons(
         // Reset event listeners.
         tooltips.removeEventListener('click', handleClick);
         controlPanel.removeEventListener('click', handleClick);
-
-        // Give a one time reminder that dismissed items are temporary.
-        if (existingEntries.length === 1 && !store.getItem('sa11y-dismiss-reminder')) {
-          store.setItem('sa11y-dismiss-reminder', 'received');
-          createAlert(Lang._('DISMISS_REMINDER'));
-        }
       }
     };
 
