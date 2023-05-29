@@ -37,6 +37,7 @@
       ERROR_MISSING_ROOT_TARGET: 'L\'accessibilité de la page entière a été vérifiée, car la zone cible <code><code>%(root)</code> n\'existe pas.',
       HEADING_NOT_VISIBLE_ALERT: 'L\'en-tête n\'est pas visible ; il peut être caché ou à l\'intérieur d\'un accordéon ou d\'un composant d\'onglet.',
       SKIP_TO_PAGE_ISSUES: 'Passer aux problèmes de page',
+      CONSOLE_ERROR_MESSAGE: 'Désolé, mais il y a un problème avec le vérificateur d\'accessibilité sur cette page.Pouvez-vous s\'il vous plaît <a href="%(link)">le signaler via ce formulaire</a> ou sur <a href="%(link)">GitHub</a> ?',
 
       // Dismiss
       PANEL_DISMISS_BUTTON: 'Afficher %(dismissCount) avertissements ignorés',

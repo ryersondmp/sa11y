@@ -31,6 +31,7 @@ var en = {
     ERROR_MISSING_ROOT_TARGET: 'The full page was checked for accessibility because the target area <code>%(root)</code> does not exist.',
     HEADING_NOT_VISIBLE_ALERT: 'Heading is not visible; it may be hidden or inside of an accordion or tab component.',
     SKIP_TO_PAGE_ISSUES: 'Skip to Page Issues',
+    CONSOLE_ERROR_MESSAGE: 'Sorry, but there is an issue with the accessibility checker on this page. Can you please <a href="%(link)">report it through this form</a> or on <a href="%(link)">GitHub</a>?',
 
     // Dismiss
     PANEL_DISMISS_BUTTON: 'Show %(dismissCount) dismissed warnings',

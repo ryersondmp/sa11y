@@ -119,7 +119,7 @@ export default function checkLinkText(results, showGoodLinkButton) {
         results.push({
           element: $el,
           type: Constants.Global.ERROR,
-          content: Lang.sprintf('LINK_EMPTY_LINK_NO_LABEL'),
+          content: Lang._('LINK_EMPTY_LINK_NO_LABEL'),
           inline: true,
           position: 'afterend',
         });
@@ -128,7 +128,7 @@ export default function checkLinkText(results, showGoodLinkButton) {
         results.push({
           element: $el,
           type: Constants.Global.ERROR,
-          content: Lang.sprintf('LINK_EMPTY'),
+          content: Lang._('LINK_EMPTY'),
           inline: true,
           position: 'afterend',
         });
@@ -175,7 +175,7 @@ export default function checkLinkText(results, showGoodLinkButton) {
         results.push({
           element: $el,
           type: Constants.Global.WARNING,
-          content: Lang.sprintf('LINK_URL'),
+          content: Lang._('LINK_URL'),
           inline: true,
           position: 'beforebegin',
           dismiss: key,

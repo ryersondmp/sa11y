@@ -97,7 +97,7 @@ export default function checkLinksAdvanced(results) {
           results.push({
             element: $el,
             type: Constants.Global.WARNING,
-            content: Lang.sprintf('NEW_TAB_WARNING'),
+            content: Lang._('NEW_TAB_WARNING'),
             inline: true,
             position: 'beforebegin',
             dismiss: key,
@@ -109,7 +109,7 @@ export default function checkLinksAdvanced(results) {
           results.push({
             element: $el,
             type: Constants.Global.WARNING,
-            content: Lang.sprintf('FILE_TYPE_WARNING'),
+            content: Lang._('FILE_TYPE_WARNING'),
             inline: true,
             position: 'beforebegin',
             dismiss: key,

@@ -99,6 +99,16 @@ export default [
       }),
     ],
   },
+  // Console log errors
+  {
+    input: 'src/scss/console-errors.scss',
+    plugins: [
+      sass({
+        output: false,
+        processor: (css) => processSCSS(css, 'console-errors.css', 'console-errors.min.css'),
+      }),
+    ],
+  },
 
   /* ********************* */
   /*      Javascript       */

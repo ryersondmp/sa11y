@@ -31,6 +31,7 @@ export default {
     ERROR_MISSING_ROOT_TARGET: 'Sprawdzono dostępność całej strony, ponieważ obszar docelowy nie istnieje: <code>%(root)</code>',
     HEADING_NOT_VISIBLE_ALERT: 'Nagłówek nie jest widoczny; może być ukryty lub wewnątrz komponentu akordeonu lub tabulatora.',
     SKIP_TO_PAGE_ISSUES: 'Przejdź do problemów ze stroną',
+    CONSOLE_ERROR_MESSAGE: 'Przepraszamy, ale wystąpił problem z narzędziem do sprawdzania ułatwień dostępu na tej stronie. Czy możesz <a href="%(link)">zgłosić to za pomocą tego formularza</a> lub na <a href="%(link)">GitHub</a>?',
 
     // Dismiss
     PANEL_DISMISS_BUTTON: 'Pokaż %(dismissCount) zignorowanych ostrzeżeń',

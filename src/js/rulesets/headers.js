@@ -117,7 +117,7 @@ export default function checkHeaders(
   if (Elements.Found.HeadingOne.length === 0) {
     results.push({
       type: Constants.Global.ERROR,
-      content: Lang.sprintf('HEADING_MISSING_ONE'),
+      content: Lang._('HEADING_MISSING_ONE'),
     });
   }
   return { results, headingOutline };

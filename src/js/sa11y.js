@@ -1,6 +1,6 @@
 /**
  * Sa11y, the accessibility quality assurance assistant.
- * @version: 3.0.0
+ * @version: 3.0.1
  * @author: Development led by Adam Chaboryk, CPWA. <adam.chaboryk@torontomu.ca>
  * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
  * @acknowledgements https://sa11y.netlify.app/acknowledgements/
@@ -19,6 +19,7 @@ import Elements from './utils/elements';
 import detectPageChanges from './logic/detect-page-changes';
 import { dismissAnnotationsLogic, dismissAnnotationsButtons } from './logic/dismiss-annotations';
 import addColourFilters from './logic/colour-filters';
+import ConsoleErrors from './interface/console-error';
 
 // Create UI/interface elements
 import mainToggle from './logic/main-toggle-logic';
@@ -69,6 +70,7 @@ class Sa11y {
         customElements.define('sa11y-tooltips', TooltipComponent);
         customElements.define('sa11y-dismiss-tooltip', DismissTooltip);
         customElements.define('sa11y-control-panel', ControlPanel);
+        customElements.define('sa11y-console-error', ConsoleErrors);
 
         // Initialize global constants and exclusions.
         Constants.initializeGlobal(
@@ -151,148 +153,153 @@ class Sa11y {
     /*  Check All: Where all the magic happens.                    */
     /* *********************************************************** */
     this.checkAll = async () => {
-      this.results = [];
-      this.headingOutline = [];
-      this.errorCount = 0;
-      this.warningCount = 0;
+      try {
+        this.results = [];
+        this.headingOutline = [];
+        this.errorCount = 0;
+        this.warningCount = 0;
 
-      // Panel alert if root doesn't exist.
-      const root = document.querySelector(this.option.checkRoot);
-      if (!root) {
-        Utils.createAlert(`${Lang.sprintf('ERROR_MISSING_ROOT_TARGET', this.option.checkRoot)}`);
-      }
-
-      // Find all web components on the page.
-      Constants.initializeShadowSearch(
-        this.option.checkRoot,
-        this.option.autoDetectShadowComponents,
-        this.option.shadowComponents,
-      );
-
-      // Find and cache elements.
-      Elements.initializeElements(
-        this.option.linksToFlag,
-      );
-
-      // Ruleset checks
-      checkHeaders(
-        this.results,
-        this.option.nonConsecutiveHeadingIsError,
-        this.option.flagLongHeadings,
-        this.headingOutline,
-      );
-      checkLinkText(this.results, this.option.showGoodLinkButton);
-      checkImages(this.results);
-      checkContrast(this.results);
-      checkLabels(this.results);
-      checkLinksAdvanced(this.results);
-      checkQA(
-        this.results,
-        this.option.badLinksQA,
-        this.option.strongItalicsQA,
-        this.option.pdfQA,
-        this.option.langQA,
-        this.option.blockquotesQA,
-        this.option.tablesQA,
-        this.option.fakeHeadingsQA,
-        this.option.fakeListQA,
-        this.option.allCapsQA,
-        this.option.duplicateIdQA,
-        this.option.underlinedTextQA,
-        this.option.pageTitleQA,
-        this.option.subscriptQA,
-      );
-      checkEmbeddedContent(
-        this.results,
-        this.option.embeddedContentAll,
-        this.option.embeddedContentAudio,
-        this.option.embeddedContentVideo,
-        this.option.embeddedContentDataViz,
-        this.option.embeddedContentTitles,
-        this.option.embeddedContentGeneral,
-      );
-      checkReadability();
-
-      // Custom checks
-      if (this.option.customChecks === true) {
-        checkCustom(this.results);
-      }
-
-      // Optional: Generate CSS selector path of element.
-      if (this.option.selectorPath === true) {
-        this.results.forEach(($el) => {
-          if ($el.element !== undefined) {
-            const path = Utils.generateSelectorPath($el.element);
-            Object.assign($el, { cssPath: path });
-          }
-        });
-      }
-
-      if (this.option.headless === false) {
-        // Check for dismissed items and update results array.
-        const dismiss = dismissAnnotationsLogic(this.results, this.dismissTooltip);
-        this.results = dismiss.updatedResults;
-        this.dismissed = dismiss.dismissedIssues;
-        this.dismissedCount = dismiss.dismissCount;
-
-        // Update count.
-        const count = updateCount(this.results, this.errorCount, this.warningCount);
-        this.errorCount = count.error;
-        this.warningCount = count.warning;
-
-        // Update badge.
-        updateBadge(this.errorCount, this.warningCount);
-
-        /* If panel is OPENED. */
-        if (Utils.store.getItem('sa11y-remember-panel') === 'Opened') {
-          // Paint the page with annotations.
-          this.results.forEach(($el, i) => {
-            Object.assign($el, { id: i });
-            annotate(
-              $el.element,
-              $el.type,
-              $el.content,
-              $el.inline,
-              $el.position,
-              $el.id,
-              this.option.dismissAnnotations,
-            );
-          });
-
-          // After annotations are painted, find & cache.
-          Elements.initializeAnnotations();
-
-          // Initialize tooltips
-          const tooltipComponent = new TooltipComponent();
-          document.body.appendChild(tooltipComponent);
-
-          dismissAnnotationsButtons(
-            this.option.dismissAnnotations,
-            this.results,
-            this.dismissed,
-            this.checkAll,
-            this.resetAll,
-          );
-
-          generatePageOutline(
-            this.dismissed,
-            this.headingOutline,
-            this.option.checkRoot,
-          );
-
-          updatePanel(
-            this.dismissedCount,
-            this.errorCount,
-            this.warningCount,
-          );
-
-          // Initialize Skip to Issue button.
-          skipToIssue();
-
-          // Extras
-          detectOverflow();
-          nudge();
+        // Panel alert if root doesn't exist.
+        const root = document.querySelector(this.option.checkRoot);
+        if (!root) {
+          Utils.createAlert(`${Lang.sprintf('ERROR_MISSING_ROOT_TARGET', this.option.checkRoot)}`);
         }
+
+        // Find all web components on the page.
+        Constants.initializeShadowSearch(
+          this.option.checkRoot,
+          this.option.autoDetectShadowComponents,
+          this.option.shadowComponents,
+        );
+
+        // Find and cache elements.
+        Elements.initializeElements(
+          this.option.linksToFlag,
+        );
+
+        // Ruleset checks
+        checkHeaders(
+          this.results,
+          this.option.nonConsecutiveHeadingIsError,
+          this.option.flagLongHeadings,
+          this.headingOutline,
+        );
+        checkLinkText(this.results, this.option.showGoodLinkButton);
+        checkImages(this.results);
+        checkContrast(this.results);
+        checkLabels(this.results);
+        checkLinksAdvanced(this.results);
+        checkQA(
+          this.results,
+          this.option.badLinksQA,
+          this.option.strongItalicsQA,
+          this.option.pdfQA,
+          this.option.langQA,
+          this.option.blockquotesQA,
+          this.option.tablesQA,
+          this.option.fakeHeadingsQA,
+          this.option.fakeListQA,
+          this.option.allCapsQA,
+          this.option.duplicateIdQA,
+          this.option.underlinedTextQA,
+          this.option.pageTitleQA,
+          this.option.subscriptQA,
+        );
+        checkEmbeddedContent(
+          this.results,
+          this.option.embeddedContentAll,
+          this.option.embeddedContentAudio,
+          this.option.embeddedContentVideo,
+          this.option.embeddedContentDataViz,
+          this.option.embeddedContentTitles,
+          this.option.embeddedContentGeneral,
+        );
+        checkReadability();
+
+        // Custom checks
+        if (this.option.customChecks === true) {
+          checkCustom(this.results);
+        }
+
+        // Optional: Generate CSS selector path of element.
+        if (this.option.selectorPath === true) {
+          this.results.forEach(($el) => {
+            if ($el.element !== undefined) {
+              const path = Utils.generateSelectorPath($el.element);
+              Object.assign($el, { cssPath: path });
+            }
+          });
+        }
+
+        if (this.option.headless === false) {
+          // Check for dismissed items and update results array.
+          const dismiss = dismissAnnotationsLogic(this.results, this.dismissTooltip);
+          this.results = dismiss.updatedResults;
+          this.dismissed = dismiss.dismissedIssues;
+          this.dismissedCount = dismiss.dismissCount;
+
+          // Update count.
+          const count = updateCount(this.results, this.errorCount, this.warningCount);
+          this.errorCount = count.error;
+          this.warningCount = count.warning;
+
+          // Update badge.
+          updateBadge(this.errorCount, this.warningCount);
+
+          /* If panel is OPENED. */
+          if (Utils.store.getItem('sa11y-remember-panel') === 'Opened') {
+            // Paint the page with annotations.
+            this.results.forEach(($el, i) => {
+              Object.assign($el, { id: i });
+              annotate(
+                $el.element,
+                $el.type,
+                $el.content,
+                $el.inline,
+                $el.position,
+                $el.id,
+                this.option.dismissAnnotations,
+              );
+            });
+
+            // After annotations are painted, find & cache.
+            Elements.initializeAnnotations();
+
+            // Initialize tooltips
+            const tooltipComponent = new TooltipComponent();
+            document.body.appendChild(tooltipComponent);
+
+            dismissAnnotationsButtons(
+              this.option.dismissAnnotations,
+              this.results,
+              this.dismissed,
+              this.checkAll,
+              this.resetAll,
+            );
+
+            generatePageOutline(
+              this.dismissed,
+              this.headingOutline,
+              this.option.checkRoot,
+            );
+
+            updatePanel(
+              this.dismissedCount,
+              this.errorCount,
+              this.warningCount,
+            );
+
+            // Initialize Skip to Issue button.
+            skipToIssue();
+
+            // Extras
+            detectOverflow();
+            nudge();
+          }
+        }
+      } catch (error) {
+        const consoleErrors = new ConsoleErrors(error);
+        document.body.appendChild(consoleErrors);
       }
     };
 

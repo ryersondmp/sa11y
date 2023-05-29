@@ -42,7 +42,7 @@ export default function checkImages(results) {
           results.push({
             element: $el,
             type: Constants.Global.ERROR,
-            content: Lang.sprintf('MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE'),
+            content: Lang._('MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE'),
             inline: false,
             position: 'beforebegin',
           });
@@ -50,7 +50,7 @@ export default function checkImages(results) {
           results.push({
             element: $el,
             type: Constants.Global.ERROR,
-            content: Lang.sprintf('MISSING_ALT_LINK_MESSAGE'),
+            content: Lang._('MISSING_ALT_LINK_MESSAGE'),
             inline: false,
             position: 'beforebegin',
           });
@@ -60,7 +60,7 @@ export default function checkImages(results) {
         results.push({
           element: $el,
           type: Constants.Global.ERROR,
-          content: Lang.sprintf('MISSING_ALT_MESSAGE'),
+          content: Lang._('MISSING_ALT_MESSAGE'),
           inline: false,
           position: 'beforebegin',
         });
@@ -70,7 +70,8 @@ export default function checkImages(results) {
       const altText = Utils.sanitizeHTML(alt); // Prevent tooltip from breaking.
       const error = containsAltTextStopWords(altText);
       const altLength = alt.length;
-      const baseSrc = $el.getAttribute('src').split('?')[0];
+      const src = $el.getAttribute('src');
+      const baseSrc = (!src) ? $el.getAttribute('srcset').split('?')[0] : src.split('?')[0];
 
       if ($el.closest('a[href]') && $el.closest('a[href]').getAttribute('tabindex') === '-1' && $el.closest('a[href]').getAttribute('aria-hidden') === 'true') {
         // Do nothing if link has aria-hidden and negative tabindex.
@@ -134,7 +135,7 @@ export default function checkImages(results) {
           results.push({
             element: $el,
             type: Constants.Global.ERROR,
-            content: Lang.sprintf('LINK_IMAGE_ARIA_HIDDEN'),
+            content: Lang._('LINK_IMAGE_ARIA_HIDDEN'),
             inline: false,
             position: 'beforebegin',
           });
@@ -142,7 +143,7 @@ export default function checkImages(results) {
           results.push({
             element: $el,
             type: Constants.Global.ERROR,
-            content: Lang.sprintf('LINK_IMAGE_NO_ALT_TEXT'),
+            content: Lang._('LINK_IMAGE_NO_ALT_TEXT'),
             inline: false,
             position: 'beforebegin',
           });
@@ -150,7 +151,7 @@ export default function checkImages(results) {
           results.push({
             element: $el,
             type: Constants.Global.GOOD,
-            content: Lang.sprintf('LINK_IMAGE_HAS_TEXT'),
+            content: Lang._('LINK_IMAGE_HAS_TEXT'),
             inline: false,
             position: 'beforebegin',
           });
@@ -197,7 +198,7 @@ export default function checkImages(results) {
             results.push({
               element: $el,
               type: Constants.Global.WARNING,
-              content: Lang.sprintf('IMAGE_FIGURE_DECORATIVE'),
+              content: Lang._('IMAGE_FIGURE_DECORATIVE'),
               inline: false,
               position: 'beforebegin',
               dismiss: key,
@@ -207,7 +208,7 @@ export default function checkImages(results) {
             results.push({
               element: $el,
               type: Constants.Global.WARNING,
-              content: Lang.sprintf('IMAGE_DECORATIVE'),
+              content: Lang._('IMAGE_DECORATIVE'),
               inline: false,
               position: 'beforebegin',
               dismiss: key,
@@ -218,7 +219,7 @@ export default function checkImages(results) {
           results.push({
             element: $el,
             type: Constants.Global.WARNING,
-            content: Lang.sprintf('IMAGE_DECORATIVE'),
+            content: Lang._('IMAGE_DECORATIVE'),
             inline: false,
             position: 'beforebegin',
             dismiss: key,

@@ -20,7 +20,7 @@ export default function checkEmbeddedContent(
         results.push({
           element: $el,
           type: Constants.Global.WARNING,
-          content: Lang.sprintf('EMBED_AUDIO'),
+          content: Lang._('EMBED_AUDIO'),
           inline: false,
           position: 'beforebegin',
           dismiss: key,
@@ -39,7 +39,7 @@ export default function checkEmbeddedContent(
           results.push({
             element: $el,
             type: Constants.Global.WARNING,
-            content: Lang.sprintf('EMBED_VIDEO'),
+            content: Lang._('EMBED_VIDEO'),
             inline: false,
             position: 'beforebegin',
             dismiss: key,
@@ -55,7 +55,7 @@ export default function checkEmbeddedContent(
         results.push({
           element: $el,
           type: Constants.Global.WARNING,
-          content: Lang.sprintf('EMBED_DATA_VIZ'),
+          content: Lang._('EMBED_DATA_VIZ'),
           inline: false,
           position: 'beforebegin',
           dismiss: key,
@@ -83,7 +83,7 @@ export default function checkEmbeddedContent(
               results.push({
                 element: $el,
                 type: Constants.Global.ERROR,
-                content: Lang.sprintf('EMBED_MISSING_TITLE'),
+                content: Lang._('EMBED_MISSING_TITLE'),
                 inline: false,
                 position: 'beforebegin',
               });
@@ -111,7 +111,7 @@ export default function checkEmbeddedContent(
           results.push({
             element: $el,
             type: Constants.Global.WARNING,
-            content: Lang.sprintf('EMBED_GENERAL_WARNING'),
+            content: Lang._('EMBED_GENERAL_WARNING'),
             inline: false,
             position: 'beforebegin',
             dismiss: key,
