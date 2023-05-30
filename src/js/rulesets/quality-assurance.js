@@ -8,6 +8,7 @@ export default function checkQA(
   badLinksQA,
   strongItalicsQA,
   pdfQA,
+  documentQA,
   langQA,
   blockquotesQA,
   tablesQA,
@@ -45,7 +46,7 @@ export default function checkQA(
         results.push({
           element: $el.parentNode,
           type: Constants.Global.WARNING,
-          content: Lang._('QA_BAD_ITALICS'),
+          content: Lang.sprintf('QA_BAD_ITALICS'),
           inline: false,
           position: 'beforebegin',
           dismiss: key,
@@ -54,23 +55,37 @@ export default function checkQA(
     });
   }
 
-  /* *********************************************************** */
-  /*  Warning: Find all PDF documents                            */
-  /* *********************************************************** */
-  if (pdfQA === true) {
-    Elements.Found.Pdf.forEach(($el) => {
-      const href = $el.getAttribute('href');
-      const key = Utils.prepareDismissal(`PDF${href}`);
-      results.push({
-        element: $el,
-        type: Constants.Global.WARNING,
-        content: Lang._('QA_PDF'),
-        inline: true,
-        position: 'beforebegin',
-        dismiss: key,
-      });
-    });
-  }
+  /* ************************************************************** */
+  /*  Warning: Manually inspect documents & PDF for accessibility.  */
+  /* ************************************************************** */
+  Elements.Found.Links.forEach(($el) => {
+    const href = $el.getAttribute('href');
+    const extensions = Constants.Global.documentLinks.split(', ');
+    if (href) {
+      const hasExtension = extensions.some((extension) => href.includes(extension));
+      const hasPDF = href.includes('.pdf');
+      const key = Utils.prepareDismissal(`DOCUMENT${href}`);
+      if (documentQA === true && hasExtension) {
+        results.push({
+          element: $el,
+          type: Constants.Global.WARNING,
+          content: Lang.sprintf('QA_DOCUMENT'),
+          inline: true,
+          position: 'beforebegin',
+          dismiss: key,
+        });
+      } else if (pdfQA === true && hasPDF) {
+        results.push({
+          element: $el,
+          type: Constants.Global.WARNING,
+          content: Lang.sprintf('QA_PDF'),
+          inline: true,
+          position: 'beforebegin',
+          dismiss: key,
+        });
+      }
+    }
+  });
 
   /* *************************************************************** */
   /*  Error: Missing language tag. Lang should be at least 2 chars.  */
@@ -79,7 +94,7 @@ export default function checkQA(
     if (!Elements.Found.Language || Elements.Found.Language.length < 2) {
       results.push({
         type: Constants.Global.ERROR,
-        content: Lang._('QA_PAGE_LANGUAGE'),
+        content: Lang.sprintf('QA_PAGE_LANGUAGE'),
       });
     }
   }
@@ -116,7 +131,7 @@ export default function checkQA(
         results.push({
           element: $el,
           type: Constants.Global.ERROR,
-          content: Lang._('TABLES_MISSING_HEADINGS'),
+          content: Lang.sprintf('TABLES_MISSING_HEADINGS'),
           inline: false,
           position: 'beforebegin',
         });
@@ -126,7 +141,7 @@ export default function checkQA(
           results.push({
             element: $a,
             type: Constants.Global.ERROR,
-            content: Lang._('TABLES_SEMANTIC_HEADING'),
+            content: Lang.sprintf('TABLES_SEMANTIC_HEADING'),
             inline: false,
             position: 'beforebegin',
           });
@@ -137,7 +152,7 @@ export default function checkQA(
           results.push({
             element: $b,
             type: Constants.Global.ERROR,
-            content: Lang._('TABLES_EMPTY_HEADING'),
+            content: Lang.sprintf('TABLES_EMPTY_HEADING'),
             inline: false,
             position: 'afterbegin',
           });
@@ -339,7 +354,7 @@ export default function checkQA(
         results.push({
           element: $el,
           type: Constants.Global.WARNING,
-          content: Lang._('QA_UPPERCASE_WARNING'),
+          content: Lang.sprintf('QA_UPPERCASE_WARNING'),
           inline: false,
           position: 'beforebegin',
           dismiss: key,
@@ -387,7 +402,7 @@ export default function checkQA(
       results.push({
         element: $el,
         type: Constants.Global.WARNING,
-        content: Lang._('QA_TEXT_UNDERLINE_WARNING'),
+        content: Lang.sprintf('QA_TEXT_UNDERLINE_WARNING'),
         inline: true,
         position: 'beforebegin',
         dismiss: key,
@@ -403,7 +418,7 @@ export default function checkQA(
         results.push({
           element: $el,
           type: Constants.Global.WARNING,
-          content: Lang._('QA_TEXT_UNDERLINE_WARNING'),
+          content: Lang.sprintf('QA_TEXT_UNDERLINE_WARNING'),
           inline: false,
           position: 'beforebegin',
           dismiss: key,
@@ -425,7 +440,7 @@ export default function checkQA(
     if (!$title || $title.textContent.trim().length === 0) {
       results.push({
         type: Constants.Global.ERROR,
-        content: Lang._('QA_PAGE_TITLE'),
+        content: Lang.sprintf('QA_PAGE_TITLE'),
       });
     }
   }
@@ -441,7 +456,7 @@ export default function checkQA(
         results.push({
           element: $el,
           type: Constants.Global.WARNING,
-          content: Lang._('QA_SUBSCRIPT_WARNING'),
+          content: Lang.sprintf('QA_SUBSCRIPT_WARNING'),
           inline: true,
           position: 'beforebegin',
           dismiss: key,

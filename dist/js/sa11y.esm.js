@@ -38,6 +38,7 @@ const defaultOptions = {
   badLinksQA: true,
   strongItalicsQA: true,
   pdfQA: true,
+  documentQA: true,
   langQA: true,
   blockquotesQA: true,
   tablesQA: true,
@@ -48,6 +49,7 @@ const defaultOptions = {
   underlinedTextQA: true,
   pageTitleQA: true,
   subscriptQA: true,
+  documentLinks: '.ppt, .doc, .xls, .csv, sway.com, docs.google.com',
 
   // Embedded content rulesets
   embeddedContentAll: true,
@@ -161,6 +163,7 @@ const Constants = (function myConstants() {
     checkAllHideToggles,
     headless,
     panelPosition,
+    documentLinks,
   ) {
     Global.ERROR = Lang._('ERROR');
     Global.WARNING = Lang._('WARNING');
@@ -192,6 +195,11 @@ const Constants = (function myConstants() {
 
     // i18n
     Global.langDirection = (Global.html.getAttribute('dir') === 'rtl') ? 'rtl' : 'ltr';
+
+    // Document links (Quality Assurance module)
+    if (documentLinks) {
+      Global.documentLinks = `${documentLinks}`;
+    }
   }
 
   /* *************** */
@@ -1050,12 +1058,6 @@ const Elements = (function myElements() {
 
     Found.Tables = find(
       'table:not([role="presentation"])',
-      'root',
-      Constants.Exclusions.Container,
-    );
-
-    Found.Pdf = find(
-      'a[href$=".pdf"]',
       'root',
       Constants.Exclusions.Container,
     );
@@ -6139,7 +6141,7 @@ function checkImages(results) {
           results.push({
             element: $el,
             type: Constants.Global.ERROR,
-            content: Lang._('MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE'),
+            content: Lang.sprintf('MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE'),
             inline: false,
             position: 'beforebegin',
           });
@@ -6147,7 +6149,7 @@ function checkImages(results) {
           results.push({
             element: $el,
             type: Constants.Global.ERROR,
-            content: Lang._('MISSING_ALT_LINK_MESSAGE'),
+            content: Lang.sprintf('MISSING_ALT_LINK_MESSAGE'),
             inline: false,
             position: 'beforebegin',
           });
@@ -6157,7 +6159,7 @@ function checkImages(results) {
         results.push({
           element: $el,
           type: Constants.Global.ERROR,
-          content: Lang._('MISSING_ALT_MESSAGE'),
+          content: Lang.sprintf('MISSING_ALT_MESSAGE'),
           inline: false,
           position: 'beforebegin',
         });
@@ -6168,7 +6170,7 @@ function checkImages(results) {
       const error = containsAltTextStopWords(altText);
       const altLength = alt.length;
       const src = $el.getAttribute('src');
-      const baseSrc = (!src) ? $el.getAttribute('srcset').split('?')[0] : src.split('?')[0];
+      const baseSrc = (!src) ? $el.getAttribute('srcset') : src;
 
       if ($el.closest('a[href]') && $el.closest('a[href]').getAttribute('tabindex') === '-1' && $el.closest('a[href]').getAttribute('aria-hidden') === 'true') ; else if (error[0] !== null && $el.closest('a[href]')) {
         // Image fails if a stop word was found.
@@ -6228,7 +6230,7 @@ function checkImages(results) {
           results.push({
             element: $el,
             type: Constants.Global.ERROR,
-            content: Lang._('LINK_IMAGE_ARIA_HIDDEN'),
+            content: Lang.sprintf('LINK_IMAGE_ARIA_HIDDEN'),
             inline: false,
             position: 'beforebegin',
           });
@@ -6236,7 +6238,7 @@ function checkImages(results) {
           results.push({
             element: $el,
             type: Constants.Global.ERROR,
-            content: Lang._('LINK_IMAGE_NO_ALT_TEXT'),
+            content: Lang.sprintf('LINK_IMAGE_NO_ALT_TEXT'),
             inline: false,
             position: 'beforebegin',
           });
@@ -6244,7 +6246,7 @@ function checkImages(results) {
           results.push({
             element: $el,
             type: Constants.Global.GOOD,
-            content: Lang._('LINK_IMAGE_HAS_TEXT'),
+            content: Lang.sprintf('LINK_IMAGE_HAS_TEXT'),
             inline: false,
             position: 'beforebegin',
           });
@@ -6291,7 +6293,7 @@ function checkImages(results) {
             results.push({
               element: $el,
               type: Constants.Global.WARNING,
-              content: Lang._('IMAGE_FIGURE_DECORATIVE'),
+              content: Lang.sprintf('IMAGE_FIGURE_DECORATIVE'),
               inline: false,
               position: 'beforebegin',
               dismiss: key,
@@ -6301,7 +6303,7 @@ function checkImages(results) {
             results.push({
               element: $el,
               type: Constants.Global.WARNING,
-              content: Lang._('IMAGE_DECORATIVE'),
+              content: Lang.sprintf('IMAGE_DECORATIVE'),
               inline: false,
               position: 'beforebegin',
               dismiss: key,
@@ -6312,7 +6314,7 @@ function checkImages(results) {
           results.push({
             element: $el,
             type: Constants.Global.WARNING,
-            content: Lang._('IMAGE_DECORATIVE'),
+            content: Lang.sprintf('IMAGE_DECORATIVE'),
             inline: false,
             position: 'beforebegin',
             dismiss: key,
@@ -6438,7 +6440,7 @@ function checkHeaders(
         });
       }
     } else if (i === 0 && level !== 1 && level !== 2) {
-      error = Lang._('HEADING_FIRST');
+      error = Lang.sprintf('HEADING_FIRST');
       results.push({
         element: $el,
         type: Constants.Global.ERROR,
@@ -6482,7 +6484,7 @@ function checkHeaders(
   if (Elements.Found.HeadingOne.length === 0) {
     results.push({
       type: Constants.Global.ERROR,
-      content: Lang._('HEADING_MISSING_ONE'),
+      content: Lang.sprintf('HEADING_MISSING_ONE'),
     });
   }
   return { results, headingOutline };
@@ -6600,7 +6602,7 @@ function checkLinkText(results, showGoodLinkButton) {
         results.push({
           element: $el,
           type: Constants.Global.ERROR,
-          content: Lang._('LINK_EMPTY_LINK_NO_LABEL'),
+          content: Lang.sprintf('LINK_EMPTY_LINK_NO_LABEL'),
           inline: true,
           position: 'afterend',
         });
@@ -6609,7 +6611,7 @@ function checkLinkText(results, showGoodLinkButton) {
         results.push({
           element: $el,
           type: Constants.Global.ERROR,
-          content: Lang._('LINK_EMPTY'),
+          content: Lang.sprintf('LINK_EMPTY'),
           inline: true,
           position: 'afterend',
         });
@@ -6654,7 +6656,7 @@ function checkLinkText(results, showGoodLinkButton) {
         results.push({
           element: $el,
           type: Constants.Global.WARNING,
-          content: Lang._('LINK_URL'),
+          content: Lang.sprintf('LINK_URL'),
           inline: true,
           position: 'beforebegin',
           dismiss: key,
@@ -6925,7 +6927,7 @@ function checkLabels(results) {
                 results.push({
                   element: $el,
                   type: Constants.Global.ERROR,
-                  content: Lang._('LABELS_MISSING_IMAGE_INPUT_MESSAGE'),
+                  content: Lang.sprintf('LABELS_MISSING_IMAGE_INPUT_MESSAGE'),
                   inline: false,
                   position: 'beforebegin',
                 });
@@ -6937,7 +6939,7 @@ function checkLabels(results) {
             results.push({
               element: $el,
               type: Constants.Global.WARNING,
-              content: Lang._('LABELS_INPUT_RESET_MESSAGE'),
+              content: Lang.sprintf('LABELS_INPUT_RESET_MESSAGE'),
               inline: false,
               position: 'beforebegin',
               dismiss: key,
@@ -6993,7 +6995,7 @@ function checkLabels(results) {
             results.push({
               element: $el,
               type: Constants.Global.ERROR,
-              content: Lang._('LABELS_MISSING_LABEL_MESSAGE'),
+              content: Lang.sprintf('LABELS_MISSING_LABEL_MESSAGE'),
               inline: false,
               position: 'beforebegin',
             });
@@ -7097,7 +7099,7 @@ function checkLinksAdvanced(results) {
           results.push({
             element: $el,
             type: Constants.Global.WARNING,
-            content: Lang._('NEW_TAB_WARNING'),
+            content: Lang.sprintf('NEW_TAB_WARNING'),
             inline: true,
             position: 'beforebegin',
             dismiss: key,
@@ -7109,7 +7111,7 @@ function checkLinksAdvanced(results) {
           results.push({
             element: $el,
             type: Constants.Global.WARNING,
-            content: Lang._('FILE_TYPE_WARNING'),
+            content: Lang.sprintf('FILE_TYPE_WARNING'),
             inline: true,
             position: 'beforebegin',
             dismiss: key,
@@ -7352,7 +7354,7 @@ function checkEmbeddedContent(
         results.push({
           element: $el,
           type: Constants.Global.WARNING,
-          content: Lang._('EMBED_AUDIO'),
+          content: Lang.sprintf('EMBED_AUDIO'),
           inline: false,
           position: 'beforebegin',
           dismiss: key,
@@ -7369,7 +7371,7 @@ function checkEmbeddedContent(
           results.push({
             element: $el,
             type: Constants.Global.WARNING,
-            content: Lang._('EMBED_VIDEO'),
+            content: Lang.sprintf('EMBED_VIDEO'),
             inline: false,
             position: 'beforebegin',
             dismiss: key,
@@ -7385,7 +7387,7 @@ function checkEmbeddedContent(
         results.push({
           element: $el,
           type: Constants.Global.WARNING,
-          content: Lang._('EMBED_DATA_VIZ'),
+          content: Lang.sprintf('EMBED_DATA_VIZ'),
           inline: false,
           position: 'beforebegin',
           dismiss: key,
@@ -7411,7 +7413,7 @@ function checkEmbeddedContent(
               results.push({
                 element: $el,
                 type: Constants.Global.ERROR,
-                content: Lang._('EMBED_MISSING_TITLE'),
+                content: Lang.sprintf('EMBED_MISSING_TITLE'),
                 inline: false,
                 position: 'beforebegin',
               });
@@ -7435,7 +7437,7 @@ function checkEmbeddedContent(
           results.push({
             element: $el,
             type: Constants.Global.WARNING,
-            content: Lang._('EMBED_GENERAL_WARNING'),
+            content: Lang.sprintf('EMBED_GENERAL_WARNING'),
             inline: false,
             position: 'beforebegin',
             dismiss: key,
@@ -7452,6 +7454,7 @@ function checkQA(
   badLinksQA,
   strongItalicsQA,
   pdfQA,
+  documentQA,
   langQA,
   blockquotesQA,
   tablesQA,
@@ -7489,7 +7492,7 @@ function checkQA(
         results.push({
           element: $el.parentNode,
           type: Constants.Global.WARNING,
-          content: Lang._('QA_BAD_ITALICS'),
+          content: Lang.sprintf('QA_BAD_ITALICS'),
           inline: false,
           position: 'beforebegin',
           dismiss: key,
@@ -7498,23 +7501,37 @@ function checkQA(
     });
   }
 
-  /* *********************************************************** */
-  /*  Warning: Find all PDF documents                            */
-  /* *********************************************************** */
-  if (pdfQA === true) {
-    Elements.Found.Pdf.forEach(($el) => {
-      const href = $el.getAttribute('href');
-      const key = prepareDismissal(`PDF${href}`);
-      results.push({
-        element: $el,
-        type: Constants.Global.WARNING,
-        content: Lang._('QA_PDF'),
-        inline: true,
-        position: 'beforebegin',
-        dismiss: key,
-      });
-    });
-  }
+  /* ************************************************************** */
+  /*  Warning: Manually inspect documents & PDF for accessibility.  */
+  /* ************************************************************** */
+  Elements.Found.Links.forEach(($el) => {
+    const href = $el.getAttribute('href');
+    const extensions = Constants.Global.documentLinks.split(', ');
+    if (href) {
+      const hasExtension = extensions.some((extension) => href.includes(extension));
+      const hasPDF = href.includes('.pdf');
+      const key = prepareDismissal(`DOCUMENT${href}`);
+      if (documentQA === true && hasExtension) {
+        results.push({
+          element: $el,
+          type: Constants.Global.WARNING,
+          content: Lang.sprintf('QA_DOCUMENT'),
+          inline: true,
+          position: 'beforebegin',
+          dismiss: key,
+        });
+      } else if (pdfQA === true && hasPDF) {
+        results.push({
+          element: $el,
+          type: Constants.Global.WARNING,
+          content: Lang.sprintf('QA_PDF'),
+          inline: true,
+          position: 'beforebegin',
+          dismiss: key,
+        });
+      }
+    }
+  });
 
   /* *************************************************************** */
   /*  Error: Missing language tag. Lang should be at least 2 chars.  */
@@ -7523,7 +7540,7 @@ function checkQA(
     if (!Elements.Found.Language || Elements.Found.Language.length < 2) {
       results.push({
         type: Constants.Global.ERROR,
-        content: Lang._('QA_PAGE_LANGUAGE'),
+        content: Lang.sprintf('QA_PAGE_LANGUAGE'),
       });
     }
   }
@@ -7560,7 +7577,7 @@ function checkQA(
         results.push({
           element: $el,
           type: Constants.Global.ERROR,
-          content: Lang._('TABLES_MISSING_HEADINGS'),
+          content: Lang.sprintf('TABLES_MISSING_HEADINGS'),
           inline: false,
           position: 'beforebegin',
         });
@@ -7570,7 +7587,7 @@ function checkQA(
           results.push({
             element: $a,
             type: Constants.Global.ERROR,
-            content: Lang._('TABLES_SEMANTIC_HEADING'),
+            content: Lang.sprintf('TABLES_SEMANTIC_HEADING'),
             inline: false,
             position: 'beforebegin',
           });
@@ -7581,7 +7598,7 @@ function checkQA(
           results.push({
             element: $b,
             type: Constants.Global.ERROR,
-            content: Lang._('TABLES_EMPTY_HEADING'),
+            content: Lang.sprintf('TABLES_EMPTY_HEADING'),
             inline: false,
             position: 'afterbegin',
           });
@@ -7779,7 +7796,7 @@ function checkQA(
         results.push({
           element: $el,
           type: Constants.Global.WARNING,
-          content: Lang._('QA_UPPERCASE_WARNING'),
+          content: Lang.sprintf('QA_UPPERCASE_WARNING'),
           inline: false,
           position: 'beforebegin',
           dismiss: key,
@@ -7827,7 +7844,7 @@ function checkQA(
       results.push({
         element: $el,
         type: Constants.Global.WARNING,
-        content: Lang._('QA_TEXT_UNDERLINE_WARNING'),
+        content: Lang.sprintf('QA_TEXT_UNDERLINE_WARNING'),
         inline: true,
         position: 'beforebegin',
         dismiss: key,
@@ -7843,7 +7860,7 @@ function checkQA(
         results.push({
           element: $el,
           type: Constants.Global.WARNING,
-          content: Lang._('QA_TEXT_UNDERLINE_WARNING'),
+          content: Lang.sprintf('QA_TEXT_UNDERLINE_WARNING'),
           inline: false,
           position: 'beforebegin',
           dismiss: key,
@@ -7865,7 +7882,7 @@ function checkQA(
     if (!$title || $title.textContent.trim().length === 0) {
       results.push({
         type: Constants.Global.ERROR,
-        content: Lang._('QA_PAGE_TITLE'),
+        content: Lang.sprintf('QA_PAGE_TITLE'),
       });
     }
   }
@@ -7881,7 +7898,7 @@ function checkQA(
         results.push({
           element: $el,
           type: Constants.Global.WARNING,
-          content: Lang._('QA_SUBSCRIPT_WARNING'),
+          content: Lang.sprintf('QA_SUBSCRIPT_WARNING'),
           inline: true,
           position: 'beforebegin',
           dismiss: key,
@@ -7937,7 +7954,7 @@ function checkCustom(results) {
 
 /**
  * Sa11y, the accessibility quality assurance assistant.
- * @version: 3.0.1
+ * @version: 3.0.2
  * @author: Development led by Adam Chaboryk, CPWA. <adam.chaboryk@torontomu.ca>
  * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
  * @acknowledgements https://sa11y.netlify.app/acknowledgements/
@@ -7982,6 +7999,7 @@ class Sa11y {
           this.option.checkAllHideToggles,
           this.option.headless,
           this.option.panelPosition,
+          this.option.documentLinks,
         );
         Constants.initializeReadability(
           this.option.readabilityPlugin,
@@ -8094,6 +8112,7 @@ class Sa11y {
           this.option.badLinksQA,
           this.option.strongItalicsQA,
           this.option.pdfQA,
+          this.option.documentQA,
           this.option.langQA,
           this.option.blockquotesQA,
           this.option.tablesQA,
@@ -8200,6 +8219,8 @@ class Sa11y {
       } catch (error) {
         const consoleErrors = new ConsoleErrors(error);
         document.body.appendChild(consoleErrors);
+        // eslint-disable-next-line no-console
+        console.error(error);
       }
     };
 

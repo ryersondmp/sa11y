@@ -38,6 +38,7 @@ const defaultOptions = {
   badLinksQA: true,
   strongItalicsQA: true,
   pdfQA: true,
+  documentQA: true,
   langQA: true,
   blockquotesQA: true,
   tablesQA: true,
@@ -48,6 +49,7 @@ const defaultOptions = {
   underlinedTextQA: true,
   pageTitleQA: true,
   subscriptQA: true,
+  documentLinks: '.ppt, .doc, .xls, .csv, sway.com, docs.google.com',
 
   // Embedded content rulesets
   embeddedContentAll: true,

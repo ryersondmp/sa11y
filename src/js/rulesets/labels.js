@@ -30,7 +30,7 @@ export default function checkLabels(results) {
                 results.push({
                   element: $el,
                   type: Constants.Global.ERROR,
-                  content: Lang._('LABELS_MISSING_IMAGE_INPUT_MESSAGE'),
+                  content: Lang.sprintf('LABELS_MISSING_IMAGE_INPUT_MESSAGE'),
                   inline: false,
                   position: 'beforebegin',
                 });
@@ -42,7 +42,7 @@ export default function checkLabels(results) {
             results.push({
               element: $el,
               type: Constants.Global.WARNING,
-              content: Lang._('LABELS_INPUT_RESET_MESSAGE'),
+              content: Lang.sprintf('LABELS_INPUT_RESET_MESSAGE'),
               inline: false,
               position: 'beforebegin',
               dismiss: key,
@@ -101,7 +101,7 @@ export default function checkLabels(results) {
             results.push({
               element: $el,
               type: Constants.Global.ERROR,
-              content: Lang._('LABELS_MISSING_LABEL_MESSAGE'),
+              content: Lang.sprintf('LABELS_MISSING_LABEL_MESSAGE'),
               inline: false,
               position: 'beforebegin',
             });

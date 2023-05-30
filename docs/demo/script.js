@@ -9,7 +9,7 @@ import SallyLangSv from '../assets/js/lang/sv.js';
 import SallyLangDe from '../assets/js/lang/de.js';
 
 // Sa11y's version.
-const v = "3.0.1";
+const v = "3.0.2";
 const webV = document.getElementById("v");
 webV.innerHTML = v;
 
@@ -52,7 +52,6 @@ const sa11y = new Sa11y({
   headless: false,
   dismissAnnotations: true,
   selectorPath: false,
-
   checkAllHideToggles: false,
 
   readabilityPlugin: true,

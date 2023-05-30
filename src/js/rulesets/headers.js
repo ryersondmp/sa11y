@@ -73,7 +73,7 @@ export default function checkHeaders(
         });
       }
     } else if (i === 0 && level !== 1 && level !== 2) {
-      error = Lang._('HEADING_FIRST');
+      error = Lang.sprintf('HEADING_FIRST');
       results.push({
         element: $el,
         type: Constants.Global.ERROR,
@@ -117,7 +117,7 @@ export default function checkHeaders(
   if (Elements.Found.HeadingOne.length === 0) {
     results.push({
       type: Constants.Global.ERROR,
-      content: Lang._('HEADING_MISSING_ONE'),
+      content: Lang.sprintf('HEADING_MISSING_ONE'),
     });
   }
   return { results, headingOutline };

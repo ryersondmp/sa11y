@@ -1,6 +1,6 @@
 /**
  * Sa11y, the accessibility quality assurance assistant.
- * @version: 3.0.1
+ * @version: 3.0.2
  * @author: Development led by Adam Chaboryk, CPWA. <adam.chaboryk@torontomu.ca>
  * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
  * @acknowledgements https://sa11y.netlify.app/acknowledgements/
@@ -82,6 +82,7 @@ class Sa11y {
           this.option.checkAllHideToggles,
           this.option.headless,
           this.option.panelPosition,
+          this.option.documentLinks,
         );
         Constants.initializeReadability(
           this.option.readabilityPlugin,
@@ -194,6 +195,7 @@ class Sa11y {
           this.option.badLinksQA,
           this.option.strongItalicsQA,
           this.option.pdfQA,
+          this.option.documentQA,
           this.option.langQA,
           this.option.blockquotesQA,
           this.option.tablesQA,
@@ -300,6 +302,8 @@ class Sa11y {
       } catch (error) {
         const consoleErrors = new ConsoleErrors(error);
         document.body.appendChild(consoleErrors);
+        // eslint-disable-next-line no-console
+        console.error(error);
       }
     };
 

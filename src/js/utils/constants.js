@@ -15,6 +15,7 @@ const Constants = (function myConstants() {
     checkAllHideToggles,
     headless,
     panelPosition,
+    documentLinks,
   ) {
     Global.ERROR = Lang._('ERROR');
     Global.WARNING = Lang._('WARNING');
@@ -46,6 +47,11 @@ const Constants = (function myConstants() {
 
     // i18n
     Global.langDirection = (Global.html.getAttribute('dir') === 'rtl') ? 'rtl' : 'ltr';
+
+    // Document links (Quality Assurance module)
+    if (documentLinks) {
+      Global.documentLinks = `${documentLinks}`;
+    }
   }
 
   /* *************** */

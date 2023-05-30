@@ -85,12 +85,6 @@ const Elements = (function myElements() {
       Constants.Exclusions.Container,
     );
 
-    Found.Pdf = find(
-      'a[href$=".pdf"]',
-      'root',
-      Constants.Exclusions.Container,
-    );
-
     Found.StrongItalics = find(
       'strong, em',
       'root',
