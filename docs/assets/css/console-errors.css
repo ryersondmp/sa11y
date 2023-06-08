@@ -1,37 +1,38 @@
 :host {
-  background: var(--sa11y-panel-bg);
-  display: block;
   position: fixed;
-  width: 100%;
-  height: fit-content;
-  z-index: 999999;
   bottom: 0;
+  z-index: 999999;
+  display: block;
+  width: 100%;
+  height: -moz-fit-content;
+  height: fit-content;
+  background: var(--sa11y-panel-bg);
   border-top: 5px solid var(--sa11y-panel-bg-splitter);
 }
 
 * {
-  color: var(--sa11y-panel-primary);
   font-family: var(--sa11y-font-face) !important;
   font-size: var(--sa11y-normal-text);
-  -webkit-font-smoothing: auto !important;
   line-height: 22px !important;
+  color: var(--sa11y-panel-primary);
+  -webkit-font-smoothing: auto !important;
 }
 
 #dialog {
   max-width: 900px;
-  margin: 20px auto;
   padding: 20px;
+  margin: 20px auto;
 }
 
 h2 {
-  font-size: var(--sa11y-large-text);
   margin-top: 0;
+  font-size: var(--sa11y-large-text);
 }
 
 a {
   color: var(--sa11y-hyperlink);
-  cursor: pointer;
   text-decoration: underline;
+  cursor: pointer;
 }
 a:hover, a:focus {
   text-decoration: none;
@@ -43,8 +44,8 @@ p {
 
 .error {
   padding: 5px;
-  border: 2px dashed lightcoral;
-  background: var(--sa11y-error);
-  color: var(--sa11y-error-text);
   margin-bottom: 0;
+  color: var(--sa11y-error-text);
+  background: var(--sa11y-error);
+  border: 2px dashed #f08080;
 }

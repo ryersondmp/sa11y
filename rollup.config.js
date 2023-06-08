@@ -10,6 +10,7 @@ import { existsSync } from 'fs';
 import { mkdir, writeFile } from 'fs/promises';
 import { dirname } from 'path';
 import pkg from './package.json';
+import autoprefixer from 'autoprefixer';
 
 /**
  * Reusable function to process SCSS files.
@@ -19,7 +20,7 @@ import pkg from './package.json';
  * @returns {Promise<string>} - Empty string.
  */
 const processSCSS = async (input, output, outputMin) => {
-  const result = await postcss().process(input, { from: undefined });
+  const result = await postcss([autoprefixer]).process(input, { from: undefined });
   const path = `dist/css/${output}`;
   const pathMin = `dist/css/${outputMin}`;
 

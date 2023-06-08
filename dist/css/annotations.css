@@ -11,28 +11,28 @@
 }
 
 button {
+  position: absolute;
+  z-index: 8888;
+  display: block;
+  width: 36px;
+  min-width: 0;
+  height: 36px;
+  padding: 0;
+  font-size: 0;
+  line-height: normal;
+  cursor: pointer;
   border-radius: 50%;
   box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.3098039216);
-  cursor: pointer;
-  display: block;
-  font-size: 0;
-  height: 36px;
-  line-height: normal;
-  min-width: 0;
-  padding: 0;
-  position: absolute;
   transition: all 0.2s ease-in-out;
-  width: 36px;
-  z-index: 8888;
 }
 button:after {
-  content: "";
-  height: 36px;
-  left: -7px;
-  padding: 7px;
   position: absolute;
   top: -7px;
+  left: -7px;
   width: 36px;
+  height: 36px;
+  padding: 7px;
+  content: "";
 }
 
 /* To prevent overlap. */
@@ -99,8 +99,8 @@ button.warning-btn-text:focus {
 /* ************************************* */
 button.sa11y-btn:active,
 button.sa11y-btn:focus {
-  box-shadow: 0 0 0 5px var(--sa11y-focus-color);
   outline: 0;
+  box-shadow: 0 0 0 5px var(--sa11y-focus-color);
 }
 
 /* High Contrast Mode */
