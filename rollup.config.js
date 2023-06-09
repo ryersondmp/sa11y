@@ -9,8 +9,22 @@ import postcss from 'postcss';
 import { existsSync } from 'fs';
 import { mkdir, writeFile } from 'fs/promises';
 import { dirname } from 'path';
-import pkg from './package.json';
 import autoprefixer from 'autoprefixer';
+import pkg from './package.json';
+
+/* Copyright notice */
+const banner = `
+/*!
+  * Sa11y, the accessibility quality assurance assistant.
+  * @version ${pkg.version}
+  * @author ${pkg.author}
+  * @license ${pkg.license}
+  * @copyright © 2020 - ${new Date().getFullYear()} Toronto Metropolitan University (formerly Ryerson University).
+  * @contact ${pkg.email}
+  * GitHub: ${pkg.repository.url} | Website: https://sa11y.netlify.app
+  * For all acknowledgements, please visit: https://sa11y.netlify.app/acknowledgements/
+  * The above copyright notice shall be included in all copies or substantial portions of the Software.
+**/`;
 
 /**
  * Reusable function to process SCSS files.
@@ -90,7 +104,7 @@ export default [
       }),
     ],
   },
-  // Global utilies injected into all shadowDOMs
+  // Global utilities injected into all shadowDOMs
   {
     input: 'src/scss/global-utilities.scss',
     plugins: [
@@ -126,8 +140,8 @@ export default [
       }),
     ],
     output: [
-      { file: 'dist/js/sa11y.esm.js', format: 'esm' },
-      { file: 'dist/js/sa11y.esm.min.js', format: 'esm', plugins: [terser()] },
+      { banner: banner, file: 'dist/js/sa11y.esm.js', format: 'esm' },
+      { banner: banner, file: 'dist/js/sa11y.esm.min.js', format: 'esm', plugins: [terser()] },
     ],
   },
   // UMD standalone files
@@ -142,8 +156,8 @@ export default [
       }),
     ],
     output: [
-      { file: 'dist/js/sa11y.umd.js', format: 'umd', name: 'Sa11y' },
-      { file: 'dist/js/sa11y.umd.min.js', format: 'umd', name: 'Sa11y', plugins: [terser()] },
+      { banner: banner, file: 'dist/js/sa11y.umd.js', format: 'umd', name: 'Sa11y' },
+      { banner: banner, file: 'dist/js/sa11y.umd.min.js', format: 'umd', name: 'Sa11y', plugins: [terser()] },
     ],
   },
 
@@ -156,14 +170,14 @@ export default [
     input: 'src/js/lang/en.js',
     plugins: [nodeResolve()],
     output: [
-      { file: 'dist/js/lang/en.js', format: 'esm' },
+      { banner: banner, file: 'dist/js/lang/en.js', format: 'esm' },
     ],
   },
   {
     input: 'src/js/lang/en.js',
     plugins: [nodeResolve()],
     output: [
-      { file: 'dist/js/lang/en.umd.js', format: 'umd', name: 'Sa11yLangEn' },
+      { banner: banner, file: 'dist/js/lang/en.umd.js', format: 'umd', name: 'Sa11yLangEn' },
     ],
   },
 
@@ -172,14 +186,14 @@ export default [
     input: 'src/js/lang/fr.js',
     plugins: [nodeResolve()],
     output: [
-      { file: 'dist/js/lang/fr.js', format: 'esm' },
+      { banner: banner, file: 'dist/js/lang/fr.js', format: 'esm' },
     ],
   },
   {
     input: 'src/js/lang/fr.js',
     plugins: [nodeResolve()],
     output: [
-      { file: 'dist/js/lang/fr.umd.js', format: 'umd', name: 'Sa11yLangFr' },
+      { banner: banner, file: 'dist/js/lang/fr.umd.js', format: 'umd', name: 'Sa11yLangFr' },
     ],
   },
 
@@ -188,14 +202,14 @@ export default [
     input: 'src/js/lang/pl.js',
     plugins: [nodeResolve()],
     output: [
-      { file: 'dist/js/lang/pl.js', format: 'esm' },
+      { banner: banner, file: 'dist/js/lang/pl.js', format: 'esm' },
     ],
   },
   {
     input: 'src/js/lang/pl.js',
     plugins: [nodeResolve()],
     output: [
-      { file: 'dist/js/lang/pl.umd.js', format: 'umd', name: 'Sa11yLangPl' },
+      { banner: banner, file: 'dist/js/lang/pl.umd.js', format: 'umd', name: 'Sa11yLangPl' },
     ],
   },
 
@@ -204,14 +218,14 @@ export default [
     input: 'src/js/lang/ua.js',
     plugins: [nodeResolve()],
     output: [
-      { file: 'dist/js/lang/ua.js', format: 'esm' },
+      { banner: banner, file: 'dist/js/lang/ua.js', format: 'esm' },
     ],
   },
   {
     input: 'src/js/lang/ua.js',
     plugins: [nodeResolve()],
     output: [
-      { file: 'dist/js/lang/ua.umd.js', format: 'umd', name: 'Sa11yLangUa' },
+      { banner: banner, file: 'dist/js/lang/ua.umd.js', format: 'umd', name: 'Sa11yLangUa' },
     ],
   },
 
@@ -220,14 +234,14 @@ export default [
     input: 'src/js/lang/sv.js',
     plugins: [nodeResolve()],
     output: [
-      { file: 'dist/js/lang/sv.js', format: 'esm' },
+      { banner: banner, file: 'dist/js/lang/sv.js', format: 'esm' },
     ],
   },
   {
     input: 'src/js/lang/sv.js',
     plugins: [nodeResolve()],
     output: [
-      { file: 'dist/js/lang/sv.umd.js', format: 'umd', name: 'Sa11yLangSv' },
+      { banner: banner, file: 'dist/js/lang/sv.umd.js', format: 'umd', name: 'Sa11yLangSv' },
     ],
   },
 
@@ -236,14 +250,14 @@ export default [
     input: 'src/js/lang/de.js',
     plugins: [nodeResolve()],
     output: [
-      { file: 'dist/js/lang/de.js', format: 'esm' },
+      { banner: banner, file: 'dist/js/lang/de.js', format: 'esm' },
     ],
   },
   {
     input: 'src/js/lang/de.js',
     plugins: [nodeResolve()],
     output: [
-      { file: 'dist/js/lang/de.umd.js', format: 'umd', name: 'Sa11yLangDe' },
+      { banner: banner, file: 'dist/js/lang/de.umd.js', format: 'umd', name: 'Sa11yLangDe' },
     ],
   },
 

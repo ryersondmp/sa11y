@@ -1,13 +1,3 @@
-/**
- * Sa11y, the accessibility quality assurance assistant.
- * @version: 3.0.2
- * @author: Development led by Adam Chaboryk, CPWA. <adam.chaboryk@torontomu.ca>
- * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
- * @acknowledgements https://sa11y.netlify.app/acknowledgements/
- * @copyright (c) 2020 - 2022 Toronto Metropolitan University (formerly Ryerson University).
- * The above copyright notice shall be included in all copies or substantial portions of the Software.
-*/
-
 // Options, language object, constants, and utilities.
 import defaultOptions from './utils/default-options';
 import Lang from './utils/lang';

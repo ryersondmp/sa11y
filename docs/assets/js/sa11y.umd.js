@@ -1,3 +1,15 @@
+
+/*!
+  * Sa11y, the accessibility quality assurance assistant.
+  * @version 3.0.3
+  * @author Adam Chaboryk, Toronto Metropolitan University
+  * @license GPL-2.0-or-later
+  * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
+  * @contact adam.chaboryk@torontomu.ca
+  * GitHub: git+https://github.com/ryersondmp/sa11y.git | Website: https://sa11y.netlify.app
+  * For all acknowledgements, please visit: https://sa11y.netlify.app/acknowledgements/
+  * The above copyright notice shall be included in all copies or substantial portions of the Software.
+**/
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -7958,15 +7970,7 @@
     });
   }
 
-  /**
-   * Sa11y, the accessibility quality assurance assistant.
-   * @version: 3.0.2
-   * @author: Development led by Adam Chaboryk, CPWA. <adam.chaboryk@torontomu.ca>
-   * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
-   * @acknowledgements https://sa11y.netlify.app/acknowledgements/
-   * @copyright (c) 2020 - 2022 Toronto Metropolitan University (formerly Ryerson University).
-   * The above copyright notice shall be included in all copies or substantial portions of the Software.
-  */
+  // Options, language object, constants, and utilities.
 
   class Sa11y {
     constructor(options) {

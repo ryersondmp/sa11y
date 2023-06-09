@@ -8,11 +8,6 @@ import Sa11yLangUa from '../assets/js/lang/ua.js';
 import SallyLangSv from '../assets/js/lang/sv.js';
 import SallyLangDe from '../assets/js/lang/de.js';
 
-// Sa11y's version.
-const v = "3.0.2";
-const webV = document.getElementById("v");
-webV.innerHTML = v;
-
 // Custom checks for English demo pages only.
 let readabilityISO = false;
 
