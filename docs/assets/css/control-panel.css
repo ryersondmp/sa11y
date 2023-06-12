@@ -357,8 +357,9 @@ hr {
   color: var(--sa11y-panel-primary);
 }
 #panel-content.errors .panel-icon, #panel-content.good .panel-icon, #panel-content.warnings .panel-icon {
-  width: 34px;
-  height: 34px;
+  width: 26px;
+  height: 26px;
+  margin: 0 auto;
 }
 #panel-content.errors .panel-icon {
   margin-top: -2px;
@@ -525,6 +526,17 @@ hr {
 .warning-badge {
   color: var(--sa11y-panel-bg);
   background: var(--sa11y-yellow-text);
+}
+
+/* Error icon */
+.error-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-bottom: -3px;
+  background: var(--sa11y-error-text);
+  -webkit-mask: var(--sa11y-error-svg) center no-repeat;
+          mask: var(--sa11y-error-svg) center no-repeat;
 }
 
 /* Hidden icon */
@@ -765,6 +777,9 @@ label {
 }
 
 #colour-filter-select {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
   position: relative;
   height: 30px;
   font-size: var(--sa11y-normal-text);
@@ -773,12 +788,9 @@ label {
   text-align: end;
   vertical-align: middle;
   cursor: pointer;
-  background: none;
+  background: var(--sa11y-panel-bg);
   border: 2px solid var(--sa11y-setting-switch-bg-off);
   border-radius: 5px;
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
   -webkit-padding-end: 25px;
           padding-inline-end: 25px;
   -webkit-padding-start: 5px;

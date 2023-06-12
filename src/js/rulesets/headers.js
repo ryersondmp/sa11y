@@ -100,16 +100,34 @@ export default function checkHeaders(
     // Create an object for heading outline panel.
     if (error !== null) {
       headingOutline.push({
-        element: $el, headingLevel: level, text: headingText, index: i, type: Constants.Global.ERROR, hidden: hiddenHeading, visibleParent: parent,
+        element: $el,
+        headingLevel: level,
+        text: headingText,
+        index: i,
+        type: Constants.Global.ERROR,
+        hidden: hiddenHeading,
+        visibleParent: parent,
       });
     } else if (warning !== null) {
       const key = Utils.prepareDismissal(`HEADING${level + headingText}`);
       headingOutline.push({
-        element: $el, headingLevel: level, text: headingText, index: i, type: Constants.Global.WARNING, hidden: hiddenHeading, visibleParent: parent, dismiss: key,
+        element: $el,
+        headingLevel: level,
+        text: headingText,
+        index: i,
+        type: Constants.Global.WARNING,
+        hidden: hiddenHeading,
+        visibleParent: parent,
+        dismiss: key,
       });
     } else if (error === null || warning === null) {
       headingOutline.push({
-        element: $el, headingLevel: level, text: headingText, index: i, hidden: hiddenHeading, visibleParent: parent,
+        element: $el,
+        headingLevel: level,
+        text: headingText,
+        index: i,
+        hidden: hiddenHeading,
+        visibleParent: parent,
       });
     }
   });

@@ -3,18 +3,10 @@ import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 
-export default function checkEmbeddedContent(
-  results,
-  embeddedContentAll,
-  embeddedContentAudio,
-  embeddedContentVideo,
-  embeddedContentDataViz,
-  embeddedContentTitles,
-  embeddedContentGeneral,
-) {
-  if (embeddedContentAll === true) {
+export default function checkEmbeddedContent(results, option) {
+  if (option.embeddedContentAll === true) {
     // Warning: Audio content.
-    if (embeddedContentAudio === true) {
+    if (option.embeddedContentAudio === true) {
       Elements.Found.Audio.forEach(($el) => {
         const key = Utils.prepareDismissal(`IFRAME${$el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src')}`);
         results.push({
@@ -29,7 +21,7 @@ export default function checkEmbeddedContent(
     }
 
     // Warning: Video content.
-    if (embeddedContentVideo === true) {
+    if (option.embeddedContentVideo === true) {
       Elements.Found.Videos.forEach(($el) => {
         const track = $el.getElementsByTagName('TRACK');
         if ($el.tagName === 'VIDEO' && track.length) {
@@ -49,7 +41,7 @@ export default function checkEmbeddedContent(
     }
 
     // Warning: Data visualizations.
-    if (embeddedContentDataViz === true) {
+    if (option.embeddedContentDataViz === true) {
       Elements.Found.Visualizations.forEach(($el) => {
         const key = Utils.prepareDismissal(`IFRAME${$el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src')}`);
         results.push({
@@ -64,7 +56,7 @@ export default function checkEmbeddedContent(
     }
 
     // Error: iFrame is missing accessible name.
-    if (embeddedContentTitles === true) {
+    if (option.embeddedContentTitles === true) {
       Elements.Found.Iframes.forEach(($el) => {
         if ($el.tagName === 'VIDEO'
           || $el.tagName === 'AUDIO'
@@ -96,7 +88,7 @@ export default function checkEmbeddedContent(
     }
 
     // Warning: general warning for iFrames
-    if (embeddedContentGeneral === true) {
+    if (option.embeddedContentGeneral === true) {
       Elements.Found.EmbeddedContent.forEach(($el) => {
         if ($el.tagName === 'VIDEO'
           || $el.tagName === 'AUDIO'

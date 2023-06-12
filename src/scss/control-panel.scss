@@ -377,8 +377,9 @@ hr {
   &.errors .panel-icon,
   &.good .panel-icon,
   &.warnings .panel-icon {
-    width: 34px;
-    height: 34px;
+    width: 26px;
+    height: 26px;
+    margin: 0 auto;
   }
 
   &.errors .panel-icon {
@@ -555,6 +556,16 @@ hr {
 .warning-badge {
   color: var(--sa11y-panel-bg);
   background: var(--sa11y-yellow-text);
+}
+
+/* Error icon */
+.error-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-bottom: -3px;
+  background: var(--sa11y-error-text);
+  mask: var(--sa11y-error-svg) center no-repeat;
 }
 
 /* Hidden icon */
@@ -811,6 +822,7 @@ label {
 }
 
 #colour-filter-select {
+  appearance: none;
   position: relative;
   height: 30px;
   font-size: var(--sa11y-normal-text);
@@ -819,10 +831,9 @@ label {
   text-align: end;
   vertical-align: middle;
   cursor: pointer;
-  background: none;
+  background: var(--sa11y-panel-bg);
   border: 2px solid var(--sa11y-setting-switch-bg-off);
   border-radius: 5px;
-  appearance: none;
   padding-inline-end: 25px;
   padding-inline-start: 5px;
 }
