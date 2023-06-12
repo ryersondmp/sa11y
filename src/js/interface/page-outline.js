@@ -50,7 +50,9 @@ export default function generatePageOutline(
         <li class="outline-${level}">
           <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
             <span class="badge error-badge">
-            <span aria-hidden="true">${visibleIcon} &#33;</span>
+            <span aria-hidden="true">${visibleIcon}
+              <span class="error-icon"></span>
+            </span>
             <span class="visually-hidden">${Lang._('ERROR')}</span> ${level}</span>
             <strong class="outline-list-item red-text">${headingText}</strong>
           </a>
