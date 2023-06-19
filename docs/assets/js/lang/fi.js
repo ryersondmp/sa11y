@@ -124,8 +124,6 @@ var fi = {
       '.',
     ],
     WARNING_ALT_STOPWORDS: [
-      '<',
-      ' >',
       'klikkaa tästä',
     ],
     NEW_WINDOW_PHRASES: [

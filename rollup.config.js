@@ -159,9 +159,9 @@ const bookmarkletConfigs = languages.map((lang) => {
 });
 
 export default [
-  ...scssConfigs,
   ...languageConfigs,
   ...bookmarkletConfigs,
+  ...scssConfigs,
 
   /* ********************* */
   /*      Javascript       */

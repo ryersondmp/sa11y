@@ -113,7 +113,7 @@ export default {
       'witrynę',
       '.',
     ],
-    WARNING_ALT_STOPWORDS: ['< ', ' >', 'kliknij tutaj'],
+    WARNING_ALT_STOPWORDS: ['kliknij tutaj'],
     NEW_WINDOW_PHRASES: [
       'zewnętrzny',
       'nowa karta',
@@ -121,9 +121,7 @@ export default {
       'pop-up',
       'pop up',
     ],
-
-    // Only some items in list would need to be translated.
-    FILE_TYPE_PHRASES: ['document', 'dokument', 'spreadsheet', 'worksheet', 'install', 'video', 'pdf', 'doc', 'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'powerpoint', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'],
+    FILE_TYPE_PHRASES: ['dokument', 'arkusz kalkulacyjny', 'arkusz obliczeniowy', 'plik skompresowany', 'plik zarchiwizowany', 'arkusz roboczy', 'powerpoint', 'prezentacja', 'instalacja', 'wideo', 'audio', 'pdf'],
 
     // Readability
     LANG_READABILITY: 'Czytelność',

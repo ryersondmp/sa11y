@@ -114,7 +114,7 @@ var es = {
       'sitio web',
       '.',
     ],
-    WARNING_ALT_STOPWORDS: ['< ', ' >', 'clic aquí'],
+    WARNING_ALT_STOPWORDS: ['clic aquí'],
     NEW_WINDOW_PHRASES: ['externo', 'nueva página', 'nueva ventana', 'ventana emergente'],
 
     // Only some items in list would need to be translated.

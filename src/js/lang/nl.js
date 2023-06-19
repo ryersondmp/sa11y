@@ -112,8 +112,6 @@ export default {
       '.',
     ],
     WARNING_ALT_STOPWORDS: [
-      '<',
-      ' >',
       'klik hier',
     ],
     NEW_WINDOW_PHRASES: [

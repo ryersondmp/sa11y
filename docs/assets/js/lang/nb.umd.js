@@ -130,8 +130,6 @@
         '.',
       ],
       WARNING_ALT_STOPWORDS: [
-        '<',
-        ' >',
         'klikk her',
       ],
       NEW_WINDOW_PHRASES: [

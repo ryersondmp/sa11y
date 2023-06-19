@@ -102,12 +102,9 @@ export default {
       'sitio web',
       '.',
     ],
-    WARNING_ALT_STOPWORDS: ['< ', ' >', 'clic aquí'],
+    WARNING_ALT_STOPWORDS: ['clic aquí'],
     NEW_WINDOW_PHRASES: ['externo', 'nueva página', 'nueva ventana', 'ventana emergente'],
-
-    // Only some items in list would need to be translated.
-    FILE_TYPE_PHRASES: ['documento', 'hoja de cálculo', 'instalar', 'video', 'pdf', 'doc',
-      'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'powerpoint', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'],
+    FILE_TYPE_PHRASES: ['documento', 'hoja de cálculo', 'hoja de cálculo', 'archivo comprimido', 'archivo archivado', 'hoja de trabajo', 'powerpoint', 'presentación', 'instalar', 'video', 'audio', 'pdf'],
 
     // Readability
     LANG_READABILITY: 'Legibilidad',

@@ -130,8 +130,6 @@
         '.',
       ],
       WARNING_ALT_STOPWORDS: [
-        '<',
-        ' >',
         'kliki siia',
       ],
       NEW_WINDOW_PHRASES: [

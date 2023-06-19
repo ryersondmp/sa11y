@@ -130,8 +130,6 @@
         '.',
       ],
       WARNING_ALT_STOPWORDS: [
-        '<',
-        ' >',
         'κάντε κλικ εδώ',
       ],
       NEW_WINDOW_PHRASES: [

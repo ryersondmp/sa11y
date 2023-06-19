@@ -69,9 +69,10 @@ export default function checkLinksAdvanced(results) {
           return linkText.toLowerCase().indexOf(pass) >= 0;
         });
 
-        // Link that points to a file type indicates that it does.
-        const containsFileTypePhrases = Lang._('FILE_TYPE_PHRASES').some((pass) => linkText.toLowerCase().indexOf(pass) >= 0);
-
+        // Link that points to a file type and indicates as such.
+        const defaultFileTypes = ['pdf', 'doc', 'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'];
+        const fileTypes = defaultFileTypes.concat(Lang._('FILE_TYPE_PHRASES'));
+        const containsFileTypePhrases = fileTypes.some((pass) => linkText.toLowerCase().indexOf(pass) >= 0);
         const fileTypeMatch = $el.matches(`
               a[href$='.pdf'],
               a[href$='.doc'],

@@ -124,8 +124,6 @@ var nl = {
       '.',
     ],
     WARNING_ALT_STOPWORDS: [
-      '<',
-      ' >',
       'klik hier',
     ],
     NEW_WINDOW_PHRASES: [

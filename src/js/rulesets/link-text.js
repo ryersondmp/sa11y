@@ -51,7 +51,9 @@ export default function checkLinkText(results, showGoodLinkButton) {
     });
 
     // Other warnings we want to add.
-    Lang._('WARNING_ALT_STOPWORDS').forEach((word) => {
+    const stopCharacters = ['< ', ' >', '← ', ' →', '« ', ' »', '‹ ', ' ›'];
+    const suspiciousStopwords = stopCharacters.concat(Lang._('WARNING_ALT_STOPWORDS'));
+    suspiciousStopwords.forEach((word) => {
       if (textContent.toLowerCase().indexOf(word) >= 0) {
         hit[1] = word;
       }

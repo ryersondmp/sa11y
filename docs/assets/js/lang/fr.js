@@ -110,7 +110,7 @@ var fr = {
       'site web',
       '.',
     ],
-    WARNING_ALT_STOPWORDS: ['< ', ' >', 'cliquer ici'],
+    WARNING_ALT_STOPWORDS: ['cliquer ici'],
     NEW_WINDOW_PHRASES: ['externe', 'nouvel onglet', 'nouvelle fenêtre', 'fenêtre pop-up', 'pop-up'],
 
     // Only some items in list would need to be translated.

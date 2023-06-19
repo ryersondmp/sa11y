@@ -124,8 +124,6 @@ var ja = {
       '.',
     ],
     WARNING_ALT_STOPWORDS: [
-      '<',
-      ' >',
       'ここをクリック',
     ],
     NEW_WINDOW_PHRASES: [

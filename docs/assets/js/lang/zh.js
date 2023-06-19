@@ -124,8 +124,6 @@ var zh = {
       '.',
     ],
     WARNING_ALT_STOPWORDS: [
-      '<',
-      ' >',
       '点击这里',
     ],
     NEW_WINDOW_PHRASES: [

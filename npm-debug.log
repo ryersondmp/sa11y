@@ -1,0 +1,51 @@
+0 info it worked if it ends with ok
+1 verbose cli [
+1 verbose cli   '/opt/homebrew/Cellar/node/19.4.0_1/bin/node',
+1 verbose cli   '/Users/adam.chaboryk/node_modules/.bin/npm',
+1 verbose cli   'run',
+1 verbose cli   'build'
+1 verbose cli ]
+2 info using npm@3.10.10
+3 info using node@v19.4.0
+4 verbose run-script [ 'prebuild', 'build', 'postbuild' ]
+5 info lifecycle sa11y@3.0.3~prebuild: sa11y@3.0.3
+6 silly lifecycle sa11y@3.0.3~prebuild: no script for prebuild, continuing
+7 info lifecycle sa11y@3.0.3~build: sa11y@3.0.3
+8 verbose lifecycle sa11y@3.0.3~build: unsafe-perm in lifecycle true
+9 verbose lifecycle sa11y@3.0.3~build: PATH: /Users/adam.chaboryk/node_modules/npm/bin/node-gyp-bin:/Users/adam.chaboryk/Documents/GitHub/sa11y/node_modules/.bin:/opt/homebrew/Cellar/node/19.4.0_1/bin:/Users/adam.chaboryk/Documents/GitHub/sa11y/node_modules/.bin:/Users/adam.chaboryk/Documents/GitHub/node_modules/.bin:/Users/adam.chaboryk/Documents/node_modules/.bin:/Users/adam.chaboryk/node_modules/.bin:/Users/node_modules/.bin:/node_modules/.bin:/opt/homebrew/lib/node_modules/npm/node_modules/@npmcli/run-script/lib/node-gyp-bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/VMware Fusion.app/Contents/Public:/Library/Apple/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/opt/homebrew/bin:/opt/homebrew/sbin
+10 verbose lifecycle sa11y@3.0.3~build: CWD: /Users/adam.chaboryk/Documents/GitHub/sa11y
+11 silly lifecycle sa11y@3.0.3~build: Args: [
+11 silly lifecycle   '-c',
+11 silly lifecycle   'rimraf dist && node ./node_modules/rollup/dist/bin/rollup -c rollup.config.js'
+11 silly lifecycle ]
+12 silly lifecycle sa11y@3.0.3~build: Returned: code: 1  signal: null
+13 info lifecycle sa11y@3.0.3~build: Failed to exec build script
+14 verbose stack Error: sa11y@3.0.3 build: `rimraf dist && node ./node_modules/rollup/dist/bin/rollup -c rollup.config.js`
+14 verbose stack Exit status 1
+14 verbose stack     at EventEmitter.<anonymous> (/Users/adam.chaboryk/node_modules/npm/lib/utils/lifecycle.js:255:16)
+14 verbose stack     at EventEmitter.emit (node:events:513:28)
+14 verbose stack     at ChildProcess.<anonymous> (/Users/adam.chaboryk/node_modules/npm/lib/utils/spawn.js:40:14)
+14 verbose stack     at ChildProcess.emit (node:events:513:28)
+14 verbose stack     at maybeClose (node:internal/child_process:1098:16)
+14 verbose stack     at ChildProcess._handle.onexit (node:internal/child_process:304:5)
+15 verbose pkgid sa11y@3.0.3
+16 verbose cwd /Users/adam.chaboryk/Documents/GitHub/sa11y
+17 error Darwin 22.5.0
+18 error argv "/opt/homebrew/Cellar/node/19.4.0_1/bin/node" "/Users/adam.chaboryk/node_modules/.bin/npm" "run" "build"
+19 error node v19.4.0
+20 error npm  v3.10.10
+21 error code ELIFECYCLE
+22 error sa11y@3.0.3 build: `rimraf dist && node ./node_modules/rollup/dist/bin/rollup -c rollup.config.js`
+22 error Exit status 1
+23 error Failed at the sa11y@3.0.3 build script 'rimraf dist && node ./node_modules/rollup/dist/bin/rollup -c rollup.config.js'.
+23 error Make sure you have the latest version of node.js and npm installed.
+23 error If you do, this is most likely a problem with the sa11y package,
+23 error not with npm itself.
+23 error Tell the author that this fails on your system:
+23 error     rimraf dist && node ./node_modules/rollup/dist/bin/rollup -c rollup.config.js
+23 error You can get information on how to open an issue for this project with:
+23 error     npm bugs sa11y
+23 error Or if that isn't available, you can get their info via:
+23 error     npm owner ls sa11y
+23 error There is likely additional logging output above.
+24 verbose exit [ 1, true ]

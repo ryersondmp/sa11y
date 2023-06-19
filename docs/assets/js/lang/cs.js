@@ -124,8 +124,6 @@ var cs = {
       '.',
     ],
     WARNING_ALT_STOPWORDS: [
-      '<',
-      ' >',
       'klikněte zde',
     ],
     NEW_WINDOW_PHRASES: [

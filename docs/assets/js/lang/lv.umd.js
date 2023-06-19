@@ -130,8 +130,6 @@
         '.',
       ],
       WARNING_ALT_STOPWORDS: [
-        '<',
-        ' >',
         'klikšķiniet šeit',
       ],
       NEW_WINDOW_PHRASES: [

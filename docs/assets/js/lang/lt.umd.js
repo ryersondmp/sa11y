@@ -130,9 +130,7 @@
         '.',
       ],
       WARNING_ALT_STOPWORDS: [
-        '<',
-        ' >',
-        'Spauskite čia',
+        'spauskite čia',
       ],
       NEW_WINDOW_PHRASES: [
         'išorinis',

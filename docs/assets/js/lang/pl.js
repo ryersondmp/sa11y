@@ -125,7 +125,7 @@ var pl = {
       'witrynę',
       '.',
     ],
-    WARNING_ALT_STOPWORDS: ['< ', ' >', 'kliknij tutaj'],
+    WARNING_ALT_STOPWORDS: ['kliknij tutaj'],
     NEW_WINDOW_PHRASES: [
       'zewnętrzny',
       'nowa karta',

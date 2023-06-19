@@ -115,12 +115,9 @@
         'вебсайт',
         '.',
       ],
-      WARNING_ALT_STOPWORDS: ['< ', ' >', 'натиснути тут'],
+      WARNING_ALT_STOPWORDS: ['натиснути тут'],
       NEW_WINDOW_PHRASES: ['зовнішнє', 'нова вкладка', 'нове вікно', 'спливаюче вікно', 'спливаючий елемент'],
-
-      // Only some items in list would need to be translated.
-      FILE_TYPE_PHRASES: ['документ', 'електронна таблиця', 'робочий аркуш', 'встановити', 'відео', 'pdf', 'пдФ', 'doc',
-        'docx', 'word', 'mp3', 'ppt', 'текст', 'pptx', 'powerpoint', 'txt', 'exe', 'dmg', 'rtf', 'Віндовс', 'Мак', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'],
+      FILE_TYPE_PHRASES: ['документ', 'електронна таблиця', 'розрахункова таблиця', 'стиснутий файл', 'заархівований файл', 'робочий аркуш', 'powerpoint', 'презентація', 'встановити', 'відео', 'аудіо', 'pdf', 'пдф'],
 
       // Readability
       LANG_READABILITY: 'Читабельність',

@@ -110,11 +110,9 @@ var fr = {
       'site web',
       '.',
     ],
-    WARNING_ALT_STOPWORDS: ['< ', ' >', 'cliquer ici'],
+    WARNING_ALT_STOPWORDS: ['cliquer ici'],
     NEW_WINDOW_PHRASES: ['externe', 'nouvel onglet', 'nouvelle fenêtre', 'fenêtre pop-up', 'pop-up'],
-
-    // Only some items in list would need to be translated.
-    FILE_TYPE_PHRASES: ['document', 'feuille de calcul', 'feuille de travail', 'installation', 'vidéo', 'pdf', 'doc', 'docx', 'word', 'mp3', 'ppt', 'texte', 'pptx', 'PowerPoint', 'txt', 'exe', 'dmg', 'rtf', 'Windows OS', 'Mac OS', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'],
+    FILE_TYPE_PHRASES: ['document', 'tableur', 'feuille de calcul', 'feuille de travail', 'fichier compressé', 'fichier archivé', 'feuille de calcul', 'powerpoint', 'présentation', 'installer', 'vidéo', 'audio', 'pdf'],
 
     // Readability
     LANG_READABILITY: 'Lisibilité',

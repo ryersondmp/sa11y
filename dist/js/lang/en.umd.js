@@ -120,12 +120,9 @@
         'website',
         '.',
       ],
-      WARNING_ALT_STOPWORDS: ['< ', ' >', 'click here'],
+      WARNING_ALT_STOPWORDS: ['click here'],
       NEW_WINDOW_PHRASES: ['external', 'new tab', 'new window', 'pop-up', 'pop up'],
-
-      // Only some items in list would need to be translated.
-      FILE_TYPE_PHRASES: ['document', 'spreadsheet', 'worksheet', 'install', 'video', 'pdf', 'doc',
-        'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'powerpoint', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'],
+      FILE_TYPE_PHRASES: ['document', 'spreadsheet', 'calculation sheet', 'compressed file', 'archived file', 'worksheet', 'powerpoint', 'presentation', 'install', 'video', 'audio', 'pdf'],
 
       // Readability
       LANG_READABILITY: 'Readability',

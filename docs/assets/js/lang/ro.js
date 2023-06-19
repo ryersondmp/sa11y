@@ -124,8 +124,6 @@ var ro = {
       '.',
     ],
     WARNING_ALT_STOPWORDS: [
-      '<',
-      ' >',
       'click aici',
     ],
     NEW_WINDOW_PHRASES: [

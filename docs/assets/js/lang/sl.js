@@ -124,8 +124,6 @@ var sl = {
       '.',
     ],
     WARNING_ALT_STOPWORDS: [
-      '<',
-      ' >',
       'kliknite tukaj',
     ],
     NEW_WINDOW_PHRASES: [

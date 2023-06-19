@@ -145,12 +145,9 @@ var de = {
       'website',
       '.',
     ],
-    WARNING_ALT_STOPWORDS: ['< ', ' >', 'click here', 'hier klicken'],
+    WARNING_ALT_STOPWORDS: ['click here', 'hier klicken'],
     NEW_WINDOW_PHRASES: ['external', 'extern', 'new tab', 'neuer tab', 'new window', 'neues fenster', 'pop-up', 'pop up'],
-
-    // Only some items in list would need to be translated.
-    FILE_TYPE_PHRASES: ['document', 'dokument', 'spreadsheet', 'tabelle', 'worksheet', 'arbeitsblatt', 'install', 'installation', 'video', 'pdf', 'doc',
-      'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'powerpoint', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'],
+    FILE_TYPE_PHRASES: ['dokument', 'document', 'spreadsheet', 'tabelle', 'worksheet', 'arbeitsblatt', 'tabellenkalkulation', 'berechnungstabelle', 'komprimierte datei', 'archivierte Datei', 'arbeitsblatt', 'powerpoint', 'präsentation', 'installieren', 'video', 'audio', 'pdf'],
 
     // Readability
     LANG_READABILITY: 'Lesbarkeit',

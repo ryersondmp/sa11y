@@ -130,8 +130,6 @@
         '.',
       ],
       WARNING_ALT_STOPWORDS: [
-        '<',
-        ' >',
         'klik di sini',
       ],
       NEW_WINDOW_PHRASES: [

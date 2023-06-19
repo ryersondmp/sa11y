@@ -124,8 +124,6 @@ var da = {
       '.',
     ],
     WARNING_ALT_STOPWORDS: [
-      '<',
-      ' >',
       'klik her',
     ],
     NEW_WINDOW_PHRASES: [

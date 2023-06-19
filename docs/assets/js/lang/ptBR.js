@@ -124,8 +124,6 @@ var ptBR = {
       '.',
     ],
     WARNING_ALT_STOPWORDS: [
-      '<',
-      ' >',
       'clique aqui',
     ],
     NEW_WINDOW_PHRASES: [

@@ -124,8 +124,6 @@ var it = {
       '.',
     ],
     WARNING_ALT_STOPWORDS: [
-      '<',
-      ' >',
       'clicca qui',
     ],
     NEW_WINDOW_PHRASES: [

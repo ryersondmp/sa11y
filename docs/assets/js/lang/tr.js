@@ -124,8 +124,6 @@ var tr = {
       '.',
     ],
     WARNING_ALT_STOPWORDS: [
-      '<',
-      ' >',
       'buraya tıklayın',
     ],
     NEW_WINDOW_PHRASES: [

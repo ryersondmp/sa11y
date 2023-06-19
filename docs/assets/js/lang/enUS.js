@@ -114,7 +114,7 @@ var enUS = {
       'website',
       '.',
     ],
-    WARNING_ALT_STOPWORDS: ['< ', ' >', 'click here'],
+    WARNING_ALT_STOPWORDS: ['click here'],
     NEW_WINDOW_PHRASES: ['external', 'new tab', 'new window', 'pop-up', 'pop up'],
 
     // Only some items in list would need to be translated.

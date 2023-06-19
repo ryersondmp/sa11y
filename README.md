@@ -30,7 +30,7 @@
 - Offered in various [languages.](https://github.com/ryersondmp/sa11y/tree/master/src/js/lang)
 
 ## Contributing
-Want to help translate or improve Sa11y? Consider [contributing!](https://github.com/ryersondmp/sa11y/blob/master/CONTRIBUTING.md) Translations may either be contributed back to the repository with a pull request, or translated files can be returned to: [adam.chaboryk@torontomu.ca](mailto:adam.chaboryk@torontomu.ca)
+Want to help translate or improve Sa11y? Consider [contributing!](https://github.com/ryersondmp/sa11y/blob/master/CONTRIBUTING.md) Translations may either be contributed back to the repository with a pull request, or translated files can be returned to: [adam.chaboryk@torontomu.ca](mailto:adam.chaboryk@torontomu.ca). When submitting a pull request, please ensure you create your translated file within the `/src/js/lang/` directory.
 
 ## Contact
 Have a question or any feedback? Email: [adam.chaboryk@torontomu.ca](mailto:adam.chaboryk@torontomu.ca)
