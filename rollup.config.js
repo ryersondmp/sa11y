@@ -51,79 +51,117 @@ const processSCSS = async (input, output, outputMin) => {
   return '';
 };
 
+/* ********************* */
+/*    Language files     */
+/* ********************* */
+const languages = [
+  'cs',
+  'da',
+  'de',
+  'el',
+  'en',
+  'enUS',
+  'es',
+  'et',
+  'fi',
+  'fr',
+  'id',
+  'it',
+  'ja',
+  'lt',
+  'lv',
+  'nb',
+  'nl',
+  'pl',
+  'ptBR',
+  'ptPT',
+  'ro',
+  'sl',
+  'sv',
+  'tr',
+  'ua',
+  'zh',
+];
+const languageConfigs = languages.flatMap((lang) => [
+  {
+    input: `src/js/lang/${lang}.js`,
+    plugins: [nodeResolve()],
+    output: [
+      {
+        banner,
+        file: `dist/js/lang/${lang}.js`,
+        format: 'esm',
+      },
+    ],
+  },
+  {
+    input: `src/js/lang/${lang}.js`,
+    plugins: [nodeResolve()],
+    output: [
+      {
+        banner,
+        file: `dist/js/lang/${lang}.umd.js`,
+        format: 'umd',
+        name: `Sa11yLang${lang.charAt(0).toUpperCase() + lang.slice(1)}`,
+      },
+    ],
+  },
+]);
+
+/* ********************* */
+/*      SCSS files       */
+/* ********************* */
+const scssFiles = [
+  'sa11y',
+  'control-panel',
+  'shared',
+  'annotations',
+  'tooltips',
+  'global-utilities',
+  'console-errors',
+];
+const scssConfigs = scssFiles.map((file) => ({
+  input: `src/scss/${file}.scss`,
+  plugins: [
+    sass({
+      output: false,
+      processor: (css) => processSCSS(css, `${file}.css`, `${file}.min.css`),
+    }),
+  ],
+}));
+
+/* ********************* */
+/*      Bookmarklets     */
+/* ********************* */
+const bookmarkletConfigs = languages.map((lang) => {
+  // outputFileName is needed because majority of people have sa11y-en.js saved as the bookmarklet.
+  const outputFileName = (lang === 'en') ? 'sa11y-en.js' : `${lang}.js`;
+  return {
+    input: `src/bookmarklet/${lang}.js`,
+    plugins: [
+      nodeResolve(),
+      css(),
+      replace({
+        preventAssignment: true,
+        'process.env.NODE_ENV': JSON.stringify('production'),
+        Sa11yVersion: JSON.stringify(pkg.version),
+      }),
+    ],
+    output: [
+      {
+        file: `bookmarklet/${outputFileName}`,
+        format: 'umd',
+        name: `Sa11yLang${lang.charAt(0).toUpperCase() + lang.slice(1)}`,
+        plugins: [terser()],
+      },
+    ],
+  };
+});
+
 export default [
-  /* ********************* */
-  /*      SCSS files       */
-  /* ********************* */
-  {
-    input: 'src/scss/sa11y.scss',
-    plugins: [
-      sass({
-        output: false,
-        processor: (css) => processSCSS(css, 'sa11y.css', 'sa11y.min.css'),
-      }),
-    ],
-  },
-  // Control panel
-  {
-    input: 'src/scss/control-panel.scss',
-    plugins: [
-      sass({
-        output: false,
-        processor: (css) => processSCSS(css, 'control-panel.css', 'control-panel.min.css'),
-      }),
-    ],
-  },
-  // Shared
-  {
-    input: 'src/scss/shared.scss',
-    plugins: [
-      sass({
-        output: false,
-        processor: (css) => processSCSS(css, 'shared.css', 'shared.min.css'),
-      }),
-    ],
-  },
-  // Annotations
-  {
-    input: 'src/scss/annotations.scss',
-    plugins: [
-      sass({
-        output: false,
-        processor: (css) => processSCSS(css, 'annotations.css', 'annotations.min.css'),
-      }),
-    ],
-  },
-  // Tooltips
-  {
-    input: 'src/scss/tooltips.scss',
-    plugins: [
-      sass({
-        output: false,
-        processor: (css) => processSCSS(css, 'tooltips.css', 'tooltips.min.css'),
-      }),
-    ],
-  },
-  // Global utilities injected into all shadowDOMs
-  {
-    input: 'src/scss/global-utilities.scss',
-    plugins: [
-      sass({
-        output: false,
-        processor: (css) => processSCSS(css, 'global-utilities.css', 'global-utilities.min.css'),
-      }),
-    ],
-  },
-  // Console log errors
-  {
-    input: 'src/scss/console-errors.scss',
-    plugins: [
-      sass({
-        output: false,
-        processor: (css) => processSCSS(css, 'console-errors.css', 'console-errors.min.css'),
-      }),
-    ],
-  },
+  ...scssConfigs,
+  ...languageConfigs,
+  ...bookmarkletConfigs,
 
   /* ********************* */
   /*      Javascript       */
@@ -140,8 +178,8 @@ export default [
       }),
     ],
     output: [
-      { banner: banner, file: 'dist/js/sa11y.esm.js', format: 'esm' },
-      { banner: banner, file: 'dist/js/sa11y.esm.min.js', format: 'esm', plugins: [terser()] },
+      { banner, file: 'dist/js/sa11y.esm.js', format: 'esm' },
+      { banner, file: 'dist/js/sa11y.esm.min.js', format: 'esm', plugins: [terser()] },
     ],
   },
   // UMD standalone files
@@ -156,202 +194,8 @@ export default [
       }),
     ],
     output: [
-      { banner: banner, file: 'dist/js/sa11y.umd.js', format: 'umd', name: 'Sa11y' },
-      { banner: banner, file: 'dist/js/sa11y.umd.min.js', format: 'umd', name: 'Sa11y', plugins: [terser()] },
-    ],
-  },
-
-  /* ********************* */
-  /*    Language files     */
-  /* ********************* */
-
-  // English
-  {
-    input: 'src/js/lang/en.js',
-    plugins: [nodeResolve()],
-    output: [
-      { banner: banner, file: 'dist/js/lang/en.js', format: 'esm' },
-    ],
-  },
-  {
-    input: 'src/js/lang/en.js',
-    plugins: [nodeResolve()],
-    output: [
-      { banner: banner, file: 'dist/js/lang/en.umd.js', format: 'umd', name: 'Sa11yLangEn' },
-    ],
-  },
-
-  // French
-  {
-    input: 'src/js/lang/fr.js',
-    plugins: [nodeResolve()],
-    output: [
-      { banner: banner, file: 'dist/js/lang/fr.js', format: 'esm' },
-    ],
-  },
-  {
-    input: 'src/js/lang/fr.js',
-    plugins: [nodeResolve()],
-    output: [
-      { banner: banner, file: 'dist/js/lang/fr.umd.js', format: 'umd', name: 'Sa11yLangFr' },
-    ],
-  },
-
-  // Polish
-  {
-    input: 'src/js/lang/pl.js',
-    plugins: [nodeResolve()],
-    output: [
-      { banner: banner, file: 'dist/js/lang/pl.js', format: 'esm' },
-    ],
-  },
-  {
-    input: 'src/js/lang/pl.js',
-    plugins: [nodeResolve()],
-    output: [
-      { banner: banner, file: 'dist/js/lang/pl.umd.js', format: 'umd', name: 'Sa11yLangPl' },
-    ],
-  },
-
-  // Ukrainian
-  {
-    input: 'src/js/lang/ua.js',
-    plugins: [nodeResolve()],
-    output: [
-      { banner: banner, file: 'dist/js/lang/ua.js', format: 'esm' },
-    ],
-  },
-  {
-    input: 'src/js/lang/ua.js',
-    plugins: [nodeResolve()],
-    output: [
-      { banner: banner, file: 'dist/js/lang/ua.umd.js', format: 'umd', name: 'Sa11yLangUa' },
-    ],
-  },
-
-  // Swedish
-  {
-    input: 'src/js/lang/sv.js',
-    plugins: [nodeResolve()],
-    output: [
-      { banner: banner, file: 'dist/js/lang/sv.js', format: 'esm' },
-    ],
-  },
-  {
-    input: 'src/js/lang/sv.js',
-    plugins: [nodeResolve()],
-    output: [
-      { banner: banner, file: 'dist/js/lang/sv.umd.js', format: 'umd', name: 'Sa11yLangSv' },
-    ],
-  },
-
-  // German
-  {
-    input: 'src/js/lang/de.js',
-    plugins: [nodeResolve()],
-    output: [
-      { banner: banner, file: 'dist/js/lang/de.js', format: 'esm' },
-    ],
-  },
-  {
-    input: 'src/js/lang/de.js',
-    plugins: [nodeResolve()],
-    output: [
-      { banner: banner, file: 'dist/js/lang/de.umd.js', format: 'umd', name: 'Sa11yLangDe' },
-    ],
-  },
-
-  /* ********************* */
-  /*      Bookmarklets     */
-  /* ********************* */
-  {
-    input: 'src/bookmarklet/sa11y-en.js',
-    plugins: [
-      nodeResolve(),
-      css(),
-      replace({
-        preventAssignment: true,
-        'process.env.NODE_ENV': JSON.stringify('production'),
-        Sa11yVersion: JSON.stringify(pkg.version),
-      }),
-    ],
-    output: [
-      { file: 'bookmarklet/sa11y-en.js', format: 'umd', name: 'Sa11y (En)', plugins: [terser()] },
-    ],
-  },
-  {
-    input: 'src/bookmarklet/fr.js',
-    plugins: [
-      nodeResolve(),
-      css(),
-      replace({
-        preventAssignment: true,
-        'process.env.NODE_ENV': JSON.stringify('production'),
-        Sa11yVersion: JSON.stringify(pkg.version),
-      }),
-    ],
-    output: [
-      { file: 'bookmarklet/fr.js', format: 'umd', name: 'Sa11y (Fr)', plugins: [terser()] },
-    ],
-  },
-  {
-    input: 'src/bookmarklet/pl.js',
-    plugins: [
-      nodeResolve(),
-      css(),
-      replace({
-        preventAssignment: true,
-        'process.env.NODE_ENV': JSON.stringify('production'),
-        Sa11yVersion: JSON.stringify(pkg.version),
-      }),
-    ],
-    output: [
-      { file: 'bookmarklet/pl.js', format: 'umd', name: 'Sa11y (Pl)', plugins: [terser()] },
-    ],
-  },
-  {
-    input: 'src/bookmarklet/sv.js',
-    plugins: [
-      nodeResolve(),
-      css(),
-      replace({
-        preventAssignment: true,
-        'process.env.NODE_ENV': JSON.stringify('production'),
-        Sa11yVersion: JSON.stringify(pkg.version),
-      }),
-    ],
-    output: [
-      { file: 'bookmarklet/sv.js', format: 'umd', name: 'Sa11y (Sv)', plugins: [terser()] },
-    ],
-  },
-  {
-    input: 'src/bookmarklet/ua.js',
-    plugins: [
-      nodeResolve(),
-      css(),
-      replace({
-        preventAssignment: true,
-        'process.env.NODE_ENV': JSON.stringify('production'),
-        Sa11yVersion: JSON.stringify(pkg.version),
-      }),
-    ],
-    output: [
-      { file: 'bookmarklet/ua.js', format: 'umd', name: 'Sa11y (Ua)', plugins: [terser()] },
-    ],
-  },
-  {
-    input: 'src/bookmarklet/de.js',
-    plugins: [
-      nodeResolve(),
-      css(),
-      replace({
-        preventAssignment: true,
-        'process.env.NODE_ENV': JSON.stringify('production'),
-        Sa11yVersion: JSON.stringify(pkg.version),
-      }),
-    ],
-    output: [
-      { file: 'bookmarklet/de.js', format: 'umd', name: 'Sa11y (De)', plugins: [terser()] },
+      { banner, file: 'dist/js/sa11y.umd.js', format: 'umd', name: 'Sa11y' },
+      { banner, file: 'dist/js/sa11y.umd.min.js', format: 'umd', name: 'Sa11y', plugins: [terser()] },
     ],
   },
 ];

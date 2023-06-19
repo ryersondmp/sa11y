@@ -137,9 +137,7 @@ class Sa11y {
         );
 
         // Find and cache elements.
-        Elements.initializeElements(
-          option.linksToFlag,
-        );
+        Elements.initializeElements(option.linksToFlag);
 
         // Ruleset checks
         checkHeaders(

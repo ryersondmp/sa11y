@@ -1,6 +1,5 @@
 :root {
-  --sa11y-font-face: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, "FontAwesome", "Font Awesome 5 Free", "Font Awesome 5 Pro", "Font Awesome 6 Free", "Font Awesome 6 Pro", sans-serif;
+  --sa11y-font-face: system-ui, "Segoe UI", roboto, helvetica, arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "FontAwesome", "Font Awesome 5 Free", "Font Awesome 5 Pro", "Font Awesome 6 Free", "Font Awesome 6 Pro";
   --sa11y-large-text: 16px;
   --sa11y-normal-text: 15px;
   --sa11y-small-text: 12px;
