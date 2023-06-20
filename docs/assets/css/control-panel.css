@@ -974,13 +974,18 @@ label {
   width: 305px;
 }
 
+#container:lang(nb) #panel,
+#container:lang(da) #panel,
 #container:lang(pl) #panel,
 #container:lang(de) #panel,
 #container:lang(sv) #panel {
   width: 335px;
 }
 
-#container:lang(ua) .switch,
-#container:lang(fr) .switch {
+#container:lang(es) .switch {
+  width: 225px !important;
+}
+
+#container:not(:lang(en)):not(:lang(de)) .switch {
   width: 205px;
 }

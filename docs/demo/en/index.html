@@ -1003,24 +1003,22 @@
           <h3>Link text best practices</h3>
           <h4>Stop words</h4>
           <p>Link contains: "click here", "&gt;", "&lt;"</p>
-          <p class="small">Expected: <span class="badge bg-warning text-dark">3 warnings</span></p>
+          <p class="small">Expected: <span class="badge bg-warning text-dark">5 warnings</span></p>
           <div class="example text-center">
             <div class="row">
               <div class="col-md-4">
                 <a href="#">Click here to view our programs</a>
               </div>
-              <div class="col-md-4">
+              <div class="col-md-2">
                 <a href="#nextlink123">Next ></a>
               </div>
-              <div class="col-md-4">
+              <div class="col-md-2">
                 <a href="#">&lt; Previous</a>
               </div>
-            </div>
-            <div class="row">
-              <div class="col-md-4">
+              <div class="col-md-2">
                 <a href="#gggg">← Left</a>
               </div>
-              <div class="col-md-4">
+              <div class="col-md-2">
                 <a href="#hhhhhh">« Previous</a>
               </div>
             </div>
@@ -1047,6 +1045,14 @@
             <p class="small mt-3">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
             <a href="www.example.com">uses aria label</a> or <a href="www.google.com/"
                aria-label="uses aria label">learn more</a>
+          </div>
+          <h4>Links to DOI</h4>
+          <div class="example">
+            <p class="small mt-3">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
+            <p>Adam Chaboryk. 2022. <strong>Creating an open source, customizable accessibility checker for content
+                authors.</strong> In Proceedings of the 19th International Web for All Conference (W4A '22). Association
+              for Computing Machinery, New York, NY, USA, Article. 6, 1–2. <a
+                 href="https://doi.org/10.1145/3493612.3520468">doi.org/10.1145/3493612.3520468</a></p>
           </div>
 
           <h3>Hyperlinks with ARIA</h3>

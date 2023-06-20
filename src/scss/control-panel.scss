@@ -1031,6 +1031,8 @@ label {
 }
 
 // Medium panel width.
+#container:lang(nb),
+#container:lang(da),
 #container:lang(pl),
 #container:lang(de),
 #container:lang(sv) {
@@ -1040,8 +1042,13 @@ label {
 }
 
 // Setting switches that need some extra width.
-#container:lang(ua),
-#container:lang(fr) {
+#container:lang(es) {
+  .switch {
+    width: 225px !important;
+  }
+}
+
+#container:not(:lang(en)):not(:lang(de)) {
   .switch {
     width: 205px;
   }

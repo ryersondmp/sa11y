@@ -3,7 +3,7 @@ import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 
-export default function checkLinkText(results, showGoodLinkButton) {
+export default function checkLinkText(results, showGoodLinkButton, linksToDOI) {
   const containsLinkTextStopWords = (textContent) => {
     const urlText = [
       'http',
@@ -38,10 +38,12 @@ export default function checkLinkText(results, showGoodLinkButton) {
       '.ua/',
     ];
 
-    const hit = [null, null, null];
+    const hit = [null, null, null, null];
 
-    // Flag partial stop words.
-    Lang._('PARTIAL_ALT_STOPWORDS').forEach((word) => {
+    // Flag partial stop words & characters.
+    const partialCharacters = ['.', ',', '/'];
+    const partialStopwords = partialCharacters.concat(Lang._('PARTIAL_ALT_STOPWORDS'));
+    partialStopwords.forEach((word) => {
       if (
         textContent.length === word.length && textContent.toLowerCase().indexOf(word) >= 0
       ) {
@@ -60,13 +62,20 @@ export default function checkLinkText(results, showGoodLinkButton) {
       return false;
     });
 
+    // Flag citations/references
+    const doi = 'doi.org';
+    if (textContent.toLowerCase().includes('doi')) {
+      hit[2] = doi;
+    }
+
     // Flag link text containing URLs.
     urlText.forEach((word) => {
       if (textContent.toLowerCase().indexOf(word) >= 0) {
-        hit[2] = word;
+        hit[3] = word;
       }
       return false;
     });
+
     return hit;
   };
 
@@ -170,7 +179,20 @@ export default function checkLinkText(results, showGoodLinkButton) {
         position: 'beforebegin',
         dismiss: key,
       });
-    } else if (error[2] != null) {
+    } else if (error[2] != null && linksToDOI === true) {
+      const key = Utils.prepareDismissal(`LINK${linkText + error[2] + href}`);
+      // Contains URL in link text.
+      if (linkText.length > 8) {
+        results.push({
+          element: $el,
+          type: Constants.Global.WARNING,
+          content: Lang.sprintf('LINK_DOI'),
+          inline: true,
+          position: 'beforebegin',
+          dismiss: key,
+        });
+      }
+    } else if (error[3] != null) {
       const key = Utils.prepareDismissal(`LINK${linkText + error[2] + href}`);
       // Contains URL in link text.
       if (linkText.length > 40) {

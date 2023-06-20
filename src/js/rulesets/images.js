@@ -13,14 +13,15 @@ export default function checkImages(results) {
       '.gif',
       '.tiff',
       '.svg',
+      'DSC_',
     ];
-
     const hit = [null, null, null];
     altUrl.forEach((word) => {
       if (alt.toLowerCase().indexOf(word) >= 0) {
         hit[0] = word;
       }
     });
+
     const stopCharacters = ['< ', ' >', '← ', ' →', '« ', ' »', '‹ ', ' ›'];
     const suspiciousStopwords = stopCharacters.concat(Lang._('WARNING_ALT_STOPWORDS'));
     suspiciousStopwords.forEach((word) => {
@@ -28,7 +29,10 @@ export default function checkImages(results) {
         hit[1] = word;
       }
     });
-    Lang._('PLACEHOLDER_ALT_STOPWORDS').forEach((word) => {
+
+    const placeholderCharacters = ['.'];
+    const placeholderStopwords = placeholderCharacters.concat(Lang._('PLACEHOLDER_ALT_STOPWORDS'));
+    placeholderStopwords.forEach((word) => {
       if (alt.length === word.length && alt.toLowerCase().indexOf(word) >= 0) {
         hit[2] = word;
       }

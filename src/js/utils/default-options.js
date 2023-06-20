@@ -50,6 +50,7 @@ const defaultOptions = {
   pageTitleQA: true,
   subscriptQA: true,
   documentLinks: '.ppt, .doc, .xls, .csv, sway.com, docs.google.com',
+  linksToDOI: true,
 
   // Embedded content rulesets
   embeddedContentAll: true,

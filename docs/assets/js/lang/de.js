@@ -66,7 +66,7 @@ var de = {
 
     // Alternative text module stop words
     SUSPICIOUS_ALT_STOPWORDS: ['image', 'graphic', 'picture', 'photo', 'foto', 'bild'],
-    PLACEHOLDER_ALT_STOPWORDS: ['alt', 'image', 'photo', 'foto', 'bild', 'decorative', 'placeholder', 'platzhalter', 'placeholder image', 'platzhalter bild', 'platzhalter foto', 'platzhalter photo', 'spacer', 'abstand', '.'],
+    PLACEHOLDER_ALT_STOPWORDS: ['alt', 'image', 'photo', 'foto', 'bild', 'decorative', 'placeholder', 'platzhalter', 'placeholder image', 'platzhalter bild', 'platzhalter foto', 'platzhalter photo', 'spacer', 'abstand'],
     PARTIAL_ALT_STOPWORDS: [
       'click',
       'klick',
@@ -143,13 +143,10 @@ var de = {
       'anschauen',
       'view our',
       'website',
-      '.',
     ],
     WARNING_ALT_STOPWORDS: ['click here', 'hier klicken'],
     NEW_WINDOW_PHRASES: ['external', 'extern', 'new tab', 'neuer tab', 'new window', 'neues fenster', 'pop-up', 'pop up'],
-
-    // Only some items in list would need to be translated.
-    FILE_TYPE_PHRASES: ['document', 'dokument', 'spreadsheet', 'tabelle', 'worksheet', 'arbeitsblatt', 'install', 'installation', 'video', 'pdf', 'doc', 'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'powerpoint', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'],
+    FILE_TYPE_PHRASES: ['dokument', 'document', 'spreadsheet', 'tabelle', 'worksheet', 'arbeitsblatt', 'tabellenkalkulation', 'berechnungstabelle', 'komprimierte datei', 'archivierte Datei', 'arbeitsblatt', 'powerpoint', 'präsentation', 'installieren', 'video', 'audio', 'pdf'],
 
     // Readability
     LANG_READABILITY: 'Lesbarkeit',
@@ -178,7 +175,8 @@ var de = {
     LINK_LABEL: '<strong>Link Label:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Der Linktext ist ohne Kontext möglicherweise nicht aussagekräftig genug: <strong {r}>%(error)</strong><hr><strong>Tipp!</strong>Der Linktext sollte immer klar, eindeutig und aussagekräftig sein. Vermeide gängige Wörter wie &quot;hier klicken&quot; oder &quot;mehr erfahren&quot;',
     LINK_BEST_PRACTICES: 'Erwäge, den Linktext zu ersetzen: <strong {r}>%(error)</strong><hr><ul><li>&quot;Hier klicken&quot; legt den Schwerpunkt auf die Mausmechanik, obwohl viele Menschen keine Maus benutzen oder diese Website möglicherweise auf einem mobilen Gerät betrachten. Erwäge die Verwendung eines anderen Verbs, das sich auf die Aufgabe bezieht.</li><li>Vermeide die Verwendung von HTML-Symbolen als Aktionsaufrufe, es sei denn, sie sind für unterstützende Technologien verborgen.</li></ul>',
-    LINK_URL: 'Längere, weniger verständliche URLs, die als Linktext verwendet werden, können mit Hilfe von unterstützenden Technologien schwer zu verstehen sein. In den meisten Fällen ist es besser, anstelle der URL einen von Menschen lesbaren Text zu verwenden. Kurze URLs (z. B. die Homepage einer Website) sind in Ordnung.<hr><strong>Tipp!</strong> Der Linktext sollte immer klar, eindeutig und aussagekräftig sein, damit er auch ohne Kontext verstanden werden kann.',
+    LINK_URL: 'Längere, weniger verständliche URLs, die als Linktext verwendet werden, könnten beim Zugriff mit Hilfe von Hilfsmitteln schwer zu verstehen sein. In den meisten Fällen ist es besser, anstelle der URL einen von Menschen lesbaren Text zu verwenden. Kurze URLs (z. B. die Homepage einer Website) sind in Ordnung.<hr><strong>Tipp!</strong> Der Linktext sollte immer klar, eindeutig und aussagekräftig sein, damit er auch ohne Kontext verstanden werden kann.',
+    LINK_DOI: 'Für Webseiten oder reine Online-Ressourcen empfiehlt der <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APA Style guide</a> die Verwendung von deskriptiven Links, indem die URL oder DOI des Werks um den Titel herumgeschrieben wird. Längere, weniger verständliche URLs, die als Linktext verwendet werden, könnten beim Zugriff mit Hilfe von Hilfsmitteln schwer zu verstehen sein.',
 
     // Links advanced
     NEW_TAB_WARNING: 'Der Link öffnet sich in einem neuen Tab oder einem neuen Fenster ohne Warnung. Dies kann verwirrend sein, insbesondere für Menschen, die Schwierigkeiten haben, visuelle Inhalte wahrzunehmen. Zweitens ist es nicht immer eine gute Praxis, die Erfahrungen der anderen zu kontrollieren oder für sie Entscheidungen zu treffen. Gib im Linktext an, dass der Link in einem neuen Fenster geöffnet wird. <hr><strong>Tipp!</strong> Lerne bewährte Praktiken kennen: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">Öffnen von Links in neuen Browserfenstern und Tabs.</a>',

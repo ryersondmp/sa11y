@@ -21,8 +21,8 @@ var es = {
     WARNING: 'Advertencia',
     WARNINGS: 'Advertencias',
     GOOD: 'Bien',
-    ON: 'On',
-    OFF: 'Off',
+    ON: 'Activado',
+    OFF: 'Desactivado',
     ALERT_TEXT: 'Alerta',
     ALERT_CLOSE: 'Cerrar',
     OUTLINE: 'Esquema de Página',
@@ -65,8 +65,8 @@ var es = {
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Los filtros de color no funcionan en el modo de alto contraste.',
 
     // Alternative text module stop words
-    SUSPICIOUS_ALT_STOPWORDS: ['imagen', 'gráfico', 'imagen', 'foto'],
-    PLACEHOLDER_ALT_STOPWORDS: ['alt', 'image', 'photo', 'decorative', 'photo', 'placeholder', 'placeholder image', 'spacer', '.'],
+    SUSPICIOUS_ALT_STOPWORDS: ['imagen', 'gráfico', 'foto'],
+    PLACEHOLDER_ALT_STOPWORDS: ['alt', 'image', 'photo', 'decorative', 'placeholder', 'placeholder image', 'spacer', 'imagen', 'foto', 'decorativo', 'marcador de posición', 'espaciador'],
     PARTIAL_ALT_STOPWORDS: [
       'clic',
       'clic aquí',
@@ -112,14 +112,10 @@ var es = {
       'vista',
       'ver nuestro',
       'sitio web',
-      '.',
     ],
     WARNING_ALT_STOPWORDS: ['clic aquí'],
     NEW_WINDOW_PHRASES: ['externo', 'nueva página', 'nueva ventana', 'ventana emergente'],
-
-    // Only some items in list would need to be translated.
-    FILE_TYPE_PHRASES: ['documento', 'hoja de cálculo', 'instalar', 'video', 'pdf', 'doc',
-      'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'powerpoint', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'],
+    FILE_TYPE_PHRASES: ['documento', 'hoja de cálculo', 'hoja de cálculo', 'archivo comprimido', 'archivo archivado', 'hoja de trabajo', 'powerpoint', 'presentación', 'instalar', 'video', 'audio', 'pdf'],
 
     // Readability
     LANG_READABILITY: 'Legibilidad',
@@ -137,8 +133,8 @@ var es = {
     HEADING_NON_CONSECUTIVE_LEVEL: 'Nivel de encabezamiento no consecutivo utilizado. Los encabezados nunca deben saltar niveles, o ir de <strong>Título %(prevLevel)</strong> en <strong {r}>Título %(level)</strong>.',
     HEADING_EMPTY: 'Encabezado vacío encontrado! Para corregir, elimine esta línea o cambie su formato de <strong {r}>Encabezado %(level)</strong> a <strong>Normal</strong> o <strong>Párrafo</strong>.',
     HEADING_LONG: '¡El título es largo! Los encabezados deben usarse para organizar el contenido y transmitir la estructura. Deben ser breves, informativos y únicos. Mantenga los encabezados de menos de 160 caracteres (no más de una oración) <hr> Número de caracteres: <strong {r}>%(headingLength)</strong>',
-    HEADING_FIRST: 'El primer encabezado de una página generalmente debe ser un encabezado 1 o un encabezado 2. El encabezado 1 debe ser el comienzo de la sección de contenido principal y es el encabezado principal que describe el propósito general de la página. Aprender más acerca de la <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Estructura de encabezado.</a>',
-    HEADING_MISSING_ONE: 'Falta el encabezado 1. El encabezado 1 debe ser el comienzo del área de contenido principal y es el encabezado principal que describe el propósito general de la página. Aprender más acerca de la <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Estructura de encabezado.</a>',
+    HEADING_FIRST: 'El primer encabezado de una página generalmente debe ser un encabezado 1 o un encabezado 2. El encabezado 1 debe ser el comienzo de la sección de contenido principal y es el encabezado principal que describe el propósito general de la página. Aprender más acerca de la <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">estructura de encabezado.</a>',
+    HEADING_MISSING_ONE: 'Falta el encabezado 1. El encabezado 1 debe ser el comienzo del área de contenido principal y es el encabezado principal que describe el propósito general de la página. Aprender más acerca de la <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">estructura de encabezado.</a>',
     HEADING_EMPTY_WITH_IMAGE: 'El encabezado no tiene texto, pero contiene una imagen. Si no es un encabezado, cambie su formato de <strong {r}>Título %(level)</strong> a <strong>Normal</strong> o <strong>Párrafo</strong>. De lo contrario, agregue texto alternativo a la imagen si no es decorativa.',
     PANEL_HEADING_MISSING_ONE: 'Falta el encabezado 1!',
 
@@ -149,6 +145,7 @@ var es = {
     LINK_STOPWORD: 'Es posible que el texto del enlace no sea lo suficientemente descriptivo fuera de contexto: <strong {r}>%(error)</strong><hr><strong>¡Consejo!</strong> El texto del enlace siempre debe ser claro, único y significativo. Evite palabras comunes como &quot;haga clic aquí&quot; o &quot;más información&quot;',
     LINK_BEST_PRACTICES: 'Considere reemplazar el texto del enlace: <strong {r}>%(error)</strong><hr><ul><li>&quot;Haga clic aquí&quot; Los lugares se enfocan en la mecánica del mouse, cuando muchas personas no usan un mouse o pueden estar viendo este sitio web en un dispositivo móvil. Considere usar un verbo diferente que se relacione con la tarea.</li><li>Evite usar símbolos HTML como llamadas a la acción, a menos que estén ocultos a las tecnologías de asistencia.</li></ul>',
     LINK_URL: 'Las URL más largas y menos inteligibles utilizadas como texto de enlace pueden ser difíciles de escuchar con tecnología de asistencia. En la mayoría de los casos, es mejor usar texto legible por humanos en lugar de la URL. Las URL cortas (como la página de inicio de un sitio) están bien.<hr><strong>¡Consejo!</strong> El texto del enlace siempre debe ser claro, único y significativo para que pueda entenderse fuera de contexto.',
+    LINK_DOI: 'En el caso de páginas web o recursos en línea, la <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">Guía de estilo de la APA</a> recomienda utilizar enlaces descriptivos que incluyan la URL o el DOI de la obra alrededor de su título. Las URL más largas y menos inteligibles utilizadas como texto de enlace pueden resultar difíciles de comprender cuando se accede a ellas con tecnología de asistencia.',
 
     // Links advanced
     NEW_TAB_WARNING: 'El enlace se abre en una nueva pestaña o ventana sin previo aviso. Si lo hace, puede ser desorientador, especialmente para las personas que tienen dificultades para percibir el contenido visual. En segundo lugar, no siempre es una buena práctica controlar la experiencia de alguien o tomar decisiones por ellos. Indique que el enlace se abre en una nueva ventana dentro del texto del enlace. <hr> <strong>¡Consejo!</strong> Aprenda las mejores prácticas: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">abrir enlaces en nuevas ventanas y pestañas del navegador.</a>',
@@ -207,7 +204,7 @@ var es = {
     QA_SUBSCRIPT_WARNING: 'Las opciones de formato de subíndice y superíndice solo deben usarse para cambiar la posición del texto por convenciones o estándares tipográficos. <strong>No</strong> debe usarse únicamente con fines de presentación o apariencia. Dar formato a oraciones completas plantea problemas de legibilidad. Los casos de uso apropiados incluirían mostrar exponentes, números ordinales como 4<sup>th</sup> en lugar de cuarto y fórmulas químicas (por ejemplo, H<sub>2</sub>O).',
 
     // Tables
-    TABLES_MISSING_HEADINGS: '¡Faltan encabezados de tabla! Las tablas accesibles necesitan marcado HTML que indique las celdas de encabezado y las celdas de datos que definen su relación. Esta información brinda contexto a las personas que usan tecnología de asistencia. Las tablas deben usarse solo para datos tabulares. <hr> Más información sobre las <a href="https://www.w3.org/WAI/tutorials/tables/">tablas accesibles</a>',
+    TABLES_MISSING_HEADINGS: '¡Faltan encabezados de tabla! Las tablas accesibles necesitan marcado HTML que indique las celdas de encabezado y las celdas de datos que definen su relación. Esta información brinda contexto a las personas que usan tecnología de asistencia. Las tablas deben usarse solo para datos tabulares. <hr> Más información sobre las <a href="https://www.w3.org/WAI/tutorials/tables/">tablas accesibles.</a>',
     TABLES_SEMANTIC_HEADING: 'Los encabezados semánticos como el Encabezado 2 o el Encabezado 3 solo deben usarse para secciones de contenido; <strong>no</strong> en tablas HTML. Indique los encabezados de la tabla usando el elemento <code>&lt;th&gt;</code> en su lugar. <hr> Más información sobre las <a href="https://www.w3.org/WAI/tutorials/tables/">tablas accesibles.</a>',
     TABLES_EMPTY_HEADING: '¡Encabezado de tabla vacío encontrado! Los encabezados de las tablas <strong>nunca</strong> deben estar vacíos. Es importante designar encabezados de fila y/o columna para transmitir su relación. Esta información brinda contexto a las personas que usan tecnología de asistencia. Tenga en cuenta que las tablas deben usarse solo para datos tabulares. <hr> Más información sobre las <a href="https://www.w3.org/WAI/tutorials/tables/">tablas accesibles.</a>',
 

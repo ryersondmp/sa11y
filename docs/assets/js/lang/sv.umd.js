@@ -72,7 +72,7 @@
 
       // Alternative text module stop words
       SUSPICIOUS_ALT_STOPWORDS: ['bild', 'grafik', 'fotografi', 'foto'],
-      PLACEHOLDER_ALT_STOPWORDS: ['alt', 'bild', 'foto', 'dekorativ', 'fotografi', 'platshållare', 'platshållarbild', 'mellanlägg', '.'],
+      PLACEHOLDER_ALT_STOPWORDS: ['alt', 'bild', 'foto', 'dekorativ', 'fotografi', 'platshållare', 'platshållarbild', 'mellanlägg'],
       PARTIAL_ALT_STOPWORDS: [
         'klicka',
         'klicka här',
@@ -121,7 +121,6 @@
         'visa',
         'visa vår',
         'webbplats',
-        '.',
       ],
       WARNING_ALT_STOPWORDS: ['klicka här'],
       NEW_WINDOW_PHRASES: ['extern', 'ny flik', 'nytt fönster', 'pop-up', 'pop up'],
@@ -158,6 +157,7 @@
       LINK_STOPWORD: 'Länktexten kanske inte är tillräckligt beskrivande ur sitt sammanhang: <strong {r}>%(error)</strong><hr><strong>Tips!</strong> Länktexten ska alltid vara tydlig, unik och meningsfull. Undvik vanliga ord som &quot;klicka här&quot; eller &quot;läs mer&quot;',
       LINK_BEST_PRACTICES: 'Överväg att ersätta länktexten: <strong {r}>%(error)</strong><hr><ul><li>&quot;Klicka här&quot; platser fokuserar på musmekanik, när många människor inte använder en mus eller kanske tittar på den här webbplatsen på en mobil enhet. Överväg att använda ett annat verb som relaterar till uppgiften.</li><li>Undvik att använda HTML-symboler som uppmaning om de inte är dolda för hjälpmedel.</li></ul>',
       LINK_URL: 'Längre, mindre begripliga webbadresser som används som länktext kan vara svåra att lyssna på med hjälpmedel. I de flesta fall är det bättre att använda läsbar text istället för URL:en. Korta webbadresser (som en webbplats startsida) är okej.<hr><strong>Tips!</strong> Länktexten ska alltid vara tydlig, unik och meningsfull så att den kan förstås tagen ur sitt sammanhang.',
+      LINK_DOI: 'För webbsidor eller resurser som endast finns online rekommenderar <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APA Style Guide</a> att man använder beskrivande länkar genom att linda in URL:en eller DOI:en för arbetet runt dess titel. Längre, mindre begripliga webbadresser som används som länktext kan vara svåra att lyssna på med hjälpmedel.',
 
       // Links advanced
       NEW_TAB_WARNING: 'Länken öppnas i en ny flik eller ett nytt fönster utan förvarning. Att göra det kan vara desorienterande, särskilt för personer som har svårt att uppfatta visuellt innehåll. För det andra är det inte alltid en bra praxis att styra någons erfarenhet eller fatta beslut åt dem. Ange att länken öppnas i ett nytt fönster i länktexten<hr><strong>Tips!</strong> Lär dig bästa praxis: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">att öppna länkar i nya webbläsarfönster och flikar.</a>',

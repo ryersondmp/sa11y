@@ -77,11 +77,9 @@ var pl = {
       'image',
       'photo',
       'decorative',
-      'photo',
       'placeholder',
       'placeholder image',
       'spacer',
-      '.',
     ],
     PARTIAL_ALT_STOPWORDS: [
       'kliknij',
@@ -123,7 +121,6 @@ var pl = {
       'zobacz naszą',
       'stronę',
       'witrynę',
-      '.',
     ],
     WARNING_ALT_STOPWORDS: ['kliknij tutaj'],
     NEW_WINDOW_PHRASES: [
@@ -133,9 +130,7 @@ var pl = {
       'pop-up',
       'pop up',
     ],
-
-    // Only some items in list would need to be translated.
-    FILE_TYPE_PHRASES: ['document', 'dokument', 'spreadsheet', 'worksheet', 'install', 'video', 'pdf', 'doc', 'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'powerpoint', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'],
+    FILE_TYPE_PHRASES: ['dokument', 'arkusz kalkulacyjny', 'arkusz obliczeniowy', 'plik skompresowany', 'plik zarchiwizowany', 'arkusz roboczy', 'powerpoint', 'prezentacja', 'instalacja', 'wideo', 'audio', 'pdf'],
 
     // Readability
     LANG_READABILITY: 'Czytelność',
@@ -164,7 +159,8 @@ var pl = {
     LINK_LABEL: '<strong>Etykieta łącza:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Tekst łącza może nie być wystarczająco opisowy w kontekście: <strong {r}>%(error)</strong><hr><strong>Porada!</strong> Tekst łącza powinien być zawsze jasny, unikalny i znaczący. Unikaj typowych słów takich jak &quot;kliknij tutaj&quot; lub &quot;czytaj więcej&quot;.',
     LINK_BEST_PRACTICES: 'Rozważ zastąpienie tekstu łącza: <strong {r}>%(error)</strong><hr><ul><li>&bdquo;Kliknij tutaj&rdquo; skupia się na mechanice myszy, podczas gdy wiele osób nie używa myszy lub może przeglądać tę stronę na urządzeniu mobilnym. Rozważ użycie innego czasownika, który odnosi się do zadania.</li><li>Unikaj używania symboli HTML jako wezwań do działania, chyba że są one ukryte dla technologii wspomagających.</li></ul>',
-    LINK_URL: 'Dłuższe, mniej zrozumiałe adresy URL używane jako tekst odnośnika mogą być trudne do odsłuchania za pomocą technologii wspomagającej. W&nbsp;większości przypadków zamiast adresu URL lepiej jest używać tekstu czytelnego dla człowieka. Krótkie adresy URL (takie jak głównej strony witryny) są w porządku.<hr><strong>Porada!</strong> Tekst łącza powinien być zawsze jasny, unikalny i znaczący, aby mógł być zrozumiany bez kontekstu.',
+    LINK_URL: 'Dłuższe, mniej zrozumiałe adresy URL używane jako tekst linku mogą być trudne do zrozumienia podczas korzystania z technologii wspomagającej. W&nbsp;większości przypadków zamiast adresu URL lepiej jest używać tekstu czytelnego dla człowieka. Krótkie adresy URL (takie jak głównej strony witryny) są w porządku.<hr><strong>Porada!</strong> Tekst łącza powinien być zawsze jasny, unikalny i znaczący, aby mógł być zrozumiany bez kontekstu.',
+    LINK_DOI: 'W przypadku stron internetowych lub zasobów dostępnych tylko online, przewodnik <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APA Style</a> zaleca stosowanie linków opisowych poprzez zawijanie adresu URL lub DOI pracy wokół jej tytułu. Dłuższe, mniej zrozumiałe adresy URL używane jako tekst linku mogą być trudne do zrozumienia podczas korzystania z technologii wspomagającej.',
 
     // Links advanced
     NEW_TAB_WARNING: 'Łącze otwiera się na nowej karcie lub w oknie bez ostrzeżenia. Może to być dezorientujące, szczególnie dla osób, które mają problemy z&nbsp;odbiorem treści wizualnych. Ponadto, nie zawsze dobrym zwyczajem jest kontrolowanie czyichś doświadczeń lub podejmowanie decyzji za kogoś. Wskaż w tekście łącza, że łącze otwiera się w nowym oknie.<hr><strong>Porada!</strong> Poznaj najlepsze praktyki: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">otwieranie łączy w nowych oknach i kartach przeglądarki.</a>',

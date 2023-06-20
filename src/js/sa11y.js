@@ -146,7 +146,11 @@ class Sa11y {
           option.flagLongHeadings,
           this.headingOutline,
         );
-        checkLinkText(this.results, option.showGoodLinkButton);
+        checkLinkText(
+          this.results,
+          option.showGoodLinkButton,
+          option.linksToDOI,
+        );
         checkImages(this.results);
         checkContrast(this.results);
         checkLabels(this.results);
