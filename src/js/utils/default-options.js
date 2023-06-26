@@ -8,8 +8,6 @@ const defaultOptions = {
   linkIgnore: 'nav *, [role="navigation"] *',
   linkIgnoreSpan: '',
   linksToFlag: '',
-  nonConsecutiveHeadingIsError: true,
-  flagLongHeadings: true,
   showGoodLinkButton: true,
   detectSPArouting: false,
   doNotRun: '',
@@ -34,6 +32,12 @@ const defaultOptions = {
   customChecks: true,
   checkAllHideToggles: false,
 
+  // Specific rulesets
+  linksToDOI: true,
+  missingH1: true,
+  flagLongHeadings: true,
+  nonConsecutiveHeadingIsError: true,
+
   // QA rulesets
   badLinksQA: true,
   strongItalicsQA: true,
@@ -50,7 +54,6 @@ const defaultOptions = {
   pageTitleQA: true,
   subscriptQA: true,
   documentLinks: '.ppt, .doc, .xls, .csv, sway.com, docs.google.com',
-  linksToDOI: true,
 
   // Embedded content rulesets
   embeddedContentAll: true,

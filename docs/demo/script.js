@@ -58,5 +58,8 @@ const sa11y = new Sa11y({
   shadowComponents: '',
   autoDetectShadowComponents: true,
   panelPosition: 'right',
+
+  // Specific checks
   linksToDOI: true,
+  missingH1: false
 });

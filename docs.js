@@ -29,7 +29,7 @@ const copyDirectory = async (src, dest) => {
 // Automatically update Sa11y version number within docs.
 (async () => {
   const packageJson = require('./package.json');
-  const version = packageJson.version;
+  const { version } = packageJson;
   const fileContent = `
     const version = '${version}';
     const webV = document.getElementById("v");

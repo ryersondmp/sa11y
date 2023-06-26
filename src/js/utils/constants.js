@@ -117,8 +117,8 @@ const Constants = (function myConstants() {
   function initializeReadability(option) {
     Readability.Lang = option.readabilityLang;
     Readability.Root = document.querySelector(option.readabilityRoot);
-    if (!option.readabilityRoot) {
-      Readability.Root = Global.Root;
+    if (!Readability.Root) {
+      Readability.Root = document.querySelector('body');
     }
 
     // Supported readability languages. Turn module off if not supported.

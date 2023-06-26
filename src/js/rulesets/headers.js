@@ -7,6 +7,7 @@ export default function checkHeaders(
   results,
   nonConsecutiveHeadingIsError,
   flagLongHeadings,
+  missingH1,
   headingOutline,
 ) {
   let prevLevel;
@@ -132,7 +133,7 @@ export default function checkHeaders(
     }
   });
   // Missing Heading 1
-  if (Elements.Found.HeadingOne.length === 0) {
+  if (Elements.Found.HeadingOne.length === 0 && missingH1 === true) {
     results.push({
       type: Constants.Global.ERROR,
       content: Lang.sprintf('HEADING_MISSING_ONE'),

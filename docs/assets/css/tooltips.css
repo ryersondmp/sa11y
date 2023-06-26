@@ -127,6 +127,7 @@ div {
 
 [role=dialog] {
   min-width: 300px;
+  text-align: start;
 }
 
 [role=tooltip] {

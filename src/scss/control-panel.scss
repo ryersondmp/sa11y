@@ -44,6 +44,7 @@ li,
 label {
   font-size: var(--sa11y-normal-text);
   font-weight: normal;
+  text-align: start;
   letter-spacing: normal;
   word-break: normal;
 }
@@ -450,6 +451,7 @@ hr {
 
 .panel-header {
   padding: 10px 15px 0;
+  text-align: start;
 }
 
 #page-issues-content,

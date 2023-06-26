@@ -144,6 +144,7 @@ class Sa11y {
           this.results,
           option.nonConsecutiveHeadingIsError,
           option.flagLongHeadings,
+          option.missingH1,
           this.headingOutline,
         );
         checkLinkText(
