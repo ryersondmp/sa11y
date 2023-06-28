@@ -115,24 +115,51 @@ const Constants = (function myConstants() {
   /* ***************** */
   const Readability = {};
   function initializeReadability(option) {
-    Readability.Lang = option.readabilityLang;
-    Readability.Root = document.querySelector(option.readabilityRoot);
-    if (!Readability.Root) {
-      Readability.Root = document.querySelector('body');
-    }
+    if (option.readabilityPlugin === true) {
+      // Readability target area to check.
+      Readability.Root = document.querySelector(option.readabilityRoot);
+      if (!Readability.Root) {
+        if (!Global.Root) {
+          Readability.Root = document.querySelector('body');
+        } else {
+          Readability.Root = Global.Root;
+          // eslint-disable-next-line no-console
+          console.error(`Sa11y configuration error: The selector '${option.readabilityRoot}' used for the property 'readabilityRoot' does not exist. '${Global.Root.tagName}' was used as a fallback.`);
+        }
+      }
 
-    // Supported readability languages. Turn module off if not supported.
-    const supported = ['en', 'fr', 'es', 'de', 'nl', 'it', 'sv', 'fi', 'da', 'no', 'nb', 'nn'];
-    const pageLang = Constants.Global.html.getAttribute('lang');
+      // Set `readabilityLang` property based on language file.
+      Readability.Lang = Lang._('LANG_CODE').substring(0, 2);
 
-    if (!pageLang) {
-      Readability.Plugin = false;
-    } else {
-      const pageLangLowerCase = pageLang.toLowerCase();
-      if (!supported.some(($el) => pageLangLowerCase.includes($el))) {
+      // Supported readability languages.
+      const supported = [
+        'en',
+        'fr',
+        'es',
+        'de',
+        'nl',
+        'it',
+        'sv',
+        'fi',
+        'da',
+        'no',
+        'nb',
+        'nn',
+        'pt',
+      ];
+
+      // Turn off readability if page language is not defined.
+      const pageLang = Constants.Global.html.getAttribute('lang');
+      if (!pageLang) {
         Readability.Plugin = false;
       } else {
-        Readability.Plugin = option.readabilityPlugin;
+        // Turn off readability if page language is not supported.
+        const pageLangLowerCase = pageLang.toLowerCase().substring(0, 2);
+        if (!supported.some(($el) => pageLangLowerCase.includes($el))) {
+          Readability.Plugin = false;
+        } else {
+          Readability.Plugin = true;
+        }
       }
     }
   }

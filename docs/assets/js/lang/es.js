@@ -43,7 +43,7 @@ var es = {
     ERROR_MISSING_ROOT_TARGET: 'Se comprobó la accesibilidad de la página completa porque el área de destino <code>%(root)</code> no existe.',
     HEADING_NOT_VISIBLE_ALERT: 'El encabezado no es visible; puede estar oculto o dentro de un componente de acordeón o pestaña.',
     SKIP_TO_PAGE_ISSUES: 'Saltar problemas de la página',
-    CONSOLE_ERROR_MESSAGE: 'Lo siento, pero hay un problema con el comprobador de accesibilidad en esta página. Puedes por favor <a href="%(link)">reportarlo a través de este formulario </a> or on <a href="%(link)">GitHub</a>?',
+    CONSOLE_ERROR_MESSAGE: 'Lo siento, pero hay un problema con el comprobador de accesibilidad en esta página. Puedes por favor <a href="%(link)">reportarlo a través de este formulario</a> or on <a href="%(link)">GitHub</a>?',
 
     // Dismiss
     PANEL_DISMISS_BUTTON: 'Mostrar %(dismissCount) advertencias descartadas',

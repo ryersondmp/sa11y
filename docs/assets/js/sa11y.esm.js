@@ -11,7 +11,10 @@
   * The above copyright notice shall be included in all copies or substantial portions of the Software.
 **/
 const defaultOptions = {
+  // Target area to check
   checkRoot: 'body',
+
+  // Exclusions
   containerIgnore: '.sa11y-ignore',
   contrastIgnore: '.sr-only, [role="menu"] *',
   outlineIgnore: '',
@@ -19,7 +22,8 @@ const defaultOptions = {
   imageIgnore: '',
   linkIgnore: 'nav *, [role="navigation"] *',
   linkIgnoreSpan: '',
-  linksToFlag: '',
+
+  // Other features
   showGoodLinkButton: true,
   detectSPArouting: false,
   doNotRun: '',
@@ -33,7 +37,6 @@ const defaultOptions = {
   // Readability
   readabilityPlugin: true,
   readabilityRoot: 'body',
-  readabilityLang: 'en',
   readabilityIgnore: '',
 
   // Other plugins
@@ -45,6 +48,7 @@ const defaultOptions = {
   checkAllHideToggles: false,
 
   // Specific rulesets
+  linksToFlag: '',
   linksToDOI: true,
   missingH1: true,
   flagLongHeadings: true,
@@ -279,24 +283,51 @@ const Constants = (function myConstants() {
   /* ***************** */
   const Readability = {};
   function initializeReadability(option) {
-    Readability.Lang = option.readabilityLang;
-    Readability.Root = document.querySelector(option.readabilityRoot);
-    if (!Readability.Root) {
-      Readability.Root = document.querySelector('body');
-    }
+    if (option.readabilityPlugin === true) {
+      // Readability target area to check.
+      Readability.Root = document.querySelector(option.readabilityRoot);
+      if (!Readability.Root) {
+        if (!Global.Root) {
+          Readability.Root = document.querySelector('body');
+        } else {
+          Readability.Root = Global.Root;
+          // eslint-disable-next-line no-console
+          console.error(`Sa11y configuration error: The selector '${option.readabilityRoot}' used for the property 'readabilityRoot' does not exist. '${Global.Root.tagName}' was used as a fallback.`);
+        }
+      }
 
-    // Supported readability languages. Turn module off if not supported.
-    const supported = ['en', 'fr', 'es', 'de', 'nl', 'it', 'sv', 'fi', 'da', 'no', 'nb', 'nn'];
-    const pageLang = Constants.Global.html.getAttribute('lang');
+      // Set `readabilityLang` property based on language file.
+      Readability.Lang = Lang._('LANG_CODE').substring(0, 2);
 
-    if (!pageLang) {
-      Readability.Plugin = false;
-    } else {
-      const pageLangLowerCase = pageLang.toLowerCase();
-      if (!supported.some(($el) => pageLangLowerCase.includes($el))) {
+      // Supported readability languages.
+      const supported = [
+        'en',
+        'fr',
+        'es',
+        'de',
+        'nl',
+        'it',
+        'sv',
+        'fi',
+        'da',
+        'no',
+        'nb',
+        'nn',
+        'pt',
+      ];
+
+      // Turn off readability if page language is not defined.
+      const pageLang = Constants.Global.html.getAttribute('lang');
+      if (!pageLang) {
         Readability.Plugin = false;
       } else {
-        Readability.Plugin = option.readabilityPlugin;
+        // Turn off readability if page language is not supported.
+        const pageLangLowerCase = pageLang.toLowerCase().substring(0, 2);
+        if (!supported.some(($el) => pageLangLowerCase.includes($el))) {
+          Readability.Plugin = false;
+        } else {
+          Readability.Plugin = true;
+        }
       }
     }
   }
@@ -7172,6 +7203,7 @@ function checkLinksAdvanced(results) {
  * @link https://github.com/Yoast/YoastSEO.js/issues/267
  * @link http://stackoverflow.com/questions/5686483/how-to-compute-number-of-syllables-in-a-word-in-javascript
  * @link https://www.simoahava.com/analytics/calculate-readability-scores-for-content/#commento-58ac602191e5c6dc391015c5a6933cf3e4fc99d1dc92644024c331f1ee9b6093
+ * @link https://oaji.net/articles/2017/601-1498133639.pdf (Portugese adaptation).
 */
 
 function checkReadability() {
@@ -7202,7 +7234,7 @@ function checkReadability() {
       const pageText = readabilityarray.join(' ').toString();
 
       /* Flesch Reading Ease for English, French, German, Dutch, and Italian. */
-      if (['en', 'fr', 'de', 'nl', 'it'].includes(Constants.Readability.Lang)) {
+      if (['en', 'es', 'fr', 'de', 'nl', 'it', 'pt'].includes(Constants.Readability.Lang)) {
         // Compute syllables
         const numberOfSyllables = (el) => {
           let wordCheck = el;
@@ -7272,6 +7304,8 @@ function checkReadability() {
           flesch = 206.84 - (0.77 * (100 * (totalSyllables / words))) - (0.93 * (words / sentences));
         } else if (Constants.Readability.Lang === 'it') {
           flesch = 217 - (1.3 * (words / sentences)) - (0.6 * (100 * (totalSyllables / words)));
+        } else if (Constants.Readability.Lang === 'pt') {
+          flesch = 248.835 - (1.015 * (words / sentences)) - (84.6 * (totalSyllables / words));
         }
 
         // Score must be between 0 and 100%.
