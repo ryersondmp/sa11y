@@ -70,7 +70,7 @@ label {
   color: #fff;
   cursor: pointer;
   background: linear-gradient(to top, #e040fb, #00bcd4);
-  background-color: var(--sa11y-blue); // Fallback colour.
+  background-color: var(--sa11y-blue);
   background-size: 150% 150%;
   border-radius: 50%;
   transition: all .2s ease-in-out;
@@ -919,17 +919,17 @@ label {
   background: var(--sa11y-panel-bg);
   border: 0;
   border-radius: 5px;
+}
 
-  &:focus {
-    z-index: 1;
-    width: auto;
-    height: auto;
-    padding: 5px 7px;
-    margin: 0;
-    overflow: visible;
-    clip: auto;
-    white-space: normal;
-  }
+#panel.has-page-issues #skip-to-page-issues:focus {
+  z-index: 1;
+  width: auto;
+  height: auto;
+  padding: 5px 7px;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
 }
 
 /* ***************************************** */
@@ -1037,7 +1037,8 @@ label {
 #container:lang(da),
 #container:lang(pl),
 #container:lang(de),
-#container:lang(sv) {
+#container:lang(sv),
+#container:lang(zh) {
   #panel {
     width: 335px;
   }

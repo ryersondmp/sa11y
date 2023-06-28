@@ -42,7 +42,30 @@ export default function checkLinkText(results, showGoodLinkButton, linksToDOI) {
 
     // Flag partial stop words & characters.
     const partialCharacters = ['.', ',', '/'];
-    const partialStopwords = partialCharacters.concat(Lang._('PARTIAL_ALT_STOPWORDS'));
+
+    // Account for various punctuation with link stop words.
+    let stopwordVariations;
+    if (Lang._('LANG_CODE') === 'ja' || Lang._('LANG_CODE') === 'zh') {
+      stopwordVariations = Lang._('PARTIAL_ALT_STOPWORDS').map((item) => [
+        item,
+        `${item}。`,
+        `${item}、`,
+        `${item}，`,
+        `${item} >`,
+      ]);
+    } else {
+      stopwordVariations = Lang._('PARTIAL_ALT_STOPWORDS').map((item) => [
+        item,
+        `${item}.`,
+        `${item},`,
+        `${item} >`,
+      ]);
+    }
+    // Merge combinations into single array.
+    const allVariations = [].concat(...stopwordVariations);
+    const partialStopwords = partialCharacters.concat(allVariations);
+
+    // Iterate through all partialStopwords.
     partialStopwords.forEach((word) => {
       if (
         textContent.length === word.length && textContent.toLowerCase().indexOf(word) >= 0

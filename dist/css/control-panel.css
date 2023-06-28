@@ -877,6 +877,7 @@ label {
   border: 0;
   border-radius: 5px;
 }
+
 #panel.has-page-issues #skip-to-page-issues:focus {
   z-index: 1;
   width: auto;
@@ -980,7 +981,8 @@ label {
 #container:lang(da) #panel,
 #container:lang(pl) #panel,
 #container:lang(de) #panel,
-#container:lang(sv) #panel {
+#container:lang(sv) #panel,
+#container:lang(zh) #panel {
   width: 335px;
 }
 

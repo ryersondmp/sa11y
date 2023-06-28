@@ -305,6 +305,7 @@ html[data-sa11y-theme=dark] {
 /* *********************************************************************************** */
 #sa11y-colour-filters,
 #sa11y-svg-filters {
+  /* Performance: Make SVG fit the screen, rather than entire viewport. */
   position: fixed !important;
   top: 0 !important;
   left: 0 !important;
@@ -316,6 +317,7 @@ html[data-sa11y-theme=dark] {
   overflow: hidden !important;
   line-height: 0 !important;
   transform: translate3d(0, 0, 0) !important;
+  /* Supposedly enables hardware acceleration to help performance. */
   transform-style: preserve-3d !important;
 }
 

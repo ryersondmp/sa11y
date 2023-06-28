@@ -155,7 +155,7 @@ const Constants = (function myConstants() {
       } else {
         // Turn off readability if page language is not supported.
         const pageLangLowerCase = pageLang.toLowerCase().substring(0, 2);
-        if (!supported.some(($el) => pageLangLowerCase.includes($el))) {
+        if (!supported.includes(pageLangLowerCase) || !supported.includes(Readability.Lang)) {
           Readability.Plugin = false;
         } else {
           Readability.Plugin = true;
