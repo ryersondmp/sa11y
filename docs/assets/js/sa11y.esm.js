@@ -6136,24 +6136,19 @@ function checkImages(results) {
       '.svg',
       'DSC_',
     ];
+
     const hit = [null, null, null];
     altUrl.forEach((word) => {
       if (alt.toLowerCase().indexOf(word) >= 0) {
         hit[0] = word;
       }
     });
-
-    const stopCharacters = ['< ', ' >', '← ', ' →', '« ', ' »', '‹ ', ' ›'];
-    const suspiciousStopwords = stopCharacters.concat(Lang._('WARNING_ALT_STOPWORDS'));
-    suspiciousStopwords.forEach((word) => {
+    Lang._('SUSPICIOUS_ALT_STOPWORDS').forEach((word) => {
       if (alt.toLowerCase().indexOf(word) >= 0) {
         hit[1] = word;
       }
     });
-
-    const placeholderCharacters = ['.'];
-    const placeholderStopwords = placeholderCharacters.concat(Lang._('PLACEHOLDER_ALT_STOPWORDS'));
-    placeholderStopwords.forEach((word) => {
+    Lang._('PLACEHOLDER_ALT_STOPWORDS').forEach((word) => {
       if (alt.length === word.length && alt.toLowerCase().indexOf(word) >= 0) {
         hit[2] = word;
       }
