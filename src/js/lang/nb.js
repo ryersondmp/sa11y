@@ -1,3 +1,4 @@
+/*! WARNING: This is a machine-generated translation and may contain errors or inaccuracies. */
 export default {
   // Norwegian (Bokmal)
   strings: {

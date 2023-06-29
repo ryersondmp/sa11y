@@ -10,6 +10,7 @@
   * For all acknowledgements, please visit: https://sa11y.netlify.app/acknowledgements/
   * The above copyright notice shall be included in all copies or substantial portions of the Software.
 **/
+/*! WARNING: This is a machine-generated translation and may contain errors or inaccuracies. */
 var ro = {
   // Romanian
   strings: {

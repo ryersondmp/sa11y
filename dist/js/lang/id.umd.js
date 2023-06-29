@@ -16,8 +16,9 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Sa11yLangId = factory());
 })(this, (function () { 'use strict';
 
+  /*! WARNING: This is a machine-generated translation and may contain errors or inaccuracies. */
   var id = {
-    // Indonesia
+    // Indonesian
     strings: {
       LANG_CODE: 'id',
       MAIN_TOGGLE_LABEL: 'Periksa Aksesibilitas',

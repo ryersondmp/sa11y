@@ -10,6 +10,7 @@
   * For all acknowledgements, please visit: https://sa11y.netlify.app/acknowledgements/
   * The above copyright notice shall be included in all copies or substantial portions of the Software.
 **/
+/*! WARNING: This is a machine-generated translation and may contain errors or inaccuracies. */
 var ja = {
   // Japan
   strings: {
@@ -86,6 +87,7 @@ var ja = {
       'は、ここに詳述されています',
       'ダウンロード',
       'ダウンロードはこちら',
+      'もっと詳しく知る',
       'はこちらからダウンロードしてください',
       'さがしだす',
       '詳細はこちら',
@@ -148,14 +150,14 @@ var ja = {
     LINK_EMPTY: 'テキストのない空のリンクを削除する。',
     LINK_EMPTY_LINK_NO_LABEL: 'リンクに、スクリーンリーダーやその他の支援技術で表示可能な識別可能なテキストがない。修正するには<ul><li>リンクの行き先を説明する簡潔なテキストを追加する。</li><li><a href="https://a11y-101.com/development/icons-and-links">アイコン リンクまたは SVG</a>である場合、説明用のラベルがない可能性があります。 </li><li> このリンクがコピー/ペーストのバグによるエラーと考えられる場合は、削除を検討してください。 </li></ul>',
     LINK_LABEL: '<strong>リンクラベル：</strong> %(sanitizedText)',
-    LINK_STOPWORD: 'リンクテキストは、文脈から見て十分に説明的でない場合があります：<strong {r}>%(error)</strong><hr><strong>Tip!</strong> リンクテキストは常に明確で、ユニークで、意味のあるものでなければなりません。quot;ここをクリック&quot;やquot;もっと知りたい&quotのような一般的な単語は避けてください；',
-    LINK_BEST_PRACTICES: 'リンクテキストを置き換えることを検討してください：<strong {r}>%(error)</strong><hr><ul><li>&quot;Click here&quot;では、多くの人がマウスを使用しないか、モバイル機器でこのウェブサイトを見ている可能性があるのに、マウス操作に焦点が当たっています。タスクに関連する別の動詞を使用することを検討してください。</li><li>支援技術に隠されていない限り、コールトゥアクションとしてHTML記号を使用しないようにしてください。',
-    LINK_URL: 'リンクテキストとして使用される長くて分かりにくいURLは、支援技術で聞き取るのが難しいかもしれません。ほとんどの場合、URL の代わりに人間が読めるテキストを使用する方がよいでしょう。<hr><strong>Tip!</strong> リンクテキストは、常に明確で、ユニークで、意味があり、文脈から理解できるものでなければなりません。',
+    LINK_STOPWORD: 'リンクテキストは、文脈から見て十分に説明的でない場合があります：<strong {r}>%(error)</strong><hr><strong>ヒント！</strong> リンクテキストは常に明確で、ユニークで、意味のあるものでなければなりません。quot;ここをクリック&quot;やquot;もっと知りたい&quotのような一般的な単語は避けてください；',
+    LINK_BEST_PRACTICES: 'リンクテキストを置き換えることを検討してください：<strong {r}>%(error)</strong><hr><ul><li>&quot;ここをクリック&quot;では、多くの人がマウスを使用しないか、モバイル機器でこのウェブサイトを見ている可能性があるのに、マウス操作に焦点が当たっています。タスクに関連する別の動詞を使用することを検討してください。</li><li>支援技術に隠されていない限り、コールトゥアクションとしてHTML記号を使用しないようにしてください。',
+    LINK_URL: 'リンクテキストとして使用される長くて分かりにくいURLは、支援技術で聞き取るのが難しいかもしれません。ほとんどの場合、URL の代わりに人間が読めるテキストを使用する方がよいでしょう。<hr><strong>ヒント！</strong> リンクテキストは、常に明確で、ユニークで、意味があり、文脈から理解できるものでなければなりません。',
     LINK_DOI: 'ウェブページやオンラインのみのリソースの場合、<a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APAスタイルガイド</a>では、作品のURLやDOIをタイトルに巻きつけて、説明的なリンクを使用することを推奨しています。リンクテキストとして使用される長くて分かりにくいURLは、支援技術でアクセスしたときに理解するのが難しいかもしれません。',
     NEW_TAB_WARNING: 'リンクは警告なしに新しいタブまたはウィンドウで開きます。そうすることで、特に視覚的なコンテンツを知覚することが困難な人々にとって、混乱させることができます。第二に、誰かの経験をコントロールしたり、彼らのために決定を下すことは、必ずしも良い習慣とは言えません。リンクテキスト内でリンクが新しいウィンドウで開くことを示す<hr><strong>ヒント！</strong>ベストプラクティスを学びましょう：<a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">リンクを新しいブラウザのウィンドウやタブで開く。</a>',
     FILE_TYPE_WARNING: 'リンク先がPDFやダウンロード可能なファイル（例：MP3、Zip、Word Doc）であることを警告せずに示す。リンクテキスト内にファイルの種類を表示する。<hr><strong>例:</strong> エグゼクティブレポート (PDF, 3MB)',
     LINK_IDENTICAL_NAME: 'リンクは別のリンクと同じテキストを持っていますが、別のページを指しています。<hr>他のリンクと区別するために、次のリンクをより説明的にすることを検討してください：<strong {r}>%(sanitizedText)</strong>。',
-    MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE: 'alt属性がdecorativeまたはnullと表示されるべきなのに、画像が周囲のテキストとともにリンクとして使用されている。',
+    MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE: '画像は装飾としてマークされる必要がありますが、画像は周囲のテキストへのリンクとして使用されています。',
     MISSING_ALT_LINK_MESSAGE: '画像がリンクとして使用されていますが、altテキストが不足しています！altテキストにリンク先が記載されていることを確認してください。',
     MISSING_ALT_MESSAGE: 'altテキストがない！画像がストーリーや雰囲気、重要な情報を伝えるものであれば、必ず画像を説明すること。',
     LINK_IMAGE_BAD_ALT_MESSAGE: 'altテキスト内のファイル拡張子が見つかりました。altテキストは、画像の文字通りの説明ではなく、リンク先を説明するものであることを確認してください。削除してください：<strong {r}>%(error)</strong>.<hr><strong>Alt text:</strong> %(altText)',

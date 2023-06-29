@@ -16,6 +16,7 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Sa11yLangSl = factory());
 })(this, (function () { 'use strict';
 
+  /*! WARNING: This is a machine-generated translation and may contain errors or inaccuracies. */
   var sl = {
     // Slovenian
     strings: {

@@ -6580,33 +6580,8 @@
 
       const hit = [null, null, null, null];
 
-      // Flag partial stop words & characters.
-      const partialCharacters = ['.', ',', '/'];
-
-      // Account for various punctuation with link stop words.
-      let stopwordVariations;
-      if (Lang._('LANG_CODE') === 'ja' || Lang._('LANG_CODE') === 'zh') {
-        stopwordVariations = Lang._('PARTIAL_ALT_STOPWORDS').map((item) => [
-          item,
-          `${item}。`,
-          `${item}、`,
-          `${item}，`,
-          `${item} >`,
-        ]);
-      } else {
-        stopwordVariations = Lang._('PARTIAL_ALT_STOPWORDS').map((item) => [
-          item,
-          `${item}.`,
-          `${item},`,
-          `${item} >`,
-        ]);
-      }
-      // Merge combinations into single array.
-      const allVariations = [].concat(...stopwordVariations);
-      const partialStopwords = partialCharacters.concat(allVariations);
-
       // Iterate through all partialStopwords.
-      partialStopwords.forEach((word) => {
+      Lang._('PARTIAL_ALT_STOPWORDS').forEach((word) => {
         if (
           textContent.length === word.length && textContent.toLowerCase().indexOf(word) >= 0
         ) {
@@ -6616,9 +6591,7 @@
       });
 
       // Other warnings we want to add.
-      const stopCharacters = ['< ', ' >', '← ', ' →', '« ', ' »', '‹ ', ' ›'];
-      const suspiciousStopwords = stopCharacters.concat(Lang._('WARNING_ALT_STOPWORDS'));
-      suspiciousStopwords.forEach((word) => {
+      Lang._('WARNING_ALT_STOPWORDS').forEach((word) => {
         if (textContent.toLowerCase().indexOf(word) >= 0) {
           hit[1] = word;
         }
@@ -6676,11 +6649,17 @@
       }
 
       // Ignore provided linkSpanIgnore prop, <style> tags, and special characters.
+      const specialCharPattern = /[!?。，、&*()\-;':"\\|,.<>↣↳←→↓«»↴]+/g;
       const error = containsLinkTextStopWords(
         fnIgnore(
           $el, Constants.Exclusions.LinkSpan,
-        ).textContent.replace(/[!*?↣↳→↓»↴]/g, '').trim(),
+        ).textContent.replace(specialCharPattern, '').trim(),
       );
+
+      // HTML symbols used as call to actions.
+      const htmlSymbols = /([<>↣↳←→↓«»↴]+)/;
+      const matches = linkText.match(htmlSymbols);
+      const matchedSymbol = matches ? matches[1] : null;
 
       if ($el.querySelectorAll('img').length) ; else if (href && !linkText) {
         // Flag empty hyperlinks.
@@ -6703,7 +6682,7 @@
             position: 'afterend',
           });
         }
-      } else if (error[0] != null) {
+      } else if (error[0] !== null) {
         // Contains stop words.
         if (hasAriaLabelledBy || hasAriaLabel || childAriaLabelledBy || childAriaLabel) {
           const sanitizedText = sanitizeHTML(linkText);
@@ -6725,20 +6704,21 @@
             position: 'afterend',
           });
         }
-      } else if (error[1] != null) {
-        const key = prepareDismissal(`LINK${linkText + error[1] + href}`);
+      } else if (error[1] !== null || matchedSymbol !== null) {
+        const key = prepareDismissal(`LINK${linkText + href}`);
+        const STOPWORD = matchedSymbol || error[1];
         // Contains warning words.
         results.push({
           element: $el,
           type: Constants.Global.WARNING,
-          content: Lang.sprintf('LINK_BEST_PRACTICES', error[1]),
+          content: Lang.sprintf('LINK_BEST_PRACTICES', STOPWORD),
           inline: true,
           position: 'beforebegin',
           dismiss: key,
         });
-      } else if (error[2] != null && linksToDOI === true) {
+      } else if (error[2] !== null && linksToDOI === true) {
         const key = prepareDismissal(`LINK${linkText + error[2] + href}`);
-        // Contains URL in link text.
+        // Contains DOI URL in link text.
         if (linkText.length > 8) {
           results.push({
             element: $el,
@@ -6749,7 +6729,7 @@
             dismiss: key,
           });
         }
-      } else if (error[3] != null) {
+      } else if (error[3] !== null) {
         const key = prepareDismissal(`LINK${linkText + error[2] + href}`);
         // Contains URL in link text.
         if (linkText.length > 40) {
@@ -6774,6 +6754,15 @@
             position: 'afterend',
           });
         }
+      } else if (linkText === '.' || linkText === ',' || linkText === '/') {
+        // Link is ONLY a period, comma, or slash.
+        results.push({
+          element: $el,
+          type: Constants.Global.ERROR,
+          content: Lang.sprintf('LINK_EMPTY'),
+          inline: true,
+          position: 'afterend',
+        });
       }
     });
     return { results };

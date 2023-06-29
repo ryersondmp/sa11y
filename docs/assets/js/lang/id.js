@@ -10,8 +10,9 @@
   * For all acknowledgements, please visit: https://sa11y.netlify.app/acknowledgements/
   * The above copyright notice shall be included in all copies or substantial portions of the Software.
 **/
+/*! WARNING: This is a machine-generated translation and may contain errors or inaccuracies. */
 var id = {
-  // Indonesia
+  // Indonesian
   strings: {
     LANG_CODE: 'id',
     MAIN_TOGGLE_LABEL: 'Periksa Aksesibilitas',

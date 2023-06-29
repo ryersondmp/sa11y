@@ -16,6 +16,7 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Sa11yLangEl = factory());
 })(this, (function () { 'use strict';
 
+  /*! WARNING: This is a machine-generated translation and may contain errors or inaccuracies. */
   var el = {
     // Greek
     strings: {
