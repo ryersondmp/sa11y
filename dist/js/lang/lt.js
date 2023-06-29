@@ -22,7 +22,7 @@ var lt = {
     WARNING: 'Įspėjimas',
     WARNINGS: 'Įspėjimai',
     GOOD: 'Geras',
-    ON: 'Svetainėje',
+    ON: 'įjungta',
     OFF: 'Išjungta',
     ALERT_TEXT: 'Įspėjimas',
     ALERT_CLOSE: 'Uždaryti',
