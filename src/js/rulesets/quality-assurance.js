@@ -11,7 +11,7 @@ export default function checkQA(results, option) {
     Elements.Found.CustomErrorLinks.forEach(($el) => {
       results.push({
         element: $el,
-        type: Constants.Global.ERROR,
+        type: 'error',
         content: Lang.sprintf('QA_BAD_LINK', $el),
         inline: true,
         position: 'beforebegin',
@@ -29,7 +29,7 @@ export default function checkQA(results, option) {
       if (strongItalicsText > 400) {
         results.push({
           element: $el.parentNode,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: Lang.sprintf('QA_BAD_ITALICS'),
           inline: false,
           position: 'beforebegin',
@@ -52,7 +52,7 @@ export default function checkQA(results, option) {
       if (option.documentQA === true && hasExtension) {
         results.push({
           element: $el,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: Lang.sprintf('QA_DOCUMENT'),
           inline: true,
           position: 'beforebegin',
@@ -61,7 +61,7 @@ export default function checkQA(results, option) {
       } else if (option.pdfQA === true && hasPDF) {
         results.push({
           element: $el,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: Lang.sprintf('QA_PDF'),
           inline: true,
           position: 'beforebegin',
@@ -77,7 +77,7 @@ export default function checkQA(results, option) {
   if (option.langQA === true) {
     if (!Elements.Found.Language || Elements.Found.Language.length < 2) {
       results.push({
-        type: Constants.Global.ERROR,
+        type: 'error',
         content: Lang.sprintf('QA_PAGE_LANGUAGE'),
       });
     }
@@ -94,7 +94,7 @@ export default function checkQA(results, option) {
         const key = Utils.prepareDismissal(`BLOCKQUOTE${sanitizedText}`);
         results.push({
           element: $el,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: Lang.sprintf('QA_BLOCKQUOTE_MESSAGE', sanitizedText),
           inline: false,
           position: 'beforebegin',
@@ -114,7 +114,7 @@ export default function checkQA(results, option) {
       if (findTHeaders.length === 0) {
         results.push({
           element: $el,
-          type: Constants.Global.ERROR,
+          type: 'error',
           content: Lang.sprintf('TABLES_MISSING_HEADINGS'),
           inline: false,
           position: 'beforebegin',
@@ -124,7 +124,7 @@ export default function checkQA(results, option) {
         findHeadingTags.forEach(($a) => {
           results.push({
             element: $a,
-            type: Constants.Global.ERROR,
+            type: 'error',
             content: Lang.sprintf('TABLES_SEMANTIC_HEADING'),
             inline: false,
             position: 'beforebegin',
@@ -135,7 +135,7 @@ export default function checkQA(results, option) {
         if ($b.textContent.trim().length === 0) {
           results.push({
             element: $b,
-            type: Constants.Global.ERROR,
+            type: 'error',
             content: Lang.sprintf('TABLES_EMPTY_HEADING'),
             inline: false,
             position: 'afterbegin',
@@ -180,7 +180,7 @@ export default function checkQA(results, option) {
             const key = Utils.prepareDismissal(`BOLD${sanitizedText}`);
             results.push({
               element: firstChild,
-              type: Constants.Global.WARNING,
+              type: 'warning',
               content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
               inline: false,
               position: 'beforebegin',
@@ -207,7 +207,7 @@ export default function checkQA(results, option) {
           const key = Utils.prepareDismissal(`BOLD${sanitizedText}`);
           results.push({
             element: $el,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
             inline: false,
             position: 'beforebegin',
@@ -236,7 +236,7 @@ export default function checkQA(results, option) {
           const key = Utils.prepareDismissal(`BOLD${sanitizedText}`);
           results.push({
             element: $elem,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
             inline: false,
             position: 'beforebegin',
@@ -298,7 +298,7 @@ export default function checkQA(results, option) {
           const key = Utils.prepareDismissal(`LIST${$el.textContent}`);
           results.push({
             element: $el,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('QA_SHOULD_BE_LIST', firstPrefix),
             inline: false,
             position: 'beforebegin',
@@ -337,7 +337,7 @@ export default function checkQA(results, option) {
         const key = Utils.prepareDismissal(`UPPERCASE${thisText}`);
         results.push({
           element: $el,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: Lang.sprintf('QA_UPPERCASE_WARNING'),
           inline: false,
           position: 'beforebegin',
@@ -364,7 +364,7 @@ export default function checkQA(results, option) {
         } else {
           results.push({
             element: $el,
-            type: Constants.Global.ERROR,
+            type: 'error',
             content: Lang.sprintf('QA_DUPLICATE_ID', id),
             inline: true,
             position: 'beforebegin',
@@ -385,7 +385,7 @@ export default function checkQA(results, option) {
       const key = Utils.prepareDismissal(`UNDERLINE${text}`);
       results.push({
         element: $el,
-        type: Constants.Global.WARNING,
+        type: 'warning',
         content: Lang.sprintf('QA_TEXT_UNDERLINE_WARNING'),
         inline: true,
         position: 'beforebegin',
@@ -401,7 +401,7 @@ export default function checkQA(results, option) {
         const key = Utils.prepareDismissal(`UNDERLINE${text}`);
         results.push({
           element: $el,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: Lang.sprintf('QA_TEXT_UNDERLINE_WARNING'),
           inline: false,
           position: 'beforebegin',
@@ -423,7 +423,7 @@ export default function checkQA(results, option) {
     const $title = document.querySelector('title');
     if (!$title || $title.textContent.trim().length === 0) {
       results.push({
-        type: Constants.Global.ERROR,
+        type: 'error',
         content: Lang.sprintf('QA_PAGE_TITLE'),
       });
     }
@@ -439,7 +439,7 @@ export default function checkQA(results, option) {
         const key = Utils.prepareDismissal($el.tagName + text);
         results.push({
           element: $el,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: Lang.sprintf('QA_SUBSCRIPT_WARNING'),
           inline: true,
           position: 'beforebegin',

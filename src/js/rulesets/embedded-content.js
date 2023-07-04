@@ -1,4 +1,3 @@
-import Constants from '../utils/constants';
 import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
@@ -11,7 +10,7 @@ export default function checkEmbeddedContent(results, option) {
         const key = Utils.prepareDismissal(`IFRAME${$el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src')}`);
         results.push({
           element: $el,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: Lang.sprintf('EMBED_AUDIO'),
           inline: false,
           position: 'beforebegin',
@@ -30,7 +29,7 @@ export default function checkEmbeddedContent(results, option) {
           const key = Utils.prepareDismissal(`IFRAME${$el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src')}`);
           results.push({
             element: $el,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('EMBED_VIDEO'),
             inline: false,
             position: 'beforebegin',
@@ -46,7 +45,7 @@ export default function checkEmbeddedContent(results, option) {
         const key = Utils.prepareDismissal(`IFRAME${$el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src')}`);
         results.push({
           element: $el,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: Lang.sprintf('EMBED_DATA_VIZ'),
           inline: false,
           position: 'beforebegin',
@@ -74,7 +73,7 @@ export default function checkEmbeddedContent(results, option) {
               }
               results.push({
                 element: $el,
-                type: Constants.Global.ERROR,
+                type: 'error',
                 content: Lang.sprintf('EMBED_MISSING_TITLE'),
                 inline: false,
                 position: 'beforebegin',
@@ -102,7 +101,7 @@ export default function checkEmbeddedContent(results, option) {
           const key = Utils.prepareDismissal(`IFRAME${$el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src')}`);
           results.push({
             element: $el,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('EMBED_GENERAL_WARNING'),
             inline: false,
             position: 'beforebegin',

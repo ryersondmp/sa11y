@@ -7,9 +7,6 @@ const Constants = (function myConstants() {
   /* **************** */
   const Global = {};
   function initializeGlobal(option) {
-    Global.ERROR = Lang._('ERROR');
-    Global.WARNING = Lang._('WARNING');
-    Global.GOOD = Lang._('GOOD');
     Global.currentPage = window.location.pathname;
     Global.html = document.querySelector('html');
     Global.headless = option.headless;

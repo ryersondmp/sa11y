@@ -1,4 +1,3 @@
-import Constants from './utils/constants';
 import * as Utils from './utils/utils';
 import find from './utils/find';
 
@@ -18,7 +17,7 @@ export default function checkCustom(results) {
       const key = Utils.prepareDismissal($checkAnnouncement[i].textContent);
       results.push({
         element: $checkAnnouncement[i],
-        type: Constants.Global.WARNING,
+        type: 'warning',
         content: C.ANNOUNCEMENT_MESSAGE,
         inline: false,
         position: 'beforebegin',
@@ -34,7 +33,7 @@ export default function checkCustom(results) {
     if (!!checkForm && checkForm.length) {
       results.push({
         element: $el,
-        type: Constants.Global.ERROR,
+        type: 'error',
         content: C.ACCORDION_FORM_MESSAGE,
         inline: false,
         position: 'beforebegin',

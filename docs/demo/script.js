@@ -38,7 +38,7 @@ const sa11y = new Sa11y({
   detectSPArouting: true,
   headless: false,
   dismissAnnotations: true,
-  selectorPath: false,
+  selectorPath: true,
   checkAllHideToggles: false,
 
   readabilityPlugin: true,

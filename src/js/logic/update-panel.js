@@ -72,9 +72,9 @@ export function updateCount(results, error, warning) {
 
   results.forEach(($el, i) => {
     const issue = results[i].type;
-    if (issue === Constants.Global.ERROR) {
+    if (issue === 'error') {
       updatedErrorCount += 1;
-    } else if (issue === Constants.Global.WARNING) {
+    } else if (issue === 'warning') {
       updatedWarningCount += 1;
     }
   });

@@ -153,9 +153,9 @@ class Sa11y {
           option.linksToDOI,
         );
         checkImages(this.results);
-        checkContrast(this.results);
-        checkLabels(this.results);
-        checkLinksAdvanced(this.results);
+        checkContrast(this.results, option);
+        checkLabels(this.results, option);
+        checkLinksAdvanced(this.results, option);
         checkQA(this.results, option);
         checkEmbeddedContent(this.results, option);
         checkReadability();
@@ -240,6 +240,14 @@ class Sa11y {
             nudge();
           }
         }
+
+        // Dispatch custom event that stores the results array.
+        const event = new CustomEvent('sa11y-check-complete', {
+          detail: {
+            results: this.results,
+          },
+        });
+        document.dispatchEvent(event);
       } catch (error) {
         const consoleErrors = new ConsoleErrors(error);
         document.body.appendChild(consoleErrors);

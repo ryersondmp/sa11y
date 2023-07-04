@@ -1,7 +1,7 @@
 /* eslint-disable no-alert */
 import { loadSa11y } from './_loadSa11y';
 
-const langCode = 'Sv';
+const langCode = 'sv';
 
 if (typeof Sa11y !== 'object') {
   loadSa11y(langCode);

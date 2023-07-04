@@ -131,7 +131,7 @@ export default function checkLinkText(results, showGoodLinkButton, linksToDOI) {
         // Has child elements (e.g. SVG or SPAN) <a><i></i></a>
         results.push({
           element: $el,
-          type: Constants.Global.ERROR,
+          type: 'error',
           content: Lang.sprintf('LINK_EMPTY_LINK_NO_LABEL'),
           inline: true,
           position: 'afterend',
@@ -140,7 +140,7 @@ export default function checkLinkText(results, showGoodLinkButton, linksToDOI) {
         // Completely empty <a></a>
         results.push({
           element: $el,
-          type: Constants.Global.ERROR,
+          type: 'error',
           content: Lang.sprintf('LINK_EMPTY'),
           inline: true,
           position: 'afterend',
@@ -153,7 +153,7 @@ export default function checkLinkText(results, showGoodLinkButton, linksToDOI) {
         if (showGoodLinkButton === true) {
           results.push({
             element: $el,
-            type: Constants.Global.GOOD,
+            type: 'good',
             content: Lang.sprintf('LINK_LABEL', sanitizedText),
             inline: true,
             position: 'afterend',
@@ -164,7 +164,7 @@ export default function checkLinkText(results, showGoodLinkButton, linksToDOI) {
       } else {
         results.push({
           element: $el,
-          type: Constants.Global.ERROR,
+          type: 'error',
           content: Lang.sprintf('LINK_STOPWORD', error[0]),
           inline: true,
           position: 'afterend',
@@ -176,7 +176,7 @@ export default function checkLinkText(results, showGoodLinkButton, linksToDOI) {
       // Contains warning words.
       results.push({
         element: $el,
-        type: Constants.Global.WARNING,
+        type: 'warning',
         content: Lang.sprintf('LINK_BEST_PRACTICES', STOPWORD),
         inline: true,
         position: 'beforebegin',
@@ -188,7 +188,7 @@ export default function checkLinkText(results, showGoodLinkButton, linksToDOI) {
       if (linkText.length > 8) {
         results.push({
           element: $el,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: Lang.sprintf('LINK_DOI'),
           inline: true,
           position: 'beforebegin',
@@ -201,7 +201,7 @@ export default function checkLinkText(results, showGoodLinkButton, linksToDOI) {
       if (linkText.length > 40) {
         results.push({
           element: $el,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: Lang.sprintf('LINK_URL'),
           inline: true,
           position: 'beforebegin',
@@ -214,7 +214,7 @@ export default function checkLinkText(results, showGoodLinkButton, linksToDOI) {
         const sanitizedText = Utils.sanitizeHTML(linkText);
         results.push({
           element: $el,
-          type: Constants.Global.GOOD,
+          type: 'good',
           content: Lang.sprintf('LINK_LABEL', sanitizedText),
           inline: true,
           position: 'afterend',
@@ -224,7 +224,7 @@ export default function checkLinkText(results, showGoodLinkButton, linksToDOI) {
       // Link is ONLY a period, comma, or slash.
       results.push({
         element: $el,
-        type: Constants.Global.ERROR,
+        type: 'error',
         content: Lang.sprintf('LINK_EMPTY'),
         inline: true,
         position: 'afterend',

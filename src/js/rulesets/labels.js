@@ -1,14 +1,13 @@
-import Constants from '../utils/constants';
 import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 
-export default function checkLabels(results) {
-  if (Constants.Global.formLabelsPlugin === true) {
+export default function checkLabels(results, option) {
+  if (option.formLabelsPlugin === true) {
     if (
       Utils.store.getItem('sa11y-remember-labels') === 'On'
-      || Constants.Global.headless === true
-      || Constants.Global.checkAllHideToggles === true
+      || option.headless === true
+      || option.checkAllHideToggles === true
     ) {
       Elements.Found.Inputs.forEach(($el) => {
         // Ignore hidden inputs.
@@ -29,7 +28,7 @@ export default function checkLabels(results) {
               } else {
                 results.push({
                   element: $el,
-                  type: Constants.Global.ERROR,
+                  type: 'error',
                   content: Lang.sprintf('LABELS_MISSING_IMAGE_INPUT_MESSAGE'),
                   inline: false,
                   position: 'beforebegin',
@@ -41,7 +40,7 @@ export default function checkLabels(results) {
             const key = Utils.prepareDismissal(`INPUT${ariaLabel}`);
             results.push({
               element: $el,
-              type: Constants.Global.WARNING,
+              type: 'warning',
               content: Lang.sprintf('LABELS_INPUT_RESET_MESSAGE'),
               inline: false,
               position: 'beforebegin',
@@ -55,7 +54,7 @@ export default function checkLabels(results) {
               const sanitizedText = Utils.sanitizeHTML(ariaLabel);
               results.push({
                 element: $el,
-                type: Constants.Global.WARNING,
+                type: 'warning',
                 content: Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', sanitizedText),
                 inline: false,
                 position: 'beforebegin',
@@ -66,7 +65,7 @@ export default function checkLabels(results) {
               const sanitizedText = Utils.sanitizeHTML(ariaLabel);
               results.push({
                 element: $el,
-                type: Constants.Global.WARNING,
+                type: 'warning',
                 content: Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', sanitizedText),
                 inline: false,
                 position: 'beforebegin',
@@ -91,7 +90,7 @@ export default function checkLabels(results) {
               const id = $el.getAttribute('id');
               results.push({
                 element: $el,
-                type: Constants.Global.ERROR,
+                type: 'error',
                 content: Lang.sprintf('LABELS_NO_FOR_ATTRIBUTE_MESSAGE', id),
                 inline: false,
                 position: 'beforebegin',
@@ -100,7 +99,7 @@ export default function checkLabels(results) {
           } else {
             results.push({
               element: $el,
-              type: Constants.Global.ERROR,
+              type: 'error',
               content: Lang.sprintf('LABELS_MISSING_LABEL_MESSAGE'),
               inline: false,
               position: 'beforebegin',

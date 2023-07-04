@@ -43,9 +43,8 @@ export default function generatePageOutline(
       // Indicate if heading is totally hidden or visually hidden.
       const visibleIcon = (visibility === true) ? '<span class="hidden-icon"></span><span class="visually-hidden">Hidden</span>' : '';
       const visibleStatus = (visibility === true) ? 'class="hidden-h"' : '';
-
       let append;
-      if (issue === Constants.Global.ERROR) {
+      if (issue === 'error') {
         append = `
         <li class="outline-${level}">
           <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
@@ -58,7 +57,7 @@ export default function generatePageOutline(
           </a>
         </li>`;
         outlineArray.push(append);
-      } else if (issue === Constants.Global.WARNING && !dismissedH) {
+      } else if (issue === 'warning' && !dismissedH) {
         append = `
         <li class="outline-${level}">
           <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>

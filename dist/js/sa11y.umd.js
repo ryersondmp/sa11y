@@ -181,9 +181,6 @@
     /* **************** */
     const Global = {};
     function initializeGlobal(option) {
-      Global.ERROR = Lang._('ERROR');
-      Global.WARNING = Lang._('WARNING');
-      Global.GOOD = Lang._('GOOD');
       Global.currentPage = window.location.pathname;
       Global.html = document.querySelector('html');
       Global.headless = option.headless;
@@ -2112,9 +2109,8 @@
         // Indicate if heading is totally hidden or visually hidden.
         const visibleIcon = (visibility === true) ? '<span class="hidden-icon"></span><span class="visually-hidden">Hidden</span>' : '';
         const visibleStatus = (visibility === true) ? 'class="hidden-h"' : '';
-
         let append;
-        if (issue === Constants.Global.ERROR) {
+        if (issue === 'error') {
           append = `
         <li class="outline-${level}">
           <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
@@ -2127,7 +2123,7 @@
           </a>
         </li>`;
           outlineArray.push(append);
-        } else if (issue === Constants.Global.WARNING && !dismissedH) {
+        } else if (issue === 'warning' && !dismissedH) {
           append = `
         <li class="outline-${level}">
           <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
@@ -2351,9 +2347,9 @@
 
     results.forEach(($el, i) => {
       const issue = results[i].type;
-      if (issue === Constants.Global.ERROR) {
+      if (issue === 'error') {
         updatedErrorCount += 1;
-      } else if (issue === Constants.Global.WARNING) {
+      } else if (issue === 'warning') {
         updatedWarningCount += 1;
       }
     });
@@ -5832,9 +5828,9 @@
     dismissAnnotationsOption,
   ) {
     const validTypes = [
-      Constants.Global.ERROR,
-      Constants.Global.WARNING,
-      Constants.Global.GOOD,
+      'error',
+      'warning',
+      'good',
     ];
 
     if (validTypes.indexOf(type) === -1) {
@@ -5842,23 +5838,23 @@
     }
     // Add unique ID and styles to annotation and marked element.
     [type].forEach(($el) => {
-      if ($el === Constants.Global.ERROR && element !== undefined) {
+      if ($el === 'error' && element !== undefined) {
         const errorAttr = (inline ? 'data-sa11y-error-inline' : 'data-sa11y-error');
         element.setAttribute(errorAttr, index);
-      } else if ($el === Constants.Global.WARNING) {
+      } else if ($el === 'warning') {
         const warningAttr = (inline ? 'data-sa11y-warning-inline' : 'data-sa11y-warning');
         element.setAttribute(warningAttr, index);
       }
     });
 
-    const CSSName = {
-      [validTypes[0]]: 'error',
-      [validTypes[1]]: 'warning',
-      [validTypes[2]]: 'good',
+    const ariaLabel = {
+      [validTypes[0]]: Lang._('ERROR'),
+      [validTypes[1]]: Lang._('WARNING'),
+      [validTypes[2]]: Lang._('GOOD'),
     };
 
     // Add dismiss button if prop enabled.
-    const dismiss = (dismissAnnotationsOption === true && CSSName[type] === 'warning') ? `<button data-sa11y-dismiss='${index}' type='button'>${Lang._('DISMISS')}</button>` : '';
+    const dismiss = (dismissAnnotationsOption === true && type === 'warning') ? `<button data-sa11y-dismiss='${index}' type='button'>${Lang._('DISMISS')}</button>` : '';
 
     const instance = document.createElement('sa11y-annotation');
     instance.setAttribute('data-sa11y-annotation', index);
@@ -5869,7 +5865,7 @@
       // Page errors displayed to main panel.
       Constants.Panel.pageIssues.classList.add('active');
       Constants.Panel.panel.classList.add('has-page-issues');
-      listItem.innerHTML = `<strong>${[type]}</strong> ${content}`;
+      listItem.innerHTML = `<strong>${ariaLabel[type]}</strong> ${content}`;
       Constants.Panel.pageIssuesList.insertAdjacentElement('afterbegin', listItem);
     } else {
       // Button annotations.
@@ -5877,13 +5873,13 @@
       create.innerHTML = `
     <button
       type="button"
-      aria-label="${[type]}"
+      aria-label="${ariaLabel[type]}"
       aria-haspopup="dialog"
-      class="sa11y-btn ${CSSName[type]}-btn${inline ? '-text' : ''}"
+      class="sa11y-btn ${[type]}-btn${inline ? '-text' : ''}"
       data-tippy-content=
         "<div lang='${Lang._('LANG_CODE')}'>
           <button class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button>
-          <div class='header-text'><h2>${[type]}</h2></div>
+          <div class='header-text'><h2>${ariaLabel[type]}</h2></div>
           ${escapeHTML(content)}
           ${dismiss}
         </div>"
@@ -6169,7 +6165,7 @@
           if (fnIgnore($el.closest('a[href]')).textContent.trim().length >= 1) {
             results.push({
               element: $el,
-              type: Constants.Global.ERROR,
+              type: 'error',
               content: Lang.sprintf('MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE'),
               inline: false,
               position: 'beforebegin',
@@ -6177,7 +6173,7 @@
           } else if (fnIgnore($el.closest('a[href]')).textContent.trim().length === 0) {
             results.push({
               element: $el,
-              type: Constants.Global.ERROR,
+              type: 'error',
               content: Lang.sprintf('MISSING_ALT_LINK_MESSAGE'),
               inline: false,
               position: 'beforebegin',
@@ -6187,7 +6183,7 @@
           // General failure message if image is missing alt.
           results.push({
             element: $el,
-            type: Constants.Global.ERROR,
+            type: 'error',
             content: Lang.sprintf('MISSING_ALT_MESSAGE'),
             inline: false,
             position: 'beforebegin',
@@ -6205,7 +6201,7 @@
           // Image fails if a stop word was found.
           results.push({
             element: $el,
-            type: Constants.Global.ERROR,
+            type: 'error',
             content: Lang.sprintf('LINK_IMAGE_BAD_ALT_MESSAGE', error[0], altText),
             inline: false,
             position: 'beforebegin',
@@ -6213,7 +6209,7 @@
         } else if (error[2] !== null && $el.closest('a[href]')) {
           results.push({
             element: $el,
-            type: Constants.Global.ERROR,
+            type: 'error',
             content: Lang.sprintf('LINK_IMAGE_PLACEHOLDER_ALT_MESSAGE', altText),
             inline: false,
             position: 'beforebegin',
@@ -6222,7 +6218,7 @@
           const key = prepareDismissal(`LINKEDIMAGE${baseSrc + altText + error[1]}`);
           results.push({
             element: $el,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('LINK_IMAGE_SUS_ALT_MESSAGE', error[1], altText),
             inline: false,
             position: 'beforebegin',
@@ -6231,7 +6227,7 @@
         } else if (error[0] !== null) {
           results.push({
             element: $el,
-            type: Constants.Global.ERROR,
+            type: 'error',
             content: Lang.sprintf('LINK_ALT_HAS_BAD_WORD_MESSAGE', error[0], altText),
             inline: false,
             position: 'beforebegin',
@@ -6239,7 +6235,7 @@
         } else if (error[2] !== null) {
           results.push({
             element: $el,
-            type: Constants.Global.ERROR,
+            type: 'error',
             content: Lang.sprintf('ALT_PLACEHOLDER_MESSAGE', altText),
             inline: false,
             position: 'beforebegin',
@@ -6248,7 +6244,7 @@
           const key = prepareDismissal(`IMAGE${baseSrc + altText + error[1]}`);
           results.push({
             element: $el,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('ALT_HAS_SUS_WORD', error[1], altText),
             inline: false,
             position: 'beforebegin',
@@ -6258,7 +6254,7 @@
           if ($el.closest('a[href]').getAttribute('tabindex') === '-1' && $el.closest('a[href]').getAttribute('aria-hidden') === 'true') ; else if ($el.closest('a[href]').getAttribute('aria-hidden') === 'true') {
             results.push({
               element: $el,
-              type: Constants.Global.ERROR,
+              type: 'error',
               content: Lang.sprintf('LINK_IMAGE_ARIA_HIDDEN'),
               inline: false,
               position: 'beforebegin',
@@ -6266,7 +6262,7 @@
           } else if (fnIgnore($el.closest('a[href]')).textContent.trim().length === 0) {
             results.push({
               element: $el,
-              type: Constants.Global.ERROR,
+              type: 'error',
               content: Lang.sprintf('LINK_IMAGE_NO_ALT_TEXT'),
               inline: false,
               position: 'beforebegin',
@@ -6274,7 +6270,7 @@
           } else {
             results.push({
               element: $el,
-              type: Constants.Global.GOOD,
+              type: 'good',
               content: Lang.sprintf('LINK_IMAGE_HAS_TEXT'),
               inline: false,
               position: 'beforebegin',
@@ -6285,7 +6281,7 @@
           // Link and contains alt text.
           results.push({
             element: $el,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('LINK_IMAGE_LONG_ALT', altLength, altText),
             inline: false,
             position: 'beforebegin',
@@ -6296,7 +6292,7 @@
           // Link and contains an alt text.
           results.push({
             element: $el,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('LINK_IMAGE_ALT_WARNING', altText),
             inline: false,
             position: 'beforebegin',
@@ -6307,7 +6303,7 @@
           // Contains alt text & surrounding link text.
           results.push({
             element: $el,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT_WARNING', altText),
             inline: false,
             position: 'beforebegin',
@@ -6321,7 +6317,7 @@
               const key = prepareDismissal(`DECORATIVE${baseSrc}`);
               results.push({
                 element: $el,
-                type: Constants.Global.WARNING,
+                type: 'warning',
                 content: Lang.sprintf('IMAGE_FIGURE_DECORATIVE'),
                 inline: false,
                 position: 'beforebegin',
@@ -6331,7 +6327,7 @@
               const key = prepareDismissal(`DECORATIVE${baseSrc}`);
               results.push({
                 element: $el,
-                type: Constants.Global.WARNING,
+                type: 'warning',
                 content: Lang.sprintf('IMAGE_DECORATIVE'),
                 inline: false,
                 position: 'beforebegin',
@@ -6342,7 +6338,7 @@
             const key = prepareDismissal(`DECORATIVE${baseSrc}`);
             results.push({
               element: $el,
-              type: Constants.Global.WARNING,
+              type: 'warning',
               content: Lang.sprintf('IMAGE_DECORATIVE'),
               inline: false,
               position: 'beforebegin',
@@ -6353,7 +6349,7 @@
           const key = prepareDismissal(`IMAGE${baseSrc + altText + alt.length}`);
           results.push({
             element: $el,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('IMAGE_ALT_TOO_LONG', altLength, altText),
             inline: false,
             position: 'beforebegin',
@@ -6368,7 +6364,7 @@
               const key = prepareDismissal(`FIGURE${baseSrc + altText}`);
               results.push({
                 element: $el,
-                type: Constants.Global.WARNING,
+                type: 'warning',
                 content: Lang.sprintf('IMAGE_FIGURE_DUPLICATE_ALT', altText),
                 inline: false,
                 position: 'beforebegin',
@@ -6377,7 +6373,7 @@
             } else {
               results.push({
                 element: $el,
-                type: Constants.Global.GOOD,
+                type: 'good',
                 content: Lang.sprintf('IMAGE_PASS', altText),
                 inline: false,
                 position: 'beforebegin',
@@ -6387,7 +6383,7 @@
             // If image has alt text - pass!
             results.push({
               element: $el,
-              type: Constants.Global.GOOD,
+              type: 'good',
               content: Lang.sprintf('IMAGE_PASS', altText),
               inline: false,
               position: 'beforebegin',
@@ -6429,7 +6425,7 @@
           error = Lang.sprintf('HEADING_NON_CONSECUTIVE_LEVEL', prevLevel, level);
           results.push({
             element: $el,
-            type: Constants.Global.ERROR,
+            type: 'error',
             content: error,
             inline: false,
             position: 'beforebegin',
@@ -6439,7 +6435,7 @@
           const key = prepareDismissal(`HEADING${level + headingText}`);
           results.push({
             element: $el,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: warning,
             inline: false,
             position: 'beforebegin',
@@ -6453,7 +6449,7 @@
             error = Lang.sprintf('HEADING_EMPTY_WITH_IMAGE', level);
             results.push({
               element: $el,
-              type: Constants.Global.ERROR,
+              type: 'error',
               content: error,
               inline: false,
               position: 'beforebegin',
@@ -6463,7 +6459,7 @@
           error = Lang.sprintf('HEADING_EMPTY', level);
           results.push({
             element: $el,
-            type: Constants.Global.ERROR,
+            type: 'error',
             content: error,
             inline: false,
             position: 'beforebegin',
@@ -6473,7 +6469,7 @@
         error = Lang.sprintf('HEADING_FIRST');
         results.push({
           element: $el,
-          type: Constants.Global.ERROR,
+          type: 'error',
           content: error,
           inline: false,
           position: 'beforebegin',
@@ -6483,7 +6479,7 @@
         const key = prepareDismissal(`HEADING${level + headingText}`);
         results.push({
           element: $el,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: warning,
           inline: false,
           position: 'beforebegin',
@@ -6501,7 +6497,7 @@
           headingLevel: level,
           text: headingText,
           index: i,
-          type: Constants.Global.ERROR,
+          type: 'error',
           hidden: hiddenHeading,
           visibleParent: parent,
         });
@@ -6512,7 +6508,7 @@
           headingLevel: level,
           text: headingText,
           index: i,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           hidden: hiddenHeading,
           visibleParent: parent,
           dismiss: key,
@@ -6531,7 +6527,7 @@
     // Missing Heading 1
     if (Elements.Found.HeadingOne.length === 0 && missingH1 === true) {
       results.push({
-        type: Constants.Global.ERROR,
+        type: 'error',
         content: Lang.sprintf('HEADING_MISSING_ONE'),
       });
     }
@@ -6662,7 +6658,7 @@
           // Has child elements (e.g. SVG or SPAN) <a><i></i></a>
           results.push({
             element: $el,
-            type: Constants.Global.ERROR,
+            type: 'error',
             content: Lang.sprintf('LINK_EMPTY_LINK_NO_LABEL'),
             inline: true,
             position: 'afterend',
@@ -6671,7 +6667,7 @@
           // Completely empty <a></a>
           results.push({
             element: $el,
-            type: Constants.Global.ERROR,
+            type: 'error',
             content: Lang.sprintf('LINK_EMPTY'),
             inline: true,
             position: 'afterend',
@@ -6684,7 +6680,7 @@
           if (showGoodLinkButton === true) {
             results.push({
               element: $el,
-              type: Constants.Global.GOOD,
+              type: 'good',
               content: Lang.sprintf('LINK_LABEL', sanitizedText),
               inline: true,
               position: 'afterend',
@@ -6693,7 +6689,7 @@
         } else if ($el.getAttribute('aria-hidden') === 'true' && $el.getAttribute('tabindex') === '-1') ; else {
           results.push({
             element: $el,
-            type: Constants.Global.ERROR,
+            type: 'error',
             content: Lang.sprintf('LINK_STOPWORD', error[0]),
             inline: true,
             position: 'afterend',
@@ -6705,7 +6701,7 @@
         // Contains warning words.
         results.push({
           element: $el,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: Lang.sprintf('LINK_BEST_PRACTICES', STOPWORD),
           inline: true,
           position: 'beforebegin',
@@ -6717,7 +6713,7 @@
         if (linkText.length > 8) {
           results.push({
             element: $el,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('LINK_DOI'),
             inline: true,
             position: 'beforebegin',
@@ -6730,7 +6726,7 @@
         if (linkText.length > 40) {
           results.push({
             element: $el,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('LINK_URL'),
             inline: true,
             position: 'beforebegin',
@@ -6743,7 +6739,7 @@
           const sanitizedText = sanitizeHTML(linkText);
           results.push({
             element: $el,
-            type: Constants.Global.GOOD,
+            type: 'good',
             content: Lang.sprintf('LINK_LABEL', sanitizedText),
             inline: true,
             position: 'afterend',
@@ -6753,7 +6749,7 @@
         // Link is ONLY a period, comma, or slash.
         results.push({
           element: $el,
-          type: Constants.Global.ERROR,
+          type: 'error',
           content: Lang.sprintf('LINK_EMPTY'),
           inline: true,
           position: 'afterend',
@@ -6770,12 +6766,12 @@
    * @link https://github.com/gka/chroma.js (Parse RGB)
   */
 
-  function checkContrast(results) {
-    if (Constants.Global.contrastPlugin === true) {
+  function checkContrast(results, option) {
+    if (option.contrastPlugin === true) {
       if (
         store.getItem('sa11y-remember-contrast') === 'On'
-        || Constants.Global.headless === true
-        || Constants.Global.checkAllHideToggles === true
+        || option.headless === true
+        || option.checkAllHideToggles === true
       ) {
         let contrastErrors = {
           errors: [],
@@ -6950,7 +6946,7 @@
           if (name.tagName === 'INPUT') {
             results.push({
               element: name,
-              type: Constants.Global.ERROR,
+              type: 'error',
               content: Lang.sprintf('CONTRAST_INPUT_ERROR', cratio),
               inline: false,
               position: 'beforebegin',
@@ -6958,7 +6954,7 @@
           } else {
             results.push({
               element: name,
-              type: Constants.Global.ERROR,
+              type: 'error',
               content: Lang.sprintf('CONTRAST_ERROR', cratio, sanitizedText),
               inline: false,
               position: 'beforebegin',
@@ -6976,7 +6972,7 @@
 
           results.push({
             element: name,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('CONTRAST_WARNING', sanitizedText),
             inline: false,
             position: 'beforebegin',
@@ -6988,12 +6984,12 @@
     return results;
   }
 
-  function checkLabels(results) {
-    if (Constants.Global.formLabelsPlugin === true) {
+  function checkLabels(results, option) {
+    if (option.formLabelsPlugin === true) {
       if (
         store.getItem('sa11y-remember-labels') === 'On'
-        || Constants.Global.headless === true
-        || Constants.Global.checkAllHideToggles === true
+        || option.headless === true
+        || option.checkAllHideToggles === true
       ) {
         Elements.Found.Inputs.forEach(($el) => {
           // Ignore hidden inputs.
@@ -7010,7 +7006,7 @@
                 if ($el.getAttribute('aria-label')) ; else {
                   results.push({
                     element: $el,
-                    type: Constants.Global.ERROR,
+                    type: 'error',
                     content: Lang.sprintf('LABELS_MISSING_IMAGE_INPUT_MESSAGE'),
                     inline: false,
                     position: 'beforebegin',
@@ -7022,7 +7018,7 @@
               const key = prepareDismissal(`INPUT${ariaLabel}`);
               results.push({
                 element: $el,
-                type: Constants.Global.WARNING,
+                type: 'warning',
                 content: Lang.sprintf('LABELS_INPUT_RESET_MESSAGE'),
                 inline: false,
                 position: 'beforebegin',
@@ -7036,7 +7032,7 @@
                 const sanitizedText = sanitizeHTML(ariaLabel);
                 results.push({
                   element: $el,
-                  type: Constants.Global.WARNING,
+                  type: 'warning',
                   content: Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', sanitizedText),
                   inline: false,
                   position: 'beforebegin',
@@ -7047,7 +7043,7 @@
                 const sanitizedText = sanitizeHTML(ariaLabel);
                 results.push({
                   element: $el,
-                  type: Constants.Global.WARNING,
+                  type: 'warning',
                   content: Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', sanitizedText),
                   inline: false,
                   position: 'beforebegin',
@@ -7069,7 +7065,7 @@
                 const id = $el.getAttribute('id');
                 results.push({
                   element: $el,
-                  type: Constants.Global.ERROR,
+                  type: 'error',
                   content: Lang.sprintf('LABELS_NO_FOR_ATTRIBUTE_MESSAGE', id),
                   inline: false,
                   position: 'beforebegin',
@@ -7078,7 +7074,7 @@
             } else {
               results.push({
                 element: $el,
-                type: Constants.Global.ERROR,
+                type: 'error',
                 content: Lang.sprintf('LABELS_MISSING_LABEL_MESSAGE'),
                 inline: false,
                 position: 'beforebegin',
@@ -7091,12 +7087,12 @@
     return { results };
   }
 
-  function checkLinksAdvanced(results) {
-    if (Constants.Global.linksAdvancedPlugin === true) {
+  function checkLinksAdvanced(results, option) {
+    if (option.linksAdvancedPlugin === true) {
       if (
         store.getItem('sa11y-remember-links-advanced') === 'On'
-        || Constants.Global.headless === true
-        || Constants.Global.checkAllHideToggles === true
+        || option.headless === true
+        || option.checkAllHideToggles === true
       ) {
         const seen = {};
         Elements.Found.Links.forEach(($el) => {
@@ -7134,7 +7130,7 @@
                 const sanitizedText = sanitizeHTML(linkText);
                 results.push({
                   element: $el,
-                  type: Constants.Global.WARNING,
+                  type: 'warning',
                   content: Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText),
                   inline: true,
                   position: 'beforebegin',
@@ -7183,7 +7179,7 @@
             const key = prepareDismissal(`LINK${linkTextTrimmed + href}`);
             results.push({
               element: $el,
-              type: Constants.Global.WARNING,
+              type: 'warning',
               content: Lang.sprintf('NEW_TAB_WARNING'),
               inline: true,
               position: 'beforebegin',
@@ -7195,7 +7191,7 @@
             const key = prepareDismissal(`LINK${linkTextTrimmed + href}`);
             results.push({
               element: $el,
-              type: Constants.Global.WARNING,
+              type: 'warning',
               content: Lang.sprintf('FILE_TYPE_WARNING'),
               inline: true,
               position: 'beforebegin',
@@ -7433,7 +7429,7 @@
           const key = prepareDismissal(`IFRAME${$el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src')}`);
           results.push({
             element: $el,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('EMBED_AUDIO'),
             inline: false,
             position: 'beforebegin',
@@ -7450,7 +7446,7 @@
             const key = prepareDismissal(`IFRAME${$el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src')}`);
             results.push({
               element: $el,
-              type: Constants.Global.WARNING,
+              type: 'warning',
               content: Lang.sprintf('EMBED_VIDEO'),
               inline: false,
               position: 'beforebegin',
@@ -7466,7 +7462,7 @@
           const key = prepareDismissal(`IFRAME${$el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src')}`);
           results.push({
             element: $el,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('EMBED_DATA_VIZ'),
             inline: false,
             position: 'beforebegin',
@@ -7492,7 +7488,7 @@
                 }
                 results.push({
                   element: $el,
-                  type: Constants.Global.ERROR,
+                  type: 'error',
                   content: Lang.sprintf('EMBED_MISSING_TITLE'),
                   inline: false,
                   position: 'beforebegin',
@@ -7516,7 +7512,7 @@
             const key = prepareDismissal(`IFRAME${$el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src')}`);
             results.push({
               element: $el,
-              type: Constants.Global.WARNING,
+              type: 'warning',
               content: Lang.sprintf('EMBED_GENERAL_WARNING'),
               inline: false,
               position: 'beforebegin',
@@ -7537,7 +7533,7 @@
       Elements.Found.CustomErrorLinks.forEach(($el) => {
         results.push({
           element: $el,
-          type: Constants.Global.ERROR,
+          type: 'error',
           content: Lang.sprintf('QA_BAD_LINK', $el),
           inline: true,
           position: 'beforebegin',
@@ -7555,7 +7551,7 @@
         if (strongItalicsText > 400) {
           results.push({
             element: $el.parentNode,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('QA_BAD_ITALICS'),
             inline: false,
             position: 'beforebegin',
@@ -7578,7 +7574,7 @@
         if (option.documentQA === true && hasExtension) {
           results.push({
             element: $el,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('QA_DOCUMENT'),
             inline: true,
             position: 'beforebegin',
@@ -7587,7 +7583,7 @@
         } else if (option.pdfQA === true && hasPDF) {
           results.push({
             element: $el,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('QA_PDF'),
             inline: true,
             position: 'beforebegin',
@@ -7603,7 +7599,7 @@
     if (option.langQA === true) {
       if (!Elements.Found.Language || Elements.Found.Language.length < 2) {
         results.push({
-          type: Constants.Global.ERROR,
+          type: 'error',
           content: Lang.sprintf('QA_PAGE_LANGUAGE'),
         });
       }
@@ -7620,7 +7616,7 @@
           const key = prepareDismissal(`BLOCKQUOTE${sanitizedText}`);
           results.push({
             element: $el,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('QA_BLOCKQUOTE_MESSAGE', sanitizedText),
             inline: false,
             position: 'beforebegin',
@@ -7640,7 +7636,7 @@
         if (findTHeaders.length === 0) {
           results.push({
             element: $el,
-            type: Constants.Global.ERROR,
+            type: 'error',
             content: Lang.sprintf('TABLES_MISSING_HEADINGS'),
             inline: false,
             position: 'beforebegin',
@@ -7650,7 +7646,7 @@
           findHeadingTags.forEach(($a) => {
             results.push({
               element: $a,
-              type: Constants.Global.ERROR,
+              type: 'error',
               content: Lang.sprintf('TABLES_SEMANTIC_HEADING'),
               inline: false,
               position: 'beforebegin',
@@ -7661,7 +7657,7 @@
           if ($b.textContent.trim().length === 0) {
             results.push({
               element: $b,
-              type: Constants.Global.ERROR,
+              type: 'error',
               content: Lang.sprintf('TABLES_EMPTY_HEADING'),
               inline: false,
               position: 'afterbegin',
@@ -7706,7 +7702,7 @@
               const key = prepareDismissal(`BOLD${sanitizedText}`);
               results.push({
                 element: firstChild,
-                type: Constants.Global.WARNING,
+                type: 'warning',
                 content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
                 inline: false,
                 position: 'beforebegin',
@@ -7731,7 +7727,7 @@
             const key = prepareDismissal(`BOLD${sanitizedText}`);
             results.push({
               element: $el,
-              type: Constants.Global.WARNING,
+              type: 'warning',
               content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
               inline: false,
               position: 'beforebegin',
@@ -7758,7 +7754,7 @@
             const key = prepareDismissal(`BOLD${sanitizedText}`);
             results.push({
               element: $elem,
-              type: Constants.Global.WARNING,
+              type: 'warning',
               content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
               inline: false,
               position: 'beforebegin',
@@ -7820,7 +7816,7 @@
             const key = prepareDismissal(`LIST${$el.textContent}`);
             results.push({
               element: $el,
-              type: Constants.Global.WARNING,
+              type: 'warning',
               content: Lang.sprintf('QA_SHOULD_BE_LIST', firstPrefix),
               inline: false,
               position: 'beforebegin',
@@ -7859,7 +7855,7 @@
           const key = prepareDismissal(`UPPERCASE${thisText}`);
           results.push({
             element: $el,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('QA_UPPERCASE_WARNING'),
             inline: false,
             position: 'beforebegin',
@@ -7886,7 +7882,7 @@
           } else {
             results.push({
               element: $el,
-              type: Constants.Global.ERROR,
+              type: 'error',
               content: Lang.sprintf('QA_DUPLICATE_ID', id),
               inline: true,
               position: 'beforebegin',
@@ -7907,7 +7903,7 @@
         const key = prepareDismissal(`UNDERLINE${text}`);
         results.push({
           element: $el,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: Lang.sprintf('QA_TEXT_UNDERLINE_WARNING'),
           inline: true,
           position: 'beforebegin',
@@ -7923,7 +7919,7 @@
           const key = prepareDismissal(`UNDERLINE${text}`);
           results.push({
             element: $el,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('QA_TEXT_UNDERLINE_WARNING'),
             inline: false,
             position: 'beforebegin',
@@ -7945,7 +7941,7 @@
       const $title = document.querySelector('title');
       if (!$title || $title.textContent.trim().length === 0) {
         results.push({
-          type: Constants.Global.ERROR,
+          type: 'error',
           content: Lang.sprintf('QA_PAGE_TITLE'),
         });
       }
@@ -7961,7 +7957,7 @@
           const key = prepareDismissal($el.tagName + text);
           results.push({
             element: $el,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('QA_SUBSCRIPT_WARNING'),
             inline: true,
             position: 'beforebegin',
@@ -7991,7 +7987,7 @@
         const key = prepareDismissal($checkAnnouncement[i].textContent);
         results.push({
           element: $checkAnnouncement[i],
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: C.ANNOUNCEMENT_MESSAGE,
           inline: false,
           position: 'beforebegin',
@@ -8007,7 +8003,7 @@
       if (!!checkForm && checkForm.length) {
         results.push({
           element: $el,
-          type: Constants.Global.ERROR,
+          type: 'error',
           content: C.ACCORDION_FORM_MESSAGE,
           inline: false,
           position: 'beforebegin',
@@ -8136,9 +8132,9 @@
             option.linksToDOI,
           );
           checkImages(this.results);
-          checkContrast(this.results);
-          checkLabels(this.results);
-          checkLinksAdvanced(this.results);
+          checkContrast(this.results, option);
+          checkLabels(this.results, option);
+          checkLinksAdvanced(this.results, option);
           checkQA(this.results, option);
           checkEmbeddedContent(this.results, option);
           checkReadability();
@@ -8223,6 +8219,14 @@
               nudge();
             }
           }
+
+          // Dispatch custom event that stores the results array.
+          const event = new CustomEvent('sa11y-check-complete', {
+            detail: {
+              results: this.results,
+            },
+          });
+          document.dispatchEvent(event);
         } catch (error) {
           const consoleErrors = new ConsoleErrors(error);
           document.body.appendChild(consoleErrors);
