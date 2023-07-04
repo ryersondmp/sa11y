@@ -8215,19 +8215,31 @@ class Sa11y {
             detectOverflow();
             nudge();
           }
-
-          // send check complete event
-          const event = new CustomEvent('sa11y-check-complete', {
-            detail: {
-              results: this.results,
-              dismissed: this.dismissed,
-              dismissedCount: this.dismissedCount,
-              errorCount: this.errorCount,
-              warningCount: this.warningCount,
-            },
-          });
-          document.dispatchEvent(event);
         }
+
+        this.results.forEach(($el) => {
+
+          // replace localized strings
+          if ($el.type === Constants.Global.ERROR) {
+            $el.type = 'error';
+          } else if ($el.type === Constants.Global.WARNING) {
+            $el.type = 'warning';
+          } else if ($el.type === Constants.Global.GOOD) {
+            $el.type = 'good';
+          }
+
+          if ($el.element !== undefined) {
+            const path = generateSelectorPath($el.element);
+            Object.assign($el, { cssPath: path });
+          }
+        });
+
+        const event = new CustomEvent('sa11y-check-complete', {
+          detail: {
+            results: this.results,
+          },
+        });
+        document.dispatchEvent(event);
 
       } catch (error) {
         const consoleErrors = new ConsoleErrors(error);

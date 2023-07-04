@@ -17,7 +17,7 @@ import Elements from './utils/elements';
 
 // Extras
 import detectPageChanges from './logic/detect-page-changes';
-import { dismissAnnotationsLogic, dismissAnnotationsButtons } from './logic/dismiss-annotations';
+import { dismissAnnotationsLogic, dismissAnnotationsButtons, getResultsForAJAX } from './logic/dismiss-annotations';
 import addColourFilters from './logic/colour-filters';
 import ConsoleErrors from './interface/console-error';
 
@@ -298,19 +298,31 @@ class Sa11y {
             detectOverflow();
             nudge();
           }
-
-          // send check complete event
-          const event = new CustomEvent('sa11y-check-complete', {
-            detail: {
-              results: this.results,
-              dismissed: this.dismissed,
-              dismissedCount: this.dismissedCount,
-              errorCount: this.errorCount,
-              warningCount: this.warningCount,
-            },
-          });
-          document.dispatchEvent(event);
         }
+
+        this.results.forEach(($el) => {
+
+          // replace localized strings
+          if ($el.type === Constants.Global.ERROR) {
+            $el.type = 'error';
+          } else if ($el.type === Constants.Global.WARNING) {
+            $el.type = 'warning';
+          } else if ($el.type === Constants.Global.GOOD) {
+            $el.type = 'good';
+          }
+
+          if ($el.element !== undefined) {
+            const path = Utils.generateSelectorPath($el.element);
+            Object.assign($el, { cssPath: path });
+          }
+        });
+
+        const event = new CustomEvent('sa11y-check-complete', {
+          detail: {
+            results: this.results,
+          },
+        });
+        document.dispatchEvent(event);
 
       } catch (error) {
         const consoleErrors = new ConsoleErrors(error);
