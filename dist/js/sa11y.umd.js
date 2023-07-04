@@ -8221,7 +8221,20 @@
               detectOverflow();
               nudge();
             }
+
+            // send check complete event
+            const event = new CustomEvent('sa11y-check-complete', {
+              detail: {
+                results: this.results,
+                dismissed: this.dismissed,
+                dismissedCount: this.dismissedCount,
+                errorCount: this.errorCount,
+                warningCount: this.warningCount,
+              },
+            });
+            document.dispatchEvent(event);
           }
+
         } catch (error) {
           const consoleErrors = new ConsoleErrors(error);
           document.body.appendChild(consoleErrors);
