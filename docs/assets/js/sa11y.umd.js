@@ -6215,7 +6215,7 @@
             position: 'beforebegin',
           });
         } else if (error[1] !== null && $el.closest('a[href]')) {
-          const key = prepareDismissal(`LINKEDIMAGE${baseSrc + altText + error[1]}`);
+          const key = prepareDismissal(`LINKEDIMAGE${baseSrc + altText}`);
           results.push({
             element: $el,
             type: 'warning',
@@ -8224,6 +8224,7 @@
           const event = new CustomEvent('sa11y-check-complete', {
             detail: {
               results: this.results,
+              page: Constants.Global.currentPage,
             },
           });
           document.dispatchEvent(event);

@@ -93,7 +93,7 @@ export default function checkImages(results) {
           position: 'beforebegin',
         });
       } else if (error[1] !== null && $el.closest('a[href]')) {
-        const key = Utils.prepareDismissal(`LINKEDIMAGE${baseSrc + altText + error[1]}`);
+        const key = Utils.prepareDismissal(`LINKEDIMAGE${baseSrc + altText}`);
         results.push({
           element: $el,
           type: 'warning',

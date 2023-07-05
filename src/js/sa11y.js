@@ -245,6 +245,7 @@ class Sa11y {
         const event = new CustomEvent('sa11y-check-complete', {
           detail: {
             results: this.results,
+            page: Constants.Global.currentPage,
           },
         });
         document.dispatchEvent(event);
