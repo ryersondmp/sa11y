@@ -53,5 +53,6 @@ const sa11y = new Sa11y({
 
   // Specific checks
   linksToDOI: true,
-  missingH1: false
+  missingH1: true,
+  nonConsecutiveHeadingIsError: true,
 });

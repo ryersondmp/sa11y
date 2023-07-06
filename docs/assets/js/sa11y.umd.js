@@ -5841,7 +5841,7 @@
       if ($el === 'error' && element !== undefined) {
         const errorAttr = (inline ? 'data-sa11y-error-inline' : 'data-sa11y-error');
         element.setAttribute(errorAttr, index);
-      } else if ($el === 'warning') {
+      } else if ($el === 'warning' && element !== undefined) {
         const warningAttr = (inline ? 'data-sa11y-warning-inline' : 'data-sa11y-warning');
         element.setAttribute(warningAttr, index);
       }
