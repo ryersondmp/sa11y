@@ -3,7 +3,7 @@ import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 
-export default function checkLinkText(results, showGoodLinkButton) {
+export default function checkLinkText(results, showGoodLinkButton, linksToDOI) {
   const containsLinkTextStopWords = (textContent) => {
     const urlText = [
       'http',
@@ -38,9 +38,9 @@ export default function checkLinkText(results, showGoodLinkButton) {
       '.ua/',
     ];
 
-    const hit = [null, null, null];
+    const hit = [null, null, null, null];
 
-    // Flag partial stop words.
+    // Iterate through all partialStopwords.
     Lang._('PARTIAL_ALT_STOPWORDS').forEach((word) => {
       if (
         textContent.length === word.length && textContent.toLowerCase().indexOf(word) >= 0
@@ -58,13 +58,20 @@ export default function checkLinkText(results, showGoodLinkButton) {
       return false;
     });
 
+    // Flag citations/references
+    const doi = 'doi.org';
+    if (textContent.toLowerCase().includes('doi')) {
+      hit[2] = doi;
+    }
+
     // Flag link text containing URLs.
     urlText.forEach((word) => {
       if (textContent.toLowerCase().indexOf(word) >= 0) {
-        hit[2] = word;
+        hit[3] = word;
       }
       return false;
     });
+
     return hit;
   };
 
@@ -102,11 +109,17 @@ export default function checkLinkText(results, showGoodLinkButton) {
     }
 
     // Ignore provided linkSpanIgnore prop, <style> tags, and special characters.
+    const specialCharPattern = /[!?。，、&*()\-;':"\\|,.<>↣↳←→↓«»↴]+/g;
     const error = containsLinkTextStopWords(
       Utils.fnIgnore(
         $el, Constants.Exclusions.LinkSpan,
-      ).textContent.replace(/[!*?↣↳→↓»↴]/g, '').trim(),
+      ).textContent.replace(specialCharPattern, '').trim(),
     );
+
+    // HTML symbols used as call to actions.
+    const htmlSymbols = /([<>↣↳←→↓«»↴]+)/;
+    const matches = linkText.match(htmlSymbols);
+    const matchedSymbol = matches ? matches[1] : null;
 
     if ($el.querySelectorAll('img').length) {
       // Do nothing. Don't overlap with Alt Text module.
@@ -118,7 +131,7 @@ export default function checkLinkText(results, showGoodLinkButton) {
         // Has child elements (e.g. SVG or SPAN) <a><i></i></a>
         results.push({
           element: $el,
-          type: Constants.Global.ERROR,
+          type: 'error',
           content: Lang.sprintf('LINK_EMPTY_LINK_NO_LABEL'),
           inline: true,
           position: 'afterend',
@@ -127,20 +140,20 @@ export default function checkLinkText(results, showGoodLinkButton) {
         // Completely empty <a></a>
         results.push({
           element: $el,
-          type: Constants.Global.ERROR,
+          type: 'error',
           content: Lang.sprintf('LINK_EMPTY'),
           inline: true,
           position: 'afterend',
         });
       }
-    } else if (error[0] != null) {
+    } else if (error[0] !== null) {
       // Contains stop words.
       if (hasAriaLabelledBy || hasAriaLabel || childAriaLabelledBy || childAriaLabel) {
         const sanitizedText = Utils.sanitizeHTML(linkText);
         if (showGoodLinkButton === true) {
           results.push({
             element: $el,
-            type: Constants.Global.GOOD,
+            type: 'good',
             content: Lang.sprintf('LINK_LABEL', sanitizedText),
             inline: true,
             position: 'afterend',
@@ -151,30 +164,44 @@ export default function checkLinkText(results, showGoodLinkButton) {
       } else {
         results.push({
           element: $el,
-          type: Constants.Global.ERROR,
+          type: 'error',
           content: Lang.sprintf('LINK_STOPWORD', error[0]),
           inline: true,
           position: 'afterend',
         });
       }
-    } else if (error[1] != null) {
-      const key = Utils.prepareDismissal(`LINK${linkText + error[1] + href}`);
+    } else if (error[1] !== null || matchedSymbol !== null) {
+      const key = Utils.prepareDismissal(`LINK${linkText + href}`);
+      const STOPWORD = matchedSymbol || error[1];
       // Contains warning words.
       results.push({
         element: $el,
-        type: Constants.Global.WARNING,
-        content: Lang.sprintf('LINK_BEST_PRACTICES', error[1]),
+        type: 'warning',
+        content: Lang.sprintf('LINK_BEST_PRACTICES', STOPWORD),
         inline: true,
         position: 'beforebegin',
         dismiss: key,
       });
-    } else if (error[2] != null) {
+    } else if (error[2] !== null && linksToDOI === true) {
+      const key = Utils.prepareDismissal(`LINK${linkText + error[2] + href}`);
+      // Contains DOI URL in link text.
+      if (linkText.length > 8) {
+        results.push({
+          element: $el,
+          type: 'warning',
+          content: Lang.sprintf('LINK_DOI'),
+          inline: true,
+          position: 'beforebegin',
+          dismiss: key,
+        });
+      }
+    } else if (error[3] !== null) {
       const key = Utils.prepareDismissal(`LINK${linkText + error[2] + href}`);
       // Contains URL in link text.
       if (linkText.length > 40) {
         results.push({
           element: $el,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: Lang.sprintf('LINK_URL'),
           inline: true,
           position: 'beforebegin',
@@ -187,12 +214,21 @@ export default function checkLinkText(results, showGoodLinkButton) {
         const sanitizedText = Utils.sanitizeHTML(linkText);
         results.push({
           element: $el,
-          type: Constants.Global.GOOD,
+          type: 'good',
           content: Lang.sprintf('LINK_LABEL', sanitizedText),
           inline: true,
           position: 'afterend',
         });
       }
+    } else if (linkText === '.' || linkText === ',' || linkText === '/') {
+      // Link is ONLY a period, comma, or slash.
+      results.push({
+        element: $el,
+        type: 'error',
+        content: Lang.sprintf('LINK_EMPTY'),
+        inline: true,
+        position: 'afterend',
+      });
     }
   });
   return { results };

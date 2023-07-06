@@ -13,16 +13,16 @@
   }
 
   [data-sa11y-readability-period] {
-    border: 0 !important;
-    clip: rect(1px, 1px, 1px, 1px) !important;
-    clip-path: inset(50%) !important;
-    display: block !important;
-    height: 1px !important;
-    overflow: hidden !important;
-    padding: 0 !important;
     position: absolute !important;
-    white-space: nowrap !important;
+    display: block !important;
     width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    clip: rect(1px, 1px, 1px, 1px) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+    clip-path: inset(50%) !important;
   }
 
   /* ************************************* */
@@ -41,28 +41,28 @@
   }
 
   [data-sa11y-error-inline] {
+    color: var(--sa11y-error-text) !important;
     background-color: var(--sa11y-error) !important;
     border-color: transparent !important;
-    border-radius: 0.25em !important;
+    border-radius: .25em !important;
     box-shadow: 0 0 0 4px var(--sa11y-error) !important;
-    color: var(--sa11y-error-text) !important;
   }
 
   [data-sa11y-warning-inline] {
+    color: var(--sa11y-warning-text) !important;
     background-color: var(--sa11y-warning) !important;
     border-color: transparent !important;
-    border-radius: 0.25em !important;
+    border-radius: .25em !important;
     box-shadow: 0 0 0 4px var(--sa11y-warning) !important;
-    color: var(--sa11y-warning-text) !important;
   }
 
   /* *************************************************** */
   /*  Pulsing border: https://codepen.io/olam/pen/zcqea  */
   /* *************************************************** */
   [data-sa11y-pulse-border] {
-    animation: pulse 2s 3;
-    box-shadow: 0;
     outline: 5px solid var(--sa11y-focus-color) !important;
+    box-shadow: 0;
+    animation: pulse 2s 3;
 
     &:hover,
     &:focus {

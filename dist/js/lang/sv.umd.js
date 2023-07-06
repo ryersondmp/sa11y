@@ -1,9 +1,22 @@
+
+/*!
+  * Sa11y, the accessibility quality assurance assistant.
+  * @version 3.0.3
+  * @author Adam Chaboryk, Toronto Metropolitan University
+  * @license GPL-2.0-or-later
+  * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
+  * @contact adam.chaboryk@torontomu.ca
+  * GitHub: git+https://github.com/ryersondmp/sa11y.git | Website: https://sa11y.netlify.app
+  * For all acknowledgements, please visit: https://sa11y.netlify.app/acknowledgements/
+  * The above copyright notice shall be included in all copies or substantial portions of the Software.
+**/
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Sa11yLangSv = factory());
 })(this, (function () { 'use strict';
 
+  /*! WARNING: This is a machine-generated translation and may contain errors or inaccuracies. */
   var sv = {
     // Swedish
     strings: {
@@ -60,58 +73,42 @@
 
       // Alternative text module stop words
       SUSPICIOUS_ALT_STOPWORDS: ['bild', 'grafik', 'fotografi', 'foto'],
-      PLACEHOLDER_ALT_STOPWORDS: ['alt', 'bild', 'foto', 'dekorativ', 'fotografi', 'platshållare', 'platshållarbild', 'mellanlägg', '.'],
+      PLACEHOLDER_ALT_STOPWORDS: ['alt', 'bild', 'foto', 'dekorativ', 'fotografi', 'platshållare', 'platshållarbild', 'mellanlägg'],
       PARTIAL_ALT_STOPWORDS: [
         'klicka',
         'klicka här',
         'klicka här för mer',
         'klicka här för att läsa mer',
-        'klicka här för att läsa mer.',
         'kolla upp',
         'detaljer här',
-        'detaljer här.',
         'ladda ner',
         'ladda ner här',
-        'ladda ner här.',
         'visa',
         'visa mer',
-        'visa mer.',
-        'visa mer >',
         'mer',
-        'mer.',
-        'mer >',
         'formulär',
         'här',
-        'här.',
         'info',
         'information',
         'länk',
         'lär dig',
         'lär dig mer',
-        'lär dig mer.',
-        'lär dig mer >',
         'lär dig att',
         'mer',
-        'mer >',
         'sida',
         'papper',
         'läs mer',
-        'läs mer >',
         'läs',
         'läs detta',
         'detta',
         'den här sidan',
-        'den här sidan.',
         'denna sida',
-        'denna sida.',
         'den här webbplatsen',
-        'den här webbplatsen.',
         'visa',
         'visa vår',
         'webbplats',
-        '.',
       ],
-      WARNING_ALT_STOPWORDS: ['< ', ' >', 'klicka här'],
+      WARNING_ALT_STOPWORDS: ['klicka här'],
       NEW_WINDOW_PHRASES: ['extern', 'ny flik', 'nytt fönster', 'pop-up', 'pop up'],
 
       // Only some items in list would need to be translated.
@@ -146,6 +143,7 @@
       LINK_STOPWORD: 'Länktexten kanske inte är tillräckligt beskrivande ur sitt sammanhang: <strong {r}>%(error)</strong><hr><strong>Tips!</strong> Länktexten ska alltid vara tydlig, unik och meningsfull. Undvik vanliga ord som &quot;klicka här&quot; eller &quot;läs mer&quot;',
       LINK_BEST_PRACTICES: 'Överväg att ersätta länktexten: <strong {r}>%(error)</strong><hr><ul><li>&quot;Klicka här&quot; platser fokuserar på musmekanik, när många människor inte använder en mus eller kanske tittar på den här webbplatsen på en mobil enhet. Överväg att använda ett annat verb som relaterar till uppgiften.</li><li>Undvik att använda HTML-symboler som uppmaning om de inte är dolda för hjälpmedel.</li></ul>',
       LINK_URL: 'Längre, mindre begripliga webbadresser som används som länktext kan vara svåra att lyssna på med hjälpmedel. I de flesta fall är det bättre att använda läsbar text istället för URL:en. Korta webbadresser (som en webbplats startsida) är okej.<hr><strong>Tips!</strong> Länktexten ska alltid vara tydlig, unik och meningsfull så att den kan förstås tagen ur sitt sammanhang.',
+      LINK_DOI: 'För webbsidor eller resurser som endast finns online rekommenderar <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APA Style Guide</a> att man använder beskrivande länkar genom att linda in URL:en eller DOI:en för arbetet runt dess titel. Längre, mindre begripliga webbadresser som används som länktext kan vara svåra att lyssna på med hjälpmedel.',
 
       // Links advanced
       NEW_TAB_WARNING: 'Länken öppnas i en ny flik eller ett nytt fönster utan förvarning. Att göra det kan vara desorienterande, särskilt för personer som har svårt att uppfatta visuellt innehåll. För det andra är det inte alltid en bra praxis att styra någons erfarenhet eller fatta beslut åt dem. Ange att länken öppnas i ett nytt fönster i länktexten<hr><strong>Tips!</strong> Lär dig bästa praxis: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">att öppna länkar i nya webbläsarfönster och flikar.</a>',
@@ -166,7 +164,7 @@
       LINK_IMAGE_NO_ALT_TEXT: 'Bilden i länken är markerad som dekorativ och det finns ingen länktext. Vänligen lägg till alternativ text till bilden som beskriver länkens destination.',
       LINK_IMAGE_HAS_TEXT: 'Bilden är markerad som dekorativ, även om länken använder den omgivande texten som en beskrivande etikett.',
       LINK_IMAGE_LONG_ALT: 'Alternativ textbeskrivning för en länkad bild är <strong>för lång</strong>. Alt-text för länkade bilder ska beskriva vart länken tar dig, inte vara en bokstavlig beskrivning av bilden. <strong>Överväg att använda titeln på sidan den länkar till som alt-text.</strong> <hr> <strong>Alt-text (<span {r}>%(altLength)</span> tecken):</ stark> %(altText)',
-      LINK_IMAGE_ALT_WARNING: 'Bildlänken innehåller alt-text, men se till att alt-texten beskriver destinationssidan. <strong>Överväg att använda titeln på sidan den länkar till som alt-text.</strong> Beskriver alt-texten vart länken tar dig? <hr> <strong>Alt-text:</strong> %(altText)',
+      LINK_IMAGE_ALT_WARNING: 'Bildlänken innehåller alt-text. <strong>Beskriver alt-texten vart länken tar dig?</strong> Överväg att använda titeln på den sida som länken leder till som alt-text. <hr> <strong>Alt-text:</strong> %(altText)',
       LINK_IMAGE_ALT_AND_TEXT_WARNING: 'Bildlänken innehåller <strong>både alt-text och omgivande länktext.</strong> Om den här bilden är dekorativ och används som en funktionell länk till en annan sida, överväg att markera bilden som dekorativ eller null - den omgivande länktexten bör räcka. <hr> <strong>Alt-text:</strong> %(altText)',
       IMAGE_FIGURE_DECORATIVE: 'Bilden är markerad som <strong>dekorativ</strong> och kommer att ignoreras av hjälpmedel. <hr> Även om en <strong>textning</strong> tillhandahölls, bör bilden också ha alternativ text i de flesta fall. <ul><li>Alt-texten ska ge en kortfattad beskrivning av vad som finns i bilden.</li><li>Texten ska vanligtvis ge ett sammanhang för att relatera bilden till det omgivande innehållet, eller ge uppmärksamhet åt viss information.</li></ul>Läs mer: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt kontra figcaption.</a>',
       IMAGE_FIGURE_DUPLICATE_ALT: 'Använd inte exakt samma ord för både alt- och bildtext. Skärmläsare kommer då att förmedla samma information två gånger.<ul><li>Alt-texten ska ge en kortfattad beskrivning av vad som finns i bilden.</li><li>Tillskriften ska vanligtvis ge sammanhang för att relatera bilden tillbaka till omgivningen innehåll eller ge uppmärksamhet åt en viss information.</li></ul> Läs mer: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt kontra figcaption.</a> <hr> <strong>Alt-text:</strong> %(altText)',

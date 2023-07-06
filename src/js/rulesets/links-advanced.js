@@ -3,12 +3,12 @@ import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 
-export default function checkLinksAdvanced(results) {
-  if (Constants.Global.linksAdvancedPlugin === true) {
+export default function checkLinksAdvanced(results, option) {
+  if (option.linksAdvancedPlugin === true) {
     if (
       Utils.store.getItem('sa11y-remember-links-advanced') === 'On'
-      || Constants.Global.headless === true
-      || Constants.Global.checkAllHideToggles === true
+      || option.headless === true
+      || option.checkAllHideToggles === true
     ) {
       const seen = {};
       Elements.Found.Links.forEach(($el) => {
@@ -48,7 +48,7 @@ export default function checkLinksAdvanced(results) {
               const sanitizedText = Utils.sanitizeHTML(linkText);
               results.push({
                 element: $el,
-                type: Constants.Global.WARNING,
+                type: 'warning',
                 content: Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText),
                 inline: true,
                 position: 'beforebegin',
@@ -69,9 +69,10 @@ export default function checkLinksAdvanced(results) {
           return linkText.toLowerCase().indexOf(pass) >= 0;
         });
 
-        // Link that points to a file type indicates that it does.
-        const containsFileTypePhrases = Lang._('FILE_TYPE_PHRASES').some((pass) => linkText.toLowerCase().indexOf(pass) >= 0);
-
+        // Link that points to a file type and indicates as such.
+        const defaultFileTypes = ['pdf', 'doc', 'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'];
+        const fileTypes = defaultFileTypes.concat(Lang._('FILE_TYPE_PHRASES'));
+        const containsFileTypePhrases = fileTypes.some((pass) => linkText.toLowerCase().indexOf(pass) >= 0);
         const fileTypeMatch = $el.matches(`
               a[href$='.pdf'],
               a[href$='.doc'],
@@ -96,7 +97,7 @@ export default function checkLinksAdvanced(results) {
           const key = Utils.prepareDismissal(`LINK${linkTextTrimmed + href}`);
           results.push({
             element: $el,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('NEW_TAB_WARNING'),
             inline: true,
             position: 'beforebegin',
@@ -108,7 +109,7 @@ export default function checkLinksAdvanced(results) {
           const key = Utils.prepareDismissal(`LINK${linkTextTrimmed + href}`);
           results.push({
             element: $el,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('FILE_TYPE_WARNING'),
             inline: true,
             position: 'beforebegin',

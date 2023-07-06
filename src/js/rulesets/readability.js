@@ -6,6 +6,7 @@
  * @link https://github.com/Yoast/YoastSEO.js/issues/267
  * @link http://stackoverflow.com/questions/5686483/how-to-compute-number-of-syllables-in-a-word-in-javascript
  * @link https://www.simoahava.com/analytics/calculate-readability-scores-for-content/#commento-58ac602191e5c6dc391015c5a6933cf3e4fc99d1dc92644024c331f1ee9b6093
+ * @link https://oaji.net/articles/2017/601-1498133639.pdf (Portugese adaptation).
 */
 import Constants from '../utils/constants';
 import Elements from '../utils/elements';
@@ -40,7 +41,7 @@ export default function checkReadability() {
       const pageText = readabilityarray.join(' ').toString();
 
       /* Flesch Reading Ease for English, French, German, Dutch, and Italian. */
-      if (['en', 'fr', 'de', 'nl', 'it'].includes(Constants.Readability.Lang)) {
+      if (['en', 'es', 'fr', 'de', 'nl', 'it', 'pt'].includes(Constants.Readability.Lang)) {
         // Compute syllables
         const numberOfSyllables = (el) => {
           let wordCheck = el;
@@ -110,6 +111,8 @@ export default function checkReadability() {
           flesch = 206.84 - (0.77 * (100 * (totalSyllables / words))) - (0.93 * (words / sentences));
         } else if (Constants.Readability.Lang === 'it') {
           flesch = 217 - (1.3 * (words / sentences)) - (0.6 * (100 * (totalSyllables / words)));
+        } else if (Constants.Readability.Lang === 'pt') {
+          flesch = 248.835 - (1.015 * (words / sentences)) - (84.6 * (totalSyllables / words));
         }
 
         // Score must be between 0 and 100%.

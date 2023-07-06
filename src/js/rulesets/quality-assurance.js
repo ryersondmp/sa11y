@@ -3,31 +3,15 @@ import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 
-export default function checkQA(
-  results,
-  badLinksQA,
-  strongItalicsQA,
-  pdfQA,
-  documentQA,
-  langQA,
-  blockquotesQA,
-  tablesQA,
-  fakeHeadingsQA,
-  fakeListQA,
-  allCapsQA,
-  duplicateIdQA,
-  underlinedTextQA,
-  pageTitleQA,
-  subscriptQA,
-) {
+export default function checkQA(results, option) {
   /* *********************************************************** */
   /*  Error: Find all links pointing to development environment. */
   /* *********************************************************** */
-  if (badLinksQA === true) {
+  if (option.badLinksQA === true) {
     Elements.Found.CustomErrorLinks.forEach(($el) => {
       results.push({
         element: $el,
-        type: Constants.Global.ERROR,
+        type: 'error',
         content: Lang.sprintf('QA_BAD_LINK', $el),
         inline: true,
         position: 'beforebegin',
@@ -38,14 +22,14 @@ export default function checkQA(
   /* *********************************************************** */
   /*  Warning: Excessive bolding or italics.                     */
   /* *********************************************************** */
-  if (strongItalicsQA === true) {
+  if (option.strongItalicsQA === true) {
     Elements.Found.StrongItalics.forEach(($el) => {
       const strongItalicsText = $el.textContent.trim().length;
       const key = Utils.prepareDismissal($el.tagName + $el.textContent);
       if (strongItalicsText > 400) {
         results.push({
           element: $el.parentNode,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: Lang.sprintf('QA_BAD_ITALICS'),
           inline: false,
           position: 'beforebegin',
@@ -65,19 +49,19 @@ export default function checkQA(
       const hasExtension = extensions.some((extension) => href.includes(extension));
       const hasPDF = href.includes('.pdf');
       const key = Utils.prepareDismissal(`DOCUMENT${href}`);
-      if (documentQA === true && hasExtension) {
+      if (option.documentQA === true && hasExtension) {
         results.push({
           element: $el,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: Lang.sprintf('QA_DOCUMENT'),
           inline: true,
           position: 'beforebegin',
           dismiss: key,
         });
-      } else if (pdfQA === true && hasPDF) {
+      } else if (option.pdfQA === true && hasPDF) {
         results.push({
           element: $el,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: Lang.sprintf('QA_PDF'),
           inline: true,
           position: 'beforebegin',
@@ -90,10 +74,10 @@ export default function checkQA(
   /* *************************************************************** */
   /*  Error: Missing language tag. Lang should be at least 2 chars.  */
   /* *************************************************************** */
-  if (langQA === true) {
+  if (option.langQA === true) {
     if (!Elements.Found.Language || Elements.Found.Language.length < 2) {
       results.push({
-        type: Constants.Global.ERROR,
+        type: 'error',
         content: Lang.sprintf('QA_PAGE_LANGUAGE'),
       });
     }
@@ -102,7 +86,7 @@ export default function checkQA(
   /* *************************************************************** */
   /*  Warning: Find blockquotes used as headers.                     */
   /* *************************************************************** */
-  if (blockquotesQA === true) {
+  if (option.blockquotesQA === true) {
     Elements.Found.Blockquotes.forEach(($el) => {
       const bqHeadingText = $el.textContent;
       if (bqHeadingText.trim().length < 25) {
@@ -110,7 +94,7 @@ export default function checkQA(
         const key = Utils.prepareDismissal(`BLOCKQUOTE${sanitizedText}`);
         results.push({
           element: $el,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: Lang.sprintf('QA_BLOCKQUOTE_MESSAGE', sanitizedText),
           inline: false,
           position: 'beforebegin',
@@ -123,14 +107,14 @@ export default function checkQA(
   /* *************************************************************** */
   /*  Errors: Check HTML tables for issues.                          */
   /* *************************************************************** */
-  if (tablesQA === true) {
+  if (option.tablesQA === true) {
     Elements.Found.Tables.forEach(($el) => {
       const findTHeaders = $el.querySelectorAll('th');
       const findHeadingTags = $el.querySelectorAll('h1, h2, h3, h4, h5, h6');
       if (findTHeaders.length === 0) {
         results.push({
           element: $el,
-          type: Constants.Global.ERROR,
+          type: 'error',
           content: Lang.sprintf('TABLES_MISSING_HEADINGS'),
           inline: false,
           position: 'beforebegin',
@@ -140,7 +124,7 @@ export default function checkQA(
         findHeadingTags.forEach(($a) => {
           results.push({
             element: $a,
-            type: Constants.Global.ERROR,
+            type: 'error',
             content: Lang.sprintf('TABLES_SEMANTIC_HEADING'),
             inline: false,
             position: 'beforebegin',
@@ -151,7 +135,7 @@ export default function checkQA(
         if ($b.textContent.trim().length === 0) {
           results.push({
             element: $b,
-            type: Constants.Global.ERROR,
+            type: 'error',
             content: Lang.sprintf('TABLES_EMPTY_HEADING'),
             inline: false,
             position: 'afterbegin',
@@ -169,7 +153,7 @@ export default function checkQA(
   /*  3) Doesn't contain the following characters: .;?!                 */
   /*  4) The previous element is not a semantic heading.                */
   /* ****************************************************************** */
-  if (fakeHeadingsQA === true) {
+  if (option.fakeHeadingsQA === true) {
     Elements.Found.Paragraphs.forEach(($el) => {
       const brAfter = $el.innerHTML.indexOf('</strong><br>');
       const brBefore = $el.innerHTML.indexOf('<br></strong>');
@@ -196,7 +180,7 @@ export default function checkQA(
             const key = Utils.prepareDismissal(`BOLD${sanitizedText}`);
             results.push({
               element: firstChild,
-              type: Constants.Global.WARNING,
+              type: 'warning',
               content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
               inline: false,
               position: 'beforebegin',
@@ -223,7 +207,7 @@ export default function checkQA(
           const key = Utils.prepareDismissal(`BOLD${sanitizedText}`);
           results.push({
             element: $el,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
             inline: false,
             position: 'beforebegin',
@@ -252,7 +236,7 @@ export default function checkQA(
           const key = Utils.prepareDismissal(`BOLD${sanitizedText}`);
           results.push({
             element: $elem,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
             inline: false,
             position: 'beforebegin',
@@ -268,7 +252,7 @@ export default function checkQA(
   /*  Warning: Detect paragraphs that should be lists.               */
   /*  Thanks to John Jameson from PrincetonU for this ruleset!       */
   /* *************************************************************** */
-  if (fakeListQA === true) {
+  if (option.fakeListQA === true) {
     Elements.Found.Paragraphs.forEach(($el) => {
       let activeMatch = '';
       const prefixDecrement = {
@@ -314,7 +298,7 @@ export default function checkQA(
           const key = Utils.prepareDismissal(`LIST${$el.textContent}`);
           results.push({
             element: $el,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('QA_SHOULD_BE_LIST', firstPrefix),
             inline: false,
             position: 'beforebegin',
@@ -333,7 +317,7 @@ export default function checkQA(
   /* *************************************************************** */
   /*  Warning: Detect uppercase text.                                */
   /* *************************************************************** */
-  if (allCapsQA === true) {
+  if (option.allCapsQA === true) {
     const checkCaps = ($el) => {
       let thisText = '';
       if ($el.tagName === 'LI') {
@@ -353,7 +337,7 @@ export default function checkQA(
         const key = Utils.prepareDismissal(`UPPERCASE${thisText}`);
         results.push({
           element: $el,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: Lang.sprintf('QA_UPPERCASE_WARNING'),
           inline: false,
           position: 'beforebegin',
@@ -370,7 +354,7 @@ export default function checkQA(
   /* *************************************************************** */
   /*  Error: Duplicate IDs                                           */
   /* *************************************************************** */
-  if (duplicateIdQA === true) {
+  if (option.duplicateIdQA === true) {
     const allIds = {};
     Elements.Found.Ids.forEach(($el) => {
       const { id } = $el;
@@ -380,7 +364,7 @@ export default function checkQA(
         } else {
           results.push({
             element: $el,
-            type: Constants.Global.ERROR,
+            type: 'error',
             content: Lang.sprintf('QA_DUPLICATE_ID', id),
             inline: true,
             position: 'beforebegin',
@@ -394,14 +378,14 @@ export default function checkQA(
   /*  Warning: Flag underlined text.                                 */
   /*  Created by Brian Teeman.                                       */
   /* *************************************************************** */
-  if (underlinedTextQA === true) {
+  if (option.underlinedTextQA === true) {
     // Find all <u> tags.
     Elements.Found.Underlines.forEach(($el) => {
       const text = Utils.getText($el);
       const key = Utils.prepareDismissal(`UNDERLINE${text}`);
       results.push({
         element: $el,
-        type: Constants.Global.WARNING,
+        type: 'warning',
         content: Lang.sprintf('QA_TEXT_UNDERLINE_WARNING'),
         inline: true,
         position: 'beforebegin',
@@ -417,7 +401,7 @@ export default function checkQA(
         const key = Utils.prepareDismissal(`UNDERLINE${text}`);
         results.push({
           element: $el,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: Lang.sprintf('QA_TEXT_UNDERLINE_WARNING'),
           inline: false,
           position: 'beforebegin',
@@ -435,11 +419,11 @@ export default function checkQA(
   /* *************************************************************** */
   /*  Error: Page is missing meta page <title>                       */
   /* *************************************************************** */
-  if (pageTitleQA === true) {
+  if (option.pageTitleQA === true) {
     const $title = document.querySelector('title');
     if (!$title || $title.textContent.trim().length === 0) {
       results.push({
-        type: Constants.Global.ERROR,
+        type: 'error',
         content: Lang.sprintf('QA_PAGE_TITLE'),
       });
     }
@@ -448,14 +432,14 @@ export default function checkQA(
   /* *************************************************************** */
   /*  Warning: Find inappropriate use of <sup> and <sub> tags.       */
   /* *************************************************************** */
-  if (subscriptQA === true) {
+  if (option.subscriptQA === true) {
     Elements.Found.Subscripts.forEach(($el) => {
       const text = Utils.getText($el);
       if (text.length >= 80) {
         const key = Utils.prepareDismissal($el.tagName + text);
         results.push({
           element: $el,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: Lang.sprintf('QA_SUBSCRIPT_WARNING'),
           inline: true,
           position: 'beforebegin',

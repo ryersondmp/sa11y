@@ -36,9 +36,9 @@ export function annotate(
   dismissAnnotationsOption,
 ) {
   const validTypes = [
-    Constants.Global.ERROR,
-    Constants.Global.WARNING,
-    Constants.Global.GOOD,
+    'error',
+    'warning',
+    'good',
   ];
 
   if (validTypes.indexOf(type) === -1) {
@@ -46,23 +46,23 @@ export function annotate(
   }
   // Add unique ID and styles to annotation and marked element.
   [type].forEach(($el) => {
-    if ($el === Constants.Global.ERROR && element !== undefined) {
+    if ($el === 'error' && element !== undefined) {
       const errorAttr = (inline ? 'data-sa11y-error-inline' : 'data-sa11y-error');
       element.setAttribute(errorAttr, index);
-    } else if ($el === Constants.Global.WARNING) {
+    } else if ($el === 'warning' && element !== undefined) {
       const warningAttr = (inline ? 'data-sa11y-warning-inline' : 'data-sa11y-warning');
       element.setAttribute(warningAttr, index);
     }
   });
 
-  const CSSName = {
-    [validTypes[0]]: 'error',
-    [validTypes[1]]: 'warning',
-    [validTypes[2]]: 'good',
+  const ariaLabel = {
+    [validTypes[0]]: Lang._('ERROR'),
+    [validTypes[1]]: Lang._('WARNING'),
+    [validTypes[2]]: Lang._('GOOD'),
   };
 
   // Add dismiss button if prop enabled.
-  const dismiss = (dismissAnnotationsOption === true && CSSName[type] === 'warning') ? `<button data-sa11y-dismiss='${index}' type='button'>${Lang._('DISMISS')}</button>` : '';
+  const dismiss = (dismissAnnotationsOption === true && type === 'warning') ? `<button data-sa11y-dismiss='${index}' type='button'>${Lang._('DISMISS')}</button>` : '';
 
   const instance = document.createElement('sa11y-annotation');
   instance.setAttribute('data-sa11y-annotation', index);
@@ -73,7 +73,7 @@ export function annotate(
     // Page errors displayed to main panel.
     Constants.Panel.pageIssues.classList.add('active');
     Constants.Panel.panel.classList.add('has-page-issues');
-    listItem.innerHTML = `<strong>${[type]}</strong> ${content}`;
+    listItem.innerHTML = `<strong>${ariaLabel[type]}</strong> ${content}`;
     Constants.Panel.pageIssuesList.insertAdjacentElement('afterbegin', listItem);
   } else {
     // Button annotations.
@@ -81,13 +81,13 @@ export function annotate(
     create.innerHTML = `
     <button
       type="button"
-      aria-label="${[type]}"
+      aria-label="${ariaLabel[type]}"
       aria-haspopup="dialog"
-      class="sa11y-btn ${CSSName[type]}-btn${inline ? '-text' : ''}"
+      class="sa11y-btn ${[type]}-btn${inline ? '-text' : ''}"
       data-tippy-content=
         "<div lang='${Lang._('LANG_CODE')}'>
           <button class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button>
-          <div class='header-text'><h2>${[type]}</h2></div>
+          <div class='header-text'><h2>${ariaLabel[type]}</h2></div>
           ${escapeHTML(content)}
           ${dismiss}
         </div>"

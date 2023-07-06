@@ -4,17 +4,16 @@
  * @link https://github.com/jasonday/color-contrast
  * @link https://github.com/gka/chroma.js (Parse RGB)
 */
-import Constants from '../utils/constants';
 import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 
-export default function checkContrast(results) {
-  if (Constants.Global.contrastPlugin === true) {
+export default function checkContrast(results, option) {
+  if (option.contrastPlugin === true) {
     if (
       Utils.store.getItem('sa11y-remember-contrast') === 'On'
-      || Constants.Global.headless === true
-      || Constants.Global.checkAllHideToggles === true
+      || option.headless === true
+      || option.checkAllHideToggles === true
     ) {
       let contrastErrors = {
         errors: [],
@@ -193,7 +192,7 @@ export default function checkContrast(results) {
         if (name.tagName === 'INPUT') {
           results.push({
             element: name,
-            type: Constants.Global.ERROR,
+            type: 'error',
             content: Lang.sprintf('CONTRAST_INPUT_ERROR', cratio),
             inline: false,
             position: 'beforebegin',
@@ -201,7 +200,7 @@ export default function checkContrast(results) {
         } else {
           results.push({
             element: name,
-            type: Constants.Global.ERROR,
+            type: 'error',
             content: Lang.sprintf('CONTRAST_ERROR', cratio, sanitizedText),
             inline: false,
             position: 'beforebegin',
@@ -219,7 +218,7 @@ export default function checkContrast(results) {
 
         results.push({
           element: name,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: Lang.sprintf('CONTRAST_WARNING', sanitizedText),
           inline: false,
           position: 'beforebegin',

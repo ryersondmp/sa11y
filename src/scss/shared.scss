@@ -2,16 +2,16 @@
 /*               Utilities                   */
 /* ***************************************** */
 .visually-hidden {
-  border: 0;
-  clip: rect(1px, 1px, 1px, 1px);
-  clip-path: inset(50%);
-  display: block;
-  height: 1px;
-  overflow: hidden;
-  padding: 0;
   position: absolute;
-  white-space: nowrap;
+  display: block;
   width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+  border: 0;
+  clip-path: inset(50%);
 }
 
 [hidden] {
@@ -21,11 +21,11 @@
 h2,
 .header-text-inline,
 .header-text {
-  color: var(--sa11y-panel-primary);
   display: block;
+  margin-bottom: 3px;
   font-size: var(--sa11y-large-text);
   font-weight: 600;
-  margin-bottom: 3px;
+  color: var(--sa11y-panel-primary);
 }
 
 .header-text-inline {
@@ -35,10 +35,10 @@ h2,
 code,
 kbd,
 .kbd {
+  padding: 1.6px 4.8px;
+  color: var(--sa11y-panel-primary);
   background-color: var(--sa11y-panel-badge);
   border-radius: 3.2px;
-  color: var(--sa11y-panel-primary);
-  padding: 1.6px 4.8px;
 }
 
 code {
@@ -50,15 +50,15 @@ code {
 }
 
 .red-text {
-  color: var(--sa11y-red-text);
   font-family: var(--sa11y-font-face);
   font-size: var(--sa11y-normal-text);
+  color: var(--sa11y-red-text);
 }
 
 .yellow-text {
-  color: var(--sa11y-yellow-text);
   font-family: var(--sa11y-font-face);
   font-size: var(--sa11y-normal-text);
+  color: var(--sa11y-yellow-text);
 }
 
 /* ***************************************** */
@@ -66,19 +66,20 @@ code {
 /* ***************************************** */
 
 .close-btn {
+  position: relative;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list */
+  float: var(--sa11y-float-rtl);
+  width: 32px;
+  height: 32px;
+  margin: 0;
+  font-size: var(--sa11y-normal-text);
+  font-weight: normal;
+  color: var(--sa11y-panel-primary);
+  cursor: pointer;
   background: none;
   border: 1px solid var(--sa11y-button-outline);
   border-radius: 50%;
-  color: var(--sa11y-panel-primary);
-  cursor: pointer;
-  float: var(--sa11y-float-rtl);
-  font-size: var(--sa11y-normal-text);
-  font-weight: normal;
-  height: 32px;
-  margin: 0;
-  position: relative;
   transition: all .2s ease-in-out;
-  width: 32px;
 
   &:hover,
   &:focus {
@@ -86,20 +87,19 @@ code {
   }
 
   &:after {
-    background: var(--sa11y-setting-switch-bg-off);
-    bottom: -7px;
-    content: "";
-    left: -7px;
-    mask: var(--sa11y-close-btn-svg) center no-repeat;
-    -webkit-mask: var(--sa11y-close-btn-svg) center no-repeat;
     position: absolute;
-    right: -7px;
     top: -7px;
+    right: -7px;
+    bottom: -7px;
+    left: -7px;
+    content: "";
+    background: var(--sa11y-setting-switch-bg-off);
+    mask: var(--sa11y-close-btn-svg) center no-repeat;
   }
 
   @media screen and (forced-colors: active) {
     &:after {
-      filter: invert(1)
+      filter: invert(1);
     }
   }
 }
@@ -118,16 +118,16 @@ code {
   select:focus,
   button:not(#settings-toggle):not(#outline-toggle):not(.switch):focus,
   a:focus {
-    box-shadow: 0 0 0 5px var(--sa11y-focus-color);
     outline: 0;
+    box-shadow: 0 0 0 5px var(--sa11y-focus-color);
   }
 
   /* These elements MUST use inset outlines */
   .switch:focus,
   #settings-toggle:focus,
   #outline-toggle:focus {
-    box-shadow: inset 0 0 0 4px var(--sa11y-focus-color);
     outline: 0;
+    box-shadow: inset 0 0 0 4px var(--sa11y-focus-color);
   }
 }
 
@@ -137,9 +137,9 @@ code {
   a:focus,
   button:focus,
   button:active,
-  [tabindex='-1']:focus {
-    box-shadow: 0 0 0 5px var(--sa11y-focus-color);
+  [tabindex="-1"]:focus {
     outline: 0;
+    box-shadow: 0 0 0 5px var(--sa11y-focus-color);
   }
 }
 
@@ -154,8 +154,8 @@ code {
   select:focus:not(:focus-visible),
   #settings-toggle:focus:not(:focus-visible),
   #outline-toggle:focus:not(:focus-visible) {
-    box-shadow: none;
     outline: 0;
+    box-shadow: none;
   }
 }
 
@@ -164,9 +164,9 @@ code {
 
   a:focus:not(:focus-visible),
   button:focus:not(:focus-visible),
-  [tabindex='-1']:focus:not(:focus-visible) {
-    box-shadow: none;
+  [tabindex="-1"]:focus:not(:focus-visible) {
     outline: 0;
+    box-shadow: none;
   }
 }
 
@@ -180,16 +180,16 @@ code {
   select:focus-visible,
   [tabindex="0"]:focus-visible,
   [tabindex="-1"]:focus-visible {
-    box-shadow: 0 0 0 5px var(--sa11y-focus-color);
     outline: 0;
+    box-shadow: 0 0 0 5px var(--sa11y-focus-color);
   }
 
   // These elements MUST use inset outlines.
   .switch:focus-visible,
   #settings-toggle:focus-visible,
   #outline-toggle:focus-visible {
-    box-shadow: inset 0 0 0 4px var(--sa11y-focus-color);
     outline: 0;
+    box-shadow: inset 0 0 0 4px var(--sa11y-focus-color);
   }
 }
 
@@ -198,9 +198,9 @@ code {
 
   a:focus-visible,
   button:focus-visible,
-  [tabindex='-1']:focus-visible {
-    box-shadow: 0 0 0 5px var(--sa11y-focus-color);
+  [tabindex="-1"]:focus-visible {
     outline: 0;
+    box-shadow: 0 0 0 5px var(--sa11y-focus-color);
   }
 }
 
@@ -224,7 +224,7 @@ code {
 
     a:focus,
     button:focus,
-    [tabindex='-1']:focus {
+    [tabindex="-1"]:focus {
       outline: transparent solid 3px !important;
     }
   }
@@ -233,8 +233,8 @@ code {
   #container {
 
     a:focus,
-    [tabindex='-1']:focus,
-    [tabindex='0']:focus,
+    [tabindex="-1"]:focus,
+    [tabindex="0"]:focus,
     select:focus,
     button:focus {
       outline: transparent solid 3px !important;

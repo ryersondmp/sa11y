@@ -1,4 +1,3 @@
-import Constants from '../utils/constants';
 import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
@@ -7,6 +6,7 @@ export default function checkHeaders(
   results,
   nonConsecutiveHeadingIsError,
   flagLongHeadings,
+  missingH1,
   headingOutline,
 ) {
   let prevLevel;
@@ -32,7 +32,7 @@ export default function checkHeaders(
         error = Lang.sprintf('HEADING_NON_CONSECUTIVE_LEVEL', prevLevel, level);
         results.push({
           element: $el,
-          type: Constants.Global.ERROR,
+          type: 'error',
           content: error,
           inline: false,
           position: 'beforebegin',
@@ -42,7 +42,7 @@ export default function checkHeaders(
         const key = Utils.prepareDismissal(`HEADING${level + headingText}`);
         results.push({
           element: $el,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: warning,
           inline: false,
           position: 'beforebegin',
@@ -56,7 +56,7 @@ export default function checkHeaders(
           error = Lang.sprintf('HEADING_EMPTY_WITH_IMAGE', level);
           results.push({
             element: $el,
-            type: Constants.Global.ERROR,
+            type: 'error',
             content: error,
             inline: false,
             position: 'beforebegin',
@@ -66,7 +66,7 @@ export default function checkHeaders(
         error = Lang.sprintf('HEADING_EMPTY', level);
         results.push({
           element: $el,
-          type: Constants.Global.ERROR,
+          type: 'error',
           content: error,
           inline: false,
           position: 'beforebegin',
@@ -76,7 +76,7 @@ export default function checkHeaders(
       error = Lang.sprintf('HEADING_FIRST');
       results.push({
         element: $el,
-        type: Constants.Global.ERROR,
+        type: 'error',
         content: error,
         inline: false,
         position: 'beforebegin',
@@ -86,7 +86,7 @@ export default function checkHeaders(
       const key = Utils.prepareDismissal(`HEADING${level + headingText}`);
       results.push({
         element: $el,
-        type: Constants.Global.WARNING,
+        type: 'warning',
         content: warning,
         inline: false,
         position: 'beforebegin',
@@ -100,23 +100,41 @@ export default function checkHeaders(
     // Create an object for heading outline panel.
     if (error !== null) {
       headingOutline.push({
-        element: $el, headingLevel: level, text: headingText, index: i, type: Constants.Global.ERROR, hidden: hiddenHeading, visibleParent: parent,
+        element: $el,
+        headingLevel: level,
+        text: headingText,
+        index: i,
+        type: 'error',
+        hidden: hiddenHeading,
+        visibleParent: parent,
       });
     } else if (warning !== null) {
       const key = Utils.prepareDismissal(`HEADING${level + headingText}`);
       headingOutline.push({
-        element: $el, headingLevel: level, text: headingText, index: i, type: Constants.Global.WARNING, hidden: hiddenHeading, visibleParent: parent, dismiss: key,
+        element: $el,
+        headingLevel: level,
+        text: headingText,
+        index: i,
+        type: 'warning',
+        hidden: hiddenHeading,
+        visibleParent: parent,
+        dismiss: key,
       });
     } else if (error === null || warning === null) {
       headingOutline.push({
-        element: $el, headingLevel: level, text: headingText, index: i, hidden: hiddenHeading, visibleParent: parent,
+        element: $el,
+        headingLevel: level,
+        text: headingText,
+        index: i,
+        hidden: hiddenHeading,
+        visibleParent: parent,
       });
     }
   });
   // Missing Heading 1
-  if (Elements.Found.HeadingOne.length === 0) {
+  if (Elements.Found.HeadingOne.length === 0 && missingH1 === true) {
     results.push({
-      type: Constants.Global.ERROR,
+      type: 'error',
       content: Lang.sprintf('HEADING_MISSING_ONE'),
     });
   }

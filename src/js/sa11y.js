@@ -1,13 +1,3 @@
-/**
- * Sa11y, the accessibility quality assurance assistant.
- * @version: 3.0.2
- * @author: Development led by Adam Chaboryk, CPWA. <adam.chaboryk@torontomu.ca>
- * @license: https://github.com/ryersondmp/sa11y/blob/master/LICENSE.md
- * @acknowledgements https://sa11y.netlify.app/acknowledgements/
- * @copyright (c) 2020 - 2022 Toronto Metropolitan University (formerly Ryerson University).
- * The above copyright notice shall be included in all copies or substantial portions of the Software.
-*/
-
 // Options, language object, constants, and utilities.
 import defaultOptions from './utils/default-options';
 import Lang from './utils/lang';
@@ -47,7 +37,7 @@ import checkCustom from './sa11y-custom-checks';
 
 class Sa11y {
   constructor(options) {
-    this.option = {
+    const option = {
       ...defaultOptions,
       ...options,
     };
@@ -58,7 +48,7 @@ class Sa11y {
     this.initialize = () => {
       // Do not run Sa11y if any supplied elements detected on page.
       const checkRunPrevent = () => {
-        const { doNotRun } = this.option;
+        const { doNotRun } = option;
         return doNotRun.trim().length > 0 ? document.querySelector(doNotRun) : false;
       };
 
@@ -73,41 +63,14 @@ class Sa11y {
         customElements.define('sa11y-console-error', ConsoleErrors);
 
         // Initialize global constants and exclusions.
-        Constants.initializeGlobal(
-          this.option.checkRoot,
-          this.option.contrastPlugin,
-          this.option.formLabelsPlugin,
-          this.option.linksAdvancedPlugin,
-          this.option.colourFilterPlugin,
-          this.option.checkAllHideToggles,
-          this.option.headless,
-          this.option.panelPosition,
-          this.option.documentLinks,
-        );
-        Constants.initializeReadability(
-          this.option.readabilityPlugin,
-          this.option.readabilityRoot,
-          this.option.readabilityLang,
-        );
-        Constants.initializeExclusions(
-          this.option.containerIgnore,
-          this.option.contrastIgnore,
-          this.option.readabilityIgnore,
-          this.option.headerIgnore,
-          this.option.outlineIgnore,
-          this.option.imageIgnore,
-          this.option.linkIgnore,
-          this.option.linkIgnoreSpan,
-        );
-        Constants.initializeEmbeddedContent(
-          this.option.videoContent,
-          this.option.audioContent,
-          this.option.dataVizContent,
-        );
+        Constants.initializeGlobal(option);
+        Constants.initializeReadability(option);
+        Constants.initializeExclusions(option);
+        Constants.initializeEmbeddedContent(option);
 
         // Once document has fully loaded.
         Utils.documentLoadingCheck(() => {
-          if (this.option.headless === true) {
+          if (option.headless === true) {
             // Headless: Perform all checks without loading UI.
             this.checkAll();
             Utils.store.removeItem('sa11y-dismissed');
@@ -127,7 +90,7 @@ class Sa11y {
 
             // Detect page changes (for SPAs).
             detectPageChanges(
-              this.option.detectSPArouting,
+              option.detectSPArouting,
               this.checkAll,
               this.resetAll,
             );
@@ -161,70 +124,49 @@ class Sa11y {
         this.warningCount = 0;
 
         // Panel alert if root doesn't exist.
-        const root = document.querySelector(this.option.checkRoot);
+        const root = document.querySelector(option.checkRoot);
         if (!root) {
-          Utils.createAlert(`${Lang.sprintf('ERROR_MISSING_ROOT_TARGET', this.option.checkRoot)}`);
+          Utils.createAlert(`${Lang.sprintf('ERROR_MISSING_ROOT_TARGET', option.checkRoot)}`);
         }
 
         // Find all web components on the page.
         Constants.initializeShadowSearch(
-          this.option.checkRoot,
-          this.option.autoDetectShadowComponents,
-          this.option.shadowComponents,
+          option.checkRoot,
+          option.autoDetectShadowComponents,
+          option.shadowComponents,
         );
 
         // Find and cache elements.
-        Elements.initializeElements(
-          this.option.linksToFlag,
-        );
+        Elements.initializeElements(option.linksToFlag);
 
         // Ruleset checks
         checkHeaders(
           this.results,
-          this.option.nonConsecutiveHeadingIsError,
-          this.option.flagLongHeadings,
+          option.nonConsecutiveHeadingIsError,
+          option.flagLongHeadings,
+          option.missingH1,
           this.headingOutline,
         );
-        checkLinkText(this.results, this.option.showGoodLinkButton);
+        checkLinkText(
+          this.results,
+          option.showGoodLinkButton,
+          option.linksToDOI,
+        );
         checkImages(this.results);
-        checkContrast(this.results);
-        checkLabels(this.results);
-        checkLinksAdvanced(this.results);
-        checkQA(
-          this.results,
-          this.option.badLinksQA,
-          this.option.strongItalicsQA,
-          this.option.pdfQA,
-          this.option.documentQA,
-          this.option.langQA,
-          this.option.blockquotesQA,
-          this.option.tablesQA,
-          this.option.fakeHeadingsQA,
-          this.option.fakeListQA,
-          this.option.allCapsQA,
-          this.option.duplicateIdQA,
-          this.option.underlinedTextQA,
-          this.option.pageTitleQA,
-          this.option.subscriptQA,
-        );
-        checkEmbeddedContent(
-          this.results,
-          this.option.embeddedContentAll,
-          this.option.embeddedContentAudio,
-          this.option.embeddedContentVideo,
-          this.option.embeddedContentDataViz,
-          this.option.embeddedContentTitles,
-          this.option.embeddedContentGeneral,
-        );
+        checkContrast(this.results, option);
+        checkLabels(this.results, option);
+        checkLinksAdvanced(this.results, option);
+        checkQA(this.results, option);
+        checkEmbeddedContent(this.results, option);
         checkReadability();
 
         // Custom checks
-        if (this.option.customChecks === true) {
+        if (option.customChecks === true) {
           checkCustom(this.results);
         }
 
         // Optional: Generate CSS selector path of element.
-        if (this.option.selectorPath === true) {
+        if (option.selectorPath === true) {
           this.results.forEach(($el) => {
             if ($el.element !== undefined) {
               const path = Utils.generateSelectorPath($el.element);
@@ -233,7 +175,7 @@ class Sa11y {
           });
         }
 
-        if (this.option.headless === false) {
+        if (option.headless === false) {
           // Check for dismissed items and update results array.
           const dismiss = dismissAnnotationsLogic(this.results, this.dismissTooltip);
           this.results = dismiss.updatedResults;
@@ -260,7 +202,7 @@ class Sa11y {
                 $el.inline,
                 $el.position,
                 $el.id,
-                this.option.dismissAnnotations,
+                option.dismissAnnotations,
               );
             });
 
@@ -272,7 +214,7 @@ class Sa11y {
             document.body.appendChild(tooltipComponent);
 
             dismissAnnotationsButtons(
-              this.option.dismissAnnotations,
+              option.dismissAnnotations,
               this.results,
               this.dismissed,
               this.checkAll,
@@ -282,7 +224,6 @@ class Sa11y {
             generatePageOutline(
               this.dismissed,
               this.headingOutline,
-              this.option.checkRoot,
             );
 
             updatePanel(
@@ -299,6 +240,15 @@ class Sa11y {
             nudge();
           }
         }
+
+        // Dispatch custom event that stores the results array.
+        const event = new CustomEvent('sa11y-check-complete', {
+          detail: {
+            results: this.results,
+            page: Constants.Global.currentPage,
+          },
+        });
+        document.dispatchEvent(event);
       } catch (error) {
         const consoleErrors = new ConsoleErrors(error);
         document.body.appendChild(consoleErrors);
@@ -351,7 +301,7 @@ class Sa11y {
       removeSkipBtnListeners();
 
       // Reset colour filters
-      if (this.option.colourFilterPlugin === true) {
+      if (option.colourFilterPlugin === true) {
         Constants.Panel.colourFilterSelect.value = 0;
         Constants.Panel.colourPanel.classList.remove('active');
         Constants.Panel.colourFilterSelect.classList.remove('active');

@@ -1,4 +1,3 @@
-import Constants from '../utils/constants';
 import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
@@ -13,6 +12,7 @@ export default function checkImages(results) {
       '.gif',
       '.tiff',
       '.svg',
+      'DSC_',
     ];
 
     const hit = [null, null, null];
@@ -41,7 +41,7 @@ export default function checkImages(results) {
         if (Utils.fnIgnore($el.closest('a[href]')).textContent.trim().length >= 1) {
           results.push({
             element: $el,
-            type: Constants.Global.ERROR,
+            type: 'error',
             content: Lang.sprintf('MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE'),
             inline: false,
             position: 'beforebegin',
@@ -49,7 +49,7 @@ export default function checkImages(results) {
         } else if (Utils.fnIgnore($el.closest('a[href]')).textContent.trim().length === 0) {
           results.push({
             element: $el,
-            type: Constants.Global.ERROR,
+            type: 'error',
             content: Lang.sprintf('MISSING_ALT_LINK_MESSAGE'),
             inline: false,
             position: 'beforebegin',
@@ -59,7 +59,7 @@ export default function checkImages(results) {
         // General failure message if image is missing alt.
         results.push({
           element: $el,
-          type: Constants.Global.ERROR,
+          type: 'error',
           content: Lang.sprintf('MISSING_ALT_MESSAGE'),
           inline: false,
           position: 'beforebegin',
@@ -79,7 +79,7 @@ export default function checkImages(results) {
         // Image fails if a stop word was found.
         results.push({
           element: $el,
-          type: Constants.Global.ERROR,
+          type: 'error',
           content: Lang.sprintf('LINK_IMAGE_BAD_ALT_MESSAGE', error[0], altText),
           inline: false,
           position: 'beforebegin',
@@ -87,16 +87,16 @@ export default function checkImages(results) {
       } else if (error[2] !== null && $el.closest('a[href]')) {
         results.push({
           element: $el,
-          type: Constants.Global.ERROR,
+          type: 'error',
           content: Lang.sprintf('LINK_IMAGE_PLACEHOLDER_ALT_MESSAGE', altText),
           inline: false,
           position: 'beforebegin',
         });
       } else if (error[1] !== null && $el.closest('a[href]')) {
-        const key = Utils.prepareDismissal(`LINKEDIMAGE${baseSrc + altText + error[1]}`);
+        const key = Utils.prepareDismissal(`LINKEDIMAGE${baseSrc + altText}`);
         results.push({
           element: $el,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: Lang.sprintf('LINK_IMAGE_SUS_ALT_MESSAGE', error[1], altText),
           inline: false,
           position: 'beforebegin',
@@ -105,7 +105,7 @@ export default function checkImages(results) {
       } else if (error[0] !== null) {
         results.push({
           element: $el,
-          type: Constants.Global.ERROR,
+          type: 'error',
           content: Lang.sprintf('LINK_ALT_HAS_BAD_WORD_MESSAGE', error[0], altText),
           inline: false,
           position: 'beforebegin',
@@ -113,7 +113,7 @@ export default function checkImages(results) {
       } else if (error[2] !== null) {
         results.push({
           element: $el,
-          type: Constants.Global.ERROR,
+          type: 'error',
           content: Lang.sprintf('ALT_PLACEHOLDER_MESSAGE', altText),
           inline: false,
           position: 'beforebegin',
@@ -122,7 +122,7 @@ export default function checkImages(results) {
         const key = Utils.prepareDismissal(`IMAGE${baseSrc + altText + error[1]}`);
         results.push({
           element: $el,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: Lang.sprintf('ALT_HAS_SUS_WORD', error[1], altText),
           inline: false,
           position: 'beforebegin',
@@ -134,7 +134,7 @@ export default function checkImages(results) {
         } else if ($el.closest('a[href]').getAttribute('aria-hidden') === 'true') {
           results.push({
             element: $el,
-            type: Constants.Global.ERROR,
+            type: 'error',
             content: Lang.sprintf('LINK_IMAGE_ARIA_HIDDEN'),
             inline: false,
             position: 'beforebegin',
@@ -142,7 +142,7 @@ export default function checkImages(results) {
         } else if (Utils.fnIgnore($el.closest('a[href]')).textContent.trim().length === 0) {
           results.push({
             element: $el,
-            type: Constants.Global.ERROR,
+            type: 'error',
             content: Lang.sprintf('LINK_IMAGE_NO_ALT_TEXT'),
             inline: false,
             position: 'beforebegin',
@@ -150,7 +150,7 @@ export default function checkImages(results) {
         } else {
           results.push({
             element: $el,
-            type: Constants.Global.GOOD,
+            type: 'good',
             content: Lang.sprintf('LINK_IMAGE_HAS_TEXT'),
             inline: false,
             position: 'beforebegin',
@@ -161,7 +161,7 @@ export default function checkImages(results) {
         // Link and contains alt text.
         results.push({
           element: $el,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: Lang.sprintf('LINK_IMAGE_LONG_ALT', altLength, altText),
           inline: false,
           position: 'beforebegin',
@@ -172,7 +172,7 @@ export default function checkImages(results) {
         // Link and contains an alt text.
         results.push({
           element: $el,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: Lang.sprintf('LINK_IMAGE_ALT_WARNING', altText),
           inline: false,
           position: 'beforebegin',
@@ -183,7 +183,7 @@ export default function checkImages(results) {
         // Contains alt text & surrounding link text.
         results.push({
           element: $el,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT_WARNING', altText),
           inline: false,
           position: 'beforebegin',
@@ -197,7 +197,7 @@ export default function checkImages(results) {
             const key = Utils.prepareDismissal(`DECORATIVE${baseSrc}`);
             results.push({
               element: $el,
-              type: Constants.Global.WARNING,
+              type: 'warning',
               content: Lang.sprintf('IMAGE_FIGURE_DECORATIVE'),
               inline: false,
               position: 'beforebegin',
@@ -207,7 +207,7 @@ export default function checkImages(results) {
             const key = Utils.prepareDismissal(`DECORATIVE${baseSrc}`);
             results.push({
               element: $el,
-              type: Constants.Global.WARNING,
+              type: 'warning',
               content: Lang.sprintf('IMAGE_DECORATIVE'),
               inline: false,
               position: 'beforebegin',
@@ -218,7 +218,7 @@ export default function checkImages(results) {
           const key = Utils.prepareDismissal(`DECORATIVE${baseSrc}`);
           results.push({
             element: $el,
-            type: Constants.Global.WARNING,
+            type: 'warning',
             content: Lang.sprintf('IMAGE_DECORATIVE'),
             inline: false,
             position: 'beforebegin',
@@ -229,7 +229,7 @@ export default function checkImages(results) {
         const key = Utils.prepareDismissal(`IMAGE${baseSrc + altText + alt.length}`);
         results.push({
           element: $el,
-          type: Constants.Global.WARNING,
+          type: 'warning',
           content: Lang.sprintf('IMAGE_ALT_TOO_LONG', altLength, altText),
           inline: false,
           position: 'beforebegin',
@@ -244,7 +244,7 @@ export default function checkImages(results) {
             const key = Utils.prepareDismissal(`FIGURE${baseSrc + altText}`);
             results.push({
               element: $el,
-              type: Constants.Global.WARNING,
+              type: 'warning',
               content: Lang.sprintf('IMAGE_FIGURE_DUPLICATE_ALT', altText),
               inline: false,
               position: 'beforebegin',
@@ -253,7 +253,7 @@ export default function checkImages(results) {
           } else {
             results.push({
               element: $el,
-              type: Constants.Global.GOOD,
+              type: 'good',
               content: Lang.sprintf('IMAGE_PASS', altText),
               inline: false,
               position: 'beforebegin',
@@ -263,7 +263,7 @@ export default function checkImages(results) {
           // If image has alt text - pass!
           results.push({
             element: $el,
-            type: Constants.Global.GOOD,
+            type: 'good',
             content: Lang.sprintf('IMAGE_PASS', altText),
             inline: false,
             position: 'beforebegin',

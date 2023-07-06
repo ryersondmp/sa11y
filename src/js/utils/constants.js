@@ -6,35 +6,22 @@ const Constants = (function myConstants() {
   /* Global constants */
   /* **************** */
   const Global = {};
-  function initializeGlobal(
-    checkRoot,
-    contrastPlugin,
-    formLabelsPlugin,
-    linksAdvancedPlugin,
-    colourFilterPlugin,
-    checkAllHideToggles,
-    headless,
-    panelPosition,
-    documentLinks,
-  ) {
-    Global.ERROR = Lang._('ERROR');
-    Global.WARNING = Lang._('WARNING');
-    Global.GOOD = Lang._('GOOD');
+  function initializeGlobal(option) {
     Global.currentPage = window.location.pathname;
     Global.html = document.querySelector('html');
-    Global.headless = headless;
-    Global.panelPosition = panelPosition;
+    Global.headless = option.headless;
+    Global.panelPosition = option.panelPosition;
 
     // Toggleable plugins
-    Global.contrastPlugin = contrastPlugin;
-    Global.formLabelsPlugin = formLabelsPlugin;
-    Global.linksAdvancedPlugin = linksAdvancedPlugin;
-    Global.colourFilterPlugin = colourFilterPlugin;
-    Global.checkAllHideToggles = checkAllHideToggles;
+    Global.contrastPlugin = option.contrastPlugin;
+    Global.formLabelsPlugin = option.formLabelsPlugin;
+    Global.linksAdvancedPlugin = option.linksAdvancedPlugin;
+    Global.colourFilterPlugin = option.colourFilterPlugin;
+    Global.checkAllHideToggles = option.checkAllHideToggles;
 
     // Root element to check.
-    Global.Root = document.querySelector(checkRoot);
-    if (!checkRoot) {
+    Global.Root = document.querySelector(option.checkRoot);
+    if (!option.checkRoot) {
       Global.Root = document.querySelector('body');
     }
 
@@ -49,8 +36,8 @@ const Constants = (function myConstants() {
     Global.langDirection = (Global.html.getAttribute('dir') === 'rtl') ? 'rtl' : 'ltr';
 
     // Document links (Quality Assurance module)
-    if (documentLinks) {
-      Global.documentLinks = `${documentLinks}`;
+    if (option.documentLinks) {
+      Global.documentLinks = `${option.documentLinks}`;
     }
   }
 
@@ -124,29 +111,52 @@ const Constants = (function myConstants() {
   /* Readability Setup */
   /* ***************** */
   const Readability = {};
-  function initializeReadability(
-    readabilityPlugin,
-    readabilityRoot,
-    readabilityLang,
-  ) {
-    Readability.Lang = readabilityLang;
-    Readability.Root = document.querySelector(readabilityRoot);
-    if (!readabilityRoot) {
-      Readability.Root = Global.Root;
-    }
+  function initializeReadability(option) {
+    if (option.readabilityPlugin === true) {
+      // Readability target area to check.
+      Readability.Root = document.querySelector(option.readabilityRoot);
+      if (!Readability.Root) {
+        if (!Global.Root) {
+          Readability.Root = document.querySelector('body');
+        } else {
+          Readability.Root = Global.Root;
+          // eslint-disable-next-line no-console
+          console.error(`Sa11y configuration error: The selector '${option.readabilityRoot}' used for the property 'readabilityRoot' does not exist. '${Global.Root.tagName}' was used as a fallback.`);
+        }
+      }
 
-    // Supported readability languages. Turn module off if not supported.
-    const supported = ['en', 'fr', 'es', 'de', 'nl', 'it', 'sv', 'fi', 'da', 'no', 'nb', 'nn'];
-    const pageLang = Constants.Global.html.getAttribute('lang');
+      // Set `readabilityLang` property based on language file.
+      Readability.Lang = Lang._('LANG_CODE').substring(0, 2);
 
-    if (!pageLang) {
-      Readability.Plugin = false;
-    } else {
-      const pageLangLowerCase = pageLang.toLowerCase();
-      if (!supported.some(($el) => pageLangLowerCase.includes($el))) {
+      // Supported readability languages.
+      const supported = [
+        'en',
+        'fr',
+        'es',
+        'de',
+        'nl',
+        'it',
+        'sv',
+        'fi',
+        'da',
+        'no',
+        'nb',
+        'nn',
+        'pt',
+      ];
+
+      // Turn off readability if page language is not defined.
+      const pageLang = Constants.Global.html.getAttribute('lang');
+      if (!pageLang) {
         Readability.Plugin = false;
       } else {
-        Readability.Plugin = readabilityPlugin;
+        // Turn off readability if page language is not supported.
+        const pageLangLowerCase = pageLang.toLowerCase().substring(0, 2);
+        if (!supported.includes(pageLangLowerCase) || !supported.includes(Readability.Lang)) {
+          Readability.Plugin = false;
+        } else {
+          Readability.Plugin = true;
+        }
       }
     }
   }
@@ -155,19 +165,10 @@ const Constants = (function myConstants() {
   /* Exclusions Setup */
   /* **************** */
   const Exclusions = {};
-  function initializeExclusions(
-    containerIgnore,
-    contrastIgnore,
-    readabilityIgnore,
-    headerIgnore,
-    outlineIgnore,
-    imageIgnore,
-    linkIgnore,
-    linkIgnoreSpan,
-  ) {
+  function initializeExclusions(option) {
     // Main container.
-    if (containerIgnore) {
-      const containerSelectors = containerIgnore.split(',').map(($el) => `${$el} *, ${$el}`);
+    if (option.containerIgnore) {
+      const containerSelectors = option.containerIgnore.split(',').map(($el) => `${$el} *, ${$el}`);
       Exclusions.Container = `[aria-hidden], #wpadminbar *, ${containerSelectors.join(', ')}`;
     } else {
       Exclusions.Container = '[aria-hidden], #wpadminbar *';
@@ -175,41 +176,41 @@ const Constants = (function myConstants() {
 
     // Contrast exclusions
     Exclusions.Contrast = 'script, style, link';
-    if (contrastIgnore) {
-      Exclusions.Contrast = `${contrastIgnore}, ${Exclusions.Contrast}`;
+    if (option.contrastIgnore) {
+      Exclusions.Contrast = `${option.contrastIgnore}, ${Exclusions.Contrast}`;
     }
 
     // Ignore specific regions for readability module.
     Exclusions.Readability = 'nav li, [role="navigation"] li';
-    if (readabilityIgnore) {
-      Exclusions.Readability = `${readabilityIgnore}, ${Exclusions.Readability}`;
+    if (option.readabilityIgnore) {
+      Exclusions.Readability = `${option.readabilityIgnore}, ${Exclusions.Readability}`;
     }
 
     // Ignore specific headings
-    if (headerIgnore) {
-      Exclusions.Headings = `${headerIgnore}`;
+    if (option.headerIgnore) {
+      Exclusions.Headings = `${option.headerIgnore}`;
     }
 
     // Don't add heading label or include in panel.
-    if (outlineIgnore) {
-      Exclusions.Outline = `${outlineIgnore}`;
+    if (option.outlineIgnore) {
+      Exclusions.Outline = `${option.outlineIgnore}`;
     }
 
     // Ignore specific images.
     Exclusions.Images = '[role="presentation"]';
-    if (imageIgnore) {
-      Exclusions.Images = `${imageIgnore}, ${Exclusions.Images}`;
+    if (option.imageIgnore) {
+      Exclusions.Images = `${option.imageIgnore}, ${Exclusions.Images}`;
     }
 
     // Ignore specific links
     Exclusions.Links = '[aria-hidden="true"], .anchorjs-link';
-    if (linkIgnore) {
-      Exclusions.Links = `${linkIgnore}, ${Exclusions.Links}`;
+    if (option.linkIgnore) {
+      Exclusions.Links = `${option.linkIgnore}, ${Exclusions.Links}`;
     }
 
     // Ignore specific classes within links.
-    if (linkIgnoreSpan) {
-      const linkIgnoreSpanSelectors = linkIgnoreSpan.split(',').map(($el) => `${$el} *, ${$el}`);
+    if (option.linkIgnoreSpan) {
+      const linkIgnoreSpanSelectors = option.linkIgnoreSpan.split(',').map(($el) => `${$el} *, ${$el}`);
       Exclusions.LinkSpan = `noscript, ${linkIgnoreSpanSelectors.join(', ')}`;
     } else {
       Exclusions.LinkSpan = 'noscript';
@@ -220,30 +221,26 @@ const Constants = (function myConstants() {
   /* Embedded Content Setup */
   /* ********************** */
   const EmbeddedContent = {};
-  function initializeEmbeddedContent(
-    videoContent,
-    audioContent,
-    dataVizContent,
-  ) {
+  function initializeEmbeddedContent(option) {
     // Video sources.
-    if (videoContent) {
-      const videos = videoContent.split(/\s*[\s,]\s*/).map(($el) => `[src*='${$el}']`);
+    if (option.videoContent) {
+      const videos = option.videoContent.split(/\s*[\s,]\s*/).map(($el) => `[src*='${$el}']`);
       EmbeddedContent.Video = `video, ${videos.join(', ')}`;
     } else {
       EmbeddedContent.Video = 'video';
     }
 
     // Audio sources.
-    if (audioContent) {
-      const audio = audioContent.split(/\s*[\s,]\s*/).map(($el) => `[src*='${$el}']`);
+    if (option.audioContent) {
+      const audio = option.audioContent.split(/\s*[\s,]\s*/).map(($el) => `[src*='${$el}']`);
       EmbeddedContent.Audio = `audio, ${audio.join(', ')}`;
     } else {
       EmbeddedContent.Audio = 'audio';
     }
 
     // Data viz sources.
-    if (dataVizContent) {
-      const data = dataVizContent.split(/\s*[\s,]\s*/).map(($el) => `[src*='${$el}']`);
+    if (option.dataVizContent) {
+      const data = option.dataVizContent.split(/\s*[\s,]\s*/).map(($el) => `[src*='${$el}']`);
       EmbeddedContent.Visualization = data.join(', ');
     } else {
       EmbeddedContent.Visualization = 'datastudio.google.com, tableau';

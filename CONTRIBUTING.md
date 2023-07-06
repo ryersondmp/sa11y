@@ -24,6 +24,8 @@ If you would like to discuss an existing ruleset, please create a new [issue.](h
 ## Translations
 Translations may either be contributed back to the repository with a pull request, or translated files can be returned to: [adam.chaboryk@torontomu.ca](mailto:adam.chaboryk@torontomu.ca)
 
+When submitting a pull request, please ensure you create your translated file within the `/src/js/lang/` directory.
+
 ## How to contribute code
 There's a couple of ways you can contribute code.
 

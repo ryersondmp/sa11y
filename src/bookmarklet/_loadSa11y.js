@@ -10,7 +10,7 @@ const version = Sa11yVersion;
 
 // Customize props within this section.
 const onLoadScript = (lang) => {
-  const objectKey = `Sa11yLang${lang}`;
+  const objectKey = `Sa11yLang${lang.charAt(0).toUpperCase() + lang.slice(1)}`;
   Sa11y.Lang.addI18n(window[objectKey].strings);
   new Sa11y.Sa11y({
     autoDetectShadowComponents: true,
@@ -30,7 +30,7 @@ export function loadSa11y(langCode) {
 
   // Append javascript
   const sa11yscript = document.createElement('script');
-  sa11yscript.src = `https://cdn.jsdelivr.net/combine/gh/ryersondmp/sa11y@${version}${env}/dist/js/lang/${langCode.toLowerCase()}.umd.min.js,gh/ryersondmp/sa11y@${version}${env}/dist/js/sa11y.umd.min.js`;
+  sa11yscript.src = `https://cdn.jsdelivr.net/combine/gh/ryersondmp/sa11y@${version}${env}/dist/js/lang/${langCode}.umd.min.js,gh/ryersondmp/sa11y@${version}${env}/dist/js/sa11y.umd.min.js`;
   document.body.appendChild(sa11yscript);
 
   sa11yscript.onload = () => onLoadScript(langCode);

@@ -25,3 +25,15 @@ const copyDirectory = async (src, dest) => {
   const scriptSource = await readFile('./docs/demo/script.js', 'utf8');
   await writeFile('./docs/demo/script.js', scriptSource.replace(/\.\.\/dist\//g, 'assets/'), 'utf8');
 })();
+
+// Automatically update Sa11y version number within docs.
+(async () => {
+  const packageJson = require('./package.json');
+  const { version } = packageJson;
+  const fileContent = `
+    const version = '${version}';
+    const webV = document.getElementById("v");
+    webV.innerHTML = version;
+  `;
+  await writeFile('./docs/demo/version.js', fileContent);
+})();

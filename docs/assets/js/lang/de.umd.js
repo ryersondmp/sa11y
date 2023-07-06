@@ -1,3 +1,15 @@
+
+/*!
+  * Sa11y, the accessibility quality assurance assistant.
+  * @version 3.0.3
+  * @author Adam Chaboryk, Toronto Metropolitan University
+  * @license GPL-2.0-or-later
+  * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
+  * @contact adam.chaboryk@torontomu.ca
+  * GitHub: git+https://github.com/ryersondmp/sa11y.git | Website: https://sa11y.netlify.app
+  * For all acknowledgements, please visit: https://sa11y.netlify.app/acknowledgements/
+  * The above copyright notice shall be included in all copies or substantial portions of the Software.
+**/
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -60,7 +72,7 @@
 
       // Alternative text module stop words
       SUSPICIOUS_ALT_STOPWORDS: ['image', 'graphic', 'picture', 'photo', 'foto', 'bild'],
-      PLACEHOLDER_ALT_STOPWORDS: ['alt', 'image', 'photo', 'foto', 'bild', 'decorative', 'placeholder', 'platzhalter', 'placeholder image', 'platzhalter bild', 'platzhalter foto', 'platzhalter photo', 'spacer', 'abstand', '.'],
+      PLACEHOLDER_ALT_STOPWORDS: ['alt', 'image', 'photo', 'foto', 'bild', 'decorative', 'placeholder', 'platzhalter', 'placeholder image', 'platzhalter bild', 'platzhalter foto', 'platzhalter photo', 'spacer', 'abstand'],
       PARTIAL_ALT_STOPWORDS: [
         'click',
         'klick',
@@ -70,56 +82,36 @@
         'hier für mehr klicken',
         'click here to learn more',
         'hier klicken um mehr zu erfahren',
-        'click here to learn more.',
-        'hier klicken um mehr zu erfahren.',
         'clicking here',
-        'clicking here.',
         'check out',
         'detailed here',
-        'detailed here.',
         'download',
         'herunterladen',
         'download here',
         'hier herunterladen',
-        'download here.',
-        'hier herunterladen.',
         'find out',
         'herausfinden',
         'find out more',
         'mehr herausfinden',
-        'find out more.',
-        'mehr herausfinden.',
-        'find out more >',
-        'mehr herausfinden >',
         'form',
         'formular',
         'here',
         'hier',
-        'here.',
-        'hier.',
         'info',
         'information',
         'link',
         'learn',
         'learn more',
         'mehr erfahren',
-        'learn more.',
-        'mehr erfahren.',
-        'learn more >',
-        'mehr erfahren >',
         'learn to',
         'more',
         'mehr',
-        'more >',
-        'mehr >',
         'page',
         'seite',
         'paper',
         'papier',
         'read more',
         'mehr lesen',
-        'read more >',
-        'mehr lesen >',
         'lesen',
         'read this',
         'dies lesen',
@@ -127,24 +119,16 @@
         'dies',
         'this page',
         'diese seite',
-        'this page.',
-        'diese seite.',
         'this website',
         'diese website',
-        'this website.',
-        'diese website.',
         'view',
         'anschauen',
         'view our',
         'website',
-        '.',
       ],
-      WARNING_ALT_STOPWORDS: ['< ', ' >', 'click here', 'hier klicken'],
+      WARNING_ALT_STOPWORDS: ['click here', 'hier klicken'],
       NEW_WINDOW_PHRASES: ['external', 'extern', 'new tab', 'neuer tab', 'new window', 'neues fenster', 'pop-up', 'pop up'],
-
-      // Only some items in list would need to be translated.
-      FILE_TYPE_PHRASES: ['document', 'dokument', 'spreadsheet', 'tabelle', 'worksheet', 'arbeitsblatt', 'install', 'installation', 'video', 'pdf', 'doc',
-        'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'powerpoint', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'],
+      FILE_TYPE_PHRASES: ['dokument', 'document', 'spreadsheet', 'tabelle', 'worksheet', 'arbeitsblatt', 'tabellenkalkulation', 'berechnungstabelle', 'komprimierte datei', 'archivierte Datei', 'arbeitsblatt', 'powerpoint', 'präsentation', 'installieren', 'video', 'audio', 'pdf'],
 
       // Readability
       LANG_READABILITY: 'Lesbarkeit',
@@ -173,7 +157,8 @@
       LINK_LABEL: '<strong>Link Label:</strong> %(sanitizedText)',
       LINK_STOPWORD: 'Der Linktext ist ohne Kontext möglicherweise nicht aussagekräftig genug: <strong {r}>%(error)</strong><hr><strong>Tipp!</strong>Der Linktext sollte immer klar, eindeutig und aussagekräftig sein. Vermeide gängige Wörter wie &quot;hier klicken&quot; oder &quot;mehr erfahren&quot;',
       LINK_BEST_PRACTICES: 'Erwäge, den Linktext zu ersetzen: <strong {r}>%(error)</strong><hr><ul><li>&quot;Hier klicken&quot; legt den Schwerpunkt auf die Mausmechanik, obwohl viele Menschen keine Maus benutzen oder diese Website möglicherweise auf einem mobilen Gerät betrachten. Erwäge die Verwendung eines anderen Verbs, das sich auf die Aufgabe bezieht.</li><li>Vermeide die Verwendung von HTML-Symbolen als Aktionsaufrufe, es sei denn, sie sind für unterstützende Technologien verborgen.</li></ul>',
-      LINK_URL: 'Längere, weniger verständliche URLs, die als Linktext verwendet werden, können mit Hilfe von unterstützenden Technologien schwer zu verstehen sein. In den meisten Fällen ist es besser, anstelle der URL einen von Menschen lesbaren Text zu verwenden. Kurze URLs (z. B. die Homepage einer Website) sind in Ordnung.<hr><strong>Tipp!</strong> Der Linktext sollte immer klar, eindeutig und aussagekräftig sein, damit er auch ohne Kontext verstanden werden kann.',
+      LINK_URL: 'Längere, weniger verständliche URLs, die als Linktext verwendet werden, könnten beim Zugriff mit Hilfe von Hilfsmitteln schwer zu verstehen sein. In den meisten Fällen ist es besser, anstelle der URL einen von Menschen lesbaren Text zu verwenden. Kurze URLs (z. B. die Homepage einer Website) sind in Ordnung.<hr><strong>Tipp!</strong> Der Linktext sollte immer klar, eindeutig und aussagekräftig sein, damit er auch ohne Kontext verstanden werden kann.',
+      LINK_DOI: 'Für Webseiten oder reine Online-Ressourcen empfiehlt der <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APA Style guide</a> die Verwendung von deskriptiven Links, indem die URL oder DOI des Werks um den Titel herumgeschrieben wird. Längere, weniger verständliche URLs, die als Linktext verwendet werden, könnten beim Zugriff mit Hilfe von Hilfsmitteln schwer zu verstehen sein.',
 
       // Links advanced
       NEW_TAB_WARNING: 'Der Link öffnet sich in einem neuen Tab oder einem neuen Fenster ohne Warnung. Dies kann verwirrend sein, insbesondere für Menschen, die Schwierigkeiten haben, visuelle Inhalte wahrzunehmen. Zweitens ist es nicht immer eine gute Praxis, die Erfahrungen der anderen zu kontrollieren oder für sie Entscheidungen zu treffen. Gib im Linktext an, dass der Link in einem neuen Fenster geöffnet wird. <hr><strong>Tipp!</strong> Lerne bewährte Praktiken kennen: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">Öffnen von Links in neuen Browserfenstern und Tabs.</a>',
@@ -194,7 +179,7 @@
       LINK_IMAGE_NO_ALT_TEXT: 'Das Bild innerhalb des Links ist als dekorativ gekennzeichnet und es gibt keinen Linktext. Bitte füge dem Bild einen Alt-Text hinzu, der das Ziel des Links beschreibt.',
       LINK_IMAGE_HAS_TEXT: 'Das Bild ist als dekorativ gekennzeichnet, obwohl der Link den umgebenden Text als beschreibende Bezeichnung verwendet.',
       LINK_IMAGE_LONG_ALT: 'Alt-Text-Beschreibung auf einem verlinkten Bild ist <strong>zu lang</strong>. Der Alt-Text von verlinkten Bildern sollte beschreiben, wohin der Link führt, und nicht eine wörtliche Beschreibung des Bildes enthalten. <strong>Erwäge, den Titel der Seite, auf die verlinkt wird, als Alt-Text zu verwenden.</strong> <hr> <strong>Alt text (<span {r}>%(altLength)</span> characters):</strong> %(altText)',
-      LINK_IMAGE_ALT_WARNING: 'Der Bildlink enthält einen Alt-Text, aber bitte achte darauf, dass der Alt-Text die Zielseite beschreibt. <strong>Erwäge, den Titel der Seite, auf die verlinkt wird, als Alt-Text zu verwenden.</strong> Beschreibt der Alt-Text, wohin der Link Dich führt? <hr> <strong>Alt text:</strong> %(altText)',
+      LINK_IMAGE_ALT_WARNING: 'Der Bildlink enthält einen Alt-Text. <strong>Beschreibt der Alt-Text, wohin der Link Sie führt?</strong> Erwägen Sie, den Titel der Seite, zu der der Link führt, als Alt-Text zu verwenden. <hr> <strong>Alt text:</strong> %(altText)',
       LINK_IMAGE_ALT_AND_TEXT_WARNING: 'Der Bildlink enthält <strong>beide Alt-Texte und den umgebenden Linktext.</strong> Wenn dieses Bild dekorativ ist und als funktionaler Link zu einer anderen Seite verwendet wird, sollte das Bild als dekorativ oder nichtig gekennzeichnet werden - der umgebende Linktext sollte ausreichen. <hr> <strong>Alt text:</strong> %(altText)',
       IMAGE_FIGURE_DECORATIVE: 'Das Bild ist als <strong>dekorativ</strong> gekennzeichnet und wird von Hilfsmitteln ignoriert. <hr> Obwohl eine <strong>Beschriftung</strong> angegeben wurde, sollte das Bild in den meisten Fällen auch einen Alt-Text haben. <ul><li>Der Alt-Text sollte eine prägnante Beschreibung des Bildes enthalten.</li><li>Die Bildunterschrift sollte in der Regel einen Zusammenhang zwischen dem Bild und dem umgebenden Inhalt herstellen oder auf eine bestimmte Information hinweisen.</li></ul>Erfahre mehr: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt versus figcaption.</a>',
       IMAGE_FIGURE_DUPLICATE_ALT: 'Verwende nicht genau dieselben Wörter für den Alt-Text und die Überschrift. Bildschirmlesegeräte melden die Informationen doppelt. <ul><li>Der Alt-Text sollte eine prägnante Beschreibung des Bildes enthalten.</li><li>Die Bildunterschrift sollte in der Regel einen Zusammenhang zwischen dem Bild und dem umgebenden Inhalt herstellen oder auf eine bestimmte Information hinweisen.</li></ul> Erfahre mehr: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt versus figcaption.</a> <hr> <strong>Alt text:</strong> %(altText)',

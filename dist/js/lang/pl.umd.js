@@ -1,3 +1,15 @@
+
+/*!
+  * Sa11y, the accessibility quality assurance assistant.
+  * @version 3.0.3
+  * @author Adam Chaboryk, Toronto Metropolitan University
+  * @license GPL-2.0-or-later
+  * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
+  * @contact adam.chaboryk@torontomu.ca
+  * GitHub: git+https://github.com/ryersondmp/sa11y.git | Website: https://sa11y.netlify.app
+  * For all acknowledgements, please visit: https://sa11y.netlify.app/acknowledgements/
+  * The above copyright notice shall be included in all copies or substantial portions of the Software.
+**/
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -71,11 +83,9 @@
         'image',
         'photo',
         'decorative',
-        'photo',
         'placeholder',
         'placeholder image',
         'spacer',
-        '.',
       ],
       PARTIAL_ALT_STOPWORDS: [
         'kliknij',
@@ -83,43 +93,32 @@
         'kliknij tu',
         'kliknij tutaj, aby dowiedzieć się więcej',
         'kliknij tu, aby dowiedzieć się więcej',
-        'kliknij tutaj, aby dowiedzieć się więcej.',
-        'kliknij tutaj, aby dowiedzieć się więcej >',
         'check out',
         'pobierz',
         'pobierz tutaj',
-        'pobierz tutaj.',
         'dowiedz się',
         'dowiedz się więcej',
-        'dowiedz się więcej.',
-        'dowiedz się więcej >',
         'formularz',
         'tutaj',
-        'tutaj.',
         'info',
         'informacja',
         'link',
         'czytaj',
         'czytaj więcej',
-        'czytaj więcej.',
-        'czytaj więcej >',
         'czytaj to',
         'wiecej',
         'czytaj tu',
         'to',
         'tę stronę',
-        'tej stronie.',
-        'tej stronie >',
+        'tej stronie',
         'tę witrynę',
-        'tej witrynie.',
-        'tej witrynie >',
+        'tej witrynie',
         'zobacz',
         'zobacz naszą',
         'stronę',
         'witrynę',
-        '.',
       ],
-      WARNING_ALT_STOPWORDS: ['< ', ' >', 'kliknij tutaj'],
+      WARNING_ALT_STOPWORDS: ['kliknij tutaj'],
       NEW_WINDOW_PHRASES: [
         'zewnętrzny',
         'nowa karta',
@@ -127,9 +126,7 @@
         'pop-up',
         'pop up',
       ],
-
-      // Only some items in list would need to be translated.
-      FILE_TYPE_PHRASES: ['document', 'dokument', 'spreadsheet', 'worksheet', 'install', 'video', 'pdf', 'doc', 'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'powerpoint', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'],
+      FILE_TYPE_PHRASES: ['dokument', 'arkusz kalkulacyjny', 'arkusz obliczeniowy', 'plik skompresowany', 'plik zarchiwizowany', 'arkusz roboczy', 'powerpoint', 'prezentacja', 'instalacja', 'wideo', 'audio', 'pdf'],
 
       // Readability
       LANG_READABILITY: 'Czytelność',
@@ -147,18 +144,19 @@
       HEADING_NON_CONSECUTIVE_LEVEL: 'Niespójny poziom nagłówka. Zastosowane poziomy nie następują po sobie. Nagłówki nigdy nie powinny pomijać poziomów np. od <strong>Nagłówek %(prevLevel)</strong> do <strong {r}>Nagłówek %(level)</strong>.',
       HEADING_EMPTY: 'Znaleziono pusty nagłówek! Aby to naprawić, usuń tę linię lub zmień jej format z <strong {r}>Nagłówek %(level)</strong> na <strong>zwykły tekst</strong> lub <strong>akapit</strong>.',
       HEADING_LONG: 'Nagłówek jest zbyt długi! Nagłówki służą do organizowania treści i przekazywania struktury. Powinny być krótkie, jasne, opisowe i niepowtarzalne. Pisz nagłówki nie dłuższe niż 160 znaków (nie więcej niż zdanie).<hr>Liczba znaków: <strong {r}>%(headingLength)</strong>.',
-      HEADING_FIRST: 'Pierwszym nagłówkiem na stronie powinien być zwykle Nagłówek H1 lub Nagłówek H2. Nagłówek H1 jest głównym nagłówkiem opisującym ogólny cel strony i powinien być początkiem obszaru treści głównej. Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Strukturze nagłówków. </a>',
+      HEADING_FIRST: 'Pierwszym nagłówkiem na stronie powinien być zwykle Nagłówek H1 lub Nagłówek H2. Nagłówek H1 jest głównym nagłówkiem opisującym ogólny cel strony i powinien być początkiem obszaru treści głównej. Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Strukturze nagłówków.</a>',
       HEADING_MISSING_ONE: 'Brakuje nagłówka H1. Nagłówek H1 jest głównym nagłówkiem opisującym ogólny cel strony i powinien być początkiem obszaru treści głównej. Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Strukturze nagłówków.</a>',
       HEADING_EMPTY_WITH_IMAGE: 'Nagłówek nie ma tekstu, ale zawiera obrazek. Jeśli to nie jest nagłówek, zmień jego format z <strong {r}>Nagłówek H%(level)</strong> na <strong>zwykły tekst</strong> lub <strong>akapit</strong>. W przeciwnym razie, dodaj do obrazu tekst alt, jeśli nie jest on ozdobny.',
       PANEL_HEADING_MISSING_ONE: 'Brak Nagłówka 1!',
 
       // Links
       LINK_EMPTY: 'Puste łącze bez żadnego tekstu. Usuń je!',
-      LINK_EMPTY_LINK_NO_LABEL: 'Łącze nie ma opisowego tekstu, który jest widoczny dla czytników ekranu i innych technologii wspomagających. Aby naprawić:<ul><li>Dodaj zwięzły tekst, który opisuje, dokąd prowadzi łącze.</li><li>Jeśli łączem jest <a href="https://a11y-101.com/development/icons-and-links">ikona lub SVG, </a> prawdopodobnie brakuje mu opisowej etykiety.</li><li>Jeśli uważasz, że to łącze jest błędem spowodowanym błędem kopiuj/wklej, rozważ usunięcie go.</li></ul>',
+      LINK_EMPTY_LINK_NO_LABEL: 'Łącze nie ma opisowego tekstu, który jest widoczny dla czytników ekranu i innych technologii wspomagających. Aby naprawić:<ul><li>Dodaj zwięzły tekst, który opisuje, dokąd prowadzi łącze.</li><li>Jeśli łączem jest <a href="https://a11y-101.com/development/icons-and-links">ikona lub SVG,</a> prawdopodobnie brakuje mu opisowej etykiety.</li><li>Jeśli uważasz, że to łącze jest błędem spowodowanym błędem kopiuj/wklej, rozważ usunięcie go.</li></ul>',
       LINK_LABEL: '<strong>Etykieta łącza:</strong> %(sanitizedText)',
       LINK_STOPWORD: 'Tekst łącza może nie być wystarczająco opisowy w kontekście: <strong {r}>%(error)</strong><hr><strong>Porada!</strong> Tekst łącza powinien być zawsze jasny, unikalny i znaczący. Unikaj typowych słów takich jak &quot;kliknij tutaj&quot; lub &quot;czytaj więcej&quot;.',
       LINK_BEST_PRACTICES: 'Rozważ zastąpienie tekstu łącza: <strong {r}>%(error)</strong><hr><ul><li>&bdquo;Kliknij tutaj&rdquo; skupia się na mechanice myszy, podczas gdy wiele osób nie używa myszy lub może przeglądać tę stronę na urządzeniu mobilnym. Rozważ użycie innego czasownika, który odnosi się do zadania.</li><li>Unikaj używania symboli HTML jako wezwań do działania, chyba że są one ukryte dla technologii wspomagających.</li></ul>',
-      LINK_URL: 'Dłuższe, mniej zrozumiałe adresy URL używane jako tekst odnośnika mogą być trudne do odsłuchania za pomocą technologii wspomagającej. W&nbsp;większości przypadków zamiast adresu URL lepiej jest używać tekstu czytelnego dla człowieka. Krótkie adresy URL (takie jak głównej strony witryny) są w porządku.<hr><strong>Porada!</strong> Tekst łącza powinien być zawsze jasny, unikalny i znaczący, aby mógł być zrozumiany bez kontekstu.',
+      LINK_URL: 'Dłuższe, mniej zrozumiałe adresy URL używane jako tekst linku mogą być trudne do zrozumienia podczas korzystania z technologii wspomagającej. W&nbsp;większości przypadków zamiast adresu URL lepiej jest używać tekstu czytelnego dla człowieka. Krótkie adresy URL (takie jak głównej strony witryny) są w porządku.<hr><strong>Porada!</strong> Tekst łącza powinien być zawsze jasny, unikalny i znaczący, aby mógł być zrozumiany bez kontekstu.',
+      LINK_DOI: 'W przypadku stron internetowych lub zasobów dostępnych tylko online, przewodnik <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APA Style</a> zaleca stosowanie linków opisowych poprzez zawijanie adresu URL lub DOI pracy wokół jej tytułu. Dłuższe, mniej zrozumiałe adresy URL używane jako tekst linku mogą być trudne do zrozumienia podczas korzystania z technologii wspomagającej.',
 
       // Links advanced
       NEW_TAB_WARNING: 'Łącze otwiera się na nowej karcie lub w oknie bez ostrzeżenia. Może to być dezorientujące, szczególnie dla osób, które mają problemy z&nbsp;odbiorem treści wizualnych. Ponadto, nie zawsze dobrym zwyczajem jest kontrolowanie czyichś doświadczeń lub podejmowanie decyzji za kogoś. Wskaż w tekście łącza, że łącze otwiera się w nowym oknie.<hr><strong>Porada!</strong> Poznaj najlepsze praktyki: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">otwieranie łączy w nowych oknach i kartach przeglądarki.</a>',
@@ -179,7 +177,7 @@
       LINK_IMAGE_NO_ALT_TEXT: 'Obraz w łączu jest oznaczony jako dekoracyjny i nie ma tekstu łącza. Dodaj do obrazu tekst alt, który opisze miejsce docelowe łącza.',
       LINK_IMAGE_HAS_TEXT: 'Obraz jest oznaczony jako dekoracyjny, ale łącze używa otaczającego go tekstu jako etykiety opisowej.',
       LINK_IMAGE_LONG_ALT: 'Tekst alternatywny opisujący obraz będący łączem jest <strong>zbyt długi</strong>. Tekst alternatywny na obrazach bedących łączami powinien przedstawiać, dokąd prowadzi łącze, a nie dosłownie opisywać obraz. <strong>Rozważ użycie jako tekstu alternatywnego tytułu strony, do którego łączy obraz.</strong><hr><strong>Tekst alternatywny (<span {r}>%(altLength)</span> znaków):</strong> %(altText)',
-      LINK_IMAGE_ALT_WARNING: 'Obraz będący łączem ma tekst alternatywny, ale upewnij się, że tekst alternatywny wskazuje na stronę docelową.<strong>Rozważ użycie jako tekstu alternatywnego tytułu strony, do którego łączy obraz.</strong>Czy tekst alternatywny mówi, dokąd prowadzi łącze?<hr><strong>Tekst alternatywny:</strong> %(altText)',
+      LINK_IMAGE_ALT_WARNING: 'Link do obrazu zawiera tekst alternatywny. <strong>Czy tekst alternatywny opisuje, dokąd prowadzi link?</strong> Rozważ użycie tytułu strony, do której prowadzi link, jako tekstu alternatywnego. <hr> <strong>Tekst alternatywny:</strong> %(altText)',
       LINK_IMAGE_ALT_AND_TEXT_WARNING: 'Łącze graficzne ma <strong>zarówno tekst alternatywny, jak i sąsiadujący tekst łącza.</strong> Jeśli ten obraz jest dekoracyjny i jest używany w funkcji łącza do innej strony, należy rozważyć oznaczenie obrazu jako dekoracyjnego (pusty alt) - sąsiadujący tekst łącza powinien wystarczyć.<hr><strong>Tekst alternatywny:</strong> %(altText)',
       IMAGE_FIGURE_DECORATIVE: 'Obraz jest oznaczony jako <strong>dekoracyjny</strong> i zostanie zignorowany przez technologię wspomagającą.<hr>Mimo że podano <strong>podpis</strong>, obraz powinien w większości przypadków zawierać również tekst alternatywny.<ul><li>Tekst alternatywny powinien zawierać zwięzły opis tego, co znajduje się na obrazku.</li><li>Podpis powinien zwykle zawierać kontekst, aby powiązać obraz z otaczającą zawartością lub zwracać uwagę na konkretną informację.</li></ul>Ucz się więcej: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alternatywny kontra podpis graficzny.</a>',
       IMAGE_FIGURE_DUPLICATE_ALT: 'Nie używaj dokładnie tych samych słów dla tekstu alternatywnego i podpisu. Czytniki ekranu podadzą informację dwukrotnie.<ul><li>Tekst alternatywny powinien zawierać zwięzły opis tego, co znajduje się na obrazku.</li><li>Podpis powinien zwykle zawierać kontekst, aby powiązać obraz z otaczającą zawartością lub zwracać uwagę na konkretną informację.</li></ul>Ucz się więcej: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alternatywny kontra podpis graficzny.</a><hr><strong>Tekst alternatywny:</strong> %(altText)',
@@ -210,13 +208,13 @@
       QA_PAGE_TITLE: 'Brak tytułu strony! Podaj <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">tytuł strony.</a>',
       QA_BLOCKQUOTE_MESSAGE: 'Czy to jest nagłówek? <strong {r}>%(sanitizedText)</strong><hr>Element blockquote powinien być używany tylko do cytatów. Jeśli ma to być nagłówek, zmień ten blockquote na nagłówek semantyczny (np. Nagłówek H2 lub Nagłówek H3).',
       QA_FAKE_HEADING: 'Czy to jest nagłówek? <strong {r}>%(boldtext)</strong> <hr> Wiersz pogrubionego lub dużego tekstu może wyglądać jak nagłówek, ale osoba korzystająca z czytnika ekranu nie może stwierdzić, że jest on istotny lub przejść do jego treści. Pogrubiony lub duży tekst nigdy nie powinien zastępować nagłówków semantycznych (od Nagłówka H2 do Nagłówka H6).',
-      QA_SHOULD_BE_LIST: 'Czy próbujesz utworzyć listę? Wykryto możliwe elementy listy: <strong {r}>%(firstPrefix)</strong><hr>Upewnij się, że używasz list semantycznych, zamiast stosowania znaków punktowania (np. myślników) lub liczb. Podczas korzystania z list semantycznych technologie wspomagające są w stanie przekazać takie informacje, jak ogólna liczba elementów i względna pozycja każdego elementu na liście. Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semantycznych listach. </a>',
+      QA_SHOULD_BE_LIST: 'Czy próbujesz utworzyć listę? Wykryto możliwe elementy listy: <strong {r}>%(firstPrefix)</strong><hr>Upewnij się, że używasz list semantycznych, zamiast stosowania znaków punktowania (np. myślników) lub liczb. Podczas korzystania z list semantycznych technologie wspomagające są w stanie przekazać takie informacje, jak ogólna liczba elementów i względna pozycja każdego elementu na liście. Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semantycznych listach.</a>',
       QA_UPPERCASE_WARNING: 'Wykryto WSZYSTKIE WIELKIE LITERY. Niektóre czytniki ekranu interpretują cały tekst wielkimi literami jako akronim i będą czytać każdą literę odrębnie. Ponadto, wszystkie wielkie litery są trudniejsze do odczytania i sprawiają wrażenie KRZYKU.',
       QA_DUPLICATE_ID: 'Znaleziono <strong>duplikat ID</strong>. Wiadomo, że błędy zduplikowanego ID powodują problemy dla technologii pomocniczych podczas próby interakcji z treścią.<hr>Usuń lub zmień następujący ID: <strong {r}>%(id)</strong>',
       QA_TEXT_UNDERLINE_WARNING: 'Podkreślony tekst można pomylić z linkami. Rozważ użycie innego stylu, takiego jak &lt;strong&gt;<strong>silne znaczenie</strong>&lt;/strong&gt; lub &lt;em&gt;<em>nacisk</em>&lt;/em&gt;.',
 
       // Tables
-      TABLES_MISSING_HEADINGS: 'Brak nagłówków tabeli! Dostępne tabele wymagają znaczników HTML, które wskazują komórki nagłówków i komórki danych, które definiują ich relację. Informacje te zapewniają kontekst osobom korzystającym z technologii wspomagających. Tabele powinny być używane tylko dla danych tabelarycznych.<hr>Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/tables/">dostępnych tabelach. </a>',
+      TABLES_MISSING_HEADINGS: 'Brak nagłówków tabeli! Dostępne tabele wymagają znaczników HTML, które wskazują komórki nagłówków i komórki danych, które definiują ich relację. Informacje te zapewniają kontekst osobom korzystającym z technologii wspomagających. Tabele powinny być używane tylko dla danych tabelarycznych.<hr>Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/tables/">dostępnych tabelach.</a>',
       TABLES_SEMANTIC_HEADING: 'Nagłówki semantyczne, takie jak nagłówek H2 lub nagłówek H3, powinny być używane tylko w odniesieniu do sekcji treści; <strong>nie</strong> w tabelach HTML. Zamiast tego należy wskazać nagłówki tabeli przy użyciu elementu <strong>th</strong>.<hr>Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/tables/">dostępnych tabelach.</a>',
       TABLES_EMPTY_HEADING: 'Wykryto pusty nagłówek tabeli! Nagłówki tabel <em>nigdy</em> nie powinny być puste. Ważne jest, aby wyznaczyć nagłówki wierszy i/lub kolumn, aby przekazać ich relację. Informacje te zapewniają kontekst osobom korzystającym z technologii wspomagających. Należy pamiętać, że tabele powinny być używane tylko dla danych tabelarycznych.<hr>Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/tables/">dostępnych tabelach.</a>',
       QA_SUBSCRIPT_WARNING: 'Opcji formatowania indeksu dolnego i indeksu górnego należy używać wyłącznie do zmiany pozycji tekstu w celu dostosowania do konwencji lub standardów typograficznych. Powinna <strong>nie</strong> być używana wyłącznie do celów prezentacji lub wyglądu. Formatowanie całych zdań stwarza problemy z czytelnością. Odpowiednie przypadki użycia obejmują wyświetlanie wykładników, liczb porządkowych, takich jak 4<sup>th</sup> zamiast czwartej, oraz wzorów chemicznych (H<sub>2</sub>O).',

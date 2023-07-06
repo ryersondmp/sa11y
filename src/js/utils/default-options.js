@@ -1,5 +1,8 @@
 const defaultOptions = {
+  // Target area to check
   checkRoot: 'body',
+
+  // Exclusions
   containerIgnore: '.sa11y-ignore',
   contrastIgnore: '.sr-only, [role="menu"] *',
   outlineIgnore: '',
@@ -7,9 +10,8 @@ const defaultOptions = {
   imageIgnore: '',
   linkIgnore: 'nav *, [role="navigation"] *',
   linkIgnoreSpan: '',
-  linksToFlag: '',
-  nonConsecutiveHeadingIsError: true,
-  flagLongHeadings: true,
+
+  // Other features
   showGoodLinkButton: true,
   detectSPArouting: false,
   doNotRun: '',
@@ -23,7 +25,6 @@ const defaultOptions = {
   // Readability
   readabilityPlugin: true,
   readabilityRoot: 'body',
-  readabilityLang: 'en',
   readabilityIgnore: '',
 
   // Other plugins
@@ -33,6 +34,13 @@ const defaultOptions = {
   colourFilterPlugin: true,
   customChecks: true,
   checkAllHideToggles: false,
+
+  // Specific rulesets
+  linksToFlag: '',
+  linksToDOI: true,
+  missingH1: true,
+  flagLongHeadings: true,
+  nonConsecutiveHeadingIsError: true,
 
   // QA rulesets
   badLinksQA: true,

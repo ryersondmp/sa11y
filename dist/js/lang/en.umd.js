@@ -1,3 +1,15 @@
+
+/*!
+  * Sa11y, the accessibility quality assurance assistant.
+  * @version 3.0.3
+  * @author Adam Chaboryk, Toronto Metropolitan University
+  * @license GPL-2.0-or-later
+  * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
+  * @contact adam.chaboryk@torontomu.ca
+  * GitHub: git+https://github.com/ryersondmp/sa11y.git | Website: https://sa11y.netlify.app
+  * For all acknowledgements, please visit: https://sa11y.netlify.app/acknowledgements/
+  * The above copyright notice shall be included in all copies or substantial portions of the Software.
+**/
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -60,60 +72,43 @@
 
       // Alternative text module stop words
       SUSPICIOUS_ALT_STOPWORDS: ['image', 'graphic', 'picture', 'photo'],
-      PLACEHOLDER_ALT_STOPWORDS: ['alt', 'image', 'photo', 'decorative', 'photo', 'placeholder', 'placeholder image', 'spacer', '.'],
+      PLACEHOLDER_ALT_STOPWORDS: ['alt', 'image', 'photo', 'decorative', 'placeholder', 'placeholder image', 'spacer'],
       PARTIAL_ALT_STOPWORDS: [
         'click',
         'click here',
         'click here for more',
         'click here to learn more',
-        'click here to learn more.',
         'clicking here',
-        'clicking here.',
         'check out',
         'detailed here',
-        'detailed here.',
         'download',
         'download here',
-        'download here.',
         'find out',
         'find out more',
-        'find out more.',
-        'find out more >',
         'form',
         'here',
-        'here.',
         'info',
         'information',
         'link',
         'learn',
         'learn more',
-        'learn more.',
-        'learn more >',
         'learn to',
         'more',
-        'more >',
         'page',
         'paper',
         'read more',
-        'read more >',
         'read',
         'read this',
         'this',
         'this page',
-        'this page.',
         'this website',
-        'this website.',
         'view',
         'view our',
         'website',
-        '.',
       ],
-      WARNING_ALT_STOPWORDS: ['< ', ' >', 'click here'],
+      WARNING_ALT_STOPWORDS: ['click here'],
       NEW_WINDOW_PHRASES: ['external', 'new tab', 'new window', 'pop-up', 'pop up'],
-
-      // Only some items in list would need to be translated.
-      FILE_TYPE_PHRASES: ['document', 'spreadsheet', 'worksheet', 'install', 'video', 'pdf', 'doc',
-        'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'powerpoint', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'],
+      FILE_TYPE_PHRASES: ['document', 'spreadsheet', 'calculation sheet', 'compressed file', 'archived file', 'worksheet', 'powerpoint', 'presentation', 'install', 'video', 'audio', 'pdf'],
 
       // Readability
       LANG_READABILITY: 'Readability',
@@ -142,7 +137,8 @@
       LINK_LABEL: '<strong>Link label:</strong> %(sanitizedText)',
       LINK_STOPWORD: 'Link text may not be descriptive enough out of context: <strong {r}>%(error)</strong><hr><strong>Tip!</strong> Link text should always be clear, unique, and meaningful. Avoid common words like &quot;click here&quot; or &quot;learn more&quot;',
       LINK_BEST_PRACTICES: 'Consider replacing the link text: <strong {r}>%(error)</strong><hr><ul><li>&quot;Click here&quot; places focus on mouse mechanics, when many people do not use a mouse or may be viewing this website on a mobile device. Consider using a different verb that relates to the task.</li><li>Avoid using HTML symbols as call to actions unless they are hidden to assistive technologies.</li></ul>',
-      LINK_URL: 'Longer, less intelligible URLs used as link text might be difficult to listen to with assistive technology. In most cases, it is better to use human-readable text instead of the URL. Short URLs (such as a site\'s homepage) are okay.<hr><strong>Tip!</strong> Link text should always be clear, unique, and meaningful so it could be understood out of context.',
+      LINK_URL: 'Longer, less intelligible URLs used as link text might be difficult to comprehend with assistive technology. In most cases, it is better to use human-readable text instead of the URL. Short URLs (such as a site\'s homepage) are okay.<hr><strong>Tip!</strong> Link text should always be clear, unique, and meaningful so it could be understood out of context.',
+      LINK_DOI: 'For web pages or online-only resources, the <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APA Style guide</a> recommends using descriptive links by wrapping the URL or DOI of the work around its title. Longer, less intelligible URLs used as link text might be difficult to comprehend with assistive technology.',
 
       // Links advanced
       NEW_TAB_WARNING: 'Link opens in a new tab or window without warning. Doing so can be disorienting, especially for people who have difficulty perceiving visual content. Secondly, it is not always a good practice to control someone\'s experience or make decisions for them. Indicate that the link opens in a new window within the link text<hr><strong>Tip!</strong> Learn best practices: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">opening links in new browser windows and tabs.</a>',
@@ -163,7 +159,7 @@
       LINK_IMAGE_NO_ALT_TEXT: 'Image within link is marked as decorative and there is no link text. Please add alt text to the image that describes the destination of the link.',
       LINK_IMAGE_HAS_TEXT: 'Image is marked as decorative, although the link is using the surrounding text as a descriptive label.',
       LINK_IMAGE_LONG_ALT: 'Alt text description on a linked image is <strong>too long</strong>. The alt text on linked images should describe where the link takes you, not a literal description of the image. <strong>Consider using the title of the page it links to as the alt text.</strong> <hr> <strong>Alt text (<span {r}>%(altLength)</span> characters):</strong> %(altText)',
-      LINK_IMAGE_ALT_WARNING: 'Image link contains alt text, although please ensure alt text describes the destination page. <strong>Consider using the title of the page it links to as the alt text.</strong> Does the alt text describe where the link takes you? <hr> <strong>Alt text:</strong> %(altText)',
+      LINK_IMAGE_ALT_WARNING: 'Image link contains alt text. Does the alt text describe where the link takes you? <strong>Consider using the title of the page it links to as the alt text.</strong> <hr> <strong>Alt text:</strong> %(altText)',
       LINK_IMAGE_ALT_AND_TEXT_WARNING: 'Image link contains <strong>both alt text and surrounding link text.</strong> If this image is decorative and is being used as a functional link to another page, consider marking the image as decorative or null - the surrounding link text should suffice. <hr> <strong>Alt text:</strong> %(altText)',
       IMAGE_FIGURE_DECORATIVE: 'Image is marked as <strong>decorative</strong> and will be ignored by assistive technology. <hr> Although a <strong>caption</strong> was provided, the image should also have alt text in most cases. <ul><li>The alt text should provide a concise description of what is in the image.</li><li>The caption should usually provide context to relate the image back to the surrounding content, or give attention to a particular piece of information.</li></ul>Learn more: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt versus figcaption.</a>',
       IMAGE_FIGURE_DUPLICATE_ALT: 'Do not use the exact same words for both the alt and caption text. Screen readers will announce the information twice.<ul><li>The alt text should provide a concise description of what is in the image.</li><li>The caption should usually provide context to relate the image back to the surrounding content, or give attention to a particular piece of information.</li></ul> Learn more: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt versus figcaption.</a> <hr> <strong>Alt text:</strong> %(altText)',
@@ -181,7 +177,7 @@
       // Embedded content
       EMBED_VIDEO: 'Please ensure <strong>all videos have closed captioning.</strong> Providing captions for all audio and video content is a mandatory Level A requirement. Captions support people who are D/deaf or hard-of-hearing.',
       EMBED_AUDIO: 'Please ensure to provide a <strong>transcript for all podcasts.</strong> Providing transcripts for audio content is a mandatory Level A requirement. Transcripts support people who are D/deaf or hard-of-hearing, but can benefit everyone. Consider placing the transcript below or within an accordion panel.',
-      EMBED_DATA_VIZ: 'Data visualization widgets like this are often problematic for people who use a keyboard or screen reader to navigate, and can present significant difficulties for people who have low vision or colorblindness. It\'s recommended to provide the same information in an alternative (text or table) format below the widget. <hr> Learn more about <a href="https://www.w3.org/WAI/tutorials/images/complex">complex images.</a>',
+      EMBED_DATA_VIZ: 'Data visualization widgets like this are often problematic for people who use a keyboard or screen reader to navigate, and can present significant difficulties for people who have low vision or colourblindness. It\'s recommended to provide the same information in an alternative (text or table) format below the widget. <hr> Learn more about <a href="https://www.w3.org/WAI/tutorials/images/complex">complex images.</a>',
       EMBED_MISSING_TITLE: 'Embedded content requires an accessible name that describes its contents. Please provide a unique <code>title</code> or <code>aria-label</code> attribute on the <code>iframe</code> element. Learn more about <a href="https://dequeuniversity.com/tips/provide-iframe-titles">iFrames.</a>',
       EMBED_GENERAL_WARNING: 'Unable to check embedded content. Please make sure that images have alt text, videos have captions, text has sufficient contrast, and interactive components are <a href="https://webaim.org/techniques/keyboard/">keyboard accessible.</a>',
 
