@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.3
+  * @version 3.0.4
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -148,6 +148,7 @@
       HEADING_MISSING_ONE: 'Manglende overskrift 1. Overskrift 1 skal være starten på hovedinnholdsområdet, og er hovedoverskriften som beskriver det overordnede formålet med siden. Les mer om <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Overskriftsstruktur.</a>.',
       HEADING_EMPTY_WITH_IMAGE: 'Overskrift har ingen tekst, men inneholder et bilde. Hvis dette ikke er en overskrift, endrer du formatet fra <strong {r}>Overskrift %(level)</strong> til <strong>Normal</strong> eller <strong>Avsnitt</strong>. Ellers kan du legge til alt-tekst til bildet hvis det ikke er dekorativt.',
       PANEL_HEADING_MISSING_ONE: 'Manglende overskrift 1!',
+      PANEL_NO_HEADINGS: 'Ingen overskrifter funnet.',
       LINK_EMPTY: 'Fjern tomme lenker uten tekst.',
       LINK_EMPTY_LINK_NO_LABEL: 'Lenken har ikke tydelig tekst som er synlig for skjermlesere og andre hjelpemidler. Slik løser du problemet: <ul><li>Legg til en kortfattet tekst som beskriver hvor lenken fører deg.</li><li>Hvis det er en <a href="https://a11y-101.com/development/icons-and-links">ikonlenke eller SVG,</a> mangler den sannsynligvis en beskrivende etikett.</li><li>Hvis du tror at denne lenken er en feil på grunn av en copy/paste-feil, bør du vurdere å slette den.</li></ul>.',
       LINK_LABEL: '<strong>Lenketikett:</strong> %(sanitizedText)',

@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.3
+  * @version 3.0.4
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -150,6 +150,7 @@
       HEADING_MISSING_ONE: 'Fehlende Überschrift 1: Überschrift 1 sollte am Anfang des Hauptinhaltsbereichs stehen und ist die Hauptüberschrift, die den allgemeinen Zweck der Seite beschreibt. Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Überschriften-Struktur.</a>',
       HEADING_EMPTY_WITH_IMAGE: 'Die Überschrift hat keinen Text, enthält aber ein Bild. Wenn es sich nicht um eine Überschrift handelt, ändere das Format von <strong {r}>Überschrift %(level)</strong> zu <strong>Normal</strong> oder <strong>Absatz (p)</strong>. Andernfalls füge bitte einen Alt-Text zum Bild hinzu, wenn es nicht dekorativ ist.',
       PANEL_HEADING_MISSING_ONE: 'Fehlende Überschrift 1!',
+      PANEL_NO_HEADINGS: 'Keine Überschriften gefunden.',
 
       // Links
       LINK_EMPTY: 'Entferne leere Links ohne Text.',

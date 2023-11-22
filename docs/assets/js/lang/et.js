@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.3
+  * @version 3.0.4
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -142,6 +142,7 @@ var et = {
     HEADING_MISSING_ONE: 'Puudub pealkiri 1. Pealkiri 1 peaks olema peamise sisuala algus ja on peamine pealkiri, mis kirjeldab lehe üldist eesmärki. Lisateave <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">pealkirja struktuur.</a>',
     HEADING_EMPTY_WITH_IMAGE: 'Pealkiri ei sisalda teksti, kuid sisaldab pilti. Kui see ei ole pealkiri, muutke selle formaat <strong {r}>pealkiri %(level)</strong>-st <strong>normaalseks</strong> või <strong>paragrahviks</strong>. Vastasel juhul lisage pildile alt-tekst, kui see ei ole dekoratiivne.',
     PANEL_HEADING_MISSING_ONE: 'Puudub rubriik 1!',
+    PANEL_NO_HEADINGS: 'Pealkirju ei leitud.',
     LINK_EMPTY: 'Eemaldage tühjad lingid ilma tekstita.',
     LINK_EMPTY_LINK_NO_LABEL: 'Lingil ei ole eristatavat teksti, mis oleks nähtav ekraanilugejatele ja muudele abivahenditele. Parandada: <ul><li>Lisandage lühike tekst, mis kirjeldab, kuhu link viib.</li><li>Kui tegemist on <a href="https://a11y-101.com/development/icons-and-links">ikoonilink või SVG,</a> puudub tõenäoliselt kirjeldav märgistus.</li><li>Kui arvate, et see link on kopeerimis-/liidevigast tingitud viga, kaaluge selle kustutamist.</li></ul>Kui arvate, et tegemist on kopeerimis-/liidevigast tingitud veaga, kaaluge selle kustutamist.</li></ul>',
     LINK_LABEL: '<strong>Linki silt:</strong> %(sanitizedText)',

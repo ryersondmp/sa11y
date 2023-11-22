@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.3
+  * @version 3.0.4
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -144,6 +144,7 @@
       HEADING_MISSING_ONE: 'Manjka naslov 1. Naslov 1 mora biti začetek glavnega vsebinskega področja in je glavni naslov, ki opisuje splošni namen strani. Preberite več o <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Strukturi naslovov.</a>',
       HEADING_EMPTY_WITH_IMAGE: 'Naslov nima besedila, vsebuje pa sliko. Če to ni naslov, spremenite njegovo obliko iz <strong {r}>Nadpis %(level)</strong> v <strong>Normalno</strong> ali <strong>Odstavek</strong>. V nasprotnem primeru sliki dodajte besedilo alt, če ni okrasno.',
       PANEL_HEADING_MISSING_ONE: 'Manjka naslov 1!',
+      PANEL_NO_HEADINGS: 'Ni najdenih naslovov.',
       LINK_EMPTY: 'Odstranite prazne povezave brez besedila.',
       LINK_EMPTY_LINK_NO_LABEL: 'Povezava nima razločljivega besedila, ki bi bilo vidno za bralnike zaslona in drugo podporno tehnologijo. Popravek: </li><li>Dodajte nekaj jedrnatega besedila, ki opisuje, kam vas bo povezava pripeljala.</li><li>Če gre za povezavo <a href="https://a11y-101.com/development/icons-and-links">ikona ali SVG,</a>, ji verjetno manjka opisna oznaka.</li><li>Če menite, da je ta povezava napaka zaradi napake pri kopiranju/prilepljanju, razmislite o njenem izbrisu.</li></ul>',
       LINK_LABEL: '<strong>Etiketa povezave:</strong> %(sanitizedText)',

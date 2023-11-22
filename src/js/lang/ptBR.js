@@ -127,6 +127,7 @@ export default {
     HEADING_MISSING_ONE: 'Falta de título 1. O título 1 deve ser o início da área de conteúdo principal e é o título principal que descreve o objetivo geral da página. Saiba mais sobre <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Estrutura de cabeçalho.</a>',
     HEADING_EMPTY_WITH_IMAGE: 'O cabeçalho não tem texto, mas contém uma imagem. Se esse não for um cabeçalho, altere seu formato de <strong {r}>Título %(level)</strong> para <strong>Normal</strong> ou <strong>Parágrafo</strong>. Caso contrário, adicione texto alternativo à imagem se ela não for decorativa.',
     PANEL_HEADING_MISSING_ONE: 'Falta o cabeçalho 1!',
+    PANEL_NO_HEADINGS: 'Nenhuma cabeçalho encontrado.',
     LINK_EMPTY: 'Remova links vazios sem nenhum texto.',
     LINK_EMPTY_LINK_NO_LABEL: 'O link não tem texto discernível que seja visível para leitores de tela e outras tecnologias assistivas. Para corrigir: <ul><li>Adicione um texto conciso que descreva para onde o link o leva.</li><li>Se for um <a href="https://a11y-101.com/development/icons-and-links">link de ícone ou SVG,</a> é provável que esteja faltando um rótulo descritivo.</li><li>Se você acha que esse link é um erro devido a um bug de copiar/colar, considere excluí-lo.</li></ul>',
     LINK_LABEL: '<strong>Rótulo do link:</strong> %(sanitizedText)',

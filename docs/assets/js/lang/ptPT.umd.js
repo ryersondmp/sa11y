@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.3
+  * @version 3.0.4
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -147,6 +147,7 @@
       HEADING_MISSING_ONE: 'Falta o Título 1. O Título 1 deve ser o início da área de conteúdo principal e é o título principal que descreve o objetivo geral da página. Saiba mais sobre <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Estrutura de cabeçalho.</a>',
       HEADING_EMPTY_WITH_IMAGE: 'O cabeçalho não tem texto, mas contém uma imagem. Se não for um cabeçalho, altere o formato de <strong {r}>Título %(level)</strong> para <strong>Normal</strong> ou <strong>Parágrafo</strong>. Caso contrário, adicione texto alternativo à imagem se esta não for decorativa.',
       PANEL_HEADING_MISSING_ONE: 'Falta o título 1!',
+      PANEL_NO_HEADINGS: 'Não foram encontrados cabeçalhos.',
       LINK_EMPTY: 'Remover ligações vazias sem qualquer texto.',
       LINK_EMPTY_LINK_NO_LABEL: 'A ligação não tem texto discernível que seja visível para leitores de ecrã e outras tecnologias de assistência. Para corrigir: <ul><li>Adicione um texto conciso que descreva para onde o link o leva.</li><li>Se for um <a href="https://a11y-101.com/development/icons-and-links">link de ícone ou SVG,</a> é provável que esteja faltando um rótulo descritivo.</li><li>Se você acha que esse link é um erro devido a um bug de copiar/colar, considere excluí-lo.</li></ul>',
       LINK_LABEL: '<strong>Rótulo do link:</strong> %(sanitizedText)',

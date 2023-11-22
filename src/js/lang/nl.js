@@ -135,6 +135,7 @@ export default {
     HEADING_MISSING_ONE: 'Ontbrekende kop 1. Kop 1 moet het begin zijn van het hoofdgedeelte van de inhoud en is de belangrijkste kop die het algemene doel van de pagina beschrijft. Meer informatie over <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Kopjesstructuur.</a>',
     HEADING_EMPTY_WITH_IMAGE: 'Een kop heeft geen tekst, maar bevat een afbeelding. Als dit geen koptekst is, verander de opmaak dan van <strong {r}>Koptekst %(niveau)</strong> in <strong>Normaal</strong> of <strong>Paragraaf</strong>. Voeg anders alt-tekst toe aan de afbeelding als deze niet decoratief is.',
     PANEL_HEADING_MISSING_ONE: 'Rubriek 1 ontbreekt!',
+    PANEL_NO_HEADINGS: 'Geen koppen gevonden.',
     LINK_EMPTY: 'Verwijder lege links zonder tekst.',
     LINK_EMPTY_LINK_NO_LABEL: 'Link heeft geen leesbare tekst die zichtbaar is voor schermlezers en andere ondersteunende technologie. Op te lossen: <ul><li>Voeg beknopte tekst toe die beschrijft waar de koppeling naartoe leidt.</li><li>Als het een <a href="https://a11y-101.com/development/icons-and-links">icon link of SVG,</a> is, ontbreekt waarschijnlijk een beschrijvend label.</li><li>Als u denkt dat deze koppeling een fout is als gevolg van een copy/paste-bug, kunt u overwegen deze te verwijderen.</li></ul>',
     LINK_LABEL: '<strong>Linklabel:</strong> %(gezuiverde tekst)',

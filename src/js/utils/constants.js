@@ -21,7 +21,7 @@ const Constants = (function myConstants() {
 
     // Root element to check.
     Global.Root = document.querySelector(option.checkRoot);
-    if (!option.checkRoot) {
+    if (!Global.Root) {
       Global.Root = document.querySelector('body');
     }
 
@@ -35,7 +35,7 @@ const Constants = (function myConstants() {
     // i18n
     Global.langDirection = (Global.html.getAttribute('dir') === 'rtl') ? 'rtl' : 'ltr';
 
-    // Document links (Quality Assurance module)
+    // QA: Document links (Quality Assurance module)
     if (option.documentLinks) {
       Global.documentLinks = `${option.documentLinks}`;
     }

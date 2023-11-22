@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.3
+  * @version 3.0.4
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -135,6 +135,7 @@ var el = {
     HEADING_MISSING_ONE: 'Λείπει η επικεφαλίδα 1. Η επικεφαλίδα 1 πρέπει να αποτελεί την αρχή της κύριας περιοχής περιεχομένου και είναι η κύρια επικεφαλίδα που περιγράφει τον γενικό σκοπό της σελίδας. Μάθετε περισσότερα για την <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Δομή επικεφαλίδων.</a>',
     HEADING_EMPTY_WITH_IMAGE: 'Η επικεφαλίδα δεν έχει κείμενο, αλλά περιέχει μια εικόνα. Αν δεν πρόκειται για επικεφαλίδα, αλλάξτε τη μορφή της από <strong {r}>Κεφαλίδα %(επίπεδο)</strong> σε <strong>Κανονική</strong> ή <strong>Παράγραφος</strong>. Διαφορετικά, προσθέστε κείμενο alt στην εικόνα, αν δεν είναι διακοσμητικό.',
     PANEL_HEADING_MISSING_ONE: 'Λείπει η επικεφαλίδα 1!',
+    PANEL_NO_HEADINGS: 'Δεν βρέθηκαν κεφαλίδες.',
     LINK_EMPTY: 'Αφαίρεση κενών συνδέσμων χωρίς κείμενο.',
     LINK_EMPTY_LINK_NO_LABEL: 'Ο σύνδεσμος δεν έχει ευδιάκριτο κείμενο που να είναι ορατό σε προγράμματα ανάγνωσης οθόνης και άλλες υποστηρικτικές τεχνολογίες. Για να το διορθώσετε: <ul><li>Προσθέστε κάποιο συνοπτικό κείμενο που να περιγράφει πού σας οδηγεί ο σύνδεσμος.</li><li>Αν πρόκειται για σύνδεσμο <a href="https://a11y-101.com/development/icons-and-links">εικονίδιο ή SVG,</a> είναι πιθανό να λείπει μια περιγραφική ετικέτα.</li><li>Αν πιστεύετε ότι αυτός ο σύνδεσμος είναι σφάλμα που οφείλεται σε σφάλμα αντιγραφής/επικόλλησης, σκεφτείτε να τον διαγράψετε.</li></ul>',
     LINK_LABEL: '<strong>Ετικέτα συνδέσμου:</strong> %(sanitizedText)',

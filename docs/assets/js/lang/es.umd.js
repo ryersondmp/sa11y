@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.3
+  * @version 3.0.4
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -130,6 +130,7 @@
       HEADING_MISSING_ONE: 'Falta el encabezado 1. El encabezado 1 debe ser el comienzo del área de contenido principal y es el encabezado principal que describe el propósito general de la página. Aprender más acerca de la <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">estructura de encabezado.</a>',
       HEADING_EMPTY_WITH_IMAGE: 'El encabezado no tiene texto, pero contiene una imagen. Si no es un encabezado, cambie su formato de <strong {r}>Título %(level)</strong> a <strong>Normal</strong> o <strong>Párrafo</strong>. De lo contrario, agregue texto alternativo a la imagen si no es decorativa.',
       PANEL_HEADING_MISSING_ONE: 'Falta el encabezado 1!',
+      PANEL_NO_HEADINGS: 'No se encontraron encabezados.',
 
       // Links
       LINK_EMPTY: 'Eliminar enlaces vacíos sin texto.',

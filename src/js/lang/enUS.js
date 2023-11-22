@@ -112,6 +112,7 @@ export default {
     HEADING_MISSING_ONE: 'Missing Heading 1. Heading 1 should be the start of the main content area, and is the main heading that describes the overall purpose of the page. Learn more about <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Heading Structure.</a>',
     HEADING_EMPTY_WITH_IMAGE: 'Heading has no text, but contains an image. If this is not a heading, change its format from <strong {r}>Heading %(level)</strong> to <strong>Normal</strong> or <strong>Paragraph</strong>. Otherwise, please add alt text to the image if it is not decorative.',
     PANEL_HEADING_MISSING_ONE: 'Missing Heading 1!',
+    PANEL_NO_HEADINGS: 'No headings found.',
 
     // Links
     LINK_EMPTY: 'Remove empty links without any text.',

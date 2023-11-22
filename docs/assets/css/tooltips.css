@@ -183,10 +183,8 @@ div {
   position: relative;
   padding: 0;
   margin: 0;
-  -webkit-margin-after: 0;
-          margin-block-end: 0;
-  -webkit-margin-before: 0;
-          margin-block-start: 0;
+  margin-block-end: 0;
+  margin-block-start: 0;
 }
 .tippy-box[data-theme~=sa11y-theme] li {
   display: list-item;

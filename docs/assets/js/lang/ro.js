@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.3
+  * @version 3.0.4
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -139,6 +139,7 @@ var ro = {
     HEADING_MISSING_ONE: 'Lipsește titlul 1. Titlul 1 ar trebui să fie începutul zonei principale de conținut și este titlul principal care descrie scopul general al paginii. Aflați mai multe despre <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Structura titlurilor.</a>.',
     HEADING_EMPTY_WITH_IMAGE: 'Rubrica nu are text, dar conține o imagine. Dacă acesta nu este un titlu, schimbați-i formatul din <strong {r}>Heading %(level)</strong> în <strong>Normal</strong> sau <strong>Paragraf</strong>. În caz contrar, vă rugăm să adăugați text alt la imagine, dacă aceasta nu este decorativă.',
     PANEL_HEADING_MISSING_ONE: 'Lipsește rubrica 1!',
+    PANEL_NO_HEADINGS: 'Nu s-au găsit antete.',
     LINK_EMPTY: 'Eliminați legăturile goale fără text.',
     LINK_EMPTY_LINK_NO_LABEL: 'Linkul nu are un text vizibil pentru cititorii de ecran și alte tehnologii de asistență. Pentru a remedia problema: <ul><li>Adaugați un text concis care să descrie unde vă duce linkul.</li><li>Dacă este un <a href="https://a11y-101.com/development/icons-and-links">link cu pictograme sau SVG,</a> este probabil să lipsească o etichetă descriptivă.</li><li>Dacă credeți că acest link este o eroare datorată unui bug de copy/paste, luați în considerare ștergerea lui.</li></ul>.',
     LINK_LABEL: '<strong>Link label:</strong> %(sanitizedText)',

@@ -130,6 +130,7 @@ export default {
     HEADING_MISSING_ONE: 'Brakuje nagłówka H1. Nagłówek H1 jest głównym nagłówkiem opisującym ogólny cel strony i powinien być początkiem obszaru treści głównej. Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Strukturze nagłówków.</a>',
     HEADING_EMPTY_WITH_IMAGE: 'Nagłówek nie ma tekstu, ale zawiera obrazek. Jeśli to nie jest nagłówek, zmień jego format z <strong {r}>Nagłówek H%(level)</strong> na <strong>zwykły tekst</strong> lub <strong>akapit</strong>. W przeciwnym razie, dodaj do obrazu tekst alt, jeśli nie jest on ozdobny.',
     PANEL_HEADING_MISSING_ONE: 'Brak Nagłówka 1!',
+    PANEL_NO_HEADINGS: 'Nie znaleziono nagłówków.',
 
     // Links
     LINK_EMPTY: 'Puste łącze bez żadnego tekstu. Usuń je!',

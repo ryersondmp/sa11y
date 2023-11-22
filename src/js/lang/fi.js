@@ -121,6 +121,7 @@ export default {
     HEADING_MISSING_ONE: 'Puuttuva otsikko 1. Otsikon 1 pitäisi olla pääsisältöalueen alku, ja se on pääotsikko, joka kuvaa sivun yleistä tarkoitusta. Lue lisää <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Ohjeiden rakenne.</a>.',
     HEADING_EMPTY_WITH_IMAGE: 'Otsikossa ei ole tekstiä, mutta se sisältää kuvan. Jos kyseessä ei ole otsikko, vaihda sen muoto <strong {r}>otsikko %(level)</strong>:sta <strong>normaaliksi</strong> tai <strong>kappaleeksi</strong>. Muussa tapauksessa lisää kuvaan alt-teksti, jos se ei ole koristeellinen.',
     PANEL_HEADING_MISSING_ONE: 'Otsikko 1 puuttuu!',
+    PANEL_NO_HEADINGS: 'Otsikoita ei löytynyt.',
     LINK_EMPTY: 'Poista tyhjät linkit ilman tekstiä.',
     LINK_EMPTY_LINK_NO_LABEL: 'Linkissä ei ole erottuvaa tekstiä, joka näkyy ruudunlukijoille ja muille apuvälineille. Korjaus: <ul><li>Lisää tiivis teksti, joka kuvaa, minne linkki vie.</li><li>Jos kyseessä on <a href="https://a11y-101.com/development/icons-and-links">kuvakkeellinen linkki tai SVG,</a> siitä puuttuu todennäköisesti kuvaava merkintä.</li><li>Jos luulet, että linkki on kopiointi/liitä-virheestä johtuva virhe, harkitse sen poistamista.</li></ul>',
     LINK_LABEL: '<strong>Linkki etiketti:</strong> %(sanitizedText)',

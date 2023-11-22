@@ -179,6 +179,10 @@ class Sa11y {
           // Check for dismissed items and update results array.
           const dismiss = dismissAnnotationsLogic(this.results, this.dismissTooltip);
           this.results = dismiss.updatedResults;
+
+          // Filter out heading issues that are outside of the root target.
+          this.results = this.results.filter((item) => item.isWithinRoot !== false);
+
           this.dismissed = dismiss.dismissedIssues;
           this.dismissedCount = dismiss.dismissCount;
 
@@ -224,6 +228,7 @@ class Sa11y {
             generatePageOutline(
               this.dismissed,
               this.headingOutline,
+              option.showHinPageOutline,
             );
 
             updatePanel(

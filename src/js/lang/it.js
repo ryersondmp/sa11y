@@ -128,6 +128,7 @@ export default {
     HEADING_MISSING_ONE: "Manca l'intestazione 1. L'intestazione 1 dovrebbe essere l'inizio dell'area di contenuto principale ed è l'intestazione principale che descrive lo scopo generale della pagina. Per saperne di più <a href=\"https://www.w3.org/WAI/tutorials/page-structure/headings/\">Struttura delle intestazioni.</a>",
     HEADING_EMPTY_WITH_IMAGE: "L'intestazione non ha testo, ma contiene un'immagine. Se non si tratta di un titolo, cambiarne il formato da <strong {r}>Testamento %(level)</strong> a <strong>Normale</strong> o <strong>Paragrafo</strong>. Altrimenti, aggiungere un testo alt all'immagine, se non è decorativo.",
     PANEL_HEADING_MISSING_ONE: "Manca l'intestazione 1!",
+    PANEL_NO_HEADINGS: 'Nessun titolo trovato.',
     LINK_EMPTY: 'Rimuovere i link vuoti senza testo.',
     LINK_EMPTY_LINK_NO_LABEL: "Il link non ha un testo distinguibile che sia visibile agli screen reader e ad altre tecnologie assistive. Per risolvere il problema: <ul><li>Aggiungi un testo conciso che descriva dove porta il link.</li><li>Se si tratta di un <a href=\"https://a11y-101.com/development/icons-and-links\">collegamento a un'icona o a un SVG,</a> è probabile che manchi un'etichetta descrittiva.</li><li>Se pensi che questo link sia un errore dovuto a un bug di copia/incolla, prendi in considerazione l'idea di cancellarlo.</li></ul>",
     LINK_LABEL: '<strong>Etichetta del link:</strong> %(sanitizedText)',

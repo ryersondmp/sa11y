@@ -55,6 +55,7 @@ const processSCSS = async (input, output, outputMin) => {
 /*    Language files     */
 /* ********************* */
 const languages = [
+  'bg',
   'cs',
   'da',
   'de',
@@ -65,9 +66,11 @@ const languages = [
   'et',
   'fi',
   'fr',
+  'hu',
   'id',
   'it',
   'ja',
+  'ko',
   'lt',
   'lv',
   'nb',
@@ -76,6 +79,7 @@ const languages = [
   'ptBR',
   'ptPT',
   'ro',
+  'sk',
   'sl',
   'sv',
   'tr',
@@ -160,8 +164,8 @@ const bookmarkletConfigs = languages.map((lang) => {
 
 export default [
   // Note to developers: If you're not changing language files, you can temporarily comment out "...languageCongifs" and "...bookmarkletConfigs" while developing to speed things up.
-  ...languageConfigs,
-  ...bookmarkletConfigs,
+  // ...languageConfigs,
+  // ...bookmarkletConfigs,
   ...scssConfigs,
 
   /* ********************* */

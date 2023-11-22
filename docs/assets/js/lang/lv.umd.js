@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.3
+  * @version 3.0.4
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -145,6 +145,7 @@
       HEADING_MISSING_ONE: 'Trūkst 1. virsraksta. 1. virsrakstam jābūt galvenā satura laukuma sākumam, un tas ir galvenais virsraksts, kas apraksta lapas vispārējo mērķi. Uzziniet vairāk par <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Galveno struktūru</a>.',
       HEADING_EMPTY_WITH_IMAGE: 'Virsrakstā nav teksta, bet ir attēls. Ja tas nav virsraksts, mainiet tā formātu no <strong {r}>Virsraksts %(level)</strong> uz <strong>Normāls</strong> vai <strong>Apakšsadaļa</strong>. Pretējā gadījumā pievienojiet attēlam alt tekstu, ja tas nav dekoratīvs.',
       PANEL_HEADING_MISSING_ONE: 'Trūkst 1. pozīcijas!',
+      PANEL_NO_HEADINGS: 'Virsraksti nav atrasti.',
       LINK_EMPTY: 'Dzēst tukšas saites bez teksta.',
       LINK_EMPTY_LINK_NO_LABEL: 'Saitei nav atpazīstama teksta, kas būtu redzams ekrānlasītājiem un citām palīgtehnoloģijām. Lai labotu: </li><li>Pievienojiet īsu tekstu, kas apraksta, kur saite ved.</li><li>Ja tā ir <a href="https://a11y-101.com/development/icons-and-links">ikonas saite vai SVG,</a>, tai, visticamāk, trūkst aprakstoša marķējuma.</li><li>Ja domājat, ka šī saite ir kļūda, kas radusies kopēšanas/ielīmēšanas kļūdas dēļ, apsveriet tās dzēšanu.</li></ul>.',
       LINK_LABEL: '<strong>Saites etiķete:</strong> %(sanitizedText)',

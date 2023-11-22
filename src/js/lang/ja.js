@@ -135,6 +135,7 @@ export default {
     HEADING_MISSING_ONE: '見出し1がない。 見出し1はメインコンテンツエリアの始まりであるべきで、ページの全体的な目的を説明する主要な見出しである。<a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">見出しの構造</a>について詳しくはこちら。',
     HEADING_EMPTY_WITH_IMAGE: '見出しにはテキストがなく、画像が含まれています。これが見出しでない場合は、そのフォーマットを<strong {r}>見出し %(level)</strong>から<strong>通常</strong>または<strong>パラグラフ</strong>に変更してください。それ以外の場合、画像に装飾がない場合は、altテキストを追加してください。',
     PANEL_HEADING_MISSING_ONE: '見出しの欠落 1！',
+    PANEL_NO_HEADINGS: '見出しはありません。',
     LINK_EMPTY: 'テキストのない空のリンクを削除する。',
     LINK_EMPTY_LINK_NO_LABEL: 'リンクに、スクリーンリーダーやその他の支援技術で表示可能な識別可能なテキストがない。修正するには<ul><li>リンクの行き先を説明する簡潔なテキストを追加する。</li><li><a href="https://a11y-101.com/development/icons-and-links">アイコン リンクまたは SVG</a>である場合、説明用のラベルがない可能性があります。 </li><li> このリンクがコピー/ペーストのバグによるエラーと考えられる場合は、削除を検討してください。 </li></ul>',
     LINK_LABEL: '<strong>リンクラベル：</strong> %(sanitizedText)',

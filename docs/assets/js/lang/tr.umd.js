@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.3
+  * @version 3.0.4
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -143,6 +143,7 @@
       HEADING_MISSING_ONE: 'Eksik Başlık 1. Başlık 1, ana içerik alanının başlangıcı olmalıdır ve sayfanın genel amacını açıklayan ana başlıktır. <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Başlık Yapısı hakkında daha fazla bilgi edinin.</a>',
       HEADING_EMPTY_WITH_IMAGE: 'Başlığın metni yoktur, ancak bir resim içerir. Bu bir başlık değilse, biçimini <strong {r}>Başlık %(level)</strong> yerine <strong>Normal</strong> veya <strong>Paragraf</strong> olarak değiştirin. Aksi takdirde, dekoratif değilse lütfen resme alt metin ekleyin.',
       PANEL_HEADING_MISSING_ONE: 'Başlık 1 eksik!',
+      PANEL_NO_HEADINGS: 'Başlık bulunamadı.',
       LINK_EMPTY: 'Herhangi bir metin içermeyen boş bağlantıları kaldırın.',
       LINK_EMPTY_LINK_NO_LABEL: 'Bağlantı, ekran okuyucular ve diğer yardımcı teknolojiler tarafından görülebilen ayırt edilebilir bir metne sahip değil. Düzeltmek için: <ul><li>Bağlantının sizi nereye götürdüğünü açıklayan kısa bir metin ekleyin.</li><li>Bu bir <a href="https://a11y-101.com/development/icons-and-links">ikon bağlantısı veya SVG,</a> ise muhtemelen açıklayıcı bir etiket eksiktir.</li><li>Bu bağlantının bir kopyala/yapıştır hatasından kaynaklanan bir hata olduğunu düşünüyorsanız, silmeyi düşünün.</li></ul>',
       LINK_LABEL: '<strong>Link etiketi:</strong> %(sanitizedText)',

@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.3
+  * @version 3.0.4
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -122,6 +122,7 @@ var ua = {
     HEADING_MISSING_ONE: 'Відсутній Заголовок 1. Заголовок 1 повинен бути початком області основного змісту та є основним заголовком, який описує загальну мету сторінки. Дізнайтеся більше про <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">структуру заголовків.</a>',
     HEADING_EMPTY_WITH_IMAGE: 'Заголовок не має тексту, але містить зображення. Якщо це не заголовок, змініть його формат: замість <strong {r}>Заголовок %(level)</strong> поставте <strong>Звичайний</strong> або <strong>Абзац</strong>. В іншому разі додайте текст заміщення до зображення, якщо воно не є декоративним.',
     PANEL_HEADING_MISSING_ONE: 'Відсутній заголовок 1!',
+    PANEL_NO_HEADINGS: 'Заголовки не знайдено.',
 
     // Links
     LINK_EMPTY: 'Видаліть пусті посилання без тексту.',

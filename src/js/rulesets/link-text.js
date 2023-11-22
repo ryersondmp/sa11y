@@ -3,39 +3,40 @@ import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 
-export default function checkLinkText(results, showGoodLinkButton, linksToDOI) {
+export default function checkLinkText(
+  results,
+  showGoodLinkButton,
+  linksToDOI,
+) {
   const containsLinkTextStopWords = (textContent) => {
     const urlText = [
       'http',
-      '.asp',
-      '.htm',
-      '.php',
-      '.edu/',
-      '.com/',
-      '.net/',
-      '.org/',
-      '.us/',
-      '.ca/',
-      '.de/',
-      '.icu/',
-      '.uk/',
-      '.ru/',
-      '.info/',
-      '.top/',
-      '.xyz/',
-      '.tk/',
-      '.cn/',
-      '.ga/',
-      '.cf/',
-      '.nl/',
-      '.io/',
-      '.fr/',
-      '.pe/',
-      '.nz/',
-      '.pt/',
-      '.es/',
-      '.pl/',
-      '.ua/',
+      'edu/',
+      'com/',
+      'net/',
+      'org/',
+      'us/',
+      'ca/',
+      'de/',
+      'icu/',
+      'uk/',
+      'ru/',
+      'info/',
+      'top/',
+      'xyz/',
+      'tk/',
+      'cn/',
+      'ga/',
+      'cf/',
+      'nl/',
+      'io/',
+      'fr/',
+      'pe/',
+      'nz/',
+      'pt/',
+      'es/',
+      'pl/',
+      'ua/',
     ];
 
     const hit = [null, null, null, null];
@@ -58,11 +59,23 @@ export default function checkLinkText(results, showGoodLinkButton, linksToDOI) {
       return false;
     });
 
-    // Flag citations/references
-    const doi = 'doi.org';
-    if (textContent.toLowerCase().includes('doi')) {
-      hit[2] = doi;
-    }
+    // Flag citations/references. Check if link text matches a publication source.
+    const doi = [
+      'doiorg/', // doi.org
+      'dlacmorg/', // dl.acm.org
+      'linkspringercom/', // link.springer.com
+      'pubmedncbinlmnihgov/', // pubmed.ncbi.nlm.nih.gov
+      'scholargooglecom/', // scholar.google.com
+      'ieeexploreieeeorg/', // ieeexplore.ieee.org
+      'researchgatenet/publication', // researchgate.net/publication
+      'sciencedirectcom/science/article', // sciencedirect.com/science/article
+    ];
+    doi.forEach((word) => {
+      if (textContent.toLowerCase().indexOf(word) >= 0) {
+        hit[2] = word;
+      }
+      return false;
+    });
 
     // Flag link text containing URLs.
     urlText.forEach((word) => {

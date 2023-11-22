@@ -34,7 +34,6 @@ export default function find(selector, desiredRoot, exclude) {
   /* Logic yoinked from Editoria11y */
   // 1. Elements array includes web components in the selector to be used as a placeholder.
   const elements = Array.from(root.querySelectorAll(`:is(${selector}${shadow}):not(${exclusions}${additional})`));
-
   if (shadowComponents.length) {
     // 2. Dive into the each shadow root and collect an array of its results.
     const shadowFind = [];
@@ -54,7 +53,6 @@ export default function find(selector, desiredRoot, exclude) {
       }
     }
   }
-
   // 4. Return the cleaned up array.
   return elements;
 }

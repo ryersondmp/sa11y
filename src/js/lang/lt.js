@@ -131,6 +131,7 @@ export default {
     HEADING_MISSING_ONE: 'Trūksta 1 antraštės. 1 antraštė turėtų būti pagrindinės turinio srities pradžia ir yra pagrindinė antraštė, apibūdinanti bendrą puslapio tikslą. Sužinokite daugiau apie <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Pavadinimų struktūrą.</a>',
     HEADING_EMPTY_WITH_IMAGE: 'Antraštėje nėra teksto, bet yra paveikslėlis. Jei tai nėra antraštė, pakeiskite jos formatą iš <strong {r}>Heading %(level)</strong> į <strong>Normal</strong> arba <strong>Paragraph</strong>. Kitu atveju pridėkite paveikslėlio alt tekstą, jei jis nėra dekoratyvinis.',
     PANEL_HEADING_MISSING_ONE: 'Trūksta 1 antraštės!',
+    PANEL_NO_HEADINGS: 'Antraščių nerasta.',
     LINK_EMPTY: 'Pašalinkite tuščias nuorodas be jokio teksto.',
     LINK_EMPTY_LINK_NO_LABEL: 'Nuorodoje nėra įskaitomo teksto, kuris būtų matomas ekrano skaitytuvams ir kitoms pagalbinėms technologijoms. Ištaisyti: </li><li>Pridėkite glaustą tekstą, kuriame būtų aprašyta, kur nuoroda veda.</li><li>Jeigu tai yra <a href="https://a11y-101.com/development/icons-and-links">paveiksliuko arba SVG nuoroda,</a> greičiausiai trūksta aprašomosios etiketės.</li><li>Jeigu manote, kad ši nuoroda yra klaida dėl kopijavimo ir įkėlimo klaidos, apsvarstykite galimybę ją ištrinti.</li></ul>.',
     LINK_LABEL: '<strong>Etiketė su nuoroda:</strong> %(sanitizedText)',

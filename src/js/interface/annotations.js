@@ -94,10 +94,7 @@ export function annotate(
     ></button>`;
 
     // Make sure annotations always appended outside of interactive elements.
-    let location = element.closest('a, button');
-    if (!location) {
-      location = element;
-    }
+    const location = element.closest('a, button') || element;
     location.insertAdjacentElement(position, instance);
     instance.shadowRoot.appendChild(create);
   }
