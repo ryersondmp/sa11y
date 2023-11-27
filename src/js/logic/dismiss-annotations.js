@@ -111,6 +111,10 @@ export function dismissAnnotationsButtons(
       const filtered = dismissed.filter((item) => item.href !== Constants.Global.currentPage);
       store.setItem('sa11y-dismissed', JSON.stringify(filtered));
       Constants.Panel.dismissButton.classList.remove('active');
+
+      // Reset & check.
+      tooltips.removeEventListener('click', handleClick);
+      controlPanel.removeEventListener('click', handleClick);
       resetAll(false);
       await checkAll();
     };

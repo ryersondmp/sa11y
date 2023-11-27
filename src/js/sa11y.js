@@ -175,6 +175,8 @@ class Sa11y {
           });
         }
 
+        this.allResults = this.results;
+
         if (option.headless === false) {
           // Check for dismissed items and update results array.
           const dismiss = dismissAnnotationsLogic(this.results, this.dismissTooltip);
@@ -198,7 +200,8 @@ class Sa11y {
           if (Utils.store.getItem('sa11y-remember-panel') === 'Opened') {
             // Paint the page with annotations.
             this.results.forEach(($el, i) => {
-              Object.assign($el, { id: i });
+              const htmlPath = $el.element?.outerHTML || '';
+              Object.assign($el, { id: i, htmlPath });
               annotate(
                 $el.element,
                 $el.type,
@@ -238,7 +241,7 @@ class Sa11y {
             );
 
             // Initialize Skip to Issue button.
-            skipToIssue();
+            skipToIssue(this.results);
 
             // Extras
             detectOverflow();

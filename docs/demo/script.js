@@ -37,10 +37,11 @@ const sa11y = new Sa11y({
   linkIgnoreSpan: '.sr-only-example',
   detectSPArouting: true,
   headless: false,
-  // outlineIgnore: 'header *',
+  outlineIgnore: 'header *',
   dismissAnnotations: true,
   selectorPath: true,
   checkAllHideToggles: false,
+  showAltAboveImage: '.carousel',
 
   // showHinPageOutline: true,
   readabilityPlugin: true,

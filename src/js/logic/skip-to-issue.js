@@ -30,16 +30,53 @@ const getHiddenParent = ($el) => {
 };
 
 // Find scroll position.
-const getScrollPosition = ($el) => {
+const getScrollPosition = ($el, results) => {
   const offsetTopPosition = $el.offsetTop;
   if (offsetTopPosition === 0) {
-    const shadowParent = $el.getRootNode().host;
-    const visiblePosition = Utils.findVisibleParent(shadowParent, 'display', 'none');
+    const annotationHost = $el.getRootNode().host;
+    const visiblePosition = Utils.findVisibleParent(annotationHost, 'display', 'none');
+    const annotationIndex = parseInt(annotationHost.getAttribute('data-sa11y-annotation'), 10);
+
+    // Get the corresponding issue object.
+    const issueObject = results.find((issue) => issue.id === annotationIndex);
+    const issueElement = issueObject.element;
+    const htmlPath = `<code>${Utils.escapeHTML(issueObject.htmlPath)}</code>`;
+
+    // Depending on the type, we'll prepare a nice a preview of the element in the alert panel.
+    const tag = {
+      IMG: (element) => {
+        const anchor = element.closest('a[href]');
+        const imgSrc = element.src;
+        const alt = element.alt ? ` alt="${element.alt}"` : ' alt';
+        if (imgSrc) {
+          return anchor
+            ? `<a href="${anchor.href}" rel="noopener noreferrer"><img src="${imgSrc}"${alt}/></a>`
+            : `<img src="${imgSrc}"${alt}/>`;
+        }
+        return htmlPath;
+      },
+      IFRAME: (element) => {
+        const iframeSrc = element.src;
+        const titleAttr = element.title ? ` title="${element.title}"` : '';
+        const ariaLabelAttr = element.getAttribute('aria-label') ? ` aria-label="${element.getAttribute('aria-label')}"` : '';
+        if (iframeSrc) {
+          const iframeTitle = titleAttr || ariaLabelAttr;
+          return `<iframe src=${iframeSrc}${iframeTitle}></iframe>`;
+        }
+        return htmlPath;
+      },
+      AUDIO: () => issueObject.htmlPath,
+      VIDEO: () => issueObject.htmlPath,
+    };
+    const tagHandler = tag[issueElement.tagName];
+
+    // If it's not one of the elements above, just print the escaped HTML code of the element.
+    const elementPreview = tagHandler ? tagHandler(issueElement) : htmlPath;
 
     // Alert if tooltip is hidden.
     getHiddenParent($el);
     const tooltip = $el.getAttribute('data-tippy-content');
-    Utils.createAlert(`${Lang._('NOT_VISIBLE_ALERT')}`, tooltip);
+    Utils.createAlert(`${Lang._('NOT_VISIBLE_ALERT')}`, tooltip, elementPreview);
 
     closeAnyActiveTooltips();
 
@@ -72,7 +109,7 @@ const determineIndex = () => {
   if (opened[0]) index = parseInt(opened[0].getAttribute('data-sa11y-position'), 10);
 };
 
-const goToNext = () => {
+const goToNext = (results) => {
   determineIndex();
   const issues = Elements.Annotations.Array;
 
@@ -81,7 +118,7 @@ const goToNext = () => {
 
   const annotation = issues[index + 1];
   const button = annotation.shadowRoot.querySelector('button');
-  const scrollPos = getScrollPosition(button);
+  const scrollPos = getScrollPosition(button, results);
 
   window.scrollTo({
     top: scrollPos,
@@ -97,11 +134,11 @@ const goToNext = () => {
   index += 1;
 };
 
-const goToPrev = () => {
+const goToPrev = (results) => {
   determineIndex();
   if (index > 0) {
     const button = Elements.Annotations.Array[index - 1].shadowRoot.querySelector('button');
-    const scrollPos = getScrollPosition(button);
+    const scrollPos = getScrollPosition(button, results);
 
     window.scrollTo({
       top: scrollPos,
@@ -121,30 +158,34 @@ const goToPrev = () => {
   }
 };
 
-function keyboardShortcut(e) {
+function keyboardShortcut(e, results) {
   if (
     Elements.Annotations.Array.length
     && !Constants.Panel.skipButton.hasAttribute('disabled')
   ) {
     if (e.altKey && e.code === 'KeyS') {
       e.preventDefault();
-      goToNext();
+      goToNext(results);
     } else if (e.altKey && e.code === 'KeyW') {
       e.preventDefault();
-      goToPrev();
+      goToPrev(results);
     }
   }
 }
 
-function handleSkipButton() {
-  goToNext();
-}
+let keyboardShortcutHandler;
+let handleSkipButtonHandler;
 
-const keyboardShortcutHandler = (event) => keyboardShortcut(event);
-const handleSkipButtonHandler = (event) => handleSkipButton(event);
-
-export function skipToIssue() {
+export function skipToIssue(results) {
   // Attach keyboard and click event listeners.
+  keyboardShortcutHandler = (event) => {
+    keyboardShortcut(event, results);
+  };
+
+  handleSkipButtonHandler = () => {
+    goToNext(results);
+  };
+
   document.addEventListener('keydown', keyboardShortcutHandler);
   Constants.Panel.skipButton.addEventListener('click', handleSkipButtonHandler);
 }

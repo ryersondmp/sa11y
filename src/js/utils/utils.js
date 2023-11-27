@@ -408,11 +408,12 @@ export function removeAlert() {
 
 /**
  * Creates an alert in the Sa11y control panel with the given alert message and error preview.
- * @param {string} alertMessage - The alert message to be displayed.
- * @param {string} errorPreview - The error preview to be displayed (optional).
+ * @param {string} alertMessage - The alert message.
+ * @param {string} errorPreview - The issue's tooltip message (optional).
+ * @param {string} extendedPreview - The issue's HTML or escaped HTML to be previewed (optional).
  * @returns {void}
  */
-export function createAlert(alertMessage, errorPreview) {
+export function createAlert(alertMessage, errorPreview, extendedPreview) {
   // Clear alert first before creating new one.
   removeAlert();
 
@@ -426,10 +427,18 @@ export function createAlert(alertMessage, errorPreview) {
 
   alert.classList.add('active');
   alertText.innerHTML = alertMessage;
+
+  // If the issue's element is being previewed.
+  const elementPreview = (extendedPreview)
+    ? `<div class="element-preview">${extendedPreview}</div>` : '';
+
+  // Alert message or tooltip's message.
   if (errorPreview) {
     alertPreview.classList.add('panel-alert-preview');
-    alertPreview.innerHTML = errorPreview;
+    alertPreview.innerHTML = `${elementPreview}<div class="preview-message">${errorPreview}</div>`;
   }
+
+  // A little time before setting focus on the close button.
   setTimeout(() => {
     alertClose.focus();
   }, 300);
