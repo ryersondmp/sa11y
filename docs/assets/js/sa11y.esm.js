@@ -35,6 +35,7 @@ const defaultOptions = {
   autoDetectShadowComponents: false,
   panelPosition: 'right',
   altTextMaxCharLength: 250,
+  headingMaxCharLength: 170,
   URLTextMaxCharLength: 40,
   URLAsLinkTextWarning: true,
 
@@ -6886,7 +6887,7 @@ function checkHeaders(results, option, headingOutline) {
         position: 'beforebegin',
         isWithinRoot,
       });
-    } else if (headingLength > 170 && option.flagLongHeadings) {
+    } else if (headingLength > option.headingMaxCharLength && option.flagLongHeadings) {
       warning = Lang.sprintf('HEADING_LONG', headingLength);
       const key = prepareDismissal(`HEADING${level + headingText}`);
       results.push({
