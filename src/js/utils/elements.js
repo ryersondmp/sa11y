@@ -13,7 +13,7 @@ const Elements = (function myElements() {
 
     Found.Headings = find(
       'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]',
-      'document',
+      'root',
       Constants.Exclusions.Headings,
     );
 

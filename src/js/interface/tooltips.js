@@ -17,23 +17,18 @@ export class TooltipComponent extends HTMLElement {
     style.innerHTML = tooltipStyles + sharedStyles;
     shadowRoot.appendChild(style);
 
-    /* Hide on Escape key.
+    // Hide on Escape key.
     const hideOnEsc = {
       name: 'hideOnEsc',
       defaultValue: true,
-      fn({ hide, instance }) {
-        const onKeyDown = (event) => {
-          if (event.keyCode === 27) {
-            hide();
-            Constants.Panel.skip.focus();
-          }
-        };
+      fn({ hide }) {
+        const onKeyDown = (event) => { if (event.keyCode === 27) { hide(); } };
         return {
           onShow() { document.addEventListener('keydown', onKeyDown); },
           onHide() { document.removeEventListener('keydown', onKeyDown); },
         };
       },
-    }; */
+    };
 
     const buttons = [];
     Elements.Annotations.Array.forEach((annotation) => {
@@ -59,45 +54,25 @@ export class TooltipComponent extends HTMLElement {
       },
       appendTo: shadowRoot,
       zIndex: 2147483645,
-      // plugins: [hideOnEsc],
+      plugins: [hideOnEsc],
       onShow(instance) {
         const openedTooltip = instance.popper;
-
-        // Hide previously opened tooltip.
         annotations.forEach((popper) => {
+          // Hide previously opened tooltip.
           if (popper !== openedTooltip) {
             popper.hide();
           }
         });
 
-        // Last opened tooltip.
+        // Last opened
         const annotation = instance.reference.getRootNode().host;
         annotation.setAttribute('data-sa11y-opened', '');
 
         // Close button for tooltip.
-        const closeButton = openedTooltip.querySelector('.close-btn');
-        const closeButtonHandler = () => {
+        openedTooltip.querySelector('.close-btn').addEventListener('click', () => {
           instance.hide();
           instance.reference.focus();
-        };
-        closeButton.addEventListener('click', closeButtonHandler);
-
-        // Event listener for the escape key.
-        const escapeListener = (event) => {
-          if (event.key === 'Escape') {
-            instance.hide();
-            instance.reference.focus();
-          }
-        };
-        openedTooltip.addEventListener('keydown', escapeListener);
-
-        // Remove all event listeners.
-        const onHiddenTooltip = () => {
-          closeButton.removeEventListener('click', closeButtonHandler);
-          openedTooltip.removeEventListener('keydown', escapeListener);
-          openedTooltip.removeEventListener('hidden', onHiddenTooltip);
-        };
-        openedTooltip.addEventListener('hidden', onHiddenTooltip);
+        });
       },
       onTrigger(instance, event) {
         if (event.type === 'click') {

@@ -3,9 +3,9 @@ import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 
 export default function checkEmbeddedContent(results, option) {
-  if (option.embeddedContentAll) {
+  if (option.embeddedContentAll === true) {
     // Warning: Audio content.
-    if (option.embeddedContentAudio) {
+    if (option.embeddedContentAudio === true) {
       Elements.Found.Audio.forEach(($el) => {
         const key = Utils.prepareDismissal(`IFRAME${$el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src')}`);
         results.push({
@@ -20,7 +20,7 @@ export default function checkEmbeddedContent(results, option) {
     }
 
     // Warning: Video content.
-    if (option.embeddedContentVideo) {
+    if (option.embeddedContentVideo === true) {
       Elements.Found.Videos.forEach(($el) => {
         const track = $el.getElementsByTagName('TRACK');
         if ($el.tagName === 'VIDEO' && track.length) {
@@ -40,7 +40,7 @@ export default function checkEmbeddedContent(results, option) {
     }
 
     // Warning: Data visualizations.
-    if (option.embeddedContentDataViz) {
+    if (option.embeddedContentDataViz === true) {
       Elements.Found.Visualizations.forEach(($el) => {
         const key = Utils.prepareDismissal(`IFRAME${$el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src')}`);
         results.push({
@@ -55,7 +55,7 @@ export default function checkEmbeddedContent(results, option) {
     }
 
     // Error: iFrame is missing accessible name.
-    if (option.embeddedContentTitles) {
+    if (option.embeddedContentTitles === true) {
       Elements.Found.Iframes.forEach(($el) => {
         if ($el.tagName === 'VIDEO'
           || $el.tagName === 'AUDIO'
@@ -87,7 +87,7 @@ export default function checkEmbeddedContent(results, option) {
     }
 
     // Warning: general warning for iFrames
-    if (option.embeddedContentGeneral) {
+    if (option.embeddedContentGeneral === true) {
       Elements.Found.EmbeddedContent.forEach(($el) => {
         if ($el.tagName === 'VIDEO'
           || $el.tagName === 'AUDIO'

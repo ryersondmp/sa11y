@@ -3,36 +3,39 @@ import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 
-export default function checkLinkText(results, option) {
+export default function checkLinkText(results, showGoodLinkButton, linksToDOI) {
   const containsLinkTextStopWords = (textContent) => {
     const urlText = [
       'http',
-      'edu/',
-      'com/',
-      'net/',
-      'org/',
-      'us/',
-      'ca/',
-      'de/',
-      'icu/',
-      'uk/',
-      'ru/',
-      'info/',
-      'top/',
-      'xyz/',
-      'tk/',
-      'cn/',
-      'ga/',
-      'cf/',
-      'nl/',
-      'io/',
-      'fr/',
-      'pe/',
-      'nz/',
-      'pt/',
-      'es/',
-      'pl/',
-      'ua/',
+      '.asp',
+      '.htm',
+      '.php',
+      '.edu/',
+      '.com/',
+      '.net/',
+      '.org/',
+      '.us/',
+      '.ca/',
+      '.de/',
+      '.icu/',
+      '.uk/',
+      '.ru/',
+      '.info/',
+      '.top/',
+      '.xyz/',
+      '.tk/',
+      '.cn/',
+      '.ga/',
+      '.cf/',
+      '.nl/',
+      '.io/',
+      '.fr/',
+      '.pe/',
+      '.nz/',
+      '.pt/',
+      '.es/',
+      '.pl/',
+      '.ua/',
     ];
 
     const hit = [null, null, null, null];
@@ -55,23 +58,11 @@ export default function checkLinkText(results, option) {
       return false;
     });
 
-    // Flag citations/references. Check if link text matches a publication source.
-    const doi = [
-      'doiorg/', // doi.org
-      'dlacmorg/', // dl.acm.org
-      'linkspringercom/', // link.springer.com
-      'pubmedncbinlmnihgov/', // pubmed.ncbi.nlm.nih.gov
-      'scholargooglecom/', // scholar.google.com
-      'ieeexploreieeeorg/', // ieeexplore.ieee.org
-      'researchgatenet/publication', // researchgate.net/publication
-      'sciencedirectcom/science/article', // sciencedirect.com/science/article
-    ];
-    doi.forEach((word) => {
-      if (textContent.toLowerCase().indexOf(word) >= 0) {
-        hit[2] = word;
-      }
-      return false;
-    });
+    // Flag citations/references
+    const doi = 'doi.org';
+    if (textContent.toLowerCase().includes('doi')) {
+      hit[2] = doi;
+    }
 
     // Flag link text containing URLs.
     urlText.forEach((word) => {
@@ -159,7 +150,7 @@ export default function checkLinkText(results, option) {
       // Contains stop words.
       if (hasAriaLabelledBy || hasAriaLabel || childAriaLabelledBy || childAriaLabel) {
         const sanitizedText = Utils.sanitizeHTML(linkText);
-        if (option.showGoodLinkButton) {
+        if (showGoodLinkButton === true) {
           results.push({
             element: $el,
             type: 'good',
@@ -191,7 +182,7 @@ export default function checkLinkText(results, option) {
         position: 'beforebegin',
         dismiss: key,
       });
-    } else if (error[2] !== null && option.linksToDOI) {
+    } else if (error[2] !== null && linksToDOI === true) {
       const key = Utils.prepareDismissal(`LINK${linkText + error[2] + href}`);
       // Contains DOI URL in link text.
       if (linkText.length > 8) {
@@ -204,10 +195,10 @@ export default function checkLinkText(results, option) {
           dismiss: key,
         });
       }
-    } else if (error[3] !== null && option.URLAsLinkTextWarning) {
+    } else if (error[3] !== null) {
       const key = Utils.prepareDismissal(`LINK${linkText + error[2] + href}`);
       // Contains URL in link text.
-      if (linkText.length > option.URLTextMaxCharLength) {
+      if (linkText.length > 40) {
         results.push({
           element: $el,
           type: 'warning',
@@ -219,7 +210,7 @@ export default function checkLinkText(results, option) {
       }
     } else if (hasAriaLabelledBy || hasAriaLabel || childAriaLabelledBy || childAriaLabel) {
       // If the link has any ARIA, append a "Good" link button.
-      if (option.showGoodLinkButton) {
+      if (showGoodLinkButton === true) {
         const sanitizedText = Utils.sanitizeHTML(linkText);
         results.push({
           element: $el,
@@ -240,5 +231,5 @@ export default function checkLinkText(results, option) {
       });
     }
   });
-  return results;
+  return { results };
 }

@@ -50,43 +50,6 @@ export function escapeHTML(string) {
 }
 
 /**
- * Decodes/unescapes HTML entities back to their corresponding character.
- * @param {string} string - The string.
- * @returns {string} - Decoded string.
- */
-export function decodeHTML(string) {
-  return string.replace(/&(#?[a-zA-Z0-9]+);/g, (match, entity) => {
-    switch (entity) {
-      case 'amp':
-        return '&';
-      case 'lt':
-        return '<';
-      case 'gt':
-        return '>';
-      case 'quot':
-        return '\'';
-      case '#39':
-        return "'"; // Convert single quotes to actual single quotes.
-      default:
-        // For numeric entities, convert them back to the corresponding character.
-        if (entity.charAt(0) === '#') {
-          return String.fromCharCode(entity.charAt(1) === 'x' ? parseInt(entity.substr(2), 16) : parseInt(entity.substr(1), 10));
-        }
-        return match;
-    }
-  });
-}
-
-/**
- * Strips HTML tags from a string.
- * @param {string} string - The string.
- * @returns {string} - String without any HTML tags.
- */
-export function stripHTMLtags(string) {
-  return string.replace(/<[^>]*>/g, '');
-}
-
-/**
  * Sanitizes an HTML string by replacing special characters with their corresponding HTML entities.
  * @param {string} string - The HTML string to sanitize.
  * @returns {string} - The sanitized HTML string with special characters replaced by their corresponding entities.
@@ -445,12 +408,11 @@ export function removeAlert() {
 
 /**
  * Creates an alert in the Sa11y control panel with the given alert message and error preview.
- * @param {string} alertMessage - The alert message.
- * @param {string} errorPreview - The issue's tooltip message (optional).
- * @param {string} extendedPreview - The issue's HTML or escaped HTML to be previewed (optional).
+ * @param {string} alertMessage - The alert message to be displayed.
+ * @param {string} errorPreview - The error preview to be displayed (optional).
  * @returns {void}
  */
-export function createAlert(alertMessage, errorPreview, extendedPreview) {
+export function createAlert(alertMessage, errorPreview) {
   // Clear alert first before creating new one.
   removeAlert();
 
@@ -464,39 +426,23 @@ export function createAlert(alertMessage, errorPreview, extendedPreview) {
 
   alert.classList.add('active');
   alertText.innerHTML = alertMessage;
-
-  // If the issue's element is being previewed.
-  const elementPreview = (extendedPreview)
-    ? `<div class="element-preview">${extendedPreview}</div>` : '';
-
-  // Alert message or tooltip's message.
   if (errorPreview) {
     alertPreview.classList.add('panel-alert-preview');
-    alertPreview.innerHTML = `${elementPreview}<div class="preview-message">${errorPreview}</div>`;
+    alertPreview.innerHTML = errorPreview;
   }
-
-  // A little time before setting focus on the close button.
   setTimeout(() => {
     alertClose.focus();
   }, 300);
 
   // Closing alert sets focus back to Skip to Issue toggle.
-  function closeAlert() {
+  alertClose.addEventListener('click', () => {
     removeAlert();
-    const focusTarget = skipButton.hasAttribute('disabled')
-      ? Sa11yPanel.getElementById('toggle')
-      : skipButton;
-    focusTarget.focus();
-  }
-  alertClose.addEventListener('click', closeAlert);
-
-  // Escape key to close alert.
-  alert.onkeydown = (e) => {
-    const evt = e || window.event;
-    if (evt.key === 'Escape' && alert.classList.contains('active')) {
-      closeAlert();
+    if (skipButton.hasAttribute('disabled')) {
+      Sa11yPanel.getElementById('toggle').focus();
+    } else {
+      skipButton.focus();
     }
-  };
+  });
 }
 
 /**
@@ -544,44 +490,4 @@ export function isScrollable(scrollArea, container) {
   } else {
     container.classList.remove('scrollable');
   }
-}
-
-/**
- * Generate an HTML preview for an issue if it's an image, iframe, audio or video element. Otherwise, return escaped HTML within <code> tags. Used for Skip to Issue panel alerts and HTML page export.
- * @param {Object} issueObject - The issue object.
- * @returns {html} Returns HTML.
- */
-export function generateElementPreview(issueObject) {
-  const issueElement = issueObject.element;
-  const htmlPath = `<pre><code>${escapeHTML(issueObject.htmlPath)}</code></pre>`;
-
-  const tag = {
-    IMG: (element) => {
-      const anchor = element.closest('a[href]');
-      const imgSrc = element.src;
-      const alt = element.alt ? ` alt="${element.alt}"` : ' alt';
-      if (imgSrc) {
-        return anchor
-          ? `<a href="${anchor.href}" rel="noopener noreferrer"><img src="${imgSrc}"${alt}/></a>`
-          : `<img src="${imgSrc}"${alt}/>`;
-      }
-      return htmlPath;
-    },
-    IFRAME: (element) => {
-      const iframeSrc = element.src;
-      const titleAttr = element.title ? ` title="${element.title}"` : '';
-      const ariaLabelAttr = element.getAttribute('aria-label') ? ` aria-label="${element.getAttribute('aria-label')}"` : '';
-      if (iframeSrc) {
-        const iframeTitle = titleAttr || ariaLabelAttr;
-        return `<iframe src=${iframeSrc}${iframeTitle}></iframe>`;
-      }
-      return htmlPath;
-    },
-    AUDIO: () => issueObject.htmlPath,
-    VIDEO: () => issueObject.htmlPath,
-  };
-
-  const tagHandler = tag[issueElement.tagName];
-  const elementPreview = tagHandler ? tagHandler(issueElement) : htmlPath;
-  return elementPreview;
 }

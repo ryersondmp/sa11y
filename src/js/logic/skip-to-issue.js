@@ -30,21 +30,16 @@ const getHiddenParent = ($el) => {
 };
 
 // Find scroll position.
-const getScrollPosition = ($el, results) => {
+const getScrollPosition = ($el) => {
   const offsetTopPosition = $el.offsetTop;
   if (offsetTopPosition === 0) {
-    const annotationHost = $el.getRootNode().host;
-    const visiblePosition = Utils.findVisibleParent(annotationHost, 'display', 'none');
-    const annotationIndex = parseInt(annotationHost.getAttribute('data-sa11y-annotation'), 10);
-
-    // Generate element preview for panel & report.
-    const issueObject = results.find((issue) => issue.id === annotationIndex);
-    const elementPreview = Utils.generateElementPreview(issueObject);
+    const shadowParent = $el.getRootNode().host;
+    const visiblePosition = Utils.findVisibleParent(shadowParent, 'display', 'none');
 
     // Alert if tooltip is hidden.
     getHiddenParent($el);
     const tooltip = $el.getAttribute('data-tippy-content');
-    Utils.createAlert(`${Lang._('NOT_VISIBLE_ALERT')}`, tooltip, elementPreview);
+    Utils.createAlert(`${Lang._('NOT_VISIBLE_ALERT')}`, tooltip);
 
     closeAnyActiveTooltips();
 
@@ -77,7 +72,7 @@ const determineIndex = () => {
   if (opened[0]) index = parseInt(opened[0].getAttribute('data-sa11y-position'), 10);
 };
 
-const goToNext = (results) => {
+const goToNext = () => {
   determineIndex();
   const issues = Elements.Annotations.Array;
 
@@ -86,7 +81,7 @@ const goToNext = (results) => {
 
   const annotation = issues[index + 1];
   const button = annotation.shadowRoot.querySelector('button');
-  const scrollPos = getScrollPosition(button, results);
+  const scrollPos = getScrollPosition(button);
 
   window.scrollTo({
     top: scrollPos,
@@ -102,11 +97,11 @@ const goToNext = (results) => {
   index += 1;
 };
 
-const goToPrev = (results) => {
+const goToPrev = () => {
   determineIndex();
   if (index > 0) {
     const button = Elements.Annotations.Array[index - 1].shadowRoot.querySelector('button');
-    const scrollPos = getScrollPosition(button, results);
+    const scrollPos = getScrollPosition(button);
 
     window.scrollTo({
       top: scrollPos,
@@ -126,37 +121,35 @@ const goToPrev = (results) => {
   }
 };
 
-function keyboardShortcut(e, results) {
+function keyboardShortcut(e) {
   if (
     Elements.Annotations.Array.length
     && !Constants.Panel.skipButton.hasAttribute('disabled')
   ) {
     if (e.altKey && e.code === 'KeyS') {
       e.preventDefault();
-      goToNext(results);
+      goToNext();
     } else if (e.altKey && e.code === 'KeyW') {
       e.preventDefault();
-      goToPrev(results);
+      goToPrev();
     }
   }
 }
 
-// Attach event listeners.
-let keyboardShortcutHandler;
-let handleSkipButtonHandler;
-export function skipToIssue(results) {
-  keyboardShortcutHandler = (e) => {
-    keyboardShortcut(e, results);
-  };
-  handleSkipButtonHandler = () => {
-    goToNext(results);
-  };
+function handleSkipButton() {
+  goToNext();
+}
 
+const keyboardShortcutHandler = (event) => keyboardShortcut(event);
+const handleSkipButtonHandler = (event) => handleSkipButton(event);
+
+export function skipToIssue() {
+  // Attach keyboard and click event listeners.
   document.addEventListener('keydown', keyboardShortcutHandler);
   Constants.Panel.skipButton.addEventListener('click', handleSkipButtonHandler);
 }
 
-// Imported by Reset function.
+// Imported by reset.js
 export function removeSkipBtnListeners() {
   document.removeEventListener('keydown', keyboardShortcutHandler);
   Constants.Panel.skipButton.removeEventListener('click', handleSkipButtonHandler);

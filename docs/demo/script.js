@@ -26,7 +26,7 @@ if (url.indexOf("/pl/") > -1) {
 
 // Instantiate
 const sa11y = new Sa11y({
-  checkRoot: 'main',
+  checkRoot: 'body',
   readabilityRoot: 'main',
   customChecks: true,
   videoContent: 'youtube.com, vimeo.com, yuja.com, panopto.com, torontomu.ca',
@@ -37,15 +37,10 @@ const sa11y = new Sa11y({
   linkIgnoreSpan: '.sr-only-example',
   detectSPArouting: true,
   headless: false,
-  outlineIgnore: 'header *',
   dismissAnnotations: true,
-  selectorPath: false,
+  selectorPath: true,
   checkAllHideToggles: false,
-  showAltAboveImage: '.carousel',
-  URLAsLinkTextWarning: true,
-  exportResultsPlugin: true,
 
-  // showHinPageOutline: true,
   readabilityPlugin: true,
   contrastPlugin: true,
   formLabelsPlugin: true,

@@ -20,18 +20,19 @@ export function updatePanel(dismissCount, errorCount, warningCount) {
   } else if (warningCount > 0) {
     Constants.Panel.content.setAttribute('class', 'warnings');
     Constants.Panel.status.innerHTML = `${Lang._('WARNINGS')} <span class="panel-count" id="warning-count">${warningCount}</span>`;
-  } else if (dismissCount > 0) {
-    Constants.Panel.status.innerHTML = `${Lang._('DISMISSED')} <span class="panel-count">${dismissCount}</span>`;
-    Constants.Panel.skipButton.classList.remove('active');
   } else {
-    Constants.Panel.content.setAttribute('class', 'good');
-    Constants.Panel.status.innerHTML = `${Lang._('PANEL_STATUS_NONE')}`;
-  }
-
-  // If there are no button annotations, disable the Skip-to-Toggle switch.
-  const annotations = document.querySelectorAll('sa11y-annotation');
-  if (annotations.length === 0) {
-    Constants.Panel.skipButton.disabled = true;
+    if (dismissCount > 0) {
+      Constants.Panel.status.innerHTML = `${Lang._('DISMISSED')} <span class="panel-count">${dismissCount}</span>`;
+      Constants.Panel.skipButton.classList.remove('active');
+    } else {
+      Constants.Panel.content.setAttribute('class', 'good');
+      Constants.Panel.status.innerHTML = `${Lang._('PANEL_STATUS_NONE')}`;
+    }
+    // If there are no button annotations, disable the Skip-to-Toggle switch.
+    const annotations = document.querySelectorAll('sa11y-annotation');
+    if (annotations.length === 0) {
+      Constants.Panel.skipButton.disabled = true;
+    }
   }
 }
 

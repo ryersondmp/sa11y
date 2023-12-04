@@ -7,10 +7,10 @@ const Constants = (function myConstants() {
   /* **************** */
   const Global = {};
   function initializeGlobal(option) {
+    Global.currentPage = window.location.pathname;
     Global.html = document.querySelector('html');
     Global.headless = option.headless;
     Global.panelPosition = option.panelPosition;
-    Global.dismissAnnotations = option.dismissAnnotations;
 
     // Toggleable plugins
     Global.contrastPlugin = option.contrastPlugin;
@@ -18,11 +18,10 @@ const Constants = (function myConstants() {
     Global.linksAdvancedPlugin = option.linksAdvancedPlugin;
     Global.colourFilterPlugin = option.colourFilterPlugin;
     Global.checkAllHideToggles = option.checkAllHideToggles;
-    Global.exportResultsPlugin = option.exportResultsPlugin;
 
     // Root element to check.
     Global.Root = document.querySelector(option.checkRoot);
-    if (!Global.Root) {
+    if (!option.checkRoot) {
       Global.Root = document.querySelector('body');
     }
 
@@ -36,7 +35,7 @@ const Constants = (function myConstants() {
     // i18n
     Global.langDirection = (Global.html.getAttribute('dir') === 'rtl') ? 'rtl' : 'ltr';
 
-    // QA: Document links (Quality Assurance module)
+    // Document links (Quality Assurance module)
     if (option.documentLinks) {
       Global.documentLinks = `${option.documentLinks}`;
     }
@@ -95,8 +94,6 @@ const Constants = (function myConstants() {
     Panel.dismissButton = Sa11yPanel.getElementById('dismiss-button');
     Panel.dismissTooltip = Sa11yPanel.getElementById('dismiss-tooltip');
     Panel.skipToPageIssues = Sa11yPanel.getElementById('skip-to-page-issues');
-    Panel.exportHTML = Sa11yPanel.getElementById('export-html');
-    Panel.exportCSV = Sa11yPanel.getElementById('export-csv');
 
     // Alerts
     Panel.alert = Sa11yPanel.getElementById('panel-alert');
@@ -115,7 +112,7 @@ const Constants = (function myConstants() {
   /* ***************** */
   const Readability = {};
   function initializeReadability(option) {
-    if (option.readabilityPlugin) {
+    if (option.readabilityPlugin === true) {
       // Readability target area to check.
       Readability.Root = document.querySelector(option.readabilityRoot);
       if (!Readability.Root) {

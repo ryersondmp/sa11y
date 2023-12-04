@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.4
+  * @version 3.0.3
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -51,24 +51,10 @@
       HEADING_NOT_VISIBLE_ALERT: 'Overskriften er ikke synlig; den kan være skjult eller inne i en trekkspill- eller fanekomponent.',
       SKIP_TO_PAGE_ISSUES: 'Gå til sideproblemer',
       CONSOLE_ERROR_MESSAGE: 'Beklager, men det er et problem med tilgjengelighetskontrollen på denne siden. Kan du <a href="%(link)">rapportere det via dette skjemaet</a> eller på <a href="%(link)">GitHub</a>?',
-
-      // Dismiss
       PANEL_DISMISS_BUTTON: 'Vis %(dismissCount) avviste advarsler',
       DISMISS: 'Avvis',
       DISMISSED: 'Avviste advarsler',
       DISMISS_REMINDER: 'Vær oppmerksom på at advarsler bare avvises <strong>midlertidig</strong>. Hvis du sletter nettleserens historikk og informasjonskapsler, gjenopprettes alle tidligere avviste advarsler på alle sider.',
-
-      // Export
-      DATE: 'Dato',
-      PAGE_TITLE: 'Sidetittel',
-      RESULTS: 'Resultater',
-      EXPORT_RESULTS: 'Eksporter resultater',
-      GENERATED: 'Resultater generert med %(tool).',
-      PREVIEW: 'Forhåndsvisning',
-      ELEMENT: 'Element',
-      PATH: 'Sti',
-
-      // Colour filters
       COLOUR_FILTER: 'Fargefilter',
       PROTANOPIA: 'Protanopi',
       DEUTERANOPIA: 'Deuteranopi',
@@ -80,8 +66,6 @@
       BLUE_EYE: 'Blå persienne.',
       MONO_EYE: 'Rød, blå og grønn blind.',
       COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Fargefiltre fungerer ikke i modus for høy kontrast.',
-
-      // Alternative text stopwords
       SUSPICIOUS_ALT_STOPWORDS: [
         'bilde',
         'grafisk',
@@ -164,7 +148,6 @@
       HEADING_MISSING_ONE: 'Manglende overskrift 1. Overskrift 1 skal være starten på hovedinnholdsområdet, og er hovedoverskriften som beskriver det overordnede formålet med siden. Les mer om <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Overskriftsstruktur.</a>.',
       HEADING_EMPTY_WITH_IMAGE: 'Overskrift har ingen tekst, men inneholder et bilde. Hvis dette ikke er en overskrift, endrer du formatet fra <strong {r}>Overskrift %(level)</strong> til <strong>Normal</strong> eller <strong>Avsnitt</strong>. Ellers kan du legge til alt-tekst til bildet hvis det ikke er dekorativt.',
       PANEL_HEADING_MISSING_ONE: 'Manglende overskrift 1!',
-      PANEL_NO_HEADINGS: 'Ingen overskrifter funnet.',
       LINK_EMPTY: 'Fjern tomme lenker uten tekst.',
       LINK_EMPTY_LINK_NO_LABEL: 'Lenken har ikke tydelig tekst som er synlig for skjermlesere og andre hjelpemidler. Slik løser du problemet: <ul><li>Legg til en kortfattet tekst som beskriver hvor lenken fører deg.</li><li>Hvis det er en <a href="https://a11y-101.com/development/icons-and-links">ikonlenke eller SVG,</a> mangler den sannsynligvis en beskrivende etikett.</li><li>Hvis du tror at denne lenken er en feil på grunn av en copy/paste-feil, bør du vurdere å slette den.</li></ul>.',
       LINK_LABEL: '<strong>Lenketikett:</strong> %(sanitizedText)',

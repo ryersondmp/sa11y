@@ -14,8 +14,8 @@ import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 
 export default function checkReadability() {
-  let results;
-  if (Constants.Readability.Plugin) {
+  let readabilityResults;
+  if (Constants.Readability.Plugin === true) {
     const rememberReadability = Utils.store.getItem('sa11y-remember-readability') === 'On';
     if (rememberReadability) {
       // Crude hack to add a period to the end of list items to make a complete sentence.
@@ -139,7 +139,7 @@ export default function checkReadability() {
         }
 
         // Create object for headless mode.
-        results = {
+        readabilityResults = {
           score: fleschScore,
           averageWordsPerSentence: avgWordsPerSentence,
           complexWords,
@@ -181,7 +181,7 @@ export default function checkReadability() {
         const lix = calculateLix(pageText);
 
         // Create object for headless mode.
-        results = {
+        readabilityResults = {
           score: lix.score,
           averageWordsPerSentence: lix.avgWordsPerSentence,
           complexWords: lix.complexWords,
@@ -194,21 +194,21 @@ export default function checkReadability() {
       if (Constants.Global.headless === false) {
         if (pageText.length === 0) {
           Constants.Panel.readabilityInfo.innerHTML = Lang._('READABILITY_NO_P_OR_LI_MESSAGE');
-        } else if (results.wordCount > 30) {
-          Constants.Panel.readabilityInfo.innerHTML = `${results.score} <span class="readability-score">${results.difficultyLevel}</span>`;
+        } else if (readabilityResults.wordCount > 30) {
+          Constants.Panel.readabilityInfo.innerHTML = `${readabilityResults.score} <span class="readability-score">${readabilityResults.difficultyLevel}</span>`;
 
           Constants.Panel.readabilityDetails.innerHTML = `
             <li>
               <strong>${Lang._('LANG_AVG_SENTENCE')}</strong>
-              ${results.averageWordsPerSentence}
+              ${readabilityResults.averageWordsPerSentence}
             </li>
             <li>
               <strong>${Lang._('LANG_COMPLEX_WORDS')}</strong>
-              ${results.complexWords}%
+              ${readabilityResults.complexWords}%
             </li>
             <li>
               <strong>${Lang._('LANG_TOTAL_WORDS')}</strong>
-              ${results.wordCount}
+              ${readabilityResults.wordCount}
             </li>`;
         } else {
           Constants.Panel.readabilityInfo.textContent = Lang._('READABILITY_NOT_ENOUGH_CONTENT_MESSAGE');
@@ -216,5 +216,5 @@ export default function checkReadability() {
       }
     }
   }
-  return results;
+  return readabilityResults;
 }

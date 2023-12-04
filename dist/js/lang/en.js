@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.4
+  * @version 3.0.3
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -45,23 +45,13 @@ var en = {
     SKIP_TO_PAGE_ISSUES: 'Skip to Page Issues',
     CONSOLE_ERROR_MESSAGE: 'Sorry, but there is an issue with the accessibility checker on this page. Can you please <a href="%(link)">report it through this form</a> or on <a href="%(link)">GitHub</a>?',
 
-    // Export
-    DATE: 'Date',
-    PAGE_TITLE: 'Page title',
-    RESULTS: 'Results',
-    EXPORT_RESULTS: 'Export results',
-    GENERATED: 'Results generated with %(tool).',
-    PREVIEW: 'Preview',
-    ELEMENT: 'Element',
-    PATH: 'Path',
-
     // Dismiss
     PANEL_DISMISS_BUTTON: 'Show %(dismissCount) dismissed warnings',
     DISMISS: 'Dismiss',
     DISMISSED: 'Dismissed warnings',
     DISMISS_REMINDER: 'Please note that warnings are only <strong>temporarily</strong> dismissed. Clearing your browser history and cookies will restore all previously dismissed warnings across all pages.',
 
-    // Colour filters
+    // Color filters
     COLOUR_FILTER: 'Colour filter',
     PROTANOPIA: 'Protanopia',
     DEUTERANOPIA: 'Deuteranopia',
@@ -74,7 +64,7 @@ var en = {
     MONO_EYE: 'Red, blue, and green blind.',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Colour filters do not work in high contrast mode.',
 
-    // Alternative text stop words
+    // Alternative text module stop words
     SUSPICIOUS_ALT_STOPWORDS: ['image', 'graphic', 'picture', 'photo'],
     PLACEHOLDER_ALT_STOPWORDS: ['alt', 'image', 'photo', 'decorative', 'placeholder', 'placeholder image', 'spacer'],
     PARTIAL_ALT_STOPWORDS: [
@@ -85,10 +75,8 @@ var en = {
       'clicking here',
       'check out',
       'detailed here',
-      'discover',
       'download',
       'download here',
-      'explore',
       'find out',
       'find out more',
       'form',
@@ -136,7 +124,6 @@ var en = {
     HEADING_MISSING_ONE: 'Missing Heading 1. Heading 1 should be the start of the main content area, and is the main heading that describes the overall purpose of the page. Learn more about <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Heading Structure.</a>',
     HEADING_EMPTY_WITH_IMAGE: 'Heading has no text, but contains an image. If this is not a heading, change its format from <strong {r}>Heading %(level)</strong> to <strong>Normal</strong> or <strong>Paragraph</strong>. Otherwise, please add alt text to the image if it is not decorative.',
     PANEL_HEADING_MISSING_ONE: 'Missing Heading 1!',
-    PANEL_NO_HEADINGS: 'No headings found.',
 
     // Links
     LINK_EMPTY: 'Remove empty links without any text.',

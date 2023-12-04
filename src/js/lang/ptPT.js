@@ -33,24 +33,10 @@ export default {
     HEADING_NOT_VISIBLE_ALERT: 'O cabeçalho não é visível; pode estar oculto ou dentro de um componente de acordeão ou separador.',
     SKIP_TO_PAGE_ISSUES: 'Saltar para os problemas da página',
     CONSOLE_ERROR_MESSAGE: 'Desculpe, mas há um problema com o verificador de acessibilidade nesta página. Pode, por favor, <a href="%(link)">relatar o problema através deste formulário</a> ou no <a href="%(link)">GitHub</a>?',
-
-    // Dismiss
     PANEL_DISMISS_BUTTON: 'Mostrar %(dismissCount) avisos rejeitados',
     DISMISS: 'Rejeitar',
     DISMISSED: 'Advertências rejeitadas',
     DISMISS_REMINDER: 'Tenha em atenção que os avisos são apenas <strong>temporariamente</strong> rejeitados. Limpar o histórico e os cookies do seu browser irá restaurar todos os avisos anteriormente rejeitados em todas as páginas.',
-
-    // Export
-    DATE: 'Data',
-    PAGE_TITLE: 'Título da página',
-    RESULTS: 'Resultados',
-    EXPORT_RESULTS: 'Exportar resultados',
-    GENERATED: 'Resultados gerados com %(tool).',
-    PREVIEW: 'Pré-visualização',
-    ELEMENT: 'Elemento',
-    PATH: 'Caminho',
-
-    // Colour filters
     COLOUR_FILTER: 'Filtro de cor',
     PROTANOPIA: 'Protanopia',
     DEUTERANOPIA: 'Deuteranopia',
@@ -62,8 +48,6 @@ export default {
     BLUE_EYE: 'Cego azul.',
     MONO_EYE: 'Cego vermelho, azul e verde.',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Os filtros de cor não funcionam no modo de alto contraste.',
-
-    // Alternative text stop words
     SUSPICIOUS_ALT_STOPWORDS: [
       'imagem',
       'gráfico',
@@ -145,7 +129,6 @@ export default {
     HEADING_MISSING_ONE: 'Falta o Título 1. O Título 1 deve ser o início da área de conteúdo principal e é o título principal que descreve o objetivo geral da página. Saiba mais sobre <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Estrutura de cabeçalho.</a>',
     HEADING_EMPTY_WITH_IMAGE: 'O cabeçalho não tem texto, mas contém uma imagem. Se não for um cabeçalho, altere o formato de <strong {r}>Título %(level)</strong> para <strong>Normal</strong> ou <strong>Parágrafo</strong>. Caso contrário, adicione texto alternativo à imagem se esta não for decorativa.',
     PANEL_HEADING_MISSING_ONE: 'Falta o título 1!',
-    PANEL_NO_HEADINGS: 'Não foram encontrados cabeçalhos.',
     LINK_EMPTY: 'Remover ligações vazias sem qualquer texto.',
     LINK_EMPTY_LINK_NO_LABEL: 'A ligação não tem texto discernível que seja visível para leitores de ecrã e outras tecnologias de assistência. Para corrigir: <ul><li>Adicione um texto conciso que descreva para onde o link o leva.</li><li>Se for um <a href="https://a11y-101.com/development/icons-and-links">link de ícone ou SVG,</a> é provável que esteja faltando um rótulo descritivo.</li><li>Se você acha que esse link é um erro devido a um bug de copiar/colar, considere excluí-lo.</li></ul>',
     LINK_LABEL: '<strong>Rótulo do link:</strong> %(sanitizedText)',

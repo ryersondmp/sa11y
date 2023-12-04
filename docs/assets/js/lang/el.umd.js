@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.4
+  * @version 3.0.3
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -51,24 +51,10 @@
       HEADING_NOT_VISIBLE_ALERT: 'Η επικεφαλίδα δεν είναι ορατή- μπορεί να είναι κρυμμένη ή μέσα σε ένα στοιχείο ακορντεόν ή καρτέλας.',
       SKIP_TO_PAGE_ISSUES: 'Μετάβαση στα θέματα της σελίδας',
       CONSOLE_ERROR_MESSAGE: 'Συγγνώμη, αλλά υπάρχει πρόβλημα με τον ελεγκτή προσβασιμότητας σε αυτή τη σελίδα. Μπορείτε να το αναφέρετε, παρακαλώ, <a href="%(link)">μέσω αυτής της φόρμας</a> ή στο <a href="%(link)">GitHub</a>',
-
-      // Dismiss
       PANEL_DISMISS_BUTTON: 'Εμφάνιση %(dismissCount) απορριφθεισών προειδοποιήσεων',
       DISMISS: 'Απορρίψτε το',
       DISMISSED: 'Απορριφθείσες προειδοποιήσεις',
       DISMISS_REMINDER: 'Λάβετε υπόψη ότι οι προειδοποιήσεις απορρίπτονται μόνο <strong>προσωρινά</strong>. Η εκκαθάριση του ιστορικού και των cookies του προγράμματος περιήγησής σας θα επαναφέρει όλες τις προειδοποιήσεις που είχαν απορριφθεί προηγουμένως σε όλες τις σελίδες.',
-
-      // Export
-      DATE: 'Ημερομηνία',
-      PAGE_TITLE: 'Τίτλος σελίδας',
-      RESULTS: 'Αποτελέσματα',
-      EXPORT_RESULTS: 'Εξαγωγή αποτελεσμάτων',
-      GENERATED: 'Τα αποτελέσματα δημιουργήθηκαν με %(tool).',
-      PREVIEW: 'Προεπισκόπηση',
-      ELEMENT: 'Στοιχείο',
-      PATH: 'Διαδρομή',
-
-      // Colour filters
       COLOUR_FILTER: 'Φίλτρο χρώματος',
       PROTANOPIA: 'Protanopia',
       DEUTERANOPIA: 'Deuteranopia',
@@ -80,8 +66,6 @@
       BLUE_EYE: 'Μπλε τυφλό.',
       MONO_EYE: 'Κόκκινο, μπλε και πράσινο τυφλό.',
       COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Τα χρωματικά φίλτρα δεν λειτουργούν στη λειτουργία υψηλής αντίθεσης.',
-
-      // Alternative text stop words
       SUSPICIOUS_ALT_STOPWORDS: [
         'εικόνα',
         'γραφικό',
@@ -157,7 +141,6 @@
       HEADING_MISSING_ONE: 'Λείπει η επικεφαλίδα 1. Η επικεφαλίδα 1 πρέπει να αποτελεί την αρχή της κύριας περιοχής περιεχομένου και είναι η κύρια επικεφαλίδα που περιγράφει τον γενικό σκοπό της σελίδας. Μάθετε περισσότερα για την <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Δομή επικεφαλίδων.</a>',
       HEADING_EMPTY_WITH_IMAGE: 'Η επικεφαλίδα δεν έχει κείμενο, αλλά περιέχει μια εικόνα. Αν δεν πρόκειται για επικεφαλίδα, αλλάξτε τη μορφή της από <strong {r}>Κεφαλίδα %(επίπεδο)</strong> σε <strong>Κανονική</strong> ή <strong>Παράγραφος</strong>. Διαφορετικά, προσθέστε κείμενο alt στην εικόνα, αν δεν είναι διακοσμητικό.',
       PANEL_HEADING_MISSING_ONE: 'Λείπει η επικεφαλίδα 1!',
-      PANEL_NO_HEADINGS: 'Δεν βρέθηκαν κεφαλίδες.',
       LINK_EMPTY: 'Αφαίρεση κενών συνδέσμων χωρίς κείμενο.',
       LINK_EMPTY_LINK_NO_LABEL: 'Ο σύνδεσμος δεν έχει ευδιάκριτο κείμενο που να είναι ορατό σε προγράμματα ανάγνωσης οθόνης και άλλες υποστηρικτικές τεχνολογίες. Για να το διορθώσετε: <ul><li>Προσθέστε κάποιο συνοπτικό κείμενο που να περιγράφει πού σας οδηγεί ο σύνδεσμος.</li><li>Αν πρόκειται για σύνδεσμο <a href="https://a11y-101.com/development/icons-and-links">εικονίδιο ή SVG,</a> είναι πιθανό να λείπει μια περιγραφική ετικέτα.</li><li>Αν πιστεύετε ότι αυτός ο σύνδεσμος είναι σφάλμα που οφείλεται σε σφάλμα αντιγραφής/επικόλλησης, σκεφτείτε να τον διαγράψετε.</li></ul>',
       LINK_LABEL: '<strong>Ετικέτα συνδέσμου:</strong> %(sanitizedText)',

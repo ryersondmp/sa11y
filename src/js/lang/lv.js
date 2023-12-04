@@ -33,24 +33,10 @@ export default {
     HEADING_NOT_VISIBLE_ALERT: 'Virsraksts nav redzams; tas var būt paslēpts vai akordeona vai cilnes komponenta iekšpusē.',
     SKIP_TO_PAGE_ISSUES: 'Pāriet uz lapas jautājumiem',
     CONSOLE_ERROR_MESSAGE: 'Atvainojiet, bet šajā lapā ir problēma ar pieejamības pārbaudītāju. Vai varat, lūdzu, <a href="%(link)">ziņot par to, izmantojot šo formu</a> vai <a href="%(link)">GitHub</a>?',
-
-    // Dismiss
     PANEL_DISMISS_BUTTON: 'Rādīt %(dismissCount) noraidīto brīdinājumu skaitu',
     DISMISS: 'Atbrīvot',
     DISMISSED: 'Noraidītie brīdinājumi',
     DISMISS_REMINDER: 'Lūdzu, ņemiet vērā, ka brīdinājumi tiek <strong>atcelti tikai uz laiku</strong>. Iztīrot pārlūkprogrammas vēsturi un sīkfailus, tiks atjaunoti visi iepriekš noraidītie brīdinājumi visās lapās.',
-
-    // Export
-    DATE: 'Datums',
-    PAGE_TITLE: 'Lapas nosaukums',
-    RESULTS: 'Rezultāti',
-    EXPORT_RESULTS: 'Eksportēt rezultātus',
-    GENERATED: 'Rezultāti ģenerēti ar %(tool).',
-    PREVIEW: 'Priekšskatījums',
-    ELEMENT: 'Elements',
-    PATH: 'Ceļš',
-
-    // Colour filters
     COLOUR_FILTER: 'Krāsu filtrs',
     PROTANOPIA: 'Protanopija',
     DEUTERANOPIA: 'Deuteranopija',
@@ -62,8 +48,6 @@ export default {
     BLUE_EYE: 'Zilā žalūzija.',
     MONO_EYE: 'Sarkans, zils un zaļš akls.',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Krāsu filtri nedarbojas augsta kontrasta režīmā.',
-
-    // Alternative text stop words
     SUSPICIOUS_ALT_STOPWORDS: [
       'attēls',
       'grafikas',
@@ -143,7 +127,6 @@ export default {
     HEADING_MISSING_ONE: 'Trūkst 1. virsraksta. 1. virsrakstam jābūt galvenā satura laukuma sākumam, un tas ir galvenais virsraksts, kas apraksta lapas vispārējo mērķi. Uzziniet vairāk par <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Galveno struktūru</a>.',
     HEADING_EMPTY_WITH_IMAGE: 'Virsrakstā nav teksta, bet ir attēls. Ja tas nav virsraksts, mainiet tā formātu no <strong {r}>Virsraksts %(level)</strong> uz <strong>Normāls</strong> vai <strong>Apakšsadaļa</strong>. Pretējā gadījumā pievienojiet attēlam alt tekstu, ja tas nav dekoratīvs.',
     PANEL_HEADING_MISSING_ONE: 'Trūkst 1. pozīcijas!',
-    PANEL_NO_HEADINGS: 'Virsraksti nav atrasti.',
     LINK_EMPTY: 'Dzēst tukšas saites bez teksta.',
     LINK_EMPTY_LINK_NO_LABEL: 'Saitei nav atpazīstama teksta, kas būtu redzams ekrānlasītājiem un citām palīgtehnoloģijām. Lai labotu: </li><li>Pievienojiet īsu tekstu, kas apraksta, kur saite ved.</li><li>Ja tā ir <a href="https://a11y-101.com/development/icons-and-links">ikonas saite vai SVG,</a>, tai, visticamāk, trūkst aprakstoša marķējuma.</li><li>Ja domājat, ka šī saite ir kļūda, kas radusies kopēšanas/ielīmēšanas kļūdas dēļ, apsveriet tās dzēšanu.</li></ul>.',
     LINK_LABEL: '<strong>Saites etiķete:</strong> %(sanitizedText)',

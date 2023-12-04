@@ -1,25 +1,34 @@
 import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
-import Constants from '../utils/constants';
 
-export default function checkHeaders(results, option, headingOutline) {
+export default function checkHeaders(
+  results,
+  nonConsecutiveHeadingIsError,
+  flagLongHeadings,
+  missingH1,
+  headingOutline,
+) {
   let prevLevel;
   Elements.Found.Headings.forEach(($el, i) => {
     const ignore = Utils.fnIgnore($el); // Ignore unwanted <style>, <script>, etc tags.
     const text = Utils.computeTextNodeWithImage(ignore);
     const headingText = Utils.sanitizeHTML(text);
 
-    const isWithinRoot = Constants.Global.Root.contains($el);
+    let level;
+    if ($el.getAttribute('aria-level')) {
+      level = +$el.getAttribute('aria-level');
+    } else {
+      level = +$el.tagName.slice(1);
+    }
+    level = parseInt(level, 10);
 
-    const level = parseInt($el.getAttribute('aria-level') || $el.tagName.slice(1), 10);
     const headingLength = headingText.length;
-
     let error = null;
     let warning = null;
 
     if (level - prevLevel > 1 && i !== 0) {
-      if (option.nonConsecutiveHeadingIsError) {
+      if (nonConsecutiveHeadingIsError === true) {
         error = Lang.sprintf('HEADING_NON_CONSECUTIVE_LEVEL', prevLevel, level);
         results.push({
           element: $el,
@@ -27,7 +36,6 @@ export default function checkHeaders(results, option, headingOutline) {
           content: error,
           inline: false,
           position: 'beforebegin',
-          isWithinRoot,
         });
       } else {
         warning = Lang.sprintf('HEADING_NON_CONSECUTIVE_LEVEL', prevLevel, level);
@@ -39,7 +47,6 @@ export default function checkHeaders(results, option, headingOutline) {
           inline: false,
           position: 'beforebegin',
           dismiss: key,
-          isWithinRoot,
         });
       }
     } else if (headingLength === 0) {
@@ -53,7 +60,6 @@ export default function checkHeaders(results, option, headingOutline) {
             content: error,
             inline: false,
             position: 'beforebegin',
-            isWithinRoot,
           });
         }
       } else {
@@ -64,7 +70,6 @@ export default function checkHeaders(results, option, headingOutline) {
           content: error,
           inline: false,
           position: 'beforebegin',
-          isWithinRoot,
         });
       }
     } else if (i === 0 && level !== 1 && level !== 2) {
@@ -75,9 +80,8 @@ export default function checkHeaders(results, option, headingOutline) {
         content: error,
         inline: false,
         position: 'beforebegin',
-        isWithinRoot,
       });
-    } else if (headingLength > option.headingMaxCharLength && option.flagLongHeadings) {
+    } else if (headingLength > 170 && flagLongHeadings === true) {
       warning = Lang.sprintf('HEADING_LONG', headingLength);
       const key = Utils.prepareDismissal(`HEADING${level + headingText}`);
       results.push({
@@ -87,14 +91,12 @@ export default function checkHeaders(results, option, headingOutline) {
         inline: false,
         position: 'beforebegin',
         dismiss: key,
-        isWithinRoot,
       });
     }
-
     prevLevel = level;
+
     const hiddenHeading = Utils.isElementVisuallyHiddenOrHidden($el);
     const parent = Utils.findVisibleParent($el, 'display', 'none');
-
     // Create an object for heading outline panel.
     if (error !== null) {
       headingOutline.push({
@@ -105,7 +107,6 @@ export default function checkHeaders(results, option, headingOutline) {
         type: 'error',
         hidden: hiddenHeading,
         visibleParent: parent,
-        isWithinRoot,
       });
     } else if (warning !== null) {
       const key = Utils.prepareDismissal(`HEADING${level + headingText}`);
@@ -118,7 +119,6 @@ export default function checkHeaders(results, option, headingOutline) {
         hidden: hiddenHeading,
         visibleParent: parent,
         dismiss: key,
-        isWithinRoot,
       });
     } else if (error === null || warning === null) {
       headingOutline.push({
@@ -128,17 +128,14 @@ export default function checkHeaders(results, option, headingOutline) {
         index: i,
         hidden: hiddenHeading,
         visibleParent: parent,
-        isWithinRoot,
       });
     }
   });
-
   // Missing Heading 1
-  if (Elements.Found.HeadingOne.length === 0 && option.missingH1) {
+  if (Elements.Found.HeadingOne.length === 0 && missingH1 === true) {
     results.push({
-      type: 'warning',
+      type: 'error',
       content: Lang.sprintf('HEADING_MISSING_ONE'),
-      dismiss: 'missingH1',
     });
   }
   return { results, headingOutline };

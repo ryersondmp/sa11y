@@ -15,7 +15,6 @@ const onLoadScript = (lang) => {
   new Sa11y.Sa11y({
     autoDetectShadowComponents: true,
     customChecks: false,
-    exportResultsPlugin: true,
     detectSPArouting: true,
   });
 };

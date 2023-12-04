@@ -39,16 +39,6 @@ export default {
     DISMISSED: 'Zignorowano ostrzeżenia',
     DISMISS_REMINDER: 'Proszę zauważyć, że ostrzeżenia są ignorowane tylko <strong>tymczasowo.</strong> Wyczyszczenie historii przeglądarki i plików cookie przywróci wszystkie wcześniej ignorowane ostrzeżenia na wszystkich stronach.',
 
-    // Export
-    DATE: 'Data',
-    PAGE_TITLE: 'Tytuł strony',
-    RESULTS: 'Wyniki',
-    EXPORT_RESULTS: 'Eksportuj wyniki',
-    GENERATED: 'Wyniki wygenerowane za pomocą %(tool).',
-    PREVIEW: 'Podgląd',
-    ELEMENT: 'Element',
-    PATH: 'Ścieżka',
-
     // Color filters
     COLOUR_FILTER: 'Filtr kolorów',
     PROTANOPIA: 'Protanopia',
@@ -140,7 +130,6 @@ export default {
     HEADING_MISSING_ONE: 'Brakuje nagłówka H1. Nagłówek H1 jest głównym nagłówkiem opisującym ogólny cel strony i powinien być początkiem obszaru treści głównej. Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Strukturze nagłówków.</a>',
     HEADING_EMPTY_WITH_IMAGE: 'Nagłówek nie ma tekstu, ale zawiera obrazek. Jeśli to nie jest nagłówek, zmień jego format z <strong {r}>Nagłówek H%(level)</strong> na <strong>zwykły tekst</strong> lub <strong>akapit</strong>. W przeciwnym razie, dodaj do obrazu tekst alt, jeśli nie jest on ozdobny.',
     PANEL_HEADING_MISSING_ONE: 'Brak Nagłówka 1!',
-    PANEL_NO_HEADINGS: 'Nie znaleziono nagłówków.',
 
     // Links
     LINK_EMPTY: 'Puste łącze bez żadnego tekstu. Usuń je!',

@@ -55,7 +55,6 @@ const processSCSS = async (input, output, outputMin) => {
 /*    Language files     */
 /* ********************* */
 const languages = [
-  'bg',
   'cs',
   'da',
   'de',
@@ -66,11 +65,9 @@ const languages = [
   'et',
   'fi',
   'fr',
-  'hu',
   'id',
   'it',
   'ja',
-  'ko',
   'lt',
   'lv',
   'nb',
@@ -79,7 +76,6 @@ const languages = [
   'ptBR',
   'ptPT',
   'ro',
-  'sk',
   'sl',
   'sv',
   'tr',
@@ -123,7 +119,6 @@ const scssFiles = [
   'tooltips',
   'global-utilities',
   'console-errors',
-  'export-results',
 ];
 const scssConfigs = scssFiles.map((file) => ({
   input: `src/scss/${file}.scss`,

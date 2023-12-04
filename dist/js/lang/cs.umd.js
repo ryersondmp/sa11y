@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.4
+  * @version 3.0.3
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -51,24 +51,10 @@
       HEADING_NOT_VISIBLE_ALERT: 'Záhlaví není viditelné; může být skryté nebo se může nacházet v komponentě akordeonu nebo karty.',
       SKIP_TO_PAGE_ISSUES: 'Přeskočit na stránku Problémy',
       CONSOLE_ERROR_MESSAGE: 'Omlouváme se, ale na této stránce je problém s kontrolou přístupnosti. Můžete ji prosím <a href="%(link)">nahlásit prostřednictvím tohoto formuláře</a> nebo na <a href="%(link)">GitHubu</a>?',
-
-      // Dismiss
       PANEL_DISMISS_BUTTON: 'Zobrazit %(dismissCount) zamítnutých varování',
       DISMISS: 'Odmítnout',
       DISMISSED: 'Zamítnutá varování',
       DISMISS_REMINDER: 'Vezměte prosím na vědomí, že varování jsou pouze <strong>dočasně</strong> zamítnuta. Vymazáním historie prohlížeče a souborů cookie se obnoví všechna dříve zamítnutá varování na všech stránkách.',
-
-      // Export
-      DATE: 'Datum',
-      PAGE_TITLE: 'Název stránky',
-      RESULTS: 'Výsledky',
-      EXPORT_RESULTS: 'Exportovat výsledky',
-      GENERATED: 'Výsledky generovány s %(tool).',
-      PREVIEW: 'Náhled',
-      ELEMENT: 'Prvek',
-      PATH: 'Cesta',
-
-      // Colour filters
       COLOUR_FILTER: 'Barevný filtr',
       PROTANOPIA: 'Protanopia',
       DEUTERANOPIA: 'Deuteranopia',
@@ -80,8 +66,6 @@
       BLUE_EYE: 'Modrá roleta.',
       MONO_EYE: 'Červená, modrá a zelená barva pro nevidomé.',
       COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Barevné filtry nefungují v režimu vysokého kontrastu.',
-
-      // Alternative text stop words
       SUSPICIOUS_ALT_STOPWORDS: [
         'obrázek',
         'grafika',
@@ -159,7 +143,6 @@
       HEADING_MISSING_ONE: 'Chybějící nadpis 1. Nadpis 1 by měl být začátkem hlavní oblasti obsahu a je to hlavní nadpis, který popisuje celkový účel stránky. Více informací o <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Struktuře nadpisů.</a>.',
       HEADING_EMPTY_WITH_IMAGE: 'Nadpis neobsahuje žádný text, ale obrázek. Pokud se nejedná o nadpis, změňte jeho formát z <strong {r}>Nadpis %(level)</strong> na <strong>Normální</strong> nebo <strong>Odstavec</strong>. V opačném případě přidejte k obrázku alt text, pokud není ozdobný.',
       PANEL_HEADING_MISSING_ONE: 'Chybí nadpis 1!',
-      PANEL_NO_HEADINGS: 'Nebyly nalezeny žádné záhlaví.',
       LINK_EMPTY: 'Odstranění prázdných odkazů bez textu.',
       LINK_EMPTY_LINK_NO_LABEL: 'Odkaz nemá čitelný text, který by byl viditelný pro čtečky obrazovky a další asistenční technologie. Oprava: </li><li>Přidejte stručný text, který popisuje, kam odkaz vede.</li><li>Jestliže se jedná o <a href="https://a11y-101.com/development/icons-and-links">odkaz na ikonu nebo SVG,</a> pravděpodobně chybí popisný štítek.</li><li>Pokud si myslíte, že tento odkaz je chybou způsobenou chybou kopírování/vkládání, zvažte jeho odstranění.</li></ul>.',
       LINK_LABEL: '<strong>Značka odkazu:</strong> %(sanitizedText)',

@@ -3,8 +3,12 @@ import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 
 export default function checkLabels(results, option) {
-  if (option.formLabelsPlugin) {
-    if (Utils.store.getItem('sa11y-remember-labels') === 'On' || option.headless || option.checkAllHideToggles) {
+  if (option.formLabelsPlugin === true) {
+    if (
+      Utils.store.getItem('sa11y-remember-labels') === 'On'
+      || option.headless === true
+      || option.checkAllHideToggles === true
+    ) {
       Elements.Found.Inputs.forEach(($el) => {
         // Ignore hidden inputs.
         if (Utils.isElementHidden($el) !== true) {
@@ -105,5 +109,5 @@ export default function checkLabels(results, option) {
       });
     }
   }
-  return results;
+  return { results };
 }

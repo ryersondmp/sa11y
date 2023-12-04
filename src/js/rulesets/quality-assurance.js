@@ -7,7 +7,7 @@ export default function checkQA(results, option) {
   /* *********************************************************** */
   /*  Error: Find all links pointing to development environment. */
   /* *********************************************************** */
-  if (option.badLinksQA) {
+  if (option.badLinksQA === true) {
     Elements.Found.CustomErrorLinks.forEach(($el) => {
       results.push({
         element: $el,
@@ -22,7 +22,7 @@ export default function checkQA(results, option) {
   /* *********************************************************** */
   /*  Warning: Excessive bolding or italics.                     */
   /* *********************************************************** */
-  if (option.strongItalicsQA) {
+  if (option.strongItalicsQA === true) {
     Elements.Found.StrongItalics.forEach(($el) => {
       const strongItalicsText = $el.textContent.trim().length;
       const key = Utils.prepareDismissal($el.tagName + $el.textContent);
@@ -49,7 +49,7 @@ export default function checkQA(results, option) {
       const hasExtension = extensions.some((extension) => href.includes(extension));
       const hasPDF = href.includes('.pdf');
       const key = Utils.prepareDismissal(`DOCUMENT${href}`);
-      if (option.documentQA && hasExtension) {
+      if (option.documentQA === true && hasExtension) {
         results.push({
           element: $el,
           type: 'warning',
@@ -58,7 +58,7 @@ export default function checkQA(results, option) {
           position: 'beforebegin',
           dismiss: key,
         });
-      } else if (option.pdfQA && hasPDF) {
+      } else if (option.pdfQA === true && hasPDF) {
         results.push({
           element: $el,
           type: 'warning',
@@ -74,7 +74,7 @@ export default function checkQA(results, option) {
   /* *************************************************************** */
   /*  Error: Missing language tag. Lang should be at least 2 chars.  */
   /* *************************************************************** */
-  if (option.langQA) {
+  if (option.langQA === true) {
     if (!Elements.Found.Language || Elements.Found.Language.length < 2) {
       results.push({
         type: 'error',
@@ -86,7 +86,7 @@ export default function checkQA(results, option) {
   /* *************************************************************** */
   /*  Warning: Find blockquotes used as headers.                     */
   /* *************************************************************** */
-  if (option.blockquotesQA) {
+  if (option.blockquotesQA === true) {
     Elements.Found.Blockquotes.forEach(($el) => {
       const bqHeadingText = $el.textContent;
       if (bqHeadingText.trim().length < 25) {
@@ -107,11 +107,11 @@ export default function checkQA(results, option) {
   /* *************************************************************** */
   /*  Errors: Check HTML tables for issues.                          */
   /* *************************************************************** */
-  if (option.tablesQA) {
+  if (option.tablesQA === true) {
     Elements.Found.Tables.forEach(($el) => {
-      const tableHeaders = $el.querySelectorAll('th');
-      const semanticHeadings = $el.querySelectorAll('h1, h2, h3, h4, h5, h6');
-      if (option.tablesQAmissingTH && tableHeaders.length === 0) {
+      const findTHeaders = $el.querySelectorAll('th');
+      const findHeadingTags = $el.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      if (findTHeaders.length === 0) {
         results.push({
           element: $el,
           type: 'error',
@@ -120,10 +120,10 @@ export default function checkQA(results, option) {
           position: 'beforebegin',
         });
       }
-      if (option.tablesQAsemanticHeadings && semanticHeadings.length > 0) {
-        semanticHeadings.forEach((heading) => {
+      if (findHeadingTags.length > 0) {
+        findHeadingTags.forEach(($a) => {
           results.push({
-            element: heading,
+            element: $a,
             type: 'error',
             content: Lang.sprintf('TABLES_SEMANTIC_HEADING'),
             inline: false,
@@ -131,12 +131,11 @@ export default function checkQA(results, option) {
           });
         });
       }
-      tableHeaders.forEach((th) => {
-        if (option.tablesQAemptyTH && th.textContent.trim().length === 0) {
-          const issueType = (option.tablesQAemptyTHisError) ? 'error' : 'warning';
+      findTHeaders.forEach(($b) => {
+        if ($b.textContent.trim().length === 0) {
           results.push({
-            element: th,
-            type: issueType,
+            element: $b,
+            type: 'error',
             content: Lang.sprintf('TABLES_EMPTY_HEADING'),
             inline: false,
             position: 'afterbegin',
@@ -154,7 +153,7 @@ export default function checkQA(results, option) {
   /*  3) Doesn't contain the following characters: .;?!                 */
   /*  4) The previous element is not a semantic heading.                */
   /* ****************************************************************** */
-  if (option.fakeHeadingsQA) {
+  if (option.fakeHeadingsQA === true) {
     Elements.Found.Paragraphs.forEach(($el) => {
       const brAfter = $el.innerHTML.indexOf('</strong><br>');
       const brBefore = $el.innerHTML.indexOf('<br></strong>');
@@ -253,7 +252,7 @@ export default function checkQA(results, option) {
   /*  Warning: Detect paragraphs that should be lists.               */
   /*  Thanks to John Jameson from PrincetonU for this ruleset!       */
   /* *************************************************************** */
-  if (option.fakeListQA) {
+  if (option.fakeListQA === true) {
     Elements.Found.Paragraphs.forEach(($el) => {
       let activeMatch = '';
       const prefixDecrement = {
@@ -318,7 +317,7 @@ export default function checkQA(results, option) {
   /* *************************************************************** */
   /*  Warning: Detect uppercase text.                                */
   /* *************************************************************** */
-  if (option.allCapsQA) {
+  if (option.allCapsQA === true) {
     const checkCaps = ($el) => {
       let thisText = '';
       if ($el.tagName === 'LI') {
@@ -355,7 +354,7 @@ export default function checkQA(results, option) {
   /* *************************************************************** */
   /*  Error: Duplicate IDs                                           */
   /* *************************************************************** */
-  if (option.duplicateIdQA) {
+  if (option.duplicateIdQA === true) {
     const allIds = {};
     Elements.Found.Ids.forEach(($el) => {
       const { id } = $el;
@@ -379,7 +378,7 @@ export default function checkQA(results, option) {
   /*  Warning: Flag underlined text.                                 */
   /*  Created by Brian Teeman.                                       */
   /* *************************************************************** */
-  if (option.underlinedTextQA) {
+  if (option.underlinedTextQA === true) {
     // Find all <u> tags.
     Elements.Found.Underlines.forEach(($el) => {
       const text = Utils.getText($el);
@@ -420,9 +419,9 @@ export default function checkQA(results, option) {
   /* *************************************************************** */
   /*  Error: Page is missing meta page <title>                       */
   /* *************************************************************** */
-  if (option.pageTitleQA) {
-    const metaTitle = document.querySelector('head title');
-    if (!metaTitle || metaTitle.textContent.trim().length === 0) {
+  if (option.pageTitleQA === true) {
+    const $title = document.querySelector('title');
+    if (!$title || $title.textContent.trim().length === 0) {
       results.push({
         type: 'error',
         content: Lang.sprintf('QA_PAGE_TITLE'),
@@ -433,7 +432,7 @@ export default function checkQA(results, option) {
   /* *************************************************************** */
   /*  Warning: Find inappropriate use of <sup> and <sub> tags.       */
   /* *************************************************************** */
-  if (option.subscriptQA) {
+  if (option.subscriptQA === true) {
     Elements.Found.Subscripts.forEach(($el) => {
       const text = Utils.getText($el);
       if (text.length >= 80) {
@@ -449,5 +448,7 @@ export default function checkQA(results, option) {
       }
     });
   }
+
+  // Return each object to results array.
   return results;
 }

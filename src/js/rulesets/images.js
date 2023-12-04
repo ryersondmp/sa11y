@@ -2,7 +2,7 @@ import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 
-export default function checkImages(results, option) {
+export default function checkImages(results) {
   const containsAltTextStopWords = (alt) => {
     const altUrl = [
       '.png',
@@ -156,7 +156,7 @@ export default function checkImages(results, option) {
             position: 'beforebegin',
           });
         }
-      } else if (alt.length > option.altTextMaxCharLength && $el.closest('a[href]')) {
+      } else if (alt.length > 250 && $el.closest('a[href]')) {
         const key = Utils.prepareDismissal(`LINKEDIMAGE${baseSrc + altText + alt.length}`);
         // Link and contains alt text.
         results.push({
@@ -225,7 +225,7 @@ export default function checkImages(results, option) {
             dismiss: key,
           });
         }
-      } else if (alt.length > option.altTextMaxCharLength) {
+      } else if (alt.length > 250) {
         const key = Utils.prepareDismissal(`IMAGE${baseSrc + altText + alt.length}`);
         results.push({
           element: $el,
@@ -272,5 +272,5 @@ export default function checkImages(results, option) {
       }
     }
   });
-  return results;
+  return { results };
 }

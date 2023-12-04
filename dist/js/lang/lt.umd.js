@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.4
+  * @version 3.0.3
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -51,24 +51,10 @@
       HEADING_NOT_VISIBLE_ALERT: 'Antraštė nėra matoma; ji gali būti paslėpta arba akordeono ar skirtuko komponento viduje.',
       SKIP_TO_PAGE_ISSUES: 'Pereiti prie puslapio klausimų',
       CONSOLE_ERROR_MESSAGE: 'Atsiprašome, bet šiame puslapyje yra problema su prieinamumo tikrintuvu. Ar galite apie tai <a href="%(link)">pranešti per šią formą</a> arba <a href="%(link)">GitHub</a>?',
-
-      // Dismiss
       PANEL_DISMISS_BUTTON: 'Rodyti %(dismissCount) atmestų įspėjimų',
       DISMISS: 'Atmesti',
       DISMISSED: 'Atmesti įspėjimai',
       DISMISS_REMINDER: 'Atkreipkite dėmesį, kad įspėjimai atmetami tik <strong>laikinai</strong>. Išvalius naršyklės istoriją ir slapukus, bus atkurti visi anksčiau atmesti įspėjimai visuose puslapiuose.',
-
-      // Export
-      DATE: 'Data',
-      PAGE_TITLE: 'Puslapio pavadinimas',
-      RESULTS: 'Rezultatai',
-      EXPORT_RESULTS: 'Eksportuoti rezultatus',
-      GENERATED: 'Rezultatai sugeneruoti su %(tool).',
-      PREVIEW: 'Peržiūra',
-      ELEMENT: 'Elementas',
-      PATH: 'Kelias',
-
-      // Colour filters
       COLOUR_FILTER: 'Spalvų filtras',
       PROTANOPIA: 'Protanopia',
       DEUTERANOPIA: 'Deuteranopija',
@@ -80,8 +66,6 @@
       BLUE_EYE: 'Mėlyna aklina.',
       MONO_EYE: 'Raudonas, mėlynas ir žalias aklasis.',
       COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Spalviniai filtrai neveikia didelio kontrasto režimu.',
-
-      // Alternative text stop words
       SUSPICIOUS_ALT_STOPWORDS: [
         'vaizdas',
         'grafinis',
@@ -165,7 +149,6 @@
       HEADING_MISSING_ONE: 'Trūksta 1 antraštės. 1 antraštė turėtų būti pagrindinės turinio srities pradžia ir yra pagrindinė antraštė, apibūdinanti bendrą puslapio tikslą. Sužinokite daugiau apie <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Pavadinimų struktūrą.</a>',
       HEADING_EMPTY_WITH_IMAGE: 'Antraštėje nėra teksto, bet yra paveikslėlis. Jei tai nėra antraštė, pakeiskite jos formatą iš <strong {r}>Heading %(level)</strong> į <strong>Normal</strong> arba <strong>Paragraph</strong>. Kitu atveju pridėkite paveikslėlio alt tekstą, jei jis nėra dekoratyvinis.',
       PANEL_HEADING_MISSING_ONE: 'Trūksta 1 antraštės!',
-      PANEL_NO_HEADINGS: 'Antraščių nerasta.',
       LINK_EMPTY: 'Pašalinkite tuščias nuorodas be jokio teksto.',
       LINK_EMPTY_LINK_NO_LABEL: 'Nuorodoje nėra įskaitomo teksto, kuris būtų matomas ekrano skaitytuvams ir kitoms pagalbinėms technologijoms. Ištaisyti: </li><li>Pridėkite glaustą tekstą, kuriame būtų aprašyta, kur nuoroda veda.</li><li>Jeigu tai yra <a href="https://a11y-101.com/development/icons-and-links">paveiksliuko arba SVG nuoroda,</a> greičiausiai trūksta aprašomosios etiketės.</li><li>Jeigu manote, kad ši nuoroda yra klaida dėl kopijavimo ir įkėlimo klaidos, apsvarstykite galimybę ją ištrinti.</li></ul>.',
       LINK_LABEL: '<strong>Etiketė su nuoroda:</strong> %(sanitizedText)',

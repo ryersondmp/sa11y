@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.4
+  * @version 3.0.3
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -45,24 +45,10 @@ var fi = {
     HEADING_NOT_VISIBLE_ALERT: 'Otsikko ei ole näkyvissä; se voi olla piilotettu tai harmonikka- tai välilehtiosan sisällä.',
     SKIP_TO_PAGE_ISSUES: 'Siirry sivulle Issues',
     CONSOLE_ERROR_MESSAGE: 'Anteeksi, mutta tämän sivun saavutettavuuden tarkistuksessa on ongelma. Voisitko <a href="%(link)">ilmoittaa siitä tällä lomakkeella</a> tai <a href="%(link)">GitHubissa</a>?',
-
-    // Dismiss
     PANEL_DISMISS_BUTTON: 'Näytä %(dismissCount) hylätyt varoitukset',
     DISMISS: 'Dismiss',
     DISMISSED: 'Hylätyt varoitukset',
     DISMISS_REMINDER: 'Huomaa, että varoitukset hylätään vain <strong>tilapäisesti</strong>. Selaimen historian ja evästeiden tyhjentäminen palauttaa kaikki aiemmin hylätyt varoitukset kaikilla sivuilla.',
-
-    // Export
-    DATE: 'Päivämäärä',
-    PAGE_TITLE: 'Sivun otsikko',
-    RESULTS: 'Tulokset',
-    EXPORT_RESULTS: 'Vie tulokset',
-    GENERATED: 'Tulokset luotu %(tool)-työkalulla.',
-    PREVIEW: 'Esikatselu',
-    ELEMENT: 'Elementti',
-    PATH: 'Polku',
-
-    // Colour filters
     COLOUR_FILTER: 'Värisuodatin',
     PROTANOPIA: 'Protanopia',
     DEUTERANOPIA: 'Deuteranopia',
@@ -74,8 +60,6 @@ var fi = {
     BLUE_EYE: 'Sininen sokea.',
     MONO_EYE: 'Punainen, sininen ja vihreä sokea.',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Värisuodattimet eivät toimi korkean kontrastin tilassa.',
-
-    // Alternative text stop words
     SUSPICIOUS_ALT_STOPWORDS: [
       'kuva',
       'graafinen',
@@ -149,7 +133,6 @@ var fi = {
     HEADING_MISSING_ONE: 'Puuttuva otsikko 1. Otsikon 1 pitäisi olla pääsisältöalueen alku, ja se on pääotsikko, joka kuvaa sivun yleistä tarkoitusta. Lue lisää <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Ohjeiden rakenne.</a>.',
     HEADING_EMPTY_WITH_IMAGE: 'Otsikossa ei ole tekstiä, mutta se sisältää kuvan. Jos kyseessä ei ole otsikko, vaihda sen muoto <strong {r}>otsikko %(level)</strong>:sta <strong>normaaliksi</strong> tai <strong>kappaleeksi</strong>. Muussa tapauksessa lisää kuvaan alt-teksti, jos se ei ole koristeellinen.',
     PANEL_HEADING_MISSING_ONE: 'Otsikko 1 puuttuu!',
-    PANEL_NO_HEADINGS: 'Otsikoita ei löytynyt.',
     LINK_EMPTY: 'Poista tyhjät linkit ilman tekstiä.',
     LINK_EMPTY_LINK_NO_LABEL: 'Linkissä ei ole erottuvaa tekstiä, joka näkyy ruudunlukijoille ja muille apuvälineille. Korjaus: <ul><li>Lisää tiivis teksti, joka kuvaa, minne linkki vie.</li><li>Jos kyseessä on <a href="https://a11y-101.com/development/icons-and-links">kuvakkeellinen linkki tai SVG,</a> siitä puuttuu todennäköisesti kuvaava merkintä.</li><li>Jos luulet, että linkki on kopiointi/liitä-virheestä johtuva virhe, harkitse sen poistamista.</li></ul>',
     LINK_LABEL: '<strong>Linkki etiketti:</strong> %(sanitizedText)',

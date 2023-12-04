@@ -9,7 +9,7 @@ export default function settingsPanelToggles(checkAll, resetAll) {
   /* ***************** */
   /*  Contrast toggle  */
   /* ***************** */
-  if (Constants.Global.contrastPlugin) {
+  if (Constants.Global.contrastPlugin === true) {
     Constants.Panel.contrastToggle.onclick = async () => {
       if (store.getItem('sa11y-remember-contrast') === 'On') {
         store.setItem('sa11y-remember-contrast', 'Off');
@@ -32,7 +32,7 @@ export default function settingsPanelToggles(checkAll, resetAll) {
   /* ***************** */
   /*  Form Labels      */
   /* ***************** */
-  if (Constants.Global.formLabelsPlugin) {
+  if (Constants.Global.formLabelsPlugin === true) {
     Constants.Panel.labelsToggle.onclick = async () => {
       if (store.getItem('sa11y-remember-labels') === 'On') {
         store.setItem('sa11y-remember-labels', 'Off');
@@ -55,7 +55,7 @@ export default function settingsPanelToggles(checkAll, resetAll) {
   /* ****************** */
   /*  Links (Advanced)  */
   /* ****************** */
-  if (Constants.Global.linksAdvancedPlugin) {
+  if (Constants.Global.linksAdvancedPlugin === true) {
     Constants.Panel.linksToggle.onclick = async () => {
       if (store.getItem('sa11y-remember-links-advanced') === 'On') {
         store.setItem('sa11y-remember-links-advanced', 'Off');
@@ -78,7 +78,7 @@ export default function settingsPanelToggles(checkAll, resetAll) {
   /* ****************** */
   /*  Readability       */
   /* ****************** */
-  if (Constants.Readability.Plugin) {
+  if (Constants.Readability.Plugin === true) {
     Constants.Panel.readabilityToggle.onclick = async () => {
       if (store.getItem('sa11y-remember-readability') === 'On') {
         store.setItem('sa11y-remember-readability', 'Off');
@@ -169,7 +169,7 @@ export default function settingsPanelToggles(checkAll, resetAll) {
   /* ****************** */
   /*  Colour filters    */
   /* ****************** */
-  if (Constants.Global.colourFilterPlugin) {
+  if (Constants.Global.colourFilterPlugin === true) {
     Constants.Panel.colourFilterSelect.addEventListener('change', async () => {
       const option = parseInt(Constants.Panel.colourFilterSelect.value, 10);
 

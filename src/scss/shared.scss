@@ -32,10 +32,6 @@ h2,
   display: inline-block !important;
 }
 
-code {
-  font-family: monospace !important;
-}
-
 code,
 kbd,
 .kbd {
@@ -43,6 +39,10 @@ kbd,
   color: var(--sa11y-panel-primary);
   background-color: var(--sa11y-panel-badge);
   border-radius: 3.2px;
+}
+
+code {
+  font-family: monospace;
 }
 
 .bold {
@@ -76,8 +76,8 @@ kbd,
   font-weight: normal;
   color: var(--sa11y-panel-primary);
   cursor: pointer;
-  background: var(--sa11y-panel-bg-secondary);
-  border: 2px solid var(--sa11y-button-outline);
+  background: none;
+  border: 1px solid var(--sa11y-button-outline);
   border-radius: 50%;
   transition: all .2s ease-in-out;
 

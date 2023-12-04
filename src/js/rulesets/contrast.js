@@ -9,8 +9,12 @@ import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 
 export default function checkContrast(results, option) {
-  if (option.contrastPlugin) {
-    if (Utils.store.getItem('sa11y-remember-contrast') === 'On' || option.headless || option.checkAllHideToggles) {
+  if (option.contrastPlugin === true) {
+    if (
+      Utils.store.getItem('sa11y-remember-contrast') === 'On'
+      || option.headless === true
+      || option.checkAllHideToggles === true
+    ) {
       let contrastErrors = {
         errors: [],
         warnings: [],

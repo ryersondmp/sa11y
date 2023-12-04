@@ -33,23 +33,13 @@ export default {
     SKIP_TO_PAGE_ISSUES: 'Saltar problemas de la página',
     CONSOLE_ERROR_MESSAGE: 'Lo siento, pero hay un problema con el comprobador de accesibilidad en esta página. Puedes por favor <a href="%(link)">reportarlo a través de este formulario</a> or on <a href="%(link)">GitHub</a>?',
 
-    // Export
-    DATE: 'Fecha',
-    PAGE_TITLE: 'Título de la página',
-    RESULTS: 'Resultados',
-    EXPORT_RESULTS: 'Exportar resultados',
-    GENERATED: 'Resultados generados con %(tool).',
-    PREVIEW: 'Vista previa',
-    ELEMENT: 'Elemento',
-    PATH: 'Ruta',
-
     // Dismiss
     PANEL_DISMISS_BUTTON: 'Mostrar %(dismissCount) advertencias descartadas',
     DISMISS: 'Descartar',
     DISMISSED: 'Descartar advertencias',
     DISMISS_REMINDER: 'Tenga en cuenta que las advertencias solo se descartan <strong>temporalmente</strong>. Al borrar el historial de su navegador y las cookies, se restaurarán todas las advertencias previamente descartadas en todas las páginas.',
 
-    // Colour filters
+    // Color filters
     COLOUR_FILTER: 'Filtro de color',
     PROTANOPIA: 'Protanopia',
     DEUTERANOPIA: 'Deuteranopia',
@@ -62,7 +52,7 @@ export default {
     MONO_EYE: 'Ciego rojo, azul y verde.',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Los filtros de color no funcionan en el modo de alto contraste.',
 
-    // Alternative text stop words
+    // Alternative text module stop words
     SUSPICIOUS_ALT_STOPWORDS: ['imagen', 'gráfico', 'foto'],
     PLACEHOLDER_ALT_STOPWORDS: ['alt', 'image', 'photo', 'decorative', 'placeholder', 'placeholder image', 'spacer', 'imagen', 'foto', 'decorativo', 'marcador de posición', 'espaciador'],
     PARTIAL_ALT_STOPWORDS: [
@@ -122,7 +112,6 @@ export default {
     HEADING_MISSING_ONE: 'Falta el encabezado 1. El encabezado 1 debe ser el comienzo del área de contenido principal y es el encabezado principal que describe el propósito general de la página. Aprender más acerca de la <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">estructura de encabezado.</a>',
     HEADING_EMPTY_WITH_IMAGE: 'El encabezado no tiene texto, pero contiene una imagen. Si no es un encabezado, cambie su formato de <strong {r}>Título %(level)</strong> a <strong>Normal</strong> o <strong>Párrafo</strong>. De lo contrario, agregue texto alternativo a la imagen si no es decorativa.',
     PANEL_HEADING_MISSING_ONE: 'Falta el encabezado 1!',
-    PANEL_NO_HEADINGS: 'No se encontraron encabezados.',
 
     // Links
     LINK_EMPTY: 'Eliminar enlaces vacíos sin texto.',

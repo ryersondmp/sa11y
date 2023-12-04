@@ -1,6 +1,3 @@
-/* eslint-disable no-return-assign */
-/* eslint-disable no-param-reassign */
-
 import Constants from '../utils/constants';
 import { store, isScrollable } from '../utils/utils';
 import Lang from '../utils/lang';
@@ -9,9 +6,7 @@ import Lang from '../utils/lang';
 /*  Main panel: Initialize Show Outline and Settings buttons/tabs.  */
 /* **************************************************************** */
 export default function initializePanelToggles() {
-  /* **************** */
-  /*  Outline panel   */
-  /* **************** */
+  // Show outline panel
   Constants.Panel.outlineToggle.addEventListener('click', () => {
     if (Constants.Panel.outlineToggle.getAttribute('aria-expanded') === 'true') {
       Constants.Panel.outlineToggle.classList.remove('outline-active');
@@ -21,6 +16,7 @@ export default function initializePanelToggles() {
 
       // Toggle visibility of heading labels
       const $headingAnnotations = document.querySelectorAll('sa11y-heading-label');
+      // eslint-disable-next-line no-return-assign, no-param-reassign
       $headingAnnotations.forEach(($el) => $el.hidden = true);
       isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
     } else {
@@ -28,10 +24,10 @@ export default function initializePanelToggles() {
       Constants.Panel.outline.classList.add('active');
       Constants.Panel.outlineToggle.setAttribute('aria-expanded', 'true');
       store.setItem('sa11y-remember-outline', 'Opened');
-      store.setItem('sa11y-remember-settings', 'Closed');
 
       // Toggle visibility of heading labels
       const $headingAnnotations = document.querySelectorAll('sa11y-heading-label');
+      // eslint-disable-next-line no-return-assign, no-param-reassign
       $headingAnnotations.forEach(($el) => $el.hidden = false);
     }
 
@@ -56,21 +52,16 @@ export default function initializePanelToggles() {
     }, 0);
   }
 
-  /* **************** */
-  /*  Settings panel  */
-  /* **************** */
+  // Show settings panel
   Constants.Panel.settingsToggle.addEventListener('click', () => {
     if (Constants.Panel.settingsToggle.getAttribute('aria-expanded') === 'true') {
       Constants.Panel.settingsToggle.classList.remove('settings-active');
       Constants.Panel.settings.classList.remove('active');
       Constants.Panel.settingsToggle.setAttribute('aria-expanded', 'false');
-      store.setItem('sa11y-remember-settings', 'Closed');
     } else {
       Constants.Panel.settingsToggle.classList.add('settings-active');
       Constants.Panel.settings.classList.add('active');
       Constants.Panel.settingsToggle.setAttribute('aria-expanded', 'true');
-      store.setItem('sa11y-remember-settings', 'Opened');
-      store.setItem('sa11y-remember-outline', 'Closed');
     }
 
     // Set focus on Settings heading for accessibility.
@@ -78,6 +69,7 @@ export default function initializePanelToggles() {
 
     // Toggle visibility of heading labels
     const $headingAnnotations = document.querySelectorAll('sa11y-heading-label');
+    // eslint-disable-next-line no-return-assign, no-param-reassign
     $headingAnnotations.forEach(($el) => $el.hidden = true);
 
     // Close Show Outline panel when Settings is active.
@@ -92,19 +84,7 @@ export default function initializePanelToggles() {
       Constants.Panel.settingsContent.setAttribute('aria-label', `${Lang._('SETTINGS')}`);
       Constants.Panel.settingsContent.setAttribute('role', 'region');
     }
-
-    // Close Outline panel when Show Outline is active.
-    Constants.Panel.outline.classList.remove('active');
-    Constants.Panel.outlineToggle.classList.remove('settings-active');
-    Constants.Panel.outlineToggle.setAttribute('aria-expanded', 'false');
   });
-
-  // Remember to leave settings open
-  if (store.getItem('sa11y-remember-settings') === 'Opened') {
-    Constants.Panel.settingsToggle.classList.add('settings-active');
-    Constants.Panel.settings.classList.add('active');
-    Constants.Panel.settingsToggle.setAttribute('aria-expanded', 'true');
-  }
 
   // Accessibility: Skip link to Page Issues
   Constants.Panel.skipToPageIssues.addEventListener('click', () => {
