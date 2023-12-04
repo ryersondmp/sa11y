@@ -33,10 +33,24 @@ export default {
     HEADING_NOT_VISIBLE_ALERT: 'Başlık görünür değildir; gizli veya bir akordeon ya da sekme bileşeninin içinde olabilir.',
     SKIP_TO_PAGE_ISSUES: 'Sayfa Sorunlarına Geç',
     CONSOLE_ERROR_MESSAGE: 'Üzgünüz, ancak bu sayfadaki erişilebilirlik denetleyicisinde bir sorun var. Lütfen <a href="%(link)">bu form</a> aracılığıyla veya <a href="%(link)">GitHub</a> üzerinden bildirebilir misiniz?',
+
+    // Dismiss
     PANEL_DISMISS_BUTTON: 'Göster %(dismissCount) reddedilen uyarılar',
     DISMISS: 'Dağılın',
     DISMISSED: 'Reddedilen uyarılar',
     DISMISS_REMINDER: 'Uyarıların yalnızca <strong>geçici olarak</strong> reddedildiğini lütfen unutmayın. Tarayıcı geçmişinizi ve çerezlerinizi temizlemek, tüm sayfalarda daha önce kapatılan tüm uyarıları geri yükleyecektir.',
+
+    // Export
+    DATE: 'Tarih',
+    PAGE_TITLE: 'Sayfa başlığı',
+    RESULTS: 'Sonuçlar',
+    EXPORT_RESULTS: 'Sonuçları dışa aktar',
+    GENERATED: '%(tool) ile oluşturulan sonuçlar.',
+    PREVIEW: 'Önizleme',
+    ELEMENT: 'Öğe',
+    PATH: 'Yol',
+
+    // Colour filters
     COLOUR_FILTER: 'Renk filtresi',
     PROTANOPIA: 'Protanopia',
     DEUTERANOPIA: 'Deuteranopia',
@@ -48,6 +62,8 @@ export default {
     BLUE_EYE: 'Mavi kör.',
     MONO_EYE: 'Kırmızı, mavi ve yeşil kör.',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Renk filtreleri yüksek kontrast modunda çalışmaz.',
+
+    // Alternative text stop words
     SUSPICIOUS_ALT_STOPWORDS: [
       'görüntü',
       'grafik',

@@ -272,8 +272,8 @@ button[data-sa11y-dismiss] {
   margin: 10px 5px 5px 0;
   color: var(--sa11y-panel-primary);
   cursor: pointer;
-  background: var(--sa11y-panel-bg);
-  border: 1px solid var(--sa11y-button-outline);
+  background: var(--sa11y-panel-bg-secondary);
+  border: 2px solid var(--sa11y-button-outline);
   border-radius: 5px;
 
   &:hover,
@@ -663,19 +663,48 @@ hr {
   border-inline-end: 1px solid var(--sa11y-panel-bg-splitter);
 }
 
+#export-results-mode,
 label {
   display: inline-block;
   width: 100%;
   margin: 0;
   font-weight: normal;
   color: var(--sa11y-panel-primary);
+}
+
+label:not(#colour-filter-mode, #export-results-mode) {
   cursor: pointer;
 }
+
 
 /* ***************************************** */
 /*           13. Settings Panel              */
 /* ***************************************** */
 #settings-panel {
+
+  #export-csv,
+  #export-html {
+    width: unset;
+    padding: 0;
+    text-align: center;
+
+    span {
+      display: block;
+      width: 65px;
+      padding: 7px 9px;
+      margin: 0 4px;
+      background: var(--sa11y-panel-bg-secondary);
+      border-radius: 5px;
+      box-shadow: inset 0 0 0 2px var(--sa11y-setting-switch-bg-off);
+    }
+
+    &:hover span,
+    &:focus span,
+    &:focus-within span {
+      background: var(--sa11y-shortcut-hover);
+    }
+  }
+
   .switch {
     position: relative;
     width: 105px;
@@ -855,11 +884,17 @@ label {
   text-align: end;
   vertical-align: middle;
   cursor: pointer;
-  background: var(--sa11y-panel-bg);
+  background: var(--sa11y-panel-bg-secondary);
   border: 2px solid var(--sa11y-setting-switch-bg-off);
   border-radius: 5px;
   padding-inline-end: 25px;
   padding-inline-start: 5px;
+  margin-inline-end: 4px;
+
+  &:hover,
+  &:focus {
+    background: var(--sa11y-shortcut-hover);
+  }
 }
 
 #colour-filter-select.active {

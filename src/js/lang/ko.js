@@ -33,10 +33,24 @@ export default {
     HEADING_NOT_VISIBLE_ALERT: '제목은 보이지 않거나 숨겨져 있거나 아코디언 또는 탭 구성 요소 안에 있을 수 있습니다.',
     SKIP_TO_PAGE_ISSUES: '페이지로 건너뛰기 이슈',
     CONSOLE_ERROR_MESSAGE: '죄송하지만 이 페이지의 접근성 검사기에 문제가 있습니다. <a href="%(link)">이 양식</a> 또는 <a href="%(link)">GitHub</a>에서 신고해 주시겠어요?',
-    PANEL_DISMISS_BUTTON: '(disissCount) 해제된 경고 표시',
+
+    // Dismiss
+    PANEL_DISMISS_BUTTON: '%(dismissCount) 해제된 경고 표시',
     DISMISS: '해지',
     DISMISSED: '기각된 경고',
     DISMISS_REMINDER: '경고는 <strong>일시적으로</strong>만 해제됩니다. 브라우저 기록과 쿠키를 지우면 모든 페이지에서 이전에 해제된 경고가 모두 복원됩니다.',
+
+    // Export
+    DATE: '날짜',
+    PAGE_TITLE: '페이지 제목',
+    RESULTS: '결과',
+    EXPORT_RESULTS: '결과 내보내기',
+    GENERATED: '%(tool)로 생성된 결과.',
+    PREVIEW: '미리보기',
+    ELEMENT: '요소',
+    PATH: '경로',
+
+    // Colour filters
     COLOUR_FILTER: '컬러 필터',
     PROTANOPIA: '프로타노피아',
     DEUTERANOPIA: '듀테라노피아',
@@ -48,6 +62,8 @@ export default {
     BLUE_EYE: '블루 블라인드.',
     MONO_EYE: '빨간색, 파란색, 녹색 블라인드.',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: '고대비 모드에서는 컬러 필터가 작동하지 않습니다.',
+
+    // Alternative text stop words
     SUSPICIOUS_ALT_STOPWORDS: [
       '이미지',
       '그래픽',

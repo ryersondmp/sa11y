@@ -33,13 +33,23 @@ export default {
     SKIP_TO_PAGE_ISSUES: 'Passer aux problèmes de page',
     CONSOLE_ERROR_MESSAGE: 'Désolé, mais il y a un problème avec le vérificateur d\'accessibilité sur cette page. Pouvez-vous s\'il vous plaît <a href="%(link)">le signaler via ce formulaire</a> ou sur <a href="%(link)">GitHub</a> ?',
 
+    // Export
+    DATE: 'Date',
+    PAGE_TITLE: 'Titre de la page',
+    RESULTS: 'Résultats',
+    EXPORT_RESULTS: 'Exporter les résultats',
+    GENERATED: 'Résultats générés avec %(tool).',
+    PREVIEW: 'Aperçu',
+    ELEMENT: 'Élément',
+    PATH: 'Chemin',
+
     // Dismiss
     PANEL_DISMISS_BUTTON: 'Afficher %(dismissCount) avertissements ignorés',
     DISMISS: 'Ignorer',
     DISMISSED: 'Avertissements ignorés',
     DISMISS_REMINDER: 'Veuillez noter que les avertissements ne sont ignorés que <strong>temporairement.</strong> Effacer l\'historique de votre navigateur et les cookies rétablira tous les avertissements précédemment ignorés sur toutes les pages.',
 
-    // Color filters
+    // Colour filters
     COLOUR_FILTER: 'Filtre de couleur',
     PROTANOPIA: 'Protanopie',
     DEUTERANOPIA: 'Deutéranopie',
@@ -52,7 +62,7 @@ export default {
     MONO_EYE: 'Daltonisme rouge, vert et bleu.',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Les filtres de couleur ne fonctionnent pas en mode contraste élevé.',
 
-    // Alternative text module stop words
+    // Alternative text stop words
     SUSPICIOUS_ALT_STOPWORDS: ['image', 'illustration', 'photo', 'photographie', 'graphic'],
     PLACEHOLDER_ALT_STOPWORDS: ['alt', 'image', 'photographie', 'décorative', 'photographie', 'support d’affichage', 'support d’affichage d’image', 'séparateur'],
     PARTIAL_ALT_STOPWORDS: [

@@ -33,10 +33,24 @@ export default {
     HEADING_NOT_VISIBLE_ALERT: 'O cabeçalho não é visível; ele pode estar oculto ou dentro de um componente de acordeão ou guia.',
     SKIP_TO_PAGE_ISSUES: 'Pular para os problemas da página',
     CONSOLE_ERROR_MESSAGE: 'Desculpe, mas há um problema com o verificador de acessibilidade nesta página. Você pode <a href="%(link)">relatar o problema por meio deste formulário</a> ou no <a href="%(link)">GitHub</a>?',
+
+    // Dismiss
     PANEL_DISMISS_BUTTON: 'Mostrar %(dismissCount) avisos descartados',
     DISMISS: 'Dispensar',
     DISMISSED: 'Avisos indeferidos',
     DISMISS_REMINDER: 'Observe que os avisos são descartados apenas <strong>temporariamente</strong>. A limpeza do histórico e dos cookies do navegador restaurará todos os avisos descartados anteriormente em todas as páginas.',
+
+    // Export
+    DATE: 'Data',
+    PAGE_TITLE: 'Título da página',
+    RESULTS: 'Resultados',
+    EXPORT_RESULTS: 'Exportar resultados',
+    GENERATED: 'Resultados gerados com %(tool).',
+    PREVIEW: 'Visualização',
+    ELEMENT: 'Elemento',
+    PATH: 'Caminho',
+
+    // Colour filters
     COLOUR_FILTER: 'Filtro de cores',
     PROTANOPIA: 'Protanopia',
     DEUTERANOPIA: 'Deuteranopia',
@@ -48,6 +62,8 @@ export default {
     BLUE_EYE: 'Cego azul.',
     MONO_EYE: 'Cego para vermelho, azul e verde.',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Os filtros de cores não funcionam no modo de alto contraste.',
+
+    // Alternative text stop words
     SUSPICIOUS_ALT_STOPWORDS: [
       'imagem',
       'gráfico',

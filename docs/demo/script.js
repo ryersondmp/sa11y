@@ -39,9 +39,11 @@ const sa11y = new Sa11y({
   headless: false,
   outlineIgnore: 'header *',
   dismissAnnotations: true,
-  selectorPath: true,
+  selectorPath: false,
   checkAllHideToggles: false,
   showAltAboveImage: '.carousel',
+  URLAsLinkTextWarning: true,
+  exportResultsPlugin: true,
 
   // showHinPageOutline: true,
   readabilityPlugin: true,

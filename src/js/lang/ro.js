@@ -33,10 +33,24 @@ export default {
     HEADING_NOT_VISIBLE_ALERT: 'Rubrica nu este vizibilă; poate fi ascunsă sau în interiorul unui acordeon sau al unei componente de tablă.',
     SKIP_TO_PAGE_ISSUES: 'Treceți la pagina Probleme',
     CONSOLE_ERROR_MESSAGE: 'Ne pare rău, dar există o problemă cu verificatorul de accesibilitate de pe această pagină. Puteți vă rog <a href="%(link)">raportați-o prin intermediul acestui formular</a> sau pe <a href="%(link)">GitHub</a>?',
+
+    // Dismiss
     PANEL_DISMISS_BUTTON: 'Afișează %(dismissCount) avertismente respinse',
     DISMISS: 'Respingeți',
     DISMISSED: 'Avertismente respinse',
     DISMISS_REMINDER: 'Vă rugăm să rețineți că avertismentele sunt doar <strong>temporar</strong> respinse. Ștergerea istoricului și a cookie-urilor din browserul dvs. va restabili toate avertismentele respinse anterior pe toate paginile.',
+
+    // Export
+    DATE: 'Data',
+    PAGE_TITLE: 'Titlul paginii',
+    RESULTS: 'Rezultate',
+    EXPORT_RESULTS: 'Exportă rezultatele',
+    GENERATED: 'Rezultate generate cu %(tool).',
+    PREVIEW: 'Previzualizare',
+    ELEMENT: 'Element',
+    PATH: 'Cale',
+
+    // Colour filters
     COLOUR_FILTER: 'Filtru de culoare',
     PROTANOPIA: 'Protanopia',
     DEUTERANOPIA: 'Deuteranopia',
@@ -48,6 +62,8 @@ export default {
     BLUE_EYE: 'Orb albastru.',
     MONO_EYE: 'Orbitor roșu, albastru și verde.',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Filtrele de culoare nu funcționează în modul de contrast ridicat.',
+
+    // Alternative text stop words
     SUSPICIOUS_ALT_STOPWORDS: [
       'imagine',
       'grafic',

@@ -33,10 +33,24 @@ export default {
     HEADING_NOT_VISIBLE_ALERT: "L'intestazione non è visibile; può essere nascosta o all'interno di un componente fisarmonica o scheda.",
     SKIP_TO_PAGE_ISSUES: 'Vai alla pagina Problemi',
     CONSOLE_ERROR_MESSAGE: "Siamo spiacenti, ma c'è un problema con il verificatore di accessibilità di questa pagina. Puoi per favore <a href=\"%(link)\">riportarlo attraverso questo modulo</a> o su <a href=\"%(link)\">GitHub</a>?",
+
+    // Dismiss
     PANEL_DISMISS_BUTTON: 'Mostra %(dismissCount) gli avvisi respinti',
     DISMISS: 'Congedo',
     DISMISSED: 'Avvertenze respinte',
     DISMISS_REMINDER: 'Si noti che gli avvisi vengono eliminati solo <strong>temporaneamente</strong>. La cancellazione della cronologia e dei cookie del browser ripristinerà tutti gli avvisi precedentemente eliminati in tutte le pagine.',
+
+    // Export
+    DATE: 'Data',
+    PAGE_TITLE: 'Titolo della pagina',
+    RESULTS: 'Risultati',
+    EXPORT_RESULTS: 'Esporta risultati',
+    GENERATED: 'Risultati generati con %(tool).',
+    PREVIEW: 'Anteprima',
+    ELEMENT: 'Elemento',
+    PATH: 'Percorso',
+
+    // Colour filters
     COLOUR_FILTER: 'Filtro colore',
     PROTANOPIA: 'Protanopia',
     DEUTERANOPIA: 'Deuteranopia',
@@ -48,6 +62,8 @@ export default {
     BLUE_EYE: 'Cieco blu.',
     MONO_EYE: 'Cieco rosso, blu e verde.',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'I filtri colore non funzionano in modalità alto contrasto.',
+
+    // Alternative text stop words
     SUSPICIOUS_ALT_STOPWORDS: [
       'immagine',
       'grafico',

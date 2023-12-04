@@ -33,10 +33,24 @@ export default {
     HEADING_NOT_VISIBLE_ALERT: 'Pealkiri ei ole nähtav; see võib olla peidetud või olla akordioni või vahekaardikomponendi sees.',
     SKIP_TO_PAGE_ISSUES: 'Skip to Page Issues (lehekülje probleemid)',
     CONSOLE_ERROR_MESSAGE: 'Vabandame, kuid selle lehekülje ligipääsetavuse kontrolliga on probleem. Kas te saaksite <a href="%(link)">teavitada sellest selle vormi kaudu</a> või <a href="%(link)">GitHubis</a>?',
+
+    // Dismiss
     PANEL_DISMISS_BUTTON: 'Show %(dismissCount) dismissed warnings',
     DISMISS: 'Lase lahti',
     DISMISSED: 'Kõrvaldatud hoiatused',
     DISMISS_REMINDER: 'Pange tähele, et hoiatused lükatakse tagasi ainult <strong>vähemalt</strong>. Brauseri ajaloo ja küpsiste kustutamine taastab kõik varem tühistatud hoiatused kõigil lehekülgedel.',
+
+    // Export
+    DATE: 'Kuupäev',
+    PAGE_TITLE: 'Lehe pealkiri',
+    RESULTS: 'Tulemused',
+    EXPORT_RESULTS: 'Ekspordi tulemused',
+    GENERATED: 'Tulemused genereeritud %(tool) abil.',
+    PREVIEW: 'Eelvaade',
+    ELEMENT: 'Element',
+    PATH: 'Rada',
+
+    // Colour filters
     COLOUR_FILTER: 'Värvifilter',
     PROTANOPIA: 'Protanopia',
     DEUTERANOPIA: 'Deuteranopia',
@@ -48,6 +62,8 @@ export default {
     BLUE_EYE: 'Sinine pime.',
     MONO_EYE: 'Punane, sinine ja roheline pime.',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Värvifiltrid ei tööta kõrge kontrastsusega režiimis.',
+
+    // Alternative text stop words
     SUSPICIOUS_ALT_STOPWORDS: [
       'pilt',
       'graafiline',

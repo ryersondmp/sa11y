@@ -37,41 +37,9 @@ const getScrollPosition = ($el, results) => {
     const visiblePosition = Utils.findVisibleParent(annotationHost, 'display', 'none');
     const annotationIndex = parseInt(annotationHost.getAttribute('data-sa11y-annotation'), 10);
 
-    // Get the corresponding issue object.
+    // Generate element preview for panel & report.
     const issueObject = results.find((issue) => issue.id === annotationIndex);
-    const issueElement = issueObject.element;
-    const htmlPath = `<code>${Utils.escapeHTML(issueObject.htmlPath)}</code>`;
-
-    // Depending on the type, we'll prepare a nice a preview of the element in the alert panel.
-    const tag = {
-      IMG: (element) => {
-        const anchor = element.closest('a[href]');
-        const imgSrc = element.src;
-        const alt = element.alt ? ` alt="${element.alt}"` : ' alt';
-        if (imgSrc) {
-          return anchor
-            ? `<a href="${anchor.href}" rel="noopener noreferrer"><img src="${imgSrc}"${alt}/></a>`
-            : `<img src="${imgSrc}"${alt}/>`;
-        }
-        return htmlPath;
-      },
-      IFRAME: (element) => {
-        const iframeSrc = element.src;
-        const titleAttr = element.title ? ` title="${element.title}"` : '';
-        const ariaLabelAttr = element.getAttribute('aria-label') ? ` aria-label="${element.getAttribute('aria-label')}"` : '';
-        if (iframeSrc) {
-          const iframeTitle = titleAttr || ariaLabelAttr;
-          return `<iframe src=${iframeSrc}${iframeTitle}></iframe>`;
-        }
-        return htmlPath;
-      },
-      AUDIO: () => issueObject.htmlPath,
-      VIDEO: () => issueObject.htmlPath,
-    };
-    const tagHandler = tag[issueElement.tagName];
-
-    // If it's not one of the elements above, just print the escaped HTML code of the element.
-    const elementPreview = tagHandler ? tagHandler(issueElement) : htmlPath;
+    const elementPreview = Utils.generateElementPreview(issueObject);
 
     // Alert if tooltip is hidden.
     getHiddenParent($el);
@@ -173,15 +141,13 @@ function keyboardShortcut(e, results) {
   }
 }
 
+// Attach event listeners.
 let keyboardShortcutHandler;
 let handleSkipButtonHandler;
-
 export function skipToIssue(results) {
-  // Attach keyboard and click event listeners.
-  keyboardShortcutHandler = (event) => {
-    keyboardShortcut(event, results);
+  keyboardShortcutHandler = (e) => {
+    keyboardShortcut(e, results);
   };
-
   handleSkipButtonHandler = () => {
     goToNext(results);
   };
@@ -190,7 +156,7 @@ export function skipToIssue(results) {
   Constants.Panel.skipButton.addEventListener('click', handleSkipButtonHandler);
 }
 
-// Imported by reset.js
+// Imported by Reset function.
 export function removeSkipBtnListeners() {
   document.removeEventListener('keydown', keyboardShortcutHandler);
   Constants.Panel.skipButton.removeEventListener('click', handleSkipButtonHandler);

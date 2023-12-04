@@ -14,7 +14,7 @@ export default function mainToggle(checkAll, resetAll) {
       Constants.Panel.toggle.setAttribute('aria-expanded', 'false');
       resetAll();
 
-      if (Constants.Panel.notifCount.innerHTML.trim() === '') {
+      if (Constants.Panel.notifCount.innerHTML.trim().length === 0) {
         Constants.Panel.notifBadge.style.display = 'none';
       } else {
         Constants.Panel.notifBadge.style.display = 'flex';
@@ -36,20 +36,12 @@ export default function mainToggle(checkAll, resetAll) {
     Constants.Panel.panel.style.transform = '';
   }
 
+  // Alt + A to enable accessibility checker.
   document.onkeydown = (e) => {
     const evt = e || window.event;
-    if (evt.key === 'Escape' && Constants.Panel.panel.classList.contains('active')) {
-      Constants.Panel.toggle.setAttribute('aria-expanded', 'false');
-      Constants.Panel.toggle.classList.remove('on');
-      Constants.Panel.toggle.click();
-      resetAll();
-    }
-
-    // Alt + A to enable accessibility checker.
     if (evt.altKey && evt.code === 'KeyA') {
       Constants.Panel.toggle.click();
       Constants.Panel.toggle.focus();
-      evt.preventDefault();
     }
   };
 }

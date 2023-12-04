@@ -3,13 +3,7 @@ import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 import Constants from '../utils/constants';
 
-export default function checkHeaders(
-  results,
-  nonConsecutiveHeadingIsError,
-  flagLongHeadings,
-  missingH1,
-  headingOutline,
-) {
+export default function checkHeaders(results, option, headingOutline) {
   let prevLevel;
   Elements.Found.Headings.forEach(($el, i) => {
     const ignore = Utils.fnIgnore($el); // Ignore unwanted <style>, <script>, etc tags.
@@ -25,7 +19,7 @@ export default function checkHeaders(
     let warning = null;
 
     if (level - prevLevel > 1 && i !== 0) {
-      if (nonConsecutiveHeadingIsError === true) {
+      if (option.nonConsecutiveHeadingIsError) {
         error = Lang.sprintf('HEADING_NON_CONSECUTIVE_LEVEL', prevLevel, level);
         results.push({
           element: $el,
@@ -83,7 +77,7 @@ export default function checkHeaders(
         position: 'beforebegin',
         isWithinRoot,
       });
-    } else if (headingLength > 170 && flagLongHeadings === true) {
+    } else if (headingLength > option.headingMaxCharLength && option.flagLongHeadings) {
       warning = Lang.sprintf('HEADING_LONG', headingLength);
       const key = Utils.prepareDismissal(`HEADING${level + headingText}`);
       results.push({
@@ -140,12 +134,12 @@ export default function checkHeaders(
   });
 
   // Missing Heading 1
-  if (Elements.Found.HeadingOne.length === 0 && missingH1 === true) {
+  if (Elements.Found.HeadingOne.length === 0 && option.missingH1) {
     results.push({
-      type: 'error',
+      type: 'warning',
       content: Lang.sprintf('HEADING_MISSING_ONE'),
+      dismiss: 'missingH1',
     });
   }
-
   return { results, headingOutline };
 }

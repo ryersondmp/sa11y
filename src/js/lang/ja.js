@@ -33,10 +33,24 @@ export default {
     HEADING_NOT_VISIBLE_ALERT: '見出しは表示されません。非表示になっていたり、アコーディオンやタブコンポーネントの中に入っていたりすることがあります。',
     SKIP_TO_PAGE_ISSUES: 'ページの先頭へ戻る',
     CONSOLE_ERROR_MESSAGE: '申し訳ありませんが、このページのアクセシビリティチェッカーに問題があります。<a href="%(link)">このフォーム</a>または<a href="%(link)">GitHub</a>で報告していただけませんでしょうか',
+
+    // Dismiss
     PANEL_DISMISS_BUTTON: '%(dismissCount)棄却された警告を表示する。',
     DISMISS: '却下',
     DISMISSED: '解除された警告',
     DISMISS_REMINDER: '警告は<strong>一時的に</strong>解除されるだけですのでご注意ください。ブラウザの履歴とクッキーを削除すると、すべてのページで警告が解除された状態に戻ります。',
+
+    // Export
+    DATE: '日付',
+    PAGE_TITLE: 'ページタイトル',
+    RESULTS: '結果',
+    EXPORT_RESULTS: '結果のエクスポート',
+    GENERATED: '%(tool) で生成された結果。',
+    PREVIEW: 'プレビュー',
+    ELEMENT: '要素',
+    PATH: 'パス',
+
+    // Colour filters
     COLOUR_FILTER: 'カラーフィルター',
     PROTANOPIA: 'プロタノピア',
     DEUTERANOPIA: 'デューテラノピア',
@@ -48,6 +62,8 @@ export default {
     BLUE_EYE: 'ブルーブラインドです。',
     MONO_EYE: '赤、青、緑のブラインド。',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'ハイコントラストモードでは、カラーフィルターは機能しません。',
+
+    // Alternative text stop words
     SUSPICIOUS_ALT_STOPWORDS: [
       'イマージュ',
       'グラフィック',

@@ -6,17 +6,13 @@ import Lang from '../utils/lang';
 import Constants from '../utils/constants';
 import find from '../utils/find';
 
-export default function generatePageOutline(
-  dismissed,
-  headingOutline,
-  showHinPageOutline,
-) {
-  // Create a single array that gets appended to heading outline, instead of creating a new HTML element everytime you iterate through each object.
+export default function generatePageOutline(dismissed, headingOutline, showHinPageOutline) {
+  // Create a single array that gets appended to heading outline.
   const outlineArray = [];
 
   // Find all dismissed headings and update headingOutline array.
   const findDismissedHeadings = dismissed.map((e) => {
-    const found = headingOutline.find((f) => (e.key.includes(f.dismiss) && e.href === Constants.Global.currentPage));
+    const found = headingOutline.find((f) => (e.key.includes(f.dismiss) && e.href === window.location.pathname));
     if (found === undefined) return '';
     return found;
   });

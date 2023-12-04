@@ -40,4 +40,5 @@ export default function checkCustom(results) {
       });
     }
   });
+  return results;
 }

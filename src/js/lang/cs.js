@@ -33,10 +33,24 @@ export default {
     HEADING_NOT_VISIBLE_ALERT: 'Záhlaví není viditelné; může být skryté nebo se může nacházet v komponentě akordeonu nebo karty.',
     SKIP_TO_PAGE_ISSUES: 'Přeskočit na stránku Problémy',
     CONSOLE_ERROR_MESSAGE: 'Omlouváme se, ale na této stránce je problém s kontrolou přístupnosti. Můžete ji prosím <a href="%(link)">nahlásit prostřednictvím tohoto formuláře</a> nebo na <a href="%(link)">GitHubu</a>?',
+
+    // Dismiss
     PANEL_DISMISS_BUTTON: 'Zobrazit %(dismissCount) zamítnutých varování',
     DISMISS: 'Odmítnout',
     DISMISSED: 'Zamítnutá varování',
     DISMISS_REMINDER: 'Vezměte prosím na vědomí, že varování jsou pouze <strong>dočasně</strong> zamítnuta. Vymazáním historie prohlížeče a souborů cookie se obnoví všechna dříve zamítnutá varování na všech stránkách.',
+
+    // Export
+    DATE: 'Datum',
+    PAGE_TITLE: 'Název stránky',
+    RESULTS: 'Výsledky',
+    EXPORT_RESULTS: 'Exportovat výsledky',
+    GENERATED: 'Výsledky generovány s %(tool).',
+    PREVIEW: 'Náhled',
+    ELEMENT: 'Prvek',
+    PATH: 'Cesta',
+
+    // Colour filters
     COLOUR_FILTER: 'Barevný filtr',
     PROTANOPIA: 'Protanopia',
     DEUTERANOPIA: 'Deuteranopia',
@@ -48,6 +62,8 @@ export default {
     BLUE_EYE: 'Modrá roleta.',
     MONO_EYE: 'Červená, modrá a zelená barva pro nevidomé.',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Barevné filtry nefungují v režimu vysokého kontrastu.',
+
+    // Alternative text stop words
     SUSPICIOUS_ALT_STOPWORDS: [
       'obrázek',
       'grafika',

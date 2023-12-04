@@ -33,10 +33,24 @@ export default {
     HEADING_NOT_VISIBLE_ALERT: 'Заглавието не е видимо; то може да е скрито или да се намира в компонент на акордеон или таб.',
     SKIP_TO_PAGE_ISSUES: 'Преминаване към страница Проблеми',
     CONSOLE_ERROR_MESSAGE: 'Съжаляваме, но има проблем с проверката за достъпност на тази страница. Можете ли да го <a href="%(link)">докладвате чрез този формуляр</a> или на <a href="%(link)">GitHub</a>?',
+
+    // Dismiss
     PANEL_DISMISS_BUTTON: 'Показване на %(dismissCount) отхвърлени предупреждения',
     DISMISS: 'Отхвърляне на',
     DISMISSED: 'Отхвърлени предупреждения',
     DISMISS_REMINDER: 'Моля, обърнете внимание, че предупрежденията се отхвърлят само <strong>временно</strong>. Изчистването на историята на браузъра и бисквитките ще възстанови всички отхвърлени преди това предупреждения във всички страници.',
+
+    // Export
+    DATE: 'Дата',
+    PAGE_TITLE: 'Заглавие на страницата',
+    RESULTS: 'Резултати',
+    EXPORT_RESULTS: 'Износ на резултати',
+    GENERATED: 'Резултатите са генерирани с %(tool).',
+    PREVIEW: 'Преглед',
+    ELEMENT: 'Елемент',
+    PATH: 'Път',
+
+    // Colour filters
     COLOUR_FILTER: 'Цветен филтър',
     PROTANOPIA: 'Protanopia',
     DEUTERANOPIA: 'Deuteranopia',
@@ -48,6 +62,8 @@ export default {
     BLUE_EYE: 'Синя сляпа.',
     MONO_EYE: 'Червени, сини и зелени слепи.',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Цветните филтри не работят в режим на висок контраст.',
+
+    // Alternative text stop words
     SUSPICIOUS_ALT_STOPWORDS: [
       'изображение',
       'графичен',

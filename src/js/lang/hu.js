@@ -33,10 +33,24 @@ export default {
     HEADING_NOT_VISIBLE_ALERT: 'A fejléc nem látható; lehet rejtett vagy egy harmonika- vagy fülkomponens belsejében.',
     SKIP_TO_PAGE_ISSUES: 'Ugrás az oldalra problémák',
     CONSOLE_ERROR_MESSAGE: 'Sajnáljuk, de probléma van az oldal hozzáférhetőségi ellenőrzőjével. Megtenné, hogy <a href="%(link)">bejelenti ezen az űrlapon</a> vagy a <a href="%(link)">GitHubon</a>?',
+
+    // Dismiss
     PANEL_DISMISS_BUTTON: 'Mutasd %(dismissCount) elbocsátott figyelmeztetéseket',
     DISMISS: 'Elutasíthatod',
     DISMISSED: 'Elutasított figyelmeztetések',
     DISMISS_REMINDER: 'Felhívjuk figyelmét, hogy a figyelmeztetések csak <strong>időlegesen</strong> kerülnek elutasításra. A böngésző előzményeinek és cookie-jainak törlése visszaállítja a korábban elutasított figyelmeztetéseket az összes oldalon.',
+
+    // Export
+    DATE: 'Dátum',
+    PAGE_TITLE: 'Oldalcím',
+    RESULTS: 'Eredmények',
+    EXPORT_RESULTS: 'Eredmények exportálása',
+    GENERATED: 'Eredmények generálva %(tool)-vel.',
+    PREVIEW: 'Előnézet',
+    ELEMENT: 'Elem',
+    PATH: 'Útvonal',
+
+    // Colour filters
     COLOUR_FILTER: 'Színes szűrő',
     PROTANOPIA: 'Protanopia',
     DEUTERANOPIA: 'Deuteranopia',
@@ -48,6 +62,8 @@ export default {
     BLUE_EYE: 'Kék vak.',
     MONO_EYE: 'Vörös, kék és zöld vakok.',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'A színszűrők nem működnek nagy kontrasztú üzemmódban.',
+
+    // Alternative text stop words
     SUSPICIOUS_ALT_STOPWORDS: [
       'kép',
       'grafika',

@@ -33,10 +33,24 @@ export default {
     HEADING_NOT_VISIBLE_ALERT: 'De kop is niet zichtbaar; hij kan verborgen zijn of in een accordeon- of tabbladcomponent staan.',
     SKIP_TO_PAGE_ISSUES: 'Doorgaan naar paginanummers',
     CONSOLE_ERROR_MESSAGE: 'Sorry, maar er is een probleem met de toegankelijkheidscontrole op deze pagina. Kunt u dit alstublieft <a href="%(link)">melden via dit formulier</a> of op <a href="%(link)">GitHub</a>?',
+
+    // Dismiss
     PANEL_DISMISS_BUTTON: 'Toon %(dismissCount) afgewezen waarschuwingen',
     DISMISS: 'Ontsla',
     DISMISSED: 'Afgewezen waarschuwingen',
     DISMISS_REMINDER: "Let op: waarschuwingen worden alleen <strong>tijdelijk</strong> genegeerd. Als u uw browsergeschiedenis en cookies wist, worden alle eerder afgewezen waarschuwingen op alle pagina's hersteld.",
+
+    // Export
+    DATE: 'Datum',
+    PAGE_TITLE: 'Paginatitel',
+    RESULTS: 'Resultaten',
+    EXPORT_RESULTS: 'Resultaten exporteren',
+    GENERATED: 'Resultaten gegenereerd met %(tool).',
+    PREVIEW: 'Voorbeeld',
+    ELEMENT: 'Element',
+    PATH: 'Pad',
+
+    // Colour filters
     COLOUR_FILTER: 'Kleurenfilter',
     PROTANOPIA: 'Protanopia',
     DEUTERANOPIA: 'Deuteranopia',
@@ -48,6 +62,8 @@ export default {
     BLUE_EYE: 'Blauwe jaloezie.',
     MONO_EYE: 'Blind rood, blauw en groen.',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Kleurenfilters werken niet in de modus Hoog contrast.',
+
+    // Alternative text stop words
     SUSPICIOUS_ALT_STOPWORDS: [
       'afbeelding',
       'grafisch',

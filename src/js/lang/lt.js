@@ -33,10 +33,24 @@ export default {
     HEADING_NOT_VISIBLE_ALERT: 'Antraštė nėra matoma; ji gali būti paslėpta arba akordeono ar skirtuko komponento viduje.',
     SKIP_TO_PAGE_ISSUES: 'Pereiti prie puslapio klausimų',
     CONSOLE_ERROR_MESSAGE: 'Atsiprašome, bet šiame puslapyje yra problema su prieinamumo tikrintuvu. Ar galite apie tai <a href="%(link)">pranešti per šią formą</a> arba <a href="%(link)">GitHub</a>?',
+
+    // Dismiss
     PANEL_DISMISS_BUTTON: 'Rodyti %(dismissCount) atmestų įspėjimų',
     DISMISS: 'Atmesti',
     DISMISSED: 'Atmesti įspėjimai',
     DISMISS_REMINDER: 'Atkreipkite dėmesį, kad įspėjimai atmetami tik <strong>laikinai</strong>. Išvalius naršyklės istoriją ir slapukus, bus atkurti visi anksčiau atmesti įspėjimai visuose puslapiuose.',
+
+    // Export
+    DATE: 'Data',
+    PAGE_TITLE: 'Puslapio pavadinimas',
+    RESULTS: 'Rezultatai',
+    EXPORT_RESULTS: 'Eksportuoti rezultatus',
+    GENERATED: 'Rezultatai sugeneruoti su %(tool).',
+    PREVIEW: 'Peržiūra',
+    ELEMENT: 'Elementas',
+    PATH: 'Kelias',
+
+    // Colour filters
     COLOUR_FILTER: 'Spalvų filtras',
     PROTANOPIA: 'Protanopia',
     DEUTERANOPIA: 'Deuteranopija',
@@ -48,6 +62,8 @@ export default {
     BLUE_EYE: 'Mėlyna aklina.',
     MONO_EYE: 'Raudonas, mėlynas ir žalias aklasis.',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Spalviniai filtrai neveikia didelio kontrasto režimu.',
+
+    // Alternative text stop words
     SUSPICIOUS_ALT_STOPWORDS: [
       'vaizdas',
       'grafinis',

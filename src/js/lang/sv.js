@@ -34,6 +34,16 @@ export default {
     SKIP_TO_PAGE_ISSUES: 'Hoppa till sidans problem',
     CONSOLE_ERROR_MESSAGE: 'Tyvärr, men det finns ett problem med tillgänglighetskontrollen på den här sidan. Kan du <a href="%(link)">rapportera det via det här formuläret</a> eller på <a href="%(link)">GitHub</a>?',
 
+    // Export
+    DATE: 'Datum',
+    PAGE_TITLE: 'Sidtitel',
+    RESULTS: 'Resultat',
+    EXPORT_RESULTS: 'Exportera resultat',
+    GENERATED: 'Resultat genererat med %(tool).',
+    PREVIEW: 'Förhandsvisning',
+    ELEMENT: 'Element',
+    PATH: 'Sökväg',
+
     // Dismiss
     PANEL_DISMISS_BUTTON: 'Visa %(dismissCount) ignorerade varningar',
     DISMISS: 'Ignorera',

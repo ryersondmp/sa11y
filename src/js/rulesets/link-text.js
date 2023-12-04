@@ -3,11 +3,7 @@ import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 
-export default function checkLinkText(
-  results,
-  showGoodLinkButton,
-  linksToDOI,
-) {
+export default function checkLinkText(results, option) {
   const containsLinkTextStopWords = (textContent) => {
     const urlText = [
       'http',
@@ -163,7 +159,7 @@ export default function checkLinkText(
       // Contains stop words.
       if (hasAriaLabelledBy || hasAriaLabel || childAriaLabelledBy || childAriaLabel) {
         const sanitizedText = Utils.sanitizeHTML(linkText);
-        if (showGoodLinkButton === true) {
+        if (option.showGoodLinkButton) {
           results.push({
             element: $el,
             type: 'good',
@@ -195,7 +191,7 @@ export default function checkLinkText(
         position: 'beforebegin',
         dismiss: key,
       });
-    } else if (error[2] !== null && linksToDOI === true) {
+    } else if (error[2] !== null && option.linksToDOI) {
       const key = Utils.prepareDismissal(`LINK${linkText + error[2] + href}`);
       // Contains DOI URL in link text.
       if (linkText.length > 8) {
@@ -208,10 +204,10 @@ export default function checkLinkText(
           dismiss: key,
         });
       }
-    } else if (error[3] !== null) {
+    } else if (error[3] !== null && option.URLAsLinkTextWarning) {
       const key = Utils.prepareDismissal(`LINK${linkText + error[2] + href}`);
       // Contains URL in link text.
-      if (linkText.length > 40) {
+      if (linkText.length > option.URLTextMaxCharLength) {
         results.push({
           element: $el,
           type: 'warning',
@@ -223,7 +219,7 @@ export default function checkLinkText(
       }
     } else if (hasAriaLabelledBy || hasAriaLabel || childAriaLabelledBy || childAriaLabel) {
       // If the link has any ARIA, append a "Good" link button.
-      if (showGoodLinkButton === true) {
+      if (option.showGoodLinkButton) {
         const sanitizedText = Utils.sanitizeHTML(linkText);
         results.push({
           element: $el,
@@ -244,5 +240,5 @@ export default function checkLinkText(
       });
     }
   });
-  return { results };
+  return results;
 }

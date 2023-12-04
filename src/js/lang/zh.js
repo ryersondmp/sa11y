@@ -33,10 +33,24 @@ export default {
     HEADING_NOT_VISIBLE_ALERT: '标题是不可见的；它可能是隐藏的或在手风琴或标签组件内。',
     SKIP_TO_PAGE_ISSUES: '跳到页面问题',
     CONSOLE_ERROR_MESSAGE: '对不起, 本页面的可访问性检查器有问题。您能否<a href="%(link)">通过此表格</a>或<a href="%(link)">GitHub</a>报告?',
+
+    // Dismiss
     PANEL_DISMISS_BUTTON: '显示%(dismissCount)被驳回的警告',
     DISMISS: '解散',
     DISMISSED: '撤消的警告',
     DISMISS_REMINDER: '请注意, 警告只被<strong>暂时</strong>驳回。清除你的浏览器历史记录和cookies将恢复所有页面上所有以前被驳回的警告。',
+
+    // Export
+    DATE: '日期',
+    PAGE_TITLE: '页面标题',
+    RESULTS: '结果',
+    EXPORT_RESULTS: '导出结果',
+    GENERATED: '使用 %(tool) 生成的结果。',
+    PREVIEW: '预览',
+    ELEMENT: '元素',
+    PATH: '路径',
+
+    // Colour filters
     COLOUR_FILTER: '彩色过滤器',
     PROTANOPIA: '原住民',
     DEUTERANOPIA: '氘代苯丙胺(Deuteranopia)',
@@ -48,6 +62,8 @@ export default {
     BLUE_EYE: '蓝盲。',
     MONO_EYE: '红、蓝、绿三色盲。',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: '彩色滤镜在高对比度模式下不工作。',
+
+    // Alternative text stop words
     SUSPICIOUS_ALT_STOPWORDS: [
       '形象',
       '图形',

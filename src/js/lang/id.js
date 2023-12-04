@@ -33,10 +33,24 @@ export default {
     HEADING_NOT_VISIBLE_ALERT: 'Judul tidak terlihat; judul mungkin tersembunyi atau berada di dalam komponen akordeon atau tab.',
     SKIP_TO_PAGE_ISSUES: 'Loncat ke Halaman Masalah',
     CONSOLE_ERROR_MESSAGE: 'Maaf, ada masalah dengan pemeriksa aksesibilitas di halaman ini. Bisakah Anda <a href="%(link)">melaporkannya melalui formulir ini</a> atau di <a href="%(link)">GitHub</a>?',
+
+    // Dismiss
     PANEL_DISMISS_BUTTON: 'Tampilkan %(dismissCount) peringatan yang diberhentikan',
     DISMISS: 'Bubarkan.',
     DISMISSED: 'Peringatan yang diabaikan',
     DISMISS_REMINDER: 'Harap diperhatikan bahwa peringatan hanya bersifat <strong>sementara</strong>. Menghapus riwayat browser dan cookie Anda akan mengembalikan semua peringatan yang sebelumnya diberhentikan di semua halaman.',
+
+    // Export
+    DATE: 'Tanggal',
+    PAGE_TITLE: 'Judul Halaman',
+    RESULTS: 'Hasil',
+    EXPORT_RESULTS: 'Ekspor hasil',
+    GENERATED: 'Hasil dihasilkan dengan %(tool).',
+    PREVIEW: 'Pratinjau',
+    ELEMENT: 'Elemen',
+    PATH: 'Jalur',
+
+    // Colour filters
     COLOUR_FILTER: 'Filter warna',
     PROTANOPIA: 'Protanopia',
     DEUTERANOPIA: 'Deuteranopia',
@@ -48,6 +62,8 @@ export default {
     BLUE_EYE: 'Biru buta.',
     MONO_EYE: 'Buta merah, biru, dan hijau.',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Filter warna tidak berfungsi dalam mode kontras tinggi.',
+
+    // Alternative text stop words
     SUSPICIOUS_ALT_STOPWORDS: [
       'gambar',
       'grafik',

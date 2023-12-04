@@ -33,10 +33,24 @@ export default {
     HEADING_NOT_VISIBLE_ALERT: 'Overskriften er ikke synlig; den kan være skjult eller inne i en trekkspill- eller fanekomponent.',
     SKIP_TO_PAGE_ISSUES: 'Gå til sideproblemer',
     CONSOLE_ERROR_MESSAGE: 'Beklager, men det er et problem med tilgjengelighetskontrollen på denne siden. Kan du <a href="%(link)">rapportere det via dette skjemaet</a> eller på <a href="%(link)">GitHub</a>?',
+
+    // Dismiss
     PANEL_DISMISS_BUTTON: 'Vis %(dismissCount) avviste advarsler',
     DISMISS: 'Avvis',
     DISMISSED: 'Avviste advarsler',
     DISMISS_REMINDER: 'Vær oppmerksom på at advarsler bare avvises <strong>midlertidig</strong>. Hvis du sletter nettleserens historikk og informasjonskapsler, gjenopprettes alle tidligere avviste advarsler på alle sider.',
+
+    // Export
+    DATE: 'Dato',
+    PAGE_TITLE: 'Sidetittel',
+    RESULTS: 'Resultater',
+    EXPORT_RESULTS: 'Eksporter resultater',
+    GENERATED: 'Resultater generert med %(tool).',
+    PREVIEW: 'Forhåndsvisning',
+    ELEMENT: 'Element',
+    PATH: 'Sti',
+
+    // Colour filters
     COLOUR_FILTER: 'Fargefilter',
     PROTANOPIA: 'Protanopi',
     DEUTERANOPIA: 'Deuteranopi',
@@ -48,6 +62,8 @@ export default {
     BLUE_EYE: 'Blå persienne.',
     MONO_EYE: 'Rød, blå og grønn blind.',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Fargefiltre fungerer ikke i modus for høy kontrast.',
+
+    // Alternative text stopwords
     SUSPICIOUS_ALT_STOPWORDS: [
       'bilde',
       'grafisk',

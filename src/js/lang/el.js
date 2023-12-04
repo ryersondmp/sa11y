@@ -33,10 +33,24 @@ export default {
     HEADING_NOT_VISIBLE_ALERT: 'Η επικεφαλίδα δεν είναι ορατή- μπορεί να είναι κρυμμένη ή μέσα σε ένα στοιχείο ακορντεόν ή καρτέλας.',
     SKIP_TO_PAGE_ISSUES: 'Μετάβαση στα θέματα της σελίδας',
     CONSOLE_ERROR_MESSAGE: 'Συγγνώμη, αλλά υπάρχει πρόβλημα με τον ελεγκτή προσβασιμότητας σε αυτή τη σελίδα. Μπορείτε να το αναφέρετε, παρακαλώ, <a href="%(link)">μέσω αυτής της φόρμας</a> ή στο <a href="%(link)">GitHub</a>',
+
+    // Dismiss
     PANEL_DISMISS_BUTTON: 'Εμφάνιση %(dismissCount) απορριφθεισών προειδοποιήσεων',
     DISMISS: 'Απορρίψτε το',
     DISMISSED: 'Απορριφθείσες προειδοποιήσεις',
     DISMISS_REMINDER: 'Λάβετε υπόψη ότι οι προειδοποιήσεις απορρίπτονται μόνο <strong>προσωρινά</strong>. Η εκκαθάριση του ιστορικού και των cookies του προγράμματος περιήγησής σας θα επαναφέρει όλες τις προειδοποιήσεις που είχαν απορριφθεί προηγουμένως σε όλες τις σελίδες.',
+
+    // Export
+    DATE: 'Ημερομηνία',
+    PAGE_TITLE: 'Τίτλος σελίδας',
+    RESULTS: 'Αποτελέσματα',
+    EXPORT_RESULTS: 'Εξαγωγή αποτελεσμάτων',
+    GENERATED: 'Τα αποτελέσματα δημιουργήθηκαν με %(tool).',
+    PREVIEW: 'Προεπισκόπηση',
+    ELEMENT: 'Στοιχείο',
+    PATH: 'Διαδρομή',
+
+    // Colour filters
     COLOUR_FILTER: 'Φίλτρο χρώματος',
     PROTANOPIA: 'Protanopia',
     DEUTERANOPIA: 'Deuteranopia',
@@ -48,6 +62,8 @@ export default {
     BLUE_EYE: 'Μπλε τυφλό.',
     MONO_EYE: 'Κόκκινο, μπλε και πράσινο τυφλό.',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Τα χρωματικά φίλτρα δεν λειτουργούν στη λειτουργία υψηλής αντίθεσης.',
+
+    // Alternative text stop words
     SUSPICIOUS_ALT_STOPWORDS: [
       'εικόνα',
       'γραφικό',

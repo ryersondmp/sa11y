@@ -33,6 +33,7 @@ export function annotate(
   inline = false,
   position,
   index,
+  dismissKey,
   dismissAnnotationsOption,
 ) {
   const validTypes = [
@@ -61,8 +62,9 @@ export function annotate(
     [validTypes[2]]: Lang._('GOOD'),
   };
 
-  // Add dismiss button if prop enabled.
-  const dismiss = (dismissAnnotationsOption === true && type === 'warning') ? `<button data-sa11y-dismiss='${index}' type='button'>${Lang._('DISMISS')}</button>` : '';
+  // Add dismiss button if prop enabled & dismiss key was defined.
+  const dismiss = (dismissAnnotationsOption === true && type === 'warning' && dismissKey !== undefined)
+    ? `<button data-sa11y-dismiss='${index}' type='button'>${Lang._('DISMISS')}</button>` : '';
 
   const instance = document.createElement('sa11y-annotation');
   instance.setAttribute('data-sa11y-annotation', index);
@@ -73,7 +75,7 @@ export function annotate(
     // Page errors displayed to main panel.
     Constants.Panel.pageIssues.classList.add('active');
     Constants.Panel.panel.classList.add('has-page-issues');
-    listItem.innerHTML = `<strong>${ariaLabel[type]}</strong> ${content}`;
+    listItem.innerHTML = `<strong>${ariaLabel[type]}</strong> ${content}${dismiss}`;
     Constants.Panel.pageIssuesList.insertAdjacentElement('afterbegin', listItem);
   } else {
     // Button annotations.

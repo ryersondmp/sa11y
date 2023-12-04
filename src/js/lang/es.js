@@ -33,13 +33,23 @@ export default {
     SKIP_TO_PAGE_ISSUES: 'Saltar problemas de la página',
     CONSOLE_ERROR_MESSAGE: 'Lo siento, pero hay un problema con el comprobador de accesibilidad en esta página. Puedes por favor <a href="%(link)">reportarlo a través de este formulario</a> or on <a href="%(link)">GitHub</a>?',
 
+    // Export
+    DATE: 'Fecha',
+    PAGE_TITLE: 'Título de la página',
+    RESULTS: 'Resultados',
+    EXPORT_RESULTS: 'Exportar resultados',
+    GENERATED: 'Resultados generados con %(tool).',
+    PREVIEW: 'Vista previa',
+    ELEMENT: 'Elemento',
+    PATH: 'Ruta',
+
     // Dismiss
     PANEL_DISMISS_BUTTON: 'Mostrar %(dismissCount) advertencias descartadas',
     DISMISS: 'Descartar',
     DISMISSED: 'Descartar advertencias',
     DISMISS_REMINDER: 'Tenga en cuenta que las advertencias solo se descartan <strong>temporalmente</strong>. Al borrar el historial de su navegador y las cookies, se restaurarán todas las advertencias previamente descartadas en todas las páginas.',
 
-    // Color filters
+    // Colour filters
     COLOUR_FILTER: 'Filtro de color',
     PROTANOPIA: 'Protanopia',
     DEUTERANOPIA: 'Deuteranopia',
@@ -52,7 +62,7 @@ export default {
     MONO_EYE: 'Ciego rojo, azul y verde.',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Los filtros de color no funcionan en el modo de alto contraste.',
 
-    // Alternative text module stop words
+    // Alternative text stop words
     SUSPICIOUS_ALT_STOPWORDS: ['imagen', 'gráfico', 'foto'],
     PLACEHOLDER_ALT_STOPWORDS: ['alt', 'image', 'photo', 'decorative', 'placeholder', 'placeholder image', 'spacer', 'imagen', 'foto', 'decorativo', 'marcador de posición', 'espaciador'],
     PARTIAL_ALT_STOPWORDS: [

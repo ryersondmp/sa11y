@@ -33,10 +33,24 @@ export default {
     HEADING_NOT_VISIBLE_ALERT: 'Otsikko ei ole näkyvissä; se voi olla piilotettu tai harmonikka- tai välilehtiosan sisällä.',
     SKIP_TO_PAGE_ISSUES: 'Siirry sivulle Issues',
     CONSOLE_ERROR_MESSAGE: 'Anteeksi, mutta tämän sivun saavutettavuuden tarkistuksessa on ongelma. Voisitko <a href="%(link)">ilmoittaa siitä tällä lomakkeella</a> tai <a href="%(link)">GitHubissa</a>?',
+
+    // Dismiss
     PANEL_DISMISS_BUTTON: 'Näytä %(dismissCount) hylätyt varoitukset',
     DISMISS: 'Dismiss',
     DISMISSED: 'Hylätyt varoitukset',
     DISMISS_REMINDER: 'Huomaa, että varoitukset hylätään vain <strong>tilapäisesti</strong>. Selaimen historian ja evästeiden tyhjentäminen palauttaa kaikki aiemmin hylätyt varoitukset kaikilla sivuilla.',
+
+    // Export
+    DATE: 'Päivämäärä',
+    PAGE_TITLE: 'Sivun otsikko',
+    RESULTS: 'Tulokset',
+    EXPORT_RESULTS: 'Vie tulokset',
+    GENERATED: 'Tulokset luotu %(tool)-työkalulla.',
+    PREVIEW: 'Esikatselu',
+    ELEMENT: 'Elementti',
+    PATH: 'Polku',
+
+    // Colour filters
     COLOUR_FILTER: 'Värisuodatin',
     PROTANOPIA: 'Protanopia',
     DEUTERANOPIA: 'Deuteranopia',
@@ -48,6 +62,8 @@ export default {
     BLUE_EYE: 'Sininen sokea.',
     MONO_EYE: 'Punainen, sininen ja vihreä sokea.',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Värisuodattimet eivät toimi korkean kontrastin tilassa.',
+
+    // Alternative text stop words
     SUSPICIOUS_ALT_STOPWORDS: [
       'kuva',
       'graafinen',

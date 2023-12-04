@@ -33,10 +33,24 @@ export default {
     HEADING_NOT_VISIBLE_ALERT: 'Glava ni vidna; lahko je skrita ali znotraj komponente harmonike ali zavihka.',
     SKIP_TO_PAGE_ISSUES: 'Preskoči na stran Vprašanja',
     CONSOLE_ERROR_MESSAGE: 'Opravičujemo se, vendar je na tej strani prišlo do težave s preverjanjem dostopnosti. Ali jo lahko <a href="%(link)">prijavite prek tega obrazca</a> ali na <a href="%(link)">GitHub</a>?',
+
+    // Dismiss
     PANEL_DISMISS_BUTTON: 'Prikaži %(dismissCount) zavrnjenih opozoril',
     DISMISS: 'Zavrnite',
     DISMISSED: 'Zavrnjena opozorila',
     DISMISS_REMINDER: 'Upoštevajte, da so opozorila le <strong>začasno</strong> zavrnjena. Z brisanjem zgodovine brskalnika in piškotkov se bodo na vseh straneh obnovila vsa predhodno zavrnjena opozorila.',
+
+    // Export
+    DATE: 'Datum',
+    PAGE_TITLE: 'Naslov strani',
+    RESULTS: 'Rezultati',
+    EXPORT_RESULTS: 'Izvozi rezultate',
+    GENERATED: 'Rezultati, ustvarjeni s %(tool).',
+    PREVIEW: 'Predogled',
+    ELEMENT: 'Element',
+    PATH: 'Pot',
+
+    // Colour filters
     COLOUR_FILTER: 'Barvni filter',
     PROTANOPIA: 'Protanopia',
     DEUTERANOPIA: 'Deuteranopija',
@@ -48,6 +62,8 @@ export default {
     BLUE_EYE: 'Modra žaluzija.',
     MONO_EYE: 'Rdeči, modri in zeleni slepi.',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Barvni filtri ne delujejo v načinu visokega kontrasta.',
+
+    // Alternative text stop words
     SUSPICIOUS_ALT_STOPWORDS: [
       'slika',
       'grafični',

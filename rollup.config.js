@@ -123,6 +123,7 @@ const scssFiles = [
   'tooltips',
   'global-utilities',
   'console-errors',
+  'export-results',
 ];
 const scssConfigs = scssFiles.map((file) => ({
   input: `src/scss/${file}.scss`,
@@ -164,8 +165,8 @@ const bookmarkletConfigs = languages.map((lang) => {
 
 export default [
   // Note to developers: If you're not changing language files, you can temporarily comment out "...languageCongifs" and "...bookmarkletConfigs" while developing to speed things up.
-  // ...languageConfigs,
-  // ...bookmarkletConfigs,
+  ...languageConfigs,
+  ...bookmarkletConfigs,
   ...scssConfigs,
 
   /* ********************* */

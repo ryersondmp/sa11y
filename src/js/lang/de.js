@@ -39,6 +39,16 @@ export default {
     DISMISSED: 'Ignorierte Warnungen',
     DISMISS_REMINDER: 'Bitte beachten Sie, dass Warnungen nur <strong>vorübergehend</strong> ignoriert werden. Das Löschen des Browserverlaufs und der Cookies stellt alle zuvor ignorierten Warnungen auf allen Seiten wieder her.',
 
+    // Export
+    DATE: 'Datum',
+    PAGE_TITLE: 'Seitentitel',
+    RESULTS: 'Ergebnisse',
+    EXPORT_RESULTS: 'Ergebnisse exportieren',
+    GENERATED: 'Ergebnisse generiert mit %(tool).',
+    PREVIEW: 'Vorschau',
+    ELEMENT: 'Element',
+    PATH: 'Pfad',
+
     // Color filters
     COLOUR_FILTER: 'Farbfilter',
     PROTANOPIA: 'Protanopie',
@@ -52,7 +62,7 @@ export default {
     MONO_EYE: 'Rot-, Grün- und Blaublindheit.',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Farbfilter funktionieren nicht im Hochkontrastmodus.',
 
-    // Alternative text module stop words
+    // Alternative text stop words
     SUSPICIOUS_ALT_STOPWORDS: ['image', 'graphic', 'picture', 'photo', 'foto', 'bild'],
     PLACEHOLDER_ALT_STOPWORDS: ['alt', 'image', 'photo', 'foto', 'bild', 'decorative', 'placeholder', 'platzhalter', 'placeholder image', 'platzhalter bild', 'platzhalter foto', 'platzhalter photo', 'spacer', 'abstand'],
     PARTIAL_ALT_STOPWORDS: [

@@ -39,6 +39,16 @@ export default {
     DISMISSED: 'Zignorowano ostrzeżenia',
     DISMISS_REMINDER: 'Proszę zauważyć, że ostrzeżenia są ignorowane tylko <strong>tymczasowo.</strong> Wyczyszczenie historii przeglądarki i plików cookie przywróci wszystkie wcześniej ignorowane ostrzeżenia na wszystkich stronach.',
 
+    // Export
+    DATE: 'Data',
+    PAGE_TITLE: 'Tytuł strony',
+    RESULTS: 'Wyniki',
+    EXPORT_RESULTS: 'Eksportuj wyniki',
+    GENERATED: 'Wyniki wygenerowane za pomocą %(tool).',
+    PREVIEW: 'Podgląd',
+    ELEMENT: 'Element',
+    PATH: 'Ścieżka',
+
     // Color filters
     COLOUR_FILTER: 'Filtr kolorów',
     PROTANOPIA: 'Protanopia',
