@@ -1394,19 +1394,24 @@
       const tooltips = document.querySelector('sa11y-tooltips').shadowRoot;
       tooltips.addEventListener('click', dismissHandler);
       Constants.Panel.panel.addEventListener('click', dismissHandler);
-    }
 
-    // Initialize restore alerts button regardless if plugin enabled or not.
-    restoreDismissedHandler = () => {
-      restoreDismissButton(dismissed, checkAll, resetAll);
-    };
-    Constants.Panel.dismissButton.addEventListener('click', restoreDismissedHandler);
+      // Initialize restore alerts button regardless if plugin enabled or not.
+      restoreDismissedHandler = () => {
+        restoreDismissButton(dismissed, checkAll, resetAll);
+      };
+      Constants.Panel.dismissButton.addEventListener('click', restoreDismissedHandler);
+    } else {
+      store.removeItem('sa11y-dismissed');
+      store.removeItem('sa11y-latest-dismissed');
+    }
   }
 
   // Imported by Reset function.
   function removeDismissListeners() {
-    Constants.Panel.panel.removeEventListener('click', dismissHandler);
-    Constants.Panel.dismissButton.removeEventListener('click', restoreDismissedHandler);
+    if (Constants.Global.dismissAnnotations) {
+      Constants.Panel.panel.removeEventListener('click', dismissHandler);
+      Constants.Panel.dismissButton.removeEventListener('click', restoreDismissedHandler);
+    }
   }
 
   /* ************************************************************** */
@@ -1697,21 +1702,25 @@
   let exportHTMLHandler;
   let exportCSVHandler;
   function exportResults(results, dismissResults) {
-    exportHTMLHandler = () => {
-      downloadHTMLTemplate(results, dismissResults);
-    };
-    exportCSVHandler = () => {
-      downloadCSVTemplate(results);
-    };
+    if (Constants.Global.exportResultsPlugin) {
+      exportHTMLHandler = () => {
+        downloadHTMLTemplate(results, dismissResults);
+      };
+      exportCSVHandler = () => {
+        downloadCSVTemplate(results);
+      };
 
-    Constants.Panel.exportHTML.addEventListener('click', exportHTMLHandler);
-    Constants.Panel.exportCSV.addEventListener('click', exportCSVHandler);
+      Constants.Panel.exportHTML.addEventListener('click', exportHTMLHandler);
+      Constants.Panel.exportCSV.addEventListener('click', exportCSVHandler);
+    }
   }
 
   // Imported by Reset function.
   function removeExportListeners() {
-    Constants.Panel.exportHTML.removeEventListener('click', exportHTMLHandler);
-    Constants.Panel.exportCSV.removeEventListener('click', exportCSVHandler);
+    if (Constants.Global.exportResultsPlugin) {
+      Constants.Panel.exportHTML.removeEventListener('click', exportHTMLHandler);
+      Constants.Panel.exportCSV.removeEventListener('click', exportCSVHandler);
+    }
   }
 
   var styles = ":host{background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);bottom:0;display:block;height:-moz-fit-content;height:fit-content;position:fixed;width:100%;z-index:999999}*{-webkit-font-smoothing:auto!important;color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;font-size:var(--sa11y-normal-text);line-height:22px!important}#dialog{margin:20px auto;max-width:900px;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none}p{margin-top:0}.error{background:var(--sa11y-error);border:2px dashed #f08080;color:var(--sa11y-error-text);margin-bottom:0;padding:5px}";

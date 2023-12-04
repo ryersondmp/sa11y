@@ -222,19 +222,23 @@ function downloadCSVTemplate(results) {
 let exportHTMLHandler;
 let exportCSVHandler;
 export function exportResults(results, dismissResults) {
-  exportHTMLHandler = () => {
-    downloadHTMLTemplate(results, dismissResults);
-  };
-  exportCSVHandler = () => {
-    downloadCSVTemplate(results, dismissResults);
-  };
+  if (Constants.Global.exportResultsPlugin) {
+    exportHTMLHandler = () => {
+      downloadHTMLTemplate(results, dismissResults);
+    };
+    exportCSVHandler = () => {
+      downloadCSVTemplate(results, dismissResults);
+    };
 
-  Constants.Panel.exportHTML.addEventListener('click', exportHTMLHandler);
-  Constants.Panel.exportCSV.addEventListener('click', exportCSVHandler);
+    Constants.Panel.exportHTML.addEventListener('click', exportHTMLHandler);
+    Constants.Panel.exportCSV.addEventListener('click', exportCSVHandler);
+  }
 }
 
 // Imported by Reset function.
 export function removeExportListeners() {
-  Constants.Panel.exportHTML.removeEventListener('click', exportHTMLHandler);
-  Constants.Panel.exportCSV.removeEventListener('click', exportCSVHandler);
+  if (Constants.Global.exportResultsPlugin) {
+    Constants.Panel.exportHTML.removeEventListener('click', exportHTMLHandler);
+    Constants.Panel.exportCSV.removeEventListener('click', exportCSVHandler);
+  }
 }
