@@ -1,4 +1,3 @@
-import Constants from '../utils/constants';
 import { store, debounce } from '../utils/utils';
 
 /* ******************************************************** */
@@ -7,7 +6,7 @@ import { store, debounce } from '../utils/utils';
 export default function detectPageChanges(detectSPArouting, checkAll, resetAll) {
   // Feature to detect page changes (e.g. SPAs).
   if (detectSPArouting === true) {
-    let url = Constants.Global.currentPage;
+    let url = window.location.pathname;
 
     const checkURL = debounce(async () => {
       if (url !== window.location.pathname) {

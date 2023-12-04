@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.3
+  * @version 3.0.4
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -51,10 +51,24 @@
       HEADING_NOT_VISIBLE_ALERT: '見出しは表示されません。非表示になっていたり、アコーディオンやタブコンポーネントの中に入っていたりすることがあります。',
       SKIP_TO_PAGE_ISSUES: 'ページの先頭へ戻る',
       CONSOLE_ERROR_MESSAGE: '申し訳ありませんが、このページのアクセシビリティチェッカーに問題があります。<a href="%(link)">このフォーム</a>または<a href="%(link)">GitHub</a>で報告していただけませんでしょうか',
+
+      // Dismiss
       PANEL_DISMISS_BUTTON: '%(dismissCount)棄却された警告を表示する。',
       DISMISS: '却下',
       DISMISSED: '解除された警告',
       DISMISS_REMINDER: '警告は<strong>一時的に</strong>解除されるだけですのでご注意ください。ブラウザの履歴とクッキーを削除すると、すべてのページで警告が解除された状態に戻ります。',
+
+      // Export
+      DATE: '日付',
+      PAGE_TITLE: 'ページタイトル',
+      RESULTS: '結果',
+      EXPORT_RESULTS: '結果のエクスポート',
+      GENERATED: '%(tool) で生成された結果。',
+      PREVIEW: 'プレビュー',
+      ELEMENT: '要素',
+      PATH: 'パス',
+
+      // Colour filters
       COLOUR_FILTER: 'カラーフィルター',
       PROTANOPIA: 'プロタノピア',
       DEUTERANOPIA: 'デューテラノピア',
@@ -66,6 +80,8 @@
       BLUE_EYE: 'ブルーブラインドです。',
       MONO_EYE: '赤、青、緑のブラインド。',
       COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'ハイコントラストモードでは、カラーフィルターは機能しません。',
+
+      // Alternative text stop words
       SUSPICIOUS_ALT_STOPWORDS: [
         'イマージュ',
         'グラフィック',
@@ -153,6 +169,7 @@
       HEADING_MISSING_ONE: '見出し1がない。 見出し1はメインコンテンツエリアの始まりであるべきで、ページの全体的な目的を説明する主要な見出しである。<a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">見出しの構造</a>について詳しくはこちら。',
       HEADING_EMPTY_WITH_IMAGE: '見出しにはテキストがなく、画像が含まれています。これが見出しでない場合は、そのフォーマットを<strong {r}>見出し %(level)</strong>から<strong>通常</strong>または<strong>パラグラフ</strong>に変更してください。それ以外の場合、画像に装飾がない場合は、altテキストを追加してください。',
       PANEL_HEADING_MISSING_ONE: '見出しの欠落 1！',
+      PANEL_NO_HEADINGS: '見出しはありません。',
       LINK_EMPTY: 'テキストのない空のリンクを削除する。',
       LINK_EMPTY_LINK_NO_LABEL: 'リンクに、スクリーンリーダーやその他の支援技術で表示可能な識別可能なテキストがない。修正するには<ul><li>リンクの行き先を説明する簡潔なテキストを追加する。</li><li><a href="https://a11y-101.com/development/icons-and-links">アイコン リンクまたは SVG</a>である場合、説明用のラベルがない可能性があります。 </li><li> このリンクがコピー/ペーストのバグによるエラーと考えられる場合は、削除を検討してください。 </li></ul>',
       LINK_LABEL: '<strong>リンクラベル：</strong> %(sanitizedText)',

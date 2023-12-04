@@ -4,8 +4,8 @@ import Constants from '../utils/constants';
 /*  DaltonLens SVG filters to simulate color vision deficiencies  */
 /*  Source: https://daltonlens.org/opensource-cvd-simulation/     */
 /* ************************************************************** */
-export default function addColourFilters() {
-  if (Constants.Global.colourFilterPlugin === true) {
+export function addColourFilters() {
+  if (Constants.Global.colourFilterPlugin) {
     if (Constants.Global.headless === false) {
       const svg = document.createElement('div');
       svg.id = 'sa11y-colour-filters';
@@ -54,5 +54,15 @@ export default function addColourFilters() {
         </svg>`;
       document.body.appendChild(svg);
     }
+  }
+}
+
+// Reset colour filters
+export function resetColourFilters() {
+  if (Constants.Global.colourFilterPlugin) {
+    Constants.Panel.colourFilterSelect.value = 0;
+    Constants.Panel.colourPanel.classList.remove('active');
+    Constants.Panel.colourFilterSelect.classList.remove('active');
+    Constants.Panel.content.hidden = false;
   }
 }

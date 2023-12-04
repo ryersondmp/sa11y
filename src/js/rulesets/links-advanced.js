@@ -4,12 +4,8 @@ import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 
 export default function checkLinksAdvanced(results, option) {
-  if (option.linksAdvancedPlugin === true) {
-    if (
-      Utils.store.getItem('sa11y-remember-links-advanced') === 'On'
-      || option.headless === true
-      || option.checkAllHideToggles === true
-    ) {
+  if (option.linksAdvancedPlugin) {
+    if (Utils.store.getItem('sa11y-remember-links-advanced') === 'On' || option.headless || option.checkAllHideToggles) {
       const seen = {};
       Elements.Found.Links.forEach(($el) => {
         let linkText = Utils.computeAccessibleName($el);

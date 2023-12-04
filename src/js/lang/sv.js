@@ -34,6 +34,16 @@ export default {
     SKIP_TO_PAGE_ISSUES: 'Hoppa till sidans problem',
     CONSOLE_ERROR_MESSAGE: 'Tyvärr, men det finns ett problem med tillgänglighetskontrollen på den här sidan. Kan du <a href="%(link)">rapportera det via det här formuläret</a> eller på <a href="%(link)">GitHub</a>?',
 
+    // Export
+    DATE: 'Datum',
+    PAGE_TITLE: 'Sidtitel',
+    RESULTS: 'Resultat',
+    EXPORT_RESULTS: 'Exportera resultat',
+    GENERATED: 'Resultat genererat med %(tool).',
+    PREVIEW: 'Förhandsvisning',
+    ELEMENT: 'Element',
+    PATH: 'Sökväg',
+
     // Dismiss
     PANEL_DISMISS_BUTTON: 'Visa %(dismissCount) ignorerade varningar',
     DISMISS: 'Ignorera',
@@ -117,6 +127,7 @@ export default {
     HEADING_MISSING_ONE: 'Saknar Rubrik 1. Rubrik 1 bör vara början på huvudinnehållsområdet, och är huvudrubriken som beskriver sidans övergripande syfte. Läs mer om <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Rubrikstruktur.</a>',
     HEADING_EMPTY_WITH_IMAGE: 'Rubriken har ingen text, men innehåller en bild. Om detta inte är en rubrik ändrar du dess format från <strong {r}>Rubrik %(level)</strong> till <strong>Normal</strong> eller <strong>Stycke</strong>. Annars, lägg till alt-text till bilden om den inte är dekorativ.',
     PANEL_HEADING_MISSING_ONE: 'Saknar rubrik 1!',
+    PANEL_NO_HEADINGS: 'Inga rubriker hittades.',
 
     // Links
     LINK_EMPTY: 'Ta bort tomma länkar utan text.',

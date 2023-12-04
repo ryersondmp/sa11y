@@ -9,7 +9,7 @@ export default function settingsPanelToggles(checkAll, resetAll) {
   /* ***************** */
   /*  Contrast toggle  */
   /* ***************** */
-  if (Constants.Global.contrastPlugin === true) {
+  if (Constants.Global.contrastPlugin) {
     Constants.Panel.contrastToggle.onclick = async () => {
       if (store.getItem('sa11y-remember-contrast') === 'On') {
         store.setItem('sa11y-remember-contrast', 'Off');
@@ -32,7 +32,7 @@ export default function settingsPanelToggles(checkAll, resetAll) {
   /* ***************** */
   /*  Form Labels      */
   /* ***************** */
-  if (Constants.Global.formLabelsPlugin === true) {
+  if (Constants.Global.formLabelsPlugin) {
     Constants.Panel.labelsToggle.onclick = async () => {
       if (store.getItem('sa11y-remember-labels') === 'On') {
         store.setItem('sa11y-remember-labels', 'Off');
@@ -55,7 +55,7 @@ export default function settingsPanelToggles(checkAll, resetAll) {
   /* ****************** */
   /*  Links (Advanced)  */
   /* ****************** */
-  if (Constants.Global.linksAdvancedPlugin === true) {
+  if (Constants.Global.linksAdvancedPlugin) {
     Constants.Panel.linksToggle.onclick = async () => {
       if (store.getItem('sa11y-remember-links-advanced') === 'On') {
         store.setItem('sa11y-remember-links-advanced', 'Off');
@@ -78,7 +78,7 @@ export default function settingsPanelToggles(checkAll, resetAll) {
   /* ****************** */
   /*  Readability       */
   /* ****************** */
-  if (Constants.Readability.Plugin === true) {
+  if (Constants.Readability.Plugin) {
     Constants.Panel.readabilityToggle.onclick = async () => {
       if (store.getItem('sa11y-remember-readability') === 'On') {
         store.setItem('sa11y-remember-readability', 'Off');
@@ -169,7 +169,7 @@ export default function settingsPanelToggles(checkAll, resetAll) {
   /* ****************** */
   /*  Colour filters    */
   /* ****************** */
-  if (Constants.Global.colourFilterPlugin === true) {
+  if (Constants.Global.colourFilterPlugin) {
     Constants.Panel.colourFilterSelect.addEventListener('change', async () => {
       const option = parseInt(Constants.Panel.colourFilterSelect.value, 10);
 

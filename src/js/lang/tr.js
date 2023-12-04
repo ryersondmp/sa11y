@@ -33,10 +33,24 @@ export default {
     HEADING_NOT_VISIBLE_ALERT: 'Başlık görünür değildir; gizli veya bir akordeon ya da sekme bileşeninin içinde olabilir.',
     SKIP_TO_PAGE_ISSUES: 'Sayfa Sorunlarına Geç',
     CONSOLE_ERROR_MESSAGE: 'Üzgünüz, ancak bu sayfadaki erişilebilirlik denetleyicisinde bir sorun var. Lütfen <a href="%(link)">bu form</a> aracılığıyla veya <a href="%(link)">GitHub</a> üzerinden bildirebilir misiniz?',
+
+    // Dismiss
     PANEL_DISMISS_BUTTON: 'Göster %(dismissCount) reddedilen uyarılar',
     DISMISS: 'Dağılın',
     DISMISSED: 'Reddedilen uyarılar',
     DISMISS_REMINDER: 'Uyarıların yalnızca <strong>geçici olarak</strong> reddedildiğini lütfen unutmayın. Tarayıcı geçmişinizi ve çerezlerinizi temizlemek, tüm sayfalarda daha önce kapatılan tüm uyarıları geri yükleyecektir.',
+
+    // Export
+    DATE: 'Tarih',
+    PAGE_TITLE: 'Sayfa başlığı',
+    RESULTS: 'Sonuçlar',
+    EXPORT_RESULTS: 'Sonuçları dışa aktar',
+    GENERATED: '%(tool) ile oluşturulan sonuçlar.',
+    PREVIEW: 'Önizleme',
+    ELEMENT: 'Öğe',
+    PATH: 'Yol',
+
+    // Colour filters
     COLOUR_FILTER: 'Renk filtresi',
     PROTANOPIA: 'Protanopia',
     DEUTERANOPIA: 'Deuteranopia',
@@ -48,6 +62,8 @@ export default {
     BLUE_EYE: 'Mavi kör.',
     MONO_EYE: 'Kırmızı, mavi ve yeşil kör.',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Renk filtreleri yüksek kontrast modunda çalışmaz.',
+
+    // Alternative text stop words
     SUSPICIOUS_ALT_STOPWORDS: [
       'görüntü',
       'grafik',
@@ -125,6 +141,7 @@ export default {
     HEADING_MISSING_ONE: 'Eksik Başlık 1. Başlık 1, ana içerik alanının başlangıcı olmalıdır ve sayfanın genel amacını açıklayan ana başlıktır. <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Başlık Yapısı hakkında daha fazla bilgi edinin.</a>',
     HEADING_EMPTY_WITH_IMAGE: 'Başlığın metni yoktur, ancak bir resim içerir. Bu bir başlık değilse, biçimini <strong {r}>Başlık %(level)</strong> yerine <strong>Normal</strong> veya <strong>Paragraf</strong> olarak değiştirin. Aksi takdirde, dekoratif değilse lütfen resme alt metin ekleyin.',
     PANEL_HEADING_MISSING_ONE: 'Başlık 1 eksik!',
+    PANEL_NO_HEADINGS: 'Başlık bulunamadı.',
     LINK_EMPTY: 'Herhangi bir metin içermeyen boş bağlantıları kaldırın.',
     LINK_EMPTY_LINK_NO_LABEL: 'Bağlantı, ekran okuyucular ve diğer yardımcı teknolojiler tarafından görülebilen ayırt edilebilir bir metne sahip değil. Düzeltmek için: <ul><li>Bağlantının sizi nereye götürdüğünü açıklayan kısa bir metin ekleyin.</li><li>Bu bir <a href="https://a11y-101.com/development/icons-and-links">ikon bağlantısı veya SVG,</a> ise muhtemelen açıklayıcı bir etiket eksiktir.</li><li>Bu bağlantının bir kopyala/yapıştır hatasından kaynaklanan bir hata olduğunu düşünüyorsanız, silmeyi düşünün.</li></ul>',
     LINK_LABEL: '<strong>Link etiketi:</strong> %(sanitizedText)',

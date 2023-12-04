@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.3
+  * @version 3.0.4
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -45,10 +45,24 @@ var nl = {
     HEADING_NOT_VISIBLE_ALERT: 'De kop is niet zichtbaar; hij kan verborgen zijn of in een accordeon- of tabbladcomponent staan.',
     SKIP_TO_PAGE_ISSUES: 'Doorgaan naar paginanummers',
     CONSOLE_ERROR_MESSAGE: 'Sorry, maar er is een probleem met de toegankelijkheidscontrole op deze pagina. Kunt u dit alstublieft <a href="%(link)">melden via dit formulier</a> of op <a href="%(link)">GitHub</a>?',
+
+    // Dismiss
     PANEL_DISMISS_BUTTON: 'Toon %(dismissCount) afgewezen waarschuwingen',
     DISMISS: 'Ontsla',
     DISMISSED: 'Afgewezen waarschuwingen',
     DISMISS_REMINDER: "Let op: waarschuwingen worden alleen <strong>tijdelijk</strong> genegeerd. Als u uw browsergeschiedenis en cookies wist, worden alle eerder afgewezen waarschuwingen op alle pagina's hersteld.",
+
+    // Export
+    DATE: 'Datum',
+    PAGE_TITLE: 'Paginatitel',
+    RESULTS: 'Resultaten',
+    EXPORT_RESULTS: 'Resultaten exporteren',
+    GENERATED: 'Resultaten gegenereerd met %(tool).',
+    PREVIEW: 'Voorbeeld',
+    ELEMENT: 'Element',
+    PATH: 'Pad',
+
+    // Colour filters
     COLOUR_FILTER: 'Kleurenfilter',
     PROTANOPIA: 'Protanopia',
     DEUTERANOPIA: 'Deuteranopia',
@@ -60,6 +74,8 @@ var nl = {
     BLUE_EYE: 'Blauwe jaloezie.',
     MONO_EYE: 'Blind rood, blauw en groen.',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Kleurenfilters werken niet in de modus Hoog contrast.',
+
+    // Alternative text stop words
     SUSPICIOUS_ALT_STOPWORDS: [
       'afbeelding',
       'grafisch',
@@ -147,6 +163,7 @@ var nl = {
     HEADING_MISSING_ONE: 'Ontbrekende kop 1. Kop 1 moet het begin zijn van het hoofdgedeelte van de inhoud en is de belangrijkste kop die het algemene doel van de pagina beschrijft. Meer informatie over <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Kopjesstructuur.</a>',
     HEADING_EMPTY_WITH_IMAGE: 'Een kop heeft geen tekst, maar bevat een afbeelding. Als dit geen koptekst is, verander de opmaak dan van <strong {r}>Koptekst %(niveau)</strong> in <strong>Normaal</strong> of <strong>Paragraaf</strong>. Voeg anders alt-tekst toe aan de afbeelding als deze niet decoratief is.',
     PANEL_HEADING_MISSING_ONE: 'Rubriek 1 ontbreekt!',
+    PANEL_NO_HEADINGS: 'Geen koppen gevonden.',
     LINK_EMPTY: 'Verwijder lege links zonder tekst.',
     LINK_EMPTY_LINK_NO_LABEL: 'Link heeft geen leesbare tekst die zichtbaar is voor schermlezers en andere ondersteunende technologie. Op te lossen: <ul><li>Voeg beknopte tekst toe die beschrijft waar de koppeling naartoe leidt.</li><li>Als het een <a href="https://a11y-101.com/development/icons-and-links">icon link of SVG,</a> is, ontbreekt waarschijnlijk een beschrijvend label.</li><li>Als u denkt dat deze koppeling een fout is als gevolg van een copy/paste-bug, kunt u overwegen deze te verwijderen.</li></ul>',
     LINK_LABEL: '<strong>Linklabel:</strong> %(gezuiverde tekst)',

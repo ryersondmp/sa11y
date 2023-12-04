@@ -15,6 +15,7 @@ button,
 svg,
 strong,
 kbd,
+pre,
 code {
   all: unset;
   box-sizing: border-box !important;
@@ -46,11 +47,24 @@ label {
   font-weight: normal;
   text-align: start;
   letter-spacing: normal;
-  word-break: normal;
+  word-break: break-word;
 }
 
 .sa11y-overflow {
   overflow: auto;
+}
+
+img,
+video,
+iframe {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border: 0;
+}
+
+audio {
+  max-width: 100%;
 }
 
 /* ************************************* */
@@ -216,7 +230,7 @@ label {
 #panel-alert-content {
   position: relative;
   align-items: center;
-  max-height: 200px;
+  max-height: 400px;
   padding: 15px 20px 15px 15px;
   overflow-y: auto;
   color: var(--sa11y-panel-primary);
@@ -243,6 +257,14 @@ label {
   border-radius: 5px;
 }
 
+.element-preview {
+  padding: 5px;
+  margin-bottom: 10px;
+  overflow-wrap: break-word;
+  background-color: var(--sa11y-panel-badge);
+  border-radius: 3.2px;
+}
+
 /* Dismiss button for issues */
 button[data-sa11y-dismiss] {
   display: block;
@@ -250,8 +272,8 @@ button[data-sa11y-dismiss] {
   margin: 10px 5px 5px 0;
   color: var(--sa11y-panel-primary);
   cursor: pointer;
-  background: var(--sa11y-panel-bg);
-  border: 1px solid var(--sa11y-button-outline);
+  background: var(--sa11y-panel-bg-secondary);
+  border: 2px solid var(--sa11y-button-outline);
   border-radius: 5px;
 
   &:hover,
@@ -641,19 +663,48 @@ hr {
   border-inline-end: 1px solid var(--sa11y-panel-bg-splitter);
 }
 
+#export-results-mode,
 label {
   display: inline-block;
   width: 100%;
   margin: 0;
   font-weight: normal;
   color: var(--sa11y-panel-primary);
+}
+
+label:not(#colour-filter-mode, #export-results-mode) {
   cursor: pointer;
 }
+
 
 /* ***************************************** */
 /*           13. Settings Panel              */
 /* ***************************************** */
 #settings-panel {
+
+  #export-csv,
+  #export-html {
+    width: unset;
+    padding: 0;
+    text-align: center;
+
+    span {
+      display: block;
+      width: 65px;
+      padding: 7px 9px;
+      margin: 0 4px;
+      background: var(--sa11y-panel-bg-secondary);
+      border-radius: 5px;
+      box-shadow: inset 0 0 0 2px var(--sa11y-setting-switch-bg-off);
+    }
+
+    &:hover span,
+    &:focus span,
+    &:focus-within span {
+      background: var(--sa11y-shortcut-hover);
+    }
+  }
+
   .switch {
     position: relative;
     width: 105px;
@@ -833,11 +884,17 @@ label {
   text-align: end;
   vertical-align: middle;
   cursor: pointer;
-  background: var(--sa11y-panel-bg);
+  background: var(--sa11y-panel-bg-secondary);
   border: 2px solid var(--sa11y-setting-switch-bg-off);
   border-radius: 5px;
   padding-inline-end: 25px;
   padding-inline-start: 5px;
+  margin-inline-end: 4px;
+
+  &:hover,
+  &:focus {
+    background: var(--sa11y-shortcut-hover);
+  }
 }
 
 #colour-filter-select.active {
@@ -947,6 +1004,7 @@ label {
 /* ***************************************** */
 ::-webkit-scrollbar {
   width: 7px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-thumb {

@@ -10,18 +10,14 @@ const addStylestoShadow = (component) => {
   component.shadowRoot.appendChild(style);
 };
 
-export default function findShadowComponents(
-  checkRoot,
-  autoDetectShadowComponents,
-  suppliedShadowComponents,
-) {
+export default function findShadowComponents(option) {
   let webComponents;
-  if (autoDetectShadowComponents === true) {
+  if (option.autoDetectShadowComponents) {
     // Elements to ignore.
     const ignore = 'sa11y-heading-label, sa11y-heading-anchor, sa11y-annotation, sa11y-tooltips, sa11y-dismiss-tooltip, sa11y-control-panel, #sa11y-colour-filters, #sa11y-colour-filters *, script';
 
     // Search all elements.
-    const root = document.querySelector(checkRoot);
+    const root = document.querySelector(option.checkRoot);
     const search = (root) ? Array.from(root.querySelectorAll(`*:not(${ignore})`)) : Array.from(document.body.querySelectorAll(`*:not(${ignore})`));
 
     // Query for open shadow roots & inject CSS utilities into every shadow DOM.
@@ -38,7 +34,7 @@ export default function findShadowComponents(
     webComponents = (all.length === 1) ? `${all.toString()}` : all.join(', ');
   } else {
     // If autoDetectShadowComponents is OFF, use provided shadow dom.
-    webComponents = suppliedShadowComponents || '';
+    webComponents = option.suppliedShadowComponents || '';
 
     // Append styles to each provided shadow dom.
     if (webComponents) {

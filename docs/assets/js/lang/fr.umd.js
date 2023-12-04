@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.3
+  * @version 3.0.4
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -46,10 +46,20 @@
       PANEL_ICON_WARNINGS: 'avertissement(s) trouvé(s).',
       PANEL_ICON_TOTAL: 'problème(s) trouvé(s) au total.',
       NOT_VISIBLE_ALERT: 'L’élément que vous tentez de consulter n’est pas visible; il peut être masqué, à l’intérieur de l’accordéon ou dans le volet de l’onglet. Voir l’aperçu:',
-      ERROR_MISSING_ROOT_TARGET: 'L\'accessibilité de la page entière a été vérifiée, car la zone cible <code><code>%(root)</code> n\'existe pas.',
+      ERROR_MISSING_ROOT_TARGET: 'L\'accessibilité de la page entière a été vérifiée, car la zone cible <code>%(root)</code> n\'existe pas.',
       HEADING_NOT_VISIBLE_ALERT: 'L\'en-tête n\'est pas visible ; il peut être caché ou à l\'intérieur d\'un accordéon ou d\'un composant d\'onglet.',
       SKIP_TO_PAGE_ISSUES: 'Passer aux problèmes de page',
-      CONSOLE_ERROR_MESSAGE: 'Désolé, mais il y a un problème avec le vérificateur d\'accessibilité sur cette page.Pouvez-vous s\'il vous plaît <a href="%(link)">le signaler via ce formulaire</a> ou sur <a href="%(link)">GitHub</a> ?',
+      CONSOLE_ERROR_MESSAGE: 'Désolé, mais il y a un problème avec le vérificateur d\'accessibilité sur cette page. Pouvez-vous s\'il vous plaît <a href="%(link)">le signaler via ce formulaire</a> ou sur <a href="%(link)">GitHub</a> ?',
+
+      // Export
+      DATE: 'Date',
+      PAGE_TITLE: 'Titre de la page',
+      RESULTS: 'Résultats',
+      EXPORT_RESULTS: 'Exporter les résultats',
+      GENERATED: 'Résultats générés avec %(tool).',
+      PREVIEW: 'Aperçu',
+      ELEMENT: 'Élément',
+      PATH: 'Chemin',
 
       // Dismiss
       PANEL_DISMISS_BUTTON: 'Afficher %(dismissCount) avertissements ignorés',
@@ -57,7 +67,7 @@
       DISMISSED: 'Avertissements ignorés',
       DISMISS_REMINDER: 'Veuillez noter que les avertissements ne sont ignorés que <strong>temporairement.</strong> Effacer l\'historique de votre navigateur et les cookies rétablira tous les avertissements précédemment ignorés sur toutes les pages.',
 
-      // Color filters
+      // Colour filters
       COLOUR_FILTER: 'Filtre de couleur',
       PROTANOPIA: 'Protanopie',
       DEUTERANOPIA: 'Deutéranopie',
@@ -70,7 +80,7 @@
       MONO_EYE: 'Daltonisme rouge, vert et bleu.',
       COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Les filtres de couleur ne fonctionnent pas en mode contraste élevé.',
 
-      // Alternative text module stop words
+      // Alternative text stop words
       SUSPICIOUS_ALT_STOPWORDS: ['image', 'illustration', 'photo', 'photographie', 'graphic'],
       PLACEHOLDER_ALT_STOPWORDS: ['alt', 'image', 'photographie', 'décorative', 'photographie', 'support d’affichage', 'support d’affichage d’image', 'séparateur'],
       PARTIAL_ALT_STOPWORDS: [
@@ -128,6 +138,7 @@
       HEADING_MISSING_ONE: 'En-tête 1 manquant. L’en-tête 1 doit débuter dans la zone principale de contenu, il est l’en-tête principal qui décrit l’objectif global de la page. En savoir plus sur <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">La Structure Des En-têtes.</a>',
       HEADING_EMPTY_WITH_IMAGE: 'L’en-tête ne contient pas de texte, mais seulement une image. Si ce n’est pas un en-tête, veuillez changer son format pour <strong {r}>L’en-tête %(level)</strong> à <strong>Normal</strong> ou <strong>Paragraphe</strong>. Sinon, veuillez ajouter du texte de remplacement à l’image si elle n’est pas décorative.',
       PANEL_HEADING_MISSING_ONE: 'En-tête 1 manquant!',
+      PANEL_NO_HEADINGS: 'Aucun titre trouvé.',
 
       // Links
       LINK_EMPTY: 'Retirer les liens vides sans texte.',

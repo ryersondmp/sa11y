@@ -13,6 +13,7 @@ const defaultOptions = {
 
   // Other features
   showGoodLinkButton: true,
+  showHinPageOutline: false,
   detectSPArouting: false,
   doNotRun: '',
   dismissAnnotations: true,
@@ -21,6 +22,10 @@ const defaultOptions = {
   shadowComponents: '',
   autoDetectShadowComponents: false,
   panelPosition: 'right',
+  altTextMaxCharLength: 250,
+  headingMaxCharLength: 170,
+  URLTextMaxCharLength: 40,
+  URLAsLinkTextWarning: true,
 
   // Readability
   readabilityPlugin: true,
@@ -34,6 +39,7 @@ const defaultOptions = {
   colourFilterPlugin: true,
   customChecks: true,
   checkAllHideToggles: false,
+  exportResultsPlugin: false,
 
   // Specific rulesets
   linksToFlag: '',
@@ -47,9 +53,9 @@ const defaultOptions = {
   strongItalicsQA: true,
   pdfQA: true,
   documentQA: true,
+  documentLinks: '.ppt, .doc, .xls, .csv, sway.com, docs.google.com',
   langQA: true,
   blockquotesQA: true,
-  tablesQA: true,
   allCapsQA: true,
   fakeHeadingsQA: true,
   fakeListQA: true,
@@ -57,7 +63,13 @@ const defaultOptions = {
   underlinedTextQA: true,
   pageTitleQA: true,
   subscriptQA: true,
-  documentLinks: '.ppt, .doc, .xls, .csv, sway.com, docs.google.com',
+
+  // Tables
+  tablesQA: true,
+  tablesQAmissingTH: true,
+  tablesQAsemanticHeadings: true,
+  tablesQAemptyTH: true,
+  tablesQAemptyTHisError: true,
 
   // Embedded content rulesets
   embeddedContentAll: true,

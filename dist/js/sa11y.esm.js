@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.3
+  * @version 3.0.4
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -25,6 +25,7 @@ const defaultOptions = {
 
   // Other features
   showGoodLinkButton: true,
+  showHinPageOutline: false,
   detectSPArouting: false,
   doNotRun: '',
   dismissAnnotations: true,
@@ -33,6 +34,10 @@ const defaultOptions = {
   shadowComponents: '',
   autoDetectShadowComponents: false,
   panelPosition: 'right',
+  altTextMaxCharLength: 250,
+  headingMaxCharLength: 170,
+  URLTextMaxCharLength: 40,
+  URLAsLinkTextWarning: true,
 
   // Readability
   readabilityPlugin: true,
@@ -46,6 +51,7 @@ const defaultOptions = {
   colourFilterPlugin: true,
   customChecks: true,
   checkAllHideToggles: false,
+  exportResultsPlugin: false,
 
   // Specific rulesets
   linksToFlag: '',
@@ -59,9 +65,9 @@ const defaultOptions = {
   strongItalicsQA: true,
   pdfQA: true,
   documentQA: true,
+  documentLinks: '.ppt, .doc, .xls, .csv, sway.com, docs.google.com',
   langQA: true,
   blockquotesQA: true,
-  tablesQA: true,
   allCapsQA: true,
   fakeHeadingsQA: true,
   fakeListQA: true,
@@ -69,7 +75,13 @@ const defaultOptions = {
   underlinedTextQA: true,
   pageTitleQA: true,
   subscriptQA: true,
-  documentLinks: '.ppt, .doc, .xls, .csv, sway.com, docs.google.com',
+
+  // Tables
+  tablesQA: true,
+  tablesQAmissingTH: true,
+  tablesQAsemanticHeadings: true,
+  tablesQAemptyTH: true,
+  tablesQAemptyTHisError: true,
 
   // Embedded content rulesets
   embeddedContentAll: true,
@@ -128,18 +140,14 @@ const addStylestoShadow = (component) => {
   component.shadowRoot.appendChild(style);
 };
 
-function findShadowComponents(
-  checkRoot,
-  autoDetectShadowComponents,
-  suppliedShadowComponents,
-) {
+function findShadowComponents(option) {
   let webComponents;
-  if (autoDetectShadowComponents === true) {
+  if (option.autoDetectShadowComponents) {
     // Elements to ignore.
     const ignore = 'sa11y-heading-label, sa11y-heading-anchor, sa11y-annotation, sa11y-tooltips, sa11y-dismiss-tooltip, sa11y-control-panel, #sa11y-colour-filters, #sa11y-colour-filters *, script';
 
     // Search all elements.
-    const root = document.querySelector(checkRoot);
+    const root = document.querySelector(option.checkRoot);
     const search = (root) ? Array.from(root.querySelectorAll(`*:not(${ignore})`)) : Array.from(document.body.querySelectorAll(`*:not(${ignore})`));
 
     // Query for open shadow roots & inject CSS utilities into every shadow DOM.
@@ -156,7 +164,7 @@ function findShadowComponents(
     webComponents = (all.length === 1) ? `${all.toString()}` : all.join(', ');
   } else {
     // If autoDetectShadowComponents is OFF, use provided shadow dom.
-    webComponents = suppliedShadowComponents || '';
+    webComponents = option.suppliedShadowComponents || '';
 
     // Append styles to each provided shadow dom.
     if (webComponents) {
@@ -175,10 +183,10 @@ const Constants = (function myConstants() {
   /* **************** */
   const Global = {};
   function initializeGlobal(option) {
-    Global.currentPage = window.location.pathname;
     Global.html = document.querySelector('html');
     Global.headless = option.headless;
     Global.panelPosition = option.panelPosition;
+    Global.dismissAnnotations = option.dismissAnnotations;
 
     // Toggleable plugins
     Global.contrastPlugin = option.contrastPlugin;
@@ -186,10 +194,11 @@ const Constants = (function myConstants() {
     Global.linksAdvancedPlugin = option.linksAdvancedPlugin;
     Global.colourFilterPlugin = option.colourFilterPlugin;
     Global.checkAllHideToggles = option.checkAllHideToggles;
+    Global.exportResultsPlugin = option.exportResultsPlugin;
 
     // Root element to check.
     Global.Root = document.querySelector(option.checkRoot);
-    if (!option.checkRoot) {
+    if (!Global.Root) {
       Global.Root = document.querySelector('body');
     }
 
@@ -203,7 +212,7 @@ const Constants = (function myConstants() {
     // i18n
     Global.langDirection = (Global.html.getAttribute('dir') === 'rtl') ? 'rtl' : 'ltr';
 
-    // Document links (Quality Assurance module)
+    // QA: Document links (Quality Assurance module)
     if (option.documentLinks) {
       Global.documentLinks = `${option.documentLinks}`;
     }
@@ -262,6 +271,8 @@ const Constants = (function myConstants() {
     Panel.dismissButton = Sa11yPanel.getElementById('dismiss-button');
     Panel.dismissTooltip = Sa11yPanel.getElementById('dismiss-tooltip');
     Panel.skipToPageIssues = Sa11yPanel.getElementById('skip-to-page-issues');
+    Panel.exportHTML = Sa11yPanel.getElementById('export-html');
+    Panel.exportCSV = Sa11yPanel.getElementById('export-csv');
 
     // Alerts
     Panel.alert = Sa11yPanel.getElementById('panel-alert');
@@ -280,7 +291,7 @@ const Constants = (function myConstants() {
   /* ***************** */
   const Readability = {};
   function initializeReadability(option) {
-    if (option.readabilityPlugin === true) {
+    if (option.readabilityPlugin) {
       // Readability target area to check.
       Readability.Root = document.querySelector(option.readabilityRoot);
       if (!Readability.Root) {
@@ -424,10 +435,7 @@ const Constants = (function myConstants() {
   const Shadow = {};
   function initializeShadowSearch(checkRoot, autoDetectShadowComponents, shadowComponents) {
     Shadow.Components = findShadowComponents(
-      checkRoot,
-      autoDetectShadowComponents,
-      shadowComponents,
-    );
+      checkRoot);
   }
 
   return {
@@ -480,7 +488,6 @@ function find(selector, desiredRoot, exclude) {
   /* Logic yoinked from Editoria11y */
   // 1. Elements array includes web components in the selector to be used as a placeholder.
   const elements = Array.from(root.querySelectorAll(`:is(${selector}${shadow}):not(${exclusions}${additional})`));
-
   if (shadowComponents.length) {
     // 2. Dive into the each shadow root and collect an array of its results.
     const shadowFind = [];
@@ -500,7 +507,6 @@ function find(selector, desiredRoot, exclude) {
       }
     }
   }
-
   // 4. Return the cleaned up array.
   return elements;
 }
@@ -552,6 +558,43 @@ function escapeHTML(string) {
   const $div = document.createElement('div');
   $div.textContent = string;
   return $div.innerHTML.replaceAll('"', '&quot;').replaceAll("'", '&#039;').replaceAll('`', '&#x60;');
+}
+
+/**
+ * Decodes/unescapes HTML entities back to their corresponding character.
+ * @param {string} string - The string.
+ * @returns {string} - Decoded string.
+ */
+function decodeHTML(string) {
+  return string.replace(/&(#?[a-zA-Z0-9]+);/g, (match, entity) => {
+    switch (entity) {
+      case 'amp':
+        return '&';
+      case 'lt':
+        return '<';
+      case 'gt':
+        return '>';
+      case 'quot':
+        return '\'';
+      case '#39':
+        return "'"; // Convert single quotes to actual single quotes.
+      default:
+        // For numeric entities, convert them back to the corresponding character.
+        if (entity.charAt(0) === '#') {
+          return String.fromCharCode(entity.charAt(1) === 'x' ? parseInt(entity.substr(2), 16) : parseInt(entity.substr(1), 10));
+        }
+        return match;
+    }
+  });
+}
+
+/**
+ * Strips HTML tags from a string.
+ * @param {string} string - The string.
+ * @returns {string} - String without any HTML tags.
+ */
+function stripHTMLtags(string) {
+  return string.replace(/<[^>]*>/g, '');
 }
 
 /**
@@ -911,11 +954,12 @@ function removeAlert() {
 
 /**
  * Creates an alert in the Sa11y control panel with the given alert message and error preview.
- * @param {string} alertMessage - The alert message to be displayed.
- * @param {string} errorPreview - The error preview to be displayed (optional).
+ * @param {string} alertMessage - The alert message.
+ * @param {string} errorPreview - The issue's tooltip message (optional).
+ * @param {string} extendedPreview - The issue's HTML or escaped HTML to be previewed (optional).
  * @returns {void}
  */
-function createAlert(alertMessage, errorPreview) {
+function createAlert(alertMessage, errorPreview, extendedPreview) {
   // Clear alert first before creating new one.
   removeAlert();
 
@@ -929,23 +973,39 @@ function createAlert(alertMessage, errorPreview) {
 
   alert.classList.add('active');
   alertText.innerHTML = alertMessage;
+
+  // If the issue's element is being previewed.
+  const elementPreview = (extendedPreview)
+    ? `<div class="element-preview">${extendedPreview}</div>` : '';
+
+  // Alert message or tooltip's message.
   if (errorPreview) {
     alertPreview.classList.add('panel-alert-preview');
-    alertPreview.innerHTML = errorPreview;
+    alertPreview.innerHTML = `${elementPreview}<div class="preview-message">${errorPreview}</div>`;
   }
+
+  // A little time before setting focus on the close button.
   setTimeout(() => {
     alertClose.focus();
   }, 300);
 
   // Closing alert sets focus back to Skip to Issue toggle.
-  alertClose.addEventListener('click', () => {
+  function closeAlert() {
     removeAlert();
-    if (skipButton.hasAttribute('disabled')) {
-      Sa11yPanel.getElementById('toggle').focus();
-    } else {
-      skipButton.focus();
+    const focusTarget = skipButton.hasAttribute('disabled')
+      ? Sa11yPanel.getElementById('toggle')
+      : skipButton;
+    focusTarget.focus();
+  }
+  alertClose.addEventListener('click', closeAlert);
+
+  // Escape key to close alert.
+  alert.onkeydown = (e) => {
+    const evt = e || window.event;
+    if (evt.key === 'Escape' && alert.classList.contains('active')) {
+      closeAlert();
     }
-  });
+  };
 }
 
 /**
@@ -995,6 +1055,46 @@ function isScrollable(scrollArea, container) {
   }
 }
 
+/**
+ * Generate an HTML preview for an issue if it's an image, iframe, audio or video element. Otherwise, return escaped HTML within <code> tags. Used for Skip to Issue panel alerts and HTML page export.
+ * @param {Object} issueObject - The issue object.
+ * @returns {html} Returns HTML.
+ */
+function generateElementPreview(issueObject) {
+  const issueElement = issueObject.element;
+  const htmlPath = `<pre><code>${escapeHTML(issueObject.htmlPath)}</code></pre>`;
+
+  const tag = {
+    IMG: (element) => {
+      const anchor = element.closest('a[href]');
+      const imgSrc = element.src;
+      const alt = element.alt ? ` alt="${element.alt}"` : ' alt';
+      if (imgSrc) {
+        return anchor
+          ? `<a href="${anchor.href}" rel="noopener noreferrer"><img src="${imgSrc}"${alt}/></a>`
+          : `<img src="${imgSrc}"${alt}/>`;
+      }
+      return htmlPath;
+    },
+    IFRAME: (element) => {
+      const iframeSrc = element.src;
+      const titleAttr = element.title ? ` title="${element.title}"` : '';
+      const ariaLabelAttr = element.getAttribute('aria-label') ? ` aria-label="${element.getAttribute('aria-label')}"` : '';
+      if (iframeSrc) {
+        const iframeTitle = titleAttr || ariaLabelAttr;
+        return `<iframe src=${iframeSrc}${iframeTitle}></iframe>`;
+      }
+      return htmlPath;
+    },
+    AUDIO: () => issueObject.htmlPath,
+    VIDEO: () => issueObject.htmlPath,
+  };
+
+  const tagHandler = tag[issueElement.tagName];
+  const elementPreview = tagHandler ? tagHandler(issueElement) : htmlPath;
+  return elementPreview;
+}
+
 const Elements = (function myElements() {
   const Found = {};
   function initializeElements(linksToFlag) {
@@ -1007,7 +1107,7 @@ const Elements = (function myElements() {
 
     Found.Headings = find(
       'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]',
-      'root',
+      'document',
       Constants.Exclusions.Headings,
     );
 
@@ -1149,7 +1249,7 @@ const Elements = (function myElements() {
 function detectPageChanges(detectSPArouting, checkAll, resetAll) {
   // Feature to detect page changes (e.g. SPAs).
   if (detectSPArouting === true) {
-    let url = Constants.Global.currentPage;
+    let url = window.location.pathname;
 
     const checkURL = debounce$2(async () => {
       if (url !== window.location.pathname) {
@@ -1173,23 +1273,24 @@ function detectPageChanges(detectSPArouting, checkAll, resetAll) {
 /* ************************************************************ */
 /*  Update results array before painting annotations to page.   */
 /* ************************************************************ */
-function dismissAnnotationsLogic(results, dismissTooltip) {
+function dismissLogic(results, dismissTooltip) {
   // Get dismissed items and re-parse back into object.
   let dismissedIssues = store.getItem('sa11y-dismissed');
   dismissedIssues = dismissedIssues ? JSON.parse(dismissedIssues) : [];
 
   // Return element from results array that matches dismiss key and dismiss url. Then filter through matched objects.
   const findKey = dismissedIssues.map((e) => {
-    const found = results.find((f) => (e.key.includes(f.dismiss) && e.href === Constants.Global.currentPage));
+    const found = results.find((f) => (e.key.includes(f.dismiss) && e.href === window.location.pathname));
     if (found === undefined) return '';
     return found;
   });
 
-  // Number of dismissed items found on the page.
-  const dismissCount = results.filter((issue) => findKey.find((e) => e.dismiss === issue.dismiss)).length;
-
   // Update results array (exclude dismissed items).
   const updatedResults = results.filter((issue) => !findKey.find((e) => e.dismiss === issue.dismiss));
+
+  // Array containing all dismissed results for page.
+  const dismissedResults = results.filter((issue) => findKey.find((e) => e.dismiss === issue.dismiss));
+  const dismissCount = dismissedResults.length;
 
   // Show dismiss button in panel.
   if (dismissCount >= 1) {
@@ -1200,88 +1301,106 @@ function dismissAnnotationsLogic(results, dismissTooltip) {
     Constants.Panel.dismissButton.classList.remove('active');
   }
 
-  return { dismissedIssues, updatedResults, dismissCount };
+  return { dismissedIssues, updatedResults, dismissCount, dismissedResults };
 }
 
 /* ************************************************************ */
 /*  Logic for tooltip "Dismiss" buttons & panel restore button  */
 /* ************************************************************ */
-function dismissAnnotationsButtons(
-  dismissAnnotationsOption,
-  results,
-  dismissed,
-  checkAll,
-  resetAll,
-) {
-  if (dismissAnnotationsOption === true) {
-    // 1) Hide annotation upon click on dismiss button on warning. Dismiss button exists in both tooltip and control panel. Need to add event listeners to both components.
-    const tooltips = document.querySelector('sa11y-tooltips').shadowRoot;
-    const controlPanel = document.querySelector('sa11y-control-panel').shadowRoot;
-    const dismissTooltipContainer = document.querySelector('sa11y-dismiss-tooltip');
+let restoreDismissedHandler;
+let dismissHandler;
 
-    const handleClick = async (e) => {
-      // Get dismissed array from localStorage.
-      let savedDismissKeys = JSON.parse(store.getItem('sa11y-dismissed'));
-      const element = e.target;
-      dismissTooltipContainer.hidden = false;
+/* 1. Hide annotation upon click of dismiss button. */
+const dismissIssueButton = async (e, results, checkAll, resetAll) => {
+  // Get dismissed array from localStorage.
+  let savedDismissKeys = JSON.parse(store.getItem('sa11y-dismissed'));
+  const element = e.target;
+  const dismissContainer = document.querySelector('sa11y-dismiss-tooltip');
+  dismissContainer.hidden = false;
 
-      // Make sure event listener is attached to dismiss button.
-      if (element.tagName === 'BUTTON' && element.hasAttribute('data-sa11y-dismiss')) {
-        // Find corresponding issue within main issues object and mark as dismissed.
-        const dismissItem = parseInt(element.getAttribute('data-sa11y-dismiss'), 10);
-        const object = results.find(($el) => $el.id === dismissItem);
+  // Make sure event listener is attached to dismiss button.
+  if (element.tagName === 'BUTTON' && element.hasAttribute('data-sa11y-dismiss')) {
+    // Find corresponding issue within main results object and mark as dismissed.
+    const dismissItem = parseInt(element.getAttribute('data-sa11y-dismiss'), 10);
+    const object = results.find(($el) => $el.id === dismissItem);
 
-        if (savedDismissKeys === null) {
-          // Give a one time reminder that dismissed items are temporary.
-          setTimeout(() => createAlert(Lang._('DISMISS_REMINDER')), 0);
-          // If no existing entries, create empty array to iterate on.
-          savedDismissKeys = [];
-        }
+    // Give a one time reminder that dismissed items are temporary.
+    if (savedDismissKeys === null) {
+      setTimeout(() => createAlert(Lang._('DISMISS_REMINDER')), 0);
+      // If no existing entries, create empty array to iterate on.
+      savedDismissKeys = [];
+    }
 
-        // Dismissal object.
-        const dismissalDetails = {
-          key: object.dismiss,
-          href: Constants.Global.currentPage,
-        };
+    // Update dismiss array.
+    if (object.dismiss) {
+      // Dismissal object.
+      const dismissalDetails = {
+        key: object.dismiss,
+        href: window.location.pathname,
+      };
 
-        const item = find(`[data-sa11y-annotation='${object.id}']`);
-        const latestDismissed = item[0].getAttribute('data-sa11y-position');
-        store.setItem('sa11y-latest-dismissed', latestDismissed);
+      // Get the position of the last annotation that was dismissed.
+      const item = find(`[data-sa11y-annotation='${object.id}']`);
+      const latestDismissed = item[0]
+        ? item[0].getAttribute('data-sa11y-position') : 0;
+      store.setItem('sa11y-latest-dismissed', latestDismissed);
 
-        // Update dismiss array.
-        store.setItem('sa11y-dismiss-item', JSON.stringify(dismissalDetails));
-        savedDismissKeys.push(dismissalDetails);
-        store.setItem('sa11y-dismissed', JSON.stringify(savedDismissKeys));
-        store.removeItem('sa11y-dismiss-item'); // Remove temporary storage item.
+      // Add dismissed item to local storage object.
+      store.setItem('sa11y-dismiss-item', JSON.stringify(dismissalDetails));
+      savedDismissKeys.push(dismissalDetails);
+      store.setItem('sa11y-dismissed', JSON.stringify(savedDismissKeys));
+      store.removeItem('sa11y-dismiss-item'); // Remove temporary storage item.
 
-        // Remove tooltip.
-        if (element.closest('[data-tippy-root]') !== null) {
-          element.closest('[data-tippy-root]').remove();
-        }
-
-        // Async scan upon dismiss.
-        resetAll(false);
-        await checkAll();
-
-        // Reset event listeners.
-        tooltips.removeEventListener('click', handleClick);
-        controlPanel.removeEventListener('click', handleClick);
+      // Remove tooltip.
+      if (element.closest('[data-tippy-root]') !== null) {
+        element.closest('[data-tippy-root]').remove();
       }
-    };
 
-    tooltips.addEventListener('click', handleClick);
-    controlPanel.addEventListener('click', handleClick);
-
-    // 2) Restore hidden alerts on the CURRENT page only.
-    Constants.Panel.dismissButton.onclick = async () => {
-      dismissTooltipContainer.hidden = true; // Prevent flash of tooltip.
-      const filtered = dismissed.filter((item) => item.href !== Constants.Global.currentPage);
-      store.setItem('sa11y-dismissed', JSON.stringify(filtered));
-      Constants.Panel.dismissButton.classList.remove('active');
+      // Async scan upon dismiss.
       resetAll(false);
       await checkAll();
-    };
+    }
   }
+};
+
+/* 2. Restore hidden alerts on the CURRENT page only. */
+const restoreDismissButton = async (dismissed, checkAll, resetAll) => {
+  const dismissContainer = document.querySelector('sa11y-dismiss-tooltip');
+  dismissContainer.hidden = true; // Prevent flash of tooltip.
+  const filtered = dismissed.filter((item) => item.href !== window.location.pathname);
+  store.setItem('sa11y-dismissed', JSON.stringify(filtered));
+  Constants.Panel.dismissButton.classList.remove('active');
+
+  // Reset & check.
+  resetAll(false);
+  await checkAll();
+};
+
+// Add event listeners.
+function dismissButtons(results, dismissed, checkAll, resetAll) {
+  if (Constants.Global.dismissAnnotations) {
+    // Dismiss buttons.
+    dismissHandler = (e) => {
+      dismissIssueButton(e, results, checkAll, resetAll);
+    };
+
+    // Dismiss button exists in both tooltip and control panel.
+    const tooltips = document.querySelector('sa11y-tooltips').shadowRoot;
+    tooltips.addEventListener('click', dismissHandler);
+    Constants.Panel.panel.addEventListener('click', dismissHandler);
+  }
+
+  // Initialize restore alerts button regardless if plugin enabled or not.
+  restoreDismissedHandler = () => {
+    restoreDismissButton(dismissed, checkAll, resetAll);
+  };
+  Constants.Panel.dismissButton.addEventListener('click', restoreDismissedHandler);
+}
+
+// Imported by Reset function.
+function removeDismissListeners() {
+  Constants.Panel.panel.removeEventListener('click', dismissHandler);
+  Constants.Panel.dismissButton.removeEventListener('click', restoreDismissedHandler);
 }
 
 /* ************************************************************** */
@@ -1289,7 +1408,7 @@ function dismissAnnotationsButtons(
 /*  Source: https://daltonlens.org/opensource-cvd-simulation/     */
 /* ************************************************************** */
 function addColourFilters() {
-  if (Constants.Global.colourFilterPlugin === true) {
+  if (Constants.Global.colourFilterPlugin) {
     if (Constants.Global.headless === false) {
       const svg = document.createElement('div');
       svg.id = 'sa11y-colour-filters';
@@ -1341,9 +1460,257 @@ function addColourFilters() {
   }
 }
 
+// Reset colour filters
+function resetColourFilters() {
+  if (Constants.Global.colourFilterPlugin) {
+    Constants.Panel.colourFilterSelect.value = 0;
+    Constants.Panel.colourPanel.classList.remove('active');
+    Constants.Panel.colourFilterSelect.classList.remove('active');
+    Constants.Panel.content.hidden = false;
+  }
+}
+
+var exportResultsStyles = ":root{--font-primary:system-ui,\"Segoe UI\",roboto,helvetica,arial,sans-serif;--font-secondary:Consolas,monaco,\"Ubuntu Mono\",\"Liberation Mono\",\"Courier New\",Courier,monospace;--body-text:#333;--bg-primary:#fff;--bg-secondary:#f6f8fa;--bg-tertiary:#d7d7d7;--link-primary:#004c9b;--red-text:#d30017}@media (prefers-color-scheme:dark){:root{--body-text:#dde8ff;--bg-primary:#0a2051;--bg-secondary:#072c7c;--bg-tertiary:#0041c9;--link-primary:#64b2ff;--red-text:#fe5b5f}}*{margin:0;padding:0}article,aside,nav,ol,p,pre,section,ul{margin-bottom:1rem}body{background:var(--bg-primary);font-family:var(--font-primary);font-size:1rem;line-height:1.5;margin:0 auto;max-width:70ch;overflow-wrap:break-word;overflow-x:hidden;padding:2rem;word-break:break-word}body,h1,h2,h3{color:var(--body-text)}h1,h2,h3{line-height:1;margin-bottom:8px;padding-bottom:2px;padding-top:.875rem}h1{font-size:2.25rem}h2{font-size:1.85rem}h3{font-size:1.55rem}a{color:var(--link-primary)}a:focus,a:hover{text-decoration:none}footer,header{background:var(--bg-secondary);padding:2rem calc(50vw - 50%)}header{border-bottom:1px solid var(--bg-tertiary);margin:-2rem calc(-50vw + 50%) 2rem}footer{border-top:1px solid var(--bg-tertiary);margin:3rem calc(-50vw + 50%) -2rem;text-align:center}header>:first-child{margin-top:0;padding-top:0}header>:last-child{margin-bottom:0}code,kbd,pre,samp{background:var(--bg-secondary);border:1px solid var(--bg-tertiary);border-radius:4px;font-family:var(--font-secondary);font-size:.9rem;padding:3px 6px}pre{display:block;max-width:100%;overflow:auto;padding:1rem 1.4rem}code pre,pre code{background:inherit;border:0;color:inherit;font-size:inherit;margin:0;padding:0}code pre{display:inline}details{background:var(--bg-primary);border:2px solid var(--link-primary);border-radius:4px;padding:.6rem 1rem}summary{cursor:pointer;font-weight:700}details[open]{padding-bottom:.75rem}details[open] summary{margin-bottom:6px}details[open]>:last-child{margin-bottom:0}.two-columns{display:flex}.column{flex:1;margin-inline-end:20px}.count{max-width:220px}.column dl{width:100%}dl{padding-top:10px}dt{font-weight:700}dd{padding-bottom:10px}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}ul li{margin-bottom:.5rem}ol,ul{padding-left:2rem}li li:has(pre,img,iframe,video,audio){list-style:none;margin-top:1rem}ol li:not(li li){margin-bottom:3rem}iframe,img{border:0;display:block;max-width:50%}.red-text{color:var(--red-text)}.visually-hidden{clip:rect(1px,1px,1px,1px);border:0;-webkit-clip-path:inset(50%);clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}";
+
+/* ************************************************************ */
+/*  Export results as CSV or HTML via Blob API.                 */
+/* ************************************************************ */
+
+// Generate meta date for both HTML and CSV templates.
+function generateMetaData() {
+  const today = new Date();
+  const day = String(today.getDate()).padStart(2, '0');
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const year = today.getFullYear();
+  const date = new Date().toLocaleString();
+  const numericDate = `${month}-${day}-${year}`;
+
+  // Page title & URL
+  const title = document.querySelector('head title');
+  const titleCheck = !title || title.textContent.trim().length === 0;
+  const metaTitle = !titleCheck ? title.textContent : '';
+  const pageURL = window.location.href;
+
+  return { date, numericDate, titleCheck, metaTitle, pageURL };
+}
+
+// Generate HTML template for download.
+function generateHTMLTemplate(results, dismissResults) {
+  const errors = results.filter((issue) => issue.type === 'error');
+  const warnings = results.filter((issue) => issue.type === 'warning');
+  const count = { error: errors.length, warning: warnings.length, dismiss: dismissResults.length };
+
+  function generateList(issues, type) {
+    const types = {
+      error: Lang._('ERRORS'),
+      warning: Lang._('WARNINGS'),
+      dismissed: Lang._('DISMISSED'),
+    };
+    const heading = types[type];
+    const hasIssues = issues.length > 0;
+
+    if (!hasIssues) return '';
+
+    let list = `<h2>${heading}</h2>`;
+    let listOpeningTag = '<ol>';
+    let listClosingTag = '</ol>';
+
+    if (type === 'dismissed') {
+      listOpeningTag = `<details><summary>${Lang.sprintf('PANEL_DISMISS_BUTTON', count.dismiss)}</summary><ol>`;
+      listClosingTag = '</details>';
+    }
+
+    // Opening tag
+    list += listOpeningTag;
+
+    issues.forEach((issue) => {
+      let elementPreview = '';
+      if (issue.element) {
+        const allowedTags = ['IMG', 'IFRAME', 'AUDIO', 'VIDEO'];
+        if (allowedTags.includes(issue.element.tagName)) {
+          elementPreview = `
+              <li>
+                <strong>${Lang._('PREVIEW')}:</strong>
+                ${generateElementPreview(issue)}
+              </li>
+              <li>
+                <strong>${Lang._('ELEMENT')}:</strong>
+                <pre><code>${escapeHTML(issue.htmlPath)}</code></pre>
+              </li>`;
+        } else {
+          elementPreview = `
+              <li>
+                <strong>${Lang._('ELEMENT')}:</strong>
+                <pre><code>${escapeHTML(issue.htmlPath)}</code></pre>
+              </li>`;
+        }
+      }
+      const cssPath = issue.cssPath
+        ? `<li>
+            <strong>${Lang._('PATH')}:</strong>
+            <pre><code>${issue.cssPath}</code></pre>
+          </li>` : '';
+
+      list += `<li>
+                <p>${issue.content.replace('<hr aria-hidden="true">', ' | ')}</p>
+                <ul>${elementPreview}${cssPath}</ul>
+              </li>`;
+    });
+
+    // Closing tag.
+    list += listClosingTag;
+    return list;
+  }
+
+  const errorsList = generateList(errors, 'error');
+  const warningList = generateList(warnings, 'warning');
+  const dismissedList = generateList(dismissResults, 'dismissed');
+
+  // Meta information.
+  const meta = generateMetaData();
+  const metaTitle = !meta.titleCheck
+    ? `<dt>${Lang._('PAGE_TITLE')}</dt><dd>${meta.metaTitle}</dd>` : '';
+  const metaErrors = count.error !== 0
+    ? `<dt>${Lang._('ERRORS')}</dt><dd>${count.error}</dd>` : '';
+  const metaWarnings = count.warning !== 0
+    ? `<dt>${Lang._('WARNINGS')}</dt><dd>${count.warning}</dd>` : '';
+  const metaDismissed = count.dismiss !== 0
+    ? `<dt>${Lang._('DISMISSED')}</dt><dd>${count.dismiss}</dd>` : '';
+  const tool = '<a href="https://sa11y.netlify.app">Sa11y</a>';
+
+  const htmlTemplate = `
+      <!DOCTYPE html>
+      <html lang="${Lang._('LANG_CODE')}">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>${Lang._('RESULTS')}: ${meta.metaTitle}</title>
+        <style>${exportResultsStyles}</style>
+      </head>
+      <body>
+        <header>
+          <h1>${Lang._('RESULTS')}</h1>
+          <dl class="two-columns">
+            <div class="column">
+              ${metaTitle}
+              <dt>URL</dt>
+              <dd><a href="${meta.pageURL}">${meta.pageURL}</a></dd>
+              <dt>${Lang._('DATE')}</dt>
+              <dd>${meta.date}</dd>
+            </div>
+            <div class="column count">
+              ${metaErrors}
+              ${metaWarnings}
+              ${metaDismissed}
+            </div>
+        </dl>
+        </header>
+        ${errorsList}
+        ${warningList}
+        ${dismissedList}
+        <footer>
+          <p>${Lang.sprintf('GENERATED', tool)}</p>
+        </footer>
+      </body>
+      </html>
+    `;
+  return htmlTemplate;
+}
+
+/* HTML Blob */
+function downloadHTMLTemplate(results, dismissResults) {
+  const htmlContent = generateHTMLTemplate(results, dismissResults);
+  const meta = generateMetaData();
+
+  // Create blob
+  const blob = new Blob([htmlContent], { type: 'text/html' });
+  const link = document.createElement('a');
+  const title = !meta.titleCheck ? `_${meta.metaTitle.trim().replace(/ /g, '')}` : '';
+  link.href = window.URL.createObjectURL(blob);
+  link.download = `Sa11y_${meta.numericDate + title}.html`;
+  document.body.appendChild(link);
+  link.click();
+
+  // Remove blob
+  setTimeout(() => {
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(link.href);
+  }, 100);
+}
+
+/* CSV Blob */
+function downloadCSVTemplate(results) {
+  const meta = generateMetaData();
+  // CSV header row
+  const filteredObjects = results.filter((issue) => issue.type === 'warning' || issue.type === 'error')
+    .map((issue) => {
+      const { type, content, htmlPath, cssPath } = issue;
+
+      // Make issue messages more readable in CSV format.
+      const prepContent = content
+        .replaceAll(/<span\s+class="visually-hidden"[^>]*>.*?<\/span>/gi, '')
+        .replaceAll('<hr aria-hidden="true">', ' | ');
+      const stripHTML = stripHTMLtags(String(prepContent));
+      const encoded = decodeHTML(stripHTML);
+
+      // Column headers.
+      const columns = {
+        Title: `"${meta.metaTitle}"`,
+        URL: `"${meta.pageURL}"`,
+        Type: `"${String(type)}"`,
+        Issue: `"${encoded}"`,
+        Element: `"${htmlPath}"`,
+      };
+      if (cssPath) columns.Path = `"${cssPath}"`;
+      return columns;
+    });
+
+  // CSV content
+  const headers = Object.keys(filteredObjects[0]);
+  const csvContent = `${headers.join(',')}\n${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(',')).join('\n')}`;
+
+  // Create blob
+  const blob = new Blob([csvContent], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.href = window.URL.createObjectURL(blob);
+  const fileNameTitle = !meta.titleCheck ? `_${meta.metaTitle.trim().replace(/ /g, '')}` : '';
+  link.setAttribute('download', `Sa11y_${meta.numericDate + fileNameTitle}.csv`);
+  document.body.appendChild(link);
+  link.click();
+
+  // Remove blob
+  setTimeout(() => {
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(link.href);
+  }, 100);
+}
+
+// Attach event listeners.
+let exportHTMLHandler;
+let exportCSVHandler;
+function exportResults(results, dismissResults) {
+  exportHTMLHandler = () => {
+    downloadHTMLTemplate(results, dismissResults);
+  };
+  exportCSVHandler = () => {
+    downloadCSVTemplate(results);
+  };
+
+  Constants.Panel.exportHTML.addEventListener('click', exportHTMLHandler);
+  Constants.Panel.exportCSV.addEventListener('click', exportCSVHandler);
+}
+
+// Imported by Reset function.
+function removeExportListeners() {
+  Constants.Panel.exportHTML.removeEventListener('click', exportHTMLHandler);
+  Constants.Panel.exportCSV.removeEventListener('click', exportCSVHandler);
+}
+
 var styles = ":host{background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);bottom:0;display:block;height:-moz-fit-content;height:fit-content;position:fixed;width:100%;z-index:999999}*{-webkit-font-smoothing:auto!important;color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;font-size:var(--sa11y-normal-text);line-height:22px!important}#dialog{margin:20px auto;max-width:900px;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none}p{margin-top:0}.error{background:var(--sa11y-error);border:2px dashed #f08080;color:var(--sa11y-error-text);margin-bottom:0;padding:5px}";
 
-var sharedStyles = ".visually-hidden{clip:rect(1px,1px,1px,1px);border:0;-webkit-clip-path:inset(50%);clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}[hidden]{display:none!important}.header-text,.header-text-inline,h2{color:var(--sa11y-panel-primary);display:block;font-size:var(--sa11y-large-text);font-weight:600;margin-bottom:3px}.header-text-inline{display:inline-block!important}.kbd,code,kbd{background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);padding:1.6px 4.8px}code{font-family:monospace}.bold{font-weight:600}.red-text{color:var(--sa11y-red-text)}.red-text,.yellow-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text)}.yellow-text{color:var(--sa11y-yellow-text)}.close-btn{background:none;border:1px solid var(--sa11y-button-outline);border-radius:50%;color:var(--sa11y-panel-primary);cursor:pointer;float:var(--sa11y-float-rtl);font-size:var(--sa11y-normal-text);font-weight:400;height:32px;margin:0;position:relative;transition:all .2s ease-in-out;width:32px}.close-btn:focus,.close-btn:hover{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{background:var(--sa11y-setting-switch-bg-off);bottom:-7px;content:\"\";left:-7px;-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute;right:-7px;top:-7px}@media screen and (forced-colors:active){.close-btn:after{filter:invert(1)}}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:not(#settings-toggle):not(#outline-toggle):not(.switch):focus,#container select:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #outline-toggle:focus,#container #settings-toggle:focus,#container .switch:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:active,.tippy-box[data-theme~=sa11y-theme] button:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #outline-toggle:focus:not(:focus-visible),#container #settings-toggle:focus:not(:focus-visible),#container [tabindex=\"-1\"]:focus:not(:focus-visible),#container [tabindex=\"0\"]:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container select:focus:not(:focus-visible){box-shadow:none;outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible){box-shadow:none;outline:0}#container [tabindex=\"-1\"]:focus-visible,#container [tabindex=\"0\"]:focus-visible,#container a:focus-visible,#container button:not(#settings-toggle):not(#outline-toggle):not(.switch):focus-visible,#container select:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #outline-toggle:focus-visible,#container #settings-toggle:focus-visible,#container .switch:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus-visible,.tippy-box[data-theme~=sa11y-theme] a:focus-visible,.tippy-box[data-theme~=sa11y-theme] button:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#outline-toggle:focus,#settings-toggle:focus{border:3px solid transparent}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container select:focus,.close-btn:focus,.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:focus{outline:3px solid transparent!important}}";
+var sharedStyles = ".visually-hidden{clip:rect(1px,1px,1px,1px);border:0;-webkit-clip-path:inset(50%);clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}[hidden]{display:none!important}.header-text,.header-text-inline,h2{color:var(--sa11y-panel-primary);display:block;font-size:var(--sa11y-large-text);font-weight:600;margin-bottom:3px}.header-text-inline{display:inline-block!important}code{font-family:monospace!important}.kbd,code,kbd{background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);padding:1.6px 4.8px}.bold{font-weight:600}.red-text{color:var(--sa11y-red-text)}.red-text,.yellow-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text)}.yellow-text{color:var(--sa11y-yellow-text)}.close-btn{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;color:var(--sa11y-panel-primary);cursor:pointer;float:var(--sa11y-float-rtl);font-size:var(--sa11y-normal-text);font-weight:400;height:32px;margin:0;position:relative;transition:all .2s ease-in-out;width:32px}.close-btn:focus,.close-btn:hover{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{background:var(--sa11y-setting-switch-bg-off);bottom:-7px;content:\"\";left:-7px;-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute;right:-7px;top:-7px}@media screen and (forced-colors:active){.close-btn:after{filter:invert(1)}}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:not(#settings-toggle):not(#outline-toggle):not(.switch):focus,#container select:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #outline-toggle:focus,#container #settings-toggle:focus,#container .switch:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:active,.tippy-box[data-theme~=sa11y-theme] button:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #outline-toggle:focus:not(:focus-visible),#container #settings-toggle:focus:not(:focus-visible),#container [tabindex=\"-1\"]:focus:not(:focus-visible),#container [tabindex=\"0\"]:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container select:focus:not(:focus-visible){box-shadow:none;outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible){box-shadow:none;outline:0}#container [tabindex=\"-1\"]:focus-visible,#container [tabindex=\"0\"]:focus-visible,#container a:focus-visible,#container button:not(#settings-toggle):not(#outline-toggle):not(.switch):focus-visible,#container select:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #outline-toggle:focus-visible,#container #settings-toggle:focus-visible,#container .switch:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus-visible,.tippy-box[data-theme~=sa11y-theme] a:focus-visible,.tippy-box[data-theme~=sa11y-theme] button:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#outline-toggle:focus,#settings-toggle:focus{border:3px solid transparent}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container select:focus,.close-btn:focus,.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:focus{outline:3px solid transparent!important}}";
 
 class ConsoleErrors extends HTMLElement {
   constructor(error) {
@@ -1406,7 +1773,7 @@ function mainToggle(checkAll, resetAll) {
       Constants.Panel.toggle.setAttribute('aria-expanded', 'false');
       resetAll();
 
-      if (Constants.Panel.notifCount.innerHTML.trim() === '') {
+      if (Constants.Panel.notifCount.innerHTML.trim().length === 0) {
         Constants.Panel.notifBadge.style.display = 'none';
       } else {
         Constants.Panel.notifBadge.style.display = 'flex';
@@ -1428,25 +1795,17 @@ function mainToggle(checkAll, resetAll) {
     Constants.Panel.panel.style.transform = '';
   }
 
+  // Alt + A to enable accessibility checker.
   document.onkeydown = (e) => {
     const evt = e || window.event;
-    if (evt.key === 'Escape' && Constants.Panel.panel.classList.contains('active')) {
-      Constants.Panel.toggle.setAttribute('aria-expanded', 'false');
-      Constants.Panel.toggle.classList.remove('on');
-      Constants.Panel.toggle.click();
-      resetAll();
-    }
-
-    // Alt + A to enable accessibility checker.
     if (evt.altKey && evt.code === 'KeyA') {
       Constants.Panel.toggle.click();
       Constants.Panel.toggle.focus();
-      evt.preventDefault();
     }
   };
 }
 
-var panelStyles = "a,button,code,div,h1,h2,kbd,label,li,ol,p,span,strong,svg,ul{all:unset;box-sizing:border-box!important}:after,:before{all:unset}div{display:block}*{-webkit-font-smoothing:auto!important;font-family:var(--sa11y-font-face)!important;line-height:22px!important}label,li,ol,p,ul{font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;text-align:start;word-break:normal}.sa11y-overflow{overflow:auto}#toggle{align-items:center;background:linear-gradient(0deg,#e040fb,#00bcd4);background-color:var(--sa11y-blue);background-size:150% 150%;border-radius:50%;bottom:15px;color:#fff;cursor:pointer;display:flex;height:55px;inset-inline-end:18px;justify-content:center;margin:0;overflow:visible;position:fixed;transition:all .2s ease-in-out;width:55px;z-index:2147483644}#toggle.left,#toggle.top-left{inset-inline-start:18px}#toggle.top-left,#toggle.top-right{bottom:unset;top:15px}@media screen and (forced-colors:active){#toggle{border:2px solid transparent}}#toggle svg{height:35px;width:35px}#toggle svg path{fill:var(--sa11y-panel-bg)}#toggle:focus,#toggle:hover{animation:sa11y-toggle-gradient 3s ease}#toggle:disabled:focus,#toggle:disabled:hover{animation:none}#toggle.on{background:linear-gradient(180deg,#e040fb,#00bcd4);background-color:var(--sa11y-blue)}#notification-badge{align-items:center;background-color:#eb0000;border:1px solid transparent;border-radius:50%;color:#fff;display:none;font-size:13px;font-weight:400;height:20px;justify-content:center;position:absolute;right:-3px;top:-3px;width:20px}#notification-badge.notification-badge-warning{background-color:var(--sa11y-warning-hover);border:1px solid var(--sa11y-warning);color:var(--sa11y-warning-text)}#panel{background:var(--sa11y-panel-bg);border-radius:4px;bottom:25px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15);inset-inline-end:42px;opacity:0;overflow:visible;position:fixed;transform:scale(0);transform-origin:100% 100%;transition:transform .2s,opacity background .2s .2s;visibility:hidden;z-index:2147483643}#panel.left,#panel.top-left{inset-inline-start:42px}#panel.top-left,#panel.top-right{bottom:unset;top:50px}#panel.active{height:auto;opacity:1;transform:scale(1);transform-origin:bottom right;transition:transform .2s,opacity .2s;visibility:visible}@media screen and (forced-colors:active){#panel{border:2px solid transparent}}#panel.active.left,[dir=rtl] #panel.active{transform-origin:bottom left}#panel.active.top-left{transform-origin:top left}#panel.active.top-right{transform-origin:top right}#panel-alert{display:none;opacity:0}#panel-alert.active{display:block;opacity:1}#panel-alert-content{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-primary);max-height:200px;overflow-y:auto;padding:15px 20px 15px 15px;position:relative}#panel-alert-preview .close-tooltip{display:none}#panel-alert-preview,#panel-alert-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}.panel-alert-preview{background:var(--sa11y-panel-bg-secondary);border:1px dashed var(--sa11y-panel-bg-splitter);border-radius:5px;margin-top:15px;padding:10px}button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg);border:1px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}button[data-sa11y-dismiss]:focus,button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}h2{display:block;font-size:var(--sa11y-large-text);margin-bottom:3px}h2,strong{font-weight:600}a:not(#outline-list a){border-bottom:0;color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none!important}hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}#dismiss-button,#skip-button{-webkit-margin-end:8px;-webkit-margin-start:2px;background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:50px;cursor:pointer;display:none;height:36px;margin-inline-end:8px;margin-inline-start:2px;overflow:visible;position:relative;text-align:center;transition:all .1s ease-in-out;width:36px}#dismiss-button.active,#skip-button.active{display:block}#dismiss-button:disabled,#skip-button:disabled{background:none;border:0;box-shadow:none;cursor:default}#dismiss-button:before,#skip-button:before{bottom:-5px;content:\"\";left:-5px;position:absolute;right:-5px;top:-5px}#dismiss-button:focus:not(:disabled),#dismiss-button:hover:not(:disabled),#skip-button:focus:not(:disabled),#skip-button:hover:not(:disabled){background-color:var(--sa11y-shortcut-hover)}#panel.left #dismiss-button,#panel.left #skip-button,#panel.top-left #dismiss-button,#panel.top-left #skip-button{-webkit-margin-start:8px;-webkit-margin-end:2px;margin-inline-end:2px;margin-inline-start:8px}.dismiss-icon{background:var(--sa11y-setting-switch-bg-off);display:inline-block;height:24px;margin-bottom:-4px;-webkit-mask:var(--sa11y-dismiss-icon) center no-repeat;mask:var(--sa11y-dismiss-icon) center no-repeat;width:24px}@media screen and (forced-colors:active){.dismiss-icon{filter:invert(1)}}#panel-content{align-items:center;color:var(--sa11y-panel-primary);display:flex;padding:6px}#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{height:26px;margin:0 auto;width:26px}#panel-content.errors .panel-icon{background:var(--sa11y-panel-error);margin-top:-2px;-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat}#panel-content.good .panel-icon{background:var(--sa11y-good);-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat}#panel-content.warnings .panel-icon{background:var(--sa11y-warning-svg-color);-webkit-mask:var(--sa11y-warning-svg) center no-repeat;mask:var(--sa11y-warning-svg) center no-repeat;transform:scaleX(var(--sa11y-icon-direction))}@media screen and (forced-colors:active){#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{filter:invert(1)}}#panel.left #panel-content,#panel.top-left #panel-content{flex-direction:row-reverse}#status{font-size:var(--sa11y-large-text)}#status,.panel-count{color:var(--sa11y-panel-primary)}.panel-count{background-color:var(--sa11y-panel-badge);border-radius:4px;font-size:15px;font-weight:400;margin-left:3px;margin-right:3px;padding:2px 4px}#outline-panel,#page-issues,#settings-panel{color:var(--sa11y-panel-primary);display:none;opacity:0}#outline-panel.active,#page-issues.active,#settings-panel.active{display:block;opacity:1}.panel-header{padding:10px 15px 0;text-align:start}#outline-content,#page-issues-content,#settings-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);padding:0 15px 10px}#page-issues-content{max-height:160px;overflow-y:auto}#outline-content{max-height:250px;overflow-y:auto}#outline-panel .outline-list-item.sa11y-red-text,#settings-panel .sa11y-red-text{color:var(--sa11y-red-text)}#outline-list{display:block;margin:0;padding:0}#outline-list a{cursor:pointer;display:block;text-decoration:none}#outline-list li{display:block;list-style-type:none;margin-bottom:3px;margin-top:0;padding:0}#outline-list li:first-child{margin-top:5px}#outline-list li a:focus,#outline-list li a:hover{background:var(--sa11y-panel-outline-hover);border-radius:5px;box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);display:block}#outline-list .outline-2{-webkit-margin-start:15px;margin-inline-start:15px}#outline-list .outline-3{-webkit-margin-start:30px;margin-inline-start:30px}#outline-list .outline-4{-webkit-margin-start:45px;margin-inline-start:45px}#outline-list .outline-5{-webkit-margin-start:60px;margin-inline-start:60px}#outline-list .outline-6{-webkit-margin-start:75px;margin-inline-start:75px}.badge{background-color:var(--sa11y-panel-badge);border:1px solid transparent;border-radius:10px;color:var(--sa11y-panel-primary);display:inline;font-size:13px;font-weight:700;min-width:10px;padding:2px 5px;text-align:center;white-space:nowrap}.error-badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.warning-badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.error-icon{background:var(--sa11y-error-text);-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat}.error-icon,.hidden-icon{display:inline-block;height:16px;margin-bottom:-3px;width:16px}.hidden-icon{background:var(--sa11y-panel-primary);-webkit-mask:var(--sa11y-hidden-icon-svg) center no-repeat;mask:var(--sa11y-hidden-icon-svg) center no-repeat}.error-badge .hidden-icon{background:var(--sa11y-error-text)}.warning-badge .hidden-icon{background:var(--sa11y-panel-bg)}@media screen and (forced-colors:active){.hidden-icon{filter:invert(1)}}#panel-controls{border-radius:0 0 4px 4px;display:flex;overflow:hidden}#outline-toggle,#settings-toggle{background:var(--sa11y-panel-bg-secondary);background-color:var(--sa11y-panel-bg-secondary);border-bottom:1px solid var(--sa11y-panel-bg-splitter);border-top:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-secondary);cursor:pointer;display:block;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;line-height:0;margin:0;opacity:1;outline:0;padding:0;position:relative;text-align:center;transition:background .2s;width:100%}#outline-toggle.outline-active,#outline-toggle.settings-active,#outline-toggle:hover,#settings-toggle.outline-active,#settings-toggle.settings-active,#settings-toggle:hover{background-color:var(--sa11y-shortcut-hover)}#outline-toggle.outline-active,#outline-toggle.settings-active,#settings-toggle.outline-active,#settings-toggle.settings-active{font-weight:500}#outline-toggle{-webkit-border-end:1px solid var(--sa11y-panel-bg-splitter);border-inline-end:1px solid var(--sa11y-panel-bg-splitter)}label{display:inline-block;width:100%}#settings-panel .switch,label{color:var(--sa11y-panel-primary);cursor:pointer;font-weight:400;margin:0}#settings-panel .switch{background:none;border:0;border-radius:5px;font-size:var(--sa11y-normal-text);height:44px;padding:7px 10px;position:relative;text-align:end;width:105px}#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{content:\"\";display:inline-block;height:27px;margin:0 4px 4px;vertical-align:middle;width:27px}#settings-panel .switch[aria-pressed=true]:after{background:var(--sa11y-setting-switch-bg-on);-webkit-mask:var(--sa11y-setting-switch-on-svg) center no-repeat;mask:var(--sa11y-setting-switch-on-svg) center no-repeat}#settings-panel .switch[aria-pressed=false]:after{background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-setting-switch-off-svg) center no-repeat;mask:var(--sa11y-setting-switch-off-svg) center no-repeat}@media screen and (forced-colors:active){#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{filter:invert(1)}}#settings-panel #settings-options li{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:flex;justify-content:space-between;list-style-type:none;padding:1px 0}#settings-panel #settings-options li:last-child{border:none}#page-issues{align-items:center;color:var(--sa11y-panel-primary)}#page-issues-list{display:block;margin-top:4px}#page-issues-list li{display:block;margin:0 0 10px}#page-issues-list strong{display:block}#panel-colour-filters{align-items:center;color:var(--sa11y-panel-primary);display:none;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}#panel-colour-filters.active{display:flex}#panel-colour-filters p{padding:6px 20px 6px 6px;width:100%}#panel-colour-filters[data-colour=protanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image-slice:1}#panel-colour-filters[data-colour=deuteranopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image-slice:1}#panel-colour-filters[data-colour=tritanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image-slice:1}#panel-colour-filters[data-colour=monochromacy]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image-slice:1}#panel-colour-filters[data-colour=protanopia] .panel-icon{background:var(--sa11y-panel-error)}#panel-colour-filters[data-colour=deuteranopia] .panel-icon{background:var(--sa11y-good-hover)}#panel-colour-filters[data-colour=tritanopia] .panel-icon{background:var(--sa11y-blue)}#panel-colour-filters[data-colour=monochromacy] .panel-icon{background:linear-gradient(90deg,#38a459 20%,red 50%,#0077c8 80%)}#panel-colour-filters .panel-icon{-webkit-margin-end:5px;-webkit-margin-start:10px;height:30px;margin-inline-end:5px;margin-inline-start:10px;-webkit-mask:var(--sa11y-low-vision-icon) center no-repeat;mask:var(--sa11y-low-vision-icon) center no-repeat;width:30px}@media screen and (forced-colors:active){#panel-colour-filters .panel-icon{forced-color-adjust:none}}.select-dropdown:after{border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid var(--sa11y-setting-switch-bg-off);content:\" \";height:0;inset-inline-end:25px;margin-top:22.5px;position:absolute;width:0}#colour-filter-select{-webkit-padding-end:25px;-webkit-padding-start:5px;-webkit-appearance:none;-moz-appearance:none;appearance:none;background:var(--sa11y-panel-bg);border:2px solid var(--sa11y-setting-switch-bg-off);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;padding-inline-end:25px;padding-inline-start:5px;position:relative;text-align:end;vertical-align:middle}#colour-filter-select.active{box-shadow:0 0 0 2px var(--sa11y-setting-switch-bg-on)}#colour-filter-item label,#colour-filter-item select{margin-bottom:9px;margin-top:10px}#readability-panel{display:none;opacity:0}#readability-panel.active{display:block;opacity:1}#readability-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-primary);padding:10px 15px;width:100%}#readability-details{list-style-type:none;margin:0;padding:0;white-space:normal}#readability-details li{-webkit-padding-end:10px;display:inline-block;list-style-type:none;margin:0;padding-inline-end:10px}.readability-score{-webkit-margin-start:5px;background-color:var(--sa11y-panel-badge);border-radius:4px;color:var(--sa11y-panel-primary);margin-inline-start:5px;padding:2px 5px}#readability-info{-webkit-margin-start:10px;margin-inline-start:10px}#skip-to-page-issues{display:none}#panel.has-page-issues #skip-to-page-issues{clip:rect(0,0,0,0);background:var(--sa11y-panel-bg);border:0;border-radius:5px;display:block;height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}#panel.has-page-issues #skip-to-page-issues:focus{clip:auto;height:auto;margin:0;overflow:visible;padding:5px 7px;white-space:normal;width:auto;z-index:1}.hide-settings-border{border-bottom:0!important;padding:0 15px!important}::-webkit-scrollbar{width:7px}::-webkit-scrollbar-thumb{background-color:var(--sa11y-button-outline);border-radius:6px}*{scrollbar-color:var(--sa11y-button-outline);scrollbar-width:thin}.scrollable:before{animation:fade 1s ease-in-out;background-image:linear-gradient(180deg,transparent 0,transparent 70%,var(--sa11y-panel-scrollable) 100%);background-position:bottom;bottom:auto;content:\"\";height:250px;left:0;position:absolute;right:0;top:auto;transition:opacity 1s ease-in-out;z-index:-1}#page-issues-content.scrollable:before{height:160px}#panel-alert.scrollable:before{height:200px}@keyframes sa11y-toggle-gradient{0%{background-position:50% 0}50%{background-position:50% 100%}to{background-position:50% 0}}@keyframes fade{0%{opacity:0}to{opacity:1}}@media (prefers-reduced-motion:reduce){*{animation:none!important;transform:none!important;transition:none!important}}#panel{width:375px}#container:lang(en) #panel{width:305px}#container:lang(da) #panel,#container:lang(de) #panel,#container:lang(nb) #panel,#container:lang(pl) #panel,#container:lang(sv) #panel,#container:lang(zh) #panel{width:335px}#container:lang(es) .switch{width:225px!important}#container:not(:lang(en)):not(:lang(de)) .switch{width:205px}";
+var panelStyles = "a,button,code,div,h1,h2,kbd,label,li,ol,p,pre,span,strong,svg,ul{all:unset;box-sizing:border-box!important}:after,:before{all:unset}div{display:block}*{-webkit-font-smoothing:auto!important;font-family:var(--sa11y-font-face)!important;line-height:22px!important}label,li,ol,p,ul{font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;text-align:start;word-break:break-word}.sa11y-overflow{overflow:auto}iframe,img,video{border:0;display:block;height:auto;max-width:100%}audio{max-width:100%}#toggle{align-items:center;background:linear-gradient(0deg,#e040fb,#00bcd4);background-color:var(--sa11y-blue);background-size:150% 150%;border-radius:50%;bottom:15px;color:#fff;cursor:pointer;display:flex;height:55px;inset-inline-end:18px;justify-content:center;margin:0;overflow:visible;position:fixed;transition:all .2s ease-in-out;width:55px;z-index:2147483644}#toggle.left,#toggle.top-left{inset-inline-start:18px}#toggle.top-left,#toggle.top-right{bottom:unset;top:15px}@media screen and (forced-colors:active){#toggle{border:2px solid transparent}}#toggle svg{height:35px;width:35px}#toggle svg path{fill:var(--sa11y-panel-bg)}#toggle:focus,#toggle:hover{animation:sa11y-toggle-gradient 3s ease}#toggle:disabled:focus,#toggle:disabled:hover{animation:none}#toggle.on{background:linear-gradient(180deg,#e040fb,#00bcd4);background-color:var(--sa11y-blue)}#notification-badge{align-items:center;background-color:#eb0000;border:1px solid transparent;border-radius:50%;color:#fff;display:none;font-size:13px;font-weight:400;height:20px;justify-content:center;position:absolute;right:-3px;top:-3px;width:20px}#notification-badge.notification-badge-warning{background-color:var(--sa11y-warning-hover);border:1px solid var(--sa11y-warning);color:var(--sa11y-warning-text)}#panel{background:var(--sa11y-panel-bg);border-radius:4px;bottom:25px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15);inset-inline-end:42px;opacity:0;overflow:visible;position:fixed;transform:scale(0);transform-origin:100% 100%;transition:transform .2s,opacity background .2s .2s;visibility:hidden;z-index:2147483643}#panel.left,#panel.top-left{inset-inline-start:42px}#panel.top-left,#panel.top-right{bottom:unset;top:50px}#panel.active{height:auto;opacity:1;transform:scale(1);transform-origin:bottom right;transition:transform .2s,opacity .2s;visibility:visible}@media screen and (forced-colors:active){#panel{border:2px solid transparent}}#panel.active.left,[dir=rtl] #panel.active{transform-origin:bottom left}#panel.active.top-left{transform-origin:top left}#panel.active.top-right{transform-origin:top right}#panel-alert{display:none;opacity:0}#panel-alert.active{display:block;opacity:1}#panel-alert-content{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-primary);max-height:400px;overflow-y:auto;padding:15px 20px 15px 15px;position:relative}#panel-alert-preview .close-tooltip{display:none}#panel-alert-preview,#panel-alert-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}.panel-alert-preview{background:var(--sa11y-panel-bg-secondary);border:1px dashed var(--sa11y-panel-bg-splitter);border-radius:5px;margin-top:15px;padding:10px}.element-preview{background-color:var(--sa11y-panel-badge);border-radius:3.2px;margin-bottom:10px;overflow-wrap:break-word;padding:5px}button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}button[data-sa11y-dismiss]:focus,button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}h2{display:block;font-size:var(--sa11y-large-text);margin-bottom:3px}h2,strong{font-weight:600}a:not(#outline-list a){border-bottom:0;color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none!important}hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}#dismiss-button,#skip-button{background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:50px;cursor:pointer;display:none;height:36px;margin-inline-end:8px;margin-inline-start:2px;overflow:visible;position:relative;text-align:center;transition:all .1s ease-in-out;width:36px}#dismiss-button.active,#skip-button.active{display:block}#dismiss-button:disabled,#skip-button:disabled{background:none;border:0;box-shadow:none;cursor:default}#dismiss-button:before,#skip-button:before{bottom:-5px;content:\"\";left:-5px;position:absolute;right:-5px;top:-5px}#dismiss-button:focus:not(:disabled),#dismiss-button:hover:not(:disabled),#skip-button:focus:not(:disabled),#skip-button:hover:not(:disabled){background-color:var(--sa11y-shortcut-hover)}#panel.left #dismiss-button,#panel.left #skip-button,#panel.top-left #dismiss-button,#panel.top-left #skip-button{margin-inline-end:2px;margin-inline-start:8px}.dismiss-icon{background:var(--sa11y-setting-switch-bg-off);display:inline-block;height:24px;margin-bottom:-4px;-webkit-mask:var(--sa11y-dismiss-icon) center no-repeat;mask:var(--sa11y-dismiss-icon) center no-repeat;width:24px}@media screen and (forced-colors:active){.dismiss-icon{filter:invert(1)}}#panel-content{align-items:center;color:var(--sa11y-panel-primary);display:flex;padding:6px}#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{height:26px;margin:0 auto;width:26px}#panel-content.errors .panel-icon{background:var(--sa11y-panel-error);margin-top:-2px;-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat}#panel-content.good .panel-icon{background:var(--sa11y-good);-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat}#panel-content.warnings .panel-icon{background:var(--sa11y-warning-svg-color);-webkit-mask:var(--sa11y-warning-svg) center no-repeat;mask:var(--sa11y-warning-svg) center no-repeat;transform:scaleX(var(--sa11y-icon-direction))}@media screen and (forced-colors:active){#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{filter:invert(1)}}#panel.left #panel-content,#panel.top-left #panel-content{flex-direction:row-reverse}#status{font-size:var(--sa11y-large-text)}#status,.panel-count{color:var(--sa11y-panel-primary)}.panel-count{background-color:var(--sa11y-panel-badge);border-radius:4px;font-size:15px;font-weight:400;margin-left:3px;margin-right:3px;padding:2px 4px}#outline-panel,#page-issues,#settings-panel{color:var(--sa11y-panel-primary);display:none;opacity:0}#outline-panel.active,#page-issues.active,#settings-panel.active{display:block;opacity:1}.panel-header{padding:10px 15px 0;text-align:start}#outline-content,#page-issues-content,#settings-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);padding:0 15px 10px}#page-issues-content{max-height:160px;overflow-y:auto}#outline-content{max-height:250px;overflow-y:auto}#outline-panel .outline-list-item.sa11y-red-text,#settings-panel .sa11y-red-text{color:var(--sa11y-red-text)}#outline-list{display:block;margin:0;padding:0}#outline-list a{cursor:pointer;display:block;text-decoration:none}#outline-list li{display:block;list-style-type:none;margin-bottom:3px;margin-top:0;padding:0}#outline-list li:first-child{margin-top:5px}#outline-list li a:focus,#outline-list li a:hover{background:var(--sa11y-panel-outline-hover);border-radius:5px;box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);display:block}#outline-list .outline-2{margin-inline-start:15px}#outline-list .outline-3{margin-inline-start:30px}#outline-list .outline-4{margin-inline-start:45px}#outline-list .outline-5{margin-inline-start:60px}#outline-list .outline-6{margin-inline-start:75px}.badge{background-color:var(--sa11y-panel-badge);border:1px solid transparent;border-radius:10px;color:var(--sa11y-panel-primary);display:inline;font-size:13px;font-weight:700;min-width:10px;padding:2px 5px;text-align:center;white-space:nowrap}.error-badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.warning-badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.error-icon{background:var(--sa11y-error-text);-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat}.error-icon,.hidden-icon{display:inline-block;height:16px;margin-bottom:-3px;width:16px}.hidden-icon{background:var(--sa11y-panel-primary);-webkit-mask:var(--sa11y-hidden-icon-svg) center no-repeat;mask:var(--sa11y-hidden-icon-svg) center no-repeat}.error-badge .hidden-icon{background:var(--sa11y-error-text)}.warning-badge .hidden-icon{background:var(--sa11y-panel-bg)}@media screen and (forced-colors:active){.hidden-icon{filter:invert(1)}}#panel-controls{border-radius:0 0 4px 4px;display:flex;overflow:hidden}#outline-toggle,#settings-toggle{background:var(--sa11y-panel-bg-secondary);background-color:var(--sa11y-panel-bg-secondary);border-bottom:1px solid var(--sa11y-panel-bg-splitter);border-top:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-secondary);cursor:pointer;display:block;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;line-height:0;margin:0;opacity:1;outline:0;padding:0;position:relative;text-align:center;transition:background .2s;width:100%}#outline-toggle.outline-active,#outline-toggle.settings-active,#outline-toggle:hover,#settings-toggle.outline-active,#settings-toggle.settings-active,#settings-toggle:hover{background-color:var(--sa11y-shortcut-hover)}#outline-toggle.outline-active,#outline-toggle.settings-active,#settings-toggle.outline-active,#settings-toggle.settings-active{font-weight:500}#outline-toggle{border-inline-end:1px solid var(--sa11y-panel-bg-splitter)}#export-results-mode,label{color:var(--sa11y-panel-primary);display:inline-block;font-weight:400;margin:0;width:100%}label:not(#colour-filter-mode,#export-results-mode){cursor:pointer}#settings-panel #export-csv,#settings-panel #export-html{padding:0;text-align:center;width:unset}#settings-panel #export-csv span,#settings-panel #export-html span{background:var(--sa11y-panel-bg-secondary);border-radius:5px;box-shadow:inset 0 0 0 2px var(--sa11y-setting-switch-bg-off);display:block;margin:0 4px;padding:7px 9px;width:65px}#settings-panel #export-csv:focus span,#settings-panel #export-csv:focus-within span,#settings-panel #export-csv:hover span,#settings-panel #export-html:focus span,#settings-panel #export-html:focus-within span,#settings-panel #export-html:hover span{background:var(--sa11y-shortcut-hover)}#settings-panel .switch{background:none;border:0;border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:44px;margin:0;padding:7px 10px;position:relative;text-align:end;width:105px}#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{content:\"\";display:inline-block;height:27px;margin:0 4px 4px;vertical-align:middle;width:27px}#settings-panel .switch[aria-pressed=true]:after{background:var(--sa11y-setting-switch-bg-on);-webkit-mask:var(--sa11y-setting-switch-on-svg) center no-repeat;mask:var(--sa11y-setting-switch-on-svg) center no-repeat}#settings-panel .switch[aria-pressed=false]:after{background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-setting-switch-off-svg) center no-repeat;mask:var(--sa11y-setting-switch-off-svg) center no-repeat}@media screen and (forced-colors:active){#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{filter:invert(1)}}#settings-panel #settings-options li{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:flex;justify-content:space-between;list-style-type:none;padding:1px 0}#settings-panel #settings-options li:last-child{border:none}#page-issues{align-items:center;color:var(--sa11y-panel-primary)}#page-issues-list{display:block;margin-top:4px}#page-issues-list li{display:block;margin:0 0 10px}#page-issues-list strong{display:block}#panel-colour-filters{align-items:center;color:var(--sa11y-panel-primary);display:none;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}#panel-colour-filters.active{display:flex}#panel-colour-filters p{padding:6px 20px 6px 6px;width:100%}#panel-colour-filters[data-colour=protanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image-slice:1}#panel-colour-filters[data-colour=deuteranopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image-slice:1}#panel-colour-filters[data-colour=tritanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image-slice:1}#panel-colour-filters[data-colour=monochromacy]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image-slice:1}#panel-colour-filters[data-colour=protanopia] .panel-icon{background:var(--sa11y-panel-error)}#panel-colour-filters[data-colour=deuteranopia] .panel-icon{background:var(--sa11y-good-hover)}#panel-colour-filters[data-colour=tritanopia] .panel-icon{background:var(--sa11y-blue)}#panel-colour-filters[data-colour=monochromacy] .panel-icon{background:linear-gradient(90deg,#38a459 20%,red 50%,#0077c8 80%)}#panel-colour-filters .panel-icon{height:30px;margin-inline-end:5px;margin-inline-start:10px;-webkit-mask:var(--sa11y-low-vision-icon) center no-repeat;mask:var(--sa11y-low-vision-icon) center no-repeat;width:30px}@media screen and (forced-colors:active){#panel-colour-filters .panel-icon{forced-color-adjust:none}}.select-dropdown:after{border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid var(--sa11y-setting-switch-bg-off);content:\" \";height:0;inset-inline-end:25px;margin-top:22.5px;position:absolute;width:0}#colour-filter-select{-webkit-appearance:none;-moz-appearance:none;appearance:none;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-setting-switch-bg-off);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;margin-inline-end:4px;padding-inline-end:25px;padding-inline-start:5px;position:relative;text-align:end;vertical-align:middle}#colour-filter-select:focus,#colour-filter-select:hover{background:var(--sa11y-shortcut-hover)}#colour-filter-select.active{box-shadow:0 0 0 2px var(--sa11y-setting-switch-bg-on)}#colour-filter-item label,#colour-filter-item select{margin-bottom:9px;margin-top:10px}#readability-panel{display:none;opacity:0}#readability-panel.active{display:block;opacity:1}#readability-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-primary);padding:10px 15px;width:100%}#readability-details{list-style-type:none;margin:0;padding:0;white-space:normal}#readability-details li{display:inline-block;list-style-type:none;margin:0;padding-inline-end:10px}.readability-score{background-color:var(--sa11y-panel-badge);border-radius:4px;color:var(--sa11y-panel-primary);margin-inline-start:5px;padding:2px 5px}#readability-info{margin-inline-start:10px}#skip-to-page-issues{display:none}#panel.has-page-issues #skip-to-page-issues{clip:rect(0,0,0,0);background:var(--sa11y-panel-bg);border:0;border-radius:5px;display:block;height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}#panel.has-page-issues #skip-to-page-issues:focus{clip:auto;height:auto;margin:0;overflow:visible;padding:5px 7px;white-space:normal;width:auto;z-index:1}.hide-settings-border{border-bottom:0!important;padding:0 15px!important}::-webkit-scrollbar{height:6px;width:7px}::-webkit-scrollbar-thumb{background-color:var(--sa11y-button-outline);border-radius:6px}*{scrollbar-color:var(--sa11y-button-outline);scrollbar-width:thin}.scrollable:before{animation:fade 1s ease-in-out;background-image:linear-gradient(180deg,transparent 0,transparent 70%,var(--sa11y-panel-scrollable) 100%);background-position:bottom;bottom:auto;content:\"\";height:250px;left:0;position:absolute;right:0;top:auto;transition:opacity 1s ease-in-out;z-index:-1}#page-issues-content.scrollable:before{height:160px}#panel-alert.scrollable:before{height:200px}@keyframes sa11y-toggle-gradient{0%{background-position:50% 0}50%{background-position:50% 100%}to{background-position:50% 0}}@keyframes fade{0%{opacity:0}to{opacity:1}}@media (prefers-reduced-motion:reduce){*{animation:none!important;transform:none!important;transition:none!important}}#panel{width:375px}#container:lang(en) #panel{width:305px}#container:lang(da) #panel,#container:lang(de) #panel,#container:lang(nb) #panel,#container:lang(pl) #panel,#container:lang(sv) #panel,#container:lang(zh) #panel{width:335px}#container:lang(es) .switch{width:225px!important}#container:not(:lang(en)):not(:lang(de)) .switch{width:205px}";
 
 class ControlPanel extends HTMLElement {
   connectedCallback() {
@@ -1466,13 +1825,13 @@ class ControlPanel extends HTMLElement {
     const rememberReadability = store.getItem('sa11y-remember-readability') === 'On';
 
     // If admin wants users to check everything, without toggleable checks.
-    const checkAll = Constants.Global.checkAllHideToggles === true;
+    const checkAll = Constants.Global.checkAllHideToggles;
 
     // Panel position: left or right side.
     const { panelPosition } = Constants.Global;
 
     /* TOGGLEABLE PLUGINS */
-    const contrastPlugin = (Constants.Global.contrastPlugin === true) ? `
+    const contrastPlugin = Constants.Global.contrastPlugin ? `
       <li id="contrast-item" ${checkAll ? 'hidden' : ''}>
         <label id="check-contrast" for="contrast-toggle">${Lang._('CONTRAST')}</label>
         <button id="contrast-toggle"
@@ -1481,7 +1840,7 @@ class ControlPanel extends HTMLElement {
           aria-pressed="${rememberContrast ? 'true' : 'false'}">${rememberContrast ? Lang._('ON') : Lang._('OFF')}</button>
       </li>` : '';
 
-    const formLabelsPlugin = (Constants.Global.formLabelsPlugin === true) ? `
+    const formLabelsPlugin = Constants.Global.formLabelsPlugin ? `
       <li id="form-labels-item" ${checkAll ? 'hidden' : ''}>
         <label id="check-labels" for="labels-toggle">${Lang._('FORM_LABELS')}</label>
         <button id="labels-toggle"
@@ -1490,7 +1849,7 @@ class ControlPanel extends HTMLElement {
           aria-pressed="${rememberFormLabels ? 'true' : 'false'}">${rememberFormLabels ? Lang._('ON') : Lang._('OFF')}</button>
       </li>` : '';
 
-    const linksAdvancedPlugin = (Constants.Global.linksAdvancedPlugin === true) ? `
+    const linksAdvancedPlugin = Constants.Global.linksAdvancedPlugin ? `
       <li id="links-advanced-item" ${checkAll ? 'hidden' : ''}>
         <label id="check-changerequest" for="links-advanced-toggle">${Lang._('LINKS_ADVANCED')} <span class="badge">AAA</span></label>
         <button id="links-advanced-toggle"
@@ -1499,7 +1858,7 @@ class ControlPanel extends HTMLElement {
           aria-pressed="${rememberLinksAdvanced ? 'true' : 'false'}">${rememberLinksAdvanced ? Lang._('ON') : Lang._('OFF')}</button>
       </li>` : '';
 
-    const readabilityPlugin = (Constants.Readability.Plugin === true) ? `
+    const readabilityPlugin = Constants.Readability.Plugin ? `
       <li id="readability-item">
         <label id="check-readability" for="readability-toggle">${Lang._('LANG_READABILITY')} <span class="badge">AAA</span></label>
         <button id="readability-toggle"
@@ -1508,7 +1867,7 @@ class ControlPanel extends HTMLElement {
           aria-pressed="${rememberReadability ? 'true' : 'false'}">${rememberReadability ? Lang._('ON') : Lang._('OFF')}</button>
       </li>` : '';
 
-    const colourFilterPlugin = (Constants.Global.colourFilterPlugin === true) ? `
+    const colourFilterPlugin = Constants.Global.colourFilterPlugin ? `
       <li id="colour-filter-item">
         <label id="colour-filter-mode" for="colour-filter">${Lang._('COLOUR_FILTER')}</label>
         <div class="select-dropdown">
@@ -1522,11 +1881,22 @@ class ControlPanel extends HTMLElement {
         </div>
       </li>` : '';
 
-    const colourFilterPanel = (Constants.Global.colourFilterPlugin === true) ? `
+    const colourFilterPanel = Constants.Global.colourFilterPlugin ? `
       <div id="panel-colour-filters" role="region" aria-labelledby="colour-filter-mode">
         <div id="filter-icon" class="panel-icon" role="img"></div>
         <p>${Lang._('COLOUR_FILTER_MESSAGE')}</p>
       </div>` : '';
+
+    const exportResultsPlugin = Constants.Global.exportResultsPlugin ? `
+      <li id="export-results-item">
+        <span id="export-results-mode">${Lang._('EXPORT_RESULTS')}</span>
+        <button id="export-csv" class="switch" aria-describedby="export-results-mode">
+          <span>CSV</span>
+        </button>
+        <button id="export-html" class="switch" aria-describedby="export-results-mode">
+          <span>HTML</span>
+        </button>
+      </li>` : '';
 
     /* MAIN TOGGLE */
     const mainToggle = `
@@ -1589,6 +1959,7 @@ class ControlPanel extends HTMLElement {
                 aria-labelledby="dark-mode"
                 class="switch"></button>
             </li>
+            ${exportResultsPlugin}
             ${colourFilterPlugin}
           </ul>
         </div>
@@ -1689,7 +2060,7 @@ function settingsPanelToggles(checkAll, resetAll) {
   /* ***************** */
   /*  Contrast toggle  */
   /* ***************** */
-  if (Constants.Global.contrastPlugin === true) {
+  if (Constants.Global.contrastPlugin) {
     Constants.Panel.contrastToggle.onclick = async () => {
       if (store.getItem('sa11y-remember-contrast') === 'On') {
         store.setItem('sa11y-remember-contrast', 'Off');
@@ -1712,7 +2083,7 @@ function settingsPanelToggles(checkAll, resetAll) {
   /* ***************** */
   /*  Form Labels      */
   /* ***************** */
-  if (Constants.Global.formLabelsPlugin === true) {
+  if (Constants.Global.formLabelsPlugin) {
     Constants.Panel.labelsToggle.onclick = async () => {
       if (store.getItem('sa11y-remember-labels') === 'On') {
         store.setItem('sa11y-remember-labels', 'Off');
@@ -1735,7 +2106,7 @@ function settingsPanelToggles(checkAll, resetAll) {
   /* ****************** */
   /*  Links (Advanced)  */
   /* ****************** */
-  if (Constants.Global.linksAdvancedPlugin === true) {
+  if (Constants.Global.linksAdvancedPlugin) {
     Constants.Panel.linksToggle.onclick = async () => {
       if (store.getItem('sa11y-remember-links-advanced') === 'On') {
         store.setItem('sa11y-remember-links-advanced', 'Off');
@@ -1758,7 +2129,7 @@ function settingsPanelToggles(checkAll, resetAll) {
   /* ****************** */
   /*  Readability       */
   /* ****************** */
-  if (Constants.Readability.Plugin === true) {
+  if (Constants.Readability.Plugin) {
     Constants.Panel.readabilityToggle.onclick = async () => {
       if (store.getItem('sa11y-remember-readability') === 'On') {
         store.setItem('sa11y-remember-readability', 'Off');
@@ -1849,7 +2220,7 @@ function settingsPanelToggles(checkAll, resetAll) {
   /* ****************** */
   /*  Colour filters    */
   /* ****************** */
-  if (Constants.Global.colourFilterPlugin === true) {
+  if (Constants.Global.colourFilterPlugin) {
     Constants.Panel.colourFilterSelect.addEventListener('change', async () => {
       const option = parseInt(Constants.Panel.colourFilterSelect.value, 10);
 
@@ -1926,11 +2297,15 @@ function settingsPanelToggles(checkAll, resetAll) {
   }
 }
 
+/* eslint-disable no-return-assign */
+
 /* **************************************************************** */
 /*  Main panel: Initialize Show Outline and Settings buttons/tabs.  */
 /* **************************************************************** */
 function initializePanelToggles() {
-  // Show outline panel
+  /* **************** */
+  /*  Outline panel   */
+  /* **************** */
   Constants.Panel.outlineToggle.addEventListener('click', () => {
     if (Constants.Panel.outlineToggle.getAttribute('aria-expanded') === 'true') {
       Constants.Panel.outlineToggle.classList.remove('outline-active');
@@ -1940,7 +2315,6 @@ function initializePanelToggles() {
 
       // Toggle visibility of heading labels
       const $headingAnnotations = document.querySelectorAll('sa11y-heading-label');
-      // eslint-disable-next-line no-return-assign, no-param-reassign
       $headingAnnotations.forEach(($el) => $el.hidden = true);
       isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
     } else {
@@ -1948,10 +2322,10 @@ function initializePanelToggles() {
       Constants.Panel.outline.classList.add('active');
       Constants.Panel.outlineToggle.setAttribute('aria-expanded', 'true');
       store.setItem('sa11y-remember-outline', 'Opened');
+      store.setItem('sa11y-remember-settings', 'Closed');
 
       // Toggle visibility of heading labels
       const $headingAnnotations = document.querySelectorAll('sa11y-heading-label');
-      // eslint-disable-next-line no-return-assign, no-param-reassign
       $headingAnnotations.forEach(($el) => $el.hidden = false);
     }
 
@@ -1976,16 +2350,21 @@ function initializePanelToggles() {
     }, 0);
   }
 
-  // Show settings panel
+  /* **************** */
+  /*  Settings panel  */
+  /* **************** */
   Constants.Panel.settingsToggle.addEventListener('click', () => {
     if (Constants.Panel.settingsToggle.getAttribute('aria-expanded') === 'true') {
       Constants.Panel.settingsToggle.classList.remove('settings-active');
       Constants.Panel.settings.classList.remove('active');
       Constants.Panel.settingsToggle.setAttribute('aria-expanded', 'false');
+      store.setItem('sa11y-remember-settings', 'Closed');
     } else {
       Constants.Panel.settingsToggle.classList.add('settings-active');
       Constants.Panel.settings.classList.add('active');
       Constants.Panel.settingsToggle.setAttribute('aria-expanded', 'true');
+      store.setItem('sa11y-remember-settings', 'Opened');
+      store.setItem('sa11y-remember-outline', 'Closed');
     }
 
     // Set focus on Settings heading for accessibility.
@@ -1993,7 +2372,6 @@ function initializePanelToggles() {
 
     // Toggle visibility of heading labels
     const $headingAnnotations = document.querySelectorAll('sa11y-heading-label');
-    // eslint-disable-next-line no-return-assign, no-param-reassign
     $headingAnnotations.forEach(($el) => $el.hidden = true);
 
     // Close Show Outline panel when Settings is active.
@@ -2008,7 +2386,19 @@ function initializePanelToggles() {
       Constants.Panel.settingsContent.setAttribute('aria-label', `${Lang._('SETTINGS')}`);
       Constants.Panel.settingsContent.setAttribute('role', 'region');
     }
+
+    // Close Outline panel when Show Outline is active.
+    Constants.Panel.outline.classList.remove('active');
+    Constants.Panel.outlineToggle.classList.remove('settings-active');
+    Constants.Panel.outlineToggle.setAttribute('aria-expanded', 'false');
   });
+
+  // Remember to leave settings open
+  if (store.getItem('sa11y-remember-settings') === 'Opened') {
+    Constants.Panel.settingsToggle.classList.add('settings-active');
+    Constants.Panel.settings.classList.add('active');
+    Constants.Panel.settingsToggle.setAttribute('aria-expanded', 'true');
+  }
 
   // Accessibility: Skip link to Page Issues
   Constants.Panel.skipToPageIssues.addEventListener('click', () => {
@@ -2066,16 +2456,13 @@ function initializePanelToggles() {
  * Create Page Outline.
 */
 
-function generatePageOutline(
-  dismissed,
-  headingOutline,
-) {
-  // Create a single array that gets appended to heading outline, instead of creating a new HTML element everytime you iterate through each object.
+function generatePageOutline(dismissed, headingOutline, showHinPageOutline) {
+  // Create a single array that gets appended to heading outline.
   const outlineArray = [];
 
   // Find all dismissed headings and update headingOutline array.
   const findDismissedHeadings = dismissed.map((e) => {
-    const found = headingOutline.find((f) => (e.key.includes(f.dismiss) && e.href === Constants.Global.currentPage));
+    const found = headingOutline.find((f) => (e.key.includes(f.dismiss) && e.href === window.location.pathname));
     if (found === undefined) return '';
     return found;
   });
@@ -2084,27 +2471,28 @@ function generatePageOutline(
   });
 
   // Iterate through object that contains all headings (and error type).
-  headingOutline.forEach((obj) => {
-    const $el = obj.element;
-    const level = obj.headingLevel;
-    const headingText = obj.text;
-    const i = obj.index;
-    const issue = obj.type;
-    const visibility = obj.hidden;
-    const parent = obj.visibleParent;
-    const dismissedH = obj.dismissedHeading;
+  headingOutline.forEach((heading) => {
+    const $el = heading.element;
+    const level = heading.headingLevel;
+    const headingText = heading.text;
+    const i = heading.index;
+    const issue = heading.type;
+    const visibility = heading.hidden;
+    const parent = heading.visibleParent;
+    const dismissedH = heading.dismissedHeading;
+    const { isWithinRoot } = heading;
 
     // Filter out specified headings in outlineIgnore prop.
-    let ignoreArray = [];
-    if (Constants.Exclusions.Outline) {
-      ignoreArray = Array.from(document.querySelectorAll(Constants.Exclusions.Outline));
-    }
+    const ignoreArray = Constants.Exclusions.Outline ? Array.from(document.querySelectorAll(Constants.Exclusions.Outline)) : [];
+
     if (!ignoreArray.includes($el)) {
       // Indicate if heading is totally hidden or visually hidden.
       const visibleIcon = (visibility === true) ? '<span class="hidden-icon"></span><span class="visually-hidden">Hidden</span>' : '';
       const visibleStatus = (visibility === true) ? 'class="hidden-h"' : '';
+      const badgeH = (showHinPageOutline === true) ? 'H' : '';
+
       let append;
-      if (issue === 'error') {
+      if (issue === 'error' && isWithinRoot === true) {
         append = `
         <li class="outline-${level}">
           <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
@@ -2112,18 +2500,18 @@ function generatePageOutline(
             <span aria-hidden="true">${visibleIcon}
               <span class="error-icon"></span>
             </span>
-            <span class="visually-hidden">${Lang._('ERROR')}</span> ${level}</span>
+            <span class="visually-hidden">${Lang._('ERROR')}</span> ${badgeH + level}</span>
             <strong class="outline-list-item red-text">${headingText}</strong>
           </a>
         </li>`;
         outlineArray.push(append);
-      } else if (issue === 'warning' && !dismissedH) {
+      } else if (issue === 'warning' && !dismissedH && isWithinRoot === true) {
         append = `
         <li class="outline-${level}">
           <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
             <span class="badge warning-badge">
             <span aria-hidden="true">${visibleIcon} &#x3f;</span>
-            <span class="visually-hidden">${Lang._('WARNING')}</span> ${level}</span>
+            <span class="visually-hidden">${Lang._('WARNING')}</span> ${badgeH + level}</span>
             <strong class="outline-list-item yellow-text">${headingText}</strong>
           </a>
         </li>`;
@@ -2132,56 +2520,58 @@ function generatePageOutline(
         append = `
         <li class="outline-${level}">
           <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
-            <span class="badge">${visibleIcon} ${level}</span>
+            <span class="badge">${visibleIcon} ${badgeH + level}</span>
             <span class="outline-list-item">${headingText}</span>
           </a>
         </li>`;
         outlineArray.push(append);
       }
-    }
 
-    /**
+      /**
       * Append heading labels.
-    */
-    const label = document.createElement('sa11y-heading-label');
-    const anchor = document.createElement('sa11y-heading-anchor');
-    label.hidden = true;
+      */
+      const label = document.createElement('sa11y-heading-label');
+      const anchor = document.createElement('sa11y-heading-anchor');
+      label.hidden = true;
 
-    // If heading is in a hidden container, place the anchor just before it's most visible parent.
-    if (parent !== null) {
-      $el.insertAdjacentElement('beforeend', label);
-      const hiddenParent = parent.previousElementSibling;
-      anchor.setAttribute('id', `sa11y-h${i}`);
-      if (hiddenParent) {
-        hiddenParent.insertAdjacentElement('beforebegin', anchor);
-        hiddenParent.setAttribute('data-sa11y-parent', `h${i}`);
+      // If heading is in a hidden container, place the anchor just before it's most visible parent.
+      if (parent !== null) {
+        $el.insertAdjacentElement('beforeend', label);
+        const hiddenParent = parent.previousElementSibling;
+        anchor.setAttribute('id', `sa11y-h${i}`);
+        if (hiddenParent) {
+          hiddenParent.insertAdjacentElement('beforebegin', anchor);
+          hiddenParent.setAttribute('data-sa11y-parent', `h${i}`);
+        } else {
+          parent.parentNode.insertAdjacentElement('beforebegin', anchor);
+          parent.parentNode.setAttribute('data-sa11y-parent', `h${i}`);
+        }
       } else {
-        parent.parentNode.insertAdjacentElement('beforebegin', anchor);
-        parent.parentNode.setAttribute('data-sa11y-parent', `h${i}`);
+        // If the heading isn't hidden, append visible label.
+        $el.insertAdjacentElement('beforeend', label);
+
+        // Create anchor above visible label.
+        label.insertAdjacentElement('beforebegin', anchor);
+        anchor.setAttribute('id', `sa11y-h${i}`);
       }
-    } else {
-      // If the heading isn't hidden, append visible label.
-      $el.insertAdjacentElement('beforeend', label);
 
-      // Create anchor above visible label.
-      label.insertAdjacentElement('beforebegin', anchor);
-      anchor.setAttribute('id', `sa11y-h${i}`);
-    }
+      // Populate heading label.
+      const content = document.createElement('span');
+      content.classList.add('heading-label');
+      content.innerHTML = `H${level}`;
+      label.shadowRoot.appendChild(content);
 
-    // Populate heading label.
-    const content = document.createElement('span');
-    content.classList.add('heading-label');
-    content.innerHTML = `H${level}`;
-    label.shadowRoot.appendChild(content);
-
-    // Make heading labels visible when panel is open.
-    if (store.getItem('sa11y-remember-outline') === 'Opened') {
-      label.hidden = false;
+      // Make heading labels visible when panel is open.
+      if (store.getItem('sa11y-remember-outline') === 'Opened') {
+        label.hidden = false;
+      }
     }
   });
 
   // Append headings to Page Outline.
-  Constants.Panel.outlineList.innerHTML = outlineArray.join(' ');
+  Constants.Panel.outlineList.innerHTML = (outlineArray.length === 0)
+    ? `<li>${Lang._('PANEL_NO_HEADINGS')}</li>`
+    : outlineArray.join(' ');
 
   // Make clickable!
   setTimeout(() => {
@@ -2195,10 +2585,11 @@ function generatePageOutline(
 
       const headingID = find(
         `#sa11y-h${i}, [data-sa11y-parent="h${i}"]`,
-        'root',
+        'document',
         Constants.Exclusions.Container,
       );
 
+      // Scroll to.
       const pulseAndScroll = (heading) => {
         addPulse(heading.parentElement);
         heading.scrollIntoView({
@@ -2207,6 +2598,7 @@ function generatePageOutline(
         });
       };
 
+      // Add pulse.
       const smoothPulse = (e) => {
         if ((e.type === 'keyup' && e.code === 'Enter') || e.type === 'click') {
           headingID.forEach((heading) => {
@@ -2221,8 +2613,10 @@ function generatePageOutline(
         }
         e.preventDefault();
       };
-      outlineLink.addEventListener('click', smoothPulse, false);
-      outlineLink.addEventListener('keyup', smoothPulse, false);
+
+      // Attach event listeners.
+      outlineLink?.addEventListener('click', smoothPulse, false);
+      outlineLink?.addEventListener('keyup', smoothPulse, false);
     });
 
     /**
@@ -2289,19 +2683,18 @@ function updatePanel(dismissCount, errorCount, warningCount) {
   } else if (warningCount > 0) {
     Constants.Panel.content.setAttribute('class', 'warnings');
     Constants.Panel.status.innerHTML = `${Lang._('WARNINGS')} <span class="panel-count" id="warning-count">${warningCount}</span>`;
+  } else if (dismissCount > 0) {
+    Constants.Panel.status.innerHTML = `${Lang._('DISMISSED')} <span class="panel-count">${dismissCount}</span>`;
+    Constants.Panel.skipButton.classList.remove('active');
   } else {
-    if (dismissCount > 0) {
-      Constants.Panel.status.innerHTML = `${Lang._('DISMISSED')} <span class="panel-count">${dismissCount}</span>`;
-      Constants.Panel.skipButton.classList.remove('active');
-    } else {
-      Constants.Panel.content.setAttribute('class', 'good');
-      Constants.Panel.status.innerHTML = `${Lang._('PANEL_STATUS_NONE')}`;
-    }
-    // If there are no button annotations, disable the Skip-to-Toggle switch.
-    const annotations = document.querySelectorAll('sa11y-annotation');
-    if (annotations.length === 0) {
-      Constants.Panel.skipButton.disabled = true;
-    }
+    Constants.Panel.content.setAttribute('class', 'good');
+    Constants.Panel.status.innerHTML = `${Lang._('PANEL_STATUS_NONE')}`;
+  }
+
+  // If there are no button annotations, disable the Skip-to-Toggle switch.
+  const annotations = document.querySelectorAll('sa11y-annotation');
+  if (annotations.length === 0) {
+    Constants.Panel.skipButton.disabled = true;
   }
 }
 
@@ -5649,7 +6042,7 @@ tippy.setDefaultProps({
   render: render
 });
 
-var tooltipStyles = "a,button,code,div,h1,h2,kbd,li,ol,p,span,strong,svg,ul{all:unset;box-sizing:border-box!important}div{display:block}:after,:before{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}@media (forced-colors:active){[data-tippy-root]{border:2px solid transparent;border-radius:5px}}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:0}.tippy-box[data-placement^=top]>.tippy-arrow:before{border-top-color:initial;border-width:8px 8px 0;bottom:-7px;left:0;transform-origin:center top}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:0}.tippy-box[data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:initial;border-width:0 8px 8px;left:0;top:-7px;transform-origin:center bottom}.tippy-box[data-placement^=left]>.tippy-arrow{right:0}.tippy-box[data-placement^=left]>.tippy-arrow:before{border-left-color:initial;border-width:8px 0 8px 8px;right:-7px;transform-origin:center left}.tippy-box[data-placement^=right]>.tippy-arrow{left:0}.tippy-box[data-placement^=right]>.tippy-arrow:before{border-right-color:initial;border-width:8px 8px 8px 0;left:-7px;transform-origin:center right}.tippy-arrow{color:#333;height:16px;width:16px}.tippy-arrow:before{border-color:transparent;border-style:solid;content:\"\";position:absolute}.tippy-content{padding:5px 9px;position:relative;z-index:1}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{min-width:300px;text-align:start}[role=tooltip]{min-width:185px;text-align:center}.tippy-box[data-theme~=sa11y-theme]{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-bg);border-radius:4px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15)!important;color:var(--sa11y-panel-primary);display:block;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px;outline:0;padding:8px;position:relative;transition-property:transform,visibility,opacity}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace}.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);letter-spacing:normal;line-height:22px;padding:1.6px 4.8px}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]{text-align:center}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{-webkit-margin-after:0;-webkit-margin-before:0;margin:0;margin-block-end:0;margin-block-start:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{display:list-item;margin:5px 10px 0 20px;padding-bottom:5px}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] a:hover{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin:0}.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:focus,.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{filter:invert(1);forced-color-adjust:none}.tippy-box[data-theme~=sa11y-theme] .tippy-arrow{z-index:-1}}";
+var tooltipStyles = "a,button,code,div,h1,h2,kbd,li,ol,p,span,strong,svg,ul{all:unset;box-sizing:border-box!important}div{display:block}:after,:before{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}@media (forced-colors:active){[data-tippy-root]{border:2px solid transparent;border-radius:5px}}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:0}.tippy-box[data-placement^=top]>.tippy-arrow:before{border-top-color:initial;border-width:8px 8px 0;bottom:-7px;left:0;transform-origin:center top}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:0}.tippy-box[data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:initial;border-width:0 8px 8px;left:0;top:-7px;transform-origin:center bottom}.tippy-box[data-placement^=left]>.tippy-arrow{right:0}.tippy-box[data-placement^=left]>.tippy-arrow:before{border-left-color:initial;border-width:8px 0 8px 8px;right:-7px;transform-origin:center left}.tippy-box[data-placement^=right]>.tippy-arrow{left:0}.tippy-box[data-placement^=right]>.tippy-arrow:before{border-right-color:initial;border-width:8px 8px 8px 0;left:-7px;transform-origin:center right}.tippy-arrow{color:#333;height:16px;width:16px}.tippy-arrow:before{border-color:transparent;border-style:solid;content:\"\";position:absolute}.tippy-content{padding:5px 9px;position:relative;z-index:1}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{min-width:300px;text-align:start}[role=tooltip]{min-width:185px;text-align:center}.tippy-box[data-theme~=sa11y-theme]{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-bg);border-radius:4px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15)!important;color:var(--sa11y-panel-primary);display:block;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px;outline:0;padding:8px;position:relative;transition-property:transform,visibility,opacity}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace}.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);letter-spacing:normal;line-height:22px;padding:1.6px 4.8px}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]{text-align:center}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block-end:0;margin-block-start:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{display:list-item;margin:5px 10px 0 20px;padding-bottom:5px}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] a:hover{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin:0}.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:focus,.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{filter:invert(1);forced-color-adjust:none}.tippy-box[data-theme~=sa11y-theme] .tippy-arrow{z-index:-1}}";
 
 class TooltipComponent extends HTMLElement {
   connectedCallback() {
@@ -5660,18 +6053,23 @@ class TooltipComponent extends HTMLElement {
     style.innerHTML = tooltipStyles + sharedStyles;
     shadowRoot.appendChild(style);
 
-    // Hide on Escape key.
+    /* Hide on Escape key.
     const hideOnEsc = {
       name: 'hideOnEsc',
       defaultValue: true,
-      fn({ hide }) {
-        const onKeyDown = (event) => { if (event.keyCode === 27) { hide(); } };
+      fn({ hide, instance }) {
+        const onKeyDown = (event) => {
+          if (event.keyCode === 27) {
+            hide();
+            Constants.Panel.skip.focus();
+          }
+        };
         return {
           onShow() { document.addEventListener('keydown', onKeyDown); },
           onHide() { document.removeEventListener('keydown', onKeyDown); },
         };
       },
-    };
+    }; */
 
     const buttons = [];
     Elements.Annotations.Array.forEach((annotation) => {
@@ -5697,25 +6095,45 @@ class TooltipComponent extends HTMLElement {
       },
       appendTo: shadowRoot,
       zIndex: 2147483645,
-      plugins: [hideOnEsc],
+      // plugins: [hideOnEsc],
       onShow(instance) {
         const openedTooltip = instance.popper;
+
+        // Hide previously opened tooltip.
         annotations.forEach((popper) => {
-          // Hide previously opened tooltip.
           if (popper !== openedTooltip) {
             popper.hide();
           }
         });
 
-        // Last opened
+        // Last opened tooltip.
         const annotation = instance.reference.getRootNode().host;
         annotation.setAttribute('data-sa11y-opened', '');
 
         // Close button for tooltip.
-        openedTooltip.querySelector('.close-btn').addEventListener('click', () => {
+        const closeButton = openedTooltip.querySelector('.close-btn');
+        const closeButtonHandler = () => {
           instance.hide();
           instance.reference.focus();
-        });
+        };
+        closeButton.addEventListener('click', closeButtonHandler);
+
+        // Event listener for the escape key.
+        const escapeListener = (event) => {
+          if (event.key === 'Escape') {
+            instance.hide();
+            instance.reference.focus();
+          }
+        };
+        openedTooltip.addEventListener('keydown', escapeListener);
+
+        // Remove all event listeners.
+        const onHiddenTooltip = () => {
+          closeButton.removeEventListener('click', closeButtonHandler);
+          openedTooltip.removeEventListener('keydown', escapeListener);
+          openedTooltip.removeEventListener('hidden', onHiddenTooltip);
+        };
+        openedTooltip.addEventListener('hidden', onHiddenTooltip);
       },
       onTrigger(instance, event) {
         if (event.type === 'click') {
@@ -5819,6 +6237,7 @@ function annotate(
   inline = false,
   position,
   index,
+  dismissKey,
   dismissAnnotationsOption,
 ) {
   const validTypes = [
@@ -5847,8 +6266,9 @@ function annotate(
     [validTypes[2]]: Lang._('GOOD'),
   };
 
-  // Add dismiss button if prop enabled.
-  const dismiss = (dismissAnnotationsOption === true && type === 'warning') ? `<button data-sa11y-dismiss='${index}' type='button'>${Lang._('DISMISS')}</button>` : '';
+  // Add dismiss button if prop enabled & dismiss key was defined.
+  const dismiss = (dismissAnnotationsOption === true && type === 'warning' && dismissKey !== undefined)
+    ? `<button data-sa11y-dismiss='${index}' type='button'>${Lang._('DISMISS')}</button>` : '';
 
   const instance = document.createElement('sa11y-annotation');
   instance.setAttribute('data-sa11y-annotation', index);
@@ -5859,7 +6279,7 @@ function annotate(
     // Page errors displayed to main panel.
     Constants.Panel.pageIssues.classList.add('active');
     Constants.Panel.panel.classList.add('has-page-issues');
-    listItem.innerHTML = `<strong>${ariaLabel[type]}</strong> ${content}`;
+    listItem.innerHTML = `<strong>${ariaLabel[type]}</strong> ${content}${dismiss}`;
     Constants.Panel.pageIssuesList.insertAdjacentElement('afterbegin', listItem);
   } else {
     // Button annotations.
@@ -5880,10 +6300,7 @@ function annotate(
     ></button>`;
 
     // Make sure annotations always appended outside of interactive elements.
-    let location = element.closest('a, button');
-    if (!location) {
-      location = element;
-    }
+    const location = element.closest('a, button') || element;
     location.insertAdjacentElement(position, instance);
     instance.shadowRoot.appendChild(create);
   }
@@ -5995,16 +6412,21 @@ const getHiddenParent = ($el) => {
 };
 
 // Find scroll position.
-const getScrollPosition = ($el) => {
+const getScrollPosition = ($el, results) => {
   const offsetTopPosition = $el.offsetTop;
   if (offsetTopPosition === 0) {
-    const shadowParent = $el.getRootNode().host;
-    const visiblePosition = findVisibleParent(shadowParent, 'display', 'none');
+    const annotationHost = $el.getRootNode().host;
+    const visiblePosition = findVisibleParent(annotationHost, 'display', 'none');
+    const annotationIndex = parseInt(annotationHost.getAttribute('data-sa11y-annotation'), 10);
+
+    // Generate element preview for panel & report.
+    const issueObject = results.find((issue) => issue.id === annotationIndex);
+    const elementPreview = generateElementPreview(issueObject);
 
     // Alert if tooltip is hidden.
     getHiddenParent($el);
     const tooltip = $el.getAttribute('data-tippy-content');
-    createAlert(`${Lang._('NOT_VISIBLE_ALERT')}`, tooltip);
+    createAlert(`${Lang._('NOT_VISIBLE_ALERT')}`, tooltip, elementPreview);
 
     closeAnyActiveTooltips();
 
@@ -6037,7 +6459,7 @@ const determineIndex = () => {
   if (opened[0]) index = parseInt(opened[0].getAttribute('data-sa11y-position'), 10);
 };
 
-const goToNext = () => {
+const goToNext = (results) => {
   determineIndex();
   const issues = Elements.Annotations.Array;
 
@@ -6046,7 +6468,7 @@ const goToNext = () => {
 
   const annotation = issues[index + 1];
   const button = annotation.shadowRoot.querySelector('button');
-  const scrollPos = getScrollPosition(button);
+  const scrollPos = getScrollPosition(button, results);
 
   window.scrollTo({
     top: scrollPos,
@@ -6062,11 +6484,11 @@ const goToNext = () => {
   index += 1;
 };
 
-const goToPrev = () => {
+const goToPrev = (results) => {
   determineIndex();
   if (index > 0) {
     const button = Elements.Annotations.Array[index - 1].shadowRoot.querySelector('button');
-    const scrollPos = getScrollPosition(button);
+    const scrollPos = getScrollPosition(button, results);
 
     window.scrollTo({
       top: scrollPos,
@@ -6086,41 +6508,43 @@ const goToPrev = () => {
   }
 };
 
-function keyboardShortcut(e) {
+function keyboardShortcut(e, results) {
   if (
     Elements.Annotations.Array.length
     && !Constants.Panel.skipButton.hasAttribute('disabled')
   ) {
     if (e.altKey && e.code === 'KeyS') {
       e.preventDefault();
-      goToNext();
+      goToNext(results);
     } else if (e.altKey && e.code === 'KeyW') {
       e.preventDefault();
-      goToPrev();
+      goToPrev(results);
     }
   }
 }
 
-function handleSkipButton() {
-  goToNext();
-}
+// Attach event listeners.
+let keyboardShortcutHandler;
+let handleSkipButtonHandler;
+function skipToIssue(results) {
+  keyboardShortcutHandler = (e) => {
+    keyboardShortcut(e, results);
+  };
+  handleSkipButtonHandler = () => {
+    goToNext(results);
+  };
 
-const keyboardShortcutHandler = (event) => keyboardShortcut(event);
-const handleSkipButtonHandler = (event) => handleSkipButton();
-
-function skipToIssue() {
-  // Attach keyboard and click event listeners.
   document.addEventListener('keydown', keyboardShortcutHandler);
   Constants.Panel.skipButton.addEventListener('click', handleSkipButtonHandler);
 }
 
-// Imported by reset.js
+// Imported by Reset function.
 function removeSkipBtnListeners() {
   document.removeEventListener('keydown', keyboardShortcutHandler);
   Constants.Panel.skipButton.removeEventListener('click', handleSkipButtonHandler);
 }
 
-function checkImages(results) {
+function checkImages(results, option) {
   const containsAltTextStopWords = (alt) => {
     const altUrl = [
       '.png',
@@ -6270,7 +6694,7 @@ function checkImages(results) {
             position: 'beforebegin',
           });
         }
-      } else if (alt.length > 250 && $el.closest('a[href]')) {
+      } else if (alt.length > option.altTextMaxCharLength && $el.closest('a[href]')) {
         const key = prepareDismissal(`LINKEDIMAGE${baseSrc + altText + alt.length}`);
         // Link and contains alt text.
         results.push({
@@ -6339,7 +6763,7 @@ function checkImages(results) {
             dismiss: key,
           });
         }
-      } else if (alt.length > 250) {
+      } else if (alt.length > option.altTextMaxCharLength) {
         const key = prepareDismissal(`IMAGE${baseSrc + altText + alt.length}`);
         results.push({
           element: $el,
@@ -6386,36 +6810,26 @@ function checkImages(results) {
       }
     }
   });
-  return { results };
+  return results;
 }
 
-function checkHeaders(
-  results,
-  nonConsecutiveHeadingIsError,
-  flagLongHeadings,
-  missingH1,
-  headingOutline,
-) {
+function checkHeaders(results, option, headingOutline) {
   let prevLevel;
   Elements.Found.Headings.forEach(($el, i) => {
     const ignore = fnIgnore($el); // Ignore unwanted <style>, <script>, etc tags.
     const text = computeTextNodeWithImage(ignore);
     const headingText = sanitizeHTML(text);
 
-    let level;
-    if ($el.getAttribute('aria-level')) {
-      level = +$el.getAttribute('aria-level');
-    } else {
-      level = +$el.tagName.slice(1);
-    }
-    level = parseInt(level, 10);
+    const isWithinRoot = Constants.Global.Root.contains($el);
 
+    const level = parseInt($el.getAttribute('aria-level') || $el.tagName.slice(1), 10);
     const headingLength = headingText.length;
+
     let error = null;
     let warning = null;
 
     if (level - prevLevel > 1 && i !== 0) {
-      if (nonConsecutiveHeadingIsError === true) {
+      if (option.nonConsecutiveHeadingIsError) {
         error = Lang.sprintf('HEADING_NON_CONSECUTIVE_LEVEL', prevLevel, level);
         results.push({
           element: $el,
@@ -6423,6 +6837,7 @@ function checkHeaders(
           content: error,
           inline: false,
           position: 'beforebegin',
+          isWithinRoot,
         });
       } else {
         warning = Lang.sprintf('HEADING_NON_CONSECUTIVE_LEVEL', prevLevel, level);
@@ -6434,6 +6849,7 @@ function checkHeaders(
           inline: false,
           position: 'beforebegin',
           dismiss: key,
+          isWithinRoot,
         });
       }
     } else if (headingLength === 0) {
@@ -6447,6 +6863,7 @@ function checkHeaders(
             content: error,
             inline: false,
             position: 'beforebegin',
+            isWithinRoot,
           });
         }
       } else {
@@ -6457,6 +6874,7 @@ function checkHeaders(
           content: error,
           inline: false,
           position: 'beforebegin',
+          isWithinRoot,
         });
       }
     } else if (i === 0 && level !== 1 && level !== 2) {
@@ -6467,8 +6885,9 @@ function checkHeaders(
         content: error,
         inline: false,
         position: 'beforebegin',
+        isWithinRoot,
       });
-    } else if (headingLength > 170 && flagLongHeadings === true) {
+    } else if (headingLength > option.headingMaxCharLength && option.flagLongHeadings) {
       warning = Lang.sprintf('HEADING_LONG', headingLength);
       const key = prepareDismissal(`HEADING${level + headingText}`);
       results.push({
@@ -6478,12 +6897,14 @@ function checkHeaders(
         inline: false,
         position: 'beforebegin',
         dismiss: key,
+        isWithinRoot,
       });
     }
-    prevLevel = level;
 
+    prevLevel = level;
     const hiddenHeading = isElementVisuallyHiddenOrHidden($el);
     const parent = findVisibleParent($el, 'display', 'none');
+
     // Create an object for heading outline panel.
     if (error !== null) {
       headingOutline.push({
@@ -6494,6 +6915,7 @@ function checkHeaders(
         type: 'error',
         hidden: hiddenHeading,
         visibleParent: parent,
+        isWithinRoot,
       });
     } else if (warning !== null) {
       const key = prepareDismissal(`HEADING${level + headingText}`);
@@ -6506,6 +6928,7 @@ function checkHeaders(
         hidden: hiddenHeading,
         visibleParent: parent,
         dismiss: key,
+        isWithinRoot,
       });
     } else if (error === null || warning === null) {
       headingOutline.push({
@@ -6515,52 +6938,52 @@ function checkHeaders(
         index: i,
         hidden: hiddenHeading,
         visibleParent: parent,
+        isWithinRoot,
       });
     }
   });
+
   // Missing Heading 1
-  if (Elements.Found.HeadingOne.length === 0 && missingH1 === true) {
+  if (Elements.Found.HeadingOne.length === 0 && option.missingH1) {
     results.push({
-      type: 'error',
+      type: 'warning',
       content: Lang.sprintf('HEADING_MISSING_ONE'),
+      dismiss: 'missingH1',
     });
   }
   return { results, headingOutline };
 }
 
-function checkLinkText(results, showGoodLinkButton, linksToDOI) {
+function checkLinkText(results, option) {
   const containsLinkTextStopWords = (textContent) => {
     const urlText = [
       'http',
-      '.asp',
-      '.htm',
-      '.php',
-      '.edu/',
-      '.com/',
-      '.net/',
-      '.org/',
-      '.us/',
-      '.ca/',
-      '.de/',
-      '.icu/',
-      '.uk/',
-      '.ru/',
-      '.info/',
-      '.top/',
-      '.xyz/',
-      '.tk/',
-      '.cn/',
-      '.ga/',
-      '.cf/',
-      '.nl/',
-      '.io/',
-      '.fr/',
-      '.pe/',
-      '.nz/',
-      '.pt/',
-      '.es/',
-      '.pl/',
-      '.ua/',
+      'edu/',
+      'com/',
+      'net/',
+      'org/',
+      'us/',
+      'ca/',
+      'de/',
+      'icu/',
+      'uk/',
+      'ru/',
+      'info/',
+      'top/',
+      'xyz/',
+      'tk/',
+      'cn/',
+      'ga/',
+      'cf/',
+      'nl/',
+      'io/',
+      'fr/',
+      'pe/',
+      'nz/',
+      'pt/',
+      'es/',
+      'pl/',
+      'ua/',
     ];
 
     const hit = [null, null, null, null];
@@ -6583,11 +7006,23 @@ function checkLinkText(results, showGoodLinkButton, linksToDOI) {
       return false;
     });
 
-    // Flag citations/references
-    const doi = 'doi.org';
-    if (textContent.toLowerCase().includes('doi')) {
-      hit[2] = doi;
-    }
+    // Flag citations/references. Check if link text matches a publication source.
+    const doi = [
+      'doiorg/', // doi.org
+      'dlacmorg/', // dl.acm.org
+      'linkspringercom/', // link.springer.com
+      'pubmedncbinlmnihgov/', // pubmed.ncbi.nlm.nih.gov
+      'scholargooglecom/', // scholar.google.com
+      'ieeexploreieeeorg/', // ieeexplore.ieee.org
+      'researchgatenet/publication', // researchgate.net/publication
+      'sciencedirectcom/science/article', // sciencedirect.com/science/article
+    ];
+    doi.forEach((word) => {
+      if (textContent.toLowerCase().indexOf(word) >= 0) {
+        hit[2] = word;
+      }
+      return false;
+    });
 
     // Flag link text containing URLs.
     urlText.forEach((word) => {
@@ -6671,7 +7106,7 @@ function checkLinkText(results, showGoodLinkButton, linksToDOI) {
       // Contains stop words.
       if (hasAriaLabelledBy || hasAriaLabel || childAriaLabelledBy || childAriaLabel) {
         const sanitizedText = sanitizeHTML(linkText);
-        if (showGoodLinkButton === true) {
+        if (option.showGoodLinkButton) {
           results.push({
             element: $el,
             type: 'good',
@@ -6701,7 +7136,7 @@ function checkLinkText(results, showGoodLinkButton, linksToDOI) {
         position: 'beforebegin',
         dismiss: key,
       });
-    } else if (error[2] !== null && linksToDOI === true) {
+    } else if (error[2] !== null && option.linksToDOI) {
       const key = prepareDismissal(`LINK${linkText + error[2] + href}`);
       // Contains DOI URL in link text.
       if (linkText.length > 8) {
@@ -6714,10 +7149,10 @@ function checkLinkText(results, showGoodLinkButton, linksToDOI) {
           dismiss: key,
         });
       }
-    } else if (error[3] !== null) {
+    } else if (error[3] !== null && option.URLAsLinkTextWarning) {
       const key = prepareDismissal(`LINK${linkText + error[2] + href}`);
       // Contains URL in link text.
-      if (linkText.length > 40) {
+      if (linkText.length > option.URLTextMaxCharLength) {
         results.push({
           element: $el,
           type: 'warning',
@@ -6729,7 +7164,7 @@ function checkLinkText(results, showGoodLinkButton, linksToDOI) {
       }
     } else if (hasAriaLabelledBy || hasAriaLabel || childAriaLabelledBy || childAriaLabel) {
       // If the link has any ARIA, append a "Good" link button.
-      if (showGoodLinkButton === true) {
+      if (option.showGoodLinkButton) {
         const sanitizedText = sanitizeHTML(linkText);
         results.push({
           element: $el,
@@ -6750,7 +7185,7 @@ function checkLinkText(results, showGoodLinkButton, linksToDOI) {
       });
     }
   });
-  return { results };
+  return results;
 }
 
 /**
@@ -6761,12 +7196,8 @@ function checkLinkText(results, showGoodLinkButton, linksToDOI) {
 */
 
 function checkContrast(results, option) {
-  if (option.contrastPlugin === true) {
-    if (
-      store.getItem('sa11y-remember-contrast') === 'On'
-      || option.headless === true
-      || option.checkAllHideToggles === true
-    ) {
+  if (option.contrastPlugin) {
+    if (store.getItem('sa11y-remember-contrast') === 'On' || option.headless || option.checkAllHideToggles) {
       let contrastErrors = {
         errors: [],
         warnings: [],
@@ -6979,12 +7410,8 @@ function checkContrast(results, option) {
 }
 
 function checkLabels(results, option) {
-  if (option.formLabelsPlugin === true) {
-    if (
-      store.getItem('sa11y-remember-labels') === 'On'
-      || option.headless === true
-      || option.checkAllHideToggles === true
-    ) {
+  if (option.formLabelsPlugin) {
+    if (store.getItem('sa11y-remember-labels') === 'On' || option.headless || option.checkAllHideToggles) {
       Elements.Found.Inputs.forEach(($el) => {
         // Ignore hidden inputs.
         if (isElementHidden($el) !== true) {
@@ -7078,16 +7505,12 @@ function checkLabels(results, option) {
       });
     }
   }
-  return { results };
+  return results;
 }
 
 function checkLinksAdvanced(results, option) {
-  if (option.linksAdvancedPlugin === true) {
-    if (
-      store.getItem('sa11y-remember-links-advanced') === 'On'
-      || option.headless === true
-      || option.checkAllHideToggles === true
-    ) {
+  if (option.linksAdvancedPlugin) {
+    if (store.getItem('sa11y-remember-links-advanced') === 'On' || option.headless || option.checkAllHideToggles) {
       const seen = {};
       Elements.Found.Links.forEach(($el) => {
         let linkText = computeAccessibleName($el);
@@ -7210,8 +7633,8 @@ function checkLinksAdvanced(results, option) {
 */
 
 function checkReadability() {
-  let readabilityResults;
-  if (Constants.Readability.Plugin === true) {
+  let results;
+  if (Constants.Readability.Plugin) {
     const rememberReadability = store.getItem('sa11y-remember-readability') === 'On';
     if (rememberReadability) {
       // Crude hack to add a period to the end of list items to make a complete sentence.
@@ -7335,7 +7758,7 @@ function checkReadability() {
         }
 
         // Create object for headless mode.
-        readabilityResults = {
+        results = {
           score: fleschScore,
           averageWordsPerSentence: avgWordsPerSentence,
           complexWords,
@@ -7377,7 +7800,7 @@ function checkReadability() {
         const lix = calculateLix(pageText);
 
         // Create object for headless mode.
-        readabilityResults = {
+        results = {
           score: lix.score,
           averageWordsPerSentence: lix.avgWordsPerSentence,
           complexWords: lix.complexWords,
@@ -7390,21 +7813,21 @@ function checkReadability() {
       if (Constants.Global.headless === false) {
         if (pageText.length === 0) {
           Constants.Panel.readabilityInfo.innerHTML = Lang._('READABILITY_NO_P_OR_LI_MESSAGE');
-        } else if (readabilityResults.wordCount > 30) {
-          Constants.Panel.readabilityInfo.innerHTML = `${readabilityResults.score} <span class="readability-score">${readabilityResults.difficultyLevel}</span>`;
+        } else if (results.wordCount > 30) {
+          Constants.Panel.readabilityInfo.innerHTML = `${results.score} <span class="readability-score">${results.difficultyLevel}</span>`;
 
           Constants.Panel.readabilityDetails.innerHTML = `
             <li>
               <strong>${Lang._('LANG_AVG_SENTENCE')}</strong>
-              ${readabilityResults.averageWordsPerSentence}
+              ${results.averageWordsPerSentence}
             </li>
             <li>
               <strong>${Lang._('LANG_COMPLEX_WORDS')}</strong>
-              ${readabilityResults.complexWords}%
+              ${results.complexWords}%
             </li>
             <li>
               <strong>${Lang._('LANG_TOTAL_WORDS')}</strong>
-              ${readabilityResults.wordCount}
+              ${results.wordCount}
             </li>`;
         } else {
           Constants.Panel.readabilityInfo.textContent = Lang._('READABILITY_NOT_ENOUGH_CONTENT_MESSAGE');
@@ -7412,13 +7835,13 @@ function checkReadability() {
       }
     }
   }
-  return readabilityResults;
+  return results;
 }
 
 function checkEmbeddedContent(results, option) {
-  if (option.embeddedContentAll === true) {
+  if (option.embeddedContentAll) {
     // Warning: Audio content.
-    if (option.embeddedContentAudio === true) {
+    if (option.embeddedContentAudio) {
       Elements.Found.Audio.forEach(($el) => {
         const key = prepareDismissal(`IFRAME${$el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src')}`);
         results.push({
@@ -7433,7 +7856,7 @@ function checkEmbeddedContent(results, option) {
     }
 
     // Warning: Video content.
-    if (option.embeddedContentVideo === true) {
+    if (option.embeddedContentVideo) {
       Elements.Found.Videos.forEach(($el) => {
         const track = $el.getElementsByTagName('TRACK');
         if ($el.tagName === 'VIDEO' && track.length) ; else {
@@ -7451,7 +7874,7 @@ function checkEmbeddedContent(results, option) {
     }
 
     // Warning: Data visualizations.
-    if (option.embeddedContentDataViz === true) {
+    if (option.embeddedContentDataViz) {
       Elements.Found.Visualizations.forEach(($el) => {
         const key = prepareDismissal(`IFRAME${$el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src')}`);
         results.push({
@@ -7466,7 +7889,7 @@ function checkEmbeddedContent(results, option) {
     }
 
     // Error: iFrame is missing accessible name.
-    if (option.embeddedContentTitles === true) {
+    if (option.embeddedContentTitles) {
       Elements.Found.Iframes.forEach(($el) => {
         if ($el.tagName === 'VIDEO'
           || $el.tagName === 'AUDIO'
@@ -7494,7 +7917,7 @@ function checkEmbeddedContent(results, option) {
     }
 
     // Warning: general warning for iFrames
-    if (option.embeddedContentGeneral === true) {
+    if (option.embeddedContentGeneral) {
       Elements.Found.EmbeddedContent.forEach(($el) => {
         if ($el.tagName === 'VIDEO'
           || $el.tagName === 'AUDIO'
@@ -7523,7 +7946,7 @@ function checkQA(results, option) {
   /* *********************************************************** */
   /*  Error: Find all links pointing to development environment. */
   /* *********************************************************** */
-  if (option.badLinksQA === true) {
+  if (option.badLinksQA) {
     Elements.Found.CustomErrorLinks.forEach(($el) => {
       results.push({
         element: $el,
@@ -7538,7 +7961,7 @@ function checkQA(results, option) {
   /* *********************************************************** */
   /*  Warning: Excessive bolding or italics.                     */
   /* *********************************************************** */
-  if (option.strongItalicsQA === true) {
+  if (option.strongItalicsQA) {
     Elements.Found.StrongItalics.forEach(($el) => {
       const strongItalicsText = $el.textContent.trim().length;
       const key = prepareDismissal($el.tagName + $el.textContent);
@@ -7565,7 +7988,7 @@ function checkQA(results, option) {
       const hasExtension = extensions.some((extension) => href.includes(extension));
       const hasPDF = href.includes('.pdf');
       const key = prepareDismissal(`DOCUMENT${href}`);
-      if (option.documentQA === true && hasExtension) {
+      if (option.documentQA && hasExtension) {
         results.push({
           element: $el,
           type: 'warning',
@@ -7574,7 +7997,7 @@ function checkQA(results, option) {
           position: 'beforebegin',
           dismiss: key,
         });
-      } else if (option.pdfQA === true && hasPDF) {
+      } else if (option.pdfQA && hasPDF) {
         results.push({
           element: $el,
           type: 'warning',
@@ -7590,7 +8013,7 @@ function checkQA(results, option) {
   /* *************************************************************** */
   /*  Error: Missing language tag. Lang should be at least 2 chars.  */
   /* *************************************************************** */
-  if (option.langQA === true) {
+  if (option.langQA) {
     if (!Elements.Found.Language || Elements.Found.Language.length < 2) {
       results.push({
         type: 'error',
@@ -7602,7 +8025,7 @@ function checkQA(results, option) {
   /* *************************************************************** */
   /*  Warning: Find blockquotes used as headers.                     */
   /* *************************************************************** */
-  if (option.blockquotesQA === true) {
+  if (option.blockquotesQA) {
     Elements.Found.Blockquotes.forEach(($el) => {
       const bqHeadingText = $el.textContent;
       if (bqHeadingText.trim().length < 25) {
@@ -7623,11 +8046,11 @@ function checkQA(results, option) {
   /* *************************************************************** */
   /*  Errors: Check HTML tables for issues.                          */
   /* *************************************************************** */
-  if (option.tablesQA === true) {
+  if (option.tablesQA) {
     Elements.Found.Tables.forEach(($el) => {
-      const findTHeaders = $el.querySelectorAll('th');
-      const findHeadingTags = $el.querySelectorAll('h1, h2, h3, h4, h5, h6');
-      if (findTHeaders.length === 0) {
+      const tableHeaders = $el.querySelectorAll('th');
+      const semanticHeadings = $el.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      if (option.tablesQAmissingTH && tableHeaders.length === 0) {
         results.push({
           element: $el,
           type: 'error',
@@ -7636,10 +8059,10 @@ function checkQA(results, option) {
           position: 'beforebegin',
         });
       }
-      if (findHeadingTags.length > 0) {
-        findHeadingTags.forEach(($a) => {
+      if (option.tablesQAsemanticHeadings && semanticHeadings.length > 0) {
+        semanticHeadings.forEach((heading) => {
           results.push({
-            element: $a,
+            element: heading,
             type: 'error',
             content: Lang.sprintf('TABLES_SEMANTIC_HEADING'),
             inline: false,
@@ -7647,11 +8070,12 @@ function checkQA(results, option) {
           });
         });
       }
-      findTHeaders.forEach(($b) => {
-        if ($b.textContent.trim().length === 0) {
+      tableHeaders.forEach((th) => {
+        if (option.tablesQAemptyTH && th.textContent.trim().length === 0) {
+          const issueType = (option.tablesQAemptyTHisError) ? 'error' : 'warning';
           results.push({
-            element: $b,
-            type: 'error',
+            element: th,
+            type: issueType,
             content: Lang.sprintf('TABLES_EMPTY_HEADING'),
             inline: false,
             position: 'afterbegin',
@@ -7669,7 +8093,7 @@ function checkQA(results, option) {
   /*  3) Doesn't contain the following characters: .;?!                 */
   /*  4) The previous element is not a semantic heading.                */
   /* ****************************************************************** */
-  if (option.fakeHeadingsQA === true) {
+  if (option.fakeHeadingsQA) {
     Elements.Found.Paragraphs.forEach(($el) => {
       const brAfter = $el.innerHTML.indexOf('</strong><br>');
       const brBefore = $el.innerHTML.indexOf('<br></strong>');
@@ -7764,7 +8188,7 @@ function checkQA(results, option) {
   /*  Warning: Detect paragraphs that should be lists.               */
   /*  Thanks to John Jameson from PrincetonU for this ruleset!       */
   /* *************************************************************** */
-  if (option.fakeListQA === true) {
+  if (option.fakeListQA) {
     Elements.Found.Paragraphs.forEach(($el) => {
       let activeMatch = '';
       const prefixDecrement = {
@@ -7829,7 +8253,7 @@ function checkQA(results, option) {
   /* *************************************************************** */
   /*  Warning: Detect uppercase text.                                */
   /* *************************************************************** */
-  if (option.allCapsQA === true) {
+  if (option.allCapsQA) {
     const checkCaps = ($el) => {
       let thisText = '';
       if ($el.tagName === 'LI') {
@@ -7866,7 +8290,7 @@ function checkQA(results, option) {
   /* *************************************************************** */
   /*  Error: Duplicate IDs                                           */
   /* *************************************************************** */
-  if (option.duplicateIdQA === true) {
+  if (option.duplicateIdQA) {
     const allIds = {};
     Elements.Found.Ids.forEach(($el) => {
       const { id } = $el;
@@ -7890,7 +8314,7 @@ function checkQA(results, option) {
   /*  Warning: Flag underlined text.                                 */
   /*  Created by Brian Teeman.                                       */
   /* *************************************************************** */
-  if (option.underlinedTextQA === true) {
+  if (option.underlinedTextQA) {
     // Find all <u> tags.
     Elements.Found.Underlines.forEach(($el) => {
       const text = getText($el);
@@ -7931,9 +8355,9 @@ function checkQA(results, option) {
   /* *************************************************************** */
   /*  Error: Page is missing meta page <title>                       */
   /* *************************************************************** */
-  if (option.pageTitleQA === true) {
-    const $title = document.querySelector('title');
-    if (!$title || $title.textContent.trim().length === 0) {
+  if (option.pageTitleQA) {
+    const metaTitle = document.querySelector('head title');
+    if (!metaTitle || metaTitle.textContent.trim().length === 0) {
       results.push({
         type: 'error',
         content: Lang.sprintf('QA_PAGE_TITLE'),
@@ -7944,7 +8368,7 @@ function checkQA(results, option) {
   /* *************************************************************** */
   /*  Warning: Find inappropriate use of <sup> and <sub> tags.       */
   /* *************************************************************** */
-  if (option.subscriptQA === true) {
+  if (option.subscriptQA) {
     Elements.Found.Subscripts.forEach(($el) => {
       const text = getText($el);
       if (text.length >= 80) {
@@ -7960,8 +8384,6 @@ function checkQA(results, option) {
       }
     });
   }
-
-  // Return each object to results array.
   return results;
 }
 
@@ -8004,6 +8426,7 @@ function checkCustom(results) {
       });
     }
   });
+  return results;
 }
 
 // Options, language object, constants, and utilities.
@@ -8043,7 +8466,7 @@ class Sa11y {
 
         // Once document has fully loaded.
         documentLoadingCheck(() => {
-          if (option.headless === true) {
+          if (option.headless) {
             // Headless: Perform all checks without loading UI.
             this.checkAll();
             store.removeItem('sa11y-dismissed');
@@ -8053,12 +8476,8 @@ class Sa11y {
             document.body.appendChild(controlPanel);
 
             // Initialize control panel.
-            settingsPanelToggles(
-              this.checkAll,
-              this.resetAll,
-            );
+            settingsPanelToggles(this.checkAll, this.resetAll);
             initializePanelToggles();
-
             addColourFilters();
 
             // Detect page changes (for SPAs).
@@ -8077,10 +8496,7 @@ class Sa11y {
 
             // Check page once page is done loading.
             this.checkAll();
-            mainToggle(
-              this.checkAll,
-              this.resetAll,
-            );
+            mainToggle(this.checkAll, this.resetAll);
           }
         });
       }
@@ -8103,65 +8519,51 @@ class Sa11y {
         }
 
         // Find all web components on the page.
-        Constants.initializeShadowSearch(
-          option.checkRoot,
-          option.autoDetectShadowComponents,
-          option.shadowComponents,
-        );
+        Constants.initializeShadowSearch(option);
 
         // Find and cache elements.
         Elements.initializeElements(option.linksToFlag);
 
         // Ruleset checks
-        checkHeaders(
-          this.results,
-          option.nonConsecutiveHeadingIsError,
-          option.flagLongHeadings,
-          option.missingH1,
-          this.headingOutline,
-        );
-        checkLinkText(
-          this.results,
-          option.showGoodLinkButton,
-          option.linksToDOI,
-        );
-        checkImages(this.results);
+        checkHeaders(this.results, option, this.headingOutline);
+        checkLinkText(this.results, option);
+        checkImages(this.results, option);
         checkContrast(this.results, option);
         checkLabels(this.results, option);
         checkLinksAdvanced(this.results, option);
         checkQA(this.results, option);
         checkEmbeddedContent(this.results, option);
         checkReadability();
+        if (option.customChecks) checkCustom(this.results);
 
-        // Custom checks
-        if (option.customChecks === true) {
-          checkCustom(this.results);
-        }
+        // Filter out heading issues that are outside of the root target.
+        this.results = this.results.filter((item) => item.isWithinRoot !== false);
 
-        // Optional: Generate CSS selector path of element.
-        if (option.selectorPath === true) {
-          this.results.forEach(($el) => {
-            if ($el.element !== undefined) {
-              const path = generateSelectorPath($el.element);
-              Object.assign($el, { cssPath: path });
-            }
-          });
-        }
+        // Generate HTML path, and optionally CSS selector path of element.
+        this.results.forEach(($el) => {
+          const cssPath = option.selectorPath ? generateSelectorPath($el.element) : '';
+          const htmlPath = $el.element?.outerHTML.replace(/\s{2,}/g, ' ').trim() || '';
+          Object.assign($el, { htmlPath, cssPath });
+        });
 
         if (option.headless === false) {
           // Check for dismissed items and update results array.
-          const dismiss = dismissAnnotationsLogic(this.results, this.dismissTooltip);
+          const dismiss = dismissLogic(
+            this.results,
+            this.dismissTooltip,
+            this.checkAll,
+            this.resetAll,
+          );
           this.results = dismiss.updatedResults;
           this.dismissed = dismiss.dismissedIssues;
-          this.dismissedCount = dismiss.dismissCount;
 
-          // Update count.
-          const count = updateCount(this.results, this.errorCount, this.warningCount);
-          this.errorCount = count.error;
-          this.warningCount = count.warning;
-
-          // Update badge.
-          updateBadge(this.errorCount, this.warningCount);
+          // Update count & badge.
+          const count = updateCount(
+            this.results,
+            this.errorCount,
+            this.warningCount,
+          );
+          updateBadge(count.error, count.warning);
 
           /* If panel is OPENED. */
           if (store.getItem('sa11y-remember-panel') === 'Opened') {
@@ -8175,6 +8577,7 @@ class Sa11y {
                 $el.inline,
                 $el.position,
                 $el.id,
+                $el.dismiss,
                 option.dismissAnnotations,
               );
             });
@@ -8186,8 +8589,7 @@ class Sa11y {
             const tooltipComponent = new TooltipComponent();
             document.body.appendChild(tooltipComponent);
 
-            dismissAnnotationsButtons(
-              option.dismissAnnotations,
+            dismissButtons(
               this.results,
               this.dismissed,
               this.checkAll,
@@ -8197,16 +8599,22 @@ class Sa11y {
             generatePageOutline(
               this.dismissed,
               this.headingOutline,
+              option.showHinPageOutline,
             );
 
             updatePanel(
-              this.dismissedCount,
-              this.errorCount,
-              this.warningCount,
+              dismiss.dismissCount,
+              count.error,
+              count.warning,
             );
 
             // Initialize Skip to Issue button.
-            skipToIssue();
+            skipToIssue(this.results);
+
+            // Initialize Export Results plugin.
+            if (option.exportResultsPlugin) {
+              exportResults(this.results, dismiss.dismissedResults);
+            }
 
             // Extras
             detectOverflow();
@@ -8218,7 +8626,7 @@ class Sa11y {
         const event = new CustomEvent('sa11y-check-complete', {
           detail: {
             results: this.results,
-            page: Constants.Global.currentPage,
+            page: window.location.pathname,
           },
         });
         document.dispatchEvent(event);
@@ -8266,20 +8674,18 @@ class Sa11y {
       Constants.Panel.readabilityInfo.innerHTML = '';
       Constants.Panel.readabilityDetails.innerHTML = '';
       Constants.Panel.panel.classList.remove('has-page-issues');
+      Constants.Panel.pageIssues.classList.remove('active');
 
       // Remove any active alerts from panel.
       removeAlert();
 
-      // Remove skip-to-issue EventListeners
+      // Remove EventListeners.
       removeSkipBtnListeners();
+      removeExportListeners();
+      removeDismissListeners();
 
-      // Reset colour filters
-      if (option.colourFilterPlugin === true) {
-        Constants.Panel.colourFilterSelect.value = 0;
-        Constants.Panel.colourPanel.classList.remove('active');
-        Constants.Panel.colourFilterSelect.classList.remove('active');
-        Constants.Panel.content.hidden = false;
-      }
+      // Reset colour filters.
+      resetColourFilters();
 
       // Main panel warning and error count.
       while (Constants.Panel.status.firstChild) Constants.Panel.status.removeChild(Constants.Panel.status.firstChild);

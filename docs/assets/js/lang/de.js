@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.3
+  * @version 3.0.4
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -51,6 +51,16 @@ var de = {
     DISMISSED: 'Ignorierte Warnungen',
     DISMISS_REMINDER: 'Bitte beachten Sie, dass Warnungen nur <strong>vorübergehend</strong> ignoriert werden. Das Löschen des Browserverlaufs und der Cookies stellt alle zuvor ignorierten Warnungen auf allen Seiten wieder her.',
 
+    // Export
+    DATE: 'Datum',
+    PAGE_TITLE: 'Seitentitel',
+    RESULTS: 'Ergebnisse',
+    EXPORT_RESULTS: 'Ergebnisse exportieren',
+    GENERATED: 'Ergebnisse generiert mit %(tool).',
+    PREVIEW: 'Vorschau',
+    ELEMENT: 'Element',
+    PATH: 'Pfad',
+
     // Color filters
     COLOUR_FILTER: 'Farbfilter',
     PROTANOPIA: 'Protanopie',
@@ -64,7 +74,7 @@ var de = {
     MONO_EYE: 'Rot-, Grün- und Blaublindheit.',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Farbfilter funktionieren nicht im Hochkontrastmodus.',
 
-    // Alternative text module stop words
+    // Alternative text stop words
     SUSPICIOUS_ALT_STOPWORDS: ['image', 'graphic', 'picture', 'photo', 'foto', 'bild'],
     PLACEHOLDER_ALT_STOPWORDS: ['alt', 'image', 'photo', 'foto', 'bild', 'decorative', 'placeholder', 'platzhalter', 'placeholder image', 'platzhalter bild', 'platzhalter foto', 'platzhalter photo', 'spacer', 'abstand'],
     PARTIAL_ALT_STOPWORDS: [
@@ -144,6 +154,7 @@ var de = {
     HEADING_MISSING_ONE: 'Fehlende Überschrift 1: Überschrift 1 sollte am Anfang des Hauptinhaltsbereichs stehen und ist die Hauptüberschrift, die den allgemeinen Zweck der Seite beschreibt. Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Überschriften-Struktur.</a>',
     HEADING_EMPTY_WITH_IMAGE: 'Die Überschrift hat keinen Text, enthält aber ein Bild. Wenn es sich nicht um eine Überschrift handelt, ändere das Format von <strong {r}>Überschrift %(level)</strong> zu <strong>Normal</strong> oder <strong>Absatz (p)</strong>. Andernfalls füge bitte einen Alt-Text zum Bild hinzu, wenn es nicht dekorativ ist.',
     PANEL_HEADING_MISSING_ONE: 'Fehlende Überschrift 1!',
+    PANEL_NO_HEADINGS: 'Keine Überschriften gefunden.',
 
     // Links
     LINK_EMPTY: 'Entferne leere Links ohne Text.',

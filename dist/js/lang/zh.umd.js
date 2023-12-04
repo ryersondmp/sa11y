@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.3
+  * @version 3.0.4
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -51,10 +51,24 @@
       HEADING_NOT_VISIBLE_ALERT: '标题是不可见的；它可能是隐藏的或在手风琴或标签组件内。',
       SKIP_TO_PAGE_ISSUES: '跳到页面问题',
       CONSOLE_ERROR_MESSAGE: '对不起, 本页面的可访问性检查器有问题。您能否<a href="%(link)">通过此表格</a>或<a href="%(link)">GitHub</a>报告?',
+
+      // Dismiss
       PANEL_DISMISS_BUTTON: '显示%(dismissCount)被驳回的警告',
       DISMISS: '解散',
       DISMISSED: '撤消的警告',
       DISMISS_REMINDER: '请注意, 警告只被<strong>暂时</strong>驳回。清除你的浏览器历史记录和cookies将恢复所有页面上所有以前被驳回的警告。',
+
+      // Export
+      DATE: '日期',
+      PAGE_TITLE: '页面标题',
+      RESULTS: '结果',
+      EXPORT_RESULTS: '导出结果',
+      GENERATED: '使用 %(tool) 生成的结果。',
+      PREVIEW: '预览',
+      ELEMENT: '元素',
+      PATH: '路径',
+
+      // Colour filters
       COLOUR_FILTER: '彩色过滤器',
       PROTANOPIA: '原住民',
       DEUTERANOPIA: '氘代苯丙胺(Deuteranopia)',
@@ -66,6 +80,8 @@
       BLUE_EYE: '蓝盲。',
       MONO_EYE: '红、蓝、绿三色盲。',
       COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: '彩色滤镜在高对比度模式下不工作。',
+
+      // Alternative text stop words
       SUSPICIOUS_ALT_STOPWORDS: [
         '形象',
         '图形',
@@ -143,6 +159,7 @@
       HEADING_MISSING_ONE: '缺少标题1。标题1应该是主要内容区的开始, 是描述页面整体目的的主要标题。了解更多关于<a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">标题结构.</a>的信息。',
       HEADING_EMPTY_WITH_IMAGE: '标题没有文字, 但包含一个图像。如果这不是一个标题, 请将其格式从<strong {r}>标题%(level)</strong>改为<strong>正常</strong>或<strong>段落</strong>。否则, 如果图片不是装饰性的, 请为其添加alt文本。',
       PANEL_HEADING_MISSING_ONE: '缺少标题1!',
+      PANEL_NO_HEADINGS: '未找到标题.',
       LINK_EMPTY: '删除没有任何文字的空链接。',
       LINK_EMPTY_LINK_NO_LABEL: '链接没有可识别的文字, 对屏幕阅读器和其他辅助技术是可见的。要解决这个问题: <ul><li>添加一些简明的文字, 描述该链接带你到哪里。</li><li>如果它是一个<a href="https://a11y-101.com/development/icons-and-links">图标链接或SVG,</a>它可能缺少一个描述性的标签。</li><li>如果你认为这个链接是一个由于复制/粘贴错误造成的错误, 考虑删除它。</li></ul>。',
       LINK_LABEL: '<strong>链接标签: </strong> %(sanitizedText)',

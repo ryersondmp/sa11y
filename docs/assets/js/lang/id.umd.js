@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.3
+  * @version 3.0.4
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -51,10 +51,24 @@
       HEADING_NOT_VISIBLE_ALERT: 'Judul tidak terlihat; judul mungkin tersembunyi atau berada di dalam komponen akordeon atau tab.',
       SKIP_TO_PAGE_ISSUES: 'Loncat ke Halaman Masalah',
       CONSOLE_ERROR_MESSAGE: 'Maaf, ada masalah dengan pemeriksa aksesibilitas di halaman ini. Bisakah Anda <a href="%(link)">melaporkannya melalui formulir ini</a> atau di <a href="%(link)">GitHub</a>?',
+
+      // Dismiss
       PANEL_DISMISS_BUTTON: 'Tampilkan %(dismissCount) peringatan yang diberhentikan',
       DISMISS: 'Bubarkan.',
       DISMISSED: 'Peringatan yang diabaikan',
       DISMISS_REMINDER: 'Harap diperhatikan bahwa peringatan hanya bersifat <strong>sementara</strong>. Menghapus riwayat browser dan cookie Anda akan mengembalikan semua peringatan yang sebelumnya diberhentikan di semua halaman.',
+
+      // Export
+      DATE: 'Tanggal',
+      PAGE_TITLE: 'Judul Halaman',
+      RESULTS: 'Hasil',
+      EXPORT_RESULTS: 'Ekspor hasil',
+      GENERATED: 'Hasil dihasilkan dengan %(tool).',
+      PREVIEW: 'Pratinjau',
+      ELEMENT: 'Elemen',
+      PATH: 'Jalur',
+
+      // Colour filters
       COLOUR_FILTER: 'Filter warna',
       PROTANOPIA: 'Protanopia',
       DEUTERANOPIA: 'Deuteranopia',
@@ -66,6 +80,8 @@
       BLUE_EYE: 'Biru buta.',
       MONO_EYE: 'Buta merah, biru, dan hijau.',
       COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Filter warna tidak berfungsi dalam mode kontras tinggi.',
+
+      // Alternative text stop words
       SUSPICIOUS_ALT_STOPWORDS: [
         'gambar',
         'grafik',
@@ -147,6 +163,7 @@
       HEADING_MISSING_ONE: 'Heading 1. Heading 1 seharusnya menjadi awal dari area konten utama, dan merupakan heading utama yang menjelaskan tujuan keseluruhan halaman. Pelajari lebih lanjut tentang <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Struktur Judul.</a>',
       HEADING_EMPTY_WITH_IMAGE: 'Judul tidak memiliki teks, namun berisi gambar. Jika ini bukan judul, ubah formatnya dari <strong {r}>Judul %(level)</strong> ke <strong>Normal</strong> atau <strong>Paragraf</strong>. Jika tidak, tambahkan teks alt ke gambar jika tidak bersifat dekoratif.',
       PANEL_HEADING_MISSING_ONE: 'Hilang Heading 1!',
+      PANEL_NO_HEADINGS: 'Tidak ada judul ditemukan.',
       LINK_EMPTY: 'Hapus tautan kosong tanpa teks apa pun.',
       LINK_EMPTY_LINK_NO_LABEL: 'Tautan tidak memiliki teks yang dapat dilihat oleh pembaca layar dan teknologi bantuan lainnya. Untuk memperbaiki: <ul><li>Tambahkan beberapa teks ringkas yang menjelaskan ke mana tautan tersebut membawa Anda.</li><li>Jika tautan tersebut adalah tautan <a href="https://a11y-101.com/development/icons-and-links">ikon atau SVG,</a> kemungkinan besar tautan tersebut tidak memiliki label deskriptif.</li><li>Jika Anda merasa tautan tersebut merupakan kesalahan akibat bug salin/tempel, pertimbangkan untuk menghapusnya.</li></ul>',
       LINK_LABEL: '<strong>Label tautan:</strong> %(sanitizedText)',

@@ -6,9 +6,10 @@ import Constants from './utils/constants';
 import Elements from './utils/elements';
 
 // Extras
-import detectPageChanges from './logic/detect-page-changes';
-import { dismissAnnotationsLogic, dismissAnnotationsButtons } from './logic/dismiss-annotations';
-import addColourFilters from './logic/colour-filters';
+import detectPageChanges from './features/detect-page-changes';
+import { dismissLogic, dismissButtons, removeDismissListeners } from './features/dismiss-annotations';
+import { addColourFilters, resetColourFilters } from './features/colour-filters';
+import { exportResults, removeExportListeners } from './features/export-results';
 import ConsoleErrors from './interface/console-error';
 
 // Create UI/interface elements
@@ -70,7 +71,7 @@ class Sa11y {
 
         // Once document has fully loaded.
         Utils.documentLoadingCheck(() => {
-          if (option.headless === true) {
+          if (option.headless) {
             // Headless: Perform all checks without loading UI.
             this.checkAll();
             Utils.store.removeItem('sa11y-dismissed');
@@ -80,12 +81,8 @@ class Sa11y {
             document.body.appendChild(controlPanel);
 
             // Initialize control panel.
-            settingsPanelToggles(
-              this.checkAll,
-              this.resetAll,
-            );
+            settingsPanelToggles(this.checkAll, this.resetAll);
             initializePanelToggles();
-
             addColourFilters();
 
             // Detect page changes (for SPAs).
@@ -104,10 +101,7 @@ class Sa11y {
 
             // Check page once page is done loading.
             this.checkAll();
-            mainToggle(
-              this.checkAll,
-              this.resetAll,
-            );
+            mainToggle(this.checkAll, this.resetAll);
           }
         });
       }
@@ -130,65 +124,51 @@ class Sa11y {
         }
 
         // Find all web components on the page.
-        Constants.initializeShadowSearch(
-          option.checkRoot,
-          option.autoDetectShadowComponents,
-          option.shadowComponents,
-        );
+        Constants.initializeShadowSearch(option);
 
         // Find and cache elements.
         Elements.initializeElements(option.linksToFlag);
 
         // Ruleset checks
-        checkHeaders(
-          this.results,
-          option.nonConsecutiveHeadingIsError,
-          option.flagLongHeadings,
-          option.missingH1,
-          this.headingOutline,
-        );
-        checkLinkText(
-          this.results,
-          option.showGoodLinkButton,
-          option.linksToDOI,
-        );
-        checkImages(this.results);
+        checkHeaders(this.results, option, this.headingOutline);
+        checkLinkText(this.results, option);
+        checkImages(this.results, option);
         checkContrast(this.results, option);
         checkLabels(this.results, option);
         checkLinksAdvanced(this.results, option);
         checkQA(this.results, option);
         checkEmbeddedContent(this.results, option);
         checkReadability();
+        if (option.customChecks) checkCustom(this.results);
 
-        // Custom checks
-        if (option.customChecks === true) {
-          checkCustom(this.results);
-        }
+        // Filter out heading issues that are outside of the root target.
+        this.results = this.results.filter((item) => item.isWithinRoot !== false);
 
-        // Optional: Generate CSS selector path of element.
-        if (option.selectorPath === true) {
-          this.results.forEach(($el) => {
-            if ($el.element !== undefined) {
-              const path = Utils.generateSelectorPath($el.element);
-              Object.assign($el, { cssPath: path });
-            }
-          });
-        }
+        // Generate HTML path, and optionally CSS selector path of element.
+        this.results.forEach(($el) => {
+          const cssPath = option.selectorPath ? Utils.generateSelectorPath($el.element) : '';
+          const htmlPath = $el.element?.outerHTML.replace(/\s{2,}/g, ' ').trim() || '';
+          Object.assign($el, { htmlPath, cssPath });
+        });
 
         if (option.headless === false) {
           // Check for dismissed items and update results array.
-          const dismiss = dismissAnnotationsLogic(this.results, this.dismissTooltip);
+          const dismiss = dismissLogic(
+            this.results,
+            this.dismissTooltip,
+            this.checkAll,
+            this.resetAll,
+          );
           this.results = dismiss.updatedResults;
           this.dismissed = dismiss.dismissedIssues;
-          this.dismissedCount = dismiss.dismissCount;
 
-          // Update count.
-          const count = updateCount(this.results, this.errorCount, this.warningCount);
-          this.errorCount = count.error;
-          this.warningCount = count.warning;
-
-          // Update badge.
-          updateBadge(this.errorCount, this.warningCount);
+          // Update count & badge.
+          const count = updateCount(
+            this.results,
+            this.errorCount,
+            this.warningCount,
+          );
+          updateBadge(count.error, count.warning);
 
           /* If panel is OPENED. */
           if (Utils.store.getItem('sa11y-remember-panel') === 'Opened') {
@@ -202,6 +182,7 @@ class Sa11y {
                 $el.inline,
                 $el.position,
                 $el.id,
+                $el.dismiss,
                 option.dismissAnnotations,
               );
             });
@@ -213,8 +194,7 @@ class Sa11y {
             const tooltipComponent = new TooltipComponent();
             document.body.appendChild(tooltipComponent);
 
-            dismissAnnotationsButtons(
-              option.dismissAnnotations,
+            dismissButtons(
               this.results,
               this.dismissed,
               this.checkAll,
@@ -224,16 +204,22 @@ class Sa11y {
             generatePageOutline(
               this.dismissed,
               this.headingOutline,
+              option.showHinPageOutline,
             );
 
             updatePanel(
-              this.dismissedCount,
-              this.errorCount,
-              this.warningCount,
+              dismiss.dismissCount,
+              count.error,
+              count.warning,
             );
 
             // Initialize Skip to Issue button.
-            skipToIssue();
+            skipToIssue(this.results);
+
+            // Initialize Export Results plugin.
+            if (option.exportResultsPlugin) {
+              exportResults(this.results, dismiss.dismissedResults);
+            }
 
             // Extras
             detectOverflow();
@@ -245,7 +231,7 @@ class Sa11y {
         const event = new CustomEvent('sa11y-check-complete', {
           detail: {
             results: this.results,
-            page: Constants.Global.currentPage,
+            page: window.location.pathname,
           },
         });
         document.dispatchEvent(event);
@@ -293,20 +279,18 @@ class Sa11y {
       Constants.Panel.readabilityInfo.innerHTML = '';
       Constants.Panel.readabilityDetails.innerHTML = '';
       Constants.Panel.panel.classList.remove('has-page-issues');
+      Constants.Panel.pageIssues.classList.remove('active');
 
       // Remove any active alerts from panel.
       Utils.removeAlert();
 
-      // Remove skip-to-issue EventListeners
+      // Remove EventListeners.
       removeSkipBtnListeners();
+      removeExportListeners();
+      removeDismissListeners();
 
-      // Reset colour filters
-      if (option.colourFilterPlugin === true) {
-        Constants.Panel.colourFilterSelect.value = 0;
-        Constants.Panel.colourPanel.classList.remove('active');
-        Constants.Panel.colourFilterSelect.classList.remove('active');
-        Constants.Panel.content.hidden = false;
-      }
+      // Reset colour filters.
+      resetColourFilters();
 
       // Main panel warning and error count.
       while (Constants.Panel.status.firstChild) Constants.Panel.status.removeChild(Constants.Panel.status.firstChild);

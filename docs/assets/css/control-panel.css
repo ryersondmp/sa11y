@@ -15,6 +15,7 @@ button,
 svg,
 strong,
 kbd,
+pre,
 code {
   all: unset;
   box-sizing: border-box !important;
@@ -46,11 +47,24 @@ label {
   font-weight: normal;
   text-align: start;
   letter-spacing: normal;
-  word-break: normal;
+  word-break: break-word;
 }
 
 .sa11y-overflow {
   overflow: auto;
+}
+
+img,
+video,
+iframe {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border: 0;
+}
+
+audio {
+  max-width: 100%;
 }
 
 /* ************************************* */
@@ -198,7 +212,7 @@ label {
 #panel-alert-content {
   position: relative;
   align-items: center;
-  max-height: 200px;
+  max-height: 400px;
   padding: 15px 20px 15px 15px;
   overflow-y: auto;
   color: var(--sa11y-panel-primary);
@@ -225,6 +239,14 @@ label {
   border-radius: 5px;
 }
 
+.element-preview {
+  padding: 5px;
+  margin-bottom: 10px;
+  overflow-wrap: break-word;
+  background-color: var(--sa11y-panel-badge);
+  border-radius: 3.2px;
+}
+
 /* Dismiss button for issues */
 button[data-sa11y-dismiss] {
   display: block;
@@ -232,8 +254,8 @@ button[data-sa11y-dismiss] {
   margin: 10px 5px 5px 0;
   color: var(--sa11y-panel-primary);
   cursor: pointer;
-  background: var(--sa11y-panel-bg);
-  border: 1px solid var(--sa11y-button-outline);
+  background: var(--sa11y-panel-bg-secondary);
+  border: 2px solid var(--sa11y-button-outline);
   border-radius: 5px;
 }
 button[data-sa11y-dismiss]:hover, button[data-sa11y-dismiss]:focus {
@@ -291,10 +313,8 @@ hr {
   border: 1px solid var(--sa11y-button-outline);
   border-radius: 50px;
   transition: all 0.1s ease-in-out;
-  -webkit-margin-end: 8px;
-          margin-inline-end: 8px;
-  -webkit-margin-start: 2px;
-          margin-inline-start: 2px;
+  margin-inline-end: 8px;
+  margin-inline-start: 2px;
 }
 #dismiss-button.active,
 #skip-button.active {
@@ -326,10 +346,8 @@ hr {
 #panel.top-left #skip-button,
 #panel.left #dismiss-button,
 #panel.left #skip-button {
-  -webkit-margin-start: 8px;
-          margin-inline-start: 8px;
-  -webkit-margin-end: 2px;
-          margin-inline-end: 2px;
+  margin-inline-start: 8px;
+  margin-inline-end: 2px;
 }
 
 /* Dismiss button */
@@ -482,24 +500,19 @@ hr {
   box-shadow: 0 0 0 2px var(--sa11y-panel-outline-hover);
 }
 #outline-list .outline-2 {
-  -webkit-margin-start: 15px;
-          margin-inline-start: 15px;
+  margin-inline-start: 15px;
 }
 #outline-list .outline-3 {
-  -webkit-margin-start: 30px;
-          margin-inline-start: 30px;
+  margin-inline-start: 30px;
 }
 #outline-list .outline-4 {
-  -webkit-margin-start: 45px;
-          margin-inline-start: 45px;
+  margin-inline-start: 45px;
 }
 #outline-list .outline-5 {
-  -webkit-margin-start: 60px;
-          margin-inline-start: 60px;
+  margin-inline-start: 60px;
 }
 #outline-list .outline-6 {
-  -webkit-margin-start: 75px;
-          margin-inline-start: 75px;
+  margin-inline-start: 75px;
 }
 
 /* **************************************** */
@@ -609,22 +622,47 @@ hr {
 }
 
 #outline-toggle {
-  -webkit-border-end: 1px solid var(--sa11y-panel-bg-splitter);
-          border-inline-end: 1px solid var(--sa11y-panel-bg-splitter);
+  border-inline-end: 1px solid var(--sa11y-panel-bg-splitter);
 }
 
+#export-results-mode,
 label {
   display: inline-block;
   width: 100%;
   margin: 0;
   font-weight: normal;
   color: var(--sa11y-panel-primary);
+}
+
+label:not(#colour-filter-mode, #export-results-mode) {
   cursor: pointer;
 }
 
 /* ***************************************** */
 /*           13. Settings Panel              */
 /* ***************************************** */
+#settings-panel #export-csv,
+#settings-panel #export-html {
+  width: unset;
+  padding: 0;
+  text-align: center;
+}
+#settings-panel #export-csv span,
+#settings-panel #export-html span {
+  display: block;
+  width: 65px;
+  padding: 7px 9px;
+  margin: 0 4px;
+  background: var(--sa11y-panel-bg-secondary);
+  border-radius: 5px;
+  box-shadow: inset 0 0 0 2px var(--sa11y-setting-switch-bg-off);
+}
+#settings-panel #export-csv:hover span, #settings-panel #export-csv:focus span, #settings-panel #export-csv:focus-within span,
+#settings-panel #export-html:hover span,
+#settings-panel #export-html:focus span,
+#settings-panel #export-html:focus-within span {
+  background: var(--sa11y-shortcut-hover);
+}
 #settings-panel .switch {
   position: relative;
   width: 105px;
@@ -753,10 +791,8 @@ label {
 #panel-colour-filters .panel-icon {
   width: 30px;
   height: 30px;
-  -webkit-margin-end: 5px;
-          margin-inline-end: 5px;
-  -webkit-margin-start: 10px;
-          margin-inline-start: 10px;
+  margin-inline-end: 5px;
+  margin-inline-start: 10px;
   -webkit-mask: var(--sa11y-low-vision-icon) center no-repeat;
           mask: var(--sa11y-low-vision-icon) center no-repeat;
 }
@@ -790,13 +826,15 @@ label {
   text-align: end;
   vertical-align: middle;
   cursor: pointer;
-  background: var(--sa11y-panel-bg);
+  background: var(--sa11y-panel-bg-secondary);
   border: 2px solid var(--sa11y-setting-switch-bg-off);
   border-radius: 5px;
-  -webkit-padding-end: 25px;
-          padding-inline-end: 25px;
-  -webkit-padding-start: 5px;
-          padding-inline-start: 5px;
+  padding-inline-end: 25px;
+  padding-inline-start: 5px;
+  margin-inline-end: 4px;
+}
+#colour-filter-select:hover, #colour-filter-select:focus {
+  background: var(--sa11y-shortcut-hover);
 }
 
 #colour-filter-select.active {
@@ -838,8 +876,7 @@ label {
   display: inline-block;
   margin: 0;
   list-style-type: none;
-  -webkit-padding-end: 10px;
-          padding-inline-end: 10px;
+  padding-inline-end: 10px;
 }
 
 .readability-score {
@@ -847,13 +884,11 @@ label {
   color: var(--sa11y-panel-primary);
   background-color: var(--sa11y-panel-badge);
   border-radius: 4px;
-  -webkit-margin-start: 5px;
-          margin-inline-start: 5px;
+  margin-inline-start: 5px;
 }
 
 #readability-info {
-  -webkit-margin-start: 10px;
-          margin-inline-start: 10px;
+  margin-inline-start: 10px;
 }
 
 /* ************************************* */
@@ -902,6 +937,7 @@ label {
 /* ***************************************** */
 ::-webkit-scrollbar {
   width: 7px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-thumb {

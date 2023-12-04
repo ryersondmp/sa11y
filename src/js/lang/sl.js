@@ -33,10 +33,24 @@ export default {
     HEADING_NOT_VISIBLE_ALERT: 'Glava ni vidna; lahko je skrita ali znotraj komponente harmonike ali zavihka.',
     SKIP_TO_PAGE_ISSUES: 'Preskoči na stran Vprašanja',
     CONSOLE_ERROR_MESSAGE: 'Opravičujemo se, vendar je na tej strani prišlo do težave s preverjanjem dostopnosti. Ali jo lahko <a href="%(link)">prijavite prek tega obrazca</a> ali na <a href="%(link)">GitHub</a>?',
+
+    // Dismiss
     PANEL_DISMISS_BUTTON: 'Prikaži %(dismissCount) zavrnjenih opozoril',
     DISMISS: 'Zavrnite',
     DISMISSED: 'Zavrnjena opozorila',
     DISMISS_REMINDER: 'Upoštevajte, da so opozorila le <strong>začasno</strong> zavrnjena. Z brisanjem zgodovine brskalnika in piškotkov se bodo na vseh straneh obnovila vsa predhodno zavrnjena opozorila.',
+
+    // Export
+    DATE: 'Datum',
+    PAGE_TITLE: 'Naslov strani',
+    RESULTS: 'Rezultati',
+    EXPORT_RESULTS: 'Izvozi rezultate',
+    GENERATED: 'Rezultati, ustvarjeni s %(tool).',
+    PREVIEW: 'Predogled',
+    ELEMENT: 'Element',
+    PATH: 'Pot',
+
+    // Colour filters
     COLOUR_FILTER: 'Barvni filter',
     PROTANOPIA: 'Protanopia',
     DEUTERANOPIA: 'Deuteranopija',
@@ -48,6 +62,8 @@ export default {
     BLUE_EYE: 'Modra žaluzija.',
     MONO_EYE: 'Rdeči, modri in zeleni slepi.',
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Barvni filtri ne delujejo v načinu visokega kontrasta.',
+
+    // Alternative text stop words
     SUSPICIOUS_ALT_STOPWORDS: [
       'slika',
       'grafični',
@@ -126,6 +142,7 @@ export default {
     HEADING_MISSING_ONE: 'Manjka naslov 1. Naslov 1 mora biti začetek glavnega vsebinskega področja in je glavni naslov, ki opisuje splošni namen strani. Preberite več o <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Strukturi naslovov.</a>',
     HEADING_EMPTY_WITH_IMAGE: 'Naslov nima besedila, vsebuje pa sliko. Če to ni naslov, spremenite njegovo obliko iz <strong {r}>Nadpis %(level)</strong> v <strong>Normalno</strong> ali <strong>Odstavek</strong>. V nasprotnem primeru sliki dodajte besedilo alt, če ni okrasno.',
     PANEL_HEADING_MISSING_ONE: 'Manjka naslov 1!',
+    PANEL_NO_HEADINGS: 'Ni najdenih naslovov.',
     LINK_EMPTY: 'Odstranite prazne povezave brez besedila.',
     LINK_EMPTY_LINK_NO_LABEL: 'Povezava nima razločljivega besedila, ki bi bilo vidno za bralnike zaslona in drugo podporno tehnologijo. Popravek: </li><li>Dodajte nekaj jedrnatega besedila, ki opisuje, kam vas bo povezava pripeljala.</li><li>Če gre za povezavo <a href="https://a11y-101.com/development/icons-and-links">ikona ali SVG,</a>, ji verjetno manjka opisna oznaka.</li><li>Če menite, da je ta povezava napaka zaradi napake pri kopiranju/prilepljanju, razmislite o njenem izbrisu.</li></ul>',
     LINK_LABEL: '<strong>Etiketa povezave:</strong> %(sanitizedText)',

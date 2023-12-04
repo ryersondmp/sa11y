@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.3
+  * @version 3.0.4
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -51,10 +51,24 @@
       HEADING_NOT_VISIBLE_ALERT: 'O cabeçalho não é visível; ele pode estar oculto ou dentro de um componente de acordeão ou guia.',
       SKIP_TO_PAGE_ISSUES: 'Pular para os problemas da página',
       CONSOLE_ERROR_MESSAGE: 'Desculpe, mas há um problema com o verificador de acessibilidade nesta página. Você pode <a href="%(link)">relatar o problema por meio deste formulário</a> ou no <a href="%(link)">GitHub</a>?',
+
+      // Dismiss
       PANEL_DISMISS_BUTTON: 'Mostrar %(dismissCount) avisos descartados',
       DISMISS: 'Dispensar',
       DISMISSED: 'Avisos indeferidos',
       DISMISS_REMINDER: 'Observe que os avisos são descartados apenas <strong>temporariamente</strong>. A limpeza do histórico e dos cookies do navegador restaurará todos os avisos descartados anteriormente em todas as páginas.',
+
+      // Export
+      DATE: 'Data',
+      PAGE_TITLE: 'Título da página',
+      RESULTS: 'Resultados',
+      EXPORT_RESULTS: 'Exportar resultados',
+      GENERATED: 'Resultados gerados com %(tool).',
+      PREVIEW: 'Visualização',
+      ELEMENT: 'Elemento',
+      PATH: 'Caminho',
+
+      // Colour filters
       COLOUR_FILTER: 'Filtro de cores',
       PROTANOPIA: 'Protanopia',
       DEUTERANOPIA: 'Deuteranopia',
@@ -66,6 +80,8 @@
       BLUE_EYE: 'Cego azul.',
       MONO_EYE: 'Cego para vermelho, azul e verde.',
       COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Os filtros de cores não funcionam no modo de alto contraste.',
+
+      // Alternative text stop words
       SUSPICIOUS_ALT_STOPWORDS: [
         'imagem',
         'gráfico',
@@ -145,6 +161,7 @@
       HEADING_MISSING_ONE: 'Falta de título 1. O título 1 deve ser o início da área de conteúdo principal e é o título principal que descreve o objetivo geral da página. Saiba mais sobre <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Estrutura de cabeçalho.</a>',
       HEADING_EMPTY_WITH_IMAGE: 'O cabeçalho não tem texto, mas contém uma imagem. Se esse não for um cabeçalho, altere seu formato de <strong {r}>Título %(level)</strong> para <strong>Normal</strong> ou <strong>Parágrafo</strong>. Caso contrário, adicione texto alternativo à imagem se ela não for decorativa.',
       PANEL_HEADING_MISSING_ONE: 'Falta o cabeçalho 1!',
+      PANEL_NO_HEADINGS: 'Nenhuma cabeçalho encontrado.',
       LINK_EMPTY: 'Remova links vazios sem nenhum texto.',
       LINK_EMPTY_LINK_NO_LABEL: 'O link não tem texto discernível que seja visível para leitores de tela e outras tecnologias assistivas. Para corrigir: <ul><li>Adicione um texto conciso que descreva para onde o link o leva.</li><li>Se for um <a href="https://a11y-101.com/development/icons-and-links">link de ícone ou SVG,</a> é provável que esteja faltando um rótulo descritivo.</li><li>Se você acha que esse link é um erro devido a um bug de copiar/colar, considere excluí-lo.</li></ul>',
       LINK_LABEL: '<strong>Rótulo do link:</strong> %(sanitizedText)',

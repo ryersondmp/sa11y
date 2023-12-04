@@ -3,39 +3,36 @@ import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 
-export default function checkLinkText(results, showGoodLinkButton, linksToDOI) {
+export default function checkLinkText(results, option) {
   const containsLinkTextStopWords = (textContent) => {
     const urlText = [
       'http',
-      '.asp',
-      '.htm',
-      '.php',
-      '.edu/',
-      '.com/',
-      '.net/',
-      '.org/',
-      '.us/',
-      '.ca/',
-      '.de/',
-      '.icu/',
-      '.uk/',
-      '.ru/',
-      '.info/',
-      '.top/',
-      '.xyz/',
-      '.tk/',
-      '.cn/',
-      '.ga/',
-      '.cf/',
-      '.nl/',
-      '.io/',
-      '.fr/',
-      '.pe/',
-      '.nz/',
-      '.pt/',
-      '.es/',
-      '.pl/',
-      '.ua/',
+      'edu/',
+      'com/',
+      'net/',
+      'org/',
+      'us/',
+      'ca/',
+      'de/',
+      'icu/',
+      'uk/',
+      'ru/',
+      'info/',
+      'top/',
+      'xyz/',
+      'tk/',
+      'cn/',
+      'ga/',
+      'cf/',
+      'nl/',
+      'io/',
+      'fr/',
+      'pe/',
+      'nz/',
+      'pt/',
+      'es/',
+      'pl/',
+      'ua/',
     ];
 
     const hit = [null, null, null, null];
@@ -58,11 +55,23 @@ export default function checkLinkText(results, showGoodLinkButton, linksToDOI) {
       return false;
     });
 
-    // Flag citations/references
-    const doi = 'doi.org';
-    if (textContent.toLowerCase().includes('doi')) {
-      hit[2] = doi;
-    }
+    // Flag citations/references. Check if link text matches a publication source.
+    const doi = [
+      'doiorg/', // doi.org
+      'dlacmorg/', // dl.acm.org
+      'linkspringercom/', // link.springer.com
+      'pubmedncbinlmnihgov/', // pubmed.ncbi.nlm.nih.gov
+      'scholargooglecom/', // scholar.google.com
+      'ieeexploreieeeorg/', // ieeexplore.ieee.org
+      'researchgatenet/publication', // researchgate.net/publication
+      'sciencedirectcom/science/article', // sciencedirect.com/science/article
+    ];
+    doi.forEach((word) => {
+      if (textContent.toLowerCase().indexOf(word) >= 0) {
+        hit[2] = word;
+      }
+      return false;
+    });
 
     // Flag link text containing URLs.
     urlText.forEach((word) => {
@@ -150,7 +159,7 @@ export default function checkLinkText(results, showGoodLinkButton, linksToDOI) {
       // Contains stop words.
       if (hasAriaLabelledBy || hasAriaLabel || childAriaLabelledBy || childAriaLabel) {
         const sanitizedText = Utils.sanitizeHTML(linkText);
-        if (showGoodLinkButton === true) {
+        if (option.showGoodLinkButton) {
           results.push({
             element: $el,
             type: 'good',
@@ -182,7 +191,7 @@ export default function checkLinkText(results, showGoodLinkButton, linksToDOI) {
         position: 'beforebegin',
         dismiss: key,
       });
-    } else if (error[2] !== null && linksToDOI === true) {
+    } else if (error[2] !== null && option.linksToDOI) {
       const key = Utils.prepareDismissal(`LINK${linkText + error[2] + href}`);
       // Contains DOI URL in link text.
       if (linkText.length > 8) {
@@ -195,10 +204,10 @@ export default function checkLinkText(results, showGoodLinkButton, linksToDOI) {
           dismiss: key,
         });
       }
-    } else if (error[3] !== null) {
+    } else if (error[3] !== null && option.URLAsLinkTextWarning) {
       const key = Utils.prepareDismissal(`LINK${linkText + error[2] + href}`);
       // Contains URL in link text.
-      if (linkText.length > 40) {
+      if (linkText.length > option.URLTextMaxCharLength) {
         results.push({
           element: $el,
           type: 'warning',
@@ -210,7 +219,7 @@ export default function checkLinkText(results, showGoodLinkButton, linksToDOI) {
       }
     } else if (hasAriaLabelledBy || hasAriaLabel || childAriaLabelledBy || childAriaLabel) {
       // If the link has any ARIA, append a "Good" link button.
-      if (showGoodLinkButton === true) {
+      if (option.showGoodLinkButton) {
         const sanitizedText = Utils.sanitizeHTML(linkText);
         results.push({
           element: $el,
@@ -231,5 +240,5 @@ export default function checkLinkText(results, showGoodLinkButton, linksToDOI) {
       });
     }
   });
-  return { results };
+  return results;
 }

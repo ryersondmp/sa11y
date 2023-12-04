@@ -24,13 +24,13 @@ export default class ControlPanel extends HTMLElement {
     const rememberReadability = store.getItem('sa11y-remember-readability') === 'On';
 
     // If admin wants users to check everything, without toggleable checks.
-    const checkAll = Constants.Global.checkAllHideToggles === true;
+    const checkAll = Constants.Global.checkAllHideToggles;
 
     // Panel position: left or right side.
     const { panelPosition } = Constants.Global;
 
     /* TOGGLEABLE PLUGINS */
-    const contrastPlugin = (Constants.Global.contrastPlugin === true) ? `
+    const contrastPlugin = Constants.Global.contrastPlugin ? `
       <li id="contrast-item" ${checkAll ? 'hidden' : ''}>
         <label id="check-contrast" for="contrast-toggle">${Lang._('CONTRAST')}</label>
         <button id="contrast-toggle"
@@ -39,7 +39,7 @@ export default class ControlPanel extends HTMLElement {
           aria-pressed="${rememberContrast ? 'true' : 'false'}">${rememberContrast ? Lang._('ON') : Lang._('OFF')}</button>
       </li>` : '';
 
-    const formLabelsPlugin = (Constants.Global.formLabelsPlugin === true) ? `
+    const formLabelsPlugin = Constants.Global.formLabelsPlugin ? `
       <li id="form-labels-item" ${checkAll ? 'hidden' : ''}>
         <label id="check-labels" for="labels-toggle">${Lang._('FORM_LABELS')}</label>
         <button id="labels-toggle"
@@ -48,7 +48,7 @@ export default class ControlPanel extends HTMLElement {
           aria-pressed="${rememberFormLabels ? 'true' : 'false'}">${rememberFormLabels ? Lang._('ON') : Lang._('OFF')}</button>
       </li>` : '';
 
-    const linksAdvancedPlugin = (Constants.Global.linksAdvancedPlugin === true) ? `
+    const linksAdvancedPlugin = Constants.Global.linksAdvancedPlugin ? `
       <li id="links-advanced-item" ${checkAll ? 'hidden' : ''}>
         <label id="check-changerequest" for="links-advanced-toggle">${Lang._('LINKS_ADVANCED')} <span class="badge">AAA</span></label>
         <button id="links-advanced-toggle"
@@ -57,7 +57,7 @@ export default class ControlPanel extends HTMLElement {
           aria-pressed="${rememberLinksAdvanced ? 'true' : 'false'}">${rememberLinksAdvanced ? Lang._('ON') : Lang._('OFF')}</button>
       </li>` : '';
 
-    const readabilityPlugin = (Constants.Readability.Plugin === true) ? `
+    const readabilityPlugin = Constants.Readability.Plugin ? `
       <li id="readability-item">
         <label id="check-readability" for="readability-toggle">${Lang._('LANG_READABILITY')} <span class="badge">AAA</span></label>
         <button id="readability-toggle"
@@ -66,7 +66,7 @@ export default class ControlPanel extends HTMLElement {
           aria-pressed="${rememberReadability ? 'true' : 'false'}">${rememberReadability ? Lang._('ON') : Lang._('OFF')}</button>
       </li>` : '';
 
-    const colourFilterPlugin = (Constants.Global.colourFilterPlugin === true) ? `
+    const colourFilterPlugin = Constants.Global.colourFilterPlugin ? `
       <li id="colour-filter-item">
         <label id="colour-filter-mode" for="colour-filter">${Lang._('COLOUR_FILTER')}</label>
         <div class="select-dropdown">
@@ -80,11 +80,22 @@ export default class ControlPanel extends HTMLElement {
         </div>
       </li>` : '';
 
-    const colourFilterPanel = (Constants.Global.colourFilterPlugin === true) ? `
+    const colourFilterPanel = Constants.Global.colourFilterPlugin ? `
       <div id="panel-colour-filters" role="region" aria-labelledby="colour-filter-mode">
         <div id="filter-icon" class="panel-icon" role="img"></div>
         <p>${Lang._('COLOUR_FILTER_MESSAGE')}</p>
       </div>` : '';
+
+    const exportResultsPlugin = Constants.Global.exportResultsPlugin ? `
+      <li id="export-results-item">
+        <span id="export-results-mode">${Lang._('EXPORT_RESULTS')}</span>
+        <button id="export-csv" class="switch" aria-describedby="export-results-mode">
+          <span>CSV</span>
+        </button>
+        <button id="export-html" class="switch" aria-describedby="export-results-mode">
+          <span>HTML</span>
+        </button>
+      </li>` : '';
 
     /* MAIN TOGGLE */
     const mainToggle = `
@@ -147,6 +158,7 @@ export default class ControlPanel extends HTMLElement {
                 aria-labelledby="dark-mode"
                 class="switch"></button>
             </li>
+            ${exportResultsPlugin}
             ${colourFilterPlugin}
           </ul>
         </div>
