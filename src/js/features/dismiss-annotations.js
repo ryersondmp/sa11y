@@ -121,22 +121,17 @@ export function dismissButtons(results, dismissed, checkAll, resetAll) {
     const tooltips = document.querySelector('sa11y-tooltips').shadowRoot;
     tooltips.addEventListener('click', dismissHandler);
     Constants.Panel.panel.addEventListener('click', dismissHandler);
-
-    // Initialize restore alerts button regardless if plugin enabled or not.
-    restoreDismissedHandler = () => {
-      restoreDismissButton(dismissed, checkAll, resetAll);
-    };
-    Constants.Panel.dismissButton.addEventListener('click', restoreDismissedHandler);
-  } else {
-    store.removeItem('sa11y-dismissed');
-    store.removeItem('sa11y-latest-dismissed');
   }
+
+  // Initialize restore alerts button regardless if plugin enabled or not.
+  restoreDismissedHandler = () => {
+    restoreDismissButton(dismissed, checkAll, resetAll);
+  };
+  Constants.Panel.dismissButton?.addEventListener('click', restoreDismissedHandler);
 }
 
 // Imported by Reset function.
 export function removeDismissListeners() {
-  if (Constants.Global.dismissAnnotations) {
-    Constants.Panel.panel.removeEventListener('click', dismissHandler);
-    Constants.Panel.dismissButton.removeEventListener('click', restoreDismissedHandler);
-  }
+  Constants.Panel.panel?.removeEventListener('click', dismissHandler);
+  Constants.Panel.dismissButton?.removeEventListener('click', restoreDismissedHandler);
 }
