@@ -6582,9 +6582,13 @@ function checkImages(results, option) {
 
   Elements.Found.Images.forEach(($el) => {
     const alt = $el.getAttribute('alt');
+    const link = $el.closest('a[href]');
+    const linkTextContentLength = link
+      ? fnIgnore(link, Constants.Exclusions.LinkSpan).textContent.trim().length : 0;
+
     if (alt === null) {
-      if ($el.closest('a[href]')) {
-        if (fnIgnore($el.closest('a[href]')).textContent.trim().length >= 1) {
+      if (link) {
+        if (linkTextContentLength >= 1) {
           results.push({
             element: $el,
             type: 'error',
@@ -6592,7 +6596,7 @@ function checkImages(results, option) {
             inline: false,
             position: 'beforebegin',
           });
-        } else if (fnIgnore($el.closest('a[href]')).textContent.trim().length === 0) {
+        } else if (linkTextContentLength === 0) {
           results.push({
             element: $el,
             type: 'error',
@@ -6619,7 +6623,7 @@ function checkImages(results, option) {
       const src = $el.getAttribute('src');
       const baseSrc = (!src) ? $el.getAttribute('srcset') : src;
 
-      if ($el.closest('a[href]') && $el.closest('a[href]').getAttribute('tabindex') === '-1' && $el.closest('a[href]').getAttribute('aria-hidden') === 'true') ; else if (error[0] !== null && $el.closest('a[href]')) {
+      if (link && link.getAttribute('tabindex') === '-1' && link.getAttribute('aria-hidden') === 'true') ; else if (link && error[0] !== null) {
         // Image fails if a stop word was found.
         results.push({
           element: $el,
@@ -6628,7 +6632,7 @@ function checkImages(results, option) {
           inline: false,
           position: 'beforebegin',
         });
-      } else if (error[2] !== null && $el.closest('a[href]')) {
+      } else if (link && error[2] !== null) {
         results.push({
           element: $el,
           type: 'error',
@@ -6636,7 +6640,7 @@ function checkImages(results, option) {
           inline: false,
           position: 'beforebegin',
         });
-      } else if (error[1] !== null && $el.closest('a[href]')) {
+      } else if (link && error[1] !== null) {
         const key = prepareDismissal(`LINKEDIMAGE${baseSrc + altText}`);
         results.push({
           element: $el,
@@ -6672,8 +6676,8 @@ function checkImages(results, option) {
           position: 'beforebegin',
           dismiss: key,
         });
-      } else if ((alt === '' || alt === ' ') && $el.closest('a[href]')) {
-        if ($el.closest('a[href]').getAttribute('tabindex') === '-1' && $el.closest('a[href]').getAttribute('aria-hidden') === 'true') ; else if ($el.closest('a[href]').getAttribute('aria-hidden') === 'true') {
+      } else if (link && (alt === '' || alt === ' ')) {
+        if (link.getAttribute('tabindex') === '-1' && link.getAttribute('aria-hidden') === 'true') ; else if (link.getAttribute('aria-hidden') === 'true') {
           results.push({
             element: $el,
             type: 'error',
@@ -6681,7 +6685,7 @@ function checkImages(results, option) {
             inline: false,
             position: 'beforebegin',
           });
-        } else if (fnIgnore($el.closest('a[href]')).textContent.trim().length === 0) {
+        } else if (linkTextContentLength === 0) {
           results.push({
             element: $el,
             type: 'error',
@@ -6698,7 +6702,7 @@ function checkImages(results, option) {
             position: 'beforebegin',
           });
         }
-      } else if (alt.length > option.altTextMaxCharLength && $el.closest('a[href]')) {
+      } else if (link && alt.length > option.altTextMaxCharLength) {
         const key = prepareDismissal(`LINKEDIMAGE${baseSrc + altText + alt.length}`);
         // Link and contains alt text.
         results.push({
@@ -6709,7 +6713,7 @@ function checkImages(results, option) {
           position: 'beforebegin',
           dismiss: key,
         });
-      } else if (alt !== '' && $el.closest('a[href]') && fnIgnore($el.closest('a[href]')).textContent.trim().length === 0) {
+      } else if (link && linkTextContentLength === 0 && alt !== '') {
         const key = prepareDismissal(`LINKEDIMAGE${baseSrc + altText}`);
         // Link and contains an alt text.
         results.push({
@@ -6720,7 +6724,7 @@ function checkImages(results, option) {
           position: 'beforebegin',
           dismiss: key,
         });
-      } else if (alt !== '' && $el.closest('a[href]') && fnIgnore($el.closest('a[href]')).textContent.trim().length >= 1) {
+      } else if (link && linkTextContentLength >= 1 && alt !== '') {
         const key = prepareDismissal(`LINKEDIMAGE${baseSrc + altText}`);
         // Contains alt text & surrounding link text.
         results.push({
