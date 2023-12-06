@@ -519,7 +519,7 @@
 
   /**
    * Checks if the document has finished loading, and if so, immediately calls the provided callback function. Otherwise, waits for the 'load' event to fire and then calls the callback function.
-   * @param {function} callback - The callback function to be called when the document finishes loading.
+   * @param {function} callback The callback function to be called when the document finishes loading.
    */
   function documentLoadingCheck(callback) {
     if (document.readyState === 'complete') {
@@ -531,8 +531,8 @@
 
   /**
    * Checks if an element is visually hidden or hidden based on its attributes and styles.
-   * @param {HTMLElement} element - The element to check for visibility.
-   * @returns {boolean} - `true` if the element is visually hidden or hidden, `false` otherwise.
+   * @param {HTMLElement} element The element to check for visibility.
+   * @returns {boolean} `true` if the element is visually hidden or hidden, `false` otherwise.
    */
   function isElementVisuallyHiddenOrHidden(element) {
     if (element.getAttribute('hidden') || (element.offsetWidth === 0 && element.offsetHeight === 0) || (element.clientHeight === 1 && element.clientWidth === 1)) {
@@ -544,8 +544,8 @@
 
   /**
    * Checks if an element is hidden based on its attributes and styles.
-   * @param {HTMLElement} element - The element to check for visibility.
-   * @returns {boolean} - `true` if the element is hidden, `false` otherwise.
+   * @param {HTMLElement} element The element to check for visibility.
+   * @returns {boolean} `true` if the element is hidden, `false` otherwise.
    */
   function isElementHidden(element) {
     if (element.getAttribute('hidden') || (element.offsetWidth === 0 && element.offsetHeight === 0)) {
@@ -557,8 +557,8 @@
 
   /**
    * Escapes HTML special characters in a string.
-   * @param {string} string - The string to escape.
-   * @returns {string} - The escaped string with HTML special characters replaced by their corresponding entities.
+   * @param {string} string The string to escape.
+   * @returns {string} The escaped string with HTML special characters replaced by their corresponding entities.
    */
   function escapeHTML(string) {
     const $div = document.createElement('div');
@@ -568,8 +568,8 @@
 
   /**
    * Decodes/unescapes HTML entities back to their corresponding character.
-   * @param {string} string - The string.
-   * @returns {string} - Decoded string.
+   * @param {string} string The string.
+   * @returns {string} Decoded string.
    */
   function decodeHTML(string) {
     return string.replace(/&(#?[a-zA-Z0-9]+);/g, (match, entity) => {
@@ -596,8 +596,8 @@
 
   /**
    * Strips HTML tags from a string.
-   * @param {string} string - The string.
-   * @returns {string} - String without any HTML tags.
+   * @param {string} string The string.
+   * @returns {string} String without any HTML tags.
    */
   function stripHTMLtags(string) {
     return string.replace(/<[^>]*>/g, '');
@@ -605,8 +605,8 @@
 
   /**
    * Sanitizes an HTML string by replacing special characters with their corresponding HTML entities.
-   * @param {string} string - The HTML string to sanitize.
-   * @returns {string} - The sanitized HTML string with special characters replaced by their corresponding entities.
+   * @param {string} string The HTML string to sanitize.
+   * @returns {string} The sanitized HTML string with special characters replaced by their corresponding entities.
    * @link https://portswigger.net/web-security/cross-site-scripting/preventing
    */
   function sanitizeHTML(string) {
@@ -615,17 +615,26 @@
 
   /**
    * Retrieves the text content of an HTML element and removes extra whitespaces and line breaks.
-   * @param {HTMLElement} element - The HTML element to retrieve the text content from.
-   * @returns {string} - The text content of the HTML element with extra whitespaces and line breaks removed.
+   * @param {HTMLElement} element The HTML element to retrieve the text content from.
+   * @returns {string} The text content of the HTML element with extra whitespaces and line breaks removed.
    */
   function getText(element) {
     return element.textContent.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
   }
 
   /**
+   * Removes extra whitespaces and line breaks from a string.
+   * @param {string} string The string to be formatted.
+   * @returns {string} Formatted text string without whitespaces.
+   */
+  function removeWhitespaceFromString(string) {
+    return string.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
+  }
+
+  /**
    * Compute alt text on images within a text node.
-   * @param {HTMLElement} element - The HTML element to compute the text content from.
-   * @returns {string} - The computed text content of the HTML element, considering alt text of images if present.
+   * @param {HTMLElement} element The HTML element to compute the text content from.
+   * @returns {string} The computed text content of the HTML element, considering alt text of images if present.
    */
   function computeTextNodeWithImage(element) {
     const textContent = getText(element);
@@ -656,9 +665,9 @@
   /**
    * Debounces a callback function, ensuring it is only executed after a certain wait period
    * has passed since the last invocation.
-   * @param {function} callback - The callback function to debounce.
-   * @param {number} wait - The wait period in milliseconds before the callback function is executed.
-   * @returns {function} - The debounced function.
+   * @param {function} callback The callback function to debounce.
+   * @param {number} wait The wait period in milliseconds before the callback function is executed.
+   * @returns {function} The debounced function.
    * @link https://www.joshwcomeau.com/snippets/javascript/debounce/
    */
   function debounce$2(callback, wait) {
@@ -673,9 +682,9 @@
 
   /**
    * Creates a clone of an element while ignoring specified elements or elements matching a selector.
-   * @param {Element} element - The element to clone.
-   * @param {string} selector - The selector to match elements to be excluded from the clone. Optional.
-   * @returns {Element} - The cloned element with excluded elements removed.
+   * @param {Element} element The element to clone.
+   * @param {string} selector The selector to match elements to be excluded from the clone. Optional.
+   * @returns {Element} The cloned element with excluded elements removed.
    */
   function fnIgnore(element, selector) {
     const defaultIgnored = 'noscript, script, style';
@@ -690,10 +699,10 @@
 
   /**
    * Computes the accessible name of an element based on various aria-* attributes.
-   * @param {Element} element - The element for which the accessible name needs to be computed.
-   * @returns {string} - The computed accessible name of the element.
+   * @param {Element} element The element for which the accessible name needs to be computed.
+   * @returns {string} The computed accessible name of the element.
    */
-  function computeAccessibleName(element) {
+  function computeAccessibleName$1(element) {
     // aria-label
     if (element.matches('[aria-label]')) {
       return element.getAttribute('aria-label');
@@ -772,10 +781,10 @@
 
   /**
    * Finds the visible parent of an element that matches a given CSS property and value.
-   * @param {Element} element - The element for which the visible parent needs to be found.
-   * @param {string} property - The CSS property to match against.
-   * @param {string} value - The value of the CSS property to match against.
-   * @returns {Element|null} - The visible parent element that matches the given property and value, or null if not found.
+   * @param {Element} element The element for which the visible parent needs to be found.
+   * @param {string} property The CSS property to match against.
+   * @param {string} value The value of the CSS property to match against.
+   * @returns {Element|null} The visible parent element that matches the given property and value, or null if not found.
    */
   function findVisibleParent(element, property, value) {
     let $el = element;
@@ -792,8 +801,8 @@
 
   /**
    * Calculates the offset top of an element relative to the viewport.
-   * @param {Element} element - The element for which the offset top needs to be calculated.
-   * @returns {Object} - An object with a `top` property that represents the offset top of the element relative to the viewport.
+   * @param {Element} element The element for which the offset top needs to be calculated.
+   * @returns {Object} An object with a `top` property that represents the offset top of the element relative to the viewport.
    */
   function offsetTop(element) {
     const rect = element.getBoundingClientRect();
@@ -841,7 +850,7 @@
 
   /**
    * Adds a pulsing border effect to an element for 2.5 seconds.
-   * @param {Element} element - The element to which the pulsing border effect needs to be added.
+   * @param {Element} element The element to which the pulsing border effect needs to be added.
    */
   function addPulse(element) {
     const border = 'data-sa11y-pulse-border';
@@ -853,9 +862,9 @@
 
   /**
    * Gets the next sibling element that matches the given selector, or the next sibling element if no selector is provided.
-   * @param {HTMLElement} element - The DOM element whose next sibling to retrieve.
-   * @param {string} selector - The optional selector to filter the next siblings. If not provided, the next sibling element will be returned regardless of its type.
-   * @returns {HTMLElement|string} - The next sibling element that matches the given selector, or the next sibling element if no selector is provided. If no matching sibling is found, an empty string is returned.
+   * @param {HTMLElement} element The DOM element whose next sibling to retrieve.
+   * @param {string} selector The optional selector to filter the next siblings. If not provided, the next sibling element will be returned regardless of its type.
+   * @returns {HTMLElement|string} The next sibling element that matches the given selector, or the next sibling element if no selector is provided. If no matching sibling is found, an empty string is returned.
    */
   function getNextSibling(element, selector) {
     let sibling = element.nextElementSibling;
@@ -869,8 +878,8 @@
 
   /**
    * Generates a unique key for dismissing items.
-   * @param {string} string - The string to be prepared for dismissal (without special chars).
-   * @returns {string} - The truncated string with a maximum of 256 characters.
+   * @param {string} string The string to be prepared for dismissal (without special chars).
+   * @returns {string} The truncated string with a maximum of 256 characters.
    */
   function prepareDismissal(string) {
     return String(string).replace(/([^0-9a-zA-Z])/g, '').substring(0, 256);
@@ -878,8 +887,8 @@
 
   /**
    * Generates a selector path for the given DOM element.
-   * @param {Element} element - The DOM element for which to generate the selector path.
-   * @returns {string} - The selector path as a string.
+   * @param {Element} element The DOM element for which to generate the selector path.
+   * @returns {string} The selector path as a string.
    * @link https://www.geeksforgeeks.org/how-to-create-a-function-generateselector-to-generate-css-selector-path-of-a-dom-element/
    * @link https://dev.to/aniket_chauhan/generate-a-css-selector-path-of-a-dom-element-4aim
   */
@@ -914,7 +923,7 @@
   /**
    * Traps focus within an element by looping focus back to the beginning or end
    * when the Tab key is pressed.
-   * @param {Element} element - The DOM element to trap focus within.
+   * @param {Element} element The DOM element to trap focus within.
    * @author Hidde de Vries
    * @link https://hidde.blog/using-javascript-to-trap-focus-in-an-element/
   */
@@ -960,9 +969,9 @@
 
   /**
    * Creates an alert in the Sa11y control panel with the given alert message and error preview.
-   * @param {string} alertMessage - The alert message.
-   * @param {string} errorPreview - The issue's tooltip message (optional).
-   * @param {string} extendedPreview - The issue's HTML or escaped HTML to be previewed (optional).
+   * @param {string} alertMessage The alert message.
+   * @param {string} errorPreview The issue's tooltip message (optional).
+   * @param {string} extendedPreview The issue's HTML or escaped HTML to be previewed (optional).
    * @returns {void}
    */
   function createAlert(alertMessage, errorPreview, extendedPreview) {
@@ -1016,8 +1025,8 @@
 
   /**
    * Finds all data-attributes specified in array, and removes them from the document.
-   * @param {Array<string>} attributes - The array of data-attributes to be reset.
-   * @param {string} root - The root element to search for elements (optional, defaults to 'document').
+   * @param {Array<string>} attributes The array of data-attributes to be reset.
+   * @param {string} root The root element to search for elements (optional, defaults to 'document').
    * @returns {void}
    */
   function resetAttributes(attributes, root) {
@@ -1034,7 +1043,7 @@
 
   /**
    * Removes the specified elements from the document.
-   * @param {string} root - The root element to search for elements (optional, defaults to 'document').
+   * @param {string} root The root element to search for elements (optional, defaults to 'document').
    * @returns {void}
    */
   function remove(elements, root) {
@@ -1049,8 +1058,8 @@
 
   /**
    * Checks if a scrollable area within a container element is scrollable or not, and applies appropriate CSS classes and attributes. Make sure to add aria-label manually.
-   * @param {Element} scrollArea - The scrollable area element to check.
-   * @param {Element} container - The container element that wraps the scrollable area.
+   * @param {Element} scrollArea The scrollable area element to check.
+   * @param {Element} container The container element that wraps the scrollable area.
    */
   function isScrollable(scrollArea, container) {
     if (scrollArea.scrollHeight > container.clientHeight) {
@@ -1063,7 +1072,7 @@
 
   /**
    * Generate an HTML preview for an issue if it's an image, iframe, audio or video element. Otherwise, return escaped HTML within <code> tags. Used for Skip to Issue panel alerts and HTML page export.
-   * @param {Object} issueObject - The issue object.
+   * @param {Object} issueObject The issue object.
    * @returns {html} Returns HTML.
    */
   function generateElementPreview(issueObject) {
@@ -6554,6 +6563,163 @@
     Constants.Panel.skipButton.removeEventListener('click', handleSkipButtonHandler);
   }
 
+  /* eslint-disable no-use-before-define */
+
+  /* Get text of pseudo elements. */
+  const wrapPseudoContent = (element, string) => {
+    const pseudo = [];
+    pseudo[0] = window.getComputedStyle(element, ':before').getPropertyValue('content');
+    pseudo[1] = window.getComputedStyle(element, ':after').getPropertyValue('content');
+    pseudo[0] = pseudo[0] === 'none' ? '' : pseudo[0].replace(/^"(.*)"$/, '$1');
+    pseudo[1] = pseudo[1] === 'none' ? '' : pseudo[1].replace(/^"(.*)"$/, '$1');
+    return ` ${pseudo[0]}${string}${pseudo[1]}`;
+  };
+
+  /* Sets treeWalker loop to last node before next branch. */
+  const nextTreeBranch = (tree) => {
+    for (let i = 0; i < 1000; i++) {
+      if (tree.nextSibling()) {
+        // Prepare for continue to advance.
+        return tree.previousNode();
+      }
+      // Next node will be in next branch.
+      if (!tree.parentNode()) {
+        return false;
+      }
+    }
+    return false;
+  };
+
+  /* Compute ARIA attributes. */
+  const computeAriaLabel = (element, recursing = false) => {
+    const labelledBy = element.getAttribute('aria-labelledby');
+    if (!recursing && labelledBy) {
+      const target = labelledBy.split(/\s+/);
+      if (target.length > 0) {
+        let returnText = '';
+        target.forEach((x) => {
+          const targetSelector = document.querySelector(`#${CSS.escape(x)}`);
+          returnText += (!targetSelector) ? '' : `${computeAccessibleName(targetSelector, 1)}`;
+        });
+        return returnText;
+      }
+    }
+    if (element.ariaLabel && element.ariaLabel.trim().length > 0) {
+      // To-do: add empty and whitespace string tests.
+      return element.ariaLabel;
+    }
+    return 'noAria';
+  };
+
+  /**
+   * Computes the accessible name of an element.
+   * @param {Element} element The element for which the accessible name needs to be computed.
+   * @returns {string} The computed accessible name of the element.
+   * @kudos to John Jameson, creator of the Editoria11y library, for developing this more robust calculation!
+   * @notes Uses a subset of the W3C accessible name algorithm.
+  */
+  const computeAccessibleName = (el, recursing = 0) => {
+    // Return immediately if there is an aria label.
+    const hasAria = computeAriaLabel(el, recursing);
+    if (hasAria !== 'noAria') {
+      return hasAria;
+    }
+
+    // Return immediately if there is only a text node.
+    let computedText = '';
+    if (!el.children.length) {
+      // Just text! Output immediately.
+      computedText = wrapPseudoContent(el, el.textContent);
+      if (!computedText.trim() && el.hasAttribute('title')) {
+        return el.getAttribute('title');
+      }
+      return recursing ? computedText : computedText.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
+    }
+
+    // Create tree walker object.
+    function createCustomTreeWalker(rootNode, showElement, showText) {
+      const acceptNode = (node) => {
+        if (showElement && node.nodeType === Node.ELEMENT_NODE) return NodeFilter.FILTER_ACCEPT;
+        if (showText && node.nodeType === Node.TEXT_NODE) return NodeFilter.FILTER_ACCEPT;
+        return NodeFilter.FILTER_REJECT;
+      };
+      return document.createTreeWalker(rootNode, NodeFilter.SHOW_ALL, { acceptNode });
+    }
+    const treeWalker = createCustomTreeWalker(el, true, true);
+
+    // Otherwise, recurse into children.
+    let addTitleIfNoName = false;
+    let aText = false;
+    let count = 0;
+    let shouldContinueWalker = true;
+
+    while (treeWalker.nextNode() && shouldContinueWalker) {
+      count += 1;
+
+      if (treeWalker.currentNode.nodeType === Node.TEXT_NODE) {
+        computedText += ` ${treeWalker.currentNode.nodeValue}`;
+      } else if (addTitleIfNoName && !treeWalker.currentNode.closest('a')) {
+        if (aText === computedText) {
+          computedText += addTitleIfNoName;
+        }
+        addTitleIfNoName = false;
+        aText = false;
+      } else if (treeWalker.currentNode.hasAttribute('aria-hidden') && !(recursing && count < 3)) {
+        if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
+      } else {
+        const aria = computeAriaLabel(treeWalker.currentNode, recursing);
+        if (aria !== 'noAria') {
+          computedText += ` ${aria}`;
+          if (!nextTreeBranch(treeWalker)) {
+            shouldContinueWalker = false;
+          }
+        } else {
+          switch (treeWalker.currentNode.tagName) {
+            case 'STYLE':
+            case 'NOSCRIPT':
+              if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
+              break;
+            case 'IMG':
+              computedText += treeWalker.currentNode.getAttribute('alt');
+              break;
+            case 'SVG':
+            case 'svg':
+              if (treeWalker.currentNode.getAttribute('role') === 'image'
+                && treeWalker.currentNode.hasAttribute('alt')) {
+                computedText += wrapPseudoContent(
+                  treeWalker.currentNode, treeWalker.currentNode.getAttribute('alt'),
+                );
+                if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
+              }
+              break;
+            case 'A':
+              if (treeWalker.currentNode.hasAttribute('title')) {
+                addTitleIfNoName = treeWalker.currentNode.getAttribute('title');
+                aText = computedText;
+              } else {
+                addTitleIfNoName = false;
+                aText = false;
+              }
+              computedText += wrapPseudoContent(treeWalker.currentNode, '');
+              break;
+            default:
+              computedText += wrapPseudoContent(treeWalker.currentNode, '');
+              break;
+          }
+        }
+      }
+    }
+
+    if (addTitleIfNoName && !aText) {
+      computedText += ` ${addTitleIfNoName}`;
+    }
+
+    if (!computedText.trim() && el.hasAttribute('title')) {
+      return el.getAttribute('title');
+    }
+    return recursing ? computedText : computedText.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
+  };
+
   function checkImages(results, option) {
     const containsAltTextStopWords = (alt) => {
       const altUrl = [
@@ -6731,12 +6897,13 @@
             dismiss: key,
           });
         } else if (link && linkTextContentLength >= 1 && alt !== '') {
+          const accName = computeAccessibleName(link);
           const key = prepareDismissal(`LINKEDIMAGE${baseSrc + altText}`);
           // Contains alt text & surrounding link text.
           results.push({
             element: $el,
             type: 'warning',
-            content: Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT_WARNING', altText),
+            content: Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT_WARNING', altText, accName),
             inline: false,
             position: 'beforebegin',
             dismiss: key,
@@ -7050,52 +7217,37 @@
     };
 
     Elements.Found.Links.forEach(($el) => {
-      let linkText = computeAccessibleName($el);
-      const hasAriaLabelledBy = $el.getAttribute('aria-labelledby');
-      const hasAriaLabel = $el.getAttribute('aria-label');
-      let childAriaLabelledBy = null;
-      let childAriaLabel = null;
-      const hasTitle = $el.getAttribute('title');
-      const href = $el.getAttribute('href');
-
-      if ($el.children.length) {
-        const $firstChild = $el.children[0];
-        childAriaLabelledBy = $firstChild.getAttribute('aria-labelledby');
-        childAriaLabel = $firstChild.getAttribute('aria-label');
-      }
-
-      if (linkText === 'noAria') {
-        // Plain text content.
-        linkText = getText($el);
-        const $img = $el.querySelector('img');
-
-        // If an image exists within the link. Help with AccName computation.
-        if ($img) {
-          // Check if there's aria on the image.
-          const imgText = computeAccessibleName($img);
-          if (imgText !== 'noAria') {
-            linkText += imgText;
-          } else {
-            // No aria? Process alt on image.
-            linkText += $img ? ($img.getAttribute('alt') || '') : '';
-          }
-        }
-      }
+      const exclusions = fnIgnore($el, Constants.Exclusions.LinkSpan);
+      const accessibleName = computeAccessibleName(exclusions);
+      const linkText = removeWhitespaceFromString(accessibleName);
 
       // Ignore provided linkSpanIgnore prop, <style> tags, and special characters.
       const specialCharPattern = /[!?。，、&*()\-;':"\\|,.<>↣↳←→↓«»↴]+/g;
-      const error = containsLinkTextStopWords(
-        fnIgnore(
-          $el, Constants.Exclusions.LinkSpan,
-        ).textContent.replace(specialCharPattern, '').trim(),
-      );
+      const error = containsLinkTextStopWords(linkText.replace(specialCharPattern, '').trim());
 
       // HTML symbols used as call to actions.
       const htmlSymbols = /([<>↣↳←→↓«»↴]+)/;
       const matches = linkText.match(htmlSymbols);
       const matchedSymbol = matches ? matches[1] : null;
 
-      if ($el.querySelectorAll('img').length) ; else if (href && !linkText) {
+      // ARIA attributes.
+      const hasAriaLabelledBy = $el.getAttribute('aria-labelledby');
+      const hasAriaLabel = $el.getAttribute('aria-label');
+      const hasTitle = $el.getAttribute('title');
+      const href = $el.getAttribute('href');
+      const hidden = $el.getAttribute('aria-hidden') === 'true';
+      const negativeTabindex = $el.getAttribute('tabindex') === '-1';
+
+      let childAriaLabelledBy = null;
+      let childAriaLabel = null;
+      if ($el.children.length) {
+        const $firstChild = $el.children[0];
+        childAriaLabelledBy = $firstChild.getAttribute('aria-labelledby');
+        childAriaLabel = $firstChild.getAttribute('aria-label');
+      }
+
+      console.log(linkText);
+      if ($el.querySelectorAll('img').length) ; else if (href && linkText.length === 0) {
         // Flag empty hyperlinks.
         if ($el && hasTitle) ; else if ($el.children.length) {
           // Has child elements (e.g. SVG or SPAN) <a><i></i></a>
@@ -7129,7 +7281,7 @@
               position: 'afterend',
             });
           }
-        } else if ($el.getAttribute('aria-hidden') === 'true' && $el.getAttribute('tabindex') === '-1') ; else {
+        } else if (hidden && negativeTabindex) ; else {
           results.push({
             element: $el,
             type: 'error',
@@ -7429,7 +7581,7 @@
         Elements.Found.Inputs.forEach(($el) => {
           // Ignore hidden inputs.
           if (isElementHidden($el) !== true) {
-            let ariaLabel = computeAccessibleName($el);
+            let ariaLabel = computeAccessibleName$1($el);
             const type = $el.getAttribute('type');
             const tabindex = $el.getAttribute('tabindex');
 
@@ -7527,7 +7679,7 @@
       if (store.getItem('sa11y-remember-links-advanced') === 'On' || option.headless || option.checkAllHideToggles) {
         const seen = {};
         Elements.Found.Links.forEach(($el) => {
-          let linkText = computeAccessibleName($el);
+          let linkText = computeAccessibleName$1($el);
           const $img = $el.querySelector('img');
 
           // If link has no ARIA.
@@ -7538,7 +7690,7 @@
             // If an image exists within the link.
             if ($img) {
               // Check if there's aria on the image.
-              const imgText = computeAccessibleName($img);
+              const imgText = computeAccessibleName$1($img);
               if (imgText !== 'noAria') {
                 linkText += imgText;
               } else {

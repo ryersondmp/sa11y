@@ -2,6 +2,7 @@ import Elements from '../utils/elements';
 import Constants from '../utils/constants';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
+import { computeAccessibleName } from '../utils/computeAccessibleName';
 
 export default function checkImages(results, option) {
   const containsAltTextStopWords = (alt) => {
@@ -184,12 +185,13 @@ export default function checkImages(results, option) {
           dismiss: key,
         });
       } else if (link && linkTextContentLength >= 1 && alt !== '') {
+        const accName = computeAccessibleName(link);
         const key = Utils.prepareDismissal(`LINKEDIMAGE${baseSrc + altText}`);
         // Contains alt text & surrounding link text.
         results.push({
           element: $el,
           type: 'warning',
-          content: Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT_WARNING', altText),
+          content: Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT_WARNING', altText, accName),
           inline: false,
           position: 'beforebegin',
           dismiss: key,

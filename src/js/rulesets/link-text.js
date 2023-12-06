@@ -2,6 +2,7 @@ import Constants from '../utils/constants';
 import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
+import { computeAccessibleName } from '../utils/computeAccessibleName';
 
 export default function checkLinkText(results, option) {
   const containsLinkTextStopWords = (textContent) => {
@@ -85,54 +86,39 @@ export default function checkLinkText(results, option) {
   };
 
   Elements.Found.Links.forEach(($el) => {
-    let linkText = Utils.computeAccessibleName($el);
-    const hasAriaLabelledBy = $el.getAttribute('aria-labelledby');
-    const hasAriaLabel = $el.getAttribute('aria-label');
-    let childAriaLabelledBy = null;
-    let childAriaLabel = null;
-    const hasTitle = $el.getAttribute('title');
-    const href = $el.getAttribute('href');
-
-    if ($el.children.length) {
-      const $firstChild = $el.children[0];
-      childAriaLabelledBy = $firstChild.getAttribute('aria-labelledby');
-      childAriaLabel = $firstChild.getAttribute('aria-label');
-    }
-
-    if (linkText === 'noAria') {
-      // Plain text content.
-      linkText = Utils.getText($el);
-      const $img = $el.querySelector('img');
-
-      // If an image exists within the link. Help with AccName computation.
-      if ($img) {
-        // Check if there's aria on the image.
-        const imgText = Utils.computeAccessibleName($img);
-        if (imgText !== 'noAria') {
-          linkText += imgText;
-        } else {
-          // No aria? Process alt on image.
-          linkText += $img ? ($img.getAttribute('alt') || '') : '';
-        }
-      }
-    }
+    const exclusions = Utils.fnIgnore($el, Constants.Exclusions.LinkSpan);
+    const accessibleName = computeAccessibleName(exclusions);
+    const linkText = Utils.removeWhitespaceFromString(accessibleName);
 
     // Ignore provided linkSpanIgnore prop, <style> tags, and special characters.
     const specialCharPattern = /[!?。，、&*()\-;':"\\|,.<>↣↳←→↓«»↴]+/g;
-    const error = containsLinkTextStopWords(
-      Utils.fnIgnore(
-        $el, Constants.Exclusions.LinkSpan,
-      ).textContent.replace(specialCharPattern, '').trim(),
-    );
+    const error = containsLinkTextStopWords(linkText.replace(specialCharPattern, '').trim());
 
     // HTML symbols used as call to actions.
     const htmlSymbols = /([<>↣↳←→↓«»↴]+)/;
     const matches = linkText.match(htmlSymbols);
     const matchedSymbol = matches ? matches[1] : null;
 
+    // ARIA attributes.
+    const hasAriaLabelledBy = $el.getAttribute('aria-labelledby');
+    const hasAriaLabel = $el.getAttribute('aria-label');
+    const hasTitle = $el.getAttribute('title');
+    const href = $el.getAttribute('href');
+    const hidden = $el.getAttribute('aria-hidden') === 'true';
+    const negativeTabindex = $el.getAttribute('tabindex') === '-1';
+
+    let childAriaLabelledBy = null;
+    let childAriaLabel = null;
+    if ($el.children.length) {
+      const $firstChild = $el.children[0];
+      childAriaLabelledBy = $firstChild.getAttribute('aria-labelledby');
+      childAriaLabel = $firstChild.getAttribute('aria-label');
+    }
+
+    console.log(linkText);
     if ($el.querySelectorAll('img').length) {
       // Do nothing. Don't overlap with Alt Text module.
-    } else if (href && !linkText) {
+    } else if (href && linkText.length === 0) {
       // Flag empty hyperlinks.
       if ($el && hasTitle) {
         // If empty but has title attribute.
@@ -168,7 +154,7 @@ export default function checkLinkText(results, option) {
             position: 'afterend',
           });
         }
-      } else if ($el.getAttribute('aria-hidden') === 'true' && $el.getAttribute('tabindex') === '-1') {
+      } else if (hidden && negativeTabindex) {
         // Do nothing.
       } else {
         results.push({
