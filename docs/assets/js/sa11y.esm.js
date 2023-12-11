@@ -348,9 +348,9 @@ const Constants = (function myConstants() {
     // Main container.
     if (option.containerIgnore) {
       const containerSelectors = option.containerIgnore.split(',').map(($el) => `${$el} *, ${$el}`);
-      Exclusions.Container = `[aria-hidden], #wpadminbar *, ${containerSelectors.join(', ')}`;
+      Exclusions.Container = `#wpadminbar *, ${containerSelectors.join(', ')}`;
     } else {
-      Exclusions.Container = '[aria-hidden], #wpadminbar *';
+      Exclusions.Container = '#wpadminbar *';
     }
 
     // Contrast exclusions
@@ -382,7 +382,7 @@ const Constants = (function myConstants() {
     }
 
     // Ignore specific links
-    Exclusions.Links = '[aria-hidden="true"], .anchorjs-link';
+    Exclusions.Links = '.anchorjs-link';
     if (option.linkIgnore) {
       Exclusions.Links = `${option.linkIgnore}, ${Exclusions.Links}`;
     }
@@ -626,37 +626,6 @@ function removeWhitespaceFromString(string) {
 }
 
 /**
- * Compute alt text on images within a text node.
- * @param {HTMLElement} element The HTML element to compute the text content from.
- * @returns {string} The computed text content of the HTML element, considering alt text of images if present.
- */
-function computeTextNodeWithImage(element) {
-  const textContent = getText(element);
-  const imgArray = Array.from(element.querySelectorAll('img'));
-  let returnText = '';
-  // No image, has text.
-  if (imgArray.length === 0 && textContent.length > 1) {
-    returnText = textContent;
-  } else if (imgArray.length && textContent.length === 0) {
-    // Has image.
-    const imgalt = imgArray[0].getAttribute('alt');
-    if (!imgalt || imgalt === ' ' || imgalt === '') {
-      returnText = '';
-    } else if (imgalt !== undefined) {
-      returnText = imgalt;
-    }
-  } else if (imgArray.length && textContent.length) {
-    // Has image and text.
-    // To-do: This is a hack? Any way to do this better?
-    imgArray.forEach((img) => {
-      img.insertAdjacentHTML('afterend', ` <span data-sa11y-clone-image-text aria-hidden="true">${imgArray[0].getAttribute('alt')}</span>`);
-    });
-    returnText = textContent;
-  }
-  return returnText;
-}
-
-/**
  * Debounces a callback function, ensuring it is only executed after a certain wait period
  * has passed since the last invocation.
  * @param {function} callback The callback function to debounce.
@@ -689,88 +658,6 @@ function fnIgnore(element, selector) {
     c.parentElement.removeChild(c);
   });
   return clone;
-}
-
-/**
- * Computes the accessible name of an element based on various aria-* attributes.
- * @param {Element} element The element for which the accessible name needs to be computed.
- * @returns {string} The computed accessible name of the element.
- */
-function computeAccessibleName$1(element) {
-  // aria-label
-  if (element.matches('[aria-label]')) {
-    return element.getAttribute('aria-label');
-  }
-
-  // aria-labeledby
-  if (element.matches('[aria-labelledby]')) {
-    const target = element.getAttribute('aria-labelledby').split(/\s+/);
-    if (target.length > 0) {
-      let returnText = '';
-      target.forEach((x) => {
-        const targetSelector = document.querySelector(`#${CSS.escape(x)}`);
-        if (targetSelector === null) {
-          returnText += ' ';
-        } else if (targetSelector.hasAttribute('aria-label')) {
-          returnText += `${targetSelector.getAttribute('aria-label')}`;
-        } else {
-          returnText += `${targetSelector.firstChild.nodeValue} `;
-        }
-      });
-      return returnText;
-    }
-  }
-
-  // Child with aria-label
-  if (Array.from(element.children).filter((x) => x.matches('[aria-label]')).length > 0) {
-    const child = Array.from(element.childNodes);
-    let returnText = '';
-
-    // Process each child within node.
-    child.forEach((x) => {
-      if (x.nodeType === 1) {
-        // Ignore HTML comments and make sure label is not null.
-        if (x.nodeType === 3 || x.ariaLabel === null) {
-          returnText += x.innerText;
-        } else {
-          returnText += x.getAttribute('aria-label');
-        }
-      } else {
-        returnText += x.nodeValue;
-      }
-    });
-    return returnText;
-  }
-
-  // Child with aria-labelledby
-  if (Array.from(element.children).filter((x) => x.matches('[aria-labelledby]')).length > 0) {
-    const child = Array.from(element.childNodes);
-    let returnText = '';
-
-    // Process each child within node.
-    child.forEach((y) => {
-      if (y.nodeType === 8) ; else if (y.nodeType === 3 || y.getAttribute('aria-labelledby') === null) {
-        returnText += y.nodeValue;
-      } else {
-        const target = y.getAttribute('aria-labelledby').split(/\s+/);
-        if (target.length > 0) {
-          let returnAria = '';
-          target.forEach((z) => {
-            if (document.querySelector(`#${CSS.escape(z)}`) === null) {
-              returnAria += ' ';
-            } else {
-              returnAria += `${document.querySelector(`#${CSS.escape(z)}`).firstChild.nodeValue} `;
-            }
-          });
-          returnText += returnAria;
-        }
-      }
-    });
-    return returnText;
-  }
-
-  // Return if noAria;
-  return 'noAria';
 }
 
 /**
@@ -852,22 +739,6 @@ function addPulse(element) {
   setTimeout(() => {
     element.removeAttribute(border);
   }, 2500);
-}
-
-/**
- * Gets the next sibling element that matches the given selector, or the next sibling element if no selector is provided.
- * @param {HTMLElement} element The DOM element whose next sibling to retrieve.
- * @param {string} selector The optional selector to filter the next siblings. If not provided, the next sibling element will be returned regardless of its type.
- * @returns {HTMLElement|string} The next sibling element that matches the given selector, or the next sibling element if no selector is provided. If no matching sibling is found, an empty string is returned.
- */
-function getNextSibling(element, selector) {
-  let sibling = element.nextElementSibling;
-  if (!selector) return sibling;
-  while (sibling) {
-    if (sibling.matches(selector)) return sibling;
-    sibling = sibling.nextElementSibling;
-  }
-  return '';
 }
 
 /**
@@ -6559,7 +6430,7 @@ function removeSkipBtnListeners() {
 
 /* eslint-disable no-use-before-define */
 
-/* Get text of pseudo elements. */
+/* Get text content of pseudo elements. */
 const wrapPseudoContent = (element, string) => {
   const pseudo = [];
   pseudo[0] = window.getComputedStyle(element, ':before').getPropertyValue('content');
@@ -6674,7 +6545,9 @@ const computeAccessibleName = (el, recursing = 0) => {
             if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
             break;
           case 'IMG':
-            computedText += treeWalker.currentNode.getAttribute('alt');
+            if (treeWalker.currentNode.hasAttribute('alt')) {
+              computedText += treeWalker.currentNode.getAttribute('alt');
+            }
             break;
           case 'SVG':
           case 'svg':
@@ -6725,11 +6598,21 @@ function checkImages(results, option) {
       '.tiff',
       '.svg',
       'DSC_',
+      'IMG_',
+      'Photo_',
+      'Pic_',
+      'Pexels_',
+      'AdobeStock_',
+      'ScreenShot_',
+      'Picture_',
+      'Snap_',
+      'Capture_',
     ];
 
     const hit = [null, null, null];
     altUrl.forEach((word) => {
-      if (alt.toLowerCase().indexOf(word) >= 0) {
+      const stopword = word.toLowerCase();
+      if (alt.toLowerCase().indexOf(stopword) >= 0) {
         hit[0] = word;
       }
     });
@@ -6752,25 +6635,40 @@ function checkImages(results, option) {
     const linkTextContentLength = link
       ? fnIgnore(link, Constants.Exclusions.LinkSpan).textContent.trim().length : 0;
 
+    // Has aria-hidden.
+    if ($el.getAttribute('aria-hidden') === 'true') {
+      return;
+    }
+
+    if (link && link.getAttribute('aria-hidden') === 'true') {
+      // If linked image has aria-hidden, but is still focusable.
+      const unfocusable = link.getAttribute('tabindex') === '-1';
+      if (!unfocusable) {
+        results.push({
+          element: $el,
+          type: 'error',
+          content: Lang.sprintf('LINK_HIDDEN_FOCUSABLE'),
+          inline: false,
+          position: 'beforebegin',
+        });
+      }
+      return;
+    }
+
+    // If alt is missing.
     if (alt === null) {
       if (link) {
-        if (linkTextContentLength >= 1) {
-          results.push({
-            element: $el,
-            type: 'error',
-            content: Lang.sprintf('MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE'),
-            inline: false,
-            position: 'beforebegin',
-          });
-        } else if (linkTextContentLength === 0) {
-          results.push({
-            element: $el,
-            type: 'error',
-            content: Lang.sprintf('MISSING_ALT_LINK_MESSAGE'),
-            inline: false,
-            position: 'beforebegin',
-          });
-        }
+        const content = (linkTextContentLength === 0)
+          ? Lang.sprintf('MISSING_ALT_LINK_MESSAGE')
+          : Lang.sprintf('MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE');
+
+        results.push({
+          element: $el,
+          type: 'error',
+          content,
+          inline: false,
+          position: 'beforebegin',
+        });
       } else {
         // General failure message if image is missing alt.
         results.push({
@@ -6782,153 +6680,49 @@ function checkImages(results, option) {
         });
       }
     } else {
-      // If alt attribute is present, further tests are done.
-      const altText = sanitizeHTML(alt); // Prevent tooltip from breaking.
+      // If image has alt.
+      const altText = sanitizeHTML(alt);
       const error = containsAltTextStopWords(altText);
-      const altLength = alt.length;
-      const src = $el.getAttribute('src');
-      const baseSrc = (!src) ? $el.getAttribute('srcset') : src;
+      const decorative = (alt === '' || alt === ' ');
 
-      if (link && link.getAttribute('tabindex') === '-1' && link.getAttribute('aria-hidden') === 'true') ; else if (link && error[0] !== null) {
-        // Image fails if a stop word was found.
-        results.push({
-          element: $el,
-          type: 'error',
-          content: Lang.sprintf('LINK_IMAGE_BAD_ALT_MESSAGE', error[0], altText),
-          inline: false,
-          position: 'beforebegin',
-        });
-      } else if (link && error[2] !== null) {
-        results.push({
-          element: $el,
-          type: 'error',
-          content: Lang.sprintf('LINK_IMAGE_PLACEHOLDER_ALT_MESSAGE', altText),
-          inline: false,
-          position: 'beforebegin',
-        });
-      } else if (link && error[1] !== null) {
-        const key = prepareDismissal(`LINKEDIMAGE${baseSrc + altText}`);
-        results.push({
-          element: $el,
-          type: 'warning',
-          content: Lang.sprintf('LINK_IMAGE_SUS_ALT_MESSAGE', error[1], altText),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: key,
-        });
-      } else if (error[0] !== null) {
-        results.push({
-          element: $el,
-          type: 'error',
-          content: Lang.sprintf('LINK_ALT_HAS_BAD_WORD_MESSAGE', error[0], altText),
-          inline: false,
-          position: 'beforebegin',
-        });
-      } else if (error[2] !== null) {
-        results.push({
-          element: $el,
-          type: 'error',
-          content: Lang.sprintf('ALT_PLACEHOLDER_MESSAGE', altText),
-          inline: false,
-          position: 'beforebegin',
-        });
-      } else if (error[1] !== null) {
-        const key = prepareDismissal(`IMAGE${baseSrc + altText + error[1]}`);
-        results.push({
-          element: $el,
-          type: 'warning',
-          content: Lang.sprintf('ALT_HAS_SUS_WORD', error[1], altText),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: key,
-        });
-      } else if (link && (alt === '' || alt === ' ')) {
-        if (link.getAttribute('tabindex') === '-1' && link.getAttribute('aria-hidden') === 'true') ; else if (link.getAttribute('aria-hidden') === 'true') {
+      // Figure elements.
+      const figure = $el.closest('figure');
+      const figcaption = figure?.querySelector('figcaption');
+      const figcaptionText = (figcaption) ? figcaption.textContent.trim() : '';
+
+      // Image's source for key.
+      const src = ($el.getAttribute('src')) ? $el.getAttribute('src') : $el.getAttribute('srcset');
+
+      // Decorative images.
+      if (decorative) {
+        const key = prepareDismissal(`DECORATIVE${src}`);
+        if (link) {
+          const type = (linkTextContentLength === 0) ? 'error' : 'good';
+          const content = (linkTextContentLength === 0)
+            ? Lang.sprintf('LINK_IMAGE_NO_ALT_TEXT')
+            : Lang.sprintf('LINK_IMAGE_HAS_TEXT');
+
           results.push({
             element: $el,
-            type: 'error',
-            content: Lang.sprintf('LINK_IMAGE_ARIA_HIDDEN'),
+            type,
+            content,
             inline: false,
             position: 'beforebegin',
           });
-        } else if (linkTextContentLength === 0) {
+        } else if (figure) {
+          const content = (figcaption && figcaptionText.length)
+            ? Lang.sprintf('IMAGE_FIGURE_DECORATIVE')
+            : Lang.sprintf('IMAGE_DECORATIVE');
+
           results.push({
             element: $el,
-            type: 'error',
-            content: Lang.sprintf('LINK_IMAGE_NO_ALT_TEXT'),
+            type: 'warning',
+            content,
             inline: false,
             position: 'beforebegin',
+            dismiss: key,
           });
         } else {
-          results.push({
-            element: $el,
-            type: 'good',
-            content: Lang.sprintf('LINK_IMAGE_HAS_TEXT'),
-            inline: false,
-            position: 'beforebegin',
-          });
-        }
-      } else if (link && alt.length > option.altTextMaxCharLength) {
-        const key = prepareDismissal(`LINKEDIMAGE${baseSrc + altText + alt.length}`);
-        // Link and contains alt text.
-        results.push({
-          element: $el,
-          type: 'warning',
-          content: Lang.sprintf('LINK_IMAGE_LONG_ALT', altLength, altText),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: key,
-        });
-      } else if (link && linkTextContentLength === 0 && alt !== '') {
-        const key = prepareDismissal(`LINKEDIMAGE${baseSrc + altText}`);
-        // Link and contains an alt text.
-        results.push({
-          element: $el,
-          type: 'warning',
-          content: Lang.sprintf('LINK_IMAGE_ALT_WARNING', altText),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: key,
-        });
-      } else if (link && linkTextContentLength >= 1 && alt !== '') {
-        const accName = computeAccessibleName(link);
-        const key = prepareDismissal(`LINKEDIMAGE${baseSrc + altText}`);
-        // Contains alt text & surrounding link text.
-        results.push({
-          element: $el,
-          type: 'warning',
-          content: Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT_WARNING', altText, accName),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: key,
-        });
-      } else if (alt === '' || alt === ' ') {
-        // Decorative alt and not a link.
-        if ($el.closest('figure')) {
-          const figcaption = $el.closest('figure').querySelector('figcaption');
-          if (figcaption !== null && figcaption.textContent.trim().length >= 1) {
-            const key = prepareDismissal(`DECORATIVE${baseSrc}`);
-            results.push({
-              element: $el,
-              type: 'warning',
-              content: Lang.sprintf('IMAGE_FIGURE_DECORATIVE'),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: key,
-            });
-          } else {
-            const key = prepareDismissal(`DECORATIVE${baseSrc}`);
-            results.push({
-              element: $el,
-              type: 'warning',
-              content: Lang.sprintf('IMAGE_DECORATIVE'),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: key,
-            });
-          }
-        } else {
-          const key = prepareDismissal(`DECORATIVE${baseSrc}`);
           results.push({
             element: $el,
             type: 'warning',
@@ -6938,42 +6732,98 @@ function checkImages(results, option) {
             dismiss: key,
           });
         }
-      } else if (alt.length > option.altTextMaxCharLength) {
-        const key = prepareDismissal(`IMAGE${baseSrc + altText + alt.length}`);
+        return;
+      }
+
+      // Alt text quality.
+      if (error[0] !== null) {
+        // Has stop words.
+        const content = (link)
+          ? Lang.sprintf('LINK_ALT_HAS_FILE_EXTENSION', error[0], altText)
+          : Lang.sprintf('ALT_HAS_FILE_EXTENSION', error[0], altText);
+
+        results.push({
+          element: $el,
+          type: 'error',
+          content,
+          inline: false,
+          position: 'beforebegin',
+        });
+      } else if (error[2] !== null) {
+        // Placeholder words.
+        const content = (link)
+          ? Lang.sprintf('LINK_IMAGE_PLACEHOLDER_ALT_MESSAGE', altText)
+          : Lang.sprintf('ALT_PLACEHOLDER_MESSAGE', altText);
+
+        results.push({
+          element: $el,
+          type: 'error',
+          content,
+          inline: false,
+          position: 'beforebegin',
+        });
+      } else if (error[1] !== null) {
+        // Suspicious words.
+        const key = prepareDismissal(`${src + altText}`);
+        const content = (link)
+          ? Lang.sprintf('LINK_IMAGE_SUS_ALT_MESSAGE', error[1], altText)
+          : Lang.sprintf('ALT_HAS_SUS_WORD', error[1], altText);
+
         results.push({
           element: $el,
           type: 'warning',
-          content: Lang.sprintf('IMAGE_ALT_TOO_LONG', altLength, altText),
+          content,
           inline: false,
           position: 'beforebegin',
           dismiss: key,
         });
-      } else if (alt !== '') {
+      } else if (alt.length > option.altTextMaxCharLength) {
+        // Alt is too long.
+        const key = prepareDismissal(`${src + altText + alt.length}`);
+        const content = (link)
+          ? Lang.sprintf('LINK_IMAGE_LONG_ALT', alt.length, altText)
+          : Lang.sprintf('IMAGE_ALT_TOO_LONG', alt.length, altText);
+
+        results.push({
+          element: $el,
+          type: 'warning',
+          content,
+          inline: false,
+          position: 'beforebegin',
+          dismiss: key,
+        });
+      } else if (link) {
+        // Has both link text and alt text.
+        const key = prepareDismissal(`${src + altText}`);
+        const accName = computeAccessibleName(link);
+        const sanitizedText = sanitizeHTML(accName);
+        const content = (linkTextContentLength === 0)
+          ? Lang.sprintf('LINK_IMAGE_ALT_WARNING', altText)
+          : Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT_WARNING', altText, sanitizedText);
+
+        results.push({
+          element: $el,
+          type: 'warning',
+          content,
+          inline: false,
+          position: 'beforebegin',
+          dismiss: key,
+        });
+      } else if (figure) {
         // Figure element has same alt and caption text.
-        if ($el.closest('figure')) {
-          const figcaption = $el.closest('figure').querySelector('figcaption');
-          if (!!figcaption
-            && (figcaption.textContent.trim().toLowerCase() === altText.trim().toLowerCase())) {
-            const key = prepareDismissal(`FIGURE${baseSrc + altText}`);
-            results.push({
-              element: $el,
-              type: 'warning',
-              content: Lang.sprintf('IMAGE_FIGURE_DUPLICATE_ALT', altText),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: key,
-            });
-          } else {
-            results.push({
-              element: $el,
-              type: 'good',
-              content: Lang.sprintf('IMAGE_PASS', altText),
-              inline: false,
-              position: 'beforebegin',
-            });
-          }
+        const duplicate = !!figcaption && (figcaptionText.toLowerCase() === altText.trim().toLowerCase());
+        if (duplicate) {
+          const key = prepareDismissal(`FIGURE${src + altText}`);
+          results.push({
+            element: $el,
+            type: 'warning',
+            content: Lang.sprintf('IMAGE_FIGURE_DUPLICATE_ALT', altText),
+            inline: false,
+            position: 'beforebegin',
+            dismiss: key,
+          });
         } else {
-          // If image has alt text - pass!
+          // Figure has alt text!
           results.push({
             element: $el,
             type: 'good',
@@ -6982,6 +6832,15 @@ function checkImages(results, option) {
             position: 'beforebegin',
           });
         }
+      } else {
+        // Image has alt text!
+        results.push({
+          element: $el,
+          type: 'good',
+          content: Lang.sprintf('IMAGE_PASS', altText),
+          inline: false,
+          position: 'beforebegin',
+        });
       }
     }
   });
@@ -6991,12 +6850,19 @@ function checkImages(results, option) {
 function checkHeaders(results, option, headingOutline) {
   let prevLevel;
   Elements.Found.Headings.forEach(($el, i) => {
-    const ignore = fnIgnore($el); // Ignore unwanted <style>, <script>, etc tags.
-    const text = computeTextNodeWithImage(ignore);
-    const headingText = sanitizeHTML(text);
+    // Exclusions & accessible name computation.
+    const exclusions = fnIgnore($el);
+    const accessibleName = computeAccessibleName(exclusions);
 
+    // Utils.fnIgnore uses cloneNode, which doesn't account for pseudo content.
+    const checkForPseudo = wrapPseudoContent($el, accessibleName);
+    const prepareText = removeWhitespaceFromString(checkForPseudo);
+    const headingText = sanitizeHTML(prepareText);
+
+    // Check if heading is within root target area.
     const isWithinRoot = Constants.Global.Root.contains($el);
 
+    // Determine heading level.
     const level = parseInt($el.getAttribute('aria-level') || $el.tagName.slice(1), 10);
     const headingLength = headingText.length;
 
@@ -7210,14 +7076,20 @@ function checkLinkText(results, option) {
     return hit;
   };
 
+  const seen = {};
   Elements.Found.Links.forEach(($el) => {
+    // Exclusions & accessible name computation.
     const exclusions = fnIgnore($el, Constants.Exclusions.LinkSpan);
     const accessibleName = computeAccessibleName(exclusions);
-    const linkText = removeWhitespaceFromString(accessibleName);
 
-    // Ignore provided linkSpanIgnore prop, <style> tags, and special characters.
+    // Utils.fnIgnore uses cloneNode, which doesn't account for pseudo content.
+    const checkForPseudo = wrapPseudoContent($el, accessibleName);
+    const linkText = removeWhitespaceFromString(checkForPseudo);
+
+    // Ignore special characters.
     const specialCharPattern = /[!?。，、&*()\-;':"\\|,.<>↣↳←→↓«»↴]+/g;
     const error = containsLinkTextStopWords(linkText.replace(specialCharPattern, '').trim());
+    const isSingleSpecialChar = linkText.length === 1 && specialCharPattern.test(linkText);
 
     // HTML symbols used as call to actions.
     const htmlSymbols = /([<>↣↳←→↓«»↴]+)/;
@@ -7225,13 +7097,11 @@ function checkLinkText(results, option) {
     const matchedSymbol = matches ? matches[1] : null;
 
     // ARIA attributes.
-    const hasAriaLabelledBy = $el.getAttribute('aria-labelledby');
-    const hasAriaLabel = $el.getAttribute('aria-label');
-    const hasTitle = $el.getAttribute('title');
     const href = $el.getAttribute('href');
-    const hidden = $el.getAttribute('aria-hidden') === 'true';
+    const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
     const negativeTabindex = $el.getAttribute('tabindex') === '-1';
 
+    // Check if child elements has ARIA (i, span, svg).
     let childAriaLabelledBy = null;
     let childAriaLabel = null;
     if ($el.children.length) {
@@ -7240,10 +7110,24 @@ function checkLinkText(results, option) {
       childAriaLabel = $firstChild.getAttribute('aria-label');
     }
 
-    console.log(linkText);
-    if ($el.querySelectorAll('img').length) ; else if (href && linkText.length === 0) {
-      // Flag empty hyperlinks.
-      if ($el && hasTitle) ; else if ($el.children.length) {
+    // Has ARIA.
+    const hasAria = $el.getAttribute('aria-labelledby') || $el.getAttribute('aria-label') || childAriaLabelledBy || childAriaLabel;
+
+    if ($el.querySelectorAll('img').length) ; else if (ariaHidden) {
+      // Has aria-hidden.
+      if (!negativeTabindex) {
+        // If negative tabindex.
+        results.push({
+          element: $el,
+          type: 'error',
+          content: Lang.sprintf('LINK_HIDDEN_FOCUSABLE'),
+          inline: true,
+          position: 'afterend',
+        });
+      }
+    } else if (href && linkText.length === 0) {
+      // Empty hyperlinks.
+      if ($el.children.length) {
         // Has child elements (e.g. SVG or SPAN) <a><i></i></a>
         results.push({
           element: $el,
@@ -7264,34 +7148,21 @@ function checkLinkText(results, option) {
       }
     } else if (error[0] !== null) {
       // Contains stop words.
-      if (hasAriaLabelledBy || hasAriaLabel || childAriaLabelledBy || childAriaLabel) {
-        const sanitizedText = sanitizeHTML(linkText);
-        if (option.showGoodLinkButton) {
-          results.push({
-            element: $el,
-            type: 'good',
-            content: Lang.sprintf('LINK_LABEL', sanitizedText),
-            inline: true,
-            position: 'afterend',
-          });
-        }
-      } else if (hidden && negativeTabindex) ; else {
-        results.push({
-          element: $el,
-          type: 'error',
-          content: Lang.sprintf('LINK_STOPWORD', error[0]),
-          inline: true,
-          position: 'afterend',
-        });
-      }
+      results.push({
+        element: $el,
+        type: 'error',
+        content: Lang.sprintf('LINK_STOPWORD', error[0]),
+        inline: true,
+        position: 'afterend',
+      });
     } else if (error[1] !== null || matchedSymbol !== null) {
       const key = prepareDismissal(`LINK${linkText + href}`);
-      const STOPWORD = matchedSymbol || error[1];
+      const stopword = matchedSymbol || error[1];
       // Contains warning words.
       results.push({
         element: $el,
         type: 'warning',
-        content: Lang.sprintf('LINK_BEST_PRACTICES', STOPWORD),
+        content: Lang.sprintf('LINK_BEST_PRACTICES', stopword),
         inline: true,
         position: 'beforebegin',
         dismiss: key,
@@ -7322,7 +7193,7 @@ function checkLinkText(results, option) {
           dismiss: key,
         });
       }
-    } else if (hasAriaLabelledBy || hasAriaLabel || childAriaLabelledBy || childAriaLabel) {
+    } else if (hasAria) {
       // If the link has any ARIA, append a "Good" link button.
       if (option.showGoodLinkButton) {
         const sanitizedText = sanitizeHTML(linkText);
@@ -7334,8 +7205,8 @@ function checkLinkText(results, option) {
           position: 'afterend',
         });
       }
-    } else if (linkText === '.' || linkText === ',' || linkText === '/') {
-      // Link is ONLY a period, comma, or slash.
+    } else if (isSingleSpecialChar) {
+      // Link is ONLY a period, comma, or special character.
       results.push({
         element: $el,
         type: 'error',
@@ -7343,6 +7214,84 @@ function checkLinkText(results, option) {
         inline: true,
         position: 'afterend',
       });
+    }
+
+    /* ********************* */
+    /*  Links (Advanced)     */
+    /* ********************* */
+    if (option.linksAdvancedPlugin) {
+      const toggleCheck = store.getItem('sa11y-remember-links-advanced') === 'On';
+      if (toggleCheck || option.headless || option.checkAllHideToggles) {
+        // New tab or new window.
+        const containsNewWindowPhrases = Lang._('NEW_WINDOW_PHRASES').some((pass) => linkText.toLowerCase().includes(pass));
+
+        // Link that points to a file type and indicates as such.
+        const defaultFileTypes = ['pdf', 'doc', 'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'];
+        const fileTypes = defaultFileTypes.concat(Lang._('FILE_TYPE_PHRASES'));
+        const containsFileTypePhrases = fileTypes.some((pass) => linkText.toLowerCase().includes(pass));
+        const fileTypeMatch = $el.matches(`
+          a[href$='.pdf'],
+          a[href$='.doc'],
+          a[href$='.docx'],
+          a[href$='.zip'],
+          a[href$='.mp3'],
+          a[href$='.txt'],
+          a[href$='.exe'],
+          a[href$='.dmg'],
+          a[href$='.rtf'],
+          a[href$='.pptx'],
+          a[href$='.ppt'],
+          a[href$='.xls'],
+          a[href$='.xlsx'],
+          a[href$='.csv'],
+          a[href$='.mp4'],
+          a[href$='.mov'],
+          a[href$='.avi']
+        `);
+
+        // Remove whitespace and special characters to improve accuracy and minimize false positives.
+        const linkTextTrimmed = linkText.replace(/'|"|-|\.|\s+/g, '').toLowerCase();
+
+        // Links with identical accessible names have equivalent purpose.
+        if (linkTextTrimmed.length !== 0) {
+          if (seen[linkTextTrimmed] && !seen[href]) {
+            // Link has identical name as another link.
+            const key = prepareDismissal(`LINK${linkTextTrimmed + href}`);
+            const sanitizedText = sanitizeHTML(linkText);
+            results.push({
+              element: $el,
+              type: 'warning',
+              content: Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText),
+              inline: true,
+              position: 'beforebegin',
+              dismiss: key,
+            });
+          } else if ($el.getAttribute('target') === '_blank' && !fileTypeMatch && !containsNewWindowPhrases) {
+            const key = prepareDismissal(`LINK${linkTextTrimmed + href}`);
+            results.push({
+              element: $el,
+              type: 'warning',
+              content: Lang.sprintf('NEW_TAB_WARNING'),
+              inline: true,
+              position: 'beforebegin',
+              dismiss: key,
+            });
+          } else if (fileTypeMatch && !containsFileTypePhrases) {
+            const key = prepareDismissal(`LINK${linkTextTrimmed + href}`);
+            results.push({
+              element: $el,
+              type: 'warning',
+              content: Lang.sprintf('FILE_TYPE_WARNING'),
+              inline: true,
+              position: 'beforebegin',
+              dismiss: key,
+            });
+          } else {
+            seen[linkTextTrimmed] = true;
+            seen[href] = true;
+          }
+        }
+      }
     }
   });
   return results;
@@ -7354,10 +7303,10 @@ function checkLinkText(results, option) {
  * @link https://github.com/jasonday/color-contrast
  * @link https://github.com/gka/chroma.js (Parse RGB)
 */
-
 function checkContrast(results, option) {
   if (option.contrastPlugin) {
-    if (store.getItem('sa11y-remember-contrast') === 'On' || option.headless || option.checkAllHideToggles) {
+    const toggleCheck = store.getItem('sa11y-remember-contrast') === 'On';
+    if (toggleCheck || option.headless || option.checkAllHideToggles) {
       let contrastErrors = {
         errors: [],
         warnings: [],
@@ -7571,208 +7520,100 @@ function checkContrast(results, option) {
 
 function checkLabels(results, option) {
   if (option.formLabelsPlugin) {
-    if (store.getItem('sa11y-remember-labels') === 'On' || option.headless || option.checkAllHideToggles) {
+    const toggleCheck = store.getItem('sa11y-remember-labels') === 'On';
+    if (toggleCheck || option.headless || option.checkAllHideToggles) {
       Elements.Found.Inputs.forEach(($el) => {
-        // Ignore hidden inputs.
-        if (isElementHidden($el) !== true) {
-          let ariaLabel = computeAccessibleName$1($el);
-          const type = $el.getAttribute('type');
-          const tabindex = $el.getAttribute('tabindex');
+        // Mission abort if input is hidden.
+        if (isElementHidden($el)) return;
 
-          // If button type is submit or button: pass
-          if (type === 'submit' || type === 'button' || type === 'hidden' || tabindex === '-1') ; else if (type === 'image') {
-            // Inputs where type="image".
-            const imgalt = $el.getAttribute('alt');
-            if (!imgalt || imgalt === ' ') {
-              if ($el.getAttribute('aria-label')) ; else {
-                results.push({
-                  element: $el,
-                  type: 'error',
-                  content: Lang.sprintf('LABELS_MISSING_IMAGE_INPUT_MESSAGE'),
-                  inline: false,
-                  position: 'beforebegin',
-                });
-              }
-            }
-          } else if (type === 'reset') {
-            // Recommendation to remove reset buttons.
-            const key = prepareDismissal(`INPUT${ariaLabel}`);
-            results.push({
-              element: $el,
-              type: 'warning',
-              content: Lang.sprintf('LABELS_INPUT_RESET_MESSAGE'),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: key,
-            });
-          } else if ($el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby') || $el.getAttribute('title')) {
-            // Uses ARIA. Warn them to ensure there's a visible label.
-            if ($el.getAttribute('title')) {
-              ariaLabel = $el.getAttribute('title');
-              const key = prepareDismissal(`INPUT${ariaLabel}`);
-              const sanitizedText = sanitizeHTML(ariaLabel);
-              results.push({
-                element: $el,
-                type: 'warning',
-                content: Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', sanitizedText),
-                inline: false,
-                position: 'beforebegin',
-                dismiss: key,
-              });
-            } else {
-              const key = prepareDismissal(`INPUT${ariaLabel}`);
-              const sanitizedText = sanitizeHTML(ariaLabel);
-              results.push({
-                element: $el,
-                type: 'warning',
-                content: Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', sanitizedText),
-                inline: false,
-                position: 'beforebegin',
-                dismiss: key,
-              });
-            }
-          } else if ($el.closest('label') && $el.closest('label').textContent.trim()) ; else if ($el.getAttribute('id')) {
-            // Has an ID but doesn't have a matching FOR attribute.
-            let hasFor = false;
+        // Compute accessible name on input.
+        const computeInput = computeAccessibleName($el);
+        const formattedInput = removeWhitespaceFromString(computeInput);
 
-            Elements.Found.Labels.forEach(($l) => {
-              if (hasFor) return;
-              if ($l.getAttribute('for') === $el.getAttribute('id')) {
-                hasFor = true;
-              }
-            });
+        // Get attributes.
+        const alt = $el.getAttribute('alt');
+        const type = $el.getAttribute('type');
+        const hasTitle = $el.getAttribute('title');
+        const tabindex = $el.getAttribute('tabindex');
+        const hasAria = $el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby');
 
-            if (!hasFor) {
-              const id = $el.getAttribute('id');
-              results.push({
-                element: $el,
-                type: 'error',
-                content: Lang.sprintf('LABELS_NO_FOR_ATTRIBUTE_MESSAGE', id),
-                inline: false,
-                position: 'beforebegin',
-              });
-            }
-          } else {
+        // Pass: Ignore if it's a submit or hidden button.
+        if (type === 'submit' || type === 'button' || type === 'hidden' || tabindex === '-1') {
+          return;
+        }
+
+        // Error: Input with type="image" without accessible name or alt.
+        if (type === 'image' && (!alt || alt === ' ')) {
+          if (!hasAria && !hasTitle) {
             results.push({
               element: $el,
               type: 'error',
-              content: Lang.sprintf('LABELS_MISSING_LABEL_MESSAGE'),
+              content: Lang.sprintf('LABELS_MISSING_IMAGE_INPUT_MESSAGE'),
               inline: false,
               position: 'beforebegin',
             });
           }
-        }
-      });
-    }
-  }
-  return results;
-}
-
-function checkLinksAdvanced(results, option) {
-  if (option.linksAdvancedPlugin) {
-    if (store.getItem('sa11y-remember-links-advanced') === 'On' || option.headless || option.checkAllHideToggles) {
-      const seen = {};
-      Elements.Found.Links.forEach(($el) => {
-        let linkText = computeAccessibleName$1($el);
-        const $img = $el.querySelector('img');
-
-        // If link has no ARIA.
-        if (linkText === 'noAria') {
-          linkText = fnIgnore($el, Constants.Exclusions.LinkSpan);
-          linkText = getText(linkText); // Get inner text within anchor.
-
-          // If an image exists within the link.
-          if ($img) {
-            // Check if there's aria on the image.
-            const imgText = computeAccessibleName$1($img);
-            if (imgText !== 'noAria') {
-              linkText += imgText;
-            } else {
-              // No aria? Process alt on image.
-              linkText += $img ? ($img.getAttribute('alt') || '') : '';
-            }
-          }
+          return;
         }
 
-        // Remove whitespace, special characters, etc.
-        const linkTextTrimmed = linkText.replace(/'|"|-|\.|\s+/g, '').toLowerCase();
-
-        // Links with identical accessible names have equivalent purpose.
-        const href = $el.getAttribute('href');
-
-        if (linkText.length !== 0) {
-          if (seen[linkTextTrimmed] && linkTextTrimmed.length !== 0) {
-            if (seen[href]) ; else {
-              const key = prepareDismissal(`LINK${linkTextTrimmed + href}`);
-              const sanitizedText = sanitizeHTML(linkText);
-              results.push({
-                element: $el,
-                type: 'warning',
-                content: Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText),
-                inline: true,
-                position: 'beforebegin',
-                dismiss: key,
-              });
-            }
-          } else {
-            seen[linkTextTrimmed] = true;
-            seen[href] = true;
-          }
-        }
-
-        // New tab or new window.
-        const containsNewWindowPhrases = Lang._('NEW_WINDOW_PHRASES').some((pass) => {
-          if (linkText.trim().length === 0 && !!$el.getAttribute('title')) {
-            linkText = $el.getAttribute('title');
-          }
-          return linkText.toLowerCase().indexOf(pass) >= 0;
-        });
-
-        // Link that points to a file type and indicates as such.
-        const defaultFileTypes = ['pdf', 'doc', 'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'];
-        const fileTypes = defaultFileTypes.concat(Lang._('FILE_TYPE_PHRASES'));
-        const containsFileTypePhrases = fileTypes.some((pass) => linkText.toLowerCase().indexOf(pass) >= 0);
-        const fileTypeMatch = $el.matches(`
-              a[href$='.pdf'],
-              a[href$='.doc'],
-              a[href$='.docx'],
-              a[href$='.zip'],
-              a[href$='.mp3'],
-              a[href$='.txt'],
-              a[href$='.exe'],
-              a[href$='.dmg'],
-              a[href$='.rtf'],
-              a[href$='.pptx'],
-              a[href$='.ppt'],
-              a[href$='.xls'],
-              a[href$='.xlsx'],
-              a[href$='.csv'],
-              a[href$='.mp4'],
-              a[href$='.mov'],
-              a[href$='.avi']
-            `);
-
-        if (linkTextTrimmed.length !== 0 && $el.getAttribute('target') === '_blank' && !fileTypeMatch && !containsNewWindowPhrases) {
-          const key = prepareDismissal(`LINK${linkTextTrimmed + href}`);
+        // Warning: to remove reset buttons.
+        if (type === 'reset') {
+          const key = prepareDismissal(`INPUT${formattedInput}`);
           results.push({
             element: $el,
             type: 'warning',
-            content: Lang.sprintf('NEW_TAB_WARNING'),
-            inline: true,
+            content: Lang.sprintf('LABELS_INPUT_RESET_MESSAGE'),
+            inline: false,
             position: 'beforebegin',
             dismiss: key,
           });
+          return;
         }
 
-        if (linkTextTrimmed.length !== 0 && fileTypeMatch && !containsFileTypePhrases) {
-          const key = prepareDismissal(`LINK${linkTextTrimmed + href}`);
+        // Uses ARIA or title attribute. Warn them to ensure there's a visible label.
+        if (hasAria || hasTitle) {
+          const key = prepareDismissal(`INPUT${formattedInput}`);
+          const sanitizedText = sanitizeHTML(formattedInput);
           results.push({
             element: $el,
             type: 'warning',
-            content: Lang.sprintf('FILE_TYPE_WARNING'),
-            inline: true,
+            content: Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', sanitizedText),
+            inline: false,
             position: 'beforebegin',
             dismiss: key,
+          });
+          return;
+        }
+
+        // Implicit label: <label>First name: <input type="text"/><label>
+        const closestLabel = $el.closest('label');
+        const computeLabel = (closestLabel) ? computeAccessibleName(closestLabel) : '';
+        const formattedLabel = removeWhitespaceFromString(computeLabel);
+        if (closestLabel && formattedLabel.length) {
+          return;
+        }
+
+        // Check to see if each label has a matching for and it attribute.
+        const id = $el.getAttribute('id');
+        if (id) {
+          // Find labels without a match.
+          if (!Elements.Found.Labels.some((label) => label.getAttribute('for') === id)) {
+            results.push({
+              element: $el,
+              type: 'error',
+              content: Lang.sprintf('LABELS_NO_FOR_ATTRIBUTE_MESSAGE', id),
+              inline: false,
+              position: 'beforebegin',
+            });
+          }
+        } else {
+          // No id!
+          results.push({
+            element: $el,
+            type: 'error',
+            content: Lang.sprintf('LABELS_MISSING_LABEL_MESSAGE'),
+            inline: false,
+            position: 'beforebegin',
           });
         }
       });
@@ -8247,64 +8088,54 @@ function checkQA(results, option) {
 
   /* ****************************************************************** */
   /*  Warning: Detect fake headings                                     */
-  /*  To prevent excessive warnings:                                    */
-  /*  1) Parent element must not be a heading, blockquote, or table.    */
-  /*  2) Must be between 4 and 120 characters (typical heading length). */
-  /*  3) Doesn't contain the following characters: .;?!                 */
-  /*  4) The previous element is not a semantic heading.                */
   /* ****************************************************************** */
   if (option.fakeHeadingsQA) {
-    Elements.Found.Paragraphs.forEach(($el) => {
-      const brAfter = $el.innerHTML.indexOf('</strong><br>');
-      const brBefore = $el.innerHTML.indexOf('<br></strong>');
-      const ignoreElements = 'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level], blockquote';
-      const ignoreParents = ignoreElements.concat(', table');
-      const getTexted = getText($el);
-      let boldtext;
+    const ignoreParents = 'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level], blockquote, table';
 
-      // Check paragraphs greater than x characters.
-      if ($el && getTexted.length >= 300) {
-        const { firstChild } = $el;
+    // Find large text as heading.
+    const computeLargeParagraphs = (p) => {
+      const size = getComputedStyle(p).fontSize.replace('px', '');
+      const getText$1 = getText(p);
+      const maybeSentence = getText$1.match(/[.;?!"]/) === null;
+      const typicalHeadingLength = getText$1.length >= 4 && getText$1.length <= 120;
 
-        // If paragraph starts with <strong> tag and ends with <br>.
-        if (firstChild.tagName === 'STRONG' && (brBefore !== -1 || brAfter !== -1)) {
-          boldtext = getText(firstChild);
-          const maybeSentence = boldtext.match(/[.;?!"]/) !== null;
-          if (
-            !/[*]$/.test(boldtext)
-            && !$el.closest(ignoreParents)
-            && (boldtext.length >= 4 && boldtext.length <= 120)
-            && maybeSentence === false
-          ) {
-            const sanitizedText = sanitizeHTML(boldtext);
-            const key = prepareDismissal(`BOLD${sanitizedText}`);
-            results.push({
-              element: firstChild,
-              type: 'warning',
-              content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: key,
-            });
+      if (size >= 24 && !p.closest(ignoreParents) && typicalHeadingLength && maybeSentence) {
+        const sanitizedText = sanitizeHTML(getText$1);
+        const key = prepareDismissal(`BOLD${sanitizedText}`);
+        results.push({
+          element: p,
+          type: 'warning',
+          content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
+          inline: false,
+          position: 'beforebegin',
+          dismiss: key,
+        });
+      }
+    };
+
+    // Find bolded text as headings.
+    const computeBoldTextParagraphs = (p) => {
+      const startsWithBold = /^(<strong>|<b>)/i.test(p.innerHTML.trim());
+
+      if (startsWithBold && !p.closest(ignoreParents)) {
+        const possibleHeading = p.querySelector('strong, b');
+        const possibleHeadingText = getText(possibleHeading);
+
+        // Conditions
+        const notASentence = possibleHeadingText.match(/[.:;?!"']/) === null;
+        const typicalHeadingLength = possibleHeadingText.length >= 3 && possibleHeadingText.length <= 120;
+
+        if (typicalHeadingLength && notASentence) {
+          // Be a little forgiving if it's a small paragraph.
+          const nonHeadingTextLength = fnIgnore(p, 'strong, bold').textContent.trim().length;
+          if (nonHeadingTextLength !== 0 && nonHeadingTextLength <= 250) {
+            return;
           }
-        }
-      }
 
-      // If paragraph only contains <p><strong>...</strong></p>.
-      if (/^<(strong)>.+<\/\1>$/.test($el.innerHTML.trim())) {
-        boldtext = getTexted;
-        const prevSibling = $el.previousElementSibling;
-        const maybeSentence = boldtext.match(/[.;?!"]/) !== null;
-        if (prevSibling !== null && prevSibling.matches(ignoreElements)) ; else if (
-          !/[*]$/.test(boldtext)
-          && (boldtext.length >= 4 && boldtext.length <= 120)
-          && !$el.closest(ignoreParents)
-          && maybeSentence === false
-        ) {
-          const sanitizedText = sanitizeHTML(boldtext);
+          const sanitizedText = sanitizeHTML(possibleHeadingText);
           const key = prepareDismissal(`BOLD${sanitizedText}`);
           results.push({
-            element: $el,
+            element: possibleHeading,
             type: 'warning',
             content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
             inline: false,
@@ -8313,34 +8144,11 @@ function checkQA(results, option) {
           });
         }
       }
+    };
 
-      // Find pretend paragraph headings
-      const computeLargeParagraphs = ($elem) => {
-        const size = getComputedStyle($elem).fontSize.replace('px', '');
-        const ignore = 'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level], blockquote';
-        const getText$1 = getText($elem);
-        const prevSibling = $elem.previousElementSibling;
-        const maybeSentence = getText$1.match(/[.;?!"]/) !== null;
-
-        if (prevSibling !== null && prevSibling.matches(ignore)) ; else if (
-          size >= 24
-          && !$elem.closest(ignore)
-          && (getText$1.length >= 4 && getText$1.length <= 120)
-          && maybeSentence === false
-        ) {
-          const sanitizedText = sanitizeHTML(getText$1);
-          const key = prepareDismissal(`BOLD${sanitizedText}`);
-          results.push({
-            element: $elem,
-            type: 'warning',
-            content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
-          });
-        }
-      };
-      computeLargeParagraphs($el);
+    Elements.Found.Paragraphs.forEach((p) => {
+      computeLargeParagraphs(p);
+      computeBoldTextParagraphs(p);
     });
   }
 
@@ -8349,51 +8157,76 @@ function checkQA(results, option) {
   /*  Thanks to John Jameson from PrincetonU for this ruleset!       */
   /* *************************************************************** */
   if (option.fakeListQA) {
-    Elements.Found.Paragraphs.forEach(($el) => {
-      let activeMatch = '';
-      const prefixDecrement = {
-        b: 'a',
-        B: 'A',
-        2: '1',
-        б: 'а',
-        Б: 'А',
-      };
-      const prefixMatch = /a\.|a\)|A\.|A\)|а\.|а\)|А\.|А\)|1\.|1\)|\*\s|-\s|--|•\s|→\s|✓\s|✔\s|✗\s|✖\s|✘\s|❯\s|›\s|»\s/;
-      const decrement = (el) => el.replace(/^b|^B|^б|^Б|^2/, (match) => prefixDecrement[match]);
-      let hit = false;
-      const firstPrefix = $el.textContent.substring(0, 2);
+    let activeMatch = '';
+    let firstText = '';
+    const prefixDecrement = {
+      2: '1',
+      b: 'a',
+      B: 'A',
+      β: 'α',
+      Β: 'Α',
+      б: 'а',
+      Б: 'А',
+    };
+    const prefixMatch = new RegExp(/([aA1]|[аА]|[αΑ]|[^\p{Alphabetic}\s])[-\s.)]/, 'u');
+    const emojiMatch = new RegExp(/\p{Emoji}/, 'u');
+    const decrement = (element) => element.replace(/^b|^B|^б|^Б|^β|^В|^2/, (match) => prefixDecrement[match]);
 
+    let lastHitWasEmoji = false;
+    Elements.Found.Paragraphs.forEach((p, i) => {
+      // Detect possible lists.
+      let firstPrefix = '';
+      let secondText = false;
+      let hit = false;
+      if (!firstText) {
+        firstText = getText(p);
+        firstPrefix = firstText.substring(0, 2);
+      }
+
+      // Grab first two characters.
+      const matchWasntEmoji = firstPrefix.match(prefixMatch);
       if (
-        firstPrefix.trim().length > 0
-        && firstPrefix !== activeMatch
-        && firstPrefix.match(prefixMatch)
+        firstPrefix.length > 0
+        && firstPrefix
+        !== activeMatch
+        && (matchWasntEmoji || firstPrefix.match(emojiMatch))
       ) {
-        const hasBreak = $el.innerHTML.indexOf('<br>');
-        if (hasBreak !== -1) {
-          const subParagraph = $el
-            .innerHTML
-            .substring(hasBreak + 4)
-            .trim();
-          const subPrefix = subParagraph.substring(0, 2);
-          if (firstPrefix === decrement(subPrefix)) {
-            hit = true;
+        // We have a prefix and a possible hit; check next detected paragraph.
+        const secondP = Elements.Found.Paragraphs[i + 1];
+        if (secondP) {
+          secondText = getText(secondP).substring(0, 2);
+          if (secondText === 'A') ; else {
+            const secondPrefix = decrement(secondText);
+            if (matchWasntEmoji) {
+              // Check for repeats (*,*) or increments(a,b)
+              lastHitWasEmoji = false;
+              if (firstPrefix !== 'A ' && firstPrefix === secondPrefix) {
+                hit = true;
+              }
+            } else if (!lastHitWasEmoji) {
+              // Check for two paragraphs in a row that start with emoji
+              if (secondPrefix.match(emojiMatch)) {
+                hit = true;
+              }
+              // It was an emoji match.
+              lastHitWasEmoji = hit;
+            }
           }
         }
-
-        // Decrement the second p prefix and compare .
         if (!hit) {
-          const $second = getNextSibling($el, 'p');
-          if ($second) {
-            const secondPrefix = decrement($el.nextElementSibling.textContent.substring(0, 2));
-            if (firstPrefix === secondPrefix) {
+          // Split p by carriage return if there was a firstPrefix and compare.
+          let textAfterBreak = p?.querySelector('br')?.nextSibling?.nodeValue;
+          if (textAfterBreak) {
+            textAfterBreak = textAfterBreak.replace(/<\/?[^>]+(>|$)/g, '').trim().substring(0, 2);
+            if (firstPrefix === decrement(textAfterBreak) || (!matchWasntEmoji && !lastHitWasEmoji && textAfterBreak.match(emojiMatch))) {
               hit = true;
             }
           }
         }
         if (hit) {
-          const key = prepareDismissal(`LIST${$el.textContent}`);
+          const key = prepareDismissal(`LIST${p.textContent}`);
           results.push({
-            element: $el,
+            element: p,
             type: 'warning',
             content: Lang.sprintf('QA_SHOULD_BE_LIST', firstPrefix),
             inline: false,
@@ -8404,9 +8237,9 @@ function checkQA(results, option) {
         } else {
           activeMatch = '';
         }
-      } else {
-        activeMatch = '';
       }
+      // Reset for next loop, carry over text query if available.
+      firstText = secondText ? '' : secondText;
     });
   }
 
@@ -8690,7 +8523,6 @@ class Sa11y {
         checkImages(this.results, option);
         checkContrast(this.results, option);
         checkLabels(this.results, option);
-        checkLinksAdvanced(this.results, option);
         checkQA(this.results, option);
         checkEmbeddedContent(this.results, option);
         checkReadability();

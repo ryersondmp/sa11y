@@ -36,6 +36,8 @@
 
         <h2 id="namecalc">Accessible name calculation</h2>
 
+        <p><a href="#">(</a></p>
+
         <h3>Pseudo selectors in a link</h3>
         <div class="positive">Link with SVG image with multiple labels, one should be ignored:
           <a href="https://www.princeton.edu">click <span class="extlink-nobreak">here<svg focusable="false"
@@ -218,6 +220,7 @@
     const sa11y = new Sa11y.Sa11y({
       checkRoot: "main",
       containerIgnore: 'footer',
+      linkIgnoreSpan: '.sr-only-example'
     });
   </script>
 

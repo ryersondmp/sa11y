@@ -115,37 +115,6 @@ export function removeWhitespaceFromString(string) {
 }
 
 /**
- * Compute alt text on images within a text node.
- * @param {HTMLElement} element The HTML element to compute the text content from.
- * @returns {string} The computed text content of the HTML element, considering alt text of images if present.
- */
-export function computeTextNodeWithImage(element) {
-  const textContent = getText(element);
-  const imgArray = Array.from(element.querySelectorAll('img'));
-  let returnText = '';
-  // No image, has text.
-  if (imgArray.length === 0 && textContent.length > 1) {
-    returnText = textContent;
-  } else if (imgArray.length && textContent.length === 0) {
-    // Has image.
-    const imgalt = imgArray[0].getAttribute('alt');
-    if (!imgalt || imgalt === ' ' || imgalt === '') {
-      returnText = '';
-    } else if (imgalt !== undefined) {
-      returnText = imgalt;
-    }
-  } else if (imgArray.length && textContent.length) {
-    // Has image and text.
-    // To-do: This is a hack? Any way to do this better?
-    imgArray.forEach((img) => {
-      img.insertAdjacentHTML('afterend', ` <span data-sa11y-clone-image-text aria-hidden="true">${imgArray[0].getAttribute('alt')}</span>`);
-    });
-    returnText = textContent;
-  }
-  return returnText;
-}
-
-/**
  * Debounces a callback function, ensuring it is only executed after a certain wait period
  * has passed since the last invocation.
  * @param {function} callback The callback function to debounce.
@@ -178,90 +147,6 @@ export function fnIgnore(element, selector) {
     c.parentElement.removeChild(c);
   });
   return clone;
-}
-
-/**
- * Computes the accessible name of an element based on various aria-* attributes.
- * @param {Element} element The element for which the accessible name needs to be computed.
- * @returns {string} The computed accessible name of the element.
- */
-export function computeAccessibleName(element) {
-  // aria-label
-  if (element.matches('[aria-label]')) {
-    return element.getAttribute('aria-label');
-  }
-
-  // aria-labeledby
-  if (element.matches('[aria-labelledby]')) {
-    const target = element.getAttribute('aria-labelledby').split(/\s+/);
-    if (target.length > 0) {
-      let returnText = '';
-      target.forEach((x) => {
-        const targetSelector = document.querySelector(`#${CSS.escape(x)}`);
-        if (targetSelector === null) {
-          returnText += ' ';
-        } else if (targetSelector.hasAttribute('aria-label')) {
-          returnText += `${targetSelector.getAttribute('aria-label')}`;
-        } else {
-          returnText += `${targetSelector.firstChild.nodeValue} `;
-        }
-      });
-      return returnText;
-    }
-  }
-
-  // Child with aria-label
-  if (Array.from(element.children).filter((x) => x.matches('[aria-label]')).length > 0) {
-    const child = Array.from(element.childNodes);
-    let returnText = '';
-
-    // Process each child within node.
-    child.forEach((x) => {
-      if (x.nodeType === 1) {
-        // Ignore HTML comments and make sure label is not null.
-        if (x.nodeType === 3 || x.ariaLabel === null) {
-          returnText += x.innerText;
-        } else {
-          returnText += x.getAttribute('aria-label');
-        }
-      } else {
-        returnText += x.nodeValue;
-      }
-    });
-    return returnText;
-  }
-
-  // Child with aria-labelledby
-  if (Array.from(element.children).filter((x) => x.matches('[aria-labelledby]')).length > 0) {
-    const child = Array.from(element.childNodes);
-    let returnText = '';
-
-    // Process each child within node.
-    child.forEach((y) => {
-      if (y.nodeType === 8) {
-        // Ignore HTML comments and make sure label is not null.
-      } else if (y.nodeType === 3 || y.getAttribute('aria-labelledby') === null) {
-        returnText += y.nodeValue;
-      } else {
-        const target = y.getAttribute('aria-labelledby').split(/\s+/);
-        if (target.length > 0) {
-          let returnAria = '';
-          target.forEach((z) => {
-            if (document.querySelector(`#${CSS.escape(z)}`) === null) {
-              returnAria += ' ';
-            } else {
-              returnAria += `${document.querySelector(`#${CSS.escape(z)}`).firstChild.nodeValue} `;
-            }
-          });
-          returnText += returnAria;
-        }
-      }
-    });
-    return returnText;
-  }
-
-  // Return if noAria;
-  return 'noAria';
 }
 
 /**

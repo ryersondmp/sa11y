@@ -15,11 +15,21 @@ export default function checkImages(results, option) {
       '.tiff',
       '.svg',
       'DSC_',
+      'IMG_',
+      'Photo_',
+      'Pic_',
+      'Pexels_',
+      'AdobeStock_',
+      'ScreenShot_',
+      'Picture_',
+      'Snap_',
+      'Capture_',
     ];
 
     const hit = [null, null, null];
     altUrl.forEach((word) => {
-      if (alt.toLowerCase().indexOf(word) >= 0) {
+      const stopword = word.toLowerCase();
+      if (alt.toLowerCase().indexOf(stopword) >= 0) {
         hit[0] = word;
       }
     });
@@ -42,25 +52,40 @@ export default function checkImages(results, option) {
     const linkTextContentLength = link
       ? Utils.fnIgnore(link, Constants.Exclusions.LinkSpan).textContent.trim().length : 0;
 
+    // Has aria-hidden.
+    if ($el.getAttribute('aria-hidden') === 'true') {
+      return;
+    }
+
+    if (link && link.getAttribute('aria-hidden') === 'true') {
+      // If linked image has aria-hidden, but is still focusable.
+      const unfocusable = link.getAttribute('tabindex') === '-1';
+      if (!unfocusable) {
+        results.push({
+          element: $el,
+          type: 'error',
+          content: Lang.sprintf('LINK_HIDDEN_FOCUSABLE'),
+          inline: false,
+          position: 'beforebegin',
+        });
+      }
+      return;
+    }
+
+    // If alt is missing.
     if (alt === null) {
       if (link) {
-        if (linkTextContentLength >= 1) {
-          results.push({
-            element: $el,
-            type: 'error',
-            content: Lang.sprintf('MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE'),
-            inline: false,
-            position: 'beforebegin',
-          });
-        } else if (linkTextContentLength === 0) {
-          results.push({
-            element: $el,
-            type: 'error',
-            content: Lang.sprintf('MISSING_ALT_LINK_MESSAGE'),
-            inline: false,
-            position: 'beforebegin',
-          });
-        }
+        const content = (linkTextContentLength === 0)
+          ? Lang.sprintf('MISSING_ALT_LINK_MESSAGE')
+          : Lang.sprintf('MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE');
+
+        results.push({
+          element: $el,
+          type: 'error',
+          content,
+          inline: false,
+          position: 'beforebegin',
+        });
       } else {
         // General failure message if image is missing alt.
         results.push({
@@ -72,157 +97,49 @@ export default function checkImages(results, option) {
         });
       }
     } else {
-      // If alt attribute is present, further tests are done.
-      const altText = Utils.sanitizeHTML(alt); // Prevent tooltip from breaking.
+      // If image has alt.
+      const altText = Utils.sanitizeHTML(alt);
       const error = containsAltTextStopWords(altText);
-      const altLength = alt.length;
-      const src = $el.getAttribute('src');
-      const baseSrc = (!src) ? $el.getAttribute('srcset') : src;
+      const decorative = (alt === '' || alt === ' ');
 
-      if (link && link.getAttribute('tabindex') === '-1' && link.getAttribute('aria-hidden') === 'true') {
-        // Do nothing if link has aria-hidden and negative tabindex.
-      } else if (link && error[0] !== null) {
-        // Image fails if a stop word was found.
-        results.push({
-          element: $el,
-          type: 'error',
-          content: Lang.sprintf('LINK_IMAGE_BAD_ALT_MESSAGE', error[0], altText),
-          inline: false,
-          position: 'beforebegin',
-        });
-      } else if (link && error[2] !== null) {
-        results.push({
-          element: $el,
-          type: 'error',
-          content: Lang.sprintf('LINK_IMAGE_PLACEHOLDER_ALT_MESSAGE', altText),
-          inline: false,
-          position: 'beforebegin',
-        });
-      } else if (link && error[1] !== null) {
-        const key = Utils.prepareDismissal(`LINKEDIMAGE${baseSrc + altText}`);
-        results.push({
-          element: $el,
-          type: 'warning',
-          content: Lang.sprintf('LINK_IMAGE_SUS_ALT_MESSAGE', error[1], altText),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: key,
-        });
-      } else if (error[0] !== null) {
-        results.push({
-          element: $el,
-          type: 'error',
-          content: Lang.sprintf('LINK_ALT_HAS_BAD_WORD_MESSAGE', error[0], altText),
-          inline: false,
-          position: 'beforebegin',
-        });
-      } else if (error[2] !== null) {
-        results.push({
-          element: $el,
-          type: 'error',
-          content: Lang.sprintf('ALT_PLACEHOLDER_MESSAGE', altText),
-          inline: false,
-          position: 'beforebegin',
-        });
-      } else if (error[1] !== null) {
-        const key = Utils.prepareDismissal(`IMAGE${baseSrc + altText + error[1]}`);
-        results.push({
-          element: $el,
-          type: 'warning',
-          content: Lang.sprintf('ALT_HAS_SUS_WORD', error[1], altText),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: key,
-        });
-      } else if (link && (alt === '' || alt === ' ')) {
-        if (link.getAttribute('tabindex') === '-1' && link.getAttribute('aria-hidden') === 'true') {
-          // Do nothing.
-        } else if (link.getAttribute('aria-hidden') === 'true') {
+      // Figure elements.
+      const figure = $el.closest('figure');
+      const figcaption = figure?.querySelector('figcaption');
+      const figcaptionText = (figcaption) ? figcaption.textContent.trim() : '';
+
+      // Image's source for key.
+      const src = ($el.getAttribute('src')) ? $el.getAttribute('src') : $el.getAttribute('srcset');
+
+      // Decorative images.
+      if (decorative) {
+        const key = Utils.prepareDismissal(`DECORATIVE${src}`);
+        if (link) {
+          const type = (linkTextContentLength === 0) ? 'error' : 'good';
+          const content = (linkTextContentLength === 0)
+            ? Lang.sprintf('LINK_IMAGE_NO_ALT_TEXT')
+            : Lang.sprintf('LINK_IMAGE_HAS_TEXT');
+
           results.push({
             element: $el,
-            type: 'error',
-            content: Lang.sprintf('LINK_IMAGE_ARIA_HIDDEN'),
+            type,
+            content,
             inline: false,
             position: 'beforebegin',
           });
-        } else if (linkTextContentLength === 0) {
+        } else if (figure) {
+          const content = (figcaption && figcaptionText.length)
+            ? Lang.sprintf('IMAGE_FIGURE_DECORATIVE')
+            : Lang.sprintf('IMAGE_DECORATIVE');
+
           results.push({
             element: $el,
-            type: 'error',
-            content: Lang.sprintf('LINK_IMAGE_NO_ALT_TEXT'),
+            type: 'warning',
+            content,
             inline: false,
             position: 'beforebegin',
+            dismiss: key,
           });
         } else {
-          results.push({
-            element: $el,
-            type: 'good',
-            content: Lang.sprintf('LINK_IMAGE_HAS_TEXT'),
-            inline: false,
-            position: 'beforebegin',
-          });
-        }
-      } else if (link && alt.length > option.altTextMaxCharLength) {
-        const key = Utils.prepareDismissal(`LINKEDIMAGE${baseSrc + altText + alt.length}`);
-        // Link and contains alt text.
-        results.push({
-          element: $el,
-          type: 'warning',
-          content: Lang.sprintf('LINK_IMAGE_LONG_ALT', altLength, altText),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: key,
-        });
-      } else if (link && linkTextContentLength === 0 && alt !== '') {
-        const key = Utils.prepareDismissal(`LINKEDIMAGE${baseSrc + altText}`);
-        // Link and contains an alt text.
-        results.push({
-          element: $el,
-          type: 'warning',
-          content: Lang.sprintf('LINK_IMAGE_ALT_WARNING', altText),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: key,
-        });
-      } else if (link && linkTextContentLength >= 1 && alt !== '') {
-        const accName = computeAccessibleName(link);
-        const key = Utils.prepareDismissal(`LINKEDIMAGE${baseSrc + altText}`);
-        // Contains alt text & surrounding link text.
-        results.push({
-          element: $el,
-          type: 'warning',
-          content: Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT_WARNING', altText, accName),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: key,
-        });
-      } else if (alt === '' || alt === ' ') {
-        // Decorative alt and not a link.
-        if ($el.closest('figure')) {
-          const figcaption = $el.closest('figure').querySelector('figcaption');
-          if (figcaption !== null && figcaption.textContent.trim().length >= 1) {
-            const key = Utils.prepareDismissal(`DECORATIVE${baseSrc}`);
-            results.push({
-              element: $el,
-              type: 'warning',
-              content: Lang.sprintf('IMAGE_FIGURE_DECORATIVE'),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: key,
-            });
-          } else {
-            const key = Utils.prepareDismissal(`DECORATIVE${baseSrc}`);
-            results.push({
-              element: $el,
-              type: 'warning',
-              content: Lang.sprintf('IMAGE_DECORATIVE'),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: key,
-            });
-          }
-        } else {
-          const key = Utils.prepareDismissal(`DECORATIVE${baseSrc}`);
           results.push({
             element: $el,
             type: 'warning',
@@ -232,42 +149,98 @@ export default function checkImages(results, option) {
             dismiss: key,
           });
         }
-      } else if (alt.length > option.altTextMaxCharLength) {
-        const key = Utils.prepareDismissal(`IMAGE${baseSrc + altText + alt.length}`);
+        return;
+      }
+
+      // Alt text quality.
+      if (error[0] !== null) {
+        // Has stop words.
+        const content = (link)
+          ? Lang.sprintf('LINK_ALT_HAS_FILE_EXTENSION', error[0], altText)
+          : Lang.sprintf('ALT_HAS_FILE_EXTENSION', error[0], altText);
+
+        results.push({
+          element: $el,
+          type: 'error',
+          content,
+          inline: false,
+          position: 'beforebegin',
+        });
+      } else if (error[2] !== null) {
+        // Placeholder words.
+        const content = (link)
+          ? Lang.sprintf('LINK_IMAGE_PLACEHOLDER_ALT_MESSAGE', altText)
+          : Lang.sprintf('ALT_PLACEHOLDER_MESSAGE', altText);
+
+        results.push({
+          element: $el,
+          type: 'error',
+          content,
+          inline: false,
+          position: 'beforebegin',
+        });
+      } else if (error[1] !== null) {
+        // Suspicious words.
+        const key = Utils.prepareDismissal(`${src + altText}`);
+        const content = (link)
+          ? Lang.sprintf('LINK_IMAGE_SUS_ALT_MESSAGE', error[1], altText)
+          : Lang.sprintf('ALT_HAS_SUS_WORD', error[1], altText);
+
         results.push({
           element: $el,
           type: 'warning',
-          content: Lang.sprintf('IMAGE_ALT_TOO_LONG', altLength, altText),
+          content,
           inline: false,
           position: 'beforebegin',
           dismiss: key,
         });
-      } else if (alt !== '') {
+      } else if (alt.length > option.altTextMaxCharLength) {
+        // Alt is too long.
+        const key = Utils.prepareDismissal(`${src + altText + alt.length}`);
+        const content = (link)
+          ? Lang.sprintf('LINK_IMAGE_LONG_ALT', alt.length, altText)
+          : Lang.sprintf('IMAGE_ALT_TOO_LONG', alt.length, altText);
+
+        results.push({
+          element: $el,
+          type: 'warning',
+          content,
+          inline: false,
+          position: 'beforebegin',
+          dismiss: key,
+        });
+      } else if (link) {
+        // Has both link text and alt text.
+        const key = Utils.prepareDismissal(`${src + altText}`);
+        const accName = computeAccessibleName(link);
+        const sanitizedText = Utils.sanitizeHTML(accName);
+        const content = (linkTextContentLength === 0)
+          ? Lang.sprintf('LINK_IMAGE_ALT_WARNING', altText)
+          : Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT_WARNING', altText, sanitizedText);
+
+        results.push({
+          element: $el,
+          type: 'warning',
+          content,
+          inline: false,
+          position: 'beforebegin',
+          dismiss: key,
+        });
+      } else if (figure) {
         // Figure element has same alt and caption text.
-        if ($el.closest('figure')) {
-          const figcaption = $el.closest('figure').querySelector('figcaption');
-          if (!!figcaption
-            && (figcaption.textContent.trim().toLowerCase() === altText.trim().toLowerCase())) {
-            const key = Utils.prepareDismissal(`FIGURE${baseSrc + altText}`);
-            results.push({
-              element: $el,
-              type: 'warning',
-              content: Lang.sprintf('IMAGE_FIGURE_DUPLICATE_ALT', altText),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: key,
-            });
-          } else {
-            results.push({
-              element: $el,
-              type: 'good',
-              content: Lang.sprintf('IMAGE_PASS', altText),
-              inline: false,
-              position: 'beforebegin',
-            });
-          }
+        const duplicate = !!figcaption && (figcaptionText.toLowerCase() === altText.trim().toLowerCase());
+        if (duplicate) {
+          const key = Utils.prepareDismissal(`FIGURE${src + altText}`);
+          results.push({
+            element: $el,
+            type: 'warning',
+            content: Lang.sprintf('IMAGE_FIGURE_DUPLICATE_ALT', altText),
+            inline: false,
+            position: 'beforebegin',
+            dismiss: key,
+          });
         } else {
-          // If image has alt text - pass!
+          // Figure has alt text!
           results.push({
             element: $el,
             type: 'good',
@@ -276,6 +249,15 @@ export default function checkImages(results, option) {
             position: 'beforebegin',
           });
         }
+      } else {
+        // Image has alt text!
+        results.push({
+          element: $el,
+          type: 'good',
+          content: Lang.sprintf('IMAGE_PASS', altText),
+          inline: false,
+          position: 'beforebegin',
+        });
       }
     }
   });

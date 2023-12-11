@@ -227,8 +227,8 @@
             <p><strong>This will be flagged</strong><br> Because it's a pretty substantial paragraph. Lorem ipsum
               dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
               aliqua. Elit duis tristique sollicitudin nibh. Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-              sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis tristique sollicitudin nibh. Etiam
+              sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis tristique sollicitudin nibh.
+              Etiam
               erat
               velit scelerisque in dictum non consectetur. Augue lacus viverra vitae congue eu consequat. Egestas
               maecenas
@@ -250,8 +250,7 @@
           <div class="example">
             <p><strong>About us</strong><br>Will not be flagged because it's a small paragraph. Lorem ipsum dolor sit
               amet,
-              consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis
-              tristique sollicitudin nibh.</p>
+              consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
           </div>
 
           <div class="example">
@@ -298,13 +297,6 @@
 
             <div class="row">
               <div class="col-md-6">
-                <h4>A subheading before</h4>
-                <p style="font-size: 24px">About us</p>
-                <span><strong>Expected:</strong> nothing.</span>
-                <p>Previous sibling element is a heading, so don't tag. This is to prevent false positives or excessive
-                  annotations on the page. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-              </div>
-              <div class="col-md-6">
                 <h4>
                   <p style="font-size: 24px">About us</p>
                 </h4>
@@ -312,6 +304,7 @@
                 <p>A paragraph with 24px text nested within a Heading 4. This should not get flagged. Lorem ipsum dolor
                   sit amet, consectetur adipiscing elit. Curabitur ut consectetur arcu, vitae luctus lacus.</p>
               </div>
+              <div class="col-md-6"></div>
             </div>
           </div>
 
@@ -320,7 +313,6 @@
 
           <h3>Images without links</h3>
           <h4>Pass</h4>
-
           <div class="row">
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill">
@@ -611,29 +603,12 @@
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill text-center">
-                <a href="#"
-                   aria-hidden="true"><img src="../assets/placeholder.svg"
-                       alt
-                       width="100%"
-                       class="w-100"></a>
-                <div class="card-body">
-                  <p class="card-text">Hyperlinked image where anchor has
-                    aria-hidden=&quot;true&quot;.</p>
-                </div>
-                <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-danger">Error</span></p>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-3 d-flex">
-              <div class="card mb-4 shadow-sm flex-fill text-center">
-                <a href="#"
-                   aria-hidden="true"><img src="../assets/placeholder.svg"
+                <a href="#"><img src="../assets/placeholder.svg"
                        alt="doggy.jpg"
                        width="100%"
                        class="w-100"></a>
                 <div class="card-body">
-                  <p class="card-text">28: Hyperlinked image's alt text contains file extension.</p>
+                  <p class="card-text">Hyperlinked image's alt text contains file extension.</p>
                 </div>
                 <div class="card-footer">
                   <p class="card-text">Expected: <span class="badge bg-danger">Error</span></p>
@@ -766,40 +741,6 @@
           <div class="row">
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill text-center">
-                <a href="#"
-                   aria-hidden="true"
-                   tabindex="-1"><img src="../assets/placeholder.svg"
-                       alt
-                       width="100%"
-                       class="w-100"></a>
-                <div class="card-body">
-                  <p class="card-text">Hyperlinked image where anchor has aria-hidden=&quot;true&quot;
-                    and tabindex=&quot;-1&quot;</p>
-                </div>
-                <div class="card-footer">
-                  <p class="card-text">Expected: Nothing!</p>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-3 d-flex">
-              <div class="card mb-4 shadow-sm flex-fill text-center">
-                <a href="#"
-                   aria-hidden="true"
-                   tabindex="-1"><img src="../assets/placeholder.svg"
-                       alt="Testing 123"
-                       width="100%"
-                       class="w-100"></a>
-                <div class="card-body">
-                  <p class="card-text">Hyperlinked image where anchor has aria-hidden=&quot;true&quot;
-                    and tabindex=&quot;-1&quot; and the image has alt text.</p>
-                </div>
-                <div class="card-footer">
-                  <p class="card-text">Expected: Nothing!</p>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-3 d-flex">
-              <div class="card mb-4 shadow-sm flex-fill text-center">
                 <a href="#"><img src="../assets/placeholder.svg"
                        alt
                        width="100%"
@@ -900,6 +841,73 @@
                 </div>
                 <div class="card-footer">
                   <p class="card-text">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <h4>Images with ARIA hidden</h4>
+          <div class="row">
+            <div class="col-md-3 d-flex">
+              <div class="card mb-4 shadow-sm flex-fill">
+                <img src="../assets/placeholder.svg"
+                     width="100%"
+                     aria-hidden="true"
+                     alt="Large mountains of sand in the Nambian desert.">
+                <div class="card-body">
+                  <p class="card-text">Image has <code>aria-hidden="true"</code></p>
+                </div>
+                <div class="card-footer">
+                  <p class="card-text">Expected: Nothing.</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 d-flex">
+              <div class="card mb-4 shadow-sm flex-fill text-center">
+                <a href="#"
+                   aria-hidden="true"
+                   tabindex="-1"><img src="../assets/placeholder.svg"
+                       alt
+                       width="100%"
+                       class="w-100"></a>
+                <div class="card-body">
+                  <p class="card-text">Hyperlinked image where anchor has <code>aria-hidden=&quot;true&quot;</code>
+                    and <code>tabindex=&quot;-1&quot;</code></p>
+                </div>
+                <div class="card-footer">
+                  <p class="card-text">Expected: Nothing!</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 d-flex">
+              <div class="card mb-4 shadow-sm flex-fill text-center">
+                <a href="#"
+                   aria-hidden="true"
+                   tabindex="-1"><img src="../assets/placeholder.svg"
+                       alt="Testing 123"
+                       width="100%"
+                       class="w-100"></a>
+                <div class="card-body">
+                  <p class="card-text">Hyperlinked image where anchor has <code>aria-hidden=&quot;true&quot;</code>
+                    and <code>tabindex=&quot;-1&quot;</code> and has alt text.</p>
+                </div>
+                <div class="card-footer">
+                  <p class="card-text">Expected: Nothing!</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 d-flex">
+              <div class="card mb-4 shadow-sm flex-fill text-center">
+                <a href="#"
+                   aria-hidden="true"><img src="../assets/placeholder.svg"
+                       alt
+                       width="100%"
+                       class="w-100"></a>
+                <div class="card-body">
+                  <p class="card-text">Hyperlinked image where anchor has <code>aria-hidden=&quot;true&quot;</code> and
+                    is still focusable.</p>
+                </div>
+                <div class="card-footer">
+                  <p class="card-text">Expected: <span class="badge bg-danger">Error</span></p>
                 </div>
               </div>
             </div>
@@ -1173,12 +1181,23 @@
           <ul>
             <li><strong>Code:</strong> <code>&lt;a href="#" <strong
                   class="text-danger">aria-hidden="true"</strong>&gt;Learn more&lt;/a&gt;</code></li>
-            <li><strong>Expected result:</strong></li>
           </ul>
           <div class="example">
-            <a href="#"
-               class="btn btn-primary"
-               aria-hidden="true">Learn more</a>
+            <div class="row">
+              <div class="col-md-6">
+                <p class="small mb-4">Expected: <span class="badge bg-danger">Error</span></p>
+                <p><a href="#"
+                     class="btn btn-primary"
+                     aria-hidden="true">Learn more</a></p>
+              </div>
+              <div class="col-md-6">
+                <p class="small mb-4">Expected:</p>
+                <p><a href="#"
+                     class="btn btn-primary"
+                     aria-hidden="true"
+                     tabindex="-1">Learn more</a></p>
+              </div>
+            </div>
           </div>
 
           <h4>Miscellaneous testing</h4>

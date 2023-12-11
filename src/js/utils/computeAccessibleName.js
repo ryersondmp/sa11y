@@ -1,7 +1,7 @@
 /* eslint-disable no-use-before-define */
 
-/* Get text of pseudo elements. */
-const wrapPseudoContent = (element, string) => {
+/* Get text content of pseudo elements. */
+export const wrapPseudoContent = (element, string) => {
   const pseudo = [];
   pseudo[0] = window.getComputedStyle(element, ':before').getPropertyValue('content');
   pseudo[1] = window.getComputedStyle(element, ':after').getPropertyValue('content');
@@ -115,7 +115,9 @@ export const computeAccessibleName = (el, recursing = 0) => {
             if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
             break;
           case 'IMG':
-            computedText += treeWalker.currentNode.getAttribute('alt');
+            if (treeWalker.currentNode.hasAttribute('alt')) {
+              computedText += treeWalker.currentNode.getAttribute('alt');
+            }
             break;
           case 'SVG':
           case 'svg':

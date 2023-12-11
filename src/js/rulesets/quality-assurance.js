@@ -148,66 +148,54 @@ export default function checkQA(results, option) {
 
   /* ****************************************************************** */
   /*  Warning: Detect fake headings                                     */
-  /*  To prevent excessive warnings:                                    */
-  /*  1) Parent element must not be a heading, blockquote, or table.    */
-  /*  2) Must be between 4 and 120 characters (typical heading length). */
-  /*  3) Doesn't contain the following characters: .;?!                 */
-  /*  4) The previous element is not a semantic heading.                */
   /* ****************************************************************** */
   if (option.fakeHeadingsQA) {
-    Elements.Found.Paragraphs.forEach(($el) => {
-      const brAfter = $el.innerHTML.indexOf('</strong><br>');
-      const brBefore = $el.innerHTML.indexOf('<br></strong>');
-      const ignoreElements = 'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level], blockquote';
-      const ignoreParents = ignoreElements.concat(', table');
-      const getTexted = Utils.getText($el);
-      let boldtext;
+    const ignoreParents = 'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level], blockquote, table';
 
-      // Check paragraphs greater than x characters.
-      if ($el && getTexted.length >= 300) {
-        const { firstChild } = $el;
+    // Find large text as heading.
+    const computeLargeParagraphs = (p) => {
+      const size = getComputedStyle(p).fontSize.replace('px', '');
+      const getText = Utils.getText(p);
+      const maybeSentence = getText.match(/[.;?!"]/) === null;
+      const typicalHeadingLength = getText.length >= 4 && getText.length <= 120;
 
-        // If paragraph starts with <strong> tag and ends with <br>.
-        if (firstChild.tagName === 'STRONG' && (brBefore !== -1 || brAfter !== -1)) {
-          boldtext = Utils.getText(firstChild);
-          const maybeSentence = boldtext.match(/[.;?!"]/) !== null;
-          if (
-            !/[*]$/.test(boldtext)
-            && !$el.closest(ignoreParents)
-            && (boldtext.length >= 4 && boldtext.length <= 120)
-            && maybeSentence === false
-          ) {
-            const sanitizedText = Utils.sanitizeHTML(boldtext);
-            const key = Utils.prepareDismissal(`BOLD${sanitizedText}`);
-            results.push({
-              element: firstChild,
-              type: 'warning',
-              content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: key,
-            });
+      if (size >= 24 && !p.closest(ignoreParents) && typicalHeadingLength && maybeSentence) {
+        const sanitizedText = Utils.sanitizeHTML(getText);
+        const key = Utils.prepareDismissal(`BOLD${sanitizedText}`);
+        results.push({
+          element: p,
+          type: 'warning',
+          content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
+          inline: false,
+          position: 'beforebegin',
+          dismiss: key,
+        });
+      }
+    };
+
+    // Find bolded text as headings.
+    const computeBoldTextParagraphs = (p) => {
+      const startsWithBold = /^(<strong>|<b>)/i.test(p.innerHTML.trim());
+
+      if (startsWithBold && !p.closest(ignoreParents)) {
+        const possibleHeading = p.querySelector('strong, b');
+        const possibleHeadingText = Utils.getText(possibleHeading);
+
+        // Conditions
+        const notASentence = possibleHeadingText.match(/[.:;?!"']/) === null;
+        const typicalHeadingLength = possibleHeadingText.length >= 3 && possibleHeadingText.length <= 120;
+
+        if (typicalHeadingLength && notASentence) {
+          // Be a little forgiving if it's a small paragraph.
+          const nonHeadingTextLength = Utils.fnIgnore(p, 'strong, bold').textContent.trim().length;
+          if (nonHeadingTextLength !== 0 && nonHeadingTextLength <= 250) {
+            return;
           }
-        }
-      }
 
-      // If paragraph only contains <p><strong>...</strong></p>.
-      if (/^<(strong)>.+<\/\1>$/.test($el.innerHTML.trim())) {
-        boldtext = getTexted;
-        const prevSibling = $el.previousElementSibling;
-        const maybeSentence = boldtext.match(/[.;?!"]/) !== null;
-        if (prevSibling !== null && prevSibling.matches(ignoreElements)) {
-          // If previous element is a heading, do nothing.
-        } else if (
-          !/[*]$/.test(boldtext)
-          && (boldtext.length >= 4 && boldtext.length <= 120)
-          && !$el.closest(ignoreParents)
-          && maybeSentence === false
-        ) {
-          const sanitizedText = Utils.sanitizeHTML(boldtext);
+          const sanitizedText = Utils.sanitizeHTML(possibleHeadingText);
           const key = Utils.prepareDismissal(`BOLD${sanitizedText}`);
           results.push({
-            element: $el,
+            element: possibleHeading,
             type: 'warning',
             content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
             inline: false,
@@ -216,36 +204,11 @@ export default function checkQA(results, option) {
           });
         }
       }
+    };
 
-      // Find pretend paragraph headings
-      const computeLargeParagraphs = ($elem) => {
-        const size = getComputedStyle($elem).fontSize.replace('px', '');
-        const ignore = 'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level], blockquote';
-        const getText = Utils.getText($elem);
-        const prevSibling = $elem.previousElementSibling;
-        const maybeSentence = getText.match(/[.;?!"]/) !== null;
-
-        if (prevSibling !== null && prevSibling.matches(ignore)) {
-          // Nothing
-        } else if (
-          size >= 24
-          && !$elem.closest(ignore)
-          && (getText.length >= 4 && getText.length <= 120)
-          && maybeSentence === false
-        ) {
-          const sanitizedText = Utils.sanitizeHTML(getText);
-          const key = Utils.prepareDismissal(`BOLD${sanitizedText}`);
-          results.push({
-            element: $elem,
-            type: 'warning',
-            content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
-          });
-        }
-      };
-      computeLargeParagraphs($el);
+    Elements.Found.Paragraphs.forEach((p) => {
+      computeLargeParagraphs(p);
+      computeBoldTextParagraphs(p);
     });
   }
 
@@ -254,51 +217,78 @@ export default function checkQA(results, option) {
   /*  Thanks to John Jameson from PrincetonU for this ruleset!       */
   /* *************************************************************** */
   if (option.fakeListQA) {
-    Elements.Found.Paragraphs.forEach(($el) => {
-      let activeMatch = '';
-      const prefixDecrement = {
-        b: 'a',
-        B: 'A',
-        2: '1',
-        б: 'а',
-        Б: 'А',
-      };
-      const prefixMatch = /a\.|a\)|A\.|A\)|а\.|а\)|А\.|А\)|1\.|1\)|\*\s|-\s|--|•\s|→\s|✓\s|✔\s|✗\s|✖\s|✘\s|❯\s|›\s|»\s/;
-      const decrement = (el) => el.replace(/^b|^B|^б|^Б|^2/, (match) => prefixDecrement[match]);
-      let hit = false;
-      const firstPrefix = $el.textContent.substring(0, 2);
+    let activeMatch = '';
+    let firstText = '';
+    const prefixDecrement = {
+      2: '1',
+      b: 'a',
+      B: 'A',
+      β: 'α',
+      Β: 'Α',
+      б: 'а',
+      Б: 'А',
+    };
+    const prefixMatch = new RegExp(/([aA1]|[аА]|[αΑ]|[^\p{Alphabetic}\s])[-\s.)]/, 'u');
+    const emojiMatch = new RegExp(/\p{Emoji}/, 'u');
+    const decrement = (element) => element.replace(/^b|^B|^б|^Б|^β|^В|^2/, (match) => prefixDecrement[match]);
 
+    let lastHitWasEmoji = false;
+    Elements.Found.Paragraphs.forEach((p, i) => {
+      // Detect possible lists.
+      let firstPrefix = '';
+      let secondText = false;
+      let hit = false;
+      if (!firstText) {
+        firstText = Utils.getText(p);
+        firstPrefix = firstText.substring(0, 2);
+      }
+
+      // Grab first two characters.
+      const matchWasntEmoji = firstPrefix.match(prefixMatch);
       if (
-        firstPrefix.trim().length > 0
-        && firstPrefix !== activeMatch
-        && firstPrefix.match(prefixMatch)
+        firstPrefix.length > 0
+        && firstPrefix
+        !== activeMatch
+        && (matchWasntEmoji || firstPrefix.match(emojiMatch))
       ) {
-        const hasBreak = $el.innerHTML.indexOf('<br>');
-        if (hasBreak !== -1) {
-          const subParagraph = $el
-            .innerHTML
-            .substring(hasBreak + 4)
-            .trim();
-          const subPrefix = subParagraph.substring(0, 2);
-          if (firstPrefix === decrement(subPrefix)) {
-            hit = true;
+        // We have a prefix and a possible hit; check next detected paragraph.
+        const secondP = Elements.Found.Paragraphs[i + 1];
+        if (secondP) {
+          secondText = Utils.getText(secondP).substring(0, 2);
+          if (secondText === 'A') {
+            // A sentence. Another sentence.
+          } else {
+            const secondPrefix = decrement(secondText);
+            if (matchWasntEmoji) {
+              // Check for repeats (*,*) or increments(a,b)
+              lastHitWasEmoji = false;
+              if (firstPrefix !== 'A ' && firstPrefix === secondPrefix) {
+                hit = true;
+              }
+            } else if (!lastHitWasEmoji) {
+              // Check for two paragraphs in a row that start with emoji
+              if (secondPrefix.match(emojiMatch)) {
+                hit = true;
+              }
+              // It was an emoji match.
+              lastHitWasEmoji = hit;
+            }
           }
         }
-
-        // Decrement the second p prefix and compare .
         if (!hit) {
-          const $second = Utils.getNextSibling($el, 'p');
-          if ($second) {
-            const secondPrefix = decrement($el.nextElementSibling.textContent.substring(0, 2));
-            if (firstPrefix === secondPrefix) {
+          // Split p by carriage return if there was a firstPrefix and compare.
+          let textAfterBreak = p?.querySelector('br')?.nextSibling?.nodeValue;
+          if (textAfterBreak) {
+            textAfterBreak = textAfterBreak.replace(/<\/?[^>]+(>|$)/g, '').trim().substring(0, 2);
+            if (firstPrefix === decrement(textAfterBreak) || (!matchWasntEmoji && !lastHitWasEmoji && textAfterBreak.match(emojiMatch))) {
               hit = true;
             }
           }
         }
         if (hit) {
-          const key = Utils.prepareDismissal(`LIST${$el.textContent}`);
+          const key = Utils.prepareDismissal(`LIST${p.textContent}`);
           results.push({
-            element: $el,
+            element: p,
             type: 'warning',
             content: Lang.sprintf('QA_SHOULD_BE_LIST', firstPrefix),
             inline: false,
@@ -309,9 +299,9 @@ export default function checkQA(results, option) {
         } else {
           activeMatch = '';
         }
-      } else {
-        activeMatch = '';
       }
+      // Reset for next loop, carry over text query if available.
+      firstText = secondText ? '' : secondText;
     });
   }
 

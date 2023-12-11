@@ -2,7 +2,7 @@ import Constants from '../utils/constants';
 import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
-import { computeAccessibleName } from '../utils/computeAccessibleName';
+import { computeAccessibleName, wrapPseudoContent } from '../utils/computeAccessibleName';
 
 export default function checkLinkText(results, option) {
   const containsLinkTextStopWords = (textContent) => {
@@ -85,14 +85,20 @@ export default function checkLinkText(results, option) {
     return hit;
   };
 
+  const seen = {};
   Elements.Found.Links.forEach(($el) => {
+    // Exclusions & accessible name computation.
     const exclusions = Utils.fnIgnore($el, Constants.Exclusions.LinkSpan);
     const accessibleName = computeAccessibleName(exclusions);
-    const linkText = Utils.removeWhitespaceFromString(accessibleName);
 
-    // Ignore provided linkSpanIgnore prop, <style> tags, and special characters.
+    // Utils.fnIgnore uses cloneNode, which doesn't account for pseudo content.
+    const checkForPseudo = wrapPseudoContent($el, accessibleName);
+    const linkText = Utils.removeWhitespaceFromString(checkForPseudo);
+
+    // Ignore special characters.
     const specialCharPattern = /[!?。，、&*()\-;':"\\|,.<>↣↳←→↓«»↴]+/g;
     const error = containsLinkTextStopWords(linkText.replace(specialCharPattern, '').trim());
+    const isSingleSpecialChar = linkText.length === 1 && specialCharPattern.test(linkText);
 
     // HTML symbols used as call to actions.
     const htmlSymbols = /([<>↣↳←→↓«»↴]+)/;
@@ -100,13 +106,11 @@ export default function checkLinkText(results, option) {
     const matchedSymbol = matches ? matches[1] : null;
 
     // ARIA attributes.
-    const hasAriaLabelledBy = $el.getAttribute('aria-labelledby');
-    const hasAriaLabel = $el.getAttribute('aria-label');
-    const hasTitle = $el.getAttribute('title');
     const href = $el.getAttribute('href');
-    const hidden = $el.getAttribute('aria-hidden') === 'true';
+    const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
     const negativeTabindex = $el.getAttribute('tabindex') === '-1';
 
+    // Check if child elements has ARIA (i, span, svg).
     let childAriaLabelledBy = null;
     let childAriaLabel = null;
     if ($el.children.length) {
@@ -115,14 +119,26 @@ export default function checkLinkText(results, option) {
       childAriaLabel = $firstChild.getAttribute('aria-label');
     }
 
-    console.log(linkText);
+    // Has ARIA.
+    const hasAria = $el.getAttribute('aria-labelledby') || $el.getAttribute('aria-label') || childAriaLabelledBy || childAriaLabel;
+
     if ($el.querySelectorAll('img').length) {
       // Do nothing. Don't overlap with Alt Text module.
+    } else if (ariaHidden) {
+      // Has aria-hidden.
+      if (!negativeTabindex) {
+        // If negative tabindex.
+        results.push({
+          element: $el,
+          type: 'error',
+          content: Lang.sprintf('LINK_HIDDEN_FOCUSABLE'),
+          inline: true,
+          position: 'afterend',
+        });
+      }
     } else if (href && linkText.length === 0) {
-      // Flag empty hyperlinks.
-      if ($el && hasTitle) {
-        // If empty but has title attribute.
-      } else if ($el.children.length) {
+      // Empty hyperlinks.
+      if ($el.children.length) {
         // Has child elements (e.g. SVG or SPAN) <a><i></i></a>
         results.push({
           element: $el,
@@ -143,36 +159,21 @@ export default function checkLinkText(results, option) {
       }
     } else if (error[0] !== null) {
       // Contains stop words.
-      if (hasAriaLabelledBy || hasAriaLabel || childAriaLabelledBy || childAriaLabel) {
-        const sanitizedText = Utils.sanitizeHTML(linkText);
-        if (option.showGoodLinkButton) {
-          results.push({
-            element: $el,
-            type: 'good',
-            content: Lang.sprintf('LINK_LABEL', sanitizedText),
-            inline: true,
-            position: 'afterend',
-          });
-        }
-      } else if (hidden && negativeTabindex) {
-        // Do nothing.
-      } else {
-        results.push({
-          element: $el,
-          type: 'error',
-          content: Lang.sprintf('LINK_STOPWORD', error[0]),
-          inline: true,
-          position: 'afterend',
-        });
-      }
+      results.push({
+        element: $el,
+        type: 'error',
+        content: Lang.sprintf('LINK_STOPWORD', error[0]),
+        inline: true,
+        position: 'afterend',
+      });
     } else if (error[1] !== null || matchedSymbol !== null) {
       const key = Utils.prepareDismissal(`LINK${linkText + href}`);
-      const STOPWORD = matchedSymbol || error[1];
+      const stopword = matchedSymbol || error[1];
       // Contains warning words.
       results.push({
         element: $el,
         type: 'warning',
-        content: Lang.sprintf('LINK_BEST_PRACTICES', STOPWORD),
+        content: Lang.sprintf('LINK_BEST_PRACTICES', stopword),
         inline: true,
         position: 'beforebegin',
         dismiss: key,
@@ -203,7 +204,7 @@ export default function checkLinkText(results, option) {
           dismiss: key,
         });
       }
-    } else if (hasAriaLabelledBy || hasAriaLabel || childAriaLabelledBy || childAriaLabel) {
+    } else if (hasAria) {
       // If the link has any ARIA, append a "Good" link button.
       if (option.showGoodLinkButton) {
         const sanitizedText = Utils.sanitizeHTML(linkText);
@@ -215,8 +216,8 @@ export default function checkLinkText(results, option) {
           position: 'afterend',
         });
       }
-    } else if (linkText === '.' || linkText === ',' || linkText === '/') {
-      // Link is ONLY a period, comma, or slash.
+    } else if (isSingleSpecialChar) {
+      // Link is ONLY a period, comma, or special character.
       results.push({
         element: $el,
         type: 'error',
@@ -224,6 +225,84 @@ export default function checkLinkText(results, option) {
         inline: true,
         position: 'afterend',
       });
+    }
+
+    /* ********************* */
+    /*  Links (Advanced)     */
+    /* ********************* */
+    if (option.linksAdvancedPlugin) {
+      const toggleCheck = Utils.store.getItem('sa11y-remember-links-advanced') === 'On';
+      if (toggleCheck || option.headless || option.checkAllHideToggles) {
+        // New tab or new window.
+        const containsNewWindowPhrases = Lang._('NEW_WINDOW_PHRASES').some((pass) => linkText.toLowerCase().includes(pass));
+
+        // Link that points to a file type and indicates as such.
+        const defaultFileTypes = ['pdf', 'doc', 'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'];
+        const fileTypes = defaultFileTypes.concat(Lang._('FILE_TYPE_PHRASES'));
+        const containsFileTypePhrases = fileTypes.some((pass) => linkText.toLowerCase().includes(pass));
+        const fileTypeMatch = $el.matches(`
+          a[href$='.pdf'],
+          a[href$='.doc'],
+          a[href$='.docx'],
+          a[href$='.zip'],
+          a[href$='.mp3'],
+          a[href$='.txt'],
+          a[href$='.exe'],
+          a[href$='.dmg'],
+          a[href$='.rtf'],
+          a[href$='.pptx'],
+          a[href$='.ppt'],
+          a[href$='.xls'],
+          a[href$='.xlsx'],
+          a[href$='.csv'],
+          a[href$='.mp4'],
+          a[href$='.mov'],
+          a[href$='.avi']
+        `);
+
+        // Remove whitespace and special characters to improve accuracy and minimize false positives.
+        const linkTextTrimmed = linkText.replace(/'|"|-|\.|\s+/g, '').toLowerCase();
+
+        // Links with identical accessible names have equivalent purpose.
+        if (linkTextTrimmed.length !== 0) {
+          if (seen[linkTextTrimmed] && !seen[href]) {
+            // Link has identical name as another link.
+            const key = Utils.prepareDismissal(`LINK${linkTextTrimmed + href}`);
+            const sanitizedText = Utils.sanitizeHTML(linkText);
+            results.push({
+              element: $el,
+              type: 'warning',
+              content: Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText),
+              inline: true,
+              position: 'beforebegin',
+              dismiss: key,
+            });
+          } else if ($el.getAttribute('target') === '_blank' && !fileTypeMatch && !containsNewWindowPhrases) {
+            const key = Utils.prepareDismissal(`LINK${linkTextTrimmed + href}`);
+            results.push({
+              element: $el,
+              type: 'warning',
+              content: Lang.sprintf('NEW_TAB_WARNING'),
+              inline: true,
+              position: 'beforebegin',
+              dismiss: key,
+            });
+          } else if (fileTypeMatch && !containsFileTypePhrases) {
+            const key = Utils.prepareDismissal(`LINK${linkTextTrimmed + href}`);
+            results.push({
+              element: $el,
+              type: 'warning',
+              content: Lang.sprintf('FILE_TYPE_WARNING'),
+              inline: true,
+              position: 'beforebegin',
+              dismiss: key,
+            });
+          } else {
+            seen[linkTextTrimmed] = true;
+            seen[href] = true;
+          }
+        }
+      }
     }
   });
   return results;

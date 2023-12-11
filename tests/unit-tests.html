@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<link rel="stylesheet"
+      href="../dist/css/export-results.min.css">
+<link rel="stylesheet"
+      href="../dist/css/sa11y.min.css" />
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+  <title>Sa11y Unit Tests</title>
+</head>
+
+<body>
+  <header>
+    <h1>Sa11y Unit Tests</h1>
+  </header>
+  <main>
+    <h2>Headings</h2>
+    <h3>Empty heading</h3>
+    <div id="empty-heading">
+      <h4></h4>
+    </div>
+    <h3>Skipped heading</h3>
+    <div id="skipped-heading">
+      <h5>This is a heading five</h5>
+    </div>
+    <hr>
+    <h2>Images</h2>
+    <img src="#"
+         alt="Pexels_something" />
+    <h2>Links</h2>
+    <h2>Quality assurance</h2>
+  </main>
+  <footer>
+    <p>Sa11y.</p>
+  </footer>
+  <script src="../dist/js/sa11y.umd.min.js"></script>
+  <script src="../dist/js/lang/en.umd.js"></script>
+  <script>
+    // Instantiate
+    Sa11y.Lang.addI18n(Sa11yLangEn.strings);
+    const sa11y = new Sa11y.Sa11y({
+      checkRoot: "body",
+    });
+  </script>
+</body>
+
+</html>

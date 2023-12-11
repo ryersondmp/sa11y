@@ -3,6 +3,7 @@
   "version": "3.0.5",
   "description": "Sa11y is an accessibility quality assurance tool that visually highlights common accessibility and usability issues. Geared towards content authors, Sa11y straightforwardly identifies errors or warnings at the source with a simple tooltip on how to fix them.",
   "main": "src/sa11y.js",
+  "type": "module",
   "author": "Adam Chaboryk, Toronto Metropolitan University",
   "email": "adam.chaboryk@torontomu.ca",
   "repository": {
@@ -26,7 +27,7 @@
     "lint:js": "node ./node_modules/eslint/bin/eslint.js src",
     "lint:css": "stylelint --config .stylelintrc.json -s scss \"src/scss/**/*.scss\"",
     "serve": "npm run build && node ./docs.js && light-server -p 8080 -b localhost -s ./ -w \"src/**/* # npm run build && node ./docs.js # reload\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test"
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",
@@ -41,8 +42,10 @@
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.23.4",
+    "jsdom": "^23.0.1",
     "light-server": "^2.9.1",
     "postcss": "^8.3.10",
+    "puppeteer": "^21.6.0",
     "rimraf": "^3.0.2",
     "rollup": "^2.52.7",
     "rollup-plugin-import-css": "^3.0.2",

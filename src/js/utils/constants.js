@@ -172,9 +172,9 @@ const Constants = (function myConstants() {
     // Main container.
     if (option.containerIgnore) {
       const containerSelectors = option.containerIgnore.split(',').map(($el) => `${$el} *, ${$el}`);
-      Exclusions.Container = `[aria-hidden], #wpadminbar *, ${containerSelectors.join(', ')}`;
+      Exclusions.Container = `#wpadminbar *, ${containerSelectors.join(', ')}`;
     } else {
-      Exclusions.Container = '[aria-hidden], #wpadminbar *';
+      Exclusions.Container = '#wpadminbar *';
     }
 
     // Contrast exclusions
@@ -206,7 +206,7 @@ const Constants = (function myConstants() {
     }
 
     // Ignore specific links
-    Exclusions.Links = '[aria-hidden="true"], .anchorjs-link';
+    Exclusions.Links = '.anchorjs-link';
     if (option.linkIgnore) {
       Exclusions.Links = `${option.linkIgnore}, ${Exclusions.Links}`;
     }
