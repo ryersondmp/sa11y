@@ -12,8 +12,8 @@ export default function checkLabels(results, option) {
         if (Utils.isElementHidden($el)) return;
 
         // Compute accessible name on input.
-        const computeInput = computeAccessibleName($el);
-        const formattedInput = Utils.removeWhitespaceFromString(computeInput);
+        const computeName = computeAccessibleName($el);
+        const inputName = Utils.removeWhitespace(computeName);
 
         // Get attributes.
         const alt = $el.getAttribute('alt');
@@ -43,7 +43,7 @@ export default function checkLabels(results, option) {
 
         // Warning: to remove reset buttons.
         if (type === 'reset') {
-          const key = Utils.prepareDismissal(`INPUT${formattedInput}`);
+          const key = Utils.prepareDismissal(`INPUT${inputName}`);
           results.push({
             element: $el,
             type: 'warning',
@@ -57,8 +57,8 @@ export default function checkLabels(results, option) {
 
         // Uses ARIA or title attribute. Warn them to ensure there's a visible label.
         if (hasAria || hasTitle) {
-          const key = Utils.prepareDismissal(`INPUT${formattedInput}`);
-          const sanitizedText = Utils.sanitizeHTML(formattedInput);
+          const key = Utils.prepareDismissal(`INPUT${inputName}`);
+          const sanitizedText = Utils.sanitizeHTML(inputName);
           results.push({
             element: $el,
             type: 'warning',
@@ -72,9 +72,8 @@ export default function checkLabels(results, option) {
 
         // Implicit label: <label>First name: <input type="text"/><label>
         const closestLabel = $el.closest('label');
-        const computeLabel = (closestLabel) ? computeAccessibleName(closestLabel) : '';
-        const formattedLabel = Utils.removeWhitespaceFromString(computeLabel);
-        if (closestLabel && formattedLabel.length) {
+        const labelName = (closestLabel) ? Utils.removeWhitespace(computeAccessibleName(closestLabel)) : '';
+        if (closestLabel && labelName.length) {
           return;
         }
 

@@ -34,7 +34,7 @@ const computeAriaLabel = (element, recursing = false) => {
       let returnText = '';
       target.forEach((x) => {
         const targetSelector = document.querySelector(`#${CSS.escape(x)}`);
-        returnText += (!targetSelector) ? '' : `${computeAccessibleName(targetSelector, 1)}`;
+        returnText += (!targetSelector) ? '' : `${computeAccessibleName(targetSelector, '', 1)}`;
       });
       return returnText;
     }
@@ -49,26 +49,28 @@ const computeAriaLabel = (element, recursing = false) => {
 /**
  * Computes the accessible name of an element.
  * @param {Element} element The element for which the accessible name needs to be computed.
+ * @param {String} exclusions List of selectors which will be ignored.
+ * @param {Number} recursing Recursion depth.
  * @returns {string} The computed accessible name of the element.
  * @kudos to John Jameson, creator of the Editoria11y library, for developing this more robust calculation!
  * @notes Uses a subset of the W3C accessible name algorithm.
 */
-export const computeAccessibleName = (el, recursing = 0) => {
+export const computeAccessibleName = (element, exclusions, recursing = 0) => {
   // Return immediately if there is an aria label.
-  const hasAria = computeAriaLabel(el, recursing);
+  const hasAria = computeAriaLabel(element, recursing);
   if (hasAria !== 'noAria') {
     return hasAria;
   }
 
   // Return immediately if there is only a text node.
   let computedText = '';
-  if (!el.children.length) {
+  if (!element.children.length) {
     // Just text! Output immediately.
-    computedText = wrapPseudoContent(el, el.textContent);
-    if (!computedText.trim() && el.hasAttribute('title')) {
-      return el.getAttribute('title');
+    computedText = wrapPseudoContent(element, element.textContent);
+    if (!computedText.trim() && element.hasAttribute('title')) {
+      return element.getAttribute('title');
     }
-    return recursing ? computedText : computedText.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
+    return computedText;
   }
 
   // Create tree walker object.
@@ -80,7 +82,7 @@ export const computeAccessibleName = (el, recursing = 0) => {
     };
     return document.createTreeWalker(rootNode, NodeFilter.SHOW_ALL, { acceptNode });
   }
-  const treeWalker = createCustomTreeWalker(el, true, true);
+  const treeWalker = createCustomTreeWalker(element, true, true);
 
   // Otherwise, recurse into children.
   let addTitleIfNoName = false;
@@ -88,10 +90,17 @@ export const computeAccessibleName = (el, recursing = 0) => {
   let count = 0;
   let shouldContinueWalker = true;
 
+  const exclude = (exclusions) ? element.querySelectorAll(exclusions) : '';
+
   while (treeWalker.nextNode() && shouldContinueWalker) {
     count += 1;
 
-    if (treeWalker.currentNode.nodeType === Node.TEXT_NODE) {
+    // Exclusions.
+    const currentNodeMatchesExclude = Array.from(exclude).some((excludedNode) => excludedNode.contains(treeWalker.currentNode));
+
+    if (currentNodeMatchesExclude) {
+      // Exclude nodes provided by props.
+    } else if (treeWalker.currentNode.nodeType === Node.TEXT_NODE) {
       computedText += ` ${treeWalker.currentNode.nodeValue}`;
     } else if (addTitleIfNoName && !treeWalker.currentNode.closest('a')) {
       if (aText === computedText) {
@@ -105,9 +114,7 @@ export const computeAccessibleName = (el, recursing = 0) => {
       const aria = computeAriaLabel(treeWalker.currentNode, recursing);
       if (aria !== 'noAria') {
         computedText += ` ${aria}`;
-        if (!nextTreeBranch(treeWalker)) {
-          shouldContinueWalker = false;
-        }
+        if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
       } else {
         switch (treeWalker.currentNode.tagName) {
           case 'STYLE':
@@ -151,8 +158,8 @@ export const computeAccessibleName = (el, recursing = 0) => {
     computedText += ` ${addTitleIfNoName}`;
   }
 
-  if (!computedText.trim() && el.hasAttribute('title')) {
-    return el.getAttribute('title');
+  if (!computedText.trim() && element.hasAttribute('title')) {
+    return element.getAttribute('title');
   }
-  return recursing ? computedText : computedText.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
+  return computedText;
 };

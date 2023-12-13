@@ -10,6 +10,7 @@ const defaultOptions = {
   imageIgnore: '',
   linkIgnore: 'nav *, [role="navigation"] *',
   linkIgnoreSpan: '',
+  linkIgnoreStrings: '',
 
   // Other features
   showGoodLinkButton: true,

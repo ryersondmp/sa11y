@@ -102,16 +102,16 @@ export function sanitizeHTML(string) {
  * @returns {string} The text content of the HTML element with extra whitespaces and line breaks removed.
  */
 export function getText(element) {
-  return element.textContent.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
+  return element.textContent.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
 /**
  * Removes extra whitespaces and line breaks from a string.
- * @param {string} string The string to be formatted.
- * @returns {string} Formatted text string without whitespaces.
+ * @param {string} string The string.
+ * @returns {string} String with line breaks and extra white space removed.
  */
-export function removeWhitespaceFromString(string) {
-  return string.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
+export function removeWhitespace(string) {
+  return string.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
 /**

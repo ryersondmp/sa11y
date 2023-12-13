@@ -22,6 +22,7 @@ const defaultOptions = {
   imageIgnore: '',
   linkIgnore: 'nav *, [role="navigation"] *',
   linkIgnoreSpan: '',
+  linkIgnoreStrings: '',
 
   // Other features
   showGoodLinkButton: true,
@@ -389,10 +390,7 @@ const Constants = (function myConstants() {
 
     // Ignore specific classes within links.
     if (option.linkIgnoreSpan) {
-      const linkIgnoreSpanSelectors = option.linkIgnoreSpan.split(',').map(($el) => `${$el} *, ${$el}`);
-      Exclusions.LinkSpan = `noscript, ${linkIgnoreSpanSelectors.join(', ')}`;
-    } else {
-      Exclusions.LinkSpan = 'noscript';
+      Exclusions.LinkSpan = option.linkIgnoreSpan;
     }
   }
 
@@ -613,16 +611,16 @@ function sanitizeHTML(string) {
  * @returns {string} The text content of the HTML element with extra whitespaces and line breaks removed.
  */
 function getText(element) {
-  return element.textContent.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
+  return element.textContent.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
 /**
  * Removes extra whitespaces and line breaks from a string.
- * @param {string} string The string to be formatted.
- * @returns {string} Formatted text string without whitespaces.
+ * @param {string} string The string.
+ * @returns {string} String with line breaks and extra white space removed.
  */
-function removeWhitespaceFromString(string) {
-  return string.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
+function removeWhitespace(string) {
+  return string.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
 /**
@@ -6464,7 +6462,7 @@ const computeAriaLabel = (element, recursing = false) => {
       let returnText = '';
       target.forEach((x) => {
         const targetSelector = document.querySelector(`#${CSS.escape(x)}`);
-        returnText += (!targetSelector) ? '' : `${computeAccessibleName(targetSelector, 1)}`;
+        returnText += (!targetSelector) ? '' : `${computeAccessibleName(targetSelector, '', 1)}`;
       });
       return returnText;
     }
@@ -6479,26 +6477,28 @@ const computeAriaLabel = (element, recursing = false) => {
 /**
  * Computes the accessible name of an element.
  * @param {Element} element The element for which the accessible name needs to be computed.
+ * @param {String} exclusions List of selectors which will be ignored.
+ * @param {Number} recursing Recursion depth.
  * @returns {string} The computed accessible name of the element.
  * @kudos to John Jameson, creator of the Editoria11y library, for developing this more robust calculation!
  * @notes Uses a subset of the W3C accessible name algorithm.
 */
-const computeAccessibleName = (el, recursing = 0) => {
+const computeAccessibleName = (element, exclusions, recursing = 0) => {
   // Return immediately if there is an aria label.
-  const hasAria = computeAriaLabel(el, recursing);
+  const hasAria = computeAriaLabel(element, recursing);
   if (hasAria !== 'noAria') {
     return hasAria;
   }
 
   // Return immediately if there is only a text node.
   let computedText = '';
-  if (!el.children.length) {
+  if (!element.children.length) {
     // Just text! Output immediately.
-    computedText = wrapPseudoContent(el, el.textContent);
-    if (!computedText.trim() && el.hasAttribute('title')) {
-      return el.getAttribute('title');
+    computedText = wrapPseudoContent(element, element.textContent);
+    if (!computedText.trim() && element.hasAttribute('title')) {
+      return element.getAttribute('title');
     }
-    return recursing ? computedText : computedText.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
+    return computedText;
   }
 
   // Create tree walker object.
@@ -6510,7 +6510,7 @@ const computeAccessibleName = (el, recursing = 0) => {
     };
     return document.createTreeWalker(rootNode, NodeFilter.SHOW_ALL, { acceptNode });
   }
-  const treeWalker = createCustomTreeWalker(el, true, true);
+  const treeWalker = createCustomTreeWalker(element, true, true);
 
   // Otherwise, recurse into children.
   let addTitleIfNoName = false;
@@ -6518,10 +6518,15 @@ const computeAccessibleName = (el, recursing = 0) => {
   let count = 0;
   let shouldContinueWalker = true;
 
+  const exclude = (exclusions) ? element.querySelectorAll(exclusions) : '';
+
   while (treeWalker.nextNode() && shouldContinueWalker) {
     count += 1;
 
-    if (treeWalker.currentNode.nodeType === Node.TEXT_NODE) {
+    // Exclusions.
+    const currentNodeMatchesExclude = Array.from(exclude).some((excludedNode) => excludedNode.contains(treeWalker.currentNode));
+
+    if (currentNodeMatchesExclude) ; else if (treeWalker.currentNode.nodeType === Node.TEXT_NODE) {
       computedText += ` ${treeWalker.currentNode.nodeValue}`;
     } else if (addTitleIfNoName && !treeWalker.currentNode.closest('a')) {
       if (aText === computedText) {
@@ -6535,9 +6540,7 @@ const computeAccessibleName = (el, recursing = 0) => {
       const aria = computeAriaLabel(treeWalker.currentNode, recursing);
       if (aria !== 'noAria') {
         computedText += ` ${aria}`;
-        if (!nextTreeBranch(treeWalker)) {
-          shouldContinueWalker = false;
-        }
+        if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
       } else {
         switch (treeWalker.currentNode.tagName) {
           case 'STYLE':
@@ -6581,10 +6584,10 @@ const computeAccessibleName = (el, recursing = 0) => {
     computedText += ` ${addTitleIfNoName}`;
   }
 
-  if (!computedText.trim() && el.hasAttribute('title')) {
-    return el.getAttribute('title');
+  if (!computedText.trim() && element.hasAttribute('title')) {
+    return element.getAttribute('title');
   }
-  return recursing ? computedText : computedText.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
+  return computedText;
 };
 
 function checkImages(results, option) {
@@ -6796,7 +6799,8 @@ function checkImages(results, option) {
         // Has both link text and alt text.
         const key = prepareDismissal(`${src + altText}`);
         const accName = computeAccessibleName(link);
-        const sanitizedText = sanitizeHTML(accName);
+        const removeWhitespace$1 = removeWhitespace(accName);
+        const sanitizedText = sanitizeHTML(removeWhitespace$1);
         const content = (linkTextContentLength === 0)
           ? Lang.sprintf('LINK_IMAGE_ALT_WARNING', altText)
           : Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT_WARNING', altText, sanitizedText);
@@ -6850,14 +6854,9 @@ function checkImages(results, option) {
 function checkHeaders(results, option, headingOutline) {
   let prevLevel;
   Elements.Found.Headings.forEach(($el, i) => {
-    // Exclusions & accessible name computation.
-    const exclusions = fnIgnore($el);
-    const accessibleName = computeAccessibleName(exclusions);
-
-    // Utils.fnIgnore uses cloneNode, which doesn't account for pseudo content.
-    const checkForPseudo = wrapPseudoContent($el, accessibleName);
-    const prepareText = removeWhitespaceFromString(checkForPseudo);
-    const headingText = sanitizeHTML(prepareText);
+    const accessibleName = computeAccessibleName($el);
+    const removeWhitespace$1 = removeWhitespace(accessibleName);
+    const headingText = sanitizeHTML(removeWhitespace$1);
 
     // Check if heading is within root target area.
     const isWithinRoot = Constants.Global.Root.contains($el);
@@ -7078,17 +7077,16 @@ function checkLinkText(results, option) {
 
   const seen = {};
   Elements.Found.Links.forEach(($el) => {
-    // Exclusions & accessible name computation.
-    const exclusions = fnIgnore($el, Constants.Exclusions.LinkSpan);
-    const accessibleName = computeAccessibleName(exclusions);
+    const accName = computeAccessibleName($el, Constants.Exclusions.LinkSpan);
+    const exclusions = option.linkIgnoreStrings ? accName.replace(option.linkIgnoreStrings, '') : accName;
+    const linkText = removeWhitespace(exclusions);
 
-    // Utils.fnIgnore uses cloneNode, which doesn't account for pseudo content.
-    const checkForPseudo = wrapPseudoContent($el, accessibleName);
-    const linkText = removeWhitespaceFromString(checkForPseudo);
+    // Ignore special characters (except forward slash).
+    const stripSpecialChars = linkText.replace(/[^\w\s/]/g, '').replace(/\s+/g, ' ').trim();
+    const error = containsLinkTextStopWords(stripSpecialChars);
 
-    // Ignore special characters.
-    const specialCharPattern = /[!?。，、&*()\-;':"\\|,.<>↣↳←→↓«»↴]+/g;
-    const error = containsLinkTextStopWords(linkText.replace(specialCharPattern, '').trim());
+    // Match special characters exactly 1 character in length.
+    const specialCharPattern = /[^a-zA-Z0-9]/g;
     const isSingleSpecialChar = linkText.length === 1 && specialCharPattern.test(linkText);
 
     // HTML symbols used as call to actions.
@@ -7101,17 +7099,8 @@ function checkLinkText(results, option) {
     const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
     const negativeTabindex = $el.getAttribute('tabindex') === '-1';
 
-    // Check if child elements has ARIA (i, span, svg).
-    let childAriaLabelledBy = null;
-    let childAriaLabel = null;
-    if ($el.children.length) {
-      const $firstChild = $el.children[0];
-      childAriaLabelledBy = $firstChild.getAttribute('aria-labelledby');
-      childAriaLabel = $firstChild.getAttribute('aria-label');
-    }
-
     // Has ARIA.
-    const hasAria = $el.getAttribute('aria-labelledby') || $el.getAttribute('aria-label') || childAriaLabelledBy || childAriaLabel;
+    const hasAria = $el.querySelector(':scope [aria-labelledby], :scope [aria-label]') || $el.getAttribute('aria-labelledby') || $el.getAttribute('aria-label');
 
     if ($el.querySelectorAll('img').length) ; else if (ariaHidden) {
       // Has aria-hidden.
@@ -7527,8 +7516,8 @@ function checkLabels(results, option) {
         if (isElementHidden($el)) return;
 
         // Compute accessible name on input.
-        const computeInput = computeAccessibleName($el);
-        const formattedInput = removeWhitespaceFromString(computeInput);
+        const computeName = computeAccessibleName($el);
+        const inputName = removeWhitespace(computeName);
 
         // Get attributes.
         const alt = $el.getAttribute('alt');
@@ -7558,7 +7547,7 @@ function checkLabels(results, option) {
 
         // Warning: to remove reset buttons.
         if (type === 'reset') {
-          const key = prepareDismissal(`INPUT${formattedInput}`);
+          const key = prepareDismissal(`INPUT${inputName}`);
           results.push({
             element: $el,
             type: 'warning',
@@ -7572,8 +7561,8 @@ function checkLabels(results, option) {
 
         // Uses ARIA or title attribute. Warn them to ensure there's a visible label.
         if (hasAria || hasTitle) {
-          const key = prepareDismissal(`INPUT${formattedInput}`);
-          const sanitizedText = sanitizeHTML(formattedInput);
+          const key = prepareDismissal(`INPUT${inputName}`);
+          const sanitizedText = sanitizeHTML(inputName);
           results.push({
             element: $el,
             type: 'warning',
@@ -7587,9 +7576,8 @@ function checkLabels(results, option) {
 
         // Implicit label: <label>First name: <input type="text"/><label>
         const closestLabel = $el.closest('label');
-        const computeLabel = (closestLabel) ? computeAccessibleName(closestLabel) : '';
-        const formattedLabel = removeWhitespaceFromString(computeLabel);
-        if (closestLabel && formattedLabel.length) {
+        const labelName = (closestLabel) ? removeWhitespace(computeAccessibleName(closestLabel)) : '';
+        if (closestLabel && labelName.length) {
           return;
         }
 

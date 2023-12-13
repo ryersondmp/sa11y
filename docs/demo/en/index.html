@@ -2,25 +2,20 @@
 <html lang="en">
 
 <head>
-  <meta http-equiv="Content-Type"
-        content="text/html; charset=UTF-8">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Everything - Sa11y Demo</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-        crossorigin="anonymous">
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+    crossorigin="anonymous">
   <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
-  <link href="../assets/main.css"
-        rel="stylesheet">
-  <link rel="icon"
-        href="../assets/favicon.ico" />
-  <link rel="stylesheet"
-        href="../../assets/css/sa11y.min.css" />
-  <meta name="theme-color"
-        content="#7952b3">
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+  <link href="../assets/main.css" rel="stylesheet">
+  <link rel="icon" href="../assets/favicon.ico" />
+  <link rel="stylesheet" href="../../assets/css/sa11y.min.css" />
+  <meta name="theme-color" content="#7952b3">
   <style>
     .badge {
       font-size: unset;
@@ -38,51 +33,38 @@
     <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
       <div class="container">
         <span class="navbar-brand mb-0 h1">Sa11y Demo <span id="v"
-                class="badge bg-info text-dark"></span></span>
-        <button class="navbar-toggler"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarCollapse"
-                aria-controls="navbarCollapse"
-                aria-expanded="false"
-                aria-label="Toggle navigation">
+            class="badge bg-info text-dark"></span></span>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+          data-bs-target="#navbarCollapse" aria-controls="navbarCollapse"
+          aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse"
-             id="navbarCollapse">
+        <div class="collapse navbar-collapse" id="navbarCollapse">
           <ul class="navbar-nav ms-auto mb-2 mb-md-0">
             <li class="nav-item">
-              <a class="nav-link active"
-                 aria-current="page"
-                 href="index.html">Everything</a>
+              <a class="nav-link active" aria-current="page"
+                href="index.html">Everything</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link"
-                 href="toggleable.html">Toggleable</a>
+              <a class="nav-link" href="toggleable.html">Toggleable</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link"
-                 href="custom.html">Custom checks</a>
+              <a class="nav-link" href="custom.html">Custom checks</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link"
-                 href="other.html">Other</a>
+              <a class="nav-link" href="other.html">Other</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link"
-                 href="errors.html">Errors</a>
+              <a class="nav-link" href="errors.html">Errors</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link"
-                 href="warnings.html">Warnings</a>
+              <a class="nav-link" href="warnings.html">Warnings</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link"
-                 href="pass.html">Good</a>
+              <a class="nav-link" href="pass.html">Good</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link"
-                 href="rtl.html">RTL</a>
+              <a class="nav-link" href="rtl.html">RTL</a>
             </li>
           </ul>
         </div>
@@ -93,25 +75,25 @@
     <div class="container">
       <div class="p-3 mb-3 rounded text-center">
         <h2>Everything</h2>
-        <p class="lead">Well, almost everything. Just a page with a lot of errors and warnings. 🤠</p>
+        <p class="lead">Well, almost everything. Just a page with a lot of
+          errors and warnings. 🤠</p>
       </div>
     </div>
     <div class="container">
       <div class="row">
         <div class="col-md-2">
-          <div id="list-example"
-               class="list-group sticky-top">
+          <div id="list-example" class="list-group sticky-top">
             <strong class="mt-1 mb-2">On this page:</strong>
             <a class="list-group-item list-group-item-action"
-               href="#list-item-1">Headings</a>
+              href="#list-item-1">Headings</a>
             <a class="list-group-item list-group-item-action"
-               href="#list-item-2">Images</a>
+              href="#list-item-2">Images</a>
             <a class="list-group-item list-group-item-action"
-               href="#list-item-3">Links</a>
+              href="#list-item-3">Links</a>
             <a class="list-group-item list-group-item-action"
-               href="#list-item-4">Tables</a>
+              href="#list-item-4">Tables</a>
             <a class="list-group-item list-group-item-action"
-               href="#list-item-5">Other issues</a>
+              href="#list-item-5">Other issues</a>
           </div>
         </div>
 
@@ -119,138 +101,171 @@
           <h2 id="list-item-1">Headings</h2>
 
           <h3>Empty headings</h3>
-          <p class="small">Expected: <span class="badge bg-danger">Error</span></p>
+          <p class="small">Expected: <span class="badge bg-danger">Error</span>
+          </p>
           <div class="example">
             <h3></h3>
           </div>
 
           <h3>Heading via aria-level</h3>
-          <p class="small">Expected: no annotation and should appear in Page Outline.</p>
+          <p class="small">Expected: no annotation and should appear in Page
+            Outline.</p>
           <div class="example">
-            <span role="heading"
-                  aria-level="4">This is a Heading 4 via ARIA.</span>
+            <span role="heading" aria-level="4">This is a Heading 4 via
+              ARIA.</span>
           </div>
 
           <h3>Ignored headings</h3>
           <p>Using prop <code>headerIgnore</code> to ignore this heading.</p>
-          <p class="small">Expected: no annotation and doesn't appear in Page Outline.</p>
+          <p class="small">Expected: no annotation and doesn't appear in Page
+            Outline.</p>
           <div class="example">
             <h6 class="ignore-this-heading">This H6 is ignored.</h6>
           </div>
           <h2 class="visually-hidden">Visually hidden heading</h2>
           <h3>Skipped headings</h3>
-          <p class="small">Expected: <span class="badge bg-danger">Error</span></p>
+          <p class="small">Expected: <span class="badge bg-danger">Error</span>
+          </p>
           <div class="example">
             <h5>This should be a Heading 4!</h5>
           </div>
 
           <h3>Headings that are too long</h3>
-          <p class="small">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
+          <p class="small">Expected: <span
+              class="badge bg-warning text-dark">Warning</span></p>
           <div class="example">
-            <h4>Is a heading really a heading if it's a long sentence? Or is a content author just going for visual
-              aesthetics? Headings longer than 160 characters will be flagged as a warning.</h4>
+            <h4>Is a heading really a heading if it's a long sentence? Or is a
+              content author just going for visual
+              aesthetics? Headings longer than 160 characters will be flagged as
+              a warning.</h4>
             <hr>
             <a href="#">
-              <h4>What about hyperlinked headings? Is a heading really a heading if it's a long sentence? Or is a
-                content author just going for visual aesthetics? Headings longer than 160 characters will be flagged as
+              <h4>What about hyperlinked headings? Is a heading really a heading
+                if it's a long sentence? Or is a
+                content author just going for visual aesthetics? Headings longer
+                than 160 characters will be flagged as
                 a warning.</h4>
             </a>
           </div>
 
           <h3>Blockquotes used as headings</h3>
-          <p>If a blockquote is less than 25 characters it will be flagged as an warning.</p>
-          <p class="small">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
+          <p>If a blockquote is less than 25 characters it will be flagged as an
+            warning.</p>
+          <p class="small">Expected: <span
+              class="badge bg-warning text-dark">Warning</span></p>
           <div class="example">
             <blockquote>About the team</blockquote>
-            <blockquote>"To be, or not to be, that is the question."</blockquote>
+            <blockquote>"To be, or not to be, that is the question."
+            </blockquote>
           </div>
 
           <h3>Empty heading contains a decorative image</h3>
-          <p class="small">Expected: <span class="badge bg-danger">Error</span> and <span
-                  class="badge bg-warning text-dark">Warning</span></p>
+          <p class="small">Expected: <span class="badge bg-danger">Error</span>
+            and <span class="badge bg-warning text-dark">Warning</span></p>
           <div class="example">
-            <h4><img src="../assets/placeholder.svg"
-                   alt
-                   width="100"></h4>
+            <h4><img src="../assets/placeholder.svg" alt width="100"></h4>
           </div>
 
           <h3>Heading contains an image without alt text</h3>
-          <p class="small">Expected: <span class="badge bg-danger">2 errors</span></p>
+          <p class="small">Expected: <span class="badge bg-danger">2
+              errors</span></p>
           <div class="example">
-            <h4><img src="../assets/placeholder.svg"
-                   width="100"></h4>
+            <h4><img src="../assets/placeholder.svg" width="100"></h4>
           </div>
 
           <h3>Heading contains an image with alt text</h3>
-          <p class="small">Expected: <span class="badge bg-success">Pass</span></p>
+          <p class="small">Expected: <span class="badge bg-success">Pass</span>
+          </p>
           <div class="example">
-            <h4><img src="../assets/placeholder.svg"
-                   alt="A beautiful square."
-                   width="100"></h4>
+            <h4><img src="../assets/placeholder.svg" alt="A beautiful square."
+                width="100"></h4>
           </div>
 
           <h3>Bolded text used as heading</h3>
           <p>Looking for <code><strong class="text-danger">&lt;p&gt;&lt;strong&gt;</strong>Some text<strong
-                class="text-danger">&lt;/strong&gt;&lt;/p&gt;</strong></code></p>
+                class="text-danger">&lt;/strong&gt;&lt;/p&gt;</strong></code>
+          </p>
           <div class="example">
-            <p class="small">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
+            <p class="small">Expected: <span
+                class="badge bg-warning text-dark">Warning</span></p>
             <p><strong>About the team</strong></p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et
               dolore
-              magna aliqua. Elit duis tristique sollicitudin nibh. Etiam erat velit scelerisque in dictum non
+              magna aliqua. Elit duis tristique sollicitudin nibh. Etiam erat
+              velit scelerisque in dictum non
               consectetur.
-              Augue lacus viverra vitae congue eu consequat. Egestas maecenas pharetra convallis posuere morbi leo urna.
+              Augue lacus viverra vitae congue eu consequat. Egestas maecenas
+              pharetra convallis posuere morbi leo urna.
             </p>
           </div>
 
           <div class="example">
-            <p><strong>This shouldn't be flagged since it's long and not necessarily a heading but just a bolded
+            <p><strong>This shouldn't be flagged since it's long and not
+                necessarily a heading but just a bolded
                 sentence for extra emphasis.</strong></p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et
               dolore
-              magna aliqua. Elit duis tristique sollicitudin nibh. Etiam erat velit scelerisque in dictum non
+              magna aliqua. Elit duis tristique sollicitudin nibh. Etiam erat
+              velit scelerisque in dictum non
               consectetur.
-              Augue lacus viverra vitae congue eu consequat. Egestas maecenas pharetra convallis posuere morbi leo urna.
+              Augue lacus viverra vitae congue eu consequat. Egestas maecenas
+              pharetra convallis posuere morbi leo urna.
             </p>
           </div>
 
           <h3>Bolded text used as heading with line breaks</h3>
           <p>Looking for something like... <code><strong class="text-danger">&lt;p&gt;&lt;strong&gt;</strong>Fake
               heading<strong class="text-danger">&lt;br&gt;&lt;/strong&gt;</strong> Followed by some
-              text.&lt;/p&gt;</code> This check has been designed to be somewhat forgiving to prevent too many
+              text.&lt;/p&gt;</code> This check has been designed to be
+            somewhat forgiving to prevent too many
             warnings.
           </p>
 
           <h4>Warning</h4>
           <div class="example">
-            <p class="small">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
-            <p><strong>This will be flagged</strong><br> Because it's a pretty substantial paragraph. Lorem ipsum
-              dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-              aliqua. Elit duis tristique sollicitudin nibh. Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-              sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis tristique sollicitudin nibh.
+            <p class="small">Expected: <span
+                class="badge bg-warning text-dark">Warning</span></p>
+            <p><strong>This will be flagged</strong><br> Because it's a pretty
+              substantial paragraph. Lorem ipsum
+              dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+              incididunt ut labore et dolore magna
+              aliqua. Elit duis tristique sollicitudin nibh. Lorem ipsum dolor
+              sit amet, consectetur adipiscing elit,
+              sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              Elit duis tristique sollicitudin nibh.
               Etiam
               erat
-              velit scelerisque in dictum non consectetur. Augue lacus viverra vitae congue eu consequat. Egestas
+              velit scelerisque in dictum non consectetur. Augue lacus viverra
+              vitae congue eu consequat. Egestas
               maecenas
               pharetra convallis posuere morbi leo urna.</p>
           </div>
 
           <div class="example">
-            <p><strong>This will not be flagged. Has punctuation, maybe sentence?</strong><br> Lorem ipsum
-              dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-              aliqua. Elit duis tristique sollicitudin nibh. Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+            <p><strong>This will not be flagged. Has punctuation, maybe
+                sentence?</strong><br> Lorem ipsum
+              dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+              incididunt ut labore et dolore magna
+              aliqua. Elit duis tristique sollicitudin nibh. Lorem ipsum dolor
+              sit amet, consectetur adipiscing elit,
               sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis tristique sollicitudin nibh. Etiam
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit
+              duis tristique sollicitudin nibh. Etiam
               erat
-              velit scelerisque in dictum non consectetur. Augue lacus viverra vitae congue eu consequat. Egestas
+              velit scelerisque in dictum non consectetur. Augue lacus viverra
+              vitae congue eu consequat. Egestas
               maecenas
               pharetra convallis posuere morbi leo urna.</p>
           </div>
 
           <div class="example">
-            <p><strong>About us</strong><br>Will not be flagged because it's a small paragraph. Lorem ipsum dolor sit
+            <p><strong>About us</strong><br>Will not be flagged because it's a
+              small paragraph. Lorem ipsum dolor sit
               amet,
-              consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+              consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+              labore et dolore magna aliqua.</p>
           </div>
 
           <div class="example">
@@ -264,14 +279,20 @@
           </div>
 
           <div class="example">
-            <p><strong>This won't be flagged either since this line of text is over 120 characters and not necessarily a
-                heading it could just be a long sentence that was bolded for emphasis</strong><br>Lorem ipsum dolor sit
+            <p><strong>This won't be flagged either since this line of text is
+                over 120 characters and not necessarily a
+                heading it could just be a long sentence that was bolded for
+                emphasis</strong><br>Lorem ipsum dolor sit
               amet,
-              consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis
-              tristique sollicitudin nibh. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+              consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+              labore et dolore magna aliqua. Elit duis
+              tristique sollicitudin nibh. Lorem ipsum dolor sit amet,
+              consectetur adipiscing elit, sed do eiusmod
               tempor
-              incididunt ut labore et dolore magna aliqua. Elit duis tristique sollicitudin nibh. Etiam erat velit
-              scelerisque in dictum non consectetur. Augue lacus viverra vitae congue eu consequat. Egestas maecenas
+              incididunt ut labore et dolore magna aliqua. Elit duis tristique
+              sollicitudin nibh. Etiam erat velit
+              scelerisque in dictum non consectetur. Augue lacus viverra vitae
+              congue eu consequat. Egestas maecenas
               pharetra convallis posuere morbi leo urna.</p>
           </div>
 
@@ -281,16 +302,22 @@
             <div class="row">
               <div class="col-md-6">
                 <p style="font-size: 24px">About us</p>
-                <p><strong>Expected:</strong> <span class="badge bg-warning text-dark">Warning</span></p>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ut consectetur arcu, vitae luctus
-                  lacus. Ut euismod arcu sed leo porta suscipit. Donec maximus eleifend diam vel pulvinar. Sed turpis
-                  mauris, eleifend et volutpat non, varius nec leo. Donec nec ligula in dui elementum venenatis.</p>
+                <p><strong>Expected:</strong> <span
+                    class="badge bg-warning text-dark">Warning</span></p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  Curabitur ut consectetur arcu, vitae luctus
+                  lacus. Ut euismod arcu sed leo porta suscipit. Donec maximus
+                  eleifend diam vel pulvinar. Sed turpis
+                  mauris, eleifend et volutpat non, varius nec leo. Donec nec
+                  ligula in dui elementum venenatis.</p>
               </div>
               <div class="col-md-6">
                 <p style="font-size: 24px">How are you doing?</p>
                 <span><strong>Expected:</strong> nothing.</span>
-                <p>Since it has punctuation, assume it's not a heading. Lorem ipsum dolor sit amet, consectetur
-                  adipiscing elit. Curabitur ut consectetur arcu, vitae luctus lacus. Ut euismod arcu sed leo porta
+                <p>Since it has punctuation, assume it's not a heading. Lorem
+                  ipsum dolor sit amet, consectetur
+                  adipiscing elit. Curabitur ut consectetur arcu, vitae luctus
+                  lacus. Ut euismod arcu sed leo porta
                   suscipit.</p>
               </div>
             </div>
@@ -301,8 +328,10 @@
                   <p style="font-size: 24px">About us</p>
                 </h4>
                 <span><strong>Expected:</strong> nothing.</span>
-                <p>A paragraph with 24px text nested within a Heading 4. This should not get flagged. Lorem ipsum dolor
-                  sit amet, consectetur adipiscing elit. Curabitur ut consectetur arcu, vitae luctus lacus.</p>
+                <p>A paragraph with 24px text nested within a Heading 4. This
+                  should not get flagged. Lorem ipsum dolor
+                  sit amet, consectetur adipiscing elit. Curabitur ut
+                  consectetur arcu, vitae luctus lacus.</p>
               </div>
               <div class="col-md-6"></div>
             </div>
@@ -316,14 +345,14 @@
           <div class="row">
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill">
-                <img src="../assets/placeholder.svg"
-                     width="100%"
-                     alt="Large mountains of sand in the Nambian desert.">
+                <img src="../assets/placeholder.svg" width="100%"
+                  alt="Large mountains of sand in the Nambian desert.">
                 <div class="card-body">
                   <p class="card-text">Image has alt text.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-success">Pass</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-success">Pass</span></p>
                 </div>
               </div>
             </div>
@@ -333,53 +362,52 @@
           <div class="row">
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill">
-                <img src="../assets/placeholder.svg"
-                     width="100%"
-                     alt="An image of a bird.">
+                <img src="../assets/placeholder.svg" width="100%"
+                  alt="An image of a bird.">
                 <div class="card-body">
                   <p class="card-text">Alt text has suspicious stop word.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-warning text-dark">Warning</span></p>
                 </div>
               </div>
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill">
-                <img src="../assets/placeholder.svg"
-                     width="100%"
-                     alt>
+                <img src="../assets/placeholder.svg" width="100%" alt>
                 <div class="card-body">
                   <p class="card-text">Image is decorative.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-warning text-dark">Warning</span></p>
                 </div>
               </div>
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill">
-                <img src="../assets/placeholder.svg"
-                     width="100%"
-                     alt=" ">
+                <img src="../assets/placeholder.svg" width="100%" alt=" ">
                 <div class="card-body">
-                  <p class="card-text">Image is decorative using empty space (alt=" ").</p>
+                  <p class="card-text">Image is decorative using empty space
+                    (alt=" ").</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-warning text-dark">Warning</span></p>
                 </div>
               </div>
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill">
-                <img src="../assets/placeholder.svg"
-                     width="100%"
-                     alt="Zebras are several species of African equids (horse family) united by their distinctive black-and-white striped coats. Their stripes come in different patterns, unique to each individual. They are generally social animals that live in small harems to large herds. Unlike their closest relatives, horses and donkeys, zebras have never been truly domesticated. Source: Wikipedia.">
+                <img src="../assets/placeholder.svg" width="100%"
+                  alt="Zebras are several species of African equids (horse family) united by their distinctive black-and-white striped coats. Their stripes come in different patterns, unique to each individual. They are generally social animals that live in small harems to large herds. Unlike their closest relatives, horses and donkeys, zebras have never been truly domesticated. Source: Wikipedia.">
                 <div class="card-body">
                   <p class="card-text">Alt text is too long.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-warning text-dark">Warning</span></p>
                 </div>
               </div>
             </div>
@@ -389,39 +417,38 @@
           <div class="row">
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill">
-                <img src="../assets/placeholder.svg"
-                     width="100%">
+                <img src="../assets/placeholder.svg" width="100%">
                 <div class="card-body">
                   <p class="card-text">Missing alt text.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-danger">Error</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-danger">Error</span></p>
                 </div>
               </div>
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill">
-                <img src="../assets/placeholder.svg"
-                     width="100%"
-                     alt="birdy.jpg">
+                <img src="../assets/placeholder.svg" width="100%"
+                  alt="birdy.jpg">
                 <div class="card-body">
                   <p class="card-text">Alt text has file extension.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-danger">Error</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-danger">Error</span></p>
                 </div>
               </div>
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill">
-                <img src="../assets/placeholder.svg"
-                     width="100%"
-                     alt="image">
+                <img src="../assets/placeholder.svg" width="100%" alt="image">
                 <div class="card-body">
                   <p class="card-text">Alt text has placeholder text.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-danger">Error</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-danger">Error</span></p>
                 </div>
               </div>
             </div>
@@ -433,17 +460,17 @@
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill text-center">
                 <a href="#">
-                  <img src="../assets/placeholder.svg"
-                       width="100%"
-                       alt
-                       class="w-100"><span class="text-center lead">Learn more
+                  <img src="../assets/placeholder.svg" width="100%" alt
+                    class="w-100"><span class="text-center lead">Learn more
                     about Tigers</span></a>
                 <div class="card-body">
-                  <p class="card-text">Hyperlinked image with null alt text, but has surrounding link text below
+                  <p class="card-text">Hyperlinked image with null alt text, but
+                    has surrounding link text below
                     image.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-success">Pass</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-success">Pass</span></p>
                 </div>
               </div>
             </div>
@@ -451,15 +478,15 @@
               <div class="card mb-4 shadow-sm flex-fill text-center">
                 <a href="#"><span class="text-center lead">Learn more about
                     Tigers</span><img src="../assets/placeholder.svg"
-                       width="100%"
-                       alt
-                       class="w-100"></a>
+                    width="100%" alt class="w-100"></a>
                 <div class="card-body">
-                  <p class="card-text">Hyperlinked image with null alt text, but has surrounding link text above
+                  <p class="card-text">Hyperlinked image with null alt text, but
+                    has surrounding link text above
                     image.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-success">Pass</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-success">Pass</span></p>
                 </div>
               </div>
             </div>
@@ -470,59 +497,61 @@
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill">
                 <a href="#">
-                  <img src="../assets/placeholder.svg"
-                       width="100%"
-                       alt="Large mountains of sand in the Nambian desert."
-                       class="w-100"></a>
+                  <img src="../assets/placeholder.svg" width="100%"
+                    alt="Large mountains of sand in the Nambian desert."
+                    class="w-100"></a>
                 <div class="card-body">
                   <p class="card-text">Hyperlinked image with alt text.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-warning text-dark">Warning</span></p>
                 </div>
               </div>
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill">
-                <a href="#"><img src="../assets/placeholder.svg"
-                       width="100%"
-                       alt="An image of a bird."
-                       class="w-100"></a>
+                <a href="#"><img src="../assets/placeholder.svg" width="100%"
+                    alt="An image of a bird." class="w-100"></a>
                 <div class="card-body">
-                  <p class="card-text">Hyperlinked image has alt text that contains a stop word.</p>
+                  <p class="card-text">Hyperlinked image has alt text that
+                    contains a stop word.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-warning text-dark">Warning</span></p>
                 </div>
               </div>
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill">
-                <a href="#"><img src="../assets/placeholder.svg"
-                       width="100%"
-                       alt="Zebras are several species of African equids (horse family) united by their distinctive black-and-white striped coats. Their stripes come in different patterns, unique to each individual. They are generally social animals that live in small harems to large herds. Unlike their closest relatives, horses & donkeys, zebras have never been truly domesticated. Source: Wikipedia."
-                       class="w-100"></a>
+                <a href="#"><img src="../assets/placeholder.svg" width="100%"
+                    alt="Zebras are several species of African equids (horse family) united by their distinctive black-and-white striped coats. Their stripes come in different patterns, unique to each individual. They are generally social animals that live in small harems to large herds. Unlike their closest relatives, horses & donkeys, zebras have never been truly domesticated. Source: Wikipedia."
+                    class="w-100"></a>
                 <div class="card-body">
-                  <p class="card-text">Hyperlinked image alt that is too long.</p>
+                  <p class="card-text">Hyperlinked image alt that is too long.
+                  </p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-warning text-dark">Warning</span></p>
                 </div>
               </div>
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill text-center">
                 <a href="#">
-                  <img src="../assets/placeholder.svg"
-                       alt="Fix it again Tony!"
-                       width="100%"
-                       class="w-100"><span class="text-center lead">Learn more
+                  <img src="../assets/placeholder.svg" alt="Fix it again Tony!"
+                    width="100%" class="w-100"><span
+                    class="text-center lead">Learn more
                     about Fiat.</span></a>
                 <div class="card-body">
-                  <p class="card-text">Hyperlinked image that contains both alt text and link text.</p>
+                  <p class="card-text">Hyperlinked image that contains both alt
+                    text and link text.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-warning text-dark">Warning</span></p>
                 </div>
               </div>
             </div>
@@ -532,51 +561,49 @@
           <div class="row">
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill">
-                <a href="#"><img src="../assets/placeholder.svg"
-                       width="100%"
-                       class="w-100"></a>
+                <a href="#"><img src="../assets/placeholder.svg" width="100%"
+                    class="w-100"></a>
                 <div class="card-body">
                   <p class="card-text">Hyperlinked image missing alt text.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-danger">Error</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-danger">Error</span></p>
                 </div>
               </div>
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill">
-                <a href="#"><img src="../assets/placeholder.svg"
-                       width="100%"
-                       alt
-                       class="w-100"></a>
+                <a href="#"><img src="../assets/placeholder.svg" width="100%"
+                    alt class="w-100"></a>
                 <div class="card-body">
                   <p class="card-text">Hyperlinked image that is decorative.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-danger">Error</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-danger">Error</span></p>
                 </div>
               </div>
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill">
-                <a href="#"><img src="../assets/placeholder.svg"
-                       width="100%"
-                       alt=" "
-                       class="w-100"></a>
+                <a href="#"><img src="../assets/placeholder.svg" width="100%"
+                    alt=" " class="w-100"></a>
                 <div class="card-body">
-                  <p class="card-text">Hyperlinked image that is decorative using empty
+                  <p class="card-text">Hyperlinked image that is decorative
+                    using empty
                     space (alt=&quot; &quot;).</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-danger">Error</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-danger">Error</span></p>
                 </div>
               </div>
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill text-center">
-                <a href="#"><img src="../assets/placeholder.svg"
-                       width="100%"
-                       class="w-100"><span class="text-center lead">Learn
+                <a href="#"><img src="../assets/placeholder.svg" width="100%"
+                    class="w-100"><span class="text-center lead">Learn
                     more
                     about Dahlias</span></a>
                 <div class="card-body">
@@ -584,34 +611,36 @@
                     contains surrounding link text.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-danger">Error</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-danger">Error</span></p>
                 </div>
               </div>
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill">
-                <a href="#"><img src="../assets/placeholder.svg"
-                       width="100%"
-                       alt="image"></a>
+                <a href="#"><img src="../assets/placeholder.svg" width="100%"
+                    alt="image"></a>
                 <div class="card-body">
-                  <p class="card-text">Hyperlinked image has alt text containing placeholder text.</p>
+                  <p class="card-text">Hyperlinked image has alt text containing
+                    placeholder text.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-danger">Error</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-danger">Error</span></p>
                 </div>
               </div>
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill text-center">
-                <a href="#"><img src="../assets/placeholder.svg"
-                       alt="doggy.jpg"
-                       width="100%"
-                       class="w-100"></a>
+                <a href="#"><img src="../assets/placeholder.svg" alt="doggy.jpg"
+                    width="100%" class="w-100"></a>
                 <div class="card-body">
-                  <p class="card-text">Hyperlinked image's alt text contains file extension.</p>
+                  <p class="card-text">Hyperlinked image's alt text contains
+                    file extension.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-danger">Error</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-danger">Error</span></p>
                 </div>
               </div>
             </div>
@@ -623,16 +652,18 @@
               <div class="card mb-4 shadow-sm flex-fill">
                 <figure>
                   <img src="../assets/placeholder.svg"
-                       alt="Alt text for figure."
-                       width="100%">
-                  <figcaption class="bg-info p-1 text-center small">Figure's caption text.
+                    alt="Alt text for figure." width="100%">
+                  <figcaption class="bg-info p-1 text-center small">Figure's
+                    caption text.
                   </figcaption>
                 </figure>
                 <div class="card-body">
-                  <p class="card-text">Figure image with different alt and caption text.</p>
+                  <p class="card-text">Figure image with different alt and
+                    caption text.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-success">Pass</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-success">Pass</span></p>
                 </div>
               </div>
             </div>
@@ -640,62 +671,65 @@
               <div class="card mb-4 shadow-sm flex-fill">
                 <figure>
                   <img src="../assets/placeholder.svg"
-                       alt="two zebras black and white"
-                       width="100%">
+                    alt="two zebras black and white" width="100%">
                 </figure>
                 <div class="card-body">
                   <p class="card-text">Figure image without figcaption.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-success">Pass</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-success">Pass</span></p>
                 </div>
               </div>
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill">
                 <figure>
-                  <img src="../assets/placeholder.svg"
-                       alt
-                       width="100%">
+                  <img src="../assets/placeholder.svg" alt width="100%">
                 </figure>
                 <div class="card-body">
-                  <p class="card-text">Decorative image within a &lt;figure&gt; element.</p>
+                  <p class="card-text">Decorative image within a &lt;figure&gt;
+                    element.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-warning text-dark">Warning</span></p>
                 </div>
               </div>
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill text-center">
                 <figure aria-describedby="caption-attachment-28">
-                  <img src="../assets/placeholder.svg"
-                       alt=""
-                       width="100%">
-                  <figcaption class="bg-info p-1 text-center small">Fig. 1: Nambian desert
+                  <img src="../assets/placeholder.svg" alt="" width="100%">
+                  <figcaption class="bg-info p-1 text-center small">Fig. 1:
+                    Nambian desert
                     (Source: unknown)</figcaption>
                 </figure>
                 <div class="card-body">
-                  <p class="card-text">Decorative image within a &lt;figure&gt; element with a &lt;figcaption&gt;.</p>
+                  <p class="card-text">Decorative image within a &lt;figure&gt;
+                    element with a &lt;figcaption&gt;.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-warning text-dark">Warning</span></p>
                 </div>
               </div>
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill">
                 <figure>
-                  <img src="../assets/placeholder.svg"
-                       alt="two zebras"
-                       width="100%">
-                  <figcaption class="bg-info p-1 text-center small">Two zebras</figcaption>
+                  <img src="../assets/placeholder.svg" alt="two zebras"
+                    width="100%">
+                  <figcaption class="bg-info p-1 text-center small">Two zebras
+                  </figcaption>
                 </figure>
                 <div class="card-body">
-                  <p class="card-text">Figure element has duplicate alt and caption text.</p>
+                  <p class="card-text">Figure element has duplicate alt and
+                    caption text.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-warning text-dark">Warning</span></p>
                 </div>
               </div>
             </div>
@@ -704,15 +738,16 @@
                 <a href="#">
                   <figure>
                     <img src="../assets/placeholder.svg"
-                         alt="two zebras black and white"
-                         width="100%">
+                      alt="two zebras black and white" width="100%">
                   </figure>
                 </a>
                 <div class="card-body">
-                  <p class="card-text">Hyperlinked figure element without figcaption.</p>
+                  <p class="card-text">Hyperlinked figure element without
+                    figcaption.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-warning text-dark">Warning</span></p>
                 </div>
               </div>
             </div>
@@ -721,17 +756,19 @@
                 <a href="#">
                   <figure>
                     <img src="../assets/placeholder.svg"
-                         alt="A bear flying in a space ship."
-                         width="100%">
-                    <figcaption class="bg-info text-center small text-dark">Learn more about space ships!
+                      alt="A bear flying in a space ship." width="100%">
+                    <figcaption class="bg-info text-center small text-dark">
+                      Learn more about space ships!
                     </figcaption>
                   </figure>
                 </a>
                 <div class="card-body">
-                  <p class="card-text"> Hyperlinked figure element with figcaption.</p>
+                  <p class="card-text"> Hyperlinked figure element with
+                    figcaption.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-warning text-dark">Warning</span></p>
                 </div>
               </div>
             </div>
@@ -741,19 +778,19 @@
           <div class="row">
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill text-center">
-                <a href="#"><img src="../assets/placeholder.svg"
-                       alt
-                       width="100%"
-                       class="w-100">
+                <a href="#"><img src="../assets/placeholder.svg" alt
+                    width="100%" class="w-100">
                   <h6>Learn more about the Canary Islands</h6>
                 </a>
                 <div class="card-body">
-                  <p class="card-text">Hyperlinked image contains skipped heading. Error is appended after the hyperlink
+                  <p class="card-text">Hyperlinked image contains skipped
+                    heading. Error is appended after the hyperlink
                     to prevent nesting button inside hyperlink.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <br><span class="badge bg-success">Pass</span> & <span
-                          class="badge bg-danger">Error</span></p>
+                  <p class="card-text">Expected: <br><span
+                      class="badge bg-success">Pass</span> & <span
+                      class="badge bg-danger">Error</span></p>
                 </div>
               </div>
             </div>
@@ -761,86 +798,84 @@
               <div class="card mb-4 shadow-sm flex-fill text-center">
                 <h3 hidden>Ignore me</h3>
                 <button>
-                  <img src="../assets/placeholder.svg"
-                       alt
-                       width="100%"
-                       class="w-100">
+                  <img src="../assets/placeholder.svg" alt width="100%"
+                    class="w-100">
                   <h6>Learn more about the Canary Islands</h6>
                 </button>
                 <div class="card-body">
-                  <p class="card-text">Hyperlinked image contains skipped heading. Error is appended after the hyperlink
+                  <p class="card-text">Hyperlinked image contains skipped
+                    heading. Error is appended after the hyperlink
                     to prevent nesting button inside hyperlink.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <br><span class="badge bg-warning text-dark">Warning</span> & <span
-                          class="badge bg-danger">Error</span></p>
+                  <p class="card-text">Expected: <br><span
+                      class="badge bg-warning text-dark">Warning</span> & <span
+                      class="badge bg-danger">Error</span></p>
                 </div>
               </div>
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill text-center">
-                <a href="#"
-                   target="_blank"><img src="../assets/placeholder.svg"
-                       alt="Fix it again Tony!"
-                       width="100%"
-                       class="w-100"></a>
+                <a href="#" target="_blank"><img src="../assets/placeholder.svg"
+                    alt="Fix it again Tony!" width="100%" class="w-100"></a>
                 <div class="card-body">
                   <p class="card-text">Hyperlinked image opens in new tab.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-warning text-dark">2 warnings</span> if Links
+                  <p class="card-text">Expected: <span
+                      class="badge bg-warning text-dark">2 warnings</span> if
+                    Links
                     (Advanced) is enabled.</p>
                 </div>
               </div>
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill text-center">
-                <a href="#"
-                   target="_blank"><img src="../assets/placeholder.svg"
-                       alt="Two zebras. Opens in new tab."
-                       width="100%"
-                       class="w-100"></a>
+                <a href="#" target="_blank"><img src="../assets/placeholder.svg"
+                    alt="Two zebras. Opens in new tab." width="100%"
+                    class="w-100"></a>
                 <div class="card-body">
-                  <p class="card-text">Hyperlinked image opens in new tab. Alt text indicates link opens in new window.
+                  <p class="card-text">Hyperlinked image opens in new tab. Alt
+                    text indicates link opens in new window.
                   </p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-warning text-dark">Warning</span></p>
                 </div>
               </div>
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill">
                 <a href="#">
-                  <img src="../assets/placeholder.svg"
-                       width="100%"
-                       alt="test"
-                       class="w-100">
+                  <img src="../assets/placeholder.svg" width="100%" alt="test"
+                    class="w-100">
                   <noscript>asdfg</noscript>
                 </a>
                 <div class="card-body">
-                  <p class="card-text">Bug testing. Ignore &lt;noscript&gt; tags.</p>
+                  <p class="card-text">Bug testing. Ignore &lt;noscript&gt;
+                    tags.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-warning text-dark">Warning</span></p>
                 </div>
               </div>
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill">
-                <a href="#"
-                   target="_blank">
-                  <img src="../assets/placeholder.svg"
-                       width="100%"
-                       alt="test"
-                       class="w-100">
+                <a href="#" target="_blank">
+                  <img src="../assets/placeholder.svg" width="100%" alt="test"
+                    class="w-100">
                   <span class="sr-only-example">Text ignored.</span>
                 </a>
                 <div class="card-body">
-                  <p class="card-text">Image link should ignore text within link.</p>
+                  <p class="card-text">Image link should ignore text within
+                    link.</p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-warning text-dark">Warning</span></p>
                 </div>
               </div>
             </div>
@@ -849,12 +884,12 @@
           <div class="row">
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill">
-                <img src="../assets/placeholder.svg"
-                     width="100%"
-                     aria-hidden="true"
-                     alt="Large mountains of sand in the Nambian desert.">
+                <img src="../assets/placeholder.svg" width="100%"
+                  aria-hidden="true"
+                  alt="Large mountains of sand in the Nambian desert.">
                 <div class="card-body">
-                  <p class="card-text">Image has <code>aria-hidden="true"</code></p>
+                  <p class="card-text">Image has <code>aria-hidden="true"</code>
+                  </p>
                 </div>
                 <div class="card-footer">
                   <p class="card-text">Expected: Nothing.</p>
@@ -863,15 +898,14 @@
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill text-center">
-                <a href="#"
-                   aria-hidden="true"
-                   tabindex="-1"><img src="../assets/placeholder.svg"
-                       alt
-                       width="100%"
-                       class="w-100"></a>
+                <a href="#" aria-hidden="true" tabindex="-1"><img
+                    src="../assets/placeholder.svg" alt width="100%"
+                    class="w-100"></a>
                 <div class="card-body">
-                  <p class="card-text">Hyperlinked image where anchor has <code>aria-hidden=&quot;true&quot;</code>
-                    and <code>tabindex=&quot;-1&quot;</code></p>
+                  <p class="card-text">Hyperlinked image where anchor has
+                    <code>aria-hidden=&quot;true&quot;</code>
+                    and <code>tabindex=&quot;-1&quot;</code>
+                  </p>
                 </div>
                 <div class="card-footer">
                   <p class="card-text">Expected: Nothing!</p>
@@ -880,15 +914,14 @@
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill text-center">
-                <a href="#"
-                   aria-hidden="true"
-                   tabindex="-1"><img src="../assets/placeholder.svg"
-                       alt="Testing 123"
-                       width="100%"
-                       class="w-100"></a>
+                <a href="#" aria-hidden="true" tabindex="-1"><img
+                    src="../assets/placeholder.svg" alt="Testing 123"
+                    width="100%" class="w-100"></a>
                 <div class="card-body">
-                  <p class="card-text">Hyperlinked image where anchor has <code>aria-hidden=&quot;true&quot;</code>
-                    and <code>tabindex=&quot;-1&quot;</code> and has alt text.</p>
+                  <p class="card-text">Hyperlinked image where anchor has
+                    <code>aria-hidden=&quot;true&quot;</code>
+                    and <code>tabindex=&quot;-1&quot;</code> and has alt text.
+                  </p>
                 </div>
                 <div class="card-footer">
                   <p class="card-text">Expected: Nothing!</p>
@@ -897,17 +930,18 @@
             </div>
             <div class="col-md-3 d-flex">
               <div class="card mb-4 shadow-sm flex-fill text-center">
-                <a href="#"
-                   aria-hidden="true"><img src="../assets/placeholder.svg"
-                       alt
-                       width="100%"
-                       class="w-100"></a>
+                <a href="#" aria-hidden="true"><img
+                    src="../assets/placeholder.svg" alt width="100%"
+                    class="w-100"></a>
                 <div class="card-body">
-                  <p class="card-text">Hyperlinked image where anchor has <code>aria-hidden=&quot;true&quot;</code> and
-                    is still focusable.</p>
+                  <p class="card-text">Hyperlinked image where anchor has
+                    <code>aria-hidden=&quot;true&quot;</code> and
+                    is still focusable.
+                  </p>
                 </div>
                 <div class="card-footer">
-                  <p class="card-text">Expected: <span class="badge bg-danger">Error</span></p>
+                  <p class="card-text">Expected: <span
+                      class="badge bg-danger">Error</span></p>
                 </div>
               </div>
             </div>
@@ -918,45 +952,50 @@
           <h3>Partial stop words</h3>
 
           <h4>Errors</h4>
-          <p>Using any of the words above on it's own will result in an error since it's not descriptive enough.</p>
-          <p class="small">Expected: <span class="badge bg-danger">3 errors</span></p>
+          <p>Using any of the words above on it's own will result in an error
+            since it's not descriptive enough.</p>
+          <p class="small">Expected: <span class="badge bg-danger">3
+              errors</span></p>
           <div class="example">
             <div class="row text-center">
               <div class="col-md-4">
-                <a href="#"
-                   class="btn btn-primary">this page</a>
+                <a href="#" class="btn btn-primary">this page</a>
               </div>
               <div class="col-md-4">
-                <a href="#"
-                   class="btn btn-primary">More »</a>
+                <a href="#" class="btn btn-primary">More »</a>
               </div>
               <div class="col-md-4">
-                <a href="#"
-                   class="btn btn-primary">Learn more &gt;</a>
+                <a href="#" class="btn btn-primary">Learn more &gt;</a>
               </div>
             </div>
           </div>
 
           <h4>Pass</h4>
-          <p>However, if used with additional text it will not be flagged as an error.</p>
+          <p>However, if used with additional text it will not be flagged as an
+            error.</p>
           <div class="example">
-            <a href="#"
-               class="btn btn-primary">Learn more about Sa11y</a>
+            <a href="#" class="btn btn-primary">Learn more about Sa11y</a>
           </div>
 
 
           <h3>Partial stop words with exclusions</h3>
-          <p>Sometimes a website theme may automatically append text to a link. For example, "(External Link)" will be
-            ignored, which will correctly flag this link as an error for not being descriptive enough.</p>
-          <p class="small">Expected: <span class="badge bg-danger">Error</span></p>
+          <p>Sometimes a website theme may automatically append text to a link.
+            For example, "(External Link)" will be
+            ignored, which will correctly flag this link as an error for not
+            being descriptive enough.</p>
+          <p class="small">Expected: <span class="badge bg-danger">Error</span>
+          </p>
           <div class="example">
             <a href="#">
               learn more
-              <span class="sr-only-example bg-info text-dark rounded p-1">(External link)</span></a>
+              <span
+                class="sr-only-example bg-info text-dark rounded p-1">(External
+                link)</span></a>
           </div>
 
           <h3>Empty hyperlinks</h3>
-          <p class="small">Expected: <span class="badge bg-danger">4 errors</span></p>
+          <p class="small">Expected: <span class="badge bg-danger">4
+              errors</span></p>
           <div class="example">
             <ul>
               <li>Empty hyperlink: <a href="#"></a></li>
@@ -967,30 +1006,28 @@
           </div>
 
           <h3>Empty hyperlinks with children</h3>
-          <p class="small">Expected: <span class="badge bg-danger">4 errors</span></p>
+          <p class="small">Expected: <span class="badge bg-danger">4
+              errors</span></p>
           <div class="example">
             <ul>
-              <li>Empty hyperlink with icon font: <a href="#"><i class="bi bi-emoji-smile-fill"></i></a></li>
+              <li>Empty hyperlink with icon font: <a href="#"><i
+                    class="bi bi-emoji-smile-fill"></i></a></li>
               <li>Empty hyperlink with icon font (opens new tab): <a href="#"
-                   target="_blank"><i class="bi bi-emoji-smile-fill"></i></a></li>
-              <li>Empty hyperlink with SVG: <a href="#"><svg xmlns="http://www.w3.org/2000/svg"
-                       width="16"
-                       height="16"
-                       fill="currentColor"
-                       class="bi bi-filetype-svg"
-                       viewBox="0 0 16 16">
+                  target="_blank"><i class="bi bi-emoji-smile-fill"></i></a>
+              </li>
+              <li>Empty hyperlink with SVG: <a href="#"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                    fill="currentColor" class="bi bi-filetype-svg"
+                    viewBox="0 0 16 16">
                     <path fill-rule="evenodd"
-                          d="M14 4.5V14a2 2 0 0 1-2 2v-1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5L14 4.5ZM0 14.841a1.13 1.13 0 0 0 .401.823c.13.108.288.192.478.252.19.061.411.091.665.091.338 0 .624-.053.858-.158.237-.105.416-.252.54-.44a1.17 1.17 0 0 0 .187-.656c0-.224-.045-.41-.135-.56a1 1 0 0 0-.375-.357 2.027 2.027 0 0 0-.565-.21l-.621-.144a.97.97 0 0 1-.405-.176.37.37 0 0 1-.143-.299c0-.156.061-.284.184-.384.125-.101.296-.152.513-.152.143 0 .266.023.37.068a.625.625 0 0 1 .245.181.56.56 0 0 1 .12.258h.75a1.092 1.092 0 0 0-.199-.566 1.21 1.21 0 0 0-.5-.41 1.813 1.813 0 0 0-.78-.152c-.293 0-.552.05-.776.15-.225.099-.4.24-.528.421-.127.182-.19.395-.19.639 0 .201.04.376.123.524.082.149.199.27.351.367.153.095.332.167.54.213l.618.144c.207.049.36.113.462.193a.387.387 0 0 1 .153.326.512.512 0 0 1-.085.29.559.559 0 0 1-.256.193c-.111.047-.249.07-.413.07-.117 0-.224-.013-.32-.04a.837.837 0 0 1-.248-.115.578.578 0 0 1-.255-.384H0Zm4.575 1.09h.952l1.327-3.999h-.879l-.887 3.138H5.05l-.897-3.138h-.917l1.339 4Zm5.483-3.293c.076.152.123.316.14.492h-.776a.797.797 0 0 0-.096-.249.689.689 0 0 0-.17-.19.707.707 0 0 0-.237-.126.963.963 0 0 0-.3-.044c-.284 0-.506.1-.664.302-.157.2-.235.484-.235.85v.497c0 .235.033.44.097.616a.881.881 0 0 0 .305.413.87.87 0 0 0 .518.146.965.965 0 0 0 .457-.097.67.67 0 0 0 .273-.263c.06-.11.09-.23.09-.364v-.254h-.823v-.59h1.576v.798c0 .193-.032.377-.096.55a1.29 1.29 0 0 1-.293.457 1.37 1.37 0 0 1-.495.314c-.198.074-.43.111-.698.111a1.98 1.98 0 0 1-.752-.132 1.447 1.447 0 0 1-.534-.377 1.58 1.58 0 0 1-.319-.58 2.482 2.482 0 0 1-.105-.745v-.507c0-.36.066-.677.199-.949.134-.271.329-.482.583-.633.256-.152.564-.228.926-.228.238 0 .45.033.635.1.188.066.348.158.48.275.134.117.238.253.314.407Z" />
+                      d="M14 4.5V14a2 2 0 0 1-2 2v-1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5L14 4.5ZM0 14.841a1.13 1.13 0 0 0 .401.823c.13.108.288.192.478.252.19.061.411.091.665.091.338 0 .624-.053.858-.158.237-.105.416-.252.54-.44a1.17 1.17 0 0 0 .187-.656c0-.224-.045-.41-.135-.56a1 1 0 0 0-.375-.357 2.027 2.027 0 0 0-.565-.21l-.621-.144a.97.97 0 0 1-.405-.176.37.37 0 0 1-.143-.299c0-.156.061-.284.184-.384.125-.101.296-.152.513-.152.143 0 .266.023.37.068a.625.625 0 0 1 .245.181.56.56 0 0 1 .12.258h.75a1.092 1.092 0 0 0-.199-.566 1.21 1.21 0 0 0-.5-.41 1.813 1.813 0 0 0-.78-.152c-.293 0-.552.05-.776.15-.225.099-.4.24-.528.421-.127.182-.19.395-.19.639 0 .201.04.376.123.524.082.149.199.27.351.367.153.095.332.167.54.213l.618.144c.207.049.36.113.462.193a.387.387 0 0 1 .153.326.512.512 0 0 1-.085.29.559.559 0 0 1-.256.193c-.111.047-.249.07-.413.07-.117 0-.224-.013-.32-.04a.837.837 0 0 1-.248-.115.578.578 0 0 1-.255-.384H0Zm4.575 1.09h.952l1.327-3.999h-.879l-.887 3.138H5.05l-.897-3.138h-.917l1.339 4Zm5.483-3.293c.076.152.123.316.14.492h-.776a.797.797 0 0 0-.096-.249.689.689 0 0 0-.17-.19.707.707 0 0 0-.237-.126.963.963 0 0 0-.3-.044c-.284 0-.506.1-.664.302-.157.2-.235.484-.235.85v.497c0 .235.033.44.097.616a.881.881 0 0 0 .305.413.87.87 0 0 0 .518.146.965.965 0 0 0 .457-.097.67.67 0 0 0 .273-.263c.06-.11.09-.23.09-.364v-.254h-.823v-.59h1.576v.798c0 .193-.032.377-.096.55a1.29 1.29 0 0 1-.293.457 1.37 1.37 0 0 1-.495.314c-.198.074-.43.111-.698.111a1.98 1.98 0 0 1-.752-.132 1.447 1.447 0 0 1-.534-.377 1.58 1.58 0 0 1-.319-.58 2.482 2.482 0 0 1-.105-.745v-.507c0-.36.066-.677.199-.949.134-.271.329-.482.583-.633.256-.152.564-.228.926-.228.238 0 .45.033.635.1.188.066.348.158.48.275.134.117.238.253.314.407Z" />
                   </svg></a></li>
               <li>Empty hyperlink with SVG (opens new tab): <a href="#"
-                   target="_blank"><svg xmlns="http://www.w3.org/2000/svg"
-                       width="16"
-                       height="16"
-                       fill="currentColor"
-                       class="bi bi-filetype-svg"
-                       viewBox="0 0 16 16">
+                  target="_blank"><svg xmlns="http://www.w3.org/2000/svg"
+                    width="16" height="16" fill="currentColor"
+                    class="bi bi-filetype-svg" viewBox="0 0 16 16">
                     <path fill-rule="evenodd"
-                          d="M14 4.5V14a2 2 0 0 1-2 2v-1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5L14 4.5ZM0 14.841a1.13 1.13 0 0 0 .401.823c.13.108.288.192.478.252.19.061.411.091.665.091.338 0 .624-.053.858-.158.237-.105.416-.252.54-.44a1.17 1.17 0 0 0 .187-.656c0-.224-.045-.41-.135-.56a1 1 0 0 0-.375-.357 2.027 2.027 0 0 0-.565-.21l-.621-.144a.97.97 0 0 1-.405-.176.37.37 0 0 1-.143-.299c0-.156.061-.284.184-.384.125-.101.296-.152.513-.152.143 0 .266.023.37.068a.625.625 0 0 1 .245.181.56.56 0 0 1 .12.258h.75a1.092 1.092 0 0 0-.199-.566 1.21 1.21 0 0 0-.5-.41 1.813 1.813 0 0 0-.78-.152c-.293 0-.552.05-.776.15-.225.099-.4.24-.528.421-.127.182-.19.395-.19.639 0 .201.04.376.123.524.082.149.199.27.351.367.153.095.332.167.54.213l.618.144c.207.049.36.113.462.193a.387.387 0 0 1 .153.326.512.512 0 0 1-.085.29.559.559 0 0 1-.256.193c-.111.047-.249.07-.413.07-.117 0-.224-.013-.32-.04a.837.837 0 0 1-.248-.115.578.578 0 0 1-.255-.384H0Zm4.575 1.09h.952l1.327-3.999h-.879l-.887 3.138H5.05l-.897-3.138h-.917l1.339 4Zm5.483-3.293c.076.152.123.316.14.492h-.776a.797.797 0 0 0-.096-.249.689.689 0 0 0-.17-.19.707.707 0 0 0-.237-.126.963.963 0 0 0-.3-.044c-.284 0-.506.1-.664.302-.157.2-.235.484-.235.85v.497c0 .235.033.44.097.616a.881.881 0 0 0 .305.413.87.87 0 0 0 .518.146.965.965 0 0 0 .457-.097.67.67 0 0 0 .273-.263c.06-.11.09-.23.09-.364v-.254h-.823v-.59h1.576v.798c0 .193-.032.377-.096.55a1.29 1.29 0 0 1-.293.457 1.37 1.37 0 0 1-.495.314c-.198.074-.43.111-.698.111a1.98 1.98 0 0 1-.752-.132 1.447 1.447 0 0 1-.534-.377 1.58 1.58 0 0 1-.319-.58 2.482 2.482 0 0 1-.105-.745v-.507c0-.36.066-.677.199-.949.134-.271.329-.482.583-.633.256-.152.564-.228.926-.228.238 0 .45.033.635.1.188.066.348.158.48.275.134.117.238.253.314.407Z" />
+                      d="M14 4.5V14a2 2 0 0 1-2 2v-1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5L14 4.5ZM0 14.841a1.13 1.13 0 0 0 .401.823c.13.108.288.192.478.252.19.061.411.091.665.091.338 0 .624-.053.858-.158.237-.105.416-.252.54-.44a1.17 1.17 0 0 0 .187-.656c0-.224-.045-.41-.135-.56a1 1 0 0 0-.375-.357 2.027 2.027 0 0 0-.565-.21l-.621-.144a.97.97 0 0 1-.405-.176.37.37 0 0 1-.143-.299c0-.156.061-.284.184-.384.125-.101.296-.152.513-.152.143 0 .266.023.37.068a.625.625 0 0 1 .245.181.56.56 0 0 1 .12.258h.75a1.092 1.092 0 0 0-.199-.566 1.21 1.21 0 0 0-.5-.41 1.813 1.813 0 0 0-.78-.152c-.293 0-.552.05-.776.15-.225.099-.4.24-.528.421-.127.182-.19.395-.19.639 0 .201.04.376.123.524.082.149.199.27.351.367.153.095.332.167.54.213l.618.144c.207.049.36.113.462.193a.387.387 0 0 1 .153.326.512.512 0 0 1-.085.29.559.559 0 0 1-.256.193c-.111.047-.249.07-.413.07-.117 0-.224-.013-.32-.04a.837.837 0 0 1-.248-.115.578.578 0 0 1-.255-.384H0Zm4.575 1.09h.952l1.327-3.999h-.879l-.887 3.138H5.05l-.897-3.138h-.917l1.339 4Zm5.483-3.293c.076.152.123.316.14.492h-.776a.797.797 0 0 0-.096-.249.689.689 0 0 0-.17-.19.707.707 0 0 0-.237-.126.963.963 0 0 0-.3-.044c-.284 0-.506.1-.664.302-.157.2-.235.484-.235.85v.497c0 .235.033.44.097.616a.881.881 0 0 0 .305.413.87.87 0 0 0 .518.146.965.965 0 0 0 .457-.097.67.67 0 0 0 .273-.263c.06-.11.09-.23.09-.364v-.254h-.823v-.59h1.576v.798c0 .193-.032.377-.096.55a1.29 1.29 0 0 1-.293.457 1.37 1.37 0 0 1-.495.314c-.198.074-.43.111-.698.111a1.98 1.98 0 0 1-.752-.132 1.447 1.447 0 0 1-.534-.377 1.58 1.58 0 0 1-.319-.58 2.482 2.482 0 0 1-.105-.745v-.507c0-.36.066-.677.199-.949.134-.271.329-.482.583-.633.256-.152.564-.228.926-.228.238 0 .45.033.635.1.188.066.348.158.48.275.134.117.238.253.314.407Z" />
                   </svg></a></li>
             </ul>
           </div>
@@ -998,37 +1035,31 @@
           <h3>Empty hyperlinks with accessible name via title attribute</h3>
           <div class="example">
             <ul>
-              <li>Empty hyperlink with title: <a href="#"
-                   title="Pass"></a></li>
+              <li>Empty hyperlink with title: <a href="#" title="Pass"></a></li>
               <li>Empty hyperlink with space and title: <a href="#"
-                   title="Pass"> </a></li>
+                  title="Pass"> </a></li>
               <li>Non-breaking space and title: <a href="#"
-                   title="Pass">&nbsp;</a></li>
+                  title="Pass">&nbsp;</a></li>
               <li>Empty hyperlink with icon font and title: <a href="#"
-                   title="Balloon"><i class="bi bi-emoji-smile-fill"></i></a></li>
-              <li>Empty hyperlink with icon font (opens new tab) and title: <a href="#"
-                   target="_blank"
-                   title="Balloon (Opens new tab)"><i class="bi bi-emoji-smile-fill"></i></a></li>
+                  title="Balloon"><i class="bi bi-emoji-smile-fill"></i></a>
+              </li>
+              <li>Empty hyperlink with icon font (opens new tab) and title: <a
+                  href="#" target="_blank" title="Balloon (Opens new tab)"><i
+                    class="bi bi-emoji-smile-fill"></i></a></li>
               <li>Empty hyperlink with SVG and title: <a href="#"
-                   title="SVG"><svg xmlns="http://www.w3.org/2000/svg"
-                       width="16"
-                       height="16"
-                       fill="currentColor"
-                       class="bi bi-filetype-svg"
-                       viewBox="0 0 16 16">
+                  title="SVG"><svg xmlns="http://www.w3.org/2000/svg" width="16"
+                    height="16" fill="currentColor" class="bi bi-filetype-svg"
+                    viewBox="0 0 16 16">
                     <path fill-rule="evenodd"
-                          d="M14 4.5V14a2 2 0 0 1-2 2v-1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5L14 4.5ZM0 14.841a1.13 1.13 0 0 0 .401.823c.13.108.288.192.478.252.19.061.411.091.665.091.338 0 .624-.053.858-.158.237-.105.416-.252.54-.44a1.17 1.17 0 0 0 .187-.656c0-.224-.045-.41-.135-.56a1 1 0 0 0-.375-.357 2.027 2.027 0 0 0-.565-.21l-.621-.144a.97.97 0 0 1-.405-.176.37.37 0 0 1-.143-.299c0-.156.061-.284.184-.384.125-.101.296-.152.513-.152.143 0 .266.023.37.068a.625.625 0 0 1 .245.181.56.56 0 0 1 .12.258h.75a1.092 1.092 0 0 0-.199-.566 1.21 1.21 0 0 0-.5-.41 1.813 1.813 0 0 0-.78-.152c-.293 0-.552.05-.776.15-.225.099-.4.24-.528.421-.127.182-.19.395-.19.639 0 .201.04.376.123.524.082.149.199.27.351.367.153.095.332.167.54.213l.618.144c.207.049.36.113.462.193a.387.387 0 0 1 .153.326.512.512 0 0 1-.085.29.559.559 0 0 1-.256.193c-.111.047-.249.07-.413.07-.117 0-.224-.013-.32-.04a.837.837 0 0 1-.248-.115.578.578 0 0 1-.255-.384H0Zm4.575 1.09h.952l1.327-3.999h-.879l-.887 3.138H5.05l-.897-3.138h-.917l1.339 4Zm5.483-3.293c.076.152.123.316.14.492h-.776a.797.797 0 0 0-.096-.249.689.689 0 0 0-.17-.19.707.707 0 0 0-.237-.126.963.963 0 0 0-.3-.044c-.284 0-.506.1-.664.302-.157.2-.235.484-.235.85v.497c0 .235.033.44.097.616a.881.881 0 0 0 .305.413.87.87 0 0 0 .518.146.965.965 0 0 0 .457-.097.67.67 0 0 0 .273-.263c.06-.11.09-.23.09-.364v-.254h-.823v-.59h1.576v.798c0 .193-.032.377-.096.55a1.29 1.29 0 0 1-.293.457 1.37 1.37 0 0 1-.495.314c-.198.074-.43.111-.698.111a1.98 1.98 0 0 1-.752-.132 1.447 1.447 0 0 1-.534-.377 1.58 1.58 0 0 1-.319-.58 2.482 2.482 0 0 1-.105-.745v-.507c0-.36.066-.677.199-.949.134-.271.329-.482.583-.633.256-.152.564-.228.926-.228.238 0 .45.033.635.1.188.066.348.158.48.275.134.117.238.253.314.407Z" />
+                      d="M14 4.5V14a2 2 0 0 1-2 2v-1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5L14 4.5ZM0 14.841a1.13 1.13 0 0 0 .401.823c.13.108.288.192.478.252.19.061.411.091.665.091.338 0 .624-.053.858-.158.237-.105.416-.252.54-.44a1.17 1.17 0 0 0 .187-.656c0-.224-.045-.41-.135-.56a1 1 0 0 0-.375-.357 2.027 2.027 0 0 0-.565-.21l-.621-.144a.97.97 0 0 1-.405-.176.37.37 0 0 1-.143-.299c0-.156.061-.284.184-.384.125-.101.296-.152.513-.152.143 0 .266.023.37.068a.625.625 0 0 1 .245.181.56.56 0 0 1 .12.258h.75a1.092 1.092 0 0 0-.199-.566 1.21 1.21 0 0 0-.5-.41 1.813 1.813 0 0 0-.78-.152c-.293 0-.552.05-.776.15-.225.099-.4.24-.528.421-.127.182-.19.395-.19.639 0 .201.04.376.123.524.082.149.199.27.351.367.153.095.332.167.54.213l.618.144c.207.049.36.113.462.193a.387.387 0 0 1 .153.326.512.512 0 0 1-.085.29.559.559 0 0 1-.256.193c-.111.047-.249.07-.413.07-.117 0-.224-.013-.32-.04a.837.837 0 0 1-.248-.115.578.578 0 0 1-.255-.384H0Zm4.575 1.09h.952l1.327-3.999h-.879l-.887 3.138H5.05l-.897-3.138h-.917l1.339 4Zm5.483-3.293c.076.152.123.316.14.492h-.776a.797.797 0 0 0-.096-.249.689.689 0 0 0-.17-.19.707.707 0 0 0-.237-.126.963.963 0 0 0-.3-.044c-.284 0-.506.1-.664.302-.157.2-.235.484-.235.85v.497c0 .235.033.44.097.616a.881.881 0 0 0 .305.413.87.87 0 0 0 .518.146.965.965 0 0 0 .457-.097.67.67 0 0 0 .273-.263c.06-.11.09-.23.09-.364v-.254h-.823v-.59h1.576v.798c0 .193-.032.377-.096.55a1.29 1.29 0 0 1-.293.457 1.37 1.37 0 0 1-.495.314c-.198.074-.43.111-.698.111a1.98 1.98 0 0 1-.752-.132 1.447 1.447 0 0 1-.534-.377 1.58 1.58 0 0 1-.319-.58 2.482 2.482 0 0 1-.105-.745v-.507c0-.36.066-.677.199-.949.134-.271.329-.482.583-.633.256-.152.564-.228.926-.228.238 0 .45.033.635.1.188.066.348.158.48.275.134.117.238.253.314.407Z" />
                   </svg></a></li>
               <li>Empty hyperlink with SVG (opens new tab): <a href="#"
-                   target="_blank"
-                   title="SVG (opens new window)"><svg xmlns="http://www.w3.org/2000/svg"
-                       width="16"
-                       height="16"
-                       fill="currentColor"
-                       class="bi bi-filetype-svg"
-                       viewBox="0 0 16 16">
+                  target="_blank" title="SVG (opens new window)"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                    fill="currentColor" class="bi bi-filetype-svg"
+                    viewBox="0 0 16 16">
                     <path fill-rule="evenodd"
-                          d="M14 4.5V14a2 2 0 0 1-2 2v-1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5L14 4.5ZM0 14.841a1.13 1.13 0 0 0 .401.823c.13.108.288.192.478.252.19.061.411.091.665.091.338 0 .624-.053.858-.158.237-.105.416-.252.54-.44a1.17 1.17 0 0 0 .187-.656c0-.224-.045-.41-.135-.56a1 1 0 0 0-.375-.357 2.027 2.027 0 0 0-.565-.21l-.621-.144a.97.97 0 0 1-.405-.176.37.37 0 0 1-.143-.299c0-.156.061-.284.184-.384.125-.101.296-.152.513-.152.143 0 .266.023.37.068a.625.625 0 0 1 .245.181.56.56 0 0 1 .12.258h.75a1.092 1.092 0 0 0-.199-.566 1.21 1.21 0 0 0-.5-.41 1.813 1.813 0 0 0-.78-.152c-.293 0-.552.05-.776.15-.225.099-.4.24-.528.421-.127.182-.19.395-.19.639 0 .201.04.376.123.524.082.149.199.27.351.367.153.095.332.167.54.213l.618.144c.207.049.36.113.462.193a.387.387 0 0 1 .153.326.512.512 0 0 1-.085.29.559.559 0 0 1-.256.193c-.111.047-.249.07-.413.07-.117 0-.224-.013-.32-.04a.837.837 0 0 1-.248-.115.578.578 0 0 1-.255-.384H0Zm4.575 1.09h.952l1.327-3.999h-.879l-.887 3.138H5.05l-.897-3.138h-.917l1.339 4Zm5.483-3.293c.076.152.123.316.14.492h-.776a.797.797 0 0 0-.096-.249.689.689 0 0 0-.17-.19.707.707 0 0 0-.237-.126.963.963 0 0 0-.3-.044c-.284 0-.506.1-.664.302-.157.2-.235.484-.235.85v.497c0 .235.033.44.097.616a.881.881 0 0 0 .305.413.87.87 0 0 0 .518.146.965.965 0 0 0 .457-.097.67.67 0 0 0 .273-.263c.06-.11.09-.23.09-.364v-.254h-.823v-.59h1.576v.798c0 .193-.032.377-.096.55a1.29 1.29 0 0 1-.293.457 1.37 1.37 0 0 1-.495.314c-.198.074-.43.111-.698.111a1.98 1.98 0 0 1-.752-.132 1.447 1.447 0 0 1-.534-.377 1.58 1.58 0 0 1-.319-.58 2.482 2.482 0 0 1-.105-.745v-.507c0-.36.066-.677.199-.949.134-.271.329-.482.583-.633.256-.152.564-.228.926-.228.238 0 .45.033.635.1.188.066.348.158.48.275.134.117.238.253.314.407Z" />
+                      d="M14 4.5V14a2 2 0 0 1-2 2v-1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5L14 4.5ZM0 14.841a1.13 1.13 0 0 0 .401.823c.13.108.288.192.478.252.19.061.411.091.665.091.338 0 .624-.053.858-.158.237-.105.416-.252.54-.44a1.17 1.17 0 0 0 .187-.656c0-.224-.045-.41-.135-.56a1 1 0 0 0-.375-.357 2.027 2.027 0 0 0-.565-.21l-.621-.144a.97.97 0 0 1-.405-.176.37.37 0 0 1-.143-.299c0-.156.061-.284.184-.384.125-.101.296-.152.513-.152.143 0 .266.023.37.068a.625.625 0 0 1 .245.181.56.56 0 0 1 .12.258h.75a1.092 1.092 0 0 0-.199-.566 1.21 1.21 0 0 0-.5-.41 1.813 1.813 0 0 0-.78-.152c-.293 0-.552.05-.776.15-.225.099-.4.24-.528.421-.127.182-.19.395-.19.639 0 .201.04.376.123.524.082.149.199.27.351.367.153.095.332.167.54.213l.618.144c.207.049.36.113.462.193a.387.387 0 0 1 .153.326.512.512 0 0 1-.085.29.559.559 0 0 1-.256.193c-.111.047-.249.07-.413.07-.117 0-.224-.013-.32-.04a.837.837 0 0 1-.248-.115.578.578 0 0 1-.255-.384H0Zm4.575 1.09h.952l1.327-3.999h-.879l-.887 3.138H5.05l-.897-3.138h-.917l1.339 4Zm5.483-3.293c.076.152.123.316.14.492h-.776a.797.797 0 0 0-.096-.249.689.689 0 0 0-.17-.19.707.707 0 0 0-.237-.126.963.963 0 0 0-.3-.044c-.284 0-.506.1-.664.302-.157.2-.235.484-.235.85v.497c0 .235.033.44.097.616a.881.881 0 0 0 .305.413.87.87 0 0 0 .518.146.965.965 0 0 0 .457-.097.67.67 0 0 0 .273-.263c.06-.11.09-.23.09-.364v-.254h-.823v-.59h1.576v.798c0 .193-.032.377-.096.55a1.29 1.29 0 0 1-.293.457 1.37 1.37 0 0 1-.495.314c-.198.074-.43.111-.698.111a1.98 1.98 0 0 1-.752-.132 1.447 1.447 0 0 1-.534-.377 1.58 1.58 0 0 1-.319-.58 2.482 2.482 0 0 1-.105-.745v-.507c0-.36.066-.677.199-.949.134-.271.329-.482.583-.633.256-.152.564-.228.926-.228.238 0 .45.033.635.1.188.066.348.158.48.275.134.117.238.253.314.407Z" />
                   </svg></a></li>
             </ul>
           </div>
@@ -1036,7 +1067,8 @@
           <h3>Link text best practices</h3>
           <h4>Stop words</h4>
           <p>Link contains: "click here", "&gt;", "&lt;"</p>
-          <p class="small">Expected: <span class="badge bg-warning text-dark">5 warnings</span></p>
+          <p class="small">Expected: <span class="badge bg-warning text-dark">5
+              warnings</span></p>
           <div class="example text-center">
             <div class="row">
               <div class="col-md-4">
@@ -1062,31 +1094,41 @@
             <div class="row">
               <div class="col-md-6">
                 <a
-                   href="https://sa11y.netlify.app/developers/custom-checks/">https://sa11y.netlify.app/developers/custom-checks/</a>
-                <p class="small mt-3">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
+                  href="https://sa11y.netlify.app/developers/custom-checks/">https://sa11y.netlify.app/developers/custom-checks/</a>
+                <p class="small mt-3">Expected: <span
+                    class="badge bg-warning text-dark">Warning</span></p>
               </div>
               <div class="col-md-6">
-                <a href="https://sa11y.netlify.app">https://sa11y.netlify.app</a>
+                <a
+                  href="https://sa11y.netlify.app">https://sa11y.netlify.app</a>
               </div>
             </div>
           </div>
           <h4>Links that have the same name but different URL</h4>
           <div class="example">
-            <p class="small mt-3">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
-            <a href="www.example.com">some link</a> or <a href="www.google.com/">some link</a>
+            <p class="small mt-3">Expected: <span
+                class="badge bg-warning text-dark">Warning</span></p>
+            <a href="www.example.com">some link</a> or <a
+              href="www.google.com/">some link</a>
 
-            <p class="small mt-3">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
-            <a href="www.example.com">uses aria label</a> or <a href="www.google.com/"
-               aria-label="uses aria label">learn more</a>
+            <p class="small mt-3">Expected: <span
+                class="badge bg-warning text-dark">Warning</span></p>
+            <a href="www.example.com">uses aria label</a> or <a
+              href="www.google.com/" aria-label="uses aria label">learn more</a>
           </div>
           <h4>Links to DOI</h4>
           <div class="example">
-            <p class="small mt-3">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
-            <p>Adam Chaboryk. 2022. <strong>Creating an open source, customizable accessibility checker for content
-                authors.</strong> In Proceedings of the 19th International Web for All Conference (W4A '22). Association
-              <a href="https://pubmed.ncbi.nlm.nih.gov/23782161/">https://pubmed.ncbi.nlm.nih.gov/23782161/</a> test
+            <p class="small mt-3">Expected: <span
+                class="badge bg-warning text-dark">Warning</span></p>
+            <p>Adam Chaboryk. 2022. <strong>Creating an open source,
+                customizable accessibility checker for content
+                authors.</strong> In Proceedings of the 19th International Web
+              for All Conference (W4A '22). Association
+              <a
+                href="https://pubmed.ncbi.nlm.nih.gov/23782161/">https://pubmed.ncbi.nlm.nih.gov/23782161/</a>
+              test
               for Computing Machinery, New York, NY, USA, Article. 6, 1–2. <a
-                 href="https://doi.org/10.1145/3493612.3520468">doi.org/10.1145/3493612.3520468</a>
+                href="https://doi.org/10.1145/3493612.3520468">doi.org/10.1145/3493612.3520468</a>
             </p>
           </div>
 
@@ -1095,23 +1137,26 @@
           <ul>
             <li><strong>Code:</strong> <code>&lt;a href="#" <strong class="text-danger">aria-label="Learn more about
                   Sa11y"</strong>&gt;Learn more&lt;/a&gt;</code></li>
-            <li><strong>Expected result:</strong> Learn more about Sa11y <span class="badge bg-success">Pass</span></li>
+            <li><strong>Expected result:</strong> Learn more about Sa11y <span
+                class="badge bg-success">Pass</span></li>
           </ul>
           <div class="example">
-            <a href="#"
-               aria-label="Learn more about Sa11y"
-               class="btn btn-primary">Learn more</a>
+            <a href="#" aria-label="Learn more about Sa11y"
+              class="btn btn-primary">Learn more</a>
           </div>
 
           <h4>Child with ARIA label</h4>
           <ul>
-            <li><strong>Code:</strong> <code>&lt;a href="#"&gt;Learn more &lt;span <strong
-                  class="text-danger">aria-label="about Sa11y"</strong>&gt;&lt;/span&gt;&lt;/a&gt;</code></li>
-            <li><strong>Expected result:</strong> Learn more about Sa11y <span class="badge bg-success">Pass</span></li>
+            <li><strong>Code:</strong>
+              <code>&lt;a href="#"&gt;Learn more &lt;span <strong
+                  class="text-danger">aria-label="about Sa11y"</strong>&gt;&lt;/span&gt;&lt;/a&gt;</code>
+            </li>
+            <li><strong>Expected result:</strong> Learn more about Sa11y <span
+                class="badge bg-success">Pass</span></li>
           </ul>
           <div class="example">
-            <a href="#"
-               class="btn btn-primary">Learn more <span aria-label="about Sa11y"></span></a>
+            <a href="#" class="btn btn-primary">Learn more <span
+                aria-label="about Sa11y"></span></a>
           </div>
 
           <h4>Multiple children with ARIA label</h4>
@@ -1120,82 +1165,91 @@
                   class="text-danger">aria-label="about Sa11y"</strong>&gt;&lt;/span&gt; &lt;i <strong
                   class="text-danger">aria-label="(External)"</strong> class="bi
                 bi-box-arrow-up-right"&gt;&lt;/i&gt;&lt;/a&gt;</code></li>
-            <li><strong>Expected result:</strong> Learn more about Sa11y (External) <span class="badge bg-success">Pass
+            <li><strong>Expected result:</strong> Learn more about Sa11y
+              (External) <span class="badge bg-success">Pass
               </span></li>
           </ul>
           <div class="example">
-            <a href="#"
-               class="btn btn-primary">Learn more <span aria-label="about Sa11y"></span> <i aria-label="(External)"
-                 class="bi bi-box-arrow-up-right"></i></a>
+            <a href="#" class="btn btn-primary">Learn more <span
+                aria-label="about Sa11y"></span> <i aria-label="(External)"
+                class="bi bi-box-arrow-up-right"></i></a>
           </div>
 
           <h4>Single ARIA-labelledby attribute</h4>
-          <span hidden
-                id="app">apples</span>
+          <span hidden id="app">apples</span>
           <ul>
-            <li><strong>Reference ID:</strong> <code>&lt;span id="app"&gt;apples&lt;/span&gt;</code></li>
-            <li><strong>Code:</strong> <code>&lt;a href="#" <strong
-                  class="text-danger">aria-labelledby="app"</strong>&gt;Learn more&lt;/a&gt;</code></li>
-            <li><strong>Expected result:</strong> apples <span class="badge bg-success">Pass</span></li>
+            <li><strong>Reference ID:</strong>
+              <code>&lt;span id="app"&gt;apples&lt;/span&gt;</code>
+            </li>
+            <li><strong>Code:</strong>
+              <code>&lt;a href="#" <strong
+                  class="text-danger">aria-labelledby="app"</strong>&gt;Learn more&lt;/a&gt;</code>
+            </li>
+            <li><strong>Expected result:</strong> apples <span
+                class="badge bg-success">Pass</span></li>
           </ul>
           <div class="example">
-            <a href="#"
-               class="btn btn-primary"
-               aria-labelledby="app">Learn more</a>
+            <a href="#" class="btn btn-primary" aria-labelledby="app">Learn
+              more</a>
           </div>
 
           <h4>Multiple ARIA-labelledby attributes</h4>
-          <span hidden
-                id="ban">and bananas</span>
+          <span hidden id="ban">and bananas</span>
           <ul>
-            <li><strong>Reference IDs:</strong> itself, <code>&lt;span id="app"&gt;apples&lt;/span&gt;</code>,
-              <code>x</code> which does not exist, <code>&lt;span id="ban"&gt;bananas&lt;/span&gt;</code>
+            <li><strong>Reference IDs:</strong> itself,
+              <code>&lt;span id="app"&gt;apples&lt;/span&gt;</code>,
+              <code>x</code> which does not exist,
+              <code>&lt;span id="ban"&gt;bananas&lt;/span&gt;</code>
             </li>
             <li><strong>Code:</strong> <code>&lt;a href="#" <strong class="text-danger">id="self" aria-labelledby="self
                   app x ban"</strong>&gt;Learn more about&lt;/a&gt;</code></li>
-            <li><strong>Expected result:</strong> Learn more about apples and bananas <span
-                    class="badge bg-success">Pass</span></li>
+            <li><strong>Expected result:</strong> Learn more about apples and
+              bananas <span class="badge bg-success">Pass</span></li>
           </ul>
           <div class="example">
-            <a href="#"
-               class="btn btn-primary"
-               id="self"
-               aria-labelledby="self app x ban">Learn more about</a>
+            <a href="#" class="btn btn-primary" id="self"
+              aria-labelledby="self app x ban">Learn more about</a>
           </div>
 
           <h4>Child with ARIA-labelledby attributes</h4>
           <ul>
-            <li><strong>Reference ID:</strong> <code>&lt;span id="app"&gt;apples&lt;/span&gt;</code>, <code>x</code>
-              which does not exist, <code>&lt;span id="ban"&gt;bananas&lt;/span&gt;</code></li>
-            <li><strong>Code:</strong> <code>&lt;a href="#"&gt;Learn more &lt;span <strong
-                  class="text-danger">aria-labelledby="app x ban"</strong>&gt;&lt;/span&gt;&lt;/a&gt;</code></li>
-            <li><strong>Expected result:</strong> Learn more about apples and bananas <span
-                    class="badge bg-success">Pass</span></li>
+            <li><strong>Reference ID:</strong>
+              <code>&lt;span id="app"&gt;apples&lt;/span&gt;</code>,
+              <code>x</code>
+              which does not exist,
+              <code>&lt;span id="ban"&gt;bananas&lt;/span&gt;</code>
+            </li>
+            <li><strong>Code:</strong>
+              <code>&lt;a href="#"&gt;Learn more &lt;span <strong
+                  class="text-danger">aria-labelledby="app x ban"</strong>&gt;&lt;/span&gt;&lt;/a&gt;</code>
+            </li>
+            <li><strong>Expected result:</strong> Learn more about apples and
+              bananas <span class="badge bg-success">Pass</span></li>
           </ul>
           <div class="example">
-            <a href="#"
-               class="btn btn-primary">Learn more about <span aria-labelledby="app x ban"></span></a>
+            <a href="#" class="btn btn-primary">Learn more about <span
+                aria-labelledby="app x ban"></span></a>
           </div>
 
           <h4>ARIA Hidden</h4>
           <ul>
-            <li><strong>Code:</strong> <code>&lt;a href="#" <strong
-                  class="text-danger">aria-hidden="true"</strong>&gt;Learn more&lt;/a&gt;</code></li>
+            <li><strong>Code:</strong>
+              <code>&lt;a href="#" <strong
+                  class="text-danger">aria-hidden="true"</strong>&gt;Learn more&lt;/a&gt;</code>
+            </li>
           </ul>
           <div class="example">
             <div class="row">
               <div class="col-md-6">
-                <p class="small mb-4">Expected: <span class="badge bg-danger">Error</span></p>
-                <p><a href="#"
-                     class="btn btn-primary"
-                     aria-hidden="true">Learn more</a></p>
+                <p class="small mb-4">Expected: <span
+                    class="badge bg-danger">Error</span></p>
+                <p><a href="#" class="btn btn-primary" aria-hidden="true">Learn
+                    more</a></p>
               </div>
               <div class="col-md-6">
                 <p class="small mb-4">Expected:</p>
-                <p><a href="#"
-                     class="btn btn-primary"
-                     aria-hidden="true"
-                     tabindex="-1">Learn more</a></p>
+                <p><a href="#" class="btn btn-primary" aria-hidden="true"
+                    tabindex="-1">Learn more</a></p>
               </div>
             </div>
           </div>
@@ -1205,20 +1259,17 @@
           <div class="example">
             <div class="row">
               <div class="col-md-6">
-                <p>Link that has an SVG with a &lt;title&gt;foo&lt;/title&gt; tag.<br /> <strong>Expected:</strong> No
+                <p>Link that has an SVG with a &lt;title&gt;foo&lt;/title&gt;
+                  tag.<br /> <strong>Expected:</strong> No
                   annotation.</p>
                 <a href="#">
                   <span class="bg-info">Learn more</span>
-                  <svg width="20"
-                       height="20"
-                       xmlns="http://www.w3.org/2000/svg"
-                       viewBox="0 0 448 512"
-                       role="image"
-                       aria-labelledby="azxc">
+                  <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 448 512" role="image" aria-labelledby="azxc">
                     <!--! Font Awesome Pro 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
                     <title id="azxc">about testing</title>
                     <path
-                          d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z" />
+                      d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z" />
                   </svg>
                 </a>
               </div>
@@ -1234,8 +1285,8 @@
                     color: green;
                   }
                 </style>
-                <p><a href="#"
-                     class="pseudo">A link with pseudo elements.</a></p>
+                <p><a href="#" class="pseudo">A link with pseudo elements.</a>
+                </p>
               </div>
             </div>
           </div>
@@ -1271,7 +1322,8 @@
           </div>
 
           <h3>Missing table headers</h3>
-          <p class="small">Expected: <span class="badge bg-danger">Error</span></p>
+          <p class="small">Expected: <span class="badge bg-danger">Error</span>
+          </p>
           <div class="example">
             <table class="table bg-light">
               <tbody>
@@ -1300,7 +1352,8 @@
           </div>
 
           <h3>Table with empty header</h3>
-          <p class="small">Expected: <span class="badge bg-danger">Error</span></p>
+          <p class="small">Expected: <span class="badge bg-danger">Error</span>
+          </p>
           <div class="example">
             <table class="table bg-light">
               <tbody>
@@ -1329,7 +1382,8 @@
           </div>
 
           <h3>Table with semantic headings</h3>
-          <p class="small">Expected: <span class="badge bg-danger">3 errors</span></p>
+          <p class="small">Expected: <span class="badge bg-danger">3
+              errors</span></p>
           <div class="example">
             <table class="table bg-light">
               <tbody>
@@ -1371,24 +1425,32 @@
           <h2 id="list-item-5">Other issues</h2>
 
           <h3>PDF</h3>
-          <p>A warning prompt about PDFs is added to any hyperlinks that have a <kbd>.pdf</kbd> file extension.</p>
-          <p class="small">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
+          <p>A warning prompt about PDFs is added to any hyperlinks that have a
+            <kbd>.pdf</kbd> file extension.
+          </p>
+          <p class="small">Expected: <span
+              class="badge bg-warning text-dark">Warning</span></p>
           <div class="example">
             <div class="ml-5">
               <ul>
-                <li>Download the <a href="#asdgasdg.pdf">Admissions Handbook <span class="sr-only">(PDF)</span></a>
+                <li>Download the <a href="#asdgasdg.pdf">Admissions Handbook
+                    <span class="sr-only">(PDF)</span></a>
                 </li>
-                <li><a href="#kklkcm.pdf">Course Outline <span class="sr-only">(PDF)</span></a></li>
-                <li><a href="#cxljsljf.pdf">Cheatsheet <span class="sr-only">(PDF)</span></a></li>
+                <li><a href="#kklkcm.pdf">Course Outline <span
+                      class="sr-only">(PDF)</span></a></li>
+                <li><a href="#cxljsljf.pdf">Cheatsheet <span
+                      class="sr-only">(PDF)</span></a></li>
               </ul>
             </div>
           </div>
 
           <h3>Documents</h3>
-          <p>A warning is added to any hyperlinks that have a <kbd>.doc</kbd>, <kbd>.xls</kbd>, <kbd>.ppt</kbd>, or
+          <p>A warning is added to any hyperlinks that have a <kbd>.doc</kbd>,
+            <kbd>.xls</kbd>, <kbd>.ppt</kbd>, or
             <kbd>docs.google.com</kbd> within the HREF.
           </p>
-          <p class="small">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
+          <p class="small">Expected: <span
+              class="badge bg-warning text-dark">Warning</span></p>
           <div class="example">
             <div class="ml-5">
               <ul>
@@ -1399,13 +1461,20 @@
           </div>
 
           <h3>Uppercase text</h3>
-          <p>This warning is to discourage the use of uppercase text. This is <strong>not</strong> a WCAG 2.1
-            requirement, however is a discouraged practice for readability. Secondly, some capitalized words may be
-            mistaken for an acronym and ready out character by character with a screen reader. This condition uses regex
-            to find uppercase words that are at least 3 characters in length, however it will only be indicated as a
-            warning if at least 5 uppercase words within an element is found. It only checks for uppercase words within
-            the following elements: h1, h2, h3, h4, h5, h6, p, li, blockquote.</p>
-          <p class="small">Expected: <span class="badge bg-warning text-dark">4 warnings</span></p>
+          <p>This warning is to discourage the use of uppercase text. This is
+            <strong>not</strong> a WCAG 2.1
+            requirement, however is a discouraged practice for readability.
+            Secondly, some capitalized words may be
+            mistaken for an acronym and ready out character by character with a
+            screen reader. This condition uses regex
+            to find uppercase words that are at least 3 characters in length,
+            however it will only be indicated as a
+            warning if at least 5 uppercase words within an element is found. It
+            only checks for uppercase words within
+            the following elements: h1, h2, h3, h4, h5, h6, p, li, blockquote.
+          </p>
+          <p class="small">Expected: <span class="badge bg-warning text-dark">4
+              warnings</span></p>
           <div class="example">
             <p>FOR EXAMPLE, THIS WILL BE FLAGGED.</p>
             <p>FOR EXAMPLE, this WILL NOT be flagged.</p>
@@ -1413,32 +1482,40 @@
               <li>UPPERCASE TEXT WITHIN BULLETS will be flagged too.</li>
             </ul>
             <h3 class="mb-4">LET'S NOT FORGET ABOUT HEADINGS TOO!</h3>
-            <p><a href="#asdajfks"
-                 class="btn btn-primary">UPPERCASE TEXT WITHIN HYPERLINKS</button></a>
+            <p><a href="#asdajfks" class="btn btn-primary">UPPERCASE TEXT WITHIN
+                HYPERLINKS</button></a>
           </div>
 
           <h3>Underlined text</h3>
-          <p>This warning is to discourage the use of underlined text as it is easily confused with links. This
-            condition checks for underlined text created with &lt;u&gt; markup and css styles within the following
+          <p>This warning is to discourage the use of underlined text as it is
+            easily confused with links. This
+            condition checks for underlined text created with &lt;u&gt; markup
+            and css styles within the following
             elements: h1, h2, h3, h4, h5, h6, p, li, span, blockquote.</p>
           <div class="row">
             <div class="col-md-4">
               <div class="example h-100">
-                <p class="small">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
-                <p style="text-decoration-line: underline;">This will be flagged for sure.</p>
+                <p class="small">Expected: <span
+                    class="badge bg-warning text-dark">Warning</span></p>
+                <p style="text-decoration-line: underline;">This will be flagged
+                  for sure.</p>
               </div>
             </div>
             <div class="col-md-4">
               <div class="example h-100">
-                <p class="small">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
-                <p><u>&lt;u&gt;underlined&lt;/u&gt;</u> this way will be flagged.</p>
+                <p class="small">Expected: <span
+                    class="badge bg-warning text-dark">Warning</span></p>
+                <p><u>&lt;u&gt;underlined&lt;/u&gt;</u> this way will be
+                  flagged.</p>
               </div>
             </div>
             <div class="col-md-4">
               <div class="example h-100">
-                <p class="small">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
+                <p class="small">Expected: <span
+                    class="badge bg-warning text-dark">Warning</span></p>
                 <ul>
-                  <li style="text-decoration: coral underline">Underlined text wihin lists will be flagged too.
+                  <li style="text-decoration: coral underline">Underlined text
+                    wihin lists will be flagged too.
                   </li>
                 </ul>
               </div>
@@ -1447,27 +1524,33 @@
           <div class="row mt-3">
             <div class="col-md-4">
               <div class="example h-100">
-                <p class="small">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
-                <h4 style="text-decoration:1px solid black underline">This heading will be flagged.</h4>
+                <p class="small">Expected: <span
+                    class="badge bg-warning text-dark">Warning</span></p>
+                <h4 style="text-decoration:1px solid black underline">This
+                  heading will be flagged.</h4>
               </div>
             </div>
             <div class="col-md-4">
               <div class="example h-100">
-                <p class="small">Expected: <span class="badge bg-warning text-dark">Warning</span></p>
-                <p>What about a <span style="text-decoration:1px solid black underline">span</span> within a paragraph.
+                <p class="small">Expected: <span
+                    class="badge bg-warning text-dark">Warning</span></p>
+                <p>What about a <span
+                    style="text-decoration:1px solid black underline">span</span>
+                  within a paragraph.
                 </p>
               </div>
             </div>
             <div class="col-md-4">
               <div class="example h-100">
-                <p><a href="#"
-                     style="text-decoration: underline coral">Linked text</a> will not be flagged.</p>
+                <p><a href="#" style="text-decoration: underline coral">Linked
+                    text</a> will not be flagged.</p>
               </div>
             </div>
           </div>
 
           <h3>Non-semantic lists</h3>
-          <p class="small">Expected: <span class="badge bg-warning text-dark">2 warnings</span></p>
+          <p class="small">Expected: <span class="badge bg-warning text-dark">2
+              warnings</span></p>
           <div class="row">
             <div class="col-md-6">
               <div class="example h-100">
@@ -1486,21 +1569,27 @@
           </div>
 
           <h3>Duplicate IDs</h3>
-          <p class="small">Expected: <span class="badge bg-danger">Error</span></p>
+          <p class="small">Expected: <span class="badge bg-danger">Error</span>
+          </p>
           <div class="example">
-            <p><span id="duplicate"
-                    class="bg-info p-1 rounded">Element 1</span> and <span id="duplicate"
-                    class="bg-info p-1 rounded">Element 2</span> have the same <kbd>id</kbd> attribute.</p>
+            <p><span id="duplicate" class="bg-info p-1 rounded">Element 1</span>
+              and <span id="duplicate" class="bg-info p-1 rounded">Element
+                2</span> have the same <kbd>id</kbd> attribute.</p>
           </div>
 
           <h3>Subscript and superscript formatting</h3>
-          <p class="small">Expected: <span class="badge bg-warning text-dark">2 warnings</span></p>
+          <p class="small">Expected: <span class="badge bg-warning text-dark">2
+              warnings</span></p>
           <div class="example">
-            <p>A subscript or superscript <sub>is a character that is set slightly below or above the normal line of
-                type, respectively. It is usually smaller than the rest of the text. Subscripts appear at or below the
+            <p>A subscript or superscript <sub>is a character that is set
+                slightly below or above the normal line of
+                type, respectively. It is usually smaller than the rest of the
+                text. Subscripts appear at or below the
                 baseline, while superscripts are above. Wikipedia.</sub></p>
-            <p>A subscript or superscript <sup>is a character that is set slightly below or above the normal line of
-                type, respectively. It is usually smaller than the rest of the text. Subscripts appear at or below the
+            <p>A subscript or superscript <sup>is a character that is set
+                slightly below or above the normal line of
+                type, respectively. It is usually smaller than the rest of the
+                text. Subscripts appear at or below the
                 baseline, while superscripts are above. Wikipedia.</sup></p>
           </div>
 
@@ -1508,19 +1597,21 @@
       </div>
     </div>
   </main>
-  <footer class="sa11y-ignore d-flex flex-wrap bg-dark text-white justify-content-between align-items-center py-5 mt-5">
+  <footer
+    class="sa11y-ignore d-flex flex-wrap bg-dark text-white justify-content-between align-items-center py-5 mt-5">
     <div class="container">
-      <span class="text-muted">This footer area is ignored. If a content editor can't fix it, don't scan it. <a
-           href="#">link</a> will be ignored.</span>
+      <span class="text-muted">This footer area is ignored. If a content editor
+        can't fix it, don't scan it. <a href="#">link</a> will be
+        ignored.</span>
     </div>
   </footer>
   <script src="../version.js"></script>
-  <script type="module"
-          src="../script.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
-          integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
-          crossorigin="anonymous">
-          </script>
+  <script type="module" src="../script.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+    integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+    crossorigin="anonymous">
+    </script>
 </body>
 
 </html>

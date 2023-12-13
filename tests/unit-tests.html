@@ -1,48 +1,799 @@
 <!DOCTYPE html>
 <html lang="en">
-<link rel="stylesheet"
-      href="../dist/css/export-results.min.css">
-<link rel="stylesheet"
-      href="../dist/css/sa11y.min.css" />
+<link rel="stylesheet" href="./assets/main.css">
+<!-- Sa11y -->
+<link rel="stylesheet" href="../dist/css/sa11y.min.css" />
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sa11y Unit Tests</title>
 </head>
 
 <body>
   <header>
     <h1>Sa11y Unit Tests</h1>
+    <p>All annotations at a glance.</p>
   </header>
   <main>
+
     <h2>Headings</h2>
+
     <h3>Empty heading</h3>
-    <div id="empty-heading">
+    <div id="error-empty-heading">
       <h4></h4>
     </div>
+
     <h3>Skipped heading</h3>
-    <div id="skipped-heading">
+    <div id="error-skipped-heading">
       <h5>This is a heading five</h5>
     </div>
+
+    <h3>Ignored headings</h3>
+    <div id="nothing-ignore-this-heading">
+      <h6>This Heading 6 is ignored.</h6>
+    </div>
+
+    <h3>Headings that are too long</h3>
+    <div id="warning-headings-too-long">
+      <h4>Lorem ipsum dolor sit amet consectetur adipisicing elit. At ea ullam
+        reiciendis quis veritatis recusandae ducimus laudantium culpa incidunt?
+        Hic, dignissimos blanditiis accusantium sed accusamus voluptates
+        perferendis nobis fuga aliquid!</h4>
+    </div>
+
+    <h3>Blockquotes used as headings</h3>
+    <div id="warning-blockquote-headings">
+      <blockquote>About the team</blockquote>
+    </div>
+
+    <div id="nothing-blockquote-long-enough">
+      <blockquote>"To be, or not to be, that is the question."</blockquote>
+    </div>
+
+    <h3>Empty heading contains a decorative image</h3>
+    <div id="error-empty-heading-decorative-image">
+      <h4><img src="./assets/placeholder.svg" alt width="100"></h4>
+    </div>
+
+    <h3>Heading contains an image with alt text</h3>
+    <div id="pass-heading-image-alt">
+      <h4><img src="./assets/placeholder.svg" alt="A beautiful square." width="100"></h4>
+    </div>
+
+    <h3>Bolded text used as heading</h3>
+    <div id="warning-bold-fake-heading">
+      <p><strong>About the team</strong></p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+        eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis
+        tristique sollicitudin nibh. Etiam erat velit scelerisque in dictum
+        non
+        consectetur. Augue lacus viverra vitae congue eu consequat. Egestas
+        maecenas pharetra convallis posuere morbi leo urna.</p>
+    </div>
+
+    <div id="warning-bold-heading-br">
+      <p><strong>This will be flagged</strong><br>
+        Because it's uses a line break and has a large paragraph following.
+        Lorem, ipsum dolor sit amet
+        consectetur adipisicing elit. Eum, harum? Sit ut quidem sequi odit
+        consequatur eveniet provident illo a voluptatibus suscipit obcaecati
+        praesentium necessitatibus, vero at excepturi sapiente nobis!</p>
+    </div>
+
+    <div id="nothing-long-bold-text">
+      <p><strong>This shouldn't be flagged since it's long and not necessarily a
+          heading but just a bolded sentence for extra emphasis.</strong></p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+        eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis
+        tristique sollicitudin nibh. Etiam erat velit scelerisque in dictum
+        non
+        consectetur. Augue lacus viverra vitae congue eu consequat. Egestas
+        maecenas pharetra convallis posuere morbi leo urna.</p>
+    </div>
+
+    <h3>Large paragraph text as heading</h3>
+    <div id="warning-large-p-heading">
+      <p style="font-size: 24px">About us</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Corporis
+        blanditiis repellat ducimus dolores suscipit itaque provident eos,
+        mollitia explicabo maxime quae ab recusandae velit, odit quibusdam
+        incidunt quidem quas ipsum.</p>
+    </div>
+
+    <div id="nothing-large-p-punctuation">
+      <p style="font-size: 24px">How are you doing?</p>
+      <p>Since it has punctuation, assume it's not a heading. Lorem
+        ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ut
+        consectetur arcu, vitae luctus lacus. Ut euismod arcu sed leo porta
+        suscipit.</p>
+    </div>
+
     <hr>
+
     <h2>Images</h2>
-    <img src="#"
-         alt="Pexels_something" />
+
+    <h3>Image has alt text</h3>
+    <div id="pass-image-has-alt-text">
+      <img src="./assets/placeholder.svg"
+        alt="Large mountains of sand in the Namibian desert.">
+    </div>
+
+    <h3>Alt text has suspicious stop word</h3>
+    <div id="warning-alt-text-has-suspicious-stop-word">
+      <img src="./assets/placeholder.svg" alt="An image of a bird.">
+    </div>
+
+    <h3>Decorative image</h3>
+    <div id="warning-image-is-decorative">
+      <img src="./assets/placeholder.svg" alt>
+    </div>
+
+    <h3>Decorative image using using empty space</h3>
+    <div id="warning-image-is-decorative-using-empty-space">
+      <img src="./assets/placeholder.svg" alt=" ">
+    </div>
+
+    <h3>Alt text is too long</h3>
+    <div id="warning-alt-text-is-too-long">
+      <img src="./assets/placeholder.svg"
+        alt="Zebras are several species of African equids (horse family) united by their distinctive black-and-white striped coats. Their stripes come in different patterns, unique to each individual. They are generally social animals that live in small harems to large herds. Unlike their closest relatives, horses and donkeys, zebras have never been truly domesticated. Source: Wikipedia.">
+    </div>
+
+    <h3>Missing alt text</h3>
+    <div id="error-missing-alt-text">
+      <img src="./assets/placeholder.svg">
+    </div>
+
+    <h3>Alt has file extension</h3>
+    <div id="error-alt-text-has-file-extension">
+      <img src="./assets/placeholder.svg" alt="birdy.jpg">
+    </div>
+
+    <h3>Alt has placeholder text</h3>
+    <div id="error-alt-text-has-placeholder-text">
+      <img src="./assets/placeholder.svg" alt="image">
+    </div>
+
+    <h3>Linked decorative image with surrounding link text</h3>
+    <div id="pass-linked-decorative-image-surrounding-text">
+      <a href="#">
+        <img src="./assets/placeholder.svg" alt>
+        Learn more about Tigers
+      </a>
+    </div>
+
+    <h3>Linked image with alt text</h3>
+    <div id="warning-link-has-alt-text">
+      <a href="#">
+        <img src="./assets/placeholder.svg"
+          alt="Large mountains of sand in the Nambian desert.">
+      </a>
+    </div>
+
+    <h3>Linked image has alt text that contains a stop word</h3>
+    <div id="warning-alt-stop-word">
+      <a href="#">
+        <img src="./assets/placeholder.svg" alt="An image of a bird.">
+      </a>
+    </div>
+
+    <h3>Linked image has long alt</h3>
+    <div id="warning-link-alt-too-long">
+      <a href="#">
+        <img src="./assets/placeholder.svg"
+          alt="Zebras are several species of African equids (horse family) united by their distinctive black-and-white striped coats. Their stripes come in different patterns, unique to each individual. They are generally social animals that live in small harems to large herds. Unlike their closest relatives, horses & donkeys, zebras have never been truly domesticated. Source: Wikipedia.">
+      </a>
+    </div>
+
+    <h3>Linked image contains both alt and link text</h3>
+    <div id="warning-alt-and-link-text">
+      <a href="#">
+        <img src="./assets/placeholder.svg" alt="Lorem ipsum, dude!">
+        Learn more about, Lorem.
+      </a>
+    </div>
+
+    <h3>Linked image missing alt text</h3>
+    <div id="error-missing-alt">
+      <a href="#">
+        <img src="./assets/placeholder.svg">
+      </a>
+    </div>
+
+    <h3>Linked decorative image</h3>
+    <div id="error-linked-decorative-image">
+      <a href="#">
+        <img src="./assets/placeholder.svg" alt>
+      </a>
+    </div>
+
+    <h3>Linked decorative image using empty space</h3>
+    <div id="error-linked-decorative-empty-space">
+      <a href="#">
+        <img src="./assets/placeholder.svg" alt=" ">
+      </a>
+    </div>
+
+    <h3>Linked image with missing alt and contains link text</h3>
+    <div id="error-missing-alt-contains-link-text">
+      <a href="#">
+        <img src="./assets/placeholder.svg">
+        Learn more about Lorem
+      </a>
+    </div>
+
+    <h3>Linked image has alt text containing placeholder stop words</h3>
+    <div id="error-linked-alt-placeholder-stopword">
+      <a href="#">
+        <img src="./assets/placeholder.svg" alt="image">
+      </a>
+    </div>
+
+    <h3>Linked image has alt text containing file extension</h3>
+    <div id="error-linked-alt-file-extension">
+      <a href="#">
+        <img src="./assets/placeholder.svg" alt="doggy.jpg">
+      </a>
+    </div>
+
+    <h3>Figure image with different alt and caption text</h3>
+    <div id="pass-figure-different-alt-caption">
+      <figure>
+        <img src="./assets/placeholder.svg" alt="Alt text for figure.">
+        <figcaption>Figure's caption text.</figcaption>
+      </figure>
+    </div>
+
+    <h3>Figure image with alt but without figcaption</h3>
+    <div id="pass-figure-without-figcaption">
+      <figure>
+        <img src="./assets/placeholder.svg" alt="Two australian shepherds.">
+      </figure>
+    </div>
+
+    <h3>Decorative figure image</h3>
+    <div id="warning-decorative-figure-element">
+      <figure>
+        <img src="./assets/placeholder.svg" alt>
+      </figure>
+    </div>
+
+    <h3>Decorative figure image and figcaption</h3>
+    <div id="warning-decorative-figure-element-with-figcaption">
+      <figure aria-describedby="caption-attachment-28">
+        <img src="./assets/placeholder.svg" alt>
+        <figcaption>Fig. 1: Nambian desert (Source: unknown)</figcaption>
+      </figure>
+    </div>
+
+    <h3>Figure element has duplicate alt and caption text</h3>
+    <div id="warning-figure-duplicate-alt-caption">
+      <figure>
+        <img src="./assets/placeholder.svg" alt="Two australian shepherds">
+        <figcaption>Two australian shepherds</figcaption>
+      </figure>
+    </div>
+
+    <h3>Linked figure with alt but without figcaption</h3>
+    <div id="warning-linked-figure-alt-without-figcaption">
+      <a href="#">
+        <figure>
+          <img src="./assets/placeholder.svg" alt="Lorem ipsum.">
+        </figure>
+      </a>
+    </div>
+
+    <h3>Linked image opens in new tab</h3>
+    <div id="warning-hyperlinked-image-opens-in-new-tab">
+      <a href="#" target="_blank">
+        <img src="./assets/placeholder.svg" alt="Fix it again Tony!">
+      </a>
+    </div>
+
+    <h3>Linked image opens in new tab, alt text provides warning</h3>
+    <div id="warning-linked-image-opens-in-new-tab">
+      <a href="#" target="_blank">
+        <img src="./assets/placeholder.svg"
+          alt="Two australian shepherds. Opens in new tab.">
+      </a>
+    </div>
+
+    <h3>Ignore noscript tags</h3>
+    <div id="warning-bug-testing-ignore-noscript-tags">
+      <a href="#">
+        <img src="./assets/placeholder.svg" alt="Test">
+        <noscript>asdfg</noscript>
+      </a>
+    </div>
+
+    <h3>Linked image should ignore text within link</h3>
+    <div id="warning-image-link-should-ignore-text-within-link">
+      <a href="#">
+        <img src="./assets/placeholder.svg" alt="test">
+        <span class="sr-only-example">Text ignored.</span>
+      </a>
+    </div>
+
+    <h3>Linked image has aria-hidden, but still focusable</h3>
+    <div id="error-hyperlinked-image-aria-hidden-focusable">
+      <a href="#" aria-hidden="true">
+        <img src="./assets/placeholder.svg" alt>
+      </a>
+    </div>
+
+    <h3>Image has aria-hidden</h3>
+    <div id="nothing-image-has-aria-hidden-true">
+      <img src="./assets/placeholder.svg" aria-hidden="true" alt="Lorem ipsum.">
+    </div>
+
+    <h3>Linked image has aria-hidden and negative tabindex</h3>
+    <div id="nothing-linked-image-aria-hidden-negative-tabindex">
+      <a href="#" aria-hidden="true" tabindex="-1">
+        <img src="./assets/placeholder.svg" alt>
+      </a>
+    </div>
+
+    <h3>Linked image with aria-hidden, negative tabindex, and alt</h3>
+    <div id="nothing-hyperlinked-image-aria-hidden-negative-tabindex-alt">
+      <a href="#" aria-hidden="true" tabindex="-1">
+        <img src="./assets/placeholder.svg" alt="Testing 123">
+      </a>
+    </div>
+
+    <hr>
+
     <h2>Links</h2>
+
+    <h3>Non descript link text</h3>
+    <div id="error-non-descript-link-1">
+      <a href="#">Learn more &gt;</a>
+    </div>
+
+    <div id="error-non-descript-link-2">
+      <a href="#">More.</a>
+    </div>
+
+    <div id="error-non-descript-link-3">
+      <a href="#">This?</a>
+    </div>
+
+    <h3>Descriptive link text</h3>
+    <div id="nothing-descriptive-link">
+      <a href="#">Learn more about Sa11y</a>
+    </div>
+
+    <h3>Non descript links using exclusions prop</h3>
+    <div id="error-non-descript-exclusions-prop">
+      <a href="#">learn more <span class="sr-only-example">(This is
+          ignored)</span></a>
+    </div>
+
+    <h3>Non descript link uses string ignore prop</h3>
+    <div id="error-non-descript-string-exclusions-prop">
+      <a href="#">learn more (External)</a>
+    </div>
+
+    <h3>Empty links</h3>
+    <div id="error-empty-1">Empty hyperlink: <a href="#"></a></div>
+    <div id="error-empty-2">Empty hyperlink with space: <a href="#"> </a></div>
+    <div id="error-empty-3">Single character: <a href="#">.</a></div>
+    <div id="error-empty-4">Non-breaking space: <a href="#">&nbsp;</a></div>
+
+
+    <h3>Empty icon links</h3>
+    <div id="error-empty-icon-link-1">
+      Empty hyperlink with icon font:
+      <a href="#">
+        <i class="bi bi-emoji-smile-fill"></i>
+      </a>
+    </div>
+    <div id="error-empty-icon-link-2">
+      Empty hyperlink with icon font (opens new tab):
+      <a href="#" target="_blank">
+        <i class="bi bi-emoji-smile-fill"></i>
+      </a>
+    </div>
+    <div id="error-empty-icon-link-3">
+      Empty hyperlink with SVG:
+      <a href="#">
+        <svg width="20" height="10">
+          <rect x="0" y="0" width="20" height="10" fill="darkgrey" />
+        </svg>
+      </a>
+    </div>
+    <div id="error-empty-icon-link-4">
+      Empty hyperlink with SVG (opens new tab):
+      <a href="#" target="_blank">
+        <svg width="20" height="10">
+          <rect x="0" y="0" width="20" height="10" fill="darkgrey" />
+        </svg>
+      </a>
+    </div>
+
+    <h3>Empty hyperlinks with accessible name via title attribute</h3>
+    <div id="nothing-link-title-1">
+      Empty hyperlink with title:
+      <a href="#" title="Pass"></a>
+    </div>
+    <div id="nothing-link-title-2">
+      Empty hyperlink with space and title:
+      <a href="#" title="Pass"> </a>
+    </div>
+    <div id="nothing-link-title-3">
+      Non-breaking space and title:
+      <a href="#" title="Pass">&nbsp;</a>
+    </div>
+    <div id="nothing-link-title-4">
+      Empty hyperlink with icon font and title:
+      <a href="#" title="Pass"><i></i></a>
+    </div>
+    <div id="nothing-link-title-5">
+      Empty hyperlink with icon font (opens new tab) and title:
+      <a href="#" target="_blank" title="Balloon (Opens new tab)">
+        <i class="bi bi-emoji-smile-fill"></i>
+      </a>
+    </div>
+    <div id="nothing-link-title-6">
+      Empty hyperlink with SVG and title:
+      <a href="#" title="SVG">
+        <svg width="20" height="10">
+          <rect x="0" y="0" width="20" height="10" fill="darkgrey" />
+        </svg>
+      </a>
+    </div>
+    <div id="nothing-link-title-7">
+      Empty hyperlink with SVG (opens new tab):
+      <a href="#" target="_blank" title="SVG (opens new window)">
+        <svg width="20" height="10">
+          <rect x="0" y="0" width="20" height="10" fill="darkgrey" />
+        </svg>
+      </a>
+    </div>
+
+    <h3>Link text contains warning word</h3>
+    <div id="warning-link-word-1">
+      <a href="#">Click here to view our
+        programs</a>
+    </div>
+    <div id="warning-link-word-2">
+      <a href="#">Next ></a>
+    </div>
+    <div id="warning-link-word-3">
+      <a href="#">&lt; Previous</a>
+    </div>
+    <div id="warning-link-word-4">
+      <a href="#">← Left</a>
+    </div>
+    <div id="warning-link-word-5">
+      <a href="#">« Previous</a>
+    </div>
+
+    <h3>Long URLs used as link text</h3>
+    <div id="warning-long-url-link-text">
+      <a href="https://sa11y.netlify.app/developers/custom-checks/">
+        https://sa11y.netlify.app/developers/custom-checks/
+      </a>
+    </div>
+    <div id="nothing-short-url-link-text">
+      <a href="https://sa11y.netlify.app">https://sa11y.netlify.app</a>
+    </div>
+
+    <h3>Links that have the same name but different URL</h3>
+    <div id="warning-same-name-diff-url-1">
+      <a href="www.example.com">some link</a> and <a href="www.google.com/">some
+        link</a>
+    </div>
+    <div id="warning-same-name-diff-url-2">
+      <a href="www.example.com">has aria label</a>
+      and <a href="www.google.com/" aria-label="has aria label">learn more</a>
+    </div>
+
+    <h3>Links to DOI</h3>
+    <div id="warning-links-to-doi">
+      <p>Adam Chaboryk. 2022. <strong>Creating an open source, customizable
+          accessibility checker for content authors.</strong> In Proceedings of
+        the 19th International Web for All Conference (W4A '22). Association for
+        Computing Machinery, New York, NY, USA, Article. 6, 1–2.<br>
+        <a
+          href="https://doi.org/10.1145/3493612.3520468">doi.org/10.1145/3493612.3520468</a>
+      </p>
+    </div>
+
+    <h3>Hyperlinks with ARIA</h3>
+    <p>Testing ARIA computation.</p>
+
+    <h4>Link with aria-label</h4>
+    <div id="pass-aria-link-1">
+      <a href="#" aria-label="Learn more about dogs">Learn more</a>
+    </div>
+
+    <h4>Child with aria-label</h4>
+    <div id="pass-aria-link-2">
+      <a href="#">Learn more <span aria-label="about WCAG"></span></a>
+    </div>
+
+    <h4>Multiple children with aria-label</h4>
+    <div id="pass-aria-link-3">
+      <a href="#">Learn more <span aria-label="about accessibility"></span> <i
+          aria-label="(Links externally)">🔗</i></a>
+    </div>
+
+    <h4>Single aria-labelledby attribute</h4>
+    <div id="pass-aria-link-4">
+      <div hidden id="apples">about apples</div>
+      <a href="#" aria-labelledby="apples">Learn more</a>
+    </div>
+
+    <h4>Multiple ARIA-labelledby attributes</h4>
+    <div id="pass-aria-link-5">
+      <div hidden id="oranges">and oranges</div>
+      <a href="#" id="self" aria-labelledby="self apples x oranges">Learn
+        more</a>
+    </div>
+
+    <h4>Child with ARIA-labelledby attributes</h4>
+    <div id="pass-aria-link-6">
+      <div hidden id="lotr">about Lord of the Rings and</div>
+      <div hidden id="rtk">the Return of the King</div>
+      <a href="#">Learn more<span aria-labelledby="lotr x rtk"></span></a>
+    </div>
+
+    <h4>Link with pseudo content</h4>
+    <div id="pass-aria-link-7">
+      <a href="#">Learn more about <span aria-labelledby="rtk"></span><span
+          class="lotr"></span></a>
+    </div>
+
+    <h3>Links with aria-hidden</h3>
+    <h4>Link with aria-hidden, but still focusable</h4>
+    <div id="error-link-aria-hidden-focusable">
+      <a href="#" aria-hidden="true">Learn more</a>
+    </div>
+
+    <h4>Link with aria-hidden and not focusable</h4>
+    <div id="nothing-link-aria-hidden-unfocusable">
+      <a href="#" aria-hidden="true" tabindex="-1">Learn more</a>
+    </div>
+
+    <hr>
+
+    <h2>Tables</h2>
+    <h3>Table without issues</h3>
+    <div id="nothing-table">
+      <table>
+        <tbody>
+          <tr class="table-primary">
+            <th>Event Name</th>
+            <th>Time</th>
+            <th>Location</th>
+          </tr>
+          <tr>
+            <td>Keynote</td>
+            <td>9:00 AM</td>
+            <td>Auditorium</td>
+          </tr>
+          <tr>
+            <td>Lunch</td>
+            <td>12:00 PM</td>
+            <td>Skyline Room</td>
+          </tr>
+          <tr>
+            <td>Closing Dinner</td>
+            <td>5:00 PM</td>
+            <td>Metropolitan Room</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Missing table headers</h3>
+    <div id="error-table-missing-headers">
+      <table>
+        <tbody>
+          <tr>
+            <td>Event Name</td>
+            <td>Time</td>
+            <td>Location</td>
+          </tr>
+          <tr>
+            <td>Keynote</td>
+            <td>9:00 AM</td>
+            <td>Auditorium</td>
+          </tr>
+          <tr>
+            <td>Lunch</td>
+            <td>12:00 PM</td>
+            <td>Skyline Room</td>
+          </tr>
+          <tr>
+            <td>Closing Dinner</td>
+            <td>5:00 PM</td>
+            <td>Metropolitan Room</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Table with empty header</h3>
+    <div id="error-empty-table-header">
+      <table>
+        <tbody>
+          <tr>
+            <th></th>
+            <th>Time</th>
+            <th>Location</th>
+          </tr>
+          <tr>
+            <td>Keynote</td>
+            <td>9:00 AM</td>
+            <td>Auditorium</td>
+          </tr>
+          <tr>
+            <td>Lunch</td>
+            <td>12:00 PM</td>
+            <td>Skyline Room</td>
+          </tr>
+          <tr>
+            <td>Closing Dinner</td>
+            <td>5:00 PM</td>
+            <td>Metropolitan Room</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Table with semantic headings</h3>
+    <div id="error-table-has-semantic-headings">
+      <table>
+        <tbody>
+          <tr>
+            <th>
+              <h4>Event</h4>
+            </th>
+            <th>
+              <h4>Time</h4>
+            </th>
+            <th>
+              <h4>Location</h4>
+            </th>
+          </tr>
+          <tr>
+            <td>Keynote</td>
+            <td>9:00 AM</td>
+            <td>Auditorium</td>
+          </tr>
+          <tr>
+            <td>Lunch</td>
+            <td>12:00 PM</td>
+            <td>Skyline Room
+              <p><strong>fake heading</strong></p>
+            </td>
+          </tr>
+          <tr>
+            <td>Closing Dinner</td>
+            <td>5:00 PM</td>
+            <td>Metropolitan Room</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr>
+
     <h2>Quality assurance</h2>
+
+    <h3>PDFs</h3>
+    <div id="warning-pdf">
+      <a href="#example.pdf">Admissions Handbook (PDF)</a>
+    </div>
+
+    <h4>PDF link with trailing characters</h4>
+    <div id="warning-pdf-trailing-characters">
+      <a href="#example.pdf?121">Course Outline (PDF)</a>
+    </div>
+
+    <h3>Documents</h3>
+    <div id="warning-google-doc">
+      <a href="docs.google.com/sheets/">Monthly expenditure (Google Sheet)</a>
+    </div>
+
+    <div id="warning-word-doc">
+      <a href="#example.docx">Brochure template (Word)</a>
+    </div>
+
+    <h3>Uppercase text</h3>
+
+    <div id="warning-allcaps-1">
+      <p>FOR EXAMPLE, THIS WILL BE FLAGGED.</p>
+    </div>
+
+    <div id="warning-allcaps-2">
+      <ul>
+        <li>UPPERCASE TEXT WITHIN BULLETS will be flagged too.</li>
+      </ul>
+    </div>
+
+    <div id="warning-allcaps-3">
+      <h4>LET'S NOT FORGET ABOUT HEADINGS TOO!</h4>
+    </div>
+
+    <div id="warning-allcaps-4">
+      <p><a href="#">UPPERCASE TEXT WITHIN HYPERLINKS</a></p>
+    </div>
+
+    <div id="nothing-allcaps">
+      <p>FOR EXAMPLE, this WILL NOT be flagged.</p>
+    </div>
+
+    <h3>Underlined text</h3>
+    <div id="warning-underline-1">
+      <p class="underline">This will be flagged.</p>
+    </div>
+
+    <div id="warning-underline-2">
+      <p>This will be <u>&lt;u&gt;flagged.&lt;/u&gt;</u></p>
+    </div>
+
+    <div id="warning-underline-3">
+      <ul>
+        <li class="underline">List items</li>
+      </ul>
+    </div>
+
+    <div id="warning-underline-4">
+      <h4 class="underline">Headings</h4>
+    </div>
+
+    <div id="warning-underline-5">
+      <p><span class="underline">Spans</span> within a paragraph.</p>
+    </div>
+
+    <h3>Non-semantic lists</h3>
+    <div id="warning-list-1">
+      <p>a) Sometimes people will manually create a list<br>
+        b) using fake list prefixes<br>
+        c) instead of using a semantic list.</p>
+    </div>
+
+    <div id="warning-list-2">
+      <p>(a) Sometimes people will manually create a list<br>
+        (b) using fake list prefixes<br>
+        (c) instead of using a semantic list.</p>
+    </div>
+
+    <div id="warning-list-3">
+      <p>1. Bananas</p>
+      <p>2. Pears</p>
+      <p>3. Apples</p>
+    </div>
+
+    <div id="warning-list-4">
+      <p lang="ua">а) Іноді люди створюють список вручну <br>
+        б) використовуючи підроблені префікси списку <br>
+        г) замість використання семантичного списку.</p>
+    </div>
+
+    <div id="warning-list-5">
+      <p>👉 Bananas</p>
+      <p>👉 Pears</p>
+      <p>👉 Apples</p>
+    </div>
+
   </main>
   <footer>
     <p>Sa11y.</p>
   </footer>
+
   <script src="../dist/js/sa11y.umd.min.js"></script>
   <script src="../dist/js/lang/en.umd.js"></script>
   <script>
-    // Instantiate
     Sa11y.Lang.addI18n(Sa11yLangEn.strings);
     const sa11y = new Sa11y.Sa11y({
       checkRoot: "body",
+      headerIgnore: "#nothing-ignore-this-heading *",
+      linkIgnoreSpan: ".sr-only-example",
+      linkIgnoreStrings: '(External)'
     });
   </script>
 </body>

@@ -213,7 +213,8 @@ export default function checkImages(results, option) {
         // Has both link text and alt text.
         const key = Utils.prepareDismissal(`${src + altText}`);
         const accName = computeAccessibleName(link);
-        const sanitizedText = Utils.sanitizeHTML(accName);
+        const removeWhitespace = Utils.removeWhitespace(accName);
+        const sanitizedText = Utils.sanitizeHTML(removeWhitespace);
         const content = (linkTextContentLength === 0)
           ? Lang.sprintf('LINK_IMAGE_ALT_WARNING', altText)
           : Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT_WARNING', altText, sanitizedText);

@@ -213,10 +213,7 @@ const Constants = (function myConstants() {
 
     // Ignore specific classes within links.
     if (option.linkIgnoreSpan) {
-      const linkIgnoreSpanSelectors = option.linkIgnoreSpan.split(',').map(($el) => `${$el} *, ${$el}`);
-      Exclusions.LinkSpan = `noscript, ${linkIgnoreSpanSelectors.join(', ')}`;
-    } else {
-      Exclusions.LinkSpan = 'noscript';
+      Exclusions.LinkSpan = option.linkIgnoreSpan;
     }
   }
 

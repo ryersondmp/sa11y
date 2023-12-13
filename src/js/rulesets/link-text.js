@@ -1,8 +1,8 @@
-import Constants from '../utils/constants';
 import Elements from '../utils/elements';
+import Constants from '../utils/constants';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
-import { computeAccessibleName, wrapPseudoContent } from '../utils/computeAccessibleName';
+import { computeAccessibleName } from '../utils/computeAccessibleName';
 
 export default function checkLinkText(results, option) {
   const containsLinkTextStopWords = (textContent) => {
@@ -87,17 +87,16 @@ export default function checkLinkText(results, option) {
 
   const seen = {};
   Elements.Found.Links.forEach(($el) => {
-    // Exclusions & accessible name computation.
-    const exclusions = Utils.fnIgnore($el, Constants.Exclusions.LinkSpan);
-    const accessibleName = computeAccessibleName(exclusions);
+    const accName = computeAccessibleName($el, Constants.Exclusions.LinkSpan);
+    const exclusions = option.linkIgnoreStrings ? accName.replace(option.linkIgnoreStrings, '') : accName;
+    const linkText = Utils.removeWhitespace(exclusions);
 
-    // Utils.fnIgnore uses cloneNode, which doesn't account for pseudo content.
-    const checkForPseudo = wrapPseudoContent($el, accessibleName);
-    const linkText = Utils.removeWhitespaceFromString(checkForPseudo);
+    // Ignore special characters (except forward slash).
+    const stripSpecialChars = linkText.replace(/[^\w\s/]/g, '').replace(/\s+/g, ' ').trim();
+    const error = containsLinkTextStopWords(stripSpecialChars);
 
-    // Ignore special characters.
-    const specialCharPattern = /[!?。，、&*()\-;':"\\|,.<>↣↳←→↓«»↴]+/g;
-    const error = containsLinkTextStopWords(linkText.replace(specialCharPattern, '').trim());
+    // Match special characters exactly 1 character in length.
+    const specialCharPattern = /[^a-zA-Z0-9]/g;
     const isSingleSpecialChar = linkText.length === 1 && specialCharPattern.test(linkText);
 
     // HTML symbols used as call to actions.
@@ -110,17 +109,8 @@ export default function checkLinkText(results, option) {
     const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
     const negativeTabindex = $el.getAttribute('tabindex') === '-1';
 
-    // Check if child elements has ARIA (i, span, svg).
-    let childAriaLabelledBy = null;
-    let childAriaLabel = null;
-    if ($el.children.length) {
-      const $firstChild = $el.children[0];
-      childAriaLabelledBy = $firstChild.getAttribute('aria-labelledby');
-      childAriaLabel = $firstChild.getAttribute('aria-label');
-    }
-
     // Has ARIA.
-    const hasAria = $el.getAttribute('aria-labelledby') || $el.getAttribute('aria-label') || childAriaLabelledBy || childAriaLabel;
+    const hasAria = $el.querySelector(':scope [aria-labelledby], :scope [aria-label]') || $el.getAttribute('aria-labelledby') || $el.getAttribute('aria-label');
 
     if ($el.querySelectorAll('img').length) {
       // Do nothing. Don't overlap with Alt Text module.
