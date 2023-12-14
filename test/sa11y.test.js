@@ -59,7 +59,7 @@ describe('Sa11y Unit Tests', () => {
     });
 
     // Navigate to unit tests page.
-    await page.goto('http://localhost:8080/tests/unit-tests.html');
+    await page.goto('http://localhost:8080/test/pages/unit-tests.html');
 
     // Toggle main toggle.
     await page.evaluate(async () => {
@@ -213,6 +213,16 @@ describe('Sa11y Unit Tests', () => {
       page, 'pass-heading-image-alt', 'Good',
     );
     assert.ok(issue);
+  });
+
+  test('Skipped heading in the shadow DOM', async () => {
+    const shadow = await page.evaluate(async () => {
+      const shadowTest = document.querySelector('shadow-test').shadowRoot;
+      const annotation = shadowTest.querySelector('sa11y-annotation').shadowRoot;
+      const message = annotation.querySelector('button').getAttribute('data-tippy-content');
+      return message.includes('Non-consecutive heading');
+    });
+    assert.ok(shadow);
   });
 
   test('<p><b>Bolded text used as heading</b></p>', async () => {
@@ -594,6 +604,20 @@ describe('Sa11y Unit Tests', () => {
     assert.ok(issue);
   });
 
+  test('Links to file without warning', async () => {
+    const issue = await checkTooltip(
+      page, 'warning-link-file', 'Link points to a PDF or downloadable file',
+    );
+    assert.ok(issue);
+  });
+
+  test('Links to file with warning', async () => {
+    const issue = await noAnnotation(
+      page, 'nothing-link-file',
+    );
+    assert.ok(issue);
+  });
+
   test('Links with aria-label', async () => {
     const issue1 = await checkTooltip(page, 'pass-aria-link-1',
       'Learn more about dogs');
@@ -734,5 +758,143 @@ describe('Sa11y Unit Tests', () => {
       const issue = await checkTooltip(page, id, 'Underlined text can be confused');
       assert.ok(issue);
     });
+  });
+
+  test('Fake lists', async () => {
+    const ids = [
+      'warning-list-1',
+      'warning-list-2',
+      'warning-list-3',
+      'warning-list-4',
+      'warning-list-5',
+      'warning-list-6',
+      'warning-list-7',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await checkTooltip(page, id, 'trying to create a list?');
+      assert.ok(issue);
+    });
+  });
+
+  test('Duplicate IDs', async () => {
+    const issue = await checkTooltip(
+      page, 'error-duplicate-id', 'Duplicate ID',
+    );
+    assert.ok(issue);
+  });
+
+  test('Subscript and superscript paragraphs', async () => {
+    const ids = [
+      'warning-supsub-1',
+      'warning-supsub-2',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await checkTooltip(page, id, 'subscript');
+      assert.ok(issue);
+    });
+  });
+
+  test('Video without track', async () => {
+    const issue = await checkTooltip(
+      page, 'warning-video', 'captions for all audio and video content',
+    );
+    assert.ok(issue);
+  });
+
+  test('Video with track', async () => {
+    const issue = await noAnnotation(
+      page, 'nothing-video',
+    );
+    assert.ok(issue);
+  });
+
+  test('Audio', async () => {
+    const issue = await checkTooltip(
+      page, 'warning-audio', 'transcripts for audio content is a mandatory',
+    );
+    assert.ok(issue);
+  });
+
+  test('Generic iFrame with title', async () => {
+    const issue = await checkTooltip(
+      page, 'warning-iframe-title', 'Unable to check embedded content.',
+    );
+    assert.ok(issue);
+  });
+
+  test('Contrast issues', async () => {
+    const ids = [
+      'error-contrast-1',
+      'error-contrast-2',
+      'error-contrast-3',
+      'error-contrast-4',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await checkTooltip(page, id, 'enough contrast');
+      assert.ok(issue);
+    });
+  });
+
+  test('Contrast warning', async () => {
+    const issue = await checkTooltip(
+      page, 'warning-contrast', 'contrast of this text is unknown',
+    );
+    assert.ok(issue);
+  });
+
+  test('Inputs with no issues', async () => {
+    const ids = [
+      'nothing-input-1',
+      'nothing-input-2',
+      'nothing-input-3',
+      'nothing-input-4',
+      'nothing-input-5',
+      'nothing-input-6',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await noAnnotation(page, id);
+      assert.ok(issue);
+    });
+  });
+
+  test('Inputs with missing labels', async () => {
+    const ids = [
+      'error-input-1',
+      'error-input-2',
+      'error-input-3',
+      'error-input-4',
+      'error-input-5',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await checkTooltip(page, id, 'no label associated with this input');
+      assert.ok(issue);
+    });
+
+    const issue2 = await checkTooltip(
+      page, 'error-input-has-id', 'a <code>for</code> attribute to the label that matches',
+    );
+    assert.ok(issue2);
+
+    const issue3 = await checkTooltip(
+      page, 'error-input-img', 'Image button is missing alt text',
+    );
+    assert.ok(issue3);
+  });
+
+  test('Inputs with warnings', async () => {
+    const ids = [
+      'warning-input-1',
+      'warning-input-2',
+      'warning-input-3',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await checkTooltip(page, id, 'Input has an accessible name');
+      assert.ok(issue);
+    });
+
+    const issue2 = await checkTooltip(
+      page, 'warning-input-reset', 'Reset buttons',
+    );
+    assert.ok(issue2);
   });
 });

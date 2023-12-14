@@ -12,7 +12,9 @@ export default function checkHeaders(results, option, headingOutline) {
     const headingText = Utils.sanitizeHTML(removeWhitespace);
 
     // Check if heading is within root target area.
-    const isWithinRoot = Constants.Global.Root.contains($el);
+    const rootContainsHeading = Constants.Global.Root.contains($el);
+    const rootContainsShadowHeading = Constants.Global.Root.contains($el.getRootNode().host);
+    const isWithinRoot = rootContainsHeading || rootContainsShadowHeading;
 
     // Determine heading level.
     const level = parseInt($el.getAttribute('aria-level') || $el.tagName.slice(1), 10);

@@ -232,6 +232,12 @@ img {
   border: 0;
 }
 
+video,
+audio {
+  display: block;
+  border: 0;
+}
+
 .red-text {
   color: var(--red-text);
 }

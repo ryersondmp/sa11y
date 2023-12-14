@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<link rel="stylesheet" href="./assets/main.css">
+<!-- Sa11y -->
+<link rel="stylesheet" href="../../dist/css/sa11y.min.css" />
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>No Errors - Sa11y Unit Tests</title>
+</head>
+
+<body>
+  <header>
+    <h1>Sa11y Unit Tests</h1>
+  </header>
+  <main>
+    <p>No errors on this page.</p>
+  </main>
+  <footer></footer>
+  <script src="../../dist/js/sa11y.umd.min.js"></script>
+  <script src="../../dist/js/lang/en.umd.js"></script>
+  <script>
+    Sa11y.Lang.addI18n(Sa11yLangEn.strings);
+    const sa11y = new Sa11y.Sa11y({
+      checkRoot: "main",
+    });
+  </script>
+</body>
+
+</html>

@@ -102,7 +102,7 @@ export function sanitizeHTML(string) {
  * @returns {string} The text content of the HTML element with extra whitespaces and line breaks removed.
  */
 export function getText(element) {
-  return element.textContent.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
+  return element.textContent.replace(/[\r\n]+/g, '').replace(/\s+/g, ' ').trim();
 }
 
 /**

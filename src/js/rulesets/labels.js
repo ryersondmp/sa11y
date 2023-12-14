@@ -57,16 +57,26 @@ export default function checkLabels(results, option) {
 
         // Uses ARIA or title attribute. Warn them to ensure there's a visible label.
         if (hasAria || hasTitle) {
-          const key = Utils.prepareDismissal(`INPUT${inputName}`);
-          const sanitizedText = Utils.sanitizeHTML(inputName);
-          results.push({
-            element: $el,
-            type: 'warning',
-            content: Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', sanitizedText),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
-          });
+          if (inputName.length === 0) {
+            results.push({
+              element: $el,
+              type: 'error',
+              content: Lang.sprintf('LABELS_MISSING_LABEL_MESSAGE'),
+              inline: false,
+              position: 'beforebegin',
+            });
+          } else {
+            const key = Utils.prepareDismissal(`INPUT${inputName}`);
+            const sanitizedText = Utils.sanitizeHTML(inputName);
+            results.push({
+              element: $el,
+              type: 'warning',
+              content: Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', sanitizedText),
+              inline: false,
+              position: 'beforebegin',
+              dismiss: key,
+            });
+          }
           return;
         }
 

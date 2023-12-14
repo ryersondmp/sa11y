@@ -2,7 +2,7 @@
 <html lang="en">
 <link rel="stylesheet" href="./assets/main.css">
 <!-- Sa11y -->
-<link rel="stylesheet" href="../dist/css/sa11y.min.css" />
+<link rel="stylesheet" href="../../dist/css/sa11y.min.css" />
 
 <head>
   <meta charset="UTF-8">
@@ -108,6 +108,11 @@
         consectetur arcu, vitae luctus lacus. Ut euismod arcu sed leo porta
         suscipit.</p>
     </div>
+
+    <hr>
+
+    <h2>Shadow DOM</h2>
+    <div id="error-shadow-dom" class="shadow-root"></div>
 
     <hr>
 
@@ -500,6 +505,14 @@
       </p>
     </div>
 
+    <h3>Links to file without warning</h3>
+    <div id="warning-link-file">
+      <a href="#assets.zip">Branding assets</a>
+    </div>
+    <div id="nothing-link-file">
+      <a href="#assets.zip">Branding assets (ZIP)</a>
+    </div>
+
     <h3>Hyperlinks with ARIA</h3>
     <p>Testing ARIA computation.</p>
 
@@ -681,19 +694,17 @@
 
     <hr>
 
-    <h2>Quality assurance</h2>
-
-    <h3>PDFs</h3>
+    <h2>PDFs</h2>
     <div id="warning-pdf">
       <a href="#example.pdf">Admissions Handbook (PDF)</a>
     </div>
 
-    <h4>PDF link with trailing characters</h4>
+    <h3>PDF link with trailing characters</h3>
     <div id="warning-pdf-trailing-characters">
       <a href="#example.pdf?121">Course Outline (PDF)</a>
     </div>
 
-    <h3>Documents</h3>
+    <h2>Documents</h2>
     <div id="warning-google-doc">
       <a href="docs.google.com/sheets/">Monthly expenditure (Google Sheet)</a>
     </div>
@@ -702,7 +713,7 @@
       <a href="#example.docx">Brochure template (Word)</a>
     </div>
 
-    <h3>Uppercase text</h3>
+    <h2>Uppercase text</h2>
 
     <div id="warning-allcaps-1">
       <p>FOR EXAMPLE, THIS WILL BE FLAGGED.</p>
@@ -715,7 +726,7 @@
     </div>
 
     <div id="warning-allcaps-3">
-      <h4>LET'S NOT FORGET ABOUT HEADINGS TOO!</h4>
+      <h3>LET'S NOT FORGET ABOUT HEADINGS TOO!</h3>
     </div>
 
     <div id="warning-allcaps-4">
@@ -726,7 +737,7 @@
       <p>FOR EXAMPLE, this WILL NOT be flagged.</p>
     </div>
 
-    <h3>Underlined text</h3>
+    <h2>Underlined text</h2>
     <div id="warning-underline-1">
       <p class="underline">This will be flagged.</p>
     </div>
@@ -742,14 +753,14 @@
     </div>
 
     <div id="warning-underline-4">
-      <h4 class="underline">Headings</h4>
+      <h3 class="underline">Headings</h3>
     </div>
 
     <div id="warning-underline-5">
       <p><span class="underline">Spans</span> within a paragraph.</p>
     </div>
 
-    <h3>Non-semantic lists</h3>
+    <h2>Non-semantic lists</h2>
     <div id="warning-list-1">
       <p>a) Sometimes people will manually create a list<br>
         b) using fake list prefixes<br>
@@ -757,9 +768,9 @@
     </div>
 
     <div id="warning-list-2">
-      <p>(a) Sometimes people will manually create a list<br>
-        (b) using fake list prefixes<br>
-        (c) instead of using a semantic list.</p>
+      <p>(1) Bananas</p>
+      <p>(2) Pears</p>
+      <p>(3) Apples</p>
     </div>
 
     <div id="warning-list-3">
@@ -780,20 +791,236 @@
       <p>👉 Apples</p>
     </div>
 
-  </main>
-  <footer>
-    <p>Sa11y.</p>
-  </footer>
+    <div id="warning-list-6">
+      <p>(a) Bears<br>
+        (b) Beats<br>
+        (c) Battlestar gallactica</p>
+    </div>
 
-  <script src="../dist/js/sa11y.umd.min.js"></script>
-  <script src="../dist/js/lang/en.umd.js"></script>
+    <div id="warning-list-7">
+      <p>- First<br>
+        - Second<br>
+        - Third</p>
+    </div>
+
+    <div id="warning-list-8">
+      <p>#1 Bears<br>
+        #2 Beats<br>
+        #3 Battlestar gallactica</p>
+    </div>
+
+    <h2>Duplicate IDs</h2>
+    <div id="error-duplicate-id">
+      <p><span id="duplicate">Element 1</span> and <span id="duplicate">Element 2</span>
+        have the same <kbd>id</kbd> attribute.</p>
+    </div>
+
+    <h3>Subscript & superscript</h3>
+    <div id="warning-supsub-1">
+      <p>A subscript or superscript <sub>is a character that is set slightly below or
+          above
+          the normal line of type, respectively. It is usually smaller than the rest of
+          the text. Subscripts appear at or below the baseline, while superscripts are
+          above. Wikipedia.</sub></p>
+    </div>
+    <div id="warning-supsub-2">
+      <p>A subscript or superscript <sup>is a character that is set slightly below or
+          above the normal line of type, respectively. It is usually smaller than the rest
+          of the text. Subscripts appear at or below the baseline, while superscripts are
+          above. Wikipedia.</sup></p>
+    </div>
+
+    <hr>
+
+    <h2>Embedded content</h2>
+
+    <h3>Video without track element</h3>
+    <div id="warning-video">
+      <video width="300" controls="" src="#"></video>
+    </div>
+
+    <h3>Video with track element</h3>
+    <div id="nothing-video">
+      <video width="300" controls="" src="#">
+        <track default="" kind="captions" srclang="en" src="#">
+      </video>
+    </div>
+
+    <h3>Audio</h3>
+    <div id="warning-audio">
+      <audio controls="">
+        <source src="https://www.w3schools.com/html/horse.ogg" type="audio/ogg">
+        <source src="https://www.w3schools.com/html/horse.mp3" type="audio/mpeg">
+      </audio>
+    </div>
+
+    <h3>Generic iFrame</h3>
+    <div id="warning-iframe-title">
+      <iframe title="Blank title"></iframe>
+    </div>
+
+    <hr>
+
+    <h2>Contrast</h2>
+    <div id="error-contrast-1">
+      <p style="color: coral">This colour fails at normal size.</p>
+    </div>
+    <div id="error-contrast-2">
+      <p style="color: aqua">
+        <script>document.write("Generated via document.write()")</script>
+      </p>
+    </div>
+    <div id="error-contrast-3">
+      <h3 class="h1" style="color:coral;">This colour also fails at a large size.</h3>
+    </div>
+    <div id="error-contrast-4">
+      <label>Name
+        <input type="text" style="color:coral">
+      </label>
+    </div>
+    <div id="warning-contrast">
+      <h4 class="background-image">Text on background image requires manual review!</h4>
+    </div>
+
+    <h2>Inputs</h2>
+    <h3>Hidden inputs</h3>
+    <div id="nothing-input-1">
+      <input type="text" hidden="">
+    </div>
+
+    <h3>Inputs that have labels</h3>
+    <h4>Input has <code>id</code> and label has corresponding <code>for</code> attribute
+    </h4>
+    <div id="nothing-input-2">
+      <input type="text" id="asd"><br>
+      <label for="asd">First name</label>
+    </div>
+
+    <h4>Input that is <code>type='submit'</code> or <code>type='button'</code></h4>
+    <div id="nothing-input-3">
+      <input type="submit">
+      <input type="button" value="Input Button">
+    </div>
+
+    <h4>Implicit label has text</h4>
+    <div id="nothing-input-4">
+      <label>First name:<input type="text"></label>
+    </div>
+
+    <h4>Text area</h4>
+    <div id="nothing-input-5">
+      <label for="review">Review:</label><br>
+      <textarea id="review" rows="2" cols="30"></textarea>
+    </div>
+
+    <h4>Select</h4>
+    <div id="nothing-input-6">
+      <label for="pet-select">Choose a pet:</label>
+      <select name="pets" id="pet-select">
+        <option value="">Choose</option>
+        <option value="dog">Dog</option>
+        <option value="cat">Cat</option>
+      </select>
+    </div>
+
+    <h3>Inputs missing labels</h3>
+
+    <h4>Input without a label or missing <code>id</code></h4>
+    <div id="error-input-1">
+      <input type="text">
+    </div>
+
+    <h4>Implicit labels without text</h4>
+    <div id="error-input-2">
+      <label><input type="text"></label>
+    </div>
+
+    <h4><code>&lt;textarea&gt;</code> without label</h4>
+    <div id="error-input-3">
+      <label>Feedback</label>
+      <textarea rows="2" cols="20"></textarea>
+    </div>
+
+    <h4><code>&lt;select&gt;</code> without label</h4>
+    <div id="error-input-4">
+      <label>Choose a car:</label>
+      <select name="cars">
+        <option value="volvo">Volvo</option>
+        <option value="saab">Saab</option>
+        <option value="mercedes">Mercedes</option>
+        <option value="audi">Audi</option>
+      </select>
+    </div>
+
+    <h4>Input where accessible name is empty</h4>
+    <div id="error-input-5">
+      <input aria-labelledby="vaxcjsk" type="text">
+    </div>
+
+    <h4>Input with ID although label does not have a <code>for</code> attribute</h4>
+    <div id="error-input-has-id">
+      <label>Name</label>
+      <input type="text" id="asdfg">
+    </div>
+
+    <h4>Input where <code>type="image"</code> does not have accessible name</h4>
+    <div id="error-input-img">
+      <label for="q">Search:</label>
+      <input type="text" id="q"><input type="image" alt=" " width="20"
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Vector_search_icon.svg/1280px-Vector_search_icon.svg.png">
+    </div>
+
+    <h3 id="vv">Input warnings</h3>
+    <h4>Input is using title, aria-label or aria-labelledby attribute</h4>
+    <div id="warning-input-1">
+      <input aria-label="First name" type="text">
+    </div>
+    <div id="warning-input-2">
+      <input aria-labelledby="vv" type="text">
+    </div>
+    <div id="warning-input-3">
+      <input type="text" title="Phone number">
+    </div>
+
+    <h4>Input that is <code>type='reset'</code></h4>
+    <div id="warning-input-reset">
+      <input type="reset">
+    </div>
+
+  </main>
+  <footer></footer>
+  <script>
+    class shadowTest extends HTMLElement {
+      constructor() {
+        super();
+      }
+      connectedCallback() {
+        if (!this.initialized) {
+          const shadow = this.attachShadow({ mode: 'open' });
+          const div = document.createElement('div');
+          div.innerHTML = `<h4>Header skip in the shadow DOM</h4>`
+          shadow.appendChild(div);
+          this.initialized = true;
+        }
+      }
+    }
+    customElements.define('shadow-test', shadowTest);
+    document.querySelectorAll('.shadow-root').forEach(($el) => {
+      let testShadowElement = document.createElement('shadow-test');
+      $el.append(testShadowElement);
+    })
+  </script>
+  <script src="../../dist/js/sa11y.umd.min.js"></script>
+  <script src="../../dist/js/lang/en.umd.js"></script>
   <script>
     Sa11y.Lang.addI18n(Sa11yLangEn.strings);
     const sa11y = new Sa11y.Sa11y({
       checkRoot: "body",
       headerIgnore: "#nothing-ignore-this-heading *",
       linkIgnoreSpan: ".sr-only-example",
-      linkIgnoreStrings: '(External)'
+      linkIgnoreStrings: '(External)',
+      exportResultsPlugin: true,
+      autoDetectShadowComponents: true,
     });
   </script>
 </body>
