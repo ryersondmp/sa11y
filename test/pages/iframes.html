@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<link rel="stylesheet" href="./assets/main.css">
+<!-- Sa11y -->
+<link rel="stylesheet" href="../../dist/css/sa11y.min.css" />
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Embedded content - Sa11y Unit Tests</title>
+</head>
+
+<body>
+  <header>
+    <h1>Sa11y Unit Tests</h1>
+  </header>
+  <main>
+    <h2>iFrames</h2>
+
+    <h3>iFrame has <code>aria-hidden="true"</code> and <code>tabindex="-1"</code></h3>
+    <div id="nothing-hidden">
+      <iframe src="https://www.example.com" aria-hidden="true" tabindex="-1"></iframe>
+    </div>
+
+    <h3>iFrame has <code>tabindex="-1"</code></h3>
+    <div id="error-focusable-content">
+      <iframe src="https://www.example.com" tabindex="-1"></iframe>
+    </div>
+
+    <h3>iFrame has missing accessible name</h3>
+    <div id="error-missing-acc-name">
+      <iframe src="https://www.example.com"></iframe>
+    </div>
+
+    <h3>General iFrame</h3>
+    <div id="warning-iframe">
+      <iframe src="https://www.example.com" title="Example"></iframe>
+    </div>
+
+    <h3>iFrame with video source</h3>
+    <div id="warning-iframe-youtube">
+      <iframe src="https://www.youtube.com/embed/fJ9rUzIMcZQ?si=JC0rdiAQQJTqDBFD"
+        title="Queen's Bohemiam Rhapsody" frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen></iframe>
+    </div>
+
+    <h3>iFrame with audio source</h3>
+    <div id="warning-iframe-soundcloud">
+      <iframe title="SoundCloud widget"
+        src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/158888399&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
+    </div>
+
+    <h3>iFrame with data visualization source</h3>
+    <div id="warning-iframe-dataviz">
+      <iframe title="Google Looker Studio dashboard"
+        src="https://lookerstudio.google.com/embed/reporting/1se-9ZRSukdgQUiRqYTSjT8nFLTV0v8Uq/page/y5MR"></iframe>
+    </div>
+
+    <h2>HTML5 video and audio</h2>
+    <h3>Video without track element</h3>
+    <div id="warning-video">
+      <video width="300" controls="" src="#"></video>
+    </div>
+
+    <h3>Video with track element (empty <code>src</code>)</h3>
+    <div id="nothing-video-null-track">
+      <video controls="">
+        <track default="" kind="captions" srclang="en" src>
+      </video>
+    </div>
+
+    <h3>Video with track element</h3>
+    <div id="nothing-video">
+      <video controls="">
+        <track default="" kind="captions" srclang="en" src="#">
+      </video>
+    </div>
+
+    <h3>Audio</h3>
+    <div id="warning-audio">
+      <audio controls="">
+        <source src="https://www.w3schools.com/html/horse.ogg" type="audio/ogg">
+        <source src="https://www.w3schools.com/html/horse.mp3" type="audio/mpeg">
+      </audio>
+    </div>
+
+  </main>
+  <footer></footer>
+  <script src="../../dist/js/sa11y.umd.min.js"></script>
+  <script src="../../dist/js/lang/en.umd.js"></script>
+  <script>
+    Sa11y.Lang.addI18n(Sa11yLangEn.strings);
+    const sa11y = new Sa11y.Sa11y({
+      checkRoot: "main",
+    });
+  </script>
+</body>
+
+</html>

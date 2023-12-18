@@ -83,7 +83,7 @@ const defaultOptions = {
   // Embedded content
   videoContent: 'youtube.com, vimeo.com, yuja.com, panopto.com',
   audioContent: 'soundcloud.com, simplecast.com, podbean.com, buzzsprout.com, blubrry.com, transistor.fm, fusebox.fm, libsyn.com',
-  dataVizContent: 'datastudio.google.com, tableau',
+  dataVizContent: 'datastudio, tableau, lookerstudio, powerbi, qlik',
 };
 
 export default defaultOptions;

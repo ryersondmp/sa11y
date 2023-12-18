@@ -8,8 +8,13 @@ export default function checkLabels(results, option) {
     const toggleCheck = Utils.store.getItem('sa11y-remember-labels') === 'On';
     if (toggleCheck || option.headless || option.checkAllHideToggles) {
       Elements.Found.Inputs.forEach(($el) => {
-        // Mission abort if input is hidden.
-        if (Utils.isElementHidden($el)) return;
+        // Ignore completely hidden elements.
+        const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
+        const negativeTabindex = $el.getAttribute('tabindex') === '-1';
+        const hidden = Utils.isElementHidden($el);
+        if (hidden || (ariaHidden && negativeTabindex)) {
+          return;
+        }
 
         // Compute accessible name on input.
         const computeName = computeAccessibleName($el);
@@ -19,11 +24,10 @@ export default function checkLabels(results, option) {
         const alt = $el.getAttribute('alt');
         const type = $el.getAttribute('type');
         const hasTitle = $el.getAttribute('title');
-        const tabindex = $el.getAttribute('tabindex');
         const hasAria = $el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby');
 
         // Pass: Ignore if it's a submit or hidden button.
-        if (type === 'submit' || type === 'button' || type === 'hidden' || tabindex === '-1') {
+        if (type === 'submit' || type === 'button' || type === 'hidden') {
           return;
         }
 

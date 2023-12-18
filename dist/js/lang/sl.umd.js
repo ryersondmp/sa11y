@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.5
+  * @version 3.0.6
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -199,8 +199,9 @@
       EMBED_VIDEO: 'Poskrbite, da bodo <strong>vsi videoposnetki opremljeni s podnapisi.</strong> Zagotavljanje podnapisov za vse zvočne in video vsebine je obvezna zahteva na ravni A. Podnapisi so v pomoč gluhim in naglušnim osebam.',
       EMBED_AUDIO: 'Za vse podcaste zagotovite <strong>prepis.</strong> Zagotavljanje prepisov za zvočne vsebine je obvezna zahteva na ravni A. Prepisi so v pomoč gluhim in naglušnim osebam, koristijo pa lahko vsem. Razmislite o tem, da bi prepis umestili pod ali v akordno ploščo.',
       EMBED_DATA_VIZ: 'Tovrstni pripomočki za vizualizacijo podatkov so pogosto problematični za osebe, ki za navigacijo uporabljajo tipkovnico ali bralnik zaslona, in lahko predstavljajo veliko težavo za slabovidne ali barvno slepe osebe. Priporočljivo je, da pod gradnikom zagotovite enake informacije v alternativni obliki (besedilo ali tabela). <hr> Preberite več o <a href="https://www.w3.org/WAI/tutorials/images/complex">kompleksnih slikah.</a>',
-      EMBED_MISSING_TITLE: 'Vgrajena vsebina potrebuje dostopno ime, ki opisuje njeno vsebino. V elementu <code>iframe</code> navedite edinstven atribut <code>title</code> ali <code>aria-label</code>. Preberite več o <a href="https://dequeuniversity.com/tips/provide-iframe-titles">iFrames.</a>',
+      EMBED_MISSING_TITLE: 'Vgrajena vsebina potrebuje dostopno ime, ki opisuje njeno vsebino. V elementu <code>iframe</code> navedite edinstven atribut <code>title</code> ali <code>aria-label</code>. Preberite več o <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>',
       EMBED_GENERAL_WARNING: 'Ni mogoče preveriti vdelane vsebine. Prepričajte se, da imajo slike alternativno besedilo, videoposnetki podnapise, da je besedilo dovolj kontrastno in da so interaktivne komponente <a href="https://webaim.org/techniques/keyboard/">dostopne s tipkovnice.</a>',
+      EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> z elementi, ki se jim ni mogoče osredotočiti, ne sme imeti <code>tabindex="-1"</code>. Vgrajena vsebina ne bo dostopna prek tipkovnice.',
       QA_BAD_LINK: 'Najdena slaba povezava. Zdi se, da povezava kaže na razvojno okolje. <hr> Ta povezava kaže na: <br> <strong {r}>%(el)</strong>',
       QA_BAD_ITALICS: 'Oznake krepko in poševno imajo semantični pomen in se ne smejo uporabljati za poudarjanje celotnih odstavkov. Krepko označeno besedilo je treba uporabiti za močno <strong>izpostavitev</strong> besede ali besedne zveze. Ležečo pisavo je treba uporabljati za poudarjanje lastnih imen (npr. naslovov knjig in člankov), tujih besed, narekovajev. Dolgi citati morajo biti oblikovani kot blokovski citati.',
       QA_PDF: 'Ni mogoče preveriti dostopnosti datotek PDF. Datoteke PDF veljajo za spletno vsebino in morajo biti prav tako dostopne. Datoteke PDF pogosto vsebujejo težave za ljudi, ki uporabljajo bralnike zaslona (manjkajoče strukturne oznake ali manjkajoče oznake polj obrazca), in ljudi s slabim vidom (besedilo se ne preliva, ko je povečano). <ul><li>Če gre za obrazec, razmislite o uporabi dostopnega obrazca HTML kot alternative.</li><li>Če gre za dokument, razmislite o pretvorbi v spletno stran.</li></ul>V nasprotnem primeru preverite <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF za dostopnost v programu Acrobat DC.</a>',

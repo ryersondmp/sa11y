@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.5
+  * @version 3.0.6
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -208,8 +208,9 @@
       EMBED_VIDEO: "Zorg ervoor dat <strong>alle video's zijn voorzien van ondertiteling.</strong> Het leveren van ondertiteling voor alle audio- en video-inhoud is een verplichte Level A-vereiste. Ondertiteling ondersteunt mensen die doof of slechthorend zijn.",
       EMBED_AUDIO: 'Zorg voor een <strong>transcript voor alle podcasts.</strong> Het leveren van transcripts voor audio-inhoud is een verplichte Level A-vereiste. Transcripties ondersteunen mensen die doof of slechthorend zijn, maar iedereen kan er baat bij hebben. Overweeg om het transcript onder of in een accordeonpaneel te plaatsen.',
       EMBED_DATA_VIZ: 'Widgets voor gegevensvisualisatie zoals deze zijn vaak problematisch voor mensen die een toetsenbord of schermlezer gebruiken om te navigeren, en kunnen aanzienlijke problemen opleveren voor mensen met slechtziendheid of kleurenblindheid. Het is aan te raden om dezelfde informatie in een alternatieve (tekst of tabel) indeling onder de widget aan te bieden. <hr>Meer informatie over <a href="https://www.w3.org/WAI/tutorials/images/complex">complexe afbeeldingen.</a>',
-      EMBED_MISSING_TITLE: 'Voor ingesloten inhoud is een toegankelijke naam nodig die de inhoud beschrijft. Geef een uniek <code>title</code> of <code>aria-label</code> attribuut op het <code>iframe</code> element. Meer informatie over <a href="https://dequeuniversity.com/tips/provide-iframe-titles">iFrames.</a>',
+      EMBED_MISSING_TITLE: 'Voor ingesloten inhoud is een toegankelijke naam nodig die de inhoud beschrijft. Geef een uniek <code>title</code> of <code>aria-label</code> attribuut op het <code>iframe</code> element. Meer informatie over <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>',
       EMBED_GENERAL_WARNING: "Kan ingesloten inhoud niet controleren. Controleer of afbeeldingen alt-tekst hebben, video's bijschriften, tekst voldoende contrast en interactieve onderdelen <a href=\"https://webaim.org/techniques/keyboard/\">toetsenbordtoegankelijk zijn.</a>",
+      EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> met niet-focusbare elementen mag geen <code>tabindex="-1"</code> hebben. De ingesloten inhoud zal niet toegankelijk zijn met het toetsenbord.',
       QA_BAD_LINK: 'Slechte link gevonden. Link lijkt te verwijzen naar een ontwikkelomgeving. <hr> Deze link verwijst naar: <br> <strong {r}>%(el)</strong>',
       QA_BAD_ITALICS: "Vetgedrukte en cursieve tags hebben een semantische betekenis en moeten <strong>niet</strong> worden gebruikt om hele alinea's te benadrukken. Vetgedrukte tekst moet worden gebruikt om een woord of zin sterk te <strong>accentueren</strong>. Cursief moet worden gebruikt om eigennamen (bijv. titels van boeken en artikelen), vreemde woorden en aanhalingstekens te benadrukken. Lange citaten moeten worden opgemaakt als een blokcitaat.",
       QA_PDF: "Kan PDF's niet controleren op toegankelijkheid. PDF's worden beschouwd als webinhoud en moeten ook toegankelijk worden gemaakt. PDF's bevatten vaak problemen voor mensen die screenreaders gebruiken (ontbrekende structurele tags of ontbrekende labels voor formuliervelden) en mensen die slecht zien (tekst wordt niet weergegeven als deze wordt vergroot). <ul><li>Als dit een formulier is, kunt u overwegen een toegankelijk HTML-formulier te gebruiken als alternatief.</li><li>Als dit een document is, kunt u overwegen het te converteren naar een webpagina.</li></ul>Ofwel controleer <a href=\"https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html\">PDF op toegankelijkheid in Acrobat DC.</a>",

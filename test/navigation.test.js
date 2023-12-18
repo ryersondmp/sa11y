@@ -142,17 +142,17 @@ describe('Sa11y navigation tests', () => {
   });
 
   /* Navigate to Warnings page. */
-  test('Navigate to warnings page (Count: 3)', async () => {
+  test('Navigate to warnings page (Count: 4)', async () => {
     await page.goto('http://localhost:8080/test/pages/warnings.html');
     const warningStatus = await page.evaluate(async () => {
       const panel = document.querySelector('sa11y-control-panel').shadowRoot;
-      const status = panel.getElementById('warning-count').textContent === '3';
+      const status = panel.getElementById('warning-count').textContent === '4';
       return status;
     });
     assert.ok(warningStatus);
   });
 
-  test('Dismiss page issue (Count: 2)', async () => {
+  test('Dismiss page issue (Count: 3)', async () => {
     const warningStatus = await page.evaluate(async () => {
       const panel = document.querySelector('sa11y-control-panel').shadowRoot;
       const pageIssues = panel.getElementById('page-issues-list');
@@ -161,7 +161,7 @@ describe('Sa11y navigation tests', () => {
 
       return new Promise((resolve) => {
         setTimeout(() => {
-          const status = panel.getElementById('warning-count').textContent === '2';
+          const status = panel.getElementById('warning-count').textContent === '3';
           resolve(status);
         }, 100);
       });
@@ -169,7 +169,7 @@ describe('Sa11y navigation tests', () => {
     assert.ok(warningStatus);
   });
 
-  test('Dismiss annotation (Count: 1)', async () => {
+  test('Dismiss annotation (Count: 2)', async () => {
     const warningStatus = await page.evaluate(async () => {
       const panel = document.querySelector('sa11y-control-panel').shadowRoot;
       const annotation = document.querySelector('sa11y-annotation').shadowRoot;
@@ -182,7 +182,7 @@ describe('Sa11y navigation tests', () => {
 
       return new Promise((resolve) => {
         setTimeout(() => {
-          const status = panel.getElementById('warning-count').textContent === '1';
+          const status = panel.getElementById('warning-count').textContent === '2';
           resolve(status);
         }, 100);
       });
@@ -190,7 +190,7 @@ describe('Sa11y navigation tests', () => {
     assert.ok(warningStatus);
   });
 
-  test('Restore all dismissed (Count: 3)', async () => {
+  test('Restore all dismissed (Count: 4)', async () => {
     const warningStatus = await page.evaluate(async () => {
       const panel = document.querySelector('sa11y-control-panel').shadowRoot;
       const restore = panel.getElementById('dismiss-button');
@@ -198,11 +198,27 @@ describe('Sa11y navigation tests', () => {
 
       return new Promise((resolve) => {
         setTimeout(() => {
-          const status = panel.getElementById('warning-count').textContent === '3';
+          const status = panel.getElementById('warning-count').textContent === '4';
           resolve(status);
         }, 100);
       });
     });
     assert.ok(warningStatus);
+  });
+
+  test('Skip-to-issue toggle', async () => {
+    const status = await page.evaluate(async () => {
+      const panel = document.querySelector('sa11y-control-panel').shadowRoot;
+      const skip = panel.getElementById('skip-button');
+      skip.click();
+
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          const alert = panel.getElementById('panel-alert-text').textContent.includes('item you are trying to view is not visible');
+          resolve(alert);
+        }, 100);
+      });
+    });
+    assert.ok(status);
   });
 });

@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.5
+  * @version 3.0.6
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -204,8 +204,9 @@ var sk = {
     EMBED_VIDEO: 'Uistite sa, že <strong>všetky videá majú skryté titulky.</strong> Poskytovanie titulkov pre všetok zvukový a obrazový obsah je povinnou požiadavkou úrovne A. Titulky podporujú osoby s poruchou sluchu alebo nepočujúce osoby.',
     EMBED_AUDIO: 'Zabezpečte <strong>prepis všetkých podcastov.</strong> Poskytovanie prepisov zvukového obsahu je povinnou požiadavkou úrovne A. Prepisy podporujú ľudí s poruchou sluchu alebo nepočujúcich, ale môžu byť prínosom pre všetkých. Zvážte umiestnenie prepisu pod alebo v rámci akordeónového panelu.',
     EMBED_DATA_VIZ: 'Takéto widgety na vizualizáciu údajov sú často problematické pre ľudí, ktorí na navigáciu používajú klávesnicu alebo čítačku obrazovky, a môžu predstavovať značné ťažkosti pre ľudí so slabým zrakom alebo farbosleposťou. Odporúča sa poskytnúť rovnaké informácie v alternatívnom (textovom alebo tabuľkovom) formáte pod widgetom. <hr> Ďalšie informácie o <a href="https://www.w3.org/WAI/tutorials/images/complex">komplexných obrázkoch.</a>',
-    EMBED_MISSING_TITLE: 'Vložený obsah vyžaduje prístupný názov, ktorý opisuje jeho obsah. Uveďte jedinečný atribút <code>title</code> alebo <code>aria-label</code> na prvku <code>iframe</code>. Ďalšie informácie o <a href="https://dequeuniversity.com/tips/provide-iframe-titles">iFrame.</a>',
+    EMBED_MISSING_TITLE: 'Vložený obsah vyžaduje prístupný názov, ktorý opisuje jeho obsah. Uveďte jedinečný atribút <code>title</code> alebo <code>aria-label</code> na prvku <code>iframe</code>. Ďalšie informácie o <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrame.</a>',
     EMBED_GENERAL_WARNING: 'Nie je možné skontrolovať vložený obsah. Uistite sa, že obrázky majú alt text, videá majú titulky, text má dostatočný kontrast a interaktívne komponenty sú <a href="https://webaim.org/techniques/keyboard/">prístupné z klávesnice.</a>',
+    EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> s nezamerateľnými prvkami by nemalo mať <code>tabindex="-1"</code>. Vložený obsah nebude dostupný pomocou klávesnice.',
     QA_BAD_LINK: 'Nájdené zlé prepojenie. Zdá sa, že odkaz smeruje na vývojové prostredie. <hr> Tento odkaz odkazuje na: <br> <strong {r}>%(el)</strong>',
     QA_BAD_ITALICS: 'Tučné písmo a kurzíva majú sémantický význam a nemali by sa používať na zvýraznenie celých odsekov. Tučný text by sa mal používať na výrazné <strong>zdôraznenie</strong> slova alebo frázy. Kurzíva by sa mala používať na zvýraznenie vlastných mien (t. j. názvov kníh a článkov), cudzích slov, citátov. Dlhé citáty by sa mali formátovať ako blokové citáty.',
     QA_PDF: 'Nie je možné skontrolovať prístupnosť súborov PDF. Súbory PDF sa považujú za webový obsah a musia byť tiež prístupné. Súbory PDF často obsahujú problémy pre ľudí, ktorí používajú čítačky obrazovky (chýbajúce štrukturálne značky alebo chýbajúce označenia polí formulára), a ľudí so slabým zrakom (text sa po zväčšení nezobrazuje). <ul><li>Ak ide o formulár, zvážte použitie prístupného formulára HTML ako alternatívy.</li><li>Ak ide o dokument, zvážte jeho konverziu na webovú stránku.</li></ul>V opačnom prípade skontrolujte <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF pre prístupnosť v Acrobat DC.</a>',

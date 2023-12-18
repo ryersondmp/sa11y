@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.5
+  * @version 3.0.6
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -201,7 +201,7 @@ var pl = {
     EMBED_VIDEO: 'Upewnij się, że <strong>wszystkie filmy mają napisy rozszerzone.</strong> Zapewnianie napisów rozszerzonych dla wszystkich treści audio i wideo jest obowiązkowym wymogiem poziomu A. Napisy mają na celu wspieranie osób Głuchych i słabosłyszących.',
     EMBED_AUDIO: 'Upewnij się, że istnieje <strong>transkrypcja dla wszystkich nagrań dźwiękowych.</strong> Zapewnianie transkrypcji treści audio jest obowiązkowym wymogiem poziomu A. Transkrypcje mają na celu wspieranie osób Głuchych i słabosłyszących, ale każdy może z nich skorzystać. Rozważ umieszczenie transkrypcji poniżej lub w panelu akordeonowym.',
     EMBED_DATA_VIZ: 'Widżety wizualizacji danych, takie jak ten, są często problematyczne dla osób, które używają klawiatury lub czytnika ekranu do nawigacji, a także mogą stanowić znaczące trudności dla osób słabo widzących lub nie rozróżniających kolorów. Zapewnij te same infromacje w alternatywnym formacie (tekst lub tabela) pod widżetem.<hr>Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/images/complex/">obrazach złożonych.</a>',
-    EMBED_MISSING_TITLE: 'Osadzona zawartość wymaga dostępnej nazwy, która opisuje jej treść. Dodaj unikalny <code>title</code> lub atrybutu <code>aria-label</code> do elementu <code>iframe</code>. Dowiedz się więcej o <a href="https://dequeuniversity.com/tips/provide-iframe-titles">iFrame.</a>',
+    EMBED_MISSING_TITLE: 'Osadzona zawartość wymaga dostępnej nazwy, która opisuje jej treść. Dodaj unikalny <code>title</code> lub atrybutu <code>aria-label</code> do elementu <code>iframe</code>. Dowiedz się więcej o <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrame.</a>',
     EMBED_GENERAL_WARNING: 'Nie można sprawdzić treści osadzonej. Upewnij się, że obrazy mają tekst alt, filmy mają napisy rozszerzone, tekst ma odpowiedni kontrast, a elementy interaktywne są <a href="https://webaim.org/techniques/keyboard/">dostępne z klawiatury.</a>',
 
     // Quality assurance

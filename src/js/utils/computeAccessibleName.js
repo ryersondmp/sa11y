@@ -26,7 +26,7 @@ const nextTreeBranch = (tree) => {
 };
 
 /* Compute ARIA attributes. */
-const computeAriaLabel = (element, recursing = false) => {
+export const computeAriaLabel = (element, recursing = false) => {
   const labelledBy = element.getAttribute('aria-labelledby');
   if (!recursing && labelledBy) {
     const target = labelledBy.split(/\s+/);

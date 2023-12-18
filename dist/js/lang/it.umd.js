@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.5
+  * @version 3.0.6
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -201,8 +201,9 @@
       EMBED_VIDEO: 'Assicuratevi che <strong>tutti i video abbiano le didascalie chiuse.</strong> Fornire didascalie per tutti i contenuti audio e video è un requisito obbligatorio di livello A. Le didascalie aiutano le persone non udenti o con problemi di udito.',
       EMBED_AUDIO: 'Assicuratevi di fornire una <strong>trascrizione per tutti i podcast.</strong> Fornire trascrizioni per i contenuti audio è un requisito obbligatorio di Livello A. Le trascrizioni sono di supporto alle persone sorde o con problemi di udito, ma possono essere utili a tutti. Considerate la possibilità di inserire la trascrizione in basso o in un pannello a fisarmonica.',
       EMBED_DATA_VIZ: 'I widget di visualizzazione dei dati come questo sono spesso problematici per le persone che utilizzano una tastiera o uno screen reader per navigare e possono presentare notevoli difficoltà per le persone ipovedenti o daltoniche. Si consiglia di fornire le stesse informazioni in un formato alternativo (testo o tabella) sotto il widget. <hr> Per saperne di più su <a href="https://www.w3.org/WAI/tutorials/images/complex">immagini complesse.</a>',
-      EMBED_MISSING_TITLE: "Il contenuto incorporato richiede un nome accessibile che ne descriva il contenuto. Si prega di fornire un attributo unico <code>title</code> o <code>aria-label</code> sull'elemento <code>iframe</code>. Per saperne di più su <a href=\"https://dequeuniversity.com/tips/provide-iframe-titles\">iFrames.</a>",
+      EMBED_MISSING_TITLE: "Il contenuto incorporato richiede un nome accessibile che ne descriva il contenuto. Si prega di fornire un attributo unico <code>title</code> o <code>aria-label</code> sull'elemento <code>iframe</code>. Per saperne di più su <a href=\"https://web.dev/learn/accessibility/more-html#iframes\">iFrames.</a>",
       EMBED_GENERAL_WARNING: 'Impossibile controllare il contenuto incorporato. Assicuratevi che le immagini abbiano un testo alt, che i video abbiano didascalie, che il testo abbia un contrasto sufficiente e che i componenti interattivi siano <a href="https://webaim.org/techniques/keyboard/">accessibili alla tastiera.</a>',
+      EMBED_UNFOCUSABLE: 'Gli <code>&lt;iframe&gt;</code> con elementi non focalizzabili non devono avere <code>tabindex="-1"</code>. Il contenuto incorporato non sarà accessibile tramite tastiera.',
       QA_BAD_LINK: 'Trovato un link errato. Il link sembra puntare a un ambiente di sviluppo. <hr> Questo link punta a: <br> <strong {r}>%(el)</strong>',
       QA_BAD_ITALICS: 'I tag grassetto e corsivo hanno un significato semantico e non devono essere usati per evidenziare interi paragrafi. Il testo in grassetto deve essere usato per dare un forte <strong>enfasi</strong> su una parola o una frase. Il corsivo deve essere usato per evidenziare nomi propri (ad esempio, titoli di libri e articoli), parole straniere e citazioni. Le citazioni lunghe devono essere formattate come blockquote.',
       QA_PDF: "Impossibile verificare l'accessibilità dei PDF. I PDF sono considerati contenuti web e devono essere resi accessibili. I PDF spesso presentano problemi per le persone che utilizzano gli screen reader (tag strutturali mancanti o etichette dei campi del modulo mancanti) e per le persone ipovedenti (il testo non scorre quando viene ingrandito). <ul><li>Se si tratta di un modulo, considerare l'utilizzo di un modulo HTML accessibile come alternativa.</li><li>Se si tratta di un documento, considerare la conversione in una pagina web.</li></ul>Altrimenti, controllare <a href=\"https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html\">PDF per l'accessibilità in Acrobat DC.</a>",

@@ -158,7 +158,10 @@ describe('Sa11y Unit Tests', () => {
     assert.ok(allTogglesActive);
   });
 
-  /* Check rulesets */
+  /* **************** */
+  /*  Headings        */
+  /* **************** */
+
   test('Empty heading', async () => {
     const issue = await checkTooltip(
       page, 'error-empty-heading', 'Empty heading found!',
@@ -259,6 +262,10 @@ describe('Sa11y Unit Tests', () => {
     );
     assert.ok(issue);
   });
+
+  /* **************** */
+  /*  Images          */
+  /* **************** */
 
   test('Image has alt text', async () => {
     const issue = await checkTooltip(
@@ -484,6 +491,10 @@ describe('Sa11y Unit Tests', () => {
     assert.ok(issue);
   });
 
+  /* **************** */
+  /*  Links           */
+  /* **************** */
+
   test('Non descript link text', async () => {
     const ids = [
       'error-non-descript-link-1',
@@ -662,6 +673,10 @@ describe('Sa11y Unit Tests', () => {
     assert.ok(issue);
   });
 
+  /* **************** */
+  /*  QA              */
+  /* **************** */
+
   test('Table without issues', async () => {
     const issue = await noAnnotation(
       page, 'nothing-table',
@@ -794,34 +809,6 @@ describe('Sa11y Unit Tests', () => {
     });
   });
 
-  test('Video without track', async () => {
-    const issue = await checkTooltip(
-      page, 'warning-video', 'captions for all audio and video content',
-    );
-    assert.ok(issue);
-  });
-
-  test('Video with track', async () => {
-    const issue = await noAnnotation(
-      page, 'nothing-video',
-    );
-    assert.ok(issue);
-  });
-
-  test('Audio', async () => {
-    const issue = await checkTooltip(
-      page, 'warning-audio', 'transcripts for audio content is a mandatory',
-    );
-    assert.ok(issue);
-  });
-
-  test('Generic iFrame with title', async () => {
-    const issue = await checkTooltip(
-      page, 'warning-iframe-title', 'Unable to check embedded content.',
-    );
-    assert.ok(issue);
-  });
-
   test('Contrast issues', async () => {
     const ids = [
       'error-contrast-1',
@@ -841,6 +828,10 @@ describe('Sa11y Unit Tests', () => {
     );
     assert.ok(issue);
   });
+
+  /* **************** */
+  /*  Inputs          */
+  /* **************** */
 
   test('Inputs with no issues', async () => {
     const ids = [
@@ -896,5 +887,86 @@ describe('Sa11y Unit Tests', () => {
       page, 'warning-input-reset', 'Reset buttons',
     );
     assert.ok(issue2);
+  });
+
+  /* **************** */
+  /* Embedded content */
+  /* **************** */
+
+  test('iFrame with aria-hidden and negative tabindex', async () => {
+    const issue = await noAnnotation(
+      page, 'nothing-hidden',
+    );
+    assert.ok(issue);
+  });
+
+  test('iframe with negative tabindex', async () => {
+    const issue = await checkTooltip(
+      page, 'error-focusable-content', 'embedded content will not be keyboard accessible',
+    );
+    assert.ok(issue);
+  });
+
+  test('iframe without accessible name', async () => {
+    const issue = await checkTooltip(
+      page, 'error-missing-acc-name', 'Embedded content requires an accessible name that describe',
+    );
+    assert.ok(issue);
+  });
+
+  test('Generic iFrame with title', async () => {
+    const issue = await checkTooltip(
+      page, 'warning-iframe', 'Unable to check embedded content.',
+    );
+    assert.ok(issue);
+  });
+
+  test('iFrame with video source', async () => {
+    const issue = await checkTooltip(
+      page, 'warning-iframe-youtube', 'all videos have closed captioning',
+    );
+    assert.ok(issue);
+  });
+
+  test('iFrame with audio source', async () => {
+    const issue = await checkTooltip(
+      page, 'warning-iframe-soundcloud', 'transcript for all podcasts',
+    );
+    assert.ok(issue);
+  });
+
+  test('iFrame with data viz source', async () => {
+    const issue = await checkTooltip(
+      page, 'warning-iframe-dataviz', 'Data visualization',
+    );
+    assert.ok(issue);
+  });
+
+  test('Video without track', async () => {
+    const issue = await checkTooltip(
+      page, 'warning-video', 'captions for all audio and video content',
+    );
+    assert.ok(issue);
+  });
+
+  test('Video with track element (empty src)', async () => {
+    const issue = await checkTooltip(
+      page, 'nothing-video-null-track', 'captions for all audio and video content',
+    );
+    assert.ok(issue);
+  });
+
+  test('Video with track', async () => {
+    const issue = await noAnnotation(
+      page, 'nothing-video',
+    );
+    assert.ok(issue);
+  });
+
+  test('Audio', async () => {
+    const issue = await checkTooltip(
+      page, 'warning-audio', 'transcripts for audio content is a mandatory',
+    );
+    assert.ok(issue);
   });
 });

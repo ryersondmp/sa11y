@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.5
+  * @version 3.0.6
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -203,8 +203,9 @@
       EMBED_VIDEO: 'Palun veenduge, et <strong>kõik millisel videol on kinnised subtiitrid.</strong> Kogu heli- ja videosisu puhul on subtiitrite esitamine kohustuslik A-taseme nõue. Üleskirjutused toetavad kurte ja vaegkuuljaid inimesi, kes on kurdid või vaegkuuljad.',
       EMBED_AUDIO: 'Veenduge, et kõigi podcastide kohta esitatakse <strong>transkriptsioon.</strong> Audiosisu transkriptsiooni esitamine on kohustuslik A-taseme nõue. Transkriptsioonid toetavad kurte ja vaegkuuljaid, kuid neist on kasu kõigile. Kaaluge transkriptsiooni paigutamist allapoole või akordionpaneeli sisse.',
       EMBED_DATA_VIZ: 'Sellised andmete visualiseerimise vidinad on sageli problemaatilised inimestele, kes kasutavad navigeerimiseks klaviatuuri või ekraanilugejat, ning võivad tekitada märkimisväärseid raskusi inimestele, kellel on madal nägemine või värvipimedus. Soovitatav on esitada sama teave alternatiivses (teksti või tabeli) vormis vidina all. <hr> Lisateave <a href="https://www.w3.org/WAI/tutorials/images/complex">komplekspiltide kohta.</a>',
-      EMBED_MISSING_TITLE: 'Varjatud sisu vajab juurdepääsetavat nime, mis kirjeldab selle sisu. Andke <code>iframe</code> elemendile <code>tiitle</code> või <code>aria-label</code> atribuut unikaalne <code>tiitle</code> või <code>aria-label</code>. Lisateave <a href="https://dequeuniversity.com/tips/provide-iframe-titles">iFrame\'i kohta.</a>',
+      EMBED_MISSING_TITLE: 'Varjatud sisu vajab juurdepääsetavat nime, mis kirjeldab selle sisu. Andke <code>iframe</code> elemendile <code>tiitle</code> või <code>aria-label</code> atribuut unikaalne <code>tiitle</code> või <code>aria-label</code>. Lisateave <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrame\'i kohta.</a>',
       EMBED_GENERAL_WARNING: 'Ei saa kontrollida varjatud sisu. Palun veenduge, et piltidel on alt-tekst, videote pealkirjad, tekst on piisavalt kontrastne ja interaktiivsed komponendid on <a href="https://webaim.org/techniques/keyboard/">tahvlile juurdepääsetavad.</a>.',
+      EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> koos fookustamata elementidega ei tohiks olla <code>tabindex="-1"</code>. Manustatud sisu ei ole klaviatuuriga juurdepääsetav.',
       QA_BAD_LINK: 'Leitud halb link. Link näib viitavat arenduskeskkonnale. <hr> See link viitab: <br> <strong {r}>%(el)</strong>',
       QA_BAD_ITALICS: 'Paks ja kursiivne märgistus on semantilise tähendusega ja neid ei tohiks <strong>ei</strong> kasutada tervete lõigete esiletõstmiseks. Häälestatud teksti tuleks kasutada selleks, et rõhutada sõna või fraasi tugevalt <strong>kõrge</strong>. Kursiivkirjas tuleks kasutada pärisnimede (st raamatute ja artiklite pealkirjade), võõrsõnade, jutumärkide esiletõstmiseks. Pikad tsitaadid tuleks vormistada plokktsitaatidena.',
       QA_PDF: 'Ei saa kontrollida PDF-failide juurdepääsetavust. PDF-failid loetakse veebisisuks ja need tuleb samuti juurdepääsetavaks muuta. PDF-failid sisaldavad sageli probleeme inimeste jaoks, kes kasutavad ekraanilugejaid (puuduvad struktuurilised märgised või vormiväljade märgised) ja inimeste jaoks, kellel on vaegnägemine (tekst ei voola suurendatud kujul tagasi). <ul><li>Kui tegemist on vormiga, kaaluge alternatiivina ligipääsetava HTML-vormi kasutamist.</li><li>Kui tegemist on dokumendiga, kaaluge selle teisendamist veebileheks.</li></ul>Muudel juhtudel kontrollige <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF-i ligipääsetavust Acrobat DC-s.</a>.',

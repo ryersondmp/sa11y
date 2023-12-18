@@ -26,12 +26,12 @@ export function isElementVisuallyHiddenOrHidden(element) {
 }
 
 /**
- * Checks if an element is hidden based on its attributes and styles.
+ * Checks if an element is hidden (display: none) based on its attributes and styles.
  * @param {HTMLElement} element The element to check for visibility.
- * @returns {boolean} `true` if the element is hidden, `false` otherwise.
+ * @returns {boolean} 'true' if the element is hidden (display: none).
  */
 export function isElementHidden(element) {
-  if (element.getAttribute('hidden') || (element.offsetWidth === 0 && element.offsetHeight === 0)) {
+  if (element.getAttribute('hidden')) {
     return true;
   }
   const compStyles = getComputedStyle(element);

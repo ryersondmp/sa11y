@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.5
+  * @version 3.0.6
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -200,8 +200,9 @@
       EMBED_VIDEO: 'Lūdzu, pārliecinieties, ka <strong>visiem videoklipiem ir slēptie titri.</strong> Visu audio un video materiālu titru nodrošināšana ir obligāta A līmeņa prasība. Titri palīdz cilvēkiem, kuri ir nedzirdīgi vai vājdzirdīgi.',
       EMBED_AUDIO: 'Lūdzu, nodrošiniet <strong>transkriptu visiem podkāstiem.</strong> Transkriptu nodrošināšana audio saturam ir obligāta A līmeņa prasība. Transkripcijas palīdz cilvēkiem, kuri ir nedzirdīgi vai vājdzirdīgi, taču tās var būt noderīgas ikvienam. Apsveriet iespēju transkriptu izvietot zem vai akordeona panelī.',
       EMBED_DATA_VIZ: 'Šādi datu vizualizācijas logrīki bieži rada problēmas cilvēkiem, kuri navigācijai izmanto tastatūru vai ekrāna lasītāju, un var radīt ievērojamas grūtības cilvēkiem ar vāju redzi vai krāsu aklumu. Ieteicams to pašu informāciju sniegt alternatīvā (teksta vai tabulas) formātā zem logrīka. <hr> Uzziniet vairāk par <a href="https://www.w3.org/WAI/tutorials/images/complex">sarežģītiem attēliem</a>.',
-      EMBED_MISSING_TITLE: 'Iegultajam saturam ir nepieciešams pieejams nosaukums, kas raksturo tā saturu. Lūdzu, norādiet unikālu <code>title</code> vai <code>aria-label</code> atribūtu elementā <code>iframe</code>. Uzziniet vairāk par <a href="https://dequeuniversity.com/tips/provide-iframe-titles">iFrame.</a>.',
+      EMBED_MISSING_TITLE: 'Iegultajam saturam ir nepieciešams pieejams nosaukums, kas raksturo tā saturu. Lūdzu, norādiet unikālu <code>title</code> vai <code>aria-label</code> atribūtu elementā <code>iframe</code>. Uzziniet vairāk par <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrame.</a>.',
       EMBED_GENERAL_WARNING: 'Nevar pārbaudīt iegulto saturu. Lūdzu, pārliecinieties, ka attēliem ir alt teksts, videoklipiem ir uzraksti, tekstam ir pietiekams kontrasts un interaktīvie komponenti ir <a href="https://webaim.org/techniques/keyboard/">pieejami no tastatūras.</a>.',
+      EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> ar neuzmanāmiem elementiem nevajadzētu būt <code>tabindex="-1"</code>. Iegultais saturs nebūs pieejams ar tastatūru.',
       QA_BAD_LINK: 'Atrasta slikta saite. Šķiet, ka saite norāda uz izstrādes vidi. <hr> Šī saite norāda uz: <br> <strong {r}>%(el)</strong>',
       QA_BAD_ITALICS: 'Trešraksta un slīpraksta tagiem ir semantiska nozīme, un tos nevajadzētu izmantot, lai izceltu veselas rindkopas. Teksts treknrakstā jāizmanto, lai <strong>uzsvērtu kādu vārdu vai frāzi</strong>. Kursīvs jāizmanto, lai izceltu īpašvārdus (piemēram, grāmatu un rakstu nosaukumus), svešvārdus, citātus. Garie citāti jānoformē kā bloka citāts.',
       QA_PDF: 'Nevar pārbaudīt PDF failu pieejamību. PDF tiek uzskatīti par tīmekļa saturu, un arī tiem jābūt pieejamiem. PDF formātos bieži ir problēmas cilvēkiem, kas izmanto ekrānlasītājus (trūkst strukturālo tagu vai veidlapu lauku marķējumu), un cilvēkiem ar vāju redzi (teksts nepalielinās, kad tiek palielināts). <ul><li>Ja tā ir veidlapa, apsveriet iespēju kā alternatīvu izmantot pieejamu HTML veidlapu.</li><li>Ja tas ir dokuments, apsveriet iespēju to pārveidot par tīmekļa lapu.</li></ul>Ja tas ir dokuments, apsveriet iespēju to pārveidot par tīmekļa vietni.</li></ul>Tādā gadījumā pārbaudiet <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF pieejamību programmā Acrobat DC.</a>.',
