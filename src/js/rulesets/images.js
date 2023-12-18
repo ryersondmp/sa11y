@@ -49,8 +49,14 @@ export default function checkImages(results, option) {
   Elements.Found.Images.forEach(($el) => {
     const alt = $el.getAttribute('alt');
     const link = $el.closest('a[href]');
+
+    // Process link text exclusions.
+    const linkSpanExclusions = link
+      ? Utils.fnIgnore(link, Constants.Exclusions.LinkSpan).textContent : '';
+    const stringMatchExclusions = option.linkIgnoreStrings
+      ? linkSpanExclusions.replace(option.linkIgnoreStrings, '') : linkSpanExclusions;
     const linkTextContentLength = link
-      ? Utils.fnIgnore(link, Constants.Exclusions.LinkSpan).textContent.trim().length : 0;
+      ? Utils.removeWhitespace(stringMatchExclusions).length : 0;
 
     // Has aria-hidden.
     if ($el.getAttribute('aria-hidden') === 'true') {

@@ -88,8 +88,9 @@ export default function checkLinkText(results, option) {
   const seen = {};
   Elements.Found.Links.forEach(($el) => {
     const accName = computeAccessibleName($el, Constants.Exclusions.LinkSpan);
-    const exclusions = option.linkIgnoreStrings ? accName.replace(option.linkIgnoreStrings, '') : accName;
-    const linkText = Utils.removeWhitespace(exclusions);
+    const stringMatchExclusions = option.linkIgnoreStrings
+      ? accName.replace(option.linkIgnoreStrings, '') : accName;
+    const linkText = Utils.removeWhitespace(stringMatchExclusions);
 
     // Ignore special characters (except forward slash).
     const stripSpecialChars = linkText.replace(/[^\w\s/]/g, '').replace(/\s+/g, ' ').trim();

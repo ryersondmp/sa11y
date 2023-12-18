@@ -163,6 +163,7 @@ div {
 
   code {
     font-family: monospace;
+    font-size: calc(var(--sa11y-normal-text) - 1px);
   }
 
   code,

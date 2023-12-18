@@ -463,6 +463,13 @@ describe('Sa11y Unit Tests', () => {
     assert.ok(issue);
   });
 
+  test('Linked image should ignore text within link via string match exclusion prop ', async () => {
+    const issue = await checkTooltip(
+      page, 'warning-image-link-should-ignore-text-within-link-string-match', 'Image link contains alt text. Does the alt text describe where the link takes you?',
+    );
+    assert.ok(issue);
+  });
+
   test('Linked image has aria-hidden, but still focusable', async () => {
     const issue = await checkTooltip(
       page, 'error-hyperlinked-image-aria-hidden-focusable', 'still keyboard focusable.',
