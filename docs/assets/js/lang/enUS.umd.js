@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.5
+  * @version 3.0.6
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -159,21 +159,21 @@
       LINK_IDENTICAL_NAME: 'Link has identical text as another link, although it points to a different page. Multiple links with the same text may cause confusion for people who use screen readers.<hr>Consider making the following link more descriptive to help distinguish it from other links: <strong {r}>%(sanitizedText)</strong>',
 
       // Images
-      MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE: 'Image is being used as a link with surrounding text, although the alt attribute should be marked as decorative or null.',
+      MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE: 'Image is being used as a link with surrounding text, although the alt attribute should be marked as decorative.',
       MISSING_ALT_LINK_MESSAGE: 'Image is being used as a link but is missing alt text! Please ensure alt text describes where the link takes you.',
       MISSING_ALT_MESSAGE: 'Missing alt text! If the image conveys a story, mood, or important information - be sure to describe the image.',
-      LINK_IMAGE_BAD_ALT_MESSAGE: 'File extension within the alt text found. Ensure the alt text describes the destination of the link, not a literal description of the image. Remove: <strong {r}>%(error)</strong>.<hr><strong>Alt text:</strong> %(altText)',
+      LINK_ALT_HAS_FILE_EXTENSION: 'File extension within the alt text found. Ensure the alt text describes the destination of the link, not a literal description of the image. Remove: <strong {r}>%(error)</strong>.<hr><strong>Alt text:</strong> %(altText)',
       LINK_IMAGE_PLACEHOLDER_ALT_MESSAGE: 'Non-descript or placeholder alt text within a linked image found. Ensure the alt text describes the destination of the link, not a literal description of the image. Replace the following alt text: <strong {r}>%(altText)</strong>',
       LINK_IMAGE_SUS_ALT_MESSAGE: 'Assistive technologies already indicate that this is an image, so &quot;<strong {r}>%(error)</strong>&quot; may be redundant. Ensure the alt text describes the destination of the link, not a literal description of the image. <hr> <strong>Alt text:</strong> %(altText)',
-      LINK_ALT_HAS_BAD_WORD_MESSAGE: 'File extension within the alt text found. If the image conveys a story, mood, or important information - be sure to describe the image. Remove: <strong {r}>%(error)</strong>.<hr><strong>Alt text:</strong> %(altText)',
+      ALT_HAS_FILE_EXTENSION: 'File extension within the alt text found. If the image conveys a story, mood, or important information - be sure to describe the image. Remove: <strong {r}>%(error)</strong>.<hr><strong>Alt text:</strong> %(altText)',
       ALT_PLACEHOLDER_MESSAGE: 'Non-descript or placeholder alt text found. Replace the following alt text with something more meaningful: <strong {r}>%(altText)</strong>',
       ALT_HAS_SUS_WORD: 'Assistive technologies already indicate that this is an image, so &quot;<strong {r}>%(error)</strong>&quot; may be redundant. <hr> <strong>Alt text:</strong> %(altText)',
-      LINK_IMAGE_ARIA_HIDDEN: 'Link around image has <code>aria-hidden=&quot;true&quot;</code> but is still keyboard focusable. If you are intending to hide a redundant or duplicate link, add <code>tabindex=&quot;-1&quot;</code> as well.',
+      LINK_HIDDEN_FOCUSABLE: 'Link has <code>aria-hidden=&quot;true&quot;</code> but is still keyboard focusable. If you are intending to hide a redundant or duplicate link, add <code>tabindex=&quot;-1&quot;</code> as well.',
       LINK_IMAGE_NO_ALT_TEXT: 'Image within link is marked as decorative and there is no link text. Please add alt text to the image that describes the destination of the link.',
       LINK_IMAGE_HAS_TEXT: 'Image is marked as decorative, although the link is using the surrounding text as a descriptive label.',
       LINK_IMAGE_LONG_ALT: 'Alt text description on a linked image is <strong>too long</strong>. The alt text on linked images should describe where the link takes you, not a literal description of the image. <strong>Consider using the title of the page it links to as the alt text.</strong> <hr> <strong>Alt text (<span {r}>%(altLength)</span> characters):</strong> %(altText)',
       LINK_IMAGE_ALT_WARNING: 'Image link contains alt text. Does the alt text describe where the link takes you? <strong>Consider using the title of the page it links to as the alt text.</strong><hr> <strong>Alt text:</strong> %(altText)',
-      LINK_IMAGE_ALT_AND_TEXT_WARNING: 'Image link contains <strong>both alt text and surrounding link text.</strong> If this image is decorative and is being used as a functional link to another page, consider marking the image as decorative or null - the surrounding link text should suffice. <hr> <strong>Alt text:</strong> %(altText)',
+      LINK_IMAGE_ALT_AND_TEXT_WARNING: 'Image link contains <strong>both alt text and surrounding link text.</strong> If this image is decorative and is being used as a functional link to another page, consider marking the image as decorative. The surrounding link text should suffice. <hr> <strong>Alt text:</strong> %(altText) <hr> <strong>Link label:</strong> %(sanitizedText)',
       IMAGE_FIGURE_DECORATIVE: 'Image is marked as <strong>decorative</strong> and will be ignored by assistive technology. <hr> Although a <strong>caption</strong> was provided, the image should also have alt text in most cases. <ul><li>The alt text should provide a concise description of what is in the image.</li><li>The caption should usually provide context to relate the image back to the surrounding content, or give attention to a particular piece of information.</li></ul>Learn more: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt versus figcaption.</a>',
       IMAGE_FIGURE_DUPLICATE_ALT: 'Do not use the exact same words for both the alt and caption text. Screen readers will announce the information twice.<ul><li>The alt text should provide a concise description of what is in the image.</li><li>The caption should usually provide context to relate the image back to the surrounding content, or give attention to a particular piece of information.</li></ul> Learn more: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt versus figcaption.</a> <hr> <strong>Alt text:</strong> %(altText)',
       IMAGE_DECORATIVE: 'Image is marked as <strong>decorative</strong> and will be ignored by assistive technology. If the image conveys a story, mood or important information - be sure to add alt text.',
@@ -182,8 +182,8 @@
 
       // Labels
       LABELS_MISSING_IMAGE_INPUT_MESSAGE: 'Image button is missing alt text. Please add alt text to provide an accessible name. For example: <em>Search</em> or <em>Submit</em>.',
-      LABELS_INPUT_RESET_MESSAGE: 'Reset buttons should <strong>not</strong> be used unless specifically needed because they are easy to activate by mistake. <hr> <strong>Tip!</strong> Learn why <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Reset and Cancel buttons pose usability issues.</a>',
-      LABELS_ARIA_LABEL_INPUT_MESSAGE: 'Input has an accessible name, although please ensure there is a visible label too. <hr> The accessible name for this input is: <strong>%(sanitizedText)</strong>',
+      LABELS_INPUT_RESET_MESSAGE: 'Reset buttons should not be used unless specifically needed because they are easy to activate by mistake. <hr> <strong>Tip!</strong> Learn why <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Reset and Cancel buttons pose usability issues.</a>',
+      LABELS_ARIA_LABEL_INPUT_MESSAGE: 'Input has an accessible name, although please ensure there is a visible label too. <hr> <strong>Input label:</strong> %(sanitizedText)',
       LABELS_NO_FOR_ATTRIBUTE_MESSAGE: 'There is no label associated with this input. Add a <code>for</code> attribute to the label that matches the <code>id</code> of this input. <hr> The ID for this input is: <strong>id=&#34;%(id)&#34;</strong>',
       LABELS_MISSING_LABEL_MESSAGE: 'There is no label associated with this input. Please add an <code>id</code> to this input, and add a matching <code>for</code> attribute to the label.',
 
@@ -191,8 +191,9 @@
       EMBED_VIDEO: 'Please ensure <strong>all videos have closed captioning.</strong> Providing captions for all audio and video content is a mandatory Level A requirement. Captions support people who are D/deaf or hard-of-hearing.',
       EMBED_AUDIO: 'Please ensure to provide a <strong>transcript for all podcasts.</strong> Providing transcripts for audio content is a mandatory Level A requirement. Transcripts support people who are D/deaf or hard-of-hearing, but can benefit everyone. Consider placing the transcript below or within an accordion panel.',
       EMBED_DATA_VIZ: 'Data visualization widgets like this are often problematic for people who use a keyboard or screen reader to navigate, and can present significant difficulties for people who have low vision or colorblindness. It\'s recommended to provide the same information in an alternative (text or table) format below the widget. <hr> Learn more about <a href="https://www.w3.org/WAI/tutorials/images/complex">complex images.</a>',
-      EMBED_MISSING_TITLE: 'Embedded content requires an accessible name that describes its contents. Please provide a unique <code>title</code> or <code>aria-label</code> attribute on the <code>iframe</code> element. Learn more about <a href="https://dequeuniversity.com/tips/provide-iframe-titles">iFrames.</a>',
+      EMBED_MISSING_TITLE: 'Embedded content requires an accessible name that describes its contents. Please provide a unique <code>title</code> or <code>aria-label</code> attribute on the <code>iframe</code> element. Learn more about <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>',
       EMBED_GENERAL_WARNING: 'Unable to check embedded content. Please make sure that images have alt text, videos have captions, text has sufficient contrast, and interactive components are <a href="https://webaim.org/techniques/keyboard/">keyboard accessible.</a>',
+      EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> with focusable elements should not have <code>tabindex="-1"</code>. The embedded content will not be keyboard accessible.',
 
       // Quality assurance
       QA_BAD_LINK: 'Bad link found. Link appears to point to a development environment. <hr> This link points to: <br> <strong {r}>%(el)</strong>',

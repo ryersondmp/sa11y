@@ -88,7 +88,7 @@ export function annotate(
       class="sa11y-btn ${[type]}-btn${inline ? '-text' : ''}"
       data-tippy-content=
         "<div lang='${Lang._('LANG_CODE')}'>
-          <button class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button>
+          <button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button>
           <div class='header-text'><h2>${ariaLabel[type]}</h2></div>
           ${escapeHTML(content)}
           ${dismiss}

@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.5
+  * @version 3.0.6
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -22,6 +22,7 @@ const defaultOptions = {
   imageIgnore: '',
   linkIgnore: 'nav *, [role="navigation"] *',
   linkIgnoreSpan: '',
+  linkIgnoreStrings: '',
 
   // Other features
   showGoodLinkButton: true,
@@ -94,7 +95,7 @@ const defaultOptions = {
   // Embedded content
   videoContent: 'youtube.com, vimeo.com, yuja.com, panopto.com',
   audioContent: 'soundcloud.com, simplecast.com, podbean.com, buzzsprout.com, blubrry.com, transistor.fm, fusebox.fm, libsyn.com',
-  dataVizContent: 'datastudio.google.com, tableau',
+  dataVizContent: 'datastudio, tableau, lookerstudio, powerbi, qlik',
 };
 
 /* Translation object */
@@ -348,9 +349,9 @@ const Constants = (function myConstants() {
     // Main container.
     if (option.containerIgnore) {
       const containerSelectors = option.containerIgnore.split(',').map(($el) => `${$el} *, ${$el}`);
-      Exclusions.Container = `[aria-hidden], #wpadminbar *, ${containerSelectors.join(', ')}`;
+      Exclusions.Container = `#wpadminbar *, ${containerSelectors.join(', ')}`;
     } else {
-      Exclusions.Container = '[aria-hidden], #wpadminbar *';
+      Exclusions.Container = '#wpadminbar *';
     }
 
     // Contrast exclusions
@@ -382,17 +383,14 @@ const Constants = (function myConstants() {
     }
 
     // Ignore specific links
-    Exclusions.Links = '[aria-hidden="true"], .anchorjs-link';
+    Exclusions.Links = '.anchorjs-link';
     if (option.linkIgnore) {
       Exclusions.Links = `${option.linkIgnore}, ${Exclusions.Links}`;
     }
 
     // Ignore specific classes within links.
     if (option.linkIgnoreSpan) {
-      const linkIgnoreSpanSelectors = option.linkIgnoreSpan.split(',').map(($el) => `${$el} *, ${$el}`);
-      Exclusions.LinkSpan = `noscript, ${linkIgnoreSpanSelectors.join(', ')}`;
-    } else {
-      Exclusions.LinkSpan = 'noscript';
+      Exclusions.LinkSpan = option.linkIgnoreSpan;
     }
   }
 
@@ -513,7 +511,7 @@ function find(selector, desiredRoot, exclude) {
 
 /**
  * Checks if the document has finished loading, and if so, immediately calls the provided callback function. Otherwise, waits for the 'load' event to fire and then calls the callback function.
- * @param {function} callback - The callback function to be called when the document finishes loading.
+ * @param {function} callback The callback function to be called when the document finishes loading.
  */
 function documentLoadingCheck(callback) {
   if (document.readyState === 'complete') {
@@ -525,8 +523,8 @@ function documentLoadingCheck(callback) {
 
 /**
  * Checks if an element is visually hidden or hidden based on its attributes and styles.
- * @param {HTMLElement} element - The element to check for visibility.
- * @returns {boolean} - `true` if the element is visually hidden or hidden, `false` otherwise.
+ * @param {HTMLElement} element The element to check for visibility.
+ * @returns {boolean} `true` if the element is visually hidden or hidden, `false` otherwise.
  */
 function isElementVisuallyHiddenOrHidden(element) {
   if (element.getAttribute('hidden') || (element.offsetWidth === 0 && element.offsetHeight === 0) || (element.clientHeight === 1 && element.clientWidth === 1)) {
@@ -537,12 +535,12 @@ function isElementVisuallyHiddenOrHidden(element) {
 }
 
 /**
- * Checks if an element is hidden based on its attributes and styles.
- * @param {HTMLElement} element - The element to check for visibility.
- * @returns {boolean} - `true` if the element is hidden, `false` otherwise.
+ * Checks if an element is hidden (display: none) based on its attributes and styles.
+ * @param {HTMLElement} element The element to check for visibility.
+ * @returns {boolean} 'true' if the element is hidden (display: none).
  */
 function isElementHidden(element) {
-  if (element.getAttribute('hidden') || (element.offsetWidth === 0 && element.offsetHeight === 0)) {
+  if (element.getAttribute('hidden')) {
     return true;
   }
   const compStyles = getComputedStyle(element);
@@ -551,8 +549,8 @@ function isElementHidden(element) {
 
 /**
  * Escapes HTML special characters in a string.
- * @param {string} string - The string to escape.
- * @returns {string} - The escaped string with HTML special characters replaced by their corresponding entities.
+ * @param {string} string The string to escape.
+ * @returns {string} The escaped string with HTML special characters replaced by their corresponding entities.
  */
 function escapeHTML(string) {
   const $div = document.createElement('div');
@@ -562,8 +560,8 @@ function escapeHTML(string) {
 
 /**
  * Decodes/unescapes HTML entities back to their corresponding character.
- * @param {string} string - The string.
- * @returns {string} - Decoded string.
+ * @param {string} string The string.
+ * @returns {string} Decoded string.
  */
 function decodeHTML(string) {
   return string.replace(/&(#?[a-zA-Z0-9]+);/g, (match, entity) => {
@@ -590,8 +588,8 @@ function decodeHTML(string) {
 
 /**
  * Strips HTML tags from a string.
- * @param {string} string - The string.
- * @returns {string} - String without any HTML tags.
+ * @param {string} string The string.
+ * @returns {string} String without any HTML tags.
  */
 function stripHTMLtags(string) {
   return string.replace(/<[^>]*>/g, '');
@@ -599,8 +597,8 @@ function stripHTMLtags(string) {
 
 /**
  * Sanitizes an HTML string by replacing special characters with their corresponding HTML entities.
- * @param {string} string - The HTML string to sanitize.
- * @returns {string} - The sanitized HTML string with special characters replaced by their corresponding entities.
+ * @param {string} string The HTML string to sanitize.
+ * @returns {string} The sanitized HTML string with special characters replaced by their corresponding entities.
  * @link https://portswigger.net/web-security/cross-site-scripting/preventing
  */
 function sanitizeHTML(string) {
@@ -609,50 +607,28 @@ function sanitizeHTML(string) {
 
 /**
  * Retrieves the text content of an HTML element and removes extra whitespaces and line breaks.
- * @param {HTMLElement} element - The HTML element to retrieve the text content from.
- * @returns {string} - The text content of the HTML element with extra whitespaces and line breaks removed.
+ * @param {HTMLElement} element The HTML element to retrieve the text content from.
+ * @returns {string} The text content of the HTML element with extra whitespaces and line breaks removed.
  */
 function getText(element) {
-  return element.textContent.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
+  return element.textContent.replace(/[\r\n]+/g, '').replace(/\s+/g, ' ').trim();
 }
 
 /**
- * Compute alt text on images within a text node.
- * @param {HTMLElement} element - The HTML element to compute the text content from.
- * @returns {string} - The computed text content of the HTML element, considering alt text of images if present.
+ * Removes extra whitespaces and line breaks from a string.
+ * @param {string} string The string.
+ * @returns {string} String with line breaks and extra white space removed.
  */
-function computeTextNodeWithImage(element) {
-  const textContent = getText(element);
-  const imgArray = Array.from(element.querySelectorAll('img'));
-  let returnText = '';
-  // No image, has text.
-  if (imgArray.length === 0 && textContent.length > 1) {
-    returnText = textContent;
-  } else if (imgArray.length && textContent.length === 0) {
-    // Has image.
-    const imgalt = imgArray[0].getAttribute('alt');
-    if (!imgalt || imgalt === ' ' || imgalt === '') {
-      returnText = '';
-    } else if (imgalt !== undefined) {
-      returnText = imgalt;
-    }
-  } else if (imgArray.length && textContent.length) {
-    // Has image and text.
-    // To-do: This is a hack? Any way to do this better?
-    imgArray.forEach((img) => {
-      img.insertAdjacentHTML('afterend', ` <span data-sa11y-clone-image-text aria-hidden="true">${imgArray[0].getAttribute('alt')}</span>`);
-    });
-    returnText = textContent;
-  }
-  return returnText;
+function removeWhitespace(string) {
+  return string.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
 /**
  * Debounces a callback function, ensuring it is only executed after a certain wait period
  * has passed since the last invocation.
- * @param {function} callback - The callback function to debounce.
- * @param {number} wait - The wait period in milliseconds before the callback function is executed.
- * @returns {function} - The debounced function.
+ * @param {function} callback The callback function to debounce.
+ * @param {number} wait The wait period in milliseconds before the callback function is executed.
+ * @returns {function} The debounced function.
  * @link https://www.joshwcomeau.com/snippets/javascript/debounce/
  */
 function debounce$2(callback, wait) {
@@ -667,9 +643,9 @@ function debounce$2(callback, wait) {
 
 /**
  * Creates a clone of an element while ignoring specified elements or elements matching a selector.
- * @param {Element} element - The element to clone.
- * @param {string} selector - The selector to match elements to be excluded from the clone. Optional.
- * @returns {Element} - The cloned element with excluded elements removed.
+ * @param {Element} element The element to clone.
+ * @param {string} selector The selector to match elements to be excluded from the clone. Optional.
+ * @returns {Element} The cloned element with excluded elements removed.
  */
 function fnIgnore(element, selector) {
   const defaultIgnored = 'noscript, script, style';
@@ -683,93 +659,11 @@ function fnIgnore(element, selector) {
 }
 
 /**
- * Computes the accessible name of an element based on various aria-* attributes.
- * @param {Element} element - The element for which the accessible name needs to be computed.
- * @returns {string} - The computed accessible name of the element.
- */
-function computeAccessibleName(element) {
-  // aria-label
-  if (element.matches('[aria-label]')) {
-    return element.getAttribute('aria-label');
-  }
-
-  // aria-labeledby
-  if (element.matches('[aria-labelledby]')) {
-    const target = element.getAttribute('aria-labelledby').split(/\s+/);
-    if (target.length > 0) {
-      let returnText = '';
-      target.forEach((x) => {
-        const targetSelector = document.querySelector(`#${CSS.escape(x)}`);
-        if (targetSelector === null) {
-          returnText += ' ';
-        } else if (targetSelector.hasAttribute('aria-label')) {
-          returnText += `${targetSelector.getAttribute('aria-label')}`;
-        } else {
-          returnText += `${targetSelector.firstChild.nodeValue} `;
-        }
-      });
-      return returnText;
-    }
-  }
-
-  // Child with aria-label
-  if (Array.from(element.children).filter((x) => x.matches('[aria-label]')).length > 0) {
-    const child = Array.from(element.childNodes);
-    let returnText = '';
-
-    // Process each child within node.
-    child.forEach((x) => {
-      if (x.nodeType === 1) {
-        // Ignore HTML comments and make sure label is not null.
-        if (x.nodeType === 3 || x.ariaLabel === null) {
-          returnText += x.innerText;
-        } else {
-          returnText += x.getAttribute('aria-label');
-        }
-      } else {
-        returnText += x.nodeValue;
-      }
-    });
-    return returnText;
-  }
-
-  // Child with aria-labelledby
-  if (Array.from(element.children).filter((x) => x.matches('[aria-labelledby]')).length > 0) {
-    const child = Array.from(element.childNodes);
-    let returnText = '';
-
-    // Process each child within node.
-    child.forEach((y) => {
-      if (y.nodeType === 8) ; else if (y.nodeType === 3 || y.getAttribute('aria-labelledby') === null) {
-        returnText += y.nodeValue;
-      } else {
-        const target = y.getAttribute('aria-labelledby').split(/\s+/);
-        if (target.length > 0) {
-          let returnAria = '';
-          target.forEach((z) => {
-            if (document.querySelector(`#${CSS.escape(z)}`) === null) {
-              returnAria += ' ';
-            } else {
-              returnAria += `${document.querySelector(`#${CSS.escape(z)}`).firstChild.nodeValue} `;
-            }
-          });
-          returnText += returnAria;
-        }
-      }
-    });
-    return returnText;
-  }
-
-  // Return if noAria;
-  return 'noAria';
-}
-
-/**
  * Finds the visible parent of an element that matches a given CSS property and value.
- * @param {Element} element - The element for which the visible parent needs to be found.
- * @param {string} property - The CSS property to match against.
- * @param {string} value - The value of the CSS property to match against.
- * @returns {Element|null} - The visible parent element that matches the given property and value, or null if not found.
+ * @param {Element} element The element for which the visible parent needs to be found.
+ * @param {string} property The CSS property to match against.
+ * @param {string} value The value of the CSS property to match against.
+ * @returns {Element|null} The visible parent element that matches the given property and value, or null if not found.
  */
 function findVisibleParent(element, property, value) {
   let $el = element;
@@ -786,8 +680,8 @@ function findVisibleParent(element, property, value) {
 
 /**
  * Calculates the offset top of an element relative to the viewport.
- * @param {Element} element - The element for which the offset top needs to be calculated.
- * @returns {Object} - An object with a `top` property that represents the offset top of the element relative to the viewport.
+ * @param {Element} element The element for which the offset top needs to be calculated.
+ * @returns {Object} An object with a `top` property that represents the offset top of the element relative to the viewport.
  */
 function offsetTop(element) {
   const rect = element.getBoundingClientRect();
@@ -835,7 +729,7 @@ const store = {
 
 /**
  * Adds a pulsing border effect to an element for 2.5 seconds.
- * @param {Element} element - The element to which the pulsing border effect needs to be added.
+ * @param {Element} element The element to which the pulsing border effect needs to be added.
  */
 function addPulse(element) {
   const border = 'data-sa11y-pulse-border';
@@ -846,25 +740,9 @@ function addPulse(element) {
 }
 
 /**
- * Gets the next sibling element that matches the given selector, or the next sibling element if no selector is provided.
- * @param {HTMLElement} element - The DOM element whose next sibling to retrieve.
- * @param {string} selector - The optional selector to filter the next siblings. If not provided, the next sibling element will be returned regardless of its type.
- * @returns {HTMLElement|string} - The next sibling element that matches the given selector, or the next sibling element if no selector is provided. If no matching sibling is found, an empty string is returned.
- */
-function getNextSibling(element, selector) {
-  let sibling = element.nextElementSibling;
-  if (!selector) return sibling;
-  while (sibling) {
-    if (sibling.matches(selector)) return sibling;
-    sibling = sibling.nextElementSibling;
-  }
-  return '';
-}
-
-/**
  * Generates a unique key for dismissing items.
- * @param {string} string - The string to be prepared for dismissal (without special chars).
- * @returns {string} - The truncated string with a maximum of 256 characters.
+ * @param {string} string The string to be prepared for dismissal (without special chars).
+ * @returns {string} The truncated string with a maximum of 256 characters.
  */
 function prepareDismissal(string) {
   return String(string).replace(/([^0-9a-zA-Z])/g, '').substring(0, 256);
@@ -872,8 +750,8 @@ function prepareDismissal(string) {
 
 /**
  * Generates a selector path for the given DOM element.
- * @param {Element} element - The DOM element for which to generate the selector path.
- * @returns {string} - The selector path as a string.
+ * @param {Element} element The DOM element for which to generate the selector path.
+ * @returns {string} The selector path as a string.
  * @link https://www.geeksforgeeks.org/how-to-create-a-function-generateselector-to-generate-css-selector-path-of-a-dom-element/
  * @link https://dev.to/aniket_chauhan/generate-a-css-selector-path-of-a-dom-element-4aim
 */
@@ -908,7 +786,7 @@ function generateSelectorPath(element) {
 /**
  * Traps focus within an element by looping focus back to the beginning or end
  * when the Tab key is pressed.
- * @param {Element} element - The DOM element to trap focus within.
+ * @param {Element} element The DOM element to trap focus within.
  * @author Hidde de Vries
  * @link https://hidde.blog/using-javascript-to-trap-focus-in-an-element/
 */
@@ -954,9 +832,9 @@ function removeAlert() {
 
 /**
  * Creates an alert in the Sa11y control panel with the given alert message and error preview.
- * @param {string} alertMessage - The alert message.
- * @param {string} errorPreview - The issue's tooltip message (optional).
- * @param {string} extendedPreview - The issue's HTML or escaped HTML to be previewed (optional).
+ * @param {string} alertMessage The alert message.
+ * @param {string} errorPreview The issue's tooltip message (optional).
+ * @param {string} extendedPreview The issue's HTML or escaped HTML to be previewed (optional).
  * @returns {void}
  */
 function createAlert(alertMessage, errorPreview, extendedPreview) {
@@ -1010,8 +888,8 @@ function createAlert(alertMessage, errorPreview, extendedPreview) {
 
 /**
  * Finds all data-attributes specified in array, and removes them from the document.
- * @param {Array<string>} attributes - The array of data-attributes to be reset.
- * @param {string} root - The root element to search for elements (optional, defaults to 'document').
+ * @param {Array<string>} attributes The array of data-attributes to be reset.
+ * @param {string} root The root element to search for elements (optional, defaults to 'document').
  * @returns {void}
  */
 function resetAttributes(attributes, root) {
@@ -1028,7 +906,7 @@ function resetAttributes(attributes, root) {
 
 /**
  * Removes the specified elements from the document.
- * @param {string} root - The root element to search for elements (optional, defaults to 'document').
+ * @param {string} root The root element to search for elements (optional, defaults to 'document').
  * @returns {void}
  */
 function remove(elements, root) {
@@ -1043,8 +921,8 @@ function remove(elements, root) {
 
 /**
  * Checks if a scrollable area within a container element is scrollable or not, and applies appropriate CSS classes and attributes. Make sure to add aria-label manually.
- * @param {Element} scrollArea - The scrollable area element to check.
- * @param {Element} container - The container element that wraps the scrollable area.
+ * @param {Element} scrollArea The scrollable area element to check.
+ * @param {Element} container The container element that wraps the scrollable area.
  */
 function isScrollable(scrollArea, container) {
   if (scrollArea.scrollHeight > container.clientHeight) {
@@ -1057,7 +935,7 @@ function isScrollable(scrollArea, container) {
 
 /**
  * Generate an HTML preview for an issue if it's an image, iframe, audio or video element. Otherwise, return escaped HTML within <code> tags. Used for Skip to Issue panel alerts and HTML page export.
- * @param {Object} issueObject - The issue object.
+ * @param {Object} issueObject The issue object.
  * @returns {html} Returns HTML.
  */
 function generateElementPreview(issueObject) {
@@ -1212,16 +1090,16 @@ const Elements = (function myElements() {
     ) : [];
 
     // iFrames
-    Found.Iframes = find(
-      'iframe, audio, video',
+    Found.iframes = find(
+      'iframe:not(hidden), audio, video',
       'root',
       Constants.Exclusions.Container,
     );
 
-    Found.Videos = Found.Iframes.filter(($el) => $el.matches(Constants.EmbeddedContent.Video));
-    Found.Audio = Found.Iframes.filter(($el) => $el.matches(Constants.EmbeddedContent.Audio));
-    Found.Visualizations = Found.Iframes.filter(($el) => $el.matches(Constants.EmbeddedContent.Visualization));
-    Found.EmbeddedContent = Found.Iframes.filter(($el) => !$el.matches(Constants.EmbeddedContent.All));
+    Found.Videos = Found.iframes.filter(($el) => $el.matches(Constants.EmbeddedContent.Video));
+    Found.Audio = Found.iframes.filter(($el) => $el.matches(Constants.EmbeddedContent.Audio));
+    Found.Visualizations = Found.iframes.filter(($el) => $el.matches(Constants.EmbeddedContent.Visualization));
+    Found.EmbeddedContent = Found.iframes.filter(($el) => !$el.matches(Constants.EmbeddedContent.All));
   }
 
   /* ***************** */
@@ -1470,7 +1348,7 @@ function resetColourFilters() {
   }
 }
 
-var exportResultsStyles = ":root{--font-primary:system-ui,\"Segoe UI\",roboto,helvetica,arial,sans-serif;--font-secondary:Consolas,monaco,\"Ubuntu Mono\",\"Liberation Mono\",\"Courier New\",Courier,monospace;--body-text:#333;--bg-primary:#fff;--bg-secondary:#f6f8fa;--bg-tertiary:#d7d7d7;--link-primary:#004c9b;--red-text:#d30017}@media (prefers-color-scheme:dark){:root{--body-text:#dde8ff;--bg-primary:#0a2051;--bg-secondary:#072c7c;--bg-tertiary:#0041c9;--link-primary:#64b2ff;--red-text:#fe5b5f}}*{margin:0;padding:0}article,aside,nav,ol,p,pre,section,ul{margin-bottom:1rem}body{background:var(--bg-primary);font-family:var(--font-primary);font-size:1rem;line-height:1.5;margin:0 auto;max-width:70ch;overflow-wrap:break-word;overflow-x:hidden;padding:2rem;word-break:break-word}body,h1,h2,h3{color:var(--body-text)}h1,h2,h3{line-height:1;margin-bottom:8px;padding-bottom:2px;padding-top:.875rem}h1{font-size:2.25rem}h2{font-size:1.85rem}h3{font-size:1.55rem}a{color:var(--link-primary)}a:focus,a:hover{text-decoration:none}footer,header{background:var(--bg-secondary);padding:2rem calc(50vw - 50%)}header{border-bottom:1px solid var(--bg-tertiary);margin:-2rem calc(-50vw + 50%) 2rem}footer{border-top:1px solid var(--bg-tertiary);margin:3rem calc(-50vw + 50%) -2rem;text-align:center}header>:first-child{margin-top:0;padding-top:0}header>:last-child{margin-bottom:0}code,kbd,pre,samp{background:var(--bg-secondary);border:1px solid var(--bg-tertiary);border-radius:4px;font-family:var(--font-secondary);font-size:.9rem;padding:3px 6px}pre{display:block;max-width:100%;overflow:auto;padding:1rem 1.4rem}code pre,pre code{background:inherit;border:0;color:inherit;font-size:inherit;margin:0;padding:0}code pre{display:inline}details{background:var(--bg-primary);border:2px solid var(--link-primary);border-radius:4px;padding:.6rem 1rem}summary{cursor:pointer;font-weight:700}details[open]{padding-bottom:.75rem}details[open] summary{margin-bottom:6px}details[open]>:last-child{margin-bottom:0}.two-columns{display:flex}.column{flex:1;margin-inline-end:20px}.count{max-width:220px}.column dl{width:100%}dl{padding-top:10px}dt{font-weight:700}dd{padding-bottom:10px}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}ul li{margin-bottom:.5rem}ol,ul{padding-left:2rem}li li:has(pre,img,iframe,video,audio){list-style:none;margin-top:1rem}ol li:not(li li){margin-bottom:3rem}iframe,img{border:0;display:block;max-width:50%}.red-text{color:var(--red-text)}.visually-hidden{clip:rect(1px,1px,1px,1px);border:0;-webkit-clip-path:inset(50%);clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}";
+var exportResultsStyles = ":root{--font-primary:system-ui,\"Segoe UI\",roboto,helvetica,arial,sans-serif;--font-secondary:Consolas,monaco,\"Ubuntu Mono\",\"Liberation Mono\",\"Courier New\",Courier,monospace;--body-text:#333;--bg-primary:#fff;--bg-secondary:#f6f8fa;--bg-tertiary:#d7d7d7;--link-primary:#004c9b;--red-text:#d30017}@media (prefers-color-scheme:dark){:root{--body-text:#dde8ff;--bg-primary:#0a2051;--bg-secondary:#072c7c;--bg-tertiary:#0041c9;--link-primary:#64b2ff;--red-text:#fe5b5f}}*{margin:0;padding:0}article,aside,nav,ol,p,pre,section,ul{margin-bottom:1rem}body{background:var(--bg-primary);font-family:var(--font-primary);font-size:1rem;line-height:1.5;margin:0 auto;max-width:70ch;overflow-wrap:break-word;overflow-x:hidden;padding:2rem;word-break:break-word}body,h1,h2,h3{color:var(--body-text)}h1,h2,h3{line-height:1;margin-bottom:8px;padding-bottom:2px;padding-top:.875rem}h1{font-size:2.25rem}h2{font-size:1.85rem}h3{font-size:1.55rem}a{color:var(--link-primary)}a:focus,a:hover{text-decoration:none}footer,header{background:var(--bg-secondary);padding:2rem calc(50vw - 50%)}header{border-bottom:1px solid var(--bg-tertiary);margin:-2rem calc(-50vw + 50%) 2rem}footer{border-top:1px solid var(--bg-tertiary);margin:3rem calc(-50vw + 50%) -2rem;text-align:center}header>:first-child{margin-top:0;padding-top:0}header>:last-child{margin-bottom:0}code,kbd,pre,samp{background:var(--bg-secondary);border:1px solid var(--bg-tertiary);border-radius:4px;font-family:var(--font-secondary);font-size:.9rem;padding:3px 6px}pre{display:block;max-width:100%;overflow:auto;padding:1rem 1.4rem}code pre,pre code{background:inherit;border:0;color:inherit;font-size:inherit;margin:0;padding:0}code pre{display:inline}details{background:var(--bg-primary);border:2px solid var(--link-primary);border-radius:4px;padding:.6rem 1rem}summary{cursor:pointer;font-weight:700}details[open]{padding-bottom:.75rem}details[open] summary{margin-bottom:6px}details[open]>:last-child{margin-bottom:0}.two-columns{display:flex}.column{flex:1;margin-inline-end:20px}.count{max-width:220px}.column dl{width:100%}dl{padding-top:10px}dt{font-weight:700}dd{padding-bottom:10px}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}ul li{margin-bottom:.5rem}ol,ul{padding-left:2rem}li li:has(pre,img,iframe,video,audio){list-style:none;margin-top:1rem}ol li:not(li li){margin-bottom:3rem}iframe,img{max-width:50%}audio,iframe,img,video{border:0;display:block}.red-text{color:var(--red-text)}.visually-hidden{clip:rect(1px,1px,1px,1px);border:0;-webkit-clip-path:inset(50%);clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}";
 
 /* ************************************************************ */
 /*  Export results as CSV or HTML via Blob API.                 */
@@ -1809,7 +1687,7 @@ function mainToggle(checkAll, resetAll) {
   };
 }
 
-var panelStyles = "a,button,code,div,h1,h2,kbd,label,li,ol,p,pre,span,strong,svg,ul{all:unset;box-sizing:border-box!important}:after,:before{all:unset}div{display:block}*{-webkit-font-smoothing:auto!important;font-family:var(--sa11y-font-face)!important;line-height:22px!important}label,li,ol,p,ul{font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;text-align:start;word-break:break-word}.sa11y-overflow{overflow:auto}iframe,img,video{border:0;display:block;height:auto;max-width:100%}audio{max-width:100%}#toggle{align-items:center;background:linear-gradient(0deg,#e040fb,#00bcd4);background-color:var(--sa11y-blue);background-size:150% 150%;border-radius:50%;bottom:15px;color:#fff;cursor:pointer;display:flex;height:55px;inset-inline-end:18px;justify-content:center;margin:0;overflow:visible;position:fixed;transition:all .2s ease-in-out;width:55px;z-index:2147483644}#toggle.left,#toggle.top-left{inset-inline-start:18px}#toggle.top-left,#toggle.top-right{bottom:unset;top:15px}@media screen and (forced-colors:active){#toggle{border:2px solid transparent}}#toggle svg{height:35px;width:35px}#toggle svg path{fill:var(--sa11y-panel-bg)}#toggle:focus,#toggle:hover{animation:sa11y-toggle-gradient 3s ease}#toggle:disabled:focus,#toggle:disabled:hover{animation:none}#toggle.on{background:linear-gradient(180deg,#e040fb,#00bcd4);background-color:var(--sa11y-blue)}#notification-badge{align-items:center;background-color:#eb0000;border:1px solid transparent;border-radius:50%;color:#fff;display:none;font-size:13px;font-weight:400;height:20px;justify-content:center;position:absolute;right:-3px;top:-3px;width:20px}#notification-badge.notification-badge-warning{background-color:var(--sa11y-warning-hover);border:1px solid var(--sa11y-warning);color:var(--sa11y-warning-text)}#panel{background:var(--sa11y-panel-bg);border-radius:4px;bottom:25px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15);inset-inline-end:42px;opacity:0;overflow:visible;position:fixed;transform:scale(0);transform-origin:100% 100%;transition:transform .2s,opacity background .2s .2s;visibility:hidden;z-index:2147483643}#panel.left,#panel.top-left{inset-inline-start:42px}#panel.top-left,#panel.top-right{bottom:unset;top:50px}#panel.active{height:auto;opacity:1;transform:scale(1);transform-origin:bottom right;transition:transform .2s,opacity .2s;visibility:visible}@media screen and (forced-colors:active){#panel{border:2px solid transparent}}#panel.active.left,[dir=rtl] #panel.active{transform-origin:bottom left}#panel.active.top-left{transform-origin:top left}#panel.active.top-right{transform-origin:top right}#panel-alert{display:none;opacity:0}#panel-alert.active{display:block;opacity:1}#panel-alert-content{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-primary);max-height:400px;overflow-y:auto;padding:15px 20px 15px 15px;position:relative}#panel-alert-preview .close-tooltip{display:none}#panel-alert-preview,#panel-alert-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}.panel-alert-preview{background:var(--sa11y-panel-bg-secondary);border:1px dashed var(--sa11y-panel-bg-splitter);border-radius:5px;margin-top:15px;padding:10px}.element-preview{background-color:var(--sa11y-panel-badge);border-radius:3.2px;margin-bottom:10px;overflow-wrap:break-word;padding:5px}button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}button[data-sa11y-dismiss]:focus,button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}h2{display:block;font-size:var(--sa11y-large-text);margin-bottom:3px}h2,strong{font-weight:600}a:not(#outline-list a){border-bottom:0;color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none!important}hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}#dismiss-button,#skip-button{background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:50px;cursor:pointer;display:none;height:36px;margin-inline-end:8px;margin-inline-start:2px;overflow:visible;position:relative;text-align:center;transition:all .1s ease-in-out;width:36px}#dismiss-button.active,#skip-button.active{display:block}#dismiss-button:disabled,#skip-button:disabled{background:none;border:0;box-shadow:none;cursor:default}#dismiss-button:before,#skip-button:before{bottom:-5px;content:\"\";left:-5px;position:absolute;right:-5px;top:-5px}#dismiss-button:focus:not(:disabled),#dismiss-button:hover:not(:disabled),#skip-button:focus:not(:disabled),#skip-button:hover:not(:disabled){background-color:var(--sa11y-shortcut-hover)}#panel.left #dismiss-button,#panel.left #skip-button,#panel.top-left #dismiss-button,#panel.top-left #skip-button{margin-inline-end:2px;margin-inline-start:8px}.dismiss-icon{background:var(--sa11y-setting-switch-bg-off);display:inline-block;height:24px;margin-bottom:-4px;-webkit-mask:var(--sa11y-dismiss-icon) center no-repeat;mask:var(--sa11y-dismiss-icon) center no-repeat;width:24px}@media screen and (forced-colors:active){.dismiss-icon{filter:invert(1)}}#panel-content{align-items:center;color:var(--sa11y-panel-primary);display:flex;padding:6px}#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{height:26px;margin:0 auto;width:26px}#panel-content.errors .panel-icon{background:var(--sa11y-panel-error);margin-top:-2px;-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat}#panel-content.good .panel-icon{background:var(--sa11y-good);-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat}#panel-content.warnings .panel-icon{background:var(--sa11y-warning-svg-color);-webkit-mask:var(--sa11y-warning-svg) center no-repeat;mask:var(--sa11y-warning-svg) center no-repeat;transform:scaleX(var(--sa11y-icon-direction))}@media screen and (forced-colors:active){#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{filter:invert(1)}}#panel.left #panel-content,#panel.top-left #panel-content{flex-direction:row-reverse}#status{font-size:var(--sa11y-large-text)}#status,.panel-count{color:var(--sa11y-panel-primary)}.panel-count{background-color:var(--sa11y-panel-badge);border-radius:4px;font-size:15px;font-weight:400;margin-left:3px;margin-right:3px;padding:2px 4px}#outline-panel,#page-issues,#settings-panel{color:var(--sa11y-panel-primary);display:none;opacity:0}#outline-panel.active,#page-issues.active,#settings-panel.active{display:block;opacity:1}.panel-header{padding:10px 15px 0;text-align:start}#outline-content,#page-issues-content,#settings-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);padding:0 15px 10px}#page-issues-content{max-height:160px;overflow-y:auto}#outline-content{max-height:250px;overflow-y:auto}#outline-panel .outline-list-item.sa11y-red-text,#settings-panel .sa11y-red-text{color:var(--sa11y-red-text)}#outline-list{display:block;margin:0;padding:0}#outline-list a{cursor:pointer;display:block;text-decoration:none}#outline-list li{display:block;list-style-type:none;margin-bottom:3px;margin-top:0;padding:0}#outline-list li:first-child{margin-top:5px}#outline-list li a:focus,#outline-list li a:hover{background:var(--sa11y-panel-outline-hover);border-radius:5px;box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);display:block}#outline-list .outline-2{margin-inline-start:15px}#outline-list .outline-3{margin-inline-start:30px}#outline-list .outline-4{margin-inline-start:45px}#outline-list .outline-5{margin-inline-start:60px}#outline-list .outline-6{margin-inline-start:75px}.badge{background-color:var(--sa11y-panel-badge);border:1px solid transparent;border-radius:10px;color:var(--sa11y-panel-primary);display:inline;font-size:13px;font-weight:700;min-width:10px;padding:2px 5px;text-align:center;white-space:nowrap}.error-badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.warning-badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.error-icon{background:var(--sa11y-error-text);-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat}.error-icon,.hidden-icon{display:inline-block;height:16px;margin-bottom:-3px;width:16px}.hidden-icon{background:var(--sa11y-panel-primary);-webkit-mask:var(--sa11y-hidden-icon-svg) center no-repeat;mask:var(--sa11y-hidden-icon-svg) center no-repeat}.error-badge .hidden-icon{background:var(--sa11y-error-text)}.warning-badge .hidden-icon{background:var(--sa11y-panel-bg)}@media screen and (forced-colors:active){.hidden-icon{filter:invert(1)}}#panel-controls{border-radius:0 0 4px 4px;display:flex;overflow:hidden}#outline-toggle,#settings-toggle{background:var(--sa11y-panel-bg-secondary);background-color:var(--sa11y-panel-bg-secondary);border-bottom:1px solid var(--sa11y-panel-bg-splitter);border-top:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-secondary);cursor:pointer;display:block;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;line-height:0;margin:0;opacity:1;outline:0;padding:0;position:relative;text-align:center;transition:background .2s;width:100%}#outline-toggle.outline-active,#outline-toggle.settings-active,#outline-toggle:hover,#settings-toggle.outline-active,#settings-toggle.settings-active,#settings-toggle:hover{background-color:var(--sa11y-shortcut-hover)}#outline-toggle.outline-active,#outline-toggle.settings-active,#settings-toggle.outline-active,#settings-toggle.settings-active{font-weight:500}#outline-toggle{border-inline-end:1px solid var(--sa11y-panel-bg-splitter)}#export-results-mode,label{color:var(--sa11y-panel-primary);display:inline-block;font-weight:400;margin:0;width:100%}label:not(#colour-filter-mode,#export-results-mode){cursor:pointer}#settings-panel #export-csv,#settings-panel #export-html{padding:0;text-align:center;width:unset}#settings-panel #export-csv span,#settings-panel #export-html span{background:var(--sa11y-panel-bg-secondary);border-radius:5px;box-shadow:inset 0 0 0 2px var(--sa11y-setting-switch-bg-off);display:block;margin:0 4px;padding:7px 9px;width:65px}#settings-panel #export-csv:focus span,#settings-panel #export-csv:focus-within span,#settings-panel #export-csv:hover span,#settings-panel #export-html:focus span,#settings-panel #export-html:focus-within span,#settings-panel #export-html:hover span{background:var(--sa11y-shortcut-hover)}#settings-panel .switch{background:none;border:0;border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:44px;margin:0;padding:7px 10px;position:relative;text-align:end;width:105px}#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{content:\"\";display:inline-block;height:27px;margin:0 4px 4px;vertical-align:middle;width:27px}#settings-panel .switch[aria-pressed=true]:after{background:var(--sa11y-setting-switch-bg-on);-webkit-mask:var(--sa11y-setting-switch-on-svg) center no-repeat;mask:var(--sa11y-setting-switch-on-svg) center no-repeat}#settings-panel .switch[aria-pressed=false]:after{background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-setting-switch-off-svg) center no-repeat;mask:var(--sa11y-setting-switch-off-svg) center no-repeat}@media screen and (forced-colors:active){#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{filter:invert(1)}}#settings-panel #settings-options li{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:flex;justify-content:space-between;list-style-type:none;padding:1px 0}#settings-panel #settings-options li:last-child{border:none}#page-issues{align-items:center;color:var(--sa11y-panel-primary)}#page-issues-list{display:block;margin-top:4px}#page-issues-list li{display:block;margin:0 0 10px}#page-issues-list strong{display:block}#panel-colour-filters{align-items:center;color:var(--sa11y-panel-primary);display:none;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}#panel-colour-filters.active{display:flex}#panel-colour-filters p{padding:6px 20px 6px 6px;width:100%}#panel-colour-filters[data-colour=protanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image-slice:1}#panel-colour-filters[data-colour=deuteranopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image-slice:1}#panel-colour-filters[data-colour=tritanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image-slice:1}#panel-colour-filters[data-colour=monochromacy]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image-slice:1}#panel-colour-filters[data-colour=protanopia] .panel-icon{background:var(--sa11y-panel-error)}#panel-colour-filters[data-colour=deuteranopia] .panel-icon{background:var(--sa11y-good-hover)}#panel-colour-filters[data-colour=tritanopia] .panel-icon{background:var(--sa11y-blue)}#panel-colour-filters[data-colour=monochromacy] .panel-icon{background:linear-gradient(90deg,#38a459 20%,red 50%,#0077c8 80%)}#panel-colour-filters .panel-icon{height:30px;margin-inline-end:5px;margin-inline-start:10px;-webkit-mask:var(--sa11y-low-vision-icon) center no-repeat;mask:var(--sa11y-low-vision-icon) center no-repeat;width:30px}@media screen and (forced-colors:active){#panel-colour-filters .panel-icon{forced-color-adjust:none}}.select-dropdown:after{border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid var(--sa11y-setting-switch-bg-off);content:\" \";height:0;inset-inline-end:25px;margin-top:22.5px;position:absolute;width:0}#colour-filter-select{-webkit-appearance:none;-moz-appearance:none;appearance:none;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-setting-switch-bg-off);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;margin-inline-end:4px;padding-inline-end:25px;padding-inline-start:5px;position:relative;text-align:end;vertical-align:middle}#colour-filter-select:focus,#colour-filter-select:hover{background:var(--sa11y-shortcut-hover)}#colour-filter-select.active{box-shadow:0 0 0 2px var(--sa11y-setting-switch-bg-on)}#colour-filter-item label,#colour-filter-item select{margin-bottom:9px;margin-top:10px}#readability-panel{display:none;opacity:0}#readability-panel.active{display:block;opacity:1}#readability-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-primary);padding:10px 15px;width:100%}#readability-details{list-style-type:none;margin:0;padding:0;white-space:normal}#readability-details li{display:inline-block;list-style-type:none;margin:0;padding-inline-end:10px}.readability-score{background-color:var(--sa11y-panel-badge);border-radius:4px;color:var(--sa11y-panel-primary);margin-inline-start:5px;padding:2px 5px}#readability-info{margin-inline-start:10px}#skip-to-page-issues{display:none}#panel.has-page-issues #skip-to-page-issues{clip:rect(0,0,0,0);background:var(--sa11y-panel-bg);border:0;border-radius:5px;display:block;height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}#panel.has-page-issues #skip-to-page-issues:focus{clip:auto;height:auto;margin:0;overflow:visible;padding:5px 7px;white-space:normal;width:auto;z-index:1}.hide-settings-border{border-bottom:0!important;padding:0 15px!important}::-webkit-scrollbar{height:6px;width:7px}::-webkit-scrollbar-thumb{background-color:var(--sa11y-button-outline);border-radius:6px}*{scrollbar-color:var(--sa11y-button-outline);scrollbar-width:thin}.scrollable:before{animation:fade 1s ease-in-out;background-image:linear-gradient(180deg,transparent 0,transparent 70%,var(--sa11y-panel-scrollable) 100%);background-position:bottom;bottom:auto;content:\"\";height:250px;left:0;position:absolute;right:0;top:auto;transition:opacity 1s ease-in-out;z-index:-1}#page-issues-content.scrollable:before{height:160px}#panel-alert.scrollable:before{height:200px}@keyframes sa11y-toggle-gradient{0%{background-position:50% 0}50%{background-position:50% 100%}to{background-position:50% 0}}@keyframes fade{0%{opacity:0}to{opacity:1}}@media (prefers-reduced-motion:reduce){*{animation:none!important;transform:none!important;transition:none!important}}#panel{width:375px}#container:lang(en) #panel{width:305px}#container:lang(da) #panel,#container:lang(de) #panel,#container:lang(nb) #panel,#container:lang(pl) #panel,#container:lang(sv) #panel,#container:lang(zh) #panel{width:335px}#container:lang(es) .switch{width:225px!important}#container:not(:lang(en)):not(:lang(de)) .switch{width:205px}";
+var panelStyles = "a,button,code,div,h1,h2,kbd,label,li,ol,p,pre,span,strong,svg,ul{all:unset;box-sizing:border-box!important}:after,:before{all:unset}div{display:block}*{-webkit-font-smoothing:auto!important;font-family:var(--sa11y-font-face)!important;line-height:22px!important}label,li,ol,p,ul{font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;text-align:start;word-break:break-word}.sa11y-overflow{overflow:auto}iframe,img,video{border:0;display:block;height:auto;max-width:100%}audio{max-width:100%}#toggle{align-items:center;background:linear-gradient(0deg,#e040fb,#00bcd4);background-color:var(--sa11y-blue);background-size:150% 150%;border-radius:50%;bottom:15px;color:#fff;cursor:pointer;display:flex;height:55px;inset-inline-end:18px;justify-content:center;margin:0;overflow:visible;position:fixed;transition:all .2s ease-in-out;width:55px;z-index:2147483644}#toggle.left,#toggle.top-left{inset-inline-start:18px}#toggle.top-left,#toggle.top-right{bottom:unset;top:15px}@media screen and (forced-colors:active){#toggle{border:2px solid transparent}}#toggle svg{height:35px;width:35px}#toggle svg path{fill:var(--sa11y-panel-bg)}#toggle:focus,#toggle:hover{animation:sa11y-toggle-gradient 3s ease}#toggle:disabled:focus,#toggle:disabled:hover{animation:none}#toggle.on{background:linear-gradient(180deg,#e040fb,#00bcd4);background-color:var(--sa11y-blue)}#notification-badge{text-wrap:nowrap;align-items:center;background-color:#eb0000;border:1px solid transparent;border-radius:12px;color:#fff;display:none;font-size:13.5px;font-weight:400;height:20px;justify-content:center;min-width:20px;padding:3px;position:absolute;right:-3px;top:-5.5px}#notification-badge.notification-badge-warning{background-color:var(--sa11y-warning-hover);border:1px solid var(--sa11y-warning);color:var(--sa11y-warning-text)}#panel{background:var(--sa11y-panel-bg);border-radius:4px;bottom:25px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15);inset-inline-end:42px;opacity:0;overflow:visible;position:fixed;transform:scale(0);transform-origin:100% 100%;transition:transform .2s,opacity background .2s .2s;visibility:hidden;z-index:2147483643}#panel.left,#panel.top-left{inset-inline-start:42px}#panel.top-left,#panel.top-right{bottom:unset;top:50px}#panel.active{height:auto;opacity:1;transform:scale(1);transform-origin:bottom right;transition:transform .2s,opacity .2s;visibility:visible}@media screen and (forced-colors:active){#panel{border:2px solid transparent}}#panel.active.left,[dir=rtl] #panel.active{transform-origin:bottom left}#panel.active.top-left{transform-origin:top left}#panel.active.top-right{transform-origin:top right}#panel-alert{display:none;opacity:0}#panel-alert.active{display:block;opacity:1}#panel-alert-content{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-primary);max-height:400px;overflow-y:auto;padding:15px 20px 15px 15px;position:relative}#panel-alert-preview .close-tooltip{display:none}#panel-alert-preview,#panel-alert-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}.panel-alert-preview{background:var(--sa11y-panel-bg-secondary);border:1px dashed var(--sa11y-panel-bg-splitter);border-radius:5px;margin-top:15px;padding:10px}.element-preview{background-color:var(--sa11y-panel-badge);border-radius:3.2px;margin-bottom:10px;overflow-wrap:break-word;padding:5px}button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}button[data-sa11y-dismiss]:focus,button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}h2{display:block;font-size:var(--sa11y-large-text);margin-bottom:3px}h2,strong{font-weight:600}a:not(#outline-list a){border-bottom:0;color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none!important}hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}#dismiss-button,#skip-button{background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:50px;cursor:pointer;display:none;height:36px;margin-inline-end:8px;margin-inline-start:2px;overflow:visible;position:relative;text-align:center;transition:all .1s ease-in-out;width:36px}#dismiss-button.active,#skip-button.active{display:block}#dismiss-button:disabled,#skip-button:disabled{background:none;border:0;box-shadow:none;cursor:default}#dismiss-button:before,#skip-button:before{bottom:-5px;content:\"\";left:-5px;position:absolute;right:-5px;top:-5px}#dismiss-button:focus:not(:disabled),#dismiss-button:hover:not(:disabled),#skip-button:focus:not(:disabled),#skip-button:hover:not(:disabled){background-color:var(--sa11y-shortcut-hover)}#panel.left #dismiss-button,#panel.left #skip-button,#panel.top-left #dismiss-button,#panel.top-left #skip-button{margin-inline-end:2px;margin-inline-start:8px}.dismiss-icon{background:var(--sa11y-setting-switch-bg-off);display:inline-block;height:24px;margin-bottom:-4px;-webkit-mask:var(--sa11y-dismiss-icon) center no-repeat;mask:var(--sa11y-dismiss-icon) center no-repeat;width:24px}@media screen and (forced-colors:active){.dismiss-icon{filter:invert(1)}}#panel-content{align-items:center;color:var(--sa11y-panel-primary);display:flex;padding:6px}#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{height:26px;margin:0 auto;width:26px}#panel-content.errors .panel-icon{background:var(--sa11y-panel-error);margin-top:-2px;-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat}#panel-content.good .panel-icon{background:var(--sa11y-good);-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat}#panel-content.warnings .panel-icon{background:var(--sa11y-warning-svg-color);-webkit-mask:var(--sa11y-warning-svg) center no-repeat;mask:var(--sa11y-warning-svg) center no-repeat;transform:scaleX(var(--sa11y-icon-direction))}@media screen and (forced-colors:active){#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{filter:invert(1)}}#panel.left #panel-content,#panel.top-left #panel-content{flex-direction:row-reverse}#status{font-size:var(--sa11y-large-text)}#status,.panel-count{color:var(--sa11y-panel-primary)}.panel-count{background-color:var(--sa11y-panel-badge);border-radius:4px;font-size:15px;font-weight:400;margin-left:3px;margin-right:3px;padding:2px 4px}#outline-panel,#page-issues,#settings-panel{color:var(--sa11y-panel-primary);display:none;opacity:0}#outline-panel.active,#page-issues.active,#settings-panel.active{display:block;opacity:1}.panel-header{padding:10px 15px 0;text-align:start}#outline-content,#page-issues-content,#settings-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);padding:0 15px 10px}#page-issues-content{max-height:160px;overflow-y:auto}#outline-content{max-height:250px;overflow-y:auto}#outline-panel .outline-list-item.sa11y-red-text,#settings-panel .sa11y-red-text{color:var(--sa11y-red-text)}#outline-list{display:block;margin:0;padding:0}#outline-list a{cursor:pointer;display:block;text-decoration:none}#outline-list li{display:block;list-style-type:none;margin-bottom:3px;margin-top:0;padding:0}#outline-list li:first-child{margin-top:5px}#outline-list li a:focus,#outline-list li a:hover{background:var(--sa11y-panel-outline-hover);border-radius:5px;box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);display:block}#outline-list .outline-2{margin-inline-start:15px}#outline-list .outline-3{margin-inline-start:30px}#outline-list .outline-4{margin-inline-start:45px}#outline-list .outline-5{margin-inline-start:60px}#outline-list .outline-6{margin-inline-start:75px}.badge{background-color:var(--sa11y-panel-badge);border:1px solid transparent;border-radius:10px;color:var(--sa11y-panel-primary);display:inline;font-size:13px;font-weight:700;min-width:10px;padding:2px 5px;text-align:center;white-space:nowrap}.error-badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.warning-badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.error-icon{background:var(--sa11y-error-text);-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat}.error-icon,.hidden-icon{display:inline-block;height:16px;margin-bottom:-3px;width:16px}.hidden-icon{background:var(--sa11y-panel-primary);-webkit-mask:var(--sa11y-hidden-icon-svg) center no-repeat;mask:var(--sa11y-hidden-icon-svg) center no-repeat}.error-badge .hidden-icon{background:var(--sa11y-error-text)}.warning-badge .hidden-icon{background:var(--sa11y-panel-bg)}@media screen and (forced-colors:active){.hidden-icon{filter:invert(1)}}#panel-controls{border-radius:0 0 4px 4px;display:flex;overflow:hidden}#outline-toggle,#settings-toggle{background:var(--sa11y-panel-bg-secondary);background-color:var(--sa11y-panel-bg-secondary);border-bottom:1px solid var(--sa11y-panel-bg-splitter);border-top:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-secondary);cursor:pointer;display:block;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;line-height:0;margin:0;opacity:1;outline:0;padding:0;position:relative;text-align:center;transition:background .2s;width:100%}#outline-toggle.outline-active,#outline-toggle.settings-active,#outline-toggle:hover,#settings-toggle.outline-active,#settings-toggle.settings-active,#settings-toggle:hover{background-color:var(--sa11y-shortcut-hover)}#outline-toggle.outline-active,#outline-toggle.settings-active,#settings-toggle.outline-active,#settings-toggle.settings-active{font-weight:500}#outline-toggle{border-inline-end:1px solid var(--sa11y-panel-bg-splitter)}#export-results-mode,label{color:var(--sa11y-panel-primary);display:inline-block;font-weight:400;margin:0;width:100%}label:not(#colour-filter-mode,#export-results-mode){cursor:pointer}#settings-panel #export-csv,#settings-panel #export-html{padding:0;text-align:center;width:unset}#settings-panel #export-csv span,#settings-panel #export-html span{background:var(--sa11y-panel-bg-secondary);border-radius:5px;box-shadow:inset 0 0 0 2px var(--sa11y-setting-switch-bg-off);display:block;margin:0 4px;padding:7px 9px;width:65px}#settings-panel #export-csv:focus span,#settings-panel #export-csv:focus-within span,#settings-panel #export-csv:hover span,#settings-panel #export-html:focus span,#settings-panel #export-html:focus-within span,#settings-panel #export-html:hover span{background:var(--sa11y-shortcut-hover)}#settings-panel .switch{background:none;border:0;border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:44px;margin:0;padding:7px 10px;position:relative;text-align:end;width:105px}#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{content:\"\";display:inline-block;height:27px;margin:0 4px 4px;vertical-align:middle;width:27px}#settings-panel .switch[aria-pressed=true]:after{background:var(--sa11y-setting-switch-bg-on);-webkit-mask:var(--sa11y-setting-switch-on-svg) center no-repeat;mask:var(--sa11y-setting-switch-on-svg) center no-repeat}#settings-panel .switch[aria-pressed=false]:after{background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-setting-switch-off-svg) center no-repeat;mask:var(--sa11y-setting-switch-off-svg) center no-repeat}@media screen and (forced-colors:active){#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{filter:invert(1)}}#settings-panel #settings-options li{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:flex;justify-content:space-between;list-style-type:none;padding:1px 0}#settings-panel #settings-options li:last-child{border:none}#page-issues{align-items:center;color:var(--sa11y-panel-primary)}#page-issues-list{display:block;margin-top:4px}#page-issues-list li{display:block;margin:0 0 10px}#page-issues-list strong{display:block}#panel-colour-filters{align-items:center;color:var(--sa11y-panel-primary);display:none;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}#panel-colour-filters.active{display:flex}#panel-colour-filters p{padding:6px 20px 6px 6px;width:100%}#panel-colour-filters[data-colour=protanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image-slice:1}#panel-colour-filters[data-colour=deuteranopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image-slice:1}#panel-colour-filters[data-colour=tritanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image-slice:1}#panel-colour-filters[data-colour=monochromacy]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image-slice:1}#panel-colour-filters[data-colour=protanopia] .panel-icon{background:var(--sa11y-panel-error)}#panel-colour-filters[data-colour=deuteranopia] .panel-icon{background:var(--sa11y-good-hover)}#panel-colour-filters[data-colour=tritanopia] .panel-icon{background:var(--sa11y-blue)}#panel-colour-filters[data-colour=monochromacy] .panel-icon{background:linear-gradient(90deg,#38a459 20%,red 50%,#0077c8 80%)}#panel-colour-filters .panel-icon{height:30px;margin-inline-end:5px;margin-inline-start:10px;-webkit-mask:var(--sa11y-low-vision-icon) center no-repeat;mask:var(--sa11y-low-vision-icon) center no-repeat;width:30px}@media screen and (forced-colors:active){#panel-colour-filters .panel-icon{forced-color-adjust:none}}.select-dropdown:after{border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid var(--sa11y-setting-switch-bg-off);content:\" \";height:0;inset-inline-end:25px;margin-top:22.5px;position:absolute;width:0}#colour-filter-select{-webkit-appearance:none;-moz-appearance:none;appearance:none;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-setting-switch-bg-off);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;margin-inline-end:4px;padding-inline-end:25px;padding-inline-start:5px;position:relative;text-align:end;vertical-align:middle}#colour-filter-select:focus,#colour-filter-select:hover{background:var(--sa11y-shortcut-hover)}#colour-filter-select.active{box-shadow:0 0 0 2px var(--sa11y-setting-switch-bg-on)}#colour-filter-item label,#colour-filter-item select{margin-bottom:9px;margin-top:10px}#readability-panel{display:none;opacity:0}#readability-panel.active{display:block;opacity:1}#readability-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-primary);padding:10px 15px;width:100%}#readability-details{list-style-type:none;margin:0;padding:0;white-space:normal}#readability-details li{display:inline-block;list-style-type:none;margin:0;padding-inline-end:10px}.readability-score{background-color:var(--sa11y-panel-badge);border-radius:4px;color:var(--sa11y-panel-primary);margin-inline-start:5px;padding:2px 5px}#readability-info{margin-inline-start:10px}#skip-to-page-issues{display:none}#panel.has-page-issues #skip-to-page-issues{clip:rect(0,0,0,0);background:var(--sa11y-panel-bg);border:0;border-radius:5px;display:block;height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}#panel.has-page-issues #skip-to-page-issues:focus{clip:auto;height:auto;margin:0;overflow:visible;padding:5px 7px;white-space:normal;width:auto;z-index:1}.hide-settings-border{border-bottom:0!important;padding:0 15px!important}::-webkit-scrollbar{height:6px;width:7px}::-webkit-scrollbar-thumb{background-color:var(--sa11y-button-outline);border-radius:6px}*{scrollbar-color:var(--sa11y-button-outline);scrollbar-width:thin}.scrollable:before{animation:fade 1s ease-in-out;background-image:linear-gradient(180deg,transparent 0,transparent 70%,var(--sa11y-panel-scrollable) 100%);background-position:bottom;bottom:auto;content:\"\";height:250px;left:0;position:absolute;right:0;top:auto;transition:opacity 1s ease-in-out;z-index:-1}#page-issues-content.scrollable:before{height:160px}#panel-alert.scrollable:before{height:200px}@keyframes sa11y-toggle-gradient{0%{background-position:50% 0}50%{background-position:50% 100%}to{background-position:50% 0}}@keyframes fade{0%{opacity:0}to{opacity:1}}@media (prefers-reduced-motion:reduce){*{animation:none!important;transform:none!important;transition:none!important}}#panel{width:375px}#container:lang(en) #panel{width:305px}#container:lang(da) #panel,#container:lang(de) #panel,#container:lang(nb) #panel,#container:lang(pl) #panel,#container:lang(sv) #panel,#container:lang(zh) #panel{width:335px}#container:lang(es) .switch{width:225px!important}#container:not(:lang(en)):not(:lang(de)) .switch{width:205px}";
 
 class ControlPanel extends HTMLElement {
   connectedCallback() {
@@ -6046,7 +5924,7 @@ tippy.setDefaultProps({
   render: render
 });
 
-var tooltipStyles = "a,button,code,div,h1,h2,kbd,li,ol,p,span,strong,svg,ul{all:unset;box-sizing:border-box!important}div{display:block}:after,:before{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}@media (forced-colors:active){[data-tippy-root]{border:2px solid transparent;border-radius:5px}}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:0}.tippy-box[data-placement^=top]>.tippy-arrow:before{border-top-color:initial;border-width:8px 8px 0;bottom:-7px;left:0;transform-origin:center top}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:0}.tippy-box[data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:initial;border-width:0 8px 8px;left:0;top:-7px;transform-origin:center bottom}.tippy-box[data-placement^=left]>.tippy-arrow{right:0}.tippy-box[data-placement^=left]>.tippy-arrow:before{border-left-color:initial;border-width:8px 0 8px 8px;right:-7px;transform-origin:center left}.tippy-box[data-placement^=right]>.tippy-arrow{left:0}.tippy-box[data-placement^=right]>.tippy-arrow:before{border-right-color:initial;border-width:8px 8px 8px 0;left:-7px;transform-origin:center right}.tippy-arrow{color:#333;height:16px;width:16px}.tippy-arrow:before{border-color:transparent;border-style:solid;content:\"\";position:absolute}.tippy-content{padding:5px 9px;position:relative;z-index:1}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{min-width:300px;text-align:start}[role=tooltip]{min-width:185px;text-align:center}.tippy-box[data-theme~=sa11y-theme]{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-bg);border-radius:4px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15)!important;color:var(--sa11y-panel-primary);display:block;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px;outline:0;padding:8px;position:relative;transition-property:transform,visibility,opacity}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace}.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);letter-spacing:normal;line-height:22px;padding:1.6px 4.8px}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]{text-align:center}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block-end:0;margin-block-start:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{display:list-item;margin:5px 10px 0 20px;padding-bottom:5px}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] a:hover{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin:0}.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:focus,.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{filter:invert(1);forced-color-adjust:none}.tippy-box[data-theme~=sa11y-theme] .tippy-arrow{z-index:-1}}";
+var tooltipStyles = "a,button,code,div,h1,h2,kbd,li,ol,p,span,strong,svg,ul{all:unset;box-sizing:border-box!important}div{display:block}:after,:before{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}@media (forced-colors:active){[data-tippy-root]{border:2px solid transparent;border-radius:5px}}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:0}.tippy-box[data-placement^=top]>.tippy-arrow:before{border-top-color:initial;border-width:8px 8px 0;bottom:-7px;left:0;transform-origin:center top}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:0}.tippy-box[data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:initial;border-width:0 8px 8px;left:0;top:-7px;transform-origin:center bottom}.tippy-box[data-placement^=left]>.tippy-arrow{right:0}.tippy-box[data-placement^=left]>.tippy-arrow:before{border-left-color:initial;border-width:8px 0 8px 8px;right:-7px;transform-origin:center left}.tippy-box[data-placement^=right]>.tippy-arrow{left:0}.tippy-box[data-placement^=right]>.tippy-arrow:before{border-right-color:initial;border-width:8px 8px 8px 0;left:-7px;transform-origin:center right}.tippy-arrow{color:#333;height:16px;width:16px}.tippy-arrow:before{border-color:transparent;border-style:solid;content:\"\";position:absolute}.tippy-content{padding:5px 9px;position:relative;z-index:1}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{min-width:300px;text-align:start}[role=tooltip]{min-width:185px;text-align:center}.tippy-box[data-theme~=sa11y-theme]{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-bg);border-radius:4px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15)!important;color:var(--sa11y-panel-primary);display:block;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px;outline:0;padding:8px;position:relative;transition-property:transform,visibility,opacity}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace;font-size:calc(var(--sa11y-normal-text) - 1px)}.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);letter-spacing:normal;line-height:22px;padding:1.6px 4.8px}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]{text-align:center}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block-end:0;margin-block-start:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{display:list-item;margin:5px 10px 0 20px;padding-bottom:5px}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] a:hover{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin:0}.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:focus,.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{filter:invert(1);forced-color-adjust:none}.tippy-box[data-theme~=sa11y-theme] .tippy-arrow{z-index:-1}}";
 
 class TooltipComponent extends HTMLElement {
   connectedCallback() {
@@ -6296,7 +6174,7 @@ function annotate(
       class="sa11y-btn ${[type]}-btn${inline ? '-text' : ''}"
       data-tippy-content=
         "<div lang='${Lang._('LANG_CODE')}'>
-          <button class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button>
+          <button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button>
           <div class='header-text'><h2>${ariaLabel[type]}</h2></div>
           ${escapeHTML(content)}
           ${dismiss}
@@ -6548,6 +6426,177 @@ function removeSkipBtnListeners() {
   Constants.Panel.skipButton.removeEventListener('click', handleSkipButtonHandler);
 }
 
+/* eslint-disable no-use-before-define */
+
+/* Get text content of pseudo elements. */
+const wrapPseudoContent = (element, string) => {
+  const pseudo = [];
+  pseudo[0] = window.getComputedStyle(element, ':before').getPropertyValue('content');
+  pseudo[1] = window.getComputedStyle(element, ':after').getPropertyValue('content');
+  pseudo[0] = pseudo[0] === 'none' ? '' : pseudo[0].replace(/^"(.*)"$/, '$1');
+  pseudo[1] = pseudo[1] === 'none' ? '' : pseudo[1].replace(/^"(.*)"$/, '$1');
+  return ` ${pseudo[0]}${string}${pseudo[1]}`;
+};
+
+/* Sets treeWalker loop to last node before next branch. */
+const nextTreeBranch = (tree) => {
+  for (let i = 0; i < 1000; i++) {
+    if (tree.nextSibling()) {
+      // Prepare for continue to advance.
+      return tree.previousNode();
+    }
+    // Next node will be in next branch.
+    if (!tree.parentNode()) {
+      return false;
+    }
+  }
+  return false;
+};
+
+/* Compute ARIA attributes. */
+const computeAriaLabel = (element, recursing = false) => {
+  const labelledBy = element.getAttribute('aria-labelledby');
+  if (!recursing && labelledBy) {
+    const target = labelledBy.split(/\s+/);
+    if (target.length > 0) {
+      let returnText = '';
+      target.forEach((x) => {
+        const targetSelector = document.querySelector(`#${CSS.escape(x)}`);
+        returnText += (!targetSelector) ? '' : `${computeAccessibleName(targetSelector, '', 1)}`;
+      });
+      return returnText;
+    }
+  }
+  if (element.ariaLabel && element.ariaLabel.trim().length > 0) {
+    // To-do: add empty and whitespace string tests.
+    return element.ariaLabel;
+  }
+  return 'noAria';
+};
+
+/**
+ * Computes the accessible name of an element.
+ * @param {Element} element The element for which the accessible name needs to be computed.
+ * @param {String} exclusions List of selectors which will be ignored.
+ * @param {Number} recursing Recursion depth.
+ * @returns {string} The computed accessible name of the element.
+ * @kudos to John Jameson, creator of the Editoria11y library, for developing this more robust calculation!
+ * @notes Uses a subset of the W3C accessible name algorithm.
+*/
+const computeAccessibleName = (element, exclusions, recursing = 0) => {
+  // Return immediately if there is an aria label.
+  const hasAria = computeAriaLabel(element, recursing);
+  if (hasAria !== 'noAria') {
+    return hasAria;
+  }
+
+  // Return immediately if there is only a text node.
+  let computedText = '';
+  if (!element.children.length) {
+    // Just text! Output immediately.
+    computedText = wrapPseudoContent(element, element.textContent);
+    if (!computedText.trim() && element.hasAttribute('title')) {
+      return element.getAttribute('title');
+    }
+    return computedText;
+  }
+
+  // Create tree walker object.
+  function createCustomTreeWalker(rootNode, showElement, showText) {
+    const acceptNode = (node) => {
+      if (showElement && node.nodeType === Node.ELEMENT_NODE) return NodeFilter.FILTER_ACCEPT;
+      if (showText && node.nodeType === Node.TEXT_NODE) return NodeFilter.FILTER_ACCEPT;
+      return NodeFilter.FILTER_REJECT;
+    };
+    return document.createTreeWalker(rootNode, NodeFilter.SHOW_ALL, { acceptNode });
+  }
+  const treeWalker = createCustomTreeWalker(element, true, true);
+
+  // Otherwise, recurse into children.
+  let addTitleIfNoName = false;
+  let aText = false;
+  let count = 0;
+  let shouldContinueWalker = true;
+
+  const exclude = (exclusions) ? element.querySelectorAll(exclusions) : '';
+
+  while (treeWalker.nextNode() && shouldContinueWalker) {
+    count += 1;
+
+    // Exclusions.
+    const currentNodeMatchesExclude = Array.from(exclude).some((excludedNode) => excludedNode.contains(treeWalker.currentNode));
+
+    if (currentNodeMatchesExclude) ; else if (treeWalker.currentNode.nodeType === Node.TEXT_NODE) {
+      computedText += ` ${treeWalker.currentNode.nodeValue}`;
+    } else if (addTitleIfNoName && !treeWalker.currentNode.closest('a')) {
+      if (aText === computedText) {
+        computedText += addTitleIfNoName;
+      }
+      addTitleIfNoName = false;
+      aText = false;
+    } else if (treeWalker.currentNode.hasAttribute('aria-hidden') && !(recursing && count < 3)) {
+      if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
+    } else {
+      const aria = computeAriaLabel(treeWalker.currentNode, recursing);
+      if (aria !== 'noAria') {
+        computedText += ` ${aria}`;
+        if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
+      } else {
+        switch (treeWalker.currentNode.tagName) {
+          case 'STYLE':
+          case 'NOSCRIPT':
+            if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
+            break;
+          case 'IMG':
+            if (treeWalker.currentNode.hasAttribute('alt')) {
+              computedText += treeWalker.currentNode.getAttribute('alt');
+            }
+            break;
+          case 'SVG':
+          case 'svg':
+            if (treeWalker.currentNode.getAttribute('role') === 'image'
+              && treeWalker.currentNode.hasAttribute('alt')) {
+              computedText += wrapPseudoContent(
+                treeWalker.currentNode, treeWalker.currentNode.getAttribute('alt'),
+              );
+              if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
+            }
+            break;
+          case 'A':
+            if (treeWalker.currentNode.hasAttribute('title')) {
+              addTitleIfNoName = treeWalker.currentNode.getAttribute('title');
+              aText = computedText;
+            } else {
+              addTitleIfNoName = false;
+              aText = false;
+            }
+            computedText += wrapPseudoContent(treeWalker.currentNode, '');
+            break;
+          default:
+            computedText += wrapPseudoContent(treeWalker.currentNode, '');
+            break;
+        }
+      }
+    }
+  }
+
+  if (addTitleIfNoName && !aText) {
+    computedText += ` ${addTitleIfNoName}`;
+  }
+
+  // Replace Private Use Area (PUA) unicode characters.
+  // https://www.unicode.org/faq/private_use.html
+  const puaRegex = /[\uE000-\uF8FF]/gu;
+  computedText = computedText.replace(puaRegex, '');
+
+  // If computedText returns blank, fallback on title attribute.
+  if (!computedText.trim() && element.hasAttribute('title')) {
+    return element.getAttribute('title');
+  }
+
+  return computedText;
+};
+
 function checkImages(results, option) {
   const containsAltTextStopWords = (alt) => {
     const altUrl = [
@@ -6559,11 +6608,21 @@ function checkImages(results, option) {
       '.tiff',
       '.svg',
       'DSC_',
+      'IMG_',
+      'Photo_',
+      'Pic_',
+      'Pexels_',
+      'AdobeStock_',
+      'ScreenShot_',
+      'Picture_',
+      'Snap_',
+      'Capture_',
     ];
 
     const hit = [null, null, null];
     altUrl.forEach((word) => {
-      if (alt.toLowerCase().indexOf(word) >= 0) {
+      const stopword = word.toLowerCase();
+      if (alt.toLowerCase().indexOf(stopword) >= 0) {
         hit[0] = word;
       }
     });
@@ -6582,25 +6641,50 @@ function checkImages(results, option) {
 
   Elements.Found.Images.forEach(($el) => {
     const alt = $el.getAttribute('alt');
+    const link = $el.closest('a[href]');
+
+    // Process link text exclusions.
+    const linkSpanExclusions = link
+      ? fnIgnore(link, Constants.Exclusions.LinkSpan).textContent : '';
+    const stringMatchExclusions = option.linkIgnoreStrings
+      ? linkSpanExclusions.replace(option.linkIgnoreStrings, '') : linkSpanExclusions;
+    const linkTextContentLength = link
+      ? removeWhitespace(stringMatchExclusions).length : 0;
+
+    // Has aria-hidden.
+    if ($el.getAttribute('aria-hidden') === 'true') {
+      return;
+    }
+
+    if (link && link.getAttribute('aria-hidden') === 'true') {
+      // If linked image has aria-hidden, but is still focusable.
+      const unfocusable = link.getAttribute('tabindex') === '-1';
+      if (!unfocusable) {
+        results.push({
+          element: $el,
+          type: 'error',
+          content: Lang.sprintf('LINK_HIDDEN_FOCUSABLE'),
+          inline: false,
+          position: 'beforebegin',
+        });
+      }
+      return;
+    }
+
+    // If alt is missing.
     if (alt === null) {
-      if ($el.closest('a[href]')) {
-        if (fnIgnore($el.closest('a[href]')).textContent.trim().length >= 1) {
-          results.push({
-            element: $el,
-            type: 'error',
-            content: Lang.sprintf('MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE'),
-            inline: false,
-            position: 'beforebegin',
-          });
-        } else if (fnIgnore($el.closest('a[href]')).textContent.trim().length === 0) {
-          results.push({
-            element: $el,
-            type: 'error',
-            content: Lang.sprintf('MISSING_ALT_LINK_MESSAGE'),
-            inline: false,
-            position: 'beforebegin',
-          });
-        }
+      if (link) {
+        const content = (linkTextContentLength === 0)
+          ? Lang.sprintf('MISSING_ALT_LINK_MESSAGE')
+          : Lang.sprintf('MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE');
+
+        results.push({
+          element: $el,
+          type: 'error',
+          content,
+          inline: false,
+          position: 'beforebegin',
+        });
       } else {
         // General failure message if image is missing alt.
         results.push({
@@ -6612,152 +6696,49 @@ function checkImages(results, option) {
         });
       }
     } else {
-      // If alt attribute is present, further tests are done.
-      const altText = sanitizeHTML(alt); // Prevent tooltip from breaking.
+      // If image has alt.
+      const altText = sanitizeHTML(alt);
       const error = containsAltTextStopWords(altText);
-      const altLength = alt.length;
-      const src = $el.getAttribute('src');
-      const baseSrc = (!src) ? $el.getAttribute('srcset') : src;
+      const decorative = (alt === '' || alt === ' ');
 
-      if ($el.closest('a[href]') && $el.closest('a[href]').getAttribute('tabindex') === '-1' && $el.closest('a[href]').getAttribute('aria-hidden') === 'true') ; else if (error[0] !== null && $el.closest('a[href]')) {
-        // Image fails if a stop word was found.
-        results.push({
-          element: $el,
-          type: 'error',
-          content: Lang.sprintf('LINK_IMAGE_BAD_ALT_MESSAGE', error[0], altText),
-          inline: false,
-          position: 'beforebegin',
-        });
-      } else if (error[2] !== null && $el.closest('a[href]')) {
-        results.push({
-          element: $el,
-          type: 'error',
-          content: Lang.sprintf('LINK_IMAGE_PLACEHOLDER_ALT_MESSAGE', altText),
-          inline: false,
-          position: 'beforebegin',
-        });
-      } else if (error[1] !== null && $el.closest('a[href]')) {
-        const key = prepareDismissal(`LINKEDIMAGE${baseSrc + altText}`);
-        results.push({
-          element: $el,
-          type: 'warning',
-          content: Lang.sprintf('LINK_IMAGE_SUS_ALT_MESSAGE', error[1], altText),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: key,
-        });
-      } else if (error[0] !== null) {
-        results.push({
-          element: $el,
-          type: 'error',
-          content: Lang.sprintf('LINK_ALT_HAS_BAD_WORD_MESSAGE', error[0], altText),
-          inline: false,
-          position: 'beforebegin',
-        });
-      } else if (error[2] !== null) {
-        results.push({
-          element: $el,
-          type: 'error',
-          content: Lang.sprintf('ALT_PLACEHOLDER_MESSAGE', altText),
-          inline: false,
-          position: 'beforebegin',
-        });
-      } else if (error[1] !== null) {
-        const key = prepareDismissal(`IMAGE${baseSrc + altText + error[1]}`);
-        results.push({
-          element: $el,
-          type: 'warning',
-          content: Lang.sprintf('ALT_HAS_SUS_WORD', error[1], altText),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: key,
-        });
-      } else if ((alt === '' || alt === ' ') && $el.closest('a[href]')) {
-        if ($el.closest('a[href]').getAttribute('tabindex') === '-1' && $el.closest('a[href]').getAttribute('aria-hidden') === 'true') ; else if ($el.closest('a[href]').getAttribute('aria-hidden') === 'true') {
+      // Figure elements.
+      const figure = $el.closest('figure');
+      const figcaption = figure?.querySelector('figcaption');
+      const figcaptionText = (figcaption) ? figcaption.textContent.trim() : '';
+
+      // Image's source for key.
+      const src = ($el.getAttribute('src')) ? $el.getAttribute('src') : $el.getAttribute('srcset');
+
+      // Decorative images.
+      if (decorative) {
+        const key = prepareDismissal(`DECORATIVE${src}`);
+        if (link) {
+          const type = (linkTextContentLength === 0) ? 'error' : 'good';
+          const content = (linkTextContentLength === 0)
+            ? Lang.sprintf('LINK_IMAGE_NO_ALT_TEXT')
+            : Lang.sprintf('LINK_IMAGE_HAS_TEXT');
+
           results.push({
             element: $el,
-            type: 'error',
-            content: Lang.sprintf('LINK_IMAGE_ARIA_HIDDEN'),
+            type,
+            content,
             inline: false,
             position: 'beforebegin',
           });
-        } else if (fnIgnore($el.closest('a[href]')).textContent.trim().length === 0) {
+        } else if (figure) {
+          const content = (figcaption && figcaptionText.length)
+            ? Lang.sprintf('IMAGE_FIGURE_DECORATIVE')
+            : Lang.sprintf('IMAGE_DECORATIVE');
+
           results.push({
             element: $el,
-            type: 'error',
-            content: Lang.sprintf('LINK_IMAGE_NO_ALT_TEXT'),
+            type: 'warning',
+            content,
             inline: false,
             position: 'beforebegin',
+            dismiss: key,
           });
         } else {
-          results.push({
-            element: $el,
-            type: 'good',
-            content: Lang.sprintf('LINK_IMAGE_HAS_TEXT'),
-            inline: false,
-            position: 'beforebegin',
-          });
-        }
-      } else if (alt.length > option.altTextMaxCharLength && $el.closest('a[href]')) {
-        const key = prepareDismissal(`LINKEDIMAGE${baseSrc + altText + alt.length}`);
-        // Link and contains alt text.
-        results.push({
-          element: $el,
-          type: 'warning',
-          content: Lang.sprintf('LINK_IMAGE_LONG_ALT', altLength, altText),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: key,
-        });
-      } else if (alt !== '' && $el.closest('a[href]') && fnIgnore($el.closest('a[href]')).textContent.trim().length === 0) {
-        const key = prepareDismissal(`LINKEDIMAGE${baseSrc + altText}`);
-        // Link and contains an alt text.
-        results.push({
-          element: $el,
-          type: 'warning',
-          content: Lang.sprintf('LINK_IMAGE_ALT_WARNING', altText),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: key,
-        });
-      } else if (alt !== '' && $el.closest('a[href]') && fnIgnore($el.closest('a[href]')).textContent.trim().length >= 1) {
-        const key = prepareDismissal(`LINKEDIMAGE${baseSrc + altText}`);
-        // Contains alt text & surrounding link text.
-        results.push({
-          element: $el,
-          type: 'warning',
-          content: Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT_WARNING', altText),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: key,
-        });
-      } else if (alt === '' || alt === ' ') {
-        // Decorative alt and not a link.
-        if ($el.closest('figure')) {
-          const figcaption = $el.closest('figure').querySelector('figcaption');
-          if (figcaption !== null && figcaption.textContent.trim().length >= 1) {
-            const key = prepareDismissal(`DECORATIVE${baseSrc}`);
-            results.push({
-              element: $el,
-              type: 'warning',
-              content: Lang.sprintf('IMAGE_FIGURE_DECORATIVE'),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: key,
-            });
-          } else {
-            const key = prepareDismissal(`DECORATIVE${baseSrc}`);
-            results.push({
-              element: $el,
-              type: 'warning',
-              content: Lang.sprintf('IMAGE_DECORATIVE'),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: key,
-            });
-          }
-        } else {
-          const key = prepareDismissal(`DECORATIVE${baseSrc}`);
           results.push({
             element: $el,
             type: 'warning',
@@ -6767,42 +6748,99 @@ function checkImages(results, option) {
             dismiss: key,
           });
         }
-      } else if (alt.length > option.altTextMaxCharLength) {
-        const key = prepareDismissal(`IMAGE${baseSrc + altText + alt.length}`);
+        return;
+      }
+
+      // Alt text quality.
+      if (error[0] !== null) {
+        // Has stop words.
+        const content = (link)
+          ? Lang.sprintf('LINK_ALT_HAS_FILE_EXTENSION', error[0], altText)
+          : Lang.sprintf('ALT_HAS_FILE_EXTENSION', error[0], altText);
+
+        results.push({
+          element: $el,
+          type: 'error',
+          content,
+          inline: false,
+          position: 'beforebegin',
+        });
+      } else if (error[2] !== null) {
+        // Placeholder words.
+        const content = (link)
+          ? Lang.sprintf('LINK_IMAGE_PLACEHOLDER_ALT_MESSAGE', altText)
+          : Lang.sprintf('ALT_PLACEHOLDER_MESSAGE', altText);
+
+        results.push({
+          element: $el,
+          type: 'error',
+          content,
+          inline: false,
+          position: 'beforebegin',
+        });
+      } else if (error[1] !== null) {
+        // Suspicious words.
+        const key = prepareDismissal(`${src + altText}`);
+        const content = (link)
+          ? Lang.sprintf('LINK_IMAGE_SUS_ALT_MESSAGE', error[1], altText)
+          : Lang.sprintf('ALT_HAS_SUS_WORD', error[1], altText);
+
         results.push({
           element: $el,
           type: 'warning',
-          content: Lang.sprintf('IMAGE_ALT_TOO_LONG', altLength, altText),
+          content,
           inline: false,
           position: 'beforebegin',
           dismiss: key,
         });
-      } else if (alt !== '') {
+      } else if (alt.length > option.altTextMaxCharLength) {
+        // Alt is too long.
+        const key = prepareDismissal(`${src + altText + alt.length}`);
+        const content = (link)
+          ? Lang.sprintf('LINK_IMAGE_LONG_ALT', alt.length, altText)
+          : Lang.sprintf('IMAGE_ALT_TOO_LONG', alt.length, altText);
+
+        results.push({
+          element: $el,
+          type: 'warning',
+          content,
+          inline: false,
+          position: 'beforebegin',
+          dismiss: key,
+        });
+      } else if (link) {
+        // Has both link text and alt text.
+        const key = prepareDismissal(`${src + altText}`);
+        const accName = computeAccessibleName(link);
+        const removeWhitespace$1 = removeWhitespace(accName);
+        const sanitizedText = sanitizeHTML(removeWhitespace$1);
+        const content = (linkTextContentLength === 0)
+          ? Lang.sprintf('LINK_IMAGE_ALT_WARNING', altText)
+          : Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT_WARNING', altText, sanitizedText);
+
+        results.push({
+          element: $el,
+          type: 'warning',
+          content,
+          inline: false,
+          position: 'beforebegin',
+          dismiss: key,
+        });
+      } else if (figure) {
         // Figure element has same alt and caption text.
-        if ($el.closest('figure')) {
-          const figcaption = $el.closest('figure').querySelector('figcaption');
-          if (!!figcaption
-            && (figcaption.textContent.trim().toLowerCase() === altText.trim().toLowerCase())) {
-            const key = prepareDismissal(`FIGURE${baseSrc + altText}`);
-            results.push({
-              element: $el,
-              type: 'warning',
-              content: Lang.sprintf('IMAGE_FIGURE_DUPLICATE_ALT', altText),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: key,
-            });
-          } else {
-            results.push({
-              element: $el,
-              type: 'good',
-              content: Lang.sprintf('IMAGE_PASS', altText),
-              inline: false,
-              position: 'beforebegin',
-            });
-          }
+        const duplicate = !!figcaption && (figcaptionText.toLowerCase() === altText.trim().toLowerCase());
+        if (duplicate) {
+          const key = prepareDismissal(`FIGURE${src + altText}`);
+          results.push({
+            element: $el,
+            type: 'warning',
+            content: Lang.sprintf('IMAGE_FIGURE_DUPLICATE_ALT', altText),
+            inline: false,
+            position: 'beforebegin',
+            dismiss: key,
+          });
         } else {
-          // If image has alt text - pass!
+          // Figure has alt text!
           results.push({
             element: $el,
             type: 'good',
@@ -6811,6 +6849,15 @@ function checkImages(results, option) {
             position: 'beforebegin',
           });
         }
+      } else {
+        // Image has alt text!
+        results.push({
+          element: $el,
+          type: 'good',
+          content: Lang.sprintf('IMAGE_PASS', altText),
+          inline: false,
+          position: 'beforebegin',
+        });
       }
     }
   });
@@ -6820,12 +6867,16 @@ function checkImages(results, option) {
 function checkHeaders(results, option, headingOutline) {
   let prevLevel;
   Elements.Found.Headings.forEach(($el, i) => {
-    const ignore = fnIgnore($el); // Ignore unwanted <style>, <script>, etc tags.
-    const text = computeTextNodeWithImage(ignore);
-    const headingText = sanitizeHTML(text);
+    const accessibleName = computeAccessibleName($el);
+    const removeWhitespace$1 = removeWhitespace(accessibleName);
+    const headingText = sanitizeHTML(removeWhitespace$1);
 
-    const isWithinRoot = Constants.Global.Root.contains($el);
+    // Check if heading is within root target area.
+    const rootContainsHeading = Constants.Global.Root.contains($el);
+    const rootContainsShadowHeading = Constants.Global.Root.contains($el.getRootNode().host);
+    const isWithinRoot = rootContainsHeading || rootContainsShadowHeading;
 
+    // Determine heading level.
     const level = parseInt($el.getAttribute('aria-level') || $el.tagName.slice(1), 10);
     const headingLength = headingText.length;
 
@@ -7039,55 +7090,49 @@ function checkLinkText(results, option) {
     return hit;
   };
 
+  const seen = {};
   Elements.Found.Links.forEach(($el) => {
-    let linkText = computeAccessibleName($el);
-    const hasAriaLabelledBy = $el.getAttribute('aria-labelledby');
-    const hasAriaLabel = $el.getAttribute('aria-label');
-    let childAriaLabelledBy = null;
-    let childAriaLabel = null;
-    const hasTitle = $el.getAttribute('title');
-    const href = $el.getAttribute('href');
+    const accName = computeAccessibleName($el, Constants.Exclusions.LinkSpan);
+    const stringMatchExclusions = option.linkIgnoreStrings
+      ? accName.replace(option.linkIgnoreStrings, '') : accName;
+    const linkText = removeWhitespace(stringMatchExclusions);
 
-    if ($el.children.length) {
-      const $firstChild = $el.children[0];
-      childAriaLabelledBy = $firstChild.getAttribute('aria-labelledby');
-      childAriaLabel = $firstChild.getAttribute('aria-label');
-    }
+    // Ignore special characters (except forward slash).
+    const stripSpecialChars = linkText.replace(/[^\w\s/]/g, '').replace(/\s+/g, ' ').trim();
+    const error = containsLinkTextStopWords(stripSpecialChars);
 
-    if (linkText === 'noAria') {
-      // Plain text content.
-      linkText = getText($el);
-      const $img = $el.querySelector('img');
-
-      // If an image exists within the link. Help with AccName computation.
-      if ($img) {
-        // Check if there's aria on the image.
-        const imgText = computeAccessibleName($img);
-        if (imgText !== 'noAria') {
-          linkText += imgText;
-        } else {
-          // No aria? Process alt on image.
-          linkText += $img ? ($img.getAttribute('alt') || '') : '';
-        }
-      }
-    }
-
-    // Ignore provided linkSpanIgnore prop, <style> tags, and special characters.
-    const specialCharPattern = /[!?。，、&*()\-;':"\\|,.<>↣↳←→↓«»↴]+/g;
-    const error = containsLinkTextStopWords(
-      fnIgnore(
-        $el, Constants.Exclusions.LinkSpan,
-      ).textContent.replace(specialCharPattern, '').trim(),
-    );
+    // Match special characters exactly 1 character in length.
+    const specialCharPattern = /[^a-zA-Z0-9]/g;
+    const isSingleSpecialChar = linkText.length === 1 && specialCharPattern.test(linkText);
 
     // HTML symbols used as call to actions.
     const htmlSymbols = /([<>↣↳←→↓«»↴]+)/;
     const matches = linkText.match(htmlSymbols);
     const matchedSymbol = matches ? matches[1] : null;
 
-    if ($el.querySelectorAll('img').length) ; else if (href && !linkText) {
-      // Flag empty hyperlinks.
-      if ($el && hasTitle) ; else if ($el.children.length) {
+    // ARIA attributes.
+    const href = $el.getAttribute('href');
+    const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
+    const negativeTabindex = $el.getAttribute('tabindex') === '-1';
+
+    // Has ARIA.
+    const hasAria = $el.querySelector(':scope [aria-labelledby], :scope [aria-label]') || $el.getAttribute('aria-labelledby') || $el.getAttribute('aria-label');
+
+    if ($el.querySelectorAll('img').length) ; else if (ariaHidden) {
+      // Has aria-hidden.
+      if (!negativeTabindex) {
+        // If negative tabindex.
+        results.push({
+          element: $el,
+          type: 'error',
+          content: Lang.sprintf('LINK_HIDDEN_FOCUSABLE'),
+          inline: true,
+          position: 'afterend',
+        });
+      }
+    } else if (href && linkText.length === 0) {
+      // Empty hyperlinks.
+      if ($el.children.length) {
         // Has child elements (e.g. SVG or SPAN) <a><i></i></a>
         results.push({
           element: $el,
@@ -7108,34 +7153,21 @@ function checkLinkText(results, option) {
       }
     } else if (error[0] !== null) {
       // Contains stop words.
-      if (hasAriaLabelledBy || hasAriaLabel || childAriaLabelledBy || childAriaLabel) {
-        const sanitizedText = sanitizeHTML(linkText);
-        if (option.showGoodLinkButton) {
-          results.push({
-            element: $el,
-            type: 'good',
-            content: Lang.sprintf('LINK_LABEL', sanitizedText),
-            inline: true,
-            position: 'afterend',
-          });
-        }
-      } else if ($el.getAttribute('aria-hidden') === 'true' && $el.getAttribute('tabindex') === '-1') ; else {
-        results.push({
-          element: $el,
-          type: 'error',
-          content: Lang.sprintf('LINK_STOPWORD', error[0]),
-          inline: true,
-          position: 'afterend',
-        });
-      }
+      results.push({
+        element: $el,
+        type: 'error',
+        content: Lang.sprintf('LINK_STOPWORD', error[0]),
+        inline: true,
+        position: 'afterend',
+      });
     } else if (error[1] !== null || matchedSymbol !== null) {
       const key = prepareDismissal(`LINK${linkText + href}`);
-      const STOPWORD = matchedSymbol || error[1];
+      const stopword = matchedSymbol || error[1];
       // Contains warning words.
       results.push({
         element: $el,
         type: 'warning',
-        content: Lang.sprintf('LINK_BEST_PRACTICES', STOPWORD),
+        content: Lang.sprintf('LINK_BEST_PRACTICES', stopword),
         inline: true,
         position: 'beforebegin',
         dismiss: key,
@@ -7166,7 +7198,7 @@ function checkLinkText(results, option) {
           dismiss: key,
         });
       }
-    } else if (hasAriaLabelledBy || hasAriaLabel || childAriaLabelledBy || childAriaLabel) {
+    } else if (hasAria) {
       // If the link has any ARIA, append a "Good" link button.
       if (option.showGoodLinkButton) {
         const sanitizedText = sanitizeHTML(linkText);
@@ -7178,8 +7210,8 @@ function checkLinkText(results, option) {
           position: 'afterend',
         });
       }
-    } else if (linkText === '.' || linkText === ',' || linkText === '/') {
-      // Link is ONLY a period, comma, or slash.
+    } else if (isSingleSpecialChar) {
+      // Link is ONLY a period, comma, or special character.
       results.push({
         element: $el,
         type: 'error',
@@ -7187,6 +7219,84 @@ function checkLinkText(results, option) {
         inline: true,
         position: 'afterend',
       });
+    }
+
+    /* ********************* */
+    /*  Links (Advanced)     */
+    /* ********************* */
+    if (option.linksAdvancedPlugin) {
+      const toggleCheck = store.getItem('sa11y-remember-links-advanced') === 'On';
+      if (toggleCheck || option.headless || option.checkAllHideToggles) {
+        // New tab or new window.
+        const containsNewWindowPhrases = Lang._('NEW_WINDOW_PHRASES').some((pass) => linkText.toLowerCase().includes(pass));
+
+        // Link that points to a file type and indicates as such.
+        const defaultFileTypes = ['pdf', 'doc', 'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'];
+        const fileTypes = defaultFileTypes.concat(Lang._('FILE_TYPE_PHRASES'));
+        const containsFileTypePhrases = fileTypes.some((pass) => linkText.toLowerCase().includes(pass));
+        const fileTypeMatch = $el.matches(`
+          a[href$='.pdf'],
+          a[href$='.doc'],
+          a[href$='.docx'],
+          a[href$='.zip'],
+          a[href$='.mp3'],
+          a[href$='.txt'],
+          a[href$='.exe'],
+          a[href$='.dmg'],
+          a[href$='.rtf'],
+          a[href$='.pptx'],
+          a[href$='.ppt'],
+          a[href$='.xls'],
+          a[href$='.xlsx'],
+          a[href$='.csv'],
+          a[href$='.mp4'],
+          a[href$='.mov'],
+          a[href$='.avi']
+        `);
+
+        // Remove whitespace and special characters to improve accuracy and minimize false positives.
+        const linkTextTrimmed = linkText.replace(/'|"|-|\.|\s+/g, '').toLowerCase();
+
+        // Links with identical accessible names have equivalent purpose.
+        if (linkTextTrimmed.length !== 0) {
+          if (seen[linkTextTrimmed] && !seen[href]) {
+            // Link has identical name as another link.
+            const key = prepareDismissal(`LINK${linkTextTrimmed + href}`);
+            const sanitizedText = sanitizeHTML(linkText);
+            results.push({
+              element: $el,
+              type: 'warning',
+              content: Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText),
+              inline: true,
+              position: 'beforebegin',
+              dismiss: key,
+            });
+          } else if ($el.getAttribute('target') === '_blank' && !fileTypeMatch && !containsNewWindowPhrases) {
+            const key = prepareDismissal(`LINK${linkTextTrimmed + href}`);
+            results.push({
+              element: $el,
+              type: 'warning',
+              content: Lang.sprintf('NEW_TAB_WARNING'),
+              inline: true,
+              position: 'beforebegin',
+              dismiss: key,
+            });
+          } else if (fileTypeMatch && !containsFileTypePhrases) {
+            const key = prepareDismissal(`LINK${linkTextTrimmed + href}`);
+            results.push({
+              element: $el,
+              type: 'warning',
+              content: Lang.sprintf('FILE_TYPE_WARNING'),
+              inline: true,
+              position: 'beforebegin',
+              dismiss: key,
+            });
+          } else {
+            seen[linkTextTrimmed] = true;
+            seen[href] = true;
+          }
+        }
+      }
     }
   });
   return results;
@@ -7198,10 +7308,10 @@ function checkLinkText(results, option) {
  * @link https://github.com/jasonday/color-contrast
  * @link https://github.com/gka/chroma.js (Parse RGB)
 */
-
 function checkContrast(results, option) {
   if (option.contrastPlugin) {
-    if (store.getItem('sa11y-remember-contrast') === 'On' || option.headless || option.checkAllHideToggles) {
+    const toggleCheck = store.getItem('sa11y-remember-contrast') === 'On';
+    if (toggleCheck || option.headless || option.checkAllHideToggles) {
       let contrastErrors = {
         errors: [],
         warnings: [],
@@ -7415,88 +7525,63 @@ function checkContrast(results, option) {
 
 function checkLabels(results, option) {
   if (option.formLabelsPlugin) {
-    if (store.getItem('sa11y-remember-labels') === 'On' || option.headless || option.checkAllHideToggles) {
+    const toggleCheck = store.getItem('sa11y-remember-labels') === 'On';
+    if (toggleCheck || option.headless || option.checkAllHideToggles) {
       Elements.Found.Inputs.forEach(($el) => {
-        // Ignore hidden inputs.
-        if (isElementHidden($el) !== true) {
-          let ariaLabel = computeAccessibleName($el);
-          const type = $el.getAttribute('type');
-          const tabindex = $el.getAttribute('tabindex');
+        // Ignore completely hidden elements.
+        const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
+        const negativeTabindex = $el.getAttribute('tabindex') === '-1';
+        const hidden = isElementHidden($el);
+        if (hidden || (ariaHidden && negativeTabindex)) {
+          return;
+        }
 
-          // If button type is submit or button: pass
-          if (type === 'submit' || type === 'button' || type === 'hidden' || tabindex === '-1') ; else if (type === 'image') {
-            // Inputs where type="image".
-            const imgalt = $el.getAttribute('alt');
-            if (!imgalt || imgalt === ' ') {
-              if ($el.getAttribute('aria-label')) ; else {
-                results.push({
-                  element: $el,
-                  type: 'error',
-                  content: Lang.sprintf('LABELS_MISSING_IMAGE_INPUT_MESSAGE'),
-                  inline: false,
-                  position: 'beforebegin',
-                });
-              }
-            }
-          } else if (type === 'reset') {
-            // Recommendation to remove reset buttons.
-            const key = prepareDismissal(`INPUT${ariaLabel}`);
+        // Compute accessible name on input.
+        const computeName = computeAccessibleName($el);
+        const inputName = removeWhitespace(computeName);
+
+        // Get attributes.
+        const alt = $el.getAttribute('alt');
+        const type = $el.getAttribute('type');
+        const hasTitle = $el.getAttribute('title');
+        const hasAria = $el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby');
+
+        // Pass: Ignore if it's a submit or hidden button.
+        if (type === 'submit' || type === 'button' || type === 'hidden') {
+          return;
+        }
+
+        // Error: Input with type="image" without accessible name or alt.
+        if (type === 'image' && (!alt || alt === ' ')) {
+          if (!hasAria && !hasTitle) {
             results.push({
               element: $el,
-              type: 'warning',
-              content: Lang.sprintf('LABELS_INPUT_RESET_MESSAGE'),
+              type: 'error',
+              content: Lang.sprintf('LABELS_MISSING_IMAGE_INPUT_MESSAGE'),
               inline: false,
               position: 'beforebegin',
-              dismiss: key,
             });
-          } else if ($el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby') || $el.getAttribute('title')) {
-            // Uses ARIA. Warn them to ensure there's a visible label.
-            if ($el.getAttribute('title')) {
-              ariaLabel = $el.getAttribute('title');
-              const key = prepareDismissal(`INPUT${ariaLabel}`);
-              const sanitizedText = sanitizeHTML(ariaLabel);
-              results.push({
-                element: $el,
-                type: 'warning',
-                content: Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', sanitizedText),
-                inline: false,
-                position: 'beforebegin',
-                dismiss: key,
-              });
-            } else {
-              const key = prepareDismissal(`INPUT${ariaLabel}`);
-              const sanitizedText = sanitizeHTML(ariaLabel);
-              results.push({
-                element: $el,
-                type: 'warning',
-                content: Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', sanitizedText),
-                inline: false,
-                position: 'beforebegin',
-                dismiss: key,
-              });
-            }
-          } else if ($el.closest('label') && $el.closest('label').textContent.trim()) ; else if ($el.getAttribute('id')) {
-            // Has an ID but doesn't have a matching FOR attribute.
-            let hasFor = false;
+          }
+          return;
+        }
 
-            Elements.Found.Labels.forEach(($l) => {
-              if (hasFor) return;
-              if ($l.getAttribute('for') === $el.getAttribute('id')) {
-                hasFor = true;
-              }
-            });
+        // Warning: to remove reset buttons.
+        if (type === 'reset') {
+          const key = prepareDismissal(`INPUT${inputName}`);
+          results.push({
+            element: $el,
+            type: 'warning',
+            content: Lang.sprintf('LABELS_INPUT_RESET_MESSAGE'),
+            inline: false,
+            position: 'beforebegin',
+            dismiss: key,
+          });
+          return;
+        }
 
-            if (!hasFor) {
-              const id = $el.getAttribute('id');
-              results.push({
-                element: $el,
-                type: 'error',
-                content: Lang.sprintf('LABELS_NO_FOR_ATTRIBUTE_MESSAGE', id),
-                inline: false,
-                position: 'beforebegin',
-              });
-            }
-          } else {
+        // Uses ARIA or title attribute. Warn them to ensure there's a visible label.
+        if (hasAria || hasTitle) {
+          if (inputName.length === 0) {
             results.push({
               element: $el,
               type: 'error',
@@ -7504,119 +7589,49 @@ function checkLabels(results, option) {
               inline: false,
               position: 'beforebegin',
             });
-          }
-        }
-      });
-    }
-  }
-  return results;
-}
-
-function checkLinksAdvanced(results, option) {
-  if (option.linksAdvancedPlugin) {
-    if (store.getItem('sa11y-remember-links-advanced') === 'On' || option.headless || option.checkAllHideToggles) {
-      const seen = {};
-      Elements.Found.Links.forEach(($el) => {
-        let linkText = computeAccessibleName($el);
-        const $img = $el.querySelector('img');
-
-        // If link has no ARIA.
-        if (linkText === 'noAria') {
-          linkText = fnIgnore($el, Constants.Exclusions.LinkSpan);
-          linkText = getText(linkText); // Get inner text within anchor.
-
-          // If an image exists within the link.
-          if ($img) {
-            // Check if there's aria on the image.
-            const imgText = computeAccessibleName($img);
-            if (imgText !== 'noAria') {
-              linkText += imgText;
-            } else {
-              // No aria? Process alt on image.
-              linkText += $img ? ($img.getAttribute('alt') || '') : '';
-            }
-          }
-        }
-
-        // Remove whitespace, special characters, etc.
-        const linkTextTrimmed = linkText.replace(/'|"|-|\.|\s+/g, '').toLowerCase();
-
-        // Links with identical accessible names have equivalent purpose.
-        const href = $el.getAttribute('href');
-
-        if (linkText.length !== 0) {
-          if (seen[linkTextTrimmed] && linkTextTrimmed.length !== 0) {
-            if (seen[href]) ; else {
-              const key = prepareDismissal(`LINK${linkTextTrimmed + href}`);
-              const sanitizedText = sanitizeHTML(linkText);
-              results.push({
-                element: $el,
-                type: 'warning',
-                content: Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText),
-                inline: true,
-                position: 'beforebegin',
-                dismiss: key,
-              });
-            }
           } else {
-            seen[linkTextTrimmed] = true;
-            seen[href] = true;
+            const key = prepareDismissal(`INPUT${inputName}`);
+            const sanitizedText = sanitizeHTML(inputName);
+            results.push({
+              element: $el,
+              type: 'warning',
+              content: Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', sanitizedText),
+              inline: false,
+              position: 'beforebegin',
+              dismiss: key,
+            });
           }
+          return;
         }
 
-        // New tab or new window.
-        const containsNewWindowPhrases = Lang._('NEW_WINDOW_PHRASES').some((pass) => {
-          if (linkText.trim().length === 0 && !!$el.getAttribute('title')) {
-            linkText = $el.getAttribute('title');
-          }
-          return linkText.toLowerCase().indexOf(pass) >= 0;
-        });
-
-        // Link that points to a file type and indicates as such.
-        const defaultFileTypes = ['pdf', 'doc', 'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'];
-        const fileTypes = defaultFileTypes.concat(Lang._('FILE_TYPE_PHRASES'));
-        const containsFileTypePhrases = fileTypes.some((pass) => linkText.toLowerCase().indexOf(pass) >= 0);
-        const fileTypeMatch = $el.matches(`
-              a[href$='.pdf'],
-              a[href$='.doc'],
-              a[href$='.docx'],
-              a[href$='.zip'],
-              a[href$='.mp3'],
-              a[href$='.txt'],
-              a[href$='.exe'],
-              a[href$='.dmg'],
-              a[href$='.rtf'],
-              a[href$='.pptx'],
-              a[href$='.ppt'],
-              a[href$='.xls'],
-              a[href$='.xlsx'],
-              a[href$='.csv'],
-              a[href$='.mp4'],
-              a[href$='.mov'],
-              a[href$='.avi']
-            `);
-
-        if (linkTextTrimmed.length !== 0 && $el.getAttribute('target') === '_blank' && !fileTypeMatch && !containsNewWindowPhrases) {
-          const key = prepareDismissal(`LINK${linkTextTrimmed + href}`);
-          results.push({
-            element: $el,
-            type: 'warning',
-            content: Lang.sprintf('NEW_TAB_WARNING'),
-            inline: true,
-            position: 'beforebegin',
-            dismiss: key,
-          });
+        // Implicit label: <label>First name: <input type="text"/><label>
+        const closestLabel = $el.closest('label');
+        const labelName = (closestLabel) ? removeWhitespace(computeAccessibleName(closestLabel)) : '';
+        if (closestLabel && labelName.length) {
+          return;
         }
 
-        if (linkTextTrimmed.length !== 0 && fileTypeMatch && !containsFileTypePhrases) {
-          const key = prepareDismissal(`LINK${linkTextTrimmed + href}`);
+        // Check to see if each label has a matching for and it attribute.
+        const id = $el.getAttribute('id');
+        if (id) {
+          // Find labels without a match.
+          if (!Elements.Found.Labels.some((label) => label.getAttribute('for') === id)) {
+            results.push({
+              element: $el,
+              type: 'error',
+              content: Lang.sprintf('LABELS_NO_FOR_ATTRIBUTE_MESSAGE', id),
+              inline: false,
+              position: 'beforebegin',
+            });
+          }
+        } else {
+          // No id!
           results.push({
             element: $el,
-            type: 'warning',
-            content: Lang.sprintf('FILE_TYPE_WARNING'),
-            inline: true,
+            type: 'error',
+            content: Lang.sprintf('LABELS_MISSING_LABEL_MESSAGE'),
+            inline: false,
             position: 'beforebegin',
-            dismiss: key,
           });
         }
       });
@@ -7847,7 +7862,12 @@ function checkEmbeddedContent(results, option) {
     // Warning: Audio content.
     if (option.embeddedContentAudio) {
       Elements.Found.Audio.forEach(($el) => {
-        const key = prepareDismissal(`IFRAME${$el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src')}`);
+        const src = ($el.getAttribute('src') !== 'undefined')
+          ? $el.getAttribute('src')
+          : $el.querySelector('[src]')?.getAttribute('src');
+
+        // General warning for audio content.
+        const key = prepareDismissal(`AUDIO${src}`);
         results.push({
           element: $el,
           type: 'warning',
@@ -7862,9 +7882,15 @@ function checkEmbeddedContent(results, option) {
     // Warning: Video content.
     if (option.embeddedContentVideo) {
       Elements.Found.Videos.forEach(($el) => {
-        const track = $el.getElementsByTagName('TRACK');
-        if ($el.tagName === 'VIDEO' && track.length) ; else {
-          const key = prepareDismissal(`IFRAME${$el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src')}`);
+        const src = ($el.getAttribute('src') !== 'undefined')
+          ? $el.getAttribute('src')
+          : $el.querySelector('[src]')?.getAttribute('src');
+
+        // Warning if <track> doesn't exist, or the <track>'s src is empty.
+        const track = $el.querySelector('track');
+        const trackSrc = track?.getAttribute('src');
+        if (track === null || trackSrc === null || trackSrc.trim().length === 0) {
+          const key = prepareDismissal(`VIDEO${src}`);
           results.push({
             element: $el,
             type: 'warning',
@@ -7880,7 +7906,12 @@ function checkEmbeddedContent(results, option) {
     // Warning: Data visualizations.
     if (option.embeddedContentDataViz) {
       Elements.Found.Visualizations.forEach(($el) => {
-        const key = prepareDismissal(`IFRAME${$el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src')}`);
+        const src = ($el.getAttribute('src') !== 'undefined')
+          ? $el.getAttribute('src')
+          : $el.querySelector('[src]')?.getAttribute('src');
+
+        // General warning for data vizualization widgets.
+        const key = prepareDismissal(`DATAVIZ${src}`);
         results.push({
           element: $el,
           type: 'warning',
@@ -7892,54 +7923,76 @@ function checkEmbeddedContent(results, option) {
       });
     }
 
-    // Error: iFrame is missing accessible name.
+    /* Error: Check all iFrames for a missing accessible name. */
     if (option.embeddedContentTitles) {
-      Elements.Found.Iframes.forEach(($el) => {
-        if ($el.tagName === 'VIDEO'
-          || $el.tagName === 'AUDIO'
-          || $el.getAttribute('aria-hidden') === 'true'
-          || $el.getAttribute('hidden') !== null
-          || $el.style.display === 'none'
-          || $el.getAttribute('role') === 'presentation') ; else if ($el.getAttribute('title') === null || $el.getAttribute('title') === '') {
-          if ($el.getAttribute('aria-label') === null || $el.getAttribute('aria-label') === '') {
-            if ($el.getAttribute('aria-labelledby') === null) {
-              // TO-DO: Make sure red error border takes precedence
-              if ($el.classList.contains('sa11y-warning-border')) {
-                $el.classList.remove('sa11y-warning-border');
-              }
-              results.push({
-                element: $el,
-                type: 'error',
-                content: Lang.sprintf('EMBED_MISSING_TITLE'),
-                inline: false,
-                position: 'beforebegin',
-              });
-            }
-          }
-        } else ;
+      Elements.Found.iframes.forEach(($el) => {
+        // Ignore completely hidden elements and video/audio.
+        const hidden = isElementHidden($el);
+        const videoAudio = $el.tagName === 'VIDEO' || $el.tagName === 'AUDIO';
+        const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
+        const negativeTabindex = $el.getAttribute('tabindex') === '-1';
+        if (hidden || videoAudio || (ariaHidden && negativeTabindex)) {
+          return;
+        }
+
+        // Warning if element only has negative tabindex (without aria-hidden). Axe rulecheck.
+        if (negativeTabindex) {
+          results.push({
+            element: $el,
+            type: 'error',
+            content: Lang.sprintf('EMBED_UNFOCUSABLE'),
+            inline: false,
+            position: 'beforebegin',
+          });
+          return;
+        }
+
+        // Accessible name is missing for iFrame.
+        const aria = computeAriaLabel($el);
+        const checkTitle = (aria === 'noAria') ? ($el.getAttribute('title') || '') : aria;
+        const accessibleName = removeWhitespace(checkTitle);
+
+        if (accessibleName.length === 0) {
+          results.push({
+            element: $el,
+            type: 'error',
+            content: Lang.sprintf('EMBED_MISSING_TITLE'),
+            inline: false,
+            position: 'beforebegin',
+          });
+        }
       });
     }
 
-    // Warning: general warning for iFrames
+    /* Warning: for all iFrames (except video, audio, or data visualizations). */
     if (option.embeddedContentGeneral) {
       Elements.Found.EmbeddedContent.forEach(($el) => {
-        if ($el.tagName === 'VIDEO'
-          || $el.tagName === 'AUDIO'
-          || $el.getAttribute('aria-hidden') === 'true'
-          || $el.getAttribute('hidden') !== null
-          || $el.style.display === 'none'
-          || $el.getAttribute('role') === 'presentation'
-          || $el.getAttribute('tabindex') === '-1') ; else {
-          const key = prepareDismissal(`IFRAME${$el.getAttribute('src') !== 'undefined' ? $el.getAttribute('src') : $el.querySelector('[src]').getAttribute('src')}`);
-          results.push({
-            element: $el,
-            type: 'warning',
-            content: Lang.sprintf('EMBED_GENERAL_WARNING'),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
-          });
+        // Ignore completely hidden elements.
+        const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
+        const negativeTabindex = $el.getAttribute('tabindex') === '-1';
+        const hidden = isElementHidden($el);
+        if (hidden || (ariaHidden && negativeTabindex)) {
+          return;
         }
+
+        // Ignore video & audio elements.
+        if ($el.tagName === 'VIDEO' || $el.tagName === 'AUDIO') {
+          return;
+        }
+
+        const src = ($el.getAttribute('src') !== 'undefined')
+          ? $el.getAttribute('src')
+          : $el.querySelector('[src]')?.getAttribute('src');
+
+        const key = prepareDismissal(`IFRAME${src}`);
+        results.push({
+          element: $el,
+          type: 'warning',
+          content: Lang.sprintf('EMBED_GENERAL_WARNING'),
+          inline: false,
+          position: 'beforebegin',
+          dismiss: key,
+        });
       });
     }
   }
@@ -8077,12 +8130,14 @@ function checkQA(results, option) {
       tableHeaders.forEach((th) => {
         if (option.tablesQAemptyTH && th.textContent.trim().length === 0) {
           const issueType = (option.tablesQAemptyTHisError) ? 'error' : 'warning';
+          const key = prepareDismissal(`TABLE${$el.textContent}`);
           results.push({
             element: th,
             type: issueType,
             content: Lang.sprintf('TABLES_EMPTY_HEADING'),
             inline: false,
             position: 'afterbegin',
+            dismiss: key,
           });
         }
       });
@@ -8091,64 +8146,54 @@ function checkQA(results, option) {
 
   /* ****************************************************************** */
   /*  Warning: Detect fake headings                                     */
-  /*  To prevent excessive warnings:                                    */
-  /*  1) Parent element must not be a heading, blockquote, or table.    */
-  /*  2) Must be between 4 and 120 characters (typical heading length). */
-  /*  3) Doesn't contain the following characters: .;?!                 */
-  /*  4) The previous element is not a semantic heading.                */
   /* ****************************************************************** */
   if (option.fakeHeadingsQA) {
-    Elements.Found.Paragraphs.forEach(($el) => {
-      const brAfter = $el.innerHTML.indexOf('</strong><br>');
-      const brBefore = $el.innerHTML.indexOf('<br></strong>');
-      const ignoreElements = 'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level], blockquote';
-      const ignoreParents = ignoreElements.concat(', table');
-      const getTexted = getText($el);
-      let boldtext;
+    const ignoreParents = 'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level], blockquote, table';
 
-      // Check paragraphs greater than x characters.
-      if ($el && getTexted.length >= 300) {
-        const { firstChild } = $el;
+    // Find large text as heading.
+    const computeLargeParagraphs = (p) => {
+      const size = getComputedStyle(p).fontSize.replace('px', '');
+      const getText$1 = getText(p);
+      const maybeSentence = getText$1.match(/[.;?!"]/) === null;
+      const typicalHeadingLength = getText$1.length >= 4 && getText$1.length <= 120;
 
-        // If paragraph starts with <strong> tag and ends with <br>.
-        if (firstChild.tagName === 'STRONG' && (brBefore !== -1 || brAfter !== -1)) {
-          boldtext = getText(firstChild);
-          const maybeSentence = boldtext.match(/[.;?!"]/) !== null;
-          if (
-            !/[*]$/.test(boldtext)
-            && !$el.closest(ignoreParents)
-            && (boldtext.length >= 4 && boldtext.length <= 120)
-            && maybeSentence === false
-          ) {
-            const sanitizedText = sanitizeHTML(boldtext);
-            const key = prepareDismissal(`BOLD${sanitizedText}`);
-            results.push({
-              element: firstChild,
-              type: 'warning',
-              content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: key,
-            });
+      if (size >= 24 && !p.closest(ignoreParents) && typicalHeadingLength && maybeSentence) {
+        const sanitizedText = sanitizeHTML(getText$1);
+        const key = prepareDismissal(`BOLD${sanitizedText}`);
+        results.push({
+          element: p,
+          type: 'warning',
+          content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
+          inline: false,
+          position: 'beforebegin',
+          dismiss: key,
+        });
+      }
+    };
+
+    // Find bolded text as headings.
+    const computeBoldTextParagraphs = (p) => {
+      const startsWithBold = /^(<strong>|<b>)/i.test(p.innerHTML.trim());
+
+      if (startsWithBold && !p.closest(ignoreParents)) {
+        const possibleHeading = p.querySelector('strong, b');
+        const possibleHeadingText = getText(possibleHeading);
+
+        // Conditions
+        const notASentence = possibleHeadingText.match(/[.:;?!"']/) === null;
+        const typicalHeadingLength = possibleHeadingText.length >= 3 && possibleHeadingText.length <= 120;
+
+        if (typicalHeadingLength && notASentence) {
+          // Be a little forgiving if it's a small paragraph.
+          const nonHeadingTextLength = fnIgnore(p, 'strong, bold').textContent.trim().length;
+          if (nonHeadingTextLength !== 0 && nonHeadingTextLength <= 250) {
+            return;
           }
-        }
-      }
 
-      // If paragraph only contains <p><strong>...</strong></p>.
-      if (/^<(strong)>.+<\/\1>$/.test($el.innerHTML.trim())) {
-        boldtext = getTexted;
-        const prevSibling = $el.previousElementSibling;
-        const maybeSentence = boldtext.match(/[.;?!"]/) !== null;
-        if (prevSibling !== null && prevSibling.matches(ignoreElements)) ; else if (
-          !/[*]$/.test(boldtext)
-          && (boldtext.length >= 4 && boldtext.length <= 120)
-          && !$el.closest(ignoreParents)
-          && maybeSentence === false
-        ) {
-          const sanitizedText = sanitizeHTML(boldtext);
+          const sanitizedText = sanitizeHTML(possibleHeadingText);
           const key = prepareDismissal(`BOLD${sanitizedText}`);
           results.push({
-            element: $el,
+            element: possibleHeading,
             type: 'warning',
             content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
             inline: false,
@@ -8157,34 +8202,11 @@ function checkQA(results, option) {
           });
         }
       }
+    };
 
-      // Find pretend paragraph headings
-      const computeLargeParagraphs = ($elem) => {
-        const size = getComputedStyle($elem).fontSize.replace('px', '');
-        const ignore = 'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level], blockquote';
-        const getText$1 = getText($elem);
-        const prevSibling = $elem.previousElementSibling;
-        const maybeSentence = getText$1.match(/[.;?!"]/) !== null;
-
-        if (prevSibling !== null && prevSibling.matches(ignore)) ; else if (
-          size >= 24
-          && !$elem.closest(ignore)
-          && (getText$1.length >= 4 && getText$1.length <= 120)
-          && maybeSentence === false
-        ) {
-          const sanitizedText = sanitizeHTML(getText$1);
-          const key = prepareDismissal(`BOLD${sanitizedText}`);
-          results.push({
-            element: $elem,
-            type: 'warning',
-            content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
-          });
-        }
-      };
-      computeLargeParagraphs($el);
+    Elements.Found.Paragraphs.forEach((p) => {
+      computeLargeParagraphs(p);
+      computeBoldTextParagraphs(p);
     });
   }
 
@@ -8192,67 +8214,85 @@ function checkQA(results, option) {
   /*  Warning: Detect paragraphs that should be lists.               */
   /*  Thanks to John Jameson from PrincetonU for this ruleset!       */
   /* *************************************************************** */
-  if (option.fakeListQA) {
-    Elements.Found.Paragraphs.forEach(($el) => {
-      let activeMatch = '';
-      const prefixDecrement = {
-        b: 'a',
-        B: 'A',
-        2: '1',
-        б: 'а',
-        Б: 'А',
-      };
-      const prefixMatch = /a\.|a\)|A\.|A\)|а\.|а\)|А\.|А\)|1\.|1\)|\*\s|-\s|--|•\s|→\s|✓\s|✔\s|✗\s|✖\s|✘\s|❯\s|›\s|»\s/;
-      const decrement = (el) => el.replace(/^b|^B|^б|^Б|^2/, (match) => prefixDecrement[match]);
-      let hit = false;
-      const firstPrefix = $el.textContent.substring(0, 2);
 
-      if (
-        firstPrefix.trim().length > 0
-        && firstPrefix !== activeMatch
-        && firstPrefix.match(prefixMatch)
-      ) {
-        const hasBreak = $el.innerHTML.indexOf('<br>');
-        if (hasBreak !== -1) {
-          const subParagraph = $el
-            .innerHTML
-            .substring(hasBreak + 4)
-            .trim();
-          const subPrefix = subParagraph.substring(0, 2);
-          if (firstPrefix === decrement(subPrefix)) {
+  let activeMatch = '';
+  let firstText = '';
+  let lastHitWasEmoji = false;
+  const prefixDecrement = {
+    2: '1',
+    b: 'a',
+    B: 'A',
+    β: 'α',
+    Β: 'Α',
+    б: 'а',
+    Б: 'А',
+  };
+  const prefixMatch = new RegExp(/([aA1]|[аА]|[αΑ]|[^\p{Alphabetic}\s])[-\s.)]/, 'u');
+  const emojiMatch = new RegExp(/\p{Emoji}/, 'u');
+  const otherPrefixChars = /[([{#]/;
+
+  const decrement = (element) => element.replace(/^b|^B|^б|^Б|^β|^В|^2/, (match) => prefixDecrement[match]);
+
+  Elements.Found.Paragraphs.forEach((p, i) => {
+    let secondText = false;
+    let hit = false;
+    const firstPrefix = firstText || getText(p).substring(0, 2);
+    const matchWasntEmoji = firstPrefix.match(prefixMatch);
+    const otherPrefix = otherPrefixChars.test(firstPrefix.charAt(0));
+    const possibleMatch = matchWasntEmoji || firstPrefix.match(emojiMatch) || otherPrefix;
+
+    if (firstPrefix.length > 0 && firstPrefix !== activeMatch && possibleMatch) {
+      // We have a prefix and a possible hit; check next detected paragraph.
+      const secondP = Elements.Found.Paragraphs[i + 1];
+      if (secondP) {
+        secondText = getText(secondP).substring(0, 2);
+        // Just a sentence, ignore.
+        if (secondText === 'A') {
+          return;
+        }
+        const secondPrefix = decrement(secondText);
+        if (matchWasntEmoji) {
+          // Check for repeats (*,*) or increments(a,b)
+          lastHitWasEmoji = false;
+          if (firstPrefix !== 'A ' && firstPrefix === secondPrefix) {
+            hit = true;
+          }
+        } else if (!lastHitWasEmoji) {
+          // Check for two paragraphs in a row that start with emoji
+          if (secondPrefix.match(emojiMatch)) {
+            hit = true;
+          }
+          lastHitWasEmoji = hit;
+        }
+      }
+      if (!hit) {
+        // Split p by carriage return if there was a firstPrefix and compare.
+        let textAfterBreak = p?.querySelector('br')?.nextSibling?.nodeValue;
+        if (textAfterBreak) {
+          textAfterBreak = textAfterBreak.replace(/<\/?[^>]+(>|$)/g, '').trim().substring(0, 2);
+          if (otherPrefix || firstPrefix === decrement(textAfterBreak) || (!matchWasntEmoji && !lastHitWasEmoji && textAfterBreak.match(emojiMatch))) {
             hit = true;
           }
         }
-
-        // Decrement the second p prefix and compare .
-        if (!hit) {
-          const $second = getNextSibling($el, 'p');
-          if ($second) {
-            const secondPrefix = decrement($el.nextElementSibling.textContent.substring(0, 2));
-            if (firstPrefix === secondPrefix) {
-              hit = true;
-            }
-          }
-        }
-        if (hit) {
-          const key = prepareDismissal(`LIST${$el.textContent}`);
-          results.push({
-            element: $el,
-            type: 'warning',
-            content: Lang.sprintf('QA_SHOULD_BE_LIST', firstPrefix),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
-          });
-          activeMatch = firstPrefix;
-        } else {
-          activeMatch = '';
-        }
+      }
+      if (hit) {
+        const key = prepareDismissal(`LIST${p.textContent}`);
+        results.push({
+          element: p,
+          type: 'warning',
+          content: Lang.sprintf('QA_SHOULD_BE_LIST', firstPrefix),
+          inline: false,
+          position: 'beforebegin',
+          dismiss: key,
+        });
+        activeMatch = firstPrefix;
       } else {
         activeMatch = '';
       }
-    });
-  }
+    }
+    // Reset for next loop, carry over text query if available.
+    firstText = secondText ? '' : secondText;
+  });
 
   /* *************************************************************** */
   /*  Warning: Detect uppercase text.                                */
@@ -8534,7 +8574,6 @@ class Sa11y {
         checkImages(this.results, option);
         checkContrast(this.results, option);
         checkLabels(this.results, option);
-        checkLinksAdvanced(this.results, option);
         checkQA(this.results, option);
         checkEmbeddedContent(this.results, option);
         checkReadability();

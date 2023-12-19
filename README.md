@@ -95,7 +95,10 @@ Please visit [developer documentation](https://sa11y.netlify.app/developers/) fo
 ## Development environment
 A light server for development is included. Any change inside `/src` folder files will trigger the build process for the files and will reload the page with the new changes. To use this environment:
 
-1. Clone this repo.
-2. Be sure you have node installed and up to date.
-3. Execute `npm install`
-4. In a terminal execute: `npm run serve`. Then open `http://localhost:8080/docs/demo/en/` in your browser.
+1. Ensure node is installed and up to date (at least v20 and up).
+2. Clone this repo.
+3. Run `npm install`
+4. Run `npm run serve`. Then open `http://localhost:8080/docs/demo/en/` in your browser.
+5. For unit tests, execute `npm test` or `node --test` while the server is running.
+
+**Tip!** To speed up compile time while developing, navigate to `rollup.config.js` and change `developmentMode` to `true`. This will only compile javascript, SCSS, and English translation strings.

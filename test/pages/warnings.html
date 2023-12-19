@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<link rel="stylesheet" href="./assets/main.css">
+<!-- Sa11y -->
+<link rel="stylesheet" href="../../dist/css/sa11y.min.css" />
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warnings - Sa11y Unit Tests</title>
+</head>
+
+<body>
+  <header>
+    <span class="h1">Sa11y Unit Tests</span>
+    <p>Some warnings and props.</p>
+  </header>
+  <main>
+
+    <h2>Hidden iframe here for testing</h2>
+    <div id="warning-iframe">
+      <div hidden><iframe title="Example" src="https://www.example.com"></iframe></div>
+    </div>
+
+    <h2>Skipped heading is warning via prop</h2>
+    <div id="warning-skipped-heading">
+      <h4>This is a heading four</h4>
+    </div>
+
+    <h2>Table with empty header</h2>
+    <div id="warning-empty-table-header">
+      <table>
+        <tbody>
+          <tr>
+            <th></th>
+            <th>Time</th>
+            <th>Location</th>
+          </tr>
+          <tr>
+            <td>Keynote</td>
+            <td>9:00 AM</td>
+            <td>Auditorium</td>
+          </tr>
+          <tr>
+            <td>Lunch</td>
+            <td>12:00 PM</td>
+            <td>Skyline Room</td>
+          </tr>
+          <tr>
+            <td>Closing Dinner</td>
+            <td>5:00 PM</td>
+            <td>Metropolitan Room</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+  <script src="../../dist/js/sa11y.umd.min.js"></script>
+  <script src="../../dist/js/lang/en.umd.js"></script>
+  <script>
+    Sa11y.Lang.addI18n(Sa11yLangEn.strings);
+    const sa11y = new Sa11y.Sa11y({
+      checkRoot: "main",
+      nonConsecutiveHeadingIsError: false,
+      tablesQAemptyTHisError: false,
+    });
+  </script>
+</body>
+
+</html>

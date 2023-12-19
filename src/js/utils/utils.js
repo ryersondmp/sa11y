@@ -2,7 +2,7 @@ import find from './find';
 
 /**
  * Checks if the document has finished loading, and if so, immediately calls the provided callback function. Otherwise, waits for the 'load' event to fire and then calls the callback function.
- * @param {function} callback - The callback function to be called when the document finishes loading.
+ * @param {function} callback The callback function to be called when the document finishes loading.
  */
 export function documentLoadingCheck(callback) {
   if (document.readyState === 'complete') {
@@ -14,8 +14,8 @@ export function documentLoadingCheck(callback) {
 
 /**
  * Checks if an element is visually hidden or hidden based on its attributes and styles.
- * @param {HTMLElement} element - The element to check for visibility.
- * @returns {boolean} - `true` if the element is visually hidden or hidden, `false` otherwise.
+ * @param {HTMLElement} element The element to check for visibility.
+ * @returns {boolean} `true` if the element is visually hidden or hidden, `false` otherwise.
  */
 export function isElementVisuallyHiddenOrHidden(element) {
   if (element.getAttribute('hidden') || (element.offsetWidth === 0 && element.offsetHeight === 0) || (element.clientHeight === 1 && element.clientWidth === 1)) {
@@ -26,12 +26,12 @@ export function isElementVisuallyHiddenOrHidden(element) {
 }
 
 /**
- * Checks if an element is hidden based on its attributes and styles.
- * @param {HTMLElement} element - The element to check for visibility.
- * @returns {boolean} - `true` if the element is hidden, `false` otherwise.
+ * Checks if an element is hidden (display: none) based on its attributes and styles.
+ * @param {HTMLElement} element The element to check for visibility.
+ * @returns {boolean} 'true' if the element is hidden (display: none).
  */
 export function isElementHidden(element) {
-  if (element.getAttribute('hidden') || (element.offsetWidth === 0 && element.offsetHeight === 0)) {
+  if (element.getAttribute('hidden')) {
     return true;
   }
   const compStyles = getComputedStyle(element);
@@ -40,8 +40,8 @@ export function isElementHidden(element) {
 
 /**
  * Escapes HTML special characters in a string.
- * @param {string} string - The string to escape.
- * @returns {string} - The escaped string with HTML special characters replaced by their corresponding entities.
+ * @param {string} string The string to escape.
+ * @returns {string} The escaped string with HTML special characters replaced by their corresponding entities.
  */
 export function escapeHTML(string) {
   const $div = document.createElement('div');
@@ -51,8 +51,8 @@ export function escapeHTML(string) {
 
 /**
  * Decodes/unescapes HTML entities back to their corresponding character.
- * @param {string} string - The string.
- * @returns {string} - Decoded string.
+ * @param {string} string The string.
+ * @returns {string} Decoded string.
  */
 export function decodeHTML(string) {
   return string.replace(/&(#?[a-zA-Z0-9]+);/g, (match, entity) => {
@@ -79,8 +79,8 @@ export function decodeHTML(string) {
 
 /**
  * Strips HTML tags from a string.
- * @param {string} string - The string.
- * @returns {string} - String without any HTML tags.
+ * @param {string} string The string.
+ * @returns {string} String without any HTML tags.
  */
 export function stripHTMLtags(string) {
   return string.replace(/<[^>]*>/g, '');
@@ -88,8 +88,8 @@ export function stripHTMLtags(string) {
 
 /**
  * Sanitizes an HTML string by replacing special characters with their corresponding HTML entities.
- * @param {string} string - The HTML string to sanitize.
- * @returns {string} - The sanitized HTML string with special characters replaced by their corresponding entities.
+ * @param {string} string The HTML string to sanitize.
+ * @returns {string} The sanitized HTML string with special characters replaced by their corresponding entities.
  * @link https://portswigger.net/web-security/cross-site-scripting/preventing
  */
 export function sanitizeHTML(string) {
@@ -98,50 +98,28 @@ export function sanitizeHTML(string) {
 
 /**
  * Retrieves the text content of an HTML element and removes extra whitespaces and line breaks.
- * @param {HTMLElement} element - The HTML element to retrieve the text content from.
- * @returns {string} - The text content of the HTML element with extra whitespaces and line breaks removed.
+ * @param {HTMLElement} element The HTML element to retrieve the text content from.
+ * @returns {string} The text content of the HTML element with extra whitespaces and line breaks removed.
  */
 export function getText(element) {
-  return element.textContent.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
+  return element.textContent.replace(/[\r\n]+/g, '').replace(/\s+/g, ' ').trim();
 }
 
 /**
- * Compute alt text on images within a text node.
- * @param {HTMLElement} element - The HTML element to compute the text content from.
- * @returns {string} - The computed text content of the HTML element, considering alt text of images if present.
+ * Removes extra whitespaces and line breaks from a string.
+ * @param {string} string The string.
+ * @returns {string} String with line breaks and extra white space removed.
  */
-export function computeTextNodeWithImage(element) {
-  const textContent = getText(element);
-  const imgArray = Array.from(element.querySelectorAll('img'));
-  let returnText = '';
-  // No image, has text.
-  if (imgArray.length === 0 && textContent.length > 1) {
-    returnText = textContent;
-  } else if (imgArray.length && textContent.length === 0) {
-    // Has image.
-    const imgalt = imgArray[0].getAttribute('alt');
-    if (!imgalt || imgalt === ' ' || imgalt === '') {
-      returnText = '';
-    } else if (imgalt !== undefined) {
-      returnText = imgalt;
-    }
-  } else if (imgArray.length && textContent.length) {
-    // Has image and text.
-    // To-do: This is a hack? Any way to do this better?
-    imgArray.forEach((img) => {
-      img.insertAdjacentHTML('afterend', ` <span data-sa11y-clone-image-text aria-hidden="true">${imgArray[0].getAttribute('alt')}</span>`);
-    });
-    returnText = textContent;
-  }
-  return returnText;
+export function removeWhitespace(string) {
+  return string.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
 /**
  * Debounces a callback function, ensuring it is only executed after a certain wait period
  * has passed since the last invocation.
- * @param {function} callback - The callback function to debounce.
- * @param {number} wait - The wait period in milliseconds before the callback function is executed.
- * @returns {function} - The debounced function.
+ * @param {function} callback The callback function to debounce.
+ * @param {number} wait The wait period in milliseconds before the callback function is executed.
+ * @returns {function} The debounced function.
  * @link https://www.joshwcomeau.com/snippets/javascript/debounce/
  */
 export function debounce(callback, wait) {
@@ -156,9 +134,9 @@ export function debounce(callback, wait) {
 
 /**
  * Creates a clone of an element while ignoring specified elements or elements matching a selector.
- * @param {Element} element - The element to clone.
- * @param {string} selector - The selector to match elements to be excluded from the clone. Optional.
- * @returns {Element} - The cloned element with excluded elements removed.
+ * @param {Element} element The element to clone.
+ * @param {string} selector The selector to match elements to be excluded from the clone. Optional.
+ * @returns {Element} The cloned element with excluded elements removed.
  */
 export function fnIgnore(element, selector) {
   const defaultIgnored = 'noscript, script, style';
@@ -172,95 +150,11 @@ export function fnIgnore(element, selector) {
 }
 
 /**
- * Computes the accessible name of an element based on various aria-* attributes.
- * @param {Element} element - The element for which the accessible name needs to be computed.
- * @returns {string} - The computed accessible name of the element.
- */
-export function computeAccessibleName(element) {
-  // aria-label
-  if (element.matches('[aria-label]')) {
-    return element.getAttribute('aria-label');
-  }
-
-  // aria-labeledby
-  if (element.matches('[aria-labelledby]')) {
-    const target = element.getAttribute('aria-labelledby').split(/\s+/);
-    if (target.length > 0) {
-      let returnText = '';
-      target.forEach((x) => {
-        const targetSelector = document.querySelector(`#${CSS.escape(x)}`);
-        if (targetSelector === null) {
-          returnText += ' ';
-        } else if (targetSelector.hasAttribute('aria-label')) {
-          returnText += `${targetSelector.getAttribute('aria-label')}`;
-        } else {
-          returnText += `${targetSelector.firstChild.nodeValue} `;
-        }
-      });
-      return returnText;
-    }
-  }
-
-  // Child with aria-label
-  if (Array.from(element.children).filter((x) => x.matches('[aria-label]')).length > 0) {
-    const child = Array.from(element.childNodes);
-    let returnText = '';
-
-    // Process each child within node.
-    child.forEach((x) => {
-      if (x.nodeType === 1) {
-        // Ignore HTML comments and make sure label is not null.
-        if (x.nodeType === 3 || x.ariaLabel === null) {
-          returnText += x.innerText;
-        } else {
-          returnText += x.getAttribute('aria-label');
-        }
-      } else {
-        returnText += x.nodeValue;
-      }
-    });
-    return returnText;
-  }
-
-  // Child with aria-labelledby
-  if (Array.from(element.children).filter((x) => x.matches('[aria-labelledby]')).length > 0) {
-    const child = Array.from(element.childNodes);
-    let returnText = '';
-
-    // Process each child within node.
-    child.forEach((y) => {
-      if (y.nodeType === 8) {
-        // Ignore HTML comments and make sure label is not null.
-      } else if (y.nodeType === 3 || y.getAttribute('aria-labelledby') === null) {
-        returnText += y.nodeValue;
-      } else {
-        const target = y.getAttribute('aria-labelledby').split(/\s+/);
-        if (target.length > 0) {
-          let returnAria = '';
-          target.forEach((z) => {
-            if (document.querySelector(`#${CSS.escape(z)}`) === null) {
-              returnAria += ' ';
-            } else {
-              returnAria += `${document.querySelector(`#${CSS.escape(z)}`).firstChild.nodeValue} `;
-            }
-          });
-          returnText += returnAria;
-        }
-      }
-    });
-    return returnText;
-  }
-
-  // Return if noAria;
-  return 'noAria';
-}
-
-/**
  * Finds the visible parent of an element that matches a given CSS property and value.
- * @param {Element} element - The element for which the visible parent needs to be found.
- * @param {string} property - The CSS property to match against.
- * @param {string} value - The value of the CSS property to match against.
- * @returns {Element|null} - The visible parent element that matches the given property and value, or null if not found.
+ * @param {Element} element The element for which the visible parent needs to be found.
+ * @param {string} property The CSS property to match against.
+ * @param {string} value The value of the CSS property to match against.
+ * @returns {Element|null} The visible parent element that matches the given property and value, or null if not found.
  */
 export function findVisibleParent(element, property, value) {
   let $el = element;
@@ -277,8 +171,8 @@ export function findVisibleParent(element, property, value) {
 
 /**
  * Calculates the offset top of an element relative to the viewport.
- * @param {Element} element - The element for which the offset top needs to be calculated.
- * @returns {Object} - An object with a `top` property that represents the offset top of the element relative to the viewport.
+ * @param {Element} element The element for which the offset top needs to be calculated.
+ * @returns {Object} An object with a `top` property that represents the offset top of the element relative to the viewport.
  */
 export function offsetTop(element) {
   const rect = element.getBoundingClientRect();
@@ -326,7 +220,7 @@ export const store = {
 
 /**
  * Adds a pulsing border effect to an element for 2.5 seconds.
- * @param {Element} element - The element to which the pulsing border effect needs to be added.
+ * @param {Element} element The element to which the pulsing border effect needs to be added.
  */
 export function addPulse(element) {
   const border = 'data-sa11y-pulse-border';
@@ -338,9 +232,9 @@ export function addPulse(element) {
 
 /**
  * Gets the next sibling element that matches the given selector, or the next sibling element if no selector is provided.
- * @param {HTMLElement} element - The DOM element whose next sibling to retrieve.
- * @param {string} selector - The optional selector to filter the next siblings. If not provided, the next sibling element will be returned regardless of its type.
- * @returns {HTMLElement|string} - The next sibling element that matches the given selector, or the next sibling element if no selector is provided. If no matching sibling is found, an empty string is returned.
+ * @param {HTMLElement} element The DOM element whose next sibling to retrieve.
+ * @param {string} selector The optional selector to filter the next siblings. If not provided, the next sibling element will be returned regardless of its type.
+ * @returns {HTMLElement|string} The next sibling element that matches the given selector, or the next sibling element if no selector is provided. If no matching sibling is found, an empty string is returned.
  */
 export function getNextSibling(element, selector) {
   let sibling = element.nextElementSibling;
@@ -354,8 +248,8 @@ export function getNextSibling(element, selector) {
 
 /**
  * Generates a unique key for dismissing items.
- * @param {string} string - The string to be prepared for dismissal (without special chars).
- * @returns {string} - The truncated string with a maximum of 256 characters.
+ * @param {string} string The string to be prepared for dismissal (without special chars).
+ * @returns {string} The truncated string with a maximum of 256 characters.
  */
 export function prepareDismissal(string) {
   return String(string).replace(/([^0-9a-zA-Z])/g, '').substring(0, 256);
@@ -363,8 +257,8 @@ export function prepareDismissal(string) {
 
 /**
  * Generates a selector path for the given DOM element.
- * @param {Element} element - The DOM element for which to generate the selector path.
- * @returns {string} - The selector path as a string.
+ * @param {Element} element The DOM element for which to generate the selector path.
+ * @returns {string} The selector path as a string.
  * @link https://www.geeksforgeeks.org/how-to-create-a-function-generateselector-to-generate-css-selector-path-of-a-dom-element/
  * @link https://dev.to/aniket_chauhan/generate-a-css-selector-path-of-a-dom-element-4aim
 */
@@ -399,7 +293,7 @@ export function generateSelectorPath(element) {
 /**
  * Traps focus within an element by looping focus back to the beginning or end
  * when the Tab key is pressed.
- * @param {Element} element - The DOM element to trap focus within.
+ * @param {Element} element The DOM element to trap focus within.
  * @author Hidde de Vries
  * @link https://hidde.blog/using-javascript-to-trap-focus-in-an-element/
 */
@@ -445,9 +339,9 @@ export function removeAlert() {
 
 /**
  * Creates an alert in the Sa11y control panel with the given alert message and error preview.
- * @param {string} alertMessage - The alert message.
- * @param {string} errorPreview - The issue's tooltip message (optional).
- * @param {string} extendedPreview - The issue's HTML or escaped HTML to be previewed (optional).
+ * @param {string} alertMessage The alert message.
+ * @param {string} errorPreview The issue's tooltip message (optional).
+ * @param {string} extendedPreview The issue's HTML or escaped HTML to be previewed (optional).
  * @returns {void}
  */
 export function createAlert(alertMessage, errorPreview, extendedPreview) {
@@ -501,8 +395,8 @@ export function createAlert(alertMessage, errorPreview, extendedPreview) {
 
 /**
  * Finds all data-attributes specified in array, and removes them from the document.
- * @param {Array<string>} attributes - The array of data-attributes to be reset.
- * @param {string} root - The root element to search for elements (optional, defaults to 'document').
+ * @param {Array<string>} attributes The array of data-attributes to be reset.
+ * @param {string} root The root element to search for elements (optional, defaults to 'document').
  * @returns {void}
  */
 export function resetAttributes(attributes, root) {
@@ -519,7 +413,7 @@ export function resetAttributes(attributes, root) {
 
 /**
  * Removes the specified elements from the document.
- * @param {string} root - The root element to search for elements (optional, defaults to 'document').
+ * @param {string} root The root element to search for elements (optional, defaults to 'document').
  * @returns {void}
  */
 export function remove(elements, root) {
@@ -534,8 +428,8 @@ export function remove(elements, root) {
 
 /**
  * Checks if a scrollable area within a container element is scrollable or not, and applies appropriate CSS classes and attributes. Make sure to add aria-label manually.
- * @param {Element} scrollArea - The scrollable area element to check.
- * @param {Element} container - The container element that wraps the scrollable area.
+ * @param {Element} scrollArea The scrollable area element to check.
+ * @param {Element} container The container element that wraps the scrollable area.
  */
 export function isScrollable(scrollArea, container) {
   if (scrollArea.scrollHeight > container.clientHeight) {
@@ -548,7 +442,7 @@ export function isScrollable(scrollArea, container) {
 
 /**
  * Generate an HTML preview for an issue if it's an image, iframe, audio or video element. Otherwise, return escaped HTML within <code> tags. Used for Skip to Issue panel alerts and HTML page export.
- * @param {Object} issueObject - The issue object.
+ * @param {Object} issueObject The issue object.
  * @returns {html} Returns HTML.
  */
 export function generateElementPreview(issueObject) {

@@ -158,6 +158,7 @@ div {
 }
 .tippy-box[data-theme~=sa11y-theme] code {
   font-family: monospace;
+  font-size: calc(var(--sa11y-normal-text) - 1px);
 }
 .tippy-box[data-theme~=sa11y-theme] code,
 .tippy-box[data-theme~=sa11y-theme] kbd {

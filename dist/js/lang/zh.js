@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.5
+  * @version 3.0.6
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -167,18 +167,18 @@ var zh = {
     MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE: '图片被用作带有周围文本的链接, 尽管alt属性应被标记为装饰性或空。',
     MISSING_ALT_LINK_MESSAGE: '图像被用作链接，但缺少替代文本！请确保替代文本描述了链接将您带到的位置。',
     MISSING_ALT_MESSAGE: '缺少替代文本！如果图像传达了故事、情绪或重要信息 - 请务必描述图像。',
-    LINK_IMAGE_BAD_ALT_MESSAGE: '在alt文本中发现文件扩展名。确保alt文本描述链接的目的地, 而不是图片的字面描述。删除: <strong {r}>%(error)</strong>.<hr><strong>替代文字:</strong>%(altText)',
+    LINK_ALT_HAS_FILE_EXTENSION: '在alt文本中发现文件扩展名。确保alt文本描述链接的目的地, 而不是图片的字面描述。删除: <strong {r}>%(error)</strong>.<hr><strong>替代文字:</strong>%(altText)',
     LINK_IMAGE_PLACEHOLDER_ALT_MESSAGE: '发现链接图片中的非描述性或占位符的alt文本。确保alt文本描述了链接的目的地, 而不是图像的字面描述。替换以下alt文本: <strong {r}>%(altText)</strong>。',
     LINK_IMAGE_SUS_ALT_MESSAGE: '辅助技术已经表明这是一张图片, 所以&quot;<strong {r}>%(error)</strong>&quot; 可能是多余的。确保alt文本描述了链接的目的地, 而不是图像的字面描述。<hr> <strong>alt文本: </strong>%(altText)',
-    LINK_ALT_HAS_BAD_WORD_MESSAGE: '在alt文本内找到文件扩展名。如果图片传达了一个故事、情绪或重要信息--一定要描述图片。删除: <strong {r}>%(error)</strong>.<hr><strong>替代文字:</strong>%(altText)',
+    ALT_HAS_FILE_EXTENSION: '在alt文本内找到文件扩展名。如果图片传达了一个故事、情绪或重要信息--一定要描述图片。删除: <strong {r}>%(error)</strong>.<hr><strong>替代文字:</strong>%(altText)',
     ALT_PLACEHOLDER_MESSAGE: '发现非描述性或占位符的alt文本。用更有意义的内容替换下面的alt文本: <strong {r}>%(altText)</strong>。',
     ALT_HAS_SUS_WORD: '辅助技术已经表明这是一张图片, 所以&quot;<strong {r}>%(error)</strong>&quot; 可能是多余的。<hr> <strong>替代文字:</strong> %(altText)',
-    LINK_IMAGE_ARIA_HIDDEN: '图片周围的链接有<code>aria-hidden=&quot;true&quot;</code>, 但仍可被键盘聚焦。如果你打算隐藏一个多余的或重复的链接, 请同时添加<code>tabindex=&quot;-1&quot;</code>。',
+    LINK_HIDDEN_FOCUSABLE: '链接具有<code>aria-hidden=&quot;true&quot;</code>，但仍可通过键盘聚焦。如果您打算隐藏多余或重复的链接，也请添加<code>tabindex=&quot;-1&quot;</code>。',
     LINK_IMAGE_NO_ALT_TEXT: '链接中的图像被标记为装饰性的, 没有链接文本。请在图片上添加描述链接目的地的alt文本。',
     LINK_IMAGE_HAS_TEXT: '图片被标记为装饰性的, 尽管链接是使用周围的文字作为描述性的标签。',
     LINK_IMAGE_LONG_ALT: '链接图片的alt文本描述<strong>太长</strong>。链接图片的alt文本应该描述链接的位置, 而不是图片的字面描述。<strong>考虑使用它所链接的页面的标题作为alt文本。</strong> <hr> <strong>alt文本 (<span {r}>% (altLength) </span>字符) : </strong> % (altText) 。',
     LINK_IMAGE_ALT_WARNING: '图片链接包含alt文本。符号文本是否描述了该链接的位置？可以考虑使用它所链接的页面的标题作为alt文本。 <hr> <strong>替代文字:</strong> %(altText)',
-    LINK_IMAGE_ALT_AND_TEXT_WARNING: '图片链接包含<strong>alt文本和周围的链接文本。</strong>如果该图片是装饰性的, 并被用作另一个页面的功能链接, 请考虑将该图片标记为装饰性或无效--周围的链接文本应该足够了。<hr> <strong>标题文本: </strong> %(altText)',
+    LINK_IMAGE_ALT_AND_TEXT_WARNING: '图片链接包含<strong>alt文本和周围的链接文本。</strong>如果该图片是装饰性的, 并被用作另一个页面的功能链接, 请考虑将该图片标记为装饰性或无效--周围的链接文本应该足够了。<hr> <strong>标题文本: </strong> %(altText) <hr> <strong>链接标签: </strong> %(sanitizedText)',
     IMAGE_FIGURE_DECORATIVE: '图片被标记为<strong>装饰性</strong>, 将被辅助技术所忽略。<hr> 虽然提供了一个<strong>标题</strong>, 但在大多数情况下, 图像也应该有alt文本。<ul><li>alt文本应该对图像中的内容进行简明的描述。</li><li>标题通常应该提供背景, 将图像与周围的内容联系起来, 或者对某一特定的信息给予关注: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt与figcaption.</a>',
     IMAGE_FIGURE_DUPLICATE_ALT: '不要在alt和标题文本中使用完全相同的词。屏幕阅读器会将信息公布两次。<ul><li>alt文本应提供对图片中内容的简明描述。</li><li>标题通常应提供背景, 将图片与周围的内容联系起来, 或对某一特定信息给予关注。</li></ul>了解更多: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt与figcaption.</a> <hr> <strong>替代文字:</strong> %(altText)',
     IMAGE_DECORATIVE: '图片被标记为<strong>装饰性</strong>, 将被辅助技术所忽略。如果图片传达了一个故事、情绪或重要的信息--请务必添加alt文本。',
@@ -186,14 +186,15 @@ var zh = {
     IMAGE_PASS: '<strong>替代文本: </strong>%(altText)',
     LABELS_MISSING_IMAGE_INPUT_MESSAGE: '图片按钮缺少alt文本。请添加alt文本, 提供一个可访问的名称。比如说: <em>Search</em>或<em>Submit</em>。',
     LABELS_INPUT_RESET_MESSAGE: '除非特别需要, 否则不应<strong></strong>使用重置按钮, 因为它们很容易被错误激活。<hr> <strong>提示！</strong>了解为什么<a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">复位和取消按钮会带来可用性问题。</a>',
-    LABELS_ARIA_LABEL_INPUT_MESSAGE: '输入有一个无障碍名称, 但请确保也有一个可见的标签。<hr> 这个输入的无障碍名称是: <strong>%(sanitizedText)</strong>。',
+    LABELS_ARIA_LABEL_INPUT_MESSAGE: '输入有一个无障碍名称, 但请确保也有一个可见的标签。<hr> <strong>输入标签：</strong> %(sanitizedText)',
     LABELS_NO_FOR_ATTRIBUTE_MESSAGE: '没有与此输入相关的标签。给标签添加一个<code>for</code>属性, 该属性与该输入的<code>id</code>相匹配。<hr> 这个输入的ID是: <strong>id=&#34;% (id) &#34;</strong>',
     LABELS_MISSING_LABEL_MESSAGE: '没有与此输入相关的标签。请为这个输入添加一个<code>id</code>, 并为标签添加一个匹配的<code>for</code>属性。',
     EMBED_VIDEO: '请确保<strong>所有视频都有闭合字幕。</strong>为所有音频和视频内容提供字幕是一项强制性的A级要求。字幕支持聋哑人或听力困难的人。',
     EMBED_AUDIO: '请确保为所有播客提供<strong>文字记录。</strong>为音频内容提供文字记录是一项强制性的A级要求。转录支持聋哑人或听力困难的人, 但也能使所有人受益。考虑将文字记录放在下面或放在一个手风琴面板内。',
     EMBED_DATA_VIZ: '像这样的数据可视化部件对于使用键盘或屏幕阅读器导航的人来说往往是有问题的, 而且对于低视力或色盲的人来说也会带来很大的困难。建议在小组件下方以替代 (文本或表格) 的形式提供相同的信息。<hr> 了解更多关于<a href="https://www.w3.org/WAI/tutorials/images/complex">复杂图像的信息。</a>',
-    EMBED_MISSING_TITLE: '嵌入内容需要一个描述其内容的可访问名称。请在<code>iframe</code>元素上提供一个独特的<code>title</code>或<code>aria-label</code>属性。了解更多关于<a href="https://dequeuniversity.com/tips/provide-iframe-titles">iFrames.</a>的信息。',
+    EMBED_MISSING_TITLE: '嵌入内容需要一个描述其内容的可访问名称。请在<code>iframe</code>元素上提供一个独特的<code>title</code>或<code>aria-label</code>属性。了解更多关于<a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>的信息。',
     EMBED_GENERAL_WARNING: '无法检查嵌入式内容。请确保图像有alt文本, 视频有标题, 文本有足够的对比度, 互动组件是<a href="https://webaim.org/techniques/keyboard/">键盘可访问的。</a>',
+    EMBED_UNFOCUSABLE: '带有无法聚焦元素的 <code>&lt;iframe&gt;</code> 不应具有 <code>tabindex="-1"</code>。嵌入内容将无法通过键盘访问。',
     QA_BAD_LINK: '发现坏的链接。链接似乎指向一个开发环境。<hr> 这个链接指向: <br> <strong {r}>%(el)</strong>',
     QA_BAD_ITALICS: '粗体和斜体标签具有语义, 不应<strong></strong>用于突出整个段落。加粗的文字应该用于对一个词或短语进行强烈的<strong>强调</strong>。斜体字应该用来突出专有名词 (即书名和文章标题) 、外国词、引号。长篇引语应采用块状引语的格式。',
     QA_PDF: '无法检查PDF的可访问性。PDF被认为是网络内容, 也必须做到无障碍。对于使用屏幕阅读器的人 (缺失结构标签或缺失表格字段标签) 和低视力的人 (文本在放大时不回流) 来说, PDF经常包含一些问题。<ul><li>如果这是一个表格, 请考虑使用可访问的HTML表格作为替代。</li><li>如果这是一个文档, 请考虑将其转换为网页。</li></ul>否则, 请在Acrobat DC中检查<a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF的可访问性。</a>',

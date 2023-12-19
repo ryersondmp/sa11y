@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.5
+  * @version 3.0.6
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2023 Toronto Metropolitan University (formerly Ryerson University).
@@ -179,18 +179,18 @@ var ko = {
     MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE: '이미지가 주변 텍스트와 함께 링크로 사용되고 있지만 alt 속성은 장식용 또는 null로 표시되어야 합니다.',
     MISSING_ALT_LINK_MESSAGE: '이미지가 링크로 사용 중이지만 대체 텍스트가 누락되었습니다! 링크가 어디로 연결되는지 설명하는 대체 텍스트를 입력하세요.',
     MISSING_ALT_MESSAGE: '대체 텍스트가 누락되었습니다! 이미지가 스토리, 분위기 또는 중요한 정보를 전달하는 경우 이미지에 대한 설명을 반드시 기재하세요.',
-    LINK_IMAGE_BAD_ALT_MESSAGE: '대체 텍스트 내의 파일 확장자를 찾았습니다. 대체 텍스트가 이미지에 대한 문자 그대로의 설명이 아니라 링크의 목적지를 설명하는지 확인하세요. 제거합니다: <strong {r}>%(error)</strong>.<hr><strong>대체 텍스트:</strong> %(altText)',
+    LINK_ALT_HAS_FILE_EXTENSION: '대체 텍스트 내의 파일 확장자를 찾았습니다. 대체 텍스트가 이미지에 대한 문자 그대로의 설명이 아니라 링크의 목적지를 설명하는지 확인하세요. 제거합니다: <strong {r}>%(error)</strong>.<hr><strong>대체 텍스트:</strong> %(altText)',
     LINK_IMAGE_PLACEHOLDER_ALT_MESSAGE: '링크된 이미지에 설명이 없거나 자리 표시자 대체 텍스트가 발견되었습니다. 대체 텍스트가 이미지에 대한 문자 그대로의 설명이 아니라 링크의 대상을 설명하는지 확인합니다. 다음 대체 텍스트를 교체합니다: <strong {r}>%(altText)</strong>',
     LINK_IMAGE_SUS_ALT_MESSAGE: '보조 기술은 이미 이미지임을 표시하므로 <strong {r}>%(error)</strong>가 중복될 수 있습니다. 대체 텍스트가 이미지에 대한 문자 그대로의 설명이 아니라 링크의 목적지를 설명하는지 확인하세요. <hr> <strong>대체 텍스트:</strong> %(altText)',
-    LINK_ALT_HAS_BAD_WORD_MESSAGE: '대체 텍스트 내의 파일 확장자를 찾았습니다. 이미지가 스토리, 분위기 또는 중요한 정보를 전달하는 경우 이미지를 설명해야 합니다. 제거합니다: <strong {r}>%(error)</strong>.<hr><strong>대체 텍스트:</strong> %(altText)',
+    ALT_HAS_FILE_EXTENSION: '대체 텍스트 내의 파일 확장자를 찾았습니다. 이미지가 스토리, 분위기 또는 중요한 정보를 전달하는 경우 이미지를 설명해야 합니다. 제거합니다: <strong {r}>%(error)</strong>.<hr><strong>대체 텍스트:</strong> %(altText)',
     ALT_PLACEHOLDER_MESSAGE: '설명이 없거나 자리 표시자 대체 텍스트가 발견되었습니다. 다음 대체 텍스트를 더 의미 있는 것으로 바꾸세요: <strong {r}>%(altText)</strong>',
     ALT_HAS_SUS_WORD: '보조 기술은 이미 이미지임을 표시하므로 <strong {r}>%(error)</strong>가 중복될 수 있습니다. <hr> <strong>대체 텍스트:</strong> %(altText)',
-    LINK_IMAGE_ARIA_HIDDEN: '이미지 주위의 링크에는 <code>aria-hidden=&quot;true&quot;</code>가 있지만 여전히 키보드 포커스를 사용할 수 있습니다. 중복되거나 중복된 링크를 숨기려면 <code>tabindex=&quot;-1&quot;</code>도 추가하세요.',
+    LINK_HIDDEN_FOCUSABLE: '링크에는 <code>aria-hidden=&quot;true&quot;</code> 속성이 있지만 키보드로 여전히 초점을 맞출 수 있습니다. 중복되거나 불필요한 링크를 숨기려면 <code>tabindex=&quot;-1&quot;</code>도 추가하세요.',
     LINK_IMAGE_NO_ALT_TEXT: '링크 내 이미지는 장식용으로 표시되어 있으며 링크 텍스트가 없습니다. 링크의 목적지를 설명하는 대체 텍스트를 이미지에 추가하세요.',
     LINK_IMAGE_HAS_TEXT: '링크가 주변 텍스트를 설명 레이블로 사용하고 있지만 이미지는 장식용으로 표시됩니다.',
     LINK_IMAGE_LONG_ALT: '링크된 이미지의 대체 텍스트 설명이 <strong>너무 깁니다</strong>. 링크된 이미지의 대체 텍스트는 이미지에 대한 문자 그대로의 설명이 아니라 링크를 통해 이동하는 위치를 설명해야 합니다. <strong>링크되는 페이지의 제목을 대체 텍스트로 사용하는 것이 좋습니다.</strong> <hr> <strong>대체 텍스트(<span {r}>%(altLength)</span> 문자):</strong> %(altText)',
     LINK_IMAGE_ALT_WARNING: '이미지 링크에 대체 텍스트가 포함되어 있습니다. 대체 텍스트에 링크가 어디로 연결되는지 설명되어 있나요? <strong>링크하는 페이지의 제목을 대체 텍스트로 사용하는 것이 좋습니다.</strong> <hr> <strong>대체 텍스트:</strong> %(altText)',
-    LINK_IMAGE_ALT_AND_TEXT_WARNING: '이미지 링크에 <strong>대체 텍스트와 주변 링크 텍스트가 모두 포함됨</strong> 이 이미지가 장식용이고 다른 페이지에 대한 기능적 링크로 사용되는 경우 이미지를 장식용으로 표시하거나 주변 링크 텍스트로 충분할 수 있도록 null로 표시하는 것을 고려하세요. <hr> <strong>대체 텍스트:</strong> %(altText)',
+    LINK_IMAGE_ALT_AND_TEXT_WARNING: '이미지 링크에 <strong>대체 텍스트와 주변 링크 텍스트가 모두 포함됨</strong> 이 이미지가 장식용이고 다른 페이지에 대한 기능적 링크로 사용되는 경우 이미지를 장식용으로 표시하거나 주변 링크 텍스트로 충분할 수 있도록 null로 표시하는 것을 고려하세요. <hr> <strong>대체 텍스트:</strong> %(altText) <hr> <strong>링크 레이블:</strong> %(sanitizedText)',
     IMAGE_FIGURE_DECORATIVE: '이미지가 <strong>장식</strong>으로 표시되어 보조 기술에서 무시됩니다. <hr> <strong>캡션</strong>이 제공되었더라도 이미지에는 대부분의 경우 대체 텍스트가 있어야 합니다. <ul><li>대체 텍스트는 이미지에 포함된 내용에 대한 간결한 설명을 제공해야 합니다.</li><li>캡션은 일반적으로 이미지를 주변 콘텐츠와 다시 연관시키거나 특정 정보에 주의를 기울일 수 있도록 맥락을 제공해야 합니다.</li></ul>자세히 알아보기: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">알트 대 그림 캡션.</a>',
     IMAGE_FIGURE_DUPLICATE_ALT: '대체 텍스트와 캡션 텍스트에 정확히 같은 단어를 사용하지 마세요. 화면 리더는 정보를 두 번 알립니다.<ul><li>대체 텍스트는 이미지에 포함된 내용에 대한 간결한 설명을 제공해야 합니다.</li><li>캡션은 일반적으로 이미지를 주변 콘텐츠와 다시 연관시키거나 특정 정보에 주목할 수 있도록 맥락을 제공해야 합니다.</li></ul> 자세히 알아보기: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">알트 대 그림 캡션.</a> <hr> <strong>대체 텍스트:</strong> %(altText)',
     IMAGE_DECORATIVE: "이미지는 '장식용'으로 표시되어 보조 기술에서 무시됩니다. 이미지가 스토리, 분위기 또는 중요한 정보를 전달하는 경우 대체 텍스트를 추가해야 합니다.",
@@ -198,14 +198,15 @@ var ko = {
     IMAGE_PASS: '<strong>대체 텍스트:</strong> %(altText)',
     LABELS_MISSING_IMAGE_INPUT_MESSAGE: '이미지 버튼에 대체 텍스트가 없습니다. 접근 가능한 이름을 제공하기 위해 대체 텍스트를 추가하세요. 예: <em>검색</em> 또는 <em>제출</em>.',
     LABELS_INPUT_RESET_MESSAGE: '재설정 버튼은 실수로 활성화하기 쉬우므로 특별히 필요한 경우가 아니라면 사용하지 않는 것이 좋습니다. <hr> <strong>Tip!</strong> <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">재설정 및 취소 버튼이 사용성 문제를 일으키는 이유에 대해 알아보세요.</a>',
-    LABELS_ARIA_LABEL_INPUT_MESSAGE: '입력에 접근 가능한 이름이 있지만 레이블도 표시되어 있는지 확인하세요. <hr> 이 입력의 접근 가능한 이름은 다음과 같습니다: <strong>%(sanitizedText)</strong>',
+    LABELS_ARIA_LABEL_INPUT_MESSAGE: '입력에 접근 가능한 이름이 있지만 레이블도 표시되어 있는지 확인하세요. <hr> <strong>입력 레이블:</strong> %(sanitizedText)',
     LABELS_NO_FOR_ATTRIBUTE_MESSAGE: '이 입력과 연결된 레이블이 없습니다. 이 입력의 <코드>ID</코드>와 일치하는 레이블에 <코드>용</코드> 속성을 추가합니다. <hr> 이 입력의 ID는 다음과 같습니다: <strong>id=&#34;%(id)&#34;</strong>',
     LABELS_MISSING_LABEL_MESSAGE: '이 입력과 연결된 레이블이 없습니다. 이 입력에 <코드>아이디</코드>를 추가하고 레이블에 일치하는 <코드>용</코드> 속성을 추가하세요.',
     EMBED_VIDEO: '모든 동영상에 자막이 있는지 확인하세요.</strong> 모든 오디오 및 동영상 콘텐츠에 자막을 제공하는 것은 필수 레벨 A 요건입니다. 자막은 청각 장애가 있거나 난청인 사용자를 지원합니다.',
     EMBED_AUDIO: '모든 팟캐스트에 <strong>대본을 제공해야 합니다. </strong> 오디오 콘텐츠에 대한 대본 제공은 필수 레벨 A 요건입니다. 대본은 청각 장애가 있거나 청각이 불편한 사람들을 지원하지만 모든 사람에게 도움이 될 수 있습니다. 대본을 아래 또는 아코디언 패널 안에 배치하는 것을 고려하세요.',
     EMBED_DATA_VIZ: '이와 같은 데이터 시각화 위젯은 키보드나 화면 리더를 사용하여 탐색하는 사람들에게 종종 문제가 되며, 저시력자나 색맹인 사람들에게는 상당한 어려움을 초래할 수 있습니다. 위젯 아래에 동일한 정보를 다른 형식(텍스트 또는 표)으로 제공하는 것이 좋습니다. <hr> 복잡한 이미지에 대해 자세히 알아보기 <a href="https://www.w3.org/WAI/tutorials/images/complex">컴플렉스 이미지.</a>',
-    EMBED_MISSING_TITLE: '임베드된 콘텐츠에는 콘텐츠를 설명하는 접근 가능한 이름이 필요합니다. <code>iframe</code> 요소에 고유한 <code>title</code> 또는 <code>aria-label</code> 속성을 제공하세요. <a href="https://dequeuniversity.com/tips/provide-iframe-titles">iFrames.</a>에 대해 자세히 알아보기',
+    EMBED_MISSING_TITLE: '임베드된 콘텐츠에는 콘텐츠를 설명하는 접근 가능한 이름이 필요합니다. <code>iframe</code> 요소에 고유한 <code>title</code> 또는 <code>aria-label</code> 속성을 제공하세요. <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>에 대해 자세히 알아보기',
     EMBED_GENERAL_WARNING: '삽입된 콘텐츠를 확인할 수 없습니다. 이미지에 대체 텍스트가 있는지, 동영상에 캡션이 있는지, 텍스트의 대비가 충분한지, 인터랙티브 구성 요소가 <a href="https://webaim.org/techniques/keyboard/">키보드에 액세스할 수 있는지 확인하세요.',
+    EMBED_UNFOCUSABLE: '포커스할 수 없는 요소를 포함한 <code>&lt;iframe&gt;</code>은 <code>tabindex="-1"</code>을 가져서는 안 됩니다. 포함된 콘텐츠는 키보드로 접근할 수 없습니다.',
     QA_BAD_LINK: '잘못된 링크를 찾았습니다. 링크가 개발 환경을 가리키는 것으로 보입니다. <hr> 이 링크는 다음을 가리킵니다: <br> <strong {r}>%(el)</strong>',
     QA_BAD_ITALICS: '굵게 및 이탤릭체 태그는 의미론적 의미가 있으며, 전체 단락을 강조할 때는 <강함>이 아닌 <강함>을 사용해야 합니다. 굵은 텍스트는 단어나 문구에 강한 <강한> 강조를 제공할 때 사용해야 합니다. 고유명사(예: 책 및 기사 제목), 외래어, 따옴표는 이탤릭체로 강조 표시해야 합니다. 긴 따옴표는 블록 따옴표로 서식을 지정해야 합니다.',
     QA_PDF: 'PDF의 접근성을 확인할 수 없습니다. PDF는 웹 콘텐츠로 간주되므로 접근성을 제공해야 합니다. PDF에는 화면 리더를 사용하는 사용자(구조 태그 누락 또는 양식 필드 레이블 누락)와 저시력 사용자(확대 시 텍스트가 리플로우되지 않음)를 위한 문제가 포함되어 있는 경우가 많습니다. <ul><li>양식인 경우 접근 가능한 HTML 양식을 대안으로 사용해 보십시오.</li><li>문서인 경우 웹 페이지로 변환해 보십시오.</li></ul>그렇지 않은 경우 <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF의 접근성을 확인하십시오.</a>를 확인하십시오.',

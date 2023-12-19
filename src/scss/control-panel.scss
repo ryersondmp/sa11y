@@ -135,19 +135,21 @@ audio {
 /* ************************************* */
 #notification-badge {
   position: absolute;
-  top: -3px;
+  top: -5.5px;
   right: -3px;
   display: none;
   align-items: center;
   justify-content: center;
-  width: 20px;
+  min-width: 20px;
   height: 20px;
-  font-size: 13px;
+  padding: 3px;
+  font-size: 13.5px;
   font-weight: normal;
   color: #fff;
+  text-wrap: nowrap;
   background-color: #eb0000;
   border: 1px solid transparent;
-  border-radius: 50%;
+  border-radius: 12px;
 
   &.notification-badge-warning {
     color: var(--sa11y-warning-text);

@@ -118,16 +118,16 @@ const Elements = (function myElements() {
     ) : [];
 
     // iFrames
-    Found.Iframes = find(
-      'iframe, audio, video',
+    Found.iframes = find(
+      'iframe:not(hidden), audio, video',
       'root',
       Constants.Exclusions.Container,
     );
 
-    Found.Videos = Found.Iframes.filter(($el) => $el.matches(Constants.EmbeddedContent.Video));
-    Found.Audio = Found.Iframes.filter(($el) => $el.matches(Constants.EmbeddedContent.Audio));
-    Found.Visualizations = Found.Iframes.filter(($el) => $el.matches(Constants.EmbeddedContent.Visualization));
-    Found.EmbeddedContent = Found.Iframes.filter(($el) => !$el.matches(Constants.EmbeddedContent.All));
+    Found.Videos = Found.iframes.filter(($el) => $el.matches(Constants.EmbeddedContent.Video));
+    Found.Audio = Found.iframes.filter(($el) => $el.matches(Constants.EmbeddedContent.Audio));
+    Found.Visualizations = Found.iframes.filter(($el) => $el.matches(Constants.EmbeddedContent.Visualization));
+    Found.EmbeddedContent = Found.iframes.filter(($el) => !$el.matches(Constants.EmbeddedContent.All));
   }
 
   /* ***************** */

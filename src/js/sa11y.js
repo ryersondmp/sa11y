@@ -30,7 +30,6 @@ import checkHeaders from './rulesets/headers';
 import checkLinkText from './rulesets/link-text';
 import checkContrast from './rulesets/contrast';
 import checkLabels from './rulesets/labels';
-import checkLinksAdvanced from './rulesets/links-advanced';
 import checkReadability from './rulesets/readability';
 import checkEmbeddedContent from './rulesets/embedded-content';
 import checkQA from './rulesets/quality-assurance';
@@ -135,7 +134,6 @@ class Sa11y {
         checkImages(this.results, option);
         checkContrast(this.results, option);
         checkLabels(this.results, option);
-        checkLinksAdvanced(this.results, option);
         checkQA(this.results, option);
         checkEmbeddedContent(this.results, option);
         checkReadability();

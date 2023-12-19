@@ -2,16 +2,21 @@ import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 import Constants from '../utils/constants';
+import { computeAccessibleName } from '../utils/computeAccessibleName';
 
 export default function checkHeaders(results, option, headingOutline) {
   let prevLevel;
   Elements.Found.Headings.forEach(($el, i) => {
-    const ignore = Utils.fnIgnore($el); // Ignore unwanted <style>, <script>, etc tags.
-    const text = Utils.computeTextNodeWithImage(ignore);
-    const headingText = Utils.sanitizeHTML(text);
+    const accessibleName = computeAccessibleName($el);
+    const removeWhitespace = Utils.removeWhitespace(accessibleName);
+    const headingText = Utils.sanitizeHTML(removeWhitespace);
 
-    const isWithinRoot = Constants.Global.Root.contains($el);
+    // Check if heading is within root target area.
+    const rootContainsHeading = Constants.Global.Root.contains($el);
+    const rootContainsShadowHeading = Constants.Global.Root.contains($el.getRootNode().host);
+    const isWithinRoot = rootContainsHeading || rootContainsShadowHeading;
 
+    // Determine heading level.
     const level = parseInt($el.getAttribute('aria-level') || $el.tagName.slice(1), 10);
     const headingLength = headingText.length;
 

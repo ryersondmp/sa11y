@@ -12,6 +12,9 @@ import { dirname } from 'path';
 import autoprefixer from 'autoprefixer';
 import pkg from './package.json';
 
+/* Speed up compile time when developing by excluding language builds. */
+const developmentMode = false;
+
 /* Copyright notice */
 const banner = `
 /*!
@@ -54,7 +57,7 @@ const processSCSS = async (input, output, outputMin) => {
 /* ********************* */
 /*    Language files     */
 /* ********************* */
-const languages = [
+const languages = (developmentMode) ? ['en'] : [
   'bg',
   'cs',
   'da',
@@ -163,11 +166,14 @@ const bookmarkletConfigs = languages.map((lang) => {
   };
 });
 
+const configsToInclude = [
+  ...(!developmentMode ? bookmarkletConfigs : []),
+];
+
 export default [
-  // Note to developers: If you're not changing language files, you can temporarily comment out "...languageCongifs" and "...bookmarkletConfigs" while developing to speed things up.
   ...languageConfigs,
-  ...bookmarkletConfigs,
   ...scssConfigs,
+  ...configsToInclude,
 
   /* ********************* */
   /*      Javascript       */

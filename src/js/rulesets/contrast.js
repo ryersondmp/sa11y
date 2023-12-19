@@ -1,16 +1,17 @@
+import Elements from '../utils/elements';
+import * as Utils from '../utils/utils';
+import Lang from '../utils/lang';
+
 /**
  * Rulesets: Contrast
  * Color contrast plugin by Jason Day.
  * @link https://github.com/jasonday/color-contrast
  * @link https://github.com/gka/chroma.js (Parse RGB)
 */
-import Elements from '../utils/elements';
-import * as Utils from '../utils/utils';
-import Lang from '../utils/lang';
-
 export default function checkContrast(results, option) {
   if (option.contrastPlugin) {
-    if (Utils.store.getItem('sa11y-remember-contrast') === 'On' || option.headless || option.checkAllHideToggles) {
+    const toggleCheck = Utils.store.getItem('sa11y-remember-contrast') === 'On';
+    if (toggleCheck || option.headless || option.checkAllHideToggles) {
       let contrastErrors = {
         errors: [],
         warnings: [],
