@@ -6590,9 +6590,16 @@
       computedText += ` ${addTitleIfNoName}`;
     }
 
+    // Replace Private Use Area (PUA) unicode characters.
+    // https://www.unicode.org/faq/private_use.html
+    const puaRegex = /[\uE000-\uF8FF]/gu;
+    computedText = computedText.replace(puaRegex, '');
+
+    // If computedText returns blank, fallback on title attribute.
     if (!computedText.trim() && element.hasAttribute('title')) {
       return element.getAttribute('title');
     }
+
     return computedText;
   };
 
