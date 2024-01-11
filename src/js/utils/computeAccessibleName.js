@@ -39,9 +39,10 @@ export const computeAriaLabel = (element, recursing = false) => {
       return returnText;
     }
   }
-  if (element.ariaLabel && element.ariaLabel.trim().length > 0) {
-    // To-do: add empty and whitespace string tests.
-    return element.ariaLabel;
+
+  const ariaLabel = element.getAttribute('aria-label');
+  if (ariaLabel && ariaLabel.trim().length > 0) {
+    return ariaLabel;
   }
   return 'noAria';
 };

@@ -20,3 +20,7 @@ npm-debug.log
 # Windows
 Thumbs.db
 Desktop.ini
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

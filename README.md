@@ -99,6 +99,6 @@ A light server for development is included. Any change inside `/src` folder file
 2. Clone this repo.
 3. Run `npm install`
 4. Run `npm run serve`. Then open `http://localhost:8080/docs/demo/en/` in your browser.
-5. For unit tests, execute `npm test` or `node --test` while the server is running.
+5. For unit tests, execute `npm run test` while the server is running.
 
 **Tip!** To speed up compile time while developing, navigate to `rollup.config.js` and change `developmentMode` to `true`. This will only compile javascript, SCSS, and English translation strings.

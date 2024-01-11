@@ -1,28 +1,23 @@
-/* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable no-console */
-import { test, describe, before, after } from 'node:test';
-import assert from 'node:assert/strict';
-import puppeteer from 'puppeteer';
+import { test, expect } from '@playwright/test';
+test.describe.configure({ mode: 'serial' });
 
-/* Unit test suite. */
-describe('Sa11y navigation tests', () => {
-  let browser;
-  let page;
+/* Miscellaneous unit tests */
+let page;
+test.describe('Sa11y miscellaneous tests', () => {
 
-  before(async () => {
-    // Launch headless browser.
-    browser = await puppeteer.launch({
-      headless: 'new',
-      devtools: true,
-      args: ['--start-maximized', '--no-sandbox'],
-    });
+  test.beforeAll(async ({ browser }) => {
     page = await browser.newPage();
+  });
 
-    // Console log messages to terminal.
-    page.on('console', (msg) => {
-      console.log(`Page Log: ${msg.text()}`);
+  // Close everything down after running through all tests.
+  test.afterAll(async () => {
+    await page.evaluate(() => {
+      localStorage.clear();
     });
+    await page.close();
+  });
 
+  test('Navigate to page with no errors and toggle Sa11y', async () => {
     // Navigate to unit tests page.
     await page.goto('http://localhost:8080/test/pages/no-errors.html');
 
@@ -39,21 +34,13 @@ describe('Sa11y navigation tests', () => {
     });
   });
 
-  // Close everything down after running through all tests.
-  after(async () => {
-    await page.evaluate(() => {
-      localStorage.clear();
-    });
-    await browser.close();
-  });
-
   test('Open status panel', async () => {
     const panelOpen = await page.evaluate(() => {
       const panel = document.querySelector('sa11y-control-panel').shadowRoot;
       const item = panel.getElementById('panel');
       return item.classList.contains('active');
     });
-    assert.strictEqual(panelOpen, true);
+    expect(panelOpen).toBe(true);
   });
 
   test('Open Settings', async () => {
@@ -71,7 +58,7 @@ describe('Sa11y navigation tests', () => {
         }, 100);
       });
     });
-    assert.strictEqual(settingsPanelActive, true);
+    expect(settingsPanelActive).toBe(true);
   });
 
   /* Toggle all toggleable buttons. Needed for other unit tests! */
@@ -102,7 +89,7 @@ describe('Sa11y navigation tests', () => {
     });
 
     const allTogglesActive = toggleSettings.every((isActive) => isActive === true);
-    assert.ok(allTogglesActive);
+    expect(allTogglesActive).toBeTruthy();
   });
 
   test('Open Page Outline', async () => {
@@ -120,7 +107,7 @@ describe('Sa11y navigation tests', () => {
         }, 100);
       });
     });
-    assert.strictEqual(outlinePanelActive, true);
+    expect(outlinePanelActive).toBe(true);
   });
 
   test('No errors found', async () => {
@@ -130,7 +117,7 @@ describe('Sa11y navigation tests', () => {
       const textHas = panel.match(/enough content to calculate readability/g);
       return textHas;
     });
-    assert.ok(readability, true);
+    expect(readability).toBeTruthy();
 
     const status = await page.evaluate(() => {
       const control = document.querySelector('sa11y-control-panel').shadowRoot;
@@ -138,7 +125,7 @@ describe('Sa11y navigation tests', () => {
       const textHas = panel.match(/No errors found/g);
       return textHas;
     });
-    assert.ok(status, true);
+    expect(status).toBeTruthy();
   });
 
   /* Navigate to Warnings page. */
@@ -149,7 +136,7 @@ describe('Sa11y navigation tests', () => {
       const status = panel.getElementById('warning-count').textContent === '4';
       return status;
     });
-    assert.ok(warningStatus);
+    expect(warningStatus).toBe(true);
   });
 
   test('Dismiss page issue (Count: 3)', async () => {
@@ -166,7 +153,7 @@ describe('Sa11y navigation tests', () => {
         }, 100);
       });
     });
-    assert.ok(warningStatus);
+    expect(warningStatus).toBe(true);
   });
 
   test('Dismiss annotation (Count: 2)', async () => {
@@ -187,7 +174,7 @@ describe('Sa11y navigation tests', () => {
         }, 100);
       });
     });
-    assert.ok(warningStatus);
+    expect(warningStatus).toBe(true);
   });
 
   test('Restore all dismissed (Count: 4)', async () => {
@@ -203,7 +190,7 @@ describe('Sa11y navigation tests', () => {
         }, 100);
       });
     });
-    assert.ok(warningStatus);
+    expect(warningStatus).toBe(true);
   });
 
   test('Skip-to-issue toggle', async () => {
@@ -219,6 +206,6 @@ describe('Sa11y navigation tests', () => {
         }, 100);
       });
     });
-    assert.ok(status);
+    expect(status).toBe(true);
   });
 });

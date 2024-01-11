@@ -452,22 +452,28 @@ export function generateElementPreview(issueObject) {
   const tag = {
     IMG: (element) => {
       const anchor = element.closest('a[href]');
+      const alt = element.alt ? `alt="${sanitizeHTML(element.alt)}"` : 'alt';
       const imgSrc = element.src;
-      const alt = element.alt ? ` alt="${element.alt}"` : ' alt';
+
+      // Account for lazy loading libraries that use 'data-src' attribute.
+      const dataSrc = element.getAttribute('data-src');
+      const source = (dataSrc && dataSrc.length > 3) ? dataSrc : imgSrc;
+
       if (imgSrc) {
         return anchor
-          ? `<a href="${anchor.href}" rel="noopener noreferrer"><img src="${imgSrc}"${alt}/></a>`
-          : `<img src="${imgSrc}"${alt}/>`;
+          ? `<a href="${anchor.href}" rel="noopener noreferrer"><img src="${source}" ${alt}/></a>`
+          : `<img src="${source}" ${alt}/>`;
       }
       return htmlPath;
     },
     IFRAME: (element) => {
-      const iframeSrc = element.src;
-      const titleAttr = element.title ? ` title="${element.title}"` : '';
-      const ariaLabelAttr = element.getAttribute('aria-label') ? ` aria-label="${element.getAttribute('aria-label')}"` : '';
-      if (iframeSrc) {
-        const iframeTitle = titleAttr || ariaLabelAttr;
-        return `<iframe src=${iframeSrc}${iframeTitle}></iframe>`;
+      const source = element.src;
+      const title = element.title ? element.title : '';
+      const ariaLabelAttr = element.getAttribute('aria-label');
+      const ariaLabel = ariaLabelAttr ? ariaLabelAttr : '';
+      if (source) {
+        const iframeTitle = ariaLabel || title;
+        return `<iframe src="${source}" aria-label="${sanitizeHTML(iframeTitle)}"></iframe>`;
       }
       return htmlPath;
     },
