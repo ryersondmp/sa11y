@@ -39,7 +39,7 @@ export default function generatePageOutline(dismissed, headingOutline, showHinPa
       // Indicate if heading is totally hidden or visually hidden.
       const visibleIcon = (visibility === true) ? '<span class="hidden-icon"></span><span class="visually-hidden">Hidden</span>' : '';
       const visibleStatus = (visibility === true) ? 'class="hidden-h"' : '';
-      const badgeH = (showHinPageOutline === true) ? 'H' : '';
+      const badgeH = (showHinPageOutline === true || showHinPageOutline === 1) ? 'H' : '';
 
       let append;
       if (issue === 'error' && isWithinRoot === true) {

@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.7
+  * @version 3.0.8
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University (formerly Ryerson University).
@@ -1113,7 +1113,7 @@ const Elements = (function myElements() {
   /* ***************** */
   const Annotations = {};
   function initializeAnnotations() {
-    Annotations.Array = find('sa11y-annotation', 'root');
+    Annotations.Array = find('sa11y-annotation', 'document');
     Annotations.Array.forEach((annotation, i) => {
       annotation.setAttribute('data-sa11y-position', i);
     });
@@ -2377,7 +2377,7 @@ function generatePageOutline(dismissed, headingOutline, showHinPageOutline) {
       // Indicate if heading is totally hidden or visually hidden.
       const visibleIcon = (visibility === true) ? '<span class="hidden-icon"></span><span class="visually-hidden">Hidden</span>' : '';
       const visibleStatus = (visibility === true) ? 'class="hidden-h"' : '';
-      const badgeH = (showHinPageOutline === true) ? 'H' : '';
+      const badgeH = (showHinPageOutline === true || showHinPageOutline === 1) ? 'H' : '';
 
       let append;
       if (issue === 'error' && isWithinRoot === true) {

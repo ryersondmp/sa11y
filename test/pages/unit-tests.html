@@ -3,8 +3,7 @@
 <link rel="stylesheet" href="./assets/main.css">
 <!-- Sa11y -->
 <link rel="stylesheet" href="../../dist/css/sa11y.min.css" />
-<link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
 
 <head>
   <meta charset="UTF-8">
@@ -122,8 +121,7 @@
 
     <h3>Image has alt text</h3>
     <div id="pass-image-has-alt-text">
-      <img src="./assets/placeholder.svg"
-        alt="Large mountains of sand in the Namibian desert.">
+      <img src="./assets/placeholder.svg" alt="Large mountains of sand in the Namibian desert.">
     </div>
 
     <h3>Alt text has suspicious stop word</h3>
@@ -173,8 +171,7 @@
     <h3>Linked image with alt text</h3>
     <div id="warning-link-has-alt-text">
       <a href="#">
-        <img src="./assets/placeholder.svg"
-          alt="Large mountains of sand in the Nambian desert.">
+        <img src="./assets/placeholder.svg" alt="Large mountains of sand in the Nambian desert.">
       </a>
     </div>
 
@@ -301,8 +298,7 @@
     <h3>Linked image opens in new tab, alt text provides warning</h3>
     <div id="warning-linked-image-opens-in-new-tab">
       <a href="#" target="_blank">
-        <img src="./assets/placeholder.svg"
-          alt="Two australian shepherds. Opens in new tab.">
+        <img src="./assets/placeholder.svg" alt="Two australian shepherds. Opens in new tab.">
       </a>
     </div>
 
@@ -505,8 +501,7 @@
           accessibility checker for content authors.</strong> In Proceedings of
         the 19th International Web for All Conference (W4A '22). Association for
         Computing Machinery, New York, NY, USA, Article. 6, 1–2.<br>
-        <a
-          href="https://doi.org/10.1145/3493612.3520468">doi.org/10.1145/3493612.3520468</a>
+        <a href="https://doi.org/10.1145/3493612.3520468">doi.org/10.1145/3493612.3520468</a>
       </p>
     </div>
 
@@ -559,8 +554,7 @@
 
     <h4>Link with pseudo content</h4>
     <div id="pass-aria-link-7">
-      <a href="#">Learn more about <span aria-labelledby="rtk"></span><span
-          class="lotr"></span></a>
+      <a href="#">Learn more about <span aria-labelledby="rtk"></span><span class="lotr"></span></a>
     </div>
 
     <h3>Links with aria-hidden</h3>
@@ -990,8 +984,8 @@
 
     <h3>iFrame with video source</h3>
     <div id="warning-iframe-youtube">
-      <iframe src="https://www.youtube.com/embed/fJ9rUzIMcZQ?si=JC0rdiAQQJTqDBFD"
-        title="Queen's Bohemiam Rhapsody" frameborder="0"
+      <iframe src="https://www.youtube.com/embed/fJ9rUzIMcZQ?si=JC0rdiAQQJTqDBFD" title="Queen's Bohemiam Rhapsody"
+        frameborder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowfullscreen></iframe>
     </div>
@@ -1068,6 +1062,7 @@
       headerIgnore: "#nothing-ignore-this-heading *",
       linkIgnoreSpan: ".sr-only-example",
       linkIgnoreStrings: '(External)',
+      showHinPageOutline: 1,
       exportResultsPlugin: true,
       autoDetectShadowComponents: true,
     });

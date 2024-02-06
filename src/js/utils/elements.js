@@ -135,7 +135,7 @@ const Elements = (function myElements() {
   /* ***************** */
   const Annotations = {};
   function initializeAnnotations() {
-    Annotations.Array = find('sa11y-annotation', 'root');
+    Annotations.Array = find('sa11y-annotation', 'document');
     Annotations.Array.forEach((annotation, i) => {
       annotation.setAttribute('data-sa11y-position', i);
     });

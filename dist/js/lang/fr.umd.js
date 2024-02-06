@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.0.7
+  * @version 3.0.8
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University (formerly Ryerson University).
