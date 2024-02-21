@@ -98,8 +98,15 @@ class Sa11y {
             // Disable toggle initially.
             Constants.Panel.toggle.disabled = false;
 
-            // Check page once page is done loading.
-            this.checkAll();
+            // Initial check once page is done loading.
+            setTimeout(() => this.checkAll(), option.delayCheck);
+
+            // Disable button if user needs to wait longer than 700ms.
+            if (option.delayCheck >= 700) {
+              Constants.Panel.toggle.disabled = true;
+            }
+
+            // Initialize main toggle
             mainToggle(this.checkAll, this.resetAll);
           }
         });
@@ -223,6 +230,9 @@ class Sa11y {
             detectOverflow();
             nudge();
           }
+
+          // Make sure toggle isn't disabled after checking.
+          Constants.Panel.toggle.disabled = false;
         }
 
         // Dispatch custom event that stores the results array.
@@ -297,6 +307,19 @@ class Sa11y {
         Constants.Panel.panel.classList.remove('active');
       }
     };
+
+    // Method to temporarily disable toggle.
+    this.disabled = () => {
+      if (Utils.store.getItem('sa11y-remember-panel') === 'Opened') {
+        Constants.Panel.toggle.click();
+      }
+      Constants.Panel.toggle.disabled = true;
+    }
+
+    // Method to re-enable toggle.
+    this.enabled = () => {
+      Constants.Panel.toggle.disabled = false;
+    }
 
     // Initialize Sa11y.
     this.initialize();

@@ -29,6 +29,7 @@ const sa11y = new Sa11y({
   checkRoot: 'main',
   readabilityRoot: 'main',
   customChecks: true,
+  delayCheck: 0, // Optional.
   videoContent: 'youtube.com, vimeo.com, yuja.com, panopto.com, torontomu.ca',
   headerIgnore: '.ignore-this-heading',
   contrastIgnore: '.card-footer *, #player *',

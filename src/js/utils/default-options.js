@@ -13,6 +13,7 @@ const defaultOptions = {
   linkIgnoreStrings: '',
 
   // Other features
+  delayCheck: 0,
   showGoodLinkButton: true,
   showHinPageOutline: false,
   detectSPArouting: false,

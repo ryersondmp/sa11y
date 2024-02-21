@@ -84,7 +84,7 @@ audio {
   color: #fff;
   cursor: pointer;
   background: linear-gradient(to top, #e040fb, #00bcd4);
-  background-color: var(--sa11y-blue);
+  background-color: var(--sa11y-setting-switch-bg-off);
   background-size: 150% 150%;
   border-radius: 50%;
   transition: all 0.2s ease-in-out;
@@ -117,7 +117,11 @@ audio {
 }
 #toggle.on {
   background: linear-gradient(to bottom, #e040fb, #00bcd4);
-  background-color: var(--sa11y-blue);
+}
+#toggle:disabled {
+  cursor: not-allowed;
+  background: unset;
+  background-color: var(--sa11y-setting-switch-bg-off);
 }
 
 /* ************************************* */
@@ -169,7 +173,7 @@ audio {
   inset-inline-start: 42px;
 }
 #panel.top-right, #panel.top-left {
-  top: 50px;
+  top: 45px;
   bottom: unset;
 }
 #panel.active {
@@ -454,6 +458,13 @@ hr {
 #outline-content {
   padding: 0 15px 10px;
   border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
+}
+.top-right #page-issues-content, .top-left #page-issues-content,
+.top-right #settings-content,
+.top-left #settings-content,
+.top-right #outline-content,
+.top-left #outline-content {
+  border: 0;
 }
 
 #page-issues-content {
