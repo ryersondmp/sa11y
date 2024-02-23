@@ -1,6 +1,6 @@
 {
   "name": "sa11y",
-  "version": "3.0.10",
+  "version": "3.1.0",
   "description": "Sa11y is an accessibility quality assurance tool that visually highlights common accessibility and usability issues. Geared towards content authors, Sa11y straightforwardly identifies errors or warnings at the source with a simple tooltip on how to fix them.",
   "main": "src/sa11y.js",
   "type": "module",
@@ -27,8 +27,7 @@
     "lint:js": "node ./node_modules/eslint/bin/eslint.js src",
     "lint:css": "stylelint --config .stylelintrc.json -s scss \"src/scss/**/*.scss\"",
     "serve": "npm run build && node ./docs.js && light-server -p 8080 -b localhost -s ./ -w \"src/**/* # npm run build && node ./docs.js # reload\"",
-    "test": "npx playwright test",
-    "pub": "npm version patch --force && npm publish"
+    "test": "npx playwright test"
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",
@@ -45,10 +44,8 @@
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.23.4",
-    "jsdom": "^23.0.1",
     "light-server": "^2.9.1",
     "postcss": "^8.3.10",
-    "puppeteer": "^21.7.0",
     "rimraf": "^3.0.2",
     "rollup": "^2.52.7",
     "rollup-plugin-import-css": "^3.0.2",

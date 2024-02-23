@@ -40,7 +40,7 @@ export default function find(selector, desiredRoot, exclude) {
     // Remove first comma and whitespace.
     const prepShadow = shadowComponents.trim().replace(/^,+/, '');
     elements.forEach((el, i) => {
-      if (el.matches(prepShadow)) {
+      if (el && el.matches && el.matches(prepShadow) && el.shadowRoot) {
         shadowFind[i] = el.shadowRoot.querySelectorAll(`:is(${selector}):not(${exclusions}${additional})`);
       }
     });
