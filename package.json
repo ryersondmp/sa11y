@@ -1,6 +1,6 @@
 {
   "name": "sa11y",
-  "version": "3.0.9",
+  "version": "3.0.10",
   "description": "Sa11y is an accessibility quality assurance tool that visually highlights common accessibility and usability issues. Geared towards content authors, Sa11y straightforwardly identifies errors or warnings at the source with a simple tooltip on how to fix them.",
   "main": "src/sa11y.js",
   "type": "module",
@@ -27,7 +27,8 @@
     "lint:js": "node ./node_modules/eslint/bin/eslint.js src",
     "lint:css": "stylelint --config .stylelintrc.json -s scss \"src/scss/**/*.scss\"",
     "serve": "npm run build && node ./docs.js && light-server -p 8080 -b localhost -s ./ -w \"src/**/* # npm run build && node ./docs.js # reload\"",
-    "test": "npx playwright test"
+    "test": "npx playwright test",
+    "pub": "npm version patch --force && npm publish"
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",
