@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.1.0
+  * @version 3.1.1
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University (formerly Ryerson University).
@@ -6526,7 +6526,8 @@ const computeAccessibleName = (element, exclusions, recursing = 0) => {
   let count = 0;
   let shouldContinueWalker = true;
 
-  const exclude = (exclusions) ? element.querySelectorAll(exclusions) : '';
+  const alwaysExclude = 'noscript, style, script';
+  const exclude = element.querySelectorAll(exclusions ? `${exclusions}, ${alwaysExclude}` : alwaysExclude);
 
   while (treeWalker.nextNode() && shouldContinueWalker) {
     count += 1;
@@ -6551,10 +6552,6 @@ const computeAccessibleName = (element, exclusions, recursing = 0) => {
         if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
       } else {
         switch (treeWalker.currentNode.tagName) {
-          case 'STYLE':
-          case 'NOSCRIPT':
-            if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
-            break;
           case 'IMG':
             if (treeWalker.currentNode.hasAttribute('alt')) {
               computedText += treeWalker.currentNode.getAttribute('alt');

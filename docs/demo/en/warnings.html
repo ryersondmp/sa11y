@@ -58,7 +58,25 @@
   <main>
     <div class="container">
       <div class="p-5 mb-5 rounded text-center">
-        <h1 class="test-ignore">Warnings</h1>
+        <h1 class="test-ignore">Warnings
+          <noscript>Testing</noscript>
+          <script>const test = "test";</script>
+          <!-- Testing comment -->
+          <template>testing template</template>
+          <svg viewBox="0 0 10 10" width="20px" xmlns="http://www.w3.org/2000/svg">
+            <style>
+              circle {
+                fill: gold;
+                stroke: darkgoldenrod;
+                stroke-width: 2px;
+              }
+            </style>
+            <script>const test2 = "test2";</script>
+            <title>on this page</title>
+            <noscript>This text should be ignored...</noscript>
+            <circle cx="5" cy="5" r="4" />
+          </svg>
+        </h1>
         <p class="lead">A typical page with accessibility or usability warnings.</p>
         <small>The sample text below is from <a href="https://en.wikipedia.org/wiki/Bear">Wikipedia: Bear.</a></small>
       </div>

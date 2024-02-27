@@ -91,7 +91,8 @@ export const computeAccessibleName = (element, exclusions, recursing = 0) => {
   let count = 0;
   let shouldContinueWalker = true;
 
-  const exclude = (exclusions) ? element.querySelectorAll(exclusions) : '';
+  const alwaysExclude = 'noscript, style, script';
+  const exclude = element.querySelectorAll(exclusions ? `${exclusions}, ${alwaysExclude}` : alwaysExclude);
 
   while (treeWalker.nextNode() && shouldContinueWalker) {
     count += 1;
@@ -100,7 +101,7 @@ export const computeAccessibleName = (element, exclusions, recursing = 0) => {
     const currentNodeMatchesExclude = Array.from(exclude).some((excludedNode) => excludedNode.contains(treeWalker.currentNode));
 
     if (currentNodeMatchesExclude) {
-      // Exclude nodes provided by props.
+      // Exclude noscript, style, script, and selectors via exclusions param.
     } else if (treeWalker.currentNode.nodeType === Node.TEXT_NODE) {
       computedText += ` ${treeWalker.currentNode.nodeValue}`;
     } else if (addTitleIfNoName && !treeWalker.currentNode.closest('a')) {
@@ -118,10 +119,6 @@ export const computeAccessibleName = (element, exclusions, recursing = 0) => {
         if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
       } else {
         switch (treeWalker.currentNode.tagName) {
-          case 'STYLE':
-          case 'NOSCRIPT':
-            if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
-            break;
           case 'IMG':
             if (treeWalker.currentNode.hasAttribute('alt')) {
               computedText += treeWalker.currentNode.getAttribute('alt');
