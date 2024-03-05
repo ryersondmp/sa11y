@@ -128,7 +128,7 @@ export default {
 
     // Links
     LINK_EMPTY: 'Remove empty links without any text.',
-    LINK_EMPTY_LINK_NO_LABEL: 'Link does not have discernable text that is visible to screen readers and other assistive technology. To fix: <ul><li>Add some concise text that describes where the link takes you.</li><li>If it is an <a href="https://a11y-101.com/development/icons-and-links">icon link or SVG,</a> it is likely missing a descriptive label.</li><li>If you think this link is an error due to a copy/paste bug, consider deleting it.</li></ul>',
+    LINK_EMPTY_LINK_NO_LABEL: 'Link does not have discernible text that is visible to screen readers and other assistive technology. To fix: <ul><li>Add some concise text that describes where the link takes you.</li><li>If it is an <a href="https://a11y-101.com/development/icons-and-links">icon link or SVG,</a> it is likely missing a descriptive label.</li><li>If you think this link is an error due to a copy/paste bug, consider deleting it.</li></ul>',
     LINK_LABEL: '<strong>Link label:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Link text may not be descriptive enough out of context: <strong {r}>%(error)</strong><hr><strong>Tip!</strong> Link text should always be clear, unique, and meaningful. Avoid common words like &quot;click here&quot; or &quot;learn more&quot;',
     LINK_BEST_PRACTICES: 'Consider replacing the link text: <strong {r}>%(error)</strong><hr><ul><li>&quot;Click here&quot; places focus on mouse mechanics, when many people do not use a mouse or may be viewing this website on a mobile device. Consider using a different verb that relates to the task.</li><li>Avoid using HTML symbols as call to actions unless they are hidden to assistive technologies.</li></ul>',
