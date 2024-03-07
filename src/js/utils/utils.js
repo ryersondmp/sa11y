@@ -470,7 +470,7 @@ export function generateElementPreview(issueObject) {
       const source = element.src;
       const title = element.title ? element.title : '';
       const ariaLabelAttr = element.getAttribute('aria-label');
-      const ariaLabel = ariaLabelAttr ? ariaLabelAttr : '';
+      const ariaLabel = ariaLabelAttr || '';
       if (source) {
         const iframeTitle = ariaLabel || title;
         return `<iframe src="${source}" aria-label="${sanitizeHTML(iframeTitle)}"></iframe>`;

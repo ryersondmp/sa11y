@@ -1,10 +1,10 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.1.1
+  * @version 3.1.2
   * @author Adam Chaboryk, Toronto Metropolitan University
   * @license GPL-2.0-or-later
-  * @copyright © 2020 - 2024 Toronto Metropolitan University (formerly Ryerson University).
+  * @copyright © 2020 - 2024 Toronto Metropolitan University.
   * @contact adam.chaboryk@torontomu.ca
   * GitHub: git+https://github.com/ryersondmp/sa11y.git | Website: https://sa11y.netlify.app
   * For all acknowledgements, please visit: https://sa11y.netlify.app/acknowledgements/
@@ -32,6 +32,7 @@
 
     // Other features
     delayCheck: 0,
+    delayCustomCheck: 500,
     showGoodLinkButton: true,
     showHinPageOutline: false,
     detectSPArouting: false,
@@ -57,7 +58,7 @@
     formLabelsPlugin: true,
     linksAdvancedPlugin: true,
     colourFilterPlugin: true,
-    customChecks: true,
+    customChecks: false,
     checkAllHideToggles: false,
     exportResultsPlugin: false,
 
@@ -970,7 +971,7 @@
         const source = element.src;
         const title = element.title ? element.title : '';
         const ariaLabelAttr = element.getAttribute('aria-label');
-        const ariaLabel = ariaLabelAttr ? ariaLabelAttr : '';
+        const ariaLabel = ariaLabelAttr || '';
         if (source) {
           const iframeTitle = ariaLabel || title;
           return `<iframe src="${source}" aria-label="${sanitizeHTML(iframeTitle)}"></iframe>`;
@@ -1605,7 +1606,7 @@
 
   var styles = ":host{background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);bottom:0;display:block;height:-moz-fit-content;height:fit-content;position:fixed;width:100%;z-index:999999}*{-webkit-font-smoothing:auto!important;color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;font-size:var(--sa11y-normal-text);line-height:22px!important}#dialog{margin:20px auto;max-width:900px;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none}p{margin-top:0}.error{background:var(--sa11y-error);border:2px dashed #f08080;color:var(--sa11y-error-text);margin-bottom:0;padding:5px}";
 
-  var sharedStyles = ".visually-hidden{clip:rect(1px,1px,1px,1px);border:0;-webkit-clip-path:inset(50%);clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}[hidden]{display:none!important}.header-text,.header-text-inline,h2{color:var(--sa11y-panel-primary);display:block;font-size:var(--sa11y-large-text);font-weight:600;margin-bottom:3px}.header-text-inline{display:inline-block!important}code{font-family:monospace!important}.kbd,code,kbd{background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);padding:1.6px 4.8px}.bold{font-weight:600}.red-text{color:var(--sa11y-red-text)}.red-text,.yellow-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text)}.yellow-text{color:var(--sa11y-yellow-text)}.close-btn{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;color:var(--sa11y-panel-primary);cursor:pointer;float:var(--sa11y-float-rtl);font-size:var(--sa11y-normal-text);font-weight:400;height:32px;margin:0;position:relative;transition:all .2s ease-in-out;width:32px}.close-btn:focus,.close-btn:hover{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{background:var(--sa11y-setting-switch-bg-off);bottom:-7px;content:\"\";left:-7px;-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute;right:-7px;top:-7px}@media screen and (forced-colors:active){.close-btn:after{filter:invert(1)}}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:not(#settings-toggle):not(#outline-toggle):not(.switch):focus,#container select:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #outline-toggle:focus,#container #settings-toggle:focus,#container .switch:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:active,.tippy-box[data-theme~=sa11y-theme] button:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #outline-toggle:focus:not(:focus-visible),#container #settings-toggle:focus:not(:focus-visible),#container [tabindex=\"-1\"]:focus:not(:focus-visible),#container [tabindex=\"0\"]:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container select:focus:not(:focus-visible){box-shadow:none;outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible){box-shadow:none;outline:0}#container [tabindex=\"-1\"]:focus-visible,#container [tabindex=\"0\"]:focus-visible,#container a:focus-visible,#container button:not(#settings-toggle):not(#outline-toggle):not(.switch):focus-visible,#container select:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #outline-toggle:focus-visible,#container #settings-toggle:focus-visible,#container .switch:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus-visible,.tippy-box[data-theme~=sa11y-theme] a:focus-visible,.tippy-box[data-theme~=sa11y-theme] button:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#outline-toggle:focus,#settings-toggle:focus{border:3px solid transparent}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container select:focus,.close-btn:focus,.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:focus{outline:3px solid transparent!important}}";
+  var sharedStyles = ".visually-hidden{clip:rect(1px,1px,1px,1px);border:0;-webkit-clip-path:inset(50%);clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}[hidden]{display:none!important}.header-text,.header-text-inline,h2{color:var(--sa11y-panel-primary);display:block;font-size:var(--sa11y-large-text);font-weight:600;margin-bottom:3px}.header-text-inline{display:inline-block!important}code{font-family:monospace!important}.kbd,code,kbd{background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);padding:1.6px 4.8px}.bold{font-weight:600}.red-text{color:var(--sa11y-red-text)}.red-text,.yellow-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text)}.yellow-text{color:var(--sa11y-yellow-text)}.close-btn{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;color:var(--sa11y-panel-primary);cursor:pointer;float:var(--sa11y-float-rtl);font-size:var(--sa11y-normal-text);font-weight:400;height:32px;margin:0;position:relative;transition:all .2s ease-in-out;width:32px}.close-btn:focus,.close-btn:hover{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{background:var(--sa11y-setting-switch-bg-off);bottom:-7px;content:\"\";left:-7px;-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute;right:-7px;top:-7px}@media screen and (forced-colors:active){.close-btn:after{filter:invert(1)}}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:not(#settings-toggle):not(#outline-toggle):not(.switch):focus,#container select:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #outline-toggle:focus,#container #settings-toggle:focus,#container .switch:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container #outline-toggle:focus:not(:focus-visible),#container #settings-toggle:focus:not(:focus-visible),#container [tabindex=\"-1\"]:focus:not(:focus-visible),#container [tabindex=\"0\"]:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container select:focus:not(:focus-visible){box-shadow:none;outline:0}#container [tabindex=\"-1\"]:focus-visible,#container [tabindex=\"0\"]:focus-visible,#container a:focus-visible,#container button:not(#settings-toggle):not(#outline-toggle):not(.switch):focus-visible,#container select:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #outline-toggle:focus-visible,#container #settings-toggle:focus-visible,#container .switch:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#outline-toggle:focus,#settings-toggle:focus{border:3px solid transparent}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container select:focus,.close-btn:focus{outline:3px solid transparent!important}}";
 
   class ConsoleErrors extends HTMLElement {
     constructor(error) {
@@ -5937,7 +5938,7 @@
     render: render
   });
 
-  var tooltipStyles = "a,button,code,div,h1,h2,kbd,li,ol,p,span,strong,svg,ul{all:unset;box-sizing:border-box!important}div{display:block}:after,:before{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}@media (forced-colors:active){[data-tippy-root]{border:2px solid transparent;border-radius:5px}}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:0}.tippy-box[data-placement^=top]>.tippy-arrow:before{border-top-color:initial;border-width:8px 8px 0;bottom:-7px;left:0;transform-origin:center top}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:0}.tippy-box[data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:initial;border-width:0 8px 8px;left:0;top:-7px;transform-origin:center bottom}.tippy-box[data-placement^=left]>.tippy-arrow{right:0}.tippy-box[data-placement^=left]>.tippy-arrow:before{border-left-color:initial;border-width:8px 0 8px 8px;right:-7px;transform-origin:center left}.tippy-box[data-placement^=right]>.tippy-arrow{left:0}.tippy-box[data-placement^=right]>.tippy-arrow:before{border-right-color:initial;border-width:8px 8px 8px 0;left:-7px;transform-origin:center right}.tippy-arrow{color:#333;height:16px;width:16px}.tippy-arrow:before{border-color:transparent;border-style:solid;content:\"\";position:absolute}.tippy-content{padding:5px 9px;position:relative;z-index:1}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{word-wrap:break-word;min-width:300px;text-align:start}[role=tooltip]{min-width:185px;text-align:center}.tippy-box[data-theme~=sa11y-theme]{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-bg);border-radius:4px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15)!important;color:var(--sa11y-panel-primary);display:block;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px;outline:0;padding:8px;position:relative;transition-property:transform,visibility,opacity}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace;font-size:calc(var(--sa11y-normal-text) - 1px)}.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);letter-spacing:normal;line-height:22px;padding:1.6px 4.8px}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]{text-align:center}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block-end:0;margin-block-start:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{display:list-item;margin:5px 10px 0 20px;padding-bottom:5px}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] a:hover{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin:0}.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:focus,.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{filter:invert(1);forced-color-adjust:none}.tippy-box[data-theme~=sa11y-theme] .tippy-arrow{z-index:-1}}";
+  var tooltipStyles = "a,button,code,div,h1,h2,kbd,li,ol,p,span,strong,svg,ul{all:unset;box-sizing:border-box!important}div{display:block}:after,:before{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}@media (forced-colors:active){[data-tippy-root]{border:2px solid transparent;border-radius:5px}}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:0}.tippy-box[data-placement^=top]>.tippy-arrow:before{border-top-color:initial;border-width:8px 8px 0;bottom:-7px;left:0;transform-origin:center top}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:0}.tippy-box[data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:initial;border-width:0 8px 8px;left:0;top:-7px;transform-origin:center bottom}.tippy-box[data-placement^=left]>.tippy-arrow{right:0}.tippy-box[data-placement^=left]>.tippy-arrow:before{border-left-color:initial;border-width:8px 0 8px 8px;right:-7px;transform-origin:center left}.tippy-box[data-placement^=right]>.tippy-arrow{left:0}.tippy-box[data-placement^=right]>.tippy-arrow:before{border-right-color:initial;border-width:8px 8px 8px 0;left:-7px;transform-origin:center right}.tippy-arrow{color:#333;height:16px;width:16px}.tippy-arrow:before{border-color:transparent;border-style:solid;content:\"\";position:absolute}.tippy-content{padding:5px 9px;position:relative;z-index:1}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{word-wrap:break-word;min-width:300px;text-align:start}[role=tooltip]{min-width:185px;text-align:center}.tippy-box[data-theme~=sa11y-theme]{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-bg);border-radius:4px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15)!important;color:var(--sa11y-panel-primary);display:block;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px;outline:0;padding:8px;position:relative;transition-property:transform,visibility,opacity}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace;font-size:calc(var(--sa11y-normal-text) - 1px)}.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);letter-spacing:normal;line-height:22px;padding:1.6px 4.8px}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block-end:0;margin-block-start:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{display:list-item;margin:5px 10px 0 20px;padding-bottom:5px}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] a:hover{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin:0}.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:focus,.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{filter:invert(1);forced-color-adjust:none}.tippy-box[data-theme~=sa11y-theme] .tippy-arrow{z-index:-1}}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:active,.tippy-box[data-theme~=sa11y-theme] button:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible){box-shadow:none;outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus-visible,.tippy-box[data-theme~=sa11y-theme] a:focus-visible,.tippy-box[data-theme~=sa11y-theme] button:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:focus{outline:3px solid transparent!important}}";
 
   class TooltipComponent extends HTMLElement {
     connectedCallback() {
@@ -5948,24 +5949,7 @@
       style.innerHTML = tooltipStyles + sharedStyles;
       shadowRoot.appendChild(style);
 
-      /* Hide on Escape key.
-      const hideOnEsc = {
-        name: 'hideOnEsc',
-        defaultValue: true,
-        fn({ hide, instance }) {
-          const onKeyDown = (event) => {
-            if (event.keyCode === 27) {
-              hide();
-              Constants.Panel.skip.focus();
-            }
-          };
-          return {
-            onShow() { document.addEventListener('keydown', onKeyDown); },
-            onHide() { document.removeEventListener('keydown', onKeyDown); },
-          };
-        },
-      }; */
-
+      // Get all annotations on page
       const buttons = [];
       Elements.Annotations.Array.forEach((annotation) => {
         const annotationButtons = annotation.shadowRoot.querySelectorAll('.sa11y-btn');
@@ -5974,14 +5958,15 @@
         }
       });
 
-      /* Page annotations */
+      // Instantiate tippy.js
       const annotations = tippy(buttons, {
         interactive: true,
-        trigger: 'mouseenter click', // Focusin trigger to ensure "Jump to issue" button displays tooltip.
+        trigger: 'mouseenter click',
         arrow: true,
-        delay: [0, 400], // Slight delay to ensure mouse doesn't quickly trigger and hide tooltip.
+        offset: [0, 8],
+        delay: [0, 400],
         theme: 'sa11y-theme',
-        placement: 'right-start',
+        placement: 'auto-start',
         allowHTML: true,
         role: 'dialog',
         aria: {
@@ -5990,7 +5975,6 @@
         },
         appendTo: shadowRoot,
         zIndex: 2147483645,
-        // plugins: [hideOnEsc],
         onShow(instance) {
           const openedTooltip = instance.popper;
 
@@ -6060,6 +6044,7 @@
         content: `${Lang._('SHORTCUT_TOOLTIP')} &raquo; <br> ${keyboardShortcut}`,
         allowHTML: true,
         delay: [500, 0],
+        offset: [0, 8],
         trigger: 'mouseenter focusin',
         arrow: true,
         placement: 'top',
@@ -6087,6 +6072,7 @@
 
       this.object = tippy(Constants.Panel.dismissButton, {
         delay: [500, 0],
+        offset: [0, 8],
         trigger: 'mouseenter focusin',
         arrow: true,
         placement: 'top',
@@ -6103,7 +6089,7 @@
     }
   }
 
-  var annotationStyles = ".instance{display:block}.instance-inline{display:inline-block;text-align:end}button{border-radius:50%;box-shadow:0 0 16px 0 rgba(0,0,0,.31);cursor:pointer;display:block;font-size:0;line-height:normal;min-width:0;padding:0;transition:all .2s ease-in-out;z-index:8888}button,button:after{height:36px;position:absolute;width:36px}button:after{content:\"\";left:-7px;padding:7px;top:-7px}button.warning-btn{margin:20px}button.error-btn,button.good-btn{margin:10px}button.error-btn-text,button.good-btn-text,button.warning-btn-text{margin:-30px 10px}button.error-btn,button.error-btn-text{background:50% 50% var(--sa11y-error-svg) no-repeat;background-color:var(--sa11y-error);background-size:22px;border:1px solid var(--sa11y-error)}button.error-btn-text:focus,button.error-btn-text:hover,button.error-btn:focus,button.error-btn:hover{background-color:var(--sa11y-error-hover)}button.good-btn,button.good-btn-text{background:50% 50% var(--sa11y-good) var(--sa11y-good-svg) no-repeat;background-color:var(--sa11y-good);background-size:20px;border:1px solid var(--sa11y-good)}button.good-btn-text:focus,button.good-btn-text:hover,button.good-btn:focus,button.good-btn:hover{background-color:var(--sa11y-good-hover)}button.warning-btn,button.warning-btn-text{background:50% 50% var(--sa11y-warning) var(--sa11y-warning-svg) no-repeat;background-color:var(--sa11y-warning);background-size:24px;border:1px solid var(--sa11y-warning);transform:scaleX(var(--sa11y-icon-direction))}button.warning-btn-text:focus,button.warning-btn-text:hover,button.warning-btn:focus,button.warning-btn:hover{background-color:var(--sa11y-warning-hover)}button.sa11y-btn:active,button.sa11y-btn:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){button.sa11y-btn{border:1px solid transparent!important;forced-color-adjust:none;outline:3px solid transparent!important}}";
+  var annotationStyles = ".instance{display:block}.instance-inline{display:inline-block;text-align:end}button{border-radius:50%;box-shadow:0 0 16px 0 rgba(0,0,0,.31);cursor:pointer;display:block;padding:0;transition:all .2s ease-in-out;z-index:8888}button,button:after{height:36px;position:absolute;width:36px}button:after{content:\"\";left:-7px;padding:7px;top:-7px}.warning-btn{margin:20px}.error-btn,.good-btn{margin:10px}.error-btn-text,.good-btn-text,.warning-btn-text{margin:-30px 10px}.error-btn,.error-btn-text{background:50% 50% var(--sa11y-error-svg) no-repeat;background-color:var(--sa11y-error);background-size:22px;border:1px solid var(--sa11y-error)}.error-btn-text:focus,.error-btn-text:hover,.error-btn:focus,.error-btn:hover{background-color:var(--sa11y-error-hover)}.good-btn,.good-btn-text{background:50% 50% var(--sa11y-good) var(--sa11y-good-svg) no-repeat;background-color:var(--sa11y-good);background-size:20px;border:1px solid var(--sa11y-good)}.good-btn-text:focus,.good-btn-text:hover,.good-btn:focus,.good-btn:hover{background-color:var(--sa11y-good-hover)}.warning-btn,.warning-btn-text{background:50% 50% var(--sa11y-warning) var(--sa11y-warning-svg) no-repeat;background-color:var(--sa11y-warning);background-size:24px;border:1px solid var(--sa11y-warning);transform:scaleX(var(--sa11y-icon-direction))}.warning-btn-text:focus,.warning-btn-text:hover,.warning-btn:focus,.warning-btn:hover{background-color:var(--sa11y-warning-hover)}.sa11y-btn:active,.sa11y-btn:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.sa11y-btn{border:1px solid transparent!important;forced-color-adjust:none;outline:3px solid transparent!important}}";
 
   class Annotations extends HTMLElement {
     connectedCallback() {
@@ -8443,23 +8429,17 @@
   }
 
   function checkCustom(results) {
-    const C = {
-      ANNOUNCEMENT_MESSAGE:
-        'More than one Announcement component found! The Announcement component should be used strategically and sparingly. It should be used to get attention or indicate that something is important. Misuse of this component makes it less effective or impactful. Secondly, this component is semantically labeled as an Announcement for people who use screen readers.',
+    /* Add custom rulesets here.
 
-      ACCORDION_FORM_MESSAGE:
-        'Do <strong>not nest forms</strong> within the Accordion component. If the form contains validation issues, a person may not see the form feedback since the accordion panel goes back to its original closed state.',
-    };
-
-    /* Example #1 */
+    // Example #1
     const $checkAnnouncement = find('.sa11y-announcement-component', 'root');
     if ($checkAnnouncement.length > 1) {
       for (let i = 1; i < $checkAnnouncement.length; i++) {
-        const key = prepareDismissal($checkAnnouncement[i].textContent);
+        const key = Utils.prepareDismissal($checkAnnouncement[i].textContent);
         results.push({
           element: $checkAnnouncement[i],
           type: 'warning',
-          content: C.ANNOUNCEMENT_MESSAGE,
+          content: 'More than one Announcement component found! The Announcement component should be used strategically and sparingly. It should be used to get attention or indicate that something is important. Misuse of this component makes it less effective or impactful. Secondly, this component is semantically labeled as an Announcement for people who use screen readers.',
           inline: false,
           position: 'beforebegin',
           dismiss: key,
@@ -8467,7 +8447,7 @@
       }
     }
 
-    /* Example #2  */
+    // Example #2
     const $checkAccordions = find('.sa11y-accordion-example', 'root');
     $checkAccordions.forEach(($el) => {
       const checkForm = $el.querySelector('form');
@@ -8475,12 +8455,13 @@
         results.push({
           element: $el,
           type: 'error',
-          content: C.ACCORDION_FORM_MESSAGE,
+          content: 'Do <strong>not nest forms</strong> within the Accordion component. If the form contains validation issues, a person may not see the form feedback since the accordion panel goes back to its original closed state.',
           inline: false,
           position: 'beforebegin',
         });
       }
-    });
+    }); */
+
     return results;
   }
 
@@ -8573,6 +8554,7 @@
           this.headingOutline = [];
           this.errorCount = 0;
           this.warningCount = 0;
+          this.customChecksRunning = false;
 
           // Panel alert if root doesn't exist.
           const root = document.querySelector(option.checkRoot);
@@ -8595,111 +8577,145 @@
           checkQA(this.results, option);
           checkEmbeddedContent(this.results, option);
           checkReadability();
-          if (option.customChecks) checkCustom(this.results);
 
-          // Filter out heading issues that are outside of the root target.
-          this.results = this.results.filter((item) => item.isWithinRoot !== false);
-
-          // Generate HTML path, and optionally CSS selector path of element.
-          this.results.forEach(($el) => {
-            const cssPath = option.selectorPath ? generateSelectorPath($el.element) : '';
-            const htmlPath = $el.element?.outerHTML.replace(/\s{2,}/g, ' ').trim() || '';
-            Object.assign($el, { htmlPath, cssPath });
-          });
-
-          if (option.headless === false) {
-            // Check for dismissed items and update results array.
-            const dismiss = dismissLogic(
-              this.results,
-              this.dismissTooltip,
-              this.checkAll,
-              this.resetAll,
-            );
-            this.results = dismiss.updatedResults;
-            this.dismissed = dismiss.dismissedIssues;
-
-            // Update count & badge.
-            const count = updateCount(
-              this.results,
-              this.errorCount,
-              this.warningCount,
-            );
-            updateBadge(count.error, count.warning);
-
-            /* If panel is OPENED. */
-            if (store.getItem('sa11y-remember-panel') === 'Opened') {
-              // Paint the page with annotations.
-              this.results.forEach(($el, i) => {
-                Object.assign($el, { id: i });
-                annotate(
-                  $el.element,
-                  $el.type,
-                  $el.content,
-                  $el.inline,
-                  $el.position,
-                  $el.id,
-                  $el.dismiss,
-                  option.dismissAnnotations,
-                );
-              });
-
-              // After annotations are painted, find & cache.
-              Elements.initializeAnnotations();
-
-              // Initialize tooltips
-              const tooltipComponent = new TooltipComponent();
-              document.body.appendChild(tooltipComponent);
-
-              dismissButtons(
-                this.results,
-                this.dismissed,
-                this.checkAll,
-                this.resetAll,
-              );
-
-              generatePageOutline(
-                this.dismissed,
-                this.headingOutline,
-                option.showHinPageOutline,
-              );
-
-              updatePanel(
-                dismiss.dismissCount,
-                count.error,
-                count.warning,
-              );
-
-              // Initialize Skip to Issue button.
-              skipToIssue(this.results);
-
-              // Initialize Export Results plugin.
-              if (option.exportResultsPlugin) {
-                exportResults(this.results, dismiss.dismissedResults);
+          /* Custom checks */
+          if (option.customChecks === true) {
+            // Option 1: Provide via sa11y-custom-checks.js
+            checkCustom(this.results);
+          } else if (typeof option.customChecks === 'object') {
+            // Option 2: Provide as an object when instantiated.
+            this.results.push(...option.customChecks);
+          } else if (option.customChecks === 'listen') {
+            // Option 3: Provide via event listener. Yoinked from Editoria11y!
+            this.customChecksRunning = true;
+            this.customChecksFinished = 0;
+            document.addEventListener('sa11y-resume', () => {
+              this.customChecksFinished += 1;
+              if (this.customChecksFinished === 1) {
+                this.customChecksRunning = false;
+                this.updateResults();
               }
-
-              // Extras
-              detectOverflow();
-              nudge();
-            }
-
-            // Make sure toggle isn't disabled after checking.
-            Constants.Panel.toggle.disabled = false;
+            });
+            window.setTimeout(() => {
+              if (this.customChecksRunning === true) {
+                this.customChecksRunning = false;
+                this.updateResults();
+                throw Error('Sa11y: No custom checks were returned.');
+              }
+            }, option.delayCustomCheck);
+            window.setTimeout(() => {
+              const customChecks = new CustomEvent('sa11y-custom-checks');
+              document.dispatchEvent(customChecks);
+            }, 0);
           }
 
-          // Dispatch custom event that stores the results array.
-          const event = new CustomEvent('sa11y-check-complete', {
-            detail: {
-              results: this.results,
-              page: window.location.pathname,
-            },
-          });
-          document.dispatchEvent(event);
+          // No custom checks running.
+          if (!this.customChecksRunning) this.updateResults();
         } catch (error) {
           const consoleErrors = new ConsoleErrors(error);
           document.body.appendChild(consoleErrors);
-          // eslint-disable-next-line no-console
-          console.error(error);
+          throw Error(error);
         }
+      };
+
+      this.updateResults = () => {
+        // Filter out heading issues that are outside of the root target.
+        this.results = this.results.filter((item) => item.isWithinRoot !== false);
+
+        // Generate HTML path, and optionally CSS selector path of element.
+        this.results.forEach(($el) => {
+          const cssPath = option.selectorPath ? generateSelectorPath($el.element) : '';
+          const htmlPath = $el.element?.outerHTML.replace(/\s{2,}/g, ' ').trim() || '';
+          Object.assign($el, { htmlPath, cssPath });
+        });
+
+        if (option.headless === false) {
+          // Check for dismissed items and update results array.
+          const dismiss = dismissLogic(
+            this.results,
+            this.dismissTooltip,
+            this.checkAll,
+            this.resetAll,
+          );
+          this.results = dismiss.updatedResults;
+          this.dismissed = dismiss.dismissedIssues;
+
+          // Update count & badge.
+          const count = updateCount(
+            this.results,
+            this.errorCount,
+            this.warningCount,
+          );
+          updateBadge(count.error, count.warning);
+
+          /* If panel is OPENED. */
+          if (store.getItem('sa11y-remember-panel') === 'Opened') {
+            // Paint the page with annotations.
+            this.results.forEach(($el, i) => {
+              Object.assign($el, { id: i });
+              annotate(
+                $el.element,
+                $el.type,
+                $el.content,
+                $el.inline,
+                $el.position,
+                $el.id,
+                $el.dismiss,
+                option.dismissAnnotations,
+              );
+            });
+
+            // After annotations are painted, find & cache.
+            Elements.initializeAnnotations();
+
+            // Initialize tooltips
+            const tooltipComponent = new TooltipComponent();
+            document.body.appendChild(tooltipComponent);
+
+            dismissButtons(
+              this.results,
+              this.dismissed,
+              this.checkAll,
+              this.resetAll,
+            );
+
+            generatePageOutline(
+              this.dismissed,
+              this.headingOutline,
+              option.showHinPageOutline,
+            );
+
+            updatePanel(
+              dismiss.dismissCount,
+              count.error,
+              count.warning,
+            );
+
+            // Initialize Skip to Issue button.
+            skipToIssue(this.results);
+
+            // Initialize Export Results plugin.
+            if (option.exportResultsPlugin) {
+              exportResults(this.results, dismiss.dismissedResults);
+            }
+
+            // Extras
+            detectOverflow();
+            nudge();
+          }
+
+          // Make sure toggle isn't disabled after checking.
+          Constants.Panel.toggle.disabled = false;
+        }
+
+        // Dispatch custom event that stores the results array.
+        const event = new CustomEvent('sa11y-check-complete', {
+          detail: {
+            results: this.results,
+            page: window.location.pathname,
+          },
+        });
+        document.dispatchEvent(event);
       };
 
       /* *********************************************************** */
@@ -8759,7 +8775,11 @@
         }
       };
 
-      // Method to temporarily disable toggle.
+      /* *********************************************************** */
+      /*  Methods: Useful utilities for integrations.                */
+      /* *********************************************************** */
+
+      // Method: temporarily disable toggle.
       this.disabled = () => {
         if (store.getItem('sa11y-remember-panel') === 'Opened') {
           Constants.Panel.toggle.click();
@@ -8767,12 +8787,23 @@
         Constants.Panel.toggle.disabled = true;
       };
 
-      // Method to re-enable toggle.
+      // Method: re-enable toggle.
       this.enabled = () => {
         Constants.Panel.toggle.disabled = false;
       };
 
-      // Initialize Sa11y.
+      // Method: find utility.
+      this.find = (selector, desiredRoot, exclude) => find(selector, desiredRoot, exclude);
+
+      // Method: prepare dismissal keys.
+      this.prepareDismissal = (string) => prepareDismissal(string);
+
+      // Method: sanitize HTML.
+      this.sanitizeHTML = (string) => sanitizeHTML(string);
+
+      /* *********************************************************** */
+      /*  Initialize Sa11y.                                          */
+      /* *********************************************************** */
       this.initialize();
     }
   }

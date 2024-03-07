@@ -105,7 +105,7 @@ kbd,
 }
 
 /* ************************************************************** */
-/*  Global keyboard focus styles for tooltips and control panel.  */
+/*  Global keyboard focus styles for control panel.               */
 /* ************************************************************** */
 
 /**
@@ -131,18 +131,6 @@ kbd,
   }
 }
 
-// Tooltip focus styles
-.tippy-box[data-theme~="sa11y-theme"] {
-
-  a:focus,
-  button:focus,
-  button:active,
-  [tabindex="-1"]:focus {
-    outline: 0;
-    box-shadow: 0 0 0 5px var(--sa11y-focus-color);
-  }
-}
-
 /**
  * B) Remove default focus styles for mouse users ONLY if :focus-visible is supported.
  **/
@@ -154,17 +142,6 @@ kbd,
   select:focus:not(:focus-visible),
   #settings-toggle:focus:not(:focus-visible),
   #outline-toggle:focus:not(:focus-visible) {
-    outline: 0;
-    box-shadow: none;
-  }
-}
-
-// Tooltip focus styles
-.tippy-box[data-theme~="sa11y-theme"] {
-
-  a:focus:not(:focus-visible),
-  button:focus:not(:focus-visible),
-  [tabindex="-1"]:focus:not(:focus-visible) {
     outline: 0;
     box-shadow: none;
   }
@@ -193,17 +170,6 @@ kbd,
   }
 }
 
-/* Tooltip focus styles */
-.tippy-box[data-theme~="sa11y-theme"] {
-
-  a:focus-visible,
-  button:focus-visible,
-  [tabindex="-1"]:focus-visible {
-    outline: 0;
-    box-shadow: 0 0 0 5px var(--sa11y-focus-color);
-  }
-}
-
 /* ***************************************** */
 /*        High contrast focus styles         */
 /* ***************************************** */
@@ -217,16 +183,6 @@ kbd,
 
   .close-btn:focus {
     outline: transparent solid 3px !important;
-  }
-
-  // Tooltips
-  .tippy-box[data-theme~="sa11y-theme"] {
-
-    a:focus,
-    button:focus,
-    [tabindex="-1"]:focus {
-      outline: transparent solid 3px !important;
-    }
   }
 
   // Control panel
