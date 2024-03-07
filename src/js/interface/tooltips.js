@@ -17,24 +17,7 @@ export class TooltipComponent extends HTMLElement {
     style.innerHTML = tooltipStyles + sharedStyles;
     shadowRoot.appendChild(style);
 
-    /* Hide on Escape key.
-    const hideOnEsc = {
-      name: 'hideOnEsc',
-      defaultValue: true,
-      fn({ hide, instance }) {
-        const onKeyDown = (event) => {
-          if (event.keyCode === 27) {
-            hide();
-            Constants.Panel.skip.focus();
-          }
-        };
-        return {
-          onShow() { document.addEventListener('keydown', onKeyDown); },
-          onHide() { document.removeEventListener('keydown', onKeyDown); },
-        };
-      },
-    }; */
-
+    // Get all annotations on page
     const buttons = [];
     Elements.Annotations.Array.forEach((annotation) => {
       const annotationButtons = annotation.shadowRoot.querySelectorAll('.sa11y-btn');
@@ -43,14 +26,15 @@ export class TooltipComponent extends HTMLElement {
       }
     });
 
-    /* Page annotations */
+    // Instantiate tippy.js
     const annotations = tippy(buttons, {
       interactive: true,
-      trigger: 'mouseenter click', // Focusin trigger to ensure "Jump to issue" button displays tooltip.
+      trigger: 'mouseenter click',
       arrow: true,
-      delay: [0, 400], // Slight delay to ensure mouse doesn't quickly trigger and hide tooltip.
+      offset: [0, 8],
+      delay: [0, 400],
       theme: 'sa11y-theme',
-      placement: 'right-start',
+      placement: 'auto-start',
       allowHTML: true,
       role: 'dialog',
       aria: {
@@ -59,7 +43,6 @@ export class TooltipComponent extends HTMLElement {
       },
       appendTo: shadowRoot,
       zIndex: 2147483645,
-      // plugins: [hideOnEsc],
       onShow(instance) {
         const openedTooltip = instance.popper;
 
@@ -129,6 +112,7 @@ export class TooltipComponent extends HTMLElement {
       content: `${Lang._('SHORTCUT_TOOLTIP')} &raquo; <br> ${keyboardShortcut}`,
       allowHTML: true,
       delay: [500, 0],
+      offset: [0, 8],
       trigger: 'mouseenter focusin',
       arrow: true,
       placement: 'top',
@@ -156,6 +140,7 @@ export class DismissTooltip extends HTMLElement {
 
     this.object = tippy(Constants.Panel.dismissButton, {
       delay: [500, 0],
+      offset: [0, 8],
       trigger: 'mouseenter focusin',
       arrow: true,
       placement: 'top',

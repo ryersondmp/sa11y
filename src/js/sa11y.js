@@ -4,6 +4,7 @@ import Lang from './utils/lang';
 import * as Utils from './utils/utils';
 import Constants from './utils/constants';
 import Elements from './utils/elements';
+import find from './utils/find';
 
 // Extras
 import detectPageChanges from './features/detect-page-changes';
@@ -122,6 +123,7 @@ class Sa11y {
         this.headingOutline = [];
         this.errorCount = 0;
         this.warningCount = 0;
+        this.customChecksRunning = false;
 
         // Panel alert if root doesn't exist.
         const root = document.querySelector(option.checkRoot);
@@ -144,111 +146,145 @@ class Sa11y {
         checkQA(this.results, option);
         checkEmbeddedContent(this.results, option);
         checkReadability();
-        if (option.customChecks) checkCustom(this.results);
 
-        // Filter out heading issues that are outside of the root target.
-        this.results = this.results.filter((item) => item.isWithinRoot !== false);
-
-        // Generate HTML path, and optionally CSS selector path of element.
-        this.results.forEach(($el) => {
-          const cssPath = option.selectorPath ? Utils.generateSelectorPath($el.element) : '';
-          const htmlPath = $el.element?.outerHTML.replace(/\s{2,}/g, ' ').trim() || '';
-          Object.assign($el, { htmlPath, cssPath });
-        });
-
-        if (option.headless === false) {
-          // Check for dismissed items and update results array.
-          const dismiss = dismissLogic(
-            this.results,
-            this.dismissTooltip,
-            this.checkAll,
-            this.resetAll,
-          );
-          this.results = dismiss.updatedResults;
-          this.dismissed = dismiss.dismissedIssues;
-
-          // Update count & badge.
-          const count = updateCount(
-            this.results,
-            this.errorCount,
-            this.warningCount,
-          );
-          updateBadge(count.error, count.warning);
-
-          /* If panel is OPENED. */
-          if (Utils.store.getItem('sa11y-remember-panel') === 'Opened') {
-            // Paint the page with annotations.
-            this.results.forEach(($el, i) => {
-              Object.assign($el, { id: i });
-              annotate(
-                $el.element,
-                $el.type,
-                $el.content,
-                $el.inline,
-                $el.position,
-                $el.id,
-                $el.dismiss,
-                option.dismissAnnotations,
-              );
-            });
-
-            // After annotations are painted, find & cache.
-            Elements.initializeAnnotations();
-
-            // Initialize tooltips
-            const tooltipComponent = new TooltipComponent();
-            document.body.appendChild(tooltipComponent);
-
-            dismissButtons(
-              this.results,
-              this.dismissed,
-              this.checkAll,
-              this.resetAll,
-            );
-
-            generatePageOutline(
-              this.dismissed,
-              this.headingOutline,
-              option.showHinPageOutline,
-            );
-
-            updatePanel(
-              dismiss.dismissCount,
-              count.error,
-              count.warning,
-            );
-
-            // Initialize Skip to Issue button.
-            skipToIssue(this.results);
-
-            // Initialize Export Results plugin.
-            if (option.exportResultsPlugin) {
-              exportResults(this.results, dismiss.dismissedResults);
+        /* Custom checks */
+        if (option.customChecks === true) {
+          // Option 1: Provide via sa11y-custom-checks.js
+          checkCustom(this.results);
+        } else if (typeof option.customChecks === 'object') {
+          // Option 2: Provide as an object when instantiated.
+          this.results.push(...option.customChecks);
+        } else if (option.customChecks === 'listen') {
+          // Option 3: Provide via event listener. Yoinked from Editoria11y!
+          this.customChecksRunning = true;
+          this.customChecksFinished = 0;
+          document.addEventListener('sa11y-resume', () => {
+            this.customChecksFinished += 1;
+            if (this.customChecksFinished === 1) {
+              this.customChecksRunning = false;
+              this.updateResults();
             }
-
-            // Extras
-            detectOverflow();
-            nudge();
-          }
-
-          // Make sure toggle isn't disabled after checking.
-          Constants.Panel.toggle.disabled = false;
+          });
+          window.setTimeout(() => {
+            if (this.customChecksRunning === true) {
+              this.customChecksRunning = false;
+              this.updateResults();
+              throw Error('Sa11y: No custom checks were returned.');
+            }
+          }, option.delayCustomCheck);
+          window.setTimeout(() => {
+            const customChecks = new CustomEvent('sa11y-custom-checks');
+            document.dispatchEvent(customChecks);
+          }, 0);
         }
 
-        // Dispatch custom event that stores the results array.
-        const event = new CustomEvent('sa11y-check-complete', {
-          detail: {
-            results: this.results,
-            page: window.location.pathname,
-          },
-        });
-        document.dispatchEvent(event);
+        // No custom checks running.
+        if (!this.customChecksRunning) this.updateResults();
       } catch (error) {
         const consoleErrors = new ConsoleErrors(error);
         document.body.appendChild(consoleErrors);
-        // eslint-disable-next-line no-console
-        console.error(error);
+        throw Error(error);
       }
+    };
+
+    this.updateResults = () => {
+      // Filter out heading issues that are outside of the root target.
+      this.results = this.results.filter((item) => item.isWithinRoot !== false);
+
+      // Generate HTML path, and optionally CSS selector path of element.
+      this.results.forEach(($el) => {
+        const cssPath = option.selectorPath ? Utils.generateSelectorPath($el.element) : '';
+        const htmlPath = $el.element?.outerHTML.replace(/\s{2,}/g, ' ').trim() || '';
+        Object.assign($el, { htmlPath, cssPath });
+      });
+
+      if (option.headless === false) {
+        // Check for dismissed items and update results array.
+        const dismiss = dismissLogic(
+          this.results,
+          this.dismissTooltip,
+          this.checkAll,
+          this.resetAll,
+        );
+        this.results = dismiss.updatedResults;
+        this.dismissed = dismiss.dismissedIssues;
+
+        // Update count & badge.
+        const count = updateCount(
+          this.results,
+          this.errorCount,
+          this.warningCount,
+        );
+        updateBadge(count.error, count.warning);
+
+        /* If panel is OPENED. */
+        if (Utils.store.getItem('sa11y-remember-panel') === 'Opened') {
+          // Paint the page with annotations.
+          this.results.forEach(($el, i) => {
+            Object.assign($el, { id: i });
+            annotate(
+              $el.element,
+              $el.type,
+              $el.content,
+              $el.inline,
+              $el.position,
+              $el.id,
+              $el.dismiss,
+              option.dismissAnnotations,
+            );
+          });
+
+          // After annotations are painted, find & cache.
+          Elements.initializeAnnotations();
+
+          // Initialize tooltips
+          const tooltipComponent = new TooltipComponent();
+          document.body.appendChild(tooltipComponent);
+
+          dismissButtons(
+            this.results,
+            this.dismissed,
+            this.checkAll,
+            this.resetAll,
+          );
+
+          generatePageOutline(
+            this.dismissed,
+            this.headingOutline,
+            option.showHinPageOutline,
+          );
+
+          updatePanel(
+            dismiss.dismissCount,
+            count.error,
+            count.warning,
+          );
+
+          // Initialize Skip to Issue button.
+          skipToIssue(this.results);
+
+          // Initialize Export Results plugin.
+          if (option.exportResultsPlugin) {
+            exportResults(this.results, dismiss.dismissedResults);
+          }
+
+          // Extras
+          detectOverflow();
+          nudge();
+        }
+
+        // Make sure toggle isn't disabled after checking.
+        Constants.Panel.toggle.disabled = false;
+      }
+
+      // Dispatch custom event that stores the results array.
+      const event = new CustomEvent('sa11y-check-complete', {
+        detail: {
+          results: this.results,
+          page: window.location.pathname,
+        },
+      });
+      document.dispatchEvent(event);
     };
 
     /* *********************************************************** */
@@ -308,20 +344,35 @@ class Sa11y {
       }
     };
 
-    // Method to temporarily disable toggle.
+    /* *********************************************************** */
+    /*  Methods: Useful utilities for integrations.                */
+    /* *********************************************************** */
+
+    // Method: temporarily disable toggle.
     this.disabled = () => {
       if (Utils.store.getItem('sa11y-remember-panel') === 'Opened') {
         Constants.Panel.toggle.click();
       }
       Constants.Panel.toggle.disabled = true;
-    }
+    };
 
-    // Method to re-enable toggle.
+    // Method: re-enable toggle.
     this.enabled = () => {
       Constants.Panel.toggle.disabled = false;
-    }
+    };
 
-    // Initialize Sa11y.
+    // Method: find utility.
+    this.find = (selector, desiredRoot, exclude) => find(selector, desiredRoot, exclude);
+
+    // Method: prepare dismissal keys.
+    this.prepareDismissal = (string) => Utils.prepareDismissal(string);
+
+    // Method: sanitize HTML.
+    this.sanitizeHTML = (string) => Utils.sanitizeHTML(string);
+
+    /* *********************************************************** */
+    /*  Initialize Sa11y.                                          */
+    /* *********************************************************** */
     this.initialize();
   }
 }

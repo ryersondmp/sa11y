@@ -178,10 +178,6 @@ div {
     -webkit-font-smoothing: auto;
   }
 
-  &[data-placement^="top"] {
-    text-align: center;
-  }
-
   .tippy-content {
     padding: 5px 9px;
   }
@@ -280,6 +276,53 @@ div {
 
     .tippy-arrow {
       z-index: -1;
+    }
+  }
+}
+
+/* Tooltip focus styles */
+// A) Default styles
+.tippy-box[data-theme~="sa11y-theme"] {
+
+  a:focus,
+  button:focus,
+  button:active,
+  [tabindex="-1"]:focus {
+    outline: 0;
+    box-shadow: 0 0 0 5px var(--sa11y-focus-color);
+  }
+}
+
+// B) Remove default focus styles for mouse users ONLY if :focus-visible is supported.
+.tippy-box[data-theme~="sa11y-theme"] {
+
+  a:focus:not(:focus-visible),
+  button:focus:not(:focus-visible),
+  [tabindex="-1"]:focus:not(:focus-visible) {
+    outline: 0;
+    box-shadow: none;
+  }
+}
+
+// C) :focus-visible supported
+.tippy-box[data-theme~="sa11y-theme"] {
+
+  a:focus-visible,
+  button:focus-visible,
+  [tabindex="-1"]:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 5px var(--sa11y-focus-color);
+  }
+}
+
+// High contrast focus styles
+@media screen and (forced-colors: active) {
+  .tippy-box[data-theme~="sa11y-theme"] {
+
+    a:focus,
+    button:focus,
+    [tabindex="-1"]:focus {
+      outline: transparent solid 3px !important;
     }
   }
 }

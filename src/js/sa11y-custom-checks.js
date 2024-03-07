@@ -2,15 +2,9 @@ import * as Utils from './utils/utils';
 import find from './utils/find';
 
 export default function checkCustom(results) {
-  const C = {
-    ANNOUNCEMENT_MESSAGE:
-      'More than one Announcement component found! The Announcement component should be used strategically and sparingly. It should be used to get attention or indicate that something is important. Misuse of this component makes it less effective or impactful. Secondly, this component is semantically labeled as an Announcement for people who use screen readers.',
+  /* Add custom rulesets here.
 
-    ACCORDION_FORM_MESSAGE:
-      'Do <strong>not nest forms</strong> within the Accordion component. If the form contains validation issues, a person may not see the form feedback since the accordion panel goes back to its original closed state.',
-  };
-
-  /* Example #1 */
+  // Example #1
   const $checkAnnouncement = find('.sa11y-announcement-component', 'root');
   if ($checkAnnouncement.length > 1) {
     for (let i = 1; i < $checkAnnouncement.length; i++) {
@@ -18,7 +12,7 @@ export default function checkCustom(results) {
       results.push({
         element: $checkAnnouncement[i],
         type: 'warning',
-        content: C.ANNOUNCEMENT_MESSAGE,
+        content: 'More than one Announcement component found! The Announcement component should be used strategically and sparingly. It should be used to get attention or indicate that something is important. Misuse of this component makes it less effective or impactful. Secondly, this component is semantically labeled as an Announcement for people who use screen readers.',
         inline: false,
         position: 'beforebegin',
         dismiss: key,
@@ -26,7 +20,7 @@ export default function checkCustom(results) {
     }
   }
 
-  /* Example #2  */
+  // Example #2
   const $checkAccordions = find('.sa11y-accordion-example', 'root');
   $checkAccordions.forEach(($el) => {
     const checkForm = $el.querySelector('form');
@@ -34,11 +28,12 @@ export default function checkCustom(results) {
       results.push({
         element: $el,
         type: 'error',
-        content: C.ACCORDION_FORM_MESSAGE,
+        content: 'Do <strong>not nest forms</strong> within the Accordion component. If the form contains validation issues, a person may not see the form feedback since the accordion panel goes back to its original closed state.',
         inline: false,
         position: 'beforebegin',
       });
     }
-  });
+  }); */
+
   return results;
 }

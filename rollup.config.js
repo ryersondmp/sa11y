@@ -22,7 +22,7 @@ const banner = `
   * @version ${pkg.version}
   * @author ${pkg.author}
   * @license ${pkg.license}
-  * @copyright © 2020 - ${new Date().getFullYear()} Toronto Metropolitan University (formerly Ryerson University).
+  * @copyright © 2020 - ${new Date().getFullYear()} Toronto Metropolitan University.
   * @contact ${pkg.email}
   * GitHub: ${pkg.repository.url} | Website: https://sa11y.netlify.app
   * For all acknowledgements, please visit: https://sa11y.netlify.app/acknowledgements/

@@ -171,9 +171,6 @@ div {
   border-radius: 3.2px;
   -webkit-font-smoothing: auto;
 }
-.tippy-box[data-theme~=sa11y-theme][data-placement^=top] {
-  text-align: center;
-}
 .tippy-box[data-theme~=sa11y-theme] .tippy-content {
   padding: 5px 9px;
 }
@@ -247,5 +244,36 @@ div {
   }
   .tippy-box[data-theme~=sa11y-theme] .tippy-arrow {
     z-index: -1;
+  }
+}
+
+/* Tooltip focus styles */
+.tippy-box[data-theme~=sa11y-theme] a:focus,
+.tippy-box[data-theme~=sa11y-theme] button:focus,
+.tippy-box[data-theme~=sa11y-theme] button:active,
+.tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus {
+  outline: 0;
+  box-shadow: 0 0 0 5px var(--sa11y-focus-color);
+}
+
+.tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),
+.tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible),
+.tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus:not(:focus-visible) {
+  outline: 0;
+  box-shadow: none;
+}
+
+.tippy-box[data-theme~=sa11y-theme] a:focus-visible,
+.tippy-box[data-theme~=sa11y-theme] button:focus-visible,
+.tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 5px var(--sa11y-focus-color);
+}
+
+@media screen and (forced-colors: active) {
+  .tippy-box[data-theme~=sa11y-theme] a:focus,
+  .tippy-box[data-theme~=sa11y-theme] button:focus,
+  .tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus {
+    outline: transparent solid 3px !important;
   }
 }

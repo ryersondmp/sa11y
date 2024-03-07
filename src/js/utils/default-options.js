@@ -14,6 +14,7 @@ const defaultOptions = {
 
   // Other features
   delayCheck: 0,
+  delayCustomCheck: 500,
   showGoodLinkButton: true,
   showHinPageOutline: false,
   detectSPArouting: false,
@@ -39,7 +40,7 @@ const defaultOptions = {
   formLabelsPlugin: true,
   linksAdvancedPlugin: true,
   colourFilterPlugin: true,
-  customChecks: true,
+  customChecks: false,
   checkAllHideToggles: false,
   exportResultsPlugin: false,
 
