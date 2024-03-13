@@ -1,14 +1,14 @@
-/* eslint-disable no-alert */
 import { loadSa11y } from './_loadSa11y';
 
 const langCode = 'nl';
-
-if (typeof Sa11y === 'object') {
-  if (window.location.pathname.includes('sa11y')) {
-    alert('Sleep de knop "Sa11y" naar je bladwijzerbalk. Klik vervolgens op de bladwijzer op een willekeurige webpagina.');
-  } else {
-    alert('Sa11y is al geladen op deze pagina. Wacht even of herlaad de pagina en probeer het opnieuw.');
-  }
-} else {
-  loadSa11y(langCode);
-}
+const message = {
+  close: 'Sluiten',
+  heading: 'Update vereist',
+  message: 'Gelieve het Sa11y-bladwijzer te updaten door de volgende link toe te voegen aan uw bladwijzerbalk.',
+  features: 'Nieuwe bladwijzerfuncties',
+  a: 'Automatische paginataal detectie',
+  aContent: 'Deze bladwijzer toont automatisch een vertaalde versie van Sa11y op basis van de paginataal. Als de taal niet wordt ondersteund, wordt teruggevallen op Engels.',
+  b: 'Waarschuwing voor beveiligingsbeleid',
+  bContent: 'Er zal een waarschuwing verschijnen als de website beveiligingsbeleid afdwingt dat Sa11y beperkt in zijn werking op de pagina\'s.',
+};
+loadSa11y(langCode, message);

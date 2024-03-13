@@ -1,14 +1,14 @@
-/* eslint-disable no-alert */
 import { loadSa11y } from './_loadSa11y';
 
 const langCode = 'lv';
-
-if (typeof Sa11y === 'object') {
-  if (window.location.pathname.includes('sa11y')) {
-    alert('Velciet pogu "Sa11y" uz grāmatzīmju joslu. Pēc tam noklikšķiniet uz grāmatzīmes jebkurā tīmekļa vietnē.');
-  } else {
-    alert('Sa11y jau ir ielādēts šajā lapā. Lūdzu, pagaidiet vai ielādējiet lapu no jauna un mēģiniet vēlreiz.');
-  }
-} else {
-  loadSa11y(langCode);
-}
+const message = {
+  close: 'Aizvērt',
+  heading: 'Nepieciešama atjaunināšana',
+  message: 'Lūdzu, atjauniniet Sa11y grāmatzīmi, pievienojot zemāk norādīto saiti savam grāmatzīmju joslam.',
+  features: 'Jaunās grāmatzīmes funkcijas',
+  a: 'Automātiska lapas valodas noteikšana',
+  aContent: 'Šī grāmatzīme automātiski parāda Sa11y tulkojumu atkarībā no lapas valodas. Ja valoda nav atbalstīta, tiks izmantota angļu valoda.',
+  b: 'Sistēmas drošības politikas brīdinājums',
+  bContent: 'Parādīsies brīdinājums, ja tīmekļa vietne piemēro sistēmas drošības politikas, kas ierobežo Sa11y darbību uz saviem lapām.',
+};
+loadSa11y(langCode, message);

@@ -1,14 +1,14 @@
-/* eslint-disable no-alert */
 import { loadSa11y } from './_loadSa11y';
 
 const langCode = 'zh';
-
-if (typeof Sa11y === 'object') {
-  if (window.location.pathname.includes('sa11y')) {
-    alert('将 "Sa11y "按钮拖入你的书签栏。然后在任何网页上点击该书签。');
-  } else {
-    alert('本页面已加载 Sa11y。请稍候，或重新加载页面再试。');
-  }
-} else {
-  loadSa11y(langCode);
-}
+const message = {
+  close: '关闭',
+  heading: '需要更新',
+  message: '请通过将以下链接添加到您的书签栏来更新 Sa11y 书签。',
+  features: '新书签功能',
+  a: '自动页面语言检测',
+  aContent: '此书签会根据页面语言自动显示 Sa11y 的翻译版本。如果语言不受支持，将使用英语。',
+  b: '安全策略警告',
+  bContent: '如果网站执行限制 Sa11y 在其页面上工作的安全策略，则会显示警告。',
+};
+loadSa11y(langCode, message);

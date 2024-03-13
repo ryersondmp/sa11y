@@ -1,14 +1,14 @@
-/* eslint-disable no-alert */
 import { loadSa11y } from './_loadSa11y';
 
 const langCode = 'nb';
-
-if (typeof Sa11y === 'object') {
-  if (window.location.pathname.includes('sa11y')) {
-    alert('Dra "Sa11y"-knappen til bokmerkelinjen. Klikk deretter på bokmerket på en hvilken som helst nettside.');
-  } else {
-    alert('Sa11y er allerede lastet inn på denne siden. Vennligst vent, eller last inn siden på nytt og prøv igjen.');
-  }
-} else {
-  loadSa11y(langCode);
-}
+const message = {
+  close: 'Lukk',
+  heading: 'Oppdatering nødvendig',
+  message: 'Vennligst oppdater Sa11y bokmerket ved å legge til følgende lenke i bokmerkelinjen din.',
+  features: 'Nye bokmerkefunksjoner',
+  a: 'Automatisk sidespråkgjenkjenning',
+  aContent: 'Dette bokmerket viser automatisk en oversatt versjon av Sa11y basert på sidespråket. Hvis språket ikke støttes, vil det falle tilbake til engelsk.',
+  b: 'Advarsel om sikkerhetspolicy',
+  bContent: 'Det vil vises en advarsel hvis nettstedet håndhever sikkerhetspolicyer som begrenser Sa11ys funksjonalitet på sidene sine.',
+};
+loadSa11y(langCode, message);

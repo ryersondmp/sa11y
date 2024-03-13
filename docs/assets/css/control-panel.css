@@ -1035,7 +1035,8 @@ label:not(#colour-filter-mode, #export-results-mode) {
   width: 335px;
 }
 
-#container:lang(es) .switch {
+#container:lang(bg) .switch:not(#export-results-item *),
+#container:lang(es) .switch:not(#export-results-item *) {
   width: 225px !important;
 }
 

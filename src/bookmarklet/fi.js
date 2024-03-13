@@ -1,14 +1,14 @@
-/* eslint-disable no-alert */
 import { loadSa11y } from './_loadSa11y';
 
 const langCode = 'fi';
-
-if (typeof Sa11y === 'object') {
-  if (window.location.pathname.includes('sa11y')) {
-    alert('Lohistage nupp "Sa11y" oma järjehoidjate riba. Seejärel klõpsake järjehoidjal ükskõik millisel veebilehel.');
-  } else {
-    alert('Sa11y on jo ladattu tälle sivulle. Odota, tai lataa sivu uudelleen ja yritä uudelleen.');
-  }
-} else {
-  loadSa11y(langCode);
-}
+const message = {
+  close: 'Sulje',
+  heading: 'Päivitys vaadittu',
+  message: 'Päivitä Sa11y kirjanmerkkityökalu lisäämällä seuraava linkki kirjanmerkkiriviisi.',
+  features: 'Uudet kirjanmerkkityökalun ominaisuudet',
+  a: 'Sivukielen automaattinen tunnistus',
+  aContent: 'Tämä kirjanmerkkityökalu näyttää automaattisesti käännetyn version Sa11y:stä sivun kieleen perustuen. Jos kieltä ei tueta, käytetään englantia.',
+  b: 'Turvapoliittinen varoitus',
+  bContent: 'Varoitus ilmestyy, jos verkkosivusto soveltaa turvapoliittisia rajoituksia, jotka estävät Sa11yn toimimisen sen sivuilla.',
+};
+loadSa11y(langCode, message);

@@ -1,14 +1,14 @@
-/* eslint-disable no-alert */
 import { loadSa11y } from './_loadSa11y';
 
 const langCode = 'tr';
-
-if (typeof Sa11y === 'object') {
-  if (window.location.pathname.includes('sa11y')) {
-    alert('Dra knappen "Sa11y" till ditt bokmärkesfält. Klicka sedan på bokmärket på valfri webbsida.');
-  } else {
-    alert('"Sa11y" düğmesini yer imleri çubuğunuza sürükleyin. Ardından herhangi bir web sayfasında yer imine tıklayın.');
-  }
-} else {
-  loadSa11y(langCode);
-}
+const message = {
+  close: 'Kapat',
+  heading: 'Güncelleme Gerekli',
+  message: 'Lütfen Sa11y yer imini, yer imler çubuğunuza aşağıdaki bağlantıyı ekleyerek güncelleyin.',
+  features: 'Yeni yer işareti özellikleri',
+  a: 'Otomatik sayfa dilini algılama',
+  aContent: 'Bu yer işareti, sayfa diline dayanarak Sa11y\'nin çevrilmiş bir sürümünü otomatik olarak görüntüler. Dil desteklenmiyorsa varsayılan olarak İngilizce kullanılır.',
+  b: 'Güvenlik politikası uyarısı',
+  bContent: 'Web sitesi, Sa11y\'nin sayfalarındaki işlevselliğini kısıtlayan güvenlik politikalarını uyguluyorsa bir uyarı görüntülenir.',
+};
+loadSa11y(langCode, message);

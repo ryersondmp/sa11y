@@ -1,14 +1,14 @@
-/* eslint-disable no-alert */
 import { loadSa11y } from './_loadSa11y';
 
 const langCode = 'hu';
-
-if (typeof Sa11y === 'object') {
-  if (window.location.pathname.includes('sa11y')) {
-    alert('Húzza a "Sa11y" gombot a könyvjelzősávba. Ezután kattintson a könyvjelzőre bármelyik weboldalon.');
-  } else {
-    alert('Sa11y már betöltődött ezen az oldalon. Kérjük, várjon, vagy töltse be újra az oldalt, és próbálja meg újra.');
-  }
-} else {
-  loadSa11y(langCode);
-}
+const message = {
+  close: 'Bezárás',
+  heading: 'Frissítés szükséges',
+  message: 'Kérjük, frissítse a Sa11y könyvjelzőt a következő hivatkozás hozzáadásával a könyvjelző sávjához.',
+  features: 'Új könyvjelző funkciók',
+  a: 'Automatikus oldalnyelv felismerés',
+  aContent: 'Ez a könyvjelző automatikusan megjeleníti a Sa11y lefordított verzióját az oldal nyelve alapján. Ha a nyelv nem támogatott, akkor az alapértelmezés szerint az angol lesz.',
+  b: 'Biztonsági irányelvek figyelmeztetése',
+  bContent: 'Figyelmeztetés jelenik meg, ha a webhely biztonsági irányelveket alkalmaz, amelyek korlátozzák a Sa11y működését az oldalain.',
+};
+loadSa11y(langCode, message);

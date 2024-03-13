@@ -1,14 +1,14 @@
-/* eslint-disable no-alert */
 import { loadSa11y } from './_loadSa11y';
 
 const langCode = 'ro';
-
-if (typeof Sa11y === 'object') {
-  if (window.location.pathname.includes('sa11y')) {
-    alert('Trageți butonul "Sa11y" în bara de marcaje. Apoi faceți clic pe marcaj pe orice pagină web.');
-  } else {
-    alert('Sa11y este deja încărcat pe această pagină. Vă rugăm să așteptați sau reîncărcați pagina și încercați din nou.');
-  }
-} else {
-  loadSa11y(langCode);
-}
+const message = {
+  close: 'Închide',
+  heading: 'Actualizare necesară',
+  message: 'Vă rugăm să actualizați bookmarkletul Sa11y adăugând următorul link în bara de marcaje.',
+  features: 'Noi caracteristici ale bookmarkletului',
+  a: 'Detectare automată a limbii paginii',
+  aContent: 'Acest bookmarklet afișează automat o versiune tradusă a lui Sa11y pe baza limbii paginii. Dacă limba nu este suportată, va fi folosită limba engleză.',
+  b: 'Avertisment privind politica de securitate',
+  bContent: 'Va apărea un avertisment dacă site-ul aplică politici de securitate care restricționează funcționarea lui Sa11y pe paginile sale.',
+};
+loadSa11y(langCode, message);

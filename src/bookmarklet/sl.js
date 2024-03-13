@@ -1,14 +1,14 @@
-/* eslint-disable no-alert */
 import { loadSa11y } from './_loadSa11y';
 
 const langCode = 'sl';
-
-if (typeof Sa11y === 'object') {
-  if (window.location.pathname.includes('sa11y')) {
-    alert('Gumb "Sa11y" povlecite v vrstico zaznamkov. Nato kliknite zaznamek na kateri koli spletni strani.');
-  } else {
-    alert('Sa11y je že naložen na tej strani. Počakajte ali ponovno naložite stran in poskusite znova.');
-  }
-} else {
-  loadSa11y(langCode);
-}
+const message = {
+  close: 'Zapri',
+  heading: 'Posodobitev potrebna',
+  message: 'Prosimo, posodobite zaznamek Sa11y z dodajanjem naslednje povezave v vašo vrstico zaznamkov.',
+  features: 'Nove funkcije zaznamka',
+  a: 'Samodejno zaznavanje jezika strani',
+  aContent: 'Ta zaznamek samodejno prikaže prevedeno različico Sa11y na podlagi jezika strani. Če je jezik nepodprt, bo uporabljen angleški jezik.',
+  b: 'Opozorilo o varnostni politiki',
+  bContent: 'Pojavi se opozorilo, če spletno mesto uporablja varnostne politike, ki omejujejo delovanje Sa11y na svojih straneh.',
+};
+loadSa11y(langCode, message);
