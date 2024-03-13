@@ -1115,8 +1115,9 @@ label:not(#colour-filter-mode, #export-results-mode) {
 }
 
 // Setting switches that need some extra width.
+#container:lang(bg),
 #container:lang(es) {
-  .switch {
+  .switch:not(#export-results-item *) {
     width: 225px !important;
   }
 }

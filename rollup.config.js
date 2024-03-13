@@ -138,42 +138,9 @@ const scssConfigs = scssFiles.map((file) => ({
   ],
 }));
 
-/* ********************* */
-/*      Bookmarklets     */
-/* ********************* */
-const bookmarkletConfigs = languages.map((lang) => {
-  // outputFileName is needed because majority of people have sa11y-en.js saved as the bookmarklet.
-  const outputFileName = (lang === 'en') ? 'sa11y-en.js' : `${lang}.js`;
-  return {
-    input: `src/bookmarklet/${lang}.js`,
-    plugins: [
-      nodeResolve(),
-      css(),
-      replace({
-        preventAssignment: true,
-        'process.env.NODE_ENV': JSON.stringify('production'),
-        Sa11yVersion: JSON.stringify(pkg.version),
-      }),
-    ],
-    output: [
-      {
-        file: `bookmarklet/${outputFileName}`,
-        format: 'umd',
-        name: `Sa11yLang${lang.charAt(0).toUpperCase() + lang.slice(1)}`,
-        plugins: [terser()],
-      },
-    ],
-  };
-});
-
-const configsToInclude = [
-  ...(!developmentMode ? bookmarkletConfigs : []),
-];
-
 export default [
   ...languageConfigs,
   ...scssConfigs,
-  ...configsToInclude,
 
   /* ********************* */
   /*      Javascript       */
@@ -208,6 +175,27 @@ export default [
     output: [
       { banner, file: 'dist/js/sa11y.umd.js', format: 'umd', name: 'Sa11y' },
       { banner, file: 'dist/js/sa11y.umd.min.js', format: 'umd', name: 'Sa11y', plugins: [terser()] },
+    ],
+  },
+  // Bookmarklet
+  {
+    input: 'src/bookmarklet/v2.js',
+    plugins: [
+      nodeResolve(),
+      css(),
+      replace({
+        preventAssignment: true,
+        'process.env.NODE_ENV': JSON.stringify('production'),
+        Sa11yVersion: JSON.stringify(pkg.version),
+      }),
+    ],
+    output: [
+      {
+        file: 'bookmarklet/v2.js',
+        format: 'umd',
+        name: 'Sa11yLangBookmarklet',
+        plugins: [terser()],
+      },
     ],
   },
 ];
