@@ -124,6 +124,7 @@ export default {
 
     // Links
     LINK_EMPTY: 'Retirer les liens vides sans texte.',
+    LINK_EMPTY_LABELLEDBY: 'Le lien a une valeur pour <code>aria-labelledby</code> qui est vide ou ne correspond pas à la valeur de l\'attribut<code>id</code> d\'un autre élément de la page.',
     LINK_EMPTY_LINK_NO_LABEL: 'Le lien ne comporte pas de texte perceptible par les lecteurs d\'écran ou autres techno-logies d\'assistance. À corriger: <ul><li>Ajoutez un texte bref qui décrit où le lien vous mène.</li><li>S’il s’agit d’un <a href="https://a11y-101.com/development/icons-and-links/">lien d’icône SVG (vectoriel),</a> il manque alors une description.</li><li>Si ce lien est une erreur due à un bogue de copier/coller, tentez de supprimer.</li></ul>',
     LINK_LABEL: '<strong>Lien de l’étiquette:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Le texte du lien peut ne pas être suffisamment descriptif hors du contexte: <strong {r}>%(error)</strong><hr><strong>Conseil!</strong> Le texte du lien doit toujours être précis, unique et significatif. Évitez les mots courants comme &quot;cliquez ici&quot; ou &quot;en savoir plus&quot;.',

@@ -126,6 +126,7 @@ export default {
 
     // Links
     LINK_EMPTY: 'Eliminar enlaces vacíos sin texto.',
+    LINK_EMPTY_LABELLEDBY: 'El enlace tiene un valor para <code>aria-labelledby</code> que está vacío o no coincide con el valor del atributo <code>id</code> de otro elemento en la página.',
     LINK_EMPTY_LINK_NO_LABEL: 'El enlace no tiene texto perceptible que sea visible para los lectores de pantalla y otras tecnologías de asistencia. Para solucionarlo: <ul><li>Agregue un texto conciso que describa a dónde lo lleva el enlace.</li><li>Si es un <a href="https://a11y-101.com/development/icons-and-links">icono de enlace o SVG,</a> es probable que le falte una etiqueta descriptiva.</li><li>Si cree que este enlace es un error debido a un error de copiar/pegar, considere eliminarlo.</li></ul>',
     LINK_LABEL: '<strong>Etiqueta de enlace:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Es posible que el texto del enlace no sea lo suficientemente descriptivo fuera de contexto: <strong {r}>%(error)</strong><hr><strong>¡Consejo!</strong> El texto del enlace siempre debe ser claro, único y significativo. Evite palabras comunes como &quot;haga clic aquí&quot; o &quot;más información&quot;',

@@ -153,6 +153,7 @@ export default {
     PANEL_HEADING_MISSING_ONE: '見出しの欠落 1！',
     PANEL_NO_HEADINGS: '見出しはありません。',
     LINK_EMPTY: 'テキストのない空のリンクを削除する。',
+    LINK_EMPTY_LABELLEDBY: 'リンクには、ページ内の別の要素の<code>id</code>属性の値と一致しないか、空の<code>aria-labelledby</code>値があります。',
     LINK_EMPTY_LINK_NO_LABEL: 'リンクに、スクリーンリーダーやその他の支援技術で表示可能な識別可能なテキストがない。修正するには<ul><li>リンクの行き先を説明する簡潔なテキストを追加する。</li><li><a href="https://a11y-101.com/development/icons-and-links">アイコン リンクまたは SVG</a>である場合、説明用のラベルがない可能性があります。 </li><li> このリンクがコピー/ペーストのバグによるエラーと考えられる場合は、削除を検討してください。 </li></ul>',
     LINK_LABEL: '<strong>リンクラベル：</strong> %(sanitizedText)',
     LINK_STOPWORD: 'リンクテキストは、文脈から見て十分に説明的でない場合があります：<strong {r}>%(error)</strong><hr><strong>ヒント！</strong> リンクテキストは常に明確で、ユニークで、意味のあるものでなければなりません。quot;ここをクリック&quot;やquot;もっと知りたい&quotのような一般的な単語は避けてください；',

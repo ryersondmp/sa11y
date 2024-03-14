@@ -146,6 +146,7 @@ export default {
     PANEL_HEADING_MISSING_ONE: "Manca l'intestazione 1!",
     PANEL_NO_HEADINGS: 'Nessun titolo trovato.',
     LINK_EMPTY: 'Rimuovere i link vuoti senza testo.',
+    LINK_EMPTY_LABELLEDBY: 'Il link ha un valore per <code>aria-labelledby</code> che è vuoto o non corrisponde al valore dell\'attributo<code>id</code> di un altro elemento nella pagina.',
     LINK_EMPTY_LINK_NO_LABEL: "Il link non ha un testo distinguibile che sia visibile agli screen reader e ad altre tecnologie assistive. Per risolvere il problema: <ul><li>Aggiungi un testo conciso che descriva dove porta il link.</li><li>Se si tratta di un <a href=\"https://a11y-101.com/development/icons-and-links\">collegamento a un'icona o a un SVG,</a> è probabile che manchi un'etichetta descrittiva.</li><li>Se pensi che questo link sia un errore dovuto a un bug di copia/incolla, prendi in considerazione l'idea di cancellarlo.</li></ul>",
     LINK_LABEL: '<strong>Etichetta del link:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Il testo del link potrebbe non essere abbastanza descrittivo fuori dal contesto: <strong {r}>%(error)</strong><hr><strong>Tip!</strong> Il testo del link deve essere sempre chiaro, unico e significativo. Evitate parole comuni come &quot;clicca qui&quot; o &quot;per saperne di più&quot;',

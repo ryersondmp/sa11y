@@ -145,6 +145,7 @@ export default {
     PANEL_HEADING_MISSING_ONE: 'Trūkst 1. pozīcijas!',
     PANEL_NO_HEADINGS: 'Virsraksti nav atrasti.',
     LINK_EMPTY: 'Dzēst tukšas saites bez teksta.',
+    LINK_EMPTY_LABELLEDBY: 'Saitei ir<code>aria-labelledby</code> ir tās vērtībai jābūt tukšai, vai nu tā nesakrīt ar citu elementu lapā, kam ir atribūts<code>id</code>.',
     LINK_EMPTY_LINK_NO_LABEL: 'Saitei nav atpazīstama teksta, kas būtu redzams ekrānlasītājiem un citām palīgtehnoloģijām. Lai labotu: </li><li>Pievienojiet īsu tekstu, kas apraksta, kur saite ved.</li><li>Ja tā ir <a href="https://a11y-101.com/development/icons-and-links">ikonas saite vai SVG,</a>, tai, visticamāk, trūkst aprakstoša marķējuma.</li><li>Ja domājat, ka šī saite ir kļūda, kas radusies kopēšanas/ielīmēšanas kļūdas dēļ, apsveriet tās dzēšanu.</li></ul>.',
     LINK_LABEL: '<strong>Saites etiķete:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Saites teksts var nebūt pietiekami aprakstošs ārpus konteksta: <strong {r}>%(kļūda)</strong><hr><strong>Padoms!</strong> Saites tekstam vienmēr jābūt skaidram, unikālam un nozīmīgam. Izvairieties no tādiem bieži lietotiem vārdiem kā &quot;klikšķiniet šeit&quot; vai &quot;uzzināt vairāk&quot;;',

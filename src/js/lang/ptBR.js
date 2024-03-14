@@ -145,6 +145,7 @@ export default {
     PANEL_HEADING_MISSING_ONE: 'Falta o cabeçalho 1!',
     PANEL_NO_HEADINGS: 'Nenhuma cabeçalho encontrado.',
     LINK_EMPTY: 'Remova links vazios sem nenhum texto.',
+    LINK_EMPTY_LABELLEDBY: 'O link possui um valor para <code>aria-labelledby</code> que está vazio ou não corresponde ao valor do atributo <code>id</code> de outro elemento na página.',
     LINK_EMPTY_LINK_NO_LABEL: 'O link não tem texto discernível que seja visível para leitores de tela e outras tecnologias assistivas. Para corrigir: <ul><li>Adicione um texto conciso que descreva para onde o link o leva.</li><li>Se for um <a href="https://a11y-101.com/development/icons-and-links">link de ícone ou SVG,</a> é provável que esteja faltando um rótulo descritivo.</li><li>Se você acha que esse link é um erro devido a um bug de copiar/colar, considere excluí-lo.</li></ul>',
     LINK_LABEL: '<strong>Rótulo do link:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'O texto do link pode não ser descritivo o suficiente fora do contexto: <strong {r}>%(error)</strong><hr><strong>Dica!</strong> O texto do link deve ser sempre claro, exclusivo e significativo. Evite palavras comuns como &quot;clique aqui&quot; ou &quot;saiba mais&quot;',

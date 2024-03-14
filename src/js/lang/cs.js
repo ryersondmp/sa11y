@@ -143,6 +143,7 @@ export default {
     PANEL_HEADING_MISSING_ONE: 'Chybí nadpis 1!',
     PANEL_NO_HEADINGS: 'Nebyly nalezeny žádné záhlaví.',
     LINK_EMPTY: 'Odstranění prázdných odkazů bez textu.',
+    LINK_EMPTY_LABELLEDBY: 'Odkaz má hodnotu <code>aria-labelledby</code>, která je prázdná nebo neodpovídá hodnotě atributu <code>id</code> jiného prvku na stránce.',
     LINK_EMPTY_LINK_NO_LABEL: 'Odkaz nemá čitelný text, který by byl viditelný pro čtečky obrazovky a další asistenční technologie. Oprava: </li><li>Přidejte stručný text, který popisuje, kam odkaz vede.</li><li>Jestliže se jedná o <a href="https://a11y-101.com/development/icons-and-links">odkaz na ikonu nebo SVG,</a> pravděpodobně chybí popisný štítek.</li><li>Pokud si myslíte, že tento odkaz je chybou způsobenou chybou kopírování/vkládání, zvažte jeho odstranění.</li></ul>.',
     LINK_LABEL: '<strong>Značka odkazu:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Text odkazu nemusí být z kontextu dostatečně popisný: <strong {r}>%(error)</strong><hr><strong>Tip!</strong> Text odkazu by měl být vždy jasný, jedinečný a smysluplný. Vyhněte se běžným slovům jako &quot;klikněte zde&quot; nebo &quot;dozvědět se více&quot;',

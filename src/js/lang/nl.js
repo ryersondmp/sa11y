@@ -153,6 +153,7 @@ export default {
     PANEL_HEADING_MISSING_ONE: 'Rubriek 1 ontbreekt!',
     PANEL_NO_HEADINGS: 'Geen koppen gevonden.',
     LINK_EMPTY: 'Verwijder lege links zonder tekst.',
+    LINK_EMPTY_LABELLEDBY: 'De link heeft een waarde voor <code>aria-labelledby</code> die leeg is of niet overeenkomt met de waarde van het attribuut <code>id</code> van een ander element op de pagina.',
     LINK_EMPTY_LINK_NO_LABEL: 'Link heeft geen leesbare tekst die zichtbaar is voor schermlezers en andere ondersteunende technologie. Op te lossen: <ul><li>Voeg beknopte tekst toe die beschrijft waar de koppeling naartoe leidt.</li><li>Als het een <a href="https://a11y-101.com/development/icons-and-links">icon link of SVG,</a> is, ontbreekt waarschijnlijk een beschrijvend label.</li><li>Als u denkt dat deze koppeling een fout is als gevolg van een copy/paste-bug, kunt u overwegen deze te verwijderen.</li></ul>',
     LINK_LABEL: '<strong>Linklabel:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Linktekst is mogelijk niet beschrijvend genoeg buiten de context: <strong {r}>%(error)</strong><hr><strong>Tip!</strong> Linktekst moet altijd duidelijk, uniek en betekenisvol zijn. Vermijd veelgebruikte woorden zoals &quot;klik hier&quot; of &quot;leer meer&quot;',

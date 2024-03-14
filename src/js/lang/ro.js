@@ -145,6 +145,7 @@ export default {
     PANEL_HEADING_MISSING_ONE: 'Lipsește rubrica 1!',
     PANEL_NO_HEADINGS: 'Nu s-au găsit antete.',
     LINK_EMPTY: 'Eliminați legăturile goale fără text.',
+    LINK_EMPTY_LABELLEDBY: 'Linkul are o valoare pentru <code>aria-labelledby</code> care este goală sau nu se potrivește cu valoarea atributului <code>id</code> al altui element de pe pagină.',
     LINK_EMPTY_LINK_NO_LABEL: 'Linkul nu are un text vizibil pentru cititorii de ecran și alte tehnologii de asistență. Pentru a remedia problema: <ul><li>Adaugați un text concis care să descrie unde vă duce linkul.</li><li>Dacă este un <a href="https://a11y-101.com/development/icons-and-links">link cu pictograme sau SVG,</a> este probabil să lipsească o etichetă descriptivă.</li><li>Dacă credeți că acest link este o eroare datorată unui bug de copy/paste, luați în considerare ștergerea lui.</li></ul>.',
     LINK_LABEL: '<strong>Etichetă de legătură:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Este posibil ca textul linkului să nu fie suficient de descriptiv în afara contextului: <strong {r}>%(error)</strong><hr><strong>Tip!</strong> Textul linkului trebuie să fie întotdeauna clar, unic și semnificativ. Evitați cuvintele comune precum &quot;click aici&quot; sau &quot;află mai multe&quot;',

@@ -148,6 +148,7 @@ export default {
     PANEL_HEADING_MISSING_ONE: 'Manglende overskrift 1!',
     PANEL_NO_HEADINGS: 'Ingen overskrifter funnet.',
     LINK_EMPTY: 'Fjern tomme lenker uten tekst.',
+    LINK_EMPTY_LABELLEDBY: 'Lenken har en verdi for <code>aria-labelledby</code>, som enten er tom eller ikke samsvarer med verdien av attributtet <code>id</code> til et annet element på siden.',
     LINK_EMPTY_LINK_NO_LABEL: 'Lenken har ikke tydelig tekst som er synlig for skjermlesere og andre hjelpemidler. Slik løser du problemet: <ul><li>Legg til en kortfattet tekst som beskriver hvor lenken fører deg.</li><li>Hvis det er en <a href="https://a11y-101.com/development/icons-and-links">ikonlenke eller SVG,</a> mangler den sannsynligvis en beskrivende etikett.</li><li>Hvis du tror at denne lenken er en feil på grunn av en copy/paste-feil, bør du vurdere å slette den.</li></ul>.',
     LINK_LABEL: '<strong>Lenketikett:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Lenketeksten er kanskje ikke beskrivende nok uten sammenheng: <strong {r}>%(error)</strong><hr><strong>Tips!</strong> Lenketekst bør alltid være tydelig, unik og meningsfull. Unngå vanlige ord som "klikk her" eller "les mer"',

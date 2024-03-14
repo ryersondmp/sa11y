@@ -143,6 +143,7 @@ export default {
     PANEL_HEADING_MISSING_ONE: 'Başlık 1 eksik!',
     PANEL_NO_HEADINGS: 'Başlık bulunamadı.',
     LINK_EMPTY: 'Herhangi bir metin içermeyen boş bağlantıları kaldırın.',
+    LINK_EMPTY_LABELLEDBY: 'Bağlantının <code>aria-labelledby</code> değeri boş veya sayfadaki başka bir öğenin <code>id</code> özniteliği değeriyle eşleşmiyor.',
     LINK_EMPTY_LINK_NO_LABEL: 'Bağlantı, ekran okuyucular ve diğer yardımcı teknolojiler tarafından görülebilen ayırt edilebilir bir metne sahip değil. Düzeltmek için: <ul><li>Bağlantının sizi nereye götürdüğünü açıklayan kısa bir metin ekleyin.</li><li>Bu bir <a href="https://a11y-101.com/development/icons-and-links">ikon bağlantısı veya SVG,</a> ise muhtemelen açıklayıcı bir etiket eksiktir.</li><li>Bu bağlantının bir kopyala/yapıştır hatasından kaynaklanan bir hata olduğunu düşünüyorsanız, silmeyi düşünün.</li></ul>',
     LINK_LABEL: '<strong>Link etiketi:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Bağlantı metni bağlam dışında yeterince açıklayıcı olmayabilir: <strong {r}>%(error)</strong><hr><strong>İpucu!</strong> Bağlantı metni her zaman açık, benzersiz ve anlamlı olmalıdır. Buraya tıklayın&quot; veya &quot;daha fazla bilgi edinin&quot gibi yaygın kelimelerden kaçının;',

@@ -143,6 +143,7 @@ export default {
     PANEL_HEADING_MISSING_ONE: '缺少标题1!',
     PANEL_NO_HEADINGS: '未找到标题.',
     LINK_EMPTY: '删除没有任何文字的空链接。',
+    LINK_EMPTY_LABELLEDBY: '链接具有<code>aria-labelledby</code>的值为空或不与页面上另一个元素的<code>id</code>属性值匹配。',
     LINK_EMPTY_LINK_NO_LABEL: '链接没有可识别的文字, 对屏幕阅读器和其他辅助技术是可见的。要解决这个问题: <ul><li>添加一些简明的文字, 描述该链接带你到哪里。</li><li>如果它是一个<a href="https://a11y-101.com/development/icons-and-links">图标链接或SVG,</a>它可能缺少一个描述性的标签。</li><li>如果你认为这个链接是一个由于复制/粘贴错误造成的错误, 考虑删除它。</li></ul>。',
     LINK_LABEL: '<strong>链接标签: </strong> %(sanitizedText)',
     LINK_STOPWORD: '链接文本可能没有足够的描述性, 脱离了上下文: <strong {r}>%(error)</strong><hr><strong>提示！</strong>链接文本应始终清晰、独特和有意义。避免使用诸如&quot;点击这里&quot;或&quot;了解更多&quot等常见的词语；',

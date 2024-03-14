@@ -144,6 +144,7 @@ export default {
 
     // Links
     LINK_EMPTY: 'Puste łącze bez żadnego tekstu. Usuń je!',
+    LINK_EMPTY_LABELLEDBY: 'Link ma wartość <code>aria-labelledby</code>, która jest pusta lub nie pasuje do wartości atrybutu <code>id</code> innego elementu na stronie.',
     LINK_EMPTY_LINK_NO_LABEL: 'Łącze nie ma opisowego tekstu, który jest widoczny dla czytników ekranu i innych technologii wspomagających. Aby naprawić:<ul><li>Dodaj zwięzły tekst, który opisuje, dokąd prowadzi łącze.</li><li>Jeśli łączem jest <a href="https://a11y-101.com/development/icons-and-links">ikona lub SVG,</a> prawdopodobnie brakuje mu opisowej etykiety.</li><li>Jeśli uważasz, że to łącze jest błędem spowodowanym błędem kopiuj/wklej, rozważ usunięcie go.</li></ul>',
     LINK_LABEL: '<strong>Etykieta łącza:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Tekst łącza może nie być wystarczająco opisowy w kontekście: <strong {r}>%(error)</strong><hr><strong>Porada!</strong> Tekst łącza powinien być zawsze jasny, unikalny i znaczący. Unikaj typowych słów takich jak &quot;kliknij tutaj&quot; lub &quot;czytaj więcej&quot;.',

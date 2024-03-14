@@ -172,9 +172,9 @@ const Constants = (function myConstants() {
     // Main container.
     if (option.containerIgnore) {
       const containerSelectors = option.containerIgnore.split(',').map(($el) => `${$el} *, ${$el}`);
-      Exclusions.Container = `#wpadminbar *, ${containerSelectors.join(', ')}`;
+      Exclusions.Container = `#wpadminbar *, #sa11y-colour-filters, #sa11y-colour-filters *, ${containerSelectors.join(', ')}`;
     } else {
-      Exclusions.Container = '#wpadminbar *';
+      Exclusions.Container = '#wpadminbar *, #sa11y-colour-filters, #sa11y-colour-filters *';
     }
 
     // Contrast exclusions

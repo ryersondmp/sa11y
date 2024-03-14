@@ -146,6 +146,7 @@ export default {
 
     // Links
     LINK_EMPTY: 'Entferne leere Links ohne Text.',
+    LINK_EMPTY_LABELLEDBY: 'Der Link hat einen Wert für <code>aria-labelledby</code>, der leer ist oder nicht mit dem Wert des <code>id</code>-Attributs eines anderen Elements auf der Seite übereinstimmt.',
     LINK_EMPTY_LINK_NO_LABEL: 'Der Link hat keinen erkennbaren Text, der für Bildschirmleser und andere unterstützenden Technologien sichtbar ist. Zu beheben: <ul><li>Füge einen kurzen Text hinzu, der beschreibt, wohin der Link führt.</li><li>Wenn es ein <a href="https://a11y-101.com/development/icons-and-links">Icon Link oder ein SVG ist,</a> ist es sehr wahrscheinlich, dass ein beschreibendes Label fehlt.</li><li>Wenn Du glaubst, dass dieser Link aufgrund eines Kopier-/Einfügefehlers fehlerhaft ist, solltest Du ihn löschen.</li></ul>',
     LINK_LABEL: '<strong>Link Label:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Der Linktext ist ohne Kontext möglicherweise nicht aussagekräftig genug: <strong {r}>%(error)</strong><hr><strong>Tipp!</strong>Der Linktext sollte immer klar, eindeutig und aussagekräftig sein. Vermeide gängige Wörter wie &quot;hier klicken&quot; oder &quot;mehr erfahren&quot;',

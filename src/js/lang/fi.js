@@ -139,6 +139,7 @@ export default {
     PANEL_HEADING_MISSING_ONE: 'Otsikko 1 puuttuu!',
     PANEL_NO_HEADINGS: 'Otsikoita ei löytynyt.',
     LINK_EMPTY: 'Poista tyhjät linkit ilman tekstiä.',
+    LINK_EMPTY_LABELLEDBY: 'Linkillä on arvo <code>aria-labelledby</code>, joka on tyhjä tai ei vastaa toisen sivun elementin <code>id</code>-ominaisuuden arvoa.',
     LINK_EMPTY_LINK_NO_LABEL: 'Linkissä ei ole erottuvaa tekstiä, joka näkyy ruudunlukijoille ja muille apuvälineille. Korjaus: <ul><li>Lisää tiivis teksti, joka kuvaa, minne linkki vie.</li><li>Jos kyseessä on <a href="https://a11y-101.com/development/icons-and-links">kuvakkeellinen linkki tai SVG,</a> siitä puuttuu todennäköisesti kuvaava merkintä.</li><li>Jos luulet, että linkki on kopiointi/liitä-virheestä johtuva virhe, harkitse sen poistamista.</li></ul>',
     LINK_LABEL: '<strong>Linkki etiketti:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Linkkiteksti ei ehkä ole riittävän kuvaava asiayhteydestään: <strong {r}>%(error)</strong><hr><strong>Vinkki!</strong> Linkkitekstin tulisi aina olla selkeä, yksilöllinen ja merkityksellinen. Vältä yleisiä sanoja, kuten &quot;klikkaa tästä&quot; tai &quot;opi lisää&quot;;',

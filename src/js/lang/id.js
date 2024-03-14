@@ -147,6 +147,7 @@ export default {
     PANEL_HEADING_MISSING_ONE: 'Hilang Heading 1!',
     PANEL_NO_HEADINGS: 'Tidak ada judul ditemukan.',
     LINK_EMPTY: 'Hapus tautan kosong tanpa teks apa pun.',
+    LINK_EMPTY_LABELLEDBY: 'Tautan memiliki nilai untuk <code>aria-labelledby</code> yang kosong atau tidak cocok dengan nilai atribut <code>id</code> dari elemen lain di halaman.',
     LINK_EMPTY_LINK_NO_LABEL: 'Tautan tidak memiliki teks yang dapat dilihat oleh pembaca layar dan teknologi bantuan lainnya. Untuk memperbaiki: <ul><li>Tambahkan beberapa teks ringkas yang menjelaskan ke mana tautan tersebut membawa Anda.</li><li>Jika tautan tersebut adalah tautan <a href="https://a11y-101.com/development/icons-and-links">ikon atau SVG,</a> kemungkinan besar tautan tersebut tidak memiliki label deskriptif.</li><li>Jika Anda merasa tautan tersebut merupakan kesalahan akibat bug salin/tempel, pertimbangkan untuk menghapusnya.</li></ul>',
     LINK_LABEL: '<strong>Label tautan:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Teks tautan mungkin tidak cukup deskriptif di luar konteks: <strong {r}>%(error)</strong><hr><strong>Tip!</strong> Teks tautan harus selalu jelas, unik, dan bermakna. Hindari kata-kata umum seperti "klik di sini" atau "pelajari lebih lanjut"',

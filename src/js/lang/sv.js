@@ -131,6 +131,7 @@ export default {
 
     // Links
     LINK_EMPTY: 'Ta bort tomma länkar utan text.',
+    LINK_EMPTY_LABELLEDBY: 'Länken har ett värde för <code>aria-labelledby</code> som antingen är tomt eller inte matchar värdet för ett annat elements attribut <code>id</code> på sidan.',
     LINK_EMPTY_LINK_NO_LABEL: 'Länken har inte urskiljbar text som är synlig för skärmläsare och andra hjälpmedel. För att fixa: <ul><li>Lägg till lite kortfattad text som beskriver vart länken tar dig.</li><li>Om det är en <a href="https://a11y-101.com/development/icons -and-links">ikonlänk eller SVG,</a> saknar den troligen en beskrivande etikett.</li><li>Om du tror att den här länken är ett fel på grund av ett kopierings-/klistra-fel, överväg att ta bort den.</li></ul>',
     LINK_LABEL: '<strong>Länketikett:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Länktexten kanske inte är tillräckligt beskrivande ur sitt sammanhang: <strong {r}>%(error)</strong><hr><strong>Tips!</strong> Länktexten ska alltid vara tydlig, unik och meningsfull. Undvik vanliga ord som &quot;klicka här&quot; eller &quot;läs mer&quot;',

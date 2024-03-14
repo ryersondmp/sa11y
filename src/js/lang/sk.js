@@ -155,6 +155,7 @@ export default {
     PANEL_HEADING_MISSING_ONE: 'Chýba položka 1!',
     PANEL_NO_HEADINGS: 'Nenašli sa žiadne záhlavia.',
     LINK_EMPTY: 'Odstránenie prázdnych odkazov bez textu.',
+    LINK_EMPTY_LABELLEDBY: 'Odkaz má hodnotu <code>aria-labelledby</code>, ktorá je prázdna alebo nezodpovedá hodnote atribútu <code>id</code> iného prvku na stránke.',
     LINK_EMPTY_LINK_NO_LABEL: 'Odkaz nemá rozoznateľný text, ktorý je viditeľný pre čítačky obrazovky a iné asistenčné technológie. Oprava: </li><li>Pridajte stručný text, ktorý popisuje, kam vás odkaz zavedie.</li><li>Ak ide o <a href="https://a11y-101.com/development/icons-and-links">odkaz na ikonu alebo SVG,</a> pravdepodobne chýba popisný štítok.</li><li>Ak si myslíte, že tento odkaz je chybou spôsobenou chybou kopírovania/vkladania, zvážte jeho odstránenie.</li></ul>',
     LINK_LABEL: '<strong>Označenie odkazu:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Text prepojenia nemusí byť dostatočne popisný mimo kontextu: <strong {r}>%(error)</strong><hr><strong>Tip!</strong> Text prepojenia by mal byť vždy jasný, jedinečný a zmysluplný. Vyhnite sa bežným slovám ako &quot;kliknite sem&quot; alebo &quot;dozvedieť sa viac&quot;;',

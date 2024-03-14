@@ -143,6 +143,7 @@ export default {
     PANEL_HEADING_MISSING_ONE: 'Manglende overskrift 1!',
     PANEL_NO_HEADINGS: 'Ingen overskrifter fundet.',
     LINK_EMPTY: 'Fjern tomme links uden tekst.',
+    LINK_EMPTY_LABELLEDBY: 'Linket har en værdi for <code>aria-labelledby</code>, der enten er tom eller ikke matcher værdien af attributten <code>id</code> for et andet element på siden.',
     LINK_EMPTY_LINK_NO_LABEL: 'Linket har ikke tydelig tekst, der er synlig for skærmlæsere og andre hjælpemidler. Sådan rettes det: <ul><li> Tilføj en kort tekst, der beskriver, hvor linket fører dig hen.</li><li> Hvis det er et <a href="https://a11y-101.com/development/icons-and-links">ikonlink eller SVG,</a> mangler det sandsynligvis en beskrivende etiket.</li><li> Hvis du tror, at dette link er en fejl på grund af en copy/paste-fejl, kan du overveje at slette det.</li></ul>',
     LINK_LABEL: '<strong>Link-etiket:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Linkteksten er måske ikke beskrivende nok uden for kontekst: <strong {r}>%(error)</strong><hr><strong>Tip!</strong> Linktekst skal altid være tydelig, unik og meningsfuld. Undgå almindelige ord som &quot;klik her&quot; eller &quot;lær mere&quot;',

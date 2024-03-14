@@ -149,6 +149,7 @@ export default {
     PANEL_HEADING_MISSING_ONE: 'Trūksta 1 antraštės!',
     PANEL_NO_HEADINGS: 'Antraščių nerasta.',
     LINK_EMPTY: 'Pašalinkite tuščias nuorodas be jokio teksto.',
+    LINK_EMPTY_LABELLEDBY: 'Nuoroda turi <code>aria-labelledby</code> reikšmę, kuri yra tuščia arba neatitinka kito puslapio elemento atributo <code>id</code> reikšmės.',
     LINK_EMPTY_LINK_NO_LABEL: 'Nuorodoje nėra įskaitomo teksto, kuris būtų matomas ekrano skaitytuvams ir kitoms pagalbinėms technologijoms. Ištaisyti: </li><li>Pridėkite glaustą tekstą, kuriame būtų aprašyta, kur nuoroda veda.</li><li>Jeigu tai yra <a href="https://a11y-101.com/development/icons-and-links">paveiksliuko arba SVG nuoroda,</a> greičiausiai trūksta aprašomosios etiketės.</li><li>Jeigu manote, kad ši nuoroda yra klaida dėl kopijavimo ir įkėlimo klaidos, apsvarstykite galimybę ją ištrinti.</li></ul>.',
     LINK_LABEL: '<strong>Etiketė su nuoroda:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Nuorodos tekstas gali būti nepakankamai aprašomas be konteksto: <strong {r}>%(error)</strong><hr><hr><strong>Tipas!</strong> Nuorodos tekstas visada turi būti aiškus, unikalus ir prasmingas. Venkite įprastų žodžių, tokių kaip &quot;spustelėkite čia&quot; arba &quot;sužinokite daugiau&quot;;',

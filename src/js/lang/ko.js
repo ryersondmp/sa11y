@@ -155,6 +155,7 @@ export default {
     PANEL_HEADING_MISSING_ONE: '제목 1이 없습니다!',
     PANEL_NO_HEADINGS: '제목을 찾을 수 없습니다.',
     LINK_EMPTY: '텍스트가 없는 빈 링크를 제거합니다.',
+    LINK_EMPTY_LABELLEDBY: '링크에는 다른 페이지 요소의 <code>id</code> 속성 값과 일치하지 않거나 비어 있는 <code>aria-labelledby</code> 값이 있습니다.',
     LINK_EMPTY_LINK_NO_LABEL: '링크에 화면 리더 및 기타 보조 기술에서 볼 수 있는 식별 가능한 텍스트가 없습니다. 수정하려면: <ul><li>링크가 어디로 연결되는지 설명하는 간결한 텍스트를 추가합니다.</li><li>이 링크가 <a href="https://a11y-101.com/development/icons-and-links">아이콘 링크 또는 SVG인 경우 설명 레이블이 누락되었을 가능성이 높습니다.</li><li>복사/붙여넣기 버그로 인한 오류라고 생각되면 링크를 삭제하는 것이 좋습니다.</li></ul>',
     LINK_LABEL: '<strong>링크 레이블:</strong> %(sanitizedText)',
     LINK_STOPWORD: "링크 텍스트가 문맥에 맞지 않게 충분히 설명적이지 않을 수 있습니다: <strong {r}>%(error)</strong><hr><strong>Tip!</strong> 링크 텍스트는 항상 명확하고 고유하며 의미 있는 것이어야 합니다. '여기를 클릭하세요' 또는 '자세히 알아보기'와 같은 일반적인 단어는 피하세요;",

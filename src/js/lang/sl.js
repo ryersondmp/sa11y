@@ -144,6 +144,7 @@ export default {
     PANEL_HEADING_MISSING_ONE: 'Manjka naslov 1!',
     PANEL_NO_HEADINGS: 'Ni najdenih naslovov.',
     LINK_EMPTY: 'Odstranite prazne povezave brez besedila.',
+    LINK_EMPTY_LABELLEDBY: 'Povezava ima vrednost za <code>aria-labelledby</code>, ki je prazna ali se ne ujema z vrednostjo atributa <code>id</code> drugega elementa na strani.',
     LINK_EMPTY_LINK_NO_LABEL: 'Povezava nima razločljivega besedila, ki bi bilo vidno za bralnike zaslona in drugo podporno tehnologijo. Popravek: </li><li>Dodajte nekaj jedrnatega besedila, ki opisuje, kam vas bo povezava pripeljala.</li><li>Če gre za povezavo <a href="https://a11y-101.com/development/icons-and-links">ikona ali SVG,</a>, ji verjetno manjka opisna oznaka.</li><li>Če menite, da je ta povezava napaka zaradi napake pri kopiranju/prilepljanju, razmislite o njenem izbrisu.</li></ul>',
     LINK_LABEL: '<strong>Etiketa povezave:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Besedilo povezave morda ni dovolj opisno, če ni v kontekstu: <strong {r}>%(error)</strong><hr><strong>Tip!</strong> Besedilo povezave mora biti vedno jasno, edinstveno in smiselno. Izogibajte se pogostim besedam, kot sta &quot;kliknite tukaj&quot; ali &quot;izvedeti več&quot;',

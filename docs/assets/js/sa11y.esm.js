@@ -78,6 +78,7 @@ const defaultOptions = {
   underlinedTextQA: true,
   pageTitleQA: true,
   subscriptQA: true,
+  inPageLinkQA: true,
 
   // Tables
   tablesQA: true,
@@ -351,9 +352,9 @@ const Constants = (function myConstants() {
     // Main container.
     if (option.containerIgnore) {
       const containerSelectors = option.containerIgnore.split(',').map(($el) => `${$el} *, ${$el}`);
-      Exclusions.Container = `#wpadminbar *, ${containerSelectors.join(', ')}`;
+      Exclusions.Container = `#wpadminbar *, #sa11y-colour-filters, #sa11y-colour-filters *, ${containerSelectors.join(', ')}`;
     } else {
-      Exclusions.Container = '#wpadminbar *';
+      Exclusions.Container = '#wpadminbar *, #sa11y-colour-filters, #sa11y-colour-filters *';
     }
 
     // Contrast exclusions
@@ -1068,12 +1069,6 @@ const Elements = (function myElements() {
     Found.StrongItalics = find(
       'strong, em',
       'root',
-      Constants.Exclusions.Container,
-    );
-
-    Found.Ids = find(
-      '[id]',
-      'document',
       Constants.Exclusions.Container,
     );
 
@@ -7109,6 +7104,9 @@ function checkLinkText(results, option) {
     // Has ARIA.
     const hasAria = $el.querySelector(':scope [aria-labelledby], :scope [aria-label]') || $el.getAttribute('aria-labelledby') || $el.getAttribute('aria-label');
 
+    // Has aria-labeledby.
+    const hasAriaLabelledby = $el.querySelector(':scope [aria-labelledby]') || $el.getAttribute('aria-labelledby');
+
     if ($el.querySelectorAll('img').length) ; else if (ariaHidden) {
       // Has aria-hidden.
       if (!negativeTabindex) {
@@ -7123,7 +7121,16 @@ function checkLinkText(results, option) {
       }
     } else if (href && linkText.length === 0) {
       // Empty hyperlinks.
-      if ($el.children.length) {
+      if (hasAriaLabelledby) {
+        // Has ariaLabelledby attribute but empty accessible name.
+        results.push({
+          element: $el,
+          type: 'error',
+          content: Lang.sprintf('LINK_EMPTY_LABELLEDBY'),
+          inline: true,
+          position: 'afterend',
+        });
+      } else if ($el.children.length) {
         // Has child elements (e.g. SVG or SPAN) <a><i></i></a>
         results.push({
           element: $el,
@@ -8027,7 +8034,7 @@ function checkQA(results, option) {
   }
 
   /* ************************************************************** */
-  /*  Warning: Manually inspect documents & PDF for accessibility.  */
+  /*  Warning: Additional link checks.                              */
   /* ************************************************************** */
   Elements.Found.Links.forEach(($el) => {
     const href = $el.getAttribute('href');
@@ -8036,6 +8043,25 @@ function checkQA(results, option) {
       const hasExtension = extensions.some((extension) => href.includes(extension));
       const hasPDF = href.includes('.pdf');
       const key = prepareDismissal(`DOCUMENT${href}`);
+
+      // Check if link is valid.
+      if (option.inPageLinkQA && href.startsWith('#')) {
+        const targetId = href.substring(1);
+        const targetElement = document.getElementById(targetId);
+        const escapedTarget = escapeHTML(targetId);
+        if (!targetElement) {
+          results.push({
+            element: $el,
+            type: 'warning',
+            content: Lang.sprintf('QA_IN_PAGE_LINK', escapedTarget),
+            inline: true,
+            position: 'beforebegin',
+            dismiss: key,
+          });
+        }
+      }
+
+      // Manually inspect documents & PDF for accessibility.
       if (option.documentQA && hasExtension) {
         results.push({
           element: $el,
@@ -8326,22 +8352,48 @@ function checkQA(results, option) {
   /*  Error: Duplicate IDs                                           */
   /* *************************************************************** */
   if (option.duplicateIdQA) {
-    const allIds = {};
-    Elements.Found.Ids.forEach(($el) => {
-      const { id } = $el;
-      if (id) {
-        if (allIds[id] === undefined) {
-          allIds[id] = 1;
-        } else {
-          results.push({
-            element: $el,
-            type: 'error',
-            content: Lang.sprintf('QA_DUPLICATE_ID', id),
-            inline: true,
-            position: 'beforebegin',
-          });
-        }
+    const doms = Constants.Shadow.Components ? `body, ${Constants.Shadow.Components}` : 'body';
+    const allDoms = document.querySelectorAll(doms);
+
+    // Look for duplicate IDs within each DOM.
+    allDoms.forEach((dom) => {
+      const allIds = new Set();
+      const findDuplicateIds = (ids) => {
+        ids.forEach(($el) => {
+          const { id } = $el;
+
+          // Ignore empty IDs.
+          if (id.trim().length === 0) {
+            return;
+          }
+
+          if (id && !allIds.has(id)) {
+            allIds.add(id);
+          } else {
+            results.push({
+              element: $el,
+              type: 'error',
+              content: Lang.sprintf('QA_DUPLICATE_ID', id),
+              inline: true,
+              position: 'beforebegin',
+            });
+          }
+        });
+      };
+
+      // Look for duplicate IDs within shadow DOMs.
+      if (dom.shadowRoot) {
+        const shadowRootIds = Array.from(
+          dom.shadowRoot.querySelectorAll(`[id]:not(${Constants.Exclusions.Container})`),
+        );
+        findDuplicateIds(shadowRootIds);
       }
+
+      // Look for duplicates IDs in document body.
+      const regularIds = Array.from(
+        dom.querySelectorAll(`[id]:not(${Constants.Exclusions.Container})`),
+      );
+      findDuplicateIds(regularIds);
     });
   }
 

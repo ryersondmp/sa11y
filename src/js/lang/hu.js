@@ -155,6 +155,7 @@ export default {
     PANEL_HEADING_MISSING_ONE: 'Hiányzik az 1. címsor!',
     PANEL_NO_HEADINGS: 'Nem találtunk címszavakat.',
     LINK_EMPTY: 'Szöveg nélküli üres linkek eltávolítása.',
+    LINK_EMPTY_LABELLEDBY: 'A hivatkozásnak van egy értéke a <code>aria-labelledby</code> számára, ami üres vagy nem egyezik meg egy másik elem <code>id</code> attribútumának az értékével az oldalon.',
     LINK_EMPTY_LINK_NO_LABEL: 'A link nem rendelkezik olyan szöveggel, amely a képernyőolvasók és más segítő technológiák számára is látható. A javításhoz: <ul><li>Adjon hozzá egy tömör szöveget, amely leírja, hogy hová vezet a link.</li><li>Ha <a href="https://a11y-101.com/development/icons-and-links">ikonos link vagy SVG,</a> akkor valószínűleg hiányzik egy leíró felirat.</li><li>Ha úgy gondolja, hogy ez a link egy másolási/beillesztési hiba miatt hibás, akkor fontolja meg a törlését.</li></ul>.',
     LINK_LABEL: '<strong>Link címke:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Előfordulhat, hogy a link szövege kontextuson kívül nem elég leíró: <strong {r}>%(hiba)</strong><hr><strong>Tipp!</strong> A linkszövegnek mindig világosnak, egyedinek és értelmesnek kell lennie. Kerülje az olyan gyakori szavakat, mint a &quot;kattintson ide&quot; vagy a &quot;tudjon meg többet&quot;;',

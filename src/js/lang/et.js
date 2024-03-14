@@ -148,6 +148,7 @@ export default {
     PANEL_HEADING_MISSING_ONE: 'Puudub rubriik 1!',
     PANEL_NO_HEADINGS: 'Pealkirju ei leitud.',
     LINK_EMPTY: 'Eemaldage tühjad lingid ilma tekstita.',
+    LINK_EMPTY_LABELLEDBY: 'Lingil on väärtus <code>aria-labelledby</code>, mis on tühi või ei ühti lehe teise elemendi atribuudi <code>id</code> väärtusega.',
     LINK_EMPTY_LINK_NO_LABEL: 'Lingil ei ole eristatavat teksti, mis oleks nähtav ekraanilugejatele ja muudele abivahenditele. Parandada: <ul><li>Lisandage lühike tekst, mis kirjeldab, kuhu link viib.</li><li>Kui tegemist on <a href="https://a11y-101.com/development/icons-and-links">ikoonilink või SVG,</a> puudub tõenäoliselt kirjeldav märgistus.</li><li>Kui arvate, et see link on kopeerimis-/liidevigast tingitud viga, kaaluge selle kustutamist.</li></ul>Kui arvate, et tegemist on kopeerimis-/liidevigast tingitud veaga, kaaluge selle kustutamist.</li></ul>',
     LINK_LABEL: '<strong>Linki silt:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Linkide tekst ei pruugi olla piisavalt kirjeldav kontekstiväliselt: <strong {r}>%(error)</strong><hr><strong>Tipp!</strong> Linkide tekst peaks alati olema selge, unikaalne ja sisukas. Vältige tavalisi sõnu nagu &quot;kliki siia&quot; või &quot;õpi rohkem&quot;',

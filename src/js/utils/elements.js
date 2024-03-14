@@ -91,12 +91,6 @@ const Elements = (function myElements() {
       Constants.Exclusions.Container,
     );
 
-    Found.Ids = find(
-      '[id]',
-      'document',
-      Constants.Exclusions.Container,
-    );
-
     Found.Underlines = find(
       'u',
       'root',
