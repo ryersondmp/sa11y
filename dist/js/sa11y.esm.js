@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.1.3
+  * @version 3.1.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -8037,26 +8037,29 @@ function checkQA(results, option) {
   /*  Warning: Additional link checks.                              */
   /* ************************************************************** */
   Elements.Found.Links.forEach(($el) => {
-    const href = $el.getAttribute('href');
-    const extensions = Constants.Global.documentLinks.split(', ');
-    if (href) {
+    if ($el.hasAttribute('href')) {
+      const href = $el.getAttribute('href');
+
+      // Has file extension.
+      const extensions = Constants.Global.documentLinks.split(', ');
       const hasExtension = extensions.some((extension) => href.includes(extension));
       const hasPDF = href.includes('.pdf');
+
+      // Dismiss key.
       const key = prepareDismissal(`DOCUMENT${href}`);
 
-      // Check if link is valid.
-      if (option.inPageLinkQA && href.startsWith('#')) {
+      // Check for broken same-page links.
+      const hasButtonRole = $el.getAttribute('role') === 'button';
+      if (option.inPageLinkQA && (href.startsWith('#') || href === '') && !hasButtonRole) {
         const targetId = href.substring(1);
         const targetElement = document.getElementById(targetId);
-        const escapedTarget = escapeHTML(targetId);
         if (!targetElement) {
           results.push({
             element: $el,
-            type: 'warning',
-            content: Lang.sprintf('QA_IN_PAGE_LINK', escapedTarget),
+            type: 'error',
+            content: Lang.sprintf('QA_IN_PAGE_LINK'),
             inline: true,
             position: 'beforebegin',
-            dismiss: key,
           });
         }
       }
@@ -8370,13 +8373,26 @@ function checkQA(results, option) {
           if (id && !allIds.has(id)) {
             allIds.add(id);
           } else {
-            results.push({
-              element: $el,
-              type: 'error',
-              content: Lang.sprintf('QA_DUPLICATE_ID', id),
-              inline: true,
-              position: 'beforebegin',
-            });
+            // Reference: https://accessibilityinsights.io/info-examples/web/duplicate-id-aria/
+            const ariaReference = Array.from(
+              dom.querySelectorAll(`
+                a[href*="${id}"],
+                label[for*="${id}"],
+                [aria-labelledby*="${id}"],
+                [aria-controls*="${id}"],
+                [aria-owns*="${id}"]`),
+            );
+
+            // Only flag duplicate IDs being referenced by same page links, aria or a label.
+            if (ariaReference.length > 0) {
+              results.push({
+                element: $el,
+                type: 'error',
+                content: Lang.sprintf('QA_DUPLICATE_ID', id),
+                inline: true,
+                position: 'beforebegin',
+              });
+            }
           }
         });
       };

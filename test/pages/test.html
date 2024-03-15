@@ -14,16 +14,50 @@
     <h1>Sa11y Unit Tests</h1>
   </header>
   <main>
-    <p id="test">No errors on this page.</p>
+    <h2>Misc test cases</h2>
 
-    <a href="#content" id="skip" aria-labelledby="content">sssst</a>
+    <h2>Invalid ARIA references</h2>
+    <h3>aria-labelledby referencing invalid ID</h3>
+    <div id="error-arialabelledby-invalid-reference">
+      <a href="https://www.example.com" aria-labelledby="content">References non-existent ID on page</a>
+    </div>
+
+    <h2>Same-page links</h2>
+
+    <h3>Link when &lt;a href&gt;</h3>
+    <div id="error-broken-same-page-empty-href"><a href="">test</a></div>
+
+    <h3>Link used as button without roles</h3>
+    <div id="error-broken-same-page"><a href="#">User</a></div>
+
+    <h3>In-page link referencing duplicate IDs</h3>
+    <div id="error-broken-same-page">
+      <a href="#asdfgh">User</a>
+
+
+      <p id="asdfgh">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Natus nam voluptate doloribus, iure alias
+        possimus distinctio recusandae impedit asperiores necessitatibus! Amet perferendis laborum accusantium,
+        dignissimos iste voluptatum nam id alias!</p>
+      <p id="asdfgh">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Natus nam voluptate doloribus, iure alias
+        possimus distinctio recusandae impedit asperiores necessitatibus! Amet perferendis laborum accusantium,
+        dignissimos
+        iste voluptatum nam id alias!</p>
+    </div>
+
+    <h3>Link used as button with proper role</h3>
+    <div id="nothing-same-page-with-role"><a href="#" role="button">User</a></div>
+
+    <h2>Link using aria-labelledby referencing duplicate IDs</h2>
+    <a href="https://www.example.com" aria-labelledby="another">Learn more</a>
+    <p id="another">Apples</p>
+    <p id="another">Pears</p>
+    <hr>
+
+    <h2>Two buttons with same ID</h2>
+    <button id="play">Play</button>
+    <button id="play">Play</button>
 
     <hr>
-    <a href="#content2">Asfasf </a>
-
-    <span id="">Testing</span>
-    <button id="play">Play</button>
-    <button id="play">Play</button>
 
     <h2>Shadow DOM</h2>
     <div id="error-shadow-dom" class="shadow-root"></div>
@@ -43,7 +77,7 @@
           <h3 id="test">Duplicate ID in shadow DOM</h3>
           <a href="#testy">Skip to content</a>
           <p id="test">Lorem ipsum</p>
-          <p id="testy" style="margin-top:900px">Some content here.</p>
+          <p id="testy">Some content here.</p>
           `
           shadow.appendChild(div);
           this.initialized = true;
