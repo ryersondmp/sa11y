@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test';
+
 test.describe.configure({ mode: 'serial' });
 
 /* Miscellaneous unit tests */
 let page;
 test.describe('Sa11y miscellaneous tests', () => {
-
   test.beforeAll(async ({ browser }) => {
     page = await browser.newPage();
   });

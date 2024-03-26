@@ -197,6 +197,7 @@ export default {
     EMBED_GENERAL_WARNING: '삽입된 콘텐츠를 확인할 수 없습니다. 이미지에 대체 텍스트가 있는지, 동영상에 캡션이 있는지, 텍스트의 대비가 충분한지, 인터랙티브 구성 요소가 <a href="https://webaim.org/techniques/keyboard/">키보드에 액세스할 수 있는지 확인하세요.',
     EMBED_UNFOCUSABLE: '포커스할 수 없는 요소를 포함한 <code>&lt;iframe&gt;</code>은 <code>tabindex="-1"</code>을 가져서는 안 됩니다. 포함된 콘텐츠는 키보드로 접근할 수 없습니다.',
     QA_BAD_LINK: '잘못된 링크를 찾았습니다. 링크가 개발 환경을 가리키는 것으로 보입니다. <hr> 이 링크는 다음을 가리킵니다: <br> <strong {r}>%(el)</strong>',
+    QA_IN_PAGE_LINK: '부서진 동일 페이지 링크입니다. 링크 대상이 이 페이지에 있는 어떤 요소와도 일치하지 않습니다.',
     QA_BAD_ITALICS: '굵게 및 이탤릭체 태그는 의미론적 의미가 있으며, 전체 단락을 강조할 때는 <강함>이 아닌 <강함>을 사용해야 합니다. 굵은 텍스트는 단어나 문구에 강한 <강한> 강조를 제공할 때 사용해야 합니다. 고유명사(예: 책 및 기사 제목), 외래어, 따옴표는 이탤릭체로 강조 표시해야 합니다. 긴 따옴표는 블록 따옴표로 서식을 지정해야 합니다.',
     QA_PDF: 'PDF의 접근성을 확인할 수 없습니다. PDF는 웹 콘텐츠로 간주되므로 접근성을 제공해야 합니다. PDF에는 화면 리더를 사용하는 사용자(구조 태그 누락 또는 양식 필드 레이블 누락)와 저시력 사용자(확대 시 텍스트가 리플로우되지 않음)를 위한 문제가 포함되어 있는 경우가 많습니다. <ul><li>양식인 경우 접근 가능한 HTML 양식을 대안으로 사용해 보십시오.</li><li>문서인 경우 웹 페이지로 변환해 보십시오.</li></ul>그렇지 않은 경우 <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF의 접근성을 확인하십시오.</a>를 확인하십시오.',
     QA_DOCUMENT: '문서의 접근성을 확인할 수 없습니다. 링크된 문서는 웹 콘텐츠로 간주되므로 접근성을 제공해야 합니다. 이 문서를 수동으로 검토해 주세요. <a href="https://support.google.com/docs/answer/6199477?hl=ko">Google 스페이스 문서 또는 프레젠테이션에 더 쉽게 액세스할 수 있도록 설정하세요.</a></li><li> <a href="https://support.microsoft.com/ko/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office 문서에 더 쉽게 액세스할 수 있도록 설정하세요.</a></li></ul>',

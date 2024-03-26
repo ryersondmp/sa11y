@@ -195,6 +195,7 @@ export default {
     EMBED_GENERAL_WARNING: '埋め込みコンテンツを確認することができません。画像にはaltテキスト、動画にはキャプション、テキストには十分なコントラスト、インタラクティブなコンポーネントには<a href="https://webaim.org/techniques/keyboard/">キーボードアクセス可能であることを確認してください。</a>',
     EMBED_UNFOCUSABLE: 'フォーカスできない要素を含む<code>&lt;iframe&gt;</code>には<code>tabindex="-1"</code>を指定しないでください。埋め込まれたコンテンツはキーボードではアクセスできません。',
     QA_BAD_LINK: '不正なリンクが見つかりました。リンクは開発環境を指しているようです。<hr> このリンクは、次の場所を指しています：<br> <strong {r}>%(el)</strong>。',
+    QA_IN_PAGE_LINK: '同じページ内リンクが壊れています。リンクの対象は、このページ上のいかなる要素とも一致しません。',
     QA_BAD_ITALICS: '太字と斜体のタグは意味上の意味があり、段落全体を強調するために<strong>使用すべきではありません</strong>。太字は、単語やフレーズを強く<strong>強調するために使用されるべきです。イタリックは、固有名詞（例：書籍や記事のタイトル）、外国語、引用を強調するために使用されるべきです。長い引用文は、ブロッククオートとしてフォーマットされるべきである。',
     QA_PDF: 'PDFのアクセシビリティをチェックできない。PDFはウェブコンテンツとみなされ、同様にアクセシビリティを確保する必要があります。PDFには、スクリーンリーダーを使用する人（構造タグがない、フォームフィールドラベルがない）や弱視の人（拡大してもテキストがリフローしない）にとって問題があることがよくあります。<ul><li>これがフォームの場合は、アクセシブルな HTML フォームを代替として使用することを検討してください。</li><li>これが文書の場合は、Web ページへの変換を検討してください。</li></ul>その他、<a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF を Acrobat DC.</a> でアクセス可能か確認してください。',
     QA_DOCUMENT: 'ドキュメントのアクセシビリティを確認できません。リンクされたドキュメントはウェブコンテンツとみなされ、同様にアクセシブルにする必要があります。このドキュメントを手動で確認してください。<ul><li><a href="https://support.google.com/docs/answer/6199477?hl=ja">Google Workspace のドキュメントまたはプレゼンテーションをよりアクセスしやすくする</a></li><li><a href="https://support.microsoft.com/ja/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office のドキュメントをよりアクセスしやすくする</a></li></ul>。',

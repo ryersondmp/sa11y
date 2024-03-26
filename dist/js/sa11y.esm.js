@@ -8361,7 +8361,7 @@ function checkQA(results, option) {
     // Look for duplicate IDs within each DOM.
     allDoms.forEach((dom) => {
       const allIds = new Set();
-      const findDuplicateIds = (ids) => {
+      const findDuplicateIds = (ids, withinDOM) => {
         ids.forEach(($el) => {
           const { id } = $el;
 
@@ -8370,20 +8370,19 @@ function checkQA(results, option) {
             return;
           }
 
+          // Only flag duplicate IDs being referenced by same-page links, aria or a label.
+          // Reference: https://accessibilityinsights.io/info-examples/web/duplicate-id-aria/
           if (id && !allIds.has(id)) {
             allIds.add(id);
           } else {
-            // Reference: https://accessibilityinsights.io/info-examples/web/duplicate-id-aria/
             const ariaReference = Array.from(
-              dom.querySelectorAll(`
+              withinDOM.querySelectorAll(`
                 a[href*="${id}"],
                 label[for*="${id}"],
                 [aria-labelledby*="${id}"],
                 [aria-controls*="${id}"],
                 [aria-owns*="${id}"]`),
             );
-
-            // Only flag duplicate IDs being referenced by same page links, aria or a label.
             if (ariaReference.length > 0) {
               results.push({
                 element: $el,
@@ -8402,14 +8401,14 @@ function checkQA(results, option) {
         const shadowRootIds = Array.from(
           dom.shadowRoot.querySelectorAll(`[id]:not(${Constants.Exclusions.Container})`),
         );
-        findDuplicateIds(shadowRootIds);
+        findDuplicateIds(shadowRootIds, dom.shadowRoot);
       }
 
       // Look for duplicates IDs in document body.
       const regularIds = Array.from(
         dom.querySelectorAll(`[id]:not(${Constants.Exclusions.Container})`),
       );
-      findDuplicateIds(regularIds);
+      findDuplicateIds(regularIds, dom);
     });
   }
 
