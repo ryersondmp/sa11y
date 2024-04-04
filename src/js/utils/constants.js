@@ -3,6 +3,29 @@ import findShadowComponents from '../logic/find-shadow-components';
 
 const Constants = (function myConstants() {
   /* **************** */
+  /* Initialize Roots */
+  /* **************** */
+  const Root = {};
+  function initializeRoot(desiredRoot, desiredReadabilityRoot) {
+    Root.areaToCheck = document.querySelector(desiredRoot);
+    if (!Root.areaToCheck) {
+      Root.areaToCheck = document.querySelector('body');
+    }
+
+    // Readability target area to check.
+    Root.Readability = document.querySelector(desiredReadabilityRoot);
+    if (!Root.Readability) {
+      if (!Root.areaToCheck) {
+        Root.Readability = document.querySelector('body');
+      } else {
+        Root.Readability = Root.areaToCheck;
+        // eslint-disable-next-line no-console
+        console.error(`Sa11y configuration error: The selector '${desiredReadabilityRoot}' used for the property 'readabilityRoot' does not exist. '${Root.areaToCheck.tagName}' was used as a fallback.`);
+      }
+    }
+  }
+
+  /* **************** */
   /* Global constants */
   /* **************** */
   const Global = {};
@@ -19,12 +42,6 @@ const Constants = (function myConstants() {
     Global.colourFilterPlugin = option.colourFilterPlugin;
     Global.checkAllHideToggles = option.checkAllHideToggles;
     Global.exportResultsPlugin = option.exportResultsPlugin;
-
-    // Root element to check.
-    Global.Root = document.querySelector(option.checkRoot);
-    if (!Global.Root) {
-      Global.Root = document.querySelector('body');
-    }
 
     // A11y: Determine scroll behaviour
     let reducedMotion = false;
@@ -116,18 +133,6 @@ const Constants = (function myConstants() {
   const Readability = {};
   function initializeReadability(option) {
     if (option.readabilityPlugin) {
-      // Readability target area to check.
-      Readability.Root = document.querySelector(option.readabilityRoot);
-      if (!Readability.Root) {
-        if (!Global.Root) {
-          Readability.Root = document.querySelector('body');
-        } else {
-          Readability.Root = Global.Root;
-          // eslint-disable-next-line no-console
-          console.error(`Sa11y configuration error: The selector '${option.readabilityRoot}' used for the property 'readabilityRoot' does not exist. '${Global.Root.tagName}' was used as a fallback.`);
-        }
-      }
-
       // Set `readabilityLang` property based on language file.
       Readability.Lang = Lang._('LANG_CODE').substring(0, 2);
 
@@ -263,6 +268,8 @@ const Constants = (function myConstants() {
   }
 
   return {
+    initializeRoot,
+    Root,
     initializeGlobal,
     Global,
     initializePanelSelectors,

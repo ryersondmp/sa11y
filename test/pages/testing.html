@@ -1,29 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-<link rel="stylesheet" href="./assets/main.css">
-<link rel="stylesheet" href="../../dist/css/sa11y.min.css" />
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sa11y Unit Tests</title>
+  <link rel="stylesheet" href="./assets/main.css">
+  <link rel="stylesheet" href="../../dist/css/sa11y.min.css" />
 </head>
 
 <body>
-  <header>
+  <header class="sa11y-active">
     <h1>Sa11y (Random) Unit Tests</h1>
   </header>
   <main>
-    <p>A blank slate for you to add test cases. </p>
+    <p>A blank slate for testing.</p>
   </main>
-  <footer></footer>
+  <footer>
+  </footer>
 
-  <script src="../../dist/js/sa11y.umd.min.js"></script>
+  <script src="../../dist/js/sa11y.umd.js"></script>
   <script src="../../dist/js/lang/en.umd.js"></script>
   <script>
     Sa11y.Lang.addI18n(Sa11yLangEn.strings);
     const sa11y = new Sa11y.Sa11y({
-      checkRoot: "main",
+      checkRoot: 'main',
       autoDetectShadowComponents: true,
     });
   </script>

@@ -13,9 +13,9 @@ export default function find(selector, desiredRoot, exclude) {
     root = document;
   } else if (desiredRoot === 'readability') {
     root = Constants.Readability.Root;
-    if (!root) root = Constants.Global.Root;
+    if (!root) root = Constants.Root.areaToCheck;
   } else if (desiredRoot === 'root') {
-    root = Constants.Global.Root;
+    root = Constants.Root.areaToCheck;
     if (!root) root = document.body;
   } else if (desiredRoot === 'panel') {
     root = Constants.Panel.panel;

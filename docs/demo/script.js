@@ -60,6 +60,17 @@ $checkAccordions.forEach(($el) => {
 });
 */
 
+// Generate unique URLs for demo purposes.
+const randomNumber = () => {
+  const min = 10000;
+  const max = 99999;
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+const ahrefs = document.querySelectorAll("a[href='#']");
+ahrefs.forEach((a) => {
+  a.href = `https://www.example.com?=${randomNumber()}`;
+});
+
 // Instantiate
 const sa11y = new Sa11y({
   checkRoot: 'main',
