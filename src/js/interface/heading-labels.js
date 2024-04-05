@@ -28,6 +28,7 @@ export class HeadingLabel extends HTMLElement {
         position: absolute;
         text-shadow: 1px 1px black;
         -webkit-text-fill-color: white;
+        word-break: keep-all;
         z-index: 200;
       }
       @media screen and (forced-colors: active) {

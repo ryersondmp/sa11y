@@ -56,7 +56,8 @@ export default function checkQA(results, option) {
 
       // Check for broken same-page links.
       const hasButtonRole = $el.getAttribute('role') === 'button';
-      if (option.inPageLinkQA && (href.startsWith('#') || href === '') && !hasButtonRole) {
+      const hasText = $el.textContent.trim().length !== 0;
+      if (option.inPageLinkQA && (href.startsWith('#') || href === '') && !hasButtonRole && hasText) {
         const targetId = href.substring(1);
         const targetElement = document.getElementById(targetId);
         if (!targetElement) {

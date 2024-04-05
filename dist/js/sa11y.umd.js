@@ -6256,6 +6256,7 @@
         position: absolute;
         text-shadow: 1px 1px black;
         -webkit-text-fill-color: white;
+        word-break: keep-all;
         z-index: 200;
       }
       @media screen and (forced-colors: active) {
@@ -7130,7 +7131,7 @@
             position: 'afterend',
           });
         }
-      } else if (href && linkText.length === 0) {
+      } else if ((href || href === '') && linkText.length === 0) {
         // Empty hyperlinks.
         if (hasAriaLabelledby) {
           // Has ariaLabelledby attribute but empty accessible name.
@@ -8061,7 +8062,8 @@
 
         // Check for broken same-page links.
         const hasButtonRole = $el.getAttribute('role') === 'button';
-        if (option.inPageLinkQA && (href.startsWith('#') || href === '') && !hasButtonRole) {
+        const hasText = $el.textContent.trim().length !== 0;
+        if (option.inPageLinkQA && (href.startsWith('#') || href === '') && !hasButtonRole && hasText) {
           const targetId = href.substring(1);
           const targetElement = document.getElementById(targetId);
           if (!targetElement) {

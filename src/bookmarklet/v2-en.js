@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 /* eslint-disable no-undef */
 /* eslint-disable no-new */
 
@@ -57,18 +58,35 @@ const loadScript = () => new Promise((resolve, reject) => {
 
 // Once scripts are loaded, instantiate Sa11y.
 const onLoadScript = () => {
-  Sa11y.Lang.addI18n(Sa11yLangEn.strings);
+  // Instantiate.
+  const instantiate = () => {
+    Sa11y.Lang.addI18n(Sa11yLangEn.strings);
+    new Sa11y.Sa11y({
+      autoDetectShadowComponents: true,
+      customChecks: false,
+      exportResultsPlugin: true,
+      detectSPArouting: true,
+    });
+  };
 
-  // Customize props as needed.
-  new Sa11y.Sa11y({
-    autoDetectShadowComponents: true,
-    customChecks: false,
-    exportResultsPlugin: true,
-    detectSPArouting: true,
-  });
+  // Vendor specific work-arounds...
+  const url = window.location.href;
+  if (url.includes('https://360.articulate.com/review/content')) {
+    const iframe = document.querySelector('iframe.player');
+    const src = iframe.getAttribute('src');
+    if (iframe && src) {
+      if (window.confirm('Press OK to be redirected to a page where you can check the accessibility of the content. The page will open in a new tab.')) {
+        window.open(src, '_blank');
+      }
+    } else {
+      instantiate();
+    }
+  } else {
+    instantiate();
 
-  // Remove loading spinner once Sa11y is instantiated.
-  document.getElementById('sa11y-loading').remove();
+    // Remove loading spinner once Sa11y is instantiated.
+    document.getElementById('sa11y-loading').remove();
+  }
 };
 
 const initialize = () => {

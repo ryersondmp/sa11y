@@ -130,7 +130,7 @@ export default function checkLinkText(results, option) {
           position: 'afterend',
         });
       }
-    } else if (href && linkText.length === 0) {
+    } else if ((href || href === '') && linkText.length === 0) {
       // Empty hyperlinks.
       if (hasAriaLabelledby) {
         // Has ariaLabelledby attribute but empty accessible name.

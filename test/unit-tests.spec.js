@@ -539,6 +539,8 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue3).toBe(true);
     const issue4 = await checkTooltip(page, 'error-empty-4', 'Remove empty links');
     expect(issue4).toBe(true);
+    const issue5 = await checkTooltip(page, 'error-empty-5', 'Remove empty links');
+    expect(issue5).toBe(true);
   });
 
   test('Empty icon links', async () => {

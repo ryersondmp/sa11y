@@ -76,28 +76,28 @@
     setTimeout(() => {
       sa11y.resetAll(false);
       sa11y.checkAll();
-    }, 800);
+    }, 400);
 
     setTimeout(() => {
       document.querySelector('header').classList.remove('sa11y-active');
       document.querySelector('main').classList.add('sa11y-active');
       sa11y.resetAll(false);
       sa11y.checkAll();
-    }, 2000);
+    }, 900);
 
     setTimeout(() => {
       document.querySelector('main').classList.remove('sa11y-active');
       document.querySelector('footer').classList.add('sa11y-active');
       sa11y.resetAll(false);
       sa11y.checkAll();
-    }, 3500);
+    }, 1900);
 
     setTimeout(() => {
       document.querySelector('footer').classList.remove('sa11y-active');
       sa11y.resetAll(false);
       sa11y.checkAll('asdfghj');
       document.querySelector('body').classList.add('sa11y-active');
-    }, 5500);
+    }, 3000);
   </script>
 </body>
 
