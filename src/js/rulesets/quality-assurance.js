@@ -271,7 +271,8 @@ export default function checkQA(results, option) {
     if (firstPrefix.length > 0 && firstPrefix !== activeMatch && possibleMatch) {
       // We have a prefix and a possible hit; check next detected paragraph.
       const secondP = Elements.Found.Paragraphs[i + 1];
-      if (secondP) {
+
+      if (secondP && !secondP.closest('th, td')) {
         secondText = Utils.getText(secondP).substring(0, 2);
         // Just a sentence, ignore.
         if (secondText === 'A') {
