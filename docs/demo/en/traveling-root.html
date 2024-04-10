@@ -2,10 +2,17 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sa11y Testing</title>
-  <link rel="stylesheet" href="../../../test/pages/assets/main.css">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Toggleable checks - Sa11y Demo</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+  <meta name="theme-color" content="#7952b3">
+  <link rel="icon" href="../assets/favicon.ico" />
+  <link href="../assets/main.css" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/sa11y.min.css" />
   <style>
     .sa11y-active {
       box-shadow: inset 0px 0px 0 20px rgb(0 220 255 / 60%);
@@ -29,37 +36,45 @@
 </head>
 
 <body>
-  <header class="sa11y-active">
-    <h1>Sa11y - Travelling roots</h1>
-    <img src="../assets/placeholder.svg" width="100">
-    <p>Gave read use way make spot how nor. In daughter goodness an likewise oh consider at procured wandered. Songs
-      words
-      wrong by me hills heard timed. Happy eat may doors songs. Be ignorant so of suitable dissuade weddings together.
-      Least
-      whole timed we is. An smallness deficient discourse do newspaper be an eagerness continued. Mr my ready guest ye
-      after
-      short at. Had strictly mrs handsome mistaken cheerful. We it so if resolution invitation remarkably unpleasant
-      conviction. As into
-      ye then form. To easy five less if rose were. Now set offended own out required entirely. Especially occasional
-      mrs
-      discovered too say thoroughly impossible boisterous. My head when real no he high rich at with. After so power of
-      young
-      as. Bore year does has get long fat cold saw neat. Put boy carried chiefly shy general.</p>
-  </header>
-  <main>
-    <p>A blank slate for testing. <a href="https://www.example.com">learn more</a></p>
-  </main>
-  <footer>
-    <img src="../assets/placeholder.svg" width="100">
-    <p>Those an equal point no years do. Depend warmth fat but her but played. Shy and subjects wondered trifling
-      pleasant. <a href="#testing">testing</a>
-      Prudent cordial comfort do no on colonel as assured chicken. Smart mrs day which begin. Snug do sold mr it if
-      such.
-      Terminated uncommonly at at estimating. Man behaviour met moonlight extremity acuteness direction. Started his
-      hearted any civilly. So me by marianne admitted speaking. Men bred fine call ask. Cease one miles truth day
-      above seven. Suspicion sportsmen provision suffering mrs saw engrossed something. Snug soon he on plan in be dine
-      some.</p>
-  </footer>
+  <div class="container">
+    <header class="sa11y-active my-5">
+      <h1>Sa11y - Travelling roots</h1>
+      <img src="../assets/placeholder.svg" width="100">
+      <p>Gave read use way make spot how nor. In daughter goodness an likewise oh consider at procured wandered. Songs
+        words
+        wrong by me hills heard timed. Happy eat may doors songs. Be ignorant so of suitable dissuade weddings together.
+        Least
+        whole timed we is. An smallness deficient discourse do newspaper be an eagerness continued. Mr my ready guest ye
+        after
+        short at. Had strictly mrs handsome mistaken cheerful. We it so if resolution invitation remarkably unpleasant
+        conviction. As into
+        ye then form. To easy five less if rose were. Now set offended own out required entirely. Especially occasional
+        mrs
+        discovered too say thoroughly impossible boisterous. My head when real no he high rich at with. After so power
+        of
+        young
+        as. Bore year does has get long fat cold saw neat. Put boy carried chiefly shy general.</p>
+    </header>
+
+    <hr aria-hidden="true">
+    <main class="my-5">
+      <p><a href="#jump">A blank slate</a> for testing. <a href="https://www.example.com">learn more</a></p>
+    </main>
+    <hr aria-hidden="true">
+    <footer class="my-5">
+      <img src="../assets/placeholder.svg" width="100">
+      <p>Those an equal point no years do. Depend warmth fat but her but played. Shy and subjects wondered trifling
+        pleasant. <a href="#testing">testing</a>
+        Prudent cordial comfort do no on colonel as assured chicken. Smart mrs day which begin. Snug do sold mr it if
+        such.
+        Terminated uncommonly at at estimating. <a href="#jump1">Behaviour</a> met moonlight extremity acuteness
+        direction. Started his
+        hearted any civilly. So me by marianne admitted speaking. Men bred fine call ask. Cease one miles truth day
+        above seven. Suspicion sportsmen provision suffering mrs saw engrossed something. Snug soon he on plan in be
+        dine
+        some.</p>
+    </footer>
+  </div>
 
   <link rel="stylesheet" href="../../assets/css/sa11y.min.css" />
   <!-- Sa11y - Regular script -->
