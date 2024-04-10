@@ -51,7 +51,7 @@
   </div>
   <div class="container" id="all">
     <section id="first" class="sa11y-active">
-      <h2>First area to check</h2>
+      <h2>First area to check <span class="anchor-js visually-hidden">(TEST)</span></h2>
       <img src="../assets/placeholder.svg" width="100">
       <p>Gave read use way make spot how nor. In daughter goodness an likewise oh consider at procured wandered. Songs
         words
@@ -71,7 +71,7 @@
 
     <hr aria-hidden="true">
     <main>
-      <h2>Second area to check</h2>
+      <h2>Second area to check <span class="visually-hidden">(IGNORED)</span></h2>
       <p>Dwelling and speedily ignorant any steepest. Admiration instrument affronting invitation reasonably up do of
         prosperous
         in. Shy saw declared age debating ecstatic man. Call in so want pure rank am dear were. Remarkably to continuing
@@ -108,6 +108,8 @@
     Sa11y.Lang.addI18n(Sa11yLangEnUS.strings);
     const sa11y = new Sa11y.Sa11y({
       checkRoot: '.sa11y-active',
+      headerIgnoreSpan: '.anchor-js',
+      headerIgnoreStrings: '(IGNORED)',
       autoDetectShadowComponents: true,
     });
 

@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.1.4
+  * @version 3.1.5
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -19,6 +19,8 @@ const defaultOptions = {
   contrastIgnore: '.sr-only, [role="menu"] *',
   outlineIgnore: '',
   headerIgnore: '',
+  headerIgnoreSpan: '',
+  headerIgnoreStrings: '',
   imageIgnore: '',
   linkIgnore: 'nav *, [role="navigation"] *',
   linkIgnoreSpan: '',
@@ -6859,8 +6861,11 @@ function checkImages(results, option) {
 function checkHeaders(results, option, headingOutline) {
   let prevLevel;
   Elements.Found.Headings.forEach(($el, i) => {
-    const accessibleName = computeAccessibleName($el);
-    const removeWhitespace$1 = removeWhitespace(accessibleName);
+    const accName = computeAccessibleName($el, option.headerIgnoreSpan);
+    const stringMatchExclusions = option.headerIgnoreStrings
+      ? accName.replace(option.headerIgnoreStrings, '') : accName;
+    const removeWhitespace$1 = removeWhitespace(stringMatchExclusions);
+
     const headingText = sanitizeHTML(removeWhitespace$1);
 
     // Check if heading is within root target area.
