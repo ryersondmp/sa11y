@@ -4,7 +4,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Toggleable checks - Sa11y Demo</title>
+  <title>Travelling roots - Sa11y Demo</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -16,6 +16,10 @@
   <style>
     .sa11y-active {
       box-shadow: inset 0px 0px 0 20px rgb(0 220 255 / 60%);
+    }
+
+    footer {
+      padding-top: 0 !important;
     }
 
     body.sa11y-active,
@@ -37,8 +41,17 @@
 
 <body>
   <div class="container">
-    <header class="sa11y-active my-5">
-      <h1>Sa11y - Travelling roots</h1>
+    <header class="my-5">
+      <h1>Travelling roots</h1>
+      <p class="lead mb-5">Sa11y can check the specified target area (<code>checkRoot</code>) even if the selector moves
+        to
+        different elements on the page.
+        Useful for single page applications where content may dynamically change.</p>
+    </header>
+  </div>
+  <div class="container" id="all">
+    <section id="first" class="sa11y-active">
+      <h2>First area to check</h2>
       <img src="../assets/placeholder.svg" width="100">
       <p>Gave read use way make spot how nor. In daughter goodness an likewise oh consider at procured wandered. Songs
         words
@@ -54,14 +67,25 @@
         of
         young
         as. Bore year does has get long fat cold saw neat. Put boy carried chiefly shy general.</p>
-    </header>
+    </section>
 
     <hr aria-hidden="true">
-    <main class="my-5">
-      <p><a href="#jump">A blank slate</a> for testing. <a href="https://www.example.com">learn more</a></p>
+    <main>
+      <h2>Second area to check</h2>
+      <p>Dwelling and speedily ignorant any steepest. Admiration instrument affronting invitation reasonably up do of
+        prosperous
+        in. Shy saw declared age debating ecstatic man. Call in so want pure rank am dear were. Remarkably to continuing
+        in
+        surrounded diminution on. <a href="#jump">In unfeeling existence</a> objection immediate repulsive on he in.
+        Imprudence comparison
+        uncommonly me he difficulty diminution resolution. Likewise <a href="https://www.example.com">learn more</a>
+        proposal differed scarcely dwelling as on raillery.
+        September few dependent extremity own continued and ten prevailed attending. Early to weeks we could. for
+        testing.</p>
     </main>
     <hr aria-hidden="true">
-    <footer class="my-5">
+    <footer class="mb-5">
+      <h2>Third area to check</h2>
       <img src="../assets/placeholder.svg" width="100">
       <p>Those an equal point no years do. Depend warmth fat but her but played. Shy and subjects wondered trifling
         pleasant. <a href="#testing">testing</a>
@@ -94,7 +118,7 @@
     }, 400);
 
     setTimeout(() => {
-      document.querySelector('header').classList.remove('sa11y-active');
+      document.querySelector('#first').classList.remove('sa11y-active');
       document.querySelector('main').classList.add('sa11y-active');
       sa11y.resetAll(false);
       sa11y.checkAll();
@@ -110,8 +134,8 @@
     setTimeout(() => {
       document.querySelector('footer').classList.remove('sa11y-active');
       sa11y.resetAll(false);
-      sa11y.checkAll('asdfghj');
-      document.querySelector('body').classList.add('sa11y-active');
+      sa11y.checkAll('.check-here');
+      document.querySelector('#all').classList.add('sa11y-active');
     }, 3000);
   </script>
 </body>
