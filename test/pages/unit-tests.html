@@ -162,7 +162,7 @@
 
     <h3>Linked decorative image with surrounding link text</h3>
     <div id="pass-linked-decorative-image-surrounding-text">
-      <a href="#">
+      <a href="https://www.example.com?=1">
         <img src="./assets/placeholder.svg" alt>
         Learn more about Tigers
       </a>
@@ -170,21 +170,21 @@
 
     <h3>Linked image with alt text</h3>
     <div id="warning-link-has-alt-text">
-      <a href="#">
+      <a href="https://www.example.com?=2">
         <img src="./assets/placeholder.svg" alt="Large mountains of sand in the Nambian desert.">
       </a>
     </div>
 
     <h3>Linked image has alt text that contains a stop word</h3>
     <div id="warning-alt-stop-word">
-      <a href="#">
+      <a href="https://www.example.com?=3">
         <img src="./assets/placeholder.svg" alt="An image of a bird.">
       </a>
     </div>
 
     <h3>Linked image has long alt</h3>
     <div id="warning-link-alt-too-long">
-      <a href="#">
+      <a href="https://www.example.com?=4">
         <img src="./assets/placeholder.svg"
           alt="Zebras are several species of African equids (horse family) united by their distinctive black-and-white striped coats. Their stripes come in different patterns, unique to each individual. They are generally social animals that live in small harems to large herds. Unlike their closest relatives, horses & donkeys, zebras have never been truly domesticated. Source: Wikipedia.">
       </a>
@@ -192,7 +192,7 @@
 
     <h3>Linked image contains both alt and link text</h3>
     <div id="warning-alt-and-link-text">
-      <a href="#">
+      <a href="https://www.example.com?=5">
         <img src="./assets/placeholder.svg" alt="Lorem ipsum, dude!">
         Learn more about, Lorem.
       </a>
@@ -200,28 +200,28 @@
 
     <h3>Linked image missing alt text</h3>
     <div id="error-missing-alt">
-      <a href="#">
+      <a href="https://www.example.com?=6">
         <img src="./assets/placeholder.svg">
       </a>
     </div>
 
     <h3>Linked decorative image</h3>
     <div id="error-linked-decorative-image">
-      <a href="#">
+      <a href="https://www.example.com?=7">
         <img src="./assets/placeholder.svg" alt>
       </a>
     </div>
 
     <h3>Linked decorative image using empty space</h3>
     <div id="error-linked-decorative-empty-space">
-      <a href="#">
+      <a href="https://www.example.com?=8">
         <img src="./assets/placeholder.svg" alt=" ">
       </a>
     </div>
 
     <h3>Linked image with missing alt and contains link text</h3>
     <div id="error-missing-alt-contains-link-text">
-      <a href="#">
+      <a href="https://www.example.com?=9">
         <img src="./assets/placeholder.svg">
         Learn more about Lorem
       </a>
@@ -229,14 +229,14 @@
 
     <h3>Linked image has alt text containing placeholder stop words</h3>
     <div id="error-linked-alt-placeholder-stopword">
-      <a href="#">
+      <a href="https://www.example.com?=10">
         <img src="./assets/placeholder.svg" alt="image">
       </a>
     </div>
 
     <h3>Linked image has alt text containing file extension</h3>
     <div id="error-linked-alt-file-extension">
-      <a href="#">
+      <a href="https://www.example.com?=11">
         <img src="./assets/placeholder.svg" alt="doggy.jpg">
       </a>
     </div>
@@ -281,7 +281,7 @@
 
     <h3>Linked figure with alt but without figcaption</h3>
     <div id="warning-linked-figure-alt-without-figcaption">
-      <a href="#">
+      <a href="https://www.example.com?=11">
         <figure>
           <img src="./assets/placeholder.svg" alt="Lorem ipsum.">
         </figure>
@@ -290,21 +290,21 @@
 
     <h3>Linked image opens in new tab</h3>
     <div id="warning-hyperlinked-image-opens-in-new-tab">
-      <a href="#" target="_blank">
+      <a href="https://www.example.com?=12" target="_blank">
         <img src="./assets/placeholder.svg" alt="Beautiful square.">
       </a>
     </div>
 
     <h3>Linked image opens in new tab, alt text provides warning</h3>
     <div id="warning-linked-image-opens-in-new-tab">
-      <a href="#" target="_blank">
+      <a href="https://www.example.com?=13" target="_blank">
         <img src="./assets/placeholder.svg" alt="Two australian shepherds. Opens in new tab.">
       </a>
     </div>
 
     <h3>Ignore noscript tags</h3>
     <div id="warning-bug-testing-ignore-noscript-tags">
-      <a href="#">
+      <a href="https://www.example.com?=14">
         <img src="./assets/placeholder.svg" alt="Beautiful square.">
         <noscript>asdfg</noscript>
       </a>
@@ -312,22 +312,22 @@
 
     <h3>Linked image should ignore text within link</h3>
     <div id="warning-image-link-should-ignore-text-within-link">
-      <a href="#">
-        <img src="./assets/placeholder.svg" alt="Beautiful square.">
+      <a href="https://www.example.com?=15">
+        <img src="./assets/placeholder.svg" alt="Another beautiful square.">
         <span class="sr-only-example">Text ignored.</span>
       </a>
     </div>
 
     <h3>Linked image should ignore text within link via string match</h3>
     <div id="warning-image-link-should-ignore-text-within-link-string-match">
-      <a href="#">
+      <a href="https://www.example.com?=16">
         <img src="./assets/placeholder.svg" alt="Link text ignored."> (External)
       </a>
     </div>
 
     <h3>Linked image has aria-hidden, but still focusable</h3>
     <div id="error-hyperlinked-image-aria-hidden-focusable">
-      <a href="#" aria-hidden="true">
+      <a href="https://www.example.com?=17" aria-hidden="true">
         <img src="./assets/placeholder.svg" alt>
       </a>
     </div>
@@ -339,14 +339,14 @@
 
     <h3>Linked image has aria-hidden and negative tabindex</h3>
     <div id="nothing-linked-image-aria-hidden-negative-tabindex">
-      <a href="#" aria-hidden="true" tabindex="-1">
+      <a href="https://www.example.com?=18" aria-hidden="true" tabindex="-1">
         <img src="./assets/placeholder.svg" alt>
       </a>
     </div>
 
     <h3>Linked image with aria-hidden, negative tabindex, and alt</h3>
     <div id="nothing-hyperlinked-image-aria-hidden-negative-tabindex-alt">
-      <a href="#" aria-hidden="true" tabindex="-1">
+      <a href="https://www.example.com?=19" aria-hidden="true" tabindex="-1">
         <img src="./assets/placeholder.svg" alt="Testing 123">
       </a>
     </div>
@@ -357,52 +357,53 @@
 
     <h3>Non descript link text</h3>
     <div id="error-non-descript-link-1">
-      <a href="#">Learn more &gt;</a>
+      <a href="https://www.example.com?=learnmore">Learn more &gt;</a>
     </div>
 
     <div id="error-non-descript-link-2">
-      <a href="#">More.</a>
+      <a href="https://www.example.com?=21">More.</a>
     </div>
 
     <div id="error-non-descript-link-3">
-      <a href="#">This?</a>
+      <a href="https://www.example.com?=22">This?</a>
     </div>
 
     <h3>Descriptive link text</h3>
     <div id="nothing-descriptive-link">
-      <a href="#">Learn more about Sa11y</a>
+      <a href="https://www.example.com?=23">Learn more about Sa11y</a>
     </div>
 
     <h3>Non descript links using exclusions prop</h3>
     <div id="error-non-descript-exclusions-prop">
-      <a href="#">learn more <span class="sr-only-example">(This is
+      <a href="https://www.example.com?=learnmore">learn more <span class="sr-only-example">(This is
           ignored)</span></a>
     </div>
 
     <h3>Non descript link uses string ignore prop</h3>
     <div id="error-non-descript-string-exclusions-prop">
-      <a href="#">learn more (External)</a>
+      <a href="https://www.example.com?=learnmore">learn more (External)</a>
     </div>
 
     <h3>Empty links</h3>
-    <div id="error-empty-1">Empty hyperlink: <a href="#"></a></div>
-    <div id="error-empty-2">Empty hyperlink with space: <a href="#"> </a></div>
-    <div id="error-empty-3">Single character: <a href="#">.</a></div>
-    <div id="error-empty-4">Non-breaking space: <a href="#">&nbsp;</a></div>
+    <div id="error-empty-1">Empty hyperlink: <a href="https://www.example.com?=26"></a></div>
+    <div id="error-empty-2">Empty hyperlink with space: <a href="https://www.example.com?=27"> </a></div>
+    <div id="error-empty-3">Single character: <a href="https://www.example.com?=28">.</a></div>
+    <div id="error-empty-4">Non-breaking space: <a href="https://www.example.com?=29">&nbsp;</a></div>
+    <div id="error-empty-5">Empty href: <a href></a></div>
 
 
     <h3>Empty icon links</h3>
     <div id="error-empty-icon-link-1">
       Empty hyperlink with icon font:
-      <a href="#"><i class="bi bi-emoji-smile-fill"></i></a>
+      <a href="https://www.example.com?=30"><i class="bi bi-emoji-smile-fill"></i></a>
     </div>
     <div id="error-empty-icon-link-2">
       Empty hyperlink with icon font (opens new tab):
-      <a href="#" target="_blank"><i class="bi bi-emoji-smile-fill"></i></a>
+      <a href="https://www.example.com?=31" target="_blank"><i class="bi bi-emoji-smile-fill"></i></a>
     </div>
     <div id="error-empty-icon-link-3">
       Empty hyperlink with SVG:
-      <a href="#">
+      <a href="https://www.example.com?=32">
         <svg width="20" height="10">
           <rect x="0" y="0" width="20" height="10" fill="darkgrey" />
         </svg>
@@ -410,7 +411,7 @@
     </div>
     <div id="error-empty-icon-link-4">
       Empty hyperlink with SVG (opens new tab):
-      <a href="#" target="_blank">
+      <a href="https://www.example.com?=33" target="_blank">
         <svg width="20" height="10">
           <rect x="0" y="0" width="20" height="10" fill="darkgrey" />
         </svg>
@@ -420,29 +421,29 @@
     <h3>Empty hyperlinks with accessible name via title attribute</h3>
     <div id="nothing-link-title-1">
       Empty hyperlink with title:
-      <a href="#" title="Pass"></a>
+      <a href="https://www.example.com?=34" title="Pass"></a>
     </div>
     <div id="nothing-link-title-2">
       Empty hyperlink with space and title:
-      <a href="#" title="Pass"> </a>
+      <a href="https://www.example.com?=35" title="Pass (1)"> </a>
     </div>
     <div id="nothing-link-title-3">
       Non-breaking space and title:
-      <a href="#" title="Pass">&nbsp;</a>
+      <a href="https://www.example.com?=36" title="Pass (2)">&nbsp;</a>
     </div>
     <div id="nothing-link-title-4">
       Empty hyperlink with icon font and title:
-      <a href="#" title="Pass"><i></i></a>
+      <a href="https://www.example.com?=37" title="Pass (3)"><i></i></a>
     </div>
     <div id="nothing-link-title-5">
       Empty hyperlink with icon font (opens new tab) and title:
-      <a href="#" target="_blank" title="Balloon (Opens new tab)">
+      <a href="https://www.example.com?=38" target="_blank" title="Balloon (Opens new tab)">
         <i class="bi bi-emoji-smile-fill"></i>
       </a>
     </div>
     <div id="nothing-link-title-6">
       Empty hyperlink with SVG and title:
-      <a href="#" title="SVG">
+      <a href="https://www.example.com?=39" title="SVG">
         <svg width="20" height="10">
           <rect x="0" y="0" width="20" height="10" fill="darkgrey" />
         </svg>
@@ -450,7 +451,7 @@
     </div>
     <div id="nothing-link-title-7">
       Empty hyperlink with SVG (opens new tab):
-      <a href="#" target="_blank" title="SVG (opens new window)">
+      <a href="https://www.example.com?=40" target="_blank" title="SVG (opens new window)">
         <svg width="20" height="10">
           <rect x="0" y="0" width="20" height="10" fill="darkgrey" />
         </svg>
@@ -459,20 +460,20 @@
 
     <h3>Link text contains warning word</h3>
     <div id="warning-link-word-1">
-      <a href="#">Click here to view our
+      <a href="https://www.example.com?=41">Click here to view our
         programs</a>
     </div>
     <div id="warning-link-word-2">
-      <a href="#">Next ></a>
+      <a href="https://www.example.com?=42">Next ></a>
     </div>
     <div id="warning-link-word-3">
-      <a href="#">&lt; Previous</a>
+      <a href="https://www.example.com?=43">&lt; Previous</a>
     </div>
     <div id="warning-link-word-4">
-      <a href="#">← Left</a>
+      <a href="https://www.example.com?=44">← Left</a>
     </div>
     <div id="warning-link-word-5">
-      <a href="#">« Previous</a>
+      <a href="https://www.example.com?=45">« Previous</a>
     </div>
 
     <h3>Long URLs used as link text</h3>
@@ -487,11 +488,11 @@
 
     <h3>Links that have the same name but different URL</h3>
     <div id="warning-same-name-diff-url-1">
-      <a href="www.example.com">some link</a> and <a href="www.google.com/">some
+      <a href="www.example.com?=46">some link</a> and <a href="www.google.com/">some
         link</a>
     </div>
     <div id="warning-same-name-diff-url-2">
-      <a href="www.example.com">has aria label</a>
+      <a href="www.example.com?=47">has aria label</a>
       and <a href="www.google.com/" aria-label="has aria label">learn more</a>
     </div>
 
@@ -507,10 +508,10 @@
 
     <h3>Links to file without warning</h3>
     <div id="warning-link-file">
-      <a href="#assets.zip">Branding assets</a>
+      <a href="https://www.example.com?=assets.zip">Branding assets</a>
     </div>
     <div id="nothing-link-file">
-      <a href="#assets.zip">Branding assets (ZIP)</a>
+      <a href="https://www.example.com?=assets.zip?342">Branding assets (ZIP)</a>
     </div>
 
     <h3>Hyperlinks with ARIA</h3>
@@ -518,30 +519,30 @@
 
     <h4>Link with aria-label</h4>
     <div id="pass-aria-link-1">
-      <a href="#" aria-label="Learn more about dogs">Learn more</a>
+      <a href="https://www.example.com?=48" aria-label="Learn more about dogs">Learn more</a>
     </div>
 
     <h4>Child with aria-label</h4>
     <div id="pass-aria-link-2">
-      <a href="#">Learn more <span aria-label="about WCAG"></span></a>
+      <a href="https://www.example.com?=49">Learn more <span aria-label="about WCAG"></span></a>
     </div>
 
     <h4>Multiple children with aria-label</h4>
     <div id="pass-aria-link-3">
-      <a href="#">Learn more <span aria-label="about accessibility"></span> <i
+      <a href="https://www.example.com?=50">Learn more <span aria-label="about accessibility"></span> <i
           aria-label="(Links externally)">🔗</i></a>
     </div>
 
     <h4>Single aria-labelledby attribute</h4>
     <div id="pass-aria-link-4">
       <div hidden id="apples">about apples</div>
-      <a href="#" aria-labelledby="apples">Learn more</a>
+      <a href="https://www.example.com?=51" aria-labelledby="apples">Learn more</a>
     </div>
 
     <h4>Multiple ARIA-labelledby attributes</h4>
     <div id="pass-aria-link-5">
       <div hidden id="oranges">and oranges</div>
-      <a href="#" id="self" aria-labelledby="self apples x oranges">Learn
+      <a href="https://www.example.com?=52" id="self" aria-labelledby="self apples x oranges">Learn
         more</a>
     </div>
 
@@ -549,23 +550,29 @@
     <div id="pass-aria-link-6">
       <div hidden id="lotr">about Lord of the Rings and</div>
       <div hidden id="rtk">the Return of the King</div>
-      <a href="#">Learn more<span aria-labelledby="lotr x rtk"></span></a>
+      <a href="https://www.example.com?=53">Learn more<span aria-labelledby="lotr x rtk"></span></a>
     </div>
 
     <h4>Link with pseudo content</h4>
     <div id="pass-aria-link-7">
-      <a href="#">Learn more about <span aria-labelledby="rtk"></span><span class="lotr"></span></a>
+      <a href="https://www.example.com?=54">Learn more about <span aria-labelledby="rtk"></span><span
+          class="lotr"></span></a>
     </div>
 
     <h3>Links with aria-hidden</h3>
     <h4>Link with aria-hidden, but still focusable</h4>
     <div id="error-link-aria-hidden-focusable">
-      <a href="#" aria-hidden="true">Learn more</a>
+      <a href="https://www.example.com?=learnmore" aria-hidden="true">Learn more</a>
     </div>
 
     <h4>Link with aria-hidden and not focusable</h4>
     <div id="nothing-link-aria-hidden-unfocusable">
-      <a href="#" aria-hidden="true" tabindex="-1">Learn more</a>
+      <a href="https://www.example.com?=learnmore" aria-hidden="true" tabindex="-1">Learn more</a>
+    </div>
+
+    <h4>aria-labelledby referencing invalid ID</h4>
+    <div id="error-arialabelledby-invalid-reference">
+      <a href="https://www.example.com?=57" aria-labelledby="content">References non-existent ID on page</a>
     </div>
 
     <hr>
@@ -695,12 +702,12 @@
 
     <h2>PDFs</h2>
     <div id="warning-pdf">
-      <a href="#example.pdf">Admissions Handbook (PDF)</a>
+      <a href="https://www.example.com?=example.pdf">Admissions Handbook (PDF)</a>
     </div>
 
     <h3>PDF link with trailing characters</h3>
     <div id="warning-pdf-trailing-characters">
-      <a href="#example.pdf?121">Course Outline (PDF)</a>
+      <a href="https://www.example.com?=example.pdf?121">Course Outline (PDF)</a>
     </div>
 
     <h2>Documents</h2>
@@ -709,7 +716,7 @@
     </div>
 
     <div id="warning-word-doc">
-      <a href="#example.docx">Brochure template (Word)</a>
+      <a href="https://www.example.com?=example.docx">Brochure template (Word)</a>
     </div>
 
     <h2>Uppercase text</h2>
@@ -729,7 +736,7 @@
     </div>
 
     <div id="warning-allcaps-4">
-      <p><a href="#">UPPERCASE TEXT WITHIN HYPERLINKS</a></p>
+      <p><a href="https://www.example.com?=58">UPPERCASE TEXT WITHIN HYPERLINKS</a></p>
     </div>
 
     <div id="nothing-allcaps">
@@ -808,11 +815,52 @@
         #3 Battlestar gallactica</p>
     </div>
 
+    <h2>In-page links</h2>
+    <h3>Link with empty href or &lt;a href&gt;</h3>
+    <div id="error-broken-same-page-empty-href"><a href>test</a></div>
+
+    <h3>Link used as button without roles</h3>
+    <div id="error-broken-same-page"><a href="#">User</a></div>
+
+    <h3>Link used as button with proper role</h3>
+    <div id="nothing-same-page-with-role"><a href="#" role="button">Settings</a></div>
+
     <h2>Duplicate IDs</h2>
-    <div id="error-duplicate-id">
+    <h3>Elements with duplicate IDs but not referenced by anything</h3>
+    <div id="nothing-duplicate-id">
       <p><span id="duplicate">Element 1</span> and <span id="duplicate">Element 2</span>
-        have the same <kbd>id</kbd> attribute.</p>
+        have the same <kbd>id</kbd> attribute but are not referenced by any label, aria-labelledby, etc.</p>
     </div>
+
+    <h3>In-page link referencing duplicate IDs</h3>
+    <div id="error-broken-same-page-duplicate-id">
+      <a href="#asdfgh">Skip to Lorem Ipsum</a>
+      <p id="asdfgh">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Natus nam voluptate doloribus, iure alias
+        possimus distinctio recusandae impedit asperiores necessitatibus! Amet perferendis laborum accusantium,
+        dignissimos iste voluptatum nam id alias!</p>
+      <p id="asdfgh">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Natus nam voluptate doloribus, iure alias
+        possimus distinctio recusandae impedit asperiores necessitatibus! Amet perferendis laborum accusantium,
+        dignissimos
+        iste voluptatum nam id alias!</p>
+    </div>
+
+    <h3>Interactive element using aria-labelledby referencing duplicate IDs</h3>
+    <div id="error-same-aria-labelledby-duplicate-ids">
+      <button aria-labelledby="another">Learn more</button>
+      <p id="another">Apples</p>
+      <p id="another">Pears</p>
+    </div>
+
+    <h3>Two buttons with same ID</h3>
+    <div id="nothing-duplicate-button-ids">
+      <button id="play">Play</button>
+      <button id="play">Play</button>
+    </div>
+
+    <h3>Duplicate ID within the Shadow DOM</h3>
+    <div id="error-shadow-dom-duplicate-id" class="shadow-root-duplicate-id"></div>
+
+    <hr>
 
     <h3>Subscript & superscript</h3>
     <div id="warning-supsub-1">
@@ -1050,6 +1098,31 @@
     customElements.define('shadow-test', shadowTest);
     document.querySelectorAll('.shadow-root').forEach(($el) => {
       let testShadowElement = document.createElement('shadow-test');
+      $el.append(testShadowElement);
+    })
+  </script>
+  <script>
+    class shadowTestDuplicateID extends HTMLElement {
+      constructor() {
+        super();
+      }
+      connectedCallback() {
+        if (!this.initialized) {
+          const shadow = this.attachShadow({ mode: 'open' });
+          const div = document.createElement('div');
+          div.innerHTML = `
+                <label for="foo">Phone</label>
+                <input id="foo">
+                <input id="foo">
+            `
+          shadow.appendChild(div);
+          this.initialized = true;
+        }
+      }
+    }
+    customElements.define('shadow-test-duplicate-id', shadowTestDuplicateID);
+    document.querySelectorAll('.shadow-root-duplicate-id').forEach(($el) => {
+      let testShadowElement = document.createElement('shadow-test-duplicate-id');
       $el.append(testShadowElement);
     })
   </script>

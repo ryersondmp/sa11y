@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.1.3
+  * @version 3.1.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -155,6 +155,7 @@ var zh = {
     PANEL_HEADING_MISSING_ONE: '缺少标题1!',
     PANEL_NO_HEADINGS: '未找到标题.',
     LINK_EMPTY: '删除没有任何文字的空链接。',
+    LINK_EMPTY_LABELLEDBY: '链接具有<code>aria-labelledby</code>的值为空或不与页面上另一个元素的<code>id</code>属性值匹配。',
     LINK_EMPTY_LINK_NO_LABEL: '链接没有可识别的文字, 对屏幕阅读器和其他辅助技术是可见的。要解决这个问题: <ul><li>添加一些简明的文字, 描述该链接带你到哪里。</li><li>如果它是一个<a href="https://a11y-101.com/development/icons-and-links">图标链接或SVG,</a>它可能缺少一个描述性的标签。</li><li>如果你认为这个链接是一个由于复制/粘贴错误造成的错误, 考虑删除它。</li></ul>。',
     LINK_LABEL: '<strong>链接标签: </strong> %(sanitizedText)',
     LINK_STOPWORD: '链接文本可能没有足够的描述性, 脱离了上下文: <strong {r}>%(error)</strong><hr><strong>提示！</strong>链接文本应始终清晰、独特和有意义。避免使用诸如&quot;点击这里&quot;或&quot;了解更多&quot等常见的词语；',
@@ -196,6 +197,7 @@ var zh = {
     EMBED_GENERAL_WARNING: '无法检查嵌入式内容。请确保图像有alt文本, 视频有标题, 文本有足够的对比度, 互动组件是<a href="https://webaim.org/techniques/keyboard/">键盘可访问的。</a>',
     EMBED_UNFOCUSABLE: '带有无法聚焦元素的 <code>&lt;iframe&gt;</code> 不应具有 <code>tabindex="-1"</code>。嵌入内容将无法通过键盘访问。',
     QA_BAD_LINK: '发现坏的链接。链接似乎指向一个开发环境。<hr> 这个链接指向: <br> <strong {r}>%(el)</strong>',
+    QA_IN_PAGE_LINK: '破损的同页链接。链接目标与此页面上的任何元素都不匹配。',
     QA_BAD_ITALICS: '粗体和斜体标签具有语义, 不应<strong></strong>用于突出整个段落。加粗的文字应该用于对一个词或短语进行强烈的<strong>强调</strong>。斜体字应该用来突出专有名词 (即书名和文章标题) 、外国词、引号。长篇引语应采用块状引语的格式。',
     QA_PDF: '无法检查PDF的可访问性。PDF被认为是网络内容, 也必须做到无障碍。对于使用屏幕阅读器的人 (缺失结构标签或缺失表格字段标签) 和低视力的人 (文本在放大时不回流) 来说, PDF经常包含一些问题。<ul><li>如果这是一个表格, 请考虑使用可访问的HTML表格作为替代。</li><li>如果这是一个文档, 请考虑将其转换为网页。</li></ul>否则, 请在Acrobat DC中检查<a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF的可访问性。</a>',
     QA_DOCUMENT: '无法检查文件的可访问性。链接文件被认为是网络内容, 也必须做到无障碍。请手动审查该文件。<ul><li>使您的<a href="https://support.google.com/docs/answer/6199477?hl=zh">Google Workspace文档或演示文稿更易于访问。</a></li><li>使您的<a href="https://support.microsoft.com/zh/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office文档更易于访问。</a></ul>。',

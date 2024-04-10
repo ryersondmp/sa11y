@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.1.3
+  * @version 3.1.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -136,6 +136,7 @@ var fr = {
 
     // Links
     LINK_EMPTY: 'Retirer les liens vides sans texte.',
+    LINK_EMPTY_LABELLEDBY: 'Le lien a une valeur pour <code>aria-labelledby</code> qui est vide ou ne correspond pas à la valeur de l\'attribut<code>id</code> d\'un autre élément de la page.',
     LINK_EMPTY_LINK_NO_LABEL: 'Le lien ne comporte pas de texte perceptible par les lecteurs d\'écran ou autres techno-logies d\'assistance. À corriger: <ul><li>Ajoutez un texte bref qui décrit où le lien vous mène.</li><li>S’il s’agit d’un <a href="https://a11y-101.com/development/icons-and-links/">lien d’icône SVG (vectoriel),</a> il manque alors une description.</li><li>Si ce lien est une erreur due à un bogue de copier/coller, tentez de supprimer.</li></ul>',
     LINK_LABEL: '<strong>Lien de l’étiquette:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Le texte du lien peut ne pas être suffisamment descriptif hors du contexte: <strong {r}>%(error)</strong><hr><strong>Conseil!</strong> Le texte du lien doit toujours être précis, unique et significatif. Évitez les mots courants comme &quot;cliquez ici&quot; ou &quot;en savoir plus&quot;.',
@@ -187,6 +188,7 @@ var fr = {
 
     // Quality assurance
     QA_BAD_LINK: 'Lien incorrect trouvé. Le lien semble diriger vers un environnement de développement. Assurez vous que le lien ne contient pas <em>dev</em> ou <em>wp-admin</em> dans l’adresse URL.<hr>Le lien dirige vers:<br><strong {r}>%(el)</strong>',
+    QA_IN_PAGE_LINK: 'Lien interne cassé. La cible du lien ne correspond à aucun élément de cette page.',
     QA_BAD_ITALICS: 'Les balises Gras et Italique ont une signification sémantique et <strong>ne devraient pas</strong> être utiliser pour surligner des paragraphes en entier. Les textes en Gras doivent être utilisés pour mettre <strong>l’emphase</strong> sur un mot ou une phrase. Les textes en Italiques doivent être utilisés pour surligneur les noms propres (ex. livres et titre d’articles), les mots étrangers et les citations.  Les citations longues doivent être formatées comme une citation en bloc.',
     QA_PDF: 'Impossible de vérifier l’accessibilité des fichiers PDF. Les PDFSs sont considérés comme contenu web et doivent être accessible comme tel. Les PDFs contiennent souvent des erreurs pour les gens qui utilisent les lecteurs d’écrans (balises structurelles manquante ou des champs de formulaire manquants) et les gens qui ont une malvoyance (le texte ne resurgit pas lorsqu’il est agrandi).<ul><li>S’il s’agit d’un formulaire, utilisez un formulaire HTML comme alternative.</li><li>S’il s’agit d’un document, convertissez-le en page web.</li></ul>Sinon, veuillez vérifier <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF pour assurer l’accessibilité dans Acrobat DC.</a>',
     QA_DOCUMENT: 'Impossible de vérifier l\'accessibilité du document. Les documents liés sont considérés comme du contenu web et doivent également être rendus accessibles. Veuillez vérifier manuellement ce document. <ul><li>Rendez votre <a href="https://support.google.com/docs/answer/6199477?hl=fr">document ou votre présentation Google Workspace plus accessible.</a></li><li>Rendez vos  <a href="https://support.microsoft.com/fr-fr/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">documents Office plus accessibles.</a></li></ul>',

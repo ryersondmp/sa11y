@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sa11y Testing</title>
+  <link rel="stylesheet" href="../../../test/pages/assets/main.css">
+  <style>
+    .sa11y-active {
+      box-shadow: inset 0px 0px 0 20px rgb(0 220 255 / 60%);
+    }
+
+    body.sa11y-active,
+    body.sa11y-active header,
+    body.sa11y-active footer {
+      box-shadow: inset 0px 0px 0 20px rgb(0 220 255 / 60%);
+    }
+
+    img {
+      float: left;
+      padding: 10px;
+    }
+
+    footer {
+      text-align: unset;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="sa11y-active">
+    <h1>Sa11y - Travelling roots</h1>
+    <img src="../assets/placeholder.svg" width="100">
+    <p>Gave read use way make spot how nor. In daughter goodness an likewise oh consider at procured wandered. Songs
+      words
+      wrong by me hills heard timed. Happy eat may doors songs. Be ignorant so of suitable dissuade weddings together.
+      Least
+      whole timed we is. An smallness deficient discourse do newspaper be an eagerness continued. Mr my ready guest ye
+      after
+      short at. Had strictly mrs handsome mistaken cheerful. We it so if resolution invitation remarkably unpleasant
+      conviction. As into
+      ye then form. To easy five less if rose were. Now set offended own out required entirely. Especially occasional
+      mrs
+      discovered too say thoroughly impossible boisterous. My head when real no he high rich at with. After so power of
+      young
+      as. Bore year does has get long fat cold saw neat. Put boy carried chiefly shy general.</p>
+  </header>
+  <main>
+    <p>A blank slate for testing. <a href="https://www.example.com">learn more</a></p>
+  </main>
+  <footer>
+    <img src="../assets/placeholder.svg" width="100">
+    <p>Those an equal point no years do. Depend warmth fat but her but played. Shy and subjects wondered trifling
+      pleasant. <a href="#testing">testing</a>
+      Prudent cordial comfort do no on colonel as assured chicken. Smart mrs day which begin. Snug do sold mr it if
+      such.
+      Terminated uncommonly at at estimating. Man behaviour met moonlight extremity acuteness direction. Started his
+      hearted any civilly. So me by marianne admitted speaking. Men bred fine call ask. Cease one miles truth day
+      above seven. Suspicion sportsmen provision suffering mrs saw engrossed something. Snug soon he on plan in be dine
+      some.</p>
+  </footer>
+
+  <link rel="stylesheet" href="../../assets/css/sa11y.min.css" />
+  <!-- Sa11y - Regular script -->
+  <script src="../../assets/js/sa11y.umd.min.js"></script>
+  <script src="../../assets/js/lang/enUS.umd.js"></script>
+  <script>
+    Sa11y.Lang.addI18n(Sa11yLangEnUS.strings);
+    const sa11y = new Sa11y.Sa11y({
+      checkRoot: '.sa11y-active',
+      autoDetectShadowComponents: true,
+    });
+
+
+    setTimeout(() => {
+      sa11y.resetAll(false);
+      sa11y.checkAll();
+    }, 400);
+
+    setTimeout(() => {
+      document.querySelector('header').classList.remove('sa11y-active');
+      document.querySelector('main').classList.add('sa11y-active');
+      sa11y.resetAll(false);
+      sa11y.checkAll();
+    }, 900);
+
+    setTimeout(() => {
+      document.querySelector('main').classList.remove('sa11y-active');
+      document.querySelector('footer').classList.add('sa11y-active');
+      sa11y.resetAll(false);
+      sa11y.checkAll();
+    }, 1900);
+
+    setTimeout(() => {
+      document.querySelector('footer').classList.remove('sa11y-active');
+      sa11y.resetAll(false);
+      sa11y.checkAll('asdfghj');
+      document.querySelector('body').classList.add('sa11y-active');
+    }, 3000);
+  </script>
+</body>
+
+</html>

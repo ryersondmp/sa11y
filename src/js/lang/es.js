@@ -126,6 +126,7 @@ export default {
 
     // Links
     LINK_EMPTY: 'Eliminar enlaces vacíos sin texto.',
+    LINK_EMPTY_LABELLEDBY: 'El enlace tiene un valor para <code>aria-labelledby</code> que está vacío o no coincide con el valor del atributo <code>id</code> de otro elemento en la página.',
     LINK_EMPTY_LINK_NO_LABEL: 'El enlace no tiene texto perceptible que sea visible para los lectores de pantalla y otras tecnologías de asistencia. Para solucionarlo: <ul><li>Agregue un texto conciso que describa a dónde lo lleva el enlace.</li><li>Si es un <a href="https://a11y-101.com/development/icons-and-links">icono de enlace o SVG,</a> es probable que le falte una etiqueta descriptiva.</li><li>Si cree que este enlace es un error debido a un error de copiar/pegar, considere eliminarlo.</li></ul>',
     LINK_LABEL: '<strong>Etiqueta de enlace:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Es posible que el texto del enlace no sea lo suficientemente descriptivo fuera de contexto: <strong {r}>%(error)</strong><hr><strong>¡Consejo!</strong> El texto del enlace siempre debe ser claro, único y significativo. Evite palabras comunes como &quot;haga clic aquí&quot; o &quot;más información&quot;',
@@ -190,6 +191,7 @@ export default {
     QA_DUPLICATE_ID: '<strong>Identificación duplicada</strong> encontrada. Se sabe que los errores de ID duplicados causan problemas a las tecnologías de asistencia cuando intentan interactuar con el contenido. <hr> Elimine o cambie el siguiente ID: <strong {r}>%(id)</strong>',
     QA_TEXT_UNDERLINE_WARNING: 'El texto subrayado se puede confundir con enlaces. Considere usar un estilo diferente como <code>&lt;strong&gt;</code><strong>gran importancia</strong><code>&lt;/strong&gt;</code> o <code>&lt;em&gt;</code><em>énfasis</em><code>&lt;/em&gt;</code>.',
     QA_SUBSCRIPT_WARNING: 'Las opciones de formato de subíndice y superíndice solo deben usarse para cambiar la posición del texto por convenciones o estándares tipográficos. <strong>No</strong> debe usarse únicamente con fines de presentación o apariencia. Dar formato a oraciones completas plantea problemas de legibilidad. Los casos de uso apropiados incluirían mostrar exponentes, números ordinales como 4<sup>th</sup> en lugar de cuarto y fórmulas químicas (por ejemplo, H<sub>2</sub>O).',
+    QA_IN_PAGE_LINK: 'Enlace interno roto. El destino del enlace no coincide con ningún elemento en esta página.',
 
     // Tables
     TABLES_MISSING_HEADINGS: '¡Faltan encabezados de tabla! Las tablas accesibles necesitan marcado HTML que indique las celdas de encabezado y las celdas de datos que definen su relación. Esta información brinda contexto a las personas que usan tecnología de asistencia. Las tablas deben usarse solo para datos tabulares. <hr> Más información sobre las <a href="https://www.w3.org/WAI/tutorials/tables/">tablas accesibles.</a>',

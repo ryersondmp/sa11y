@@ -117,7 +117,10 @@ class Sa11y {
     /* *********************************************************** */
     /*  Check All: Where all the magic happens.                    */
     /* *********************************************************** */
-    this.checkAll = async () => {
+    this.checkAll = async (
+      desiredRoot = option.checkRoot,
+      desiredReadabilityRoot = option.readabilityRoot,
+    ) => {
       try {
         this.results = [];
         this.headingOutline = [];
@@ -125,17 +128,18 @@ class Sa11y {
         this.warningCount = 0;
         this.customChecksRunning = false;
 
-        // Panel alert if root doesn't exist.
-        const root = document.querySelector(option.checkRoot);
+        // Initialize root areas to check.
+        const root = document.querySelector(desiredRoot);
         if (!root) {
-          Utils.createAlert(`${Lang.sprintf('ERROR_MISSING_ROOT_TARGET', option.checkRoot)}`);
+          Utils.createAlert(`${Lang.sprintf('ERROR_MISSING_ROOT_TARGET', desiredRoot)}`);
         }
+        Constants.initializeRoot(desiredRoot, desiredReadabilityRoot);
 
         // Find all web components on the page.
-        Constants.initializeShadowSearch(option);
+        Constants.initializeShadowSearch(option, desiredRoot);
 
         // Find and cache elements.
-        Elements.initializeElements(option.linksToFlag);
+        Elements.initializeElements(option);
 
         // Ruleset checks
         checkHeaders(this.results, option, this.headingOutline);

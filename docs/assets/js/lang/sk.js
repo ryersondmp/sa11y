@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.1.3
+  * @version 3.1.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -167,6 +167,7 @@ var sk = {
     PANEL_HEADING_MISSING_ONE: 'Chýba položka 1!',
     PANEL_NO_HEADINGS: 'Nenašli sa žiadne záhlavia.',
     LINK_EMPTY: 'Odstránenie prázdnych odkazov bez textu.',
+    LINK_EMPTY_LABELLEDBY: 'Odkaz má hodnotu <code>aria-labelledby</code>, ktorá je prázdna alebo nezodpovedá hodnote atribútu <code>id</code> iného prvku na stránke.',
     LINK_EMPTY_LINK_NO_LABEL: 'Odkaz nemá rozoznateľný text, ktorý je viditeľný pre čítačky obrazovky a iné asistenčné technológie. Oprava: </li><li>Pridajte stručný text, ktorý popisuje, kam vás odkaz zavedie.</li><li>Ak ide o <a href="https://a11y-101.com/development/icons-and-links">odkaz na ikonu alebo SVG,</a> pravdepodobne chýba popisný štítok.</li><li>Ak si myslíte, že tento odkaz je chybou spôsobenou chybou kopírovania/vkladania, zvážte jeho odstránenie.</li></ul>',
     LINK_LABEL: '<strong>Označenie odkazu:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Text prepojenia nemusí byť dostatočne popisný mimo kontextu: <strong {r}>%(error)</strong><hr><strong>Tip!</strong> Text prepojenia by mal byť vždy jasný, jedinečný a zmysluplný. Vyhnite sa bežným slovám ako &quot;kliknite sem&quot; alebo &quot;dozvedieť sa viac&quot;;',
@@ -208,6 +209,7 @@ var sk = {
     EMBED_GENERAL_WARNING: 'Nie je možné skontrolovať vložený obsah. Uistite sa, že obrázky majú alt text, videá majú titulky, text má dostatočný kontrast a interaktívne komponenty sú <a href="https://webaim.org/techniques/keyboard/">prístupné z klávesnice.</a>',
     EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> s nezamerateľnými prvkami by nemalo mať <code>tabindex="-1"</code>. Vložený obsah nebude dostupný pomocou klávesnice.',
     QA_BAD_LINK: 'Nájdené zlé prepojenie. Zdá sa, že odkaz smeruje na vývojové prostredie. <hr> Tento odkaz odkazuje na: <br> <strong {r}>%(el)</strong>',
+    QA_IN_PAGE_LINK: 'Rozbitý odkaz na rovnakú stránku. Cieľ odkazu nezodpovedá žiadnemu prvku na tejto stránke.',
     QA_BAD_ITALICS: 'Tučné písmo a kurzíva majú sémantický význam a nemali by sa používať na zvýraznenie celých odsekov. Tučný text by sa mal používať na výrazné <strong>zdôraznenie</strong> slova alebo frázy. Kurzíva by sa mala používať na zvýraznenie vlastných mien (t. j. názvov kníh a článkov), cudzích slov, citátov. Dlhé citáty by sa mali formátovať ako blokové citáty.',
     QA_PDF: 'Nie je možné skontrolovať prístupnosť súborov PDF. Súbory PDF sa považujú za webový obsah a musia byť tiež prístupné. Súbory PDF často obsahujú problémy pre ľudí, ktorí používajú čítačky obrazovky (chýbajúce štrukturálne značky alebo chýbajúce označenia polí formulára), a ľudí so slabým zrakom (text sa po zväčšení nezobrazuje). <ul><li>Ak ide o formulár, zvážte použitie prístupného formulára HTML ako alternatívy.</li><li>Ak ide o dokument, zvážte jeho konverziu na webovú stránku.</li></ul>V opačnom prípade skontrolujte <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF pre prístupnosť v Acrobat DC.</a>',
     QA_DOCUMENT: 'Nie je možné skontrolovať prístupnosť dokumentu. Prepojené dokumenty sa považujú za webový obsah a musia byť tiež prístupné. Skontrolujte tento dokument manuálne. <ul><li>Urobte svoj <a href="https://support.google.com/docs/answer/6199477?hl=sk">dokument alebo prezentáciu v službe Google Workspace prístupnejšou.</a></li><li>Urobte svoj <a href="https://support.microsoft.com/sk/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">dokument Office prístupnejším.</a></li></ul>',

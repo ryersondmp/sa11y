@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.1.3
+  * @version 3.1.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -165,6 +165,7 @@ var nl = {
     PANEL_HEADING_MISSING_ONE: 'Rubriek 1 ontbreekt!',
     PANEL_NO_HEADINGS: 'Geen koppen gevonden.',
     LINK_EMPTY: 'Verwijder lege links zonder tekst.',
+    LINK_EMPTY_LABELLEDBY: 'De link heeft een waarde voor <code>aria-labelledby</code> die leeg is of niet overeenkomt met de waarde van het attribuut <code>id</code> van een ander element op de pagina.',
     LINK_EMPTY_LINK_NO_LABEL: 'Link heeft geen leesbare tekst die zichtbaar is voor schermlezers en andere ondersteunende technologie. Op te lossen: <ul><li>Voeg beknopte tekst toe die beschrijft waar de koppeling naartoe leidt.</li><li>Als het een <a href="https://a11y-101.com/development/icons-and-links">icon link of SVG,</a> is, ontbreekt waarschijnlijk een beschrijvend label.</li><li>Als u denkt dat deze koppeling een fout is als gevolg van een copy/paste-bug, kunt u overwegen deze te verwijderen.</li></ul>',
     LINK_LABEL: '<strong>Linklabel:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Linktekst is mogelijk niet beschrijvend genoeg buiten de context: <strong {r}>%(error)</strong><hr><strong>Tip!</strong> Linktekst moet altijd duidelijk, uniek en betekenisvol zijn. Vermijd veelgebruikte woorden zoals &quot;klik hier&quot; of &quot;leer meer&quot;',
@@ -206,6 +207,7 @@ var nl = {
     EMBED_GENERAL_WARNING: "Kan ingesloten inhoud niet controleren. Controleer of afbeeldingen alt-tekst hebben, video's bijschriften, tekst voldoende contrast en interactieve onderdelen <a href=\"https://webaim.org/techniques/keyboard/\">toetsenbordtoegankelijk zijn.</a>",
     EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> met niet-focusbare elementen mag geen <code>tabindex="-1"</code> hebben. De ingesloten inhoud zal niet toegankelijk zijn met het toetsenbord.',
     QA_BAD_LINK: 'Slechte link gevonden. Link lijkt te verwijzen naar een ontwikkelomgeving. <hr> Deze link verwijst naar: <br> <strong {r}>%(el)</strong>',
+    QA_IN_PAGE_LINK: 'Gebroken koppeling naar dezelfde pagina. Het koppelingsdoel komt niet overeen met enig element op deze pagina.',
     QA_BAD_ITALICS: "Vetgedrukte en cursieve tags hebben een semantische betekenis en moeten <strong>niet</strong> worden gebruikt om hele alinea's te benadrukken. Vetgedrukte tekst moet worden gebruikt om een woord of zin sterk te <strong>accentueren</strong>. Cursief moet worden gebruikt om eigennamen (bijv. titels van boeken en artikelen), vreemde woorden en aanhalingstekens te benadrukken. Lange citaten moeten worden opgemaakt als een blokcitaat.",
     QA_PDF: "Kan PDF's niet controleren op toegankelijkheid. PDF's worden beschouwd als webinhoud en moeten ook toegankelijk worden gemaakt. PDF's bevatten vaak problemen voor mensen die screenreaders gebruiken (ontbrekende structurele tags of ontbrekende labels voor formuliervelden) en mensen die slecht zien (tekst wordt niet weergegeven als deze wordt vergroot). <ul><li>Als dit een formulier is, kunt u overwegen een toegankelijk HTML-formulier te gebruiken als alternatief.</li><li>Als dit een document is, kunt u overwegen het te converteren naar een webpagina.</li></ul>Ofwel controleer <a href=\"https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html\">PDF op toegankelijkheid in Acrobat DC.</a>",
     QA_DOCUMENT: 'Kan document niet controleren op toegankelijkheid. Gekoppelde documenten worden beschouwd als webinhoud en moeten ook toegankelijk worden gemaakt. Controleer dit document handmatig. <ul><li>Maak uw <a href="https://support.google.com/docs/answer/6199477?hl=nl">Google Workspace-document of presentatie toegankelijker.</a></li><li>Maak uw <a href="https://support.microsoft.com/nl/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office-documenten toegankelijker.</a></li></ul>',

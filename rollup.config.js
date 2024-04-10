@@ -177,7 +177,7 @@ export default [
       { banner, file: 'dist/js/sa11y.umd.min.js', format: 'umd', name: 'Sa11y', plugins: [terser()] },
     ],
   },
-  // Bookmarklet
+  // Bookmarklet - Automatic language detection.
   {
     input: 'src/bookmarklet/v2.js',
     plugins: [
@@ -194,6 +194,27 @@ export default [
         file: 'bookmarklet/v2.js',
         format: 'umd',
         name: 'Sa11yLangBookmarklet',
+        plugins: [terser()],
+      },
+    ],
+  },
+  // Bookmarklet - English.
+  {
+    input: 'src/bookmarklet/v2-en.js',
+    plugins: [
+      nodeResolve(),
+      css(),
+      replace({
+        preventAssignment: true,
+        'process.env.NODE_ENV': JSON.stringify('production'),
+        Sa11yVersion: JSON.stringify(pkg.version),
+      }),
+    ],
+    output: [
+      {
+        file: 'bookmarklet/v2-en.js',
+        format: 'umd',
+        name: 'Sa11yLangBookmarkletEn',
         plugins: [terser()],
       },
     ],

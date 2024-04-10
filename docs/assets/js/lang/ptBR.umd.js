@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.1.3
+  * @version 3.1.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -163,6 +163,7 @@
       PANEL_HEADING_MISSING_ONE: 'Falta o cabeçalho 1!',
       PANEL_NO_HEADINGS: 'Nenhuma cabeçalho encontrado.',
       LINK_EMPTY: 'Remova links vazios sem nenhum texto.',
+      LINK_EMPTY_LABELLEDBY: 'O link possui um valor para <code>aria-labelledby</code> que está vazio ou não corresponde ao valor do atributo <code>id</code> de outro elemento na página.',
       LINK_EMPTY_LINK_NO_LABEL: 'O link não tem texto discernível que seja visível para leitores de tela e outras tecnologias assistivas. Para corrigir: <ul><li>Adicione um texto conciso que descreva para onde o link o leva.</li><li>Se for um <a href="https://a11y-101.com/development/icons-and-links">link de ícone ou SVG,</a> é provável que esteja faltando um rótulo descritivo.</li><li>Se você acha que esse link é um erro devido a um bug de copiar/colar, considere excluí-lo.</li></ul>',
       LINK_LABEL: '<strong>Rótulo do link:</strong> %(sanitizedText)',
       LINK_STOPWORD: 'O texto do link pode não ser descritivo o suficiente fora do contexto: <strong {r}>%(error)</strong><hr><strong>Dica!</strong> O texto do link deve ser sempre claro, exclusivo e significativo. Evite palavras comuns como &quot;clique aqui&quot; ou &quot;saiba mais&quot;',
@@ -204,6 +205,7 @@
       EMBED_GENERAL_WARNING: 'Não foi possível verificar o conteúdo incorporado. Certifique-se de que as imagens tenham texto alternativo, os vídeos tenham legendas, o texto tenha contraste suficiente e os componentes interativos sejam <a href="https://webaim.org/techniques/keyboard/">acessíveis ao teclado.</a>',
       EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> com elementos não focalizáveis não deve ter <code>tabindex="-1"</code>. O conteúdo incorporado não será acessível pelo teclado.',
       QA_BAD_LINK: 'Encontrado link incorreto. O link parece apontar para um ambiente de desenvolvimento. <hr> Esse link aponta para: <br> <strong {r}>%(el)</strong>',
+      QA_IN_PAGE_LINK: 'Link quebrado na mesma página. O destino do link não corresponde a nenhum elemento nesta página.',
       QA_BAD_ITALICS: 'As tags negrito e itálico têm significado semântico e não devem ser usadas para destacar parágrafos inteiros. O texto em negrito deve ser usado para dar forte <strong>ênfase</strong> a uma palavra ou frase. O itálico deve ser usado para destacar nomes próprios (ou seja, títulos de livros e artigos), palavras estrangeiras e citações. As citações longas devem ser formatadas como uma citação em bloco.',
       QA_PDF: 'Não é possível verificar a acessibilidade de PDFs. Os PDFs são considerados conteúdo da Web e também devem ser acessíveis. Os PDFs geralmente contêm problemas para pessoas que usam leitores de tela (tags estruturais ausentes ou rótulos de campo de formulário ausentes) e pessoas com baixa visão (o texto não flui novamente quando ampliado). <ul><li>Se este for um formulário, considere o uso de um formulário HTML acessível como alternativa.</li><li>Se este for um documento, considere convertê-lo em uma página da Web.</li></ul>Caso contrário, verifique a acessibilidade do <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF no Acrobat DC.</a>',
       QA_DOCUMENT: 'Não é possível verificar a acessibilidade do documento. Os documentos vinculados são considerados conteúdo da Web e também devem ser acessíveis. Revise manualmente este documento. <ul><li>Torne seu <a href="https://support.google.com/docs/answer/6199477?hl=pt-br">documento ou apresentação do Google Workspace mais acessível.</a></li><li>Torne seus <a href="https://support.microsoft.com/pt-br/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">documentos do Office mais acessíveis.</a></li></ul>',

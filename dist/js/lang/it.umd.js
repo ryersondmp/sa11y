@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.1.3
+  * @version 3.1.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -164,6 +164,7 @@
       PANEL_HEADING_MISSING_ONE: "Manca l'intestazione 1!",
       PANEL_NO_HEADINGS: 'Nessun titolo trovato.',
       LINK_EMPTY: 'Rimuovere i link vuoti senza testo.',
+      LINK_EMPTY_LABELLEDBY: 'Il link ha un valore per <code>aria-labelledby</code> che è vuoto o non corrisponde al valore dell\'attributo<code>id</code> di un altro elemento nella pagina.',
       LINK_EMPTY_LINK_NO_LABEL: "Il link non ha un testo distinguibile che sia visibile agli screen reader e ad altre tecnologie assistive. Per risolvere il problema: <ul><li>Aggiungi un testo conciso che descriva dove porta il link.</li><li>Se si tratta di un <a href=\"https://a11y-101.com/development/icons-and-links\">collegamento a un'icona o a un SVG,</a> è probabile che manchi un'etichetta descrittiva.</li><li>Se pensi che questo link sia un errore dovuto a un bug di copia/incolla, prendi in considerazione l'idea di cancellarlo.</li></ul>",
       LINK_LABEL: '<strong>Etichetta del link:</strong> %(sanitizedText)',
       LINK_STOPWORD: 'Il testo del link potrebbe non essere abbastanza descrittivo fuori dal contesto: <strong {r}>%(error)</strong><hr><strong>Tip!</strong> Il testo del link deve essere sempre chiaro, unico e significativo. Evitate parole comuni come &quot;clicca qui&quot; o &quot;per saperne di più&quot;',
@@ -205,6 +206,7 @@
       EMBED_GENERAL_WARNING: 'Impossibile controllare il contenuto incorporato. Assicuratevi che le immagini abbiano un testo alt, che i video abbiano didascalie, che il testo abbia un contrasto sufficiente e che i componenti interattivi siano <a href="https://webaim.org/techniques/keyboard/">accessibili alla tastiera.</a>',
       EMBED_UNFOCUSABLE: 'Gli <code>&lt;iframe&gt;</code> con elementi non focalizzabili non devono avere <code>tabindex="-1"</code>. Il contenuto incorporato non sarà accessibile tramite tastiera.',
       QA_BAD_LINK: 'Trovato un link errato. Il link sembra puntare a un ambiente di sviluppo. <hr> Questo link punta a: <br> <strong {r}>%(el)</strong>',
+      QA_IN_PAGE_LINK: 'Link interno rotto. Il target del link non corrisponde a nessun elemento di questa pagina.',
       QA_BAD_ITALICS: 'I tag grassetto e corsivo hanno un significato semantico e non devono essere usati per evidenziare interi paragrafi. Il testo in grassetto deve essere usato per dare un forte <strong>enfasi</strong> su una parola o una frase. Il corsivo deve essere usato per evidenziare nomi propri (ad esempio, titoli di libri e articoli), parole straniere e citazioni. Le citazioni lunghe devono essere formattate come blockquote.',
       QA_PDF: "Impossibile verificare l'accessibilità dei PDF. I PDF sono considerati contenuti web e devono essere resi accessibili. I PDF spesso presentano problemi per le persone che utilizzano gli screen reader (tag strutturali mancanti o etichette dei campi del modulo mancanti) e per le persone ipovedenti (il testo non scorre quando viene ingrandito). <ul><li>Se si tratta di un modulo, considerare l'utilizzo di un modulo HTML accessibile come alternativa.</li><li>Se si tratta di un documento, considerare la conversione in una pagina web.</li></ul>Altrimenti, controllare <a href=\"https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html\">PDF per l'accessibilità in Acrobat DC.</a>",
       QA_DOCUMENT: "Impossibile verificare l'accessibilità del documento. I documenti collegati sono considerati contenuti web e devono essere resi accessibili. Esaminare manualmente il documento. <ul><li>Rendi più accessibile il tuo <a href=\"https://support.google.com/docs/answer/6199477?hl=en\">documento o presentazione di Google Workspace.</a></li><li>Rendi più accessibili i tuoi <a href=\"https://support.microsoft.com/en-us/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155\">documenti di Office.</a></li></ul>",

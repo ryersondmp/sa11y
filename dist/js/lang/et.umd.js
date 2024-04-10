@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.1.3
+  * @version 3.1.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -166,6 +166,7 @@
       PANEL_HEADING_MISSING_ONE: 'Puudub rubriik 1!',
       PANEL_NO_HEADINGS: 'Pealkirju ei leitud.',
       LINK_EMPTY: 'Eemaldage tühjad lingid ilma tekstita.',
+      LINK_EMPTY_LABELLEDBY: 'Lingil on väärtus <code>aria-labelledby</code>, mis on tühi või ei ühti lehe teise elemendi atribuudi <code>id</code> väärtusega.',
       LINK_EMPTY_LINK_NO_LABEL: 'Lingil ei ole eristatavat teksti, mis oleks nähtav ekraanilugejatele ja muudele abivahenditele. Parandada: <ul><li>Lisandage lühike tekst, mis kirjeldab, kuhu link viib.</li><li>Kui tegemist on <a href="https://a11y-101.com/development/icons-and-links">ikoonilink või SVG,</a> puudub tõenäoliselt kirjeldav märgistus.</li><li>Kui arvate, et see link on kopeerimis-/liidevigast tingitud viga, kaaluge selle kustutamist.</li></ul>Kui arvate, et tegemist on kopeerimis-/liidevigast tingitud veaga, kaaluge selle kustutamist.</li></ul>',
       LINK_LABEL: '<strong>Linki silt:</strong> %(sanitizedText)',
       LINK_STOPWORD: 'Linkide tekst ei pruugi olla piisavalt kirjeldav kontekstiväliselt: <strong {r}>%(error)</strong><hr><strong>Tipp!</strong> Linkide tekst peaks alati olema selge, unikaalne ja sisukas. Vältige tavalisi sõnu nagu &quot;kliki siia&quot; või &quot;õpi rohkem&quot;',
@@ -207,6 +208,7 @@
       EMBED_GENERAL_WARNING: 'Ei saa kontrollida varjatud sisu. Palun veenduge, et piltidel on alt-tekst, videote pealkirjad, tekst on piisavalt kontrastne ja interaktiivsed komponendid on <a href="https://webaim.org/techniques/keyboard/">tahvlile juurdepääsetavad.</a>.',
       EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> koos fookustamata elementidega ei tohiks olla <code>tabindex="-1"</code>. Manustatud sisu ei ole klaviatuuriga juurdepääsetav.',
       QA_BAD_LINK: 'Leitud halb link. Link näib viitavat arenduskeskkonnale. <hr> See link viitab: <br> <strong {r}>%(el)</strong>',
+      QA_IN_PAGE_LINK: 'Katkine samalehekülje link. Lingi sihtmärk ei vasta sellel lehel ühelegi elemendile.',
       QA_BAD_ITALICS: 'Paks ja kursiivne märgistus on semantilise tähendusega ja neid ei tohiks <strong>ei</strong> kasutada tervete lõigete esiletõstmiseks. Häälestatud teksti tuleks kasutada selleks, et rõhutada sõna või fraasi tugevalt <strong>kõrge</strong>. Kursiivkirjas tuleks kasutada pärisnimede (st raamatute ja artiklite pealkirjade), võõrsõnade, jutumärkide esiletõstmiseks. Pikad tsitaadid tuleks vormistada plokktsitaatidena.',
       QA_PDF: 'Ei saa kontrollida PDF-failide juurdepääsetavust. PDF-failid loetakse veebisisuks ja need tuleb samuti juurdepääsetavaks muuta. PDF-failid sisaldavad sageli probleeme inimeste jaoks, kes kasutavad ekraanilugejaid (puuduvad struktuurilised märgised või vormiväljade märgised) ja inimeste jaoks, kellel on vaegnägemine (tekst ei voola suurendatud kujul tagasi). <ul><li>Kui tegemist on vormiga, kaaluge alternatiivina ligipääsetava HTML-vormi kasutamist.</li><li>Kui tegemist on dokumendiga, kaaluge selle teisendamist veebileheks.</li></ul>Muudel juhtudel kontrollige <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF-i ligipääsetavust Acrobat DC-s.</a>.',
       QA_DOCUMENT: 'Ei saa kontrollida dokumendi juurdepääsetavust. Lingitud dokumente loetakse veebisisuks ja need tuleb samuti juurdepääsetavaks muuta. Palun vaadake see dokument käsitsi üle. <ul><li>Muuta oma <a href="https://support.google.com/docs/answer/6199477?hl=et">Google Workspace\'i dokument või esitlus ligipääsetavamaks.</a></li></li><li>Muuta oma <a href="https://support.microsoft.com/et/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office\'i dokumendid ligipääsetavamaks.</a></li></ul>',

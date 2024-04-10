@@ -113,6 +113,9 @@ export default function checkLinkText(results, option) {
     // Has ARIA.
     const hasAria = $el.querySelector(':scope [aria-labelledby], :scope [aria-label]') || $el.getAttribute('aria-labelledby') || $el.getAttribute('aria-label');
 
+    // Has aria-labeledby.
+    const hasAriaLabelledby = $el.querySelector(':scope [aria-labelledby]') || $el.getAttribute('aria-labelledby');
+
     if ($el.querySelectorAll('img').length) {
       // Do nothing. Don't overlap with Alt Text module.
     } else if (ariaHidden) {
@@ -127,9 +130,18 @@ export default function checkLinkText(results, option) {
           position: 'afterend',
         });
       }
-    } else if (href && linkText.length === 0) {
+    } else if ((href || href === '') && linkText.length === 0) {
       // Empty hyperlinks.
-      if ($el.children.length) {
+      if (hasAriaLabelledby) {
+        // Has ariaLabelledby attribute but empty accessible name.
+        results.push({
+          element: $el,
+          type: 'error',
+          content: Lang.sprintf('LINK_EMPTY_LABELLEDBY'),
+          inline: true,
+          position: 'afterend',
+        });
+      } else if ($el.children.length) {
         // Has child elements (e.g. SVG or SPAN) <a><i></i></a>
         results.push({
           element: $el,

@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.1.3
+  * @version 3.1.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -167,6 +167,7 @@
       PANEL_HEADING_MISSING_ONE: 'Trūksta 1 antraštės!',
       PANEL_NO_HEADINGS: 'Antraščių nerasta.',
       LINK_EMPTY: 'Pašalinkite tuščias nuorodas be jokio teksto.',
+      LINK_EMPTY_LABELLEDBY: 'Nuoroda turi <code>aria-labelledby</code> reikšmę, kuri yra tuščia arba neatitinka kito puslapio elemento atributo <code>id</code> reikšmės.',
       LINK_EMPTY_LINK_NO_LABEL: 'Nuorodoje nėra įskaitomo teksto, kuris būtų matomas ekrano skaitytuvams ir kitoms pagalbinėms technologijoms. Ištaisyti: </li><li>Pridėkite glaustą tekstą, kuriame būtų aprašyta, kur nuoroda veda.</li><li>Jeigu tai yra <a href="https://a11y-101.com/development/icons-and-links">paveiksliuko arba SVG nuoroda,</a> greičiausiai trūksta aprašomosios etiketės.</li><li>Jeigu manote, kad ši nuoroda yra klaida dėl kopijavimo ir įkėlimo klaidos, apsvarstykite galimybę ją ištrinti.</li></ul>.',
       LINK_LABEL: '<strong>Etiketė su nuoroda:</strong> %(sanitizedText)',
       LINK_STOPWORD: 'Nuorodos tekstas gali būti nepakankamai aprašomas be konteksto: <strong {r}>%(error)</strong><hr><hr><strong>Tipas!</strong> Nuorodos tekstas visada turi būti aiškus, unikalus ir prasmingas. Venkite įprastų žodžių, tokių kaip &quot;spustelėkite čia&quot; arba &quot;sužinokite daugiau&quot;;',
@@ -208,6 +209,7 @@
       EMBED_GENERAL_WARNING: 'Nepavyksta patikrinti įterpto turinio. Įsitikinkite, kad paveikslėliuose yra "alt" tekstas, vaizdo įrašuose - antraštės, tekstas pakankamai kontrastingas, o interaktyvūs komponentai yra <a href="https://webaim.org/techniques/keyboard/">prieinami klaviatūra.</a>',
       EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> su elementais, į kuriuos negalima sutelkti dėmesio, neturėtų turėti <code>tabindex="-1"</code>. Įterptasis turinys nebus pasiekiamas naudojant klaviatūrą.',
       QA_BAD_LINK: 'Rasta bloga nuoroda. Atrodo, kad nuoroda nukreipia į kūrimo aplinką. <hr> Ši nuoroda nukreipia į: <br> <strong {r}>%(el)</strong>',
+      QA_IN_PAGE_LINK: 'Nugriautas tos pačios puslapio nuorodas. Nuorodos tikslas nesutampa su jokiu šios puslapio elementu.',
       QA_BAD_ITALICS: 'Paryškinimo ir kursyvo žymės turi semantinę reikšmę ir neturėtų būti naudojamos <strong>ne</strong> ištisoms pastraipoms paryškinti. Paryškintas tekstas turėtų būti naudojamas stipriai <strong>pabrėžti</strong> žodį ar frazę. Kursyvu reikėtų paryškinti tikruosius vardus (t. y. knygų ir straipsnių pavadinimus), svetimžodžius, kabutes. Ilgos citatos turėtų būti formatuojamos kaip blokinė citata.',
       QA_PDF: 'Nepavyksta patikrinti PDF failų prieinamumo. PDF yra laikomi žiniatinklio turiniu, todėl jie taip pat turi būti prieinami. PDF dažnai kyla problemų žmonėms, kurie naudojasi ekrano skaitytuvais (trūksta struktūrinių žymų arba formos laukų etikečių), ir silpnaregiams (padidinus tekstą, jis neatsinaujina). <ul><li>Jei tai yra forma, apsvarstykite galimybę kaip alternatyvą naudoti prieinamą HTML formą.</li><li>Jei tai yra dokumentas, apsvarstykite galimybę jį konvertuoti į tinklalapį.</li></ul>Kitu atveju patikrinkite <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF prieinamumą programoje "Acrobat DC".</a>',
       QA_DOCUMENT: 'Nepavyksta patikrinti dokumento prieinamumo. Susieti dokumentai laikomi žiniatinklio turiniu ir taip pat turi būti prieinami. Prašome peržiūrėti šį dokumentą rankiniu būdu. <ul><li>Padarykite savo <a href="https://support.google.com/docs/answer/6199477?hl=lt">"Google Workspace" dokumentą arba pristatymą prieinamesnį.</a></li><li>Padarykite savo <a href="https://support.microsoft.com/lt/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">"Office" dokumentus prieinamesnius.</a></li></li></ul>',

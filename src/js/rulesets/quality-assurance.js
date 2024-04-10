@@ -40,15 +40,38 @@ export default function checkQA(results, option) {
   }
 
   /* ************************************************************** */
-  /*  Warning: Manually inspect documents & PDF for accessibility.  */
+  /*  Warning: Additional link checks.                              */
   /* ************************************************************** */
   Elements.Found.Links.forEach(($el) => {
-    const href = $el.getAttribute('href');
-    const extensions = Constants.Global.documentLinks.split(', ');
-    if (href) {
+    if ($el.hasAttribute('href')) {
+      const href = $el.getAttribute('href');
+
+      // Has file extension.
+      const extensions = Constants.Global.documentLinks.split(', ');
       const hasExtension = extensions.some((extension) => href.includes(extension));
       const hasPDF = href.includes('.pdf');
+
+      // Dismiss key.
       const key = Utils.prepareDismissal(`DOCUMENT${href}`);
+
+      // Check for broken same-page links.
+      const hasButtonRole = $el.getAttribute('role') === 'button';
+      const hasText = $el.textContent.trim().length !== 0;
+      if (option.inPageLinkQA && (href.startsWith('#') || href === '') && !hasButtonRole && hasText) {
+        const targetId = href.substring(1);
+        const targetElement = document.getElementById(targetId);
+        if (!targetElement) {
+          results.push({
+            element: $el,
+            type: 'error',
+            content: Lang.sprintf('QA_IN_PAGE_LINK'),
+            inline: true,
+            position: 'beforebegin',
+          });
+        }
+      }
+
+      // Manually inspect documents & PDF for accessibility.
       if (option.documentQA && hasExtension) {
         results.push({
           element: $el,
@@ -248,7 +271,8 @@ export default function checkQA(results, option) {
     if (firstPrefix.length > 0 && firstPrefix !== activeMatch && possibleMatch) {
       // We have a prefix and a possible hit; check next detected paragraph.
       const secondP = Elements.Found.Paragraphs[i + 1];
-      if (secondP) {
+
+      if (secondP && !secondP.closest('th, td')) {
         secondText = Utils.getText(secondP).substring(0, 2);
         // Just a sentence, ignore.
         if (secondText === 'A') {
@@ -339,22 +363,60 @@ export default function checkQA(results, option) {
   /*  Error: Duplicate IDs                                           */
   /* *************************************************************** */
   if (option.duplicateIdQA) {
-    const allIds = {};
-    Elements.Found.Ids.forEach(($el) => {
-      const { id } = $el;
-      if (id) {
-        if (allIds[id] === undefined) {
-          allIds[id] = 1;
-        } else {
-          results.push({
-            element: $el,
-            type: 'error',
-            content: Lang.sprintf('QA_DUPLICATE_ID', id),
-            inline: true,
-            position: 'beforebegin',
-          });
-        }
+    const doms = Constants.Shadow.Components ? `body, ${Constants.Shadow.Components}` : 'body';
+    const allDoms = document.querySelectorAll(doms);
+
+    // Look for duplicate IDs within each DOM.
+    allDoms.forEach((dom) => {
+      const allIds = new Set();
+      const findDuplicateIds = (ids, withinDOM) => {
+        ids.forEach(($el) => {
+          const { id } = $el;
+
+          // Ignore empty IDs.
+          if (id.trim().length === 0) {
+            return;
+          }
+
+          // Only flag duplicate IDs being referenced by same-page links, aria or a label.
+          // Reference: https://accessibilityinsights.io/info-examples/web/duplicate-id-aria/
+          if (id && !allIds.has(id)) {
+            allIds.add(id);
+          } else {
+            const ariaReference = Array.from(
+              withinDOM.querySelectorAll(`
+                a[href*="${id}"],
+                label[for*="${id}"],
+                [aria-labelledby*="${id}"],
+                [aria-controls*="${id}"],
+                [aria-owns*="${id}"]`),
+            );
+            if (ariaReference.length > 0) {
+              results.push({
+                element: $el,
+                type: 'error',
+                content: Lang.sprintf('QA_DUPLICATE_ID', id),
+                inline: true,
+                position: 'beforebegin',
+              });
+            }
+          }
+        });
+      };
+
+      // Look for duplicate IDs within shadow DOMs.
+      if (dom.shadowRoot) {
+        const shadowRootIds = Array.from(
+          dom.shadowRoot.querySelectorAll(`[id]:not(${Constants.Exclusions.Container})`),
+        );
+        findDuplicateIds(shadowRootIds, dom.shadowRoot);
       }
+
+      // Look for duplicates IDs in document body.
+      const regularIds = Array.from(
+        dom.querySelectorAll(`[id]:not(${Constants.Exclusions.Container})`),
+      );
+      findDuplicateIds(regularIds, dom);
     });
   }
 

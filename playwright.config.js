@@ -1,4 +1,5 @@
 // @ts-check
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { defineConfig, devices } from '@playwright/test';
 
 /**
@@ -15,10 +16,11 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: [['html', { open: 'on-failure' }]],
+  // reporter: [['html', { open: 'on-failure' }]],
   use: {
     baseURL: 'http://localhost:8080',
     trace: 'on-first-retry',
+    // headless: false,
   },
 
   /* Configure projects for major browsers */
@@ -27,7 +29,6 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
@@ -46,4 +47,3 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
   }, */
 });
-

@@ -128,6 +128,7 @@ export default {
 
     // Links
     LINK_EMPTY: 'Remove empty links without any text.',
+    LINK_EMPTY_LABELLEDBY: 'Link has an <code>aria-labelledby</code> value that is empty or does not match the <code>id</code> value of another element on the page.',
     LINK_EMPTY_LINK_NO_LABEL: 'Link does not have discernible text that is visible to screen readers and other assistive technology. To fix: <ul><li>Add some concise text that describes where the link takes you.</li><li>If it is an <a href="https://a11y-101.com/development/icons-and-links">icon link or SVG,</a> it is likely missing a descriptive label.</li><li>If you think this link is an error due to a copy/paste bug, consider deleting it.</li></ul>',
     LINK_LABEL: '<strong>Link label:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Link text may not be descriptive enough out of context: <strong {r}>%(error)</strong><hr><strong>Tip!</strong> Link text should always be clear, unique, and meaningful. Avoid common words like &quot;click here&quot; or &quot;learn more&quot;',
@@ -191,6 +192,7 @@ export default {
     QA_DUPLICATE_ID: 'Found <strong>duplicate ID</strong>. Duplicate ID errors are known to cause problems for assistive technologies when they are trying to interact with content. <hr> Please remove or change the following ID: <strong {r}>%(id)</strong>',
     QA_TEXT_UNDERLINE_WARNING: 'Underlined text can be confused with links. Consider using a different style such as <code>&lt;strong&gt;</code><strong>strong importance</strong><code>&lt;/strong&gt;</code> or <code>&lt;em&gt;</code><em>emphasis</em><code>&lt;/em&gt;</code>.',
     QA_SUBSCRIPT_WARNING: 'The subscript and superscript formatting options should only be used to change the position of text for typographical conventions or standards. It should <strong>not</strong> solely be used for presentation or appearance purposes. Formatting entire sentences poses readability issues. Appropriate use cases would include displaying exponents, ordinal numbers such as 4<sup>th</sup> instead of fourth, and chemical formulas (e.g. H<sub>2</sub>O).',
+    QA_IN_PAGE_LINK: 'Broken same-page link. The link target does not match any element on the page.',
 
     // Tables
     TABLES_MISSING_HEADINGS: 'Missing table headers! Accessible tables need HTML markup that indicates header cells and data cells which defines their relationship. This information provides context to people who use assistive technology. Tables should be used for tabular data only. <hr> Learn more about <a href="https://www.w3.org/WAI/tutorials/tables/">accessible tables.</a>',

@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.1.3
+  * @version 3.1.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -157,6 +157,7 @@ var ro = {
     PANEL_HEADING_MISSING_ONE: 'Lipsește rubrica 1!',
     PANEL_NO_HEADINGS: 'Nu s-au găsit antete.',
     LINK_EMPTY: 'Eliminați legăturile goale fără text.',
+    LINK_EMPTY_LABELLEDBY: 'Linkul are o valoare pentru <code>aria-labelledby</code> care este goală sau nu se potrivește cu valoarea atributului <code>id</code> al altui element de pe pagină.',
     LINK_EMPTY_LINK_NO_LABEL: 'Linkul nu are un text vizibil pentru cititorii de ecran și alte tehnologii de asistență. Pentru a remedia problema: <ul><li>Adaugați un text concis care să descrie unde vă duce linkul.</li><li>Dacă este un <a href="https://a11y-101.com/development/icons-and-links">link cu pictograme sau SVG,</a> este probabil să lipsească o etichetă descriptivă.</li><li>Dacă credeți că acest link este o eroare datorată unui bug de copy/paste, luați în considerare ștergerea lui.</li></ul>.',
     LINK_LABEL: '<strong>Etichetă de legătură:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Este posibil ca textul linkului să nu fie suficient de descriptiv în afara contextului: <strong {r}>%(error)</strong><hr><strong>Tip!</strong> Textul linkului trebuie să fie întotdeauna clar, unic și semnificativ. Evitați cuvintele comune precum &quot;click aici&quot; sau &quot;află mai multe&quot;',
@@ -198,6 +199,7 @@ var ro = {
     EMBED_GENERAL_WARNING: 'Nu se poate verifica conținutul încorporat. Vă rugăm să vă asigurați că imaginile au text alt, videoclipurile au legende, textul are un contrast suficient, iar componentele interactive sunt <a href="https://webaim.org/techniques/keyboard/">accesibile la tastatură.</a>.',
     EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> cu elemente nefocalizabile nu ar trebui să aibă <code>tabindex="-1"</code>. Conținutul încorporat nu va fi accesibil prin tastatură.',
     QA_BAD_LINK: 'Link greșit găsit. Linkul pare să indice un mediu de dezvoltare. <hr> Acest link trimite la: <br> <strong {r}>%(el)</strong>.',
+    QA_IN_PAGE_LINK: 'Legătură internă ruptă. Destinația linkului nu se potrivește cu niciun element de pe această pagină.',
     QA_BAD_ITALICS: 'Etichetele bold și italic au o semnificație semantică și nu trebuie <strong>nu</strong> folosite pentru a evidenția paragrafe întregi. Textul cu caractere aldine trebuie folosit pentru a oferi o <strong>accentuare</strong> puternică asupra unui cuvânt sau a unei fraze. Italicul ar trebui utilizat pentru a evidenția nume proprii (de exemplu, titluri de cărți și articole), cuvinte străine, ghilimele. Citatele lungi ar trebui să fie formatate ca un blockquote.',
     QA_PDF: 'Imposibilitatea de a verifica accesibilitatea PDF-urilor. PDF-urile sunt considerate conținut web și trebuie să fie, de asemenea, accesibile. PDF-urile conțin adesea probleme pentru persoanele care utilizează cititoare de ecran (etichete structurale sau etichete de câmpuri de formular lipsă) și pentru persoanele cu vedere slabă (textul nu se reface atunci când este mărit). <ul><li>Dacă acesta este un formular, luați în considerare utilizarea unui formular HTML accesibil ca alternativă.</li><li>Dacă acesta este un document, luați în considerare transformarea acestuia într-o pagină web.</li></ul>În caz contrar, vă rugăm să verificați <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF pentru accesibilitate în Acrobat DC.</a>',
     QA_DOCUMENT: 'Imposibil să verificați dacă documentul este accesibil. Documentele legate sunt considerate conținut web și trebuie să fie, de asemenea, accesibile. Vă rugăm să verificați manual acest document. <ul><li>Faceți-vă <a href="https://support.google.com/docs/answer/6199477?hl=ro">Documentul sau prezentarea Google Workspace mai accesibil.</a></li><li>Faceți-vă <a href="https://support.microsoft.com/ro/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Documentele Office mai accesibile.</a></li></ul>.',

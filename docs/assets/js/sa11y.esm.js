@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.1.3
+  * @version 3.1.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -78,6 +78,7 @@ const defaultOptions = {
   underlinedTextQA: true,
   pageTitleQA: true,
   subscriptQA: true,
+  inPageLinkQA: true,
 
   // Tables
   tablesQA: true,
@@ -143,14 +144,14 @@ const addStylestoShadow = (component) => {
   component.shadowRoot.appendChild(style);
 };
 
-function findShadowComponents(option) {
+function findShadowComponents(option, desiredRoot) {
   let webComponents;
   if (option.autoDetectShadowComponents) {
     // Elements to ignore.
     const ignore = 'sa11y-heading-label, sa11y-heading-anchor, sa11y-annotation, sa11y-tooltips, sa11y-dismiss-tooltip, sa11y-control-panel, #sa11y-colour-filters, #sa11y-colour-filters *, script';
 
     // Search all elements.
-    const root = document.querySelector(option.checkRoot);
+    const root = document.querySelector(desiredRoot);
     const search = (root) ? Array.from(root.querySelectorAll(`*:not(${ignore})`)) : Array.from(document.body.querySelectorAll(`*:not(${ignore})`));
 
     // Query for open shadow roots & inject CSS utilities into every shadow DOM.
@@ -182,6 +183,29 @@ function findShadowComponents(option) {
 
 const Constants = (function myConstants() {
   /* **************** */
+  /* Initialize Roots */
+  /* **************** */
+  const Root = {};
+  function initializeRoot(desiredRoot, desiredReadabilityRoot) {
+    Root.areaToCheck = document.querySelector(desiredRoot);
+    if (!Root.areaToCheck) {
+      Root.areaToCheck = document.querySelector('body');
+    }
+
+    // Readability target area to check.
+    Root.Readability = document.querySelector(desiredReadabilityRoot);
+    if (!Root.Readability) {
+      if (!Root.areaToCheck) {
+        Root.Readability = document.querySelector('body');
+      } else {
+        Root.Readability = Root.areaToCheck;
+        // eslint-disable-next-line no-console
+        console.error(`Sa11y configuration error: The selector '${desiredReadabilityRoot}' used for the property 'readabilityRoot' does not exist. '${Root.areaToCheck.tagName}' was used as a fallback.`);
+      }
+    }
+  }
+
+  /* **************** */
   /* Global constants */
   /* **************** */
   const Global = {};
@@ -198,12 +222,6 @@ const Constants = (function myConstants() {
     Global.colourFilterPlugin = option.colourFilterPlugin;
     Global.checkAllHideToggles = option.checkAllHideToggles;
     Global.exportResultsPlugin = option.exportResultsPlugin;
-
-    // Root element to check.
-    Global.Root = document.querySelector(option.checkRoot);
-    if (!Global.Root) {
-      Global.Root = document.querySelector('body');
-    }
 
     // A11y: Determine scroll behaviour
     let reducedMotion = false;
@@ -295,18 +313,6 @@ const Constants = (function myConstants() {
   const Readability = {};
   function initializeReadability(option) {
     if (option.readabilityPlugin) {
-      // Readability target area to check.
-      Readability.Root = document.querySelector(option.readabilityRoot);
-      if (!Readability.Root) {
-        if (!Global.Root) {
-          Readability.Root = document.querySelector('body');
-        } else {
-          Readability.Root = Global.Root;
-          // eslint-disable-next-line no-console
-          console.error(`Sa11y configuration error: The selector '${option.readabilityRoot}' used for the property 'readabilityRoot' does not exist. '${Global.Root.tagName}' was used as a fallback.`);
-        }
-      }
-
       // Set `readabilityLang` property based on language file.
       Readability.Lang = Lang._('LANG_CODE').substring(0, 2);
 
@@ -351,9 +357,9 @@ const Constants = (function myConstants() {
     // Main container.
     if (option.containerIgnore) {
       const containerSelectors = option.containerIgnore.split(',').map(($el) => `${$el} *, ${$el}`);
-      Exclusions.Container = `#wpadminbar *, ${containerSelectors.join(', ')}`;
+      Exclusions.Container = `#wpadminbar *, #sa11y-colour-filters, #sa11y-colour-filters *, ${containerSelectors.join(', ')}`;
     } else {
-      Exclusions.Container = '#wpadminbar *';
+      Exclusions.Container = '#wpadminbar *, #sa11y-colour-filters, #sa11y-colour-filters *';
     }
 
     // Contrast exclusions
@@ -435,10 +441,13 @@ const Constants = (function myConstants() {
   const Shadow = {};
   function initializeShadowSearch(checkRoot, autoDetectShadowComponents, shadowComponents) {
     Shadow.Components = findShadowComponents(
-      checkRoot);
+      checkRoot,
+      autoDetectShadowComponents);
   }
 
   return {
+    initializeRoot,
+    Root,
     initializeGlobal,
     Global,
     initializePanelSelectors,
@@ -467,9 +476,9 @@ function find(selector, desiredRoot, exclude) {
     root = document;
   } else if (desiredRoot === 'readability') {
     root = Constants.Readability.Root;
-    if (!root) root = Constants.Global.Root;
+    if (!root) root = Constants.Root.areaToCheck;
   } else if (desiredRoot === 'root') {
-    root = Constants.Global.Root;
+    root = Constants.Root.areaToCheck;
     if (!root) root = document.body;
   } else if (desiredRoot === 'panel') {
     root = Constants.Panel.panel;
@@ -983,7 +992,7 @@ function generateElementPreview(issueObject) {
 
 const Elements = (function myElements() {
   const Found = {};
-  function initializeElements(linksToFlag) {
+  function initializeElements(option) {
     // Main selectors
     Found.Images = find(
       'img',
@@ -1071,12 +1080,6 @@ const Elements = (function myElements() {
       Constants.Exclusions.Container,
     );
 
-    Found.Ids = find(
-      '[id]',
-      'document',
-      Constants.Exclusions.Container,
-    );
-
     Found.Underlines = find(
       'u',
       'root',
@@ -1091,8 +1094,8 @@ const Elements = (function myElements() {
 
     Found.Language = Constants.Global.html.getAttribute('lang');
 
-    Found.CustomErrorLinks = linksToFlag ? find(
-      linksToFlag,
+    Found.CustomErrorLinks = option.linksToFlag ? find(
+      option.linksToFlag,
       'root',
       Constants.Exclusions.Container,
     ) : [];
@@ -1133,22 +1136,19 @@ const Elements = (function myElements() {
 /*  Feature to detect if URL changed for bookmarklet/SPAs.  */
 /* ******************************************************** */
 function detectPageChanges(detectSPArouting, checkAll, resetAll) {
-  // Feature to detect page changes (e.g. SPAs).
   if (detectSPArouting === true) {
-    let url = window.location.pathname;
-
+    // Current URL.
+    let url = window.location.href;
+    // Debounce function to re-check page.
     const checkURL = debounce$2(async () => {
-      if (url !== window.location.pathname) {
+      if (url !== window.location.href) {
         if (store.getItem('sa11y-remember-panel') === 'Closed' || !store.getItem('sa11y-remember-panel')) {
           checkAll();
         } else {
-          // Async scan while panel is open.
           resetAll(false);
           await checkAll();
         }
-
-        // Performance: New URL becomes current.
-        url = window.location.pathname;
+        url = window.location.href; // Update current URL
       }
     }, 250);
     window.addEventListener('mousemove', checkURL);
@@ -1598,7 +1598,7 @@ function removeExportListeners() {
   }
 }
 
-var styles = ":host{background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);bottom:0;display:block;height:-moz-fit-content;height:fit-content;position:fixed;width:100%;z-index:999999}*{-webkit-font-smoothing:auto!important;color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;font-size:var(--sa11y-normal-text);line-height:22px!important}#dialog{margin:20px auto;max-width:900px;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none}p{margin-top:0}.error{background:var(--sa11y-error);border:2px dashed #f08080;color:var(--sa11y-error-text);margin-bottom:0;padding:5px}";
+var styles = ":host{background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);bottom:0;display:block;height:-moz-fit-content;height:fit-content;left:0;position:fixed;right:0;width:100%;z-index:999999}*{-webkit-font-smoothing:auto!important;color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;font-size:var(--sa11y-normal-text);line-height:22px!important}#dialog{margin:20px auto;max-width:900px;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none}p{margin-top:0}.error{background:var(--sa11y-error);border:2px dashed #f08080;color:var(--sa11y-error-text);margin-bottom:0;padding:5px}";
 
 var sharedStyles = ".visually-hidden{clip:rect(1px,1px,1px,1px);border:0;-webkit-clip-path:inset(50%);clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}[hidden]{display:none!important}.header-text,.header-text-inline,h2{color:var(--sa11y-panel-primary);display:block;font-size:var(--sa11y-large-text);font-weight:600;margin-bottom:3px}.header-text-inline{display:inline-block!important}code{font-family:monospace!important}.kbd,code,kbd{background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);padding:1.6px 4.8px}.bold{font-weight:600}.red-text{color:var(--sa11y-red-text)}.red-text,.yellow-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text)}.yellow-text{color:var(--sa11y-yellow-text)}.close-btn{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;color:var(--sa11y-panel-primary);cursor:pointer;float:var(--sa11y-float-rtl);font-size:var(--sa11y-normal-text);font-weight:400;height:32px;margin:0;position:relative;transition:all .2s ease-in-out;width:32px}.close-btn:focus,.close-btn:hover{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{background:var(--sa11y-setting-switch-bg-off);bottom:-7px;content:\"\";left:-7px;-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute;right:-7px;top:-7px}@media screen and (forced-colors:active){.close-btn:after{filter:invert(1)}}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:not(#settings-toggle):not(#outline-toggle):not(.switch):focus,#container select:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #outline-toggle:focus,#container #settings-toggle:focus,#container .switch:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container #outline-toggle:focus:not(:focus-visible),#container #settings-toggle:focus:not(:focus-visible),#container [tabindex=\"-1\"]:focus:not(:focus-visible),#container [tabindex=\"0\"]:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container select:focus:not(:focus-visible){box-shadow:none;outline:0}#container [tabindex=\"-1\"]:focus-visible,#container [tabindex=\"0\"]:focus-visible,#container a:focus-visible,#container button:not(#settings-toggle):not(#outline-toggle):not(.switch):focus-visible,#container select:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #outline-toggle:focus-visible,#container #settings-toggle:focus-visible,#container .switch:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#outline-toggle:focus,#settings-toggle:focus{border:3px solid transparent}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container select:focus,.close-btn:focus{outline:3px solid transparent!important}}";
 
@@ -2133,7 +2133,7 @@ function settingsPanelToggles(checkAll, resetAll) {
           createAlert(Lang._('COLOUR_FILTER_HIGH_CONTRAST_MESSAGE'));
         } else {
           // Set attributes.
-          Constants.Global.Root.setAttribute('data-sa11y-filter', filters[option - 1]);
+          Constants.Root.areaToCheck.setAttribute('data-sa11y-filter', filters[option - 1]);
           Constants.Panel.colourFilterIcon.setAttribute('aria-label', icons[option - 1]);
 
           // Remove page markup while filters are applied. Otherwise it may confuse content authors.
@@ -2170,7 +2170,7 @@ function settingsPanelToggles(checkAll, resetAll) {
         }
       } else {
         // Restore panel.
-        Constants.Global.Root.removeAttribute('data-sa11y-filter');
+        Constants.Root.areaToCheck.removeAttribute('data-sa11y-filter');
         Constants.Panel.settingsContent.classList.remove('hide-settings-border');
 
         // Hide colour filter panel.
@@ -6250,6 +6250,7 @@ class HeadingLabel extends HTMLElement {
         position: absolute;
         text-shadow: 1px 1px black;
         -webkit-text-fill-color: white;
+        word-break: keep-all;
         z-index: 200;
       }
       @media screen and (forced-colors: active) {
@@ -6863,8 +6864,8 @@ function checkHeaders(results, option, headingOutline) {
     const headingText = sanitizeHTML(removeWhitespace$1);
 
     // Check if heading is within root target area.
-    const rootContainsHeading = Constants.Global.Root.contains($el);
-    const rootContainsShadowHeading = Constants.Global.Root.contains($el.getRootNode().host);
+    const rootContainsHeading = Constants.Root.areaToCheck.contains($el);
+    const rootContainsShadowHeading = Constants.Root.areaToCheck.contains($el.getRootNode().host);
     const isWithinRoot = rootContainsHeading || rootContainsShadowHeading;
 
     // Determine heading level.
@@ -7109,6 +7110,9 @@ function checkLinkText(results, option) {
     // Has ARIA.
     const hasAria = $el.querySelector(':scope [aria-labelledby], :scope [aria-label]') || $el.getAttribute('aria-labelledby') || $el.getAttribute('aria-label');
 
+    // Has aria-labeledby.
+    const hasAriaLabelledby = $el.querySelector(':scope [aria-labelledby]') || $el.getAttribute('aria-labelledby');
+
     if ($el.querySelectorAll('img').length) ; else if (ariaHidden) {
       // Has aria-hidden.
       if (!negativeTabindex) {
@@ -7121,9 +7125,18 @@ function checkLinkText(results, option) {
           position: 'afterend',
         });
       }
-    } else if (href && linkText.length === 0) {
+    } else if ((href || href === '') && linkText.length === 0) {
       // Empty hyperlinks.
-      if ($el.children.length) {
+      if (hasAriaLabelledby) {
+        // Has ariaLabelledby attribute but empty accessible name.
+        results.push({
+          element: $el,
+          type: 'error',
+          content: Lang.sprintf('LINK_EMPTY_LABELLEDBY'),
+          inline: true,
+          position: 'afterend',
+        });
+      } else if ($el.children.length) {
         // Has child elements (e.g. SVG or SPAN) <a><i></i></a>
         results.push({
           element: $el,
@@ -8027,15 +8040,38 @@ function checkQA(results, option) {
   }
 
   /* ************************************************************** */
-  /*  Warning: Manually inspect documents & PDF for accessibility.  */
+  /*  Warning: Additional link checks.                              */
   /* ************************************************************** */
   Elements.Found.Links.forEach(($el) => {
-    const href = $el.getAttribute('href');
-    const extensions = Constants.Global.documentLinks.split(', ');
-    if (href) {
+    if ($el.hasAttribute('href')) {
+      const href = $el.getAttribute('href');
+
+      // Has file extension.
+      const extensions = Constants.Global.documentLinks.split(', ');
       const hasExtension = extensions.some((extension) => href.includes(extension));
       const hasPDF = href.includes('.pdf');
+
+      // Dismiss key.
       const key = prepareDismissal(`DOCUMENT${href}`);
+
+      // Check for broken same-page links.
+      const hasButtonRole = $el.getAttribute('role') === 'button';
+      const hasText = $el.textContent.trim().length !== 0;
+      if (option.inPageLinkQA && (href.startsWith('#') || href === '') && !hasButtonRole && hasText) {
+        const targetId = href.substring(1);
+        const targetElement = document.getElementById(targetId);
+        if (!targetElement) {
+          results.push({
+            element: $el,
+            type: 'error',
+            content: Lang.sprintf('QA_IN_PAGE_LINK'),
+            inline: true,
+            position: 'beforebegin',
+          });
+        }
+      }
+
+      // Manually inspect documents & PDF for accessibility.
       if (option.documentQA && hasExtension) {
         results.push({
           element: $el,
@@ -8235,7 +8271,8 @@ function checkQA(results, option) {
     if (firstPrefix.length > 0 && firstPrefix !== activeMatch && possibleMatch) {
       // We have a prefix and a possible hit; check next detected paragraph.
       const secondP = Elements.Found.Paragraphs[i + 1];
-      if (secondP) {
+
+      if (secondP && !secondP.closest('th, td')) {
         secondText = getText(secondP).substring(0, 2);
         // Just a sentence, ignore.
         if (secondText === 'A') {
@@ -8326,22 +8363,60 @@ function checkQA(results, option) {
   /*  Error: Duplicate IDs                                           */
   /* *************************************************************** */
   if (option.duplicateIdQA) {
-    const allIds = {};
-    Elements.Found.Ids.forEach(($el) => {
-      const { id } = $el;
-      if (id) {
-        if (allIds[id] === undefined) {
-          allIds[id] = 1;
-        } else {
-          results.push({
-            element: $el,
-            type: 'error',
-            content: Lang.sprintf('QA_DUPLICATE_ID', id),
-            inline: true,
-            position: 'beforebegin',
-          });
-        }
+    const doms = Constants.Shadow.Components ? `body, ${Constants.Shadow.Components}` : 'body';
+    const allDoms = document.querySelectorAll(doms);
+
+    // Look for duplicate IDs within each DOM.
+    allDoms.forEach((dom) => {
+      const allIds = new Set();
+      const findDuplicateIds = (ids, withinDOM) => {
+        ids.forEach(($el) => {
+          const { id } = $el;
+
+          // Ignore empty IDs.
+          if (id.trim().length === 0) {
+            return;
+          }
+
+          // Only flag duplicate IDs being referenced by same-page links, aria or a label.
+          // Reference: https://accessibilityinsights.io/info-examples/web/duplicate-id-aria/
+          if (id && !allIds.has(id)) {
+            allIds.add(id);
+          } else {
+            const ariaReference = Array.from(
+              withinDOM.querySelectorAll(`
+                a[href*="${id}"],
+                label[for*="${id}"],
+                [aria-labelledby*="${id}"],
+                [aria-controls*="${id}"],
+                [aria-owns*="${id}"]`),
+            );
+            if (ariaReference.length > 0) {
+              results.push({
+                element: $el,
+                type: 'error',
+                content: Lang.sprintf('QA_DUPLICATE_ID', id),
+                inline: true,
+                position: 'beforebegin',
+              });
+            }
+          }
+        });
+      };
+
+      // Look for duplicate IDs within shadow DOMs.
+      if (dom.shadowRoot) {
+        const shadowRootIds = Array.from(
+          dom.shadowRoot.querySelectorAll(`[id]:not(${Constants.Exclusions.Container})`),
+        );
+        findDuplicateIds(shadowRootIds, dom.shadowRoot);
       }
+
+      // Look for duplicates IDs in document body.
+      const regularIds = Array.from(
+        dom.querySelectorAll(`[id]:not(${Constants.Exclusions.Container})`),
+      );
+      findDuplicateIds(regularIds, dom);
     });
   }
 
@@ -8542,7 +8617,10 @@ class Sa11y {
     /* *********************************************************** */
     /*  Check All: Where all the magic happens.                    */
     /* *********************************************************** */
-    this.checkAll = async () => {
+    this.checkAll = async (
+      desiredRoot = option.checkRoot,
+      desiredReadabilityRoot = option.readabilityRoot,
+    ) => {
       try {
         this.results = [];
         this.headingOutline = [];
@@ -8550,17 +8628,18 @@ class Sa11y {
         this.warningCount = 0;
         this.customChecksRunning = false;
 
-        // Panel alert if root doesn't exist.
-        const root = document.querySelector(option.checkRoot);
+        // Initialize root areas to check.
+        const root = document.querySelector(desiredRoot);
         if (!root) {
-          createAlert(`${Lang.sprintf('ERROR_MISSING_ROOT_TARGET', option.checkRoot)}`);
+          createAlert(`${Lang.sprintf('ERROR_MISSING_ROOT_TARGET', desiredRoot)}`);
         }
+        Constants.initializeRoot(desiredRoot, desiredReadabilityRoot);
 
         // Find all web components on the page.
-        Constants.initializeShadowSearch(option);
+        Constants.initializeShadowSearch(option, desiredRoot);
 
         // Find and cache elements.
-        Elements.initializeElements(option.linksToFlag);
+        Elements.initializeElements(option);
 
         // Ruleset checks
         checkHeaders(this.results, option, this.headingOutline);

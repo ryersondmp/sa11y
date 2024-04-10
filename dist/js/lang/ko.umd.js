@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.1.3
+  * @version 3.1.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -173,6 +173,7 @@
       PANEL_HEADING_MISSING_ONE: '제목 1이 없습니다!',
       PANEL_NO_HEADINGS: '제목을 찾을 수 없습니다.',
       LINK_EMPTY: '텍스트가 없는 빈 링크를 제거합니다.',
+      LINK_EMPTY_LABELLEDBY: '링크에는 다른 페이지 요소의 <code>id</code> 속성 값과 일치하지 않거나 비어 있는 <code>aria-labelledby</code> 값이 있습니다.',
       LINK_EMPTY_LINK_NO_LABEL: '링크에 화면 리더 및 기타 보조 기술에서 볼 수 있는 식별 가능한 텍스트가 없습니다. 수정하려면: <ul><li>링크가 어디로 연결되는지 설명하는 간결한 텍스트를 추가합니다.</li><li>이 링크가 <a href="https://a11y-101.com/development/icons-and-links">아이콘 링크 또는 SVG인 경우 설명 레이블이 누락되었을 가능성이 높습니다.</li><li>복사/붙여넣기 버그로 인한 오류라고 생각되면 링크를 삭제하는 것이 좋습니다.</li></ul>',
       LINK_LABEL: '<strong>링크 레이블:</strong> %(sanitizedText)',
       LINK_STOPWORD: "링크 텍스트가 문맥에 맞지 않게 충분히 설명적이지 않을 수 있습니다: <strong {r}>%(error)</strong><hr><strong>Tip!</strong> 링크 텍스트는 항상 명확하고 고유하며 의미 있는 것이어야 합니다. '여기를 클릭하세요' 또는 '자세히 알아보기'와 같은 일반적인 단어는 피하세요;",
@@ -214,6 +215,7 @@
       EMBED_GENERAL_WARNING: '삽입된 콘텐츠를 확인할 수 없습니다. 이미지에 대체 텍스트가 있는지, 동영상에 캡션이 있는지, 텍스트의 대비가 충분한지, 인터랙티브 구성 요소가 <a href="https://webaim.org/techniques/keyboard/">키보드에 액세스할 수 있는지 확인하세요.',
       EMBED_UNFOCUSABLE: '포커스할 수 없는 요소를 포함한 <code>&lt;iframe&gt;</code>은 <code>tabindex="-1"</code>을 가져서는 안 됩니다. 포함된 콘텐츠는 키보드로 접근할 수 없습니다.',
       QA_BAD_LINK: '잘못된 링크를 찾았습니다. 링크가 개발 환경을 가리키는 것으로 보입니다. <hr> 이 링크는 다음을 가리킵니다: <br> <strong {r}>%(el)</strong>',
+      QA_IN_PAGE_LINK: '부서진 동일 페이지 링크입니다. 링크 대상이 이 페이지에 있는 어떤 요소와도 일치하지 않습니다.',
       QA_BAD_ITALICS: '굵게 및 이탤릭체 태그는 의미론적 의미가 있으며, 전체 단락을 강조할 때는 <강함>이 아닌 <강함>을 사용해야 합니다. 굵은 텍스트는 단어나 문구에 강한 <강한> 강조를 제공할 때 사용해야 합니다. 고유명사(예: 책 및 기사 제목), 외래어, 따옴표는 이탤릭체로 강조 표시해야 합니다. 긴 따옴표는 블록 따옴표로 서식을 지정해야 합니다.',
       QA_PDF: 'PDF의 접근성을 확인할 수 없습니다. PDF는 웹 콘텐츠로 간주되므로 접근성을 제공해야 합니다. PDF에는 화면 리더를 사용하는 사용자(구조 태그 누락 또는 양식 필드 레이블 누락)와 저시력 사용자(확대 시 텍스트가 리플로우되지 않음)를 위한 문제가 포함되어 있는 경우가 많습니다. <ul><li>양식인 경우 접근 가능한 HTML 양식을 대안으로 사용해 보십시오.</li><li>문서인 경우 웹 페이지로 변환해 보십시오.</li></ul>그렇지 않은 경우 <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF의 접근성을 확인하십시오.</a>를 확인하십시오.',
       QA_DOCUMENT: '문서의 접근성을 확인할 수 없습니다. 링크된 문서는 웹 콘텐츠로 간주되므로 접근성을 제공해야 합니다. 이 문서를 수동으로 검토해 주세요. <a href="https://support.google.com/docs/answer/6199477?hl=ko">Google 스페이스 문서 또는 프레젠테이션에 더 쉽게 액세스할 수 있도록 설정하세요.</a></li><li> <a href="https://support.microsoft.com/ko/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office 문서에 더 쉽게 액세스할 수 있도록 설정하세요.</a></li></ul>',

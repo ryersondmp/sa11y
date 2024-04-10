@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.1.3
+  * @version 3.1.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -157,6 +157,7 @@ var lv = {
     PANEL_HEADING_MISSING_ONE: 'Trūkst 1. pozīcijas!',
     PANEL_NO_HEADINGS: 'Virsraksti nav atrasti.',
     LINK_EMPTY: 'Dzēst tukšas saites bez teksta.',
+    LINK_EMPTY_LABELLEDBY: 'Saitei ir<code>aria-labelledby</code> ir tās vērtībai jābūt tukšai, vai nu tā nesakrīt ar citu elementu lapā, kam ir atribūts<code>id</code>.',
     LINK_EMPTY_LINK_NO_LABEL: 'Saitei nav atpazīstama teksta, kas būtu redzams ekrānlasītājiem un citām palīgtehnoloģijām. Lai labotu: </li><li>Pievienojiet īsu tekstu, kas apraksta, kur saite ved.</li><li>Ja tā ir <a href="https://a11y-101.com/development/icons-and-links">ikonas saite vai SVG,</a>, tai, visticamāk, trūkst aprakstoša marķējuma.</li><li>Ja domājat, ka šī saite ir kļūda, kas radusies kopēšanas/ielīmēšanas kļūdas dēļ, apsveriet tās dzēšanu.</li></ul>.',
     LINK_LABEL: '<strong>Saites etiķete:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Saites teksts var nebūt pietiekami aprakstošs ārpus konteksta: <strong {r}>%(kļūda)</strong><hr><strong>Padoms!</strong> Saites tekstam vienmēr jābūt skaidram, unikālam un nozīmīgam. Izvairieties no tādiem bieži lietotiem vārdiem kā &quot;klikšķiniet šeit&quot; vai &quot;uzzināt vairāk&quot;;',
@@ -198,6 +199,7 @@ var lv = {
     EMBED_GENERAL_WARNING: 'Nevar pārbaudīt iegulto saturu. Lūdzu, pārliecinieties, ka attēliem ir alt teksts, videoklipiem ir uzraksti, tekstam ir pietiekams kontrasts un interaktīvie komponenti ir <a href="https://webaim.org/techniques/keyboard/">pieejami no tastatūras.</a>.',
     EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> ar neuzmanāmiem elementiem nevajadzētu būt <code>tabindex="-1"</code>. Iegultais saturs nebūs pieejams ar tastatūru.',
     QA_BAD_LINK: 'Atrasta slikta saite. Šķiet, ka saite norāda uz izstrādes vidi. <hr> Šī saite norāda uz: <br> <strong {r}>%(el)</strong>',
+    QA_IN_PAGE_LINK: 'Sapušušā saites uz vienu un to pašu lapu. Saistītās lapas mērķis neatbilst nevienam elementam šajā lapā.',
     QA_BAD_ITALICS: 'Trešraksta un slīpraksta tagiem ir semantiska nozīme, un tos nevajadzētu izmantot, lai izceltu veselas rindkopas. Teksts treknrakstā jāizmanto, lai <strong>uzsvērtu kādu vārdu vai frāzi</strong>. Kursīvs jāizmanto, lai izceltu īpašvārdus (piemēram, grāmatu un rakstu nosaukumus), svešvārdus, citātus. Garie citāti jānoformē kā bloka citāts.',
     QA_PDF: 'Nevar pārbaudīt PDF failu pieejamību. PDF tiek uzskatīti par tīmekļa saturu, un arī tiem jābūt pieejamiem. PDF formātos bieži ir problēmas cilvēkiem, kas izmanto ekrānlasītājus (trūkst strukturālo tagu vai veidlapu lauku marķējumu), un cilvēkiem ar vāju redzi (teksts nepalielinās, kad tiek palielināts). <ul><li>Ja tā ir veidlapa, apsveriet iespēju kā alternatīvu izmantot pieejamu HTML veidlapu.</li><li>Ja tas ir dokuments, apsveriet iespēju to pārveidot par tīmekļa lapu.</li></ul>Ja tas ir dokuments, apsveriet iespēju to pārveidot par tīmekļa vietni.</li></ul>Tādā gadījumā pārbaudiet <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF pieejamību programmā Acrobat DC.</a>.',
     QA_DOCUMENT: 'Nevar pārbaudīt dokumenta pieejamību. Saistītie dokumenti tiek uzskatīti par tīmekļa saturu, un arī tiem jābūt pieejamiem. Lūdzu, pārbaudiet šo dokumentu manuāli. <ul><li>Padariet savu <a href="https://support.google.com/docs/answer/6199477?hl=lv">Google Workspace dokumentu vai prezentāciju pieejamāku.</a></li></li><li>Padariet savu <a href="https://support.microsoft.com/lv/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office dokumentu pieejamāku.</a></li></li></ul>.',

@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.1.3
+  * @version 3.1.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -156,6 +156,7 @@ var pl = {
 
     // Links
     LINK_EMPTY: 'Puste łącze bez żadnego tekstu. Usuń je!',
+    LINK_EMPTY_LABELLEDBY: 'Link ma wartość <code>aria-labelledby</code>, która jest pusta lub nie pasuje do wartości atrybutu <code>id</code> innego elementu na stronie.',
     LINK_EMPTY_LINK_NO_LABEL: 'Łącze nie ma opisowego tekstu, który jest widoczny dla czytników ekranu i innych technologii wspomagających. Aby naprawić:<ul><li>Dodaj zwięzły tekst, który opisuje, dokąd prowadzi łącze.</li><li>Jeśli łączem jest <a href="https://a11y-101.com/development/icons-and-links">ikona lub SVG,</a> prawdopodobnie brakuje mu opisowej etykiety.</li><li>Jeśli uważasz, że to łącze jest błędem spowodowanym błędem kopiuj/wklej, rozważ usunięcie go.</li></ul>',
     LINK_LABEL: '<strong>Etykieta łącza:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Tekst łącza może nie być wystarczająco opisowy w kontekście: <strong {r}>%(error)</strong><hr><strong>Porada!</strong> Tekst łącza powinien być zawsze jasny, unikalny i znaczący. Unikaj typowych słów takich jak &quot;kliknij tutaj&quot; lub &quot;czytaj więcej&quot;.',
@@ -206,6 +207,7 @@ var pl = {
 
     // Quality assurance
     QA_BAD_LINK: 'Podejrzane łącze. Łącze wydaje się wskazywać środowisko programistyczne.<hr>Łącze wskazuje na:<br><strong {r}>%(el)</strong>',
+    QA_IN_PAGE_LINK: 'Uszkodzony link na tej samej stronie. Cel linku nie odpowiada żadnemu elementowi na tej stronie.',
     QA_BAD_ITALICS: 'Znaczniki pogrubienia i kursywy mają znaczenie semantyczne i <strong>nie powinny</strong> być używane do wyróżniania całych akapitów. Pogrubiony tekst powinien być używany w celu <strong>silnego podkreślenia słowa lub frazy</strong>. Kursywa powinna być używana do wyróżnienia nazw własnych (np. tytułów książek i artykułów), wyrazów obcych, cytatów. Długie cytaty powinny być sformatowane jako blockquote.',
     QA_PDF: 'Nie można sprawdzić dostępności pliku PDF. Pliki PDF są uważane za treści internetowe i muszą być również dostępne. Pliki PDF często powodują problemy dla osób korzystających z&nbsp;czytników ekranu (brakujące znaczniki strukturalne lub etykiety pól formularzy) oraz dla osób słabowidzących (tekst nie jest ponownie wyświetlany po powiększeniu).<ul><li>Jeśli jest to formularz, rozważ użycie dostępnego formularza HTML jako alternatywy</li><li>Jeśli jest to dokument, rozważ przekonwertowanie go na stronę internetową.</li></ul> W przeciwnym razie <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">sprawdź plik pod kątem dostępności w programie Acrobat DC.</a>',
     QA_DOCUMENT: 'Nie można sprawdzić dokumentu pod kątem dostępności. Powiązane dokumenty są uważane za treści internetowe i również muszą być dostępne. Sprawdź ten dokument ręcznie. <ul><li>Zwiększ dostępność <a href="https://support.google.com/docs/answer/6199477?hl=pl">dokumentu lub prezentacji Google Workspace.</a></li><li>Zwiększ dostępność <a href="https://support.microsoft.com/pl-pl/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">dokumentów pakietu Office.</a></li></ul>',

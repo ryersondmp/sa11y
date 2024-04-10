@@ -2,6 +2,8 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-new */
 
+/* ENGLISH - No automatic language detection. */
+
 // Version based on package.json
 const version = Sa11yVersion;
 const loadingSpinnerSVG = `
@@ -46,20 +48,19 @@ const loadStyleSheet = () => new Promise((resolve, reject) => {
 });
 
 // Then inject Sa11y's javascript in the body of the page.
-const loadScript = (lang) => new Promise((resolve, reject) => {
+const loadScript = () => new Promise((resolve, reject) => {
   const script = document.createElement('script');
-  script.src = `https://cdn.jsdelivr.net/combine/gh/ryersondmp/sa11y@${version}/dist/js/lang/${lang}.umd.min.js,gh/ryersondmp/sa11y@${version}/dist/js/sa11y.umd.min.js`;
+  script.src = `https://cdn.jsdelivr.net/combine/gh/ryersondmp/sa11y@${version}/dist/js/lang/en.umd.min.js,gh/ryersondmp/sa11y@${version}/dist/js/sa11y.umd.min.js`;
   script.onload = resolve;
   script.onerror = reject;
   document.body.appendChild(script);
 });
 
 // Once scripts are loaded, instantiate Sa11y.
-const onLoadScript = (lang) => {
+const onLoadScript = () => {
   // Instantiate.
   const instantiate = () => {
-    const objectKey = `Sa11yLang${lang.charAt(0).toUpperCase() + lang.slice(1)}`;
-    Sa11y.Lang.addI18n(window[objectKey].strings);
+    Sa11y.Lang.addI18n(Sa11yLangEn.strings);
     new Sa11y.Sa11y({
       autoDetectShadowComponents: true,
       customChecks: false,
@@ -99,33 +100,10 @@ const initialize = () => {
   shadowRoot.appendChild(loadingSpinnerContent);
   document.body.appendChild(loadingSpinner);
 
-  // Get page locale.
-  const getLangResult = document.documentElement.lang || 'en';
-  const splitLang = getLangResult.split('-');
-  let lang = splitLang[0];
-  const country = (splitLang[1]) ? splitLang[1].toLowerCase() : '';
-
-  // Sa11y is available in the following languages.
-  const supportedLang = [
-    'bg', 'cs', 'da', 'de', 'el', 'en', 'es', 'et', 'fi', 'fr', 'hu', 'id', 'it', 'ja', 'ko',
-    'lt', 'lv', 'nb', 'nl', 'pl', 'pt', 'ro', 'sl', 'sk', 'sv', 'tr', 'uk', 'ua', 'zh',
-  ];
-
-  // Check if Sa11y supports language.
-  if (!supportedLang.includes(lang)) {
-    lang = 'en';
-  } else if (lang === 'pt') {
-    lang = country === 'br' ? 'ptBR' : 'ptPT';
-  } else if (lang === 'uk') {
-    lang = 'ua';
-  } else if (lang === 'en') {
-    lang = country === 'us' ? 'enUS' : 'en';
-  }
-
   // Load scripts & then instantiate Sa11y.
   loadStyleSheet()
-    .then(() => loadScript(lang))
-    .then(() => onLoadScript(lang))
+    .then(() => loadScript())
+    .then(() => onLoadScript())
     .catch((error) => new Error('Error loading Sa11y:', error));
 };
 

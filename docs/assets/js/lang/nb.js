@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.1.3
+  * @version 3.1.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -160,6 +160,7 @@ var nb = {
     PANEL_HEADING_MISSING_ONE: 'Manglende overskrift 1!',
     PANEL_NO_HEADINGS: 'Ingen overskrifter funnet.',
     LINK_EMPTY: 'Fjern tomme lenker uten tekst.',
+    LINK_EMPTY_LABELLEDBY: 'Lenken har en verdi for <code>aria-labelledby</code>, som enten er tom eller ikke samsvarer med verdien av attributtet <code>id</code> til et annet element på siden.',
     LINK_EMPTY_LINK_NO_LABEL: 'Lenken har ikke tydelig tekst som er synlig for skjermlesere og andre hjelpemidler. Slik løser du problemet: <ul><li>Legg til en kortfattet tekst som beskriver hvor lenken fører deg.</li><li>Hvis det er en <a href="https://a11y-101.com/development/icons-and-links">ikonlenke eller SVG,</a> mangler den sannsynligvis en beskrivende etikett.</li><li>Hvis du tror at denne lenken er en feil på grunn av en copy/paste-feil, bør du vurdere å slette den.</li></ul>.',
     LINK_LABEL: '<strong>Lenketikett:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Lenketeksten er kanskje ikke beskrivende nok uten sammenheng: <strong {r}>%(error)</strong><hr><strong>Tips!</strong> Lenketekst bør alltid være tydelig, unik og meningsfull. Unngå vanlige ord som "klikk her" eller "les mer"',
@@ -201,6 +202,7 @@ var nb = {
     EMBED_GENERAL_WARNING: 'Kunne ikke sjekke innebygd innhold. Kontroller at bilder har alt-tekst, videoer har bildetekster, tekst har tilstrekkelig kontrast og interaktive komponenter er <a href="https://webaim.org/techniques/keyboard/">tilgjengelige via tastaturet.</a>.',
     EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> med ikke-fokuserbare elementer bør ikke ha <code>tabindex="-1"</code>. Den innebygde innholdet vil ikke være tilgjengelig med tastaturet.',
     QA_BAD_LINK: 'Feil lenke funnet. Lenken ser ut til å peke til et utviklingsmiljø. <hr> Denne lenken peker til: <br> <strong {r}>%(el)</strong>',
+    QA_IN_PAGE_LINK: 'Ødelagt samme-sides lenke. Lenkemålet samsvarer ikke med noen element på denne siden.',
     QA_BAD_ITALICS: 'Fet og kursiv har en semantisk betydning, og bør <strong>ikke</strong> brukes til å fremheve hele avsnitt. Fet skrift skal brukes til å fremheve et ord eller en frase. Kursiv skal brukes til å fremheve egennavn (f.eks. bok- og artikkeltitler), fremmedord og sitater. Lange sitater bør formateres som blokksitater.',
     QA_PDF: 'Kan ikke sjekke om PDF-filer er tilgjengelige. PDF-filer regnes som nettinnhold og må også gjøres tilgjengelige. PDF-filer inneholder ofte problemer for personer som bruker skjermlesere (manglende strukturelle tagger eller manglende etiketter for skjemafelt) og personer med nedsatt syn (teksten flyter ikke ut igjen når den forstørres). <ul><li>Hvis dette er et skjema, bør du vurdere å bruke et tilgjengelig HTML-skjema som et alternativ.</li><li>Hvis dette er et dokument, bør du vurdere å konvertere det til en nettside.</li></ul> Ellers kan du sjekke om <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF-en er tilgjengelig i Acrobat DC.</a>.',
     QA_DOCUMENT: 'Kan ikke sjekke dokumentets tilgjengelighet. Lenkede dokumenter regnes som nettinnhold og må også gjøres tilgjengelige. Vennligst gå gjennom dette dokumentet manuelt. <ul><li>Gjør <a href="https://support.google.com/docs/answer/6199477?hl=nb">Google Workspace-dokumentet eller -presentasjonen mer tilgjengelig.</a></li><li>Gjør <a href="https://support.microsoft.com/nb/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office-dokumenter mer tilgjengelige.</a></li></ul>',

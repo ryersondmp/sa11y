@@ -4,22 +4,19 @@ import { store, debounce } from '../utils/utils';
 /*  Feature to detect if URL changed for bookmarklet/SPAs.  */
 /* ******************************************************** */
 export default function detectPageChanges(detectSPArouting, checkAll, resetAll) {
-  // Feature to detect page changes (e.g. SPAs).
   if (detectSPArouting === true) {
-    let url = window.location.pathname;
-
+    // Current URL.
+    let url = window.location.href;
+    // Debounce function to re-check page.
     const checkURL = debounce(async () => {
-      if (url !== window.location.pathname) {
+      if (url !== window.location.href) {
         if (store.getItem('sa11y-remember-panel') === 'Closed' || !store.getItem('sa11y-remember-panel')) {
           checkAll();
         } else {
-          // Async scan while panel is open.
           resetAll(false);
           await checkAll();
         }
-
-        // Performance: New URL becomes current.
-        url = window.location.pathname;
+        url = window.location.href; // Update current URL
       }
     }, 250);
     window.addEventListener('mousemove', checkURL);

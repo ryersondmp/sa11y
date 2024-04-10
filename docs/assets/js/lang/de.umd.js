@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.1.3
+  * @version 3.1.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -164,6 +164,7 @@
 
       // Links
       LINK_EMPTY: 'Entferne leere Links ohne Text.',
+      LINK_EMPTY_LABELLEDBY: 'Der Link hat einen Wert für <code>aria-labelledby</code>, der leer ist oder nicht mit dem Wert des <code>id</code>-Attributs eines anderen Elements auf der Seite übereinstimmt.',
       LINK_EMPTY_LINK_NO_LABEL: 'Der Link hat keinen erkennbaren Text, der für Bildschirmleser und andere unterstützenden Technologien sichtbar ist. Zu beheben: <ul><li>Füge einen kurzen Text hinzu, der beschreibt, wohin der Link führt.</li><li>Wenn es ein <a href="https://a11y-101.com/development/icons-and-links">Icon Link oder ein SVG ist,</a> ist es sehr wahrscheinlich, dass ein beschreibendes Label fehlt.</li><li>Wenn Du glaubst, dass dieser Link aufgrund eines Kopier-/Einfügefehlers fehlerhaft ist, solltest Du ihn löschen.</li></ul>',
       LINK_LABEL: '<strong>Link Label:</strong> %(sanitizedText)',
       LINK_STOPWORD: 'Der Linktext ist ohne Kontext möglicherweise nicht aussagekräftig genug: <strong {r}>%(error)</strong><hr><strong>Tipp!</strong>Der Linktext sollte immer klar, eindeutig und aussagekräftig sein. Vermeide gängige Wörter wie &quot;hier klicken&quot; oder &quot;mehr erfahren&quot;',
@@ -215,6 +216,7 @@
 
       // Quality assurance
       QA_BAD_LINK: 'Ungültiger Link gefunden. Link scheint auf eine Entwicklungsumgebung zu verweisen. <hr> Dieser Link verweist auf: <br> <strong {r}>%(el)</strong>',
+      QA_IN_PAGE_LINK: 'Defekter Verweis innerhalb der Seite. Das Ziel des Verweises stimmt mit keinem Element auf dieser Seite überein.',
       QA_BAD_ITALICS: 'Fett- und Kursiv-Tags haben semantische Bedeutung und sollten <strong>nicht</strong> verwendet werden, um ganze Absätze hervorzuheben. Fettgedruckter Text sollte verwendet werden, um ein Wort oder einen Ausdruck stark <strong>zu betonen</strong>. Kursiv sollte verwendet werden, um Eigennamen (z. B. Buch- und Artikeltitel), Fremdwörter, Zitate hervorzuheben. Lange Zitate sollten als Blockquote formatiert werden.',
       QA_PDF: 'PDFs können nicht auf Barrierefreiheit geprüft werden. PDFs gelten als Webinhalte und müssen ebenfalls zugänglich gemacht werden. PDFs enthalten oft Probleme für Personen, die Screenreader verwenden (fehlende Struktur-Tags oder fehlende Beschriftungen von Formularfeldern) und Personen mit Sehbehinderung (Text umfließt beim Vergrößern nicht ). <ul><li>Wenn es sich um ein Formular handelt, solltest Du alternativ ein barrierefreies HTML-Formular verwenden.</li><li>Wenn es sich um ein Dokument handelt, solltest Du es in eine Webseite umwandeln.</li></ul > Andernfalls überprüfe bitte <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF für Barrierefreiheit in Acrobat DC.</a>',
       QA_DOCUMENT: 'Das Dokument kann nicht auf Zugänglichkeit geprüft werden. Verknüpfte Dokumente gelten als Webinhalte und müssen ebenfalls zugänglich gemacht werden. Bitte überprüfen Sie dieses Dokument manuell. <ul><li>Machen Sie Ihr <a href="https://support.google.com/docs/answer/6199477?hl=de">Google Workspace-Dokument oder Ihre Präsentation besser zugänglich.</a></li><li>Machen Sie Ihre <a href="https://support.microsoft.com/de-de/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office-Dokumente besser zugänglich.</a></li></ul>',

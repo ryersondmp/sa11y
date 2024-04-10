@@ -66,6 +66,7 @@ const defaultOptions = {
   underlinedTextQA: true,
   pageTitleQA: true,
   subscriptQA: true,
+  inPageLinkQA: true,
 
   // Tables
   tablesQA: true,

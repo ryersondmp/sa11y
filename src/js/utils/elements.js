@@ -3,7 +3,7 @@ import find from './find';
 
 const Elements = (function myElements() {
   const Found = {};
-  function initializeElements(linksToFlag) {
+  function initializeElements(option) {
     // Main selectors
     Found.Images = find(
       'img',
@@ -91,12 +91,6 @@ const Elements = (function myElements() {
       Constants.Exclusions.Container,
     );
 
-    Found.Ids = find(
-      '[id]',
-      'document',
-      Constants.Exclusions.Container,
-    );
-
     Found.Underlines = find(
       'u',
       'root',
@@ -111,8 +105,8 @@ const Elements = (function myElements() {
 
     Found.Language = Constants.Global.html.getAttribute('lang');
 
-    Found.CustomErrorLinks = linksToFlag ? find(
-      linksToFlag,
+    Found.CustomErrorLinks = option.linksToFlag ? find(
+      option.linksToFlag,
       'root',
       Constants.Exclusions.Container,
     ) : [];

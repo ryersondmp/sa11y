@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.1.3
+  * @version 3.1.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -149,6 +149,7 @@
 
       // Links
       LINK_EMPTY: 'Ta bort tomma länkar utan text.',
+      LINK_EMPTY_LABELLEDBY: 'Länken har ett värde för <code>aria-labelledby</code> som antingen är tomt eller inte matchar värdet för ett annat elements attribut <code>id</code> på sidan.',
       LINK_EMPTY_LINK_NO_LABEL: 'Länken har inte urskiljbar text som är synlig för skärmläsare och andra hjälpmedel. För att fixa: <ul><li>Lägg till lite kortfattad text som beskriver vart länken tar dig.</li><li>Om det är en <a href="https://a11y-101.com/development/icons -and-links">ikonlänk eller SVG,</a> saknar den troligen en beskrivande etikett.</li><li>Om du tror att den här länken är ett fel på grund av ett kopierings-/klistra-fel, överväg att ta bort den.</li></ul>',
       LINK_LABEL: '<strong>Länketikett:</strong> %(sanitizedText)',
       LINK_STOPWORD: 'Länktexten kanske inte är tillräckligt beskrivande ur sitt sammanhang: <strong {r}>%(error)</strong><hr><strong>Tips!</strong> Länktexten ska alltid vara tydlig, unik och meningsfull. Undvik vanliga ord som &quot;klicka här&quot; eller &quot;läs mer&quot;',
@@ -200,6 +201,7 @@
 
       // Quality assurance
       QA_BAD_LINK: 'Dålig länk hittades. Länk verkar peka till en utvecklingsmiljö. <hr> Den här länken pekar på: <br> <strong {r}>%(el)</strong>',
+      QA_IN_PAGE_LINK: 'Bruten samma-sideslänk. Länkmålet matchar inte något element på denna sida.',
       QA_BAD_ITALICS: 'Feta och kursiva HTML-taggar har semantisk betydelse och bör <strong>inte</strong> användas för att markera hela stycken. Fetstil text bör användas för att ge ett ord eller en fras stark <strong>betoning</strong>. Kursiv stil ska användas för att markera egennamn (d.v.s. bok- och artikeltitlar), främmande ord, citat. Långa citat bör formateras som ett blockcitat.',
       QA_PDF: 'Det går inte att kontrollera PDF-filer för tillgänglighet. PDF-filer betraktas som webbinnehåll och måste också göras tillgängliga. PDF-filer är ofta problematiska för personer som använder skärmläsare (till exempel: saknade strukturella taggar eller saknade formulärfältetiketter) och personer som har nedsatt syn (texten anpassar sig inte när den förstoras). <ul><li>Om detta är ett formulär, överväg att använda ett tillgängligt HTML-formulär som ett alternativ.</li><li>Om detta är ett dokument, överväg att konvertera det till en webbsida.</li></ul> Annars kontrollerar du <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF för tillgänglighet i Acrobat DC.</a>',
       QA_DOCUMENT: 'Det gick inte att kontrollera dokumentets tillgänglighet. Länkade dokument betraktas som webbinnehåll och måste också göras tillgängliga. Granska dokumentet manuellt. <ul><li>Gör ditt <a href="https://support.google.com/docs/answer/6199477?hl=sv">Google Workspace-dokument eller din presentation mer tillgänglig.</a></li><li>Gör dina <a href="https://support.microsoft.com/sv-se/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office-dokument mer tillgängliga.</a></li></ul>',

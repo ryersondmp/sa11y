@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.1.3
+  * @version 3.1.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -155,6 +155,7 @@ var da = {
     PANEL_HEADING_MISSING_ONE: 'Manglende overskrift 1!',
     PANEL_NO_HEADINGS: 'Ingen overskrifter fundet.',
     LINK_EMPTY: 'Fjern tomme links uden tekst.',
+    LINK_EMPTY_LABELLEDBY: 'Linket har en værdi for <code>aria-labelledby</code>, der enten er tom eller ikke matcher værdien af attributten <code>id</code> for et andet element på siden.',
     LINK_EMPTY_LINK_NO_LABEL: 'Linket har ikke tydelig tekst, der er synlig for skærmlæsere og andre hjælpemidler. Sådan rettes det: <ul><li> Tilføj en kort tekst, der beskriver, hvor linket fører dig hen.</li><li> Hvis det er et <a href="https://a11y-101.com/development/icons-and-links">ikonlink eller SVG,</a> mangler det sandsynligvis en beskrivende etiket.</li><li> Hvis du tror, at dette link er en fejl på grund af en copy/paste-fejl, kan du overveje at slette det.</li></ul>',
     LINK_LABEL: '<strong>Link-etiket:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Linkteksten er måske ikke beskrivende nok uden for kontekst: <strong {r}>%(error)</strong><hr><strong>Tip!</strong> Linktekst skal altid være tydelig, unik og meningsfuld. Undgå almindelige ord som &quot;klik her&quot; eller &quot;lær mere&quot;',
@@ -196,6 +197,7 @@ var da = {
     EMBED_GENERAL_WARNING: 'Kan ikke kontrollere indlejret indhold. Sørg for, at billeder har alt-tekst, videoer har undertekster, tekst har tilstrækkelig kontrast, og interaktive komponenter er <a href="https://webaim.org/techniques/keyboard/">tilgængelige via tastaturet.</a>',
     EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> med ikke-fokuserbare elementer bør ikke have <code>tabindex="-1"</code>. Det indlejrede indhold vil ikke være tilgængeligt med tastaturet.',
     QA_BAD_LINK: 'Dårligt link fundet. Linket ser ud til at pege på et udviklingsmiljø. <hr> Dette link peger på: <br> <strong {r}>%(el)</strong>',
+    QA_IN_PAGE_LINK: 'Brudt samme-sides link. Linkmålet stemmer ikke overens med nogen element på denne side.',
     QA_BAD_ITALICS: 'Fede og kursive tags har semantisk betydning og bør <strong>ikke</strong> bruges til at fremhæve hele afsnit. Fed tekst skal bruges til at give stærk <strong>fremhævelse</strong> af et ord eller en sætning. Kursiv bør bruges til at fremhæve egennavne (f.eks. bog- og artikeltitler), fremmedord og citater. Lange citater skal formateres som blokcitater.',
     QA_PDF: 'Kan ikke tjekke PDF\'er for tilgængelighed. PDF\'er betragtes som webindhold og skal også gøres tilgængelige. PDF\'er indeholder ofte problemer for folk, der bruger skærmlæsere (manglende strukturelle tags eller manglende formularfeltetiketter) og folk, der ser dårligt (teksten flyder ikke ud igen, når den forstørres). <ul><li>Hvis dette er en formular, kan du overveje at bruge en tilgængelig HTML-formular som alternativ.</li><li>Hvis dette er et dokument, kan du overveje at konvertere det til en webside.</li></ul> Ellers bedes du tjekke <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF for tilgængelighed i Acrobat DC.</a>',
     QA_DOCUMENT: 'Kan ikke tjekke dokumentet for tilgængelighed. Linkede dokumenter betragtes som webindhold og skal også gøres tilgængelige. Gennemgå venligst dette dokument manuelt. <ul><li>Gør dit <a href="https://support.google.com/docs/answer/6199477?hl=da">Google Workspace-dokument eller din præsentation mere tilgængelig.</a></li><li>Gør dine <a href="https://support.microsoft.com/da/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office-dokumenter mere tilgængelige.</a></li></ul>',

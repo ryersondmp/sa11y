@@ -1,24 +1,32 @@
 import { test, expect } from '@playwright/test';
+
 test.describe.configure({ mode: 'serial' });
 
 /**
  * Check contents of tooltip.
- * @param {Page} page Page provides methods to interact with a single tab.
+ * @param {page} page Page provides methods to interact with a single tab.
  * @param {string} elementId The ID on the test page.
  * @param {string} expectedText The expected tooltip message.
  * @returns {Promise<boolean>} True if the tooltip text matches, false otherwise.
  */
 async function checkTooltip(page, elementId, expectedText) {
-  return await page.evaluate(({ id, text }) => {
+  const tooltipMatches = await page.evaluate(({ id, text }) => {
     const element = document.getElementById(id);
     if (!element) return false;
-    const annotation = element.querySelector('sa11y-annotation');
-    if (!annotation) return false;
-    const annotationShadow = annotation.shadowRoot;
-    if (!annotationShadow) return false;
-    const message = annotationShadow.querySelector('button').getAttribute('data-tippy-content');
-    return message.includes(text);
-  }, { id: elementId, text: expectedText }); // Wrap the arguments in an object
+    const annotations = element.querySelectorAll('sa11y-annotation');
+    let foundMatch = false;
+    annotations.forEach((annotation) => {
+      const annotationShadow = annotation.shadowRoot;
+      if (annotationShadow) {
+        const message = annotationShadow.querySelector('button')?.getAttribute('data-tippy-content');
+        if (message && message.includes(text)) {
+          foundMatch = true;
+        }
+      }
+    });
+    return foundMatch;
+  }, { id: elementId, text: expectedText });
+  return tooltipMatches;
 }
 
 /**
@@ -39,7 +47,6 @@ async function noAnnotation(page, elementId) {
 /* Unit test suite. */
 let page;
 test.describe('Sa11y Unit Tests', () => {
-
   test.beforeAll(async ({ browser }) => {
     page = await browser.newPage();
   });
@@ -48,6 +55,7 @@ test.describe('Sa11y Unit Tests', () => {
   test.afterAll(async () => {
     await page.evaluate(() => {
       localStorage.clear();
+      sessionStorage.clear();
     });
     await page.close();
   });
@@ -151,7 +159,7 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Empty heading', async () => {
     const issue = await checkTooltip(
-      page, 'error-empty-heading', 'Empty heading found!',
+      page, 'error-empty-heading', 'Empty heading found',
     );
     expect(issue).toBe(true);
   });
@@ -445,14 +453,14 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Linked image should ignore text within link', async () => {
     const issue = await checkTooltip(
-      page, 'warning-image-link-should-ignore-text-within-link', 'Image link contains alt text. Does the alt text describe where the link takes you?',
+      page, 'warning-image-link-should-ignore-text-within-link', 'Image link contains alt',
     );
     expect(issue).toBe(true);
   });
 
   test('Linked image should ignore text within link via string match exclusion prop ', async () => {
     const issue = await checkTooltip(
-      page, 'warning-image-link-should-ignore-text-within-link-string-match', 'Image link contains alt text. Does the alt text describe where the link takes you?',
+      page, 'warning-image-link-should-ignore-text-within-link-string-match', 'Image link contains alt',
     );
     expect(issue).toBe(true);
   });
@@ -531,6 +539,8 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue3).toBe(true);
     const issue4 = await checkTooltip(page, 'error-empty-4', 'Remove empty links');
     expect(issue4).toBe(true);
+    const issue5 = await checkTooltip(page, 'error-empty-5', 'Remove empty links');
+    expect(issue5).toBe(true);
   });
 
   test('Empty icon links', async () => {
@@ -785,11 +795,63 @@ test.describe('Sa11y Unit Tests', () => {
     });
   });
 
-  test('Duplicate IDs', async () => {
+  test('Link with empty href or <a href>', async () => {
     const issue = await checkTooltip(
-      page, 'error-duplicate-id', 'Duplicate ID',
+      page, 'error-broken-same-page-empty-href', 'Broken same-page link',
     );
     expect(issue).toBe(true);
+  });
+
+  test('Link used as button without roles (a href=#)', async () => {
+    const issue = await checkTooltip(
+      page, 'error-broken-same-page', 'Broken same-page link',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Link used as button with proper role', async () => {
+    const issue = await noAnnotation(
+      page, 'nothing-same-page-with-role',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Elements with duplicate IDs but not referenced by anything', async () => {
+    const issue = await noAnnotation(
+      page, 'nothing-duplicate-id',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('In-page link referencing duplicate IDs', async () => {
+    const issue = await checkTooltip(
+      page, 'error-broken-same-page-duplicate-id', 'Duplicate ID',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Interactive element using aria-labelledby referencing duplicate IDs', async () => {
+    const issue = await checkTooltip(
+      page, 'error-same-aria-labelledby-duplicate-ids', 'Duplicate ID',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Two buttons with same id', async () => {
+    const issue = await noAnnotation(
+      page, 'nothing-duplicate-button-ids',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Duplicate ID within the Shadow DOM', async () => {
+    const shadow = await page.evaluate(async () => {
+      const shadowTest = document.querySelector('shadow-test-duplicate-id').shadowRoot;
+      const annotation = shadowTest.querySelector('sa11y-annotation').shadowRoot;
+      const message = annotation.querySelector('button').getAttribute('data-tippy-content');
+      return message.includes('Duplicate ID');
+    });
+    expect(shadow).toBe(true);
   });
 
   test('Subscript and superscript paragraphs', async () => {

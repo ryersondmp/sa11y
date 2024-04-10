@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.1.3
+  * @version 3.1.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -155,6 +155,7 @@ var tr = {
     PANEL_HEADING_MISSING_ONE: 'Başlık 1 eksik!',
     PANEL_NO_HEADINGS: 'Başlık bulunamadı.',
     LINK_EMPTY: 'Herhangi bir metin içermeyen boş bağlantıları kaldırın.',
+    LINK_EMPTY_LABELLEDBY: 'Bağlantının <code>aria-labelledby</code> değeri boş veya sayfadaki başka bir öğenin <code>id</code> özniteliği değeriyle eşleşmiyor.',
     LINK_EMPTY_LINK_NO_LABEL: 'Bağlantı, ekran okuyucular ve diğer yardımcı teknolojiler tarafından görülebilen ayırt edilebilir bir metne sahip değil. Düzeltmek için: <ul><li>Bağlantının sizi nereye götürdüğünü açıklayan kısa bir metin ekleyin.</li><li>Bu bir <a href="https://a11y-101.com/development/icons-and-links">ikon bağlantısı veya SVG,</a> ise muhtemelen açıklayıcı bir etiket eksiktir.</li><li>Bu bağlantının bir kopyala/yapıştır hatasından kaynaklanan bir hata olduğunu düşünüyorsanız, silmeyi düşünün.</li></ul>',
     LINK_LABEL: '<strong>Link etiketi:</strong> %(sanitizedText)',
     LINK_STOPWORD: 'Bağlantı metni bağlam dışında yeterince açıklayıcı olmayabilir: <strong {r}>%(error)</strong><hr><strong>İpucu!</strong> Bağlantı metni her zaman açık, benzersiz ve anlamlı olmalıdır. Buraya tıklayın&quot; veya &quot;daha fazla bilgi edinin&quot gibi yaygın kelimelerden kaçının;',
@@ -196,6 +197,7 @@ var tr = {
     EMBED_GENERAL_WARNING: 'Gömülü içerik kontrol edilemiyor. Lütfen resimlerin alt metni, videoların alt yazısı, metinlerin yeterli kontrastı ve etkileşimli bileşenlerin <a href="https://webaim.org/techniques/keyboard/">klavye ile erişilebilir olduğundan emin olun.</a>',
     EMBED_UNFOCUSABLE: 'Odaklanılamayan öğeler içeren <code>&lt;iframe&gt;</code>, <code>tabindex="-1"</code> olmamalıdır. Gömülü içerik klavye ile erişilebilir olmayacak.',
     QA_BAD_LINK: 'Kötü bağlantı bulundu. Bağlantı bir geliştirme ortamına işaret ediyor gibi görünüyor. <hr> Bu bağlantı şuraya işaret ediyor: <br> <strong {r}>%(el)</strong>',
+    QA_IN_PAGE_LINK: 'Kırık aynı sayfa bağlantısı. Bağlantı hedefi, bu sayfadaki herhangi bir öğeyle eşleşmiyor.',
     QA_BAD_ITALICS: 'Kalın ve italik etiketlerinin anlamsal bir anlamı vardır ve paragrafların tamamını vurgulamak için <strong>kullanılmamalıdır</strong>. Kalınlaştırılmış metin, bir kelime veya cümleye güçlü bir <strong>vurgu</strong> yapmak için kullanılmalıdır. İtalik yazılar özel isimleri (kitap ve makale başlıkları gibi), yabancı kelimeleri ve alıntıları vurgulamak için kullanılmalıdır. Uzun alıntılar blok alıntı olarak biçimlendirilmelidir.',
     QA_PDF: "PDF'ler erişilebilirlik açısından kontrol edilemiyor. PDF'ler web içeriği olarak kabul edilir ve erişilebilir hale getirilmelidir. PDF'ler genellikle ekran okuyucu kullanan kişiler (eksik yapısal etiketler veya eksik form alanı etiketleri) ve az gören kişiler (metin büyütüldüğünde yeniden akmıyor) için sorunlar içerir. <ul><li>Bu bir form ise, alternatif olarak erişilebilir bir HTML formu kullanmayı düşünün.</li><li>Bu bir belge ise, bir web sayfasına dönüştürmeyi düşünün.</li></ul>Aksi takdirde, lütfen Acrobat DC'de erişilebilirlik için <a href=\"https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html\">PDF'yi kontrol edin.</a>",
     QA_DOCUMENT: 'Belge erişilebilirlik açısından kontrol edilemiyor. Bağlantılı belgeler web içeriği olarak kabul edilir ve erişilebilir hale getirilmelidir. Lütfen bu belgeyi manuel olarak inceleyin. <ul><li><a href="https://support.google.com/docs/answer/6199477?hl=tr">Google Workspace belgenizi veya sunumunuzu daha erişilebilir hale getirin.</a></li><li><a href="https://support.microsoft.com/tr/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Ofis belgelerinizi daha erişilebilir hale getirin.</a></li></ul>',

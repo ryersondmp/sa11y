@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.1.3
+  * @version 3.1.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -161,6 +161,7 @@
       PANEL_HEADING_MISSING_ONE: 'Chybí nadpis 1!',
       PANEL_NO_HEADINGS: 'Nebyly nalezeny žádné záhlaví.',
       LINK_EMPTY: 'Odstranění prázdných odkazů bez textu.',
+      LINK_EMPTY_LABELLEDBY: 'Odkaz má hodnotu <code>aria-labelledby</code>, která je prázdná nebo neodpovídá hodnotě atributu <code>id</code> jiného prvku na stránce.',
       LINK_EMPTY_LINK_NO_LABEL: 'Odkaz nemá čitelný text, který by byl viditelný pro čtečky obrazovky a další asistenční technologie. Oprava: </li><li>Přidejte stručný text, který popisuje, kam odkaz vede.</li><li>Jestliže se jedná o <a href="https://a11y-101.com/development/icons-and-links">odkaz na ikonu nebo SVG,</a> pravděpodobně chybí popisný štítek.</li><li>Pokud si myslíte, že tento odkaz je chybou způsobenou chybou kopírování/vkládání, zvažte jeho odstranění.</li></ul>.',
       LINK_LABEL: '<strong>Značka odkazu:</strong> %(sanitizedText)',
       LINK_STOPWORD: 'Text odkazu nemusí být z kontextu dostatečně popisný: <strong {r}>%(error)</strong><hr><strong>Tip!</strong> Text odkazu by měl být vždy jasný, jedinečný a smysluplný. Vyhněte se běžným slovům jako &quot;klikněte zde&quot; nebo &quot;dozvědět se více&quot;',
@@ -202,6 +203,7 @@
       EMBED_GENERAL_WARNING: 'Nelze zkontrolovat vložený obsah. Ujistěte se prosím, že obrázky mají alt text, videa mají titulky, text je dostatečně kontrastní a interaktivní komponenty jsou <a href="https://webaim.org/techniques/keyboard/">přístupné z klávesnice.</a>.',
       EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> s nezaměřitelnými prvky by nemělo mít <code>tabindex="-1"</code>. Vložený obsah nebude přístupný klávesnicí.',
       QA_BAD_LINK: 'Nalezen špatný odkaz. Zdá se, že odkaz vede na vývojové prostředí. <hr> Tento odkaz odkazuje na: <br> <strong {r}>%(el)</strong>',
+      QA_IN_PAGE_LINK: 'Porušený odkaz na stejnou stránku. Cíl odkazu neodpovídá žádnému prvku na této stránce.',
       QA_BAD_ITALICS: 'Tučné písmo a kurzíva mají sémantický význam a neměly by se <strong>používat</strong> ke zvýraznění celých odstavců. Tučný text by měl být používán k výraznému <strong>zdůraznění</strong> slova nebo slovního spojení. Kurzíva by se měla používat ke zvýraznění vlastních jmen (tj. názvů knih a článků), cizích slov, citátů. Dlouhé citace by měly být formátovány jako blokové citace.',
       QA_PDF: 'Nelze zkontrolovat přístupnost souborů PDF. Soubory PDF jsou považovány za webový obsah a musí být také zpřístupněny. Soubory PDF často obsahují problémy pro lidi, kteří používají čtečky obrazovky (chybějící strukturální značky nebo chybějící popisky formulářových polí), a pro lidi se slabým zrakem (text se při zvětšení nezvětšuje). <ul><li>Jestliže se jedná o formulář, zvažte jako alternativu použití přístupného formuláře HTML.</li><li>Jestliže se jedná o dokument, zvažte jeho převedení na webovou stránku.</li></ul>V opačném případě zkontrolujte <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF pro přístupnost v Acrobatu DC.</a>.',
       QA_DOCUMENT: 'Nelze zkontrolovat přístupnost dokumentu. Propojené dokumenty jsou považovány za webový obsah a musí být rovněž zpřístupněny. Zkontrolujte prosím tento dokument ručně. <ul><li>Zpřístupněte svůj <a href="https://support.google.com/docs/answer/6199477?hl=en">dokument nebo prezentaci v prostředí Google Workspace.</a></li><li>Zpřístupněte své <a href="https://support.microsoft.com/en-us/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">dokumenty Office.</a></li></ul>.',
