@@ -64,7 +64,7 @@ export default {
 
     // Alternative text stop words
     SUSPICIOUS_ALT_STOPWORDS: ['image', 'graphic', 'picture', 'photo'],
-    PLACEHOLDER_ALT_STOPWORDS: ['alt', 'image', 'photo', 'decorative', 'placeholder', 'placeholder image', 'spacer'],
+    PLACEHOLDER_ALT_STOPWORDS: ['alt', 'chart', 'decorative', 'image', 'graphic', 'photo', 'placeholder', 'placeholder image', 'spacer', 'tbd', 'todo', 'to do'],
     PARTIAL_ALT_STOPWORDS: [
       'click',
       'click here',
