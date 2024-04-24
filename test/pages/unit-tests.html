@@ -351,6 +351,38 @@
       </a>
     </div>
 
+    <h3>Image's alt supplied via <code>aria-label</code></h3>
+    <div id="pass-alt-via-aria-label">
+      <img src="./assets/placeholder.svg" aria-label="A big square" width="100" />
+    </div>
+
+    <h3>Image with empty <code>aria-label=""</code></h3>
+    <div id="error-image-empty-aria-label">
+      <img src="./assets/placeholder.svg" aria-label="" width="100" />
+    </div>
+
+    <h3>Image with empty space for <code>aria-label=" "</code></h3>
+    <div id="error-image-empty-space-aria-label">
+      <img src="./assets/placeholder.svg" aria-label=" " width="100" />
+    </div>
+
+    <h3>Image with invalid <code>aria-labelledby</code></h3>
+    <div id="error-image-invalid-aria-labelledby">
+      <img src="./assets/placeholder.svg" aria-labelledby="square" width="100" />
+    </div>
+
+    <h3>Image with valid <code>aria-labelledby</code></h3>
+    <div id="pass-image-valid-aria-labelledby">
+      <img src="./assets/placeholder.svg" aria-labelledby="apples" width="100" />
+    </div>
+
+    <h3>Linked image with valid <code>aria-label</code></h3>
+    <div id="warning-image-link-valid-aria-label">
+      <a href="https://www.example.com?=15sdas">
+        <img src="./assets/placeholder.svg" aria-label="Off to example.com" width="100" />
+      </a>
+    </div>
+
     <hr>
 
     <h2>Links</h2>

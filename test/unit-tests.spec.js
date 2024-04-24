@@ -493,6 +493,48 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
+  test('Image has alt supplied via aria-label', async () => {
+    const issue = await checkTooltip(
+      page, 'pass-alt-via-aria-label', '<strong>Alt text:</strong> A big square',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Image with empty aria-label', async () => {
+    const issue = await checkTooltip(
+      page, 'error-image-empty-aria-label', 'Missing alt text!',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Image with empty space for aria-label', async () => {
+    const issue = await checkTooltip(
+      page, 'error-image-empty-space-aria-label', 'Missing alt text!',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Image with invalid aria-labelledby as alt', async () => {
+    const issue = await checkTooltip(
+      page, 'error-image-invalid-aria-labelledby', 'Missing alt text!',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Image with valid aria-labelledby as alt', async () => {
+    const issue = await checkTooltip(
+      page, 'pass-image-valid-aria-labelledby', '<strong>Alt text:</strong> about apples',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Linked image with valid aria-label as alt', async () => {
+    const issue = await checkTooltip(
+      page, 'warning-image-link-valid-aria-label', 'Image link contains alt text. Does the alt text describe',
+    );
+    expect(issue).toBe(true);
+  });
+
   /* **************** */
   /*  Links           */
   /* **************** */

@@ -15,6 +15,21 @@
   </header>
   <main>
     <h2>A blank slate for testing.</h2>
+
+    <h3><code>aria-label</code></h3>
+    <img src="./assets/placeholder.svg" aria-label="A big square" width="100" />
+
+    <h3>Empty <code>aria-label=""</code></h3>
+    <img src="./assets/placeholder.svg" aria-label="" width="100" />
+
+    <h3>Empty <code>aria-label=" "</code></h3>
+    <img src="./assets/placeholder.svg" aria-label=" " width="100" />
+
+    <h3><code>aria-labelledby</code></h3>
+    <img src="./assets/placeholder.svg" aria-labelledby="square" width="100" />
+
+    <hr>
+
     <p>
       Empty href: <a href style="padding:20px;background:blue;"></a>
     </p>
@@ -23,6 +38,16 @@
     <p><a href="#asdsd"></a></p>
 
     <hr>
+
+    <a href="#%E7%94%B5%E5%AD%90%E4%B9%A6%C2%A0"><strong>电子书&nbsp;</strong></a>
+
+
+    <div id="warning-list-2">
+      <p>+ Bananas</p>
+      <p>+ Pears</p>
+      <p>+ Apples</p>
+    </div>
+    <p dir="ltr" id="电子书&nbsp;">电子书&nbsp;</p>
 
     <table cellspacing="0" cellpadding="0" border="1"
       summary="Table has 8 columns and 6 rows. Read each column from top to bottom for sleep diary details for each day of the week."

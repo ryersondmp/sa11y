@@ -242,9 +242,11 @@ export default function checkQA(results, option) {
   /*  Thanks to John Jameson from PrincetonU for this ruleset!       */
   /* *************************************************************** */
 
-  let activeMatch = '';
-  let firstText = '';
-  let lastHitWasEmoji = false;
+  const numberMatch = new RegExp(/(([023456789][\d\s])|(1\d))/, ''); // All numbers but 1.
+  const alphabeticMatch = new RegExp(/(^[aA1αаΑ]|[^\p{Alphabetic}\s])[-\s.)]/, 'u');
+  const emojiMatch = new RegExp(/\p{Extended_Pictographic}/, 'u');
+  const secondTextNoMatch = ['a', 'A', 'α', 'Α', 'а', 'А', '1'];
+  const specialCharsMatch = /[([{#]/;
   const prefixDecrement = {
     2: '1',
     b: 'a',
@@ -254,43 +256,52 @@ export default function checkQA(results, option) {
     б: 'а',
     Б: 'А',
   };
-  const prefixMatch = new RegExp(/([aA1]|[аА]|[αΑ]|[^\p{Alphabetic}\s])[-\s.)]/, 'u');
-  const emojiMatch = new RegExp(/\p{Emoji}/, 'u');
-  const otherPrefixChars = /[([{#]/;
-
   const decrement = (element) => element.replace(/^b|^B|^б|^Б|^β|^В|^2/, (match) => prefixDecrement[match]);
+
+  // Variables to carry in loop.
+  let activeMatch = ''; // Carried in loop for second paragraph.
+  let firstText = ''; // Text of previous paragraph.
+  let lastHitWasEmoji = false;
 
   Elements.Found.Paragraphs.forEach((p, i) => {
     let secondText = false;
     let hit = false;
-    const firstPrefix = firstText || Utils.getText(p).substring(0, 2);
-    const matchWasntEmoji = firstPrefix.match(prefixMatch);
-    const otherPrefix = otherPrefixChars.test(firstPrefix.charAt(0));
-    const possibleMatch = matchWasntEmoji || firstPrefix.match(emojiMatch) || otherPrefix;
+    firstText = firstText || Utils.getText(p).replace('(', '');
+    const firstPrefix = firstText.substring(0, 2);
 
-    if (firstPrefix.length > 0 && firstPrefix !== activeMatch && possibleMatch) {
+    // Grab first two characters.
+    const isAlphabetic = firstPrefix.match(alphabeticMatch);
+    const isNumber = firstPrefix.match(numberMatch);
+    const isEmoji = firstPrefix.match(emojiMatch);
+    const isSpecialChar = specialCharsMatch.test(firstPrefix.charAt(0));
+
+    if (
+      firstPrefix.length > 0
+      && firstPrefix !== activeMatch
+      && !isNumber
+      && (isAlphabetic || isEmoji || isSpecialChar)
+    ) {
       // We have a prefix and a possible hit; check next detected paragraph.
       const secondP = Elements.Found.Paragraphs[i + 1];
-
-      if (secondP && !secondP.closest('th, td')) {
-        secondText = Utils.getText(secondP).substring(0, 2);
-        // Just a sentence, ignore.
-        if (secondText === 'A') {
+      if (secondP) {
+        secondText = Utils.getText(secondP).replace('(', '').substring(0, 2);
+        if (secondTextNoMatch.includes(secondText?.toLowerCase().trim())) {
+          // A sentence. Another sentence. (A sentence). 1 apple, 1 banana.
           return;
         }
         const secondPrefix = decrement(secondText);
-        if (matchWasntEmoji) {
+        if (isAlphabetic) {
           // Check for repeats (*,*) or increments(a,b)
-          lastHitWasEmoji = false;
           if (firstPrefix !== 'A ' && firstPrefix === secondPrefix) {
             hit = true;
           }
-        } else if (!lastHitWasEmoji) {
-          // Check for two paragraphs in a row that start with emoji
+        } else if (isEmoji && !lastHitWasEmoji) {
+          // Check for two paragraphs in a row that start with emoji.
           if (secondPrefix.match(emojiMatch)) {
             hit = true;
+            lastHitWasEmoji = true;
+            // This is carried; better miss than have lots of positives.
           }
-          lastHitWasEmoji = hit;
         }
       }
       if (!hit) {
@@ -298,12 +309,14 @@ export default function checkQA(results, option) {
         let textAfterBreak = p?.querySelector('br')?.nextSibling?.nodeValue;
         if (textAfterBreak) {
           textAfterBreak = textAfterBreak.replace(/<\/?[^>]+(>|$)/g, '').trim().substring(0, 2);
-          if (otherPrefix || firstPrefix === decrement(textAfterBreak) || (!matchWasntEmoji && !lastHitWasEmoji && textAfterBreak.match(emojiMatch))) {
+          const checkForOtherPrefixChars = specialCharsMatch.test(textAfterBreak.charAt(0));
+          if (checkForOtherPrefixChars
+            || firstPrefix === decrement(textAfterBreak)
+            || (!lastHitWasEmoji && textAfterBreak.match(emojiMatch))) {
             hit = true;
           }
         }
-      }
-      if (hit) {
+      } if (hit) {
         const key = Utils.prepareDismissal(`LIST${p.textContent}`);
         results.push({
           element: p,
