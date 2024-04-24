@@ -129,8 +129,7 @@ html[data-sa11y-theme=dark] {
   clip: rect(1px, 1px, 1px, 1px) !important;
   white-space: nowrap !important;
   border: 0 !important;
-  -webkit-clip-path: inset(50%) !important;
-          clip-path: inset(50%) !important;
+  clip-path: inset(50%) !important;
 }
 
 /* ************************************* */
@@ -223,8 +222,7 @@ html[data-sa11y-theme=dark] {
   clip: rect(1px, 1px, 1px, 1px) !important;
   white-space: nowrap !important;
   border: 0 !important;
-  -webkit-clip-path: inset(50%) !important;
-          clip-path: inset(50%) !important;
+  clip-path: inset(50%) !important;
 }
 
 /* ************************************* */

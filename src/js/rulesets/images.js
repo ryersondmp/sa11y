@@ -2,7 +2,7 @@ import Elements from '../utils/elements';
 import Constants from '../utils/constants';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
-import { computeAccessibleName } from '../utils/computeAccessibleName';
+import { computeAriaLabel, computeAccessibleName } from '../utils/computeAccessibleName';
 
 export default function checkImages(results, option) {
   const containsAltTextStopWords = (alt) => {
@@ -47,7 +47,7 @@ export default function checkImages(results, option) {
   };
 
   Elements.Found.Images.forEach(($el) => {
-    const alt = $el.getAttribute('alt');
+    const alt = (computeAriaLabel($el) === 'noAria') ? $el.getAttribute('alt') : computeAriaLabel($el);
     const link = $el.closest('a[href]');
 
     // Process link text exclusions.
@@ -104,8 +104,10 @@ export default function checkImages(results, option) {
       }
     } else {
       // If image has alt.
-      const altText = Utils.sanitizeHTML(alt);
+      const sanitizedAlt = Utils.sanitizeHTML(alt);
+      const altText = Utils.removeWhitespace(sanitizedAlt);
       const error = containsAltTextStopWords(altText);
+      const hasAria = $el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby');
       const decorative = (alt === '' || alt === ' ');
 
       // Figure elements.
@@ -115,6 +117,18 @@ export default function checkImages(results, option) {
 
       // Image's source for key.
       const src = ($el.getAttribute('src')) ? $el.getAttribute('src') : $el.getAttribute('srcset');
+
+      // If aria-label or aria-labelledby returns empty or invalid.
+      if (hasAria && altText === '') {
+        results.push({
+          element: $el,
+          type: 'error',
+          content: Lang.sprintf('MISSING_ALT_MESSAGE'),
+          inline: false,
+          position: 'beforebegin',
+        });
+        return;
+      }
 
       // Decorative images.
       if (decorative) {
@@ -218,8 +232,8 @@ export default function checkImages(results, option) {
       } else if (link) {
         // Has both link text and alt text.
         const key = Utils.prepareDismissal(`${src + altText}`);
-        const accName = computeAccessibleName(link);
-        const removeWhitespace = Utils.removeWhitespace(accName);
+        const linkAccName = computeAccessibleName(link);
+        const removeWhitespace = Utils.removeWhitespace(linkAccName);
         const sanitizedText = Utils.sanitizeHTML(removeWhitespace);
         const content = (linkTextContentLength === 0)
           ? Lang.sprintf('LINK_IMAGE_ALT_WARNING', altText)

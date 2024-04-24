@@ -7,6 +7,8 @@ const defaultOptions = {
   contrastIgnore: '.sr-only, [role="menu"] *',
   outlineIgnore: '',
   headerIgnore: '',
+  headerIgnoreSpan: '',
+  headerIgnoreStrings: '',
   imageIgnore: '',
   linkIgnore: 'nav *, [role="navigation"] *',
   linkIgnoreSpan: '',

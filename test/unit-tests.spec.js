@@ -493,6 +493,48 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
+  test('Image has alt supplied via aria-label', async () => {
+    const issue = await checkTooltip(
+      page, 'pass-alt-via-aria-label', '<strong>Alt text:</strong> A big square',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Image with empty aria-label', async () => {
+    const issue = await checkTooltip(
+      page, 'error-image-empty-aria-label', 'Missing alt text!',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Image with empty space for aria-label', async () => {
+    const issue = await checkTooltip(
+      page, 'error-image-empty-space-aria-label', 'Missing alt text!',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Image with invalid aria-labelledby as alt', async () => {
+    const issue = await checkTooltip(
+      page, 'error-image-invalid-aria-labelledby', 'Missing alt text!',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Image with valid aria-labelledby as alt', async () => {
+    const issue = await checkTooltip(
+      page, 'pass-image-valid-aria-labelledby', '<strong>Alt text:</strong> about apples',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Linked image with valid aria-label as alt', async () => {
+    const issue = await checkTooltip(
+      page, 'warning-image-link-valid-aria-label', 'Image link contains alt text. Does the alt text describe',
+    );
+    expect(issue).toBe(true);
+  });
+
   /* **************** */
   /*  Links           */
   /* **************** */
@@ -788,11 +830,20 @@ test.describe('Sa11y Unit Tests', () => {
       'warning-list-5',
       'warning-list-6',
       'warning-list-7',
+      'warning-list-8',
+      'warning-list-9',
     ];
     ids.forEach(async (id) => {
       const issue = await checkTooltip(page, id, 'trying to create a list?');
       expect(issue).toBe(true);
     });
+  });
+
+  test('Table with numbers should not be flagged as fake list', async () => {
+    const issue = await noAnnotation(
+      page, 'nothing-warning-list-table',
+    );
+    expect(issue).toBe(true);
   });
 
   test('Link with empty href or <a href>', async () => {
@@ -828,6 +879,21 @@ test.describe('Sa11y Unit Tests', () => {
       page, 'error-broken-same-page-duplicate-id', 'Duplicate ID',
     );
     expect(issue).toBe(true);
+  });
+
+  test('Valid in-page links with various encoded or decoded href and id', async () => {
+    const ids = [
+      'nothing-encoded-id-and-href',
+      'nothing-encoded-href',
+      'nothing-encoded-id',
+      'nothing-emoji-href',
+      'nothing-encoded-emoji-href-id',
+      'nothing-encoded-emoji-href-decoded-id',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await noAnnotation(page, id);
+      expect(issue).toBe(true);
+    });
   });
 
   test('Interactive element using aria-labelledby referencing duplicate IDs', async () => {

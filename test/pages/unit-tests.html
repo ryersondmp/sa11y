@@ -351,6 +351,38 @@
       </a>
     </div>
 
+    <h3>Image's alt supplied via <code>aria-label</code></h3>
+    <div id="pass-alt-via-aria-label">
+      <img src="./assets/placeholder.svg" aria-label="A big square" width="100" />
+    </div>
+
+    <h3>Image with empty <code>aria-label=""</code></h3>
+    <div id="error-image-empty-aria-label">
+      <img src="./assets/placeholder.svg" aria-label="" width="100" />
+    </div>
+
+    <h3>Image with empty space for <code>aria-label=" "</code></h3>
+    <div id="error-image-empty-space-aria-label">
+      <img src="./assets/placeholder.svg" aria-label=" " width="100" />
+    </div>
+
+    <h3>Image with invalid <code>aria-labelledby</code></h3>
+    <div id="error-image-invalid-aria-labelledby">
+      <img src="./assets/placeholder.svg" aria-labelledby="square" width="100" />
+    </div>
+
+    <h3>Image with valid <code>aria-labelledby</code></h3>
+    <div id="pass-image-valid-aria-labelledby">
+      <img src="./assets/placeholder.svg" aria-labelledby="apples" width="100" />
+    </div>
+
+    <h3>Linked image with valid <code>aria-label</code></h3>
+    <div id="warning-image-link-valid-aria-label">
+      <a href="https://www.example.com?=15sdas">
+        <img src="./assets/placeholder.svg" aria-label="Off to example.com" width="100" />
+      </a>
+    </div>
+
     <hr>
 
     <h2>Links</h2>
@@ -815,6 +847,179 @@
         #3 Battlestar gallactica</p>
     </div>
 
+    <div id="warning-list-9">
+      <p>+ Bananas</p>
+      <p>+ Pears</p>
+      <p>+ Apples</p>
+    </div>
+
+    <h3>Previous false positive within a table</h3>
+    <p>In an earlier version, multiple warnings would appear within a table like this.</p>
+    <div id="nothing-warning-list-table">
+      <table cellspacing="0" cellpadding="0" border="1"
+        summary="Table has 8 columns and 6 rows. Read each column from top to bottom for sleep diary details for each day of the week."
+        role="table">
+        <thead>
+          <tr>
+            <td></td>
+            <th valign="top">
+              <p dir="auto">Mon</p>
+            </th>
+            <th valign="top">
+              <p dir="auto">Tue</p>
+            </th>
+            <th valign="top">
+              <p dir="auto">Wed</p>
+            </th>
+            <th valign="top">
+              <p dir="auto">Thu</p>
+            </th>
+            <th valign="top">
+              <p dir="auto">Fri</p>
+            </th>
+            <th valign="top">
+              <p dir="auto">Sat</p>
+            </th>
+            <th valign="top">
+              <p dir="auto">Sun</p>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th valign="top">
+              <p dir="auto">1. Bedtime</p>
+            </th>
+            <td valign="top">
+              <p dir="auto">11:00 pm</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">11:30 pm</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">11:05 pm</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">10:35 pm</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">10:55 pm</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">12:15 am</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">10:15 pm</p>
+            </td>
+          </tr>
+          <tr>
+            <th valign="top">
+              <p dir="auto">2. Time to fall asleep</p>
+            </th>
+            <td>
+              <p dir="auto">25</p>
+            </td>
+            <td>
+              <p dir="auto">20</p>
+            </td>
+            <td>
+              <p dir="auto">40</p>
+            </td>
+            <td>
+              <p dir="auto">60</p>
+            </td>
+            <td>
+              <p dir="auto">35</p>
+            </td>
+            <td>
+              <p dir="auto">15</p>
+            </td>
+            <td>
+              <p dir="auto">95</p>
+            </td>
+          </tr>
+          <tr>
+            <th valign="top">
+              <p dir="auto">3. Time awake during night</p>
+            </th>
+            <td>
+              <p dir="auto">20</p>
+            </td>
+            <td>
+              <p dir="auto">25</p>
+            </td>
+            <td>
+              <p dir="auto">15</p>
+            </td>
+            <td>
+              <p dir="auto">35</p>
+            </td>
+            <td>
+              <p dir="auto">20</p>
+            </td>
+            <td>
+              <p dir="auto">45</p>
+            </td>
+            <td>
+              <p dir="auto">60</p>
+            </td>
+          </tr>
+          <tr>
+            <th valign="top">
+              <p dir="auto">4. Wake time</p>
+            </th>
+            <td valign="top">
+              <p dir="auto">7 am</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">7 am</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">7 am</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">7 am</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">7 am</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">8:40 am</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">7:50 am</p>
+            </td>
+          </tr>
+          <tr>
+            <th valign="top">
+              <p dir="auto">5. Rise time</p>
+            </th>
+            <td valign="top">
+              <p dir="auto">7:15 am</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">7:20 am</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">7 am</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">7:25 am</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">7:15 am</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">10:50 am</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">11:45 am</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
     <h2>In-page links</h2>
     <h3>Link with empty href or &lt;a href&gt;</h3>
     <div id="error-broken-same-page-empty-href"><a href>test</a></div>
@@ -824,6 +1029,44 @@
 
     <h3>Link used as button with proper role</h3>
     <div id="nothing-same-page-with-role"><a href="#" role="button">Settings</a></div>
+
+    <h3>Valid links with encoded or decoded <code>href</code> or <code>id</code> values</h3>
+
+    <h4>Encoded <kbd>href</kbd> and <kbd>id</kbd></h4>
+    <div id="nothing-encoded-id-and-href" lang="ua">
+      <a href="#%D0%BC%D0%B0%D0%B3%D0%B0%D0%B7%D0%B8%D0%BD"><strong>магазин</strong></a><br>
+      <span id="%D0%BC%D0%B0%D0%B3%D0%B0%D0%B7%D0%B8%D0%BD">магазин</span>
+    </div>
+
+    <h4>Encoded <kbd>href</kbd></h4>
+    <div id="nothing-encoded-href" lang="zh-CN">
+      <a href="#%E7%94%B5%E5%AD%90%E4%B9%A6"><strong>电子书</strong></a><br>
+      <span id="电子书">电子书</span>
+    </div>
+
+    <h4>Encoded <kbd>id</kbd></h4>
+    <div id="nothing-encoded-id" lang="ua">
+      <a href="#книга"><strong>книга</strong></a><br>
+      <span id="%D0%BA%D0%BD%D0%B8%D0%B3%D0%B0">电子书</span>
+    </div>
+
+    <h4>Emoji <kbd>href</kbd> and <kbd>id</kbd></h4>
+    <div id="nothing-emoji-href">
+      <a href="#😃"><strong>😃</strong></a><br>
+      <span id="😃">😃😃😃</span>
+    </div>
+
+    <h4>Encoded emoji <kbd>href</kbd> and <kbd>id</kbd></h4>
+    <div id="nothing-encoded-emoji-href-id">
+      <a href="#%F0%9F%A7%99%E2%80%8D%E2%99%82%EF%B8%8F"><strong>🧙‍♂️</strong></a><br>
+      <span id="%F0%9F%A7%99%E2%80%8D%E2%99%82%EF%B8%8F">🧙‍♂️🧙‍♂️🧙‍♂️</span>
+    </div>
+
+    <h4>Emoji encoded <kbd>href</kbd> and decoded <kbd>id</kbd></h4>
+    <div id="nothing-encoded-emoji-href-decoded-id">
+      <a href="#%F0%9F%A4%A0"><strong>🤠</strong></a><br>
+      <span id="🤠">🤠🤠🤠</span>
+    </div>
 
     <h2>Duplicate IDs</h2>
     <h3>Elements with duplicate IDs but not referenced by anything</h3>

@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.1.4
+  * @version 3.1.5
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -82,7 +82,7 @@
 
       // Alternative text stop words
       SUSPICIOUS_ALT_STOPWORDS: ['image', 'graphic', 'picture', 'photo'],
-      PLACEHOLDER_ALT_STOPWORDS: ['alt', 'image', 'photo', 'decorative', 'placeholder', 'placeholder image', 'spacer'],
+      PLACEHOLDER_ALT_STOPWORDS: ['alt', 'chart', 'decorative', 'image', 'graphic', 'photo', 'placeholder', 'placeholder image', 'spacer', 'tbd', 'todo', 'to do'],
       PARTIAL_ALT_STOPWORDS: [
         'click',
         'click here',

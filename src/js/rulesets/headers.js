@@ -7,8 +7,11 @@ import { computeAccessibleName } from '../utils/computeAccessibleName';
 export default function checkHeaders(results, option, headingOutline) {
   let prevLevel;
   Elements.Found.Headings.forEach(($el, i) => {
-    const accessibleName = computeAccessibleName($el);
-    const removeWhitespace = Utils.removeWhitespace(accessibleName);
+    const accName = computeAccessibleName($el, option.headerIgnoreSpan);
+    const stringMatchExclusions = option.headerIgnoreStrings
+      ? accName.replace(option.headerIgnoreStrings, '') : accName;
+    const removeWhitespace = Utils.removeWhitespace(stringMatchExclusions);
+
     const headingText = Utils.sanitizeHTML(removeWhitespace);
 
     // Check if heading is within root target area.
