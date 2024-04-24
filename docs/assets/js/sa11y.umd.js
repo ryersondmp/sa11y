@@ -8084,7 +8084,7 @@
         const hasText = $el.textContent.trim().length !== 0;
         if (option.inPageLinkQA && (href.startsWith('#') || href === '') && !hasButtonRole && hasText) {
           const targetId = href.substring(1);
-          const targetElement = document.getElementById(targetId);
+          const targetElement = document.getElementById(targetId) || document.getElementById(decodeURIComponent(targetId)) || document.getElementById(encodeURIComponent(targetId));
           if (!targetElement) {
             results.push({
               element: $el,
