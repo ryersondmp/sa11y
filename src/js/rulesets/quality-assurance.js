@@ -59,7 +59,10 @@ export default function checkQA(results, option) {
       const hasText = $el.textContent.trim().length !== 0;
       if (option.inPageLinkQA && (href.startsWith('#') || href === '') && !hasButtonRole && hasText) {
         const targetId = href.substring(1);
-        const targetElement = document.getElementById(targetId);
+        let targetElement = false;
+        if(document.getElementById(targetId) || document.getElementById(decodeURIComponent(targetId))){
+          targetElement = true;
+        }
         if (!targetElement) {
           results.push({
             element: $el,
