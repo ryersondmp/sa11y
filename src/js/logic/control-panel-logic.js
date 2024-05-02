@@ -5,6 +5,73 @@ import Constants from '../utils/constants';
 import { store, isScrollable } from '../utils/utils';
 import Lang from '../utils/lang';
 
+/**
+ * OUTLINE PANEL.
+ */
+const openOutline = () => {
+  Constants.Panel.outlineToggle.classList.add('active');
+  Constants.Panel.outline.classList.add('active');
+  Constants.Panel.outlineToggle.setAttribute('aria-expanded', 'true');
+  store.setItem('sa11y-remember-outline', 'Opened');
+
+  // Toggle visibility of heading labels
+  const $headingAnnotations = document.querySelectorAll('sa11y-heading-label');
+  $headingAnnotations.forEach(($el) => $el.hidden = false);
+
+  const event = new CustomEvent('sa11y-build-heading-outline');
+  document.dispatchEvent(event);
+};
+
+const closeOutline = () => {
+  Constants.Panel.outline.classList.remove('active');
+  Constants.Panel.outlineToggle.classList.remove('active');
+  Constants.Panel.outlineToggle.setAttribute('aria-expanded', 'false');
+  store.setItem('sa11y-remember-outline', 'Closed');
+
+  // Toggle visibility of heading labels
+  const $headingAnnotations = document.querySelectorAll('sa11y-heading-label');
+  $headingAnnotations.forEach(($el) => $el.hidden = true);
+};
+
+/**
+ * IMAGES PANEL.
+ */
+const openImages = () => {
+  Constants.Panel.imagesToggle.classList.add('active');
+  Constants.Panel.images.classList.add('active');
+  Constants.Panel.imagesToggle.setAttribute('aria-expanded', 'true');
+  store.setItem('sa11y-remember-images', 'Opened');
+
+  const event = new CustomEvent('sa11y-build-image-outline');
+  document.dispatchEvent(event);
+};
+
+const closeImages = () => {
+  if (Constants.Global.showImageOutline) {
+    Constants.Panel.imagesToggle.classList.remove('active');
+    Constants.Panel.images.classList.remove('active');
+    Constants.Panel.imagesToggle.setAttribute('aria-expanded', 'false');
+    store.setItem('sa11y-remember-images', 'Closed');
+  }
+};
+
+/**
+ * SETTINGS PANEL.
+ */
+const openSettings = () => {
+  Constants.Panel.settingsToggle.classList.add('active');
+  Constants.Panel.settings.classList.add('active');
+  Constants.Panel.settingsToggle.setAttribute('aria-expanded', 'true');
+  store.setItem('sa11y-remember-settings', 'Opened');
+};
+
+const closeSettings = () => {
+  Constants.Panel.settings.classList.remove('active');
+  Constants.Panel.settingsToggle.classList.remove('active');
+  Constants.Panel.settingsToggle.setAttribute('aria-expanded', 'false');
+  store.setItem('sa11y-remember-settings', 'Closed');
+};
+
 /* **************************************************************** */
 /*  Main panel: Initialize Show Outline and Settings buttons/tabs.  */
 /* **************************************************************** */
@@ -14,46 +81,55 @@ export default function initializePanelToggles() {
   /* **************** */
   Constants.Panel.outlineToggle.addEventListener('click', () => {
     if (Constants.Panel.outlineToggle.getAttribute('aria-expanded') === 'true') {
-      Constants.Panel.outlineToggle.classList.remove('outline-active');
-      Constants.Panel.outline.classList.remove('active');
-      Constants.Panel.outlineToggle.setAttribute('aria-expanded', 'false');
-      store.setItem('sa11y-remember-outline', 'Closed');
-
-      // Toggle visibility of heading labels
-      const $headingAnnotations = document.querySelectorAll('sa11y-heading-label');
-      $headingAnnotations.forEach(($el) => $el.hidden = true);
+      closeOutline();
       isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
     } else {
-      Constants.Panel.outlineToggle.classList.add('outline-active');
-      Constants.Panel.outline.classList.add('active');
-      Constants.Panel.outlineToggle.setAttribute('aria-expanded', 'true');
-      store.setItem('sa11y-remember-outline', 'Opened');
-      store.setItem('sa11y-remember-settings', 'Closed');
-
-      // Toggle visibility of heading labels
-      const $headingAnnotations = document.querySelectorAll('sa11y-heading-label');
-      $headingAnnotations.forEach(($el) => $el.hidden = false);
+      openOutline();
+      closeSettings();
+      closeImages();
     }
 
     // Set focus on Page Outline heading for accessibility.
     Constants.Panel.outlineHeader.focus();
-
-    // Close Settings panel when Show Outline is active.
-    Constants.Panel.settings.classList.remove('active');
-    Constants.Panel.settingsToggle.classList.remove('settings-active');
-    Constants.Panel.settingsToggle.setAttribute('aria-expanded', 'false');
     isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
   });
 
   // Remember to leave outline open
   if (store.getItem('sa11y-remember-outline') === 'Opened') {
-    Constants.Panel.outlineToggle.classList.add('outline-active');
-    Constants.Panel.outline.classList.add('active');
-    Constants.Panel.outlineToggle.setAttribute('aria-expanded', 'true');
-
+    openOutline();
     setTimeout(() => {
       isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
     }, 0);
+  }
+
+  /* **************** */
+  /*  Images panel   */
+  /* **************** */
+  if (Constants.Global.showImageOutline) {
+    Constants.Panel.imagesToggle.addEventListener('click', () => {
+      if (Constants.Panel.imagesToggle.getAttribute('aria-expanded') === 'true') {
+        closeImages();
+        isScrollable(Constants.Panel.imagesList, Constants.Panel.imagesContent);
+      } else {
+        openImages();
+        closeOutline();
+        closeSettings();
+      }
+
+      // Set focus on Images heading for accessibility.
+      Constants.Panel.imagesHeader.focus();
+      setTimeout(() => {
+        isScrollable(Constants.Panel.imagesList, Constants.Panel.imagesContent);
+      }, 0);
+    });
+
+    // Remember to leave outline open
+    if (store.getItem('sa11y-remember-images') === 'Opened') {
+      openImages();
+      setTimeout(() => {
+        isScrollable(Constants.Panel.imagesList, Constants.Panel.imagesContent);
+      }, 0);
+    }
   }
 
   /* **************** */
@@ -61,30 +137,15 @@ export default function initializePanelToggles() {
   /* **************** */
   Constants.Panel.settingsToggle.addEventListener('click', () => {
     if (Constants.Panel.settingsToggle.getAttribute('aria-expanded') === 'true') {
-      Constants.Panel.settingsToggle.classList.remove('settings-active');
-      Constants.Panel.settings.classList.remove('active');
-      Constants.Panel.settingsToggle.setAttribute('aria-expanded', 'false');
-      store.setItem('sa11y-remember-settings', 'Closed');
+      closeSettings();
     } else {
-      Constants.Panel.settingsToggle.classList.add('settings-active');
-      Constants.Panel.settings.classList.add('active');
-      Constants.Panel.settingsToggle.setAttribute('aria-expanded', 'true');
-      store.setItem('sa11y-remember-settings', 'Opened');
-      store.setItem('sa11y-remember-outline', 'Closed');
+      openSettings();
+      closeOutline();
+      closeImages();
     }
 
     // Set focus on Settings heading for accessibility.
     Constants.Panel.settingsHeader.focus();
-
-    // Toggle visibility of heading labels
-    const $headingAnnotations = document.querySelectorAll('sa11y-heading-label');
-    $headingAnnotations.forEach(($el) => $el.hidden = true);
-
-    // Close Show Outline panel when Settings is active.
-    Constants.Panel.outline.classList.remove('active');
-    Constants.Panel.outlineToggle.classList.remove('outline-active');
-    Constants.Panel.outlineToggle.setAttribute('aria-expanded', 'false');
-    store.setItem('sa11y-remember-outline', 'Closed');
 
     // Keyboard accessibility fix for scrollable panel content.
     if (Constants.Panel.settingsContent.clientHeight > 350) {
@@ -92,18 +153,11 @@ export default function initializePanelToggles() {
       Constants.Panel.settingsContent.setAttribute('aria-label', `${Lang._('SETTINGS')}`);
       Constants.Panel.settingsContent.setAttribute('role', 'region');
     }
-
-    // Close Outline panel when Show Outline is active.
-    Constants.Panel.outline.classList.remove('active');
-    Constants.Panel.outlineToggle.classList.remove('settings-active');
-    Constants.Panel.outlineToggle.setAttribute('aria-expanded', 'false');
   });
 
   // Remember to leave settings open
   if (store.getItem('sa11y-remember-settings') === 'Opened') {
-    Constants.Panel.settingsToggle.classList.add('settings-active');
-    Constants.Panel.settings.classList.add('active');
-    Constants.Panel.settingsToggle.setAttribute('aria-expanded', 'true');
+    openSettings();
   }
 
   // Accessibility: Skip link to Page Issues
@@ -115,45 +169,4 @@ export default function initializePanelToggles() {
   setTimeout(() => {
     isScrollable(Constants.Panel.pageIssuesList, Constants.Panel.pageIssuesContent);
   }, 0);
-
-  // Enhanced keyboard accessibility for panel.
-  Constants.Panel.controls.addEventListener('keydown', (e) => {
-    const $tab = Constants.Panel.panel.querySelectorAll('#outline-toggle[role=tab], #settings-toggle[role=tab]');
-    if (e.key === 'ArrowRight') {
-      for (let i = 0; i < $tab.length; i++) {
-        if ($tab[i].getAttribute('aria-expanded') === 'true' || $tab[i].getAttribute('aria-expanded') === 'false') {
-          $tab[i + 1].focus();
-          e.preventDefault();
-          break;
-        }
-      }
-    }
-    if (e.key === 'ArrowDown') {
-      for (let i = 0; i < $tab.length; i++) {
-        if ($tab[i].getAttribute('aria-expanded') === 'true' || $tab[i].getAttribute('aria-expanded') === 'false') {
-          $tab[i + 1].focus();
-          e.preventDefault();
-          break;
-        }
-      }
-    }
-    if (e.key === 'ArrowLeft') {
-      for (let i = $tab.length - 1; i > 0; i--) {
-        if ($tab[i].getAttribute('aria-expanded') === 'true' || $tab[i].getAttribute('aria-expanded') === 'false') {
-          $tab[i - 1].focus();
-          e.preventDefault();
-          break;
-        }
-      }
-    }
-    if (e.key === 'ArrowUp') {
-      for (let i = $tab.length - 1; i > 0; i--) {
-        if ($tab[i].getAttribute('aria-expanded') === 'true' || $tab[i].getAttribute('aria-expanded') === 'false') {
-          $tab[i - 1].focus();
-          e.preventDefault();
-          break;
-        }
-      }
-    }
-  });
 }

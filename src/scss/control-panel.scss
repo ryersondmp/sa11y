@@ -464,6 +464,7 @@ hr {
 /*   9. Outline and Settings shared styles   */
 /* ***************************************** */
 #page-issues,
+#images-panel,
 #settings-panel,
 #outline-panel {
   display: none;
@@ -472,6 +473,7 @@ hr {
 }
 
 #page-issues.active,
+#images-panel.active,
 #settings-panel.active,
 #outline-panel.active {
   display: block;
@@ -484,6 +486,7 @@ hr {
 }
 
 #page-issues-content,
+#images-content,
 #settings-content,
 #outline-content {
   padding: 0 15px 10px;
@@ -500,6 +503,7 @@ hr {
   overflow-y: auto;
 }
 
+#images-content,
 #outline-content {
   max-height: 250px;
   overflow-y: auto;
@@ -562,6 +566,74 @@ hr {
 
   .outline-6 {
     margin-inline-start: 75px;
+  }
+}
+
+/* ***************************************** */
+/*          10A. Images list            */
+/* ***************************************** */
+#images-list {
+  display: block;
+  padding: 0;
+  margin: 0;
+
+  li {
+    display: block;
+    width: 100%;
+    margin: 15px 0;
+    overflow: hidden;
+    list-style-type: none;
+    border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
+
+    &:first-child {
+      margin-top: 5px;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+      border: none;
+    }
+
+    .alt {
+      padding: 0 5px 10px;
+    }
+
+    .badge {
+      margin-inline-end: 1px;
+    }
+
+    img {
+      float: inline-start;
+      max-width: 110px;
+      margin: 0 10px 15px 0;
+      border-radius: 5px;
+    }
+
+    &.warning {
+      .alt {
+        color: var(--sa11y-yellow-text);
+      }
+
+      img {
+        border: 5px solid var(--sa11y-yellow-text);
+      }
+    }
+
+    &.error {
+      .alt {
+        color: var(--sa11y-error);
+      }
+
+      img {
+        border: 5px solid var(--sa11y-error);
+      }
+    }
+
+    &.good {
+      img {
+        border: 5px solid var(--sa11y-panel-badge);
+      }
+    }
   }
 }
 
@@ -637,8 +709,7 @@ hr {
   border-radius: 0 0 4px 4px;
 }
 
-#settings-toggle,
-#outline-toggle {
+#panel-controls button {
   position: relative;
   display: block;
   width: 100%;
@@ -655,24 +726,19 @@ hr {
   background-color: var(--sa11y-panel-bg-secondary);
   border-top: 1px solid var(--sa11y-panel-bg-splitter);
   border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
+  border-inline-end: 1px solid var(--sa11y-panel-bg-splitter);
   outline: 0;
   opacity: 1;
   transition: background .2s;
 
   &:hover,
-  &.settings-active,
-  &.outline-active {
+  &.active {
     background-color: var(--sa11y-shortcut-hover);
   }
 
-  &.settings-active,
-  &.outline-active {
+  &.active {
     font-weight: 500;
   }
-}
-
-#outline-toggle {
-  border-inline-end: 1px solid var(--sa11y-panel-bg-splitter);
 }
 
 #export-results-mode,

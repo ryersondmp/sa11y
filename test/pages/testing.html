@@ -15,6 +15,27 @@
   </header>
   <main>
     <h2>A blank slate for testing.</h2>
+    <h3>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellat porro doloribus magnam nobis nisi! Officia
+      earum reiciendis sequi cum voluptate cupiditate eaque asperiores quos, non voluptatum id mollitia, voluptatibus
+      sit!</h3>
+    <img
+      src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ3RwYzJ4cjNoMHluZnFiODJudWtkZ3BsN3czdjY4dmVwYjd6YnJsMCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/jOpLbiGmHR9S0/giphy.gif"
+      alt="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam tempora accusantium doloribus perspiciatis? Ex voluptates labore ullam dolorem aliquid voluptatum, quos voluptatem explicabo minima molestiae praesentium deserunt odit sequi ipsa. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam tempora accusantium doloribus perspiciatis? Ex voluptates labore ullam dolorem aliquid voluptatum, quos voluptatem explicabo minima molestiae praesentium deserunt odit sequi ipsa.">
+    <hr>
+    <img class="ignore"
+      src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGFkbDR3emdreTVxZnZqNzZsYWE1dXU2b21xZWM3dDZ6bXlmcDhsOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GQ9InpECkHgJO/giphy.gif"
+      alt="Michael Scott: why are you the way you are?">
+    <hr>
+    <img
+      src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGFkbDR3emdreTVxZnZqNzZsYWE1dXU2b21xZWM3dDZ6bXlmcDhsOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GQ9InpECkHgJO/giphy.gif"
+      alt="Michael Scott: why are you the way you are?">
+    <hr>
+    <h5>Test</h5>
+    <img
+      src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGFkbDR3emdreTVxZnZqNzZsYWE1dXU2b21xZWM3dDZ6bXlmcDhsOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GQ9InpECkHgJO/giphy.gif">
+
+    <h2>Relative image</h2>
+    <img class="wp-image-333" src="http://localhost:8080/test/pages/assets/placeholder.svg" alt="Not michael scott." />
   </main>
   <footer></footer>
   <script src="../../dist/js/sa11y.umd.js"></script>
@@ -24,6 +45,11 @@
     const sa11y = new Sa11y.Sa11y({
       checkRoot: 'main',
       autoDetectShadowComponents: true,
+      imageIgnore: '.ignore',
+      showImageOutline: true,
+      relativePathImageID: 'wp-image-',
+      relativePathImageSRC: 'localhost:8080',
+      editImageURLofCMS: 'https://aemauthor.torontomu.ca/assets.html/content/dam',
     });
   </script>
 </body>

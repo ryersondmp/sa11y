@@ -434,6 +434,7 @@ hr {
 /*   9. Outline and Settings shared styles   */
 /* ***************************************** */
 #page-issues,
+#images-panel,
 #settings-panel,
 #outline-panel {
   display: none;
@@ -442,6 +443,7 @@ hr {
 }
 
 #page-issues.active,
+#images-panel.active,
 #settings-panel.active,
 #outline-panel.active {
   display: block;
@@ -454,12 +456,15 @@ hr {
 }
 
 #page-issues-content,
+#images-content,
 #settings-content,
 #outline-content {
   padding: 0 15px 10px;
   border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
 }
 .top-right #page-issues-content, .top-left #page-issues-content,
+.top-right #images-content,
+.top-left #images-content,
 .top-right #settings-content,
 .top-left #settings-content,
 .top-right #outline-content,
@@ -472,6 +477,7 @@ hr {
   overflow-y: auto;
 }
 
+#images-content,
 #outline-content {
   max-height: 250px;
   overflow-y: auto;
@@ -526,6 +532,57 @@ hr {
 }
 #outline-list .outline-6 {
   margin-inline-start: 75px;
+}
+
+/* ***************************************** */
+/*          10A. Images list            */
+/* ***************************************** */
+#images-list {
+  display: block;
+  padding: 0;
+  margin: 0;
+}
+#images-list li {
+  display: block;
+  width: 100%;
+  margin: 15px 0;
+  overflow: hidden;
+  list-style-type: none;
+  border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
+}
+#images-list li:first-child {
+  margin-top: 5px;
+}
+#images-list li:last-child {
+  margin-bottom: 0;
+  border: none;
+}
+#images-list li .alt {
+  padding: 0 5px 10px;
+}
+#images-list li .badge {
+  margin-inline-end: 1px;
+}
+#images-list li img {
+  float: inline-start;
+  max-width: 110px;
+  margin: 0 10px 15px 0;
+  border-radius: 5px;
+}
+#images-list li.warning .alt {
+  color: var(--sa11y-yellow-text);
+}
+#images-list li.warning img {
+  border: 5px solid var(--sa11y-yellow-text);
+}
+#images-list li.error .alt {
+  color: var(--sa11y-error);
+}
+#images-list li.error img {
+  border: 5px solid var(--sa11y-error);
+}
+#images-list li.good img {
+  border: 5px solid var(--sa11y-panel-badge);
 }
 
 /* **************************************** */
@@ -600,8 +657,7 @@ hr {
   border-radius: 0 0 4px 4px;
 }
 
-#settings-toggle,
-#outline-toggle {
+#panel-controls button {
   position: relative;
   display: block;
   width: 100%;
@@ -618,24 +674,16 @@ hr {
   background-color: var(--sa11y-panel-bg-secondary);
   border-top: 1px solid var(--sa11y-panel-bg-splitter);
   border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
+  border-inline-end: 1px solid var(--sa11y-panel-bg-splitter);
   outline: 0;
   opacity: 1;
   transition: background 0.2s;
 }
-#settings-toggle:hover, #settings-toggle.settings-active, #settings-toggle.outline-active,
-#outline-toggle:hover,
-#outline-toggle.settings-active,
-#outline-toggle.outline-active {
+#panel-controls button:hover, #panel-controls button.active {
   background-color: var(--sa11y-shortcut-hover);
 }
-#settings-toggle.settings-active, #settings-toggle.outline-active,
-#outline-toggle.settings-active,
-#outline-toggle.outline-active {
+#panel-controls button.active {
   font-weight: 500;
-}
-
-#outline-toggle {
-  border-inline-end: 1px solid var(--sa11y-panel-bg-splitter);
 }
 
 #export-results-mode,

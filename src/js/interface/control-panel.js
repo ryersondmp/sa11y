@@ -140,6 +140,21 @@ export default class ControlPanel extends HTMLElement {
         </div>
       </div>`;
 
+    /* IMAGES OUTLINE */
+    const imagesOutline = Constants.Global.showImageOutline ? `
+      <div id="images-panel" role="tabpanel" aria-labelledby="images-header">
+        <div class="panel-header">
+          <h2 id="images-header" tabindex="-1">${Lang._('IMAGES')}</h2>
+        </div>
+        <div id="images-content">
+          <ul
+            id="images-list"
+            tabindex="0"
+            role="list"
+            aria-labelledby="images-header"></ul>
+        </div>
+      </div>` : '';
+
     /* PAGE SETTINGS */
     const pageSettings = `
       <div id="settings-panel" role="tabpanel" aria-labelledby="settings-header">
@@ -202,12 +217,20 @@ export default class ControlPanel extends HTMLElement {
       </div>`;
 
     /* OUTLINE & SETTING TAB TOGGLES. */
+    const imageToggleButton = `<button type="button" role="tab" aria-expanded="false" id="images-toggle" aria-controls="images-panel">${Lang._('IMAGES')}</button>`;
+
+    // Spacer for toggle width...
+    const spacer = Constants.Global.showImageOutline
+      ? '<div style="width:65px"></div>'
+      : '<div style="width:40px"></div>';
+
     const tabToggles = `
       <div id="panel-controls" role="tablist" aria-orientation="horizontal">
-        ${(panelPosition === 'left') ? '<div style="width:40px"></div>' : ''}
+        ${(panelPosition === 'left') ? spacer : ''}
         <button type="button" role="tab" aria-expanded="false" id="outline-toggle" aria-controls="outline-panel">${Lang._('OUTLINE')}</button>
+        ${Constants.Global.showImageOutline ? imageToggleButton : ''}
         <button type="button" role="tab" aria-expanded="false" id="settings-toggle" aria-controls="settings-panel">${Lang._('SETTINGS')}</button>
-        ${(panelPosition === 'right') ? '<div style="width:40px"></div>' : ''}
+        ${(panelPosition === 'right') ? spacer : ''}
       </div>`;
 
     /* MAIN CONTAINER */
@@ -226,6 +249,7 @@ export default class ControlPanel extends HTMLElement {
           ${colourFilterPanel}
           ${tabToggles}
           ${pageOutline}
+          ${imagesOutline}
           ${pageSettings}
           ${panelAlerts}
           ${pageIssues}
@@ -236,6 +260,7 @@ export default class ControlPanel extends HTMLElement {
         <div id="panel" class="${panelPosition}">
           ${pageIssues}
           ${pageOutline}
+          ${imagesOutline}
           ${pageSettings}
           ${panelAlerts}
           ${colourFilterPanel}
