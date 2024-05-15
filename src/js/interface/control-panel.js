@@ -221,7 +221,7 @@ export default class ControlPanel extends HTMLElement {
 
     // Spacer for toggle width...
     const spacer = Constants.Global.showImageOutline
-      ? '<div style="width:65px"></div>'
+      ? '<div style="width:80px"></div>'
       : '<div style="width:40px"></div>';
 
     const tabToggles = `

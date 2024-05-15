@@ -25,7 +25,11 @@ const Lang = {
     return $el.replaceAll(/<hr>/g, '<hr aria-hidden="true">')
       .replaceAll(/<a[\s]href=/g, '<a target="_blank" rel="noopener noreferrer" href=')
       .replaceAll(/<\/a>/g, `<span class="visually-hidden"> (${Lang._('NEW_TAB')})</span></a>`)
-      .replaceAll(/{r}/g, 'class="red-text"');
+      .replaceAll(/{r}/g, 'class="red-text"')
+      .replaceAll(/{w}/g, 'class="yellow-text"')
+      .replaceAll(/{b}/g, 'class="badge"')
+      .replaceAll(/{wb}/g, 'class="badge warning-badge"')
+      .replaceAll(/{eb}/g, 'class="badge error-badge"');
   },
 };
 export default Lang;

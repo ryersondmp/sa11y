@@ -64,7 +64,13 @@ export default function generateImageOutline(dismissed, imageResults) {
       const issue = image.type;
       const { dismissedImage } = image;
       const altText = Utils.escapeHTML(image.element.alt);
+
+      // Account for lazy loading libraries that use 'data-src' attribute.
       const { src } = image.element;
+      const dataSrc = image.element.getAttribute('data-src');
+      const source = (dataSrc && dataSrc.length > 3) ? dataSrc : src;
+
+      // Generate edit link if locally hosted image and prop is enabled.
       const edit = generateEditLink(image);
 
       let append;
@@ -73,9 +79,9 @@ export default function generateImageOutline(dismissed, imageResults) {
           ? `<span class="badge error-badge">${Lang._('MISSING')}</span>` : '';
         append = `
         <li class="error">
-          <img src="${src}" alt/>
+          <img src="${source}" alt/>
           <div class="alt">
-            <span class="badge error-badge"><span class="error-icon"></span><span class="visually-hidden">${Lang._('ERROR')}</span> ALT</span>
+            <span class="badge error-badge"><span class="error-icon"></span><span class="visually-hidden">${Lang._('ERROR')}</span> ${Lang._('ALT')}</span>
             ${missing} <strong class="outline-list-item red-text">${altText}</strong>
           </div>
           ${edit}
@@ -86,9 +92,9 @@ export default function generateImageOutline(dismissed, imageResults) {
           ? `<span class="badge warning-badge">${Lang._('DECORATIVE')}</span>` : '';
         append = `
         <li class="warning">
-          <img src="${src}" alt/>
+          <img src="${source}" alt/>
           <div class="alt">
-            <span class="badge warning-badge"><span aria-hidden="true">&#x3f; ALT</span><span class="visually-hidden">${Lang._('WARNING')}</span></span>
+            <span class="badge warning-badge"><span aria-hidden="true">&#x3f; ${Lang._('ALT')}</span><span class="visually-hidden">${Lang._('WARNING')}</span></span>
             ${decorative} <strong class="outline-list-item yellow-text">${altText}</strong>
           </div>
           ${edit}
@@ -99,9 +105,9 @@ export default function generateImageOutline(dismissed, imageResults) {
           ? `<span class="badge">${Lang._('DECORATIVE')}</span>` : '';
         append = `
         <li class="good">
-          <img src="${src}" alt/>
+          <img src="${source}" alt/>
           <div class="alt">
-            <span class="badge">ALT</span>
+            <span class="badge">${Lang._('ALT')}</span>
             ${decorative} ${altText}
           </div>
           ${edit}

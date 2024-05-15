@@ -641,31 +641,6 @@ hr {
 /*         11. Page Outline extras          */
 /* **************************************** */
 
-/* Badges */
-.badge {
-  display: inline;
-  min-width: 10px;
-  padding: 2px 5px;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--sa11y-panel-primary);
-  text-align: center;
-  white-space: nowrap;
-  background-color: var(--sa11y-panel-badge);
-  border: 1px solid transparent;
-  border-radius: 10px;
-}
-
-.error-badge {
-  color: var(--sa11y-error-text);
-  background: var(--sa11y-error);
-}
-
-.warning-badge {
-  color: var(--sa11y-panel-bg);
-  background: var(--sa11y-yellow-text);
-}
-
 /* Error icon */
 .error-icon {
   display: inline-block;
@@ -1160,7 +1135,7 @@ label:not(#colour-filter-mode, #export-results-mode) {
 
 // Default panel width.
 #panel {
-  width: 375px;
+  width: 400px;
 }
 
 // English
@@ -1176,7 +1151,7 @@ label:not(#colour-filter-mode, #export-results-mode) {
 #container:lang(sv),
 #container:lang(zh) {
   #panel {
-    width: 335px;
+    width: 350px;
   }
 }
 
