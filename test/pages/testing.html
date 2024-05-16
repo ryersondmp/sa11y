@@ -7,6 +7,16 @@
   <title>Testing - Sa11y Unit Tests</title>
   <link rel="stylesheet" href="./assets/main.css">
   <link rel="stylesheet" href="../../dist/css/sa11y.min.css" />
+  <style>
+    .color-mix {
+      color: color-mix(in srgb, rgba(235, 52, 52, 1) 90%, white);
+      background-color: color-mix(in srgb, rgba(52, 201, 235, 0.9) 50%, white);
+    }
+
+    .color {
+      color: color(display-p3 1 8 0 / .5);
+    }
+  </style>
 </head>
 
 <body>
@@ -14,10 +24,18 @@
     <h1>Sa11y (Random) Unit Tests</h1>
   </header>
   <main>
+    <p class="color-mix">This uses color-mix.</p>
+    <p class="color">This uses color().</p>
+    <p class="visually-hidden">testing</p>
     <h2>A blank slate for testing.</h2>
     <h3>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellat porro doloribus magnam nobis nisi! Officia
       earum reiciendis sequi cum voluptate cupiditate eaque asperiores quos, non voluptatum id mollitia, voluptatibus
       sit!</h3>
+
+    <img
+      src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGFkbDR3emdreTVxZnZqNzZsYWE1dXU2b21xZWM3dDZ6bXlmcDhsOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GQ9InpECkHgJO/giphy.gif"
+      alt="an image of Scott: why are you image of a cat the way you are?">
+    <hr>
     <img
       src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ3RwYzJ4cjNoMHluZnFiODJudWtkZ3BsN3czdjY4dmVwYjd6YnJsMCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/jOpLbiGmHR9S0/giphy.gif"
       alt="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam tempora accusantium doloribus perspiciatis? Ex voluptates labore ullam dolorem aliquid voluptatum, quos voluptatem explicabo minima molestiae praesentium deserunt odit sequi ipsa. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam tempora accusantium doloribus perspiciatis? Ex voluptates labore ullam dolorem aliquid voluptatum, quos voluptatem explicabo minima molestiae praesentium deserunt odit sequi ipsa.">
@@ -26,6 +44,7 @@
       src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGFkbDR3emdreTVxZnZqNzZsYWE1dXU2b21xZWM3dDZ6bXlmcDhsOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GQ9InpECkHgJO/giphy.gif"
       alt="Michael Scott: why are you the way you are?">
     <hr>
+
     <img
       src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGFkbDR3emdreTVxZnZqNzZsYWE1dXU2b21xZWM3dDZ6bXlmcDhsOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GQ9InpECkHgJO/giphy.gif"
       alt="Michael Scott: why are you the way you are?">
@@ -35,16 +54,25 @@
       src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGFkbDR3emdreTVxZnZqNzZsYWE1dXU2b21xZWM3dDZ6bXlmcDhsOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GQ9InpECkHgJO/giphy.gif">
 
     <h2>Relative image</h2>
+    <div></div>
     <img class="wp-image-333" src="http://localhost:8080/test/pages/assets/placeholder.svg" alt="Not michael scott." />
   </main>
+  <div id="webcomponent">
+    <template shadowrootmode="open">
+      <h3>Test</h3>
+      <img src="#">
+    </template>
+  </div>
+
   <footer></footer>
   <script src="../../dist/js/sa11y.umd.js"></script>
   <script src="../../dist/js/lang/en.umd.js"></script>
   <script>
     Sa11y.Lang.addI18n(Sa11yLangEn.strings);
     const sa11y = new Sa11y.Sa11y({
-      checkRoot: 'main',
-      autoDetectShadowComponents: true,
+      checkRoot: 'body',
+      autoDetectShadowComponents: false,
+      shadowComponents: '#webcomponent',
       imageIgnore: '.ignore',
       showImageOutline: true,
       relativePathImageID: 'wp-image-',

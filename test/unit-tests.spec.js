@@ -276,6 +276,13 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
+  test('Alt text has suspicious stop word in the end', async () => {
+    const issue = await checkTooltip(
+      page, 'pass-alt-text-has-suspicious-stop-word-end', 'Good',
+    );
+    expect(issue).toBe(true);
+  });
+
   test('Decorative image', async () => {
     const issue = await checkTooltip(
       page, 'warning-image-is-decorative', 'Image is marked as <strong>decorative</strong>',
@@ -495,7 +502,7 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Image has alt supplied via aria-label', async () => {
     const issue = await checkTooltip(
-      page, 'pass-alt-via-aria-label', '<strong>Alt text:</strong> A big square',
+      page, 'pass-alt-via-aria-label', 'A square box rectangle thing.',
     );
     expect(issue).toBe(true);
   });
@@ -523,7 +530,7 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Image with valid aria-labelledby as alt', async () => {
     const issue = await checkTooltip(
-      page, 'pass-image-valid-aria-labelledby', '<strong>Alt text:</strong> about apples',
+      page, 'pass-image-valid-aria-labelledby', '</strong> about apples',
     );
     expect(issue).toBe(true);
   });

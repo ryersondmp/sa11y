@@ -5,6 +5,7 @@ import * as Utils from './utils/utils';
 import Constants from './utils/constants';
 import Elements from './utils/elements';
 import find from './utils/find';
+import findShadowComponents from './logic/find-shadow-components';
 
 // Extras
 import detectPageChanges from './features/detect-page-changes';
@@ -138,7 +139,7 @@ class Sa11y {
         Constants.initializeRoot(desiredRoot, desiredReadabilityRoot);
 
         // Find all web components on the page.
-        Constants.initializeShadowSearch(option, desiredRoot);
+        findShadowComponents(option);
 
         // Find and cache elements.
         Elements.initializeElements(option);
@@ -305,6 +306,17 @@ class Sa11y {
     this.resetAll = (restartPanel = true) => {
       Constants.Global.html.removeAttribute('data-sa11y-active');
 
+      // Remove from page.
+      Utils.remove([
+        'sa11y-annotation',
+        'sa11y-heading-label',
+        'sa11y-heading-anchor',
+        'sa11y-tooltips',
+        '[data-sa11y-readability-period]',
+        '[data-sa11y-clone-image-text]',
+        '.sa11y-css-utilities',
+      ], 'document');
+
       // Reset all data attributes.
       Utils.resetAttributes([
         'data-sa11y-parent',
@@ -316,17 +328,7 @@ class Sa11y {
         'data-sa11y-overflow',
         'data-sa11y-pulse-border',
         'data-sa11y-filter',
-      ], 'document');
-
-      // Remove from page.
-      Utils.remove([
-        'sa11y-annotation',
-        'sa11y-heading-label',
-        'sa11y-heading-anchor',
-        'sa11y-tooltips',
-        '[data-sa11y-readability-period]',
-        '[data-sa11y-clone-image-text]',
-        '.sa11y-css-utilities',
+        'data-sa11y-has-shadow-root',
       ], 'document');
 
       // Remove from panel.
@@ -351,6 +353,11 @@ class Sa11y {
 
       // Main panel warning and error count.
       while (Constants.Panel.status.firstChild) Constants.Panel.status.removeChild(Constants.Panel.status.firstChild);
+
+      // Remove data attribute from shadow root elements.
+      document.querySelectorAll('[data-sa11y-has-shadow-root]').forEach((el) => {
+        el.removeAttribute('data-sa11y-has-shadow-root');
+      });
 
       if (restartPanel) {
         Constants.Panel.panel.classList.remove('active');

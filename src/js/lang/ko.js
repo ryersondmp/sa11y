@@ -219,8 +219,8 @@ export default {
     TABLES_MISSING_HEADINGS: '표 헤더가 누락되었습니다! 접근 가능한 표에는 머리글 셀과 데이터 셀의 관계를 정의하는 HTML 마크업이 필요합니다. 이 정보는 보조 기술을 사용하는 사람들에게 컨텍스트를 제공합니다. 표는 표 형식의 데이터에만 사용해야 합니다. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">액세스 가능한 표에 대해 자세히 알아보기.</a>',
     TABLES_SEMANTIC_HEADING: '제목 2 또는 제목 3과 같은 시맨틱 제목은 콘텐츠 섹션에만 사용해야 하며, HTML 표에는 <strong>이 아닌</strong>을 사용해야 합니다. 대신 <code>&lt;th&gt;</code> 요소를 사용하여 표 제목을 표시하세요. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">액세스 가능한 표에 대해 자세히 알아보기.</a>',
     TABLES_EMPTY_HEADING: '빈 테이블 헤더가 발견되었습니다! 테이블 헤더는 비어 있으면 안 됩니다. 행 및/또는 열 머리글을 지정하여 관계를 전달하는 것이 중요합니다. 이 정보는 보조 기술을 사용하는 사람들에게 맥락을 제공합니다. 표는 표 형식의 데이터에만 사용해야 한다는 점에 유의하세요. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">액세스 가능한 테이블에 대해 자세히 알아보기.</a>',
-    CONTRAST_ERROR: '이 텍스트는 배경과 대비가 충분하지 않습니다. 대비 비율은 일반 텍스트의 경우 4.5:1 이상, 큰 텍스트의 경우 3:1 이상이어야 합니다. <hr> 다음 텍스트의 대비 비율은 <strong {r}>%(RATIO)</strong>입니다: <strong {r}>%(TEXT)</strong>',
+    CONTRAST_ERROR: '이 텍스트는 배경과 대비가 충분하지 않습니다. 대비 비율은 일반 텍스트의 경우 4.5:1 이상, 큰 텍스트의 경우 3:1 이상이어야 합니다. <hr> <strong {eb}>대조 비율</strong> <strong {eb}>%(RATIO)</strong> <strong {r}>%(TEXT)</strong>',
     CONTRAST_WARNING: '이 텍스트의 대비를 알 수 없으므로 수동으로 검토해야 합니다. 텍스트와 배경의 색상이 강하게 대비되는지 확인합니다. 대비 비율은 일반 텍스트의 경우 4.5:1 이상, 큰 텍스트의 경우 3:1 이상이어야 합니다. <hr> 검토해 주세요: <strong {w}>%(TEXT)</strong>',
-    CONTRAST_INPUT_ERROR: '이 입력 내의 텍스트는 배경과 대비가 충분하지 않습니다. 대비 비율은 일반 텍스트의 경우 4.5:1 이상, 큰 텍스트의 경우 3:1 이상이어야 합니다. <hr> 대비 비율: <strong {r}>%(RATIO)</strong>',
+    CONTRAST_INPUT_ERROR: '이 입력 내의 텍스트는 배경과 대비가 충분하지 않습니다. 대비 비율은 일반 텍스트의 경우 4.5:1 이상, 큰 텍스트의 경우 3:1 이상이어야 합니다. <hr> <strong {eb}>대조 비율</strong> <strong {eb}>%(RATIO)</strong>',
   },
 };

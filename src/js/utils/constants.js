@@ -1,5 +1,4 @@
 import Lang from './lang';
-import findShadowComponents from '../logic/find-shadow-components';
 
 const Constants = (function myConstants() {
   /* **************** */
@@ -269,18 +268,6 @@ const Constants = (function myConstants() {
     EmbeddedContent.All = `${EmbeddedContent.Video}, ${EmbeddedContent.Audio}, ${EmbeddedContent.Visualization}`;
   }
 
-  /* ***************** */
-  /* Shadow Components */
-  /* ***************** */
-  const Shadow = {};
-  function initializeShadowSearch(checkRoot, autoDetectShadowComponents, shadowComponents) {
-    Shadow.Components = findShadowComponents(
-      checkRoot,
-      autoDetectShadowComponents,
-      shadowComponents,
-    );
-  }
-
   return {
     initializeRoot,
     Root,
@@ -294,8 +281,6 @@ const Constants = (function myConstants() {
     Exclusions,
     initializeEmbeddedContent,
     EmbeddedContent,
-    initializeShadowSearch,
-    Shadow,
   };
 }());
 

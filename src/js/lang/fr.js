@@ -202,8 +202,8 @@ export default {
     TABLES_EMPTY_HEADING: 'En-tête de tableau vide trouvé! Les en-têtes de tableau ne devraient jamais être vides. Il est important de déterminer les rangées et/ou colonnes des en-têtes pour détermi-ner leur relation. Cette information fournit le contexte aux gens qui utilisent la tech-nologie d’assistance. Veuillez garder à l’esprit que les tableaux devraient être utilisés pour les données relatives uniquement. <hr> En savoir plus sur les <a href="https://www.w3.org/WAI/tutorials/tables/">tableaux accessibles.</a>',
 
     // Contrast
-    CONTRAST_ERROR: 'Ce texte n’est pas suffisamment contrasté avec l’arrière-plan. Le ratio du contraste devrait être au moins de 4.5:1 pour le texte normal et 3:1 pour les textes plus grands. <hr> Le ratio du contraste est de <strong {r}>%(RATIO)</strong> pour le texte suivant: <strong {r}>%(TEXT)</strong>',
+    CONTRAST_ERROR: 'Ce texte n’est pas suffisamment contrasté avec l’arrière-plan. Le ratio du contraste devrait être au moins de 4.5:1 pour le texte normal et 3:1 pour les textes plus grands. <hr> <strong {eb}>Ratio de contraste</strong> <strong {eb}>%(RATIO)</strong> <strong {r}>%(TEXT)</strong>',
     CONTRAST_WARNING: 'Le contraste de ce texte est inconnu et doit être manuellement révisé. Assurez-vous que le texte et l’arrière-plan représentent des couleurs contrastantes. Le ratio du con-traste devrait être au moins de 4.5:1 pour les textes normaux et 3:1 pour les textes plus grands. <hr> Veuillez réviser: <strong {w}>%(TEXT)</strong>',
-    CONTRAST_INPUT_ERROR: 'Le texte à l’intérieur de cette entrée n’est pas suffisamment contrasté avec l’arrière-plan. Le ratio du contraste devraient être au moins de 4.5:1 pour le texte normal et 3:1 pour les textes plus grands. <hr> Ratio du contraste: <strong {r}>%(RATIO)</strong>',
+    CONTRAST_INPUT_ERROR: 'Le texte à l’intérieur de cette entrée n’est pas suffisamment contrasté avec l’arrière-plan. Le ratio du contraste devraient être au moins de 4.5:1 pour le texte normal et 3:1 pour les textes plus grands. <hr> <strong {eb}>Ratio de contraste</strong> <strong {eb}>%(RATIO)</strong>',
   },
 };

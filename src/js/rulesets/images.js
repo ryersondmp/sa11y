@@ -34,7 +34,8 @@ export default function checkImages(results, option) {
       }
     });
     Lang._('SUSPICIOUS_ALT_STOPWORDS').forEach((word) => {
-      if (alt.toLowerCase().indexOf(word) >= 0) {
+      const susWord = alt.toLowerCase().indexOf(word);
+      if (susWord > -1 && susWord < 6) {
         hit[1] = word;
       }
     });

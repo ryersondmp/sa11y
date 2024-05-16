@@ -376,11 +376,9 @@ export default function checkQA(results, option) {
   /*  Error: Duplicate IDs                                           */
   /* *************************************************************** */
   if (option.duplicateIdQA) {
-    const doms = Constants.Shadow.Components ? `body, ${Constants.Shadow.Components}` : 'body';
-    const allDoms = document.querySelectorAll(doms);
-
     // Look for duplicate IDs within each DOM.
-    allDoms.forEach((dom) => {
+    const doms = document.querySelectorAll('body, [data-sa11y-has-shadow-root]');
+    doms.forEach((dom) => {
       const allIds = new Set();
       const findDuplicateIds = (ids, withinDOM) => {
         ids.forEach(($el) => {

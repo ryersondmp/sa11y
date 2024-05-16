@@ -221,8 +221,8 @@ export default {
     QA_SUBSCRIPT_WARNING: 'Opcji formatowania indeksu dolnego i indeksu górnego należy używać wyłącznie do zmiany pozycji tekstu w celu dostosowania do konwencji lub standardów typograficznych. Powinna <strong>nie</strong> być używana wyłącznie do celów prezentacji lub wyglądu. Formatowanie całych zdań stwarza problemy z czytelnością. Odpowiednie przypadki użycia obejmują wyświetlanie wykładników, liczb porządkowych, takich jak 4<sup>th</sup> zamiast czwartej, oraz wzorów chemicznych (H<sub>2</sub>O).',
 
     // Contrast
-    CONTRAST_ERROR: 'Ten tekst nie ma wystarczającego kontrastu z tłem Współczynnik kontrastu powinien wynosić co najmniej 4,5:1 dla zwykłego tekstu i 3:1 dla dużego tekstu. <hr> Współczynnik kontrastu wynosi <strong {r}>%(RATIO)</strong> dla następującego tekstu: <strong {r}>%(TEXT)</strong>',
+    CONTRAST_ERROR: 'Ten tekst nie ma wystarczającego kontrastu z tłem Współczynnik kontrastu powinien wynosić co najmniej 4,5:1 dla zwykłego tekstu i 3:1 dla dużego tekstu. <hr> <strong {eb}>Stosunek kontrastu</strong> <strong {eb}>%(RATIO)</strong> <strong {r}>%(TEXT)</strong>',
     CONTRAST_WARNING: 'Kontrast tego tekstu jest nieznany i wymaga ręcznego przeglądu. Upewnij się, że tekst i tło mają silne kontrastujące kolory. Współczynnik kontrastu powinien wynosić co najmniej 4,5:1 dla zwykłego tekstu i 3:1 dla dużego tekstu. <hr> Sprawdź kontrast następującego tekstu: <strong {w}>%(TEXT)</strong>',
-    CONTRAST_INPUT_ERROR: 'Text within this input does not have enough contrast with the background. The contrast ratio should be at least 4.5:1 for normal text and 3:1 for large text. <hr> Contrast ratio: <strong {r}>%(RATIO)</strong>',
+    CONTRAST_INPUT_ERROR: 'Tekst w tym polu nie ma wystarczającego kontrastu z tłem. Stosunek kontrastu powinien wynosić co najmniej 4,5:1 dla normalnego tekstu i 3:1 dla dużego tekstu. <hr> <strong {eb}>Stosunek kontrastu</strong> <strong {eb}>%(RATIO)</strong>',
   },
 };

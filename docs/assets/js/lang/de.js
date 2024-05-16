@@ -236,9 +236,9 @@ var de = {
     TABLES_EMPTY_HEADING: 'Leerer Tabellenkopf gefunden! Tabellenüberschriften sollten <strong>niemals</strong> leer sein. Es ist wichtig, Zeilen- und/oder Spaltenüberschriften zu benennen, um ihre Beziehung zu verdeutlichen. Diese Informationen bieten Menschen, die Hilfsmittel verwenden, einen Kontext. Bitte beachte, dass Tabellen nur für tabellarische Daten verwendet werden sollten. <hr> Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/tables/">barrierefreie Tabellen.</a>',
 
     // Contrast
-    CONTRAST_ERROR: 'Dieser Text hat nicht genügend Kontrast zum Hintergrund. Das Kontrastverhältnis sollte mindestens 4,5:1 für normalen Text und 3:1 für großen Text betragen. <hr> Das Kontrastverhältnis beträgt <strong {r}>%(RATIO)</strong> für den folgenden Text: <strong {r}>%(TEXT)</strong>',
+    CONTRAST_ERROR: 'Dieser Text hat nicht genügend Kontrast zum Hintergrund. Das Kontrastverhältnis sollte mindestens 4,5:1 für normalen Text und 3:1 für großen Text betragen. <hr> <strong {eb}>Kontrastverhältnis</strong> <strong {eb}>%(RATIO)</strong> <strong {r}>%(TEXT)</strong>',
     CONTRAST_WARNING: 'Der Kontrast dieses Textes ist unbekannt und muss manuell überprüft werden. Stelle sicher, dass der Text und der Hintergrund einen starken Farbkontrast aufweisen. Das Kontrastverhältnis sollte mindestens 4,5:1 für normalen Text und 3:1 für großen Text betragen. <hr> Bitte überprüfen: <strong {w}>%(TEXT)</strong>',
-    CONTRAST_INPUT_ERROR: 'Der Text in dieser Eingabe hat nicht genügend Kontrast zum Hintergrund. Das Kontrastverhältnis sollte mindestens 4,5:1 für normalen Text und 3:1 für großen Text betragen. <hr> Kontrastverhältnis: <strong {r}>%(RATIO)</strong>',
+    CONTRAST_INPUT_ERROR: 'Der Text in dieser Eingabe hat nicht genügend Kontrast zum Hintergrund. Das Kontrastverhältnis sollte mindestens 4,5:1 für normalen Text und 3:1 für großen Text betragen. <hr> <strong {eb}>Kontrastverhältnis</strong> <strong {eb}>%(RATIO)</strong>',
   },
 };
 

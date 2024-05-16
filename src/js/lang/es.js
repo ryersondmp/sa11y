@@ -205,8 +205,8 @@ export default {
     TABLES_EMPTY_HEADING: '¡Encabezado de tabla vacío encontrado! Los encabezados de las tablas <strong>nunca</strong> deben estar vacíos. Es importante designar encabezados de fila y/o columna para transmitir su relación. Esta información brinda contexto a las personas que usan tecnología de asistencia. Tenga en cuenta que las tablas deben usarse solo para datos tabulares. <hr> Más información sobre las <a href="https://www.w3.org/WAI/tutorials/tables/">tablas accesibles.</a>',
 
     // Contrast
-    CONTRAST_ERROR: 'Este texto no tiene suficiente contraste con el fondo. La relación de contraste debe ser de al menos 4,5:1 para texto normal y 3:1 para texto grande. <hr> La relación de contraste es <strong {r}>%(RATIO)</strong> para el siguiente texto: <strong {r}>%(TEXT)</strong>',
+    CONTRAST_ERROR: 'Este texto no tiene suficiente contraste con el fondo. La relación de contraste debe ser de al menos 4,5:1 para texto normal y 3:1 para texto grande. <hr> <strong {eb}>Relación de contraste</strong> <strong {eb}>%(RATIO)</strong> <strong {r}>%(TEXT)</strong>',
     CONTRAST_WARNING: 'Se desconoce el contraste de este texto y debe revisarse manualmente. Asegúrese de que el texto y el fondo tengan colores fuertes que contrasten. La relación de contraste debe ser de al menos 4,5:1 para texto normal y 3:1 para texto grande. <hr> Revise: <strong {w}>%(TEXT)</strong>',
-    CONTRAST_INPUT_ERROR: 'El texto dentro de esta entrada no tiene suficiente contraste con el fondo. La relación de contraste debe ser de al menos 4,5:1 para texto normal y 3:1 para texto grande. <hr> Relación de contraste: <strong {r}>%(RATIO)</strong>',
+    CONTRAST_INPUT_ERROR: 'El texto dentro de esta entrada no tiene suficiente contraste con el fondo. La relación de contraste debe ser de al menos 4,5:1 para texto normal y 3:1 para texto grande. <hr> <strong {eb}>Relación de contraste</strong> <strong {eb}>%(RATIO)</strong>',
   },
 };

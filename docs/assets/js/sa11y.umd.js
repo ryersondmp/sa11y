@@ -148,55 +148,6 @@
     },
   };
 
-  var styles$1 = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-clone-image-text]{display:none!important}[data-sa11y-readability-period]{clip:rect(1px,1px,1px,1px)!important;border:0!important;clip-path:inset(50%)!important;display:block!important;height:1px!important;overflow:hidden!important;padding:0!important;position:absolute!important;white-space:nowrap!important;width:1px!important}[data-sa11y-error]{outline:5px solid var(--sa11y-error)!important}[data-sa11y-warning]{outline:5px solid var(--sa11y-warning)!important}[data-sa11y-good]{outline:5px solid var(--sa11y-good)!important}[data-sa11y-error-inline]{background-color:var(--sa11y-error)!important;box-shadow:0 0 0 4px var(--sa11y-error)!important;color:var(--sa11y-error-text)!important}[data-sa11y-error-inline],[data-sa11y-warning-inline]{border-color:transparent!important;border-radius:.25em!important}[data-sa11y-warning-inline]{background-color:var(--sa11y-warning)!important;box-shadow:0 0 0 4px var(--sa11y-warning)!important;color:var(--sa11y-warning-text)!important}[data-sa11y-pulse-border]{animation:pulse 2s 3;box-shadow:0;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:focus,[data-sa11y-pulse-border]:hover{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color)}70%{box-shadow:0 0 0 12px var(--sa11y-pulse-color)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}@media (forced-colors:active){[data-sa11y-error-inline],[data-sa11y-error],[data-sa11y-good],[data-sa11y-pulse-border],[data-sa11y-warning-inline],[data-sa11y-warning]{forced-color-adjust:none}}";
-
-  /* ************************************************************ */
-  /*  Auto-detect shadow DOM or process provided web components.  */
-  /* ************************************************************ */
-  const addStylestoShadow = (component) => {
-    const style = document.createElement('style');
-    style.setAttribute('class', 'sa11y-css-utilities');
-    style.textContent = styles$1;
-    component.shadowRoot.appendChild(style);
-  };
-
-  function findShadowComponents(option, desiredRoot) {
-    let webComponents;
-    if (option.autoDetectShadowComponents) {
-      // Elements to ignore.
-      const ignore = 'sa11y-heading-label, sa11y-heading-anchor, sa11y-annotation, sa11y-tooltips, sa11y-dismiss-tooltip, sa11y-control-panel, #sa11y-colour-filters, #sa11y-colour-filters *, script';
-
-      // Search all elements.
-      const root = document.querySelector(desiredRoot);
-      const search = (root) ? Array.from(root.querySelectorAll(`*:not(${ignore})`)) : Array.from(document.body.querySelectorAll(`*:not(${ignore})`));
-
-      // Query for open shadow roots & inject CSS utilities into every shadow DOM.
-      const foundShadows = [];
-      search.forEach((component) => {
-        if (component.shadowRoot && component.shadowRoot.mode === 'open') {
-          foundShadows.push(component);
-          addStylestoShadow(component);
-        }
-      });
-
-      // Return ALL web components on the page.
-      const all = Array.from(foundShadows).map((component) => component.tagName.toLowerCase());
-      webComponents = (all.length === 1) ? `${all.toString()}` : all.join(', ');
-    } else {
-      // If autoDetectShadowComponents is OFF, use provided shadow dom.
-      webComponents = option.suppliedShadowComponents || '';
-
-      // Append styles to each provided shadow dom.
-      if (webComponents) {
-        const providedShadow = document.querySelectorAll(webComponents);
-        providedShadow.forEach((component) => {
-          addStylestoShadow(component);
-        });
-      }
-    }
-    return webComponents;
-  }
-
   const Constants = (function myConstants() {
     /* **************** */
     /* Initialize Roots */
@@ -465,16 +416,6 @@
       EmbeddedContent.All = `${EmbeddedContent.Video}, ${EmbeddedContent.Audio}, ${EmbeddedContent.Visualization}`;
     }
 
-    /* ***************** */
-    /* Shadow Components */
-    /* ***************** */
-    const Shadow = {};
-    function initializeShadowSearch(checkRoot, autoDetectShadowComponents, shadowComponents) {
-      Shadow.Components = findShadowComponents(
-        checkRoot,
-        autoDetectShadowComponents);
-    }
-
     return {
       initializeRoot,
       Root,
@@ -488,8 +429,6 @@
       Exclusions,
       initializeEmbeddedContent,
       EmbeddedContent,
-      initializeShadowSearch,
-      Shadow,
     };
   }());
 
@@ -518,8 +457,8 @@
       if (!root) root = document.body;
     }
 
-    const shadowComponents = Constants.Shadow.Components;
-    const shadow = (shadowComponents) ? `, ${shadowComponents}` : '';
+    const shadowComponents = document.querySelectorAll('[data-sa11y-has-shadow-root]');
+    const shadow = (shadowComponents) ? ', [data-sa11y-has-shadow-root]' : '';
 
     const exclusions = Constants.Exclusions.Container;
     const additional = (exclude !== undefined) ? `, ${exclude}` : '';
@@ -531,9 +470,8 @@
       // 2. Dive into the each shadow root and collect an array of its results.
       const shadowFind = [];
       // Remove first comma and whitespace.
-      const prepShadow = shadowComponents.trim().replace(/^,+/, '');
       elements.forEach((el, i) => {
-        if (el && el.matches && el.matches(prepShadow) && el.shadowRoot) {
+        if (el && el.matches && el.matches('[data-sa11y-has-shadow-root]') && el.shadowRoot) {
           shadowFind[i] = el.shadowRoot.querySelectorAll(`:is(${selector}):not(${exclusions}${additional})`);
         }
       });
@@ -1161,6 +1099,43 @@
       Annotations,
     };
   }());
+
+  var styles$1 = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-clone-image-text]{display:none!important}[data-sa11y-readability-period]{clip:rect(1px,1px,1px,1px)!important;border:0!important;clip-path:inset(50%)!important;display:block!important;height:1px!important;overflow:hidden!important;padding:0!important;position:absolute!important;white-space:nowrap!important;width:1px!important}[data-sa11y-error]{outline:5px solid var(--sa11y-error)!important}[data-sa11y-warning]{outline:5px solid var(--sa11y-warning)!important}[data-sa11y-good]{outline:5px solid var(--sa11y-good)!important}[data-sa11y-error-inline]{background-color:var(--sa11y-error)!important;box-shadow:0 0 0 4px var(--sa11y-error)!important;color:var(--sa11y-error-text)!important}[data-sa11y-error-inline],[data-sa11y-warning-inline]{border-color:transparent!important;border-radius:.25em!important}[data-sa11y-warning-inline]{background-color:var(--sa11y-warning)!important;box-shadow:0 0 0 4px var(--sa11y-warning)!important;color:var(--sa11y-warning-text)!important}[data-sa11y-pulse-border]{animation:pulse 2s 3;box-shadow:0;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:focus,[data-sa11y-pulse-border]:hover{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color)}70%{box-shadow:0 0 0 12px var(--sa11y-pulse-color)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}@media (forced-colors:active){[data-sa11y-error-inline],[data-sa11y-error],[data-sa11y-good],[data-sa11y-pulse-border],[data-sa11y-warning-inline],[data-sa11y-warning]{forced-color-adjust:none}}";
+
+  /* ************************************************************ */
+  /*  Auto-detect shadow DOM or process provided web components.  */
+  /* ************************************************************ */
+  const addStylestoShadow = (component) => {
+    const style = document.createElement('style');
+    style.setAttribute('class', 'sa11y-css-utilities');
+    style.textContent = styles$1;
+    component.shadowRoot.appendChild(style);
+  };
+
+  function findShadowComponents(option) {
+    if (option.autoDetectShadowComponents) {
+      // Elements to ignore.
+      const ignore = 'sa11y-heading-label, sa11y-heading-anchor, sa11y-annotation, sa11y-tooltips, sa11y-dismiss-tooltip, sa11y-control-panel, #sa11y-colour-filters, #sa11y-colour-filters *, script';
+
+      // Search all elements.
+      const root = document.querySelector(option.checkRoot);
+      const search = (root) ? Array.from(root.querySelectorAll(`*:not(${ignore})`)) : Array.from(document.body.querySelectorAll(`*:not(${ignore})`));
+
+      // Query for open shadow roots & inject CSS utilities into every shadow DOM.
+      search.forEach((component) => {
+        if (component.shadowRoot && component.shadowRoot.mode === 'open') {
+          component.setAttribute('data-sa11y-has-shadow-root', '');
+          addStylestoShadow(component);
+        }
+      });
+    } else if (option.shadowComponents) {
+      const providedShadow = document.querySelectorAll(option.shadowComponents);
+      providedShadow.forEach((component) => {
+        component.setAttribute('data-sa11y-has-shadow-root', '');
+        addStylestoShadow(component);
+      });
+    }
+  }
 
   /* ******************************************************** */
   /*  Feature to detect if URL changed for bookmarklet/SPAs.  */
@@ -6827,7 +6802,8 @@
         }
       });
       Lang._('SUSPICIOUS_ALT_STOPWORDS').forEach((word) => {
-        if (alt.toLowerCase().indexOf(word) >= 0) {
+        const susWord = alt.toLowerCase().indexOf(word);
+        if (susWord > -1 && susWord < 6) {
           hit[1] = word;
         }
       });
@@ -7532,6 +7508,39 @@
   }
 
   /**
+   * Converts a color string in the format 'color(srgb r g b [a])' to RGBA format.
+   * If alpha value is not provided, it defaults to 1 (fully opaque).
+   * @param {string} colorString The color string in the format 'color(srgb r g b [a])'.
+   * @returns {string} The RGBA color string in the format 'rgba(r, g, b, a)'.
+   * Returns 'invalid-format' if the input format is invalid.
+   */
+  const convertColorToRGBA = (colorString) => {
+    if (colorString.startsWith('color(srgb')) {
+      const rgbaRegex = /srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s+([\d.]+))?/; // Added alpha value regex group
+      const match = colorString.match(rgbaRegex);
+
+      if (match && match.length >= 4) {
+        const [r, g, b, a] = match.slice(1);
+
+        // Ensure the parsed values are within the valid range [0, 1].
+        const parsedR = Math.min(1, parseFloat(r));
+        const parsedG = Math.min(1, parseFloat(g));
+        const parsedB = Math.min(1, parseFloat(b));
+
+        // Parse alpha value or default to 1 if not provided
+        const alpha = a !== undefined ? Math.min(1, parseFloat(a)) : 1;
+
+        // Converting RGB to RGBA.
+        const rgbaColor = `rgba(${Math.round(parsedR * 255)}, ${Math.round(parsedG * 255)}, ${Math.round(parsedB * 255)}, ${alpha})`;
+
+        return rgbaColor;
+      }
+      return 'invalid-format';
+    }
+    return colorString; // Return the original color if it's not in the color() format.
+  };
+
+  /**
    * Rulesets: Contrast
    * Color contrast plugin by Jason Day.
    * @link https://github.com/jasonday/color-contrast
@@ -7604,18 +7613,18 @@
             }
 
             const styles = getComputedStyle(el);
-            const bgColor = styles.backgroundColor;
+            const bgColor = convertColorToRGBA(styles.backgroundColor);
             const bgImage = styles.backgroundImage;
             const rgb = `${contrastObject.parseRgb(bgColor)}`;
             const alpha = rgb.split(',');
 
-            // if background has alpha transparency, flag manual check
+            // if background has alpha transparency, flag manual check.
             if (alpha[3] < 1 && alpha[3] > 0) {
               return 'alpha';
             }
 
-            // if element has no background image, or transparent return bgColor
             if (bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent' && bgImage === 'none' && alpha[3] !== '0') {
+              // if element has no background image, or transparent return bgColor
               return bgColor;
             } if (bgImage !== 'none') {
               return 'image';
@@ -7639,8 +7648,12 @@
               const elem = Elements.Found.Contrast[i];
 
               if (Elements.Found.Contrast) {
+                let ratio;
+                let error;
+                let warning;
+
                 const style = getComputedStyle(elem);
-                const { color } = style;
+                const color = convertColorToRGBA(style.color);
                 const { fill } = style;
                 const fontSize = parseInt(style.fontSize, 10);
                 const pointSize = fontSize * (3 / 4);
@@ -7649,14 +7662,26 @@
                 const background = contrastObject.getBackground(elem);
                 const textString = [].reduce.call(elem.childNodes, (a, b) => a + (b.nodeType === 3 ? b.textContent : ''), '');
                 const text = textString.trim();
-                const clip = window.getComputedStyle(elem).clip.replace(/\s/g, '');
-                const width = parseFloat(window.getComputedStyle(elem).width);
-                const height = parseFloat(window.getComputedStyle(elem).height);
-                let ratio;
-                let error;
-                let warning;
 
-                if ((width === 1 && height === 1) && (clip === "rect(0,0,0,0)" || clip === "rect(1px,1px,1px,1px)")) ; else if (htmlTag === 'SVG') {
+                // Maybe visually hidden text.
+                const computedStyle = window.getComputedStyle(elem);
+                const clip = computedStyle.clip.replace(/\s/g, '');
+                const clipPath = computedStyle.getPropertyValue('clip-path');
+                const width = parseFloat(computedStyle.width);
+                const height = parseFloat(computedStyle.height);
+                const maybeVisuallyHidden = (width === 1 && height === 1) &&
+                  (clipPath === 'inset(50%)' || /^(rect\(0(,\s*0){3}\)|rect\(1px(,\s*1px){3}\))$/.test(clip));
+
+                // Ignore if visually hidden for screen readers.
+                if (maybeVisuallyHidden) {
+                  return;
+                } else if (color.startsWith('color(')) {
+                  // Push a warning if using a color() functional notation.
+                  warning = {
+                    elem,
+                  };
+                  contrastErrors.warnings.push(warning);
+                } else if (htmlTag === 'SVG') {
                   ratio = Math.round(contrastObject.contrastRatio(fill, background) * 100) / 100;
                   if (ratio < 3) {
                     error = {
@@ -8601,11 +8626,9 @@
     /*  Error: Duplicate IDs                                           */
     /* *************************************************************** */
     if (option.duplicateIdQA) {
-      const doms = Constants.Shadow.Components ? `body, ${Constants.Shadow.Components}` : 'body';
-      const allDoms = document.querySelectorAll(doms);
-
       // Look for duplicate IDs within each DOM.
-      allDoms.forEach((dom) => {
+      const doms = document.querySelectorAll('body, [data-sa11y-has-shadow-root]');
+      doms.forEach((dom) => {
         const allIds = new Set();
         const findDuplicateIds = (ids, withinDOM) => {
           ids.forEach(($el) => {
@@ -8875,7 +8898,7 @@
           Constants.initializeRoot(desiredRoot, desiredReadabilityRoot);
 
           // Find all web components on the page.
-          Constants.initializeShadowSearch(option, desiredRoot);
+          findShadowComponents(option);
 
           // Find and cache elements.
           Elements.initializeElements(option);
@@ -9042,6 +9065,17 @@
       this.resetAll = (restartPanel = true) => {
         Constants.Global.html.removeAttribute('data-sa11y-active');
 
+        // Remove from page.
+        remove([
+          'sa11y-annotation',
+          'sa11y-heading-label',
+          'sa11y-heading-anchor',
+          'sa11y-tooltips',
+          '[data-sa11y-readability-period]',
+          '[data-sa11y-clone-image-text]',
+          '.sa11y-css-utilities',
+        ], 'document');
+
         // Reset all data attributes.
         resetAttributes([
           'data-sa11y-parent',
@@ -9053,17 +9087,7 @@
           'data-sa11y-overflow',
           'data-sa11y-pulse-border',
           'data-sa11y-filter',
-        ], 'document');
-
-        // Remove from page.
-        remove([
-          'sa11y-annotation',
-          'sa11y-heading-label',
-          'sa11y-heading-anchor',
-          'sa11y-tooltips',
-          '[data-sa11y-readability-period]',
-          '[data-sa11y-clone-image-text]',
-          '.sa11y-css-utilities',
+          'data-sa11y-has-shadow-root',
         ], 'document');
 
         // Remove from panel.
@@ -9088,6 +9112,11 @@
 
         // Main panel warning and error count.
         while (Constants.Panel.status.firstChild) Constants.Panel.status.removeChild(Constants.Panel.status.firstChild);
+
+        // Remove data attribute from shadow root elements.
+        document.querySelectorAll('[data-sa11y-has-shadow-root]').forEach((el) => {
+          el.removeAttribute('data-sa11y-has-shadow-root');
+        });
 
         if (restartPanel) {
           Constants.Panel.panel.classList.remove('active');
