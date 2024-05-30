@@ -34,12 +34,12 @@ export default function generateImageOutline(dismissed, imageResults) {
 
       // Only add edit button to relative (locally hosted) images.
       const isRelativeLink = (imageSrc) => imageSrc.includes(window.location.host) || imageSrc.startsWith(relativePath);
-      finalURL = (isRelativeLink(src))
-        ? `<a
+      finalURL = (isRelativeLink(src) && imageUniqueID !== undefined)
+        ? `<div class="edit-block"><a
             href="${encodeURI(editURL)}"
             target="_blank"
             rel="noopener noreferrer"
-            class="edit">${Lang._('EDIT')}</a>`
+            class="edit">${Lang._('EDIT')}</a></div>`
         : '';
     }
     return finalURL ?? '';

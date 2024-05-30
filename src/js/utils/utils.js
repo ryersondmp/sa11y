@@ -430,14 +430,21 @@ export function remove(elements, root) {
  * Checks if a scrollable area within a container element is scrollable or not, and applies appropriate CSS classes and attributes. Make sure to add aria-label manually.
  * @param {Element} scrollArea The scrollable area element to check.
  * @param {Element} container The container element that wraps the scrollable area.
+ * @param {Attribute} ariaLabel Give scroll area an accessible name and region landmark.
  */
-export function isScrollable(scrollArea, container) {
-  if (scrollArea.scrollHeight > container.clientHeight) {
-    container.classList.add('scrollable');
-    scrollArea.setAttribute('tabindex', '0');
-  } else {
-    container.classList.remove('scrollable');
-  }
+export function isScrollable(scrollArea, container, ariaLabel) {
+  setTimeout(() => {
+    if (scrollArea.scrollHeight > container.clientHeight) {
+      container.classList.add('scrollable');
+      scrollArea.setAttribute('tabindex', '0');
+      if (ariaLabel) {
+        scrollArea.setAttribute('aria-label', ariaLabel);
+        scrollArea.setAttribute('role', 'region');
+      }
+    } else {
+      container.classList.remove('scrollable');
+    }
+  }, 50);
 }
 
 /**

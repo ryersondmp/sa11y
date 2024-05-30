@@ -15,6 +15,7 @@ const defaultOptions = {
   linkIgnoreStrings: '',
 
   // Other features
+  aboutContent: '',
   delayCheck: 0,
   delayCustomCheck: 500,
   showGoodLinkButton: true,

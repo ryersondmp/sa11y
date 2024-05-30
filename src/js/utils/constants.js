@@ -33,6 +33,7 @@ const Constants = (function myConstants() {
     Global.headless = option.headless;
     Global.panelPosition = option.panelPosition;
     Global.dismissAnnotations = option.dismissAnnotations;
+    Global.aboutContent = option.aboutContent;
 
     // Toggleable plugins
     Global.contrastPlugin = option.contrastPlugin;

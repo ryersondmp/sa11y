@@ -303,7 +303,7 @@ strong {
   font-weight: 600;
 }
 
-a:not(#outline-list a) {
+a:not(#outline-list a):not(.edit) {
   color: var(--sa11y-hyperlink);
   text-decoration: underline;
   cursor: pointer;
@@ -470,6 +470,11 @@ hr {
   display: none;
   color: var(--sa11y-panel-primary);
   opacity: 0;
+
+  p {
+    display: block;
+    margin-block-end: 1em;
+  }
 }
 
 #page-issues.active,
@@ -483,6 +488,10 @@ hr {
 .panel-header {
   padding: 10px 15px 0;
   text-align: start;
+}
+
+#about-content {
+  padding-top: 5px;
 }
 
 #page-issues-content,
@@ -503,9 +512,14 @@ hr {
   overflow-y: auto;
 }
 
+#settings-content {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
 #images-content,
 #outline-content {
-  max-height: 250px;
+  max-height: 300px;
   overflow-y: auto;
 }
 
@@ -595,7 +609,32 @@ hr {
     }
 
     .alt {
-      padding: 0 5px 10px;
+      padding: 2px 5px 10px;
+    }
+
+    .edit {
+      position: relative;
+      padding: 4px 7px;
+      color: var(--sa11y-panel-primary);
+      text-decoration: none;
+      cursor: pointer;
+      background: var(--sa11y-panel-bg-secondary);
+      border: 2px solid var(--sa11y-button-outline);
+      border-radius: 5px;
+
+      &:hover,
+      &:focus {
+        background-color: var(--sa11y-shortcut-hover);
+      }
+
+      &::before {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        bottom: -10px;
+        left: -10px;
+        content: "";
+      }
     }
 
     .badge {
@@ -915,16 +954,19 @@ label:not(#colour-filter-mode, #export-results-mode) {
   }
 }
 
+.select-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
 .select-dropdown:after {
   position: absolute;
-  width: 0;
-  height: 0;
-  margin-top: 22.5px;
   content: " ";
   border-top: 5px solid var(--sa11y-setting-switch-bg-off);
   border-right: 5px solid transparent;
   border-left: 5px solid transparent;
-  inset-inline-end: 25px;
+  inset-inline-end: 14px;
 }
 
 #colour-filter-select {
@@ -1050,7 +1092,21 @@ label:not(#colour-filter-mode, #export-results-mode) {
 .hide-settings-border {
   padding: 0 15px !important;
   border-bottom: 0 !important;
+
+  li:not(#colour-filter-item) {
+    display: none !important;
+  }
+
+  #about-content {
+    display: none;
+  }
+
+  &.scrollable::before {
+    all: unset;
+  }
 }
+
+
 
 /* ***************************************** */
 /*         19. Scrollbar styling             */
@@ -1072,17 +1128,26 @@ label:not(#colour-filter-mode, #export-results-mode) {
 
 .scrollable::before {
   position: absolute;
-  top: auto;
   right: 0;
-  bottom: auto;
   left: 0;
   z-index: -1;
-  height: 250px;
+  width: 100%;
+  height: 360px;
   content: "";
-  background-image: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 70%, var(--sa11y-panel-scrollable) 100%);
-  background-position: bottom;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 70%, var(--sa11y-panel-scrollable) 100%);
   transition: opacity 1s ease-in-out;
   animation: fade 1s ease-in-out;
+}
+
+.right .scrollable:not(#page-issues-content)::before,
+.left .scrollable:not(#page-issues-content)::before {
+  bottom: 79px;
+}
+
+.top-right .scrollable::before,
+.top-left .scrollable::before {
+  bottom: 0;
+  border-radius: 5px;
 }
 
 #page-issues-content.scrollable::before {
@@ -1092,7 +1157,6 @@ label:not(#colour-filter-mode, #export-results-mode) {
 #panel-alert.scrollable::before {
   height: 200px;
 }
-
 
 /* ***************************************** */
 /*           20. Animations                  */

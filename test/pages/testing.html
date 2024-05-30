@@ -13,6 +13,11 @@
       background-color: color-mix(in srgb, rgba(52, 201, 235, 0.9) 50%, white);
     }
 
+    .hsl {
+      color: black;
+      background-color: hsl(248, 100%, 50%);
+    }
+
     .color {
       color: color(display-p3 1 8 0 / .5);
     }
@@ -21,11 +26,12 @@
 
 <body>
   <header class="sa11y-active">
-    <h1>Sa11y (Random) Unit Tests</h1>
+    <h2>Sa11y (Random) Unit Tests</h2>
   </header>
   <main>
     <p class="color-mix">This uses color-mix.</p>
     <p class="color">This uses color().</p>
+    <p class="hsl">This uses hsl</p>
     <p class="visually-hidden">testing</p>
     <h2>A blank slate for testing.</h2>
     <h3>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellat porro doloribus magnam nobis nisi! Officia
@@ -34,15 +40,17 @@
 
     <img
       src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGFkbDR3emdreTVxZnZqNzZsYWE1dXU2b21xZWM3dDZ6bXlmcDhsOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GQ9InpECkHgJO/giphy.gif"
-      alt="an image of Scott: why are you image of a cat the way you are?">
+      alt="An image of Michael Scott saying: Why are you the way that you are?">
     <hr>
+    <img
+      src="https://imageio.forbes.com/specials-images/imageserve/663c5a05627bd75cb76db0fd/The-Office/960x0.jpg?format=jpg&width=960">
     <img
       src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ3RwYzJ4cjNoMHluZnFiODJudWtkZ3BsN3czdjY4dmVwYjd6YnJsMCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/jOpLbiGmHR9S0/giphy.gif"
       alt="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam tempora accusantium doloribus perspiciatis? Ex voluptates labore ullam dolorem aliquid voluptatum, quos voluptatem explicabo minima molestiae praesentium deserunt odit sequi ipsa. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam tempora accusantium doloribus perspiciatis? Ex voluptates labore ullam dolorem aliquid voluptatum, quos voluptatem explicabo minima molestiae praesentium deserunt odit sequi ipsa.">
     <hr>
     <img class="ignore"
-      src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGFkbDR3emdreTVxZnZqNzZsYWE1dXU2b21xZWM3dDZ6bXlmcDhsOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GQ9InpECkHgJO/giphy.gif"
-      alt="Michael Scott: why are you the way you are?">
+      src="https://imageio.forbes.com/specials-images/imageserve/663c5a05627bd75cb76db0fd/The-Office/960x0.jpg?format=jpg&width=960"
+      alt="Dwight Shrute">
     <hr>
 
     <img
@@ -50,8 +58,7 @@
       alt="Michael Scott: why are you the way you are?">
     <hr>
     <h5>Test</h5>
-    <img
-      src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGFkbDR3emdreTVxZnZqNzZsYWE1dXU2b21xZWM3dDZ6bXlmcDhsOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GQ9InpECkHgJO/giphy.gif">
+
 
     <h2>Relative image</h2>
     <div></div>
@@ -60,7 +67,7 @@
   <div id="webcomponent">
     <template shadowrootmode="open">
       <h3>Test</h3>
-      <img src="#">
+      <img src="http://localhost:8080/test/pages/assets/placehkolder.svg">
     </template>
   </div>
 
@@ -71,9 +78,12 @@
     Sa11y.Lang.addI18n(Sa11yLangEn.strings);
     const sa11y = new Sa11y.Sa11y({
       checkRoot: 'body',
+      aboutHeader: 'Help',
+      aboutContent: '<h2>Help</h2><p>Questions? Review the <a href="#">accessibility guide</a>. For help, please contact <a href="mailto:help@torontomu.ca">help@torontomu.ca</a>. This tool was created by the Toronto Metropolitan University.</p><p><a href="https://forms.gle/sjzK9XykETaoqZv99">Report bugs &amp; feedback</a></p>',
       autoDetectShadowComponents: false,
       shadowComponents: '#webcomponent',
       imageIgnore: '.ignore',
+      exportResultsPlugin: true,
       showImageOutline: true,
       relativePathImageID: 'wp-image-',
       relativePathImageSRC: 'localhost:8080',

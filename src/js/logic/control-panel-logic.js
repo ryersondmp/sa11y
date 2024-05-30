@@ -4,6 +4,7 @@
 import Constants from '../utils/constants';
 import { store, isScrollable } from '../utils/utils';
 import Lang from '../utils/lang';
+import find from '../utils/find';
 
 /**
  * OUTLINE PANEL.
@@ -13,10 +14,11 @@ const openOutline = () => {
   Constants.Panel.outline.classList.add('active');
   Constants.Panel.outlineToggle.setAttribute('aria-expanded', 'true');
   store.setItem('sa11y-remember-outline', 'Opened');
+  isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
 
   // Toggle visibility of heading labels
-  const $headingAnnotations = document.querySelectorAll('sa11y-heading-label');
-  $headingAnnotations.forEach(($el) => $el.hidden = false);
+  const headingLabels = find('sa11y-heading-label', 'root');
+  headingLabels.forEach(($el) => $el.hidden = false);
 
   const event = new CustomEvent('sa11y-build-heading-outline');
   document.dispatchEvent(event);
@@ -29,8 +31,8 @@ const closeOutline = () => {
   store.setItem('sa11y-remember-outline', 'Closed');
 
   // Toggle visibility of heading labels
-  const $headingAnnotations = document.querySelectorAll('sa11y-heading-label');
-  $headingAnnotations.forEach(($el) => $el.hidden = true);
+  const headingLabels = find('sa11y-heading-label', 'root');
+  headingLabels.forEach(($el) => $el.hidden = true);
 };
 
 /**
@@ -41,6 +43,7 @@ const openImages = () => {
   Constants.Panel.images.classList.add('active');
   Constants.Panel.imagesToggle.setAttribute('aria-expanded', 'true');
   store.setItem('sa11y-remember-images', 'Opened');
+  isScrollable(Constants.Panel.imagesList, Constants.Panel.imagesContent);
 
   const event = new CustomEvent('sa11y-build-image-outline');
   document.dispatchEvent(event);
@@ -63,6 +66,11 @@ const openSettings = () => {
   Constants.Panel.settings.classList.add('active');
   Constants.Panel.settingsToggle.setAttribute('aria-expanded', 'true');
   store.setItem('sa11y-remember-settings', 'Opened');
+  isScrollable(
+    Constants.Panel.settingsContent,
+    Constants.Panel.settingsContent,
+    Lang._('SETTINGS'),
+  );
 };
 
 const closeSettings = () => {
@@ -82,7 +90,6 @@ export default function initializePanelToggles() {
   Constants.Panel.outlineToggle.addEventListener('click', () => {
     if (Constants.Panel.outlineToggle.getAttribute('aria-expanded') === 'true') {
       closeOutline();
-      isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
     } else {
       openOutline();
       closeSettings();
@@ -91,15 +98,11 @@ export default function initializePanelToggles() {
 
     // Set focus on Page Outline heading for accessibility.
     Constants.Panel.outlineHeader.focus();
-    isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
   });
 
   // Remember to leave outline open
   if (store.getItem('sa11y-remember-outline') === 'Opened') {
     openOutline();
-    setTimeout(() => {
-      isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
-    }, 0);
   }
 
   /* **************** */
@@ -109,7 +112,6 @@ export default function initializePanelToggles() {
     Constants.Panel.imagesToggle.addEventListener('click', () => {
       if (Constants.Panel.imagesToggle.getAttribute('aria-expanded') === 'true') {
         closeImages();
-        isScrollable(Constants.Panel.imagesList, Constants.Panel.imagesContent);
       } else {
         openImages();
         closeOutline();
@@ -118,17 +120,11 @@ export default function initializePanelToggles() {
 
       // Set focus on Images heading for accessibility.
       Constants.Panel.imagesHeader.focus();
-      setTimeout(() => {
-        isScrollable(Constants.Panel.imagesList, Constants.Panel.imagesContent);
-      }, 0);
     });
 
     // Remember to leave outline open
     if (store.getItem('sa11y-remember-images') === 'Opened') {
       openImages();
-      setTimeout(() => {
-        isScrollable(Constants.Panel.imagesList, Constants.Panel.imagesContent);
-      }, 0);
     }
   }
 
@@ -146,13 +142,6 @@ export default function initializePanelToggles() {
 
     // Set focus on Settings heading for accessibility.
     Constants.Panel.settingsHeader.focus();
-
-    // Keyboard accessibility fix for scrollable panel content.
-    if (Constants.Panel.settingsContent.clientHeight > 350) {
-      Constants.Panel.settingsContent.setAttribute('tabindex', '0');
-      Constants.Panel.settingsContent.setAttribute('aria-label', `${Lang._('SETTINGS')}`);
-      Constants.Panel.settingsContent.setAttribute('role', 'region');
-    }
   });
 
   // Remember to leave settings open
@@ -166,7 +155,24 @@ export default function initializePanelToggles() {
   });
 
   // Page issues: add gradient if scrollable list.
-  setTimeout(() => {
-    isScrollable(Constants.Panel.pageIssuesList, Constants.Panel.pageIssuesContent);
-  }, 0);
+  isScrollable(Constants.Panel.pageIssuesList, Constants.Panel.pageIssuesContent);
+
+  /* ******************************** */
+  /*  Better keyboard accessibility.  */
+  /* ******************************** */
+  const tabs = Constants.Panel.panel.querySelectorAll('[role=tab]');
+  let currentIndex = Array.from(tabs).findIndex((tab) => tab.classList.contains('active'));
+  tabs.forEach((tab) => {
+    tab.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        currentIndex = (currentIndex + 1) % tabs.length;
+        tabs[currentIndex].focus();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        currentIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+        tabs[currentIndex].focus();
+      }
+    });
+  });
 }

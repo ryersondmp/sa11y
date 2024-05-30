@@ -97,6 +97,12 @@ export default class ControlPanel extends HTMLElement {
         </button>
       </li>` : '';
 
+    /* CUSTOMIZABLE ABOUT SECTION */
+    const aboutSection = Constants.Global.aboutContent ? `
+      <div id="about-content">
+        ${Constants.Global.aboutContent}
+      </div>` : '';
+
     /* MAIN TOGGLE */
     const mainToggle = `
       <button type="button" aria-expanded="false" id="toggle" aria-describedby="notification-badge" aria-label="${Lang._('MAIN_TOGGLE_LABEL')}" class="${panelPosition}" disabled>
@@ -176,6 +182,7 @@ export default class ControlPanel extends HTMLElement {
             ${exportResultsPlugin}
             ${colourFilterPlugin}
           </ul>
+          ${aboutSection}
         </div>
       </div>`;
 
