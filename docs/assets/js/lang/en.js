@@ -81,8 +81,8 @@ var en = {
     COLOUR_FILTER_HIGH_CONTRAST_MESSAGE: 'Colour filters do not work in high contrast mode.',
 
     // Alternative text stop words
-    SUSPICIOUS_ALT_STOPWORDS: ['image', 'graphic', 'picture', 'photo'],
-    PLACEHOLDER_ALT_STOPWORDS: ['alt', 'chart', 'decorative', 'image', 'graphic', 'photo', 'placeholder', 'placeholder image', 'spacer', 'tbd', 'todo', 'to do'],
+    SUSPICIOUS_ALT_STOPWORDS: ['image', 'graphic', 'picture', 'photo', 'thumbnail'],
+    PLACEHOLDER_ALT_STOPWORDS: ['alt', 'chart', 'decorative', 'image', 'graphic', 'photo', 'placeholder', 'placeholder image', 'spacer', 'tbd', 'todo', 'to do', 'thumbnail'],
     PARTIAL_ALT_STOPWORDS: [
       'click',
       'click here',

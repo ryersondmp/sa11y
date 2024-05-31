@@ -190,7 +190,7 @@ audio {
 
   &.top-right,
   &.top-left {
-    top: 45px;
+    top: 35px;
     bottom: unset;
   }
 
@@ -470,11 +470,6 @@ hr {
   display: none;
   color: var(--sa11y-panel-primary);
   opacity: 0;
-
-  p {
-    display: block;
-    margin-block-end: 1em;
-  }
 }
 
 #page-issues.active,
@@ -492,6 +487,11 @@ hr {
 
 #about-content {
   padding-top: 5px;
+
+  p {
+    display: block;
+    margin-block-end: 1em;
+  }
 }
 
 #page-issues-content,
@@ -517,9 +517,10 @@ hr {
   overflow-y: auto;
 }
 
+/* Note to self: stop tinkering with the max-height. This is the max height that will accommodate the Page Issues and Readability panel on your average 13" screen. */
 #images-content,
 #outline-content {
-  max-height: 300px;
+  max-height: 250px;
   overflow-y: auto;
 }
 
@@ -638,13 +639,14 @@ hr {
     }
 
     .badge {
-      margin-inline-end: 1px;
+      margin-inline-end: 4px;
     }
 
     img {
       float: inline-start;
       max-width: 110px;
-      margin: 0 10px 15px 0;
+      margin-inline-end: 10px;
+      margin-block-end: 15px;
       border-radius: 5px;
     }
 
@@ -858,6 +860,7 @@ label:not(#colour-filter-mode, #export-results-mode) {
 /* ************************************* */
 /*            14. Page issues            */
 /* ************************************* */
+
 #page-issues {
   align-items: center;
   color: var(--sa11y-panel-primary);
@@ -1015,11 +1018,24 @@ label:not(#colour-filter-mode, #export-results-mode) {
   }
 }
 
+.top-left,
+.top-right {
+  #readability-content {
+    border-top: 1px solid var(--sa11y-panel-bg-splitter);
+  }
+}
+
+.left,
+.right {
+  #readability-content {
+    border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
+  }
+}
+
 #readability-content {
   width: 100%;
   padding: 10px 15px;
   color: var(--sa11y-panel-primary);
-  border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
 }
 
 #readability-details {

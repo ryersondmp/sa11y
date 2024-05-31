@@ -173,7 +173,7 @@ audio {
   inset-inline-start: 42px;
 }
 #panel.top-right, #panel.top-left {
-  top: 45px;
+  top: 35px;
   bottom: unset;
 }
 #panel.active {
@@ -441,13 +441,6 @@ hr {
   color: var(--sa11y-panel-primary);
   opacity: 0;
 }
-#page-issues p,
-#images-panel p,
-#settings-panel p,
-#outline-panel p {
-  display: block;
-  margin-block-end: 1em;
-}
 
 #page-issues.active,
 #images-panel.active,
@@ -464,6 +457,10 @@ hr {
 
 #about-content {
   padding-top: 5px;
+}
+#about-content p {
+  display: block;
+  margin-block-end: 1em;
 }
 
 #page-issues-content,
@@ -493,9 +490,10 @@ hr {
   overflow-y: auto;
 }
 
+/* Note to self: stop tinkering with the max-height. This is the max height that will accommodate the Page Issues and Readability panel on your average 13" screen. */
 #images-content,
 #outline-content {
-  max-height: 300px;
+  max-height: 250px;
   overflow-y: auto;
 }
 
@@ -598,12 +596,13 @@ hr {
   content: "";
 }
 #images-list li .badge {
-  margin-inline-end: 1px;
+  margin-inline-end: 4px;
 }
 #images-list li img {
   float: inline-start;
   max-width: 110px;
-  margin: 0 10px 15px 0;
+  margin-inline-end: 10px;
+  margin-block-end: 15px;
   border-radius: 5px;
 }
 #images-list li.warning .alt {
@@ -935,11 +934,20 @@ label:not(#colour-filter-mode, #export-results-mode) {
   opacity: 1;
 }
 
+.top-left #readability-content,
+.top-right #readability-content {
+  border-top: 1px solid var(--sa11y-panel-bg-splitter);
+}
+
+.left #readability-content,
+.right #readability-content {
+  border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
+}
+
 #readability-content {
   width: 100%;
   padding: 10px 15px;
   color: var(--sa11y-panel-primary);
-  border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
 }
 
 #readability-details {

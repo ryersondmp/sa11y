@@ -76,25 +76,34 @@ export default function generateImageOutline(dismissed, imageResults) {
       let append;
       if (issue === 'error') {
         const missing = altText.length === 0
-          ? `<span class="badge error-badge">${Lang._('MISSING')}</span>` : '';
+          ? `<div class="badge error-badge">${Lang._('MISSING')}</div>`
+          : `<strong class="outline-list-item red-text">${altText}</strong>`;
         append = `
         <li class="error">
           <img src="${source}" alt/>
           <div class="alt">
-            <span class="badge error-badge"><span class="error-icon"></span><span class="visually-hidden">${Lang._('ERROR')}</span> ${Lang._('ALT')}</span>
-            ${missing} <strong class="outline-list-item red-text">${altText}</strong>
+            <div class="badge error-badge">
+              <span class="error-icon"></span>
+              <span class="visually-hidden">${Lang._('ERROR')}</span>
+              ${Lang._('ALT')}
+            </div>
+            ${missing}
           </div>
           ${edit}
         </li>`;
         imageArray.push(append);
       } else if (issue === 'warning' && !dismissedImage) {
         const decorative = altText.length === 0
-          ? `<span class="badge warning-badge">${Lang._('DECORATIVE')}</span>` : '';
+          ? `<div class="badge warning-badge">${Lang._('DECORATIVE')}</div>` : '';
         append = `
         <li class="warning">
           <img src="${source}" alt/>
           <div class="alt">
-            <span class="badge warning-badge"><span aria-hidden="true">&#x3f; ${Lang._('ALT')}</span><span class="visually-hidden">${Lang._('WARNING')}</span></span>
+            <div class="badge warning-badge">
+              <span aria-hidden="true">&#63;</span>
+              <span class="visually-hidden">${Lang._('WARNING')}</span>
+              ${Lang._('ALT')}
+            </div>
             ${decorative} <strong class="outline-list-item yellow-text">${altText}</strong>
           </div>
           ${edit}
@@ -102,12 +111,12 @@ export default function generateImageOutline(dismissed, imageResults) {
         imageArray.push(append);
       } else {
         const decorative = altText.length === 0
-          ? `<span class="badge">${Lang._('DECORATIVE')}</span>` : '';
+          ? `<div class="badge">${Lang._('DECORATIVE')}</div>` : '';
         append = `
         <li class="good">
           <img src="${source}" alt/>
           <div class="alt">
-            <span class="badge">${Lang._('ALT')}</span>
+            <div class="badge">${Lang._('ALT')}</div>
             ${decorative} ${altText}
           </div>
           ${edit}

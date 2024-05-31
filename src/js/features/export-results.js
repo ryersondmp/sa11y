@@ -180,7 +180,8 @@ function downloadCSVTemplate(results) {
       // Make issue messages more readable in CSV format.
       const prepContent = content
         .replaceAll(/<span\s+class="visually-hidden"[^>]*>.*?<\/span>/gi, '')
-        .replaceAll('<hr aria-hidden="true">', ' | ');
+        .replaceAll('<hr aria-hidden="true">', ' | ')
+        .replaceAll(/"/g, '""');
       const stripHTML = stripHTMLtags(String(prepContent));
       const encoded = decodeHTML(stripHTML);
 
@@ -201,7 +202,8 @@ function downloadCSVTemplate(results) {
   const csvContent = `${headers.join(',')}\n${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(',')).join('\n')}`;
 
   // Create blob
-  const blob = new Blob([csvContent], { type: 'text/csv' });
+  const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+  const blob = new Blob([bom, csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = window.URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
