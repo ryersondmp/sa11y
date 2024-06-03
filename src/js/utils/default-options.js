@@ -66,7 +66,7 @@ const defaultOptions = {
   strongItalicsQA: true,
   pdfQA: true,
   documentQA: true,
-  documentLinks: '.ppt, .doc, .xls, .csv, sway.com, docs.google.com',
+  documentLinks: 'a[href$=".doc"], a[href$=".docx"], a[href*=".doc?"], a[href*=".docx?"], a[href$=".ppt"], a[href$=".pptx"], a[href*=".ppt?"], a[href*=".pptx?"], a[href^="https://docs.google"], a[href^="https://sway."]',
   langQA: true,
   blockquotesQA: true,
   allCapsQA: true,

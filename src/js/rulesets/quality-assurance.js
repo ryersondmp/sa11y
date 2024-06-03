@@ -47,9 +47,8 @@ export default function checkQA(results, option) {
       const href = $el.getAttribute('href');
 
       // Has file extension.
-      const extensions = Constants.Global.documentLinks.split(', ');
-      const hasExtension = extensions.some((extension) => href.includes(extension));
-      const hasPDF = href.includes('.pdf');
+      const hasExtension = $el.matches(Constants.Global.documentLinks);
+      const hasPDF = $el.matches('a[href$=".pdf"], a[href*=".pdf?"]');
 
       // Dismiss key.
       const key = Utils.prepareDismissal(`DOCUMENT${href}`);

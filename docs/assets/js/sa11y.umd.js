@@ -84,7 +84,7 @@
     strongItalicsQA: true,
     pdfQA: true,
     documentQA: true,
-    documentLinks: '.ppt, .doc, .xls, .csv, sway.com, docs.google.com',
+    documentLinks: 'a[href$=".doc"], a[href$=".docx"], a[href*=".doc?"], a[href*=".docx?"], a[href$=".ppt"], a[href$=".pptx"], a[href*=".ppt?"], a[href*=".pptx?"], a[href^="https://docs.google"], a[href^="https://sway."]',
     langQA: true,
     blockquotesQA: true,
     allCapsQA: true,
@@ -8349,9 +8349,8 @@
         const href = $el.getAttribute('href');
 
         // Has file extension.
-        const extensions = Constants.Global.documentLinks.split(', ');
-        const hasExtension = extensions.some((extension) => href.includes(extension));
-        const hasPDF = href.includes('.pdf');
+        const hasExtension = $el.matches(Constants.Global.documentLinks);
+        const hasPDF = $el.matches('a[href$=".pdf"], a[href*=".pdf?"]');
 
         // Dismiss key.
         const key = prepareDismissal(`DOCUMENT${href}`);
