@@ -244,6 +244,13 @@ audio {
   border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
 }
 
+.top-left,
+.top-right {
+  #panel-alert-content {
+    border: 0;
+  }
+}
+
 #panel-alert-preview .close-tooltip {
   display: none;
 }
@@ -860,7 +867,6 @@ label:not(#colour-filter-mode, #export-results-mode) {
 /* ************************************* */
 /*            14. Page issues            */
 /* ************************************* */
-
 #page-issues {
   align-items: center;
   color: var(--sa11y-panel-primary);
@@ -877,6 +883,16 @@ label:not(#colour-filter-mode, #export-results-mode) {
 
   strong {
     display: block;
+  }
+}
+
+.top-left,
+.top-right {
+
+  &.has-page-issues #page-issues {
+    /* Hide double border. */
+    margin-top: -1px;
+    border-top: 1px solid var(--sa11y-panel-bg-splitter);
   }
 }
 
@@ -1144,25 +1160,26 @@ label:not(#colour-filter-mode, #export-results-mode) {
 
 .scrollable::before {
   position: absolute;
+  top: auto;
   right: 0;
+  bottom: auto;
   left: 0;
   z-index: -1;
   width: 100%;
-  height: 360px;
+  height: 250px;
   content: "";
   background: linear-gradient(180deg, rgba(0, 0, 0, 0) 70%, var(--sa11y-panel-scrollable) 100%);
+  background-position: bottom;
   transition: opacity 1s ease-in-out;
   animation: fade 1s ease-in-out;
 }
 
-.right .scrollable:not(#page-issues-content)::before,
-.left .scrollable:not(#page-issues-content)::before {
-  bottom: 79px;
+#settings-content.scrollable::before {
+  height: 400px;
 }
 
 .top-right .scrollable::before,
 .top-left .scrollable::before {
-  bottom: 0;
   border-radius: 5px;
 }
 
