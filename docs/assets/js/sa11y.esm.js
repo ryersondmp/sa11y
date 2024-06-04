@@ -2640,7 +2640,10 @@ function generateImageOutline(dismissed, imageResults) {
       const { src } = image.element;
 
       // Check if image's SRC attribute is hosted on same domain or is relative path.
-      const relativePath = Constants.Global.relativePathImageSRC;
+      const relativePath = Constants.Global.relativePathImageSRC
+        ? Constants.Global.relativePathImageSRC
+        : window.location.host;
+
       const parts = src.split(relativePath);
       const fileExtension = parts.length > 1 ? parts[1] : '';
 
