@@ -5,6 +5,7 @@ import * as Utils from './utils/utils';
 import Constants from './utils/constants';
 import Elements from './utils/elements';
 import find from './utils/find';
+import findShadowComponents from './logic/find-shadow-components';
 
 // Extras
 import detectPageChanges from './features/detect-page-changes';
@@ -19,6 +20,7 @@ import ControlPanel from './interface/control-panel';
 import settingsPanelToggles from './logic/settings-panel-logic';
 import initializePanelToggles from './logic/control-panel-logic';
 import generatePageOutline from './interface/page-outline';
+import generateImageOutline from './interface/image-outline';
 import { updatePanel, updateBadge, updateCount } from './logic/update-panel';
 import { TooltipComponent, DismissTooltip } from './interface/tooltips';
 import { Annotations, annotate, detectOverflow, nudge } from './interface/annotations';
@@ -124,6 +126,7 @@ class Sa11y {
       try {
         this.results = [];
         this.headingOutline = [];
+        this.imageOutline = [];
         this.errorCount = 0;
         this.warningCount = 0;
         this.customChecksRunning = false;
@@ -136,7 +139,7 @@ class Sa11y {
         Constants.initializeRoot(desiredRoot, desiredReadabilityRoot);
 
         // Find all web components on the page.
-        Constants.initializeShadowSearch(option, desiredRoot);
+        findShadowComponents(option);
 
         // Find and cache elements.
         Elements.initializeElements(option);
@@ -150,6 +153,8 @@ class Sa11y {
         checkQA(this.results, option);
         checkEmbeddedContent(this.results, option);
         checkReadability();
+
+        this.imageResults = this.results.filter((item) => item.element?.tagName === 'IMG');
 
         /* Custom checks */
         if (option.customChecks === true) {
@@ -258,6 +263,10 @@ class Sa11y {
             option.showHinPageOutline,
           );
 
+          if (option.showImageOutline) {
+            generateImageOutline(this.dismissed, this.imageResults);
+          }
+
           updatePanel(
             dismiss.dismissCount,
             count.error,
@@ -297,19 +306,6 @@ class Sa11y {
     this.resetAll = (restartPanel = true) => {
       Constants.Global.html.removeAttribute('data-sa11y-active');
 
-      // Reset all data attributes.
-      Utils.resetAttributes([
-        'data-sa11y-parent',
-        'data-sa11y-error',
-        'data-sa11y-warning',
-        'data-sa11y-good',
-        'data-sa11y-error-inline',
-        'data-sa11y-warning-inline',
-        'data-sa11y-overflow',
-        'data-sa11y-pulse-border',
-        'data-sa11y-filter',
-      ], 'document');
-
       // Remove from page.
       Utils.remove([
         'sa11y-annotation',
@@ -321,8 +317,23 @@ class Sa11y {
         '.sa11y-css-utilities',
       ], 'document');
 
+      // Reset all data attributes.
+      Utils.resetAttributes([
+        'data-sa11y-parent',
+        'data-sa11y-error',
+        'data-sa11y-warning',
+        'data-sa11y-good',
+        'data-sa11y-error-inline',
+        'data-sa11y-warning-inline',
+        'data-sa11y-overflow',
+        'data-sa11y-pulse-border',
+        'data-sa11y-filter',
+        'data-sa11y-has-shadow-root',
+      ], 'document');
+
       // Remove from panel.
       Constants.Panel.outlineList.innerHTML = '';
+      if (option.showImageOutline) Constants.Panel.imagesList.innerHTML = '';
       Constants.Panel.pageIssuesList.innerHTML = '';
       Constants.Panel.readabilityInfo.innerHTML = '';
       Constants.Panel.readabilityDetails.innerHTML = '';
@@ -342,6 +353,11 @@ class Sa11y {
 
       // Main panel warning and error count.
       while (Constants.Panel.status.firstChild) Constants.Panel.status.removeChild(Constants.Panel.status.firstChild);
+
+      // Remove data attribute from shadow root elements.
+      document.querySelectorAll('[data-sa11y-has-shadow-root]').forEach((el) => {
+        el.removeAttribute('data-sa11y-has-shadow-root');
+      });
 
       if (restartPanel) {
         Constants.Panel.panel.classList.remove('active');

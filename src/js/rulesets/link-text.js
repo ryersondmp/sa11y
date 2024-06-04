@@ -49,7 +49,8 @@ export default function checkLinkText(results, option) {
     });
 
     // Other warnings we want to add.
-    Lang._('WARNING_ALT_STOPWORDS').forEach((word) => {
+    const linkStopWords = (option.linkStopWords) ? option.linkStopWords.split(',').map((word) => word.trim()) : Lang._('WARNING_ALT_STOPWORDS');
+    linkStopWords.forEach((word) => {
       if (textContent.toLowerCase().indexOf(word) >= 0) {
         hit[1] = word;
       }

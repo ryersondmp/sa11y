@@ -1,5 +1,4 @@
 import Lang from './lang';
-import findShadowComponents from '../logic/find-shadow-components';
 
 const Constants = (function myConstants() {
   /* **************** */
@@ -34,6 +33,7 @@ const Constants = (function myConstants() {
     Global.headless = option.headless;
     Global.panelPosition = option.panelPosition;
     Global.dismissAnnotations = option.dismissAnnotations;
+    Global.aboutContent = option.aboutContent;
 
     // Toggleable plugins
     Global.contrastPlugin = option.contrastPlugin;
@@ -42,6 +42,10 @@ const Constants = (function myConstants() {
     Global.colourFilterPlugin = option.colourFilterPlugin;
     Global.checkAllHideToggles = option.checkAllHideToggles;
     Global.exportResultsPlugin = option.exportResultsPlugin;
+    Global.showImageOutline = option.showImageOutline;
+    Global.editImageURLofCMS = option.editImageURLofCMS;
+    Global.relativePathImageSRC = option.relativePathImageSRC;
+    Global.relativePathImageID = option.relativePathImageID;
 
     // A11y: Determine scroll behaviour
     let reducedMotion = false;
@@ -69,10 +73,17 @@ const Constants = (function myConstants() {
     Panel.panel = Sa11yPanel.getElementById('panel');
     Panel.content = Sa11yPanel.getElementById('panel-content');
     Panel.controls = Sa11yPanel.getElementById('panel-controls');
+
     Panel.outline = Sa11yPanel.getElementById('outline-panel');
     Panel.outlineContent = Sa11yPanel.getElementById('outline-content');
     Panel.outlineList = Sa11yPanel.getElementById('outline-list');
     Panel.outlineHeader = Sa11yPanel.getElementById('outline-header');
+
+    Panel.images = Sa11yPanel.getElementById('images-panel');
+    Panel.imagesContent = Sa11yPanel.getElementById('images-content');
+    Panel.imagesList = Sa11yPanel.getElementById('images-list');
+    Panel.imagesHeader = Sa11yPanel.getElementById('images-header');
+
     Panel.notifBadge = Sa11yPanel.getElementById('notification-badge');
     Panel.notifCount = Sa11yPanel.getElementById('notification-count');
     Panel.notifText = Sa11yPanel.getElementById('notification-text');
@@ -84,10 +95,12 @@ const Constants = (function myConstants() {
     Panel.pageIssuesHeader = Sa11yPanel.getElementById('page-issues-header');
     Panel.pageIssuesContent = Sa11yPanel.getElementById('page-issues-content');
 
-    // Settings
+    // Settings panel
     Panel.settings = Sa11yPanel.getElementById('settings-panel');
     Panel.settingsHeader = Sa11yPanel.getElementById('settings-header');
     Panel.settingsContent = Sa11yPanel.getElementById('settings-content');
+
+    // Settings toggles
     Panel.contrastToggle = Sa11yPanel.getElementById('contrast-toggle');
     Panel.labelsToggle = Sa11yPanel.getElementById('labels-toggle');
     Panel.linksToggle = Sa11yPanel.getElementById('links-advanced-toggle');
@@ -107,6 +120,7 @@ const Constants = (function myConstants() {
     // Buttons
     Panel.toggle = Sa11yPanel.getElementById('toggle');
     Panel.outlineToggle = Sa11yPanel.getElementById('outline-toggle');
+    Panel.imagesToggle = Sa11yPanel.getElementById('images-toggle');
     Panel.settingsToggle = Sa11yPanel.getElementById('settings-toggle');
     Panel.skipButton = Sa11yPanel.getElementById('skip-button');
     Panel.dismissButton = Sa11yPanel.getElementById('dismiss-button');
@@ -255,18 +269,6 @@ const Constants = (function myConstants() {
     EmbeddedContent.All = `${EmbeddedContent.Video}, ${EmbeddedContent.Audio}, ${EmbeddedContent.Visualization}`;
   }
 
-  /* ***************** */
-  /* Shadow Components */
-  /* ***************** */
-  const Shadow = {};
-  function initializeShadowSearch(checkRoot, autoDetectShadowComponents, shadowComponents) {
-    Shadow.Components = findShadowComponents(
-      checkRoot,
-      autoDetectShadowComponents,
-      shadowComponents,
-    );
-  }
-
   return {
     initializeRoot,
     Root,
@@ -280,8 +282,6 @@ const Constants = (function myConstants() {
     Exclusions,
     initializeEmbeddedContent,
     EmbeddedContent,
-    initializeShadowSearch,
-    Shadow,
   };
 }());
 

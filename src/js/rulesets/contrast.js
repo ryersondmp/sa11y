@@ -3,6 +3,39 @@ import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 
 /**
+ * Converts a color string in the format 'color(srgb r g b [a])' to RGBA format.
+ * If alpha value is not provided, it defaults to 1 (fully opaque).
+ * @param {string} colorString The color string in the format 'color(srgb r g b [a])'.
+ * @returns {string} The RGBA color string in the format 'rgba(r, g, b, a)'.
+ * Returns 'invalid-format' if the input format is invalid.
+ */
+const convertColorToRGBA = (colorString) => {
+  if (colorString.startsWith('color(srgb')) {
+    const rgbaRegex = /srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s+([\d.]+))?/; // Added alpha value regex group
+    const match = colorString.match(rgbaRegex);
+
+    if (match && match.length >= 4) {
+      const [r, g, b, a] = match.slice(1);
+
+      // Ensure the parsed values are within the valid range [0, 1].
+      const parsedR = Math.min(1, parseFloat(r));
+      const parsedG = Math.min(1, parseFloat(g));
+      const parsedB = Math.min(1, parseFloat(b));
+
+      // Parse alpha value or default to 1 if not provided
+      const alpha = a !== undefined ? Math.min(1, parseFloat(a)) : 1;
+
+      // Converting RGB to RGBA.
+      const rgbaColor = `rgba(${Math.round(parsedR * 255)}, ${Math.round(parsedG * 255)}, ${Math.round(parsedB * 255)}, ${alpha})`;
+
+      return rgbaColor;
+    }
+    return 'invalid-format';
+  }
+  return colorString; // Return the original color if it's not in the color() format.
+};
+
+/**
  * Rulesets: Contrast
  * Color contrast plugin by Jason Day.
  * @link https://github.com/jasonday/color-contrast
@@ -75,18 +108,18 @@ export default function checkContrast(results, option) {
           }
 
           const styles = getComputedStyle(el);
-          const bgColor = styles.backgroundColor;
+          const bgColor = convertColorToRGBA(styles.backgroundColor);
           const bgImage = styles.backgroundImage;
           const rgb = `${contrastObject.parseRgb(bgColor)}`;
           const alpha = rgb.split(',');
 
-          // if background has alpha transparency, flag manual check
+          // if background has alpha transparency, flag manual check.
           if (alpha[3] < 1 && alpha[3] > 0) {
             return 'alpha';
           }
 
-          // if element has no background image, or transparent return bgColor
           if (bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent' && bgImage === 'none' && alpha[3] !== '0') {
+            // if element has no background image, or transparent return bgColor
             return bgColor;
           } if (bgImage !== 'none') {
             return 'image';
@@ -110,8 +143,12 @@ export default function checkContrast(results, option) {
             const elem = Elements.Found.Contrast[i];
 
             if (Elements.Found.Contrast) {
+              let ratio;
+              let error;
+              let warning;
+
               const style = getComputedStyle(elem);
-              const { color } = style;
+              const color = convertColorToRGBA(style.color);
               const { fill } = style;
               const fontSize = parseInt(style.fontSize, 10);
               const pointSize = fontSize * (3 / 4);
@@ -120,15 +157,25 @@ export default function checkContrast(results, option) {
               const background = contrastObject.getBackground(elem);
               const textString = [].reduce.call(elem.childNodes, (a, b) => a + (b.nodeType === 3 ? b.textContent : ''), '');
               const text = textString.trim();
-              const clip = window.getComputedStyle(elem).clip.replace(/\s/g, '');
-              const width = parseFloat(window.getComputedStyle(elem).width);
-              const height = parseFloat(window.getComputedStyle(elem).height);
-              let ratio;
-              let error;
-              let warning;
 
-              if ((width === 1 && height === 1) && (clip === "rect(0,0,0,0)" || clip === "rect(1px,1px,1px,1px)")) {
-                // Ignore if visually hidden for screen readers.
+              // Maybe visually hidden text.
+              const computedStyle = window.getComputedStyle(elem);
+              const clip = computedStyle.clip.replace(/\s/g, '');
+              const clipPath = computedStyle.getPropertyValue('clip-path');
+              const width = parseFloat(computedStyle.width);
+              const height = parseFloat(computedStyle.height);
+              const maybeVisuallyHidden = (width === 1 && height === 1) &&
+                (clipPath === 'inset(50%)' || /^(rect\(0(,\s*0){3}\)|rect\(1px(,\s*1px){3}\))$/.test(clip));
+
+              // Ignore if visually hidden for screen readers.
+              if (maybeVisuallyHidden) {
+                return;
+              } else if (color.startsWith('color(')) {
+                // Push a warning if using a color() functional notation.
+                warning = {
+                  elem,
+                };
+                contrastErrors.warnings.push(warning);
               } else if (htmlTag === 'SVG') {
                 ratio = Math.round(contrastObject.contrastRatio(fill, background) * 100) / 100;
                 if (ratio < 3) {

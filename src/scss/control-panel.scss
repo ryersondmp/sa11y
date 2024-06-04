@@ -190,7 +190,7 @@ audio {
 
   &.top-right,
   &.top-left {
-    top: 45px;
+    top: 35px;
     bottom: unset;
   }
 
@@ -242,6 +242,13 @@ audio {
   overflow-y: auto;
   color: var(--sa11y-panel-primary);
   border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
+}
+
+.top-left,
+.top-right {
+  #panel-alert-content {
+    border: 0;
+  }
 }
 
 #panel-alert-preview .close-tooltip {
@@ -303,7 +310,7 @@ strong {
   font-weight: 600;
 }
 
-a:not(#outline-list a) {
+a:not(#outline-list a):not(.edit) {
   color: var(--sa11y-hyperlink);
   text-decoration: underline;
   cursor: pointer;
@@ -464,6 +471,7 @@ hr {
 /*   9. Outline and Settings shared styles   */
 /* ***************************************** */
 #page-issues,
+#images-panel,
 #settings-panel,
 #outline-panel {
   display: none;
@@ -472,6 +480,7 @@ hr {
 }
 
 #page-issues.active,
+#images-panel.active,
 #settings-panel.active,
 #outline-panel.active {
   display: block;
@@ -483,7 +492,17 @@ hr {
   text-align: start;
 }
 
+#about-content {
+  padding-top: 5px;
+
+  p {
+    display: block;
+    margin-block-end: 1em;
+  }
+}
+
 #page-issues-content,
+#images-content,
 #settings-content,
 #outline-content {
   padding: 0 15px 10px;
@@ -500,6 +519,13 @@ hr {
   overflow-y: auto;
 }
 
+#settings-content {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Note to self: stop tinkering with the max-height. This is the max height that will accommodate the Page Issues and Readability panel on your average 13" screen. */
+#images-content,
 #outline-content {
   max-height: 250px;
   overflow-y: auto;
@@ -565,34 +591,103 @@ hr {
   }
 }
 
+/* ***************************************** */
+/*          10A. Images list            */
+/* ***************************************** */
+#images-list {
+  display: block;
+  padding: 0;
+  margin: 0;
+
+  li {
+    display: block;
+    width: 100%;
+    margin: 15px 0;
+    overflow: hidden;
+    list-style-type: none;
+    border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
+
+    &:first-child {
+      margin-top: 5px;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+      border: none;
+    }
+
+    .alt {
+      padding: 2px 5px 10px;
+    }
+
+    .edit {
+      position: relative;
+      padding: 4px 7px;
+      color: var(--sa11y-panel-primary);
+      text-decoration: none;
+      cursor: pointer;
+      background: var(--sa11y-panel-bg-secondary);
+      border: 2px solid var(--sa11y-button-outline);
+      border-radius: 5px;
+
+      &:hover,
+      &:focus {
+        background-color: var(--sa11y-shortcut-hover);
+      }
+
+      &::before {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        bottom: -10px;
+        left: -10px;
+        content: "";
+      }
+    }
+
+    .badge {
+      margin-inline-end: 4px;
+    }
+
+    img {
+      float: inline-start;
+      max-width: 110px;
+      margin-inline-end: 10px;
+      margin-block-end: 15px;
+      border-radius: 5px;
+    }
+
+    &.warning {
+      .alt {
+        color: var(--sa11y-yellow-text);
+      }
+
+      img {
+        border: 5px solid var(--sa11y-yellow-text);
+      }
+    }
+
+    &.error {
+      .alt {
+        color: var(--sa11y-error);
+      }
+
+      img {
+        border: 5px solid var(--sa11y-error);
+      }
+    }
+
+    &.good {
+      img {
+        border: 5px solid var(--sa11y-panel-badge);
+      }
+    }
+  }
+}
+
 /* **************************************** */
 /*         11. Page Outline extras          */
 /* **************************************** */
-
-/* Badges */
-.badge {
-  display: inline;
-  min-width: 10px;
-  padding: 2px 5px;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--sa11y-panel-primary);
-  text-align: center;
-  white-space: nowrap;
-  background-color: var(--sa11y-panel-badge);
-  border: 1px solid transparent;
-  border-radius: 10px;
-}
-
-.error-badge {
-  color: var(--sa11y-error-text);
-  background: var(--sa11y-error);
-}
-
-.warning-badge {
-  color: var(--sa11y-panel-bg);
-  background: var(--sa11y-yellow-text);
-}
 
 /* Error icon */
 .error-icon {
@@ -637,8 +732,7 @@ hr {
   border-radius: 0 0 4px 4px;
 }
 
-#settings-toggle,
-#outline-toggle {
+#panel-controls button {
   position: relative;
   display: block;
   width: 100%;
@@ -655,24 +749,19 @@ hr {
   background-color: var(--sa11y-panel-bg-secondary);
   border-top: 1px solid var(--sa11y-panel-bg-splitter);
   border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
+  border-inline-end: 1px solid var(--sa11y-panel-bg-splitter);
   outline: 0;
   opacity: 1;
   transition: background .2s;
 
   &:hover,
-  &.settings-active,
-  &.outline-active {
+  &.active {
     background-color: var(--sa11y-shortcut-hover);
   }
 
-  &.settings-active,
-  &.outline-active {
+  &.active {
     font-weight: 500;
   }
-}
-
-#outline-toggle {
-  border-inline-end: 1px solid var(--sa11y-panel-bg-splitter);
 }
 
 #export-results-mode,
@@ -797,6 +886,16 @@ label:not(#colour-filter-mode, #export-results-mode) {
   }
 }
 
+.top-left,
+.top-right {
+
+  &.has-page-issues #page-issues {
+    /* Hide double border. */
+    margin-top: -1px;
+    border-top: 1px solid var(--sa11y-panel-bg-splitter);
+  }
+}
+
 /* ************************************* */
 /*      15. Colour filters plugin        */
 /* ************************************* */
@@ -874,16 +973,19 @@ label:not(#colour-filter-mode, #export-results-mode) {
   }
 }
 
+.select-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
 .select-dropdown:after {
   position: absolute;
-  width: 0;
-  height: 0;
-  margin-top: 22.5px;
   content: " ";
   border-top: 5px solid var(--sa11y-setting-switch-bg-off);
   border-right: 5px solid transparent;
   border-left: 5px solid transparent;
-  inset-inline-end: 25px;
+  inset-inline-end: 14px;
 }
 
 #colour-filter-select {
@@ -932,11 +1034,24 @@ label:not(#colour-filter-mode, #export-results-mode) {
   }
 }
 
+.top-left,
+.top-right {
+  #readability-content {
+    border-top: 1px solid var(--sa11y-panel-bg-splitter);
+  }
+}
+
+.left,
+.right {
+  #readability-content {
+    border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
+  }
+}
+
 #readability-content {
   width: 100%;
   padding: 10px 15px;
   color: var(--sa11y-panel-primary);
-  border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
 }
 
 #readability-details {
@@ -1009,7 +1124,21 @@ label:not(#colour-filter-mode, #export-results-mode) {
 .hide-settings-border {
   padding: 0 15px !important;
   border-bottom: 0 !important;
+
+  li:not(#colour-filter-item) {
+    display: none !important;
+  }
+
+  #about-content {
+    display: none;
+  }
+
+  &.scrollable::before {
+    all: unset;
+  }
 }
+
+
 
 /* ***************************************** */
 /*         19. Scrollbar styling             */
@@ -1036,12 +1165,22 @@ label:not(#colour-filter-mode, #export-results-mode) {
   bottom: auto;
   left: 0;
   z-index: -1;
+  width: 100%;
   height: 250px;
   content: "";
-  background-image: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 70%, var(--sa11y-panel-scrollable) 100%);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 70%, var(--sa11y-panel-scrollable) 100%);
   background-position: bottom;
   transition: opacity 1s ease-in-out;
   animation: fade 1s ease-in-out;
+}
+
+#settings-content.scrollable::before {
+  height: 400px;
+}
+
+.top-right .scrollable::before,
+.top-left .scrollable::before {
+  border-radius: 5px;
 }
 
 #page-issues-content.scrollable::before {
@@ -1051,7 +1190,6 @@ label:not(#colour-filter-mode, #export-results-mode) {
 #panel-alert.scrollable::before {
   height: 200px;
 }
-
 
 /* ***************************************** */
 /*           20. Animations                  */
@@ -1094,7 +1232,7 @@ label:not(#colour-filter-mode, #export-results-mode) {
 
 // Default panel width.
 #panel {
-  width: 375px;
+  width: 400px;
 }
 
 // English
@@ -1110,7 +1248,7 @@ label:not(#colour-filter-mode, #export-results-mode) {
 #container:lang(sv),
 #container:lang(zh) {
   #panel {
-    width: 335px;
+    width: 350px;
   }
 }
 

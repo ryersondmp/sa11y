@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.1.5
+  * @version 3.2.0
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -27,10 +27,15 @@ const defaultOptions = {
   linkIgnoreStrings: '',
 
   // Other features
+  aboutContent: '',
   delayCheck: 0,
   delayCustomCheck: 500,
   showGoodLinkButton: true,
   showHinPageOutline: false,
+  showImageOutline: true,
+  editImageURLofCMS: '',
+  relativePathImageSRC: '',
+  relativePathImageID: '',
   detectSPArouting: false,
   doNotRun: '',
   dismissAnnotations: true,
@@ -40,6 +45,9 @@ const defaultOptions = {
   autoDetectShadowComponents: false,
   panelPosition: 'right',
   altTextMaxCharLength: 250,
+  susAltStopWords: '',
+  linkStopWords: '',
+  extraPlaceholderStopWords: '',
   headingMaxCharLength: 170,
   URLTextMaxCharLength: 40,
   URLAsLinkTextWarning: true,
@@ -70,7 +78,7 @@ const defaultOptions = {
   strongItalicsQA: true,
   pdfQA: true,
   documentQA: true,
-  documentLinks: '.ppt, .doc, .xls, .csv, sway.com, docs.google.com',
+  documentLinks: 'a[href$=".doc"], a[href$=".docx"], a[href*=".doc?"], a[href*=".docx?"], a[href$=".ppt"], a[href$=".pptx"], a[href*=".ppt?"], a[href*=".pptx?"], a[href^="https://docs.google"], a[href^="https://sway."]',
   langQA: true,
   blockquotesQA: true,
   allCapsQA: true,
@@ -130,58 +138,13 @@ const Lang = {
     return $el.replaceAll(/<hr>/g, '<hr aria-hidden="true">')
       .replaceAll(/<a[\s]href=/g, '<a target="_blank" rel="noopener noreferrer" href=')
       .replaceAll(/<\/a>/g, `<span class="visually-hidden"> (${Lang._('NEW_TAB')})</span></a>`)
-      .replaceAll(/{r}/g, 'class="red-text"');
+      .replaceAll(/{r}/g, 'class="red-text"')
+      .replaceAll(/{w}/g, 'class="yellow-text"')
+      .replaceAll(/{b}/g, 'class="badge"')
+      .replaceAll(/{wb}/g, 'class="badge warning-badge"')
+      .replaceAll(/{eb}/g, 'class="badge error-badge"');
   },
 };
-
-var styles$1 = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-clone-image-text]{display:none!important}[data-sa11y-readability-period]{clip:rect(1px,1px,1px,1px)!important;border:0!important;clip-path:inset(50%)!important;display:block!important;height:1px!important;overflow:hidden!important;padding:0!important;position:absolute!important;white-space:nowrap!important;width:1px!important}[data-sa11y-error]{outline:5px solid var(--sa11y-error)!important}[data-sa11y-warning]{outline:5px solid var(--sa11y-warning)!important}[data-sa11y-good]{outline:5px solid var(--sa11y-good)!important}[data-sa11y-error-inline]{background-color:var(--sa11y-error)!important;box-shadow:0 0 0 4px var(--sa11y-error)!important;color:var(--sa11y-error-text)!important}[data-sa11y-error-inline],[data-sa11y-warning-inline]{border-color:transparent!important;border-radius:.25em!important}[data-sa11y-warning-inline]{background-color:var(--sa11y-warning)!important;box-shadow:0 0 0 4px var(--sa11y-warning)!important;color:var(--sa11y-warning-text)!important}[data-sa11y-pulse-border]{animation:pulse 2s 3;box-shadow:0;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:focus,[data-sa11y-pulse-border]:hover{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color)}70%{box-shadow:0 0 0 12px var(--sa11y-pulse-color)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}@media (forced-colors:active){[data-sa11y-error-inline],[data-sa11y-error],[data-sa11y-good],[data-sa11y-pulse-border],[data-sa11y-warning-inline],[data-sa11y-warning]{forced-color-adjust:none}}";
-
-/* ************************************************************ */
-/*  Auto-detect shadow DOM or process provided web components.  */
-/* ************************************************************ */
-const addStylestoShadow = (component) => {
-  const style = document.createElement('style');
-  style.setAttribute('class', 'sa11y-css-utilities');
-  style.textContent = styles$1;
-  component.shadowRoot.appendChild(style);
-};
-
-function findShadowComponents(option, desiredRoot) {
-  let webComponents;
-  if (option.autoDetectShadowComponents) {
-    // Elements to ignore.
-    const ignore = 'sa11y-heading-label, sa11y-heading-anchor, sa11y-annotation, sa11y-tooltips, sa11y-dismiss-tooltip, sa11y-control-panel, #sa11y-colour-filters, #sa11y-colour-filters *, script';
-
-    // Search all elements.
-    const root = document.querySelector(desiredRoot);
-    const search = (root) ? Array.from(root.querySelectorAll(`*:not(${ignore})`)) : Array.from(document.body.querySelectorAll(`*:not(${ignore})`));
-
-    // Query for open shadow roots & inject CSS utilities into every shadow DOM.
-    const foundShadows = [];
-    search.forEach((component) => {
-      if (component.shadowRoot && component.shadowRoot.mode === 'open') {
-        foundShadows.push(component);
-        addStylestoShadow(component);
-      }
-    });
-
-    // Return ALL web components on the page.
-    const all = Array.from(foundShadows).map((component) => component.tagName.toLowerCase());
-    webComponents = (all.length === 1) ? `${all.toString()}` : all.join(', ');
-  } else {
-    // If autoDetectShadowComponents is OFF, use provided shadow dom.
-    webComponents = option.suppliedShadowComponents || '';
-
-    // Append styles to each provided shadow dom.
-    if (webComponents) {
-      const providedShadow = document.querySelectorAll(webComponents);
-      providedShadow.forEach((component) => {
-        addStylestoShadow(component);
-      });
-    }
-  }
-  return webComponents;
-}
 
 const Constants = (function myConstants() {
   /* **************** */
@@ -216,6 +179,7 @@ const Constants = (function myConstants() {
     Global.headless = option.headless;
     Global.panelPosition = option.panelPosition;
     Global.dismissAnnotations = option.dismissAnnotations;
+    Global.aboutContent = option.aboutContent;
 
     // Toggleable plugins
     Global.contrastPlugin = option.contrastPlugin;
@@ -224,6 +188,10 @@ const Constants = (function myConstants() {
     Global.colourFilterPlugin = option.colourFilterPlugin;
     Global.checkAllHideToggles = option.checkAllHideToggles;
     Global.exportResultsPlugin = option.exportResultsPlugin;
+    Global.showImageOutline = option.showImageOutline;
+    Global.editImageURLofCMS = option.editImageURLofCMS;
+    Global.relativePathImageSRC = option.relativePathImageSRC;
+    Global.relativePathImageID = option.relativePathImageID;
 
     // A11y: Determine scroll behaviour
     let reducedMotion = false;
@@ -251,10 +219,17 @@ const Constants = (function myConstants() {
     Panel.panel = Sa11yPanel.getElementById('panel');
     Panel.content = Sa11yPanel.getElementById('panel-content');
     Panel.controls = Sa11yPanel.getElementById('panel-controls');
+
     Panel.outline = Sa11yPanel.getElementById('outline-panel');
     Panel.outlineContent = Sa11yPanel.getElementById('outline-content');
     Panel.outlineList = Sa11yPanel.getElementById('outline-list');
     Panel.outlineHeader = Sa11yPanel.getElementById('outline-header');
+
+    Panel.images = Sa11yPanel.getElementById('images-panel');
+    Panel.imagesContent = Sa11yPanel.getElementById('images-content');
+    Panel.imagesList = Sa11yPanel.getElementById('images-list');
+    Panel.imagesHeader = Sa11yPanel.getElementById('images-header');
+
     Panel.notifBadge = Sa11yPanel.getElementById('notification-badge');
     Panel.notifCount = Sa11yPanel.getElementById('notification-count');
     Panel.notifText = Sa11yPanel.getElementById('notification-text');
@@ -266,10 +241,12 @@ const Constants = (function myConstants() {
     Panel.pageIssuesHeader = Sa11yPanel.getElementById('page-issues-header');
     Panel.pageIssuesContent = Sa11yPanel.getElementById('page-issues-content');
 
-    // Settings
+    // Settings panel
     Panel.settings = Sa11yPanel.getElementById('settings-panel');
     Panel.settingsHeader = Sa11yPanel.getElementById('settings-header');
     Panel.settingsContent = Sa11yPanel.getElementById('settings-content');
+
+    // Settings toggles
     Panel.contrastToggle = Sa11yPanel.getElementById('contrast-toggle');
     Panel.labelsToggle = Sa11yPanel.getElementById('labels-toggle');
     Panel.linksToggle = Sa11yPanel.getElementById('links-advanced-toggle');
@@ -289,6 +266,7 @@ const Constants = (function myConstants() {
     // Buttons
     Panel.toggle = Sa11yPanel.getElementById('toggle');
     Panel.outlineToggle = Sa11yPanel.getElementById('outline-toggle');
+    Panel.imagesToggle = Sa11yPanel.getElementById('images-toggle');
     Panel.settingsToggle = Sa11yPanel.getElementById('settings-toggle');
     Panel.skipButton = Sa11yPanel.getElementById('skip-button');
     Panel.dismissButton = Sa11yPanel.getElementById('dismiss-button');
@@ -437,16 +415,6 @@ const Constants = (function myConstants() {
     EmbeddedContent.All = `${EmbeddedContent.Video}, ${EmbeddedContent.Audio}, ${EmbeddedContent.Visualization}`;
   }
 
-  /* ***************** */
-  /* Shadow Components */
-  /* ***************** */
-  const Shadow = {};
-  function initializeShadowSearch(checkRoot, autoDetectShadowComponents, shadowComponents) {
-    Shadow.Components = findShadowComponents(
-      checkRoot,
-      autoDetectShadowComponents);
-  }
-
   return {
     initializeRoot,
     Root,
@@ -460,8 +428,6 @@ const Constants = (function myConstants() {
     Exclusions,
     initializeEmbeddedContent,
     EmbeddedContent,
-    initializeShadowSearch,
-    Shadow,
   };
 }());
 
@@ -490,8 +456,8 @@ function find(selector, desiredRoot, exclude) {
     if (!root) root = document.body;
   }
 
-  const shadowComponents = Constants.Shadow.Components;
-  const shadow = (shadowComponents) ? `, ${shadowComponents}` : '';
+  const shadowComponents = document.querySelectorAll('[data-sa11y-has-shadow-root]');
+  const shadow = (shadowComponents) ? ', [data-sa11y-has-shadow-root]' : '';
 
   const exclusions = Constants.Exclusions.Container;
   const additional = (exclude !== undefined) ? `, ${exclude}` : '';
@@ -503,9 +469,8 @@ function find(selector, desiredRoot, exclude) {
     // 2. Dive into the each shadow root and collect an array of its results.
     const shadowFind = [];
     // Remove first comma and whitespace.
-    const prepShadow = shadowComponents.trim().replace(/^,+/, '');
     elements.forEach((el, i) => {
-      if (el && el.matches && el.matches(prepShadow) && el.shadowRoot) {
+      if (el && el.matches && el.matches('[data-sa11y-has-shadow-root]') && el.shadowRoot) {
         shadowFind[i] = el.shadowRoot.querySelectorAll(`:is(${selector}):not(${exclusions}${additional})`);
       }
     });
@@ -936,14 +901,21 @@ function remove(elements, root) {
  * Checks if a scrollable area within a container element is scrollable or not, and applies appropriate CSS classes and attributes. Make sure to add aria-label manually.
  * @param {Element} scrollArea The scrollable area element to check.
  * @param {Element} container The container element that wraps the scrollable area.
+ * @param {Attribute} ariaLabel Give scroll area an accessible name and region landmark.
  */
-function isScrollable(scrollArea, container) {
-  if (scrollArea.scrollHeight > container.clientHeight) {
-    container.classList.add('scrollable');
-    scrollArea.setAttribute('tabindex', '0');
-  } else {
-    container.classList.remove('scrollable');
-  }
+function isScrollable(scrollArea, container, ariaLabel) {
+  setTimeout(() => {
+    if (scrollArea.scrollHeight > container.clientHeight) {
+      container.classList.add('scrollable');
+      scrollArea.setAttribute('tabindex', '0');
+      if (ariaLabel) {
+        scrollArea.setAttribute('aria-label', ariaLabel);
+        scrollArea.setAttribute('role', 'region');
+      }
+    } else {
+      container.classList.remove('scrollable');
+    }
+  }, 50);
 }
 
 /**
@@ -1134,6 +1106,43 @@ const Elements = (function myElements() {
   };
 }());
 
+var styles$1 = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-clone-image-text]{display:none!important}[data-sa11y-readability-period]{clip:rect(1px,1px,1px,1px)!important;border:0!important;clip-path:inset(50%)!important;display:block!important;height:1px!important;overflow:hidden!important;padding:0!important;position:absolute!important;white-space:nowrap!important;width:1px!important}[data-sa11y-error]{outline:5px solid var(--sa11y-error)!important}[data-sa11y-warning]{outline:5px solid var(--sa11y-warning)!important}[data-sa11y-good]{outline:5px solid var(--sa11y-good)!important}[data-sa11y-error-inline]{background-color:var(--sa11y-error)!important;box-shadow:0 0 0 4px var(--sa11y-error)!important;color:var(--sa11y-error-text)!important}[data-sa11y-error-inline],[data-sa11y-warning-inline]{border-color:transparent!important;border-radius:.25em!important}[data-sa11y-warning-inline]{background-color:var(--sa11y-warning)!important;box-shadow:0 0 0 4px var(--sa11y-warning)!important;color:var(--sa11y-warning-text)!important}[data-sa11y-pulse-border]{animation:pulse 2s 3;box-shadow:0;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:focus,[data-sa11y-pulse-border]:hover{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color)}70%{box-shadow:0 0 0 12px var(--sa11y-pulse-color)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}@media (forced-colors:active){[data-sa11y-error-inline],[data-sa11y-error],[data-sa11y-good],[data-sa11y-pulse-border],[data-sa11y-warning-inline],[data-sa11y-warning]{forced-color-adjust:none}}";
+
+/* ************************************************************ */
+/*  Auto-detect shadow DOM or process provided web components.  */
+/* ************************************************************ */
+const addStylestoShadow = (component) => {
+  const style = document.createElement('style');
+  style.setAttribute('class', 'sa11y-css-utilities');
+  style.textContent = styles$1;
+  component.shadowRoot.appendChild(style);
+};
+
+function findShadowComponents(option) {
+  if (option.autoDetectShadowComponents) {
+    // Elements to ignore.
+    const ignore = 'sa11y-heading-label, sa11y-heading-anchor, sa11y-annotation, sa11y-tooltips, sa11y-dismiss-tooltip, sa11y-control-panel, #sa11y-colour-filters, #sa11y-colour-filters *, script';
+
+    // Search all elements.
+    const root = document.querySelector(option.checkRoot);
+    const search = (root) ? Array.from(root.querySelectorAll(`*:not(${ignore})`)) : Array.from(document.body.querySelectorAll(`*:not(${ignore})`));
+
+    // Query for open shadow roots & inject CSS utilities into every shadow DOM.
+    search.forEach((component) => {
+      if (component.shadowRoot && component.shadowRoot.mode === 'open') {
+        component.setAttribute('data-sa11y-has-shadow-root', '');
+        addStylestoShadow(component);
+      }
+    });
+  } else if (option.shadowComponents) {
+    const providedShadow = document.querySelectorAll(option.shadowComponents);
+    providedShadow.forEach((component) => {
+      component.setAttribute('data-sa11y-has-shadow-root', '');
+      addStylestoShadow(component);
+    });
+  }
+}
+
 /* ******************************************************** */
 /*  Feature to detect if URL changed for bookmarklet/SPAs.  */
 /* ******************************************************** */
@@ -1153,7 +1162,7 @@ function detectPageChanges(detectSPArouting, checkAll, resetAll) {
         url = window.location.href; // Update current URL
       }
     }, 250);
-    window.addEventListener('mousemove', checkURL);
+    window.addEventListener('click', checkURL);
     window.addEventListener('keydown', checkURL);
   }
 }
@@ -1537,7 +1546,8 @@ function downloadCSVTemplate(results) {
       // Make issue messages more readable in CSV format.
       const prepContent = content
         .replaceAll(/<span\s+class="visually-hidden"[^>]*>.*?<\/span>/gi, '')
-        .replaceAll('<hr aria-hidden="true">', ' | ');
+        .replaceAll('<hr aria-hidden="true">', ' | ')
+        .replaceAll(/"/g, '""');
       const stripHTML = stripHTMLtags(String(prepContent));
       const encoded = decodeHTML(stripHTML);
 
@@ -1558,7 +1568,8 @@ function downloadCSVTemplate(results) {
   const csvContent = `${headers.join(',')}\n${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(',')).join('\n')}`;
 
   // Create blob
-  const blob = new Blob([csvContent], { type: 'text/csv' });
+  const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+  const blob = new Blob([bom, csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = window.URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
@@ -1602,7 +1613,7 @@ function removeExportListeners() {
 
 var styles = ":host{background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);bottom:0;display:block;height:-moz-fit-content;height:fit-content;left:0;position:fixed;right:0;width:100%;z-index:999999}*{-webkit-font-smoothing:auto!important;color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;font-size:var(--sa11y-normal-text);line-height:22px!important}#dialog{margin:20px auto;max-width:900px;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none}p{margin-top:0}.error{background:var(--sa11y-error);border:2px dashed #f08080;color:var(--sa11y-error-text);margin-bottom:0;padding:5px}";
 
-var sharedStyles = ".visually-hidden{clip:rect(1px,1px,1px,1px);border:0;clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}[hidden]{display:none!important}.header-text,.header-text-inline,h2{color:var(--sa11y-panel-primary);display:block;font-size:var(--sa11y-large-text);font-weight:600;margin-bottom:3px}.header-text-inline{display:inline-block!important}code{font-family:monospace!important}.kbd,code,kbd{background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);padding:1.6px 4.8px}.bold{font-weight:600}.red-text{color:var(--sa11y-red-text)}.red-text,.yellow-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text)}.yellow-text{color:var(--sa11y-yellow-text)}.close-btn{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;color:var(--sa11y-panel-primary);cursor:pointer;float:var(--sa11y-float-rtl);font-size:var(--sa11y-normal-text);font-weight:400;height:32px;margin:0;position:relative;transition:all .2s ease-in-out;width:32px}.close-btn:focus,.close-btn:hover{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{background:var(--sa11y-setting-switch-bg-off);bottom:-7px;content:\"\";left:-7px;-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute;right:-7px;top:-7px}@media screen and (forced-colors:active){.close-btn:after{filter:invert(1)}}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:not(#settings-toggle):not(#outline-toggle):not(.switch):focus,#container select:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #outline-toggle:focus,#container #settings-toggle:focus,#container .switch:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container #outline-toggle:focus:not(:focus-visible),#container #settings-toggle:focus:not(:focus-visible),#container [tabindex=\"-1\"]:focus:not(:focus-visible),#container [tabindex=\"0\"]:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container select:focus:not(:focus-visible){box-shadow:none;outline:0}#container [tabindex=\"-1\"]:focus-visible,#container [tabindex=\"0\"]:focus-visible,#container a:focus-visible,#container button:not(#settings-toggle):not(#outline-toggle):not(.switch):focus-visible,#container select:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #outline-toggle:focus-visible,#container #settings-toggle:focus-visible,#container .switch:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#outline-toggle:focus,#settings-toggle:focus{border:3px solid transparent}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container select:focus,.close-btn:focus{outline:3px solid transparent!important}}";
+var sharedStyles = ".visually-hidden{clip:rect(1px,1px,1px,1px);border:0;clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}[hidden]{display:none!important}.header-text,.header-text-inline,h2{color:var(--sa11y-panel-primary);display:block;font-size:var(--sa11y-large-text);font-weight:600;margin-bottom:3px}.header-text-inline{display:inline-block!important}code{font-family:monospace!important}.kbd,code,kbd{background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);padding:1.6px 4.8px}.bold{font-weight:600}.red-text{color:var(--sa11y-red-text)}.red-text,.yellow-text{font-family:var(--sa11y-font-face)}.yellow-text{color:var(--sa11y-yellow-text)}.badge{background-color:var(--sa11y-panel-badge);border:1px solid transparent;border-radius:10px;color:var(--sa11y-panel-primary);display:inline;font-size:13px;font-weight:700;min-width:10px;padding:2px 3px;text-align:center;white-space:nowrap}.error-badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.warning-badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.close-btn{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;color:var(--sa11y-panel-primary);cursor:pointer;float:var(--sa11y-float-rtl);font-size:var(--sa11y-normal-text);font-weight:400;height:32px;margin:0;position:relative;transition:all .2s ease-in-out;width:32px}.close-btn:focus,.close-btn:hover{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{background:var(--sa11y-setting-switch-bg-off);bottom:-7px;content:\"\";left:-7px;-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute;right:-7px;top:-7px}@media screen and (forced-colors:active){.close-btn:after{filter:invert(1)}}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:not(#panel-controls button):not(.switch):focus,#container select:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus,#container .switch:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus:not(:focus-visible),#container [tabindex=\"-1\"]:focus:not(:focus-visible),#container [tabindex=\"0\"]:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container select:focus:not(:focus-visible){box-shadow:none;outline:0}#container [tabindex=\"-1\"]:focus-visible,#container [tabindex=\"0\"]:focus-visible,#container a:focus-visible,#container button:not(#panel-controls button):not(.switch):focus-visible,#container select:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus-visible,#container .switch:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#panel-controls button:focus{border:3px solid transparent}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container select:focus,.close-btn:focus{outline:3px solid transparent!important}}";
 
 class ConsoleErrors extends HTMLElement {
   constructor(error) {
@@ -1697,7 +1708,7 @@ function mainToggle(checkAll, resetAll) {
   };
 }
 
-var panelStyles = "a,button,code,div,h1,h2,kbd,label,li,ol,p,pre,span,strong,svg,ul{all:unset;box-sizing:border-box!important}:after,:before{all:unset}div{display:block}*{-webkit-font-smoothing:auto!important;font-family:var(--sa11y-font-face)!important;line-height:22px!important}label,li,ol,p,ul{font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;text-align:start;word-break:break-word}.sa11y-overflow{overflow:auto}iframe,img,video{border:0;display:block;height:auto;max-width:100%}audio{max-width:100%}#toggle{align-items:center;background:linear-gradient(0deg,#e040fb,#00bcd4);background-color:var(--sa11y-setting-switch-bg-off);background-size:150% 150%;border-radius:50%;bottom:15px;color:#fff;cursor:pointer;display:flex;height:55px;inset-inline-end:18px;justify-content:center;margin:0;overflow:visible;position:fixed;transition:all .2s ease-in-out;width:55px;z-index:2147483644}#toggle.left,#toggle.top-left{inset-inline-start:18px}#toggle.top-left,#toggle.top-right{bottom:unset;top:15px}@media screen and (forced-colors:active){#toggle{border:2px solid transparent}}#toggle svg{height:35px;width:35px}#toggle svg path{fill:var(--sa11y-panel-bg)}#toggle:focus,#toggle:hover{animation:sa11y-toggle-gradient 3s ease}#toggle:disabled:focus,#toggle:disabled:hover{animation:none}#toggle.on{background:linear-gradient(180deg,#e040fb,#00bcd4)}#toggle:disabled{background:unset;background-color:var(--sa11y-setting-switch-bg-off);cursor:not-allowed}#notification-badge{text-wrap:nowrap;align-items:center;background-color:#eb0000;border:1px solid transparent;border-radius:12px;color:#fff;display:none;font-size:13.5px;font-weight:400;height:20px;justify-content:center;min-width:20px;padding:3px;position:absolute;right:-3px;top:-5.5px}#notification-badge.notification-badge-warning{background-color:var(--sa11y-warning-hover);border:1px solid var(--sa11y-warning);color:var(--sa11y-warning-text)}#panel{background:var(--sa11y-panel-bg);border-radius:4px;bottom:25px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15);inset-inline-end:42px;opacity:0;overflow:visible;position:fixed;transform:scale(0);transform-origin:100% 100%;transition:transform .2s,opacity background .2s .2s;visibility:hidden;z-index:2147483643}#panel.left,#panel.top-left{inset-inline-start:42px}#panel.top-left,#panel.top-right{bottom:unset;top:45px}#panel.active{height:auto;opacity:1;transform:scale(1);transform-origin:bottom right;transition:transform .2s,opacity .2s;visibility:visible}@media screen and (forced-colors:active){#panel{border:2px solid transparent}}#panel.active.left,[dir=rtl] #panel.active{transform-origin:bottom left}#panel.active.top-left{transform-origin:top left}#panel.active.top-right{transform-origin:top right}#panel-alert{display:none;opacity:0}#panel-alert.active{display:block;opacity:1}#panel-alert-content{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-primary);max-height:400px;overflow-y:auto;padding:15px 20px 15px 15px;position:relative}#panel-alert-preview .close-tooltip{display:none}#panel-alert-preview,#panel-alert-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}.panel-alert-preview{background:var(--sa11y-panel-bg-secondary);border:1px dashed var(--sa11y-panel-bg-splitter);border-radius:5px;margin-top:15px;padding:10px}.element-preview{background-color:var(--sa11y-panel-badge);border-radius:3.2px;margin-bottom:10px;overflow-wrap:break-word;padding:5px}button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}button[data-sa11y-dismiss]:focus,button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}h2{display:block;font-size:var(--sa11y-large-text);margin-bottom:3px}h2,strong{font-weight:600}a:not(#outline-list a){border-bottom:0;color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none!important}hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}#dismiss-button,#skip-button{background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:50px;cursor:pointer;display:none;height:36px;margin-inline-end:8px;margin-inline-start:2px;overflow:visible;position:relative;text-align:center;transition:all .1s ease-in-out;width:36px}#dismiss-button.active,#skip-button.active{display:block}#dismiss-button:disabled,#skip-button:disabled{background:none;border:0;box-shadow:none;cursor:default}#dismiss-button:before,#skip-button:before{bottom:-5px;content:\"\";left:-5px;position:absolute;right:-5px;top:-5px}#dismiss-button:focus:not(:disabled),#dismiss-button:hover:not(:disabled),#skip-button:focus:not(:disabled),#skip-button:hover:not(:disabled){background-color:var(--sa11y-shortcut-hover)}#panel.left #dismiss-button,#panel.left #skip-button,#panel.top-left #dismiss-button,#panel.top-left #skip-button{margin-inline-end:2px;margin-inline-start:8px}.dismiss-icon{background:var(--sa11y-setting-switch-bg-off);display:inline-block;height:24px;margin-bottom:-4px;-webkit-mask:var(--sa11y-dismiss-icon) center no-repeat;mask:var(--sa11y-dismiss-icon) center no-repeat;width:24px}@media screen and (forced-colors:active){.dismiss-icon{filter:invert(1)}}#panel-content{align-items:center;color:var(--sa11y-panel-primary);display:flex;padding:6px}#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{height:26px;margin:0 auto;width:26px}#panel-content.errors .panel-icon{background:var(--sa11y-panel-error);margin-top:-2px;-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat}#panel-content.good .panel-icon{background:var(--sa11y-good);-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat}#panel-content.warnings .panel-icon{background:var(--sa11y-warning-svg-color);-webkit-mask:var(--sa11y-warning-svg) center no-repeat;mask:var(--sa11y-warning-svg) center no-repeat;transform:scaleX(var(--sa11y-icon-direction))}@media screen and (forced-colors:active){#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{filter:invert(1)}}#panel.left #panel-content,#panel.top-left #panel-content{flex-direction:row-reverse}#status{font-size:var(--sa11y-large-text)}#status,.panel-count{color:var(--sa11y-panel-primary)}.panel-count{background-color:var(--sa11y-panel-badge);border-radius:4px;font-size:15px;font-weight:400;margin-left:3px;margin-right:3px;padding:2px 4px}#outline-panel,#page-issues,#settings-panel{color:var(--sa11y-panel-primary);display:none;opacity:0}#outline-panel.active,#page-issues.active,#settings-panel.active{display:block;opacity:1}.panel-header{padding:10px 15px 0;text-align:start}#outline-content,#page-issues-content,#settings-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);padding:0 15px 10px}.top-left #outline-content,.top-left #page-issues-content,.top-left #settings-content,.top-right #outline-content,.top-right #page-issues-content,.top-right #settings-content{border:0}#page-issues-content{max-height:160px;overflow-y:auto}#outline-content{max-height:250px;overflow-y:auto}#outline-panel .outline-list-item.sa11y-red-text,#settings-panel .sa11y-red-text{color:var(--sa11y-red-text)}#outline-list{display:block;margin:0;padding:0}#outline-list a{cursor:pointer;display:block;text-decoration:none}#outline-list li{display:block;list-style-type:none;margin-bottom:3px;margin-top:0;padding:0}#outline-list li:first-child{margin-top:5px}#outline-list li a:focus,#outline-list li a:hover{background:var(--sa11y-panel-outline-hover);border-radius:5px;box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);display:block}#outline-list .outline-2{margin-inline-start:15px}#outline-list .outline-3{margin-inline-start:30px}#outline-list .outline-4{margin-inline-start:45px}#outline-list .outline-5{margin-inline-start:60px}#outline-list .outline-6{margin-inline-start:75px}.badge{background-color:var(--sa11y-panel-badge);border:1px solid transparent;border-radius:10px;color:var(--sa11y-panel-primary);display:inline;font-size:13px;font-weight:700;min-width:10px;padding:2px 5px;text-align:center;white-space:nowrap}.error-badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.warning-badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.error-icon{background:var(--sa11y-error-text);-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat}.error-icon,.hidden-icon{display:inline-block;height:16px;margin-bottom:-3px;width:16px}.hidden-icon{background:var(--sa11y-panel-primary);-webkit-mask:var(--sa11y-hidden-icon-svg) center no-repeat;mask:var(--sa11y-hidden-icon-svg) center no-repeat}.error-badge .hidden-icon{background:var(--sa11y-error-text)}.warning-badge .hidden-icon{background:var(--sa11y-panel-bg)}@media screen and (forced-colors:active){.hidden-icon{filter:invert(1)}}#panel-controls{border-radius:0 0 4px 4px;display:flex;overflow:hidden}#outline-toggle,#settings-toggle{background:var(--sa11y-panel-bg-secondary);background-color:var(--sa11y-panel-bg-secondary);border-bottom:1px solid var(--sa11y-panel-bg-splitter);border-top:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-secondary);cursor:pointer;display:block;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;line-height:0;margin:0;opacity:1;outline:0;padding:0;position:relative;text-align:center;transition:background .2s;width:100%}#outline-toggle.outline-active,#outline-toggle.settings-active,#outline-toggle:hover,#settings-toggle.outline-active,#settings-toggle.settings-active,#settings-toggle:hover{background-color:var(--sa11y-shortcut-hover)}#outline-toggle.outline-active,#outline-toggle.settings-active,#settings-toggle.outline-active,#settings-toggle.settings-active{font-weight:500}#outline-toggle{border-inline-end:1px solid var(--sa11y-panel-bg-splitter)}#export-results-mode,label{color:var(--sa11y-panel-primary);display:inline-block;font-weight:400;margin:0;width:100%}label:not(#colour-filter-mode,#export-results-mode){cursor:pointer}#settings-panel #export-csv,#settings-panel #export-html{padding:0;text-align:center;width:unset}#settings-panel #export-csv span,#settings-panel #export-html span{background:var(--sa11y-panel-bg-secondary);border-radius:5px;box-shadow:inset 0 0 0 2px var(--sa11y-setting-switch-bg-off);display:block;margin:0 4px;padding:7px 9px;width:65px}#settings-panel #export-csv:focus span,#settings-panel #export-csv:focus-within span,#settings-panel #export-csv:hover span,#settings-panel #export-html:focus span,#settings-panel #export-html:focus-within span,#settings-panel #export-html:hover span{background:var(--sa11y-shortcut-hover)}#settings-panel .switch{background:none;border:0;border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:44px;margin:0;padding:7px 10px;position:relative;text-align:end;width:105px}#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{content:\"\";display:inline-block;height:27px;margin:0 4px 4px;vertical-align:middle;width:27px}#settings-panel .switch[aria-pressed=true]:after{background:var(--sa11y-setting-switch-bg-on);-webkit-mask:var(--sa11y-setting-switch-on-svg) center no-repeat;mask:var(--sa11y-setting-switch-on-svg) center no-repeat}#settings-panel .switch[aria-pressed=false]:after{background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-setting-switch-off-svg) center no-repeat;mask:var(--sa11y-setting-switch-off-svg) center no-repeat}@media screen and (forced-colors:active){#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{filter:invert(1)}}#settings-panel #settings-options li{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:flex;justify-content:space-between;list-style-type:none;padding:1px 0}#settings-panel #settings-options li:last-child{border:none}#page-issues{align-items:center;color:var(--sa11y-panel-primary)}#page-issues-list{display:block;margin-top:4px}#page-issues-list li{display:block;margin:0 0 10px}#page-issues-list strong{display:block}#panel-colour-filters{align-items:center;color:var(--sa11y-panel-primary);display:none;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}#panel-colour-filters.active{display:flex}#panel-colour-filters p{padding:6px 20px 6px 6px;width:100%}#panel-colour-filters[data-colour=protanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image-slice:1}#panel-colour-filters[data-colour=deuteranopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image-slice:1}#panel-colour-filters[data-colour=tritanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image-slice:1}#panel-colour-filters[data-colour=monochromacy]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image-slice:1}#panel-colour-filters[data-colour=protanopia] .panel-icon{background:var(--sa11y-panel-error)}#panel-colour-filters[data-colour=deuteranopia] .panel-icon{background:var(--sa11y-good-hover)}#panel-colour-filters[data-colour=tritanopia] .panel-icon{background:var(--sa11y-blue)}#panel-colour-filters[data-colour=monochromacy] .panel-icon{background:linear-gradient(90deg,#38a459 20%,red 50%,#0077c8 80%)}#panel-colour-filters .panel-icon{height:30px;margin-inline-end:5px;margin-inline-start:10px;-webkit-mask:var(--sa11y-low-vision-icon) center no-repeat;mask:var(--sa11y-low-vision-icon) center no-repeat;width:30px}@media screen and (forced-colors:active){#panel-colour-filters .panel-icon{forced-color-adjust:none}}.select-dropdown:after{border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid var(--sa11y-setting-switch-bg-off);content:\" \";height:0;inset-inline-end:25px;margin-top:22.5px;position:absolute;width:0}#colour-filter-select{-webkit-appearance:none;-moz-appearance:none;appearance:none;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-setting-switch-bg-off);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;margin-inline-end:4px;padding-inline-end:25px;padding-inline-start:5px;position:relative;text-align:end;vertical-align:middle}#colour-filter-select:focus,#colour-filter-select:hover{background:var(--sa11y-shortcut-hover)}#colour-filter-select.active{box-shadow:0 0 0 2px var(--sa11y-setting-switch-bg-on)}#colour-filter-item label,#colour-filter-item select{margin-bottom:9px;margin-top:10px}#readability-panel{display:none;opacity:0}#readability-panel.active{display:block;opacity:1}#readability-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-primary);padding:10px 15px;width:100%}#readability-details{list-style-type:none;margin:0;padding:0;white-space:normal}#readability-details li{display:inline-block;list-style-type:none;margin:0;padding-inline-end:10px}.readability-score{background-color:var(--sa11y-panel-badge);border-radius:4px;color:var(--sa11y-panel-primary);margin-inline-start:5px;padding:2px 5px}#readability-info{margin-inline-start:10px}#skip-to-page-issues{display:none}#panel.has-page-issues #skip-to-page-issues{clip:rect(0,0,0,0);background:var(--sa11y-panel-bg);border:0;border-radius:5px;display:block;height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}#panel.has-page-issues #skip-to-page-issues:focus{clip:auto;height:auto;margin:0;overflow:visible;padding:5px 7px;white-space:normal;width:auto;z-index:1}.hide-settings-border{border-bottom:0!important;padding:0 15px!important}::-webkit-scrollbar{height:6px;width:7px}::-webkit-scrollbar-thumb{background-color:var(--sa11y-button-outline);border-radius:6px}*{scrollbar-color:var(--sa11y-button-outline);scrollbar-width:thin}.scrollable:before{animation:fade 1s ease-in-out;background-image:linear-gradient(180deg,transparent 0,transparent 70%,var(--sa11y-panel-scrollable) 100%);background-position:bottom;bottom:auto;content:\"\";height:250px;left:0;position:absolute;right:0;top:auto;transition:opacity 1s ease-in-out;z-index:-1}#page-issues-content.scrollable:before{height:160px}#panel-alert.scrollable:before{height:200px}@keyframes sa11y-toggle-gradient{0%{background-position:50% 0}50%{background-position:50% 100%}to{background-position:50% 0}}@keyframes fade{0%{opacity:0}to{opacity:1}}@media (prefers-reduced-motion:reduce){*{animation:none!important;transform:none!important;transition:none!important}}#panel{width:375px}#container:lang(en) #panel{width:305px}#container:lang(da) #panel,#container:lang(de) #panel,#container:lang(nb) #panel,#container:lang(pl) #panel,#container:lang(sv) #panel,#container:lang(zh) #panel{width:335px}#container:lang(bg) .switch:not(#export-results-item *),#container:lang(es) .switch:not(#export-results-item *){width:225px!important}#container:not(:lang(en)):not(:lang(de)) .switch{width:205px}";
+var panelStyles = "a,button,code,div,h1,h2,kbd,label,li,ol,p,pre,span,strong,svg,ul{all:unset;box-sizing:border-box!important}:after,:before{all:unset}div{display:block}*{-webkit-font-smoothing:auto!important;font-family:var(--sa11y-font-face)!important;line-height:22px!important}label,li,ol,p,ul{font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;text-align:start;word-break:break-word}.sa11y-overflow{overflow:auto}iframe,img,video{border:0;display:block;height:auto;max-width:100%}audio{max-width:100%}#toggle{align-items:center;background:linear-gradient(0deg,#e040fb,#00bcd4);background-color:var(--sa11y-setting-switch-bg-off);background-size:150% 150%;border-radius:50%;bottom:15px;color:#fff;cursor:pointer;display:flex;height:55px;inset-inline-end:18px;justify-content:center;margin:0;overflow:visible;position:fixed;transition:all .2s ease-in-out;width:55px;z-index:2147483644}#toggle.left,#toggle.top-left{inset-inline-start:18px}#toggle.top-left,#toggle.top-right{bottom:unset;top:15px}@media screen and (forced-colors:active){#toggle{border:2px solid transparent}}#toggle svg{height:35px;width:35px}#toggle svg path{fill:var(--sa11y-panel-bg)}#toggle:focus,#toggle:hover{animation:sa11y-toggle-gradient 3s ease}#toggle:disabled:focus,#toggle:disabled:hover{animation:none}#toggle.on{background:linear-gradient(180deg,#e040fb,#00bcd4)}#toggle:disabled{background:unset;background-color:var(--sa11y-setting-switch-bg-off);cursor:not-allowed}#notification-badge{text-wrap:nowrap;align-items:center;background-color:#eb0000;border:1px solid transparent;border-radius:12px;color:#fff;display:none;font-size:13.5px;font-weight:400;height:20px;justify-content:center;min-width:20px;padding:3px;position:absolute;right:-3px;top:-5.5px}#notification-badge.notification-badge-warning{background-color:var(--sa11y-warning-hover);border:1px solid var(--sa11y-warning);color:var(--sa11y-warning-text)}#panel{background:var(--sa11y-panel-bg);border-radius:4px;bottom:25px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15);inset-inline-end:42px;opacity:0;overflow:visible;position:fixed;transform:scale(0);transform-origin:100% 100%;transition:transform .2s,opacity background .2s .2s;visibility:hidden;z-index:2147483643}#panel.left,#panel.top-left{inset-inline-start:42px}#panel.top-left,#panel.top-right{bottom:unset;top:35px}#panel.active{height:auto;opacity:1;transform:scale(1);transform-origin:bottom right;transition:transform .2s,opacity .2s;visibility:visible}@media screen and (forced-colors:active){#panel{border:2px solid transparent}}#panel.active.left,[dir=rtl] #panel.active{transform-origin:bottom left}#panel.active.top-left{transform-origin:top left}#panel.active.top-right{transform-origin:top right}#panel-alert{display:none;opacity:0}#panel-alert.active{display:block;opacity:1}#panel-alert-content{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-primary);max-height:400px;overflow-y:auto;padding:15px 20px 15px 15px;position:relative}.top-left #panel-alert-content,.top-right #panel-alert-content{border:0}#panel-alert-preview .close-tooltip{display:none}#panel-alert-preview,#panel-alert-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}.panel-alert-preview{background:var(--sa11y-panel-bg-secondary);border:1px dashed var(--sa11y-panel-bg-splitter);border-radius:5px;margin-top:15px;padding:10px}.element-preview{background-color:var(--sa11y-panel-badge);border-radius:3.2px;margin-bottom:10px;overflow-wrap:break-word;padding:5px}button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}button[data-sa11y-dismiss]:focus,button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}h2{display:block;font-size:var(--sa11y-large-text);margin-bottom:3px}h2,strong{font-weight:600}a:not(#outline-list a):not(.edit){border-bottom:0;color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none!important}hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}#dismiss-button,#skip-button{background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:50px;cursor:pointer;display:none;height:36px;margin-inline-end:8px;margin-inline-start:2px;overflow:visible;position:relative;text-align:center;transition:all .1s ease-in-out;width:36px}#dismiss-button.active,#skip-button.active{display:block}#dismiss-button:disabled,#skip-button:disabled{background:none;border:0;box-shadow:none;cursor:default}#dismiss-button:before,#skip-button:before{bottom:-5px;content:\"\";left:-5px;position:absolute;right:-5px;top:-5px}#dismiss-button:focus:not(:disabled),#dismiss-button:hover:not(:disabled),#skip-button:focus:not(:disabled),#skip-button:hover:not(:disabled){background-color:var(--sa11y-shortcut-hover)}#panel.left #dismiss-button,#panel.left #skip-button,#panel.top-left #dismiss-button,#panel.top-left #skip-button{margin-inline-end:2px;margin-inline-start:8px}.dismiss-icon{background:var(--sa11y-setting-switch-bg-off);display:inline-block;height:24px;margin-bottom:-4px;-webkit-mask:var(--sa11y-dismiss-icon) center no-repeat;mask:var(--sa11y-dismiss-icon) center no-repeat;width:24px}@media screen and (forced-colors:active){.dismiss-icon{filter:invert(1)}}#panel-content{align-items:center;color:var(--sa11y-panel-primary);display:flex;padding:6px}#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{height:26px;margin:0 auto;width:26px}#panel-content.errors .panel-icon{background:var(--sa11y-panel-error);margin-top:-2px;-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat}#panel-content.good .panel-icon{background:var(--sa11y-good);-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat}#panel-content.warnings .panel-icon{background:var(--sa11y-warning-svg-color);-webkit-mask:var(--sa11y-warning-svg) center no-repeat;mask:var(--sa11y-warning-svg) center no-repeat;transform:scaleX(var(--sa11y-icon-direction))}@media screen and (forced-colors:active){#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{filter:invert(1)}}#panel.left #panel-content,#panel.top-left #panel-content{flex-direction:row-reverse}#status{font-size:var(--sa11y-large-text)}#status,.panel-count{color:var(--sa11y-panel-primary)}.panel-count{background-color:var(--sa11y-panel-badge);border-radius:4px;font-size:15px;font-weight:400;margin-left:3px;margin-right:3px;padding:2px 4px}#images-panel,#outline-panel,#page-issues,#settings-panel{color:var(--sa11y-panel-primary);display:none;opacity:0}#images-panel.active,#outline-panel.active,#page-issues.active,#settings-panel.active{display:block;opacity:1}.panel-header{padding:10px 15px 0;text-align:start}#about-content{padding-top:5px}#about-content p{display:block;margin-block-end:1em}#images-content,#outline-content,#page-issues-content,#settings-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);padding:0 15px 10px}.top-left #images-content,.top-left #outline-content,.top-left #page-issues-content,.top-left #settings-content,.top-right #images-content,.top-right #outline-content,.top-right #page-issues-content,.top-right #settings-content{border:0}#page-issues-content{max-height:160px;overflow-y:auto}#settings-content{max-height:400px;overflow-y:auto}#images-content,#outline-content{max-height:250px;overflow-y:auto}#outline-panel .outline-list-item.sa11y-red-text,#settings-panel .sa11y-red-text{color:var(--sa11y-red-text)}#outline-list{display:block;margin:0;padding:0}#outline-list a{cursor:pointer;display:block;text-decoration:none}#outline-list li{display:block;list-style-type:none;margin-bottom:3px;margin-top:0;padding:0}#outline-list li:first-child{margin-top:5px}#outline-list li a:focus,#outline-list li a:hover{background:var(--sa11y-panel-outline-hover);border-radius:5px;box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);display:block}#outline-list .outline-2{margin-inline-start:15px}#outline-list .outline-3{margin-inline-start:30px}#outline-list .outline-4{margin-inline-start:45px}#outline-list .outline-5{margin-inline-start:60px}#outline-list .outline-6{margin-inline-start:75px}#images-list{display:block;margin:0;padding:0}#images-list li{border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:block;list-style-type:none;margin:15px 0;overflow:hidden;width:100%}#images-list li:first-child{margin-top:5px}#images-list li:last-child{border:none;margin-bottom:0}#images-list li .alt{padding:2px 5px 10px}#images-list li .edit{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;padding:4px 7px;position:relative;text-decoration:none}#images-list li .edit:focus,#images-list li .edit:hover{background-color:var(--sa11y-shortcut-hover)}#images-list li .edit:before{bottom:-10px;content:\"\";left:-10px;position:absolute;right:-10px;top:-10px}#images-list li .badge{margin-inline-end:4px}#images-list li img{border-radius:5px;float:inline-start;margin-block-end:15px;margin-inline-end:10px;max-width:110px}#images-list li.warning .alt{color:var(--sa11y-yellow-text)}#images-list li.warning img{border:5px solid var(--sa11y-yellow-text)}#images-list li.error .alt{color:var(--sa11y-error)}#images-list li.error img{border:5px solid var(--sa11y-error)}#images-list li.good img{border:5px solid var(--sa11y-panel-badge)}.error-icon{background:var(--sa11y-error-text);-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat}.error-icon,.hidden-icon{display:inline-block;height:16px;margin-bottom:-3px;width:16px}.hidden-icon{background:var(--sa11y-panel-primary);-webkit-mask:var(--sa11y-hidden-icon-svg) center no-repeat;mask:var(--sa11y-hidden-icon-svg) center no-repeat}.error-badge .hidden-icon{background:var(--sa11y-error-text)}.warning-badge .hidden-icon{background:var(--sa11y-panel-bg)}@media screen and (forced-colors:active){.hidden-icon{filter:invert(1)}}#panel-controls{border-radius:0 0 4px 4px;display:flex;overflow:hidden}#panel-controls button{background:var(--sa11y-panel-bg-secondary);background-color:var(--sa11y-panel-bg-secondary);border-bottom:1px solid var(--sa11y-panel-bg-splitter);border-inline-end:1px solid var(--sa11y-panel-bg-splitter);border-top:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-secondary);cursor:pointer;display:block;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;line-height:0;margin:0;opacity:1;outline:0;padding:0;position:relative;text-align:center;transition:background .2s;width:100%}#panel-controls button.active,#panel-controls button:hover{background-color:var(--sa11y-shortcut-hover)}#panel-controls button.active{font-weight:500}#export-results-mode,label{color:var(--sa11y-panel-primary);display:inline-block;font-weight:400;margin:0;width:100%}label:not(#colour-filter-mode,#export-results-mode){cursor:pointer}#settings-panel #export-csv,#settings-panel #export-html{padding:0;text-align:center;width:unset}#settings-panel #export-csv span,#settings-panel #export-html span{background:var(--sa11y-panel-bg-secondary);border-radius:5px;box-shadow:inset 0 0 0 2px var(--sa11y-setting-switch-bg-off);display:block;margin:0 4px;padding:7px 9px;width:65px}#settings-panel #export-csv:focus span,#settings-panel #export-csv:focus-within span,#settings-panel #export-csv:hover span,#settings-panel #export-html:focus span,#settings-panel #export-html:focus-within span,#settings-panel #export-html:hover span{background:var(--sa11y-shortcut-hover)}#settings-panel .switch{background:none;border:0;border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:44px;margin:0;padding:7px 10px;position:relative;text-align:end;width:105px}#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{content:\"\";display:inline-block;height:27px;margin:0 4px 4px;vertical-align:middle;width:27px}#settings-panel .switch[aria-pressed=true]:after{background:var(--sa11y-setting-switch-bg-on);-webkit-mask:var(--sa11y-setting-switch-on-svg) center no-repeat;mask:var(--sa11y-setting-switch-on-svg) center no-repeat}#settings-panel .switch[aria-pressed=false]:after{background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-setting-switch-off-svg) center no-repeat;mask:var(--sa11y-setting-switch-off-svg) center no-repeat}@media screen and (forced-colors:active){#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{filter:invert(1)}}#settings-panel #settings-options li{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:flex;justify-content:space-between;list-style-type:none;padding:1px 0}#settings-panel #settings-options li:last-child{border:none}#page-issues{align-items:center;color:var(--sa11y-panel-primary)}#page-issues-list{display:block;margin-top:4px}#page-issues-list li{display:block;margin:0 0 10px}#page-issues-list strong{display:block}.top-left.has-page-issues #page-issues,.top-right.has-page-issues #page-issues{border-top:1px solid var(--sa11y-panel-bg-splitter);margin-top:-1px}#panel-colour-filters{align-items:center;color:var(--sa11y-panel-primary);display:none;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}#panel-colour-filters.active{display:flex}#panel-colour-filters p{padding:6px 20px 6px 6px;width:100%}#panel-colour-filters[data-colour=protanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image-slice:1}#panel-colour-filters[data-colour=deuteranopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image-slice:1}#panel-colour-filters[data-colour=tritanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image-slice:1}#panel-colour-filters[data-colour=monochromacy]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image-slice:1}#panel-colour-filters[data-colour=protanopia] .panel-icon{background:var(--sa11y-panel-error)}#panel-colour-filters[data-colour=deuteranopia] .panel-icon{background:var(--sa11y-good-hover)}#panel-colour-filters[data-colour=tritanopia] .panel-icon{background:var(--sa11y-blue)}#panel-colour-filters[data-colour=monochromacy] .panel-icon{background:linear-gradient(90deg,#38a459 20%,red 50%,#0077c8 80%)}#panel-colour-filters .panel-icon{height:30px;margin-inline-end:5px;margin-inline-start:10px;-webkit-mask:var(--sa11y-low-vision-icon) center no-repeat;mask:var(--sa11y-low-vision-icon) center no-repeat;width:30px}@media screen and (forced-colors:active){#panel-colour-filters .panel-icon{forced-color-adjust:none}}.select-dropdown{align-items:center;display:flex;position:relative}.select-dropdown:after{border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid var(--sa11y-setting-switch-bg-off);content:\" \";inset-inline-end:14px;position:absolute}#colour-filter-select{-webkit-appearance:none;-moz-appearance:none;appearance:none;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-setting-switch-bg-off);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;margin-inline-end:4px;padding-inline-end:25px;padding-inline-start:5px;position:relative;text-align:end;vertical-align:middle}#colour-filter-select:focus,#colour-filter-select:hover{background:var(--sa11y-shortcut-hover)}#colour-filter-select.active{box-shadow:0 0 0 2px var(--sa11y-setting-switch-bg-on)}#colour-filter-item label,#colour-filter-item select{margin-bottom:9px;margin-top:10px}#readability-panel{display:none;opacity:0}#readability-panel.active{display:block;opacity:1}.top-left #readability-content,.top-right #readability-content{border-top:1px solid var(--sa11y-panel-bg-splitter)}.left #readability-content,.right #readability-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter)}#readability-content{color:var(--sa11y-panel-primary);padding:10px 15px;width:100%}#readability-details{list-style-type:none;margin:0;padding:0;white-space:normal}#readability-details li{display:inline-block;list-style-type:none;margin:0;padding-inline-end:10px}.readability-score{background-color:var(--sa11y-panel-badge);border-radius:4px;color:var(--sa11y-panel-primary);margin-inline-start:5px;padding:2px 5px}#readability-info{margin-inline-start:10px}#skip-to-page-issues{display:none}#panel.has-page-issues #skip-to-page-issues{clip:rect(0,0,0,0);background:var(--sa11y-panel-bg);border:0;border-radius:5px;display:block;height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}#panel.has-page-issues #skip-to-page-issues:focus{clip:auto;height:auto;margin:0;overflow:visible;padding:5px 7px;white-space:normal;width:auto;z-index:1}.hide-settings-border{border-bottom:0!important;padding:0 15px!important}.hide-settings-border li:not(#colour-filter-item){display:none!important}.hide-settings-border #about-content{display:none}.hide-settings-border.scrollable:before{all:unset}::-webkit-scrollbar{height:6px;width:7px}::-webkit-scrollbar-thumb{background-color:var(--sa11y-button-outline);border-radius:6px}*{scrollbar-color:var(--sa11y-button-outline);scrollbar-width:thin}.scrollable:before{animation:fade 1s ease-in-out;background:linear-gradient(180deg,transparent 70%,var(--sa11y-panel-scrollable) 100%);background-position:bottom;bottom:auto;content:\"\";height:250px;left:0;position:absolute;right:0;top:auto;transition:opacity 1s ease-in-out;width:100%;z-index:-1}#settings-content.scrollable:before{height:400px}.top-left .scrollable:before,.top-right .scrollable:before{border-radius:5px}#page-issues-content.scrollable:before{height:160px}#panel-alert.scrollable:before{height:200px}@keyframes sa11y-toggle-gradient{0%{background-position:50% 0}50%{background-position:50% 100%}to{background-position:50% 0}}@keyframes fade{0%{opacity:0}to{opacity:1}}@media (prefers-reduced-motion:reduce){*{animation:none!important;transform:none!important;transition:none!important}}#panel{width:400px}#container:lang(en) #panel{width:305px}#container:lang(da) #panel,#container:lang(de) #panel,#container:lang(nb) #panel,#container:lang(pl) #panel,#container:lang(sv) #panel,#container:lang(zh) #panel{width:350px}#container:lang(bg) .switch:not(#export-results-item *),#container:lang(es) .switch:not(#export-results-item *){width:225px!important}#container:not(:lang(en)):not(:lang(de)) .switch{width:205px}";
 
 class ControlPanel extends HTMLElement {
   connectedCallback() {
@@ -1790,6 +1801,12 @@ class ControlPanel extends HTMLElement {
         </button>
       </li>` : '';
 
+    /* CUSTOMIZABLE ABOUT SECTION */
+    const aboutSection = Constants.Global.aboutContent ? `
+      <div id="about-content">
+        ${Constants.Global.aboutContent}
+      </div>` : '';
+
     /* MAIN TOGGLE */
     const mainToggle = `
       <button type="button" aria-expanded="false" id="toggle" aria-describedby="notification-badge" aria-label="${Lang._('MAIN_TOGGLE_LABEL')}" class="${panelPosition}" disabled>
@@ -1833,6 +1850,21 @@ class ControlPanel extends HTMLElement {
         </div>
       </div>`;
 
+    /* IMAGES OUTLINE */
+    const imagesOutline = Constants.Global.showImageOutline ? `
+      <div id="images-panel" role="tabpanel" aria-labelledby="images-header">
+        <div class="panel-header">
+          <h2 id="images-header" tabindex="-1">${Lang._('IMAGES')}</h2>
+        </div>
+        <div id="images-content">
+          <ul
+            id="images-list"
+            tabindex="0"
+            role="list"
+            aria-labelledby="images-header"></ul>
+        </div>
+      </div>` : '';
+
     /* PAGE SETTINGS */
     const pageSettings = `
       <div id="settings-panel" role="tabpanel" aria-labelledby="settings-header">
@@ -1854,6 +1886,7 @@ class ControlPanel extends HTMLElement {
             ${exportResultsPlugin}
             ${colourFilterPlugin}
           </ul>
+          ${aboutSection}
         </div>
       </div>`;
 
@@ -1895,12 +1928,20 @@ class ControlPanel extends HTMLElement {
       </div>`;
 
     /* OUTLINE & SETTING TAB TOGGLES. */
+    const imageToggleButton = `<button type="button" role="tab" aria-expanded="false" id="images-toggle" aria-controls="images-panel">${Lang._('IMAGES')}</button>`;
+
+    // Spacer for toggle width...
+    const spacer = Constants.Global.showImageOutline
+      ? '<div style="width:80px"></div>'
+      : '<div style="width:40px"></div>';
+
     const tabToggles = `
       <div id="panel-controls" role="tablist" aria-orientation="horizontal">
-        ${(panelPosition === 'left') ? '<div style="width:40px"></div>' : ''}
+        ${(panelPosition === 'left') ? spacer : ''}
         <button type="button" role="tab" aria-expanded="false" id="outline-toggle" aria-controls="outline-panel">${Lang._('OUTLINE')}</button>
+        ${Constants.Global.showImageOutline ? imageToggleButton : ''}
         <button type="button" role="tab" aria-expanded="false" id="settings-toggle" aria-controls="settings-panel">${Lang._('SETTINGS')}</button>
-        ${(panelPosition === 'right') ? '<div style="width:40px"></div>' : ''}
+        ${(panelPosition === 'right') ? spacer : ''}
       </div>`;
 
     /* MAIN CONTAINER */
@@ -1919,6 +1960,7 @@ class ControlPanel extends HTMLElement {
           ${colourFilterPanel}
           ${tabToggles}
           ${pageOutline}
+          ${imagesOutline}
           ${pageSettings}
           ${panelAlerts}
           ${pageIssues}
@@ -1929,6 +1971,7 @@ class ControlPanel extends HTMLElement {
         <div id="panel" class="${panelPosition}">
           ${pageIssues}
           ${pageOutline}
+          ${imagesOutline}
           ${pageSettings}
           ${panelAlerts}
           ${colourFilterPanel}
@@ -2191,6 +2234,80 @@ function settingsPanelToggles(checkAll, resetAll) {
 
 /* eslint-disable no-return-assign */
 
+/**
+ * OUTLINE PANEL.
+ */
+const openOutline = () => {
+  Constants.Panel.outlineToggle.classList.add('active');
+  Constants.Panel.outline.classList.add('active');
+  Constants.Panel.outlineToggle.setAttribute('aria-expanded', 'true');
+  store.setItem('sa11y-remember-outline', 'Opened');
+  isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
+
+  // Toggle visibility of heading labels
+  const headingLabels = find('sa11y-heading-label', 'root');
+  headingLabels.forEach(($el) => $el.hidden = false);
+
+  const event = new CustomEvent('sa11y-build-heading-outline');
+  document.dispatchEvent(event);
+};
+
+const closeOutline = () => {
+  Constants.Panel.outline.classList.remove('active');
+  Constants.Panel.outlineToggle.classList.remove('active');
+  Constants.Panel.outlineToggle.setAttribute('aria-expanded', 'false');
+  store.setItem('sa11y-remember-outline', 'Closed');
+
+  // Toggle visibility of heading labels
+  const headingLabels = find('sa11y-heading-label', 'root');
+  headingLabels.forEach(($el) => $el.hidden = true);
+};
+
+/**
+ * IMAGES PANEL.
+ */
+const openImages = () => {
+  Constants.Panel.imagesToggle.classList.add('active');
+  Constants.Panel.images.classList.add('active');
+  Constants.Panel.imagesToggle.setAttribute('aria-expanded', 'true');
+  store.setItem('sa11y-remember-images', 'Opened');
+  isScrollable(Constants.Panel.imagesList, Constants.Panel.imagesContent);
+
+  const event = new CustomEvent('sa11y-build-image-outline');
+  document.dispatchEvent(event);
+};
+
+const closeImages = () => {
+  if (Constants.Global.showImageOutline) {
+    Constants.Panel.imagesToggle.classList.remove('active');
+    Constants.Panel.images.classList.remove('active');
+    Constants.Panel.imagesToggle.setAttribute('aria-expanded', 'false');
+    store.setItem('sa11y-remember-images', 'Closed');
+  }
+};
+
+/**
+ * SETTINGS PANEL.
+ */
+const openSettings = () => {
+  Constants.Panel.settingsToggle.classList.add('active');
+  Constants.Panel.settings.classList.add('active');
+  Constants.Panel.settingsToggle.setAttribute('aria-expanded', 'true');
+  store.setItem('sa11y-remember-settings', 'Opened');
+  isScrollable(
+    Constants.Panel.settingsContent,
+    Constants.Panel.settingsContent,
+    Lang._('SETTINGS'),
+  );
+};
+
+const closeSettings = () => {
+  Constants.Panel.settings.classList.remove('active');
+  Constants.Panel.settingsToggle.classList.remove('active');
+  Constants.Panel.settingsToggle.setAttribute('aria-expanded', 'false');
+  store.setItem('sa11y-remember-settings', 'Closed');
+};
+
 /* **************************************************************** */
 /*  Main panel: Initialize Show Outline and Settings buttons/tabs.  */
 /* **************************************************************** */
@@ -2200,46 +2317,43 @@ function initializePanelToggles() {
   /* **************** */
   Constants.Panel.outlineToggle.addEventListener('click', () => {
     if (Constants.Panel.outlineToggle.getAttribute('aria-expanded') === 'true') {
-      Constants.Panel.outlineToggle.classList.remove('outline-active');
-      Constants.Panel.outline.classList.remove('active');
-      Constants.Panel.outlineToggle.setAttribute('aria-expanded', 'false');
-      store.setItem('sa11y-remember-outline', 'Closed');
-
-      // Toggle visibility of heading labels
-      const $headingAnnotations = document.querySelectorAll('sa11y-heading-label');
-      $headingAnnotations.forEach(($el) => $el.hidden = true);
-      isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
+      closeOutline();
     } else {
-      Constants.Panel.outlineToggle.classList.add('outline-active');
-      Constants.Panel.outline.classList.add('active');
-      Constants.Panel.outlineToggle.setAttribute('aria-expanded', 'true');
-      store.setItem('sa11y-remember-outline', 'Opened');
-      store.setItem('sa11y-remember-settings', 'Closed');
-
-      // Toggle visibility of heading labels
-      const $headingAnnotations = document.querySelectorAll('sa11y-heading-label');
-      $headingAnnotations.forEach(($el) => $el.hidden = false);
+      openOutline();
+      closeSettings();
+      closeImages();
     }
 
     // Set focus on Page Outline heading for accessibility.
     Constants.Panel.outlineHeader.focus();
-
-    // Close Settings panel when Show Outline is active.
-    Constants.Panel.settings.classList.remove('active');
-    Constants.Panel.settingsToggle.classList.remove('settings-active');
-    Constants.Panel.settingsToggle.setAttribute('aria-expanded', 'false');
-    isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
   });
 
   // Remember to leave outline open
   if (store.getItem('sa11y-remember-outline') === 'Opened') {
-    Constants.Panel.outlineToggle.classList.add('outline-active');
-    Constants.Panel.outline.classList.add('active');
-    Constants.Panel.outlineToggle.setAttribute('aria-expanded', 'true');
+    openOutline();
+  }
 
-    setTimeout(() => {
-      isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
-    }, 0);
+  /* **************** */
+  /*  Images panel   */
+  /* **************** */
+  if (Constants.Global.showImageOutline) {
+    Constants.Panel.imagesToggle.addEventListener('click', () => {
+      if (Constants.Panel.imagesToggle.getAttribute('aria-expanded') === 'true') {
+        closeImages();
+      } else {
+        openImages();
+        closeOutline();
+        closeSettings();
+      }
+
+      // Set focus on Images heading for accessibility.
+      Constants.Panel.imagesHeader.focus();
+    });
+
+    // Remember to leave outline open
+    if (store.getItem('sa11y-remember-images') === 'Opened') {
+      openImages();
+    }
   }
 
   /* **************** */
@@ -2247,49 +2361,20 @@ function initializePanelToggles() {
   /* **************** */
   Constants.Panel.settingsToggle.addEventListener('click', () => {
     if (Constants.Panel.settingsToggle.getAttribute('aria-expanded') === 'true') {
-      Constants.Panel.settingsToggle.classList.remove('settings-active');
-      Constants.Panel.settings.classList.remove('active');
-      Constants.Panel.settingsToggle.setAttribute('aria-expanded', 'false');
-      store.setItem('sa11y-remember-settings', 'Closed');
+      closeSettings();
     } else {
-      Constants.Panel.settingsToggle.classList.add('settings-active');
-      Constants.Panel.settings.classList.add('active');
-      Constants.Panel.settingsToggle.setAttribute('aria-expanded', 'true');
-      store.setItem('sa11y-remember-settings', 'Opened');
-      store.setItem('sa11y-remember-outline', 'Closed');
+      openSettings();
+      closeOutline();
+      closeImages();
     }
 
     // Set focus on Settings heading for accessibility.
     Constants.Panel.settingsHeader.focus();
-
-    // Toggle visibility of heading labels
-    const $headingAnnotations = document.querySelectorAll('sa11y-heading-label');
-    $headingAnnotations.forEach(($el) => $el.hidden = true);
-
-    // Close Show Outline panel when Settings is active.
-    Constants.Panel.outline.classList.remove('active');
-    Constants.Panel.outlineToggle.classList.remove('outline-active');
-    Constants.Panel.outlineToggle.setAttribute('aria-expanded', 'false');
-    store.setItem('sa11y-remember-outline', 'Closed');
-
-    // Keyboard accessibility fix for scrollable panel content.
-    if (Constants.Panel.settingsContent.clientHeight > 350) {
-      Constants.Panel.settingsContent.setAttribute('tabindex', '0');
-      Constants.Panel.settingsContent.setAttribute('aria-label', `${Lang._('SETTINGS')}`);
-      Constants.Panel.settingsContent.setAttribute('role', 'region');
-    }
-
-    // Close Outline panel when Show Outline is active.
-    Constants.Panel.outline.classList.remove('active');
-    Constants.Panel.outlineToggle.classList.remove('settings-active');
-    Constants.Panel.outlineToggle.setAttribute('aria-expanded', 'false');
   });
 
   // Remember to leave settings open
   if (store.getItem('sa11y-remember-settings') === 'Opened') {
-    Constants.Panel.settingsToggle.classList.add('settings-active');
-    Constants.Panel.settings.classList.add('active');
-    Constants.Panel.settingsToggle.setAttribute('aria-expanded', 'true');
+    openSettings();
   }
 
   // Accessibility: Skip link to Page Issues
@@ -2298,49 +2383,25 @@ function initializePanelToggles() {
   });
 
   // Page issues: add gradient if scrollable list.
-  setTimeout(() => {
-    isScrollable(Constants.Panel.pageIssuesList, Constants.Panel.pageIssuesContent);
-  }, 0);
+  isScrollable(Constants.Panel.pageIssuesList, Constants.Panel.pageIssuesContent);
 
-  // Enhanced keyboard accessibility for panel.
-  Constants.Panel.controls.addEventListener('keydown', (e) => {
-    const $tab = Constants.Panel.panel.querySelectorAll('#outline-toggle[role=tab], #settings-toggle[role=tab]');
-    if (e.key === 'ArrowRight') {
-      for (let i = 0; i < $tab.length; i++) {
-        if ($tab[i].getAttribute('aria-expanded') === 'true' || $tab[i].getAttribute('aria-expanded') === 'false') {
-          $tab[i + 1].focus();
-          e.preventDefault();
-          break;
-        }
+  /* ******************************** */
+  /*  Better keyboard accessibility.  */
+  /* ******************************** */
+  const tabs = Constants.Panel.panel.querySelectorAll('[role=tab]');
+  let currentIndex = Array.from(tabs).findIndex((tab) => tab.classList.contains('active'));
+  tabs.forEach((tab) => {
+    tab.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        currentIndex = (currentIndex + 1) % tabs.length;
+        tabs[currentIndex].focus();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        currentIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+        tabs[currentIndex].focus();
       }
-    }
-    if (e.key === 'ArrowDown') {
-      for (let i = 0; i < $tab.length; i++) {
-        if ($tab[i].getAttribute('aria-expanded') === 'true' || $tab[i].getAttribute('aria-expanded') === 'false') {
-          $tab[i + 1].focus();
-          e.preventDefault();
-          break;
-        }
-      }
-    }
-    if (e.key === 'ArrowLeft') {
-      for (let i = $tab.length - 1; i > 0; i--) {
-        if ($tab[i].getAttribute('aria-expanded') === 'true' || $tab[i].getAttribute('aria-expanded') === 'false') {
-          $tab[i - 1].focus();
-          e.preventDefault();
-          break;
-        }
-      }
-    }
-    if (e.key === 'ArrowUp') {
-      for (let i = $tab.length - 1; i > 0; i--) {
-        if ($tab[i].getAttribute('aria-expanded') === 'true' || $tab[i].getAttribute('aria-expanded') === 'false') {
-          $tab[i - 1].focus();
-          e.preventDefault();
-          break;
-        }
-      }
-    }
+    });
   });
 }
 
@@ -2349,43 +2410,44 @@ function initializePanelToggles() {
 */
 
 function generatePageOutline(dismissed, headingOutline, showHinPageOutline) {
-  // Create a single array that gets appended to heading outline.
-  const outlineArray = [];
+  const outlineHandler = () => {
+    // Create a single array that gets appended to heading outline.
+    const outlineArray = [];
 
-  // Find all dismissed headings and update headingOutline array.
-  const findDismissedHeadings = dismissed.map((e) => {
-    const found = headingOutline.find((f) => (e.key.includes(f.dismiss) && e.href === window.location.pathname));
-    if (found === undefined) return '';
-    return found;
-  });
-  findDismissedHeadings.forEach(($el) => {
-    Object.assign($el, { dismissedHeading: true });
-  });
+    // Find all dismissed headings and update headingOutline array.
+    const findDismissedHeadings = dismissed.map((e) => {
+      const found = headingOutline.find((f) => (e.key.includes(f.dismiss) && e.href === window.location.pathname));
+      if (found === undefined) return '';
+      return found;
+    });
+    findDismissedHeadings.forEach(($el) => {
+      Object.assign($el, { dismissedHeading: true });
+    });
 
-  // Iterate through object that contains all headings (and error type).
-  headingOutline.forEach((heading) => {
-    const $el = heading.element;
-    const level = heading.headingLevel;
-    const headingText = heading.text;
-    const i = heading.index;
-    const issue = heading.type;
-    const visibility = heading.hidden;
-    const parent = heading.visibleParent;
-    const dismissedH = heading.dismissedHeading;
-    const { isWithinRoot } = heading;
+    // Iterate through object that contains all headings (and error type).
+    headingOutline.forEach((heading) => {
+      const $el = heading.element;
+      const level = heading.headingLevel;
+      const headingText = heading.text;
+      const i = heading.index;
+      const issue = heading.type;
+      const visibility = heading.hidden;
+      const parent = heading.visibleParent;
+      const dismissedH = heading.dismissedHeading;
+      const { isWithinRoot } = heading;
 
-    // Filter out specified headings in outlineIgnore prop.
-    const ignoreArray = Constants.Exclusions.Outline ? Array.from(document.querySelectorAll(Constants.Exclusions.Outline)) : [];
+      // Filter out specified headings in outlineIgnore prop.
+      const ignoreArray = Constants.Exclusions.Outline ? Array.from(document.querySelectorAll(Constants.Exclusions.Outline)) : [];
 
-    if (!ignoreArray.includes($el)) {
-      // Indicate if heading is totally hidden or visually hidden.
-      const visibleIcon = (visibility === true) ? '<span class="hidden-icon"></span><span class="visually-hidden">Hidden</span>' : '';
-      const visibleStatus = (visibility === true) ? 'class="hidden-h"' : '';
-      const badgeH = (showHinPageOutline === true || showHinPageOutline === 1) ? 'H' : '';
+      if (!ignoreArray.includes($el)) {
+        // Indicate if heading is totally hidden or visually hidden.
+        const visibleIcon = (visibility === true) ? '<span class="hidden-icon"></span><span class="visually-hidden">Hidden</span>' : '';
+        const visibleStatus = (visibility === true) ? 'class="hidden-h"' : '';
+        const badgeH = (showHinPageOutline === true || showHinPageOutline === 1) ? 'H' : '';
 
-      let append;
-      if (issue === 'error' && isWithinRoot === true) {
-        append = `
+        let append;
+        if (issue === 'error' && isWithinRoot === true) {
+          append = `
         <li class="outline-${level}">
           <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
             <span class="badge error-badge">
@@ -2396,9 +2458,9 @@ function generatePageOutline(dismissed, headingOutline, showHinPageOutline) {
             <strong class="outline-list-item red-text">${headingText}</strong>
           </a>
         </li>`;
-        outlineArray.push(append);
-      } else if (issue === 'warning' && !dismissedH && isWithinRoot === true) {
-        append = `
+          outlineArray.push(append);
+        } else if (issue === 'warning' && !dismissedH && isWithinRoot === true) {
+          append = `
         <li class="outline-${level}">
           <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
             <span class="badge warning-badge">
@@ -2407,154 +2469,305 @@ function generatePageOutline(dismissed, headingOutline, showHinPageOutline) {
             <strong class="outline-list-item yellow-text">${headingText}</strong>
           </a>
         </li>`;
-        outlineArray.push(append);
-      } else {
-        append = `
+          outlineArray.push(append);
+        } else {
+          append = `
         <li class="outline-${level}">
           <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
             <span class="badge">${visibleIcon} ${badgeH + level}</span>
             <span class="outline-list-item">${headingText}</span>
           </a>
         </li>`;
-        outlineArray.push(append);
+          outlineArray.push(append);
+        }
+
+        /**
+        * Append heading labels.
+        */
+        const label = document.createElement('sa11y-heading-label');
+        const anchor = document.createElement('sa11y-heading-anchor');
+        label.hidden = true;
+
+        // If heading is in a hidden container, place the anchor just before it's most visible parent.
+        if (parent !== null) {
+          $el.insertAdjacentElement('beforeend', label);
+          const hiddenParent = parent.previousElementSibling;
+          anchor.setAttribute('id', `sa11y-h${i}`);
+          if (hiddenParent) {
+            hiddenParent.insertAdjacentElement('beforebegin', anchor);
+            hiddenParent.setAttribute('data-sa11y-parent', `h${i}`);
+          } else {
+            parent.parentNode.insertAdjacentElement('beforebegin', anchor);
+            parent.parentNode.setAttribute('data-sa11y-parent', `h${i}`);
+          }
+        } else {
+          // If the heading isn't hidden, append visible label.
+          $el.insertAdjacentElement('beforeend', label);
+
+          // Create anchor above visible label.
+          label.insertAdjacentElement('beforebegin', anchor);
+          anchor.setAttribute('id', `sa11y-h${i}`);
+        }
+
+        // Populate heading label.
+        const content = document.createElement('span');
+        content.classList.add('heading-label');
+        content.innerHTML = `H${level}`;
+        label.shadowRoot.appendChild(content);
+
+        // Make heading labels visible when panel is open.
+        if (store.getItem('sa11y-remember-outline') === 'Opened') {
+          label.hidden = false;
+        }
       }
+    });
+
+    // Append headings to Page Outline.
+    Constants.Panel.outlineList.innerHTML = (outlineArray.length === 0)
+      ? `<li>${Lang._('PANEL_NO_HEADINGS')}</li>`
+      : outlineArray.join(' ');
+
+    // Make clickable!
+    setTimeout(() => {
+      const panel = document.querySelector('sa11y-control-panel');
+      const shadow = panel.shadowRoot;
+      const children = Array.from(shadow.querySelectorAll('#outline-list a'));
+
+      children.forEach(($el, i) => {
+        // Make Page Outline clickable.
+        const outlineLink = shadow.getElementById(`sa11y-link-${i}`);
+
+        const headingID = find(
+          `#sa11y-h${i}, [data-sa11y-parent="h${i}"]`,
+          'document',
+          Constants.Exclusions.Container,
+        );
+
+        // Scroll to.
+        const pulseAndScroll = (heading) => {
+          addPulse(heading.parentElement);
+          heading.scrollIntoView({
+            behavior: `${Constants.Global.scrollBehaviour}`,
+            block: 'center',
+          });
+        };
+
+        // Add pulse.
+        const smoothPulse = (e) => {
+          if ((e.type === 'keyup' && e.code === 'Enter') || e.type === 'click') {
+            headingID.forEach((heading) => {
+              pulseAndScroll(heading);
+            });
+
+            if (outlineLink.classList.contains('hidden-h')) {
+              createAlert(`${Lang._('HEADING_NOT_VISIBLE_ALERT')}`);
+            } else if (Constants.Panel.alert.classList.contains('active')) {
+              removeAlert();
+            }
+          }
+          e.preventDefault();
+        };
+
+        // Attach event listeners.
+        outlineLink?.addEventListener('click', smoothPulse, false);
+        outlineLink?.addEventListener('keyup', smoothPulse, false);
+      });
 
       /**
-      * Append heading labels.
+       * Roving tabindex menu for page outline.
+       * Thanks to Srijan for this snippet!
+       * @link https://blog.srij.dev/roving-tabindex-from-scratch
       */
-      const label = document.createElement('sa11y-heading-label');
-      const anchor = document.createElement('sa11y-heading-anchor');
-      label.hidden = true;
-
-      // If heading is in a hidden container, place the anchor just before it's most visible parent.
-      if (parent !== null) {
-        $el.insertAdjacentElement('beforeend', label);
-        const hiddenParent = parent.previousElementSibling;
-        anchor.setAttribute('id', `sa11y-h${i}`);
-        if (hiddenParent) {
-          hiddenParent.insertAdjacentElement('beforebegin', anchor);
-          hiddenParent.setAttribute('data-sa11y-parent', `h${i}`);
-        } else {
-          parent.parentNode.insertAdjacentElement('beforebegin', anchor);
-          parent.parentNode.setAttribute('data-sa11y-parent', `h${i}`);
+      let current = 0;
+      const handleKeyDown = (e) => {
+        if (!['ArrowUp', 'ArrowDown', 'Space'].includes(e.code)) return;
+        if (e.code === 'Space') {
+          children[current].click();
+          return;
         }
-      } else {
-        // If the heading isn't hidden, append visible label.
-        $el.insertAdjacentElement('beforeend', label);
-
-        // Create anchor above visible label.
-        label.insertAdjacentElement('beforebegin', anchor);
-        anchor.setAttribute('id', `sa11y-h${i}`);
-      }
-
-      // Populate heading label.
-      const content = document.createElement('span');
-      content.classList.add('heading-label');
-      content.innerHTML = `H${level}`;
-      label.shadowRoot.appendChild(content);
-
-      // Make heading labels visible when panel is open.
-      if (store.getItem('sa11y-remember-outline') === 'Opened') {
-        label.hidden = false;
-      }
-    }
-  });
-
-  // Append headings to Page Outline.
-  Constants.Panel.outlineList.innerHTML = (outlineArray.length === 0)
-    ? `<li>${Lang._('PANEL_NO_HEADINGS')}</li>`
-    : outlineArray.join(' ');
-
-  // Make clickable!
-  setTimeout(() => {
-    const panel = document.querySelector('sa11y-control-panel');
-    const shadow = panel.shadowRoot;
-    const children = Array.from(shadow.querySelectorAll('#outline-list a'));
-
-    children.forEach(($el, i) => {
-      // Make Page Outline clickable.
-      const outlineLink = shadow.getElementById(`sa11y-link-${i}`);
-
-      const headingID = find(
-        `#sa11y-h${i}, [data-sa11y-parent="h${i}"]`,
-        'document',
-        Constants.Exclusions.Container,
-      );
-
-      // Scroll to.
-      const pulseAndScroll = (heading) => {
-        addPulse(heading.parentElement);
-        heading.scrollIntoView({
-          behavior: `${Constants.Global.scrollBehaviour}`,
-          block: 'center',
-        });
-      };
-
-      // Add pulse.
-      const smoothPulse = (e) => {
-        if ((e.type === 'keyup' && e.code === 'Enter') || e.type === 'click') {
-          headingID.forEach((heading) => {
-            pulseAndScroll(heading);
-          });
-
-          if (outlineLink.classList.contains('hidden-h')) {
-            createAlert(`${Lang._('HEADING_NOT_VISIBLE_ALERT')}`);
-          } else if (Constants.Panel.alert.classList.contains('active')) {
-            removeAlert();
+        const selected = children[current];
+        selected.setAttribute('tabindex', -1);
+        let next;
+        if (e.code === 'ArrowDown') {
+          next = current + 1;
+          if (current === children.length - 1) {
+            next = 0;
+          }
+        } else if ((e.code === 'ArrowUp')) {
+          next = current - 1;
+          if (current === 0) {
+            next = children.length - 1;
           }
         }
+        children[next].setAttribute('tabindex', 0);
+        children[next].focus();
+        current = next;
         e.preventDefault();
       };
-
-      // Attach event listeners.
-      outlineLink?.addEventListener('click', smoothPulse, false);
-      outlineLink?.addEventListener('keyup', smoothPulse, false);
-    });
-
-    /**
-     * Roving tabindex menu for page outline.
-     * Thanks to Srijan for this snippet!
-     * @link https://blog.srij.dev/roving-tabindex-from-scratch
-    */
-    let current = 0;
-    const handleKeyDown = (e) => {
-      if (!['ArrowUp', 'ArrowDown', 'Space'].includes(e.code)) return;
-      if (e.code === 'Space') {
-        children[current].click();
-        return;
-      }
-      const selected = children[current];
-      selected.setAttribute('tabindex', -1);
-      let next;
-      if (e.code === 'ArrowDown') {
-        next = current + 1;
-        if (current === children.length - 1) {
-          next = 0;
+      Constants.Panel.outlineList.addEventListener('focus', () => {
+        if (children.length > 0) {
+          Constants.Panel.outlineList.setAttribute('tabindex', -1);
+          children[current].setAttribute('tabindex', 0);
+          children[current].focus();
         }
-      } else if ((e.code === 'ArrowUp')) {
-        next = current - 1;
-        if (current === 0) {
-          next = children.length - 1;
-        }
+        Constants.Panel.outlineList.addEventListener('keydown', handleKeyDown);
+      });
+      Constants.Panel.outlineList.addEventListener('blur', () => {
+        Constants.Panel.outlineList.removeEventListener('keydown', handleKeyDown);
+      });
+    }, 0);
+
+    // Remove event listener and returned dismissed results.
+    document.removeEventListener('sa11y-build-heading-outline', outlineHandler);
+    return dismissed;
+  };
+
+  // Generate heading outline based on local storage or if "Outline" button is selected.
+  const rememberOutline = store.getItem('sa11y-remember-outline');
+  if (rememberOutline === 'Opened') outlineHandler();
+  document.addEventListener('sa11y-build-heading-outline', outlineHandler);
+}
+
+/**
+ * Create Images outline.
+*/
+
+function generateImageOutline(dismissed, imageResults) {
+  const generateEditLink = (image) => {
+    let finalURL;
+    // Only generate edit link if prop is populated.
+    if (Constants.Global.editImageURLofCMS.length !== 0) {
+      const { src } = image.element;
+
+      // Check if image's SRC attribute is hosted on same domain or is relative path.
+      const relativePath = Constants.Global.relativePathImageSRC
+        ? Constants.Global.relativePathImageSRC
+        : window.location.host;
+
+      const parts = src.split(relativePath);
+      const fileExtension = parts.length > 1 ? parts[1] : '';
+
+      const imageID = Constants.Global.relativePathImageID;
+      let imageUniqueID;
+      if (imageID.length && image.element.classList.length) {
+        image.element.classList.forEach((className) => {
+          if (className.startsWith(imageID)) {
+            const [digit] = className.match(/\d+/) || [];
+            imageUniqueID = digit;
+          }
+        });
       }
-      children[next].setAttribute('tabindex', 0);
-      children[next].focus();
-      current = next;
-      e.preventDefault();
-    };
-    Constants.Panel.outlineList.addEventListener('focus', () => {
-      if (children.length > 0) {
-        Constants.Panel.outlineList.setAttribute('tabindex', -1);
-        children[current].setAttribute('tabindex', 0);
-        children[current].focus();
+
+      const editURL = (relativePath && imageID.length)
+        ? Constants.Global.editImageURLofCMS + imageUniqueID
+        : Constants.Global.editImageURLofCMS + fileExtension;
+
+      // Only add edit button to relative (locally hosted) images.
+      const isRelativeLink = (imageSrc) => imageSrc.includes(window.location.host) || imageSrc.startsWith(relativePath);
+      finalURL = (isRelativeLink(src) && imageUniqueID !== undefined)
+        ? `<div class="edit-block"><a
+            href="${encodeURI(editURL)}"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="edit">${Lang._('EDIT')}</a></div>`
+        : '';
+    }
+    return finalURL ?? '';
+  };
+
+  const imageOutlineHandler = () => {
+    // Create a single array that gets appended to heading outline.
+    const imageArray = [];
+
+    // Find all dismissed images and update headingOutline array.
+    const findDismissedImages = dismissed.map((e) => {
+      const found = imageResults.find((f) => (e.key.includes(f.dismiss) && e.href === window.location.pathname));
+      if (found === undefined) return '';
+      return found;
+    });
+
+    findDismissedImages.forEach(($el) => {
+      Object.assign($el, { dismissedImage: true });
+    });
+
+    imageResults.forEach((image) => {
+      const issue = image.type;
+      const { dismissedImage } = image;
+      const altText = escapeHTML(image.element.alt);
+
+      // Account for lazy loading libraries that use 'data-src' attribute.
+      const { src } = image.element;
+      const dataSrc = image.element.getAttribute('data-src');
+      const source = (dataSrc && dataSrc.length > 3) ? dataSrc : src;
+
+      // Generate edit link if locally hosted image and prop is enabled.
+      const edit = generateEditLink(image);
+
+      let append;
+      if (issue === 'error') {
+        const missing = altText.length === 0
+          ? `<div class="badge error-badge">${Lang._('MISSING')}</div>`
+          : `<strong class="outline-list-item red-text">${altText}</strong>`;
+        append = `
+        <li class="error">
+          <img src="${source}" alt/>
+          <div class="alt">
+            <div class="badge error-badge">
+              <span class="error-icon"></span>
+              <span class="visually-hidden">${Lang._('ERROR')}</span>
+              ${Lang._('ALT')}
+            </div>
+            ${missing}
+          </div>
+          ${edit}
+        </li>`;
+        imageArray.push(append);
+      } else if (issue === 'warning' && !dismissedImage) {
+        const decorative = altText.length === 0
+          ? `<div class="badge warning-badge">${Lang._('DECORATIVE')}</div>` : '';
+        append = `
+        <li class="warning">
+          <img src="${source}" alt/>
+          <div class="alt">
+            <div class="badge warning-badge">
+              <span aria-hidden="true">&#63;</span>
+              <span class="visually-hidden">${Lang._('WARNING')}</span>
+              ${Lang._('ALT')}
+            </div>
+            ${decorative} <strong class="outline-list-item yellow-text">${altText}</strong>
+          </div>
+          ${edit}
+        </li>`;
+        imageArray.push(append);
+      } else {
+        const decorative = altText.length === 0
+          ? `<div class="badge">${Lang._('DECORATIVE')}</div>` : '';
+        append = `
+        <li class="good">
+          <img src="${source}" alt/>
+          <div class="alt">
+            <div class="badge">${Lang._('ALT')}</div>
+            ${decorative} ${altText}
+          </div>
+          ${edit}
+        </li>`;
+        imageArray.push(append);
       }
-      Constants.Panel.outlineList.addEventListener('keydown', handleKeyDown);
     });
-    Constants.Panel.outlineList.addEventListener('blur', () => {
-      Constants.Panel.outlineList.removeEventListener('keydown', handleKeyDown);
-    });
-  }, 0);
-  return dismissed;
+
+    // Append headings to Page Outline.
+    Constants.Panel.imagesList.innerHTML = (imageArray.length === 0)
+      ? `<li>${Lang._('IMAGES_NOT_FOUND')}</li>`
+      : imageArray.join(' ');
+
+    // Remove event listener.
+    document.removeEventListener('sa11y-build-image-outline', imageOutlineHandler);
+  };
+
+  /* Generate image outline based on local storage or if "Image" button is selected. */
+  const rememberImages = store.getItem('sa11y-remember-images');
+  if (rememberImages === 'Opened') imageOutlineHandler();
+  document.addEventListener('sa11y-build-image-outline', imageOutlineHandler);
 }
 
 /* ************************************************************ */
@@ -6620,16 +6833,33 @@ function checkImages(results, option) {
         hit[0] = word;
       }
     });
-    Lang._('SUSPICIOUS_ALT_STOPWORDS').forEach((word) => {
-      if (alt.toLowerCase().indexOf(word) >= 0) {
+
+    const susAltWordsOverride = (option.susAltStopWords) ? option.susAltStopWords.split(',').map((word) => word.trim()) : Lang._('SUSPICIOUS_ALT_STOPWORDS');
+    susAltWordsOverride.forEach((word) => {
+      const susWord = alt.toLowerCase().indexOf(word);
+      if (susWord > -1 && susWord < 6) {
         hit[1] = word;
       }
     });
+
     Lang._('PLACEHOLDER_ALT_STOPWORDS').forEach((word) => {
       if (alt.length === word.length && alt.toLowerCase().indexOf(word) >= 0) {
         hit[2] = word;
       }
     });
+
+    // Additional placeholder stopwords to flag as an error.
+    const { extraPlaceholderStopWords } = option;
+    if (extraPlaceholderStopWords.length) {
+      const array = extraPlaceholderStopWords.split(',').map((word) => word.trim());
+      array.forEach((word) => {
+        const susWord = alt.toLowerCase().indexOf(word);
+        if (susWord > -1 && susWord < 6) {
+          hit[2] = word;
+        }
+      });
+    }
+
     return hit;
   };
 
@@ -7065,7 +7295,8 @@ function checkLinkText(results, option) {
     });
 
     // Other warnings we want to add.
-    Lang._('WARNING_ALT_STOPWORDS').forEach((word) => {
+    const linkStopWords = (option.linkStopWords) ? option.linkStopWords.split(',').map((word) => word.trim()) : Lang._('WARNING_ALT_STOPWORDS');
+    linkStopWords.forEach((word) => {
       if (textContent.toLowerCase().indexOf(word) >= 0) {
         hit[1] = word;
       }
@@ -7326,6 +7557,39 @@ function checkLinkText(results, option) {
 }
 
 /**
+ * Converts a color string in the format 'color(srgb r g b [a])' to RGBA format.
+ * If alpha value is not provided, it defaults to 1 (fully opaque).
+ * @param {string} colorString The color string in the format 'color(srgb r g b [a])'.
+ * @returns {string} The RGBA color string in the format 'rgba(r, g, b, a)'.
+ * Returns 'invalid-format' if the input format is invalid.
+ */
+const convertColorToRGBA = (colorString) => {
+  if (colorString.startsWith('color(srgb')) {
+    const rgbaRegex = /srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s+([\d.]+))?/; // Added alpha value regex group
+    const match = colorString.match(rgbaRegex);
+
+    if (match && match.length >= 4) {
+      const [r, g, b, a] = match.slice(1);
+
+      // Ensure the parsed values are within the valid range [0, 1].
+      const parsedR = Math.min(1, parseFloat(r));
+      const parsedG = Math.min(1, parseFloat(g));
+      const parsedB = Math.min(1, parseFloat(b));
+
+      // Parse alpha value or default to 1 if not provided
+      const alpha = a !== undefined ? Math.min(1, parseFloat(a)) : 1;
+
+      // Converting RGB to RGBA.
+      const rgbaColor = `rgba(${Math.round(parsedR * 255)}, ${Math.round(parsedG * 255)}, ${Math.round(parsedB * 255)}, ${alpha})`;
+
+      return rgbaColor;
+    }
+    return 'invalid-format';
+  }
+  return colorString; // Return the original color if it's not in the color() format.
+};
+
+/**
  * Rulesets: Contrast
  * Color contrast plugin by Jason Day.
  * @link https://github.com/jasonday/color-contrast
@@ -7398,18 +7662,18 @@ function checkContrast(results, option) {
           }
 
           const styles = getComputedStyle(el);
-          const bgColor = styles.backgroundColor;
+          const bgColor = convertColorToRGBA(styles.backgroundColor);
           const bgImage = styles.backgroundImage;
           const rgb = `${contrastObject.parseRgb(bgColor)}`;
           const alpha = rgb.split(',');
 
-          // if background has alpha transparency, flag manual check
+          // if background has alpha transparency, flag manual check.
           if (alpha[3] < 1 && alpha[3] > 0) {
             return 'alpha';
           }
 
-          // if element has no background image, or transparent return bgColor
           if (bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent' && bgImage === 'none' && alpha[3] !== '0') {
+            // if element has no background image, or transparent return bgColor
             return bgColor;
           } if (bgImage !== 'none') {
             return 'image';
@@ -7433,8 +7697,12 @@ function checkContrast(results, option) {
             const elem = Elements.Found.Contrast[i];
 
             if (Elements.Found.Contrast) {
+              let ratio;
+              let error;
+              let warning;
+
               const style = getComputedStyle(elem);
-              const { color } = style;
+              const color = convertColorToRGBA(style.color);
               const { fill } = style;
               const fontSize = parseInt(style.fontSize, 10);
               const pointSize = fontSize * (3 / 4);
@@ -7443,14 +7711,26 @@ function checkContrast(results, option) {
               const background = contrastObject.getBackground(elem);
               const textString = [].reduce.call(elem.childNodes, (a, b) => a + (b.nodeType === 3 ? b.textContent : ''), '');
               const text = textString.trim();
-              const clip = window.getComputedStyle(elem).clip.replace(/\s/g, '');
-              const width = parseFloat(window.getComputedStyle(elem).width);
-              const height = parseFloat(window.getComputedStyle(elem).height);
-              let ratio;
-              let error;
-              let warning;
 
-              if ((width === 1 && height === 1) && (clip === "rect(0,0,0,0)" || clip === "rect(1px,1px,1px,1px)")) ; else if (htmlTag === 'SVG') {
+              // Maybe visually hidden text.
+              const computedStyle = window.getComputedStyle(elem);
+              const clip = computedStyle.clip.replace(/\s/g, '');
+              const clipPath = computedStyle.getPropertyValue('clip-path');
+              const width = parseFloat(computedStyle.width);
+              const height = parseFloat(computedStyle.height);
+              const maybeVisuallyHidden = (width === 1 && height === 1) &&
+                (clipPath === 'inset(50%)' || /^(rect\(0(,\s*0){3}\)|rect\(1px(,\s*1px){3}\))$/.test(clip));
+
+              // Ignore if visually hidden for screen readers.
+              if (maybeVisuallyHidden) {
+                return;
+              } else if (color.startsWith('color(')) {
+                // Push a warning if using a color() functional notation.
+                warning = {
+                  elem,
+                };
+                contrastErrors.warnings.push(warning);
+              } else if (htmlTag === 'SVG') {
                 ratio = Math.round(contrastObject.contrastRatio(fill, background) * 100) / 100;
                 if (ratio < 3) {
                   error = {
@@ -8066,9 +8346,8 @@ function checkQA(results, option) {
       const href = $el.getAttribute('href');
 
       // Has file extension.
-      const extensions = Constants.Global.documentLinks.split(', ');
-      const hasExtension = extensions.some((extension) => href.includes(extension));
-      const hasPDF = href.includes('.pdf');
+      const hasExtension = $el.matches(Constants.Global.documentLinks);
+      const hasPDF = $el.matches('a[href$=".pdf"], a[href*=".pdf?"]');
 
       // Dismiss key.
       const key = prepareDismissal(`DOCUMENT${href}`);
@@ -8395,11 +8674,9 @@ function checkQA(results, option) {
   /*  Error: Duplicate IDs                                           */
   /* *************************************************************** */
   if (option.duplicateIdQA) {
-    const doms = Constants.Shadow.Components ? `body, ${Constants.Shadow.Components}` : 'body';
-    const allDoms = document.querySelectorAll(doms);
-
     // Look for duplicate IDs within each DOM.
-    allDoms.forEach((dom) => {
+    const doms = document.querySelectorAll('body, [data-sa11y-has-shadow-root]');
+    doms.forEach((dom) => {
       const allIds = new Set();
       const findDuplicateIds = (ids, withinDOM) => {
         ids.forEach(($el) => {
@@ -8656,6 +8933,7 @@ class Sa11y {
       try {
         this.results = [];
         this.headingOutline = [];
+        this.imageOutline = [];
         this.errorCount = 0;
         this.warningCount = 0;
         this.customChecksRunning = false;
@@ -8668,7 +8946,7 @@ class Sa11y {
         Constants.initializeRoot(desiredRoot, desiredReadabilityRoot);
 
         // Find all web components on the page.
-        Constants.initializeShadowSearch(option, desiredRoot);
+        findShadowComponents(option);
 
         // Find and cache elements.
         Elements.initializeElements(option);
@@ -8682,6 +8960,8 @@ class Sa11y {
         checkQA(this.results, option);
         checkEmbeddedContent(this.results, option);
         checkReadability();
+
+        this.imageResults = this.results.filter((item) => item.element?.tagName === 'IMG');
 
         /* Custom checks */
         if (option.customChecks === true) {
@@ -8790,6 +9070,10 @@ class Sa11y {
             option.showHinPageOutline,
           );
 
+          if (option.showImageOutline) {
+            generateImageOutline(this.dismissed, this.imageResults);
+          }
+
           updatePanel(
             dismiss.dismissCount,
             count.error,
@@ -8829,19 +9113,6 @@ class Sa11y {
     this.resetAll = (restartPanel = true) => {
       Constants.Global.html.removeAttribute('data-sa11y-active');
 
-      // Reset all data attributes.
-      resetAttributes([
-        'data-sa11y-parent',
-        'data-sa11y-error',
-        'data-sa11y-warning',
-        'data-sa11y-good',
-        'data-sa11y-error-inline',
-        'data-sa11y-warning-inline',
-        'data-sa11y-overflow',
-        'data-sa11y-pulse-border',
-        'data-sa11y-filter',
-      ], 'document');
-
       // Remove from page.
       remove([
         'sa11y-annotation',
@@ -8853,8 +9124,23 @@ class Sa11y {
         '.sa11y-css-utilities',
       ], 'document');
 
+      // Reset all data attributes.
+      resetAttributes([
+        'data-sa11y-parent',
+        'data-sa11y-error',
+        'data-sa11y-warning',
+        'data-sa11y-good',
+        'data-sa11y-error-inline',
+        'data-sa11y-warning-inline',
+        'data-sa11y-overflow',
+        'data-sa11y-pulse-border',
+        'data-sa11y-filter',
+        'data-sa11y-has-shadow-root',
+      ], 'document');
+
       // Remove from panel.
       Constants.Panel.outlineList.innerHTML = '';
+      if (option.showImageOutline) Constants.Panel.imagesList.innerHTML = '';
       Constants.Panel.pageIssuesList.innerHTML = '';
       Constants.Panel.readabilityInfo.innerHTML = '';
       Constants.Panel.readabilityDetails.innerHTML = '';
@@ -8874,6 +9160,11 @@ class Sa11y {
 
       // Main panel warning and error count.
       while (Constants.Panel.status.firstChild) Constants.Panel.status.removeChild(Constants.Panel.status.firstChild);
+
+      // Remove data attribute from shadow root elements.
+      document.querySelectorAll('[data-sa11y-has-shadow-root]').forEach((el) => {
+        el.removeAttribute('data-sa11y-has-shadow-root');
+      });
 
       if (restartPanel) {
         Constants.Panel.panel.classList.remove('active');

@@ -25,8 +25,8 @@ export default function find(selector, desiredRoot, exclude) {
     if (!root) root = document.body;
   }
 
-  const shadowComponents = Constants.Shadow.Components;
-  const shadow = (shadowComponents) ? `, ${shadowComponents}` : '';
+  const shadowComponents = document.querySelectorAll('[data-sa11y-has-shadow-root]');
+  const shadow = (shadowComponents) ? ', [data-sa11y-has-shadow-root]' : '';
 
   const exclusions = Constants.Exclusions.Container;
   const additional = (exclude !== undefined) ? `, ${exclude}` : '';
@@ -38,9 +38,8 @@ export default function find(selector, desiredRoot, exclude) {
     // 2. Dive into the each shadow root and collect an array of its results.
     const shadowFind = [];
     // Remove first comma and whitespace.
-    const prepShadow = shadowComponents.trim().replace(/^,+/, '');
     elements.forEach((el, i) => {
-      if (el && el.matches && el.matches(prepShadow) && el.shadowRoot) {
+      if (el && el.matches && el.matches('[data-sa11y-has-shadow-root]') && el.shadowRoot) {
         shadowFind[i] = el.shadowRoot.querySelectorAll(`:is(${selector}):not(${exclusions}${additional})`);
       }
     });

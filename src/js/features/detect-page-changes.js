@@ -19,7 +19,7 @@ export default function detectPageChanges(detectSPArouting, checkAll, resetAll) 
         url = window.location.href; // Update current URL
       }
     }, 250);
-    window.addEventListener('mousemove', checkURL);
+    window.addEventListener('click', checkURL);
     window.addEventListener('keydown', checkURL);
   }
 }

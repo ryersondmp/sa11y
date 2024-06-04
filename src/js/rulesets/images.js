@@ -33,16 +33,33 @@ export default function checkImages(results, option) {
         hit[0] = word;
       }
     });
-    Lang._('SUSPICIOUS_ALT_STOPWORDS').forEach((word) => {
-      if (alt.toLowerCase().indexOf(word) >= 0) {
+
+    const susAltWordsOverride = (option.susAltStopWords) ? option.susAltStopWords.split(',').map((word) => word.trim()) : Lang._('SUSPICIOUS_ALT_STOPWORDS');
+    susAltWordsOverride.forEach((word) => {
+      const susWord = alt.toLowerCase().indexOf(word);
+      if (susWord > -1 && susWord < 6) {
         hit[1] = word;
       }
     });
+
     Lang._('PLACEHOLDER_ALT_STOPWORDS').forEach((word) => {
       if (alt.length === word.length && alt.toLowerCase().indexOf(word) >= 0) {
         hit[2] = word;
       }
     });
+
+    // Additional placeholder stopwords to flag as an error.
+    const { extraPlaceholderStopWords } = option;
+    if (extraPlaceholderStopWords.length) {
+      const array = extraPlaceholderStopWords.split(',').map((word) => word.trim());
+      array.forEach((word) => {
+        const susWord = alt.toLowerCase().indexOf(word);
+        if (susWord > -1 && susWord < 6) {
+          hit[2] = word;
+        }
+      });
+    }
+
     return hit;
   };
 

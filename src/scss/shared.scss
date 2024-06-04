@@ -51,14 +51,37 @@ kbd,
 
 .red-text {
   font-family: var(--sa11y-font-face);
-  font-size: var(--sa11y-normal-text);
   color: var(--sa11y-red-text);
 }
 
 .yellow-text {
   font-family: var(--sa11y-font-face);
-  font-size: var(--sa11y-normal-text);
   color: var(--sa11y-yellow-text);
+}
+
+/* Badges */
+.badge {
+  display: inline;
+  min-width: 10px;
+  padding: 2px 3px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--sa11y-panel-primary);
+  text-align: center;
+  white-space: nowrap;
+  background-color: var(--sa11y-panel-badge);
+  border: 1px solid transparent;
+  border-radius: 10px;
+}
+
+.error-badge {
+  color: var(--sa11y-error-text);
+  background: var(--sa11y-error);
+}
+
+.warning-badge {
+  color: var(--sa11y-panel-bg);
+  background: var(--sa11y-yellow-text);
 }
 
 /* ***************************************** */
@@ -116,7 +139,7 @@ kbd,
   [tabindex="0"]:focus,
   [tabindex="-1"]:focus,
   select:focus,
-  button:not(#settings-toggle):not(#outline-toggle):not(.switch):focus,
+  button:not(#panel-controls button):not(.switch):focus,
   a:focus {
     outline: 0;
     box-shadow: 0 0 0 5px var(--sa11y-focus-color);
@@ -124,8 +147,7 @@ kbd,
 
   /* These elements MUST use inset outlines */
   .switch:focus,
-  #settings-toggle:focus,
-  #outline-toggle:focus {
+  #panel-controls button:focus {
     outline: 0;
     box-shadow: inset 0 0 0 4px var(--sa11y-focus-color);
   }
@@ -140,8 +162,7 @@ kbd,
   [tabindex="-1"]:focus:not(:focus-visible),
   button:focus:not(:focus-visible),
   select:focus:not(:focus-visible),
-  #settings-toggle:focus:not(:focus-visible),
-  #outline-toggle:focus:not(:focus-visible) {
+  #panel-controls button:focus:not(:focus-visible) {
     outline: 0;
     box-shadow: none;
   }
@@ -153,7 +174,7 @@ kbd,
 #container {
 
   a:focus-visible,
-  button:not(#settings-toggle):not(#outline-toggle):not(.switch):focus-visible,
+  button:not(#panel-controls button):not(.switch):focus-visible,
   select:focus-visible,
   [tabindex="0"]:focus-visible,
   [tabindex="-1"]:focus-visible {
@@ -163,8 +184,7 @@ kbd,
 
   // These elements MUST use inset outlines.
   .switch:focus-visible,
-  #settings-toggle:focus-visible,
-  #outline-toggle:focus-visible {
+  #panel-controls button:focus-visible {
     outline: 0;
     box-shadow: inset 0 0 0 4px var(--sa11y-focus-color);
   }
@@ -176,8 +196,7 @@ kbd,
 
 @media screen and (forced-colors: active) {
 
-  #outline-toggle:focus,
-  #settings-toggle:focus {
+  #panel-controls button:focus {
     border: inset 3px solid transparent;
   }
 
