@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.2.0
+  * @version 3.2.1
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -42,6 +42,7 @@ var ko = {
     SHORTCUT_SCREEN_READER: '문제로 건너뛰기. 키보드 단축키: Alt S',
     SHORTCUT_TOOLTIP: '문제로 건너뛰기',
     NEW_TAB: '새 탭에서 열기',
+    LINKED: '연결됨',
     PANEL_HEADING: '접근성 확인',
     PANEL_STATUS_NONE: '오류 없음.',
     PANEL_ICON_WARNINGS: '경고 발견.',
@@ -166,7 +167,7 @@ var ko = {
     READABILITY_NOT_ENOUGH_CONTENT_MESSAGE: '가독성 점수를 계산할 콘텐츠가 충분하지 않습니다.',
     HEADING_NON_CONSECUTIVE_LEVEL: '비연속적인 머리글 레벨이 사용되었습니다. 제목은 레벨을 건너뛰거나 <strong>헤딩 %(level)</strong>에서 <strong {r}>헤딩 %(level)</strong>로 이동하지 않아야 합니다.',
     HEADING_EMPTY: '빈 제목이 발견되었습니다! 수정하려면 이 줄을 삭제하거나 형식을 <strong {r}>헤딩 %(level)</strong>에서 <strong>일반</strong> 또는 <strong>단락</strong>으로 변경하세요.',
-    HEADING_LONG: '제목이 길어요! 제목은 콘텐츠를 구성하고 구조를 전달하는 데 사용해야 합니다. 제목은 간결하고 유익하며 독창적이어야 합니다. 제목은 160자 이내(한 문장 이하)로 유지하세요. <hr> <strong {wb}>%(HEADING_LENGTH) 문자</strong>',
+    HEADING_LONG: '제목이 길어요! 제목은 콘텐츠를 구성하고 구조를 전달하는 데 사용해야 합니다. 제목은 간결하고 유익하며 독창적이어야 합니다. 제목은 160자 이내(한 문장 이하)로 유지하세요. <hr> <strong {b}>%(HEADING_LENGTH) 문자</strong>',
     HEADING_FIRST: '페이지의 첫 번째 제목은 일반적으로 제목 1 또는 제목 2여야 합니다. 제목 1은 주요 콘텐츠 섹션의 시작 부분이어야 하며 페이지의 전반적인 목적을 설명하는 주요 제목입니다. <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">헤딩 구조에 대해 자세히 알아보기.</a>',
     HEADING_MISSING_ONE: '제목 1이 누락되었습니다. 제목 1은 주요 콘텐츠 영역의 시작 부분이어야 하며 페이지의 전반적인 목적을 설명하는 기본 제목입니다. <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">헤딩 구조에 대해 자세히 알아보기.</a>',
     HEADING_EMPTY_WITH_IMAGE: '제목에 텍스트가 없지만 이미지가 포함되어 있습니다. 제목이 아닌 경우 형식을 <strong {r}>제목 %(level)</strong>에서 <strong>일반</strong> 또는 <strong>단락</strong>으로 변경합니다. 그렇지 않으면 장식용 이미지가 아닌 경우 이미지에 대체 텍스트를 추가하세요.',
@@ -186,26 +187,26 @@ var ko = {
     MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE: '이미지가 주변 텍스트와 함께 링크로 사용되고 있지만 alt 속성은 장식용 또는 null로 표시되어야 합니다.',
     MISSING_ALT_LINK_MESSAGE: '이미지가 링크로 사용 중이지만 대체 텍스트가 누락되었습니다! 링크가 어디로 연결되는지 설명하는 대체 텍스트를 입력하세요.',
     MISSING_ALT_MESSAGE: '대체 텍스트가 누락되었습니다! 이미지가 스토리, 분위기 또는 중요한 정보를 전달하는 경우 이미지에 대한 설명을 반드시 기재하세요.',
-    LINK_ALT_HAS_FILE_EXTENSION: '대체 텍스트 내의 파일 확장자를 찾았습니다. 대체 텍스트가 이미지에 대한 문자 그대로의 설명이 아니라 링크의 목적지를 설명하는지 확인하세요. 제거합니다: <strong {r}>%(ERROR)</strong>. <hr> <strong {eb}>대체 텍스트</strong> <strong {r}>%(ALT_TEXT)</strong>',
-    LINK_IMAGE_PLACEHOLDER_ALT_MESSAGE: '링크된 이미지에 설명이 없거나 자리 표시자 대체 텍스트가 발견되었습니다. 대체 텍스트가 이미지에 대한 문자 그대로의 설명이 아니라 링크의 대상을 설명하는지 확인합니다. 다음 대체 텍스트를 교체합니다: <strong {r}>%(ALT_TEXT)</strong>',
-    LINK_IMAGE_SUS_ALT_MESSAGE: '보조 기술은 이미 이미지임을 표시하므로 <strong {w}>%(ERROR)</strong>가 중복될 수 있습니다. 대체 텍스트가 이미지에 대한 문자 그대로의 설명이 아니라 링크의 목적지를 설명하는지 확인하세요. <hr> <strong {wb}>대체 텍스트</strong> <strong {w}>%(ALT_TEXT)</strong>',
-    ALT_HAS_FILE_EXTENSION: '대체 텍스트 내의 파일 확장자를 찾았습니다. 이미지가 스토리, 분위기 또는 중요한 정보를 전달하는 경우 이미지를 설명해야 합니다. 제거합니다: <strong {r}>%(ERROR)</strong>. <hr> <strong {eb}>대체 텍스트</strong> <strong {r}>%(ALT_TEXT)</strong>',
-    ALT_PLACEHOLDER_MESSAGE: '설명이 없거나 자리 표시자 대체 텍스트가 발견되었습니다. 다음 대체 텍스트를 더 의미 있는 것으로 바꾸세요: <strong {r}>%(ALT_TEXT)</strong>',
-    ALT_HAS_SUS_WORD: '보조 기술은 이미 이미지임을 표시하므로 <strong {w}>%(ERROR)</strong>가 중복될 수 있습니다. <hr> <strong {wb}>대체 텍스트</strong> <strong {w}>%(ALT_TEXT)</strong>',
+    LINK_ALT_HAS_FILE_EXTENSION: '대체 텍스트 내의 파일 확장자를 찾았습니다. 대체 텍스트가 이미지에 대한 문자 그대로의 설명이 아니라 링크의 목적지를 설명하는지 확인하세요. 제거합니다: <strong {r}>%(ERROR)</strong> <hr> {ALT} {L} <strong {r}>%(ALT_TEXT)</strong>',
+    LINK_IMAGE_PLACEHOLDER_ALT_MESSAGE: '링크된 이미지에 설명이 없거나 자리 표시자 대체 텍스트가 발견되었습니다. 대체 텍스트가 이미지에 대한 문자 그대로의 설명이 아니라 링크의 대상을 설명하는지 확인합니다. 다음 대체 텍스트를 교체합니다. <hr> {ALT} {L} <strong {r}>%(ALT_TEXT)</strong>',
+    LINK_IMAGE_SUS_ALT_MESSAGE: '보조 기술은 이미 이미지임을 표시하므로 <strong {w}>%(ERROR)</strong>가 중복될 수 있습니다. 대체 텍스트가 이미지에 대한 문자 그대로의 설명이 아니라 링크의 목적지를 설명하는지 확인하세요. <hr> {ALT} {L} <strong {w}>%(ALT_TEXT)</strong>',
+    ALT_HAS_FILE_EXTENSION: '대체 텍스트 내의 파일 확장자를 찾았습니다. 이미지가 스토리, 분위기 또는 중요한 정보를 전달하는 경우 이미지를 설명해야 합니다. 제거합니다: <strong {r}>%(ERROR)</strong> <hr> {ALT} <strong {r}>%(ALT_TEXT)</strong>',
+    ALT_PLACEHOLDER_MESSAGE: '설명이 없거나 자리 표시자 대체 텍스트가 발견되었습니다. 다음 대체 텍스트를 더 의미 있는 것으로 바꾸세요. <hr> {ALT} <strong {r}>%(ALT_TEXT)</strong>',
+    ALT_HAS_SUS_WORD: '보조 기술은 이미 이미지임을 표시하므로 <strong {w}>%(ERROR)</strong>가 중복될 수 있습니다. <hr> {ALT} <strong {w}>%(ALT_TEXT)</strong>',
     LINK_HIDDEN_FOCUSABLE: '링크에는 <code>aria-hidden=&quot;true&quot;</code> 속성이 있지만 키보드로 여전히 초점을 맞출 수 있습니다. 중복되거나 불필요한 링크를 숨기려면 <code>tabindex=&quot;-1&quot;</code>도 추가하세요.',
     LINK_IMAGE_NO_ALT_TEXT: '링크 내 이미지는 장식용으로 표시되어 있으며 링크 텍스트가 없습니다. 링크의 목적지를 설명하는 대체 텍스트를 이미지에 추가하세요.',
     LINK_IMAGE_HAS_TEXT: '링크가 주변 텍스트를 설명 레이블로 사용하고 있지만 이미지는 장식용으로 표시됩니다.',
-    LINK_IMAGE_LONG_ALT: '링크된 이미지의 대체 텍스트 설명이 <strong>너무 깁니다</strong>. 링크된 이미지의 대체 텍스트는 이미지에 대한 문자 그대로의 설명이 아니라 링크를 통해 이동하는 위치를 설명해야 합니다. <strong>링크되는 페이지의 제목을 대체 텍스트로 사용하는 것이 좋습니다.</strong> <hr> <strong {wb}>대체</strong> <strong {wb}>%(altLength) 문자</strong> <strong {w}>%(ALT_TEXT)</strong>',
-    LINK_IMAGE_ALT_WARNING: '이미지 링크에 대체 텍스트가 포함되어 있습니다. 대체 텍스트에 링크가 어디로 연결되는지 설명되어 있나요? <strong>링크하는 페이지의 제목을 대체 텍스트로 사용하는 것이 좋습니다.</strong> <hr> <strong {wb}>대체 텍스트</strong> <strong {w}>%(ALT_TEXT)</strong>',
-    LINK_IMAGE_ALT_AND_TEXT_WARNING: '이미지 링크에 <strong>대체 텍스트와 주변 링크 텍스트가 모두 포함됨</strong> 이 이미지가 장식용이고 다른 페이지에 대한 기능적 링크로 사용되는 경우 이미지를 장식용으로 표시하거나 주변 링크 텍스트로 충분할 수 있도록 null로 표시하는 것을 고려하세요. <hr> <strong {wb}>대체 텍스트</strong> <strong {w}>%(ALT_TEXT)</strong> <hr> <strong {wb}>링크 레이블</strong> <strong {w}>%(TEXT)</strong>',
+    LINK_IMAGE_LONG_ALT: '링크된 이미지의 대체 텍스트 설명이 <strong>너무 깁니다</strong>. 링크된 이미지의 대체 텍스트는 이미지에 대한 문자 그대로의 설명이 아니라 링크를 통해 이동하는 위치를 설명해야 합니다. <strong>링크되는 페이지의 제목을 대체 텍스트로 사용하는 것이 좋습니다.</strong> <hr> {ALT} {L} <strong {b}>%(altLength) 문자</strong> <strong {w}>%(ALT_TEXT)</strong>',
+    LINK_IMAGE_ALT_WARNING: '이미지 링크에 대체 텍스트가 포함되어 있습니다. 대체 텍스트에 링크가 어디로 연결되는지 설명되어 있나요? <strong>링크하는 페이지의 제목을 대체 텍스트로 사용하는 것이 좋습니다.</strong> <hr> {ALT} {L} <strong {w}>%(ALT_TEXT)</strong>',
+    LINK_IMAGE_ALT_AND_TEXT_WARNING: '이미지 링크에 <strong>대체 텍스트와 주변 링크 텍스트가 모두 포함됨</strong> 이 이미지가 장식용이고 다른 페이지에 대한 기능적 링크로 사용되는 경우 이미지를 장식용으로 표시하거나 주변 링크 텍스트로 충분할 수 있도록 null로 표시하는 것을 고려하세요. <hr> {ALT} <strong {w}>%(ALT_TEXT)</strong> <hr> <strong {b}>링크 레이블</strong> {L} <strong {w}>%(TEXT)</strong>',
     IMAGE_FIGURE_DECORATIVE: '이미지가 <strong>장식</strong>으로 표시되어 보조 기술에서 무시됩니다. <hr> <strong>캡션</strong>이 제공되었더라도 이미지에는 대부분의 경우 대체 텍스트가 있어야 합니다. <ul><li>대체 텍스트는 이미지에 포함된 내용에 대한 간결한 설명을 제공해야 합니다.</li><li>캡션은 일반적으로 이미지를 주변 콘텐츠와 다시 연관시키거나 특정 정보에 주의를 기울일 수 있도록 맥락을 제공해야 합니다.</li></ul>자세히 알아보기: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">알트 대 그림 캡션.</a>',
-    IMAGE_FIGURE_DUPLICATE_ALT: '대체 텍스트와 캡션 텍스트에 정확히 같은 단어를 사용하지 마세요. 화면 리더는 정보를 두 번 알립니다.<ul><li>대체 텍스트는 이미지에 포함된 내용에 대한 간결한 설명을 제공해야 합니다.</li><li>캡션은 일반적으로 이미지를 주변 콘텐츠와 다시 연관시키거나 특정 정보에 주목할 수 있도록 맥락을 제공해야 합니다.</li></ul> 자세히 알아보기: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">알트 대 그림 캡션.</a> <hr> <strong {wb}>대체 텍스트</strong> <strong {w}>%(ALT_TEXT)</strong>',
+    IMAGE_FIGURE_DUPLICATE_ALT: '대체 텍스트와 캡션 텍스트에 정확히 같은 단어를 사용하지 마세요. 화면 리더는 정보를 두 번 알립니다.<ul><li>대체 텍스트는 이미지에 포함된 내용에 대한 간결한 설명을 제공해야 합니다.</li><li>캡션은 일반적으로 이미지를 주변 콘텐츠와 다시 연관시키거나 특정 정보에 주목할 수 있도록 맥락을 제공해야 합니다.</li></ul> 자세히 알아보기: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">알트 대 그림 캡션.</a> <hr> {ALT} <strong {w}>%(ALT_TEXT)</strong>',
     IMAGE_DECORATIVE: "이미지는 '장식용'으로 표시되어 보조 기술에서 무시됩니다. 이미지가 스토리, 분위기 또는 중요한 정보를 전달하는 경우 대체 텍스트를 추가해야 합니다.",
-    IMAGE_ALT_TOO_LONG: '대체 텍스트 설명이 <strong>너무 깁니다</strong>. 대체 텍스트는 간결하면서도 트윗처럼 의미 있는 내용이어야 합니다(100자 내외). 복잡한 이미지나 그래프인 경우 이미지에 대한 긴 설명을 아래 텍스트나 아코디언 구성 요소에 넣는 것이 좋습니다. <hr> <strong {wb}>대체</strong> <strong {wb}>%(altLength) 문자</strong> <strong {w}>%(ALT_TEXT)</strong>',
+    IMAGE_ALT_TOO_LONG: '대체 텍스트 설명이 <strong>너무 깁니다</strong>. 대체 텍스트는 간결하면서도 트윗처럼 의미 있는 내용이어야 합니다(100자 내외). 복잡한 이미지나 그래프인 경우 이미지에 대한 긴 설명을 아래 텍스트나 아코디언 구성 요소에 넣는 것이 좋습니다. <hr> {ALT} <strong {b}>%(altLength) 문자</strong> <strong {w}>%(ALT_TEXT)</strong>',
     IMAGE_PASS: '<strong {b}>대체 텍스트</strong> %(ALT_TEXT)',
     LABELS_MISSING_IMAGE_INPUT_MESSAGE: '이미지 버튼에 대체 텍스트가 없습니다. 접근 가능한 이름을 제공하기 위해 대체 텍스트를 추가하세요. 예: <em>검색</em> 또는 <em>제출</em>.',
     LABELS_INPUT_RESET_MESSAGE: '재설정 버튼은 실수로 활성화하기 쉬우므로 특별히 필요한 경우가 아니라면 사용하지 않는 것이 좋습니다. <hr> <strong>Tip!</strong> <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">재설정 및 취소 버튼이 사용성 문제를 일으키는 이유에 대해 알아보세요.</a>',
-    LABELS_ARIA_LABEL_INPUT_MESSAGE: '입력에 접근 가능한 이름이 있지만 레이블도 표시되어 있는지 확인하세요. <hr> <strong {wb}>입력 레이블</strong> <strong {w}>%(TEXT)</strong>',
+    LABELS_ARIA_LABEL_INPUT_MESSAGE: '입력에 접근 가능한 이름이 있지만 레이블도 표시되어 있는지 확인하세요. <hr> <strong {b}>입력 레이블</strong> <strong {w}>%(TEXT)</strong>',
     LABELS_NO_FOR_ATTRIBUTE_MESSAGE: '이 입력과 연결된 레이블이 없습니다. 이 입력의 <code>ID</code>와 일치하는 레이블에 <code>용</code> 속성을 추가합니다. <hr> 이 입력의 ID는 다음과 같습니다: <strong>id=&#34;%(id)&#34;</strong>',
     LABELS_MISSING_LABEL_MESSAGE: '이 입력과 연결된 레이블이 없습니다. 이 입력에 <code>아이디</code>를 추가하고 레이블에 일치하는 <code>용</code> 속성을 추가하세요.',
     EMBED_VIDEO: '모든 동영상에 자막이 있는지 확인하세요. 모든 오디오 및 동영상 콘텐츠에 자막을 제공하는 것은 필수 레벨 A 요건입니다. 자막은 청각 장애가 있거나 난청인 사용자를 지원합니다.',
@@ -231,9 +232,9 @@ var ko = {
     TABLES_MISSING_HEADINGS: '표 헤더가 누락되었습니다! 접근 가능한 표에는 머리글 셀과 데이터 셀의 관계를 정의하는 HTML 마크업이 필요합니다. 이 정보는 보조 기술을 사용하는 사람들에게 컨텍스트를 제공합니다. 표는 표 형식의 데이터에만 사용해야 합니다. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">액세스 가능한 표에 대해 자세히 알아보기.</a>',
     TABLES_SEMANTIC_HEADING: '제목 2 또는 제목 3과 같은 시맨틱 제목은 콘텐츠 섹션에만 사용해야 하며, HTML 표에는 <strong>이 아닌</strong>을 사용해야 합니다. 대신 <code>&lt;th&gt;</code> 요소를 사용하여 표 제목을 표시하세요. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">액세스 가능한 표에 대해 자세히 알아보기.</a>',
     TABLES_EMPTY_HEADING: '빈 테이블 헤더가 발견되었습니다! 테이블 헤더는 비어 있으면 안 됩니다. 행 및/또는 열 머리글을 지정하여 관계를 전달하는 것이 중요합니다. 이 정보는 보조 기술을 사용하는 사람들에게 맥락을 제공합니다. 표는 표 형식의 데이터에만 사용해야 한다는 점에 유의하세요. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">액세스 가능한 테이블에 대해 자세히 알아보기.</a>',
-    CONTRAST_ERROR: '이 텍스트는 배경과 대비가 충분하지 않습니다. 대비 비율은 일반 텍스트의 경우 4.5:1 이상, 큰 텍스트의 경우 3:1 이상이어야 합니다. <hr> <strong {eb}>대조 비율</strong> <strong {eb}>%(RATIO)</strong> <strong {r}>%(TEXT)</strong>',
+    CONTRAST_ERROR: '이 텍스트는 배경과 대비가 충분하지 않습니다. 대비 비율은 일반 텍스트의 경우 4.5:1 이상, 큰 텍스트의 경우 3:1 이상이어야 합니다. <hr> <strong {b}>대조 비율</strong> <strong {b}>%(RATIO)</strong> <strong {r}>%(TEXT)</strong>',
     CONTRAST_WARNING: '이 텍스트의 대비를 알 수 없으므로 수동으로 검토해야 합니다. 텍스트와 배경의 색상이 강하게 대비되는지 확인합니다. 대비 비율은 일반 텍스트의 경우 4.5:1 이상, 큰 텍스트의 경우 3:1 이상이어야 합니다. <hr> 검토해 주세요: <strong {w}>%(TEXT)</strong>',
-    CONTRAST_INPUT_ERROR: '이 입력 내의 텍스트는 배경과 대비가 충분하지 않습니다. 대비 비율은 일반 텍스트의 경우 4.5:1 이상, 큰 텍스트의 경우 3:1 이상이어야 합니다. <hr> <strong {eb}>대조 비율</strong> <strong {eb}>%(RATIO)</strong>',
+    CONTRAST_INPUT_ERROR: '이 입력 내의 텍스트는 배경과 대비가 충분하지 않습니다. 대비 비율은 일반 텍스트의 경우 4.5:1 이상, 큰 텍스트의 경우 3:1 이상이어야 합니다. <hr> <strong {b}>대조 비율</strong> <strong {b}>%(RATIO)</strong>',
   },
 };
 

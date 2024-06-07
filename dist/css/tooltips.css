@@ -225,6 +225,29 @@ div {
 .tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:hover, .tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:focus {
   background: var(--sa11y-shortcut-hover);
 }
+.tippy-box[data-theme~=sa11y-theme] .link-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-bottom: -3px;
+  background: var(--sa11y-panel-primary);
+  -webkit-mask: var(--sa11y-link-icon-svg) center no-repeat;
+          mask: var(--sa11y-link-icon-svg) center no-repeat;
+}
+.tippy-box[data-theme~=sa11y-theme] .error .badge {
+  color: var(--sa11y-error-text);
+  background: var(--sa11y-error);
+}
+.tippy-box[data-theme~=sa11y-theme] .error .link-icon {
+  background: var(--sa11y-error-text);
+}
+.tippy-box[data-theme~=sa11y-theme] .warning .badge {
+  color: var(--sa11y-panel-bg);
+  background: var(--sa11y-yellow-text);
+}
+.tippy-box[data-theme~=sa11y-theme] .warning .link-icon {
+  background: var(--sa11y-warning-text);
+}
 .tippy-box[data-theme~=sa11y-theme][data-placement^=top] > .tippy-arrow::before {
   border-top-color: var(--sa11y-panel-bg);
 }

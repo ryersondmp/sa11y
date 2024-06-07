@@ -245,6 +245,38 @@ div {
     }
   }
 
+  // Link icon
+  .link-icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-bottom: -3px;
+    background: var(--sa11y-panel-primary);
+    mask: var(--sa11y-link-icon-svg) center no-repeat;
+  }
+
+  .error {
+    .badge {
+      color: var(--sa11y-error-text);
+      background: var(--sa11y-error);
+    }
+
+    .link-icon {
+      background: var(--sa11y-error-text);
+    }
+  }
+
+  .warning {
+    .badge {
+      color: var(--sa11y-panel-bg);
+      background: var(--sa11y-yellow-text);
+    }
+
+    .link-icon {
+      background: var(--sa11y-warning-text);
+    }
+  }
+
   /* ************************************* */
   /*                Arrows                 */
   /* ************************************* */

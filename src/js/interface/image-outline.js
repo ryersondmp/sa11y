@@ -76,51 +76,52 @@ export default function generateImageOutline(dismissed, imageResults) {
       // Generate edit link if locally hosted image and prop is enabled.
       const edit = generateEditLink(image);
 
+      // If image is linked.
+      const linked = (image.element.closest('a[href]'))
+        ? `<div class="badge ${issue}-badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._('LINKED')}</span></div>`
+        : '';
+
       let append;
       if (issue === 'error') {
         const missing = altText.length === 0
           ? `<div class="badge error-badge">${Lang._('MISSING')}</div>`
-          : `<strong class="outline-list-item red-text">${altText}</strong>`;
+          : `<strong class="red-text">${altText}</strong>`;
         append = `
         <li class="error">
           <img src="${source}" alt/>
           <div class="alt">
-            <div class="badge error-badge">
-              <span class="error-icon"></span>
-              <span class="visually-hidden">${Lang._('ERROR')}</span>
-              ${Lang._('ALT')}
-            </div>
-            ${missing}
+            <div class="badge error-badge"><span class="error-icon"></span><span class="visually-hidden">${Lang._('ERROR')}</span> ${Lang._('ALT')}</div> ${linked} ${missing}
           </div>
           ${edit}
         </li>`;
         imageArray.push(append);
       } else if (issue === 'warning' && !dismissedImage) {
         const decorative = altText.length === 0
-          ? `<div class="badge warning-badge">${Lang._('DECORATIVE')}</div>` : '';
+          ? `<div class="badge warning-badge">${Lang._('DECORATIVE')}</div>`
+          : '';
         append = `
         <li class="warning">
           <img src="${source}" alt/>
           <div class="alt">
-            <div class="badge warning-badge">
-              <span aria-hidden="true">&#63;</span>
-              <span class="visually-hidden">${Lang._('WARNING')}</span>
-              ${Lang._('ALT')}
-            </div>
-            ${decorative} <strong class="outline-list-item yellow-text">${altText}</strong>
+            <div class="badge warning-badge"><span aria-hidden="true">&#63;</span> <span class="visually-hidden">${Lang._('WARNING')}</span> ${Lang._('ALT')}</div>
+            ${linked} ${decorative} <strong class="yellow-text">${altText}</strong>
           </div>
           ${edit}
         </li>`;
         imageArray.push(append);
       } else {
         const decorative = altText.length === 0
-          ? `<div class="badge">${Lang._('DECORATIVE')}</div>` : '';
+          ? `<div class="badge">${Lang._('DECORATIVE')}</div>`
+          : '';
+        const goodLinked = (image.element.closest('a[href]'))
+          ? `<div class="badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._('LINKED')}</span></div>`
+          : '';
         append = `
         <li class="good">
           <img src="${source}" alt/>
           <div class="alt">
             <div class="badge">${Lang._('ALT')}</div>
-            ${decorative} ${altText}
+            ${goodLinked} ${decorative} ${altText}
           </div>
           ${edit}
         </li>`;

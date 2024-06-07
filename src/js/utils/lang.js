@@ -28,8 +28,8 @@ const Lang = {
       .replaceAll(/{r}/g, 'class="red-text"')
       .replaceAll(/{w}/g, 'class="yellow-text"')
       .replaceAll(/{b}/g, 'class="badge"')
-      .replaceAll(/{wb}/g, 'class="badge warning-badge"')
-      .replaceAll(/{eb}/g, 'class="badge error-badge"');
+      .replaceAll(/{ALT}/g, `<strong class="badge">${Lang._('ALT')}</strong>`)
+      .replaceAll(/{L}/g, `<strong class="badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._('LINKED')}</span></strong>`);
   },
 };
 export default Lang;
