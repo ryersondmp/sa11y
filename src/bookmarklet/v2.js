@@ -74,6 +74,7 @@ const onLoadScript = (lang) => {
     const iframe = document.querySelector('iframe.player');
     const src = iframe.getAttribute('src');
     if (iframe && src) {
+      document.getElementById('sa11y-loading').remove();
       if (window.confirm('Press OK to be redirected to a page where you can check the accessibility of the content. The page will open in a new tab.')) {
         window.open(src, '_blank');
       }

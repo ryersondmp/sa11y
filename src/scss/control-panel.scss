@@ -102,6 +102,7 @@ audio {
   }
 
   @media screen and (forced-colors: active) {
+    background: ButtonFace !important;
     border: 2px solid transparent;
   }
 
@@ -646,7 +647,7 @@ hr {
     }
 
     .badge {
-      margin-inline-end: 4px;
+      margin-inline-end: 2px;
     }
 
     img {
@@ -663,6 +664,7 @@ hr {
       }
 
       img {
+        background-color: var(--sa11y-yellow-text);
         border: 5px solid var(--sa11y-yellow-text);
       }
     }
@@ -673,51 +675,64 @@ hr {
       }
 
       img {
+        background-color: var(--sa11y-error);
         border: 5px solid var(--sa11y-error);
       }
     }
 
     &.good {
       img {
+        background-color: var(--sa11y-panel-badge);
         border: 5px solid var(--sa11y-panel-badge);
+      }
+    }
+
+    @media screen and (forced-colors: active) {
+      img {
+        background-color: ButtonBorder !important;
       }
     }
   }
 }
 
 /* **************************************** */
-/*         11. Page Outline extras          */
+/*    11. Page & Image Outline extras       */
 /* **************************************** */
+@mixin icon($background, $mask) {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-bottom: -3px;
+  background: $background;
+  mask: $mask center no-repeat;
+}
 
-/* Error icon */
 .error-icon {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  margin-bottom: -3px;
-  background: var(--sa11y-error-text);
-  mask: var(--sa11y-error-svg) center no-repeat;
+  @include icon(var(--sa11y-error-text), var(--sa11y-error-svg));
 }
 
-/* Hidden icon */
 .hidden-icon {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  margin-bottom: -3px;
-  background: var(--sa11y-panel-primary);
-  mask: var(--sa11y-hidden-icon-svg) center no-repeat;
+  @include icon(var(--sa11y-panel-primary), var(--sa11y-hidden-icon-svg));
 }
 
+.link-icon {
+  @include icon(var(--sa11y-panel-primary), var(--sa11y-link-icon-svg));
+}
+
+.error-badge .link-icon,
 .error-badge .hidden-icon {
   background: var(--sa11y-error-text);
 }
 
+.warning-badge .link-icon,
 .warning-badge .hidden-icon {
   background: var(--sa11y-panel-bg);
 }
 
 @media screen and (forced-colors: active) {
+
+  .error-icon,
+  .link-icon,
   .hidden-icon {
     filter: invert(1);
   }

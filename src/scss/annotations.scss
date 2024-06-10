@@ -3,10 +3,12 @@
 /* ************************************* */
 
 .instance {
+  position: relative;
   display: block;
 }
 
 .instance-inline {
+  position: relative;
   display: inline-block;
   text-align: end;
 }

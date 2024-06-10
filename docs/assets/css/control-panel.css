@@ -99,6 +99,7 @@ audio {
 }
 @media screen and (forced-colors: active) {
   #toggle {
+    background: ButtonFace !important;
     border: 2px solid transparent;
   }
 }
@@ -601,7 +602,7 @@ hr {
   content: "";
 }
 #images-list li .badge {
-  margin-inline-end: 4px;
+  margin-inline-end: 2px;
 }
 #images-list li img {
   float: inline-start;
@@ -614,22 +615,29 @@ hr {
   color: var(--sa11y-yellow-text);
 }
 #images-list li.warning img {
+  background-color: var(--sa11y-yellow-text);
   border: 5px solid var(--sa11y-yellow-text);
 }
 #images-list li.error .alt {
   color: var(--sa11y-error);
 }
 #images-list li.error img {
+  background-color: var(--sa11y-error);
   border: 5px solid var(--sa11y-error);
 }
 #images-list li.good img {
+  background-color: var(--sa11y-panel-badge);
   border: 5px solid var(--sa11y-panel-badge);
+}
+@media screen and (forced-colors: active) {
+  #images-list li img {
+    background-color: ButtonBorder !important;
+  }
 }
 
 /* **************************************** */
-/*         11. Page Outline extras          */
+/*    11. Page & Image Outline extras       */
 /* **************************************** */
-/* Error icon */
 .error-icon {
   display: inline-block;
   width: 16px;
@@ -640,7 +648,6 @@ hr {
           mask: var(--sa11y-error-svg) center no-repeat;
 }
 
-/* Hidden icon */
 .hidden-icon {
   display: inline-block;
   width: 16px;
@@ -651,15 +658,29 @@ hr {
           mask: var(--sa11y-hidden-icon-svg) center no-repeat;
 }
 
+.link-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-bottom: -3px;
+  background: var(--sa11y-panel-primary);
+  -webkit-mask: var(--sa11y-link-icon-svg) center no-repeat;
+          mask: var(--sa11y-link-icon-svg) center no-repeat;
+}
+
+.error-badge .link-icon,
 .error-badge .hidden-icon {
   background: var(--sa11y-error-text);
 }
 
+.warning-badge .link-icon,
 .warning-badge .hidden-icon {
   background: var(--sa11y-panel-bg);
 }
 
 @media screen and (forced-colors: active) {
+  .error-icon,
+  .link-icon,
   .hidden-icon {
     filter: invert(1);
   }

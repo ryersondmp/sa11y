@@ -245,6 +245,38 @@ div {
     }
   }
 
+  // Link icon
+  .link-icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-bottom: -3px;
+    background: var(--sa11y-panel-primary);
+    mask: var(--sa11y-link-icon-svg) center no-repeat;
+  }
+
+  .error {
+    .badge {
+      color: var(--sa11y-error-text);
+      background: var(--sa11y-error);
+    }
+
+    .link-icon {
+      background: var(--sa11y-error-text);
+    }
+  }
+
+  .warning {
+    .badge {
+      color: var(--sa11y-panel-bg);
+      background: var(--sa11y-yellow-text);
+    }
+
+    .link-icon {
+      background: var(--sa11y-panel-bg);
+    }
+  }
+
   /* ************************************* */
   /*                Arrows                 */
   /* ************************************* */
@@ -270,7 +302,6 @@ div {
     &[data-placement^="bottom"]>.tippy-arrow::before,
     &[data-placement^="left"]>.tippy-arrow::before,
     &[data-placement^="right"]>.tippy-arrow::before {
-      filter: invert(1);
       forced-color-adjust: none;
     }
 
@@ -318,6 +349,12 @@ div {
 // High contrast focus styles
 @media screen and (forced-colors: active) {
   .tippy-box[data-theme~="sa11y-theme"] {
+
+    .error-icon,
+    .link-icon,
+    .hidden-icon {
+      filter: invert(1);
+    }
 
     a:focus,
     button:focus,
