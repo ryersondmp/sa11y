@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.2.0
+  * @version 3.2.1
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -167,7 +167,7 @@ var ja = {
     // Headings
     HEADING_NON_CONSECUTIVE_LEVEL: '非連続の見出しレベルが使用されました。見出しはレベルをスキップしたり、<strong>見出し%(prevLevel)</strong>から<strong {r}>見出し%(level)</strong>に移行することはありません。',
     HEADING_EMPTY: '空の見出しが見つかりました！修正するには、この行を削除するか、その形式を<strong {r}>見出し%(level)</strong>から<strong>通常</strong>または<strong>段落</strong>に変更してください。',
-    HEADING_LONG: '見出しが長すぎます！見出しはコンテンツを整理し、構造を伝えるために使用されます。簡潔で情報量があり、他と区別される必要があります。見出しは160文字未満に保つようにしてください（1文を超えないでください）。<hr> <strong {b}>%(HEADING_LENGTH) 文字</strong>',
+    HEADING_LONG: '見出しが長すぎます！見出しはコンテンツを整理し、構造を伝えるために使用されます。簡潔で情報量があり、他と区別される必要があります。見出しは160文字未満に保つようにしてください（1文を超えないでください）。<hr> <strong {B}>%(HEADING_LENGTH) 文字</strong>',
     HEADING_FIRST: 'ページの最初の見出しは通常、見出し1または見出し2にする必要があります。見出し1はメインコンテンツセクションの開始であり、ページ全体の目的を説明する主要な見出しです。<a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">見出しの構造</a>について詳しくはこちら。',
     HEADING_MISSING_ONE: '見出し1がありません。見出し1はメインコンテンツ領域の開始であり、ページ全体の目的を説明する主要な見出しです。<a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">見出しの構造</a>について詳しくはこちら。',
     HEADING_EMPTY_WITH_IMAGE: '見出しにテキストがありませんが、画像が含まれています。これが見出しでない場合は、その形式を<strong {r}>見出し%(level)</strong>から<strong>通常</strong>または<strong>段落</strong>に変更してください。それ以外の場合は、画像に装飾的でない alt テキストを追加してください。',
@@ -178,7 +178,7 @@ var ja = {
     LINK_EMPTY: 'テキストのない空のリンクを削除してください。',
     LINK_EMPTY_LABELLEDBY: 'リンクには、空の<code>aria-labelledby</code>値またはページの他の要素の<code>id</code>値と一致しない<code>aria-labelledby</code>値があります。',
     LINK_EMPTY_LINK_NO_LABEL: 'スクリーンリーダーやその他の支援技術で見える識別可能なテキストを持たないリンクです。修正するには：<ul><li>リンク先を説明する簡潔なテキストを追加してください。</li><li><a href="https://a11y-101.com/development/icons-and-links">アイコンリンクやSVG</a>の場合、おそらく説明的なラベルが不足しています。</li><li>このリンクがコピー/貼り付けのバグによるエラーであると考える場合は、削除を検討してください。</li></ul>',
-    LINK_LABEL: '<strong {b}>ラベル</strong> %(TEXT)',
+    LINK_LABEL: '<strong {B}>ラベル</strong> %(TEXT)',
     LINK_STOPWORD: 'コンテキストがない状況では、リンクテキストが十分に説明的ではないかもしれません：<strong {r}>%(ERROR)</strong> <hr> <strong>ヒント！</strong> リンクテキストは常に明確で、ユニークで、意味のあるものである必要があります。"ここをクリック"や"詳細を見る"などの一般的な言葉は避けてください。',
     LINK_BEST_PRACTICES: 'リンクテキストを置き換えることを検討してください：<strong {r}>%(ERROR)</strong> <hr> <ul><li>"ここをクリック"は多くの人がマウスを使用しないか、このウェブサイトをモバイルデバイスで表示している可能性があるため、マウスの操作に焦点を当てています。タスクに関連する別の動詞を使用することを検討してください。</li><li>補助技術には非表示にされていない限り、HTMLシンボルをコールツーアクションとして使用しないでください。</li></ul>',
     LINK_URL: 'リンクテキストとして使用される長く理解しにくいURLは、支援技術で理解するのが難しい場合があります。ほとんどの場合、URLの代わりに読みやすいテキストを使用する方が良いでしょう。短いURL（サイトのホームページなど）は問題ありません。<hr><strong>ヒント！</strong> リンクテキストは常に明確で、ユニークで、意味のあるものである必要があります。コンテキストがない状況でも理解できるようにしてください。',
@@ -187,7 +187,7 @@ var ja = {
     // Links advanced
     NEW_TAB_WARNING: 'リンクが警告なしに新しいタブまたはウィンドウで開きます。これは、視覚的コンテンツを認識するのが難しい人々にとって特に混乱を招く可能性があります。さらに、誰かの体験を制御したり、代わりに決定したりするのは常に良い慣行ではありません。リンクテキスト内でリンクが新しいウィンドウで開くことを示してください。<hr> <strong>ヒント！</strong> ベストプラクティスを学ぶ：<a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">新しいブラウザウィンドウとタブでのリンクの開き方。</a>',
     FILE_TYPE_WARNING: 'リンクが警告なしにPDFやダウンロード可能なファイル（MP3、Zip、Word Docなど）を指しています。リンクテキスト内にファイルの種類を示してください。ファイルが大きい場合は、ファイルサイズを含めることを検討してください。<hr> <strong>例:</strong> 実行レポート（PDF、3MB）',
-    LINK_IDENTICAL_NAME: 'リンクが他のリンクと同じテキストを持っていますが、異なるページを指しています。同じテキストを持つ複数のリンクは、スクリーンリーダーを使用する人々に混乱を招く可能性があります。<hr> 他のリンクと区別するために、次のリンクをより具体的にすることを検討してください：<strong {w}>%(TEXT)</strong>',
+    LINK_IDENTICAL_NAME: 'リンクが他のリンクと同じテキストを持っていますが、異なるページを指しています。同じテキストを持つ複数のリンクは、スクリーンリーダーを使用する人々に混乱を招く可能性があります。<hr> 他のリンクと区別するために、次のリンクをより具体的にすることを検討してください：<strong {W}>%(TEXT)</strong>',
 
     // Images
     MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE: '画像が周囲のテキストと一緒にリンクとして使用されていますが、alt属性は装飾用としてマークされる必要があります。',
@@ -195,26 +195,26 @@ var ja = {
     MISSING_ALT_MESSAGE: 'altテキストがありません！画像が物語やムード、重要な情報を伝えている場合は、画像を説明してください。',
     LINK_ALT_HAS_FILE_EXTENSION: 'altテキスト内にファイルの拡張子が見つかりました。altテキストが画像のリンク先を説明しているかどうか、画像の文字通りの説明ではないことを確認してください。<hr> {ALT} {L} <strong {r}>%(ALT_TEXT)</strong>',
     LINK_IMAGE_PLACEHOLDER_ALT_MESSAGE: 'リンクされた画像内の記述のないまたはプレースホルダーのaltテキストが見つかりました。altテキストが画像のリンク先を説明していることを確認してください。<hr> {ALT} {L} <strong {r}>%(ALT_TEXT)</strong>',
-    LINK_IMAGE_SUS_ALT_MESSAGE: '支援技術はすでにこれが画像であることを示しているため、「<strong {w}>%(ERROR)</strong>」は冗長かもしれません。altテキストが画像のリンク先を説明していることを確認してください。<hr> {ALT} {L} <strong {w}>%(ALT_TEXT)</strong>',
+    LINK_IMAGE_SUS_ALT_MESSAGE: '支援技術はすでにこれが画像であることを示しているため、「<strong {W}>%(ERROR)</strong>」は冗長かもしれません。altテキストが画像のリンク先を説明していることを確認してください。<hr> {ALT} {L} <strong {W}>%(ALT_TEXT)</strong>',
     ALT_HAS_FILE_EXTENSION: 'altテキスト内にファイルの拡張子が見つかりました。画像が物語やムード、重要な情報を伝えている場合は、画像を説明してください。<hr> {ALT} <strong {r}>%(ALT_TEXT)</strong>',
     ALT_PLACEHOLDER_MESSAGE: '記述のないまたはプレースホルダーのaltテキストが見つかりました。次のaltテキストをより意味のあるものに置き換えてください。<hr> {ALT} <strong {r}>%(ALT_TEXT)</strong>',
-    ALT_HAS_SUS_WORD: '支援技術はすでにこれが画像であることを示しているため、「<strong {w}>%(ERROR)</strong>」は冗長かもしれません。<hr> {ALT} <strong {w}>%(ALT_TEXT)</strong>',
+    ALT_HAS_SUS_WORD: '支援技術はすでにこれが画像であることを示しているため、「<strong {W}>%(ERROR)</strong>」は冗長かもしれません。<hr> {ALT} <strong {W}>%(ALT_TEXT)</strong>',
     LINK_HIDDEN_FOCUSABLE: '<code>aria-hidden=&quot;true&quot;</code>を持つリンクですが、キーボードでフォーカスが可能です。冗長または重複したリンクを非表示にする場合は、<code>tabindex=&quot;-1&quot;</code>も追加してください。',
     LINK_IMAGE_NO_ALT_TEXT: '画像内のリンクが装飾用としてマークされており、リンクテキストがありません。リンクの目的を説明するaltテキストを画像に追加してください。',
     LINK_IMAGE_HAS_TEXT: '画像が装飾用としてマークされていますが、リンクが周囲のテキストを説明するラベルとして使用されています。',
-    LINK_IMAGE_LONG_ALT: 'リンクされた画像のaltテキストの説明が<strong>長すぎます</strong>。リンクされた画像のaltテキストは、画像の文字通りの説明ではなく、リンクの目的を説明する必要があります。<strong>リンク先のページのタイトルをaltテキストとして使用することを検討してください。</strong> <hr> {ALT} {L} <strong {b}>%(altLength) 文字</strong> <strong {w}>%(ALT_TEXT)</strong>',
-    LINK_IMAGE_ALT_WARNING: '画像リンクにはaltテキストが含まれています。altテキストがリンク先を説明していますか？<strong>リンク先のページのタイトルをaltテキストとして使用することを検討してください。</strong> <hr> {ALT} {L} <strong {w}>%(ALT_TEXT)</strong>',
-    LINK_IMAGE_ALT_AND_TEXT_WARNING: '画像リンクには<strong>altテキストと周囲のリンクテキストの両方が含まれています。</strong> この画像が装飾用であり、他のページへの機能的なリンクとして使用されている場合は、画像を装飾用としてマークすることを検討してください。周囲のリンクテキストで十分です。<hr> {ALT} <strong {w}>%(ALT_TEXT)</strong> <hr> <strong {b}>ラベル</strong> {L} <strong {w}>%(TEXT)</strong>',
+    LINK_IMAGE_LONG_ALT: 'リンクされた画像のaltテキストの説明が<strong>長すぎます</strong>。リンクされた画像のaltテキストは、画像の文字通りの説明ではなく、リンクの目的を説明する必要があります。<strong>リンク先のページのタイトルをaltテキストとして使用することを検討してください。</strong> <hr> {ALT} {L} <strong {B}>%(altLength) 文字</strong> <strong {W}>%(ALT_TEXT)</strong>',
+    LINK_IMAGE_ALT_WARNING: '画像リンクにはaltテキストが含まれています。altテキストがリンク先を説明していますか？<strong>リンク先のページのタイトルをaltテキストとして使用することを検討してください。</strong> <hr> {ALT} {L} <strong {W}>%(ALT_TEXT)</strong>',
+    LINK_IMAGE_ALT_AND_TEXT_WARNING: '画像リンクには<strong>altテキストと周囲のリンクテキストの両方が含まれています。</strong> この画像が装飾用であり、他のページへの機能的なリンクとして使用されている場合は、画像を装飾用としてマークすることを検討してください。周囲のリンクテキストで十分です。<hr> {ALT} <strong {W}>%(ALT_TEXT)</strong> <hr> <strong {B}>ラベル</strong> {L} <strong {W}>%(TEXT)</strong>',
     IMAGE_FIGURE_DECORATIVE: '画像が<strong>装飾用</strong>としてマークされ、支援技術によって無視されます。<hr> キャプションが提供されていますが、ほとんどの場合、画像にはaltテキストも必要です。<ul><li>altテキストは画像の内容を簡潔に説明する必要があります。</li><li>キャプションは通常、画像を周囲のコンテンツに関連付けるための文脈を提供したり、特定の情報に注意を払ったりするために使用されます。</li></ul>詳細はこちら：<a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">altとfigcaptionの比較</a>。',
-    IMAGE_FIGURE_DUPLICATE_ALT: 'altとキャプションテキストにはまったく同じ単語を使用しないでください。スクリーンリーダーは情報を二重に発表します。<ul><li>altテキストは画像の内容を簡潔に説明する必要があります。</li><li>キャプションは通常、画像を周囲のコンテンツに関連付けるための文脈を提供したり、特定の情報に注意を払ったりするために使用されます。</li></ul>詳細はこちら：<a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">altとfigcaptionの比較</a> <hr> {ALT} <strong {w}>%(ALT_TEXT)</strong>',
+    IMAGE_FIGURE_DUPLICATE_ALT: 'altとキャプションテキストにはまったく同じ単語を使用しないでください。スクリーンリーダーは情報を二重に発表します。<ul><li>altテキストは画像の内容を簡潔に説明する必要があります。</li><li>キャプションは通常、画像を周囲のコンテンツに関連付けるための文脈を提供したり、特定の情報に注意を払ったりするために使用されます。</li></ul>詳細はこちら：<a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">altとfigcaptionの比較</a> <hr> {ALT} <strong {W}>%(ALT_TEXT)</strong>',
     IMAGE_DECORATIVE: '画像が<strong>装飾用</strong>としてマークされ、支援技術によって無視されます。画像が物語やムード、重要な情報を伝えている場合は、altテキストを追加してください。',
-    IMAGE_ALT_TOO_LONG: 'altテキストの説明が<strong>長すぎます</strong>。altテキストは簡潔でありながら意味のあるものである必要があります（ツイートのように、約100文字）。これが複雑な画像やグラフの場合は、画像の長い説明を以下のテキストまたは折りたたみコンポーネントに入れることを検討してください。<hr> {ALT} <strong {b}>%(altLength) 文字</strong> <strong {w}>%(ALT_TEXT)</strong>',
+    IMAGE_ALT_TOO_LONG: 'altテキストの説明が<strong>長すぎます</strong>。altテキストは簡潔でありながら意味のあるものである必要があります（ツイートのように、約100文字）。これが複雑な画像やグラフの場合は、画像の長い説明を以下のテキストまたは折りたたみコンポーネントに入れることを検討してください。<hr> {ALT} <strong {B}>%(altLength) 文字</strong> <strong {W}>%(ALT_TEXT)</strong>',
     IMAGE_PASS: '{ALT} %(ALT_TEXT)',
 
     // Labels
     LABELS_MISSING_IMAGE_INPUT_MESSAGE: '画像ボタンにaltテキストがありません。アクセス可能な名前を提供するためにaltテキストを追加してください。例：<em>検索</em>または<em>送信</em>。',
     LABELS_INPUT_RESET_MESSAGE: 'リセットボタンは、特に必要な場合を除いて使用しないでください。間違って簡単にアクティブ化される可能性があります。<hr> <strong>ヒント！</strong> <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">リセットおよびキャンセルボタンが使用性の問題を引き起こす理由</a>を学んでください。',
-    LABELS_ARIA_LABEL_INPUT_MESSAGE: '入力フィールドにはアクセス可能な名前がありますが、見えるラベルもあることを確認してください。<hr> <strong {b}>入力ラベル</strong> <strong {w}>%(TEXT)</strong>',
+    LABELS_ARIA_LABEL_INPUT_MESSAGE: '入力フィールドにはアクセス可能な名前がありますが、見えるラベルもあることを確認してください。<hr> <strong {B}>入力ラベル</strong> <strong {W}>%(TEXT)</strong>',
     LABELS_NO_FOR_ATTRIBUTE_MESSAGE: 'この入力フィールドに関連付けられたラベルがありません。この入力フィールドのラベルに一致する<code>for</code>属性を追加してください。<hr> この入力フィールドのIDは：<strong>id=&#34;%(id)&#34;</strong>',
     LABELS_MISSING_LABEL_MESSAGE: 'この入力フィールドに関連付けられたラベルがありません。この入力フィールドに<code>id</code>を追加し、ラベルに一致する<code>for</code>属性を追加してください。',
 
@@ -233,8 +233,8 @@ var ja = {
     QA_DOCUMENT: '文書のアクセシビリティをチェックできません。リンクされた文書はWebコンテンツと見なされ、アクセシブルにする必要があります。この文書を手動で確認してください。<ul><li><a href="https://support.google.com/docs/answer/6199477?hl=en">Google Workspaceドキュメントやプレゼンテーションをよりアクセシブルにする方法</a></li><li><a href="https://support.microsoft.com/en-us/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office文書をよりアクセシブルにする方法</a></li></ul>',
     QA_PAGE_LANGUAGE: 'ページ言語が宣言されていません！<a href="https://www.w3.org/International/questions/qa-html-language-declarations">HTMLタグで言語を宣言してください。</a>',
     QA_PAGE_TITLE: 'ページタイトルがありません！<a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">ページタイトルを入力してください。</a>',
-    QA_BLOCKQUOTE_MESSAGE: 'これは見出しですか？<strong {w}>%(TEXT)</strong><hr> ブロック引用は引用のためにのみ使用する必要があります。これが見出しである場合は、このブロック引用をセマンティックな見出し（例：見出し2または見出し3）に変更してください。',
-    QA_FAKE_HEADING: 'これは見出しですか？<strong {w}>%(TEXT)</strong><hr> 太字や大きなテキストの行は見出しのように見えるかもしれませんが、スクリーンリーダーを使用している人はそれが重要であるかどうかを判断したり、その内容にジャンプしたりすることができません。太字や大きなテキストはセマンティックな見出し（見出し2から見出し6）を置き換えるべきではありません。',
+    QA_BLOCKQUOTE_MESSAGE: 'これは見出しですか？<strong {W}>%(TEXT)</strong><hr> ブロック引用は引用のためにのみ使用する必要があります。これが見出しである場合は、このブロック引用をセマンティックな見出し（例：見出し2または見出し3）に変更してください。',
+    QA_FAKE_HEADING: 'これは見出しですか？<strong {W}>%(TEXT)</strong><hr> 太字や大きなテキストの行は見出しのように見えるかもしれませんが、スクリーンリーダーを使用している人はそれが重要であるかどうかを判断したり、その内容にジャンプしたりすることができません。太字や大きなテキストはセマンティックな見出し（見出し2から見出し6）を置き換えるべきではありません。',
     QA_SHOULD_BE_LIST: 'リストを作成しようとしていますか？可能なリスト項目が見つかりました：<strong {r}>%(firstPrefix)</strong> <hr> ブルレットまたは番号の書式設定ボタンを使用してセマンティックなリストを使用してください。セマンティックなリストを使用すると、支援技術が合計アイテム数やリスト内の各アイテムの相対位置などの情報を伝えることができます。<a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">セマンティックリスト</a>について詳しく学びます。',
     QA_UPPERCASE_WARNING: 'すべて大文字が見つかりました。一部のスクリーンリーダーはすべて大文字のテキストを略語と解釈し、各文字を個別に読み上げます。また、一部の人々はすべて大文字のテキストを読むのが難しく、それが叫んでいるように見えるかもしれません。',
     QA_DUPLICATE_ID: '重複した<strong>IDが見つかりました</strong>。重複したIDは、支援技術がコンテンツとの相互作用を試みる際に問題を引き起こすことが知られています。<hr> 次のIDを削除または変更してください：<strong {r}>%(id)</strong>',
@@ -248,9 +248,9 @@ var ja = {
     TABLES_EMPTY_HEADING: '空のテーブルヘッダーが見つかりました！テーブルヘッダーは<strong>空にしてはいけません</strong>。行や列のヘッダーを指定して関係性を伝えることが重要です。これにより、支援技術を使用する人々にコンテキストが提供されます。テーブルは表形式のデータのみに使用する必要があります。<hr> <a href="https://www.w3.org/WAI/tutorials/tables/">アクセシブルなテーブル</a>について詳しく学びます。',
 
     // Contrast
-    CONTRAST_ERROR: 'このテキストは背景との対比が不足しています。通常のテキストには対比比率が少なくとも4.5:1、大きなテキストには3:1以上である必要があります。<hr> <strong {b}>コントラスト比</strong> <strong {b}>%(RATIO)</strong> <strong {r}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'このテキストの対比は不明であり、手動で確認する必要があります。テキストと背景が強い対比色を持つことを確認してください。通常のテキストには対比比率が少なくとも4.5:1、大きなテキストには3:1以上である必要があります。<hr> 確認してください：<strong {w}>%(TEXT)</strong>',
-    CONTRAST_INPUT_ERROR: 'この入力内のテキストは背景との対比が不足しています。通常のテキストには対比比率が少なくとも4.5:1、大きなテキストには3:1以上である必要があります。<hr> <strong {b}>コントラスト比</strong> <strong {b}>%(RATIO)</strong>',
+    CONTRAST_ERROR: 'このテキストは背景との対比が不足しています。通常のテキストには対比比率が少なくとも4.5:1、大きなテキストには3:1以上である必要があります。<hr> <strong {B}>コントラスト比</strong> <strong {B}>%(RATIO)</strong> <strong {r}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'このテキストの対比は不明であり、手動で確認する必要があります。テキストと背景が強い対比色を持つことを確認してください。通常のテキストには対比比率が少なくとも4.5:1、大きなテキストには3:1以上である必要があります。<hr> 確認してください：<strong {W}>%(TEXT)</strong>',
+    CONTRAST_INPUT_ERROR: 'この入力内のテキストは背景との対比が不足しています。通常のテキストには対比比率が少なくとも4.5:1、大きなテキストには3:1以上である必要があります。<hr> <strong {B}>コントラスト比</strong> <strong {B}>%(RATIO)</strong>',
   },
 };
 

@@ -99,6 +99,7 @@ audio {
 }
 @media screen and (forced-colors: active) {
   #toggle {
+    background: ButtonFace !important;
     border: 2px solid transparent;
   }
 }
@@ -628,6 +629,11 @@ hr {
   background-color: var(--sa11y-panel-badge);
   border: 5px solid var(--sa11y-panel-badge);
 }
+@media screen and (forced-colors: active) {
+  #images-list li img {
+    background-color: ButtonBorder !important;
+  }
+}
 
 /* **************************************** */
 /*    11. Page & Image Outline extras       */
@@ -673,6 +679,8 @@ hr {
 }
 
 @media screen and (forced-colors: active) {
+  .error-icon,
+  .link-icon,
   .hidden-icon {
     filter: invert(1);
   }

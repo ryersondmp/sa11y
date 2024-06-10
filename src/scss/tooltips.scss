@@ -273,7 +273,7 @@ div {
     }
 
     .link-icon {
-      background: var(--sa11y-warning-text);
+      background: var(--sa11y-panel-bg);
     }
   }
 
@@ -302,7 +302,6 @@ div {
     &[data-placement^="bottom"]>.tippy-arrow::before,
     &[data-placement^="left"]>.tippy-arrow::before,
     &[data-placement^="right"]>.tippy-arrow::before {
-      filter: invert(1);
       forced-color-adjust: none;
     }
 
@@ -350,6 +349,12 @@ div {
 // High contrast focus styles
 @media screen and (forced-colors: active) {
   .tippy-box[data-theme~="sa11y-theme"] {
+
+    .error-icon,
+    .link-icon,
+    .hidden-icon {
+      filter: invert(1);
+    }
 
     a:focus,
     button:focus,

@@ -246,7 +246,7 @@ div {
   background: var(--sa11y-yellow-text);
 }
 .tippy-box[data-theme~=sa11y-theme] .warning .link-icon {
-  background: var(--sa11y-warning-text);
+  background: var(--sa11y-panel-bg);
 }
 .tippy-box[data-theme~=sa11y-theme][data-placement^=top] > .tippy-arrow::before {
   border-top-color: var(--sa11y-panel-bg);
@@ -262,7 +262,6 @@ div {
 }
 @media (forced-colors: active) {
   .tippy-box[data-theme~=sa11y-theme][data-placement^=top] > .tippy-arrow::before, .tippy-box[data-theme~=sa11y-theme][data-placement^=bottom] > .tippy-arrow::before, .tippy-box[data-theme~=sa11y-theme][data-placement^=left] > .tippy-arrow::before, .tippy-box[data-theme~=sa11y-theme][data-placement^=right] > .tippy-arrow::before {
-    filter: invert(1);
     forced-color-adjust: none;
   }
   .tippy-box[data-theme~=sa11y-theme] .tippy-arrow {
@@ -294,6 +293,11 @@ div {
 }
 
 @media screen and (forced-colors: active) {
+  .tippy-box[data-theme~=sa11y-theme] .error-icon,
+  .tippy-box[data-theme~=sa11y-theme] .link-icon,
+  .tippy-box[data-theme~=sa11y-theme] .hidden-icon {
+    filter: invert(1);
+  }
   .tippy-box[data-theme~=sa11y-theme] a:focus,
   .tippy-box[data-theme~=sa11y-theme] button:focus,
   .tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus {

@@ -102,6 +102,7 @@ audio {
   }
 
   @media screen and (forced-colors: active) {
+    background: ButtonFace !important;
     border: 2px solid transparent;
   }
 
@@ -685,6 +686,12 @@ hr {
         border: 5px solid var(--sa11y-panel-badge);
       }
     }
+
+    @media screen and (forced-colors: active) {
+      img {
+        background-color: ButtonBorder !important;
+      }
+    }
   }
 }
 
@@ -723,6 +730,9 @@ hr {
 }
 
 @media screen and (forced-colors: active) {
+
+  .error-icon,
+  .link-icon,
   .hidden-icon {
     filter: invert(1);
   }
