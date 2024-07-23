@@ -15,6 +15,7 @@ export default {
     ALERT_TEXT: 'Hoiatus',
     ALERT_CLOSE: 'Sulge',
     OUTLINE: 'Ülevaade',
+    TITLE: 'Pealkiri',
     ALT: 'ALT',
     IMAGES: 'Pildid',
     EDIT: 'Muuda',

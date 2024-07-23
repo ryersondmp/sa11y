@@ -14,6 +14,7 @@ export default {
     ALERT_TEXT: 'Alerta',
     ALERT_CLOSE: 'Cerrar',
     OUTLINE: 'Esquema',
+    TITLE: 'Título',
     ALT: 'ALT',
     IMAGES: 'Imágenes',
     EDIT: 'Editar',

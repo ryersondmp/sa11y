@@ -15,6 +15,7 @@ export default {
     ALERT_TEXT: 'Uyarı',
     ALERT_CLOSE: 'Kapat',
     OUTLINE: 'Taslak',
+    TITLE: 'Başlık',
     ALT: 'ALT',
     IMAGES: 'Görseller',
     EDIT: 'Düzenle',

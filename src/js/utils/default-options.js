@@ -20,6 +20,7 @@ const defaultOptions = {
   delayCustomCheck: 500,
   showGoodLinkButton: true,
   showHinPageOutline: false,
+  showTitleInPageOutline: true,
   showImageOutline: true,
   editImageURLofCMS: '',
   relativePathImageSRC: '',

@@ -15,6 +15,7 @@ export default {
     ALERT_TEXT: 'Upozornenie',
     ALERT_CLOSE: 'Zatvoriť',
     OUTLINE: 'Náčrt',
+    TITLE: 'Titul',
     ALT: 'ALT',
     IMAGES: 'Obrázky',
     EDIT: 'Upraviť',

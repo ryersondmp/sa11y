@@ -15,6 +15,7 @@ export default {
     ALERT_TEXT: 'Opozorilo',
     ALERT_CLOSE: 'Zapri',
     OUTLINE: 'Oris',
+    TITLE: 'Naslov',
     ALT: 'ALT',
     IMAGES: 'Slike',
     EDIT: 'Uredi',

@@ -15,6 +15,7 @@ export default {
     ALERT_TEXT: 'Hälytys',
     ALERT_CLOSE: 'Sulje',
     OUTLINE: 'Sivuluettelo',
+    TITLE: 'Otsikko',
     ALT: 'ALT',
     IMAGES: 'Kuvat',
     EDIT: 'Muokkaa',

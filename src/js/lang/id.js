@@ -15,6 +15,7 @@ export default {
     ALERT_TEXT: 'Waspada',
     ALERT_CLOSE: 'Tutup',
     OUTLINE: 'Halaman',
+    TITLE: 'Judul',
     ALT: 'ALT',
     IMAGES: 'Gambar',
     EDIT: 'Edit',

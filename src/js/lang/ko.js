@@ -15,6 +15,7 @@ export default {
     ALERT_TEXT: '경고',
     ALERT_CLOSE: '닫기',
     OUTLINE: '윤곽',
+    TITLE: '제목',
     ALT: '대체 텍스트',
     IMAGES: '이미지',
     EDIT: '편집',

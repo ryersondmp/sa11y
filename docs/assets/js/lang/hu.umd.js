@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.2.1
+  * @version 3.2.2
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -33,6 +33,7 @@
       ALERT_TEXT: 'Riasztás',
       ALERT_CLOSE: 'Zárja be a',
       OUTLINE: 'Oldalvázlat',
+      TITLE: 'Cím',
       ALT: 'ALT',
       IMAGES: 'Képek',
       EDIT: 'Szerkesztés',

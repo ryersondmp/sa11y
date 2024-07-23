@@ -15,6 +15,7 @@ export default {
     ALERT_TEXT: 'Ειδοποίηση',
     ALERT_CLOSE: 'Κλείστε το',
     OUTLINE: 'Περίγραμμα',
+    TITLE: 'Τίτλος',
     ALT: 'ALT',
     IMAGES: 'Εικόνες',
     EDIT: 'Επεξεργασία',

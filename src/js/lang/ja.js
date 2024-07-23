@@ -15,6 +15,7 @@ export default {
     ALERT_TEXT: 'アラート',
     ALERT_CLOSE: '閉じる',
     OUTLINE: 'ページ概要',
+    TITLE: 'タイトル',
     ALT: 'ALT',
     IMAGES: '画像',
     EDIT: '編集',

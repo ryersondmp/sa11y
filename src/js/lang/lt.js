@@ -15,6 +15,7 @@ export default {
     ALERT_TEXT: 'Įspėjimas',
     ALERT_CLOSE: 'Uždaryti',
     OUTLINE: 'Apžvalga',
+    TITLE: 'Pavadinimas',
     ALT: 'ALT',
     IMAGES: 'Vaizdai',
     EDIT: 'Redaguoti',

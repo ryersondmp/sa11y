@@ -15,6 +15,7 @@ export default {
     ALERT_TEXT: 'Alarm',
     ALERT_CLOSE: 'Luk',
     OUTLINE: 'Sideoversigt',
+    TITLE: 'Titel',
     ALT: 'ALT',
     IMAGES: 'Billeder',
     EDIT: 'Rediger',
