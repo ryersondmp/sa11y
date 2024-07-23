@@ -15,6 +15,7 @@ export default {
     ALERT_TEXT: 'Предупреждение',
     ALERT_CLOSE: 'Затвори',
     OUTLINE: 'Описание',
+    TITLE: 'Заглавие',
     ALT: 'АЛТ',
     IMAGES: 'Изображения',
     EDIT: 'Редактиране',

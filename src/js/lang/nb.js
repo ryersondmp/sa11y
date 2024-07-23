@@ -15,6 +15,7 @@ export default {
     ALERT_TEXT: 'Varsling',
     ALERT_CLOSE: 'Lukk',
     OUTLINE: 'Sideoversikt',
+    TITLE: 'Tittel',
     ALT: 'ALT',
     IMAGES: 'Bilder',
     EDIT: 'Rediger',

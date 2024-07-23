@@ -6,7 +6,7 @@ import Lang from '../utils/lang';
 import Constants from '../utils/constants';
 import find from '../utils/find';
 
-export default function generatePageOutline(dismissed, headingOutline, showHinPageOutline) {
+export default function generatePageOutline(dismissed, headingOutline, option) {
   const outlineHandler = () => {
     // Create a single array that gets appended to heading outline.
     const outlineArray = [];
@@ -20,6 +20,19 @@ export default function generatePageOutline(dismissed, headingOutline, showHinPa
     findDismissedHeadings.forEach(($el) => {
       Object.assign($el, { dismissedHeading: true });
     });
+
+    // Show meta page title in Page Outline.
+    if (option.showTitleInPageOutline) {
+      let outlineItem;
+      const metaTitleElement = document.querySelector('head title');
+      if (!metaTitleElement || metaTitleElement.textContent.trim().length === 0) {
+        outlineItem = `<li><div class="badge error-badge"><span aria-hidden="true"><span class="error-icon"></span></span> ${Lang._('TITLE')}</div> <div class="badge error-badge">${Lang._('MISSING')}</div></li>`;
+      } else {
+        const titleText = Utils.getText(metaTitleElement);
+        outlineItem = `<li><span class="badge">${Lang._('TITLE')}</span> ${Utils.sanitizeHTML(titleText)}</li>`;
+      }
+      outlineArray.push(outlineItem);
+    }
 
     // Iterate through object that contains all headings (and error type).
     headingOutline.forEach((heading) => {
@@ -40,7 +53,7 @@ export default function generatePageOutline(dismissed, headingOutline, showHinPa
         // Indicate if heading is totally hidden or visually hidden.
         const visibleIcon = (visibility === true) ? '<span class="hidden-icon"></span><span class="visually-hidden">Hidden</span>' : '';
         const visibleStatus = (visibility === true) ? 'class="hidden-h"' : '';
-        const badgeH = (showHinPageOutline === true || showHinPageOutline === 1) ? 'H' : '';
+        const badgeH = (option.showHinPageOutline === true || option.showHinPageOutline === 1) ? 'H' : '';
 
         let append;
         if (issue === 'error' && isWithinRoot === true) {

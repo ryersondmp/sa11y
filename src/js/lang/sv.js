@@ -15,6 +15,7 @@ export default {
     ALERT_TEXT: 'Varning',
     ALERT_CLOSE: 'Stäng',
     OUTLINE: 'Sidöversikt',
+    TITLE: 'Titel',
     ALT: 'ALT',
     IMAGES: 'Bilder',
     EDIT: 'Redigera',

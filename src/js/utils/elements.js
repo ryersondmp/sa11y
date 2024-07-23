@@ -56,7 +56,7 @@ const Elements = (function myElements() {
 
     // Quality assurance module.
     Found.Paragraphs = find(
-      'p',
+      'p:not(table p)',
       'root',
       Constants.Exclusions.Container,
     );

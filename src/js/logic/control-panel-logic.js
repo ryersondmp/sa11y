@@ -154,9 +154,6 @@ export default function initializePanelToggles() {
     Constants.Panel.pageIssuesHeader.focus();
   });
 
-  // Page issues: add gradient if scrollable list.
-  isScrollable(Constants.Panel.pageIssuesList, Constants.Panel.pageIssuesContent);
-
   /* ******************************** */
   /*  Better keyboard accessibility.  */
   /* ******************************** */

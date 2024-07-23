@@ -15,6 +15,7 @@ export default {
     ALERT_TEXT: 'Alertă',
     ALERT_CLOSE: 'Închideți',
     OUTLINE: 'Schiță',
+    TITLE: 'Titlu',
     ALT: 'ALT',
     IMAGES: 'Imagini',
     EDIT: 'Editare',

@@ -15,6 +15,7 @@ export default {
     ALERT_TEXT: 'Brīdinājums',
     ALERT_CLOSE: 'Aizvērt',
     OUTLINE: 'Kopsavilkums',
+    TITLE: 'Nosaukums',
     ALT: 'ALT',
     IMAGES: 'Attēli',
     EDIT: 'Rediģēt',

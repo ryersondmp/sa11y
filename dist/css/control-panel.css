@@ -35,7 +35,6 @@ div {
 * {
   font-family: var(--sa11y-font-face) !important;
   -webkit-font-smoothing: auto !important;
-  line-height: 22px !important;
 }
 
 p,
@@ -45,6 +44,7 @@ li,
 label {
   font-size: var(--sa11y-normal-text);
   font-weight: normal;
+  line-height: 22px !important;
   text-align: start;
   letter-spacing: normal;
   word-break: break-word;
@@ -135,11 +135,10 @@ audio {
   display: none;
   align-items: center;
   justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 3px;
+  padding: 2.5px;
   font-size: 13.5px;
   font-weight: normal;
+  line-height: 1;
   color: #fff;
   text-wrap: nowrap;
   background-color: #eb0000;
@@ -601,9 +600,6 @@ hr {
   left: -10px;
   content: "";
 }
-#images-list li .badge {
-  margin-inline-end: 2px;
-}
 #images-list li img {
   float: inline-start;
   max-width: 110px;
@@ -639,30 +635,30 @@ hr {
 /*    11. Page & Image Outline extras       */
 /* **************************************** */
 .error-icon {
+  margin-bottom: -4px;
   display: inline-block;
   width: 16px;
   height: 16px;
-  margin-bottom: -3px;
   background: var(--sa11y-error-text);
   -webkit-mask: var(--sa11y-error-svg) center no-repeat;
           mask: var(--sa11y-error-svg) center no-repeat;
 }
 
 .hidden-icon {
+  margin-bottom: -3px;
   display: inline-block;
   width: 16px;
   height: 16px;
-  margin-bottom: -3px;
   background: var(--sa11y-panel-primary);
   -webkit-mask: var(--sa11y-hidden-icon-svg) center no-repeat;
           mask: var(--sa11y-hidden-icon-svg) center no-repeat;
 }
 
 .link-icon {
+  margin-bottom: -3.5px;
   display: inline-block;
   width: 16px;
   height: 16px;
-  margin-bottom: -3px;
   background: var(--sa11y-panel-primary);
   -webkit-mask: var(--sa11y-link-icon-svg) center no-repeat;
           mask: var(--sa11y-link-icon-svg) center no-repeat;

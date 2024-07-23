@@ -35,7 +35,6 @@ div {
 * {
   font-family: var(--sa11y-font-face) !important;
   -webkit-font-smoothing: auto !important;
-  line-height: 22px !important;
 }
 
 p,
@@ -45,6 +44,7 @@ li,
 label {
   font-size: var(--sa11y-normal-text);
   font-weight: normal;
+  line-height: 22px !important;
   text-align: start;
   letter-spacing: normal;
   word-break: break-word;
@@ -146,11 +146,10 @@ audio {
   display: none;
   align-items: center;
   justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 3px;
+  padding: 2.5px;
   font-size: 13.5px;
   font-weight: normal;
+  line-height: 1;
   color: #fff;
   text-wrap: nowrap;
   background-color: #eb0000;
@@ -646,10 +645,6 @@ hr {
       }
     }
 
-    .badge {
-      margin-inline-end: 2px;
-    }
-
     img {
       float: inline-start;
       max-width: 110px;
@@ -702,20 +697,22 @@ hr {
   display: inline-block;
   width: 16px;
   height: 16px;
-  margin-bottom: -3px;
   background: $background;
   mask: $mask center no-repeat;
 }
 
 .error-icon {
+  margin-bottom: -4px;
   @include icon(var(--sa11y-error-text), var(--sa11y-error-svg));
 }
 
 .hidden-icon {
+  margin-bottom: -3px;
   @include icon(var(--sa11y-panel-primary), var(--sa11y-hidden-icon-svg));
 }
 
 .link-icon {
+  margin-bottom: -3.5px;
   @include icon(var(--sa11y-panel-primary), var(--sa11y-link-icon-svg));
 }
 

@@ -260,7 +260,7 @@ class Sa11y {
           generatePageOutline(
             this.dismissed,
             this.headingOutline,
-            option.showHinPageOutline,
+            option,
           );
 
           if (option.showImageOutline) {
@@ -280,6 +280,9 @@ class Sa11y {
           if (option.exportResultsPlugin) {
             exportResults(this.results, dismiss.dismissedResults);
           }
+
+          // Page issues: add gradient if scrollable list.
+          Utils.isScrollable(Constants.Panel.pageIssuesList, Constants.Panel.pageIssuesContent);
 
           // Extras
           detectOverflow();

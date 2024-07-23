@@ -228,7 +228,7 @@ iframe,
 img {
   display: block;
   max-width: 50%;
-  border: 0;
+  border: 1px solid var(--bg-tertiary);
 }
 
 video,

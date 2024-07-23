@@ -15,6 +15,7 @@ export default {
     ALERT_TEXT: 'Riasztás',
     ALERT_CLOSE: 'Zárja be a',
     OUTLINE: 'Oldalvázlat',
+    TITLE: 'Cím',
     ALT: 'ALT',
     IMAGES: 'Képek',
     EDIT: 'Szerkesztés',

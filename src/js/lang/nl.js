@@ -15,6 +15,7 @@ export default {
     ALERT_TEXT: 'Waarschuwing',
     ALERT_CLOSE: 'Sluit',
     OUTLINE: 'Overzicht',
+    TITLE: 'Titel',
     ALT: 'ALT',
     IMAGES: 'Afbeeldingen',
     EDIT: 'Bewerken',

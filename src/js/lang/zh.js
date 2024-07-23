@@ -15,6 +15,7 @@ export default {
     ALERT_TEXT: '警报',
     ALERT_CLOSE: '关闭',
     OUTLINE: '大纲',
+    TITLE: '标题',
     ALT: 'ALT',
     IMAGES: '图片',
     EDIT: '编辑',

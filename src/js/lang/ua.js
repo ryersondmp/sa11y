@@ -14,6 +14,7 @@ export default {
     ALERT_TEXT: 'Попередження',
     ALERT_CLOSE: 'Закрити',
     OUTLINE: 'Структура',
+    TITLE: 'Назва',
     ALT: 'АЛЬТ',
     IMAGES: 'Зображення',
     EDIT: 'Редагувати',
