@@ -36,9 +36,7 @@ const Constants = (function myConstants() {
     Global.aboutContent = option.aboutContent;
 
     // Toggleable plugins
-    Global.contrastPlugin = option.contrastPlugin;
-    Global.formLabelsPlugin = option.formLabelsPlugin;
-    Global.linksAdvancedPlugin = option.linksAdvancedPlugin;
+    Global.advancedPlugin = option.advancedPlugin;
     Global.colourFilterPlugin = option.colourFilterPlugin;
     Global.checkAllHideToggles = option.checkAllHideToggles;
     Global.exportResultsPlugin = option.exportResultsPlugin;
@@ -101,17 +99,12 @@ const Constants = (function myConstants() {
     Panel.settingsContent = Sa11yPanel.getElementById('settings-content');
 
     // Settings toggles
-    Panel.contrastToggle = Sa11yPanel.getElementById('contrast-toggle');
-    Panel.labelsToggle = Sa11yPanel.getElementById('labels-toggle');
-    Panel.linksToggle = Sa11yPanel.getElementById('links-advanced-toggle');
+    Panel.advancedToggle = Sa11yPanel.getElementById('advanced-toggle');
     Panel.readabilityToggle = Sa11yPanel.getElementById('readability-toggle');
     Panel.themeToggle = Sa11yPanel.getElementById('theme-toggle');
-    Panel.contrastItem = Sa11yPanel.getElementById('contrast-item');
-    Panel.labelsItem = Sa11yPanel.getElementById('form-labels-item');
-    Panel.linksItem = Sa11yPanel.getElementById('links-advanced-item');
+    Panel.advancedItem = Sa11yPanel.getElementById('advanced-item');
     Panel.readabilityItem = Sa11yPanel.getElementById('readability-item');
     Panel.darkModeItem = Sa11yPanel.getElementById('dark-mode-item');
-
     Panel.colourPanel = Sa11yPanel.getElementById('panel-colour-filters');
     Panel.colourFilterItem = Sa11yPanel.getElementById('colour-filter-item');
     Panel.colourFilterSelect = Sa11yPanel.getElementById('colour-filter-select');

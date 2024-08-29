@@ -10,7 +10,7 @@ export default function detectPageChanges(detectSPArouting, checkAll, resetAll) 
     // Debounce function to re-check page.
     const checkURL = debounce(async () => {
       if (url !== window.location.href) {
-        if (store.getItem('sa11y-remember-panel') === 'Closed' || !store.getItem('sa11y-remember-panel')) {
+        if (store.getItem('sa11y-panel') === 'Closed' || !store.getItem('sa11y-panel')) {
           checkAll();
         } else {
           resetAll(false);

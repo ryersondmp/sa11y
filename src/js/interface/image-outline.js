@@ -131,7 +131,7 @@ export default function generateImageOutline(dismissed, imageResults) {
 
     // Append headings to Page Outline.
     Constants.Panel.imagesList.innerHTML = (imageArray.length === 0)
-      ? `<li>${Lang._('IMAGES_NOT_FOUND')}</li>`
+      ? `<li>${Lang._('NO_IMAGES')}</li>`
       : imageArray.join(' ');
 
     // Remove event listener.
@@ -139,7 +139,7 @@ export default function generateImageOutline(dismissed, imageResults) {
   };
 
   /* Generate image outline based on local storage or if "Image" button is selected. */
-  const rememberImages = Utils.store.getItem('sa11y-remember-images');
+  const rememberImages = Utils.store.getItem('sa11y-images');
   if (rememberImages === 'Opened') imageOutlineHandler();
   document.addEventListener('sa11y-build-image-outline', imageOutlineHandler);
 }

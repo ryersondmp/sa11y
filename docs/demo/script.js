@@ -55,6 +55,7 @@ $checkAccordions.forEach(($el) => {
       content: 'Do <strong>not nest forms</strong> within the Accordion component. If the form contains validation issues, a person may not see the form feedback since the accordion panel goes back to its original closed state.',
       inline: false,
       position: 'beforebegin',
+      advanced: true,
     });
   }
 });
@@ -103,17 +104,13 @@ const sa11y = new Sa11y({
   shadowComponents: '',
   autoDetectShadowComponents: true,
   panelPosition: 'right',
-
-  // Specific checks
-  linksToDOI: true,
-  missingH1: true,
-  nonConsecutiveHeadingIsError: true,
+  // checkAllHideToggles: true,
 });
 
-/* Console all results
+/* Console all results */
 document.addEventListener('sa11y-check-complete', (e) => {
   console.log(e.detail)
-}); */
+});
 
 /**
  * Custom checks via event listeners.

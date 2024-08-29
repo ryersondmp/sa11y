@@ -127,9 +127,6 @@ test.describe('Sa11y Unit Tests', () => {
     const toggleSettings = await page.evaluate(async () => {
       const panel = document.querySelector('sa11y-control-panel').shadowRoot;
       const settings = [
-        'contrast-toggle',
-        'labels-toggle',
-        'links-advanced-toggle',
         'readability-toggle',
         'theme-toggle',
       ];
@@ -166,7 +163,7 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Skipped heading', async () => {
     const issue = await checkTooltip(
-      page, 'error-skipped-heading', 'Non-consecutive heading level used.',
+      page, 'error-skipped-heading', 'Headings should not skip',
     );
     expect(issue).toBe(true);
   });
@@ -218,7 +215,7 @@ test.describe('Sa11y Unit Tests', () => {
       const shadowTest = document.querySelector('shadow-test').shadowRoot;
       const annotation = shadowTest.querySelector('sa11y-annotation').shadowRoot;
       const message = annotation.querySelector('button').getAttribute('data-tippy-content');
-      return message.includes('Non-consecutive heading');
+      return message.includes('Headings should not skip');
     });
     expect(shadow).toBe(true);
   });
@@ -936,6 +933,13 @@ test.describe('Sa11y Unit Tests', () => {
       const issue = await checkTooltip(page, id, 'subscript');
       expect(issue).toBe(true);
     });
+  });
+
+  test('Nested layout components', async () => {
+    const issue = await checkTooltip(
+      page, 'warning-nested', 'Avoid nesting interactive layout components',
+    );
+    expect(issue).toBe(true);
   });
 
   test('Contrast issues', async () => {

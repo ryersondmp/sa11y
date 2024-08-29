@@ -42,15 +42,12 @@ const convertColorToRGBA = (colorString) => {
  * @link https://github.com/gka/chroma.js (Parse RGB)
 */
 export default function checkContrast(results, option) {
-  if (option.contrastPlugin) {
-    const toggleCheck = Utils.store.getItem('sa11y-remember-contrast') === 'On';
-    if (toggleCheck || option.headless || option.checkAllHideToggles) {
-      let contrastErrors = {
-        errors: [],
-        warnings: [],
-      };
+  let contrastErrors = {
+    errors: [],
+    warnings: [],
+  };
 
-      /* eslint-disable */
+  /* eslint-disable */
       const contrastObject = {
         // Parse rgb(r, g, b) and rgba(r, g, b, a) strings into an array.
         parseRgb(css) {
@@ -169,7 +166,7 @@ export default function checkContrast(results, option) {
 
               // Ignore if visually hidden for screen readers.
               if (maybeVisuallyHidden) {
-                return;
+                // Do nothing.
               } else if (color.startsWith('color(')) {
                 // Push a warning if using a color() functional notation.
                 warning = {
@@ -234,42 +231,49 @@ export default function checkContrast(results, option) {
         const sanitizedText = Utils.sanitizeHTML(nodeText);
 
         if (name.tagName === 'INPUT') {
-          results.push({
-            element: name,
-            type: 'error',
-            content: Lang.sprintf('CONTRAST_INPUT_ERROR', cratio),
-            inline: false,
-            position: 'beforebegin',
-          });
+          if (option.checks.CONTRAST_INPUT) {
+            results.push({
+              element: name,
+              type: option.checks.CONTRAST_INPUT.type || 'error',
+              content: option.checks.CONTRAST_INPUT.content || Lang.sprintf('CONTRAST_INPUT', cratio),
+              inline: false,
+              position: 'beforebegin',
+              dismiss: Utils.prepareDismissal(`CONTRAST${name.tagName}${cratio}`),
+              advanced: option.checks.CONTRAST_INPUT.advanced || false,
+            });
+          }
         } else {
-          results.push({
-            element: name,
-            type: 'error',
-            content: Lang.sprintf('CONTRAST_ERROR', cratio, sanitizedText),
-            inline: false,
-            position: 'beforebegin',
-          });
+          if (option.checks.CONTRAST_ERROR) {
+            results.push({
+              element: name,
+              type: option.checks.CONTRAST_ERROR.type || 'error',
+              content: option.checks.CONTRAST_ERROR.content || Lang.sprintf('CONTRAST_ERROR', cratio, sanitizedText),
+              inline: false,
+              position: 'beforebegin',
+              dismiss: Utils.prepareDismissal(`CONTRAST${sanitizedText}`),
+              advanced: option.checks.CONTRAST_ERROR.advanced || false,
+            });
+          }
         }
       });
 
-      contrastErrors.warnings.forEach((item) => {
-        const name = item.elem;
-        const clone = name.cloneNode(true);
-        const nodeText = Utils.fnIgnore(clone, 'script, style').textContent;
+      if (option.checks.CONTRAST_WARNING) {
+        contrastErrors.warnings.forEach((item) => {
+          const name = item.elem;
+          const clone = name.cloneNode(true);
+          const nodeText = Utils.fnIgnore(clone, 'script, style').textContent;
+          const sanitizedText = Utils.sanitizeHTML(nodeText);
 
-        const key = Utils.prepareDismissal(`CONTRAST${nodeText}`);
-        const sanitizedText = Utils.sanitizeHTML(nodeText);
-
-        results.push({
-          element: name,
-          type: 'warning',
-          content: Lang.sprintf('CONTRAST_WARNING', sanitizedText),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: key,
+          results.push({
+            element: name,
+            type: option.checks.CONTRAST_WARNING.type || 'warning',
+            content: option.checks.CONTRAST_WARNING.content || Lang.sprintf('CONTRAST_WARNING', sanitizedText),
+            inline: false,
+            position: 'beforebegin',
+            dismiss: Utils.prepareDismissal(`CONTRAST${nodeText}`),
+            advanced: option.checks.CONTRAST_WARNING.advanced || false,
+          });
         });
-      });
-    }
-  }
+      }
   return results;
 };

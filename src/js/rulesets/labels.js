@@ -5,117 +5,129 @@ import { computeAccessibleName } from '../utils/computeAccessibleName';
 
 export default function checkLabels(results, option) {
   if (option.formLabelsPlugin) {
-    const toggleCheck = Utils.store.getItem('sa11y-remember-labels') === 'On';
-    if (toggleCheck || option.headless || option.checkAllHideToggles) {
-      Elements.Found.Inputs.forEach(($el) => {
-        // Ignore completely hidden elements.
-        const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
-        const negativeTabindex = $el.getAttribute('tabindex') === '-1';
-        const hidden = Utils.isElementHidden($el);
-        if (hidden || (ariaHidden && negativeTabindex)) {
-          return;
-        }
+    Elements.Found.Inputs.forEach(($el) => {
+      // Ignore completely hidden elements.
+      const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
+      const negativeTabindex = $el.getAttribute('tabindex') === '-1';
+      const hidden = Utils.isElementHidden($el);
+      if (hidden || (ariaHidden && negativeTabindex)) {
+        return;
+      }
 
-        // Compute accessible name on input.
-        const computeName = computeAccessibleName($el);
-        const inputName = Utils.removeWhitespace(computeName);
+      // Compute accessible name on input.
+      const computeName = computeAccessibleName($el);
+      const inputName = Utils.removeWhitespace(computeName);
 
-        // Get attributes.
-        const alt = $el.getAttribute('alt');
-        const type = $el.getAttribute('type');
-        const hasTitle = $el.getAttribute('title');
-        const hasAria = $el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby');
+      // Get attributes.
+      const alt = $el.getAttribute('alt');
+      const type = $el.getAttribute('type');
+      const hasTitle = $el.getAttribute('title');
+      const hasAria = $el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby');
 
-        // Pass: Ignore if it's a submit or hidden button.
-        if (type === 'submit' || type === 'button' || type === 'hidden') {
-          return;
-        }
+      // Pass: Ignore if it's a submit or hidden button.
+      if (type === 'submit' || type === 'button' || type === 'hidden') {
+        return;
+      }
 
-        // Error: Input with type="image" without accessible name or alt.
-        if (type === 'image' && (!alt || alt === ' ')) {
-          if (!hasAria && !hasTitle) {
-            results.push({
-              element: $el,
-              type: 'error',
-              content: Lang.sprintf('LABELS_MISSING_IMAGE_INPUT_MESSAGE'),
-              inline: false,
-              position: 'beforebegin',
-            });
-          }
-          return;
-        }
+      // Create dismiss key.
+      const key = Utils.prepareDismissal(`INPUT${inputName}`);
 
-        // Warning: to remove reset buttons.
-        if (type === 'reset') {
-          const key = Utils.prepareDismissal(`INPUT${inputName}`);
+      // Error: Input with type="image" without accessible name or alt.
+      if (type === 'image' && (!alt || alt.trim() === '')) {
+        if (option.checks.LABELS_MISSING_IMAGE_INPUT && !hasAria && !hasTitle) {
           results.push({
             element: $el,
-            type: 'warning',
-            content: Lang.sprintf('LABELS_INPUT_RESET_MESSAGE'),
+            type: option.checks.LABELS_MISSING_IMAGE_INPUT.type || 'error',
+            content: option.checks.LABELS_MISSING_IMAGE_INPUT.content || Lang.sprintf('LABELS_MISSING_IMAGE_INPUT'),
             inline: false,
             position: 'beforebegin',
             dismiss: key,
+            advanced: option.checks.LABELS_MISSING_IMAGE_INPUT.advanced || true,
           });
-          return;
         }
+        return;
+      }
 
-        // Uses ARIA or title attribute. Warn them to ensure there's a visible label.
-        if (hasAria || hasTitle) {
-          if (inputName.length === 0) {
+      // Warning: to remove reset buttons.
+      if (type === 'reset') {
+        if (option.checks.LABELS_INPUT_RESET) {
+          results.push({
+            element: $el,
+            type: option.checks.LABELS_INPUT_RESET.type || 'warning',
+            content: option.checks.LABELS_INPUT_RESET.content || Lang.sprintf('LABELS_INPUT_RESET'),
+            inline: false,
+            position: 'beforebegin',
+            dismiss: key,
+            advanced: option.checks.LABELS_INPUT_RESET.advanced || false,
+          });
+        }
+        return;
+      }
+
+      // Uses ARIA or title attribute. Warn them to ensure there's a visible label.
+      if (hasAria || hasTitle) {
+        if (inputName.length === 0) {
+          if (option.checks.LABELS_MISSING_LABEL) {
             results.push({
               element: $el,
-              type: 'error',
-              content: Lang.sprintf('LABELS_MISSING_LABEL_MESSAGE'),
-              inline: false,
-              position: 'beforebegin',
-            });
-          } else {
-            const key = Utils.prepareDismissal(`INPUT${inputName}`);
-            const sanitizedText = Utils.sanitizeHTML(inputName);
-            results.push({
-              element: $el,
-              type: 'warning',
-              content: Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', sanitizedText),
+              type: option.checks.LABELS_MISSING_LABEL.type || 'error',
+              content: option.checks.LABELS_MISSING_LABEL.content || Lang.sprintf('LABELS_MISSING_LABEL'),
               inline: false,
               position: 'beforebegin',
               dismiss: key,
+              advanced: option.checks.LABELS_MISSING_LABEL.advanced || true,
             });
           }
-          return;
-        }
-
-        // Implicit label: <label>First name: <input type="text"/><label>
-        const closestLabel = $el.closest('label');
-        const labelName = (closestLabel) ? Utils.removeWhitespace(computeAccessibleName(closestLabel)) : '';
-        if (closestLabel && labelName.length) {
-          return;
-        }
-
-        // Check to see if each label has a matching for and it attribute.
-        const id = $el.getAttribute('id');
-        if (id) {
-          // Find labels without a match.
-          if (!Elements.Found.Labels.some((label) => label.getAttribute('for') === id)) {
-            results.push({
-              element: $el,
-              type: 'error',
-              content: Lang.sprintf('LABELS_NO_FOR_ATTRIBUTE_MESSAGE', id),
-              inline: false,
-              position: 'beforebegin',
-            });
-          }
-        } else {
-          // No id!
+        } else if (option.checks.LABELS_ARIA_LABEL_INPUT) {
+          const sanitizedText = Utils.sanitizeHTML(inputName);
           results.push({
             element: $el,
-            type: 'error',
-            content: Lang.sprintf('LABELS_MISSING_LABEL_MESSAGE'),
+            type: option.checks.LABELS_ARIA_LABEL_INPUT.type || 'warning',
+            content: option.checks.LABELS_ARIA_LABEL_INPUT.content || Lang.sprintf('LABELS_ARIA_LABEL_INPUT', sanitizedText),
             inline: false,
             position: 'beforebegin',
+            dismiss: key,
+            advanced: option.checks.LABELS_ARIA_LABEL_INPUT.advanced || true,
           });
         }
-      });
-    }
+        return;
+      }
+
+      // Implicit label: <label>First name: <input type="text"/><label>
+      const closestLabel = $el.closest('label');
+      const labelName = (closestLabel) ? Utils.removeWhitespace(computeAccessibleName(closestLabel)) : '';
+      if (closestLabel && labelName.length) {
+        return;
+      }
+
+      // Check to see if each label has a matching for and it attribute.
+      const id = $el.getAttribute('id');
+      if (id) {
+        // Find labels without a match.
+        if (!Elements.Found.Labels.some((label) => label.getAttribute('for') === id)) {
+          if (option.checks.LABELS_NO_FOR_ATTRIBUTE) {
+            results.push({
+              element: $el,
+              type: option.checks.LABELS_NO_FOR_ATTRIBUTE.type || 'error',
+              content: option.checks.LABELS_NO_FOR_ATTRIBUTE.content || Lang.sprintf('LABELS_NO_FOR_ATTRIBUTE', id),
+              inline: false,
+              position: 'beforebegin',
+              advanced: option.checks.LABELS_NO_FOR_ATTRIBUTE.advanced || true,
+            });
+          }
+        }
+      } else if (option.checks.LABELS_MISSING_LABEL) {
+        // No id!
+        results.push({
+          element: $el,
+          type: option.checks.LABELS_MISSING_LABEL.type || 'error',
+          content: option.checks.LABELS_MISSING_LABEL.content || Lang.sprintf('LABELS_MISSING_LABEL'),
+          inline: false,
+          position: 'beforebegin',
+          advanced: option.checks.LABELS_MISSING_LABEL.advanced || true,
+        });
+      }
+    });
   }
   return results;
 }

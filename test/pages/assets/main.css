@@ -5,6 +5,7 @@
   --bg-primary: #fff;
   --bg-secondary: #f6f8fa;
   --bg-tertiary: #d7d7d7;
+  --bg-example: #ececec;
   --link-primary: #004c9b;
   --red-text: #d30017;
 }
@@ -15,6 +16,7 @@
     --bg-primary: #0a2051;
     --bg-secondary: #072c7c;
     --bg-tertiary: #0041c9;
+    --bg-example: #252525;
     --link-primary: #64b2ff;
     --red-text: #fe5b5f;
   }
@@ -276,7 +278,7 @@ main [id^="pass"] {
   padding: 30px;
   margin-top: 15px;
   margin-bottom: 15px;
-  background: rgb(236, 236, 236);
+  background: var(--bg-example);
   border: 2px dashed rgb(158, 158, 158);
 }
 

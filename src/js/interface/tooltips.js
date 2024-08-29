@@ -109,7 +109,7 @@ export class TooltipComponent extends HTMLElement {
       keyboardShortcut = '<span class="kbd">Alt</span> + <span class="kbd">S</span>';
     }
     tippy(Constants.Panel.skipButton, {
-      content: `${Lang._('SHORTCUT_TOOLTIP')} &raquo; <br> ${keyboardShortcut}`,
+      content: `${Lang._('SKIP_TO_ISSUE')} &raquo; <br> ${keyboardShortcut}`,
       allowHTML: true,
       delay: [500, 0],
       offset: [0, 8],

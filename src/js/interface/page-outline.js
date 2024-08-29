@@ -126,7 +126,7 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
         label.shadowRoot.appendChild(content);
 
         // Make heading labels visible when panel is open.
-        if (Utils.store.getItem('sa11y-remember-outline') === 'Opened') {
+        if (Utils.store.getItem('sa11y-outline') === 'Opened') {
           label.hidden = false;
         }
       }
@@ -170,7 +170,7 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
             });
 
             if (outlineLink.classList.contains('hidden-h')) {
-              Utils.createAlert(`${Lang._('HEADING_NOT_VISIBLE_ALERT')}`);
+              Utils.createAlert(`${Lang._('HEADING_NOT_VISIBLE')}`);
             } else if (Constants.Panel.alert.classList.contains('active')) {
               Utils.removeAlert();
             }
@@ -233,7 +233,7 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
   };
 
   // Generate heading outline based on local storage or if "Outline" button is selected.
-  const rememberOutline = Utils.store.getItem('sa11y-remember-outline');
+  const rememberOutline = Utils.store.getItem('sa11y-outline');
   if (rememberOutline === 'Opened') outlineHandler();
   document.addEventListener('sa11y-build-heading-outline', outlineHandler);
 }

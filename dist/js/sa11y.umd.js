@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.2.2
+  * @version 4.0.0
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -36,10 +36,11 @@
     aboutContent: '',
     delayCheck: 0,
     delayCustomCheck: 500,
-    showGoodLinkButton: true,
     showHinPageOutline: false,
     showTitleInPageOutline: true,
     showImageOutline: true,
+    showGoodImageButton: true,
+    showGoodLinkButton: true,
     editImageURLofCMS: '',
     relativePathImageSRC: '',
     relativePathImageID: '',
@@ -51,13 +52,6 @@
     shadowComponents: '',
     autoDetectShadowComponents: false,
     panelPosition: 'right',
-    altTextMaxCharLength: 250,
-    susAltStopWords: '',
-    linkStopWords: '',
-    extraPlaceholderStopWords: '',
-    headingMaxCharLength: 170,
-    URLTextMaxCharLength: 40,
-    URLAsLinkTextWarning: true,
 
     // Readability
     readabilityPlugin: true,
@@ -67,55 +61,118 @@
     // Other plugins
     contrastPlugin: true,
     formLabelsPlugin: true,
-    linksAdvancedPlugin: true,
+    embeddedContentPlugin: true,
+    advancedPlugin: true,
     colourFilterPlugin: true,
     customChecks: false,
     checkAllHideToggles: false,
     exportResultsPlugin: false,
 
-    // Specific rulesets
+    // Customizing checks.
+    altTextMaxCharLength: 250,
+    susAltStopWords: '',
+    decorativeShouldHaveAlt: '.carousel',
+    linkStopWords: '',
+    extraPlaceholderStopWords: '',
+    headingMaxCharLength: 170,
+
+    // QA ruleset customizations.
+    URLTextMaxCharLength: 40,
     linksToFlag: '',
-    linksToDOI: true,
-    missingH1: true,
-    flagLongHeadings: true,
-    nonConsecutiveHeadingIsError: true,
+    documentLinks: 'a[href$=".doc"], a[href$=".docx"], a[href*=".doc?"], a[href*=".docx?"], a[href$=".ppt"], a[href$=".pptx"], a[href*=".ppt?"], a[href*=".pptx?"], a[href^="https://drive.google.com/file"], a[href^="https://docs.google."], a[href^="https://sway."]',
+    nestedComponentSources: '[role="tablist"], details',
 
-    // QA rulesets
-    badLinksQA: true,
-    strongItalicsQA: true,
-    pdfQA: true,
-    documentQA: true,
-    documentLinks: 'a[href$=".doc"], a[href$=".docx"], a[href*=".doc?"], a[href*=".docx?"], a[href$=".ppt"], a[href$=".pptx"], a[href*=".ppt?"], a[href*=".pptx?"], a[href^="https://docs.google"], a[href^="https://sway."]',
-    langQA: true,
-    blockquotesQA: true,
-    allCapsQA: true,
-    fakeHeadingsQA: true,
-    fakeListQA: true,
-    duplicateIdQA: true,
-    underlinedTextQA: true,
-    pageTitleQA: true,
-    subscriptQA: true,
-    inPageLinkQA: true,
-
-    // Tables
-    tablesQA: true,
-    tablesQAmissingTH: true,
-    tablesQAsemanticHeadings: true,
-    tablesQAemptyTH: true,
-    tablesQAemptyTHisError: true,
-
-    // Embedded content rulesets
-    embeddedContentAll: true,
-    embeddedContentAudio: true,
-    embeddedContentVideo: true,
-    embeddedContentDataViz: true,
-    embeddedContentTitles: true,
-    embeddedContentGeneral: true,
-
-    // Embedded content
+    // Embedded content sources
     videoContent: 'youtube.com, vimeo.com, yuja.com, panopto.com',
     audioContent: 'soundcloud.com, simplecast.com, podbean.com, buzzsprout.com, blubrry.com, transistor.fm, fusebox.fm, libsyn.com',
     dataVizContent: 'datastudio, tableau, lookerstudio, powerbi, qlik',
+
+    // All checks.
+    checks: {
+      // Heading checks.
+      HEADING_SKIPPED_LEVEL: true,
+      HEADING_EMPTY_WITH_IMAGE: true,
+      HEADING_EMPTY: true,
+      HEADING_FIRST: true,
+      HEADING_LONG: true,
+      HEADING_MISSING_ONE: true,
+
+      // Image checks.
+      MISSING_ALT_LINK: true,
+      MISSING_ALT_LINK_HAS_TEXT: true,
+      MISSING_ALT: true,
+      IMAGE_DECORATIVE_CAROUSEL: true,
+      LINK_IMAGE_NO_ALT_TEXT: true,
+      LINK_IMAGE_TEXT: true,
+      IMAGE_FIGURE_DECORATIVE: true,
+      IMAGE_DECORATIVE: true,
+      LINK_ALT_FILE_EXT: true,
+      ALT_FILE_EXT: true,
+      LINK_PLACEHOLDER_ALT: true,
+      ALT_PLACEHOLDER: true,
+      LINK_SUS_ALT: true,
+      SUS_ALT: true,
+      LINK_IMAGE_LONG_ALT: true,
+      IMAGE_ALT_TOO_LONG: true,
+      LINK_IMAGE_ALT: true,
+      LINK_IMAGE_ALT_AND_TEXT: true,
+      IMAGE_FIGURE_DUPLICATE_ALT: true,
+      IMAGE_PASS: true,
+
+      // Link checks.
+      LINK_HIDDEN_FOCUSABLE: true,
+      LINK_EMPTY_LABELLEDBY: true,
+      LINK_EMPTY_NO_LABEL: true,
+      LINK_STOPWORD: true,
+      LINK_BEST_PRACTICES: true,
+      LINK_DOI: true,
+      LINK_URL: true,
+      LINK_LABEL: true,
+      LINK_EMPTY: true,
+      LINK_IDENTICAL_NAME: true,
+      LINK_NEW_TAB: true,
+      LINK_FILE_EXT: true,
+
+      // Form Labels checks.
+      LABELS_MISSING_IMAGE_INPUT: true,
+      LABELS_INPUT_RESET: true,
+      LABELS_MISSING_LABEL: true,
+      LABELS_ARIA_LABEL_INPUT: true,
+      LABELS_NO_FOR_ATTRIBUTE: true,
+
+      // Embedded Content checks.
+      EMBED_AUDIO: true,
+      EMBED_VIDEO: true,
+      EMBED_DATA_VIZ: true,
+      EMBED_UNFOCUSABLE: true,
+      EMBED_MISSING_TITLE: true,
+      EMBED_GENERAL: true,
+
+      // Quality Assurance checks.
+      QA_BAD_LINK: true,
+      QA_STRONG_ITALICS: true,
+      QA_IN_PAGE_LINK: true,
+      QA_DOCUMENT: true,
+      QA_PDF: true,
+      QA_PAGE_LANG: true,
+      QA_BLOCKQUOTE: true,
+      TABLES_MISSING_HEADINGS: true,
+      TABLES_SEMANTIC_HEADING: true,
+      TABLES_EMPTY_HEADING: true,
+      QA_FAKE_HEADING: true,
+      QA_FAKE_LIST: true,
+      QA_UPPERCASE: true,
+      QA_DUPLICATE_ID: true,
+      QA_UNDERLINE: true,
+      QA_PAGE_TITLE: true,
+      QA_SUBSCRIPT: true,
+      QA_NESTED_COMPONENTS: true,
+
+      // Contrast checks.
+      CONTRAST_WARNING: false,
+      CONTRAST_INPUT: true,
+      CONTRAST_ERROR: true,
+    },
   };
 
   /* Translation object */
@@ -189,9 +246,7 @@
       Global.aboutContent = option.aboutContent;
 
       // Toggleable plugins
-      Global.contrastPlugin = option.contrastPlugin;
-      Global.formLabelsPlugin = option.formLabelsPlugin;
-      Global.linksAdvancedPlugin = option.linksAdvancedPlugin;
+      Global.advancedPlugin = option.advancedPlugin;
       Global.colourFilterPlugin = option.colourFilterPlugin;
       Global.checkAllHideToggles = option.checkAllHideToggles;
       Global.exportResultsPlugin = option.exportResultsPlugin;
@@ -254,17 +309,12 @@
       Panel.settingsContent = Sa11yPanel.getElementById('settings-content');
 
       // Settings toggles
-      Panel.contrastToggle = Sa11yPanel.getElementById('contrast-toggle');
-      Panel.labelsToggle = Sa11yPanel.getElementById('labels-toggle');
-      Panel.linksToggle = Sa11yPanel.getElementById('links-advanced-toggle');
+      Panel.advancedToggle = Sa11yPanel.getElementById('advanced-toggle');
       Panel.readabilityToggle = Sa11yPanel.getElementById('readability-toggle');
       Panel.themeToggle = Sa11yPanel.getElementById('theme-toggle');
-      Panel.contrastItem = Sa11yPanel.getElementById('contrast-item');
-      Panel.labelsItem = Sa11yPanel.getElementById('form-labels-item');
-      Panel.linksItem = Sa11yPanel.getElementById('links-advanced-item');
+      Panel.advancedItem = Sa11yPanel.getElementById('advanced-item');
       Panel.readabilityItem = Sa11yPanel.getElementById('readability-item');
       Panel.darkModeItem = Sa11yPanel.getElementById('dark-mode-item');
-
       Panel.colourPanel = Sa11yPanel.getElementById('panel-colour-filters');
       Panel.colourFilterItem = Sa11yPanel.getElementById('colour-filter-item');
       Panel.colourFilterSelect = Sa11yPanel.getElementById('colour-filter-select');
@@ -1081,6 +1131,12 @@
         Constants.Exclusions.Container,
       ) : [];
 
+      Found.NestedComponents = option.nestedComponentSources ? find(
+        option.nestedComponentSources,
+        'root',
+        Constants.Exclusions.Container,
+      ) : [];
+
       // iFrames
       Found.iframes = find(
         'iframe:not(hidden), audio, video',
@@ -1160,7 +1216,7 @@
       // Debounce function to re-check page.
       const checkURL = debounce$2(async () => {
         if (url !== window.location.href) {
-          if (store.getItem('sa11y-remember-panel') === 'Closed' || !store.getItem('sa11y-remember-panel')) {
+          if (store.getItem('sa11y-panel') === 'Closed' || !store.getItem('sa11y-panel')) {
             checkAll();
           } else {
             resetAll(false);
@@ -1650,7 +1706,7 @@
       content.innerHTML = `
       <button class="close-btn" aria-label="${Lang._('ALERT_CLOSE')}"></button>
       <h2>${Lang._('ERROR')}</h2>
-      <p>${Lang.sprintf('CONSOLE_ERROR_MESSAGE', google, github)}</p>
+      <p>${Lang.sprintf('CONSOLE_ERROR', google, github)}</p>
       <p class="error">${escapeHTML(this.error.stack)}<br><br>URL: ${url}</p>
     `;
       shadow.appendChild(content);
@@ -1676,9 +1732,9 @@
   function mainToggle(checkAll, resetAll) {
     // Keeps checker active when navigating between pages until it is toggled off.
     Constants.Panel.toggle.addEventListener('click', (e) => {
-      if (store.getItem('sa11y-remember-panel') === 'Opened') {
+      if (store.getItem('sa11y-panel') === 'Opened') {
         e.preventDefault();
-        store.setItem('sa11y-remember-panel', 'Closed');
+        store.setItem('sa11y-panel', 'Closed');
         Constants.Panel.toggle.classList.remove('on');
         Constants.Panel.toggle.setAttribute('aria-expanded', 'false');
         resetAll();
@@ -1690,7 +1746,7 @@
         }
       } else {
         e.preventDefault();
-        store.setItem('sa11y-remember-panel', 'Opened');
+        store.setItem('sa11y-panel', 'Opened');
         Constants.Panel.toggle.classList.add('on');
         Constants.Panel.toggle.setAttribute('aria-expanded', 'true');
         checkAll();
@@ -1699,7 +1755,7 @@
     });
 
     // Remember to leave it open
-    if (store.getItem('sa11y-remember-panel') === 'Opened') {
+    if (store.getItem('sa11y-panel') === 'Opened') {
       Constants.Panel.toggle.classList.add('on');
       Constants.Panel.toggle.setAttribute('aria-expanded', 'true');
       Constants.Panel.panel.style.transform = '';
@@ -1715,7 +1771,7 @@
     };
   }
 
-  var panelStyles = "a,button,code,div,h1,h2,kbd,label,li,ol,p,pre,span,strong,svg,ul{all:unset;box-sizing:border-box!important}:after,:before{all:unset}div{display:block}*{-webkit-font-smoothing:auto!important;font-family:var(--sa11y-font-face)!important}label,li,ol,p,ul{font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px!important;text-align:start;word-break:break-word}.sa11y-overflow{overflow:auto}iframe,img,video{border:0;display:block;height:auto;max-width:100%}audio{max-width:100%}#toggle{align-items:center;background:linear-gradient(0deg,#e040fb,#00bcd4);background-color:var(--sa11y-setting-switch-bg-off);background-size:150% 150%;border-radius:50%;bottom:15px;color:#fff;cursor:pointer;display:flex;height:55px;inset-inline-end:18px;justify-content:center;margin:0;overflow:visible;position:fixed;transition:all .2s ease-in-out;width:55px;z-index:2147483644}#toggle.left,#toggle.top-left{inset-inline-start:18px}#toggle.top-left,#toggle.top-right{bottom:unset;top:15px}@media screen and (forced-colors:active){#toggle{background:ButtonFace!important;border:2px solid transparent}}#toggle svg{height:35px;width:35px}#toggle svg path{fill:var(--sa11y-panel-bg)}#toggle:focus,#toggle:hover{animation:sa11y-toggle-gradient 3s ease}#toggle:disabled:focus,#toggle:disabled:hover{animation:none}#toggle.on{background:linear-gradient(180deg,#e040fb,#00bcd4)}#toggle:disabled{background:unset;background-color:var(--sa11y-setting-switch-bg-off);cursor:not-allowed}#notification-badge{text-wrap:nowrap;align-items:center;background-color:#eb0000;border:1px solid transparent;border-radius:12px;color:#fff;display:none;font-size:13.5px;font-weight:400;justify-content:center;line-height:1;padding:2.5px;position:absolute;right:-3px;top:-5.5px}#notification-badge.notification-badge-warning{background-color:var(--sa11y-warning-hover);border:1px solid var(--sa11y-warning);color:var(--sa11y-warning-text)}#panel{background:var(--sa11y-panel-bg);border-radius:4px;bottom:25px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15);inset-inline-end:42px;opacity:0;overflow:visible;position:fixed;transform:scale(0);transform-origin:100% 100%;transition:transform .2s,opacity background .2s .2s;visibility:hidden;z-index:2147483643}#panel.left,#panel.top-left{inset-inline-start:42px}#panel.top-left,#panel.top-right{bottom:unset;top:35px}#panel.active{height:auto;opacity:1;transform:scale(1);transform-origin:bottom right;transition:transform .2s,opacity .2s;visibility:visible}@media screen and (forced-colors:active){#panel{border:2px solid transparent}}#panel.active.left,[dir=rtl] #panel.active{transform-origin:bottom left}#panel.active.top-left{transform-origin:top left}#panel.active.top-right{transform-origin:top right}#panel-alert{display:none;opacity:0}#panel-alert.active{display:block;opacity:1}#panel-alert-content{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-primary);max-height:400px;overflow-y:auto;padding:15px 20px 15px 15px;position:relative}.top-left #panel-alert-content,.top-right #panel-alert-content{border:0}#panel-alert-preview .close-tooltip{display:none}#panel-alert-preview,#panel-alert-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}.panel-alert-preview{background:var(--sa11y-panel-bg-secondary);border:1px dashed var(--sa11y-panel-bg-splitter);border-radius:5px;margin-top:15px;padding:10px}.element-preview{background-color:var(--sa11y-panel-badge);border-radius:3.2px;margin-bottom:10px;overflow-wrap:break-word;padding:5px}button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}button[data-sa11y-dismiss]:focus,button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}h2{display:block;font-size:var(--sa11y-large-text);margin-bottom:3px}h2,strong{font-weight:600}a:not(#outline-list a):not(.edit){border-bottom:0;color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none!important}hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}#dismiss-button,#skip-button{background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:50px;cursor:pointer;display:none;height:36px;margin-inline-end:8px;margin-inline-start:2px;overflow:visible;position:relative;text-align:center;transition:all .1s ease-in-out;width:36px}#dismiss-button.active,#skip-button.active{display:block}#dismiss-button:disabled,#skip-button:disabled{background:none;border:0;box-shadow:none;cursor:default}#dismiss-button:before,#skip-button:before{bottom:-5px;content:\"\";left:-5px;position:absolute;right:-5px;top:-5px}#dismiss-button:focus:not(:disabled),#dismiss-button:hover:not(:disabled),#skip-button:focus:not(:disabled),#skip-button:hover:not(:disabled){background-color:var(--sa11y-shortcut-hover)}#panel.left #dismiss-button,#panel.left #skip-button,#panel.top-left #dismiss-button,#panel.top-left #skip-button{margin-inline-end:2px;margin-inline-start:8px}.dismiss-icon{background:var(--sa11y-setting-switch-bg-off);display:inline-block;height:24px;margin-bottom:-4px;-webkit-mask:var(--sa11y-dismiss-icon) center no-repeat;mask:var(--sa11y-dismiss-icon) center no-repeat;width:24px}@media screen and (forced-colors:active){.dismiss-icon{filter:invert(1)}}#panel-content{align-items:center;color:var(--sa11y-panel-primary);display:flex;padding:6px}#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{height:26px;margin:0 auto;width:26px}#panel-content.errors .panel-icon{background:var(--sa11y-panel-error);margin-top:-2px;-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat}#panel-content.good .panel-icon{background:var(--sa11y-good);-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat}#panel-content.warnings .panel-icon{background:var(--sa11y-warning-svg-color);-webkit-mask:var(--sa11y-warning-svg) center no-repeat;mask:var(--sa11y-warning-svg) center no-repeat;transform:scaleX(var(--sa11y-icon-direction))}@media screen and (forced-colors:active){#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{filter:invert(1)}}#panel.left #panel-content,#panel.top-left #panel-content{flex-direction:row-reverse}#status{font-size:var(--sa11y-large-text)}#status,.panel-count{color:var(--sa11y-panel-primary)}.panel-count{background-color:var(--sa11y-panel-badge);border-radius:4px;font-size:15px;font-weight:400;margin-left:3px;margin-right:3px;padding:2px 4px}#images-panel,#outline-panel,#page-issues,#settings-panel{color:var(--sa11y-panel-primary);display:none;opacity:0}#images-panel.active,#outline-panel.active,#page-issues.active,#settings-panel.active{display:block;opacity:1}.panel-header{padding:10px 15px 0;text-align:start}#about-content{padding-top:5px}#about-content p{display:block;margin-block-end:1em}#images-content,#outline-content,#page-issues-content,#settings-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);padding:0 15px 10px}.top-left #images-content,.top-left #outline-content,.top-left #page-issues-content,.top-left #settings-content,.top-right #images-content,.top-right #outline-content,.top-right #page-issues-content,.top-right #settings-content{border:0}#page-issues-content{max-height:160px;overflow-y:auto}#settings-content{max-height:400px;overflow-y:auto}#images-content,#outline-content{max-height:250px;overflow-y:auto}#outline-panel .outline-list-item.sa11y-red-text,#settings-panel .sa11y-red-text{color:var(--sa11y-red-text)}#outline-list{display:block;margin:0;padding:0}#outline-list a{cursor:pointer;display:block;text-decoration:none}#outline-list li{display:block;list-style-type:none;margin-bottom:3px;margin-top:0;padding:0}#outline-list li:first-child{margin-top:5px}#outline-list li a:focus,#outline-list li a:hover{background:var(--sa11y-panel-outline-hover);border-radius:5px;box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);display:block}#outline-list .outline-2{margin-inline-start:15px}#outline-list .outline-3{margin-inline-start:30px}#outline-list .outline-4{margin-inline-start:45px}#outline-list .outline-5{margin-inline-start:60px}#outline-list .outline-6{margin-inline-start:75px}#images-list{display:block;margin:0;padding:0}#images-list li{border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:block;list-style-type:none;margin:15px 0;overflow:hidden;width:100%}#images-list li:first-child{margin-top:5px}#images-list li:last-child{border:none;margin-bottom:0}#images-list li .alt{padding:2px 5px 10px}#images-list li .edit{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;padding:4px 7px;position:relative;text-decoration:none}#images-list li .edit:focus,#images-list li .edit:hover{background-color:var(--sa11y-shortcut-hover)}#images-list li .edit:before{bottom:-10px;content:\"\";left:-10px;position:absolute;right:-10px;top:-10px}#images-list li img{border-radius:5px;float:inline-start;margin-block-end:15px;margin-inline-end:10px;max-width:110px}#images-list li.warning .alt{color:var(--sa11y-yellow-text)}#images-list li.warning img{background-color:var(--sa11y-yellow-text);border:5px solid var(--sa11y-yellow-text)}#images-list li.error .alt{color:var(--sa11y-error)}#images-list li.error img{background-color:var(--sa11y-error);border:5px solid var(--sa11y-error)}#images-list li.good img{background-color:var(--sa11y-panel-badge);border:5px solid var(--sa11y-panel-badge)}@media screen and (forced-colors:active){#images-list li img{background-color:ButtonBorder!important}}.error-icon{background:var(--sa11y-error-text);display:inline-block;height:16px;margin-bottom:-4px;-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat;width:16px}.hidden-icon{margin-bottom:-3px;-webkit-mask:var(--sa11y-hidden-icon-svg) center no-repeat;mask:var(--sa11y-hidden-icon-svg) center no-repeat}.hidden-icon,.link-icon{background:var(--sa11y-panel-primary);display:inline-block;height:16px;width:16px}.link-icon{margin-bottom:-3.5px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat}.error-badge .hidden-icon,.error-badge .link-icon{background:var(--sa11y-error-text)}.warning-badge .hidden-icon,.warning-badge .link-icon{background:var(--sa11y-panel-bg)}@media screen and (forced-colors:active){.error-icon,.hidden-icon,.link-icon{filter:invert(1)}}#panel-controls{border-radius:0 0 4px 4px;display:flex;overflow:hidden}#panel-controls button{background:var(--sa11y-panel-bg-secondary);background-color:var(--sa11y-panel-bg-secondary);border-bottom:1px solid var(--sa11y-panel-bg-splitter);border-inline-end:1px solid var(--sa11y-panel-bg-splitter);border-top:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-secondary);cursor:pointer;display:block;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;line-height:0;margin:0;opacity:1;outline:0;padding:0;position:relative;text-align:center;transition:background .2s;width:100%}#panel-controls button.active,#panel-controls button:hover{background-color:var(--sa11y-shortcut-hover)}#panel-controls button.active{font-weight:500}#export-results-mode,label{color:var(--sa11y-panel-primary);display:inline-block;font-weight:400;margin:0;width:100%}label:not(#colour-filter-mode,#export-results-mode){cursor:pointer}#settings-panel #export-csv,#settings-panel #export-html{padding:0;text-align:center;width:unset}#settings-panel #export-csv span,#settings-panel #export-html span{background:var(--sa11y-panel-bg-secondary);border-radius:5px;box-shadow:inset 0 0 0 2px var(--sa11y-setting-switch-bg-off);display:block;margin:0 4px;padding:7px 9px;width:65px}#settings-panel #export-csv:focus span,#settings-panel #export-csv:focus-within span,#settings-panel #export-csv:hover span,#settings-panel #export-html:focus span,#settings-panel #export-html:focus-within span,#settings-panel #export-html:hover span{background:var(--sa11y-shortcut-hover)}#settings-panel .switch{background:none;border:0;border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:44px;margin:0;padding:7px 10px;position:relative;text-align:end;width:105px}#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{content:\"\";display:inline-block;height:27px;margin:0 4px 4px;vertical-align:middle;width:27px}#settings-panel .switch[aria-pressed=true]:after{background:var(--sa11y-setting-switch-bg-on);-webkit-mask:var(--sa11y-setting-switch-on-svg) center no-repeat;mask:var(--sa11y-setting-switch-on-svg) center no-repeat}#settings-panel .switch[aria-pressed=false]:after{background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-setting-switch-off-svg) center no-repeat;mask:var(--sa11y-setting-switch-off-svg) center no-repeat}@media screen and (forced-colors:active){#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{filter:invert(1)}}#settings-panel #settings-options li{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:flex;justify-content:space-between;list-style-type:none;padding:1px 0}#settings-panel #settings-options li:last-child{border:none}#page-issues{align-items:center;color:var(--sa11y-panel-primary)}#page-issues-list{display:block;margin-top:4px}#page-issues-list li{display:block;margin:0 0 10px}#page-issues-list strong{display:block}.top-left.has-page-issues #page-issues,.top-right.has-page-issues #page-issues{border-top:1px solid var(--sa11y-panel-bg-splitter);margin-top:-1px}#panel-colour-filters{align-items:center;color:var(--sa11y-panel-primary);display:none;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}#panel-colour-filters.active{display:flex}#panel-colour-filters p{padding:6px 20px 6px 6px;width:100%}#panel-colour-filters[data-colour=protanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image-slice:1}#panel-colour-filters[data-colour=deuteranopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image-slice:1}#panel-colour-filters[data-colour=tritanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image-slice:1}#panel-colour-filters[data-colour=monochromacy]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image-slice:1}#panel-colour-filters[data-colour=protanopia] .panel-icon{background:var(--sa11y-panel-error)}#panel-colour-filters[data-colour=deuteranopia] .panel-icon{background:var(--sa11y-good-hover)}#panel-colour-filters[data-colour=tritanopia] .panel-icon{background:var(--sa11y-blue)}#panel-colour-filters[data-colour=monochromacy] .panel-icon{background:linear-gradient(90deg,#38a459 20%,red 50%,#0077c8 80%)}#panel-colour-filters .panel-icon{height:30px;margin-inline-end:5px;margin-inline-start:10px;-webkit-mask:var(--sa11y-low-vision-icon) center no-repeat;mask:var(--sa11y-low-vision-icon) center no-repeat;width:30px}@media screen and (forced-colors:active){#panel-colour-filters .panel-icon{forced-color-adjust:none}}.select-dropdown{align-items:center;display:flex;position:relative}.select-dropdown:after{border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid var(--sa11y-setting-switch-bg-off);content:\" \";inset-inline-end:14px;position:absolute}#colour-filter-select{-webkit-appearance:none;-moz-appearance:none;appearance:none;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-setting-switch-bg-off);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;margin-inline-end:4px;padding-inline-end:25px;padding-inline-start:5px;position:relative;text-align:end;vertical-align:middle}#colour-filter-select:focus,#colour-filter-select:hover{background:var(--sa11y-shortcut-hover)}#colour-filter-select.active{box-shadow:0 0 0 2px var(--sa11y-setting-switch-bg-on)}#colour-filter-item label,#colour-filter-item select{margin-bottom:9px;margin-top:10px}#readability-panel{display:none;opacity:0}#readability-panel.active{display:block;opacity:1}.top-left #readability-content,.top-right #readability-content{border-top:1px solid var(--sa11y-panel-bg-splitter)}.left #readability-content,.right #readability-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter)}#readability-content{color:var(--sa11y-panel-primary);padding:10px 15px;width:100%}#readability-details{list-style-type:none;margin:0;padding:0;white-space:normal}#readability-details li{display:inline-block;list-style-type:none;margin:0;padding-inline-end:10px}.readability-score{background-color:var(--sa11y-panel-badge);border-radius:4px;color:var(--sa11y-panel-primary);margin-inline-start:5px;padding:2px 5px}#readability-info{margin-inline-start:10px}#skip-to-page-issues{display:none}#panel.has-page-issues #skip-to-page-issues{clip:rect(0,0,0,0);background:var(--sa11y-panel-bg);border:0;border-radius:5px;display:block;height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}#panel.has-page-issues #skip-to-page-issues:focus{clip:auto;height:auto;margin:0;overflow:visible;padding:5px 7px;white-space:normal;width:auto;z-index:1}.hide-settings-border{border-bottom:0!important;padding:0 15px!important}.hide-settings-border li:not(#colour-filter-item){display:none!important}.hide-settings-border #about-content{display:none}.hide-settings-border.scrollable:before{all:unset}::-webkit-scrollbar{height:6px;width:7px}::-webkit-scrollbar-thumb{background-color:var(--sa11y-button-outline);border-radius:6px}*{scrollbar-color:var(--sa11y-button-outline);scrollbar-width:thin}.scrollable:before{animation:fade 1s ease-in-out;background:linear-gradient(180deg,transparent 70%,var(--sa11y-panel-scrollable) 100%);background-position:bottom;bottom:auto;content:\"\";height:250px;left:0;position:absolute;right:0;top:auto;transition:opacity 1s ease-in-out;width:100%;z-index:-1}#settings-content.scrollable:before{height:400px}.top-left .scrollable:before,.top-right .scrollable:before{border-radius:5px}#page-issues-content.scrollable:before{height:160px}#panel-alert.scrollable:before{height:200px}@keyframes sa11y-toggle-gradient{0%{background-position:50% 0}50%{background-position:50% 100%}to{background-position:50% 0}}@keyframes fade{0%{opacity:0}to{opacity:1}}@media (prefers-reduced-motion:reduce){*{animation:none!important;transform:none!important;transition:none!important}}#panel{width:400px}#container:lang(en) #panel{width:305px}#container:lang(da) #panel,#container:lang(de) #panel,#container:lang(nb) #panel,#container:lang(pl) #panel,#container:lang(sv) #panel,#container:lang(zh) #panel{width:350px}#container:lang(bg) .switch:not(#export-results-item *),#container:lang(es) .switch:not(#export-results-item *){width:225px!important}#container:not(:lang(en)):not(:lang(de)) .switch{width:205px}";
+  var panelStyles = "a,button,code,div,h1,h2,kbd,label,li,ol,p,pre,span,strong,svg,ul{all:unset;box-sizing:border-box!important}:after,:before{all:unset}div{display:block}*{-webkit-font-smoothing:auto!important;font-family:var(--sa11y-font-face)!important}label,li,ol,p,ul{font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px!important;text-align:start;word-break:break-word}.sa11y-overflow{overflow:auto}iframe,img,video{border:0;display:block;height:auto;max-width:100%}audio{max-width:100%}#toggle{align-items:center;background:linear-gradient(0deg,#e040fb,#00bcd4);background-color:var(--sa11y-setting-switch-bg-off);background-size:150% 150%;border-radius:50%;bottom:15px;color:#fff;cursor:pointer;display:flex;height:55px;inset-inline-end:18px;justify-content:center;margin:0;overflow:visible;position:fixed;transition:all .2s ease-in-out;width:55px;z-index:2147483644}#toggle.left,#toggle.top-left{inset-inline-start:18px}#toggle.top-left,#toggle.top-right{bottom:unset;top:15px}@media screen and (forced-colors:active){#toggle{background:ButtonFace!important;border:2px solid transparent}}#toggle svg{height:35px;width:35px}#toggle svg path{fill:var(--sa11y-panel-bg)}#toggle:focus,#toggle:hover{animation:sa11y-toggle-gradient 3s ease}#toggle:disabled:focus,#toggle:disabled:hover{animation:none}#toggle.on{background:linear-gradient(180deg,#e040fb,#00bcd4)}#toggle:disabled{background:unset;background-color:var(--sa11y-setting-switch-bg-off);cursor:not-allowed}#notification-badge{text-wrap:nowrap;align-items:center;background-color:#eb0000;border:1px solid transparent;border-radius:12px;color:#fff;display:none;font-size:13.5px;font-weight:400;justify-content:center;line-height:1;min-width:20px;padding:2.5px;position:absolute;right:-3px;top:-5.5px}#notification-badge.notification-badge-warning{background-color:var(--sa11y-warning-hover);border:1px solid var(--sa11y-warning);color:var(--sa11y-warning-text)}#panel{background:var(--sa11y-panel-bg);border-radius:4px;bottom:25px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15);inset-inline-end:42px;opacity:0;overflow:visible;position:fixed;transform:scale(0);transform-origin:100% 100%;transition:transform .2s,opacity background .2s .2s;visibility:hidden;z-index:2147483643}#panel.left,#panel.top-left{inset-inline-start:42px}#panel.top-left,#panel.top-right{bottom:unset;top:35px}#panel.active{height:auto;opacity:1;transform:scale(1);transform-origin:bottom right;transition:transform .2s,opacity .2s;visibility:visible}@media screen and (forced-colors:active){#panel{border:2px solid transparent}}#panel.active.left,[dir=rtl] #panel.active{transform-origin:bottom left}#panel.active.top-left{transform-origin:top left}#panel.active.top-right{transform-origin:top right}#panel-alert{display:none;opacity:0}#panel-alert.active{display:block;opacity:1}#panel-alert-content{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-primary);max-height:400px;overflow-y:auto;padding:15px 20px 15px 15px;position:relative}.top-left #panel-alert-content,.top-right #panel-alert-content{border:0}#panel-alert-preview .close-tooltip{display:none}#panel-alert-preview,#panel-alert-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}.panel-alert-preview{background:var(--sa11y-panel-bg-secondary);border:1px dashed var(--sa11y-panel-bg-splitter);border-radius:5px;margin-top:15px;padding:10px}.element-preview{background-color:var(--sa11y-panel-badge);border-radius:3.2px;margin-bottom:10px;overflow-wrap:break-word;padding:5px}button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}button[data-sa11y-dismiss]:focus,button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}h2{display:block;font-size:var(--sa11y-large-text);margin-bottom:3px}h2,strong{font-weight:600}a:not(#outline-list a):not(.edit){border-bottom:0;color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none!important}hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}#dismiss-button,#skip-button{background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:50px;cursor:pointer;display:none;height:36px;margin-inline-end:8px;margin-inline-start:2px;overflow:visible;position:relative;text-align:center;transition:all .1s ease-in-out;width:36px}#dismiss-button.active,#skip-button.active{display:block}#dismiss-button:disabled,#skip-button:disabled{background:none;border:0;box-shadow:none;cursor:default}#dismiss-button:before,#skip-button:before{bottom:-5px;content:\"\";left:-5px;position:absolute;right:-5px;top:-5px}#dismiss-button:focus:not(:disabled),#dismiss-button:hover:not(:disabled),#skip-button:focus:not(:disabled),#skip-button:hover:not(:disabled){background-color:var(--sa11y-shortcut-hover)}#panel.left #dismiss-button,#panel.left #skip-button,#panel.top-left #dismiss-button,#panel.top-left #skip-button{margin-inline-end:2px;margin-inline-start:8px}.dismiss-icon{background:var(--sa11y-setting-switch-bg-off);display:inline-block;height:24px;margin-bottom:-4px;-webkit-mask:var(--sa11y-dismiss-icon) center no-repeat;mask:var(--sa11y-dismiss-icon) center no-repeat;width:24px}@media screen and (forced-colors:active){.dismiss-icon{filter:invert(1)}}#panel-content{align-items:center;color:var(--sa11y-panel-primary);display:flex;padding:6px}#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{height:26px;margin:0 auto;width:26px}#panel-content.errors .panel-icon{background:var(--sa11y-panel-error);margin-top:-2px;-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat}#panel-content.good .panel-icon{background:var(--sa11y-good);-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat}#panel-content.warnings .panel-icon{background:var(--sa11y-warning-svg-color);-webkit-mask:var(--sa11y-warning-svg) center no-repeat;mask:var(--sa11y-warning-svg) center no-repeat;transform:scaleX(var(--sa11y-icon-direction))}@media screen and (forced-colors:active){#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{filter:invert(1)}}#panel.left #panel-content,#panel.top-left #panel-content{flex-direction:row-reverse}#status{font-size:var(--sa11y-large-text)}#status,.panel-count{color:var(--sa11y-panel-primary)}.panel-count{background-color:var(--sa11y-panel-badge);border-radius:4px;font-size:15px;font-weight:400;margin-left:3px;margin-right:3px;padding:2px 4px}#images-panel,#outline-panel,#page-issues,#settings-panel{color:var(--sa11y-panel-primary);display:none;opacity:0}#images-panel.active,#outline-panel.active,#page-issues.active,#settings-panel.active{display:block;opacity:1}.panel-header{padding:10px 15px 0;text-align:start}#about-content{padding-top:5px}#about-content p{display:block;margin-block-end:1em}#images-content,#outline-content,#page-issues-content,#settings-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);padding:0 15px 10px}.top-left #images-content,.top-left #outline-content,.top-left #page-issues-content,.top-left #settings-content,.top-right #images-content,.top-right #outline-content,.top-right #page-issues-content,.top-right #settings-content{border:0}#page-issues-content{max-height:160px;overflow-y:auto}#settings-content{max-height:400px;overflow-y:auto}#images-content,#outline-content{max-height:250px;overflow-y:auto}#outline-panel .outline-list-item.sa11y-red-text,#settings-panel .sa11y-red-text{color:var(--sa11y-red-text)}#outline-list{display:block;margin:0;padding:0}#outline-list a{cursor:pointer;display:block;text-decoration:none}#outline-list li{display:block;list-style-type:none;margin-bottom:3px;margin-top:0;padding:0}#outline-list li:first-child{margin-top:5px}#outline-list li a:focus,#outline-list li a:hover{background:var(--sa11y-panel-outline-hover);border-radius:5px;box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);display:block}#outline-list .outline-2{margin-inline-start:15px}#outline-list .outline-3{margin-inline-start:30px}#outline-list .outline-4{margin-inline-start:45px}#outline-list .outline-5{margin-inline-start:60px}#outline-list .outline-6{margin-inline-start:75px}#images-list{display:block;margin:0;padding:0}#images-list li{border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:block;list-style-type:none;margin:15px 0;overflow:hidden;width:100%}#images-list li:first-child{margin-top:5px}#images-list li:last-child{border:none;margin-bottom:0}#images-list li .alt{padding:2px 5px 10px}#images-list li .edit{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;padding:4px 7px;position:relative;text-decoration:none}#images-list li .edit:focus,#images-list li .edit:hover{background-color:var(--sa11y-shortcut-hover)}#images-list li .edit:before{bottom:-10px;content:\"\";left:-10px;position:absolute;right:-10px;top:-10px}#images-list li img{border-radius:5px;float:inline-start;margin-block-end:15px;margin-inline-end:10px;max-width:110px}#images-list li.warning .alt{color:var(--sa11y-yellow-text)}#images-list li.warning img{background-color:var(--sa11y-yellow-text);border:5px solid var(--sa11y-yellow-text)}#images-list li.error .alt{color:var(--sa11y-error)}#images-list li.error img{background-color:var(--sa11y-error);border:5px solid var(--sa11y-error)}#images-list li.good img{background-color:var(--sa11y-panel-badge);border:5px solid var(--sa11y-panel-badge)}@media screen and (forced-colors:active){#images-list li img{background-color:ButtonBorder!important}}.error-icon{background:var(--sa11y-error-text);display:inline-block;height:16px;margin-bottom:-4px;-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat;width:16px}.hidden-icon{margin-bottom:-3px;-webkit-mask:var(--sa11y-hidden-icon-svg) center no-repeat;mask:var(--sa11y-hidden-icon-svg) center no-repeat}.hidden-icon,.link-icon{background:var(--sa11y-panel-primary);display:inline-block;height:16px;width:16px}.link-icon{margin-bottom:-3.5px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat}.error-badge .hidden-icon,.error-badge .link-icon{background:var(--sa11y-error-text)}.warning-badge .hidden-icon,.warning-badge .link-icon{background:var(--sa11y-panel-bg)}@media screen and (forced-colors:active){.error-icon,.hidden-icon,.link-icon{filter:invert(1)}}#panel-controls{border-radius:0 0 4px 4px;display:flex;overflow:hidden}#panel-controls button{background:var(--sa11y-panel-bg-secondary);background-color:var(--sa11y-panel-bg-secondary);border-bottom:1px solid var(--sa11y-panel-bg-splitter);border-inline-end:1px solid var(--sa11y-panel-bg-splitter);border-top:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-secondary);cursor:pointer;display:block;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;line-height:0;margin:0;opacity:1;outline:0;padding:0;position:relative;text-align:center;transition:background .2s;width:100%}#panel-controls button.active,#panel-controls button:hover{background-color:var(--sa11y-shortcut-hover)}#panel-controls button.active{font-weight:500}#export-results-mode,label{color:var(--sa11y-panel-primary);display:inline-block;font-weight:400;margin:0;width:100%}label:not(#colour-filter-mode,#export-results-mode){cursor:pointer}#settings-panel #export-csv,#settings-panel #export-html{padding:0;text-align:center;width:unset}#settings-panel #export-csv span,#settings-panel #export-html span{background:var(--sa11y-panel-bg-secondary);border-radius:5px;box-shadow:inset 0 0 0 2px var(--sa11y-setting-switch-bg-off);display:block;margin:0 4px;padding:7px 9px;width:65px}#settings-panel #export-csv:focus span,#settings-panel #export-csv:focus-within span,#settings-panel #export-csv:hover span,#settings-panel #export-html:focus span,#settings-panel #export-html:focus-within span,#settings-panel #export-html:hover span{background:var(--sa11y-shortcut-hover)}#settings-panel .switch{background:none;border:0;border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:44px;margin:0;padding:7px 10px;position:relative;text-align:end;width:105px}#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{content:\"\";display:inline-block;height:27px;margin:0 4px 4px;vertical-align:middle;width:27px}#settings-panel .switch[aria-pressed=true]:after{background:var(--sa11y-setting-switch-bg-on);-webkit-mask:var(--sa11y-setting-switch-on-svg) center no-repeat;mask:var(--sa11y-setting-switch-on-svg) center no-repeat}#settings-panel .switch[aria-pressed=false]:after{background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-setting-switch-off-svg) center no-repeat;mask:var(--sa11y-setting-switch-off-svg) center no-repeat}@media screen and (forced-colors:active){#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{filter:invert(1)}}#settings-panel #settings-options li{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:flex;justify-content:space-between;list-style-type:none;padding:1px 0}#settings-panel #settings-options li:last-child{border:none}#page-issues{align-items:center;color:var(--sa11y-panel-primary)}#page-issues-list{display:block;margin-top:4px}#page-issues-list li{display:block;margin:0 0 10px}#page-issues-list strong{display:block}.top-left.has-page-issues #page-issues,.top-right.has-page-issues #page-issues{border-top:1px solid var(--sa11y-panel-bg-splitter);margin-top:-1px}#panel-colour-filters{align-items:center;color:var(--sa11y-panel-primary);display:none;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}#panel-colour-filters.active{display:flex}#panel-colour-filters p{padding:6px 20px 6px 6px;width:100%}#panel-colour-filters[data-colour=protanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image-slice:1}#panel-colour-filters[data-colour=deuteranopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image-slice:1}#panel-colour-filters[data-colour=tritanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image-slice:1}#panel-colour-filters[data-colour=monochromacy]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image-slice:1}#panel-colour-filters[data-colour=protanopia] .panel-icon{background:var(--sa11y-panel-error)}#panel-colour-filters[data-colour=deuteranopia] .panel-icon{background:var(--sa11y-good-hover)}#panel-colour-filters[data-colour=tritanopia] .panel-icon{background:var(--sa11y-blue)}#panel-colour-filters[data-colour=monochromacy] .panel-icon{background:linear-gradient(90deg,#38a459 20%,red 50%,#0077c8 80%)}#panel-colour-filters .panel-icon{height:30px;margin-inline-end:5px;margin-inline-start:10px;-webkit-mask:var(--sa11y-low-vision-icon) center no-repeat;mask:var(--sa11y-low-vision-icon) center no-repeat;width:30px}@media screen and (forced-colors:active){#panel-colour-filters .panel-icon{forced-color-adjust:none}}.select-dropdown{align-items:center;display:flex;position:relative}.select-dropdown:after{border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid var(--sa11y-setting-switch-bg-off);content:\" \";inset-inline-end:14px;position:absolute}#colour-filter-select{-webkit-appearance:none;-moz-appearance:none;appearance:none;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-setting-switch-bg-off);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;margin-inline-end:4px;padding-inline-end:25px;padding-inline-start:5px;position:relative;text-align:end;vertical-align:middle}#colour-filter-select:focus,#colour-filter-select:hover{background:var(--sa11y-shortcut-hover)}#colour-filter-select.active{box-shadow:0 0 0 2px var(--sa11y-setting-switch-bg-on)}#colour-filter-item label,#colour-filter-item select{margin-bottom:9px;margin-top:10px}#readability-panel{display:none;opacity:0}#readability-panel.active{display:block;opacity:1}.top-left #readability-content,.top-right #readability-content{border-top:1px solid var(--sa11y-panel-bg-splitter)}.left #readability-content,.right #readability-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter)}#readability-content{color:var(--sa11y-panel-primary);padding:10px 15px;width:100%}#readability-details{list-style-type:none;margin:0;padding:0;white-space:normal}#readability-details li{display:inline-block;list-style-type:none;margin:0;padding-inline-end:10px}.readability-score{background-color:var(--sa11y-panel-badge);border-radius:4px;color:var(--sa11y-panel-primary);margin-inline-start:5px;padding:2px 5px}#readability-info{margin-inline-start:10px}#skip-to-page-issues{display:none}#panel.has-page-issues #skip-to-page-issues{clip:rect(0,0,0,0);background:var(--sa11y-panel-bg);border:0;border-radius:5px;display:block;height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}#panel.has-page-issues #skip-to-page-issues:focus{clip:auto;height:auto;margin:0;overflow:visible;padding:5px 7px;white-space:normal;width:auto;z-index:1}.hide-settings-border{border-bottom:0!important;padding:0 15px!important}.hide-settings-border li:not(#colour-filter-item){display:none!important}.hide-settings-border #about-content{display:none}.hide-settings-border.scrollable:before{all:unset}::-webkit-scrollbar{height:6px;width:7px}::-webkit-scrollbar-thumb{background-color:var(--sa11y-button-outline);border-radius:6px}*{scrollbar-color:var(--sa11y-button-outline);scrollbar-width:thin}.scrollable:before{animation:fade 1s ease-in-out;background:linear-gradient(180deg,transparent 70%,var(--sa11y-panel-scrollable) 100%);background-position:bottom;bottom:auto;content:\"\";height:250px;left:0;position:absolute;right:0;top:auto;transition:opacity 1s ease-in-out;width:100%;z-index:-1}#settings-content.scrollable:before{height:400px}.top-left .scrollable:before,.top-right .scrollable:before{border-radius:5px}#page-issues-content.scrollable:before{height:160px}#panel-alert.scrollable:before{height:200px}@keyframes sa11y-toggle-gradient{0%{background-position:50% 0}50%{background-position:50% 100%}to{background-position:50% 0}}@keyframes fade{0%{opacity:0}to{opacity:1}}@media (prefers-reduced-motion:reduce){*{animation:none!important;transform:none!important;transition:none!important}}#panel{width:400px}#container:lang(en) #panel{width:305px}#container:lang(da) #panel,#container:lang(de) #panel,#container:lang(nb) #panel,#container:lang(pl) #panel,#container:lang(sv) #panel,#container:lang(zh) #panel{width:350px}#container:lang(bg) .switch:not(#export-results-item *),#container:lang(es) .switch:not(#export-results-item *){width:225px!important}#container:not(:lang(en)):not(:lang(de)) .switch{width:205px}";
 
   class ControlPanel extends HTMLElement {
     connectedCallback() {
@@ -1729,10 +1785,8 @@
       // Icon for the main toggle.
       const MainToggleIcon = '<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 48c114.953 0 208 93.029 208 208 0 114.953-93.029 208-208 208-114.953 0-208-93.029-208-208 0-114.953 93.029-208 208-208m0-40C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 56C149.961 64 64 149.961 64 256s85.961 192 192 192 192-85.961 192-192S362.039 64 256 64zm0 44c19.882 0 36 16.118 36 36s-16.118 36-36 36-36-16.118-36-36 16.118-36 36-36zm117.741 98.023c-28.712 6.779-55.511 12.748-82.14 15.807.851 101.023 12.306 123.052 25.037 155.621 3.617 9.26-.957 19.698-10.217 23.315-9.261 3.617-19.699-.957-23.316-10.217-8.705-22.308-17.086-40.636-22.261-78.549h-9.686c-5.167 37.851-13.534 56.208-22.262 78.549-3.615 9.255-14.05 13.836-23.315 10.217-9.26-3.617-13.834-14.056-10.217-23.315 12.713-32.541 24.185-54.541 25.037-155.621-26.629-3.058-53.428-9.027-82.141-15.807-8.6-2.031-13.926-10.648-11.895-19.249s10.647-13.926 19.249-11.895c96.686 22.829 124.283 22.783 220.775 0 8.599-2.03 17.218 3.294 19.249 11.895 2.029 8.601-3.297 17.219-11.897 19.249z"/></svg>';
 
-      const rememberContrast = store.getItem('sa11y-remember-contrast') === 'On';
-      const rememberFormLabels = store.getItem('sa11y-remember-labels') === 'On';
-      const rememberLinksAdvanced = store.getItem('sa11y-remember-links-advanced') === 'On';
-      const rememberReadability = store.getItem('sa11y-remember-readability') === 'On';
+      const rememberAdvanced = store.getItem('sa11y-advanced') === 'On';
+      const rememberReadability = store.getItem('sa11y-readability') === 'On';
 
       // If admin wants users to check everything, without toggleable checks.
       const checkAll = Constants.Global.checkAllHideToggles;
@@ -1741,36 +1795,18 @@
       const { panelPosition } = Constants.Global;
 
       /* TOGGLEABLE PLUGINS */
-      const contrastPlugin = Constants.Global.contrastPlugin ? `
-      <li id="contrast-item" ${checkAll ? 'hidden' : ''}>
-        <label id="check-contrast" for="contrast-toggle">${Lang._('CONTRAST')}</label>
-        <button id="contrast-toggle"
-          aria-labelledby="check-contrast"
+      const advancedPlugin = Constants.Global.advancedPlugin ? `
+      <li id="advanced-item" ${checkAll ? 'hidden' : ''}>
+        <label id="check-advanced" for="advanced-toggle">${Lang._('ADVANCED')}</label>
+        <button id="advanced-toggle"
+          aria-labelledby="check-advanced"
           class="switch"
-          aria-pressed="${rememberContrast ? 'true' : 'false'}">${rememberContrast ? Lang._('ON') : Lang._('OFF')}</button>
-      </li>` : '';
-
-      const formLabelsPlugin = Constants.Global.formLabelsPlugin ? `
-      <li id="form-labels-item" ${checkAll ? 'hidden' : ''}>
-        <label id="check-labels" for="labels-toggle">${Lang._('FORM_LABELS')}</label>
-        <button id="labels-toggle"
-          aria-labelledby="check-labels"
-          class="switch"
-          aria-pressed="${rememberFormLabels ? 'true' : 'false'}">${rememberFormLabels ? Lang._('ON') : Lang._('OFF')}</button>
-      </li>` : '';
-
-      const linksAdvancedPlugin = Constants.Global.linksAdvancedPlugin ? `
-      <li id="links-advanced-item" ${checkAll ? 'hidden' : ''}>
-        <label id="check-changerequest" for="links-advanced-toggle">${Lang._('LINKS_ADVANCED')} <span class="badge">AAA</span></label>
-        <button id="links-advanced-toggle"
-          aria-labelledby="check-changerequest"
-          class="switch"
-          aria-pressed="${rememberLinksAdvanced ? 'true' : 'false'}">${rememberLinksAdvanced ? Lang._('ON') : Lang._('OFF')}</button>
+          aria-pressed="${rememberAdvanced ? 'true' : 'false'}">${rememberAdvanced ? Lang._('ON') : Lang._('OFF')}</button>
       </li>` : '';
 
       const readabilityPlugin = Constants.Readability.Plugin ? `
       <li id="readability-item">
-        <label id="check-readability" for="readability-toggle">${Lang._('LANG_READABILITY')} <span class="badge">AAA</span></label>
+        <label id="check-readability" for="readability-toggle">${Lang._('READABILITY')}</label>
         <button id="readability-toggle"
           aria-labelledby="check-readability"
           class="switch"
@@ -1850,7 +1886,7 @@
         </div>
         <div id="readability-panel">
           <div id="readability-content">
-            <h2 class="header-text-inline">${Lang._('LANG_READABILITY')}</h2>
+            <h2 class="header-text-inline">${Lang._('READABILITY')}</h2>
             <p id="readability-info"></p>
             <ul id="readability-details"></ul>
           </div>
@@ -1880,9 +1916,7 @@
         </div>
         <div id="settings-content">
           <ul id="settings-options">
-            ${contrastPlugin}
-            ${formLabelsPlugin}
-            ${linksAdvancedPlugin}
+            ${advancedPlugin}
             ${readabilityPlugin}
             <li id="dark-mode-item">
               <label id="dark-mode" for="theme-toggle">${Lang._('DARK_MODE')}</label>
@@ -1922,7 +1956,7 @@
         </button>
         <button id="skip-button" type="button">
           <div class="panel-icon"></div>
-          <span class="visually-hidden">${Lang._('SHORTCUT_SCREEN_READER')}</span>
+          <span class="visually-hidden">${Lang._('SHORTCUT_SR')}</span>
         </button>
         <button id="dismiss-button" type="button">
           <div class="dismiss-icon"></div>
@@ -2000,72 +2034,26 @@
   /* ************************************************************ */
   function settingsPanelToggles(checkAll, resetAll) {
     /* ***************** */
-    /*  Contrast toggle  */
+    /*  Advanced toggle  */
     /* ***************** */
-    if (Constants.Global.contrastPlugin) {
-      Constants.Panel.contrastToggle.onclick = async () => {
-        if (store.getItem('sa11y-remember-contrast') === 'On') {
-          store.setItem('sa11y-remember-contrast', 'Off');
-          Constants.Panel.contrastToggle.textContent = `${Lang._('OFF')}`;
-          Constants.Panel.contrastToggle.setAttribute('aria-pressed', 'false');
+    if (Constants.Global.advancedPlugin) {
+      Constants.Panel.advancedToggle.onclick = async () => {
+        if (store.getItem('sa11y-advanced') === 'On') {
+          store.setItem('sa11y-advanced', 'Off');
+          Constants.Panel.advancedToggle.textContent = `${Lang._('OFF')}`;
+          Constants.Panel.advancedToggle.setAttribute('aria-pressed', 'false');
           resetAll(false);
           await checkAll();
         } else {
-          store.setItem('sa11y-remember-contrast', 'On');
-          Constants.Panel.contrastToggle.textContent = `${Lang._('ON')}`;
-          Constants.Panel.contrastToggle.setAttribute('aria-pressed', 'true');
+          store.setItem('sa11y-advanced', 'On');
+          Constants.Panel.advancedToggle.textContent = `${Lang._('ON')}`;
+          Constants.Panel.advancedToggle.setAttribute('aria-pressed', 'true');
           resetAll(false);
           await checkAll();
         }
       };
     } else {
-      store.setItem('sa11y-remember-contrast', 'Off');
-    }
-
-    /* ***************** */
-    /*  Form Labels      */
-    /* ***************** */
-    if (Constants.Global.formLabelsPlugin) {
-      Constants.Panel.labelsToggle.onclick = async () => {
-        if (store.getItem('sa11y-remember-labels') === 'On') {
-          store.setItem('sa11y-remember-labels', 'Off');
-          Constants.Panel.labelsToggle.textContent = `${Lang._('OFF')}`;
-          Constants.Panel.labelsToggle.setAttribute('aria-pressed', 'false');
-          resetAll(false);
-          await checkAll();
-        } else {
-          store.setItem('sa11y-remember-labels', 'On');
-          Constants.Panel.labelsToggle.textContent = `${Lang._('ON')}`;
-          Constants.Panel.labelsToggle.setAttribute('aria-pressed', 'true');
-          resetAll(false);
-          await checkAll();
-        }
-      };
-    } else {
-      store.setItem('sa11y-remember-labels', 'Off');
-    }
-
-    /* ****************** */
-    /*  Links (Advanced)  */
-    /* ****************** */
-    if (Constants.Global.linksAdvancedPlugin) {
-      Constants.Panel.linksToggle.onclick = async () => {
-        if (store.getItem('sa11y-remember-links-advanced') === 'On') {
-          store.setItem('sa11y-remember-links-advanced', 'Off');
-          Constants.Panel.linksToggle.textContent = `${Lang._('OFF')}`;
-          Constants.Panel.linksToggle.setAttribute('aria-pressed', 'false');
-          resetAll(false);
-          await checkAll();
-        } else {
-          store.setItem('sa11y-remember-links-advanced', 'On');
-          Constants.Panel.linksToggle.textContent = `${Lang._('ON')}`;
-          Constants.Panel.linksToggle.setAttribute('aria-pressed', 'true');
-          resetAll(false);
-          await checkAll();
-        }
-      };
-    } else {
-      store.setItem('sa11y-remember-links-advanced', 'Off');
+      store.setItem('sa11y-advanced', 'Off');
     }
 
     /* ****************** */
@@ -2073,15 +2061,15 @@
     /* ****************** */
     if (Constants.Readability.Plugin) {
       Constants.Panel.readabilityToggle.onclick = async () => {
-        if (store.getItem('sa11y-remember-readability') === 'On') {
-          store.setItem('sa11y-remember-readability', 'Off');
+        if (store.getItem('sa11y-readability') === 'On') {
+          store.setItem('sa11y-readability', 'Off');
           Constants.Panel.readabilityToggle.textContent = `${Lang._('OFF')}`;
           Constants.Panel.readabilityToggle.setAttribute('aria-pressed', 'false');
           Constants.Panel.readability.classList.remove('active');
           resetAll(false);
           await checkAll();
         } else {
-          store.setItem('sa11y-remember-readability', 'On');
+          store.setItem('sa11y-readability', 'On');
           Constants.Panel.readabilityToggle.textContent = `${Lang._('ON')}`;
           Constants.Panel.readabilityToggle.setAttribute('aria-pressed', 'true');
           Constants.Panel.readability.classList.add('active');
@@ -2090,7 +2078,7 @@
         }
       };
 
-      if (store.getItem('sa11y-remember-readability') === 'On') {
+      if (store.getItem('sa11y-readability') === 'On') {
         Constants.Panel.readability.classList.add('active');
       }
     }
@@ -2101,63 +2089,31 @@
      * @link https://derekkedziora.com/blog/dark-mode-revisited
     */
     const systemInitiatedDark = window.matchMedia('(prefers-color-scheme: dark)');
-    if (systemInitiatedDark.matches) {
-      Constants.Panel.themeToggle.textContent = `${Lang._('ON')}`;
-      Constants.Panel.themeToggle.setAttribute('aria-pressed', 'true');
-    } else {
-      Constants.Panel.themeToggle.textContent = `${Lang._('OFF')}`;
-      Constants.Panel.themeToggle.setAttribute('aria-pressed', 'false');
-    }
-    const prefersColorTest = () => {
-      if (systemInitiatedDark.matches) {
-        Constants.Global.html.setAttribute('data-sa11y-theme', 'dark');
-        Constants.Panel.themeToggle.textContent = `${Lang._('ON')}`;
-        Constants.Panel.themeToggle.setAttribute('aria-pressed', 'true');
-        store.setItem('sa11y-remember-theme', '');
-      } else {
-        Constants.Global.html.setAttribute('data-sa11y-theme', 'light');
-        Constants.Panel.themeToggle.textContent = `${Lang._('OFF')}`;
-        Constants.Panel.themeToggle.setAttribute('aria-pressed', 'false');
-        store.setItem('sa11y-remember-theme', '');
-      }
+    const { themeToggle } = Constants.Panel;
+    const { html } = Constants.Global;
+
+    const storeTheme = (theme) => {
+      html.setAttribute('data-sa11y-theme', theme);
+      store.setItem('sa11y-theme', theme);
+      themeToggle.textContent = Lang._(theme === 'dark' ? 'ON' : 'OFF');
+      themeToggle.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
     };
-    systemInitiatedDark.addEventListener('change', prefersColorTest);
-    Constants.Panel.themeToggle.onclick = async () => {
-      const theme = store.getItem('sa11y-remember-theme');
-      if (theme === 'dark') {
-        Constants.Global.html.setAttribute('data-sa11y-theme', 'light');
-        store.setItem('sa11y-remember-theme', 'light');
-        Constants.Panel.themeToggle.textContent = `${Lang._('OFF')}`;
-        Constants.Panel.themeToggle.setAttribute('aria-pressed', 'false');
-      } else if (theme === 'light') {
-        Constants.Global.html.setAttribute('data-sa11y-theme', 'dark');
-        store.setItem('sa11y-remember-theme', 'dark');
-        Constants.Panel.themeToggle.textContent = `${Lang._('ON')}`;
-        Constants.Panel.themeToggle.setAttribute('aria-pressed', 'true');
-      } else if (systemInitiatedDark.matches) {
-        Constants.Global.html.setAttribute('data-sa11y-theme', 'light');
-        store.setItem('sa11y-remember-theme', 'light');
-        Constants.Panel.themeToggle.textContent = `${Lang._('OFF')}`;
-        Constants.Panel.themeToggle.setAttribute('aria-pressed', 'false');
-      } else {
-        Constants.Global.html.setAttribute('data-sa11y-theme', 'dark');
-        store.setItem('sa11y-remember-theme', 'dark');
-        Constants.Panel.themeToggle.textContent = `${Lang._('ON')}`;
-        Constants.Panel.themeToggle.setAttribute('aria-pressed', 'true');
-      }
+
+    // Initial theme setup.
+    const initialTheme = store.getItem('sa11y-theme') || (systemInitiatedDark.matches ? 'dark' : 'light');
+    storeTheme(initialTheme);
+
+    // Listen to system theme changes.
+    systemInitiatedDark.addEventListener('change', () => {
+      storeTheme(systemInitiatedDark.matches ? 'dark' : 'light');
+    });
+
+    // Toggle theme on based on toggle switch.
+    themeToggle.onclick = () => {
+      const currentTheme = store.getItem('sa11y-theme') || (systemInitiatedDark.matches ? 'dark' : 'light');
+      const preferredTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      storeTheme(preferredTheme);
     };
-    const theme = store.getItem('sa11y-remember-theme');
-    if (theme === 'dark') {
-      Constants.Global.html.setAttribute('data-sa11y-theme', 'dark');
-      store.setItem('sa11y-remember-theme', 'dark');
-      Constants.Panel.themeToggle.textContent = `${Lang._('ON')}`;
-      Constants.Panel.themeToggle.setAttribute('aria-pressed', 'true');
-    } else if (theme === 'light') {
-      Constants.Global.html.setAttribute('data-sa11y-theme', 'light');
-      store.setItem('sa11y-remember-theme', 'light');
-      Constants.Panel.themeToggle.textContent = `${Lang._('OFF')}`;
-      Constants.Panel.themeToggle.setAttribute('aria-pressed', 'false');
-    }
 
     /* ****************** */
     /*  Colour filters    */
@@ -2182,7 +2138,7 @@
 
         if (option >= 1 && option <= 4) {
           if (window.matchMedia('(forced-colors: active)').matches) {
-            createAlert(Lang._('COLOUR_FILTER_HIGH_CONTRAST_MESSAGE'));
+            createAlert(Lang._('COLOUR_FILTER_HIGH_CONTRAST'));
           } else {
             // Set attributes.
             Constants.Root.areaToCheck.setAttribute('data-sa11y-filter', filters[option - 1]);
@@ -2248,7 +2204,7 @@
     Constants.Panel.outlineToggle.classList.add('active');
     Constants.Panel.outline.classList.add('active');
     Constants.Panel.outlineToggle.setAttribute('aria-expanded', 'true');
-    store.setItem('sa11y-remember-outline', 'Opened');
+    store.setItem('sa11y-outline', 'Opened');
     isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
 
     // Toggle visibility of heading labels
@@ -2263,7 +2219,7 @@
     Constants.Panel.outline.classList.remove('active');
     Constants.Panel.outlineToggle.classList.remove('active');
     Constants.Panel.outlineToggle.setAttribute('aria-expanded', 'false');
-    store.setItem('sa11y-remember-outline', 'Closed');
+    store.setItem('sa11y-outline', 'Closed');
 
     // Toggle visibility of heading labels
     const headingLabels = find('sa11y-heading-label', 'root');
@@ -2277,7 +2233,7 @@
     Constants.Panel.imagesToggle.classList.add('active');
     Constants.Panel.images.classList.add('active');
     Constants.Panel.imagesToggle.setAttribute('aria-expanded', 'true');
-    store.setItem('sa11y-remember-images', 'Opened');
+    store.setItem('sa11y-images', 'Opened');
     isScrollable(Constants.Panel.imagesList, Constants.Panel.imagesContent);
 
     const event = new CustomEvent('sa11y-build-image-outline');
@@ -2289,7 +2245,7 @@
       Constants.Panel.imagesToggle.classList.remove('active');
       Constants.Panel.images.classList.remove('active');
       Constants.Panel.imagesToggle.setAttribute('aria-expanded', 'false');
-      store.setItem('sa11y-remember-images', 'Closed');
+      store.setItem('sa11y-images', 'Closed');
     }
   };
 
@@ -2300,7 +2256,7 @@
     Constants.Panel.settingsToggle.classList.add('active');
     Constants.Panel.settings.classList.add('active');
     Constants.Panel.settingsToggle.setAttribute('aria-expanded', 'true');
-    store.setItem('sa11y-remember-settings', 'Opened');
+    store.setItem('sa11y-settings', 'Opened');
     isScrollable(
       Constants.Panel.settingsContent,
       Constants.Panel.settingsContent,
@@ -2312,7 +2268,7 @@
     Constants.Panel.settings.classList.remove('active');
     Constants.Panel.settingsToggle.classList.remove('active');
     Constants.Panel.settingsToggle.setAttribute('aria-expanded', 'false');
-    store.setItem('sa11y-remember-settings', 'Closed');
+    store.setItem('sa11y-settings', 'Closed');
   };
 
   /* **************************************************************** */
@@ -2336,7 +2292,7 @@
     });
 
     // Remember to leave outline open
-    if (store.getItem('sa11y-remember-outline') === 'Opened') {
+    if (store.getItem('sa11y-outline') === 'Opened') {
       openOutline();
     }
 
@@ -2358,7 +2314,7 @@
       });
 
       // Remember to leave outline open
-      if (store.getItem('sa11y-remember-images') === 'Opened') {
+      if (store.getItem('sa11y-images') === 'Opened') {
         openImages();
       }
     }
@@ -2380,7 +2336,7 @@
     });
 
     // Remember to leave settings open
-    if (store.getItem('sa11y-remember-settings') === 'Opened') {
+    if (store.getItem('sa11y-settings') === 'Opened') {
       openSettings();
     }
 
@@ -2533,7 +2489,7 @@
           label.shadowRoot.appendChild(content);
 
           // Make heading labels visible when panel is open.
-          if (store.getItem('sa11y-remember-outline') === 'Opened') {
+          if (store.getItem('sa11y-outline') === 'Opened') {
             label.hidden = false;
           }
         }
@@ -2577,7 +2533,7 @@
               });
 
               if (outlineLink.classList.contains('hidden-h')) {
-                createAlert(`${Lang._('HEADING_NOT_VISIBLE_ALERT')}`);
+                createAlert(`${Lang._('HEADING_NOT_VISIBLE')}`);
               } else if (Constants.Panel.alert.classList.contains('active')) {
                 removeAlert();
               }
@@ -2640,7 +2596,7 @@
     };
 
     // Generate heading outline based on local storage or if "Outline" button is selected.
-    const rememberOutline = store.getItem('sa11y-remember-outline');
+    const rememberOutline = store.getItem('sa11y-outline');
     if (rememberOutline === 'Opened') outlineHandler();
     document.addEventListener('sa11y-build-heading-outline', outlineHandler);
   }
@@ -2775,7 +2731,7 @@
 
       // Append headings to Page Outline.
       Constants.Panel.imagesList.innerHTML = (imageArray.length === 0)
-        ? `<li>${Lang._('IMAGES_NOT_FOUND')}</li>`
+        ? `<li>${Lang._('NO_IMAGES')}</li>`
         : imageArray.join(' ');
 
       // Remove event listener.
@@ -2783,7 +2739,7 @@
     };
 
     /* Generate image outline based on local storage or if "Image" button is selected. */
-    const rememberImages = store.getItem('sa11y-remember-images');
+    const rememberImages = store.getItem('sa11y-images');
     if (rememberImages === 'Opened') imageOutlineHandler();
     document.addEventListener('sa11y-build-image-outline', imageOutlineHandler);
   }
@@ -2811,7 +2767,7 @@
       Constants.Panel.skipButton.classList.remove('active');
     } else {
       Constants.Panel.content.setAttribute('class', 'good');
-      Constants.Panel.status.innerHTML = `${Lang._('PANEL_STATUS_NONE')}`;
+      Constants.Panel.status.innerHTML = `${Lang._('NO_ERRORS_FOUND')}`;
     }
 
     // If there are no button annotations, disable the Skip-to-Toggle switch.
@@ -2833,15 +2789,15 @@
     } else if (warningCount > 0 && errorCount === 0) {
       Constants.Panel.notifBadge.classList.add('notification-badge-warning');
       Constants.Panel.notifCount.innerText = `${warningCount}`;
-      Constants.Panel.notifText.innerText = `${Lang._('PANEL_ICON_WARNINGS')}`;
+      Constants.Panel.notifText.innerText = `${Lang._('WARNINGS_FOUND')}`;
     } else {
       Constants.Panel.notifBadge.classList.remove('notification-badge-warning');
       Constants.Panel.notifCount.innerText = `${totalCount}`;
-      Constants.Panel.notifText.innerText = Lang._('PANEL_ICON_TOTAL');
+      Constants.Panel.notifText.innerText = Lang._('TOTAL_FOUND');
     }
 
     // Don't show badge when panel is opened.
-    if (store.getItem('sa11y-remember-panel') === 'Opened' || totalCount === 0) {
+    if (store.getItem('sa11y-panel') === 'Opened' || totalCount === 0) {
       Constants.Panel.notifBadge.style.display = 'none';
     } else {
       Constants.Panel.notifBadge.style.display = 'flex';
@@ -6165,7 +6121,7 @@
     render: render
   });
 
-  var tooltipStyles = "a,button,code,div,h1,h2,kbd,li,ol,p,span,strong,svg,ul{all:unset;box-sizing:border-box!important}div{display:block}:after,:before{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}@media (forced-colors:active){[data-tippy-root]{border:2px solid transparent;border-radius:5px}}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:0}.tippy-box[data-placement^=top]>.tippy-arrow:before{border-top-color:initial;border-width:8px 8px 0;bottom:-7px;left:0;transform-origin:center top}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:0}.tippy-box[data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:initial;border-width:0 8px 8px;left:0;top:-7px;transform-origin:center bottom}.tippy-box[data-placement^=left]>.tippy-arrow{right:0}.tippy-box[data-placement^=left]>.tippy-arrow:before{border-left-color:initial;border-width:8px 0 8px 8px;right:-7px;transform-origin:center left}.tippy-box[data-placement^=right]>.tippy-arrow{left:0}.tippy-box[data-placement^=right]>.tippy-arrow:before{border-right-color:initial;border-width:8px 8px 8px 0;left:-7px;transform-origin:center right}.tippy-arrow{color:#333;height:16px;width:16px}.tippy-arrow:before{border-color:transparent;border-style:solid;content:\"\";position:absolute}.tippy-content{padding:5px 9px;position:relative;z-index:1}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{word-wrap:break-word;min-width:300px;text-align:start}[role=tooltip]{min-width:185px;text-align:center}.tippy-box[data-theme~=sa11y-theme]{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-bg);border-radius:4px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15)!important;color:var(--sa11y-panel-primary);display:block;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px;outline:0;padding:8px;position:relative;transition-property:transform,visibility,opacity}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace;font-size:calc(var(--sa11y-normal-text) - 1px)}.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);letter-spacing:normal;line-height:22px;padding:1.6px 4.8px}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block-end:0;margin-block-start:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{display:list-item;margin:5px 10px 0 20px;padding-bottom:5px}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] a:hover{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin:0}.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:focus,.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme] .link-icon{background:var(--sa11y-panel-primary);display:inline-block;height:16px;margin-bottom:-3px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat;width:16px}.tippy-box[data-theme~=sa11y-theme] .error .badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .error .link-icon{background:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .warning .badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme] .warning .link-icon{background:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{forced-color-adjust:none}.tippy-box[data-theme~=sa11y-theme] .tippy-arrow{z-index:-1}}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:active,.tippy-box[data-theme~=sa11y-theme] button:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible){box-shadow:none;outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus-visible,.tippy-box[data-theme~=sa11y-theme] a:focus-visible,.tippy-box[data-theme~=sa11y-theme] button:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.tippy-box[data-theme~=sa11y-theme] .error-icon,.tippy-box[data-theme~=sa11y-theme] .hidden-icon,.tippy-box[data-theme~=sa11y-theme] .link-icon{filter:invert(1)}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:focus{outline:3px solid transparent!important}}";
+  var tooltipStyles = "a,button,code,div,h1,h2,kbd,li,ol,p,span,strong,svg,ul{all:unset;box-sizing:border-box!important}div{display:block}:after,:before{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}@media (forced-colors:active){[data-tippy-root]{border:2px solid transparent;border-radius:5px}}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:0}.tippy-box[data-placement^=top]>.tippy-arrow:before{border-top-color:initial;border-width:8px 8px 0;bottom:-7px;left:0;transform-origin:center top}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:0}.tippy-box[data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:initial;border-width:0 8px 8px;left:0;top:-7px;transform-origin:center bottom}.tippy-box[data-placement^=left]>.tippy-arrow{right:0}.tippy-box[data-placement^=left]>.tippy-arrow:before{border-left-color:initial;border-width:8px 0 8px 8px;right:-7px;transform-origin:center left}.tippy-box[data-placement^=right]>.tippy-arrow{left:0}.tippy-box[data-placement^=right]>.tippy-arrow:before{border-right-color:initial;border-width:8px 8px 8px 0;left:-7px;transform-origin:center right}.tippy-arrow{color:#333;height:16px;width:16px}.tippy-arrow:before{border-color:transparent;border-style:solid;content:\"\";position:absolute}.tippy-content{padding:5px 9px;position:relative;z-index:1}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{word-wrap:break-word;min-width:300px;text-align:start}[role=tooltip]{min-width:185px;text-align:center}.tippy-box[data-theme~=sa11y-theme]{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-bg);border-radius:4px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15)!important;color:var(--sa11y-panel-primary);display:block;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px;outline:0;padding:8px;position:relative;transition-property:transform,visibility,opacity}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace;font-size:calc(var(--sa11y-normal-text) - 1px)}.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);letter-spacing:normal;line-height:22px;padding:1.6px 4.8px}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block-end:0;margin-block-start:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{display:list-item;margin:5px 10px 0 20px;padding-bottom:5px}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] a:hover{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin:0}.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:focus,.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme] .link-icon{background:var(--sa11y-panel-primary);display:inline-block;height:16px;margin-bottom:-3.5px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat;width:16px}.tippy-box[data-theme~=sa11y-theme] .error .badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .error .link-icon{background:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .warning .badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme] .warning .link-icon{background:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{forced-color-adjust:none}.tippy-box[data-theme~=sa11y-theme] .tippy-arrow{z-index:-1}}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:active,.tippy-box[data-theme~=sa11y-theme] button:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible){box-shadow:none;outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus-visible,.tippy-box[data-theme~=sa11y-theme] a:focus-visible,.tippy-box[data-theme~=sa11y-theme] button:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.tippy-box[data-theme~=sa11y-theme] .error-icon,.tippy-box[data-theme~=sa11y-theme] .hidden-icon,.tippy-box[data-theme~=sa11y-theme] .link-icon{filter:invert(1)}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:focus{outline:3px solid transparent!important}}";
 
   class TooltipComponent extends HTMLElement {
     connectedCallback() {
@@ -6268,7 +6224,7 @@
         keyboardShortcut = '<span class="kbd">Alt</span> + <span class="kbd">S</span>';
       }
       tippy(Constants.Panel.skipButton, {
-        content: `${Lang._('SHORTCUT_TOOLTIP')} &raquo; <br> ${keyboardShortcut}`,
+        content: `${Lang._('SKIP_TO_ISSUE')} &raquo; <br> ${keyboardShortcut}`,
         allowHTML: true,
         delay: [500, 0],
         offset: [0, 8],
@@ -6337,6 +6293,7 @@
     * @param {Boolean} inline: Whether the annotation should be displayed inline with text.
     * @param {String} position: Position of annotation (beforebegin, afterbegin, e.g.).
     * @param {Number} index: Index or order of issue.
+    * @param {String} dismissKey: Unique dismiss key to identify element.
   */
   function annotate(
     element,
@@ -6346,17 +6303,14 @@
     position,
     index,
     dismissKey,
-    dismissAnnotationsOption,
+    option,
   ) {
-    const validTypes = [
-      'error',
-      'warning',
-      'good',
-    ];
-
+    // Validate types to prevent errors.
+    const validTypes = ['error', 'warning', 'good'];
     if (validTypes.indexOf(type) === -1) {
       throw Error(`Invalid type [${type}] for annotation`);
     }
+
     // Add unique ID and styles to annotation and marked element.
     [type].forEach(($el) => {
       if ($el === 'error' && element !== undefined) {
@@ -6368,29 +6322,38 @@
       }
     });
 
+    // Generate aria-label for annotations.
     const ariaLabel = {
       [validTypes[0]]: Lang._('ERROR'),
       [validTypes[1]]: Lang._('WARNING'),
       [validTypes[2]]: Lang._('GOOD'),
     };
 
-    // Add dismiss button if prop enabled & dismiss key was defined.
-    const dismiss = (dismissAnnotationsOption === true && type === 'warning' && dismissKey !== undefined)
+    // Don't paint page with "Good" annotations for images with alt text and links with accessible name.
+    if (option.showGoodImageButton === false && element?.tagName === 'IMG' && type === 'good') return;
+    if (option.showGoodLinkButton === false && element?.tagName === 'A' && type === 'good') return;
+
+    // Add dismiss button if prop enabled & has a dismiss key.
+    const dismiss = (option.dismissAnnotations === true && type === 'warning' && dismissKey !== undefined)
       ? `<button data-sa11y-dismiss='${index}' type='button'>${Lang._('DISMISS')}</button>` : '';
 
+    // Create 'sa11y-annotation' web component for each annotation.
     const instance = document.createElement('sa11y-annotation');
     instance.setAttribute('data-sa11y-annotation', index);
-    const create = document.createElement('div');
-    const listItem = document.createElement('li');
 
+    // Generate HTML for painted annotations.
     if (element === undefined) {
       // Page errors displayed to main panel.
-      Constants.Panel.pageIssues.classList.add('active');
-      Constants.Panel.panel.classList.add('has-page-issues');
+      const listItem = document.createElement('li');
       listItem.innerHTML = `<strong>${ariaLabel[type]}</strong> ${content}${dismiss}`;
       Constants.Panel.pageIssuesList.insertAdjacentElement('afterbegin', listItem);
+
+      // Display Page Issues panel.
+      Constants.Panel.pageIssues.classList.add('active');
+      Constants.Panel.panel.classList.add('has-page-issues');
     } else {
       // Button annotations.
+      const create = document.createElement('div');
       create.classList.add(`${inline ? 'instance-inline' : 'instance'}`);
       create.innerHTML = `
     <button
@@ -6405,7 +6368,7 @@
     ></button>`;
 
       // Make sure annotations always appended outside of interactive elements.
-      const location = element.closest('a, button') || element;
+      const location = element.closest('a, button, [role="link"], [role="button"]') || element;
       location.insertAdjacentElement(position, instance);
       instance.shadowRoot.appendChild(create);
     }
@@ -6532,7 +6495,7 @@
       // Alert if tooltip is hidden.
       getHiddenParent($el);
       const tooltip = $el.getAttribute('data-tippy-content');
-      createAlert(`${Lang._('NOT_VISIBLE_ALERT')}`, tooltip, elementPreview);
+      createAlert(`${Lang._('NOT_VISIBLE')}`, tooltip, elementPreview);
 
       closeAnyActiveTooltips();
 
@@ -6849,7 +6812,7 @@
         }
       });
 
-      const susAltWordsOverride = (option.susAltStopWords) ? option.susAltStopWords.split(',').map((word) => word.trim()) : Lang._('SUSPICIOUS_ALT_STOPWORDS');
+      const susAltWordsOverride = (option.susAltStopWords) ? option.susAltStopWords.split(',').map((word) => word.trim()) : Lang._('SUS_ALT_STOPWORDS');
       susAltWordsOverride.forEach((word) => {
         const susWord = alt.toLowerCase().indexOf(word);
         if (susWord > -1 && susWord < 6) {
@@ -6882,6 +6845,10 @@
       const alt = (computeAriaLabel($el) === 'noAria') ? $el.getAttribute('alt') : computeAriaLabel($el);
       const link = $el.closest('a[href]');
 
+      // Image's source for key.
+      const src = ($el.getAttribute('src')) ? $el.getAttribute('src') : $el.getAttribute('srcset');
+      const key = prepareDismissal(`IMAGE${src}`);
+
       // Process link text exclusions.
       const linkSpanExclusions = link
         ? fnIgnore(link, Constants.Exclusions.LinkSpan).textContent : '';
@@ -6898,13 +6865,15 @@
       if (link && link.getAttribute('aria-hidden') === 'true') {
         // If linked image has aria-hidden, but is still focusable.
         const unfocusable = link.getAttribute('tabindex') === '-1';
-        if (!unfocusable) {
+        if (option.checks.LINK_HIDDEN_FOCUSABLE && !unfocusable) {
           results.push({
             element: $el,
-            type: 'error',
-            content: Lang.sprintf('LINK_HIDDEN_FOCUSABLE'),
+            type: option.checks.LINK_HIDDEN_FOCUSABLE.type || 'error',
+            content: option.checks.LINK_HIDDEN_FOCUSABLE.content || Lang.sprintf('LINK_HIDDEN_FOCUSABLE'),
             inline: false,
             position: 'beforebegin',
+            dismiss: key,
+            advanced: option.checks.LINK_HIDDEN_FOCUSABLE.advanced || true,
           });
         }
         return;
@@ -6913,25 +6882,31 @@
       // If alt is missing.
       if (alt === null) {
         if (link) {
-          const content = (linkTextContentLength === 0)
-            ? Lang.sprintf('MISSING_ALT_LINK_MESSAGE')
-            : Lang.sprintf('MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE');
-
-          results.push({
-            element: $el,
-            type: 'error',
-            content,
-            inline: false,
-            position: 'beforebegin',
-          });
-        } else {
+          const rule = (linkTextContentLength === 0)
+            ? option.checks.MISSING_ALT_LINK
+            : option.checks.MISSING_ALT_LINK_HAS_TEXT;
+          if (rule) {
+            results.push({
+              element: $el,
+              type: rule.type || 'error',
+              content: rule.content || Lang.sprintf(linkTextContentLength === 0
+                ? 'MISSING_ALT_LINK' : 'MISSING_ALT_LINK_HAS_TEXT'),
+              inline: false,
+              position: 'beforebegin',
+              dismiss: key,
+              advanced: rule.advanced || false,
+            });
+          }
+        } else if (option.checks.MISSING_ALT) {
           // General failure message if image is missing alt.
           results.push({
             element: $el,
-            type: 'error',
-            content: Lang.sprintf('MISSING_ALT_MESSAGE'),
+            type: option.checks.MISSING_ALT.type || 'error',
+            content: option.checks.MISSING_ALT.content || Lang.sprintf('MISSING_ALT'),
             inline: false,
             position: 'beforebegin',
+            dismiss: key,
+            advanced: option.checks.MISSING_ALT.advanced || false,
           });
         }
       } else {
@@ -6947,58 +6922,75 @@
         const figcaption = figure?.querySelector('figcaption');
         const figcaptionText = (figcaption) ? figcaption.textContent.trim() : '';
 
-        // Image's source for key.
-        const src = ($el.getAttribute('src')) ? $el.getAttribute('src') : $el.getAttribute('srcset');
-
         // If aria-label or aria-labelledby returns empty or invalid.
         if (hasAria && altText === '') {
-          results.push({
-            element: $el,
-            type: 'error',
-            content: Lang.sprintf('MISSING_ALT_MESSAGE'),
-            inline: false,
-            position: 'beforebegin',
-          });
+          if (option.checks.MISSING_ALT) {
+            results.push({
+              element: $el,
+              type: option.checks.MISSING_ALT.type || 'error',
+              content: option.checks.MISSING_ALT.content || Lang.sprintf('MISSING_ALT'),
+              inline: false,
+              position: 'beforebegin',
+              dismiss: key,
+              advanced: option.checks.MISSING_ALT.advanced || false,
+            });
+          }
           return;
         }
 
         // Decorative images.
         if (decorative) {
-          const key = prepareDismissal(`DECORATIVE${src}`);
-          if (link) {
-            const type = (linkTextContentLength === 0) ? 'error' : 'good';
-            const content = (linkTextContentLength === 0)
-              ? Lang.sprintf('LINK_IMAGE_NO_ALT_TEXT')
-              : Lang.sprintf('LINK_IMAGE_HAS_TEXT');
-
+          if (option.checks.IMAGE_DECORATIVE_CAROUSEL && $el.closest(option.decorativeShouldHaveAlt)) {
             results.push({
               element: $el,
-              type,
-              content,
+              type: option.checks.IMAGE_DECORATIVE_CAROUSEL.type || 'warning',
+              content: option.checks.IMAGE_DECORATIVE_CAROUSEL.content || Lang.sprintf('IMAGE_DECORATIVE_CAROUSEL'),
               inline: false,
               position: 'beforebegin',
+              dismiss: key,
+              advanced: option.checks.IMAGE_DECORATIVE_CAROUSEL.advanced || false,
             });
+          } else if (link) {
+            const rule = (linkTextContentLength === 0)
+              ? option.checks.LINK_IMAGE_NO_ALT_TEXT
+              : option.checks.LINK_IMAGE_TEXT;
+            if (rule) {
+              results.push({
+                element: $el,
+                type: rule.type || (linkTextContentLength === 0 ? 'error' : 'good'),
+                content: rule.content || Lang.sprintf(linkTextContentLength === 0
+                  ? 'LINK_IMAGE_NO_ALT_TEXT' : 'LINK_IMAGE_TEXT'),
+                inline: false,
+                position: 'beforebegin',
+                dismiss: key,
+                advanced: rule.advanced || false,
+              });
+            }
           } else if (figure) {
-            const content = (figcaption && figcaptionText.length)
-              ? Lang.sprintf('IMAGE_FIGURE_DECORATIVE')
-              : Lang.sprintf('IMAGE_DECORATIVE');
-
+            const rule = (figcaption && figcaptionText.length)
+              ? option.checks.IMAGE_FIGURE_DECORATIVE
+              : option.checks.IMAGE_DECORATIVE;
+            if (rule) {
+              results.push({
+                element: $el,
+                type: rule.type || 'warning',
+                content: rule.content || Lang.sprintf(figcaption && figcaptionText.length
+                  ? 'IMAGE_FIGURE_DECORATIVE' : 'IMAGE_DECORATIVE'),
+                inline: false,
+                position: 'beforebegin',
+                dismiss: key,
+                advanced: rule.advanced || false,
+              });
+            }
+          } else if (option.checks.IMAGE_DECORATIVE) {
             results.push({
               element: $el,
-              type: 'warning',
-              content,
+              type: option.checks.IMAGE_DECORATIVE.type || 'warning',
+              content: option.checks.IMAGE_DECORATIVE.content || Lang.sprintf('IMAGE_DECORATIVE'),
               inline: false,
               position: 'beforebegin',
               dismiss: key,
-            });
-          } else {
-            results.push({
-              element: $el,
-              type: 'warning',
-              content: Lang.sprintf('IMAGE_DECORATIVE'),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: key,
+              advanced: option.checks.IMAGE_DECORATIVE.advanced || false,
             });
           }
           return;
@@ -7007,109 +6999,127 @@
         // Alt text quality.
         if (error[0] !== null) {
           // Has stop words.
-          const content = (link)
-            ? Lang.sprintf('LINK_ALT_HAS_FILE_EXTENSION', error[0], altText)
-            : Lang.sprintf('ALT_HAS_FILE_EXTENSION', error[0], altText);
-
-          results.push({
-            element: $el,
-            type: 'error',
-            content,
-            inline: false,
-            position: 'beforebegin',
-          });
+          const rule = (link)
+            ? option.checks.LINK_ALT_FILE_EXT
+            : option.checks.ALT_FILE_EXT;
+          if (rule) {
+            results.push({
+              element: $el,
+              type: rule.type || 'error',
+              content: rule.content || Lang.sprintf(link
+                ? 'LINK_ALT_FILE_EXT' : 'ALT_FILE_EXT', error[0], altText),
+              inline: false,
+              position: 'beforebegin',
+              dismiss: key,
+              advanced: rule.advanced || false,
+            });
+          }
         } else if (error[2] !== null) {
           // Placeholder words.
-          const content = (link)
-            ? Lang.sprintf('LINK_IMAGE_PLACEHOLDER_ALT_MESSAGE', altText)
-            : Lang.sprintf('ALT_PLACEHOLDER_MESSAGE', altText);
-
-          results.push({
-            element: $el,
-            type: 'error',
-            content,
-            inline: false,
-            position: 'beforebegin',
-          });
+          const rule = (link)
+            ? option.checks.LINK_PLACEHOLDER_ALT
+            : option.checks.ALT_PLACEHOLDER;
+          if (rule) {
+            results.push({
+              element: $el,
+              type: rule.type || 'error',
+              content: rule.content || Lang.sprintf(link
+                ? 'LINK_PLACEHOLDER_ALT' : 'ALT_PLACEHOLDER', altText),
+              inline: false,
+              position: 'beforebegin',
+              dismiss: key,
+              advanced: rule.advanced || false,
+            });
+          }
         } else if (error[1] !== null) {
           // Suspicious words.
-          const key = prepareDismissal(`${src + altText}`);
-          const content = (link)
-            ? Lang.sprintf('LINK_IMAGE_SUS_ALT_MESSAGE', error[1], altText)
-            : Lang.sprintf('ALT_HAS_SUS_WORD', error[1], altText);
-
-          results.push({
-            element: $el,
-            type: 'warning',
-            content,
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
-          });
+          const rule = (link)
+            ? option.checks.LINK_SUS_ALT
+            : option.checks.SUS_ALT;
+          if (rule) {
+            results.push({
+              element: $el,
+              type: rule.type || 'warning',
+              content: rule.content || Lang.sprintf(link
+                ? 'LINK_SUS_ALT' : 'SUS_ALT', error[1], altText),
+              inline: false,
+              position: 'beforebegin',
+              dismiss: key,
+              advanced: rule.advanced || false,
+            });
+          }
         } else if (alt.length > option.altTextMaxCharLength) {
           // Alt is too long.
-          const key = prepareDismissal(`${src + altText + alt.length}`);
-          const content = (link)
-            ? Lang.sprintf('LINK_IMAGE_LONG_ALT', alt.length, altText)
-            : Lang.sprintf('IMAGE_ALT_TOO_LONG', alt.length, altText);
-
-          results.push({
-            element: $el,
-            type: 'warning',
-            content,
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
-          });
+          const rule = (link)
+            ? option.checks.LINK_IMAGE_LONG_ALT
+            : option.checks.IMAGE_ALT_TOO_LONG;
+          if (rule) {
+            results.push({
+              element: $el,
+              type: rule.type || 'warning',
+              content: rule.content || Lang.sprintf(link
+                ? 'LINK_IMAGE_LONG_ALT' : 'IMAGE_ALT_TOO_LONG', alt.length, altText),
+              inline: false,
+              position: 'beforebegin',
+              dismiss: key,
+              advanced: rule.advanced || false,
+            });
+          }
         } else if (link) {
-          // Has both link text and alt text.
-          const key = prepareDismissal(`${src + altText}`);
-          const linkAccName = computeAccessibleName(link);
-          const removeWhitespace$1 = removeWhitespace(linkAccName);
-          const sanitizedText = sanitizeHTML(removeWhitespace$1);
-          const content = (linkTextContentLength === 0)
-            ? Lang.sprintf('LINK_IMAGE_ALT_WARNING', altText)
-            : Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT_WARNING', altText, sanitizedText);
-
-          results.push({
-            element: $el,
-            type: 'warning',
-            content,
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
-          });
+          const rule = (linkTextContentLength === 0)
+            ? option.checks.LINK_IMAGE_ALT
+            : option.checks.LINK_IMAGE_ALT_AND_TEXT;
+          if (rule) {
+            // Has both link text and alt text.
+            const linkAccName = computeAccessibleName(link);
+            const removeWhitespace$1 = removeWhitespace(linkAccName);
+            const sanitizedText = sanitizeHTML(removeWhitespace$1);
+            results.push({
+              element: $el,
+              type: rule.type || 'warning',
+              content: rule.content || Lang.sprintf(linkTextContentLength === 0
+                ? 'LINK_IMAGE_ALT' : 'LINK_IMAGE_ALT_AND_TEXT', altText, sanitizedText),
+              inline: false,
+              position: 'beforebegin',
+              dismiss: key,
+              advanced: rule.advanced || false,
+            });
+          }
         } else if (figure) {
           // Figure element has same alt and caption text.
           const duplicate = !!figcaption && (figcaptionText.toLowerCase() === altText.trim().toLowerCase());
           if (duplicate) {
-            const key = prepareDismissal(`FIGURE${src + altText}`);
-            results.push({
-              element: $el,
-              type: 'warning',
-              content: Lang.sprintf('IMAGE_FIGURE_DUPLICATE_ALT', altText),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: key,
-            });
-          } else {
+            if (option.checks.IMAGE_FIGURE_DUPLICATE_ALT) {
+              results.push({
+                element: $el,
+                type: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.type || 'warning',
+                content: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.content || Lang.sprintf('IMAGE_FIGURE_DUPLICATE_ALT', altText),
+                inline: false,
+                position: 'beforebegin',
+                dismiss: key,
+                advanced: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.advanced || false,
+              });
+            }
+          } else if (option.checks.IMAGE_PASS) {
             // Figure has alt text!
             results.push({
               element: $el,
-              type: 'good',
-              content: Lang.sprintf('IMAGE_PASS', altText),
+              type: option.checks.IMAGE_PASS.type || 'good',
+              content: option.checks.IMAGE_PASS.content || Lang.sprintf('IMAGE_PASS', altText),
               inline: false,
               position: 'beforebegin',
+              advanced: option.checks.IMAGE_PASS.advanced || false,
             });
           }
-        } else {
+        } else if (option.checks.IMAGE_PASS) {
           // Image has alt text!
           results.push({
             element: $el,
-            type: 'good',
-            content: Lang.sprintf('IMAGE_PASS', altText),
+            type: option.checks.IMAGE_PASS.type || 'good',
+            content: option.checks.IMAGE_PASS.content || Lang.sprintf('IMAGE_PASS', altText),
             inline: false,
             position: 'beforebegin',
+            advanced: option.checks.IMAGE_PASS.advanced || false,
           });
         }
       }
@@ -7120,11 +7130,11 @@
   function checkHeaders(results, option, headingOutline) {
     let prevLevel;
     Elements.Found.Headings.forEach(($el, i) => {
+      // Get accessible name of heading.
       const accName = computeAccessibleName($el, option.headerIgnoreSpan);
       const stringMatchExclusions = option.headerIgnoreStrings
         ? accName.replace(option.headerIgnoreStrings, '') : accName;
       const removeWhitespace$1 = removeWhitespace(stringMatchExclusions);
-
       const headingText = sanitizeHTML(removeWhitespace$1);
 
       // Check if heading is within root target area.
@@ -7136,130 +7146,92 @@
       const level = parseInt($el.getAttribute('aria-level') || $el.tagName.slice(1), 10);
       const headingLength = headingText.length;
 
-      let error = null;
-      let warning = null;
+      // Default.
+      let type = null;
+      let content = null;
+      let advanced = null;
 
+      // Rulesets.
       if (level - prevLevel > 1 && i !== 0) {
-        if (option.nonConsecutiveHeadingIsError) {
-          error = Lang.sprintf('HEADING_NON_CONSECUTIVE_LEVEL', prevLevel, level);
-          results.push({
-            element: $el,
-            type: 'error',
-            content: error,
-            inline: false,
-            position: 'beforebegin',
-            isWithinRoot,
-          });
-        } else {
-          warning = Lang.sprintf('HEADING_NON_CONSECUTIVE_LEVEL', prevLevel, level);
-          const key = prepareDismissal(`HEADING${level + headingText}`);
-          results.push({
-            element: $el,
-            type: 'warning',
-            content: warning,
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
-            isWithinRoot,
-          });
+        if (option.checks.HEADING_SKIPPED_LEVEL) {
+          type = option.checks.HEADING_SKIPPED_LEVEL.type || 'error';
+          content = option.checks.HEADING_SKIPPED_LEVEL.content || Lang.sprintf('HEADING_SKIPPED_LEVEL', prevLevel, level);
+          advanced = option.checks.HEADING_SKIPPED_LEVEL.advanced || false;
         }
       } else if (headingLength === 0) {
         if ($el.querySelectorAll('img').length) {
-          const imgalt = $el.querySelector('img').getAttribute('alt');
-          if (imgalt === null || imgalt === ' ' || imgalt === '') {
-            error = Lang.sprintf('HEADING_EMPTY_WITH_IMAGE', level);
-            results.push({
-              element: $el,
-              type: 'error',
-              content: error,
-              inline: false,
-              position: 'beforebegin',
-              isWithinRoot,
-            });
+          const alt = $el.querySelector('img')?.getAttribute('alt');
+          if ($el.querySelector('img') && (!alt || alt.trim() === '')) {
+            if (option.checks.HEADING_EMPTY_WITH_IMAGE) {
+              type = option.checks.HEADING_EMPTY_WITH_IMAGE.type || 'error';
+              content = option.checks.HEADING_EMPTY_WITH_IMAGE.content || Lang.sprintf('HEADING_EMPTY_WITH_IMAGE', level);
+              advanced = option.checks.HEADING_EMPTY_WITH_IMAGE.advanced || false;
+            }
           }
-        } else {
-          error = Lang.sprintf('HEADING_EMPTY', level);
-          results.push({
-            element: $el,
-            type: 'error',
-            content: error,
-            inline: false,
-            position: 'beforebegin',
-            isWithinRoot,
-          });
+        } else if (option.checks.HEADING_EMPTY) {
+          type = option.checks.HEADING_EMPTY.type || 'error';
+          content = option.checks.HEADING_EMPTY.content || Lang.sprintf('HEADING_EMPTY', level);
+          advanced = option.checks.HEADING_EMPTY.advanced || false;
         }
       } else if (i === 0 && level !== 1 && level !== 2) {
-        error = Lang.sprintf('HEADING_FIRST');
+        if (option.checks.HEADING_FIRST) {
+          type = option.checks.HEADING_FIRST.type || 'error';
+          content = option.checks.HEADING_FIRST.content || Lang.sprintf('HEADING_FIRST');
+          advanced = option.checks.HEADING_FIRST.advanced || false;
+        }
+      } else if (headingLength > option.headingMaxCharLength) {
+        if (option.checks.HEADING_LONG) {
+          type = option.checks.HEADING_LONG.type || 'warning';
+          content = option.checks.HEADING_LONG.content || Lang.sprintf('HEADING_LONG', headingLength);
+          advanced = option.checks.HEADING_LONG.advanced || false;
+        }
+      }
+
+      // Create dismiss key for results object and heading outline.
+      const key = (type === 'warning') ? prepareDismissal(`HEADING${level + headingText}`) : '';
+
+      // Create results object.
+      if (content && type) {
         results.push({
           element: $el,
-          type: 'error',
-          content: error,
-          inline: false,
-          position: 'beforebegin',
-          isWithinRoot,
-        });
-      } else if (headingLength > option.headingMaxCharLength && option.flagLongHeadings) {
-        warning = Lang.sprintf('HEADING_LONG', headingLength);
-        const key = prepareDismissal(`HEADING${level + headingText}`);
-        results.push({
-          element: $el,
-          type: 'warning',
-          content: warning,
+          type,
+          content,
           inline: false,
           position: 'beforebegin',
           dismiss: key,
           isWithinRoot,
+          advanced,
         });
       }
 
+      // Reset level.
       prevLevel = level;
+
+      // Determine if heading is visually hidden or within hidden container.
       const hiddenHeading = isElementVisuallyHiddenOrHidden($el);
       const parent = findVisibleParent($el, 'display', 'none');
 
       // Create an object for heading outline panel.
-      if (error !== null) {
-        headingOutline.push({
-          element: $el,
-          headingLevel: level,
-          text: headingText,
-          index: i,
-          type: 'error',
-          hidden: hiddenHeading,
-          visibleParent: parent,
-          isWithinRoot,
-        });
-      } else if (warning !== null) {
-        const key = prepareDismissal(`HEADING${level + headingText}`);
-        headingOutline.push({
-          element: $el,
-          headingLevel: level,
-          text: headingText,
-          index: i,
-          type: 'warning',
-          hidden: hiddenHeading,
-          visibleParent: parent,
-          dismiss: key,
-          isWithinRoot,
-        });
-      } else if (error === null || warning === null) {
-        headingOutline.push({
-          element: $el,
-          headingLevel: level,
-          text: headingText,
-          index: i,
-          hidden: hiddenHeading,
-          visibleParent: parent,
-          isWithinRoot,
-        });
-      }
+      headingOutline.push({
+        element: $el,
+        headingLevel: level,
+        text: headingText,
+        index: i,
+        type,
+        hidden: hiddenHeading,
+        visibleParent: parent,
+        dismiss: key,
+        isWithinRoot,
+      });
     });
 
     // Missing Heading 1
-    if (Elements.Found.HeadingOne.length === 0 && option.missingH1) {
+    if (option.checks.HEADING_MISSING_ONE && Elements.Found.HeadingOne.length === 0) {
       results.push({
-        type: 'warning',
-        content: Lang.sprintf('HEADING_MISSING_ONE'),
-        dismiss: 'missingH1',
+        type: option.checks.HEADING_MISSING_ONE.type || 'warning',
+        content: option.checks.HEADING_MISSING_ONE.content || Lang.sprintf('HEADING_MISSING_ONE'),
+        dismiss: 'MISSINGH1',
+        advanced: option.checks.HEADING_MISSING_ONE.advanced || false,
       });
     }
     return { results, headingOutline };
@@ -7378,132 +7350,14 @@
       // Has aria-labeledby.
       const hasAriaLabelledby = $el.querySelector(':scope [aria-labelledby]') || $el.getAttribute('aria-labelledby');
 
-      if ($el.querySelectorAll('img').length) ; else if (ariaHidden) {
-        // Has aria-hidden.
-        if (!negativeTabindex) {
-          // If negative tabindex.
-          results.push({
-            element: $el,
-            type: 'error',
-            content: Lang.sprintf('LINK_HIDDEN_FOCUSABLE'),
-            inline: true,
-            position: 'afterend',
-          });
-        }
-      } else if ((href || href === '') && linkText.length === 0) {
-        // Empty hyperlinks.
-        if (hasAriaLabelledby) {
-          // Has ariaLabelledby attribute but empty accessible name.
-          results.push({
-            element: $el,
-            type: 'error',
-            content: Lang.sprintf('LINK_EMPTY_LABELLEDBY'),
-            inline: true,
-            position: 'afterend',
-          });
-        } else if ($el.children.length) {
-          // Has child elements (e.g. SVG or SPAN) <a><i></i></a>
-          results.push({
-            element: $el,
-            type: 'error',
-            content: Lang.sprintf('LINK_EMPTY_LINK_NO_LABEL'),
-            inline: true,
-            position: 'afterend',
-          });
-        } else {
-          // Completely empty <a></a>
-          results.push({
-            element: $el,
-            type: 'error',
-            content: Lang.sprintf('LINK_EMPTY'),
-            inline: true,
-            position: 'afterend',
-          });
-        }
-      } else if (error[0] !== null) {
-        // Contains stop words.
-        results.push({
-          element: $el,
-          type: 'error',
-          content: Lang.sprintf('LINK_STOPWORD', error[0]),
-          inline: true,
-          position: 'afterend',
-        });
-      } else if (error[1] !== null || matchedSymbol !== null) {
-        const key = prepareDismissal(`LINK${linkText + href}`);
-        const stopword = matchedSymbol || error[1];
-        // Contains warning words.
-        results.push({
-          element: $el,
-          type: 'warning',
-          content: Lang.sprintf('LINK_BEST_PRACTICES', stopword),
-          inline: true,
-          position: 'beforebegin',
-          dismiss: key,
-        });
-      } else if (error[2] !== null && option.linksToDOI) {
-        const key = prepareDismissal(`LINK${linkText + error[2] + href}`);
-        // Contains DOI URL in link text.
-        if (linkText.length > 8) {
-          results.push({
-            element: $el,
-            type: 'warning',
-            content: Lang.sprintf('LINK_DOI'),
-            inline: true,
-            position: 'beforebegin',
-            dismiss: key,
-          });
-        }
-      } else if (error[3] !== null && option.URLAsLinkTextWarning) {
-        const key = prepareDismissal(`LINK${linkText + error[2] + href}`);
-        // Contains URL in link text.
-        if (linkText.length > option.URLTextMaxCharLength) {
-          results.push({
-            element: $el,
-            type: 'warning',
-            content: Lang.sprintf('LINK_URL'),
-            inline: true,
-            position: 'beforebegin',
-            dismiss: key,
-          });
-        }
-      } else if (hasAria) {
-        // If the link has any ARIA, append a "Good" link button.
-        if (option.showGoodLinkButton) {
-          const sanitizedText = sanitizeHTML(linkText);
-          results.push({
-            element: $el,
-            type: 'good',
-            content: Lang.sprintf('LINK_LABEL', sanitizedText),
-            inline: true,
-            position: 'afterend',
-          });
-        }
-      } else if (isSingleSpecialChar) {
-        // Link is ONLY a period, comma, or special character.
-        results.push({
-          element: $el,
-          type: 'error',
-          content: Lang.sprintf('LINK_EMPTY'),
-          inline: true,
-          position: 'afterend',
-        });
-      }
+      // New tab or new window.
+      const containsNewWindowPhrases = Lang._('NEW_WINDOW_PHRASES').some((pass) => linkText.toLowerCase().includes(pass));
 
-      /* ********************* */
-      /*  Links (Advanced)     */
-      /* ********************* */
-      if (option.linksAdvancedPlugin) {
-        const toggleCheck = store.getItem('sa11y-remember-links-advanced') === 'On';
-        if (toggleCheck || option.headless || option.checkAllHideToggles) {
-          // New tab or new window.
-          const containsNewWindowPhrases = Lang._('NEW_WINDOW_PHRASES').some((pass) => linkText.toLowerCase().includes(pass));
-
-          // Link that points to a file type and indicates as such.
-          const defaultFileTypes = ['pdf', 'doc', 'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'];
-          const fileTypes = defaultFileTypes.concat(Lang._('FILE_TYPE_PHRASES'));
-          const containsFileTypePhrases = fileTypes.some((pass) => linkText.toLowerCase().includes(pass));
-          const fileTypeMatch = $el.matches(`
+      // Link that points to a file type and indicates as such.
+      const defaultFileTypes = ['pdf', 'doc', 'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'];
+      const fileTypes = defaultFileTypes.concat(Lang._('FILE_TYPE_PHRASES'));
+      const containsFileTypePhrases = fileTypes.some((pass) => linkText.toLowerCase().includes(pass));
+      const fileTypeMatch = $el.matches(`
           a[href$='.pdf'],
           a[href$='.doc'],
           a[href$='.docx'],
@@ -7523,47 +7377,196 @@
           a[href$='.avi']
         `);
 
-          // Remove whitespace and special characters to improve accuracy and minimize false positives.
-          const linkTextTrimmed = linkText.replace(/'|"|-|\.|\s+/g, '').toLowerCase();
+      // Remove whitespace and special characters to improve accuracy and minimize false positives.
+      const linkTextTrimmed = linkText.replace(/'|"|-|\.|\s+/g, '').toLowerCase();
 
-          // Links with identical accessible names have equivalent purpose.
-          if (linkTextTrimmed.length !== 0) {
-            if (seen[linkTextTrimmed] && !seen[href]) {
-              // Link has identical name as another link.
-              const key = prepareDismissal(`LINK${linkTextTrimmed + href}`);
+      if ($el.querySelectorAll('img').length) ; else if (ariaHidden) {
+        // Has aria-hidden.
+        if (!negativeTabindex) {
+          // If negative tabindex.
+          if (option.checks.LINK_HIDDEN_FOCUSABLE) {
+            results.push({
+              element: $el,
+              type: option.checks.LINK_HIDDEN_FOCUSABLE.type || 'error',
+              content: option.checks.LINK_HIDDEN_FOCUSABLE.content || Lang.sprintf('LINK_HIDDEN_FOCUSABLE'),
+              inline: true,
+              position: 'afterend',
+              dismiss: prepareDismissal(`A${href}`),
+              advanced: option.checks.LINK_HIDDEN_FOCUSABLE.advanced || true,
+            });
+          }
+        }
+      } else if ((href || href === '') && linkText.length === 0) {
+        // Empty hyperlinks.
+        if (hasAriaLabelledby) {
+          // Has ariaLabelledby attribute but empty accessible name.
+          if (option.checks.LINK_EMPTY_LABELLEDBY) {
+            results.push({
+              element: $el,
+              type: option.checks.LINK_EMPTY_LABELLEDBY.type || 'error',
+              content: option.checks.LINK_EMPTY_LABELLEDBY.content || Lang.sprintf('LINK_EMPTY_LABELLEDBY'),
+              inline: true,
+              position: 'afterend',
+              dismiss: prepareDismissal(`A${href}`),
+              advanced: option.checks.LINK_EMPTY_LABELLEDBY.advanced || true,
+            });
+          }
+        } else if ($el.children.length) {
+          // Has child elements (e.g. SVG or SPAN) <a><i></i></a>
+          if (option.checks.LINK_EMPTY_NO_LABEL) {
+            results.push({
+              element: $el,
+              type: option.checks.LINK_EMPTY_NO_LABEL.type || 'error',
+              content: option.checks.LINK_EMPTY_NO_LABEL.content || Lang.sprintf('LINK_EMPTY_NO_LABEL'),
+              inline: true,
+              position: 'afterend',
+              dismiss: prepareDismissal(`A${href}`),
+              advanced: option.checks.LINK_EMPTY_NO_LABEL.advanced || false,
+            });
+          }
+        } else if (option.checks.LINK_EMPTY) {
+          // Completely empty <a></a>
+          results.push({
+            element: $el,
+            type: option.checks.LINK_EMPTY.type || 'error',
+            content: option.checks.LINK_EMPTY.content || Lang.sprintf('LINK_EMPTY'),
+            inline: true,
+            position: 'afterend',
+            dismiss: prepareDismissal(`A${href}`),
+            advanced: option.checks.LINK_EMPTY.advanced || false,
+          });
+        }
+      } else if (error[0] !== null) {
+        // Contains stop words.
+        if (option.checks.LINK_STOPWORD) {
+          results.push({
+            element: $el,
+            type: option.checks.LINK_STOPWORD.type || 'error',
+            content: option.checks.LINK_STOPWORD.content || Lang.sprintf('LINK_STOPWORD', error[0]),
+            inline: true,
+            position: 'afterend',
+            dismiss: prepareDismissal(`A${linkText + href}`),
+            advanced: option.checks.LINK_STOPWORD.advanced || false,
+          });
+        }
+      } else if (error[1] !== null || matchedSymbol !== null) {
+        // Contains warning words.
+        if (option.checks.LINK_BEST_PRACTICES) {
+          const stopword = matchedSymbol || error[1];
+          results.push({
+            element: $el,
+            type: option.checks.LINK_BEST_PRACTICES.type || 'warning',
+            content: option.checks.LINK_BEST_PRACTICES.content || Lang.sprintf('LINK_BEST_PRACTICES', stopword),
+            inline: true,
+            position: 'beforebegin',
+            dismiss: prepareDismissal(`LINK${linkText + href}`),
+            advanced: option.checks.LINK_BEST_PRACTICES.advanced || false,
+          });
+        }
+      } else if (error[2] !== null) {
+        // Contains DOI URL in link text.
+        if (linkText.length > 8) {
+          if (option.checks.LINK_DOI) {
+            results.push({
+              element: $el,
+              type: option.checks.LINK_DOI.type || 'warning',
+              content: option.checks.LINK_DOI.content || Lang.sprintf('LINK_DOI'),
+              inline: true,
+              position: 'beforebegin',
+              dismiss: prepareDismissal(`LINK${linkText + href}`),
+              advanced: option.checks.LINK_DOI.advanced || false,
+            });
+          }
+        }
+      } else if (error[3] !== null) {
+        // Contains URL in link text.
+        if (linkText.length > option.URLTextMaxCharLength) {
+          if (option.checks.LINK_URL) {
+            results.push({
+              element: $el,
+              type: option.checks.LINK_URL.type || 'warning',
+              content: option.checks.LINK_URL.content || Lang.sprintf('LINK_URL'),
+              inline: true,
+              position: 'beforebegin',
+              dismiss: prepareDismissal(`LINK${linkText + href}`),
+              advanced: option.checks.LINK_URL.advanced || false,
+            });
+          }
+        }
+      } else if (hasAria) {
+        // If the link has any ARIA, append a "Good" link button.
+        if (option.checks.LINK_LABEL) {
+          const sanitizedText = sanitizeHTML(linkText);
+          results.push({
+            element: $el,
+            type: option.checks.LINK_LABEL.type || 'good',
+            content: option.checks.LINK_LABEL.content || Lang.sprintf('LINK_LABEL', sanitizedText),
+            inline: true,
+            position: 'afterend',
+            dismiss: prepareDismissal(`LINK${linkText + href}`),
+            advanced: option.checks.LINK_LABEL.advanced || false,
+          });
+        }
+      } else if (isSingleSpecialChar) {
+        // Link is ONLY a period, comma, or special character.
+        if (option.checks.LINK_EMPTY) {
+          results.push({
+            element: $el,
+            type: option.checks.LINK_EMPTY.type || 'error',
+            content: option.checks.LINK_EMPTY.content || Lang.sprintf('LINK_EMPTY'),
+            inline: true,
+            position: 'afterend',
+            dismiss: prepareDismissal(`LINK${href}`),
+            advanced: option.checks.LINK_EMPTY.advanced || false,
+          });
+        }
+      }
+
+      /* LINKS ADVANCED */
+      if (option.linksAdvancedPlugin) {
+        if (linkTextTrimmed.length !== 0) {
+        // Links with identical accessible names have equivalent purpose.
+          if (seen[linkTextTrimmed] && !seen[href]) {
+            // Link has identical name as another link.
+            if (option.checks.LINK_IDENTICAL_NAME) {
               const sanitizedText = sanitizeHTML(linkText);
               results.push({
                 element: $el,
-                type: 'warning',
-                content: Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText),
+                type: option.checks.LINK_IDENTICAL_NAME.type || 'warning',
+                content: option.checks.LINK_IDENTICAL_NAME.content || Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText),
                 inline: true,
                 position: 'beforebegin',
-                dismiss: key,
+                dismiss: prepareDismissal(`LINK${linkTextTrimmed + href}`),
+                advanced: option.checks.LINK_IDENTICAL_NAME.advanced || false,
               });
-            } else if ($el.getAttribute('target') === '_blank' && !fileTypeMatch && !containsNewWindowPhrases) {
-              const key = prepareDismissal(`LINK${linkTextTrimmed + href}`);
-              results.push({
-                element: $el,
-                type: 'warning',
-                content: Lang.sprintf('NEW_TAB_WARNING'),
-                inline: true,
-                position: 'beforebegin',
-                dismiss: key,
-              });
-            } else if (fileTypeMatch && !containsFileTypePhrases) {
-              const key = prepareDismissal(`LINK${linkTextTrimmed + href}`);
-              results.push({
-                element: $el,
-                type: 'warning',
-                content: Lang.sprintf('FILE_TYPE_WARNING'),
-                inline: true,
-                position: 'beforebegin',
-                dismiss: key,
-              });
-            } else {
-              seen[linkTextTrimmed] = true;
-              seen[href] = true;
             }
+          } else if ($el.getAttribute('target') === '_blank' && !fileTypeMatch && !containsNewWindowPhrases) {
+            if (option.checks.LINK_NEW_TAB) {
+              results.push({
+                element: $el,
+                type: option.checks.LINK_NEW_TAB.type || 'warning',
+                content: option.checks.LINK_NEW_TAB.content || Lang.sprintf('LINK_NEW_TAB'),
+                inline: true,
+                position: 'beforebegin',
+                dismiss: prepareDismissal(`LINK${linkTextTrimmed + href}`),
+                advanced: option.checks.LINK_NEW_TAB.advanced || false,
+              });
+            }
+          } else if (fileTypeMatch && !containsFileTypePhrases) {
+            if (option.checks.LINK_FILE_EXT) {
+              results.push({
+                element: $el,
+                type: option.checks.LINK_FILE_EXT.type || 'warning',
+                content: option.checks.LINK_FILE_EXT.content || Lang.sprintf('LINK_FILE_EXT'),
+                inline: true,
+                position: 'beforebegin',
+                dismiss: prepareDismissal(`LINK${linkTextTrimmed + href}`),
+                advanced: option.checks.LINK_FILE_EXT.advanced || false,
+              });
+            }
+          } else {
+            seen[linkTextTrimmed] = true;
+            seen[href] = true;
           }
         }
       }
@@ -7611,15 +7614,12 @@
    * @link https://github.com/gka/chroma.js (Parse RGB)
   */
   function checkContrast(results, option) {
-    if (option.contrastPlugin) {
-      const toggleCheck = store.getItem('sa11y-remember-contrast') === 'On';
-      if (toggleCheck || option.headless || option.checkAllHideToggles) {
-        let contrastErrors = {
-          errors: [],
-          warnings: [],
-        };
+    let contrastErrors = {
+      errors: [],
+      warnings: [],
+    };
 
-        /* eslint-disable */
+    /* eslint-disable */
         const contrastObject = {
           // Parse rgb(r, g, b) and rgba(r, g, b, a) strings into an array.
           parseRgb(css) {
@@ -7737,9 +7737,7 @@
                   (clipPath === 'inset(50%)' || /^(rect\(0(,\s*0){3}\)|rect\(1px(,\s*1px){3}\))$/.test(clip));
 
                 // Ignore if visually hidden for screen readers.
-                if (maybeVisuallyHidden) {
-                  return;
-                } else if (color.startsWith('color(')) {
+                if (maybeVisuallyHidden) ; else if (color.startsWith('color(')) {
                   // Push a warning if using a color() functional notation.
                   warning = {
                     elem,
@@ -7801,159 +7799,178 @@
           const sanitizedText = sanitizeHTML(nodeText);
 
           if (name.tagName === 'INPUT') {
-            results.push({
-              element: name,
-              type: 'error',
-              content: Lang.sprintf('CONTRAST_INPUT_ERROR', cratio),
-              inline: false,
-              position: 'beforebegin',
-            });
+            if (option.checks.CONTRAST_INPUT) {
+              results.push({
+                element: name,
+                type: option.checks.CONTRAST_INPUT.type || 'error',
+                content: option.checks.CONTRAST_INPUT.content || Lang.sprintf('CONTRAST_INPUT', cratio),
+                inline: false,
+                position: 'beforebegin',
+                dismiss: prepareDismissal(`CONTRAST${name.tagName}${cratio}`),
+                advanced: option.checks.CONTRAST_INPUT.advanced || false,
+              });
+            }
           } else {
-            results.push({
-              element: name,
-              type: 'error',
-              content: Lang.sprintf('CONTRAST_ERROR', cratio, sanitizedText),
-              inline: false,
-              position: 'beforebegin',
-            });
+            if (option.checks.CONTRAST_ERROR) {
+              results.push({
+                element: name,
+                type: option.checks.CONTRAST_ERROR.type || 'error',
+                content: option.checks.CONTRAST_ERROR.content || Lang.sprintf('CONTRAST_ERROR', cratio, sanitizedText),
+                inline: false,
+                position: 'beforebegin',
+                dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
+                advanced: option.checks.CONTRAST_ERROR.advanced || false,
+              });
+            }
           }
         });
 
-        contrastErrors.warnings.forEach((item) => {
-          const name = item.elem;
-          const clone = name.cloneNode(true);
-          const nodeText = fnIgnore(clone, 'script, style').textContent;
+        if (option.checks.CONTRAST_WARNING) {
+          contrastErrors.warnings.forEach((item) => {
+            const name = item.elem;
+            const clone = name.cloneNode(true);
+            const nodeText = fnIgnore(clone, 'script, style').textContent;
+            const sanitizedText = sanitizeHTML(nodeText);
 
-          const key = prepareDismissal(`CONTRAST${nodeText}`);
-          const sanitizedText = sanitizeHTML(nodeText);
-
-          results.push({
-            element: name,
-            type: 'warning',
-            content: Lang.sprintf('CONTRAST_WARNING', sanitizedText),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
+            results.push({
+              element: name,
+              type: option.checks.CONTRAST_WARNING.type || 'warning',
+              content: option.checks.CONTRAST_WARNING.content || Lang.sprintf('CONTRAST_WARNING', sanitizedText),
+              inline: false,
+              position: 'beforebegin',
+              dismiss: prepareDismissal(`CONTRAST${nodeText}`),
+              advanced: option.checks.CONTRAST_WARNING.advanced || false,
+            });
           });
-        });
-      }
-    }
+        }
     return results;
   }
 
   function checkLabels(results, option) {
     if (option.formLabelsPlugin) {
-      const toggleCheck = store.getItem('sa11y-remember-labels') === 'On';
-      if (toggleCheck || option.headless || option.checkAllHideToggles) {
-        Elements.Found.Inputs.forEach(($el) => {
-          // Ignore completely hidden elements.
-          const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
-          const negativeTabindex = $el.getAttribute('tabindex') === '-1';
-          const hidden = isElementHidden($el);
-          if (hidden || (ariaHidden && negativeTabindex)) {
-            return;
-          }
+      Elements.Found.Inputs.forEach(($el) => {
+        // Ignore completely hidden elements.
+        const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
+        const negativeTabindex = $el.getAttribute('tabindex') === '-1';
+        const hidden = isElementHidden($el);
+        if (hidden || (ariaHidden && negativeTabindex)) {
+          return;
+        }
 
-          // Compute accessible name on input.
-          const computeName = computeAccessibleName($el);
-          const inputName = removeWhitespace(computeName);
+        // Compute accessible name on input.
+        const computeName = computeAccessibleName($el);
+        const inputName = removeWhitespace(computeName);
 
-          // Get attributes.
-          const alt = $el.getAttribute('alt');
-          const type = $el.getAttribute('type');
-          const hasTitle = $el.getAttribute('title');
-          const hasAria = $el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby');
+        // Get attributes.
+        const alt = $el.getAttribute('alt');
+        const type = $el.getAttribute('type');
+        const hasTitle = $el.getAttribute('title');
+        const hasAria = $el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby');
 
-          // Pass: Ignore if it's a submit or hidden button.
-          if (type === 'submit' || type === 'button' || type === 'hidden') {
-            return;
-          }
+        // Pass: Ignore if it's a submit or hidden button.
+        if (type === 'submit' || type === 'button' || type === 'hidden') {
+          return;
+        }
 
-          // Error: Input with type="image" without accessible name or alt.
-          if (type === 'image' && (!alt || alt === ' ')) {
-            if (!hasAria && !hasTitle) {
-              results.push({
-                element: $el,
-                type: 'error',
-                content: Lang.sprintf('LABELS_MISSING_IMAGE_INPUT_MESSAGE'),
-                inline: false,
-                position: 'beforebegin',
-              });
-            }
-            return;
-          }
+        // Create dismiss key.
+        const key = prepareDismissal(`INPUT${inputName}`);
 
-          // Warning: to remove reset buttons.
-          if (type === 'reset') {
-            const key = prepareDismissal(`INPUT${inputName}`);
+        // Error: Input with type="image" without accessible name or alt.
+        if (type === 'image' && (!alt || alt.trim() === '')) {
+          if (option.checks.LABELS_MISSING_IMAGE_INPUT && !hasAria && !hasTitle) {
             results.push({
               element: $el,
-              type: 'warning',
-              content: Lang.sprintf('LABELS_INPUT_RESET_MESSAGE'),
+              type: option.checks.LABELS_MISSING_IMAGE_INPUT.type || 'error',
+              content: option.checks.LABELS_MISSING_IMAGE_INPUT.content || Lang.sprintf('LABELS_MISSING_IMAGE_INPUT'),
               inline: false,
               position: 'beforebegin',
               dismiss: key,
+              advanced: option.checks.LABELS_MISSING_IMAGE_INPUT.advanced || true,
             });
-            return;
           }
+          return;
+        }
 
-          // Uses ARIA or title attribute. Warn them to ensure there's a visible label.
-          if (hasAria || hasTitle) {
-            if (inputName.length === 0) {
+        // Warning: to remove reset buttons.
+        if (type === 'reset') {
+          if (option.checks.LABELS_INPUT_RESET) {
+            results.push({
+              element: $el,
+              type: option.checks.LABELS_INPUT_RESET.type || 'warning',
+              content: option.checks.LABELS_INPUT_RESET.content || Lang.sprintf('LABELS_INPUT_RESET'),
+              inline: false,
+              position: 'beforebegin',
+              dismiss: key,
+              advanced: option.checks.LABELS_INPUT_RESET.advanced || false,
+            });
+          }
+          return;
+        }
+
+        // Uses ARIA or title attribute. Warn them to ensure there's a visible label.
+        if (hasAria || hasTitle) {
+          if (inputName.length === 0) {
+            if (option.checks.LABELS_MISSING_LABEL) {
               results.push({
                 element: $el,
-                type: 'error',
-                content: Lang.sprintf('LABELS_MISSING_LABEL_MESSAGE'),
-                inline: false,
-                position: 'beforebegin',
-              });
-            } else {
-              const key = prepareDismissal(`INPUT${inputName}`);
-              const sanitizedText = sanitizeHTML(inputName);
-              results.push({
-                element: $el,
-                type: 'warning',
-                content: Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', sanitizedText),
+                type: option.checks.LABELS_MISSING_LABEL.type || 'error',
+                content: option.checks.LABELS_MISSING_LABEL.content || Lang.sprintf('LABELS_MISSING_LABEL'),
                 inline: false,
                 position: 'beforebegin',
                 dismiss: key,
+                advanced: option.checks.LABELS_MISSING_LABEL.advanced || true,
               });
             }
-            return;
-          }
-
-          // Implicit label: <label>First name: <input type="text"/><label>
-          const closestLabel = $el.closest('label');
-          const labelName = (closestLabel) ? removeWhitespace(computeAccessibleName(closestLabel)) : '';
-          if (closestLabel && labelName.length) {
-            return;
-          }
-
-          // Check to see if each label has a matching for and it attribute.
-          const id = $el.getAttribute('id');
-          if (id) {
-            // Find labels without a match.
-            if (!Elements.Found.Labels.some((label) => label.getAttribute('for') === id)) {
-              results.push({
-                element: $el,
-                type: 'error',
-                content: Lang.sprintf('LABELS_NO_FOR_ATTRIBUTE_MESSAGE', id),
-                inline: false,
-                position: 'beforebegin',
-              });
-            }
-          } else {
-            // No id!
+          } else if (option.checks.LABELS_ARIA_LABEL_INPUT) {
+            const sanitizedText = sanitizeHTML(inputName);
             results.push({
               element: $el,
-              type: 'error',
-              content: Lang.sprintf('LABELS_MISSING_LABEL_MESSAGE'),
+              type: option.checks.LABELS_ARIA_LABEL_INPUT.type || 'warning',
+              content: option.checks.LABELS_ARIA_LABEL_INPUT.content || Lang.sprintf('LABELS_ARIA_LABEL_INPUT', sanitizedText),
               inline: false,
               position: 'beforebegin',
+              dismiss: key,
+              advanced: option.checks.LABELS_ARIA_LABEL_INPUT.advanced || true,
             });
           }
-        });
-      }
+          return;
+        }
+
+        // Implicit label: <label>First name: <input type="text"/><label>
+        const closestLabel = $el.closest('label');
+        const labelName = (closestLabel) ? removeWhitespace(computeAccessibleName(closestLabel)) : '';
+        if (closestLabel && labelName.length) {
+          return;
+        }
+
+        // Check to see if each label has a matching for and it attribute.
+        const id = $el.getAttribute('id');
+        if (id) {
+          // Find labels without a match.
+          if (!Elements.Found.Labels.some((label) => label.getAttribute('for') === id)) {
+            if (option.checks.LABELS_NO_FOR_ATTRIBUTE) {
+              results.push({
+                element: $el,
+                type: option.checks.LABELS_NO_FOR_ATTRIBUTE.type || 'error',
+                content: option.checks.LABELS_NO_FOR_ATTRIBUTE.content || Lang.sprintf('LABELS_NO_FOR_ATTRIBUTE', id),
+                inline: false,
+                position: 'beforebegin',
+                advanced: option.checks.LABELS_NO_FOR_ATTRIBUTE.advanced || true,
+              });
+            }
+          }
+        } else if (option.checks.LABELS_MISSING_LABEL) {
+          // No id!
+          results.push({
+            element: $el,
+            type: option.checks.LABELS_MISSING_LABEL.type || 'error',
+            content: option.checks.LABELS_MISSING_LABEL.content || Lang.sprintf('LABELS_MISSING_LABEL'),
+            inline: false,
+            position: 'beforebegin',
+            advanced: option.checks.LABELS_MISSING_LABEL.advanced || true,
+          });
+        }
+      });
     }
     return results;
   }
@@ -7971,204 +7988,202 @@
 
   function checkReadability() {
     let results;
-    if (Constants.Readability.Plugin) {
-      const rememberReadability = store.getItem('sa11y-remember-readability') === 'On';
-      if (rememberReadability) {
-        // Crude hack to add a period to the end of list items to make a complete sentence.
-        Elements.Found.Readability.forEach(($el) => {
-          const listText = $el.textContent;
-          if (listText.length >= 120) {
-            if (listText.charAt(listText.length - 1) !== '.') {
-              $el.insertAdjacentHTML('beforeend', '<span data-sa11y-readability-period>.</span>');
-            }
-          }
-        });
-
-        // Combine all page text.
-        const readabilityarray = [];
-        for (let i = 0; i < Elements.Found.Readability.length; i++) {
-          const current = Elements.Found.Readability[i];
-          const ignore = fnIgnore(current); // Ignore unwanted <script> and <style> tags.
-          const getText$1 = getText(ignore); // Get text.
-          if (getText$1 !== '') {
-            readabilityarray.push(getText$1);
+    const rememberReadability = store.getItem('sa11y-readability') === 'On';
+    if (rememberReadability) {
+      // Crude hack to add a period to the end of list items to make a complete sentence.
+      Elements.Found.Readability.forEach(($el) => {
+        const listText = $el.textContent;
+        if (listText.length >= 120) {
+          if (listText.charAt(listText.length - 1) !== '.') {
+            $el.insertAdjacentHTML('beforeend', '<span data-sa11y-readability-period>.</span>');
           }
         }
-        const pageText = readabilityarray.join(' ').toString();
+      });
 
-        /* Flesch Reading Ease for English, French, German, Dutch, and Italian. */
-        if (['en', 'es', 'fr', 'de', 'nl', 'it', 'pt'].includes(Constants.Readability.Lang)) {
-          // Compute syllables
-          const numberOfSyllables = (el) => {
-            let wordCheck = el;
-            wordCheck = wordCheck.toLowerCase().replace('.', '').replace('\n', '');
-            if (wordCheck.length <= 3) {
-              return 1;
-            }
-            wordCheck = wordCheck.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
-            wordCheck = wordCheck.replace(/^y/, '');
-            const syllableString = wordCheck.match(/[aeiouy]{1,2}/g);
-            let syllables = 0;
+      // Combine all page text.
+      const readabilityarray = [];
+      for (let i = 0; i < Elements.Found.Readability.length; i++) {
+        const current = Elements.Found.Readability[i];
+        const ignore = fnIgnore(current); // Ignore unwanted <script> and <style> tags.
+        const getText$1 = getText(ignore); // Get text.
+        if (getText$1 !== '') {
+          readabilityarray.push(getText$1);
+        }
+      }
+      const pageText = readabilityarray.join(' ').toString();
 
-            const syllString = !!syllableString;
-            if (syllString) {
-              syllables = syllableString.length;
+      /* Flesch Reading Ease for English, French, German, Dutch, and Italian. */
+      if (['en', 'es', 'fr', 'de', 'nl', 'it', 'pt'].includes(Constants.Readability.Lang)) {
+        // Compute syllables
+        const numberOfSyllables = (el) => {
+          let wordCheck = el;
+          wordCheck = wordCheck.toLowerCase().replace('.', '').replace('\n', '');
+          if (wordCheck.length <= 3) {
+            return 1;
+          }
+          wordCheck = wordCheck.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
+          wordCheck = wordCheck.replace(/^y/, '');
+          const syllableString = wordCheck.match(/[aeiouy]{1,2}/g);
+          let syllables = 0;
+
+          const syllString = !!syllableString;
+          if (syllString) {
+            syllables = syllableString.length;
+          }
+          return syllables;
+        };
+
+        // Words
+        const wordsRaw = pageText.replace(/[.!?-]+/g, ' ').split(' ');
+        let words = 0;
+        for (let i = 0; i < wordsRaw.length; i++) {
+          // eslint-disable-next-line eqeqeq
+          if (wordsRaw[i] != 0) {
+            words += 1;
+          }
+        }
+
+        // Sentences
+        const sentenceRaw = pageText.split(/[.!?]+/);
+        let sentences = 0;
+        for (let i = 0; i < sentenceRaw.length; i++) {
+          if (sentenceRaw[i] !== '') {
+            sentences += 1;
+          }
+        }
+
+        // Syllables
+        let totalSyllables = 0;
+        let syllables1 = 0;
+        let syllables2 = 0;
+        for (let i = 0; i < wordsRaw.length; i++) {
+          // eslint-disable-next-line eqeqeq
+          if (wordsRaw[i] != 0) {
+            const syllableCount = numberOfSyllables(wordsRaw[i]);
+            if (syllableCount === 1) {
+              syllables1 += 1;
             }
-            return syllables;
+            if (syllableCount === 2) {
+              syllables2 += 1;
+            }
+            totalSyllables += syllableCount;
+          }
+        }
+
+        let flesch = false;
+        if (Constants.Readability.Lang === 'en') {
+          flesch = 206.835 - (1.015 * (words / sentences)) - (84.6 * (totalSyllables / words));
+        } else if (Constants.Readability.Lang === 'fr') {
+          flesch = 207 - (1.015 * (words / sentences)) - (73.6 * (totalSyllables / words));
+        } else if (Constants.Readability.Lang === 'es') {
+          flesch = 206.84 - (1.02 * (words / sentences)) - (0.60 * (100 * (totalSyllables / words)));
+        } else if (Constants.Readability.Lang === 'de') {
+          flesch = 180 - (words / sentences) - (58.5 * (totalSyllables / words));
+        } else if (Constants.Readability.Lang === 'nl') {
+          flesch = 206.84 - (0.77 * (100 * (totalSyllables / words))) - (0.93 * (words / sentences));
+        } else if (Constants.Readability.Lang === 'it') {
+          flesch = 217 - (1.3 * (words / sentences)) - (0.6 * (100 * (totalSyllables / words)));
+        } else if (Constants.Readability.Lang === 'pt') {
+          flesch = 248.835 - (1.015 * (words / sentences)) - (84.6 * (totalSyllables / words));
+        }
+
+        // Score must be between 0 and 100%.
+        if (flesch > 100) {
+          flesch = 100;
+        } else if (flesch < 0) {
+          flesch = 0;
+        }
+
+        // Compute scores.
+        const fleschScore = flesch.toFixed(1);
+        const avgWordsPerSentence = (words / sentences).toFixed(1);
+        const complexWords = Math.round(100 * ((words - (syllables1 + syllables2)) / words));
+
+        let difficulty;
+        if (fleschScore >= 0 && fleschScore < 30) {
+          difficulty = Lang._('VERY_DIFFICULT');
+        } else if (fleschScore > 31 && fleschScore < 49) {
+          difficulty = Lang._('DIFFICULT');
+        } else if (fleschScore > 50 && fleschScore < 60) {
+          difficulty = Lang._('FAIRLY_DIFFICULT');
+        } else {
+          difficulty = Lang._('GOOD');
+        }
+
+        // Create object for headless mode.
+        results = {
+          score: fleschScore,
+          averageWordsPerSentence: avgWordsPerSentence,
+          complexWords,
+          difficultyLevel: difficulty,
+          wordCount: words,
+        };
+      } else if (['sv', 'fi', 'da', 'no', 'nb', 'nn'].includes(Constants.Readability.Lang)) {
+        /* Lix: Danish, Finnish, Norwegian (Bokmål & Nynorsk), Swedish. */
+        const calculateLix = (text) => {
+          const lixWords = () => text.replace(/[-'.]/ig, '').split(/[^a-zA-ZöäåÖÄÅÆæØø0-9]/g).filter(Boolean);
+          const splitSentences = () => {
+            const splitter = /\?|!|\.|\n/g;
+            const arrayOfSentences = text.split(splitter).filter(Boolean);
+            return arrayOfSentences;
           };
-
-          // Words
-          const wordsRaw = pageText.replace(/[.!?-]+/g, ' ').split(' ');
-          let words = 0;
-          for (let i = 0; i < wordsRaw.length; i++) {
-            // eslint-disable-next-line eqeqeq
-            if (wordsRaw[i] != 0) {
-              words += 1;
-            }
-          }
-
-          // Sentences
-          const sentenceRaw = pageText.split(/[.!?]+/);
-          let sentences = 0;
-          for (let i = 0; i < sentenceRaw.length; i++) {
-            if (sentenceRaw[i] !== '') {
-              sentences += 1;
-            }
-          }
-
-          // Syllables
-          let totalSyllables = 0;
-          let syllables1 = 0;
-          let syllables2 = 0;
-          for (let i = 0; i < wordsRaw.length; i++) {
-            // eslint-disable-next-line eqeqeq
-            if (wordsRaw[i] != 0) {
-              const syllableCount = numberOfSyllables(wordsRaw[i]);
-              if (syllableCount === 1) {
-                syllables1 += 1;
-              }
-              if (syllableCount === 2) {
-                syllables2 += 1;
-              }
-              totalSyllables += syllableCount;
-            }
-          }
-
-          let flesch = false;
-          if (Constants.Readability.Lang === 'en') {
-            flesch = 206.835 - (1.015 * (words / sentences)) - (84.6 * (totalSyllables / words));
-          } else if (Constants.Readability.Lang === 'fr') {
-            flesch = 207 - (1.015 * (words / sentences)) - (73.6 * (totalSyllables / words));
-          } else if (Constants.Readability.Lang === 'es') {
-            flesch = 206.84 - (1.02 * (words / sentences)) - (0.60 * (100 * (totalSyllables / words)));
-          } else if (Constants.Readability.Lang === 'de') {
-            flesch = 180 - (words / sentences) - (58.5 * (totalSyllables / words));
-          } else if (Constants.Readability.Lang === 'nl') {
-            flesch = 206.84 - (0.77 * (100 * (totalSyllables / words))) - (0.93 * (words / sentences));
-          } else if (Constants.Readability.Lang === 'it') {
-            flesch = 217 - (1.3 * (words / sentences)) - (0.6 * (100 * (totalSyllables / words)));
-          } else if (Constants.Readability.Lang === 'pt') {
-            flesch = 248.835 - (1.015 * (words / sentences)) - (84.6 * (totalSyllables / words));
-          }
-
-          // Score must be between 0 and 100%.
-          if (flesch > 100) {
-            flesch = 100;
-          } else if (flesch < 0) {
-            flesch = 0;
-          }
-
-          // Compute scores.
-          const fleschScore = flesch.toFixed(1);
-          const avgWordsPerSentence = (words / sentences).toFixed(1);
-          const complexWords = Math.round(100 * ((words - (syllables1 + syllables2)) / words));
+          const wordCount = lixWords().length;
+          const longWordsCount = lixWords().filter((wordsArray) => wordsArray.length > 6).length;
+          const sentenceCount = splitSentences().length;
+          const score = Math.round((wordCount / sentenceCount) + ((longWordsCount * 100) / wordCount));
+          const avgWordsPerSentence = (wordCount / sentenceCount).toFixed(1);
+          const complexWords = Math.round(100 * (longWordsCount / wordCount));
 
           let difficulty;
-          if (fleschScore >= 0 && fleschScore < 30) {
-            difficulty = Lang._('LANG_VERY_DIFFICULT');
-          } else if (fleschScore > 31 && fleschScore < 49) {
-            difficulty = Lang._('LANG_DIFFICULT');
-          } else if (fleschScore > 50 && fleschScore < 60) {
-            difficulty = Lang._('LANG_FAIRLY_DIFFICULT');
+          if (score >= 0 && score < 39) {
+            difficulty = Lang._('GOOD');
+          } else if (score > 40 && score < 50) {
+            difficulty = Lang._('FAIRLY_DIFFICULT');
+          } else if (score > 51 && score < 61) {
+            difficulty = Lang._('DIFFICULT');
           } else {
-            difficulty = Lang._('LANG_GOOD');
+            difficulty = Lang._('VERY_DIFFICULT');
           }
-
-          // Create object for headless mode.
-          results = {
-            score: fleschScore,
-            averageWordsPerSentence: avgWordsPerSentence,
-            complexWords,
-            difficultyLevel: difficulty,
-            wordCount: words,
+          return {
+            score, difficulty, avgWordsPerSentence, complexWords, wordCount,
           };
-        } else if (['sv', 'fi', 'da', 'no', 'nb', 'nn'].includes(Constants.Readability.Lang)) {
-          /* Lix: Danish, Finnish, Norwegian (Bokmål & Nynorsk), Swedish. */
-          const calculateLix = (text) => {
-            const lixWords = () => text.replace(/[-'.]/ig, '').split(/[^a-zA-ZöäåÖÄÅÆæØø0-9]/g).filter(Boolean);
-            const splitSentences = () => {
-              const splitter = /\?|!|\.|\n/g;
-              const arrayOfSentences = text.split(splitter).filter(Boolean);
-              return arrayOfSentences;
-            };
-            const wordCount = lixWords().length;
-            const longWordsCount = lixWords().filter((wordsArray) => wordsArray.length > 6).length;
-            const sentenceCount = splitSentences().length;
-            const score = Math.round((wordCount / sentenceCount) + ((longWordsCount * 100) / wordCount));
-            const avgWordsPerSentence = (wordCount / sentenceCount).toFixed(1);
-            const complexWords = Math.round(100 * (longWordsCount / wordCount));
+        };
 
-            let difficulty;
-            if (score >= 0 && score < 39) {
-              difficulty = Lang._('LANG_GOOD');
-            } else if (score > 40 && score < 50) {
-              difficulty = Lang._('LANG_FAIRLY_DIFFICULT');
-            } else if (score > 51 && score < 61) {
-              difficulty = Lang._('LANG_DIFFICULT');
-            } else {
-              difficulty = Lang._('LANG_VERY_DIFFICULT');
-            }
-            return {
-              score, difficulty, avgWordsPerSentence, complexWords, wordCount,
-            };
-          };
+        // Compute LIX
+        const lix = calculateLix(pageText);
 
-          // Compute LIX
-          const lix = calculateLix(pageText);
+        // Create object for headless mode.
+        results = {
+          score: lix.score,
+          averageWordsPerSentence: lix.avgWordsPerSentence,
+          complexWords: lix.complexWords,
+          difficultyLevel: lix.difficulty,
+          wordCount: lix.wordCount,
+        };
+      }
 
-          // Create object for headless mode.
-          results = {
-            score: lix.score,
-            averageWordsPerSentence: lix.avgWordsPerSentence,
-            complexWords: lix.complexWords,
-            difficultyLevel: lix.difficulty,
-            wordCount: lix.wordCount,
-          };
-        }
+      // Update main panel if not in headless mode.
+      if (Constants.Global.headless === false) {
+        if (pageText.length === 0) {
+          Constants.Panel.readabilityInfo.innerHTML = Lang._('READABILITY_NO_CONTENT');
+        } else if (results.wordCount > 30) {
+          Constants.Panel.readabilityInfo.innerHTML = `${results.score} <span class="readability-score">${results.difficultyLevel}</span>`;
 
-        // Update main panel if not in headless mode.
-        if (Constants.Global.headless === false) {
-          if (pageText.length === 0) {
-            Constants.Panel.readabilityInfo.innerHTML = Lang._('READABILITY_NO_P_OR_LI_MESSAGE');
-          } else if (results.wordCount > 30) {
-            Constants.Panel.readabilityInfo.innerHTML = `${results.score} <span class="readability-score">${results.difficultyLevel}</span>`;
-
-            Constants.Panel.readabilityDetails.innerHTML = `
+          Constants.Panel.readabilityDetails.innerHTML = `
             <li>
-              <strong>${Lang._('LANG_AVG_SENTENCE')}</strong>
+              <strong>${Lang._('AVG_SENTENCE')}</strong>
               ${results.averageWordsPerSentence}
             </li>
             <li>
-              <strong>${Lang._('LANG_COMPLEX_WORDS')}</strong>
+              <strong>${Lang._('COMPLEX_WORDS')}</strong>
               ${results.complexWords}%
             </li>
             <li>
-              <strong>${Lang._('LANG_TOTAL_WORDS')}</strong>
+              <strong>${Lang._('TOTAL_WORDS')}</strong>
               ${results.wordCount}
             </li>`;
-          } else {
-            Constants.Panel.readabilityInfo.textContent = Lang._('READABILITY_NOT_ENOUGH_CONTENT_MESSAGE');
-          }
+        } else {
+          Constants.Panel.readabilityInfo.textContent = Lang._('READABILITY_NOT_ENOUGH');
         }
       }
     }
@@ -8176,143 +8191,153 @@
   }
 
   function checkEmbeddedContent(results, option) {
-    if (option.embeddedContentAll) {
-      // Warning: Audio content.
-      if (option.embeddedContentAudio) {
-        Elements.Found.Audio.forEach(($el) => {
-          const src = ($el.getAttribute('src') !== 'undefined')
-            ? $el.getAttribute('src')
-            : $el.querySelector('[src]')?.getAttribute('src');
+    // Warning: Audio content.
+    if (option.checks.EMBED_AUDIO) {
+      Elements.Found.Audio.forEach(($el) => {
+        const src = ($el.getAttribute('src') !== 'undefined')
+          ? $el.getAttribute('src')
+          : $el.querySelector('[src]')?.getAttribute('src');
 
-          // General warning for audio content.
-          const key = prepareDismissal(`AUDIO${src}`);
+        // General warning for audio content.
+        results.push({
+          element: $el,
+          type: option.checks.EMBED_AUDIO.type || 'warning',
+          content: option.checks.EMBED_AUDIO.content || Lang.sprintf('EMBED_AUDIO'),
+          inline: false,
+          position: 'beforebegin',
+          dismiss: prepareDismissal(`AUDIO${src}`),
+          advanced: option.checks.EMBED_AUDIO.advanced || false,
+        });
+      });
+    }
+
+    // Warning: Video content.
+    if (option.checks.EMBED_VIDEO) {
+      Elements.Found.Videos.forEach(($el) => {
+        const src = ($el.getAttribute('src') !== 'undefined')
+          ? $el.getAttribute('src')
+          : $el.querySelector('[src]')?.getAttribute('src');
+
+        // Warning if <track> doesn't exist, or the <track>'s src is empty.
+        const track = $el.querySelector('track');
+        const trackSrc = track?.getAttribute('src');
+        if (track === null || trackSrc === null || trackSrc.trim().length === 0) {
           results.push({
             element: $el,
-            type: 'warning',
-            content: Lang.sprintf('EMBED_AUDIO'),
+            type: option.checks.EMBED_VIDEO.type || 'warning',
+            content: option.checks.EMBED_VIDEO.content || Lang.sprintf('EMBED_VIDEO'),
+            inline: false,
+            position: 'beforebegin',
+            dismiss: prepareDismissal(`VIDEO${src}`),
+            advanced: option.checks.EMBED_VIDEO.advanced || false,
+          });
+        }
+      });
+    }
+
+    // Warning: Data visualizations.
+    if (option.checks.EMBED_DATA_VIZ) {
+      Elements.Found.Visualizations.forEach(($el) => {
+        const src = ($el.getAttribute('src') !== 'undefined')
+          ? $el.getAttribute('src')
+          : $el.querySelector('[src]')?.getAttribute('src');
+
+        // General warning for data vizualization widgets.
+        results.push({
+          element: $el,
+          type: option.checks.EMBED_DATA_VIZ.type || 'warning',
+          content: option.checks.EMBED_DATA_VIZ.content || Lang.sprintf('EMBED_DATA_VIZ'),
+          inline: false,
+          position: 'beforebegin',
+          dismiss: prepareDismissal(`DATAVIZ${src}`),
+          advanced: option.checks.EMBED_DATA_VIZ.advanced || false,
+        });
+      });
+    }
+
+    /* Error: Check all iFrames for a missing accessible name. */
+    Elements.Found.iframes.forEach(($el) => {
+      // Generate dismiss key.
+      const src = ($el.getAttribute('src') !== 'undefined')
+        ? $el.getAttribute('src')
+        : $el.querySelector('[src]')?.getAttribute('src');
+      const key = prepareDismissal(`EMBED${src}`);
+
+      // Ignore completely hidden elements and video/audio.
+      const hidden = isElementHidden($el);
+      const videoAudio = $el.tagName === 'VIDEO' || $el.tagName === 'AUDIO';
+      const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
+      const negativeTabindex = $el.getAttribute('tabindex') === '-1';
+      if (hidden || videoAudio || (ariaHidden && negativeTabindex)) {
+        return;
+      }
+
+      // Warning if element only has negative tabindex (without aria-hidden). Axe rulecheck.
+      if (negativeTabindex) {
+        if (option.checks.EMBED_UNFOCUSABLE) {
+          results.push({
+            element: $el,
+            type: option.checks.EMBED_UNFOCUSABLE.type || 'error',
+            content: option.checks.EMBED_UNFOCUSABLE.content || Lang.sprintf('EMBED_UNFOCUSABLE'),
             inline: false,
             position: 'beforebegin',
             dismiss: key,
+            advanced: option.checks.EMBED_UNFOCUSABLE.advanced || true,
           });
-        });
+        }
+        return;
       }
 
-      // Warning: Video content.
-      if (option.embeddedContentVideo) {
-        Elements.Found.Videos.forEach(($el) => {
-          const src = ($el.getAttribute('src') !== 'undefined')
-            ? $el.getAttribute('src')
-            : $el.querySelector('[src]')?.getAttribute('src');
-
-          // Warning if <track> doesn't exist, or the <track>'s src is empty.
-          const track = $el.querySelector('track');
-          const trackSrc = track?.getAttribute('src');
-          if (track === null || trackSrc === null || trackSrc.trim().length === 0) {
-            const key = prepareDismissal(`VIDEO${src}`);
-            results.push({
-              element: $el,
-              type: 'warning',
-              content: Lang.sprintf('EMBED_VIDEO'),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: key,
-            });
-          }
-        });
-      }
-
-      // Warning: Data visualizations.
-      if (option.embeddedContentDataViz) {
-        Elements.Found.Visualizations.forEach(($el) => {
-          const src = ($el.getAttribute('src') !== 'undefined')
-            ? $el.getAttribute('src')
-            : $el.querySelector('[src]')?.getAttribute('src');
-
-          // General warning for data vizualization widgets.
-          const key = prepareDismissal(`DATAVIZ${src}`);
+      if (option.checks.EMBED_MISSING_TITLE) {
+        // Accessible name is missing for iFrame.
+        const aria = computeAriaLabel($el);
+        const checkTitle = (aria === 'noAria') ? ($el.getAttribute('title') || '') : aria;
+        const accessibleName = removeWhitespace(checkTitle);
+        if (accessibleName.length === 0) {
           results.push({
             element: $el,
-            type: 'warning',
-            content: Lang.sprintf('EMBED_DATA_VIZ'),
+            type: option.checks.EMBED_MISSING_TITLE.type || 'error',
+            content: option.checks.EMBED_MISSING_TITLE.content || Lang.sprintf('EMBED_MISSING_TITLE'),
             inline: false,
             position: 'beforebegin',
             dismiss: key,
+            advanced: option.checks.EMBED_MISSING_TITLE.advanced || true,
           });
-        });
+        }
       }
+    });
 
-      /* Error: Check all iFrames for a missing accessible name. */
-      if (option.embeddedContentTitles) {
-        Elements.Found.iframes.forEach(($el) => {
-          // Ignore completely hidden elements and video/audio.
-          const hidden = isElementHidden($el);
-          const videoAudio = $el.tagName === 'VIDEO' || $el.tagName === 'AUDIO';
-          const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
-          const negativeTabindex = $el.getAttribute('tabindex') === '-1';
-          if (hidden || videoAudio || (ariaHidden && negativeTabindex)) {
-            return;
-          }
+    /* Warning: for all iFrames (except video, audio, or data visualizations). */
+    if (option.checks.EMBED_GENERAL) {
+      Elements.Found.EmbeddedContent.forEach(($el) => {
+        // Ignore completely hidden elements.
+        const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
+        const negativeTabindex = $el.getAttribute('tabindex') === '-1';
+        const hidden = isElementHidden($el);
+        if (hidden || (ariaHidden && negativeTabindex)) {
+          return;
+        }
 
-          // Warning if element only has negative tabindex (without aria-hidden). Axe rulecheck.
-          if (negativeTabindex) {
-            results.push({
-              element: $el,
-              type: 'error',
-              content: Lang.sprintf('EMBED_UNFOCUSABLE'),
-              inline: false,
-              position: 'beforebegin',
-            });
-            return;
-          }
+        // Ignore video & audio elements.
+        if ($el.tagName === 'VIDEO' || $el.tagName === 'AUDIO') {
+          return;
+        }
 
-          // Accessible name is missing for iFrame.
-          const aria = computeAriaLabel($el);
-          const checkTitle = (aria === 'noAria') ? ($el.getAttribute('title') || '') : aria;
-          const accessibleName = removeWhitespace(checkTitle);
+        // For dismiss key.
+        const src = ($el.getAttribute('src') !== 'undefined')
+          ? $el.getAttribute('src')
+          : $el.querySelector('[src]')?.getAttribute('src');
 
-          if (accessibleName.length === 0) {
-            results.push({
-              element: $el,
-              type: 'error',
-              content: Lang.sprintf('EMBED_MISSING_TITLE'),
-              inline: false,
-              position: 'beforebegin',
-            });
-          }
+        results.push({
+          element: $el,
+          type: option.checks.EMBED_GENERAL.type || 'warning',
+          content: option.checks.EMBED_GENERAL.content || Lang.sprintf('EMBED_GENERAL'),
+          inline: false,
+          position: 'beforebegin',
+          dismiss: prepareDismissal(`IFRAME${src}`),
+          advanced: option.checks.EMBED_GENERAL.advanced || false,
         });
-      }
-
-      /* Warning: for all iFrames (except video, audio, or data visualizations). */
-      if (option.embeddedContentGeneral) {
-        Elements.Found.EmbeddedContent.forEach(($el) => {
-          // Ignore completely hidden elements.
-          const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
-          const negativeTabindex = $el.getAttribute('tabindex') === '-1';
-          const hidden = isElementHidden($el);
-          if (hidden || (ariaHidden && negativeTabindex)) {
-            return;
-          }
-
-          // Ignore video & audio elements.
-          if ($el.tagName === 'VIDEO' || $el.tagName === 'AUDIO') {
-            return;
-          }
-
-          const src = ($el.getAttribute('src') !== 'undefined')
-            ? $el.getAttribute('src')
-            : $el.querySelector('[src]')?.getAttribute('src');
-
-          const key = prepareDismissal(`IFRAME${src}`);
-          results.push({
-            element: $el,
-            type: 'warning',
-            content: Lang.sprintf('EMBED_GENERAL_WARNING'),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
-          });
-        });
-      }
+      });
     }
     return results;
   }
@@ -8321,14 +8346,16 @@
     /* *********************************************************** */
     /*  Error: Find all links pointing to development environment. */
     /* *********************************************************** */
-    if (option.badLinksQA) {
+    if (option.checks.QA_BAD_LINK) {
       Elements.Found.CustomErrorLinks.forEach(($el) => {
         results.push({
           element: $el,
-          type: 'error',
-          content: Lang.sprintf('QA_BAD_LINK', $el),
+          type: option.checks.QA_BAD_LINK.type || 'error',
+          content: option.checks.QA_BAD_LINK.content || Lang.sprintf('QA_BAD_LINK', $el),
           inline: true,
           position: 'beforebegin',
+          dismiss: prepareDismissal($el.tagName + $el.textContent),
+          advanced: option.checks.QA_BAD_LINK.advanced || false,
         });
       });
     }
@@ -8336,18 +8363,17 @@
     /* *********************************************************** */
     /*  Warning: Excessive bolding or italics.                     */
     /* *********************************************************** */
-    if (option.strongItalicsQA) {
+    if (option.checks.QA_STRONG_ITALICS) {
       Elements.Found.StrongItalics.forEach(($el) => {
-        const strongItalicsText = $el.textContent.trim().length;
-        const key = prepareDismissal($el.tagName + $el.textContent);
-        if (strongItalicsText > 400) {
+        if ($el.textContent.trim().length > 400) {
           results.push({
             element: $el.parentNode,
-            type: 'warning',
-            content: Lang.sprintf('QA_BAD_ITALICS'),
+            type: option.checks.QA_STRONG_ITALICS.type || 'warning',
+            content: option.checks.QA_STRONG_ITALICS.content || Lang.sprintf('QA_STRONG_ITALICS'),
             inline: false,
             position: 'beforebegin',
-            dismiss: key,
+            dismiss: prepareDismissal($el.tagName + $el.textContent),
+            advanced: option.checks.QA_STRONG_ITALICS.advanced || false,
           });
         }
       });
@@ -8370,38 +8396,42 @@
         // Check for broken same-page links.
         const hasButtonRole = $el.getAttribute('role') === 'button';
         const hasText = $el.textContent.trim().length !== 0;
-        if (option.inPageLinkQA && (href.startsWith('#') || href === '') && !hasButtonRole && hasText) {
+        if (option.checks.QA_IN_PAGE_LINK && (href.startsWith('#') || href === '') && !hasButtonRole && hasText) {
           const targetId = href.substring(1);
           const targetElement = document.getElementById(targetId) || document.getElementById(decodeURIComponent(targetId)) || document.getElementById(encodeURIComponent(targetId));
           if (!targetElement) {
             results.push({
               element: $el,
-              type: 'error',
-              content: Lang.sprintf('QA_IN_PAGE_LINK'),
+              type: option.checks.QA_IN_PAGE_LINK.type || 'error',
+              content: option.checks.QA_IN_PAGE_LINK.content || Lang.sprintf('QA_IN_PAGE_LINK'),
               inline: true,
               position: 'beforebegin',
+              dismiss: key,
+              advanced: option.checks.QA_IN_PAGE_LINK.advanced || false,
             });
           }
         }
 
         // Manually inspect documents & PDF for accessibility.
-        if (option.documentQA && hasExtension) {
+        if (option.checks.QA_DOCUMENT && hasExtension) {
           results.push({
             element: $el,
-            type: 'warning',
-            content: Lang.sprintf('QA_DOCUMENT'),
+            type: option.checks.QA_DOCUMENT.type || 'warning',
+            content: option.checks.QA_DOCUMENT.content || Lang.sprintf('QA_DOCUMENT'),
             inline: true,
             position: 'beforebegin',
             dismiss: key,
+            advanced: option.checks.QA_DOCUMENT.advanced || false,
           });
-        } else if (option.pdfQA && hasPDF) {
+        } else if (option.checks.QA_PDF && hasPDF) {
           results.push({
             element: $el,
-            type: 'warning',
-            content: Lang.sprintf('QA_PDF'),
+            type: option.checks.QA_PDF.type || 'warning',
+            content: option.checks.QA_PDF.content || Lang.sprintf('QA_PDF'),
             inline: true,
             position: 'beforebegin',
             dismiss: key,
+            advanced: option.checks.QA_PDF.advanced || false,
           });
         }
       }
@@ -8410,11 +8440,13 @@
     /* *************************************************************** */
     /*  Error: Missing language tag. Lang should be at least 2 chars.  */
     /* *************************************************************** */
-    if (option.langQA) {
+    if (option.checks.QA_PAGE_LANG) {
       if (!Elements.Found.Language || Elements.Found.Language.length < 2) {
         results.push({
-          type: 'error',
-          content: Lang.sprintf('QA_PAGE_LANGUAGE'),
+          type: option.checks.QA_PAGE_LANG.type || 'error',
+          content: option.checks.QA_PAGE_LANG.content || Lang.sprintf('QA_PAGE_LANG'),
+          dismiss: prepareDismissal('LANG'),
+          advanced: option.checks.QA_PAGE_LANG.advanced || true,
         });
       }
     }
@@ -8422,19 +8454,19 @@
     /* *************************************************************** */
     /*  Warning: Find blockquotes used as headers.                     */
     /* *************************************************************** */
-    if (option.blockquotesQA) {
+    if (option.checks.QA_BLOCKQUOTE) {
       Elements.Found.Blockquotes.forEach(($el) => {
         const bqHeadingText = $el.textContent;
         if (bqHeadingText.trim().length < 25) {
           const sanitizedText = sanitizeHTML(bqHeadingText);
-          const key = prepareDismissal(`BLOCKQUOTE${sanitizedText}`);
           results.push({
             element: $el,
-            type: 'warning',
-            content: Lang.sprintf('QA_BLOCKQUOTE_MESSAGE', sanitizedText),
+            type: option.checks.QA_BLOCKQUOTE.type || 'warning',
+            content: option.checks.QA_BLOCKQUOTE.content || Lang.sprintf('QA_BLOCKQUOTE', sanitizedText),
             inline: false,
             position: 'beforebegin',
-            dismiss: key,
+            dismiss: prepareDismissal(`BLOCKQUOTE${sanitizedText}`),
+            advanced: option.checks.QA_BLOCKQUOTE.advanced || false,
           });
         }
       });
@@ -8443,51 +8475,53 @@
     /* *************************************************************** */
     /*  Errors: Check HTML tables for issues.                          */
     /* *************************************************************** */
-    if (option.tablesQA) {
-      Elements.Found.Tables.forEach(($el) => {
-        const tableHeaders = $el.querySelectorAll('th');
-        const semanticHeadings = $el.querySelectorAll('h1, h2, h3, h4, h5, h6');
-        if (option.tablesQAmissingTH && tableHeaders.length === 0) {
+    Elements.Found.Tables.forEach(($el) => {
+      const tableHeaders = $el.querySelectorAll('th');
+      const semanticHeadings = $el.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      const key = prepareDismissal(`TABLE${$el.textContent}`);
+      if (option.checks.TABLES_MISSING_HEADINGS && tableHeaders.length === 0) {
+        results.push({
+          element: $el,
+          type: option.checks.TABLES_MISSING_HEADINGS.type || 'error',
+          content: option.checks.TABLES_MISSING_HEADINGS.content || Lang.sprintf('TABLES_MISSING_HEADINGS'),
+          inline: false,
+          position: 'beforebegin',
+          dismiss: key,
+          advanced: option.checks.TABLES_MISSING_HEADINGS.advanced || false,
+        });
+      }
+      if (option.checks.TABLES_SEMANTIC_HEADING && semanticHeadings.length > 0) {
+        semanticHeadings.forEach((heading) => {
           results.push({
-            element: $el,
-            type: 'error',
-            content: Lang.sprintf('TABLES_MISSING_HEADINGS'),
+            element: heading,
+            type: option.checks.TABLES_SEMANTIC_HEADING.type || 'error',
+            content: option.checks.TABLES_SEMANTIC_HEADING.content || Lang.sprintf('TABLES_SEMANTIC_HEADING'),
             inline: false,
             position: 'beforebegin',
+            dismiss: key,
+            advanced: option.checks.TABLES_SEMANTIC_HEADING.advanced || false,
           });
-        }
-        if (option.tablesQAsemanticHeadings && semanticHeadings.length > 0) {
-          semanticHeadings.forEach((heading) => {
-            results.push({
-              element: heading,
-              type: 'error',
-              content: Lang.sprintf('TABLES_SEMANTIC_HEADING'),
-              inline: false,
-              position: 'beforebegin',
-            });
-          });
-        }
-        tableHeaders.forEach((th) => {
-          if (option.tablesQAemptyTH && th.textContent.trim().length === 0) {
-            const issueType = (option.tablesQAemptyTHisError) ? 'error' : 'warning';
-            const key = prepareDismissal(`TABLE${$el.textContent}`);
-            results.push({
-              element: th,
-              type: issueType,
-              content: Lang.sprintf('TABLES_EMPTY_HEADING'),
-              inline: false,
-              position: 'afterbegin',
-              dismiss: key,
-            });
-          }
         });
+      }
+      tableHeaders.forEach((th) => {
+        if (option.checks.TABLES_EMPTY_HEADING && th.textContent.trim().length === 0) {
+          results.push({
+            element: th,
+            type: option.checks.TABLES_EMPTY_HEADING.type || 'error',
+            content: option.checks.TABLES_EMPTY_HEADING.content || Lang.sprintf('TABLES_EMPTY_HEADING'),
+            inline: false,
+            position: 'afterbegin',
+            dismiss: key,
+            advanced: option.checks.TABLES_EMPTY_HEADING.advanced || false,
+          });
+        }
       });
-    }
+    });
 
     /* ****************************************************************** */
     /*  Warning: Detect fake headings                                     */
     /* ****************************************************************** */
-    if (option.fakeHeadingsQA) {
+    if (option.checks.QA_FAKE_HEADING) {
       const ignoreParents = 'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level], blockquote, table';
 
       // Find large text as heading.
@@ -8499,14 +8533,14 @@
 
         if (size >= 24 && !p.closest(ignoreParents) && typicalHeadingLength && maybeSentence) {
           const sanitizedText = sanitizeHTML(getText$1);
-          const key = prepareDismissal(`BOLD${sanitizedText}`);
           results.push({
             element: p,
-            type: 'warning',
-            content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
+            type: option.checks.QA_FAKE_HEADING.type || 'warning',
+            content: option.checks.QA_FAKE_HEADING.content || Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
             inline: false,
             position: 'beforebegin',
-            dismiss: key,
+            dismiss: prepareDismissal(`BOLD${sanitizedText}`),
+            advanced: option.checks.QA_FAKE_HEADING.advanced || false,
           });
         }
       };
@@ -8531,14 +8565,14 @@
             }
 
             const sanitizedText = sanitizeHTML(possibleHeadingText);
-            const key = prepareDismissal(`BOLD${sanitizedText}`);
             results.push({
               element: possibleHeading,
-              type: 'warning',
-              content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
+              type: option.checks.QA_FAKE_HEADING.type || 'warning',
+              content: option.checks.QA_FAKE_HEADING.content || Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
               inline: false,
               position: 'beforebegin',
-              dismiss: key,
+              dismiss: prepareDismissal(`BOLD${sanitizedText}`),
+              advanced: option.checks.QA_FAKE_HEADING.advanced || false,
             });
           }
         }
@@ -8554,104 +8588,105 @@
     /*  Warning: Detect paragraphs that should be lists.               */
     /*  Thanks to John Jameson from PrincetonU for this ruleset!       */
     /* *************************************************************** */
+    if (option.checks.QA_FAKE_LIST) {
+      const numberMatch = new RegExp(/(([023456789][\d\s])|(1\d))/, ''); // All numbers but 1.
+      const alphabeticMatch = new RegExp(/(^[aA1αаΑ]|[^\p{Alphabetic}\s])[-\s.)]/, 'u');
+      const emojiMatch = new RegExp(/\p{Extended_Pictographic}/, 'u');
+      const secondTextNoMatch = ['a', 'A', 'α', 'Α', 'а', 'А', '1'];
+      const specialCharsMatch = /[([{#]/;
+      const prefixDecrement = {
+        2: '1',
+        b: 'a',
+        B: 'A',
+        β: 'α',
+        Β: 'Α',
+        б: 'а',
+        Б: 'А',
+      };
+      const decrement = (element) => element.replace(/^b|^B|^б|^Б|^β|^В|^2/, (match) => prefixDecrement[match]);
 
-    const numberMatch = new RegExp(/(([023456789][\d\s])|(1\d))/, ''); // All numbers but 1.
-    const alphabeticMatch = new RegExp(/(^[aA1αаΑ]|[^\p{Alphabetic}\s])[-\s.)]/, 'u');
-    const emojiMatch = new RegExp(/\p{Extended_Pictographic}/, 'u');
-    const secondTextNoMatch = ['a', 'A', 'α', 'Α', 'а', 'А', '1'];
-    const specialCharsMatch = /[([{#]/;
-    const prefixDecrement = {
-      2: '1',
-      b: 'a',
-      B: 'A',
-      β: 'α',
-      Β: 'Α',
-      б: 'а',
-      Б: 'А',
-    };
-    const decrement = (element) => element.replace(/^b|^B|^б|^Б|^β|^В|^2/, (match) => prefixDecrement[match]);
+      // Variables to carry in loop.
+      let activeMatch = ''; // Carried in loop for second paragraph.
+      let firstText = ''; // Text of previous paragraph.
+      let lastHitWasEmoji = false;
 
-    // Variables to carry in loop.
-    let activeMatch = ''; // Carried in loop for second paragraph.
-    let firstText = ''; // Text of previous paragraph.
-    let lastHitWasEmoji = false;
+      Elements.Found.Paragraphs.forEach((p, i) => {
+        let secondText = false;
+        let hit = false;
+        firstText = firstText || getText(p).replace('(', '');
+        const firstPrefix = firstText.substring(0, 2);
 
-    Elements.Found.Paragraphs.forEach((p, i) => {
-      let secondText = false;
-      let hit = false;
-      firstText = firstText || getText(p).replace('(', '');
-      const firstPrefix = firstText.substring(0, 2);
+        // Grab first two characters.
+        const isAlphabetic = firstPrefix.match(alphabeticMatch);
+        const isNumber = firstPrefix.match(numberMatch);
+        const isEmoji = firstPrefix.match(emojiMatch);
+        const isSpecialChar = specialCharsMatch.test(firstPrefix.charAt(0));
 
-      // Grab first two characters.
-      const isAlphabetic = firstPrefix.match(alphabeticMatch);
-      const isNumber = firstPrefix.match(numberMatch);
-      const isEmoji = firstPrefix.match(emojiMatch);
-      const isSpecialChar = specialCharsMatch.test(firstPrefix.charAt(0));
-
-      if (
-        firstPrefix.length > 0
+        if (
+          firstPrefix.length > 0
         && firstPrefix !== activeMatch
         && !isNumber
         && (isAlphabetic || isEmoji || isSpecialChar)
-      ) {
+        ) {
         // We have a prefix and a possible hit; check next detected paragraph.
-        const secondP = Elements.Found.Paragraphs[i + 1];
-        if (secondP) {
-          secondText = getText(secondP).replace('(', '').substring(0, 2);
-          if (secondTextNoMatch.includes(secondText?.toLowerCase().trim())) {
+          const secondP = Elements.Found.Paragraphs[i + 1];
+          if (secondP) {
+            secondText = getText(secondP).replace('(', '').substring(0, 2);
+            if (secondTextNoMatch.includes(secondText?.toLowerCase().trim())) {
             // A sentence. Another sentence. (A sentence). 1 apple, 1 banana.
-            return;
-          }
-          const secondPrefix = decrement(secondText);
-          if (isAlphabetic) {
+              return;
+            }
+            const secondPrefix = decrement(secondText);
+            if (isAlphabetic) {
             // Check for repeats (*,*) or increments(a,b)
-            if (firstPrefix !== 'A ' && firstPrefix === secondPrefix) {
-              hit = true;
-            }
-          } else if (isEmoji && !lastHitWasEmoji) {
+              if (firstPrefix !== 'A ' && firstPrefix === secondPrefix) {
+                hit = true;
+              }
+            } else if (isEmoji && !lastHitWasEmoji) {
             // Check for two paragraphs in a row that start with emoji.
-            if (secondPrefix.match(emojiMatch)) {
-              hit = true;
-              lastHitWasEmoji = true;
+              if (secondPrefix.match(emojiMatch)) {
+                hit = true;
+                lastHitWasEmoji = true;
               // This is carried; better miss than have lots of positives.
+              }
             }
           }
-        }
-        if (!hit) {
+          if (!hit) {
           // Split p by carriage return if there was a firstPrefix and compare.
-          let textAfterBreak = p?.querySelector('br')?.nextSibling?.nodeValue;
-          if (textAfterBreak) {
-            textAfterBreak = textAfterBreak.replace(/<\/?[^>]+(>|$)/g, '').trim().substring(0, 2);
-            const checkForOtherPrefixChars = specialCharsMatch.test(textAfterBreak.charAt(0));
-            if (checkForOtherPrefixChars
+            let textAfterBreak = p?.querySelector('br')?.nextSibling?.nodeValue;
+            if (textAfterBreak) {
+              textAfterBreak = textAfterBreak.replace(/<\/?[^>]+(>|$)/g, '').trim().substring(0, 2);
+              const checkForOtherPrefixChars = specialCharsMatch.test(textAfterBreak.charAt(0));
+              if (checkForOtherPrefixChars
               || firstPrefix === decrement(textAfterBreak)
               || (!lastHitWasEmoji && textAfterBreak.match(emojiMatch))) {
-              hit = true;
+                hit = true;
+              }
             }
+          } if (hit) {
+            results.push({
+              element: p,
+              type: option.checks.QA_FAKE_LIST.type || 'warning',
+              content: option.checks.QA_FAKE_LIST.content || Lang.sprintf('QA_FAKE_LIST', firstPrefix),
+              inline: false,
+              position: 'beforebegin',
+              dismiss: prepareDismissal(`LIST${p.textContent}`),
+              advanced: option.checks.QA_FAKE_LIST.advanced || false,
+            });
+            activeMatch = firstPrefix;
+          } else {
+            activeMatch = '';
           }
-        } if (hit) {
-          const key = prepareDismissal(`LIST${p.textContent}`);
-          results.push({
-            element: p,
-            type: 'warning',
-            content: Lang.sprintf('QA_SHOULD_BE_LIST', firstPrefix),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
-          });
-          activeMatch = firstPrefix;
-        } else {
-          activeMatch = '';
         }
-      }
-      // Reset for next loop, carry over text query if available.
-      firstText = secondText ? '' : secondText;
-    });
+        // Reset for next loop, carry over text query if available.
+        firstText = secondText ? '' : secondText;
+      });
+    }
 
     /* *************************************************************** */
     /*  Warning: Detect uppercase text.                                */
     /* *************************************************************** */
-    if (option.allCapsQA) {
+    if (option.checks.QA_UPPERCASE) {
       const checkCaps = ($el) => {
         let thisText = '';
         if ($el.tagName === 'LI') {
@@ -8668,14 +8703,14 @@
         const detectUpperCase = thisText.match(uppercasePattern);
 
         if (detectUpperCase && detectUpperCase[0].length > 10) {
-          const key = prepareDismissal(`UPPERCASE${thisText}`);
           results.push({
             element: $el,
-            type: 'warning',
-            content: Lang.sprintf('QA_UPPERCASE_WARNING'),
+            type: option.checks.QA_UPPERCASE.type || 'warning',
+            content: option.checks.QA_UPPERCASE.content || Lang.sprintf('QA_UPPERCASE'),
             inline: false,
             position: 'beforebegin',
-            dismiss: key,
+            dismiss: prepareDismissal(`UPPERCASE${thisText}`),
+            advanced: option.checks.QA_UPPERCASE.advanced || false,
           });
         }
       };
@@ -8688,7 +8723,7 @@
     /* *************************************************************** */
     /*  Error: Duplicate IDs                                           */
     /* *************************************************************** */
-    if (option.duplicateIdQA) {
+    if (option.checks.QA_DUPLICATE_ID) {
       // Look for duplicate IDs within each DOM.
       const doms = document.querySelectorAll('body, [data-sa11y-has-shadow-root]');
       doms.forEach((dom) => {
@@ -8698,7 +8733,7 @@
             const { id } = $el;
 
             // Ignore empty IDs.
-            if (id.trim().length === 0) {
+            if (typeof id !== 'string' || id.trim().length === 0) {
               return;
             }
 
@@ -8718,10 +8753,12 @@
               if (ariaReference.length > 0) {
                 results.push({
                   element: $el,
-                  type: 'error',
-                  content: Lang.sprintf('QA_DUPLICATE_ID', id),
+                  type: option.checks.QA_DUPLICATE_ID.type || 'error',
+                  content: option.checks.QA_DUPLICATE_ID.content || Lang.sprintf('QA_DUPLICATE_ID', id),
                   inline: true,
                   position: 'beforebegin',
+                  dismiss: prepareDismissal(`DUPLICATEID${id}${$el.textContent}`),
+                  advanced: option.checks.QA_DUPLICATE_ID.advanced || true,
                 });
               }
             }
@@ -8748,18 +8785,17 @@
     /*  Warning: Flag underlined text.                                 */
     /*  Created by Brian Teeman.                                       */
     /* *************************************************************** */
-    if (option.underlinedTextQA) {
-      // Find all <u> tags.
+    if (option.checks.QA_UNDERLINE) {
       Elements.Found.Underlines.forEach(($el) => {
         const text = getText($el);
-        const key = prepareDismissal(`UNDERLINE${text}`);
         results.push({
           element: $el,
-          type: 'warning',
-          content: Lang.sprintf('QA_TEXT_UNDERLINE_WARNING'),
+          type: option.checks.QA_UNDERLINE.type || 'warning',
+          content: option.checks.QA_UNDERLINE.content || Lang.sprintf('QA_UNDERLINE'),
           inline: true,
           position: 'beforebegin',
-          dismiss: key,
+          dismiss: prepareDismissal(`UNDERLINE${text}`),
+          advanced: option.checks.QA_UNDERLINE.advanced || false,
         });
       });
       // Find underline based on computed style.
@@ -8768,14 +8804,14 @@
         const decoration = style.textDecorationLine;
         const text = getText($el);
         if (decoration === 'underline') {
-          const key = prepareDismissal(`UNDERLINE${text}`);
           results.push({
             element: $el,
-            type: 'warning',
-            content: Lang.sprintf('QA_TEXT_UNDERLINE_WARNING'),
+            type: option.checks.QA_UNDERLINE.type || 'warning',
+            content: option.checks.QA_UNDERLINE.content || Lang.sprintf('QA_UNDERLINE'),
             inline: false,
             position: 'beforebegin',
-            dismiss: key,
+            dismiss: prepareDismissal(`UNDERLINE${text}`),
+            advanced: option.checks.QA_UNDERLINE.advanced || false,
           });
         }
       };
@@ -8789,12 +8825,14 @@
     /* *************************************************************** */
     /*  Error: Page is missing meta page <title>                       */
     /* *************************************************************** */
-    if (option.pageTitleQA) {
+    if (option.checks.QA_PAGE_TITLE) {
       const metaTitle = document.querySelector('head title');
       if (!metaTitle || metaTitle.textContent.trim().length === 0) {
         results.push({
-          type: 'error',
-          content: Lang.sprintf('QA_PAGE_TITLE'),
+          type: option.checks.QA_PAGE_TITLE.type || 'error',
+          content: option.checks.QA_PAGE_TITLE.content || Lang.sprintf('QA_PAGE_TITLE'),
+          dismiss: prepareDismissal('TITLE'),
+          advanced: option.checks.QA_PAGE_TITLE.advanced || true,
         });
       }
     }
@@ -8802,18 +8840,38 @@
     /* *************************************************************** */
     /*  Warning: Find inappropriate use of <sup> and <sub> tags.       */
     /* *************************************************************** */
-    if (option.subscriptQA) {
+    if (option.checks.QA_SUBSCRIPT) {
       Elements.Found.Subscripts.forEach(($el) => {
         const text = getText($el);
         if (text.length >= 80) {
-          const key = prepareDismissal($el.tagName + text);
           results.push({
             element: $el,
-            type: 'warning',
-            content: Lang.sprintf('QA_SUBSCRIPT_WARNING'),
+            type: option.checks.QA_SUBSCRIPT.type || 'warning',
+            content: option.checks.QA_SUBSCRIPT.content || Lang.sprintf('QA_SUBSCRIPT'),
             inline: true,
             position: 'beforebegin',
-            dismiss: key,
+            dismiss: prepareDismissal($el.tagName + text),
+            advanced: option.checks.QA_SUBSCRIPT.advanced || false,
+          });
+        }
+      });
+    }
+
+    /* *************************************************************** */
+    /*  Warning: Find double nested layout components.                 */
+    /* *************************************************************** */
+    if (option.checks.QA_NESTED_COMPONENTS) {
+      Elements.Found.NestedComponents.forEach(($el) => {
+        const component = $el.querySelector(option.nestedComponentSources);
+        if (component) {
+          results.push({
+            element: $el,
+            type: option.checks.QA_NESTED_COMPONENTS.type || 'warning',
+            content: option.checks.QA_NESTED_COMPONENTS.content || Lang.sprintf('QA_NESTED_COMPONENTS'),
+            inline: false,
+            position: 'beforebegin',
+            dismiss: prepareDismissal(`NESTED${$el.textContent}`),
+            advanced: option.checks.QA_NESTED_COMPONENTS.advanced || false,
           });
         }
       });
@@ -8836,6 +8894,7 @@
           inline: false,
           position: 'beforebegin',
           dismiss: key,
+          advanced: false,
         });
       }
     }
@@ -8851,6 +8910,7 @@
           content: 'Do <strong>not nest forms</strong> within the Accordion component. If the form contains validation issues, a person may not see the form feedback since the accordion panel goes back to its original closed state.',
           inline: false,
           position: 'beforebegin',
+          advanced: false,
         });
       }
     }); */
@@ -8865,6 +8925,10 @@
       const option = {
         ...defaultOptions,
         ...options,
+        checks: {
+          ...defaultOptions.checks,
+          ...options.checks,
+        },
       };
 
       /* *********************************************************** */
@@ -8892,6 +8956,11 @@
           Constants.initializeReadability(option);
           Constants.initializeExclusions(option);
           Constants.initializeEmbeddedContent(option);
+
+          // Make "Advanced checks" on by default or if toggle switch is visually hidden.
+          if (store.getItem('sa11y-advanced') === null || option.checkAllHideToggles) {
+            store.setItem('sa11y-advanced', 'On');
+          }
 
           // Once document has fully loaded.
           documentLoadingCheck(() => {
@@ -8955,8 +9024,8 @@
 
           // Initialize root areas to check.
           const root = document.querySelector(desiredRoot);
-          if (!root) {
-            createAlert(`${Lang.sprintf('ERROR_MISSING_ROOT_TARGET', desiredRoot)}`);
+          if (!root && option.headless === false) {
+            createAlert(`${Lang.sprintf('MISSING_ROOT', desiredRoot)}`);
           }
           Constants.initializeRoot(desiredRoot, desiredReadabilityRoot);
 
@@ -8970,12 +9039,13 @@
           checkHeaders(this.results, option, this.headingOutline);
           checkLinkText(this.results, option);
           checkImages(this.results, option);
-          checkContrast(this.results, option);
           checkLabels(this.results, option);
           checkQA(this.results, option);
-          checkEmbeddedContent(this.results, option);
-          checkReadability();
+          if (option.embeddedContentPlugin) checkEmbeddedContent(this.results, option);
+          if (option.contrastPlugin) checkContrast(this.results, option);
+          if (option.readabilityPlugin) checkReadability();
 
+          // Flagged issues that are images, for the purpose of generating Image Outline.
           this.imageResults = this.results.filter((item) => item.element?.tagName === 'IMG');
 
           /* Custom checks */
@@ -9019,8 +9089,13 @@
       };
 
       this.updateResults = () => {
-        // Filter out heading issues that are outside of the root target.
+        // Filter out heading issues that are outside of the target root.
         this.results = this.results.filter((item) => item.isWithinRoot !== false);
+
+        // Filter out "Advanced checks" if toggled off.
+        if (store.getItem('sa11y-advanced') === 'Off') {
+          this.results = this.results.filter((item) => item.advanced !== true);
+        }
 
         // Generate HTML path, and optionally CSS selector path of element.
         this.results.forEach(($el) => {
@@ -9049,7 +9124,7 @@
           updateBadge(count.error, count.warning);
 
           /* If panel is OPENED. */
-          if (store.getItem('sa11y-remember-panel') === 'Opened') {
+          if (store.getItem('sa11y-panel') === 'Opened') {
             // Paint the page with annotations.
             this.results.forEach(($el, i) => {
               Object.assign($el, { id: i });
@@ -9061,7 +9136,7 @@
                 $el.position,
                 $el.id,
                 $el.dismiss,
-                option.dismissAnnotations,
+                option,
               );
             });
 
@@ -9195,7 +9270,7 @@
 
       // Method: temporarily disable toggle.
       this.disabled = () => {
-        if (store.getItem('sa11y-remember-panel') === 'Opened') {
+        if (store.getItem('sa11y-panel') === 'Opened') {
           Constants.Panel.toggle.click();
         }
         Constants.Panel.toggle.disabled = true;

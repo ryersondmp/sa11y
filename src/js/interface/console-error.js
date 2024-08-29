@@ -34,7 +34,7 @@ export default class ConsoleErrors extends HTMLElement {
     content.innerHTML = `
       <button class="close-btn" aria-label="${Lang._('ALERT_CLOSE')}"></button>
       <h2>${Lang._('ERROR')}</h2>
-      <p>${Lang.sprintf('CONSOLE_ERROR_MESSAGE', google, github)}</p>
+      <p>${Lang.sprintf('CONSOLE_ERROR', google, github)}</p>
       <p class="error">${escapeHTML(this.error.stack)}<br><br>URL: ${url}</p>
     `;
     shadow.appendChild(content);

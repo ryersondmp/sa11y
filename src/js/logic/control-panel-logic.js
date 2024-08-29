@@ -13,7 +13,7 @@ const openOutline = () => {
   Constants.Panel.outlineToggle.classList.add('active');
   Constants.Panel.outline.classList.add('active');
   Constants.Panel.outlineToggle.setAttribute('aria-expanded', 'true');
-  store.setItem('sa11y-remember-outline', 'Opened');
+  store.setItem('sa11y-outline', 'Opened');
   isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
 
   // Toggle visibility of heading labels
@@ -28,7 +28,7 @@ const closeOutline = () => {
   Constants.Panel.outline.classList.remove('active');
   Constants.Panel.outlineToggle.classList.remove('active');
   Constants.Panel.outlineToggle.setAttribute('aria-expanded', 'false');
-  store.setItem('sa11y-remember-outline', 'Closed');
+  store.setItem('sa11y-outline', 'Closed');
 
   // Toggle visibility of heading labels
   const headingLabels = find('sa11y-heading-label', 'root');
@@ -42,7 +42,7 @@ const openImages = () => {
   Constants.Panel.imagesToggle.classList.add('active');
   Constants.Panel.images.classList.add('active');
   Constants.Panel.imagesToggle.setAttribute('aria-expanded', 'true');
-  store.setItem('sa11y-remember-images', 'Opened');
+  store.setItem('sa11y-images', 'Opened');
   isScrollable(Constants.Panel.imagesList, Constants.Panel.imagesContent);
 
   const event = new CustomEvent('sa11y-build-image-outline');
@@ -54,7 +54,7 @@ const closeImages = () => {
     Constants.Panel.imagesToggle.classList.remove('active');
     Constants.Panel.images.classList.remove('active');
     Constants.Panel.imagesToggle.setAttribute('aria-expanded', 'false');
-    store.setItem('sa11y-remember-images', 'Closed');
+    store.setItem('sa11y-images', 'Closed');
   }
 };
 
@@ -65,7 +65,7 @@ const openSettings = () => {
   Constants.Panel.settingsToggle.classList.add('active');
   Constants.Panel.settings.classList.add('active');
   Constants.Panel.settingsToggle.setAttribute('aria-expanded', 'true');
-  store.setItem('sa11y-remember-settings', 'Opened');
+  store.setItem('sa11y-settings', 'Opened');
   isScrollable(
     Constants.Panel.settingsContent,
     Constants.Panel.settingsContent,
@@ -77,7 +77,7 @@ const closeSettings = () => {
   Constants.Panel.settings.classList.remove('active');
   Constants.Panel.settingsToggle.classList.remove('active');
   Constants.Panel.settingsToggle.setAttribute('aria-expanded', 'false');
-  store.setItem('sa11y-remember-settings', 'Closed');
+  store.setItem('sa11y-settings', 'Closed');
 };
 
 /* **************************************************************** */
@@ -101,7 +101,7 @@ export default function initializePanelToggles() {
   });
 
   // Remember to leave outline open
-  if (store.getItem('sa11y-remember-outline') === 'Opened') {
+  if (store.getItem('sa11y-outline') === 'Opened') {
     openOutline();
   }
 
@@ -123,7 +123,7 @@ export default function initializePanelToggles() {
     });
 
     // Remember to leave outline open
-    if (store.getItem('sa11y-remember-images') === 'Opened') {
+    if (store.getItem('sa11y-images') === 'Opened') {
       openImages();
     }
   }
@@ -145,7 +145,7 @@ export default function initializePanelToggles() {
   });
 
   // Remember to leave settings open
-  if (store.getItem('sa11y-remember-settings') === 'Opened') {
+  if (store.getItem('sa11y-settings') === 'Opened') {
     openSettings();
   }
 

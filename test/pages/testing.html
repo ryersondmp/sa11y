@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title></title>
+  <title>Testing</title>
   <link rel="stylesheet" href="./assets/main.css">
   <link rel="stylesheet" href="../../dist/css/sa11y.min.css" />
   <style>
@@ -21,6 +21,15 @@
     .color {
       color: color(display-p3 1 8 0 / .5);
     }
+
+    .carousel {
+      padding: 40px;
+      background: lightblue;
+    }
+
+    [tabindex] {
+      outline: 2px salmon solid;
+    }
   </style>
 </head>
 
@@ -29,67 +38,82 @@
     <h2>Sa11y (Random) Unit Tests</h2>
   </header>
   <main>
-    <p class="color-mix">This uses color-mix.</p>
-    <p class="color">This uses color().</p>
-    <p class="hsl">This uses hsl</p>
-    <p class="visually-hidden">testing</p>
     <h2>A blank slate for testing.</h2>
     <h3>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellat porro doloribus magnam nobis nisi! Officia
       earum reiciendis sequi cum voluptate cupiditate eaque asperiores quos, non voluptatum id mollitia, voluptatibus
       sit!</h3>
 
-    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Animi repellendus vero excepturi veritatis debitis
-      laborum ipsa nam ea dolorum? Architecto earum deserunt, magnam hic adipisci porro quo optio quibusdam laboriosam.
-      <a href="https://www.example.com/asdad.doc.htm">Not an actual document</a> and this is still a PDF <a
-        href="https://www.example.com/asdasd.pdf?asds">Another PDF document</a>.
+    <hr>
+
+    <a href="https://www.example.com/asdsd" target="_blank">Test 123</a>
+
+    <hr>
+    <p>
+      <strong>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis perferendis itaque officiis, iure quaerat
+        blanditiis quibusdam tempora provident accusamus harum corrupti quas architecto mollitia nostrum? Dicta
+        laudantium <a href="https://www.example.com/asdsff" aria-label="Pass">Test 123</a>
+        incidunt sint alias. Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium temporibus libero
+        voluptatem neque nemo, ipsum, quidem distinctio nam repellendus tempora, tempore dolorem reiciendis. Eveniet
+        consectetur culpa eos tempora porro veniam.</strong>
     </p>
 
-    <img src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg">
+    <hr>
 
-    <img
-      src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGFkbDR3emdreTVxZnZqNzZsYWE1dXU2b21xZWM3dDZ6bXlmcDhsOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GQ9InpECkHgJO/giphy.gif"
-      alt="An image of Michael Scott saying: Why are you the way that you are?">
+    <p class="visually-hidden">testing.</p>
 
-    <img
-      src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGFkbDR3emdreTVxZnZqNzZsYWE1dXU2b21xZWM3dDZ6bXlmcDhsOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GQ9InpECkHgJO/giphy.gif"
-      alt="Untitled design - Test">
+    <div class="carousel">
+      <h3>Parent div has class of <strong>.carousel</strong></h3>
+      <div class="slide">
+        <img alt src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg">
+      </div>
+    </div>
 
-    <a href="#"><img
-        src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGFkbDR3emdreTVxZnZqNzZsYWE1dXU2b21xZWM3dDZ6bXlmcDhsOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GQ9InpECkHgJO/giphy.gif"
-        alt="placeh.png"></a>
+    <hr>
 
-    <div hidden>
-      <img
-        src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGFkbDR3emdreTVxZnZqNzZsYWE1dXU2b21xZWM3dDZ6bXlmcDhsOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GQ9InpECkHgJO/giphy.gif"
-        alt="What thumbnail">
+    <div role="link" tabindex="0">
+      <p>Parent has role="link", so annotation should be appended before that.</p>
+      <h4 style="color:pink">Test</h4>
+    </div>
+
+    <hr>
+
+    <p style="color:coral">Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet facere, in, fugiat neque, eaque
+      eligendi commodi provident incidunt a at libero porro eos. Expedita alias dolores corporis saepe officia quod!</p>
+
+    <div role="tablist">
+      Testing
+      <div role="tablist">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum cupiditate dolorum ipsum, praesentium quae quam
+        laudantium modi eius labore neque fugiat tenetur velit quaerat hic perspiciatis, fuga ex assumenda dignissimos.
+      </div>
     </div>
     <hr>
-    <img
-      src="https://imageio.forbes.com/specials-images/imageserve/663c5a05627bd75cb76db0fd/The-Office/960x0.jpg?format=jpg&width=960">
-    <a href="https://www.example.com"><img
-        src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ3RwYzJ4cjNoMHluZnFiODJudWtkZ3BsN3czdjY4dmVwYjd6YnJsMCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/jOpLbiGmHR9S0/giphy.gif"
-        alt="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam tempora accusantium doloribus perspiciatis? Ex voluptates labore ullam dolorem aliquid voluptatum, quos voluptatem explicabo minima molestiae praesentium deserunt odit sequi ipsa. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam tempora accusantium doloribus perspiciatis? Ex voluptates labore ullam dolorem aliquid voluptatum, quos voluptatem explicabo minima molestiae praesentium deserunt odit sequi ipsa."></a>
-    <hr>
-    <img class="ignore"
-      src="https://imageio.forbes.com/specials-images/imageserve/663c5a05627bd75cb76db0fd/The-Office/960x0.jpg?format=jpg&width=960"
-      alt="Dwight Shrute">
+    <details>
+      <summary>Details</summary>
+      Something small enough to escape casual notice.
+      <details>
+        <summary>Details</summary>
+        Something small enough to escape casual notice.
+        <details>
+          <summary>Details</summary>
+          Something small enough to escape casual notice.
+        </details>
+
+      </details>
+
+    </details>
+
     <hr>
 
-    <img
-      src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGFkbDR3emdreTVxZnZqNzZsYWE1dXU2b21xZWM3dDZ6bXlmcDhsOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GQ9InpECkHgJO/giphy.gif"
-      alt="Michael Scott: why are you the way you are?">
-    <hr>
-    <h5>Test</h5>
-
-
-    <h2>Relative image</h2>
-    <div></div>
-    <img class="wp-image-333" src="http://localhost:8080/test/pages/assets/placeholder.svg" alt="Not michael scott." />
   </main>
   <div id="webcomponent">
     <template shadowrootmode="open">
       <h3>Test</h3>
-      <img src="http://localhost:8080/test/pages/assets/placehkolder.svg">
+      <div style="background-color:black">
+        <a href="https://developer.mozilla.org/en-US/" aria-hidden="true">
+          <img alt="MDN" src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg">
+        </a>
+      </div>
     </template>
   </div>
 
@@ -102,17 +126,12 @@
       checkRoot: 'body',
       aboutHeader: 'Help',
       aboutContent: '<h2>Help</h2><p>Questions? Review the <a href="#">accessibility guide</a>. For help, please contact <a href="mailto:help@torontomu.ca">help@torontomu.ca</a>. This tool was created by the Toronto Metropolitan University.</p><p><a href="https://forms.gle/sjzK9XykETaoqZv99">Report bugs &amp; feedback</a></p>',
-      autoDetectShadowComponents: false,
-      panelPosition: 'right',
       shadowComponents: '#webcomponent',
-      // showTitleinPageOutline: false,
-      extraPlaceholderStopWords: 'untitled design',
-      imageIgnore: '.ignore',
-      exportResultsPlugin: true,
-      showImageOutline: true,
-      relativePathImageID: 'wp-image-',
-      // relativePathImageSRC: '',
-      editImageURLofCMS: 'https://aemauthor.torontomu.ca/assets.html/content/dam',
+      checks: {
+        IMAGE_DECORATIVE_CAROUSEL: {
+          type: 'error',
+        },
+      },
     });
   </script>
 </body>

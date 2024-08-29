@@ -117,134 +117,14 @@ export default function checkLinkText(results, option) {
     // Has aria-labeledby.
     const hasAriaLabelledby = $el.querySelector(':scope [aria-labelledby]') || $el.getAttribute('aria-labelledby');
 
-    if ($el.querySelectorAll('img').length) {
-      // Do nothing. Don't overlap with Alt Text module.
-    } else if (ariaHidden) {
-      // Has aria-hidden.
-      if (!negativeTabindex) {
-        // If negative tabindex.
-        results.push({
-          element: $el,
-          type: 'error',
-          content: Lang.sprintf('LINK_HIDDEN_FOCUSABLE'),
-          inline: true,
-          position: 'afterend',
-        });
-      }
-    } else if ((href || href === '') && linkText.length === 0) {
-      // Empty hyperlinks.
-      if (hasAriaLabelledby) {
-        // Has ariaLabelledby attribute but empty accessible name.
-        results.push({
-          element: $el,
-          type: 'error',
-          content: Lang.sprintf('LINK_EMPTY_LABELLEDBY'),
-          inline: true,
-          position: 'afterend',
-        });
-      } else if ($el.children.length) {
-        // Has child elements (e.g. SVG or SPAN) <a><i></i></a>
-        results.push({
-          element: $el,
-          type: 'error',
-          content: Lang.sprintf('LINK_EMPTY_LINK_NO_LABEL'),
-          inline: true,
-          position: 'afterend',
-        });
-      } else {
-        // Completely empty <a></a>
-        results.push({
-          element: $el,
-          type: 'error',
-          content: Lang.sprintf('LINK_EMPTY'),
-          inline: true,
-          position: 'afterend',
-        });
-      }
-    } else if (error[0] !== null) {
-      // Contains stop words.
-      results.push({
-        element: $el,
-        type: 'error',
-        content: Lang.sprintf('LINK_STOPWORD', error[0]),
-        inline: true,
-        position: 'afterend',
-      });
-    } else if (error[1] !== null || matchedSymbol !== null) {
-      const key = Utils.prepareDismissal(`LINK${linkText + href}`);
-      const stopword = matchedSymbol || error[1];
-      // Contains warning words.
-      results.push({
-        element: $el,
-        type: 'warning',
-        content: Lang.sprintf('LINK_BEST_PRACTICES', stopword),
-        inline: true,
-        position: 'beforebegin',
-        dismiss: key,
-      });
-    } else if (error[2] !== null && option.linksToDOI) {
-      const key = Utils.prepareDismissal(`LINK${linkText + error[2] + href}`);
-      // Contains DOI URL in link text.
-      if (linkText.length > 8) {
-        results.push({
-          element: $el,
-          type: 'warning',
-          content: Lang.sprintf('LINK_DOI'),
-          inline: true,
-          position: 'beforebegin',
-          dismiss: key,
-        });
-      }
-    } else if (error[3] !== null && option.URLAsLinkTextWarning) {
-      const key = Utils.prepareDismissal(`LINK${linkText + error[2] + href}`);
-      // Contains URL in link text.
-      if (linkText.length > option.URLTextMaxCharLength) {
-        results.push({
-          element: $el,
-          type: 'warning',
-          content: Lang.sprintf('LINK_URL'),
-          inline: true,
-          position: 'beforebegin',
-          dismiss: key,
-        });
-      }
-    } else if (hasAria) {
-      // If the link has any ARIA, append a "Good" link button.
-      if (option.showGoodLinkButton) {
-        const sanitizedText = Utils.sanitizeHTML(linkText);
-        results.push({
-          element: $el,
-          type: 'good',
-          content: Lang.sprintf('LINK_LABEL', sanitizedText),
-          inline: true,
-          position: 'afterend',
-        });
-      }
-    } else if (isSingleSpecialChar) {
-      // Link is ONLY a period, comma, or special character.
-      results.push({
-        element: $el,
-        type: 'error',
-        content: Lang.sprintf('LINK_EMPTY'),
-        inline: true,
-        position: 'afterend',
-      });
-    }
+    // New tab or new window.
+    const containsNewWindowPhrases = Lang._('NEW_WINDOW_PHRASES').some((pass) => linkText.toLowerCase().includes(pass));
 
-    /* ********************* */
-    /*  Links (Advanced)     */
-    /* ********************* */
-    if (option.linksAdvancedPlugin) {
-      const toggleCheck = Utils.store.getItem('sa11y-remember-links-advanced') === 'On';
-      if (toggleCheck || option.headless || option.checkAllHideToggles) {
-        // New tab or new window.
-        const containsNewWindowPhrases = Lang._('NEW_WINDOW_PHRASES').some((pass) => linkText.toLowerCase().includes(pass));
-
-        // Link that points to a file type and indicates as such.
-        const defaultFileTypes = ['pdf', 'doc', 'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'];
-        const fileTypes = defaultFileTypes.concat(Lang._('FILE_TYPE_PHRASES'));
-        const containsFileTypePhrases = fileTypes.some((pass) => linkText.toLowerCase().includes(pass));
-        const fileTypeMatch = $el.matches(`
+    // Link that points to a file type and indicates as such.
+    const defaultFileTypes = ['pdf', 'doc', 'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'];
+    const fileTypes = defaultFileTypes.concat(Lang._('FILE_TYPE_PHRASES'));
+    const containsFileTypePhrases = fileTypes.some((pass) => linkText.toLowerCase().includes(pass));
+    const fileTypeMatch = $el.matches(`
           a[href$='.pdf'],
           a[href$='.doc'],
           a[href$='.docx'],
@@ -264,47 +144,198 @@ export default function checkLinkText(results, option) {
           a[href$='.avi']
         `);
 
-        // Remove whitespace and special characters to improve accuracy and minimize false positives.
-        const linkTextTrimmed = linkText.replace(/'|"|-|\.|\s+/g, '').toLowerCase();
+    // Remove whitespace and special characters to improve accuracy and minimize false positives.
+    const linkTextTrimmed = linkText.replace(/'|"|-|\.|\s+/g, '').toLowerCase();
 
-        // Links with identical accessible names have equivalent purpose.
-        if (linkTextTrimmed.length !== 0) {
-          if (seen[linkTextTrimmed] && !seen[href]) {
-            // Link has identical name as another link.
-            const key = Utils.prepareDismissal(`LINK${linkTextTrimmed + href}`);
+    if ($el.querySelectorAll('img').length) {
+      // Do nothing. Don't overlap with Alt Text module.
+    } else if (ariaHidden) {
+      // Has aria-hidden.
+      if (!negativeTabindex) {
+        // If negative tabindex.
+        if (option.checks.LINK_HIDDEN_FOCUSABLE) {
+          results.push({
+            element: $el,
+            type: option.checks.LINK_HIDDEN_FOCUSABLE.type || 'error',
+            content: option.checks.LINK_HIDDEN_FOCUSABLE.content || Lang.sprintf('LINK_HIDDEN_FOCUSABLE'),
+            inline: true,
+            position: 'afterend',
+            dismiss: Utils.prepareDismissal(`A${href}`),
+            advanced: option.checks.LINK_HIDDEN_FOCUSABLE.advanced || true,
+          });
+        }
+      }
+    } else if ((href || href === '') && linkText.length === 0) {
+      // Empty hyperlinks.
+      if (hasAriaLabelledby) {
+        // Has ariaLabelledby attribute but empty accessible name.
+        if (option.checks.LINK_EMPTY_LABELLEDBY) {
+          results.push({
+            element: $el,
+            type: option.checks.LINK_EMPTY_LABELLEDBY.type || 'error',
+            content: option.checks.LINK_EMPTY_LABELLEDBY.content || Lang.sprintf('LINK_EMPTY_LABELLEDBY'),
+            inline: true,
+            position: 'afterend',
+            dismiss: Utils.prepareDismissal(`A${href}`),
+            advanced: option.checks.LINK_EMPTY_LABELLEDBY.advanced || true,
+          });
+        }
+      } else if ($el.children.length) {
+        // Has child elements (e.g. SVG or SPAN) <a><i></i></a>
+        if (option.checks.LINK_EMPTY_NO_LABEL) {
+          results.push({
+            element: $el,
+            type: option.checks.LINK_EMPTY_NO_LABEL.type || 'error',
+            content: option.checks.LINK_EMPTY_NO_LABEL.content || Lang.sprintf('LINK_EMPTY_NO_LABEL'),
+            inline: true,
+            position: 'afterend',
+            dismiss: Utils.prepareDismissal(`A${href}`),
+            advanced: option.checks.LINK_EMPTY_NO_LABEL.advanced || false,
+          });
+        }
+      } else if (option.checks.LINK_EMPTY) {
+        // Completely empty <a></a>
+        results.push({
+          element: $el,
+          type: option.checks.LINK_EMPTY.type || 'error',
+          content: option.checks.LINK_EMPTY.content || Lang.sprintf('LINK_EMPTY'),
+          inline: true,
+          position: 'afterend',
+          dismiss: Utils.prepareDismissal(`A${href}`),
+          advanced: option.checks.LINK_EMPTY.advanced || false,
+        });
+      }
+    } else if (error[0] !== null) {
+      // Contains stop words.
+      if (option.checks.LINK_STOPWORD) {
+        results.push({
+          element: $el,
+          type: option.checks.LINK_STOPWORD.type || 'error',
+          content: option.checks.LINK_STOPWORD.content || Lang.sprintf('LINK_STOPWORD', error[0]),
+          inline: true,
+          position: 'afterend',
+          dismiss: Utils.prepareDismissal(`A${linkText + href}`),
+          advanced: option.checks.LINK_STOPWORD.advanced || false,
+        });
+      }
+    } else if (error[1] !== null || matchedSymbol !== null) {
+      // Contains warning words.
+      if (option.checks.LINK_BEST_PRACTICES) {
+        const stopword = matchedSymbol || error[1];
+        results.push({
+          element: $el,
+          type: option.checks.LINK_BEST_PRACTICES.type || 'warning',
+          content: option.checks.LINK_BEST_PRACTICES.content || Lang.sprintf('LINK_BEST_PRACTICES', stopword),
+          inline: true,
+          position: 'beforebegin',
+          dismiss: Utils.prepareDismissal(`LINK${linkText + href}`),
+          advanced: option.checks.LINK_BEST_PRACTICES.advanced || false,
+        });
+      }
+    } else if (error[2] !== null) {
+      // Contains DOI URL in link text.
+      if (linkText.length > 8) {
+        if (option.checks.LINK_DOI) {
+          results.push({
+            element: $el,
+            type: option.checks.LINK_DOI.type || 'warning',
+            content: option.checks.LINK_DOI.content || Lang.sprintf('LINK_DOI'),
+            inline: true,
+            position: 'beforebegin',
+            dismiss: Utils.prepareDismissal(`LINK${linkText + href}`),
+            advanced: option.checks.LINK_DOI.advanced || false,
+          });
+        }
+      }
+    } else if (error[3] !== null) {
+      // Contains URL in link text.
+      if (linkText.length > option.URLTextMaxCharLength) {
+        if (option.checks.LINK_URL) {
+          results.push({
+            element: $el,
+            type: option.checks.LINK_URL.type || 'warning',
+            content: option.checks.LINK_URL.content || Lang.sprintf('LINK_URL'),
+            inline: true,
+            position: 'beforebegin',
+            dismiss: Utils.prepareDismissal(`LINK${linkText + href}`),
+            advanced: option.checks.LINK_URL.advanced || false,
+          });
+        }
+      }
+    } else if (hasAria) {
+      // If the link has any ARIA, append a "Good" link button.
+      if (option.checks.LINK_LABEL) {
+        const sanitizedText = Utils.sanitizeHTML(linkText);
+        results.push({
+          element: $el,
+          type: option.checks.LINK_LABEL.type || 'good',
+          content: option.checks.LINK_LABEL.content || Lang.sprintf('LINK_LABEL', sanitizedText),
+          inline: true,
+          position: 'afterend',
+          dismiss: Utils.prepareDismissal(`LINK${linkText + href}`),
+          advanced: option.checks.LINK_LABEL.advanced || false,
+        });
+      }
+    } else if (isSingleSpecialChar) {
+      // Link is ONLY a period, comma, or special character.
+      if (option.checks.LINK_EMPTY) {
+        results.push({
+          element: $el,
+          type: option.checks.LINK_EMPTY.type || 'error',
+          content: option.checks.LINK_EMPTY.content || Lang.sprintf('LINK_EMPTY'),
+          inline: true,
+          position: 'afterend',
+          dismiss: Utils.prepareDismissal(`LINK${href}`),
+          advanced: option.checks.LINK_EMPTY.advanced || false,
+        });
+      }
+    }
+
+    /* LINKS ADVANCED */
+    if (option.linksAdvancedPlugin) {
+      if (linkTextTrimmed.length !== 0) {
+      // Links with identical accessible names have equivalent purpose.
+        if (seen[linkTextTrimmed] && !seen[href]) {
+          // Link has identical name as another link.
+          if (option.checks.LINK_IDENTICAL_NAME) {
             const sanitizedText = Utils.sanitizeHTML(linkText);
             results.push({
               element: $el,
-              type: 'warning',
-              content: Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText),
+              type: option.checks.LINK_IDENTICAL_NAME.type || 'warning',
+              content: option.checks.LINK_IDENTICAL_NAME.content || Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText),
               inline: true,
               position: 'beforebegin',
-              dismiss: key,
+              dismiss: Utils.prepareDismissal(`LINK${linkTextTrimmed + href}`),
+              advanced: option.checks.LINK_IDENTICAL_NAME.advanced || false,
             });
-          } else if ($el.getAttribute('target') === '_blank' && !fileTypeMatch && !containsNewWindowPhrases) {
-            const key = Utils.prepareDismissal(`LINK${linkTextTrimmed + href}`);
-            results.push({
-              element: $el,
-              type: 'warning',
-              content: Lang.sprintf('NEW_TAB_WARNING'),
-              inline: true,
-              position: 'beforebegin',
-              dismiss: key,
-            });
-          } else if (fileTypeMatch && !containsFileTypePhrases) {
-            const key = Utils.prepareDismissal(`LINK${linkTextTrimmed + href}`);
-            results.push({
-              element: $el,
-              type: 'warning',
-              content: Lang.sprintf('FILE_TYPE_WARNING'),
-              inline: true,
-              position: 'beforebegin',
-              dismiss: key,
-            });
-          } else {
-            seen[linkTextTrimmed] = true;
-            seen[href] = true;
           }
+        } else if ($el.getAttribute('target') === '_blank' && !fileTypeMatch && !containsNewWindowPhrases) {
+          if (option.checks.LINK_NEW_TAB) {
+            results.push({
+              element: $el,
+              type: option.checks.LINK_NEW_TAB.type || 'warning',
+              content: option.checks.LINK_NEW_TAB.content || Lang.sprintf('LINK_NEW_TAB'),
+              inline: true,
+              position: 'beforebegin',
+              dismiss: Utils.prepareDismissal(`LINK${linkTextTrimmed + href}`),
+              advanced: option.checks.LINK_NEW_TAB.advanced || false,
+            });
+          }
+        } else if (fileTypeMatch && !containsFileTypePhrases) {
+          if (option.checks.LINK_FILE_EXT) {
+            results.push({
+              element: $el,
+              type: option.checks.LINK_FILE_EXT.type || 'warning',
+              content: option.checks.LINK_FILE_EXT.content || Lang.sprintf('LINK_FILE_EXT'),
+              inline: true,
+              position: 'beforebegin',
+              dismiss: Utils.prepareDismissal(`LINK${linkTextTrimmed + href}`),
+              advanced: option.checks.LINK_FILE_EXT.advanced || false,
+            });
+          }
+        } else {
+          seen[linkTextTrimmed] = true;
+          seen[href] = true;
         }
       }
     }

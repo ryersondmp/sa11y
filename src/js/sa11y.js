@@ -43,6 +43,10 @@ class Sa11y {
     const option = {
       ...defaultOptions,
       ...options,
+      checks: {
+        ...defaultOptions.checks,
+        ...options.checks,
+      },
     };
 
     /* *********************************************************** */
@@ -70,6 +74,11 @@ class Sa11y {
         Constants.initializeReadability(option);
         Constants.initializeExclusions(option);
         Constants.initializeEmbeddedContent(option);
+
+        // Make "Advanced checks" on by default or if toggle switch is visually hidden.
+        if (Utils.store.getItem('sa11y-advanced') === null || option.checkAllHideToggles) {
+          Utils.store.setItem('sa11y-advanced', 'On');
+        }
 
         // Once document has fully loaded.
         Utils.documentLoadingCheck(() => {
@@ -133,8 +142,8 @@ class Sa11y {
 
         // Initialize root areas to check.
         const root = document.querySelector(desiredRoot);
-        if (!root) {
-          Utils.createAlert(`${Lang.sprintf('ERROR_MISSING_ROOT_TARGET', desiredRoot)}`);
+        if (!root && option.headless === false) {
+          Utils.createAlert(`${Lang.sprintf('MISSING_ROOT', desiredRoot)}`);
         }
         Constants.initializeRoot(desiredRoot, desiredReadabilityRoot);
 
@@ -148,12 +157,13 @@ class Sa11y {
         checkHeaders(this.results, option, this.headingOutline);
         checkLinkText(this.results, option);
         checkImages(this.results, option);
-        checkContrast(this.results, option);
         checkLabels(this.results, option);
         checkQA(this.results, option);
-        checkEmbeddedContent(this.results, option);
-        checkReadability();
+        if (option.embeddedContentPlugin) checkEmbeddedContent(this.results, option);
+        if (option.contrastPlugin) checkContrast(this.results, option);
+        if (option.readabilityPlugin) checkReadability();
 
+        // Flagged issues that are images, for the purpose of generating Image Outline.
         this.imageResults = this.results.filter((item) => item.element?.tagName === 'IMG');
 
         /* Custom checks */
@@ -197,8 +207,13 @@ class Sa11y {
     };
 
     this.updateResults = () => {
-      // Filter out heading issues that are outside of the root target.
+      // Filter out heading issues that are outside of the target root.
       this.results = this.results.filter((item) => item.isWithinRoot !== false);
+
+      // Filter out "Advanced checks" if toggled off.
+      if (Utils.store.getItem('sa11y-advanced') === 'Off') {
+        this.results = this.results.filter((item) => item.advanced !== true);
+      }
 
       // Generate HTML path, and optionally CSS selector path of element.
       this.results.forEach(($el) => {
@@ -227,7 +242,7 @@ class Sa11y {
         updateBadge(count.error, count.warning);
 
         /* If panel is OPENED. */
-        if (Utils.store.getItem('sa11y-remember-panel') === 'Opened') {
+        if (Utils.store.getItem('sa11y-panel') === 'Opened') {
           // Paint the page with annotations.
           this.results.forEach(($el, i) => {
             Object.assign($el, { id: i });
@@ -239,7 +254,7 @@ class Sa11y {
               $el.position,
               $el.id,
               $el.dismiss,
-              option.dismissAnnotations,
+              option,
             );
           });
 
@@ -373,7 +388,7 @@ class Sa11y {
 
     // Method: temporarily disable toggle.
     this.disabled = () => {
-      if (Utils.store.getItem('sa11y-remember-panel') === 'Opened') {
+      if (Utils.store.getItem('sa11y-panel') === 'Opened') {
         Constants.Panel.toggle.click();
       }
       Constants.Panel.toggle.disabled = true;

@@ -44,7 +44,7 @@ const getScrollPosition = ($el, results) => {
     // Alert if tooltip is hidden.
     getHiddenParent($el);
     const tooltip = $el.getAttribute('data-tippy-content');
-    Utils.createAlert(`${Lang._('NOT_VISIBLE_ALERT')}`, tooltip, elementPreview);
+    Utils.createAlert(`${Lang._('NOT_VISIBLE')}`, tooltip, elementPreview);
 
     closeAnyActiveTooltips();
 

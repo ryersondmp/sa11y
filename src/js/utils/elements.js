@@ -111,6 +111,12 @@ const Elements = (function myElements() {
       Constants.Exclusions.Container,
     ) : [];
 
+    Found.NestedComponents = option.nestedComponentSources ? find(
+      option.nestedComponentSources,
+      'root',
+      Constants.Exclusions.Container,
+    ) : [];
+
     // iFrames
     Found.iframes = find(
       'iframe:not(hidden), audio, video',

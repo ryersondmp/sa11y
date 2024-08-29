@@ -1127,6 +1127,22 @@
 
     <hr>
 
+    <h3>Double nested interactive layout components</h3>
+    <div id="warning-nested">
+      <details>
+        <summary>Details</summary>
+        Something small enough to escape casual notice.
+        <details>
+          <summary>Click me</summary>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Iusto ipsum ratione voluptatibus magnam reprehenderit
+          facilis, aperiam autem tempore quasi doloremque? Corporis, eius? Explicabo temporibus totam vitae quis ipsa
+          error dolorum.
+        </details>
+      </details>
+    </div>
+
+    <hr>
+
     <h2>Contrast</h2>
     <div id="error-contrast-1">
       <p style="color: coral">This colour fails at normal size.</p>
@@ -1386,6 +1402,9 @@
       showHinPageOutline: 1,
       exportResultsPlugin: true,
       autoDetectShadowComponents: true,
+
+      // showGoodImageButton: false,
+      // showGoodLinkButton: false,
     });
   </script>
 </body>

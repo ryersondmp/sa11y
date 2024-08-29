@@ -135,6 +135,7 @@ audio {
   display: none;
   align-items: center;
   justify-content: center;
+  min-width: 20px;
   padding: 2.5px;
   font-size: 13.5px;
   font-weight: normal;
