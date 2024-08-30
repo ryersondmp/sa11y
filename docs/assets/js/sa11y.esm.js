@@ -54,6 +54,7 @@ const defaultOptions = {
 
   // Other plugins
   contrastPlugin: true,
+  linksAdvancedPlugin: true,
   formLabelsPlugin: true,
   embeddedContentPlugin: true,
   advancedPlugin: true,
