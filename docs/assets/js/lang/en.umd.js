@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.2.2
+  * @version 3.2.3
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -165,8 +165,8 @@
 
       // Links advanced
       NEW_TAB_WARNING: 'Link opens in a new tab or window without warning. Doing so can be disorienting, especially for people who have difficulty perceiving visual content. Secondly, it is not always a good practice to control someone\'s experience or make decisions for them. Indicate that the link opens in a new window within the link text. <hr> <strong>Tip!</strong> Learn best practices: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">opening links in new browser windows and tabs.</a>',
-      FILE_TYPE_WARNING: 'Link points to a PDF or downloadable file (e.g. MP3, Zip, Word Doc) without warning. Indicate the file type within the link text. If it is a large file, consider including the file size. <hr <strong>Example:</strong> Executive Report (PDF, 3MB)',
-      LINK_IDENTICAL_NAME: 'Link has identical text as another link, although it points to a different page. Multiple links with the same text may cause confusion for people who use screen readers. <strong>Consider making the following link more descriptive to help distinguish it from other links.<strong> <hr> <strong {B}>Label</strong> <strong {W}>%(TEXT)</strong>',
+      FILE_TYPE_WARNING: 'Link points to a PDF or downloadable file (e.g. MP3, Zip, Word Doc) without warning. Indicate the file type within the link text. If it is a large file, consider including the file size. <hr> <strong>Example:</strong> Executive Report (PDF, 3MB)',
+      LINK_IDENTICAL_NAME: 'Link has identical text as another link, although it points to a different page. Multiple links with the same text may cause confusion for people who use screen readers. <strong>Consider making the following link more descriptive to help distinguish it from other links.</strong> <hr> <strong {B}>Label</strong> <strong {W}>%(TEXT)</strong>',
 
       // Images
       MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE: 'Image is being used as a link with surrounding text, although the alt attribute should be marked as decorative.',

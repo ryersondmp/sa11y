@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.2.2
+  * @version 3.2.3
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -33,6 +33,7 @@ var enUS = {
     IMAGES_NOT_FOUND: 'No images found.',
     DECORATIVE: 'Decorative',
     PAGE_ISSUES: 'Page Issues',
+    MISSING: 'Missing',
     SETTINGS: 'Settings',
     CONTRAST: 'Contrast',
     FORM_LABELS: 'Form labels',
@@ -137,12 +138,12 @@ var enUS = {
     READABILITY_NOT_ENOUGH_CONTENT_MESSAGE: 'Not enough content to calculate readability score.',
 
     // Headings
-    HEADING_NON_CONSECUTIVE_LEVEL: 'Non-consecutive heading level used. Headings should never skip levels, or go from <strong>Heading %(prevLevel)</strong> to <strong {r}>Heading %(level)</strong>.',
-    HEADING_EMPTY: 'Empty heading found! To fix, delete this line or change its format from <strong {r}>Heading %(level)</strong> to <strong>Normal</strong> or <strong>Paragraph</strong>.',
+    HEADING_NON_CONSECUTIVE_LEVEL: 'Non-consecutive heading level used. Headings should never skip levels, or go from <strong>Heading %(prevLevel)</strong> to <strong {R}>Heading %(level)</strong>.',
+    HEADING_EMPTY: 'Empty heading found! To fix, delete this line or change its format from <strong {R}>Heading %(level)</strong> to <strong>Normal</strong> or <strong>Paragraph</strong>.',
     HEADING_LONG: 'Heading is long! Headings should be used to organize content and convey structure. They should be brief, informative, and unique. Please keep headings less than 160 characters (no more than a sentence). <hr> <strong {B}>%(HEADING_LENGTH) Characters</strong>',
     HEADING_FIRST: 'The first heading on a page should usually be a Heading 1 or Heading 2. Heading 1 should be the start of the main content section, and is the main heading that describes the overall purpose of the page. Learn more about <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Heading Structure.</a>',
     HEADING_MISSING_ONE: 'Missing Heading 1. Heading 1 should be the start of the main content area, and is the main heading that describes the overall purpose of the page. Learn more about <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Heading Structure.</a>',
-    HEADING_EMPTY_WITH_IMAGE: 'Heading has no text, but contains an image. If this is not a heading, change its format from <strong {r}>Heading %(level)</strong> to <strong>Normal</strong> or <strong>Paragraph</strong>. Otherwise, please add alt text to the image if it is not decorative.',
+    HEADING_EMPTY_WITH_IMAGE: 'Heading has no text, but contains an image. If this is not a heading, change its format from <strong {R}>Heading %(level)</strong> to <strong>Normal</strong> or <strong>Paragraph</strong>. Otherwise, please add alt text to the image if it is not decorative.',
     PANEL_HEADING_MISSING_ONE: 'Missing Heading 1!',
     PANEL_NO_HEADINGS: 'No headings found.',
 
@@ -151,26 +152,26 @@ var enUS = {
     LINK_EMPTY_LABELLEDBY: 'Link has an <code>aria-labelledby</code> value that is empty or does not match the <code>id</code> value of another element on the page.',
     LINK_EMPTY_LINK_NO_LABEL: 'Link does not have discernible text that is visible to screen readers and other assistive technology. To fix: <ul><li>Add some concise text that describes where the link takes you.</li><li>If it is an <a href="https://a11y-101.com/development/icons-and-links">icon link or SVG,</a> it is likely missing a descriptive label.</li><li>If you think this link is an error due to a copy/paste bug, consider deleting it.</li></ul>',
     LINK_LABEL: '<strong {B}>Label</strong> %(TEXT)',
-    LINK_STOPWORD: 'Link text may not be descriptive enough out of context: <strong {r}>%(ERROR)</strong><hr><strong>Tip!</strong> Link text should always be clear, unique, and meaningful. Avoid common words like &quot;click here&quot; or &quot;learn more&quot;',
-    LINK_BEST_PRACTICES: 'Consider replacing the link text: <strong {r}>%(ERROR)</strong><hr><ul><li>&quot;Click here&quot; places focus on mouse mechanics, when many people do not use a mouse or may be viewing this website on a mobile device. Consider using a different verb that relates to the task.</li><li>Avoid using HTML symbols as call to actions unless they are hidden to assistive technologies.</li></ul>',
+    LINK_STOPWORD: 'Link text may not be descriptive enough out of context: <strong {R}>%(ERROR)</strong><hr><strong>Tip!</strong> Link text should always be clear, unique, and meaningful. Avoid common words like &quot;click here&quot; or &quot;learn more&quot;',
+    LINK_BEST_PRACTICES: 'Consider replacing the link text: <strong {R}>%(ERROR)</strong><hr><ul><li>&quot;Click here&quot; places focus on mouse mechanics, when many people do not use a mouse or may be viewing this website on a mobile device. Consider using a different verb that relates to the task.</li><li>Avoid using HTML symbols as call to actions unless they are hidden to assistive technologies.</li></ul>',
     LINK_URL: 'Longer, less intelligible URLs used as link text might be difficult to comprehend with assistive technology. In most cases, it is better to use human-readable text instead of the URL. Short URLs (such as a site\'s homepage) are okay. <hr> <strong>Tip!</strong> Link text should always be clear, unique, and meaningful so it could be understood out of context.',
     LINK_DOI: 'For web pages or online-only resources, the <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APA Style guide</a> recommends using descriptive links by wrapping the URL or DOI of the work around its title. Longer, less intelligible URLs used as link text might be difficult to comprehend with assistive technology.',
 
     // Links advanced
     NEW_TAB_WARNING: 'Link opens in a new tab or window without warning. Doing so can be disorienting, especially for people who have difficulty perceiving visual content. Secondly, it is not always a good practice to control someone\'s experience or make decisions for them. Indicate that the link opens in a new window within the link text. <hr> <strong>Tip!</strong> Learn best practices: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">opening links in new browser windows and tabs.</a>',
     FILE_TYPE_WARNING: 'Link points to a PDF or downloadable file (e.g. MP3, Zip, Word Doc) without warning. Indicate the file type within the link text. If it is a large file, consider including the file size.<hr><strong>Example:</strong> Executive Report (PDF, 3MB)',
-    LINK_IDENTICAL_NAME: 'Link has identical text as another link, although it points to a different page. Multiple links with the same text may cause confusion for people who use screen readers. <strong>Consider making the following link more descriptive to help distinguish it from other links.<strong> <hr> <strong {B}>Label</strong> <strong {W}>%(TEXT)</strong>',
+    LINK_IDENTICAL_NAME: 'Link has identical text as another link, although it points to a different page. Multiple links with the same text may cause confusion for people who use screen readers. <strong>Consider making the following link more descriptive to help distinguish it from other links.</strong> <hr> <strong {B}>Label</strong> <strong {W}>%(TEXT)</strong>',
 
     // Images
     MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE: 'Image is being used as a link with surrounding text, although the alt attribute should be marked as decorative.',
     MISSING_ALT_LINK_MESSAGE: 'Image is being used as a link but is missing alt text! Please ensure alt text describes where the link takes you.',
     MISSING_ALT_MESSAGE: 'Missing alt text! If the image conveys a story, mood, or important information - be sure to describe the image.',
-    LINK_ALT_HAS_FILE_EXTENSION: 'File extension within the alt text found. Ensure the alt text describes the destination of the link, not a literal description of the image. Remove: <strong {r}>%(ERROR)</strong> <hr> {ALT} {L} <strong {W}>%(ALT_TEXT)</strong>',
-    LINK_IMAGE_PLACEHOLDER_ALT_MESSAGE: 'Non-descript or placeholder alt text within a linked image found. Ensure the alt text describes the destination of the link, not a literal description of the image. Replace the following alt text. <hr> {ALT} {L} <strong {r}>%(ALT_TEXT)</strong>',
+    LINK_ALT_HAS_FILE_EXTENSION: 'File extension within the alt text found. Ensure the alt text describes the destination of the link, not a literal description of the image. Remove: <strong {R}>%(ERROR)</strong> <hr> {ALT} {L} <strong {R}>%(ALT_TEXT)</strong>',
+    LINK_IMAGE_PLACEHOLDER_ALT_MESSAGE: 'Non-descript or placeholder alt text within a linked image found. Ensure the alt text describes the destination of the link, not a literal description of the image. Replace the following alt text. <hr> {ALT} {L} <strong {R}>%(ALT_TEXT)</strong>',
     LINK_IMAGE_SUS_ALT_MESSAGE: 'Assistive technologies already indicate that this is an image, so &quot;<strong {W}>%(ERROR)</strong>&quot; may be redundant. Ensure the alt text describes the destination of the link, not a literal description of the image. <hr> {ALT} {L} <strong {W}>%(ALT_TEXT)</strong>',
-    ALT_HAS_FILE_EXTENSION: 'File extension within the alt text found. If the image conveys a story, mood, or important information - be sure to describe the image. Remove: <strong {r}>%(ERROR)</strong>. <hr> {ALT} <strong {r}>%(ALT_TEXT)</strong>',
-    ALT_PLACEHOLDER_MESSAGE: 'Non-descript or placeholder alt text found. Replace the following alt text with something more meaningful. <hr> {ALT} <strong {r}>%(ALT_TEXT)</strong>',
-    ALT_HAS_SUS_WORD: 'Assistive technologies already indicate that this is an image, so &quot;<strong {r}>%(ERROR)</strong>&quot; may be redundant. <hr> {ALT} <strong {W}>%(ALT_TEXT)</strong>',
+    ALT_HAS_FILE_EXTENSION: 'File extension within the alt text found. If the image conveys a story, mood, or important information - be sure to describe the image. Remove: <strong {R}>%(ERROR)</strong>. <hr> {ALT} <strong {R}>%(ALT_TEXT)</strong>',
+    ALT_PLACEHOLDER_MESSAGE: 'Non-descript or placeholder alt text found. Replace the following alt text with something more meaningful. <hr> {ALT} <strong {R}>%(ALT_TEXT)</strong>',
+    ALT_HAS_SUS_WORD: 'Assistive technologies already indicate that this is an image, so &quot;<strong {W}>%(ERROR)</strong>&quot; may be redundant. <hr> {ALT} <strong {W}>%(ALT_TEXT)</strong>',
     LINK_HIDDEN_FOCUSABLE: 'Link has <code>aria-hidden=&quot;true&quot;</code> but is still keyboard focusable. If you are intending to hide a redundant or duplicate link, add <code>tabindex=&quot;-1&quot;</code> as well.',
     LINK_IMAGE_NO_ALT_TEXT: 'Image within link is marked as decorative and there is no link text. Please add alt text to the image that describes the destination of the link.',
     LINK_IMAGE_HAS_TEXT: 'Image is marked as decorative, although the link is using the surrounding text as a descriptive label.',
@@ -199,7 +200,7 @@ var enUS = {
     EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> with focusable elements should not have <code>tabindex="-1"</code>. The embedded content will not be keyboard accessible.',
 
     // Quality assurance
-    QA_BAD_LINK: 'Bad link found. Link appears to point to a development environment. <hr> This link points to: <br> <strong {r}>%(LINK)</strong>',
+    QA_BAD_LINK: 'Bad link found. Link appears to point to a development environment. <hr> This link points to: <br> <strong {R}>%(LINK)</strong>',
     QA_BAD_ITALICS: 'Bold and italic tags have semantic meaning, and should <strong>not</strong> be used to highlight entire paragraphs. Bolded text should be used to provide strong <strong>emphasis</strong> on a word or phrase. Italics should be used to highlight proper names (i.e. book and article titles), foreign words, quotes. Long quotes should be formatted as a blockquote.',
     QA_PDF: 'Unable to check PDFs for accessibility. PDFs are considered web content and must be made accessible as well. PDFs often contain issues for people who use screen readers (missing structural tags or missing form field labels) and people who have low vision (text does not reflow when enlarged). <ul><li>If this is a form, consider using an accessible HTML form as an alternative.</li><li>If this is a document, consider converting it into a web page.</li></ul>Otherwise, please check <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF for accessibility in Acrobat DC.</a>',
     QA_DOCUMENT: 'Unable to check document for accessibility. Linked documents are considered web content and must be made accessible as well. Please manually review this document. <ul><li>Make your <a href="https://support.google.com/docs/answer/6199477?hl=en">Google Workspace document or presentation more accessible.</a></li><li>Make your <a href="https://support.microsoft.com/en-us/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office documents more accessible.</a></li></ul>',
@@ -207,9 +208,9 @@ var enUS = {
     QA_PAGE_TITLE: 'Missing page title! Please provide a <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">page title.</a>',
     QA_BLOCKQUOTE_MESSAGE: 'Is this a heading? <strong {W}>%(TEXT)</strong> <hr> Blockquotes should be used for quotes only. If this is intended to be a heading, change this blockquote to a semantic heading (e.g. Heading 2 or Heading 3).',
     QA_FAKE_HEADING: 'Is this a heading? <strong {W}>%(TEXT)</strong> <hr> A line of bold or large text might look like a heading, but someone using a screen reader cannot tell that it is important or jump to its content. Bold or large text should never replace semantic headings (Heading 2 to Heading 6).',
-    QA_SHOULD_BE_LIST: 'Are you trying to create a list? Possible list item found: <strong {r}>%(firstPrefix)</strong> <hr> Make sure to use semantic lists by using the bullet or number formatting buttons instead. When using a semantic list, assistive technologies are able to convey information such as the total number of items and the relative position of each item in the list. Learn more about <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semantic lists.</a>',
+    QA_SHOULD_BE_LIST: 'Are you trying to create a list? Possible list item found: <strong {R}>%(firstPrefix)</strong> <hr> Make sure to use semantic lists by using the bullet or number formatting buttons instead. When using a semantic list, assistive technologies are able to convey information such as the total number of items and the relative position of each item in the list. Learn more about <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semantic lists.</a>',
     QA_UPPERCASE_WARNING: 'Found all caps. Some screen readers may interpret all caps text as an acronym and will read each letter individually. Additionally, some people find all caps more difficult to read and it may give the appearance of SHOUTING.',
-    QA_DUPLICATE_ID: 'Found <strong>duplicate ID</strong>. Duplicate ID errors are known to cause problems for assistive technologies when they are trying to interact with content. <hr> Please remove or change the following ID: <strong {r}>%(id)</strong>',
+    QA_DUPLICATE_ID: 'Found <strong>duplicate ID</strong>. Duplicate ID errors are known to cause problems for assistive technologies when they are trying to interact with content. <hr> Please remove or change the following ID: <strong {R}>%(id)</strong>',
     QA_TEXT_UNDERLINE_WARNING: 'Underlined text can be confused with links. Consider using a different style such as <code>&lt;strong&gt;</code><strong>strong importance</strong><code>&lt;/strong&gt;</code> or <code>&lt;em&gt;</code><em>emphasis</em><code>&lt;/em&gt;</code>.',
     QA_SUBSCRIPT_WARNING: 'The subscript and superscript formatting options should only be used to change the position of text for typographical conventions or standards. It should <strong>not</strong> solely be used for presentation or appearance purposes. Formatting entire sentences poses readability issues. Appropriate use cases would include displaying exponents, ordinal numbers such as 4<sup>th</sup> instead of fourth, and chemical formulas (e.g. H<sub>2</sub>O).',
     QA_IN_PAGE_LINK: 'Broken same-page link. The link target does not match any element on this page.',
@@ -220,7 +221,7 @@ var enUS = {
     TABLES_EMPTY_HEADING: 'Empty table header found! Table headers should <strong>never</strong> be empty. It is important to designate row and/or column headers to convey their relationship. This information provides context to people who use assistive technology. Please keep in mind that tables should be used for tabular data only. <hr> Learn more about <a href="https://www.w3.org/WAI/tutorials/tables/">accessible tables.</a>',
 
     // Contrast
-    CONTRAST_ERROR: 'This text does not have enough contrast with the background. The contrast ratio should be at least 4.5:1 for normal text and 3:1 for large text. <hr> <strong {B}>Contrast Ratio</strong> <strong {B}>%(RATIO)</strong> <strong {r}>%(TEXT)</strong>',
+    CONTRAST_ERROR: 'This text does not have enough contrast with the background. The contrast ratio should be at least 4.5:1 for normal text and 3:1 for large text. <hr> <strong {B}>Contrast Ratio</strong> <strong {B}>%(RATIO)</strong> <strong {R}>%(TEXT)</strong>',
     CONTRAST_WARNING: 'The contrast of this text is unknown and needs to be manually reviewed. Ensure the text and the background have strong contrasting colors. The contrast ratio should be at least 4.5:1 for normal text and 3:1 for large text. <hr> Please review: <strong {W}>%(TEXT)</strong>',
     CONTRAST_INPUT_ERROR: 'Text within this input does not have enough contrast with the background. The contrast ratio should be at least 4.5:1 for normal text and 3:1 for large text. <hr> <strong {B}>Contrast Ratio</strong> <strong {B}>%(RATIO)</strong>',
   },

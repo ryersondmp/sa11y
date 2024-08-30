@@ -34,17 +34,14 @@ export function annotate(
   position,
   index,
   dismissKey,
-  dismissAnnotationsOption,
+  option,
 ) {
-  const validTypes = [
-    'error',
-    'warning',
-    'good',
-  ];
-
+  // Validate types to prevent errors.
+  const validTypes = ['error', 'warning', 'good'];
   if (validTypes.indexOf(type) === -1) {
     throw Error(`Invalid type [${type}] for annotation`);
   }
+
   // Add unique ID and styles to annotation and marked element.
   [type].forEach(($el) => {
     if ($el === 'error' && element !== undefined) {
@@ -62,23 +59,30 @@ export function annotate(
     [validTypes[2]]: Lang._('GOOD'),
   };
 
-  // Add dismiss button if prop enabled & dismiss key was defined.
-  const dismiss = (dismissAnnotationsOption === true && type === 'warning' && dismissKey !== undefined)
+  // Don't paint page with "Good" annotations for images with alt text and links with accessible name.
+  if (option.showGoodImageButton === false && element?.tagName === 'IMG' && type === 'good') return;
+  if (option.showGoodLinkButton === false && element?.tagName === 'A' && type === 'good') return;
+
+  // Add dismiss button if prop enabled & has a dismiss key.
+  const dismiss = (option.dismissAnnotations === true && type === 'warning' && dismissKey !== undefined)
     ? `<button data-sa11y-dismiss='${index}' type='button'>${Lang._('DISMISS')}</button>` : '';
 
+  // Create 'sa11y-annotation' web component for each annotation.
   const instance = document.createElement('sa11y-annotation');
   instance.setAttribute('data-sa11y-annotation', index);
-  const create = document.createElement('div');
-  const listItem = document.createElement('li');
 
   if (element === undefined) {
     // Page errors displayed to main panel.
-    Constants.Panel.pageIssues.classList.add('active');
-    Constants.Panel.panel.classList.add('has-page-issues');
+    const listItem = document.createElement('li');
     listItem.innerHTML = `<strong>${ariaLabel[type]}</strong> ${content}${dismiss}`;
     Constants.Panel.pageIssuesList.insertAdjacentElement('afterbegin', listItem);
+
+    // Make "Page Issues" visible.
+    Constants.Panel.pageIssues.classList.add('active');
+    Constants.Panel.panel.classList.add('has-page-issues');
   } else {
     // Button annotations.
+    const create = document.createElement('div');
     create.classList.add(`${inline ? 'instance-inline' : 'instance'}`);
     create.innerHTML = `
     <button
@@ -93,7 +97,7 @@ export function annotate(
     ></button>`;
 
     // Make sure annotations always appended outside of interactive elements.
-    const location = element.closest('a, button') || element;
+    const location = element.closest('a, button, [role="link"], [role="button"]') || element;
     location.insertAdjacentElement(position, instance);
     instance.shadowRoot.appendChild(create);
   }

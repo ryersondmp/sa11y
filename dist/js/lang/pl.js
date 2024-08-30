@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.2.2
+  * @version 3.2.3
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -153,12 +153,12 @@ var pl = {
     READABILITY_NOT_ENOUGH_CONTENT_MESSAGE: 'Za mało treści, aby ocenić czytelność.',
 
     // Headings
-    HEADING_NON_CONSECUTIVE_LEVEL: 'Niespójny poziom nagłówka. Zastosowane poziomy nie następują po sobie. Nagłówki nigdy nie powinny pomijać poziomów np. od <strong>Nagłówek %(prevLevel)</strong> do <strong {r}>Nagłówek %(level)</strong>.',
-    HEADING_EMPTY: 'Znaleziono pusty nagłówek! Aby to naprawić, usuń tę linię lub zmień jej format z <strong {r}>Nagłówek %(level)</strong> na <strong>zwykły tekst</strong> lub <strong>akapit</strong>.',
+    HEADING_NON_CONSECUTIVE_LEVEL: 'Niespójny poziom nagłówka. Zastosowane poziomy nie następują po sobie. Nagłówki nigdy nie powinny pomijać poziomów np. od <strong>Nagłówek %(prevLevel)</strong> do <strong {R}>Nagłówek %(level)</strong>.',
+    HEADING_EMPTY: 'Znaleziono pusty nagłówek! Aby to naprawić, usuń tę linię lub zmień jej format z <strong {R}>Nagłówek %(level)</strong> na <strong>zwykły tekst</strong> lub <strong>akapit</strong>.',
     HEADING_LONG: 'Nagłówek jest zbyt długi! Nagłówki służą do organizowania treści i przekazywania struktury. Powinny być krótkie, jasne, opisowe i niepowtarzalne. Pisz nagłówki nie dłuższe niż 160 znaków (nie więcej niż zdanie). <hr> <strong>%(HEADING_LENGTH) Znaków</strong>',
     HEADING_FIRST: 'Pierwszym nagłówkiem na stronie powinien być zwykle Nagłówek H1 lub Nagłówek H2. Nagłówek H1 jest głównym nagłówkiem opisującym ogólny cel strony i powinien być początkiem obszaru treści głównej. Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Strukturze nagłówków.</a>',
     HEADING_MISSING_ONE: 'Brakuje nagłówka H1. Nagłówek H1 jest głównym nagłówkiem opisującym ogólny cel strony i powinien być początkiem obszaru treści głównej. Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Strukturze nagłówków.</a>',
-    HEADING_EMPTY_WITH_IMAGE: 'Nagłówek nie ma tekstu, ale zawiera obrazek. Jeśli to nie jest nagłówek, zmień jego format z <strong {r}>Nagłówek H%(level)</strong> na <strong>zwykły tekst</strong> lub <strong>akapit</strong>. W przeciwnym razie, dodaj do obrazu tekst alt, jeśli nie jest on ozdobny.',
+    HEADING_EMPTY_WITH_IMAGE: 'Nagłówek nie ma tekstu, ale zawiera obrazek. Jeśli to nie jest nagłówek, zmień jego format z <strong {R}>Nagłówek H%(level)</strong> na <strong>zwykły tekst</strong> lub <strong>akapit</strong>. W przeciwnym razie, dodaj do obrazu tekst alt, jeśli nie jest on ozdobny.',
     PANEL_HEADING_MISSING_ONE: 'Brak Nagłówka 1!',
     PANEL_NO_HEADINGS: 'Nie znaleziono nagłówków.',
 
@@ -167,8 +167,8 @@ var pl = {
     LINK_EMPTY_LABELLEDBY: 'Link ma wartość <code>aria-labelledby</code>, która jest pusta lub nie pasuje do wartości atrybutu <code>id</code> innego elementu na stronie.',
     LINK_EMPTY_LINK_NO_LABEL: 'Łącze nie ma opisowego tekstu, który jest widoczny dla czytników ekranu i innych technologii wspomagających. Aby naprawić: <ul><li>Dodaj zwięzły tekst, który opisuje, dokąd prowadzi łącze.</li><li>Jeśli łączem jest <a href="https://a11y-101.com/development/icons-and-links">ikona lub SVG,</a> prawdopodobnie brakuje mu opisowej etykiety.</li><li>Jeśli uważasz, że to łącze jest błędem spowodowanym błędem kopiuj/wklej, rozważ usunięcie go.</li></ul>',
     LINK_LABEL: '<strong {B}>Etykieta łącza</strong> %(TEXT)',
-    LINK_STOPWORD: 'Tekst łącza może nie być wystarczająco opisowy w kontekście: <strong {r}>%(ERROR)</strong> <hr> <strong>Porada!</strong> Tekst łącza powinien być zawsze jasny, unikalny i znaczący. Unikaj typowych słów takich jak &quot;kliknij tutaj&quot; lub &quot;czytaj więcej&quot;.',
-    LINK_BEST_PRACTICES: 'Rozważ zastąpienie tekstu łącza: <strong {r}>%(ERROR)</strong> <hr> <ul><li>&bdquo;Kliknij tutaj&rdquo; skupia się na mechanice myszy, podczas gdy wiele osób nie używa myszy lub może przeglądać tę stronę na urządzeniu mobilnym. Rozważ użycie innego czasownika, który odnosi się do zadania.</li><li>Unikaj używania symboli HTML jako wezwań do działania, chyba że są one ukryte dla technologii wspomagających.</li></ul>',
+    LINK_STOPWORD: 'Tekst łącza może nie być wystarczająco opisowy w kontekście: <strong {R}>%(ERROR)</strong> <hr> <strong>Porada!</strong> Tekst łącza powinien być zawsze jasny, unikalny i znaczący. Unikaj typowych słów takich jak &quot;kliknij tutaj&quot; lub &quot;czytaj więcej&quot;.',
+    LINK_BEST_PRACTICES: 'Rozważ zastąpienie tekstu łącza: <strong {R}>%(ERROR)</strong> <hr> <ul><li>&bdquo;Kliknij tutaj&rdquo; skupia się na mechanice myszy, podczas gdy wiele osób nie używa myszy lub może przeglądać tę stronę na urządzeniu mobilnym. Rozważ użycie innego czasownika, który odnosi się do zadania.</li><li>Unikaj używania symboli HTML jako wezwań do działania, chyba że są one ukryte dla technologii wspomagających.</li></ul>',
     LINK_URL: 'Dłuższe, mniej zrozumiałe adresy URL używane jako tekst linku mogą być trudne do zrozumienia podczas korzystania z technologii wspomagającej. W&nbsp;większości przypadków zamiast adresu URL lepiej jest używać tekstu czytelnego dla człowieka. Krótkie adresy URL (takie jak głównej strony witryny) są w porządku. <hr> <strong>Porada!</strong> Tekst łącza powinien być zawsze jasny, unikalny i znaczący, aby mógł być zrozumiany bez kontekstu.',
     LINK_DOI: 'W przypadku stron internetowych lub zasobów dostępnych tylko online, przewodnik <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APA Style</a> zaleca stosowanie linków opisowych poprzez zawijanie adresu URL lub DOI pracy wokół jej tytułu. Dłuższe, mniej zrozumiałe adresy URL używane jako tekst linku mogą być trudne do zrozumienia podczas korzystania z technologii wspomagającej.',
 
@@ -181,12 +181,12 @@ var pl = {
     MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE: 'Obraz jest używany razem z sąsiadującym tekstem jako łącze. Obraz powinien być oznaczony jako dekoracyjny albo atrybut alt obrazu powinien być pusty.',
     MISSING_ALT_LINK_MESSAGE: 'Obraz jest używany jako łącze, ale brakuje tekstu alternatywnego! Dodaj tekst alternatywny, który mówi, dokąd prowadzi łącze.',
     MISSING_ALT_MESSAGE: 'Brak tekstu alternatywnego! Jeśli obraz przekazuje historię, nastrój lub ważne informacje - przedstaw je w tekście alternatywnym.',
-    LINK_ALT_HAS_FILE_EXTENSION: 'W tekście alt znaleziono rozszerzenie nazwy pliku. Upewnij się, że tekst alternatywny opisuje miejsce docelowe łącza, a nie treść lub wygląd obrazu. Usuń wyraz(y): <strong {r}>%(ERROR)</strong> <hr> {ALT} {L} <strong {r}>%(ALT_TEXT)</strong>',
-    LINK_IMAGE_PLACEHOLDER_ALT_MESSAGE: 'Znaleziono nieopisowy lub zastępczy tekst alt w obrazie będącym łączem. Upewnij się, że tekst alternatywny opisuje miejsce docelowe łącza, a nie treść lub wygląd obrazu. Zastąp następujący tekst alt. <hr> {ALT} {L} <strong {r}>%(ALT_TEXT)</strong>.',
+    LINK_ALT_HAS_FILE_EXTENSION: 'W tekście alt znaleziono rozszerzenie nazwy pliku. Upewnij się, że tekst alternatywny opisuje miejsce docelowe łącza, a nie treść lub wygląd obrazu. Usuń wyraz(y): <strong {R}>%(ERROR)</strong> <hr> {ALT} {L} <strong {R}>%(ALT_TEXT)</strong>',
+    LINK_IMAGE_PLACEHOLDER_ALT_MESSAGE: 'Znaleziono nieopisowy lub zastępczy tekst alt w obrazie będącym łączem. Upewnij się, że tekst alternatywny opisuje miejsce docelowe łącza, a nie treść lub wygląd obrazu. Zastąp następujący tekst alt. <hr> {ALT} {L} <strong {R}>%(ALT_TEXT)</strong>.',
     LINK_IMAGE_SUS_ALT_MESSAGE: 'Technologie wspomagające już wskazują, że jest to obraz, więc &quot;<strong {W}>%(ERROR)</strong>&quot; mogą być zbędne. Upewnij się, że tekst alternatywny opisuje miejsce docelowe łącza, a nie treść lub wygląd obrazu. <hr> {ALT} {L} <strong {W}>%(ALT_TEXT)</strong>',
-    ALT_HAS_FILE_EXTENSION: 'W tekście alt znaleziono rozszerzenie nazwy pliku. Upewnij się, że tekst alternatywny opisuje miejsce docelowe łącza, a nie treść lub wygląd obrazu. Usuń wyraz(y): <strong {r}>%(ERROR)</strong> <hr> {ALT} <strong {W}>%(ALT_TEXT)</strong>',
-    ALT_PLACEHOLDER_MESSAGE: 'Znaleziono nieopisowy lub zastępczy tekst alt. Zamień poniższy tekst alt na coś bardziej znaczącego. <hr> {ALT} <strong {r}>%(ALT_TEXT)</strong>.',
-    ALT_HAS_SUS_WORD: 'Technologie wspomagające już wskazują, że jest to obraz, więc &quot;<strong {r}>%(ERROR)</strong>&quot; mogą być zbędne. <hr> {ALT} <strong {W}>%(ALT_TEXT)</strong>',
+    ALT_HAS_FILE_EXTENSION: 'W tekście alt znaleziono rozszerzenie nazwy pliku. Upewnij się, że tekst alternatywny opisuje miejsce docelowe łącza, a nie treść lub wygląd obrazu. Usuń wyraz(y): <strong {R}>%(ERROR)</strong> <hr> {ALT} <strong {W}>%(ALT_TEXT)</strong>',
+    ALT_PLACEHOLDER_MESSAGE: 'Znaleziono nieopisowy lub zastępczy tekst alt. Zamień poniższy tekst alt na coś bardziej znaczącego. <hr> {ALT} <strong {R}>%(ALT_TEXT)</strong>.',
+    ALT_HAS_SUS_WORD: 'Technologie wspomagające już wskazują, że jest to obraz, więc &quot;<strong {R}>%(ERROR)</strong>&quot; mogą być zbędne. <hr> {ALT} <strong {W}>%(ALT_TEXT)</strong>',
     LINK_HIDDEN_FOCUSABLE: 'Link ma ustawienie <code>aria-hidden=&quot;true&quot;</code>, ale nadal można go zaznaczyć za pomocą klawiatury. Jeśli zamierzasz ukryć nadmierny lub zduplikowany link, dodaj również <code>tabindex=&quot;-1&quot;</code>.',
     LINK_IMAGE_NO_ALT_TEXT: 'Obraz w łączu jest oznaczony jako dekoracyjny i nie ma tekstu łącza. Dodaj do obrazu tekst alt, który opisze miejsce docelowe łącza.',
     LINK_IMAGE_HAS_TEXT: 'Obraz jest oznaczony jako dekoracyjny, ale łącze używa otaczającego go tekstu jako etykiety opisowej.',
@@ -214,7 +214,7 @@ var pl = {
     EMBED_GENERAL_WARNING: 'Nie można sprawdzić treści osadzonej. Upewnij się, że obrazy mają tekst alt, filmy mają napisy rozszerzone, tekst ma odpowiedni kontrast, a elementy interaktywne są <a href="https://webaim.org/techniques/keyboard/">dostępne z klawiatury.</a>',
 
     // Quality assurance
-    QA_BAD_LINK: 'Podejrzane łącze. Łącze wydaje się wskazywać środowisko programistyczne.<hr>Łącze wskazuje na: <br> <strong {r}>%(LINK)</strong>',
+    QA_BAD_LINK: 'Podejrzane łącze. Łącze wydaje się wskazywać środowisko programistyczne.<hr>Łącze wskazuje na: <br> <strong {R}>%(LINK)</strong>',
     QA_IN_PAGE_LINK: 'Uszkodzony link na tej samej stronie. Cel linku nie odpowiada żadnemu elementowi na tej stronie.',
     QA_BAD_ITALICS: 'Znaczniki pogrubienia i kursywy mają znaczenie semantyczne i <strong>nie powinny</strong> być używane do wyróżniania całych akapitów. Pogrubiony tekst powinien być używany w celu <strong>silnego podkreślenia słowa lub frazy</strong>. Kursywa powinna być używana do wyróżnienia nazw własnych (np. tytułów książek i artykułów), wyrazów obcych, cytatów. Długie cytaty powinny być sformatowane jako blockquote.',
     QA_PDF: 'Nie można sprawdzić dostępności pliku PDF. Pliki PDF są uważane za treści internetowe i muszą być również dostępne. Pliki PDF często powodują problemy dla osób korzystających z&nbsp;czytników ekranu (brakujące znaczniki strukturalne lub etykiety pól formularzy) oraz dla osób słabowidzących (tekst nie jest ponownie wyświetlany po powiększeniu). <ul><li>Jeśli jest to formularz, rozważ użycie dostępnego formularza HTML jako alternatywy</li><li>Jeśli jest to dokument, rozważ przekonwertowanie go na stronę internetową.</li></ul> W przeciwnym razie <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">sprawdź plik pod kątem dostępności w programie Acrobat DC.</a>',
@@ -225,7 +225,7 @@ var pl = {
     QA_FAKE_HEADING: 'Czy to jest nagłówek? <strong {W}>%(TEXT)</strong> <hr> Wiersz pogrubionego lub dużego tekstu może wyglądać jak nagłówek, ale osoba korzystająca z czytnika ekranu nie może stwierdzić, że jest on istotny lub przejść do jego treści. Pogrubiony lub duży tekst nigdy nie powinien zastępować nagłówków semantycznych (od Nagłówka H2 do Nagłówka H6).',
     QA_SHOULD_BE_LIST: 'Czy próbujesz utworzyć listę? Wykryto możliwe elementy listy: <strong {W}>%(firstPrefix)</strong> <hr> Upewnij się, że używasz list semantycznych, zamiast stosowania znaków punktowania (np. myślników) lub liczb. Podczas korzystania z list semantycznych technologie wspomagające są w stanie przekazać takie informacje, jak ogólna liczba elementów i względna pozycja każdego elementu na liście. Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semantycznych listach.</a>',
     QA_UPPERCASE_WARNING: 'Wykryto WSZYSTKIE WIELKIE LITERY. Niektóre czytniki ekranu interpretują cały tekst wielkimi literami jako akronim i będą czytać każdą literę odrębnie. Ponadto, wszystkie wielkie litery są trudniejsze do odczytania i sprawiają wrażenie KRZYKU.',
-    QA_DUPLICATE_ID: 'Znaleziono <strong>duplikat ID</strong>. Wiadomo, że błędy zduplikowanego ID powodują problemy dla technologii pomocniczych podczas próby interakcji z treścią. <hr> Usuń lub zmień następujący ID: <strong {r}>%(id)</strong>',
+    QA_DUPLICATE_ID: 'Znaleziono <strong>duplikat ID</strong>. Wiadomo, że błędy zduplikowanego ID powodują problemy dla technologii pomocniczych podczas próby interakcji z treścią. <hr> Usuń lub zmień następujący ID: <strong {R}>%(id)</strong>',
     QA_TEXT_UNDERLINE_WARNING: 'Podkreślony tekst można pomylić z linkami. Rozważ użycie innego stylu, takiego jak &lt;strong&gt;<strong>silne znaczenie</strong>&lt;/strong&gt; lub &lt;em&gt;<em>nacisk</em>&lt;/em&gt;.',
 
     // Tables
@@ -235,7 +235,7 @@ var pl = {
     QA_SUBSCRIPT_WARNING: 'Opcji formatowania indeksu dolnego i indeksu górnego należy używać wyłącznie do zmiany pozycji tekstu w celu dostosowania do konwencji lub standardów typograficznych. Powinna <strong>nie</strong> być używana wyłącznie do celów prezentacji lub wyglądu. Formatowanie całych zdań stwarza problemy z czytelnością. Odpowiednie przypadki użycia obejmują wyświetlanie wykładników, liczb porządkowych, takich jak 4<sup>th</sup> zamiast czwartej, oraz wzorów chemicznych (H<sub>2</sub>O).',
 
     // Contrast
-    CONTRAST_ERROR: 'Ten tekst nie ma wystarczającego kontrastu z tłem Współczynnik kontrastu powinien wynosić co najmniej 4,5:1 dla zwykłego tekstu i 3:1 dla dużego tekstu. <hr> <strong {B}>Stosunek kontrastu</strong> <strong {B}>%(RATIO)</strong> <strong {r}>%(TEXT)</strong>',
+    CONTRAST_ERROR: 'Ten tekst nie ma wystarczającego kontrastu z tłem Współczynnik kontrastu powinien wynosić co najmniej 4,5:1 dla zwykłego tekstu i 3:1 dla dużego tekstu. <hr> <strong {B}>Stosunek kontrastu</strong> <strong {B}>%(RATIO)</strong> <strong {R}>%(TEXT)</strong>',
     CONTRAST_WARNING: 'Kontrast tego tekstu jest nieznany i wymaga ręcznego przeglądu. Upewnij się, że tekst i tło mają silne kontrastujące kolory. Współczynnik kontrastu powinien wynosić co najmniej 4,5:1 dla zwykłego tekstu i 3:1 dla dużego tekstu. <hr> Sprawdź kontrast następującego tekstu: <strong {W}>%(TEXT)</strong>',
     CONTRAST_INPUT_ERROR: 'Tekst w tym polu nie ma wystarczającego kontrastu z tłem. Stosunek kontrastu powinien wynosić co najmniej 4,5:1 dla normalnego tekstu i 3:1 dla dużego tekstu. <hr> <strong {B}>Stosunek kontrastu</strong> <strong {B}>%(RATIO)</strong>',
   },

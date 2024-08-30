@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.2.2
+  * @version 3.2.3
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2024 Toronto Metropolitan University.
@@ -172,12 +172,12 @@
       READABILITY_NOT_ENOUGH_CONTENT_MESSAGE: '読みやすさのスコアを計算するためのコンテンツが十分でない。',
 
       // Headings
-      HEADING_NON_CONSECUTIVE_LEVEL: '非連続の見出しレベルが使用されました。見出しはレベルをスキップしたり、<strong>見出し%(prevLevel)</strong>から<strong {r}>見出し%(level)</strong>に移行することはありません。',
-      HEADING_EMPTY: '空の見出しが見つかりました！修正するには、この行を削除するか、その形式を<strong {r}>見出し%(level)</strong>から<strong>通常</strong>または<strong>段落</strong>に変更してください。',
+      HEADING_NON_CONSECUTIVE_LEVEL: '非連続の見出しレベルが使用されました。見出しはレベルをスキップしたり、<strong>見出し%(prevLevel)</strong>から<strong {R}>見出し%(level)</strong>に移行することはありません。',
+      HEADING_EMPTY: '空の見出しが見つかりました！修正するには、この行を削除するか、その形式を<strong {R}>見出し%(level)</strong>から<strong>通常</strong>または<strong>段落</strong>に変更してください。',
       HEADING_LONG: '見出しが長すぎます！見出しはコンテンツを整理し、構造を伝えるために使用されます。簡潔で情報量があり、他と区別される必要があります。見出しは160文字未満に保つようにしてください（1文を超えないでください）。<hr> <strong {B}>%(HEADING_LENGTH) 文字</strong>',
       HEADING_FIRST: 'ページの最初の見出しは通常、見出し1または見出し2にする必要があります。見出し1はメインコンテンツセクションの開始であり、ページ全体の目的を説明する主要な見出しです。<a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">見出しの構造</a>について詳しくはこちら。',
       HEADING_MISSING_ONE: '見出し1がありません。見出し1はメインコンテンツ領域の開始であり、ページ全体の目的を説明する主要な見出しです。<a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">見出しの構造</a>について詳しくはこちら。',
-      HEADING_EMPTY_WITH_IMAGE: '見出しにテキストがありませんが、画像が含まれています。これが見出しでない場合は、その形式を<strong {r}>見出し%(level)</strong>から<strong>通常</strong>または<strong>段落</strong>に変更してください。それ以外の場合は、画像に装飾的でない alt テキストを追加してください。',
+      HEADING_EMPTY_WITH_IMAGE: '見出しにテキストがありませんが、画像が含まれています。これが見出しでない場合は、その形式を<strong {R}>見出し%(level)</strong>から<strong>通常</strong>または<strong>段落</strong>に変更してください。それ以外の場合は、画像に装飾的でない alt テキストを追加してください。',
       PANEL_HEADING_MISSING_ONE: '見出し1がありません！',
       PANEL_NO_HEADINGS: '見出しが見つかりません。',
 
@@ -186,8 +186,8 @@
       LINK_EMPTY_LABELLEDBY: 'リンクには、空の<code>aria-labelledby</code>値またはページの他の要素の<code>id</code>値と一致しない<code>aria-labelledby</code>値があります。',
       LINK_EMPTY_LINK_NO_LABEL: 'スクリーンリーダーやその他の支援技術で見える識別可能なテキストを持たないリンクです。修正するには：<ul><li>リンク先を説明する簡潔なテキストを追加してください。</li><li><a href="https://a11y-101.com/development/icons-and-links">アイコンリンクやSVG</a>の場合、おそらく説明的なラベルが不足しています。</li><li>このリンクがコピー/貼り付けのバグによるエラーであると考える場合は、削除を検討してください。</li></ul>',
       LINK_LABEL: '<strong {B}>ラベル</strong> %(TEXT)',
-      LINK_STOPWORD: 'コンテキストがない状況では、リンクテキストが十分に説明的ではないかもしれません：<strong {r}>%(ERROR)</strong> <hr> <strong>ヒント！</strong> リンクテキストは常に明確で、ユニークで、意味のあるものである必要があります。"ここをクリック"や"詳細を見る"などの一般的な言葉は避けてください。',
-      LINK_BEST_PRACTICES: 'リンクテキストを置き換えることを検討してください：<strong {r}>%(ERROR)</strong> <hr> <ul><li>"ここをクリック"は多くの人がマウスを使用しないか、このウェブサイトをモバイルデバイスで表示している可能性があるため、マウスの操作に焦点を当てています。タスクに関連する別の動詞を使用することを検討してください。</li><li>補助技術には非表示にされていない限り、HTMLシンボルをコールツーアクションとして使用しないでください。</li></ul>',
+      LINK_STOPWORD: 'コンテキストがない状況では、リンクテキストが十分に説明的ではないかもしれません：<strong {R}>%(ERROR)</strong> <hr> <strong>ヒント！</strong> リンクテキストは常に明確で、ユニークで、意味のあるものである必要があります。"ここをクリック"や"詳細を見る"などの一般的な言葉は避けてください。',
+      LINK_BEST_PRACTICES: 'リンクテキストを置き換えることを検討してください：<strong {R}>%(ERROR)</strong> <hr> <ul><li>"ここをクリック"は多くの人がマウスを使用しないか、このウェブサイトをモバイルデバイスで表示している可能性があるため、マウスの操作に焦点を当てています。タスクに関連する別の動詞を使用することを検討してください。</li><li>補助技術には非表示にされていない限り、HTMLシンボルをコールツーアクションとして使用しないでください。</li></ul>',
       LINK_URL: 'リンクテキストとして使用される長く理解しにくいURLは、支援技術で理解するのが難しい場合があります。ほとんどの場合、URLの代わりに読みやすいテキストを使用する方が良いでしょう。短いURL（サイトのホームページなど）は問題ありません。<hr><strong>ヒント！</strong> リンクテキストは常に明確で、ユニークで、意味のあるものである必要があります。コンテキストがない状況でも理解できるようにしてください。',
       LINK_DOI: 'ウェブページやオンラインのみのリソースの場合、<a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APAスタイルガイド</a>は、作品のURLまたはDOIをタイトルにラップすることで説明的なリンクを使用することを推奨しています。リンクテキストとして使用される長く理解しにくいURLは、支援技術で理解するのが難しい場合があります。',
 
@@ -200,11 +200,11 @@
       MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE: '画像が周囲のテキストと一緒にリンクとして使用されていますが、alt属性は装飾用としてマークされる必要があります。',
       MISSING_ALT_LINK_MESSAGE: '画像がリンクとして使用されていますが、altテキストがありません！リンクがどこに向かうかを説明するaltテキストを確認してください。',
       MISSING_ALT_MESSAGE: 'altテキストがありません！画像が物語やムード、重要な情報を伝えている場合は、画像を説明してください。',
-      LINK_ALT_HAS_FILE_EXTENSION: 'altテキスト内にファイルの拡張子が見つかりました。altテキストが画像のリンク先を説明しているかどうか、画像の文字通りの説明ではないことを確認してください。<hr> {ALT} {L} <strong {r}>%(ALT_TEXT)</strong>',
-      LINK_IMAGE_PLACEHOLDER_ALT_MESSAGE: 'リンクされた画像内の記述のないまたはプレースホルダーのaltテキストが見つかりました。altテキストが画像のリンク先を説明していることを確認してください。<hr> {ALT} {L} <strong {r}>%(ALT_TEXT)</strong>',
+      LINK_ALT_HAS_FILE_EXTENSION: 'altテキスト内にファイルの拡張子が見つかりました。altテキストが画像のリンク先を説明しているかどうか、画像の文字通りの説明ではないことを確認してください。<hr> {ALT} {L} <strong {R}>%(ALT_TEXT)</strong>',
+      LINK_IMAGE_PLACEHOLDER_ALT_MESSAGE: 'リンクされた画像内の記述のないまたはプレースホルダーのaltテキストが見つかりました。altテキストが画像のリンク先を説明していることを確認してください。<hr> {ALT} {L} <strong {R}>%(ALT_TEXT)</strong>',
       LINK_IMAGE_SUS_ALT_MESSAGE: '支援技術はすでにこれが画像であることを示しているため、「<strong {W}>%(ERROR)</strong>」は冗長かもしれません。altテキストが画像のリンク先を説明していることを確認してください。<hr> {ALT} {L} <strong {W}>%(ALT_TEXT)</strong>',
-      ALT_HAS_FILE_EXTENSION: 'altテキスト内にファイルの拡張子が見つかりました。画像が物語やムード、重要な情報を伝えている場合は、画像を説明してください。<hr> {ALT} <strong {r}>%(ALT_TEXT)</strong>',
-      ALT_PLACEHOLDER_MESSAGE: '記述のないまたはプレースホルダーのaltテキストが見つかりました。次のaltテキストをより意味のあるものに置き換えてください。<hr> {ALT} <strong {r}>%(ALT_TEXT)</strong>',
+      ALT_HAS_FILE_EXTENSION: 'altテキスト内にファイルの拡張子が見つかりました。画像が物語やムード、重要な情報を伝えている場合は、画像を説明してください。<hr> {ALT} <strong {R}>%(ALT_TEXT)</strong>',
+      ALT_PLACEHOLDER_MESSAGE: '記述のないまたはプレースホルダーのaltテキストが見つかりました。次のaltテキストをより意味のあるものに置き換えてください。<hr> {ALT} <strong {R}>%(ALT_TEXT)</strong>',
       ALT_HAS_SUS_WORD: '支援技術はすでにこれが画像であることを示しているため、「<strong {W}>%(ERROR)</strong>」は冗長かもしれません。<hr> {ALT} <strong {W}>%(ALT_TEXT)</strong>',
       LINK_HIDDEN_FOCUSABLE: '<code>aria-hidden=&quot;true&quot;</code>を持つリンクですが、キーボードでフォーカスが可能です。冗長または重複したリンクを非表示にする場合は、<code>tabindex=&quot;-1&quot;</code>も追加してください。',
       LINK_IMAGE_NO_ALT_TEXT: '画像内のリンクが装飾用としてマークされており、リンクテキストがありません。リンクの目的を説明するaltテキストを画像に追加してください。',
@@ -234,7 +234,7 @@
       EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code>にフォーカス可能な要素が含まれている場合、<code>tabindex="-1"</code>を持つべきではありません。埋め込みコンテンツはキーボードでアクセスできません。',
 
       // QA
-      QA_BAD_LINK: '悪いリンクが見つかりました。リンクは開発環境を指しているようです。<hr> このリンクの先は：<br> <strong {r}>%(LINK)</strong>',
+      QA_BAD_LINK: '悪いリンクが見つかりました。リンクは開発環境を指しているようです。<hr> このリンクの先は：<br> <strong {R}>%(LINK)</strong>',
       QA_BAD_ITALICS: '太字および斜体タグには意味があり、段落全体を強調表示するために使用してはいけません。<strong>強調</strong>するためには、太字が使用されるべきです。斜体は固有名詞（つまり、書籍や記事のタイトル）、外国語、引用を強調するために使用されるべきです。長い引用は引用ブロックとしてフォーマットする必要があります。',
       QA_PDF: 'PDFのアクセシビリティをチェックできません。PDFはWebコンテンツと見なされ、アクセシブルにする必要があります。PDFには、スクリーンリーダーを使用する人や視力が低い人向けの問題がよく含まれます（構造タグの欠落やフォームフィールドのラベルの欠落など）。<ul><li>これがフォームである場合は、代替としてアクセシブルなHTMLフォームを使用してください。</li><li>これが文書である場合は、Webページに変換してください。</li></ul>それ以外の場合は、<a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">Acrobat DCでのPDFのアクセシビリティを確認してください。</a>',
       QA_DOCUMENT: '文書のアクセシビリティをチェックできません。リンクされた文書はWebコンテンツと見なされ、アクセシブルにする必要があります。この文書を手動で確認してください。<ul><li><a href="https://support.google.com/docs/answer/6199477?hl=en">Google Workspaceドキュメントやプレゼンテーションをよりアクセシブルにする方法</a></li><li><a href="https://support.microsoft.com/en-us/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office文書をよりアクセシブルにする方法</a></li></ul>',
@@ -242,9 +242,9 @@
       QA_PAGE_TITLE: 'ページタイトルがありません！<a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">ページタイトルを入力してください。</a>',
       QA_BLOCKQUOTE_MESSAGE: 'これは見出しですか？<strong {W}>%(TEXT)</strong><hr> ブロック引用は引用のためにのみ使用する必要があります。これが見出しである場合は、このブロック引用をセマンティックな見出し（例：見出し2または見出し3）に変更してください。',
       QA_FAKE_HEADING: 'これは見出しですか？<strong {W}>%(TEXT)</strong><hr> 太字や大きなテキストの行は見出しのように見えるかもしれませんが、スクリーンリーダーを使用している人はそれが重要であるかどうかを判断したり、その内容にジャンプしたりすることができません。太字や大きなテキストはセマンティックな見出し（見出し2から見出し6）を置き換えるべきではありません。',
-      QA_SHOULD_BE_LIST: 'リストを作成しようとしていますか？可能なリスト項目が見つかりました：<strong {r}>%(firstPrefix)</strong> <hr> ブルレットまたは番号の書式設定ボタンを使用してセマンティックなリストを使用してください。セマンティックなリストを使用すると、支援技術が合計アイテム数やリスト内の各アイテムの相対位置などの情報を伝えることができます。<a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">セマンティックリスト</a>について詳しく学びます。',
+      QA_SHOULD_BE_LIST: 'リストを作成しようとしていますか？可能なリスト項目が見つかりました：<strong {R}>%(firstPrefix)</strong> <hr> ブルレットまたは番号の書式設定ボタンを使用してセマンティックなリストを使用してください。セマンティックなリストを使用すると、支援技術が合計アイテム数やリスト内の各アイテムの相対位置などの情報を伝えることができます。<a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">セマンティックリスト</a>について詳しく学びます。',
       QA_UPPERCASE_WARNING: 'すべて大文字が見つかりました。一部のスクリーンリーダーはすべて大文字のテキストを略語と解釈し、各文字を個別に読み上げます。また、一部の人々はすべて大文字のテキストを読むのが難しく、それが叫んでいるように見えるかもしれません。',
-      QA_DUPLICATE_ID: '重複した<strong>IDが見つかりました</strong>。重複したIDは、支援技術がコンテンツとの相互作用を試みる際に問題を引き起こすことが知られています。<hr> 次のIDを削除または変更してください：<strong {r}>%(id)</strong>',
+      QA_DUPLICATE_ID: '重複した<strong>IDが見つかりました</strong>。重複したIDは、支援技術がコンテンツとの相互作用を試みる際に問題を引き起こすことが知られています。<hr> 次のIDを削除または変更してください：<strong {R}>%(id)</strong>',
       QA_TEXT_UNDERLINE_WARNING: '下線付きテキストはリンクと混同される可能性があります。<code>&lt;strong&gt;</code><strong>strong importance</strong><code>&lt;/strong&gt;</code>や<code>&lt;em&gt;</code><em>emphasis</em><code>&lt;/em&gt;</code>など、異なるスタイルを使用してください。',
       QA_SUBSCRIPT_WARNING: '下付き文字および上付き文字の書式設定オプションは、テキストの位置を変更するためのものであるべきです。それは単にプレゼンテーションや外観の目的でのみ使用されるべきではありません。文章全体のフォーマットは読みにくさの問題を引き起こします。適切な使用例には、指数の表示、序数（たとえば4<sup>th</sup>）、化学式（例：H<sub>2</sub>O）などが含まれます。',
       QA_IN_PAGE_LINK: 'リンクが壊れた同じページのリンクです。リンクのターゲットはページ上のいずれの要素とも一致しません。',
@@ -255,7 +255,7 @@
       TABLES_EMPTY_HEADING: '空のテーブルヘッダーが見つかりました！テーブルヘッダーは<strong>空にしてはいけません</strong>。行や列のヘッダーを指定して関係性を伝えることが重要です。これにより、支援技術を使用する人々にコンテキストが提供されます。テーブルは表形式のデータのみに使用する必要があります。<hr> <a href="https://www.w3.org/WAI/tutorials/tables/">アクセシブルなテーブル</a>について詳しく学びます。',
 
       // Contrast
-      CONTRAST_ERROR: 'このテキストは背景との対比が不足しています。通常のテキストには対比比率が少なくとも4.5:1、大きなテキストには3:1以上である必要があります。<hr> <strong {B}>コントラスト比</strong> <strong {B}>%(RATIO)</strong> <strong {r}>%(TEXT)</strong>',
+      CONTRAST_ERROR: 'このテキストは背景との対比が不足しています。通常のテキストには対比比率が少なくとも4.5:1、大きなテキストには3:1以上である必要があります。<hr> <strong {B}>コントラスト比</strong> <strong {B}>%(RATIO)</strong> <strong {R}>%(TEXT)</strong>',
       CONTRAST_WARNING: 'このテキストの対比は不明であり、手動で確認する必要があります。テキストと背景が強い対比色を持つことを確認してください。通常のテキストには対比比率が少なくとも4.5:1、大きなテキストには3:1以上である必要があります。<hr> 確認してください：<strong {W}>%(TEXT)</strong>',
       CONTRAST_INPUT_ERROR: 'この入力内のテキストは背景との対比が不足しています。通常のテキストには対比比率が少なくとも4.5:1、大きなテキストには3:1以上である必要があります。<hr> <strong {B}>コントラスト比</strong> <strong {B}>%(RATIO)</strong>',
     },

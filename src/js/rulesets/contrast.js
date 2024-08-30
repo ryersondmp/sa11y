@@ -167,9 +167,8 @@ export default function checkContrast(results, option) {
               const maybeVisuallyHidden = (width === 1 && height === 1) &&
                 (clipPath === 'inset(50%)' || /^(rect\(0(,\s*0){3}\)|rect\(1px(,\s*1px){3}\))$/.test(clip));
 
-              // Ignore if visually hidden for screen readers.
               if (maybeVisuallyHidden) {
-                return;
+                // Ignore if visually hidden for screen readers.
               } else if (color.startsWith('color(')) {
                 // Push a warning if using a color() functional notation.
                 warning = {

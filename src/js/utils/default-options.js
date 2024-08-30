@@ -19,6 +19,7 @@ const defaultOptions = {
   delayCheck: 0,
   delayCustomCheck: 500,
   showGoodLinkButton: true,
+  showGoodImageButton: true,
   showHinPageOutline: false,
   showTitleInPageOutline: true,
   showImageOutline: true,
