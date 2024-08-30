@@ -127,9 +127,6 @@ test.describe('Sa11y Unit Tests', () => {
     const toggleSettings = await page.evaluate(async () => {
       const panel = document.querySelector('sa11y-control-panel').shadowRoot;
       const settings = [
-        'contrast-toggle',
-        'labels-toggle',
-        'links-advanced-toggle',
         'readability-toggle',
         'theme-toggle',
       ];

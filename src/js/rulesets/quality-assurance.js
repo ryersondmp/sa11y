@@ -240,99 +240,100 @@ export default function checkQA(results, option) {
   /*  Warning: Detect paragraphs that should be lists.               */
   /*  Thanks to John Jameson from PrincetonU for this ruleset!       */
   /* *************************************************************** */
+  if (option.fakeListQA) {
+    const numberMatch = new RegExp(/(([023456789][\d\s])|(1\d))/, ''); // All numbers but 1.
+    const alphabeticMatch = new RegExp(/(^[aA1αаΑ]|[^\p{Alphabetic}\s])[-\s.)]/, 'u');
+    const emojiMatch = new RegExp(/\p{Extended_Pictographic}/, 'u');
+    const secondTextNoMatch = ['a', 'A', 'α', 'Α', 'а', 'А', '1'];
+    const specialCharsMatch = /[([{#]/;
+    const prefixDecrement = {
+      2: '1',
+      b: 'a',
+      B: 'A',
+      β: 'α',
+      Β: 'Α',
+      б: 'а',
+      Б: 'А',
+    };
+    const decrement = (element) => element.replace(/^b|^B|^б|^Б|^β|^В|^2/, (match) => prefixDecrement[match]);
 
-  const numberMatch = new RegExp(/(([023456789][\d\s])|(1\d))/, ''); // All numbers but 1.
-  const alphabeticMatch = new RegExp(/(^[aA1αаΑ]|[^\p{Alphabetic}\s])[-\s.)]/, 'u');
-  const emojiMatch = new RegExp(/\p{Extended_Pictographic}/, 'u');
-  const secondTextNoMatch = ['a', 'A', 'α', 'Α', 'а', 'А', '1'];
-  const specialCharsMatch = /[([{#]/;
-  const prefixDecrement = {
-    2: '1',
-    b: 'a',
-    B: 'A',
-    β: 'α',
-    Β: 'Α',
-    б: 'а',
-    Б: 'А',
-  };
-  const decrement = (element) => element.replace(/^b|^B|^б|^Б|^β|^В|^2/, (match) => prefixDecrement[match]);
+    // Variables to carry in loop.
+    let activeMatch = ''; // Carried in loop for second paragraph.
+    let firstText = ''; // Text of previous paragraph.
+    let lastHitWasEmoji = false;
 
-  // Variables to carry in loop.
-  let activeMatch = ''; // Carried in loop for second paragraph.
-  let firstText = ''; // Text of previous paragraph.
-  let lastHitWasEmoji = false;
+    Elements.Found.Paragraphs.forEach((p, i) => {
+      let secondText = false;
+      let hit = false;
+      firstText = firstText || Utils.getText(p).replace('(', '');
+      const firstPrefix = firstText.substring(0, 2);
 
-  Elements.Found.Paragraphs.forEach((p, i) => {
-    let secondText = false;
-    let hit = false;
-    firstText = firstText || Utils.getText(p).replace('(', '');
-    const firstPrefix = firstText.substring(0, 2);
+      // Grab first two characters.
+      const isAlphabetic = firstPrefix.match(alphabeticMatch);
+      const isNumber = firstPrefix.match(numberMatch);
+      const isEmoji = firstPrefix.match(emojiMatch);
+      const isSpecialChar = specialCharsMatch.test(firstPrefix.charAt(0));
 
-    // Grab first two characters.
-    const isAlphabetic = firstPrefix.match(alphabeticMatch);
-    const isNumber = firstPrefix.match(numberMatch);
-    const isEmoji = firstPrefix.match(emojiMatch);
-    const isSpecialChar = specialCharsMatch.test(firstPrefix.charAt(0));
-
-    if (
-      firstPrefix.length > 0
-      && firstPrefix !== activeMatch
-      && !isNumber
-      && (isAlphabetic || isEmoji || isSpecialChar)
-    ) {
-      // We have a prefix and a possible hit; check next detected paragraph.
-      const secondP = Elements.Found.Paragraphs[i + 1];
-      if (secondP) {
-        secondText = Utils.getText(secondP).replace('(', '').substring(0, 2);
-        if (secondTextNoMatch.includes(secondText?.toLowerCase().trim())) {
-          // A sentence. Another sentence. (A sentence). 1 apple, 1 banana.
-          return;
+      if (
+        firstPrefix.length > 0
+        && firstPrefix !== activeMatch
+        && !isNumber
+        && (isAlphabetic || isEmoji || isSpecialChar)
+      ) {
+        // We have a prefix and a possible hit; check next detected paragraph.
+        const secondP = Elements.Found.Paragraphs[i + 1];
+        if (secondP) {
+          secondText = Utils.getText(secondP).replace('(', '').substring(0, 2);
+          if (secondTextNoMatch.includes(secondText?.toLowerCase().trim())) {
+            // A sentence. Another sentence. (A sentence). 1 apple, 1 banana.
+            return;
+          }
+          const secondPrefix = decrement(secondText);
+          if (isAlphabetic) {
+            // Check for repeats (*,*) or increments(a,b)
+            if (firstPrefix !== 'A ' && firstPrefix === secondPrefix) {
+              hit = true;
+            }
+          } else if (isEmoji && !lastHitWasEmoji) {
+            // Check for two paragraphs in a row that start with emoji.
+            if (secondPrefix.match(emojiMatch)) {
+              hit = true;
+              lastHitWasEmoji = true;
+              // This is carried; better miss than have lots of positives.
+            }
+          }
         }
-        const secondPrefix = decrement(secondText);
-        if (isAlphabetic) {
-          // Check for repeats (*,*) or increments(a,b)
-          if (firstPrefix !== 'A ' && firstPrefix === secondPrefix) {
-            hit = true;
+        if (!hit) {
+          // Split p by carriage return if there was a firstPrefix and compare.
+          let textAfterBreak = p?.querySelector('br')?.nextSibling?.nodeValue;
+          if (textAfterBreak) {
+            textAfterBreak = textAfterBreak.replace(/<\/?[^>]+(>|$)/g, '').trim().substring(0, 2);
+            const checkForOtherPrefixChars = specialCharsMatch.test(textAfterBreak.charAt(0));
+            if (checkForOtherPrefixChars
+              || firstPrefix === decrement(textAfterBreak)
+              || (!lastHitWasEmoji && textAfterBreak.match(emojiMatch))) {
+              hit = true;
+            }
           }
-        } else if (isEmoji && !lastHitWasEmoji) {
-          // Check for two paragraphs in a row that start with emoji.
-          if (secondPrefix.match(emojiMatch)) {
-            hit = true;
-            lastHitWasEmoji = true;
-            // This is carried; better miss than have lots of positives.
-          }
+        } if (hit) {
+          const key = Utils.prepareDismissal(`LIST${p.textContent}`);
+          results.push({
+            element: p,
+            type: 'warning',
+            content: Lang.sprintf('QA_SHOULD_BE_LIST', firstPrefix),
+            inline: false,
+            position: 'beforebegin',
+            dismiss: key,
+          });
+          activeMatch = firstPrefix;
+        } else {
+          activeMatch = '';
         }
       }
-      if (!hit) {
-        // Split p by carriage return if there was a firstPrefix and compare.
-        let textAfterBreak = p?.querySelector('br')?.nextSibling?.nodeValue;
-        if (textAfterBreak) {
-          textAfterBreak = textAfterBreak.replace(/<\/?[^>]+(>|$)/g, '').trim().substring(0, 2);
-          const checkForOtherPrefixChars = specialCharsMatch.test(textAfterBreak.charAt(0));
-          if (checkForOtherPrefixChars
-            || firstPrefix === decrement(textAfterBreak)
-            || (!lastHitWasEmoji && textAfterBreak.match(emojiMatch))) {
-            hit = true;
-          }
-        }
-      } if (hit) {
-        const key = Utils.prepareDismissal(`LIST${p.textContent}`);
-        results.push({
-          element: p,
-          type: 'warning',
-          content: Lang.sprintf('QA_SHOULD_BE_LIST', firstPrefix),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: key,
-        });
-        activeMatch = firstPrefix;
-      } else {
-        activeMatch = '';
-      }
-    }
-    // Reset for next loop, carry over text query if available.
-    firstText = secondText ? '' : secondText;
-  });
+      // Reset for next loop, carry over text query if available.
+      firstText = secondText ? '' : secondText;
+    });
+  }
 
   /* *************************************************************** */
   /*  Warning: Detect uppercase text.                                */
@@ -384,7 +385,7 @@ export default function checkQA(results, option) {
           const { id } = $el;
 
           // Ignore empty IDs.
-          if (id.trim().length === 0) {
+          if (typeof id !== 'string' || id.trim().length === 0) {
             return;
           }
 

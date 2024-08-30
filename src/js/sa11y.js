@@ -71,6 +71,14 @@ class Sa11y {
         Constants.initializeExclusions(option);
         Constants.initializeEmbeddedContent(option);
 
+        // Toggleable checks on by default.
+        const toggleableChecks = ['sa11y-remember-contrast', 'sa11y-remember-labels', 'sa11y-remember-links-advanced'];
+        toggleableChecks.forEach((key) => {
+          if (Utils.store.getItem(key) === null) {
+            Utils.store.setItem(key, 'On');
+          }
+        });
+
         // Once document has fully loaded.
         Utils.documentLoadingCheck(() => {
           if (option.headless) {
@@ -133,7 +141,7 @@ class Sa11y {
 
         // Initialize root areas to check.
         const root = document.querySelector(desiredRoot);
-        if (!root) {
+        if (!root && option.headless === false) {
           Utils.createAlert(`${Lang.sprintf('ERROR_MISSING_ROOT_TARGET', desiredRoot)}`);
         }
         Constants.initializeRoot(desiredRoot, desiredReadabilityRoot);
@@ -239,7 +247,7 @@ class Sa11y {
               $el.position,
               $el.id,
               $el.dismiss,
-              option.dismissAnnotations,
+              option,
             );
           });
 
