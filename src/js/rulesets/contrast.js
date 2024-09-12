@@ -239,7 +239,7 @@ export default function checkContrast(results, option) {
               inline: false,
               position: 'beforebegin',
               dismiss: Utils.prepareDismissal(`CONTRAST${name.tagName}${cratio}`),
-              advanced: option.checks.CONTRAST_INPUT.advanced || false,
+              developer: option.checks.CONTRAST_INPUT.developer || false,
             });
           }
         } else {
@@ -251,7 +251,7 @@ export default function checkContrast(results, option) {
               inline: false,
               position: 'beforebegin',
               dismiss: Utils.prepareDismissal(`CONTRAST${sanitizedText}`),
-              advanced: option.checks.CONTRAST_ERROR.advanced || false,
+              developer: option.checks.CONTRAST_ERROR.developer || false,
             });
           }
         }
@@ -271,7 +271,7 @@ export default function checkContrast(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: Utils.prepareDismissal(`CONTRAST${nodeText}`),
-            advanced: option.checks.CONTRAST_WARNING.advanced || false,
+            developer: option.checks.CONTRAST_WARNING.developer || false,
           });
         });
       }

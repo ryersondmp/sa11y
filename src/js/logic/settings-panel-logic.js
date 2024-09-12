@@ -6,27 +6,27 @@ import Lang from '../utils/lang';
 /*  Initialize all toggle switches within Settings panel.       */
 /* ************************************************************ */
 export default function settingsPanelToggles(checkAll, resetAll) {
-  /* ***************** */
-  /*  Advanced toggle  */
-  /* ***************** */
-  if (Constants.Global.advancedPlugin) {
-    Constants.Panel.advancedToggle.onclick = async () => {
-      if (store.getItem('sa11y-advanced') === 'On') {
-        store.setItem('sa11y-advanced', 'Off');
-        Constants.Panel.advancedToggle.textContent = `${Lang._('OFF')}`;
-        Constants.Panel.advancedToggle.setAttribute('aria-pressed', 'false');
+  /* ************************* */
+  /*  Developer checks toggle  */
+  /* ************************* */
+  if (Constants.Global.developerPlugin) {
+    Constants.Panel.developerToggle.onclick = async () => {
+      if (store.getItem('sa11y-developer') === 'On') {
+        store.setItem('sa11y-developer', 'Off');
+        Constants.Panel.developerToggle.textContent = `${Lang._('OFF')}`;
+        Constants.Panel.developerToggle.setAttribute('aria-pressed', 'false');
         resetAll(false);
         await checkAll();
       } else {
-        store.setItem('sa11y-advanced', 'On');
-        Constants.Panel.advancedToggle.textContent = `${Lang._('ON')}`;
-        Constants.Panel.advancedToggle.setAttribute('aria-pressed', 'true');
+        store.setItem('sa11y-developer', 'On');
+        Constants.Panel.developerToggle.textContent = `${Lang._('ON')}`;
+        Constants.Panel.developerToggle.setAttribute('aria-pressed', 'true');
         resetAll(false);
         await checkAll();
       }
     };
   } else {
-    store.setItem('sa11y-advanced', 'Off');
+    store.setItem('sa11y-developer', 'Off');
   }
 
   /* ****************** */

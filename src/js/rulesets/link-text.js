@@ -160,8 +160,8 @@ export default function checkLinkText(results, option) {
             content: option.checks.LINK_HIDDEN_FOCUSABLE.content || Lang.sprintf('LINK_HIDDEN_FOCUSABLE'),
             inline: true,
             position: 'afterend',
-            dismiss: Utils.prepareDismissal(`A${href}`),
-            advanced: option.checks.LINK_HIDDEN_FOCUSABLE.advanced || true,
+            dismiss: Utils.prepareDismissal(`A${href + linkTextTrimmed}`),
+            developer: option.checks.LINK_HIDDEN_FOCUSABLE.developer || true,
           });
         }
       }
@@ -177,7 +177,7 @@ export default function checkLinkText(results, option) {
             inline: true,
             position: 'afterend',
             dismiss: Utils.prepareDismissal(`A${href}`),
-            advanced: option.checks.LINK_EMPTY_LABELLEDBY.advanced || true,
+            developer: option.checks.LINK_EMPTY_LABELLEDBY.developer || true,
           });
         }
       } else if ($el.children.length) {
@@ -190,7 +190,7 @@ export default function checkLinkText(results, option) {
             inline: true,
             position: 'afterend',
             dismiss: Utils.prepareDismissal(`A${href}`),
-            advanced: option.checks.LINK_EMPTY_NO_LABEL.advanced || false,
+            developer: option.checks.LINK_EMPTY_NO_LABEL.developer || false,
           });
         }
       } else if (option.checks.LINK_EMPTY) {
@@ -202,7 +202,7 @@ export default function checkLinkText(results, option) {
           inline: true,
           position: 'afterend',
           dismiss: Utils.prepareDismissal(`A${href}`),
-          advanced: option.checks.LINK_EMPTY.advanced || false,
+          developer: option.checks.LINK_EMPTY.developer || false,
         });
       }
     } else if (error[0] !== null) {
@@ -214,8 +214,8 @@ export default function checkLinkText(results, option) {
           content: option.checks.LINK_STOPWORD.content || Lang.sprintf('LINK_STOPWORD', error[0]),
           inline: true,
           position: 'afterend',
-          dismiss: Utils.prepareDismissal(`A${linkText + href}`),
-          advanced: option.checks.LINK_STOPWORD.advanced || false,
+          dismiss: Utils.prepareDismissal(`A${href + linkTextTrimmed}`),
+          developer: option.checks.LINK_STOPWORD.developer || false,
         });
       }
     } else if (error[1] !== null || matchedSymbol !== null) {
@@ -228,8 +228,8 @@ export default function checkLinkText(results, option) {
           content: option.checks.LINK_BEST_PRACTICES.content || Lang.sprintf('LINK_BEST_PRACTICES', stopword),
           inline: true,
           position: 'beforebegin',
-          dismiss: Utils.prepareDismissal(`LINK${linkText + href}`),
-          advanced: option.checks.LINK_BEST_PRACTICES.advanced || false,
+          dismiss: Utils.prepareDismissal(`LINK${href + linkTextTrimmed}`),
+          developer: option.checks.LINK_BEST_PRACTICES.developer || false,
         });
       }
     } else if (error[2] !== null) {
@@ -242,8 +242,8 @@ export default function checkLinkText(results, option) {
             content: option.checks.LINK_DOI.content || Lang.sprintf('LINK_DOI'),
             inline: true,
             position: 'beforebegin',
-            dismiss: Utils.prepareDismissal(`LINK${linkText + href}`),
-            advanced: option.checks.LINK_DOI.advanced || false,
+            dismiss: Utils.prepareDismissal(`LINK${href + linkTextTrimmed}`),
+            developer: option.checks.LINK_DOI.developer || false,
           });
         }
       }
@@ -257,8 +257,8 @@ export default function checkLinkText(results, option) {
             content: option.checks.LINK_URL.content || Lang.sprintf('LINK_URL'),
             inline: true,
             position: 'beforebegin',
-            dismiss: Utils.prepareDismissal(`LINK${linkText + href}`),
-            advanced: option.checks.LINK_URL.advanced || false,
+            dismiss: Utils.prepareDismissal(`LINK${href + linkTextTrimmed}`),
+            developer: option.checks.LINK_URL.developer || false,
           });
         }
       }
@@ -272,8 +272,8 @@ export default function checkLinkText(results, option) {
           content: option.checks.LINK_LABEL.content || Lang.sprintf('LINK_LABEL', sanitizedText),
           inline: true,
           position: 'afterend',
-          dismiss: Utils.prepareDismissal(`LINK${linkText + href}`),
-          advanced: option.checks.LINK_LABEL.advanced || false,
+          dismiss: Utils.prepareDismissal(`LINK${href + linkTextTrimmed}`),
+          developer: option.checks.LINK_LABEL.developer || false,
         });
       }
     } else if (isSingleSpecialChar) {
@@ -286,12 +286,12 @@ export default function checkLinkText(results, option) {
           inline: true,
           position: 'afterend',
           dismiss: Utils.prepareDismissal(`LINK${href}`),
-          advanced: option.checks.LINK_EMPTY.advanced || false,
+          developer: option.checks.LINK_EMPTY.developer || false,
         });
       }
     }
 
-    /* LINKS ADVANCED */
+    /* LINKS developer */
     if (option.linksAdvancedPlugin) {
       if (linkTextTrimmed.length !== 0) {
       // Links with identical accessible names have equivalent purpose.
@@ -305,8 +305,9 @@ export default function checkLinkText(results, option) {
               content: option.checks.LINK_IDENTICAL_NAME.content || Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText),
               inline: true,
               position: 'beforebegin',
-              dismiss: Utils.prepareDismissal(`LINK${linkTextTrimmed + href}`),
-              advanced: option.checks.LINK_IDENTICAL_NAME.advanced || false,
+              dismiss: Utils.prepareDismissal(`LINK${href + linkTextTrimmed}`),
+              dismissAll: 'LINK_IDENTICAL_NAME',
+              developer: option.checks.LINK_IDENTICAL_NAME.developer || false,
             });
           }
         } else if ($el.getAttribute('target') === '_blank' && !fileTypeMatch && !containsNewWindowPhrases) {
@@ -317,8 +318,9 @@ export default function checkLinkText(results, option) {
               content: option.checks.LINK_NEW_TAB.content || Lang.sprintf('LINK_NEW_TAB'),
               inline: true,
               position: 'beforebegin',
-              dismiss: Utils.prepareDismissal(`LINK${linkTextTrimmed + href}`),
-              advanced: option.checks.LINK_NEW_TAB.advanced || false,
+              dismiss: Utils.prepareDismissal(`LINK${href + linkTextTrimmed}`),
+              dismissAll: 'LINK_NEW_TAB',
+              developer: option.checks.LINK_NEW_TAB.developer || false,
             });
           }
         } else if (fileTypeMatch && !containsFileTypePhrases) {
@@ -329,8 +331,8 @@ export default function checkLinkText(results, option) {
               content: option.checks.LINK_FILE_EXT.content || Lang.sprintf('LINK_FILE_EXT'),
               inline: true,
               position: 'beforebegin',
-              dismiss: Utils.prepareDismissal(`LINK${linkTextTrimmed + href}`),
-              advanced: option.checks.LINK_FILE_EXT.advanced || false,
+              dismiss: Utils.prepareDismissal(`LINK${href + linkTextTrimmed}`),
+              developer: option.checks.LINK_FILE_EXT.developer || false,
             });
           }
         } else {

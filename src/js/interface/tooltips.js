@@ -8,6 +8,24 @@ import Elements from '../utils/elements';
 import tooltipStyles from '../../../dist/css/tooltips.min.css';
 import sharedStyles from '../../../dist/css/shared.min.css';
 
+// Default options for basic tooltips (not popovers).
+const tooltipOptions = (shadowRoot) => ({
+  allowHTML: true,
+  delay: [500, 0],
+  trigger: 'mouseenter focusin',
+  arrow: true,
+  maxWidth: 200,
+  placement: 'top',
+  theme: 'sa11y-theme',
+  role: 'tooltip',
+  aria: {
+    content: null,
+    expanded: false,
+  },
+  appendTo: shadowRoot,
+  zIndex: 2147483645,
+});
+
 export class TooltipComponent extends HTMLElement {
   connectedCallback() {
     const shadowRoot = this.attachShadow({ mode: 'open' });
@@ -102,30 +120,23 @@ export class TooltipComponent extends HTMLElement {
     });
 
     /* Skip to Issue toggle button */
-    let keyboardShortcut;
-    if (navigator.userAgent.indexOf('Mac') !== -1) {
-      keyboardShortcut = '<span class="kbd">Option</span> + <span class="kbd">S</span>';
-    } else {
-      keyboardShortcut = '<span class="kbd">Alt</span> + <span class="kbd">S</span>';
-    }
+    const keyboardShortcut = navigator.userAgent.indexOf('Mac') !== -1
+      ? '<span class="kbd">Option</span> + <span class="kbd">S</span>'
+      : '<span class="kbd">Alt</span> + <span class="kbd">S</span>';
+
     tippy(Constants.Panel.skipButton, {
-      content: `${Lang._('SKIP_TO_ISSUE')} &raquo; <br> ${keyboardShortcut}`,
-      allowHTML: true,
-      delay: [500, 0],
+      ...tooltipOptions(shadowRoot),
       offset: [0, 8],
-      trigger: 'mouseenter focusin',
-      arrow: true,
-      placement: 'top',
-      theme: 'sa11y-theme',
-      maxWidth: 165,
-      role: 'tooltip',
-      aria: {
-        content: null,
-        expanded: false,
-      },
-      appendTo: shadowRoot,
-      zIndex: 2147483645,
+      content: `${Lang._('SKIP_TO_ISSUE')} &raquo; <br> ${keyboardShortcut}`,
     });
+
+    if (Constants.Global.developerPlugin) {
+      tippy(Constants.Panel.developerToggle, {
+        ...tooltipOptions(shadowRoot),
+        offset: [0, 0],
+        content: 'Checks for issues that may need coding knowledge to fix.',
+      });
+    }
   }
 }
 
@@ -139,20 +150,8 @@ export class DismissTooltip extends HTMLElement {
     shadowRoot.appendChild(style);
 
     this.object = tippy(Constants.Panel.dismissButton, {
-      delay: [500, 0],
       offset: [0, 8],
-      trigger: 'mouseenter focusin',
-      arrow: true,
-      placement: 'top',
-      theme: 'sa11y-theme',
-      maxWidth: 165,
-      role: 'tooltip',
-      aria: {
-        content: null,
-        expanded: false,
-      },
-      appendTo: shadowRoot,
-      zIndex: 2147483645,
+      ...tooltipOptions(shadowRoot),
     });
   }
 }

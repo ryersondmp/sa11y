@@ -19,7 +19,7 @@ export default function checkEmbeddedContent(results, option) {
         inline: false,
         position: 'beforebegin',
         dismiss: Utils.prepareDismissal(`AUDIO${src}`),
-        advanced: option.checks.EMBED_AUDIO.advanced || false,
+        developer: option.checks.EMBED_AUDIO.developer || false,
       });
     });
   }
@@ -42,7 +42,7 @@ export default function checkEmbeddedContent(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: Utils.prepareDismissal(`VIDEO${src}`),
-          advanced: option.checks.EMBED_VIDEO.advanced || false,
+          developer: option.checks.EMBED_VIDEO.developer || false,
         });
       }
     });
@@ -63,7 +63,7 @@ export default function checkEmbeddedContent(results, option) {
         inline: false,
         position: 'beforebegin',
         dismiss: Utils.prepareDismissal(`DATAVIZ${src}`),
-        advanced: option.checks.EMBED_DATA_VIZ.advanced || false,
+        developer: option.checks.EMBED_DATA_VIZ.developer || false,
       });
     });
   }
@@ -95,7 +95,7 @@ export default function checkEmbeddedContent(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: key,
-          advanced: option.checks.EMBED_UNFOCUSABLE.advanced || true,
+          developer: option.checks.EMBED_UNFOCUSABLE.developer || true,
         });
       }
       return;
@@ -114,7 +114,7 @@ export default function checkEmbeddedContent(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: key,
-          advanced: option.checks.EMBED_MISSING_TITLE.advanced || true,
+          developer: option.checks.EMBED_MISSING_TITLE.developer || true,
         });
       }
     }
@@ -148,7 +148,7 @@ export default function checkEmbeddedContent(results, option) {
         inline: false,
         position: 'beforebegin',
         dismiss: Utils.prepareDismissal(`IFRAME${src}`),
-        advanced: option.checks.EMBED_GENERAL.advanced || false,
+        developer: option.checks.EMBED_GENERAL.developer || false,
       });
     });
   }

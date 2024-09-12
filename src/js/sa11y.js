@@ -75,9 +75,9 @@ class Sa11y {
         Constants.initializeExclusions(option);
         Constants.initializeEmbeddedContent(option);
 
-        // Make "Advanced checks" on by default or if toggle switch is visually hidden.
-        if (Utils.store.getItem('sa11y-advanced') === null || option.checkAllHideToggles) {
-          Utils.store.setItem('sa11y-advanced', 'On');
+        // Make "Developer checks" on by default or if toggle switch is visually hidden.
+        if (Utils.store.getItem('sa11y-developer') === null || option.checkAllHideToggles) {
+          Utils.store.setItem('sa11y-developer', 'On');
         }
 
         // Once document has fully loaded.
@@ -164,7 +164,7 @@ class Sa11y {
         if (option.readabilityPlugin) checkReadability();
 
         // Flagged issues that are images, for the purpose of generating Image Outline.
-        this.imageResults = this.results.filter((item) => item.element?.tagName === 'IMG');
+        this.imageResults = this.results.filter((issue) => issue.element?.tagName === 'IMG');
 
         /* Custom checks */
         if (option.customChecks === true) {
@@ -208,11 +208,11 @@ class Sa11y {
 
     this.updateResults = () => {
       // Filter out heading issues that are outside of the target root.
-      this.results = this.results.filter((item) => item.isWithinRoot !== false);
+      this.results = this.results.filter((heading) => heading.isWithinRoot !== false);
 
-      // Filter out "Advanced checks" if toggled off.
-      if (Utils.store.getItem('sa11y-advanced') === 'Off') {
-        this.results = this.results.filter((item) => item.advanced !== true);
+      // Filter out "Developer checks" if toggled off.
+      if (Utils.store.getItem('sa11y-developer') === 'Off') {
+        this.results = this.results.filter((issue) => issue.developer !== true);
       }
 
       // Generate HTML path, and optionally CSS selector path of element.
@@ -254,6 +254,7 @@ class Sa11y {
               $el.position,
               $el.id,
               $el.dismiss,
+              $el.dismissAll,
               option,
             );
           });

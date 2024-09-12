@@ -41,6 +41,7 @@ const defaultOptions = {
   detectSPArouting: false,
   doNotRun: '',
   dismissAnnotations: true,
+  dismissAll: true,
   headless: false,
   selectorPath: false,
   shadowComponents: '',
@@ -57,7 +58,7 @@ const defaultOptions = {
   linksAdvancedPlugin: true,
   formLabelsPlugin: true,
   embeddedContentPlugin: true,
-  advancedPlugin: true,
+  developerPlugin: true,
   colourFilterPlugin: true,
   customChecks: false,
   checkAllHideToggles: false,
@@ -197,8 +198,7 @@ const Lang = {
     return $el.replaceAll(/<hr>/g, '<hr aria-hidden="true">')
       .replaceAll(/<a[\s]href=/g, '<a target="_blank" rel="noopener noreferrer" href=')
       .replaceAll(/<\/a>/g, `<span class="visually-hidden"> (${Lang._('NEW_TAB')})</span></a>`)
-      .replaceAll(/{R}/g, 'class="red-text"')
-      .replaceAll(/{W}/g, 'class="yellow-text"')
+      .replaceAll(/{C}/g, 'class="colour"')
       .replaceAll(/{B}/g, 'class="badge"')
       .replaceAll(/{ALT}/g, `<strong class="badge">${Lang._('ALT')}</strong>`)
       .replaceAll(/{L}/g, `<strong class="badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._('LINKED')}</span></strong>`);
@@ -241,7 +241,7 @@ const Constants = (function myConstants() {
     Global.aboutContent = option.aboutContent;
 
     // Toggleable plugins
-    Global.advancedPlugin = option.advancedPlugin;
+    Global.developerPlugin = option.developerPlugin;
     Global.colourFilterPlugin = option.colourFilterPlugin;
     Global.checkAllHideToggles = option.checkAllHideToggles;
     Global.exportResultsPlugin = option.exportResultsPlugin;
@@ -304,10 +304,10 @@ const Constants = (function myConstants() {
     Panel.settingsContent = Sa11yPanel.getElementById('settings-content');
 
     // Settings toggles
-    Panel.advancedToggle = Sa11yPanel.getElementById('advanced-toggle');
+    Panel.developerToggle = Sa11yPanel.getElementById('developer-toggle');
     Panel.readabilityToggle = Sa11yPanel.getElementById('readability-toggle');
     Panel.themeToggle = Sa11yPanel.getElementById('theme-toggle');
-    Panel.advancedItem = Sa11yPanel.getElementById('advanced-item');
+    Panel.developerItem = Sa11yPanel.getElementById('developer-item');
     Panel.readabilityItem = Sa11yPanel.getElementById('readability-item');
     Panel.darkModeItem = Sa11yPanel.getElementById('dark-mode-item');
     Panel.colourPanel = Sa11yPanel.getElementById('panel-colour-filters');
@@ -1230,25 +1230,34 @@ function detectPageChanges(detectSPArouting, checkAll, resetAll) {
 /* ************************************************************ */
 function dismissLogic(results, dismissTooltip) {
   // Get dismissed items and re-parse back into object.
-  let dismissedIssues = store.getItem('sa11y-dismissed');
-  dismissedIssues = dismissedIssues ? JSON.parse(dismissedIssues) : [];
+  const dismissedIssues = JSON.parse(localStorage.getItem('sa11y-dismissed') || '[]');
+  const currentPath = window.location.pathname;
 
-  // Return element from results array that matches dismiss key and dismiss url. Then filter through matched objects.
-  const findKey = dismissedIssues.map((e) => {
-    const found = results.find((f) => (e.key.includes(f.dismiss) && e.href === window.location.pathname));
-    if (found === undefined) return '';
-    return found;
-  });
+  // Helper function to check if an issue is individually dismissed.
+  const isSoloDismissed = (issue, dismissed) => dismissed.key.includes(issue.dismiss)
+    && dismissed.href === currentPath
+    && (issue.type === 'warning' || issue.type === 'good');
 
-  // Update results array (exclude dismissed items).
-  const updatedResults = results.filter((issue) => !findKey.find((e) => e.dismiss === issue.dismiss));
+  // Helper function to check if "dismiss all".
+  const dismissAll = (issue, dismissed) => typeof dismissed.dismissAll === 'string'
+    && issue.dismissAll === dismissed.dismissAll
+    && dismissed.href === currentPath;
 
-  // Array containing all dismissed results for page.
-  const dismissedResults = results.filter((issue) => findKey.find((e) => e.dismiss === issue.dismiss));
+  // Process individually dismissed issues.
+  const soloDismissed = results.filter((issue) => dismissedIssues.some((dismissed) => isSoloDismissed(issue, dismissed)));
+
+  // Process dismiss all issues.
+  const allDismissed = results.filter((issue) => dismissedIssues.some((dismissed) => dismissAll(issue, dismissed)));
+
+  // Combine all dismissed results
+  const dismissedResults = [...soloDismissed, ...allDismissed];
   const dismissCount = dismissedResults.length;
 
+  // Update results array (exclude dismissed and dismissed all checks).
+  const updatedResults = results.filter((issue) => !dismissedResults.some((dismissed) => dismissed.dismiss === issue.dismiss && (issue.type === 'warning' || issue.type === 'good')));
+
   // Show dismiss button in panel.
-  if (dismissCount >= 1) {
+  if (dismissCount) {
     Constants.Panel.dismissButton.classList.add('active');
     Constants.Panel.dismissTooltip.innerText = Lang.sprintf('PANEL_DISMISS_BUTTON', dismissCount);
     dismissTooltip.object.setContent(Lang.sprintf('PANEL_DISMISS_BUTTON', dismissCount));
@@ -1269,15 +1278,15 @@ let dismissHandler;
 const dismissIssueButton = async (e, results, checkAll, resetAll) => {
   // Get dismissed array from localStorage.
   let savedDismissKeys = JSON.parse(store.getItem('sa11y-dismissed'));
-  const element = e.target;
+  const dismissButton = e.target;
   const dismissContainer = document.querySelector('sa11y-dismiss-tooltip');
   dismissContainer.hidden = false;
 
   // Make sure event listener is attached to dismiss button.
-  if (element.tagName === 'BUTTON' && element.hasAttribute('data-sa11y-dismiss')) {
+  if (dismissButton.tagName === 'BUTTON' && dismissButton.hasAttribute('data-sa11y-dismiss')) {
     // Find corresponding issue within main results object and mark as dismissed.
-    const dismissItem = parseInt(element.getAttribute('data-sa11y-dismiss'), 10);
-    const object = results.find(($el) => $el.id === dismissItem);
+    const dismissItem = parseInt(dismissButton.getAttribute('data-sa11y-dismiss'), 10);
+    const issue = results.find(($el) => $el.id === dismissItem);
 
     // Give a one time reminder that dismissed items are temporary.
     if (savedDismissKeys === null) {
@@ -1287,15 +1296,18 @@ const dismissIssueButton = async (e, results, checkAll, resetAll) => {
     }
 
     // Update dismiss array.
-    if (object.dismiss) {
+    if (issue.dismiss) {
+      // If dismiss all selected, then indicate so within dismiss object.
+      const dismissAllSelected = dismissButton.hasAttribute('data-sa11y-dismiss-all') ? issue.dismissAll : '';
       // Dismissal object.
       const dismissalDetails = {
-        key: object.dismiss,
+        key: issue.dismiss,
         href: window.location.pathname,
+        ...(dismissAllSelected ? { dismissAll: dismissAllSelected } : {}),
       };
 
       // Get the position of the last annotation that was dismissed.
-      const item = find(`[data-sa11y-annotation='${object.id}']`);
+      const item = find(`[data-sa11y-annotation='${issue.id}']`);
       const latestDismissed = item[0]
         ? item[0].getAttribute('data-sa11y-position') : 0;
       store.setItem('sa11y-latest-dismissed', latestDismissed);
@@ -1307,8 +1319,8 @@ const dismissIssueButton = async (e, results, checkAll, resetAll) => {
       store.removeItem('sa11y-dismiss-item'); // Remove temporary storage item.
 
       // Remove tooltip.
-      if (element.closest('[data-tippy-root]') !== null) {
-        element.closest('[data-tippy-root]').remove();
+      if (dismissButton.closest('[data-tippy-root]') !== null) {
+        dismissButton.closest('[data-tippy-root]').remove();
       }
 
       // Async scan upon dismiss.
@@ -1780,7 +1792,7 @@ class ControlPanel extends HTMLElement {
     // Icon for the main toggle.
     const MainToggleIcon = '<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 48c114.953 0 208 93.029 208 208 0 114.953-93.029 208-208 208-114.953 0-208-93.029-208-208 0-114.953 93.029-208 208-208m0-40C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 56C149.961 64 64 149.961 64 256s85.961 192 192 192 192-85.961 192-192S362.039 64 256 64zm0 44c19.882 0 36 16.118 36 36s-16.118 36-36 36-36-16.118-36-36 16.118-36 36-36zm117.741 98.023c-28.712 6.779-55.511 12.748-82.14 15.807.851 101.023 12.306 123.052 25.037 155.621 3.617 9.26-.957 19.698-10.217 23.315-9.261 3.617-19.699-.957-23.316-10.217-8.705-22.308-17.086-40.636-22.261-78.549h-9.686c-5.167 37.851-13.534 56.208-22.262 78.549-3.615 9.255-14.05 13.836-23.315 10.217-9.26-3.617-13.834-14.056-10.217-23.315 12.713-32.541 24.185-54.541 25.037-155.621-26.629-3.058-53.428-9.027-82.141-15.807-8.6-2.031-13.926-10.648-11.895-19.249s10.647-13.926 19.249-11.895c96.686 22.829 124.283 22.783 220.775 0 8.599-2.03 17.218 3.294 19.249 11.895 2.029 8.601-3.297 17.219-11.897 19.249z"/></svg>';
 
-    const rememberAdvanced = store.getItem('sa11y-advanced') === 'On';
+    const rememberDeveloper = store.getItem('sa11y-developer') === 'On';
     const rememberReadability = store.getItem('sa11y-readability') === 'On';
 
     // If admin wants users to check everything, without toggleable checks.
@@ -1790,13 +1802,13 @@ class ControlPanel extends HTMLElement {
     const { panelPosition } = Constants.Global;
 
     /* TOGGLEABLE PLUGINS */
-    const advancedPlugin = Constants.Global.advancedPlugin ? `
-      <li id="advanced-item" ${checkAll ? 'hidden' : ''}>
-        <label id="check-advanced" for="advanced-toggle">${Lang._('ADVANCED')}</label>
-        <button id="advanced-toggle"
-          aria-labelledby="check-advanced"
+    const developerPlugin = Constants.Global.developerPlugin ? `
+      <li id="developer-item" ${checkAll ? 'hidden' : ''}>
+        <label id="check-developer" for="developer-toggle">${Lang._('DEVELOPER_CHECKS')}</label>
+        <button id="developer-toggle"
+          aria-labelledby="check-developer"
           class="switch"
-          aria-pressed="${rememberAdvanced ? 'true' : 'false'}">${rememberAdvanced ? Lang._('ON') : Lang._('OFF')}</button>
+          aria-pressed="${rememberDeveloper ? 'true' : 'false'}">${rememberDeveloper ? Lang._('ON') : Lang._('OFF')}</button>
       </li>` : '';
 
     const readabilityPlugin = Constants.Readability.Plugin ? `
@@ -1911,7 +1923,7 @@ class ControlPanel extends HTMLElement {
         </div>
         <div id="settings-content">
           <ul id="settings-options">
-            ${advancedPlugin}
+            ${developerPlugin}
             ${readabilityPlugin}
             <li id="dark-mode-item">
               <label id="dark-mode" for="theme-toggle">${Lang._('DARK_MODE')}</label>
@@ -2028,27 +2040,27 @@ class ControlPanel extends HTMLElement {
 /*  Initialize all toggle switches within Settings panel.       */
 /* ************************************************************ */
 function settingsPanelToggles(checkAll, resetAll) {
-  /* ***************** */
-  /*  Advanced toggle  */
-  /* ***************** */
-  if (Constants.Global.advancedPlugin) {
-    Constants.Panel.advancedToggle.onclick = async () => {
-      if (store.getItem('sa11y-advanced') === 'On') {
-        store.setItem('sa11y-advanced', 'Off');
-        Constants.Panel.advancedToggle.textContent = `${Lang._('OFF')}`;
-        Constants.Panel.advancedToggle.setAttribute('aria-pressed', 'false');
+  /* ************************* */
+  /*  Developer checks toggle  */
+  /* ************************* */
+  if (Constants.Global.developerPlugin) {
+    Constants.Panel.developerToggle.onclick = async () => {
+      if (store.getItem('sa11y-developer') === 'On') {
+        store.setItem('sa11y-developer', 'Off');
+        Constants.Panel.developerToggle.textContent = `${Lang._('OFF')}`;
+        Constants.Panel.developerToggle.setAttribute('aria-pressed', 'false');
         resetAll(false);
         await checkAll();
       } else {
-        store.setItem('sa11y-advanced', 'On');
-        Constants.Panel.advancedToggle.textContent = `${Lang._('ON')}`;
-        Constants.Panel.advancedToggle.setAttribute('aria-pressed', 'true');
+        store.setItem('sa11y-developer', 'On');
+        Constants.Panel.developerToggle.textContent = `${Lang._('ON')}`;
+        Constants.Panel.developerToggle.setAttribute('aria-pressed', 'true');
         resetAll(false);
         await checkAll();
       }
     };
   } else {
-    store.setItem('sa11y-advanced', 'Off');
+    store.setItem('sa11y-developer', 'Off');
   }
 
   /* ****************** */
@@ -6116,7 +6128,25 @@ tippy.setDefaultProps({
   render: render
 });
 
-var tooltipStyles = "a,button,code,div,h1,h2,kbd,li,ol,p,span,strong,svg,ul{all:unset;box-sizing:border-box!important}div{display:block}:after,:before{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}@media (forced-colors:active){[data-tippy-root]{border:2px solid transparent;border-radius:5px}}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:0}.tippy-box[data-placement^=top]>.tippy-arrow:before{border-top-color:initial;border-width:8px 8px 0;bottom:-7px;left:0;transform-origin:center top}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:0}.tippy-box[data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:initial;border-width:0 8px 8px;left:0;top:-7px;transform-origin:center bottom}.tippy-box[data-placement^=left]>.tippy-arrow{right:0}.tippy-box[data-placement^=left]>.tippy-arrow:before{border-left-color:initial;border-width:8px 0 8px 8px;right:-7px;transform-origin:center left}.tippy-box[data-placement^=right]>.tippy-arrow{left:0}.tippy-box[data-placement^=right]>.tippy-arrow:before{border-right-color:initial;border-width:8px 8px 8px 0;left:-7px;transform-origin:center right}.tippy-arrow{color:#333;height:16px;width:16px}.tippy-arrow:before{border-color:transparent;border-style:solid;content:\"\";position:absolute}.tippy-content{padding:5px 9px;position:relative;z-index:1}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{word-wrap:break-word;min-width:300px;text-align:start}[role=tooltip]{min-width:185px;text-align:center}.tippy-box[data-theme~=sa11y-theme]{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-bg);border-radius:4px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15)!important;color:var(--sa11y-panel-primary);display:block;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px;outline:0;padding:8px;position:relative;transition-property:transform,visibility,opacity}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace;font-size:calc(var(--sa11y-normal-text) - 1px)}.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);letter-spacing:normal;line-height:22px;padding:1.6px 4.8px}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block-end:0;margin-block-start:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{display:list-item;margin:5px 10px 0 20px;padding-bottom:5px}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] a:hover{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin:0}.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:focus,.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme] .link-icon{background:var(--sa11y-panel-primary);display:inline-block;height:16px;margin-bottom:-3.5px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat;width:16px}.tippy-box[data-theme~=sa11y-theme] .error .badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .error .link-icon{background:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .warning .badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme] .warning .link-icon{background:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{forced-color-adjust:none}.tippy-box[data-theme~=sa11y-theme] .tippy-arrow{z-index:-1}}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:active,.tippy-box[data-theme~=sa11y-theme] button:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible){box-shadow:none;outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus-visible,.tippy-box[data-theme~=sa11y-theme] a:focus-visible,.tippy-box[data-theme~=sa11y-theme] button:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.tippy-box[data-theme~=sa11y-theme] .error-icon,.tippy-box[data-theme~=sa11y-theme] .hidden-icon,.tippy-box[data-theme~=sa11y-theme] .link-icon{filter:invert(1)}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:focus{outline:3px solid transparent!important}}";
+var tooltipStyles = "a,button,code,div,h1,h2,kbd,li,ol,p,span,strong,svg,ul{all:unset;box-sizing:border-box!important}div{display:block}:after,:before{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}@media (forced-colors:active){[data-tippy-root]{border:2px solid transparent;border-radius:5px}}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:0}.tippy-box[data-placement^=top]>.tippy-arrow:before{border-top-color:initial;border-width:8px 8px 0;bottom:-7px;left:0;transform-origin:center top}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:0}.tippy-box[data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:initial;border-width:0 8px 8px;left:0;top:-7px;transform-origin:center bottom}.tippy-box[data-placement^=left]>.tippy-arrow{right:0}.tippy-box[data-placement^=left]>.tippy-arrow:before{border-left-color:initial;border-width:8px 0 8px 8px;right:-7px;transform-origin:center left}.tippy-box[data-placement^=right]>.tippy-arrow{left:0}.tippy-box[data-placement^=right]>.tippy-arrow:before{border-right-color:initial;border-width:8px 8px 8px 0;left:-7px;transform-origin:center right}.tippy-arrow{color:#333;height:16px;width:16px}.tippy-arrow:before{border-color:transparent;border-style:solid;content:\"\";position:absolute}.tippy-content{padding:5px 9px;position:relative;z-index:1}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{word-wrap:break-word;min-width:300px;text-align:start}[role=tooltip]{min-width:185px;text-align:center}.tippy-box[data-theme~=sa11y-theme]{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-bg);border-radius:4px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15)!important;color:var(--sa11y-panel-primary);display:block;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px;outline:0;padding:8px;position:relative;transition-property:transform,visibility,opacity}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace;font-size:calc(var(--sa11y-normal-text) - 1px)}.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);letter-spacing:normal;line-height:22px;padding:1.6px 4.8px}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block-end:0;margin-block-start:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{display:list-item;margin:5px 10px 0 20px;padding-bottom:5px}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] a:hover{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin:0}.tippy-box[data-theme~=sa11y-theme] .dismiss-group{margin-top:5px}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:inline-block;margin:10px 5px 5px 0;margin-inline-end:15px;padding:4px 8px}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:focus,.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:hover{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme] .link-icon{background:var(--sa11y-panel-primary);display:inline-block;height:16px;margin-bottom:-3.5px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat;width:16px}.tippy-box[data-theme~=sa11y-theme] .error .badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .error .colour{color:var(--sa11y-red-text)}.tippy-box[data-theme~=sa11y-theme] .error .link-icon{background:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .warning .badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme] .warning .colour{color:var(--sa11y-yellow-text)}.tippy-box[data-theme~=sa11y-theme] .warning .link-icon{background:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{forced-color-adjust:none}.tippy-box[data-theme~=sa11y-theme] .tippy-arrow{z-index:-1}}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:active,.tippy-box[data-theme~=sa11y-theme] button:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible){box-shadow:none;outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus-visible,.tippy-box[data-theme~=sa11y-theme] a:focus-visible,.tippy-box[data-theme~=sa11y-theme] button:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.tippy-box[data-theme~=sa11y-theme] .error-icon,.tippy-box[data-theme~=sa11y-theme] .hidden-icon,.tippy-box[data-theme~=sa11y-theme] .link-icon{filter:invert(1)}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:focus{outline:3px solid transparent!important}}";
+
+// Default options for basic tooltips (not popovers).
+const tooltipOptions = (shadowRoot) => ({
+  allowHTML: true,
+  delay: [500, 0],
+  trigger: 'mouseenter focusin',
+  arrow: true,
+  maxWidth: 200,
+  placement: 'top',
+  theme: 'sa11y-theme',
+  role: 'tooltip',
+  aria: {
+    content: null,
+    expanded: false,
+  },
+  appendTo: shadowRoot,
+  zIndex: 2147483645,
+});
 
 class TooltipComponent extends HTMLElement {
   connectedCallback() {
@@ -6212,30 +6242,23 @@ class TooltipComponent extends HTMLElement {
     });
 
     /* Skip to Issue toggle button */
-    let keyboardShortcut;
-    if (navigator.userAgent.indexOf('Mac') !== -1) {
-      keyboardShortcut = '<span class="kbd">Option</span> + <span class="kbd">S</span>';
-    } else {
-      keyboardShortcut = '<span class="kbd">Alt</span> + <span class="kbd">S</span>';
-    }
+    const keyboardShortcut = navigator.userAgent.indexOf('Mac') !== -1
+      ? '<span class="kbd">Option</span> + <span class="kbd">S</span>'
+      : '<span class="kbd">Alt</span> + <span class="kbd">S</span>';
+
     tippy(Constants.Panel.skipButton, {
-      content: `${Lang._('SKIP_TO_ISSUE')} &raquo; <br> ${keyboardShortcut}`,
-      allowHTML: true,
-      delay: [500, 0],
+      ...tooltipOptions(shadowRoot),
       offset: [0, 8],
-      trigger: 'mouseenter focusin',
-      arrow: true,
-      placement: 'top',
-      theme: 'sa11y-theme',
-      maxWidth: 165,
-      role: 'tooltip',
-      aria: {
-        content: null,
-        expanded: false,
-      },
-      appendTo: shadowRoot,
-      zIndex: 2147483645,
+      content: `${Lang._('SKIP_TO_ISSUE')} &raquo; <br> ${keyboardShortcut}`,
     });
+
+    if (Constants.Global.developerPlugin) {
+      tippy(Constants.Panel.developerToggle, {
+        ...tooltipOptions(shadowRoot),
+        offset: [0, 0],
+        content: 'Checks for issues that may need coding knowledge to fix.',
+      });
+    }
   }
 }
 
@@ -6249,20 +6272,8 @@ class DismissTooltip extends HTMLElement {
     shadowRoot.appendChild(style);
 
     this.object = tippy(Constants.Panel.dismissButton, {
-      delay: [500, 0],
       offset: [0, 8],
-      trigger: 'mouseenter focusin',
-      arrow: true,
-      placement: 'top',
-      theme: 'sa11y-theme',
-      maxWidth: 165,
-      role: 'tooltip',
-      aria: {
-        content: null,
-        expanded: false,
-      },
-      appendTo: shadowRoot,
-      zIndex: 2147483645,
+      ...tooltipOptions(shadowRoot),
     });
   }
 }
@@ -6298,6 +6309,7 @@ function annotate(
   position,
   index,
   dismissKey,
+  dismissAll,
   option,
 ) {
   // Validate types to prevent errors.
@@ -6325,12 +6337,25 @@ function annotate(
   };
 
   // Don't paint page with "Good" annotations for images with alt text and links with accessible name.
-  if (option.showGoodImageButton === false && element?.tagName === 'IMG' && type === 'good') return;
-  if (option.showGoodLinkButton === false && element?.tagName === 'A' && type === 'good') return;
+  if (option.showGoodImageButton === false
+    && element?.tagName === 'IMG' && type === 'good') return;
+  if (option.showGoodLinkButton === false
+    && element?.tagName === 'A' && type === 'good') return;
 
   // Add dismiss button if prop enabled & has a dismiss key.
-  const dismiss = (option.dismissAnnotations === true && type === 'warning' && dismissKey !== undefined)
+  const dismissBtn = (
+    option.dismissAnnotations
+    && (type === 'warning' || type === 'good')
+    && dismissKey !== undefined)
     ? `<button data-sa11y-dismiss='${index}' type='button'>${Lang._('DISMISS')}</button>` : '';
+
+  // Add dismiss all button if prop enabled & has addition check key.
+  const dismissAllBtn = (
+    option.dismissAnnotations
+    && option.dismissAll
+    && (type === 'warning' || type === 'good')
+    && dismissAll !== undefined)
+    ? `<button data-sa11y-dismiss='${index}' data-sa11y-dismiss-all type='button'>${Lang._('DISMISS_ALL')}</button>` : '';
 
   // Create 'sa11y-annotation' web component for each annotation.
   const instance = document.createElement('sa11y-annotation');
@@ -6340,7 +6365,7 @@ function annotate(
   if (element === undefined) {
     // Page errors displayed to main panel.
     const listItem = document.createElement('li');
-    listItem.innerHTML = `<strong>${ariaLabel[type]}</strong> ${content}${dismiss}`;
+    listItem.innerHTML = `<strong>${ariaLabel[type]}</strong> ${content}${dismissBtn}`;
     Constants.Panel.pageIssuesList.insertAdjacentElement('afterbegin', listItem);
 
     // Display Page Issues panel.
@@ -6358,7 +6383,8 @@ function annotate(
       class="sa11y-btn ${[type]}-btn${inline ? '-text' : ''}"
       data-tippy-content=
         "<div lang='${Lang._('LANG_CODE')}' class='${[type]}'>
-          <button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button> <h2>${ariaLabel[type]}</h2> ${escapeHTML(content)} ${dismiss}
+          <button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button> <h2>${ariaLabel[type]}</h2> ${escapeHTML(content)}
+          <div class='dismiss-group'>${dismissBtn}${dismissAllBtn}</div>
         </div>"
     ></button>`;
 
@@ -6780,6 +6806,7 @@ const computeAccessibleName = (element, exclusions, recursing = 0) => {
 function checkImages(results, option) {
   const containsAltTextStopWords = (alt) => {
     const altUrl = [
+      '.avif',
       '.png',
       '.jpg',
       '.jpeg',
@@ -6787,6 +6814,8 @@ function checkImages(results, option) {
       '.gif',
       '.tiff',
       '.svg',
+      '.heif',
+      '.heic',
       'DSC_',
       'IMG_',
       'Photo_',
@@ -6842,7 +6871,6 @@ function checkImages(results, option) {
 
     // Image's source for key.
     const src = ($el.getAttribute('src')) ? $el.getAttribute('src') : $el.getAttribute('srcset');
-    const key = prepareDismissal(`IMAGE${src}`);
 
     // Process link text exclusions.
     const linkSpanExclusions = link
@@ -6867,8 +6895,8 @@ function checkImages(results, option) {
           content: option.checks.LINK_HIDDEN_FOCUSABLE.content || Lang.sprintf('LINK_HIDDEN_FOCUSABLE'),
           inline: false,
           position: 'beforebegin',
-          dismiss: key,
-          advanced: option.checks.LINK_HIDDEN_FOCUSABLE.advanced || true,
+          dismiss: prepareDismissal(`IMAGEHIDDENFOCUSABLE${src}`),
+          developer: option.checks.LINK_HIDDEN_FOCUSABLE.developer || true,
         });
       }
       return;
@@ -6888,8 +6916,8 @@ function checkImages(results, option) {
               ? 'MISSING_ALT_LINK' : 'MISSING_ALT_LINK_HAS_TEXT'),
             inline: false,
             position: 'beforebegin',
-            dismiss: key,
-            advanced: rule.advanced || false,
+            dismiss: prepareDismissal(`LINKIMAGENOALT${src + linkTextContentLength}`),
+            developer: rule.developer || false,
           });
         }
       } else if (option.checks.MISSING_ALT) {
@@ -6900,8 +6928,8 @@ function checkImages(results, option) {
           content: option.checks.MISSING_ALT.content || Lang.sprintf('MISSING_ALT'),
           inline: false,
           position: 'beforebegin',
-          dismiss: key,
-          advanced: option.checks.MISSING_ALT.advanced || false,
+          dismiss: prepareDismissal(`IMAGENOALT${src}`),
+          developer: option.checks.MISSING_ALT.developer || false,
         });
       }
     } else {
@@ -6926,8 +6954,8 @@ function checkImages(results, option) {
             content: option.checks.MISSING_ALT.content || Lang.sprintf('MISSING_ALT'),
             inline: false,
             position: 'beforebegin',
-            dismiss: key,
-            advanced: option.checks.MISSING_ALT.advanced || false,
+            dismiss: prepareDismissal(`IMAGENOALT${src}`),
+            developer: option.checks.MISSING_ALT.developer || false,
           });
         }
         return;
@@ -6942,8 +6970,8 @@ function checkImages(results, option) {
             content: option.checks.IMAGE_DECORATIVE_CAROUSEL.content || Lang.sprintf('IMAGE_DECORATIVE_CAROUSEL'),
             inline: false,
             position: 'beforebegin',
-            dismiss: key,
-            advanced: option.checks.IMAGE_DECORATIVE_CAROUSEL.advanced || false,
+            dismiss: prepareDismissal(`DECIMAGE${src}`),
+            developer: option.checks.IMAGE_DECORATIVE_CAROUSEL.developer || false,
           });
         } else if (link) {
           const rule = (linkTextContentLength === 0)
@@ -6957,8 +6985,8 @@ function checkImages(results, option) {
                 ? 'LINK_IMAGE_NO_ALT_TEXT' : 'LINK_IMAGE_TEXT'),
               inline: false,
               position: 'beforebegin',
-              dismiss: key,
-              advanced: rule.advanced || false,
+              dismiss: prepareDismissal(`IMAGETEXT${src + linkTextContentLength}`),
+              developer: rule.developer || false,
             });
           }
         } else if (figure) {
@@ -6973,8 +7001,8 @@ function checkImages(results, option) {
                 ? 'IMAGE_FIGURE_DECORATIVE' : 'IMAGE_DECORATIVE'),
               inline: false,
               position: 'beforebegin',
-              dismiss: key,
-              advanced: rule.advanced || false,
+              dismiss: prepareDismissal(`FIG${src + figcaptionText}`),
+              developer: rule.developer || false,
             });
           }
         } else if (option.checks.IMAGE_DECORATIVE) {
@@ -6984,8 +7012,8 @@ function checkImages(results, option) {
             content: option.checks.IMAGE_DECORATIVE.content || Lang.sprintf('IMAGE_DECORATIVE'),
             inline: false,
             position: 'beforebegin',
-            dismiss: key,
-            advanced: option.checks.IMAGE_DECORATIVE.advanced || false,
+            dismiss: prepareDismissal(`DECIMAGE${src}`),
+            developer: option.checks.IMAGE_DECORATIVE.developer || false,
           });
         }
         return;
@@ -7005,8 +7033,8 @@ function checkImages(results, option) {
               ? 'LINK_ALT_FILE_EXT' : 'ALT_FILE_EXT', error[0], altText),
             inline: false,
             position: 'beforebegin',
-            dismiss: key,
-            advanced: rule.advanced || false,
+            dismiss: prepareDismissal(`IMAGE${src + altText}`),
+            developer: rule.developer || false,
           });
         }
       } else if (error[2] !== null) {
@@ -7022,8 +7050,8 @@ function checkImages(results, option) {
               ? 'LINK_PLACEHOLDER_ALT' : 'ALT_PLACEHOLDER', altText),
             inline: false,
             position: 'beforebegin',
-            dismiss: key,
-            advanced: rule.advanced || false,
+            dismiss: prepareDismissal(`IMAGE${src + altText}`),
+            developer: rule.developer || false,
           });
         }
       } else if (error[1] !== null) {
@@ -7039,8 +7067,8 @@ function checkImages(results, option) {
               ? 'LINK_SUS_ALT' : 'SUS_ALT', error[1], altText),
             inline: false,
             position: 'beforebegin',
-            dismiss: key,
-            advanced: rule.advanced || false,
+            dismiss: prepareDismissal(`IMAGE${src + altText}`),
+            developer: rule.developer || false,
           });
         }
       } else if (alt.length > option.altTextMaxCharLength) {
@@ -7056,8 +7084,8 @@ function checkImages(results, option) {
               ? 'LINK_IMAGE_LONG_ALT' : 'IMAGE_ALT_TOO_LONG', alt.length, altText),
             inline: false,
             position: 'beforebegin',
-            dismiss: key,
-            advanced: rule.advanced || false,
+            dismiss: prepareDismissal(`IMAGE${src + altText}`),
+            developer: rule.developer || false,
           });
         }
       } else if (link) {
@@ -7076,8 +7104,8 @@ function checkImages(results, option) {
               ? 'LINK_IMAGE_ALT' : 'LINK_IMAGE_ALT_AND_TEXT', altText, sanitizedText),
             inline: false,
             position: 'beforebegin',
-            dismiss: key,
-            advanced: rule.advanced || false,
+            dismiss: prepareDismissal(`IMAGELINK${src + altText}`),
+            developer: rule.developer || false,
           });
         }
       } else if (figure) {
@@ -7091,8 +7119,8 @@ function checkImages(results, option) {
               content: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.content || Lang.sprintf('IMAGE_FIGURE_DUPLICATE_ALT', altText),
               inline: false,
               position: 'beforebegin',
-              dismiss: key,
-              advanced: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.advanced || false,
+              dismiss: prepareDismissal(`FIGIMAGEDUPLICATE${src}`),
+              developer: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.developer || false,
             });
           }
         } else if (option.checks.IMAGE_PASS) {
@@ -7103,7 +7131,8 @@ function checkImages(results, option) {
             content: option.checks.IMAGE_PASS.content || Lang.sprintf('IMAGE_PASS', altText),
             inline: false,
             position: 'beforebegin',
-            advanced: option.checks.IMAGE_PASS.advanced || false,
+            dismiss: prepareDismissal(`IMAGEPASS${src + altText}`),
+            developer: option.checks.IMAGE_PASS.developer || false,
           });
         }
       } else if (option.checks.IMAGE_PASS) {
@@ -7114,7 +7143,8 @@ function checkImages(results, option) {
           content: option.checks.IMAGE_PASS.content || Lang.sprintf('IMAGE_PASS', altText),
           inline: false,
           position: 'beforebegin',
-          advanced: option.checks.IMAGE_PASS.advanced || false,
+          dismiss: prepareDismissal(`IMAGEPASS${src + altText}`),
+          developer: option.checks.IMAGE_PASS.developer || false,
         });
       }
     }
@@ -7144,14 +7174,14 @@ function checkHeaders(results, option, headingOutline) {
     // Default.
     let type = null;
     let content = null;
-    let advanced = null;
+    let developer = null;
 
     // Rulesets.
     if (level - prevLevel > 1 && i !== 0) {
       if (option.checks.HEADING_SKIPPED_LEVEL) {
         type = option.checks.HEADING_SKIPPED_LEVEL.type || 'error';
         content = option.checks.HEADING_SKIPPED_LEVEL.content || Lang.sprintf('HEADING_SKIPPED_LEVEL', prevLevel, level);
-        advanced = option.checks.HEADING_SKIPPED_LEVEL.advanced || false;
+        developer = option.checks.HEADING_SKIPPED_LEVEL.developer || false;
       }
     } else if (headingLength === 0) {
       if ($el.querySelectorAll('img').length) {
@@ -7160,30 +7190,27 @@ function checkHeaders(results, option, headingOutline) {
           if (option.checks.HEADING_EMPTY_WITH_IMAGE) {
             type = option.checks.HEADING_EMPTY_WITH_IMAGE.type || 'error';
             content = option.checks.HEADING_EMPTY_WITH_IMAGE.content || Lang.sprintf('HEADING_EMPTY_WITH_IMAGE', level);
-            advanced = option.checks.HEADING_EMPTY_WITH_IMAGE.advanced || false;
+            developer = option.checks.HEADING_EMPTY_WITH_IMAGE.developer || false;
           }
         }
       } else if (option.checks.HEADING_EMPTY) {
         type = option.checks.HEADING_EMPTY.type || 'error';
         content = option.checks.HEADING_EMPTY.content || Lang.sprintf('HEADING_EMPTY', level);
-        advanced = option.checks.HEADING_EMPTY.advanced || false;
+        developer = option.checks.HEADING_EMPTY.developer || false;
       }
     } else if (i === 0 && level !== 1 && level !== 2) {
       if (option.checks.HEADING_FIRST) {
         type = option.checks.HEADING_FIRST.type || 'error';
         content = option.checks.HEADING_FIRST.content || Lang.sprintf('HEADING_FIRST');
-        advanced = option.checks.HEADING_FIRST.advanced || false;
+        developer = option.checks.HEADING_FIRST.developer || false;
       }
     } else if (headingLength > option.headingMaxCharLength) {
       if (option.checks.HEADING_LONG) {
         type = option.checks.HEADING_LONG.type || 'warning';
         content = option.checks.HEADING_LONG.content || Lang.sprintf('HEADING_LONG', headingLength);
-        advanced = option.checks.HEADING_LONG.advanced || false;
+        developer = option.checks.HEADING_LONG.developer || false;
       }
     }
-
-    // Create dismiss key for results object and heading outline.
-    const key = (type === 'warning') ? prepareDismissal(`HEADING${level + headingText}`) : '';
 
     // Create results object.
     if (content && type) {
@@ -7193,9 +7220,9 @@ function checkHeaders(results, option, headingOutline) {
         content,
         inline: false,
         position: 'beforebegin',
-        dismiss: key,
+        dismiss: prepareDismissal(`HEADING${level + headingText}`),
         isWithinRoot,
-        advanced,
+        developer,
       });
     }
 
@@ -7215,7 +7242,7 @@ function checkHeaders(results, option, headingOutline) {
       type,
       hidden: hiddenHeading,
       visibleParent: parent,
-      dismiss: key,
+      dismiss: prepareDismissal(`HEADING${level + headingText}`),
       isWithinRoot,
     });
   });
@@ -7226,7 +7253,7 @@ function checkHeaders(results, option, headingOutline) {
       type: option.checks.HEADING_MISSING_ONE.type || 'warning',
       content: option.checks.HEADING_MISSING_ONE.content || Lang.sprintf('HEADING_MISSING_ONE'),
       dismiss: 'MISSINGH1',
-      advanced: option.checks.HEADING_MISSING_ONE.advanced || false,
+      developer: option.checks.HEADING_MISSING_ONE.developer || false,
     });
   }
   return { results, headingOutline };
@@ -7386,8 +7413,8 @@ function checkLinkText(results, option) {
             content: option.checks.LINK_HIDDEN_FOCUSABLE.content || Lang.sprintf('LINK_HIDDEN_FOCUSABLE'),
             inline: true,
             position: 'afterend',
-            dismiss: prepareDismissal(`A${href}`),
-            advanced: option.checks.LINK_HIDDEN_FOCUSABLE.advanced || true,
+            dismiss: prepareDismissal(`A${href + linkTextTrimmed}`),
+            developer: option.checks.LINK_HIDDEN_FOCUSABLE.developer || true,
           });
         }
       }
@@ -7403,7 +7430,7 @@ function checkLinkText(results, option) {
             inline: true,
             position: 'afterend',
             dismiss: prepareDismissal(`A${href}`),
-            advanced: option.checks.LINK_EMPTY_LABELLEDBY.advanced || true,
+            developer: option.checks.LINK_EMPTY_LABELLEDBY.developer || true,
           });
         }
       } else if ($el.children.length) {
@@ -7416,7 +7443,7 @@ function checkLinkText(results, option) {
             inline: true,
             position: 'afterend',
             dismiss: prepareDismissal(`A${href}`),
-            advanced: option.checks.LINK_EMPTY_NO_LABEL.advanced || false,
+            developer: option.checks.LINK_EMPTY_NO_LABEL.developer || false,
           });
         }
       } else if (option.checks.LINK_EMPTY) {
@@ -7428,7 +7455,7 @@ function checkLinkText(results, option) {
           inline: true,
           position: 'afterend',
           dismiss: prepareDismissal(`A${href}`),
-          advanced: option.checks.LINK_EMPTY.advanced || false,
+          developer: option.checks.LINK_EMPTY.developer || false,
         });
       }
     } else if (error[0] !== null) {
@@ -7440,8 +7467,8 @@ function checkLinkText(results, option) {
           content: option.checks.LINK_STOPWORD.content || Lang.sprintf('LINK_STOPWORD', error[0]),
           inline: true,
           position: 'afterend',
-          dismiss: prepareDismissal(`A${linkText + href}`),
-          advanced: option.checks.LINK_STOPWORD.advanced || false,
+          dismiss: prepareDismissal(`A${href + linkTextTrimmed}`),
+          developer: option.checks.LINK_STOPWORD.developer || false,
         });
       }
     } else if (error[1] !== null || matchedSymbol !== null) {
@@ -7454,8 +7481,8 @@ function checkLinkText(results, option) {
           content: option.checks.LINK_BEST_PRACTICES.content || Lang.sprintf('LINK_BEST_PRACTICES', stopword),
           inline: true,
           position: 'beforebegin',
-          dismiss: prepareDismissal(`LINK${linkText + href}`),
-          advanced: option.checks.LINK_BEST_PRACTICES.advanced || false,
+          dismiss: prepareDismissal(`LINK${href + linkTextTrimmed}`),
+          developer: option.checks.LINK_BEST_PRACTICES.developer || false,
         });
       }
     } else if (error[2] !== null) {
@@ -7468,8 +7495,8 @@ function checkLinkText(results, option) {
             content: option.checks.LINK_DOI.content || Lang.sprintf('LINK_DOI'),
             inline: true,
             position: 'beforebegin',
-            dismiss: prepareDismissal(`LINK${linkText + href}`),
-            advanced: option.checks.LINK_DOI.advanced || false,
+            dismiss: prepareDismissal(`LINK${href + linkTextTrimmed}`),
+            developer: option.checks.LINK_DOI.developer || false,
           });
         }
       }
@@ -7483,8 +7510,8 @@ function checkLinkText(results, option) {
             content: option.checks.LINK_URL.content || Lang.sprintf('LINK_URL'),
             inline: true,
             position: 'beforebegin',
-            dismiss: prepareDismissal(`LINK${linkText + href}`),
-            advanced: option.checks.LINK_URL.advanced || false,
+            dismiss: prepareDismissal(`LINK${href + linkTextTrimmed}`),
+            developer: option.checks.LINK_URL.developer || false,
           });
         }
       }
@@ -7498,8 +7525,8 @@ function checkLinkText(results, option) {
           content: option.checks.LINK_LABEL.content || Lang.sprintf('LINK_LABEL', sanitizedText),
           inline: true,
           position: 'afterend',
-          dismiss: prepareDismissal(`LINK${linkText + href}`),
-          advanced: option.checks.LINK_LABEL.advanced || false,
+          dismiss: prepareDismissal(`LINK${href + linkTextTrimmed}`),
+          developer: option.checks.LINK_LABEL.developer || false,
         });
       }
     } else if (isSingleSpecialChar) {
@@ -7512,12 +7539,12 @@ function checkLinkText(results, option) {
           inline: true,
           position: 'afterend',
           dismiss: prepareDismissal(`LINK${href}`),
-          advanced: option.checks.LINK_EMPTY.advanced || false,
+          developer: option.checks.LINK_EMPTY.developer || false,
         });
       }
     }
 
-    /* LINKS ADVANCED */
+    /* LINKS developer */
     if (option.linksAdvancedPlugin) {
       if (linkTextTrimmed.length !== 0) {
       // Links with identical accessible names have equivalent purpose.
@@ -7531,8 +7558,9 @@ function checkLinkText(results, option) {
               content: option.checks.LINK_IDENTICAL_NAME.content || Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText),
               inline: true,
               position: 'beforebegin',
-              dismiss: prepareDismissal(`LINK${linkTextTrimmed + href}`),
-              advanced: option.checks.LINK_IDENTICAL_NAME.advanced || false,
+              dismiss: prepareDismissal(`LINK${href + linkTextTrimmed}`),
+              dismissAll: 'LINK_IDENTICAL_NAME',
+              developer: option.checks.LINK_IDENTICAL_NAME.developer || false,
             });
           }
         } else if ($el.getAttribute('target') === '_blank' && !fileTypeMatch && !containsNewWindowPhrases) {
@@ -7543,8 +7571,9 @@ function checkLinkText(results, option) {
               content: option.checks.LINK_NEW_TAB.content || Lang.sprintf('LINK_NEW_TAB'),
               inline: true,
               position: 'beforebegin',
-              dismiss: prepareDismissal(`LINK${linkTextTrimmed + href}`),
-              advanced: option.checks.LINK_NEW_TAB.advanced || false,
+              dismiss: prepareDismissal(`LINK${href + linkTextTrimmed}`),
+              dismissAll: 'LINK_NEW_TAB',
+              developer: option.checks.LINK_NEW_TAB.developer || false,
             });
           }
         } else if (fileTypeMatch && !containsFileTypePhrases) {
@@ -7555,8 +7584,8 @@ function checkLinkText(results, option) {
               content: option.checks.LINK_FILE_EXT.content || Lang.sprintf('LINK_FILE_EXT'),
               inline: true,
               position: 'beforebegin',
-              dismiss: prepareDismissal(`LINK${linkTextTrimmed + href}`),
-              advanced: option.checks.LINK_FILE_EXT.advanced || false,
+              dismiss: prepareDismissal(`LINK${href + linkTextTrimmed}`),
+              developer: option.checks.LINK_FILE_EXT.developer || false,
             });
           }
         } else {
@@ -7802,7 +7831,7 @@ function checkContrast(results, option) {
               inline: false,
               position: 'beforebegin',
               dismiss: prepareDismissal(`CONTRAST${name.tagName}${cratio}`),
-              advanced: option.checks.CONTRAST_INPUT.advanced || false,
+              developer: option.checks.CONTRAST_INPUT.developer || false,
             });
           }
         } else {
@@ -7814,7 +7843,7 @@ function checkContrast(results, option) {
               inline: false,
               position: 'beforebegin',
               dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
-              advanced: option.checks.CONTRAST_ERROR.advanced || false,
+              developer: option.checks.CONTRAST_ERROR.developer || false,
             });
           }
         }
@@ -7834,7 +7863,7 @@ function checkContrast(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: prepareDismissal(`CONTRAST${nodeText}`),
-            advanced: option.checks.CONTRAST_WARNING.advanced || false,
+            developer: option.checks.CONTRAST_WARNING.developer || false,
           });
         });
       }
@@ -7880,7 +7909,7 @@ function checkLabels(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: key,
-            advanced: option.checks.LABELS_MISSING_IMAGE_INPUT.advanced || true,
+            developer: option.checks.LABELS_MISSING_IMAGE_INPUT.developer || true,
           });
         }
         return;
@@ -7896,7 +7925,7 @@ function checkLabels(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: key,
-            advanced: option.checks.LABELS_INPUT_RESET.advanced || false,
+            developer: option.checks.LABELS_INPUT_RESET.developer || false,
           });
         }
         return;
@@ -7913,7 +7942,7 @@ function checkLabels(results, option) {
               inline: false,
               position: 'beforebegin',
               dismiss: key,
-              advanced: option.checks.LABELS_MISSING_LABEL.advanced || true,
+              developer: option.checks.LABELS_MISSING_LABEL.developer || true,
             });
           }
         } else if (option.checks.LABELS_ARIA_LABEL_INPUT) {
@@ -7925,7 +7954,7 @@ function checkLabels(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: key,
-            advanced: option.checks.LABELS_ARIA_LABEL_INPUT.advanced || true,
+            developer: option.checks.LABELS_ARIA_LABEL_INPUT.developer || true,
           });
         }
         return;
@@ -7950,7 +7979,7 @@ function checkLabels(results, option) {
               content: option.checks.LABELS_NO_FOR_ATTRIBUTE.content || Lang.sprintf('LABELS_NO_FOR_ATTRIBUTE', id),
               inline: false,
               position: 'beforebegin',
-              advanced: option.checks.LABELS_NO_FOR_ATTRIBUTE.advanced || true,
+              developer: option.checks.LABELS_NO_FOR_ATTRIBUTE.developer || true,
             });
           }
         }
@@ -7962,7 +7991,7 @@ function checkLabels(results, option) {
           content: option.checks.LABELS_MISSING_LABEL.content || Lang.sprintf('LABELS_MISSING_LABEL'),
           inline: false,
           position: 'beforebegin',
-          advanced: option.checks.LABELS_MISSING_LABEL.advanced || true,
+          developer: option.checks.LABELS_MISSING_LABEL.developer || true,
         });
       }
     });
@@ -8201,7 +8230,7 @@ function checkEmbeddedContent(results, option) {
         inline: false,
         position: 'beforebegin',
         dismiss: prepareDismissal(`AUDIO${src}`),
-        advanced: option.checks.EMBED_AUDIO.advanced || false,
+        developer: option.checks.EMBED_AUDIO.developer || false,
       });
     });
   }
@@ -8224,7 +8253,7 @@ function checkEmbeddedContent(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: prepareDismissal(`VIDEO${src}`),
-          advanced: option.checks.EMBED_VIDEO.advanced || false,
+          developer: option.checks.EMBED_VIDEO.developer || false,
         });
       }
     });
@@ -8245,7 +8274,7 @@ function checkEmbeddedContent(results, option) {
         inline: false,
         position: 'beforebegin',
         dismiss: prepareDismissal(`DATAVIZ${src}`),
-        advanced: option.checks.EMBED_DATA_VIZ.advanced || false,
+        developer: option.checks.EMBED_DATA_VIZ.developer || false,
       });
     });
   }
@@ -8277,7 +8306,7 @@ function checkEmbeddedContent(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: key,
-          advanced: option.checks.EMBED_UNFOCUSABLE.advanced || true,
+          developer: option.checks.EMBED_UNFOCUSABLE.developer || true,
         });
       }
       return;
@@ -8296,7 +8325,7 @@ function checkEmbeddedContent(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: key,
-          advanced: option.checks.EMBED_MISSING_TITLE.advanced || true,
+          developer: option.checks.EMBED_MISSING_TITLE.developer || true,
         });
       }
     }
@@ -8330,7 +8359,7 @@ function checkEmbeddedContent(results, option) {
         inline: false,
         position: 'beforebegin',
         dismiss: prepareDismissal(`IFRAME${src}`),
-        advanced: option.checks.EMBED_GENERAL.advanced || false,
+        developer: option.checks.EMBED_GENERAL.developer || false,
       });
     });
   }
@@ -8350,7 +8379,7 @@ function checkQA(results, option) {
         inline: true,
         position: 'beforebegin',
         dismiss: prepareDismissal($el.tagName + $el.textContent),
-        advanced: option.checks.QA_BAD_LINK.advanced || false,
+        developer: option.checks.QA_BAD_LINK.developer || false,
       });
     });
   }
@@ -8368,7 +8397,7 @@ function checkQA(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: prepareDismissal($el.tagName + $el.textContent),
-          advanced: option.checks.QA_STRONG_ITALICS.advanced || false,
+          developer: option.checks.QA_STRONG_ITALICS.developer || false,
         });
       }
     });
@@ -8402,7 +8431,7 @@ function checkQA(results, option) {
             inline: true,
             position: 'beforebegin',
             dismiss: key,
-            advanced: option.checks.QA_IN_PAGE_LINK.advanced || false,
+            developer: option.checks.QA_IN_PAGE_LINK.developer || false,
           });
         }
       }
@@ -8416,7 +8445,7 @@ function checkQA(results, option) {
           inline: true,
           position: 'beforebegin',
           dismiss: key,
-          advanced: option.checks.QA_DOCUMENT.advanced || false,
+          developer: option.checks.QA_DOCUMENT.developer || false,
         });
       } else if (option.checks.QA_PDF && hasPDF) {
         results.push({
@@ -8426,7 +8455,8 @@ function checkQA(results, option) {
           inline: true,
           position: 'beforebegin',
           dismiss: key,
-          advanced: option.checks.QA_PDF.advanced || false,
+          dismissAll: 'QA_PDF',
+          developer: option.checks.QA_PDF.developer || false,
         });
       }
     }
@@ -8441,7 +8471,7 @@ function checkQA(results, option) {
         type: option.checks.QA_PAGE_LANG.type || 'error',
         content: option.checks.QA_PAGE_LANG.content || Lang.sprintf('QA_PAGE_LANG'),
         dismiss: prepareDismissal('LANG'),
-        advanced: option.checks.QA_PAGE_LANG.advanced || true,
+        developer: option.checks.QA_PAGE_LANG.developer || true,
       });
     }
   }
@@ -8461,7 +8491,7 @@ function checkQA(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: prepareDismissal(`BLOCKQUOTE${sanitizedText}`),
-          advanced: option.checks.QA_BLOCKQUOTE.advanced || false,
+          developer: option.checks.QA_BLOCKQUOTE.developer || false,
         });
       }
     });
@@ -8482,7 +8512,7 @@ function checkQA(results, option) {
         inline: false,
         position: 'beforebegin',
         dismiss: key,
-        advanced: option.checks.TABLES_MISSING_HEADINGS.advanced || false,
+        developer: option.checks.TABLES_MISSING_HEADINGS.developer || false,
       });
     }
     if (option.checks.TABLES_SEMANTIC_HEADING && semanticHeadings.length > 0) {
@@ -8494,7 +8524,7 @@ function checkQA(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: key,
-          advanced: option.checks.TABLES_SEMANTIC_HEADING.advanced || false,
+          developer: option.checks.TABLES_SEMANTIC_HEADING.developer || false,
         });
       });
     }
@@ -8507,7 +8537,7 @@ function checkQA(results, option) {
           inline: false,
           position: 'afterbegin',
           dismiss: key,
-          advanced: option.checks.TABLES_EMPTY_HEADING.advanced || false,
+          developer: option.checks.TABLES_EMPTY_HEADING.developer || false,
         });
       }
     });
@@ -8535,7 +8565,7 @@ function checkQA(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: prepareDismissal(`BOLD${sanitizedText}`),
-          advanced: option.checks.QA_FAKE_HEADING.advanced || false,
+          developer: option.checks.QA_FAKE_HEADING.developer || false,
         });
       }
     };
@@ -8567,7 +8597,7 @@ function checkQA(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: prepareDismissal(`BOLD${sanitizedText}`),
-            advanced: option.checks.QA_FAKE_HEADING.advanced || false,
+            developer: option.checks.QA_FAKE_HEADING.developer || false,
           });
         }
       }
@@ -8666,7 +8696,7 @@ function checkQA(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: prepareDismissal(`LIST${p.textContent}`),
-            advanced: option.checks.QA_FAKE_LIST.advanced || false,
+            developer: option.checks.QA_FAKE_LIST.developer || false,
           });
           activeMatch = firstPrefix;
         } else {
@@ -8705,7 +8735,7 @@ function checkQA(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: prepareDismissal(`UPPERCASE${thisText}`),
-          advanced: option.checks.QA_UPPERCASE.advanced || false,
+          developer: option.checks.QA_UPPERCASE.developer || false,
         });
       }
     };
@@ -8753,7 +8783,7 @@ function checkQA(results, option) {
                 inline: true,
                 position: 'beforebegin',
                 dismiss: prepareDismissal(`DUPLICATEID${id}${$el.textContent}`),
-                advanced: option.checks.QA_DUPLICATE_ID.advanced || true,
+                developer: option.checks.QA_DUPLICATE_ID.developer || true,
               });
             }
           }
@@ -8790,7 +8820,7 @@ function checkQA(results, option) {
         inline: true,
         position: 'beforebegin',
         dismiss: prepareDismissal(`UNDERLINE${text}`),
-        advanced: option.checks.QA_UNDERLINE.advanced || false,
+        developer: option.checks.QA_UNDERLINE.developer || false,
       });
     });
     // Find underline based on computed style.
@@ -8806,7 +8836,7 @@ function checkQA(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: prepareDismissal(`UNDERLINE${text}`),
-          advanced: option.checks.QA_UNDERLINE.advanced || false,
+          developer: option.checks.QA_UNDERLINE.developer || false,
         });
       }
     };
@@ -8827,7 +8857,7 @@ function checkQA(results, option) {
         type: option.checks.QA_PAGE_TITLE.type || 'error',
         content: option.checks.QA_PAGE_TITLE.content || Lang.sprintf('QA_PAGE_TITLE'),
         dismiss: prepareDismissal('TITLE'),
-        advanced: option.checks.QA_PAGE_TITLE.advanced || true,
+        developer: option.checks.QA_PAGE_TITLE.developer || true,
       });
     }
   }
@@ -8846,7 +8876,7 @@ function checkQA(results, option) {
           inline: true,
           position: 'beforebegin',
           dismiss: prepareDismissal($el.tagName + text),
-          advanced: option.checks.QA_SUBSCRIPT.advanced || false,
+          developer: option.checks.QA_SUBSCRIPT.developer || false,
         });
       }
     });
@@ -8866,7 +8896,7 @@ function checkQA(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: prepareDismissal(`NESTED${$el.textContent}`),
-          advanced: option.checks.QA_NESTED_COMPONENTS.advanced || false,
+          developer: option.checks.QA_NESTED_COMPONENTS.developer || false,
         });
       }
     });
@@ -8889,7 +8919,7 @@ function checkCustom(results) {
         inline: false,
         position: 'beforebegin',
         dismiss: key,
-        advanced: false,
+        developer: false,
       });
     }
   }
@@ -8905,7 +8935,7 @@ function checkCustom(results) {
         content: 'Do <strong>not nest forms</strong> within the Accordion component. If the form contains validation issues, a person may not see the form feedback since the accordion panel goes back to its original closed state.',
         inline: false,
         position: 'beforebegin',
-        advanced: false,
+        developer: false,
       });
     }
   }); */
@@ -8952,9 +8982,9 @@ class Sa11y {
         Constants.initializeExclusions(option);
         Constants.initializeEmbeddedContent(option);
 
-        // Make "Advanced checks" on by default or if toggle switch is visually hidden.
-        if (store.getItem('sa11y-advanced') === null || option.checkAllHideToggles) {
-          store.setItem('sa11y-advanced', 'On');
+        // Make "Developer checks" on by default or if toggle switch is visually hidden.
+        if (store.getItem('sa11y-developer') === null || option.checkAllHideToggles) {
+          store.setItem('sa11y-developer', 'On');
         }
 
         // Once document has fully loaded.
@@ -9041,7 +9071,7 @@ class Sa11y {
         if (option.readabilityPlugin) checkReadability();
 
         // Flagged issues that are images, for the purpose of generating Image Outline.
-        this.imageResults = this.results.filter((item) => item.element?.tagName === 'IMG');
+        this.imageResults = this.results.filter((issue) => issue.element?.tagName === 'IMG');
 
         /* Custom checks */
         if (option.customChecks === true) {
@@ -9085,11 +9115,11 @@ class Sa11y {
 
     this.updateResults = () => {
       // Filter out heading issues that are outside of the target root.
-      this.results = this.results.filter((item) => item.isWithinRoot !== false);
+      this.results = this.results.filter((heading) => heading.isWithinRoot !== false);
 
-      // Filter out "Advanced checks" if toggled off.
-      if (store.getItem('sa11y-advanced') === 'Off') {
-        this.results = this.results.filter((item) => item.advanced !== true);
+      // Filter out "Developer checks" if toggled off.
+      if (store.getItem('sa11y-developer') === 'Off') {
+        this.results = this.results.filter((issue) => issue.developer !== true);
       }
 
       // Generate HTML path, and optionally CSS selector path of element.
@@ -9131,6 +9161,7 @@ class Sa11y {
               $el.position,
               $el.id,
               $el.dismiss,
+              $el.dismissAll,
               option,
             );
           });

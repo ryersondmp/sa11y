@@ -26,14 +26,14 @@ export default function checkHeaders(results, option, headingOutline) {
     // Default.
     let type = null;
     let content = null;
-    let advanced = null;
+    let developer = null;
 
     // Rulesets.
     if (level - prevLevel > 1 && i !== 0) {
       if (option.checks.HEADING_SKIPPED_LEVEL) {
         type = option.checks.HEADING_SKIPPED_LEVEL.type || 'error';
         content = option.checks.HEADING_SKIPPED_LEVEL.content || Lang.sprintf('HEADING_SKIPPED_LEVEL', prevLevel, level);
-        advanced = option.checks.HEADING_SKIPPED_LEVEL.advanced || false;
+        developer = option.checks.HEADING_SKIPPED_LEVEL.developer || false;
       }
     } else if (headingLength === 0) {
       if ($el.querySelectorAll('img').length) {
@@ -42,30 +42,27 @@ export default function checkHeaders(results, option, headingOutline) {
           if (option.checks.HEADING_EMPTY_WITH_IMAGE) {
             type = option.checks.HEADING_EMPTY_WITH_IMAGE.type || 'error';
             content = option.checks.HEADING_EMPTY_WITH_IMAGE.content || Lang.sprintf('HEADING_EMPTY_WITH_IMAGE', level);
-            advanced = option.checks.HEADING_EMPTY_WITH_IMAGE.advanced || false;
+            developer = option.checks.HEADING_EMPTY_WITH_IMAGE.developer || false;
           }
         }
       } else if (option.checks.HEADING_EMPTY) {
         type = option.checks.HEADING_EMPTY.type || 'error';
         content = option.checks.HEADING_EMPTY.content || Lang.sprintf('HEADING_EMPTY', level);
-        advanced = option.checks.HEADING_EMPTY.advanced || false;
+        developer = option.checks.HEADING_EMPTY.developer || false;
       }
     } else if (i === 0 && level !== 1 && level !== 2) {
       if (option.checks.HEADING_FIRST) {
         type = option.checks.HEADING_FIRST.type || 'error';
         content = option.checks.HEADING_FIRST.content || Lang.sprintf('HEADING_FIRST');
-        advanced = option.checks.HEADING_FIRST.advanced || false;
+        developer = option.checks.HEADING_FIRST.developer || false;
       }
     } else if (headingLength > option.headingMaxCharLength) {
       if (option.checks.HEADING_LONG) {
         type = option.checks.HEADING_LONG.type || 'warning';
         content = option.checks.HEADING_LONG.content || Lang.sprintf('HEADING_LONG', headingLength);
-        advanced = option.checks.HEADING_LONG.advanced || false;
+        developer = option.checks.HEADING_LONG.developer || false;
       }
     }
-
-    // Create dismiss key for results object and heading outline.
-    const key = (type === 'warning') ? Utils.prepareDismissal(`HEADING${level + headingText}`) : '';
 
     // Create results object.
     if (content && type) {
@@ -75,9 +72,9 @@ export default function checkHeaders(results, option, headingOutline) {
         content,
         inline: false,
         position: 'beforebegin',
-        dismiss: key,
+        dismiss: Utils.prepareDismissal(`HEADING${level + headingText}`),
         isWithinRoot,
-        advanced,
+        developer,
       });
     }
 
@@ -97,7 +94,7 @@ export default function checkHeaders(results, option, headingOutline) {
       type,
       hidden: hiddenHeading,
       visibleParent: parent,
-      dismiss: key,
+      dismiss: Utils.prepareDismissal(`HEADING${level + headingText}`),
       isWithinRoot,
     });
   });
@@ -108,7 +105,7 @@ export default function checkHeaders(results, option, headingOutline) {
       type: option.checks.HEADING_MISSING_ONE.type || 'warning',
       content: option.checks.HEADING_MISSING_ONE.content || Lang.sprintf('HEADING_MISSING_ONE'),
       dismiss: 'MISSINGH1',
-      advanced: option.checks.HEADING_MISSING_ONE.advanced || false,
+      developer: option.checks.HEADING_MISSING_ONE.developer || false,
     });
   }
   return { results, headingOutline };

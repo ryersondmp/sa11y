@@ -229,19 +229,25 @@ div {
     margin: 0;
   }
 
-  button[data-sa11y-dismiss] {
-    display: block;
-    padding: 4px 8px;
-    margin: 10px 5px 5px 0;
-    color: var(--sa11y-panel-primary);
-    cursor: pointer;
-    background: var(--sa11y-panel-bg-secondary);
-    border: 2px solid var(--sa11y-button-outline);
-    border-radius: 5px;
+  /* Dismiss buttons */
+  .dismiss-group {
+    margin-top: 5px;
 
-    &:hover,
-    &:focus {
-      background: var(--sa11y-shortcut-hover);
+    button {
+      display: inline-block;
+      padding: 4px 8px;
+      margin: 10px 5px 5px 0;
+      margin-inline-end: 15px;
+      color: var(--sa11y-panel-primary);
+      cursor: pointer;
+      background: var(--sa11y-panel-bg-secondary);
+      border: 2px solid var(--sa11y-button-outline);
+      border-radius: 5px;
+
+      &:hover,
+      &:focus {
+        background: var(--sa11y-shortcut-hover);
+      }
     }
   }
 
@@ -261,6 +267,10 @@ div {
       background: var(--sa11y-error);
     }
 
+    .colour {
+      color: var(--sa11y-red-text);
+    }
+
     .link-icon {
       background: var(--sa11y-error-text);
     }
@@ -270,6 +280,10 @@ div {
     .badge {
       color: var(--sa11y-panel-bg);
       background: var(--sa11y-yellow-text);
+    }
+
+    .colour {
+      color: var(--sa11y-yellow-text);
     }
 
     .link-icon {

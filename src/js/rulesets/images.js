@@ -7,6 +7,7 @@ import { computeAriaLabel, computeAccessibleName } from '../utils/computeAccessi
 export default function checkImages(results, option) {
   const containsAltTextStopWords = (alt) => {
     const altUrl = [
+      '.avif',
       '.png',
       '.jpg',
       '.jpeg',
@@ -14,6 +15,8 @@ export default function checkImages(results, option) {
       '.gif',
       '.tiff',
       '.svg',
+      '.heif',
+      '.heic',
       'DSC_',
       'IMG_',
       'Photo_',
@@ -69,7 +72,6 @@ export default function checkImages(results, option) {
 
     // Image's source for key.
     const src = ($el.getAttribute('src')) ? $el.getAttribute('src') : $el.getAttribute('srcset');
-    const key = Utils.prepareDismissal(`IMAGE${src}`);
 
     // Process link text exclusions.
     const linkSpanExclusions = link
@@ -94,8 +96,8 @@ export default function checkImages(results, option) {
           content: option.checks.LINK_HIDDEN_FOCUSABLE.content || Lang.sprintf('LINK_HIDDEN_FOCUSABLE'),
           inline: false,
           position: 'beforebegin',
-          dismiss: key,
-          advanced: option.checks.LINK_HIDDEN_FOCUSABLE.advanced || true,
+          dismiss: Utils.prepareDismissal(`IMAGEHIDDENFOCUSABLE${src}`),
+          developer: option.checks.LINK_HIDDEN_FOCUSABLE.developer || true,
         });
       }
       return;
@@ -115,8 +117,8 @@ export default function checkImages(results, option) {
               ? 'MISSING_ALT_LINK' : 'MISSING_ALT_LINK_HAS_TEXT'),
             inline: false,
             position: 'beforebegin',
-            dismiss: key,
-            advanced: rule.advanced || false,
+            dismiss: Utils.prepareDismissal(`LINKIMAGENOALT${src + linkTextContentLength}`),
+            developer: rule.developer || false,
           });
         }
       } else if (option.checks.MISSING_ALT) {
@@ -127,8 +129,8 @@ export default function checkImages(results, option) {
           content: option.checks.MISSING_ALT.content || Lang.sprintf('MISSING_ALT'),
           inline: false,
           position: 'beforebegin',
-          dismiss: key,
-          advanced: option.checks.MISSING_ALT.advanced || false,
+          dismiss: Utils.prepareDismissal(`IMAGENOALT${src}`),
+          developer: option.checks.MISSING_ALT.developer || false,
         });
       }
     } else {
@@ -153,8 +155,8 @@ export default function checkImages(results, option) {
             content: option.checks.MISSING_ALT.content || Lang.sprintf('MISSING_ALT'),
             inline: false,
             position: 'beforebegin',
-            dismiss: key,
-            advanced: option.checks.MISSING_ALT.advanced || false,
+            dismiss: Utils.prepareDismissal(`IMAGENOALT${src}`),
+            developer: option.checks.MISSING_ALT.developer || false,
           });
         }
         return;
@@ -169,8 +171,8 @@ export default function checkImages(results, option) {
             content: option.checks.IMAGE_DECORATIVE_CAROUSEL.content || Lang.sprintf('IMAGE_DECORATIVE_CAROUSEL'),
             inline: false,
             position: 'beforebegin',
-            dismiss: key,
-            advanced: option.checks.IMAGE_DECORATIVE_CAROUSEL.advanced || false,
+            dismiss: Utils.prepareDismissal(`DECIMAGE${src}`),
+            developer: option.checks.IMAGE_DECORATIVE_CAROUSEL.developer || false,
           });
         } else if (link) {
           const rule = (linkTextContentLength === 0)
@@ -184,8 +186,8 @@ export default function checkImages(results, option) {
                 ? 'LINK_IMAGE_NO_ALT_TEXT' : 'LINK_IMAGE_TEXT'),
               inline: false,
               position: 'beforebegin',
-              dismiss: key,
-              advanced: rule.advanced || false,
+              dismiss: Utils.prepareDismissal(`IMAGETEXT${src + linkTextContentLength}`),
+              developer: rule.developer || false,
             });
           }
         } else if (figure) {
@@ -200,8 +202,8 @@ export default function checkImages(results, option) {
                 ? 'IMAGE_FIGURE_DECORATIVE' : 'IMAGE_DECORATIVE'),
               inline: false,
               position: 'beforebegin',
-              dismiss: key,
-              advanced: rule.advanced || false,
+              dismiss: Utils.prepareDismissal(`FIG${src + figcaptionText}`),
+              developer: rule.developer || false,
             });
           }
         } else if (option.checks.IMAGE_DECORATIVE) {
@@ -211,8 +213,8 @@ export default function checkImages(results, option) {
             content: option.checks.IMAGE_DECORATIVE.content || Lang.sprintf('IMAGE_DECORATIVE'),
             inline: false,
             position: 'beforebegin',
-            dismiss: key,
-            advanced: option.checks.IMAGE_DECORATIVE.advanced || false,
+            dismiss: Utils.prepareDismissal(`DECIMAGE${src}`),
+            developer: option.checks.IMAGE_DECORATIVE.developer || false,
           });
         }
         return;
@@ -232,8 +234,8 @@ export default function checkImages(results, option) {
               ? 'LINK_ALT_FILE_EXT' : 'ALT_FILE_EXT', error[0], altText),
             inline: false,
             position: 'beforebegin',
-            dismiss: key,
-            advanced: rule.advanced || false,
+            dismiss: Utils.prepareDismissal(`IMAGE${src + altText}`),
+            developer: rule.developer || false,
           });
         }
       } else if (error[2] !== null) {
@@ -249,8 +251,8 @@ export default function checkImages(results, option) {
               ? 'LINK_PLACEHOLDER_ALT' : 'ALT_PLACEHOLDER', altText),
             inline: false,
             position: 'beforebegin',
-            dismiss: key,
-            advanced: rule.advanced || false,
+            dismiss: Utils.prepareDismissal(`IMAGE${src + altText}`),
+            developer: rule.developer || false,
           });
         }
       } else if (error[1] !== null) {
@@ -266,8 +268,8 @@ export default function checkImages(results, option) {
               ? 'LINK_SUS_ALT' : 'SUS_ALT', error[1], altText),
             inline: false,
             position: 'beforebegin',
-            dismiss: key,
-            advanced: rule.advanced || false,
+            dismiss: Utils.prepareDismissal(`IMAGE${src + altText}`),
+            developer: rule.developer || false,
           });
         }
       } else if (alt.length > option.altTextMaxCharLength) {
@@ -283,8 +285,8 @@ export default function checkImages(results, option) {
               ? 'LINK_IMAGE_LONG_ALT' : 'IMAGE_ALT_TOO_LONG', alt.length, altText),
             inline: false,
             position: 'beforebegin',
-            dismiss: key,
-            advanced: rule.advanced || false,
+            dismiss: Utils.prepareDismissal(`IMAGE${src + altText}`),
+            developer: rule.developer || false,
           });
         }
       } else if (link) {
@@ -303,8 +305,8 @@ export default function checkImages(results, option) {
               ? 'LINK_IMAGE_ALT' : 'LINK_IMAGE_ALT_AND_TEXT', altText, sanitizedText),
             inline: false,
             position: 'beforebegin',
-            dismiss: key,
-            advanced: rule.advanced || false,
+            dismiss: Utils.prepareDismissal(`IMAGELINK${src + altText}`),
+            developer: rule.developer || false,
           });
         }
       } else if (figure) {
@@ -318,8 +320,8 @@ export default function checkImages(results, option) {
               content: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.content || Lang.sprintf('IMAGE_FIGURE_DUPLICATE_ALT', altText),
               inline: false,
               position: 'beforebegin',
-              dismiss: key,
-              advanced: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.advanced || false,
+              dismiss: Utils.prepareDismissal(`FIGIMAGEDUPLICATE${src}`),
+              developer: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.developer || false,
             });
           }
         } else if (option.checks.IMAGE_PASS) {
@@ -330,7 +332,8 @@ export default function checkImages(results, option) {
             content: option.checks.IMAGE_PASS.content || Lang.sprintf('IMAGE_PASS', altText),
             inline: false,
             position: 'beforebegin',
-            advanced: option.checks.IMAGE_PASS.advanced || false,
+            dismiss: Utils.prepareDismissal(`IMAGEPASS${src + altText}`),
+            developer: option.checks.IMAGE_PASS.developer || false,
           });
         }
       } else if (option.checks.IMAGE_PASS) {
@@ -341,7 +344,8 @@ export default function checkImages(results, option) {
           content: option.checks.IMAGE_PASS.content || Lang.sprintf('IMAGE_PASS', altText),
           inline: false,
           position: 'beforebegin',
-          advanced: option.checks.IMAGE_PASS.advanced || false,
+          dismiss: Utils.prepareDismissal(`IMAGEPASS${src + altText}`),
+          developer: option.checks.IMAGE_PASS.developer || false,
         });
       }
     }

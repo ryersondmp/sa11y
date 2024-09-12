@@ -45,17 +45,33 @@
 
     <hr>
 
-    <a href="https://www.example.com/asdsd" target="_blank">Test 123</a>
+    <ul>
+      <li><a href="https://www.example.com/asdsd" target="_blank">Test 1</a></li>
+      <li><a href="https://www.example.com/asdsd" target="_blank">Test 2</a></li>
+      <li><a href="https://www.example.com/asdsd" target="_blank">Test 3</a></li>
+      <li><a href="https://www.example.com/asdsd" target="_blank">Test 4</a></li>
+      <li><a href="https://www.example.com/asdsd" target="_blank">Test 5</a></li>
+    </ul>
+
 
     <hr>
     <p>
       <strong>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis perferendis itaque officiis, iure quaerat
         blanditiis quibusdam tempora provident accusamus harum corrupti quas architecto mollitia nostrum? Dicta
         laudantium <a href="https://www.example.com/asdsff" aria-label="Pass">Test 123</a>
-        incidunt sint alias. Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium temporibus libero
-        voluptatem neque nemo, ipsum, quidem distinctio nam repellendus tempora, tempore dolorem reiciendis. Eveniet
+        incidunt sint alias. Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium temporibus libero <a
+          href="https://www.example.com/asdsffdgfg.pdf">Test 123 (pdf)</a>
+        voluptatem neque nemo, ipsum, quidem distinctio nam repellendus tempora, tempore dolorem reiciendis. <a
+          href="https://www.example.com/ffdgfg.pdf">Test 1236464 (pdf)</a> Eveniet
         consectetur culpa eos tempora porro veniam.</strong>
     </p>
+
+    <img alt="hi" src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg">
+
+    <hr>
+    <div style="background-color:black"><img alt="mdn.heic"
+        src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg">
+    </div>
 
     <hr>
 
@@ -79,6 +95,8 @@
 
     <p style="color:coral">Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet facere, in, fugiat neque, eaque
       eligendi commodi provident incidunt a at libero porro eos. Expedita alias dolores corporis saepe officia quod!</p>
+
+    <p style="color:white">Testing 1:1 contrast ratio should be warning now, instead of error?</p>
 
     <div role="tablist">
       Testing
@@ -124,8 +142,6 @@
     Sa11y.Lang.addI18n(Sa11yLangEn.strings);
     const sa11y = new Sa11y.Sa11y({
       checkRoot: 'body',
-      aboutHeader: 'Help',
-      aboutContent: '<h2>Help</h2><p>Questions? Review the <a href="#">accessibility guide</a>. For help, please contact <a href="mailto:help@torontomu.ca">help@torontomu.ca</a>. This tool was created by the Toronto Metropolitan University.</p><p><a href="https://forms.gle/sjzK9XykETaoqZv99">Report bugs &amp; feedback</a></p>',
       shadowComponents: '#webcomponent',
       checks: {
         IMAGE_DECORATIVE_CAROUSEL: {

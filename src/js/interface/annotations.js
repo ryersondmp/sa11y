@@ -35,6 +35,7 @@ export function annotate(
   position,
   index,
   dismissKey,
+  dismissAll,
   option,
 ) {
   // Validate types to prevent errors.
@@ -62,12 +63,25 @@ export function annotate(
   };
 
   // Don't paint page with "Good" annotations for images with alt text and links with accessible name.
-  if (option.showGoodImageButton === false && element?.tagName === 'IMG' && type === 'good') return;
-  if (option.showGoodLinkButton === false && element?.tagName === 'A' && type === 'good') return;
+  if (option.showGoodImageButton === false
+    && element?.tagName === 'IMG' && type === 'good') return;
+  if (option.showGoodLinkButton === false
+    && element?.tagName === 'A' && type === 'good') return;
 
   // Add dismiss button if prop enabled & has a dismiss key.
-  const dismiss = (option.dismissAnnotations === true && type === 'warning' && dismissKey !== undefined)
+  const dismissBtn = (
+    option.dismissAnnotations
+    && (type === 'warning' || type === 'good')
+    && dismissKey !== undefined)
     ? `<button data-sa11y-dismiss='${index}' type='button'>${Lang._('DISMISS')}</button>` : '';
+
+  // Add dismiss all button if prop enabled & has addition check key.
+  const dismissAllBtn = (
+    option.dismissAnnotations
+    && option.dismissAll
+    && (type === 'warning' || type === 'good')
+    && dismissAll !== undefined)
+    ? `<button data-sa11y-dismiss='${index}' data-sa11y-dismiss-all type='button'>${Lang._('DISMISS_ALL')}</button>` : '';
 
   // Create 'sa11y-annotation' web component for each annotation.
   const instance = document.createElement('sa11y-annotation');
@@ -77,7 +91,7 @@ export function annotate(
   if (element === undefined) {
     // Page errors displayed to main panel.
     const listItem = document.createElement('li');
-    listItem.innerHTML = `<strong>${ariaLabel[type]}</strong> ${content}${dismiss}`;
+    listItem.innerHTML = `<strong>${ariaLabel[type]}</strong> ${content}${dismissBtn}`;
     Constants.Panel.pageIssuesList.insertAdjacentElement('afterbegin', listItem);
 
     // Display Page Issues panel.
@@ -95,7 +109,8 @@ export function annotate(
       class="sa11y-btn ${[type]}-btn${inline ? '-text' : ''}"
       data-tippy-content=
         "<div lang='${Lang._('LANG_CODE')}' class='${[type]}'>
-          <button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button> <h2>${ariaLabel[type]}</h2> ${escapeHTML(content)} ${dismiss}
+          <button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button> <h2>${ariaLabel[type]}</h2> ${escapeHTML(content)}
+          <div class='dismiss-group'>${dismissBtn}${dismissAllBtn}</div>
         </div>"
     ></button>`;
 

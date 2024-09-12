@@ -41,6 +41,7 @@ if ($checkAnnouncement.length > 1) {
       content: 'More than one Announcement component found! The Announcement component should be used strategically and sparingly. It should be used to get attention or indicate that something is important. Misuse of this component makes it less effective or impactful. Secondly, this component is semantically labeled as an Announcement for people who use screen readers.',
       inline: false,
       position: 'beforebegin',
+      developer: false,
     });
   }
 }
@@ -55,7 +56,7 @@ $checkAccordions.forEach(($el) => {
       content: 'Do <strong>not nest forms</strong> within the Accordion component. If the form contains validation issues, a person may not see the form feedback since the accordion panel goes back to its original closed state.',
       inline: false,
       position: 'beforebegin',
-      advanced: true,
+      developer: true,
     });
   }
 });

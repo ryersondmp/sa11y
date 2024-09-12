@@ -42,7 +42,7 @@ export default function checkLabels(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: key,
-            advanced: option.checks.LABELS_MISSING_IMAGE_INPUT.advanced || true,
+            developer: option.checks.LABELS_MISSING_IMAGE_INPUT.developer || true,
           });
         }
         return;
@@ -58,7 +58,7 @@ export default function checkLabels(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: key,
-            advanced: option.checks.LABELS_INPUT_RESET.advanced || false,
+            developer: option.checks.LABELS_INPUT_RESET.developer || false,
           });
         }
         return;
@@ -75,7 +75,7 @@ export default function checkLabels(results, option) {
               inline: false,
               position: 'beforebegin',
               dismiss: key,
-              advanced: option.checks.LABELS_MISSING_LABEL.advanced || true,
+              developer: option.checks.LABELS_MISSING_LABEL.developer || true,
             });
           }
         } else if (option.checks.LABELS_ARIA_LABEL_INPUT) {
@@ -87,7 +87,7 @@ export default function checkLabels(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: key,
-            advanced: option.checks.LABELS_ARIA_LABEL_INPUT.advanced || true,
+            developer: option.checks.LABELS_ARIA_LABEL_INPUT.developer || true,
           });
         }
         return;
@@ -112,7 +112,7 @@ export default function checkLabels(results, option) {
               content: option.checks.LABELS_NO_FOR_ATTRIBUTE.content || Lang.sprintf('LABELS_NO_FOR_ATTRIBUTE', id),
               inline: false,
               position: 'beforebegin',
-              advanced: option.checks.LABELS_NO_FOR_ATTRIBUTE.advanced || true,
+              developer: option.checks.LABELS_NO_FOR_ATTRIBUTE.developer || true,
             });
           }
         }
@@ -124,7 +124,7 @@ export default function checkLabels(results, option) {
           content: option.checks.LABELS_MISSING_LABEL.content || Lang.sprintf('LABELS_MISSING_LABEL'),
           inline: false,
           position: 'beforebegin',
-          advanced: option.checks.LABELS_MISSING_LABEL.advanced || true,
+          developer: option.checks.LABELS_MISSING_LABEL.developer || true,
         });
       }
     });

@@ -16,7 +16,7 @@ export default function checkQA(results, option) {
         inline: true,
         position: 'beforebegin',
         dismiss: Utils.prepareDismissal($el.tagName + $el.textContent),
-        advanced: option.checks.QA_BAD_LINK.advanced || false,
+        developer: option.checks.QA_BAD_LINK.developer || false,
       });
     });
   }
@@ -34,7 +34,7 @@ export default function checkQA(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: Utils.prepareDismissal($el.tagName + $el.textContent),
-          advanced: option.checks.QA_STRONG_ITALICS.advanced || false,
+          developer: option.checks.QA_STRONG_ITALICS.developer || false,
         });
       }
     });
@@ -68,7 +68,7 @@ export default function checkQA(results, option) {
             inline: true,
             position: 'beforebegin',
             dismiss: key,
-            advanced: option.checks.QA_IN_PAGE_LINK.advanced || false,
+            developer: option.checks.QA_IN_PAGE_LINK.developer || false,
           });
         }
       }
@@ -82,7 +82,7 @@ export default function checkQA(results, option) {
           inline: true,
           position: 'beforebegin',
           dismiss: key,
-          advanced: option.checks.QA_DOCUMENT.advanced || false,
+          developer: option.checks.QA_DOCUMENT.developer || false,
         });
       } else if (option.checks.QA_PDF && hasPDF) {
         results.push({
@@ -92,7 +92,8 @@ export default function checkQA(results, option) {
           inline: true,
           position: 'beforebegin',
           dismiss: key,
-          advanced: option.checks.QA_PDF.advanced || false,
+          dismissAll: 'QA_PDF',
+          developer: option.checks.QA_PDF.developer || false,
         });
       }
     }
@@ -107,7 +108,7 @@ export default function checkQA(results, option) {
         type: option.checks.QA_PAGE_LANG.type || 'error',
         content: option.checks.QA_PAGE_LANG.content || Lang.sprintf('QA_PAGE_LANG'),
         dismiss: Utils.prepareDismissal('LANG'),
-        advanced: option.checks.QA_PAGE_LANG.advanced || true,
+        developer: option.checks.QA_PAGE_LANG.developer || true,
       });
     }
   }
@@ -127,7 +128,7 @@ export default function checkQA(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: Utils.prepareDismissal(`BLOCKQUOTE${sanitizedText}`),
-          advanced: option.checks.QA_BLOCKQUOTE.advanced || false,
+          developer: option.checks.QA_BLOCKQUOTE.developer || false,
         });
       }
     });
@@ -148,7 +149,7 @@ export default function checkQA(results, option) {
         inline: false,
         position: 'beforebegin',
         dismiss: key,
-        advanced: option.checks.TABLES_MISSING_HEADINGS.advanced || false,
+        developer: option.checks.TABLES_MISSING_HEADINGS.developer || false,
       });
     }
     if (option.checks.TABLES_SEMANTIC_HEADING && semanticHeadings.length > 0) {
@@ -160,7 +161,7 @@ export default function checkQA(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: key,
-          advanced: option.checks.TABLES_SEMANTIC_HEADING.advanced || false,
+          developer: option.checks.TABLES_SEMANTIC_HEADING.developer || false,
         });
       });
     }
@@ -173,7 +174,7 @@ export default function checkQA(results, option) {
           inline: false,
           position: 'afterbegin',
           dismiss: key,
-          advanced: option.checks.TABLES_EMPTY_HEADING.advanced || false,
+          developer: option.checks.TABLES_EMPTY_HEADING.developer || false,
         });
       }
     });
@@ -201,7 +202,7 @@ export default function checkQA(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: Utils.prepareDismissal(`BOLD${sanitizedText}`),
-          advanced: option.checks.QA_FAKE_HEADING.advanced || false,
+          developer: option.checks.QA_FAKE_HEADING.developer || false,
         });
       }
     };
@@ -233,7 +234,7 @@ export default function checkQA(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: Utils.prepareDismissal(`BOLD${sanitizedText}`),
-            advanced: option.checks.QA_FAKE_HEADING.advanced || false,
+            developer: option.checks.QA_FAKE_HEADING.developer || false,
           });
         }
       }
@@ -332,7 +333,7 @@ export default function checkQA(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: Utils.prepareDismissal(`LIST${p.textContent}`),
-            advanced: option.checks.QA_FAKE_LIST.advanced || false,
+            developer: option.checks.QA_FAKE_LIST.developer || false,
           });
           activeMatch = firstPrefix;
         } else {
@@ -371,7 +372,7 @@ export default function checkQA(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: Utils.prepareDismissal(`UPPERCASE${thisText}`),
-          advanced: option.checks.QA_UPPERCASE.advanced || false,
+          developer: option.checks.QA_UPPERCASE.developer || false,
         });
       }
     };
@@ -419,7 +420,7 @@ export default function checkQA(results, option) {
                 inline: true,
                 position: 'beforebegin',
                 dismiss: Utils.prepareDismissal(`DUPLICATEID${id}${$el.textContent}`),
-                advanced: option.checks.QA_DUPLICATE_ID.advanced || true,
+                developer: option.checks.QA_DUPLICATE_ID.developer || true,
               });
             }
           }
@@ -456,7 +457,7 @@ export default function checkQA(results, option) {
         inline: true,
         position: 'beforebegin',
         dismiss: Utils.prepareDismissal(`UNDERLINE${text}`),
-        advanced: option.checks.QA_UNDERLINE.advanced || false,
+        developer: option.checks.QA_UNDERLINE.developer || false,
       });
     });
     // Find underline based on computed style.
@@ -472,7 +473,7 @@ export default function checkQA(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: Utils.prepareDismissal(`UNDERLINE${text}`),
-          advanced: option.checks.QA_UNDERLINE.advanced || false,
+          developer: option.checks.QA_UNDERLINE.developer || false,
         });
       }
     };
@@ -493,7 +494,7 @@ export default function checkQA(results, option) {
         type: option.checks.QA_PAGE_TITLE.type || 'error',
         content: option.checks.QA_PAGE_TITLE.content || Lang.sprintf('QA_PAGE_TITLE'),
         dismiss: Utils.prepareDismissal('TITLE'),
-        advanced: option.checks.QA_PAGE_TITLE.advanced || true,
+        developer: option.checks.QA_PAGE_TITLE.developer || true,
       });
     }
   }
@@ -512,7 +513,7 @@ export default function checkQA(results, option) {
           inline: true,
           position: 'beforebegin',
           dismiss: Utils.prepareDismissal($el.tagName + text),
-          advanced: option.checks.QA_SUBSCRIPT.advanced || false,
+          developer: option.checks.QA_SUBSCRIPT.developer || false,
         });
       }
     });
@@ -532,7 +533,7 @@ export default function checkQA(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: Utils.prepareDismissal(`NESTED${$el.textContent}`),
-          advanced: option.checks.QA_NESTED_COMPONENTS.advanced || false,
+          developer: option.checks.QA_NESTED_COMPONENTS.developer || false,
         });
       }
     });
