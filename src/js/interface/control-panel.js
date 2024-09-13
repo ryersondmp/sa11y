@@ -33,8 +33,10 @@ export default class ControlPanel extends HTMLElement {
         <label id="check-developer" for="developer-toggle">${Lang._('DEVELOPER_CHECKS')}</label>
         <button id="developer-toggle"
           aria-labelledby="check-developer"
+          aria-describedby="check-developer-desc"
           class="switch"
           aria-pressed="${rememberDeveloper ? 'true' : 'false'}">${rememberDeveloper ? Lang._('ON') : Lang._('OFF')}</button>
+        <div id="check-developer-desc" hidden>${Lang._('DEVELOPER_DESC')}</div>
       </li>` : '';
 
     const readabilityPlugin = Constants.Readability.Plugin ? `

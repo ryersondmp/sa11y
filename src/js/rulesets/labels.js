@@ -30,7 +30,7 @@ export default function checkLabels(results, option) {
       }
 
       // Create dismiss key.
-      const key = Utils.prepareDismissal(`INPUT${inputName}`);
+      const key = Utils.prepareDismissal(`INPUT${type + inputName}`);
 
       // Error: Input with type="image" without accessible name or alt.
       if (type === 'image' && (!alt || alt.trim() === '')) {

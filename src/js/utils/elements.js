@@ -117,6 +117,12 @@ const Elements = (function myElements() {
       Constants.Exclusions.Container,
     ) : [];
 
+    Found.UncontainedLi = option.checks.QA_UNCONTAINED_LI ? find(
+      'li:not(ul li):not(ol li):not(menu li)',
+      'root',
+      Constants.Exclusions.Container,
+    ) : [];
+
     // iFrames
     Found.iframes = find(
       'iframe:not(hidden), audio, video',

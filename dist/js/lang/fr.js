@@ -36,6 +36,7 @@ var fr = {
     PAGE_ISSUES: 'Problèmes de pages',
     SETTINGS: 'Paramètres',
     DEVELOPER_CHECKS: 'Vérifications du développeur',
+    DEVELOPER_DESC: 'Vérifie les problèmes qui peuvent nécessiter des compétences en programmation pour les résoudre.',
     DARK_MODE: 'Mode sombre',
     SHORTCUT_SR: 'Passer à l’édition. Raccourci clavier: Alt et point',
     SKIP_TO_ISSUE: 'Passer à l’édition',
@@ -209,6 +210,9 @@ var fr = {
     QA_UNDERLINE: 'Le texte soulignés peuvent être confondus avec les liens. Envisagez d’utiliser un style différent comme &lt;strong&gt;<strong>forte importance</strong>&lt;/strong&gt; ou &lt;em&gt;<em>l’emphase.</em>&lt;/em&gt;.',
     QA_SUBSCRIPT: 'Les options de mise en forme en indice et en exposant ne doivent être utilisées que pour modifier la position du texte afin de se conformer aux conventions ou normes typographiques. Il ne doit <strong>pas</strong> être utilisé uniquement à des fins de présentation ou d’apparence. La mise en forme de phrases entières pose des problèmes de lisibilité. Les cas d’utilisation appropriés incluent l’affichage d’exposants, de nombres ordinaux tels que 4<sup>th</sup> au lieu de quatrième et de formules chimiques (H<sub>2</sub>O).',
     QA_NESTED_COMPONENTS: 'Évitez de imbriquer des composants de mise en page interactifs, comme de placer des accordéons dans des onglets ou des onglets dans des accordéons. Cela peut compliquer la navigation, augmenter la charge cognitive et conduire à ce que les gens négligent le contenu.',
+    QA_UNCONTAINED_LI: 'Tous les éléments de liste <code>&lt;li&gt;</code> doivent être placés à l\'intérieur des éléments <code>&lt;ul&gt;</code> non ordonnés ou <code>&lt;ol&gt;</code> ordonnés. Cette structure aide les lecteurs d\'écran à annoncer la liste et ses éléments avec précision.',
+    QA_META_SCALABLE: 'Supprimez le paramètre <code>user-scalable="no"</code> dans l\'élément <code>&lt;meta name="viewport"&gt;</code> afin de permettre le zoom.',
+    QA_META_MAX: 'Assurez-vous que le paramètre <code>maximum-scale</code> dans l\'élément <code>&lt;meta name="viewport"&gt;</code> n\'est pas inférieur à 2.',
 
     // Tables
     TABLES_MISSING_HEADINGS: 'En-têtes de tableau manquants! Les tableaux accessibles doivent contenir le balisage HTML pour indiquer la cellule de l’en-tête et la cellule des donnés qui déterminent leur relation. Cette information fournit le contexte aux gens qui utilisent la technolo-gie d’assistance. Les tableaux doivent être utilisés pour les données relatives uni-quement. <hr> En savoir plus sur les <a href="https://www.w3.org/WAI/tutorials/tables/">tableaux accessibles.</a>',

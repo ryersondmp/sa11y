@@ -24,6 +24,7 @@ export default {
     PAGE_ISSUES: 'Page Issues',
     SETTINGS: 'Settings',
     DEVELOPER_CHECKS: 'Developer checks',
+    DEVELOPER_DESC: 'Checks for issues that may need coding knowledge to fix.',
     DARK_MODE: 'Dark mode',
     SHORTCUT_SR: 'Skip to issue. Keyboard shortcut: Alt S',
     SKIP_TO_ISSUE: 'Skip to issue',
@@ -127,8 +128,8 @@ export default {
     HEADING_SKIPPED_LEVEL: 'Headings should not skip levels or jump from <strong>Heading %(prevLevel)</strong> to <strong {C}>Heading %(level)</strong>, as this disrupts the content\'s order and hierarchy, making it harder to follow.',
     HEADING_EMPTY: 'Empty heading found! To fix, delete this line or change its format from <strong {C}>Heading %(level)</strong> to <strong>Normal</strong> or <strong>Paragraph</strong>.',
     HEADING_LONG: 'Heading is long! Headings should be used to organize content and convey structure. They should be brief, informative, and unique. Please keep headings less than 160 characters (no more than a sentence). <hr> <strong {B}>%(HEADING_LENGTH) Characters</strong>',
-    HEADING_FIRST: 'The first heading on a page should usually be a Heading 1 or Heading 2. Heading 1 should be the start of the main content section, and is the main heading that describes the overall purpose of the page. Learn more about <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Heading Structure.</a>',
-    HEADING_MISSING_ONE: 'Missing Heading 1. Heading 1 should be the start of the main content area, and is the main heading that describes the overall purpose of the page. Learn more about <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Heading Structure.</a>',
+    HEADING_FIRST: 'The first heading on a page should usually be a Heading 1 or Heading 2. Heading 1 should be the start of the main content section, and is the main heading that describes the overall purpose of the page. Learn more about <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">heading structure.</a>',
+    HEADING_MISSING_ONE: 'Missing Heading 1. Heading 1 should be the start of the main content area, and is the main heading that describes the overall purpose of the page. Learn more about <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">heading structure.</a>',
     HEADING_EMPTY_WITH_IMAGE: 'Heading has no text, but contains an image. If this is not a heading, change its format from <strong {C}>Heading %(level)</strong> to <strong>Normal</strong> or <strong>Paragraph</strong>. Otherwise, please add alt text to the image if it is not decorative.',
     PANEL_HEADING_MISSING_ONE: 'Missing Heading 1!',
     PANEL_NO_HEADINGS: 'No headings found.',
@@ -202,6 +203,9 @@ export default {
     QA_SUBSCRIPT: 'The subscript and superscript formatting options should only be used to change the position of text for typographical conventions or standards. It should <strong>not</strong> solely be used for presentation or appearance purposes. Formatting entire sentences poses readability issues. Appropriate use cases would include displaying exponents, ordinal numbers such as 4<sup>th</sup> instead of fourth, and chemical formulas (e.g. H<sub>2</sub>O).',
     QA_IN_PAGE_LINK: 'Broken same-page link. The link target does not match any element on the page.',
     QA_NESTED_COMPONENTS: 'Avoid nesting interactive layout components, such as placing accordions within other accordions, or placing tabs inside accordions and vice versa. This can complicate navigation, increase cognitive overload, and lead to people overlooking content.',
+    QA_UNCONTAINED_LI: 'All <code>&lt;li&gt;</code> list items must be placed inside <code>&lt;ul&gt;</code> unordered or <code>&lt;ol&gt;</code> ordered elements. This structure helps screen readers announce the list and its items accurately.',
+    QA_META_SCALABLE: 'Remove the <code>user-scalable="no"</code> parameter in the <code>&lt;meta name="viewport"&gt;</code> element in order to allow zooming.',
+    QA_META_MAX: 'Ensure the <code>maximum-scale</code> parameter in the <code>&lt;meta name="viewport"&gt;</code> element is not less than 2.',
 
     // Tables
     TABLES_MISSING_HEADINGS: 'Missing table headers! Accessible tables need HTML markup that indicates header cells and data cells which defines their relationship. This information provides context to people who use assistive technology. Tables should be used for tabular data only. <hr> Learn more about <a href="https://www.w3.org/WAI/tutorials/tables/">accessible tables.</a>',

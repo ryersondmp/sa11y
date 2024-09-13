@@ -538,5 +538,62 @@ export default function checkQA(results, option) {
       }
     });
   }
+
+  /* *************************************************************** */
+  /*  Error: <li> elements must be contained in a <ul>/<ol>/<menu>.  */
+  /* *************************************************************** */
+  if (option.checks.QA_UNCONTAINED_LI) {
+    Elements.Found.UncontainedLi.forEach(($el) => {
+      results.push({
+        element: $el,
+        type: option.checks.QA_UNCONTAINED_LI.type || 'error',
+        content: option.checks.QA_UNCONTAINED_LI.content || Lang._('QA_UNCONTAINED_LI'),
+        inline: false,
+        position: 'beforebegin',
+        dismiss: Utils.prepareDismissal(`UNCONTAINEDLI${$el.textContent}`),
+        developer: option.checks.QA_UNCONTAINED_LI.developer || true,
+      });
+    });
+  }
+
+  /* *************************************************************** */
+  /*  Error: Zooming and scaling must not be disabled.               */
+  /* *************************************************************** */
+  if (option.checks.QA_META_SCALABLE || option.checks.QA_META_MAX) {
+    const metaViewport = document.querySelector('meta[name="viewport"]');
+    if (metaViewport) {
+      const content = metaViewport.getAttribute('content');
+      if (content) {
+        // Parse the content attribute to extract parameters.
+        const params = content.split(',').reduce((acc, param) => {
+          const [key, value] = param.split('=').map((s) => s.trim());
+          acc[key] = value;
+          return acc;
+        }, {});
+
+        // Check for user-scalable parameter.
+        if (option.checks.QA_META_SCALABLE && params['user-scalable'] === 'no') {
+          results.push({
+            type: option.checks.QA_META_SCALABLE.type || 'error',
+            content: option.checks.QA_META_SCALABLE.content || Lang._('QA_META_SCALABLE'),
+            dismiss: Utils.prepareDismissal('NOTUSERSCALABLE'),
+            developer: option.checks.QA_META_SCALABLE.developer || true,
+          });
+        }
+
+        // Check maximum-scale parameter.
+        const maxScale = parseFloat(params['maximum-scale']);
+        if (option.checks.QA_META_MAX && !Number.isNaN(maxScale) && maxScale < 2) {
+          results.push({
+            type: option.checks.QA_META_MAX.type || 'error',
+            content: option.checks.QA_META_MAX.content || Lang._('QA_META_MAX'),
+            dismiss: Utils.prepareDismissal('MAXSCALE'),
+            developer: option.checks.QA_META_MAX.developer || true,
+          });
+        }
+      }
+    }
+  }
+
   return results;
 }

@@ -37,6 +37,7 @@ var sv = {
     PAGE_ISSUES: 'Sidproblem',
     SETTINGS: 'Inställningar',
     DEVELOPER_CHECKS: 'Utvecklarkontroller',
+    DEVELOPER_DESC: 'Kontrollerar problem som kan kräva kodningskunskaper för att åtgärda.',
     DARK_MODE: 'Mörkt läge',
     SHORTCUT_SR: 'Hoppa till problem. Kortkommando: Alt + punkt',
     SKIP_TO_ISSUE: 'Hoppa till problem',
@@ -216,6 +217,9 @@ var sv = {
     QA_UNDERLINE: 'Understruken text kan förväxlas med länkar. Överväg att använda en annan stil som <code>&lt;strong&gt;</code><strong>fetstil</strong><code>&lt;/strong&gt;</code> eller <code>&lt;em&gt;</code ><em>kursiv</em><code>&lt;/em&gt;</code>.',
     QA_SUBSCRIPT: 'Formateringsalternativen nedsänkt och upphöjd text bör endast användas för att ändra textens position för typografiska konventioner eller standarder. Det bör <strong>inte</strong> endast användas för presentations- eller utseendeändamål. Att formatera hela meningar ställer till läsbarhetsproblem. Lämpliga användningsfall inkluderar visning av exponenter, ordningstal som 4<sup>th</sup> istället för fjärde och kemiska formler (t.ex. H<sub>2</sub>O).',
     QA_NESTED_COMPONENTS: 'Undvik att nästla interaktiva layoutkomponenter, som att placera ackordeoner inom flikar eller flikar inom ackordeoner. Detta kan komplicera navigering, öka den kognitiva belastningen och leda till att människor överser innehåll.',
+    QA_UNCONTAINED_LI: 'Alla <code>&lt;li&gt;</code> listobjekt måste placeras inuti <code>&lt;ul&gt;</code> oordnade eller <code>&lt;ol&gt;</code> ordnade element. Denna struktur hjälper skärmläsare att korrekt tillkännage listan och dess objekt.',
+    QA_META_SCALABLE: 'Ta bort parametern <code>user-scalable="no"</code> i <code>&lt;meta name="viewport"&gt;</code>-elementet för att tillåta zoomning.',
+    QA_META_MAX: 'Säkerställ att parametern <code>maximum-scale</code> i <code>&lt;meta name="viewport"&gt;</code>-elementet inte är mindre än 2.',
 
     // Tables
     TABLES_MISSING_HEADINGS: 'Tabellrubriker saknas! Tillgänglighetsanpassade tabeller behöver HTML-markup som indikerar rubrikceller och dataceller, vilket definierar deras relation. Informationen ger sammanhang till personer som använder hjälpmedelsverktyg. Tabeller bör endast användas för tabelldata. <hr> Läs mer om <a href="https://www.w3.org/WAI/tutorials/tables/">tillgängliga tabeller.</a>',

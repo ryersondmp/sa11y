@@ -216,10 +216,10 @@ class Sa11y {
       }
 
       // Generate HTML path, and optionally CSS selector path of element.
-      this.results.forEach(($el) => {
+      this.results.forEach(($el, id) => {
         const cssPath = option.selectorPath ? Utils.generateSelectorPath($el.element) : '';
         const htmlPath = $el.element?.outerHTML.replace(/\s{2,}/g, ' ').trim() || '';
-        Object.assign($el, { htmlPath, cssPath });
+        Object.assign($el, { htmlPath, cssPath, id });
       });
 
       if (option.headless === false) {
@@ -244,8 +244,8 @@ class Sa11y {
         /* If panel is OPENED. */
         if (Utils.store.getItem('sa11y-panel') === 'Opened') {
           // Paint the page with annotations.
-          this.results.forEach(($el, i) => {
-            Object.assign($el, { id: i });
+          this.results.forEach(($el) => {
+            Object.assign($el);
             annotate(
               $el.element,
               $el.type,

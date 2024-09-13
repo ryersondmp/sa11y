@@ -20,7 +20,7 @@ const tooltipOptions = (shadowRoot) => ({
   role: 'tooltip',
   aria: {
     content: null,
-    expanded: false,
+    expanded: null,
   },
   appendTo: shadowRoot,
   zIndex: 2147483645,
@@ -133,8 +133,9 @@ export class TooltipComponent extends HTMLElement {
     if (Constants.Global.developerPlugin) {
       tippy(Constants.Panel.developerToggle, {
         ...tooltipOptions(shadowRoot),
+        triggerTarget: [Constants.Panel.developerItem],
         offset: [0, 0],
-        content: 'Checks for issues that may need coding knowledge to fix.',
+        content: Lang._('DEVELOPER_DESC'),
       });
     }
   }

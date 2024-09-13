@@ -36,6 +36,7 @@ var de = {
     PAGE_ISSUES: 'Seitenprobleme',
     SETTINGS: 'Einstellungen',
     DEVELOPER_CHECKS: 'Entwicklerprüfungen',
+    DEVELOPER_DESC: 'Überprüft Probleme, die möglicherweise Programmierkenntnisse zur Behebung erfordern.',
     DARK_MODE: 'Dark mode',
     SHORTCUT_SR: 'Zum Eintrag springen. Keyboard shortcut: Alt Punkt',
     SKIP_TO_ISSUE: 'Zum Eintrag springen',
@@ -231,6 +232,9 @@ var de = {
     QA_UNDERLINE: 'Unterstrichener Text kann mit Links verwechselt werden. Erwäge die Verwendung eines anderen Stils wie <code>&lt;strong&gt;</code><strong>starke Wichtigkeit</strong><code>&lt;/strong&gt;</code> oder <code>&lt;em&gt;</code><em>Hervorhebung</em><code>&lt;/em&gt;</code>.',
     QA_SUBSCRIPT: 'Die Formatierungsoptionen für tiefgestellten und hochgestellten Text sollten nur verwendet werden, um die Textposition für typografische Konventionen oder Standards zu ändern. Es sollte <strong>nicht</strong> ausschließlich zu Präsentations- oder Erscheinungszwecken verwendet werden. Das Formatieren ganzer Sätze wirft Lesbarkeitsprobleme auf. Geeignete Anwendungsfälle wären die Anzeige von Exponenten, Ordnungszahlen wie 4<sup>th</sup> anstelle von 4 und chemischen Formeln (z. B. H<sub>2</sub>O).',
     QA_NESTED_COMPONENTS: 'Vermeiden Sie das Verschachteln interaktiver Layoutkomponenten, wie das Platzieren von Akkordeons in Tabs oder Tabs in Akkordeons. Dies kann die Navigation komplizieren, die kognitive Belastung erhöhen und dazu führen, dass Inhalte übersehen werden.',
+    QA_UNCONTAINED_LI: 'Alle <code>&lt;li&gt;</code> Listenelemente müssen innerhalb von <code>&lt;ul&gt;</code> ungeordneten oder <code>&lt;ol&gt;</code> geordneten Elementen platziert werden. Diese Struktur hilft Bildschirmlesern, die Liste und ihre Elemente genau anzukündigen.',
+    QA_META_SCALABLE: 'Entfernen Sie den Parameter <code>user-scalable="no"</code> im <code>&lt;meta name="viewport"&gt;</code> Element, um das Zoomen zu ermöglichen.',
+    QA_META_MAX: 'Stellen Sie sicher, dass der Parameter <code>maximum-scale</code> im <code>&lt;meta name="viewport"&gt;</code> Element nicht kleiner als 2 ist.',
 
     // Tables
     TABLES_MISSING_HEADINGS: 'Fehlende Tabellenüberschriften! Barrierefreie Tabellen benötigen eine HTML-Auszeichnung, die Kopfzellen und Datenzellen kennzeichnet und ihre Beziehung zueinander definiert. Diese Informationen liefern den Kontext für Menschen, die Hilfsmittel verwenden. Tabellen sollten nur für tabellarische Daten verwendet werden. <hr> Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/tables/">barrierefreie Tabellen.</a>',

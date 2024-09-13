@@ -239,7 +239,7 @@ export default function checkContrast(results, option) {
               inline: false,
               position: 'beforebegin',
               dismiss: Utils.prepareDismissal(`CONTRAST${name.tagName}${cratio}`),
-              developer: option.checks.CONTRAST_INPUT.developer || false,
+              developer: option.checks.CONTRAST_INPUT.developer || true,
             });
           }
         } else {
@@ -271,6 +271,7 @@ export default function checkContrast(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: Utils.prepareDismissal(`CONTRAST${nodeText}`),
+            dismissAll: 'CONTRAST_WARNING',
             developer: option.checks.CONTRAST_WARNING.developer || false,
           });
         });

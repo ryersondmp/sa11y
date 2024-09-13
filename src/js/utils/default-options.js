@@ -151,9 +151,12 @@ const defaultOptions = {
     QA_PAGE_TITLE: true,
     QA_SUBSCRIPT: true,
     QA_NESTED_COMPONENTS: true,
+    QA_UNCONTAINED_LI: true,
+    QA_META_SCALABLE: true,
+    QA_META_MAX: true,
 
     // Contrast checks.
-    CONTRAST_WARNING: false,
+    CONTRAST_WARNING: true,
     CONTRAST_INPUT: true,
     CONTRAST_ERROR: true,
   },

@@ -163,9 +163,12 @@ const defaultOptions = {
     QA_PAGE_TITLE: true,
     QA_SUBSCRIPT: true,
     QA_NESTED_COMPONENTS: true,
+    QA_UNCONTAINED_LI: true,
+    QA_META_SCALABLE: true,
+    QA_META_MAX: true,
 
     // Contrast checks.
-    CONTRAST_WARNING: false,
+    CONTRAST_WARNING: true,
     CONTRAST_INPUT: true,
     CONTRAST_ERROR: true,
   },
@@ -1132,6 +1135,12 @@ const Elements = (function myElements() {
       Constants.Exclusions.Container,
     ) : [];
 
+    Found.UncontainedLi = option.checks.QA_UNCONTAINED_LI ? find(
+      'li:not(ul li):not(ol li):not(menu li)',
+      'root',
+      Constants.Exclusions.Container,
+    ) : [];
+
     // iFrames
     Found.iframes = find(
       'iframe:not(hidden), audio, video',
@@ -1249,8 +1258,10 @@ function dismissLogic(results, dismissTooltip) {
   // Process dismiss all issues.
   const allDismissed = results.filter((issue) => dismissedIssues.some((dismissed) => dismissAll(issue, dismissed)));
 
-  // Combine all dismissed results
-  const dismissedResults = [...soloDismissed, ...allDismissed];
+  // Combine all dismissed results and filter out duplicates.
+  const dismissedResults = [...soloDismissed, ...allDismissed].filter(
+    (issue, index, self) => index === self.findIndex((i) => i.id === issue.id),
+  );
   const dismissCount = dismissedResults.length;
 
   // Update results array (exclude dismissed and dismissed all checks).
@@ -1807,8 +1818,10 @@ class ControlPanel extends HTMLElement {
         <label id="check-developer" for="developer-toggle">${Lang._('DEVELOPER_CHECKS')}</label>
         <button id="developer-toggle"
           aria-labelledby="check-developer"
+          aria-describedby="check-developer-desc"
           class="switch"
           aria-pressed="${rememberDeveloper ? 'true' : 'false'}">${rememberDeveloper ? Lang._('ON') : Lang._('OFF')}</button>
+        <div id="check-developer-desc" hidden>${Lang._('DEVELOPER_DESC')}</div>
       </li>` : '';
 
     const readabilityPlugin = Constants.Readability.Plugin ? `
@@ -6142,7 +6155,7 @@ const tooltipOptions = (shadowRoot) => ({
   role: 'tooltip',
   aria: {
     content: null,
-    expanded: false,
+    expanded: null,
   },
   appendTo: shadowRoot,
   zIndex: 2147483645,
@@ -6255,8 +6268,9 @@ class TooltipComponent extends HTMLElement {
     if (Constants.Global.developerPlugin) {
       tippy(Constants.Panel.developerToggle, {
         ...tooltipOptions(shadowRoot),
+        triggerTarget: [Constants.Panel.developerItem],
         offset: [0, 0],
-        content: 'Checks for issues that may need coding knowledge to fix.',
+        content: Lang._('DEVELOPER_DESC'),
       });
     }
   }
@@ -7831,7 +7845,7 @@ function checkContrast(results, option) {
               inline: false,
               position: 'beforebegin',
               dismiss: prepareDismissal(`CONTRAST${name.tagName}${cratio}`),
-              developer: option.checks.CONTRAST_INPUT.developer || false,
+              developer: option.checks.CONTRAST_INPUT.developer || true,
             });
           }
         } else {
@@ -7863,6 +7877,7 @@ function checkContrast(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: prepareDismissal(`CONTRAST${nodeText}`),
+            dismissAll: 'CONTRAST_WARNING',
             developer: option.checks.CONTRAST_WARNING.developer || false,
           });
         });
@@ -7897,7 +7912,7 @@ function checkLabels(results, option) {
       }
 
       // Create dismiss key.
-      const key = prepareDismissal(`INPUT${inputName}`);
+      const key = prepareDismissal(`INPUT${type + inputName}`);
 
       // Error: Input with type="image" without accessible name or alt.
       if (type === 'image' && (!alt || alt.trim() === '')) {
@@ -8901,6 +8916,63 @@ function checkQA(results, option) {
       }
     });
   }
+
+  /* *************************************************************** */
+  /*  Error: <li> elements must be contained in a <ul>/<ol>/<menu>.  */
+  /* *************************************************************** */
+  if (option.checks.QA_UNCONTAINED_LI) {
+    Elements.Found.UncontainedLi.forEach(($el) => {
+      results.push({
+        element: $el,
+        type: option.checks.QA_UNCONTAINED_LI.type || 'error',
+        content: option.checks.QA_UNCONTAINED_LI.content || Lang._('QA_UNCONTAINED_LI'),
+        inline: false,
+        position: 'beforebegin',
+        dismiss: prepareDismissal(`UNCONTAINEDLI${$el.textContent}`),
+        developer: option.checks.QA_UNCONTAINED_LI.developer || true,
+      });
+    });
+  }
+
+  /* *************************************************************** */
+  /*  Error: Zooming and scaling must not be disabled.               */
+  /* *************************************************************** */
+  if (option.checks.QA_META_SCALABLE || option.checks.QA_META_MAX) {
+    const metaViewport = document.querySelector('meta[name="viewport"]');
+    if (metaViewport) {
+      const content = metaViewport.getAttribute('content');
+      if (content) {
+        // Parse the content attribute to extract parameters.
+        const params = content.split(',').reduce((acc, param) => {
+          const [key, value] = param.split('=').map((s) => s.trim());
+          acc[key] = value;
+          return acc;
+        }, {});
+
+        // Check for user-scalable parameter.
+        if (option.checks.QA_META_SCALABLE && params['user-scalable'] === 'no') {
+          results.push({
+            type: option.checks.QA_META_SCALABLE.type || 'error',
+            content: option.checks.QA_META_SCALABLE.content || Lang._('QA_META_SCALABLE'),
+            dismiss: prepareDismissal('NOTUSERSCALABLE'),
+            developer: option.checks.QA_META_SCALABLE.developer || true,
+          });
+        }
+
+        // Check maximum-scale parameter.
+        const maxScale = parseFloat(params['maximum-scale']);
+        if (option.checks.QA_META_MAX && !Number.isNaN(maxScale) && maxScale < 2) {
+          results.push({
+            type: option.checks.QA_META_MAX.type || 'error',
+            content: option.checks.QA_META_MAX.content || Lang._('QA_META_MAX'),
+            dismiss: prepareDismissal('MAXSCALE'),
+            developer: option.checks.QA_META_MAX.developer || true,
+          });
+        }
+      }
+    }
+  }
+
   return results;
 }
 
@@ -9123,10 +9195,10 @@ class Sa11y {
       }
 
       // Generate HTML path, and optionally CSS selector path of element.
-      this.results.forEach(($el) => {
+      this.results.forEach(($el, id) => {
         const cssPath = option.selectorPath ? generateSelectorPath($el.element) : '';
         const htmlPath = $el.element?.outerHTML.replace(/\s{2,}/g, ' ').trim() || '';
-        Object.assign($el, { htmlPath, cssPath });
+        Object.assign($el, { htmlPath, cssPath, id });
       });
 
       if (option.headless === false) {
@@ -9151,8 +9223,8 @@ class Sa11y {
         /* If panel is OPENED. */
         if (store.getItem('sa11y-panel') === 'Opened') {
           // Paint the page with annotations.
-          this.results.forEach(($el, i) => {
-            Object.assign($el, { id: i });
+          this.results.forEach(($el) => {
+            Object.assign($el);
             annotate(
               $el.element,
               $el.type,

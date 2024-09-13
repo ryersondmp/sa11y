@@ -36,6 +36,7 @@ var pl = {
     PAGE_ISSUES: 'Problemy ze stroną',
     SETTINGS: 'Ustawienia',
     DEVELOPER_CHECKS: 'Kontrole dewelopera',
+    DEVELOPER_DESC: 'Sprawdza problemy, które mogą wymagać znajomości kodowania do naprawy.',
     DARK_MODE: 'Tryb ciemny',
     SHORTCUT_SR: 'Przejdź do problemu. Klawisze skrótu: lewy Option',
     SKIP_TO_ISSUE: 'Przejdź do problemu',
@@ -233,6 +234,9 @@ var pl = {
     TABLES_EMPTY_HEADING: 'Wykryto pusty nagłówek tabeli! Nagłówki tabel <em>nigdy</em> nie powinny być puste. Ważne jest, aby wyznaczyć nagłówki wierszy i/lub kolumn, aby przekazać ich relację. Informacje te zapewniają kontekst osobom korzystającym z technologii wspomagających. Należy pamiętać, że tabele powinny być używane tylko dla danych tabelarycznych. <hr> Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/tables/">dostępnych tabelach.</a>',
     QA_SUBSCRIPT: 'Opcji formatowania indeksu dolnego i indeksu górnego należy używać wyłącznie do zmiany pozycji tekstu w celu dostosowania do konwencji lub standardów typograficznych. Powinna <strong>nie</strong> być używana wyłącznie do celów prezentacji lub wyglądu. Formatowanie całych zdań stwarza problemy z czytelnością. Odpowiednie przypadki użycia obejmują wyświetlanie wykładników, liczb porządkowych, takich jak 4<sup>th</sup> zamiast czwartej, oraz wzorów chemicznych (H<sub>2</sub>O).',
     QA_NESTED_COMPONENTS: 'Unikaj zagnieżdżania interaktywnych komponentów układu, takich jak umieszczanie akordeonów w zakładkach lub zakładek w akordeonach. Może to skomplikować nawigację, zwiększyć obciążenie poznawcze i prowadzić do pomijania treści.',
+    QA_UNCONTAINED_LI: 'Wszystkie elementy listy <code>&lt;li&gt;</code> muszą być umieszczone wewnątrz elementów <code>&lt;ul&gt;</code> nieuporządkowanych lub <code>&lt;ol&gt;</code> uporządkowanych. Ta struktura pomaga czytnikom ekranu dokładnie ogłaszać listę i jej elementy.',
+    QA_META_SCALABLE: 'Usuń parametr <code>user-scalable="no"</code> w elemencie <code>&lt;meta name="viewport"&gt;</code>, aby umożliwić powiększanie.',
+    QA_META_MAX: 'Upewnij się, że parametr <code>maximum-scale</code> w elemencie <code>&lt;meta name="viewport"&gt;</code> nie jest mniejszy niż 2.',
 
     // Contrast
     CONTRAST_ERROR: 'Ten tekst nie ma wystarczającego kontrastu z tłem Współczynnik kontrastu powinien wynosić co najmniej 4,5:1 dla zwykłego tekstu i 3:1 dla dużego tekstu. <hr> <strong {B}>Stosunek kontrastu</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',

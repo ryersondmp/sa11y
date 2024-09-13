@@ -42,6 +42,7 @@
       PAGE_ISSUES: 'Problemas de la Página',
       SETTINGS: 'Ajustes',
       DEVELOPER_CHECKS: 'Verificaciones del desarrollador',
+      DEVELOPER_DESC: 'Verifica problemas que pueden requerir conocimientos de programación para solucionarse.',
       DARK_MODE: 'Modo Oscuro',
       SHORTCUT_SR: 'Saltar Problema. Atajo de teclado: Alt S',
       SKIP_TO_ISSUE: 'Saltar Problema',
@@ -218,6 +219,9 @@
       QA_SUBSCRIPT: 'Las opciones de formato de subíndice y superíndice solo deben usarse para cambiar la posición del texto por convenciones o estándares tipográficos. <strong>No</strong> debe usarse únicamente con fines de presentación o apariencia. Dar formato a oraciones completas plantea problemas de legibilidad. Los casos de uso apropiados incluirían mostrar exponentes, números ordinales como 4<sup>th</sup> en lugar de cuarto y fórmulas químicas (por ejemplo, H<sub>2</sub>O).',
       QA_IN_PAGE_LINK: 'Enlace interno roto. El destino del enlace no coincide con ningún elemento en esta página.',
       QA_NESTED_COMPONENTS: 'Evita anidar componentes de diseño interactivos, como colocar acordeones dentro de pestañas o pestañas dentro de acordeones. Esto puede complicar la navegación, aumentar la carga cognitiva y llevar a que las personas pasen por alto el contenido.',
+      QA_UNCONTAINED_LI: 'Todos los elementos de lista <code>&lt;li&gt;</code> deben colocarse dentro de elementos <code>&lt;ul&gt;</code> desordenados o <code>&lt;ol&gt;</code> ordenados. Esta estructura ayuda a los lectores de pantalla a anunciar la lista y sus elementos con precisión.',
+      QA_META_SCALABLE: 'Elimine el parámetro <code>user-scalable="no"</code> en el elemento <code>&lt;meta name="viewport"&gt;</code> para permitir el zoom.',
+      QA_META_MAX: 'Asegúrese de que el parámetro <code>maximum-scale</code> en el elemento <code>&lt;meta name="viewport"&gt;</code> no sea inferior a 2.',
 
       // Tables
       TABLES_MISSING_HEADINGS: '¡Faltan encabezados de tabla! Las tablas accesibles necesitan marcado HTML que indique las celdas de encabezado y las celdas de datos que definen su relación. Esta información brinda contexto a las personas que usan tecnología de asistencia. Las tablas deben usarse solo para datos tabulares. <hr> Más información sobre las <a href="https://www.w3.org/WAI/tutorials/tables/">tablas accesibles.</a>',
