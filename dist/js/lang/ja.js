@@ -246,6 +246,7 @@ var ja = {
     QA_UNCONTAINED_LI: 'すべての <code>&lt;li&gt;</code> リスト項目は、<code>&lt;ul&gt;</code> 順不同リストまたは <code>&lt;ol&gt;</code> 順序付きリストの要素内に配置する必要があります。この構造は、スクリーンリーダーがリストとその項目を正確に読み上げるのに役立ちます。',
     QA_META_SCALABLE: 'ズームを許可するために、 <code>&lt;meta name="viewport"&gt;</code> 要素の <code>user-scalable="no"</code> パラメータを削除します。',
     QA_META_MAX: ' <code>&lt;meta name="viewport"&gt;</code> 要素の <code>maximum-scale</code> パラメータが2未満でないことを確認してください。',
+    QA_JUSTIFY: '左端と右端の両方に揃った均等揃えのテキストの使用を避けてください。これは、単語間の間隔が不均一なため、一部の人々にとって読みづらい場合があります。より良い可読性のためには、左揃えのテキストを使用してください。',
 
     // Tables
     TABLES_MISSING_HEADINGS: 'テーブルヘッダーがありません！アクセシブルなテーブルには、ヘッダーセルとデータセルを示すHTMLマークアップが必要です。これにより、支援技術を使用する人々にコンテキストが提供されます。テーブルは表形式のデータのみに使用する必要があります。<hr> <a href="https://www.w3.org/WAI/tutorials/tables/">アクセシブルなテーブル</a>について詳しく学びます。',

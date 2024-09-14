@@ -210,6 +210,7 @@ export default {
     QA_UNCONTAINED_LI: '所有 <code>&lt;li&gt;</code> 列表项必须放置在 <code>&lt;ul&gt;</code> 无序列表或 <code>&lt;ol&gt;</code> 有序列表元素内部。这个结构帮助屏幕阅读器准确地读取列表及其项。',
     QA_META_SCALABLE: '删除 <code>&lt;meta name="viewport"&gt;</code> 元素中的 <code>user-scalable="no"</code> 参数，以允许缩放。',
     QA_META_MAX: '确保 <code>&lt;meta name="viewport"&gt;</code> 元素中的 <code>maximum-scale</code> 参数不少于 2。',
+    QA_JUSTIFY: '避免使用对齐到左边和右边的文本。这可能会因为单词之间不均匀的空隙而使一些人阅读困难。为了更好的可读性，请使用左对齐的文本。',
     TABLES_MISSING_HEADINGS: '缺少表头!可访问的表格需要HTML标记, 表明标题单元和数据单元, 定义它们的关系。这种信息为使用辅助技术的人提供了背景。表格应该只用于表格式的数据。<hr> 了解更多关于<a href="https://www.w3.org/WAI/tutorials/tables/">无障碍表格的信息。</a>',
     TABLES_SEMANTIC_HEADING: '语义标题, 如Heading 2或Heading 3, 只能用于内容的章节；<strong>不能</strong>用于HTML表格。使用<code>&lt;th&gt;</code>元素来表示表格的标题。<hr> 了解更多关于<a href="https://www.w3.org/WAI/tutorials/tables/">可访问的表格。</a>',
     TABLES_EMPTY_HEADING: '发现空的表头!表头应该<strong>永远不会</strong>是空的。指定行和/或列的标题以表达它们的关系是很重要的。这一信息为使用辅助技术的人提供了背景。请记住, 表格应该只用于表格式数据。<hr> 了解更多关于<a href="https://www.w3.org/WAI/tutorials/tables/">可访问的表格。</a>',

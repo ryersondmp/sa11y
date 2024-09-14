@@ -223,6 +223,7 @@ export default {
     QA_UNCONTAINED_LI: 'Alle <code>&lt;li&gt;</code> Listenelemente müssen innerhalb von <code>&lt;ul&gt;</code> ungeordneten oder <code>&lt;ol&gt;</code> geordneten Elementen platziert werden. Diese Struktur hilft Bildschirmlesern, die Liste und ihre Elemente genau anzukündigen.',
     QA_META_SCALABLE: 'Entfernen Sie den Parameter <code>user-scalable="no"</code> im <code>&lt;meta name="viewport"&gt;</code> Element, um das Zoomen zu ermöglichen.',
     QA_META_MAX: 'Stellen Sie sicher, dass der Parameter <code>maximum-scale</code> im <code>&lt;meta name="viewport"&gt;</code> Element nicht kleiner als 2 ist.',
+    QA_JUSTIFY: 'Vermeiden Sie die Verwendung von Blocksatz, der sowohl an den linken als auch an den rechten Rand ausgerichtet ist. Dies kann für einige Menschen aufgrund der ungleichmäßigen Abstände zwischen den Wörtern schwer lesbar sein. Verwenden Sie linksbündigen Text für eine bessere Lesbarkeit.',
 
     // Tables
     TABLES_MISSING_HEADINGS: 'Fehlende Tabellenüberschriften! Barrierefreie Tabellen benötigen eine HTML-Auszeichnung, die Kopfzellen und Datenzellen kennzeichnet und ihre Beziehung zueinander definiert. Diese Informationen liefern den Kontext für Menschen, die Hilfsmittel verwenden. Tabellen sollten nur für tabellarische Daten verwendet werden. <hr> Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/tables/">barrierefreie Tabellen.</a>',

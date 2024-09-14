@@ -216,6 +216,7 @@ var es = {
     QA_UNCONTAINED_LI: 'Todos los elementos de lista <code>&lt;li&gt;</code> deben colocarse dentro de elementos <code>&lt;ul&gt;</code> desordenados o <code>&lt;ol&gt;</code> ordenados. Esta estructura ayuda a los lectores de pantalla a anunciar la lista y sus elementos con precisión.',
     QA_META_SCALABLE: 'Elimine el parámetro <code>user-scalable="no"</code> en el elemento <code>&lt;meta name="viewport"&gt;</code> para permitir el zoom.',
     QA_META_MAX: 'Asegúrese de que el parámetro <code>maximum-scale</code> en el elemento <code>&lt;meta name="viewport"&gt;</code> no sea inferior a 2.',
+    QA_JUSTIFY: 'Evite utilizar texto justificado, que se alinea tanto al margen izquierdo como al derecho. Esto puede ser difícil de leer para algunas personas debido a los espacios desiguales entre palabras. Use texto alineado a la izquierda para una mejor legibilidad.',
 
     // Tables
     TABLES_MISSING_HEADINGS: '¡Faltan encabezados de tabla! Las tablas accesibles necesitan marcado HTML que indique las celdas de encabezado y las celdas de datos que definen su relación. Esta información brinda contexto a las personas que usan tecnología de asistencia. Las tablas deben usarse solo para datos tabulares. <hr> Más información sobre las <a href="https://www.w3.org/WAI/tutorials/tables/">tablas accesibles.</a>',

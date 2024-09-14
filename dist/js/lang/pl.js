@@ -237,6 +237,7 @@ var pl = {
     QA_UNCONTAINED_LI: 'Wszystkie elementy listy <code>&lt;li&gt;</code> muszą być umieszczone wewnątrz elementów <code>&lt;ul&gt;</code> nieuporządkowanych lub <code>&lt;ol&gt;</code> uporządkowanych. Ta struktura pomaga czytnikom ekranu dokładnie ogłaszać listę i jej elementy.',
     QA_META_SCALABLE: 'Usuń parametr <code>user-scalable="no"</code> w elemencie <code>&lt;meta name="viewport"&gt;</code>, aby umożliwić powiększanie.',
     QA_META_MAX: 'Upewnij się, że parametr <code>maximum-scale</code> w elemencie <code>&lt;meta name="viewport"&gt;</code> nie jest mniejszy niż 2.',
+    QA_JUSTIFY: 'Unikaj używania tekstu wyjustowanego, który jest wyrównany zarówno do lewej, jak i do prawej krawędzi. Może być to trudne do przeczytania dla niektórych osób z powodu nierównych odstępów między słowami. Używaj tekstu wyrównanego do lewej dla lepszej czytelności.',
 
     // Contrast
     CONTRAST_ERROR: 'Ten tekst nie ma wystarczającego kontrastu z tłem Współczynnik kontrastu powinien wynosić co najmniej 4,5:1 dla zwykłego tekstu i 3:1 dla dużego tekstu. <hr> <strong {B}>Stosunek kontrastu</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',

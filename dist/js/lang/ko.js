@@ -234,6 +234,7 @@ var ko = {
     QA_UNCONTAINED_LI: '모든 <code>&lt;li&gt;</code> 목록 항목은 <code>&lt;ul&gt;</code> 비정렬 목록 또는 <code>&lt;ol&gt;</code> 정렬 목록 요소 안에 배치해야 합니다. 이 구조는 스크린 리더가 목록과 항목을 정확하게 읽어주는 데 도움이 됩니다.',
     QA_META_SCALABLE: '확대/축소를 허용하려면 <code>&lt;meta name="viewport"&gt;</code> 요소에서 <code>user-scalable="no"</code> 매개변수를 제거하세요.',
     QA_META_MAX: ' <code>&lt;meta name="viewport"&gt;</code> 요소에서 <code>maximum-scale</code> 매개변수가 2 미만이 아닌지 확인하세요.',
+    QA_JUSTIFY: '왼쪽 및 오른쪽 여백에 맞춘 정렬된 텍스트의 사용을 피하십시오. 단어 사이의 불균형한 간격으로 인해 일부 사람들이 읽기 어려울 수 있습니다. 가독성을 높이려면 왼쪽 정렬 텍스트를 사용하세요.',
     TABLES_MISSING_HEADINGS: '표 헤더가 누락되었습니다! 접근 가능한 표에는 머리글 셀과 데이터 셀의 관계를 정의하는 HTML 마크업이 필요합니다. 이 정보는 보조 기술을 사용하는 사람들에게 컨텍스트를 제공합니다. 표는 표 형식의 데이터에만 사용해야 합니다. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">액세스 가능한 표에 대해 자세히 알아보기.</a>',
     TABLES_SEMANTIC_HEADING: '제목 2 또는 제목 3과 같은 시맨틱 제목은 콘텐츠 섹션에만 사용해야 하며, HTML 표에는 <strong>이 아닌</strong>을 사용해야 합니다. 대신 <code>&lt;th&gt;</code> 요소를 사용하여 표 제목을 표시하세요. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">액세스 가능한 표에 대해 자세히 알아보기.</a>',
     TABLES_EMPTY_HEADING: '빈 테이블 헤더가 발견되었습니다! 테이블 헤더는 비어 있으면 안 됩니다. 행 및/또는 열 머리글을 지정하여 관계를 전달하는 것이 중요합니다. 이 정보는 보조 기술을 사용하는 사람들에게 맥락을 제공합니다. 표는 표 형식의 데이터에만 사용해야 한다는 점에 유의하세요. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">액세스 가능한 테이블에 대해 자세히 알아보기.</a>',

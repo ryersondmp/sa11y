@@ -166,6 +166,7 @@ const defaultOptions = {
     QA_UNCONTAINED_LI: true,
     QA_META_SCALABLE: true,
     QA_META_MAX: true,
+    QA_JUSTIFY: true,
 
     // Contrast checks.
     CONTRAST_WARNING: true,
@@ -1042,12 +1043,11 @@ const Elements = (function myElements() {
     );
 
     Found.Links = find(
-      'a[href]',
+      'a[href]:not(a[role="button"])',
       'root',
       Constants.Exclusions.Links,
     );
 
-    // Toggleable rulesets
     Found.Inputs = find(
       'input, select, textarea',
       'root',
@@ -8562,9 +8562,20 @@ function checkQA(results, option) {
   /*  Warning: Detect fake headings                                     */
   /* ****************************************************************** */
   if (option.checks.QA_FAKE_HEADING) {
-    const ignoreParents = 'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level], blockquote, table';
+    const addResult = (element, sanitizedText) => {
+      results.push({
+        element,
+        type: option.checks.QA_FAKE_HEADING.type || 'warning',
+        content: option.checks.QA_FAKE_HEADING.content || Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
+        inline: false,
+        position: 'beforebegin',
+        dismiss: prepareDismissal(`BOLD${sanitizedText}`),
+        developer: option.checks.QA_FAKE_HEADING.developer || false,
+      });
+    };
 
     // Find large text as heading.
+    const ignoreParents = 'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level], blockquote, table';
     const computeLargeParagraphs = (p) => {
       const size = getComputedStyle(p).fontSize.replace('px', '');
       const getText$1 = getText(p);
@@ -8573,15 +8584,7 @@ function checkQA(results, option) {
 
       if (size >= 24 && !p.closest(ignoreParents) && typicalHeadingLength && maybeSentence) {
         const sanitizedText = sanitizeHTML(getText$1);
-        results.push({
-          element: p,
-          type: option.checks.QA_FAKE_HEADING.type || 'warning',
-          content: option.checks.QA_FAKE_HEADING.content || Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: prepareDismissal(`BOLD${sanitizedText}`),
-          developer: option.checks.QA_FAKE_HEADING.developer || false,
-        });
+        addResult(p, sanitizedText);
       }
     };
 
@@ -8605,15 +8608,7 @@ function checkQA(results, option) {
           }
 
           const sanitizedText = sanitizeHTML(possibleHeadingText);
-          results.push({
-            element: possibleHeading,
-            type: option.checks.QA_FAKE_HEADING.type || 'warning',
-            content: option.checks.QA_FAKE_HEADING.content || Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: prepareDismissal(`BOLD${sanitizedText}`),
-            developer: option.checks.QA_FAKE_HEADING.developer || false,
-          });
+          addResult(possibleHeading, sanitizedText);
         }
       }
     };
@@ -8664,42 +8659,42 @@ function checkQA(results, option) {
 
       if (
         firstPrefix.length > 0
-      && firstPrefix !== activeMatch
-      && !isNumber
-      && (isAlphabetic || isEmoji || isSpecialChar)
+        && firstPrefix !== activeMatch
+        && !isNumber
+        && (isAlphabetic || isEmoji || isSpecialChar)
       ) {
-      // We have a prefix and a possible hit; check next detected paragraph.
+        // We have a prefix and a possible hit; check next detected paragraph.
         const secondP = Elements.Found.Paragraphs[i + 1];
         if (secondP) {
           secondText = getText(secondP).replace('(', '').substring(0, 2);
           if (secondTextNoMatch.includes(secondText?.toLowerCase().trim())) {
-          // A sentence. Another sentence. (A sentence). 1 apple, 1 banana.
+            // A sentence. Another sentence. (A sentence). 1 apple, 1 banana.
             return;
           }
           const secondPrefix = decrement(secondText);
           if (isAlphabetic) {
-          // Check for repeats (*,*) or increments(a,b)
+            // Check for repeats (*,*) or increments(a,b)
             if (firstPrefix !== 'A ' && firstPrefix === secondPrefix) {
               hit = true;
             }
           } else if (isEmoji && !lastHitWasEmoji) {
-          // Check for two paragraphs in a row that start with emoji.
+            // Check for two paragraphs in a row that start with emoji.
             if (secondPrefix.match(emojiMatch)) {
               hit = true;
               lastHitWasEmoji = true;
-            // This is carried; better miss than have lots of positives.
+              // This is carried; better miss than have lots of positives.
             }
           }
         }
         if (!hit) {
-        // Split p by carriage return if there was a firstPrefix and compare.
+          // Split p by carriage return if there was a firstPrefix and compare.
           let textAfterBreak = p?.querySelector('br')?.nextSibling?.nodeValue;
           if (textAfterBreak) {
             textAfterBreak = textAfterBreak.replace(/<\/?[^>]+(>|$)/g, '').trim().substring(0, 2);
             const checkForOtherPrefixChars = specialCharsMatch.test(textAfterBreak.charAt(0));
             if (checkForOtherPrefixChars
-            || firstPrefix === decrement(textAfterBreak)
-            || (!lastHitWasEmoji && textAfterBreak.match(emojiMatch))) {
+              || firstPrefix === decrement(textAfterBreak)
+              || (!lastHitWasEmoji && textAfterBreak.match(emojiMatch))) {
               hit = true;
             }
           }
@@ -8822,44 +8817,61 @@ function checkQA(results, option) {
   }
 
   /* *************************************************************** */
-  /*  Warning: Flag underlined text.                                 */
-  /*  Created by Brian Teeman.                                       */
+  /*  Warning: Flag underlined & justified text.                     */
+  /*  Thanks to Brian Teeman (@brianteeman)                          */
   /* *************************************************************** */
+  // Helper function to add underline results.
+  const addUnderlineResult = ($el, inline) => {
+    const text = getText($el);
+    results.push({
+      element: $el,
+      type: option.checks.QA_UNDERLINE.type || 'warning',
+      content: option.checks.QA_UNDERLINE.content || Lang.sprintf('QA_UNDERLINE'),
+      inline,
+      position: 'beforebegin',
+      dismiss: prepareDismissal(`UNDERLINE${text}`),
+      developer: option.checks.QA_UNDERLINE.developer || false,
+    });
+  };
+
+  // For individual <u>underlined</u> elements.
   if (option.checks.QA_UNDERLINE) {
     Elements.Found.Underlines.forEach(($el) => {
+      addUnderlineResult($el, true);
+    });
+  }
+
+  // Get computed styles.
+  const computeStyle = ($el) => {
+    const style = getComputedStyle($el);
+    const { textDecorationLine, textAlign } = style;
+
+    // Underlined text.
+    if (option.checks.QA_UNDERLINE && textDecorationLine === 'underline') {
+      addUnderlineResult($el, false); // Inline false for computed underlines.
+    }
+
+    // Justified text.
+    if (option.checks.QA_JUSTIFY && textAlign === 'justify') {
       const text = getText($el);
       results.push({
         element: $el,
-        type: option.checks.QA_UNDERLINE.type || 'warning',
-        content: option.checks.QA_UNDERLINE.content || Lang.sprintf('QA_UNDERLINE'),
-        inline: true,
+        type: option.checks.QA_JUSTIFY.type || 'warning',
+        content: option.checks.QA_JUSTIFY.content || Lang._('QA_JUSTIFY'),
+        inline: false,
         position: 'beforebegin',
-        dismiss: prepareDismissal(`UNDERLINE${text}`),
-        developer: option.checks.QA_UNDERLINE.developer || false,
+        dismiss: prepareDismissal(`JUSTIFIED${text}`),
+        developer: option.checks.QA_JUSTIFY.developer || false,
       });
-    });
-    // Find underline based on computed style.
-    const computeUnderline = ($el) => {
-      const style = getComputedStyle($el);
-      const decoration = style.textDecorationLine;
-      const text = getText($el);
-      if (decoration === 'underline') {
-        results.push({
-          element: $el,
-          type: option.checks.QA_UNDERLINE.type || 'warning',
-          content: option.checks.QA_UNDERLINE.content || Lang.sprintf('QA_UNDERLINE'),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: prepareDismissal(`UNDERLINE${text}`),
-          developer: option.checks.QA_UNDERLINE.developer || false,
-        });
-      }
-    };
-    Elements.Found.Paragraphs.forEach(($el) => computeUnderline($el));
-    Elements.Found.Headings.forEach(($el) => computeUnderline($el));
-    Elements.Found.Lists.forEach(($el) => computeUnderline($el));
-    Elements.Found.Blockquotes.forEach(($el) => computeUnderline($el));
-    Elements.Found.Spans.forEach(($el) => computeUnderline($el));
+    }
+  };
+
+  if (option.checks.QA_UNDERLINE || option.checks.QA_JUSTIFY) {
+    Elements.Found.Paragraphs.forEach(computeStyle);
+    Elements.Found.Headings.forEach(computeStyle);
+    Elements.Found.Lists.forEach(computeStyle);
+    Elements.Found.Blockquotes.forEach(computeStyle);
+    Elements.Found.Spans.forEach(computeStyle);
   }
 
   /* *************************************************************** */
@@ -8954,7 +8966,7 @@ function checkQA(results, option) {
           results.push({
             type: option.checks.QA_META_SCALABLE.type || 'error',
             content: option.checks.QA_META_SCALABLE.content || Lang._('QA_META_SCALABLE'),
-            dismiss: prepareDismissal('NOTUSERSCALABLE'),
+            dismiss: prepareDismissal('SCALABLE'),
             developer: option.checks.QA_META_SCALABLE.developer || true,
           });
         }

@@ -220,6 +220,7 @@ var sv = {
     QA_UNCONTAINED_LI: 'Alla <code>&lt;li&gt;</code> listobjekt måste placeras inuti <code>&lt;ul&gt;</code> oordnade eller <code>&lt;ol&gt;</code> ordnade element. Denna struktur hjälper skärmläsare att korrekt tillkännage listan och dess objekt.',
     QA_META_SCALABLE: 'Ta bort parametern <code>user-scalable="no"</code> i <code>&lt;meta name="viewport"&gt;</code>-elementet för att tillåta zoomning.',
     QA_META_MAX: 'Säkerställ att parametern <code>maximum-scale</code> i <code>&lt;meta name="viewport"&gt;</code>-elementet inte är mindre än 2.',
+    QA_JUSTIFY: 'Undvik att använda text som är rättfärdigad, vilket justeras både till vänster och höger marginal. Detta kan vara svårt för vissa personer att läsa på grund av ojämna mellanrum mellan orden. Använd vänsterjusterad text för bättre läsbarhet.',
 
     // Tables
     TABLES_MISSING_HEADINGS: 'Tabellrubriker saknas! Tillgänglighetsanpassade tabeller behöver HTML-markup som indikerar rubrikceller och dataceller, vilket definierar deras relation. Informationen ger sammanhang till personer som använder hjälpmedelsverktyg. Tabeller bör endast användas för tabelldata. <hr> Läs mer om <a href="https://www.w3.org/WAI/tutorials/tables/">tillgängliga tabeller.</a>',

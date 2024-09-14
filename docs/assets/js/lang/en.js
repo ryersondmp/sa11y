@@ -218,6 +218,7 @@ var en = {
     QA_UNCONTAINED_LI: 'All <code>&lt;li&gt;</code> list items must be placed inside <code>&lt;ul&gt;</code> unordered or <code>&lt;ol&gt;</code> ordered elements. This structure helps screen readers announce the list and its items accurately.',
     QA_META_SCALABLE: 'Remove the <code>user-scalable="no"</code> parameter in the <code>&lt;meta name="viewport"&gt;</code> element in order to allow zooming.',
     QA_META_MAX: 'Ensure the <code>maximum-scale</code> parameter in the <code>&lt;meta name="viewport"&gt;</code> element is not less than 2.',
+    QA_JUSTIFY: 'Avoid using justified text, which aligns to both the left and right margins. This can be difficult for some people to read due to the uneven spaces between words. Use left-aligned text for better readability.',
 
     // Tables
     TABLES_MISSING_HEADINGS: 'Missing table headers! Accessible tables need HTML markup that indicates header cells and data cells which defines their relationship. This information provides context to people who use assistive technology. Tables should be used for tabular data only. <hr> Learn more about <a href="https://www.w3.org/WAI/tutorials/tables/">accessible tables.</a>',

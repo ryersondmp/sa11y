@@ -24,12 +24,11 @@ const Elements = (function myElements() {
     );
 
     Found.Links = find(
-      'a[href]',
+      'a[href]:not(a[role="button"])',
       'root',
       Constants.Exclusions.Links,
     );
 
-    // Toggleable rulesets
     Found.Inputs = find(
       'input, select, textarea',
       'root',

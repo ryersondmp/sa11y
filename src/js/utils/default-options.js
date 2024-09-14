@@ -154,6 +154,7 @@ const defaultOptions = {
     QA_UNCONTAINED_LI: true,
     QA_META_SCALABLE: true,
     QA_META_MAX: true,
+    QA_JUSTIFY: true,
 
     // Contrast checks.
     CONTRAST_WARNING: true,

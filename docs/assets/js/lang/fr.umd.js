@@ -219,6 +219,7 @@
       QA_UNCONTAINED_LI: 'Tous les éléments de liste <code>&lt;li&gt;</code> doivent être placés à l\'intérieur des éléments <code>&lt;ul&gt;</code> non ordonnés ou <code>&lt;ol&gt;</code> ordonnés. Cette structure aide les lecteurs d\'écran à annoncer la liste et ses éléments avec précision.',
       QA_META_SCALABLE: 'Supprimez le paramètre <code>user-scalable="no"</code> dans l\'élément <code>&lt;meta name="viewport"&gt;</code> afin de permettre le zoom.',
       QA_META_MAX: 'Assurez-vous que le paramètre <code>maximum-scale</code> dans l\'élément <code>&lt;meta name="viewport"&gt;</code> n\'est pas inférieur à 2.',
+      QA_JUSTIFY: 'Évitez d’utiliser le texte justifié, qui s’aligne à la fois aux marges gauche et droite. Cela peut être difficile à lire pour certaines personnes en raison des espaces inégaux entre les mots. Utilisez du texte aligné à gauche pour une meilleure lisibilité.',
 
       // Tables
       TABLES_MISSING_HEADINGS: 'En-têtes de tableau manquants! Les tableaux accessibles doivent contenir le balisage HTML pour indiquer la cellule de l’en-tête et la cellule des donnés qui déterminent leur relation. Cette information fournit le contexte aux gens qui utilisent la technolo-gie d’assistance. Les tableaux doivent être utilisés pour les données relatives uni-quement. <hr> En savoir plus sur les <a href="https://www.w3.org/WAI/tutorials/tables/">tableaux accessibles.</a>',
