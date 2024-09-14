@@ -390,6 +390,9 @@ const Constants = (function myConstants() {
   /* **************** */
   const Exclusions = {};
   function initializeExclusions(option) {
+    // Global elements to exclude.
+    const exclusions = 'style, script, noscript, sa11y-control-panel, sa11y-dismiss-tooltip';
+
     // Main container.
     if (option.containerIgnore) {
       const containerSelectors = option.containerIgnore.split(',').map(($el) => `${$el} *, ${$el}`);
@@ -399,13 +402,13 @@ const Constants = (function myConstants() {
     }
 
     // Contrast exclusions
-    Exclusions.Contrast = 'script, style, link';
+    Exclusions.Contrast = `link, hr, ${exclusions}`;
     if (option.contrastIgnore) {
       Exclusions.Contrast = `${option.contrastIgnore}, ${Exclusions.Contrast}`;
     }
 
     // Ignore specific regions for readability module.
-    Exclusions.Readability = 'nav li, [role="navigation"] li';
+    Exclusions.Readability = `nav li, [role="navigation"] li, ${exclusions}`;
     if (option.readabilityIgnore) {
       Exclusions.Readability = `${option.readabilityIgnore}, ${Exclusions.Readability}`;
     }
@@ -7812,7 +7815,13 @@ function checkContrast(results, option) {
                       };
                       contrastErrors.errors.push(error);
                     }
-                  } else if (ratio < 4.5) {
+                  } else if (ratio === 1) {
+                    // If ratio is exactly 1:1, it's obviously a failure, but also good potential for a false positive. So flag as warning.
+                    warning = {
+                      elem,
+                    };
+                    contrastErrors.warnings.push(warning);
+                  } else if (ratio > 1 && ratio < 4.5) {
                     error = {
                       elem,
                       ratio: `${ratio}:1`,
@@ -8433,21 +8442,27 @@ function checkQA(results, option) {
       const key = prepareDismissal(`DOCUMENT${href}`);
 
       // Check for broken same-page links.
-      const hasButtonRole = $el.getAttribute('role') === 'button';
-      const hasText = $el.textContent.trim().length !== 0;
-      if (option.checks.QA_IN_PAGE_LINK && (href.startsWith('#') || href === '') && !hasButtonRole && hasText) {
-        const targetId = href.substring(1);
-        const targetElement = document.getElementById(targetId) || document.getElementById(decodeURIComponent(targetId)) || document.getElementById(encodeURIComponent(targetId));
-        if (!targetElement) {
-          results.push({
-            element: $el,
-            type: option.checks.QA_IN_PAGE_LINK.type || 'error',
-            content: option.checks.QA_IN_PAGE_LINK.content || Lang.sprintf('QA_IN_PAGE_LINK'),
-            inline: true,
-            position: 'beforebegin',
-            dismiss: key,
-            developer: option.checks.QA_IN_PAGE_LINK.developer || false,
-          });
+      if (option.checks.QA_IN_PAGE_LINK) {
+        const hasButtonRole = $el.getAttribute('role') === 'button';
+        const hasText = $el.textContent.trim().length !== 0;
+        const hasClick = $el.hasAttribute('onclick');
+        if ((href.startsWith('#') || href === '') && !hasButtonRole && hasText && !hasClick) {
+          const targetId = href.substring(1);
+          const ariaControls = $el.getAttribute('aria-controls');
+          const targetElement = document.getElementById(targetId) || document.getElementById(decodeURIComponent(targetId)) || document.getElementById(encodeURIComponent(targetId)) || document.getElementById(ariaControls);
+
+          // If reference ID doesn't exist.
+          if (!targetElement) {
+            results.push({
+              element: $el,
+              type: option.checks.QA_IN_PAGE_LINK.type || 'error',
+              content: option.checks.QA_IN_PAGE_LINK.content || Lang.sprintf('QA_IN_PAGE_LINK'),
+              inline: true,
+              position: 'beforebegin',
+              dismiss: key,
+              developer: option.checks.QA_IN_PAGE_LINK.developer || false,
+            });
+          }
         }
       }
 

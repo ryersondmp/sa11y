@@ -206,7 +206,13 @@ export default function checkContrast(results, option) {
                       };
                       contrastErrors.errors.push(error);
                     }
-                  } else if (ratio < 4.5) {
+                  } else if (ratio === 1) {
+                    // If ratio is exactly 1:1, it's obviously a failure, but also good potential for a false positive. So flag as warning.
+                    warning = {
+                      elem,
+                    };
+                    contrastErrors.warnings.push(warning);
+                  } else if (ratio > 1 && ratio < 4.5) {
                     error = {
                       elem,
                       ratio: `${ratio}:1`,

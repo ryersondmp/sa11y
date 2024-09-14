@@ -181,6 +181,9 @@ const Constants = (function myConstants() {
   /* **************** */
   const Exclusions = {};
   function initializeExclusions(option) {
+    // Global elements to exclude.
+    const exclusions = 'style, script, noscript, sa11y-control-panel, sa11y-dismiss-tooltip';
+
     // Main container.
     if (option.containerIgnore) {
       const containerSelectors = option.containerIgnore.split(',').map(($el) => `${$el} *, ${$el}`);
@@ -190,13 +193,13 @@ const Constants = (function myConstants() {
     }
 
     // Contrast exclusions
-    Exclusions.Contrast = 'script, style, link';
+    Exclusions.Contrast = `link, hr, ${exclusions}`;
     if (option.contrastIgnore) {
       Exclusions.Contrast = `${option.contrastIgnore}, ${Exclusions.Contrast}`;
     }
 
     // Ignore specific regions for readability module.
-    Exclusions.Readability = 'nav li, [role="navigation"] li';
+    Exclusions.Readability = `nav li, [role="navigation"] li, ${exclusions}`;
     if (option.readabilityIgnore) {
       Exclusions.Readability = `${option.readabilityIgnore}, ${Exclusions.Readability}`;
     }

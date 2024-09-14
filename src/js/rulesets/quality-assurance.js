@@ -55,21 +55,27 @@ export default function checkQA(results, option) {
       const key = Utils.prepareDismissal(`DOCUMENT${href}`);
 
       // Check for broken same-page links.
-      const hasButtonRole = $el.getAttribute('role') === 'button';
-      const hasText = $el.textContent.trim().length !== 0;
-      if (option.checks.QA_IN_PAGE_LINK && (href.startsWith('#') || href === '') && !hasButtonRole && hasText) {
-        const targetId = href.substring(1);
-        const targetElement = document.getElementById(targetId) || document.getElementById(decodeURIComponent(targetId)) || document.getElementById(encodeURIComponent(targetId));
-        if (!targetElement) {
-          results.push({
-            element: $el,
-            type: option.checks.QA_IN_PAGE_LINK.type || 'error',
-            content: option.checks.QA_IN_PAGE_LINK.content || Lang.sprintf('QA_IN_PAGE_LINK'),
-            inline: true,
-            position: 'beforebegin',
-            dismiss: key,
-            developer: option.checks.QA_IN_PAGE_LINK.developer || false,
-          });
+      if (option.checks.QA_IN_PAGE_LINK) {
+        const hasButtonRole = $el.getAttribute('role') === 'button';
+        const hasText = $el.textContent.trim().length !== 0;
+        const hasClick = $el.hasAttribute('onclick');
+        if ((href.startsWith('#') || href === '') && !hasButtonRole && hasText && !hasClick) {
+          const targetId = href.substring(1);
+          const ariaControls = $el.getAttribute('aria-controls');
+          const targetElement = document.getElementById(targetId) || document.getElementById(decodeURIComponent(targetId)) || document.getElementById(encodeURIComponent(targetId)) || document.getElementById(ariaControls);
+
+          // If reference ID doesn't exist.
+          if (!targetElement) {
+            results.push({
+              element: $el,
+              type: option.checks.QA_IN_PAGE_LINK.type || 'error',
+              content: option.checks.QA_IN_PAGE_LINK.content || Lang.sprintf('QA_IN_PAGE_LINK'),
+              inline: true,
+              position: 'beforebegin',
+              dismiss: key,
+              developer: option.checks.QA_IN_PAGE_LINK.developer || false,
+            });
+          }
         }
       }
 
