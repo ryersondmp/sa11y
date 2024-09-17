@@ -36,6 +36,7 @@ import checkLabels from './rulesets/labels';
 import checkReadability from './rulesets/readability';
 import checkEmbeddedContent from './rulesets/embedded-content';
 import checkQA from './rulesets/quality-assurance';
+import checkDeveloper from './rulesets/developer';
 import checkCustom from './sa11y-custom-checks';
 
 class Sa11y {
@@ -159,6 +160,7 @@ class Sa11y {
         checkImages(this.results, option);
         checkLabels(this.results, option);
         checkQA(this.results, option);
+        checkDeveloper(this.results, option);
         if (option.embeddedContentPlugin) checkEmbeddedContent(this.results, option);
         if (option.contrastPlugin) checkContrast(this.results, option);
         if (option.readabilityPlugin) checkReadability();

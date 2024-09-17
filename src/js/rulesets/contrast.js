@@ -233,7 +233,7 @@ export default function checkContrast(results, option) {
         const name = item.elem;
         const cratio = item.ratio;
         const clone = name.cloneNode(true);
-        const nodeText = Utils.fnIgnore(clone, 'script, style').textContent;
+        const nodeText = Utils.fnIgnore(clone, 'script, style, noscript').textContent;
         const sanitizedText = Utils.sanitizeHTML(nodeText);
 
         if (name.tagName === 'INPUT') {
@@ -245,6 +245,7 @@ export default function checkContrast(results, option) {
               inline: false,
               position: 'beforebegin',
               dismiss: Utils.prepareDismissal(`CONTRAST${name.tagName}${cratio}`),
+              dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
               developer: option.checks.CONTRAST_INPUT.developer || true,
             });
           }
@@ -257,6 +258,7 @@ export default function checkContrast(results, option) {
               inline: false,
               position: 'beforebegin',
               dismiss: Utils.prepareDismissal(`CONTRAST${sanitizedText}`),
+              dismissAll: option.checks.CONTRAST_ERROR.dismissAll ? 'CONTRAST_ERROR' : false,
               developer: option.checks.CONTRAST_ERROR.developer || false,
             });
           }
@@ -267,7 +269,7 @@ export default function checkContrast(results, option) {
         contrastErrors.warnings.forEach((item) => {
           const name = item.elem;
           const clone = name.cloneNode(true);
-          const nodeText = Utils.fnIgnore(clone, 'script, style').textContent;
+          const nodeText = Utils.fnIgnore(clone, 'script, style, noscript').textContent;
           const sanitizedText = Utils.sanitizeHTML(nodeText);
 
           results.push({
@@ -277,7 +279,7 @@ export default function checkContrast(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: Utils.prepareDismissal(`CONTRAST${nodeText}`),
-            dismissAll: 'CONTRAST_WARNING',
+            dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
             developer: option.checks.CONTRAST_WARNING.developer || false,
           });
         });

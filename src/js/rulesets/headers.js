@@ -27,6 +27,7 @@ export default function checkHeaders(results, option, headingOutline) {
     let type = null;
     let content = null;
     let developer = null;
+    let dismissAll = null;
 
     // Rulesets.
     if (level - prevLevel > 1 && i !== 0) {
@@ -34,6 +35,7 @@ export default function checkHeaders(results, option, headingOutline) {
         type = option.checks.HEADING_SKIPPED_LEVEL.type || 'error';
         content = option.checks.HEADING_SKIPPED_LEVEL.content || Lang.sprintf('HEADING_SKIPPED_LEVEL', prevLevel, level);
         developer = option.checks.HEADING_SKIPPED_LEVEL.developer || false;
+        dismissAll = option.checks.HEADING_SKIPPED_LEVEL.dismissAll ? 'HEADING_SKIPPED_LEVEL' : false;
       }
     } else if (headingLength === 0) {
       if ($el.querySelectorAll('img').length) {
@@ -43,24 +45,28 @@ export default function checkHeaders(results, option, headingOutline) {
             type = option.checks.HEADING_EMPTY_WITH_IMAGE.type || 'error';
             content = option.checks.HEADING_EMPTY_WITH_IMAGE.content || Lang.sprintf('HEADING_EMPTY_WITH_IMAGE', level);
             developer = option.checks.HEADING_EMPTY_WITH_IMAGE.developer || false;
+            dismissAll = option.checks.HEADING_EMPTY_WITH_IMAGE.dismissAll ? 'HEADING_EMPTY_WITH_IMAGE' : false;
           }
         }
       } else if (option.checks.HEADING_EMPTY) {
         type = option.checks.HEADING_EMPTY.type || 'error';
         content = option.checks.HEADING_EMPTY.content || Lang.sprintf('HEADING_EMPTY', level);
         developer = option.checks.HEADING_EMPTY.developer || false;
+        dismissAll = option.checks.HEADING_EMPTY.dismissAll ? 'HEADING_EMPTY' : false;
       }
     } else if (i === 0 && level !== 1 && level !== 2) {
       if (option.checks.HEADING_FIRST) {
         type = option.checks.HEADING_FIRST.type || 'error';
         content = option.checks.HEADING_FIRST.content || Lang.sprintf('HEADING_FIRST');
         developer = option.checks.HEADING_FIRST.developer || false;
+        dismissAll = option.checks.HEADING_FIRST.dismissAll ? 'HEADING_FIRST' : false;
       }
     } else if (headingLength > option.headingMaxCharLength) {
       if (option.checks.HEADING_LONG) {
         type = option.checks.HEADING_LONG.type || 'warning';
         content = option.checks.HEADING_LONG.content || Lang.sprintf('HEADING_LONG', headingLength);
         developer = option.checks.HEADING_LONG.developer || false;
+        dismissAll = option.checks.HEADING_LONG.dismissAll ? 'HEADING_LONG' : false;
       }
     }
 
@@ -73,6 +79,7 @@ export default function checkHeaders(results, option, headingOutline) {
         inline: false,
         position: 'beforebegin',
         dismiss: Utils.prepareDismissal(`HEADING${level + headingText}`),
+        dismissAll,
         isWithinRoot,
         developer,
       });

@@ -116,17 +116,22 @@ const defaultOptions = {
     IMAGE_PASS: true,
 
     // Link checks.
-    LINK_HIDDEN_FOCUSABLE: true,
     LINK_EMPTY_LABELLEDBY: true,
     LINK_EMPTY_NO_LABEL: true,
     LINK_STOPWORD: true,
     LINK_BEST_PRACTICES: true,
-    LINK_DOI: true,
+    LINK_DOI: {
+      dismissAll: true,
+    },
     LINK_URL: true,
     LINK_LABEL: true,
     LINK_EMPTY: true,
-    LINK_IDENTICAL_NAME: true,
-    LINK_NEW_TAB: true,
+    LINK_IDENTICAL_NAME: {
+      dismissAll: true,
+    },
+    LINK_NEW_TAB: {
+      dismissAll: true,
+    },
     LINK_FILE_EXT: true,
 
     // Form Labels checks.
@@ -148,9 +153,12 @@ const defaultOptions = {
     QA_BAD_LINK: true,
     QA_STRONG_ITALICS: true,
     QA_IN_PAGE_LINK: true,
-    QA_DOCUMENT: true,
-    QA_PDF: true,
-    QA_PAGE_LANG: true,
+    QA_DOCUMENT: {
+      dismissAll: true,
+    },
+    QA_PDF: {
+      dismissAll: true,
+    },
     QA_BLOCKQUOTE: true,
     TABLES_MISSING_HEADINGS: true,
     TABLES_SEMANTIC_HEADING: true,
@@ -158,18 +166,32 @@ const defaultOptions = {
     QA_FAKE_HEADING: true,
     QA_FAKE_LIST: true,
     QA_UPPERCASE: true,
-    QA_DUPLICATE_ID: true,
     QA_UNDERLINE: true,
-    QA_PAGE_TITLE: true,
     QA_SUBSCRIPT: true,
     QA_NESTED_COMPONENTS: true,
-    QA_UNCONTAINED_LI: true,
-    QA_META_SCALABLE: true,
-    QA_META_MAX: true,
     QA_JUSTIFY: true,
+    QA_SMALL_TEXT: true,
+
+    // Developer
+    PAGE_LANG: true,
+    DUPLICATE_ID: true,
+    META_TITLE: true,
+    HIDDEN_FOCUSABLE: true,
+    UNCONTAINED_LI: true,
+    META_SCALABLE: true,
+    META_MAX: true,
+    META_REFRESH: true,
+    TABINDEX_ATTR: true,
+
+    // Buttons
+    BTN_EMPTY: true,
+    BTN_EMPTY_LABELLEDBY: true,
+    BTN_ROLE_IN_NAME: true,
 
     // Contrast checks.
-    CONTRAST_WARNING: true,
+    CONTRAST_WARNING: {
+      dismissAll: true,
+    },
     CONTRAST_INPUT: true,
     CONTRAST_ERROR: true,
   },
@@ -1051,6 +1073,12 @@ const Elements = (function myElements() {
       Constants.Exclusions.Links,
     );
 
+    Found.Buttons = find(
+      'button, [role="button"]',
+      'root',
+      Constants.Exclusions.Container,
+    );
+
     Found.Inputs = find(
       'input, select, textarea',
       'root',
@@ -1138,11 +1166,17 @@ const Elements = (function myElements() {
       Constants.Exclusions.Container,
     ) : [];
 
-    Found.UncontainedLi = option.checks.QA_UNCONTAINED_LI ? find(
+    Found.UncontainedLi = option.checks.UNCONTAINED_LI ? find(
       'li:not(ul li):not(ol li):not(menu li)',
       'root',
       Constants.Exclusions.Container,
     ) : [];
+
+    Found.TabIndex = find(
+      '[tabindex]:not([tabindex="0"], [tabindex^="-"])',
+      'root',
+      Constants.Exclusions.Container,
+    );
 
     // iFrames
     Found.iframes = find(
@@ -1697,7 +1731,7 @@ function removeExportListeners() {
 
 var styles = ":host{background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);bottom:0;display:block;height:-moz-fit-content;height:fit-content;left:0;position:fixed;right:0;width:100%;z-index:999999}*{-webkit-font-smoothing:auto!important;color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;font-size:var(--sa11y-normal-text);line-height:22px!important}#dialog{margin:20px auto;max-width:900px;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none}p{margin-top:0}.error{background:var(--sa11y-error);border:2px dashed #f08080;color:var(--sa11y-error-text);margin-bottom:0;padding:5px}";
 
-var sharedStyles = ".visually-hidden{clip:rect(1px,1px,1px,1px);border:0;clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}[hidden]{display:none!important}.header-text,.header-text-inline,h2{color:var(--sa11y-panel-primary);display:block;font-size:var(--sa11y-large-text);font-weight:600;margin-bottom:3px}.header-text-inline{display:inline-block!important}code{font-family:monospace!important}.kbd,code,kbd{background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);padding:1.6px 4.8px}.bold{font-weight:600}.red-text{color:var(--sa11y-red-text)}.red-text,.yellow-text{font-family:var(--sa11y-font-face)}.yellow-text{color:var(--sa11y-yellow-text)}.badge{background-color:var(--sa11y-panel-badge);border:1px solid transparent;border-radius:10px;color:var(--sa11y-panel-primary);display:inline;font-size:13px;font-weight:700!important;line-height:1;min-width:10px;padding:1px 4.5px 1.75px;text-align:center;vertical-align:baseline;white-space:nowrap}.error-badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.warning-badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.close-btn{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;color:var(--sa11y-panel-primary);cursor:pointer;float:var(--sa11y-float-rtl);font-size:var(--sa11y-normal-text);font-weight:400;height:32px;margin:0;position:relative;transition:all .2s ease-in-out;width:32px}.close-btn:focus,.close-btn:hover{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{background:var(--sa11y-setting-switch-bg-off);bottom:-7px;content:\"\";left:-7px;-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute;right:-7px;top:-7px}@media screen and (forced-colors:active){.close-btn:after{filter:invert(1)}}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:not(#panel-controls button):not(.switch):focus,#container select:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus,#container .switch:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus:not(:focus-visible),#container [tabindex=\"-1\"]:focus:not(:focus-visible),#container [tabindex=\"0\"]:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container select:focus:not(:focus-visible){box-shadow:none;outline:0}#container [tabindex=\"-1\"]:focus-visible,#container [tabindex=\"0\"]:focus-visible,#container a:focus-visible,#container button:not(#panel-controls button):not(.switch):focus-visible,#container select:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus-visible,#container .switch:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#panel-controls button:focus{border:3px solid transparent}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container select:focus,.close-btn:focus{outline:3px solid transparent!important}}";
+var sharedStyles = ".visually-hidden{clip:rect(1px,1px,1px,1px);border:0;clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}[hidden]{display:none!important}.header-text,.header-text-inline,h2{color:var(--sa11y-panel-primary);display:block;font-size:var(--sa11y-large-text);font-weight:600;margin-bottom:3px}.header-text-inline{display:inline-block!important}code{font-family:monospace!important;font-size:14px}.kbd,code,kbd{background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);padding:1.6px 4.8px}.bold{font-weight:600}.red-text{color:var(--sa11y-red-text)}.red-text,.yellow-text{font-family:var(--sa11y-font-face)}.yellow-text{color:var(--sa11y-yellow-text)}.badge{background-color:var(--sa11y-panel-badge);border:1px solid transparent;border-radius:10px;color:var(--sa11y-panel-primary);display:inline;font-size:13px;font-weight:700!important;line-height:1;min-width:10px;padding:1px 4.5px 1.75px;text-align:center;vertical-align:baseline;white-space:nowrap}.error-badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.warning-badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.close-btn{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;color:var(--sa11y-panel-primary);cursor:pointer;float:var(--sa11y-float-rtl);font-size:var(--sa11y-normal-text);font-weight:400;height:32px;margin:0;position:relative;transition:all .2s ease-in-out;width:32px}.close-btn:focus,.close-btn:hover{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{background:var(--sa11y-setting-switch-bg-off);bottom:-7px;content:\"\";left:-7px;-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute;right:-7px;top:-7px}@media screen and (forced-colors:active){.close-btn:after{filter:invert(1)}}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:not(#panel-controls button):not(.switch):focus,#container select:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus,#container .switch:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus:not(:focus-visible),#container [tabindex=\"-1\"]:focus:not(:focus-visible),#container [tabindex=\"0\"]:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container select:focus:not(:focus-visible){box-shadow:none;outline:0}#container [tabindex=\"-1\"]:focus-visible,#container [tabindex=\"0\"]:focus-visible,#container a:focus-visible,#container button:not(#panel-controls button):not(.switch):focus-visible,#container select:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus-visible,#container .switch:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#panel-controls button:focus{border:3px solid transparent}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container select:focus,.close-btn:focus{outline:3px solid transparent!important}}";
 
 class ConsoleErrors extends HTMLElement {
   constructor(error) {
@@ -6369,9 +6403,8 @@ function annotate(
   // Add dismiss all button if prop enabled & has addition check key.
   const dismissAllBtn = (
     option.dismissAnnotations
-    && option.dismissAll
-    && (type === 'warning' || type === 'good')
-    && dismissAll !== undefined)
+    && (option.dismissAll && typeof dismissAll === 'string')
+    && (type === 'warning' || type === 'good'))
     ? `<button data-sa11y-dismiss='${index}' data-sa11y-dismiss-all type='button'>${Lang._('DISMISS_ALL')}</button>` : '';
 
   // Create 'sa11y-annotation' web component for each annotation.
@@ -6902,18 +6935,24 @@ function checkImages(results, option) {
       return;
     }
 
+    // Ignore tracking pixels without explicit aria-hidden or nullified alt.
+    if ($el.height === 1 && $el.width === 1 && isElementHidden($el)) {
+      return;
+    }
+
     if (link && link.getAttribute('aria-hidden') === 'true') {
       // If linked image has aria-hidden, but is still focusable.
       const unfocusable = link.getAttribute('tabindex') === '-1';
-      if (option.checks.LINK_HIDDEN_FOCUSABLE && !unfocusable) {
+      if (option.checks.HIDDEN_FOCUSABLE && !unfocusable) {
         results.push({
           element: $el,
-          type: option.checks.LINK_HIDDEN_FOCUSABLE.type || 'error',
-          content: option.checks.LINK_HIDDEN_FOCUSABLE.content || Lang.sprintf('LINK_HIDDEN_FOCUSABLE'),
+          type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
+          content: option.checks.HIDDEN_FOCUSABLE.content || Lang.sprintf('HIDDEN_FOCUSABLE'),
           inline: false,
           position: 'beforebegin',
           dismiss: prepareDismissal(`IMAGEHIDDENFOCUSABLE${src}`),
-          developer: option.checks.LINK_HIDDEN_FOCUSABLE.developer || true,
+          dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll ? 'LINK_HIDDEN_FOCUSABLE' : false,
+          developer: option.checks.HIDDEN_FOCUSABLE.developer || true,
         });
       }
       return;
@@ -6925,6 +6964,8 @@ function checkImages(results, option) {
         const rule = (linkTextContentLength === 0)
           ? option.checks.MISSING_ALT_LINK
           : option.checks.MISSING_ALT_LINK_HAS_TEXT;
+        const conditional = linkTextContentLength === 0
+          ? 'MISSING_ALT_LINK' : 'MISSING_ALT_LINK_HAS_TEXT';
         if (rule) {
           results.push({
             element: $el,
@@ -6934,6 +6975,7 @@ function checkImages(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: prepareDismissal(`LINKIMAGENOALT${src + linkTextContentLength}`),
+            dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
         }
@@ -6946,6 +6988,7 @@ function checkImages(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: prepareDismissal(`IMAGENOALT${src}`),
+          dismissAll: option.checks.MISSING_ALT.dismissAll ? 'MISSING_ALT' : false,
           developer: option.checks.MISSING_ALT.developer || false,
         });
       }
@@ -6972,6 +7015,7 @@ function checkImages(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: prepareDismissal(`IMAGENOALT${src}`),
+            dismissAll: option.checks.MISSING_ALT.dismissAll ? 'MISSING_ALT' : false,
             developer: option.checks.MISSING_ALT.developer || false,
           });
         }
@@ -6988,21 +7032,24 @@ function checkImages(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: prepareDismissal(`DECIMAGE${src}`),
+            dismissAll: option.checks.IMAGE_DECORATIVE_CAROUSEL.dismissAll ? 'IMAGE_DECORATIVE_CAROUSEL' : false,
             developer: option.checks.IMAGE_DECORATIVE_CAROUSEL.developer || false,
           });
         } else if (link) {
           const rule = (linkTextContentLength === 0)
             ? option.checks.LINK_IMAGE_NO_ALT_TEXT
             : option.checks.LINK_IMAGE_TEXT;
+          const conditional = linkTextContentLength === 0
+            ? 'LINK_IMAGE_NO_ALT_TEXT' : 'LINK_IMAGE_TEXT';
           if (rule) {
             results.push({
               element: $el,
               type: rule.type || (linkTextContentLength === 0 ? 'error' : 'good'),
-              content: rule.content || Lang.sprintf(linkTextContentLength === 0
-                ? 'LINK_IMAGE_NO_ALT_TEXT' : 'LINK_IMAGE_TEXT'),
+              content: rule.content || Lang.sprintf(conditional),
               inline: false,
               position: 'beforebegin',
               dismiss: prepareDismissal(`IMAGETEXT${src + linkTextContentLength}`),
+              dismissAll: rule.dismissAll ? conditional : false,
               developer: rule.developer || false,
             });
           }
@@ -7010,15 +7057,17 @@ function checkImages(results, option) {
           const rule = (figcaption && figcaptionText.length)
             ? option.checks.IMAGE_FIGURE_DECORATIVE
             : option.checks.IMAGE_DECORATIVE;
+          const conditional = figcaption && figcaptionText.length
+            ? 'IMAGE_FIGURE_DECORATIVE' : 'IMAGE_DECORATIVE';
           if (rule) {
             results.push({
               element: $el,
               type: rule.type || 'warning',
-              content: rule.content || Lang.sprintf(figcaption && figcaptionText.length
-                ? 'IMAGE_FIGURE_DECORATIVE' : 'IMAGE_DECORATIVE'),
+              content: rule.content || Lang.sprintf(conditional),
               inline: false,
               position: 'beforebegin',
               dismiss: prepareDismissal(`FIG${src + figcaptionText}`),
+              dismissAll: rule.dismissAll ? conditional : false,
               developer: rule.developer || false,
             });
           }
@@ -7030,6 +7079,7 @@ function checkImages(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: prepareDismissal(`DECIMAGE${src}`),
+            dismissAll: option.checks.IMAGE_DECORATIVE.dismissAll ? 'IMAGE_DECORATIVE' : false,
             developer: option.checks.IMAGE_DECORATIVE.developer || false,
           });
         }
@@ -7042,6 +7092,7 @@ function checkImages(results, option) {
         const rule = (link)
           ? option.checks.LINK_ALT_FILE_EXT
           : option.checks.ALT_FILE_EXT;
+        const conditional = (link) ? 'LINK_ALT_FILE_EXT' : 'ALT_FILE_EXT';
         if (rule) {
           results.push({
             element: $el,
@@ -7051,6 +7102,7 @@ function checkImages(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: prepareDismissal(`IMAGE${src + altText}`),
+            dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
         }
@@ -7059,6 +7111,7 @@ function checkImages(results, option) {
         const rule = (link)
           ? option.checks.LINK_PLACEHOLDER_ALT
           : option.checks.ALT_PLACEHOLDER;
+        const conditional = (link) ? 'LINK_PLACEHOLDER_ALT' : 'ALT_PLACEHOLDER';
         if (rule) {
           results.push({
             element: $el,
@@ -7068,6 +7121,7 @@ function checkImages(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: prepareDismissal(`IMAGE${src + altText}`),
+            dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
         }
@@ -7076,6 +7130,7 @@ function checkImages(results, option) {
         const rule = (link)
           ? option.checks.LINK_SUS_ALT
           : option.checks.SUS_ALT;
+        const conditional = (link) ? 'LINK_SUS_ALT' : 'SUS_ALT';
         if (rule) {
           results.push({
             element: $el,
@@ -7085,6 +7140,7 @@ function checkImages(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: prepareDismissal(`IMAGE${src + altText}`),
+            dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
         }
@@ -7093,6 +7149,7 @@ function checkImages(results, option) {
         const rule = (link)
           ? option.checks.LINK_IMAGE_LONG_ALT
           : option.checks.IMAGE_ALT_TOO_LONG;
+        const conditional = (link) ? 'LINK_IMAGE_LONG_ALT' : 'IMAGE_ALT_TOO_LONG';
         if (rule) {
           results.push({
             element: $el,
@@ -7102,6 +7159,7 @@ function checkImages(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: prepareDismissal(`IMAGE${src + altText}`),
+            dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
         }
@@ -7109,6 +7167,7 @@ function checkImages(results, option) {
         const rule = (linkTextContentLength === 0)
           ? option.checks.LINK_IMAGE_ALT
           : option.checks.LINK_IMAGE_ALT_AND_TEXT;
+        const conditional = (linkTextContentLength === 0) ? 'LINK_IMAGE_ALT' : 'LINK_IMAGE_ALT_AND_TEXT';
         if (rule) {
           // Has both link text and alt text.
           const linkAccName = computeAccessibleName(link);
@@ -7122,6 +7181,7 @@ function checkImages(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: prepareDismissal(`IMAGELINK${src + altText}`),
+            dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
         }
@@ -7137,6 +7197,7 @@ function checkImages(results, option) {
               inline: false,
               position: 'beforebegin',
               dismiss: prepareDismissal(`FIGIMAGEDUPLICATE${src}`),
+              dismissAll: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.dismissAll ? 'IMAGE_FIGURE_DUPLICATE_ALT' : false,
               developer: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.developer || false,
             });
           }
@@ -7149,6 +7210,7 @@ function checkImages(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: prepareDismissal(`IMAGEPASS${src + altText}`),
+            dismissAll: option.checks.IMAGE_PASS.dismissAll ? 'IMAGE_PASS' : false,
             developer: option.checks.IMAGE_PASS.developer || false,
           });
         }
@@ -7161,6 +7223,7 @@ function checkImages(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: prepareDismissal(`IMAGEPASS${src + altText}`),
+          dismissAll: option.checks.IMAGE_PASS.dismissAll ? 'IMAGE_PASS' : false,
           developer: option.checks.IMAGE_PASS.developer || false,
         });
       }
@@ -7192,6 +7255,7 @@ function checkHeaders(results, option, headingOutline) {
     let type = null;
     let content = null;
     let developer = null;
+    let dismissAll = null;
 
     // Rulesets.
     if (level - prevLevel > 1 && i !== 0) {
@@ -7199,6 +7263,7 @@ function checkHeaders(results, option, headingOutline) {
         type = option.checks.HEADING_SKIPPED_LEVEL.type || 'error';
         content = option.checks.HEADING_SKIPPED_LEVEL.content || Lang.sprintf('HEADING_SKIPPED_LEVEL', prevLevel, level);
         developer = option.checks.HEADING_SKIPPED_LEVEL.developer || false;
+        dismissAll = option.checks.HEADING_SKIPPED_LEVEL.dismissAll ? 'HEADING_SKIPPED_LEVEL' : false;
       }
     } else if (headingLength === 0) {
       if ($el.querySelectorAll('img').length) {
@@ -7208,24 +7273,28 @@ function checkHeaders(results, option, headingOutline) {
             type = option.checks.HEADING_EMPTY_WITH_IMAGE.type || 'error';
             content = option.checks.HEADING_EMPTY_WITH_IMAGE.content || Lang.sprintf('HEADING_EMPTY_WITH_IMAGE', level);
             developer = option.checks.HEADING_EMPTY_WITH_IMAGE.developer || false;
+            dismissAll = option.checks.HEADING_EMPTY_WITH_IMAGE.dismissAll ? 'HEADING_EMPTY_WITH_IMAGE' : false;
           }
         }
       } else if (option.checks.HEADING_EMPTY) {
         type = option.checks.HEADING_EMPTY.type || 'error';
         content = option.checks.HEADING_EMPTY.content || Lang.sprintf('HEADING_EMPTY', level);
         developer = option.checks.HEADING_EMPTY.developer || false;
+        dismissAll = option.checks.HEADING_EMPTY.dismissAll ? 'HEADING_EMPTY' : false;
       }
     } else if (i === 0 && level !== 1 && level !== 2) {
       if (option.checks.HEADING_FIRST) {
         type = option.checks.HEADING_FIRST.type || 'error';
         content = option.checks.HEADING_FIRST.content || Lang.sprintf('HEADING_FIRST');
         developer = option.checks.HEADING_FIRST.developer || false;
+        dismissAll = option.checks.HEADING_FIRST.dismissAll ? 'HEADING_FIRST' : false;
       }
     } else if (headingLength > option.headingMaxCharLength) {
       if (option.checks.HEADING_LONG) {
         type = option.checks.HEADING_LONG.type || 'warning';
         content = option.checks.HEADING_LONG.content || Lang.sprintf('HEADING_LONG', headingLength);
         developer = option.checks.HEADING_LONG.developer || false;
+        dismissAll = option.checks.HEADING_LONG.dismissAll ? 'HEADING_LONG' : false;
       }
     }
 
@@ -7238,6 +7307,7 @@ function checkHeaders(results, option, headingOutline) {
         inline: false,
         position: 'beforebegin',
         dismiss: prepareDismissal(`HEADING${level + headingText}`),
+        dismissAll,
         isWithinRoot,
         developer,
       });
@@ -7423,15 +7493,16 @@ function checkLinkText(results, option) {
       // Has aria-hidden.
       if (!negativeTabindex) {
         // If negative tabindex.
-        if (option.checks.LINK_HIDDEN_FOCUSABLE) {
+        if (option.checks.HIDDEN_FOCUSABLE) {
           results.push({
             element: $el,
-            type: option.checks.LINK_HIDDEN_FOCUSABLE.type || 'error',
-            content: option.checks.LINK_HIDDEN_FOCUSABLE.content || Lang.sprintf('LINK_HIDDEN_FOCUSABLE'),
+            type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
+            content: option.checks.HIDDEN_FOCUSABLE.content || Lang.sprintf('HIDDEN_FOCUSABLE'),
             inline: true,
             position: 'afterend',
             dismiss: prepareDismissal(`A${href + linkTextTrimmed}`),
-            developer: option.checks.LINK_HIDDEN_FOCUSABLE.developer || true,
+            dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll ? 'LINK_HIDDEN_FOCUSABLE' : false,
+            developer: option.checks.HIDDEN_FOCUSABLE.developer || true,
           });
         }
       }
@@ -7447,6 +7518,7 @@ function checkLinkText(results, option) {
             inline: true,
             position: 'afterend',
             dismiss: prepareDismissal(`A${href}`),
+            dismissAll: option.checks.LINK_EMPTY_LABELLEDBY.dismissAll ? 'LINK_EMPTY_LABELLEDBY' : false,
             developer: option.checks.LINK_EMPTY_LABELLEDBY.developer || true,
           });
         }
@@ -7460,6 +7532,7 @@ function checkLinkText(results, option) {
             inline: true,
             position: 'afterend',
             dismiss: prepareDismissal(`A${href}`),
+            dismissAll: option.checks.LINK_EMPTY_NO_LABEL.dismissAll ? 'LINK_EMPTY_NO_LABEL' : false,
             developer: option.checks.LINK_EMPTY_NO_LABEL.developer || false,
           });
         }
@@ -7472,6 +7545,7 @@ function checkLinkText(results, option) {
           inline: true,
           position: 'afterend',
           dismiss: prepareDismissal(`A${href}`),
+          dismissAll: option.checks.LINK_EMPTY.dismissAll ? 'LINK_EMPTY' : false,
           developer: option.checks.LINK_EMPTY.developer || false,
         });
       }
@@ -7485,6 +7559,7 @@ function checkLinkText(results, option) {
           inline: true,
           position: 'afterend',
           dismiss: prepareDismissal(`A${href + linkTextTrimmed}`),
+          dismissAll: option.checks.LINK_STOPWORD.dismissAll ? 'LINK_STOPWORD' : false,
           developer: option.checks.LINK_STOPWORD.developer || false,
         });
       }
@@ -7499,6 +7574,7 @@ function checkLinkText(results, option) {
           inline: true,
           position: 'beforebegin',
           dismiss: prepareDismissal(`LINK${href + linkTextTrimmed}`),
+          dismissAll: option.checks.LINK_BEST_PRACTICES.dismissAll ? 'LINK_BEST_PRACTICES' : false,
           developer: option.checks.LINK_BEST_PRACTICES.developer || false,
         });
       }
@@ -7513,6 +7589,7 @@ function checkLinkText(results, option) {
             inline: true,
             position: 'beforebegin',
             dismiss: prepareDismissal(`LINK${href + linkTextTrimmed}`),
+            dismissAll: option.checks.LINK_DOI.dismissAll ? 'LINK_DOI' : false,
             developer: option.checks.LINK_DOI.developer || false,
           });
         }
@@ -7528,6 +7605,7 @@ function checkLinkText(results, option) {
             inline: true,
             position: 'beforebegin',
             dismiss: prepareDismissal(`LINK${href + linkTextTrimmed}`),
+            dismissAll: option.checks.LINK_URL.dismissAll ? 'LINK_URL' : false,
             developer: option.checks.LINK_URL.developer || false,
           });
         }
@@ -7539,10 +7617,11 @@ function checkLinkText(results, option) {
         results.push({
           element: $el,
           type: option.checks.LINK_LABEL.type || 'good',
-          content: option.checks.LINK_LABEL.content || Lang.sprintf('LINK_LABEL', sanitizedText),
+          content: option.checks.LINK_LABEL.content || Lang.sprintf('ACC_NAME', sanitizedText),
           inline: true,
           position: 'afterend',
           dismiss: prepareDismissal(`LINK${href + linkTextTrimmed}`),
+          dismissAll: option.checks.LINK_LABEL.dismissAll ? 'LINK_LABEL' : false,
           developer: option.checks.LINK_LABEL.developer || false,
         });
       }
@@ -7556,6 +7635,7 @@ function checkLinkText(results, option) {
           inline: true,
           position: 'afterend',
           dismiss: prepareDismissal(`LINK${href}`),
+          dismissAll: option.checks.LINK_EMPTY.dismissAll ? 'LINK_EMPTY' : false,
           developer: option.checks.LINK_EMPTY.developer || false,
         });
       }
@@ -7576,7 +7656,7 @@ function checkLinkText(results, option) {
               inline: true,
               position: 'beforebegin',
               dismiss: prepareDismissal(`LINK${href + linkTextTrimmed}`),
-              dismissAll: 'LINK_IDENTICAL_NAME',
+              dismissAll: option.checks.LINK_IDENTICAL_NAME.dismissAll ? 'LINK_IDENTICAL_NAME' : false,
               developer: option.checks.LINK_IDENTICAL_NAME.developer || false,
             });
           }
@@ -7589,7 +7669,7 @@ function checkLinkText(results, option) {
               inline: true,
               position: 'beforebegin',
               dismiss: prepareDismissal(`LINK${href + linkTextTrimmed}`),
-              dismissAll: 'LINK_NEW_TAB',
+              dismissAll: option.checks.LINK_NEW_TAB.dismissAll ? 'LINK_NEW_TAB' : false,
               developer: option.checks.LINK_NEW_TAB.developer || false,
             });
           }
@@ -7602,6 +7682,7 @@ function checkLinkText(results, option) {
               inline: true,
               position: 'beforebegin',
               dismiss: prepareDismissal(`LINK${href + linkTextTrimmed}`),
+              dismissAll: option.checks.LINK_FILE_EXT.dismissAll ? 'LINK_FILE_EXT' : false,
               developer: option.checks.LINK_FILE_EXT.developer || false,
             });
           }
@@ -7842,7 +7923,7 @@ function checkContrast(results, option) {
         const name = item.elem;
         const cratio = item.ratio;
         const clone = name.cloneNode(true);
-        const nodeText = fnIgnore(clone, 'script, style').textContent;
+        const nodeText = fnIgnore(clone, 'script, style, noscript').textContent;
         const sanitizedText = sanitizeHTML(nodeText);
 
         if (name.tagName === 'INPUT') {
@@ -7854,6 +7935,7 @@ function checkContrast(results, option) {
               inline: false,
               position: 'beforebegin',
               dismiss: prepareDismissal(`CONTRAST${name.tagName}${cratio}`),
+              dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
               developer: option.checks.CONTRAST_INPUT.developer || true,
             });
           }
@@ -7866,6 +7948,7 @@ function checkContrast(results, option) {
               inline: false,
               position: 'beforebegin',
               dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
+              dismissAll: option.checks.CONTRAST_ERROR.dismissAll ? 'CONTRAST_ERROR' : false,
               developer: option.checks.CONTRAST_ERROR.developer || false,
             });
           }
@@ -7876,7 +7959,7 @@ function checkContrast(results, option) {
         contrastErrors.warnings.forEach((item) => {
           const name = item.elem;
           const clone = name.cloneNode(true);
-          const nodeText = fnIgnore(clone, 'script, style').textContent;
+          const nodeText = fnIgnore(clone, 'script, style, noscript').textContent;
           const sanitizedText = sanitizeHTML(nodeText);
 
           results.push({
@@ -7886,7 +7969,7 @@ function checkContrast(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: prepareDismissal(`CONTRAST${nodeText}`),
-            dismissAll: 'CONTRAST_WARNING',
+            dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
             developer: option.checks.CONTRAST_WARNING.developer || false,
           });
         });
@@ -7933,6 +8016,7 @@ function checkLabels(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: key,
+            dismissAll: option.checks.LABELS_MISSING_IMAGE_INPUT.dismissAll ? 'LABELS_MISSING_IMAGE_INPUT' : false,
             developer: option.checks.LABELS_MISSING_IMAGE_INPUT.developer || true,
           });
         }
@@ -7949,6 +8033,7 @@ function checkLabels(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: key,
+            dismissAll: option.checks.LABELS_INPUT_RESET.dismissAll ? 'LABELS_INPUT_RESET' : false,
             developer: option.checks.LABELS_INPUT_RESET.developer || false,
           });
         }
@@ -7966,6 +8051,7 @@ function checkLabels(results, option) {
               inline: false,
               position: 'beforebegin',
               dismiss: key,
+              dismissAll: option.checks.LABELS_MISSING_LABEL.dismissAll ? 'LABELS_MISSING_LABEL' : false,
               developer: option.checks.LABELS_MISSING_LABEL.developer || true,
             });
           }
@@ -7978,6 +8064,7 @@ function checkLabels(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: key,
+            dismissAll: option.checks.LABELS_ARIA_LABEL_INPUT.dismissAll ? 'LABELS_ARIA_LABEL_INPUT' : false,
             developer: option.checks.LABELS_ARIA_LABEL_INPUT.developer || true,
           });
         }
@@ -8003,6 +8090,8 @@ function checkLabels(results, option) {
               content: option.checks.LABELS_NO_FOR_ATTRIBUTE.content || Lang.sprintf('LABELS_NO_FOR_ATTRIBUTE', id),
               inline: false,
               position: 'beforebegin',
+              dismiss: key,
+              dismissAll: option.checks.LABELS_NO_FOR_ATTRIBUTE.dismissAll ? 'LABELS_NO_FOR_ATTRIBUTE' : false,
               developer: option.checks.LABELS_NO_FOR_ATTRIBUTE.developer || true,
             });
           }
@@ -8015,6 +8104,8 @@ function checkLabels(results, option) {
           content: option.checks.LABELS_MISSING_LABEL.content || Lang.sprintf('LABELS_MISSING_LABEL'),
           inline: false,
           position: 'beforebegin',
+          dismiss: key,
+          dismissAll: option.checks.LABELS_MISSING_LABEL.dismissAll ? 'LABELS_MISSING_LABEL' : false,
           developer: option.checks.LABELS_MISSING_LABEL.developer || true,
         });
       }
@@ -8254,6 +8345,7 @@ function checkEmbeddedContent(results, option) {
         inline: false,
         position: 'beforebegin',
         dismiss: prepareDismissal(`AUDIO${src}`),
+        dismissAll: option.checks.EMBED_AUDIO.dismissAll ? 'EMBED_AUDIO' : false,
         developer: option.checks.EMBED_AUDIO.developer || false,
       });
     });
@@ -8277,6 +8369,7 @@ function checkEmbeddedContent(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: prepareDismissal(`VIDEO${src}`),
+          dismissAll: option.checks.EMBED_VIDEO.dismissAll ? 'EMBED_VIDEO' : false,
           developer: option.checks.EMBED_VIDEO.developer || false,
         });
       }
@@ -8298,6 +8391,7 @@ function checkEmbeddedContent(results, option) {
         inline: false,
         position: 'beforebegin',
         dismiss: prepareDismissal(`DATAVIZ${src}`),
+        dismissAll: option.checks.EMBED_DATA_VIZ.dismissAll ? 'EMBED_DATA_VIZ' : false,
         developer: option.checks.EMBED_DATA_VIZ.developer || false,
       });
     });
@@ -8330,6 +8424,7 @@ function checkEmbeddedContent(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: key,
+          dismissAll: option.checks.EMBED_UNFOCUSABLE.dismissAll ? 'EMBED_UNFOCUSABLE' : false,
           developer: option.checks.EMBED_UNFOCUSABLE.developer || true,
         });
       }
@@ -8349,6 +8444,7 @@ function checkEmbeddedContent(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: key,
+          dismissAll: option.checks.EMBED_MISSING_TITLE.dismissAll ? 'EMBED_MISSING_TITLE' : false,
           developer: option.checks.EMBED_MISSING_TITLE.developer || true,
         });
       }
@@ -8383,6 +8479,7 @@ function checkEmbeddedContent(results, option) {
         inline: false,
         position: 'beforebegin',
         dismiss: prepareDismissal(`IFRAME${src}`),
+        dismissAll: option.checks.EMBED_GENERAL.dismissAll ? 'EMBED_GENERAL' : false,
         developer: option.checks.EMBED_GENERAL.developer || false,
       });
     });
@@ -8403,6 +8500,7 @@ function checkQA(results, option) {
         inline: true,
         position: 'beforebegin',
         dismiss: prepareDismissal($el.tagName + $el.textContent),
+        dismissAll: option.checks.QA_BAD_LINK.dismissAll ? 'QA_BAD_LINK' : false,
         developer: option.checks.QA_BAD_LINK.developer || false,
       });
     });
@@ -8421,6 +8519,7 @@ function checkQA(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: prepareDismissal($el.tagName + $el.textContent),
+          dismissAll: option.checks.QA_STRONG_ITALICS.dismissAll ? 'QA_STRONG_ITALICS' : false,
           developer: option.checks.QA_STRONG_ITALICS.developer || false,
         });
       }
@@ -8460,6 +8559,7 @@ function checkQA(results, option) {
               inline: true,
               position: 'beforebegin',
               dismiss: key,
+              dismissAll: option.checks.QA_IN_PAGE_LINK.dismissAll ? 'QA_IN_PAGE_LINK' : false,
               developer: option.checks.QA_IN_PAGE_LINK.developer || false,
             });
           }
@@ -8475,6 +8575,7 @@ function checkQA(results, option) {
           inline: true,
           position: 'beforebegin',
           dismiss: key,
+          dismissAll: option.checks.QA_DOCUMENT.dismissAll ? 'QA_DOCUMENT' : false,
           developer: option.checks.QA_DOCUMENT.developer || false,
         });
       } else if (option.checks.QA_PDF && hasPDF) {
@@ -8485,26 +8586,12 @@ function checkQA(results, option) {
           inline: true,
           position: 'beforebegin',
           dismiss: key,
-          dismissAll: 'QA_PDF',
+          dismissAll: option.checks.QA_PDF.dismissAll ? 'QA_PDF' : false,
           developer: option.checks.QA_PDF.developer || false,
         });
       }
     }
   });
-
-  /* *************************************************************** */
-  /*  Error: Missing language tag. Lang should be at least 2 chars.  */
-  /* *************************************************************** */
-  if (option.checks.QA_PAGE_LANG) {
-    if (!Elements.Found.Language || Elements.Found.Language.length < 2) {
-      results.push({
-        type: option.checks.QA_PAGE_LANG.type || 'error',
-        content: option.checks.QA_PAGE_LANG.content || Lang.sprintf('QA_PAGE_LANG'),
-        dismiss: prepareDismissal('LANG'),
-        developer: option.checks.QA_PAGE_LANG.developer || true,
-      });
-    }
-  }
 
   /* *************************************************************** */
   /*  Warning: Find blockquotes used as headers.                     */
@@ -8521,6 +8608,7 @@ function checkQA(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: prepareDismissal(`BLOCKQUOTE${sanitizedText}`),
+          dismissAll: option.checks.QA_BLOCKQUOTE.dismissAll ? 'QA_BLOCKQUOTE' : false,
           developer: option.checks.QA_BLOCKQUOTE.developer || false,
         });
       }
@@ -8542,6 +8630,7 @@ function checkQA(results, option) {
         inline: false,
         position: 'beforebegin',
         dismiss: key,
+        dismissAll: option.checks.TABLES_MISSING_HEADINGS.dismissAll ? 'TABLES_MISSING_HEADINGS' : false,
         developer: option.checks.TABLES_MISSING_HEADINGS.developer || false,
       });
     }
@@ -8554,6 +8643,7 @@ function checkQA(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: key,
+          dismissAll: option.checks.TABLES_SEMANTIC_HEADING.dismissAll ? 'TABLES_SEMANTIC_HEADING' : false,
           developer: option.checks.TABLES_SEMANTIC_HEADING.developer || false,
         });
       });
@@ -8567,6 +8657,7 @@ function checkQA(results, option) {
           inline: false,
           position: 'afterbegin',
           dismiss: key,
+          dismissAll: option.checks.TABLES_EMPTY_HEADING.dismissAll ? 'TABLES_EMPTY_HEADING' : false,
           developer: option.checks.TABLES_EMPTY_HEADING.developer || false,
         });
       }
@@ -8585,6 +8676,7 @@ function checkQA(results, option) {
         inline: false,
         position: 'beforebegin',
         dismiss: prepareDismissal(`BOLD${sanitizedText}`),
+        dismissAll: option.checks.QA_FAKE_HEADING.dismissAll ? 'QA_FAKE_HEADING' : false,
         developer: option.checks.QA_FAKE_HEADING.developer || false,
       });
     };
@@ -8721,6 +8813,7 @@ function checkQA(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: prepareDismissal(`LIST${p.textContent}`),
+            dismissAll: option.checks.QA_FAKE_LIST.dismissAll ? 'QA_FAKE_LIST' : false,
             developer: option.checks.QA_FAKE_LIST.developer || false,
           });
           activeMatch = firstPrefix;
@@ -8749,6 +8842,8 @@ function checkQA(results, option) {
       } else {
         thisText = getText($el);
       }
+
+      // Patterns
       const uppercasePattern = /([A-Z]{2,}[ ])([A-Z]{2,}[ ])([A-Z]{2,}[ ])([A-Z]{2,})/g;
       const detectUpperCase = thisText.match(uppercasePattern);
 
@@ -8760,6 +8855,7 @@ function checkQA(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: prepareDismissal(`UPPERCASE${thisText}`),
+          dismissAll: option.checks.QA_UPPERCASE.dismissAll ? 'QA_UPPERCASE' : false,
           developer: option.checks.QA_UPPERCASE.developer || false,
         });
       }
@@ -8771,9 +8867,168 @@ function checkQA(results, option) {
   }
 
   /* *************************************************************** */
-  /*  Error: Duplicate IDs                                           */
+  /*  Check for underlined and justify-aligned text.                 */
   /* *************************************************************** */
-  if (option.checks.QA_DUPLICATE_ID) {
+  if (option.checks.QA_UNDERLINE || option.checks.QA_JUSTIFY) {
+    const addUnderlineResult = ($el, inline) => {
+      const text = getText($el);
+      results.push({
+        element: $el,
+        type: option.checks.QA_UNDERLINE.type || 'warning',
+        content: option.checks.QA_UNDERLINE.content || Lang.sprintf('QA_UNDERLINE'),
+        inline,
+        position: 'beforebegin',
+        dismiss: prepareDismissal(`UNDERLINE${text}`),
+        dismissAll: option.checks.QA_UNDERLINE.dismissAll ? 'QA_UNDERLINE' : false,
+        developer: option.checks.QA_UNDERLINE.developer || false,
+      });
+    };
+
+    const addJustifyResult = ($el) => {
+      const text = getText($el);
+      results.push({
+        element: $el,
+        type: option.checks.QA_JUSTIFY.type || 'warning',
+        content: option.checks.QA_JUSTIFY.content || Lang._('QA_JUSTIFY'),
+        inline: false,
+        position: 'beforebegin',
+        dismiss: prepareDismissal(`JUSTIFIED${text}`),
+        dismissAll: option.checks.QA_JUSTIFY.dismissAll ? 'QA_JUSTIFY' : false,
+        developer: option.checks.QA_JUSTIFY.developer || false,
+      });
+    };
+
+    const addSmallTextResult = ($el) => {
+      const text = getText($el);
+      results.push({
+        element: $el,
+        type: option.checks.QA_SMALL_TEXT.type || 'warning',
+        content: option.checks.QA_SMALL_TEXT.content || Lang._('QA_SMALL_TEXT'),
+        inline: false,
+        position: 'beforebegin',
+        dismiss: prepareDismissal(`SMALL${text}`),
+        dismissAll: option.checks.QA_SMALL_TEXT.dismissAll ? 'QA_SMALL_TEXT' : false,
+        developer: option.checks.QA_SMALL_TEXT.developer || false,
+      });
+    };
+
+    /**
+      * Check: Flag all <u> elements (underlined).
+      * @author Brian Teeman
+    */
+    if (option.checks.QA_UNDERLINE) {
+      Elements.Found.Underlines.forEach(($el) => {
+        addUnderlineResult($el, true);
+      });
+    }
+
+    // Get computed styles.
+    const computeStyle = ($el) => {
+      const style = getComputedStyle($el);
+      const { textDecorationLine, textAlign, fontSize } = style;
+
+      /** Check: underline formatted text. @author Brian Teeman */
+      if (option.checks.QA_UNDERLINE && textDecorationLine === 'underline') {
+        addUnderlineResult($el, false); // Inline false for computed underlines.
+      }
+
+      /** Check: Font size is less than or equal to 10px.
+       * Inspired by WebAim's WAVE check. @since 4.0.0 */
+      if (option.checks.QA_SMALL_TEXT && parseFloat(fontSize) <= 10) {
+        addSmallTextResult($el);
+      }
+
+      /** Check: Check if text is justify-aligned. @since 4.0.0 */
+      if (option.checks.QA_JUSTIFY && textAlign === 'justify') {
+        addJustifyResult($el);
+      }
+    };
+    Elements.Found.Paragraphs.forEach(computeStyle);
+    Elements.Found.Headings.forEach(computeStyle);
+    Elements.Found.Lists.forEach(computeStyle);
+    Elements.Found.Blockquotes.forEach(computeStyle);
+    Elements.Found.Spans.forEach(computeStyle);
+  }
+
+  /* *************************************************************** */
+  /*  Find inappropriate use of <sup> and <sub> tags.                */
+  /* *************************************************************** */
+  if (option.checks.QA_SUBSCRIPT) {
+    Elements.Found.Subscripts.forEach(($el) => {
+      const text = getText($el);
+      if (text.length >= 80) {
+        results.push({
+          element: $el,
+          type: option.checks.QA_SUBSCRIPT.type || 'warning',
+          content: option.checks.QA_SUBSCRIPT.content || Lang.sprintf('QA_SUBSCRIPT'),
+          inline: true,
+          position: 'beforebegin',
+          dismiss: prepareDismissal($el.tagName + text),
+          dismissAll: option.checks.QA_SUBSCRIPT.dismissAll ? 'QA_SUBSCRIPT' : false,
+          developer: option.checks.QA_SUBSCRIPT.developer || false,
+        });
+      }
+    });
+  }
+
+  /* *************************************************************** */
+  /*  Find double nested layout components. @since 4.0.0             */
+  /* *************************************************************** */
+  if (option.checks.QA_NESTED_COMPONENTS) {
+    Elements.Found.NestedComponents.forEach(($el) => {
+      const component = $el.querySelector(option.nestedComponentSources);
+      if (component) {
+        results.push({
+          element: $el,
+          type: option.checks.QA_NESTED_COMPONENTS.type || 'warning',
+          content: option.checks.QA_NESTED_COMPONENTS.content || Lang.sprintf('QA_NESTED_COMPONENTS'),
+          inline: false,
+          position: 'beforebegin',
+          dismiss: prepareDismissal(`NESTED${$el.textContent}`),
+          dismissAll: option.checks.QA_NESTED_COMPONENTS.dismissAll ? 'QA_NESTED_COMPONENTS' : false,
+          developer: option.checks.QA_NESTED_COMPONENTS.developer || false,
+        });
+      }
+    });
+  }
+
+  return results;
+}
+
+function checkDeveloper(results, option) {
+  /* *************************************************************** */
+  /*  Error: Missing language tag. Lang should be at least 2 chars.  */
+  /* *************************************************************** */
+  if (option.checks.PAGE_LANG) {
+    if (!Elements.Found.Language || Elements.Found.Language.length < 2) {
+      results.push({
+        type: option.checks.PAGE_LANG.type || 'error',
+        content: option.checks.PAGE_LANG.content || Lang.sprintf('PAGE_LANG'),
+        dismiss: prepareDismissal('LANG'),
+        developer: option.checks.PAGE_LANG.developer || true,
+      });
+    }
+  }
+
+  /* *************************************************************** */
+  /*  Check for missing meta page title <title>                      */
+  /* *************************************************************** */
+  if (option.checks.META_TITLE) {
+    const metaTitle = document.querySelector('head title');
+    if (!metaTitle || metaTitle.textContent.trim().length === 0) {
+      results.push({
+        type: option.checks.META_TITLE.type || 'error',
+        content: option.checks.META_TITLE.content || Lang.sprintf('META_TITLE'),
+        dismiss: prepareDismissal('TITLE'),
+        developer: option.checks.META_TITLE.developer || true,
+      });
+    }
+  }
+
+  /* *************************************************************** */
+  /*  Check for duplicate IDs that are referenced by other elements. */
+  /* *************************************************************** */
+  if (option.checks.DUPLICATE_ID) {
     // Look for duplicate IDs within each DOM.
     const doms = document.querySelectorAll('body, [data-sa11y-has-shadow-root]');
     doms.forEach((dom) => {
@@ -8803,12 +9058,13 @@ function checkQA(results, option) {
             if (ariaReference.length > 0) {
               results.push({
                 element: $el,
-                type: option.checks.QA_DUPLICATE_ID.type || 'error',
-                content: option.checks.QA_DUPLICATE_ID.content || Lang.sprintf('QA_DUPLICATE_ID', id),
+                type: option.checks.DUPLICATE_ID.type || 'error',
+                content: option.checks.DUPLICATE_ID.content || Lang.sprintf('DUPLICATE_ID', id),
                 inline: true,
                 position: 'beforebegin',
                 dismiss: prepareDismissal(`DUPLICATEID${id}${$el.textContent}`),
-                developer: option.checks.QA_DUPLICATE_ID.developer || true,
+                dismissAll: option.checks.DUPLICATE_ID.dismissAll ? 'DUPLICATE_ID' : false,
+                developer: option.checks.DUPLICATE_ID.developer || true,
               });
             }
           }
@@ -8831,140 +9087,105 @@ function checkQA(results, option) {
     });
   }
 
-  /* *************************************************************** */
-  /*  Warning: Flag underlined & justified text.                     */
-  /*  Thanks to Brian Teeman (@brianteeman)                          */
-  /* *************************************************************** */
-  // Helper function to add underline results.
-  const addUnderlineResult = ($el, inline) => {
-    const text = getText($el);
-    results.push({
-      element: $el,
-      type: option.checks.QA_UNDERLINE.type || 'warning',
-      content: option.checks.QA_UNDERLINE.content || Lang.sprintf('QA_UNDERLINE'),
-      inline,
-      position: 'beforebegin',
-      dismiss: prepareDismissal(`UNDERLINE${text}`),
-      developer: option.checks.QA_UNDERLINE.developer || false,
-    });
-  };
+  /* ******************************************************************* */
+  /*  Buttons must have an accessible name. @since 4.0.0                 */
+  /* ******************************************************************* */
+  if (option.checks.BTN_EMPTY || option.checks.BTN_EMPTY_LABELLEDBY || option.checks.BTN_LABEL || option.checks.HIDDEN_FOCUSABLE) {
+    Elements.Found.Buttons.forEach(($el) => {
+      const accName = computeAccessibleName($el);
+      const buttonText = accName.replace(/'|"|-|\.|\s+/g, '').toLowerCase();
 
-  // For individual <u>underlined</u> elements.
-  if (option.checks.QA_UNDERLINE) {
-    Elements.Found.Underlines.forEach(($el) => {
-      addUnderlineResult($el, true);
-    });
-  }
+      // Dismissal key.
+      const key = prepareDismissal(`BTN${$el.tagName + $el.id + $el.className + accName}`);
 
-  // Get computed styles.
-  const computeStyle = ($el) => {
-    const style = getComputedStyle($el);
-    const { textDecorationLine, textAlign } = style;
+      // Has ARIA
+      const hasAriaLabelledby = $el.querySelector(':scope [aria-labelledby]') || $el.getAttribute('aria-labelledby');
+      const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
+      const negativeTabindex = $el.getAttribute('tabindex') === '-1';
 
-    // Underlined text.
-    if (option.checks.QA_UNDERLINE && textDecorationLine === 'underline') {
-      addUnderlineResult($el, false); // Inline false for computed underlines.
-    }
+      if (ariaHidden) {
+      // Has aria-hidden.
+        if (!negativeTabindex) {
+        // If negative tabindex.
+          if (option.checks.HIDDEN_FOCUSABLE) {
+            results.push({
+              element: $el,
+              type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
+              content: option.checks.HIDDEN_FOCUSABLE.content || Lang.sprintf('HIDDEN_FOCUSABLE'),
+              inline: true,
+              position: 'afterend',
+              dismiss: key,
+              dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll ? 'BTN_HIDDEN_FOCUSABLE' : false,
+              developer: option.checks.HIDDEN_FOCUSABLE.developer || true,
+            });
+          }
+        }
+        return;
+      }
 
-    // Justified text.
-    if (option.checks.QA_JUSTIFY && textAlign === 'justify') {
-      const text = getText($el);
-      results.push({
-        element: $el,
-        type: option.checks.QA_JUSTIFY.type || 'warning',
-        content: option.checks.QA_JUSTIFY.content || Lang._('QA_JUSTIFY'),
-        inline: false,
-        position: 'beforebegin',
-        dismiss: prepareDismissal(`JUSTIFIED${text}`),
-        developer: option.checks.QA_JUSTIFY.developer || false,
-      });
-    }
-  };
-
-  if (option.checks.QA_UNDERLINE || option.checks.QA_JUSTIFY) {
-    Elements.Found.Paragraphs.forEach(computeStyle);
-    Elements.Found.Headings.forEach(computeStyle);
-    Elements.Found.Lists.forEach(computeStyle);
-    Elements.Found.Blockquotes.forEach(computeStyle);
-    Elements.Found.Spans.forEach(computeStyle);
-  }
-
-  /* *************************************************************** */
-  /*  Error: Page is missing meta page <title>                       */
-  /* *************************************************************** */
-  if (option.checks.QA_PAGE_TITLE) {
-    const metaTitle = document.querySelector('head title');
-    if (!metaTitle || metaTitle.textContent.trim().length === 0) {
-      results.push({
-        type: option.checks.QA_PAGE_TITLE.type || 'error',
-        content: option.checks.QA_PAGE_TITLE.content || Lang.sprintf('QA_PAGE_TITLE'),
-        dismiss: prepareDismissal('TITLE'),
-        developer: option.checks.QA_PAGE_TITLE.developer || true,
-      });
-    }
-  }
-
-  /* *************************************************************** */
-  /*  Warning: Find inappropriate use of <sup> and <sub> tags.       */
-  /* *************************************************************** */
-  if (option.checks.QA_SUBSCRIPT) {
-    Elements.Found.Subscripts.forEach(($el) => {
-      const text = getText($el);
-      if (text.length >= 80) {
+      // Button doesn't have an accessible name.
+      if (buttonText.length === 0) {
+        if (option.checks.BTN_EMPTY_LABELLEDBY && hasAriaLabelledby) {
+          results.push({
+            element: $el,
+            type: option.checks.BTN_EMPTY_LABELLEDBY.type || 'error',
+            content: option.checks.BTN_EMPTY_LABELLEDBY.content || `${Lang.sprintf('BTN_EMPTY_LABELLEDBY')} ${Lang.sprintf('BTN_TIP')}`,
+            inline: true,
+            position: 'afterend',
+            dismiss: prepareDismissal(key),
+            dismissAll: option.checks.BTN_EMPTY_LABELLEDBY.dismissAll ? 'BTN_EMPTY_LABELLEDBY' : false,
+            developer: option.checks.BTN_EMPTY_LABELLEDBY.developer || true,
+          });
+        } else if (option.checks.BTN_EMPTY) {
+          results.push({
+            element: $el,
+            type: option.checks.BTN_EMPTY.type || 'error',
+            content: option.checks.BTN_EMPTY.content || `${Lang.sprintf('BTN_EMPTY')} ${Lang.sprintf('BTN_TIP')}`,
+            inline: true,
+            position: 'beforebegin',
+            dismiss: key,
+            dismissAll: option.checks.BTN_EMPTY.dismissAll ? 'BTN_EMPTY' : false,
+            developer: option.checks.BTN_EMPTY.developer || true,
+          });
+        }
+      } else if (option.checks.BTN_ROLE_IN_NAME && accName.includes(Lang._('BTN'))) {
+        // Has "button" in the accessible name.
         results.push({
           element: $el,
-          type: option.checks.QA_SUBSCRIPT.type || 'warning',
-          content: option.checks.QA_SUBSCRIPT.content || Lang.sprintf('QA_SUBSCRIPT'),
+          type: option.checks.BTN_ROLE_IN_NAME.type || 'warning',
+          content: option.checks.BTN_ROLE_IN_NAME.content || `${Lang.sprintf('BTN_ROLE_IN_NAME')} ${Lang.sprintf('BTN_TIP')}`,
           inline: true,
           position: 'beforebegin',
-          dismiss: prepareDismissal($el.tagName + text),
-          developer: option.checks.QA_SUBSCRIPT.developer || false,
+          dismiss: key,
+          dismissAll: option.checks.BTN_ROLE_IN_NAME.dismissAll ? 'BTN_ROLE_IN_NAME' : false,
+          developer: option.checks.BTN_ROLE_IN_NAME.developer || true,
         });
       }
     });
   }
 
-  /* *************************************************************** */
-  /*  Warning: Find double nested layout components.                 */
-  /* *************************************************************** */
-  if (option.checks.QA_NESTED_COMPONENTS) {
-    Elements.Found.NestedComponents.forEach(($el) => {
-      const component = $el.querySelector(option.nestedComponentSources);
-      if (component) {
-        results.push({
-          element: $el,
-          type: option.checks.QA_NESTED_COMPONENTS.type || 'warning',
-          content: option.checks.QA_NESTED_COMPONENTS.content || Lang.sprintf('QA_NESTED_COMPONENTS'),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: prepareDismissal(`NESTED${$el.textContent}`),
-          developer: option.checks.QA_NESTED_COMPONENTS.developer || false,
-        });
-      }
-    });
-  }
-
-  /* *************************************************************** */
-  /*  Error: <li> elements must be contained in a <ul>/<ol>/<menu>.  */
-  /* *************************************************************** */
-  if (option.checks.QA_UNCONTAINED_LI) {
+  /* ******************************************************************* */
+  /* <li> elements must be contained in a <ul>/<ol>/<menu>. @since 4.0.0 */
+  /* ******************************************************************* */
+  if (option.checks.UNCONTAINED_LI) {
     Elements.Found.UncontainedLi.forEach(($el) => {
       results.push({
         element: $el,
-        type: option.checks.QA_UNCONTAINED_LI.type || 'error',
-        content: option.checks.QA_UNCONTAINED_LI.content || Lang._('QA_UNCONTAINED_LI'),
+        type: option.checks.UNCONTAINED_LI.type || 'error',
+        content: option.checks.UNCONTAINED_LI.content || Lang.sprintf('UNCONTAINED_LI'),
         inline: false,
         position: 'beforebegin',
         dismiss: prepareDismissal(`UNCONTAINEDLI${$el.textContent}`),
-        developer: option.checks.QA_UNCONTAINED_LI.developer || true,
+        dismissAll: option.checks.UNCONTAINED_LI.dismissAll ? 'UNCONTAINED_LI' : false,
+        developer: option.checks.UNCONTAINED_LI.developer || true,
       });
     });
   }
 
-  /* *************************************************************** */
-  /*  Error: Zooming and scaling must not be disabled.               */
-  /* *************************************************************** */
-  if (option.checks.QA_META_SCALABLE || option.checks.QA_META_MAX) {
+  /* ********************************************************* */
+  /*  Zooming and scaling must not be disabled. @since 4.0.0   */
+  /* ********************************************************* */
+  if (option.checks.META_SCALABLE || option.checks.META_MAX) {
     const metaViewport = document.querySelector('meta[name="viewport"]');
     if (metaViewport) {
       const content = metaViewport.getAttribute('content');
@@ -8977,27 +9198,62 @@ function checkQA(results, option) {
         }, {});
 
         // Check for user-scalable parameter.
-        if (option.checks.QA_META_SCALABLE && params['user-scalable'] === 'no') {
+        if (option.checks.META_SCALABLE && params['user-scalable'] === 'no') {
           results.push({
-            type: option.checks.QA_META_SCALABLE.type || 'error',
-            content: option.checks.QA_META_SCALABLE.content || Lang._('QA_META_SCALABLE'),
+            type: option.checks.META_SCALABLE.type || 'error',
+            content: option.checks.META_SCALABLE.content || Lang.sprintf('META_SCALABLE'),
             dismiss: prepareDismissal('SCALABLE'),
-            developer: option.checks.QA_META_SCALABLE.developer || true,
+            developer: option.checks.META_SCALABLE.developer || true,
           });
         }
 
         // Check maximum-scale parameter.
         const maxScale = parseFloat(params['maximum-scale']);
-        if (option.checks.QA_META_MAX && !Number.isNaN(maxScale) && maxScale < 2) {
+        if (option.checks.META_MAX && !Number.isNaN(maxScale) && maxScale < 2) {
           results.push({
-            type: option.checks.QA_META_MAX.type || 'error',
-            content: option.checks.QA_META_MAX.content || Lang._('QA_META_MAX'),
+            type: option.checks.META_MAX.type || 'error',
+            content: option.checks.META_MAX.content || Lang.sprintf('META_MAX'),
             dismiss: prepareDismissal('MAXSCALE'),
-            developer: option.checks.QA_META_MAX.developer || true,
+            developer: option.checks.META_MAX.developer || true,
           });
         }
       }
     }
+  }
+
+  /* ********************************************************* */
+  /*  Page shouldn't automatically refresh.     @since 4.0.0   */
+  /* ********************************************************* */
+  if (option.checks.META_REFRESH) {
+    const metaRefresh = document.querySelector('meta[http-equiv="refresh"]');
+    if (metaRefresh) {
+      results.push({
+        type: option.checks.META_REFRESH.type || 'error',
+        content: option.checks.META_REFRESH.content || Lang.sprintf('META_REFRESH'),
+        dismiss: prepareDismissal('REFRESH'),
+        developer: option.checks.META_REFRESH.developer || true,
+      });
+    }
+  }
+
+  console.log('@TO-DO: ADD translations for all new developer and QA checks.');
+
+  /* ********************************************************* */
+  /*  No tabindex values greater than 0.        @since 4.0.0   */
+  /* ********************************************************* */
+  if (option.checks.TABINDEX_ATTR) {
+    Elements.Found.TabIndex.forEach(($el) => {
+      results.push({
+        element: $el,
+        type: option.checks.TABINDEX_ATTR.type || 'error',
+        content: option.checks.TABINDEX_ATTR.content || Lang.sprintf('TABINDEX_ATTR'),
+        inline: false,
+        position: 'beforebegin',
+        dismiss: prepareDismissal(`TABINDEX${$el.tagName + $el.id + $el.className}`),
+        dismissAll: option.checks.TABINDEX_ATTR.dismissAll ? 'TABINDEX_ATTR' : false,
+        developer: option.checks.TABINDEX_ATTR.developer || true,
+      });
+    });
   }
 
   return results;
@@ -9165,6 +9421,7 @@ class Sa11y {
         checkImages(this.results, option);
         checkLabels(this.results, option);
         checkQA(this.results, option);
+        checkDeveloper(this.results, option);
         if (option.embeddedContentPlugin) checkEmbeddedContent(this.results, option);
         if (option.contrastPlugin) checkContrast(this.results, option);
         if (option.readabilityPlugin) checkReadability();

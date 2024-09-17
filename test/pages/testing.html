@@ -7,6 +7,7 @@
   <title>Testing</title>
   <link rel="stylesheet" href="./assets/main.css">
   <link rel="stylesheet" href="../../dist/css/sa11y.min.css" />
+  <meta http-equiv="refresh" content="60">
   <style>
     .color-mix {
       color: color-mix(in srgb, rgba(235, 52, 52, 1) 90%, white);
@@ -75,6 +76,8 @@
 
     <hr>
 
+    <p tabindex="4">Tabindex more than 1</p>
+
     <li>testing</li>
     <li>not contained in ol/ul/menu</li>
 
@@ -125,7 +128,32 @@
 
     <u>Underlined text</u>
 
+    <hr>
+    <button class="btn-primary"></button>
+    <hr>
+    <button class="btn-primary" aria-labelledby="asd"><i class="bi bi-emoji-smile-fill"></i></button>
+    <hr>
+    <button class="btn-primary"><i class="bi bi-emoji-smile-fill"></i></button>
+    <hr>
+    <button aria-hidden="true" class="btn-primary"><i class="bi bi-emoji-smile-fill"></i></button>
+    <hr>
+    <button aria-hidden="true" class="btn-primary"><i class="bi bi-emoji-smile-fill"></i>Has text</button>
+    <hr>
+    <button class="btn-primary"><i class="bi bi-emoji-smile-fill"></i>Has text</button>
+    <hr>
+    <button class="btn-primary"><i class="bi bi-emoji-smile-fill"></i>something button</button>
+    <hr>
+    <button class="btn-primary" aria-label="dog"><i class="bi bi-emoji-smile-fill"></i>something button</button>
+
+    <hr>
+    <h2>1:1 contrast ratio</h2>
+
     <p style="color:white">Testing 1:1 contrast ratio should be warning now, instead of error?</p>
+
+    <hr>
+    <h2>Tracking pixels</h2>
+    <img src="https://analytics.twitter.com/" height="1" width="1" style="display: none;">
+    <hr>
 
     <div role="tablist">
       Testing
@@ -134,6 +162,21 @@
         laudantium modi eius labore neque fugiat tenetur velit quaerat hic perspiciatis, fuga ex assumenda dignissimos.
       </div>
     </div>
+
+    <hr>
+    <h2>Text too small</h2>
+    <p style="font-size:9px !important">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Harum, dolorem,
+      tempore, est modi
+      nesciunt maiores ducimus sed iste necessitatibus esse alias quod numquam. Magni officiis ratione deleniti aliquid
+      obcaecati ad!</p>
+    <p style="font-size:10px !important">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Harum, dolorem,
+      tempore, est modi
+      nesciunt maiores ducimus sed iste necessitatibus esse alias quod numquam. Magni officiis ratione deleniti aliquid
+      obcaecati ad!</p>
+    <p style="font-size:11px !important">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Harum, dolorem,
+      tempore, est modi
+      nesciunt maiores ducimus sed iste necessitatibus esse alias quod numquam. Magni officiis ratione deleniti aliquid
+      obcaecati ad!</p>
     <hr>
     <details>
       <summary>Details</summary>
@@ -141,13 +184,7 @@
       <details>
         <summary>Details</summary>
         Something small enough to escape casual notice.
-        <details>
-          <summary>Details</summary>
-          Something small enough to escape casual notice.
-        </details>
-
       </details>
-
     </details>
 
     <hr>

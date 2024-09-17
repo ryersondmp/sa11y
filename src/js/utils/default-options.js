@@ -104,17 +104,22 @@ const defaultOptions = {
     IMAGE_PASS: true,
 
     // Link checks.
-    LINK_HIDDEN_FOCUSABLE: true,
     LINK_EMPTY_LABELLEDBY: true,
     LINK_EMPTY_NO_LABEL: true,
     LINK_STOPWORD: true,
     LINK_BEST_PRACTICES: true,
-    LINK_DOI: true,
+    LINK_DOI: {
+      dismissAll: true,
+    },
     LINK_URL: true,
     LINK_LABEL: true,
     LINK_EMPTY: true,
-    LINK_IDENTICAL_NAME: true,
-    LINK_NEW_TAB: true,
+    LINK_IDENTICAL_NAME: {
+      dismissAll: true,
+    },
+    LINK_NEW_TAB: {
+      dismissAll: true,
+    },
     LINK_FILE_EXT: true,
 
     // Form Labels checks.
@@ -136,9 +141,12 @@ const defaultOptions = {
     QA_BAD_LINK: true,
     QA_STRONG_ITALICS: true,
     QA_IN_PAGE_LINK: true,
-    QA_DOCUMENT: true,
-    QA_PDF: true,
-    QA_PAGE_LANG: true,
+    QA_DOCUMENT: {
+      dismissAll: true,
+    },
+    QA_PDF: {
+      dismissAll: true,
+    },
     QA_BLOCKQUOTE: true,
     TABLES_MISSING_HEADINGS: true,
     TABLES_SEMANTIC_HEADING: true,
@@ -146,18 +154,32 @@ const defaultOptions = {
     QA_FAKE_HEADING: true,
     QA_FAKE_LIST: true,
     QA_UPPERCASE: true,
-    QA_DUPLICATE_ID: true,
     QA_UNDERLINE: true,
-    QA_PAGE_TITLE: true,
     QA_SUBSCRIPT: true,
     QA_NESTED_COMPONENTS: true,
-    QA_UNCONTAINED_LI: true,
-    QA_META_SCALABLE: true,
-    QA_META_MAX: true,
     QA_JUSTIFY: true,
+    QA_SMALL_TEXT: true,
+
+    // Developer
+    PAGE_LANG: true,
+    DUPLICATE_ID: true,
+    META_TITLE: true,
+    HIDDEN_FOCUSABLE: true,
+    UNCONTAINED_LI: true,
+    META_SCALABLE: true,
+    META_MAX: true,
+    META_REFRESH: true,
+    TABINDEX_ATTR: true,
+
+    // Buttons
+    BTN_EMPTY: true,
+    BTN_EMPTY_LABELLEDBY: true,
+    BTN_ROLE_IN_NAME: true,
 
     // Contrast checks.
-    CONTRAST_WARNING: true,
+    CONTRAST_WARNING: {
+      dismissAll: true,
+    },
     CONTRAST_INPUT: true,
     CONTRAST_ERROR: true,
   },

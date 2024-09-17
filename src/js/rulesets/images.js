@@ -86,18 +86,24 @@ export default function checkImages(results, option) {
       return;
     }
 
+    // Ignore tracking pixels without explicit aria-hidden or nullified alt.
+    if ($el.height === 1 && $el.width === 1 && Utils.isElementHidden($el)) {
+      return;
+    }
+
     if (link && link.getAttribute('aria-hidden') === 'true') {
       // If linked image has aria-hidden, but is still focusable.
       const unfocusable = link.getAttribute('tabindex') === '-1';
-      if (option.checks.LINK_HIDDEN_FOCUSABLE && !unfocusable) {
+      if (option.checks.HIDDEN_FOCUSABLE && !unfocusable) {
         results.push({
           element: $el,
-          type: option.checks.LINK_HIDDEN_FOCUSABLE.type || 'error',
-          content: option.checks.LINK_HIDDEN_FOCUSABLE.content || Lang.sprintf('LINK_HIDDEN_FOCUSABLE'),
+          type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
+          content: option.checks.HIDDEN_FOCUSABLE.content || Lang.sprintf('HIDDEN_FOCUSABLE'),
           inline: false,
           position: 'beforebegin',
           dismiss: Utils.prepareDismissal(`IMAGEHIDDENFOCUSABLE${src}`),
-          developer: option.checks.LINK_HIDDEN_FOCUSABLE.developer || true,
+          dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll ? 'LINK_HIDDEN_FOCUSABLE' : false,
+          developer: option.checks.HIDDEN_FOCUSABLE.developer || true,
         });
       }
       return;
@@ -109,6 +115,8 @@ export default function checkImages(results, option) {
         const rule = (linkTextContentLength === 0)
           ? option.checks.MISSING_ALT_LINK
           : option.checks.MISSING_ALT_LINK_HAS_TEXT;
+        const conditional = linkTextContentLength === 0
+          ? 'MISSING_ALT_LINK' : 'MISSING_ALT_LINK_HAS_TEXT';
         if (rule) {
           results.push({
             element: $el,
@@ -118,6 +126,7 @@ export default function checkImages(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: Utils.prepareDismissal(`LINKIMAGENOALT${src + linkTextContentLength}`),
+            dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
         }
@@ -130,6 +139,7 @@ export default function checkImages(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: Utils.prepareDismissal(`IMAGENOALT${src}`),
+          dismissAll: option.checks.MISSING_ALT.dismissAll ? 'MISSING_ALT' : false,
           developer: option.checks.MISSING_ALT.developer || false,
         });
       }
@@ -156,6 +166,7 @@ export default function checkImages(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: Utils.prepareDismissal(`IMAGENOALT${src}`),
+            dismissAll: option.checks.MISSING_ALT.dismissAll ? 'MISSING_ALT' : false,
             developer: option.checks.MISSING_ALT.developer || false,
           });
         }
@@ -172,21 +183,24 @@ export default function checkImages(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: Utils.prepareDismissal(`DECIMAGE${src}`),
+            dismissAll: option.checks.IMAGE_DECORATIVE_CAROUSEL.dismissAll ? 'IMAGE_DECORATIVE_CAROUSEL' : false,
             developer: option.checks.IMAGE_DECORATIVE_CAROUSEL.developer || false,
           });
         } else if (link) {
           const rule = (linkTextContentLength === 0)
             ? option.checks.LINK_IMAGE_NO_ALT_TEXT
             : option.checks.LINK_IMAGE_TEXT;
+          const conditional = linkTextContentLength === 0
+            ? 'LINK_IMAGE_NO_ALT_TEXT' : 'LINK_IMAGE_TEXT';
           if (rule) {
             results.push({
               element: $el,
               type: rule.type || (linkTextContentLength === 0 ? 'error' : 'good'),
-              content: rule.content || Lang.sprintf(linkTextContentLength === 0
-                ? 'LINK_IMAGE_NO_ALT_TEXT' : 'LINK_IMAGE_TEXT'),
+              content: rule.content || Lang.sprintf(conditional),
               inline: false,
               position: 'beforebegin',
               dismiss: Utils.prepareDismissal(`IMAGETEXT${src + linkTextContentLength}`),
+              dismissAll: rule.dismissAll ? conditional : false,
               developer: rule.developer || false,
             });
           }
@@ -194,15 +208,17 @@ export default function checkImages(results, option) {
           const rule = (figcaption && figcaptionText.length)
             ? option.checks.IMAGE_FIGURE_DECORATIVE
             : option.checks.IMAGE_DECORATIVE;
+          const conditional = figcaption && figcaptionText.length
+            ? 'IMAGE_FIGURE_DECORATIVE' : 'IMAGE_DECORATIVE';
           if (rule) {
             results.push({
               element: $el,
               type: rule.type || 'warning',
-              content: rule.content || Lang.sprintf(figcaption && figcaptionText.length
-                ? 'IMAGE_FIGURE_DECORATIVE' : 'IMAGE_DECORATIVE'),
+              content: rule.content || Lang.sprintf(conditional),
               inline: false,
               position: 'beforebegin',
               dismiss: Utils.prepareDismissal(`FIG${src + figcaptionText}`),
+              dismissAll: rule.dismissAll ? conditional : false,
               developer: rule.developer || false,
             });
           }
@@ -214,6 +230,7 @@ export default function checkImages(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: Utils.prepareDismissal(`DECIMAGE${src}`),
+            dismissAll: option.checks.IMAGE_DECORATIVE.dismissAll ? 'IMAGE_DECORATIVE' : false,
             developer: option.checks.IMAGE_DECORATIVE.developer || false,
           });
         }
@@ -226,6 +243,7 @@ export default function checkImages(results, option) {
         const rule = (link)
           ? option.checks.LINK_ALT_FILE_EXT
           : option.checks.ALT_FILE_EXT;
+        const conditional = (link) ? 'LINK_ALT_FILE_EXT' : 'ALT_FILE_EXT';
         if (rule) {
           results.push({
             element: $el,
@@ -235,6 +253,7 @@ export default function checkImages(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: Utils.prepareDismissal(`IMAGE${src + altText}`),
+            dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
         }
@@ -243,6 +262,7 @@ export default function checkImages(results, option) {
         const rule = (link)
           ? option.checks.LINK_PLACEHOLDER_ALT
           : option.checks.ALT_PLACEHOLDER;
+        const conditional = (link) ? 'LINK_PLACEHOLDER_ALT' : 'ALT_PLACEHOLDER';
         if (rule) {
           results.push({
             element: $el,
@@ -252,6 +272,7 @@ export default function checkImages(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: Utils.prepareDismissal(`IMAGE${src + altText}`),
+            dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
         }
@@ -260,6 +281,7 @@ export default function checkImages(results, option) {
         const rule = (link)
           ? option.checks.LINK_SUS_ALT
           : option.checks.SUS_ALT;
+        const conditional = (link) ? 'LINK_SUS_ALT' : 'SUS_ALT';
         if (rule) {
           results.push({
             element: $el,
@@ -269,6 +291,7 @@ export default function checkImages(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: Utils.prepareDismissal(`IMAGE${src + altText}`),
+            dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
         }
@@ -277,6 +300,7 @@ export default function checkImages(results, option) {
         const rule = (link)
           ? option.checks.LINK_IMAGE_LONG_ALT
           : option.checks.IMAGE_ALT_TOO_LONG;
+        const conditional = (link) ? 'LINK_IMAGE_LONG_ALT' : 'IMAGE_ALT_TOO_LONG';
         if (rule) {
           results.push({
             element: $el,
@@ -286,6 +310,7 @@ export default function checkImages(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: Utils.prepareDismissal(`IMAGE${src + altText}`),
+            dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
         }
@@ -293,6 +318,7 @@ export default function checkImages(results, option) {
         const rule = (linkTextContentLength === 0)
           ? option.checks.LINK_IMAGE_ALT
           : option.checks.LINK_IMAGE_ALT_AND_TEXT;
+        const conditional = (linkTextContentLength === 0) ? 'LINK_IMAGE_ALT' : 'LINK_IMAGE_ALT_AND_TEXT';
         if (rule) {
           // Has both link text and alt text.
           const linkAccName = computeAccessibleName(link);
@@ -306,6 +332,7 @@ export default function checkImages(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: Utils.prepareDismissal(`IMAGELINK${src + altText}`),
+            dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
         }
@@ -321,6 +348,7 @@ export default function checkImages(results, option) {
               inline: false,
               position: 'beforebegin',
               dismiss: Utils.prepareDismissal(`FIGIMAGEDUPLICATE${src}`),
+              dismissAll: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.dismissAll ? 'IMAGE_FIGURE_DUPLICATE_ALT' : false,
               developer: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.developer || false,
             });
           }
@@ -333,6 +361,7 @@ export default function checkImages(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: Utils.prepareDismissal(`IMAGEPASS${src + altText}`),
+            dismissAll: option.checks.IMAGE_PASS.dismissAll ? 'IMAGE_PASS' : false,
             developer: option.checks.IMAGE_PASS.developer || false,
           });
         }
@@ -345,6 +374,7 @@ export default function checkImages(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: Utils.prepareDismissal(`IMAGEPASS${src + altText}`),
+          dismissAll: option.checks.IMAGE_PASS.dismissAll ? 'IMAGE_PASS' : false,
           developer: option.checks.IMAGE_PASS.developer || false,
         });
       }

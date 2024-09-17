@@ -42,6 +42,7 @@ export default function checkLabels(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: key,
+            dismissAll: option.checks.LABELS_MISSING_IMAGE_INPUT.dismissAll ? 'LABELS_MISSING_IMAGE_INPUT' : false,
             developer: option.checks.LABELS_MISSING_IMAGE_INPUT.developer || true,
           });
         }
@@ -58,6 +59,7 @@ export default function checkLabels(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: key,
+            dismissAll: option.checks.LABELS_INPUT_RESET.dismissAll ? 'LABELS_INPUT_RESET' : false,
             developer: option.checks.LABELS_INPUT_RESET.developer || false,
           });
         }
@@ -75,6 +77,7 @@ export default function checkLabels(results, option) {
               inline: false,
               position: 'beforebegin',
               dismiss: key,
+              dismissAll: option.checks.LABELS_MISSING_LABEL.dismissAll ? 'LABELS_MISSING_LABEL' : false,
               developer: option.checks.LABELS_MISSING_LABEL.developer || true,
             });
           }
@@ -87,6 +90,7 @@ export default function checkLabels(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: key,
+            dismissAll: option.checks.LABELS_ARIA_LABEL_INPUT.dismissAll ? 'LABELS_ARIA_LABEL_INPUT' : false,
             developer: option.checks.LABELS_ARIA_LABEL_INPUT.developer || true,
           });
         }
@@ -112,6 +116,8 @@ export default function checkLabels(results, option) {
               content: option.checks.LABELS_NO_FOR_ATTRIBUTE.content || Lang.sprintf('LABELS_NO_FOR_ATTRIBUTE', id),
               inline: false,
               position: 'beforebegin',
+              dismiss: key,
+              dismissAll: option.checks.LABELS_NO_FOR_ATTRIBUTE.dismissAll ? 'LABELS_NO_FOR_ATTRIBUTE' : false,
               developer: option.checks.LABELS_NO_FOR_ATTRIBUTE.developer || true,
             });
           }
@@ -124,6 +130,8 @@ export default function checkLabels(results, option) {
           content: option.checks.LABELS_MISSING_LABEL.content || Lang.sprintf('LABELS_MISSING_LABEL'),
           inline: false,
           position: 'beforebegin',
+          dismiss: key,
+          dismissAll: option.checks.LABELS_MISSING_LABEL.dismissAll ? 'LABELS_MISSING_LABEL' : false,
           developer: option.checks.LABELS_MISSING_LABEL.developer || true,
         });
       }

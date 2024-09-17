@@ -16,6 +16,7 @@ export default function checkQA(results, option) {
         inline: true,
         position: 'beforebegin',
         dismiss: Utils.prepareDismissal($el.tagName + $el.textContent),
+        dismissAll: option.checks.QA_BAD_LINK.dismissAll ? 'QA_BAD_LINK' : false,
         developer: option.checks.QA_BAD_LINK.developer || false,
       });
     });
@@ -34,6 +35,7 @@ export default function checkQA(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: Utils.prepareDismissal($el.tagName + $el.textContent),
+          dismissAll: option.checks.QA_STRONG_ITALICS.dismissAll ? 'QA_STRONG_ITALICS' : false,
           developer: option.checks.QA_STRONG_ITALICS.developer || false,
         });
       }
@@ -73,6 +75,7 @@ export default function checkQA(results, option) {
               inline: true,
               position: 'beforebegin',
               dismiss: key,
+              dismissAll: option.checks.QA_IN_PAGE_LINK.dismissAll ? 'QA_IN_PAGE_LINK' : false,
               developer: option.checks.QA_IN_PAGE_LINK.developer || false,
             });
           }
@@ -88,6 +91,7 @@ export default function checkQA(results, option) {
           inline: true,
           position: 'beforebegin',
           dismiss: key,
+          dismissAll: option.checks.QA_DOCUMENT.dismissAll ? 'QA_DOCUMENT' : false,
           developer: option.checks.QA_DOCUMENT.developer || false,
         });
       } else if (option.checks.QA_PDF && hasPDF) {
@@ -98,26 +102,12 @@ export default function checkQA(results, option) {
           inline: true,
           position: 'beforebegin',
           dismiss: key,
-          dismissAll: 'QA_PDF',
+          dismissAll: option.checks.QA_PDF.dismissAll ? 'QA_PDF' : false,
           developer: option.checks.QA_PDF.developer || false,
         });
       }
     }
   });
-
-  /* *************************************************************** */
-  /*  Error: Missing language tag. Lang should be at least 2 chars.  */
-  /* *************************************************************** */
-  if (option.checks.QA_PAGE_LANG) {
-    if (!Elements.Found.Language || Elements.Found.Language.length < 2) {
-      results.push({
-        type: option.checks.QA_PAGE_LANG.type || 'error',
-        content: option.checks.QA_PAGE_LANG.content || Lang.sprintf('QA_PAGE_LANG'),
-        dismiss: Utils.prepareDismissal('LANG'),
-        developer: option.checks.QA_PAGE_LANG.developer || true,
-      });
-    }
-  }
 
   /* *************************************************************** */
   /*  Warning: Find blockquotes used as headers.                     */
@@ -134,6 +124,7 @@ export default function checkQA(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: Utils.prepareDismissal(`BLOCKQUOTE${sanitizedText}`),
+          dismissAll: option.checks.QA_BLOCKQUOTE.dismissAll ? 'QA_BLOCKQUOTE' : false,
           developer: option.checks.QA_BLOCKQUOTE.developer || false,
         });
       }
@@ -155,6 +146,7 @@ export default function checkQA(results, option) {
         inline: false,
         position: 'beforebegin',
         dismiss: key,
+        dismissAll: option.checks.TABLES_MISSING_HEADINGS.dismissAll ? 'TABLES_MISSING_HEADINGS' : false,
         developer: option.checks.TABLES_MISSING_HEADINGS.developer || false,
       });
     }
@@ -167,6 +159,7 @@ export default function checkQA(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: key,
+          dismissAll: option.checks.TABLES_SEMANTIC_HEADING.dismissAll ? 'TABLES_SEMANTIC_HEADING' : false,
           developer: option.checks.TABLES_SEMANTIC_HEADING.developer || false,
         });
       });
@@ -180,6 +173,7 @@ export default function checkQA(results, option) {
           inline: false,
           position: 'afterbegin',
           dismiss: key,
+          dismissAll: option.checks.TABLES_EMPTY_HEADING.dismissAll ? 'TABLES_EMPTY_HEADING' : false,
           developer: option.checks.TABLES_EMPTY_HEADING.developer || false,
         });
       }
@@ -198,6 +192,7 @@ export default function checkQA(results, option) {
         inline: false,
         position: 'beforebegin',
         dismiss: Utils.prepareDismissal(`BOLD${sanitizedText}`),
+        dismissAll: option.checks.QA_FAKE_HEADING.dismissAll ? 'QA_FAKE_HEADING' : false,
         developer: option.checks.QA_FAKE_HEADING.developer || false,
       });
     };
@@ -334,6 +329,7 @@ export default function checkQA(results, option) {
             inline: false,
             position: 'beforebegin',
             dismiss: Utils.prepareDismissal(`LIST${p.textContent}`),
+            dismissAll: option.checks.QA_FAKE_LIST.dismissAll ? 'QA_FAKE_LIST' : false,
             developer: option.checks.QA_FAKE_LIST.developer || false,
           });
           activeMatch = firstPrefix;
@@ -362,6 +358,8 @@ export default function checkQA(results, option) {
       } else {
         thisText = Utils.getText($el);
       }
+
+      // Patterns
       const uppercasePattern = /([A-Z]{2,}[ ])([A-Z]{2,}[ ])([A-Z]{2,}[ ])([A-Z]{2,})/g;
       const detectUpperCase = thisText.match(uppercasePattern);
 
@@ -373,6 +371,7 @@ export default function checkQA(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: Utils.prepareDismissal(`UPPERCASE${thisText}`),
+          dismissAll: option.checks.QA_UPPERCASE.dismissAll ? 'QA_UPPERCASE' : false,
           developer: option.checks.QA_UPPERCASE.developer || false,
         });
       }
@@ -384,103 +383,24 @@ export default function checkQA(results, option) {
   }
 
   /* *************************************************************** */
-  /*  Error: Duplicate IDs                                           */
+  /*  Check for underlined and justify-aligned text.                 */
   /* *************************************************************** */
-  if (option.checks.QA_DUPLICATE_ID) {
-    // Look for duplicate IDs within each DOM.
-    const doms = document.querySelectorAll('body, [data-sa11y-has-shadow-root]');
-    doms.forEach((dom) => {
-      const allIds = new Set();
-      const findDuplicateIds = (ids, withinDOM) => {
-        ids.forEach(($el) => {
-          const { id } = $el;
+  if (option.checks.QA_UNDERLINE || option.checks.QA_JUSTIFY) {
+    const addUnderlineResult = ($el, inline) => {
+      const text = Utils.getText($el);
+      results.push({
+        element: $el,
+        type: option.checks.QA_UNDERLINE.type || 'warning',
+        content: option.checks.QA_UNDERLINE.content || Lang.sprintf('QA_UNDERLINE'),
+        inline,
+        position: 'beforebegin',
+        dismiss: Utils.prepareDismissal(`UNDERLINE${text}`),
+        dismissAll: option.checks.QA_UNDERLINE.dismissAll ? 'QA_UNDERLINE' : false,
+        developer: option.checks.QA_UNDERLINE.developer || false,
+      });
+    };
 
-          // Ignore empty IDs.
-          if (typeof id !== 'string' || id.trim().length === 0) {
-            return;
-          }
-
-          // Only flag duplicate IDs being referenced by same-page links, aria or a label.
-          // Reference: https://accessibilityinsights.io/info-examples/web/duplicate-id-aria/
-          if (id && !allIds.has(id)) {
-            allIds.add(id);
-          } else {
-            const ariaReference = Array.from(
-              withinDOM.querySelectorAll(`
-                a[href*="${id}"],
-                label[for*="${id}"],
-                [aria-labelledby*="${id}"],
-                [aria-controls*="${id}"],
-                [aria-owns*="${id}"]`),
-            );
-            if (ariaReference.length > 0) {
-              results.push({
-                element: $el,
-                type: option.checks.QA_DUPLICATE_ID.type || 'error',
-                content: option.checks.QA_DUPLICATE_ID.content || Lang.sprintf('QA_DUPLICATE_ID', id),
-                inline: true,
-                position: 'beforebegin',
-                dismiss: Utils.prepareDismissal(`DUPLICATEID${id}${$el.textContent}`),
-                developer: option.checks.QA_DUPLICATE_ID.developer || true,
-              });
-            }
-          }
-        });
-      };
-
-      // Look for duplicate IDs within shadow DOMs.
-      if (dom.shadowRoot) {
-        const shadowRootIds = Array.from(
-          dom.shadowRoot.querySelectorAll(`[id]:not(${Constants.Exclusions.Container})`),
-        );
-        findDuplicateIds(shadowRootIds, dom.shadowRoot);
-      }
-
-      // Look for duplicates IDs in document body.
-      const regularIds = Array.from(
-        dom.querySelectorAll(`[id]:not(${Constants.Exclusions.Container})`),
-      );
-      findDuplicateIds(regularIds, dom);
-    });
-  }
-
-  /* *************************************************************** */
-  /*  Warning: Flag underlined & justified text.                     */
-  /*  Thanks to Brian Teeman (@brianteeman)                          */
-  /* *************************************************************** */
-  // Helper function to add underline results.
-  const addUnderlineResult = ($el, inline) => {
-    const text = Utils.getText($el);
-    results.push({
-      element: $el,
-      type: option.checks.QA_UNDERLINE.type || 'warning',
-      content: option.checks.QA_UNDERLINE.content || Lang.sprintf('QA_UNDERLINE'),
-      inline,
-      position: 'beforebegin',
-      dismiss: Utils.prepareDismissal(`UNDERLINE${text}`),
-      developer: option.checks.QA_UNDERLINE.developer || false,
-    });
-  };
-
-  // For individual <u>underlined</u> elements.
-  if (option.checks.QA_UNDERLINE) {
-    Elements.Found.Underlines.forEach(($el) => {
-      addUnderlineResult($el, true);
-    });
-  }
-
-  // Get computed styles.
-  const computeStyle = ($el) => {
-    const style = getComputedStyle($el);
-    const { textDecorationLine, textAlign } = style;
-
-    // Underlined text.
-    if (option.checks.QA_UNDERLINE && textDecorationLine === 'underline') {
-      addUnderlineResult($el, false); // Inline false for computed underlines.
-    }
-
-    // Justified text.
-    if (option.checks.QA_JUSTIFY && textAlign === 'justify') {
+    const addJustifyResult = ($el) => {
       const text = Utils.getText($el);
       results.push({
         element: $el,
@@ -489,12 +409,56 @@ export default function checkQA(results, option) {
         inline: false,
         position: 'beforebegin',
         dismiss: Utils.prepareDismissal(`JUSTIFIED${text}`),
+        dismissAll: option.checks.QA_JUSTIFY.dismissAll ? 'QA_JUSTIFY' : false,
         developer: option.checks.QA_JUSTIFY.developer || false,
       });
-    }
-  };
+    };
 
-  if (option.checks.QA_UNDERLINE || option.checks.QA_JUSTIFY) {
+    const addSmallTextResult = ($el) => {
+      const text = Utils.getText($el);
+      results.push({
+        element: $el,
+        type: option.checks.QA_SMALL_TEXT.type || 'warning',
+        content: option.checks.QA_SMALL_TEXT.content || Lang._('QA_SMALL_TEXT'),
+        inline: false,
+        position: 'beforebegin',
+        dismiss: Utils.prepareDismissal(`SMALL${text}`),
+        dismissAll: option.checks.QA_SMALL_TEXT.dismissAll ? 'QA_SMALL_TEXT' : false,
+        developer: option.checks.QA_SMALL_TEXT.developer || false,
+      });
+    };
+
+    /**
+      * Check: Flag all <u> elements (underlined).
+      * @author Brian Teeman
+    */
+    if (option.checks.QA_UNDERLINE) {
+      Elements.Found.Underlines.forEach(($el) => {
+        addUnderlineResult($el, true);
+      });
+    }
+
+    // Get computed styles.
+    const computeStyle = ($el) => {
+      const style = getComputedStyle($el);
+      const { textDecorationLine, textAlign, fontSize } = style;
+
+      /** Check: underline formatted text. @author Brian Teeman */
+      if (option.checks.QA_UNDERLINE && textDecorationLine === 'underline') {
+        addUnderlineResult($el, false); // Inline false for computed underlines.
+      }
+
+      /** Check: Font size is less than or equal to 10px.
+       * Inspired by WebAim's WAVE check. @since 4.0.0 */
+      if (option.checks.QA_SMALL_TEXT && parseFloat(fontSize) <= 10) {
+        addSmallTextResult($el);
+      }
+
+      /** Check: Check if text is justify-aligned. @since 4.0.0 */
+      if (option.checks.QA_JUSTIFY && textAlign === 'justify') {
+        addJustifyResult($el);
+      }
+    };
     Elements.Found.Paragraphs.forEach(computeStyle);
     Elements.Found.Headings.forEach(computeStyle);
     Elements.Found.Lists.forEach(computeStyle);
@@ -503,22 +467,7 @@ export default function checkQA(results, option) {
   }
 
   /* *************************************************************** */
-  /*  Error: Page is missing meta page <title>                       */
-  /* *************************************************************** */
-  if (option.checks.QA_PAGE_TITLE) {
-    const metaTitle = document.querySelector('head title');
-    if (!metaTitle || metaTitle.textContent.trim().length === 0) {
-      results.push({
-        type: option.checks.QA_PAGE_TITLE.type || 'error',
-        content: option.checks.QA_PAGE_TITLE.content || Lang.sprintf('QA_PAGE_TITLE'),
-        dismiss: Utils.prepareDismissal('TITLE'),
-        developer: option.checks.QA_PAGE_TITLE.developer || true,
-      });
-    }
-  }
-
-  /* *************************************************************** */
-  /*  Warning: Find inappropriate use of <sup> and <sub> tags.       */
+  /*  Find inappropriate use of <sup> and <sub> tags.                */
   /* *************************************************************** */
   if (option.checks.QA_SUBSCRIPT) {
     Elements.Found.Subscripts.forEach(($el) => {
@@ -531,6 +480,7 @@ export default function checkQA(results, option) {
           inline: true,
           position: 'beforebegin',
           dismiss: Utils.prepareDismissal($el.tagName + text),
+          dismissAll: option.checks.QA_SUBSCRIPT.dismissAll ? 'QA_SUBSCRIPT' : false,
           developer: option.checks.QA_SUBSCRIPT.developer || false,
         });
       }
@@ -538,7 +488,7 @@ export default function checkQA(results, option) {
   }
 
   /* *************************************************************** */
-  /*  Warning: Find double nested layout components.                 */
+  /*  Find double nested layout components. @since 4.0.0             */
   /* *************************************************************** */
   if (option.checks.QA_NESTED_COMPONENTS) {
     Elements.Found.NestedComponents.forEach(($el) => {
@@ -551,66 +501,11 @@ export default function checkQA(results, option) {
           inline: false,
           position: 'beforebegin',
           dismiss: Utils.prepareDismissal(`NESTED${$el.textContent}`),
+          dismissAll: option.checks.QA_NESTED_COMPONENTS.dismissAll ? 'QA_NESTED_COMPONENTS' : false,
           developer: option.checks.QA_NESTED_COMPONENTS.developer || false,
         });
       }
     });
-  }
-
-  /* *************************************************************** */
-  /*  Error: <li> elements must be contained in a <ul>/<ol>/<menu>.  */
-  /* *************************************************************** */
-  if (option.checks.QA_UNCONTAINED_LI) {
-    Elements.Found.UncontainedLi.forEach(($el) => {
-      results.push({
-        element: $el,
-        type: option.checks.QA_UNCONTAINED_LI.type || 'error',
-        content: option.checks.QA_UNCONTAINED_LI.content || Lang._('QA_UNCONTAINED_LI'),
-        inline: false,
-        position: 'beforebegin',
-        dismiss: Utils.prepareDismissal(`UNCONTAINEDLI${$el.textContent}`),
-        developer: option.checks.QA_UNCONTAINED_LI.developer || true,
-      });
-    });
-  }
-
-  /* *************************************************************** */
-  /*  Error: Zooming and scaling must not be disabled.               */
-  /* *************************************************************** */
-  if (option.checks.QA_META_SCALABLE || option.checks.QA_META_MAX) {
-    const metaViewport = document.querySelector('meta[name="viewport"]');
-    if (metaViewport) {
-      const content = metaViewport.getAttribute('content');
-      if (content) {
-        // Parse the content attribute to extract parameters.
-        const params = content.split(',').reduce((acc, param) => {
-          const [key, value] = param.split('=').map((s) => s.trim());
-          acc[key] = value;
-          return acc;
-        }, {});
-
-        // Check for user-scalable parameter.
-        if (option.checks.QA_META_SCALABLE && params['user-scalable'] === 'no') {
-          results.push({
-            type: option.checks.QA_META_SCALABLE.type || 'error',
-            content: option.checks.QA_META_SCALABLE.content || Lang._('QA_META_SCALABLE'),
-            dismiss: Utils.prepareDismissal('SCALABLE'),
-            developer: option.checks.QA_META_SCALABLE.developer || true,
-          });
-        }
-
-        // Check maximum-scale parameter.
-        const maxScale = parseFloat(params['maximum-scale']);
-        if (option.checks.QA_META_MAX && !Number.isNaN(maxScale) && maxScale < 2) {
-          results.push({
-            type: option.checks.QA_META_MAX.type || 'error',
-            content: option.checks.QA_META_MAX.content || Lang._('QA_META_MAX'),
-            dismiss: Utils.prepareDismissal('MAXSCALE'),
-            developer: option.checks.QA_META_MAX.developer || true,
-          });
-        }
-      }
-    }
   }
 
   return results;

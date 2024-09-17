@@ -78,9 +78,8 @@ export function annotate(
   // Add dismiss all button if prop enabled & has addition check key.
   const dismissAllBtn = (
     option.dismissAnnotations
-    && option.dismissAll
-    && (type === 'warning' || type === 'good')
-    && dismissAll !== undefined)
+    && (option.dismissAll && typeof dismissAll === 'string')
+    && (type === 'warning' || type === 'good'))
     ? `<button data-sa11y-dismiss='${index}' data-sa11y-dismiss-all type='button'>${Lang._('DISMISS_ALL')}</button>` : '';
 
   // Create 'sa11y-annotation' web component for each annotation.

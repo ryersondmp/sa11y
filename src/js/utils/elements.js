@@ -29,6 +29,12 @@ const Elements = (function myElements() {
       Constants.Exclusions.Links,
     );
 
+    Found.Buttons = find(
+      'button, [role="button"]',
+      'root',
+      Constants.Exclusions.Container,
+    );
+
     Found.Inputs = find(
       'input, select, textarea',
       'root',
@@ -116,11 +122,17 @@ const Elements = (function myElements() {
       Constants.Exclusions.Container,
     ) : [];
 
-    Found.UncontainedLi = option.checks.QA_UNCONTAINED_LI ? find(
+    Found.UncontainedLi = option.checks.UNCONTAINED_LI ? find(
       'li:not(ul li):not(ol li):not(menu li)',
       'root',
       Constants.Exclusions.Container,
     ) : [];
+
+    Found.TabIndex = find(
+      '[tabindex]:not([tabindex="0"], [tabindex^="-"])',
+      'root',
+      Constants.Exclusions.Container,
+    );
 
     // iFrames
     Found.iframes = find(
