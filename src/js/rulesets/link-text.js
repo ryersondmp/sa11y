@@ -271,13 +271,27 @@ export default function checkLinkText(results, option) {
         }
       }
     } else if (hasAria) {
-      // If the link has any ARIA, append a "Good" link button.
-      if (option.checks.LINK_LABEL) {
+      // Button must have visible label as part of their accessible name.
+      const isVisibleTextInAccessibleName = Utils.isVisibleTextInAccessibleName($el);
+      if (option.checks.LABEL_IN_NAME && isVisibleTextInAccessibleName && $el.textContent.length !== 0) {
+        const sanitizedText = Utils.sanitizeHTML(accName);
+        results.push({
+          element: $el,
+          type: option.checks.LABEL_IN_NAME.type || 'warning',
+          content: option.checks.LABEL_IN_NAME.content || `${Lang.sprintf('LABEL_IN_NAME', sanitizedText)}`,
+          inline: true,
+          position: 'afterend',
+          dismiss: Utils.prepareDismissal(`LINK${href + linkTextTrimmed}`),
+          dismissAll: option.checks.LABEL_IN_NAME.dismissAll ? 'BTN_LABEL_IN_NAME' : false,
+          developer: option.checks.LABEL_IN_NAME.developer || true,
+        });
+      } else if (option.checks.LINK_LABEL) {
+        // If the link has any ARIA, append a "Good" link button.
         const sanitizedText = Utils.sanitizeHTML(linkText);
         results.push({
           element: $el,
           type: option.checks.LINK_LABEL.type || 'good',
-          content: option.checks.LINK_LABEL.content || Lang.sprintf('ACC_NAME', sanitizedText),
+          content: option.checks.LINK_LABEL.content || `${Lang.sprintf('ACC_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
           inline: true,
           position: 'afterend',
           dismiss: Utils.prepareDismissal(`LINK${href + linkTextTrimmed}`),
@@ -312,7 +326,7 @@ export default function checkLinkText(results, option) {
             results.push({
               element: $el,
               type: option.checks.LINK_IDENTICAL_NAME.type || 'warning',
-              content: option.checks.LINK_IDENTICAL_NAME.content || Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText),
+              content: option.checks.LINK_IDENTICAL_NAME.content || `${Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
               inline: true,
               position: 'beforebegin',
               dismiss: Utils.prepareDismissal(`LINK${href + linkTextTrimmed}`),

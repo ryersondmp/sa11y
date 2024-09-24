@@ -33,8 +33,8 @@ export default function checkLabels(results, option) {
       const key = Utils.prepareDismissal(`INPUT${type + inputName}`);
 
       // Error: Input with type="image" without accessible name or alt.
-      if (type === 'image' && (!alt || alt.trim() === '')) {
-        if (option.checks.LABELS_MISSING_IMAGE_INPUT && !hasAria && !hasTitle) {
+      if (type === 'image') {
+        if (option.checks.LABELS_MISSING_IMAGE_INPUT && (!alt || alt.trim() === '') && !hasAria && !hasTitle) {
           results.push({
             element: $el,
             type: option.checks.LABELS_MISSING_IMAGE_INPUT.type || 'error',
@@ -86,7 +86,7 @@ export default function checkLabels(results, option) {
           results.push({
             element: $el,
             type: option.checks.LABELS_ARIA_LABEL_INPUT.type || 'warning',
-            content: option.checks.LABELS_ARIA_LABEL_INPUT.content || Lang.sprintf('LABELS_ARIA_LABEL_INPUT', sanitizedText),
+            content: option.checks.LABELS_ARIA_LABEL_INPUT.content || `${Lang.sprintf('LABELS_ARIA_LABEL_INPUT', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
             inline: false,
             position: 'beforebegin',
             dismiss: key,

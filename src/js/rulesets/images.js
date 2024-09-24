@@ -175,14 +175,15 @@ export default function checkImages(results, option) {
 
       // Decorative images.
       if (decorative) {
-        if (option.checks.IMAGE_DECORATIVE_CAROUSEL && $el.closest(option.decorativeShouldHaveAlt)) {
+        const carouselSources = option.checks.IMAGE_DECORATIVE_CAROUSEL.sources || '.carousel';
+        if (option.checks.IMAGE_DECORATIVE_CAROUSEL && $el.closest(carouselSources)) {
           results.push({
             element: $el,
             type: option.checks.IMAGE_DECORATIVE_CAROUSEL.type || 'warning',
             content: option.checks.IMAGE_DECORATIVE_CAROUSEL.content || Lang.sprintf('IMAGE_DECORATIVE_CAROUSEL'),
             inline: false,
             position: 'beforebegin',
-            dismiss: Utils.prepareDismissal(`DECIMAGE${src}`),
+            dismiss: Utils.prepareDismissal(`CAROUSEL${src}`),
             dismissAll: option.checks.IMAGE_DECORATIVE_CAROUSEL.dismissAll ? 'IMAGE_DECORATIVE_CAROUSEL' : false,
             developer: option.checks.IMAGE_DECORATIVE_CAROUSEL.developer || false,
           });
@@ -319,16 +320,21 @@ export default function checkImages(results, option) {
           ? option.checks.LINK_IMAGE_ALT
           : option.checks.LINK_IMAGE_ALT_AND_TEXT;
         const conditional = (linkTextContentLength === 0) ? 'LINK_IMAGE_ALT' : 'LINK_IMAGE_ALT_AND_TEXT';
+
         if (rule) {
           // Has both link text and alt text.
           const linkAccName = computeAccessibleName(link);
           const removeWhitespace = Utils.removeWhitespace(linkAccName);
           const sanitizedText = Utils.sanitizeHTML(removeWhitespace);
+
+          const tooltip = (linkTextContentLength === 0)
+            ? Lang.sprintf('LINK_IMAGE_ALT', altText)
+            : `${Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT', altText, sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`;
+
           results.push({
             element: $el,
             type: rule.type || 'warning',
-            content: rule.content || Lang.sprintf(linkTextContentLength === 0
-              ? 'LINK_IMAGE_ALT' : 'LINK_IMAGE_ALT_AND_TEXT', altText, sanitizedText),
+            content: rule.content || tooltip,
             inline: false,
             position: 'beforebegin',
             dismiss: Utils.prepareDismissal(`IMAGELINK${src + altText}`),

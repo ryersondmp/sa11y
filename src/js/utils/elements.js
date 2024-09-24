@@ -116,8 +116,9 @@ const Elements = (function myElements() {
       Constants.Exclusions.Container,
     ) : [];
 
-    Found.NestedComponents = option.nestedComponentSources ? find(
-      option.nestedComponentSources,
+    const nestedSources = option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
+    Found.NestedComponents = nestedSources ? find(
+      nestedSources,
       'root',
       Constants.Exclusions.Container,
     ) : [];
@@ -136,7 +137,7 @@ const Elements = (function myElements() {
 
     // iFrames
     Found.iframes = find(
-      'iframe:not(hidden), audio, video',
+      'iframe, audio, video',
       'root',
       Constants.Exclusions.Container,
     );

@@ -1,4 +1,5 @@
 import find from './find';
+import { computeAccessibleName } from './computeAccessibleName';
 
 /**
  * Checks if the document has finished loading, and if so, immediately calls the provided callback function. Otherwise, waits for the 'load' event to fire and then calls the callback function.
@@ -491,4 +492,37 @@ export function generateElementPreview(issueObject) {
   const tagHandler = tag[issueElement.tagName];
   const elementPreview = tagHandler ? tagHandler(issueElement) : htmlPath;
   return elementPreview;
+}
+
+/**
+ * Check if an element's visible text is included in the accessible name.
+ * To minimize false positives: iterate through all child nodes of the element, checking for visibility.
+ * @param {element} $el The element to test.
+ * @returns {boolean}
+ */
+export function isVisibleTextInAccessibleName($el) {
+  let text = '';
+  const accName = computeAccessibleName($el).toLowerCase();
+  const nodes = $el.childNodes;
+  nodes.forEach((node) => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      text += node.textContent;
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      // Only return text content if it's not hidden.
+      if (!isElementVisuallyHiddenOrHidden(node)) {
+        text += node.textContent;
+      }
+    }
+  });
+
+  // Ignore emojis
+  const emojiRegex = /[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu;
+  const ignoreEmojis = text.replace(emojiRegex, '');
+
+  // Check if visible text is included in accessible name.
+  const trimmed = removeWhitespace(ignoreEmojis).toLowerCase();
+  if (trimmed.length !== 0 && !accName.includes(trimmed)) {
+    return true;
+  }
+  return false;
 }

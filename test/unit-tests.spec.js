@@ -294,6 +294,13 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
+  test('Decorative image within a carousel component', async () => {
+    const issue = await checkTooltip(
+      page, 'warning-image-decorative-carousel', 'images in a carousel or gallery',
+    );
+    expect(issue).toBe(true);
+  });
+
   test('Alt text is too long', async () => {
     const issue = await checkTooltip(
       page, 'warning-alt-text-is-too-long', 'Alt text description is <strong>too long</strong>',
@@ -527,7 +534,7 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Image with valid aria-labelledby as alt', async () => {
     const issue = await checkTooltip(
-      page, 'pass-image-valid-aria-labelledby', '</strong> about apples',
+      page, 'pass-image-valid-aria-labelledby', '</strong> Learn more about apples',
     );
     expect(issue).toBe(true);
   });
@@ -535,6 +542,13 @@ test.describe('Sa11y Unit Tests', () => {
   test('Linked image with valid aria-label as alt', async () => {
     const issue = await checkTooltip(
       page, 'warning-image-link-valid-aria-label', 'Image link contains alt text. Does the alt text describe',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Ignore tracking pixels', async () => {
+    const issue = await noAnnotation(
+      page, 'nothing-tracking-pixel',
     );
     expect(issue).toBe(true);
   });
@@ -723,6 +737,20 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
+  test('Link with aria-labelledby referencing invalid ID', async () => {
+    const issue = await checkTooltip(
+      page, 'error-arialabelledby-invalid-reference', 'Link has an <code>aria-labelledby',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Link with aria-label that does not contain visible text', async () => {
+    const issue = await checkTooltip(
+      page, 'warning-link-label-in-name', 'The visible text for this element appears to be different than the accessible name',
+    );
+    expect(issue).toBe(true);
+  });
+
   /* **************** */
   /*  QA              */
   /* **************** */
@@ -791,6 +819,35 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
+  test('Justify-aligned text', async () => {
+    const issue = await checkTooltip(
+      page, 'warning-justify', 'Avoid using justified text',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Small text but no warning', async () => {
+    const ids = [
+      'nothing-small-text-1',
+      'nothing-small-text-2',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await noAnnotation(page, id);
+      expect(issue).toBe(true);
+    });
+  });
+
+  test('Small text size warning', async () => {
+    const ids = [
+      'warning-small-text-1',
+      'warning-small-text-1',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await checkTooltip(page, id, 'Small text is harder to read');
+      expect(issue).toBe(true);
+    });
+  });
+
   test('Uppercase text', async () => {
     const ids = [
       'warning-allcaps-1',
@@ -843,6 +900,13 @@ test.describe('Sa11y Unit Tests', () => {
     });
   });
 
+  test('Uncontained list items', async () => {
+    const issue = await checkTooltip(
+      page, 'error-uncontained-list-items', 'list items must be placed inside',
+    );
+    expect(issue).toBe(true);
+  });
+
   test('Table with numbers should not be flagged as fake list', async () => {
     const issue = await noAnnotation(
       page, 'nothing-warning-list-table',
@@ -864,13 +928,6 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
-  test('Link used as button with proper role', async () => {
-    const issue = await noAnnotation(
-      page, 'nothing-same-page-with-role',
-    );
-    expect(issue).toBe(true);
-  });
-
   test('Elements with duplicate IDs but not referenced by anything', async () => {
     const issue = await noAnnotation(
       page, 'nothing-duplicate-id',
@@ -878,11 +935,23 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
-  test('In-page link referencing duplicate IDs', async () => {
+  test('Same-page link referencing duplicate IDs', async () => {
     const issue = await checkTooltip(
       page, 'error-broken-same-page-duplicate-id', 'Duplicate ID',
     );
     expect(issue).toBe(true);
+  });
+
+  test('Link with button role, aria-controls, or has onclick', async () => {
+    const ids = [
+      'nothing-same-page-with-role',
+      'nothing-same-page-onclick',
+      'nothing-same-page-ariacontrols',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await noAnnotation(page, id);
+      expect(issue).toBe(true);
+    });
   });
 
   test('Valid in-page links with various encoded or decoded href and id', async () => {
@@ -937,7 +1006,7 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Nested layout components', async () => {
     const issue = await checkTooltip(
-      page, 'warning-nested', 'Avoid nesting interactive layout components',
+      page, 'warning-nested', 'Avoid nesting interactive layout',
     );
     expect(issue).toBe(true);
   });
@@ -956,10 +1025,14 @@ test.describe('Sa11y Unit Tests', () => {
   });
 
   test('Contrast warning', async () => {
-    const issue = await checkTooltip(
-      page, 'warning-contrast', 'contrast of this text is unknown',
-    );
-    expect(issue).toBe(true);
+    const ids = [
+      'warning-contrast',
+      'warning-contrast-1',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await checkTooltip(page, id, 'contrast of this text is unknown');
+      expect(issue).toBe(true);
+    });
   });
 
   /* **************** */
@@ -1084,7 +1157,7 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Video with track element (empty src)', async () => {
     const issue = await checkTooltip(
-      page, 'nothing-video-null-track', 'captions for all audio and video content',
+      page, 'warning-video-null-track', 'captions for all audio and video content',
     );
     expect(issue).toBe(true);
   });
@@ -1102,4 +1175,92 @@ test.describe('Sa11y Unit Tests', () => {
     );
     expect(issue).toBe(true);
   });
+
+  /* **************** */
+  /* Developer checks */
+  /* **************** */
+
+  test('Positive tabindex attribute', async () => {
+    const issue = await checkTooltip(
+      page, 'error-positive-tabindex', 'Element should not have a <code>tabindex</code> attribute',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Tabindex with 0 or negative', async () => {
+    const ids = [
+      'nothing-tabindex-0',
+      'nothing-negative-tabindex',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await noAnnotation(page, id);
+      expect(issue).toBe(true);
+    });
+  });
+
+  /* **************** */
+  /*  Buttons         */
+  /* **************** */
+
+  test('Buttons with missing labels', async () => {
+    const ids = [
+      'error-button-empty-1',
+      'error-button-empty-2',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await checkTooltip(page, id, 'Button is missing an accessible name');
+      expect(issue).toBe(true);
+    });
+
+    const issue2 = await checkTooltip(
+      page, 'error-button-arialabelledby', 'Button has an <code>aria-labelledby',
+    );
+    expect(issue2).toBe(true);
+  });
+
+  test('Button has aria-hidden but still focusable', async () => {
+    const issue = await checkTooltip(
+      page, 'error-button-ariahidden', 'Link or button has <code>aria-hidden',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Buttons should pass', async () => {
+    const ids = [
+      'nothing-button-1',
+      'nothing-button-2',
+      'nothing-button-3',
+      'nothing-button-4',
+      'nothing-button-5',
+      'nothing-button-6',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await noAnnotation(page, id);
+      expect(issue).toBe(true);
+    });
+  });
+
+  test('Buttons with word "button" in acc name', async () => {
+    const ids = [
+      'warning-button-with-button-text-1',
+      'warning-button-with-button-text-2',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await checkTooltip(page, id, 'Do not include the word "button"');
+      expect(issue).toBe(true);
+    });
+  });
+
+  test('Buttons with visible name not in accessible name', async () => {
+    const ids = [
+      'warning-label-in-name-1',
+      'warning-label-in-name-2',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await checkTooltip(page, id, 'The visible text for this element appears to be different than the accessible name');
+      expect(issue).toBe(true);
+    });
+  });
+
+  // End of tests.
 });

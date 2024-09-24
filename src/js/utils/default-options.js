@@ -55,7 +55,6 @@ const defaultOptions = {
   // Customizing checks.
   altTextMaxCharLength: 250,
   susAltStopWords: '',
-  decorativeShouldHaveAlt: '.carousel',
   linkStopWords: '',
   extraPlaceholderStopWords: '',
   headingMaxCharLength: 170,
@@ -64,7 +63,6 @@ const defaultOptions = {
   URLTextMaxCharLength: 40,
   linksToFlag: '',
   documentLinks: 'a[href$=".doc"], a[href$=".docx"], a[href*=".doc?"], a[href*=".docx?"], a[href$=".ppt"], a[href$=".pptx"], a[href*=".ppt?"], a[href*=".pptx?"], a[href^="https://drive.google.com/file"], a[href^="https://docs.google."], a[href^="https://sway."]',
-  nestedComponentSources: '[role="tablist"], details',
 
   // Embedded content sources
   videoContent: 'youtube.com, vimeo.com, yuja.com, panopto.com',
@@ -160,18 +158,20 @@ const defaultOptions = {
     QA_JUSTIFY: true,
     QA_SMALL_TEXT: true,
 
-    // Developer
-    PAGE_LANG: true,
-    DUPLICATE_ID: true,
-    META_TITLE: true,
-    HIDDEN_FOCUSABLE: true,
-    UNCONTAINED_LI: true,
+    // Meta checks
+    META_LANG: true,
+
     META_SCALABLE: true,
     META_MAX: true,
     META_REFRESH: true,
-    TABINDEX_ATTR: true,
 
-    // Buttons
+    // Developer checks
+    DUPLICATE_ID: true,
+    META_TITLE: true,
+    UNCONTAINED_LI: true,
+    TABINDEX_ATTR: true,
+    HIDDEN_FOCUSABLE: true,
+    LABEL_IN_NAME: true,
     BTN_EMPTY: true,
     BTN_EMPTY_LABELLEDBY: true,
     BTN_ROLE_IN_NAME: true,

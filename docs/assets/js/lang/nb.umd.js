@@ -155,6 +155,8 @@
         'dukker opp',
       ],
       FILE_TYPE_PHRASES: ['dokument', 'regneark', 'kalkulasjonsark', 'komprimert fil', 'arkivert fil', 'regneark', 'powerpoint', 'presentasjon', 'installasjon', 'video', 'lyd', 'pdf'],
+
+      // Readability
       READABILITY: 'Lesbarhet',
       AVG_SENTENCE: 'Gjennomsnittlig antall ord per setning:',
       COMPLEX_WORDS: 'Komplekse ord:',
@@ -164,6 +166,8 @@
       FAIRLY_DIFFICULT: 'Ganske vanskelig',
       READABILITY_NO_CONTENT: 'Kunne ikke beregne lesbarhetspoeng. Ingen avsnitt <code>&lt;p&gt;</code> eller listeinnhold <code>&lt;li&gt;</code> funnet.',
       READABILITY_NOT_ENOUGH: 'Ikke nok innhold til å beregne lesbarhetspoeng.',
+
+      // Headings
       HEADING_SKIPPED_LEVEL: 'Det brukes ikke fortløpende overskriftsnivåer. Overskrifter skal aldri hoppe over nivåer, eller gå fra <strong>Overskrift %(prevLevel)</strong> til <strong {C}>Overskrift %(level)</strong>.',
       HEADING_EMPTY: 'Tom overskrift funnet! Løsningen er å slette denne linjen eller endre formatet fra <strong {C}>Overskrift %(level)</strong> til <strong>Normal</strong> eller <strong>Avsnitt</strong>.',
       HEADING_LONG: 'Overskriften er lang! Overskrifter skal brukes til å organisere innholdet og formidle struktur. De bør være korte, informative og unike. Hold overskriftene på mindre enn 160 tegn (ikke mer enn en setning). <hr> <strong {C}>%(HEADING_LENGTH) Tegn</strong>',
@@ -172,19 +176,20 @@
       HEADING_EMPTY_WITH_IMAGE: 'Overskrift har ingen tekst, men inneholder et bilde. Hvis dette ikke er en overskrift, endrer du formatet fra <strong {C}>Overskrift %(level)</strong> til <strong>Normal</strong> eller <strong>Avsnitt</strong>. Ellers kan du legge til alt-tekst til bildet hvis det ikke er dekorativt.',
       PANEL_HEADING_MISSING_ONE: 'Manglende overskrift 1!',
       PANEL_NO_HEADINGS: 'Ingen overskrifter funnet.',
+
+      // Links
       LINK_EMPTY: 'Fjern tomme lenker uten tekst.',
       LINK_EMPTY_LABELLEDBY: 'Lenken har en verdi for <code>aria-labelledby</code>, som enten er tom eller ikke samsvarer med verdien av attributtet <code>id</code> til et annet element på siden.',
       LINK_EMPTY_NO_LABEL: 'Lenken har ikke tydelig tekst som er synlig for skjermlesere og andre hjelpemidler. Slik løser du problemet: <ul><li>Legg til en kortfattet tekst som beskriver hvor lenken fører deg.</li><li>Hvis det er en <a href="https://a11y-101.com/development/icons-and-links">ikonlenke eller SVG,</a> mangler den sannsynligvis en beskrivende etikett.</li><li>Hvis du tror at denne lenken er en feil på grunn av en copy/paste-feil, bør du vurdere å slette den.</li></ul>',
-      ACC_NAME: '<strong {B}>Lenketikett</strong> %(TEXT)',
       LINK_STOPWORD: 'Lenketeksten er kanskje ikke beskrivende nok uten sammenheng: <strong {C}>%(ERROR)</strong> <hr> <strong>Tips!</strong> Lenketekst bør alltid være tydelig, unik og meningsfull. Unngå vanlige ord som &quot;klikk her&quot; eller &quot;les mer&quot;',
       LINK_BEST_PRACTICES: 'Vurder å erstatte lenketeksten: <strong {C}>%(ERROR)</strong> <hr> <ul><li>&quot;Klikk her&quot; setter fokus på musemekanikk, når mange ikke bruker mus eller kanskje ser dette nettstedet på en mobil enhet. Vurder å bruke et annet verb som er relatert til oppgaven.</li><li>Ungå å bruke HTML-symboler som call to actions med mindre de er skjult for hjelpemidler.</li></ul>',
       LINK_URL: 'Lengre, mindre forståelige nettadresser som brukes som lenketekst, kan være vanskelige å lytte til med hjelpemidler. I de fleste tilfeller er det bedre å bruke tekst som kan leses av mennesker i stedet for URL-adressen. Korte nettadresser (for eksempel et nettsteds hjemmeside) er ok. <hr> <strong>Tips!</strong> Lenketeksten bør alltid være tydelig, unik og meningsfull, slik at den kan forstås utenfor kontekst.',
       LINK_DOI: '<a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APA Style-guiden</a> anbefaler at du bruker beskrivende lenker til nettsider eller rene nettressurser ved å legge URL-adressen eller DOI-en til verket rundt tittelen. Lengre, mindre forståelige URL-er som brukes som lenketekst, kan være vanskelige å forstå når de brukes med hjelpemidler.',
       LINK_NEW_TAB: 'Lenken åpnes i en ny fane eller et nytt vindu uten forvarsel. Det kan virke forvirrende, særlig for personer som har problemer med å oppfatte visuelt innhold. For det andre er det ikke alltid en god praksis å kontrollere andres opplevelse eller ta avgjørelser for dem. Angi at lenken åpnes i et nytt vindu i lenketeksten. <hr> <strong>Tips!</strong> Lær beste praksis: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">åpning av lenker i nye nettleservinduer og faner.</a>',
       LINK_FILE_EXT: 'Lenken peker til en PDF-fil eller en nedlastbar fil (f.eks. MP3, Zip, Word-dokument) uten advarsel. Oppgi filtypen i lenketeksten. Hvis det er en stor fil, bør du vurdere å inkludere filstørrelsen. <hr> <strong>Eksempel:</strong> Executive Report (PDF, 3 MB)',
-      LINK_IDENTICAL_NAME: 'Lenken har samme tekst som en annen lenke, selv om den peker til en annen side. Flere lenker med samme tekst kan skape forvirring for personer som bruker skjermlesere. <hr> Vurder å gjøre følgende lenke mer beskrivende for å skille den fra andre lenker: <strong {C}>%(TEXT)</strong>',
-      BTN_EMPTY: 'Knappen mangler et tilgjengelig navn som beskriver formålet. Lær hvordan du lager en <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">tilgjengelig knapp.</a>',
-      BTN_EMPTY_LABELLEDBY: 'Knappen har en <code>aria-labelledby</code>-verdi som er tom eller ikke samsvarer med <code>id</code>-verdien til et annet element på siden.',
+      LINK_IDENTICAL_NAME: 'Lenken har samme tekst som en annen lenke, selv om den peker til en annen side. Flere lenker med samme tekst kan skape forvirring for personer som bruker skjermlesere. <strong>Vurder å gjøre følgende lenke mer beskrivende for å skille den fra andre lenker.</strong> <hr> <strong {B}>Tilgjengelig navn</strong> <strong {C}>%(TEXT)</strong>',
+
+      // Images
       MISSING_ALT_LINK_HAS_TEXT: 'Bildet brukes som lenke med omkringliggende tekst, selv om alt-attributtet skal være merket som dekorativt eller null.',
       MISSING_ALT_LINK: 'Bildet brukes som lenke, men mangler alt-tekst! Sørg for at alt-teksten beskriver hvor lenken fører deg.',
       MISSING_ALT: 'Manglende alt-tekst! Hvis bildet formidler en historie, en stemning eller viktig informasjon - sørg for å beskrive bildet.',
@@ -194,52 +199,80 @@
       ALT_FILE_EXT: 'Filtypen i alt-teksten som er funnet. Hvis bildet formidler en historie, en stemning eller viktig informasjon - husk å beskrive bildet. Fjern dette: <strong {C}>%(ERROR)</strong> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
       ALT_PLACEHOLDER: 'Ikke-beskrivende alt-tekst eller plassholder-alt-tekst funnet. Erstatt følgende alt-tekst med noe mer meningsfylt. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
       SUS_ALT: 'Hjelpemidler indikerer allerede at dette er et bilde, så &quot;<strong {C}>%(ERROR)</strong>&quot; kan være overflødig. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
-      LINK_HIDDEN_FOCUSABLE: 'Lenken har <code>aria-hidden=&quot;true&quot;</code>, men er fortsatt tastaturfokuserbar. Hvis du har til hensikt å skjule en overflødig eller duplisert lenke, legg til <code>tabindex=&quot;-1&quot;</code> også.',
-      HIDDEN_FOCUSABLE: 'Lenken eller knappen har <code>aria-hidden=&quot;true&quot;</code>, men kan fortsatt fokuseres med tastaturet. Hvis du har til hensikt å skjule en duplikatlenke eller -knapp, legg også til <code>tabindex=&quot;-1&quot;</code>. Ellers bør <code>aria-hidden=&quot;true&quot;</code> ikke brukes på elementer som kan motta fokus. <hr> Lær mer om <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden-attributtet.</a>',
       LINK_IMAGE_NO_ALT_TEXT: 'Bildet i lenken er merket som dekorativt, og det er ingen lenketekst. Legg til alt-tekst i bildet som beskriver lenkens destinasjon.',
       LINK_IMAGE_TEXT: 'Bildet er merket som dekorativt, selv om lenken bruker den omkringliggende teksten som en beskrivende etikett.',
       LINK_IMAGE_LONG_ALT: 'Alt-tekstbeskrivelsen på et lenket bilde er <strong>for lang</strong>. Alt-teksten på lenkede bilder bør beskrive hvor lenken tar deg, ikke en bokstavelig beskrivelse av bildet. <strong>Vurder å bruke tittelen på siden det lenkes til som alt-tekst.</strong> <hr> {ALT} {L} <strong {B}>%(altLength) Tegn</strong> <strong {C}>%(ALT_TEXT)</strong>',
       LINK_IMAGE_ALT: 'Bildelenken inneholder alt-tekst. <strong>Beskriver alt-teksten hvor lenken fører deg?</strong> Vurder å bruke tittelen på siden det lenkes til som alt-tekst. <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
-      LINK_IMAGE_ALT_AND_TEXT: 'Bildelenken inneholder <strong>både alt-tekst og omkringliggende lenketekst.</strong> Hvis dette bildet er dekorativt og brukes som en funksjonell lenke til en annen side, bør du vurdere å merke bildet som dekorativt eller null - den omkringliggende lenketeksten bør være tilstrekkelig. <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong> <hr> <strong {B}>Lenketikett</strong> <strong {C}>%(TEXT)</strong>',
+      LINK_IMAGE_ALT_AND_TEXT: 'Bildelenken inneholder <strong>både alt-tekst og omkringliggende lenketekst.</strong> Hvis dette bildet er dekorativt og brukes som en funksjonell lenke til en annen side, bør du vurdere å merke bildet som dekorativt eller null - den omkringliggende lenketeksten bør være tilstrekkelig. <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong> <hr> <strong {B}>Tilgjengelig navn</strong> <strong {C}>%(TEXT)</strong>',
       IMAGE_FIGURE_DECORATIVE: 'Bildet er merket som <strong>dekorativt</strong> og vil bli ignorert av hjelpemidler. <hr> Selv om det er oppgitt en <strong>caption</strong>, bør bildet også ha en alt-tekst i de fleste tilfeller. <ul><li>Alternativteksten bør gi en kortfattet beskrivelse av hva som er i bildet.</li><li>Bildeteksten bør vanligvis gi kontekst for å relatere bildet til det omkringliggende innholdet, eller gi oppmerksomhet til en bestemt del av informasjonen.</li></ul> Lær mer: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt versus figcaption.</a>',
       IMAGE_FIGURE_DUPLICATE_ALT: 'Ikke bruk nøyaktig de samme ordene i alt- og bildeteksten. Skjermlesere vil annonsere informasjonen to ganger. <ul><li>Alt-teksten bør gi en kortfattet beskrivelse av hva som er i bildet.</li><li>Bildeteksten bør vanligvis gi kontekst for å relatere bildet til det omkringliggende innholdet, eller gi oppmerksomhet til en bestemt del av informasjonen.</li></ul> Les mer: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt versus figcaption.</a> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
       IMAGE_DECORATIVE: 'Bildet er merket som <strong>dekorativt</strong> og vil bli ignorert av hjelpemidler. Hvis bildet formidler en historie, en stemning eller viktig informasjon - husk å legge til alt-tekst.',
       IMAGE_DECORATIVE_CAROUSEL: 'Bildet er merket som dekorativt, men alle bilder i en karusell eller galleri bør inkludere beskrivende alt-tekst for å sikre en likeverdig opplevelse for alle.',
       IMAGE_ALT_TOO_LONG: 'Alt-tekstbeskrivelsen er <strong>for lang</strong>. Alt-teksten bør være kortfattet, men likevel meningsfull, som en <em>tweet</em> (rundt 100 tegn). Hvis dette er et komplekst bilde eller en graf, bør du vurdere å legge den lange beskrivelsen av bildet i teksten nedenfor eller i en trekkspillkomponent. <hr> {ALT} <strong {B}>%(altLength) Tegn</strong> <strong {C}>%(ALT_TEXT)</strong>',
       IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+
+      // Form labels
       LABELS_MISSING_IMAGE_INPUT: 'Bildeknappen mangler alt-tekst. Legg til alt-tekst for å gi et tilgjengelig navn. For eksempel: <em>Søk</em> eller <em>Send</em>.',
       LABELS_INPUT_RESET: 'Tilbakestillingsknapper bør <strong>ikke</strong> brukes med mindre det er spesifikt behov for dem, fordi de lett kan aktiveres ved en feiltakelse. <hr> <strong>Tips!</strong> Les mer om hvorfor <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Reset- og Cancel-knapper er problematiske for brukervennligheten.',
-      LABELS_ARIA_LABEL_INPUT: 'Inndataene har et tilgjengelig navn, men sørg for at de også har en synlig etikett. <hr> <strong {B}>Inndatalabel</strong> <strong {C}>%(TEXT)</strong>',
+      LABELS_ARIA_LABEL_INPUT: 'Inndataene har et tilgjengelig navn, men sørg for at de også har en synlig etikett. <hr> <strong {B}>Tilgjengelig navn</strong> <strong {C}>%(TEXT)</strong>',
       LABELS_NO_FOR_ATTRIBUTE: 'Det er ingen etikett knyttet til denne inndataen. Legg til et <code>for</code>-attributt i etiketten som samsvarer med <code>id</code> for denne inndataen. <hr> ID-en for denne inndataen er: <strong>id=&#34;%(id)&#34;</strong>',
       LABELS_MISSING_LABEL: 'Det er ingen etikett knyttet til denne inndataen. Legg til et <code>id</code> til denne inndataen, og legg til et matchende <code>for</code>-attributt til etiketten.',
+
+      // Embedded content
       EMBED_VIDEO: 'Sørg for at <strong>alle videoer er tekstet.</strong> Det er et obligatorisk nivå A-krav at alt lyd- og videoinnhold er tekstet. Teksting er til hjelp for personer som er døve eller har nedsatt hørsel.',
       EMBED_AUDIO: 'Sørg for å levere en <strong>utskrift for alle podcaster.</strong> Det er et obligatorisk nivå A-krav å levere utskrifter for lydinnhold. Transkripsjoner er til hjelp for døve og hørselshemmede, men kan være til nytte for alle. Vurder å plassere transkripsjonen nedenfor eller i et trekkspillpanel.',
       EMBED_DATA_VIZ: 'Datavisualiseringswidgets som dette er ofte problematiske for personer som bruker tastatur eller skjermleser for å navigere, og kan by på betydelige problemer for personer med nedsatt syn eller fargeblindhet. Det anbefales å gi den samme informasjonen i et alternativt format (tekst eller tabell) under widgeten. <hr> Les mer om <a href="https://www.w3.org/WAI/tutorials/images/complex">komplekse bilder</a>.',
       EMBED_MISSING_TITLE: 'Innebygd innhold krever et tilgjengelig navn som beskriver innholdet. Oppgi et unikt <code>title</code> eller <code>aria-label</code>-attributt på <code>iframe</code>-elementet. Finn ut mer om <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>.',
       EMBED_GENERAL: 'Kunne ikke sjekke innebygd innhold. Kontroller at bilder har alt-tekst, videoer har bildetekster, tekst har tilstrekkelig kontrast og interaktive komponenter er <a href="https://webaim.org/techniques/keyboard/">tilgjengelige via tastaturet.</a>',
       EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> med ikke-fokuserbare elementer bør ikke ha <code>tabindex="-1"</code>. Den innebygde innholdet vil ikke være tilgjengelig med tastaturet.',
+
+      // QA
       QA_BAD_LINK: 'Feil lenke funnet. Lenken ser ut til å peke til et utviklingsmiljø. <hr> Denne lenken peker til: <br> <strong {C}>%(LINK)</strong>',
       QA_IN_PAGE_LINK: 'Ødelagt samme-sides lenke. Lenkemålet samsvarer ikke med noen element på denne siden.',
       QA_STRONG_ITALICS: 'Fet og kursiv har en semantisk betydning, og bør <strong>ikke</strong> brukes til å fremheve hele avsnitt. Fet skrift skal brukes til å fremheve et ord eller en frase. Kursiv skal brukes til å fremheve egennavn (f.eks. bok- og artikkeltitler), fremmedord og sitater. Lange sitater bør formateres som blokksitater.',
       QA_PDF: 'Kan ikke sjekke om PDF-filer er tilgjengelige. PDF-filer regnes som nettinnhold og må også gjøres tilgjengelige. PDF-filer inneholder ofte problemer for personer som bruker skjermlesere (manglende strukturelle tagger eller manglende etiketter for skjemafelt) og personer med nedsatt syn (teksten flyter ikke ut igjen når den forstørres). <ul><li>Hvis dette er et skjema, bør du vurdere å bruke et tilgjengelig HTML-skjema som et alternativ.</li><li>Hvis dette er et dokument, bør du vurdere å konvertere det til en nettside.</li></ul> Ellers kan du sjekke om <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF-en er tilgjengelig i Acrobat DC.</a>.',
       QA_DOCUMENT: 'Kan ikke sjekke dokumentets tilgjengelighet. Lenkede dokumenter regnes som nettinnhold og må også gjøres tilgjengelige. Vennligst gå gjennom dette dokumentet manuelt. <ul><li>Gjør <a href="https://support.google.com/docs/answer/6199477?hl=nb">Google Workspace-dokumentet eller -presentasjonen mer tilgjengelig.</a></li><li>Gjør <a href="https://support.microsoft.com/nb/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office-dokumenter mer tilgjengelige.</a></li></ul>',
-      PAGE_LANG: 'Sidens språk er ikke oppgitt! Vennligst <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarer språk i HTML-taggen.</a>.',
-      META_TITLE: 'Manglende sidetittel! Vennligst oppgi en <a href="https://developer.mozilla.org/nb/docs/Web/HTML/Element/title">sidetittel.</a>.',
       QA_BLOCKQUOTE: 'Er dette en overskrift? <strong {C}>%(TEXT)</strong> <hr> Blokksitater skal kun brukes til sitater. Hvis dette er ment å være en overskrift, endrer du blokksitatet til en semantisk overskrift (f.eks. Overskrift 2 eller Overskrift 3).',
       QA_FAKE_HEADING: 'Er dette en overskrift? <strong {C}>%(TEXT)</strong> <hr> En linje med fet eller stor tekst kan se ut som en overskrift, men en person som bruker skjermleser, kan ikke se at den er viktig eller hoppe til innholdet. Fet eller stor tekst bør aldri erstatte semantiske overskrifter (overskrift 2 til overskrift 6).',
       QA_FAKE_LIST: 'Prøver du å opprette en liste? Mulig listeelement funnet: <strong {C}>%(firstPrefix)</strong> <hr> Sørg for å bruke semantiske lister ved å bruke knappene for punkt- eller tallformatering i stedet. Når du bruker en semantisk liste, kan hjelpemidler formidle informasjon som det totale antallet elementer og den relative posisjonen til hvert element i listen. Finn ut mer om <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semantiske lister.</a>',
       QA_UPPERCASE: 'Fant store bokstaver. Noen skjermlesere kan tolke tekst med store bokstaver som et akronym og vil lese hver bokstav for seg. I tillegg synes noen at store bokstaver er vanskeligere å lese, og det kan gi inntrykk av at man roper.',
-      DUPLICATE_ID: 'Fant <strong>duplisert ID</strong>. Feil med dupliserte ID-er er kjent for å forårsake problemer for hjelpeteknologier når de prøver å samhandle med innhold. <hr> Vennligst fjern eller endre følgende ID: <strong {C}>%(id)</strong>',
       QA_UNDERLINE: 'Understreket tekst kan forveksles med lenker. Vurder å bruke en annen stil, for eksempel <code>&lt;strong&gt;</code><strong>strong importance</strong><code>&lt;/strong&gt;</code> eller <code>&lt;em&gt;</code><em>emphasis</em><code>&lt;/em&gt;</code>.',
       QA_SUBSCRIPT: 'Formateringsalternativene subscript og superscript skal bare brukes til å endre plasseringen av tekst i henhold til typografiske konvensjoner eller standarder. De bør <strong>ikke</strong> brukes utelukkende til presentasjons- eller utseendeformål. Formatering av hele setninger gir problemer med lesbarheten. Det kan for eksempel være aktuelt å vise eksponenter, ordenstall som 4<sup>th</sup> i stedet for fjerde, og kjemiske formler (f.eks. H<sub>2</sub>O).',
       QA_NESTED_COMPONENTS: 'Unngå å legge interaktive layoutkomponenter inne i hverandre, for eksempel å plassere akordeoner i faner eller faner i akordeoner. Dette kan komplisere navigasjonen, øke den kognitive belastningen og føre til at folk overser innhold.',
+      QA_JUSTIFY: 'Unngå å bruke rettet tekst, som justeres både til venstre og høyre marg. Dette kan være vanskelig for noen å lese på grunn av ujevne mellomrom mellom ordene. Bruk venstrejustert tekst for bedre lesbarhet.',
+      QA_SMALL_TEXT: 'Liten tekst er vanskeligere å lese, spesielt for de med dårlig syn. For å sikre bedre lesbarhet, unngå å bruke skrifttyper mindre enn standard.',
+
+      // Shared
+      ACC_NAME: '<strong {B}>Tilgjengelig navn</strong> %(TEXT)',
+      ACC_NAME_TIP: '<hr><strong>Tips!</strong> "Tilgjengelig navn" er den endelige etiketten som kommuniseres til personer som bruker hjelpemidler, og beregnes av ARIA. Dette hjelper dem med å forstå formålet med lenken eller knappen.',
+      HIDDEN_FOCUSABLE: 'Lenken eller knappen har <code>aria-hidden=&quot;true&quot;</code>, men kan fortsatt fokuseres med tastaturet. Hvis du har til hensikt å skjule en duplikatlenke eller -knapp, legg også til <code>tabindex=&quot;-1&quot;</code>. Ellers bør <code>aria-hidden=&quot;true&quot;</code> ikke brukes på elementer som kan motta fokus. <hr> Lær mer om <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden-attributtet.</a>',
+
+      // Developer
+      DUPLICATE_ID: 'Fant <strong>duplisert ID</strong>. Feil med dupliserte ID-er er kjent for å forårsake problemer for hjelpeteknologier når de prøver å samhandle med innhold. <hr> Vennligst fjern eller endre følgende ID: <strong {C}>%(id)</strong>',
       UNCONTAINED_LI: 'Alle <code>&lt;li&gt;</code> listeelementer må plasseres inne i <code>&lt;ul&gt;</code> uordnede eller <code>&lt;ol&gt;</code> ordnede elementer. Denne strukturen hjelper skjermlesere med å annonsere listen og dens elementer nøyaktig.',
+      TABINDEX_ATTR: 'Elementet bør ikke ha et <code>tabindex</code>-attributt større enn 0.',
+
+      // Meta checks
+      META_LANG: 'Sidens språk er ikke oppgitt! Vennligst <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarer språk i HTML-taggen.</a>.',
+      META_TITLE: 'Manglende sidetittel! Vennligst oppgi en <a href="https://developer.mozilla.org/nb/docs/Web/HTML/Element/title">sidetittel.</a>.',
       META_SCALABLE: 'Fjern parameteren <code>user-scalable="no"</code> i <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta-taggen for visningsområde</a> for å tillate zooming.',
       META_MAX: 'Sørg for at parameteren <code>maximum-scale</code> i <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta-taggen for visningsområde</a> ikke er mindre enn 2.',
-      QA_JUSTIFY: 'Unngå å bruke rettferdiggjort tekst, som justerer seg til både venstre og høyre marg. Dette kan være vanskelig for noen mennesker å lese på grunn av de ujevne mellomrommene mellom ordene. Bruk venstrejustert tekst for bedre lesbarhet.',
+      META_REFRESH: 'Siden bør ikke automatisk oppdateres ved hjelp av en meta-tag.',
+
+      // Buttons
+      BTN_EMPTY: 'Knappen mangler et tilgjengelig navn som beskriver dens formål.',
+      BTN_EMPTY_LABELLEDBY: 'Knappen har en <code>aria-labelledby</code> verdi som er tom eller ikke samsvarer med <code>id</code> verdien til et annet element på siden.',
+      BTN: 'knapp',
+      BTN_TIP: 'Lær hvordan du lager en <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">tilgjengelig knapp.</a>',
+      BTN_ROLE_IN_NAME: 'Ikke inkluder ordet "knapp" i navnet på en knapp. Skjermlesere kunngjør allerede elementets rolle i tillegg til navnet.',
+      LABEL_IN_NAME: 'Den synlige teksten for dette elementet ser ut til å være forskjellig fra det tilgjengelige navnet, noe som kan føre til forvirring for brukere av hjelpemiddelsteknologi. Vennligst sjekk: <hr> <strong {B}>Tilgjengelig Navn</strong> <strong {C}>%(TEXT)</strong>',
+
+      // Tables
       TABLES_MISSING_HEADINGS: 'Manglende tabelloverskrifter! Universelt utformede tabeller trenger HTML-merking som angir overskriftsceller og dataceller, og som definerer forholdet mellom dem. Denne informasjonen gir kontekst til personer som bruker hjelpemidler. Tabeller bør kun brukes til tabelldata. <hr> Les mer om <a href="https://www.w3.org/WAI/tutorials/tables/">tilgjengelige tabeller.</a>',
       TABLES_SEMANTIC_HEADING: 'Semantiske overskrifter som overskrift 2 eller overskrift 3 skal bare brukes til innholdsseksjoner, <strong>ikke</strong> i HTML-tabeller. Angi tabelloverskrifter ved hjelp av <code>&lt;th&gt;</code>-elementet i stedet. <hr> Les mer om <a href="https://www.w3.org/WAI/tutorials/tables/">tilgjengelige tabeller</a>.',
       TABLES_EMPTY_HEADING: 'Tom tabelloverskrift funnet! Tabelloverskrifter skal <strong>aldri</strong> være tomme. Det er viktig å utpeke rad- og/eller kolonneoverskrifter for å vise sammenhengen mellom dem. Denne informasjonen gir kontekst til personer som bruker hjelpemidler. Husk at tabeller kun skal brukes til tabelldata. <hr> Finn ut mer om <a href="https://www.w3.org/WAI/tutorials/tables/">tilgjengelige tabeller.</a>',
+
+      // Contrast
       CONTRAST_ERROR: 'Denne teksten har ikke nok kontrast til bakgrunnen. Kontrastforholdet bør være minst 4,5:1 for normal tekst og 3:1 for stor tekst. <hr> <strong {B}>Kontrastforhold</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
       CONTRAST_WARNING: 'Kontrasten i denne teksten er ukjent og må kontrolleres manuelt. Sørg for at teksten og bakgrunnen har sterke kontrastfarger. Kontrastforholdet bør være minst 4,5:1 for normal tekst og 3:1 for stor tekst. <hr> Vennligst se gjennom: <strong {C}>%(TEXT)</strong>',
       CONTRAST_INPUT: 'Teksten i denne inngangen har ikke nok kontrast til bakgrunnen. Kontrastforholdet bør være minst 4,5:1 for normal tekst og 3:1 for stor tekst. <hr> <strong {B}>Kontrastforhold</strong> <strong {B}>%(RATIO)</strong>',

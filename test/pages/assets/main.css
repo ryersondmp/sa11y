@@ -344,3 +344,34 @@ table td {
   padding: .5em;
   border: 1px solid #d3d3d3;
 }
+
+button {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 5px;
+  font-size: 1.1em;
+  font-weight: bold;
+  background-color: #b7b7b7;
+  border: 2px solid #808080;
+  border-radius: 5px;
+}
+
+button:hover,
+button:focus {
+  background-color: #cacaca;
+}
+
+[tabindex] {
+  padding: 5px;
+  border: 2px #fa8072 solid;
+}
+
+[tabindex]:focus,
+[tabindex]:hover {
+  outline: 5px #fa8072 dashed;
+}
+
+.justify {
+  /* stylelint-disable-next-line declaration-property-value-allowed-list */
+  text-align: justify;
+}

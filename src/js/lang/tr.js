@@ -132,6 +132,8 @@ export default {
       'açılır pencere',
     ],
     FILE_TYPE_PHRASES: ['belge', 'elektronik tablo', 'hesaplama sayfası', 'sıkıştırılmış dosya', 'arşivlenmiş dosya', 'çalışma sayfası', 'powerpoint', 'sunum', 'yükle', 'video', 'ses', 'pdf'],
+
+    // Readability
     READABILITY: 'Okunabilirlik',
     AVG_SENTENCE: 'Cümle başına ortalama kelime:',
     COMPLEX_WORDS: 'Karmaşık kelimeler:',
@@ -141,6 +143,8 @@ export default {
     FAIRLY_DIFFICULT: 'Oldukça zor',
     READABILITY_NO_CONTENT: 'Okunabilirlik puanı hesaplanamıyor. Paragraf <code>&lt;p&gt;</code> veya liste içeriği <code>&lt;li&gt;</code> bulunamadı.',
     READABILITY_NOT_ENOUGH: 'Okunabilirlik puanını hesaplamak için yeterli içerik yok.',
+
+    // Headings
     HEADING_SKIPPED_LEVEL: "Ardışık olmayan başlık seviyesi kullanıldı. Başlıklar asla seviye atlamamalı veya <strong>Başlık %(prevLevel)</strong>'den <strong {C}>Başlık %(level)</strong>'e geçmemelidir.",
     HEADING_EMPTY: 'Boş başlık bulundu! Düzeltmek için bu satırı silin veya biçimini <strong {C}>Heading %(level)</strong> yerine <strong>Normal</strong> veya <strong>Paragraph</strong> olarak değiştirin.',
     HEADING_LONG: 'Başlık uzun! Başlıklar içeriği düzenlemek ve yapıyı aktarmak için kullanılmalıdır. Kısa, bilgilendirici ve benzersiz olmalıdırlar. Lütfen başlıkları 160 karakterden az tutun (bir cümleden fazla olmamalıdır). <hr> <strong {B}>%(HEADING_LENGTH) Karakter</strong>',
@@ -149,19 +153,20 @@ export default {
     HEADING_EMPTY_WITH_IMAGE: 'Başlığın metni yoktur, ancak bir resim içerir. Bu bir başlık değilse, biçimini <strong {C}>Başlık %(level)</strong> yerine <strong>Normal</strong> veya <strong>Paragraf</strong> olarak değiştirin. Aksi takdirde, dekoratif değilse lütfen resme alt metin ekleyin.',
     PANEL_HEADING_MISSING_ONE: 'Başlık 1 eksik!',
     PANEL_NO_HEADINGS: 'Başlık bulunamadı.',
+
+    // Links
     LINK_EMPTY: 'Herhangi bir metin içermeyen boş bağlantıları kaldırın.',
     LINK_EMPTY_LABELLEDBY: 'Bağlantının <code>aria-labelledby</code> değeri boş veya sayfadaki başka bir öğenin <code>id</code> özniteliği değeriyle eşleşmiyor.',
     LINK_EMPTY_NO_LABEL: 'Bağlantı, ekran okuyucular ve diğer yardımcı teknolojiler tarafından görülebilen ayırt edilebilir bir metne sahip değil. Düzeltmek için: <ul><li>Bağlantının sizi nereye götürdüğünü açıklayan kısa bir metin ekleyin.</li><li>Bu bir <a href="https://a11y-101.com/development/icons-and-links">ikon bağlantısı veya SVG,</a> ise muhtemelen açıklayıcı bir etiket eksiktir.</li><li>Bu bağlantının bir kopyala/yapıştır hatasından kaynaklanan bir hata olduğunu düşünüyorsanız, silmeyi düşünün.</li></ul>',
-    ACC_NAME: '<strong {B}>Link etiketi</strong> %(TEXT)',
     LINK_STOPWORD: 'Bağlantı metni bağlam dışında yeterince açıklayıcı olmayabilir: <strong {C}>%(ERROR)</strong> <hr> <strong>İpucu!</strong> Bağlantı metni her zaman açık, benzersiz ve anlamlı olmalıdır. Buraya tıklayın&quot; veya &quot;daha fazla bilgi edinin&quot gibi yaygın kelimelerden kaçının;',
     LINK_BEST_PRACTICES: 'Bağlantı metnini değiştirmeyi düşünün: <strong {C}>%(ERROR)</strong> <hr> <ul><li>&quot;Buraya tıklayın&quot; birçok kişi fare kullanmadığında veya bu web sitesini bir mobil cihazda görüntülüyor olabileceğinde fare mekaniğine odaklanır. Görevle ilgili farklı bir fiil kullanmayı düşünün.</li><li>Yardımcı teknolojiler için gizli olmadıkça HTML sembollerini eylem çağrısı olarak kullanmaktan kaçının.</li></ul>',
     LINK_URL: "Bağlantı metni olarak kullanılan daha uzun, daha az anlaşılır URL'lerin yardımcı teknoloji ile dinlenmesi zor olabilir. Çoğu durumda, URL yerine insan tarafından okunabilir metin kullanmak daha iyidir. Kısa URL'ler (bir sitenin ana sayfası gibi) uygundur. <hr> <strong>İpucu!</strong> Bağlantı metni her zaman açık, benzersiz ve anlamlı olmalıdır, böylece bağlam dışında da anlaşılabilir.",
     LINK_DOI: 'Web sayfaları veya yalnızca çevrimiçi kaynaklar için <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APA Stil kılavuzu,</a> çalışmanın URL\'sini veya DOI\'sini başlığının etrafına sararak açıklayıcı bağlantılar kullanılmasını önerir. Bağlantı metni olarak kullanılan daha uzun, daha az anlaşılır URL\'lerin yardımcı teknoloji ile erişildiğinde anlaşılması zor olabilir.',
     LINK_NEW_TAB: 'Bağlantı uyarı vermeden yeni bir sekmede veya pencerede açılır. Bunu yapmak, özellikle görsel içeriği algılamakta zorluk çeken kişiler için kafa karıştırıcı olabilir. İkinci olarak, bir kişinin deneyimini kontrol etmek veya onun yerine karar vermek her zaman iyi bir uygulama değildir. Bağlantı metninde bağlantının yeni bir pencerede açıldığını belirtin. <hr> <strong>İpucu!</strong> En iyi uygulamaları öğrenin: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">bağlantıları yeni tarayıcı pencerelerinde ve sekmelerinde açma.</a>',
     LINK_FILE_EXT: 'Bağlantı, uyarı vermeden bir PDF veya indirilebilir dosyaya (örn. MP3, Zip, Word Doc) işaret ediyor. Bağlantı metni içinde dosya türünü belirtin. Büyük bir dosya ise, dosya boyutunu da eklemeyi düşünün. <hr> <strong>Örnek:</strong> Yönetici Raporu (PDF, 3MB)',
-    LINK_IDENTICAL_NAME: 'Bağlantı, farklı bir sayfaya işaret etmesine rağmen başka bir bağlantıyla aynı metne sahip. Aynı metne sahip birden fazla bağlantı, ekran okuyucu kullanan kişiler için kafa karışıklığına neden olabilir. <hr> Aşağıdaki bağlantıyı diğer bağlantılardan ayırt etmeye yardımcı olmak için daha açıklayıcı hale getirmeyi düşünün: <strong {C}>%(TEXT)</strong>',
-    BTN_EMPTY: 'Düğmenin amacını açıklayan bir erişilebilir adı eksik. Bir <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">erişilebilir düğme</a> nasıl yapılır öğrenin.',
-    BTN_EMPTY_LABELLEDBY: 'Düğme, boş veya sayfadaki başka bir öğenin <code>id</code> değeriyle eşleşmeyen bir <code>aria-labelledby</code> değerine sahiptir.',
+    LINK_IDENTICAL_NAME: 'Bağlantı, farklı bir sayfaya işaret etmesine rağmen başka bir bağlantıyla aynı metne sahip. Aynı metne sahip birden fazla bağlantı, ekran okuyucu kullanan kişiler için kafa karışıklığına neden olabilir. <strong>Aşağıdaki bağlantıyı diğer bağlantılardan ayırt etmeye yardımcı olmak için daha açıklayıcı hale getirmeyi düşünün.</strong> <hr> <strong {B}>Erişilebilir ad</strong> <strong {C}>%(TEXT)</strong>',
+
+    // Images
     MISSING_ALT_LINK_HAS_TEXT: 'Görüntü, çevresindeki metinle birlikte bir bağlantı olarak kullanılıyor, ancak alt özniteliği dekoratif veya boş olarak işaretlenmelidir.',
     MISSING_ALT_LINK: 'Resim bağlantı olarak kullanılıyor ancak alt metni eksik! Lütfen alt metnin bağlantının sizi nereye götüreceğini açıkladığından emin olun.',
     MISSING_ALT: 'Eksik alt metin! Görsel bir hikaye, ruh hali veya önemli bir bilgi aktarıyorsa, görseli tanımladığınızdan emin olun.',
@@ -171,12 +176,11 @@ export default {
     ALT_FILE_EXT: 'Bulunan alt metin içinde dosya uzantısı. Görsel bir hikaye, ruh hali veya önemli bir bilgi aktarıyorsa, görseli tanımladığınızdan emin olun. Kaldırın: <strong {C}>%(ERROR)</strong> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     ALT_PLACEHOLDER: 'Tanımlayıcı olmayan veya yer tutucu alt metin bulundu. Aşağıdaki alt metni daha anlamlı bir metinle değiştirin. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     SUS_ALT: 'Yardımcı teknolojiler zaten bunun bir resim olduğunu belirtmektedir, bu nedenle &quot;<strong {C}>%(ERROR)</strong>&quot; gereksiz olabilir. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
-    HIDDEN_FOCUSABLE: 'Bağlantı veya düğme <code>aria-hidden=&quot;true&quot;</code> değerine sahip ancak hâlâ klavye ile odaklanabilir durumda. Bir kopya bağlantı veya düğmeyi gizlemeyi düşünüyorsanız, <code>tabindex=&quot;-1&quot;</code> ekleyin. Aksi takdirde, odak alabilen öğelerde <code>aria-hidden=&quot;true&quot;</code> kullanılmamalıdır. <hr> <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden özelliği</a> hakkında daha fazla bilgi edinin.',
     LINK_IMAGE_NO_ALT_TEXT: 'Bağlantı içindeki resim dekoratif olarak işaretlenmiş ve bağlantı metni yok. Lütfen resme bağlantının hedefini açıklayan alt metin ekleyin.',
     LINK_IMAGE_TEXT: 'Bağlantı, çevresindeki metni açıklayıcı bir etiket olarak kullanmasına rağmen görüntü dekoratif olarak işaretlenmiştir.',
     LINK_IMAGE_LONG_ALT: 'Bağlantılı bir görseldeki alt metin açıklaması <strong>çok uzun</strong>. Bağlantılı görsellerdeki alt metin, görselin birebir açıklamasını değil, bağlantının sizi nereye götürdüğünü açıklamalıdır. <strong>Alt metin olarak bağlantı verilen sayfanın başlığını kullanmayı düşünün.</strong> <hr> {ALT} {L} <strong {B}>%(altLength) Karakter</strong> <strong {C}>%(ALT_TEXT)</strong>',
     LINK_IMAGE_ALT: 'Resim bağlantısı alt metin içeriyor. <strong>Alt metin bağlantının sizi nereye götürdüğünü açıklıyor mu?</strong> Bağlantı verilen sayfanın başlığını alt metin olarak kullanmayı düşünün. <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
-    LINK_IMAGE_ALT_AND_TEXT: 'Resim bağlantısı <strong>hem alt metin hem de çevresindeki bağlantı metnini içerir.</strong> Bu resim dekoratifse ve başka bir sayfaya işlevsel bir bağlantı olarak kullanılıyorsa, resmi dekoratif veya boş olarak işaretlemeyi düşünün - çevresindeki bağlantı metni yeterli olmalıdır. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong> <hr> <strong {B}>Etiketi</strong> {L} <strong {C}>%(TEXT)</strong>',
+    LINK_IMAGE_ALT_AND_TEXT: 'Resim bağlantısı <strong>hem alt metin hem de çevresindeki bağlantı metnini içerir.</strong> Bu resim dekoratifse ve başka bir sayfaya işlevsel bir bağlantı olarak kullanılıyorsa, resmi dekoratif veya boş olarak işaretlemeyi düşünün - çevresindeki bağlantı metni yeterli olmalıdır. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong> <hr> <strong {B}>Erişilebilir ad</strong> {L} <strong {C}>%(TEXT)</strong>',
     IMAGE_FIGURE_DECORATIVE: 'Resim <strong>dekoratif</strong> olarak işaretlenmiştir ve yardımcı teknoloji tarafından göz ardı edilecektir. <hr> Bir <strong>başlık</strong> verilmiş olsa da, çoğu durumda görselin alt metni de olmalıdır. <ul><li>Alt metin, görselde ne olduğuna dair kısa bir açıklama sağlamalıdır.</li><li>Alt yazı genellikle görseli çevreleyen içerikle ilişkilendirmek için bağlam sağlamalı veya belirli bir bilgi parçasına dikkat çekmelidir.</li></ul> Daha fazla bilgi edinin: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt versus figcaption.</a>',
     IMAGE_FIGURE_DUPLICATE_ALT: 'Hem alt hem de başlık metni için aynı kelimeleri kullanmayın. Ekran okuyucular bilgileri iki kez duyuracaktır. <ul><li>Alt metin görselde ne olduğuna dair kısa bir açıklama sağlamalıdır.</li><li>Alt yazı genellikle görseli çevreleyen içerikle ilişkilendirmek için bağlam sağlamalı veya belirli bir bilgi parçasına dikkat çekmelidir.</li></ul> Daha fazla bilgi edinin: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt versus figcaption.</a> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     IMAGE_DECORATIVE: 'Görüntü <strong>dekoratif</strong> olarak işaretlenir ve yardımcı teknoloji tarafından göz ardı edilir. Görsel bir hikaye, ruh hali veya önemli bir bilgi aktarıyorsa alt metin eklediğinizden emin olun.',
@@ -185,37 +189,65 @@ export default {
     IMAGE_PASS: '{ALT} %(ALT_TEXT)',
     LABELS_MISSING_IMAGE_INPUT: 'Resim düğmesinin alt metni eksik. Lütfen erişilebilir bir ad sağlamak için alt metin ekleyin. Örneğin: <em>Arama</em> veya <em>Gönder</em>.',
     LABELS_INPUT_RESET: 'Sıfırla düğmeleri özellikle gerekmedikçe <strong>kullanılmamalıdır</strong> çünkü yanlışlıkla etkinleştirilmeleri kolaydır. <hr> <strong>İpucu!</strong> <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Reset ve İptal düğmelerinin neden kullanılabilirlik sorunları oluşturduğunu öğrenin.</a>',
-    LABELS_ARIA_LABEL_INPUT: 'Girdinin erişilebilir bir adı vardır, ancak lütfen görünür bir etiket olduğundan da emin olun. <hr> <strong {B}>Giriş etiketi</strong> <strong {C}>%(TEXT)</strong>',
+    LABELS_ARIA_LABEL_INPUT: 'Girdinin erişilebilir bir adı vardır, ancak lütfen görünür bir etiket olduğundan da emin olun. <hr> <strong {B}>Erişilebilir ad</strong> <strong {C}>%(TEXT)</strong>',
     LABELS_NO_FOR_ATTRIBUTE: "Bu girdiyle ilişkilendirilmiş bir etiket yok. Etikete, bu girdinin <code>id</code>'siyle eşleşen bir <code>for</code> niteliği ekleyin. <hr> Bu girdinin kimliği şudur: <strong>id=&#34;%(id)&#34;</strong>",
     LABELS_MISSING_LABEL: 'Bu girdiyle ilişkilendirilmiş bir etiket yok. Lütfen bu girdiye bir <code>id</code> ekleyin ve etikete eşleşen bir <code>for</code> niteliği ekleyin.',
+
+    // Embedded content
     EMBED_VIDEO: 'Lütfen <strong>tüm videolarda altyazı olduğundan emin olun.</strong> Tüm ses ve video içerikleri için altyazı sağlanması zorunlu bir A Düzeyi gerekliliğidir. Altyazılar, işitme engelli veya işitme güçlüğü çeken kişileri destekler.',
     EMBED_AUDIO: "Lütfen tüm podcast'ler için bir <strong>transkript sağladığınızdan emin olun.</strong> Ses içeriği için transkript sağlamak zorunlu bir Seviye A gerekliliğidir. Transkriptler işitme engelli veya işitme güçlüğü çeken kişileri destekler, ancak herkese fayda sağlayabilir. Transkripti aşağıya veya bir akordeon panel içine yerleştirmeyi düşünün.",
     EMBED_DATA_VIZ: 'Bunun gibi veri görselleştirme araçları, gezinmek için klavye veya ekran okuyucu kullanan kişiler için genellikle sorunludur ve az gören veya renk körlüğü olan kişiler için önemli zorluklar yaratabilir. Aynı bilgilerin widget\'ın altında alternatif (metin veya tablo) bir formatta sunulması önerilir. <hr> <a href="https://www.w3.org/WAI/tutorials/images/complex">karmaşık görüntüler hakkında daha fazla bilgi edinin.</a>',
     EMBED_MISSING_TITLE: 'Gömülü içerik, içeriğini açıklayan erişilebilir bir ad gerektirir. Lütfen <code>iframe</code> öğesinde benzersiz bir <code>title</code> veya <code>aria-label</code> özniteliği sağlayın. <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>',
     EMBED_GENERAL: 'Gömülü içerik kontrol edilemiyor. Lütfen resimlerin alt metni, videoların alt yazısı, metinlerin yeterli kontrastı ve etkileşimli bileşenlerin <a href="https://webaim.org/techniques/keyboard/">klavye ile erişilebilir olduğundan emin olun.</a>',
     EMBED_UNFOCUSABLE: 'Odaklanılamayan öğeler içeren <code>&lt;iframe&gt;</code>, <code>tabindex="-1"</code> olmamalıdır. Gömülü içerik klavye ile erişilebilir olmayacak.',
+
+    // QA
     QA_BAD_LINK: 'Kötü bağlantı bulundu. Bağlantı bir geliştirme ortamına işaret ediyor gibi görünüyor. <hr> Bu bağlantı şuraya işaret ediyor: <br> <strong {C}>%(LINK)</strong>',
     QA_IN_PAGE_LINK: 'Kırık aynı sayfa bağlantısı. Bağlantı hedefi, bu sayfadaki herhangi bir öğeyle eşleşmiyor.',
     QA_STRONG_ITALICS: 'Kalın ve italik etiketlerinin anlamsal bir anlamı vardır ve paragrafların tamamını vurgulamak için <strong>kullanılmamalıdır</strong>. Kalınlaştırılmış metin, bir kelime veya cümleye güçlü bir <strong>vurgu</strong> yapmak için kullanılmalıdır. İtalik yazılar özel isimleri (kitap ve makale başlıkları gibi), yabancı kelimeleri ve alıntıları vurgulamak için kullanılmalıdır. Uzun alıntılar blok alıntı olarak biçimlendirilmelidir.',
     QA_PDF: 'PDF\'ler erişilebilirlik açısından kontrol edilemiyor. PDF\'ler web içeriği olarak kabul edilir ve erişilebilir hale getirilmelidir. PDF\'ler genellikle ekran okuyucu kullanan kişiler (eksik yapısal etiketler veya eksik form alanı etiketleri) ve az gören kişiler (metin büyütüldüğünde yeniden akmıyor) için sorunlar içerir. <ul><li>Bu bir form ise, alternatif olarak erişilebilir bir HTML formu kullanmayı düşünün.</li><li>Bu bir belge ise, bir web sayfasına dönüştürmeyi düşünün.</li></ul>Aksi takdirde, lütfen Acrobat DC\'de erişilebilirlik için <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF\'yi kontrol edin.</a>',
     QA_DOCUMENT: 'Belge erişilebilirlik açısından kontrol edilemiyor. Bağlantılı belgeler web içeriği olarak kabul edilir ve erişilebilir hale getirilmelidir. Lütfen bu belgeyi manuel olarak inceleyin. <ul><li><a href="https://support.google.com/docs/answer/6199477?hl=tr">Google Workspace belgenizi veya sunumunuzu daha erişilebilir hale getirin.</a></li><li><a href="https://support.microsoft.com/tr/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Ofis belgelerinizi daha erişilebilir hale getirin.</a></li></ul>',
-    PAGE_LANG: 'Sayfa dili bildirilmedi! Lütfen <a href="https://www.w3.org/International/questions/qa-html-language-declarations">declare language on HTML tag.</a>',
-    META_TITLE: 'Sayfa başlığı eksik! Lütfen bir <a href="https://developer.mozilla.org/tr/docs/Web/HTML/Element/title">sayfa başlığı sağlayın.</a>',
     QA_BLOCKQUOTE: 'Bu bir başlık mı? <strong {C}>%(TEXT)</strong> <hr> Blok tırnaklar yalnızca alıntılar için kullanılmalıdır. Bunun bir başlık olması amaçlanıyorsa, bu blok alıntıyı anlamsal bir başlığa (örneğin Başlık 2 veya Başlık 3) değiştirin.',
     QA_FAKE_HEADING: "Bu bir başlık mı? <strong {C}>%(TEXT)</strong> <hr>Bir satır kalın veya büyük metin bir başlık gibi görünebilir, ancak ekran okuyucu kullanan biri bunun önemli olduğunu anlayamaz veya içeriğine atlayamaz. Kalın veya büyük metin asla anlamsal başlıkların (Başlık 2'den Başlık 6'ya) yerini almamalıdır.",
     QA_FAKE_LIST: 'Bir liste oluşturmaya mı çalışıyorsunuz? Olası liste öğesi bulundu: <strong {C}>%(firstPrefix)</strong> <hr> Bunun yerine madde işareti veya sayı biçimlendirme düğmelerini kullanarak anlamsal listeler kullandığınızdan emin olun. Anlamsal bir liste kullanıldığında, yardımcı teknolojiler toplam öğe sayısı ve listedeki her bir öğenin göreli konumu gibi bilgileri iletebilir. <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">anlamsal listeler hakkında daha fazla bilgi edinin.</a>',
     QA_UPPERCASE: 'Büyük harfler bulundu. Bazı ekran okuyucular büyük harfle yazılan metni kısaltma olarak yorumlayabilir ve her harfi ayrı ayrı okuyabilir. Ayrıca, bazı kişiler büyük harfleri okumayı daha zor bulabilir ve bu durum BAĞIRMA görüntüsü verebilir.',
-    DUPLICATE_ID: '<strong>Yinelenen kimlik</strong> bulundu. Yinelenen kimlik hatalarının, içerikle etkileşime girmeye çalışan yardımcı teknolojiler için sorunlara neden olduğu bilinmektedir. <hr> Lütfen aşağıdaki kimliği kaldırın veya değiştirin: <strong {C}>%(id)</strong>',
     QA_UNDERLINE: 'Altı çizili metin bağlantılarla karıştırılabilir. <code>&lt;strong&gt;</code><strong>strong importance</strong><code>&lt;/strong&gt;</code> veya <code>&lt;em&gt;</code><em>emphasis</em><code>&lt;/em&gt;</code> gibi farklı bir stil kullanmayı düşünün.',
     QA_SUBSCRIPT: 'Alt simge ve üst simge biçimlendirme seçenekleri yalnızca tipografik kurallar veya standartlar için metnin konumunu değiştirmek amacıyla kullanılmalıdır. Yalnızca sunum veya görünüm amacıyla <strong>kullanılmamalıdır</strong>. Tüm cümlelerin biçimlendirilmesi okunabilirlik sorunları yaratır. Uygun kullanım durumları arasında üslerin, dördüncü yerine 4<sup>üncü</sup> gibi sıra sayılarının ve kimyasal formüllerin (örneğin H<sub>2</sub>O) gösterilmesi yer alır.',
     QA_NESTED_COMPONENTS: 'Etkileşimli düzen bileşenlerini iç içe kullanmaktan kaçının, örneğin akordeonları sekmelerin içine veya sekmeleri akordeonların içine yerleştirmek gibi. Bu, gezinmeyi karmaşıklaştırabilir, bilişsel yükü artırabilir ve kişilerin içeriği gözden kaçırmasına neden olabilir.',
+    QA_JUSTIFY: 'Hem sol hem de sağ kenar boşluklarına hizalanan metinleri kullanmaktan kaçının. Kelimeler arasındaki düzensiz boşluklar nedeniyle bu, bazı insanlar için zor olabilir. Daha iyi okunabilirlik için sola hizalanmış metin kullanın.',
+    QA_SMALL_TEXT: 'Küçük metin, özellikle görme sorunu yaşayanlar için okumak daha zordur. Daha iyi okunabilirlik sağlamak için varsayılandan daha küçük yazı tipi boyutlarını kullanmaktan kaçının.',
+
+    // Shared
+    ACC_NAME: '<strong {B}>Erişilebilir ad</strong> %(TEXT)',
+    ACC_NAME_TIP: '<hr><strong>İpucu!</strong> "Erişilebilir ad", yardımcı teknolojiyi kullanan kişilere iletilen son etikettir ve ARIA tarafından hesaplanır. Bu, bağlantının veya düğmenin amacını anlamalarına yardımcı olur.',
+    HIDDEN_FOCUSABLE: 'Bağlantı veya düğme <code>aria-hidden=&quot;true&quot;</code> değerine sahip ancak hâlâ klavye ile odaklanabilir durumda. Bir kopya bağlantı veya düğmeyi gizlemeyi düşünüyorsanız, <code>tabindex=&quot;-1&quot;</code> ekleyin. Aksi takdirde, odak alabilen öğelerde <code>aria-hidden=&quot;true&quot;</code> kullanılmamalıdır. <hr> <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden özelliği</a> hakkında daha fazla bilgi edinin.',
+
+    // Developer
+    DUPLICATE_ID: '<strong>Yinelenen kimlik</strong> bulundu. Yinelenen kimlik hatalarının, içerikle etkileşime girmeye çalışan yardımcı teknolojiler için sorunlara neden olduğu bilinmektedir. <hr> Lütfen aşağıdaki kimliği kaldırın veya değiştirin: <strong {C}>%(id)</strong>',
     UNCONTAINED_LI: 'Tüm <code>&lt;li&gt;</code> liste öğeleri, <code>&lt;ul&gt;</code> sırasız veya <code>&lt;ol&gt;</code> sıralı öğeler içinde yer almalıdır. Bu yapı, ekran okuyucularının listeyi ve öğelerini doğru bir şekilde duyurmasına yardımcı olur.',
+    TABINDEX_ATTR: 'Öğenin <code>tabindex</code> değeri 0’dan büyük olmamalıdır.',
+
+    // Meta checks
+    META_LANG: 'Sayfa dili bildirilmedi! Lütfen <a href="https://www.w3.org/International/questions/qa-html-language-declarations">declare language on HTML tag.</a>',
+    META_TITLE: 'Sayfa başlığı eksik! Lütfen bir <a href="https://developer.mozilla.org/tr/docs/Web/HTML/Element/title">sayfa başlığı sağlayın.</a>',
     META_SCALABLE: '<a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">Görünüm meta etiketi</a> içindeki <code>user-scalable="no"</code> parametresini kaldırarak büyütmeye izin verin.',
     META_MAX: '<a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">Görünüm meta etiketi</a> içindeki <code>maximum-scale</code> parametresinin 2\'den küçük olmadığından emin olun.',
-    QA_JUSTIFY: 'Hemişe hem sol hem sağ kenara hizalanmış metin kullanmaktan kaçının. Bu, bazı insanlar için kelimeler arasındaki düzensiz boşluklar nedeniyle okumayı zorlaştırabilir. Daha iyi okunabilirlik için sola hizalanmış metin kullanın.',
+    META_REFRESH: 'Sayfa bir meta etiketi kullanılarak otomatik olarak yenilenmemelidir.',
+
+    // Buttons
+    BTN_EMPTY: 'Düğme, amacını açıklayan erişilebilir bir ada sahip değil.',
+    BTN_EMPTY_LABELLEDBY: 'Düğmenin boş bir <code>aria-labelledby</code> değeri var veya sayfadaki başka bir öğenin <code>id</code> değeri ile eşleşmiyor.',
+    BTN: 'düğme',
+    BTN_TIP: 'Bir <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">erişilebilir düğme</a> nasıl yapılacağını öğrenin.',
+    BTN_ROLE_IN_NAME: 'Bir düğmenin adında "düğme" kelimesini içermeyin. Ekran okuyucular zaten öğenin rolünü adıyla birlikte iletir.',
+    LABEL_IN_NAME: 'Bu öğe için görünen metin, erişilebilir ad ile farklı görünüyor, bu da yardımcı teknoloji kullanıcıları için kafa karışıklığına neden olabilir. Lütfen gözden geçirin: <hr> <strong {B}>Erişilebilir Ad</strong> <strong {C}>%(TEXT)</strong>',
+
+    // Tables
     TABLES_MISSING_HEADINGS: 'Eksik tablo başlıkları! Erişilebilir tablolar, başlık hücrelerini ve aralarındaki ilişkiyi tanımlayan veri hücrelerini gösteren HTML işaretlemesine ihtiyaç duyar. Bu bilgi, yardımcı teknoloji kullanan kişilere bağlam sağlar. Tablolar yalnızca tablo verileri için kullanılmalıdır. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">erişilebilir tablolar hakkında daha fazla bilgi edinin.</a>',
     TABLES_SEMANTIC_HEADING: 'Heading 2 veya Heading 3 gibi anlamsal başlıklar yalnızca içerik bölümleri için kullanılmalıdır; HTML tablolarında <strong>değil</strong>. Bunun yerine tablo başlıklarını <code>&lt;th&gt;</code> öğesini kullanarak belirtin. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">erişilebilir tablolar hakkında daha fazla bilgi edinin.</a>',
     TABLES_EMPTY_HEADING: 'Boş tablo başlığı bulundu! Tablo başlıkları <strong>asla</strong> boş olmamalıdır. İlişkilerini aktarmak için satır ve/veya sütun başlıklarını belirlemek önemlidir. Bu bilgi, yardımcı teknoloji kullanan kişilere bağlam sağlar. Lütfen tabloların yalnızca tablo halindeki veriler için kullanılması gerektiğini unutmayın. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">erişilebilir tablolar hakkında daha fazla bilgi edinin.</a>',
+
+    // Contrast
     CONTRAST_ERROR: 'Bu metin arka planla yeterli kontrasta sahip değil. Kontrast oranı normal metin için en az 4,5:1 ve büyük metin için 3:1 olmalıdır. <hr> <strong {B}>Kontrast Oranı</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_WARNING: 'Bu metnin kontrastı bilinmemektedir ve manuel olarak gözden geçirilmesi gerekmektedir. Metin ve arka planın güçlü kontrast renklere sahip olduğundan emin olun. Kontrast oranı normal metin için en az 4,5:1 ve büyük metin için 3:1 olmalıdır. <hr> Lütfen inceleyin: <strong {C}>%(TEXT)</strong>',
     CONTRAST_INPUT: 'Bu girişteki metin arka planla yeterli kontrasta sahip değil. Kontrast oranı normal metin için en az 4,5:1 ve büyük metin için 3:1 olmalıdır. <hr> <strong {B}>Kontrast Oranı</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',

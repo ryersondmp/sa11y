@@ -142,6 +142,8 @@ export default {
       'ポップアップ',
     ],
     FILE_TYPE_PHRASES: ['ドキュメント', 'スプレッドシート', '計算シート', '圧縮ファイル', 'アーカイブされたファイル', 'ワークシート', 'パワーポイント', 'プレゼンテーション', 'インストール', 'ビデオ', 'オーディオ', 'PDF', 'ピクシブ', 'ドック', 'ドックス', 'になる', 'エムピーディー', 'パップ', 'テキスト', 'プチプチ', 'エグゼ', 'ディーエムジー', 'レントゲン写真', 'ウィンドウズ', 'マコス', 'クサビ', 'エックスエル', 'エックスエルエックス', 'エムピーフォー', 'ムーブ', 'アビ', 'ビュッ'],
+
+    // Readability
     READABILITY: '読みやすさ',
     AVG_SENTENCE: '1文あたりの平均単語数：',
     COMPLEX_WORDS: '複雑な言葉：',
@@ -166,20 +168,13 @@ export default {
     LINK_EMPTY: 'テキストのない空のリンクを削除してください。',
     LINK_EMPTY_LABELLEDBY: 'リンクには、空の<code>aria-labelledby</code>値またはページの他の要素の<code>id</code>値と一致しない<code>aria-labelledby</code>値があります。',
     LINK_EMPTY_NO_LABEL: 'スクリーンリーダーやその他の支援技術で見える識別可能なテキストを持たないリンクです。修正するには：<ul><li>リンク先を説明する簡潔なテキストを追加してください。</li><li><a href="https://a11y-101.com/development/icons-and-links">アイコンリンクやSVG</a>の場合、おそらく説明的なラベルが不足しています。</li><li>このリンクがコピー/貼り付けのバグによるエラーであると考える場合は、削除を検討してください。</li></ul>',
-    ACC_NAME: '<strong {B}>ラベル</strong> %(TEXT)',
     LINK_STOPWORD: 'コンテキストがない状況では、リンクテキストが十分に説明的ではないかもしれません：<strong {C}>%(ERROR)</strong> <hr> <strong>ヒント！</strong> リンクテキストは常に明確で、ユニークで、意味のあるものである必要があります。"ここをクリック"や"詳細を見る"などの一般的な言葉は避けてください。',
     LINK_BEST_PRACTICES: 'リンクテキストを置き換えることを検討してください：<strong {C}>%(ERROR)</strong> <hr> <ul><li>"ここをクリック"は多くの人がマウスを使用しないか、このウェブサイトをモバイルデバイスで表示している可能性があるため、マウスの操作に焦点を当てています。タスクに関連する別の動詞を使用することを検討してください。</li><li>補助技術には非表示にされていない限り、HTMLシンボルをコールツーアクションとして使用しないでください。</li></ul>',
     LINK_URL: 'リンクテキストとして使用される長く理解しにくいURLは、支援技術で理解するのが難しい場合があります。ほとんどの場合、URLの代わりに読みやすいテキストを使用する方が良いでしょう。短いURL（サイトのホームページなど）は問題ありません。<hr><strong>ヒント！</strong> リンクテキストは常に明確で、ユニークで、意味のあるものである必要があります。コンテキストがない状況でも理解できるようにしてください。',
     LINK_DOI: 'ウェブページやオンラインのみのリソースの場合、<a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APAスタイルガイド</a>は、作品のURLまたはDOIをタイトルにラップすることで説明的なリンクを使用することを推奨しています。リンクテキストとして使用される長く理解しにくいURLは、支援技術で理解するのが難しい場合があります。',
-
-    // Links advanced
     LINK_NEW_TAB: 'リンクが警告なしに新しいタブまたはウィンドウで開きます。これは、視覚的コンテンツを認識するのが難しい人々にとって特に混乱を招く可能性があります。さらに、誰かの体験を制御したり、代わりに決定したりするのは常に良い慣行ではありません。リンクテキスト内でリンクが新しいウィンドウで開くことを示してください。<hr> <strong>ヒント！</strong> ベストプラクティスを学ぶ：<a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">新しいブラウザウィンドウとタブでのリンクの開き方。</a>',
     LINK_FILE_EXT: 'リンクが警告なしにPDFやダウンロード可能なファイル（MP3、Zip、Word Docなど）を指しています。リンクテキスト内にファイルの種類を示してください。ファイルが大きい場合は、ファイルサイズを含めることを検討してください。<hr> <strong>例:</strong> 実行レポート（PDF、3MB）',
-    LINK_IDENTICAL_NAME: 'リンクが他のリンクと同じテキストを持っていますが、異なるページを指しています。同じテキストを持つ複数のリンクは、スクリーンリーダーを使用する人々に混乱を招く可能性があります。<hr> 他のリンクと区別するために、次のリンクをより具体的にすることを検討してください：<strong {C}>%(TEXT)</strong>',
-
-    // Buttons
-    BTN_EMPTY: 'ボタンには、その目的を説明するアクセシブル名がありません。アクセシブルなボタンの作成方法について学んでください <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">こちらをご覧ください。</a>',
-    BTN_EMPTY_LABELLEDBY: 'ボタンの<code>aria-labelledby</code>の値が空であるか、ページ上の他の要素の<code>id</code>値と一致していません。',
+    LINK_IDENTICAL_NAME: 'リンクが他のリンクと同じテキストを持っていますが、異なるページを指しています。同じテキストを持つ複数のリンクは、スクリーンリーダーを使用する人々に混乱を招く可能性があります。<strong>他のリンクと区別するために、次のリンクをより具体的にすることを検討してください。</strong> <hr> <strong {B}>アクセシブル名</strong> <strong {C}>%(TEXT)</strong>',
 
     // Images
     MISSING_ALT_LINK_HAS_TEXT: '画像が周囲のテキストと一緒にリンクとして使用されていますが、alt属性は装飾用としてマークされる必要があります。',
@@ -191,12 +186,11 @@ export default {
     ALT_FILE_EXT: 'altテキスト内にファイルの拡張子が見つかりました。画像が物語やムード、重要な情報を伝えている場合は、画像を説明してください。<hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     ALT_PLACEHOLDER: '記述のないまたはプレースホルダーのaltテキストが見つかりました。次のaltテキストをより意味のあるものに置き換えてください。<hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     SUS_ALT: '支援技術はすでにこれが画像であることを示しているため、「<strong {C}>%(ERROR)</strong>」は冗長かもしれません。<hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
-    HIDDEN_FOCUSABLE: 'リンクやボタンに <code>aria-hidden=&quot;true&quot;</code> が設定されていますが、キーボードでフォーカス可能です。重複したリンクやボタンを非表示にする場合は、<code>tabindex=&quot;-1&quot;</code> も追加してください。それ以外の場合、フォーカスを受け取ることができる要素に <code>aria-hidden=&quot;true&quot;</code> を使用してはいけません。<hr> <a href="https://developer.mozilla.org/ja/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden 属性について</a>詳しく知る。',
     LINK_IMAGE_NO_ALT_TEXT: '画像内のリンクが装飾用としてマークされており、リンクテキストがありません。リンクの目的を説明するaltテキストを画像に追加してください。',
     LINK_IMAGE_TEXT: '画像が装飾用としてマークされていますが、リンクが周囲のテキストを説明するラベルとして使用されています。',
     LINK_IMAGE_LONG_ALT: 'リンクされた画像のaltテキストの説明が<strong>長すぎます</strong>。リンクされた画像のaltテキストは、画像の文字通りの説明ではなく、リンクの目的を説明する必要があります。<strong>リンク先のページのタイトルをaltテキストとして使用することを検討してください。</strong> <hr> {ALT} {L} <strong {B}>%(altLength) 文字</strong> <strong {C}>%(ALT_TEXT)</strong>',
     LINK_IMAGE_ALT: '画像リンクにはaltテキストが含まれています。altテキストがリンク先を説明していますか？<strong>リンク先のページのタイトルをaltテキストとして使用することを検討してください。</strong> <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
-    LINK_IMAGE_ALT_AND_TEXT: '画像リンクには<strong>altテキストと周囲のリンクテキストの両方が含まれています。</strong> この画像が装飾用であり、他のページへの機能的なリンクとして使用されている場合は、画像を装飾用としてマークすることを検討してください。周囲のリンクテキストで十分です。<hr> {ALT} <strong {C}>%(ALT_TEXT)</strong> <hr> <strong {B}>ラベル</strong> {L} <strong {C}>%(TEXT)</strong>',
+    LINK_IMAGE_ALT_AND_TEXT: '画像リンクには<strong>altテキストと周囲のリンクテキストの両方が含まれています。</strong> この画像が装飾用であり、他のページへの機能的なリンクとして使用されている場合は、画像を装飾用としてマークすることを検討してください。周囲のリンクテキストで十分です。<hr> {ALT} <strong {C}>%(ALT_TEXT)</strong> <hr> <strong {B}>アクセシブル名</strong> {L} <strong {C}>%(TEXT)</strong>',
     IMAGE_FIGURE_DECORATIVE: '画像が<strong>装飾用</strong>としてマークされ、支援技術によって無視されます。<hr> キャプションが提供されていますが、ほとんどの場合、画像にはaltテキストも必要です。<ul><li>altテキストは画像の内容を簡潔に説明する必要があります。</li><li>キャプションは通常、画像を周囲のコンテンツに関連付けるための文脈を提供したり、特定の情報に注意を払ったりするために使用されます。</li></ul>詳細はこちら：<a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">altとfigcaptionの比較</a>。',
     IMAGE_FIGURE_DUPLICATE_ALT: 'altとキャプションテキストにはまったく同じ単語を使用しないでください。スクリーンリーダーは情報を二重に発表します。<ul><li>altテキストは画像の内容を簡潔に説明する必要があります。</li><li>キャプションは通常、画像を周囲のコンテンツに関連付けるための文脈を提供したり、特定の情報に注意を払ったりするために使用されます。</li></ul>詳細はこちら：<a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">altとfigcaptionの比較</a> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     IMAGE_DECORATIVE: '画像が<strong>装飾用</strong>としてマークされ、支援技術によって無視されます。画像が物語やムード、重要な情報を伝えている場合は、altテキストを追加してください。',
@@ -204,10 +198,10 @@ export default {
     IMAGE_ALT_TOO_LONG: 'altテキストの説明が<strong>長すぎます</strong>。altテキストは簡潔でありながら意味のあるものである必要があります（ツイートのように、約100文字）。これが複雑な画像やグラフの場合は、画像の長い説明を以下のテキストまたは折りたたみコンポーネントに入れることを検討してください。<hr> {ALT} <strong {B}>%(altLength) 文字</strong> <strong {C}>%(ALT_TEXT)</strong>',
     IMAGE_PASS: '{ALT} %(ALT_TEXT)',
 
-    // Labels
+    // Form labels
     LABELS_MISSING_IMAGE_INPUT: '画像ボタンにaltテキストがありません。アクセス可能な名前を提供するためにaltテキストを追加してください。例：<em>検索</em>または<em>送信</em>。',
     LABELS_INPUT_RESET: 'リセットボタンは、特に必要な場合を除いて使用しないでください。間違って簡単にアクティブ化される可能性があります。<hr> <strong>ヒント！</strong> <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">リセットおよびキャンセルボタンが使用性の問題を引き起こす理由</a>を学んでください。',
-    LABELS_ARIA_LABEL_INPUT: '入力フィールドにはアクセス可能な名前がありますが、見えるラベルもあることを確認してください。<hr> <strong {B}>入力ラベル</strong> <strong {C}>%(TEXT)</strong>',
+    LABELS_ARIA_LABEL_INPUT: '入力フィールドにはアクセス可能な名前がありますが、見えるラベルもあることを確認してください。<hr> <strong {B}>アクセシブル名</strong> <strong {C}>%(TEXT)</strong>',
     LABELS_NO_FOR_ATTRIBUTE: 'この入力フィールドに関連付けられたラベルがありません。この入力フィールドのラベルに一致する<code>for</code>属性を追加してください。<hr> この入力フィールドのIDは：<strong>id=&#34;%(id)&#34;</strong>',
     LABELS_MISSING_LABEL: 'この入力フィールドに関連付けられたラベルがありません。この入力フィールドに<code>id</code>を追加し、ラベルに一致する<code>for</code>属性を追加してください。',
 
@@ -224,21 +218,41 @@ export default {
     QA_STRONG_ITALICS: '太字および斜体タグには意味があり、段落全体を強調表示するために使用してはいけません。<strong>強調</strong>するためには、太字が使用されるべきです。斜体は固有名詞（つまり、書籍や記事のタイトル）、外国語、引用を強調するために使用されるべきです。長い引用は引用ブロックとしてフォーマットする必要があります。',
     QA_PDF: 'PDFのアクセシビリティをチェックできません。PDFはWebコンテンツと見なされ、アクセシブルにする必要があります。PDFには、スクリーンリーダーを使用する人や視力が低い人向けの問題がよく含まれます（構造タグの欠落やフォームフィールドのラベルの欠落など）。<ul><li>これがフォームである場合は、代替としてアクセシブルなHTMLフォームを使用してください。</li><li>これが文書である場合は、Webページに変換してください。</li></ul>それ以外の場合は、<a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">Acrobat DCでのPDFのアクセシビリティを確認してください。</a>',
     QA_DOCUMENT: '文書のアクセシビリティをチェックできません。リンクされた文書はWebコンテンツと見なされ、アクセシブルにする必要があります。この文書を手動で確認してください。<ul><li><a href="https://support.google.com/docs/answer/6199477?hl=en">Google Workspaceドキュメントやプレゼンテーションをよりアクセシブルにする方法</a></li><li><a href="https://support.microsoft.com/en-us/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office文書をよりアクセシブルにする方法</a></li></ul>',
-    PAGE_LANG: 'ページ言語が宣言されていません！<a href="https://www.w3.org/International/questions/qa-html-language-declarations">HTMLタグで言語を宣言してください。</a>',
-    META_TITLE: 'ページタイトルがありません！<a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">ページタイトルを入力してください。</a>',
     QA_BLOCKQUOTE: 'これは見出しですか？<strong {C}>%(TEXT)</strong><hr> ブロック引用は引用のためにのみ使用する必要があります。これが見出しである場合は、このブロック引用をセマンティックな見出し（例：見出し2または見出し3）に変更してください。',
     QA_FAKE_HEADING: 'これは見出しですか？<strong {C}>%(TEXT)</strong><hr> 太字や大きなテキストの行は見出しのように見えるかもしれませんが、スクリーンリーダーを使用している人はそれが重要であるかどうかを判断したり、その内容にジャンプしたりすることができません。太字や大きなテキストはセマンティックな見出し（見出し2から見出し6）を置き換えるべきではありません。',
     QA_FAKE_LIST: 'リストを作成しようとしていますか？可能なリスト項目が見つかりました：<strong {C}>%(firstPrefix)</strong> <hr> ブルレットまたは番号の書式設定ボタンを使用してセマンティックなリストを使用してください。セマンティックなリストを使用すると、支援技術が合計アイテム数やリスト内の各アイテムの相対位置などの情報を伝えることができます。<a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">セマンティックリスト</a>について詳しく学びます。',
     QA_UPPERCASE: 'すべて大文字が見つかりました。一部のスクリーンリーダーはすべて大文字のテキストを略語と解釈し、各文字を個別に読み上げます。また、一部の人々はすべて大文字のテキストを読むのが難しく、それが叫んでいるように見えるかもしれません。',
-    DUPLICATE_ID: '重複した<strong>IDが見つかりました</strong>。重複したIDは、支援技術がコンテンツとの相互作用を試みる際に問題を引き起こすことが知られています。<hr> 次のIDを削除または変更してください：<strong {C}>%(id)</strong>',
     QA_UNDERLINE: '下線付きテキストはリンクと混同される可能性があります。<code>&lt;strong&gt;</code><strong>strong importance</strong><code>&lt;/strong&gt;</code>や<code>&lt;em&gt;</code><em>emphasis</em><code>&lt;/em&gt;</code>など、異なるスタイルを使用してください。',
     QA_SUBSCRIPT: '下付き文字および上付き文字の書式設定オプションは、テキストの位置を変更するためのものであるべきです。それは単にプレゼンテーションや外観の目的でのみ使用されるべきではありません。文章全体のフォーマットは読みにくさの問題を引き起こします。適切な使用例には、指数の表示、序数（たとえば4<sup>th</sup>）、化学式（例：H<sub>2</sub>O）などが含まれます。',
     QA_IN_PAGE_LINK: 'リンクが壊れた同じページのリンクです。リンクのターゲットはページ上のいずれの要素とも一致しません。',
     QA_NESTED_COMPONENTS: 'インタラクティブなレイアウトコンポーネントをネストすることは避けてください。例えば、アコーディオンをタブ内に配置したり、タブをアコーディオン内に配置したりすることです。これにより、ナビゲーションが複雑になり、認知的負荷が増加し、コンテンツを見落とす可能性があります。',
+    QA_JUSTIFY: '左右のマージンに揃える「両端揃え」を使用しないでください。単語間の不均等なスペースのため、一部の人には読みにくくなる可能性があります。読みやすさを向上させるために、左揃えのテキストを使用してください。',
+    QA_SMALL_TEXT: '小さな文字は、特に視力の低下した人にとって読みづらいです。より良い可読性を確保するため、デフォルトサイズより小さいフォントサイズの使用は避けてください。',
+
+    // Shared
+    ACC_NAME: '<strong {B}>アクセシブル名</strong> %(TEXT)',
+    ACC_NAME_TIP: '<hr><strong>ヒント!</strong> "アクセシブル名"は、支援技術を使用する人々に伝えられる最終的なラベルであり、ARIAによって計算されます。これにより、リンクやボタンの目的を理解するのに役立ちます。',
+    HIDDEN_FOCUSABLE: 'リンクやボタンに <code>aria-hidden=&quot;true&quot;</code> が設定されていますが、キーボードでフォーカス可能です。重複したリンクやボタンを非表示にする場合は、<code>tabindex=&quot;-1&quot;</code> も追加してください。それ以外の場合、フォーカスを受け取ることができる要素に <code>aria-hidden=&quot;true&quot;</code> を使用してはいけません。<hr> <a href="https://developer.mozilla.org/ja/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden 属性について</a>詳しく知る。',
+
+    // Developer
+    DUPLICATE_ID: '重複した<strong>IDが見つかりました</strong>。重複したIDは、支援技術がコンテンツとの相互作用を試みる際に問題を引き起こすことが知られています。<hr> 次のIDを削除または変更してください：<strong {C}>%(id)</strong>',
     UNCONTAINED_LI: 'すべての <code>&lt;li&gt;</code> リスト項目は、<code>&lt;ul&gt;</code> 順不同リストまたは <code>&lt;ol&gt;</code> 順序付きリストの要素内に配置する必要があります。この構造は、スクリーンリーダーがリストとその項目を正確に読み上げるのに役立ちます。',
+    TABINDEX_ATTR: '要素は <code>tabindex</code> 属性が 0 より大きくてはいけません。',
+
+    // Meta checks
+    META_LANG: 'ページ言語が宣言されていません！<a href="https://www.w3.org/International/questions/qa-html-language-declarations">HTMLタグで言語を宣言してください。</a>',
+    META_TITLE: 'ページタイトルがありません！<a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">ページタイトルを入力してください。</a>',
     META_SCALABLE: '<a href="https://developer.mozilla.org/ja/docs/Web/HTML/Viewport_meta_tag">ビューポートのメタタグ</a>にある <code>user-scalable="no"</code> パラメータを削除して、ズームを許可してください。',
     META_MAX: '<a href="https://developer.mozilla.org/ja/docs/Web/HTML/Viewport_meta_tag">ビューポートのメタタグ</a>の <code>maximum-scale</code> パラメータが 2 未満でないことを確認してください。',
-    QA_JUSTIFY: '左端と右端の両方に揃った均等揃えのテキストの使用を避けてください。これは、単語間の間隔が不均一なため、一部の人々にとって読みづらい場合があります。より良い可読性のためには、左揃えのテキストを使用してください。',
+    META_REFRESH: 'ページはメタタグを使用して自動的に更新されるべきではありません。',
+
+    // Buttons
+    BTN_EMPTY: 'ボタンにはその目的を説明するアクセシブルな名前がありません。',
+    BTN_EMPTY_LABELLEDBY: 'ボタンに空の <code>aria-labelledby</code> 値があるか、ページ上の他の要素の <code>id</code> と一致していません。',
+    BTN: 'ボタン',
+    BTN_TIP: 'アクセシブルな <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">ボタンの作り方</a> を学ぶ。',
+    BTN_ROLE_IN_NAME: 'ボタンの名前に「ボタン」という単語を含めないでください。スクリーンリーダーは、名前に加えて要素の役割をすでに伝えています。',
+    LABEL_IN_NAME: 'この要素の表示されるテキストがアクセシブルな名前と異なっているようで、支援技術を使用するユーザーに混乱を招く可能性があります。確認してください：<hr> <strong {B}>アクセシブルな名前</strong> <strong {C}>%(TEXT)</strong>',
 
     // Tables
     TABLES_MISSING_HEADINGS: 'テーブルヘッダーがありません！アクセシブルなテーブルには、ヘッダーセルとデータセルを示すHTMLマークアップが必要です。これにより、支援技術を使用する人々にコンテキストが提供されます。テーブルは表形式のデータのみに使用する必要があります。<hr> <a href="https://www.w3.org/WAI/tutorials/tables/">アクセシブルなテーブル</a>について詳しく学びます。',

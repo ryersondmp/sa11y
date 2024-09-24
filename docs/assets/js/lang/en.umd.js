@@ -156,7 +156,6 @@
       LINK_EMPTY: 'Remove empty links without any text.',
       LINK_EMPTY_LABELLEDBY: 'Link has an <code>aria-labelledby</code> value that is empty or does not match the <code>id</code> value of another element on the page.',
       LINK_EMPTY_NO_LABEL: 'Link does not have discernible text that is visible to screen readers and other assistive technology. To fix: <ul><li>Add concise text that describes where the link takes you.</li><li>If it is an <a href="https://a11y-101.com/development/icons-and-links">icon link or SVG,</a> it is likely missing a descriptive label.</li><li>If you think this link is an error due to a copy/paste bug, consider deleting it.</li></ul>',
-      ACC_NAME: '<strong {B}>Label</strong> %(TEXT)',
       LINK_STOPWORD: 'Link text may not be descriptive enough out of context: <strong {C}>%(ERROR)</strong> <hr> <strong>Tip!</strong> Link text should always be clear, unique, and meaningful. Avoid common words like &quot;click here&quot; or &quot;learn more&quot;',
       LINK_BEST_PRACTICES: 'Consider replacing the link text: <strong {C}>%(ERROR)</strong> <hr> <ul><li>&quot;Click here&quot; places focus on mouse mechanics, when many people do not use a mouse or may be viewing this website on a mobile device. Consider using a different verb that relates to the task.</li><li>Avoid using HTML symbols as call to actions unless they are hidden to assistive technologies.</li></ul>',
       LINK_URL: 'Longer, less intelligible URLs used as link text might be difficult to comprehend with assistive technology. In most cases, it is better to use human-readable text instead of the URL. Short URLs (such as a site\'s homepage) are okay.<hr><strong>Tip!</strong> Link text should always be clear, unique, and meaningful so it could be understood out of context.',
@@ -165,7 +164,7 @@
       // Links advanced
       LINK_NEW_TAB: 'Link opens in a new tab or window without warning. Doing so can be disorienting, especially for people who have difficulty perceiving visual content. Secondly, it is not always a good practice to control someone\'s experience or make decisions for them. Indicate that the link opens in a new window within the link text. <hr> <strong>Tip!</strong> Learn best practices: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">opening links in new browser windows and tabs.</a>',
       LINK_FILE_EXT: 'Link points to a PDF or downloadable file (e.g. MP3, Zip, Word Doc) without warning. Indicate the file type within the link text. If it is a large file, consider including the file size. For example: "Executive Report (PDF, 3MB)"',
-      LINK_IDENTICAL_NAME: 'Link has identical text as another link, although it points to a different page. Multiple links with the same text may cause confusion for people who use screen readers. <strong>Consider making the following link more descriptive to help distinguish it from other links.</strong> <hr> <strong {B}>Label</strong> <strong {C}>%(TEXT)</strong>',
+      LINK_IDENTICAL_NAME: 'Link has identical text as another link, although it points to a different page. Multiple links with the same text may cause confusion for people who use screen readers. <strong>Consider making the following link more descriptive to help distinguish it from other links.</strong> <hr> <strong {B}>Accessible Name</strong> <strong {C}>%(TEXT)</strong>',
 
       // Images
       MISSING_ALT_LINK_HAS_TEXT: 'Image is being used as a link with surrounding text, although the alt attribute should be marked as decorative.',
@@ -177,12 +176,11 @@
       ALT_FILE_EXT: 'File extension within the alt text found. If the image conveys a story, mood, or important information - be sure to describe the image. Remove: <strong {C}>%(ERROR)</strong> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
       ALT_PLACEHOLDER: 'Non-descript or placeholder alt text found. Replace the following alt text with something more meaningful. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
       SUS_ALT: 'Assistive technologies already indicate that this is an image, so &quot;<strong {C}>%(ERROR)</strong>&quot; may be redundant. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
-      HIDDEN_FOCUSABLE: 'Link or button has <code>aria-hidden=&quot;true&quot;</code> but is still keyboard focusable. If you are intending to hide a duplicate link or button, add <code>tabindex=&quot;-1&quot;</code> as well. Otherwise, <code>aria-hidden=&quot;true&quot;</code> should not be used on elements that can receive focus. <hr> Learn more about the <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden attribute.</a>',
       LINK_IMAGE_NO_ALT_TEXT: 'Image within link is marked as decorative and there is no link text. Please add alt text to the image that describes the destination of the link.',
       LINK_IMAGE_TEXT: 'Image is marked as decorative, although the link is using the surrounding text as a descriptive label.',
       LINK_IMAGE_LONG_ALT: 'Alt text description on a linked image is <strong>too long</strong>. The alt text on linked images should describe where the link takes you, not a literal description of the image. <strong>Consider using the title of the page it links to as the alt text.</strong> <hr> {ALT} {L} <strong {B}>%(altLength) Characters</strong> <strong {C}>%(ALT_TEXT)</strong>',
       LINK_IMAGE_ALT: 'Image link contains alt text. Does the alt text describe where the link takes you? <strong>Consider using the title of the page it links to as the alt text.</strong> <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
-      LINK_IMAGE_ALT_AND_TEXT: 'Image link contains <strong>both alt text and surrounding link text.</strong> If this image is decorative and is being used as a functional link to another page, consider marking the image as decorative. The surrounding link text should suffice. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong> <hr> <strong {B}>Label</strong> {L} <strong {C}>%(TEXT)</strong>',
+      LINK_IMAGE_ALT_AND_TEXT: 'Image link contains <strong>both alt text and surrounding link text.</strong> If this image is decorative and is being used as a functional link to another page, consider marking the image as decorative. The surrounding link text should suffice. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong> <hr> <strong {B}>Accessible Name</strong> {L} <strong {C}>%(TEXT)</strong>',
       IMAGE_FIGURE_DECORATIVE: 'Image is marked as <strong>decorative</strong> and will be ignored by assistive technology. <hr> Although a <strong>caption</strong> was provided, the image should also have alt text in most cases. <ul><li>The alt text should provide a concise description of what is in the image.</li><li>The caption should usually provide context to relate the image back to the surrounding content, or give attention to a particular piece of information.</li></ul> Learn more: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt versus figcaption.</a>',
       IMAGE_FIGURE_DUPLICATE_ALT: 'Do not use the exact same words for both the alt and caption text. Screen readers will announce the information twice. <ul><li>The alt text should provide a concise description of what is in the image.</li><li>The caption should usually provide context to relate the image back to the surrounding content, or give attention to a particular piece of information.</li></ul> Learn more: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt versus figcaption.</a> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
       IMAGE_DECORATIVE: 'Image is marked as <strong>decorative</strong> and will be ignored by assistive technology. If the image conveys a story, mood or important information - be sure to add alt text.',
@@ -193,7 +191,7 @@
       // Labels
       LABELS_MISSING_IMAGE_INPUT: 'Image button is missing alt text. Please add alt text to provide an accessible name. For example: <em>Search</em> or <em>Submit</em>.',
       LABELS_INPUT_RESET: 'Reset buttons should not be used unless specifically needed because they are easy to activate by mistake. <hr> <strong>Tip!</strong> Learn why <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Reset and Cancel buttons pose usability issues.</a>',
-      LABELS_ARIA_LABEL_INPUT: 'Input has an accessible name, although please ensure there is a visible label too. <hr> <strong {B}>Input label</strong> <strong {C}>%(TEXT)</strong>',
+      LABELS_ARIA_LABEL_INPUT: 'Input has an accessible name, although please ensure there is a visible label too. <hr> <strong {B}>Accessible Name</strong> <strong {C}>%(TEXT)</strong>',
       LABELS_NO_FOR_ATTRIBUTE: 'There is no label associated with this input. Add a <code>for</code> attribute to the label that matches the <code>id</code> of this input. <hr> The ID for this input is: <strong>id=&#34;%(id)&#34;</strong>',
       LABELS_MISSING_LABEL: 'There is no label associated with this input. Please add an <code>id</code> to this input, and add a matching <code>for</code> attribute to the label.',
 
@@ -219,29 +217,37 @@
       QA_IN_PAGE_LINK: 'Broken same-page link. The link target does not match any element on the page.',
       QA_NESTED_COMPONENTS: 'Avoid nesting interactive layout components, such as placing accordions within other accordions, or placing tabs inside accordions and vice versa. This can complicate navigation, increase cognitive overload, and lead to people overlooking content.',
       QA_JUSTIFY: 'Avoid using justified text, which aligns to both the left and right margins. This can be difficult for some people to read due to the uneven spaces between words. Use left-aligned text for better readability.',
-      QA_SMALL_TEXT: 'Small text is harder to read, particularly for those with low vision. To ensure better readability, avoid using font sizes smaller than 16 points or the default size.',
+      QA_SMALL_TEXT: 'Small text is harder to read, particularly for those with low vision. To ensure better readability, avoid using font sizes smaller than the default.',
+
+      // Shared
+      ACC_NAME: '<strong {B}>Accessible Name</strong> %(TEXT)',
+      ACC_NAME_TIP: '<hr><strong>Tip!</strong> The "accessible name" is the final label that gets communicated to people who use assistive technology. This helps them understand the link or button\'s purpose.',
+      HIDDEN_FOCUSABLE: 'Link or button has <code>aria-hidden=&quot;true&quot;</code> but is still keyboard focusable. If you are intending to hide a duplicate link or button, add <code>tabindex=&quot;-1&quot;</code> as well. Otherwise, <code>aria-hidden=&quot;true&quot;</code> should not be used on elements that can receive focus. <hr> Learn more about the <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden attribute.</a>',
 
       // Developer checks
-      PAGE_LANG: 'Page language not declared! Please <a href="https://www.w3.org/International/questions/qa-html-language-declarations">declare language on HTML tag.</a>',
-      META_TITLE: 'Missing page title! Please provide a <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">page title.</a>',
       DUPLICATE_ID: 'Found <strong>duplicate ID</strong>. Duplicate ID errors are known to cause problems for assistive technologies when they are trying to interact with content. <hr> Please remove or change the following ID: <strong {C}>%(id)</strong>',
       UNCONTAINED_LI: 'All <code>&lt;li&gt;</code> list items must be placed inside <code>&lt;ul&gt;</code> unordered or <code>&lt;ol&gt;</code> ordered elements. This structure helps screen readers announce the list and its items accurately.',
+      TABINDEX_ATTR: 'Element should not have a <code>tabindex</code> attribute greater than 0.',
+
+      // Meta checks
+      META_TITLE: 'Missing page title! Please provide a <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">page title.</a>',
       META_SCALABLE: 'Remove the <code>user-scalable="no"</code> parameter in the <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">viewport meta tag</a> in order to allow zooming.',
       META_MAX: 'Ensure the <code>maximum-scale</code> parameter in the <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">viewport meta tag</a> is not less than 2.',
+      META_LANG: 'Page language not declared! Please <a href="https://www.w3.org/International/questions/qa-html-language-declarations">declare language on HTML tag.</a>',
+      META_REFRESH: 'Page should not automatically refresh using a meta tag.',
+
+      // Buttons
       BTN_EMPTY: 'Button is missing an accessible name that describes its purpose.',
       BTN_EMPTY_LABELLEDBY: 'Button has an <code>aria-labelledby</code> value that is empty or does not match the <code>id</code> value of another element on the page.',
       BTN: 'button',
       BTN_TIP: 'Learn how to make an <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">accessible button.</a>',
       BTN_ROLE_IN_NAME: 'Do not include the word "button" in the name of a button. Screen readers already convey the role of an element in addition to its name.',
-      META_REFRESH: 'Page should not automatically refresh using a meta tag.',
-      TABINDEX_ATTR: 'The <code>tabindex</code> attribute should never be greater than 0.',
+      LABEL_IN_NAME: 'The visible text for this element appears to be different than the accessible name, which may cause confusion for assistive technologies users. Please review: <hr> <strong {B}>Accessible Name</strong> <strong {C}>%(TEXT)</strong>',
 
       // Tables
       TABLES_MISSING_HEADINGS: 'Missing table headers! Accessible tables need HTML markup that indicates header cells and data cells which defines their relationship. This information provides context to people who use assistive technology. Tables should be used for tabular data only. <hr> Learn more about <a href="https://www.w3.org/WAI/tutorials/tables/">accessible tables.</a>',
       TABLES_SEMANTIC_HEADING: 'Semantic headings such as Heading 2 or Heading 3 should only be used for sections of content; <strong>not</strong> in HTML tables. Indicate table headings using the <code>&lt;th&gt;</code> element instead. <hr> Learn more about <a href="https://www.w3.org/WAI/tutorials/tables/">accessible tables.</a>',
       TABLES_EMPTY_HEADING: 'Empty table header found! Table headers should <strong>never</strong> be empty. It is important to designate row and/or column headers to convey their relationship. This information provides context to people who use assistive technology. Please keep in mind that tables should be used for tabular data only. <hr> Learn more about <a href="https://www.w3.org/WAI/tutorials/tables/">accessible tables.</a>',
-
-      // Contrast
       CONTRAST_ERROR: 'This text does not have enough contrast with the background. The contrast ratio should be at least 4.5:1 for normal text and 3:1 for large text. <hr> <strong {B}>Contrast Ratio</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
       CONTRAST_WARNING: 'The contrast of this text is unknown and needs to be manually reviewed. Ensure the text and the background have strong contrasting colours. The contrast ratio should be at least 4.5:1 for normal text and 3:1 for large text. <hr> Please review: <strong {C}>%(TEXT)</strong>',
       CONTRAST_INPUT: 'Text within this input does not have enough contrast with the background. The contrast ratio should be at least 4.5:1 for normal text and 3:1 for large text. <hr> <strong {B}>Contrast Ratio</strong> <strong {B}>%(RATIO)</strong>',

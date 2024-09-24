@@ -125,13 +125,13 @@ export const computeAccessibleName = (element, exclusions, recursing = 0) => {
             }
             break;
           case 'SVG':
-          case 'svg':
-            if (treeWalker.currentNode.getAttribute('role') === 'image'
-              && treeWalker.currentNode.hasAttribute('alt')) {
-              computedText += wrapPseudoContent(
-                treeWalker.currentNode, treeWalker.currentNode.getAttribute('alt'),
-              );
-              if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
+            if (treeWalker.currentNode.hasAttribute('role') === 'img' || treeWalker.currentNode.hasAttribute('role') === 'graphics-document') {
+              computedText += computeAriaLabel(treeWalker.currentNode);
+            } else {
+              const title = treeWalker.currentNode.querySelector('title');
+              if (title) {
+                computedText += title;
+              }
             }
             break;
           case 'A':

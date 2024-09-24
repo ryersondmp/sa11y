@@ -342,9 +342,9 @@ export default function checkQA(results, option) {
     });
   }
 
-  /* *************************************************************** */
-  /*  Warning: Detect uppercase text.                                */
-  /* *************************************************************** */
+  /* **************************************** */
+  /*  Warning: Detect uppercase text.         */
+  /* **************************************** */
   if (option.checks.QA_UPPERCASE) {
     const checkCaps = ($el) => {
       let thisText = '';
@@ -382,9 +382,9 @@ export default function checkQA(results, option) {
     Elements.Found.Blockquotes.forEach(($el) => checkCaps($el));
   }
 
-  /* *************************************************************** */
-  /*  Check for underlined and justify-aligned text.                 */
-  /* *************************************************************** */
+  /* **************************************************** */
+  /*  Check for underlined and justify-aligned text.      */
+  /* **************************************************** */
   if (option.checks.QA_UNDERLINE || option.checks.QA_JUSTIFY) {
     const addUnderlineResult = ($el, inline) => {
       const text = Utils.getText($el);
@@ -449,12 +449,13 @@ export default function checkQA(results, option) {
       }
 
       /** Check: Font size is less than or equal to 10px.
-       * Inspired by WebAim's WAVE check. @since 4.0.0 */
-      if (option.checks.QA_SMALL_TEXT && parseFloat(fontSize) <= 10) {
+       * Inspired by WebAim's WAVE check. Not WCAG. */
+      const defaultSize = option.checks.QA_SMALL_TEXT.fontSize || 10;
+      if (option.checks.QA_SMALL_TEXT && parseFloat(fontSize) <= defaultSize) {
         addSmallTextResult($el);
       }
 
-      /** Check: Check if text is justify-aligned. @since 4.0.0 */
+      /** Check: Check if text is justify-aligned. */
       if (option.checks.QA_JUSTIFY && textAlign === 'justify') {
         addJustifyResult($el);
       }
@@ -466,9 +467,9 @@ export default function checkQA(results, option) {
     Elements.Found.Spans.forEach(computeStyle);
   }
 
-  /* *************************************************************** */
-  /*  Find inappropriate use of <sup> and <sub> tags.                */
-  /* *************************************************************** */
+  /* **************************************************** */
+  /*  Find inappropriate use of <sup> and <sub> tags.     */
+  /* **************************************************** */
   if (option.checks.QA_SUBSCRIPT) {
     Elements.Found.Subscripts.forEach(($el) => {
       const text = Utils.getText($el);
@@ -487,12 +488,13 @@ export default function checkQA(results, option) {
     });
   }
 
-  /* *************************************************************** */
-  /*  Find double nested layout components. @since 4.0.0             */
-  /* *************************************************************** */
+  /* ****************************************** */
+  /*  Find double nested layout components.     */
+  /* ****************************************** */
   if (option.checks.QA_NESTED_COMPONENTS) {
     Elements.Found.NestedComponents.forEach(($el) => {
-      const component = $el.querySelector(option.nestedComponentSources);
+      const sources = option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
+      const component = $el.querySelector(sources);
       if (component) {
         results.push({
           element: $el,

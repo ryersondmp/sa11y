@@ -73,7 +73,6 @@
     // Customizing checks.
     altTextMaxCharLength: 250,
     susAltStopWords: '',
-    decorativeShouldHaveAlt: '.carousel',
     linkStopWords: '',
     extraPlaceholderStopWords: '',
     headingMaxCharLength: 170,
@@ -82,7 +81,6 @@
     URLTextMaxCharLength: 40,
     linksToFlag: '',
     documentLinks: 'a[href$=".doc"], a[href$=".docx"], a[href*=".doc?"], a[href*=".docx?"], a[href$=".ppt"], a[href$=".pptx"], a[href*=".ppt?"], a[href*=".pptx?"], a[href^="https://drive.google.com/file"], a[href^="https://docs.google."], a[href^="https://sway."]',
-    nestedComponentSources: '[role="tablist"], details',
 
     // Embedded content sources
     videoContent: 'youtube.com, vimeo.com, yuja.com, panopto.com',
@@ -178,18 +176,20 @@
       QA_JUSTIFY: true,
       QA_SMALL_TEXT: true,
 
-      // Developer
-      PAGE_LANG: true,
-      DUPLICATE_ID: true,
-      META_TITLE: true,
-      HIDDEN_FOCUSABLE: true,
-      UNCONTAINED_LI: true,
+      // Meta checks
+      META_LANG: true,
+
       META_SCALABLE: true,
       META_MAX: true,
       META_REFRESH: true,
-      TABINDEX_ATTR: true,
 
-      // Buttons
+      // Developer checks
+      DUPLICATE_ID: true,
+      META_TITLE: true,
+      UNCONTAINED_LI: true,
+      TABINDEX_ATTR: true,
+      HIDDEN_FOCUSABLE: true,
+      LABEL_IN_NAME: true,
       BTN_EMPTY: true,
       BTN_EMPTY_LABELLEDBY: true,
       BTN_ROLE_IN_NAME: true,
@@ -573,6 +573,175 @@
     // 4. Return the cleaned up array.
     return elements;
   }
+
+  /* eslint-disable no-use-before-define */
+
+  /* Get text content of pseudo elements. */
+  const wrapPseudoContent = (element, string) => {
+    const pseudo = [];
+    pseudo[0] = window.getComputedStyle(element, ':before').getPropertyValue('content');
+    pseudo[1] = window.getComputedStyle(element, ':after').getPropertyValue('content');
+    pseudo[0] = pseudo[0] === 'none' ? '' : pseudo[0].replace(/^"(.*)"$/, '$1');
+    pseudo[1] = pseudo[1] === 'none' ? '' : pseudo[1].replace(/^"(.*)"$/, '$1');
+    return ` ${pseudo[0]}${string}${pseudo[1]}`;
+  };
+
+  /* Sets treeWalker loop to last node before next branch. */
+  const nextTreeBranch = (tree) => {
+    for (let i = 0; i < 1000; i++) {
+      if (tree.nextSibling()) {
+        // Prepare for continue to advance.
+        return tree.previousNode();
+      }
+      // Next node will be in next branch.
+      if (!tree.parentNode()) {
+        return false;
+      }
+    }
+    return false;
+  };
+
+  /* Compute ARIA attributes. */
+  const computeAriaLabel = (element, recursing = false) => {
+    const labelledBy = element.getAttribute('aria-labelledby');
+    if (!recursing && labelledBy) {
+      const target = labelledBy.split(/\s+/);
+      if (target.length > 0) {
+        let returnText = '';
+        target.forEach((x) => {
+          const targetSelector = document.querySelector(`#${CSS.escape(x)}`);
+          returnText += (!targetSelector) ? '' : `${computeAccessibleName(targetSelector, '', 1)}`;
+        });
+        return returnText;
+      }
+    }
+
+    const ariaLabel = element.getAttribute('aria-label');
+    if (ariaLabel && ariaLabel.trim().length > 0) {
+      return ariaLabel;
+    }
+    return 'noAria';
+  };
+
+  /**
+   * Computes the accessible name of an element.
+   * @param {Element} element The element for which the accessible name needs to be computed.
+   * @param {String} exclusions List of selectors which will be ignored.
+   * @param {Number} recursing Recursion depth.
+   * @returns {string} The computed accessible name of the element.
+   * @kudos to John Jameson, creator of the Editoria11y library, for developing this more robust calculation!
+   * @notes Uses a subset of the W3C accessible name algorithm.
+  */
+  const computeAccessibleName = (element, exclusions, recursing = 0) => {
+    // Return immediately if there is an aria label.
+    const hasAria = computeAriaLabel(element, recursing);
+    if (hasAria !== 'noAria') {
+      return hasAria;
+    }
+
+    // Return immediately if there is only a text node.
+    let computedText = '';
+    if (!element.children.length) {
+      // Just text! Output immediately.
+      computedText = wrapPseudoContent(element, element.textContent);
+      if (!computedText.trim() && element.hasAttribute('title')) {
+        return element.getAttribute('title');
+      }
+      return computedText;
+    }
+
+    // Create tree walker object.
+    function createCustomTreeWalker(rootNode, showElement, showText) {
+      const acceptNode = (node) => {
+        if (showElement && node.nodeType === Node.ELEMENT_NODE) return NodeFilter.FILTER_ACCEPT;
+        if (showText && node.nodeType === Node.TEXT_NODE) return NodeFilter.FILTER_ACCEPT;
+        return NodeFilter.FILTER_REJECT;
+      };
+      return document.createTreeWalker(rootNode, NodeFilter.SHOW_ALL, { acceptNode });
+    }
+    const treeWalker = createCustomTreeWalker(element, true, true);
+
+    // Otherwise, recurse into children.
+    let addTitleIfNoName = false;
+    let aText = false;
+    let count = 0;
+    let shouldContinueWalker = true;
+
+    const alwaysExclude = 'noscript, style, script';
+    const exclude = element.querySelectorAll(exclusions ? `${exclusions}, ${alwaysExclude}` : alwaysExclude);
+
+    while (treeWalker.nextNode() && shouldContinueWalker) {
+      count += 1;
+
+      // Exclusions.
+      const currentNodeMatchesExclude = Array.from(exclude).some((excludedNode) => excludedNode.contains(treeWalker.currentNode));
+
+      if (currentNodeMatchesExclude) ; else if (treeWalker.currentNode.nodeType === Node.TEXT_NODE) {
+        computedText += ` ${treeWalker.currentNode.nodeValue}`;
+      } else if (addTitleIfNoName && !treeWalker.currentNode.closest('a')) {
+        if (aText === computedText) {
+          computedText += addTitleIfNoName;
+        }
+        addTitleIfNoName = false;
+        aText = false;
+      } else if (treeWalker.currentNode.hasAttribute('aria-hidden') && !(recursing && count < 3)) {
+        if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
+      } else {
+        const aria = computeAriaLabel(treeWalker.currentNode, recursing);
+        if (aria !== 'noAria') {
+          computedText += ` ${aria}`;
+          if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
+        } else {
+          switch (treeWalker.currentNode.tagName) {
+            case 'IMG':
+              if (treeWalker.currentNode.hasAttribute('alt')) {
+                computedText += treeWalker.currentNode.getAttribute('alt');
+              }
+              break;
+            case 'SVG':
+              if (treeWalker.currentNode.hasAttribute('role') === 'img' || treeWalker.currentNode.hasAttribute('role') === 'graphics-document') {
+                computedText += computeAriaLabel(treeWalker.currentNode);
+              } else {
+                const title = treeWalker.currentNode.querySelector('title');
+                if (title) {
+                  computedText += title;
+                }
+              }
+              break;
+            case 'A':
+              if (treeWalker.currentNode.hasAttribute('title')) {
+                addTitleIfNoName = treeWalker.currentNode.getAttribute('title');
+                aText = computedText;
+              } else {
+                addTitleIfNoName = false;
+                aText = false;
+              }
+              computedText += wrapPseudoContent(treeWalker.currentNode, '');
+              break;
+            default:
+              computedText += wrapPseudoContent(treeWalker.currentNode, '');
+              break;
+          }
+        }
+      }
+    }
+
+    if (addTitleIfNoName && !aText) {
+      computedText += ` ${addTitleIfNoName}`;
+    }
+
+    // Replace Private Use Area (PUA) unicode characters.
+    // https://www.unicode.org/faq/private_use.html
+    const puaRegex = /[\uE000-\uF8FF]/gu;
+    computedText = computedText.replace(puaRegex, '');
+
+    // If computedText returns blank, fallback on title attribute.
+    if (!computedText.trim() && element.hasAttribute('title')) {
+      return element.getAttribute('title');
+    }
+
+    return computedText;
+  };
 
   /**
    * Checks if the document has finished loading, and if so, immediately calls the provided callback function. Otherwise, waits for the 'load' event to fire and then calls the callback function.
@@ -1051,6 +1220,39 @@
     return elementPreview;
   }
 
+  /**
+   * Check if an element's visible text is included in the accessible name.
+   * To minimize false positives: iterate through all child nodes of the element, checking for visibility.
+   * @param {element} $el The element to test.
+   * @returns {boolean}
+   */
+  function isVisibleTextInAccessibleName($el) {
+    let text = '';
+    const accName = computeAccessibleName($el).toLowerCase();
+    const nodes = $el.childNodes;
+    nodes.forEach((node) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        text += node.textContent;
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        // Only return text content if it's not hidden.
+        if (!isElementVisuallyHiddenOrHidden(node)) {
+          text += node.textContent;
+        }
+      }
+    });
+
+    // Ignore emojis
+    const emojiRegex = /[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu;
+    const ignoreEmojis = text.replace(emojiRegex, '');
+
+    // Check if visible text is included in accessible name.
+    const trimmed = removeWhitespace(ignoreEmojis).toLowerCase();
+    if (trimmed.length !== 0 && !accName.includes(trimmed)) {
+      return true;
+    }
+    return false;
+  }
+
   const Elements = (function myElements() {
     const Found = {};
     function initializeElements(option) {
@@ -1166,8 +1368,9 @@
         Constants.Exclusions.Container,
       ) : [];
 
-      Found.NestedComponents = option.nestedComponentSources ? find(
-        option.nestedComponentSources,
+      const nestedSources = option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
+      Found.NestedComponents = nestedSources ? find(
+        nestedSources,
         'root',
         Constants.Exclusions.Container,
       ) : [];
@@ -1186,7 +1389,7 @@
 
       // iFrames
       Found.iframes = find(
-        'iframe:not(hidden), audio, video',
+        'iframe, audio, video',
         'root',
         Constants.Exclusions.Container,
       );
@@ -6690,175 +6893,6 @@
     Constants.Panel.skipButton.removeEventListener('click', handleSkipButtonHandler);
   }
 
-  /* eslint-disable no-use-before-define */
-
-  /* Get text content of pseudo elements. */
-  const wrapPseudoContent = (element, string) => {
-    const pseudo = [];
-    pseudo[0] = window.getComputedStyle(element, ':before').getPropertyValue('content');
-    pseudo[1] = window.getComputedStyle(element, ':after').getPropertyValue('content');
-    pseudo[0] = pseudo[0] === 'none' ? '' : pseudo[0].replace(/^"(.*)"$/, '$1');
-    pseudo[1] = pseudo[1] === 'none' ? '' : pseudo[1].replace(/^"(.*)"$/, '$1');
-    return ` ${pseudo[0]}${string}${pseudo[1]}`;
-  };
-
-  /* Sets treeWalker loop to last node before next branch. */
-  const nextTreeBranch = (tree) => {
-    for (let i = 0; i < 1000; i++) {
-      if (tree.nextSibling()) {
-        // Prepare for continue to advance.
-        return tree.previousNode();
-      }
-      // Next node will be in next branch.
-      if (!tree.parentNode()) {
-        return false;
-      }
-    }
-    return false;
-  };
-
-  /* Compute ARIA attributes. */
-  const computeAriaLabel = (element, recursing = false) => {
-    const labelledBy = element.getAttribute('aria-labelledby');
-    if (!recursing && labelledBy) {
-      const target = labelledBy.split(/\s+/);
-      if (target.length > 0) {
-        let returnText = '';
-        target.forEach((x) => {
-          const targetSelector = document.querySelector(`#${CSS.escape(x)}`);
-          returnText += (!targetSelector) ? '' : `${computeAccessibleName(targetSelector, '', 1)}`;
-        });
-        return returnText;
-      }
-    }
-
-    const ariaLabel = element.getAttribute('aria-label');
-    if (ariaLabel && ariaLabel.trim().length > 0) {
-      return ariaLabel;
-    }
-    return 'noAria';
-  };
-
-  /**
-   * Computes the accessible name of an element.
-   * @param {Element} element The element for which the accessible name needs to be computed.
-   * @param {String} exclusions List of selectors which will be ignored.
-   * @param {Number} recursing Recursion depth.
-   * @returns {string} The computed accessible name of the element.
-   * @kudos to John Jameson, creator of the Editoria11y library, for developing this more robust calculation!
-   * @notes Uses a subset of the W3C accessible name algorithm.
-  */
-  const computeAccessibleName = (element, exclusions, recursing = 0) => {
-    // Return immediately if there is an aria label.
-    const hasAria = computeAriaLabel(element, recursing);
-    if (hasAria !== 'noAria') {
-      return hasAria;
-    }
-
-    // Return immediately if there is only a text node.
-    let computedText = '';
-    if (!element.children.length) {
-      // Just text! Output immediately.
-      computedText = wrapPseudoContent(element, element.textContent);
-      if (!computedText.trim() && element.hasAttribute('title')) {
-        return element.getAttribute('title');
-      }
-      return computedText;
-    }
-
-    // Create tree walker object.
-    function createCustomTreeWalker(rootNode, showElement, showText) {
-      const acceptNode = (node) => {
-        if (showElement && node.nodeType === Node.ELEMENT_NODE) return NodeFilter.FILTER_ACCEPT;
-        if (showText && node.nodeType === Node.TEXT_NODE) return NodeFilter.FILTER_ACCEPT;
-        return NodeFilter.FILTER_REJECT;
-      };
-      return document.createTreeWalker(rootNode, NodeFilter.SHOW_ALL, { acceptNode });
-    }
-    const treeWalker = createCustomTreeWalker(element, true, true);
-
-    // Otherwise, recurse into children.
-    let addTitleIfNoName = false;
-    let aText = false;
-    let count = 0;
-    let shouldContinueWalker = true;
-
-    const alwaysExclude = 'noscript, style, script';
-    const exclude = element.querySelectorAll(exclusions ? `${exclusions}, ${alwaysExclude}` : alwaysExclude);
-
-    while (treeWalker.nextNode() && shouldContinueWalker) {
-      count += 1;
-
-      // Exclusions.
-      const currentNodeMatchesExclude = Array.from(exclude).some((excludedNode) => excludedNode.contains(treeWalker.currentNode));
-
-      if (currentNodeMatchesExclude) ; else if (treeWalker.currentNode.nodeType === Node.TEXT_NODE) {
-        computedText += ` ${treeWalker.currentNode.nodeValue}`;
-      } else if (addTitleIfNoName && !treeWalker.currentNode.closest('a')) {
-        if (aText === computedText) {
-          computedText += addTitleIfNoName;
-        }
-        addTitleIfNoName = false;
-        aText = false;
-      } else if (treeWalker.currentNode.hasAttribute('aria-hidden') && !(recursing && count < 3)) {
-        if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
-      } else {
-        const aria = computeAriaLabel(treeWalker.currentNode, recursing);
-        if (aria !== 'noAria') {
-          computedText += ` ${aria}`;
-          if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
-        } else {
-          switch (treeWalker.currentNode.tagName) {
-            case 'IMG':
-              if (treeWalker.currentNode.hasAttribute('alt')) {
-                computedText += treeWalker.currentNode.getAttribute('alt');
-              }
-              break;
-            case 'SVG':
-            case 'svg':
-              if (treeWalker.currentNode.getAttribute('role') === 'image'
-                && treeWalker.currentNode.hasAttribute('alt')) {
-                computedText += wrapPseudoContent(
-                  treeWalker.currentNode, treeWalker.currentNode.getAttribute('alt'),
-                );
-                if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
-              }
-              break;
-            case 'A':
-              if (treeWalker.currentNode.hasAttribute('title')) {
-                addTitleIfNoName = treeWalker.currentNode.getAttribute('title');
-                aText = computedText;
-              } else {
-                addTitleIfNoName = false;
-                aText = false;
-              }
-              computedText += wrapPseudoContent(treeWalker.currentNode, '');
-              break;
-            default:
-              computedText += wrapPseudoContent(treeWalker.currentNode, '');
-              break;
-          }
-        }
-      }
-    }
-
-    if (addTitleIfNoName && !aText) {
-      computedText += ` ${addTitleIfNoName}`;
-    }
-
-    // Replace Private Use Area (PUA) unicode characters.
-    // https://www.unicode.org/faq/private_use.html
-    const puaRegex = /[\uE000-\uF8FF]/gu;
-    computedText = computedText.replace(puaRegex, '');
-
-    // If computedText returns blank, fallback on title attribute.
-    if (!computedText.trim() && element.hasAttribute('title')) {
-      return element.getAttribute('title');
-    }
-
-    return computedText;
-  };
-
   function checkImages(results, option) {
     const containsAltTextStopWords = (alt) => {
       const altUrl = [
@@ -7030,14 +7064,15 @@
 
         // Decorative images.
         if (decorative) {
-          if (option.checks.IMAGE_DECORATIVE_CAROUSEL && $el.closest(option.decorativeShouldHaveAlt)) {
+          const carouselSources = option.checks.IMAGE_DECORATIVE_CAROUSEL.sources || '.carousel';
+          if (option.checks.IMAGE_DECORATIVE_CAROUSEL && $el.closest(carouselSources)) {
             results.push({
               element: $el,
               type: option.checks.IMAGE_DECORATIVE_CAROUSEL.type || 'warning',
               content: option.checks.IMAGE_DECORATIVE_CAROUSEL.content || Lang.sprintf('IMAGE_DECORATIVE_CAROUSEL'),
               inline: false,
               position: 'beforebegin',
-              dismiss: prepareDismissal(`DECIMAGE${src}`),
+              dismiss: prepareDismissal(`CAROUSEL${src}`),
               dismissAll: option.checks.IMAGE_DECORATIVE_CAROUSEL.dismissAll ? 'IMAGE_DECORATIVE_CAROUSEL' : false,
               developer: option.checks.IMAGE_DECORATIVE_CAROUSEL.developer || false,
             });
@@ -7174,16 +7209,21 @@
             ? option.checks.LINK_IMAGE_ALT
             : option.checks.LINK_IMAGE_ALT_AND_TEXT;
           const conditional = (linkTextContentLength === 0) ? 'LINK_IMAGE_ALT' : 'LINK_IMAGE_ALT_AND_TEXT';
+
           if (rule) {
             // Has both link text and alt text.
             const linkAccName = computeAccessibleName(link);
             const removeWhitespace$1 = removeWhitespace(linkAccName);
             const sanitizedText = sanitizeHTML(removeWhitespace$1);
+
+            const tooltip = (linkTextContentLength === 0)
+              ? Lang.sprintf('LINK_IMAGE_ALT', altText)
+              : `${Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT', altText, sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`;
+
             results.push({
               element: $el,
               type: rule.type || 'warning',
-              content: rule.content || Lang.sprintf(linkTextContentLength === 0
-                ? 'LINK_IMAGE_ALT' : 'LINK_IMAGE_ALT_AND_TEXT', altText, sanitizedText),
+              content: rule.content || tooltip,
               inline: false,
               position: 'beforebegin',
               dismiss: prepareDismissal(`IMAGELINK${src + altText}`),
@@ -7617,13 +7657,27 @@
           }
         }
       } else if (hasAria) {
-        // If the link has any ARIA, append a "Good" link button.
-        if (option.checks.LINK_LABEL) {
+        // Button must have visible label as part of their accessible name.
+        const isVisibleTextInAccessibleName$1 = isVisibleTextInAccessibleName($el);
+        if (option.checks.LABEL_IN_NAME && isVisibleTextInAccessibleName$1 && $el.textContent.length !== 0) {
+          const sanitizedText = sanitizeHTML(accName);
+          results.push({
+            element: $el,
+            type: option.checks.LABEL_IN_NAME.type || 'warning',
+            content: option.checks.LABEL_IN_NAME.content || `${Lang.sprintf('LABEL_IN_NAME', sanitizedText)}`,
+            inline: true,
+            position: 'afterend',
+            dismiss: prepareDismissal(`LINK${href + linkTextTrimmed}`),
+            dismissAll: option.checks.LABEL_IN_NAME.dismissAll ? 'BTN_LABEL_IN_NAME' : false,
+            developer: option.checks.LABEL_IN_NAME.developer || true,
+          });
+        } else if (option.checks.LINK_LABEL) {
+          // If the link has any ARIA, append a "Good" link button.
           const sanitizedText = sanitizeHTML(linkText);
           results.push({
             element: $el,
             type: option.checks.LINK_LABEL.type || 'good',
-            content: option.checks.LINK_LABEL.content || Lang.sprintf('ACC_NAME', sanitizedText),
+            content: option.checks.LINK_LABEL.content || `${Lang.sprintf('ACC_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
             inline: true,
             position: 'afterend',
             dismiss: prepareDismissal(`LINK${href + linkTextTrimmed}`),
@@ -7658,7 +7712,7 @@
               results.push({
                 element: $el,
                 type: option.checks.LINK_IDENTICAL_NAME.type || 'warning',
-                content: option.checks.LINK_IDENTICAL_NAME.content || Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText),
+                content: option.checks.LINK_IDENTICAL_NAME.content || `${Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
                 inline: true,
                 position: 'beforebegin',
                 dismiss: prepareDismissal(`LINK${href + linkTextTrimmed}`),
@@ -8013,8 +8067,8 @@
         const key = prepareDismissal(`INPUT${type + inputName}`);
 
         // Error: Input with type="image" without accessible name or alt.
-        if (type === 'image' && (!alt || alt.trim() === '')) {
-          if (option.checks.LABELS_MISSING_IMAGE_INPUT && !hasAria && !hasTitle) {
+        if (type === 'image') {
+          if (option.checks.LABELS_MISSING_IMAGE_INPUT && (!alt || alt.trim() === '') && !hasAria && !hasTitle) {
             results.push({
               element: $el,
               type: option.checks.LABELS_MISSING_IMAGE_INPUT.type || 'error',
@@ -8066,7 +8120,7 @@
             results.push({
               element: $el,
               type: option.checks.LABELS_ARIA_LABEL_INPUT.type || 'warning',
-              content: option.checks.LABELS_ARIA_LABEL_INPUT.content || Lang.sprintf('LABELS_ARIA_LABEL_INPUT', sanitizedText),
+              content: option.checks.LABELS_ARIA_LABEL_INPUT.content || `${Lang.sprintf('LABELS_ARIA_LABEL_INPUT', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
               inline: false,
               position: 'beforebegin',
               dismiss: key,
@@ -8832,9 +8886,9 @@
       });
     }
 
-    /* *************************************************************** */
-    /*  Warning: Detect uppercase text.                                */
-    /* *************************************************************** */
+    /* **************************************** */
+    /*  Warning: Detect uppercase text.         */
+    /* **************************************** */
     if (option.checks.QA_UPPERCASE) {
       const checkCaps = ($el) => {
         let thisText = '';
@@ -8872,9 +8926,9 @@
       Elements.Found.Blockquotes.forEach(($el) => checkCaps($el));
     }
 
-    /* *************************************************************** */
-    /*  Check for underlined and justify-aligned text.                 */
-    /* *************************************************************** */
+    /* **************************************************** */
+    /*  Check for underlined and justify-aligned text.      */
+    /* **************************************************** */
     if (option.checks.QA_UNDERLINE || option.checks.QA_JUSTIFY) {
       const addUnderlineResult = ($el, inline) => {
         const text = getText($el);
@@ -8939,12 +8993,13 @@
         }
 
         /** Check: Font size is less than or equal to 10px.
-         * Inspired by WebAim's WAVE check. @since 4.0.0 */
-        if (option.checks.QA_SMALL_TEXT && parseFloat(fontSize) <= 10) {
+         * Inspired by WebAim's WAVE check. Not WCAG. */
+        const defaultSize = option.checks.QA_SMALL_TEXT.fontSize || 10;
+        if (option.checks.QA_SMALL_TEXT && parseFloat(fontSize) <= defaultSize) {
           addSmallTextResult($el);
         }
 
-        /** Check: Check if text is justify-aligned. @since 4.0.0 */
+        /** Check: Check if text is justify-aligned. */
         if (option.checks.QA_JUSTIFY && textAlign === 'justify') {
           addJustifyResult($el);
         }
@@ -8956,9 +9011,9 @@
       Elements.Found.Spans.forEach(computeStyle);
     }
 
-    /* *************************************************************** */
-    /*  Find inappropriate use of <sup> and <sub> tags.                */
-    /* *************************************************************** */
+    /* **************************************************** */
+    /*  Find inappropriate use of <sup> and <sub> tags.     */
+    /* **************************************************** */
     if (option.checks.QA_SUBSCRIPT) {
       Elements.Found.Subscripts.forEach(($el) => {
         const text = getText($el);
@@ -8977,12 +9032,13 @@
       });
     }
 
-    /* *************************************************************** */
-    /*  Find double nested layout components. @since 4.0.0             */
-    /* *************************************************************** */
+    /* ****************************************** */
+    /*  Find double nested layout components.     */
+    /* ****************************************** */
     if (option.checks.QA_NESTED_COMPONENTS) {
       Elements.Found.NestedComponents.forEach(($el) => {
-        const component = $el.querySelector(option.nestedComponentSources);
+        const sources = option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
+        const component = $el.querySelector(sources);
         if (component) {
           results.push({
             element: $el,
@@ -9005,13 +9061,13 @@
     /* *************************************************************** */
     /*  Error: Missing language tag. Lang should be at least 2 chars.  */
     /* *************************************************************** */
-    if (option.checks.PAGE_LANG) {
+    if (option.checks.META_LANG) {
       if (!Elements.Found.Language || Elements.Found.Language.length < 2) {
         results.push({
-          type: option.checks.PAGE_LANG.type || 'error',
-          content: option.checks.PAGE_LANG.content || Lang.sprintf('PAGE_LANG'),
+          type: option.checks.META_LANG.type || 'error',
+          content: option.checks.META_LANG.content || Lang.sprintf('META_LANG'),
           dismiss: prepareDismissal('LANG'),
-          developer: option.checks.PAGE_LANG.developer || true,
+          developer: option.checks.META_LANG.developer || true,
         });
       }
     }
@@ -9027,6 +9083,60 @@
           content: option.checks.META_TITLE.content || Lang.sprintf('META_TITLE'),
           dismiss: prepareDismissal('TITLE'),
           developer: option.checks.META_TITLE.developer || true,
+        });
+      }
+    }
+
+    /* ********************************************* */
+    /*  Zooming and scaling must not be disabled.    */
+    /* ********************************************* */
+    if (option.checks.META_SCALABLE || option.checks.META_MAX) {
+      const metaViewport = document.querySelector('meta[name="viewport"]');
+      if (metaViewport) {
+        const content = metaViewport.getAttribute('content');
+        if (content) {
+          // Parse the content attribute to extract parameters.
+          const params = content.split(',').reduce((acc, param) => {
+            const [key, value] = param.split('=').map((s) => s.trim());
+            acc[key] = value;
+            return acc;
+          }, {});
+
+          // Check for user-scalable parameter.
+          if (option.checks.META_SCALABLE && params['user-scalable'] === 'no') {
+            results.push({
+              type: option.checks.META_SCALABLE.type || 'error',
+              content: option.checks.META_SCALABLE.content || Lang.sprintf('META_SCALABLE'),
+              dismiss: prepareDismissal('SCALABLE'),
+              developer: option.checks.META_SCALABLE.developer || true,
+            });
+          }
+
+          // Check maximum-scale parameter.
+          const maxScale = parseFloat(params['maximum-scale']);
+          if (option.checks.META_MAX && !Number.isNaN(maxScale) && maxScale < 2) {
+            results.push({
+              type: option.checks.META_MAX.type || 'error',
+              content: option.checks.META_MAX.content || Lang.sprintf('META_MAX'),
+              dismiss: prepareDismissal('MAXSCALE'),
+              developer: option.checks.META_MAX.developer || true,
+            });
+          }
+        }
+      }
+    }
+
+    /* ****************************************** */
+    /*  Page shouldn't automatically refresh.     */
+    /* ****************************************** */
+    if (option.checks.META_REFRESH) {
+      const metaRefresh = document.querySelector('meta[http-equiv="refresh"]');
+      if (metaRefresh) {
+        results.push({
+          type: option.checks.META_REFRESH.type || 'error',
+          content: option.checks.META_REFRESH.content || Lang.sprintf('META_REFRESH'),
+          dismiss: prepareDismissal('REFRESH'),
+          developer: option.checks.META_REFRESH.developer || true,
         });
       }
     }
@@ -9093,10 +9203,10 @@
       });
     }
 
-    /* ******************************************************************* */
-    /*  Buttons must have an accessible name. @since 4.0.0                 */
-    /* ******************************************************************* */
-    if (option.checks.BTN_EMPTY || option.checks.BTN_EMPTY_LABELLEDBY || option.checks.BTN_LABEL || option.checks.HIDDEN_FOCUSABLE) {
+    /* ********************************************* */
+    /*  Buttons must have an accessible name.        */
+    /* ********************************************* */
+    if (option.checks.BTN_EMPTY || option.checks.BTN_EMPTY_LABELLEDBY || option.checks.BTN_LABEL || option.checks.HIDDEN_FOCUSABLE || option.checks.LABEL_IN_NAME) {
       Elements.Found.Buttons.forEach(($el) => {
         const accName = computeAccessibleName($el);
         const buttonText = accName.replace(/'|"|-|\.|\s+/g, '').toLowerCase();
@@ -9105,21 +9215,21 @@
         const key = prepareDismissal(`BTN${$el.tagName + $el.id + $el.className + accName}`);
 
         // Has ARIA
+        const hasAria = $el.querySelector(':scope [aria-labelledby], :scope [aria-label]') || $el.getAttribute('aria-labelledby') || $el.getAttribute('aria-label');
         const hasAriaLabelledby = $el.querySelector(':scope [aria-labelledby]') || $el.getAttribute('aria-labelledby');
         const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
         const negativeTabindex = $el.getAttribute('tabindex') === '-1';
 
+        // Button has aria-hidden but is still focusable.
         if (ariaHidden) {
-        // Has aria-hidden.
           if (!negativeTabindex) {
-          // If negative tabindex.
             if (option.checks.HIDDEN_FOCUSABLE) {
               results.push({
                 element: $el,
                 type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
                 content: option.checks.HIDDEN_FOCUSABLE.content || Lang.sprintf('HIDDEN_FOCUSABLE'),
-                inline: true,
-                position: 'afterend',
+                inline: false,
+                position: 'beforebegin',
                 dismiss: key,
                 dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll ? 'BTN_HIDDEN_FOCUSABLE' : false,
                 developer: option.checks.HIDDEN_FOCUSABLE.developer || true,
@@ -9136,8 +9246,8 @@
               element: $el,
               type: option.checks.BTN_EMPTY_LABELLEDBY.type || 'error',
               content: option.checks.BTN_EMPTY_LABELLEDBY.content || `${Lang.sprintf('BTN_EMPTY_LABELLEDBY')} ${Lang.sprintf('BTN_TIP')}`,
-              inline: true,
-              position: 'afterend',
+              inline: false,
+              position: 'beforebegin',
               dismiss: prepareDismissal(key),
               dismissAll: option.checks.BTN_EMPTY_LABELLEDBY.dismissAll ? 'BTN_EMPTY_LABELLEDBY' : false,
               developer: option.checks.BTN_EMPTY_LABELLEDBY.developer || true,
@@ -9147,20 +9257,40 @@
               element: $el,
               type: option.checks.BTN_EMPTY.type || 'error',
               content: option.checks.BTN_EMPTY.content || `${Lang.sprintf('BTN_EMPTY')} ${Lang.sprintf('BTN_TIP')}`,
-              inline: true,
+              inline: false,
               position: 'beforebegin',
               dismiss: key,
               dismissAll: option.checks.BTN_EMPTY.dismissAll ? 'BTN_EMPTY' : false,
               developer: option.checks.BTN_EMPTY.developer || true,
             });
           }
-        } else if (option.checks.BTN_ROLE_IN_NAME && accName.includes(Lang._('BTN'))) {
-          // Has "button" in the accessible name.
+          return;
+        }
+
+        // Button must have visible label as part of their accessible name.
+        const isVisibleTextInAccessibleName$1 = isVisibleTextInAccessibleName($el);
+        if (option.checks.LABEL_IN_NAME && hasAria && isVisibleTextInAccessibleName$1) {
+          const sanitizedText = sanitizeHTML(accName);
+          results.push({
+            element: $el,
+            type: option.checks.LABEL_IN_NAME.type || 'warning',
+            content: option.checks.LABEL_IN_NAME.content || `${Lang.sprintf('LABEL_IN_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
+            inline: false,
+            position: 'beforebegin',
+            dismiss: key,
+            dismissAll: option.checks.LABEL_IN_NAME.dismissAll ? 'BTN_LABEL_IN_NAME' : false,
+            developer: option.checks.LABEL_IN_NAME.developer || true,
+          });
+          return;
+        }
+
+        // Has "button" in the accessible name.
+        if (option.checks.BTN_ROLE_IN_NAME && accName.includes(Lang._('BTN'))) {
           results.push({
             element: $el,
             type: option.checks.BTN_ROLE_IN_NAME.type || 'warning',
             content: option.checks.BTN_ROLE_IN_NAME.content || `${Lang.sprintf('BTN_ROLE_IN_NAME')} ${Lang.sprintf('BTN_TIP')}`,
-            inline: true,
+            inline: false,
             position: 'beforebegin',
             dismiss: key,
             dismissAll: option.checks.BTN_ROLE_IN_NAME.dismissAll ? 'BTN_ROLE_IN_NAME' : false,
@@ -9170,9 +9300,9 @@
       });
     }
 
-    /* ******************************************************************* */
-    /* <li> elements must be contained in a <ul>/<ol>/<menu>. @since 4.0.0 */
-    /* ******************************************************************* */
+    /* ********************************************************** */
+    /* <li> elements must be contained in a <ul>/<ol>/<menu>.     */
+    /* ********************************************************** */
     if (option.checks.UNCONTAINED_LI) {
       Elements.Found.UncontainedLi.forEach(($el) => {
         results.push({
@@ -9188,65 +9318,9 @@
       });
     }
 
-    /* ********************************************************* */
-    /*  Zooming and scaling must not be disabled. @since 4.0.0   */
-    /* ********************************************************* */
-    if (option.checks.META_SCALABLE || option.checks.META_MAX) {
-      const metaViewport = document.querySelector('meta[name="viewport"]');
-      if (metaViewport) {
-        const content = metaViewport.getAttribute('content');
-        if (content) {
-          // Parse the content attribute to extract parameters.
-          const params = content.split(',').reduce((acc, param) => {
-            const [key, value] = param.split('=').map((s) => s.trim());
-            acc[key] = value;
-            return acc;
-          }, {});
-
-          // Check for user-scalable parameter.
-          if (option.checks.META_SCALABLE && params['user-scalable'] === 'no') {
-            results.push({
-              type: option.checks.META_SCALABLE.type || 'error',
-              content: option.checks.META_SCALABLE.content || Lang.sprintf('META_SCALABLE'),
-              dismiss: prepareDismissal('SCALABLE'),
-              developer: option.checks.META_SCALABLE.developer || true,
-            });
-          }
-
-          // Check maximum-scale parameter.
-          const maxScale = parseFloat(params['maximum-scale']);
-          if (option.checks.META_MAX && !Number.isNaN(maxScale) && maxScale < 2) {
-            results.push({
-              type: option.checks.META_MAX.type || 'error',
-              content: option.checks.META_MAX.content || Lang.sprintf('META_MAX'),
-              dismiss: prepareDismissal('MAXSCALE'),
-              developer: option.checks.META_MAX.developer || true,
-            });
-          }
-        }
-      }
-    }
-
-    /* ********************************************************* */
-    /*  Page shouldn't automatically refresh.     @since 4.0.0   */
-    /* ********************************************************* */
-    if (option.checks.META_REFRESH) {
-      const metaRefresh = document.querySelector('meta[http-equiv="refresh"]');
-      if (metaRefresh) {
-        results.push({
-          type: option.checks.META_REFRESH.type || 'error',
-          content: option.checks.META_REFRESH.content || Lang.sprintf('META_REFRESH'),
-          dismiss: prepareDismissal('REFRESH'),
-          developer: option.checks.META_REFRESH.developer || true,
-        });
-      }
-    }
-
-    console.log('@TO-DO: ADD translations for all new developer and QA checks.');
-
-    /* ********************************************************* */
-    /*  No tabindex values greater than 0.        @since 4.0.0   */
-    /* ********************************************************* */
+    /* ****************************************** */
+    /*  No tabindex values greater than 0.        */
+    /* ****************************************** */
     if (option.checks.TABINDEX_ATTR) {
       Elements.Found.TabIndex.forEach(($el) => {
         results.push({
