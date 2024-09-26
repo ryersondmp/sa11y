@@ -947,6 +947,7 @@ test.describe('Sa11y Unit Tests', () => {
       'nothing-same-page-with-role',
       'nothing-same-page-onclick',
       'nothing-same-page-ariacontrols',
+      'nothing-same-page-name-attr',
     ];
     ids.forEach(async (id) => {
       const issue = await noAnnotation(page, id);
@@ -1233,6 +1234,8 @@ test.describe('Sa11y Unit Tests', () => {
       'nothing-button-4',
       'nothing-button-5',
       'nothing-button-6',
+      'nothing-button-7',
+      'nothing-button-8',
     ];
     ids.forEach(async (id) => {
       const issue = await noAnnotation(page, id);

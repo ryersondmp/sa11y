@@ -23,7 +23,7 @@ export default function checkDeveloper(results, option) {
   /*  Check for missing meta page title <title>                      */
   /* *************************************************************** */
   if (option.checks.META_TITLE) {
-    const metaTitle = document.querySelector('head title');
+    const metaTitle = document.querySelector('title:not(svg title)');
     if (!metaTitle || metaTitle.textContent.trim().length === 0) {
       results.push({
         type: option.checks.META_TITLE.type || 'error',

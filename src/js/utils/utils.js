@@ -517,12 +517,16 @@ export function isVisibleTextInAccessibleName($el) {
 
   // Ignore emojis
   const emojiRegex = /[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu;
-  const ignoreEmojis = text.replace(emojiRegex, '');
+  let visibleText = text.replace(emojiRegex, '');
+
+  // Final visible text.
+  visibleText = removeWhitespace(visibleText).toLowerCase();
+
+  // If visible text is just an x character, ignore.
+  if (visibleText === 'x') {
+    return false;
+  }
 
   // Check if visible text is included in accessible name.
-  const trimmed = removeWhitespace(ignoreEmojis).toLowerCase();
-  if (trimmed.length !== 0 && !accName.includes(trimmed)) {
-    return true;
-  }
-  return false;
+  return visibleText.length !== 0 && !accName.includes(visibleText);
 }

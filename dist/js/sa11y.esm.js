@@ -1237,14 +1237,18 @@ function isVisibleTextInAccessibleName($el) {
 
   // Ignore emojis
   const emojiRegex = /[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu;
-  const ignoreEmojis = text.replace(emojiRegex, '');
+  let visibleText = text.replace(emojiRegex, '');
+
+  // Final visible text.
+  visibleText = removeWhitespace(visibleText).toLowerCase();
+
+  // If visible text is just an x character, ignore.
+  if (visibleText === 'x') {
+    return false;
+  }
 
   // Check if visible text is included in accessible name.
-  const trimmed = removeWhitespace(ignoreEmojis).toLowerCase();
-  if (trimmed.length !== 0 && !accName.includes(trimmed)) {
-    return true;
-  }
-  return false;
+  return visibleText.length !== 0 && !accName.includes(visibleText);
 }
 
 const Elements = (function myElements() {
@@ -6426,6 +6430,7 @@ class TooltipComponent extends HTMLElement {
       arrow: true,
       offset: [0, 8],
       delay: [0, 400],
+      maxWidth: 375,
       theme: 'sa11y-theme',
       placement: 'auto-start',
       allowHTML: true,
@@ -8602,7 +8607,11 @@ function checkQA(results, option) {
         if ((href.startsWith('#') || href === '') && !hasButtonRole && hasText && !hasClick) {
           const targetId = href.substring(1);
           const ariaControls = $el.getAttribute('aria-controls');
-          const targetElement = document.getElementById(targetId) || document.getElementById(decodeURIComponent(targetId)) || document.getElementById(encodeURIComponent(targetId)) || document.getElementById(ariaControls);
+          const targetElement = document.getElementById(targetId)
+            || document.getElementById(decodeURIComponent(targetId))
+            || document.getElementById(encodeURIComponent(targetId))
+            || document.getElementById(ariaControls)
+            || document.querySelector(`a[name="${targetId}"]`);
 
           // If reference ID doesn't exist.
           if (!targetElement) {
@@ -9070,7 +9079,7 @@ function checkDeveloper(results, option) {
   /*  Check for missing meta page title <title>                      */
   /* *************************************************************** */
   if (option.checks.META_TITLE) {
-    const metaTitle = document.querySelector('head title');
+    const metaTitle = document.querySelector('title:not(svg title)');
     if (!metaTitle || metaTitle.textContent.trim().length === 0) {
       results.push({
         type: option.checks.META_TITLE.type || 'error',

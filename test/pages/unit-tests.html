@@ -1117,6 +1117,13 @@
       <div id="collapseLoginMenuOptions">Example menu</div>
     </div>
 
+    <h3>Link with valid <code>name</code> attribute</h3>
+    <div id="nothing-same-page-name-attr">
+      <a href="#skip-to-name">Skip to <code>name</code> attribute.</a>
+      <br><br><br>
+      <p><a name="skip-to-name"></a>Using <code>name</code> attribute.</p>
+    </div>
+
     <h3>Valid links with encoded or decoded <code>href</code> or <code>id</code> values</h3>
 
     <h4>Encoded <kbd>href</kbd> and <kbd>id</kbd></h4>
@@ -1467,7 +1474,7 @@
 
     <h3>Button with broken aria-labelledby attribute</h3>
     <div id="error-button-arialabelledby">
-      <button class="btn-primary" aria-labelledby="asd"><i class="bi bi-trash"></i></button>
+      <button aria-labelledby="asd"><i class="bi bi-trash"></i></button>
     </div>
 
     <h3>Button with aria-hidden</h3>
@@ -1502,14 +1509,14 @@
 
     <h4>Button has aria-label</h4>
     <div id="nothing-button-3">
-      <button class="btn-primary" aria-label="Delete"><i class="bi bi-trash"></i></button>
+      <button aria-label="Delete"><i class="bi bi-trash"></i></button>
     </div>
 
     <h3>Label in name</h3>
 
     <h4>Visible text not within aria-label</h4>
     <div id="warning-label-in-name-1">
-      <button type="button" class="btn-primary" aria-label="Trash">
+      <button type="button" aria-label="Trash">
         <i class="bi bi-trash"></i> Delete
       </button>
     </div>
@@ -1519,7 +1526,7 @@
     <div id="warning-label-in-name-2">
       <details>
         <summary>Open me!</summary>
-        <button type="button" class="btn-primary" aria-label="Trash">
+        <button type="button" aria-label="Trash">
           <i class="bi bi-trash"></i> Delete
         </button>
       </details>
@@ -1527,7 +1534,7 @@
 
     <h4>No visible text</h4>
     <div id="nothing-button-4">
-      <button type="button" class="btn-primary" aria-label="Trash">
+      <button type="button" aria-label="Trash">
         <i class="bi bi-trash"></i>
         <span class="visually-hidden">Delete</span>
       </button>
@@ -1535,15 +1542,31 @@
 
     <h4>Mixed case letters</h4>
     <div id="nothing-button-5">
-      <button type="button" class="btn-primary" aria-label="Please delete!">
+      <button type="button" aria-label="Please delete!">
         <i class="bi bi-trash"></i> DeLeTe
       </button>
     </div>
 
     <h4>Testing mixed visually hidden children of button</h4>
     <div id="nothing-button-6">
-      <button type="button" class="btn-primary" aria-label="please delete">
+      <button type="button" aria-label="please delete">
         <i class="bi bi-trash"></i><span class="visually-hidden">Please</span> Delete
+      </button>
+    </div>
+
+    <h4>Testing hidden children of button, but parent element is also hidden</h4>
+    <div id="nothing-button-7">
+      <div hidden>
+        <button type="button" aria-label="please delete">
+          <i class="bi bi-trash"></i><span class="visually-hidden">Please</span> Delete
+        </button>
+      </div>
+    </div>
+
+    <h4>Button only has an "x" (e.g. a close button)</h4>
+    <div id="nothing-button-8">
+      <button type="button" aria-label="Close">
+        X
       </button>
     </div>
 

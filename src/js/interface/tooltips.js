@@ -51,6 +51,7 @@ export class TooltipComponent extends HTMLElement {
       arrow: true,
       offset: [0, 8],
       delay: [0, 400],
+      maxWidth: 375,
       theme: 'sa11y-theme',
       placement: 'auto-start',
       allowHTML: true,
