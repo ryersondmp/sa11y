@@ -138,6 +138,8 @@ const scssConfigs = scssFiles.map((file) => ({
   ],
 }));
 
+console.log('@DEV BOOKMARKLET');
+
 export default [
   ...languageConfigs,
   ...scssConfigs,
@@ -215,6 +217,26 @@ export default [
         file: 'bookmarklet/v2-en.js',
         format: 'umd',
         name: 'Sa11yLangBookmarkletEn',
+        plugins: [terser()],
+      },
+    ],
+  },
+  {
+    input: 'src/bookmarklet/dev.js',
+    plugins: [
+      nodeResolve(),
+      css(),
+      replace({
+        preventAssignment: true,
+        'process.env.NODE_ENV': JSON.stringify('production'),
+        Sa11yVersion: JSON.stringify(pkg.version),
+      }),
+    ],
+    output: [
+      {
+        file: 'bookmarklet/dev.js',
+        format: 'umd',
+        name: 'Sa11yLangBookmarklet',
         plugins: [terser()],
       },
     ],
