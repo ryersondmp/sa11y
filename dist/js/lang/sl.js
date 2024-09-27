@@ -264,7 +264,7 @@ var sl = {
 
     // Contrast
     CONTRAST_ERROR: 'Besedilo ni dovolj kontrastno glede na ozadje. Kontrastno razmerje bi moralo biti vsaj 4,5:1 za običajno besedilo in 3:1 za veliko besedilo. <hr> <strong {B}>Razmerje kontrasta</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'Kontrast tega besedila ni znan in ga je treba ročno preveriti. Prepričajte se, da imata besedilo in ozadje močno kontrastne barve. Kontrastno razmerje mora biti vsaj 4,5 : 1 za običajno besedilo in 3 : 1 za veliko besedilo. <hr> Prosimo, preglejte: <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'Kontrast tega besedila ni znan in ga je treba ročno preveriti. Prepričajte se, da imata besedilo in ozadje močno kontrastne barve. Kontrastno razmerje mora biti vsaj 4,5 : 1 za običajno besedilo in 3 : 1 za veliko besedilo. <hr> <strong {B}>Razmerje kontrasta</strong> <strong {B}>Neznano</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_INPUT: 'Besedilo v tem vnosu ni dovolj kontrastno z ozadjem. Kontrastno razmerje mora biti vsaj 4,5 : 1 za običajno besedilo in 3 : 1 za veliko besedilo. <hr> <strong {B}>Razmerje kontrasta</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

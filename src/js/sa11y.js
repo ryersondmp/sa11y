@@ -76,9 +76,11 @@ class Sa11y {
         Constants.initializeExclusions(option);
         Constants.initializeEmbeddedContent(option);
 
-        // Make "Developer checks" on by default or if toggle switch is visually hidden.
-        if (Utils.store.getItem('sa11y-developer') === null || option.checkAllHideToggles) {
-          Utils.store.setItem('sa11y-developer', 'On');
+        /* Make "Developer checks" on by default or if toggle switch is visually hidden. */
+        if (option.developerChecksOnByDefault) {
+          if (Utils.store.getItem('sa11y-developer') === null || option.checkAllHideToggles) {
+            Utils.store.setItem('sa11y-developer', 'On');
+          }
         }
 
         // Once document has fully loaded.
@@ -213,7 +215,7 @@ class Sa11y {
       this.results = this.results.filter((heading) => heading.isWithinRoot !== false);
 
       // Filter out "Developer checks" if toggled off.
-      if (Utils.store.getItem('sa11y-developer') === 'Off') {
+      if (Utils.store.getItem('sa11y-developer') === 'Off' || Utils.store.getItem('sa11y-developer') === null) {
         this.results = this.results.filter((issue) => issue.developer !== true);
       }
 

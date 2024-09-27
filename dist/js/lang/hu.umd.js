@@ -281,7 +281,7 @@
 
       // Contrast
       CONTRAST_ERROR: 'Ez a szöveg nem elég kontrasztos a háttérrel szemben. A kontrasztaránynak normál szöveg esetén legalább 4,5:1, nagyméretű szöveg esetén pedig 3:1 arányúnak kell lennie. <hr> <strong {B}>Kontrasztarány</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-      CONTRAST_WARNING: 'Ennek a szövegnek a kontrasztja ismeretlen, és kézzel kell ellenőrizni. Biztosítsa, hogy a szöveg és a háttér színei erősen kontrasztosak legyenek. A kontrasztaránynak normál szöveg esetén legalább 4,5:1, nagyméretű szöveg esetén pedig 3:1 arányúnak kell lennie. <hr> Kérem, vizsgálja felül: <strong {C}>%(TEXT)</strong>',
+      CONTRAST_WARNING: 'Ennek a szövegnek a kontrasztja ismeretlen, és kézzel kell ellenőrizni. Biztosítsa, hogy a szöveg és a háttér színei erősen kontrasztosak legyenek. A kontrasztaránynak normál szöveg esetén legalább 4,5:1, nagyméretű szöveg esetén pedig 3:1 arányúnak kell lennie. <hr> <strong {B}>Kontrasztarány</strong> <strong {B}>Ismeretlen</strong> <strong {C}>%(TEXT)</strong>',
       CONTRAST_INPUT: 'A szövegnek ebben a bevitelben nincs elég kontrasztja a háttérrel. A kontrasztaránynak normál szöveg esetén legalább 4,5:1, nagyméretű szöveg esetén pedig 3:1 arányúnak kell lennie. <hr> <strong {B}>Kontrasztarány</strong> <strong {B}>%(RATIO)</strong>',
     },
   };

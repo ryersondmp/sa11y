@@ -257,7 +257,7 @@ export default {
 
     // Contrast
     CONTRAST_ERROR: 'Šis tekstas nepakankamai kontrastuoja su fonu. Įprasto teksto kontrasto santykis turėtų būti bent 4,5:1, o didelio teksto - 3:1. <hr> <strong {B}>Kontrasto santykis</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'Šio teksto kontrastas nežinomas ir turi būti peržiūrėtas rankiniu būdu. Užtikrinkite, kad tekstas ir fonas būtų ryškios kontrastingos spalvos. Įprasto teksto kontrasto santykis turėtų būti bent 4,5:1, o didelio teksto - 3:1. <hr> Prašome peržiūrėti: <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'Šio teksto kontrastas nežinomas ir turi būti peržiūrėtas rankiniu būdu. Užtikrinkite, kad tekstas ir fonas būtų ryškios kontrastingos spalvos. Įprasto teksto kontrasto santykis turėtų būti bent 4,5:1, o didelio teksto - 3:1. <hr> <strong {B}>Kontrasto santykis</strong> <strong {B}>Nežinomas</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_INPUT: 'Šios įvesties tekstas nepakankamai kontrastuoja su fonu. Įprasto teksto kontrasto santykis turėtų būti bent 4,5:1, o didelio teksto - 3:1. <hr> <strong {B}>Kontrasto santykis</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

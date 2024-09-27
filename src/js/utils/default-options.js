@@ -50,6 +50,7 @@ const defaultOptions = {
   colourFilterPlugin: true,
   customChecks: false,
   checkAllHideToggles: false,
+  developerChecksOnByDefault: false,
   exportResultsPlugin: false,
 
   // Customizing checks.

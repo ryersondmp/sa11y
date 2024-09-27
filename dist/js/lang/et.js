@@ -268,7 +268,7 @@ var et = {
 
     // Contrast
     CONTRAST_ERROR: 'See tekst ei ole taustaga piisavalt kontrastne. Kontrastsuse suhe peaks olema tavalise teksti puhul vähemalt 4,5:1 ja suure teksti puhul 3:1. <hr> <strong {B}>Kontrastsuhe</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'Selle teksti kontrastsus on teadmata ja see tuleb käsitsi üle vaadata. Veenduge, et teksti ja tausta värvid oleksid tugevalt kontrastsed. Kontrastsuse suhe peaks olema tavalise teksti puhul vähemalt 4,5:1 ja suure teksti puhul 3:1. <hr> Palun kontrollige: <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'Selle teksti kontrastsus on teadmata ja see tuleb käsitsi üle vaadata. Veenduge, et teksti ja tausta värvid oleksid tugevalt kontrastsed. Kontrastsuse suhe peaks olema tavalise teksti puhul vähemalt 4,5:1 ja suure teksti puhul 3:1. <hr> <strong {B}>Kontrastsuhe</strong> <strong {B}>Teadmata</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_INPUT: 'Selle sisendi tekst ei ole taustaga piisavalt kontrastne. Kontrastsuse suhe peaks olema tavalise teksti puhul vähemalt 4,5:1 ja suure teksti puhul 3:1. <hr> <strong {B}>Kontrastsuhe</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

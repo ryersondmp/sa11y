@@ -267,7 +267,7 @@ var ptPT = {
 
     // Contrast
     CONTRAST_ERROR: 'Este texto não tem contraste suficiente com o fundo. A relação de contraste deve ser de pelo menos 4,5:1 para texto normal e 3:1 para texto grande. <hr> <strong {B}>Razão de contraste</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'O contraste deste texto é desconhecido e tem de ser revisto manualmente. Certifique-se de que o texto e o fundo têm cores fortes e contrastantes. A relação de contraste deve ser de pelo menos 4,5:1 para texto normal e 3:1 para texto grande. <hr> Por favor, reveja: <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'O contraste deste texto é desconhecido e tem de ser revisto manualmente. Certifique-se de que o texto e o fundo têm cores fortes e contrastantes. A relação de contraste deve ser de pelo menos 4,5:1 para texto normal e 3:1 para texto grande. <hr> <strong {B}>Taxa de Contraste</strong> <strong {B}>Desconhecido</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_INPUT: 'O texto nesta entrada não tem contraste suficiente com o fundo. O rácio de contraste deve ser de, pelo menos, 4,5:1 para texto normal e 3:1 para texto grande. <hr> <strong {B}>Razão de contraste</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

@@ -247,7 +247,7 @@
 
       // Contrast
       CONTRAST_ERROR: 'Este texto no tiene suficiente contraste con el fondo. La relación de contraste debe ser de al menos 4,5:1 para texto normal y 3:1 para texto grande. <hr> <strong {B}>Relación de contraste</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-      CONTRAST_WARNING: 'Se desconoce el contraste de este texto y debe revisarse manualmente. Asegúrese de que el texto y el fondo tengan colores fuertes que contrasten. La relación de contraste debe ser de al menos 4,5:1 para texto normal y 3:1 para texto grande. <hr> Revise: <strong {C}>%(TEXT)</strong>',
+      CONTRAST_WARNING: 'Se desconoce el contraste de este texto y debe revisarse manualmente. Asegúrese de que el texto y el fondo tengan colores fuertes que contrasten. La relación de contraste debe ser de al menos 4,5:1 para texto normal y 3:1 para texto grande. <hr> <strong {B}>Relación de contraste</strong> <strong {B}>Desconocido</strong> <strong {C}>%(TEXT)</strong>',
       CONTRAST_INPUT: 'El texto dentro de esta entrada no tiene suficiente contraste con el fondo. La relación de contraste debe ser de al menos 4,5:1 para texto normal y 3:1 para texto grande. <hr> <strong {B}>Relación de contraste</strong> <strong {B}>%(RATIO)</strong>',
     },
   };

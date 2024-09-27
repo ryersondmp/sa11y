@@ -269,7 +269,7 @@
 
       // Contrast
       CONTRAST_ERROR: '这个文本与背景的对比度不够。普通文本的对比度至少应该是4.5:1, 大文本的对比度应该是3:1。<hr> <strong {B}>对比度比率</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-      CONTRAST_WARNING: '该文本的对比度不明, 需要人工审查。确保文字和背景有强烈的颜色对比。正常文本的对比度应至少为4.5:1, 大型文本为3:1。<hr> 请审查: <strong {C}>%(TEXT)</strong>',
+      CONTRAST_WARNING: '该文本的对比度不明, 需要人工审查。确保文字和背景有强烈的颜色对比。正常文本的对比度应至少为4.5:1, 大型文本为3:1。<hr> <strong {B}>对比度</strong> <strong {B}>未知</strong> <strong {C}>%(TEXT)</strong>',
       CONTRAST_INPUT: '该输入的文字与背景的对比度不够。普通文本的对比度应该至少为4.5:1, 大文本的对比度应该为3:1。<hr> <strong {B}>对比度比率</strong> <strong {B}>%(RATIO)</strong>',
     },
   };

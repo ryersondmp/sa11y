@@ -253,7 +253,7 @@ export default {
 
     // Contrast
     CONTRAST_ERROR: 'Šis teksts nav pietiekami kontrastējošs ar fonu. Kontrasta attiecībai jābūt vismaz 4,5:1 parastam tekstam un 3:1 lielam tekstam. <hr> <strong {B}>Kontrasta attiecība</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'Šī teksta kontrasts nav zināms, un tas ir jāpārbauda manuāli. Pārliecinieties, ka tekstam un fonam ir spēcīgi kontrastējošas krāsas. Kontrasta attiecībai jābūt vismaz 4,5:1 parastam tekstam un 3:1 lielam tekstam. <hr> Lūdzu pārskatīt: <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'Šī teksta kontrasts nav zināms, un tas ir jāpārbauda manuāli. Pārliecinieties, ka tekstam un fonam ir spēcīgi kontrastējošas krāsas. Kontrasta attiecībai jābūt vismaz 4,5:1 parastam tekstam un 3:1 lielam tekstam. <hr> <strong {B}>Kontrasta attiecība</strong> <strong {B}>Nezināms</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_INPUT: 'Teksts šajā ievades laukā nav pietiekami kontrastējošs ar fonu. Kontrasta attiecībai jābūt vismaz 4,5:1 parastam tekstam un 3:1 lielam tekstam. <hr> <strong {B}>Kontrasta attiecība</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

@@ -251,7 +251,7 @@
 
       // Contrast
       CONTRAST_ERROR: 'Denna text har inte tillräcklig kontrast mot bakgrunden. Kontrastförhållandet bör vara minst 4,5:1 för normal text och 3:1 för stor text. <hr> <strong {B}>Kontrastförhållande</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-      CONTRAST_WARNING: 'Denna texts är okänd och måste granskas manuellt. Se till att texten och bakgrunden har starka kontrasterande färger. Kontrastförhållandet bör vara minst 4,5:1 för normal text och 3:1 för stor text. <hr> Granska: <strong {C}>%(TEXT)</strong>',
+      CONTRAST_WARNING: 'Denna texts är okänd och måste granskas manuellt. Se till att texten och bakgrunden har starka kontrasterande färger. Kontrastförhållandet bör vara minst 4,5:1 för normal text och 3:1 för stor text. <hr> <strong {B}>Kontrastförhållande</strong> <strong {B}>Okänt</strong> <strong {C}>%(TEXT)</strong>',
       CONTRAST_INPUT: 'Text i detta inmatningsfält har inte tillräcklig kontrast mot bakgrunden. Kontrastförhållandet bör vara minst 4,5:1 för normal text och 3:1 för stor text. <hr> <strong {B}>Kontrastförhållande</strong> <strong {B}>%(RATIO)</strong>',
     },
   };

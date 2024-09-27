@@ -848,6 +848,13 @@ test.describe('Sa11y Unit Tests', () => {
     });
   });
 
+  test('Small text size warning (no annotation', async () => {
+    const issue = await noAnnotation(
+      page, 'nothing-small-text',
+    );
+    expect(issue).toBe(true);
+  });
+
   test('Uppercase text', async () => {
     const ids = [
       'warning-allcaps-1',
@@ -1018,6 +1025,7 @@ test.describe('Sa11y Unit Tests', () => {
       'error-contrast-2',
       'error-contrast-3',
       'error-contrast-4',
+      'error-contrast-5',
     ];
     ids.forEach(async (id) => {
       const issue = await checkTooltip(page, id, 'enough contrast');
@@ -1029,6 +1037,9 @@ test.describe('Sa11y Unit Tests', () => {
     const ids = [
       'warning-contrast',
       'warning-contrast-1',
+      'warning-contrast-2',
+      'warning-contrast-3',
+      'warning-contrast-4',
     ];
     ids.forEach(async (id) => {
       const issue = await checkTooltip(page, id, 'contrast of this text is unknown');

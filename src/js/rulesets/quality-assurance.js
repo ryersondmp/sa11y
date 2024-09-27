@@ -445,17 +445,18 @@ export default function checkQA(results, option) {
     // Get computed styles.
     const computeStyle = ($el) => {
       const style = getComputedStyle($el);
-      const { textDecorationLine, textAlign, fontSize } = style;
+      const { textDecorationLine, textAlign, computedFontSize } = style;
 
       /** Check: underline formatted text. @author Brian Teeman */
       if (option.checks.QA_UNDERLINE && textDecorationLine === 'underline') {
         addUnderlineResult($el, false); // Inline false for computed underlines.
       }
 
-      /** Check: Font size is less than or equal to 10px.
+      /** Check: Font size is greater than 0 and less than 10.
        * Inspired by WebAim's WAVE check. Not WCAG. */
       const defaultSize = option.checks.QA_SMALL_TEXT.fontSize || 10;
-      if (option.checks.QA_SMALL_TEXT && parseFloat(fontSize) <= defaultSize) {
+      const fontSize = parseFloat(computedFontSize);
+      if (option.checks.QA_SMALL_TEXT && fontSize > 0 && fontSize <= defaultSize) {
         addSmallTextResult($el);
       }
 

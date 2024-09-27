@@ -253,7 +253,7 @@ export default {
 
     // Contrast
     CONTRAST_ERROR: 'Esse texto não tem contraste suficiente com o plano de fundo. A taxa de contraste deve ser de pelo menos 4,5:1 para texto normal e 3:1 para texto grande. <hr> <strong {B}>Razão de contraste</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'O contraste desse texto é desconhecido e precisa ser revisado manualmente. Certifique-se de que o texto e o plano de fundo tenham cores fortes e contrastantes. A taxa de contraste deve ser de pelo menos 4,5:1 para texto normal e 3:1 para texto grande. <hr> Por favor, revise: <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'O contraste desse texto é desconhecido e precisa ser revisado manualmente. Certifique-se de que o texto e o plano de fundo tenham cores fortes e contrastantes. A taxa de contraste deve ser de pelo menos 4,5:1 para texto normal e 3:1 para texto grande. <hr> <strong {B}>Taxa de Contraste</strong> <strong {B}>Desconhecido</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_INPUT: 'O texto nessa entrada não tem contraste suficiente com o plano de fundo. A taxa de contraste deve ser de pelo menos 4,5:1 para texto normal e 3:1 para texto grande. <hr> <strong {B}>Razão de contraste</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

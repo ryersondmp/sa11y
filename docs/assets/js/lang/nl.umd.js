@@ -280,7 +280,7 @@
 
       // Contrast
       CONTRAST_ERROR: 'Deze tekst heeft niet genoeg contrast met de achtergrond. De contrastverhouding moet ten minste 4,5:1 zijn voor normale tekst en 3:1 voor grote tekst. <hr> <strong {B}>Contrastverhouding</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-      CONTRAST_WARNING: 'Het contrast van deze tekst is onbekend en moet handmatig worden gecontroleerd. Zorg ervoor dat de tekst en de achtergrond sterk contrasterende kleuren hebben. De contrastverhouding moet minstens 4,5:1 zijn voor normale tekst en 3:1 voor grote tekst. <hr> Bekijk: <strong {C}>%(TEXT)</strong>',
+      CONTRAST_WARNING: 'Het contrast van deze tekst is onbekend en moet handmatig worden gecontroleerd. Zorg ervoor dat de tekst en de achtergrond sterk contrasterende kleuren hebben. De contrastverhouding moet minstens 4,5:1 zijn voor normale tekst en 3:1 voor grote tekst. <hr> <strong {B}>Contrastverhouding</strong> <strong {B}>Onbekend</strong> <strong {C}>%(TEXT)</strong>',
       CONTRAST_INPUT: 'Tekst binnen deze invoer heeft niet genoeg contrast met de achtergrond. De contrastverhouding moet ten minste 4,5:1 zijn voor normale tekst en 3:1 voor grote tekst. <hr> <strong {B}>Contrastverhouding</strong> <strong {B}>%(RATIO)</strong>',
     },
   };

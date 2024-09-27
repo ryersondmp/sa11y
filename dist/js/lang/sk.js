@@ -275,7 +275,7 @@ var sk = {
 
     // Contrast
     CONTRAST_ERROR: 'Tento text nie je dostatočne kontrastný s pozadím. Kontrastný pomer by mal byť aspoň 4,5:1 pre normálny text a 3:1 pre veľký text. <hr> <strong {B}>Kontrastný pomer</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'Kontrast tohto textu nie je známy a je potrebné ho manuálne skontrolovať. Uistite sa, že text a pozadie majú výrazne kontrastné farby. Kontrastný pomer by mal byť aspoň 4,5:1 pre normálny text a 3:1 pre veľký text. <hr> Prosím skontrolujte: <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'Kontrast tohto textu nie je známy a je potrebné ho manuálne skontrolovať. Uistite sa, že text a pozadie majú výrazne kontrastné farby. Kontrastný pomer by mal byť aspoň 4,5:1 pre normálny text a 3:1 pre veľký text. <hr> <strong {B}>Kontrastný pomer</strong> <strong {B}>Neznámy</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_INPUT: 'Text v tomto vstupe nie je dostatočne kontrastný s pozadím. Kontrastný pomer by mal byť aspoň 4,5:1 pre normálny text a 3:1 pre veľký text. <hr> <strong {B}>Kontrastný pomer</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

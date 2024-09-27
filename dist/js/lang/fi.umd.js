@@ -265,7 +265,7 @@
 
       // Contrast
       CONTRAST_ERROR: 'Tässä tekstissä ei ole riittävästi kontrastia taustaan nähden. Kontrastisuhteen tulisi olla vähintään 4,5:1 normaalille tekstille ja 3:1 suurelle tekstille. <hr> <strong {B}>Kontrastisuhde</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-      CONTRAST_WARNING: 'Tämän tekstin kontrasti on tuntematon, ja se on tarkistettava manuaalisesti. Varmista, että tekstin ja taustan värit ovat voimakkaan kontrastiset. Kontrastisuhteen tulisi olla vähintään 4,5:1 normaalissa tekstissä ja 3:1 suuressa tekstissä. <hr> Tarkista: <strong {C}>%(TEXT)</strong>',
+      CONTRAST_WARNING: 'Tämän tekstin kontrasti on tuntematon, ja se on tarkistettava manuaalisesti. Varmista, että tekstin ja taustan värit ovat voimakkaan kontrastiset. Kontrastisuhteen tulisi olla vähintään 4,5:1 normaalissa tekstissä ja 3:1 suuressa tekstissä. <hr> <strong {B}>Kontrastisuhde</strong> <strong {B}>Tuntematon</strong> <strong {C}>%(TEXT)</strong>',
       CONTRAST_INPUT: 'Tekstin kontrasti taustaan nähden ei ole riittävä. Kontrastisuhteen tulisi olla vähintään 4,5:1 normaalille tekstille ja 3:1 suurelle tekstille. <hr> <strong {B}>Kontrastisuhde</strong> <strong {B}>%(RATIO)</strong>',
     },
   };

@@ -268,7 +268,7 @@ var nb = {
 
     // Contrast
     CONTRAST_ERROR: 'Denne teksten har ikke nok kontrast til bakgrunnen. Kontrastforholdet bør være minst 4,5:1 for normal tekst og 3:1 for stor tekst. <hr> <strong {B}>Kontrastforhold</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'Kontrasten i denne teksten er ukjent og må kontrolleres manuelt. Sørg for at teksten og bakgrunnen har sterke kontrastfarger. Kontrastforholdet bør være minst 4,5:1 for normal tekst og 3:1 for stor tekst. <hr> Vennligst se gjennom: <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'Kontrasten i denne teksten er ukjent og må kontrolleres manuelt. Sørg for at teksten og bakgrunnen har sterke kontrastfarger. Kontrastforholdet bør være minst 4,5:1 for normal tekst og 3:1 for stor tekst. <hr> <strong {B}>Kontrastforhold</strong> <strong {B}>Ukjent</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_INPUT: 'Teksten i denne inngangen har ikke nok kontrast til bakgrunnen. Kontrastforholdet bør være minst 4,5:1 for normal tekst og 3:1 for stor tekst. <hr> <strong {B}>Kontrastforhold</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

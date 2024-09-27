@@ -266,7 +266,7 @@
 
       // Contrast
       CONTRAST_ERROR: 'Dieser Text hat nicht genügend Kontrast zum Hintergrund. Das Kontrastverhältnis sollte mindestens 4,5:1 für normalen Text und 3:1 für großen Text betragen. <hr> <strong {B}>Kontrastverhältnis</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-      CONTRAST_WARNING: 'Der Kontrast dieses Textes ist unbekannt und muss manuell überprüft werden. Stelle sicher, dass der Text und der Hintergrund einen starken Farbkontrast aufweisen. Das Kontrastverhältnis sollte mindestens 4,5:1 für normalen Text und 3:1 für großen Text betragen. <hr> Bitte überprüfen: <strong {C}>%(TEXT)</strong>',
+      CONTRAST_WARNING: 'Der Kontrast dieses Textes ist unbekannt und muss manuell überprüft werden. Stelle sicher, dass der Text und der Hintergrund einen starken Farbkontrast aufweisen. Das Kontrastverhältnis sollte mindestens 4,5:1 für normalen Text und 3:1 für großen Text betragen. <hr> <strong {B}>Kontrastverhältnis</strong> <strong {B}>Unbekannt</strong> <strong {C}>%(TEXT)</strong>',
       CONTRAST_INPUT: 'Der Text in dieser Eingabe hat nicht genügend Kontrast zum Hintergrund. Das Kontrastverhältnis sollte mindestens 4,5:1 für normalen Text und 3:1 für großen Text betragen. <hr> <strong {B}>Kontrastverhältnis</strong> <strong {B}>%(RATIO)</strong>',
     },
   };

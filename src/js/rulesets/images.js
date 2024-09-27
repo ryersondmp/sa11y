@@ -9,30 +9,18 @@ export default function checkImages(results, option) {
     const altUrl = [
       '.avif',
       '.png',
-      '.jpg',
-      '.jpeg',
+      '.jp',
       '.webp',
       '.gif',
       '.tiff',
       '.svg',
-      '.heif',
-      '.heic',
-      'DSC_',
-      'IMG_',
-      'Photo_',
-      'Pic_',
-      'Pexels_',
-      'AdobeStock_',
-      'ScreenShot_',
-      'Picture_',
-      'Snap_',
-      'Capture_',
+      '.hei',
+      'http',
     ];
 
     const hit = [null, null, null];
     altUrl.forEach((word) => {
-      const stopword = word.toLowerCase();
-      if (alt.toLowerCase().indexOf(stopword) >= 0) {
+      if (alt.toLowerCase().indexOf(word.toLowerCase()) !== -1) {
         hit[0] = word;
       }
     });

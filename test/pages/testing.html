@@ -28,6 +28,15 @@
       padding: 40px;
       background: lightblue;
     }
+
+    .a-test {
+      font-size: 3em;
+    }
+
+    .a-test:hover,
+    .a-test:focus {
+      opacity: 0.8;
+    }
   </style>
 </head>
 
@@ -73,6 +82,9 @@
       </a>
     </div>
 
+    <img src="./assets/placeholder.svg" alt="Points to https://www.google.com">
+
+    <a class="a-test" href="https://www.example.com?rearsdsd">Some text here</a>
     <hr>
 
     <h2>Dismiss all</h2>
@@ -114,6 +126,7 @@
     Sa11y.Lang.addI18n(Sa11yLangEn.strings);
     const sa11y = new Sa11y.Sa11y({
       checkRoot: 'body',
+      developerChecksOnByDefault: false,
       shadowComponents: '#webcomponent',
       checks: {
         IMAGE_DECORATIVE_CAROUSEL: {

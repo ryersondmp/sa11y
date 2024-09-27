@@ -266,7 +266,7 @@ var it = {
 
     // Contrast
     CONTRAST_ERROR: 'Il testo non ha un contrasto sufficiente con lo sfondo. Il rapporto di contrasto dovrebbe essere almeno 4,5:1 per il testo normale e 3:1 per il testo grande. <hr> <strong {B}>Rapporto di contrasto</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'Il contrasto di questo testo è sconosciuto e deve essere rivisto manualmente. Assicurarsi che il testo e lo sfondo abbiano colori fortemente contrastanti. Il rapporto di contrasto dovrebbe essere almeno 4,5:1 per il testo normale e 3:1 per il testo grande. <hr> Per favore, controllare: <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'Il contrasto di questo testo è sconosciuto e deve essere rivisto manualmente. Assicurarsi che il testo e lo sfondo abbiano colori fortemente contrastanti. Il rapporto di contrasto dovrebbe essere almeno 4,5:1 per il testo normale e 3:1 per il testo grande. <hr> <strong {B}>Rapporto di contrasto</strong> <strong {B}>Sconosciuto</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_INPUT: 'Il testo all\'interno di questo input non ha un contrasto sufficiente con lo sfondo. Il rapporto di contrasto dovrebbe essere di almeno 4,5:1 per il testo normale e di 3:1 per il testo grande. <hr> <strong {B}>Rapporto di contrasto</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

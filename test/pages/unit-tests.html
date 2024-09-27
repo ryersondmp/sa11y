@@ -808,6 +808,22 @@
       <p style="font-size: 50%">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
     </div>
 
+    <h3>Ignore if <code>font-size: 0;</code></h3>
+    <style>
+      .input-group-btn {
+        position: relative;
+        font-size: 0;
+        white-space: nowrap;
+      }
+    </style>
+    <div id="nothing-small-text">
+      <span class="input-group-btn">
+        <button aria-label="Search" class="btn btn-default">
+          <i class="fa fa-search" title="Search Torontomu.ca"></i>
+        </button>
+      </span>
+    </div>
+
     <h2>Uppercase text</h2>
 
     <div id="warning-allcaps-1">
@@ -1250,6 +1266,15 @@
         <input type="text" style="color:coral">
       </label>
     </div>
+    <div id="error-contrast-5">
+      <label for="pet-select-2">Choose a pet:</label>
+      <select id="pet-select-2" style="color:aliceblue">
+        <option value="">Please choose an option</option>
+        <option value="dog">Dog</option>
+        <option value="cat">Cat</option>
+      </select>
+    </div>
+
     <div id="warning-contrast">
       <h4 class="background-image">Text on background image requires manual review!</h4>
     </div>
@@ -1264,6 +1289,33 @@
         necessitatibus
         iure?
       </p>
+    </div>
+    <h4>Large size text with 1:1</h4>
+    <div id="warning-contrast-2">
+      <p style="color: var(--bg-example);font-size:5em">
+        Lorem ipsum dolor.
+      </p>
+    </div>
+
+    <h4>Text has low opacity</h4>
+    <div id="warning-contrast-3">
+      <p style="font-size:5em; opacity: 0.05;">
+        Lorem ipsum dolor.
+      </p>
+    </div>
+
+    <h4><code>&lt;select&gt;</code> element with background image</h4>
+    <div id="warning-contrast-4">
+      <label for="pet-select">Choose a pet:</label>
+      <select id="pet-select" style="background-image: url(clientlib-site/images/google.gif);">
+        <option value="">Please choose an option</option>
+        <option value="dog">Dog</option>
+        <option value="cat">Cat</option>
+        <option value="hamster">Hamster</option>
+        <option value="parrot">Parrot</option>
+        <option value="spider">Spider</option>
+        <option value="goldfish">Goldfish</option>
+      </select>
     </div>
 
     <h2>Inputs</h2>

@@ -251,7 +251,7 @@ export default {
 
     // Contrast
     CONTRAST_ERROR: 'Denne tekst har ikke nok kontrast til baggrunden. Kontrastforholdet skal være mindst 4,5:1 for normal tekst og 3:1 for stor tekst. <hr> <strong {B}>Kontrastforhold</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'Kontrasten i denne tekst er ukendt og skal gennemgås manuelt. Sørg for, at teksten og baggrunden har stærke kontrastfarver. Kontrastforholdet skal være mindst 4,5:1 for normal tekst og 3:1 for stor tekst. <hr> Vær venlig at gennemgå: <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'Kontrasten i denne tekst er ukendt og skal gennemgås manuelt. Sørg for, at teksten og baggrunden har stærke kontrastfarver. Kontrastforholdet skal være mindst 4,5:1 for normal tekst og 3:1 for stor tekst. <hr> <strong {B}>Kontrastforhold</strong> <strong {B}>Ukendt</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_INPUT: 'Teksten i dette input har ikke nok kontrast til baggrunden. Kontrastforholdet skal være mindst 4,5:1 for normal tekst og 3:1 for stor tekst. <hr> <strong {B}>Kontrastforhold</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

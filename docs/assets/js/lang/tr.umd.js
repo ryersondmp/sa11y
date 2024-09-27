@@ -267,7 +267,7 @@
 
       // Contrast
       CONTRAST_ERROR: 'Bu metin arka planla yeterli kontrasta sahip değil. Kontrast oranı normal metin için en az 4,5:1 ve büyük metin için 3:1 olmalıdır. <hr> <strong {B}>Kontrast Oranı</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-      CONTRAST_WARNING: 'Bu metnin kontrastı bilinmemektedir ve manuel olarak gözden geçirilmesi gerekmektedir. Metin ve arka planın güçlü kontrast renklere sahip olduğundan emin olun. Kontrast oranı normal metin için en az 4,5:1 ve büyük metin için 3:1 olmalıdır. <hr> Lütfen inceleyin: <strong {C}>%(TEXT)</strong>',
+      CONTRAST_WARNING: 'Bu metnin kontrastı bilinmemektedir ve manuel olarak gözden geçirilmesi gerekmektedir. Metin ve arka planın güçlü kontrast renklere sahip olduğundan emin olun. Kontrast oranı normal metin için en az 4,5:1 ve büyük metin için 3:1 olmalıdır. <hr> <strong {B}>Kontrast Oranı</strong> <strong {B}>Bilinmiyor</strong> <strong {C}>%(TEXT)</strong>',
       CONTRAST_INPUT: 'Bu girişteki metin arka planla yeterli kontrasta sahip değil. Kontrast oranı normal metin için en az 4,5:1 ve büyük metin için 3:1 olmalıdır. <hr> <strong {B}>Kontrast Oranı</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
     },
   };

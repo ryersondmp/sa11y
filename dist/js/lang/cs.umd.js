@@ -269,7 +269,7 @@
 
       // Contrast
       CONTRAST_ERROR: 'Tento text není dostatečně kontrastní s pozadím. Kontrastní poměr by měl být alespoň 4,5:1 pro normální text a 3:1 pro velký text. <hr> <strong {B}>Kontrastní poměr</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-      CONTRAST_WARNING: 'Kontrast tohoto textu není znám a je třeba jej ručně zkontrolovat. Ujistěte se, že text a pozadí mají výrazně kontrastní barvy. Kontrastní poměr by měl být alespoň 4,5:1 pro normální text a 3:1 pro velký text. <hr> Prosím, zkontrolujte: <strong {C}>%(TEXT)</strong>',
+      CONTRAST_WARNING: 'Kontrast tohoto textu není znám a je třeba jej ručně zkontrolovat. Ujistěte se, že text a pozadí mají výrazně kontrastní barvy. Kontrastní poměr by měl být alespoň 4,5:1 pro normální text a 3:1 pro velký text. <hr> <strong {B}>Poměr kontrastu</strong> <strong {B}>Neznámý</strong> <strong {C}>%(TEXT)</strong>',
       CONTRAST_INPUT: 'Text v tomto vstupu není dostatečně kontrastní s pozadím. Kontrastní poměr by měl být alespoň 4,5:1 pro normální text a 3:1 pro velký text. <hr> <strong {B}>Kontrastní poměr</strong> <strong {B}>%(RATIO)</strong>',
     },
   };

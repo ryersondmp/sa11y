@@ -255,7 +255,7 @@ export default {
 
     // Contrast
     CONTRAST_ERROR: 'Teks ini tidak memiliki kontras yang cukup dengan latar belakang. Rasio kontras minimal 4,5:1 untuk teks normal dan 3:1 untuk teks besar. <hr> <strong {B}>Rasio Kontras</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'Kontras teks ini tidak diketahui dan perlu ditinjau secara manual. Pastikan teks dan latar belakang memiliki warna kontras yang kuat. Rasio kontras setidaknya 4,5:1 untuk teks normal dan 3:1 untuk teks besar. <hr> Tolong tinjau: <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'Kontras teks ini tidak diketahui dan perlu ditinjau secara manual. Pastikan teks dan latar belakang memiliki warna kontras yang kuat. Rasio kontras setidaknya 4,5:1 untuk teks normal dan 3:1 untuk teks besar. <hr> <strong {B}>Rasio Kontras</strong> <strong {B}>Tidak Diketahui</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_INPUT: 'Teks dalam input ini tidak memiliki kontras yang cukup dengan latar belakang. Rasio kontras minimal 4,5:1 untuk teks normal dan 3:1 untuk teks besar. <hr> <strong {B}>Rasio Kontras</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

@@ -265,7 +265,7 @@ var ro = {
 
     // Contrast
     CONTRAST_ERROR: 'Acest text nu are un contrast suficient cu fundalul. Raportul de contrast ar trebui să fie de cel puțin 4,5:1 pentru textul normal și de 3:1 pentru textul mare. <hr> <strong {B}>Raport de contrast</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'Contrastul acestui text este necunoscut și trebuie să fie revizuit manual. Asigurați-vă că textul și fundalul au culori puternic contrastante. Raportul de contrast trebuie să fie de cel puțin 4,5:1 pentru textul normal și de 3:1 pentru textul mare. <hr> Vă rugăm să revizuiți: <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'Contrastul acestui text este necunoscut și trebuie să fie revizuit manual. Asigurați-vă că textul și fundalul au culori puternic contrastante. Raportul de contrast trebuie să fie de cel puțin 4,5:1 pentru textul normal și de 3:1 pentru textul mare. <hr> <strong {B}>Raport de contrast</strong> <strong {B}>Necunoscut</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_INPUT: 'Textul din această intrare nu are un contrast suficient cu fundalul. Raportul de contrast ar trebui să fie de cel puțin 4,5:1 pentru textul normal și de 3:1 pentru textul mare. <hr> <strong {B}>Raport de contrast</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

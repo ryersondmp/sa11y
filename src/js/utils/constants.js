@@ -193,7 +193,7 @@ const Constants = (function myConstants() {
     }
 
     // Contrast exclusions
-    Exclusions.Contrast = `link, hr, ${exclusions}`;
+    Exclusions.Contrast = `link, hr, select option, ${exclusions}`;
     if (option.contrastIgnore) {
       Exclusions.Contrast = `${option.contrastIgnore}, ${Exclusions.Contrast}`;
     }
