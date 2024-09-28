@@ -530,3 +530,13 @@ export function isVisibleTextInAccessibleName($el) {
   // Check if visible text is included in accessible name.
   return visibleText.length !== 0 && !accName.includes(visibleText);
 }
+
+/**
+ * Truncate string.
+ * @param {*} string The string to truncate.
+ * @param {*} maxLength Desired max length of string.
+ * @returns Truncated string.
+ */
+export function truncateString(string, maxLength) {
+  return string.length > maxLength ? `${string.substring(0, maxLength)}...` : string;
+}

@@ -425,7 +425,7 @@ const Constants = (function myConstants() {
     }
 
     // Contrast exclusions
-    Exclusions.Contrast = `link, hr, select option, ${exclusions}`;
+    Exclusions.Contrast = `link, hr, select option, video track, ${exclusions}`;
     if (option.contrastIgnore) {
       Exclusions.Contrast = `${option.contrastIgnore}, ${Exclusions.Contrast}`;
     }
@@ -662,7 +662,7 @@ const computeAccessibleName = (element, exclusions, recursing = 0) => {
   let count = 0;
   let shouldContinueWalker = true;
 
-  const alwaysExclude = 'noscript, style, script';
+  const alwaysExclude = 'noscript, style, script, video, audio';
   const exclude = element.querySelectorAll(exclusions ? `${exclusions}, ${alwaysExclude}` : alwaysExclude);
 
   while (treeWalker.nextNode() && shouldContinueWalker) {
@@ -1250,6 +1250,16 @@ function isVisibleTextInAccessibleName($el) {
 
   // Check if visible text is included in accessible name.
   return visibleText.length !== 0 && !accName.includes(visibleText);
+}
+
+/**
+ * Truncate string.
+ * @param {*} string The string to truncate.
+ * @param {*} maxLength Desired max length of string.
+ * @returns Truncated string.
+ */
+function truncateString(string, maxLength) {
+  return string.length > maxLength ? `${string.substring(0, maxLength)}...` : string;
 }
 
 const Elements = (function myElements() {
@@ -6898,12 +6908,14 @@ function checkImages(results, option) {
     const altUrl = [
       '.avif',
       '.png',
-      '.jp',
+      '.jpg',
+      '.jpeg',
       '.webp',
       '.gif',
       '.tiff',
       '.svg',
-      '.hei',
+      '.heif',
+      '.heic',
       'http',
     ];
 
@@ -7384,41 +7396,42 @@ function checkLinkText(results, option) {
   const containsLinkTextStopWords = (textContent) => {
     const urlText = [
       'http',
-      'edu/',
-      'com/',
-      'net/',
-      'org/',
-      'us/',
-      'ca/',
-      'de/',
-      'icu/',
-      'uk/',
-      'ru/',
-      'info/',
-      'top/',
-      'xyz/',
-      'tk/',
-      'cn/',
-      'ga/',
-      'cf/',
-      'nl/',
-      'io/',
-      'fr/',
-      'pe/',
-      'nz/',
-      'pt/',
-      'es/',
-      'pl/',
-      'ua/',
+      'www.',
+      '.edu/',
+      '.com/',
+      '.net/',
+      '.org/',
+      '.us/',
+      '.ca/',
+      '.de/',
+      '.icu/',
+      '.uk/',
+      '.ru/',
+      '.info/',
+      '.top/',
+      '.xyz/',
+      '.tk/',
+      '.cn/',
+      '.ga/',
+      '.cf/',
+      '.nl/',
+      '.io/',
+      '.fr/',
+      '.pe/',
+      '.nz/',
+      '.pt/',
+      '.es/',
+      '.pl/',
+      '.ua/',
     ];
 
     const hit = [null, null, null, null];
 
     // Iterate through all partialStopwords.
     Lang._('PARTIAL_ALT_STOPWORDS').forEach((word) => {
-      if (
-        textContent.length === word.length && textContent.toLowerCase().indexOf(word) >= 0
-      ) {
+      // Remove periods to improve accuracy.
+      const testTextContent = textContent.replace(/\./g, '');
+      if (testTextContent.length === word.length && testTextContent.toLowerCase().indexOf(word) >= 0) {
         hit[0] = word;
       }
       return false;
@@ -7435,14 +7448,14 @@ function checkLinkText(results, option) {
 
     // Flag citations/references. Check if link text matches a publication source.
     const doi = [
-      'doiorg/', // doi.org
-      'dlacmorg/', // dl.acm.org
-      'linkspringercom/', // link.springer.com
-      'pubmedncbinlmnihgov/', // pubmed.ncbi.nlm.nih.gov
-      'scholargooglecom/', // scholar.google.com
-      'ieeexploreieeeorg/', // ieeexplore.ieee.org
-      'researchgatenet/publication', // researchgate.net/publication
-      'sciencedirectcom/science/article', // sciencedirect.com/science/article
+      'doi.org/',
+      'dl.acm.org/',
+      'link.springer.com/',
+      'pubmed.ncbi.nlm.nih.gov/',
+      'scholar.google.com/',
+      'ieeexplore.ieee.org/',
+      'researchgate.net/publication/',
+      'sciencedirect.com/science/article/',
     ];
     doi.forEach((word) => {
       if (textContent.toLowerCase().indexOf(word) >= 0) {
@@ -7470,7 +7483,7 @@ function checkLinkText(results, option) {
     const linkText = removeWhitespace(stringMatchExclusions);
 
     // Ignore special characters (except forward slash).
-    const stripSpecialChars = linkText.replace(/[^\w\s/]/g, '').replace(/\s+/g, ' ').trim();
+    const stripSpecialChars = linkText.replace(/[^\w\s./]/g, '').replace(/\s+/g, ' ').trim();
     const error = containsLinkTextStopWords(stripSpecialChars);
 
     // Match special characters exactly 1 character in length.
@@ -7971,7 +7984,8 @@ function checkContrast(results, option) {
         const clone = name.cloneNode(true);
         const nodeText = fnIgnore(clone, 'script, style, noscript, select option:not(:first-child)').textContent;
         const trimmed = removeWhitespace(nodeText);
-        const sanitizedText = sanitizeHTML(trimmed);
+        const truncateString$1 = truncateString(trimmed, 150);
+        const sanitizedText = sanitizeHTML(truncateString$1);
 
         if (name.tagName === 'INPUT') {
           if (option.checks.CONTRAST_INPUT) {
@@ -8008,7 +8022,8 @@ function checkContrast(results, option) {
           const clone = name.cloneNode(true);
           const nodeText = fnIgnore(clone, 'script, style, noscript, select option:not(:first-child)').textContent;
           const trimmed = removeWhitespace(nodeText);
-          const sanitizedText = sanitizeHTML(trimmed);
+          const truncateString$1 = truncateString(trimmed, 150);
+          const sanitizedText = sanitizeHTML(truncateString$1);
 
           results.push({
             element: name,
@@ -8590,10 +8605,9 @@ function checkQA(results, option) {
 
       // Check for broken same-page links.
       if (option.checks.QA_IN_PAGE_LINK) {
-        const hasButtonRole = $el.getAttribute('role') === 'button';
+        const hasAttributes = $el.getAttribute('role') === 'button' || $el.hasAttribute('aria-haspopup') || $el.hasAttribute('aria-expanded') || $el.hasAttribute('onclick');
         const hasText = $el.textContent.trim().length !== 0;
-        const hasClick = $el.hasAttribute('onclick');
-        if ((href.startsWith('#') || href === '') && !hasButtonRole && hasText && !hasClick) {
+        if ((href.startsWith('#') || href === '') && !hasAttributes && hasText) {
           const targetId = href.substring(1);
           const ariaControls = $el.getAttribute('aria-controls');
           const targetElement = document.getElementById(targetId)
@@ -8977,7 +8991,7 @@ function checkQA(results, option) {
     // Get computed styles.
     const computeStyle = ($el) => {
       const style = getComputedStyle($el);
-      const { textDecorationLine, textAlign, computedFontSize } = style;
+      const { textDecorationLine, textAlign, fontSize } = style;
 
       /** Check: underline formatted text. @author Brian Teeman */
       if (option.checks.QA_UNDERLINE && textDecorationLine === 'underline') {
@@ -8987,8 +9001,10 @@ function checkQA(results, option) {
       /** Check: Font size is greater than 0 and less than 10.
        * Inspired by WebAim's WAVE check. Not WCAG. */
       const defaultSize = option.checks.QA_SMALL_TEXT.fontSize || 10;
-      const fontSize = parseFloat(computedFontSize);
-      if (option.checks.QA_SMALL_TEXT && fontSize > 0 && fontSize <= defaultSize) {
+      const computedFontSize = parseFloat(fontSize);
+      const withinRange = computedFontSize > 0 && computedFontSize <= defaultSize;
+      const hasText = $el.textContent.length !== 0;
+      if (option.checks.QA_SMALL_TEXT && hasText && withinRange) {
         addSmallTextResult($el);
       }
 
@@ -9169,7 +9185,7 @@ function checkDeveloper(results, option) {
                 element: $el,
                 type: option.checks.DUPLICATE_ID.type || 'error',
                 content: option.checks.DUPLICATE_ID.content || Lang.sprintf('DUPLICATE_ID', id),
-                inline: true,
+                inline: false,
                 position: 'beforebegin',
                 dismiss: prepareDismissal(`DUPLICATEID${id}${$el.textContent}`),
                 dismissAll: option.checks.DUPLICATE_ID.dismissAll ? 'DUPLICATE_ID' : false,

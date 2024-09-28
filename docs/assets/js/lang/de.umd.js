@@ -240,7 +240,7 @@
       HIDDEN_FOCUSABLE: 'Der Link oder die Schaltfläche hat <code>aria-hidden=&quot;true&quot;</code>, ist jedoch weiterhin über die Tastatur fokussierbar. Wenn Sie beabsichtigen, einen doppelten Link oder eine Schaltfläche zu verstecken, fügen Sie auch <code>tabindex=&quot;-1&quot;</code> hinzu. Andernfalls sollte <code>aria-hidden=&quot;true&quot;</code> nicht bei fokussierbaren Elementen verwendet werden. <hr> Erfahren Sie mehr über das <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden-Attribut.</a>',
 
       // Developer
-      DUPLICATE_ID: '<strong>Doppelte ID</strong> gefunden. Doppelte ID-Fehler verursachen bekanntermaßen Probleme für Hilfstechnologien, wenn man versucht, mit Inhalten zu interagieren. <hr> Bitte entferne oder ändere die folgende ID: <strong {C}>%(id)</strong>',
+      DUPLICATE_ID: '<strong>Doppelte ID</strong> gefunden. Doppelte ID-Fehler verursachen bekanntermaßen Probleme für Hilfstechnologien, wenn man versucht, mit Inhalten zu interagieren. Bitte entferne oder ändere die folgende ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
       UNCONTAINED_LI: 'Alle <code>&lt;li&gt;</code> Listenelemente müssen innerhalb von <code>&lt;ul&gt;</code> ungeordneten oder <code>&lt;ol&gt;</code> geordneten Elementen platziert werden. Diese Struktur hilft Bildschirmlesern, die Liste und ihre Elemente genau anzukündigen.',
       TABINDEX_ATTR: 'Das Element sollte kein <code>tabindex</code>-Attribut größer als 0 haben.',
 

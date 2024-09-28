@@ -233,7 +233,7 @@ var fi = {
     HIDDEN_FOCUSABLE: 'Linkillä tai painikkeella on <code>aria-hidden=&quot;true&quot;</code>, mutta se on edelleen näppäimistöllä käytettävissä. Jos aiot piilottaa kaksoislinkin tai -painikkeen, lisää myös <code>tabindex=&quot;-1&quot;</code>. Muuten <code>aria-hidden=&quot;true&quot;</code> -määritettä ei tulisi käyttää elementeissä, jotka voivat vastaanottaa fokuksen. <hr> Lue lisää <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden-attribuutista.</a>',
 
     // Developer
-    DUPLICATE_ID: 'Löytyi <strong>kaksoistunniste</strong>. Kaksoistunnusvirheiden tiedetään aiheuttavan ongelmia avustaville teknologioille, kun ne yrittävät toimia vuorovaikutuksessa sisällön kanssa. <hr> Poista tai vaihda seuraava ID: <strong {C}>%(id)</strong>',
+    DUPLICATE_ID: 'Löytyi <strong>kaksoistunniste</strong>. Kaksoistunnusvirheiden tiedetään aiheuttavan ongelmia avustaville teknologioille, kun ne yrittävät toimia vuorovaikutuksessa sisällön kanssa. Poista tai vaihda seuraava ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     UNCONTAINED_LI: 'Kaikki <code>&lt;li&gt;</code> luetteloelementit on sijoitettava <code>&lt;ul&gt;</code> järjestämättömien tai <code>&lt;ol&gt;</code> järjestettyjen elementtien sisään. Tämä rakenne auttaa ruudunlukuohjelmia ilmoittamaan luettelon ja sen kohteet tarkasti.',
     TABINDEX_ATTR: 'Elementillä ei tulisi olla <code>tabindex</code>-attribuuttia, joka on suurempi kuin 0.',
 

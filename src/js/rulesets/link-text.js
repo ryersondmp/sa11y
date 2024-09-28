@@ -8,41 +8,42 @@ export default function checkLinkText(results, option) {
   const containsLinkTextStopWords = (textContent) => {
     const urlText = [
       'http',
-      'edu/',
-      'com/',
-      'net/',
-      'org/',
-      'us/',
-      'ca/',
-      'de/',
-      'icu/',
-      'uk/',
-      'ru/',
-      'info/',
-      'top/',
-      'xyz/',
-      'tk/',
-      'cn/',
-      'ga/',
-      'cf/',
-      'nl/',
-      'io/',
-      'fr/',
-      'pe/',
-      'nz/',
-      'pt/',
-      'es/',
-      'pl/',
-      'ua/',
+      'www.',
+      '.edu/',
+      '.com/',
+      '.net/',
+      '.org/',
+      '.us/',
+      '.ca/',
+      '.de/',
+      '.icu/',
+      '.uk/',
+      '.ru/',
+      '.info/',
+      '.top/',
+      '.xyz/',
+      '.tk/',
+      '.cn/',
+      '.ga/',
+      '.cf/',
+      '.nl/',
+      '.io/',
+      '.fr/',
+      '.pe/',
+      '.nz/',
+      '.pt/',
+      '.es/',
+      '.pl/',
+      '.ua/',
     ];
 
     const hit = [null, null, null, null];
 
     // Iterate through all partialStopwords.
     Lang._('PARTIAL_ALT_STOPWORDS').forEach((word) => {
-      if (
-        textContent.length === word.length && textContent.toLowerCase().indexOf(word) >= 0
-      ) {
+      // Remove periods to improve accuracy.
+      const testTextContent = textContent.replace(/\./g, '');
+      if (testTextContent.length === word.length && testTextContent.toLowerCase().indexOf(word) >= 0) {
         hit[0] = word;
       }
       return false;
@@ -59,14 +60,14 @@ export default function checkLinkText(results, option) {
 
     // Flag citations/references. Check if link text matches a publication source.
     const doi = [
-      'doiorg/', // doi.org
-      'dlacmorg/', // dl.acm.org
-      'linkspringercom/', // link.springer.com
-      'pubmedncbinlmnihgov/', // pubmed.ncbi.nlm.nih.gov
-      'scholargooglecom/', // scholar.google.com
-      'ieeexploreieeeorg/', // ieeexplore.ieee.org
-      'researchgatenet/publication', // researchgate.net/publication
-      'sciencedirectcom/science/article', // sciencedirect.com/science/article
+      'doi.org/',
+      'dl.acm.org/',
+      'link.springer.com/',
+      'pubmed.ncbi.nlm.nih.gov/',
+      'scholar.google.com/',
+      'ieeexplore.ieee.org/',
+      'researchgate.net/publication/',
+      'sciencedirect.com/science/article/',
     ];
     doi.forEach((word) => {
       if (textContent.toLowerCase().indexOf(word) >= 0) {
@@ -94,7 +95,7 @@ export default function checkLinkText(results, option) {
     const linkText = Utils.removeWhitespace(stringMatchExclusions);
 
     // Ignore special characters (except forward slash).
-    const stripSpecialChars = linkText.replace(/[^\w\s/]/g, '').replace(/\s+/g, ' ').trim();
+    const stripSpecialChars = linkText.replace(/[^\w\s./]/g, '').replace(/\s+/g, ' ').trim();
     const error = containsLinkTextStopWords(stripSpecialChars);
 
     // Match special characters exactly 1 character in length.

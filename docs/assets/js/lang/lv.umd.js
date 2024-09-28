@@ -245,7 +245,7 @@
       HIDDEN_FOCUSABLE: 'Saites vai pogas atribūtam ir <code>aria-hidden=&quot;true&quot;</code>, bet tas ir joprojām fokusējams no tastatūras. Ja jūs vēlaties paslēpt dublējošu saiti vai pogu, pievienojiet arī <code>tabindex=&quot;-1&quot;</code>. Pretējā gadījumā <code>aria-hidden=&quot;true&quot;</code> nedrīkst izmantot elementiem, kas var saņemt fokusu. <hr> Uzziniet vairāk par <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden atribūtu.</a>',
 
       // Developer
-      DUPLICATE_ID: 'Atrasts <strong>duplicate ID</strong>. Ir zināms, ka dubultā ID kļūdas rada problēmas palīgtehnoloģijām, kad tās mēģina mijiedarboties ar saturu. <hr> Lūdzu, noņemiet vai mainiet šādu ID: <strong {C}>%(id)</strong>',
+      DUPLICATE_ID: 'Atrasts <strong>duplicate ID</strong>. Ir zināms, ka dubultā ID kļūdas rada problēmas palīgtehnoloģijām, kad tās mēģina mijiedarboties ar saturu. Lūdzu, noņemiet vai mainiet šādu ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
       UNCONTAINED_LI: 'Visiem <code>&lt;li&gt;</code> saraksta elementiem jābūt ievietotiem <code>&lt;ul&gt;</code> nesakārtotas vai <code>&lt;ol&gt;</code> sakārtotas elementus. Šī struktūra palīdz ekrāna lasītājiem precīzi paziņot sarakstu un tā elementus.',
       TABINDEX_ATTR: 'Elementam nevajadzētu būt ar <code>tabindex</code> atribūtu, kas ir lielāks par 0.',
 

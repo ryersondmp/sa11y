@@ -249,7 +249,7 @@ var sk = {
     HIDDEN_FOCUSABLE: 'Odkaz alebo tlačidlo má <code>aria-hidden=&quot;true&quot;</code>, ale stále je prístupné cez klávesnicu. Ak chcete skryť duplikovaný odkaz alebo tlačidlo, pridajte aj <code>tabindex=&quot;-1&quot;</code>. Inak by sa <code>aria-hidden=&quot;true&quot;</code> nemalo používať na prvkoch, ktoré môžu získať fokus. <hr> Viac informácií o <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atribúte aria-hidden.</a>',
 
     // Developer
-    DUPLICATE_ID: 'Nájdené <strong>duplicitné ID</strong>. Je známe, že chyby duplicitného ID spôsobujú problémy asistenčným technológiám pri pokusoch o interakciu s obsahom. <hr> Odstráňte alebo zmeňte nasledujúce ID: <strong {C}>%(id)</strong>',
+    DUPLICATE_ID: 'Nájdené <strong>duplicitné ID</strong>. Je známe, že chyby duplicitného ID spôsobujú problémy asistenčným technológiám pri pokusoch o interakciu s obsahom. Odstráňte alebo zmeňte nasledujúce ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     UNCONTAINED_LI: 'Všetky položky zoznamu <code>&lt;li&gt;</code> musia byť umiestnené vo vnútri <code>&lt;ul&gt;</code> neusporiadaných alebo <code>&lt;ol&gt;</code> usporiadaných prvkov. Táto štruktúra pomáha čítačkám obrazovky presne oznamovať zoznam a jeho položky.',
     TABINDEX_ATTR: 'Prvok by nemal mať atribút <code>tabindex</code> väčší ako 0.',
 

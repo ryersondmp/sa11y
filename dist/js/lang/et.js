@@ -242,7 +242,7 @@ var et = {
     HIDDEN_FOCUSABLE: 'Link või nupp on <code>aria-hidden=&quot;true&quot;</code>, kuid on endiselt klaviatuurilt fookustatav. Kui kavatsete peita dubleeritud lingi või nupu, lisage ka <code>tabindex=&quot;-1&quot;</code>. Vastasel juhul ei tohiks <code>aria-hidden=&quot;true&quot;</code> kasutada elementidel, mis saavad fookust. <hr> Lisateave <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden atribuudi kohta.</a>',
 
     // Developer
-    DUPLICATE_ID: 'Leiti <strong>korduv ID</strong>. Teadaolevalt põhjustavad dubleeritud ID-vead probleeme tugitehnoloogiatele, kui need üritavad sisuga suhelda. <hr> Palun eemaldage või muutke järgmine ID: <strong {C}>%(id)</strong>',
+    DUPLICATE_ID: 'Leiti <strong>korduv ID</strong>. Teadaolevalt põhjustavad dubleeritud ID-vead probleeme tugitehnoloogiatele, kui need üritavad sisuga suhelda. Palun eemaldage või muutke järgmine ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     UNCONTAINED_LI: 'Kõik <code>&lt;li&gt;</code> nimekirjaelemendid peavad olema paigutatud <code>&lt;ul&gt;</code> järjestamata või <code>&lt;ol&gt;</code> järjestatud elementide sisse. See struktuur aitab ekraani lugemistarkvaral nimekirja ja selle elemente täpselt kuulutada.',
     TABINDEX_ATTR: 'Elemendil ei tohiks olla <code>tabindex</code> atribuut, mis on suurem kui 0.',
 

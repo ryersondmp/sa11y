@@ -236,7 +236,7 @@ export default {
     HIDDEN_FOCUSABLE: 'De link of knop heeft <code>aria-hidden=&quot;true&quot;</code>, maar is nog steeds via het toetsenbord toegankelijk. Als u een dubbele link of knop wilt verbergen, voeg dan ook <code>tabindex=&quot;-1&quot;</code> toe. Anders moet <code>aria-hidden=&quot;true&quot;</code> niet worden gebruikt op elementen die focus kunnen ontvangen. <hr> Lees meer over het <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden-attribuut.</a>',
 
     // Developer
-    DUPLICATE_ID: '<strong>Duplicate ID</strong> gevonden. Het is bekend dat dubbele ID-fouten problemen veroorzaken voor hulptechnologieën wanneer deze proberen te communiceren met inhoud. <hr> Verwijder of wijzig de volgende ID: <strong {C}>%(id)</strong>',
+    DUPLICATE_ID: '<strong>Duplicate ID</strong> gevonden. Het is bekend dat dubbele ID-fouten problemen veroorzaken voor hulptechnologieën wanneer deze proberen te communiceren met inhoud. Verwijder of wijzig de volgende ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     UNCONTAINED_LI: 'Alle <code>&lt;li&gt;</code> lijstitems moeten worden geplaatst binnen <code>&lt;ul&gt;</code> ongeordende of <code>&lt;ol&gt;</code> geordende elementen. Deze structuur helpt schermlezers om de lijst en de items ervan nauwkeurig aan te kondigen.',
     TABINDEX_ATTR: 'Het element mag geen <code>tabindex</code>-attribuut groter dan 0 hebben.',
 

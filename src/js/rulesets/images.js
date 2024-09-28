@@ -9,12 +9,14 @@ export default function checkImages(results, option) {
     const altUrl = [
       '.avif',
       '.png',
-      '.jp',
+      '.jpg',
+      '.jpeg',
       '.webp',
       '.gif',
       '.tiff',
       '.svg',
-      '.hei',
+      '.heif',
+      '.heic',
       'http',
     ];
 

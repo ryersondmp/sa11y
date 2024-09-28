@@ -91,7 +91,7 @@ export const computeAccessibleName = (element, exclusions, recursing = 0) => {
   let count = 0;
   let shouldContinueWalker = true;
 
-  const alwaysExclude = 'noscript, style, script';
+  const alwaysExclude = 'noscript, style, script, video, audio';
   const exclude = element.querySelectorAll(exclusions ? `${exclusions}, ${alwaysExclude}` : alwaysExclude);
 
   while (treeWalker.nextNode() && shouldContinueWalker) {

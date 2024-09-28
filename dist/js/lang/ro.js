@@ -239,7 +239,7 @@ var ro = {
     HIDDEN_FOCUSABLE: 'Linkul sau butonul are atributul <code>aria-hidden=&quot;true&quot;</code>, dar este poate fi totuși accesat folosind tastatura. Dacă intenționați să ascundeți un link sau un buton duplicat, adăugați și <code>tabindex=&quot;-1&quot;</code>. În caz contrar, <code>aria-hidden=&quot;true&quot;</code> nu ar trebui să fie utilizat pe elemente care pot primi focus. <hr> Aflați mai multe despre <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atributul aria-hidden.</a>',
 
     // Developer
-    DUPLICATE_ID: 'S-a găsit <strong>un ID duplicat</strong>. Se știe că erorile de ID duplicat cauzează probleme pentru tehnologiile asistive atunci când acestea încearcă să interacționeze cu conținutul. <hr> Vă rugăm să eliminați sau să modificați următorul ID: <strong {C}>%(id)</strong>',
+    DUPLICATE_ID: 'S-a găsit <strong>un ID duplicat</strong>. Se știe că erorile de ID duplicat cauzează probleme pentru tehnologiile asistive atunci când acestea încearcă să interacționeze cu conținutul. Vă rugăm să eliminați sau să modificați următorul ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     UNCONTAINED_LI: 'Toate elementele de listă <code>&lt;li&gt;</code> trebuie să fie plasate în interiorul elementelor <code>&lt;ul&gt;</code> neordonate sau <code>&lt;ol&gt;</code> ordonate. Această structură ajută cititoarele de ecran să anunțe lista și elementele sale cu precizie.',
     TABINDEX_ATTR: 'Elementul nu ar trebui să aibă un atribut <code>tabindex</code> mai mare de 0.',
 

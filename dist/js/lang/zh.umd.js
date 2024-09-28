@@ -243,7 +243,7 @@
       HIDDEN_FOCUSABLE: '链接或按钮已设置 <code>aria-hidden=&quot;true&quot;</code>，但仍然可以通过键盘聚焦。如果您打算隐藏重复的链接或按钮，请添加 <code>tabindex=&quot;-1&quot;</code>。否则，不应在可以接收焦点的元素上使用 <code>aria-hidden=&quot;true&quot;</code>。了解更多关于 <a href="https://developer.mozilla.org/zh-CH/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden 属性</a>。',
 
       // Developer
-      DUPLICATE_ID: '发现<strong>重复的ID</strong>。众所周知, 当辅助技术试图与内容互动时, 重复的ID错误会给辅助技术带来问题。<hr> 请删除或更改以下ID: <strong {C}>%(id)</strong>',
+      DUPLICATE_ID: '发现<strong>重复的ID</strong>。众所周知, 当辅助技术试图与内容互动时, 重复的ID错误会给辅助技术带来问题。请删除或更改以下ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
       UNCONTAINED_LI: '所有 <code>&lt;li&gt;</code> 列表项必须放置在 <code>&lt;ul&gt;</code> 无序列表或 <code>&lt;ol&gt;</code> 有序列表元素内部。这个结构帮助屏幕阅读器准确地读取列表及其项。',
       TABINDEX_ATTR: '元素不应具有大于 0 的 <code>tabindex</code> 属性。',
 

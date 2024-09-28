@@ -58,10 +58,9 @@ export default function checkQA(results, option) {
 
       // Check for broken same-page links.
       if (option.checks.QA_IN_PAGE_LINK) {
-        const hasButtonRole = $el.getAttribute('role') === 'button';
+        const hasAttributes = $el.getAttribute('role') === 'button' || $el.hasAttribute('aria-haspopup') || $el.hasAttribute('aria-expanded') || $el.hasAttribute('onclick');
         const hasText = $el.textContent.trim().length !== 0;
-        const hasClick = $el.hasAttribute('onclick');
-        if ((href.startsWith('#') || href === '') && !hasButtonRole && hasText && !hasClick) {
+        if ((href.startsWith('#') || href === '') && !hasAttributes && hasText) {
           const targetId = href.substring(1);
           const ariaControls = $el.getAttribute('aria-controls');
           const targetElement = document.getElementById(targetId)
@@ -445,7 +444,7 @@ export default function checkQA(results, option) {
     // Get computed styles.
     const computeStyle = ($el) => {
       const style = getComputedStyle($el);
-      const { textDecorationLine, textAlign, computedFontSize } = style;
+      const { textDecorationLine, textAlign, fontSize } = style;
 
       /** Check: underline formatted text. @author Brian Teeman */
       if (option.checks.QA_UNDERLINE && textDecorationLine === 'underline') {
@@ -455,8 +454,10 @@ export default function checkQA(results, option) {
       /** Check: Font size is greater than 0 and less than 10.
        * Inspired by WebAim's WAVE check. Not WCAG. */
       const defaultSize = option.checks.QA_SMALL_TEXT.fontSize || 10;
-      const fontSize = parseFloat(computedFontSize);
-      if (option.checks.QA_SMALL_TEXT && fontSize > 0 && fontSize <= defaultSize) {
+      const computedFontSize = parseFloat(fontSize);
+      const withinRange = computedFontSize > 0 && computedFontSize <= defaultSize;
+      const hasText = $el.textContent.length !== 0;
+      if (option.checks.QA_SMALL_TEXT && hasText && withinRange) {
         addSmallTextResult($el);
       }
 

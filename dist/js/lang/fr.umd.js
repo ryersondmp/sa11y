@@ -218,7 +218,7 @@
       HIDDEN_FOCUSABLE: 'Le lien ou le bouton a <code>aria-hidden=&quot;true&quot;</code> mais reste accessible via le clavier. Si vous avez l\'intention de masquer un lien ou un bouton dupliqué, ajoutez également<code>tabindex=& quot;- 1 & quot;</code>. Sinon, <code>aria-hidden=&quot;true&quot;</code> ne doit pas être utilisé sur des éléments pouvant recevoir le focus. <hr> En savoir plus sur l\' <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">attribut aria-hidden.</a>',
 
       // Developer
-      DUPLICATE_ID: 'ID (Identifiant) dupliqué trouvé. Les erreurs d’ID (d’identifiants) dupliqués sont re-connues pour causer des problèmes au niveau de la technologie d’assistance lors-qu’ils tentent d’interagir avec le contenu.<hr>Veuillez retirer ou modifier l’ID (l’identifiant) suivant: <strong {C}>%(id)</strong>',
+      DUPLICATE_ID: 'ID (Identifiant) dupliqué trouvé. Les erreurs d’ID (d’identifiants) dupliqués sont re-connues pour causer des problèmes au niveau de la technologie d’assistance lors-qu’ils tentent d’interagir avec le contenu. Veuillez retirer ou modifier l’ID (l’identifiant) suivant. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
       UNCONTAINED_LI: 'Tous les éléments de liste <code>&lt;li&gt;</code> doivent être placés à l\'intérieur des éléments <code>&lt;ul&gt;</code> non ordonnés ou <code>&lt;ol&gt;</code> ordonnés. Cette structure aide les lecteurs d\'écran à annoncer la liste et ses éléments avec précision.',
       TABINDEX_ATTR: 'L\'élément ne doit pas avoir un attribut <code>tabindex</code> supérieur à 0.',
 

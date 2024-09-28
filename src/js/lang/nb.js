@@ -230,7 +230,7 @@ export default {
     HIDDEN_FOCUSABLE: 'Lenken eller knappen har <code>aria-hidden=&quot;true&quot;</code>, men kan fortsatt fokuseres med tastaturet. Hvis du har til hensikt å skjule en duplikatlenke eller -knapp, legg også til <code>tabindex=&quot;-1&quot;</code>. Ellers bør <code>aria-hidden=&quot;true&quot;</code> ikke brukes på elementer som kan motta fokus. <hr> Lær mer om <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden-attributtet.</a>',
 
     // Developer
-    DUPLICATE_ID: 'Fant <strong>duplisert ID</strong>. Feil med dupliserte ID-er er kjent for å forårsake problemer for hjelpeteknologier når de prøver å samhandle med innhold. <hr> Vennligst fjern eller endre følgende ID: <strong {C}>%(id)</strong>',
+    DUPLICATE_ID: 'Fant <strong>duplisert ID</strong>. Feil med dupliserte ID-er er kjent for å forårsake problemer for hjelpeteknologier når de prøver å samhandle med innhold. Vennligst fjern eller endre følgende ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     UNCONTAINED_LI: 'Alle <code>&lt;li&gt;</code> listeelementer må plasseres inne i <code>&lt;ul&gt;</code> uordnede eller <code>&lt;ol&gt;</code> ordnede elementer. Denne strukturen hjelper skjermlesere med å annonsere listen og dens elementer nøyaktig.',
     TABINDEX_ATTR: 'Elementet bør ikke ha et <code>tabindex</code>-attributt større enn 0.',
 

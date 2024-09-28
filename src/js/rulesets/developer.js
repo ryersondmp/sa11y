@@ -123,7 +123,7 @@ export default function checkDeveloper(results, option) {
                 element: $el,
                 type: option.checks.DUPLICATE_ID.type || 'error',
                 content: option.checks.DUPLICATE_ID.content || Lang.sprintf('DUPLICATE_ID', id),
-                inline: true,
+                inline: false,
                 position: 'beforebegin',
                 dismiss: Utils.prepareDismissal(`DUPLICATEID${id}${$el.textContent}`),
                 dismissAll: option.checks.DUPLICATE_ID.dismissAll ? 'DUPLICATE_ID' : false,

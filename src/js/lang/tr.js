@@ -223,7 +223,7 @@ export default {
     HIDDEN_FOCUSABLE: 'Bağlantı veya düğme <code>aria-hidden=&quot;true&quot;</code> değerine sahip ancak hâlâ klavye ile odaklanabilir durumda. Bir kopya bağlantı veya düğmeyi gizlemeyi düşünüyorsanız, <code>tabindex=&quot;-1&quot;</code> ekleyin. Aksi takdirde, odak alabilen öğelerde <code>aria-hidden=&quot;true&quot;</code> kullanılmamalıdır. <hr> <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden özelliği</a> hakkında daha fazla bilgi edinin.',
 
     // Developer
-    DUPLICATE_ID: '<strong>Yinelenen kimlik</strong> bulundu. Yinelenen kimlik hatalarının, içerikle etkileşime girmeye çalışan yardımcı teknolojiler için sorunlara neden olduğu bilinmektedir. <hr> Lütfen aşağıdaki kimliği kaldırın veya değiştirin: <strong {C}>%(id)</strong>',
+    DUPLICATE_ID: '<strong>Yinelenen kimlik</strong> bulundu. Yinelenen kimlik hatalarının, içerikle etkileşime girmeye çalışan yardımcı teknolojiler için sorunlara neden olduğu bilinmektedir. Lütfen aşağıdaki kimliği kaldırın veya değiştirin. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     UNCONTAINED_LI: 'Tüm <code>&lt;li&gt;</code> liste öğeleri, <code>&lt;ul&gt;</code> sırasız veya <code>&lt;ol&gt;</code> sıralı öğeler içinde yer almalıdır. Bu yapı, ekran okuyucularının listeyi ve öğelerini doğru bir şekilde duyurmasına yardımcı olur.',
     TABINDEX_ATTR: 'Öğenin <code>tabindex</code> değeri 0’dan büyük olmamalıdır.',
 

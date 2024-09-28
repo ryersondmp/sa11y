@@ -233,7 +233,8 @@ export default function checkContrast(results, option) {
         const clone = name.cloneNode(true);
         const nodeText = Utils.fnIgnore(clone, 'script, style, noscript, select option:not(:first-child)').textContent;
         const trimmed = Utils.removeWhitespace(nodeText);
-        const sanitizedText = Utils.sanitizeHTML(trimmed);
+        const truncateString = Utils.truncateString(trimmed, 150);
+        const sanitizedText = Utils.sanitizeHTML(truncateString);
 
         if (name.tagName === 'INPUT') {
           if (option.checks.CONTRAST_INPUT) {
@@ -270,7 +271,8 @@ export default function checkContrast(results, option) {
           const clone = name.cloneNode(true);
           const nodeText = Utils.fnIgnore(clone, 'script, style, noscript, select option:not(:first-child)').textContent;
           const trimmed = Utils.removeWhitespace(nodeText);
-          const sanitizedText = Utils.sanitizeHTML(trimmed);
+          const truncateString = Utils.truncateString(trimmed, 150);
+          const sanitizedText = Utils.sanitizeHTML(truncateString);
 
           results.push({
             element: name,

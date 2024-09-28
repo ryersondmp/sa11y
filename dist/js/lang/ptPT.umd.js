@@ -247,7 +247,7 @@
       HIDDEN_FOCUSABLE: 'O link ou botão tem <code>aria-hidden=&quot;true&quot;</code>, mas ainda é focável pelo teclado. Se pretende ocultar um link ou botão duplicado, adicione também <code>tabindex=&quot;-1&quot;</code>. Caso contrário, <code>aria-hidden=&quot;true&quot;</code> não deve ser usado em elementos que podem receber foco. <hr> Saiba mais sobre o <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atributo aria-hidden.</a>',
 
       // Developer
-      DUPLICATE_ID: 'Encontrada <strong>identificação duplicada</strong>. Os erros de ID duplicada são conhecidos por causar problemas às tecnologias de assistência quando estas estão a tentar interagir com o conteúdo. <hr> Remova ou altere o seguinte ID: <strong {C}>%(id)</strong>',
+      DUPLICATE_ID: 'Encontrada <strong>identificação duplicada</strong>. Os erros de ID duplicada são conhecidos por causar problemas às tecnologias de assistência quando estas estão a tentar interagir com o conteúdo. Remova ou altere o seguinte ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
       UNCONTAINED_LI: 'Todos os itens de lista <code>&lt;li&gt;</code> devem ser colocados dentro dos elementos <code>&lt;ul&gt;</code> não ordenados ou <code>&lt;ol&gt;</code> ordenados. Esta estrutura ajuda os leitores de ecrã a anunciar a lista e os seus itens com precisão.',
       TABINDEX_ATTR: 'O elemento não deve ter um atributo <code>tabindex</code> superior a 0.',
 

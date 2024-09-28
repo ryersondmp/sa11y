@@ -229,7 +229,7 @@ export default {
     HIDDEN_FOCUSABLE: 'Tautan atau tombol memiliki <code>aria-hidden=&quot;true&quot;</code> namun masih bisa difokuskan melalui keyboard. Jika Anda berniat untuk menyembunyikan tautan atau tombol duplikat, tambahkan juga <code>tabindex=&quot;-1&quot;</code>. Jika tidak, <code>aria-hidden=&quot;true&quot;</code> tidak boleh digunakan pada elemen yang bisa menerima fokus. <hr> Pelajari lebih lanjut tentang <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atribut aria-hidden.</a>',
 
     // Developer
-    DUPLICATE_ID: 'Ditemukan <strong>duplikat ID</strong>. Kesalahan ID duplikat diketahui dapat menyebabkan masalah pada teknologi bantuan saat mencoba berinteraksi dengan konten. <hr> Harap hapus atau ubah ID berikut ini: <strong {C}>%(id)</strong>',
+    DUPLICATE_ID: 'Ditemukan <strong>duplikat ID</strong>. Kesalahan ID duplikat diketahui dapat menyebabkan masalah pada teknologi bantuan saat mencoba berinteraksi dengan konten. Harap hapus atau ubah ID berikut ini. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     UNCONTAINED_LI: 'Semua item daftar <code>&lt;li&gt;</code> harus diletakkan di dalam elemen <code>&lt;ul&gt;</code> yang tidak terurut atau <code>&lt;ol&gt;</code> yang terurut. Struktur ini membantu pembaca layar mengumumkan daftar dan item-itemnya dengan akurat.',
     TABINDEX_ATTR: 'Elemen tidak boleh memiliki atribut <code>tabindex</code> yang lebih besar dari 0.',
 

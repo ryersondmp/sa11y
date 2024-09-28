@@ -237,7 +237,7 @@ var da = {
     HIDDEN_FOCUSABLE: 'Link eller knap har <code>aria-hidden=&quot;true&quot;</code>, men kan stadig fokuseres med tastaturet. Hvis du ønsker at skjule et duplikeret link eller en knap, skal du også tilføje <code>tabindex=&quot;-1&quot;</code>. Ellers bør <code>aria-hidden=&quot;true&quot;</code> ikke bruges på elementer, der kan modtage fokus. <hr> Læs mere om <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden-attributten.</a>',
 
     // Developer
-    DUPLICATE_ID: 'Fandt <strong>duplikat-ID</strong>. Fejl med dublerede ID\'er er kendt for at give problemer for hjælpeteknologier, når de forsøger at interagere med indhold. <hr> Fjern eller ændr venligst følgende ID: <strong {C}>%(id)</strong>',
+    DUPLICATE_ID: 'Fandt <strong>duplikat-ID</strong>. Fejl med dublerede ID\'er er kendt for at give problemer for hjælpeteknologier, når de forsøger at interagere med indhold. Fjern eller ændr venligst følgende ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     UNCONTAINED_LI: 'Alle <code>&lt;li&gt;</code> listeelementer skal placeres inde i <code>&lt;ul&gt;</code> uordnede eller <code>&lt;ol&gt;</code> ordnede elementer. Denne struktur hjælper skærmlæsere med at annoncere listen og dens elementer nøjagtigt.',
     TABINDEX_ATTR: 'Elementet bør ikke have et <code>tabindex</code>-attribut større end 0.',
 

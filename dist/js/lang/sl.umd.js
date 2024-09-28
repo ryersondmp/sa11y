@@ -244,7 +244,7 @@
       HIDDEN_FOCUSABLE: 'Povezava ali gumb ima <code>aria-hidden=&quot;true&quot;</code>, vendar je še vedno dostopen s tipkovnico. Če nameravate skriti podvojeno povezavo ali gumb, dodajte tudi <code>tabindex=&quot;-1&quot;</code>. V nasprotnem primeru se <code>aria-hidden=&quot;true&quot;</code> ne sme uporabljati na elementih, ki lahko prejmejo fokus. <hr> Več o <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atributu aria-hidden.</a>',
 
       // Developer
-      DUPLICATE_ID: 'Najden <strong>podvojen ID</strong>. Znano je, da napake z dvojnim ID povzročajo težave podpornim tehnologijam, ko poskušajo sodelovati z vsebino. <hr> Prosimo, odstranite ali spremenite naslednji ID: <strong {C}>%(id)</strong>',
+      DUPLICATE_ID: 'Najden <strong>podvojen ID</strong>. Znano je, da napake z dvojnim ID povzročajo težave podpornim tehnologijam, ko poskušajo sodelovati z vsebino. Prosimo, odstranite ali spremenite naslednji ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
       UNCONTAINED_LI: 'Vse <code>&lt;li&gt;</code> postavke seznama morajo biti nameščene znotraj <code>&lt;ul&gt;</code> neurejenih ali <code>&lt;ol&gt;</code> urejenih elementov. Ta struktura pomaga bralnikom zaslona natančno napovedati seznam in njegove postavke.',
       TABINDEX_ATTR: 'Element ne sme imeti atributa <code>tabindex</code>, ki je večji od 0.',
 

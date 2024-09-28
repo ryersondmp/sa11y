@@ -237,7 +237,7 @@ export default {
     HIDDEN_FOCUSABLE: '링크 또는 버튼에 <code>aria-hidden=&quot;true&quot;</code> 속성이 있지만 여전히 키보드로 포커스할 수 있습니다. 중복된 링크 또는 버튼을 숨기려면 <code>tabindex=&quot;-1&quot;</code> 속성을 추가하세요. 그렇지 않으면, 포커스를 받을 수 있는 요소에 <code>aria-hidden=&quot;true&quot;</code>를 사용해서는 안 됩니다. <hr> <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden 속성</a>에 대해 더 알아보세요.',
 
     // Developer
-    DUPLICATE_ID: '중복 ID를 찾았습니다. 중복 ID 오류는 보조 기술이 콘텐츠와 상호 작용할 때 문제를 일으키는 것으로 알려져 있습니다. <hr> 다음 ID를 제거하거나 변경하세요: <strong {C}>%(id)</strong>',
+    DUPLICATE_ID: '중복 ID를 찾았습니다. 중복 ID 오류는 보조 기술이 콘텐츠와 상호 작용할 때 문제를 일으키는 것으로 알려져 있습니다. 다음 ID를 제거하거나 변경하세요. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     UNCONTAINED_LI: '모든 <code>&lt;li&gt;</code> 목록 항목은 <code>&lt;ul&gt;</code> 비정렬 목록 또는 <code>&lt;ol&gt;</code> 정렬 목록 요소 안에 배치해야 합니다. 이 구조는 스크린 리더가 목록과 항목을 정확하게 읽어주는 데 도움이 됩니다.',
     TABINDEX_ATTR: '요소는 <code>tabindex</code> 속성이 0보다 커서는 안 됩니다.',
 

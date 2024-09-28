@@ -255,7 +255,7 @@
       HIDDEN_FOCUSABLE: 'A hivatkozás vagy a gomb <code>aria-hidden=&quot;true&quot;</code>, de még mindig elérhető a billentyűzettel. Ha egy duplikált hivatkozást vagy gombot szeretne elrejteni, adjon hozzá egy <code>tabindex=&quot;-1&quot;</code> értéket is. Ellenkező esetben az <code>aria-hidden=&quot;true&quot;</code> nem használható olyan elemeknél, amelyek fókuszt kaphatnak. <hr> További információ a <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden attribútumról.</a>',
 
       // Developer
-      DUPLICATE_ID: 'Találtunk <strong>duplikált azonosítót</strong>. A duplikált azonosító hibák köztudottan problémákat okoznak a segítő technológiák számára, amikor azok megpróbálnak interakcióba lépni a tartalommal. <hr> Kérjük, távolítsa el vagy változtassa meg a következő azonosítót: <strong {C}>%(id)</strong>',
+      DUPLICATE_ID: 'Találtunk <strong>duplikált azonosítót</strong>. A duplikált azonosító hibák köztudottan problémákat okoznak a segítő technológiák számára, amikor azok megpróbálnak interakcióba lépni a tartalommal. Kérjük, távolítsa el vagy változtassa meg a következő azonosítót. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
       UNCONTAINED_LI: 'Minden <code>&lt;li&gt;</code> listatételt a <code>&lt;ul&gt;</code> rendezetlen vagy <code>&lt;ol&gt;</code> rendezett elemek belsejébe kell elhelyezni. Ez a struktúra segít a képernyőolvasóknak pontosan bejelenteni a listát és annak elemeit.',
       TABINDEX_ATTR: 'Az elemnek nem lehet <code>tabindex</code> attribútuma, amely nagyobb, mint 0.',
 
