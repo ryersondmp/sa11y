@@ -295,7 +295,7 @@ export default function checkLinkText(results, option) {
           content: option.checks.LINK_LABEL.content || `${Lang.sprintf('ACC_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
           inline: true,
           position: 'afterend',
-          dismiss: Utils.prepareDismissal(`LINK${href + linkTextTrimmed}`),
+          dismiss: Utils.prepareDismissal(`LINKGOOD${href + linkTextTrimmed}`),
           dismissAll: option.checks.LINK_LABEL.dismissAll ? 'LINK_LABEL' : false,
           developer: option.checks.LINK_LABEL.developer || false,
         });

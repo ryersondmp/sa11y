@@ -178,12 +178,7 @@ export default function checkContrast(results, option) {
                 const type = elem.getAttribute('type');
                 if (type === 'range' || type === 'color') {
                   // Ignore specific input types.
-                } else if (background === 'image') {
-                  warning = {
-                    elem,
-                  };
-                  contrastErrors.warnings.push(warning);
-                } else if (background === 'alpha') {
+                } else if (background === 'image' || background === 'alpha') {
                   warning = {
                     elem,
                   };
@@ -250,7 +245,7 @@ export default function checkContrast(results, option) {
             });
           }
         } else {
-          if (option.checks.CONTRAST_ERROR) {
+          if (option.checks.CONTRAST_ERROR && trimmed.length !== 0) {
             results.push({
               element: name,
               type: option.checks.CONTRAST_ERROR.type || 'error',
@@ -274,16 +269,18 @@ export default function checkContrast(results, option) {
           const truncateString = Utils.truncateString(trimmed, 150);
           const sanitizedText = Utils.sanitizeHTML(truncateString);
 
-          results.push({
-            element: name,
-            type: option.checks.CONTRAST_WARNING.type || 'warning',
-            content: option.checks.CONTRAST_WARNING.content || Lang.sprintf('CONTRAST_WARNING', sanitizedText),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: Utils.prepareDismissal(`CONTRAST${nodeText}`),
-            dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
-            developer: option.checks.CONTRAST_WARNING.developer || false,
-          });
+          if (trimmed.length !== 0) {
+            results.push({
+              element: name,
+              type: option.checks.CONTRAST_WARNING.type || 'warning',
+              content: option.checks.CONTRAST_WARNING.content || Lang.sprintf('CONTRAST_WARNING', sanitizedText),
+              inline: false,
+              position: 'beforebegin',
+              dismiss: Utils.prepareDismissal(`CONTRAST${nodeText}`),
+              dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
+              developer: option.checks.CONTRAST_WARNING.developer || false,
+            });
+          }
         });
       }
   return results;

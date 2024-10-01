@@ -178,9 +178,7 @@ const defaultOptions = {
     BTN_ROLE_IN_NAME: true,
 
     // Contrast checks.
-    CONTRAST_WARNING: {
-      dismissAll: true,
-    },
+    CONTRAST_WARNING: false,
     CONTRAST_INPUT: true,
     CONTRAST_ERROR: true,
   },

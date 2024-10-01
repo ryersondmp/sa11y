@@ -196,9 +196,7 @@
       BTN_ROLE_IN_NAME: true,
 
       // Contrast checks.
-      CONTRAST_WARNING: {
-        dismissAll: true,
-      },
+      CONTRAST_WARNING: false,
       CONTRAST_INPUT: true,
       CONTRAST_ERROR: true,
     },
@@ -1364,7 +1362,7 @@
       );
 
       Found.Underlines = find(
-        'u',
+        'u:not(a[href] u)',
         'root',
         Constants.Exclusions.Container,
       );
@@ -7687,7 +7685,7 @@
             content: option.checks.LINK_LABEL.content || `${Lang.sprintf('ACC_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
             inline: true,
             position: 'afterend',
-            dismiss: prepareDismissal(`LINK${href + linkTextTrimmed}`),
+            dismiss: prepareDismissal(`LINKGOOD${href + linkTextTrimmed}`),
             dismissAll: option.checks.LINK_LABEL.dismissAll ? 'LINK_LABEL' : false,
             developer: option.checks.LINK_LABEL.developer || false,
           });
@@ -7935,12 +7933,7 @@
                   }
                 } else if (text.length || htmlTag === 'INPUT' || htmlTag === 'SELECT' || htmlTag === 'TEXTAREA') {
                   const type = elem.getAttribute('type');
-                  if (type === 'range' || type === 'color') ; else if (background === 'image') {
-                    warning = {
-                      elem,
-                    };
-                    contrastErrors.warnings.push(warning);
-                  } else if (background === 'alpha') {
+                  if (type === 'range' || type === 'color') ; else if (background === 'image' || background === 'alpha') {
                     warning = {
                       elem,
                     };
@@ -8007,7 +8000,7 @@
               });
             }
           } else {
-            if (option.checks.CONTRAST_ERROR) {
+            if (option.checks.CONTRAST_ERROR && trimmed.length !== 0) {
               results.push({
                 element: name,
                 type: option.checks.CONTRAST_ERROR.type || 'error',
@@ -8031,16 +8024,18 @@
             const truncateString$1 = truncateString(trimmed, 150);
             const sanitizedText = sanitizeHTML(truncateString$1);
 
-            results.push({
-              element: name,
-              type: option.checks.CONTRAST_WARNING.type || 'warning',
-              content: option.checks.CONTRAST_WARNING.content || Lang.sprintf('CONTRAST_WARNING', sanitizedText),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: prepareDismissal(`CONTRAST${nodeText}`),
-              dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
-              developer: option.checks.CONTRAST_WARNING.developer || false,
-            });
+            if (trimmed.length !== 0) {
+              results.push({
+                element: name,
+                type: option.checks.CONTRAST_WARNING.type || 'warning',
+                content: option.checks.CONTRAST_WARNING.content || Lang.sprintf('CONTRAST_WARNING', sanitizedText),
+                inline: false,
+                position: 'beforebegin',
+                dismiss: prepareDismissal(`CONTRAST${nodeText}`),
+                dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
+                developer: option.checks.CONTRAST_WARNING.developer || false,
+              });
+            }
           });
         }
     return results;
@@ -8580,7 +8575,8 @@
     /* *********************************************************** */
     if (option.checks.QA_STRONG_ITALICS) {
       Elements.Found.StrongItalics.forEach(($el) => {
-        if ($el.textContent.trim().length > 400) {
+        const text = getText($el);
+        if (text.length !== 0 && text.length > 400) {
           results.push({
             element: $el.parentNode,
             type: option.checks.QA_STRONG_ITALICS.type || 'warning',
@@ -8612,7 +8608,7 @@
         // Check for broken same-page links.
         if (option.checks.QA_IN_PAGE_LINK) {
           const hasAttributes = $el.getAttribute('role') === 'button' || $el.hasAttribute('aria-haspopup') || $el.hasAttribute('aria-expanded') || $el.hasAttribute('onclick');
-          const hasText = $el.textContent.trim().length !== 0;
+          const hasText = getText($el).length !== 0;
           if ((href.startsWith('#') || href === '') && !hasAttributes && hasText) {
             const targetId = href.substring(1);
             const ariaControls = $el.getAttribute('aria-controls');
@@ -8670,9 +8666,9 @@
     /* *************************************************************** */
     if (option.checks.QA_BLOCKQUOTE) {
       Elements.Found.Blockquotes.forEach(($el) => {
-        const bqHeadingText = $el.textContent;
-        if (bqHeadingText.trim().length < 25) {
-          const sanitizedText = sanitizeHTML(bqHeadingText);
+        const text = getText($el);
+        if (text.length !== 0 && text.length < 25) {
+          const sanitizedText = sanitizeHTML(text);
           results.push({
             element: $el,
             type: option.checks.QA_BLOCKQUOTE.type || 'warning',
@@ -8753,6 +8749,14 @@
         });
       };
 
+      // To minimize false positives/number of warnings...
+      const isPreviousElementAHeading = (p) => {
+        const previousElement = p.previousElementSibling;
+        if (!previousElement) return false;
+        const headingTags = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'];
+        return headingTags.includes(previousElement.tagName);
+      };
+
       // Find large text as heading.
       const ignoreParents = 'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level], blockquote, table';
       const computeLargeParagraphs = (p) => {
@@ -8761,7 +8765,11 @@
         const maybeSentence = getText$1.match(/[.;?!"]/) === null;
         const typicalHeadingLength = getText$1.length >= 4 && getText$1.length <= 120;
 
-        if (size >= 24 && !p.closest(ignoreParents) && typicalHeadingLength && maybeSentence) {
+        if (size >= 24
+          && !p.closest(ignoreParents)
+          && typicalHeadingLength
+          && maybeSentence
+          && !isPreviousElementAHeading(p)) {
           const sanitizedText = sanitizeHTML(getText$1);
           addResult(p, sanitizedText);
         }
@@ -8781,7 +8789,7 @@
 
           if (typicalHeadingLength && notASentence) {
             // Be a little forgiving if it's a small paragraph.
-            const nonHeadingTextLength = fnIgnore(p, 'strong, bold').textContent.trim().length;
+            const nonHeadingTextLength = fnIgnore(p, 'strong, b').textContent.trim().length;
             if (nonHeadingTextLength !== 0 && nonHeadingTextLength <= 250) {
               return;
             }
@@ -8944,44 +8952,50 @@
     if (option.checks.QA_UNDERLINE || option.checks.QA_JUSTIFY) {
       const addUnderlineResult = ($el, inline) => {
         const text = getText($el);
-        results.push({
-          element: $el,
-          type: option.checks.QA_UNDERLINE.type || 'warning',
-          content: option.checks.QA_UNDERLINE.content || Lang.sprintf('QA_UNDERLINE'),
-          inline,
-          position: 'beforebegin',
-          dismiss: prepareDismissal(`UNDERLINE${text}`),
-          dismissAll: option.checks.QA_UNDERLINE.dismissAll ? 'QA_UNDERLINE' : false,
-          developer: option.checks.QA_UNDERLINE.developer || false,
-        });
+        if (text.length !== 0) {
+          results.push({
+            element: $el,
+            type: option.checks.QA_UNDERLINE.type || 'warning',
+            content: option.checks.QA_UNDERLINE.content || Lang.sprintf('QA_UNDERLINE'),
+            inline,
+            position: 'beforebegin',
+            dismiss: prepareDismissal(`UNDERLINE${text}`),
+            dismissAll: option.checks.QA_UNDERLINE.dismissAll ? 'QA_UNDERLINE' : false,
+            developer: option.checks.QA_UNDERLINE.developer || false,
+          });
+        }
       };
 
       const addJustifyResult = ($el) => {
         const text = getText($el);
-        results.push({
-          element: $el,
-          type: option.checks.QA_JUSTIFY.type || 'warning',
-          content: option.checks.QA_JUSTIFY.content || Lang._('QA_JUSTIFY'),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: prepareDismissal(`JUSTIFIED${text}`),
-          dismissAll: option.checks.QA_JUSTIFY.dismissAll ? 'QA_JUSTIFY' : false,
-          developer: option.checks.QA_JUSTIFY.developer || false,
-        });
+        if (text.length !== 0) {
+          results.push({
+            element: $el,
+            type: option.checks.QA_JUSTIFY.type || 'warning',
+            content: option.checks.QA_JUSTIFY.content || Lang._('QA_JUSTIFY'),
+            inline: false,
+            position: 'beforebegin',
+            dismiss: prepareDismissal(`JUSTIFIED${text}`),
+            dismissAll: option.checks.QA_JUSTIFY.dismissAll ? 'QA_JUSTIFY' : false,
+            developer: option.checks.QA_JUSTIFY.developer || false,
+          });
+        }
       };
 
       const addSmallTextResult = ($el) => {
         const text = getText($el);
-        results.push({
-          element: $el,
-          type: option.checks.QA_SMALL_TEXT.type || 'warning',
-          content: option.checks.QA_SMALL_TEXT.content || Lang._('QA_SMALL_TEXT'),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: prepareDismissal(`SMALL${text}`),
-          dismissAll: option.checks.QA_SMALL_TEXT.dismissAll ? 'QA_SMALL_TEXT' : false,
-          developer: option.checks.QA_SMALL_TEXT.developer || false,
-        });
+        if (text.length !== 0) {
+          results.push({
+            element: $el,
+            type: option.checks.QA_SMALL_TEXT.type || 'warning',
+            content: option.checks.QA_SMALL_TEXT.content || Lang._('QA_SMALL_TEXT'),
+            inline: false,
+            position: 'beforebegin',
+            dismiss: prepareDismissal(`SMALL${text}`),
+            dismissAll: option.checks.QA_SMALL_TEXT.dismissAll ? 'QA_SMALL_TEXT' : false,
+            developer: option.checks.QA_SMALL_TEXT.developer || false,
+          });
+        }
       };
 
       /**
@@ -9000,7 +9014,7 @@
         const { textDecorationLine, textAlign, fontSize } = style;
 
         /** Check: underline formatted text. @author Brian Teeman */
-        if (option.checks.QA_UNDERLINE && textDecorationLine === 'underline') {
+        if (option.checks.QA_UNDERLINE && textDecorationLine === 'underline' && !$el.closest('a[href]')) {
           addUnderlineResult($el, false); // Inline false for computed underlines.
         }
 
@@ -9009,8 +9023,7 @@
         const defaultSize = option.checks.QA_SMALL_TEXT.fontSize || 10;
         const computedFontSize = parseFloat(fontSize);
         const withinRange = computedFontSize > 0 && computedFontSize <= defaultSize;
-        const hasText = $el.textContent.length !== 0;
-        if (option.checks.QA_SMALL_TEXT && hasText && withinRange) {
+        if (option.checks.QA_SMALL_TEXT && withinRange) {
           addSmallTextResult($el);
         }
 

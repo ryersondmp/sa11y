@@ -97,7 +97,7 @@ const Elements = (function myElements() {
     );
 
     Found.Underlines = find(
-      'u',
+      'u:not(a[href] u)',
       'root',
       Constants.Exclusions.Container,
     );

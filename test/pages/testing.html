@@ -37,6 +37,20 @@
     .a-test:focus {
       opacity: 0.8;
     }
+
+    .slick-sr-only {
+      border: 0 !important;
+      clip: rect(1px, 1px, 1px, 1px) !important;
+      -webkit-clip-path: inset(50%) !important;
+      clip-path: inset(50%) !important;
+      height: 1px !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      padding: 0 !important;
+      position: absolute !important;
+      width: 1px !important;
+      white-space: nowrap !important;
+    }
   </style>
 </head>
 
@@ -82,6 +96,7 @@
       </a>
     </div>
 
+
     <hr>
     <style>
       .sr-only {
@@ -94,15 +109,38 @@
         white-space: nowrap;
         border: 0;
       }
+
+      .underline {
+        text-decoration: underline;
+      }
     </style>
-    <a href="/" id="mcmaster-brand" class="nav-item">
-      <img src="https://www.mcmaster.ca/wp-content/uploads/2024/07/m24-col.png"
-        style="width: 140px; height: 80px; margin: 0 10px">
-      <span class="sr-only">McMaster logo</span>
+    <a href="/" class="nav-item">
+      <span class="underline">asdasdsd</span>
     </a>
 
     <hr>
 
+    <a href="/" class="nav-item">
+      <u>asdasdsd</u>
+    </a>
+
+    <hr>
+    <u>asdasdsd</u>
+
+    <hr>
+    <h2>Testing testing</h2>
+    <p style="font-size:30px;">Building a vibrant community of creative and accomplished people from around the world
+    </p>
+
+    <a href="#">Top</a>
+
+    <hr>
+    <h2>Slick sr-only class</h2>
+    <span class=" slick-sr-only">Go to slide 2</span>
+    <hr>
+    <h2>Empty div contrast?</h2>
+    <div id="lightboxOverlay" class="lightboxOverlay" style="display: none;opacity:0.8;"></div>
+    <hr>
     <a class="link" href="features/2024/fall/laurier-welcomes-first-students-to-milton-campus.html" target="">
       <img class="background" lazy-src="/wp-content/themes/child-mcmaster/assets/images/default/Admissions.png"
         alt="Admissions" src="/wp-content/themes/child-mcmaster/assets/images/default/Admissions.png">
