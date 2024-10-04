@@ -65,6 +65,7 @@ const onLoadScript = (lang) => {
       customChecks: false,
       exportResultsPlugin: true,
       detectSPArouting: true,
+      contrastAPCA: true,
     });
   };
 
