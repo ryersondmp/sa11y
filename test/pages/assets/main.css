@@ -128,6 +128,7 @@ pre {
   padding: 3px 6px;
   font-family: var(--font-secondary);
   font-size: .9rem;
+  font-weight: 500;
   background: var(--bg-secondary);
   border: 1px solid var(--bg-tertiary);
   border-radius: 4px;
@@ -266,6 +267,10 @@ iframe {
   clip-path: inset(50%);
 }
 
+label {
+  font-weight: 500;
+}
+
 img {
   width: 80px;
 }
@@ -316,6 +321,12 @@ iframe {
 
 .underline {
   text-decoration-line: underline;
+}
+
+.background-image-2 {
+  padding: 20px;
+  background-color: #fa0;
+  background-image: url("../assets/placeholder.svg");
 }
 
 .background-image {

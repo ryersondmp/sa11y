@@ -540,3 +540,18 @@ export function isVisibleTextInAccessibleName($el) {
 export function truncateString(string, maxLength) {
   return string.length > maxLength ? `${string.substring(0, maxLength)}...` : string;
 }
+
+/**
+ * Standardize the href attribute of a link by removing any trailing slashes and stripping the protocol (http, https) and 'www.' prefix. Used to minimize false positives for link check module.
+ * @param {HTMLElement} $el - The element from which to retrieve the href attribute.
+ * @returns {string} - The standardized href.
+ */
+export function standardizeHref($el) {
+  let href = $el.getAttribute('href');
+  // Remove trailing slash if it exists
+  if (href.endsWith('/')) {
+    href = href.slice(0, -1);
+  }
+  // Remove protocol and www., without affecting subdomains.
+  return href.replace(/^https?:\/\/(www\.)?/, '');
+}

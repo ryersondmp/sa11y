@@ -43,6 +43,7 @@ const defaultOptions = {
 
   // Other plugins
   contrastPlugin: true,
+  contrastAPCA: false,
   linksAdvancedPlugin: true,
   formLabelsPlugin: true,
   embeddedContentPlugin: true,
@@ -178,7 +179,9 @@ const defaultOptions = {
     BTN_ROLE_IN_NAME: true,
 
     // Contrast checks.
-    CONTRAST_WARNING: false,
+    CONTRAST_WARNING: {
+      dismissAll: true,
+    },
     CONTRAST_INPUT: true,
     CONTRAST_ERROR: true,
   },

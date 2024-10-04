@@ -89,6 +89,7 @@ export default function checkLinkText(results, option) {
 
   const seen = {};
   Elements.Found.Links.forEach(($el) => {
+    const href = Utils.standardizeHref($el);
     const accName = computeAccessibleName($el, Constants.Exclusions.LinkSpan);
     const stringMatchExclusions = option.linkIgnoreStrings
       ? accName.replace(option.linkIgnoreStrings, '') : accName;
@@ -108,14 +109,11 @@ export default function checkLinkText(results, option) {
     const matchedSymbol = matches ? matches[1] : null;
 
     // ARIA attributes.
-    const href = $el.getAttribute('href');
     const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
     const negativeTabindex = $el.getAttribute('tabindex') === '-1';
 
     // Has ARIA.
     const hasAria = $el.querySelector(':scope [aria-labelledby], :scope [aria-label]') || $el.getAttribute('aria-labelledby') || $el.getAttribute('aria-label');
-
-    // Has aria-labeledby.
     const hasAriaLabelledby = $el.querySelector(':scope [aria-labelledby]') || $el.getAttribute('aria-labelledby');
 
     // New tab or new window.
@@ -319,7 +317,7 @@ export default function checkLinkText(results, option) {
     /* LINKS developer */
     if (option.linksAdvancedPlugin) {
       if (linkTextTrimmed.length !== 0) {
-      // Links with identical accessible names have equivalent purpose.
+        // Links with identical accessible names have equivalent purpose.
         if (seen[linkTextTrimmed] && !seen[href]) {
           // Link has identical name as another link.
           if (option.checks.LINK_IDENTICAL_NAME) {

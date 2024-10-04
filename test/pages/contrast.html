@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contrast tests</title>
+  <link rel="stylesheet" href="./assets/main.css">
+  <link rel="stylesheet" href="../../dist/css/sa11y.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+  <style>
+    /* RGB */
+    .rgb {
+      color: rgb(255, 87, 51);
+    }
+
+    /* RGBA */
+    .rgba {
+      color: rgba(255, 87, 51, 0.5);
+    }
+
+    /* Hex */
+    .hex {
+      color: #FF5733;
+    }
+
+    /* HSL */
+    .hsl {
+      color: hsl(14, 100%, 60%);
+    }
+
+    /* HSLA */
+    .hsla {
+      color: hsla(14, 100%, 60%, 0.5);
+    }
+
+    /* Display P3 */
+    .display-p3 {
+      color: color(display-p3 1 0.3 0.2);
+    }
+
+    /* Lab */
+    .lab {
+      color: lab(60% 50 20);
+    }
+
+    /* LCH */
+    .lch {
+      color: lch(60% 80 40);
+    }
+
+    /* OKLab */
+    .oklab {
+      color: oklab(60% 0.1 0.2);
+    }
+
+    /* OKLCH */
+    .oklch {
+      color: oklch(60% 0.2 40);
+    }
+
+    /* HWB */
+    .hwb {
+      color: hwb(14 0% 0%);
+    }
+
+    /* Named color */
+    .rebeccapurple {
+      color: rebeccapurple;
+    }
+
+    /* Rec. 2020 */
+    .rec2020 {
+      color: color(rec2020 0.9 0.4 0.2);
+    }
+
+    /* Font sizes */
+    .size24 {
+      font-size: 24px;
+    }
+
+    .weight700 {
+      font-weight: 700;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="sa11y-active">
+    <h1>APCA - Contrast Tests</h1>
+  </header>
+  <main>
+
+    <h2>Normal text (400 at 16px)</h2>
+    <h3>RGB</h3>
+    <div id="error-rgb">
+      <p class="rgb">This is using the RGB colour space.</p>
+    </div>
+
+    <h3>RGBA</h3>
+    <div id="error-rgba">
+      <p class="rgba">This is using the RGBA colour space.</p>
+    </div>
+
+    <h3>Hex</h3>
+    <div id="error-hex">
+      <p class="hex">This is using the Hex colour space.</p>
+    </div>
+
+    <h3>HSL</h3>
+    <div id="error-hsl">
+      <p class="hsl">This is using the HSL colour space.</p>
+    </div>
+
+    <h3>HSLA</h3>
+    <div id="error-hsla">
+      <p class="hsla">This is using the HSLA colour space.</p>
+    </div>
+
+    <h3>Display P3</h3>
+    <div id="error-display-p3">
+      <p class="display-p3">This is using the Display P3 colour space.</p>
+    </div>
+
+    <h3>Lab</h3>
+    <div id="error-lab">
+      <p class="lab">This is using the Lab colour space.</p>
+    </div>
+
+    <h3>LCH</h3>
+    <div id="error-lch">
+      <p class="lch">This is using the LCH colour space.</p>
+    </div>
+
+    <h3>OKLab</h3>
+    <div id="error-oklab">
+      <p class="oklab">This is using the OKLab colour space.</p>
+    </div>
+
+    <h3>OKLCH</h3>
+    <div id="error-oklch">
+      <p class="oklch">This is using the OKLCH colour space.</p>
+    </div>
+
+    <h3>HWB</h3>
+    <div id="error-hwb">
+      <p class="hwb">This is using the HWB colour space.</p>
+    </div>
+
+    <h3>Named Color (RebeccaPurple)</h3>
+    <div id="error-rebeccapurple">
+      <p class="rebeccapurple">This is using the named colour RebeccaPurple.</p>
+    </div>
+
+    <h3>Rec. 2020</h3>
+    <div id="error-rec2020">
+      <p class="rec2020">This is using the Rec. 2020 colour space.</p>
+    </div>
+
+    <hr>
+
+    <h2>Large text (400 at 24px)</h2>
+    <h3>RGB</h3>
+    <div id="error-rgb">
+      <p class="rgb size24">This is using the RGB colour space.</p>
+    </div>
+
+    <h3>RGBA</h3>
+    <div id="error-rgba">
+      <p class="rgba size24">This is using the RGBA colour space.</p>
+    </div>
+
+    <h3>Hex</h3>
+    <div id="error-hex">
+      <p class="hex size24">This is using the Hex colour space.</p>
+    </div>
+
+    <h3>HSL</h3>
+    <div id="error-hsl">
+      <p class="hsl size24">This is using the HSL colour space.</p>
+    </div>
+
+    <h3>HSLA</h3>
+    <div id="error-hsla">
+      <p class="hsla size24">This is using the HSLA colour space.</p>
+    </div>
+
+    <h3>Display P3</h3>
+    <div id="error-display-p3">
+      <p class="display-p3 size24">This is using the Display P3 colour space.</p>
+    </div>
+
+    <h3>Lab</h3>
+    <div id="error-lab">
+      <p class="lab size24">This is using the Lab colour space.</p>
+    </div>
+
+    <h3>LCH</h3>
+    <div id="error-lch">
+      <p class="lch size24">This is using the LCH colour space.</p>
+    </div>
+
+    <h3>OKLab</h3>
+    <div id="error-oklab">
+      <p class="oklab size24">This is using the OKLab colour space.</p>
+    </div>
+
+    <h3>OKLCH</h3>
+    <div id="error-oklch">
+      <p class="oklch size24">This is using the OKLCH colour space.</p>
+    </div>
+
+    <h3>HWB</h3>
+    <div id="error-hwb">
+      <p class="hwb size24">This is using the HWB colour space.</p>
+    </div>
+
+    <h3>Named Color (RebeccaPurple)</h3>
+    <div id="nothing-rebeccapurple">
+      <p class="rebeccapurple size24">This is using the named colour RebeccaPurple.</p>
+    </div>
+
+    <h3>Rec. 2020</h3>
+    <div id="error-rec2020">
+      <p class="rec2020 size24">This is using the Rec. 2020 colour space.</p>
+    </div>
+
+    <hr>
+
+    <h2>Large text (700 at 24px)</h2>
+    <h3>RGB</h3>
+    <div id="nothing-rgb-24-700">
+      <p class="rgb size24 weight700">This is using the RGB colour space.</p>
+    </div>
+
+    <h3>RGBA</h3>
+    <div id="error-rgba-24-700">
+      <p class="rgba size24 weight700">This is using the RGBA colour space.</p>
+    </div>
+
+    <h3>Hex</h3>
+    <div id="nothing-hex-24-700">
+      <p class="hex size24 weight700">This is using the Hex colour space.</p>
+    </div>
+
+    <h3>HSL</h3>
+    <div id="nothing-hsl-24-700">
+      <p class="hsl size24 weight700">This is using the HSL colour space.</p>
+    </div>
+
+    <h3>HSLA</h3>
+    <div id="error-hsla-24-700">
+      <p class="hsla size24 weight700">This is using the HSLA colour space.</p>
+    </div>
+
+    <h3>Display P3</h3>
+    <div id="nothing-display-p3-24-700">
+      <p class="display-p3 size24 weight700">This is using the Display P3 colour space.</p>
+    </div>
+
+    <h3>Lab</h3>
+    <div id="nothing-lab-24-700">
+      <p class="lab size24 weight700">This is using the Lab colour space.</p>
+    </div>
+
+    <h3>LCH</h3>
+    <div id="nothing-lch-24-700">
+      <p class="lch size24 weight700">This is using the LCH colour space.</p>
+    </div>
+
+    <h3>OKLab</h3>
+    <div id="nothing-oklab-24-700">
+      <p class="oklab size24 weight700">This is using the OKLab colour space.</p>
+    </div>
+
+    <h3>OKLCH</h3>
+    <div id="nothing-oklch-24-700">
+      <p class="oklch size24 weight700">This is using the OKLCH colour space.</p>
+    </div>
+
+    <h3>HWB</h3>
+    <div id="nothing-hwb-24-700">
+      <p class="hwb size24 weight700">This is using the HWB colour space.</p>
+    </div>
+
+    <h3>Named Color (RebeccaPurple)</h3>
+    <div id="nothing-rebeccapurple-24-700">
+      <p class="rebeccapurple size24 weight700">This is using the named colour RebeccaPurple.</p>
+    </div>
+
+    <h3>Rec. 2020</h3>
+    <div id="nothing-rec2020-24-700">
+      <p class="rec2020 size24 weight700">This is using the Rec. 2020 colour space.</p>
+    </div>
+
+    <hr>
+    <hr>
+    <hr>
+
+    <h2>hsla</h2>
+    <div id="error-hsla">
+      <p class="hsla">This is using HSLA colour.</p>
+    </div>
+
+    <h2>Visually hidden content</h2>
+    <div id="nothing-visually-hidden">
+      <p class="visually-hidden">This is visually hidden.</p>
+    </div>
+
+    <h2>Large text passing</h2>
+    <div id="nothing">
+      <h2 style="color:brown">Some large brown text</h2>
+    </div>
+
+    <h2>Colour name</h2>
+    <div id="error-colour-name">
+      <p class="colour-name">This is using a colour name.</p>
+    </div>
+
+    <h2>Transparency</h2>
+    <div id="error-rgba-transparency">
+      <p class="rgba-transparency">RGBA with various transparency</p>
+    </div>
+
+    <h2>Color mix</h2>
+    <div id="error-color-mix">
+      <p class="color-mix">Colour mix</p>
+    </div>
+
+    <h2>Paragraph with node types that are not text nodes</h2>
+    <div id="error">
+      <p class="color-mix">Colour mix <style>
+          .testing-testing {
+            asdasds
+          }
+        </style>
+      </p>
+    </div>
+    <div id="error">
+      <p class="color-mix">Some script and noscript elements
+        <script>const test123 = "a variable";</script> <noscript>Some noscript text</noscript>
+      </p>
+    </div>
+
+    <h2>Input</h2>
+    <div id="error-text-area">
+      <label for="input-a">Name:</label>
+      <input type="text" id="input-a" />
+    </div>
+
+    <h2>Text area</h2>
+    <div id="error-text-area">
+      <label for="textarea-a">Address:</label>
+      <textarea id="textarea-a">Test...</textarea>
+    </div>
+
+    <h2>Background image</h2>
+    <div id="warning-contrast">
+      <p class="background-image">Text on background image requires manual review!</p>
+    </div>
+
+    <div id="warning-bg-image-nav">
+      <nav>
+        <p class="background-image">Text on background image within a navigation element requires manual review!</p>
+      </nav>
+    </div>
+
+    <div id="warning-bg-image-nav">
+      <nav>
+        <p class="background-image">Nisi eveniet magni mollitia numquam omnis! Quisquam facere labore illum.</p>
+      </nav>
+    </div>
+
+
+
+    <h3>1:1 contrast ratio should be warning instead of error</h3>
+    <p>In most cases, any time there's been a 1:1 ratio it's because it's a background image... as no one should
+      intentionally make something 1:1...</p>
+    <div id="warning-contrast-1">
+      <p style="color: var(--bg-example);">
+        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Numquam quasi ipsa assumenda aliquam dolore amet
+        mollitia similique ab consequuntur magnam id veritatis explicabo accusamus, ipsum iusto ea eligendi
+        necessitatibus
+        iure?
+      </p>
+    </div>
+    <h4>Large size text with 1:1</h4>
+    <div id="warning-contrast-2">
+      <p style="color: var(--bg-example);font-size:5em">
+        Has 0 opacity.
+      </p>
+    </div>
+
+    <h4>Text has low opacity via explicit <code>opacity</code> attribute</h4>
+    <div id="error-opacity">
+      <code>opacity: 0.05;</code>
+      <p style="font-size:4em; opacity: 0.05;">
+        Text has 0.5 opacity.
+      </p>
+    </div>
+
+    <h2>Opacity is set to 0</h2>
+    <div id="warning-opacity">
+      <code>opacity: 0;</code>
+      <p style="font-size:5em; opacity: 0;">
+        Lorem ipsum dolor.
+      </p>
+    </div>
+
+    <h2>color(displayP)</h2>
+    <div id="error">
+      <p style="color:color(display-p3 0.690196 0.686275 0.662745 / 1);">Color(display-p3)</p>
+    </div>
+
+    <h2><code>&lt;select&gt;</code> element with background image</h2>
+    <div id="nothing-contrast-4">
+      <label for="pet-select">Choose a pet:</label>
+      <select id="pet-select" style="background-image: url(clientlib-site/images/google.gif);">
+        <option value="">Please choose an option</option>
+        <option value="dog">Dog</option>
+        <option value="cat">Cat</option>
+        <option value="hamster">Hamster</option>
+        <option value="parrot">Parrot</option>
+        <option value="spider">Spider</option>
+        <option value="goldfish">Goldfish</option>
+      </select>
+    </div>
+
+
+
+    <h2>Inside the shadow dom!</h2>
+    <div id="webcomponent">
+      <template shadowrootmode="open">
+        <div style="background-color:hotpink;padding:20px">
+          <h3 style="color:white">Heading in the shadow dom</h3>
+        </div>
+      </template>
+    </div>
+  </main>
+
+  <footer>No automated unit tests are on this page. Blank slate for testing!</footer>
+  <script src="../../dist/js/sa11y.umd.js"></script>
+  <script src="../../dist/js/lang/en.umd.js"></script>
+  <script>
+    Sa11y.Lang.addI18n(Sa11yLangEn.strings);
+    const sa11y = new Sa11y.Sa11y({
+      checkRoot: 'body',
+      developerChecksOnByDefault: false,
+      shadowComponents: '#webcomponent',
+      contrastAPCA: true,
+      checks: {
+        IMAGE_DECORATIVE_CAROUSEL: {
+          type: 'error',
+          sources: '.carousel',
+        },
+        HEADING_LONG: {
+          type: 'error'
+        }
+      },
+    });
+  </script>
+</body>
+
+</html>

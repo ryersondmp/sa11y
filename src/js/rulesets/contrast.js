@@ -1,287 +1,289 @@
+import chroma from 'chroma-js';
 import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 
 /**
- * Converts a color string in the format 'color(srgb r g b [a])' to RGBA format.
- * If alpha value is not provided, it defaults to 1 (fully opaque).
- * @param {string} colorString The color string in the format 'color(srgb r g b [a])'.
- * @returns {string} The RGBA color string in the format 'rgba(r, g, b, a)'.
- * Returns 'invalid-format' if the input format is invalid.
- */
-const convertColorToRGBA = (colorString) => {
-  if (colorString.startsWith('color(srgb')) {
-    const rgbaRegex = /srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s+([\d.]+))?/; // Added alpha value regex group
-    const match = colorString.match(rgbaRegex);
-
-    if (match && match.length >= 4) {
-      const [r, g, b, a] = match.slice(1);
-
-      // Ensure the parsed values are within the valid range [0, 1].
-      const parsedR = Math.min(1, parseFloat(r));
-      const parsedG = Math.min(1, parseFloat(g));
-      const parsedB = Math.min(1, parseFloat(b));
-
-      // Parse alpha value or default to 1 if not provided
-      const alpha = a !== undefined ? Math.min(1, parseFloat(a)) : 1;
-
-      // Converting RGB to RGBA.
-      const rgbaColor = `rgba(${Math.round(parsedR * 255)}, ${Math.round(parsedG * 255)}, ${Math.round(parsedB * 255)}, ${alpha})`;
-
-      return rgbaColor;
-    }
-    return 'invalid-format';
-  }
-  return colorString; // Return the original color if it's not in the color() format.
-};
-
-/**
  * Rulesets: Contrast
- * Color contrast plugin by Jason Day.
+ * With help of Jason Day (color-contrast) and Gregor Aisch (chroma.js).
+ * APCA contrast checking is experimental.
  * @link https://github.com/jasonday/color-contrast
- * @link https://github.com/gka/chroma.js (Parse RGB)
+ * @link https://github.com/gka/chroma.js
+ * @link https://github.com/Myndex/SAPC-APCA
 */
 export default function checkContrast(results, option) {
-  let contrastErrors = {
+  let contrastResults = {
     errors: [],
     warnings: [],
   };
-
-  /* eslint-disable */
   const contrastObject = {
-    // Parse rgb(r, g, b) and rgba(r, g, b, a) strings into an array.
-    parseRgb(css) {
-      let i, m, rgb, f, k;
-      if (m = css.match(/rgb\(\s*(\-?\d+),\s*(\-?\d+)\s*,\s*(\-?\d+)\s*\)/)) {
-        rgb = m.slice(1, 4);
-        for (i = f = 0; f <= 2; i = ++f) {
-          rgb[i] = +rgb[i];
+    validateColor(color, opacity, type) {
+      let colorString = color;
+
+      // Let browser do conversion in rgb for non-supported colour spaces.
+      if (!colorString.startsWith('rgb')) {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        context.fillStyle = colorString;
+        context.fillRect(0, 0, 1, 1);
+        const imageData = context.getImageData(0, 0, 1, 1);
+        const [r, g, b, a] = imageData.data; // values in [0, 255]
+        const alpha = (a / 255).toFixed(6);
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+      }
+
+      // If element has opacity attribute; ammend the foreground text color string.
+      if (opacity && opacity < 1) {
+        colorString = colorString.replace('rgb', 'rgba').replace(')', `, ${opacity})`);
+      }
+
+      // Validate colour with Chroma.js.
+      if (type === 'color') {
+        colorString = chroma.valid(colorString) ? colorString : 'invalidColor';
+      }
+
+      return colorString;
+    },
+    getBackground($el) {
+      let targetEl = $el;
+      while (targetEl && targetEl.nodeType === 1) {
+        const styles = getComputedStyle(targetEl);
+        const bgColor = this.validateColor(styles.backgroundColor);
+        const bgImage = styles.backgroundImage;
+        if (bgImage !== 'none') {
+          return 'image';
         }
-        rgb[3] = 1;
-      } else if (m = css.match(/rgba\(\s*(\-?\d+),\s*(\-?\d+)\s*,\s*(\-?\d+)\s*,\s*([01]|[01]?\.\d+)\)/)) {
-        rgb = m.slice(1, 5);
-        for (i = k = 0; k <= 3; i = ++k) {
-          rgb[i] = +rgb[i];
+        if (bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent') {
+          return bgColor; // Return the first non-transparent background color.
+        }
+        if (targetEl.tagName === 'HTML') {
+          return 'rgb(255, 255, 255)'; // Default to white if we reach the HTML tag.
+        }
+        targetEl = targetEl.parentNode;
+      }
+      return 'rgb(255, 255, 255)'; // Default to white if no background color is found.
+    },
+    normalizeFontWeight(weight) {
+      const numericWeight = parseInt(weight, 10);
+      if (!Number.isNaN(numericWeight)) return numericWeight;
+      const weightMap = {
+        normal: 400,
+        bold: 700,
+        lighter: 100,
+        bolder: 900,
+      };
+      return weightMap[weight] || 400;
+    },
+    calculateContrast(textColor, bgColor) {
+      // Convert colors to Chroma.js objects.
+      const color = chroma(textColor);
+      const bg = chroma(bgColor);
+
+      // If text color has alpha, mix it with the background.
+      if (color.alpha() < 1) {
+        const mixed = chroma.mix(bg, color, color.alpha(), 'rgb').rgb();
+        return option.contrastAPCA ? chroma.contrastAPCA(mixed, bg) : chroma.contrast(mixed, bg);
+      }
+      return option.contrastAPCA ? chroma.contrastAPCA(color, bg) : chroma.contrast(color, bg);
+    },
+    isScreenReaderOnly(style) {
+      const clipPath = style.getPropertyValue('clip-path');
+      const { position } = style;
+      const width = parseFloat(style.width);
+      const height = parseFloat(style.height);
+      const { overflow } = style;
+      return (
+        (clipPath === 'inset(50%)') || (position === 'absolute' && width === 1 && height === 1 && overflow === 'hidden')
+      );
+    },
+    wcagAlgorithm($el, style, srOnly, color, fontSize, fontWeight, background) {
+      let ratio;
+      const htmlTag = $el.tagName;
+      const opacity = parseFloat(style.opacity);
+      if (srOnly || opacity === 0 || color === background) {
+        // Visually hidden.
+      } else if (htmlTag === 'SVG') {
+        ratio = this.calculateContrast(style.fill, background);
+        if (ratio < 3) {
+          contrastResults.errors.push({ $el, ratio: `${ratio.toFixed(2)}:1` });
+        }
+      } else if (background === 'image') {
+        if (!['INPUT', 'SELECT', 'TEXTAREA'].includes(htmlTag)) {
+          // Don't flag warning for inputs with background image...
+          contrastResults.warnings.push({ $el });
+        }
+      } else {
+        ratio = this.calculateContrast(color, background);
+        const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
+        const hasLowContrast = ratio < 3;
+        const hasLowContrastNormalText = ratio > 1 && ratio < 4.5;
+
+        if (ratio === 1) {
+          // 1:1 is obviously a failure, but most likely false positive.
+        } else if (isLargeText && hasLowContrast) {
+          contrastResults.errors.push({ $el, ratio: `${ratio.toFixed(2)}:1` });
+        } else if (!isLargeText && hasLowContrastNormalText) {
+          contrastResults.errors.push({ $el, ratio: `${ratio.toFixed(2)}:1` });
         }
       }
-      return rgb;
     },
-    /** Based on @link http://www.w3.org/TR/WCAG20/#relativeluminancedef */
-    relativeLuminance(c) {
-      const lum = [];
-      for (let i = 0; i < 3; i++) {
-        const v = c[i] / 255;
-        // eslint-disable-next-line no-restricted-properties
-        lum.push(v < 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
-      }
-      return (0.2126 * lum[0]) + (0.7152 * lum[1]) + (0.0722 * lum[2]);
-    },
-    /** Based on @link http://www.w3.org/TR/WCAG20/#contrast-ratiodef */
-    contrastRatio(x, y) {
-      const l1 = contrastObject.relativeLuminance(contrastObject.parseRgb(x));
-      const l2 = contrastObject.relativeLuminance(contrastObject.parseRgb(y));
-      return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
-    },
-    getBackground(el) {
-      // If item is shadowRoot (nodeType 11)
-      if (el.nodeType === 11) {
-        // find the parentNode outside shadow: most likely the inherited bg colour.
-        const parent = el.getRootNode().host.parentNode;
-        if (parent !== null) {
-          el = parent;
-        } else {
-          // Return warning or manual check otherwise.
-          return 'alpha';
+    apcaAlgorithm($el, style, srOnly, color, fontSize, fontWeight, background) {
+      const opacity = parseFloat(style.opacity);
+      if (srOnly || opacity === 0 || color === background) {
+        // Visually hidden.
+      } else if (background === 'image') {
+        if (!['INPUT', 'SELECT', 'TEXTAREA'].includes($el.tagName)) {
+          // Don't flag warning for inputs with background image...
+          contrastResults.warnings.push({ $el });
+        }
+      } else {
+        const contrast = this.calculateContrast(color, background);
+        const fontSizes = [12, 14, 16, 18, 24, 30, 36, 48, 60, 72, 96, 120];
+        const fontWeights = [200, 300, 400, 500, 600, 700];
+        const minContrastTable = {
+          12: { 200: false, 300: false, 400: false, 500: 100, 600: 90, 700: 80 },
+          14: { 200: false, 300: false, 400: 100, 500: 90, 600: 80, 700: 60 },
+          16: { 200: false, 300: 100, 400: 90, 500: 80, 600: 60, 700: 55 },
+          18: { 200: false, 300: 90, 400: 80, 500: 60, 600: 55, 700: 50 },
+          24: { 200: 100, 300: 80, 400: 60, 500: 55, 600: 50, 700: 40 },
+          30: { 200: 90, 300: 70, 400: 55, 500: 50, 600: 40, 700: 38 },
+          36: { 200: 80, 300: 60, 400: 50, 500: 40, 600: 38, 700: 35 },
+          48: { 200: 70, 300: 55, 400: 40, 500: 38, 600: 35, 700: 30 },
+          60: { 200: 60, 300: 50, 400: 38, 500: 35, 600: 30, 700: 25 },
+          72: { 200: 55, 300: 40, 400: 35, 500: 30, 600: 25, 700: 20 },
+          96: { 200: 50, 300: 35, 400: 30, 500: 25, 600: 20, 700: 20 },
+          120: { 200: 40, 300: 30, 400: 25, 500: 20, 600: 20, 700: 20 },
+        };
+
+        // Normalize font size to nearest available size.
+        const normalizedSize = fontSizes.reduce((prev, curr) => (Math.abs(curr - fontSize) < Math.abs(prev - fontSize)
+          ? curr : prev));
+
+        // Normalize font weight to nearest available weight.
+        const normalizedWeight = fontWeights.reduce((prev, curr) => (Math.abs(curr - fontWeight) < Math.abs(prev - fontWeight)
+          ? curr : prev));
+
+        // Get minimum required contrast.
+        const minContrast = minContrastTable[normalizedSize][normalizedWeight];
+
+        // Check if contrast meets or exceeds the minimum required.
+        const passes = minContrast !== false && Math.abs(contrast) >= minContrast;
+        if (!passes) {
+          contrastResults.errors.push({ $el, ratio: `APCA ${contrast.toFixed(1)}` });
+          console.log(
+            `Text: ${Utils.getText($el)}
+           Foreground: ${color}
+           Background: ${background}
+           Font Weight: ${fontWeight}
+           Font Size: ${fontSize}
+           APCA: ${contrast},
+           Opacity: ${style.opacity}`,
+          );
         }
       }
-
-      const styles = getComputedStyle(el);
-      const bgColor = convertColorToRGBA(styles.backgroundColor);
-      const bgImage = styles.backgroundImage;
-      const rgb = `${contrastObject.parseRgb(bgColor)}`;
-      const alpha = rgb.split(',');
-
-      // if background has alpha transparency, flag manual check.
-      if (alpha[3] < 1 && alpha[3] > 0) {
-        return 'alpha';
-      }
-
-      if (bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent' && bgImage === 'none' && alpha[3] !== '0') {
-        // if element has no background image, or transparent return bgColor
-        return bgColor;
-      } if (bgImage !== 'none') {
-        return 'image';
-      }
-
-      // retest if not returned above
-      if (el.tagName === 'HTML') {
-        return 'rgb(255, 255, 255)';
-      }
-      return contrastObject.getBackground(el.parentNode);
     },
-    /* eslint-disable */
-        check() {
-          // resets results
-          contrastErrors = {
-            errors: [],
-            warnings: [],
-          };
-
-          for (let i = 0; i < Elements.Found.Contrast.length; i++) {
-            const elem = Elements.Found.Contrast[i];
-
-            if (Elements.Found.Contrast) {
-              let ratio;
-              let error;
-              let warning;
-
-              const style = getComputedStyle(elem);
-              const color = convertColorToRGBA(style.color);
-              const { fill } = style;
-              const fontSize = parseInt(style.fontSize, 10);
-              const pointSize = fontSize * (3 / 4);
-              const { fontWeight } = style;
-              const htmlTag = elem.tagName;
-              const background = contrastObject.getBackground(elem);
-              const textString = [].reduce.call(elem.childNodes, (a, b) => a + (b.nodeType === 3 ? b.textContent : ''), '');
-              const text = textString.trim();
-
-              // Maybe visually hidden text.
-              const computedStyle = window.getComputedStyle(elem);
-              const opacity = computedStyle.getPropertyValue('opacity');
-              const clip = computedStyle.clip.replace(/\s/g, '');
-              const clipPath = computedStyle.getPropertyValue('clip-path');
-              const width = parseFloat(computedStyle.width);
-              const height = parseFloat(computedStyle.height);
-              const maybeVisuallyHidden = (width === 1 && height === 1) &&
-                (clipPath === 'inset(50%)' || /^(rect\(0(,\s*0){3}\)|rect\(1px(,\s*1px){3}\))$/.test(clip));
-
-              // Ignore if visually hidden for screen readers.
-              if (maybeVisuallyHidden) {
-                // Do nothing.
-              } else if (color.startsWith('color(') || opacity < 1) {
-                // Push a warning if using a color() functional notation.
-                warning = {
-                  elem,
-                };
-                contrastErrors.warnings.push(warning);
-              } else if (htmlTag === 'SVG') {
-                ratio = Math.round(contrastObject.contrastRatio(fill, background) * 100) / 100;
-                if (ratio < 3) {
-                  error = {
-                    elem,
-                    ratio: `${ratio}:1`,
-                  };
-                  contrastErrors.errors.push(error);
-                }
-              } else if (text.length || htmlTag === 'INPUT' || htmlTag === 'SELECT' || htmlTag === 'TEXTAREA') {
-                const type = elem.getAttribute('type');
-                if (type === 'range' || type === 'color') {
-                  // Ignore specific input types.
-                } else if (background === 'image' || background === 'alpha') {
-                  warning = {
-                    elem,
-                  };
-                  contrastErrors.warnings.push(warning);
-                } else {
-                  ratio = Math.round(contrastObject.contrastRatio(color, background) * 100) / 100;
-                  if (pointSize >= 18 || (pointSize >= 14 && fontWeight >= 700)) {
-                    if (ratio === 1) {
-                      // 1:1 is obviously a failure, but most likely false positive.
-                      warning = {
-                        elem,
-                      };
-                      contrastErrors.warnings.push(warning);
-                    } else if (ratio < 3) {
-                      error = {
-                        elem,
-                        ratio: `${ratio}:1`,
-                      };
-                      contrastErrors.errors.push(error);
-                    }
-                  } else if (ratio === 1) {
-                    // 1:1 is obviously a failure, but most likely false positive.
-                    warning = {
-                      elem,
-                    };
-                    contrastErrors.warnings.push(warning);
-                  } else if (ratio > 1 && ratio < 4.5) {
-                    error = {
-                      elem,
-                      ratio: `${ratio}:1`,
-                    };
-                    contrastErrors.errors.push(error);
-                  }
-                }
-              }
-            }
-          }
-          return contrastErrors;
-        },
+    check() {
+      contrastResults = {
+        errors: [],
+        warnings: [],
       };
 
-      contrastObject.check();
+      for (let i = 0; i < Elements.Found.Contrast.length; i++) {
+        // Get computed styles of each element.
+        const $el = Elements.Found.Contrast[i];
+        const style = getComputedStyle($el);
+        const { opacity } = style;
+        const color = this.validateColor(style.color, opacity, 'color');
+        const fontSize = parseInt(style.fontSize, 10);
+        const getFontWeight = style.fontWeight;
+        const fontWeight = this.normalizeFontWeight(getFontWeight);
+        const background = this.getBackground($el);
 
-      contrastErrors.errors.forEach((item) => {
-        const name = item.elem;
-        const cratio = item.ratio;
-        const clone = name.cloneNode(true);
-        const nodeText = Utils.fnIgnore(clone, 'script, style, noscript, select option:not(:first-child)').textContent;
-        const trimmed = Utils.removeWhitespace(nodeText);
-        const truncateString = Utils.truncateString(trimmed, 150);
-        const sanitizedText = Utils.sanitizeHTML(truncateString);
+        // If element is visually hidden via screen reader only class.
+        const srOnly = this.isScreenReaderOnly(style);
 
-        if (name.tagName === 'INPUT') {
-          if (option.checks.CONTRAST_INPUT) {
-            results.push({
-              element: name,
-              type: option.checks.CONTRAST_INPUT.type || 'error',
-              content: option.checks.CONTRAST_INPUT.content || Lang.sprintf('CONTRAST_INPUT', cratio),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: Utils.prepareDismissal(`CONTRAST${name.tagName}${cratio}`),
-              dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
-              developer: option.checks.CONTRAST_INPUT.developer || true,
-            });
-          }
-        } else {
-          if (option.checks.CONTRAST_ERROR && trimmed.length !== 0) {
-            results.push({
-              element: name,
-              type: option.checks.CONTRAST_ERROR.type || 'error',
-              content: option.checks.CONTRAST_ERROR.content || Lang.sprintf('CONTRAST_ERROR', cratio, sanitizedText),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: Utils.prepareDismissal(`CONTRAST${sanitizedText}`),
-              dismissAll: option.checks.CONTRAST_ERROR.dismissAll ? 'CONTRAST_ERROR' : false,
-              developer: option.checks.CONTRAST_ERROR.developer || false,
-            });
-          }
+        // Filter only text nodes.
+        const textString = Array.from($el.childNodes)
+          .filter((node) => node.nodeType === 3)
+          .map((node) => node.textContent)
+          .join('');
+        const text = textString.trim();
+
+        // Preferred contrast algorithm.
+        const algorithm = option.contrastAPCA ? 'apcaAlgorithm' : 'wcagAlgorithm';
+        if (color === 'invalidColor') {
+          // Throw console error if unsupported colour.
+          throw new Error(`Sa11y: Unsupported color format for contrast testing: ${color}`);
+        } else if (text.length !== 0 || ($el.tagName === 'INPUT' || $el.tagName === 'TEXTAREA')) {
+          // Only check for contrast on nodes with text.
+          this[algorithm]($el, style, srOnly, color, fontSize, fontWeight, background);
         }
-      });
+      }
+      return contrastResults;
+    },
+  };
+  contrastObject.check();
 
-      if (option.checks.CONTRAST_WARNING) {
-        contrastErrors.warnings.forEach((item) => {
-          const name = item.elem;
-          const clone = name.cloneNode(true);
-          const nodeText = Utils.fnIgnore(clone, 'script, style, noscript, select option:not(:first-child)').textContent;
-          const trimmed = Utils.removeWhitespace(nodeText);
-          const truncateString = Utils.truncateString(trimmed, 150);
-          const sanitizedText = Utils.sanitizeHTML(truncateString);
+  // Utility function to clone the element, get the text content, while ignoring text within specific elements.
+  const processContrastItem = (item) => {
+    const { $el } = item;
+    const { ratio } = item;
+    const clone = $el.cloneNode(true);
+    const ignoreTextWithinElements = 'script, style, noscript, select option:not(:first-child)';
+    const nodeText = Utils.fnIgnore(clone, ignoreTextWithinElements);
+    const text = Utils.getText(nodeText);
+    const sanitizedText = Utils.sanitizeHTML(Utils.truncateString(text, 150));
+    return { $el, ratio, sanitizedText };
+  };
 
-          if (trimmed.length !== 0) {
-            results.push({
-              element: name,
-              type: option.checks.CONTRAST_WARNING.type || 'warning',
-              content: option.checks.CONTRAST_WARNING.content || Lang.sprintf('CONTRAST_WARNING', sanitizedText),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: Utils.prepareDismissal(`CONTRAST${nodeText}`),
-              dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
-              developer: option.checks.CONTRAST_WARNING.developer || false,
-            });
-          }
+  // Contrast errors
+  contrastResults.errors.forEach((item) => {
+    const { $el, ratio, sanitizedText } = processContrastItem(item);
+    if ($el.tagName === 'INPUT' || $el.tagName === 'TEXTAREA') {
+      if (option.checks.CONTRAST_INPUT) {
+        results.push({
+          element: $el,
+          type: option.checks.CONTRAST_INPUT.type || 'error',
+          content: option.checks.CONTRAST_INPUT.content || Lang.sprintf('CONTRAST_INPUT', ratio),
+          inline: false,
+          position: 'beforebegin',
+          dismiss: Utils.prepareDismissal(`CONTRAST${$el.getAttribute('class')}${$el.tagName}${ratio}`),
+          dismissAll: option.checks.CONTRAST_INPUT.dismissAll ? 'CONTRAST_INPUT' : false,
+          developer: option.checks.CONTRAST_INPUT.developer || true,
         });
       }
+    } else if (option.checks.CONTRAST_ERROR && sanitizedText.length !== 0) {
+      results.push({
+        element: $el,
+        type: option.checks.CONTRAST_ERROR.type || 'error',
+        content: option.checks.CONTRAST_ERROR.content || Lang.sprintf('CONTRAST_ERROR', ratio, sanitizedText),
+        inline: false,
+        position: 'beforebegin',
+        dismiss: Utils.prepareDismissal(`CONTRAST${sanitizedText}`),
+        dismissAll: option.checks.CONTRAST_ERROR.dismissAll ? 'CONTRAST_ERROR' : false,
+        developer: option.checks.CONTRAST_ERROR.developer || false,
+      });
+    }
+  });
+
+  // Contrast warnings
+  if (option.checks.CONTRAST_WARNING) {
+    contrastResults.warnings.forEach((item) => {
+      const { $el, sanitizedText } = processContrastItem(item);
+      if (sanitizedText.length !== 0) {
+        results.push({
+          element: $el,
+          type: option.checks.CONTRAST_WARNING.type || 'warning',
+          content: option.checks.CONTRAST_WARNING.content || Lang.sprintf('CONTRAST_WARNING', sanitizedText),
+          inline: false,
+          position: 'beforebegin',
+          dismiss: Utils.prepareDismissal(`CONTRAST${sanitizedText}`),
+          dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
+          developer: option.checks.CONTRAST_WARNING.developer || false,
+        });
+      }
+    });
+  }
+
   return results;
-};
+}

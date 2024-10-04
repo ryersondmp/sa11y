@@ -217,11 +217,7 @@ export default function checkQA(results, option) {
       const maybeSentence = getText.match(/[.;?!"]/) === null;
       const typicalHeadingLength = getText.length >= 4 && getText.length <= 120;
 
-      if (size >= 24
-        && !p.closest(ignoreParents)
-        && typicalHeadingLength
-        && maybeSentence
-        && !isPreviousElementAHeading(p)) {
+      if (size >= 24 && !p.closest(ignoreParents) && typicalHeadingLength && maybeSentence && !isPreviousElementAHeading(p)) {
         const sanitizedText = Utils.sanitizeHTML(getText);
         addResult(p, sanitizedText);
       }
