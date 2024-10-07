@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contrast tests</title>
+  <link rel="stylesheet" href="./assets/main.css">
+  <link rel="stylesheet" href="../../dist/css/sa11y.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+  <style>
+    .blackwhite {
+      color: black;
+      background: white;
+    }
+
+    .blackyellow {
+      color: black;
+      background: rgb(255, 217, 0)
+    }
+
+    /* RGB */
+    .rgb {
+      color: rgb(51, 187, 255);
+      background: rgb(255, 217, 0);
+    }
+
+    /* RGBA */
+    .rgba {
+      color: rgba(255, 51, 224, 0.5);
+      background: rgba(3, 249, 3, 1);
+    }
+
+    /* Hex */
+    .hex {
+      color: #FF5733;
+      background: #33bbff;
+    }
+
+    /* HSL */
+    .hsl {
+      color: hsl(14, 100%, 60%);
+      background: hsl(0, 100%, 24%);
+    }
+
+    /* HSLA */
+    .hsla {
+      color: hsla(115, 100%, 60%, 0.5);
+      background: hsl(115, 100%, 14%);
+    }
+
+    /* Display P3
+    .display-p3 {
+      color: color(display-p3 1 0.3 0.2);
+    } */
+
+    /* Lab */
+    .lab {
+      color: lab(60% 50 20);
+    }
+
+    /* LCH */
+    .lch {
+      color: lch(60% 80 40);
+    }
+
+    /* OKLab */
+    .oklab {
+      color: oklab(60% 0.1 0.2);
+    }
+
+    /* OKLCH */
+    .oklch {
+      color: oklch(60% 0.2 40);
+    }
+
+    /* HWB */
+    .hwb {
+      color: hwb(14 0% 0%);
+    }
+
+    /* Named color */
+    .rebeccapurple {
+      color: rebeccapurple;
+    }
+
+    /* Rec. 2020
+    .rec2020 {
+      color: color(rec2020 0.9 0.4 0.2);
+    }*/
+
+    /* Font sizes */
+    .size24 {
+      font-size: 24px;
+    }
+
+    .weight700 {
+      font-weight: 700;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="sa11y-active">
+    <h1>APCA - Contrast Tests</h1>
+  </header>
+  <main>
+    <div id="error-black-white">
+      <p class="blackwhite">Black on white at 400 font weight.</p>
+    </div>
+
+    <div id="error-black-white">
+      <p class="blackyellow">Black on white at 400 font weight.</p>
+    </div>
+
+    <div id="error-rgb">
+      <p class="rgb">This is using the RGB colour space.</p>
+    </div>
+  </main>
+  <footer>No automated unit tests are on this page. Blank slate for testing!</footer>
+  <script src="../../dist/js/sa11y.umd.js"></script>
+  <script src="../../dist/js/lang/en.umd.js"></script>
+  <script>
+    Sa11y.Lang.addI18n(Sa11yLangEn.strings);
+    const sa11y = new Sa11y.Sa11y({
+      checkRoot: 'main',
+      developerChecksOnByDefault: false,
+      contrastAPCA: true,
+    });
+  </script>
+</body>
+
+</html>

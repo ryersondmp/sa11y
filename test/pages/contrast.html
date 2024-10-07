@@ -11,33 +11,38 @@
   <style>
     /* RGB */
     .rgb {
-      color: rgb(255, 87, 51);
+      color: rgb(51, 187, 255);
+      background: rgb(255, 217, 0);
     }
 
     /* RGBA */
     .rgba {
-      color: rgba(255, 87, 51, 0.5);
+      color: rgba(255, 51, 224, 0.5);
+      background: rgba(3, 249, 3, 1);
     }
 
     /* Hex */
     .hex {
       color: #FF5733;
+      background: #33bbff;
     }
 
     /* HSL */
     .hsl {
       color: hsl(14, 100%, 60%);
+      background: hsl(0, 100%, 24%);
     }
 
     /* HSLA */
     .hsla {
-      color: hsla(14, 100%, 60%, 0.5);
+      color: hsla(115, 100%, 60%, 0.5);
+      background: hsl(115, 100%, 14%);
     }
 
-    /* Display P3 */
+    /* Display P3
     .display-p3 {
       color: color(display-p3 1 0.3 0.2);
-    }
+    } */
 
     /* Lab */
     .lab {
@@ -69,10 +74,10 @@
       color: rebeccapurple;
     }
 
-    /* Rec. 2020 */
+    /* Rec. 2020
     .rec2020 {
       color: color(rec2020 0.9 0.4 0.2);
-    }
+    }*/
 
     /* Font sizes */
     .size24 {
@@ -92,6 +97,13 @@
   <main>
 
     <h2>Normal text (400 at 16px)</h2>
+
+    <h3>Testing extremes 1.01:1 ratio</h3>
+    <div id="error-light-grey">
+      <p style="color: #eaeaea">Super light grey</p>
+      <p style="color: rgb(6, 6, 6);background:black;">What about this</p>
+    </div>
+
     <h3>RGB</h3>
     <div id="error-rgb">
       <p class="rgb">This is using the RGB colour space.</p>
@@ -405,11 +417,6 @@
       <p style="font-size:5em; opacity: 0;">
         Lorem ipsum dolor.
       </p>
-    </div>
-
-    <h2>color(displayP)</h2>
-    <div id="error">
-      <p style="color:color(display-p3 0.690196 0.686275 0.662745 / 1);">Color(display-p3)</p>
     </div>
 
     <h2><code>&lt;select&gt;</code> element with background image</h2>
