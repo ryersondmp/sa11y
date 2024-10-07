@@ -127,7 +127,7 @@ export default function checkContrast(results, option) {
 
   /**
    * Calculate the contrast ratio or value between two colours.
-   * @param {Array} color Text colour in [R,G,B,A] format.
+   * @param {number[]} color Text colour in [R,G,B,A] format.
    * @param {Array} bg Backgrounud colour in [R,G,B,A] format.
    * @returns Either WCAG 2.0 contrast ratio or APCA contrast value.
    */
@@ -149,8 +149,8 @@ export default function checkContrast(results, option) {
 
   /**
    * Brighten a foreground text colour.
-   * @param {Array} color Text colour in [R,G,B,A] format.
-   * @param {Number} amount Number or increment to brighten by.
+   * @param {number[]} color Text colour in [R,G,B,A] format.
+   * @param {number} amount Number or increment to brighten by.
    * @returns Lighter foreground text colour.
    */
   const brighten = (color, amount) => {
@@ -163,8 +163,8 @@ export default function checkContrast(results, option) {
 
   /**
    * Darken a foreground text colour.
-   * @param {Array} color Text colour in [R,G,B,A] format.
-   * @param {Number} amount Number or increment to darken by.
+   * @param {number[]} color Text colour in [R,G,B,A] format.
+   * @param {number} amount Number or increment to darken by.
    * @returns Darker foreground text colour.
    */
   const darken = (color, amount) => {
@@ -177,7 +177,7 @@ export default function checkContrast(results, option) {
 
   /**
    * Get the hex code equivalent of an RGB colour.
-   * @param {Array} color Colour in [R,G,B,A] format.
+   * @param {number[]} color Colour in [R,G,B,A] format.
    * @returns Hexcode equivalent.
    */
   const getHex = (color) => {
@@ -190,10 +190,10 @@ export default function checkContrast(results, option) {
 
   /**
    * Suggest a foreground colour with sufficient contrast.
-   * @param {Array} color Text colour in [R,G,B,A] format.
-   * @param {ColorString} background Background colour in [R,G,B,A] format.
-   * @param {Number} ratio The current contrast ratio.
-   * @param {Boolean} isLargeText Whether text is normal or large size.
+   * @param {number[]} color Text colour in [R,G,B,A] format.
+   * @param {number[]} background Background colour in [R,G,B,A] format.
+   * @param {number} ratio The current contrast ratio.
+   * @param {boolean} isLargeText Whether text is normal or large size.
    * @returns Compliant colour hexcode.
    */
   const suggestColorWCAG = (color, background, ratio, isLargeText) => {
@@ -224,11 +224,11 @@ export default function checkContrast(results, option) {
 
   /**
    * Suggests a new colour or font size based on APCA contrast algorithm.
-   * @param {Array} color Text colour in [R,G,B,A] format.
+   * @param {number[]} color Text colour in [R,G,B,A] format.
    * @param {Array} background Background colour in [R,G,B,A] format.
-   * @param {Number} ratio APCA contrast ratio.
-   * @param {Number} fontWeight Current font weight of the element.
-   * @param {Number} fontSize Current font size of the element.
+   * @param {number} ratio APCA contrast ratio.
+   * @param {number} fontWeight Current font weight of the element.
+   * @param {number} fontSize Current font size of the element.
    * @returns Compliant colour hexcode and/or font size combination.
    */
   const suggestColorAPCA = (color, background, ratio, fontWeight, fontSize) => {
@@ -276,11 +276,11 @@ export default function checkContrast(results, option) {
   /**
    * Calculate an elements contrast based on WCAG 2.0 contrast algorithm.
    * @param {HTMLElement} $el The element in the DOM.
-   * @param {Array} color Text colour in [R,G,B,A] format.
+   * @param {number[]} color Text colour in [R,G,B,A] format.
    * @param {Array} background Background colour in [R,G,B,A] format.
-   * @param {Boolean} isVisuallyHidden Check if element is visually hidden.
-   * @param {Number} fontSize Element's font size.
-   * @param {Number} fontWeight Element's font weight.
+   * @param {boolean} isVisuallyHidden Check if element is visually hidden.
+   * @param {number} fontSize Element's font size.
+   * @param {number} fontWeight Element's font weight.
    */
   const wcagAlgorithm = ($el, color, background, isVisuallyHidden, fontSize, fontWeight) => {
     const htmlTag = $el.tagName;
@@ -328,11 +328,11 @@ export default function checkContrast(results, option) {
   /**
    * Calculate an elements contrast based on APCA algorithm.
    * @param {HTMLElement} $el The element in the DOM.
-   * @param {Array} color Text colour in [R,G,B,A] format.
+   * @param {number[]} color Text colour in [R,G,B,A] format.
    * @param {Array} background Background colour in [R,G,B,A] format.
-   * @param {Boolean} isVisuallyHidden Check if element is visually hidden.
-   * @param {Number} fontSize Element's font size.
-   * @param {Number} fontWeight Element's font weight.
+   * @param {boolean} isVisuallyHidden Check if element is visually hidden.
+   * @param {number} fontSize Element's font size.
+   * @param {number} fontWeight Element's font weight.
   */
   const apcaAlgorithm = ($el, color, background, isVisuallyHidden, fontSize, fontWeight) => {
     const opacity = parseFloat($el.style.opacity);
