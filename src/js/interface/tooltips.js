@@ -3,6 +3,7 @@ import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 import Constants from '../utils/constants';
 import Elements from '../utils/elements';
+import { generateColorSuggestion } from '../rulesets/contrast';
 
 // Import processed minified styles as a string.
 import tooltipStyles from '../../../dist/css/tooltips.min.css';
@@ -92,6 +93,16 @@ export class TooltipComponent extends HTMLElement {
           }
         };
         openedTooltip.addEventListener('keydown', escapeListener);
+
+        // Generate colour suggestions to improve contrast.
+        if (Constants.Global.contrastSuggestions) {
+          const hasColorSuggestion = instance.popper?.querySelector('[data-sa11y-suggestion]');
+          if (hasColorSuggestion) {
+            const colorObject = hasColorSuggestion?.getAttribute('data-sa11y-suggestion');
+            const suggestion = generateColorSuggestion(JSON.parse(colorObject));
+            hasColorSuggestion.innerHTML = suggestion;
+          }
+        }
 
         // Remove all event listeners.
         const onHiddenTooltip = () => {

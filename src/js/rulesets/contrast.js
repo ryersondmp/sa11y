@@ -1,4 +1,5 @@
-import { alphaBlend, calcAPCA, sRGBtoY, fontLookupAPCA } from 'apca-w3';
+import { alphaBlend, sRGBtoY, APCAcontrast, fontLookupAPCA } from 'apca-w3';
+import Constants from '../utils/constants';
 import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
@@ -10,267 +11,346 @@ import Lang from '../utils/lang';
  * @link https://github.com/gka/chroma.js
  * @link https://github.com/Myndex/SAPC-APCA
 */
+
+/**
+ * Normalizes a given font weight to a numeric value. Maps keywords to their numeric equivalents.
+ * @param {string|number} weight - The font weight, either as a number or a keyword.
+ * @returns {number} - The numeric font weight.
+*/
+export function normalizeFontWeight(weight) {
+  const numericWeight = parseInt(weight, 10);
+  if (!Number.isNaN(numericWeight)) return numericWeight;
+  const weightMap = {
+    normal: 400,
+    bold: 700,
+    lighter: 100,
+    bolder: 900,
+  };
+  return weightMap[weight] || 400;
+}
+
+/**
+ * Convert colour string to RGBA format.
+ * @param {string} color The colour string to convert.
+ * @param {number} opacity The computed opacity of the element (0 to 1).
+ * @returns Returns colour in rgba format with alpha value.
+ */
+export function convertToRGBA(color, opacity) {
+  const colorString = color;
+  let r;
+  let g;
+  let b;
+  let a = 1; // Initialize alpha to 1 by default.
+
+  // Let the browser do conversion in rgb for non-supported colour spaces.
+  if (!colorString.startsWith('rgb')) {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    context.fillStyle = colorString;
+    context.fillRect(0, 0, 1, 1);
+    const imageData = context.getImageData(0, 0, 1, 1);
+    [r, g, b, a] = imageData.data;
+    a = (a / 255).toFixed(2); // Convert alpha to range [0, 1]
+  } else {
+    // Parse RGB or RGBA values from the color string
+    const rgbaArray = colorString.match(/[\d.]+/g).map(Number);
+    [r, g, b, a] = rgbaArray.length === 4 ? rgbaArray : [...rgbaArray, 1];
+  }
+
+  // If element has opacity attribute, amend the foreground text color string.
+  if (opacity && opacity < 1) {
+    a = (a * opacity).toFixed(2); // Adjust alpha based on the opacity
+  }
+  return [r, g, b, Number(a)];
+}
+
+/**
+ * Retrieves the background colour of an element by traversing up the DOM tree.
+ * @param {HTMLElement} $el - The DOM element from which to start searching for the background.
+ * @returns {string} - The background color in RGBA format, or "image" if background image.
+*/
+export function getBackground($el) {
+  let targetEl = $el;
+  while (targetEl && targetEl.nodeType === 1) {
+    const styles = getComputedStyle(targetEl);
+    const bgColor = convertToRGBA(styles.backgroundColor);
+    const bgImage = styles.backgroundImage;
+    if (bgImage !== 'none') {
+      return 'image';
+    }
+    if (bgColor[3] !== 0 && bgColor !== 'transparent') {
+      return bgColor; // Return the first non-transparent background color.
+    }
+    if (targetEl.tagName === 'HTML') {
+      return [255, 255, 255]; // Default to white if we reach the HTML tag.
+    }
+    targetEl = targetEl.parentNode;
+  }
+  return [255, 255, 255]; // Default to white if no background color is found.
+}
+
+/** Get the relative luminance of a colour based on WCAG 2.0
+ * @link http://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef
+ * @param {number[]} color Colour code in [R,G,B] format.
+ * @returns Luminance value.
+ */
+export function getLuminance(color) {
+  const rgb = color.slice(0, 3).map((x) => {
+    const normalized = x / 255;
+    return normalized <= 0.03928 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+}
+
+/**
+ * Get WCAG 2.0 contrast ratio from luminance value.
+ * @link http://www.w3.org/TR/2008/REC-WCAG20-20081211/#contrast-ratiodef
+ * @param {number} l1 Luminance value of foreground colour.
+ * @param {number} l2 Luminance value of background colour.
+ * @returns WCAG 2.0 contrast ratio.
+ */
+export function getWCAG2Ratio(l1, l2) {
+  const lighter = Math.max(l1, l2);
+  const darker = Math.min(l1, l2);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+/**
+ * Brighten a foreground text colour.
+ * @param {number[]} color Text colour in [R,G,B,A] format.
+ * @param {number} amount Number or increment to brighten by.
+ * @returns Lighter foreground text colour.
+ */
+export function brighten(color, amount) {
+  const clampedAmount = Math.min(Math.max(amount, 0), 1);
+  return color.map((value) => {
+    const newValue = Math.round(value + (255 - value) * clampedAmount);
+    return Math.min(newValue, 255);
+  });
+}
+
+/**
+ * Darken a foreground text colour.
+ * @param {number[]} color Text colour in [R,G,B,A] format.
+ * @param {number} amount Number or increment to darken by.
+ * @returns Darker foreground text colour.
+ */
+export function darken(color, amount) {
+  const clampedAmount = Math.min(Math.max(amount, 0), 1);
+  return color.map((value) => {
+    const newValue = Math.round(value - value * clampedAmount);
+    return Math.max(newValue, 0);
+  });
+}
+
+/**
+ * Get the hex code equivalent of an RGB colour.
+ * @param {number[]} color Colour in [R,G,B,A] format.
+ * @returns Hexcode equivalent.
+ */
+export function getHex(color) {
+  const [r, g, b] = color.map((value) => Math.min(255, Math.max(0, value)));
+  const hexR = r.toString(16).padStart(2, '0');
+  const hexG = g.toString(16).padStart(2, '0');
+  const hexB = b.toString(16).padStart(2, '0');
+  return `#${hexR}${hexG}${hexB}`;
+}
+
+/**
+ * Calculate the contrast ratio or value between two colours.
+ * @param {number[]} color Text colour in [R,G,B,A] format.
+ * @param {Array} bg Backgrounud colour in [R,G,B,A] format.
+ * @returns Either WCAG 2.0 contrast ratio or APCA contrast value.
+ */
+export function calculateContrast(color, bg) {
+  let ratio;
+  const blendedColor = alphaBlend(color, bg);
+
+  if (Constants.Global.contrastAPCA) {
+    const foreground = sRGBtoY(blendedColor);
+    const background = sRGBtoY(bg);
+    ratio = APCAcontrast(foreground, background);
+  } else {
+    // Uses WCAG 2.0 contrast algorithm based on luminance.
+    const foreground = getLuminance(blendedColor);
+    const background = getLuminance(bg);
+    ratio = getWCAG2Ratio(foreground, background);
+  }
+  return { ratio, blendedColor };
+}
+
+/**
+ * Suggest a foreground colour with sufficient contrast.
+ * @param {number[]} color Text colour in [R,G,B,A] format.
+ * @param {number[]} background Background colour in [R,G,B,A] format.
+ * @param {number} ratio The current contrast ratio.
+ * @param {boolean} isLargeText Whether text is normal or large size.
+ * @returns Compliant colour hexcode.
+ */
+export function suggestColorWCAG(color, background, isLargeText) {
+  const minContrastRatio = isLargeText ? 3 : 4.5;
+  const fgLuminance = getLuminance(color);
+  const bgLuminance = getLuminance(background);
+
+  const adjustColor = (foregroundColor, amount, adjustMode) => (
+    adjustMode ? brighten(foregroundColor, amount) : darken(foregroundColor, amount)
+  );
+
+  let adjustedColor = color;
+  let lastValidColor = adjustedColor;
+  let contrastRatio = getWCAG2Ratio(fgLuminance, bgLuminance);
+
+  // Loop parameters.
+  let iterations = 0;
+  const step = 0.05;
+  const maxIterations = 500;
+
+  let adjustMode = true;
+  let previousColor = null;
+  while (contrastRatio < minContrastRatio && iterations < maxIterations) {
+    adjustedColor = adjustColor(adjustedColor, step, adjustMode);
+    const newLuminance = getLuminance(adjustedColor);
+    contrastRatio = getWCAG2Ratio(newLuminance, bgLuminance);
+
+    /* console.log(`%c ${getHex(adjustedColor)} | ${contrastRatio}`, `color:${getHex(adjustedColor)};background:${getHex(background)}`); */
+
+    // If same colour keeps getting suggested; it means it can't find a valid colour:
+    // Switch colours modes, starting from the original colour.
+    if (previousColor && getHex(adjustedColor) === getHex(previousColor)) {
+      adjustMode = !adjustMode; // Switch colour adjust modes.
+      adjustedColor = color; // Adjust from original colour.
+    }
+
+    // Break the loop once minimum contrast is met!
+    if (contrastRatio >= minContrastRatio) {
+      lastValidColor = adjustedColor;
+      break;
+    }
+
+    iterations += 1;
+    previousColor = adjustedColor;
+  }
+  return { color: getHex(lastValidColor) };
+}
+
+/**
+ * Suggests a new colour or font size based on APCA contrast algorithm.
+ * @param {number[]} color Text colour in [R,G,B,A] format.
+ * @param {Array} background Background colour in [R,G,B,A] format.
+ * @param {number} ratio APCA contrast ratio.
+ * @param {number} fontWeight Current font weight of the element.
+ * @param {number} fontSize Current font size of the element.
+ * @returns Compliant colour hexcode and/or font size combination.
+ */
+export function suggestColorAPCA(color, background, fontWeight, fontSize) {
+  const bgLuminance = sRGBtoY(background);
+  const adjustColor = (foregroundColor, amount) => {
+    const fgLuminance = sRGBtoY(color);
+    let adjustedColor;
+    // 0.9 and 0.1 to account for outliers.
+    if (fgLuminance > bgLuminance) {
+      adjustedColor = fgLuminance > 0.9
+        ? darken(foregroundColor, amount)
+        : brighten(foregroundColor, amount);
+    } else {
+      adjustedColor = fgLuminance < 0.1
+        ? brighten(foregroundColor, amount)
+        : darken(foregroundColor, amount);
+    }
+    return adjustedColor;
+  };
+
+  let adjustedColor = color;
+
+  // Returns 9 font sizes in px corresponding to weights 100 thru 900.
+  // Returns ['LcValue',100,200,300,400,500,600,700,800,900]
+  let contrast = calculateContrast(adjustedColor, background);
+  let fontLookup = fontLookupAPCA(contrast.ratio).slice(1);
+
+  // Index of the corresponding fontWeight.
+  const fontWeightIndex = Math.floor(fontWeight / 100) - 1;
+  const minimumSizeRequired = fontLookup[fontWeightIndex];
+
+  // Find another colour, because nothing will work at any size.
+  const notGoodAtAnySize = minimumSizeRequired === 999 || minimumSizeRequired === 777;
+
+  // Has low contrast, but font size is okay.
+  const lowContrastButSizeOk = contrast.ratio < 60;
+
+  // Loop to find a new colour.
+  if (notGoodAtAnySize || lowContrastButSizeOk) {
+    const step = 0.05;
+    const maxIterations = 500;
+    let iterations = 0;
+    let previousColor = null;
+    while (iterations < maxIterations) {
+      iterations += 1;
+      adjustedColor = adjustColor(adjustedColor, step);
+      contrast = calculateContrast(adjustedColor, background);
+      fontLookup = fontLookupAPCA(contrast.ratio).slice(1);
+
+      // console.log(`%c ${getHex(adjustedColor)} | ${contrast.ratio.toFixed(1)} | ${fontLookup}`, `color:${getHex(adjustedColor)};background:${getHex(background)}`);
+
+      // Valid colour found.
+      if (fontLookup[fontWeightIndex] <= fontSize) {
+        return { color: getHex(adjustedColor), size: null };
+      }
+
+      // Break the loop once it starts suggesting the same colour. It means there's no valid colour at the current font size, so suggest recommended font size too.
+      if (previousColor && getHex(previousColor) === getHex(adjustedColor)) {
+        return { color: getHex(adjustedColor), size: Math.ceil(fontLookup[fontWeightIndex]) };
+      }
+      previousColor = adjustedColor;
+    }
+    return { color: getHex(adjustedColor), size: null };
+  }
+
+  // If good contrast, but text is too small, suggest minimimum font size.
+  if (minimumSizeRequired > fontSize && contrast.ratio > 60) {
+    return { color: null, size: Math.ceil(minimumSizeRequired) };
+  }
+
+  return { color: getHex(adjustedColor), size: null };
+}
+
+/**
+ * Generate colour suggestions for tooltip upon tooltip opening.
+ * This function is referenced within './interface/tooltips.js'
+ * For performance reasons, it is only called upon tooltip opening.
+ * @param {Object} details An object containing the colours, font weight, and size of an element.
+ * @returns Suggested colour combinations for tooltip.
+ */
+export function generateColorSuggestion(details) {
+  const { color, background, weight, size, isLargeText } = details;
+  const suggested = Constants.Global.contrastAPCA
+    ? suggestColorAPCA(color, background, weight, size)
+    : suggestColorWCAG(color, background, isLargeText);
+
+  let suggestion;
+  const colorBadge = `<strong class="badge" style="color:${suggested.color}!important;background-color:${getHex(details.background)}!important;">${suggested.color}</strong>`;
+  const sizeBadge = `<strong class="badge" style="color:var(--sa11y-panel-primary);background:var(--sa11y-panel-badge)!important;">${suggested.size}px</strong>`;
+  if (!Constants.Global.contrastAPCA) {
+    suggestion = `${Lang.sprintf('COLOR_SUGGEST')} ${colorBadge}`;
+  } else if (suggested.color && suggested.size) {
+    suggestion = Lang.sprintf('APCA_SUGGEST', colorBadge, sizeBadge);
+  } else if (suggested.color) {
+    suggestion = `${Lang.sprintf('COLOR_SUGGEST')} ${colorBadge}`;
+  } else if (suggested.size) {
+    suggestion = `${Lang.sprintf('SIZE_SUGGEST')} ${sizeBadge}`;
+  }
+  return suggestion;
+}
+
+/**
+ * Check contrast.
+ * @param {Array} results Sa11y's results array.
+ * @param {Object} option Sa11y's options object.
+ * @returns Contrast results.
+ */
 export default function checkContrast(results, option) {
   let contrastResults = {
     errors: [],
     warnings: [],
-  };
-
-  /**
-   * Determing whether an element is visually hidden based on computed properties.
-   * @param {CSSStyleDeclaration} style The style object.
-   * @returns {boolean} Returns true if visually hidden based on properties.
-   */
-  const isScreenReaderOnly = (style) => {
-    const clipPath = style.getPropertyValue('clip-path');
-    const { position } = style;
-    const width = parseFloat(style.width);
-    const height = parseFloat(style.height);
-    const { overflow } = style;
-    return (
-      (clipPath === 'inset(50%)') || (position === 'absolute' && width === 1 && height === 1 && overflow === 'hidden')
-    );
-  };
-
-  /**
-   * Normalizes a given font weight to a numeric value. Maps keywords to their numeric equivalents.
-   * @param {string|number} weight - The font weight, either as a number or a keyword.
-   * @returns {number} - The numeric font weight.
-  */
-  const normalizeFontWeight = (weight) => {
-    const numericWeight = parseInt(weight, 10);
-    if (!Number.isNaN(numericWeight)) return numericWeight;
-    const weightMap = {
-      normal: 400,
-      bold: 700,
-      lighter: 100,
-      bolder: 900,
-    };
-    return weightMap[weight] || 400;
-  };
-
-  /**
-   * Convert colour string to RGBA format.
-   * @param {string} color The colour string to convert.
-   * @param {number} opacity The computed opacity of the element (0 to 1).
-   * @returns Returns colour in rgba format with alpha value.
-   */
-  const convertToRGBA = (color, opacity) => {
-    const colorString = color;
-    let r;
-    let g;
-    let b;
-    let a = 1; // Initialize alpha to 1 by default.
-
-    // Let the browser do conversion in rgb for non-supported colour spaces.
-    if (!colorString.startsWith('rgb')) {
-      const canvas = document.createElement('canvas');
-      const context = canvas.getContext('2d');
-      context.fillStyle = colorString;
-      context.fillRect(0, 0, 1, 1);
-      const imageData = context.getImageData(0, 0, 1, 1);
-      [r, g, b, a] = imageData.data;
-      a = (a / 255).toFixed(2); // Convert alpha to range [0, 1]
-    } else {
-      // Parse RGB or RGBA values from the color string
-      const rgbaArray = colorString.match(/[\d.]+/g).map(Number);
-      [r, g, b, a] = rgbaArray.length === 4 ? rgbaArray : [...rgbaArray, 1];
-    }
-
-    // If element has opacity attribute, amend the foreground text color string.
-    if (opacity && opacity < 1) {
-      a = (a * opacity).toFixed(2); // Adjust alpha based on the opacity
-    }
-    return [r, g, b, Number(a)];
-  };
-
-  /**
-   * Retrieves the background colour of an element by traversing up the DOM tree.
-   * @param {HTMLElement} $el - The DOM element from which to start searching for the background.
-   * @returns {string} - The background color in RGBA format, or "image" if background image.
-  */
-  const getBackground = ($el) => {
-    let targetEl = $el;
-    while (targetEl && targetEl.nodeType === 1) {
-      const styles = getComputedStyle(targetEl);
-      const bgColor = convertToRGBA(styles.backgroundColor);
-      const bgImage = styles.backgroundImage;
-      if (bgImage !== 'none') {
-        return 'image';
-      }
-      if (bgColor[3] !== 0 && bgColor !== 'transparent') {
-        return bgColor; // Return the first non-transparent background color.
-      }
-      if (targetEl.tagName === 'HTML') {
-        return [255, 255, 255]; // Default to white if we reach the HTML tag.
-      }
-      targetEl = targetEl.parentNode;
-    }
-    return [255, 255, 255]; // Default to white if no background color is found.
-  };
-
-  // Relative luminance: http://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef
-  const getLuminance = (color) => {
-    const rgb = color.slice(0, 3).map((x) => {
-      const normalized = x / 255;
-      return normalized <= 0.03928 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
-    });
-    return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
-  };
-
-  // WCAG contrast ratio: http://www.w3.org/TR/2008/REC-WCAG20-20081211/#contrast-ratiodef
-  const getContrastRatio = (l1, l2) => {
-    const lighter = Math.max(l1, l2);
-    const darker = Math.min(l1, l2);
-    return (lighter + 0.05) / (darker + 0.05);
-  };
-
-  /**
-   * Calculate the contrast ratio or value between two colours.
-   * @param {number[]} color Text colour in [R,G,B,A] format.
-   * @param {Array} bg Backgrounud colour in [R,G,B,A] format.
-   * @returns Either WCAG 2.0 contrast ratio or APCA contrast value.
-   */
-  const calculateContrast = (color, bg) => {
-    let ratio;
-    const blendedColor = alphaBlend(color, bg);
-
-    if (option.contrastAPCA) {
-      // Note: Shorthand APCA function does auto blending!
-      ratio = calcAPCA(color, bg);
-    } else {
-      // Uses WCAG 2.0 contrast algorithm based on luminance.
-      const foreground = getLuminance(blendedColor);
-      const background = getLuminance(bg);
-      ratio = getContrastRatio(foreground, background);
-    }
-    return { ratio, blendedColor };
-  };
-
-  /**
-   * Brighten a foreground text colour.
-   * @param {number[]} color Text colour in [R,G,B,A] format.
-   * @param {number} amount Number or increment to brighten by.
-   * @returns Lighter foreground text colour.
-   */
-  const brighten = (color, amount) => {
-    const clampedAmount = Math.min(Math.max(amount, 0), 1);
-    return color.map((value) => {
-      const newValue = Math.round(value + (255 - value) * clampedAmount);
-      return Math.min(newValue, 255);
-    });
-  };
-
-  /**
-   * Darken a foreground text colour.
-   * @param {number[]} color Text colour in [R,G,B,A] format.
-   * @param {number} amount Number or increment to darken by.
-   * @returns Darker foreground text colour.
-   */
-  const darken = (color, amount) => {
-    const clampedAmount = Math.min(Math.max(amount, 0), 1);
-    return color.map((value) => {
-      const newValue = Math.round(value - value * clampedAmount);
-      return Math.max(newValue, 0);
-    });
-  };
-
-  /**
-   * Get the hex code equivalent of an RGB colour.
-   * @param {number[]} color Colour in [R,G,B,A] format.
-   * @returns Hexcode equivalent.
-   */
-  const getHex = (color) => {
-    const [r, g, b] = color.map((value) => Math.min(255, Math.max(0, value)));
-    const hexR = r.toString(16).padStart(2, '0');
-    const hexG = g.toString(16).padStart(2, '0');
-    const hexB = b.toString(16).padStart(2, '0');
-    return `#${hexR}${hexG}${hexB}`;
-  };
-
-  /**
-   * Suggest a foreground colour with sufficient contrast.
-   * @param {number[]} color Text colour in [R,G,B,A] format.
-   * @param {number[]} background Background colour in [R,G,B,A] format.
-   * @param {number} ratio The current contrast ratio.
-   * @param {boolean} isLargeText Whether text is normal or large size.
-   * @returns Compliant colour hexcode.
-   */
-  const suggestColorWCAG = (color, background, ratio, isLargeText) => {
-    const minContrastRatio = isLargeText ? 3 : 4.5;
-    const bgLuminance = getLuminance(background);
-    const fgLuminance = getLuminance(color);
-
-    const adjustColor = (foregroundColor, amount) => (fgLuminance > bgLuminance
-      ? brighten(foregroundColor, amount)
-      : darken(foregroundColor, amount));
-
-    let currentContrast = ratio;
-    let adjustedColor = color;
-    let lastValidColor = adjustedColor;
-    let iterations = 0;
-    const step = 0.05; // Keep step tiny so it suggests a colour as close as possible to the original.
-    const maxIterations = 100;
-
-    while (currentContrast < minContrastRatio && iterations < maxIterations) {
-      adjustedColor = adjustColor(adjustedColor, step);
-      const newLuminance = getLuminance(adjustedColor);
-      currentContrast = getContrastRatio(newLuminance, bgLuminance);
-      if (currentContrast >= minContrastRatio) lastValidColor = adjustedColor;
-      iterations += 1;
-    }
-    return getHex(lastValidColor);
-  };
-
-  /**
-   * Suggests a new colour or font size based on APCA contrast algorithm.
-   * @param {number[]} color Text colour in [R,G,B,A] format.
-   * @param {Array} background Background colour in [R,G,B,A] format.
-   * @param {number} ratio APCA contrast ratio.
-   * @param {number} fontWeight Current font weight of the element.
-   * @param {number} fontSize Current font size of the element.
-   * @returns Compliant colour hexcode and/or font size combination.
-   */
-  const suggestColorAPCA = (color, background, ratio, fontWeight, fontSize) => {
-    const adjustColor = (foregroundColor, amount) => {
-      const fgLuminance = sRGBtoY(foregroundColor);
-      const bgLuminance = sRGBtoY(background);
-      const adjusted = fgLuminance > bgLuminance
-        ? brighten(foregroundColor, amount)
-        : darken(foregroundColor, amount);
-      return adjusted;
-    };
-
-    let currentRatio = ratio;
-    let adjustedColor = color;
-    let lastValidColor = adjustedColor;
-    let iterations = 0;
-    const step = 0.01;
-    const maxIterations = 1000;
-
-    while (iterations < maxIterations) {
-      const lookupArray = fontLookupAPCA(currentRatio);
-      const minFontSize = lookupArray[Math.floor(fontWeight / 100)];
-      const passes = fontSize >= minFontSize && minFontSize < 777;
-
-      if (passes) {
-        lastValidColor = adjustedColor;
-        break;
-      }
-
-      adjustedColor = adjustColor(adjustedColor, step);
-      const { ratio: newRatio } = calculateContrast(adjustedColor, background);
-      currentRatio = newRatio;
-      iterations += 1;
-    }
-
-    // TO-DO: If no valid colour, suggest new font size and weight.
-    const originalHex = getHex(color);
-    const suggestedHex = getHex(lastValidColor);
-    if (suggestedHex === originalHex) {
-      return getHex(adjustedColor);
-    }
-    return suggestedHex;
   };
 
   /**
@@ -285,17 +365,18 @@ export default function checkContrast(results, option) {
   const wcagAlgorithm = ($el, color, background, isVisuallyHidden, fontSize, fontWeight) => {
     const htmlTag = $el.tagName;
     const opacity = parseFloat($el.style.opacity);
-    if (isVisuallyHidden || opacity === 0 || color === background) {
+
+    if (background === 'image') {
+      if (!['INPUT', 'SELECT', 'TEXTAREA'].includes(htmlTag)) {
+        // Don't flag warning for inputs with background image...
+        contrastResults.warnings.push({ $el });
+      }
+    } else if (isVisuallyHidden || opacity === 0 || getHex(color) === getHex(background)) {
       // Visually hidden.
     } else if (htmlTag === 'SVG') {
       const ratio = calculateContrast($el.style.fill, background);
       if (ratio < 3) {
         contrastResults.errors.push({ $el, ratio: `${ratio.toFixed(2)}:1` });
-      }
-    } else if (background === 'image') {
-      if (!['INPUT', 'SELECT', 'TEXTAREA'].includes(htmlTag)) {
-        // Don't flag warning for inputs with background image...
-        contrastResults.warnings.push({ $el });
       }
     } else {
       const { ratio, blendedColor } = calculateContrast(color, background);
@@ -306,20 +387,16 @@ export default function checkContrast(results, option) {
       if (ratio === 1) {
         // 1:1 is obviously a failure, but most likely false positive.
       } else if (isLargeText && hasLowContrast) {
-        const suggestedColor = suggestColorWCAG(blendedColor, background, ratio, isLargeText);
         contrastResults.errors.push({
           $el,
           ratio: `${ratio.toFixed(2)}:1`,
-          suggestedColor,
-          background: getHex(background),
+          details: { color: blendedColor, background, isLargeText },
         });
       } else if (!isLargeText && hasLowContrastNormalText) {
-        const suggestedColor = suggestColorWCAG(blendedColor, background, ratio, false);
         contrastResults.errors.push({
           $el,
           ratio: `${ratio.toFixed(2)}:1`,
-          suggestedColor,
-          background: getHex(background),
+          details: { color: blendedColor, background, isLargeText },
         });
       }
     }
@@ -335,28 +412,34 @@ export default function checkContrast(results, option) {
    * @param {number} fontWeight Element's font weight.
   */
   const apcaAlgorithm = ($el, color, background, isVisuallyHidden, fontSize, fontWeight) => {
+    // ////////////////////////////////////////
+    /* @TO-DO: Non text contrast for APCA'); */
+    // ////////////////////////////////////////
     const opacity = parseFloat($el.style.opacity);
-    if (isVisuallyHidden || opacity === 0 || color === background) {
-      // Visually hidden.
-    } else if (background === 'image') {
+    if (background === 'image') {
       if (!['INPUT', 'SELECT', 'TEXTAREA'].includes($el.tagName)) {
         // Don't flag warning for inputs with background image...
         contrastResults.warnings.push({ $el });
       }
+    } else if (isVisuallyHidden || opacity === 0 || getHex(color) === getHex(background)) {
+      // Visually hidden.
     } else {
       const { ratio, blendedColor } = calculateContrast(color, background);
 
-      const lookupArray = fontLookupAPCA(ratio);
-      const minFontSize = lookupArray[Math.floor(fontWeight / 100)];
-      const passes = fontSize >= minFontSize && minFontSize < 777;
+      // Returns 9 font sizes in px corresponding to weights 100 thru 900.
+      // Returns ['LcValue',100,200,300,400,500,600,700,800,900]
+      const fontLookup = fontLookupAPCA(ratio).slice(1);
 
-      const suggestColor = suggestColorAPCA(blendedColor, background, ratio, fontWeight, fontSize);
-      if (!passes) {
+      // Get minimum font size based on weight.
+      const fontWeightIndex = Math.floor(fontWeight / 100) - 1;
+      const minFontSize = fontLookup[fontWeightIndex];
+      const fails = fontSize < minFontSize;
+
+      if (fails) {
         contrastResults.errors.push({
           $el,
-          ratio: `APCA ${ratio.toFixed(1)}`,
-          suggestedColor: suggestColor,
-          background: getHex(background),
+          ratio: `APCA ${Math.abs(ratio.toFixed(1))}`,
+          details: { color: blendedColor, background, weight: fontWeight, size: fontSize },
         });
       }
     }
@@ -367,21 +450,17 @@ export default function checkContrast(results, option) {
    * @param {Object} item A single item (object) from the contrast results object.
    * @returns Element, ratio, sanitized text for tooltip, suggested colour, and background colour.
    */
-  const processContrastItem = (item) => {
-    const { $el } = item;
-    const { ratio } = item;
-    const { suggestedColor } = item;
-    const { background } = item;
-    const clone = $el.cloneNode(true); // Ignore text within specific nodes.
-    const ignoreTextWithinElements = 'script, style, noscript, select option:not(:first-child)';
-    const nodeText = Utils.fnIgnore(clone, ignoreTextWithinElements);
-    const text = Utils.getText(nodeText);
-    const sanitizedText = Utils.sanitizeHTML(Utils.truncateString(text, 150));
-    return { $el, ratio, sanitizedText, suggestedColor, background };
+  const processContrastItem = ({ $el, ratio, details }) => {
+    const clone = $el.cloneNode(true);
+    const nodeText = Utils.fnIgnore(clone, 'script, style, noscript, select option:not(:first-child)');
+    const sanitizedText = Utils.sanitizeHTML(Utils.truncateString(Utils.getText(nodeText), 150));
+    const suggestion = (option.contrastSuggestions)
+      ? `<div data-sa11y-suggestion='${JSON.stringify(details)}'></div>` : '';
+    return { $el, ratio, sanitizedText, suggestion };
   };
 
   /**
-  * Iterate through all elements on the page, calculating the contrast of each item with preferred algorthim.
+  * Iterate through all elements on the page.
   * @returns {Object[]} Returns a object containing all contrast errors and warnings.
   */
   (() => {
@@ -396,13 +475,13 @@ export default function checkContrast(results, option) {
       const style = getComputedStyle($el);
       const { opacity } = style;
       const color = convertToRGBA(style.color, opacity);
-      const fontSize = parseInt(style.fontSize, 10);
+      const fontSize = parseFloat(style.fontSize);
       const getFontWeight = style.fontWeight;
       const fontWeight = normalizeFontWeight(getFontWeight);
       const background = getBackground($el);
 
       // Check if element is visually hidden to screen readers.
-      const isVisuallyHidden = isScreenReaderOnly(style);
+      const isVisuallyHidden = Utils.isScreenReaderOnly($el);
 
       // Filter only text nodes.
       const textString = Array.from($el.childNodes)
@@ -422,15 +501,15 @@ export default function checkContrast(results, option) {
 
   /* Contrast errors */
   contrastResults.errors.forEach((item) => {
-    const { $el, ratio, sanitizedText, suggestedColor, background } = processContrastItem(item);
-    const suggestion = `<strong class="badge" style="color:${suggestedColor}!important;background-color:${background}">${suggestedColor}</strong>`;
+    const { $el, ratio, sanitizedText, suggestion } = processContrastItem(item);
 
     if ($el.tagName === 'INPUT' || $el.tagName === 'TEXTAREA') {
       if (option.checks.CONTRAST_INPUT) {
         results.push({
           element: $el,
           type: option.checks.CONTRAST_INPUT.type || 'error',
-          content: option.checks.CONTRAST_INPUT.content || Lang.sprintf('CONTRAST_INPUT', suggestion, ratio),
+          content: option.checks.CONTRAST_INPUT.content
+            || Lang.sprintf('CONTRAST_INPUT', ratio) + suggestion,
           inline: false,
           position: 'beforebegin',
           dismiss: Utils.prepareDismissal(`CONTRAST${$el.getAttribute('class')}${$el.tagName}${ratio}`),
@@ -442,7 +521,8 @@ export default function checkContrast(results, option) {
       results.push({
         element: $el,
         type: option.checks.CONTRAST_ERROR.type || 'error',
-        content: option.checks.CONTRAST_ERROR.content || Lang.sprintf('CONTRAST_ERROR', suggestion, ratio, sanitizedText),
+        content: option.checks.CONTRAST_ERROR.content
+          || Lang.sprintf('CONTRAST_ERROR', ratio, sanitizedText) + suggestion,
         inline: false,
         position: 'beforebegin',
         dismiss: Utils.prepareDismissal(`CONTRAST${sanitizedText}`),

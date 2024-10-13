@@ -27,6 +27,23 @@ export function isElementVisuallyHiddenOrHidden(element) {
 }
 
 /**
+ * Determing whether an element is visually hidden (e.g. .sr-only) based on computed properties.
+ * @param {HTMLElement} element The element to check for.
+ * @returns {boolean} Returns true if visually hidden based on properties.
+ */
+export function isScreenReaderOnly(element) {
+  const style = window.getComputedStyle(element);
+  const clipPath = style.getPropertyValue('clip-path');
+  const { position } = style;
+  const width = parseFloat(style.width);
+  const height = parseFloat(style.height);
+  const { overflow } = style;
+  return (
+    (clipPath === 'inset(50%)') || (position === 'absolute' && width === 1 && height === 1 && overflow === 'hidden')
+  );
+}
+
+/**
  * Checks if an element is hidden (display: none) based on its attributes and styles.
  * @param {HTMLElement} element The element to check for visibility.
  * @returns {boolean} 'true' if the element is hidden (display: none).

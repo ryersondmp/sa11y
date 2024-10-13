@@ -44,6 +44,7 @@ const defaultOptions = {
   // Other plugins
   contrastPlugin: true,
   contrastAPCA: false,
+  contrastSuggestions: true,
   linksAdvancedPlugin: true,
   formLabelsPlugin: true,
   embeddedContentPlugin: true,

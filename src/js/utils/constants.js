@@ -34,6 +34,8 @@ const Constants = (function myConstants() {
     Global.panelPosition = option.panelPosition;
     Global.dismissAnnotations = option.dismissAnnotations;
     Global.aboutContent = option.aboutContent;
+    Global.contrastAPCA = option.contrastAPCA;
+    Global.contrastSuggestions = option.contrastSuggestions;
 
     // Toggleable plugins
     Global.developerPlugin = option.developerPlugin;
