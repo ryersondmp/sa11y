@@ -252,6 +252,10 @@ export default {
     TABLES_EMPTY_HEADING: 'S-a găsit un antet de tabel gol! Anteturile de tabel nu ar trebui să fie <strong>niciodată</strong> goale. Este important să se desemneze antetele de rând și/sau de coloană pentru a transmite relația dintre ele. Aceste informații oferă context persoanelor care utilizează tehnologia de asistență. Vă rugăm să rețineți că tabelele trebuie utilizate numai pentru date tabelare. <hr> Aflați mai multe despre <a href="https://www.w3.org/WAI/tutorials/tables/">tablouri accesibile.</a>',
 
     // Contrast
+    CONTRAST_OPACITY: 'Crește opacitatea textului pentru o vizibilitate mai bună:',
+    CONTRAST_APCA: 'Acesta nu este un contrast suficient pentru niciună dimensiune a textului. Luați în considerare utilizarea acestei combinații de culoare și dimensiune a textului?',
+    CONTRAST_COLOR: 'Luați în considerare utilizarea acestei culori în schimb?',
+    CONTRAST_SIZE: 'Luați în considerare mărirea dimensiunii textului pentru această combinație de culori?',
     CONTRAST_ERROR: 'Acest text nu are un contrast suficient cu fundalul. Raportul de contrast ar trebui să fie de cel puțin 4,5:1 pentru textul normal și de 3:1 pentru textul mare. <hr> <strong {B}>Raport de contrast</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_WARNING: 'Contrastul acestui text este necunoscut și trebuie să fie revizuit manual. Asigurați-vă că textul și fundalul au culori puternic contrastante. Raportul de contrast trebuie să fie de cel puțin 4,5:1 pentru textul normal și de 3:1 pentru textul mare. <hr> <strong {B}>Raport de contrast</strong> <strong {B}>Necunoscut</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_INPUT: 'Textul din această intrare nu are un contrast suficient cu fundalul. Raportul de contrast ar trebui să fie de cel puțin 4,5:1 pentru textul normal și de 3:1 pentru textul mare. <hr> <strong {B}>Raport de contrast</strong> <strong {B}>%(RATIO)</strong>',

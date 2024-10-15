@@ -244,6 +244,10 @@ export default {
     TABLES_EMPTY_HEADING: 'Wykryto pusty nagłówek tabeli! Nagłówki tabel <em>nigdy</em> nie powinny być puste. Ważne jest, aby wyznaczyć nagłówki wierszy i/lub kolumn, aby przekazać ich relację. Informacje te zapewniają kontekst osobom korzystającym z technologii wspomagających. Należy pamiętać, że tabele powinny być używane tylko dla danych tabelarycznych. <hr> Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/tables/">dostępnych tabelach.</a>',
 
     // Contrast
+    CONTRAST_OPACITY: 'Zwiększ przezroczystość tekstu, aby poprawić widoczność:',
+    CONTRAST_APCA: 'To nie wystarcza kontrastu dla żadnego rozmiaru tekstu. Rozważ użycie tej kombinacji koloru i rozmiaru tekstu?',
+    CONTRAST_COLOR: 'Rozważ użycie tego koloru zamiast?',
+    CONTRAST_SIZE: 'Rozważ zwiększenie rozmiaru tekstu dla tej kombinacji kolorów?',
     CONTRAST_ERROR: 'Ten tekst nie ma wystarczającego kontrastu z tłem Współczynnik kontrastu powinien wynosić co najmniej 4,5:1 dla zwykłego tekstu i 3:1 dla dużego tekstu. <hr> <strong {B}>Stosunek kontrastu</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_WARNING: 'Kontrast tego tekstu jest nieznany i wymaga ręcznego przeglądu. Upewnij się, że tekst i tło mają silne kontrastujące kolory. Współczynnik kontrastu powinien wynosić co najmniej 4,5:1 dla zwykłego tekstu i 3:1 dla dużego tekstu. <hr> <strong {B}>Współczynnik kontrastu</strong> <strong {B}>Nieznany</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_INPUT: 'Tekst w tym polu nie ma wystarczającego kontrastu z tłem. Stosunek kontrastu powinien wynosić co najmniej 4,5:1 dla normalnego tekstu i 3:1 dla dużego tekstu. <hr> <strong {B}>Stosunek kontrastu</strong> <strong {B}>%(RATIO)</strong>',

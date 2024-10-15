@@ -43,3 +43,14 @@ const copyDirectory = async (src, dest) => {
   `;
   await writeFile('./docs/demo/version.js', fileContent);
 })();
+
+// Automatically update Sa11y version number within library.
+(async () => {
+  const packageJsonPath = new URL('./package.json', import.meta.url);
+  const packageJsonContent = await fs.readFile(packageJsonPath, 'utf-8');
+  const packageJsonData = JSON.parse(packageJsonContent);
+  const { version } = packageJsonData;
+  const fileContent = `const version = '${version}';
+  export default version;`;
+  await writeFile('./version.js', fileContent);
+})();

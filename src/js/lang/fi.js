@@ -246,6 +246,10 @@ export default {
     TABLES_EMPTY_HEADING: 'Tyhjä taulukkootsikko löytyi! Taulukkootsikoiden ei pitäisi <strong>ei koskaan</strong> olla tyhjiä. On tärkeää nimetä rivi- ja/tai sarakeotsikot, jotta niiden välinen suhde välittyy. Nämä tiedot tarjoavat kontekstin ihmisille, jotka käyttävät apuvälineteknologiaa. Muista, että taulukoita tulisi käyttää vain taulukkomuotoisiin tietoihin. <hr> Lisätietoja <a href="https://www.w3.org/WAI/tutorials/tables/">saavutettavista taulukoista.</a>',
 
     // Contrast
+    CONTRAST_OPACITY: 'Lisää tekstin peittävyyttä paremman näkyvyyden takaamiseksi:',
+    CONTRAST_APCA: 'Tämä ei riitä kontrastiksi minkään kokoiselle tekstille. Harkitse tämän värin ja tekstikoon yhdistelmän käyttöä?',
+    CONTRAST_COLOR: 'Harkitse tämän värin käyttämistä sen sijaan?',
+    CONTRAST_SIZE: 'Harkitse tekstikoon suurentamista tämän värikombinaation kohdalla?',
     CONTRAST_ERROR: 'Tässä tekstissä ei ole riittävästi kontrastia taustaan nähden. Kontrastisuhteen tulisi olla vähintään 4,5:1 normaalille tekstille ja 3:1 suurelle tekstille. <hr> <strong {B}>Kontrastisuhde</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_WARNING: 'Tämän tekstin kontrasti on tuntematon, ja se on tarkistettava manuaalisesti. Varmista, että tekstin ja taustan värit ovat voimakkaan kontrastiset. Kontrastisuhteen tulisi olla vähintään 4,5:1 normaalissa tekstissä ja 3:1 suuressa tekstissä. <hr> <strong {B}>Kontrastisuhde</strong> <strong {B}>Tuntematon</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_INPUT: 'Tekstin kontrasti taustaan nähden ei ole riittävä. Kontrastisuhteen tulisi olla vähintään 4,5:1 normaalille tekstille ja 3:1 suurelle tekstille. <hr> <strong {B}>Kontrastisuhde</strong> <strong {B}>%(RATIO)</strong>',

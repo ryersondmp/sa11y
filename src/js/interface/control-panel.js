@@ -1,6 +1,7 @@
 import Lang from '../utils/lang';
 import { store } from '../utils/utils';
 import Constants from '../utils/constants';
+import version from '../../../version';
 
 // Import processed minified styles as a string.
 import panelStyles from '../../../dist/css/control-panel.min.css';
@@ -224,6 +225,7 @@ export default class ControlPanel extends HTMLElement {
     const container = document.createElement('div');
     container.setAttribute('id', 'container');
     container.setAttribute('role', 'region');
+    container.setAttribute('data-sa11y-version', version);
     container.setAttribute('lang', Lang._('LANG_CODE'));
     container.setAttribute('aria-label', Lang._('CONTAINER_LABEL'));
     container.setAttribute('dir', Constants.Global.langDirection);

@@ -61,6 +61,7 @@ kbd,
 }
 
 /* Badges */
+.normal-badge,
 .badge {
   display: inline;
   min-width: 10px;

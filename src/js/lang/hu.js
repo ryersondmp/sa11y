@@ -262,6 +262,10 @@ export default {
     TABLES_EMPTY_HEADING: 'Üres asztali fejlécet találtunk! A táblázat fejlécének <strong>soha</strong> nem szabad üresnek lennie. Fontos a sor- és/vagy oszlopfejlécek kijelölése a kapcsolatuk érzékeltetése érdekében. Ez az információ kontextust biztosít a segítő technológiát használó emberek számára. Ne feledje, hogy a táblázatok csak táblázatos adatokhoz használhatók. <hr> Tudjon meg többet a <a href="https://www.w3.org/WAI/tutorials/tables/">elérhető táblázatokról.</a>',
 
     // Contrast
+    CONTRAST_OPACITY: 'Növelje a szöveg opacitását a jobb láthatóság érdekében:',
+    CONTRAST_APCA: 'Ez nem elegendő kontraszt semmilyen szövegméret számára. Fontolja meg ezt a szín- és szövegméret-kombinációt?',
+    CONTRAST_COLOR: 'Fontolja meg ennek a színnek a használatát?',
+    CONTRAST_SIZE: 'Fontolja meg a szövegméret növelését ennek a színkombinációnak?',
     CONTRAST_ERROR: 'Ez a szöveg nem elég kontrasztos a háttérrel szemben. A kontrasztaránynak normál szöveg esetén legalább 4,5:1, nagyméretű szöveg esetén pedig 3:1 arányúnak kell lennie. <hr> <strong {B}>Kontrasztarány</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_WARNING: 'Ennek a szövegnek a kontrasztja ismeretlen, és kézzel kell ellenőrizni. Biztosítsa, hogy a szöveg és a háttér színei erősen kontrasztosak legyenek. A kontrasztaránynak normál szöveg esetén legalább 4,5:1, nagyméretű szöveg esetén pedig 3:1 arányúnak kell lennie. <hr> <strong {B}>Kontrasztarány</strong> <strong {B}>Ismeretlen</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_INPUT: 'A szövegnek ebben a bevitelben nincs elég kontrasztja a háttérrel. A kontrasztaránynak normál szöveg esetén legalább 4,5:1, nagyméretű szöveg esetén pedig 3:1 arányúnak kell lennie. <hr> <strong {B}>Kontrasztarány</strong> <strong {B}>%(RATIO)</strong>',

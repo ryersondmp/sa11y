@@ -327,19 +327,21 @@ export function generateColorSuggestion(details) {
     ? suggestColorAPCA(color, background, weight, size)
     : suggestColorWCAG(color, background, isLargeText);
 
-  let suggestion;
-  const colorBadge = `<strong class="badge" style="color:${suggested.color}!important;background-color:${getHex(details.background)}!important;">${suggested.color}</strong>`;
-  const sizeBadge = `<strong class="badge" style="color:var(--sa11y-panel-primary);background:var(--sa11y-panel-badge)!important;">${suggested.size}px</strong>`;
+  let advice;
+  const hr = '<hr aria-hidden="true">';
+  const style = `color:${suggested.color};background-color:${getHex(details.background)};`;
+  const colorBadge = `<strong class="badge" style="${style}">${suggested.color}</strong>`;
+  const sizeBadge = `<strong class="normal-badge">${suggested.size}px</strong>`;
   if (!Constants.Global.contrastAPCA) {
-    suggestion = `${Lang.sprintf('COLOR_SUGGEST')} ${colorBadge}`;
+    advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
   } else if (suggested.color && suggested.size) {
-    suggestion = Lang.sprintf('APCA_SUGGEST', colorBadge, sizeBadge);
+    advice = `${hr} ${Lang._('CONTRAST_APCA')} ${colorBadge} ${sizeBadge}`;
   } else if (suggested.color) {
-    suggestion = `${Lang.sprintf('COLOR_SUGGEST')} ${colorBadge}`;
+    advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
   } else if (suggested.size) {
-    suggestion = `${Lang.sprintf('SIZE_SUGGEST')} ${sizeBadge}`;
+    advice = `${hr} ${Lang._('CONTRAST_SIZE')} ${sizeBadge}`;
   }
-  return suggestion;
+  return advice;
 }
 
 /**
@@ -482,7 +484,9 @@ export default function checkContrast(results, option) {
   /* Contrast errors */
   contrastResults.errors.forEach((item) => {
     const { $el, ratio, sanitizedText, suggestion, opacity } = processContrastItem(item);
-    const advice = opacity < 1 ? Lang.sprintf('CONTRAST_OPACITY', opacity) : suggestion;
+    const advice = opacity < 1
+      ? `<hr aria-hidden="true"> ${Lang.sprintf('CONTRAST_OPACITY')} <strong class="badge">${opacity}</strong>`
+      : suggestion;
 
     if ($el.tagName === 'INPUT' || $el.tagName === 'TEXTAREA') {
       if (option.checks.CONTRAST_INPUT) {

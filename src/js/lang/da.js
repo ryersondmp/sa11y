@@ -250,6 +250,10 @@ export default {
     TABLES_EMPTY_HEADING: 'Tom tabeloverskrift fundet! Tabeloverskrifter bør <strong>aldrig</strong> være tomme. Det er vigtigt at udpege række- og/eller kolonneoverskrifter for at formidle deres relation. Disse oplysninger giver kontekst til personer, der bruger hjælpemidler. Husk, at tabeller kun bør bruges til tabeldata. <hr> Få mere at vide om <a href="https://www.w3.org/WAI/tutorials/tables/">tilgængelige tabeller.</a>',
 
     // Contrast
+    CONTRAST_OPACITY: 'Øg opaciteten af teksten for bedre synlighed:',
+    CONTRAST_APCA: 'Dette er ikke nok kontrast til nogen tekststørrelse. Overvej at bruge denne farve- og tekststørrelseskombination?',
+    CONTRAST_COLOR: 'Overvej at bruge denne farve i stedet?',
+    CONTRAST_SIZE: 'Overvej at gøre tekststørrelsen større for denne farvekombination?',
     CONTRAST_ERROR: 'Denne tekst har ikke nok kontrast til baggrunden. Kontrastforholdet skal være mindst 4,5:1 for normal tekst og 3:1 for stor tekst. <hr> <strong {B}>Kontrastforhold</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_WARNING: 'Kontrasten i denne tekst er ukendt og skal gennemgås manuelt. Sørg for, at teksten og baggrunden har stærke kontrastfarver. Kontrastforholdet skal være mindst 4,5:1 for normal tekst og 3:1 for stor tekst. <hr> <strong {B}>Kontrastforhold</strong> <strong {B}>Ukendt</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_INPUT: 'Teksten i dette input har ikke nok kontrast til baggrunden. Kontrastforholdet skal være mindst 4,5:1 for normal tekst og 3:1 for stor tekst. <hr> <strong {B}>Kontrastforhold</strong> <strong {B}>%(RATIO)</strong>',

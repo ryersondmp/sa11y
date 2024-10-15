@@ -244,13 +244,13 @@ var en = {
     TABLES_EMPTY_HEADING: 'Empty table header found! Table headers should <strong>never</strong> be empty. It is important to designate row and/or column headers to convey their relationship. This information provides context to people who use assistive technology. Please keep in mind that tables should be used for tabular data only. <hr> Learn more about <a href="https://www.w3.org/WAI/tutorials/tables/">accessible tables.</a>',
 
     // Contrast
-    CONTRAST_OPACITY: '<hr> Adjust the opacity <strong {B}>%(OPACITY)</strong> so that the text is more visible.',
-    APCA_SUGGEST: '<hr> This is not enough contrast for any size text. Consider using this colour %(COLOR) and text size %(SIZE) combination?',
-    COLOR_SUGGEST: '<hr> Consider using this colour instead?',
-    SIZE_SUGGEST: '<hr> Consider making the text size larger for this colour combination?',
+    CONTRAST_OPACITY: 'Increase the opacity of the text for better visibility:',
+    CONTRAST_APCA: 'This is not enough contrast for any size text. Consider using this colour and text size combination?',
+    CONTRAST_COLOR: 'Consider using this colour instead?',
+    CONTRAST_SIZE: 'Consider making the text size larger for this colour combination?',
     CONTRAST_ERROR: 'Text does not have enough contrast with the background, making it harder to read. <hr> <strong {B}>Contrast Ratio</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_WARNING: 'The contrast of this text is unknown and needs to be manually reviewed. Ensure the text and the background have strong contrasting colours. The contrast ratio should be at least 4.5:1 for normal text and 3:1 for large text. <hr> <strong {B}>Contrast Ratio</strong> <strong {B}>Unknown</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_INPUT: 'Text within this input does not have enough contrast with the background, making it harder to read.  <hr> <strong {B}>Contrast Ratio</strong> <strong {B}>%(RATIO)</strong>',
+    CONTRAST_INPUT: 'Text within this input does not have enough contrast with the background, making it harder to read. <hr> <strong {B}>Contrast Ratio</strong> <strong {B}>%(RATIO)</strong>',
   },
 };
 

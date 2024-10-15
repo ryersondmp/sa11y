@@ -262,6 +262,10 @@ export default {
     TABLES_EMPTY_HEADING: '빈 테이블 헤더가 발견되었습니다! 테이블 헤더는 비어 있으면 안 됩니다. 행 및/또는 열 머리글을 지정하여 관계를 전달하는 것이 중요합니다. 이 정보는 보조 기술을 사용하는 사람들에게 맥락을 제공합니다. 표는 표 형식의 데이터에만 사용해야 한다는 점에 유의하세요. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">액세스 가능한 테이블에 대해 자세히 알아보기.</a>',
 
     // Contrast
+    CONTRAST_OPACITY: '텍스트의 불투명도를 높여 가시성을 향상시키십시오:',
+    CONTRAST_APCA: '이는 어떤 텍스트 크기에도 충분한 대비가 아닙니다. 이 색상 및 텍스트 크기 조합을 사용하는 것을 고려하시겠습니까?',
+    CONTRAST_COLOR: '대신 이 색상을 사용하는 것을 고려하시겠습니까?',
+    CONTRAST_SIZE: '이 색상 조합에 대해 텍스트 크기를 더 크게 만드는 것을 고려하시겠습니까?',
     CONTRAST_ERROR: '이 텍스트는 배경과 대비가 충분하지 않습니다. 대비 비율은 일반 텍스트의 경우 4.5:1 이상, 큰 텍스트의 경우 3:1 이상이어야 합니다. <hr> <strong {B}>대조 비율</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_WARNING: '이 텍스트의 대비를 알 수 없으므로 수동으로 검토해야 합니다. 텍스트와 배경의 색상이 강하게 대비되는지 확인합니다. 대비 비율은 일반 텍스트의 경우 4.5:1 이상, 큰 텍스트의 경우 3:1 이상이어야 합니다. <hr> <strong {B}>대비 비율</strong> <strong {B}>알 수 없음</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_INPUT: '이 입력 내의 텍스트는 배경과 대비가 충분하지 않습니다. 대비 비율은 일반 텍스트의 경우 4.5:1 이상, 큰 텍스트의 경우 3:1 이상이어야 합니다. <hr> <strong {B}>대조 비율</strong> <strong {B}>%(RATIO)</strong>',

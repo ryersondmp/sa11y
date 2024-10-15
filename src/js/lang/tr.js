@@ -248,6 +248,10 @@ export default {
     TABLES_EMPTY_HEADING: 'Boş tablo başlığı bulundu! Tablo başlıkları <strong>asla</strong> boş olmamalıdır. İlişkilerini aktarmak için satır ve/veya sütun başlıklarını belirlemek önemlidir. Bu bilgi, yardımcı teknoloji kullanan kişilere bağlam sağlar. Lütfen tabloların yalnızca tablo halindeki veriler için kullanılması gerektiğini unutmayın. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">erişilebilir tablolar hakkında daha fazla bilgi edinin.</a>',
 
     // Contrast
+    CONTRAST_OPACITY: 'Metin opaklığını artırarak görünürlüğü artırın:',
+    CONTRAST_APCA: 'Bu, herhangi bir metin boyutu için yeterli kontrast değil. Bu renk ve metin boyutu kombinasyonunu kullanmayı düşünün?',
+    CONTRAST_COLOR: 'Bunun yerine bu rengi kullanmayı düşünün?',
+    CONTRAST_SIZE: 'Bu renk kombinasyonu için metin boyutunu büyütmeyi düşünün?',
     CONTRAST_ERROR: 'Bu metin arka planla yeterli kontrasta sahip değil. Kontrast oranı normal metin için en az 4,5:1 ve büyük metin için 3:1 olmalıdır. <hr> <strong {B}>Kontrast Oranı</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_WARNING: 'Bu metnin kontrastı bilinmemektedir ve manuel olarak gözden geçirilmesi gerekmektedir. Metin ve arka planın güçlü kontrast renklere sahip olduğundan emin olun. Kontrast oranı normal metin için en az 4,5:1 ve büyük metin için 3:1 olmalıdır. <hr> <strong {B}>Kontrast Oranı</strong> <strong {B}>Bilinmiyor</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_INPUT: 'Bu girişteki metin arka planla yeterli kontrasta sahip değil. Kontrast oranı normal metin için en az 4,5:1 ve büyük metin için 3:1 olmalıdır. <hr> <strong {B}>Kontrast Oranı</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',

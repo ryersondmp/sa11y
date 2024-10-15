@@ -254,6 +254,10 @@ export default {
     TABLES_EMPTY_HEADING: 'Header tabel kosong ditemukan! Header tabel tidak boleh kosong. Penting untuk menentukan header baris dan/atau kolom untuk menyampaikan hubungan mereka. Informasi ini memberikan konteks kepada orang-orang yang menggunakan teknologi bantu. Harap diingat bahwa tabel harus digunakan hanya untuk data tabular. <hr> Pelajari lebih lanjut tentang <a href="https://www.w3.org/WAI/tutorials/tables/">tabel yang dapat diakses.</a>',
 
     // Contrast
+    CONTRAST_OPACITY: 'Tingkatkan opasitas teks untuk visibilitas yang lebih baik:',
+    CONTRAST_APCA: 'Ini tidak cukup kontras untuk ukuran teks apa pun. Pertimbangkan untuk menggunakan kombinasi warna dan ukuran teks ini?',
+    CONTRAST_COLOR: 'Pertimbangkan untuk menggunakan warna ini sebagai gantinya?',
+    CONTRAST_SIZE: 'Pertimbangkan untuk memperbesar ukuran teks untuk kombinasi warna ini?',
     CONTRAST_ERROR: 'Teks ini tidak memiliki kontras yang cukup dengan latar belakang. Rasio kontras minimal 4,5:1 untuk teks normal dan 3:1 untuk teks besar. <hr> <strong {B}>Rasio Kontras</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_WARNING: 'Kontras teks ini tidak diketahui dan perlu ditinjau secara manual. Pastikan teks dan latar belakang memiliki warna kontras yang kuat. Rasio kontras setidaknya 4,5:1 untuk teks normal dan 3:1 untuk teks besar. <hr> <strong {B}>Rasio Kontras</strong> <strong {B}>Tidak Diketahui</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_INPUT: 'Teks dalam input ini tidak memiliki kontras yang cukup dengan latar belakang. Rasio kontras minimal 4,5:1 untuk teks normal dan 3:1 untuk teks besar. <hr> <strong {B}>Rasio Kontras</strong> <strong {B}>%(RATIO)</strong>',

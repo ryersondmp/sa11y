@@ -99,8 +99,11 @@ const dismissIssueButton = async (e, results, checkAll, resetAll) => {
       store.removeItem('sa11y-dismiss-item'); // Remove temporary storage item.
 
       // Remove tooltip.
-      if (dismissButton.closest('[data-tippy-root]') !== null) {
-        dismissButton.closest('[data-tippy-root]').remove();
+      const tooltip = dismissButton?.closest('[data-tippy-root]');
+      if (tooltip) {
+        setTimeout(() => {
+          tooltip.remove();
+        }, 0);
       }
 
       // Async scan upon dismiss.
