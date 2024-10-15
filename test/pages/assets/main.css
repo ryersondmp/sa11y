@@ -267,6 +267,10 @@ iframe {
   clip-path: inset(50%);
 }
 
+code {
+  font-size: 16px;
+}
+
 label {
   font-weight: 500;
 }

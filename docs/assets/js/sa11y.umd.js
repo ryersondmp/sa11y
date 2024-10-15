@@ -435,7 +435,7 @@
       }
 
       // Contrast exclusions
-      Exclusions.Contrast = `link, hr, select option, video track, ${exclusions}`;
+      Exclusions.Contrast = `link, hr, select option, video track, input[type="color"], input[type="range"], ${exclusions}`;
       if (option.contrastIgnore) {
         Exclusions.Contrast = `${option.contrastIgnore}, ${Exclusions.Contrast}`;
       }
@@ -7081,6 +7081,7 @@
     const notGoodAtAnySize = minimumSizeRequired === 999 || minimumSizeRequired === 777;
 
     // Has low contrast, but font size is okay.
+    // Lc of 60 is "sort of like" the old WCAG 2's 4.5:1.
     const lowContrastButSizeOk = contrast.ratio < 60;
 
     // Loop to find a new colour.
@@ -7168,39 +7169,24 @@
      * @param {number} fontSize Element's font size.
      * @param {number} fontWeight Element's font weight.
      */
-    const wcagAlgorithm = ($el, color, background, isVisuallyHidden, fontSize, fontWeight) => {
-      const htmlTag = $el.tagName;
-      const opacity = parseFloat($el.style.opacity);
+    const wcagAlgorithm = ($el, color, background, fontSize, fontWeight, opacity) => {
+      const { ratio, blendedColor } = calculateContrast(color, background);
+      const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
+      const hasLowContrast = ratio < 3;
+      const hasLowContrastNormalText = ratio > 1 && ratio < 4.5;
 
-      if (background === 'image') {
-        if (!['INPUT', 'SELECT', 'TEXTAREA'].includes(htmlTag)) {
-          // Don't flag warning for inputs with background image...
-          contrastResults.warnings.push({ $el });
-        }
-      } else if (isVisuallyHidden || opacity === 0 || getHex(color) === getHex(background)) ; else if (htmlTag === 'SVG') {
-        const ratio = calculateContrast($el.style.fill, background);
-        if (ratio < 3) {
-          contrastResults.errors.push({ $el, ratio: `${ratio.toFixed(2)}:1` });
-        }
-      } else {
-        const { ratio, blendedColor } = calculateContrast(color, background);
-        const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
-        const hasLowContrast = ratio < 3;
-        const hasLowContrastNormalText = ratio > 1 && ratio < 4.5;
-
-        if (ratio === 1) ; else if (isLargeText && hasLowContrast) {
-          contrastResults.errors.push({
-            $el,
-            ratio: `${ratio.toFixed(2)}:1`,
-            details: { color: blendedColor, background, isLargeText },
-          });
-        } else if (!isLargeText && hasLowContrastNormalText) {
-          contrastResults.errors.push({
-            $el,
-            ratio: `${ratio.toFixed(2)}:1`,
-            details: { color: blendedColor, background, isLargeText },
-          });
-        }
+      if (isLargeText && hasLowContrast) {
+        contrastResults.errors.push({
+          $el,
+          ratio: `${ratio.toFixed(2)}:1`,
+          details: { color: blendedColor, background, isLargeText, opacity },
+        });
+      } else if (!isLargeText && hasLowContrastNormalText) {
+        contrastResults.errors.push({
+          $el,
+          ratio: `${ratio.toFixed(2)}:1`,
+          details: { color: blendedColor, background, isLargeText, opacity },
+        });
       }
     };
 
@@ -7213,35 +7199,24 @@
      * @param {number} fontSize Element's font size.
      * @param {number} fontWeight Element's font weight.
     */
-    const apcaAlgorithm = ($el, color, background, isVisuallyHidden, fontSize, fontWeight) => {
-      // ////////////////////////////////////////
-      /* @TO-DO: Non text contrast for APCA'); */
-      // ////////////////////////////////////////
-      const opacity = parseFloat($el.style.opacity);
-      if (background === 'image') {
-        if (!['INPUT', 'SELECT', 'TEXTAREA'].includes($el.tagName)) {
-          // Don't flag warning for inputs with background image...
-          contrastResults.warnings.push({ $el });
-        }
-      } else if (isVisuallyHidden || opacity === 0 || getHex(color) === getHex(background)) ; else {
-        const { ratio, blendedColor } = calculateContrast(color, background);
+    const apcaAlgorithm = ($el, color, background, fontSize, fontWeight, opacity) => {
+      const { ratio, blendedColor } = calculateContrast(color, background);
 
-        // Returns 9 font sizes in px corresponding to weights 100 thru 900.
-        // Returns ['LcValue',100,200,300,400,500,600,700,800,900]
-        const fontLookup = fontLookupAPCA(ratio).slice(1);
+      // Returns 9 font sizes in px corresponding to weights 100 thru 900.
+      // Returns ['LcValue',100,200,300,400,500,600,700,800,900]
+      const fontLookup = fontLookupAPCA(ratio).slice(1);
 
-        // Get minimum font size based on weight.
-        const fontWeightIndex = Math.floor(fontWeight / 100) - 1;
-        const minFontSize = fontLookup[fontWeightIndex];
-        const fails = fontSize < minFontSize;
+      // Get minimum font size based on weight.
+      const fontWeightIndex = Math.floor(fontWeight / 100) - 1;
+      const minFontSize = fontLookup[fontWeightIndex];
+      const fails = fontSize < minFontSize;
 
-        if (fails) {
-          contrastResults.errors.push({
-            $el,
-            ratio: `APCA ${Math.abs(ratio.toFixed(1))}`,
-            details: { color: blendedColor, background, weight: fontWeight, size: fontSize },
-          });
-        }
+      if (fails) {
+        contrastResults.errors.push({
+          $el,
+          ratio: `APCA ${Math.abs(ratio.toFixed(1))}`,
+          details: { color: blendedColor, background, weight: fontWeight, size: fontSize, opacity },
+        });
       }
     };
 
@@ -7254,9 +7229,10 @@
       const clone = $el.cloneNode(true);
       const nodeText = fnIgnore(clone, 'script, style, noscript, select option:not(:first-child)');
       const sanitizedText = sanitizeHTML(truncateString(getText(nodeText), 150));
-      const suggestion = (option.contrastSuggestions)
+      const suggestion = (option.contrastSuggestions && details !== undefined)
         ? `<div data-sa11y-suggestion='${JSON.stringify(details)}'></div>` : '';
-      return { $el, ratio, sanitizedText, suggestion };
+      const opacity = (details !== undefined) ? details.opacity : '';
+      return { $el, ratio, sanitizedText, suggestion, opacity };
     };
 
     /**
@@ -7273,7 +7249,7 @@
         // Get computed styles of each element.
         const $el = Elements.Found.Contrast[i];
         const style = getComputedStyle($el);
-        const { opacity } = style;
+        const opacity = parseFloat(style.opacity);
         const color = convertToRGBA(style.color, opacity);
         const fontSize = parseFloat(style.fontSize);
         const getFontWeight = style.fontWeight;
@@ -7290,10 +7266,18 @@
           .join('');
         const text = textString.trim();
 
-        // Preferred contrast algorithm.
-        const algorithm = option.contrastAPCA ? apcaAlgorithm : wcagAlgorithm;
-        if (text.length !== 0 || ($el.tagName === 'INPUT' || $el.tagName === 'TEXTAREA')) {
-          algorithm($el, color, background, isVisuallyHidden, fontSize, fontWeight);
+        // Contrast check only elements with text, inputs, and textareas.
+        if (text.length !== 0 || $el.tagName === 'INPUT' || $el.tagName === 'TEXTAREA') {
+          if (background === 'image') {
+            // Warnings for elements with a background image, ignoring inputs.
+            if (!['INPUT', 'SELECT', 'TEXTAREA'].includes($el.tagName) && !$el.closest('nav')) {
+              contrastResults.warnings.push({ $el });
+            }
+          } else if (isVisuallyHidden || opacity === 0 || getHex(color) === getHex(background)) ; else {
+            // Preferred contrast algorithm.
+            const algorithm = option.contrastAPCA ? apcaAlgorithm : wcagAlgorithm;
+            algorithm($el, color, background, fontSize, fontWeight, opacity);
+          }
         }
       }
       return contrastResults;
@@ -7301,7 +7285,8 @@
 
     /* Contrast errors */
     contrastResults.errors.forEach((item) => {
-      const { $el, ratio, sanitizedText, suggestion } = processContrastItem(item);
+      const { $el, ratio, sanitizedText, suggestion, opacity } = processContrastItem(item);
+      const advice = opacity < 1 ? Lang.sprintf('CONTRAST_OPACITY', opacity) : suggestion;
 
       if ($el.tagName === 'INPUT' || $el.tagName === 'TEXTAREA') {
         if (option.checks.CONTRAST_INPUT) {
@@ -7309,7 +7294,7 @@
             element: $el,
             type: option.checks.CONTRAST_INPUT.type || 'error',
             content: option.checks.CONTRAST_INPUT.content
-              || Lang.sprintf('CONTRAST_INPUT', ratio) + suggestion,
+              || Lang.sprintf('CONTRAST_INPUT', ratio) + advice,
             inline: false,
             position: 'beforebegin',
             dismiss: prepareDismissal(`CONTRAST${$el.getAttribute('class')}${$el.tagName}${ratio}`),
@@ -7322,7 +7307,7 @@
           element: $el,
           type: option.checks.CONTRAST_ERROR.type || 'error',
           content: option.checks.CONTRAST_ERROR.content
-            || Lang.sprintf('CONTRAST_ERROR', ratio, sanitizedText) + suggestion,
+            || Lang.sprintf('CONTRAST_ERROR', ratio, sanitizedText) + advice,
           inline: false,
           position: 'beforebegin',
           dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),

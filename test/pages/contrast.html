@@ -79,6 +79,10 @@
       color: color(rec2020 0.9 0.4 0.2);
     }
 
+    input {
+      color: lightblue;
+    }
+
     /* Font sizes */
     .size24 {
       font-size: 24px;
@@ -306,6 +310,28 @@
     </div>
 
     <hr>
+    <h2>SVG</h2>
+    <div class="ColorContrastImprover-styles-module--icons--1QwPJ"
+      style="color: rgb(6, 101, 148); background: rgb(255, 255, 255);"><svg id="i-heart" viewBox="0 0 32 32" width="30"
+        height="30" fill="none" stroke="rgb(6, 101, 148)" stroke-linecap="round" stroke-linejoin="round"
+        stroke-width="6.25%">
+        <path
+          d="M4 16 C1 12 2 6 7 4 12 2 15 6 16 8 17 6 21 2 26 4 31 6 31 12 28 16 25 20 16 28 16 28 16 28 7 20 4 16 Z">
+        </path>
+      </svg><svg id="i-lightning" viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="rgb(6, 101, 148)"
+        stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <path d="M18 13 L26 2 8 13 14 19 6 30 24 19 Z"></path>
+      </svg><svg id="i-code" viewBox="0 0 32 32" width="34" height="34" fill="none" stroke="rgb(6, 101, 148)"
+        stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <path d="M10 9 L3 17 10 25 M22 9 L29 17 22 25 M18 7 L14 27"></path>
+      </svg></div>
+
+    <h2>SVG text</h2>
+    <svg height="40" width="200" xmlns="http://www.w3.org/2000/svg">
+      <text x="5" y="30" fill="none" stroke="#ffc6c6" font-size="35">I love SVG!</text>
+    </svg>
+
+    <hr>
     <hr>
     <hr>
 
@@ -354,6 +380,23 @@
       </p>
     </div>
 
+    <h2>Date</h2>
+    <div id="error-date">
+      <label for="start">Start date:</label>
+      <input type="date" id="start" name="trip-start" value="2018-07-22" min="2018-01-01" max="2018-12-31" />
+    </div>
+    <h2>Colour input</h2>
+    <div id="nothing-color-input">
+      <label for="input-color">Color:</label>
+      <input id="input-color" type="color" />
+    </div>
+
+    <h2>Colour</h2>
+    <div id="nothing-range">
+      <label for="input-range">Range</label>
+      <input id="input-range" type="range" />
+    </div>
+
     <h2>Input</h2>
     <div id="error-text-area">
       <label for="input-a">Name:</label>
@@ -363,7 +406,7 @@
     <h2>Text area</h2>
     <div id="error-text-area">
       <label for="textarea-a">Address:</label>
-      <textarea id="textarea-a">Test...</textarea>
+      <textarea class="rgb" id="textarea-a">Test...</textarea>
     </div>
 
     <h2>Background image</h2>
@@ -373,14 +416,12 @@
 
     <div id="warning-bg-image-nav">
       <nav>
-        <p class="background-image">Text on background image within a navigation element requires manual review!</p>
+        <p class="background-image">Nested within a <code>&lt;nav&gt;</code></p>
       </nav>
     </div>
 
     <div id="warning-bg-image-nav">
-      <nav>
-        <p class="background-image">Nisi eveniet magni mollitia numquam omnis! Quisquam facere labore illum.</p>
-      </nav>
+      <p class="background-image"></p>
     </div>
 
 

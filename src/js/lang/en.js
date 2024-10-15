@@ -232,6 +232,7 @@ export default {
     TABLES_EMPTY_HEADING: 'Empty table header found! Table headers should <strong>never</strong> be empty. It is important to designate row and/or column headers to convey their relationship. This information provides context to people who use assistive technology. Please keep in mind that tables should be used for tabular data only. <hr> Learn more about <a href="https://www.w3.org/WAI/tutorials/tables/">accessible tables.</a>',
 
     // Contrast
+    CONTRAST_OPACITY: '<hr> Adjust the opacity <strong {B}>%(OPACITY)</strong> so that the text is more visible.',
     APCA_SUGGEST: '<hr> This is not enough contrast for any size text. Consider using this colour %(COLOR) and text size %(SIZE) combination?',
     COLOR_SUGGEST: '<hr> Consider using this colour instead?',
     SIZE_SUGGEST: '<hr> Consider making the text size larger for this colour combination?',
