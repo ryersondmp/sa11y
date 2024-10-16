@@ -244,6 +244,10 @@ var sv = {
     TABLES_EMPTY_HEADING: 'Tom tabellrubrik hittades! Tabellrubriker får <strong>aldrig</strong> vara tomma. Det är viktigt att ange rad- och/eller kolumnrubriker för att förmedla deras relation. Informationen ger sammanhang till personer som använder hjälpmedelsverktyg. Tänk på att tabeller endast ska användas för tabelldata. <hr> Läs mer om <a href="https://www.w3.org/WAI/tutorials/tables/">tillgängliga tabeller.</a>',
 
     // Contrast
+    CONTRAST_OPACITY: 'Öka opaciteten hos texten för bättre synlighet:',
+    CONTRAST_APCA: 'Detta är inte tillräckligt med kontrast för någon textstorlek. Överväg att använda denna färg- och textstorlek kombination?',
+    CONTRAST_COLOR: 'Överväg att använda denna färg istället?',
+    CONTRAST_SIZE: 'Överväg att göra textstorleken större för denna färgkombination?',
     CONTRAST_ERROR: 'Denna text har inte tillräcklig kontrast mot bakgrunden. Kontrastförhållandet bör vara minst 4,5:1 för normal text och 3:1 för stor text. <hr> <strong {B}>Kontrastförhållande</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_WARNING: 'Denna texts är okänd och måste granskas manuellt. Se till att texten och bakgrunden har starka kontrasterande färger. Kontrastförhållandet bör vara minst 4,5:1 för normal text och 3:1 för stor text. <hr> <strong {B}>Kontrastförhållande</strong> <strong {B}>Okänt</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_INPUT: 'Text i detta inmatningsfält har inte tillräcklig kontrast mot bakgrunden. Kontrastförhållandet bör vara minst 4,5:1 för normal text och 3:1 för stor text. <hr> <strong {B}>Kontrastförhållande</strong> <strong {B}>%(RATIO)</strong>',

@@ -424,7 +424,9 @@ export default function checkContrast(results, option) {
   const processContrastItem = ({ $el, ratio, details }) => {
     const clone = $el.cloneNode(true);
     const nodeText = Utils.fnIgnore(clone, 'script, style, noscript, select option:not(:first-child)');
-    const sanitizedText = Utils.sanitizeHTML(Utils.truncateString(Utils.getText(nodeText), 150));
+    const text = Utils.getText(nodeText);
+    const truncatedText = Utils.truncateString(text, 100);
+    const sanitizedText = Utils.sanitizeHTML(truncatedText);
     const suggestion = (option.contrastSuggestions && details !== undefined)
       ? `<div data-sa11y-suggestion='${JSON.stringify(details)}'></div>` : '';
     const opacity = (details !== undefined) ? details.opacity : '';

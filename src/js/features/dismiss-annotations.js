@@ -59,7 +59,7 @@ const dismissIssueButton = async (e, results, checkAll, resetAll) => {
   // Get dismissed array from localStorage.
   let savedDismissKeys = JSON.parse(store.getItem('sa11y-dismissed'));
   const dismissButton = e.target;
-  const dismissContainer = document.querySelector('sa11y-dismiss-tooltip');
+  const dismissContainer = document.querySelector('sa11y-panel-tooltips');
   dismissContainer.hidden = false;
 
   // Make sure event listener is attached to dismiss button.
@@ -115,7 +115,7 @@ const dismissIssueButton = async (e, results, checkAll, resetAll) => {
 
 /* 2. Restore hidden alerts on the CURRENT page only. */
 const restoreDismissButton = async (dismissed, checkAll, resetAll) => {
-  const dismissContainer = document.querySelector('sa11y-dismiss-tooltip');
+  const dismissContainer = document.querySelector('sa11y-panel-tooltips');
   dismissContainer.hidden = true; // Prevent flash of tooltip.
   const filtered = dismissed.filter((item) => item.href !== window.location.pathname);
   store.setItem('sa11y-dismissed', JSON.stringify(filtered));

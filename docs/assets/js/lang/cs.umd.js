@@ -268,6 +268,10 @@
       TABLES_EMPTY_HEADING: 'Nalezeno prázdné záhlaví tabulky! Záhlaví tabulky by <strong>nikdy</strong> nemělo být prázdné. Je důležité označit záhlaví řádků a/nebo sloupců, aby byl vyjádřen jejich vztah. Tyto informace poskytují kontext osobám, které používají asistenční technologie. Mějte na paměti, že tabulky by se měly používat pouze pro tabulková data. <hr> Další informace o <a href="https://www.w3.org/WAI/tutorials/tables/">přístupných tabulkách.</a>.',
 
       // Contrast
+      CONTRAST_OPACITY: 'Zvyšte neprůhlednost textu pro lepší viditelnost:',
+      CONTRAST_APCA: 'Toto není dostatečný kontrast pro žádnou velikost textu. Zvažte použití této kombinace barvy a velikosti textu?',
+      CONTRAST_COLOR: 'Zvažte použití této barvy místo?',
+      CONTRAST_SIZE: 'Zvažte zvětšení velikosti textu pro tuto barevnou kombinaci?',
       CONTRAST_ERROR: 'Tento text není dostatečně kontrastní s pozadím. Kontrastní poměr by měl být alespoň 4,5:1 pro normální text a 3:1 pro velký text. <hr> <strong {B}>Kontrastní poměr</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
       CONTRAST_WARNING: 'Kontrast tohoto textu není znám a je třeba jej ručně zkontrolovat. Ujistěte se, že text a pozadí mají výrazně kontrastní barvy. Kontrastní poměr by měl být alespoň 4,5:1 pro normální text a 3:1 pro velký text. <hr> <strong {B}>Poměr kontrastu</strong> <strong {B}>Neznámý</strong> <strong {C}>%(TEXT)</strong>',
       CONTRAST_INPUT: 'Text v tomto vstupu není dostatečně kontrastní s pozadím. Kontrastní poměr by měl být alespoň 4,5:1 pro normální text a 3:1 pro velký text. <hr> <strong {B}>Kontrastní poměr</strong> <strong {B}>%(RATIO)</strong>',

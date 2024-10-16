@@ -246,6 +246,10 @@
       TABLES_EMPTY_HEADING: '¡Encabezado de tabla vacío encontrado! Los encabezados de las tablas <strong>nunca</strong> deben estar vacíos. Es importante designar encabezados de fila y/o columna para transmitir su relación. Esta información brinda contexto a las personas que usan tecnología de asistencia. Tenga en cuenta que las tablas deben usarse solo para datos tabulares. <hr> Más información sobre las <a href="https://www.w3.org/WAI/tutorials/tables/">tablas accesibles.</a>',
 
       // Contrast
+      CONTRAST_OPACITY: 'Aumenta la opacidad del texto para mejorar la visibilidad:',
+      CONTRAST_APCA: 'Esto no es suficiente contraste para ningún tamaño de texto. ¿Considera usar esta combinación de color y tamaño de texto?',
+      CONTRAST_COLOR: '¿Considera usar este color en su lugar?',
+      CONTRAST_SIZE: '¿Considera aumentar el tamaño del texto para esta combinación de colores?',
       CONTRAST_ERROR: 'Este texto no tiene suficiente contraste con el fondo. La relación de contraste debe ser de al menos 4,5:1 para texto normal y 3:1 para texto grande. <hr> <strong {B}>Relación de contraste</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
       CONTRAST_WARNING: 'Se desconoce el contraste de este texto y debe revisarse manualmente. Asegúrese de que el texto y el fondo tengan colores fuertes que contrasten. La relación de contraste debe ser de al menos 4,5:1 para texto normal y 3:1 para texto grande. <hr> <strong {B}>Relación de contraste</strong> <strong {B}>Desconocido</strong> <strong {C}>%(TEXT)</strong>',
       CONTRAST_INPUT: 'El texto dentro de esta entrada no tiene suficiente contraste con el fondo. La relación de contraste debe ser de al menos 4,5:1 para texto normal y 3:1 para texto grande. <hr> <strong {B}>Relación de contraste</strong> <strong {B}>%(RATIO)</strong>',

@@ -274,6 +274,10 @@
       TABLES_EMPTY_HEADING: 'Rasta tuščia lentelės antraštė! Lentelės antraštės <strong>niekada</strong> neturėtų būti tuščios. Svarbu nurodyti eilučių ir (arba) stulpelių antraštes, kad būtų išreikštas jų ryšys. Ši informacija suteikia kontekstą žmonėms, kurie naudojasi pagalbinėmis technologijomis. Atminkite, kad lentelės turėtų būti naudojamos tik lentelėms su lentelių duomenimis. <hr> Sužinokite daugiau apie <a href="https://www.w3.org/WAI/tutorials/tables/">prieinamas lenteles.</a>',
 
       // Contrast
+      CONTRAST_OPACITY: 'Padidinkite teksto opacitetą geresniam matomumui:',
+      CONTRAST_APCA: 'Tai nepakankamas kontrastas jokio dydžio tekstui. Apsvarstykite šios spalvos ir teksto dydžio derinį?',
+      CONTRAST_COLOR: 'Apsvarstykite galimybę naudoti šią spalvą?',
+      CONTRAST_SIZE: 'Apsvarstykite galimybę padidinti teksto dydį šiam spalvų deriniui?',
       CONTRAST_ERROR: 'Šis tekstas nepakankamai kontrastuoja su fonu. Įprasto teksto kontrasto santykis turėtų būti bent 4,5:1, o didelio teksto - 3:1. <hr> <strong {B}>Kontrasto santykis</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
       CONTRAST_WARNING: 'Šio teksto kontrastas nežinomas ir turi būti peržiūrėtas rankiniu būdu. Užtikrinkite, kad tekstas ir fonas būtų ryškios kontrastingos spalvos. Įprasto teksto kontrasto santykis turėtų būti bent 4,5:1, o didelio teksto - 3:1. <hr> <strong {B}>Kontrasto santykis</strong> <strong {B}>Nežinomas</strong> <strong {C}>%(TEXT)</strong>',
       CONTRAST_INPUT: 'Šios įvesties tekstas nepakankamai kontrastuoja su fonu. Įprasto teksto kontrasto santykis turėtų būti bent 4,5:1, o didelio teksto - 3:1. <hr> <strong {B}>Kontrasto santykis</strong> <strong {B}>%(RATIO)</strong>',

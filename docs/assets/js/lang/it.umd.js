@@ -271,6 +271,10 @@
       TABLES_EMPTY_HEADING: "Trovato un'intestazione di tabella vuota! Le intestazioni delle tabelle non devono mai essere vuote. È importante designare le intestazioni di riga e/o di colonna per indicare la loro relazione. Queste informazioni forniscono un contesto alle persone che utilizzano tecnologie assistive. Tenete presente che le tabelle devono essere utilizzate solo per i dati tabellari. <hr> Per saperne di più su <a href=\"https://www.w3.org/WAI/tutorials/tables/\">tabelle accessibili.</a>",
 
       // Contrast
+      CONTRAST_OPACITY: 'Aumenta l\'opacità del testo per una migliore visibilità:',
+      CONTRAST_APCA: 'Questo non è un contrasto sufficiente per alcuna dimensione di testo. Considera di utilizzare questa combinazione di colore e dimensione del testo?',
+      CONTRAST_COLOR: 'Considera di utilizzare invece questo colore?',
+      CONTRAST_SIZE: 'Considera di ingrandire la dimensione del testo per questa combinazione di colori?',
       CONTRAST_ERROR: 'Il testo non ha un contrasto sufficiente con lo sfondo. Il rapporto di contrasto dovrebbe essere almeno 4,5:1 per il testo normale e 3:1 per il testo grande. <hr> <strong {B}>Rapporto di contrasto</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
       CONTRAST_WARNING: 'Il contrasto di questo testo è sconosciuto e deve essere rivisto manualmente. Assicurarsi che il testo e lo sfondo abbiano colori fortemente contrastanti. Il rapporto di contrasto dovrebbe essere almeno 4,5:1 per il testo normale e 3:1 per il testo grande. <hr> <strong {B}>Rapporto di contrasto</strong> <strong {B}>Sconosciuto</strong> <strong {C}>%(TEXT)</strong>',
       CONTRAST_INPUT: 'Il testo all\'interno di questo input non ha un contrasto sufficiente con lo sfondo. Il rapporto di contrasto dovrebbe essere di almeno 4,5:1 per il testo normale e di 3:1 per il testo grande. <hr> <strong {B}>Rapporto di contrasto</strong> <strong {B}>%(RATIO)</strong>',

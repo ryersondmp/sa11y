@@ -279,6 +279,10 @@
       TABLES_EMPTY_HEADING: 'Lege tabelheader gevonden! Tabelkoppen moeten <strong>nooit</strong> leeg zijn. Het is belangrijk om rij- en/of kolomkoppen aan te geven om hun relatie duidelijk te maken. Deze informatie geeft context aan mensen die ondersteunende technologie gebruiken. Houd in gedachten dat tabellen alleen mogen worden gebruikt voor gegevens in tabelvorm. <hr> Meer informatie over <a href="https://www.w3.org/WAI/tutorials/tables/">toegankelijke tabellen.</a>',
 
       // Contrast
+      CONTRAST_OPACITY: 'Verhoog de opaciteit van de tekst voor betere zichtbaarheid:',
+      CONTRAST_APCA: 'Dit is niet genoeg contrast voor enige tekstgrootte. Overweeg deze kleur- en tekstgroottecombinatie te gebruiken?',
+      CONTRAST_COLOR: 'Overweeg deze kleur in plaats daarvan te gebruiken?',
+      CONTRAST_SIZE: 'Overweeg de tekstgrootte groter te maken voor deze kleurcombinatie?',
       CONTRAST_ERROR: 'Deze tekst heeft niet genoeg contrast met de achtergrond. De contrastverhouding moet ten minste 4,5:1 zijn voor normale tekst en 3:1 voor grote tekst. <hr> <strong {B}>Contrastverhouding</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
       CONTRAST_WARNING: 'Het contrast van deze tekst is onbekend en moet handmatig worden gecontroleerd. Zorg ervoor dat de tekst en de achtergrond sterk contrasterende kleuren hebben. De contrastverhouding moet minstens 4,5:1 zijn voor normale tekst en 3:1 voor grote tekst. <hr> <strong {B}>Contrastverhouding</strong> <strong {B}>Onbekend</strong> <strong {C}>%(TEXT)</strong>',
       CONTRAST_INPUT: 'Tekst binnen deze invoer heeft niet genoeg contrast met de achtergrond. De contrastverhouding moet ten minste 4,5:1 zijn voor normale tekst en 3:1 voor grote tekst. <hr> <strong {B}>Contrastverhouding</strong> <strong {B}>%(RATIO)</strong>',

@@ -142,6 +142,11 @@ div {
   text-align: center;
 }
 
+/* Add a 2px border to panel tooktips. */
+.tippy-box[data-theme~="sa11y-panel"] {
+  border: 1px solid var(--sa11y-panel-bg-splitter);
+}
+
 /* Tooltip content */
 .tippy-box[data-theme~="sa11y-theme"] {
   position: relative;

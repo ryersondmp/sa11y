@@ -270,6 +270,10 @@
       TABLES_EMPTY_HEADING: 'Atrasta tukša tabulas galvene! Tabulu galvenēm <strong>nevajadzētu būt tukšām. Ir svarīgi norādīt rindu un/vai kolonnu galvenes, lai atspoguļotu to saistību. Šī informācija sniedz kontekstu cilvēkiem, kuri izmanto palīgtehnoloģijas. Paturiet prātā, ka tabulas jāizmanto tikai tabulārajiem datiem. <hr> Uzziniet vairāk par <a href="https://www.w3.org/WAI/tutorials/tables/">pieejamām tabulām</a>.',
 
       // Contrast
+      CONTRAST_OPACITY: 'Palieliniet teksta opacitāti labākai redzamībai:',
+      CONTRAST_APCA: 'Tas nav pietiekams kontrasts nevienam teksta izmēram. Apsveriet iespēju izmantot šo krāsu un teksta izmēra kombināciju?',
+      CONTRAST_COLOR: 'Apsveriet iespēju izmantot šo krāsu?',
+      CONTRAST_SIZE: 'Apsveriet iespēju palielināt teksta izmēru šai krāsu kombinācijai?',
       CONTRAST_ERROR: 'Šis teksts nav pietiekami kontrastējošs ar fonu. Kontrasta attiecībai jābūt vismaz 4,5:1 parastam tekstam un 3:1 lielam tekstam. <hr> <strong {B}>Kontrasta attiecība</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
       CONTRAST_WARNING: 'Šī teksta kontrasts nav zināms, un tas ir jāpārbauda manuāli. Pārliecinieties, ka tekstam un fonam ir spēcīgi kontrastējošas krāsas. Kontrasta attiecībai jābūt vismaz 4,5:1 parastam tekstam un 3:1 lielam tekstam. <hr> <strong {B}>Kontrasta attiecība</strong> <strong {B}>Nezināms</strong> <strong {C}>%(TEXT)</strong>',
       CONTRAST_INPUT: 'Teksts šajā ievades laukā nav pietiekami kontrastējošs ar fonu. Kontrasta attiecībai jābūt vismaz 4,5:1 parastam tekstam un 3:1 lielam tekstam. <hr> <strong {B}>Kontrasta attiecība</strong> <strong {B}>%(RATIO)</strong>',

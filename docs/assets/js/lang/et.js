@@ -267,6 +267,10 @@ var et = {
     TABLES_EMPTY_HEADING: 'Leitud on tühi tabeli päis! Tabeli päised ei tohiks <strong>ei tohiks</strong> kunagi</strong> olla tühjad. Oluline on määrata rea ja/või veeru päised, et anda edasi nende seos. See teave annab konteksti inimestele, kes kasutavad abivahendeid. Pidage meeles, et tabeleid tuleks kasutada ainult tabeliandmete jaoks. <hr> Lisateave <a href="https://www.w3.org/WAI/tutorials/tables/">juurdepääsetavate tabelite kohta.</a>',
 
     // Contrast
+    CONTRAST_OPACITY: 'Suurendage teksti opakust parema nähtavuse tagamiseks:',
+    CONTRAST_APCA: 'See ei ole piisav kontrast ühegi tekstisuuruse jaoks. Kasutage selle värvi ja tekstisuuruse kombinatsiooni?',
+    CONTRAST_COLOR: 'Kas kaalute selle värvi kasutamist?',
+    CONTRAST_SIZE: 'Kas kaalute selle värvikombinatsiooni jaoks tekstisuuruse suurendamist?',
     CONTRAST_ERROR: 'See tekst ei ole taustaga piisavalt kontrastne. Kontrastsuse suhe peaks olema tavalise teksti puhul vähemalt 4,5:1 ja suure teksti puhul 3:1. <hr> <strong {B}>Kontrastsuhe</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_WARNING: 'Selle teksti kontrastsus on teadmata ja see tuleb käsitsi üle vaadata. Veenduge, et teksti ja tausta värvid oleksid tugevalt kontrastsed. Kontrastsuse suhe peaks olema tavalise teksti puhul vähemalt 4,5:1 ja suure teksti puhul 3:1. <hr> <strong {B}>Kontrastsuhe</strong> <strong {B}>Teadmata</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_INPUT: 'Selle sisendi tekst ei ole taustaga piisavalt kontrastne. Kontrastsuse suhe peaks olema tavalise teksti puhul vähemalt 4,5:1 ja suure teksti puhul 3:1. <hr> <strong {B}>Kontrastsuhe</strong> <strong {B}>%(RATIO)</strong>',

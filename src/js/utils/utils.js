@@ -555,7 +555,8 @@ export function isVisibleTextInAccessibleName($el) {
  * @returns Truncated string.
  */
 export function truncateString(string, maxLength) {
-  return string.length > maxLength ? `${string.substring(0, maxLength)}...` : string;
+  const truncatedString = string.substring(0, maxLength).trimEnd();
+  return string.length > maxLength ? `${truncatedString}...` : string;
 }
 
 /**

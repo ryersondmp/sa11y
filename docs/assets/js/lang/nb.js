@@ -267,6 +267,10 @@ var nb = {
     TABLES_EMPTY_HEADING: 'Tom tabelloverskrift funnet! Tabelloverskrifter skal <strong>aldri</strong> være tomme. Det er viktig å utpeke rad- og/eller kolonneoverskrifter for å vise sammenhengen mellom dem. Denne informasjonen gir kontekst til personer som bruker hjelpemidler. Husk at tabeller kun skal brukes til tabelldata. <hr> Finn ut mer om <a href="https://www.w3.org/WAI/tutorials/tables/">tilgjengelige tabeller.</a>',
 
     // Contrast
+    CONTRAST_OPACITY: 'Øk opasiteten til teksten for bedre synlighet:',
+    CONTRAST_APCA: 'Dette er ikke nok kontrast til noen tekststørrelse. Vurder å bruke denne farge- og tekststørrelseskombinasjonen?',
+    CONTRAST_COLOR: 'Vurder å bruke denne fargen i stedet?',
+    CONTRAST_SIZE: 'Vurder å gjøre tekststørrelsen større for denne fargekombinasjonen?',
     CONTRAST_ERROR: 'Denne teksten har ikke nok kontrast til bakgrunnen. Kontrastforholdet bør være minst 4,5:1 for normal tekst og 3:1 for stor tekst. <hr> <strong {B}>Kontrastforhold</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_WARNING: 'Kontrasten i denne teksten er ukjent og må kontrolleres manuelt. Sørg for at teksten og bakgrunnen har sterke kontrastfarger. Kontrastforholdet bør være minst 4,5:1 for normal tekst og 3:1 for stor tekst. <hr> <strong {B}>Kontrastforhold</strong> <strong {B}>Ukjent</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_INPUT: 'Teksten i denne inngangen har ikke nok kontrast til bakgrunnen. Kontrastforholdet bør være minst 4,5:1 for normal tekst og 3:1 for stor tekst. <hr> <strong {B}>Kontrastforhold</strong> <strong {B}>%(RATIO)</strong>',

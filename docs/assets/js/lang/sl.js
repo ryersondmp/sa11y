@@ -263,6 +263,10 @@ var sl = {
     TABLES_EMPTY_HEADING: 'Najden je prazen naglavni del tabele! Glave tabel ne smejo biti nikoli prazne. Pomembno je, da označite glave vrstic in/ali stolpcev in tako izrazite njihovo povezanost. Te informacije zagotavljajo kontekst za osebe, ki uporabljajo podporno tehnologijo. Ne pozabite, da je treba tabele uporabljati samo za tabelarične podatke. <hr> Preberite več o <a href="https://www.w3.org/WAI/tutorials/tables/">dostopnih tabelah.</a>',
 
     // Contrast
+    CONTRAST_OPACITY: 'Povečajte neprosojnost besedila za boljšo vidnost:',
+    CONTRAST_APCA: 'To ni dovolj kontrasta za nobeno velikost besedila. Razmislite o uporabi te kombinacije barve in velikosti besedila?',
+    CONTRAST_COLOR: 'Razmislite o uporabi te barve namesto?',
+    CONTRAST_SIZE: 'Razmislite o povečanju velikosti besedila za to barvno kombinacijo?',
     CONTRAST_ERROR: 'Besedilo ni dovolj kontrastno glede na ozadje. Kontrastno razmerje bi moralo biti vsaj 4,5:1 za običajno besedilo in 3:1 za veliko besedilo. <hr> <strong {B}>Razmerje kontrasta</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_WARNING: 'Kontrast tega besedila ni znan in ga je treba ročno preveriti. Prepričajte se, da imata besedilo in ozadje močno kontrastne barve. Kontrastno razmerje mora biti vsaj 4,5 : 1 za običajno besedilo in 3 : 1 za veliko besedilo. <hr> <strong {B}>Razmerje kontrasta</strong> <strong {B}>Neznano</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_INPUT: 'Besedilo v tem vnosu ni dovolj kontrastno z ozadjem. Kontrastno razmerje mora biti vsaj 4,5 : 1 za običajno besedilo in 3 : 1 za veliko besedilo. <hr> <strong {B}>Razmerje kontrasta</strong> <strong {B}>%(RATIO)</strong>',

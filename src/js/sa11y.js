@@ -22,7 +22,7 @@ import initializePanelToggles from './logic/control-panel-logic';
 import generatePageOutline from './interface/page-outline';
 import generateImageOutline from './interface/image-outline';
 import { updatePanel, updateBadge, updateCount } from './logic/update-panel';
-import { TooltipComponent, DismissTooltip } from './interface/tooltips';
+import { AnnotationTooltips, PanelTooltips } from './interface/tooltips';
 import { Annotations, annotate, detectOverflow, nudge } from './interface/annotations';
 import { HeadingAnchor, HeadingLabel } from './interface/heading-labels';
 import { skipToIssue, removeSkipBtnListeners } from './logic/skip-to-issue';
@@ -65,8 +65,8 @@ class Sa11y {
         customElements.define('sa11y-heading-label', HeadingLabel);
         customElements.define('sa11y-heading-anchor', HeadingAnchor);
         customElements.define('sa11y-annotation', Annotations);
-        customElements.define('sa11y-tooltips', TooltipComponent);
-        customElements.define('sa11y-dismiss-tooltip', DismissTooltip);
+        customElements.define('sa11y-tooltips', AnnotationTooltips);
+        customElements.define('sa11y-panel-tooltips', PanelTooltips);
         customElements.define('sa11y-control-panel', ControlPanel);
         customElements.define('sa11y-console-error', ConsoleErrors);
 
@@ -106,9 +106,9 @@ class Sa11y {
               this.resetAll,
             );
 
-            // Initialize dismiss tooltip.
-            this.dismissTooltip = new DismissTooltip();
-            document.body.appendChild(this.dismissTooltip);
+            // Initialize panel tooltips.
+            this.panelTooltips = new PanelTooltips();
+            document.body.appendChild(this.panelTooltips);
 
             // Disable toggle initially.
             Constants.Panel.toggle.disabled = false;
@@ -230,7 +230,7 @@ class Sa11y {
         // Check for dismissed items and update results array.
         const dismiss = dismissLogic(
           this.results,
-          this.dismissTooltip,
+          this.panelTooltips,
           this.checkAll,
           this.resetAll,
         );
@@ -267,7 +267,7 @@ class Sa11y {
           Elements.initializeAnnotations();
 
           // Initialize tooltips
-          const tooltipComponent = new TooltipComponent();
+          const tooltipComponent = new AnnotationTooltips();
           document.body.appendChild(tooltipComponent);
 
           dismissButtons(

@@ -274,6 +274,10 @@ var sk = {
     TABLES_EMPTY_HEADING: 'Nájdené prázdne záhlavie tabuľky! Hlavičky tabuliek by <strong>nikdy</strong> nemali byť prázdne. Je dôležité označiť záhlavia riadkov a/alebo stĺpcov, aby sa vyjadril ich vzťah. Tieto informácie poskytujú kontext ľuďom, ktorí používajú asistenčné technológie. Majte na pamäti, že tabuľky by sa mali používať len pre tabuľkové údaje. <hr> Ďalšie informácie o <a href="https://www.w3.org/WAI/tutorials/tables/">prístupných tabuľkách.</a>',
 
     // Contrast
+    CONTRAST_OPACITY: 'Zvýšte nepriehľadnosť textu pre lepšiu viditeľnosť:',
+    CONTRAST_APCA: 'Toto nie je dostatočný kontrast pre žiadnu veľkosť textu. Zvážte použitie tejto kombinácie farby a veľkosti textu?',
+    CONTRAST_COLOR: 'Zvážte použitie tejto farby namiesto?',
+    CONTRAST_SIZE: 'Zvážte zväčšenie veľkosti textu pre túto farebnú kombináciu?',
     CONTRAST_ERROR: 'Tento text nie je dostatočne kontrastný s pozadím. Kontrastný pomer by mal byť aspoň 4,5:1 pre normálny text a 3:1 pre veľký text. <hr> <strong {B}>Kontrastný pomer</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_WARNING: 'Kontrast tohto textu nie je známy a je potrebné ho manuálne skontrolovať. Uistite sa, že text a pozadie majú výrazne kontrastné farby. Kontrastný pomer by mal byť aspoň 4,5:1 pre normálny text a 3:1 pre veľký text. <hr> <strong {B}>Kontrastný pomer</strong> <strong {B}>Neznámy</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_INPUT: 'Text v tomto vstupe nie je dostatočne kontrastný s pozadím. Kontrastný pomer by mal byť aspoň 4,5:1 pre normálny text a 3:1 pre veľký text. <hr> <strong {B}>Kontrastný pomer</strong> <strong {B}>%(RATIO)</strong>',

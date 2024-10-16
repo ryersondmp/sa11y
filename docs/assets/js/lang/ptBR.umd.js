@@ -270,6 +270,10 @@
       TABLES_EMPTY_HEADING: 'Encontrado um cabeçalho de tabela vazio! Os cabeçalhos de tabela <strong>nunca</strong> devem estar vazios. É importante designar os cabeçalhos de linha e/ou coluna para transmitir sua relação. Essas informações fornecem contexto para as pessoas que usam tecnologia assistiva. Lembre-se de que as tabelas devem ser usadas somente para dados tabulares. <hr> Saiba mais sobre <a href="https://www.w3.org/WAI/tutorials/tables/">tabelas acessíveis.</a>',
 
       // Contrast
+      CONTRAST_OPACITY: 'Aumente a opacidade do texto para melhor visibilidade:',
+      CONTRAST_APCA: 'Isto não é contraste suficiente para qualquer tamanho de texto. Considere usar esta combinação de cor e tamanho de texto?',
+      CONTRAST_COLOR: 'Considere usar esta cor em vez disso?',
+      CONTRAST_SIZE: 'Considere aumentar o tamanho do texto para esta combinação de cores?',
       CONTRAST_ERROR: 'Esse texto não tem contraste suficiente com o plano de fundo. A taxa de contraste deve ser de pelo menos 4,5:1 para texto normal e 3:1 para texto grande. <hr> <strong {B}>Razão de contraste</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
       CONTRAST_WARNING: 'O contraste desse texto é desconhecido e precisa ser revisado manualmente. Certifique-se de que o texto e o plano de fundo tenham cores fortes e contrastantes. A taxa de contraste deve ser de pelo menos 4,5:1 para texto normal e 3:1 para texto grande. <hr> <strong {B}>Taxa de Contraste</strong> <strong {B}>Desconhecido</strong> <strong {C}>%(TEXT)</strong>',
       CONTRAST_INPUT: 'O texto nessa entrada não tem contraste suficiente com o plano de fundo. A taxa de contraste deve ser de pelo menos 4,5:1 para texto normal e 3:1 para texto grande. <hr> <strong {B}>Razão de contraste</strong> <strong {B}>%(RATIO)</strong>',
