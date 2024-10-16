@@ -464,11 +464,14 @@ export default function checkContrast(results, option) {
         .join('');
       const text = textString.trim();
 
+      // Inputs to check
+      const checkInputs = ['SELECT', 'INPUT', 'TEXTAREA'].includes($el.tagName);
+
       // Contrast check only elements with text, inputs, and textareas.
-      if (text.length !== 0 || $el.tagName === 'INPUT' || $el.tagName === 'TEXTAREA') {
+      if (text.length !== 0 || checkInputs) {
         if (background === 'image') {
           // Warnings for elements with a background image, ignoring inputs.
-          if (!['INPUT', 'SELECT', 'TEXTAREA'].includes($el.tagName) && !$el.closest('nav')) {
+          if (!checkInputs && !$el.closest('nav')) {
             contrastResults.warnings.push({ $el });
           }
         } else if (isVisuallyHidden || opacity === 0 || getHex(color) === getHex(background)) {
@@ -490,7 +493,7 @@ export default function checkContrast(results, option) {
       ? `<hr aria-hidden="true"> ${Lang.sprintf('CONTRAST_OPACITY')} <strong class="badge">${opacity}</strong>`
       : suggestion;
 
-    if ($el.tagName === 'INPUT' || $el.tagName === 'TEXTAREA') {
+    if (['SELECT', 'INPUT', 'TEXTAREA'].includes($el.tagName)) {
       if (option.checks.CONTRAST_INPUT) {
         results.push({
           element: $el,

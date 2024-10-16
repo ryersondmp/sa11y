@@ -195,7 +195,7 @@ const Constants = (function myConstants() {
     }
 
     // Contrast exclusions
-    Exclusions.Contrast = `link, hr, select option, video track, input[type="color"], input[type="range"], ${exclusions}`;
+    Exclusions.Contrast = `link, hr, option, video track, input[type="color"], input[type="range"], ${exclusions}`;
     if (option.contrastIgnore) {
       Exclusions.Contrast = `${option.contrastIgnore}, ${Exclusions.Contrast}`;
     }

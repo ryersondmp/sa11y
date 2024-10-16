@@ -1274,15 +1274,22 @@
         <option value="cat">Cat</option>
       </select>
     </div>
+    <div id="error-contrast-6">
+      <p style="font-size:5em; opacity: 0.05;">
+        Lorem ipsum dolor. Low opacity text.
+      </p>
+    </div>
 
+    <h3>Contrast warning</h3>
     <div id="warning-contrast">
       <h4 class="background-image">Text on background image requires manual review!</h4>
     </div>
 
-    <h3>1:1 contrast ratio should be warning instead of error</h3>
+    <h3>Contrast ignore</h3>
+    <h4>Ignore elements with exactly 1:1 contrast ratio</h4>
     <p>In most cases, any time there's been a 1:1 ratio it's because it's a background image... as no one should
       intentionally make something 1:1...</p>
-    <div id="warning-contrast-1">
+    <div id="nothing-contrast-1">
       <p style="color: var(--bg-example);">
         Lorem ipsum dolor, sit amet consectetur adipisicing elit. Numquam quasi ipsa assumenda aliquam dolore amet
         mollitia similique ab consequuntur magnam id veritatis explicabo accusamus, ipsum iusto ea eligendi
@@ -1291,21 +1298,14 @@
       </p>
     </div>
     <h4>Large size text with 1:1</h4>
-    <div id="warning-contrast-2">
+    <div id="nothing-contrast-2">
       <p style="color: var(--bg-example);font-size:5em">
         Lorem ipsum dolor.
       </p>
     </div>
 
-    <h4>Text has low opacity</h4>
-    <div id="warning-contrast-3">
-      <p style="font-size:5em; opacity: 0.05;">
-        Lorem ipsum dolor.
-      </p>
-    </div>
-
     <h4><code>&lt;select&gt;</code> element with background image</h4>
-    <div id="warning-contrast-4">
+    <div id="nothing-contrast-3">
       <label for="pet-select">Choose a pet:</label>
       <select id="pet-select" style="background-image: url(clientlib-site/images/google.gif);">
         <option value="">Please choose an option</option>
@@ -1316,6 +1316,13 @@
         <option value="spider">Spider</option>
         <option value="goldfish">Goldfish</option>
       </select>
+    </div>
+
+    <h4>Ignore background images within a <code>&lt;nav&gt;</code></h4>
+    <div id="nothing-contrast-4">
+      <nav>
+        <p class="background-image">Text on background image requires manual review!</p>
+      </nav>
     </div>
 
     <h2>Inputs</h2>
