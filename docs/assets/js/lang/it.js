@@ -207,7 +207,7 @@ var it = {
     LABELS_MISSING_IMAGE_INPUT: "Il pulsante dell'immagine manca del testo alt. Aggiungere il testo alt per fornire un nome accessibile. Ad esempio: <em>Cerca</em> o <em>Invio</em>.",
     LABELS_INPUT_RESET: 'I pulsanti di reset non dovrebbero essere utilizzati se non specificamente necessari, perché è facile che si attivino per errore. <hr> <strong>Tip!</strong> Scoprite perché <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">i pulsanti Reset e Cancel pongono problemi di usabilità.</a>',
     LABELS_ARIA_LABEL_INPUT: "L'input ha un nome accessibile, anche se bisogna assicurarsi che ci sia anche un'etichetta visibile. <hr> <strong {B}>Nome accessibile</strong> <strong {C}>%(TEXT)</strong>",
-    LABELS_NO_FOR_ATTRIBUTE: "Non c'è un'etichetta associata a questo input. Aggiungere un attributo <code>for</code> all'etichetta che corrisponda all'<code>id</code> di questo input. <hr> L'ID di questo input è: <strong>id=&#34;%(id)&#34;</strong>.",
+    LABELS_NO_FOR_ATTRIBUTE: "Non c'è un'etichetta associata a questo input. Aggiungere un attributo <code>for</code> all'etichetta che corrisponda all'<code>id</code> di questo input. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
     LABELS_MISSING_LABEL: "Non c'è un'etichetta associata a questo input. Aggiungere un <code>id</code> a questo input e aggiungere un attributo <code>for</code> corrispondente all'etichetta.",
 
     // Embedded content

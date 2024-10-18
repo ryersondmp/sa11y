@@ -186,7 +186,7 @@ var sv = {
     LABELS_MISSING_IMAGE_INPUT: 'Bildknappen saknar alternativ text. Lägg till alt-text för att ge knappen ett tillgängligt namn. Till exempel: <em>Sök</em> eller <em>Skicka</em>.',
     LABELS_INPUT_RESET: 'Återställningsknappar bör <strong>inte</strong> användas om de inte specifikt behövs, eftersom de är lätta att aktivera av misstag. <hr> <strong>Tips!</strong> Lär dig varför <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Återställ- och Avbryt-knapparna orsakar användbarhetsproblem.</a>',
     LABELS_ARIA_LABEL_INPUT: 'Inmatningsfältet har ett tillgängligt namn, men se till att det även finns en synlig etikett. <hr> <strong {B}>Tillgängligt namn</strong> <strong {C}>%(TEXT)</strong>',
-    LABELS_NO_FOR_ATTRIBUTE: 'Det finns ingen etikett associerad med detta inmatningsfält. Lägg till ett <code>for</code>-attribut till etiketten som matchar <code>id</code> för detta inmatningsfält. <hr> ID:t för detta inmatningsfält är: <strong>id=&#34;%(id)&#34;</strong>',
+    LABELS_NO_FOR_ATTRIBUTE: 'Det finns ingen etikett associerad med detta inmatningsfält. Lägg till ett <code>for</code>-attribut till etiketten som matchar <code>id</code> för detta inmatningsfält. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'Det finns ingen etikett associerad med detta inmatningsfält. Vänligen lägg till ett <code>id</code> till denna inmatning och lägg till ett matchande <code>for</code>-attribut till etiketten.',
 
     // Embedded content

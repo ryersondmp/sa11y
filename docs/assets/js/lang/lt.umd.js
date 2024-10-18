@@ -216,7 +216,7 @@
       LABELS_MISSING_IMAGE_INPUT: 'Nėra paveikslėlio mygtuko alt teksto. Pridėkite alt tekstą ir pateikite prieinamą pavadinimą. Pavyzdžiui: <em>Ieškoti</em> arba <em>Pateikti</em>.',
       LABELS_INPUT_RESET: 'Atstatymo mygtukai turėtų būti <strong>nenaudojami, nebent jų specialiai reikia, nes juos lengva įjungti per klaidą. <hr> <strong>Tipas!</strong> Sužinokite, kodėl <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Mygtukai "Reset" ir "Cancel" kelia patogumo problemų.</a>',
       LABELS_ARIA_LABEL_INPUT: 'Įvestis turi prieinamą pavadinimą, tačiau užtikrinkite, kad būtų matoma ir etiketė. <hr> <strong {B}>Prieinamas pavadinimas</strong> <strong {C}>%(TEXT)</strong>',
-      LABELS_NO_FOR_ATTRIBUTE: 'Su šia įvestimi nėra susieta jokia etiketė. Pridėkite <code>for</code> atributą prie etiketės, atitinkančios šios įvesties <code>id</code>. <hr> Šios įvesties ID yra: <strong>id=&#34;%(id)&#34;</strong>.',
+      LABELS_NO_FOR_ATTRIBUTE: 'Su šia įvestimi nėra susieta jokia etiketė. Pridėkite <code>for</code> atributą prie etiketės, atitinkančios šios įvesties <code>id</code>. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
       LABELS_MISSING_LABEL: 'Su šia įvestimi nėra susieta jokia etiketė. Pridėkite <code>id</code> prie šios įvesties ir pridėkite atitinkamą <code>for</code> atributą prie etiketės.',
 
       // Embedded content

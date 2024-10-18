@@ -194,7 +194,7 @@ export default {
     LABELS_MISSING_IMAGE_INPUT: 'O botão de imagem está sem texto alternativo. Adicione o texto alternativo para fornecer um nome acessível. Por exemplo: <em>Search</em> ou <em>Submit</em>.',
     LABELS_INPUT_RESET: 'Os botões de reinicialização não devem ser usados, a menos que sejam especificamente necessários, pois são fáceis de serem ativados por engano. <hr> <strong>Dica!</strong> Saiba por que <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">os botões Redefinir e Cancelar apresentam problemas de usabilidade.</a>',
     LABELS_ARIA_LABEL_INPUT: 'A entrada tem um nome acessível, mas certifique-se de que também haja um rótulo visível. <hr> <strong {B}>Nome acessível</strong> <strong {C}>%(TEXT)</strong>',
-    LABELS_NO_FOR_ATTRIBUTE: 'Não há rótulo associado a esse input. Adicione um atributo <code>for</code> ao rótulo que corresponda ao <code>id</code> desse input. <hr> O ID desse input é: <strong>id=&#34;%(id)&#34;</strong>',
+    LABELS_NO_FOR_ATTRIBUTE: 'Não há rótulo associado a esse input. Adicione um atributo <code>for</code> ao rótulo que corresponda ao <code>id</code> desse input. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'Não há rótulo associado a essa entrada. Adicione um <code>id</code> a essa entrada e adicione um atributo <code>for</code> correspondente ao rótulo.',
 
     // Embedded content

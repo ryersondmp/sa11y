@@ -204,7 +204,7 @@ var da = {
     LABELS_MISSING_IMAGE_INPUT: 'Billedknappen mangler alt-tekst. Tilføj venligst alt-tekst for at give et tilgængeligt navn. For eksempel: <em>Søg</em> eller <em>Send</em>.',
     LABELS_INPUT_RESET: 'Nulstillingsknapper bør <strong>ikke</strong> bruges, medmindre det er specifikt nødvendigt, fordi de er lette at aktivere ved en fejl. <hr> <strong>Tip!</strong> Lær, hvorfor <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Reset- og Cancel-knapper giver problemer med brugervenligheden.</a>',
     LABELS_ARIA_LABEL_INPUT: 'Input har et tilgængeligt navn, men sørg for, at der også er en synlig label. <hr> <strong {B}>Tilgængeligt navn</strong> <strong {C}>%(TEXT)</strong>',
-    LABELS_NO_FOR_ATTRIBUTE: 'Der er ingen label knyttet til dette input. Tilføj en <code>for</code>-attribut til den label, der matcher <code>id</code> for dette input. <hr> ID\'et for dette input er: <strong>id=&#34;%(id)&#34;</strong>',
+    LABELS_NO_FOR_ATTRIBUTE: 'Der er ingen label knyttet til dette input. Tilføj en <code>for</code>-attribut til den label, der matcher <code>id</code> for dette input. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'Der er ingen label knyttet til dette input. Tilføj venligst et <code>id</code> til dette input, og tilføj en matchende <code>for</code>-attribut til etiketten.',
 
     // Embedded content

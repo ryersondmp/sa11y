@@ -189,7 +189,7 @@ export default {
     LABELS_MISSING_IMAGE_INPUT: 'Bildschaltfläche fehlt Alt-Text. Bitte füge alternativen Text hinzu, um einen barrierefreien Namen bereitzustellen. Zum Beispiel: <em>Suchen</em> oder <em>Senden</em>.',
     LABELS_INPUT_RESET: 'Reset-Buttons sollten <strong>nicht</strong> verwendet werden, es sei denn, dies wird ausdrücklich benötigt, da sie leicht versehentlich aktiviert werden können. <hr> <strong>Tipp!</strong> Erfahre, warum <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Zurücksetzen- und Abbrechen-Schaltflächen Probleme mit der Benutzerfreundlichkeit aufwerfen.</a>',
     LABELS_ARIA_LABEL_INPUT: 'Die Eingabe hat einen zugänglichen Namen, stelle bitte trotzdem sicher, dass es auch ein sichtbares Label gibt. <hr> <strong {B}>Zugänglicher Name</strong> <strong {C}>%(TEXT)</strong>',
-    LABELS_NO_FOR_ATTRIBUTE: 'Dieser Eingabe ist kein Label zugeordnet. Füge dem Label ein <code>for</code>-Attribut hinzu, das der <code>id</code> dieser Eingabe entspricht. <hr> Die ID für diese Eingabe lautet: <strong>id=&#34;%(id)&#34;</strong>',
+    LABELS_NO_FOR_ATTRIBUTE: 'Dieser Eingabe ist kein Label zugeordnet. Füge dem Label ein <code>for</code>-Attribut hinzu, das der <code>id</code> dieser Eingabe entspricht. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'Dieser Eingabe ist kein Label zugeordnet. Bitte füge dieser Eingabe eine <code>id</code> hinzu und füge dem Label ein passendes <code>for</code>-Attribut hinzu.',
 
     // Embedded content

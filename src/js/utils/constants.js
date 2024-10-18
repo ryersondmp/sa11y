@@ -183,55 +183,64 @@ const Constants = (function myConstants() {
   /* **************** */
   const Exclusions = {};
   function initializeExclusions(option) {
-    // Global elements to exclude.
-    const exclusions = 'style, script, noscript, sa11y-control-panel, sa11y-dismiss-tooltip';
+    // List of Sa11y's interface components.
+    Exclusions.Sa11yElements = ['sa11y-heading-label', 'sa11y-heading-anchor', 'sa11y-annotation', 'sa11y-tooltips', 'sa11y-panel-tooltips', 'sa11y-control-panel', '#sa11y-colour-filters', '#sa11y-colour-filters *'];
 
-    // Main container.
+    // Global elements to exclude.
+    const exclusions = ['style', 'script', 'noscript'];
+
+    // Main container exclusions.
+    Exclusions.Container = ['#wpadminbar', '#wpadminbar *', ...exclusions];
     if (option.containerIgnore) {
-      const containerSelectors = option.containerIgnore.split(',').map(($el) => `${$el} *, ${$el}`);
-      Exclusions.Container = `#wpadminbar *, #sa11y-colour-filters, #sa11y-colour-filters *, ${containerSelectors.join(', ')}`;
-    } else {
-      Exclusions.Container = '#wpadminbar *, #sa11y-colour-filters, #sa11y-colour-filters *';
+      const containerSelectors = option.containerIgnore.split(',').map((item) => item.trim());
+      Exclusions.Container = Exclusions.Container.concat(
+        containerSelectors.flatMap((item) => [`${item} *`, item]),
+      );
     }
 
     // Contrast exclusions
-    Exclusions.Contrast = `link, hr, option, video track, input[type="color"], input[type="range"], ${exclusions}`;
+    Exclusions.Contrast = ['link', 'hr', 'option', 'video track', 'input[type="color"]', 'input[type="range"]', ...exclusions];
     if (option.contrastIgnore) {
-      Exclusions.Contrast = `${option.contrastIgnore}, ${Exclusions.Contrast}`;
+      Exclusions.Contrast = option.contrastIgnore.split(',').map(($el) => $el.trim()).concat(Exclusions.Contrast);
     }
 
     // Ignore specific regions for readability module.
-    Exclusions.Readability = `nav li, [role="navigation"] li, ${exclusions}`;
+    Exclusions.Readability = ['nav li', '[role="navigation"] li', ...exclusions];
     if (option.readabilityIgnore) {
-      Exclusions.Readability = `${option.readabilityIgnore}, ${Exclusions.Readability}`;
+      Exclusions.Readability = option.readabilityIgnore.split(',').map(($el) => $el.trim()).concat(Exclusions.Readability);
     }
 
-    // Ignore specific headings
-    if (option.headerIgnore) {
-      Exclusions.Headings = `${option.headerIgnore}`;
-    }
+    // Ignore specific headings.
+    Exclusions.Headings = option.headerIgnore
+      ? option.headerIgnore.split(',').map(($el) => $el.trim())
+      : [];
+
+    // Ignore specific classes within headings.
+    Exclusions.HeaderSpan = option.headerIgnoreSpan
+      ? option.headerIgnoreSpan.split(',').map(($el) => $el.trim())
+      : [];
 
     // Don't add heading label or include in panel.
-    if (option.outlineIgnore) {
-      Exclusions.Outline = `${option.outlineIgnore}`;
-    }
+    Exclusions.Outline = option.outlineIgnore
+      ? option.outlineIgnore.split(',').map(($el) => $el.trim())
+      : [];
 
     // Ignore specific images.
-    Exclusions.Images = '[role="presentation"]';
+    Exclusions.Images = ['[role="presentation"]'];
     if (option.imageIgnore) {
-      Exclusions.Images = `${option.imageIgnore}, ${Exclusions.Images}`;
+      Exclusions.Images = option.imageIgnore.split(',').map(($el) => $el.trim()).concat(Exclusions.Images);
     }
 
     // Ignore specific links
-    Exclusions.Links = '.anchorjs-link';
+    Exclusions.Links = ['.anchorjs-link'];
     if (option.linkIgnore) {
-      Exclusions.Links = `${option.linkIgnore}, ${Exclusions.Links}`;
+      Exclusions.Links = option.linkIgnore.split(',').map(($el) => $el.trim()).concat(Exclusions.Links);
     }
 
     // Ignore specific classes within links.
-    if (option.linkIgnoreSpan) {
-      Exclusions.LinkSpan = option.linkIgnoreSpan;
-    }
+    Exclusions.LinkSpan = option.linkIgnoreSpan
+      ? option.linkIgnoreSpan.split(',').map(($el) => $el.trim())
+      : [];
   }
 
   /* ********************** */

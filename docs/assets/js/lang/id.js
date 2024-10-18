@@ -208,7 +208,7 @@ var id = {
     LABELS_MISSING_IMAGE_INPUT: 'Tombol gambar tidak memiliki teks alt. Tambahkan teks alt untuk memberikan nama yang dapat diakses. Sebagai contoh: <em>Cari</em> atau <em>Kirim</em>.',
     LABELS_INPUT_RESET: 'Tombol Reset sebaiknya <strong>tidak</strong> digunakan kecuali jika secara khusus diperlukan karena mudah diaktifkan secara tidak sengaja. <hr> <strong>Tip!</strong> Pelajari mengapa tombol <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Reset dan Batal menimbulkan masalah dalam hal kegunaan.</a>',
     LABELS_ARIA_LABEL_INPUT: 'Input memiliki nama yang dapat diakses, meskipun pastikan ada label yang terlihat juga. <hr> <strong {B}>Nama yang dapat diakses</strong> <strong {C}>%(TEXT)</strong>',
-    LABELS_NO_FOR_ATTRIBUTE: 'Tidak ada label yang terkait dengan input ini. Tambahkan atribut <code>untuk</code> ke label yang sesuai dengan <code>id</code> input ini. <hr> ID untuk input ini adalah: <strong>id=&#34;%(id)&#34;</strong>',
+    LABELS_NO_FOR_ATTRIBUTE: 'Tidak ada label yang terkait dengan input ini. Tambahkan atribut <code>untuk</code> ke label yang sesuai dengan <code>id</code> input ini. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'Tidak ada label yang terkait dengan input ini. Tambahkan <code>id</code> ke input ini, dan tambahkan atribut <code>untuk</code> yang sesuai ke label.',
 
     // Embedded content

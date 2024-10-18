@@ -190,7 +190,7 @@ export default {
     LABELS_MISSING_IMAGE_INPUT: 'Resim düğmesinin alt metni eksik. Lütfen erişilebilir bir ad sağlamak için alt metin ekleyin. Örneğin: <em>Arama</em> veya <em>Gönder</em>.',
     LABELS_INPUT_RESET: 'Sıfırla düğmeleri özellikle gerekmedikçe <strong>kullanılmamalıdır</strong> çünkü yanlışlıkla etkinleştirilmeleri kolaydır. <hr> <strong>İpucu!</strong> <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Reset ve İptal düğmelerinin neden kullanılabilirlik sorunları oluşturduğunu öğrenin.</a>',
     LABELS_ARIA_LABEL_INPUT: 'Girdinin erişilebilir bir adı vardır, ancak lütfen görünür bir etiket olduğundan da emin olun. <hr> <strong {B}>Erişilebilir ad</strong> <strong {C}>%(TEXT)</strong>',
-    LABELS_NO_FOR_ATTRIBUTE: "Bu girdiyle ilişkilendirilmiş bir etiket yok. Etikete, bu girdinin <code>id</code>'siyle eşleşen bir <code>for</code> niteliği ekleyin. <hr> Bu girdinin kimliği şudur: <strong>id=&#34;%(id)&#34;</strong>",
+    LABELS_NO_FOR_ATTRIBUTE: "Bu girdiyle ilişkilendirilmiş bir etiket yok. Etikete, bu girdinin <code>id</code>'siyle eşleşen bir <code>for</code> niteliği ekleyin. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
     LABELS_MISSING_LABEL: 'Bu girdiyle ilişkilendirilmiş bir etiket yok. Lütfen bu girdiye bir <code>id</code> ekleyin ve etikete eşleşen bir <code>for</code> niteliği ekleyin.',
 
     // Embedded content

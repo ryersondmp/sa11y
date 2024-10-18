@@ -362,17 +362,19 @@ export default function checkImages(results, option) {
           });
         }
       } else if (option.checks.IMAGE_PASS) {
-        // Image has alt text!
-        results.push({
-          element: $el,
-          type: option.checks.IMAGE_PASS.type || 'good',
-          content: option.checks.IMAGE_PASS.content || Lang.sprintf('IMAGE_PASS', altText),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: Utils.prepareDismissal(`IMAGEPASS${src + altText}`),
-          dismissAll: option.checks.IMAGE_PASS.dismissAll ? 'IMAGE_PASS' : false,
-          developer: option.checks.IMAGE_PASS.developer || false,
-        });
+        if (!$el.closest('button, [role="button"]')) {
+          // Image has alt text!
+          results.push({
+            element: $el,
+            type: option.checks.IMAGE_PASS.type || 'good',
+            content: option.checks.IMAGE_PASS.content || Lang.sprintf('IMAGE_PASS', altText),
+            inline: false,
+            position: 'beforebegin',
+            dismiss: Utils.prepareDismissal(`IMAGEPASS${src + altText}`),
+            dismissAll: option.checks.IMAGE_PASS.dismissAll ? 'IMAGE_PASS' : false,
+            developer: option.checks.IMAGE_PASS.developer || false,
+          });
+        }
       }
     }
   });

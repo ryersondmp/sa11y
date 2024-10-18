@@ -220,7 +220,7 @@
       LABELS_MISSING_IMAGE_INPUT: '画像ボタンにaltテキストがありません。アクセス可能な名前を提供するためにaltテキストを追加してください。例：<em>検索</em>または<em>送信</em>。',
       LABELS_INPUT_RESET: 'リセットボタンは、特に必要な場合を除いて使用しないでください。間違って簡単にアクティブ化される可能性があります。<hr> <strong>ヒント！</strong> <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">リセットおよびキャンセルボタンが使用性の問題を引き起こす理由</a>を学んでください。',
       LABELS_ARIA_LABEL_INPUT: '入力フィールドにはアクセス可能な名前がありますが、見えるラベルもあることを確認してください。<hr> <strong {B}>アクセシブル名</strong> <strong {C}>%(TEXT)</strong>',
-      LABELS_NO_FOR_ATTRIBUTE: 'この入力フィールドに関連付けられたラベルがありません。この入力フィールドのラベルに一致する<code>for</code>属性を追加してください。<hr> この入力フィールドのIDは：<strong>id=&#34;%(id)&#34;</strong>',
+      LABELS_NO_FOR_ATTRIBUTE: 'この入力フィールドに関連付けられたラベルがありません。この入力フィールドのラベルに一致する<code>for</code>属性を追加してください。 <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
       LABELS_MISSING_LABEL: 'この入力フィールドに関連付けられたラベルがありません。この入力フィールドに<code>id</code>を追加し、ラベルに一致する<code>for</code>属性を追加してください。',
 
       // Embedded content

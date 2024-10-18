@@ -206,7 +206,7 @@ var ro = {
     LABELS_MISSING_IMAGE_INPUT: 'Butonul de imagine nu are text alternativ. Vă rugăm să adăugați un alt text pentru a oferi un nume accesibil. De exemplu: <em>Cercetare</em> sau <em>Submitere</em>.',
     LABELS_INPUT_RESET: 'Butoanele de resetare nu ar trebui <strong>nu</strong> utilizate decât dacă sunt necesare în mod specific, deoarece sunt ușor de activat din greșeală. <hr> <strong>Tip!</strong> Aflați de ce <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Butoanele Reset și Cancel ridică probleme de utilizare.</a>',
     LABELS_ARIA_LABEL_INPUT: 'Intrarea are un nume accesibil, deși vă rugăm să vă asigurați că există și o etichetă vizibilă. <hr> <strong {B}>Numele accesibil</strong> <strong {C}>%(TEXT)</strong>',
-    LABELS_NO_FOR_ATTRIBUTE: 'Nu există nicio etichetă asociată cu această intrare. Adăugați un atribut <code>for</code> la eticheta care se potrivește cu <code>id</code> al acestei intrări. <hr> ID-ul pentru această intrare este: <strong>id=&#34;%(id)&#34;</strong>.',
+    LABELS_NO_FOR_ATTRIBUTE: 'Nu există nicio etichetă asociată cu această intrare. Adăugați un atribut <code>for</code> la eticheta care se potrivește cu <code>id</code> al acestei intrări. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'Nu există nicio etichetă asociată cu această intrare. Vă rugăm să adăugați un <code>id</code> la această intrare și să adăugați un atribut <code>for</code> corespunzător etichetei.',
 
     // Embedded content

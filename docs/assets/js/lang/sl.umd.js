@@ -211,7 +211,7 @@
       LABELS_MISSING_IMAGE_INPUT: 'V gumbu za sliko manjka besedilo alt. Dodajte besedilo alt in zagotovite dostopno ime. Na primer: <em>Poišči</em> ali <em>Oddaj</em>.',
       LABELS_INPUT_RESET: 'Gumbe za ponastavitev <strong>ne smete uporabljati, razen če je to posebej potrebno, saj jih je mogoče zlahka aktivirati po pomoti. <hr> <strong>Tip!</strong> Preberite, zakaj <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Gumbova Reset in Cancel predstavljata težave z uporabnostjo.</a>',
       LABELS_ARIA_LABEL_INPUT: 'Vnos ima dostopno ime, vendar poskrbite, da je vidna tudi nalepka. <hr> <strong {B}>Dostopno ime</strong> <strong {C}>%(TEXT)</strong>',
-      LABELS_NO_FOR_ATTRIBUTE: 'S tem vnosom ni povezana nobena oznaka. Dodajte atribut <code>for</code> oznaki, ki ustreza <code>id</code> tega vnosa. <hr> ID tega vnosa je: <strong>id=&#34;%(id)&#34;</strong>.',
+      LABELS_NO_FOR_ATTRIBUTE: 'S tem vnosom ni povezana nobena oznaka. Dodajte atribut <code>for</code> oznaki, ki ustreza <code>id</code> tega vnosa. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
       LABELS_MISSING_LABEL: 'S tem vnosom ni povezana nobena oznaka. Dodajte <code>id</code> temu vnosu in dodajte ustrezen atribut <code>for</code> oznaki.',
 
       // Embedded content

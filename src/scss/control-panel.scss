@@ -241,6 +241,7 @@ audio {
   max-height: 400px;
   padding: 15px 20px 15px 15px;
   overflow-y: auto;
+  line-height: 22px;
   color: var(--sa11y-panel-primary);
   border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
 }

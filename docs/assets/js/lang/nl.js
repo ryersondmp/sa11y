@@ -215,7 +215,7 @@ var nl = {
     LABELS_MISSING_IMAGE_INPUT: 'Bij de afbeeldingsknop ontbreekt alt-tekst. Voeg alt-tekst toe om een toegankelijke naam te geven. Bijvoorbeeld: <em>Zoeken</em> of <em>Inzenden</em>.',
     LABELS_INPUT_RESET: 'Resetknoppen moeten <strong>niet</strong> worden gebruikt tenzij ze specifiek nodig zijn, omdat ze gemakkelijk per ongeluk kunnen worden geactiveerd. <hr> <strong>Tip!</strong>Lees waarom <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Reset- en annuleerknoppen bruikbaarheidsproblemen opleveren.</a>',
     LABELS_ARIA_LABEL_INPUT: 'De invoer heeft een toegankelijke naam, maar zorg ervoor dat er ook een zichtbaar label is. <hr> <strong {B}>Toegankelijk naam</strong> <strong {C}>%(TEXT)</strong>',
-    LABELS_NO_FOR_ATTRIBUTE: 'Er is geen label gekoppeld aan deze ingang. Voeg een <code>for</code>-attribuut toe aan het label dat overeenkomt met de <code>id</code> van deze ingang. <hr> De ID voor deze ingang is: <strong>id=&#34;%(id)&#34;</strong>',
+    LABELS_NO_FOR_ATTRIBUTE: 'Er is geen label gekoppeld aan deze ingang. Voeg een <code>for</code>-attribuut toe aan het label dat overeenkomt met de <code>id</code> van deze ingang. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'Er is geen label gekoppeld aan deze ingang. Voeg een <code>id</code> toe aan deze ingang en voeg een overeenkomend <code>for</code> attribuut toe aan het label.',
 
     // Embedded content

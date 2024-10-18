@@ -237,7 +237,7 @@ export default function checkQA(results, option) {
 
         if (typicalHeadingLength && notASentence) {
           // Be a little forgiving if it's a small paragraph.
-          const nonHeadingTextLength = Utils.fnIgnore(p, 'strong, b').textContent.trim().length;
+          const nonHeadingTextLength = Utils.fnIgnore(p, ['strong', 'b']).textContent.trim().length;
           if (nonHeadingTextLength !== 0 && nonHeadingTextLength <= 250) {
             return;
           }
@@ -394,97 +394,113 @@ export default function checkQA(results, option) {
     Elements.Found.Blockquotes.forEach(($el) => checkCaps($el));
   }
 
-  /* **************************************************** */
-  /*  Check for underlined and justify-aligned text.      */
-  /* **************************************************** */
-  if (option.checks.QA_UNDERLINE || option.checks.QA_JUSTIFY) {
-    const addUnderlineResult = ($el, inline) => {
-      const text = Utils.getText($el);
-      if (text.length !== 0) {
-        results.push({
-          element: $el,
-          type: option.checks.QA_UNDERLINE.type || 'warning',
-          content: option.checks.QA_UNDERLINE.content || Lang.sprintf('QA_UNDERLINE'),
-          inline,
-          position: 'beforebegin',
-          dismiss: Utils.prepareDismissal(`UNDERLINE${text}`),
-          dismissAll: option.checks.QA_UNDERLINE.dismissAll ? 'QA_UNDERLINE' : false,
-          developer: option.checks.QA_UNDERLINE.developer || false,
-        });
-      }
-    };
-
-    const addJustifyResult = ($el) => {
-      const text = Utils.getText($el);
-      if (text.length !== 0) {
-        results.push({
-          element: $el,
-          type: option.checks.QA_JUSTIFY.type || 'warning',
-          content: option.checks.QA_JUSTIFY.content || Lang._('QA_JUSTIFY'),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: Utils.prepareDismissal(`JUSTIFIED${text}`),
-          dismissAll: option.checks.QA_JUSTIFY.dismissAll ? 'QA_JUSTIFY' : false,
-          developer: option.checks.QA_JUSTIFY.developer || false,
-        });
-      }
-    };
-
-    const addSmallTextResult = ($el) => {
-      const text = Utils.getText($el);
-      if (text.length !== 0) {
-        results.push({
-          element: $el,
-          type: option.checks.QA_SMALL_TEXT.type || 'warning',
-          content: option.checks.QA_SMALL_TEXT.content || Lang._('QA_SMALL_TEXT'),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: Utils.prepareDismissal(`SMALL${text}`),
-          dismissAll: option.checks.QA_SMALL_TEXT.dismissAll ? 'QA_SMALL_TEXT' : false,
-          developer: option.checks.QA_SMALL_TEXT.developer || false,
-        });
-      }
-    };
-
-    /**
-      * Check: Flag all <u> elements (underlined).
-      * @author Brian Teeman
-    */
-    if (option.checks.QA_UNDERLINE) {
-      Elements.Found.Underlines.forEach(($el) => {
-        addUnderlineResult($el, true);
+  /* ************************************************************** */
+  /*  Various checks: underlines, justify-aligned, and small text.  */
+  /* ************************************************************** */
+  // Check underlined text. Created by Brian Teeman!
+  const addUnderlineResult = ($el, inline) => {
+    const text = Utils.getText($el);
+    if (text.length !== 0) {
+      results.push({
+        element: $el,
+        type: option.checks.QA_UNDERLINE.type || 'warning',
+        content: option.checks.QA_UNDERLINE.content || Lang.sprintf('QA_UNDERLINE'),
+        inline,
+        position: 'beforebegin',
+        dismiss: Utils.prepareDismissal(`UNDERLINE${text}`),
+        dismissAll: option.checks.QA_UNDERLINE.dismissAll ? 'QA_UNDERLINE' : false,
+        developer: option.checks.QA_UNDERLINE.developer || false,
       });
     }
+  };
 
-    // Get computed styles.
-    const computeStyle = ($el) => {
-      const style = getComputedStyle($el);
-      const { textDecorationLine, textAlign, fontSize } = style;
+  const addJustifyResult = ($el) => {
+    const text = Utils.getText($el);
+    if (text.length !== 0) {
+      results.push({
+        element: $el,
+        type: option.checks.QA_JUSTIFY.type || 'warning',
+        content: option.checks.QA_JUSTIFY.content || Lang._('QA_JUSTIFY'),
+        inline: false,
+        position: 'beforebegin',
+        dismiss: Utils.prepareDismissal(`JUSTIFIED${text}`),
+        dismissAll: option.checks.QA_JUSTIFY.dismissAll ? 'QA_JUSTIFY' : false,
+        developer: option.checks.QA_JUSTIFY.developer || false,
+      });
+    }
+  };
 
-      /** Check: underline formatted text. @author Brian Teeman */
-      if (option.checks.QA_UNDERLINE && textDecorationLine === 'underline' && !$el.closest('a[href]')) {
-        addUnderlineResult($el, false); // Inline false for computed underlines.
+  const addSmallTextResult = ($el) => {
+    const text = Utils.getText($el);
+    if (text.length !== 0) {
+      results.push({
+        element: $el,
+        type: option.checks.QA_SMALL_TEXT.type || 'warning',
+        content: option.checks.QA_SMALL_TEXT.content || Lang._('QA_SMALL_TEXT'),
+        inline: false,
+        position: 'beforebegin',
+        dismiss: Utils.prepareDismissal(`SMALL${text}`),
+        dismissAll: option.checks.QA_SMALL_TEXT.dismissAll ? 'QA_SMALL_TEXT' : false,
+        developer: option.checks.QA_SMALL_TEXT.developer || false,
+      });
+    }
+  };
+
+  // Flag all <u> elements.
+  if (option.checks.QA_UNDERLINE) {
+    Elements.Found.Underlines.forEach(($el) => {
+      addUnderlineResult($el, true);
+    });
+  }
+
+  const computeStyle = ($el) => {
+    const style = getComputedStyle($el);
+    const { textDecorationLine, textAlign, fontSize } = style;
+
+    /* Check: Underlined text. */
+    if (option.checks.QA_UNDERLINE && textDecorationLine === 'underline' && !$el.closest('a[href]')) {
+      addUnderlineResult($el, false); // Inline false for computed underlines.
+    }
+
+    /* Check: Font size is greater than 0 and less than 10. */
+    const defaultSize = option.checks.QA_SMALL_TEXT.fontSize || 10;
+    const computedFontSize = parseFloat(fontSize);
+
+    // Compare with parent element's font size.
+    const parentFontSize = $el.parentElement
+      ? parseFloat(getComputedStyle($el.parentElement).fontSize)
+      : null;
+    const isInherited = parentFontSize === computedFontSize;
+
+    // Ensure the font size is specific to the element, not inherited.
+    const withinRange = !isInherited && computedFontSize > 1 && computedFontSize <= defaultSize;
+    if (option.checks.QA_SMALL_TEXT && withinRange) {
+      addSmallTextResult($el);
+    }
+
+    /* Check: Check if text is justify-aligned. */
+    if (option.checks.QA_JUSTIFY && textAlign === 'justify') {
+      addJustifyResult($el);
+    }
+  };
+
+  // Loop through all elements within the root area.
+  if (option.checks.QA_UNDERLINE || option.checks.QA_JUSTIFY || option.checks.QA_SMALL_TEXT) {
+    for (let i = 0; i < Elements.Found.Everything.length; i++) {
+      const $el = Elements.Found.Everything[i];
+
+      // Filter only text nodes.
+      const textString = Array.from($el.childNodes)
+        .filter((node) => node.nodeType === 3)
+        .map((node) => node.textContent)
+        .join('');
+      const text = textString.trim();
+
+      // Only if there's text!
+      if (text.length !== 0) {
+        computeStyle($el);
       }
-
-      /** Check: Font size is greater than 0 and less than 10.
-       * Inspired by WebAim's WAVE check. Not WCAG. */
-      const defaultSize = option.checks.QA_SMALL_TEXT.fontSize || 10;
-      const computedFontSize = parseFloat(fontSize);
-      const withinRange = computedFontSize > 0 && computedFontSize <= defaultSize;
-      if (option.checks.QA_SMALL_TEXT && withinRange) {
-        addSmallTextResult($el);
-      }
-
-      /** Check: Check if text is justify-aligned. */
-      if (option.checks.QA_JUSTIFY && textAlign === 'justify') {
-        addJustifyResult($el);
-      }
-    };
-    Elements.Found.Paragraphs.forEach(computeStyle);
-    Elements.Found.Headings.forEach(computeStyle);
-    Elements.Found.Lists.forEach(computeStyle);
-    Elements.Found.Blockquotes.forEach(computeStyle);
-    Elements.Found.Spans.forEach(computeStyle);
+    }
   }
 
   /* **************************************************** */

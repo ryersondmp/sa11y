@@ -251,17 +251,19 @@ export default function checkDeveloper(results, option) {
   /* <li> elements must be contained in a <ul>/<ol>/<menu>.     */
   /* ********************************************************** */
   if (option.checks.UNCONTAINED_LI) {
-    Elements.Found.UncontainedLi.forEach(($el) => {
-      results.push({
-        element: $el,
-        type: option.checks.UNCONTAINED_LI.type || 'error',
-        content: option.checks.UNCONTAINED_LI.content || Lang.sprintf('UNCONTAINED_LI'),
-        inline: false,
-        position: 'beforebegin',
-        dismiss: Utils.prepareDismissal(`UNCONTAINEDLI${$el.textContent}`),
-        dismissAll: option.checks.UNCONTAINED_LI.dismissAll ? 'UNCONTAINED_LI' : false,
-        developer: option.checks.UNCONTAINED_LI.developer || true,
-      });
+    Elements.Found.Lists.forEach(($el) => {
+      if (!$el.closest('ul, ol, menu')) {
+        results.push({
+          element: $el,
+          type: option.checks.UNCONTAINED_LI.type || 'error',
+          content: option.checks.UNCONTAINED_LI.content || Lang.sprintf('UNCONTAINED_LI'),
+          inline: false,
+          position: 'beforebegin',
+          dismiss: Utils.prepareDismissal(`UNCONTAINEDLI${$el.textContent}`),
+          dismissAll: option.checks.UNCONTAINED_LI.dismissAll ? 'UNCONTAINED_LI' : false,
+          developer: option.checks.UNCONTAINED_LI.developer || true,
+        });
+      }
     });
   }
 

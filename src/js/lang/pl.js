@@ -187,7 +187,7 @@ export default {
     LABELS_MISSING_IMAGE_INPUT: 'Przycisk graficzny nie ma tekstu alternatywneego. Dodaj tekst alt, aby zapewnić dostępną nazwę. Na przykład: <em>Szukaj</em> lub <em>Wyślij</em>.',
     LABELS_INPUT_RESET: 'Przyciski resetowania <strong>nie powinny</strong> być używane, chyba że są specjalnie potrzebne, ponieważ łatwo je aktywować przez pomyłkę.<hr><strong>Porada!</strong> Dowiedz się, dlaczego <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Przyciski Resetuj i Anuluj powodują problemy z użytecznością.</a>',
     LABELS_ARIA_LABEL_INPUT: 'Pole danych ma dostępną nazwę (etykietę), ale upewnij się, że etykieta jest również widoczna. <hr> <strong {B}>Dostępna nazwa</strong> <strong {C}>%(TEXT)</strong>',
-    LABELS_NO_FOR_ATTRIBUTE: 'Z tym polem input nie jest skojarzona żadna etykieta (label). Dodaj atrybut <code>for</code> do etykiety z wartością <code>id</code>  pasującą do <code>id</code> tego pola.<hr>ID tego pola to: <strong>id=&#34;%(t)&#34;</strong>',
+    LABELS_NO_FOR_ATTRIBUTE: 'Z tym polem input nie jest skojarzona żadna etykieta (label). Dodaj atrybut <code>for</code> do etykiety z wartością <code>id</code>  pasującą do <code>id</code> tego pola. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'Z tym polem input nie jest skojarzona żadna etykieta (label). Dodaj do tego pola danych <code>id</code> i dodaj pasujący atrybut <code>for</code> do etykiety.',
 
     // Embedded content

@@ -351,7 +351,8 @@ export function generateColorSuggestion(details) {
  * @returns Contrast results.
  */
 export default function checkContrast(results, option) {
-  let contrastResults = {
+  // Initialize contrast object.
+  const contrastResults = {
     errors: [],
     warnings: [],
   };
@@ -371,13 +372,7 @@ export default function checkContrast(results, option) {
     const hasLowContrast = ratio < 3;
     const hasLowContrastNormalText = ratio > 1 && ratio < 4.5;
 
-    if (isLargeText && hasLowContrast) {
-      contrastResults.errors.push({
-        $el,
-        ratio: `${ratio.toFixed(2)}:1`,
-        details: { color: blendedColor, background, isLargeText, opacity },
-      });
-    } else if (!isLargeText && hasLowContrastNormalText) {
+    if ((isLargeText && hasLowContrast) || (!isLargeText && hasLowContrastNormalText)) {
       contrastResults.errors.push({
         $el,
         ratio: `${ratio.toFixed(2)}:1`,
@@ -405,9 +400,8 @@ export default function checkContrast(results, option) {
     // Get minimum font size based on weight.
     const fontWeightIndex = Math.floor(fontWeight / 100) - 1;
     const minFontSize = fontLookup[fontWeightIndex];
-    const fails = fontSize < minFontSize;
 
-    if (fails) {
+    if (fontSize < minFontSize) {
       contrastResults.errors.push({
         $el,
         ratio: `APCA ${Math.abs(ratio.toFixed(1))}`,
@@ -416,6 +410,49 @@ export default function checkContrast(results, option) {
     }
   };
 
+  // Iterate through all elements on the page.
+  for (let i = 0; i < Elements.Found.Contrast.length; i++) {
+    const $el = Elements.Found.Contrast[i];
+    const style = getComputedStyle($el);
+
+    // Get computed styles.
+    const opacity = parseFloat(style.opacity);
+    const color = convertToRGBA(style.color, opacity);
+    const fontSize = parseFloat(style.fontSize);
+    const getFontWeight = style.fontWeight;
+    const fontWeight = normalizeFontWeight(getFontWeight);
+    const background = getBackground($el);
+
+    // Check if element is visually hidden to screen readers.
+    const isVisuallyHidden = Utils.isScreenReaderOnly($el);
+
+    // Filter only text nodes.
+    const textString = Array.from($el.childNodes)
+      .filter((node) => node.nodeType === 3)
+      .map((node) => node.textContent)
+      .join('');
+    const text = textString.trim();
+
+    // Inputs to check
+    const checkInputs = ['SELECT', 'INPUT', 'TEXTAREA'].includes($el.tagName);
+
+    // Contrast check only elements with text, inputs, and textareas.
+    if (text.length !== 0 || checkInputs) {
+      if (background === 'image') {
+        // Warnings for elements with a background image, ignoring inputs.
+        if (!checkInputs && !$el.closest('nav')) {
+          contrastResults.warnings.push({ $el });
+        }
+      } else if (isVisuallyHidden || opacity === 0 || getHex(color) === getHex(background)) {
+        // Ignore visually hidden elements.
+      } else {
+        // Preferred contrast algorithm.
+        const algorithm = option.contrastAPCA ? apcaAlgorithm : wcagAlgorithm;
+        algorithm($el, color, background, fontSize, fontWeight, opacity);
+      }
+    }
+  }
+
   /**
    * Some additional processing before pushing to Sa11y's results array.
    * @param {Object} item A single item (object) from the contrast results object.
@@ -423,7 +460,8 @@ export default function checkContrast(results, option) {
    */
   const processContrastItem = ({ $el, ratio, details }) => {
     const clone = $el.cloneNode(true);
-    const nodeText = Utils.fnIgnore(clone, 'script, style, noscript, select option:not(:first-child)');
+    const ignoreElements = ['script', 'style', 'noscript'];
+    const nodeText = Utils.fnIgnore(clone, ignoreElements);
     const text = Utils.getText(nodeText);
     const truncatedText = Utils.truncateString(text, 100);
     const sanitizedText = Utils.sanitizeHTML(truncatedText);
@@ -432,59 +470,6 @@ export default function checkContrast(results, option) {
     const opacity = (details !== undefined) ? details.opacity : '';
     return { $el, ratio, sanitizedText, suggestion, opacity };
   };
-
-  /**
-  * Iterate through all elements on the page.
-  * @returns {Object[]} Returns a object containing all contrast errors and warnings.
-  */
-  (() => {
-    contrastResults = {
-      errors: [],
-      warnings: [],
-    };
-
-    for (let i = 0; i < Elements.Found.Contrast.length; i++) {
-      // Get computed styles of each element.
-      const $el = Elements.Found.Contrast[i];
-      const style = getComputedStyle($el);
-      const opacity = parseFloat(style.opacity);
-      const color = convertToRGBA(style.color, opacity);
-      const fontSize = parseFloat(style.fontSize);
-      const getFontWeight = style.fontWeight;
-      const fontWeight = normalizeFontWeight(getFontWeight);
-      const background = getBackground($el);
-
-      // Check if element is visually hidden to screen readers.
-      const isVisuallyHidden = Utils.isScreenReaderOnly($el);
-
-      // Filter only text nodes.
-      const textString = Array.from($el.childNodes)
-        .filter((node) => node.nodeType === 3)
-        .map((node) => node.textContent)
-        .join('');
-      const text = textString.trim();
-
-      // Inputs to check
-      const checkInputs = ['SELECT', 'INPUT', 'TEXTAREA'].includes($el.tagName);
-
-      // Contrast check only elements with text, inputs, and textareas.
-      if (text.length !== 0 || checkInputs) {
-        if (background === 'image') {
-          // Warnings for elements with a background image, ignoring inputs.
-          if (!checkInputs && !$el.closest('nav')) {
-            contrastResults.warnings.push({ $el });
-          }
-        } else if (isVisuallyHidden || opacity === 0 || getHex(color) === getHex(background)) {
-          // Ignore visually hidden elements.
-        } else {
-          // Preferred contrast algorithm.
-          const algorithm = option.contrastAPCA ? apcaAlgorithm : wcagAlgorithm;
-          algorithm($el, color, background, fontSize, fontWeight, opacity);
-        }
-      }
-    }
-    return contrastResults;
-  })();
 
   /* Contrast errors */
   contrastResults.errors.forEach((item) => {

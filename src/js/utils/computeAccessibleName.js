@@ -56,11 +56,16 @@ export const computeAriaLabel = (element, recursing = false) => {
  * @kudos to John Jameson, creator of the Editoria11y library, for developing this more robust calculation!
  * @notes Uses a subset of the W3C accessible name algorithm.
 */
-export const computeAccessibleName = (element, exclusions, recursing = 0) => {
+export const computeAccessibleName = (element, exclusions = [], recursing = 0) => {
   // Return immediately if there is an aria label.
   const hasAria = computeAriaLabel(element, recursing);
   if (hasAria !== 'noAria') {
     return hasAria;
+  }
+
+  // Textarea with a title.
+  if (element.tagName === 'TEXTAREA' && element.hasAttribute('title')) {
+    return element.getAttribute('title');
   }
 
   // Return immediately if there is only a text node.
@@ -91,8 +96,14 @@ export const computeAccessibleName = (element, exclusions, recursing = 0) => {
   let count = 0;
   let shouldContinueWalker = true;
 
-  const alwaysExclude = 'noscript, style, script, video, audio';
-  const exclude = element.querySelectorAll(exclusions ? `${exclusions}, ${alwaysExclude}` : alwaysExclude);
+  const alwaysExclude = ['noscript', 'style', 'script', 'video', 'audio'];
+
+  // Combine exclusions and alwaysExclude arrays, ensuring no trailing commas.
+  const validExclusions = exclusions && exclusions.length ? exclusions.join(', ') : '';
+  const excludeSelector = [...(validExclusions ? [validExclusions] : []), ...alwaysExclude].join(', ');
+
+  // Use the excludeSelector in querySelectorAll
+  const exclude = element.querySelectorAll(excludeSelector);
 
   while (treeWalker.nextNode() && shouldContinueWalker) {
     count += 1;

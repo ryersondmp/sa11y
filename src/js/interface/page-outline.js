@@ -4,6 +4,7 @@
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 import Constants from '../utils/constants';
+import Elements from '../utils/elements';
 import find from '../utils/find';
 
 export default function generatePageOutline(dismissed, headingOutline, option) {
@@ -47,7 +48,7 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
       const { isWithinRoot } = heading;
 
       // Filter out specified headings in outlineIgnore prop.
-      const ignoreArray = Constants.Exclusions.Outline ? Array.from(document.querySelectorAll(Constants.Exclusions.Outline)) : [];
+      const ignoreArray = Constants.Exclusions.Outline ? Elements.Found.ExcludedHeadings : [];
 
       if (!ignoreArray.includes($el)) {
         // Indicate if heading is totally hidden or visually hidden.

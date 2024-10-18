@@ -209,7 +209,7 @@ var nb = {
     LABELS_MISSING_IMAGE_INPUT: 'Bildeknappen mangler alt-tekst. Legg til alt-tekst for å gi et tilgjengelig navn. For eksempel: <em>Søk</em> eller <em>Send</em>.',
     LABELS_INPUT_RESET: 'Tilbakestillingsknapper bør <strong>ikke</strong> brukes med mindre det er spesifikt behov for dem, fordi de lett kan aktiveres ved en feiltakelse. <hr> <strong>Tips!</strong> Les mer om hvorfor <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Reset- og Cancel-knapper er problematiske for brukervennligheten.',
     LABELS_ARIA_LABEL_INPUT: 'Inndataene har et tilgjengelig navn, men sørg for at de også har en synlig etikett. <hr> <strong {B}>Tilgjengelig navn</strong> <strong {C}>%(TEXT)</strong>',
-    LABELS_NO_FOR_ATTRIBUTE: 'Det er ingen etikett knyttet til denne inndataen. Legg til et <code>for</code>-attributt i etiketten som samsvarer med <code>id</code> for denne inndataen. <hr> ID-en for denne inndataen er: <strong>id=&#34;%(id)&#34;</strong>',
+    LABELS_NO_FOR_ATTRIBUTE: 'Det er ingen etikett knyttet til denne inndataen. Legg til et <code>for</code>-attributt i etiketten som samsvarer med <code>id</code> for denne inndataen. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'Det er ingen etikett knyttet til denne inndataen. Legg til et <code>id</code> til denne inndataen, og legg til et matchende <code>for</code>-attributt til etiketten.',
 
     // Embedded content

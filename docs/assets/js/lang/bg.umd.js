@@ -222,7 +222,7 @@
       LABELS_MISSING_IMAGE_INPUT: 'В бутона за изображения липсва текст alt. Моля, добавете alt текст, за да предоставите достъпно име. Например: <em>Издирване</em> или <em>Изпращане</em>.',
       LABELS_INPUT_RESET: 'Бутоните за нулиране не трябва да се използват, освен ако не са изрично необходими, тъй като е лесно да бъдат активирани по погрешка. <hr> <strong>Съвет!</strong> Научете защо <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">бутоните за нулиране и отмяна създават проблеми с ползваемостта.</a>',
       LABELS_ARIA_LABEL_INPUT: 'Входът има достъпно име, но се уверете, че има и видим етикет. <hr> <strong {B}>Достъпно име</strong> <strong {C}>%(TEXT)</strong>',
-      LABELS_NO_FOR_ATTRIBUTE: 'Няма етикет, свързан с този вход. Добавете атрибут <code>for</code> към етикета, който съответства на <code>id</code> на този вход. <hr> Идентификаторът на този вход е: <strong>id=&#34;%(id)&#34;</strong>',
+      LABELS_NO_FOR_ATTRIBUTE: 'Няма етикет, свързан с този вход. Добавете атрибут <code>for</code> към етикета, който съответства на <code>id</code> на този вход. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
       LABELS_MISSING_LABEL: 'Няма етикет, свързан с този вход. Моля, добавете <code>id</code> към този вход и добавете съответстващ атрибут <code>for</code> към етикета.',
 
       // Embedded content

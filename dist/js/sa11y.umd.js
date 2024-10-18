@@ -423,55 +423,64 @@
     /* **************** */
     const Exclusions = {};
     function initializeExclusions(option) {
-      // Global elements to exclude.
-      const exclusions = 'style, script, noscript, sa11y-control-panel, sa11y-dismiss-tooltip';
+      // List of Sa11y's interface components.
+      Exclusions.Sa11yElements = ['sa11y-heading-label', 'sa11y-heading-anchor', 'sa11y-annotation', 'sa11y-tooltips', 'sa11y-panel-tooltips', 'sa11y-control-panel', '#sa11y-colour-filters', '#sa11y-colour-filters *'];
 
-      // Main container.
+      // Global elements to exclude.
+      const exclusions = ['style', 'script', 'noscript'];
+
+      // Main container exclusions.
+      Exclusions.Container = ['#wpadminbar', '#wpadminbar *', ...exclusions];
       if (option.containerIgnore) {
-        const containerSelectors = option.containerIgnore.split(',').map(($el) => `${$el} *, ${$el}`);
-        Exclusions.Container = `#wpadminbar *, #sa11y-colour-filters, #sa11y-colour-filters *, ${containerSelectors.join(', ')}`;
-      } else {
-        Exclusions.Container = '#wpadminbar *, #sa11y-colour-filters, #sa11y-colour-filters *';
+        const containerSelectors = option.containerIgnore.split(',').map((item) => item.trim());
+        Exclusions.Container = Exclusions.Container.concat(
+          containerSelectors.flatMap((item) => [`${item} *`, item]),
+        );
       }
 
       // Contrast exclusions
-      Exclusions.Contrast = `link, hr, option, video track, input[type="color"], input[type="range"], ${exclusions}`;
+      Exclusions.Contrast = ['link', 'hr', 'option', 'video track', 'input[type="color"]', 'input[type="range"]', ...exclusions];
       if (option.contrastIgnore) {
-        Exclusions.Contrast = `${option.contrastIgnore}, ${Exclusions.Contrast}`;
+        Exclusions.Contrast = option.contrastIgnore.split(',').map(($el) => $el.trim()).concat(Exclusions.Contrast);
       }
 
       // Ignore specific regions for readability module.
-      Exclusions.Readability = `nav li, [role="navigation"] li, ${exclusions}`;
+      Exclusions.Readability = ['nav li', '[role="navigation"] li', ...exclusions];
       if (option.readabilityIgnore) {
-        Exclusions.Readability = `${option.readabilityIgnore}, ${Exclusions.Readability}`;
+        Exclusions.Readability = option.readabilityIgnore.split(',').map(($el) => $el.trim()).concat(Exclusions.Readability);
       }
 
-      // Ignore specific headings
-      if (option.headerIgnore) {
-        Exclusions.Headings = `${option.headerIgnore}`;
-      }
+      // Ignore specific headings.
+      Exclusions.Headings = option.headerIgnore
+        ? option.headerIgnore.split(',').map(($el) => $el.trim())
+        : [];
+
+      // Ignore specific classes within headings.
+      Exclusions.HeaderSpan = option.headerIgnoreSpan
+        ? option.headerIgnoreSpan.split(',').map(($el) => $el.trim())
+        : [];
 
       // Don't add heading label or include in panel.
-      if (option.outlineIgnore) {
-        Exclusions.Outline = `${option.outlineIgnore}`;
-      }
+      Exclusions.Outline = option.outlineIgnore
+        ? option.outlineIgnore.split(',').map(($el) => $el.trim())
+        : [];
 
       // Ignore specific images.
-      Exclusions.Images = '[role="presentation"]';
+      Exclusions.Images = ['[role="presentation"]'];
       if (option.imageIgnore) {
-        Exclusions.Images = `${option.imageIgnore}, ${Exclusions.Images}`;
+        Exclusions.Images = option.imageIgnore.split(',').map(($el) => $el.trim()).concat(Exclusions.Images);
       }
 
       // Ignore specific links
-      Exclusions.Links = '.anchorjs-link';
+      Exclusions.Links = ['.anchorjs-link'];
       if (option.linkIgnore) {
-        Exclusions.Links = `${option.linkIgnore}, ${Exclusions.Links}`;
+        Exclusions.Links = option.linkIgnore.split(',').map(($el) => $el.trim()).concat(Exclusions.Links);
       }
 
       // Ignore specific classes within links.
-      if (option.linkIgnoreSpan) {
-        Exclusions.LinkSpan = option.linkIgnoreSpan;
-      }
+      Exclusions.LinkSpan = option.linkIgnoreSpan
+        ? option.linkIgnoreSpan.split(',').map(($el) => $el.trim())
+        : [];
     }
 
     /* ********************** */
@@ -551,8 +560,12 @@
     const shadowComponents = document.querySelectorAll('[data-sa11y-has-shadow-root]');
     const shadow = (shadowComponents) ? ', [data-sa11y-has-shadow-root]' : '';
 
-    const exclusions = Constants.Exclusions.Container;
-    const additional = (exclude !== undefined) ? `, ${exclude}` : '';
+    // Exclusions are returned as an array & need to become a string for selector.
+    const exclusions = Constants.Exclusions.Container.join(', ');
+    const additionalExclusions = (exclude !== undefined) ? exclude.join(', ') : '';
+
+    // Ensure no trailing commas.
+    const additional = additionalExclusions ? `, ${additionalExclusions}` : '';
 
     /* Logic yoinked from Editoria11y */
     // 1. Elements array includes web components in the selector to be used as a placeholder.
@@ -560,7 +573,6 @@
     if (shadowComponents.length) {
       // 2. Dive into the each shadow root and collect an array of its results.
       const shadowFind = [];
-      // Remove first comma and whitespace.
       elements.forEach((el, i) => {
         if (el && el.matches && el.matches('[data-sa11y-has-shadow-root]') && el.shadowRoot) {
           shadowFind[i] = el.shadowRoot.querySelectorAll(`:is(${selector}):not(${exclusions}${additional})`);
@@ -637,11 +649,16 @@
    * @kudos to John Jameson, creator of the Editoria11y library, for developing this more robust calculation!
    * @notes Uses a subset of the W3C accessible name algorithm.
   */
-  const computeAccessibleName = (element, exclusions, recursing = 0) => {
+  const computeAccessibleName = (element, exclusions = [], recursing = 0) => {
     // Return immediately if there is an aria label.
     const hasAria = computeAriaLabel(element, recursing);
     if (hasAria !== 'noAria') {
       return hasAria;
+    }
+
+    // Textarea with a title.
+    if (element.tagName === 'TEXTAREA' && element.hasAttribute('title')) {
+      return element.getAttribute('title');
     }
 
     // Return immediately if there is only a text node.
@@ -672,8 +689,14 @@
     let count = 0;
     let shouldContinueWalker = true;
 
-    const alwaysExclude = 'noscript, style, script, video, audio';
-    const exclude = element.querySelectorAll(exclusions ? `${exclusions}, ${alwaysExclude}` : alwaysExclude);
+    const alwaysExclude = ['noscript', 'style', 'script', 'video', 'audio'];
+
+    // Combine exclusions and alwaysExclude arrays, ensuring no trailing commas.
+    const validExclusions = exclusions && exclusions.length ? exclusions.join(', ') : '';
+    const excludeSelector = [...(validExclusions ? [validExclusions] : []), ...alwaysExclude].join(', ');
+
+    // Use the excludeSelector in querySelectorAll
+    const exclude = element.querySelectorAll(excludeSelector);
 
     while (treeWalker.nextNode() && shouldContinueWalker) {
       count += 1;
@@ -900,16 +923,16 @@
   /**
    * Creates a clone of an element while ignoring specified elements or elements matching a selector.
    * @param {Element} element The element to clone.
-   * @param {string} selector The selector to match elements to be excluded from the clone. Optional.
+   * @param {Array} selector The selector to match elements to be excluded from the clone. Optional.
    * @returns {Element} The cloned element with excluded elements removed.
    */
-  function fnIgnore(element, selector) {
-    const defaultIgnored = 'noscript, script, style';
-    const ignore = (!selector) ? defaultIgnored : `${defaultIgnored}, ${selector}`;
+  function fnIgnore(element, selectors = []) {
+    const defaultIgnored = ['noscript', 'script', 'style'];
+    const ignore = [...defaultIgnored, ...selectors].join(', ');
     const clone = element.cloneNode(true);
     const exclude = Array.from(clone.querySelectorAll(ignore));
-    exclude.forEach((c) => {
-      c.parentElement.removeChild(c);
+    exclude.forEach(($el) => {
+      $el.parentElement.removeChild($el);
     });
     return clone;
   }
@@ -1308,153 +1331,91 @@
   const Elements = (function myElements() {
     const Found = {};
     function initializeElements(option) {
-      // Main selectors
-      Found.Images = find(
-        'img',
-        'root',
-        Constants.Exclusions.Images,
-      );
+      // Since 4.0.0: For performance, we filter elements instead of dozens of querySelectors on the DOM.
+      Found.Everything = find('*', 'root', Constants.Exclusions.Sa11yElements);
 
+      Found.Contrast = Found.Everything.filter(($el) => {
+        const matchesSelector = Constants.Exclusions.Contrast.some((exclusion) => $el.matches(exclusion));
+        return !matchesSelector && !Constants.Exclusions.Contrast.includes($el);
+      });
+
+      Found.Images = Found.Everything.filter(($el) => $el.tagName === 'IMG'
+        && !Constants.Exclusions.Images.some((selector) => $el.matches(selector)));
+
+      Found.Links = Found.Everything.filter(($el) => $el.tagName === 'A'
+        && $el.hasAttribute('href')
+        && !$el.matches('[role="button"]') // Exclude links with [role="button"]
+        && !Constants.Exclusions.Links.some((selector) => $el.matches(selector)));
+
+      // We want headings from the entire document for the Page Outline.
       Found.Headings = find(
         'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]',
         'document',
         Constants.Exclusions.Headings,
       );
-
       Found.HeadingOne = find(
         'h1, [role="heading"][aria-level="1"]',
         'document',
         Constants.Exclusions.Headings,
       );
-
-      Found.Links = find(
-        'a[href]:not(a[role="button"])',
-        'root',
-        Constants.Exclusions.Links,
-      );
-
-      Found.Buttons = find(
-        'button, [role="button"]',
-        'root',
-        Constants.Exclusions.Container,
-      );
-
-      Found.Inputs = find(
-        'input, select, textarea',
-        'root',
-        Constants.Exclusions.Container,
-      );
-
-      Found.Contrast = find(
-        '*',
-        'root',
-        Constants.Exclusions.Contrast,
-      );
-
-      Found.Labels = find(
-        'label',
-        'root',
-        Constants.Exclusions.Container,
-      );
-
-      Found.Readability = find(
-        'p, li',
-        'readability',
-        Constants.Exclusions.Readability,
-      );
+      Found.ExcludedHeadings = Found.Headings.filter((heading) => Constants.Exclusions.Headings.some((exclusion) => heading.matches(exclusion)));
 
       // Quality assurance module.
-      Found.Paragraphs = find(
-        'p:not(table p)',
-        'root',
-        Constants.Exclusions.Container,
-      );
+      Found.Paragraphs = Found.Everything.filter(($el) => $el.tagName === 'P'
+        && !$el.closest('table'));
 
-      Found.Lists = find(
-        'li',
-        'root',
-        Constants.Exclusions.Container,
-      );
+      Found.Lists = Found.Everything.filter(($el) => $el.tagName === 'LI');
 
-      Found.Spans = find(
-        'span',
-        'root',
-        Constants.Exclusions.Container,
-      );
+      Found.Blockquotes = Found.Everything.filter(($el) => $el.tagName === 'BLOCKQUOTE');
 
-      Found.Blockquotes = find(
-        'blockquote',
-        'root',
-        Constants.Exclusions.Container,
-      );
+      Found.Tables = Found.Everything.filter(($el) => $el.tagName === 'TABLE' && !$el.matches('[role="presentation"]'));
 
-      Found.Tables = find(
-        'table:not([role="presentation"])',
-        'root',
-        Constants.Exclusions.Container,
-      );
+      Found.StrongItalics = Found.Everything.filter(($el) => ['STRONG', 'EM'].includes($el.tagName));
 
-      Found.StrongItalics = find(
-        'strong, em',
-        'root',
-        Constants.Exclusions.Container,
-      );
+      Found.Underlines = Found.Everything.filter(($el) => $el.tagName === 'U' && !$el.closest('a[href]'));
 
-      Found.Underlines = find(
-        'u:not(a[href] u)',
-        'root',
-        Constants.Exclusions.Container,
-      );
+      Found.Subscripts = Found.Everything.filter(($el) => ['SUP', 'SUB'].includes($el.tagName));
 
-      Found.Subscripts = find(
-        'sup, sub',
-        'root',
-        Constants.Exclusions.Container,
-      );
+      Found.CustomErrorLinks = option.linksToFlag
+        ? Found.Links.filter(($el) => option.linksToFlag.split(',').some((selector) => $el.matches(selector.trim()))) : [];
 
-      Found.Language = Constants.Global.html.getAttribute('lang');
+      // Readability.
+      const readabilityExclusions = ($el) => Constants.Root.Readability.contains($el)
+        && !Constants.Exclusions.Readability.some((selector) => $el.matches(selector));
+      Found.Readability = [
+        ...Found.Paragraphs.filter(readabilityExclusions),
+        ...Found.Lists.filter(readabilityExclusions),
+      ];
 
-      Found.CustomErrorLinks = option.linksToFlag ? find(
-        option.linksToFlag,
-        'root',
-        Constants.Exclusions.Container,
-      ) : [];
-
+      // Developer checks.
       const nestedSources = option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
-      Found.NestedComponents = nestedSources ? find(
-        nestedSources,
-        'root',
-        Constants.Exclusions.Container,
-      ) : [];
+      Found.NestedComponents = nestedSources ? Found.Everything.filter(($el) => $el.matches(nestedSources)) : [];
 
-      Found.UncontainedLi = option.checks.UNCONTAINED_LI ? find(
-        'li:not(ul li):not(ol li):not(menu li)',
-        'root',
-        Constants.Exclusions.Container,
-      ) : [];
+      Found.TabIndex = Found.Everything.filter(($el) => $el.hasAttribute('tabindex')
+        && $el.getAttribute('tabindex') !== '0'
+        && !$el.getAttribute('tabindex').startsWith('-'));
 
-      Found.TabIndex = find(
-        '[tabindex]:not([tabindex="0"], [tabindex^="-"])',
-        'root',
-        Constants.Exclusions.Container,
-      );
+      Found.Buttons = Found.Everything.filter(($el) => $el.tagName === 'BUTTON' || $el.matches('[role="button"]'));
 
-      // iFrames
-      Found.iframes = find(
-        'iframe, audio, video',
-        'root',
-        Constants.Exclusions.Container,
-      );
+      Found.Inputs = Found.Everything.filter(($el) => ['INPUT', 'SELECT', 'TEXTAREA'].includes($el.tagName));
 
+      Found.Labels = Found.Everything.filter(($el) => $el.tagName === 'LABEL');
+
+      // iFrames.
+      Found.iframes = Found.Everything.filter(($el) => ['IFRAME', 'AUDIO', 'VIDEO'].includes($el.tagName));
       Found.Videos = Found.iframes.filter(($el) => $el.matches(Constants.EmbeddedContent.Video));
       Found.Audio = Found.iframes.filter(($el) => $el.matches(Constants.EmbeddedContent.Audio));
       Found.Visualizations = Found.iframes.filter(($el) => $el.matches(Constants.EmbeddedContent.Visualization));
       Found.EmbeddedContent = Found.iframes.filter(($el) => !$el.matches(Constants.EmbeddedContent.All));
+
+      // Query select <HTML> given that the lang may change on an SPA.
+      const html = document.querySelector('html');
+      Found.Language = html.getAttribute('lang');
     }
 
-    /* ***************** */
-    /* Annotations */
-    /* ***************** */
+    /* ************* */
+    /*  Annotations  */
+    /* ************* */
     const Annotations = {};
     function initializeAnnotations() {
       Annotations.Array = find('sa11y-annotation', 'document');
@@ -1486,11 +1447,13 @@
   function findShadowComponents(option) {
     if (option.autoDetectShadowComponents) {
       // Elements to ignore.
-      const ignore = 'sa11y-heading-label, sa11y-heading-anchor, sa11y-annotation, sa11y-tooltips, sa11y-dismiss-tooltip, sa11y-control-panel, #sa11y-colour-filters, #sa11y-colour-filters *, script';
+      const ignore = Constants.Exclusions.Sa11yElements;
 
       // Search all elements.
       const root = document.querySelector(option.checkRoot);
-      const search = (root) ? Array.from(root.querySelectorAll(`*:not(${ignore})`)) : Array.from(document.body.querySelectorAll(`*:not(${ignore})`));
+      const search = (root)
+        ? Array.from(root.querySelectorAll(`*:not(${ignore})`))
+        : Array.from(document.body.querySelectorAll(`*:not(${ignore})`));
 
       // Query for open shadow roots & inject CSS utilities into every shadow DOM.
       search.forEach((component) => {
@@ -2107,7 +2070,7 @@ ${this.error.stack}
     };
   }
 
-  var panelStyles = "a,button,code,div,h1,h2,kbd,label,li,ol,p,pre,span,strong,svg,ul{all:unset;box-sizing:border-box!important}:after,:before{all:unset}div{display:block}*{-webkit-font-smoothing:auto!important;font-family:var(--sa11y-font-face)!important}label,li,ol,p,ul{font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px!important;text-align:start;word-break:break-word}.sa11y-overflow{overflow:auto}iframe,img,video{border:0;display:block;height:auto;max-width:100%}audio{max-width:100%}#toggle{align-items:center;background:linear-gradient(0deg,#e040fb,#00bcd4);background-color:var(--sa11y-setting-switch-bg-off);background-size:150% 150%;border-radius:50%;bottom:15px;color:#fff;cursor:pointer;display:flex;height:55px;inset-inline-end:18px;justify-content:center;margin:0;overflow:visible;position:fixed;transition:all .2s ease-in-out;width:55px;z-index:2147483644}#toggle.left,#toggle.top-left{inset-inline-start:18px}#toggle.top-left,#toggle.top-right{bottom:unset;top:15px}@media screen and (forced-colors:active){#toggle{background:ButtonFace!important;border:2px solid transparent}}#toggle svg{height:35px;width:35px}#toggle svg path{fill:var(--sa11y-panel-bg)}#toggle:focus,#toggle:hover{animation:sa11y-toggle-gradient 3s ease}#toggle:disabled:focus,#toggle:disabled:hover{animation:none}#toggle.on{background:linear-gradient(180deg,#e040fb,#00bcd4)}#toggle:disabled{background:unset;background-color:var(--sa11y-setting-switch-bg-off);cursor:not-allowed}#notification-badge{text-wrap:nowrap;align-items:center;background-color:#eb0000;border:1px solid transparent;border-radius:12px;color:#fff;display:none;font-size:13.5px;font-weight:400;justify-content:center;line-height:1;min-width:20px;padding:2.5px;position:absolute;right:-3px;top:-5.5px}#notification-badge.notification-badge-warning{background-color:var(--sa11y-warning-hover);border:1px solid var(--sa11y-warning);color:var(--sa11y-warning-text)}#panel{background:var(--sa11y-panel-bg);border-radius:4px;bottom:25px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15);inset-inline-end:42px;opacity:0;overflow:visible;position:fixed;transform:scale(0);transform-origin:100% 100%;transition:transform .2s,opacity background .2s .2s;visibility:hidden;z-index:2147483643}#panel.left,#panel.top-left{inset-inline-start:42px}#panel.top-left,#panel.top-right{bottom:unset;top:35px}#panel.active{height:auto;opacity:1;transform:scale(1);transform-origin:bottom right;transition:transform .2s,opacity .2s;visibility:visible}@media screen and (forced-colors:active){#panel{border:2px solid transparent}}#panel.active.left,[dir=rtl] #panel.active{transform-origin:bottom left}#panel.active.top-left{transform-origin:top left}#panel.active.top-right{transform-origin:top right}#panel-alert{display:none;opacity:0}#panel-alert.active{display:block;opacity:1}#panel-alert-content{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-primary);max-height:400px;overflow-y:auto;padding:15px 20px 15px 15px;position:relative}.top-left #panel-alert-content,.top-right #panel-alert-content{border:0}#panel-alert-preview .close-tooltip{display:none}#panel-alert-preview,#panel-alert-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}.panel-alert-preview{background:var(--sa11y-panel-bg-secondary);border:1px dashed var(--sa11y-panel-bg-splitter);border-radius:5px;margin-top:15px;padding:10px}.element-preview{background-color:var(--sa11y-panel-badge);border-radius:3.2px;margin-bottom:10px;overflow-wrap:break-word;padding:5px}button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}button[data-sa11y-dismiss]:focus,button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}h2{display:block;font-size:var(--sa11y-large-text);margin-bottom:3px}h2,strong{font-weight:600}a:not(#outline-list a):not(.edit){border-bottom:0;color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none!important}hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}#dismiss-button,#skip-button{background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:50px;cursor:pointer;display:none;height:36px;margin-inline-end:8px;margin-inline-start:2px;overflow:visible;position:relative;text-align:center;transition:all .1s ease-in-out;width:36px}#dismiss-button.active,#skip-button.active{display:block}#dismiss-button:disabled,#skip-button:disabled{background:none;border:0;box-shadow:none;cursor:default}#dismiss-button:before,#skip-button:before{bottom:-5px;content:\"\";left:-5px;position:absolute;right:-5px;top:-5px}#dismiss-button:focus:not(:disabled),#dismiss-button:hover:not(:disabled),#skip-button:focus:not(:disabled),#skip-button:hover:not(:disabled){background-color:var(--sa11y-shortcut-hover)}#panel.left #dismiss-button,#panel.left #skip-button,#panel.top-left #dismiss-button,#panel.top-left #skip-button{margin-inline-end:2px;margin-inline-start:8px}.dismiss-icon{background:var(--sa11y-setting-switch-bg-off);display:inline-block;height:24px;margin-bottom:-4px;-webkit-mask:var(--sa11y-dismiss-icon) center no-repeat;mask:var(--sa11y-dismiss-icon) center no-repeat;width:24px}@media screen and (forced-colors:active){.dismiss-icon{filter:invert(1)}}#panel-content{align-items:center;color:var(--sa11y-panel-primary);display:flex;padding:6px}#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{height:26px;margin:0 auto;width:26px}#panel-content.errors .panel-icon{background:var(--sa11y-panel-error);margin-top:-2px;-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat}#panel-content.good .panel-icon{background:var(--sa11y-good);-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat}#panel-content.warnings .panel-icon{background:var(--sa11y-warning-svg-color);-webkit-mask:var(--sa11y-warning-svg) center no-repeat;mask:var(--sa11y-warning-svg) center no-repeat;transform:scaleX(var(--sa11y-icon-direction))}@media screen and (forced-colors:active){#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{filter:invert(1)}}#panel.left #panel-content,#panel.top-left #panel-content{flex-direction:row-reverse}#status{font-size:var(--sa11y-large-text)}#status,.panel-count{color:var(--sa11y-panel-primary)}.panel-count{background-color:var(--sa11y-panel-badge);border-radius:4px;font-size:15px;font-weight:400;margin-left:3px;margin-right:3px;padding:2px 4px}#images-panel,#outline-panel,#page-issues,#settings-panel{color:var(--sa11y-panel-primary);display:none;opacity:0}#images-panel.active,#outline-panel.active,#page-issues.active,#settings-panel.active{display:block;opacity:1}.panel-header{padding:10px 15px 0;text-align:start}#about-content{padding-top:5px}#about-content p{display:block;margin-block-end:1em}#images-content,#outline-content,#page-issues-content,#settings-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);padding:0 15px 10px}.top-left #images-content,.top-left #outline-content,.top-left #page-issues-content,.top-left #settings-content,.top-right #images-content,.top-right #outline-content,.top-right #page-issues-content,.top-right #settings-content{border:0}#page-issues-content{max-height:160px;overflow-y:auto}#settings-content{max-height:400px;overflow-y:auto}#images-content,#outline-content{max-height:250px;overflow-y:auto}#outline-panel .outline-list-item.sa11y-red-text,#settings-panel .sa11y-red-text{color:var(--sa11y-red-text)}#outline-list{display:block;margin:0;padding:0}#outline-list a{cursor:pointer;display:block;text-decoration:none}#outline-list li{display:block;list-style-type:none;margin-bottom:3px;margin-top:0;padding:0}#outline-list li:first-child{margin-top:5px}#outline-list li a:focus,#outline-list li a:hover{background:var(--sa11y-panel-outline-hover);border-radius:5px;box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);display:block}#outline-list .outline-2{margin-inline-start:15px}#outline-list .outline-3{margin-inline-start:30px}#outline-list .outline-4{margin-inline-start:45px}#outline-list .outline-5{margin-inline-start:60px}#outline-list .outline-6{margin-inline-start:75px}#images-list{display:block;margin:0;padding:0}#images-list li{border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:block;list-style-type:none;margin:15px 0;overflow:hidden;width:100%}#images-list li:first-child{margin-top:5px}#images-list li:last-child{border:none;margin-bottom:0}#images-list li .alt{padding:2px 5px 10px}#images-list li .edit{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;padding:4px 7px;position:relative;text-decoration:none}#images-list li .edit:focus,#images-list li .edit:hover{background-color:var(--sa11y-shortcut-hover)}#images-list li .edit:before{bottom:-10px;content:\"\";left:-10px;position:absolute;right:-10px;top:-10px}#images-list li img{border-radius:5px;float:inline-start;margin-block-end:15px;margin-inline-end:10px;max-width:110px}#images-list li.warning .alt{color:var(--sa11y-yellow-text)}#images-list li.warning img{background-color:var(--sa11y-yellow-text);border:5px solid var(--sa11y-yellow-text)}#images-list li.error .alt{color:var(--sa11y-error)}#images-list li.error img{background-color:var(--sa11y-error);border:5px solid var(--sa11y-error)}#images-list li.good img{background-color:var(--sa11y-panel-badge);border:5px solid var(--sa11y-panel-badge)}@media screen and (forced-colors:active){#images-list li img{background-color:ButtonBorder!important}}.error-icon{background:var(--sa11y-error-text);display:inline-block;height:16px;margin-bottom:-4px;-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat;width:16px}.hidden-icon{margin-bottom:-3px;-webkit-mask:var(--sa11y-hidden-icon-svg) center no-repeat;mask:var(--sa11y-hidden-icon-svg) center no-repeat}.hidden-icon,.link-icon{background:var(--sa11y-panel-primary);display:inline-block;height:16px;width:16px}.link-icon{margin-bottom:-3.5px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat}.error-badge .hidden-icon,.error-badge .link-icon{background:var(--sa11y-error-text)}.warning-badge .hidden-icon,.warning-badge .link-icon{background:var(--sa11y-panel-bg)}@media screen and (forced-colors:active){.error-icon,.hidden-icon,.link-icon{filter:invert(1)}}#panel-controls{border-radius:0 0 4px 4px;display:flex;overflow:hidden}#panel-controls button{background:var(--sa11y-panel-bg-secondary);background-color:var(--sa11y-panel-bg-secondary);border-bottom:1px solid var(--sa11y-panel-bg-splitter);border-inline-end:1px solid var(--sa11y-panel-bg-splitter);border-top:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-secondary);cursor:pointer;display:block;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;line-height:0;margin:0;opacity:1;outline:0;padding:0;position:relative;text-align:center;transition:background .2s;width:100%}#panel-controls button.active,#panel-controls button:hover{background-color:var(--sa11y-shortcut-hover)}#panel-controls button.active{font-weight:500}#export-results-mode,label{color:var(--sa11y-panel-primary);display:inline-block;font-weight:400;margin:0;width:100%}label:not(#colour-filter-mode,#export-results-mode){cursor:pointer}#settings-panel #export-csv,#settings-panel #export-html{padding:0;text-align:center;width:unset}#settings-panel #export-csv span,#settings-panel #export-html span{background:var(--sa11y-panel-bg-secondary);border-radius:5px;box-shadow:inset 0 0 0 2px var(--sa11y-setting-switch-bg-off);display:block;margin:0 4px;padding:7px 9px;width:65px}#settings-panel #export-csv:focus span,#settings-panel #export-csv:focus-within span,#settings-panel #export-csv:hover span,#settings-panel #export-html:focus span,#settings-panel #export-html:focus-within span,#settings-panel #export-html:hover span{background:var(--sa11y-shortcut-hover)}#settings-panel .switch{background:none;border:0;border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:44px;margin:0;padding:7px 10px;position:relative;text-align:end;width:105px}#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{content:\"\";display:inline-block;height:27px;margin:0 4px 4px;vertical-align:middle;width:27px}#settings-panel .switch[aria-pressed=true]:after{background:var(--sa11y-setting-switch-bg-on);-webkit-mask:var(--sa11y-setting-switch-on-svg) center no-repeat;mask:var(--sa11y-setting-switch-on-svg) center no-repeat}#settings-panel .switch[aria-pressed=false]:after{background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-setting-switch-off-svg) center no-repeat;mask:var(--sa11y-setting-switch-off-svg) center no-repeat}@media screen and (forced-colors:active){#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{filter:invert(1)}}#settings-panel #settings-options li{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:flex;justify-content:space-between;list-style-type:none;padding:1px 0}#settings-panel #settings-options li:last-child{border:none}#page-issues{align-items:center;color:var(--sa11y-panel-primary)}#page-issues-list{display:block;margin-top:4px}#page-issues-list li{display:block;margin:0 0 10px}#page-issues-list strong{display:block}.top-left.has-page-issues #page-issues,.top-right.has-page-issues #page-issues{border-top:1px solid var(--sa11y-panel-bg-splitter);margin-top:-1px}#panel-colour-filters{align-items:center;color:var(--sa11y-panel-primary);display:none;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}#panel-colour-filters.active{display:flex}#panel-colour-filters p{padding:6px 20px 6px 6px;width:100%}#panel-colour-filters[data-colour=protanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image-slice:1}#panel-colour-filters[data-colour=deuteranopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image-slice:1}#panel-colour-filters[data-colour=tritanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image-slice:1}#panel-colour-filters[data-colour=monochromacy]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image-slice:1}#panel-colour-filters[data-colour=protanopia] .panel-icon{background:var(--sa11y-panel-error)}#panel-colour-filters[data-colour=deuteranopia] .panel-icon{background:var(--sa11y-good-hover)}#panel-colour-filters[data-colour=tritanopia] .panel-icon{background:var(--sa11y-blue)}#panel-colour-filters[data-colour=monochromacy] .panel-icon{background:linear-gradient(90deg,#38a459 20%,red 50%,#0077c8 80%)}#panel-colour-filters .panel-icon{height:30px;margin-inline-end:5px;margin-inline-start:10px;-webkit-mask:var(--sa11y-low-vision-icon) center no-repeat;mask:var(--sa11y-low-vision-icon) center no-repeat;width:30px}@media screen and (forced-colors:active){#panel-colour-filters .panel-icon{forced-color-adjust:none}}.select-dropdown{align-items:center;display:flex;position:relative}.select-dropdown:after{border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid var(--sa11y-setting-switch-bg-off);content:\" \";inset-inline-end:14px;position:absolute}#colour-filter-select{-webkit-appearance:none;-moz-appearance:none;appearance:none;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-setting-switch-bg-off);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;margin-inline-end:4px;padding-inline-end:25px;padding-inline-start:5px;position:relative;text-align:end;vertical-align:middle}#colour-filter-select:focus,#colour-filter-select:hover{background:var(--sa11y-shortcut-hover)}#colour-filter-select.active{box-shadow:0 0 0 2px var(--sa11y-setting-switch-bg-on)}#colour-filter-item label,#colour-filter-item select{margin-bottom:9px;margin-top:10px}#readability-panel{display:none;opacity:0}#readability-panel.active{display:block;opacity:1}.top-left #readability-content,.top-right #readability-content{border-top:1px solid var(--sa11y-panel-bg-splitter)}.left #readability-content,.right #readability-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter)}#readability-content{color:var(--sa11y-panel-primary);padding:10px 15px;width:100%}#readability-details{list-style-type:none;margin:0;padding:0;white-space:normal}#readability-details li{display:inline-block;list-style-type:none;margin:0;padding-inline-end:10px}.readability-score{background-color:var(--sa11y-panel-badge);border-radius:4px;color:var(--sa11y-panel-primary);margin-inline-start:5px;padding:2px 5px}#readability-info{margin-inline-start:10px}#skip-to-page-issues{display:none}#panel.has-page-issues #skip-to-page-issues{clip:rect(0,0,0,0);background:var(--sa11y-panel-bg);border:0;border-radius:5px;display:block;height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}#panel.has-page-issues #skip-to-page-issues:focus{clip:auto;height:auto;margin:0;overflow:visible;padding:5px 7px;white-space:normal;width:auto;z-index:1}.hide-settings-border{border-bottom:0!important;padding:0 15px!important}.hide-settings-border li:not(#colour-filter-item){display:none!important}.hide-settings-border #about-content{display:none}.hide-settings-border.scrollable:before{all:unset}::-webkit-scrollbar{height:6px;width:7px}::-webkit-scrollbar-thumb{background-color:var(--sa11y-button-outline);border-radius:6px}*{scrollbar-color:var(--sa11y-button-outline);scrollbar-width:thin}.scrollable:before{animation:fade 1s ease-in-out;background:linear-gradient(180deg,transparent 70%,var(--sa11y-panel-scrollable) 100%);background-position:bottom;bottom:auto;content:\"\";height:250px;left:0;position:absolute;right:0;top:auto;transition:opacity 1s ease-in-out;width:100%;z-index:-1}#settings-content.scrollable:before{height:400px}.top-left .scrollable:before,.top-right .scrollable:before{border-radius:5px}#page-issues-content.scrollable:before{height:160px}#panel-alert.scrollable:before{height:200px}@keyframes sa11y-toggle-gradient{0%{background-position:50% 0}50%{background-position:50% 100%}to{background-position:50% 0}}@keyframes fade{0%{opacity:0}to{opacity:1}}@media (prefers-reduced-motion:reduce){*{animation:none!important;transform:none!important;transition:none!important}}#panel{width:400px}#container:lang(en) #panel{width:305px}#container:lang(da) #panel,#container:lang(de) #panel,#container:lang(nb) #panel,#container:lang(pl) #panel,#container:lang(sv) #panel,#container:lang(zh) #panel{width:350px}#container:lang(bg) .switch:not(#export-results-item *),#container:lang(es) .switch:not(#export-results-item *){width:225px!important}#container:not(:lang(en)):not(:lang(de)) .switch{width:205px}";
+  var panelStyles = "a,button,code,div,h1,h2,kbd,label,li,ol,p,pre,span,strong,svg,ul{all:unset;box-sizing:border-box!important}:after,:before{all:unset}div{display:block}*{-webkit-font-smoothing:auto!important;font-family:var(--sa11y-font-face)!important}label,li,ol,p,ul{font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px!important;text-align:start;word-break:break-word}.sa11y-overflow{overflow:auto}iframe,img,video{border:0;display:block;height:auto;max-width:100%}audio{max-width:100%}#toggle{align-items:center;background:linear-gradient(0deg,#e040fb,#00bcd4);background-color:var(--sa11y-setting-switch-bg-off);background-size:150% 150%;border-radius:50%;bottom:15px;color:#fff;cursor:pointer;display:flex;height:55px;inset-inline-end:18px;justify-content:center;margin:0;overflow:visible;position:fixed;transition:all .2s ease-in-out;width:55px;z-index:2147483644}#toggle.left,#toggle.top-left{inset-inline-start:18px}#toggle.top-left,#toggle.top-right{bottom:unset;top:15px}@media screen and (forced-colors:active){#toggle{background:ButtonFace!important;border:2px solid transparent}}#toggle svg{height:35px;width:35px}#toggle svg path{fill:var(--sa11y-panel-bg)}#toggle:focus,#toggle:hover{animation:sa11y-toggle-gradient 3s ease}#toggle:disabled:focus,#toggle:disabled:hover{animation:none}#toggle.on{background:linear-gradient(180deg,#e040fb,#00bcd4)}#toggle:disabled{background:unset;background-color:var(--sa11y-setting-switch-bg-off);cursor:not-allowed}#notification-badge{text-wrap:nowrap;align-items:center;background-color:#eb0000;border:1px solid transparent;border-radius:12px;color:#fff;display:none;font-size:13.5px;font-weight:400;justify-content:center;line-height:1;min-width:20px;padding:2.5px;position:absolute;right:-3px;top:-5.5px}#notification-badge.notification-badge-warning{background-color:var(--sa11y-warning-hover);border:1px solid var(--sa11y-warning);color:var(--sa11y-warning-text)}#panel{background:var(--sa11y-panel-bg);border-radius:4px;bottom:25px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15);inset-inline-end:42px;opacity:0;overflow:visible;position:fixed;transform:scale(0);transform-origin:100% 100%;transition:transform .2s,opacity background .2s .2s;visibility:hidden;z-index:2147483643}#panel.left,#panel.top-left{inset-inline-start:42px}#panel.top-left,#panel.top-right{bottom:unset;top:35px}#panel.active{height:auto;opacity:1;transform:scale(1);transform-origin:bottom right;transition:transform .2s,opacity .2s;visibility:visible}@media screen and (forced-colors:active){#panel{border:2px solid transparent}}#panel.active.left,[dir=rtl] #panel.active{transform-origin:bottom left}#panel.active.top-left{transform-origin:top left}#panel.active.top-right{transform-origin:top right}#panel-alert{display:none;opacity:0}#panel-alert.active{display:block;opacity:1}#panel-alert-content{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-primary);line-height:22px;max-height:400px;overflow-y:auto;padding:15px 20px 15px 15px;position:relative}.top-left #panel-alert-content,.top-right #panel-alert-content{border:0}#panel-alert-preview .close-tooltip{display:none}#panel-alert-preview,#panel-alert-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}.panel-alert-preview{background:var(--sa11y-panel-bg-secondary);border:1px dashed var(--sa11y-panel-bg-splitter);border-radius:5px;margin-top:15px;padding:10px}.element-preview{background-color:var(--sa11y-panel-badge);border-radius:3.2px;margin-bottom:10px;overflow-wrap:break-word;padding:5px}button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}button[data-sa11y-dismiss]:focus,button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}h2{display:block;font-size:var(--sa11y-large-text);margin-bottom:3px}h2,strong{font-weight:600}a:not(#outline-list a):not(.edit){border-bottom:0;color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none!important}hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}#dismiss-button,#skip-button{background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:50px;cursor:pointer;display:none;height:36px;margin-inline-end:8px;margin-inline-start:2px;overflow:visible;position:relative;text-align:center;transition:all .1s ease-in-out;width:36px}#dismiss-button.active,#skip-button.active{display:block}#dismiss-button:disabled,#skip-button:disabled{background:none;border:0;box-shadow:none;cursor:default}#dismiss-button:before,#skip-button:before{bottom:-5px;content:\"\";left:-5px;position:absolute;right:-5px;top:-5px}#dismiss-button:focus:not(:disabled),#dismiss-button:hover:not(:disabled),#skip-button:focus:not(:disabled),#skip-button:hover:not(:disabled){background-color:var(--sa11y-shortcut-hover)}#panel.left #dismiss-button,#panel.left #skip-button,#panel.top-left #dismiss-button,#panel.top-left #skip-button{margin-inline-end:2px;margin-inline-start:8px}.dismiss-icon{background:var(--sa11y-setting-switch-bg-off);display:inline-block;height:24px;margin-bottom:-4px;-webkit-mask:var(--sa11y-dismiss-icon) center no-repeat;mask:var(--sa11y-dismiss-icon) center no-repeat;width:24px}@media screen and (forced-colors:active){.dismiss-icon{filter:invert(1)}}#panel-content{align-items:center;color:var(--sa11y-panel-primary);display:flex;padding:6px}#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{height:26px;margin:0 auto;width:26px}#panel-content.errors .panel-icon{background:var(--sa11y-panel-error);margin-top:-2px;-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat}#panel-content.good .panel-icon{background:var(--sa11y-good);-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat}#panel-content.warnings .panel-icon{background:var(--sa11y-warning-svg-color);-webkit-mask:var(--sa11y-warning-svg) center no-repeat;mask:var(--sa11y-warning-svg) center no-repeat;transform:scaleX(var(--sa11y-icon-direction))}@media screen and (forced-colors:active){#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{filter:invert(1)}}#panel.left #panel-content,#panel.top-left #panel-content{flex-direction:row-reverse}#status{font-size:var(--sa11y-large-text)}#status,.panel-count{color:var(--sa11y-panel-primary)}.panel-count{background-color:var(--sa11y-panel-badge);border-radius:4px;font-size:15px;font-weight:400;margin-left:3px;margin-right:3px;padding:2px 4px}#images-panel,#outline-panel,#page-issues,#settings-panel{color:var(--sa11y-panel-primary);display:none;opacity:0}#images-panel.active,#outline-panel.active,#page-issues.active,#settings-panel.active{display:block;opacity:1}.panel-header{padding:10px 15px 0;text-align:start}#about-content{padding-top:5px}#about-content p{display:block;margin-block-end:1em}#images-content,#outline-content,#page-issues-content,#settings-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);padding:0 15px 10px}.top-left #images-content,.top-left #outline-content,.top-left #page-issues-content,.top-left #settings-content,.top-right #images-content,.top-right #outline-content,.top-right #page-issues-content,.top-right #settings-content{border:0}#page-issues-content{max-height:160px;overflow-y:auto}#settings-content{max-height:400px;overflow-y:auto}#images-content,#outline-content{max-height:250px;overflow-y:auto}#outline-panel .outline-list-item.sa11y-red-text,#settings-panel .sa11y-red-text{color:var(--sa11y-red-text)}#outline-list{display:block;margin:0;padding:0}#outline-list a{cursor:pointer;display:block;text-decoration:none}#outline-list li{display:block;list-style-type:none;margin-bottom:3px;margin-top:0;padding:0}#outline-list li:first-child{margin-top:5px}#outline-list li a:focus,#outline-list li a:hover{background:var(--sa11y-panel-outline-hover);border-radius:5px;box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);display:block}#outline-list .outline-2{margin-inline-start:15px}#outline-list .outline-3{margin-inline-start:30px}#outline-list .outline-4{margin-inline-start:45px}#outline-list .outline-5{margin-inline-start:60px}#outline-list .outline-6{margin-inline-start:75px}#images-list{display:block;margin:0;padding:0}#images-list li{border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:block;list-style-type:none;margin:15px 0;overflow:hidden;width:100%}#images-list li:first-child{margin-top:5px}#images-list li:last-child{border:none;margin-bottom:0}#images-list li .alt{padding:2px 5px 10px}#images-list li .edit{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;padding:4px 7px;position:relative;text-decoration:none}#images-list li .edit:focus,#images-list li .edit:hover{background-color:var(--sa11y-shortcut-hover)}#images-list li .edit:before{bottom:-10px;content:\"\";left:-10px;position:absolute;right:-10px;top:-10px}#images-list li img{border-radius:5px;float:inline-start;margin-block-end:15px;margin-inline-end:10px;max-width:110px}#images-list li.warning .alt{color:var(--sa11y-yellow-text)}#images-list li.warning img{background-color:var(--sa11y-yellow-text);border:5px solid var(--sa11y-yellow-text)}#images-list li.error .alt{color:var(--sa11y-error)}#images-list li.error img{background-color:var(--sa11y-error);border:5px solid var(--sa11y-error)}#images-list li.good img{background-color:var(--sa11y-panel-badge);border:5px solid var(--sa11y-panel-badge)}@media screen and (forced-colors:active){#images-list li img{background-color:ButtonBorder!important}}.error-icon{background:var(--sa11y-error-text);display:inline-block;height:16px;margin-bottom:-4px;-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat;width:16px}.hidden-icon{margin-bottom:-3px;-webkit-mask:var(--sa11y-hidden-icon-svg) center no-repeat;mask:var(--sa11y-hidden-icon-svg) center no-repeat}.hidden-icon,.link-icon{background:var(--sa11y-panel-primary);display:inline-block;height:16px;width:16px}.link-icon{margin-bottom:-3.5px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat}.error-badge .hidden-icon,.error-badge .link-icon{background:var(--sa11y-error-text)}.warning-badge .hidden-icon,.warning-badge .link-icon{background:var(--sa11y-panel-bg)}@media screen and (forced-colors:active){.error-icon,.hidden-icon,.link-icon{filter:invert(1)}}#panel-controls{border-radius:0 0 4px 4px;display:flex;overflow:hidden}#panel-controls button{background:var(--sa11y-panel-bg-secondary);background-color:var(--sa11y-panel-bg-secondary);border-bottom:1px solid var(--sa11y-panel-bg-splitter);border-inline-end:1px solid var(--sa11y-panel-bg-splitter);border-top:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-secondary);cursor:pointer;display:block;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;line-height:0;margin:0;opacity:1;outline:0;padding:0;position:relative;text-align:center;transition:background .2s;width:100%}#panel-controls button.active,#panel-controls button:hover{background-color:var(--sa11y-shortcut-hover)}#panel-controls button.active{font-weight:500}#export-results-mode,label{color:var(--sa11y-panel-primary);display:inline-block;font-weight:400;margin:0;width:100%}label:not(#colour-filter-mode,#export-results-mode){cursor:pointer}#settings-panel #export-csv,#settings-panel #export-html{padding:0;text-align:center;width:unset}#settings-panel #export-csv span,#settings-panel #export-html span{background:var(--sa11y-panel-bg-secondary);border-radius:5px;box-shadow:inset 0 0 0 2px var(--sa11y-setting-switch-bg-off);display:block;margin:0 4px;padding:7px 9px;width:65px}#settings-panel #export-csv:focus span,#settings-panel #export-csv:focus-within span,#settings-panel #export-csv:hover span,#settings-panel #export-html:focus span,#settings-panel #export-html:focus-within span,#settings-panel #export-html:hover span{background:var(--sa11y-shortcut-hover)}#settings-panel .switch{background:none;border:0;border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:44px;margin:0;padding:7px 10px;position:relative;text-align:end;width:105px}#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{content:\"\";display:inline-block;height:27px;margin:0 4px 4px;vertical-align:middle;width:27px}#settings-panel .switch[aria-pressed=true]:after{background:var(--sa11y-setting-switch-bg-on);-webkit-mask:var(--sa11y-setting-switch-on-svg) center no-repeat;mask:var(--sa11y-setting-switch-on-svg) center no-repeat}#settings-panel .switch[aria-pressed=false]:after{background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-setting-switch-off-svg) center no-repeat;mask:var(--sa11y-setting-switch-off-svg) center no-repeat}@media screen and (forced-colors:active){#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{filter:invert(1)}}#settings-panel #settings-options li{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:flex;justify-content:space-between;list-style-type:none;padding:1px 0}#settings-panel #settings-options li:last-child{border:none}#page-issues{align-items:center;color:var(--sa11y-panel-primary)}#page-issues-list{display:block;margin-top:4px}#page-issues-list li{display:block;margin:0 0 10px}#page-issues-list strong{display:block}.top-left.has-page-issues #page-issues,.top-right.has-page-issues #page-issues{border-top:1px solid var(--sa11y-panel-bg-splitter);margin-top:-1px}#panel-colour-filters{align-items:center;color:var(--sa11y-panel-primary);display:none;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}#panel-colour-filters.active{display:flex}#panel-colour-filters p{padding:6px 20px 6px 6px;width:100%}#panel-colour-filters[data-colour=protanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image-slice:1}#panel-colour-filters[data-colour=deuteranopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image-slice:1}#panel-colour-filters[data-colour=tritanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image-slice:1}#panel-colour-filters[data-colour=monochromacy]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image-slice:1}#panel-colour-filters[data-colour=protanopia] .panel-icon{background:var(--sa11y-panel-error)}#panel-colour-filters[data-colour=deuteranopia] .panel-icon{background:var(--sa11y-good-hover)}#panel-colour-filters[data-colour=tritanopia] .panel-icon{background:var(--sa11y-blue)}#panel-colour-filters[data-colour=monochromacy] .panel-icon{background:linear-gradient(90deg,#38a459 20%,red 50%,#0077c8 80%)}#panel-colour-filters .panel-icon{height:30px;margin-inline-end:5px;margin-inline-start:10px;-webkit-mask:var(--sa11y-low-vision-icon) center no-repeat;mask:var(--sa11y-low-vision-icon) center no-repeat;width:30px}@media screen and (forced-colors:active){#panel-colour-filters .panel-icon{forced-color-adjust:none}}.select-dropdown{align-items:center;display:flex;position:relative}.select-dropdown:after{border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid var(--sa11y-setting-switch-bg-off);content:\" \";inset-inline-end:14px;position:absolute}#colour-filter-select{-webkit-appearance:none;-moz-appearance:none;appearance:none;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-setting-switch-bg-off);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;margin-inline-end:4px;padding-inline-end:25px;padding-inline-start:5px;position:relative;text-align:end;vertical-align:middle}#colour-filter-select:focus,#colour-filter-select:hover{background:var(--sa11y-shortcut-hover)}#colour-filter-select.active{box-shadow:0 0 0 2px var(--sa11y-setting-switch-bg-on)}#colour-filter-item label,#colour-filter-item select{margin-bottom:9px;margin-top:10px}#readability-panel{display:none;opacity:0}#readability-panel.active{display:block;opacity:1}.top-left #readability-content,.top-right #readability-content{border-top:1px solid var(--sa11y-panel-bg-splitter)}.left #readability-content,.right #readability-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter)}#readability-content{color:var(--sa11y-panel-primary);padding:10px 15px;width:100%}#readability-details{list-style-type:none;margin:0;padding:0;white-space:normal}#readability-details li{display:inline-block;list-style-type:none;margin:0;padding-inline-end:10px}.readability-score{background-color:var(--sa11y-panel-badge);border-radius:4px;color:var(--sa11y-panel-primary);margin-inline-start:5px;padding:2px 5px}#readability-info{margin-inline-start:10px}#skip-to-page-issues{display:none}#panel.has-page-issues #skip-to-page-issues{clip:rect(0,0,0,0);background:var(--sa11y-panel-bg);border:0;border-radius:5px;display:block;height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}#panel.has-page-issues #skip-to-page-issues:focus{clip:auto;height:auto;margin:0;overflow:visible;padding:5px 7px;white-space:normal;width:auto;z-index:1}.hide-settings-border{border-bottom:0!important;padding:0 15px!important}.hide-settings-border li:not(#colour-filter-item){display:none!important}.hide-settings-border #about-content{display:none}.hide-settings-border.scrollable:before{all:unset}::-webkit-scrollbar{height:6px;width:7px}::-webkit-scrollbar-thumb{background-color:var(--sa11y-button-outline);border-radius:6px}*{scrollbar-color:var(--sa11y-button-outline);scrollbar-width:thin}.scrollable:before{animation:fade 1s ease-in-out;background:linear-gradient(180deg,transparent 70%,var(--sa11y-panel-scrollable) 100%);background-position:bottom;bottom:auto;content:\"\";height:250px;left:0;position:absolute;right:0;top:auto;transition:opacity 1s ease-in-out;width:100%;z-index:-1}#settings-content.scrollable:before{height:400px}.top-left .scrollable:before,.top-right .scrollable:before{border-radius:5px}#page-issues-content.scrollable:before{height:160px}#panel-alert.scrollable:before{height:200px}@keyframes sa11y-toggle-gradient{0%{background-position:50% 0}50%{background-position:50% 100%}to{background-position:50% 0}}@keyframes fade{0%{opacity:0}to{opacity:1}}@media (prefers-reduced-motion:reduce){*{animation:none!important;transform:none!important;transition:none!important}}#panel{width:400px}#container:lang(en) #panel{width:305px}#container:lang(da) #panel,#container:lang(de) #panel,#container:lang(nb) #panel,#container:lang(pl) #panel,#container:lang(sv) #panel,#container:lang(zh) #panel{width:350px}#container:lang(bg) .switch:not(#export-results-item *),#container:lang(es) .switch:not(#export-results-item *){width:225px!important}#container:not(:lang(en)):not(:lang(de)) .switch{width:205px}";
 
   class ControlPanel extends HTMLElement {
     connectedCallback() {
@@ -2749,7 +2712,7 @@ ${this.error.stack}
         const { isWithinRoot } = heading;
 
         // Filter out specified headings in outlineIgnore prop.
-        const ignoreArray = Constants.Exclusions.Outline ? Array.from(document.querySelectorAll(Constants.Exclusions.Outline)) : [];
+        const ignoreArray = Constants.Exclusions.Outline ? Elements.Found.ExcludedHeadings : [];
 
         if (!ignoreArray.includes($el)) {
           // Indicate if heading is totally hidden or visually hidden.
@@ -7179,7 +7142,8 @@ ${this.error.stack}
    * @returns Contrast results.
    */
   function checkContrast(results, option) {
-    let contrastResults = {
+    // Initialize contrast object.
+    const contrastResults = {
       errors: [],
       warnings: [],
     };
@@ -7199,13 +7163,7 @@ ${this.error.stack}
       const hasLowContrast = ratio < 3;
       const hasLowContrastNormalText = ratio > 1 && ratio < 4.5;
 
-      if (isLargeText && hasLowContrast) {
-        contrastResults.errors.push({
-          $el,
-          ratio: `${ratio.toFixed(2)}:1`,
-          details: { color: blendedColor, background, isLargeText, opacity },
-        });
-      } else if (!isLargeText && hasLowContrastNormalText) {
+      if ((isLargeText && hasLowContrast) || (!isLargeText && hasLowContrastNormalText)) {
         contrastResults.errors.push({
           $el,
           ratio: `${ratio.toFixed(2)}:1`,
@@ -7233,9 +7191,8 @@ ${this.error.stack}
       // Get minimum font size based on weight.
       const fontWeightIndex = Math.floor(fontWeight / 100) - 1;
       const minFontSize = fontLookup[fontWeightIndex];
-      const fails = fontSize < minFontSize;
 
-      if (fails) {
+      if (fontSize < minFontSize) {
         contrastResults.errors.push({
           $el,
           ratio: `APCA ${Math.abs(ratio.toFixed(1))}`,
@@ -7244,6 +7201,47 @@ ${this.error.stack}
       }
     };
 
+    // Iterate through all elements on the page.
+    for (let i = 0; i < Elements.Found.Contrast.length; i++) {
+      const $el = Elements.Found.Contrast[i];
+      const style = getComputedStyle($el);
+
+      // Get computed styles.
+      const opacity = parseFloat(style.opacity);
+      const color = convertToRGBA(style.color, opacity);
+      const fontSize = parseFloat(style.fontSize);
+      const getFontWeight = style.fontWeight;
+      const fontWeight = normalizeFontWeight(getFontWeight);
+      const background = getBackground($el);
+
+      // Check if element is visually hidden to screen readers.
+      const isVisuallyHidden = isScreenReaderOnly($el);
+
+      // Filter only text nodes.
+      const textString = Array.from($el.childNodes)
+        .filter((node) => node.nodeType === 3)
+        .map((node) => node.textContent)
+        .join('');
+      const text = textString.trim();
+
+      // Inputs to check
+      const checkInputs = ['SELECT', 'INPUT', 'TEXTAREA'].includes($el.tagName);
+
+      // Contrast check only elements with text, inputs, and textareas.
+      if (text.length !== 0 || checkInputs) {
+        if (background === 'image') {
+          // Warnings for elements with a background image, ignoring inputs.
+          if (!checkInputs && !$el.closest('nav')) {
+            contrastResults.warnings.push({ $el });
+          }
+        } else if (isVisuallyHidden || opacity === 0 || getHex(color) === getHex(background)) ; else {
+          // Preferred contrast algorithm.
+          const algorithm = option.contrastAPCA ? apcaAlgorithm : wcagAlgorithm;
+          algorithm($el, color, background, fontSize, fontWeight, opacity);
+        }
+      }
+    }
+
     /**
      * Some additional processing before pushing to Sa11y's results array.
      * @param {Object} item A single item (object) from the contrast results object.
@@ -7251,7 +7249,8 @@ ${this.error.stack}
      */
     const processContrastItem = ({ $el, ratio, details }) => {
       const clone = $el.cloneNode(true);
-      const nodeText = fnIgnore(clone, 'script, style, noscript, select option:not(:first-child)');
+      const ignoreElements = ['script', 'style', 'noscript'];
+      const nodeText = fnIgnore(clone, ignoreElements);
       const text = getText(nodeText);
       const truncatedText = truncateString(text, 100);
       const sanitizedText = sanitizeHTML(truncatedText);
@@ -7260,57 +7259,6 @@ ${this.error.stack}
       const opacity = (details !== undefined) ? details.opacity : '';
       return { $el, ratio, sanitizedText, suggestion, opacity };
     };
-
-    /**
-    * Iterate through all elements on the page.
-    * @returns {Object[]} Returns a object containing all contrast errors and warnings.
-    */
-    (() => {
-      contrastResults = {
-        errors: [],
-        warnings: [],
-      };
-
-      for (let i = 0; i < Elements.Found.Contrast.length; i++) {
-        // Get computed styles of each element.
-        const $el = Elements.Found.Contrast[i];
-        const style = getComputedStyle($el);
-        const opacity = parseFloat(style.opacity);
-        const color = convertToRGBA(style.color, opacity);
-        const fontSize = parseFloat(style.fontSize);
-        const getFontWeight = style.fontWeight;
-        const fontWeight = normalizeFontWeight(getFontWeight);
-        const background = getBackground($el);
-
-        // Check if element is visually hidden to screen readers.
-        const isVisuallyHidden = isScreenReaderOnly($el);
-
-        // Filter only text nodes.
-        const textString = Array.from($el.childNodes)
-          .filter((node) => node.nodeType === 3)
-          .map((node) => node.textContent)
-          .join('');
-        const text = textString.trim();
-
-        // Inputs to check
-        const checkInputs = ['SELECT', 'INPUT', 'TEXTAREA'].includes($el.tagName);
-
-        // Contrast check only elements with text, inputs, and textareas.
-        if (text.length !== 0 || checkInputs) {
-          if (background === 'image') {
-            // Warnings for elements with a background image, ignoring inputs.
-            if (!checkInputs && !$el.closest('nav')) {
-              contrastResults.warnings.push({ $el });
-            }
-          } else if (isVisuallyHidden || opacity === 0 || getHex(color) === getHex(background)) ; else {
-            // Preferred contrast algorithm.
-            const algorithm = option.contrastAPCA ? apcaAlgorithm : wcagAlgorithm;
-            algorithm($el, color, background, fontSize, fontWeight, opacity);
-          }
-        }
-      }
-      return contrastResults;
-    })();
 
     /* Contrast errors */
     contrastResults.errors.forEach((item) => {
@@ -8253,17 +8201,19 @@ ${this.error.stack}
             });
           }
         } else if (option.checks.IMAGE_PASS) {
-          // Image has alt text!
-          results.push({
-            element: $el,
-            type: option.checks.IMAGE_PASS.type || 'good',
-            content: option.checks.IMAGE_PASS.content || Lang.sprintf('IMAGE_PASS', altText),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: prepareDismissal(`IMAGEPASS${src + altText}`),
-            dismissAll: option.checks.IMAGE_PASS.dismissAll ? 'IMAGE_PASS' : false,
-            developer: option.checks.IMAGE_PASS.developer || false,
-          });
+          if (!$el.closest('button, [role="button"]')) {
+            // Image has alt text!
+            results.push({
+              element: $el,
+              type: option.checks.IMAGE_PASS.type || 'good',
+              content: option.checks.IMAGE_PASS.content || Lang.sprintf('IMAGE_PASS', altText),
+              inline: false,
+              position: 'beforebegin',
+              dismiss: prepareDismissal(`IMAGEPASS${src + altText}`),
+              dismissAll: option.checks.IMAGE_PASS.dismissAll ? 'IMAGE_PASS' : false,
+              developer: option.checks.IMAGE_PASS.developer || false,
+            });
+          }
         }
       }
     });
@@ -8274,7 +8224,7 @@ ${this.error.stack}
     let prevLevel;
     Elements.Found.Headings.forEach(($el, i) => {
       // Get accessible name of heading.
-      const accName = computeAccessibleName($el, option.headerIgnoreSpan);
+      const accName = computeAccessibleName($el, Constants.Exclusions.HeaderSpan);
       const stringMatchExclusions = option.headerIgnoreStrings
         ? accName.replace(option.headerIgnoreStrings, '') : accName;
       const removeWhitespace$1 = removeWhitespace(stringMatchExclusions);
@@ -9491,7 +9441,7 @@ ${this.error.stack}
 
           if (typicalHeadingLength && notASentence) {
             // Be a little forgiving if it's a small paragraph.
-            const nonHeadingTextLength = fnIgnore(p, 'strong, b').textContent.trim().length;
+            const nonHeadingTextLength = fnIgnore(p, ['strong', 'b']).textContent.trim().length;
             if (nonHeadingTextLength !== 0 && nonHeadingTextLength <= 250) {
               return;
             }
@@ -9648,97 +9598,113 @@ ${this.error.stack}
       Elements.Found.Blockquotes.forEach(($el) => checkCaps($el));
     }
 
-    /* **************************************************** */
-    /*  Check for underlined and justify-aligned text.      */
-    /* **************************************************** */
-    if (option.checks.QA_UNDERLINE || option.checks.QA_JUSTIFY) {
-      const addUnderlineResult = ($el, inline) => {
-        const text = getText($el);
-        if (text.length !== 0) {
-          results.push({
-            element: $el,
-            type: option.checks.QA_UNDERLINE.type || 'warning',
-            content: option.checks.QA_UNDERLINE.content || Lang.sprintf('QA_UNDERLINE'),
-            inline,
-            position: 'beforebegin',
-            dismiss: prepareDismissal(`UNDERLINE${text}`),
-            dismissAll: option.checks.QA_UNDERLINE.dismissAll ? 'QA_UNDERLINE' : false,
-            developer: option.checks.QA_UNDERLINE.developer || false,
-          });
-        }
-      };
-
-      const addJustifyResult = ($el) => {
-        const text = getText($el);
-        if (text.length !== 0) {
-          results.push({
-            element: $el,
-            type: option.checks.QA_JUSTIFY.type || 'warning',
-            content: option.checks.QA_JUSTIFY.content || Lang._('QA_JUSTIFY'),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: prepareDismissal(`JUSTIFIED${text}`),
-            dismissAll: option.checks.QA_JUSTIFY.dismissAll ? 'QA_JUSTIFY' : false,
-            developer: option.checks.QA_JUSTIFY.developer || false,
-          });
-        }
-      };
-
-      const addSmallTextResult = ($el) => {
-        const text = getText($el);
-        if (text.length !== 0) {
-          results.push({
-            element: $el,
-            type: option.checks.QA_SMALL_TEXT.type || 'warning',
-            content: option.checks.QA_SMALL_TEXT.content || Lang._('QA_SMALL_TEXT'),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: prepareDismissal(`SMALL${text}`),
-            dismissAll: option.checks.QA_SMALL_TEXT.dismissAll ? 'QA_SMALL_TEXT' : false,
-            developer: option.checks.QA_SMALL_TEXT.developer || false,
-          });
-        }
-      };
-
-      /**
-        * Check: Flag all <u> elements (underlined).
-        * @author Brian Teeman
-      */
-      if (option.checks.QA_UNDERLINE) {
-        Elements.Found.Underlines.forEach(($el) => {
-          addUnderlineResult($el, true);
+    /* ************************************************************** */
+    /*  Various checks: underlines, justify-aligned, and small text.  */
+    /* ************************************************************** */
+    // Check underlined text. Created by Brian Teeman!
+    const addUnderlineResult = ($el, inline) => {
+      const text = getText($el);
+      if (text.length !== 0) {
+        results.push({
+          element: $el,
+          type: option.checks.QA_UNDERLINE.type || 'warning',
+          content: option.checks.QA_UNDERLINE.content || Lang.sprintf('QA_UNDERLINE'),
+          inline,
+          position: 'beforebegin',
+          dismiss: prepareDismissal(`UNDERLINE${text}`),
+          dismissAll: option.checks.QA_UNDERLINE.dismissAll ? 'QA_UNDERLINE' : false,
+          developer: option.checks.QA_UNDERLINE.developer || false,
         });
       }
+    };
 
-      // Get computed styles.
-      const computeStyle = ($el) => {
-        const style = getComputedStyle($el);
-        const { textDecorationLine, textAlign, fontSize } = style;
+    const addJustifyResult = ($el) => {
+      const text = getText($el);
+      if (text.length !== 0) {
+        results.push({
+          element: $el,
+          type: option.checks.QA_JUSTIFY.type || 'warning',
+          content: option.checks.QA_JUSTIFY.content || Lang._('QA_JUSTIFY'),
+          inline: false,
+          position: 'beforebegin',
+          dismiss: prepareDismissal(`JUSTIFIED${text}`),
+          dismissAll: option.checks.QA_JUSTIFY.dismissAll ? 'QA_JUSTIFY' : false,
+          developer: option.checks.QA_JUSTIFY.developer || false,
+        });
+      }
+    };
 
-        /** Check: underline formatted text. @author Brian Teeman */
-        if (option.checks.QA_UNDERLINE && textDecorationLine === 'underline' && !$el.closest('a[href]')) {
-          addUnderlineResult($el, false); // Inline false for computed underlines.
+    const addSmallTextResult = ($el) => {
+      const text = getText($el);
+      if (text.length !== 0) {
+        results.push({
+          element: $el,
+          type: option.checks.QA_SMALL_TEXT.type || 'warning',
+          content: option.checks.QA_SMALL_TEXT.content || Lang._('QA_SMALL_TEXT'),
+          inline: false,
+          position: 'beforebegin',
+          dismiss: prepareDismissal(`SMALL${text}`),
+          dismissAll: option.checks.QA_SMALL_TEXT.dismissAll ? 'QA_SMALL_TEXT' : false,
+          developer: option.checks.QA_SMALL_TEXT.developer || false,
+        });
+      }
+    };
+
+    // Flag all <u> elements.
+    if (option.checks.QA_UNDERLINE) {
+      Elements.Found.Underlines.forEach(($el) => {
+        addUnderlineResult($el, true);
+      });
+    }
+
+    const computeStyle = ($el) => {
+      const style = getComputedStyle($el);
+      const { textDecorationLine, textAlign, fontSize } = style;
+
+      /* Check: Underlined text. */
+      if (option.checks.QA_UNDERLINE && textDecorationLine === 'underline' && !$el.closest('a[href]')) {
+        addUnderlineResult($el, false); // Inline false for computed underlines.
+      }
+
+      /* Check: Font size is greater than 0 and less than 10. */
+      const defaultSize = option.checks.QA_SMALL_TEXT.fontSize || 10;
+      const computedFontSize = parseFloat(fontSize);
+
+      // Compare with parent element's font size.
+      const parentFontSize = $el.parentElement
+        ? parseFloat(getComputedStyle($el.parentElement).fontSize)
+        : null;
+      const isInherited = parentFontSize === computedFontSize;
+
+      // Ensure the font size is specific to the element, not inherited.
+      const withinRange = !isInherited && computedFontSize > 1 && computedFontSize <= defaultSize;
+      if (option.checks.QA_SMALL_TEXT && withinRange) {
+        addSmallTextResult($el);
+      }
+
+      /* Check: Check if text is justify-aligned. */
+      if (option.checks.QA_JUSTIFY && textAlign === 'justify') {
+        addJustifyResult($el);
+      }
+    };
+
+    // Loop through all elements within the root area.
+    if (option.checks.QA_UNDERLINE || option.checks.QA_JUSTIFY || option.checks.QA_SMALL_TEXT) {
+      for (let i = 0; i < Elements.Found.Everything.length; i++) {
+        const $el = Elements.Found.Everything[i];
+
+        // Filter only text nodes.
+        const textString = Array.from($el.childNodes)
+          .filter((node) => node.nodeType === 3)
+          .map((node) => node.textContent)
+          .join('');
+        const text = textString.trim();
+
+        // Only if there's text!
+        if (text.length !== 0) {
+          computeStyle($el);
         }
-
-        /** Check: Font size is greater than 0 and less than 10.
-         * Inspired by WebAim's WAVE check. Not WCAG. */
-        const defaultSize = option.checks.QA_SMALL_TEXT.fontSize || 10;
-        const computedFontSize = parseFloat(fontSize);
-        const withinRange = computedFontSize > 0 && computedFontSize <= defaultSize;
-        if (option.checks.QA_SMALL_TEXT && withinRange) {
-          addSmallTextResult($el);
-        }
-
-        /** Check: Check if text is justify-aligned. */
-        if (option.checks.QA_JUSTIFY && textAlign === 'justify') {
-          addJustifyResult($el);
-        }
-      };
-      Elements.Found.Paragraphs.forEach(computeStyle);
-      Elements.Found.Headings.forEach(computeStyle);
-      Elements.Found.Lists.forEach(computeStyle);
-      Elements.Found.Blockquotes.forEach(computeStyle);
-      Elements.Found.Spans.forEach(computeStyle);
+      }
     }
 
     /* **************************************************** */
@@ -10034,17 +10000,19 @@ ${this.error.stack}
     /* <li> elements must be contained in a <ul>/<ol>/<menu>.     */
     /* ********************************************************** */
     if (option.checks.UNCONTAINED_LI) {
-      Elements.Found.UncontainedLi.forEach(($el) => {
-        results.push({
-          element: $el,
-          type: option.checks.UNCONTAINED_LI.type || 'error',
-          content: option.checks.UNCONTAINED_LI.content || Lang.sprintf('UNCONTAINED_LI'),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: prepareDismissal(`UNCONTAINEDLI${$el.textContent}`),
-          dismissAll: option.checks.UNCONTAINED_LI.dismissAll ? 'UNCONTAINED_LI' : false,
-          developer: option.checks.UNCONTAINED_LI.developer || true,
-        });
+      Elements.Found.Lists.forEach(($el) => {
+        if (!$el.closest('ul, ol, menu')) {
+          results.push({
+            element: $el,
+            type: option.checks.UNCONTAINED_LI.type || 'error',
+            content: option.checks.UNCONTAINED_LI.content || Lang.sprintf('UNCONTAINED_LI'),
+            inline: false,
+            position: 'beforebegin',
+            dismiss: prepareDismissal(`UNCONTAINEDLI${$el.textContent}`),
+            dismissAll: option.checks.UNCONTAINED_LI.dismissAll ? 'UNCONTAINED_LI' : false,
+            developer: option.checks.UNCONTAINED_LI.developer || true,
+          });
+        }
       });
     }
 

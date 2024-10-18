@@ -209,7 +209,7 @@ var et = {
     LABELS_MISSING_IMAGE_INPUT: 'Pildi nupul puudub alt-tekst. Palun lisage alt-tekst, et anda ligipääsetav nimi. Näiteks: <em>Search</em> või <em>Submit</em>.',
     LABELS_INPUT_RESET: 'Reset-nuppe ei tohiks <strong>ei</strong> kasutada, kui see pole spetsiaalselt vajalik, sest neid on lihtne kogemata aktiveerida. <hr> <strong>Nipp!</strong> Lugege, miks <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Reset ja Cancel nupud tekitavad kasutatavusprobleeme.</a>',
     LABELS_ARIA_LABEL_INPUT: 'Sisendil on juurdepääsetav nimi, kuigi palun veenduge, et ka silt on nähtav. <hr> <strong {B}>Ligipääsetav nimi</strong> <strong {C}>%(TEXT)</strong>',
-    LABELS_NO_FOR_ATTRIBUTE: 'Selle sisendiga ei ole seotud mingit märgistust. Lisage sildile <code>for</code> atribuut, mis vastab selle sisendi <code>id</code>. <hr> Selle sisendi ID on: <strong>id=&#34;%(id)&#34;</strong>',
+    LABELS_NO_FOR_ATTRIBUTE: 'Selle sisendiga ei ole seotud mingit märgistust. Lisage sildile <code>for</code> atribuut, mis vastab selle sisendi <code>id</code>. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'Selle sisendiga ei ole seotud mingit märgistust. Palun lisage sellele sisendile <code>id</code> ja lisage sildile vastav <code>for</code> atribuut.',
 
     // Embedded content

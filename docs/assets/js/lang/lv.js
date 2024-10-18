@@ -206,7 +206,7 @@ var lv = {
     LABELS_MISSING_IMAGE_INPUT: 'Attēla pogai trūkst alt teksta. Lūdzu, pievienojiet alt tekstu, lai nodrošinātu pieejamu nosaukumu. Piemēram: Piemēram, <em>Meklēšana</em> vai <em>Nosūtīt</em>.',
     LABELS_INPUT_RESET: 'Atiestatīšanas pogas <strong>nevajadzētu izmantot, ja vien tas nav īpaši nepieciešams, jo tās var viegli aktivizēt kļūdas pēc. <hr> <strong>Tip!</strong> Uzziniet, kāpēc <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Pārtraukšanas un atcelšanas pogas rada lietojamības problēmas</a>.',
     LABELS_ARIA_LABEL_INPUT: 'Ievadei ir pieejams nosaukums, tomēr pārliecinieties, ka ir redzams arī marķējums. <hr> <strong {B}>Pieejamais nosaukums</strong> <strong {C}>%(TEXT)</strong>',
-    LABELS_NO_FOR_ATTRIBUTE: 'Šim ievadam nav piesaistīta etiķete. Pievienojiet <code>for</code> atribūtu etiķetei, kas atbilst šīs ievades <code>id</code>. <hr> Šīs ievades ID ir: <strong>id=&#34;%(id)&#34;</strong>.',
+    LABELS_NO_FOR_ATTRIBUTE: 'Šim ievadam nav piesaistīta etiķete. Pievienojiet <code>for</code> atribūtu etiķetei, kas atbilst šīs ievades <code>id</code>. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'Šim ievadam nav piesaistīta etiķete. Lūdzu, pievienojiet šim ievadam <code>id</code> un pievienojiet etiķetei atbilstošu atribūtu <code>for</code>.',
 
     // Embedded content

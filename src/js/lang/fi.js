@@ -188,7 +188,7 @@ export default {
     LABELS_MISSING_IMAGE_INPUT: 'Kuvapainikkeesta puuttuu alt-teksti. Lisää alt-tekstiä, jotta nimi on helposti saatavilla. Esimerkiksi: <em>Haku</em> tai <em>Lähetä</em>.',
     LABELS_INPUT_RESET: 'Nollauspainikkeita <strong>ei</strong> tulisi käyttää, ellei niitä erityisesti tarvita, koska ne on helppo aktivoida vahingossa. <hr> <strong>Vinkki!</strong> Lue, miksi <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Reset- ja Cancel-painikkeet aiheuttavat käytettävyysongelmia.</a>',
     LABELS_ARIA_LABEL_INPUT: 'Syötteellä on helppokäyttöinen nimi, mutta varmista, että myös merkintä on näkyvissä. <hr> <strong {B}>Saavutettava nimi</strong> <strong {C}>%(TEXT)</strong>',
-    LABELS_NO_FOR_ATTRIBUTE: 'Tähän syötteeseen ei liity nimikettä. Lisää <code>for</code>-attribuutti labeliin, joka vastaa tämän syötteen <code>id</code>:tä. <hr> Tämän syötteen tunnus on: <strong>id=&#34;%(id)&#34;</strong>.',
+    LABELS_NO_FOR_ATTRIBUTE: 'Tähän syötteeseen ei liity nimikettä. Lisää <code>for</code>-attribuutti labeliin, joka vastaa tämän syötteen <code>id</code>:tä. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'Tähän syötteeseen ei liity nimikettä. Lisää tälle syötteelle <code>id</code> ja lisää labeliin vastaava <code>for</code>-attribuutti.',
 
     // Embedded content

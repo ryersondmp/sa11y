@@ -208,7 +208,7 @@ var ptPT = {
     LABELS_MISSING_IMAGE_INPUT: 'O botão de imagem não tem texto alternativo. Adicione texto alternativo para fornecer um nome acessível. Por exemplo: <em>Pesquisar</em> ou <em>Submeter</em>.',
     LABELS_INPUT_RESET: 'Os botões de reinicialização <strong>não</strong> devem ser usados a menos que sejam especificamente necessários, pois são fáceis de ativar por engano. <hr> <strong>Dica!</strong> Saiba por que <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">os botões Redefinir e Cancelar apresentam problemas de usabilidade.</a>',
     LABELS_ARIA_LABEL_INPUT: 'A entrada tem um nome acessível, mas certifique-se de que também existe uma etiqueta visível. <hr> <strong {B}>Nome acessível</strong> <strong {C}>%(TEXT)</strong>',
-    LABELS_NO_FOR_ATTRIBUTE: 'Não existe um rótulo associado a esta entrada. Adicione um atributo <code>for</code> ao rótulo que corresponde ao <code>id</code> desta entrada. <hr> O ID para esta entrada é: <strong>id=&#34;%(id)&#34;</strong>',
+    LABELS_NO_FOR_ATTRIBUTE: 'Não existe um rótulo associado a esta entrada. Adicione um atributo <code>for</code> ao rótulo que corresponde ao <code>id</code> desta entrada. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'Não existe uma etiqueta associada a esta entrada. Adicione um <code>id</code> a esta entrada e adicione um atributo <code>for</code> correspondente à etiqueta.',
 
     // Embedded content

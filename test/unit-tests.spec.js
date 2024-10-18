@@ -553,6 +553,13 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
+  test('Image excluded via prop', async () => {
+    const issue = await noAnnotation(
+      page, 'nothing-image-ignore-prop',
+    );
+    expect(issue).toBe(true);
+  });
+
   /* **************** */
   /*  Links           */
   /* **************** */
@@ -579,6 +586,13 @@ test.describe('Sa11y Unit Tests', () => {
   test('Non descript links using exclusions prop', async () => {
     const issue = await checkTooltip(
       page, 'error-non-descript-exclusions-prop', 'Link text may not be descriptive',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Link pointing to a dev environment via linksToFlag prop', async () => {
+    const issue = await checkTooltip(
+      page, 'error-custom-error-links', 'Bad link found.',
     );
     expect(issue).toBe(true);
   });
@@ -756,10 +770,14 @@ test.describe('Sa11y Unit Tests', () => {
   /* **************** */
 
   test('Table without issues', async () => {
-    const issue = await noAnnotation(
-      page, 'nothing-table',
-    );
-    expect(issue).toBe(true);
+    const ids = [
+      'nothing-table-1',
+      'nothing-table-2',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await noAnnotation(page, id);
+      expect(issue).toBe(true);
+    });
   });
 
   test('Missing table headers, but focusable', async () => {
@@ -1013,10 +1031,14 @@ test.describe('Sa11y Unit Tests', () => {
   });
 
   test('Nested layout components', async () => {
-    const issue = await checkTooltip(
-      page, 'warning-nested', 'Avoid nesting interactive layout',
-    );
-    expect(issue).toBe(true);
+    const ids = [
+      'warning-nested-1',
+      'warning-nested-2',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await checkTooltip(page, id, 'Avoid nesting interactive layout');
+      expect(issue).toBe(true);
+    });
   });
 
   test('Contrast issues', async () => {
@@ -1050,6 +1072,7 @@ test.describe('Sa11y Unit Tests', () => {
       'nothing-contrast-2',
       'nothing-contrast-3',
       'nothing-contrast-4',
+      'nothing-contrast-5',
     ];
     ids.forEach(async (id) => {
       const issue = await noAnnotation(page, id);

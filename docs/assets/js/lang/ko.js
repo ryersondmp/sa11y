@@ -216,7 +216,7 @@ var ko = {
     LABELS_MISSING_IMAGE_INPUT: '이미지 버튼에 대체 텍스트가 없습니다. 접근 가능한 이름을 제공하기 위해 대체 텍스트를 추가하세요. 예: <em>검색</em> 또는 <em>제출</em>.',
     LABELS_INPUT_RESET: '재설정 버튼은 실수로 활성화하기 쉬우므로 특별히 필요한 경우가 아니라면 사용하지 않는 것이 좋습니다. <hr> <strong>Tip!</strong> <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">재설정 및 취소 버튼이 사용성 문제를 일으키는 이유에 대해 알아보세요.</a>',
     LABELS_ARIA_LABEL_INPUT: '입력에 접근 가능한 이름이 있지만 레이블도 표시되어 있는지 확인하세요. <hr> <strong {B}>접근 가능한 이름</strong> <strong {C}>%(TEXT)</strong>',
-    LABELS_NO_FOR_ATTRIBUTE: '이 입력과 연결된 레이블이 없습니다. 이 입력의 <code>ID</code>와 일치하는 레이블에 <code>용</code> 속성을 추가합니다. <hr> 이 입력의 ID는 다음과 같습니다: <strong>id=&#34;%(id)&#34;</strong>',
+    LABELS_NO_FOR_ATTRIBUTE: '이 입력과 연결된 레이블이 없습니다. 이 입력의 <code>ID</code>와 일치하는 레이블에 <code>용</code> 속성을 추가합니다. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: '이 입력과 연결된 레이블이 없습니다. 이 입력에 <code>아이디</code>를 추가하고 레이블에 일치하는 <code>용</code> 속성을 추가하세요.',
 
     // Embedded content

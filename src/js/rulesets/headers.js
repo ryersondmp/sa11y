@@ -8,7 +8,7 @@ export default function checkHeaders(results, option, headingOutline) {
   let prevLevel;
   Elements.Found.Headings.forEach(($el, i) => {
     // Get accessible name of heading.
-    const accName = computeAccessibleName($el, option.headerIgnoreSpan);
+    const accName = computeAccessibleName($el, Constants.Exclusions.HeaderSpan);
     const stringMatchExclusions = option.headerIgnoreStrings
       ? accName.replace(option.headerIgnoreStrings, '') : accName;
     const removeWhitespace = Utils.removeWhitespace(stringMatchExclusions);

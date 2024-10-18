@@ -153,16 +153,16 @@ export function debounce(callback, wait) {
 /**
  * Creates a clone of an element while ignoring specified elements or elements matching a selector.
  * @param {Element} element The element to clone.
- * @param {string} selector The selector to match elements to be excluded from the clone. Optional.
+ * @param {Array} selector The selector to match elements to be excluded from the clone. Optional.
  * @returns {Element} The cloned element with excluded elements removed.
  */
-export function fnIgnore(element, selector) {
-  const defaultIgnored = 'noscript, script, style';
-  const ignore = (!selector) ? defaultIgnored : `${defaultIgnored}, ${selector}`;
+export function fnIgnore(element, selectors = []) {
+  const defaultIgnored = ['noscript', 'script', 'style'];
+  const ignore = [...defaultIgnored, ...selectors].join(', ');
   const clone = element.cloneNode(true);
   const exclude = Array.from(clone.querySelectorAll(ignore));
-  exclude.forEach((c) => {
-    c.parentElement.removeChild(c);
+  exclude.forEach(($el) => {
+    $el.parentElement.removeChild($el);
   });
   return clone;
 }

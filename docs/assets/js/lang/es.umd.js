@@ -187,7 +187,7 @@
       LABELS_MISSING_IMAGE_INPUT: 'Al botón de imagen le falta el texto alternativo. Agregue texto alternativo para proporcionar un nombre accesible. Por ejemplo: <em>Buscar</em> o <em>Enviar</em>.',
       LABELS_INPUT_RESET: 'Los botones de reinicio <strong>no</strong> deben usarse a menos que se necesiten específicamente porque son fáciles de activar por error. <hr> <strong>¡Consejo!</strong> Descubra por qué <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">los botones Restablecer y Cancelar plantean problemas de uso.</a>',
       LABELS_ARIA_LABEL_INPUT: 'La entrada tiene un nombre accesible, aunque asegúrese de que también haya una etiqueta visible. <hr> <strong {B}>Nombre accesible</strong> <strong {C}>%(TEXT)</strong>',
-      LABELS_NO_FOR_ATTRIBUTE: 'No hay ninguna etiqueta asociada con esta entrada. Agregue un atributo <code>for</code> a la etiqueta que coincida con el <code>id</code> de esta entrada. <hr> El ID de esta entrada es: <strong>id=&#34;%(id)&#34;</strong>',
+      LABELS_NO_FOR_ATTRIBUTE: 'No hay ninguna etiqueta asociada con esta entrada. Agregue un atributo <code>for</code> a la etiqueta que coincida con el <code>id</code> de esta entrada. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
       LABELS_MISSING_LABEL: 'No hay ninguna etiqueta asociada con esta entrada. Agregue un <code>id</code> a esta entrada y agregue un atributo <code>for</code> coincidente a la etiqueta.',
 
       // Embedded content

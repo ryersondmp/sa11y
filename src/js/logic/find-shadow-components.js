@@ -1,4 +1,5 @@
 import styles from '../../../dist/css/global-utilities.min.css';
+import Constants from '../utils/constants';
 
 /* ************************************************************ */
 /*  Auto-detect shadow DOM or process provided web components.  */
@@ -13,11 +14,13 @@ const addStylestoShadow = (component) => {
 export default function findShadowComponents(option) {
   if (option.autoDetectShadowComponents) {
     // Elements to ignore.
-    const ignore = 'sa11y-heading-label, sa11y-heading-anchor, sa11y-annotation, sa11y-tooltips, sa11y-dismiss-tooltip, sa11y-control-panel, #sa11y-colour-filters, #sa11y-colour-filters *, script';
+    const ignore = Constants.Exclusions.Sa11yElements;
 
     // Search all elements.
     const root = document.querySelector(option.checkRoot);
-    const search = (root) ? Array.from(root.querySelectorAll(`*:not(${ignore})`)) : Array.from(document.body.querySelectorAll(`*:not(${ignore})`));
+    const search = (root)
+      ? Array.from(root.querySelectorAll(`*:not(${ignore})`))
+      : Array.from(document.body.querySelectorAll(`*:not(${ignore})`));
 
     // Query for open shadow roots & inject CSS utilities into every shadow DOM.
     search.forEach((component) => {

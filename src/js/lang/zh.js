@@ -192,7 +192,7 @@ export default {
     LABELS_MISSING_IMAGE_INPUT: '图片按钮缺少alt文本。请添加alt文本, 提供一个可访问的名称。比如说: <em>Search</em>或<em>Submit</em>。',
     LABELS_INPUT_RESET: '除非特别需要, 否则不应<strong></strong>使用重置按钮, 因为它们很容易被错误激活。<hr> <strong>提示！</strong>了解为什么<a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">复位和取消按钮会带来可用性问题。</a>',
     LABELS_ARIA_LABEL_INPUT: '输入有一个无障碍名称, 但请确保也有一个可见的标签。<hr> <strong {B}>可访问名称</strong> <strong {C}>%(TEXT)</strong>',
-    LABELS_NO_FOR_ATTRIBUTE: '没有与此输入相关的标签。给标签添加一个<code>for</code>属性, 该属性与该输入的<code>id</code>相匹配。<hr> 这个输入的ID是: <strong>id=&#34;% (id) &#34;</strong>',
+    LABELS_NO_FOR_ATTRIBUTE: '没有与此输入相关的标签。给标签添加一个<code>for</code>属性, 该属性与该输入的<code>id</code>相匹配。<hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: '没有与此输入相关的标签。请为这个输入添加一个<code>id</code>, 并为标签添加一个匹配的<code>for</code>属性。',
 
     // Embedded content

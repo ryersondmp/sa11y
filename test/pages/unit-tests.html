@@ -400,6 +400,12 @@
       <img src="#" height="1" width="1" style="display: none;">
     </div>
 
+    <h3>Excluded image via prop</h3>
+    <p>Image excluded by class via prop <code>imageIgnore</code></p>
+    <div id="nothing-image-ignore-prop">
+      <img src="./assets/placeholder.svg" alt="Logo" class="logo" width="100" />
+    </div>
+
     <hr>
 
     <h2>Links</h2>
@@ -431,6 +437,11 @@
     <h3>Non descript link uses string ignore prop</h3>
     <div id="error-non-descript-string-exclusions-prop">
       <a href="https://www.example.com?=learnmore">learn more (External)</a>
+    </div>
+
+    <h3>Flag custom links via prop <code>linksToFlag</code></h3>
+    <div id="error-custom-error-links">
+      <a href="https://www.dev.example.com?linksToFlag">Development environment</a>
     </div>
 
     <h3>Empty links</h3>
@@ -635,7 +646,7 @@
 
     <h2>Tables</h2>
     <h3>Table without issues</h3>
-    <div id="nothing-table">
+    <div id="nothing-table-1">
       <table>
         <tbody>
           <tr class="table-primary">
@@ -657,6 +668,19 @@
             <td>Closing Dinner</td>
             <td>5:00 PM</td>
             <td>Metropolitan Room</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Table with <code>role="presentation"</code></h3>
+    <div id="nothing-table-2">
+      <table role="presentation">
+        <tbody>
+          <tr class="table-primary">
+            <th>Event Name</th>
+            <th></th>
+            <th></th>
           </tr>
         </tbody>
       </table>
@@ -1233,7 +1257,7 @@
     <hr>
 
     <h3>Double nested interactive layout components</h3>
-    <div id="warning-nested">
+    <div id="warning-nested-1">
       <details>
         <summary>Details</summary>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste autem numquam ullam illum, aliquid quaerat dolor.
@@ -1244,6 +1268,14 @@
           Capitale.
         </details>
       </details>
+    </div>
+
+    <h4>Using <code>[role="tablist"]</code></h4>
+    <div id="warning-nested-2">
+      <div role="tablist" style="background:lightblue;padding:5px">
+        Some text.
+        <div role="tablist" style="background:darkgray">Some more text nested within.</div>
+      </div>
     </div>
 
     <hr>
@@ -1323,6 +1355,18 @@
       <nav>
         <p class="background-image">Text on background image requires manual review!</p>
       </nav>
+    </div>
+
+    <h4>Ignore specific elements</h4>
+    <div id="nothing-contrast-5">
+      <label>
+        Range
+        <input type="range">
+      </label>
+      <label>
+        Color picker
+        <input type="color">
+      </label>
     </div>
 
     <h2>Inputs</h2>
@@ -1685,7 +1729,9 @@
       checkRoot: "body",
       headerIgnore: "#nothing-ignore-this-heading *",
       linkIgnoreSpan: ".sr-only-example",
+      linksToFlag: 'a[href*="dev."]',
       linkIgnoreStrings: '(External)',
+      imageIgnore: ".logo",
       showHinPageOutline: 1,
       exportResultsPlugin: true,
       autoDetectShadowComponents: true,

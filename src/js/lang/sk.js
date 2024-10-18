@@ -204,7 +204,7 @@ export default {
     LABELS_MISSING_IMAGE_INPUT: 'V tlačidle obrázka chýba text alt. Pridajte text alt a uveďte prístupný názov. Napríklad: <em>Vyhľadať</em> alebo <em>Odoslať</em>.',
     LABELS_INPUT_RESET: 'Tlačidlá resetovania by sa nemali používať, ak to nie je výslovne potrebné, pretože sa ľahko aktivujú omylom. <hr> <strong>Tip!</strong> Prečítajte si, prečo <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">tlačidlá Reset a Cancel predstavujú problémy s použiteľnosťou.</a>',
     LABELS_ARIA_LABEL_INPUT: 'Vstup má prístupný názov, ale dbajte na to, aby bol viditeľný aj štítok. <hr> <strong {B}>Prístupné meno</strong> <strong {C}>%(TEXT)</strong>',
-    LABELS_NO_FOR_ATTRIBUTE: 'K tomuto vstupu nie je priradený žiadny štítok. Pridajte atribút <code>for</code> k štítku, ktorý sa zhoduje s <code>id</code> tohto vstupu. <hr> ID tohto vstupu je: <strong>id=&#34;%(id)&#34;</strong>',
+    LABELS_NO_FOR_ATTRIBUTE: 'K tomuto vstupu nie je priradený žiadny štítok. Pridajte atribút <code>for</code> k štítku, ktorý sa zhoduje s <code>id</code> tohto vstupu. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'K tomuto vstupu nie je priradený žiadny štítok. Prosím, pridajte <code>id</code> k tomuto vstupu a pridajte zodpovedajúci atribút <code>for</code> k štítku.',
 
     // Embedded content

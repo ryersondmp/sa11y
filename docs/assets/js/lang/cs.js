@@ -204,7 +204,7 @@ var cs = {
     LABELS_MISSING_IMAGE_INPUT: 'U tlačítka obrázku chybí text alt. Přidejte prosím text alt a uveďte přístupný název. Například: <em>Hledat</em> nebo <em>Odeslat</em>.',
     LABELS_INPUT_RESET: 'Tlačítka resetování by se neměla používat, pokud to není výslovně nutné, protože je lze snadno aktivovat omylem. <hr> <strong>Tip!</strong> Přečtěte si, proč <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">tlačítka Reset a Cancel představují problém s použitelností.</a>',
     LABELS_ARIA_LABEL_INPUT: 'Vstup má přístupný název, ale zajistěte, aby byl viditelný i štítek. <hr> <strong {B}>Přístupné jméno</strong> <strong {C}>%(TEXT)</strong>',
-    LABELS_NO_FOR_ATTRIBUTE: 'K tomuto vstupu není přiřazen žádný štítek. Přidejte atribut <code>for</code> ke štítku, který odpovídá <code>id</code> tohoto vstupu. <hr> ID tohoto vstupu je: <strong>id=&#34;%(id)&#34;</strong>.',
+    LABELS_NO_FOR_ATTRIBUTE: 'K tomuto vstupu není přiřazen žádný štítek. Přidejte atribut <code>for</code> ke štítku, který odpovídá <code>id</code> tohoto vstupu. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'K tomuto vstupu není přiřazen žádný štítek. Přidejte prosím k tomuto vstupu <code>id</code> a ke štítku přidejte odpovídající atribut <code>for</code>.',
 
     // Embedded content

@@ -204,7 +204,7 @@ export default {
     LABELS_MISSING_IMAGE_INPUT: 'A képgombból hiányzik az alt szöveg. Kérjük, adjon hozzá alt szöveget, hogy elérhető nevet adjon. Például: <em>Keresés</em> vagy <em>Submit</em>.',
     LABELS_INPUT_RESET: 'A visszaállító gombokat <strong>nem</strong> szabad használni, hacsak nem kifejezetten szükséges, mert könnyen aktiválhatók tévedésből. <hr> <strong>Tipp!</strong> Tudja meg, hogy a <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">A visszaállítás és a törlés gombok miért jelentenek használhatósági problémát.</a>',
     LABELS_ARIA_LABEL_INPUT: 'A bemenetnek elérhető neve van, de kérjük, gondoskodjon arról, hogy a címke is látható legyen. <hr> <strong {B}>Hozzáférhető név</strong> <strong {C}>%(TEXT)</strong>',
-    LABELS_NO_FOR_ATTRIBUTE: 'Ehhez a bemenethez nincs címke társítva. Adjon hozzá egy <code>for</code> attribútumot a címkéhez, amely megfelel a bemenet <code>id</code> azonosítójának. <hr> Ennek a bemenetnek az azonosítója a következő: <strong>id=&#34;%(id)&#34;</strong>',
+    LABELS_NO_FOR_ATTRIBUTE: 'Ehhez a bemenethez nincs címke társítva. Adjon hozzá egy <code>for</code> attribútumot a címkéhez, amely megfelel a bemenet <code>id</code> azonosítójának. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'Ehhez a bemenethez nincs címke társítva. Kérjük, adjon hozzá egy <code>id</code>-t ehhez a bemenethez, és adjon hozzá egy megfelelő <code>for</code> attribútumot a címkéhez.',
 
     // Embedded content
