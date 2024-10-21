@@ -160,9 +160,8 @@
     <h2>Empty div contrast?</h2>
     <div id="lightboxOverlay" class="lightboxOverlay" style="display: none;opacity:0.8;"></div>
     <hr>
-    <a class="link" href="features/2024/fall/laurier-welcomes-first-students-to-milton-campus.html" target="">
-      <img class="background" lazy-src="/wp-content/themes/child-mcmaster/assets/images/default/Admissions.png"
-        alt="Admissions" src="/wp-content/themes/child-mcmaster/assets/images/default/Admissions.png">
+    <a class="link" href="/features/2024/fall/laurier-welcomes-first-students-to-milton-campus.html" target="">
+      <img class="background" alt="Admissions" src="./assets/placeholder.svg">
       <video controls="">
         Your browser doesn't support
       </video>
@@ -282,6 +281,32 @@
     <a class="a-test" href="https://www.example.com?rearsdsd">Some text here</a>
     <hr>
 
+    <h2>Link too long?</h2>
+    <p>
+      <a href="https://www.example.com?sdasdsd33">100 characters. consectetur adipisicing elit. Doloribus magnam
+        laudantium
+        enim voluptas tempo libero</a>
+    </p>
+
+    <p><a href="https://www.example.com?sdasdsdddddd">
+        200 characters. consectetur adipisicing elit. Doloribus magnam laudantium 100 characters. consectetur
+        adipisicing
+        elit.
+        Lorem ipsum dolor, porem ipsum dolor, sit amet consectetur adipisicing how bouts
+      </a></p>
+
+    <p><a href="https://www.example.com?sdasdsdddddd">
+        300 characters. consectetur adipisicing elit. Doloribus magnam laudantium 100 characters. consectetur
+        adipisicing elit.
+        Lorem ipsum dolor, porem ipsum dolor, sit amet consectetur adipisicing how bouts. Lorem ipsum dolor sit amet,
+        consectetur adipiscing elit. Cras aliquet quam tellus, a aliquet arcuc
+      </a></p>
+
+    <h3>300 characters. consectetur adipisicing elit. Doloribus magnam laudantium 100 characters. consectetur
+      adipisicing elit.
+      Lorem ipsum dolor, porem ipsum dolor, sit amet consectetur adipisicing how bouts. Lorem ipsum dolor sit amet,
+      consectetur adipiscing elit. Cras aliquet quam tellus, a aliquet arcuc </h3>
+
     <h2>Dismiss all</h2>
     <ul>
       <li><a href="https://www.example.com/asdsd" target="_blank">Test 1</a></li>
@@ -296,6 +321,27 @@
     <h2>Parent div has class of <strong>.carousel</strong></h2>
     <div class="carousel">
       <img alt src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg">
+    </div>
+
+    <h2>Alt too long for tooltip</h2>
+    <div class="carousel">
+      <img alt="Lorem ipsum lorem ipsum Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero
+      illo magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum
+      dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero illo
+      magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum dolor,Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero
+      illo magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum
+      dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero illo
+      magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum dolor,Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero
+      illo magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum
+      dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero illo
+      magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum dolor,Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero
+      illo magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum
+      dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero illo
+      magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum dolor,Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero
+      illo magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum
+      dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero illo
+      magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum dolor,"
+        src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg">
     </div>
 
     <hr>
@@ -321,7 +367,7 @@
   <script>
     Sa11y.Lang.addI18n(Sa11yLangEn.strings);
     const sa11y = new Sa11y.Sa11y({
-      checkRoot: 'sds',
+      checkRoot: 'body',
       containerIgnore: '.ignore-this, .this-too',
       developerChecksOnByDefault: false,
       autoDetectShadowComponents: true,

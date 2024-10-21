@@ -190,6 +190,7 @@ export default {
     LABELS_ARIA_LABEL_INPUT: 'Syötteellä on helppokäyttöinen nimi, mutta varmista, että myös merkintä on näkyvissä. <hr> <strong {B}>Saavutettava nimi</strong> <strong {C}>%(TEXT)</strong>',
     LABELS_NO_FOR_ATTRIBUTE: 'Tähän syötteeseen ei liity nimikettä. Lisää <code>for</code>-attribuutti labeliin, joka vastaa tämän syötteen <code>id</code>:tä. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'Tähän syötteeseen ei liity nimikettä. Lisää tälle syötteelle <code>id</code> ja lisää labeliin vastaava <code>for</code>-attribuutti.',
+    LABELS_PLACEHOLDER: 'Katoava paikkateksti ansiosta ihmisten on vaikeaa muistaa, mitä tietoa kenttään kuuluu, sekä tunnistaa ja korjata validointiongelmia. Sen sijaan harkitse pysyvän näkyvän vihjeen käyttöä ennen lomakekenttää. <hr> Lue lisää: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Paikkamerkit lomakekentissä ovat haitallisia.</a>',
 
     // Embedded content
     EMBED_VIDEO: 'Varmista, että <strong>kaikissa videoissa on kuvatekstit.</strong> Kaiken ääni- ja videosisällön tekstittäminen on pakollinen A-tason vaatimus. Kuvatekstit tukevat kuuroja ja huonokuuloisia.',

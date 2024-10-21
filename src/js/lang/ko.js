@@ -206,6 +206,7 @@ export default {
     LABELS_ARIA_LABEL_INPUT: '입력에 접근 가능한 이름이 있지만 레이블도 표시되어 있는지 확인하세요. <hr> <strong {B}>접근 가능한 이름</strong> <strong {C}>%(TEXT)</strong>',
     LABELS_NO_FOR_ATTRIBUTE: '이 입력과 연결된 레이블이 없습니다. 이 입력의 <code>ID</code>와 일치하는 레이블에 <code>용</code> 속성을 추가합니다. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: '이 입력과 연결된 레이블이 없습니다. 이 입력에 <code>아이디</code>를 추가하고 레이블에 일치하는 <code>용</code> 속성을 추가하세요.',
+    LABELS_PLACEHOLDER: '사라지는 자리 표시자 텍스트는 사람들이 필드에 어떤 정보가 들어가야 하는지 기억하는 데 어려움을 주며 유효성 검사 문제를 식별하고 수정하기 어렵게 만듭니다. 대신, 양식 필드 앞에 항상 표시되는 힌트를 사용하는 것을 고려하십시오. <hr> 자세히 알아보세요: <a href="https://www.nngroup.com/articles/form-design-placeholders/">양식 필드의 자리 표시자는 유해합니다.</a>',
 
     // Embedded content
     EMBED_VIDEO: '모든 동영상에 자막이 있는지 확인하세요. 모든 오디오 및 동영상 콘텐츠에 자막을 제공하는 것은 필수 레벨 A 요건입니다. 자막은 청각 장애가 있거나 난청인 사용자를 지원합니다.',

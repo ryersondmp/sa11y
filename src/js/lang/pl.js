@@ -189,6 +189,7 @@ export default {
     LABELS_ARIA_LABEL_INPUT: 'Pole danych ma dostępną nazwę (etykietę), ale upewnij się, że etykieta jest również widoczna. <hr> <strong {B}>Dostępna nazwa</strong> <strong {C}>%(TEXT)</strong>',
     LABELS_NO_FOR_ATTRIBUTE: 'Z tym polem input nie jest skojarzona żadna etykieta (label). Dodaj atrybut <code>for</code> do etykiety z wartością <code>id</code>  pasującą do <code>id</code> tego pola. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'Z tym polem input nie jest skojarzona żadna etykieta (label). Dodaj do tego pola danych <code>id</code> i dodaj pasujący atrybut <code>for</code> do etykiety.',
+    LABELS_PLACEHOLDER: 'Znikający tekst zastępczy utrudnia ludziom zapamiętanie, jakie informacje powinny znaleźć się w polu, a także utrudnia identyfikację i poprawę błędów. Zamiast tego rozważ użycie trwale widocznej wskazówki przed polem formularza. <hr> Dowiedz się więcej: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Zastępniki w polach formularzy są szkodliwe.</a>',
 
     // Embedded content
     EMBED_VIDEO: 'Upewnij się, że <strong>wszystkie filmy mają napisy rozszerzone.</strong> Zapewnianie napisów rozszerzonych dla wszystkich treści audio i wideo jest obowiązkowym wymogiem poziomu A. Napisy mają na celu wspieranie osób Głuchych i słabosłyszących.',

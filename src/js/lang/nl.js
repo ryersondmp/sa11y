@@ -205,6 +205,7 @@ export default {
     LABELS_ARIA_LABEL_INPUT: 'De invoer heeft een toegankelijke naam, maar zorg ervoor dat er ook een zichtbaar label is. <hr> <strong {B}>Toegankelijk naam</strong> <strong {C}>%(TEXT)</strong>',
     LABELS_NO_FOR_ATTRIBUTE: 'Er is geen label gekoppeld aan deze ingang. Voeg een <code>for</code>-attribuut toe aan het label dat overeenkomt met de <code>id</code> van deze ingang. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'Er is geen label gekoppeld aan deze ingang. Voeg een <code>id</code> toe aan deze ingang en voeg een overeenkomend <code>for</code> attribuut toe aan het label.',
+    LABELS_PLACEHOLDER: 'Verdwijning van placeholdertekst maakt het moeilijk voor mensen om te onthouden welke informatie in een veld thuishoort en maakt het uitdagend om fouten te identificeren en te corrigeren. Overweeg in plaats daarvan om een permanent zichtbaar hint voor het formulier veld te gebruiken. <hr> Leer meer: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Plaatsvervangers in formulier velden zijn schadelijk.</a>',
 
     // Embedded content
     EMBED_VIDEO: "Zorg ervoor dat <strong>alle video's zijn voorzien van ondertiteling.</strong> Het leveren van ondertiteling voor alle audio- en video-inhoud is een verplichte Level A-vereiste. Ondertiteling ondersteunt mensen die doof of slechthorend zijn.",

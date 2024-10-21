@@ -194,6 +194,7 @@ export default {
     LABELS_ARIA_LABEL_INPUT: 'Vstup má přístupný název, ale zajistěte, aby byl viditelný i štítek. <hr> <strong {B}>Přístupné jméno</strong> <strong {C}>%(TEXT)</strong>',
     LABELS_NO_FOR_ATTRIBUTE: 'K tomuto vstupu není přiřazen žádný štítek. Přidejte atribut <code>for</code> ke štítku, který odpovídá <code>id</code> tohoto vstupu. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'K tomuto vstupu není přiřazen žádný štítek. Přidejte prosím k tomuto vstupu <code>id</code> a ke štítku přidejte odpovídající atribut <code>for</code>.',
+    LABELS_PLACEHOLDER: 'Zmizelé texty pro zástupné znaky ztěžují lidem zapamatování, jaké informace patří do pole, a identifikaci a opravu problémů s validací. Místo toho zvažte použití trvale viditelné nápovědy před polem formuláře. <hr> Přečtěte si více: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Zástupné znaky v polích formulářů jsou škodlivé.</a>',
 
     // Embedded content
     EMBED_VIDEO: 'Zajistěte, aby <strong>všechna videa byla opatřena skrytými titulky.</strong> Poskytování titulků pro veškerý audio a video obsah je povinným požadavkem úrovně A. Titulky podporují osoby s postižením D/neslyšící nebo nedoslýchavé.',

@@ -65,8 +65,13 @@ export default function generateImageOutline(dismissed, imageResults) {
 
     imageResults.forEach((image) => {
       const issue = image.type;
+      const developerCheck = image.developer;
       const { dismissedImage } = image;
       const altText = Utils.escapeHTML(image.element.alt);
+
+      // Make developer checks don't show images as error if Developer checks are off!
+      const devChecksOff = Utils.store.getItem('sa11y-developer') === 'Off' || Utils.store.getItem('sa11y-developer') === null;
+      const showDeveloperChecks = devChecksOff && (issue === 'error' || issue === 'warning') && developerCheck === true;
 
       // Account for lazy loading libraries that use 'data-src' attribute.
       const { src } = image.element;
@@ -82,7 +87,8 @@ export default function generateImageOutline(dismissed, imageResults) {
         : '';
 
       let append;
-      if (issue === 'error') {
+
+      if (issue === 'error' && !showDeveloperChecks) {
         const missing = altText.length === 0
           ? `<div class="badge error-badge">${Lang._('MISSING')}</div>`
           : `<strong class="red-text">${altText}</strong>`;
@@ -95,7 +101,7 @@ export default function generateImageOutline(dismissed, imageResults) {
           ${edit}
         </li>`;
         imageArray.push(append);
-      } else if (issue === 'warning' && !dismissedImage) {
+      } else if (issue === 'warning' && !dismissedImage && !showDeveloperChecks) {
         const decorative = altText.length === 0
           ? `<div class="badge warning-badge">${Lang._('DECORATIVE')}</div>`
           : '';

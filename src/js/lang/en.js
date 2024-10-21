@@ -176,6 +176,7 @@ export default {
     LABELS_ARIA_LABEL_INPUT: 'Input has an accessible name, although please ensure there is a visible label too. <hr> <strong {B}>Accessible Name</strong> <strong {C}>%(TEXT)</strong>',
     LABELS_NO_FOR_ATTRIBUTE: 'There is no label associated with this input. Add a <code>for</code> attribute to the label that matches the <code>id</code> of this input. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'There is no label associated with this input. Please add an <code>id</code> to this input, and add a matching <code>for</code> attribute to the label.',
+    LABELS_PLACEHOLDER: 'Disappearing placeholder text makes it hard for people to remember what information belongs in a field and to identify and correct validation issues. Instead, consider using a permanently visible hint before the form field. <hr> Learn more: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Placeholders in form fields are harmful.</a>',
 
     // Embedded content
     EMBED_VIDEO: 'Please ensure <strong>all videos have closed captioning.</strong> Providing captions for all audio and video content is a mandatory Level A requirement. Captions support people who are D/deaf or hard-of-hearing.',
@@ -238,6 +239,7 @@ export default {
     CONTRAST_SIZE: 'Consider making the text size larger for this colour combination?',
     CONTRAST_ERROR: 'Text does not have enough contrast with the background, making it harder to read. <hr> <strong {B}>Contrast Ratio</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_WARNING: 'The contrast of this text is unknown and needs to be manually reviewed. Ensure the text and the background have strong contrasting colours. The contrast ratio should be at least 4.5:1 for normal text and 3:1 for large text. <hr> <strong {B}>Contrast Ratio</strong> <strong {B}>Unknown</strong> <strong {C}>%(TEXT)</strong>',
+    CONTRAST_PLACEHOLDER: 'Placeholder text within this input does not have enough contrast with the background, making it harder to read. <hr> <strong {B}>Contrast Ratio</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_INPUT: 'Text within this input does not have enough contrast with the background, making it harder to read. <hr> <strong {B}>Contrast Ratio</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

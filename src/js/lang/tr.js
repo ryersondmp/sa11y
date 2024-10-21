@@ -192,6 +192,7 @@ export default {
     LABELS_ARIA_LABEL_INPUT: 'Girdinin erişilebilir bir adı vardır, ancak lütfen görünür bir etiket olduğundan da emin olun. <hr> <strong {B}>Erişilebilir ad</strong> <strong {C}>%(TEXT)</strong>',
     LABELS_NO_FOR_ATTRIBUTE: "Bu girdiyle ilişkilendirilmiş bir etiket yok. Etikete, bu girdinin <code>id</code>'siyle eşleşen bir <code>for</code> niteliği ekleyin. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
     LABELS_MISSING_LABEL: 'Bu girdiyle ilişkilendirilmiş bir etiket yok. Lütfen bu girdiye bir <code>id</code> ekleyin ve etikete eşleşen bir <code>for</code> niteliği ekleyin.',
+    LABELS_PLACEHOLDER: 'Kaybolan yer tutucu metin, insanların bir alana hangi bilginin ait olduğunu hatırlamalarını zorlaştırır ve hataları tanımlamayı ve düzeltmeyi zor hale getirir. Bunun yerine, form alanından önce kalıcı olarak görünür bir ipucu kullanmayı düşünün. <hr> Daha fazla bilgi: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Form alanlarındaki yer tutucular zararlıdır.</a>',
 
     // Embedded content
     EMBED_VIDEO: 'Lütfen <strong>tüm videolarda altyazı olduğundan emin olun.</strong> Tüm ses ve video içerikleri için altyazı sağlanması zorunlu bir A Düzeyi gerekliliğidir. Altyazılar, işitme engelli veya işitme güçlüğü çeken kişileri destekler.',

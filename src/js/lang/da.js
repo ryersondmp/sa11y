@@ -194,6 +194,7 @@ export default {
     LABELS_ARIA_LABEL_INPUT: 'Input har et tilgængeligt navn, men sørg for, at der også er en synlig label. <hr> <strong {B}>Tilgængeligt navn</strong> <strong {C}>%(TEXT)</strong>',
     LABELS_NO_FOR_ATTRIBUTE: 'Der er ingen label knyttet til dette input. Tilføj en <code>for</code>-attribut til den label, der matcher <code>id</code> for dette input. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'Der er ingen label knyttet til dette input. Tilføj venligst et <code>id</code> til dette input, og tilføj en matchende <code>for</code>-attribut til etiketten.',
+    LABELS_PLACEHOLDER: 'Forbigående pladsholdertekst gør det svært for folk at huske, hvilken information der hører til i et felt, og at identificere og rette valideringsproblemer. Overvej i stedet at bruge et permanent synligt hint før formularfeltet. <hr> Læs mere: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Pladsholdere i formularfelter er skadelige.</a>',
 
     // Embedded content
     EMBED_VIDEO: 'Sørg for, at <strong>alle videoer har undertekster.</strong> Det er et obligatorisk krav på niveau A at levere undertekster til alt lyd- og videoindhold. Undertekster støtter mennesker, der er døve eller hørehæmmede.',

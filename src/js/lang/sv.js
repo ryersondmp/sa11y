@@ -176,6 +176,7 @@ export default {
     LABELS_ARIA_LABEL_INPUT: 'Inmatningsfältet har ett tillgängligt namn, men se till att det även finns en synlig etikett. <hr> <strong {B}>Tillgängligt namn</strong> <strong {C}>%(TEXT)</strong>',
     LABELS_NO_FOR_ATTRIBUTE: 'Det finns ingen etikett associerad med detta inmatningsfält. Lägg till ett <code>for</code>-attribut till etiketten som matchar <code>id</code> för detta inmatningsfält. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'Det finns ingen etikett associerad med detta inmatningsfält. Vänligen lägg till ett <code>id</code> till denna inmatning och lägg till ett matchande <code>for</code>-attribut till etiketten.',
+    LABELS_PLACEHOLDER: 'Försvinnande platshållartext gör det svårt för människor att komma ihåg vilken information som tillhör ett fält och gör det utmanande att identifiera och åtgärda fel. Överväg istället att använda en permanent synlig hint före formulärfältet. <hr> Läs mer: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Platshållare i formulärfält är skadliga.</a>',
 
     // Embedded content
     EMBED_VIDEO: 'Se till att <strong>alla videor har undertexter.</strong> Att tillhandahålla textning för allt ljud- och videoinnehåll är ett obligatoriskt krav för nivå A. Bildtexter stöder personer som är D/döva eller hörselskada.',

@@ -198,6 +198,7 @@ export default {
     LABELS_ARIA_LABEL_INPUT: 'Input memiliki nama yang dapat diakses, meskipun pastikan ada label yang terlihat juga. <hr> <strong {B}>Nama yang dapat diakses</strong> <strong {C}>%(TEXT)</strong>',
     LABELS_NO_FOR_ATTRIBUTE: 'Tidak ada label yang terkait dengan input ini. Tambahkan atribut <code>untuk</code> ke label yang sesuai dengan <code>id</code> input ini. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'Tidak ada label yang terkait dengan input ini. Tambahkan <code>id</code> ke input ini, dan tambahkan atribut <code>untuk</code> yang sesuai ke label.',
+    LABELS_PLACEHOLDER: 'Teks placeholder yang menghilang menyulitkan orang untuk mengingat informasi apa yang harus ada di dalam kolom dan untuk mengidentifikasi serta memperbaiki masalah validasi. Sebagai gantinya, pertimbangkan untuk menggunakan petunjuk yang selalu terlihat sebelum kolom formulir. <hr> Pelajari lebih lanjut: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Placeholder di kolom formulir itu berbahaya.</a>',
 
     // Embedded content
     EMBED_VIDEO: 'Pastikan <strong>semua video memiliki teks tertutup.</strong> Menyediakan teks untuk semua konten audio dan video adalah persyaratan Level A wajib. Teks mendukung orang-orang yang tuli atau sulit mendengar.',

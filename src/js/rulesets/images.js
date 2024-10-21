@@ -292,12 +292,13 @@ export default function checkImages(results, option) {
           ? option.checks.LINK_IMAGE_LONG_ALT
           : option.checks.IMAGE_ALT_TOO_LONG;
         const conditional = (link) ? 'LINK_IMAGE_LONG_ALT' : 'IMAGE_ALT_TOO_LONG';
+        const truncated = Utils.truncateString(altText, 600);
         if (rule) {
           results.push({
             element: $el,
             type: rule.type || 'warning',
             content: rule.content || Lang.sprintf(link
-              ? 'LINK_IMAGE_LONG_ALT' : 'IMAGE_ALT_TOO_LONG', alt.length, altText),
+              ? 'LINK_IMAGE_LONG_ALT' : 'IMAGE_ALT_TOO_LONG', alt.length, truncated),
             inline: false,
             position: 'beforebegin',
             dismiss: Utils.prepareDismissal(`IMAGE${src + altText}`),

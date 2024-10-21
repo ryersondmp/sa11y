@@ -204,6 +204,7 @@ export default {
     LABELS_ARIA_LABEL_INPUT: '入力フィールドにはアクセス可能な名前がありますが、見えるラベルもあることを確認してください。<hr> <strong {B}>アクセシブル名</strong> <strong {C}>%(TEXT)</strong>',
     LABELS_NO_FOR_ATTRIBUTE: 'この入力フィールドに関連付けられたラベルがありません。この入力フィールドのラベルに一致する<code>for</code>属性を追加してください。 <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'この入力フィールドに関連付けられたラベルがありません。この入力フィールドに<code>id</code>を追加し、ラベルに一致する<code>for</code>属性を追加してください。',
+    LABELS_PLACEHOLDER: '消えるプレースホルダー テキストは、人々がフィールドに何の情報が属しているかを思い出すのを難しくし、検証の問題を特定して修正するのを困難にします。代わりに、フォームフィールドの前に常に表示されるヒントを使用することを検討してください。 <hr> 詳細はこちら: <a href="https://www.nngroup.com/articles/form-design-placeholders/">フォームフィールドのプレースホルダーは有害です。</a>',
 
     // Embedded content
     EMBED_VIDEO: 'すべての動画に<strong>字幕を表示してください。</strong> 音声および動画コンテンツのすべてに字幕を提供することは、必須のレベルAの要件です。字幕は、聴覚障害者や難聴者をサポートします。',

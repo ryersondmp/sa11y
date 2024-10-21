@@ -171,6 +171,7 @@ export default {
     LABELS_ARIA_LABEL_INPUT: 'La entrada tiene un nombre accesible, aunque asegúrese de que también haya una etiqueta visible. <hr> <strong {B}>Nombre accesible</strong> <strong {C}>%(TEXT)</strong>',
     LABELS_NO_FOR_ATTRIBUTE: 'No hay ninguna etiqueta asociada con esta entrada. Agregue un atributo <code>for</code> a la etiqueta que coincida con el <code>id</code> de esta entrada. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'No hay ninguna etiqueta asociada con esta entrada. Agregue un <code>id</code> a esta entrada y agregue un atributo <code>for</code> coincidente a la etiqueta.',
+    LABELS_PLACEHOLDER: 'El texto del marcador de posición que desaparece dificulta que las personas recuerden qué información pertenece a un campo y a identificar y corregir problemas de validación. En su lugar, considere usar una pista permanentemente visible antes del campo del formulario. <hr> Obtenga más información: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Los marcadores de posición en los campos de formulario son dañinos.</a>',
 
     // Embedded content
     EMBED_VIDEO: 'Asegúrese de que <strong>todos los videos tengan subtítulos.</strong> Proporcionar subtítulos para todo el contenido de audio y video es un requisito obligatorio de nivel A. Los subtítulos ayudan a las personas sordas o con dificultades auditivas.',

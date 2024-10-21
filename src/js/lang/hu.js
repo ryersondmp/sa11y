@@ -206,6 +206,7 @@ export default {
     LABELS_ARIA_LABEL_INPUT: 'A bemenetnek elérhető neve van, de kérjük, gondoskodjon arról, hogy a címke is látható legyen. <hr> <strong {B}>Hozzáférhető név</strong> <strong {C}>%(TEXT)</strong>',
     LABELS_NO_FOR_ATTRIBUTE: 'Ehhez a bemenethez nincs címke társítva. Adjon hozzá egy <code>for</code> attribútumot a címkéhez, amely megfelel a bemenet <code>id</code> azonosítójának. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'Ehhez a bemenethez nincs címke társítva. Kérjük, adjon hozzá egy <code>id</code>-t ehhez a bemenethez, és adjon hozzá egy megfelelő <code>for</code> attribútumot a címkéhez.',
+    LABELS_PLACEHOLDER: 'A eltűnő helyőrző szöveg megnehezíti az emberek számára, hogy emlékezzenek arra, hogy mely információk tartoznak egy mezőbe, és hogy azonosítsák és kijavítsák a validálási problémákat. Ehelyett fontolja meg, hogy állandóan látható tippet használjon a űrlapmező előtt. <hr> Tudjon meg többet: <a href="https://www.nngroup.com/articles/form-design-placeholders/">A helyőrzők a űrlapmezőkben károsak.</a>',
 
     // Embedded content
     EMBED_VIDEO: 'Kérjük, gondoskodjon arról, hogy <strong>minden videó feliratozással legyen ellátva.</strong> A feliratozás biztosítása minden hang- és videotartalomhoz kötelező A-szintű követelmény. A feliratozás a siket vagy nagyothalló embereket támogatja.',

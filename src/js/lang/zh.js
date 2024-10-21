@@ -194,6 +194,7 @@ export default {
     LABELS_ARIA_LABEL_INPUT: '输入有一个无障碍名称, 但请确保也有一个可见的标签。<hr> <strong {B}>可访问名称</strong> <strong {C}>%(TEXT)</strong>',
     LABELS_NO_FOR_ATTRIBUTE: '没有与此输入相关的标签。给标签添加一个<code>for</code>属性, 该属性与该输入的<code>id</code>相匹配。<hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: '没有与此输入相关的标签。请为这个输入添加一个<code>id</code>, 并为标签添加一个匹配的<code>for</code>属性。',
+    LABELS_PLACEHOLDER: '消失的占位符文本使人们很难记住哪些信息属于某个字段，并使识别和纠正错误变得具有挑战性。相反，请考虑在表单字段之前使用永久可见的提示。<hr> 了解更多信息：<a href="https://www.nngroup.com/articles/form-design-placeholders/">表单字段中的占位符是有害的。</a>',
 
     // Embedded content
     EMBED_VIDEO: '请确保<strong>所有视频都有闭合字幕。</strong>为所有音频和视频内容提供字幕是一项强制性的A级要求。字幕支持聋哑人或听力困难的人。',

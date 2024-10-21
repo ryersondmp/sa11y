@@ -371,10 +371,12 @@ export default function checkContrast(results, option) {
     const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
     const hasLowContrast = ratio < 3;
     const hasLowContrastNormalText = ratio > 1 && ratio < 4.5;
+    const isPlaceholderText = $el.hasAttribute('data-sa11y-contrast-placeholder');
 
     if ((isLargeText && hasLowContrast) || (!isLargeText && hasLowContrastNormalText)) {
       contrastResults.errors.push({
         $el,
+        type: isPlaceholderText ? 'placeholder' : '',
         ratio: `${ratio.toFixed(2)}:1`,
         details: { color: blendedColor, background, isLargeText, opacity },
       });
@@ -401,9 +403,12 @@ export default function checkContrast(results, option) {
     const fontWeightIndex = Math.floor(fontWeight / 100) - 1;
     const minFontSize = fontLookup[fontWeightIndex];
 
+    const isPlaceholderText = $el.hasAttribute('data-sa11y-contrast-placeholder');
+
     if (fontSize < minFontSize) {
       contrastResults.errors.push({
         $el,
+        type: isPlaceholderText ? 'placeholder' : '',
         ratio: `APCA ${Math.abs(ratio.toFixed(1))}`,
         details: { color: blendedColor, background, weight: fontWeight, size: fontSize, opacity },
       });
@@ -436,6 +441,9 @@ export default function checkContrast(results, option) {
     // Inputs to check
     const checkInputs = ['SELECT', 'INPUT', 'TEXTAREA'].includes($el.tagName);
 
+    // Preferred contrast algorithm.
+    const algorithm = option.contrastAPCA ? apcaAlgorithm : wcagAlgorithm;
+
     // Contrast check only elements with text, inputs, and textareas.
     if (text.length !== 0 || checkInputs) {
       if (background === 'image') {
@@ -446,10 +454,19 @@ export default function checkContrast(results, option) {
       } else if (isVisuallyHidden || opacity === 0 || getHex(color) === getHex(background)) {
         // Ignore visually hidden elements.
       } else {
-        // Preferred contrast algorithm.
-        const algorithm = option.contrastAPCA ? apcaAlgorithm : wcagAlgorithm;
         algorithm($el, color, background, fontSize, fontWeight, opacity);
       }
+    }
+
+    // Placeholder attributes.
+    if (checkInputs && $el.placeholder && $el.placeholder.length !== 0) {
+      const placeholder = getComputedStyle($el, '::placeholder');
+      const pColor = convertToRGBA(placeholder.getPropertyValue('color'));
+      const pSize = parseFloat(placeholder.fontSize);
+      const pWeight = normalizeFontWeight(placeholder.fontWeight);
+      $el.setAttribute('data-sa11y-contrast-placeholder', 'true');
+      algorithm($el, pColor, background, pSize, pWeight, opacity, true);
+      $el.removeAttribute('data-sa11y-contrast-placeholder');
     }
   }
 
@@ -478,18 +495,32 @@ export default function checkContrast(results, option) {
       ? `<hr aria-hidden="true"> ${Lang.sprintf('CONTRAST_OPACITY')} <strong class="badge">${opacity}</strong>`
       : suggestion;
 
-    if (['SELECT', 'INPUT', 'TEXTAREA'].includes($el.tagName)) {
-      if (option.checks.CONTRAST_INPUT) {
+    if (option.checks.CONTRAST_INPUT && ['SELECT', 'INPUT', 'TEXTAREA'].includes($el.tagName)) {
+      results.push({
+        element: $el,
+        type: option.checks.CONTRAST_INPUT.type || 'error',
+        content: option.checks.CONTRAST_INPUT.content
+          || Lang.sprintf('CONTRAST_INPUT', ratio) + advice,
+        inline: false,
+        position: 'beforebegin',
+        dismiss: Utils.prepareDismissal(`CONTRAST${$el.getAttribute('class')}${$el.tagName}${ratio}`),
+        dismissAll: option.checks.CONTRAST_INPUT.dismissAll ? 'CONTRAST_INPUT' : false,
+        developer: option.checks.CONTRAST_INPUT.developer || true,
+      });
+
+      // Flag additional errors if placeholder text is low.
+      if (option.checks.CONTRAST_PLACEHOLDER && item.type === 'placeholder') {
+        const sanitizedPlaceholder = $el.placeholder ? Utils.sanitizeHTML($el.placeholder) : '';
         results.push({
           element: $el,
-          type: option.checks.CONTRAST_INPUT.type || 'error',
-          content: option.checks.CONTRAST_INPUT.content
-            || Lang.sprintf('CONTRAST_INPUT', ratio) + advice,
+          type: option.checks.CONTRAST_PLACEHOLDER.type || 'error',
+          content: option.checks.CONTRAST_PLACEHOLDER.content
+            || Lang.sprintf('CONTRAST_PLACEHOLDER', ratio, sanitizedPlaceholder) + advice,
           inline: false,
-          position: 'beforebegin',
-          dismiss: Utils.prepareDismissal(`CONTRAST${$el.getAttribute('class')}${$el.tagName}${ratio}`),
-          dismissAll: option.checks.CONTRAST_INPUT.dismissAll ? 'CONTRAST_INPUT' : false,
-          developer: option.checks.CONTRAST_INPUT.developer || true,
+          position: 'afterend',
+          dismiss: Utils.prepareDismissal(`CPLACEHOLDER${$el.getAttribute('class')}${$el.tagName}${ratio}`),
+          dismissAll: option.checks.CONTRAST_PLACEHOLDER.dismissAll ? 'CONTRAST_PLACEHOLDER' : false,
+          developer: option.checks.CONTRAST_PLACEHOLDER.developer || true,
         });
       }
     } else if (option.checks.CONTRAST_ERROR && sanitizedText.length !== 0) {

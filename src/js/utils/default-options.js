@@ -129,6 +129,7 @@ const defaultOptions = {
     LABELS_MISSING_LABEL: true,
     LABELS_ARIA_LABEL_INPUT: true,
     LABELS_NO_FOR_ATTRIBUTE: true,
+    LABELS_PLACEHOLDER: true,
 
     // Embedded Content checks.
     EMBED_AUDIO: true,
@@ -163,7 +164,6 @@ const defaultOptions = {
 
     // Meta checks
     META_LANG: true,
-
     META_SCALABLE: true,
     META_MAX: true,
     META_REFRESH: true,
@@ -185,6 +185,7 @@ const defaultOptions = {
     },
     CONTRAST_INPUT: true,
     CONTRAST_ERROR: true,
+    CONTRAST_PLACEHOLDER: true,
   },
 };
 

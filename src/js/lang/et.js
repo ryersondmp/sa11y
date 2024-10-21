@@ -199,6 +199,7 @@ export default {
     LABELS_ARIA_LABEL_INPUT: 'Sisendil on juurdepääsetav nimi, kuigi palun veenduge, et ka silt on nähtav. <hr> <strong {B}>Ligipääsetav nimi</strong> <strong {C}>%(TEXT)</strong>',
     LABELS_NO_FOR_ATTRIBUTE: 'Selle sisendiga ei ole seotud mingit märgistust. Lisage sildile <code>for</code> atribuut, mis vastab selle sisendi <code>id</code>. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'Selle sisendiga ei ole seotud mingit märgistust. Palun lisage sellele sisendile <code>id</code> ja lisage sildile vastav <code>for</code> atribuut.',
+    LABELS_PLACEHOLDER: 'Kaduv tekstiväli teeb inimestele raskeks meeles pidada, milline teave kuulub väljale, ja tuvastada ning parandada valideerimisega seotud probleeme. Selle asemel kaaluge pidevalt nähtava vihje kasutamist enne vormivälja. <hr> Lisateavet leiate: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Vormiväljade kohatäidised on kahjulikud.</a>',
 
     // Embedded content
     EMBED_VIDEO: 'Palun veenduge, et <strong>kõik millisel videol on kinnised subtiitrid.</strong> Kogu heli- ja videosisu puhul on subtiitrite esitamine kohustuslik A-taseme nõue. Üleskirjutused toetavad kurte ja vaegkuuljaid inimesi, kes on kurdid või vaegkuuljad.',

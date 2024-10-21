@@ -34,7 +34,8 @@ h2,
 
 code {
   font-family: monospace !important;
-  font-size: 14px;
+  font-size: calc(var(--sa11y-normal-text) - 1px);
+  font-weight: 600;
 }
 
 code,
@@ -65,8 +66,8 @@ kbd,
 .badge {
   display: inline;
   min-width: 10px;
-  padding: 1px 4.5px 1.75px;
-  font-size: 13px;
+  padding: 1px 5px 1.75px;
+  font-size: 14px;
   font-weight: 700 !important;
   line-height: 1;
   color: var(--sa11y-panel-primary);
@@ -74,8 +75,8 @@ kbd,
   white-space: nowrap;
   vertical-align: baseline;
   background-color: var(--sa11y-panel-badge);
-  border: 1px solid transparent;
   border-radius: 10px;
+  outline: 1px solid transparent;
 }
 
 .error-badge {

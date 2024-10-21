@@ -191,6 +191,7 @@ export default {
     LABELS_ARIA_LABEL_INPUT: 'Die Eingabe hat einen zugänglichen Namen, stelle bitte trotzdem sicher, dass es auch ein sichtbares Label gibt. <hr> <strong {B}>Zugänglicher Name</strong> <strong {C}>%(TEXT)</strong>',
     LABELS_NO_FOR_ATTRIBUTE: 'Dieser Eingabe ist kein Label zugeordnet. Füge dem Label ein <code>for</code>-Attribut hinzu, das der <code>id</code> dieser Eingabe entspricht. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'Dieser Eingabe ist kein Label zugeordnet. Bitte füge dieser Eingabe eine <code>id</code> hinzu und füge dem Label ein passendes <code>for</code>-Attribut hinzu.',
+    LABELS_PLACEHOLDER: 'Verschwindender Platzhaltertext erschwert es den Menschen, sich daran zu erinnern, welche Informationen in ein Feld gehören, und Probleme mit der Validierung zu identifizieren und zu beheben. Erwägen Sie stattdessen, einen dauerhaft sichtbaren Hinweis vor dem Formularfeld zu verwenden. <hr> Erfahren Sie mehr: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Platzhalter in Formularfeldern sind schädlich.</a>',
 
     // Embedded content
     EMBED_VIDEO: 'Bitte stelle sicher, dass <strong>alle Videos Untertitel haben.</strong> Das Bereitstellen von Untertiteln für alle Audio- und Videoinhalte ist eine obligatorische Anforderung der Stufe-A. Bildunterschriften unterstützen Menschen, die Taub oder schwerhörig sind.',

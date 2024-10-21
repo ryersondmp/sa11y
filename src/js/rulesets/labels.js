@@ -135,6 +135,20 @@ export default function checkLabels(results, option) {
           developer: option.checks.LABELS_MISSING_LABEL.developer || true,
         });
       }
+
+      // Avoid using placeholder attributes.
+      if ($el.placeholder && $el.placeholder !== 0) {
+        results.push({
+          element: $el,
+          type: option.checks.LABELS_PLACEHOLDER.type || 'warning',
+          content: option.checks.LABELS_PLACEHOLDER.content || Lang.sprintf('LABELS_PLACEHOLDER'),
+          inline: false,
+          position: 'beforebegin',
+          dismiss: key,
+          dismissAll: option.checks.LABELS_PLACEHOLDER.dismissAll ? 'LABELS_PLACEHOLDER' : false,
+          developer: option.checks.LABELS_PLACEHOLDER.developer || true,
+        });
+      }
     });
   }
   return results;

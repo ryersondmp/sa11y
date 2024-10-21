@@ -197,6 +197,7 @@ export default {
     LABELS_ARIA_LABEL_INPUT: "L'input ha un nome accessibile, anche se bisogna assicurarsi che ci sia anche un'etichetta visibile. <hr> <strong {B}>Nome accessibile</strong> <strong {C}>%(TEXT)</strong>",
     LABELS_NO_FOR_ATTRIBUTE: "Non c'è un'etichetta associata a questo input. Aggiungere un attributo <code>for</code> all'etichetta che corrisponda all'<code>id</code> di questo input. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
     LABELS_MISSING_LABEL: "Non c'è un'etichetta associata a questo input. Aggiungere un <code>id</code> a questo input e aggiungere un attributo <code>for</code> corrispondente all'etichetta.",
+    LABELS_PLACEHOLDER: 'Il testo segnaposto che scompare rende difficile per le persone ricordare quali informazioni appartengono a un campo e identificare e correggere problemi di validazione. Invece, prendi in considerazione l’uso di un suggerimento visibile in modo permanente prima del campo del modulo. <hr> Scopri di più: <a href="https://www.nngroup.com/articles/form-design-placeholders/">I segnaposto nei campi dei moduli sono dannosi.</a>',
 
     // Embedded content
     EMBED_VIDEO: 'Assicuratevi che <strong>tutti i video abbiano le didascalie chiuse.</strong> Fornire didascalie per tutti i contenuti audio e video è un requisito obbligatorio di livello A. Le didascalie aiutano le persone non udenti o con problemi di udito.',

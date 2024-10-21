@@ -136,9 +136,15 @@ div {
   text-align: center;
 }
 
-/* Add a 2px border to panel tooktips. */
+/* More visible panel tooltips. */
 .tippy-box[data-theme~=sa11y-panel] {
   border: 1px solid var(--sa11y-panel-bg-splitter);
+  box-shadow: var(--sa11y-box-shadow);
+}
+
+/* Annotation tooltip boxshadows. */
+.tippy-box[data-theme~=sa11y-theme]:not([data-theme~=sa11y-panel]) {
+  box-shadow: 0 0 20px 4px rgba(154, 161, 177, 0.15), 0 4px 80px -8px rgba(36, 40, 47, 0.25), 0 4px 4px -2px rgba(91, 94, 105, 0.15) !important;
 }
 
 /* Tooltip content */
@@ -155,7 +161,6 @@ div {
   background-color: var(--sa11y-panel-bg);
   border-radius: 4px;
   outline: 0;
-  box-shadow: 0 0 20px 4px rgba(154, 161, 177, 0.15), 0 4px 80px -8px rgba(36, 40, 47, 0.25), 0 4px 4px -2px rgba(91, 94, 105, 0.15) !important;
   transition-property: transform, visibility, opacity;
   -webkit-font-smoothing: auto;
   /* Dismiss buttons */
@@ -166,6 +171,7 @@ div {
 .tippy-box[data-theme~=sa11y-theme] code {
   font-family: monospace;
   font-size: calc(var(--sa11y-normal-text) - 1px);
+  font-weight: 500;
 }
 .tippy-box[data-theme~=sa11y-theme] code,
 .tippy-box[data-theme~=sa11y-theme] kbd {
@@ -197,6 +203,7 @@ div {
   margin: 5px 10px 0 20px;
 }
 .tippy-box[data-theme~=sa11y-theme] a {
+  font-weight: 500;
   color: var(--sa11y-hyperlink);
   text-decoration: underline;
   cursor: pointer;

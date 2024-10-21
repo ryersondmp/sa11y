@@ -79,7 +79,7 @@
       color: color(rec2020 0.9 0.4 0.2);
     }
 
-    input {
+    #input-1 {
       color: lightblue;
     }
 
@@ -376,9 +376,23 @@
     </div>
 
     <h2>Input</h2>
-    <div id="error-text-area">
-      <label for="input-a">Name:</label>
-      <input type="text" id="input-a" />
+    <div id="error-input-1">
+      <label for="input-1">Name:</label>
+      <input type="text" id="input-1" />
+    </div>
+
+    <div id="error-input-2">
+      <style>
+        #input-2 {
+          color: #676767;
+        }
+
+        #input-2::placeholder {
+          color: lightgrey
+        }
+      </style>
+      <label for="input-2">Phone:</label>
+      <input type="text" id="input-2" placeholder="E.g. 416-967-711" />
     </div>
 
     <h2>Text area</h2>

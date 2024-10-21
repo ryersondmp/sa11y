@@ -198,6 +198,7 @@ export default {
     LABELS_ARIA_LABEL_INPUT: 'A entrada tem um nome acessível, mas certifique-se de que também existe uma etiqueta visível. <hr> <strong {B}>Nome acessível</strong> <strong {C}>%(TEXT)</strong>',
     LABELS_NO_FOR_ATTRIBUTE: 'Não existe um rótulo associado a esta entrada. Adicione um atributo <code>for</code> ao rótulo que corresponde ao <code>id</code> desta entrada. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'Não existe uma etiqueta associada a esta entrada. Adicione um <code>id</code> a esta entrada e adicione um atributo <code>for</code> correspondente à etiqueta.',
+    LABELS_PLACEHOLDER: 'O texto de espaço reservado que desaparece torna difícil para as pessoas lembrarem-se de que informações pertencem a um campo e torna difícil identificar e corrigir erros. Em vez disso, considere usar uma dica permanentemente visível antes do campo do formulário. <hr> Saiba mais: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Os espaços reservados nos campos de formulário são prejudiciais.</a>',
 
     // Embedded content
     EMBED_VIDEO: 'Por favor, certifique-se de que <strong>todos os vídeos têm legendas fechadas.</strong> Fornecer legendas para todo o conteúdo de áudio e vídeo é um requisito obrigatório de Nível A. As legendas ajudam as pessoas com deficiência auditiva ou surdas.',

@@ -199,6 +199,7 @@ export default {
     LABELS_ARIA_LABEL_INPUT: 'Inndataene har et tilgjengelig navn, men sørg for at de også har en synlig etikett. <hr> <strong {B}>Tilgjengelig navn</strong> <strong {C}>%(TEXT)</strong>',
     LABELS_NO_FOR_ATTRIBUTE: 'Det er ingen etikett knyttet til denne inndataen. Legg til et <code>for</code>-attributt i etiketten som samsvarer med <code>id</code> for denne inndataen. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'Det er ingen etikett knyttet til denne inndataen. Legg til et <code>id</code> til denne inndataen, og legg til et matchende <code>for</code>-attributt til etiketten.',
+    LABELS_PLACEHOLDER: 'Forsvinner plassholdertekst gjør det vanskelig for folk å huske hvilken informasjon som hører til et felt, og gjør det utfordrende å identifisere og korrigere feil. Vurder i stedet å bruke et permanent synlig hint før skjema feltet. <hr> Lær mer: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Plassholdere i skjema felt er skadelige.</a>',
 
     // Embedded content
     EMBED_VIDEO: 'Sørg for at <strong>alle videoer er tekstet.</strong> Det er et obligatorisk nivå A-krav at alt lyd- og videoinnhold er tekstet. Teksting er til hjelp for personer som er døve eller har nedsatt hørsel.',

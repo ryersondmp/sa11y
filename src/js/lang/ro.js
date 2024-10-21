@@ -196,6 +196,7 @@ export default {
     LABELS_ARIA_LABEL_INPUT: 'Intrarea are un nume accesibil, deși vă rugăm să vă asigurați că există și o etichetă vizibilă. <hr> <strong {B}>Numele accesibil</strong> <strong {C}>%(TEXT)</strong>',
     LABELS_NO_FOR_ATTRIBUTE: 'Nu există nicio etichetă asociată cu această intrare. Adăugați un atribut <code>for</code> la eticheta care se potrivește cu <code>id</code> al acestei intrări. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'Nu există nicio etichetă asociată cu această intrare. Vă rugăm să adăugați un <code>id</code> la această intrare și să adăugați un atribut <code>for</code> corespunzător etichetei.',
+    LABELS_PLACEHOLDER: 'Textul temporar de tip placeholder face dificil pentru oameni să își amintească ce informații aparțin unui câmp și face provocatoare identificarea și corectarea greșelilor. În schimb, considerați utilizarea unui indiciu permanent vizibil înainte de câmpul formularului. <hr> Aflați mai multe: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Placeholders în câmpurile de formular sunt dăunătoare.</a>',
 
     // Embedded content
     EMBED_VIDEO: 'Vă rugăm să vă asigurați că <strong>toate videoclipurile au subtitrare.</strong> Furnizarea de subtitrări pentru tot conținutul audio și video este o cerință obligatorie de nivel A. Subtitrările vin în sprijinul persoanelor care sunt D/surde sau cu deficiențe de auz.',

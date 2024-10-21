@@ -195,6 +195,7 @@ export default {
     LABELS_ARIA_LABEL_INPUT: 'Vnos ima dostopno ime, vendar poskrbite, da je vidna tudi nalepka. <hr> <strong {B}>Dostopno ime</strong> <strong {C}>%(TEXT)</strong>',
     LABELS_NO_FOR_ATTRIBUTE: 'S tem vnosom ni povezana nobena oznaka. Dodajte atribut <code>for</code> oznaki, ki ustreza <code>id</code> tega vnosa. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'S tem vnosom ni povezana nobena oznaka. Dodajte <code>id</code> temu vnosu in dodajte ustrezen atribut <code>for</code> oznaki.',
+    LABELS_PLACEHOLDER: 'Izginjajoči tekst zavor se težko spomni, katera informacija spada v polje in otežuje ugotavljanje in popravljanje napak. Namesto tega razmislite o uporabi trajno vidnega namiga pred poljem obrazca. <hr> Več informacij: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Zavori v obrazcih so škodljivi.</a>',
 
     // Embedded content
     EMBED_VIDEO: 'Poskrbite, da bodo <strong>vsi videoposnetki opremljeni s podnapisi.</strong> Zagotavljanje podnapisov za vse zvočne in video vsebine je obvezna zahteva na ravni A. Podnapisi so v pomoč gluhim in naglušnim osebam.',

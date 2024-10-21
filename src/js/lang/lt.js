@@ -200,6 +200,7 @@ export default {
     LABELS_ARIA_LABEL_INPUT: 'Įvestis turi prieinamą pavadinimą, tačiau užtikrinkite, kad būtų matoma ir etiketė. <hr> <strong {B}>Prieinamas pavadinimas</strong> <strong {C}>%(TEXT)</strong>',
     LABELS_NO_FOR_ATTRIBUTE: 'Su šia įvestimi nėra susieta jokia etiketė. Pridėkite <code>for</code> atributą prie etiketės, atitinkančios šios įvesties <code>id</code>. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'Su šia įvestimi nėra susieta jokia etiketė. Pridėkite <code>id</code> prie šios įvesties ir pridėkite atitinkamą <code>for</code> atributą prie etiketės.',
+    LABELS_PLACEHOLDER: 'Dingstantis vietos laikiklio tekstas apsunkina žmonėms atsiminti, kokia informacija priklauso laukeliui, ir nustatyti bei ištaisyti galiojimo problemas. Vietoj to, apsvarstykite galimybę naudoti nuolat matomą užuominą prieš formos laukelį. <hr> Sužinokite daugiau: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Vietos laikikliai formų laukeliuose yra žalingi.</a>',
 
     // Embedded content
     EMBED_VIDEO: 'Užtikrinkite, kad <strong>visuose vaizdo įrašuose būtų uždaros antraštės.</strong> Visų garso ir vaizdo įrašų titrų pateikimas yra privalomas A lygio reikalavimas. Titrai padeda kurtiesiems ir neprigirdintiesiems.',

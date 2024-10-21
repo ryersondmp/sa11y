@@ -196,6 +196,7 @@ export default {
     LABELS_ARIA_LABEL_INPUT: 'Ievadei ir pieejams nosaukums, tomēr pārliecinieties, ka ir redzams arī marķējums. <hr> <strong {B}>Pieejamais nosaukums</strong> <strong {C}>%(TEXT)</strong>',
     LABELS_NO_FOR_ATTRIBUTE: 'Šim ievadam nav piesaistīta etiķete. Pievienojiet <code>for</code> atribūtu etiķetei, kas atbilst šīs ievades <code>id</code>. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
     LABELS_MISSING_LABEL: 'Šim ievadam nav piesaistīta etiķete. Lūdzu, pievienojiet šim ievadam <code>id</code> un pievienojiet etiķetei atbilstošu atribūtu <code>for</code>.',
+    LABELS_PLACEHOLDER: 'Izšķirošais vietturis teksts apgrūtina cilvēkiem atcerēties, kāda informācija pieder laukam, un noteikt un labot validācijas problēmas. Tā vietā apsveriet iespēju izmantot pastāvīgi redzamu norādi pirms veidlapas lauka. <hr> Uzziniet vairāk: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Vietturis veidlapu laukos ir kaitīgs.</a>',
 
     // Embedded content
     EMBED_VIDEO: 'Lūdzu, pārliecinieties, ka <strong>visiem videoklipiem ir slēptie titri.</strong> Visu audio un video materiālu titru nodrošināšana ir obligāta A līmeņa prasība. Titri palīdz cilvēkiem, kuri ir nedzirdīgi vai vājdzirdīgi.',
