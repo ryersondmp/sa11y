@@ -345,77 +345,88 @@ export function generateColorSuggestion(details) {
 }
 
 /**
+  * Calculate an elements contrast based on WCAG 2.0 contrast algorithm.
+  * @param {HTMLElement} $el The element in the DOM.
+  * @param {number[]} color Text colour in [R,G,B,A] format.
+  * @param {Array} background Background colour in [R,G,B,A] format.
+  * @param {number} fontSize Element's font size.
+  * @param {number} fontWeight Element's font weight.
+  * @param {number} opacity Element's opacity value.
+  * @returns {Object} Object containing the element, ratio, and extra details.
+  */
+export function wcagAlgorithm($el, color, background, fontSize, fontWeight, opacity) {
+  const { ratio, blendedColor } = calculateContrast(color, background);
+  const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
+  const hasLowContrast = ratio < 3;
+  const hasLowContrastNormalText = ratio > 1 && ratio < 4.5;
+
+  if ((isLargeText && hasLowContrast) || (!isLargeText && hasLowContrastNormalText)) {
+    return {
+      $el,
+      ratio: `${ratio.toFixed(2)}:1`,
+      details: { color: blendedColor, background, isLargeText, opacity },
+    };
+  }
+  return null;
+}
+
+/**
+ * Calculate an elements contrast based on APCA algorithm.
+ * @param {HTMLElement} $el The element in the DOM.
+ * @param {number[]} color Text colour in [R,G,B,A] format.
+ * @param {Array} background Background colour in [R,G,B,A] format.
+ * @param {number} fontSize Element's font size.
+ * @param {number} fontWeight Element's font weight.
+ * @param {number} opacity Element's opacity value.
+ * @returns {Object} Object containing the element, ratio, and extra details.
+*/
+export function apcaAlgorithm($el, color, background, fontSize, fontWeight, opacity) {
+  const { ratio, blendedColor } = calculateContrast(color, background);
+
+  // Returns 9 font sizes in px corresponding to weights 100 thru 900.
+  // Returns ['LcValue',100,200,300,400,500,600,700,800,900]
+  const fontLookup = fontLookupAPCA(ratio).slice(1);
+
+  // Get minimum font size based on weight.
+  const fontWeightIndex = Math.floor(fontWeight / 100) - 1;
+  const minFontSize = fontLookup[fontWeightIndex];
+
+  if (fontSize < minFontSize) {
+    return {
+      $el,
+      ratio: `APCA ${Math.abs(ratio.toFixed(1))}`,
+      details: { color: blendedColor, background, weight: fontWeight, size: fontSize, opacity },
+    };
+  }
+  return null;
+}
+
+/**
+ * Check an element's contrast based on APCA or WCAG 2.0 algorithm.
+ * @param {HTMLElement} $el The element in the DOM.
+ * @param {number[]} color Text colour in [R,G,B,A] format.
+ * @param {Array} background Background colour in [R,G,B,A] format.
+ * @param {number} fontSize Element's font size.
+ * @param {number} fontWeight Element's font weight.
+ * @param {number} opacity Element's opacity value.
+ * @returns {Object} Object containing the element, ratio, and extra details.
+ */
+export function checkElementContrast($el, color, background, fontSize, fontWeight, opacity) {
+  const algorithm = Constants.Global.contrastAPCA ? apcaAlgorithm : wcagAlgorithm;
+  return algorithm($el, color, background, fontSize, fontWeight, opacity);
+}
+
+/**
  * Check contrast.
  * @param {Array} results Sa11y's results array.
  * @param {Object} option Sa11y's options object.
  * @returns Contrast results.
  */
 export default function checkContrast(results, option) {
-  // Initialize contrast object.
-  const contrastResults = {
-    errors: [],
-    warnings: [],
-  };
+  // Initialize contrast results array.
+  const contrastResults = [];
 
-  /**
-   * Calculate an elements contrast based on WCAG 2.0 contrast algorithm.
-   * @param {HTMLElement} $el The element in the DOM.
-   * @param {number[]} color Text colour in [R,G,B,A] format.
-   * @param {Array} background Background colour in [R,G,B,A] format.
-   * @param {boolean} isVisuallyHidden Check if element is visually hidden.
-   * @param {number} fontSize Element's font size.
-   * @param {number} fontWeight Element's font weight.
-   */
-  const wcagAlgorithm = ($el, color, background, fontSize, fontWeight, opacity) => {
-    const { ratio, blendedColor } = calculateContrast(color, background);
-    const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
-    const hasLowContrast = ratio < 3;
-    const hasLowContrastNormalText = ratio > 1 && ratio < 4.5;
-    const isPlaceholderText = $el.hasAttribute('data-sa11y-contrast-placeholder');
-
-    if ((isLargeText && hasLowContrast) || (!isLargeText && hasLowContrastNormalText)) {
-      contrastResults.errors.push({
-        $el,
-        type: isPlaceholderText ? 'placeholder' : '',
-        ratio: `${ratio.toFixed(2)}:1`,
-        details: { color: blendedColor, background, isLargeText, opacity },
-      });
-    }
-  };
-
-  /**
-   * Calculate an elements contrast based on APCA algorithm.
-   * @param {HTMLElement} $el The element in the DOM.
-   * @param {number[]} color Text colour in [R,G,B,A] format.
-   * @param {Array} background Background colour in [R,G,B,A] format.
-   * @param {boolean} isVisuallyHidden Check if element is visually hidden.
-   * @param {number} fontSize Element's font size.
-   * @param {number} fontWeight Element's font weight.
-  */
-  const apcaAlgorithm = ($el, color, background, fontSize, fontWeight, opacity) => {
-    const { ratio, blendedColor } = calculateContrast(color, background);
-
-    // Returns 9 font sizes in px corresponding to weights 100 thru 900.
-    // Returns ['LcValue',100,200,300,400,500,600,700,800,900]
-    const fontLookup = fontLookupAPCA(ratio).slice(1);
-
-    // Get minimum font size based on weight.
-    const fontWeightIndex = Math.floor(fontWeight / 100) - 1;
-    const minFontSize = fontLookup[fontWeightIndex];
-
-    const isPlaceholderText = $el.hasAttribute('data-sa11y-contrast-placeholder');
-
-    if (fontSize < minFontSize) {
-      contrastResults.errors.push({
-        $el,
-        type: isPlaceholderText ? 'placeholder' : '',
-        ratio: `APCA ${Math.abs(ratio.toFixed(1))}`,
-        details: { color: blendedColor, background, weight: fontWeight, size: fontSize, opacity },
-      });
-    }
-  };
-
-  // Iterate through all elements on the page.
+  // Iterate through all elements on the page and get computed styles.
   for (let i = 0; i < Elements.Found.Contrast.length; i++) {
     const $el = Elements.Found.Contrast[i];
     const style = getComputedStyle($el);
@@ -441,121 +452,126 @@ export default function checkContrast(results, option) {
     // Inputs to check
     const checkInputs = ['SELECT', 'INPUT', 'TEXTAREA'].includes($el.tagName);
 
-    // Preferred contrast algorithm.
-    const algorithm = option.contrastAPCA ? apcaAlgorithm : wcagAlgorithm;
-
-    // Contrast check only elements with text, inputs, and textareas.
+    // Only check elements with text and inputs.
     if (text.length !== 0 || checkInputs) {
       if (background === 'image') {
         // Warnings for elements with a background image, ignoring inputs.
         if (!checkInputs && !$el.closest('nav')) {
-          contrastResults.warnings.push({ $el });
+          contrastResults.push({ $el, type: 'warning' });
         }
       } else if (isVisuallyHidden || opacity === 0 || getHex(color) === getHex(background)) {
         // Ignore visually hidden elements.
       } else {
-        algorithm($el, color, background, fontSize, fontWeight, opacity);
+        const result = checkElementContrast($el, color, background, fontSize, fontWeight, opacity);
+        if (result) {
+          result.type = checkInputs ? 'input' : 'text';
+          contrastResults.push(result);
+        }
       }
     }
+  }
 
-    // Placeholder attributes.
-    if (checkInputs && $el.placeholder && $el.placeholder.length !== 0) {
+  // Check contrast of all placeholder elements.
+  Elements.Found.Inputs.forEach(($el) => {
+    if ($el.placeholder && $el.placeholder.length !== 0) {
       const placeholder = getComputedStyle($el, '::placeholder');
       const pColor = convertToRGBA(placeholder.getPropertyValue('color'));
       const pSize = parseFloat(placeholder.fontSize);
       const pWeight = normalizeFontWeight(placeholder.fontWeight);
-      $el.setAttribute('data-sa11y-contrast-placeholder', 'true');
-      algorithm($el, pColor, background, pSize, pWeight, opacity, true);
-      $el.removeAttribute('data-sa11y-contrast-placeholder');
+      const pBackground = getBackground($el);
+      const pOpacity = parseFloat(placeholder.opacity);
+      const result = checkElementContrast($el, pColor, pBackground, pSize, pWeight, pOpacity);
+      if (result) {
+        result.type = 'placeholder';
+        contrastResults.push(result);
+      }
     }
-  }
+  });
 
-  /**
-   * Some additional processing before pushing to Sa11y's results array.
-   * @param {Object} item A single item (object) from the contrast results object.
-   * @returns Element, ratio, sanitized text for tooltip, suggested colour, and background colour.
-   */
-  const processContrastItem = ({ $el, ratio, details }) => {
+  // Iterate through all contrast results.
+  contrastResults.forEach((item) => {
+    const { $el, ratio, details } = item;
+
+    // Process text within element.
     const clone = $el.cloneNode(true);
     const ignoreElements = ['script', 'style', 'noscript'];
     const nodeText = Utils.fnIgnore(clone, ignoreElements);
     const text = Utils.getText(nodeText);
+
+    // Content for tooltip.
     const truncatedText = Utils.truncateString(text, 100);
     const sanitizedText = Utils.sanitizeHTML(truncatedText);
     const suggestion = (option.contrastSuggestions && details !== undefined)
       ? `<div data-sa11y-suggestion='${JSON.stringify(details)}'></div>` : '';
     const opacity = (details !== undefined) ? details.opacity : '';
-    return { $el, ratio, sanitizedText, suggestion, opacity };
-  };
+    const advice = (opacity < 1)
+      ? `<hr aria-hidden="true"> ${Lang.sprintf('CONTRAST_OPACITY')} <strong class="badge">${opacity}</strong>` : suggestion;
 
-  /* Contrast errors */
-  contrastResults.errors.forEach((item) => {
-    const { $el, ratio, sanitizedText, suggestion, opacity } = processContrastItem(item);
-    const advice = opacity < 1
-      ? `<hr aria-hidden="true"> ${Lang.sprintf('CONTRAST_OPACITY')} <strong class="badge">${opacity}</strong>`
-      : suggestion;
-
-    if (option.checks.CONTRAST_INPUT && ['SELECT', 'INPUT', 'TEXTAREA'].includes($el.tagName)) {
-      results.push({
-        element: $el,
-        type: option.checks.CONTRAST_INPUT.type || 'error',
-        content: option.checks.CONTRAST_INPUT.content
-          || Lang.sprintf('CONTRAST_INPUT', ratio) + advice,
-        inline: false,
-        position: 'beforebegin',
-        dismiss: Utils.prepareDismissal(`CONTRAST${$el.getAttribute('class')}${$el.tagName}${ratio}`),
-        dismissAll: option.checks.CONTRAST_INPUT.dismissAll ? 'CONTRAST_INPUT' : false,
-        developer: option.checks.CONTRAST_INPUT.developer || true,
-      });
-
-      // Flag additional errors if placeholder text is low.
-      if (option.checks.CONTRAST_PLACEHOLDER && item.type === 'placeholder') {
-        const sanitizedPlaceholder = $el.placeholder ? Utils.sanitizeHTML($el.placeholder) : '';
-        results.push({
-          element: $el,
-          type: option.checks.CONTRAST_PLACEHOLDER.type || 'error',
-          content: option.checks.CONTRAST_PLACEHOLDER.content
-            || Lang.sprintf('CONTRAST_PLACEHOLDER', ratio, sanitizedPlaceholder) + advice,
-          inline: false,
-          position: 'afterend',
-          dismiss: Utils.prepareDismissal(`CPLACEHOLDER${$el.getAttribute('class')}${$el.tagName}${ratio}`),
-          dismissAll: option.checks.CONTRAST_PLACEHOLDER.dismissAll ? 'CONTRAST_PLACEHOLDER' : false,
-          developer: option.checks.CONTRAST_PLACEHOLDER.developer || true,
-        });
-      }
-    } else if (option.checks.CONTRAST_ERROR && sanitizedText.length !== 0) {
-      results.push({
-        element: $el,
-        type: option.checks.CONTRAST_ERROR.type || 'error',
-        content: option.checks.CONTRAST_ERROR.content
-          || Lang.sprintf('CONTRAST_ERROR', ratio, sanitizedText) + advice,
-        inline: false,
-        position: 'beforebegin',
-        dismiss: Utils.prepareDismissal(`CONTRAST${sanitizedText}`),
-        dismissAll: option.checks.CONTRAST_ERROR.dismissAll ? 'CONTRAST_ERROR' : false,
-        developer: option.checks.CONTRAST_ERROR.developer || false,
-      });
+    // Iterate through contrast results based on type.
+    switch (item.type) {
+      case 'text':
+        if (option.checks.CONTRAST_ERROR) {
+          results.push({
+            element: $el,
+            type: option.checks.CONTRAST_ERROR.type || 'error',
+            content: option.checks.CONTRAST_ERROR.content
+              || Lang.sprintf('CONTRAST_ERROR', ratio, sanitizedText) + advice,
+            inline: false,
+            position: 'beforebegin',
+            dismiss: Utils.prepareDismissal(`CONTRAST${sanitizedText}`),
+            dismissAll: option.checks.CONTRAST_ERROR.dismissAll ? 'CONTRAST_ERROR' : false,
+            developer: option.checks.CONTRAST_ERROR.developer || false,
+          });
+        }
+        break;
+      case 'input':
+        if (option.checks.CONTRAST_INPUT) {
+          results.push({
+            element: $el,
+            type: option.checks.CONTRAST_INPUT.type || 'error',
+            content: option.checks.CONTRAST_INPUT.content
+              || Lang.sprintf('CONTRAST_INPUT', ratio) + advice,
+            inline: false,
+            position: 'beforebegin',
+            dismiss: Utils.prepareDismissal(`CONTRAST${$el.getAttribute('class')}${$el.tagName}${ratio}`),
+            dismissAll: option.checks.CONTRAST_INPUT.dismissAll ? 'CONTRAST_INPUT' : false,
+            developer: option.checks.CONTRAST_INPUT.developer || true,
+          });
+        }
+        break;
+      case 'placeholder':
+        if (option.checks.CONTRAST_PLACEHOLDER) {
+          const sanitizedPlaceholder = $el.placeholder ? Utils.sanitizeHTML($el.placeholder) : '';
+          results.push({
+            element: $el,
+            type: option.checks.CONTRAST_PLACEHOLDER.type || 'error',
+            content: option.checks.CONTRAST_PLACEHOLDER.content
+              || Lang.sprintf('CONTRAST_PLACEHOLDER', ratio, sanitizedPlaceholder) + advice,
+            inline: false,
+            position: 'afterend',
+            dismiss: Utils.prepareDismissal(`CPLACEHOLDER${$el.getAttribute('class')}${$el.tagName}${ratio}`),
+            dismissAll: option.checks.CONTRAST_PLACEHOLDER.dismissAll ? 'CONTRAST_PLACEHOLDER' : false,
+            developer: option.checks.CONTRAST_PLACEHOLDER.developer || true,
+          });
+        }
+        break;
+      case 'warning':
+        if (option.checks.CONTRAST_WARNING) {
+          results.push({
+            element: $el,
+            type: option.checks.CONTRAST_WARNING.type || 'warning',
+            content: option.checks.CONTRAST_WARNING.content || Lang.sprintf('CONTRAST_WARNING', sanitizedText),
+            inline: false,
+            position: 'beforebegin',
+            dismiss: Utils.prepareDismissal(`CONTRAST${sanitizedText}`),
+            dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
+            developer: option.checks.CONTRAST_WARNING.developer || false,
+          });
+        }
+        break;
+      default:
+        break;
     }
   });
-
-  /* Contrast warnings */
-  if (option.checks.CONTRAST_WARNING) {
-    contrastResults.warnings.forEach((item) => {
-      const { $el, sanitizedText } = processContrastItem(item);
-      if (sanitizedText.length !== 0) {
-        results.push({
-          element: $el,
-          type: option.checks.CONTRAST_WARNING.type || 'warning',
-          content: option.checks.CONTRAST_WARNING.content || Lang.sprintf('CONTRAST_WARNING', sanitizedText),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: Utils.prepareDismissal(`CONTRAST${sanitizedText}`),
-          dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
-          developer: option.checks.CONTRAST_WARNING.developer || false,
-        });
-      }
-    });
-  }
-
   return results;
 }
