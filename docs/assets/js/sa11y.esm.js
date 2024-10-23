@@ -1416,6 +1416,7 @@ function isVisibleTextInAccessibleName($el) {
  */
 function standardizeHref($el) {
   let href = $el.getAttribute('href');
+  href = removeWhitespace(href).toLowerCase();
 
   // Remove trailing slash if it exists.
   if (href.endsWith('/')) {
