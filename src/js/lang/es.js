@@ -122,7 +122,7 @@ export default {
     READABILITY_NOT_ENOUGH: 'No hay suficiente contenido para calcular la puntuación de legibilidad.',
 
     // Headings
-    HEADING_SKIPPED_LEVEL: 'Nivel de encabezamiento no consecutivo utilizado. Los encabezados nunca deben saltar niveles, o ir de <strong>Título %(prevLevel)</strong> en <strong {C}>Título %(level)</strong>.',
+    HEADING_SKIPPED_LEVEL: 'Las cabeceras no deben saltarse niveles ni pasar de <strong>Encabezado %(PREV_LEVEL)</strong> a <strong {C}>Encabezado %(LEVEL)</strong>, ya que esto interrumpe el orden y la jerarquía del contenido, lo que dificulta su seguimiento. <hr> Si <strong {C}>%(HEADING)</strong> cae bajo la sección <strong>%(PREV_HEADING)</strong>, considere formatearlo como un <strong>Encabezado %(LEVEL)</strong> en su lugar.',
     HEADING_EMPTY: 'Encabezado vacío encontrado! Para corregir, elimine esta línea o cambie su formato de <strong {C}>Encabezado %(level)</strong> a <strong>Normal</strong> o <strong>Párrafo</strong>.',
     HEADING_LONG: '¡El título es largo! Los encabezados deben usarse para organizar el contenido y transmitir la estructura. Deben ser breves, informativos y únicos. Mantenga los encabezados de menos de 160 caracteres (no más de una oración). <hr> <strong {B}>%(HEADING_LENGTH) Caracteres</strong>',
     HEADING_FIRST: 'El primer encabezado de una página generalmente debe ser un encabezado 1 o un encabezado 2. El encabezado 1 debe ser el comienzo de la sección de contenido principal y es el encabezado principal que describe el propósito general de la página. Aprender más acerca de la <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">estructura de encabezado.</a>',

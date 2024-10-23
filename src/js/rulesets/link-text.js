@@ -159,7 +159,7 @@ export default function checkLinkText(results, option) {
             content: option.checks.HIDDEN_FOCUSABLE.content || Lang.sprintf('HIDDEN_FOCUSABLE'),
             inline: true,
             position: 'afterend',
-            dismiss: Utils.prepareDismissal(`A${href + linkTextTrimmed}`),
+            dismiss: Utils.prepareDismissal(`LINKHIDDENFOCUS${href + linkTextTrimmed}`),
             dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll ? 'LINK_HIDDEN_FOCUSABLE' : false,
             developer: option.checks.HIDDEN_FOCUSABLE.developer || true,
           });
@@ -176,7 +176,7 @@ export default function checkLinkText(results, option) {
             content: option.checks.LINK_EMPTY_LABELLEDBY.content || Lang.sprintf('LINK_EMPTY_LABELLEDBY'),
             inline: true,
             position: 'afterend',
-            dismiss: Utils.prepareDismissal(`A${href}`),
+            dismiss: Utils.prepareDismissal(`LINKEMPTYLABELLEDBY${href}`),
             dismissAll: option.checks.LINK_EMPTY_LABELLEDBY.dismissAll ? 'LINK_EMPTY_LABELLEDBY' : false,
             developer: option.checks.LINK_EMPTY_LABELLEDBY.developer || true,
           });
@@ -190,7 +190,7 @@ export default function checkLinkText(results, option) {
             content: option.checks.LINK_EMPTY_NO_LABEL.content || Lang.sprintf('LINK_EMPTY_NO_LABEL'),
             inline: true,
             position: 'afterend',
-            dismiss: Utils.prepareDismissal(`A${href}`),
+            dismiss: Utils.prepareDismissal(`LINKEMPTYNOLABEL${href}`),
             dismissAll: option.checks.LINK_EMPTY_NO_LABEL.dismissAll ? 'LINK_EMPTY_NO_LABEL' : false,
             developer: option.checks.LINK_EMPTY_NO_LABEL.developer || false,
           });
@@ -203,7 +203,7 @@ export default function checkLinkText(results, option) {
           content: option.checks.LINK_EMPTY.content || Lang.sprintf('LINK_EMPTY'),
           inline: true,
           position: 'afterend',
-          dismiss: Utils.prepareDismissal(`A${href}`),
+          dismiss: Utils.prepareDismissal(`LINKEMPTY${href}`),
           dismissAll: option.checks.LINK_EMPTY.dismissAll ? 'LINK_EMPTY' : false,
           developer: option.checks.LINK_EMPTY.developer || false,
         });
@@ -217,7 +217,7 @@ export default function checkLinkText(results, option) {
           content: option.checks.LINK_STOPWORD.content || Lang.sprintf('LINK_STOPWORD', error[0]),
           inline: true,
           position: 'afterend',
-          dismiss: Utils.prepareDismissal(`A${href + linkTextTrimmed}`),
+          dismiss: Utils.prepareDismissal(`LINKSTOPWORD${href + linkTextTrimmed}`),
           dismissAll: option.checks.LINK_STOPWORD.dismissAll ? 'LINK_STOPWORD' : false,
           developer: option.checks.LINK_STOPWORD.developer || false,
         });
@@ -232,7 +232,7 @@ export default function checkLinkText(results, option) {
           content: option.checks.LINK_BEST_PRACTICES.content || Lang.sprintf('LINK_BEST_PRACTICES', stopword),
           inline: true,
           position: 'beforebegin',
-          dismiss: Utils.prepareDismissal(`LINK${href + linkTextTrimmed}`),
+          dismiss: Utils.prepareDismissal(`LINKBP${href + linkTextTrimmed}`),
           dismissAll: option.checks.LINK_BEST_PRACTICES.dismissAll ? 'LINK_BEST_PRACTICES' : false,
           developer: option.checks.LINK_BEST_PRACTICES.developer || false,
         });
@@ -247,7 +247,7 @@ export default function checkLinkText(results, option) {
             content: option.checks.LINK_DOI.content || Lang.sprintf('LINK_DOI'),
             inline: true,
             position: 'beforebegin',
-            dismiss: Utils.prepareDismissal(`LINK${href + linkTextTrimmed}`),
+            dismiss: Utils.prepareDismissal(`LINKDOI${href + linkTextTrimmed}`),
             dismissAll: option.checks.LINK_DOI.dismissAll ? 'LINK_DOI' : false,
             developer: option.checks.LINK_DOI.developer || false,
           });
@@ -263,7 +263,7 @@ export default function checkLinkText(results, option) {
             content: option.checks.LINK_URL.content || Lang.sprintf('LINK_URL'),
             inline: true,
             position: 'beforebegin',
-            dismiss: Utils.prepareDismissal(`LINK${href + linkTextTrimmed}`),
+            dismiss: Utils.prepareDismissal(`LINKURLNAME${href + linkTextTrimmed}`),
             dismissAll: option.checks.LINK_URL.dismissAll ? 'LINK_URL' : false,
             developer: option.checks.LINK_URL.developer || false,
           });
@@ -280,7 +280,7 @@ export default function checkLinkText(results, option) {
           content: option.checks.LABEL_IN_NAME.content || `${Lang.sprintf('LABEL_IN_NAME', sanitizedText)}`,
           inline: true,
           position: 'afterend',
-          dismiss: Utils.prepareDismissal(`LINK${href + linkTextTrimmed}`),
+          dismiss: Utils.prepareDismissal(`LINKLABELNAME${href + linkTextTrimmed}`),
           dismissAll: option.checks.LABEL_IN_NAME.dismissAll ? 'BTN_LABEL_IN_NAME' : false,
           developer: option.checks.LABEL_IN_NAME.developer || true,
         });
@@ -307,7 +307,7 @@ export default function checkLinkText(results, option) {
           content: option.checks.LINK_EMPTY.content || Lang.sprintf('LINK_EMPTY'),
           inline: true,
           position: 'afterend',
-          dismiss: Utils.prepareDismissal(`LINK${href}`),
+          dismiss: Utils.prepareDismissal(`LINKCHAR${href}`),
           dismissAll: option.checks.LINK_EMPTY.dismissAll ? 'LINK_EMPTY' : false,
           developer: option.checks.LINK_EMPTY.developer || false,
         });
@@ -328,7 +328,7 @@ export default function checkLinkText(results, option) {
               content: option.checks.LINK_IDENTICAL_NAME.content || `${Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
               inline: true,
               position: 'beforebegin',
-              dismiss: Utils.prepareDismissal(`LINK${href + linkTextTrimmed}`),
+              dismiss: Utils.prepareDismissal(`LINKSEEN${href + linkTextTrimmed}`),
               dismissAll: option.checks.LINK_IDENTICAL_NAME.dismissAll ? 'LINK_IDENTICAL_NAME' : false,
               developer: option.checks.LINK_IDENTICAL_NAME.developer || false,
             });
@@ -341,7 +341,7 @@ export default function checkLinkText(results, option) {
               content: option.checks.LINK_NEW_TAB.content || Lang.sprintf('LINK_NEW_TAB'),
               inline: true,
               position: 'beforebegin',
-              dismiss: Utils.prepareDismissal(`LINK${href + linkTextTrimmed}`),
+              dismiss: Utils.prepareDismissal(`LINKNEWTAB${href + linkTextTrimmed}`),
               dismissAll: option.checks.LINK_NEW_TAB.dismissAll ? 'LINK_NEW_TAB' : false,
               developer: option.checks.LINK_NEW_TAB.developer || false,
             });
@@ -354,7 +354,7 @@ export default function checkLinkText(results, option) {
               content: option.checks.LINK_FILE_EXT.content || Lang.sprintf('LINK_FILE_EXT'),
               inline: true,
               position: 'beforebegin',
-              dismiss: Utils.prepareDismissal(`LINK${href + linkTextTrimmed}`),
+              dismiss: Utils.prepareDismissal(`LINKEXT${href + linkTextTrimmed}`),
               dismissAll: option.checks.LINK_FILE_EXT.dismissAll ? 'LINK_FILE_EXT' : false,
               developer: option.checks.LINK_FILE_EXT.developer || false,
             });

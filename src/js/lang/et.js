@@ -150,7 +150,7 @@ export default {
     READABILITY_NOT_ENOUGH: 'Loetavuse hinde arvutamiseks ei ole piisavalt sisu.',
 
     // Headings
-    HEADING_SKIPPED_LEVEL: 'Kasutatakse mittejärjepideva pealkirja tasandit. Pealkirjad ei tohiks kunagi taset vahele jätta ega minna <strong>pealkirjast %(prevLevel)</strong> kuni <strong {C}>pealkirjast %(level)</strong>.',
+    HEADING_SKIPPED_LEVEL: 'Pealkirjad ei tohiks vahele jätta tasemeid ega hüpata <strong>Pealkiri %(PREV_LEVEL)</strong> pealt <strong {C}>Pealkiri %(LEVEL)</strong> peale, sest see rikub sisu järjekorra ja hierarhia, muutes selle jälgimise keerulisemaks. <hr> Kui <strong {C}>%(HEADING)</strong> kuulub <strong>%(PREV_HEADING)</strong> sektsiooni, siis kaaluge selle vormindamist kui <strong>Pealkiri %(LEVEL)</strong>.',
     HEADING_EMPTY: 'Tühi rubriik leitud! Parandamiseks kustutage see rida või muutke selle vorming <strong {C}>pealkiri %(level)</strong> <strong>normaalseks</strong> või <strong>paragrahviks</strong>.',
     HEADING_LONG: 'Pealkiri on pikk! Pealkirju tuleks kasutada sisu korrastamiseks ja struktuuri edastamiseks. Need peaksid olema lühikesed, informatiivsed ja unikaalsed. Palun hoidke pealkirjad alla 160 tähemärgi (mitte rohkem kui üks lause). <hr> <strong {B}>%(HEADING_LENGTH) Tähemärki</strong>',
     HEADING_FIRST: 'Lehekülje esimene pealkiri peaks tavaliselt olema pealkiri 1 või 2. Pealkiri 1 peaks olema peamise sisuosa algus ja on peamine pealkiri, mis kirjeldab lehe üldist eesmärki. Lisateave <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">pealkirjade struktuuri kohta.</a>',

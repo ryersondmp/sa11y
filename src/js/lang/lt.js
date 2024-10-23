@@ -151,7 +151,7 @@ export default {
     READABILITY_NOT_ENOUGH: 'Nepakankamai turinio, kad būtų galima apskaičiuoti skaitomumo balą.',
 
     // Headings
-    HEADING_SKIPPED_LEVEL: 'Naudojamas ne nuoseklus antraštės lygis. Antraštės niekada neturėtų praleisti lygių arba pereiti iš <strong>Pavadinimo %(prevLevel)</strong> į <strong {C}>Pavadinimą %(level)</strong>.',
+    HEADING_SKIPPED_LEVEL: 'Antraštės neturėtų praleisti lygių arba peršokti nuo <strong>Antraštės %(PREV_LEVEL)</strong> prie <strong {C}>Antraštės %(LEVEL)</strong>, nes tai sutrikdo turinio tvarką ir hierarchiją, todėl sunkiau sekti. <hr> Jei <strong {C}>%(HEADING)</strong> patenka į <strong>%(PREV_HEADING)</strong> skyrių, apsvarstykite galimybę formatuoti ją kaip <strong>Antraštė %(LEVEL)</strong>.',
     HEADING_EMPTY: 'Rasta tuščia antraštė! Norėdami ištaisyti, ištrinkite šią eilutę arba pakeiskite jos formatą iš <strong {C}>Heading %(level)</strong> į <strong>Normal</strong> arba <strong>Paragraph</strong>.',
     HEADING_LONG: 'Antraštė ilga! Antraštės turėtų būti naudojamos turiniui tvarkyti ir struktūrai perteikti. Jos turėtų būti trumpos, informatyvios ir unikalios. Prašome, kad antraštės būtų trumpesnės nei 160 ženklų (ne ilgesnės nei sakinys). <hr> <strong {B}>%(HEADING_LENGTH) Ženklai</strong>',
     HEADING_FIRST: 'Pirmoji puslapio antraštė paprastai turėtų būti 1 arba 2 antraštė. 1 antraštė turėtų būti pagrindinio turinio skyriaus pradžia ir yra pagrindinė antraštė, apibūdinanti bendrą puslapio tikslą. Sužinokite daugiau apie <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Galvutės struktūrą.</a>',

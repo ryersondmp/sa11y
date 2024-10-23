@@ -149,7 +149,7 @@ export default {
     READABILITY_NOT_ENOUGH: 'Não há conteúdo suficiente para calcular a pontuação de legibilidade.',
 
     // Headings
-    HEADING_SKIPPED_LEVEL: 'Nível de cabeçalho não consecutivo utilizado. Os títulos nunca devem saltar níveis, ou ir de <strong>Título %(prevLevel)</strong> para <strong {C}>Título %(level)</strong>.',
+    HEADING_SKIPPED_LEVEL: 'Os cabeçalhos não devem pular níveis ou saltar de <strong>Cabeçalho %(PREV_LEVEL)</strong> para <strong {C}>Cabeçalho %(LEVEL)</strong>, pois isso interrompe a ordem e a hierarquia do conteúdo, dificultando o acompanhamento. <hr> Se <strong {C}>%(HEADING)</strong> estiver sob a seção <strong>%(PREV_HEADING)</strong>, considere formatá-lo como um <strong>Cabeçalho %(LEVEL)</strong> no lugar.',
     HEADING_EMPTY: 'Encontrado um título vazio! Para corrigir, elimine esta linha ou altere o seu formato de <strong {C}>Título %(level)</strong> para <strong>Normal</strong> ou <strong>Parágrafo</strong>.',
     HEADING_LONG: 'O título é longo! Os títulos devem ser utilizados para organizar o conteúdo e transmitir estrutura. Devem ser breves, informativos e únicos. Os títulos devem ter menos de 160 caracteres (não mais do que uma frase). <hr> <strong {B}>%(HEADING_LENGTH) Caracteres</strong>',
     HEADING_FIRST: 'O primeiro título de uma página deve ser normalmente o Título 1 ou o Título 2. O Título 1 deve ser o início da secção de conteúdo principal e é o título principal que descreve o objetivo geral da página. Saiba mais sobre <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Estrutura de títulos.</a>',

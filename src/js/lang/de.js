@@ -142,7 +142,7 @@ export default {
     READABILITY_NOT_ENOUGH: 'Nicht genügend Inhalt für die Berechnung der Lesbarkeitsbewertung.',
 
     // Headings
-    HEADING_SKIPPED_LEVEL: 'Nicht-konsekutive Überschriftenebene verwendet. Überschriften sollten niemals Ebenen überspringen oder von <strong>Überschrift %(prevLevel)</strong> zu <strong {C}>Überschrift %(level)</strong> gehen.',
+    HEADING_SKIPPED_LEVEL: 'Überschriften sollten keine Ebenen überspringen oder von <strong>Überschrift %(PREV_LEVEL)</strong> zu <strong {C}>Überschrift %(LEVEL)</strong> springen, da dies die Ordnung und Hierarchie des Inhalts stört und das Folgen erschwert. <hr> Wenn <strong {C}>%(HEADING)</strong> unter den Abschnitt <strong>%(PREV_HEADING)</strong> fällt, sollten Sie in Betracht ziehen, es stattdessen als <strong>Überschrift %(LEVEL)</strong> zu formatieren.',
     HEADING_EMPTY: 'Leere Überschrift gefunden! Um dies zu beheben, löschen Sie diese Zeile oder ändern Sie ihr Format von <strong {C}>Überschrift %(level)</strong> zu <strong>Normal</strong> oder <strong>Absatz (p)</strong>.',
     HEADING_LONG: 'Die Überschrift ist lang! Überschriften sollten dazu dienen, den Inhalt zu gliedern und eine Struktur zu vermitteln. Sie sollten kurz, informativ und eindeutig sein. Überschriften sollten nicht länger als 160 Zeichen sein (nicht länger als ein Satz). <hr> <strong {B}>%(HEADING_LENGTH) Zeichen</strong>',
     HEADING_FIRST: 'Die erste Überschrift auf einer Seite sollte in der Regel Überschrift 1 oder Überschrift 2 sein. Überschrift 1 sollte der Beginn des Hauptinhaltsabschnitts sein und ist die Hauptüberschrift, die den allgemeinen Zweck der Seite beschreibt. Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Überschriften-Struktur.</a>',

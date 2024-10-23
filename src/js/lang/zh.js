@@ -145,7 +145,7 @@ export default {
     READABILITY_NOT_ENOUGH: '没有足够的内容来计算可读性得分。',
 
     // Headings
-    HEADING_SKIPPED_LEVEL: '使用了非连续的标题级别。标题不应跳级, 或从<strong>标题 %(prevLevel)</strong>到<strong {C}>标题%(level)</strong>。',
+    HEADING_SKIPPED_LEVEL: '标题不应跳过级别或从<strong>标题 %(PREV_LEVEL)</strong>跳到<strong {C}>标题 %(LEVEL)</strong>，因为这会破坏内容的顺序和层次结构，增加阅读难度。<hr>如果 <strong {C}>%(HEADING)</strong> 属于 <strong>%(PREV_HEADING)</strong> 部分，建议将其格式化为 <strong>标题 %(LEVEL)</strong>。',
     HEADING_EMPTY: '发现空的标题!要解决这个问题, 请删除这一行或将其格式从<strong {C}>标题%(level)</strong>改为<strong>正常</strong>或<strong>段落</strong>。',
     HEADING_LONG: '标题很长!标题应被用来组织内容和传达结构。它们应该是简短的、信息丰富的和独特的。请将标题保持在160个字符以内 (不超过一个句子) 。<hr> <strong {B}>%(HEADING_LENGTH) 字符</strong>。',
     HEADING_FIRST: '一个页面的第一个标题通常应该是标题1或标题2。标题1应该是主要内容部分的开始, 也是描述页面整体目的的主要标题。了解更多关于<a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">标题结构。</a>的信息。',

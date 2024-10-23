@@ -149,7 +149,7 @@ export default {
     READABILITY_NOT_ENOUGH: 'Konten tidak cukup untuk menghitung skor keterbacaan.',
 
     // Headings
-    HEADING_SKIPPED_LEVEL: 'Level heading yang digunakan tidak berurutan. Judul tidak boleh melompati level, atau berpindah dari <strong>Judul %(prevLevel)</strong> ke <strong {C}>Judul %(level)</strong>.',
+    HEADING_SKIPPED_LEVEL: 'Judul tidak boleh melompati level atau melompat dari <strong>Judul %(PREV_LEVEL)</strong> ke <strong {C}>Judul %(LEVEL)</strong>, karena ini mengganggu urutan dan hierarki konten, sehingga lebih sulit diikuti. <hr> Jika <strong {C}>%(HEADING)</strong> termasuk dalam bagian <strong>%(PREV_HEADING)</strong>, pertimbangkan untuk memformatnya sebagai <strong>Judul %(LEVEL)</strong>.',
     HEADING_EMPTY: 'Judul kosong ditemukan! Untuk memperbaikinya, hapus baris ini atau ubah formatnya dari <strong {C}>Header %(level)</strong> ke <strong>Normal</strong> atau <strong>Paragraph</strong>.',
     HEADING_LONG: 'Judulnya panjang! Judul harus digunakan untuk mengatur konten dan menyampaikan struktur. Judul harus singkat, informatif, dan unik. Harap jaga agar judul kurang dari 160 karakter (tidak lebih dari satu kalimat). <hr> <strong {B}>%(HEADING_LENGTH) Karakter</strong>',
     HEADING_FIRST: 'Judul pertama pada halaman biasanya adalah Heading 1 atau Heading 2. Heading 1 harus menjadi awal dari bagian konten utama, dan merupakan judul utama yang menjelaskan tujuan keseluruhan halaman. Pelajari lebih lanjut tentang <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Struktur Heading.</a>',

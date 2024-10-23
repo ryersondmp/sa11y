@@ -146,7 +146,7 @@ export default {
     READABILITY_NOT_ENOUGH: 'Premalo vsebine za izračun ocene berljivosti.',
 
     // Headings
-    HEADING_SKIPPED_LEVEL: 'Uporabljena je raven brez zaporednih naslovov. Naslovi nikoli ne smejo preskočiti ravni ali preiti iz <strong>Nadpis %(prevLevel)</strong> na <strong {C}>Nadpis %(level)</strong>.',
+    HEADING_SKIPPED_LEVEL: 'Naslovi ne bi smeli preskakovati nivoje ali skočiti z <strong>Naslova %(PREV_LEVEL)</strong> na <strong {C}>Naslov %(LEVEL)</strong>, saj to moti red in hierarhijo vsebine, zaradi česar je težje slediti. <hr> Če <strong {C}>%(HEADING)</strong> spada pod razdelek <strong>%(PREV_HEADING)</strong>, razmislite o oblikovanju kot <strong>Naslov %(LEVEL)</strong> namesto tega.',
     HEADING_EMPTY: 'Najden je bil prazen naslov! To popravite tako, da izbrišete to vrstico ali spremenite njeno obliko iz <strong {C}>Glavica %(level)</strong> v <strong>Normalno</strong> ali <strong>Odstavek</strong>.',
     HEADING_LONG: 'Smer je dolga! Naslovi se uporabljajo za urejanje vsebine in izražanje strukture. Biti morajo kratki, informativni in edinstveni. Naj bodo naslovi krajši od 160 znakov (največ en stavek). <hr> <strong {B}>%(HEADING_LENGTH) Znakov</strong>',
     HEADING_FIRST: 'Prvi naslov na strani mora biti običajno naslov 1 ali 2. Naslov 1 mora biti začetek poglavja z glavno vsebino in je glavni naslov, ki opisuje splošni namen strani. Preberite več o <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Strukturi naslovov.</a>',

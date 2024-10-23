@@ -145,7 +145,7 @@ export default {
     READABILITY_NOT_ENOUGH: 'Okunabilirlik puanını hesaplamak için yeterli içerik yok.',
 
     // Headings
-    HEADING_SKIPPED_LEVEL: "Ardışık olmayan başlık seviyesi kullanıldı. Başlıklar asla seviye atlamamalı veya <strong>Başlık %(prevLevel)</strong>'den <strong {C}>Başlık %(level)</strong>'e geçmemelidir.",
+    HEADING_SKIPPED_LEVEL: 'Başlıklar seviyeleri atlamamalı veya <strong>Başlık %(PREV_LEVEL)</strong> seviyesinden <strong {C}>Başlık %(LEVEL)</strong> seviyesine geçmemelidir, çünkü bu içerik düzenini ve hiyerarşisini bozar ve takip etmeyi zorlaştırır. <hr> Eğer <strong {C}>%(HEADING)</strong>, <strong>%(PREV_HEADING)</strong> bölümünün altına giriyorsa, bunun yerine bir <strong>Başlık %(LEVEL)</strong> olarak formatlamayı düşünün.',
     HEADING_EMPTY: 'Boş başlık bulundu! Düzeltmek için bu satırı silin veya biçimini <strong {C}>Heading %(level)</strong> yerine <strong>Normal</strong> veya <strong>Paragraph</strong> olarak değiştirin.',
     HEADING_LONG: 'Başlık uzun! Başlıklar içeriği düzenlemek ve yapıyı aktarmak için kullanılmalıdır. Kısa, bilgilendirici ve benzersiz olmalıdırlar. Lütfen başlıkları 160 karakterden az tutun (bir cümleden fazla olmamalıdır). <hr> <strong {B}>%(HEADING_LENGTH) Karakter</strong>',
     HEADING_FIRST: 'Bir sayfadaki ilk başlık genellikle Başlık 1 veya Başlık 2 olmalıdır. Başlık 1, ana içerik bölümünün başlangıcı olmalıdır ve sayfanın genel amacını açıklayan ana başlıktır. <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Başlık Yapısı hakkında daha fazla bilgi edinin.</a>',

@@ -127,7 +127,7 @@ export default {
     READABILITY_NOT_ENOUGH: 'Inte tillräckligt innehåll för att beräkna läsbarhetspoäng.',
 
     // Headings
-    HEADING_SKIPPED_LEVEL: 'Icke-konsekutiv rubriknivå används. Rubriker bör aldrig hoppa över nivåer eller gå från <strong>Rubrik %(prevLevel)</strong> till <strong {C}>Rubrik %(level)</strong>.',
+    HEADING_SKIPPED_LEVEL: 'Rubriker bör inte hoppa över nivåer eller hoppa från <strong>Rubrik %(PREV_LEVEL)</strong> till <strong {C}>Rubrik %(LEVEL)</strong>, eftersom det stör innehållets ordning och hierarki och gör det svårare att följa. <hr> Om <strong {C}>%(HEADING)</strong> faller under sektionen <strong>%(PREV_HEADING)</strong>, överväg att formatera det som en <strong>Rubrik %(LEVEL)</strong> istället.',
     HEADING_EMPTY: 'Tom rubrik hittades! För att åtgärda, ta bort den här raden eller ändra dess format från <strong {C}>Rubrik %(level)</strong> till <strong>Normal</strong> eller <strong>Stycke</strong>.',
     HEADING_LONG: 'Rubriken är lång! Rubriker bör användas för att organisera innehåll och förmedla struktur. De ska vara korta, informativa och unika. Vänligen håll rubriker kortare än 160 tecken (högst en mening). <hr> <strong {B}>%(HEADING_LENGTH) Tecken</strong>',
     HEADING_FIRST: 'Den första rubriken på en sida bör vanligtvis vara en Rubrik 1 eller Rubrik 2. Rubrik 1 bör vara början på huvudinnehållsavsnittet och är huvudrubriken som beskriver sidans övergripande syfte. Läs mer om <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Rubrikstruktur.</a>',

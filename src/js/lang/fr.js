@@ -120,7 +120,7 @@ export default {
     READABILITY_NOT_ENOUGH: 'Pas suffisamment de contenu pour calculer le taux de lisibilité.',
 
     // Headings
-    HEADING_SKIPPED_LEVEL: 'Utilisation d’un niveau d’en-tête non consécutif. Les en-têtes ne doivent jamais sauter de niveaux ou aller de <strong>L’en-tête %(prevLevel)</strong> à <strong {C}>L’en-tête %(level)</strong>.',
+    HEADING_SKIPPED_LEVEL: 'Les titres ne doivent pas sauter de niveaux ou passer de <strong>Titre %(PREV_LEVEL)</strong> à <strong {C}>Titre %(LEVEL)</strong>, car cela perturbe l\'ordre et la hiérarchie du contenu, rendant sa compréhension plus difficile. <hr> Si <strong {C}>%(HEADING)</strong> appartient à la section <strong>%(PREV_HEADING)</strong>, envisagez de le formater comme un <strong>Titre %(LEVEL)</strong>.',
     HEADING_EMPTY: 'En-tête vide trouvé! Pour résoudre, supprimer cette ligne ou changer le format de <strong {C}>L’en-tête %(level)</strong> à <strong>Normal</strong> ou <strong>Paragraphe</strong>.',
     HEADING_LONG: 'L’en-tête est long! Les en-têtes doivent être utilisées pour organiser le contenu et acheminer la structure. Ils doivent être brefs, informatifs et uniques. Les en-têtes doi-vent être inférieures à 160 caractères (pas plus d’une phrase). <hr> <strong {B}>%(HEADING_LENGTH) Caractères</strong>',
     HEADING_FIRST: 'Le premier en-tête sur la page doit être habituellement En-tête 1 ou En-tête 2. L’en-tête 1 doit débuter dans la section principale du contenu,  car il s\'agit de l’en-tête prin-cipal qui décrit l\'objectif général de la page. En savoir plus sur <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">La Structure Des En-têtes.</a>',

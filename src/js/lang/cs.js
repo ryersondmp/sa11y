@@ -145,7 +145,7 @@ export default {
     READABILITY_NOT_ENOUGH: 'Nedostatečný obsah pro výpočet skóre čitelnosti.',
 
     // Headings
-    HEADING_SKIPPED_LEVEL: 'Použitá úroveň nadpisu, která není po sobě jdoucí. Nadpisy by nikdy neměly přeskakovat úrovně nebo přecházet z <strong>Nadpisu %(prevLevel)</strong> na <strong {C}>Nadpis %(level)</strong>.',
+    HEADING_SKIPPED_LEVEL: 'Nadpisy by neměly přeskočit úrovně nebo přeskakovat z <strong>Nadpisu %(PREV_LEVEL)</strong> na <strong {C}>Nadpis %(LEVEL)</strong>, protože to narušuje pořádek a hierarchii obsahu, což ztěžuje jeho sledování. <hr> Pokud <strong {C}>%(HEADING)</strong> spadá pod sekci <strong>%(PREV_HEADING)</strong>, zvažte jeho formátování jako <strong>Nadpis %(LEVEL)</strong>.',
     HEADING_EMPTY: 'Nalezena prázdná rubrika! Chcete-li to opravit, odstraňte tento řádek nebo změňte jeho formát z <strong {C}>Záhlaví %(level)</strong> na <strong>Normální</strong> nebo <strong>Odstavec</strong>.',
     HEADING_LONG: 'Záhlaví je dlouhé! Nadpisy by měly sloužit k uspořádání obsahu a vyjádření struktury. Měly by být stručné, informativní a jedinečné. Udržujte nadpisy kratší než 160 znaků (ne delší než jedna věta). <hr> <strong {B}>%(HEADING_LENGTH) Znaků</strong>',
     HEADING_FIRST: 'Prvním nadpisem na stránce by obvykle měl být nadpis 1 nebo nadpis 2. Nadpis 1 by měl být začátkem hlavní části obsahu a je hlavním nadpisem, který popisuje celkový účel stránky. Více informací o <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Struktuře nadpisů.</a>.',

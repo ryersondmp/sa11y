@@ -548,7 +548,7 @@ export function generateElementPreview(issueObject) {
   const tag = {
     A: (element) => {
       const text = getText(element);
-      const truncatedText = truncateString(text, 600);
+      const truncatedText = truncateString(text, 100);
       if (text.length > 1 && element.href && !element.hasAttribute('role')) {
         return `<a href="${sanitizeURL(element.href)}">${sanitizeHTML(truncatedText)}</a>`;
       }
@@ -634,7 +634,8 @@ export function isVisibleTextInAccessibleName($el) {
  */
 export function standardizeHref($el) {
   let href = $el.getAttribute('href');
-  // Remove trailing slash if it exists
+
+  // Remove trailing slash if it exists.
   if (href.endsWith('/')) {
     href = href.slice(0, -1);
   }

@@ -145,7 +145,7 @@ export default {
     READABILITY_NOT_ENOUGH: 'Ikke nok indhold til at beregne læsbarhedsscore.',
 
     // Headings
-    HEADING_SKIPPED_LEVEL: 'Ikke-fortløbende overskriftsniveau brugt. Overskrifter bør aldrig springe niveauer over, eller gå fra <strong>Overskrift %(prevLevel)</strong> til <strong {C}>Overskrift %(level)</strong>.',
+    HEADING_SKIPPED_LEVEL: 'Overskrifter bør ikke springe niveauer over eller hoppe fra <strong>Overskrift %(PREV_LEVEL)</strong> til <strong {C}>Overskrift %(LEVEL)</strong>, da dette forstyrrer indholdets orden og hierarki og gør det sværere at følge. <hr> Hvis <strong {C}>%(HEADING)</strong> hører under sektionen <strong>%(PREV_HEADING)</strong>, så overvej at formatere det som <strong>Overskrift %(LEVEL)</strong> i stedet.',
     HEADING_EMPTY: 'Tom overskrift fundet! For at rette skal du slette denne linje eller ændre dens format fra <strong {C}>Overskrift %(level)</strong> til <strong>Normal</strong> eller <strong>Afsnit</strong>.',
     HEADING_LONG: 'Overskriften er lang! Overskrifter skal bruges til at organisere indhold og formidle struktur. De skal være korte, informative og unikke. Hold venligst overskrifter på mindre end 160 tegn (ikke mere end en sætning). <hr> <strong {B}>%(HEADING_LENGTH) Tegn</strong>',
     HEADING_FIRST: 'Den første overskrift på en side bør normalt være en Overskrift 1 eller Overskrift 2. Overskrift 1 bør være starten på hovedindholdssektionen og er den hovedoverskrift, der beskriver det overordnede formål med siden. Læs mere om <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Overskriftsstruktur.</a>',

@@ -6,6 +6,7 @@ import { computeAccessibleName } from '../utils/computeAccessibleName';
 
 export default function checkHeaders(results, option, headingOutline) {
   let prevLevel;
+  let prevHeadingText = '';
   Elements.Found.Headings.forEach(($el, i) => {
     // Get accessible name of heading.
     const accName = computeAccessibleName($el, Constants.Exclusions.HeaderSpan);
@@ -33,7 +34,8 @@ export default function checkHeaders(results, option, headingOutline) {
     if (level - prevLevel > 1 && i !== 0) {
       if (option.checks.HEADING_SKIPPED_LEVEL) {
         type = option.checks.HEADING_SKIPPED_LEVEL.type || 'error';
-        content = option.checks.HEADING_SKIPPED_LEVEL.content || Lang.sprintf('HEADING_SKIPPED_LEVEL', prevLevel, level);
+        content = option.checks.HEADING_SKIPPED_LEVEL.content
+          || Lang.sprintf('HEADING_SKIPPED_LEVEL', prevLevel, level, Utils.truncateString(headingText, 50), Utils.truncateString(prevHeadingText, 50), prevLevel + 1);
         developer = option.checks.HEADING_SKIPPED_LEVEL.developer || false;
         dismissAll = option.checks.HEADING_SKIPPED_LEVEL.dismissAll ? 'HEADING_SKIPPED_LEVEL' : false;
       }
@@ -85,8 +87,9 @@ export default function checkHeaders(results, option, headingOutline) {
       });
     }
 
-    // Reset level.
+    // Reset level and text.
     prevLevel = level;
+    prevHeadingText = headingText;
 
     // Determine if heading is visually hidden or within hidden container.
     const hiddenHeading = Utils.isElementVisuallyHiddenOrHidden($el);

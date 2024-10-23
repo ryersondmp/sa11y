@@ -157,7 +157,7 @@ export default {
     READABILITY_NOT_ENOUGH: 'Nem elég tartalom az olvashatósági pontszám kiszámításához.',
 
     // Headings
-    HEADING_SKIPPED_LEVEL: 'Nem egymást követő címsorszintet használtak. A fejlécek soha nem ugorhatnak szinteket, vagy nem mehetnek <strong>Felirat %(prevLevel)</strong>-ről <strong {C}>Felirat %(level)</strong>-ra.',
+    HEADING_SKIPPED_LEVEL: 'A címsoroknak nem szabad kihagyniuk szinteket, vagy átugraniuk a <strong>Címsor %(PREV_LEVEL)</strong> szintről a <strong {C}>Címsor %(LEVEL)</strong> szintre, mert ez megzavarja a tartalom sorrendjét és hierarchiáját, ami megnehezíti a követését. <hr> Ha a <strong {C}>%(HEADING)</strong> az <strong>%(PREV_HEADING)</strong> szekció alá tartozik, fontolja meg a formázást <strong>Címsorként %(LEVEL)</strong> helyette.',
     HEADING_EMPTY: 'Üres fejlécet találtunk! A javításhoz törölje ezt a sort, vagy változtassa meg a formátumát <strong {C}>Felirat %(level)</strong>-ról <strong>Normál</strong> vagy <strong>Paragraph</strong> formátumra.',
     HEADING_LONG: 'A fejléc hosszú! A címsorokat a tartalom rendszerezésére és a szerkezet közvetítésére kell használni. Rövidnek, informatívnak és egyedinek kell lenniük. Kérjük, hogy a címsorokat 160 karakternél (egy mondatnál nem több) rövidebbre tartsa. <hr> <strong {B}>%(HEADING_LENGTH) Karakterek</strong>',
     HEADING_FIRST: 'Az oldal első címe általában Cím 1 vagy Cím 2 legyen.A Cím 1-nek a fő tartalom szakaszának kezdetét kell jelentenie, és ez a fő cím, amely leírja az oldal általános célját.Tudj meg többet a<a href = "https://www.w3.org/WAI/tutorials/page-structure/headings/">Fejléc szerkezetéről.</a>',

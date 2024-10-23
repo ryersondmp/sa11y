@@ -143,7 +143,7 @@
       READABILITY_NOT_ENOUGH: 'Not enough content to calculate readability score.',
 
       // Headings
-      HEADING_SKIPPED_LEVEL: 'Headings should not skip levels or jump from <strong>Heading %(prevLevel)</strong> to <strong {C}>Heading %(level)</strong>, as this disrupts the content\'s order and hierarchy, making it harder to follow.',
+      HEADING_SKIPPED_LEVEL: 'Headings should not skip levels or jump from <strong>Heading %(PREV_LEVEL)</strong> to <strong {C}>Heading %(LEVEL)</strong>, as this disrupts the content\'s order and hierarchy, making it harder to follow. <hr> If <strong {C}>%(HEADING)</strong> falls under the <strong>%(PREV_HEADING)</strong> section, then consider formatting it as a <strong>Heading %(level)</strong> instead.',
       HEADING_EMPTY: 'Empty heading found! To fix, delete this line or change its format from <strong {C}>Heading %(level)</strong> to <strong>Normal</strong> or <strong>Paragraph</strong>.',
       HEADING_LONG: 'Heading is long! Headings should be used to organize content and convey structure. They should be brief, informative, and unique. Please keep headings less than 160 characters (no more than a sentence). <hr> <strong {B}>%(HEADING_LENGTH) Characters</strong>',
       HEADING_FIRST: 'The first heading on a page should usually be a Heading 1 or Heading 2. Heading 1 should be the start of the main content section, and is the main heading that describes the overall purpose of the page. Learn more about <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">heading structure.</a>',
@@ -169,7 +169,7 @@
       // Images
       MISSING_ALT_LINK_HAS_TEXT: 'Image is being used as a link with surrounding text, although the alt attribute should be marked as decorative.',
       MISSING_ALT_LINK: 'Image is being used as a link but is missing alt text! Please ensure alt text describes where the link takes you.',
-      MISSING_ALT: 'Missing alt text! If the image conveys a story, mood, or important information - be sure to describe the image.',
+      MISSING_ALT: 'Missing alt text! If the image conveys a story, mood, or important information, make sure to describe it clearly.',
       LINK_ALT_FILE_EXT: 'File extension within the alt text found. Ensure the alt text describes the destination of the link, not a literal description of the image. Remove: <strong {C}>%(ERROR)</strong> <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
       LINK_PLACEHOLDER_ALT: 'Non-descript or placeholder alt text within a linked image found. Ensure the alt text describes the destination of the link, not a literal description of the image. Replace the following alt text. <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
       LINK_SUS_ALT: 'Assistive technologies already indicate that this is an image, so &quot;<strong {C}>%(ERROR)</strong>&quot; may be redundant. Ensure the alt text describes the destination of the link, not a literal description of the image. <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',

@@ -147,7 +147,7 @@ export default {
     READABILITY_NOT_ENOUGH: 'Nepietiek satura, lai aprēķinātu lasāmības rādītāju.',
 
     // Headings
-    HEADING_SKIPPED_LEVEL: 'Izmantots virsrakstu līmenis, kas nav secīgs. Virsraksti nekad nedrīkst izlaist līmeņus vai pāriet no <strong>virsraksta %(prevLevel)</strong> uz <strong {C}>virsraksta %(level)</strong>.',
+    HEADING_SKIPPED_LEVEL: 'Virsraksti nedrīkst izlaist līmeņus vai pāriet no <strong>Virsraksta %(PREV_LEVEL)</strong> uz <strong {C}>Virsrakstu %(LEVEL)</strong>, jo tas traucē satura kārtību un hierarhiju, padarot to grūtāk uztveramu. <hr> Ja <strong {C}>%(HEADING)</strong> atrodas sadaļā <strong>%(PREV_HEADING)</strong>, apsveriet to formatēt kā <strong>Virsrakstu %(LEVEL)</strong>.',
     HEADING_EMPTY: 'Tukša pozīcija atrasta! Lai to novērstu, dzēsiet šo rindu vai mainiet tās formātu no <strong {C}>Galviņa %(level)</strong> uz <strong>Normāls</strong> vai <strong>Apakšsadaļa</strong>.',
     HEADING_LONG: 'Virsraksts ir garš! Virsraksti jāizmanto, lai sakārtotu saturu un izteiktu struktūru. Tām jābūt īsām, informatīvām un unikālām. Lūdzu, lai virsraksti būtu īsāki par 160 rakstzīmēm (ne garāki par vienu teikumu). <hr> <strong {C}>%(HEADING_LENGTH) Rakstzīmes</strong>',
     HEADING_FIRST: 'Pirmais virsraksts lapā parasti ir 1. vai 2. virsraksts. Ar 1. virsrakstu jāsāk galvenā satura sadaļa, un tas ir galvenais virsraksts, kas raksturo lapas vispārējo mērķi. Uzziniet vairāk par <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Galveno virsrakstu struktūru</a>.',

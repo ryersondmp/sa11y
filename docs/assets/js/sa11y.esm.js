@@ -494,7 +494,7 @@ const Constants = (function myConstants() {
     }
 
     // Contrast exclusions
-    Exclusions.Contrast = ['link', 'hr', 'option', 'video track', 'input[type="color"]', 'input[type="range"]', ...exclusions];
+    Exclusions.Contrast = ['link', 'hr', 'option', 'audio', 'audio *', 'video', 'video *', 'input[type="color"]', 'input[type="range"]', ...exclusions];
     if (option.contrastIgnore) {
       Exclusions.Contrast = option.contrastIgnore
         .split(',')
@@ -1330,7 +1330,7 @@ function generateElementPreview(issueObject) {
   const tag = {
     A: (element) => {
       const text = getText(element);
-      const truncatedText = truncateString(text, 600);
+      const truncatedText = truncateString(text, 100);
       if (text.length > 1 && element.href && !element.hasAttribute('role')) {
         return `<a href="${sanitizeURL(element.href)}">${sanitizeHTML(truncatedText)}</a>`;
       }
@@ -1416,7 +1416,8 @@ function isVisibleTextInAccessibleName($el) {
  */
 function standardizeHref($el) {
   let href = $el.getAttribute('href');
-  // Remove trailing slash if it exists
+
+  // Remove trailing slash if it exists.
   if (href.endsWith('/')) {
     href = href.slice(0, -1);
   }
@@ -7396,7 +7397,7 @@ function checkContrast(results, option) {
 
     // Process text within element.
     const clone = $el.cloneNode(true);
-    const ignoreElements = ['script', 'style', 'noscript'];
+    const ignoreElements = ['script', 'style', 'noscript', 'audio', 'video'];
     const nodeText = fnIgnore(clone, ignoreElements);
     const text = getText(nodeText);
 
@@ -8239,7 +8240,7 @@ function checkImages(results, option) {
               ? 'LINK_ALT_FILE_EXT' : 'ALT_FILE_EXT', error[0], altText),
             inline: false,
             position: 'beforebegin',
-            dismiss: prepareDismissal(`IMAGE${src + altText}`),
+            dismiss: prepareDismissal(`IMAGEEXT${src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
@@ -8258,7 +8259,7 @@ function checkImages(results, option) {
               ? 'LINK_PLACEHOLDER_ALT' : 'ALT_PLACEHOLDER', altText),
             inline: false,
             position: 'beforebegin',
-            dismiss: prepareDismissal(`IMAGE${src + altText}`),
+            dismiss: prepareDismissal(`ALTPLACEHOLDER${src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
@@ -8277,7 +8278,7 @@ function checkImages(results, option) {
               ? 'LINK_SUS_ALT' : 'SUS_ALT', error[1], altText),
             inline: false,
             position: 'beforebegin',
-            dismiss: prepareDismissal(`IMAGE${src + altText}`),
+            dismiss: prepareDismissal(`SUSALT${src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
@@ -8299,7 +8300,7 @@ function checkImages(results, option) {
               ? 'LINK_IMAGE_LONG_ALT' : 'IMAGE_ALT_TOO_LONG', alt.length, truncated),
             inline: false,
             position: 'beforebegin',
-            dismiss: prepareDismissal(`IMAGE${src + altText}`),
+            dismiss: prepareDismissal(`ALTLONG${src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
@@ -8342,7 +8343,7 @@ function checkImages(results, option) {
               content: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.content || Lang.sprintf('IMAGE_FIGURE_DUPLICATE_ALT', altText),
               inline: false,
               position: 'beforebegin',
-              dismiss: prepareDismissal(`FIGIMAGEDUPLICATE${src}`),
+              dismiss: prepareDismissal(`FIGDUPLICATE${src}`),
               dismissAll: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.dismissAll ? 'IMAGE_FIGURE_DUPLICATE_ALT' : false,
               developer: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.developer || false,
             });
@@ -8382,6 +8383,7 @@ function checkImages(results, option) {
 
 function checkHeaders(results, option, headingOutline) {
   let prevLevel;
+  let prevHeadingText = '';
   Elements.Found.Headings.forEach(($el, i) => {
     // Get accessible name of heading.
     const accName = computeAccessibleName($el, Constants.Exclusions.HeaderSpan);
@@ -8409,7 +8411,8 @@ function checkHeaders(results, option, headingOutline) {
     if (level - prevLevel > 1 && i !== 0) {
       if (option.checks.HEADING_SKIPPED_LEVEL) {
         type = option.checks.HEADING_SKIPPED_LEVEL.type || 'error';
-        content = option.checks.HEADING_SKIPPED_LEVEL.content || Lang.sprintf('HEADING_SKIPPED_LEVEL', prevLevel, level);
+        content = option.checks.HEADING_SKIPPED_LEVEL.content
+          || Lang.sprintf('HEADING_SKIPPED_LEVEL', prevLevel, level, truncateString(headingText, 50), truncateString(prevHeadingText, 50), prevLevel + 1);
         developer = option.checks.HEADING_SKIPPED_LEVEL.developer || false;
         dismissAll = option.checks.HEADING_SKIPPED_LEVEL.dismissAll ? 'HEADING_SKIPPED_LEVEL' : false;
       }
@@ -8461,8 +8464,9 @@ function checkHeaders(results, option, headingOutline) {
       });
     }
 
-    // Reset level.
+    // Reset level and text.
     prevLevel = level;
+    prevHeadingText = headingText;
 
     // Determine if heading is visually hidden or within hidden container.
     const hiddenHeading = isElementVisuallyHiddenOrHidden($el);
@@ -8647,7 +8651,7 @@ function checkLinkText(results, option) {
             content: option.checks.HIDDEN_FOCUSABLE.content || Lang.sprintf('HIDDEN_FOCUSABLE'),
             inline: true,
             position: 'afterend',
-            dismiss: prepareDismissal(`A${href + linkTextTrimmed}`),
+            dismiss: prepareDismissal(`LINKHIDDENFOCUS${href + linkTextTrimmed}`),
             dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll ? 'LINK_HIDDEN_FOCUSABLE' : false,
             developer: option.checks.HIDDEN_FOCUSABLE.developer || true,
           });
@@ -8664,7 +8668,7 @@ function checkLinkText(results, option) {
             content: option.checks.LINK_EMPTY_LABELLEDBY.content || Lang.sprintf('LINK_EMPTY_LABELLEDBY'),
             inline: true,
             position: 'afterend',
-            dismiss: prepareDismissal(`A${href}`),
+            dismiss: prepareDismissal(`LINKEMPTYLABELLEDBY${href}`),
             dismissAll: option.checks.LINK_EMPTY_LABELLEDBY.dismissAll ? 'LINK_EMPTY_LABELLEDBY' : false,
             developer: option.checks.LINK_EMPTY_LABELLEDBY.developer || true,
           });
@@ -8678,7 +8682,7 @@ function checkLinkText(results, option) {
             content: option.checks.LINK_EMPTY_NO_LABEL.content || Lang.sprintf('LINK_EMPTY_NO_LABEL'),
             inline: true,
             position: 'afterend',
-            dismiss: prepareDismissal(`A${href}`),
+            dismiss: prepareDismissal(`LINKEMPTYNOLABEL${href}`),
             dismissAll: option.checks.LINK_EMPTY_NO_LABEL.dismissAll ? 'LINK_EMPTY_NO_LABEL' : false,
             developer: option.checks.LINK_EMPTY_NO_LABEL.developer || false,
           });
@@ -8691,7 +8695,7 @@ function checkLinkText(results, option) {
           content: option.checks.LINK_EMPTY.content || Lang.sprintf('LINK_EMPTY'),
           inline: true,
           position: 'afterend',
-          dismiss: prepareDismissal(`A${href}`),
+          dismiss: prepareDismissal(`LINKEMPTY${href}`),
           dismissAll: option.checks.LINK_EMPTY.dismissAll ? 'LINK_EMPTY' : false,
           developer: option.checks.LINK_EMPTY.developer || false,
         });
@@ -8705,7 +8709,7 @@ function checkLinkText(results, option) {
           content: option.checks.LINK_STOPWORD.content || Lang.sprintf('LINK_STOPWORD', error[0]),
           inline: true,
           position: 'afterend',
-          dismiss: prepareDismissal(`A${href + linkTextTrimmed}`),
+          dismiss: prepareDismissal(`LINKSTOPWORD${href + linkTextTrimmed}`),
           dismissAll: option.checks.LINK_STOPWORD.dismissAll ? 'LINK_STOPWORD' : false,
           developer: option.checks.LINK_STOPWORD.developer || false,
         });
@@ -8720,7 +8724,7 @@ function checkLinkText(results, option) {
           content: option.checks.LINK_BEST_PRACTICES.content || Lang.sprintf('LINK_BEST_PRACTICES', stopword),
           inline: true,
           position: 'beforebegin',
-          dismiss: prepareDismissal(`LINK${href + linkTextTrimmed}`),
+          dismiss: prepareDismissal(`LINKBP${href + linkTextTrimmed}`),
           dismissAll: option.checks.LINK_BEST_PRACTICES.dismissAll ? 'LINK_BEST_PRACTICES' : false,
           developer: option.checks.LINK_BEST_PRACTICES.developer || false,
         });
@@ -8735,7 +8739,7 @@ function checkLinkText(results, option) {
             content: option.checks.LINK_DOI.content || Lang.sprintf('LINK_DOI'),
             inline: true,
             position: 'beforebegin',
-            dismiss: prepareDismissal(`LINK${href + linkTextTrimmed}`),
+            dismiss: prepareDismissal(`LINKDOI${href + linkTextTrimmed}`),
             dismissAll: option.checks.LINK_DOI.dismissAll ? 'LINK_DOI' : false,
             developer: option.checks.LINK_DOI.developer || false,
           });
@@ -8751,7 +8755,7 @@ function checkLinkText(results, option) {
             content: option.checks.LINK_URL.content || Lang.sprintf('LINK_URL'),
             inline: true,
             position: 'beforebegin',
-            dismiss: prepareDismissal(`LINK${href + linkTextTrimmed}`),
+            dismiss: prepareDismissal(`LINKURLNAME${href + linkTextTrimmed}`),
             dismissAll: option.checks.LINK_URL.dismissAll ? 'LINK_URL' : false,
             developer: option.checks.LINK_URL.developer || false,
           });
@@ -8768,7 +8772,7 @@ function checkLinkText(results, option) {
           content: option.checks.LABEL_IN_NAME.content || `${Lang.sprintf('LABEL_IN_NAME', sanitizedText)}`,
           inline: true,
           position: 'afterend',
-          dismiss: prepareDismissal(`LINK${href + linkTextTrimmed}`),
+          dismiss: prepareDismissal(`LINKLABELNAME${href + linkTextTrimmed}`),
           dismissAll: option.checks.LABEL_IN_NAME.dismissAll ? 'BTN_LABEL_IN_NAME' : false,
           developer: option.checks.LABEL_IN_NAME.developer || true,
         });
@@ -8795,7 +8799,7 @@ function checkLinkText(results, option) {
           content: option.checks.LINK_EMPTY.content || Lang.sprintf('LINK_EMPTY'),
           inline: true,
           position: 'afterend',
-          dismiss: prepareDismissal(`LINK${href}`),
+          dismiss: prepareDismissal(`LINKCHAR${href}`),
           dismissAll: option.checks.LINK_EMPTY.dismissAll ? 'LINK_EMPTY' : false,
           developer: option.checks.LINK_EMPTY.developer || false,
         });
@@ -8816,7 +8820,7 @@ function checkLinkText(results, option) {
               content: option.checks.LINK_IDENTICAL_NAME.content || `${Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
               inline: true,
               position: 'beforebegin',
-              dismiss: prepareDismissal(`LINK${href + linkTextTrimmed}`),
+              dismiss: prepareDismissal(`LINKSEEN${href + linkTextTrimmed}`),
               dismissAll: option.checks.LINK_IDENTICAL_NAME.dismissAll ? 'LINK_IDENTICAL_NAME' : false,
               developer: option.checks.LINK_IDENTICAL_NAME.developer || false,
             });
@@ -8829,7 +8833,7 @@ function checkLinkText(results, option) {
               content: option.checks.LINK_NEW_TAB.content || Lang.sprintf('LINK_NEW_TAB'),
               inline: true,
               position: 'beforebegin',
-              dismiss: prepareDismissal(`LINK${href + linkTextTrimmed}`),
+              dismiss: prepareDismissal(`LINKNEWTAB${href + linkTextTrimmed}`),
               dismissAll: option.checks.LINK_NEW_TAB.dismissAll ? 'LINK_NEW_TAB' : false,
               developer: option.checks.LINK_NEW_TAB.developer || false,
             });
@@ -8842,7 +8846,7 @@ function checkLinkText(results, option) {
               content: option.checks.LINK_FILE_EXT.content || Lang.sprintf('LINK_FILE_EXT'),
               inline: true,
               position: 'beforebegin',
-              dismiss: prepareDismissal(`LINK${href + linkTextTrimmed}`),
+              dismiss: prepareDismissal(`LINKEXT${href + linkTextTrimmed}`),
               dismissAll: option.checks.LINK_FILE_EXT.dismissAll ? 'LINK_FILE_EXT' : false,
               developer: option.checks.LINK_FILE_EXT.developer || false,
             });

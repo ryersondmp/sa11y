@@ -140,7 +140,7 @@ export default {
     READABILITY_NOT_ENOUGH: 'Za mało treści, aby ocenić czytelność.',
 
     // Headings
-    HEADING_SKIPPED_LEVEL: 'Niespójny poziom nagłówka. Zastosowane poziomy nie następują po sobie. Nagłówki nigdy nie powinny pomijać poziomów np. od <strong>Nagłówek %(prevLevel)</strong> do <strong {C}>Nagłówek %(level)</strong>.',
+    HEADING_SKIPPED_LEVEL: 'Nagłówki nie powinny pomijać poziomów ani przeskakiwać z <strong>Nagłówka %(PREV_LEVEL)</strong> na <strong {C}>Nagłówek %(LEVEL)</strong>, ponieważ zakłóca to porządek i hierarchię treści, co utrudnia śledzenie. <hr> Jeśli <strong {C}>%(HEADING)</strong> znajduje się pod sekcją <strong>%(PREV_HEADING)</strong>, rozważ jego sformatowanie jako <strong>Nagłówek %(LEVEL)</strong>.',
     HEADING_EMPTY: 'Znaleziono pusty nagłówek! Aby to naprawić, usuń tę linię lub zmień jej format z <strong {C}>Nagłówek %(level)</strong> na <strong>zwykły tekst</strong> lub <strong>akapit</strong>.',
     HEADING_LONG: 'Nagłówek jest zbyt długi! Nagłówki służą do organizowania treści i przekazywania struktury. Powinny być krótkie, jasne, opisowe i niepowtarzalne. Pisz nagłówki nie dłuższe niż 160 znaków (nie więcej niż zdanie). <hr> <strong>%(HEADING_LENGTH) Znaków</strong>',
     HEADING_FIRST: 'Pierwszym nagłówkiem na stronie powinien być zwykle Nagłówek H1 lub Nagłówek H2. Nagłówek H1 jest głównym nagłówkiem opisującym ogólny cel strony i powinien być początkiem obszaru treści głównej. Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Strukturze nagłówków.</a>',

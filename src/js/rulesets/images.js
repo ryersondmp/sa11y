@@ -247,7 +247,7 @@ export default function checkImages(results, option) {
               ? 'LINK_ALT_FILE_EXT' : 'ALT_FILE_EXT', error[0], altText),
             inline: false,
             position: 'beforebegin',
-            dismiss: Utils.prepareDismissal(`IMAGE${src + altText}`),
+            dismiss: Utils.prepareDismissal(`IMAGEEXT${src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
@@ -266,7 +266,7 @@ export default function checkImages(results, option) {
               ? 'LINK_PLACEHOLDER_ALT' : 'ALT_PLACEHOLDER', altText),
             inline: false,
             position: 'beforebegin',
-            dismiss: Utils.prepareDismissal(`IMAGE${src + altText}`),
+            dismiss: Utils.prepareDismissal(`ALTPLACEHOLDER${src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
@@ -285,7 +285,7 @@ export default function checkImages(results, option) {
               ? 'LINK_SUS_ALT' : 'SUS_ALT', error[1], altText),
             inline: false,
             position: 'beforebegin',
-            dismiss: Utils.prepareDismissal(`IMAGE${src + altText}`),
+            dismiss: Utils.prepareDismissal(`SUSALT${src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
@@ -307,7 +307,7 @@ export default function checkImages(results, option) {
               ? 'LINK_IMAGE_LONG_ALT' : 'IMAGE_ALT_TOO_LONG', alt.length, truncated),
             inline: false,
             position: 'beforebegin',
-            dismiss: Utils.prepareDismissal(`IMAGE${src + altText}`),
+            dismiss: Utils.prepareDismissal(`ALTLONG${src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
@@ -350,7 +350,7 @@ export default function checkImages(results, option) {
               content: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.content || Lang.sprintf('IMAGE_FIGURE_DUPLICATE_ALT', altText),
               inline: false,
               position: 'beforebegin',
-              dismiss: Utils.prepareDismissal(`FIGIMAGEDUPLICATE${src}`),
+              dismiss: Utils.prepareDismissal(`FIGDUPLICATE${src}`),
               dismissAll: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.dismissAll ? 'IMAGE_FIGURE_DUPLICATE_ALT' : false,
               developer: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.developer || false,
             });

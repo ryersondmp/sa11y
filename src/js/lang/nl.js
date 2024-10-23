@@ -155,7 +155,7 @@ export default {
     READABILITY_NOT_ENOUGH: 'Niet genoeg inhoud om een leesbaarheidsscore te berekenen.',
 
     // Headings
-    HEADING_SKIPPED_LEVEL: 'Niet-opeenvolgend rubriekniveau gebruikt. Koppen mogen nooit niveaus overslaan of van <strong>Kop %(prevLevel)</strong> naar <strong {C}>Kop %(level)</strong> gaan.',
+    HEADING_SKIPPED_LEVEL: 'Koppen mogen geen niveaus overslaan of van <strong>Kop %(PREV_LEVEL)</strong> naar <strong {C}>Kop %(LEVEL)</strong> springen, omdat dit de volgorde en hiërarchie van de inhoud verstoort, waardoor het moeilijker te volgen is. <hr> Als <strong {C}>%(HEADING)</strong> onder de sectie <strong>%(PREV_HEADING)</strong> valt, overweeg dan om het als een <strong>Kop %(LEVEL)</strong> in plaats daarvan te formatteren.',
     HEADING_EMPTY: 'Lege koptekst gevonden! Om dit op te lossen, verwijdert u deze regel of wijzigt u de opmaak van <strong {C}>Heading %(level)</strong> in <strong>Normal</strong> of <strong>Paragraph</strong>.',
     HEADING_LONG: 'Koppen zijn lang! Koppen moeten worden gebruikt om inhoud te organiseren en structuur over te brengen. Ze moeten kort, informatief en uniek zijn. Houd koppen onder de 160 tekens (niet meer dan een zin). <hr> <strong {B}>%(HEADING_LENGTH) Tekens</strong>',
     HEADING_FIRST: 'De eerste kop op een pagina moet meestal een Kop 1 of Kop 2 zijn. Kop 1 moet het begin zijn van het hoofdgedeelte van de inhoud en is de belangrijkste kop die het algemene doel van de pagina beschrijft. Meer informatie over <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Kopjesstructuur.</a>',

@@ -520,7 +520,7 @@ export default function checkContrast(results, option) {
 
     // Process text within element.
     const clone = $el.cloneNode(true);
-    const ignoreElements = ['script', 'style', 'noscript'];
+    const ignoreElements = ['script', 'style', 'noscript', 'audio', 'video'];
     const nodeText = Utils.fnIgnore(clone, ignoreElements);
     const text = Utils.getText(nodeText);
 

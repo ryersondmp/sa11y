@@ -66,6 +66,26 @@
       <p style="color:hotpink">Some text within a hidden div.</p>
     </div>
 
+    <p>Original: <a href="https://www.torontomu.ca/">TMU Website</a></p>
+
+    <h2>URL Variations</h2>
+    <p><a href="https://www.torontomu.ca/">TMU Website</a> - https://www.torontomu.ca/ [Same URL, should not be flagged]
+    </p>
+    <p><a href="https://torontomu.ca/">TMU Website</a> - https://torontomu.ca/</p>
+    <p><a href="http://www.torontomu.ca/">TMU Website</a> - http://www.torontomu.ca/</p>
+    <p><a href="https://www.torontomu.ca">TMU Website</a> - https://www.torontomu.ca</p>
+    <p><a href="HTTPS://WWW.TORONTOMU.CA/">TMU Website</a> - HTTPS://WWW.TORONTOMU.CA/</p>
+    <p><a href="https://www.torontomu.ca/ ">TMU Website</a> - https://www.torontomu.ca/ with trailing space</p>
+    <p><a href=" https://www.torontomu.ca/">TMU Website</a> - https://www.torontomu.ca/ with preceding space</p>
+    <p><a href="https://www.torontomu.ca/   ">TMU Website</a> - https://www.torontomu.ca/ with trailing tab</p>
+
+    <h2>Dismiss Bug</h2>
+    <p>Opens in a new tab without warning: <a href="https://www.torontomu.ca/" target="_blank">TMU Website descriptive
+        link
+        text</a></p>
+
+    <hr>
+
     <p style="color:orange;display:none;">Some text within a hidden div.</p>
 
     <h2>Heading too long</h2>
@@ -426,8 +446,9 @@
       checkRoot: 'body',
       containerIgnore: '.ignore-this, .this-too',
       developerChecksOnByDefault: false,
-      autoDetectShadowComponents: true,
-      // shadowComponents: '#webcomponent',
+      // autoDetectShadowComponents: true,
+      shadowComponents: '#webcomponent',
+      contrastAPCA: true,
       checks: {
         IMAGE_DECORATIVE_CAROUSEL: {
           type: 'error',
