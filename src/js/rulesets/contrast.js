@@ -315,33 +315,57 @@ export function suggestColorAPCA(color, background, fontWeight, fontSize) {
 }
 
 /**
- * Generate colour suggestions for tooltip upon tooltip opening.
- * This function is referenced within './interface/tooltips.js'
+ * Generates and inserts color suggestions for tooltip upon tooltip opening.
+ * This function is referenced within './interface/tooltips.js'.
  * For performance reasons, it is only called upon tooltip opening.
- * @param {Object} details An object containing the colours, font weight, and size of an element.
- * @returns Suggested colour combinations for tooltip.
+ * @param {HTMLElement} container The container where the color suggestion will be inserted.
  */
-export function generateColorSuggestion(details) {
-  const { color, background, weight, size, isLargeText } = details;
-  const suggested = Constants.Global.contrastAPCA
-    ? suggestColorAPCA(color, background, weight, size)
-    : suggestColorWCAG(color, background, isLargeText);
+export function generateColorSuggestion(container) {
+  if (Constants.Global.contrastSuggestions) {
+    const hasColorSuggestion = container?.querySelector('[data-sa11y-suggestion]');
+    if (hasColorSuggestion) {
+      const colorObject = hasColorSuggestion?.getAttribute('data-sa11y-suggestion');
+      const details = JSON.parse(colorObject);
+      const { color, background, weight, size, isLargeText } = details;
 
-  let advice;
-  const hr = '<hr aria-hidden="true">';
-  const style = `color:${suggested.color};background-color:${getHex(details.background)};`;
-  const colorBadge = `<strong class="badge" style="${style}">${suggested.color}</strong>`;
-  const sizeBadge = `<strong class="normal-badge">${suggested.size}px</strong>`;
-  if (!Constants.Global.contrastAPCA) {
-    advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
-  } else if (suggested.color && suggested.size) {
-    advice = `${hr} ${Lang._('CONTRAST_APCA')} ${colorBadge} ${sizeBadge}`;
-  } else if (suggested.color) {
-    advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
-  } else if (suggested.size) {
-    advice = `${hr} ${Lang._('CONTRAST_SIZE')} ${sizeBadge}`;
+      const suggested = Constants.Global.contrastAPCA
+        ? suggestColorAPCA(color, background, weight, size)
+        : suggestColorWCAG(color, background, isLargeText);
+
+      let advice;
+      const hr = '<hr aria-hidden="true">';
+      const style = `color:${suggested.color};background-color:${getHex(details.background)};`;
+      const colorBadge = `<strong class="badge" style="${style}">${suggested.color}</strong>`;
+      const sizeBadge = `<strong class="normal-badge">${suggested.size}px</strong>`;
+
+      if (!Constants.Global.contrastAPCA) {
+        advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
+      } else if (suggested.color && suggested.size) {
+        advice = `${hr} ${Lang._('CONTRAST_APCA')} ${colorBadge} ${sizeBadge}`;
+      } else if (suggested.color) {
+        advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
+      } else if (suggested.size) {
+        advice = `${hr} ${Lang._('CONTRAST_SIZE')} ${sizeBadge}`;
+      }
+
+      hasColorSuggestion.innerHTML = advice;
+    }
   }
-  return advice;
+}
+
+/**
+ * Used to insert the colour suggestion within tooltips and the control panel.
+ * @param {HTMLElement} container The container of where to insert the generated color suggestion.
+ */
+export function insertColorSuggestion(container) {
+  if (Constants.Global.contrastSuggestions) {
+    const hasColorSuggestion = container?.querySelector('[data-sa11y-suggestion]');
+    if (hasColorSuggestion) {
+      const colorObject = hasColorSuggestion?.getAttribute('data-sa11y-suggestion');
+      const suggestion = generateColorSuggestion(JSON.parse(colorObject));
+      hasColorSuggestion.innerHTML = suggestion;
+    }
+  }
 }
 
 /**
@@ -439,8 +463,10 @@ export default function checkContrast(results, option) {
     const fontWeight = normalizeFontWeight(getFontWeight);
     const background = getBackground($el);
 
-    // Check if element is visually hidden to screen readers.
+    // Check if element is visually hidden to screen readers or explicitly hidden.
     const isVisuallyHidden = Utils.isScreenReaderOnly($el);
+    const isExplicitlyHidden = Utils.isElementHidden($el);
+    const isHidden = isExplicitlyHidden || isVisuallyHidden || opacity === 0;
 
     // Filter only text nodes.
     const textString = Array.from($el.childNodes)
@@ -457,9 +483,9 @@ export default function checkContrast(results, option) {
       if (background === 'image') {
         // Warnings for elements with a background image, ignoring inputs.
         if (!checkInputs && !$el.closest('nav')) {
-          contrastResults.push({ $el, type: 'warning' });
+          contrastResults.push({ $el, type: 'unknown' });
         }
-      } else if (isVisuallyHidden || opacity === 0 || getHex(color) === getHex(background)) {
+      } else if (isHidden || getHex(color) === getHex(background)) {
         // Ignore visually hidden elements.
       } else {
         const result = checkElementContrast($el, color, background, fontSize, fontWeight, opacity);
@@ -555,12 +581,13 @@ export default function checkContrast(results, option) {
           });
         }
         break;
-      case 'warning':
+      case 'unknown':
         if (option.checks.CONTRAST_WARNING) {
           results.push({
             element: $el,
             type: option.checks.CONTRAST_WARNING.type || 'warning',
-            content: option.checks.CONTRAST_WARNING.content || Lang.sprintf('CONTRAST_WARNING', sanitizedText),
+            content: option.checks.CONTRAST_WARNING.content
+              || Lang.sprintf('CONTRAST_WARNING', sanitizedText),
             inline: false,
             position: 'beforebegin',
             dismiss: Utils.prepareDismissal(`CONTRAST${sanitizedText}`),

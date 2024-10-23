@@ -686,6 +686,18 @@
       </table>
     </div>
 
+    <h3>Table explicitly hidden with <code>display:none</code></h3>
+    <div id="nothing-table-3">
+      <table style="display:none">
+        <tbody>
+          <tr>
+            <th></th>
+            <th></th>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
     <h3>Missing table headers</h3>
     <div id="error-table-missing-headers">
       <table>
@@ -893,6 +905,11 @@
 
     <div id="warning-underline-5">
       <p><span class="underline">Spans</span> within a paragraph.</p>
+    </div>
+
+    <div id="nothing-underline">
+      <p>Underlined text within a <a href="https://www.example.com?sdssn98"><span class="underline">hyperlink</span></a>
+      </p>
     </div>
 
     <h2>Non-semantic lists</h2>
@@ -1369,6 +1386,13 @@
       </label>
     </div>
 
+    <h4>Ignore specific elements via prop</h4>
+    <div id="nothing-contrast-6">
+      <div class="background-image-component">
+        <p class="background-image">Ignore via <code>contrastIgnore</code> prop.</p>
+      </div>
+    </div>
+
     <h2>Inputs</h2>
     <h3>Hidden inputs</h3>
     <div id="nothing-input-1">
@@ -1729,13 +1753,20 @@
       checkRoot: "body",
       headerIgnore: "#nothing-ignore-this-heading *",
       linkIgnoreSpan: ".sr-only-example",
-      linksToFlag: 'a[href*="dev."]',
       linkIgnoreStrings: '(External)',
       imageIgnore: ".logo",
+      contrastIgnore: '.background-image-component',
       showHinPageOutline: 1,
       exportResultsPlugin: true,
       autoDetectShadowComponents: true,
       developerChecksOnByDefault: true,
+
+      checks: {
+        QA_BAD_LINK: {
+          sources: 'a[href*="dev."]',
+        }
+      },
+
       // showGoodImageButton: false,
       // showGoodLinkButton: false,
     });

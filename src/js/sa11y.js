@@ -74,7 +74,6 @@ class Sa11y {
         Constants.initializeGlobal(option);
         Constants.initializeReadability(option);
         Constants.initializeExclusions(option);
-        Constants.initializeEmbeddedContent(option);
 
         /* Make "Developer checks" on by default or if toggle switch is visually hidden. */
         if (option.developerChecksOnByDefault) {

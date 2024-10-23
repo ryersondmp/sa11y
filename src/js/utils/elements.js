@@ -45,12 +45,11 @@ const Elements = (function myElements() {
 
     Found.StrongItalics = Found.Everything.filter(($el) => ['STRONG', 'EM'].includes($el.tagName));
 
-    Found.Underlines = Found.Everything.filter(($el) => $el.tagName === 'U' && !$el.closest('a[href]'));
-
     Found.Subscripts = Found.Everything.filter(($el) => ['SUP', 'SUB'].includes($el.tagName));
 
-    Found.CustomErrorLinks = option.linksToFlag
-      ? Found.Links.filter(($el) => option.linksToFlag.split(',').some((selector) => $el.matches(selector.trim()))) : [];
+    const badLinkSources = option.checks.QA_BAD_LINK.sources;
+    Found.CustomErrorLinks = badLinkSources.length
+      ? Found.Links.filter(($el) => badLinkSources.split(',').some((selector) => $el.matches(selector.trim()))) : [];
 
     // Readability.
     const readabilityExclusions = ($el) => Constants.Root.Readability.contains($el)
@@ -62,7 +61,8 @@ const Elements = (function myElements() {
 
     // Developer checks.
     const nestedSources = option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
-    Found.NestedComponents = nestedSources ? Found.Everything.filter(($el) => $el.matches(nestedSources)) : [];
+    Found.NestedComponents = nestedSources
+      ? Found.Everything.filter(($el) => $el.matches(nestedSources)) : [];
 
     Found.TabIndex = Found.Everything.filter(($el) => $el.hasAttribute('tabindex')
       && $el.getAttribute('tabindex') !== '0'
@@ -76,10 +76,10 @@ const Elements = (function myElements() {
 
     // iFrames.
     Found.iframes = Found.Everything.filter(($el) => ['IFRAME', 'AUDIO', 'VIDEO'].includes($el.tagName));
-    Found.Videos = Found.iframes.filter(($el) => $el.matches(Constants.EmbeddedContent.Video));
-    Found.Audio = Found.iframes.filter(($el) => $el.matches(Constants.EmbeddedContent.Audio));
-    Found.Visualizations = Found.iframes.filter(($el) => $el.matches(Constants.EmbeddedContent.Visualization));
-    Found.EmbeddedContent = Found.iframes.filter(($el) => !$el.matches(Constants.EmbeddedContent.All));
+    Found.Videos = Found.iframes.filter(($el) => $el.matches(Constants.Global.VideoSources));
+    Found.Audio = Found.iframes.filter(($el) => $el.matches(Constants.Global.AudioSources));
+    Found.Visualizations = Found.iframes.filter(($el) => $el.matches(Constants.Global.VisualizationSources));
+    Found.EmbeddedContent = Found.iframes.filter(($el) => !$el.matches(Constants.Global.AllEmbeddedContent));
 
     // Query select <HTML> given that the lang may change on an SPA.
     const html = document.querySelector('html');

@@ -51,7 +51,7 @@ export default function checkQA(results, option) {
       const href = $el.getAttribute('href');
 
       // Has file extension.
-      const hasExtension = $el.matches(Constants.Global.documentLinks);
+      const hasExtension = $el.matches(Constants.Global.documentSources);
       const hasPDF = $el.matches('a[href$=".pdf"], a[href*=".pdf?"]');
 
       // Dismiss key.
@@ -139,49 +139,51 @@ export default function checkQA(results, option) {
   /*  Errors: Check HTML tables for issues.                          */
   /* *************************************************************** */
   Elements.Found.Tables.forEach(($el) => {
-    const tableHeaders = $el.querySelectorAll('th');
-    const semanticHeadings = $el.querySelectorAll('h1, h2, h3, h4, h5, h6');
-    const key = Utils.prepareDismissal(`TABLE${$el.textContent}`);
-    if (option.checks.TABLES_MISSING_HEADINGS && tableHeaders.length === 0) {
-      results.push({
-        element: $el,
-        type: option.checks.TABLES_MISSING_HEADINGS.type || 'error',
-        content: option.checks.TABLES_MISSING_HEADINGS.content || Lang.sprintf('TABLES_MISSING_HEADINGS'),
-        inline: false,
-        position: 'beforebegin',
-        dismiss: key,
-        dismissAll: option.checks.TABLES_MISSING_HEADINGS.dismissAll ? 'TABLES_MISSING_HEADINGS' : false,
-        developer: option.checks.TABLES_MISSING_HEADINGS.developer || false,
-      });
-    }
-    if (option.checks.TABLES_SEMANTIC_HEADING && semanticHeadings.length > 0) {
-      semanticHeadings.forEach((heading) => {
+    if (Utils.isElementHidden($el) === false) {
+      const tableHeaders = $el.querySelectorAll('th');
+      const semanticHeadings = $el.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      const key = Utils.prepareDismissal(`TABLE${$el.textContent}`);
+      if (option.checks.TABLES_MISSING_HEADINGS && tableHeaders.length === 0) {
         results.push({
-          element: heading,
-          type: option.checks.TABLES_SEMANTIC_HEADING.type || 'error',
-          content: option.checks.TABLES_SEMANTIC_HEADING.content || Lang.sprintf('TABLES_SEMANTIC_HEADING'),
+          element: $el,
+          type: option.checks.TABLES_MISSING_HEADINGS.type || 'error',
+          content: option.checks.TABLES_MISSING_HEADINGS.content || Lang.sprintf('TABLES_MISSING_HEADINGS'),
           inline: false,
           position: 'beforebegin',
           dismiss: key,
-          dismissAll: option.checks.TABLES_SEMANTIC_HEADING.dismissAll ? 'TABLES_SEMANTIC_HEADING' : false,
-          developer: option.checks.TABLES_SEMANTIC_HEADING.developer || false,
-        });
-      });
-    }
-    tableHeaders.forEach((th) => {
-      if (option.checks.TABLES_EMPTY_HEADING && th.textContent.trim().length === 0) {
-        results.push({
-          element: th,
-          type: option.checks.TABLES_EMPTY_HEADING.type || 'error',
-          content: option.checks.TABLES_EMPTY_HEADING.content || Lang.sprintf('TABLES_EMPTY_HEADING'),
-          inline: false,
-          position: 'afterbegin',
-          dismiss: key,
-          dismissAll: option.checks.TABLES_EMPTY_HEADING.dismissAll ? 'TABLES_EMPTY_HEADING' : false,
-          developer: option.checks.TABLES_EMPTY_HEADING.developer || false,
+          dismissAll: option.checks.TABLES_MISSING_HEADINGS.dismissAll ? 'TABLES_MISSING_HEADINGS' : false,
+          developer: option.checks.TABLES_MISSING_HEADINGS.developer || false,
         });
       }
-    });
+      if (option.checks.TABLES_SEMANTIC_HEADING && semanticHeadings.length > 0) {
+        semanticHeadings.forEach((heading) => {
+          results.push({
+            element: heading,
+            type: option.checks.TABLES_SEMANTIC_HEADING.type || 'error',
+            content: option.checks.TABLES_SEMANTIC_HEADING.content || Lang.sprintf('TABLES_SEMANTIC_HEADING'),
+            inline: false,
+            position: 'beforebegin',
+            dismiss: key,
+            dismissAll: option.checks.TABLES_SEMANTIC_HEADING.dismissAll ? 'TABLES_SEMANTIC_HEADING' : false,
+            developer: option.checks.TABLES_SEMANTIC_HEADING.developer || false,
+          });
+        });
+      }
+      tableHeaders.forEach((th) => {
+        if (option.checks.TABLES_EMPTY_HEADING && th.textContent.trim().length === 0) {
+          results.push({
+            element: th,
+            type: option.checks.TABLES_EMPTY_HEADING.type || 'error',
+            content: option.checks.TABLES_EMPTY_HEADING.content || Lang.sprintf('TABLES_EMPTY_HEADING'),
+            inline: false,
+            position: 'afterbegin',
+            dismiss: key,
+            dismissAll: option.checks.TABLES_EMPTY_HEADING.dismissAll ? 'TABLES_EMPTY_HEADING' : false,
+            developer: option.checks.TABLES_EMPTY_HEADING.developer || false,
+          });
+        }
+      });
+    }
   });
 
   /* ****************************************************************** */
@@ -398,60 +400,44 @@ export default function checkQA(results, option) {
   /*  Various checks: underlines, justify-aligned, and small text.  */
   /* ************************************************************** */
   // Check underlined text. Created by Brian Teeman!
-  const addUnderlineResult = ($el, inline) => {
-    const text = Utils.getText($el);
-    if (text.length !== 0) {
-      results.push({
-        element: $el,
-        type: option.checks.QA_UNDERLINE.type || 'warning',
-        content: option.checks.QA_UNDERLINE.content || Lang.sprintf('QA_UNDERLINE'),
-        inline,
-        position: 'beforebegin',
-        dismiss: Utils.prepareDismissal(`UNDERLINE${text}`),
-        dismissAll: option.checks.QA_UNDERLINE.dismissAll ? 'QA_UNDERLINE' : false,
-        developer: option.checks.QA_UNDERLINE.developer || false,
-      });
-    }
+  const addUnderlineResult = ($el) => {
+    results.push({
+      element: $el,
+      type: option.checks.QA_UNDERLINE.type || 'warning',
+      content: option.checks.QA_UNDERLINE.content || Lang.sprintf('QA_UNDERLINE'),
+      inline: true,
+      position: 'beforebegin',
+      dismiss: Utils.prepareDismissal(`UNDERLINE${$el.textContent}`),
+      dismissAll: option.checks.QA_UNDERLINE.dismissAll ? 'QA_UNDERLINE' : false,
+      developer: option.checks.QA_UNDERLINE.developer || false,
+    });
   };
 
   const addJustifyResult = ($el) => {
-    const text = Utils.getText($el);
-    if (text.length !== 0) {
-      results.push({
-        element: $el,
-        type: option.checks.QA_JUSTIFY.type || 'warning',
-        content: option.checks.QA_JUSTIFY.content || Lang._('QA_JUSTIFY'),
-        inline: false,
-        position: 'beforebegin',
-        dismiss: Utils.prepareDismissal(`JUSTIFIED${text}`),
-        dismissAll: option.checks.QA_JUSTIFY.dismissAll ? 'QA_JUSTIFY' : false,
-        developer: option.checks.QA_JUSTIFY.developer || false,
-      });
-    }
+    results.push({
+      element: $el,
+      type: option.checks.QA_JUSTIFY.type || 'warning',
+      content: option.checks.QA_JUSTIFY.content || Lang._('QA_JUSTIFY'),
+      inline: false,
+      position: 'beforebegin',
+      dismiss: Utils.prepareDismissal(`JUSTIFIED${$el.textContent}`),
+      dismissAll: option.checks.QA_JUSTIFY.dismissAll ? 'QA_JUSTIFY' : false,
+      developer: option.checks.QA_JUSTIFY.developer || false,
+    });
   };
 
   const addSmallTextResult = ($el) => {
-    const text = Utils.getText($el);
-    if (text.length !== 0) {
-      results.push({
-        element: $el,
-        type: option.checks.QA_SMALL_TEXT.type || 'warning',
-        content: option.checks.QA_SMALL_TEXT.content || Lang._('QA_SMALL_TEXT'),
-        inline: false,
-        position: 'beforebegin',
-        dismiss: Utils.prepareDismissal(`SMALL${text}`),
-        dismissAll: option.checks.QA_SMALL_TEXT.dismissAll ? 'QA_SMALL_TEXT' : false,
-        developer: option.checks.QA_SMALL_TEXT.developer || false,
-      });
-    }
-  };
-
-  // Flag all <u> elements.
-  if (option.checks.QA_UNDERLINE) {
-    Elements.Found.Underlines.forEach(($el) => {
-      addUnderlineResult($el, true);
+    results.push({
+      element: $el,
+      type: option.checks.QA_SMALL_TEXT.type || 'warning',
+      content: option.checks.QA_SMALL_TEXT.content || Lang._('QA_SMALL_TEXT'),
+      inline: false,
+      position: 'beforebegin',
+      dismiss: Utils.prepareDismissal(`SMALL${$el.textContent}`),
+      dismissAll: option.checks.QA_SMALL_TEXT.dismissAll ? 'QA_SMALL_TEXT' : false,
+      developer: option.checks.QA_SMALL_TEXT.developer || false,
     });
-  }
+  };
 
   const computeStyle = ($el) => {
     const style = getComputedStyle($el);
@@ -459,7 +445,7 @@ export default function checkQA(results, option) {
 
     /* Check: Underlined text. */
     if (option.checks.QA_UNDERLINE && textDecorationLine === 'underline' && !$el.closest('a[href]')) {
-      addUnderlineResult($el, false); // Inline false for computed underlines.
+      addUnderlineResult($el);
     }
 
     /* Check: Font size is greater than 0 and less than 10. */

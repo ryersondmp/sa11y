@@ -16,7 +16,7 @@ const defaultOptions = {
 
   // Exclusions
   containerIgnore: '.sa11y-ignore',
-  contrastIgnore: '.sr-only, [role="menu"] *',
+  contrastIgnore: '.sr-only',
   outlineIgnore: '',
   headerIgnore: '',
   headerIgnoreSpan: '',
@@ -26,79 +26,81 @@ const defaultOptions = {
   linkIgnoreSpan: '',
   linkIgnoreStrings: '',
 
-  // Other features
+  // Control panel settings
   aboutContent: '',
-  delayCheck: 0,
-  delayCustomCheck: 500,
+  panelPosition: 'right',
+  checkAllHideToggles: false,
+  developerChecksOnByDefault: false,
+
+  // Page outline
   showHinPageOutline: false,
   showTitleInPageOutline: true,
+
+  // Image outline
   showImageOutline: true,
-  showGoodImageButton: true,
-  showGoodLinkButton: true,
   editImageURLofCMS: '',
   relativePathImageSRC: '',
   relativePathImageID: '',
+
+  // Other features
+  delayCheck: 0,
+  delayCustomCheck: 500,
   detectSPArouting: false,
   doNotRun: '',
-  dismissAnnotations: true,
-  dismissAll: true,
   headless: false,
   selectorPath: false,
   shadowComponents: '',
   autoDetectShadowComponents: false,
-  panelPosition: 'right',
+
+  // Annotations
+  showGoodImageButton: true,
+  showGoodLinkButton: true,
+  dismissAnnotations: true,
+  dismissAll: true,
 
   // Readability
   readabilityPlugin: true,
   readabilityRoot: 'body',
   readabilityIgnore: '',
 
-  // Other plugins
+  // Contrast
   contrastPlugin: true,
   contrastAPCA: false,
   contrastSuggestions: true,
+
+  // Other plugins
+  customChecks: false,
   linksAdvancedPlugin: true,
   formLabelsPlugin: true,
   embeddedContentPlugin: true,
   developerPlugin: true,
   colourFilterPlugin: true,
-  customChecks: false,
-  checkAllHideToggles: false,
-  developerChecksOnByDefault: false,
   exportResultsPlugin: false,
 
-  // Customizing checks.
-  altTextMaxCharLength: 250,
+  // Shared properties for some checks
   susAltStopWords: '',
   linkStopWords: '',
   extraPlaceholderStopWords: '',
-  headingMaxCharLength: 170,
 
-  // QA ruleset customizations.
-  URLTextMaxCharLength: 40,
-  linksToFlag: '',
-  documentLinks: 'a[href$=".doc"], a[href$=".docx"], a[href*=".doc?"], a[href*=".docx?"], a[href$=".ppt"], a[href$=".pptx"], a[href*=".ppt?"], a[href*=".pptx?"], a[href^="https://drive.google.com/file"], a[href^="https://docs.google."], a[href^="https://sway."]',
-
-  // Embedded content sources
-  videoContent: 'youtube.com, vimeo.com, yuja.com, panopto.com',
-  audioContent: 'soundcloud.com, simplecast.com, podbean.com, buzzsprout.com, blubrry.com, transistor.fm, fusebox.fm, libsyn.com',
-  dataVizContent: 'datastudio, tableau, lookerstudio, powerbi, qlik',
-
-  // All checks.
+  // All checks
   checks: {
-    // Heading checks.
+    // Heading checks
     HEADING_SKIPPED_LEVEL: true,
     HEADING_EMPTY_WITH_IMAGE: true,
     HEADING_EMPTY: true,
     HEADING_FIRST: true,
-    HEADING_LONG: true,
+    HEADING_LONG: {
+      maxLength: 170,
+    },
     HEADING_MISSING_ONE: true,
 
-    // Image checks.
+    // Image checks
     MISSING_ALT_LINK: true,
     MISSING_ALT_LINK_HAS_TEXT: true,
     MISSING_ALT: true,
-    IMAGE_DECORATIVE_CAROUSEL: true,
+    IMAGE_DECORATIVE_CAROUSEL: {
+      sources: '.carousel',
+    },
     LINK_IMAGE_NO_ALT_TEXT: true,
     LINK_IMAGE_TEXT: true,
     IMAGE_FIGURE_DECORATIVE: true,
@@ -109,14 +111,18 @@ const defaultOptions = {
     ALT_PLACEHOLDER: true,
     LINK_SUS_ALT: true,
     SUS_ALT: true,
-    LINK_IMAGE_LONG_ALT: true,
-    IMAGE_ALT_TOO_LONG: true,
+    LINK_IMAGE_LONG_ALT: {
+      maxLength: 250,
+    },
+    IMAGE_ALT_TOO_LONG: {
+      maxLength: 250,
+    },
     LINK_IMAGE_ALT: true,
     LINK_IMAGE_ALT_AND_TEXT: true,
     IMAGE_FIGURE_DUPLICATE_ALT: true,
     IMAGE_PASS: true,
 
-    // Link checks.
+    // Link checks
     LINK_EMPTY_LABELLEDBY: true,
     LINK_EMPTY_NO_LABEL: true,
     LINK_STOPWORD: true,
@@ -124,7 +130,9 @@ const defaultOptions = {
     LINK_DOI: {
       dismissAll: true,
     },
-    LINK_URL: true,
+    LINK_URL: {
+      maxLength: 40,
+    },
     LINK_LABEL: true,
     LINK_EMPTY: true,
     LINK_IDENTICAL_NAME: {
@@ -135,7 +143,7 @@ const defaultOptions = {
     },
     LINK_FILE_EXT: true,
 
-    // Form Labels checks.
+    // Form labels checks
     LABELS_MISSING_IMAGE_INPUT: true,
     LABELS_INPUT_RESET: true,
     LABELS_MISSING_LABEL: true,
@@ -143,19 +151,28 @@ const defaultOptions = {
     LABELS_NO_FOR_ATTRIBUTE: true,
     LABELS_PLACEHOLDER: true,
 
-    // Embedded Content checks.
-    EMBED_AUDIO: true,
-    EMBED_VIDEO: true,
-    EMBED_DATA_VIZ: true,
+    // Embedded content checks
+    EMBED_AUDIO: {
+      sources: '',
+    },
+    EMBED_VIDEO: {
+      sources: '',
+    },
+    EMBED_DATA_VIZ: {
+      sources: '',
+    },
     EMBED_UNFOCUSABLE: true,
     EMBED_MISSING_TITLE: true,
     EMBED_GENERAL: true,
 
-    // Quality Assurance checks.
-    QA_BAD_LINK: true,
+    // Quality assurance checks
+    QA_BAD_LINK: {
+      sources: '',
+    },
     QA_STRONG_ITALICS: true,
     QA_IN_PAGE_LINK: true,
     QA_DOCUMENT: {
+      sources: '',
       dismissAll: true,
     },
     QA_PDF: {
@@ -170,7 +187,9 @@ const defaultOptions = {
     QA_UPPERCASE: true,
     QA_UNDERLINE: true,
     QA_SUBSCRIPT: true,
-    QA_NESTED_COMPONENTS: true,
+    QA_NESTED_COMPONENTS: {
+      sources: '',
+    },
     QA_JUSTIFY: true,
     QA_SMALL_TEXT: true,
 
@@ -191,7 +210,7 @@ const defaultOptions = {
     BTN_EMPTY_LABELLEDBY: true,
     BTN_ROLE_IN_NAME: true,
 
-    // Contrast checks.
+    // Contrast checks
     CONTRAST_WARNING: {
       dismissAll: true,
     },
@@ -292,10 +311,51 @@ const Constants = (function myConstants() {
     // i18n
     Global.langDirection = (Global.html.getAttribute('dir') === 'rtl') ? 'rtl' : 'ltr';
 
-    // QA: Document links (Quality Assurance module)
-    if (option.documentLinks) {
-      Global.documentLinks = `${option.documentLinks}`;
+    // Check for document types.
+    const documentSources = option.checks.QA_DOCUMENT.sources;
+    const defaultDocumentSources = 'a[href$=".doc"], a[href$=".docx"], a[href*=".doc?"], a[href*=".docx?"], a[href$=".ppt"], a[href$=".pptx"], a[href*=".ppt?"], a[href*=".pptx?"], a[href^="https://drive.google.com/file"], a[href^="https://docs.google."], a[href^="https://sway."]';
+    if (documentSources.length) {
+      Global.documentSources = `${defaultDocumentSources}, ${documentSources}`;
+    } else {
+      Global.documentSources = defaultDocumentSources;
     }
+
+    /* ********************** */
+    /* Embedded Content Setup */
+    /* ********************** */
+
+    // Video sources.
+    const videoSources = option.checks.EMBED_VIDEO.sources;
+    const defaultVideoSources = 'video, [src*="youtube.com"], [src*="vimeo.com"], [src*="yuja.com"], [src*="panopto.com"]';
+    if (videoSources.length) {
+      const videos = videoSources.split(/\s*[\s,]\s*/).map(($el) => `[src*="${$el}"]`);
+      Global.VideoSources = `${defaultVideoSources}, ${videos.join(', ')}`;
+    } else {
+      Global.VideoSources = defaultVideoSources;
+    }
+
+    // Audio sources.
+    const audioSources = option.checks.EMBED_AUDIO.sources;
+    const defaultAudioSources = 'audio, [src*="soundcloud.com"], [src*="simplecast.com"], [src*="podbean.com"], [src*="buzzsprout.com"], [src*="blubrry.com"], [src*="transistor.fm"], [src*="fusebox.fm"], [src*="libsyn.com"]';
+    if (audioSources.length) {
+      const audio = audioSources.split(/\s*[\s,]\s*/).map(($el) => `[src*="${$el}"]`);
+      Global.AudioSources = `${defaultAudioSources}, ${audio.join(', ')}`;
+    } else {
+      Global.AudioSources = defaultAudioSources;
+    }
+
+    // Data viz sources.
+    const dataVizSources = option.checks.EMBED_DATA_VIZ.sources;
+    const defaultDataVizSources = '[src*="datastudio"], [src*="tableau"], [src*="lookerstudio"], [src*="powerbi"], [src*="qlik"]';
+    if (dataVizSources.length) {
+      const data = dataVizSources.split(/\s*[\s,]\s*/).map(($el) => `[src*="${$el}"]`);
+      Global.VisualizationSources = `${defaultDataVizSources}, ${data.join(', ')}`;
+    } else {
+      Global.VisualizationSources = defaultDataVizSources;
+    }
+
+    // Embedded content all
+    Global.AllEmbeddedContent = `${Global.VideoSources}, ${Global.AudioSources}, ${Global.VisualizationSources}`;
   }
 
   /* *************** */
@@ -436,13 +496,21 @@ const Constants = (function myConstants() {
     // Contrast exclusions
     Exclusions.Contrast = ['link', 'hr', 'option', 'video track', 'input[type="color"]', 'input[type="range"]', ...exclusions];
     if (option.contrastIgnore) {
-      Exclusions.Contrast = option.contrastIgnore.split(',').map(($el) => $el.trim()).concat(Exclusions.Contrast);
+      Exclusions.Contrast = option.contrastIgnore
+        .split(',')
+        .map(($el) => $el.trim())
+        .flatMap(($el) => [$el, `${$el} *`])
+        .concat(Exclusions.Contrast);
     }
 
     // Ignore specific regions for readability module.
     Exclusions.Readability = ['nav li', '[role="navigation"] li', ...exclusions];
     if (option.readabilityIgnore) {
-      Exclusions.Readability = option.readabilityIgnore.split(',').map(($el) => $el.trim()).concat(Exclusions.Readability);
+      Exclusions.Readability = option.readabilityIgnore
+        .split(',')
+        .map(($el) => $el.trim())
+        .flatMap(($el) => [$el, `${$el} *`])
+        .concat(Exclusions.Readability);
     }
 
     // Ignore specific headings.
@@ -478,39 +546,6 @@ const Constants = (function myConstants() {
       : [];
   }
 
-  /* ********************** */
-  /* Embedded Content Setup */
-  /* ********************** */
-  const EmbeddedContent = {};
-  function initializeEmbeddedContent(option) {
-    // Video sources.
-    if (option.videoContent) {
-      const videos = option.videoContent.split(/\s*[\s,]\s*/).map(($el) => `[src*='${$el}']`);
-      EmbeddedContent.Video = `video, ${videos.join(', ')}`;
-    } else {
-      EmbeddedContent.Video = 'video';
-    }
-
-    // Audio sources.
-    if (option.audioContent) {
-      const audio = option.audioContent.split(/\s*[\s,]\s*/).map(($el) => `[src*='${$el}']`);
-      EmbeddedContent.Audio = `audio, ${audio.join(', ')}`;
-    } else {
-      EmbeddedContent.Audio = 'audio';
-    }
-
-    // Data viz sources.
-    if (option.dataVizContent) {
-      const data = option.dataVizContent.split(/\s*[\s,]\s*/).map(($el) => `[src*='${$el}']`);
-      EmbeddedContent.Visualization = data.join(', ');
-    } else {
-      EmbeddedContent.Visualization = 'datastudio.google.com, tableau';
-    }
-
-    // Embedded content all
-    EmbeddedContent.All = `${EmbeddedContent.Video}, ${EmbeddedContent.Audio}, ${EmbeddedContent.Visualization}`;
-  }
-
   return {
     initializeRoot,
     Root,
@@ -522,8 +557,6 @@ const Constants = (function myConstants() {
     Readability,
     initializeExclusions,
     Exclusions,
-    initializeEmbeddedContent,
-    EmbeddedContent,
   };
 }());
 
@@ -880,6 +913,65 @@ function sanitizeHTML(string) {
 }
 
 /**
+ * Sanitize links (e.g. href and src values).
+ * @param {string} string The URL string to sanitize.
+ * @returns {string} The sanitized URL if valid, or an empty string if invalid.
+ */
+function sanitizeURL(string) {
+  if (!string) return '#';
+  const sanitizedInput = String(string).trim();
+
+  // Remove protocols.
+  if (/^javascript:/i.test(sanitizedInput)) return '#';
+  if (/^data:/i.test(sanitizedInput)) return '#';
+
+  // Ensure valid protocol.
+  const protocols = ['http:', 'https:', 'mailto:', 'tel:', 'ftp:'];
+  const hasValidProtocol = protocols.some((protocol) => sanitizedInput.toLowerCase().startsWith(protocol));
+
+  // Assume relative URLs.
+  if (!hasValidProtocol && !sanitizedInput.startsWith('/') && !sanitizedInput.startsWith('#')) {
+    return `./${sanitizedInput}`;
+  }
+
+  // Remove any HTML tags.
+  const cleanedString = sanitizedInput.replace(/<[^>]*>/g, '');
+  return encodeURI(cleanedString);
+}
+
+/**
+ * Sanitizes HTML by removing script tags, inline event handlers and any dangerous attributes. It returns a clean version of the HTML string.
+ * @param {string} html The HTML string to sanitize.
+ * @returns {string} The sanitized HTML string.
+ */
+function sanitizeHTMLBlock(html) {
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = html;
+
+  // Remove blocks.
+  ['script', 'style', 'iframe', 'form'].forEach((tag) => {
+    const elements = tempDiv.getElementsByTagName(tag);
+    while (elements.length > 0) {
+      elements[0].parentNode.removeChild(elements[0]);
+    }
+  });
+
+  // Remove inline event handlers and dangerous attributes.
+  const allElements = tempDiv.getElementsByTagName('*');
+  for (let i = 0; i < allElements.length; i++) {
+    const element = allElements[i];
+    const attributes = Array.from(element.attributes);
+    attributes.forEach((attr) => {
+      if (attr.name.startsWith('on')) {
+        element.removeAttribute(attr.name);
+      }
+    });
+    element.removeAttribute('style');
+  }
+  return tempDiv.innerHTML;
+}
+
+/**
  * Retrieves the text content of an HTML element and removes extra whitespaces and line breaks.
  * @param {HTMLElement} element The HTML element to retrieve the text content from.
  * @returns {string} The text content of the HTML element with extra whitespaces and line breaks removed.
@@ -895,6 +987,17 @@ function getText(element) {
  */
 function removeWhitespace(string) {
   return string.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+/**
+ * Truncate string.
+ * @param {*} string The string to truncate.
+ * @param {*} maxLength Desired max length of string.
+ * @returns Truncated string.
+ */
+function truncateString(string, maxLength) {
+  const truncatedString = string.substring(0, maxLength).trimEnd();
+  return string.length > maxLength ? `${truncatedString}...` : string;
 }
 
 /**
@@ -1089,7 +1192,7 @@ function trapFocus(element) {
 
 /**
  * Removes the alert from the Sa11y control panel by clearing its content and removing CSS classes.
- * @description This function clears the content of the alert element and removes CSS classes 'active' from the main alert element, and 'panel-alert-preview' from the alert preview element.
+ * This function clears the content of the alert element and removes CSS classes 'active' from the main alert element, and 'panel-alert-preview' from the alert preview element.
  * @returns {void}
  */
 function removeAlert() {
@@ -1221,9 +1324,18 @@ function isScrollable(scrollArea, container, ariaLabel) {
  */
 function generateElementPreview(issueObject) {
   const issueElement = issueObject.element;
-  const htmlPath = `<pre><code>${escapeHTML(issueObject.htmlPath)}</code></pre>`;
+  const truncatedHTML = truncateString(issueObject.htmlPath, 600);
+  const htmlPath = `<pre><code>${escapeHTML(truncatedHTML)}</code></pre>`;
 
   const tag = {
+    A: (element) => {
+      const text = getText(element);
+      const truncatedText = truncateString(text, 600);
+      if (text.length > 1 && element.href && !element.hasAttribute('role')) {
+        return `<a href="${sanitizeURL(element.href)}">${sanitizeHTML(truncatedText)}</a>`;
+      }
+      return htmlPath;
+    },
     IMG: (element) => {
       const anchor = element.closest('a[href]');
       const alt = element.alt ? `alt="${sanitizeHTML(element.alt)}"` : 'alt';
@@ -1235,8 +1347,8 @@ function generateElementPreview(issueObject) {
 
       if (imgSrc) {
         return anchor
-          ? `<a href="${anchor.href}" rel="noopener noreferrer"><img src="${source}" ${alt}/></a>`
-          : `<img src="${source}" ${alt}/>`;
+          ? `<a href="${anchor.href}" rel="noopener noreferrer"><img src="${sanitizeURL(source)}" ${alt}/></a>`
+          : `<img src="${sanitizeURL(source)}" ${alt}/>`;
       }
       return htmlPath;
     },
@@ -1247,12 +1359,12 @@ function generateElementPreview(issueObject) {
       const ariaLabel = ariaLabelAttr || '';
       if (source) {
         const iframeTitle = ariaLabel || title;
-        return `<iframe src="${source}" aria-label="${sanitizeHTML(iframeTitle)}"></iframe>`;
+        return `<iframe src="${sanitizeURL(source)}" aria-label="${sanitizeHTML(iframeTitle)}"></iframe>`;
       }
       return htmlPath;
     },
-    AUDIO: () => issueObject.htmlPath,
-    VIDEO: () => issueObject.htmlPath,
+    AUDIO: () => sanitizeHTMLBlock(issueObject.htmlPath),
+    VIDEO: () => sanitizeHTMLBlock(issueObject.htmlPath),
   };
 
   const tagHandler = tag[issueElement.tagName];
@@ -1281,7 +1393,7 @@ function isVisibleTextInAccessibleName($el) {
     }
   });
 
-  // Ignore emojis
+  // Ignore emojis.
   const emojiRegex = /[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu;
   let visibleText = text.replace(emojiRegex, '');
 
@@ -1295,17 +1407,6 @@ function isVisibleTextInAccessibleName($el) {
 
   // Check if visible text is included in accessible name.
   return visibleText.length !== 0 && !accName.includes(visibleText);
-}
-
-/**
- * Truncate string.
- * @param {*} string The string to truncate.
- * @param {*} maxLength Desired max length of string.
- * @returns Truncated string.
- */
-function truncateString(string, maxLength) {
-  const truncatedString = string.substring(0, maxLength).trimEnd();
-  return string.length > maxLength ? `${truncatedString}...` : string;
 }
 
 /**
@@ -1367,12 +1468,11 @@ const Elements = (function myElements() {
 
     Found.StrongItalics = Found.Everything.filter(($el) => ['STRONG', 'EM'].includes($el.tagName));
 
-    Found.Underlines = Found.Everything.filter(($el) => $el.tagName === 'U' && !$el.closest('a[href]'));
-
     Found.Subscripts = Found.Everything.filter(($el) => ['SUP', 'SUB'].includes($el.tagName));
 
-    Found.CustomErrorLinks = option.linksToFlag
-      ? Found.Links.filter(($el) => option.linksToFlag.split(',').some((selector) => $el.matches(selector.trim()))) : [];
+    const badLinkSources = option.checks.QA_BAD_LINK.sources;
+    Found.CustomErrorLinks = badLinkSources.length
+      ? Found.Links.filter(($el) => badLinkSources.split(',').some((selector) => $el.matches(selector.trim()))) : [];
 
     // Readability.
     const readabilityExclusions = ($el) => Constants.Root.Readability.contains($el)
@@ -1384,7 +1484,8 @@ const Elements = (function myElements() {
 
     // Developer checks.
     const nestedSources = option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
-    Found.NestedComponents = nestedSources ? Found.Everything.filter(($el) => $el.matches(nestedSources)) : [];
+    Found.NestedComponents = nestedSources
+      ? Found.Everything.filter(($el) => $el.matches(nestedSources)) : [];
 
     Found.TabIndex = Found.Everything.filter(($el) => $el.hasAttribute('tabindex')
       && $el.getAttribute('tabindex') !== '0'
@@ -1398,10 +1499,10 @@ const Elements = (function myElements() {
 
     // iFrames.
     Found.iframes = Found.Everything.filter(($el) => ['IFRAME', 'AUDIO', 'VIDEO'].includes($el.tagName));
-    Found.Videos = Found.iframes.filter(($el) => $el.matches(Constants.EmbeddedContent.Video));
-    Found.Audio = Found.iframes.filter(($el) => $el.matches(Constants.EmbeddedContent.Audio));
-    Found.Visualizations = Found.iframes.filter(($el) => $el.matches(Constants.EmbeddedContent.Visualization));
-    Found.EmbeddedContent = Found.iframes.filter(($el) => !$el.matches(Constants.EmbeddedContent.All));
+    Found.Videos = Found.iframes.filter(($el) => $el.matches(Constants.Global.VideoSources));
+    Found.Audio = Found.iframes.filter(($el) => $el.matches(Constants.Global.AudioSources));
+    Found.Visualizations = Found.iframes.filter(($el) => $el.matches(Constants.Global.VisualizationSources));
+    Found.EmbeddedContent = Found.iframes.filter(($el) => !$el.matches(Constants.Global.AllEmbeddedContent));
 
     // Query select <HTML> given that the lang may change on an SPA.
     const html = document.querySelector('html');
@@ -1956,7 +2057,7 @@ const version = '4.0.0';
 
 var styles = ":host{background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);bottom:0;display:block;height:-moz-fit-content;height:fit-content;left:0;position:fixed;right:0;width:100%;z-index:999999}*{-webkit-font-smoothing:auto!important;color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;font-size:var(--sa11y-normal-text);line-height:22px!important}#dialog{margin:20px auto;max-width:900px;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none}p{margin-top:0}.error{background:var(--sa11y-error);border:2px dashed #f08080;color:var(--sa11y-error-text);margin-bottom:0;padding:5px}";
 
-var sharedStyles = ".visually-hidden{clip:rect(1px,1px,1px,1px);border:0;clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}[hidden]{display:none!important}.header-text,.header-text-inline,h2{color:var(--sa11y-panel-primary);display:block;font-size:var(--sa11y-large-text);font-weight:600;margin-bottom:3px}.header-text-inline{display:inline-block!important}code{font-family:monospace!important;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:600}.kbd,code,kbd{background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);padding:1.6px 4.8px}.bold{font-weight:600}.red-text{color:var(--sa11y-red-text)}.red-text,.yellow-text{font-family:var(--sa11y-font-face)}.yellow-text{color:var(--sa11y-yellow-text)}.badge,.normal-badge{background-color:var(--sa11y-panel-badge);border-radius:10px;color:var(--sa11y-panel-primary);display:inline;font-size:14px;font-weight:700!important;line-height:1;min-width:10px;outline:1px solid transparent;padding:1px 5px 1.75px;text-align:center;vertical-align:baseline;white-space:nowrap}.error-badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.warning-badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.close-btn{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;color:var(--sa11y-panel-primary);cursor:pointer;float:var(--sa11y-float-rtl);font-size:var(--sa11y-normal-text);font-weight:400;height:32px;margin:0;position:relative;transition:all .2s ease-in-out;width:32px}.close-btn:focus,.close-btn:hover{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{background:var(--sa11y-setting-switch-bg-off);bottom:-7px;content:\"\";left:-7px;-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute;right:-7px;top:-7px}@media screen and (forced-colors:active){.close-btn:after{filter:invert(1)}}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:not(#panel-controls button):not(.switch):focus,#container select:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus,#container .switch:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus:not(:focus-visible),#container [tabindex=\"-1\"]:focus:not(:focus-visible),#container [tabindex=\"0\"]:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container select:focus:not(:focus-visible){box-shadow:none;outline:0}#container [tabindex=\"-1\"]:focus-visible,#container [tabindex=\"0\"]:focus-visible,#container a:focus-visible,#container button:not(#panel-controls button):not(.switch):focus-visible,#container select:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus-visible,#container .switch:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#panel-controls button:focus{border:3px solid transparent}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container select:focus,.close-btn:focus{outline:3px solid transparent!important}}";
+var sharedStyles = ".visually-hidden{clip:rect(1px,1px,1px,1px);border:0;clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}[hidden]{display:none!important}.header-text,.header-text-inline,h2{color:var(--sa11y-panel-primary);display:block;font-size:var(--sa11y-large-text);font-weight:600;margin-bottom:3px}.header-text-inline{display:inline-block!important}code{font-family:monospace!important;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:600}.kbd,code,kbd{background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);padding:1.6px 4.8px}.bold{font-weight:600}.error .colour,.red-text{color:var(--sa11y-red-text);font-family:var(--sa11y-font-face)}.warning .colour,.yellow-text{color:var(--sa11y-yellow-text);font-family:var(--sa11y-font-face)}.badge,.normal-badge{background-color:var(--sa11y-panel-badge);border-radius:10px;color:var(--sa11y-panel-primary);display:inline;font-size:14px;font-weight:700!important;line-height:1;min-width:10px;outline:1px solid transparent;padding:1px 5px 1.75px;text-align:center;vertical-align:baseline;white-space:nowrap}.error .badge,.error-badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.warning .badge,.warning-badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.close-btn{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;color:var(--sa11y-panel-primary);cursor:pointer;float:var(--sa11y-float-rtl);font-size:var(--sa11y-normal-text);font-weight:400;height:32px;margin:0;position:relative;transition:all .2s ease-in-out;width:32px}.close-btn:focus,.close-btn:hover{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{background:var(--sa11y-setting-switch-bg-off);bottom:-7px;content:\"\";left:-7px;-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute;right:-7px;top:-7px}@media screen and (forced-colors:active){.close-btn:after{filter:invert(1)}}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:not(#panel-controls button):not(.switch):focus,#container select:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus,#container .switch:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus:not(:focus-visible),#container [tabindex=\"-1\"]:focus:not(:focus-visible),#container [tabindex=\"0\"]:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container select:focus:not(:focus-visible){box-shadow:none;outline:0}#container [tabindex=\"-1\"]:focus-visible,#container [tabindex=\"0\"]:focus-visible,#container a:focus-visible,#container button:not(#panel-controls button):not(.switch):focus-visible,#container select:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus-visible,#container .switch:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#panel-controls button:focus{border:3px solid transparent}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container select:focus,.close-btn:focus{outline:3px solid transparent!important}}";
 
 class ConsoleErrors extends HTMLElement {
   constructor(error) {
@@ -2065,7 +2166,7 @@ function mainToggle(checkAll, resetAll) {
   };
 }
 
-var panelStyles = "a,button,code,div,h1,h2,kbd,label,li,ol,p,pre,span,strong,svg,ul{all:unset;box-sizing:border-box!important}:after,:before{all:unset}div{display:block}*{-webkit-font-smoothing:auto!important;font-family:var(--sa11y-font-face)!important}label,li,ol,p,ul{font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px!important;text-align:start;word-break:break-word}.sa11y-overflow{overflow:auto}iframe,img,video{border:0;display:block;height:auto;max-width:100%}audio{max-width:100%}#toggle{align-items:center;background:linear-gradient(0deg,#e040fb,#00bcd4);background-color:var(--sa11y-setting-switch-bg-off);background-size:150% 150%;border-radius:50%;bottom:15px;color:#fff;cursor:pointer;display:flex;height:55px;inset-inline-end:18px;justify-content:center;margin:0;overflow:visible;position:fixed;transition:all .2s ease-in-out;width:55px;z-index:2147483644}#toggle.left,#toggle.top-left{inset-inline-start:18px}#toggle.top-left,#toggle.top-right{bottom:unset;top:15px}@media screen and (forced-colors:active){#toggle{background:ButtonFace!important;border:2px solid transparent}}#toggle svg{height:35px;width:35px}#toggle svg path{fill:var(--sa11y-panel-bg)}#toggle:focus,#toggle:hover{animation:sa11y-toggle-gradient 3s ease}#toggle:disabled:focus,#toggle:disabled:hover{animation:none}#toggle.on{background:linear-gradient(180deg,#e040fb,#00bcd4)}#toggle:disabled{background:unset;background-color:var(--sa11y-setting-switch-bg-off);cursor:not-allowed}#notification-badge{text-wrap:nowrap;align-items:center;background-color:#eb0000;border:1px solid transparent;border-radius:12px;color:#fff;display:none;font-size:13.5px;font-weight:400;justify-content:center;line-height:1;min-width:20px;padding:2.5px;position:absolute;right:-3px;top:-5.5px}#notification-badge.notification-badge-warning{background-color:var(--sa11y-warning-hover);border:1px solid var(--sa11y-warning);color:var(--sa11y-warning-text)}#panel{background:var(--sa11y-panel-bg);border-radius:4px;bottom:25px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15);inset-inline-end:42px;opacity:0;overflow:visible;position:fixed;transform:scale(0);transform-origin:100% 100%;transition:transform .2s,opacity background .2s .2s;visibility:hidden;z-index:2147483643}#panel.left,#panel.top-left{inset-inline-start:42px}#panel.top-left,#panel.top-right{bottom:unset;top:35px}#panel.active{height:auto;opacity:1;transform:scale(1);transform-origin:bottom right;transition:transform .2s,opacity .2s;visibility:visible}@media screen and (forced-colors:active){#panel{border:2px solid transparent}}#panel.active.left,[dir=rtl] #panel.active{transform-origin:bottom left}#panel.active.top-left{transform-origin:top left}#panel.active.top-right{transform-origin:top right}#panel-alert{display:none;opacity:0}#panel-alert.active{display:block;opacity:1}#panel-alert-content{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-primary);line-height:22px;max-height:400px;overflow-y:auto;padding:15px 20px 15px 15px;position:relative}.top-left #panel-alert-content,.top-right #panel-alert-content{border:0}#panel-alert-preview .close-tooltip{display:none}#panel-alert-preview,#panel-alert-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}.panel-alert-preview{background:var(--sa11y-panel-bg-secondary);border:1px dashed var(--sa11y-panel-bg-splitter);border-radius:5px;margin-top:15px;padding:10px}.element-preview{background-color:var(--sa11y-panel-badge);border-radius:3.2px;margin-bottom:10px;overflow-wrap:break-word;padding:5px}button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}button[data-sa11y-dismiss]:focus,button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}h2{display:block;font-size:var(--sa11y-large-text);font-weight:700;margin-bottom:3px}strong{font-weight:600}a:not(#outline-list a):not(.edit){border-bottom:0;color:var(--sa11y-hyperlink);cursor:pointer;font-weight:500;text-decoration:underline}a:focus,a:hover{text-decoration:none!important}hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}#dismiss-button,#skip-button{background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:50px;cursor:pointer;display:none;height:36px;margin-inline-end:8px;margin-inline-start:2px;overflow:visible;position:relative;text-align:center;transition:all .1s ease-in-out;width:36px}#dismiss-button.active,#skip-button.active{display:block}#dismiss-button:disabled,#skip-button:disabled{background:none;border:0;box-shadow:none;cursor:default}#dismiss-button:before,#skip-button:before{bottom:-5px;content:\"\";left:-5px;position:absolute;right:-5px;top:-5px}#dismiss-button:focus:not(:disabled),#dismiss-button:hover:not(:disabled),#skip-button:focus:not(:disabled),#skip-button:hover:not(:disabled){background-color:var(--sa11y-shortcut-hover)}#panel.left #dismiss-button,#panel.left #skip-button,#panel.top-left #dismiss-button,#panel.top-left #skip-button{margin-inline-end:2px;margin-inline-start:8px}.dismiss-icon{background:var(--sa11y-setting-switch-bg-off);display:inline-block;height:24px;margin-bottom:-4px;-webkit-mask:var(--sa11y-dismiss-icon) center no-repeat;mask:var(--sa11y-dismiss-icon) center no-repeat;width:24px}@media screen and (forced-colors:active){.dismiss-icon{filter:invert(1)}}#panel-content{align-items:center;color:var(--sa11y-panel-primary);display:flex;padding:6px}#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{height:26px;margin:0 auto;width:26px}#panel-content.errors .panel-icon{background:var(--sa11y-panel-error);margin-top:-2px;-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat}#panel-content.good .panel-icon{background:var(--sa11y-good);-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat}#panel-content.warnings .panel-icon{background:var(--sa11y-warning-svg-color);-webkit-mask:var(--sa11y-warning-svg) center no-repeat;mask:var(--sa11y-warning-svg) center no-repeat;transform:scaleX(var(--sa11y-icon-direction))}@media screen and (forced-colors:active){#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{filter:invert(1)}}#panel.left #panel-content,#panel.top-left #panel-content{flex-direction:row-reverse}#status{font-size:var(--sa11y-large-text)}#status,.panel-count{color:var(--sa11y-panel-primary)}.panel-count{background-color:var(--sa11y-panel-badge);border-radius:4px;font-size:15px;font-weight:400;margin-left:3px;margin-right:3px;padding:2px 4px}#images-panel,#outline-panel,#page-issues,#settings-panel{color:var(--sa11y-panel-primary);display:none;opacity:0}#images-panel.active,#outline-panel.active,#page-issues.active,#settings-panel.active{display:block;opacity:1}.panel-header{padding:10px 15px 0;text-align:start}#about-content{padding-top:5px}#about-content p{display:block;margin-block-end:1em}#images-content,#outline-content,#page-issues-content,#settings-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);padding:0 15px 10px}.top-left #images-content,.top-left #outline-content,.top-left #page-issues-content,.top-left #settings-content,.top-right #images-content,.top-right #outline-content,.top-right #page-issues-content,.top-right #settings-content{border:0}#page-issues-content{max-height:160px;overflow-y:auto}#settings-content{max-height:400px;overflow-y:auto}#images-content,#outline-content{max-height:250px;overflow-y:auto}#outline-panel .outline-list-item.sa11y-red-text,#settings-panel .sa11y-red-text{color:var(--sa11y-red-text)}#outline-list{display:block;margin:0;padding:0}#outline-list a{cursor:pointer;display:block;text-decoration:none}#outline-list li{display:block;list-style-type:none;margin-bottom:3px;margin-top:0;padding:0}#outline-list li:first-child{margin-top:5px}#outline-list li a:focus,#outline-list li a:hover{background:var(--sa11y-panel-outline-hover);border-radius:5px;box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);display:block}#outline-list .outline-2{margin-inline-start:15px}#outline-list .outline-3{margin-inline-start:30px}#outline-list .outline-4{margin-inline-start:45px}#outline-list .outline-5{margin-inline-start:60px}#outline-list .outline-6{margin-inline-start:75px}#images-list{display:block;margin:0;padding:0}#images-list li{border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:block;list-style-type:none;margin:15px 0;overflow:hidden;width:100%}#images-list li:first-child{margin-top:5px}#images-list li:last-child{border:none;margin-bottom:0}#images-list li .alt{padding:2px 5px 10px}#images-list li .edit{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;padding:4px 7px;position:relative;text-decoration:none}#images-list li .edit:focus,#images-list li .edit:hover{background-color:var(--sa11y-shortcut-hover)}#images-list li .edit:before{bottom:-10px;content:\"\";left:-10px;position:absolute;right:-10px;top:-10px}#images-list li img{border-radius:5px;float:inline-start;margin-block-end:15px;margin-inline-end:10px;max-width:110px}#images-list li.warning .alt{color:var(--sa11y-yellow-text)}#images-list li.warning img{background-color:var(--sa11y-yellow-text);border:5px solid var(--sa11y-yellow-text)}#images-list li.error .alt{color:var(--sa11y-error)}#images-list li.error img{background-color:var(--sa11y-error);border:5px solid var(--sa11y-error)}#images-list li.good img{background-color:var(--sa11y-panel-badge);border:5px solid var(--sa11y-panel-badge)}@media screen and (forced-colors:active){#images-list li img{background-color:ButtonBorder!important}}.error-icon{background:var(--sa11y-error-text);display:inline-block;height:16px;margin-bottom:-4px;-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat;width:16px}.hidden-icon{margin-bottom:-3px;-webkit-mask:var(--sa11y-hidden-icon-svg) center no-repeat;mask:var(--sa11y-hidden-icon-svg) center no-repeat}.hidden-icon,.link-icon{background:var(--sa11y-panel-primary);display:inline-block;height:16px;width:16px}.link-icon{margin-bottom:-3.5px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat}.error-badge .hidden-icon,.error-badge .link-icon{background:var(--sa11y-error-text)}.warning-badge .hidden-icon,.warning-badge .link-icon{background:var(--sa11y-panel-bg)}@media screen and (forced-colors:active){.error-icon,.hidden-icon,.link-icon{filter:invert(1)}}#panel-controls{border-radius:0 0 4px 4px;display:flex;overflow:hidden}#panel-controls button{background:var(--sa11y-panel-bg-secondary);background-color:var(--sa11y-panel-bg-secondary);border-bottom:1px solid var(--sa11y-panel-bg-splitter);border-inline-end:1px solid var(--sa11y-panel-bg-splitter);border-top:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-secondary);cursor:pointer;display:block;font-size:var(--sa11y-normal-text);font-weight:400;line-height:0;margin:0;min-height:30px;opacity:1;outline:0;padding:0;position:relative;text-align:center;transition:background .2s;width:100%}#panel-controls button.active,#panel-controls button:hover{background-color:var(--sa11y-shortcut-hover)}#panel-controls button.active{font-weight:600}#export-results-mode,label{color:var(--sa11y-panel-primary);display:inline-block;font-weight:400;margin:0;width:100%}label:not(#colour-filter-mode,#export-results-mode){cursor:pointer}#settings-panel #export-csv,#settings-panel #export-html{padding:0;text-align:center;width:unset}#settings-panel #export-csv span,#settings-panel #export-html span{background:var(--sa11y-panel-bg-secondary);border-radius:5px;box-shadow:inset 0 0 0 2px var(--sa11y-setting-switch-bg-off);display:block;margin:0 4px;padding:7px 9px;width:65px}#settings-panel #export-csv:focus span,#settings-panel #export-csv:focus-within span,#settings-panel #export-csv:hover span,#settings-panel #export-html:focus span,#settings-panel #export-html:focus-within span,#settings-panel #export-html:hover span{background:var(--sa11y-shortcut-hover)}#settings-panel .switch{background:none;border:0;border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:44px;margin:0;padding:7px 10px;position:relative;text-align:end;width:105px}#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{content:\"\";display:inline-block;height:27px;margin:0 4px 4px;vertical-align:middle;width:27px}#settings-panel .switch[aria-pressed=true]:after{background:var(--sa11y-setting-switch-bg-on);-webkit-mask:var(--sa11y-setting-switch-on-svg) center no-repeat;mask:var(--sa11y-setting-switch-on-svg) center no-repeat}#settings-panel .switch[aria-pressed=false]:after{background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-setting-switch-off-svg) center no-repeat;mask:var(--sa11y-setting-switch-off-svg) center no-repeat}@media screen and (forced-colors:active){#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{filter:invert(1)}}#settings-panel #settings-options li{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:flex;justify-content:space-between;list-style-type:none;padding:1px 0}#settings-panel #settings-options li:last-child{border:none}#page-issues{align-items:center;color:var(--sa11y-panel-primary)}#page-issues-list{display:block;margin-top:4px}#page-issues-list li{display:block;margin:0 0 10px}#page-issues-list strong{display:block}.top-left.has-page-issues #page-issues,.top-right.has-page-issues #page-issues{border-top:1px solid var(--sa11y-panel-bg-splitter);margin-top:-1px}#panel-colour-filters{align-items:center;color:var(--sa11y-panel-primary);display:none;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}#panel-colour-filters.active{display:flex}#panel-colour-filters p{padding:6px 20px 6px 6px;width:100%}#panel-colour-filters[data-colour=protanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image-slice:1}#panel-colour-filters[data-colour=deuteranopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image-slice:1}#panel-colour-filters[data-colour=tritanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image-slice:1}#panel-colour-filters[data-colour=monochromacy]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image-slice:1}#panel-colour-filters[data-colour=protanopia] .panel-icon{background:var(--sa11y-panel-error)}#panel-colour-filters[data-colour=deuteranopia] .panel-icon{background:var(--sa11y-good-hover)}#panel-colour-filters[data-colour=tritanopia] .panel-icon{background:var(--sa11y-blue)}#panel-colour-filters[data-colour=monochromacy] .panel-icon{background:linear-gradient(90deg,#38a459 20%,red 50%,#0077c8 80%)}#panel-colour-filters .panel-icon{height:30px;margin-inline-end:5px;margin-inline-start:10px;-webkit-mask:var(--sa11y-low-vision-icon) center no-repeat;mask:var(--sa11y-low-vision-icon) center no-repeat;width:30px}@media screen and (forced-colors:active){#panel-colour-filters .panel-icon{forced-color-adjust:none}}.select-dropdown{align-items:center;display:flex;position:relative}.select-dropdown:after{border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid var(--sa11y-setting-switch-bg-off);content:\" \";inset-inline-end:14px;position:absolute}#colour-filter-select{-webkit-appearance:none;-moz-appearance:none;appearance:none;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-setting-switch-bg-off);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;margin-inline-end:4px;padding-inline-end:25px;padding-inline-start:5px;position:relative;text-align:end;vertical-align:middle}#colour-filter-select:focus,#colour-filter-select:hover{background:var(--sa11y-shortcut-hover)}#colour-filter-select.active{box-shadow:0 0 0 2px var(--sa11y-setting-switch-bg-on)}#colour-filter-item label,#colour-filter-item select{margin-bottom:9px;margin-top:10px}#readability-panel{display:none;opacity:0}#readability-panel.active{display:block;opacity:1}.top-left #readability-content,.top-right #readability-content{border-top:1px solid var(--sa11y-panel-bg-splitter)}.left #readability-content,.right #readability-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter)}#readability-content{color:var(--sa11y-panel-primary);padding:10px 15px;width:100%}#readability-details{list-style-type:none;margin:0;padding:0;white-space:normal}#readability-details li{display:inline-block;list-style-type:none;margin:0;padding-inline-end:10px}.readability-score{background-color:var(--sa11y-panel-badge);border-radius:4px;color:var(--sa11y-panel-primary);margin-inline-start:5px;padding:2px 5px}#readability-info{margin-inline-start:10px}#skip-to-page-issues{display:none}#panel.has-page-issues #skip-to-page-issues{clip:rect(0,0,0,0);background:var(--sa11y-panel-bg);border:0;border-radius:5px;display:block;height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}#panel.has-page-issues #skip-to-page-issues:focus{clip:auto;height:auto;margin:0;overflow:visible;padding:5px 7px;white-space:normal;width:auto;z-index:1}.hide-settings-border{border-bottom:0!important;padding:0 15px!important}.hide-settings-border li:not(#colour-filter-item){display:none!important}.hide-settings-border #about-content{display:none}.hide-settings-border.scrollable:before{all:unset}::-webkit-scrollbar{height:6px;width:7px}::-webkit-scrollbar-thumb{background-color:var(--sa11y-button-outline);border-radius:6px}*{scrollbar-color:var(--sa11y-button-outline);scrollbar-width:thin}.scrollable:before{animation:fade 1s ease-in-out;background:linear-gradient(180deg,transparent 70%,var(--sa11y-panel-scrollable) 100%);background-position:bottom;bottom:auto;content:\"\";height:250px;left:0;position:absolute;right:0;top:auto;transition:opacity 1s ease-in-out;width:100%;z-index:-1}#settings-content.scrollable:before{height:400px}.top-left .scrollable:before,.top-right .scrollable:before{border-radius:5px}#page-issues-content.scrollable:before{height:160px}#panel-alert.scrollable:before{height:200px}@keyframes sa11y-toggle-gradient{0%{background-position:50% 0}50%{background-position:50% 100%}to{background-position:50% 0}}@keyframes fade{0%{opacity:0}to{opacity:1}}@media (prefers-reduced-motion:reduce){*{animation:none!important;transform:none!important;transition:none!important}}#panel{width:400px}#container:lang(en) #panel{width:315px}#container:lang(da) #panel,#container:lang(de) #panel,#container:lang(nb) #panel,#container:lang(pl) #panel,#container:lang(sv) #panel,#container:lang(zh) #panel{width:350px}#container:lang(bg) .switch:not(#export-results-item *),#container:lang(es) .switch:not(#export-results-item *){width:225px!important}#container:not(:lang(en)):not(:lang(de)) .switch{width:205px}";
+var panelStyles = "a,button,code,div,h1,h2,kbd,label,li,ol,p,pre,span,strong,svg,ul{all:unset;box-sizing:border-box!important}:after,:before{all:unset}div{display:block}*{-webkit-font-smoothing:auto!important;font-family:var(--sa11y-font-face)!important}label,li,ol,p,ul{font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px!important;text-align:start;word-break:break-word}.sa11y-overflow{overflow:auto}iframe,img,video{border:0;display:block;height:auto;max-width:100%}audio{max-width:100%}#toggle{align-items:center;background:linear-gradient(0deg,#e040fb,#00bcd4);background-color:var(--sa11y-setting-switch-bg-off);background-size:150% 150%;border-radius:50%;bottom:15px;color:#fff;cursor:pointer;display:flex;height:55px;inset-inline-end:18px;justify-content:center;margin:0;overflow:visible;position:fixed;transition:all .2s ease-in-out;width:55px;z-index:2147483644}#toggle.left,#toggle.top-left{inset-inline-start:18px}#toggle.top-left,#toggle.top-right{bottom:unset;top:15px}@media screen and (forced-colors:active){#toggle{background:ButtonFace!important;border:2px solid transparent}}#toggle svg{height:35px;width:35px}#toggle svg path{fill:var(--sa11y-panel-bg)}#toggle:focus,#toggle:hover{animation:sa11y-toggle-gradient 3s ease}#toggle:disabled:focus,#toggle:disabled:hover{animation:none}#toggle.on{background:linear-gradient(180deg,#e040fb,#00bcd4)}#toggle:disabled{background:unset;background-color:var(--sa11y-setting-switch-bg-off);cursor:not-allowed}#notification-badge{text-wrap:nowrap;align-items:center;background-color:#eb0000;border:1px solid transparent;border-radius:12px;color:#fff;display:none;font-size:13.5px;font-weight:400;justify-content:center;line-height:1;min-width:20px;padding:2.5px;position:absolute;right:-3px;top:-5.5px}#notification-badge.notification-badge-warning{background-color:var(--sa11y-warning-hover);border:1px solid var(--sa11y-warning);color:var(--sa11y-warning-text)}#panel{background:var(--sa11y-panel-bg);border-radius:4px;bottom:25px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15);inset-inline-end:42px;opacity:0;overflow:visible;position:fixed;transform:scale(0);transform-origin:100% 100%;transition:transform .2s,opacity background .2s .2s;visibility:hidden;z-index:2147483643}#panel.left,#panel.top-left{inset-inline-start:42px}#panel.top-left,#panel.top-right{bottom:unset;top:35px}#panel.active{height:auto;opacity:1;transform:scale(1);transform-origin:bottom right;transition:transform .2s,opacity .2s;visibility:visible}@media screen and (forced-colors:active){#panel{border:2px solid transparent}}#panel.active.left,[dir=rtl] #panel.active{transform-origin:bottom left}#panel.active.top-left{transform-origin:top left}#panel.active.top-right{transform-origin:top right}#panel-alert{display:none;opacity:0}#panel-alert.active{display:block;opacity:1}#panel-alert-content{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-primary);line-height:22px;max-height:400px;overflow-y:auto;padding:15px 20px 15px 15px;position:relative}.top-left #panel-alert-content,.top-right #panel-alert-content{border:0}#panel-alert-preview .close-tooltip{display:none}#panel-alert-preview,#panel-alert-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}.panel-alert-preview{background:var(--sa11y-panel-bg-secondary);border:1px dashed var(--sa11y-panel-bg-splitter);border-radius:5px;margin-top:15px;padding:10px}.element-preview{background-color:var(--sa11y-element-preview);border-radius:3.2px;margin-bottom:10px;overflow-wrap:break-word;padding:5px}button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}button[data-sa11y-dismiss]:focus,button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}h2{display:block;font-size:var(--sa11y-large-text);font-weight:700;margin-bottom:3px}strong{font-weight:600}a:not(#outline-list a):not(.edit){border-bottom:0;color:var(--sa11y-hyperlink);cursor:pointer;font-weight:500;text-decoration:underline}a:focus,a:hover{text-decoration:none!important}hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}#dismiss-button,#skip-button{background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:50px;cursor:pointer;display:none;height:36px;margin-inline-end:8px;margin-inline-start:2px;overflow:visible;position:relative;text-align:center;transition:all .1s ease-in-out;width:36px}#dismiss-button.active,#skip-button.active{display:block}#dismiss-button:disabled,#skip-button:disabled{background:none;border:0;box-shadow:none;cursor:default}#dismiss-button:before,#skip-button:before{bottom:-5px;content:\"\";left:-5px;position:absolute;right:-5px;top:-5px}#dismiss-button:focus:not(:disabled),#dismiss-button:hover:not(:disabled),#skip-button:focus:not(:disabled),#skip-button:hover:not(:disabled){background-color:var(--sa11y-shortcut-hover)}#panel.left #dismiss-button,#panel.left #skip-button,#panel.top-left #dismiss-button,#panel.top-left #skip-button{margin-inline-end:2px;margin-inline-start:8px}.dismiss-icon{background:var(--sa11y-setting-switch-bg-off);display:inline-block;height:24px;margin-bottom:-4px;-webkit-mask:var(--sa11y-dismiss-icon) center no-repeat;mask:var(--sa11y-dismiss-icon) center no-repeat;width:24px}@media screen and (forced-colors:active){.dismiss-icon{filter:invert(1)}}#panel-content{align-items:center;color:var(--sa11y-panel-primary);display:flex;padding:6px}#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{height:26px;margin:0 auto;width:26px}#panel-content.errors .panel-icon{background:var(--sa11y-panel-error);margin-top:-2px;-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat}#panel-content.good .panel-icon{background:var(--sa11y-good);-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat}#panel-content.warnings .panel-icon{background:var(--sa11y-warning-svg-color);-webkit-mask:var(--sa11y-warning-svg) center no-repeat;mask:var(--sa11y-warning-svg) center no-repeat;transform:scaleX(var(--sa11y-icon-direction))}@media screen and (forced-colors:active){#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{filter:invert(1)}}#panel.left #panel-content,#panel.top-left #panel-content{flex-direction:row-reverse}#status{font-size:var(--sa11y-large-text)}#status,.panel-count{color:var(--sa11y-panel-primary)}.panel-count{background-color:var(--sa11y-panel-badge);border-radius:4px;font-size:15px;font-weight:400;margin-left:3px;margin-right:3px;padding:2px 4px}#images-panel,#outline-panel,#page-issues,#settings-panel{color:var(--sa11y-panel-primary);display:none;opacity:0}#images-panel.active,#outline-panel.active,#page-issues.active,#settings-panel.active{display:block;opacity:1}.panel-header{padding:10px 15px 0;text-align:start}#about-content{padding-top:5px}#about-content p{display:block;margin-block-end:1em}#images-content,#outline-content,#page-issues-content,#settings-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);padding:0 15px 10px}.top-left #images-content,.top-left #outline-content,.top-left #page-issues-content,.top-left #settings-content,.top-right #images-content,.top-right #outline-content,.top-right #page-issues-content,.top-right #settings-content{border:0}#page-issues-content{max-height:160px;overflow-y:auto}#settings-content{max-height:400px;overflow-y:auto}#images-content,#outline-content{max-height:250px;overflow-y:auto}#outline-panel .outline-list-item.sa11y-red-text,#settings-panel .sa11y-red-text{color:var(--sa11y-red-text)}#outline-list{display:block;margin:0;padding:0}#outline-list a{cursor:pointer;display:block;text-decoration:none}#outline-list li{display:block;list-style-type:none;margin-bottom:3px;margin-top:0;padding:0}#outline-list li:first-child{margin-top:5px}#outline-list li a:focus,#outline-list li a:hover{background:var(--sa11y-panel-outline-hover);border-radius:5px;box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);display:block}#outline-list .outline-2{margin-inline-start:15px}#outline-list .outline-3{margin-inline-start:30px}#outline-list .outline-4{margin-inline-start:45px}#outline-list .outline-5{margin-inline-start:60px}#outline-list .outline-6{margin-inline-start:75px}#images-list{display:block;margin:0;padding:0}#images-list li{border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:block;list-style-type:none;margin:15px 0;overflow:hidden;width:100%}#images-list li:first-child{margin-top:5px}#images-list li:last-child{border:none;margin-bottom:0}#images-list li .alt{padding:2px 5px 10px}#images-list li .edit{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;padding:4px 7px;position:relative;text-decoration:none}#images-list li .edit:focus,#images-list li .edit:hover{background-color:var(--sa11y-shortcut-hover)}#images-list li .edit:before{bottom:-10px;content:\"\";left:-10px;position:absolute;right:-10px;top:-10px}#images-list li img{border-radius:5px;float:inline-start;margin-block-end:15px;margin-inline-end:10px;max-width:110px}#images-list li.warning .alt{color:var(--sa11y-yellow-text)}#images-list li.warning img{background-color:var(--sa11y-yellow-text);border:5px solid var(--sa11y-yellow-text)}#images-list li.error .alt{color:var(--sa11y-error)}#images-list li.error img{background-color:var(--sa11y-error);border:5px solid var(--sa11y-error)}#images-list li.good img{background-color:var(--sa11y-panel-badge);border:5px solid var(--sa11y-panel-badge)}@media screen and (forced-colors:active){#images-list li img{background-color:ButtonBorder!important}}.error-icon{background:var(--sa11y-error-text);display:inline-block;height:16px;margin-bottom:-4px;-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat;width:16px}.hidden-icon{margin-bottom:-3px;-webkit-mask:var(--sa11y-hidden-icon-svg) center no-repeat;mask:var(--sa11y-hidden-icon-svg) center no-repeat}.hidden-icon,.link-icon{background:var(--sa11y-panel-primary);display:inline-block;height:16px;width:16px}.link-icon{margin-bottom:-3.5px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat}.error-badge .hidden-icon,.error-badge .link-icon{background:var(--sa11y-error-text)}.warning-badge .hidden-icon,.warning-badge .link-icon{background:var(--sa11y-panel-bg)}@media screen and (forced-colors:active){.error-icon,.hidden-icon,.link-icon{filter:invert(1)}}#panel-controls{border-radius:0 0 4px 4px;display:flex;overflow:hidden}#panel-controls button{background:var(--sa11y-panel-bg-secondary);background-color:var(--sa11y-panel-bg-secondary);border-bottom:1px solid var(--sa11y-panel-bg-splitter);border-inline-end:1px solid var(--sa11y-panel-bg-splitter);border-top:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-secondary);cursor:pointer;display:block;font-size:var(--sa11y-normal-text);font-weight:400;line-height:0;margin:0;min-height:30px;opacity:1;outline:0;padding:0;position:relative;text-align:center;transition:background .2s;width:100%}#panel-controls button.active,#panel-controls button:hover{background-color:var(--sa11y-shortcut-hover)}#panel-controls button.active{font-weight:600}#export-results-mode,label{color:var(--sa11y-panel-primary);display:inline-block;font-weight:400;margin:0;width:100%}label:not(#colour-filter-mode,#export-results-mode){cursor:pointer}#settings-panel #export-csv,#settings-panel #export-html{padding:0;text-align:center;width:unset}#settings-panel #export-csv span,#settings-panel #export-html span{background:var(--sa11y-panel-bg-secondary);border-radius:5px;box-shadow:inset 0 0 0 2px var(--sa11y-setting-switch-bg-off);display:block;margin:0 4px;padding:7px 9px;width:65px}#settings-panel #export-csv:focus span,#settings-panel #export-csv:focus-within span,#settings-panel #export-csv:hover span,#settings-panel #export-html:focus span,#settings-panel #export-html:focus-within span,#settings-panel #export-html:hover span{background:var(--sa11y-shortcut-hover)}#settings-panel .switch{background:none;border:0;border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:44px;margin:0;padding:7px 10px;position:relative;text-align:end;width:105px}#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{content:\"\";display:inline-block;height:27px;margin:0 4px 4px;vertical-align:middle;width:27px}#settings-panel .switch[aria-pressed=true]:after{background:var(--sa11y-setting-switch-bg-on);-webkit-mask:var(--sa11y-setting-switch-on-svg) center no-repeat;mask:var(--sa11y-setting-switch-on-svg) center no-repeat}#settings-panel .switch[aria-pressed=false]:after{background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-setting-switch-off-svg) center no-repeat;mask:var(--sa11y-setting-switch-off-svg) center no-repeat}@media screen and (forced-colors:active){#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{filter:invert(1)}}#settings-panel #settings-options li{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:flex;justify-content:space-between;list-style-type:none;padding:1px 0}#settings-panel #settings-options li:last-child{border:none}#page-issues{align-items:center;color:var(--sa11y-panel-primary)}#page-issues-list{display:block;margin-top:4px}#page-issues-list li{display:block;margin:0 0 10px}#page-issues-list strong{display:block}.top-left.has-page-issues #page-issues,.top-right.has-page-issues #page-issues{border-top:1px solid var(--sa11y-panel-bg-splitter);margin-top:-1px}#panel-colour-filters{align-items:center;color:var(--sa11y-panel-primary);display:none;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}#panel-colour-filters.active{display:flex}#panel-colour-filters p{padding:6px 20px 6px 6px;width:100%}#panel-colour-filters[data-colour=protanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image-slice:1}#panel-colour-filters[data-colour=deuteranopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image-slice:1}#panel-colour-filters[data-colour=tritanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image-slice:1}#panel-colour-filters[data-colour=monochromacy]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image-slice:1}#panel-colour-filters[data-colour=protanopia] .panel-icon{background:var(--sa11y-panel-error)}#panel-colour-filters[data-colour=deuteranopia] .panel-icon{background:var(--sa11y-good-hover)}#panel-colour-filters[data-colour=tritanopia] .panel-icon{background:var(--sa11y-blue)}#panel-colour-filters[data-colour=monochromacy] .panel-icon{background:linear-gradient(90deg,#38a459 20%,red 50%,#0077c8 80%)}#panel-colour-filters .panel-icon{height:30px;margin-inline-end:5px;margin-inline-start:10px;-webkit-mask:var(--sa11y-low-vision-icon) center no-repeat;mask:var(--sa11y-low-vision-icon) center no-repeat;width:30px}@media screen and (forced-colors:active){#panel-colour-filters .panel-icon{forced-color-adjust:none}}.select-dropdown{align-items:center;display:flex;position:relative}.select-dropdown:after{border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid var(--sa11y-setting-switch-bg-off);content:\" \";inset-inline-end:14px;position:absolute}#colour-filter-select{-webkit-appearance:none;-moz-appearance:none;appearance:none;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-setting-switch-bg-off);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;margin-inline-end:4px;padding-inline-end:25px;padding-inline-start:5px;position:relative;text-align:end;vertical-align:middle}#colour-filter-select:focus,#colour-filter-select:hover{background:var(--sa11y-shortcut-hover)}#colour-filter-select.active{box-shadow:0 0 0 2px var(--sa11y-setting-switch-bg-on)}#colour-filter-item label,#colour-filter-item select{margin-bottom:9px;margin-top:10px}#readability-panel{display:none;opacity:0}#readability-panel.active{display:block;opacity:1}.top-left #readability-content,.top-right #readability-content{border-top:1px solid var(--sa11y-panel-bg-splitter)}.left #readability-content,.right #readability-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter)}#readability-content{color:var(--sa11y-panel-primary);padding:10px 15px;width:100%}#readability-details{list-style-type:none;margin:0;padding:0;white-space:normal}#readability-details li{display:inline-block;list-style-type:none;margin:0;padding-inline-end:10px}.readability-score{background-color:var(--sa11y-panel-badge);border-radius:4px;color:var(--sa11y-panel-primary);margin-inline-start:5px;padding:2px 5px}#readability-info{margin-inline-start:10px}#skip-to-page-issues{display:none}#panel.has-page-issues #skip-to-page-issues{clip:rect(0,0,0,0);background:var(--sa11y-panel-bg);border:0;border-radius:5px;display:block;height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}#panel.has-page-issues #skip-to-page-issues:focus{clip:auto;height:auto;margin:0;overflow:visible;padding:5px 7px;white-space:normal;width:auto;z-index:1}.hide-settings-border{border-bottom:0!important;padding:0 15px!important}.hide-settings-border li:not(#colour-filter-item){display:none!important}.hide-settings-border #about-content{display:none}.hide-settings-border.scrollable:before{all:unset}::-webkit-scrollbar{height:6px;width:7px}::-webkit-scrollbar-thumb{background-color:var(--sa11y-button-outline);border-radius:6px}*{scrollbar-color:var(--sa11y-button-outline);scrollbar-width:thin}.scrollable:before{animation:fade 1s ease-in-out;background:linear-gradient(180deg,transparent 70%,var(--sa11y-panel-scrollable) 100%);background-position:bottom;bottom:auto;content:\"\";height:250px;left:0;position:absolute;right:0;top:auto;transition:opacity 1s ease-in-out;width:100%;z-index:-1}#settings-content.scrollable:before{height:400px}.top-left .scrollable:before,.top-right .scrollable:before{border-radius:5px}#page-issues-content.scrollable:before{height:160px}#panel-alert.scrollable:before{height:200px}@keyframes sa11y-toggle-gradient{0%{background-position:50% 0}50%{background-position:50% 100%}to{background-position:50% 0}}@keyframes fade{0%{opacity:0}to{opacity:1}}@media (prefers-reduced-motion:reduce){*{animation:none!important;transform:none!important;transition:none!important}}#panel{width:400px}#container:lang(en) #panel{width:315px}#container:lang(da) #panel,#container:lang(de) #panel,#container:lang(nb) #panel,#container:lang(pl) #panel,#container:lang(sv) #panel,#container:lang(zh) #panel{width:350px}#container:lang(bg) .switch:not(#export-results-item *),#container:lang(es) .switch:not(#export-results-item *){width:225px!important}#container:not(:lang(en)):not(:lang(de)) .switch{width:205px}";
 
 class ControlPanel extends HTMLElement {
   connectedCallback() {
@@ -7107,33 +7208,42 @@ function suggestColorAPCA(color, background, fontWeight, fontSize) {
 }
 
 /**
- * Generate colour suggestions for tooltip upon tooltip opening.
- * This function is referenced within './interface/tooltips.js'
+ * Generates and inserts color suggestions for tooltip upon tooltip opening.
+ * This function is referenced within './interface/tooltips.js'.
  * For performance reasons, it is only called upon tooltip opening.
- * @param {Object} details An object containing the colours, font weight, and size of an element.
- * @returns Suggested colour combinations for tooltip.
+ * @param {HTMLElement} container The container where the color suggestion will be inserted.
  */
-function generateColorSuggestion(details) {
-  const { color, background, weight, size, isLargeText } = details;
-  const suggested = Constants.Global.contrastAPCA
-    ? suggestColorAPCA(color, background, weight, size)
-    : suggestColorWCAG(color, background, isLargeText);
+function generateColorSuggestion(container) {
+  if (Constants.Global.contrastSuggestions) {
+    const hasColorSuggestion = container?.querySelector('[data-sa11y-suggestion]');
+    if (hasColorSuggestion) {
+      const colorObject = hasColorSuggestion?.getAttribute('data-sa11y-suggestion');
+      const details = JSON.parse(colorObject);
+      const { color, background, weight, size, isLargeText } = details;
 
-  let advice;
-  const hr = '<hr aria-hidden="true">';
-  const style = `color:${suggested.color};background-color:${getHex(details.background)};`;
-  const colorBadge = `<strong class="badge" style="${style}">${suggested.color}</strong>`;
-  const sizeBadge = `<strong class="normal-badge">${suggested.size}px</strong>`;
-  if (!Constants.Global.contrastAPCA) {
-    advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
-  } else if (suggested.color && suggested.size) {
-    advice = `${hr} ${Lang._('CONTRAST_APCA')} ${colorBadge} ${sizeBadge}`;
-  } else if (suggested.color) {
-    advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
-  } else if (suggested.size) {
-    advice = `${hr} ${Lang._('CONTRAST_SIZE')} ${sizeBadge}`;
+      const suggested = Constants.Global.contrastAPCA
+        ? suggestColorAPCA(color, background, weight, size)
+        : suggestColorWCAG(color, background, isLargeText);
+
+      let advice;
+      const hr = '<hr aria-hidden="true">';
+      const style = `color:${suggested.color};background-color:${getHex(details.background)};`;
+      const colorBadge = `<strong class="badge" style="${style}">${suggested.color}</strong>`;
+      const sizeBadge = `<strong class="normal-badge">${suggested.size}px</strong>`;
+
+      if (!Constants.Global.contrastAPCA) {
+        advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
+      } else if (suggested.color && suggested.size) {
+        advice = `${hr} ${Lang._('CONTRAST_APCA')} ${colorBadge} ${sizeBadge}`;
+      } else if (suggested.color) {
+        advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
+      } else if (suggested.size) {
+        advice = `${hr} ${Lang._('CONTRAST_SIZE')} ${sizeBadge}`;
+      }
+
+      hasColorSuggestion.innerHTML = advice;
+    }
   }
-  return advice;
 }
 
 /**
@@ -7231,8 +7341,10 @@ function checkContrast(results, option) {
     const fontWeight = normalizeFontWeight(getFontWeight);
     const background = getBackground($el);
 
-    // Check if element is visually hidden to screen readers.
+    // Check if element is visually hidden to screen readers or explicitly hidden.
     const isVisuallyHidden = isScreenReaderOnly($el);
+    const isExplicitlyHidden = isElementHidden($el);
+    const isHidden = isExplicitlyHidden || isVisuallyHidden || opacity === 0;
 
     // Filter only text nodes.
     const textString = Array.from($el.childNodes)
@@ -7249,9 +7361,9 @@ function checkContrast(results, option) {
       if (background === 'image') {
         // Warnings for elements with a background image, ignoring inputs.
         if (!checkInputs && !$el.closest('nav')) {
-          contrastResults.push({ $el, type: 'warning' });
+          contrastResults.push({ $el, type: 'unknown' });
         }
-      } else if (isVisuallyHidden || opacity === 0 || getHex(color) === getHex(background)) ; else {
+      } else if (isHidden || getHex(color) === getHex(background)) ; else {
         const result = checkElementContrast($el, color, background, fontSize, fontWeight, opacity);
         if (result) {
           result.type = checkInputs ? 'input' : 'text';
@@ -7345,12 +7457,13 @@ function checkContrast(results, option) {
           });
         }
         break;
-      case 'warning':
+      case 'unknown':
         if (option.checks.CONTRAST_WARNING) {
           results.push({
             element: $el,
             type: option.checks.CONTRAST_WARNING.type || 'warning',
-            content: option.checks.CONTRAST_WARNING.content || Lang.sprintf('CONTRAST_WARNING', sanitizedText),
+            content: option.checks.CONTRAST_WARNING.content
+              || Lang.sprintf('CONTRAST_WARNING', sanitizedText),
             inline: false,
             position: 'beforebegin',
             dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
@@ -7436,15 +7549,9 @@ class AnnotationTooltips extends HTMLElement {
         };
         openedTooltip.addEventListener('keydown', escapeListener);
 
-        // Generate colour suggestions to improve contrast.
-        if (Constants.Global.contrastSuggestions) {
-          const hasColorSuggestion = instance.popper?.querySelector('[data-sa11y-suggestion]');
-          if (hasColorSuggestion) {
-            const colorObject = hasColorSuggestion?.getAttribute('data-sa11y-suggestion');
-            const suggestion = generateColorSuggestion(JSON.parse(colorObject));
-            hasColorSuggestion.innerHTML = suggestion;
-          }
-        }
+        // Generate colour suggestions upon tooltip opening for contrast checks.
+        // Imported from rulesets/contrast.js
+        generateColorSuggestion(instance.popper);
 
         // Remove all event listeners.
         const onHiddenTooltip = () => {
@@ -7973,11 +8080,13 @@ function checkImages(results, option) {
         results.push({
           element: $el,
           type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
-          content: option.checks.HIDDEN_FOCUSABLE.content || Lang.sprintf('HIDDEN_FOCUSABLE'),
+          content: option.checks.HIDDEN_FOCUSABLE.content
+            || Lang.sprintf('HIDDEN_FOCUSABLE'),
           inline: false,
           position: 'beforebegin',
           dismiss: prepareDismissal(`IMAGEHIDDENFOCUSABLE${src}`),
-          dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll ? 'LINK_HIDDEN_FOCUSABLE' : false,
+          dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll
+            ? 'LINK_HIDDEN_FOCUSABLE' : false,
           developer: option.checks.HIDDEN_FOCUSABLE.developer || true,
         });
       }
@@ -8050,16 +8159,18 @@ function checkImages(results, option) {
 
       // Decorative images.
       if (decorative) {
-        const carouselSources = option.checks.IMAGE_DECORATIVE_CAROUSEL.sources || '.carousel';
+        const carouselSources = option.checks.IMAGE_DECORATIVE_CAROUSEL.sources;
         if (option.checks.IMAGE_DECORATIVE_CAROUSEL && $el.closest(carouselSources)) {
           results.push({
             element: $el,
             type: option.checks.IMAGE_DECORATIVE_CAROUSEL.type || 'warning',
-            content: option.checks.IMAGE_DECORATIVE_CAROUSEL.content || Lang.sprintf('IMAGE_DECORATIVE_CAROUSEL'),
+            content: option.checks.IMAGE_DECORATIVE_CAROUSEL.content
+              || Lang.sprintf('IMAGE_DECORATIVE_CAROUSEL'),
             inline: false,
             position: 'beforebegin',
             dismiss: prepareDismissal(`CAROUSEL${src}`),
-            dismissAll: option.checks.IMAGE_DECORATIVE_CAROUSEL.dismissAll ? 'IMAGE_DECORATIVE_CAROUSEL' : false,
+            dismissAll: option.checks.IMAGE_DECORATIVE_CAROUSEL.dismissAll
+              ? 'IMAGE_DECORATIVE_CAROUSEL' : false,
             developer: option.checks.IMAGE_DECORATIVE_CAROUSEL.developer || false,
           });
         } else if (link) {
@@ -8171,7 +8282,9 @@ function checkImages(results, option) {
             developer: rule.developer || false,
           });
         }
-      } else if (alt.length > option.altTextMaxCharLength) {
+      } else if (link
+        ? alt.length > (option.checks.LINK_IMAGE_LONG_ALT.maxLength || 250)
+        : alt.length > (option.checks.IMAGE_ALT_TOO_LONG.maxLength || 250)) {
         // Alt is too long.
         const rule = (link)
           ? option.checks.LINK_IMAGE_LONG_ALT
@@ -8324,7 +8437,7 @@ function checkHeaders(results, option, headingOutline) {
         developer = option.checks.HEADING_FIRST.developer || false;
         dismissAll = option.checks.HEADING_FIRST.dismissAll ? 'HEADING_FIRST' : false;
       }
-    } else if (headingLength > option.headingMaxCharLength) {
+    } else if (headingLength > (option.checks.HEADING_LONG.maxLength || 170)) {
       if (option.checks.HEADING_LONG) {
         type = option.checks.HEADING_LONG.type || 'warning';
         content = option.checks.HEADING_LONG.content || Lang.sprintf('HEADING_LONG', headingLength);
@@ -8630,7 +8743,7 @@ function checkLinkText(results, option) {
       }
     } else if (error[3] !== null) {
       // Contains URL in link text.
-      if (linkText.length > option.URLTextMaxCharLength) {
+      if (linkText.length > (option.checks.LINK_URL.maxLength || 40)) {
         if (option.checks.LINK_URL) {
           results.push({
             element: $el,
@@ -9316,7 +9429,7 @@ function checkQA(results, option) {
       const href = $el.getAttribute('href');
 
       // Has file extension.
-      const hasExtension = $el.matches(Constants.Global.documentLinks);
+      const hasExtension = $el.matches(Constants.Global.documentSources);
       const hasPDF = $el.matches('a[href$=".pdf"], a[href*=".pdf?"]');
 
       // Dismiss key.
@@ -9404,49 +9517,51 @@ function checkQA(results, option) {
   /*  Errors: Check HTML tables for issues.                          */
   /* *************************************************************** */
   Elements.Found.Tables.forEach(($el) => {
-    const tableHeaders = $el.querySelectorAll('th');
-    const semanticHeadings = $el.querySelectorAll('h1, h2, h3, h4, h5, h6');
-    const key = prepareDismissal(`TABLE${$el.textContent}`);
-    if (option.checks.TABLES_MISSING_HEADINGS && tableHeaders.length === 0) {
-      results.push({
-        element: $el,
-        type: option.checks.TABLES_MISSING_HEADINGS.type || 'error',
-        content: option.checks.TABLES_MISSING_HEADINGS.content || Lang.sprintf('TABLES_MISSING_HEADINGS'),
-        inline: false,
-        position: 'beforebegin',
-        dismiss: key,
-        dismissAll: option.checks.TABLES_MISSING_HEADINGS.dismissAll ? 'TABLES_MISSING_HEADINGS' : false,
-        developer: option.checks.TABLES_MISSING_HEADINGS.developer || false,
-      });
-    }
-    if (option.checks.TABLES_SEMANTIC_HEADING && semanticHeadings.length > 0) {
-      semanticHeadings.forEach((heading) => {
+    if (isElementHidden($el) === false) {
+      const tableHeaders = $el.querySelectorAll('th');
+      const semanticHeadings = $el.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      const key = prepareDismissal(`TABLE${$el.textContent}`);
+      if (option.checks.TABLES_MISSING_HEADINGS && tableHeaders.length === 0) {
         results.push({
-          element: heading,
-          type: option.checks.TABLES_SEMANTIC_HEADING.type || 'error',
-          content: option.checks.TABLES_SEMANTIC_HEADING.content || Lang.sprintf('TABLES_SEMANTIC_HEADING'),
+          element: $el,
+          type: option.checks.TABLES_MISSING_HEADINGS.type || 'error',
+          content: option.checks.TABLES_MISSING_HEADINGS.content || Lang.sprintf('TABLES_MISSING_HEADINGS'),
           inline: false,
           position: 'beforebegin',
           dismiss: key,
-          dismissAll: option.checks.TABLES_SEMANTIC_HEADING.dismissAll ? 'TABLES_SEMANTIC_HEADING' : false,
-          developer: option.checks.TABLES_SEMANTIC_HEADING.developer || false,
-        });
-      });
-    }
-    tableHeaders.forEach((th) => {
-      if (option.checks.TABLES_EMPTY_HEADING && th.textContent.trim().length === 0) {
-        results.push({
-          element: th,
-          type: option.checks.TABLES_EMPTY_HEADING.type || 'error',
-          content: option.checks.TABLES_EMPTY_HEADING.content || Lang.sprintf('TABLES_EMPTY_HEADING'),
-          inline: false,
-          position: 'afterbegin',
-          dismiss: key,
-          dismissAll: option.checks.TABLES_EMPTY_HEADING.dismissAll ? 'TABLES_EMPTY_HEADING' : false,
-          developer: option.checks.TABLES_EMPTY_HEADING.developer || false,
+          dismissAll: option.checks.TABLES_MISSING_HEADINGS.dismissAll ? 'TABLES_MISSING_HEADINGS' : false,
+          developer: option.checks.TABLES_MISSING_HEADINGS.developer || false,
         });
       }
-    });
+      if (option.checks.TABLES_SEMANTIC_HEADING && semanticHeadings.length > 0) {
+        semanticHeadings.forEach((heading) => {
+          results.push({
+            element: heading,
+            type: option.checks.TABLES_SEMANTIC_HEADING.type || 'error',
+            content: option.checks.TABLES_SEMANTIC_HEADING.content || Lang.sprintf('TABLES_SEMANTIC_HEADING'),
+            inline: false,
+            position: 'beforebegin',
+            dismiss: key,
+            dismissAll: option.checks.TABLES_SEMANTIC_HEADING.dismissAll ? 'TABLES_SEMANTIC_HEADING' : false,
+            developer: option.checks.TABLES_SEMANTIC_HEADING.developer || false,
+          });
+        });
+      }
+      tableHeaders.forEach((th) => {
+        if (option.checks.TABLES_EMPTY_HEADING && th.textContent.trim().length === 0) {
+          results.push({
+            element: th,
+            type: option.checks.TABLES_EMPTY_HEADING.type || 'error',
+            content: option.checks.TABLES_EMPTY_HEADING.content || Lang.sprintf('TABLES_EMPTY_HEADING'),
+            inline: false,
+            position: 'afterbegin',
+            dismiss: key,
+            dismissAll: option.checks.TABLES_EMPTY_HEADING.dismissAll ? 'TABLES_EMPTY_HEADING' : false,
+            developer: option.checks.TABLES_EMPTY_HEADING.developer || false,
+          });
+        }
+      });
+    }
   });
 
   /* ****************************************************************** */
@@ -9663,60 +9778,44 @@ function checkQA(results, option) {
   /*  Various checks: underlines, justify-aligned, and small text.  */
   /* ************************************************************** */
   // Check underlined text. Created by Brian Teeman!
-  const addUnderlineResult = ($el, inline) => {
-    const text = getText($el);
-    if (text.length !== 0) {
-      results.push({
-        element: $el,
-        type: option.checks.QA_UNDERLINE.type || 'warning',
-        content: option.checks.QA_UNDERLINE.content || Lang.sprintf('QA_UNDERLINE'),
-        inline,
-        position: 'beforebegin',
-        dismiss: prepareDismissal(`UNDERLINE${text}`),
-        dismissAll: option.checks.QA_UNDERLINE.dismissAll ? 'QA_UNDERLINE' : false,
-        developer: option.checks.QA_UNDERLINE.developer || false,
-      });
-    }
+  const addUnderlineResult = ($el) => {
+    results.push({
+      element: $el,
+      type: option.checks.QA_UNDERLINE.type || 'warning',
+      content: option.checks.QA_UNDERLINE.content || Lang.sprintf('QA_UNDERLINE'),
+      inline: true,
+      position: 'beforebegin',
+      dismiss: prepareDismissal(`UNDERLINE${$el.textContent}`),
+      dismissAll: option.checks.QA_UNDERLINE.dismissAll ? 'QA_UNDERLINE' : false,
+      developer: option.checks.QA_UNDERLINE.developer || false,
+    });
   };
 
   const addJustifyResult = ($el) => {
-    const text = getText($el);
-    if (text.length !== 0) {
-      results.push({
-        element: $el,
-        type: option.checks.QA_JUSTIFY.type || 'warning',
-        content: option.checks.QA_JUSTIFY.content || Lang._('QA_JUSTIFY'),
-        inline: false,
-        position: 'beforebegin',
-        dismiss: prepareDismissal(`JUSTIFIED${text}`),
-        dismissAll: option.checks.QA_JUSTIFY.dismissAll ? 'QA_JUSTIFY' : false,
-        developer: option.checks.QA_JUSTIFY.developer || false,
-      });
-    }
+    results.push({
+      element: $el,
+      type: option.checks.QA_JUSTIFY.type || 'warning',
+      content: option.checks.QA_JUSTIFY.content || Lang._('QA_JUSTIFY'),
+      inline: false,
+      position: 'beforebegin',
+      dismiss: prepareDismissal(`JUSTIFIED${$el.textContent}`),
+      dismissAll: option.checks.QA_JUSTIFY.dismissAll ? 'QA_JUSTIFY' : false,
+      developer: option.checks.QA_JUSTIFY.developer || false,
+    });
   };
 
   const addSmallTextResult = ($el) => {
-    const text = getText($el);
-    if (text.length !== 0) {
-      results.push({
-        element: $el,
-        type: option.checks.QA_SMALL_TEXT.type || 'warning',
-        content: option.checks.QA_SMALL_TEXT.content || Lang._('QA_SMALL_TEXT'),
-        inline: false,
-        position: 'beforebegin',
-        dismiss: prepareDismissal(`SMALL${text}`),
-        dismissAll: option.checks.QA_SMALL_TEXT.dismissAll ? 'QA_SMALL_TEXT' : false,
-        developer: option.checks.QA_SMALL_TEXT.developer || false,
-      });
-    }
-  };
-
-  // Flag all <u> elements.
-  if (option.checks.QA_UNDERLINE) {
-    Elements.Found.Underlines.forEach(($el) => {
-      addUnderlineResult($el, true);
+    results.push({
+      element: $el,
+      type: option.checks.QA_SMALL_TEXT.type || 'warning',
+      content: option.checks.QA_SMALL_TEXT.content || Lang._('QA_SMALL_TEXT'),
+      inline: false,
+      position: 'beforebegin',
+      dismiss: prepareDismissal(`SMALL${$el.textContent}`),
+      dismissAll: option.checks.QA_SMALL_TEXT.dismissAll ? 'QA_SMALL_TEXT' : false,
+      developer: option.checks.QA_SMALL_TEXT.developer || false,
     });
-  }
+  };
 
   const computeStyle = ($el) => {
     const style = getComputedStyle($el);
@@ -9724,7 +9823,7 @@ function checkQA(results, option) {
 
     /* Check: Underlined text. */
     if (option.checks.QA_UNDERLINE && textDecorationLine === 'underline' && !$el.closest('a[href]')) {
-      addUnderlineResult($el, false); // Inline false for computed underlines.
+      addUnderlineResult($el);
     }
 
     /* Check: Font size is greater than 0 and less than 10. */
@@ -10174,7 +10273,6 @@ class Sa11y {
         Constants.initializeGlobal(option);
         Constants.initializeReadability(option);
         Constants.initializeExclusions(option);
-        Constants.initializeEmbeddedContent(option);
 
         /* Make "Developer checks" on by default or if toggle switch is visually hidden. */
         if (option.developerChecksOnByDefault) {

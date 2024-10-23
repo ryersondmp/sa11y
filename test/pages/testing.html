@@ -60,12 +60,67 @@
   </header>
   <main>
 
+    <table style="display:none"></table>
+    <h2>Some hidden text</h2>
+    <div hidden>
+      <p style="color:hotpink">Some text within a hidden div.</p>
+    </div>
+
+    <p style="color:orange;display:none;">Some text within a hidden div.</p>
+
     <h2>Heading too long</h2>
     <p>Using prop to convert warning to error.</p>
     <h3>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellat porro doloribus magnam nobis nisi! Officia
       earum reiciendis sequi cum voluptate cupiditate eaque asperiores quos, non voluptatum id mollitia, voluptatibus
       sit!</h3>
 
+    <hr>
+    <div hidden>
+      <video width="320" height="240" controls>
+        <source src="https://www.w3schools.com/html/movie.mp4" type="video/mp4">
+        <source src="https://www.w3schools.com/html/movie.ogg" type="video/ogg">
+        Your browser does not support the video tag.
+        <style>
+          video {
+            padding: 20px;
+            background: hotpink;
+          }
+        </style>
+      </video>
+      <a href="javascript:console.log('hacked')">https://www.example.com/asdasdasdasdasdasdasdasdasdasdasdasda
+        Lorem
+        ipsum dolor sit amet consectetur adipisicing elit. Ut provident consectetur accusamus quos excepturi dolore
+        neque iste? Doloremque recusandae libero commodi quod nam in! Ut, ratione eaque. Voluptatibus, inventore
+        suscipit! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolorem temporibus vitae reiciendis
+        molestias libero similique odit aspernatur labore? Hic, sit incidunt omnis totam dignissimos aspernatur eligendi
+        voluptatibus ducimus porro facilis! Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium
+        aliquid soluta, dolore inventore cupiditate, error eius maxime laudantium delectus eos neque odit doloribus
+        cumque repudiandae. Necessitatibus nemo natus pariatur laborum. Lorem, ipsum dolor sit amet consectetur
+        adipisicing elit. Tenetur, harum minima ipsum expedita corrupti sint, ex quod temporibus suscipit reprehenderit
+        dignissimos! Corporis quam voluptate doloribus, voluptatem optio rem libero fugiat.
+      </a>
+
+      <a href="https://www.example.com?sdsdccccf" role="button" style="Lorem
+        ipsum dolor sit amet consectetur adipisicing elit. Ut provident consectetur accusamus quos excepturi dolore
+        neque iste? Doloremque recusandae libero commodi quod nam in! Ut, ratione eaque. Voluptatibus, inventore
+        suscipit! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolorem temporibus vitae reiciendis
+        molestias libero similique odit aspernatur labore? Hic, sit incidunt omnis totam dignissimos aspernatur eligendi
+        voluptatibus ducimus porro facilis! Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium
+        aliquid soluta, dolore inventore cupiditate, error eius maxime laudantium delectus eos neque odit doloribus
+        cumque repudiandae. Necessitatibus nemo natus pariatur laborum. Lorem, ipsum dolor sit amet consectetur
+        adipisicing elit. Tenetur, harum minima ipsum expedita corrupti sint, ex quod temporibus suscipit reprehenderit
+        dignissimos! Corporis quam voluptate doloribus, voluptatem optio rem libero fugiat.Lorem
+        ipsum dolor sit amet consectetur adipisicing elit. Ut provident consectetur accusamus quos excepturi dolore
+        neque iste? Doloremque recusandae libero commodi quod nam in! Ut, ratione eaque. Voluptatibus, inventore
+        suscipit! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolorem temporibus vitae reiciendis
+        molestias libero similique odit aspernatur labore? Hic, sit incidunt omnis totam dignissimos aspernatur eligendi
+        voluptatibus ducimus porro facilis! Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium
+        aliquid soluta, dolore inventore cupiditate, error eius maxime laudantium delectus eos neque odit doloribus
+        cumque repudiandae. Necessitatibus nemo natus pariatur laborum. Lorem, ipsum dolor sit amet consectetur
+        adipisicing elit. Tenetur, harum minima ipsum expedita corrupti sint, ex quod temporibus suscipit reprehenderit
+        dignissimos! Corporis quam voluptate doloribus, voluptatem optio rem libero fugiat."></a>
+      <a href="https://www.example.com?sdcf13"></a>
+    </div>
     <hr>
 
     <details>
@@ -178,8 +233,9 @@
     <hr>
     <a href="https://www.example.com/adam">learn more...</a>
 
-    <br>
-    <a href="https://www.example.com/adam">www.example.pt/asdsaasdsadsa/dasdasds</a>
+    <hr>
+    <h2>Link too long</h2>
+    <a href="https://www.example.com/adam">www.example.pt/asdsaasdsadsa/sdsdsdasdasdsddasdasds</a>
     <br>
     <a href="http://example.com/adam/">www.example.pt/asdsaasdsadsa/dasdasds</a>
 
@@ -375,10 +431,9 @@
       checks: {
         IMAGE_DECORATIVE_CAROUSEL: {
           type: 'error',
-          sources: '.carousel',
         },
         HEADING_LONG: {
-          type: 'error'
+          type: 'error',
         }
       },
     });

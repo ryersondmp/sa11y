@@ -88,11 +88,13 @@ export default function checkImages(results, option) {
         results.push({
           element: $el,
           type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
-          content: option.checks.HIDDEN_FOCUSABLE.content || Lang.sprintf('HIDDEN_FOCUSABLE'),
+          content: option.checks.HIDDEN_FOCUSABLE.content
+            || Lang.sprintf('HIDDEN_FOCUSABLE'),
           inline: false,
           position: 'beforebegin',
           dismiss: Utils.prepareDismissal(`IMAGEHIDDENFOCUSABLE${src}`),
-          dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll ? 'LINK_HIDDEN_FOCUSABLE' : false,
+          dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll
+            ? 'LINK_HIDDEN_FOCUSABLE' : false,
           developer: option.checks.HIDDEN_FOCUSABLE.developer || true,
         });
       }
@@ -165,16 +167,18 @@ export default function checkImages(results, option) {
 
       // Decorative images.
       if (decorative) {
-        const carouselSources = option.checks.IMAGE_DECORATIVE_CAROUSEL.sources || '.carousel';
+        const carouselSources = option.checks.IMAGE_DECORATIVE_CAROUSEL.sources;
         if (option.checks.IMAGE_DECORATIVE_CAROUSEL && $el.closest(carouselSources)) {
           results.push({
             element: $el,
             type: option.checks.IMAGE_DECORATIVE_CAROUSEL.type || 'warning',
-            content: option.checks.IMAGE_DECORATIVE_CAROUSEL.content || Lang.sprintf('IMAGE_DECORATIVE_CAROUSEL'),
+            content: option.checks.IMAGE_DECORATIVE_CAROUSEL.content
+              || Lang.sprintf('IMAGE_DECORATIVE_CAROUSEL'),
             inline: false,
             position: 'beforebegin',
             dismiss: Utils.prepareDismissal(`CAROUSEL${src}`),
-            dismissAll: option.checks.IMAGE_DECORATIVE_CAROUSEL.dismissAll ? 'IMAGE_DECORATIVE_CAROUSEL' : false,
+            dismissAll: option.checks.IMAGE_DECORATIVE_CAROUSEL.dismissAll
+              ? 'IMAGE_DECORATIVE_CAROUSEL' : false,
             developer: option.checks.IMAGE_DECORATIVE_CAROUSEL.developer || false,
           });
         } else if (link) {
@@ -286,7 +290,9 @@ export default function checkImages(results, option) {
             developer: rule.developer || false,
           });
         }
-      } else if (alt.length > option.altTextMaxCharLength) {
+      } else if (link
+        ? alt.length > (option.checks.LINK_IMAGE_LONG_ALT.maxLength || 250)
+        : alt.length > (option.checks.IMAGE_ALT_TOO_LONG.maxLength || 250)) {
         // Alt is too long.
         const rule = (link)
           ? option.checks.LINK_IMAGE_LONG_ALT

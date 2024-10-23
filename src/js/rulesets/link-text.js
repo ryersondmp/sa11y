@@ -255,7 +255,7 @@ export default function checkLinkText(results, option) {
       }
     } else if (error[3] !== null) {
       // Contains URL in link text.
-      if (linkText.length > option.URLTextMaxCharLength) {
+      if (linkText.length > (option.checks.LINK_URL.maxLength || 40)) {
         if (option.checks.LINK_URL) {
           results.push({
             element: $el,

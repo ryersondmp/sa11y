@@ -115,6 +115,65 @@ export function sanitizeHTML(string) {
 }
 
 /**
+ * Sanitize links (e.g. href and src values).
+ * @param {string} string The URL string to sanitize.
+ * @returns {string} The sanitized URL if valid, or an empty string if invalid.
+ */
+export function sanitizeURL(string) {
+  if (!string) return '#';
+  const sanitizedInput = String(string).trim();
+
+  // Remove protocols.
+  if (/^javascript:/i.test(sanitizedInput)) return '#';
+  if (/^data:/i.test(sanitizedInput)) return '#';
+
+  // Ensure valid protocol.
+  const protocols = ['http:', 'https:', 'mailto:', 'tel:', 'ftp:'];
+  const hasValidProtocol = protocols.some((protocol) => sanitizedInput.toLowerCase().startsWith(protocol));
+
+  // Assume relative URLs.
+  if (!hasValidProtocol && !sanitizedInput.startsWith('/') && !sanitizedInput.startsWith('#')) {
+    return `./${sanitizedInput}`;
+  }
+
+  // Remove any HTML tags.
+  const cleanedString = sanitizedInput.replace(/<[^>]*>/g, '');
+  return encodeURI(cleanedString);
+}
+
+/**
+ * Sanitizes HTML by removing script tags, inline event handlers and any dangerous attributes. It returns a clean version of the HTML string.
+ * @param {string} html The HTML string to sanitize.
+ * @returns {string} The sanitized HTML string.
+ */
+export function sanitizeHTMLBlock(html) {
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = html;
+
+  // Remove blocks.
+  ['script', 'style', 'iframe', 'form'].forEach((tag) => {
+    const elements = tempDiv.getElementsByTagName(tag);
+    while (elements.length > 0) {
+      elements[0].parentNode.removeChild(elements[0]);
+    }
+  });
+
+  // Remove inline event handlers and dangerous attributes.
+  const allElements = tempDiv.getElementsByTagName('*');
+  for (let i = 0; i < allElements.length; i++) {
+    const element = allElements[i];
+    const attributes = Array.from(element.attributes);
+    attributes.forEach((attr) => {
+      if (attr.name.startsWith('on')) {
+        element.removeAttribute(attr.name);
+      }
+    });
+    element.removeAttribute('style');
+  }
+  return tempDiv.innerHTML;
+}
+
+/**
  * Retrieves the text content of an HTML element and removes extra whitespaces and line breaks.
  * @param {HTMLElement} element The HTML element to retrieve the text content from.
  * @returns {string} The text content of the HTML element with extra whitespaces and line breaks removed.
@@ -130,6 +189,17 @@ export function getText(element) {
  */
 export function removeWhitespace(string) {
   return string.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+/**
+ * Truncate string.
+ * @param {*} string The string to truncate.
+ * @param {*} maxLength Desired max length of string.
+ * @returns Truncated string.
+ */
+export function truncateString(string, maxLength) {
+  const truncatedString = string.substring(0, maxLength).trimEnd();
+  return string.length > maxLength ? `${truncatedString}...` : string;
 }
 
 /**
@@ -340,7 +410,7 @@ export function trapFocus(element) {
 
 /**
  * Removes the alert from the Sa11y control panel by clearing its content and removing CSS classes.
- * @description This function clears the content of the alert element and removes CSS classes 'active' from the main alert element, and 'panel-alert-preview' from the alert preview element.
+ * This function clears the content of the alert element and removes CSS classes 'active' from the main alert element, and 'panel-alert-preview' from the alert preview element.
  * @returns {void}
  */
 export function removeAlert() {
@@ -472,9 +542,18 @@ export function isScrollable(scrollArea, container, ariaLabel) {
  */
 export function generateElementPreview(issueObject) {
   const issueElement = issueObject.element;
-  const htmlPath = `<pre><code>${escapeHTML(issueObject.htmlPath)}</code></pre>`;
+  const truncatedHTML = truncateString(issueObject.htmlPath, 600);
+  const htmlPath = `<pre><code>${escapeHTML(truncatedHTML)}</code></pre>`;
 
   const tag = {
+    A: (element) => {
+      const text = getText(element);
+      const truncatedText = truncateString(text, 600);
+      if (text.length > 1 && element.href && !element.hasAttribute('role')) {
+        return `<a href="${sanitizeURL(element.href)}">${sanitizeHTML(truncatedText)}</a>`;
+      }
+      return htmlPath;
+    },
     IMG: (element) => {
       const anchor = element.closest('a[href]');
       const alt = element.alt ? `alt="${sanitizeHTML(element.alt)}"` : 'alt';
@@ -486,8 +565,8 @@ export function generateElementPreview(issueObject) {
 
       if (imgSrc) {
         return anchor
-          ? `<a href="${anchor.href}" rel="noopener noreferrer"><img src="${source}" ${alt}/></a>`
-          : `<img src="${source}" ${alt}/>`;
+          ? `<a href="${anchor.href}" rel="noopener noreferrer"><img src="${sanitizeURL(source)}" ${alt}/></a>`
+          : `<img src="${sanitizeURL(source)}" ${alt}/>`;
       }
       return htmlPath;
     },
@@ -498,12 +577,12 @@ export function generateElementPreview(issueObject) {
       const ariaLabel = ariaLabelAttr || '';
       if (source) {
         const iframeTitle = ariaLabel || title;
-        return `<iframe src="${source}" aria-label="${sanitizeHTML(iframeTitle)}"></iframe>`;
+        return `<iframe src="${sanitizeURL(source)}" aria-label="${sanitizeHTML(iframeTitle)}"></iframe>`;
       }
       return htmlPath;
     },
-    AUDIO: () => issueObject.htmlPath,
-    VIDEO: () => issueObject.htmlPath,
+    AUDIO: () => sanitizeHTMLBlock(issueObject.htmlPath),
+    VIDEO: () => sanitizeHTMLBlock(issueObject.htmlPath),
   };
 
   const tagHandler = tag[issueElement.tagName];
@@ -532,7 +611,7 @@ export function isVisibleTextInAccessibleName($el) {
     }
   });
 
-  // Ignore emojis
+  // Ignore emojis.
   const emojiRegex = /[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu;
   let visibleText = text.replace(emojiRegex, '');
 
@@ -546,17 +625,6 @@ export function isVisibleTextInAccessibleName($el) {
 
   // Check if visible text is included in accessible name.
   return visibleText.length !== 0 && !accName.includes(visibleText);
-}
-
-/**
- * Truncate string.
- * @param {*} string The string to truncate.
- * @param {*} maxLength Desired max length of string.
- * @returns Truncated string.
- */
-export function truncateString(string, maxLength) {
-  const truncatedString = string.substring(0, maxLength).trimEnd();
-  return string.length > maxLength ? `${truncatedString}...` : string;
 }
 
 /**

@@ -61,7 +61,7 @@ export default function checkHeaders(results, option, headingOutline) {
         developer = option.checks.HEADING_FIRST.developer || false;
         dismissAll = option.checks.HEADING_FIRST.dismissAll ? 'HEADING_FIRST' : false;
       }
-    } else if (headingLength > option.headingMaxCharLength) {
+    } else if (headingLength > (option.checks.HEADING_LONG.maxLength || 170)) {
       if (option.checks.HEADING_LONG) {
         type = option.checks.HEADING_LONG.type || 'warning';
         content = option.checks.HEADING_LONG.content || Lang.sprintf('HEADING_LONG', headingLength);

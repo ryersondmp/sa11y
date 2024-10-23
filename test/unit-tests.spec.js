@@ -773,6 +773,7 @@ test.describe('Sa11y Unit Tests', () => {
     const ids = [
       'nothing-table-1',
       'nothing-table-2',
+      'nothing-table-3',
     ];
     ids.forEach(async (id) => {
       const issue = await noAnnotation(page, id);
@@ -1073,6 +1074,7 @@ test.describe('Sa11y Unit Tests', () => {
       'nothing-contrast-3',
       'nothing-contrast-4',
       'nothing-contrast-5',
+      'nothing-contrast-6',
     ];
     ids.forEach(async (id) => {
       const issue = await noAnnotation(page, id);

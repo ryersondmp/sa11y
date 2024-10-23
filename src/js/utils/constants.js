@@ -57,10 +57,51 @@ const Constants = (function myConstants() {
     // i18n
     Global.langDirection = (Global.html.getAttribute('dir') === 'rtl') ? 'rtl' : 'ltr';
 
-    // QA: Document links (Quality Assurance module)
-    if (option.documentLinks) {
-      Global.documentLinks = `${option.documentLinks}`;
+    // Check for document types.
+    const documentSources = option.checks.QA_DOCUMENT.sources;
+    const defaultDocumentSources = 'a[href$=".doc"], a[href$=".docx"], a[href*=".doc?"], a[href*=".docx?"], a[href$=".ppt"], a[href$=".pptx"], a[href*=".ppt?"], a[href*=".pptx?"], a[href^="https://drive.google.com/file"], a[href^="https://docs.google."], a[href^="https://sway."]';
+    if (documentSources.length) {
+      Global.documentSources = `${defaultDocumentSources}, ${documentSources}`;
+    } else {
+      Global.documentSources = defaultDocumentSources;
     }
+
+    /* ********************** */
+    /* Embedded Content Setup */
+    /* ********************** */
+
+    // Video sources.
+    const videoSources = option.checks.EMBED_VIDEO.sources;
+    const defaultVideoSources = 'video, [src*="youtube.com"], [src*="vimeo.com"], [src*="yuja.com"], [src*="panopto.com"]';
+    if (videoSources.length) {
+      const videos = videoSources.split(/\s*[\s,]\s*/).map(($el) => `[src*="${$el}"]`);
+      Global.VideoSources = `${defaultVideoSources}, ${videos.join(', ')}`;
+    } else {
+      Global.VideoSources = defaultVideoSources;
+    }
+
+    // Audio sources.
+    const audioSources = option.checks.EMBED_AUDIO.sources;
+    const defaultAudioSources = 'audio, [src*="soundcloud.com"], [src*="simplecast.com"], [src*="podbean.com"], [src*="buzzsprout.com"], [src*="blubrry.com"], [src*="transistor.fm"], [src*="fusebox.fm"], [src*="libsyn.com"]';
+    if (audioSources.length) {
+      const audio = audioSources.split(/\s*[\s,]\s*/).map(($el) => `[src*="${$el}"]`);
+      Global.AudioSources = `${defaultAudioSources}, ${audio.join(', ')}`;
+    } else {
+      Global.AudioSources = defaultAudioSources;
+    }
+
+    // Data viz sources.
+    const dataVizSources = option.checks.EMBED_DATA_VIZ.sources;
+    const defaultDataVizSources = '[src*="datastudio"], [src*="tableau"], [src*="lookerstudio"], [src*="powerbi"], [src*="qlik"]';
+    if (dataVizSources.length) {
+      const data = dataVizSources.split(/\s*[\s,]\s*/).map(($el) => `[src*="${$el}"]`);
+      Global.VisualizationSources = `${defaultDataVizSources}, ${data.join(', ')}`;
+    } else {
+      Global.VisualizationSources = defaultDataVizSources;
+    }
+
+    // Embedded content all
+    Global.AllEmbeddedContent = `${Global.VideoSources}, ${Global.AudioSources}, ${Global.VisualizationSources}`;
   }
 
   /* *************** */
@@ -201,13 +242,21 @@ const Constants = (function myConstants() {
     // Contrast exclusions
     Exclusions.Contrast = ['link', 'hr', 'option', 'video track', 'input[type="color"]', 'input[type="range"]', ...exclusions];
     if (option.contrastIgnore) {
-      Exclusions.Contrast = option.contrastIgnore.split(',').map(($el) => $el.trim()).concat(Exclusions.Contrast);
+      Exclusions.Contrast = option.contrastIgnore
+        .split(',')
+        .map(($el) => $el.trim())
+        .flatMap(($el) => [$el, `${$el} *`])
+        .concat(Exclusions.Contrast);
     }
 
     // Ignore specific regions for readability module.
     Exclusions.Readability = ['nav li', '[role="navigation"] li', ...exclusions];
     if (option.readabilityIgnore) {
-      Exclusions.Readability = option.readabilityIgnore.split(',').map(($el) => $el.trim()).concat(Exclusions.Readability);
+      Exclusions.Readability = option.readabilityIgnore
+        .split(',')
+        .map(($el) => $el.trim())
+        .flatMap(($el) => [$el, `${$el} *`])
+        .concat(Exclusions.Readability);
     }
 
     // Ignore specific headings.
@@ -243,39 +292,6 @@ const Constants = (function myConstants() {
       : [];
   }
 
-  /* ********************** */
-  /* Embedded Content Setup */
-  /* ********************** */
-  const EmbeddedContent = {};
-  function initializeEmbeddedContent(option) {
-    // Video sources.
-    if (option.videoContent) {
-      const videos = option.videoContent.split(/\s*[\s,]\s*/).map(($el) => `[src*='${$el}']`);
-      EmbeddedContent.Video = `video, ${videos.join(', ')}`;
-    } else {
-      EmbeddedContent.Video = 'video';
-    }
-
-    // Audio sources.
-    if (option.audioContent) {
-      const audio = option.audioContent.split(/\s*[\s,]\s*/).map(($el) => `[src*='${$el}']`);
-      EmbeddedContent.Audio = `audio, ${audio.join(', ')}`;
-    } else {
-      EmbeddedContent.Audio = 'audio';
-    }
-
-    // Data viz sources.
-    if (option.dataVizContent) {
-      const data = option.dataVizContent.split(/\s*[\s,]\s*/).map(($el) => `[src*='${$el}']`);
-      EmbeddedContent.Visualization = data.join(', ');
-    } else {
-      EmbeddedContent.Visualization = 'datastudio.google.com, tableau';
-    }
-
-    // Embedded content all
-    EmbeddedContent.All = `${EmbeddedContent.Video}, ${EmbeddedContent.Audio}, ${EmbeddedContent.Visualization}`;
-  }
-
   return {
     initializeRoot,
     Root,
@@ -287,8 +303,6 @@ const Constants = (function myConstants() {
     Readability,
     initializeExclusions,
     Exclusions,
-    initializeEmbeddedContent,
-    EmbeddedContent,
   };
 }());
 

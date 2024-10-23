@@ -79,15 +79,9 @@ export class AnnotationTooltips extends HTMLElement {
         };
         openedTooltip.addEventListener('keydown', escapeListener);
 
-        // Generate colour suggestions to improve contrast.
-        if (Constants.Global.contrastSuggestions) {
-          const hasColorSuggestion = instance.popper?.querySelector('[data-sa11y-suggestion]');
-          if (hasColorSuggestion) {
-            const colorObject = hasColorSuggestion?.getAttribute('data-sa11y-suggestion');
-            const suggestion = generateColorSuggestion(JSON.parse(colorObject));
-            hasColorSuggestion.innerHTML = suggestion;
-          }
-        }
+        // Generate colour suggestions upon tooltip opening for contrast checks.
+        // Imported from rulesets/contrast.js
+        generateColorSuggestion(instance.popper);
 
         // Remove all event listeners.
         const onHiddenTooltip = () => {

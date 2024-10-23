@@ -51,11 +51,13 @@ kbd,
   font-weight: 600;
 }
 
+.error .colour,
 .red-text {
   font-family: var(--sa11y-font-face);
   color: var(--sa11y-red-text);
 }
 
+.warning .colour,
 .yellow-text {
   font-family: var(--sa11y-font-face);
   color: var(--sa11y-yellow-text);
@@ -79,11 +81,13 @@ kbd,
   outline: 1px solid transparent;
 }
 
+.error .badge,
 .error-badge {
   color: var(--sa11y-error-text);
   background: var(--sa11y-error);
 }
 
+.warning .badge,
 .warning-badge {
   color: var(--sa11y-panel-bg);
   background: var(--sa11y-yellow-text);
