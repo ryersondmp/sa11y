@@ -211,7 +211,7 @@ export default {
     EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> su elementais, į kuriuos negalima sutelkti dėmesio, neturėtų turėti <code>tabindex="-1"</code>. Įterptasis turinys nebus pasiekiamas naudojant klaviatūrą.',
 
     // QA
-    QA_BAD_LINK: 'Rasta bloga nuoroda. Atrodo, kad nuoroda nukreipia į kūrimo aplinką. <hr> Ši nuoroda nukreipia į: <br> <strong {C}>%(LINK)</strong>',
+    QA_BAD_LINK: 'Rasta bloga nuoroda. Atrodo, kad nuoroda nukreipia į kūrimo aplinką. <hr> {L} <strong {C}>%(LINK)</strong>',
     QA_IN_PAGE_LINK: 'Nugriautas tos pačios puslapio nuorodas. Nuorodos tikslas nesutampa su jokiu šios puslapio elementu.',
     QA_STRONG_ITALICS: 'Paryškinimo ir kursyvo žymės turi semantinę reikšmę ir neturėtų būti naudojamos <strong>ne</strong> ištisoms pastraipoms paryškinti. Paryškintas tekstas turėtų būti naudojamas stipriai <strong>pabrėžti</strong> žodį ar frazę. Kursyvu reikėtų paryškinti tikruosius vardus (t. y. knygų ir straipsnių pavadinimus), svetimžodžius, kabutes. Ilgos citatos turėtų būti formatuojamos kaip blokinė citata.',
     QA_PDF: 'Nepavyksta patikrinti PDF failų prieinamumo. PDF yra laikomi žiniatinklio turiniu, todėl jie taip pat turi būti prieinami. PDF dažnai kyla problemų žmonėms, kurie naudojasi ekrano skaitytuvais (trūksta struktūrinių žymų arba formos laukų etikečių), ir silpnaregiams (padidinus tekstą, jis neatsinaujina). <ul><li>Jei tai yra forma, apsvarstykite galimybę kaip alternatyvą naudoti prieinamą HTML formą.</li><li>Jei tai yra dokumentas, apsvarstykite galimybę jį konvertuoti į tinklalapį.</li></ul>Kitu atveju patikrinkite <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF prieinamumą programoje Acrobat DC.</a>',
@@ -262,7 +262,9 @@ export default {
     CONTRAST_COLOR: 'Apsvarstykite galimybę naudoti šią spalvą?',
     CONTRAST_SIZE: 'Apsvarstykite galimybę padidinti teksto dydį šiam spalvų deriniui?',
     CONTRAST_ERROR: 'Šis tekstas nepakankamai kontrastuoja su fonu. Įprasto teksto kontrasto santykis turėtų būti bent 4,5:1, o didelio teksto - 3:1. <hr> <strong {B}>Kontrasto santykis</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'Šio teksto kontrastas nežinomas ir turi būti peržiūrėtas rankiniu būdu. Užtikrinkite, kad tekstas ir fonas būtų ryškios kontrastingos spalvos. Įprasto teksto kontrasto santykis turėtų būti bent 4,5:1, o didelio teksto - 3:1. <hr> <strong {B}>Kontrasto santykis</strong> <strong {B}>Nežinomas</strong> <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'Šio teksto kontrastas nežinomas ir reikia rankiniu būdu peržiūrėti. Įsitikinkite, kad tekstas ir fonas turi stiprų kontrastą. <hr> <strong {B}>Kontrastas</strong> <strong {B}>Nežinomas</strong> <strong {C}>%(TEXT)</strong>',
+    WCAG_ADVICE: 'Kontrasto santykis turėtų būti bent 4,5:1 normaliam tekstui ir 3:1 dideliam tekstui.',
+    APCA_ADVICE: 'Kontrasto vertė turėtų būti bent 60 kūno tekstui ir 45 dideliam tekstui.',
     CONTRAST_INPUT: 'Šios įvesties tekstas nepakankamai kontrastuoja su fonu. Įprasto teksto kontrasto santykis turėtų būti bent 4,5:1, o didelio teksto - 3:1. <hr> <strong {B}>Kontrasto santykis</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

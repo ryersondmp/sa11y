@@ -207,7 +207,7 @@ export default {
     EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> com elementos não focalizáveis não deve ter <code>tabindex="-1"</code>. O conteúdo incorporado não será acessível pelo teclado.',
 
     // QA
-    QA_BAD_LINK: 'Encontrado link incorreto. O link parece apontar para um ambiente de desenvolvimento. <hr> Esse link aponta para: <br> <strong {C}>%(LINK)</strong>',
+    QA_BAD_LINK: 'Encontrado link incorreto. O link parece apontar para um ambiente de desenvolvimento. <hr> {L} <strong {C}>%(LINK)</strong>',
     QA_IN_PAGE_LINK: 'Link quebrado na mesma página. O destino do link não corresponde a nenhum elemento nesta página.',
     QA_STRONG_ITALICS: 'As tags negrito e itálico têm significado semântico e não devem ser usadas para destacar parágrafos inteiros. O texto em negrito deve ser usado para dar forte <strong>ênfase</strong> a uma palavra ou frase. O itálico deve ser usado para destacar nomes próprios (ou seja, títulos de livros e artigos), palavras estrangeiras e citações. As citações longas devem ser formatadas como uma citação em bloco.',
     QA_PDF: 'Não é possível verificar a acessibilidade de PDFs. Os PDFs são considerados conteúdo da Web e também devem ser acessíveis. Os PDFs geralmente contêm problemas para pessoas que usam leitores de tela (tags estruturais ausentes ou rótulos de campo de formulário ausentes) e pessoas com baixa visão (o texto não flui novamente quando ampliado). <ul><li>Se este for um formulário, considere o uso de um formulário HTML acessível como alternativa.</li><li>Se este for um documento, considere convertê-lo em uma página da Web.</li></ul> Caso contrário, verifique a acessibilidade do <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF no Acrobat DC.</a>',
@@ -258,7 +258,9 @@ export default {
     CONTRAST_COLOR: 'Considere usar esta cor em vez disso?',
     CONTRAST_SIZE: 'Considere aumentar o tamanho do texto para esta combinação de cores?',
     CONTRAST_ERROR: 'Esse texto não tem contraste suficiente com o plano de fundo. A taxa de contraste deve ser de pelo menos 4,5:1 para texto normal e 3:1 para texto grande. <hr> <strong {B}>Razão de contraste</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'O contraste desse texto é desconhecido e precisa ser revisado manualmente. Certifique-se de que o texto e o plano de fundo tenham cores fortes e contrastantes. A taxa de contraste deve ser de pelo menos 4,5:1 para texto normal e 3:1 para texto grande. <hr> <strong {B}>Taxa de Contraste</strong> <strong {B}>Desconhecido</strong> <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'O contraste deste texto é desconhecido e precisa ser revisado manualmente. Certifique-se de que o texto e o fundo têm cores fortemente contrastantes. <hr> <strong {B}>Contraste</strong> <strong {B}>Desconhecido</strong> <strong {C}>%(TEXT)</strong>',
+    WCAG_ADVICE: 'A proporção de contraste deve ser de pelo menos 4,5:1 para texto normal e 3:1 para texto grande.',
+    APCA_ADVICE: 'O valor de contraste deve ser de pelo menos 60 para o texto principal e 45 para o texto grande.',
     CONTRAST_INPUT: 'O texto nessa entrada não tem contraste suficiente com o plano de fundo. A taxa de contraste deve ser de pelo menos 4,5:1 para texto normal e 3:1 para texto grande. <hr> <strong {B}>Razão de contraste</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

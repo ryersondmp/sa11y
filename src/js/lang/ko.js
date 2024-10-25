@@ -217,7 +217,7 @@ export default {
     EMBED_UNFOCUSABLE: '포커스할 수 없는 요소를 포함한 <code>&lt;iframe&gt;</code>은 <code>tabindex="-1"</code>을 가져서는 안 됩니다. 포함된 콘텐츠는 키보드로 접근할 수 없습니다.',
 
     // QA
-    QA_BAD_LINK: '잘못된 링크를 찾았습니다. 링크가 개발 환경을 가리키는 것으로 보입니다. <hr> 이 링크는 다음을 가리킵니다: <br> <strong {C}>%(LINK)</strong>',
+    QA_BAD_LINK: '잘못된 링크를 찾았습니다. 링크가 개발 환경을 가리키는 것으로 보입니다. <hr> {L} <strong {C}>%(LINK)</strong>',
     QA_IN_PAGE_LINK: '부서진 동일 페이지 링크입니다. 링크 대상이 이 페이지에 있는 어떤 요소와도 일치하지 않습니다.',
     QA_STRONG_ITALICS: '굵게 및 이탤릭체 태그는 의미론적 의미가 있으며, 전체 단락을 강조할 때는 <강함>이 아닌 <강함>을 사용해야 합니다. 굵은 텍스트는 단어나 문구에 강한 <강한> 강조를 제공할 때 사용해야 합니다. 고유명사(예: 책 및 기사 제목), 외래어, 따옴표는 이탤릭체로 강조 표시해야 합니다. 긴 따옴표는 블록 따옴표로 서식을 지정해야 합니다.',
     QA_PDF: 'PDF의 접근성을 확인할 수 없습니다. PDF는 웹 콘텐츠로 간주되며 접근성을 확보해야 합니다. PDF에는 종종 스크린 리더를 사용하는 사람들을 위한 문제가 있습니다(구조 태그가 누락되거나 양식 필드 레이블이 누락됨) 및 시각이 낮은 사람들(텍스트가 확대되면 재배치되지 않음). <ul><li>이것이 양식이면 접근 가능한 HTML 양식을 대안으로 사용하는 것을 고려하십시오.</li><li>이것이 문서인 경우 웹 페이지로 변환하는 것을 고려하십시오.</li></ul>그렇지 않으면, <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">Acrobat DC에서 PDF의 접근성을 확인하세요.</a>',
@@ -268,7 +268,9 @@ export default {
     CONTRAST_COLOR: '대신 이 색상을 사용하는 것을 고려하시겠습니까?',
     CONTRAST_SIZE: '이 색상 조합에 대해 텍스트 크기를 더 크게 만드는 것을 고려하시겠습니까?',
     CONTRAST_ERROR: '이 텍스트는 배경과 대비가 충분하지 않습니다. 대비 비율은 일반 텍스트의 경우 4.5:1 이상, 큰 텍스트의 경우 3:1 이상이어야 합니다. <hr> <strong {B}>대조 비율</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: '이 텍스트의 대비를 알 수 없으므로 수동으로 검토해야 합니다. 텍스트와 배경의 색상이 강하게 대비되는지 확인합니다. 대비 비율은 일반 텍스트의 경우 4.5:1 이상, 큰 텍스트의 경우 3:1 이상이어야 합니다. <hr> <strong {B}>대비 비율</strong> <strong {B}>알 수 없음</strong> <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: '이 텍스트의 명도 대비는 알 수 없으며 수동으로 검토해야 합니다. 텍스트와 배경의 색상이 강하게 대비되도록 확인하세요. <hr> <strong {B}>명도 대비</strong> <strong {B}>알 수 없음</strong> <strong {C}>%(TEXT)</strong>',
+    WCAG_ADVICE: '일반 텍스트의 경우 명도 대비 비율은 최소 4.5:1, 큰 텍스트의 경우 최소 3:1이어야 합니다。',
+    APCA_ADVICE: '본문 텍스트의 경우 대비 값은 최소 60, 큰 텍스트의 경우 45 이상이어야 합니다。',
     CONTRAST_INPUT: '이 입력 내의 텍스트는 배경과 대비가 충분하지 않습니다. 대비 비율은 일반 텍스트의 경우 4.5:1 이상, 큰 텍스트의 경우 3:1 이상이어야 합니다. <hr> <strong {B}>대조 비율</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

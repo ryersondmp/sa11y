@@ -202,7 +202,7 @@ export default {
     EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> mit nicht fokussierbaren Elementen sollte kein <code>tabindex="-1"</code> haben. Der eingebettete Inhalt wird nicht mit der Tastatur erreichbar sein.',
 
     // Quality assurance
-    QA_BAD_LINK: 'Ungültiger Link gefunden. Link scheint auf eine Entwicklungsumgebung zu verweisen. <hr> Dieser Link verweist auf: <br> <strong {C}>%(LINK)</strong>',
+    QA_BAD_LINK: 'Ungültiger Link gefunden. Link scheint auf eine Entwicklungsumgebung zu verweisen. <hr> {L} <strong {C}>%(LINK)</strong>',
     QA_IN_PAGE_LINK: 'Defekter Verweis innerhalb der Seite. Das Ziel des Verweises stimmt mit keinem Element auf dieser Seite überein.',
     QA_STRONG_ITALICS: 'Fett- und Kursiv-Tags haben semantische Bedeutung und sollten <strong>nicht</strong> verwendet werden, um ganze Absätze hervorzuheben. Fettgedruckter Text sollte verwendet werden, um ein Wort oder einen Ausdruck stark <strong>zu betonen</strong>. Kursiv sollte verwendet werden, um Eigennamen (z. B. Buch- und Artikeltitel), Fremdwörter, Zitate hervorzuheben. Lange Zitate sollten als Blockquote formatiert werden.',
     QA_PDF: 'PDFs können nicht auf Barrierefreiheit geprüft werden. PDFs gelten als Webinhalte und müssen ebenfalls zugänglich gemacht werden. PDFs enthalten oft Probleme für Personen, die Screenreader verwenden (fehlende Struktur-Tags oder fehlende Beschriftungen von Formularfeldern) und Personen mit Sehbehinderung (Text umfließt beim Vergrößern nicht ). <ul><li>Wenn es sich um ein Formular handelt, solltest Du alternativ ein barrierefreies HTML-Formular verwenden.</li><li>Wenn es sich um ein Dokument handelt, solltest Du es in eine Webseite umwandeln.</li></ul> Andernfalls überprüfe bitte <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF für Barrierefreiheit in Acrobat DC.</a>',
@@ -253,7 +253,9 @@ export default {
     CONTRAST_COLOR: 'Erwägen Sie, stattdessen diese Farbe zu verwenden?',
     CONTRAST_SIZE: 'Erwägen Sie, die Textgröße für diese Farbkombination zu vergrößern?',
     CONTRAST_ERROR: 'Dieser Text hat nicht genügend Kontrast zum Hintergrund. Das Kontrastverhältnis sollte mindestens 4,5:1 für normalen Text und 3:1 für großen Text betragen. <hr> <strong {B}>Kontrastverhältnis</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'Der Kontrast dieses Textes ist unbekannt und muss manuell überprüft werden. Stelle sicher, dass der Text und der Hintergrund einen starken Farbkontrast aufweisen. Das Kontrastverhältnis sollte mindestens 4,5:1 für normalen Text und 3:1 für großen Text betragen. <hr> <strong {B}>Kontrastverhältnis</strong> <strong {B}>Unbekannt</strong> <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'Der Kontrast dieses Textes ist unbekannt und muss manuell überprüft werden. Stellen Sie sicher, dass Text und Hintergrund starke Kontrastfarben haben. <hr> <strong {B}>Kontrast</strong> <strong {B}>Unbekannt</strong> <strong {C}>%(TEXT)</strong>',
+    WCAG_ADVICE: 'Das Kontrastverhältnis sollte mindestens 4,5:1 für normalen Text und 3:1 für großen Text betragen.',
+    APCA_ADVICE: 'Der Kontrastwert sollte mindestens 60 für Fließtext und 45 für großen Text betragen.',
     CONTRAST_INPUT: 'Der Text in dieser Eingabe hat nicht genügend Kontrast zum Hintergrund. Das Kontrastverhältnis sollte mindestens 4,5:1 für normalen Text und 3:1 für großen Text betragen. <hr> <strong {B}>Kontrastverhältnis</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

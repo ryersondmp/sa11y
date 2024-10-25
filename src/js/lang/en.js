@@ -187,7 +187,7 @@ export default {
     EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> with focusable elements should not have <code>tabindex="-1"</code>. The embedded content will not be keyboard accessible.',
 
     // Quality assurance
-    QA_BAD_LINK: 'Bad link found. Link appears to point to a development environment. <hr> This link points to: <br> <strong {C}>%(LINK)</strong>',
+    QA_BAD_LINK: 'Bad link found. Link appears to point to a development environment. <hr> {L} <strong {C}>%(LINK)</strong>',
     QA_STRONG_ITALICS: 'Bold and italic tags have semantic meaning, and should <strong>not</strong> be used to highlight entire paragraphs. Bolded text should be used to provide strong <strong>emphasis</strong> on a word or phrase. Italics should be used to highlight proper names (i.e. book and article titles), foreign words, quotes. Long quotes should be formatted as a blockquote.',
     QA_PDF: 'Unable to check PDFs for accessibility. PDFs are considered web content and must be made accessible as well. PDFs often contain issues for people who use screen readers (missing structural tags or missing form field labels) and people who have low vision (text does not reflow when enlarged). <ul><li>If this is a form, consider using an accessible HTML form as an alternative.</li><li>If this is a document, consider converting it into a web page.</li></ul>Otherwise, please check <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF for accessibility in Acrobat DC.</a>',
     QA_DOCUMENT: 'Unable to check document for accessibility. Linked documents are considered web content and must be made accessible as well. Please manually review this document. <ul><li>Make your <a href="https://support.google.com/docs/answer/6199477?hl=en">Google Workspace document or presentation more accessible.</a></li><li>Make your <a href="https://support.microsoft.com/en-us/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office documents more accessible.</a></li></ul>',
@@ -238,7 +238,9 @@ export default {
     CONTRAST_COLOR: 'Consider using this colour instead?',
     CONTRAST_SIZE: 'Consider making the text size larger for this colour combination?',
     CONTRAST_ERROR: 'Text does not have enough contrast with the background, making it harder to read. <hr> <strong {B}>Contrast Ratio</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'The contrast of this text is unknown and needs to be manually reviewed. Ensure the text and the background have strong contrasting colours. The contrast ratio should be at least 4.5:1 for normal text and 3:1 for large text. <hr> <strong {B}>Contrast Ratio</strong> <strong {B}>Unknown</strong> <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'The contrast of this text is unknown and needs to be manually reviewed. Ensure the text and the background have strong contrasting colours. <hr> <strong {B}>Contrast</strong> <strong {B}>Unknown</strong> <strong {C}>%(TEXT)</strong>',
+    WCAG_ADVICE: 'The contrast ratio should be at least 4.5:1 for normal text and 3:1 for large text.',
+    APCA_ADVICE: 'The contrast value should be at least 60 for body text and 45 for large text.',
     CONTRAST_PLACEHOLDER: 'Placeholder text within this input does not have enough contrast with the background, making it harder to read. <hr> <strong {B}>Contrast Ratio</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
     CONTRAST_INPUT: 'Text within this input does not have enough contrast with the background, making it harder to read. <hr> <strong {B}>Contrast Ratio</strong> <strong {B}>%(RATIO)</strong>',
   },

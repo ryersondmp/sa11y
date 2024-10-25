@@ -207,7 +207,7 @@ export default {
     EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> ar neuzmanāmiem elementiem nevajadzētu būt <code>tabindex="-1"</code>. Iegultais saturs nebūs pieejams ar tastatūru.',
 
     // QA
-    QA_BAD_LINK: 'Atrasta slikta saite. Šķiet, ka saite norāda uz izstrādes vidi. <hr> Šī saite norāda uz: <br> <strong {C}>%(LINK)</strong>',
+    QA_BAD_LINK: 'Atrasta slikta saite. Šķiet, ka saite norāda uz izstrādes vidi. <hr> {L} <strong {C}>%(LINK)</strong>',
     QA_IN_PAGE_LINK: 'Sapušušā saites uz vienu un to pašu lapu. Saistītās lapas mērķis neatbilst nevienam elementam šajā lapā.',
     QA_STRONG_ITALICS: 'Trešraksta un slīpraksta tagiem ir semantiska nozīme, un tos nevajadzētu izmantot, lai izceltu veselas rindkopas. Teksts treknrakstā jāizmanto, lai <strong>uzsvērtu kādu vārdu vai frāzi</strong>. Kursīvs jāizmanto, lai izceltu īpašvārdus (piemēram, grāmatu un rakstu nosaukumus), svešvārdus, citātus. Garie citāti jānoformē kā bloka citāts.',
     QA_PDF: 'Nevar pārbaudīt PDF failu pieejamību. PDF tiek uzskatīti par tīmekļa saturu, un arī tiem jābūt pieejamiem. PDF formātos bieži ir problēmas cilvēkiem, kas izmanto ekrānlasītājus (trūkst strukturālo tagu vai veidlapu lauku marķējumu), un cilvēkiem ar vāju redzi (teksts nepalielinās, kad tiek palielināts). <ul><li>Ja tā ir veidlapa, apsveriet iespēju kā alternatīvu izmantot pieejamu HTML veidlapu.</li><li>Ja tas ir dokuments, apsveriet iespēju to pārveidot par tīmekļa lapu.</li><li>Ja tas ir dokuments, apsveriet iespēju to pārveidot par tīmekļa vietni.</li></ul> Tādā gadījumā pārbaudiet <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF pieejamību programmā Acrobat DC.</a>',
@@ -258,7 +258,9 @@ export default {
     CONTRAST_COLOR: 'Apsveriet iespēju izmantot šo krāsu?',
     CONTRAST_SIZE: 'Apsveriet iespēju palielināt teksta izmēru šai krāsu kombinācijai?',
     CONTRAST_ERROR: 'Šis teksts nav pietiekami kontrastējošs ar fonu. Kontrasta attiecībai jābūt vismaz 4,5:1 parastam tekstam un 3:1 lielam tekstam. <hr> <strong {B}>Kontrasta attiecība</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'Šī teksta kontrasts nav zināms, un tas ir jāpārbauda manuāli. Pārliecinieties, ka tekstam un fonam ir spēcīgi kontrastējošas krāsas. Kontrasta attiecībai jābūt vismaz 4,5:1 parastam tekstam un 3:1 lielam tekstam. <hr> <strong {B}>Kontrasta attiecība</strong> <strong {B}>Nezināms</strong> <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'Šī teksta kontrasts nav zināms, un tas jāapskata manuāli. Pārliecinieties, ka tekstam un fonam ir spēcīgs kontrasts. <hr> <strong {B}>Kontrasts</strong> <strong {B}>Nezināms</strong> <strong {C}>%(TEXT)</strong>',
+    WCAG_ADVICE: 'Kontrasta attiecībai jābūt vismaz 4.5:1 parastam tekstam un 3:1 lielam tekstam.',
+    APCA_ADVICE: 'Kontrasta vērtībai jābūt vismaz 60 pamattekstam un 45 lielam tekstam.',
     CONTRAST_INPUT: 'Teksts šajā ievades laukā nav pietiekami kontrastējošs ar fonu. Kontrasta attiecībai jābūt vismaz 4,5:1 parastam tekstam un 3:1 lielam tekstam. <hr> <strong {B}>Kontrasta attiecība</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

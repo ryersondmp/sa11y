@@ -207,7 +207,7 @@ export default {
     EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> cu elemente nefocalizabile nu ar trebui să aibă <code>tabindex="-1"</code>. Conținutul încorporat nu va fi accesibil prin tastatură.',
 
     // QA
-    QA_BAD_LINK: 'Link greșit găsit. Linkul pare să indice un mediu de dezvoltare. <hr> Acest link trimite la: <br> <strong {C}>%(LINK)</strong>.',
+    QA_BAD_LINK: 'Link greșit găsit. Linkul pare să indice un mediu de dezvoltare. <hr> {L} <strong {C}>%(LINK)</strong>.',
     QA_IN_PAGE_LINK: 'Legătură internă ruptă. Destinația linkului nu se potrivește cu niciun element de pe această pagină.',
     QA_STRONG_ITALICS: 'Etichetele bold și italic au o semnificație semantică și nu trebuie <strong>nu</strong> folosite pentru a evidenția paragrafe întregi. Textul cu caractere aldine trebuie folosit pentru a oferi o <strong>accentuare</strong> puternică asupra unui cuvânt sau a unei fraze. Italicul ar trebui utilizat pentru a evidenția nume proprii (de exemplu, titluri de cărți și articole), cuvinte străine, ghilimele. Citatele lungi ar trebui să fie formatate ca un blockquote.',
     QA_PDF: 'Imposibilitatea de a verifica accesibilitatea PDF-urilor. PDF-urile sunt considerate conținut web și trebuie să fie, de asemenea, accesibile. PDF-urile conțin adesea probleme pentru persoanele care utilizează cititoare de ecran (etichete structurale sau etichete de câmpuri de formular lipsă) și pentru persoanele cu vedere slabă (textul nu se reface atunci când este mărit). <ul><li>Dacă acesta este un formular, luați în considerare utilizarea unui formular HTML accesibil ca alternativă.</li><li>Dacă acesta este un document, luați în considerare transformarea acestuia într-o pagină web.</li></ul> În caz contrar, vă rugăm să verificați <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF pentru accesibilitate în Acrobat DC.</a>',
@@ -258,7 +258,9 @@ export default {
     CONTRAST_COLOR: 'Luați în considerare utilizarea acestei culori în schimb?',
     CONTRAST_SIZE: 'Luați în considerare mărirea dimensiunii textului pentru această combinație de culori?',
     CONTRAST_ERROR: 'Acest text nu are un contrast suficient cu fundalul. Raportul de contrast ar trebui să fie de cel puțin 4,5:1 pentru textul normal și de 3:1 pentru textul mare. <hr> <strong {B}>Raport de contrast</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'Contrastul acestui text este necunoscut și trebuie să fie revizuit manual. Asigurați-vă că textul și fundalul au culori puternic contrastante. Raportul de contrast trebuie să fie de cel puțin 4,5:1 pentru textul normal și de 3:1 pentru textul mare. <hr> <strong {B}>Raport de contrast</strong> <strong {B}>Necunoscut</strong> <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'Contrastul acestui text este necunoscut și trebuie revizuit manual. Asigurați-vă că textul și fundalul au culori cu contrast puternic. <hr> <strong {B}>Contrast</strong> <strong {B}>Necunoscut</strong> <strong {C}>%(TEXT)</strong>',
+    WCAG_ADVICE: 'Raportul de contrast ar trebui să fie de cel puțin 4,5:1 pentru textul normal și 3:1 pentru textul mare.',
+    APCA_ADVICE: 'Valoarea contrastului ar trebui să fie de cel puțin 60 pentru textul principal și 45 pentru textul mare.',
     CONTRAST_INPUT: 'Textul din această intrare nu are un contrast suficient cu fundalul. Raportul de contrast ar trebui să fie de cel puțin 4,5:1 pentru textul normal și de 3:1 pentru textul mare. <hr> <strong {B}>Raport de contrast</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

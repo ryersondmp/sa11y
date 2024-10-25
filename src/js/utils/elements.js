@@ -70,7 +70,7 @@ const Elements = (function myElements() {
 
     Found.Buttons = Found.Everything.filter(($el) => $el.tagName === 'BUTTON' || $el.matches('[role="button"]'));
 
-    Found.Inputs = Found.Everything.filter(($el) => ['INPUT', 'SELECT', 'TEXTAREA'].includes($el.tagName));
+    Found.Inputs = Found.Everything.filter(($el) => ['INPUT', 'SELECT', 'TEXTAREA', 'METER', 'PROGRESS'].includes($el.tagName));
 
     Found.Labels = Found.Everything.filter(($el) => $el.tagName === 'LABEL');
 

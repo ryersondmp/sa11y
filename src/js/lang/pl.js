@@ -199,7 +199,7 @@ export default {
     EMBED_GENERAL: 'Nie można sprawdzić treści osadzonej. Upewnij się, że obrazy mają tekst alt, filmy mają napisy rozszerzone, tekst ma odpowiedni kontrast, a elementy interaktywne są <a href="https://webaim.org/techniques/keyboard/">dostępne z klawiatury.</a>',
 
     // Quality assurance
-    QA_BAD_LINK: 'Podejrzane łącze. Łącze wydaje się wskazywać środowisko programistyczne.<hr>Łącze wskazuje na: <br> <strong {C}>%(LINK)</strong>',
+    QA_BAD_LINK: 'Podejrzane łącze. Łącze wydaje się wskazywać środowisko programistyczne. <hr> {L} <strong {C}>%(LINK)</strong>',
     QA_IN_PAGE_LINK: 'Uszkodzony link na tej samej stronie. Cel linku nie odpowiada żadnemu elementowi na tej stronie.',
     QA_STRONG_ITALICS: 'Znaczniki pogrubienia i kursywy mają znaczenie semantyczne i <strong>nie powinny</strong> być używane do wyróżniania całych akapitów. Pogrubiony tekst powinien być używany w celu <strong>silnego podkreślenia słowa lub frazy</strong>. Kursywa powinna być używana do wyróżnienia nazw własnych (np. tytułów książek i artykułów), wyrazów obcych, cytatów. Długie cytaty powinny być sformatowane jako blockquote.',
     QA_PDF: 'Nie można sprawdzić dostępności pliku PDF. Pliki PDF są uważane za treści internetowe i muszą być również dostępne. Pliki PDF często powodują problemy dla osób korzystających z&nbsp;czytników ekranu (brakujące znaczniki strukturalne lub etykiety pól formularzy) oraz dla osób słabowidzących (tekst nie jest ponownie wyświetlany po powiększeniu). <ul><li>Jeśli jest to formularz, rozważ użycie dostępnego formularza HTML jako alternatywy</li><li>Jeśli jest to dokument, rozważ przekonwertowanie go na stronę internetową.</li></ul> W przeciwnym razie <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">sprawdź plik pod kątem dostępności w programie Acrobat DC.</a>',
@@ -250,7 +250,9 @@ export default {
     CONTRAST_COLOR: 'Rozważ użycie tego koloru zamiast?',
     CONTRAST_SIZE: 'Rozważ zwiększenie rozmiaru tekstu dla tej kombinacji kolorów?',
     CONTRAST_ERROR: 'Ten tekst nie ma wystarczającego kontrastu z tłem Współczynnik kontrastu powinien wynosić co najmniej 4,5:1 dla zwykłego tekstu i 3:1 dla dużego tekstu. <hr> <strong {B}>Stosunek kontrastu</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'Kontrast tego tekstu jest nieznany i wymaga ręcznego przeglądu. Upewnij się, że tekst i tło mają silne kontrastujące kolory. Współczynnik kontrastu powinien wynosić co najmniej 4,5:1 dla zwykłego tekstu i 3:1 dla dużego tekstu. <hr> <strong {B}>Współczynnik kontrastu</strong> <strong {B}>Nieznany</strong> <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'Kontrast tego tekstu jest nieznany i należy go sprawdzić ręcznie. Upewnij się, że tekst i tło mają silne kontrastowe kolory. <hr> <strong {B}>Kontrast</strong> <strong {B}>Nieznany</strong> <strong {C}>%(TEXT)</strong>',
+    WCAG_ADVICE: 'Współczynnik kontrastu powinien wynosić co najmniej 4,5:1 dla normalnego tekstu i 3:1 dla dużego tekstu.',
+    APCA_ADVICE: 'Wartość kontrastu powinna wynosić co najmniej 60 dla tekstu podstawowego i 45 dla dużego tekstu.',
     CONTRAST_INPUT: 'Tekst w tym polu nie ma wystarczającego kontrastu z tłem. Stosunek kontrastu powinien wynosić co najmniej 4,5:1 dla normalnego tekstu i 3:1 dla dużego tekstu. <hr> <strong {B}>Stosunek kontrastu</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

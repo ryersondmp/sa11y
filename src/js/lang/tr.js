@@ -203,7 +203,7 @@ export default {
     EMBED_UNFOCUSABLE: 'Odaklanılamayan öğeler içeren <code>&lt;iframe&gt;</code>, <code>tabindex="-1"</code> olmamalıdır. Gömülü içerik klavye ile erişilebilir olmayacak.',
 
     // QA
-    QA_BAD_LINK: 'Kötü bağlantı bulundu. Bağlantı bir geliştirme ortamına işaret ediyor gibi görünüyor. <hr> Bu bağlantı şuraya işaret ediyor: <br> <strong {C}>%(LINK)</strong>',
+    QA_BAD_LINK: 'Kötü bağlantı bulundu. Bağlantı bir geliştirme ortamına işaret ediyor gibi görünüyor. <hr> {L} <strong {C}>%(LINK)</strong>',
     QA_IN_PAGE_LINK: 'Kırık aynı sayfa bağlantısı. Bağlantı hedefi, bu sayfadaki herhangi bir öğeyle eşleşmiyor.',
     QA_STRONG_ITALICS: 'Kalın ve italik etiketlerinin anlamsal bir anlamı vardır ve paragrafların tamamını vurgulamak için <strong>kullanılmamalıdır</strong>. Kalınlaştırılmış metin, bir kelime veya cümleye güçlü bir <strong>vurgu</strong> yapmak için kullanılmalıdır. İtalik yazılar özel isimleri (kitap ve makale başlıkları gibi), yabancı kelimeleri ve alıntıları vurgulamak için kullanılmalıdır. Uzun alıntılar blok alıntı olarak biçimlendirilmelidir.',
     QA_PDF: 'PDF\'ler erişilebilirlik açısından kontrol edilemiyor. PDF\'ler web içeriği olarak kabul edilir ve erişilebilir hale getirilmelidir. PDF\'ler genellikle ekran okuyucu kullanan kişiler (eksik yapısal etiketler veya eksik form alanı etiketleri) ve az gören kişiler (metin büyütüldüğünde yeniden akmıyor) için sorunlar içerir. <ul><li>Bu bir form ise, alternatif olarak erişilebilir bir HTML formu kullanmayı düşünün.</li><li>Bu bir belge ise, bir web sayfasına dönüştürmeyi düşünün.</li></ul>Aksi takdirde, lütfen Acrobat DC\'de erişilebilirlik için <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF\'yi kontrol edin.</a>',
@@ -254,7 +254,9 @@ export default {
     CONTRAST_COLOR: 'Bunun yerine bu rengi kullanmayı düşünün?',
     CONTRAST_SIZE: 'Bu renk kombinasyonu için metin boyutunu büyütmeyi düşünün?',
     CONTRAST_ERROR: 'Bu metin arka planla yeterli kontrasta sahip değil. Kontrast oranı normal metin için en az 4,5:1 ve büyük metin için 3:1 olmalıdır. <hr> <strong {B}>Kontrast Oranı</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'Bu metnin kontrastı bilinmemektedir ve manuel olarak gözden geçirilmesi gerekmektedir. Metin ve arka planın güçlü kontrast renklere sahip olduğundan emin olun. Kontrast oranı normal metin için en az 4,5:1 ve büyük metin için 3:1 olmalıdır. <hr> <strong {B}>Kontrast Oranı</strong> <strong {B}>Bilinmiyor</strong> <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'Bu metnin kontrastı bilinmiyor ve manuel olarak gözden geçirilmesi gerekiyor. Metin ve arka planın güçlü kontrast renklerine sahip olduğundan emin olun. <hr> <strong {B}>Kontrast</strong> <strong {B}>Bilinmiyor</strong> <strong {C}>%(TEXT)</strong>',
+    WCAG_ADVICE: 'Kontrast oranı normal metin için en az 4,5:1 ve büyük metin için 3:1 olmalıdır.',
+    APCA_ADVICE: 'Kontrast değeri gövde metni için en az 60, büyük metin için ise 45 olmalıdır.',
     CONTRAST_INPUT: 'Bu girişteki metin arka planla yeterli kontrasta sahip değil. Kontrast oranı normal metin için en az 4,5:1 ve büyük metin için 3:1 olmalıdır. <hr> <strong {B}>Kontrast Oranı</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
   },
 };

@@ -183,7 +183,7 @@ export default {
     EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> con elementos no enfocables no debe tener <code>tabindex="-1"</code>. El contenido incrustado no será accesible mediante el teclado.',
 
     // Quality assurance
-    QA_BAD_LINK: 'Enlace incorrecto encontrado. El enlace parece apuntar a un entorno de desarrollo. <hr> Este enlace apunta a: <br> <strong {C}>%(LINK)</strong>',
+    QA_BAD_LINK: 'Enlace incorrecto encontrado. El enlace parece apuntar a un entorno de desarrollo. <hr> {L} <strong {C}>%(LINK)</strong>',
     QA_STRONG_ITALICS: 'Las etiquetas en negrita y cursiva tienen un significado semántico y <strong>no</strong> deben usarse para resaltar párrafos completos. El texto en negrita se debe utilizar para dar un fuerte <strong>énfasis</strong> a una palabra o frase. Se debe usar cursiva para resaltar nombres propios (es decir, títulos de libros y artículos), palabras extranjeras, citas. Las comillas largas deben formatearse como comillas en bloque.',
     QA_PDF: 'No se pueden verificar los archivos PDF para accesibilidad. Los archivos PDF se consideran contenido web y también deben ser accesibles. Los archivos PDF a menudo contienen problemas para las personas que usan lectores de pantalla (faltan etiquetas estructurales o etiquetas de campos de formulario) y personas con problemas de visión (el texto no se ajusta cuando se amplía). <ul><li>Si se trata de un formulario, considere usar un formulario HTML accesible como alternativa.</li><li>Si se trata de un documento, considere convertirlo en una página web.</li></ul> De lo contrario, consulte <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF para conocer la accesibilidad en Acrobat DC.</a>',
     QA_DOCUMENT: 'No se puede comprobar la accesibilidad del documento. Los documentos vinculados se consideran contenido web y también deben ser accesibles. Por favor revise manualmente este documento. <ul><li>Haz que tu <a href="https://support.google.com/docs/answer/6199477?hl=es">documento o presentación de Google Workspace sea más accesible.</a></li> <li>Haz que tus <a href="https://support.microsoft.com/es/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">documentos de Office sean más accesibles.</a></li></ul>',
@@ -234,7 +234,9 @@ export default {
     CONTRAST_COLOR: '¿Considera usar este color en su lugar?',
     CONTRAST_SIZE: '¿Considera aumentar el tamaño del texto para esta combinación de colores?',
     CONTRAST_ERROR: 'Este texto no tiene suficiente contraste con el fondo. La relación de contraste debe ser de al menos 4,5:1 para texto normal y 3:1 para texto grande. <hr> <strong {B}>Relación de contraste</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'Se desconoce el contraste de este texto y debe revisarse manualmente. Asegúrese de que el texto y el fondo tengan colores fuertes que contrasten. La relación de contraste debe ser de al menos 4,5:1 para texto normal y 3:1 para texto grande. <hr> <strong {B}>Relación de contraste</strong> <strong {B}>Desconocido</strong> <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'El contraste de este texto es desconocido y necesita ser revisado manualmente. Asegúrate de que el texto y el fondo tienen colores con un fuerte contraste. <hr> <strong {B}>Contraste</strong> <strong {B}>Desconocido</strong> <strong {C}>%(TEXT)</strong>',
+    WCAG_ADVICE: 'La relación de contraste debe ser de al menos 4.5:1 para texto normal y 3:1 para texto grande.',
+    APCA_ADVICE: 'El valor de contraste debe ser al menos 60 para el texto principal y 45 para el texto grande.',
     CONTRAST_INPUT: 'El texto dentro de esta entrada no tiene suficiente contraste con el fondo. La relación de contraste debe ser de al menos 4,5:1 para texto normal y 3:1 para texto grande. <hr> <strong {B}>Relación de contraste</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

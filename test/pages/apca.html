@@ -49,10 +49,9 @@
       background: hsl(115, 100%, 14%);
     }
 
-    /* Display P3
     .display-p3 {
       color: color(display-p3 1 0.3 0.2);
-    } */
+    }
 
     /* Lab */
     .lab {
@@ -97,6 +96,10 @@
     .weight700 {
       font-weight: 700;
     }
+
+    .display-p3 {
+      color: color(display-p3 1 0.3 0.2);
+    }
   </style>
 </head>
 
@@ -106,48 +109,10 @@
   </header>
   <main>
 
-    <div id="error-input-2">
-      <style>
-        #input-2 {
-          color: rgb(159, 201, 238);
-        }
-
-        #input-2::placeholder {
-          color: rgb(255, 149, 0);
-        }
-      </style>
-      <label for="input-2">Phone:</label>
-      <input type="text" id="input-2" placeholder="E.g. 416-967-711" />
+    <div id="nothing-display-p3-24-700">
+      <p class="display-p3 size24 weight700">This is using the Display P3 colour space.</p>
     </div>
 
-
-    <div id="error-black-white">
-      <p class="blackwhite">Black on white at 400 font weight.</p>
-    </div>
-
-    <div id="error-black-white">
-      <p class="blackyellow">Black on white at 400 font weight.</p>
-    </div>
-
-    <div id="error-rgb">
-      <p class="rgb">This is using the RGB colour space.</p>
-    </div>
-
-    <div id="error-rgb">
-      <p style="color:#ffff11;background:#ffff00">This is using the RGB colour space.</p>
-    </div>
-
-    <div id="error-rgb">
-      <p style="color:#151515;background:#000000">This is using the RGB colour space.</p>
-    </div>
-
-    <div id="error">
-      <p style="color:#999900;background:#ffff00;font-size:20px">Black on white at 400 font weight.</p>
-    </div>
-
-    <div id="error">
-      <p class="hsla">hsla colours</p>
-    </div>
 
   </main>
   <footer>No automated unit tests are on this page. Blank slate for testing!</footer>

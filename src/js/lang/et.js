@@ -210,7 +210,7 @@ export default {
     EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> koos fookustamata elementidega ei tohiks olla <code>tabindex="-1"</code>. Manustatud sisu ei ole klaviatuuriga juurdepääsetav.',
 
     // QA
-    QA_BAD_LINK: 'Leitud halb link. Link näib viitavat arenduskeskkonnale. <hr> See link viitab: <br> <strong {C}>%(LINK)</strong>',
+    QA_BAD_LINK: 'Leitud halb link. Link näib viitavat arenduskeskkonnale. <hr> {L} <strong {C}>%(LINK)</strong>',
     QA_IN_PAGE_LINK: 'Katkine samalehekülje link. Lingi sihtmärk ei vasta sellel lehel ühelegi elemendile.',
     QA_STRONG_ITALICS: 'Paks ja kursiivne märgistus on semantilise tähendusega ja neid ei tohiks <strong>ei</strong> kasutada tervete lõigete esiletõstmiseks. Häälestatud teksti tuleks kasutada selleks, et rõhutada sõna või fraasi tugevalt <strong>kõrge</strong>. Kursiivkirjas tuleks kasutada pärisnimede (st raamatute ja artiklite pealkirjade), võõrsõnade, jutumärkide esiletõstmiseks. Pikad tsitaadid tuleks vormistada plokktsitaatidena.',
     QA_PDF: 'Ei saa kontrollida PDF-failide juurdepääsetavust. PDF-failid loetakse veebisisuks ja need tuleb samuti juurdepääsetavaks muuta. PDF-failid sisaldavad sageli probleeme inimeste jaoks, kes kasutavad ekraanilugejaid (puuduvad struktuurilised märgised või vormiväljade märgised) ja inimeste jaoks, kellel on vaegnägemine (tekst ei voola suurendatud kujul tagasi). <ul><li>Kui tegemist on vormiga, kaaluge alternatiivina ligipääsetava HTML-vormi kasutamist.</li><li>Kui tegemist on dokumendiga, kaaluge selle teisendamist veebileheks.</li></ul> Muudel juhtudel kontrollige <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF-i ligipääsetavust Acrobat DC-s.</a>.',
@@ -261,7 +261,9 @@ export default {
     CONTRAST_COLOR: 'Kas kaalute selle värvi kasutamist?',
     CONTRAST_SIZE: 'Kas kaalute selle värvikombinatsiooni jaoks tekstisuuruse suurendamist?',
     CONTRAST_ERROR: 'See tekst ei ole taustaga piisavalt kontrastne. Kontrastsuse suhe peaks olema tavalise teksti puhul vähemalt 4,5:1 ja suure teksti puhul 3:1. <hr> <strong {B}>Kontrastsuhe</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'Selle teksti kontrastsus on teadmata ja see tuleb käsitsi üle vaadata. Veenduge, et teksti ja tausta värvid oleksid tugevalt kontrastsed. Kontrastsuse suhe peaks olema tavalise teksti puhul vähemalt 4,5:1 ja suure teksti puhul 3:1. <hr> <strong {B}>Kontrastsuhe</strong> <strong {B}>Teadmata</strong> <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'Selle teksti kontrastsus on teadmata ja vajab käsitsi ülevaatamist. Veenduge, et tekstil ja taustal on tugev kontrast. <hr> <strong {B}>Kontrast</strong> <strong {B}>Teadmata</strong> <strong {C}>%(TEXT)</strong>',
+    WCAG_ADVICE: 'Kontrastsuhe peaks olema vähemalt 4.5:1 tavalise teksti puhul ja 3:1 suure teksti puhul.',
+    APCA_ADVICE: 'Kontrasti väärtus peaks olema vähemalt 60 keha teksti puhul ja 45 suure teksti puhul.',
     CONTRAST_INPUT: 'Selle sisendi tekst ei ole taustaga piisavalt kontrastne. Kontrastsuse suhe peaks olema tavalise teksti puhul vähemalt 4,5:1 ja suure teksti puhul 3:1. <hr> <strong {B}>Kontrastsuhe</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

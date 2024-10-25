@@ -1,4 +1,5 @@
 import { alphaBlend, sRGBtoY, APCAcontrast, fontLookupAPCA } from 'apca-w3';
+import { colorParsley } from 'colorparsley';
 import Constants from '../utils/constants';
 import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
@@ -44,17 +45,22 @@ export function convertToRGBA(color, opacity) {
 
   // Let the browser do conversion in rgb for non-supported colour spaces.
   if (!colorString.startsWith('rgb')) {
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    context.fillStyle = colorString;
-    context.fillRect(0, 0, 1, 1);
-    const imageData = context.getImageData(0, 0, 1, 1);
-    [r, g, b, a] = imageData.data;
-    a = (a / 255).toFixed(2); // Convert alpha to range [0, 1]
+    if (colorString.startsWith('color(rec2020')) {
+      return 'unsupported'; // Unsupported color space.
+    }
+    if (colorString.startsWith('color(display-p3') || colorString.startsWith('#')) {
+      [r, g, b, a] = colorParsley(colorString);
+    } else {
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      context.fillStyle = colorString;
+      context.fillRect(0, 0, 1, 1);
+      const imageData = context.getImageData(0, 0, 1, 1);
+      [r, g, b, a] = imageData.data;
+      a = (a / 255).toFixed(2); // Convert alpha to range [0, 1]
+    }
   } else {
-    // Parse RGB or RGBA values from the color string
-    const rgbaArray = colorString.match(/[\d.]+/g).map(Number);
-    [r, g, b, a] = rgbaArray.length === 4 ? rgbaArray : [...rgbaArray, 1];
+    [r, g, b, a] = colorParsley(colorString);
   }
 
   // If element has opacity attribute, amend the foreground text color string.
@@ -476,14 +482,22 @@ export default function checkContrast(results, option) {
     const text = textString.trim();
 
     // Inputs to check
-    const checkInputs = ['SELECT', 'INPUT', 'TEXTAREA'].includes($el.tagName);
+    const checkInputs = ['OPTION', 'INPUT', 'TEXTAREA'].includes($el.tagName);
 
     // Only check elements with text and inputs.
     if (text.length !== 0 || checkInputs) {
-      if (background === 'image') {
-        // Warnings for elements with a background image, ignoring inputs.
-        if (!checkInputs && !$el.closest('nav')) {
-          contrastResults.push({ $el, type: 'unknown' });
+      if (color === 'unsupported' || background === 'unsupported') {
+        contrastResults.push({ $el, type: 'unknown' });
+      } else if (background === 'image' || $el.tagName === 'text') {
+        // If adjacent nodes share the same background image, push a single warning.
+        const prevEl = Elements.Found.Contrast[i - 1];
+        if (!prevEl || prevEl.parentNode !== $el.parentNode) {
+          const nextEl = Elements.Found.Contrast[i + 1];
+          const elementToPush = nextEl && nextEl.parentNode === $el.parentNode ? $el.parentNode : $el;
+          contrastResults.push({ $el: elementToPush, type: 'unknown' });
+
+          // If shared parent node, skip over the node.
+          if (elementToPush === $el.parentNode) i += 1;
         }
       } else if (isHidden || getHex(color) === getHex(background)) {
         // Ignore visually hidden elements.
@@ -552,8 +566,10 @@ export default function checkContrast(results, option) {
         break;
       case 'input':
         if (option.checks.CONTRAST_INPUT) {
+          const element = ($el.tagName === 'OPTION')
+            ? $el.closest('datalist, select, optgroup') : $el;
           results.push({
-            element: $el,
+            element,
             type: option.checks.CONTRAST_INPUT.type || 'error',
             content: option.checks.CONTRAST_INPUT.content
               || Lang.sprintf('CONTRAST_INPUT', ratio) + advice,
@@ -583,11 +599,15 @@ export default function checkContrast(results, option) {
         break;
       case 'unknown':
         if (option.checks.CONTRAST_WARNING) {
+          const element = ($el.tagName === 'OPTION')
+            ? $el.closest('datalist, select, optgroup') : $el;
+          const warningAdvice = (option.contrastAPCA)
+            ? Lang.sprintf('APCA_ADVICE') : Lang.sprintf('WCAG_ADVICE');
           results.push({
-            element: $el,
+            element,
             type: option.checks.CONTRAST_WARNING.type || 'warning',
             content: option.checks.CONTRAST_WARNING.content
-              || Lang.sprintf('CONTRAST_WARNING', sanitizedText),
+              || `${Lang.sprintf('CONTRAST_WARNING', sanitizedText)} <hr aria-hidden="true"> ${warningAdvice}`,
             inline: false,
             position: 'beforebegin',
             dismiss: Utils.prepareDismissal(`CONTRAST${sanitizedText}`),

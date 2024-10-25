@@ -217,7 +217,7 @@ export default {
     EMBED_UNFOCUSABLE: 'Azoknak a <code>&lt;iframe&gt;</code>-nek, amelyek nem fókuszálható elemekkel rendelkeznek, nem kell <code>tabindex="-1"</code> tulajdonságot rendelni. A beágyazott tartalom nem lesz billentyűzettel elérhető.',
 
     // QA
-    QA_BAD_LINK: 'Rossz linket találtunk. Úgy tűnik, hogy a link egy fejlesztői környezetre mutat. <hr> Ez a link a következőre mutat: <br> <strong {C}>%(LINK)</strong>',
+    QA_BAD_LINK: 'Rossz linket találtunk. Úgy tűnik, hogy a link egy fejlesztői környezetre mutat. <hr> {L} <strong {C}>%(LINK)</strong>',
     QA_IN_PAGE_LINK: 'Sérült azonos oldalú link. A hivatkozás célja nem egyezik meg egyetlen elemmel sem ezen az oldalon.',
     QA_STRONG_ITALICS: 'A vastag és dőlt betűs címkéknek szemantikai jelentésük van, és <strong>nem</strong> szabad egész bekezdések kiemelésére használni őket. A félkövérrel kiemelt szöveget egy szó vagy kifejezés erős <strong>kiemelésére</strong> kell használni. A dőlt betűt a tulajdonnevek (pl. könyv- és cikkcímek), idegen szavak, idézőjelek kiemelésére kell használni. A hosszú idézeteket blokkidézetként kell formázni.',
     QA_PDF: 'Nem lehet ellenőrizni a PDF-ek hozzáférhetőségét. A PDF-ek webes tartalomnak minősülnek, és azokat is hozzáférhetővé kell tenni. A PDF-ek gyakran tartalmaznak problémákat a képernyőolvasót használók (hiányzó szerkezeti címkék vagy hiányzó űrlapmező-címkék) és a gyengén látók (a szöveg nagyításkor nem folyik vissza) számára. <ul><li>Ha ez egy űrlap, fontolja meg egy hozzáférhető HTML űrlap használatát alternatívaként.</li><li>Ha ez egy dokumentum, fontolja meg a weboldallá alakítását.</li></ul>Máskülönben ellenőrizze a <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF hozzáférhetőségét az Acrobat DC-ben.</a>Megközelíthetőségét az <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF-ben.</a>.',
@@ -268,7 +268,9 @@ export default {
     CONTRAST_COLOR: 'Fontolja meg ennek a színnek a használatát?',
     CONTRAST_SIZE: 'Fontolja meg a szövegméret növelését ennek a színkombinációnak?',
     CONTRAST_ERROR: 'Ez a szöveg nem elég kontrasztos a háttérrel szemben. A kontrasztaránynak normál szöveg esetén legalább 4,5:1, nagyméretű szöveg esetén pedig 3:1 arányúnak kell lennie. <hr> <strong {B}>Kontrasztarány</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'Ennek a szövegnek a kontrasztja ismeretlen, és kézzel kell ellenőrizni. Biztosítsa, hogy a szöveg és a háttér színei erősen kontrasztosak legyenek. A kontrasztaránynak normál szöveg esetén legalább 4,5:1, nagyméretű szöveg esetén pedig 3:1 arányúnak kell lennie. <hr> <strong {B}>Kontrasztarány</strong> <strong {B}>Ismeretlen</strong> <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'Ennek a szövegnek az ellentéte ismeretlen, és manuálisan kell ellenőrizni. Győződjön meg róla, hogy a szöveg és a háttér erős ellentétes színekkel rendelkezik. <hr> <strong {B}>Kontraszt</strong> <strong {B}>Ismeretlen</strong> <strong {C}>%(TEXT)</strong>',
+    WCAG_ADVICE: 'A kontrasztarány legyen legalább 4,5:1 a normál szövegnél és 3:1 a nagy szövegnél.',
+    APCA_ADVICE: 'A kontrasztérték legyen legalább 60 a törzsszövegnél, és 45 a nagy szövegnél.',
     CONTRAST_INPUT: 'A szövegnek ebben a bevitelben nincs elég kontrasztja a háttérrel. A kontrasztaránynak normál szöveg esetén legalább 4,5:1, nagyméretű szöveg esetén pedig 3:1 arányúnak kell lennie. <hr> <strong {B}>Kontrasztarány</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

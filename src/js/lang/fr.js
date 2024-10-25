@@ -180,7 +180,7 @@ export default {
     EMBED_UNFOCUSABLE: 'Les <code>&lt;iframe&gt;</code> avec des éléments non focusables ne doivent pas avoir de <code>tabindex="-1"</code>. Le contenu incorporé ne sera pas accessible au clavier.',
 
     // Quality assurance
-    QA_BAD_LINK: 'Lien incorrect trouvé. Le lien semble diriger vers un environnement de développement. Assurez vous que le lien ne contient pas <em>dev</em> ou <em>wp-admin</em> dans l’adresse URL. <hr> Le lien dirige vers: <br> <strong {C}>%(LINK)</strong>',
+    QA_BAD_LINK: 'Lien incorrect trouvé. Le lien semble diriger vers un environnement de développement.  <hr> {L} <strong {C}>%(LINK)</strong>',
     QA_IN_PAGE_LINK: 'Lien interne cassé. La cible du lien ne correspond à aucun élément de cette page.',
     QA_STRONG_ITALICS: 'Les balises Gras et Italique ont une signification sémantique et <strong>ne devraient pas</strong> être utiliser pour surligner des paragraphes en entier. Les textes en Gras doivent être utilisés pour mettre <strong>l’emphase</strong> sur un mot ou une phrase. Les textes en Italiques doivent être utilisés pour surligneur les noms propres (ex. livres et titre d’articles), les mots étrangers et les citations.  Les citations longues doivent être formatées comme une citation en bloc.',
     QA_PDF: 'Impossible de vérifier l’accessibilité des fichiers PDF. Les PDFSs sont considérés comme contenu web et doivent être accessible comme tel. Les PDFs contiennent souvent des erreurs pour les gens qui utilisent les lecteurs d’écrans (balises structurelles manquante ou des champs de formulaire manquants) et les gens qui ont une malvoyance (le texte ne resurgit pas lorsqu’il est agrandi). <ul><li>S’il s’agit d’un formulaire, utilisez un formulaire HTML comme alternative.</li><li>S’il s’agit d’un document, convertissez-le en page web.</li></ul> Sinon, veuillez vérifier <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF pour assurer l’accessibilité dans Acrobat DC.</a>',
@@ -231,7 +231,9 @@ export default {
     CONTRAST_COLOR: 'Envisagez d\'utiliser cette couleur à la place ?',
     CONTRAST_SIZE: 'Envisagez d\'augmenter la taille du texte pour cette combinaison de couleurs ?',
     CONTRAST_ERROR: 'Ce texte n’est pas suffisamment contrasté avec l’arrière-plan. Le ratio du contraste devrait être au moins de 4.5:1 pour le texte normal et 3:1 pour les textes plus grands. <hr> <strong {B}>Rapport de contraste</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'Le contraste de ce texte est inconnu et doit être manuellement révisé. Assurez-vous que le texte et l’arrière-plan représentent des couleurs contrastantes. Le ratio du con-traste devrait être au moins de 4.5:1 pour les textes normaux et 3:1 pour les textes plus grands. <hr> <strong {B}>Rapport de contraste</strong> <strong {B}>Inconnu</strong> <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'Le contraste de ce texte est inconnu et doit être examiné manuellement. Assurez-vous que le texte et l\'arrière-plan ont des couleurs fortement contrastées. <hr> <strong {B}>Contraste</strong> <strong {B}>Inconnu</strong> <strong {C}>%(TEXT)</strong>',
+    WCAG_ADVICE: 'Le rapport de contraste doit être d\'au moins 4,5:1 pour le texte normal et de 3:1 pour le texte de grande taille.',
+    APCA_ADVICE: 'La valeur du contraste doit être d\'au moins 60 pour le texte principal et 45 pour le texte de grande taille.',
     CONTRAST_INPUT: 'Le texte à l’intérieur de cette entrée n’est pas suffisamment contrasté avec l’arrière-plan. Le ratio du contraste devraient être au moins de 4.5:1 pour le texte normal et 3:1 pour les textes plus grands. <hr> <strong {B}>Rapport de contraste</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

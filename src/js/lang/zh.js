@@ -205,7 +205,7 @@ export default {
     EMBED_UNFOCUSABLE: '带有无法聚焦元素的 <code>&lt;iframe&gt;</code> 不应具有 <code>tabindex="-1"</code>。嵌入内容将无法通过键盘访问。',
 
     // QA
-    QA_BAD_LINK: '发现坏的链接。链接似乎指向一个开发环境。<hr> 这个链接指向: <br> <strong {C}>%(LINK)</strong>',
+    QA_BAD_LINK: '发现坏的链接。链接似乎指向一个开发环境。<hr> {L} <strong {C}>%(LINK)</strong>',
     QA_IN_PAGE_LINK: '破损的同页链接。链接目标与此页面上的任何元素都不匹配。',
     QA_STRONG_ITALICS: '粗体和斜体标签具有语义, 不应<strong></strong>用于突出整个段落。加粗的文字应该用于对一个词或短语进行强烈的<strong>强调</strong>。斜体字应该用来突出专有名词 (即书名和文章标题) 、外国词、引号。长篇引语应采用块状引语的格式。',
     QA_PDF: '无法检查PDF的可访问性。PDF被认为是网络内容, 也必须做到无障碍。对于使用屏幕阅读器的人 (缺失结构标签或缺失表格字段标签) 和低视力的人 (文本在放大时不回流) 来说, PDF经常包含一些问题。<ul><li>如果这是一个表格, 请考虑使用可访问的HTML表格作为替代。</li><li>如果这是一个文档, 请考虑将其转换为网页。</li></ul>否则, 请在Acrobat DC中检查<a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF的可访问性。</a>',
@@ -256,7 +256,9 @@ export default {
     CONTRAST_COLOR: '考虑改用此颜色？',
     CONTRAST_SIZE: '考虑为此颜色组合增大文本大小？',
     CONTRAST_ERROR: '这个文本与背景的对比度不够。普通文本的对比度至少应该是4.5:1, 大文本的对比度应该是3:1。<hr> <strong {B}>对比度比率</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: '该文本的对比度不明, 需要人工审查。确保文字和背景有强烈的颜色对比。正常文本的对比度应至少为4.5:1, 大型文本为3:1。<hr> <strong {B}>对比度</strong> <strong {B}>未知</strong> <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: '该文本的对比度未知，需要手动审查。请确保文本和背景具有强烈的对比色。<hr> <strong {B}>对比度</strong> <strong {B}>未知</strong> <strong {C}>%(TEXT)</strong>',
+    WCAG_ADVICE: '正常文本的对比度应至少为4.5:1，大文本的对比度应至少为3:1。',
+    APCA_ADVICE: '正文的对比值应至少为60，大文本的对比值应至少为45。',
     CONTRAST_INPUT: '该输入的文字与背景的对比度不够。普通文本的对比度应该至少为4.5:1, 大文本的对比度应该为3:1。<hr> <strong {B}>对比度比率</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

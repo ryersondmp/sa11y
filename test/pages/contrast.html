@@ -70,6 +70,10 @@
     }
 
     /* Named color */
+    .aliceblue {
+      color: aliceblue;
+    }
+
     .rebeccapurple {
       color: rebeccapurple;
     }
@@ -100,6 +104,158 @@
   </header>
   <main>
 
+    <h2>Background images</h2>
+    <h3>Multiple nodes shared background</h3>
+    <div id="warning-contrast-1">
+      <div class="background-image">
+        <h2>Lorem ipsum</h2>
+        <script>const test123 = "a variable";</script> <noscript>Some noscript text</noscript>
+        <p>Adipisci, quidem! Expedita nulla excepturi
+          reprehenderit cumque perferendis? Commodi odio, voluptatem nobis perspiciatis, modi facilis nostrum.</p>
+        <p>Reprehenderit aperiam incidunt ad, fugiat eligendi!</p>
+        <a href="https://www.example.com?sdsx">Learn more about example</a>
+      </div>
+    </div>
+
+    <h3>Single node within background image</h3>
+    <div id="warning-contrast-2">
+      <p class="background-image">Text on background image requires manual review!</p>
+    </div>
+
+    <h3>No text within background image</h3>
+    <div id="nothing-background-image">
+      <p class="background-image"></p>
+    </div>
+
+    <h2>1:1 ratio</h2>
+    <p>1:1 means invisible to all, or potentially false positive.</p>
+    <h3>Normal size text</h3>
+    <div id="nothing-contrast-1">
+      <p style="color: var(--bg-example);">
+        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Numquam quasi ipsa assumenda aliquam dolore amet
+        mollitia similique ab consequuntur magnam id veritatis explicabo accusamus, ipsum iusto ea eligendi
+        necessitatibus
+        iure?
+      </p>
+    </div>
+
+    <h4>Large size text</h4>
+    <div id="nothing-contrast-2">
+      <p style="color: var(--bg-example);font-size:5em">
+        Has 0 opacity.
+      </p>
+    </div>
+
+    <h2>Opacity</h2>
+    <h3>Text has low opacity via explicit <code>opacity</code> attribute</h3>
+    <div id="error-opacity">
+      <code>opacity: 0.05;</code>
+      <p style="font-size:4em; opacity: 0.05;">
+        Text has 0.5 opacity.
+      </p>
+    </div>
+
+    <h3>Opacity is set to 0</h3>
+    <div id="nothing-opacity">
+      <code>opacity: 0;</code>
+      <p style="font-size:5em; opacity: 0;">
+        Lorem ipsum dolor.
+      </p>
+    </div>
+
+    <h2>Inside the shadow dom</h2>
+    <div id="error-shadow-dom">
+      <div id="webcomponent">
+        <template shadowrootmode="open">
+          <div style="background-color:hotpink;padding:20px">
+            <h3 style="color:white">Heading in the shadow dom</h3>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <h2>Inputs</h2>
+
+    <h3>Colour input</h3>
+    <div id="nothing-input-1">
+      <label for="input-color">Color:</label>
+      <input id="input-color" type="color" />
+    </div>
+
+    <h3>Range</h3>
+    <div id="nothing-input-2">
+      <label for="input-range">Range</label>
+      <input id="input-range" type="range" />
+    </div>
+
+    <h3>Meter</h3>
+    <div id="nothing-input-3">
+      <label for="fuel">Fuel</label>
+      <meter id="fuel" min="0" max="100" low="33" high="66" optimum="80" value="50">at 50/100</meter>
+    </div>
+
+    <h3>Progress</h3>
+    <div id="nothing-input-4">
+      <label for="progress-bar">Uploading Document</label>
+      <progress id="progress-bar" value="70" max="100">70 %</progress>
+    </div>
+
+    <h3><code>&lt;select&gt;</code> with low contrast</h3>
+    <div id="error-input-1">
+      <label for="pet-select-a">Choose a pet:</label>
+      <select id="pet-select-a" style="color:red;">
+        <option value="" style="color:aliceblue !important">Please choose an option</option>
+        <option value="dog">Dog</option>
+        <option value="cat">Cat</option>
+        <option value="hamster">Hamster</option>
+        <option value="parrot">Parrot</option>
+        <option value="spider">Spider</option>
+        <option value="goldfish">Goldfish</option>
+      </select>
+    </div>
+
+    <h3><code>&lt;select&gt;</code> element with background image</h3>
+    <div id="warning-contrast-select">
+      <label for="pet-select">Choose a pet:</label>
+      <select id="pet-select" class="background-image">
+        <option value="">Please choose an option</option>
+        <option value="dog">Dog</option>
+        <option value="cat">Cat</option>
+        <option value="hamster">Hamster</option>
+        <option value="parrot">Parrot</option>
+        <option value="spider">Spider</option>
+        <option value="goldfish">Goldfish</option>
+      </select>
+    </div>
+
+    <h3>Input</h3>
+    <div id="error-input-1">
+      <label for="input-1">Name:</label>
+      <input type="text" id="input-1" />
+    </div>
+
+    <div id="error-input-2">
+      <style>
+        #input-2 {
+          color: #676767;
+        }
+
+        #input-2::placeholder {
+          color: lightgrey
+        }
+      </style>
+      <label for="input-2">Phone:</label>
+      <input type="text" id="input-2" placeholder="E.g. 416-967-711" />
+    </div>
+
+    <h2>Text area</h2>
+    <div id="error-text-area">
+      <label for="textarea-a">Address:</label>
+      <textarea class="rgb" id="textarea-a">Test...</textarea>
+    </div>
+
+
+
     <h2>Normal text (400 at 16px)</h2>
 
     <h3>Testing extremes 1.01:1 ratio</h3>
@@ -110,7 +266,9 @@
 
     <h3>RGB</h3>
     <div id="error-rgb">
-      <p class="rgb">This is using the RGB colour space.</p>
+      <p class="rgb">This is using the RGB colour space.
+        <script>const test12s3 = "a variable";</script> <noscript>Some noscript text</noscript>
+      </p>
     </div>
 
     <h3>RGBA</h3>
@@ -165,13 +323,13 @@
       <p class="hwb">This is using the HWB colour space.</p>
     </div>
 
-    <h3>Named Color (RebeccaPurple)</h3>
-    <div id="error-rebeccapurple">
-      <p class="rebeccapurple">This is using the named colour RebeccaPurple.</p>
+    <h3>Named color</h3>
+    <div id="error-aliceblue">
+      <p class="aliceblue">This is using the named colour AliceBlue</p>
     </div>
 
     <h3>Rec. 2020</h3>
-    <div id="error-rec2020">
+    <div id="warning-rec2020">
       <p class="rec2020">This is using the Rec. 2020 colour space.</p>
     </div>
 
@@ -194,12 +352,12 @@
     </div>
 
     <h3>HSL</h3>
-    <div id="error-hsl">
+    <div id="nothing-hsl">
       <p class="hsl size24">This is using the HSL colour space.</p>
     </div>
 
     <h3>HSLA</h3>
-    <div id="error-hsla">
+    <div id="nothing-hsla">
       <p class="hsla size24">This is using the HSLA colour space.</p>
     </div>
 
@@ -219,17 +377,17 @@
     </div>
 
     <h3>OKLab</h3>
-    <div id="error-oklab">
+    <div id="nothing-oklab">
       <p class="oklab size24">This is using the OKLab colour space.</p>
     </div>
 
     <h3>OKLCH</h3>
-    <div id="error-oklch">
+    <div id="nothing-oklch">
       <p class="oklch size24">This is using the OKLCH colour space.</p>
     </div>
 
     <h3>HWB</h3>
-    <div id="error-hwb">
+    <div id="nothing-hwb">
       <p class="hwb size24">This is using the HWB colour space.</p>
     </div>
 
@@ -247,7 +405,7 @@
 
     <h2>Large text (700 at 24px)</h2>
     <h3>RGB</h3>
-    <div id="nothing-rgb-24-700">
+    <div id="error-rgb-24-700">
       <p class="rgb size24 weight700">This is using the RGB colour space.</p>
     </div>
 
@@ -257,7 +415,7 @@
     </div>
 
     <h3>Hex</h3>
-    <div id="nothing-hex-24-700">
+    <div id="error-hex-24-700">
       <p class="hex size24 weight700">This is using the Hex colour space.</p>
     </div>
 
@@ -267,22 +425,22 @@
     </div>
 
     <h3>HSLA</h3>
-    <div id="error-hsla-24-700">
+    <div id="nothing-hsla-24-700">
       <p class="hsla size24 weight700">This is using the HSLA colour space.</p>
     </div>
 
     <h3>Display P3</h3>
-    <div id="nothing-display-p3-24-700">
+    <div id="error-display-p3-24-700">
       <p class="display-p3 size24 weight700">This is using the Display P3 colour space.</p>
     </div>
 
     <h3>Lab</h3>
-    <div id="nothing-lab-24-700">
+    <div id="error-lab-24-700">
       <p class="lab size24 weight700">This is using the Lab colour space.</p>
     </div>
 
     <h3>LCH</h3>
-    <div id="nothing-lch-24-700">
+    <div id="error-lch-24-700">
       <p class="lch size24 weight700">This is using the LCH colour space.</p>
     </div>
 
@@ -307,7 +465,7 @@
     </div>
 
     <h3>Rec. 2020</h3>
-    <div id="nothing-rec2020-24-700">
+    <div id="warning-rec2020-24-700">
       <p class="rec2020 size24 weight700">This is using the Rec. 2020 colour space.</p>
     </div>
 
@@ -341,152 +499,6 @@
     <h2>Color mix</h2>
     <div id="error-color-mix">
       <p class="color-mix">Colour mix</p>
-    </div>
-
-    <h2>Paragraph with node types that are not text nodes</h2>
-    <div id="error">
-      <p class="color-mix">Colour mix <style>
-          .testing-testing {
-            asdasds
-          }
-        </style>
-      </p>
-    </div>
-    <div id="error">
-      <p class="color-mix">Some script and noscript elements
-        <script>const test123 = "a variable";</script> <noscript>Some noscript text</noscript>
-      </p>
-    </div>
-
-    <h2>Date</h2>
-    <div id="error-date">
-      <label for="start">Start date:</label>
-      <input type="date" id="start" name="trip-start" value="2018-07-22" min="2018-01-01" max="2018-12-31" />
-    </div>
-    <h2>Colour input</h2>
-    <div id="nothing-color-input">
-      <label for="input-color">Color:</label>
-      <input id="input-color" type="color" />
-    </div>
-
-    <h2>Colour</h2>
-    <div id="nothing-range">
-      <label for="input-range">Range</label>
-      <input id="input-range" type="range" />
-    </div>
-
-    <h2>Input</h2>
-    <div id="error-input-1">
-      <label for="input-1">Name:</label>
-      <input type="text" id="input-1" />
-    </div>
-
-    <div id="error-input-2">
-      <style>
-        #input-2 {
-          color: #676767;
-        }
-
-        #input-2::placeholder {
-          color: lightgrey
-        }
-      </style>
-      <label for="input-2">Phone:</label>
-      <input type="text" id="input-2" placeholder="E.g. 416-967-711" />
-    </div>
-
-    <h2>Text area</h2>
-    <div id="error-text-area">
-      <label for="textarea-a">Address:</label>
-      <textarea class="rgb" id="textarea-a">Test...</textarea>
-    </div>
-
-    <h2>Background image</h2>
-    <div id="warning-contrast">
-      <p class="background-image">Text on background image requires manual review!</p>
-    </div>
-
-    <div id="warning-bg-image-nav">
-      <nav>
-        <p class="background-image">Nested within a <code>&lt;nav&gt;</code></p>
-      </nav>
-    </div>
-
-    <div id="warning-bg-image-nav">
-      <p class="background-image"></p>
-    </div>
-
-    <h3>1:1 contrast ratio should be warning instead of error</h3>
-    <p>In most cases, any time there's been a 1:1 ratio it's because it's a background image... as no one should
-      intentionally make something 1:1...</p>
-    <div id="warning-contrast-1">
-      <p style="color: var(--bg-example);">
-        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Numquam quasi ipsa assumenda aliquam dolore amet
-        mollitia similique ab consequuntur magnam id veritatis explicabo accusamus, ipsum iusto ea eligendi
-        necessitatibus
-        iure?
-      </p>
-    </div>
-    <h4>Large size text with 1:1</h4>
-    <div id="warning-contrast-2">
-      <p style="color: var(--bg-example);font-size:5em">
-        Has 0 opacity.
-      </p>
-    </div>
-
-    <h4>Text has low opacity via explicit <code>opacity</code> attribute</h4>
-    <div id="error-opacity">
-      <code>opacity: 0.05;</code>
-      <p style="font-size:4em; opacity: 0.05;">
-        Text has 0.5 opacity.
-      </p>
-    </div>
-
-    <h2>Opacity is set to 0</h2>
-    <div id="warning-opacity">
-      <code>opacity: 0;</code>
-      <p style="font-size:5em; opacity: 0;">
-        Lorem ipsum dolor.
-      </p>
-    </div>
-
-    <h2><code>&lt;select&gt;</code> element with background image</h2>
-    <div id="error-contrast-4">
-      <label for="pet-select-a">Choose a pet:</label>
-      <select id="pet-select-a" style="color:red;">
-        <option value="">Please choose an option</option>
-        <option value="dog">Dog</option>
-        <option value="cat">Cat</option>
-        <option value="hamster">Hamster</option>
-        <option value="parrot">Parrot</option>
-        <option value="spider">Spider</option>
-        <option value="goldfish">Goldfish</option>
-      </select>
-    </div>
-
-    <h2><code>&lt;select&gt;</code> element with background image</h2>
-    <div id="nothing-contrast-4">
-      <label for="pet-select">Choose a pet:</label>
-      <select id="pet-select" style="background-image: url(clientlib-site/images/google.gif);">
-        <option value="">Please choose an option</option>
-        <option value="dog">Dog</option>
-        <option value="cat">Cat</option>
-        <option value="hamster">Hamster</option>
-        <option value="parrot">Parrot</option>
-        <option value="spider">Spider</option>
-        <option value="goldfish">Goldfish</option>
-      </select>
-    </div>
-
-
-
-    <h2>Inside the shadow dom!</h2>
-    <div id="webcomponent">
-      <template shadowrootmode="open">
-        <div style="background-color:hotpink;padding:20px">
-          <h3 style="color:white">Heading in the shadow dom</h3>
-        </div>
-      </template>
     </div>
   </main>
 

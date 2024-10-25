@@ -209,7 +209,7 @@ export default {
     EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> dengan elemen yang tidak dapat difokuskan seharusnya tidak memiliki <code>tabindex="-1"</code>. Konten yang disematkan tidak akan dapat diakses menggunakan keyboard.',
 
     // QA
-    QA_BAD_LINK: 'Tautan buruk ditemukan. Tautan yang muncul mengarah ke lingkungan pengembangan. <hr> Tautan ini mengarah ke: <br> <strong {C}>%(LINK)</strong>',
+    QA_BAD_LINK: 'Tautan buruk ditemukan. Tautan yang muncul mengarah ke lingkungan pengembangan. <hr> {L} <strong {C}>%(LINK)</strong>',
     QA_IN_PAGE_LINK: 'Tautan dalam halaman rusak. Tujuan tautan tidak cocok dengan elemen apa pun di halaman ini.',
     QA_STRONG_ITALICS: 'Tag cetak tebal dan miring memiliki makna semantik, dan tidak boleh digunakan untuk menyorot seluruh paragraf. Teks yang dicetak tebal harus digunakan untuk memberikan <strong>penekanan</strong> yang kuat pada sebuah kata atau frasa. Huruf miring harus digunakan untuk menyoroti nama diri (misalnya judul buku dan artikel), kata-kata asing, kutipan. Kutipan panjang harus diformat sebagai kutipan blok.',
     QA_PDF: 'Tidak dapat memeriksa aksesibilitas PDF. PDF dianggap sebagai konten web dan harus dapat diakses juga. PDF sering kali mengandung masalah bagi orang yang menggunakan pembaca layar (tag struktural yang hilang atau label bidang formulir yang hilang) dan orang yang memiliki penglihatan rendah (teks tidak dapat dilihat ketika diperbesar). <ul><li>Jika ini adalah formulir, pertimbangkan untuk menggunakan formulir HTML yang dapat diakses sebagai alternatif.</li><li>Jika ini adalah dokumen, pertimbangkan untuk mengonversinya menjadi halaman web.</li></ul> Jika tidak, periksa <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF untuk aksesibilitas di Acrobat DC.</a>',
@@ -260,7 +260,9 @@ export default {
     CONTRAST_COLOR: 'Pertimbangkan untuk menggunakan warna ini sebagai gantinya?',
     CONTRAST_SIZE: 'Pertimbangkan untuk memperbesar ukuran teks untuk kombinasi warna ini?',
     CONTRAST_ERROR: 'Teks ini tidak memiliki kontras yang cukup dengan latar belakang. Rasio kontras minimal 4,5:1 untuk teks normal dan 3:1 untuk teks besar. <hr> <strong {B}>Rasio Kontras</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'Kontras teks ini tidak diketahui dan perlu ditinjau secara manual. Pastikan teks dan latar belakang memiliki warna kontras yang kuat. Rasio kontras setidaknya 4,5:1 untuk teks normal dan 3:1 untuk teks besar. <hr> <strong {B}>Rasio Kontras</strong> <strong {B}>Tidak Diketahui</strong> <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'Kontras teks ini tidak diketahui dan perlu ditinjau secara manual. Pastikan teks dan latar belakang memiliki warna kontras yang kuat. <hr> <strong {B}>Kontras</strong> <strong {B}>Tidak Diketahui</strong> <strong {C}>%(TEXT)</strong>',
+    WCAG_ADVICE: 'Rasio kontras harus setidaknya 4,5:1 untuk teks normal dan 3:1 untuk teks besar.',
+    APCA_ADVICE: 'Nilai kontras harus setidaknya 60 untuk teks utama dan 45 untuk teks besar.',
     CONTRAST_INPUT: 'Teks dalam input ini tidak memiliki kontras yang cukup dengan latar belakang. Rasio kontras minimal 4,5:1 untuk teks normal dan 3:1 untuk teks besar. <hr> <strong {B}>Rasio Kontras</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

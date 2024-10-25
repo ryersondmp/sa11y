@@ -205,7 +205,7 @@ export default {
     EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> s nezaměřitelnými prvky by nemělo mít <code>tabindex="-1"</code>. Vložený obsah nebude přístupný klávesnicí.',
 
     // QA
-    QA_BAD_LINK: 'Nalezen špatný odkaz. Zdá se, že odkaz vede na vývojové prostředí. <hr> Tento odkaz odkazuje na: <br> <strong {C}>%(LINK)</strong>',
+    QA_BAD_LINK: 'Nalezen špatný odkaz. Zdá se, že odkaz vede na vývojové prostředí. <hr> {L} <strong {C}>%(LINK)</strong>',
     QA_IN_PAGE_LINK: 'Porušený odkaz na stejnou stránku. Cíl odkazu neodpovídá žádnému prvku na této stránce.',
     QA_STRONG_ITALICS: 'Tučné písmo a kurzíva mají sémantický význam a neměly by se <strong>používat</strong> ke zvýraznění celých odstavců. Tučný text by měl být používán k výraznému <strong>zdůraznění</strong> slova nebo slovního spojení. Kurzíva by se měla používat ke zvýraznění vlastních jmen (tj. názvů knih a článků), cizích slov, citátů. Dlouhé citace by měly být formátovány jako blokové citace.',
     QA_PDF: 'Nelze zkontrolovat přístupnost souborů PDF. Soubory PDF jsou považovány za webový obsah a musí být také zpřístupněny. Soubory PDF často obsahují problémy pro lidi, kteří používají čtečky obrazovky (chybějící strukturální značky nebo chybějící popisky formulářových polí), a pro lidi se slabým zrakem (text se při zvětšení nezvětšuje). <ul><li>Jestliže se jedná o formulář, zvažte jako alternativu použití přístupného formuláře HTML.</li><li>Jestliže se jedná o dokument, zvažte jeho převedení na webovou stránku.</li></ul>V opačném případě zkontrolujte <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF pro přístupnost v Acrobatu DC.</a>.',
@@ -256,7 +256,9 @@ export default {
     CONTRAST_COLOR: 'Zvažte použití této barvy místo?',
     CONTRAST_SIZE: 'Zvažte zvětšení velikosti textu pro tuto barevnou kombinaci?',
     CONTRAST_ERROR: 'Tento text není dostatečně kontrastní s pozadím. Kontrastní poměr by měl být alespoň 4,5:1 pro normální text a 3:1 pro velký text. <hr> <strong {B}>Kontrastní poměr</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'Kontrast tohoto textu není znám a je třeba jej ručně zkontrolovat. Ujistěte se, že text a pozadí mají výrazně kontrastní barvy. Kontrastní poměr by měl být alespoň 4,5:1 pro normální text a 3:1 pro velký text. <hr> <strong {B}>Poměr kontrastu</strong> <strong {B}>Neznámý</strong> <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'Kontrast tohoto textu je neznámý a je třeba ho zkontrolovat ručně. Ujistěte se, že text a pozadí mají silné kontrastní barvy. <hr> <strong {B}>Kontrast</strong> <strong {B}>Neznámý</strong> <strong {C}>%(TEXT)</strong>',
+    WCAG_ADVICE: 'Poměr kontrastu by měl být alespoň 4.5:1 pro běžný text a 3:1 pro velký text.',
+    APCA_ADVICE: 'Hodnota kontrastu by měla být alespoň 60 pro tělo textu a 45 pro velký text.',
     CONTRAST_INPUT: 'Text v tomto vstupu není dostatečně kontrastní s pozadím. Kontrastní poměr by měl být alespoň 4,5:1 pro normální text a 3:1 pro velký text. <hr> <strong {B}>Kontrastní poměr</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

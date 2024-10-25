@@ -201,7 +201,7 @@ export default {
     EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> jossa ei ole fokusointikelpoisia elementtejä, ei pitäisi olla <code>tabindex="-1"</code>. Upotettu sisältö ei ole näppäimistöllä saavutettavissa.',
 
     // QA
-    QA_BAD_LINK: 'Huono linkki löytyi. Linkki näyttää osoittavan kehitysympäristöön. <hr> Tämä linkki osoittaa: <br> <strong {C}>%(LINK)</strong>',
+    QA_BAD_LINK: 'Huono linkki löytyi. Linkki näyttää osoittavan kehitysympäristöön. <hr> {L} <strong {C}>%(LINK)</strong>',
     QA_IN_PAGE_LINK: 'Rikkinäinen samalla sivulla oleva linkki. Linkin kohde ei vastaa mitään tämän sivun elementtiä.',
     QA_STRONG_ITALICS: 'Lihavointi- ja kursivointitunnisteilla on semanttinen merkitys, eikä niitä tulisi <strong>ei</strong> käyttää kokonaisten kappaleiden korostamiseen. Lihavoitua tekstiä tulisi käyttää sanan tai lauseen voimakkaaseen <strong>korostamiseen</strong>. Kursivointia tulisi käyttää oikeiden nimien (esim. kirjan ja artikkelin otsikot), vierasperäisten sanojen ja lainausmerkkien korostamiseen. Pitkät lainaukset olisi muotoiltava blokkilainauksiksi.',
     QA_PDF: 'PDF-tiedostojen saavutettavuuden tarkistaminen ei onnistu. PDF-tiedostoja pidetään verkkosisältönä, ja ne on myös saatettava saavutettaviksi. PDF-tiedostoissa on usein ongelmia ruudunlukuohjelmia käyttäville henkilöille (puuttuvat rakennetunnisteet tai lomakekenttien merkinnät) ja heikkonäköisille (teksti ei virtaa uudelleen, kun sitä suurennetaan). <ul><li>Jos kyseessä on lomake, harkitse esteettömän HTML-lomakkeen käyttämistä vaihtoehtona.</li><li>Jos kyseessä on asiakirja, harkitse sen muuntamista verkkosivuksi.</li></ul>Muussa tapauksessa tarkista <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF:n esteettömyys Acrobat DC:ssä.</a>',
@@ -252,7 +252,9 @@ export default {
     CONTRAST_COLOR: 'Harkitse tämän värin käyttämistä sen sijaan?',
     CONTRAST_SIZE: 'Harkitse tekstikoon suurentamista tämän värikombinaation kohdalla?',
     CONTRAST_ERROR: 'Tässä tekstissä ei ole riittävästi kontrastia taustaan nähden. Kontrastisuhteen tulisi olla vähintään 4,5:1 normaalille tekstille ja 3:1 suurelle tekstille. <hr> <strong {B}>Kontrastisuhde</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'Tämän tekstin kontrasti on tuntematon, ja se on tarkistettava manuaalisesti. Varmista, että tekstin ja taustan värit ovat voimakkaan kontrastiset. Kontrastisuhteen tulisi olla vähintään 4,5:1 normaalissa tekstissä ja 3:1 suuressa tekstissä. <hr> <strong {B}>Kontrastisuhde</strong> <strong {B}>Tuntematon</strong> <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'Tämän tekstin kontrasti on tuntematon ja se tulee tarkistaa manuaalisesti. Varmista, että tekstin ja taustan värit ovat selvästi kontrastissa toisiinsa. <hr> <strong {B}>Kontrasti</strong> <strong {B}>Tuntematon</strong> <strong {C}>%(TEXT)</strong>',
+    WCAG_ADVICE: 'Kontrastisuhteen tulisi olla vähintään 4,5:1 normaalille tekstille ja 3:1 suurelle tekstille.',
+    APCA_ADVICE: 'Kontrastiarvon tulisi olla vähintään 60 leipätekstille ja 45 suurelle tekstille.',
     CONTRAST_INPUT: 'Tekstin kontrasti taustaan nähden ei ole riittävä. Kontrastisuhteen tulisi olla vähintään 4,5:1 normaalille tekstille ja 3:1 suurelle tekstille. <hr> <strong {B}>Kontrastisuhde</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

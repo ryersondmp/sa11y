@@ -216,7 +216,7 @@ export default {
     EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> met niet-focusbare elementen mag geen <code>tabindex="-1"</code> hebben. De ingesloten inhoud zal niet toegankelijk zijn met het toetsenbord.',
 
     // QA
-    QA_BAD_LINK: 'Slechte link gevonden. Link lijkt te verwijzen naar een ontwikkelomgeving. <hr> Deze link verwijst naar: <br> <strong {C}>%(LINK)</strong>',
+    QA_BAD_LINK: 'Slechte link gevonden. Link lijkt te verwijzen naar een ontwikkelomgeving. <hr> {L} <strong {C}>%(LINK)</strong>',
     QA_IN_PAGE_LINK: 'Gebroken koppeling naar dezelfde pagina. Het koppelingsdoel komt niet overeen met enig element op deze pagina.',
     QA_STRONG_ITALICS: "Vetgedrukte en cursieve tags hebben een semantische betekenis en moeten <strong>niet</strong> worden gebruikt om hele alinea's te benadrukken. Vetgedrukte tekst moet worden gebruikt om een woord of zin sterk te <strong>accentueren</strong>. Cursief moet worden gebruikt om eigennamen (bijv. titels van boeken en artikelen), vreemde woorden en aanhalingstekens te benadrukken. Lange citaten moeten worden opgemaakt als een blokcitaat.",
     QA_PDF: 'Kan PDF\'s niet controleren op toegankelijkheid. PDF\'s worden beschouwd als webinhoud en moeten ook toegankelijk worden gemaakt. PDF\'s bevatten vaak problemen voor mensen die screenreaders gebruiken (ontbrekende structurele tags of ontbrekende labels voor formuliervelden) en mensen die slecht zien (tekst wordt niet weergegeven als deze wordt vergroot). <ul><li>Als dit een formulier is, kunt u overwegen een toegankelijk HTML-formulier te gebruiken als alternatief.</li><li>Als dit een document is, kunt u overwegen het te converteren naar een webpagina.</li></ul> Ofwel controleer <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF op toegankelijkheid in Acrobat DC.</a>',
@@ -267,7 +267,9 @@ export default {
     CONTRAST_COLOR: 'Overweeg deze kleur in plaats daarvan te gebruiken?',
     CONTRAST_SIZE: 'Overweeg de tekstgrootte groter te maken voor deze kleurcombinatie?',
     CONTRAST_ERROR: 'Deze tekst heeft niet genoeg contrast met de achtergrond. De contrastverhouding moet ten minste 4,5:1 zijn voor normale tekst en 3:1 voor grote tekst. <hr> <strong {B}>Contrastverhouding</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'Het contrast van deze tekst is onbekend en moet handmatig worden gecontroleerd. Zorg ervoor dat de tekst en de achtergrond sterk contrasterende kleuren hebben. De contrastverhouding moet minstens 4,5:1 zijn voor normale tekst en 3:1 voor grote tekst. <hr> <strong {B}>Contrastverhouding</strong> <strong {B}>Onbekend</strong> <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'Het contrast van deze tekst is onbekend en moet handmatig worden beoordeeld. Zorg ervoor dat de tekst en de achtergrond sterke contrasterende kleuren hebben. <hr> <strong {B}>Contrast</strong> <strong {B}>Onbekend</strong> <strong {C}>%(TEXT)</strong>',
+    WCAG_ADVICE: 'De contrastverhouding moet ten minste 4,5:1 zijn voor normale tekst en 3:1 voor grote tekst.',
+    APCA_ADVICE: 'De contrastwaarde moet ten minste 60 zijn voor gewone tekst en 45 voor grote tekst.',
     CONTRAST_INPUT: 'Tekst binnen deze invoer heeft niet genoeg contrast met de achtergrond. De contrastverhouding moet ten minste 4,5:1 zijn voor normale tekst en 3:1 voor grote tekst. <hr> <strong {B}>Contrastverhouding</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

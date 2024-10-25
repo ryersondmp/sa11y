@@ -208,7 +208,7 @@ export default {
     EMBED_UNFOCUSABLE: 'Gli <code>&lt;iframe&gt;</code> con elementi non focalizzabili non devono avere <code>tabindex="-1"</code>. Il contenuto incorporato non sarà accessibile tramite tastiera.',
 
     // QA
-    QA_BAD_LINK: 'Trovato un link errato. Il link sembra puntare a un ambiente di sviluppo. <hr> Questo link punta a: <br> <strong {C}>%(LINK)</strong>',
+    QA_BAD_LINK: 'Trovato un link errato. Il link sembra puntare a un ambiente di sviluppo. <hr> {L} <strong {C}>%(LINK)</strong>',
     QA_IN_PAGE_LINK: 'Link interno rotto. Il target del link non corrisponde a nessun elemento di questa pagina.',
     QA_STRONG_ITALICS: 'I tag grassetto e corsivo hanno un significato semantico e non devono essere usati per evidenziare interi paragrafi. Il testo in grassetto deve essere usato per dare un forte <strong>enfasi</strong> su una parola o una frase. Il corsivo deve essere usato per evidenziare nomi propri (ad esempio, titoli di libri e articoli), parole straniere e citazioni. Le citazioni lunghe devono essere formattate come blockquote.',
     QA_PDF: "Impossibile verificare l'accessibilità dei PDF. I PDF sono considerati contenuti web e devono essere resi accessibili. I PDF spesso presentano problemi per le persone che utilizzano gli screen reader (tag strutturali mancanti o etichette dei campi del modulo mancanti) e per le persone ipovedenti (il testo non scorre quando viene ingrandito). <ul><li>Se si tratta di un modulo, considerare l'utilizzo di un modulo HTML accessibile come alternativa.</li><li>Se si tratta di un documento, considerare la conversione in una pagina web.</li></ul> Altrimenti, controllare <a href=\"https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html\">PDF per l'accessibilità in Acrobat DC.</a>",
@@ -259,7 +259,9 @@ export default {
     CONTRAST_COLOR: 'Considera di utilizzare invece questo colore?',
     CONTRAST_SIZE: 'Considera di ingrandire la dimensione del testo per questa combinazione di colori?',
     CONTRAST_ERROR: 'Il testo non ha un contrasto sufficiente con lo sfondo. Il rapporto di contrasto dovrebbe essere almeno 4,5:1 per il testo normale e 3:1 per il testo grande. <hr> <strong {B}>Rapporto di contrasto</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'Il contrasto di questo testo è sconosciuto e deve essere rivisto manualmente. Assicurarsi che il testo e lo sfondo abbiano colori fortemente contrastanti. Il rapporto di contrasto dovrebbe essere almeno 4,5:1 per il testo normale e 3:1 per il testo grande. <hr> <strong {B}>Rapporto di contrasto</strong> <strong {B}>Sconosciuto</strong> <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'Il contrasto di questo testo è sconosciuto e deve essere controllato manualmente. Assicurati che il testo e lo sfondo abbiano colori con forte contrasto. <hr> <strong {B}>Contrasto</strong> <strong {B}>Sconosciuto</strong> <strong {C}>%(TEXT)</strong>',
+    WCAG_ADVICE: 'Il rapporto di contrasto dovrebbe essere almeno 4,5:1 per il testo normale e 3:1 per il testo grande.',
+    APCA_ADVICE: 'Il valore del contrasto dovrebbe essere almeno 60 per il testo del corpo e 45 per il testo grande.',
     CONTRAST_INPUT: 'Il testo all\'interno di questo input non ha un contrasto sufficiente con lo sfondo. Il rapporto di contrasto dovrebbe essere di almeno 4,5:1 per il testo normale e di 3:1 per il testo grande. <hr> <strong {B}>Rapporto di contrasto</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

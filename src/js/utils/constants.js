@@ -240,7 +240,7 @@ const Constants = (function myConstants() {
     }
 
     // Contrast exclusions
-    Exclusions.Contrast = ['link', 'hr', 'option', 'audio', 'audio *', 'video', 'video *', 'input[type="color"]', 'input[type="range"]', ...exclusions];
+    Exclusions.Contrast = ['link', 'hr', 'option:not(:first-child)', 'audio', 'audio *', 'video', 'video *', 'input[type="color"]', 'input[type="range"]', 'progress', 'progress *', 'meter', 'meter *', 'iframe', ...exclusions];
     if (option.contrastIgnore) {
       Exclusions.Contrast = option.contrastIgnore
         .split(',')

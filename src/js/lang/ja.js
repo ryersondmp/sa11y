@@ -215,7 +215,7 @@ export default {
     EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code>にフォーカス可能な要素が含まれている場合、<code>tabindex="-1"</code>を持つべきではありません。埋め込みコンテンツはキーボードでアクセスできません。',
 
     // QA
-    QA_BAD_LINK: '悪いリンクが見つかりました。リンクは開発環境を指しているようです。<hr> このリンクの先は：<br> <strong {C}>%(LINK)</strong>',
+    QA_BAD_LINK: '悪いリンクが見つかりました。リンクは開発環境を指しているようです。<hr> {L} <strong {C}>%(LINK)</strong>',
     QA_STRONG_ITALICS: '太字および斜体タグには意味があり、段落全体を強調表示するために使用してはいけません。<strong>強調</strong>するためには、太字が使用されるべきです。斜体は固有名詞（つまり、書籍や記事のタイトル）、外国語、引用を強調するために使用されるべきです。長い引用は引用ブロックとしてフォーマットする必要があります。',
     QA_PDF: 'PDFのアクセシビリティをチェックできません。PDFはWebコンテンツと見なされ、アクセシブルにする必要があります。PDFには、スクリーンリーダーを使用する人や視力が低い人向けの問題がよく含まれます（構造タグの欠落やフォームフィールドのラベルの欠落など）。<ul><li>これがフォームである場合は、代替としてアクセシブルなHTMLフォームを使用してください。</li><li>これが文書である場合は、Webページに変換してください。</li></ul>それ以外の場合は、<a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">Acrobat DCでのPDFのアクセシビリティを確認してください。</a>',
     QA_DOCUMENT: '文書のアクセシビリティをチェックできません。リンクされた文書はWebコンテンツと見なされ、アクセシブルにする必要があります。この文書を手動で確認してください。<ul><li><a href="https://support.google.com/docs/answer/6199477?hl=en">Google Workspaceドキュメントやプレゼンテーションをよりアクセシブルにする方法</a></li><li><a href="https://support.microsoft.com/en-us/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office文書をよりアクセシブルにする方法</a></li></ul>',
@@ -266,7 +266,9 @@ export default {
     CONTRAST_COLOR: 'この色の使用を検討しますか？',
     CONTRAST_SIZE: 'この色の組み合わせのテキストサイズを大きくすることを検討しますか？',
     CONTRAST_ERROR: 'このテキストは背景との対比が不足しています。通常のテキストには対比比率が少なくとも4.5:1、大きなテキストには3:1以上である必要があります。<hr> <strong {B}>コントラスト比</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'このテキストの対比は不明であり、手動で確認する必要があります。テキストと背景が強い対比色を持つことを確認してください。通常のテキストには対比比率が少なくとも4.5:1、大きなテキストには3:1以上である必要があります。<hr> <strong {B}>コントラスト比</strong> <strong {B}>不明</strong> <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'このテキストのコントラストは不明で、手動で確認する必要があります。テキストと背景の色が強いコントラストを持っていることを確認してください。 <hr> <strong {B}>コントラスト</strong> <strong {B}>不明</strong> <strong {C}>%(TEXT)</strong>',
+    WCAG_ADVICE: 'コントラスト比は通常のテキストでは少なくとも 4.5:1、大きなテキストでは 3:1 であるべきです。',
+    APCA_ADVICE: 'コントラスト値は本文では少なくとも 60、大きなテキストでは 45 であるべきです。',
     CONTRAST_INPUT: 'この入力内のテキストは背景との対比が不足しています。通常のテキストには対比比率が少なくとも4.5:1、大きなテキストには3:1以上である必要があります。<hr> <strong {B}>コントラスト比</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

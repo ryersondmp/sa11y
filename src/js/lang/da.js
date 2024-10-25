@@ -205,7 +205,7 @@ export default {
     EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> med ikke-fokuserbare elementer bør ikke have <code>tabindex="-1"</code>. Det indlejrede indhold vil ikke være tilgængeligt med tastaturet.',
 
     // QA
-    QA_BAD_LINK: 'Dårligt link fundet. Linket ser ud til at pege på et udviklingsmiljø. <hr> Dette link peger på: <br> <strong {C}>%(LINK)</strong>',
+    QA_BAD_LINK: 'Dårligt link fundet. Linket ser ud til at pege på et udviklingsmiljø. <hr> {L} <strong {C}>%(LINK)</strong>',
     QA_IN_PAGE_LINK: 'Brudt samme-sides link. Linkmålet stemmer ikke overens med nogen element på denne side.',
     QA_STRONG_ITALICS: 'Fede og kursive tags har semantisk betydning og bør <strong>ikke</strong> bruges til at fremhæve hele afsnit. Fed tekst skal bruges til at give stærk <strong>fremhævelse</strong> af et ord eller en sætning. Kursiv bør bruges til at fremhæve egennavne (f.eks. bog- og artikeltitler), fremmedord og citater. Lange citater skal formateres som blokcitater.',
     QA_PDF: 'Kan ikke tjekke PDF\'er for tilgængelighed. PDF\'er betragtes som webindhold og skal også gøres tilgængelige. PDF\'er indeholder ofte problemer for folk, der bruger skærmlæsere (manglende strukturelle tags eller manglende formularfeltetiketter) og folk, der ser dårligt (teksten flyder ikke ud igen, når den forstørres). <ul><li>Hvis dette er en formular, kan du overveje at bruge en tilgængelig HTML-formular som alternativ.</li><li>Hvis dette er et dokument, kan du overveje at konvertere det til en webside.</li></ul> Ellers bedes du tjekke <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF for tilgængelighed i Acrobat DC.</a>',
@@ -256,7 +256,9 @@ export default {
     CONTRAST_COLOR: 'Overvej at bruge denne farve i stedet?',
     CONTRAST_SIZE: 'Overvej at gøre tekststørrelsen større for denne farvekombination?',
     CONTRAST_ERROR: 'Denne tekst har ikke nok kontrast til baggrunden. Kontrastforholdet skal være mindst 4,5:1 for normal tekst og 3:1 for stor tekst. <hr> <strong {B}>Kontrastforhold</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'Kontrasten i denne tekst er ukendt og skal gennemgås manuelt. Sørg for, at teksten og baggrunden har stærke kontrastfarver. Kontrastforholdet skal være mindst 4,5:1 for normal tekst og 3:1 for stor tekst. <hr> <strong {B}>Kontrastforhold</strong> <strong {B}>Ukendt</strong> <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'Kontrasten af denne tekst er ukendt og skal gennemgås manuelt. Sørg for, at teksten og baggrunden har stærke kontrastfarver. <hr> <strong {B}>Kontrast</strong> <strong {B}>Ukendt</strong> <strong {C}>%(TEXT)</strong>',
+    WCAG_ADVICE: 'Kontrastforholdet skal være mindst 4,5:1 for almindelig tekst og 3:1 for stor tekst.',
+    APCA_ADVICE: 'Kontrastværdien skal være mindst 60 for brødtekst og 45 for stor tekst.',
     CONTRAST_INPUT: 'Teksten i dette input har ikke nok kontrast til baggrunden. Kontrastforholdet skal være mindst 4,5:1 for normal tekst og 3:1 for stor tekst. <hr> <strong {B}>Kontrastforhold</strong> <strong {B}>%(RATIO)</strong>',
   },
 };

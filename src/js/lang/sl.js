@@ -206,7 +206,7 @@ export default {
     EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> z elementi, ki se jim ni mogoče osredotočiti, ne sme imeti <code>tabindex="-1"</code>. Vgrajena vsebina ne bo dostopna prek tipkovnice.',
 
     // QA
-    QA_BAD_LINK: 'Najdena slaba povezava. Zdi se, da povezava kaže na razvojno okolje. <hr> Ta povezava kaže na: <br> <strong {C}>%(LINK)</strong>',
+    QA_BAD_LINK: 'Najdena slaba povezava. Zdi se, da povezava kaže na razvojno okolje. <hr> {L} <strong {C}>%(LINK)</strong>',
     QA_IN_PAGE_LINK: 'Okvarjena povezava na isto stran. Cilj povezave se ne ujema z nobenim elementom na tej strani.',
     QA_STRONG_ITALICS: 'Oznake krepko in poševno imajo semantični pomen in se ne smejo uporabljati za poudarjanje celotnih odstavkov. Krepko označeno besedilo je treba uporabiti za močno <strong>izpostavitev</strong> besede ali besedne zveze. Ležečo pisavo je treba uporabljati za poudarjanje lastnih imen (npr. naslovov knjig in člankov), tujih besed, narekovajev. Dolgi citati morajo biti oblikovani kot blokovski citati.',
     QA_PDF: 'Ni mogoče preveriti dostopnosti datotek PDF. Datoteke PDF veljajo za spletno vsebino in morajo biti prav tako dostopne. Datoteke PDF pogosto vsebujejo težave za ljudi, ki uporabljajo bralnike zaslona (manjkajoče strukturne oznake ali manjkajoče oznake polj obrazca), in ljudi s slabim vidom (besedilo se ne preliva, ko je povečano). <ul><li>Če gre za obrazec, razmislite o uporabi dostopnega obrazca HTML kot alternative.</li><li>Če gre za dokument, razmislite o pretvorbi v spletno stran.</li></ul> V nasprotnem primeru preverite <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF za dostopnost v programu Acrobat DC.</a>',
@@ -257,7 +257,9 @@ export default {
     CONTRAST_COLOR: 'Razmislite o uporabi te barve namesto?',
     CONTRAST_SIZE: 'Razmislite o povečanju velikosti besedila za to barvno kombinacijo?',
     CONTRAST_ERROR: 'Besedilo ni dovolj kontrastno glede na ozadje. Kontrastno razmerje bi moralo biti vsaj 4,5:1 za običajno besedilo in 3:1 za veliko besedilo. <hr> <strong {B}>Razmerje kontrasta</strong> <strong {B}>%(RATIO)</strong> <strong {C}>%(TEXT)</strong>',
-    CONTRAST_WARNING: 'Kontrast tega besedila ni znan in ga je treba ročno preveriti. Prepričajte se, da imata besedilo in ozadje močno kontrastne barve. Kontrastno razmerje mora biti vsaj 4,5 : 1 za običajno besedilo in 3 : 1 za veliko besedilo. <hr> <strong {B}>Razmerje kontrasta</strong> <strong {B}>Neznano</strong> <strong {C}>%(TEXT)</strong>',
+    CONTRAST_WARNING: 'Kontrast tega besedila je neznan in ga je treba ročno pregledati. Poskrbite, da imata besedilo in ozadje močne kontrastne barve. <hr> <strong {B}>Kontrast</strong> <strong {B}>Neznan</strong> <strong {C}>%(TEXT)</strong>',
+    WCAG_ADVICE: 'Razmerje kontrasta naj bo vsaj 4,5:1 za navadno besedilo in 3:1 za veliko besedilo.',
+    APCA_ADVICE: 'Vrednost kontrasta naj bo vsaj 60 za telo besedila in 45 za veliko besedilo.',
     CONTRAST_INPUT: 'Besedilo v tem vnosu ni dovolj kontrastno z ozadjem. Kontrastno razmerje mora biti vsaj 4,5 : 1 za običajno besedilo in 3 : 1 za veliko besedilo. <hr> <strong {B}>Razmerje kontrasta</strong> <strong {B}>%(RATIO)</strong>',
   },
 };
