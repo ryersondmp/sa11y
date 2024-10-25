@@ -106,10 +106,23 @@
 
     <h2>Background images</h2>
     <h3>Multiple nodes shared background</h3>
+    <h4>Different colour nodes with shared background</h4>
+    <div id="warning-contrast-1">
+      <div class="background-image">
+        <h5>Lorem ipsum</h5>
+        <script>const test123 = "a variable";</script> <noscript>Some noscript text</noscript>
+        <p>Adipisci, quidem! Expedita nulla excepturi
+          reprehenderit cumque perferendis? Commodi odio, voluptatem nobis perspiciatis, modi facilis nostrum.</p>
+        <p style="color:hotpink">Reprehenderit aperiam incidunt ad, fugiat eligendi!</p>
+        <a href="https://www.example.com?sdsx">Learn more about example</a>
+      </div>
+    </div>
+
+    <h4>Same colour nodes with shared background</h4>
     <div id="warning-contrast-1">
       <div class="background-image">
         <h2>Lorem ipsum</h2>
-        <script>const test123 = "a variable";</script> <noscript>Some noscript text</noscript>
+        <noscript>Some noscript text</noscript>
         <p>Adipisci, quidem! Expedita nulla excepturi
           reprehenderit cumque perferendis? Commodi odio, voluptatem nobis perspiciatis, modi facilis nostrum.</p>
         <p>Reprehenderit aperiam incidunt ad, fugiat eligendi!</p>
@@ -144,6 +157,14 @@
       <p style="color: var(--bg-example);font-size:5em">
         Has 0 opacity.
       </p>
+    </div>
+
+    <h2>SVGs</h2>
+    <div id="warning-svg">
+      <svg height="40" width="200" xmlns="http://www.w3.org/2000/svg">
+        <text x="5" y="30" fill="none" stroke="red" font-size="35">I love SVG!</text>
+        <text x="5" y="30" fill="lightblue" stroke="none" font-size="12">Cool.</text>
+      </svg>
     </div>
 
     <h2>Opacity</h2>

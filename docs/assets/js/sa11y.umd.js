@@ -342,7 +342,7 @@
 
       // Audio sources.
       const audioSources = option.checks.EMBED_AUDIO.sources;
-      const defaultAudioSources = 'audio, [src*="soundcloud.com"], [src*="simplecast.com"], [src*="podbean.com"], [src*="buzzsprout.com"], [src*="blubrry.com"], [src*="transistor.fm"], [src*="fusebox.fm"], [src*="libsyn.com"]';
+      const defaultAudioSources = 'audio, [src*="soundcloud.com"], [src*="simplecast.com"], [src*="podbean.com"], [src*="buzzsprout.com"], [src*="blubrry.com"], [src*="transistor.fm"], [src*="fusebox.fm"], [src*="libsyn.com"], [src*="spotify.com"], [src*="podcasts.apple.com"], [src*="castbox.fm"]';
       if (audioSources.length) {
         const audio = audioSources.split(/\s*[\s,]\s*/).map(($el) => `[src*="${$el}"]`);
         Global.AudioSources = `${defaultAudioSources}, ${audio.join(', ')}`;
@@ -7656,7 +7656,8 @@ ${this.error.stack}
    */
   function checkContrast(results, option) {
     // Initialize contrast results array.
-    const contrastResults = [];
+    const contrastErrors = [];
+    const contrastWarnings = [];
 
     // Iterate through all elements on the page and get computed styles.
     for (let i = 0; i < Elements.Found.Contrast.length; i++) {
@@ -7689,23 +7690,16 @@ ${this.error.stack}
       // Only check elements with text and inputs.
       if (text.length !== 0 || checkInputs) {
         if (color === 'unsupported' || background === 'unsupported') {
-          contrastResults.push({ $el, type: 'unknown' });
-        } else if (background === 'image' || $el.tagName === 'text') {
-          // If adjacent nodes share the same background image, push a single warning.
-          const prevEl = Elements.Found.Contrast[i - 1];
-          if (!prevEl || prevEl.parentNode !== $el.parentNode) {
-            const nextEl = Elements.Found.Contrast[i + 1];
-            const elementToPush = nextEl && nextEl.parentNode === $el.parentNode ? $el.parentNode : $el;
-            contrastResults.push({ $el: elementToPush, type: 'unknown' });
-
-            // If shared parent node, skip over the node.
-            if (elementToPush === $el.parentNode) i += 1;
-          }
+          contrastWarnings.push({ $el, type: 'unsupported' });
+        } else if (background === 'image') {
+          contrastWarnings.push({ $el, color, background, type: 'background-image' });
+        } else if ($el.tagName === 'text' && $el.closest('svg')) {
+          contrastWarnings.push({ $el, background, type: 'svg' });
         } else if (isHidden || getHex(color) === getHex(background)) ; else {
           const result = checkElementContrast($el, color, background, fontSize, fontWeight, opacity);
           if (result) {
             result.type = checkInputs ? 'input' : 'text';
-            contrastResults.push(result);
+            contrastErrors.push(result);
           }
         }
       }
@@ -7723,10 +7717,31 @@ ${this.error.stack}
         const result = checkElementContrast($el, pColor, pBackground, pSize, pWeight, pOpacity);
         if (result) {
           result.type = 'placeholder';
-          contrastResults.push(result);
+          contrastErrors.push(result);
         }
       }
     });
+
+    // Extra processing of the contrast results object.
+    const processedWarnings = [];
+    contrastWarnings.forEach((item) => {
+      // When adjacent nodes share the same foreground color and background image, merge the object.
+      // This minimizes the number of warnings, and allows us to supply a foreground color to tooltip.
+      if (item.type === 'background-image') {
+        const lastMerged = processedWarnings[processedWarnings.length - 1];
+        if (!lastMerged || !(JSON.stringify(item.color) === JSON.stringify(lastMerged.color)
+          && item.background === lastMerged.background)) {
+          processedWarnings.push({ ...item });
+        } else {
+          lastMerged.$el = item.$el.parentNode || lastMerged.$el;
+        }
+      } else {
+        processedWarnings.push(item);
+      }
+    });
+
+    // Final contrast results array.
+    const contrastResults = [...contrastErrors, ...processedWarnings];
 
     // Iterate through all contrast results.
     contrastResults.forEach((item) => {
@@ -7739,13 +7754,23 @@ ${this.error.stack}
       const text = getText(nodeText);
 
       // Content for tooltip.
-      const truncatedText = truncateString(text, 100);
+      const truncatedText = truncateString(text, 80);
       const sanitizedText = sanitizeHTML(truncatedText);
       const suggestion = (option.contrastSuggestions && details !== undefined)
         ? `<div data-sa11y-suggestion='${JSON.stringify(details)}'></div>` : '';
       const opacity = (details !== undefined) ? details.opacity : '';
       const advice = (opacity < 1)
         ? `<hr aria-hidden="true"> ${Lang.sprintf('CONTRAST_OPACITY')} <strong class="badge">${opacity}</strong>` : suggestion;
+
+      // Annotation placement.
+      let element;
+      if ($el.tagName === 'OPTION') {
+        element = $el.closest('datalist, select, optgroup');
+      } else if ($el.tagName === 'text') {
+        element = $el.closest('svg');
+      } else {
+        element = $el;
+      }
 
       // Iterate through contrast results based on type.
       switch (item.type) {
@@ -7766,8 +7791,6 @@ ${this.error.stack}
           break;
         case 'input':
           if (option.checks.CONTRAST_INPUT) {
-            const element = ($el.tagName === 'OPTION')
-              ? $el.closest('datalist, select, optgroup') : $el;
             results.push({
               element,
               type: option.checks.CONTRAST_INPUT.type || 'error',
@@ -7797,10 +7820,26 @@ ${this.error.stack}
             });
           }
           break;
-        case 'unknown':
+        case 'svg':
+        case 'background-image':
           if (option.checks.CONTRAST_WARNING) {
-            const element = ($el.tagName === 'OPTION')
-              ? $el.closest('datalist, select, optgroup') : $el;
+            const warningAdvice = (option.contrastAPCA)
+              ? Lang.sprintf('APCA_ADVICE') : Lang.sprintf('WCAG_ADVICE');
+            results.push({
+              element,
+              type: option.checks.CONTRAST_WARNING.type || 'warning',
+              content: option.checks.CONTRAST_WARNING.content
+                || `${Lang.sprintf('CONTRAST_WARNING', sanitizedText)} <hr aria-hidden="true"> ${warningAdvice}`,
+              inline: false,
+              position: 'beforebegin',
+              dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
+              dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
+              developer: option.checks.CONTRAST_WARNING.developer || false,
+            });
+          }
+          break;
+        case 'unsupported':
+          if (option.checks.CONTRAST_WARNING) {
             const warningAdvice = (option.contrastAPCA)
               ? Lang.sprintf('APCA_ADVICE') : Lang.sprintf('WCAG_ADVICE');
             results.push({
