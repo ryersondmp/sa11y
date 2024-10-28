@@ -81,16 +81,100 @@ kbd,
   outline: 1px solid transparent;
 }
 
-.error .badge,
-.error-badge {
-  color: var(--sa11y-error-text);
-  background: var(--sa11y-error);
+.error {
+  .badge {
+    color: var(--sa11y-error-text);
+    background: var(--sa11y-error);
+  }
+
+  &-badge {
+    color: var(--sa11y-error-text) !important;
+    background: var(--sa11y-error) !important;
+  }
 }
 
-.warning .badge,
-.warning-badge {
-  color: var(--sa11y-panel-bg);
-  background: var(--sa11y-yellow-text);
+.warning {
+  .badge {
+    color: var(--sa11y-panel-bg);
+    background: var(--sa11y-yellow-text);
+  }
+
+  &-badge {
+    color: var(--sa11y-panel-bg) !important;
+    background: var(--sa11y-yellow-text) !important;
+  }
+}
+
+.good {
+  .badge {
+    color: var(--sa11y-good-text);
+    background: var(--sa11y-good);
+  }
+
+  &-badge {
+    color: var(--sa11y-good-text) !important;
+    background: var(--sa11y-good) !important;
+  }
+}
+
+/* ***************************************** */
+/*            Contrast related               */
+/* ***************************************** */
+
+.contrast-preview {
+  max-height: 100px;
+  padding: 5px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  overflow: clip;
+  line-height: 1;
+  overflow-wrap: break-word;
+  background-color: #e8e8e8;
+  background-image: linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc),
+    linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc);
+  background-position: 0 0, 5px 5px;
+  background-size: 10px 10px;
+  border: 2px dashed var(--sa11y-panel-bg-splitter);
+  border-radius: 3.2px;
+}
+
+.color-pickers {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+
+  label {
+    display: flex;
+    align-items: center;
+  }
+
+  input {
+    margin-inline-start: 7px;
+  }
+}
+
+input[type="color" i] {
+  padding: 1px;
+  background: var(--sa11y-panel-bg-secondary);
+  border-color: var(--sa11y-button-outline);
+  border-width: 2px;
+  border-radius: 50%;
+  inline-size: 30px;
+  block-size: 30px;
+
+  &::-webkit-color-swatch-wrapper {
+    padding: 1px;
+  }
+
+  &::-webkit-color-swatch {
+    border-color: var(--sa11y-button-outline);
+    border-radius: 50%;
+  }
+
+  &::-moz-color-swatch {
+    border-color: var(--sa11y-button-outline);
+    border-radius: 50%;
+  }
 }
 
 /* ***************************************** */
@@ -147,6 +231,7 @@ kbd,
 
   [tabindex="0"]:focus,
   [tabindex="-1"]:focus,
+  input:focus,
   select:focus,
   button:not(#panel-controls button):not(.switch):focus,
   a:focus {
@@ -169,6 +254,7 @@ kbd,
 
   [tabindex="0"]:focus:not(:focus-visible),
   [tabindex="-1"]:focus:not(:focus-visible),
+  input:focus:not(:focus-visible),
   button:focus:not(:focus-visible),
   select:focus:not(:focus-visible),
   #panel-controls button:focus:not(:focus-visible) {
@@ -185,6 +271,7 @@ kbd,
   a:focus-visible,
   button:not(#panel-controls button):not(.switch):focus-visible,
   select:focus-visible,
+  input:focus-visible,
   [tabindex="0"]:focus-visible,
   [tabindex="-1"]:focus-visible {
     outline: 0;

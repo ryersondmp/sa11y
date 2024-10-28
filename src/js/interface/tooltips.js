@@ -3,7 +3,7 @@ import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 import Constants from '../utils/constants';
 import Elements from '../utils/elements';
-import { generateColorSuggestion } from '../rulesets/contrast';
+import { generateColorSuggestion, generateContrastTools, initializeContrastTools } from '../rulesets/contrast';
 
 // Import processed minified styles as a string.
 import tooltipStyles from '../../../dist/css/tooltips.min.css';
@@ -34,6 +34,7 @@ export class AnnotationTooltips extends HTMLElement {
     const annotations = tippy(buttons, {
       interactive: true,
       trigger: 'mouseenter click',
+      hideOnClick: false,
       arrow: true,
       offset: [0, 8],
       delay: [0, 400],
@@ -79,9 +80,23 @@ export class AnnotationTooltips extends HTMLElement {
         };
         openedTooltip.addEventListener('keydown', escapeListener);
 
-        // Generate colour suggestions upon tooltip opening for contrast checks.
+        // Generate preview & colour pickers for contrast tooltips.
         // Imported from rulesets/contrast.js
-        generateColorSuggestion(instance.popper);
+        generateContrastTools(openedTooltip);
+        initializeContrastTools(openedTooltip);
+
+        // Generate colour suggestions for contrast tooltips.
+        // Imported from rulesets/contrast.js
+        generateColorSuggestion(openedTooltip);
+
+        // Make tooltip stay open if colour picker is used.
+        let firstClick = true;
+        instance.popper.addEventListener('click', (event) => {
+          if (firstClick && event.target.matches('input[type="color"]')) {
+            instance.reference.click();
+            firstClick = false;
+          }
+        });
 
         // Remove all event listeners.
         const onHiddenTooltip = () => {
@@ -107,6 +122,10 @@ export class AnnotationTooltips extends HTMLElement {
         });
         const annotation = instance.reference.getRootNode().host;
         annotation.removeAttribute('data-sa11y-opened');
+
+        // Reset contrast suggestions/colour pickers.
+        const clearContrastSuggestions = openedTooltip?.querySelector('[data-sa11y-contrast-details');
+        if (clearContrastSuggestions) clearContrastSuggestions.innerHTML = '';
       },
     });
   }

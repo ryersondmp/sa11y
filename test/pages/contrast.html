@@ -5,10 +5,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Contrast tests</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="./assets/main.css">
   <link rel="stylesheet" href="../../dist/css/sa11y.min.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
   <style>
+    * {
+      font-family: "Atkinson Hyperlegible", sans-serif;
+    }
+
     /* RGB */
     .rgb {
       color: rgb(51, 187, 255);
@@ -109,7 +118,7 @@
     <h4>Different colour nodes with shared background</h4>
     <div id="warning-contrast-1">
       <div class="background-image">
-        <h5>Lorem ipsum</h5>
+        <h3 style="font-weight:800">Lorem ipsum</h3>
         <script>const test123 = "a variable";</script> <noscript>Some noscript text</noscript>
         <p>Adipisci, quidem! Expedita nulla excepturi
           reprehenderit cumque perferendis? Commodi odio, voluptatem nobis perspiciatis, modi facilis nostrum.</p>
@@ -126,13 +135,23 @@
         <p>Adipisci, quidem! Expedita nulla excepturi
           reprehenderit cumque perferendis? Commodi odio, voluptatem nobis perspiciatis, modi facilis nostrum.</p>
         <p>Reprehenderit aperiam incidunt ad, fugiat eligendi!</p>
-        <a href="https://www.example.com?sdsx">Learn more about example</a>
       </div>
     </div>
 
     <h3>Single node within background image</h3>
     <div id="warning-contrast-2">
-      <p class="background-image">Text on background image requires manual review!</p>
+      <p class="background-image" style="color:hotpink">Text on background image requires manual review!</p>
+    </div>
+
+    <h3>Background image within accordion</h3>
+    <div id="warning-contrast-2">
+      <div hidden>
+
+        <p class="background-image" style="color:hotpink">Text on background image requires manual review!</p>
+
+        <span style="color:aliceblue">asdsdsdss</span>
+
+      </div>
     </div>
 
     <h3>No text within background image</h3>
@@ -163,7 +182,7 @@
     <div id="warning-svg">
       <svg height="40" width="200" xmlns="http://www.w3.org/2000/svg">
         <text x="5" y="30" fill="none" stroke="red" font-size="35">I love SVG!</text>
-        <text x="5" y="30" fill="lightblue" stroke="none" font-size="12">Cool.</text>
+        <text x="5" y="30" fill="lightblue" stroke="none" font-size="99">Cool.</text>
       </svg>
     </div>
 

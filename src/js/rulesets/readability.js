@@ -31,7 +31,7 @@ export default function checkReadability() {
     const readabilityarray = [];
     for (let i = 0; i < Elements.Found.Readability.length; i++) {
       const current = Elements.Found.Readability[i];
-      const ignore = Utils.fnIgnore(current); // Ignore unwanted <script> and <style> tags.
+      const ignore = Utils.fnIgnore(current); // Ignore unwanted tags.
       const getText = Utils.getText(ignore); // Get text.
       if (getText !== '') {
         readabilityarray.push(getText);

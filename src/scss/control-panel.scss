@@ -283,7 +283,7 @@ audio {
 
 /* Dismiss button for issues */
 button[data-sa11y-dismiss] {
-  display: block;
+  display: inline-block;
   padding: 4px 8px;
   margin: 10px 5px 5px 0;
   color: var(--sa11y-panel-primary);
@@ -291,6 +291,7 @@ button[data-sa11y-dismiss] {
   background: var(--sa11y-panel-bg-secondary);
   border: 2px solid var(--sa11y-button-outline);
   border-radius: 5px;
+  margin-inline-end: 15px;
 
   &:hover,
   &:focus {
@@ -1153,7 +1154,10 @@ label:not(#colour-filter-mode, #export-results-mode) {
   }
 }
 
-
+// Hide colour picker within control panel since element is hidden.
+#contrast-tools {
+  display: none;
+}
 
 /* ***************************************** */
 /*         19. Scrollbar styling             */

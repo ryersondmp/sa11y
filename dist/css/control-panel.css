@@ -262,7 +262,7 @@ audio {
 
 /* Dismiss button for issues */
 button[data-sa11y-dismiss] {
-  display: block;
+  display: inline-block;
   padding: 4px 8px;
   margin: 10px 5px 5px 0;
   color: var(--sa11y-panel-primary);
@@ -270,6 +270,7 @@ button[data-sa11y-dismiss] {
   background: var(--sa11y-panel-bg-secondary);
   border: 2px solid var(--sa11y-button-outline);
   border-radius: 5px;
+  margin-inline-end: 15px;
 }
 button[data-sa11y-dismiss]:hover, button[data-sa11y-dismiss]:focus {
   background: var(--sa11y-shortcut-hover);
@@ -1055,6 +1056,10 @@ label:not(#colour-filter-mode, #export-results-mode) {
 }
 .hide-settings-border.scrollable::before {
   all: unset;
+}
+
+#contrast-tools {
+  display: none;
 }
 
 /* ***************************************** */

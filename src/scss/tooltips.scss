@@ -263,6 +263,16 @@ div {
     }
   }
 
+  // For contrast badge
+  .good-icon {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-bottom: -3.5px;
+    background: var(--sa11y-good-text);
+    mask: var(--sa11y-good-svg) center no-repeat;
+  }
+
   // Link icon
   .link-icon {
     display: inline-block;
@@ -342,6 +352,7 @@ div {
 .tippy-box[data-theme~="sa11y-theme"] {
 
   a:focus,
+  input:focus,
   button:focus,
   button:active,
   [tabindex="-1"]:focus {
@@ -353,6 +364,7 @@ div {
 // B) Remove default focus styles for mouse users ONLY if :focus-visible is supported.
 .tippy-box[data-theme~="sa11y-theme"] {
 
+  input:focus:not(:focus-visible),
   a:focus:not(:focus-visible),
   button:focus:not(:focus-visible),
   [tabindex="-1"]:focus:not(:focus-visible) {
@@ -366,6 +378,7 @@ div {
 
   a:focus-visible,
   button:focus-visible,
+  input:focus-visible,
   [tabindex="-1"]:focus-visible {
     outline: 0;
     box-shadow: 0 0 0 5px var(--sa11y-focus-color);

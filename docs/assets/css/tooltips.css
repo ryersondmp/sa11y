@@ -242,6 +242,15 @@ div {
 .tippy-box[data-theme~=sa11y-theme] .dismiss-group button:hover, .tippy-box[data-theme~=sa11y-theme] .dismiss-group button:focus {
   background: var(--sa11y-shortcut-hover);
 }
+.tippy-box[data-theme~=sa11y-theme] .good-icon {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-bottom: -3.5px;
+  background: var(--sa11y-good-text);
+  -webkit-mask: var(--sa11y-good-svg) center no-repeat;
+          mask: var(--sa11y-good-svg) center no-repeat;
+}
 .tippy-box[data-theme~=sa11y-theme] .link-icon {
   display: inline-block;
   width: 16px;
@@ -294,6 +303,7 @@ div {
 
 /* Tooltip focus styles */
 .tippy-box[data-theme~=sa11y-theme] a:focus,
+.tippy-box[data-theme~=sa11y-theme] input:focus,
 .tippy-box[data-theme~=sa11y-theme] button:focus,
 .tippy-box[data-theme~=sa11y-theme] button:active,
 .tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus {
@@ -301,6 +311,7 @@ div {
   box-shadow: 0 0 0 5px var(--sa11y-focus-color);
 }
 
+.tippy-box[data-theme~=sa11y-theme] input:focus:not(:focus-visible),
 .tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),
 .tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible),
 .tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus:not(:focus-visible) {
@@ -310,6 +321,7 @@ div {
 
 .tippy-box[data-theme~=sa11y-theme] a:focus-visible,
 .tippy-box[data-theme~=sa11y-theme] button:focus-visible,
+.tippy-box[data-theme~=sa11y-theme] input:focus-visible,
 .tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus-visible {
   outline: 0;
   box-shadow: 0 0 0 5px var(--sa11y-focus-color);

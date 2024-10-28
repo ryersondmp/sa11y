@@ -151,7 +151,7 @@ export function sanitizeHTMLBlock(html) {
   tempDiv.innerHTML = html;
 
   // Remove blocks.
-  ['script', 'style', 'iframe', 'form'].forEach((tag) => {
+  ['script', 'style', 'noscript', 'iframe', 'form'].forEach((tag) => {
     const elements = tempDiv.getElementsByTagName(tag);
     while (elements.length > 0) {
       elements[0].parentNode.removeChild(elements[0]);
@@ -159,17 +159,13 @@ export function sanitizeHTMLBlock(html) {
   });
 
   // Remove inline event handlers and dangerous attributes.
-  const allElements = tempDiv.getElementsByTagName('*');
-  for (let i = 0; i < allElements.length; i++) {
-    const element = allElements[i];
-    const attributes = Array.from(element.attributes);
-    attributes.forEach((attr) => {
-      if (attr.name.startsWith('on')) {
-        element.removeAttribute(attr.name);
-      }
+  const allElements = Array.from(tempDiv.getElementsByTagName('*'));
+  allElements.forEach((element) => {
+    Array.from(element.attributes).forEach((attr) => {
+      if (attr.name.startsWith('on')) element.removeAttribute(attr.name);
     });
     element.removeAttribute('style');
-  }
+  });
   return tempDiv.innerHTML;
 }
 
@@ -222,12 +218,13 @@ export function debounce(callback, wait) {
 
 /**
  * Creates a clone of an element while ignoring specified elements or elements matching a selector.
+ * Ignored by default: ['noscript', 'script', 'style', 'audio', 'video', 'form', 'iframe']
  * @param {Element} element The element to clone.
  * @param {Array} selector The selector to match elements to be excluded from the clone. Optional.
  * @returns {Element} The cloned element with excluded elements removed.
  */
 export function fnIgnore(element, selectors = []) {
-  const defaultIgnored = ['noscript', 'script', 'style'];
+  const defaultIgnored = ['noscript', 'script', 'style', 'audio', 'video', 'form', 'iframe'];
   const ignore = [...defaultIgnored, ...selectors].join(', ');
   const clone = element.cloneNode(true);
   const exclude = Array.from(clone.querySelectorAll(ignore));
@@ -565,7 +562,7 @@ export function generateElementPreview(issueObject) {
 
       if (imgSrc) {
         return anchor
-          ? `<a href="${anchor.href}" rel="noopener noreferrer"><img src="${sanitizeURL(source)}" ${alt}/></a>`
+          ? `<a href="${sanitizeURL(anchor.href)}" rel="noopener noreferrer"><img src="${sanitizeURL(source)}" ${alt}/></a>`
           : `<img src="${sanitizeURL(source)}" ${alt}/>`;
       }
       return htmlPath;
