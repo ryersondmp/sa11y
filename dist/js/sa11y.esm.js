@@ -7570,9 +7570,8 @@ function checkContrast(results, option) {
       const hasSameParent = previous && current.$el.parentNode === previous.$el.parentNode;
 
       if (!previous || !hasSameColor || !hasSameParent) {
-        mergedWarnings.push({ ...current, mergeCount: 1 });
-      } else {
-        previous.mergeCount += 1;
+        mergedWarnings.push({ ...current });
+        return mergedWarnings;
       }
 
       // For APCA, font size and font weight matter.
@@ -7580,8 +7579,10 @@ function checkContrast(results, option) {
         const hasSameFont = current.details.fontSize === previous.details.fontSize
             && current.details.fontWeight === previous.details.fontWeight;
         if (!hasSameFont) {
-          mergedWarnings.push({ ...current });
+          mergedWarnings.push({ ...current, mergeCount: 1 });
         }
+      } else {
+        previous.mergeCount += 1;
       }
       return mergedWarnings;
     }
@@ -7599,10 +7600,24 @@ function checkContrast(results, option) {
   contrastResults.forEach((item) => {
     const { $el, ratio, details } = item;
 
+    // Process text within element.
+    const nodeText = fnIgnore($el);
+    const text = getText(nodeText);
+
+    // Content for tooltip.
+    const truncatedText = truncateString(text, 80);
+    const sanitizedText = sanitizeHTML(truncatedText);
+    details.sanitizedText = item.type === 'placeholder' && $el.placeholder
+      ? sanitizeHTML($el.placeholder) : sanitizedText;
+
+    details.ratio = ratio;
+
+    const contrastDetails = `<div data-sa11y-contrast-details='${JSON.stringify(details)}'></div>`;
+
     // Annotation placement.
     let element;
     if (item.type === 'background-image' && item.mergeCount > 1) {
-      // Get the corresponding parent of the background image.
+      // Get the background image.
       let parent = $el.parentElement;
       while (parent) {
         const computedStyle = window.getComputedStyle(parent);
@@ -7617,20 +7632,6 @@ function checkContrast(results, option) {
     } else {
       element = $el;
     }
-
-    // Process text within element.
-    const nodeText = fnIgnore(element);
-    const text = getText(nodeText);
-
-    // Content for tooltip.
-    const truncatedText = truncateString(text, 80);
-    const sanitizedText = sanitizeHTML(truncatedText);
-    details.sanitizedText = item.type === 'placeholder' && $el.placeholder
-      ? sanitizeHTML($el.placeholder) : sanitizedText;
-
-    details.ratio = ratio;
-
-    const contrastDetails = `<div data-sa11y-contrast-details='${JSON.stringify(details)}'></div>`;
 
     // Iterate through contrast results based on type.
     switch (item.type) {
