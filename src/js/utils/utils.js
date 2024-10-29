@@ -220,7 +220,7 @@ export function debounce(callback, wait) {
  * Creates a clone of an element while ignoring specified elements or elements matching a selector.
  * Ignored by default: ['noscript', 'script', 'style', 'audio', 'video', 'form', 'iframe']
  * @param {Element} element The element to clone.
- * @param {Array} selector The selector to match elements to be excluded from the clone. Optional.
+ * @param {Array[]} selectors The selector to match elements to be excluded from the clone. Optional.
  * @returns {Element} The cloned element with excluded elements removed.
  */
 export function fnIgnore(element, selectors = []) {

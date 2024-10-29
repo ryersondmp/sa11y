@@ -66,7 +66,6 @@ const defaultOptions = {
   // Contrast
   contrastPlugin: true,
   contrastAPCA: false,
-  contrastSuggestions: true,
 
   // Other plugins
   customChecks: false,
@@ -1018,7 +1017,7 @@ function debounce$2(callback, wait) {
  * Creates a clone of an element while ignoring specified elements or elements matching a selector.
  * Ignored by default: ['noscript', 'script', 'style', 'audio', 'video', 'form', 'iframe']
  * @param {Element} element The element to clone.
- * @param {Array} selector The selector to match elements to be excluded from the clone. Optional.
+ * @param {Array[]} selectors The selector to match elements to be excluded from the clone. Optional.
  * @returns {Element} The cloned element with excluded elements removed.
  */
 function fnIgnore(element, selectors = []) {
@@ -7177,6 +7176,19 @@ function suggestColorAPCA(color, background, fontWeight, fontSize) {
     return adjustedColor;
   };
 
+  const getBestContrastingColor = (backgroundColor) => {
+    const contrastWithDark = calculateContrast(backgroundColor, [0, 0, 0]);
+    const contrastWithLight = calculateContrast(backgroundColor, [255, 255, 255]);
+
+    const isDarkBetter = Math.abs(contrastWithDark.ratio) > Math.abs(contrastWithLight.ratio);
+    const suggestedColor = isDarkBetter ? '#000000' : '#FFFFFF';
+    const bestContrastRatio = isDarkBetter ? contrastWithDark.ratio : contrastWithLight.ratio;
+
+    const newFontLookup = fontLookupAPCA(bestContrastRatio).slice(1);
+    const size = Math.ceil(newFontLookup[Math.floor(fontWeight / 100) - 1]);
+    return { suggestedColor, size };
+  };
+
   let adjustedColor = color;
 
   // Returns 9 font sizes in px corresponding to weights 100 thru 900.
@@ -7189,18 +7201,15 @@ function suggestColorAPCA(color, background, fontWeight, fontSize) {
   const minimumSizeRequired = fontLookup[fontWeightIndex];
 
   // Find another colour, because nothing will work at any size.
-  const notGoodAtAnySize = minimumSizeRequired === 999 || minimumSizeRequired === 777;
+  const fails = fontSize < minimumSizeRequired || minimumSizeRequired === 999 || minimumSizeRequired === 777;
 
-  // Has low contrast, but font size is okay.
-  // Lc of 60 is "sort of like" the old WCAG 2's 4.5:1.
-  const lowContrastButSizeOk = contrast.ratio < 60;
+  const step = 0.1;
+  const maxIterations = 500;
+  let iterations = 0;
+  let previousColor = null;
 
   // Loop to find a new colour.
-  if (notGoodAtAnySize || lowContrastButSizeOk) {
-    const step = 0.05;
-    const maxIterations = 500;
-    let iterations = 0;
-    let previousColor = null;
+  if (fails) {
     while (iterations < maxIterations) {
       iterations += 1;
       adjustedColor = adjustColor(adjustedColor, step);
@@ -7209,26 +7218,21 @@ function suggestColorAPCA(color, background, fontWeight, fontSize) {
 
       // console.log(`%c ${getHex(adjustedColor)} | ${contrast.ratio.toFixed(1)} | ${fontLookup}`, `color:${getHex(adjustedColor)};background:${getHex(background)}`);
 
-      // Valid colour found.
-      if (fontLookup[fontWeightIndex] <= fontSize) {
+      // Found a valid colour.
+      if (fontLookup[fontWeightIndex] < fontSize) {
         return { color: getHex(adjustedColor), size: null };
       }
 
       // Break the loop once it starts suggesting the same colour. It means there's no valid colour at the current font size, so suggest recommended font size too.
       if (previousColor && getHex(previousColor) === getHex(adjustedColor)) {
-        return { color: getHex(adjustedColor), size: Math.ceil(fontLookup[fontWeightIndex]) };
+        break;
       }
+
       previousColor = adjustedColor;
     }
-    return { color: getHex(adjustedColor), size: null };
   }
-
-  // If good contrast, but text is too small, suggest minimimum font size.
-  if (minimumSizeRequired > fontSize && contrast.ratio > 60) {
-    return { color: null, size: Math.ceil(minimumSizeRequired) };
-  }
-
-  return { color: getHex(adjustedColor), size: null };
+  const best = getBestContrastingColor(background);
+  return { color: best.suggestedColor, size: best.size };
 }
 
 /**
@@ -7238,46 +7242,44 @@ function suggestColorAPCA(color, background, fontWeight, fontSize) {
  * @param {HTMLElement} container The container where the color suggestion will be inserted.
  */
 function generateColorSuggestion(container) {
-  if (Constants.Global.contrastSuggestions) {
-    const hasContrastDetails = container?.querySelector('[data-sa11y-contrast-details]');
-    if (hasContrastDetails) {
-      const colorObject = hasContrastDetails?.getAttribute('data-sa11y-contrast-details');
-      const details = JSON.parse(colorObject);
-      const { color, background, fontWeight, fontSize, isLargeText } = details;
+  const hasContrastDetails = container?.querySelector('[data-sa11y-contrast-details]');
+  if (hasContrastDetails) {
+    const colorObject = hasContrastDetails?.getAttribute('data-sa11y-contrast-details');
+    const details = JSON.parse(colorObject);
+    const { color, background, fontWeight, fontSize, isLargeText } = details;
 
-      if (color && background !== 'image') {
-        const suggested = Constants.Global.contrastAPCA
-          ? suggestColorAPCA(color, background, fontWeight, fontSize)
-          : suggestColorWCAG(color, background, isLargeText);
+    if (color && background !== 'image') {
+      const suggested = Constants.Global.contrastAPCA
+        ? suggestColorAPCA(color, background, fontWeight, fontSize)
+        : suggestColorWCAG(color, background, isLargeText);
 
-        let advice;
-        const hr = '<hr aria-hidden="true">';
-        const style = `color:${suggested.color};background-color:${getHex(details.background)};`;
-        const colorBadge = `<strong class="badge" style="${style}">${suggested.color}</strong>`;
-        const sizeBadge = `<strong class="normal-badge">${suggested.size}px</strong>`;
+      let advice;
+      const hr = '<hr aria-hidden="true">';
+      const style = `color:${suggested.color};background-color:${getHex(details.background)};`;
+      const colorBadge = `<strong class="badge" style="${style}">${suggested.color}</strong>`;
+      const sizeBadge = `<strong class="normal-badge">${suggested.size}px</strong>`;
 
-        if (!Constants.Global.contrastAPCA) {
-          advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
-        } else if (suggested.color && suggested.size) {
-          advice = `${hr} ${Lang._('CONTRAST_APCA')} ${colorBadge} ${sizeBadge}`;
-        } else if (suggested.color) {
-          advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
-        } else if (suggested.size) {
-          advice = `${hr} ${Lang._('CONTRAST_SIZE')} ${sizeBadge}`;
-        }
-
-        // Append it to contrast details container.
-        const adviceContainer = document.createElement('div');
-        adviceContainer.id = 'advice';
-
-        // If low opacity, suggest increase opacity first.
-        const suggestion = (details.opacity < 1)
-          ? `<hr aria-hidden="true"> ${Lang.sprintf('CONTRAST_OPACITY')}` : advice;
-
-        // Append advice to contrast details container.
-        adviceContainer.innerHTML = suggestion;
-        hasContrastDetails.appendChild(adviceContainer);
+      if (!Constants.Global.contrastAPCA) {
+        advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
+      } else if (suggested.color && suggested.size) {
+        advice = `${hr} ${Lang._('CONTRAST_APCA')} ${colorBadge} ${sizeBadge}`;
+      } else if (suggested.color) {
+        advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
+      } else if (suggested.size) {
+        advice = `${hr} ${Lang._('CONTRAST_SIZE')} ${sizeBadge}`;
       }
+
+      // Append it to contrast details container.
+      const adviceContainer = document.createElement('div');
+      adviceContainer.id = 'advice';
+
+      // If low opacity, suggest increase opacity first.
+      const suggestion = (details.opacity < 1)
+        ? `<hr aria-hidden="true"> ${Lang.sprintf('CONTRAST_OPACITY')}` : advice;
+
+      // Append advice to contrast details container.
+      adviceContainer.innerHTML = suggestion;
+      hasContrastDetails.appendChild(adviceContainer);
     }
   }
 }
@@ -7562,24 +7564,25 @@ function checkContrast(results, option) {
     }
   });
 
+  // Do some extra processing on warnings.
   const processWarnings = (warnings) => warnings.reduce((mergedWarnings, current) => {
-    // Handle background-image warnings
     if (current.type === 'background-image') {
+      // For background images, merge nodes that share similar properties to minimize number of annotations.
       const previous = mergedWarnings[mergedWarnings.length - 1];
       const hasSameColor = previous && JSON.stringify(current.details.color) === JSON.stringify(previous.details.color);
       const hasSameParent = previous && current.$el.parentNode === previous.$el.parentNode;
 
       if (!previous || !hasSameColor || !hasSameParent) {
-        mergedWarnings.push({ ...current });
+        mergedWarnings.push({ ...current, mergeCount: 1 });
         return mergedWarnings;
       }
 
       // For APCA, font size and font weight matter.
       if (option.contrastAPCA) {
         const hasSameFont = current.details.fontSize === previous.details.fontSize
-            && current.details.fontWeight === previous.details.fontWeight;
+          && current.details.fontWeight === previous.details.fontWeight;
         if (!hasSameFont) {
-          mergedWarnings.push({ ...current, mergeCount: 1 });
+          mergedWarnings.push({ ...current });
         }
       } else {
         previous.mergeCount += 1;
@@ -7587,7 +7590,7 @@ function checkContrast(results, option) {
       return mergedWarnings;
     }
 
-    // Process other warning types
+    // Return remaining warnings that don't need additional processing.
     mergedWarnings.push(current);
     return mergedWarnings;
   }, []);
@@ -7600,20 +7603,6 @@ function checkContrast(results, option) {
   contrastResults.forEach((item) => {
     const { $el, ratio, details } = item;
 
-    // Process text within element.
-    const nodeText = fnIgnore($el);
-    const text = getText(nodeText);
-
-    // Content for tooltip.
-    const truncatedText = truncateString(text, 80);
-    const sanitizedText = sanitizeHTML(truncatedText);
-    details.sanitizedText = item.type === 'placeholder' && $el.placeholder
-      ? sanitizeHTML($el.placeholder) : sanitizedText;
-
-    details.ratio = ratio;
-
-    const contrastDetails = `<div data-sa11y-contrast-details='${JSON.stringify(details)}'></div>`;
-
     // Annotation placement.
     let element;
     if (item.type === 'background-image' && item.mergeCount > 1) {
@@ -7625,6 +7614,8 @@ function checkContrast(results, option) {
         parent = parent.parentElement;
       }
       element = parent || $el;
+      details.fontWeight = 400;
+      details.fontSize = 15.5; // For merged objects, reset font size.
     } else if ($el.tagName === 'OPTION') {
       element = $el.closest('datalist, select, optgroup');
     } else if ($el.closest('svg')) {
@@ -7632,6 +7623,20 @@ function checkContrast(results, option) {
     } else {
       element = $el;
     }
+
+    // Process text within element.
+    const nodeText = fnIgnore(element, ['option:not(option:first-child)']);
+    const text = getText(nodeText);
+
+    // Content for tooltip.
+    const truncatedText = truncateString(text, 80);
+    const sanitizedText = sanitizeHTML(truncatedText);
+    details.sanitizedText = item.type === 'placeholder' && $el.placeholder
+      ? sanitizeHTML($el.placeholder) : sanitizedText;
+
+    details.ratio = ratio;
+
+    const contrastDetails = `<div data-sa11y-contrast-details='${JSON.stringify(details)}'></div>`;
 
     // Iterate through contrast results based on type.
     switch (item.type) {
@@ -7656,7 +7661,7 @@ function checkContrast(results, option) {
             element,
             type: option.checks.CONTRAST_INPUT.type || 'error',
             content: option.checks.CONTRAST_INPUT.content
-              || Lang.sprintf('CONTRAST_INPUT', ratio),
+              || Lang.sprintf('CONTRAST_INPUT', ratio) + contrastDetails,
             inline: false,
             position: 'beforebegin',
             dismiss: prepareDismissal(`CONTRAST${$el.getAttribute('class')}${$el.tagName}${ratio}`),
@@ -7684,12 +7689,13 @@ function checkContrast(results, option) {
       case 'unsupported':
       case 'background-image':
         if (option.checks.CONTRAST_WARNING) {
-          const apcaAdvice = (option.contrastAPCA) ? Lang._('APCA_ADVICE') : '';
+          const apcaAdvice = (option.contrastAPCA)
+            ? `<hr aria-hidden="true"> ${Lang._('APCA_ADVICE')}` : '';
           results.push({
             element,
             type: option.checks.CONTRAST_WARNING.type || 'warning',
             content: option.checks.CONTRAST_WARNING.content
-              || `${Lang.sprintf('CONTRAST_WARNING')} ${contrastDetails} <hr aria-hidden="true"> ${apcaAdvice}`,
+              || `${Lang.sprintf('CONTRAST_WARNING')} ${contrastDetails} ${apcaAdvice}`,
             inline: false,
             position: 'beforebegin',
             dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
@@ -7776,13 +7782,10 @@ class AnnotationTooltips extends HTMLElement {
         };
         openedTooltip.addEventListener('keydown', escapeListener);
 
-        // Generate preview & colour pickers for contrast tooltips.
+        // Generate preview, colour pickers, and suggestions for contrast tooltips.
         // Imported from rulesets/contrast.js
         generateContrastTools(openedTooltip);
         initializeContrastTools(openedTooltip);
-
-        // Generate colour suggestions for contrast tooltips.
-        // Imported from rulesets/contrast.js
         generateColorSuggestion(openedTooltip);
 
         // Make tooltip stay open if colour picker is used.
@@ -10654,12 +10657,6 @@ class Sa11y {
         document.body.appendChild(consoleErrors);
         throw Error(error);
       }
-
-      console.warn(`
-      TO-DO:
-      1) Print ratio and text at the very least for headless mode.
-      2) Prop to hide contrast tools for errors.
-    `);
     };
 
     this.updateResults = () => {

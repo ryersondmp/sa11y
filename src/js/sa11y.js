@@ -207,12 +207,6 @@ class Sa11y {
         document.body.appendChild(consoleErrors);
         throw Error(error);
       }
-
-      console.warn(`
-      TO-DO:
-      1) Print ratio and text at the very least for headless mode.
-      2) Prop to hide contrast tools for errors.
-    `);
     };
 
     this.updateResults = () => {

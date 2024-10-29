@@ -80,13 +80,10 @@ export class AnnotationTooltips extends HTMLElement {
         };
         openedTooltip.addEventListener('keydown', escapeListener);
 
-        // Generate preview & colour pickers for contrast tooltips.
+        // Generate preview, colour pickers, and suggestions for contrast tooltips.
         // Imported from rulesets/contrast.js
         generateContrastTools(openedTooltip);
         initializeContrastTools(openedTooltip);
-
-        // Generate colour suggestions for contrast tooltips.
-        // Imported from rulesets/contrast.js
         generateColorSuggestion(openedTooltip);
 
         // Make tooltip stay open if colour picker is used.

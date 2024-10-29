@@ -53,6 +53,11 @@
       color: color(display-p3 1 0.3 0.2);
     }
 
+    .display-p3-bg {
+      color: color(display-p3 1 0.3 0.2);
+      background: color(display-p3 0.934 0 0.69 / 1);
+    }
+
     /* Lab */
     .lab {
       color: lab(60% 50 20);
@@ -321,6 +326,7 @@
     <h3>Hex</h3>
     <div id="error-hex">
       <p class="hex">This is using the Hex colour space.</p>
+      <p style="color:white;background:#33BAFE;font-size:24px;">This is using the Hex colour space.</p>
     </div>
 
     <h3>HSL</h3>
@@ -334,8 +340,13 @@
     </div>
 
     <h3>Display P3</h3>
-    <div id="error-display-p3">
+    <div id="warning-display-p3">
       <p class="display-p3">This is using the Display P3 colour space.</p>
+    </div>
+
+    <h3>Display P3 Background</h3>
+    <div id="warning-display-p3-bg">
+      <p class="display-p3-bg">This is using the Display P3 with background.</p>
     </div>
 
     <h3>Lab</h3>
@@ -402,7 +413,7 @@
     </div>
 
     <h3>Display P3</h3>
-    <div id="error-display-p3">
+    <div id="warning-display-p3">
       <p class="display-p3 size24">This is using the Display P3 colour space.</p>
     </div>
 
@@ -437,7 +448,7 @@
     </div>
 
     <h3>Rec. 2020</h3>
-    <div id="error-rec2020">
+    <div id="warning-rec2020">
       <p class="rec2020 size24">This is using the Rec. 2020 colour space.</p>
     </div>
 
@@ -470,7 +481,7 @@
     </div>
 
     <h3>Display P3</h3>
-    <div id="error-display-p3-24-700">
+    <div id="warning-display-p3-24-700">
       <p class="display-p3 size24 weight700">This is using the Display P3 colour space.</p>
     </div>
 
@@ -552,7 +563,6 @@
       developerChecksOnByDefault: false,
       shadowComponents: '#webcomponent',
       contrastAPCA: true,
-      // contrastSuggestions: false,
       checks: {
         IMAGE_DECORATIVE_CAROUSEL: {
           type: 'error',

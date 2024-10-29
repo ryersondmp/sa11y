@@ -259,7 +259,7 @@
       CONTRAST_WARNING: 'The contrast of this text is unknown and needs to be manually reviewed. Ensure the text and the background have strong contrasting colours.',
       APCA_ADVICE: 'If no colour combination passes, try increasing the font size.',
       CONTRAST_PLACEHOLDER: 'Placeholder text within this input does not have enough contrast with the background, making it harder to read.',
-      CONTRAST_INPUT: 'Text within this input does not have enough contrast with the background, making it harder to read. <hr> <strong {B}>Contrast</strong> <strong {B}>%(RATIO)</strong>',
+      CONTRAST_INPUT: 'Text within this input does not have enough contrast with the background, making it harder to read.',
       CONTRAST: 'Contrast',
       UNKNOWN: 'Unknown',
       LARGE_TEXT: 'Large Text',
