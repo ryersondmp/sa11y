@@ -30,26 +30,6 @@ export function normalizeFontWeight(weight) {
 }
 
 /**
- * Get the equivalent human, more readable font weight from a numeric value.
- * @param {number} weight - The numeric font weight.
- * @returns {string} - The equivalent, more readable name.
-*/
-export function getFontWeightName(weight) {
-  const fontWeightMap = {
-    100: Lang._('THIN'),
-    200: Lang._('EXTRA_LIGHT'),
-    300: Lang._('LIGHT'),
-    400: Lang._('REGULAR'),
-    500: Lang._('MEDIUM'),
-    600: Lang._('SEMI_BOLD'),
-    700: Lang._('BOLD'),
-    800: Lang._('EXTRA_BOLD'),
-    900: Lang._('BLACK'),
-  };
-  return fontWeightMap[weight] || Lang._('REGULAR');
-}
-
-/**
  * Convert colour string to RGBA format.
  * @param {string} color The colour string to convert.
  * @param {number} opacity The computed opacity of the element (0 to 1).
@@ -259,9 +239,26 @@ export function suggestColorWCAG(color, background, isLargeText) {
 }
 
 /**
+ * Determines the optimal contrasting color (either #000 or #FFF) for a given background color and the minimum font size required to meet APCA.
+ * @param {number[]} background The background color in [R, G, B, A] format.
+ * @param {number} fontWeight The computed weight of the font.
+ * @returns Object containing hex code (#000/#FFF) and the recommended font size.
+ */
+const getOptimalAPCACombo = (background, fontWeight) => {
+  const contrastWithDark = calculateContrast(background, [0, 0, 0]);
+  const contrastWithLight = calculateContrast(background, [255, 255, 255]);
+  const isDarkBetter = Math.abs(contrastWithDark.ratio) > Math.abs(contrastWithLight.ratio);
+  const suggestedColor = isDarkBetter ? '#000000' : '#FFFFFF';
+  const bestContrastRatio = isDarkBetter ? contrastWithDark.ratio : contrastWithLight.ratio;
+  const newFontLookup = fontLookupAPCA(bestContrastRatio).slice(1);
+  const size = Math.ceil(newFontLookup[Math.floor(fontWeight / 100) - 1]);
+  return { suggestedColor, size };
+};
+
+/**
  * Suggests a new colour or font size based on APCA contrast algorithm.
  * @param {number[]} color Text colour in [R,G,B,A] format.
- * @param {Array} background Background colour in [R,G,B,A] format.
+ * @param {number[]} background Background colour in [R,G,B,A] format.
  * @param {number} ratio APCA contrast ratio.
  * @param {number} fontWeight Current font weight of the element.
  * @param {number} fontSize Current font size of the element.
@@ -283,19 +280,6 @@ export function suggestColorAPCA(color, background, fontWeight, fontSize) {
         : darken(foregroundColor, amount);
     }
     return adjustedColor;
-  };
-
-  const getBestContrastingColor = (backgroundColor) => {
-    const contrastWithDark = calculateContrast(backgroundColor, [0, 0, 0]);
-    const contrastWithLight = calculateContrast(backgroundColor, [255, 255, 255]);
-
-    const isDarkBetter = Math.abs(contrastWithDark.ratio) > Math.abs(contrastWithLight.ratio);
-    const suggestedColor = isDarkBetter ? '#000000' : '#FFFFFF';
-    const bestContrastRatio = isDarkBetter ? contrastWithDark.ratio : contrastWithLight.ratio;
-
-    const newFontLookup = fontLookupAPCA(bestContrastRatio).slice(1);
-    const size = Math.ceil(newFontLookup[Math.floor(fontWeight / 100) - 1]);
-    return { suggestedColor, size };
   };
 
   let adjustedColor = color;
@@ -332,7 +316,7 @@ export function suggestColorAPCA(color, background, fontWeight, fontSize) {
         return { color: getHex(adjustedColor), size: null };
       }
 
-      // Break the loop once it starts suggesting the same colour. It means there's no valid colour at the current font size, so suggest recommended font size too.
+      // Break the loop once it starts suggesting the same colour. It means there's no valid colour at the current font size.
       if (previousColor && getHex(previousColor) === getHex(adjustedColor)) {
         break;
       }
@@ -340,7 +324,9 @@ export function suggestColorAPCA(color, background, fontWeight, fontSize) {
       previousColor = adjustedColor;
     }
   }
-  const best = getBestContrastingColor(background);
+
+  // Suggest either black or white, whatever provides highest contrast, and the suggested font size.
+  const best = getOptimalAPCACombo(background, fontWeight);
   return { color: best.suggestedColor, size: best.size };
 }
 
@@ -405,15 +391,7 @@ export function generateContrastTools(container) {
     const hasBackgroundColor = background && background !== 'image';
     const backgroundHex = hasBackgroundColor ? getHex(background) : '#ffffff';
     const foregroundHex = color ? getHex(color) : '#000000';
-    const fontSizeDecimal = fontSize.toFixed(1);
-    const formattedFontSize = fontSizeDecimal.endsWith('.0')
-      ? parseInt(fontSizeDecimal, 10)
-      : parseFloat(fontSizeDecimal);
-
-    // APCA has more information.
-    const apcaDetails = Constants.Global.contrastAPCA
-      ? `<strong id="font-size" class="badge">${formattedFontSize}px</strong> <strong id="font-weight" class="badge">${getFontWeightName(fontWeight)}</strong>`
-      : '';
+    const displayedRatio = Math.abs(ratio) === 0 ? 0 : Math.abs(ratio) || Lang._('UNKNOWN');
 
     // Generate HTML layout.
     const contrastTools = document.createElement('div');
@@ -421,10 +399,9 @@ export function generateContrastTools(container) {
     contrastTools.innerHTML = `
       <hr aria-hidden="true">
       <strong id="contrast" class="badge">${Lang._('CONTRAST')}</strong>
-      <strong id="value" class="badge">${ratio || Lang._('UNKNOWN')}</strong>
+      <strong id="value" class="badge">${displayedRatio}</strong>
       <strong id="large-text" class="badge good-badge" hidden>${Lang._('LARGE_TEXT')}</strong>
       <strong id="body-text" class="badge good-badge" hidden>${Lang._('BODY_TEXT')}</strong>
-      ${apcaDetails}
       <strong id="apca" class="badge good-badge" hidden>${Lang._('GOOD')} <span class="good-icon"></span></strong>
       <div class="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};` : ''}font-weight:${fontWeight};font-size:${fontSize}px;">
         ${sanitizedText}
@@ -461,8 +438,6 @@ export function initializeContrastTools(container) {
     const largeText = container.querySelector('#large-text');
     const ratio = container.querySelector('#value');
     const apca = container.querySelector('#apca');
-    const fontSizeBadge = container.querySelector('#font-size');
-    const fontWeightBadge = container.querySelector('#font-weight');
 
     // Helper to update badge classes.
     const toggleBadges = (elements, condition) => {
@@ -482,12 +457,12 @@ export function initializeContrastTools(container) {
       contrastPreview.style.backgroundImage = 'none';
 
       const contrastValue = calculateContrast(convertToRGBA(fgColor), convertToRGBA(bgColor));
-      const elementsToToggle = [fontSizeBadge, fontWeightBadge, ratio, contrast];
+      const elementsToToggle = [ratio, contrast];
 
       if (Constants.Global.contrastAPCA) {
         // APCA
         const value = Number(contrastValue.ratio.toFixed(1));
-        ratio.textContent = value;
+        ratio.textContent = Math.abs(value);
         const minFontSize = fontLookupAPCA(value).slice(1)[Math.floor(fontWeight / 100) - 1];
         const passes = fontSize > minFontSize;
         toggleBadges(elementsToToggle, passes);
@@ -680,8 +655,10 @@ export default function checkContrast(results, option) {
     if (current.type === 'background-image') {
       // For background images, merge nodes that share similar properties to minimize number of annotations.
       const previous = mergedWarnings[mergedWarnings.length - 1];
-      const hasSameColor = previous && JSON.stringify(current.details.color) === JSON.stringify(previous.details.color);
-      const hasSameParent = previous && current.$el.parentNode === previous.$el.parentNode;
+      const hasSameColor = previous
+        && JSON.stringify(current.details.color) === JSON.stringify(previous.details.color);
+      const hasSameParent = previous
+        && current.$el.parentNode === previous.$el.parentNode;
 
       if (!previous || !hasSameColor || !hasSameParent) {
         mergedWarnings.push({ ...current, mergeCount: 1 });

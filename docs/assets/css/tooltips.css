@@ -246,7 +246,7 @@ div {
   display: inline-block;
   width: 14px;
   height: 14px;
-  margin-bottom: -3.5px;
+  margin-bottom: -2.5px;
   background: var(--sa11y-good-text);
   -webkit-mask: var(--sa11y-good-svg) center no-repeat;
           mask: var(--sa11y-good-svg) center no-repeat;

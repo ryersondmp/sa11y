@@ -266,15 +266,6 @@
       BODY_TEXT: 'Body Text',
       TEXT: 'Text',
       BG: 'Background',
-      THIN: 'Thin',
-      EXTRA_LIGHT: 'Extra Light',
-      LIGHT: 'Light',
-      REGULAR: 'Regular',
-      MEDIUM: 'Medium',
-      SEMI_BOLD: 'Semi Bold',
-      BOLD: 'Bold',
-      EXTRA_BOLD: 'Extra Bold',
-      BLACK: 'Black',
     },
   };
 
