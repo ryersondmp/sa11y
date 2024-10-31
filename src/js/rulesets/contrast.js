@@ -127,9 +127,8 @@ export function getWCAG2Ratio(l1, l2) {
  * @returns Lighter foreground text colour.
  */
 export function brighten(color, amount) {
-  const clampedAmount = Math.min(Math.max(amount, 0), 1);
   return color.map((value) => {
-    const newValue = Math.round(value + (255 - value) * clampedAmount);
+    const newValue = Math.round(value + (255 - value) * amount);
     return Math.min(newValue, 255);
   });
 }
@@ -141,9 +140,8 @@ export function brighten(color, amount) {
  * @returns Darker foreground text colour.
  */
 export function darken(color, amount) {
-  const clampedAmount = Math.min(Math.max(amount, 0), 1);
   return color.map((value) => {
-    const newValue = Math.round(value - value * clampedAmount);
+    const newValue = Math.round(value - value * amount);
     return Math.max(newValue, 0);
   });
 }
@@ -389,8 +387,10 @@ export function generateContrastTools(container) {
 
     // Initialize variables.
     const hasBackgroundColor = background && background !== 'image';
-    const backgroundHex = hasBackgroundColor ? getHex(background) : '#ffffff';
+    const backgroundHex = hasBackgroundColor ? getHex(background) : '#000000';
     const foregroundHex = color ? getHex(color) : '#000000';
+    const unknownFG = color ? '' : 'class="unknown"';
+    const unknownBG = background && background !== 'image' ? '' : 'class="unknown"';
     const displayedRatio = Math.abs(ratio) === 0 ? 0 : Math.abs(ratio) || Lang._('UNKNOWN');
 
     // Generate HTML layout.
@@ -398,20 +398,20 @@ export function generateContrastTools(container) {
     contrastTools.id = 'contrast-tools';
     contrastTools.innerHTML = `
       <hr aria-hidden="true">
-      <strong id="contrast" class="badge">${Lang._('CONTRAST')}</strong>
-      <strong id="value" class="badge">${displayedRatio}</strong>
-      <strong id="large-text" class="badge good-badge" hidden>${Lang._('LARGE_TEXT')}</strong>
-      <strong id="body-text" class="badge good-badge" hidden>${Lang._('BODY_TEXT')}</strong>
-      <strong id="apca" class="badge good-badge" hidden>${Lang._('GOOD')} <span class="good-icon"></span></strong>
+      <span id="contrast" class="badge">${Lang._('CONTRAST')}</span>
+      <span id="value" class="badge">${displayedRatio}</span>
+      <span id="large-text" class="badge good-badge" hidden>${Lang._('LARGE_TEXT')}</span>
+      <span id="body-text" class="badge good-badge" hidden>${Lang._('BODY_TEXT')}</span>
+      <span id="apca" class="badge good-badge" hidden>${Lang._('GOOD')} <span class="good-icon"></span></span>
       <div class="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};` : ''}font-weight:${fontWeight};font-size:${fontSize}px;">
         ${sanitizedText}
       </div>
       <div class="color-pickers">
         <label for="fg-text">${Lang._('TEXT')}
-          <input type="color" id="fg-text" value="${foregroundHex}"/>
+          <input type="color" id="fg-text" value="${foregroundHex}" ${unknownFG}/>
         </label>
         <label for="bg">${Lang._('BG')}
-          <input type="color" id="bg" value="${backgroundHex}"/>
+          <input type="color" id="bg" value="${backgroundHex}" ${unknownBG}/>
         </label>
       </div>`;
     hasContrastDetails.appendChild(contrastTools);
@@ -452,6 +452,12 @@ export function initializeContrastTools(container) {
       const fgColor = fgInput.value;
       const bgColor = bgInput.value;
 
+      // Remove question mark from inputs.
+      if (fgInput.classList.contains('unknown') || bgInput.classList.contains('unknown')) {
+        fgInput.classList.remove('unknown');
+        bgInput.classList.remove('unknown');
+      }
+
       contrastPreview.style.color = fgColor;
       contrastPreview.style.backgroundColor = bgColor;
       contrastPreview.style.backgroundImage = 'none';
@@ -464,7 +470,7 @@ export function initializeContrastTools(container) {
         const value = Number(contrastValue.ratio.toFixed(1));
         ratio.textContent = Math.abs(value);
         const minFontSize = fontLookupAPCA(value).slice(1)[Math.floor(fontWeight / 100) - 1];
-        const passes = fontSize > minFontSize;
+        const passes = fontSize >= minFontSize;
         toggleBadges(elementsToToggle, passes);
         apca.hidden = !passes;
       } else {
@@ -478,8 +484,10 @@ export function initializeContrastTools(container) {
       }
     };
 
-    // Attach event listeners.
+    // Due to weird Safari issue, we have to use both a 'click' and 'input' event, otherwise upon initial click with input event it would quickly disappear.
+    // fgInput.addEventListener('click', (event) => event.stopPropagation());
     fgInput.addEventListener('input', updatePreview);
+    // bgInput.addEventListener('click', (event) => event.stopPropagation());
     bgInput.addEventListener('input', updatePreview);
   }
 }
@@ -531,7 +539,7 @@ export function apcaAlgorithm($el, color, background, fontSize, fontWeight, opac
   const fontWeightIndex = Math.floor(fontWeight / 100) - 1;
   const minFontSize = fontLookup[fontWeightIndex];
 
-  if (fontSize < minFontSize) {
+  if (fontSize <= minFontSize) {
     return {
       $el,
       ratio: Math.abs(ratio.toFixed(1)),

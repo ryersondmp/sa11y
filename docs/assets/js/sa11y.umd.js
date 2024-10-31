@@ -2061,7 +2061,7 @@
 
   var styles = ":host{background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);bottom:0;display:block;height:-moz-fit-content;height:fit-content;left:0;position:fixed;right:0;width:100%;z-index:999999}*{-webkit-font-smoothing:auto!important;color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;font-size:var(--sa11y-normal-text);line-height:22px!important}#dialog{margin:20px auto;max-width:900px;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none}p{margin-top:0}.error{background:var(--sa11y-error);border:2px dashed #f08080;color:var(--sa11y-error-text);margin-bottom:0;padding:5px}";
 
-  var sharedStyles = ".visually-hidden{clip:rect(1px,1px,1px,1px);border:0;clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}[hidden]{display:none!important}.header-text,.header-text-inline,h2{color:var(--sa11y-panel-primary);display:block;font-size:var(--sa11y-large-text);font-weight:600;margin-bottom:3px}.header-text-inline{display:inline-block!important}code{font-family:monospace!important;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:600}.kbd,code,kbd{background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);padding:1.6px 4.8px}.bold{font-weight:600}.error .colour,.red-text{color:var(--sa11y-red-text);font-family:var(--sa11y-font-face)}.warning .colour,.yellow-text{color:var(--sa11y-yellow-text);font-family:var(--sa11y-font-face)}.badge,.normal-badge{background-color:var(--sa11y-panel-badge);border-radius:10px;color:var(--sa11y-panel-primary);display:inline;font-size:14px;font-weight:700!important;line-height:1;min-width:10px;outline:1px solid transparent;padding:1px 5px 1.75px;text-align:center;vertical-align:baseline;white-space:nowrap}.error .badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.error-badge{background:var(--sa11y-error)!important;color:var(--sa11y-error-text)!important}.warning .badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.warning-badge{background:var(--sa11y-yellow-text)!important;color:var(--sa11y-panel-bg)!important}.good .badge{background:var(--sa11y-good);color:var(--sa11y-good-text)}.good-badge{background:var(--sa11y-good)!important;color:var(--sa11y-good-text)!important}.contrast-preview{background-color:#e8e8e8;background-image:linear-gradient(45deg,#ccc 25%,transparent 0,transparent 75%,#ccc 0,#ccc),linear-gradient(45deg,#ccc 25%,transparent 0,transparent 75%,#ccc 0,#ccc);background-position:0 0,5px 5px;background-size:10px 10px;border:2px dashed var(--sa11y-panel-bg-splitter);border-radius:3.2px;line-height:1;margin-bottom:10px;margin-top:10px;max-height:100px;overflow:clip;overflow-wrap:break-word;padding:5px}.color-pickers{display:flex;justify-content:space-between;margin-bottom:10px}.color-pickers label{align-items:center;display:flex}.color-pickers input{margin-inline-start:7px}input[type=color i]{background:var(--sa11y-panel-bg-secondary);block-size:30px;border-color:var(--sa11y-button-outline);border-radius:50%;border-width:2px;inline-size:30px;padding:1px}input[type=color i]::-webkit-color-swatch-wrapper{padding:1px}input[type=color i]::-webkit-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i]::-moz-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}.close-btn{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;color:var(--sa11y-panel-primary);cursor:pointer;float:var(--sa11y-float-rtl);font-size:var(--sa11y-normal-text);font-weight:400;height:32px;margin:0;position:relative;transition:all .2s ease-in-out;width:32px}.close-btn:focus,.close-btn:hover{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{background:var(--sa11y-setting-switch-bg-off);bottom:-7px;content:\"\";left:-7px;-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute;right:-7px;top:-7px}@media screen and (forced-colors:active){.close-btn:after{filter:invert(1)}}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:not(#panel-controls button):not(.switch):focus,#container input:focus,#container select:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus,#container .switch:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus:not(:focus-visible),#container [tabindex=\"-1\"]:focus:not(:focus-visible),#container [tabindex=\"0\"]:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container input:focus:not(:focus-visible),#container select:focus:not(:focus-visible){box-shadow:none;outline:0}#container [tabindex=\"-1\"]:focus-visible,#container [tabindex=\"0\"]:focus-visible,#container a:focus-visible,#container button:not(#panel-controls button):not(.switch):focus-visible,#container input:focus-visible,#container select:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus-visible,#container .switch:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#panel-controls button:focus{border:3px solid transparent}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container select:focus,.close-btn:focus{outline:3px solid transparent!important}}";
+  var sharedStyles = ".visually-hidden{clip:rect(1px,1px,1px,1px);border:0;clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}[hidden]{display:none!important}.header-text,.header-text-inline,h2{color:var(--sa11y-panel-primary);display:block;font-size:var(--sa11y-large-text);font-weight:600;margin-bottom:3px}.header-text-inline{display:inline-block!important}code{font-family:monospace!important;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:600}.kbd,code,kbd{background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);padding:1.6px 4.8px}.bold{font-weight:600}.error .colour,.red-text{color:var(--sa11y-red-text);font-family:var(--sa11y-font-face)}.warning .colour,.yellow-text{color:var(--sa11y-yellow-text);font-family:var(--sa11y-font-face)}.badge,.normal-badge{background-color:var(--sa11y-panel-badge);border-radius:10px;color:var(--sa11y-panel-primary);display:inline;font-size:14px;font-weight:700!important;line-height:1;min-width:10px;outline:1px solid transparent;padding:1px 5px 1.75px;text-align:center;vertical-align:baseline;white-space:nowrap}.error .badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.error-badge{background:var(--sa11y-error)!important;color:var(--sa11y-error-text)!important}.warning .badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.warning-badge{background:var(--sa11y-yellow-text)!important;color:var(--sa11y-panel-bg)!important}.good .badge{background:var(--sa11y-good);color:var(--sa11y-good-text)}.good-badge{background:var(--sa11y-good)!important;color:var(--sa11y-good-text)!important}.contrast-preview{background-color:#e8e8e8;background-image:linear-gradient(45deg,#ccc 25%,transparent 0,transparent 75%,#ccc 0,#ccc),linear-gradient(45deg,#ccc 25%,transparent 0,transparent 75%,#ccc 0,#ccc);background-position:0 0,5px 5px;background-size:10px 10px;border:2px dashed var(--sa11y-panel-bg-splitter);border-radius:3.2px;line-height:1;margin-bottom:10px;margin-top:10px;max-height:100px;overflow:clip;overflow-wrap:break-word;padding:5px}.color-pickers{display:flex;justify-content:space-between;margin-bottom:10px}.color-pickers label{align-items:center;display:flex}.color-pickers input{margin-inline-start:7px}input[type=color i]{background:var(--sa11y-panel-bg-secondary);block-size:30px;border-color:var(--sa11y-button-outline);border-radius:50%;border-style:solid;border-width:1px;inline-size:30px;padding:2px}input[type=color i]::-webkit-color-swatch-wrapper{padding:1px}input[type=color i]::-webkit-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i]::-moz-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i].unknown:after{align-items:center;color:#fff;content:\"?\";display:flex;font-size:1.2rem;height:1.5rem;justify-content:center;margin:-25px -1.5px;padding:2px;pointer-events:none;position:absolute;width:1.5rem;z-index:2}.close-btn{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;color:var(--sa11y-panel-primary);cursor:pointer;float:var(--sa11y-float-rtl);font-size:var(--sa11y-normal-text);font-weight:400;height:32px;margin:0;position:relative;transition:all .2s ease-in-out;width:32px}.close-btn:focus,.close-btn:hover{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{background:var(--sa11y-setting-switch-bg-off);bottom:-7px;content:\"\";left:-7px;-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute;right:-7px;top:-7px}@media screen and (forced-colors:active){.close-btn:after{filter:invert(1)}}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:not(#panel-controls button):not(.switch):focus,#container input:focus,#container select:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus,#container .switch:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus:not(:focus-visible),#container [tabindex=\"-1\"]:focus:not(:focus-visible),#container [tabindex=\"0\"]:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container input:focus:not(:focus-visible),#container select:focus:not(:focus-visible){box-shadow:none;outline:0}#container [tabindex=\"-1\"]:focus-visible,#container [tabindex=\"0\"]:focus-visible,#container a:focus-visible,#container button:not(#panel-controls button):not(.switch):focus-visible,#container input:focus-visible,#container select:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus-visible,#container .switch:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#panel-controls button:focus{border:3px solid transparent}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container select:focus,.close-btn:focus{outline:3px solid transparent!important}}";
 
   class ConsoleErrors extends HTMLElement {
     constructor(error) {
@@ -7024,9 +7024,8 @@ ${this.error.stack}
    * @returns Lighter foreground text colour.
    */
   function brighten(color, amount) {
-    const clampedAmount = Math.min(Math.max(amount, 0), 1);
     return color.map((value) => {
-      const newValue = Math.round(value + (255 - value) * clampedAmount);
+      const newValue = Math.round(value + (255 - value) * amount);
       return Math.min(newValue, 255);
     });
   }
@@ -7038,9 +7037,8 @@ ${this.error.stack}
    * @returns Darker foreground text colour.
    */
   function darken(color, amount) {
-    const clampedAmount = Math.min(Math.max(amount, 0), 1);
     return color.map((value) => {
-      const newValue = Math.round(value - value * clampedAmount);
+      const newValue = Math.round(value - value * amount);
       return Math.max(newValue, 0);
     });
   }
@@ -7286,8 +7284,10 @@ ${this.error.stack}
 
       // Initialize variables.
       const hasBackgroundColor = background && background !== 'image';
-      const backgroundHex = hasBackgroundColor ? getHex(background) : '#ffffff';
+      const backgroundHex = hasBackgroundColor ? getHex(background) : '#000000';
       const foregroundHex = color ? getHex(color) : '#000000';
+      const unknownFG = color ? '' : 'class="unknown"';
+      const unknownBG = background && background !== 'image' ? '' : 'class="unknown"';
       const displayedRatio = Math.abs(ratio) === 0 ? 0 : Math.abs(ratio) || Lang._('UNKNOWN');
 
       // Generate HTML layout.
@@ -7295,20 +7295,20 @@ ${this.error.stack}
       contrastTools.id = 'contrast-tools';
       contrastTools.innerHTML = `
       <hr aria-hidden="true">
-      <strong id="contrast" class="badge">${Lang._('CONTRAST')}</strong>
-      <strong id="value" class="badge">${displayedRatio}</strong>
-      <strong id="large-text" class="badge good-badge" hidden>${Lang._('LARGE_TEXT')}</strong>
-      <strong id="body-text" class="badge good-badge" hidden>${Lang._('BODY_TEXT')}</strong>
-      <strong id="apca" class="badge good-badge" hidden>${Lang._('GOOD')} <span class="good-icon"></span></strong>
+      <span id="contrast" class="badge">${Lang._('CONTRAST')}</span>
+      <span id="value" class="badge">${displayedRatio}</span>
+      <span id="large-text" class="badge good-badge" hidden>${Lang._('LARGE_TEXT')}</span>
+      <span id="body-text" class="badge good-badge" hidden>${Lang._('BODY_TEXT')}</span>
+      <span id="apca" class="badge good-badge" hidden>${Lang._('GOOD')} <span class="good-icon"></span></span>
       <div class="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};` : ''}font-weight:${fontWeight};font-size:${fontSize}px;">
         ${sanitizedText}
       </div>
       <div class="color-pickers">
         <label for="fg-text">${Lang._('TEXT')}
-          <input type="color" id="fg-text" value="${foregroundHex}"/>
+          <input type="color" id="fg-text" value="${foregroundHex}" ${unknownFG}/>
         </label>
         <label for="bg">${Lang._('BG')}
-          <input type="color" id="bg" value="${backgroundHex}"/>
+          <input type="color" id="bg" value="${backgroundHex}" ${unknownBG}/>
         </label>
       </div>`;
       hasContrastDetails.appendChild(contrastTools);
@@ -7349,6 +7349,12 @@ ${this.error.stack}
         const fgColor = fgInput.value;
         const bgColor = bgInput.value;
 
+        // Remove question mark from inputs.
+        if (fgInput.classList.contains('unknown') || bgInput.classList.contains('unknown')) {
+          fgInput.classList.remove('unknown');
+          bgInput.classList.remove('unknown');
+        }
+
         contrastPreview.style.color = fgColor;
         contrastPreview.style.backgroundColor = bgColor;
         contrastPreview.style.backgroundImage = 'none';
@@ -7361,7 +7367,7 @@ ${this.error.stack}
           const value = Number(contrastValue.ratio.toFixed(1));
           ratio.textContent = Math.abs(value);
           const minFontSize = fontLookupAPCA(value).slice(1)[Math.floor(fontWeight / 100) - 1];
-          const passes = fontSize > minFontSize;
+          const passes = fontSize >= minFontSize;
           toggleBadges(elementsToToggle, passes);
           apca.hidden = !passes;
         } else {
@@ -7375,8 +7381,10 @@ ${this.error.stack}
         }
       };
 
-      // Attach event listeners.
+      // Due to weird Safari issue, we have to use both a 'click' and 'input' event, otherwise upon initial click with input event it would quickly disappear.
+      // fgInput.addEventListener('click', (event) => event.stopPropagation());
       fgInput.addEventListener('input', updatePreview);
+      // bgInput.addEventListener('click', (event) => event.stopPropagation());
       bgInput.addEventListener('input', updatePreview);
     }
   }
@@ -7428,7 +7436,7 @@ ${this.error.stack}
     const fontWeightIndex = Math.floor(fontWeight / 100) - 1;
     const minFontSize = fontLookup[fontWeightIndex];
 
-    if (fontSize < minFontSize) {
+    if (fontSize <= minFontSize) {
       return {
         $el,
         ratio: Math.abs(ratio.toFixed(1)),
@@ -7767,18 +7775,23 @@ ${this.error.stack}
 
           // Generate preview, colour pickers, and suggestions for contrast tooltips.
           // Imported from rulesets/contrast.js
-          generateContrastTools(openedTooltip);
-          initializeContrastTools(openedTooltip);
-          generateColorSuggestion(openedTooltip);
+          if (!openedTooltip.hasAttribute('contrast-tools-initialized')) {
+            generateContrastTools(openedTooltip);
+            initializeContrastTools(openedTooltip);
+            generateColorSuggestion(openedTooltip);
+            openedTooltip.setAttribute('contrast-tools-initialized', true);
+          }
 
-          // Make tooltip stay open if colour picker is used.
+          // Make tooltip stay open if colour picker is used. Use 'mousedown' event, because upon click of trigger, it sets focus on close button, which immediately closes colour input on safari.
           let firstClick = true;
-          instance.popper.addEventListener('click', (event) => {
+          function handleMouseDown(event) {
             if (firstClick && event.target.matches('input[type="color"]')) {
               instance.reference.click();
               firstClick = false;
+              openedTooltip.removeEventListener('mousedown', handleMouseDown);
             }
-          });
+          }
+          openedTooltip.addEventListener('mousedown', handleMouseDown);
 
           // Remove all event listeners.
           const onHiddenTooltip = () => {
@@ -7804,10 +7817,6 @@ ${this.error.stack}
           });
           const annotation = instance.reference.getRootNode().host;
           annotation.removeAttribute('data-sa11y-opened');
-
-          // Reset contrast suggestions/colour pickers.
-          const clearContrastSuggestions = openedTooltip?.querySelector('[data-sa11y-contrast-details');
-          if (clearContrastSuggestions) clearContrastSuggestions.innerHTML = '';
         },
       });
     }

@@ -154,13 +154,15 @@ kbd,
 }
 
 input[type="color" i] {
-  padding: 1px;
+  padding: 2px;
   background: var(--sa11y-panel-bg-secondary);
   border-color: var(--sa11y-button-outline);
-  border-width: 2px;
+  border-style: solid;
+  border-width: 1px;
   border-radius: 50%;
   inline-size: 30px;
   block-size: 30px;
+
 
   &::-webkit-color-swatch-wrapper {
     padding: 1px;
@@ -174,6 +176,22 @@ input[type="color" i] {
   &::-moz-color-swatch {
     border-color: var(--sa11y-button-outline);
     border-radius: 50%;
+  }
+
+  &.unknown::after {
+    position: absolute;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 2px;
+    margin: -25px -1.5px;
+    font-size: 1.2rem;
+    color: #fff;
+    pointer-events: none;
+    content: "?";
   }
 }
 

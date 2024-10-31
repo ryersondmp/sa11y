@@ -82,18 +82,23 @@ export class AnnotationTooltips extends HTMLElement {
 
         // Generate preview, colour pickers, and suggestions for contrast tooltips.
         // Imported from rulesets/contrast.js
-        generateContrastTools(openedTooltip);
-        initializeContrastTools(openedTooltip);
-        generateColorSuggestion(openedTooltip);
+        if (!openedTooltip.hasAttribute('contrast-tools-initialized')) {
+          generateContrastTools(openedTooltip);
+          initializeContrastTools(openedTooltip);
+          generateColorSuggestion(openedTooltip);
+          openedTooltip.setAttribute('contrast-tools-initialized', true);
+        }
 
-        // Make tooltip stay open if colour picker is used.
+        // Make tooltip stay open if colour picker is used. Use 'mousedown' event, because upon click of trigger, it sets focus on close button, which immediately closes colour input on safari.
         let firstClick = true;
-        instance.popper.addEventListener('click', (event) => {
+        function handleMouseDown(event) {
           if (firstClick && event.target.matches('input[type="color"]')) {
             instance.reference.click();
             firstClick = false;
+            openedTooltip.removeEventListener('mousedown', handleMouseDown);
           }
-        });
+        }
+        openedTooltip.addEventListener('mousedown', handleMouseDown);
 
         // Remove all event listeners.
         const onHiddenTooltip = () => {
@@ -119,10 +124,6 @@ export class AnnotationTooltips extends HTMLElement {
         });
         const annotation = instance.reference.getRootNode().host;
         annotation.removeAttribute('data-sa11y-opened');
-
-        // Reset contrast suggestions/colour pickers.
-        const clearContrastSuggestions = openedTooltip?.querySelector('[data-sa11y-contrast-details');
-        if (clearContrastSuggestions) clearContrastSuggestions.innerHTML = '';
       },
     });
   }
