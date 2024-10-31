@@ -7024,9 +7024,12 @@ ${this.error.stack}
    * @returns Lighter foreground text colour.
    */
   function brighten(color, amount) {
-    return color.map((value) => {
-      const newValue = Math.round(value + (255 - value) * amount);
-      return Math.min(newValue, 255);
+    return color.map((value, index) => {
+      if (index < 3) { // Only brighten [R,G,B]
+        const newValue = Math.ceil(value + (255 - value) * amount);
+        return newValue >= 255 ? 255 : newValue;
+      }
+      return value;
     });
   }
 
@@ -7037,9 +7040,12 @@ ${this.error.stack}
    * @returns Darker foreground text colour.
    */
   function darken(color, amount) {
-    return color.map((value) => {
-      const newValue = Math.round(value - value * amount);
-      return Math.max(newValue, 0);
+    return color.map((value, index) => {
+      if (index < 3) { // Only darken [R,G,B]
+        const newValue = Math.floor(value * (1 - amount));
+        return newValue <= 0 ? 0 : newValue;
+      }
+      return value;
     });
   }
 
@@ -7140,10 +7146,10 @@ ${this.error.stack}
    * @returns Object containing hex code (#000/#FFF) and the recommended font size.
    */
   const getOptimalAPCACombo = (background, fontWeight) => {
-    const contrastWithDark = calculateContrast(background, [0, 0, 0]);
-    const contrastWithLight = calculateContrast(background, [255, 255, 255]);
+    const contrastWithDark = calculateContrast(background, [0, 0, 0, 1]);
+    const contrastWithLight = calculateContrast(background, [255, 255, 255, 1]);
     const isDarkBetter = Math.abs(contrastWithDark.ratio) > Math.abs(contrastWithLight.ratio);
-    const suggestedColor = isDarkBetter ? '#000000' : '#FFFFFF';
+    const suggestedColor = isDarkBetter ? [0, 0, 0, 1] : [255, 255, 255, 1];
     const bestContrastRatio = isDarkBetter ? contrastWithDark.ratio : contrastWithLight.ratio;
     const newFontLookup = fontLookupAPCA(bestContrastRatio).slice(1);
     const size = Math.ceil(newFontLookup[Math.floor(fontWeight / 100) - 1]);
@@ -7207,7 +7213,7 @@ ${this.error.stack}
         // console.log(`%c ${getHex(adjustedColor)} | ${contrast.ratio.toFixed(1)} | ${fontLookup}`, `color:${getHex(adjustedColor)};background:${getHex(background)}`);
 
         // Found a valid colour.
-        if (fontLookup[fontWeightIndex] < fontSize) {
+        if (fontLookup[fontWeightIndex] <= fontSize) {
           return { color: getHex(adjustedColor), size: null };
         }
 
@@ -7222,7 +7228,7 @@ ${this.error.stack}
 
     // Suggest either black or white, whatever provides highest contrast, and the suggested font size.
     const best = getOptimalAPCACombo(background, fontWeight);
-    return { color: best.suggestedColor, size: best.size };
+    return { color: getHex(best.suggestedColor), size: best.size };
   }
 
   /**
