@@ -1,3 +1,5 @@
+@use "./global-utilities.scss" as utils;
+
 :root {
   --sa11y-font-face: system-ui, "Segoe UI", roboto, helvetica, arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "FontAwesome", "Font Awesome 5 Free", "Font Awesome 5 Pro", "Font Awesome 6 Free", "Font Awesome 6 Pro";
   --sa11y-large-text: 16.5px;
@@ -113,8 +115,7 @@ html[data-sa11y-theme="dark"] {
   }
 }
 
-@import "global-utilities.scss";
-@include global-utilities;
+@include utils.global-utilities;
 
 /* *********************************************************************************** */
 /*           Colour vision deficiency filters created using DaltonLens library.        */
