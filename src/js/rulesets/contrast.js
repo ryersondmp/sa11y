@@ -168,7 +168,7 @@ export function getHex(color) {
 /**
  * Calculate the contrast ratio or value between two colours.
  * @param {number[]} color Text colour in [R,G,B,A] format.
- * @param {Array} bg Backgrounud colour in [R,G,B,A] format.
+ * @param {Array} bg Background colour in [R,G,B,A] format.
  * @returns Either WCAG 2.0 contrast ratio or APCA contrast value.
  */
 export function calculateContrast(color, bg) {
@@ -192,7 +192,6 @@ export function calculateContrast(color, bg) {
  * Suggest a foreground colour with sufficient contrast.
  * @param {number[]} color Text colour in [R,G,B,A] format.
  * @param {number[]} background Background colour in [R,G,B,A] format.
- * @param {number} ratio The current contrast ratio.
  * @param {boolean} isLargeText Whether text is normal or large size.
  * @returns Compliant colour hexcode.
  */
@@ -201,42 +200,43 @@ export function suggestColorWCAG(color, background, isLargeText) {
   const fgLuminance = getLuminance(color);
   const bgLuminance = getLuminance(background);
 
-  const adjustColor = (foregroundColor, amount, adjustMode) => (
-    adjustMode ? brighten(foregroundColor, amount) : darken(foregroundColor, amount)
+  // Choose whether to lighten or darken text colour:
+  // Check contrast of extreme luminance values to see if lightened/darkened text will meet contrast requirement.
+  const adjustMode = fgLuminance > bgLuminance
+    ? getWCAG2Ratio(1, bgLuminance) > minContrastRatio
+    : getWCAG2Ratio(0, bgLuminance) < minContrastRatio;
+
+  const adjustColor = (foregroundColor, amount, mode) => (
+    mode ? brighten(foregroundColor, amount) : darken(foregroundColor, amount)
   );
 
   let adjustedColor = color;
   let lastValidColor = adjustedColor;
   let contrastRatio = getWCAG2Ratio(fgLuminance, bgLuminance);
+  let bestContrast = contrastRatio;
+  let previousColor = color;
 
   // Loop parameters.
-  let iterations = 0;
-  const step = 0.05;
-  const maxIterations = 500;
+  let step = 0.16;
+  const percentChange = 0.5;
+  const precision = 0.01;
 
-  let adjustMode = true;
-  let previousColor = null;
-  while (contrastRatio < minContrastRatio && iterations < maxIterations) {
+  while (step >= precision) {
     adjustedColor = adjustColor(adjustedColor, step, adjustMode);
     const newLuminance = getLuminance(adjustedColor);
     contrastRatio = getWCAG2Ratio(newLuminance, bgLuminance);
 
-    /* console.log(`%c ${getHex(adjustedColor)} | ${contrastRatio}`, `color:${getHex(adjustedColor)};background:${getHex(background)}`); */
+    // console.log(`%c ${getHex(adjustedColor)} | ${contrastRatio}`, `color:${getHex(adjustedColor)};background:${getHex(background)}`);
 
-    // If same colour keeps getting suggested; it means it can't find a valid colour:
-    // Switch colours modes, starting from the original colour.
-    if (previousColor && getHex(adjustedColor) === getHex(previousColor)) {
-      adjustMode = !adjustMode; // Switch colour adjust modes.
-      adjustedColor = color; // Adjust from original colour.
-    }
-
-    // Break the loop once minimum contrast is met!
+    // Save valid colour, go back to previous, and continue with a smaller step.
     if (contrastRatio >= minContrastRatio) {
-      lastValidColor = adjustedColor;
-      break;
+      // Ensure new colour is closer to the contrast minimum than old colour.
+      lastValidColor = (contrastRatio <= bestContrast) ? adjustedColor : lastValidColor;
+      bestContrast = contrastRatio;
+      adjustedColor = previousColor;
+      step *= percentChange;
     }
 
-    iterations += 1;
     previousColor = adjustedColor;
   }
   return { color: getHex(lastValidColor) };
@@ -263,7 +263,6 @@ const getOptimalAPCACombo = (background, fontWeight) => {
  * Suggests a new colour or font size based on APCA contrast algorithm.
  * @param {number[]} color Text colour in [R,G,B,A] format.
  * @param {number[]} background Background colour in [R,G,B,A] format.
- * @param {number} ratio APCA contrast ratio.
  * @param {number} fontWeight Current font weight of the element.
  * @param {number} fontSize Current font size of the element.
  * @returns Compliant colour hexcode and/or font size combination.
@@ -300,38 +299,45 @@ export function suggestColorAPCA(color, background, fontWeight, fontSize) {
   // Find another colour, because nothing will work at any size.
   const fails = fontSize < minimumSizeRequired || minimumSizeRequired === 999 || minimumSizeRequired === 777;
 
-  const step = 0.1;
-  const maxIterations = 500;
-  let iterations = 0;
-  let previousColor = null;
+  // Needs new font size - no colour will work at current size.
+  const best = getOptimalAPCACombo(background, fontWeight);
+  if (best.size > fontSize) {
+    return { color: getHex(best.suggestedColor), size: best.size };
+  }
+
+  let previousColor = color;
+  let lastValidColor = null;
+  let bestContrast = contrast.ratio;
+
+  // Loop parameters.
+  let step = 0.16;
+  const percentChange = 0.5;
+  const precision = 0.01;
 
   // Loop to find a new colour.
   if (fails) {
-    while (iterations < maxIterations) {
-      iterations += 1;
+    while (step >= precision) {
       adjustedColor = adjustColor(adjustedColor, step);
       contrast = calculateContrast(adjustedColor, background);
       fontLookup = fontLookupAPCA(contrast.ratio).slice(1);
 
       // console.log(`%c ${getHex(adjustedColor)} | ${contrast.ratio.toFixed(1)} | ${fontLookup}`, `color:${getHex(adjustedColor)};background:${getHex(background)}`);
 
-      // Found a valid colour.
+      // Save valid colour, go back to previous, and continue with a smaller step.
       if (fontLookup[fontWeightIndex] <= fontSize) {
-        return { color: getHex(adjustedColor), size: null };
-      }
-
-      // Break the loop once it starts suggesting the same colour. It means there's no valid colour at the current font size.
-      if (previousColor && getHex(previousColor) === getHex(adjustedColor)) {
-        break;
+        // Ensure new colour is closer to the contrast minimum than old colour.
+        lastValidColor = (Math.abs(contrast.ratio) <= Math.abs(bestContrast)) ? adjustedColor : lastValidColor;
+        bestContrast = contrast.ratio;
+        lastValidColor = adjustedColor;
+        adjustedColor = previousColor;
+        step *= percentChange;
       }
 
       previousColor = adjustedColor;
     }
   }
 
-  // Suggest either black or white, whatever provides highest contrast, and the suggested font size.
-  const best = getOptimalAPCACombo(background, fontWeight);
-  return { color: getHex(best.suggestedColor), size: best.size };
+  return { color: getHex(lastValidColor), size: null };
 }
 
 /**
@@ -397,7 +403,12 @@ export function generateContrastTools(container) {
     const foregroundHex = color ? getHex(color) : '#000000';
     const unknownFG = color ? '' : 'class="unknown"';
     const unknownBG = background && background !== 'image' ? '' : 'class="unknown"';
-    const displayedRatio = Math.abs(ratio) === 0 ? 0 : Math.abs(ratio) || Lang._('UNKNOWN');
+    let displayedRatio;
+    if (Constants.Global.contrastAPCA) {
+      displayedRatio = Math.abs(ratio) === 0 ? 0 : (Math.abs(ratio) || Lang._('UNKNOWN'));
+    } else {
+      displayedRatio = ratio;
+    }
 
     // Generate HTML layout.
     const contrastTools = document.createElement('div');
