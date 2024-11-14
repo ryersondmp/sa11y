@@ -113,7 +113,10 @@ class Sa11y {
             Constants.Panel.toggle.disabled = false;
 
             // Initial check once page is done loading.
-            setTimeout(() => this.checkAll(), option.delayCheck);
+            setTimeout(() => {
+              this.resetAll(); // Make sure there's a clean slate.
+              this.checkAll();
+            }, option.delayCheck);
 
             // Disable button if user needs to wait longer than 700ms.
             if (option.delayCheck >= 700) {

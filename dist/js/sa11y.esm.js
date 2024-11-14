@@ -1489,6 +1489,8 @@ const Elements = (function myElements() {
       && $el.getAttribute('tabindex') !== '0'
       && !$el.getAttribute('tabindex').startsWith('-'));
 
+    Found.Svg = Found.Everything.filter(($el) => $el.tagName === 'svg');
+
     Found.Buttons = Found.Everything.filter(($el) => $el.tagName === 'BUTTON' || $el.matches('[role="button"]'));
 
     Found.Inputs = Found.Everything.filter(($el) => ['INPUT', 'SELECT', 'TEXTAREA', 'METER', 'PROGRESS'].includes($el.tagName));
@@ -7059,7 +7061,7 @@ function getHex(color) {
 /**
  * Calculate the contrast ratio or value between two colours.
  * @param {number[]} color Text colour in [R,G,B,A] format.
- * @param {Array} bg Backgrounud colour in [R,G,B,A] format.
+ * @param {Array} bg Background colour in [R,G,B,A] format.
  * @returns Either WCAG 2.0 contrast ratio or APCA contrast value.
  */
 function calculateContrast(color, bg) {
@@ -7083,7 +7085,6 @@ function calculateContrast(color, bg) {
  * Suggest a foreground colour with sufficient contrast.
  * @param {number[]} color Text colour in [R,G,B,A] format.
  * @param {number[]} background Background colour in [R,G,B,A] format.
- * @param {number} ratio The current contrast ratio.
  * @param {boolean} isLargeText Whether text is normal or large size.
  * @returns Compliant colour hexcode.
  */
@@ -7092,42 +7093,43 @@ function suggestColorWCAG(color, background, isLargeText) {
   const fgLuminance = getLuminance(color);
   const bgLuminance = getLuminance(background);
 
-  const adjustColor = (foregroundColor, amount, adjustMode) => (
-    adjustMode ? brighten(foregroundColor, amount) : darken(foregroundColor, amount)
+  // Choose whether to lighten or darken text colour:
+  // Check contrast of extreme luminance values to see if lightened/darkened text will meet contrast requirement.
+  const adjustMode = fgLuminance > bgLuminance
+    ? getWCAG2Ratio(1, bgLuminance) > minContrastRatio
+    : getWCAG2Ratio(0, bgLuminance) < minContrastRatio;
+
+  const adjustColor = (foregroundColor, amount, mode) => (
+    mode ? brighten(foregroundColor, amount) : darken(foregroundColor, amount)
   );
 
   let adjustedColor = color;
   let lastValidColor = adjustedColor;
   let contrastRatio = getWCAG2Ratio(fgLuminance, bgLuminance);
+  let bestContrast = contrastRatio;
+  let previousColor = color;
 
   // Loop parameters.
-  let iterations = 0;
-  const step = 0.05;
-  const maxIterations = 500;
+  let step = 0.16;
+  const percentChange = 0.5;
+  const precision = 0.01;
 
-  let adjustMode = true;
-  let previousColor = null;
-  while (contrastRatio < minContrastRatio && iterations < maxIterations) {
+  while (step >= precision) {
     adjustedColor = adjustColor(adjustedColor, step, adjustMode);
     const newLuminance = getLuminance(adjustedColor);
     contrastRatio = getWCAG2Ratio(newLuminance, bgLuminance);
 
-    /* console.log(`%c ${getHex(adjustedColor)} | ${contrastRatio}`, `color:${getHex(adjustedColor)};background:${getHex(background)}`); */
+    // console.log(`%c ${getHex(adjustedColor)} | ${contrastRatio}`, `color:${getHex(adjustedColor)};background:${getHex(background)}`);
 
-    // If same colour keeps getting suggested; it means it can't find a valid colour:
-    // Switch colours modes, starting from the original colour.
-    if (previousColor && getHex(adjustedColor) === getHex(previousColor)) {
-      adjustMode = !adjustMode; // Switch colour adjust modes.
-      adjustedColor = color; // Adjust from original colour.
-    }
-
-    // Break the loop once minimum contrast is met!
+    // Save valid colour, go back to previous, and continue with a smaller step.
     if (contrastRatio >= minContrastRatio) {
-      lastValidColor = adjustedColor;
-      break;
+      // Ensure new colour is closer to the contrast minimum than old colour.
+      lastValidColor = (contrastRatio <= bestContrast) ? adjustedColor : lastValidColor;
+      bestContrast = contrastRatio;
+      adjustedColor = previousColor;
+      step *= percentChange;
     }
 
-    iterations += 1;
     previousColor = adjustedColor;
   }
   return { color: getHex(lastValidColor) };
@@ -7154,28 +7156,16 @@ const getOptimalAPCACombo = (background, fontWeight) => {
  * Suggests a new colour or font size based on APCA contrast algorithm.
  * @param {number[]} color Text colour in [R,G,B,A] format.
  * @param {number[]} background Background colour in [R,G,B,A] format.
- * @param {number} ratio APCA contrast ratio.
  * @param {number} fontWeight Current font weight of the element.
  * @param {number} fontSize Current font size of the element.
  * @returns Compliant colour hexcode and/or font size combination.
  */
 function suggestColorAPCA(color, background, fontWeight, fontSize) {
   const bgLuminance = sRGBtoY(background);
-  const adjustColor = (foregroundColor, amount) => {
-    const fgLuminance = sRGBtoY(color);
-    let adjustedColor;
-    // 0.9 and 0.1 to account for outliers.
-    if (fgLuminance > bgLuminance) {
-      adjustedColor = fgLuminance > 0.9
-        ? darken(foregroundColor, amount)
-        : brighten(foregroundColor, amount);
-    } else {
-      adjustedColor = fgLuminance < 0.1
-        ? brighten(foregroundColor, amount)
-        : darken(foregroundColor, amount);
-    }
-    return adjustedColor;
-  };
+  // https://medium.com/@mikeyullinger/how-chameleon-text-ensures-legibility-ae414d7b069a#:~:text=0.179
+  const adjustColor = (foregroundColor, amount) => (bgLuminance <= 0.179
+    ? brighten(foregroundColor, amount)
+    : darken(foregroundColor, amount));
 
   let adjustedColor = color;
 
@@ -7191,14 +7181,26 @@ function suggestColorAPCA(color, background, fontWeight, fontSize) {
   // Find another colour, because nothing will work at any size.
   const fails = fontSize < minimumSizeRequired || minimumSizeRequired === 999 || minimumSizeRequired === 777;
 
-  const step = 0.1;
-  const maxIterations = 500;
+  // Needs new font size - no colour will work at current size.
+  const best = getOptimalAPCACombo(background, fontWeight);
+  if (best.size > fontSize) {
+    return { color: getHex(best.suggestedColor), size: best.size };
+  }
+
+  let previousColor = color;
+  let lastValidColor = adjustedColor;
+  let bestContrast = contrast.ratio;
+
+  // Loop parameters.
+  let step = 0.16;
+  const percentChange = 0.5;
+  const precision = 0.01;
   let iterations = 0;
-  let previousColor = null;
+  const maxIterations = 50;
 
   // Loop to find a new colour.
   if (fails) {
-    while (iterations < maxIterations) {
+    while (step >= precision) {
       iterations += 1;
       adjustedColor = adjustColor(adjustedColor, step);
       contrast = calculateContrast(adjustedColor, background);
@@ -7206,23 +7208,27 @@ function suggestColorAPCA(color, background, fontWeight, fontSize) {
 
       // console.log(`%c ${getHex(adjustedColor)} | ${contrast.ratio.toFixed(1)} | ${fontLookup}`, `color:${getHex(adjustedColor)};background:${getHex(background)}`);
 
-      // Found a valid colour.
+      // Save valid colour, go back to previous, and continue with a smaller step.
       if (fontLookup[fontWeightIndex] <= fontSize) {
-        return { color: getHex(adjustedColor), size: null };
-      }
-
-      // Break the loop once it starts suggesting the same colour. It means there's no valid colour at the current font size.
-      if (previousColor && getHex(previousColor) === getHex(adjustedColor)) {
-        break;
+        // Ensure new colour is closer to the contrast minimum than old colour.
+        lastValidColor = (Math.abs(contrast.ratio) <= Math.abs(bestContrast)) ? adjustedColor : lastValidColor;
+        bestContrast = contrast.ratio;
+        lastValidColor = adjustedColor;
+        adjustedColor = previousColor;
+        step *= percentChange;
       }
 
       previousColor = adjustedColor;
+
+      // Just in case, break the loop.
+      if (iterations === maxIterations) {
+        return { color: getHex(best.suggestedColor), size: best.size };
+      }
     }
   }
 
-  // Suggest either black or white, whatever provides highest contrast, and the suggested font size.
-  const best = getOptimalAPCACombo(background, fontWeight);
-  return { color: getHex(best.suggestedColor), size: best.size };
+  // Found a valid colour.
+  return { color: getHex(lastValidColor), size: null };
 }
 
 /**
@@ -7238,7 +7244,7 @@ function generateColorSuggestion(container) {
     const details = JSON.parse(colorObject);
     const { color, background, fontWeight, fontSize, isLargeText } = details;
 
-    if (color && background !== 'image') {
+    if (color && background && background !== 'image') {
       const suggested = Constants.Global.contrastAPCA
         ? suggestColorAPCA(color, background, fontWeight, fontSize)
         : suggestColorWCAG(color, background, isLargeText);
@@ -7274,6 +7280,10 @@ function generateColorSuggestion(container) {
   }
 }
 
+/**
+ * Inject contrast colour pickers into tooltip.
+ * @param {HTMLElement} container The tooltip container to inject the contrast colour pickers.
+ */
 function generateContrastTools(container) {
   const hasContrastDetails = container?.querySelector('[data-sa11y-contrast-details]');
   if (hasContrastDetails) {
@@ -7288,30 +7298,78 @@ function generateContrastTools(container) {
     const foregroundHex = color ? getHex(color) : '#000000';
     const unknownFG = color ? '' : 'class="unknown"';
     const unknownBG = background && background !== 'image' ? '' : 'class="unknown"';
-    const displayedRatio = Math.abs(ratio) === 0 ? 0 : Math.abs(ratio) || Lang._('UNKNOWN');
+    const hasFontWeight = fontWeight ? `font-weight:${fontWeight};` : '';
+    const hasFontSize = fontSize ? `font-size:${fontSize}px;` : '';
+
+    // Ratio to be displayed.
+    let displayedRatio;
+    if (Constants.Global.contrastAPCA) {
+      // If APCA, don't show "unknown" when value is absolute 0.
+      displayedRatio = Math.abs(ratio) === 0 ? 0 : (Math.abs(ratio) || Lang._('UNKNOWN'));
+    } else {
+      // WCAG 2.0 ratio.
+      displayedRatio = ratio || Lang._('UNKNOWN');
+    }
 
     // Generate HTML layout.
     const contrastTools = document.createElement('div');
     contrastTools.id = 'contrast-tools';
     contrastTools.innerHTML = `
       <hr aria-hidden="true">
-      <span id="contrast" class="badge">${Lang._('CONTRAST')}</span>
-      <span id="value" class="badge">${displayedRatio}</span>
-      <span id="large-text" class="badge good-badge" hidden>${Lang._('LARGE_TEXT')}</span>
-      <span id="body-text" class="badge good-badge" hidden>${Lang._('BODY_TEXT')}</span>
-      <span id="apca" class="badge good-badge" hidden>${Lang._('GOOD')} <span class="good-icon"></span></span>
-      <div class="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};` : ''}font-weight:${fontWeight};font-size:${fontSize}px;">
-        ${sanitizedText}
-      </div>
+      <div id="contrast" class="badge">${Lang._('CONTRAST')}</div>
+      <div id="value" class="badge">${displayedRatio}</div>
+      <div id="non-text" class="badge good-badge" hidden>${Lang._('NON_TEXT')}</div>
+      <div id="large-text" class="badge good-badge" hidden>${Lang._('LARGE_TEXT')}</div>
+      <div id="body-text" class="badge good-badge" hidden>${Lang._('BODY_TEXT')}</div>
+      <div id="apca" class="badge good-badge" hidden>${Lang._('GOOD')}</div>
+      <div id="apca-table" hidden></div>
+      <div class="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};` : ''}${hasFontWeight}${hasFontSize}">${sanitizedText}</div>
       <div class="color-pickers">
         <label for="fg-text">${Lang._('TEXT')}
-          <input type="color" id="fg-text" value="${foregroundHex}" ${unknownFG}/>
+          <input type="color" id="fg-input" value="${foregroundHex}" ${unknownFG}/>
         </label>
         <label for="bg">${Lang._('BG')}
-          <input type="color" id="bg" value="${backgroundHex}" ${unknownBG}/>
+          <input type="color" id="bg-input" value="${backgroundHex}" ${unknownBG}/>
         </label>
       </div>`;
     hasContrastDetails.appendChild(contrastTools);
+  }
+}
+
+function createFontSizesTable(container, fontSizes) {
+  const apcaTable = container;
+  apcaTable.innerHTML = '';
+  apcaTable.hidden = false;
+
+  const row = document.createElement('div');
+  row.classList.add('row');
+
+  // Show only 200 thru 700 font weights.
+  const filteredFontSizes = fontSizes.slice(1, 7);
+  for (let i = 0; i < filteredFontSizes.length; i++) {
+    const fontSize = filteredFontSizes[i];
+    const fontWeight = (i + 2) * 100;
+
+    // Only render the cell if font size is not 777 or 999.
+    if (fontSize !== 777 && fontSize !== 999) {
+      const cell = document.createElement('div');
+      cell.classList.add('cell');
+
+      // Font size.
+      const sizeElement = document.createElement('div');
+      sizeElement.classList.add('font-size');
+      sizeElement.textContent = `${Math.ceil(fontSize)}px`;
+
+      // Font weight.
+      const weightElement = document.createElement('div');
+      weightElement.classList.add('font-weight');
+      weightElement.textContent = `${fontWeight}`;
+
+      cell.appendChild(sizeElement);
+      cell.appendChild(weightElement);
+      row.appendChild(cell);
+      apcaTable.appendChild(row);
+    }
   }
 }
 
@@ -7324,17 +7382,19 @@ function initializeContrastTools(container) {
   const contrastTools = container?.querySelector('[data-sa11y-contrast-details]');
   if (contrastTools) {
     const details = JSON.parse(contrastTools.getAttribute('data-sa11y-contrast-details') || '{}');
-    const { fontSize, fontWeight } = details;
+    const { fontSize, fontWeight, type } = details;
 
     // Cache selectors
     const contrast = container.querySelector('#contrast');
     const contrastPreview = container.querySelector('.contrast-preview');
-    const fgInput = container.querySelector('#fg-text');
-    const bgInput = container.querySelector('#bg');
+    const fgInput = container.querySelector('#fg-input');
+    const bgInput = container.querySelector('#bg-input');
+    const nonText = container.querySelector('#non-text');
     const bodyText = container.querySelector('#body-text');
     const largeText = container.querySelector('#large-text');
     const ratio = container.querySelector('#value');
     const apca = container.querySelector('#apca');
+    const apcaTable = container.querySelector('#apca-table');
 
     // Helper to update badge classes.
     const toggleBadges = (elements, condition) => {
@@ -7356,6 +7416,7 @@ function initializeContrastTools(container) {
       }
 
       contrastPreview.style.color = fgColor;
+      contrastPreview.style.fill = fgColor;
       contrastPreview.style.backgroundColor = bgColor;
       contrastPreview.style.backgroundImage = 'none';
 
@@ -7363,28 +7424,67 @@ function initializeContrastTools(container) {
       const elementsToToggle = [ratio, contrast];
 
       if (Constants.Global.contrastAPCA) {
-        // APCA
-        const value = Number(contrastValue.ratio.toFixed(1));
-        ratio.textContent = Math.abs(value);
-        const minFontSize = fontLookupAPCA(value).slice(1)[Math.floor(fontWeight / 100) - 1];
-        const passes = fontSize >= minFontSize;
-        toggleBadges(elementsToToggle, passes);
-        apca.hidden = !passes;
-      } else {
-        // WCAG 2.0
+        const value = Math.abs(Number(contrastValue.ratio.toFixed(1)));
+        ratio.textContent = value;
+        const fontArray = fontLookupAPCA(value).slice(1);
+        const nonTextPasses = value >= 45 && fontArray[0] >= 0 && fontArray[0] <= 777;
+        let passes;
+
+        switch (type) {
+          case 'svg': {
+            nonText.hidden = !nonTextPasses;
+            passes = nonTextPasses;
+            toggleBadges(elementsToToggle, passes);
+            break;
+          }
+          case 'svg-text': {
+            nonText.hidden = !nonTextPasses;
+            passes = fontArray.slice(1, 7).some((size) => size !== 999 && size !== 777);
+            toggleBadges(elementsToToggle, passes);
+            createFontSizesTable(apcaTable, fontArray);
+            break;
+          }
+          default: {
+            const minFontSize = fontArray[Math.floor(fontWeight / 100) - 1];
+            passes = fontSize > minFontSize;
+            toggleBadges(elementsToToggle, passes);
+            apca.hidden = !passes;
+            break;
+          }
+        }
+      }
+
+      // WCAG 2.0
+      if (!Constants.Global.contrastAPCA) {
         const value = contrastValue.ratio.toFixed(2);
         ratio.textContent = `${value}:1`;
         const passes = value > 3;
-        toggleBadges([ratio, contrast], passes);
-        largeText.hidden = value < 3;
-        bodyText.hidden = value < 4.5;
+
+        switch (type) {
+          case 'svg': {
+            nonText.hidden = !passes;
+            toggleBadges(elementsToToggle, passes);
+            break;
+          }
+          case 'svg-text': {
+            nonText.hidden = !passes;
+            toggleBadges(elementsToToggle, passes);
+            largeText.hidden = !passes;
+            bodyText.hidden = value < 4.5;
+            break;
+          }
+          default: {
+            toggleBadges([ratio, contrast], passes);
+            largeText.hidden = !passes;
+            bodyText.hidden = value < 4.5;
+            break;
+          }
+        }
       }
     };
 
-    // Due to weird Safari issue, we have to use both a 'click' and 'input' event, otherwise upon initial click with input event it would quickly disappear.
-    // fgInput.addEventListener('click', (event) => event.stopPropagation());
+    // Event listeners for both colour inputs.
     fgInput.addEventListener('input', updatePreview);
-    // bgInput.addEventListener('click', (event) => event.stopPropagation());
     bgInput.addEventListener('input', updatePreview);
   }
 }
@@ -7409,7 +7509,12 @@ function wcagAlgorithm($el, color, background, fontSize, fontWeight, opacity) {
     return {
       $el,
       ratio: `${ratio.toFixed(2)}:1`,
-      details: { color: blendedColor, background, fontSize, fontWeight, isLargeText, opacity },
+      color: blendedColor,
+      background,
+      fontSize,
+      fontWeight,
+      isLargeText,
+      opacity,
     };
   }
   return null;
@@ -7436,11 +7541,15 @@ function apcaAlgorithm($el, color, background, fontSize, fontWeight, opacity) {
   const fontWeightIndex = Math.floor(fontWeight / 100) - 1;
   const minFontSize = fontLookup[fontWeightIndex];
 
-  if (fontSize <= minFontSize) {
+  if (fontSize < minFontSize) {
     return {
       $el,
       ratio: Math.abs(ratio.toFixed(1)),
-      details: { color: blendedColor, background, fontWeight, fontSize, opacity },
+      color: blendedColor,
+      background,
+      fontWeight,
+      fontSize,
+      opacity,
     };
   }
   return null;
@@ -7506,27 +7615,23 @@ function checkContrast(results, option) {
         contrastWarnings.push({
           $el,
           type: 'unsupported',
-          details: {
-            fontSize,
-            fontWeight,
-            opacity,
-            ...(background !== 'unsupported' && { background }),
-            ...(color !== 'unsupported' && { color }),
-          },
+          fontSize,
+          fontWeight,
+          opacity,
+          ...(background !== 'unsupported' && { background }),
+          ...(color !== 'unsupported' && { color }),
         });
       } else if (background === 'image') {
         contrastWarnings.push({
           $el,
           type: 'background-image',
-          details: { color, background, fontSize, fontWeight, opacity },
+          color,
+          background,
+          fontSize,
+          fontWeight,
+          opacity,
         });
-      } else if ($el.tagName === 'text' && $el.closest('svg')) {
-        contrastWarnings.push({
-          $el,
-          type: 'svg',
-          details: { background, fontSize, fontWeight, opacity },
-        });
-      } else if (isHidden || getHex(color) === getHex(background)) ; else {
+      } else if ($el.tagName === 'text' && $el.closest('svg')) ; else if (isHidden || getHex(color) === getHex(background)) ; else {
         const result = checkElementContrast($el, color, background, fontSize, fontWeight, opacity);
         if (result) {
           result.type = checkInputs ? 'input' : 'text';
@@ -7535,6 +7640,18 @@ function checkContrast(results, option) {
       }
     }
   }
+
+  // Warning for all SVGs.
+  Elements.Found.Svg.forEach(($el) => {
+    const background = getBackground($el);
+    const type = $el.querySelector('text') ? 'svg-text' : 'svg';
+    contrastWarnings.push({
+      $el,
+      type,
+      sanitizedSVG: sanitizeHTMLBlock($el),
+      background,
+    });
+  });
 
   // Check contrast of all placeholder elements.
   Elements.Found.Inputs.forEach(($el) => {
@@ -7559,7 +7676,7 @@ function checkContrast(results, option) {
       // For background images, merge nodes that share similar properties to minimize number of annotations.
       const previous = mergedWarnings[mergedWarnings.length - 1];
       const hasSameColor = previous
-        && JSON.stringify(current.details.color) === JSON.stringify(previous.details.color);
+        && JSON.stringify(current.color) === JSON.stringify(previous.color);
       const hasSameParent = previous
         && current.$el.parentNode === previous.$el.parentNode;
 
@@ -7570,8 +7687,8 @@ function checkContrast(results, option) {
 
       // For APCA, font size and font weight matter.
       if (option.contrastAPCA) {
-        const hasSameFont = current.details.fontSize === previous.details.fontSize
-          && current.details.fontWeight === previous.details.fontWeight;
+        const hasSameFont = current.fontSize === previous.fontSize
+          && current.fontWeight === previous.fontWeight;
         if (!hasSameFont) {
           mergedWarnings.push({ ...current });
         }
@@ -7592,7 +7709,8 @@ function checkContrast(results, option) {
 
   // Iterate through all contrast results.
   contrastResults.forEach((item) => {
-    const { $el, ratio, details } = item;
+    const { $el, ratio } = item;
+    const updatedItem = item;
 
     // Annotation placement.
     let element;
@@ -7605,12 +7723,10 @@ function checkContrast(results, option) {
         parent = parent.parentElement;
       }
       element = parent || $el;
-      details.fontWeight = 400;
-      details.fontSize = 15.5; // For merged objects, reset font size.
+      updatedItem.fontWeight = 400;
+      updatedItem.fontSize = 15.5; // For merged objects, reset font size.
     } else if ($el.tagName === 'OPTION') {
       element = $el.closest('datalist, select, optgroup');
-    } else if ($el.closest('svg')) {
-      element = $el.closest('svg');
     } else {
       element = $el;
     }
@@ -7622,12 +7738,19 @@ function checkContrast(results, option) {
     // Content for tooltip.
     const truncatedText = truncateString(text, 80);
     const sanitizedText = sanitizeHTML(truncatedText);
-    details.sanitizedText = item.type === 'placeholder' && $el.placeholder
-      ? sanitizeHTML($el.placeholder) : sanitizedText;
 
-    details.ratio = ratio;
+    // Preview text
+    let previewText;
+    if (item.type === 'placeholder' && $el.placeholder) {
+      previewText = sanitizeHTML($el.placeholder);
+    } else if (item.type === 'svg' || item.type === 'svg-text') {
+      previewText = `${sanitizeHTMLBlock($el.outerHTML)}`;
+    } else {
+      previewText = sanitizedText;
+    }
+    updatedItem.sanitizedText = previewText;
 
-    const contrastDetails = `<div data-sa11y-contrast-details='${JSON.stringify(details)}'></div>`;
+    const contrastDetails = `<div data-sa11y-contrast-details='${JSON.stringify(updatedItem)}'></div>`;
 
     // Iterate through contrast results based on type.
     switch (item.type) {
@@ -7677,6 +7800,21 @@ function checkContrast(results, option) {
         }
         break;
       case 'svg':
+      case 'svg-text':
+        if (option.checks.CONTRAST_WARNING) {
+          results.push({
+            element: $el,
+            type: option.checks.CONTRAST_WARNING.type || 'warning',
+            content: option.checks.CONTRAST_WARNING.content
+              || `${Lang.sprintf('CONTRAST_WARNING')} ${contrastDetails}`,
+            inline: false,
+            position: 'beforebegin',
+            dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
+            dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
+            developer: option.checks.CONTRAST_WARNING.developer || true,
+          });
+        }
+        break;
       case 'unsupported':
       case 'background-image':
         if (option.checks.CONTRAST_WARNING) {
@@ -7700,7 +7838,7 @@ function checkContrast(results, option) {
   return results;
 }
 
-var tooltipStyles = "a,button,code,div,h1,h2,kbd,li,ol,p,span,strong,svg,ul{all:unset;box-sizing:border-box!important}div{display:block}:after,:before{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}@media (forced-colors:active){[data-tippy-root]{border:2px solid transparent;border-radius:5px}}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:0}.tippy-box[data-placement^=top]>.tippy-arrow:before{border-top-color:initial;border-width:8px 8px 0;bottom:-7px;left:0;transform-origin:center top}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:0}.tippy-box[data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:initial;border-width:0 8px 8px;left:0;top:-7px;transform-origin:center bottom}.tippy-box[data-placement^=left]>.tippy-arrow{right:0}.tippy-box[data-placement^=left]>.tippy-arrow:before{border-left-color:initial;border-width:8px 0 8px 8px;right:-7px;transform-origin:center left}.tippy-box[data-placement^=right]>.tippy-arrow{left:0}.tippy-box[data-placement^=right]>.tippy-arrow:before{border-right-color:initial;border-width:8px 8px 8px 0;left:-7px;transform-origin:center right}.tippy-arrow{color:#333;height:16px;width:16px}.tippy-arrow:before{border-color:transparent;border-style:solid;content:\"\";position:absolute}.tippy-content{padding:5px 9px;position:relative;z-index:1}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{word-wrap:break-word;min-width:300px;text-align:start}[role=tooltip]{min-width:185px;text-align:center}.tippy-box[data-theme~=sa11y-panel]{border:1px solid var(--sa11y-panel-bg-splitter);box-shadow:var(--sa11y-box-shadow)}.tippy-box[data-theme~=sa11y-theme]:not([data-theme~=sa11y-panel]){box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15)!important}.tippy-box[data-theme~=sa11y-theme]{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-bg);border-radius:4px;color:var(--sa11y-panel-primary);display:block;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px;outline:0;padding:8px;position:relative;transition-property:transform,visibility,opacity}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:500}.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);letter-spacing:normal;line-height:22px;padding:1.6px 4.8px}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block-end:0;margin-block-start:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{display:list-item;margin:5px 10px 0 20px;padding-bottom:5px}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;font-weight:500;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] a:hover{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin:0}.tippy-box[data-theme~=sa11y-theme] .dismiss-group{margin-top:5px}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:inline-block;margin:10px 5px 5px 0;margin-inline-end:15px;padding:4px 8px}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:focus,.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:hover{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme] .good-icon{background:var(--sa11y-good-text);display:inline-block;height:14px;margin-bottom:-2.5px;-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat;width:14px}.tippy-box[data-theme~=sa11y-theme] .link-icon{background:var(--sa11y-panel-primary);display:inline-block;height:16px;margin-bottom:-3.5px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat;width:16px}.tippy-box[data-theme~=sa11y-theme] .error .badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .error .colour{color:var(--sa11y-red-text)}.tippy-box[data-theme~=sa11y-theme] .error .link-icon{background:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .warning .badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme] .warning .colour{color:var(--sa11y-yellow-text)}.tippy-box[data-theme~=sa11y-theme] .warning .link-icon{background:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{forced-color-adjust:none}.tippy-box[data-theme~=sa11y-theme] .tippy-arrow{z-index:-1}}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:active,.tippy-box[data-theme~=sa11y-theme] button:focus,.tippy-box[data-theme~=sa11y-theme] input:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] input:focus:not(:focus-visible){box-shadow:none;outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus-visible,.tippy-box[data-theme~=sa11y-theme] a:focus-visible,.tippy-box[data-theme~=sa11y-theme] button:focus-visible,.tippy-box[data-theme~=sa11y-theme] input:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.tippy-box[data-theme~=sa11y-theme] .error-icon,.tippy-box[data-theme~=sa11y-theme] .hidden-icon,.tippy-box[data-theme~=sa11y-theme] .link-icon{filter:invert(1)}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:focus{outline:3px solid transparent!important}}";
+var tooltipStyles = "a,button,code,div,h1,h2,kbd,li,ol,p,span,strong,svg,ul{all:unset;box-sizing:border-box!important}div{display:block}:after,:before{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}@media (forced-colors:active){[data-tippy-root]{border:2px solid transparent;border-radius:5px}}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:0}.tippy-box[data-placement^=top]>.tippy-arrow:before{border-top-color:initial;border-width:8px 8px 0;bottom:-7px;left:0;transform-origin:center top}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:0}.tippy-box[data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:initial;border-width:0 8px 8px;left:0;top:-7px;transform-origin:center bottom}.tippy-box[data-placement^=left]>.tippy-arrow{right:0}.tippy-box[data-placement^=left]>.tippy-arrow:before{border-left-color:initial;border-width:8px 0 8px 8px;right:-7px;transform-origin:center left}.tippy-box[data-placement^=right]>.tippy-arrow{left:0}.tippy-box[data-placement^=right]>.tippy-arrow:before{border-right-color:initial;border-width:8px 8px 8px 0;left:-7px;transform-origin:center right}.tippy-arrow{color:#333;height:16px;width:16px}.tippy-arrow:before{border-color:transparent;border-style:solid;content:\"\";position:absolute}.tippy-content{padding:5px 9px;position:relative;z-index:1}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{word-wrap:break-word;min-width:300px;text-align:start}[role=tooltip]{min-width:185px;text-align:center}.tippy-box[data-theme~=sa11y-panel]{border:1px solid var(--sa11y-panel-bg-splitter);box-shadow:var(--sa11y-box-shadow)}.tippy-box[data-theme~=sa11y-theme]:not([data-theme~=sa11y-panel]){box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15)!important}.tippy-box[data-theme~=sa11y-theme]{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-bg);border-radius:4px;color:var(--sa11y-panel-primary);display:block;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px;outline:0;padding:8px;position:relative;transition-property:transform,visibility,opacity}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:500}.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);letter-spacing:normal;line-height:22px;padding:1.6px 4.8px}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block-end:0;margin-block-start:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{display:list-item;margin:5px 10px 0 20px;padding-bottom:5px}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;font-weight:500;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] a:hover{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin:0}.tippy-box[data-theme~=sa11y-theme] .dismiss-group{margin-top:5px}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:inline-block;margin:10px 5px 5px 0;margin-inline-end:15px;padding:4px 8px}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:focus,.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:hover{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme] .good-icon{background:var(--sa11y-good-text);display:inline-block;height:14px;margin-bottom:-2.5px;-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat;width:14px}.tippy-box[data-theme~=sa11y-theme] .link-icon{background:var(--sa11y-panel-primary);display:inline-block;height:16px;margin-bottom:-3.5px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat;width:16px}.tippy-box[data-theme~=sa11y-theme] .error .badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .error .colour{color:var(--sa11y-red-text)}.tippy-box[data-theme~=sa11y-theme] .error .link-icon{background:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .warning .badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme] .warning .colour{color:var(--sa11y-yellow-text)}.tippy-box[data-theme~=sa11y-theme] .warning .link-icon{background:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme] #apca-table{width:100%}.tippy-box[data-theme~=sa11y-theme] #apca-table .row{display:flex;margin-top:10px}.tippy-box[data-theme~=sa11y-theme] #apca-table .cell{align-items:center;display:flex;flex:1;flex-direction:column;padding:1px}.tippy-box[data-theme~=sa11y-theme] #apca-table .font-weight{font-size:calc(var(--sa11y-normal-text) - 2px);font-weight:700}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{forced-color-adjust:none}.tippy-box[data-theme~=sa11y-theme] .tippy-arrow{z-index:-1}}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:active,.tippy-box[data-theme~=sa11y-theme] button:focus,.tippy-box[data-theme~=sa11y-theme] input:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] input:focus:not(:focus-visible){box-shadow:none;outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus-visible,.tippy-box[data-theme~=sa11y-theme] a:focus-visible,.tippy-box[data-theme~=sa11y-theme] button:focus-visible,.tippy-box[data-theme~=sa11y-theme] input:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.tippy-box[data-theme~=sa11y-theme] .error-icon,.tippy-box[data-theme~=sa11y-theme] .hidden-icon,.tippy-box[data-theme~=sa11y-theme] .link-icon{filter:invert(1)}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:focus{outline:3px solid transparent!important}}";
 
 /**
  * Tooltip container for all annotations.
@@ -8739,37 +8877,6 @@ function checkHeaders(results, option, headingOutline) {
 
 function checkLinkText(results, option) {
   const containsLinkTextStopWords = (textContent) => {
-    const urlText = [
-      'http',
-      'www.',
-      '.edu/',
-      '.com/',
-      '.net/',
-      '.org/',
-      '.us/',
-      '.ca/',
-      '.de/',
-      '.icu/',
-      '.uk/',
-      '.ru/',
-      '.info/',
-      '.top/',
-      '.xyz/',
-      '.tk/',
-      '.cn/',
-      '.ga/',
-      '.cf/',
-      '.nl/',
-      '.io/',
-      '.fr/',
-      '.pe/',
-      '.nz/',
-      '.pt/',
-      '.es/',
-      '.pl/',
-      '.ua/',
-    ];
-
     const hit = [null, null, null, null];
 
     // Iterate through all partialStopwords.
@@ -8809,8 +8916,17 @@ function checkLinkText(results, option) {
       return false;
     });
 
-    // Flag link text containing URLs.
-    urlText.forEach((word) => {
+    // URL starts with.
+    ['www.', 'http'].forEach((word) => {
+      if (textContent.toLowerCase().startsWith(word)) {
+        hit[3] = word;
+      }
+      return false;
+    });
+
+    // Flag link containing these typical URL endings.
+    const urlEndings = ['.edu/', '.com/', '.net/', '.org/', '.us/', '.ca/', '.de/', '.icu/', '.uk/', '.ru/', '.info/', '.top/', '.xyz/', '.tk/', '.cn/', '.ga/', '.cf/', '.nl/', '.io/', '.fr/', '.pe/', '.nz/', '.pt/', '.es/', '.pl/', '.ua/'];
+    urlEndings.forEach((word) => {
       if (textContent.toLowerCase().indexOf(word) >= 0) {
         hit[3] = word;
       }
@@ -9043,10 +9159,8 @@ function checkLinkText(results, option) {
           developer: option.checks.LINK_EMPTY.developer || false,
         });
       }
-    }
-
-    /* LINKS developer */
-    if (option.linksAdvancedPlugin) {
+    } else if (option.linksAdvancedPlugin) {
+      /* LINKS developer */
       if (linkTextTrimmed.length !== 0) {
         // Links with identical accessible names have equivalent purpose.
         if (seen[linkTextTrimmed] && !seen[href]) {
@@ -10555,7 +10669,10 @@ class Sa11y {
             Constants.Panel.toggle.disabled = false;
 
             // Initial check once page is done loading.
-            setTimeout(() => this.checkAll(), option.delayCheck);
+            setTimeout(() => {
+              this.resetAll(); // Make sure there's a clean slate.
+              this.checkAll();
+            }, option.delayCheck);
 
             // Disable button if user needs to wait longer than 700ms.
             if (option.delayCheck >= 700) {

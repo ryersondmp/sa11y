@@ -6,37 +6,6 @@ import { computeAccessibleName } from '../utils/computeAccessibleName';
 
 export default function checkLinkText(results, option) {
   const containsLinkTextStopWords = (textContent) => {
-    const urlText = [
-      'http',
-      'www.',
-      '.edu/',
-      '.com/',
-      '.net/',
-      '.org/',
-      '.us/',
-      '.ca/',
-      '.de/',
-      '.icu/',
-      '.uk/',
-      '.ru/',
-      '.info/',
-      '.top/',
-      '.xyz/',
-      '.tk/',
-      '.cn/',
-      '.ga/',
-      '.cf/',
-      '.nl/',
-      '.io/',
-      '.fr/',
-      '.pe/',
-      '.nz/',
-      '.pt/',
-      '.es/',
-      '.pl/',
-      '.ua/',
-    ];
-
     const hit = [null, null, null, null];
 
     // Iterate through all partialStopwords.
@@ -76,8 +45,17 @@ export default function checkLinkText(results, option) {
       return false;
     });
 
-    // Flag link text containing URLs.
-    urlText.forEach((word) => {
+    // URL starts with.
+    ['www.', 'http'].forEach((word) => {
+      if (textContent.toLowerCase().startsWith(word)) {
+        hit[3] = word;
+      }
+      return false;
+    });
+
+    // Flag link containing these typical URL endings.
+    const urlEndings = ['.edu/', '.com/', '.net/', '.org/', '.us/', '.ca/', '.de/', '.icu/', '.uk/', '.ru/', '.info/', '.top/', '.xyz/', '.tk/', '.cn/', '.ga/', '.cf/', '.nl/', '.io/', '.fr/', '.pe/', '.nz/', '.pt/', '.es/', '.pl/', '.ua/'];
+    urlEndings.forEach((word) => {
       if (textContent.toLowerCase().indexOf(word) >= 0) {
         hit[3] = word;
       }
@@ -312,10 +290,8 @@ export default function checkLinkText(results, option) {
           developer: option.checks.LINK_EMPTY.developer || false,
         });
       }
-    }
-
-    /* LINKS developer */
-    if (option.linksAdvancedPlugin) {
+    } else if (option.linksAdvancedPlugin) {
+      /* LINKS developer */
       if (linkTextTrimmed.length !== 0) {
         // Links with identical accessible names have equivalent purpose.
         if (seen[linkTextTrimmed] && !seen[href]) {

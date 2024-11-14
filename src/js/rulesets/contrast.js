@@ -269,21 +269,10 @@ const getOptimalAPCACombo = (background, fontWeight) => {
  */
 export function suggestColorAPCA(color, background, fontWeight, fontSize) {
   const bgLuminance = sRGBtoY(background);
-  const adjustColor = (foregroundColor, amount) => {
-    const fgLuminance = sRGBtoY(color);
-    let adjustedColor;
-    // 0.9 and 0.1 to account for outliers.
-    if (fgLuminance > bgLuminance) {
-      adjustedColor = fgLuminance > 0.9
-        ? darken(foregroundColor, amount)
-        : brighten(foregroundColor, amount);
-    } else {
-      adjustedColor = fgLuminance < 0.1
-        ? brighten(foregroundColor, amount)
-        : darken(foregroundColor, amount);
-    }
-    return adjustedColor;
-  };
+  // https://medium.com/@mikeyullinger/how-chameleon-text-ensures-legibility-ae414d7b069a#:~:text=0.179
+  const adjustColor = (foregroundColor, amount) => (bgLuminance <= 0.179
+    ? brighten(foregroundColor, amount)
+    : darken(foregroundColor, amount));
 
   let adjustedColor = color;
 
@@ -306,17 +295,20 @@ export function suggestColorAPCA(color, background, fontWeight, fontSize) {
   }
 
   let previousColor = color;
-  let lastValidColor = null;
+  let lastValidColor = adjustedColor;
   let bestContrast = contrast.ratio;
 
   // Loop parameters.
   let step = 0.16;
   const percentChange = 0.5;
   const precision = 0.01;
+  let iterations = 0;
+  const maxIterations = 50;
 
   // Loop to find a new colour.
   if (fails) {
     while (step >= precision) {
+      iterations += 1;
       adjustedColor = adjustColor(adjustedColor, step);
       contrast = calculateContrast(adjustedColor, background);
       fontLookup = fontLookupAPCA(contrast.ratio).slice(1);
@@ -334,9 +326,15 @@ export function suggestColorAPCA(color, background, fontWeight, fontSize) {
       }
 
       previousColor = adjustedColor;
+
+      // Just in case, break the loop.
+      if (iterations === maxIterations) {
+        return { color: getHex(best.suggestedColor), size: best.size };
+      }
     }
   }
 
+  // Found a valid colour.
   return { color: getHex(lastValidColor), size: null };
 }
 
@@ -353,7 +351,7 @@ export function generateColorSuggestion(container) {
     const details = JSON.parse(colorObject);
     const { color, background, fontWeight, fontSize, isLargeText } = details;
 
-    if (color && background !== 'image') {
+    if (color && background && background !== 'image') {
       const suggested = Constants.Global.contrastAPCA
         ? suggestColorAPCA(color, background, fontWeight, fontSize)
         : suggestColorWCAG(color, background, isLargeText);
@@ -389,6 +387,10 @@ export function generateColorSuggestion(container) {
   }
 }
 
+/**
+ * Inject contrast colour pickers into tooltip.
+ * @param {HTMLElement} container The tooltip container to inject the contrast colour pickers.
+ */
 export function generateContrastTools(container) {
   const hasContrastDetails = container?.querySelector('[data-sa11y-contrast-details]');
   if (hasContrastDetails) {
@@ -403,11 +405,17 @@ export function generateContrastTools(container) {
     const foregroundHex = color ? getHex(color) : '#000000';
     const unknownFG = color ? '' : 'class="unknown"';
     const unknownBG = background && background !== 'image' ? '' : 'class="unknown"';
+    const hasFontWeight = fontWeight ? `font-weight:${fontWeight};` : '';
+    const hasFontSize = fontSize ? `font-size:${fontSize}px;` : '';
+
+    // Ratio to be displayed.
     let displayedRatio;
     if (Constants.Global.contrastAPCA) {
+      // If APCA, don't show "unknown" when value is absolute 0.
       displayedRatio = Math.abs(ratio) === 0 ? 0 : (Math.abs(ratio) || Lang._('UNKNOWN'));
     } else {
-      displayedRatio = ratio;
+      // WCAG 2.0 ratio.
+      displayedRatio = ratio || Lang._('UNKNOWN');
     }
 
     // Generate HTML layout.
@@ -415,23 +423,60 @@ export function generateContrastTools(container) {
     contrastTools.id = 'contrast-tools';
     contrastTools.innerHTML = `
       <hr aria-hidden="true">
-      <span id="contrast" class="badge">${Lang._('CONTRAST')}</span>
-      <span id="value" class="badge">${displayedRatio}</span>
-      <span id="large-text" class="badge good-badge" hidden>${Lang._('LARGE_TEXT')}</span>
-      <span id="body-text" class="badge good-badge" hidden>${Lang._('BODY_TEXT')}</span>
-      <span id="apca" class="badge good-badge" hidden>${Lang._('GOOD')} <span class="good-icon"></span></span>
-      <div class="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};` : ''}font-weight:${fontWeight};font-size:${fontSize}px;">
-        ${sanitizedText}
-      </div>
+      <div id="contrast" class="badge">${Lang._('CONTRAST')}</div>
+      <div id="value" class="badge">${displayedRatio}</div>
+      <div id="non-text" class="badge good-badge" hidden>${Lang._('NON_TEXT')}</div>
+      <div id="large-text" class="badge good-badge" hidden>${Lang._('LARGE_TEXT')}</div>
+      <div id="body-text" class="badge good-badge" hidden>${Lang._('BODY_TEXT')}</div>
+      <div id="apca" class="badge good-badge" hidden>${Lang._('GOOD')}</div>
+      <div id="apca-table" hidden></div>
+      <div class="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};` : ''}${hasFontWeight}${hasFontSize}">${sanitizedText}</div>
       <div class="color-pickers">
         <label for="fg-text">${Lang._('TEXT')}
-          <input type="color" id="fg-text" value="${foregroundHex}" ${unknownFG}/>
+          <input type="color" id="fg-input" value="${foregroundHex}" ${unknownFG}/>
         </label>
         <label for="bg">${Lang._('BG')}
-          <input type="color" id="bg" value="${backgroundHex}" ${unknownBG}/>
+          <input type="color" id="bg-input" value="${backgroundHex}" ${unknownBG}/>
         </label>
       </div>`;
     hasContrastDetails.appendChild(contrastTools);
+  }
+}
+
+export function createFontSizesTable(container, fontSizes) {
+  const apcaTable = container;
+  apcaTable.innerHTML = '';
+  apcaTable.hidden = false;
+
+  const row = document.createElement('div');
+  row.classList.add('row');
+
+  // Show only 200 thru 700 font weights.
+  const filteredFontSizes = fontSizes.slice(1, 7);
+  for (let i = 0; i < filteredFontSizes.length; i++) {
+    const fontSize = filteredFontSizes[i];
+    const fontWeight = (i + 2) * 100;
+
+    // Only render the cell if font size is not 777 or 999.
+    if (fontSize !== 777 && fontSize !== 999) {
+      const cell = document.createElement('div');
+      cell.classList.add('cell');
+
+      // Font size.
+      const sizeElement = document.createElement('div');
+      sizeElement.classList.add('font-size');
+      sizeElement.textContent = `${Math.ceil(fontSize)}px`;
+
+      // Font weight.
+      const weightElement = document.createElement('div');
+      weightElement.classList.add('font-weight');
+      weightElement.textContent = `${fontWeight}`;
+
+      cell.appendChild(sizeElement);
+      cell.appendChild(weightElement);
+      row.appendChild(cell);
+      apcaTable.appendChild(row);
+    }
   }
 }
 
@@ -444,17 +489,19 @@ export function initializeContrastTools(container) {
   const contrastTools = container?.querySelector('[data-sa11y-contrast-details]');
   if (contrastTools) {
     const details = JSON.parse(contrastTools.getAttribute('data-sa11y-contrast-details') || '{}');
-    const { fontSize, fontWeight } = details;
+    const { fontSize, fontWeight, type } = details;
 
     // Cache selectors
     const contrast = container.querySelector('#contrast');
     const contrastPreview = container.querySelector('.contrast-preview');
-    const fgInput = container.querySelector('#fg-text');
-    const bgInput = container.querySelector('#bg');
+    const fgInput = container.querySelector('#fg-input');
+    const bgInput = container.querySelector('#bg-input');
+    const nonText = container.querySelector('#non-text');
     const bodyText = container.querySelector('#body-text');
     const largeText = container.querySelector('#large-text');
     const ratio = container.querySelector('#value');
     const apca = container.querySelector('#apca');
+    const apcaTable = container.querySelector('#apca-table');
 
     // Helper to update badge classes.
     const toggleBadges = (elements, condition) => {
@@ -476,6 +523,7 @@ export function initializeContrastTools(container) {
       }
 
       contrastPreview.style.color = fgColor;
+      contrastPreview.style.fill = fgColor;
       contrastPreview.style.backgroundColor = bgColor;
       contrastPreview.style.backgroundImage = 'none';
 
@@ -483,28 +531,67 @@ export function initializeContrastTools(container) {
       const elementsToToggle = [ratio, contrast];
 
       if (Constants.Global.contrastAPCA) {
-        // APCA
-        const value = Number(contrastValue.ratio.toFixed(1));
-        ratio.textContent = Math.abs(value);
-        const minFontSize = fontLookupAPCA(value).slice(1)[Math.floor(fontWeight / 100) - 1];
-        const passes = fontSize >= minFontSize;
-        toggleBadges(elementsToToggle, passes);
-        apca.hidden = !passes;
-      } else {
-        // WCAG 2.0
+        const value = Math.abs(Number(contrastValue.ratio.toFixed(1)));
+        ratio.textContent = value;
+        const fontArray = fontLookupAPCA(value).slice(1);
+        const nonTextPasses = value >= 45 && fontArray[0] >= 0 && fontArray[0] <= 777;
+        let passes;
+
+        switch (type) {
+          case 'svg': {
+            nonText.hidden = !nonTextPasses;
+            passes = nonTextPasses;
+            toggleBadges(elementsToToggle, passes);
+            break;
+          }
+          case 'svg-text': {
+            nonText.hidden = !nonTextPasses;
+            passes = fontArray.slice(1, 7).some((size) => size !== 999 && size !== 777);
+            toggleBadges(elementsToToggle, passes);
+            createFontSizesTable(apcaTable, fontArray);
+            break;
+          }
+          default: {
+            const minFontSize = fontArray[Math.floor(fontWeight / 100) - 1];
+            passes = fontSize > minFontSize;
+            toggleBadges(elementsToToggle, passes);
+            apca.hidden = !passes;
+            break;
+          }
+        }
+      }
+
+      // WCAG 2.0
+      if (!Constants.Global.contrastAPCA) {
         const value = contrastValue.ratio.toFixed(2);
         ratio.textContent = `${value}:1`;
         const passes = value > 3;
-        toggleBadges([ratio, contrast], passes);
-        largeText.hidden = value < 3;
-        bodyText.hidden = value < 4.5;
+
+        switch (type) {
+          case 'svg': {
+            nonText.hidden = !passes;
+            toggleBadges(elementsToToggle, passes);
+            break;
+          }
+          case 'svg-text': {
+            nonText.hidden = !passes;
+            toggleBadges(elementsToToggle, passes);
+            largeText.hidden = !passes;
+            bodyText.hidden = value < 4.5;
+            break;
+          }
+          default: {
+            toggleBadges([ratio, contrast], passes);
+            largeText.hidden = !passes;
+            bodyText.hidden = value < 4.5;
+            break;
+          }
+        }
       }
     };
 
-    // Due to weird Safari issue, we have to use both a 'click' and 'input' event, otherwise upon initial click with input event it would quickly disappear.
-    // fgInput.addEventListener('click', (event) => event.stopPropagation());
+    // Event listeners for both colour inputs.
     fgInput.addEventListener('input', updatePreview);
-    // bgInput.addEventListener('click', (event) => event.stopPropagation());
     bgInput.addEventListener('input', updatePreview);
   }
 }
@@ -529,7 +616,12 @@ export function wcagAlgorithm($el, color, background, fontSize, fontWeight, opac
     return {
       $el,
       ratio: `${ratio.toFixed(2)}:1`,
-      details: { color: blendedColor, background, fontSize, fontWeight, isLargeText, opacity },
+      color: blendedColor,
+      background,
+      fontSize,
+      fontWeight,
+      isLargeText,
+      opacity,
     };
   }
   return null;
@@ -556,11 +648,15 @@ export function apcaAlgorithm($el, color, background, fontSize, fontWeight, opac
   const fontWeightIndex = Math.floor(fontWeight / 100) - 1;
   const minFontSize = fontLookup[fontWeightIndex];
 
-  if (fontSize <= minFontSize) {
+  if (fontSize < minFontSize) {
     return {
       $el,
       ratio: Math.abs(ratio.toFixed(1)),
-      details: { color: blendedColor, background, fontWeight, fontSize, opacity },
+      color: blendedColor,
+      background,
+      fontWeight,
+      fontSize,
+      opacity,
     };
   }
   return null;
@@ -626,26 +722,24 @@ export default function checkContrast(results, option) {
         contrastWarnings.push({
           $el,
           type: 'unsupported',
-          details: {
-            fontSize,
-            fontWeight,
-            opacity,
-            ...(background !== 'unsupported' && { background }),
-            ...(color !== 'unsupported' && { color }),
-          },
+          fontSize,
+          fontWeight,
+          opacity,
+          ...(background !== 'unsupported' && { background }),
+          ...(color !== 'unsupported' && { color }),
         });
       } else if (background === 'image') {
         contrastWarnings.push({
           $el,
           type: 'background-image',
-          details: { color, background, fontSize, fontWeight, opacity },
+          color,
+          background,
+          fontSize,
+          fontWeight,
+          opacity,
         });
       } else if ($el.tagName === 'text' && $el.closest('svg')) {
-        contrastWarnings.push({
-          $el,
-          type: 'svg',
-          details: { background, fontSize, fontWeight, opacity },
-        });
+        // Handle seperately.
       } else if (isHidden || getHex(color) === getHex(background)) {
         // Ignore visually hidden elements.
       } else {
@@ -657,6 +751,18 @@ export default function checkContrast(results, option) {
       }
     }
   }
+
+  // Warning for all SVGs.
+  Elements.Found.Svg.forEach(($el) => {
+    const background = getBackground($el);
+    const type = $el.querySelector('text') ? 'svg-text' : 'svg';
+    contrastWarnings.push({
+      $el,
+      type,
+      sanitizedSVG: Utils.sanitizeHTMLBlock($el),
+      background,
+    });
+  });
 
   // Check contrast of all placeholder elements.
   Elements.Found.Inputs.forEach(($el) => {
@@ -681,7 +787,7 @@ export default function checkContrast(results, option) {
       // For background images, merge nodes that share similar properties to minimize number of annotations.
       const previous = mergedWarnings[mergedWarnings.length - 1];
       const hasSameColor = previous
-        && JSON.stringify(current.details.color) === JSON.stringify(previous.details.color);
+        && JSON.stringify(current.color) === JSON.stringify(previous.color);
       const hasSameParent = previous
         && current.$el.parentNode === previous.$el.parentNode;
 
@@ -692,8 +798,8 @@ export default function checkContrast(results, option) {
 
       // For APCA, font size and font weight matter.
       if (option.contrastAPCA) {
-        const hasSameFont = current.details.fontSize === previous.details.fontSize
-          && current.details.fontWeight === previous.details.fontWeight;
+        const hasSameFont = current.fontSize === previous.fontSize
+          && current.fontWeight === previous.fontWeight;
         if (!hasSameFont) {
           mergedWarnings.push({ ...current });
         }
@@ -714,7 +820,8 @@ export default function checkContrast(results, option) {
 
   // Iterate through all contrast results.
   contrastResults.forEach((item) => {
-    const { $el, ratio, details } = item;
+    const { $el, ratio } = item;
+    const updatedItem = item;
 
     // Annotation placement.
     let element;
@@ -727,12 +834,10 @@ export default function checkContrast(results, option) {
         parent = parent.parentElement;
       }
       element = parent || $el;
-      details.fontWeight = 400;
-      details.fontSize = 15.5; // For merged objects, reset font size.
+      updatedItem.fontWeight = 400;
+      updatedItem.fontSize = 15.5; // For merged objects, reset font size.
     } else if ($el.tagName === 'OPTION') {
       element = $el.closest('datalist, select, optgroup');
-    } else if ($el.closest('svg')) {
-      element = $el.closest('svg');
     } else {
       element = $el;
     }
@@ -744,12 +849,19 @@ export default function checkContrast(results, option) {
     // Content for tooltip.
     const truncatedText = Utils.truncateString(text, 80);
     const sanitizedText = Utils.sanitizeHTML(truncatedText);
-    details.sanitizedText = item.type === 'placeholder' && $el.placeholder
-      ? Utils.sanitizeHTML($el.placeholder) : sanitizedText;
 
-    details.ratio = ratio;
+    // Preview text
+    let previewText;
+    if (item.type === 'placeholder' && $el.placeholder) {
+      previewText = Utils.sanitizeHTML($el.placeholder);
+    } else if (item.type === 'svg' || item.type === 'svg-text') {
+      previewText = `${Utils.sanitizeHTMLBlock($el.outerHTML)}`;
+    } else {
+      previewText = sanitizedText;
+    }
+    updatedItem.sanitizedText = previewText;
 
-    const contrastDetails = `<div data-sa11y-contrast-details='${JSON.stringify(details)}'></div>`;
+    const contrastDetails = `<div data-sa11y-contrast-details='${JSON.stringify(updatedItem)}'></div>`;
 
     // Iterate through contrast results based on type.
     switch (item.type) {
@@ -799,6 +911,21 @@ export default function checkContrast(results, option) {
         }
         break;
       case 'svg':
+      case 'svg-text':
+        if (option.checks.CONTRAST_WARNING) {
+          results.push({
+            element: $el,
+            type: option.checks.CONTRAST_WARNING.type || 'warning',
+            content: option.checks.CONTRAST_WARNING.content
+              || `${Lang.sprintf('CONTRAST_WARNING')} ${contrastDetails}`,
+            inline: false,
+            position: 'beforebegin',
+            dismiss: Utils.prepareDismissal(`CONTRAST${sanitizedText}`),
+            dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
+            developer: option.checks.CONTRAST_WARNING.developer || true,
+          });
+        }
+        break;
       case 'unsupported':
       case 'background-image':
         if (option.checks.CONTRAST_WARNING) {

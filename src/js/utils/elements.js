@@ -68,6 +68,8 @@ const Elements = (function myElements() {
       && $el.getAttribute('tabindex') !== '0'
       && !$el.getAttribute('tabindex').startsWith('-'));
 
+    Found.Svg = Found.Everything.filter(($el) => $el.tagName === 'svg');
+
     Found.Buttons = Found.Everything.filter(($el) => $el.tagName === 'BUTTON' || $el.matches('[role="button"]'));
 
     Found.Inputs = Found.Everything.filter(($el) => ['INPUT', 'SELECT', 'TEXTAREA', 'METER', 'PROGRESS'].includes($el.tagName));

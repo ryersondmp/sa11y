@@ -313,6 +313,29 @@ div {
     }
   }
 
+  /* APCA table */
+  #apca-table {
+    width: 100%;
+
+    .row {
+      display: flex;
+      margin-top: 10px;
+    }
+
+    .cell {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      align-items: center;
+      padding: 1px;
+    }
+
+    .font-weight {
+      font-size: calc(var(--sa11y-normal-text) - 2px);
+      font-weight: bold;
+    }
+  }
+
   /* ************************************* */
   /*                Arrows                 */
   /* ************************************* */

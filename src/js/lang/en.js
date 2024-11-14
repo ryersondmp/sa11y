@@ -248,5 +248,6 @@ export default {
     BODY_TEXT: 'Body Text',
     TEXT: 'Text',
     BG: 'Background',
+    NON_TEXT: 'Non-Text',
   },
 };
