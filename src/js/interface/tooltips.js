@@ -50,11 +50,9 @@ export class AnnotationTooltips extends HTMLElement {
       appendTo: shadowRoot,
       zIndex: 2147483645,
       onShow(instance) {
-        const openedTooltip = instance.popper;
-
         // Hide previously opened tooltip.
         annotations.forEach((popper) => {
-          if (popper !== openedTooltip) {
+          if (popper !== instance.popper) {
             popper.hide();
           }
         });
@@ -64,7 +62,7 @@ export class AnnotationTooltips extends HTMLElement {
         annotation.setAttribute('data-sa11y-opened', '');
 
         // Close button for tooltip.
-        const closeButton = openedTooltip.querySelector('.close-btn');
+        const closeButton = instance.popper.querySelector('.close-btn');
         const closeButtonHandler = () => {
           instance.hide();
           instance.reference.focus();
@@ -78,15 +76,30 @@ export class AnnotationTooltips extends HTMLElement {
             instance.reference.focus();
           }
         };
-        openedTooltip.addEventListener('keydown', escapeListener);
+        instance.popper.addEventListener('keydown', escapeListener);
 
         // Generate preview, colour pickers, and suggestions for contrast tooltips.
         // Imported from rulesets/contrast.js
-        if (!openedTooltip.hasAttribute('contrast-tools-initialized')) {
-          generateContrastTools(openedTooltip);
-          initializeContrastTools(openedTooltip);
-          generateColorSuggestion(openedTooltip);
-          openedTooltip.setAttribute('contrast-tools-initialized', true);
+        if (!instance.popper.hasAttribute('contrast-tools-initialized')) {
+          const issueID = parseInt(annotation.getAttribute('data-sa11y-annotation'), 10);
+          const issueObject = window.sa11yCheckComplete.results.find((issue) => issue.id === issueID);
+          const { contrastDetails } = issueObject || {};
+
+          if (contrastDetails) {
+            const container = instance.popper.querySelector('[data-sa11y-contrast-details]');
+
+            // Append color pickers and suggested color.
+            const tools = generateContrastTools(contrastDetails);
+            container.appendChild(tools);
+            initializeContrastTools(instance.popper, contrastDetails);
+
+            // Append suggested color.
+            const suggestion = generateColorSuggestion(contrastDetails);
+            if (suggestion) container.appendChild(suggestion);
+
+            // Contrast tools has been initialized.
+            instance.popper.setAttribute('contrast-tools-initialized', true);
+          }
         }
 
         // Make tooltip stay open if colour picker is used. Use 'mousedown' event, because upon click of trigger, it sets focus on close button, which immediately closes colour input on safari.
@@ -95,18 +108,18 @@ export class AnnotationTooltips extends HTMLElement {
           if (firstClick && event.target.matches('input[type="color"]')) {
             instance.reference.click();
             firstClick = false;
-            openedTooltip.removeEventListener('mousedown', handleMouseDown);
+            instance.popper.removeEventListener('mousedown', handleMouseDown);
           }
         }
-        openedTooltip.addEventListener('mousedown', handleMouseDown);
+        instance.popper.addEventListener('mousedown', handleMouseDown);
 
         // Remove all event listeners.
         const onHiddenTooltip = () => {
           closeButton.removeEventListener('click', closeButtonHandler);
-          openedTooltip.removeEventListener('keydown', escapeListener);
-          openedTooltip.removeEventListener('hidden', onHiddenTooltip);
+          instance.popper.removeEventListener('keydown', escapeListener);
+          instance.popper.removeEventListener('hidden', onHiddenTooltip);
         };
-        openedTooltip.addEventListener('hidden', onHiddenTooltip);
+        instance.popper.addEventListener('hidden', onHiddenTooltip);
       },
       onTrigger(instance, event) {
         if (event.type === 'click') {
@@ -118,8 +131,7 @@ export class AnnotationTooltips extends HTMLElement {
         }
       },
       onHide(instance) {
-        const openedTooltip = instance.popper;
-        openedTooltip.querySelector('.close-btn').removeEventListener('click', () => {
+        instance.popper.querySelector('.close-btn').removeEventListener('click', () => {
           instance.hide();
         });
         const annotation = instance.reference.getRootNode().host;

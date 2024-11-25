@@ -250,19 +250,9 @@ class Sa11y {
         /* If panel is OPENED. */
         if (Utils.store.getItem('sa11y-panel') === 'Opened') {
           // Paint the page with annotations.
-          this.results.forEach(($el) => {
-            Object.assign($el);
-            annotate(
-              $el.element,
-              $el.type,
-              $el.content,
-              $el.inline,
-              $el.position,
-              $el.id,
-              $el.dismiss,
-              $el.dismissAll,
-              option,
-            );
+          this.results.forEach((issue) => {
+            Object.assign(issue);
+            annotate(issue, option);
           });
 
           // After annotations are painted, find & cache.
@@ -316,12 +306,14 @@ class Sa11y {
       }
 
       // Dispatch custom event that stores the results array.
+      window.sa11yCheckComplete = null;
       const event = new CustomEvent('sa11y-check-complete', {
         detail: {
           results: this.results,
           page: window.location.pathname,
         },
       });
+      window.sa11yCheckComplete = event.detail;
       document.dispatchEvent(event);
     };
 

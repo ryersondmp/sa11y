@@ -144,9 +144,10 @@ export function sanitizeURL(string) {
 /**
  * Sanitizes HTML by removing script tags, inline event handlers and any dangerous attributes. It returns a clean version of the HTML string.
  * @param {string} html The HTML string to sanitize.
+ * @param {Boolean} allowStyles Preserve inline style attributes.
  * @returns {string} The sanitized HTML string.
  */
-export function sanitizeHTMLBlock(html) {
+export function sanitizeHTMLBlock(html, allowStyles = false) {
   const tempDiv = document.createElement('div');
   tempDiv.innerHTML = html;
 
@@ -164,7 +165,9 @@ export function sanitizeHTMLBlock(html) {
     Array.from(element.attributes).forEach((attr) => {
       if (attr.name.startsWith('on')) element.removeAttribute(attr.name);
     });
-    element.removeAttribute('style');
+    if (!allowStyles) {
+      element.removeAttribute('style');
+    }
   });
   return tempDiv.innerHTML;
 }

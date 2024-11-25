@@ -344,84 +344,74 @@ export function suggestColorAPCA(color, background, fontWeight, fontSize) {
  * For performance reasons, it is only called upon tooltip opening.
  * @param {HTMLElement} container The container where the color suggestion will be inserted.
  */
-export function generateColorSuggestion(container) {
-  const hasContrastDetails = container?.querySelector('[data-sa11y-contrast-details]');
-  if (hasContrastDetails) {
-    const colorObject = hasContrastDetails?.getAttribute('data-sa11y-contrast-details');
-    const details = JSON.parse(colorObject);
-    const { color, background, fontWeight, fontSize, isLargeText } = details;
+export function generateColorSuggestion(contrastDetails) {
+  let adviceContainer;
+  const { color, background, fontWeight, fontSize, isLargeText, type } = contrastDetails;
+  if (color && background && background !== 'image' && type === 'text') {
+    const suggested = Constants.Global.contrastAPCA
+      ? suggestColorAPCA(color, background, fontWeight, fontSize)
+      : suggestColorWCAG(color, background, isLargeText);
 
-    if (color && background && background !== 'image') {
-      const suggested = Constants.Global.contrastAPCA
-        ? suggestColorAPCA(color, background, fontWeight, fontSize)
-        : suggestColorWCAG(color, background, isLargeText);
+    let advice;
+    const hr = '<hr aria-hidden="true">';
+    const style = `color:${suggested.color};background-color:${getHex(contrastDetails.background)};`;
+    const colorBadge = `<strong class="badge" style="${style}">${suggested.color}</strong>`;
+    const sizeBadge = `<strong class="normal-badge">${suggested.size}px</strong>`;
 
-      let advice;
-      const hr = '<hr aria-hidden="true">';
-      const style = `color:${suggested.color};background-color:${getHex(details.background)};`;
-      const colorBadge = `<strong class="badge" style="${style}">${suggested.color}</strong>`;
-      const sizeBadge = `<strong class="normal-badge">${suggested.size}px</strong>`;
-
-      if (!Constants.Global.contrastAPCA) {
-        advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
-      } else if (suggested.color && suggested.size) {
-        advice = `${hr} ${Lang._('CONTRAST_APCA')} ${colorBadge} ${sizeBadge}`;
-      } else if (suggested.color) {
-        advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
-      } else if (suggested.size) {
-        advice = `${hr} ${Lang._('CONTRAST_SIZE')} ${sizeBadge}`;
-      }
-
-      // Append it to contrast details container.
-      const adviceContainer = document.createElement('div');
-      adviceContainer.id = 'advice';
-
-      // If low opacity, suggest increase opacity first.
-      const suggestion = (details.opacity < 1)
-        ? `<hr aria-hidden="true"> ${Lang.sprintf('CONTRAST_OPACITY')}` : advice;
-
-      // Append advice to contrast details container.
-      adviceContainer.innerHTML = suggestion;
-      hasContrastDetails.appendChild(adviceContainer);
+    if (!Constants.Global.contrastAPCA) {
+      advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
+    } else if (suggested.color && suggested.size) {
+      advice = `${hr} ${Lang._('CONTRAST_APCA')} ${colorBadge} ${sizeBadge}`;
+    } else if (suggested.color) {
+      advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
+    } else if (suggested.size) {
+      advice = `${hr} ${Lang._('CONTRAST_SIZE')} ${sizeBadge}`;
     }
+
+    // Append it to contrast details container.
+    adviceContainer = document.createElement('div');
+    adviceContainer.id = 'advice';
+
+    // If low opacity, suggest increase opacity first.
+    const suggestion = (contrastDetails.opacity < 1)
+      ? `<hr aria-hidden="true"> ${Lang.sprintf('CONTRAST_OPACITY')}` : advice;
+
+    // Append advice to contrast details container.
+    adviceContainer.innerHTML = suggestion;
   }
+  return adviceContainer;
 }
 
 /**
  * Inject contrast colour pickers into tooltip.
  * @param {HTMLElement} container The tooltip container to inject the contrast colour pickers.
  */
-export function generateContrastTools(container) {
-  const hasContrastDetails = container?.querySelector('[data-sa11y-contrast-details]');
-  if (hasContrastDetails) {
-    // Get the contrast details object.
-    const colorObject = hasContrastDetails.getAttribute('data-sa11y-contrast-details' || '{}');
-    const details = JSON.parse(colorObject);
-    const { sanitizedText, color, background, fontWeight, fontSize, ratio } = details;
+export function generateContrastTools(contrastDetails) {
+  const { sanitizedText, color, background, fontWeight, fontSize, ratio } = contrastDetails;
 
-    // Initialize variables.
-    const hasBackgroundColor = background && background !== 'image';
-    const backgroundHex = hasBackgroundColor ? getHex(background) : '#000000';
-    const foregroundHex = color ? getHex(color) : '#000000';
-    const unknownFG = color ? '' : 'class="unknown"';
-    const unknownBG = background && background !== 'image' ? '' : 'class="unknown"';
-    const hasFontWeight = fontWeight ? `font-weight:${fontWeight};` : '';
-    const hasFontSize = fontSize ? `font-size:${fontSize}px;` : '';
+  // Initialize variables.
+  const hasBackgroundColor = background && background !== 'image';
+  const backgroundHex = hasBackgroundColor ? getHex(background) : '#000000';
+  const foregroundHex = color ? getHex(color) : '#000000';
+  const unknownFG = color ? '' : 'class="unknown"';
+  const unknownBG = background && background !== 'image' ? '' : 'class="unknown"';
+  const hasFontWeight = fontWeight ? `font-weight:${fontWeight};` : '';
+  const hasFontSize = fontSize ? `font-size:${fontSize}px;` : '';
 
-    // Ratio to be displayed.
-    let displayedRatio;
-    if (Constants.Global.contrastAPCA) {
-      // If APCA, don't show "unknown" when value is absolute 0.
-      displayedRatio = Math.abs(ratio) === 0 ? 0 : (Math.abs(ratio) || Lang._('UNKNOWN'));
-    } else {
-      // WCAG 2.0 ratio.
-      displayedRatio = ratio || Lang._('UNKNOWN');
-    }
+  // Ratio to be displayed.
+  let displayedRatio;
+  if (Constants.Global.contrastAPCA) {
+    // If APCA, don't show "unknown" when value is absolute 0.
+    displayedRatio = Math.abs(ratio) === 0 ? 0 : (Math.abs(ratio) || Lang._('UNKNOWN'));
+  } else {
+    // WCAG 2.0 ratio.
+    displayedRatio = ratio || Lang._('UNKNOWN');
+  }
 
-    // Generate HTML layout.
-    const contrastTools = document.createElement('div');
-    contrastTools.id = 'contrast-tools';
-    contrastTools.innerHTML = `
+  // Generate HTML layout.
+  const contrastTools = document.createElement('div');
+  contrastTools.id = 'contrast-tools';
+  contrastTools.innerHTML = `
       <hr aria-hidden="true">
       <div id="contrast" class="badge">${Lang._('CONTRAST')}</div>
       <div id="value" class="badge">${displayedRatio}</div>
@@ -430,17 +420,16 @@ export function generateContrastTools(container) {
       <div id="body-text" class="badge good-badge" hidden>${Lang._('BODY_TEXT')}</div>
       <div id="apca" class="badge good-badge" hidden>${Lang._('GOOD')}</div>
       <div id="apca-table" hidden></div>
-      <div class="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};` : ''}${hasFontWeight}${hasFontSize}">${sanitizedText}</div>
-      <div class="color-pickers">
-        <label for="fg-text">${Lang._('TEXT')}
+      <div id="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};${sanitizedText.length ? '' : 'display: none;'}` : ''}${hasFontWeight}${hasFontSize}">${sanitizedText}</div>
+      <div id="color-pickers">
+        <label for="fg-text">${Lang._('FG')}
           <input type="color" id="fg-input" value="${foregroundHex}" ${unknownFG}/>
         </label>
         <label for="bg">${Lang._('BG')}
           <input type="color" id="bg-input" value="${backgroundHex}" ${unknownBG}/>
         </label>
       </div>`;
-    hasContrastDetails.appendChild(contrastTools);
-  }
+  return contrastTools;
 }
 
 export function createFontSizesTable(container, fontSizes) {
@@ -484,16 +473,16 @@ export function createFontSizesTable(container, fontSizes) {
  * Initializes colour eyedroppers for respective tooltip.
  * This function is referenced within './interface/tooltips.js'.
  * @param {HTMLElement} container The container where the color suggestion will be inserted.
+ * @param {Object} contrastDetails Contrast details object containing colour, background, etc.
  */
-export function initializeContrastTools(container) {
-  const contrastTools = container?.querySelector('[data-sa11y-contrast-details]');
+export function initializeContrastTools(container, contrastDetails) {
+  const contrastTools = container?.querySelector('#contrast-tools');
   if (contrastTools) {
-    const details = JSON.parse(contrastTools.getAttribute('data-sa11y-contrast-details') || '{}');
-    const { fontSize, fontWeight, type } = details;
+    const { fontSize, fontWeight, type } = contrastDetails;
 
     // Cache selectors
     const contrast = container.querySelector('#contrast');
-    const contrastPreview = container.querySelector('.contrast-preview');
+    const contrastPreview = container.querySelector('#contrast-preview');
     const fgInput = container.querySelector('#fg-input');
     const bgInput = container.querySelector('#bg-input');
     const nonText = container.querySelector('#non-text');
@@ -522,10 +511,14 @@ export function initializeContrastTools(container) {
         bgInput.classList.remove('unknown');
       }
 
+      // Adjust colours in preview area.
       contrastPreview.style.color = fgColor;
-      contrastPreview.style.fill = fgColor;
       contrastPreview.style.backgroundColor = bgColor;
       contrastPreview.style.backgroundImage = 'none';
+
+      // Change SVG color if it contains a single <path> element.
+      const path = contrastPreview.querySelectorAll('svg path');
+      if (path.length === 1) path[0].style.fill = fgColor;
 
       const contrastValue = calculateContrast(convertToRGBA(fgColor), convertToRGBA(bgColor));
       const elementsToToggle = [ratio, contrast];
@@ -538,7 +531,8 @@ export function initializeContrastTools(container) {
         let passes;
 
         switch (type) {
-          case 'svg': {
+          case 'svg-error':
+          case 'svg-warning': {
             nonText.hidden = !nonTextPasses;
             passes = nonTextPasses;
             toggleBadges(elementsToToggle, passes);
@@ -553,7 +547,7 @@ export function initializeContrastTools(container) {
           }
           default: {
             const minFontSize = fontArray[Math.floor(fontWeight / 100) - 1];
-            passes = fontSize > minFontSize;
+            passes = fontSize >= minFontSize;
             toggleBadges(elementsToToggle, passes);
             apca.hidden = !passes;
             break;
@@ -568,7 +562,8 @@ export function initializeContrastTools(container) {
         const passes = value > 3;
 
         switch (type) {
-          case 'svg': {
+          case 'svg-error':
+          case 'svg-warning': {
             nonText.hidden = !passes;
             toggleBadges(elementsToToggle, passes);
             break;
@@ -685,8 +680,7 @@ export function checkElementContrast($el, color, background, fontSize, fontWeigh
  */
 export default function checkContrast(results, option) {
   // Initialize contrast results array.
-  const contrastErrors = [];
-  const contrastWarnings = [];
+  const contrastResults = [];
 
   // Iterate through all elements on the page and get computed styles.
   for (let i = 0; i < Elements.Found.Contrast.length; i++) {
@@ -719,7 +713,7 @@ export default function checkContrast(results, option) {
     // Only check elements with text and inputs.
     if (text.length !== 0 || checkInputs) {
       if (color === 'unsupported' || background === 'unsupported') {
-        contrastWarnings.push({
+        contrastResults.push({
           $el,
           type: 'unsupported',
           fontSize,
@@ -729,7 +723,7 @@ export default function checkContrast(results, option) {
           ...(color !== 'unsupported' && { color }),
         });
       } else if (background === 'image') {
-        contrastWarnings.push({
+        contrastResults.push({
           $el,
           type: 'background-image',
           color,
@@ -746,7 +740,7 @@ export default function checkContrast(results, option) {
         const result = checkElementContrast($el, color, background, fontSize, fontWeight, opacity);
         if (result) {
           result.type = checkInputs ? 'input' : 'text';
-          contrastErrors.push(result);
+          contrastResults.push(result);
         }
       }
     }
@@ -755,13 +749,83 @@ export default function checkContrast(results, option) {
   // Warning for all SVGs.
   Elements.Found.Svg.forEach(($el) => {
     const background = getBackground($el);
-    const type = $el.querySelector('text') ? 'svg-text' : 'svg';
-    contrastWarnings.push({
-      $el,
-      type,
-      sanitizedSVG: Utils.sanitizeHTMLBlock($el),
-      background,
-    });
+    const paths = $el.querySelectorAll('path');
+
+    if (paths.length === 1) {
+      const path = paths[0];
+      const style = getComputedStyle(path);
+      const { fill, opacity } = style;
+
+      if (fill === 'none') {
+        // No fill, skip contrast checks but log as a warning.
+        contrastResults.push({
+          $el,
+          type: 'svg-warning',
+          background,
+        });
+      } else if (fill.startsWith('url(')) {
+        // Gradient or pattern fill.
+        contrastResults.push({
+          $el,
+          type: 'svg-warning',
+          background,
+        });
+      } else if (fill === 'currentColor') {
+        // Use currentColor from the parent element.
+        const currentColor = getComputedStyle($el).color;
+        const resolvedFill = convertToRGBA(currentColor, opacity);
+        const result = calculateContrast(resolvedFill, background);
+
+        if (option.contrastAPCA && result.ratio < 45) {
+          contrastResults.push({
+            $el,
+            type: 'svg-error',
+            color: resolvedFill,
+            ratio: Math.abs(result.ratio).toFixed(1),
+            background,
+          });
+        } else if (result.ratio < 3) {
+          contrastResults.push({
+            $el,
+            type: 'svg-error',
+            color: resolvedFill,
+            isLargeText: true,
+            ratio: result.ratio.toFixed(2),
+            background,
+          });
+        }
+      } else {
+        // Standard color value (e.g., named color, hex, rgb, hsl).
+        const resolvedFill = convertToRGBA(fill, opacity);
+        const result = calculateContrast(resolvedFill, background);
+        if (option.contrastAPCA && result.ratio < 45) {
+          contrastResults.push({
+            $el,
+            type: 'svg-error',
+            color: resolvedFill,
+            ratio: Math.abs(result.ratio).toFixed(1),
+            background,
+          });
+        } else if (result.ratio < 3) {
+          contrastResults.push({
+            $el,
+            type: 'svg-error',
+            color: resolvedFill,
+            isLargeText: true,
+            ratio: result.ratio.toFixed(2),
+            background,
+          });
+        }
+      }
+    } else {
+      // Handle multiple paths or missing path fills.
+      const type = $el.querySelector('text') ? 'svg-text' : 'svg-warning';
+      contrastResults.push({
+        $el,
+        type,
+        background,
+      });
+    }
   });
 
   // Check contrast of all placeholder elements.
@@ -776,7 +840,7 @@ export default function checkContrast(results, option) {
       const result = checkElementContrast($el, pColor, pBackground, pSize, pWeight, pOpacity);
       if (result) {
         result.type = 'placeholder';
-        contrastErrors.push(result);
+        contrastResults.push(result);
       }
     }
   });
@@ -813,13 +877,10 @@ export default function checkContrast(results, option) {
     mergedWarnings.push(current);
     return mergedWarnings;
   }, []);
-  const processedWarnings = processWarnings(contrastWarnings);
-
-  // Merge errors & warnings arrays.
-  const contrastResults = [...contrastErrors, ...processedWarnings];
+  const processedResults = processWarnings(contrastResults);
 
   // Iterate through all contrast results.
-  contrastResults.forEach((item) => {
+  processedResults.forEach((item) => {
     const { $el, ratio } = item;
     const updatedItem = item;
 
@@ -854,29 +915,31 @@ export default function checkContrast(results, option) {
     let previewText;
     if (item.type === 'placeholder' && $el.placeholder) {
       previewText = Utils.sanitizeHTML($el.placeholder);
-    } else if (item.type === 'svg' || item.type === 'svg-text') {
-      previewText = `${Utils.sanitizeHTMLBlock($el.outerHTML)}`;
+    } else if (item.type === 'svg-error' || item.type === 'svg-warning' || item.type === 'svg-text') {
+      const sanitizeSvg = Utils.sanitizeHTMLBlock(updatedItem.$el.outerHTML, true);
+      previewText = Utils.removeWhitespace(sanitizeSvg);
     } else {
       previewText = sanitizedText;
     }
     updatedItem.sanitizedText = previewText;
 
-    const contrastDetails = `<div data-sa11y-contrast-details='${JSON.stringify(updatedItem)}'></div>`;
-
     // Iterate through contrast results based on type.
     switch (item.type) {
       case 'text':
         if (option.checks.CONTRAST_ERROR) {
+          const apcaAdvice = (option.contrastAPCA)
+            ? `<hr aria-hidden="true"> ${Lang._('APCA_ADVICE')}` : '';
           results.push({
             element: $el,
             type: option.checks.CONTRAST_ERROR.type || 'error',
             content: option.checks.CONTRAST_ERROR.content
-              || Lang.sprintf('CONTRAST_ERROR') + contrastDetails,
+              || Lang.sprintf('CONTRAST_ERROR') + apcaAdvice,
             inline: false,
             position: 'beforebegin',
             dismiss: Utils.prepareDismissal(`CONTRAST${sanitizedText}`),
             dismissAll: option.checks.CONTRAST_ERROR.dismissAll ? 'CONTRAST_ERROR' : false,
             developer: option.checks.CONTRAST_ERROR.developer || false,
+            contrastDetails: updatedItem,
           });
         }
         break;
@@ -886,12 +949,13 @@ export default function checkContrast(results, option) {
             element,
             type: option.checks.CONTRAST_INPUT.type || 'error',
             content: option.checks.CONTRAST_INPUT.content
-              || Lang.sprintf('CONTRAST_INPUT', ratio) + contrastDetails,
+              || Lang.sprintf('CONTRAST_INPUT', ratio),
             inline: false,
             position: 'beforebegin',
             dismiss: Utils.prepareDismissal(`CONTRAST${$el.getAttribute('class')}${$el.tagName}${ratio}`),
             dismissAll: option.checks.CONTRAST_INPUT.dismissAll ? 'CONTRAST_INPUT' : false,
             developer: option.checks.CONTRAST_INPUT.developer || true,
+            contrastDetails: updatedItem,
           });
         }
         break;
@@ -901,46 +965,63 @@ export default function checkContrast(results, option) {
             element: $el,
             type: option.checks.CONTRAST_PLACEHOLDER.type || 'error',
             content: option.checks.CONTRAST_PLACEHOLDER.content
-              || Lang.sprintf('CONTRAST_PLACEHOLDER') + contrastDetails,
+              || Lang.sprintf('CONTRAST_PLACEHOLDER'),
             inline: false,
             position: 'afterend',
             dismiss: Utils.prepareDismissal(`CPLACEHOLDER${$el.getAttribute('class')}${$el.tagName}${ratio}`),
             dismissAll: option.checks.CONTRAST_PLACEHOLDER.dismissAll ? 'CONTRAST_PLACEHOLDER' : false,
             developer: option.checks.CONTRAST_PLACEHOLDER.developer || true,
+            contrastDetails: updatedItem,
           });
         }
         break;
-      case 'svg':
-      case 'svg-text':
-        if (option.checks.CONTRAST_WARNING) {
+      case 'svg-error':
+        if (option.checks.CONTRAST_ERROR_GRAPHIC) {
           results.push({
             element: $el,
-            type: option.checks.CONTRAST_WARNING.type || 'warning',
-            content: option.checks.CONTRAST_WARNING.content
-              || `${Lang.sprintf('CONTRAST_WARNING')} ${contrastDetails}`,
+            type: option.checks.CONTRAST_ERROR_GRAPHIC.type || 'error',
+            content: option.checks.CONTRAST_ERROR_GRAPHIC.content
+              || Lang.sprintf('CONTRAST_ERROR_GRAPHIC'),
             inline: false,
             position: 'beforebegin',
-            dismiss: Utils.prepareDismissal(`CONTRAST${sanitizedText}`),
-            dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
-            developer: option.checks.CONTRAST_WARNING.developer || true,
+            dismiss: Utils.prepareDismissal(`CONTRAST_GRAPHIC${sanitizedText}`),
+            dismissAll: option.checks.CONTRAST_ERROR_GRAPHIC.dismissAll ? 'CONTRAST_ERROR_GRAPHIC' : false,
+            developer: option.checks.CONTRAST_ERROR_GRAPHIC.developer || true,
+            contrastDetails: updatedItem,
+          });
+        }
+        break;
+      case 'svg-warning':
+      case 'svg-text':
+        if (option.checks.CONTRAST_WARNING_GRAPHIC) {
+          results.push({
+            element: $el,
+            type: option.checks.CONTRAST_WARNING_GRAPHIC.type || 'warning',
+            content: option.checks.CONTRAST_WARNING_GRAPHIC.content
+              || Lang.sprintf('CONTRAST_WARNING_GRAPHIC'),
+            inline: false,
+            position: 'beforebegin',
+            dismiss: Utils.prepareDismissal(`CONTRASTGRAPHIC${sanitizedText}`),
+            dismissAll: option.checks.CONTRAST_WARNING_GRAPHIC.dismissAll ? 'CONTRAST_WARNING_GRAPHIC' : false,
+            developer: option.checks.CONTRAST_WARNING_GRAPHIC.developer || true,
+            contrastDetails: updatedItem,
           });
         }
         break;
       case 'unsupported':
       case 'background-image':
         if (option.checks.CONTRAST_WARNING) {
-          const apcaAdvice = (option.contrastAPCA)
-            ? `<hr aria-hidden="true"> ${Lang._('APCA_ADVICE')}` : '';
           results.push({
             element,
             type: option.checks.CONTRAST_WARNING.type || 'warning',
             content: option.checks.CONTRAST_WARNING.content
-              || `${Lang.sprintf('CONTRAST_WARNING')} ${contrastDetails} ${apcaAdvice}`,
+              || Lang.sprintf('CONTRAST_WARNING'),
             inline: false,
             position: 'beforebegin',
             dismiss: Utils.prepareDismissal(`CONTRAST${sanitizedText}`),
             dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
             developer: option.checks.CONTRAST_WARNING.developer || false,
+            contrastDetails: updatedItem,
           });
         }
         break;

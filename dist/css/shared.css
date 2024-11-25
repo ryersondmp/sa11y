@@ -111,11 +111,10 @@ kbd,
 /* ***************************************** */
 /*            Contrast related               */
 /* ***************************************** */
-.contrast-preview {
+#contrast-preview {
   max-height: 100px;
   padding: 5px;
   margin-top: 10px;
-  margin-bottom: 10px;
   overflow: clip;
   line-height: 1;
   overflow-wrap: break-word;
@@ -127,16 +126,17 @@ kbd,
   border-radius: 3.2px;
 }
 
-.color-pickers {
+#color-pickers {
   display: flex;
   justify-content: space-between;
+  margin-top: 10px;
   margin-bottom: 10px;
 }
-.color-pickers label {
+#color-pickers label {
   display: flex;
   align-items: center;
 }
-.color-pickers input {
+#color-pickers input {
   margin-inline-start: 7px;
 }
 

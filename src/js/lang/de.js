@@ -257,5 +257,12 @@ export default {
     WCAG_ADVICE: 'Das Kontrastverhältnis sollte mindestens 4,5:1 für normalen Text und 3:1 für großen Text betragen.',
     APCA_ADVICE: 'Der Kontrastwert sollte mindestens 60 für Fließtext und 45 für großen Text betragen.',
     CONTRAST_INPUT: 'Der Text in dieser Eingabe hat nicht genügend Kontrast zum Hintergrund. Das Kontrastverhältnis sollte mindestens 4,5:1 für normalen Text und 3:1 für großen Text betragen. <hr> <strong {B}>Kontrastverhältnis</strong> <strong {B}>%(RATIO)</strong>',
+    CONTRAST: 'Kontrast',
+    UNKNOWN: 'Unbekannt',
+    LARGE_TEXT: 'Großer Text',
+    BODY_TEXT: 'Fließtext',
+    FG: 'Vordergrund',
+    BG: 'Hintergrund',
+    NON_TEXT: 'Nicht-Text',
   },
 };

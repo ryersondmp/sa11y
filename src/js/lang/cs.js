@@ -260,5 +260,12 @@ export default {
     WCAG_ADVICE: 'Poměr kontrastu by měl být alespoň 4.5:1 pro běžný text a 3:1 pro velký text.',
     APCA_ADVICE: 'Hodnota kontrastu by měla být alespoň 60 pro tělo textu a 45 pro velký text.',
     CONTRAST_INPUT: 'Text v tomto vstupu není dostatečně kontrastní s pozadím. Kontrastní poměr by měl být alespoň 4,5:1 pro normální text a 3:1 pro velký text. <hr> <strong {B}>Kontrastní poměr</strong> <strong {B}>%(RATIO)</strong>',
+    CONTRAST: 'Kontrast',
+    UNKNOWN: 'Neznámý',
+    LARGE_TEXT: 'Velký text',
+    BODY_TEXT: 'Text těla',
+    FG: 'Popředí',
+    BG: 'Pozadí',
+    NON_TEXT: 'Ne-text',
   },
 };

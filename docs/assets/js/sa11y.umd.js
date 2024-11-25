@@ -221,6 +221,8 @@
       },
       CONTRAST_INPUT: true,
       CONTRAST_ERROR: true,
+      CONTRAST_ERROR_GRAPHIC: true,
+      CONTRAST_WARNING_GRAPHIC: true,
       CONTRAST_PLACEHOLDER: true,
     },
   };
@@ -947,9 +949,10 @@
   /**
    * Sanitizes HTML by removing script tags, inline event handlers and any dangerous attributes. It returns a clean version of the HTML string.
    * @param {string} html The HTML string to sanitize.
+   * @param {Boolean} allowStyles Preserve inline style attributes.
    * @returns {string} The sanitized HTML string.
    */
-  function sanitizeHTMLBlock(html) {
+  function sanitizeHTMLBlock(html, allowStyles = false) {
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = html;
 
@@ -967,7 +970,9 @@
       Array.from(element.attributes).forEach((attr) => {
         if (attr.name.startsWith('on')) element.removeAttribute(attr.name);
       });
-      element.removeAttribute('style');
+      if (!allowStyles) {
+        element.removeAttribute('style');
+      }
     });
     return tempDiv.innerHTML;
   }
@@ -1468,7 +1473,7 @@
 
       Found.Blockquotes = Found.Everything.filter(($el) => $el.tagName === 'BLOCKQUOTE');
 
-      Found.Tables = Found.Everything.filter(($el) => $el.tagName === 'TABLE' && !$el.matches('[role="presentation"]'));
+      Found.Tables = Found.Everything.filter(($el) => $el.tagName === 'TABLE' && !$el.matches('[role="presentation"]') && !$el.matches('[role="none"]'));
 
       Found.StrongItalics = Found.Everything.filter(($el) => ['STRONG', 'EM'].includes($el.tagName));
 
@@ -1622,9 +1627,13 @@
     const allDismissed = results.filter((issue) => dismissedIssues.some((dismissed) => dismissAll(issue, dismissed)));
 
     // Combine all dismissed results and filter out duplicates.
-    const dismissedResults = [...soloDismissed, ...allDismissed].filter(
-      (issue, index, self) => index === self.findIndex((i) => i.id === issue.id),
-    );
+    const dismissedResults = [
+      ...new Map(
+        [...soloDismissed, ...allDismissed]
+          .filter((issue) => issue?.id)
+          .map((issue) => [issue.id, issue]),
+      ).values(),
+    ];
     const dismissCount = dismissedResults.length;
 
     // Update results array (exclude dismissed and dismissed all checks).
@@ -2063,7 +2072,7 @@
 
   var styles = ":host{background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);bottom:0;display:block;height:-moz-fit-content;height:fit-content;left:0;position:fixed;right:0;width:100%;z-index:999999}*{-webkit-font-smoothing:auto!important;color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;font-size:var(--sa11y-normal-text);line-height:22px!important}#dialog{margin:20px auto;max-width:900px;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none}p{margin-top:0}.error{background:var(--sa11y-error);border:2px dashed #f08080;color:var(--sa11y-error-text);margin-bottom:0;padding:5px}";
 
-  var sharedStyles = ".visually-hidden{clip:rect(1px,1px,1px,1px);border:0;clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}[hidden]{display:none!important}.header-text,.header-text-inline,h2{color:var(--sa11y-panel-primary);display:block;font-size:var(--sa11y-large-text);font-weight:600;margin-bottom:3px}.header-text-inline{display:inline-block!important}code{font-family:monospace!important;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:600}.kbd,code,kbd{background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);padding:1.6px 4.8px}.bold{font-weight:600}.error .colour,.red-text{color:var(--sa11y-red-text);font-family:var(--sa11y-font-face)}.warning .colour,.yellow-text{color:var(--sa11y-yellow-text);font-family:var(--sa11y-font-face)}.badge,.normal-badge{background-color:var(--sa11y-panel-badge);border-radius:10px;color:var(--sa11y-panel-primary);display:inline;font-size:14px;font-weight:700!important;line-height:1;min-width:10px;outline:1px solid transparent;padding:1px 5px 1.75px;text-align:center;vertical-align:baseline;white-space:nowrap}.error .badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.error-badge{background:var(--sa11y-error)!important;color:var(--sa11y-error-text)!important}.warning .badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.warning-badge{background:var(--sa11y-yellow-text)!important;color:var(--sa11y-panel-bg)!important}.good .badge{background:var(--sa11y-good);color:var(--sa11y-good-text)}.good-badge{background:var(--sa11y-good)!important;color:var(--sa11y-good-text)!important}.contrast-preview{background-color:#e8e8e8;background-image:linear-gradient(45deg,#ccc 25%,transparent 0,transparent 75%,#ccc 0,#ccc),linear-gradient(45deg,#ccc 25%,transparent 0,transparent 75%,#ccc 0,#ccc);background-position:0 0,5px 5px;background-size:10px 10px;border:2px dashed var(--sa11y-panel-bg-splitter);border-radius:3.2px;line-height:1;margin-bottom:10px;margin-top:10px;max-height:100px;overflow:clip;overflow-wrap:break-word;padding:5px}.color-pickers{display:flex;justify-content:space-between;margin-bottom:10px}.color-pickers label{align-items:center;display:flex}.color-pickers input{margin-inline-start:7px}input[type=color i]{background:var(--sa11y-panel-bg-secondary);block-size:30px;border-color:var(--sa11y-button-outline);border-radius:50%;border-style:solid;border-width:1px;inline-size:30px;padding:2px}input[type=color i]::-webkit-color-swatch-wrapper{padding:1px}input[type=color i]::-webkit-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i]::-moz-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i].unknown:after{align-items:center;color:#fff;content:\"?\";display:flex;font-size:1.2rem;height:1.5rem;justify-content:center;margin:-24px 0;pointer-events:none;position:absolute;width:1.5rem;z-index:2}.close-btn{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;color:var(--sa11y-panel-primary);cursor:pointer;float:var(--sa11y-float-rtl);font-size:var(--sa11y-normal-text);font-weight:400;height:32px;margin:0;position:relative;transition:all .2s ease-in-out;width:32px}.close-btn:focus,.close-btn:hover{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{background:var(--sa11y-setting-switch-bg-off);bottom:-7px;content:\"\";left:-7px;-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute;right:-7px;top:-7px}@media screen and (forced-colors:active){.close-btn:after{filter:invert(1)}}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:not(#panel-controls button):not(.switch):focus,#container input:focus,#container select:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus,#container .switch:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus:not(:focus-visible),#container [tabindex=\"-1\"]:focus:not(:focus-visible),#container [tabindex=\"0\"]:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container input:focus:not(:focus-visible),#container select:focus:not(:focus-visible){box-shadow:none;outline:0}#container [tabindex=\"-1\"]:focus-visible,#container [tabindex=\"0\"]:focus-visible,#container a:focus-visible,#container button:not(#panel-controls button):not(.switch):focus-visible,#container input:focus-visible,#container select:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus-visible,#container .switch:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#panel-controls button:focus{border:3px solid transparent}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container select:focus,.close-btn:focus{outline:3px solid transparent!important}}";
+  var sharedStyles = ".visually-hidden{clip:rect(1px,1px,1px,1px);border:0;clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}[hidden]{display:none!important}.header-text,.header-text-inline,h2{color:var(--sa11y-panel-primary);display:block;font-size:var(--sa11y-large-text);font-weight:600;margin-bottom:3px}.header-text-inline{display:inline-block!important}code{font-family:monospace!important;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:600}.kbd,code,kbd{background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);padding:1.6px 4.8px}.bold{font-weight:600}.error .colour,.red-text{color:var(--sa11y-red-text);font-family:var(--sa11y-font-face)}.warning .colour,.yellow-text{color:var(--sa11y-yellow-text);font-family:var(--sa11y-font-face)}.badge,.normal-badge{background-color:var(--sa11y-panel-badge);border-radius:10px;color:var(--sa11y-panel-primary);display:inline;font-size:14px;font-weight:700!important;line-height:1;min-width:10px;outline:1px solid transparent;padding:1px 5px 1.75px;text-align:center;vertical-align:baseline;white-space:nowrap}.error .badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.error-badge{background:var(--sa11y-error)!important;color:var(--sa11y-error-text)!important}.warning .badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.warning-badge{background:var(--sa11y-yellow-text)!important;color:var(--sa11y-panel-bg)!important}.good .badge{background:var(--sa11y-good);color:var(--sa11y-good-text)}.good-badge{background:var(--sa11y-good)!important;color:var(--sa11y-good-text)!important}#contrast-preview{background-color:#e8e8e8;background-image:linear-gradient(45deg,#ccc 25%,transparent 0,transparent 75%,#ccc 0,#ccc),linear-gradient(45deg,#ccc 25%,transparent 0,transparent 75%,#ccc 0,#ccc);background-position:0 0,5px 5px;background-size:10px 10px;border:2px dashed var(--sa11y-panel-bg-splitter);border-radius:3.2px;line-height:1;margin-top:10px;max-height:100px;overflow:clip;overflow-wrap:break-word;padding:5px}#color-pickers{display:flex;justify-content:space-between;margin-bottom:10px;margin-top:10px}#color-pickers label{align-items:center;display:flex}#color-pickers input{margin-inline-start:7px}input[type=color i]{background:var(--sa11y-panel-bg-secondary);block-size:30px;border-color:var(--sa11y-button-outline);border-radius:50%;border-style:solid;border-width:1px;inline-size:30px;padding:2px}input[type=color i]::-webkit-color-swatch-wrapper{padding:1px}input[type=color i]::-webkit-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i]::-moz-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i].unknown:after{align-items:center;color:#fff;content:\"?\";display:flex;font-size:1.2rem;height:1.5rem;justify-content:center;margin:-24px 0;pointer-events:none;position:absolute;width:1.5rem;z-index:2}.close-btn{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;color:var(--sa11y-panel-primary);cursor:pointer;float:var(--sa11y-float-rtl);font-size:var(--sa11y-normal-text);font-weight:400;height:32px;margin:0;position:relative;transition:all .2s ease-in-out;width:32px}.close-btn:focus,.close-btn:hover{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{background:var(--sa11y-setting-switch-bg-off);bottom:-7px;content:\"\";left:-7px;-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute;right:-7px;top:-7px}@media screen and (forced-colors:active){.close-btn:after{filter:invert(1)}}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:not(#panel-controls button):not(.switch):focus,#container input:focus,#container select:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus,#container .switch:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus:not(:focus-visible),#container [tabindex=\"-1\"]:focus:not(:focus-visible),#container [tabindex=\"0\"]:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container input:focus:not(:focus-visible),#container select:focus:not(:focus-visible){box-shadow:none;outline:0}#container [tabindex=\"-1\"]:focus-visible,#container [tabindex=\"0\"]:focus-visible,#container a:focus-visible,#container button:not(#panel-controls button):not(.switch):focus-visible,#container input:focus-visible,#container select:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus-visible,#container .switch:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#panel-controls button:focus{border:3px solid transparent}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container select:focus,.close-btn:focus{outline:3px solid transparent!important}}";
 
   class ConsoleErrors extends HTMLElement {
     constructor(error) {
@@ -2172,7 +2181,7 @@ ${this.error.stack}
     };
   }
 
-  var panelStyles = "a,button,code,div,h1,h2,kbd,label,li,ol,p,pre,span,strong,svg,ul{all:unset;box-sizing:border-box!important}:after,:before{all:unset}div{display:block}*{-webkit-font-smoothing:auto!important;font-family:var(--sa11y-font-face)!important}label,li,ol,p,ul{font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px!important;text-align:start;word-break:break-word}.sa11y-overflow{overflow:auto}iframe,img,video{border:0;display:block;height:auto;max-width:100%}audio{max-width:100%}#toggle{align-items:center;background:linear-gradient(0deg,#e040fb,#00bcd4);background-color:var(--sa11y-setting-switch-bg-off);background-size:150% 150%;border-radius:50%;bottom:15px;color:#fff;cursor:pointer;display:flex;height:55px;inset-inline-end:18px;justify-content:center;margin:0;overflow:visible;position:fixed;transition:all .2s ease-in-out;width:55px;z-index:2147483644}#toggle.left,#toggle.top-left{inset-inline-start:18px}#toggle.top-left,#toggle.top-right{bottom:unset;top:15px}@media screen and (forced-colors:active){#toggle{background:ButtonFace!important;border:2px solid transparent}}#toggle svg{height:35px;width:35px}#toggle svg path{fill:var(--sa11y-panel-bg)}#toggle:focus,#toggle:hover{animation:sa11y-toggle-gradient 3s ease}#toggle:disabled:focus,#toggle:disabled:hover{animation:none}#toggle.on{background:linear-gradient(180deg,#e040fb,#00bcd4)}#toggle:disabled{background:unset;background-color:var(--sa11y-setting-switch-bg-off);cursor:not-allowed}#notification-badge{text-wrap:nowrap;align-items:center;background-color:#eb0000;border:1px solid transparent;border-radius:12px;color:#fff;display:none;font-size:13.5px;font-weight:400;justify-content:center;line-height:1;min-width:20px;padding:2.5px;position:absolute;right:-3px;top:-5.5px}#notification-badge.notification-badge-warning{background-color:var(--sa11y-warning-hover);border:1px solid var(--sa11y-warning);color:var(--sa11y-warning-text)}#panel{background:var(--sa11y-panel-bg);border-radius:4px;bottom:25px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15);inset-inline-end:42px;opacity:0;overflow:visible;position:fixed;transform:scale(0);transform-origin:100% 100%;transition:transform .2s,opacity background .2s .2s;visibility:hidden;z-index:2147483643}#panel.left,#panel.top-left{inset-inline-start:42px}#panel.top-left,#panel.top-right{bottom:unset;top:35px}#panel.active{height:auto;opacity:1;transform:scale(1);transform-origin:bottom right;transition:transform .2s,opacity .2s;visibility:visible}@media screen and (forced-colors:active){#panel{border:2px solid transparent}}#panel.active.left,[dir=rtl] #panel.active{transform-origin:bottom left}#panel.active.top-left{transform-origin:top left}#panel.active.top-right{transform-origin:top right}#panel-alert{display:none;opacity:0}#panel-alert.active{display:block;opacity:1}#panel-alert-content{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-primary);line-height:22px;max-height:400px;overflow-y:auto;padding:15px 20px 15px 15px;position:relative}.top-left #panel-alert-content,.top-right #panel-alert-content{border:0}#panel-alert-preview .close-tooltip{display:none}#panel-alert-preview,#panel-alert-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}.panel-alert-preview{background:var(--sa11y-panel-bg-secondary);border:1px dashed var(--sa11y-panel-bg-splitter);border-radius:5px;margin-top:15px;padding:10px}.element-preview{background-color:var(--sa11y-element-preview);border-radius:3.2px;margin-bottom:10px;overflow-wrap:break-word;padding:5px}button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:inline-block;margin:10px 5px 5px 0;margin-inline-end:15px;padding:4px 8px}button[data-sa11y-dismiss]:focus,button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}h2{display:block;font-size:var(--sa11y-large-text);font-weight:700;margin-bottom:3px}strong{font-weight:600}a:not(#outline-list a):not(.edit){border-bottom:0;color:var(--sa11y-hyperlink);cursor:pointer;font-weight:500;text-decoration:underline}a:focus,a:hover{text-decoration:none!important}hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}#dismiss-button,#skip-button{background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:50px;cursor:pointer;display:none;height:36px;margin-inline-end:8px;margin-inline-start:2px;overflow:visible;position:relative;text-align:center;transition:all .1s ease-in-out;width:36px}#dismiss-button.active,#skip-button.active{display:block}#dismiss-button:disabled,#skip-button:disabled{background:none;border:0;box-shadow:none;cursor:default}#dismiss-button:before,#skip-button:before{bottom:-5px;content:\"\";left:-5px;position:absolute;right:-5px;top:-5px}#dismiss-button:focus:not(:disabled),#dismiss-button:hover:not(:disabled),#skip-button:focus:not(:disabled),#skip-button:hover:not(:disabled){background-color:var(--sa11y-shortcut-hover)}#panel.left #dismiss-button,#panel.left #skip-button,#panel.top-left #dismiss-button,#panel.top-left #skip-button{margin-inline-end:2px;margin-inline-start:8px}.dismiss-icon{background:var(--sa11y-setting-switch-bg-off);display:inline-block;height:24px;margin-bottom:-4px;-webkit-mask:var(--sa11y-dismiss-icon) center no-repeat;mask:var(--sa11y-dismiss-icon) center no-repeat;width:24px}@media screen and (forced-colors:active){.dismiss-icon{filter:invert(1)}}#panel-content{align-items:center;color:var(--sa11y-panel-primary);display:flex;padding:6px}#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{height:26px;margin:0 auto;width:26px}#panel-content.errors .panel-icon{background:var(--sa11y-panel-error);margin-top:-2px;-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat}#panel-content.good .panel-icon{background:var(--sa11y-good);-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat}#panel-content.warnings .panel-icon{background:var(--sa11y-warning-svg-color);-webkit-mask:var(--sa11y-warning-svg) center no-repeat;mask:var(--sa11y-warning-svg) center no-repeat;transform:scaleX(var(--sa11y-icon-direction))}@media screen and (forced-colors:active){#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{filter:invert(1)}}#panel.left #panel-content,#panel.top-left #panel-content{flex-direction:row-reverse}#status{font-size:var(--sa11y-large-text)}#status,.panel-count{color:var(--sa11y-panel-primary)}.panel-count{background-color:var(--sa11y-panel-badge);border-radius:4px;font-size:15px;font-weight:400;margin-left:3px;margin-right:3px;padding:2px 4px}#images-panel,#outline-panel,#page-issues,#settings-panel{color:var(--sa11y-panel-primary);display:none;opacity:0}#images-panel.active,#outline-panel.active,#page-issues.active,#settings-panel.active{display:block;opacity:1}.panel-header{padding:10px 15px 0;text-align:start}#about-content{padding-top:5px}#about-content p{display:block;margin-block-end:1em}#images-content,#outline-content,#page-issues-content,#settings-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);padding:0 15px 10px}.top-left #images-content,.top-left #outline-content,.top-left #page-issues-content,.top-left #settings-content,.top-right #images-content,.top-right #outline-content,.top-right #page-issues-content,.top-right #settings-content{border:0}#page-issues-content{max-height:160px;overflow-y:auto}#settings-content{max-height:400px;overflow-y:auto}#images-content,#outline-content{max-height:250px;overflow-y:auto}#outline-panel .outline-list-item.sa11y-red-text,#settings-panel .sa11y-red-text{color:var(--sa11y-red-text)}#outline-list{display:block;margin:0;padding:0}#outline-list a{cursor:pointer;display:block;text-decoration:none}#outline-list li{display:block;list-style-type:none;margin-bottom:3px;margin-top:0;padding:0}#outline-list li:first-child{margin-top:5px}#outline-list li a:focus,#outline-list li a:hover{background:var(--sa11y-panel-outline-hover);border-radius:5px;box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);display:block}#outline-list .outline-2{margin-inline-start:15px}#outline-list .outline-3{margin-inline-start:30px}#outline-list .outline-4{margin-inline-start:45px}#outline-list .outline-5{margin-inline-start:60px}#outline-list .outline-6{margin-inline-start:75px}#images-list{display:block;margin:0;padding:0}#images-list li{border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:block;list-style-type:none;margin:15px 0;overflow:hidden;width:100%}#images-list li:first-child{margin-top:5px}#images-list li:last-child{border:none;margin-bottom:0}#images-list li .alt{padding:2px 5px 10px}#images-list li .edit{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;padding:4px 7px;position:relative;text-decoration:none}#images-list li .edit:focus,#images-list li .edit:hover{background-color:var(--sa11y-shortcut-hover)}#images-list li .edit:before{bottom:-10px;content:\"\";left:-10px;position:absolute;right:-10px;top:-10px}#images-list li img{border-radius:5px;float:inline-start;margin-block-end:15px;margin-inline-end:10px;max-width:110px}#images-list li.warning .alt{color:var(--sa11y-yellow-text)}#images-list li.warning img{background-color:var(--sa11y-yellow-text);border:5px solid var(--sa11y-yellow-text)}#images-list li.error .alt{color:var(--sa11y-error)}#images-list li.error img{background-color:var(--sa11y-error);border:5px solid var(--sa11y-error)}#images-list li.good img{background-color:var(--sa11y-panel-badge);border:5px solid var(--sa11y-panel-badge)}@media screen and (forced-colors:active){#images-list li img{background-color:ButtonBorder!important}}.error-icon{background:var(--sa11y-error-text);display:inline-block;height:16px;margin-bottom:-4px;-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat;width:16px}.hidden-icon{margin-bottom:-3px;-webkit-mask:var(--sa11y-hidden-icon-svg) center no-repeat;mask:var(--sa11y-hidden-icon-svg) center no-repeat}.hidden-icon,.link-icon{background:var(--sa11y-panel-primary);display:inline-block;height:16px;width:16px}.link-icon{margin-bottom:-3.5px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat}.error-badge .hidden-icon,.error-badge .link-icon{background:var(--sa11y-error-text)}.warning-badge .hidden-icon,.warning-badge .link-icon{background:var(--sa11y-panel-bg)}@media screen and (forced-colors:active){.error-icon,.hidden-icon,.link-icon{filter:invert(1)}}#panel-controls{border-radius:0 0 4px 4px;display:flex;overflow:hidden}#panel-controls button{background:var(--sa11y-panel-bg-secondary);background-color:var(--sa11y-panel-bg-secondary);border-bottom:1px solid var(--sa11y-panel-bg-splitter);border-inline-end:1px solid var(--sa11y-panel-bg-splitter);border-top:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-secondary);cursor:pointer;display:block;font-size:var(--sa11y-normal-text);font-weight:400;line-height:0;margin:0;min-height:30px;opacity:1;outline:0;padding:0;position:relative;text-align:center;transition:background .2s;width:100%}#panel-controls button.active,#panel-controls button:hover{background-color:var(--sa11y-shortcut-hover)}#panel-controls button.active{font-weight:600}#export-results-mode,label{color:var(--sa11y-panel-primary);display:inline-block;font-weight:400;margin:0;width:100%}label:not(#colour-filter-mode,#export-results-mode){cursor:pointer}#settings-panel #export-csv,#settings-panel #export-html{padding:0;text-align:center;width:unset}#settings-panel #export-csv span,#settings-panel #export-html span{background:var(--sa11y-panel-bg-secondary);border-radius:5px;box-shadow:inset 0 0 0 2px var(--sa11y-setting-switch-bg-off);display:block;margin:0 4px;padding:7px 9px;width:65px}#settings-panel #export-csv:focus span,#settings-panel #export-csv:focus-within span,#settings-panel #export-csv:hover span,#settings-panel #export-html:focus span,#settings-panel #export-html:focus-within span,#settings-panel #export-html:hover span{background:var(--sa11y-shortcut-hover)}#settings-panel .switch{background:none;border:0;border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:44px;margin:0;padding:7px 10px;position:relative;text-align:end;width:105px}#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{content:\"\";display:inline-block;height:27px;margin:0 4px 4px;vertical-align:middle;width:27px}#settings-panel .switch[aria-pressed=true]:after{background:var(--sa11y-setting-switch-bg-on);-webkit-mask:var(--sa11y-setting-switch-on-svg) center no-repeat;mask:var(--sa11y-setting-switch-on-svg) center no-repeat}#settings-panel .switch[aria-pressed=false]:after{background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-setting-switch-off-svg) center no-repeat;mask:var(--sa11y-setting-switch-off-svg) center no-repeat}@media screen and (forced-colors:active){#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{filter:invert(1)}}#settings-panel #settings-options li{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:flex;justify-content:space-between;list-style-type:none;padding:1px 0}#settings-panel #settings-options li:last-child{border:none}#page-issues{align-items:center;color:var(--sa11y-panel-primary)}#page-issues-list{display:block;margin-top:4px}#page-issues-list li{display:block;margin:0 0 10px}#page-issues-list strong{display:block}.top-left.has-page-issues #page-issues,.top-right.has-page-issues #page-issues{border-top:1px solid var(--sa11y-panel-bg-splitter);margin-top:-1px}#panel-colour-filters{align-items:center;color:var(--sa11y-panel-primary);display:none;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}#panel-colour-filters.active{display:flex}#panel-colour-filters p{padding:6px 20px 6px 6px;width:100%}#panel-colour-filters[data-colour=protanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image-slice:1}#panel-colour-filters[data-colour=deuteranopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image-slice:1}#panel-colour-filters[data-colour=tritanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image-slice:1}#panel-colour-filters[data-colour=monochromacy]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image-slice:1}#panel-colour-filters[data-colour=protanopia] .panel-icon{background:var(--sa11y-panel-error)}#panel-colour-filters[data-colour=deuteranopia] .panel-icon{background:var(--sa11y-good-hover)}#panel-colour-filters[data-colour=tritanopia] .panel-icon{background:var(--sa11y-blue)}#panel-colour-filters[data-colour=monochromacy] .panel-icon{background:linear-gradient(90deg,#38a459 20%,red 50%,#0077c8 80%)}#panel-colour-filters .panel-icon{height:30px;margin-inline-end:5px;margin-inline-start:10px;-webkit-mask:var(--sa11y-low-vision-icon) center no-repeat;mask:var(--sa11y-low-vision-icon) center no-repeat;width:30px}@media screen and (forced-colors:active){#panel-colour-filters .panel-icon{forced-color-adjust:none}}.select-dropdown{align-items:center;display:flex;position:relative}.select-dropdown:after{border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid var(--sa11y-setting-switch-bg-off);content:\" \";inset-inline-end:14px;position:absolute}#colour-filter-select{-webkit-appearance:none;-moz-appearance:none;appearance:none;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-setting-switch-bg-off);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;margin-inline-end:4px;padding-inline-end:25px;padding-inline-start:5px;position:relative;text-align:end;vertical-align:middle}#colour-filter-select:focus,#colour-filter-select:hover{background:var(--sa11y-shortcut-hover)}#colour-filter-select.active{box-shadow:0 0 0 2px var(--sa11y-setting-switch-bg-on)}#colour-filter-item label,#colour-filter-item select{margin-bottom:9px;margin-top:10px}#readability-panel{display:none;opacity:0}#readability-panel.active{display:block;opacity:1}.top-left #readability-content,.top-right #readability-content{border-top:1px solid var(--sa11y-panel-bg-splitter)}.left #readability-content,.right #readability-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter)}#readability-content{color:var(--sa11y-panel-primary);padding:10px 15px;width:100%}#readability-details{list-style-type:none;margin:0;padding:0;white-space:normal}#readability-details li{display:inline-block;list-style-type:none;margin:0;padding-inline-end:10px}.readability-score{background-color:var(--sa11y-panel-badge);border-radius:4px;color:var(--sa11y-panel-primary);margin-inline-start:5px;padding:2px 5px}#readability-info{margin-inline-start:10px}#skip-to-page-issues{display:none}#panel.has-page-issues #skip-to-page-issues{clip:rect(0,0,0,0);background:var(--sa11y-panel-bg);border:0;border-radius:5px;display:block;height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}#panel.has-page-issues #skip-to-page-issues:focus{clip:auto;height:auto;margin:0;overflow:visible;padding:5px 7px;white-space:normal;width:auto;z-index:1}.hide-settings-border{border-bottom:0!important;padding:0 15px!important}.hide-settings-border li:not(#colour-filter-item){display:none!important}.hide-settings-border #about-content{display:none}.hide-settings-border.scrollable:before{all:unset}#contrast-tools{display:none}::-webkit-scrollbar{height:6px;width:7px}::-webkit-scrollbar-thumb{background-color:var(--sa11y-button-outline);border-radius:6px}*{scrollbar-color:var(--sa11y-button-outline);scrollbar-width:thin}.scrollable:before{animation:fade 1s ease-in-out;background:linear-gradient(180deg,transparent 70%,var(--sa11y-panel-scrollable) 100%);background-position:bottom;bottom:auto;content:\"\";height:250px;left:0;position:absolute;right:0;top:auto;transition:opacity 1s ease-in-out;width:100%;z-index:-1}#settings-content.scrollable:before{height:400px}.top-left .scrollable:before,.top-right .scrollable:before{border-radius:5px}#page-issues-content.scrollable:before{height:160px}#panel-alert.scrollable:before{height:200px}@keyframes sa11y-toggle-gradient{0%{background-position:50% 0}50%{background-position:50% 100%}to{background-position:50% 0}}@keyframes fade{0%{opacity:0}to{opacity:1}}@media (prefers-reduced-motion:reduce){*{animation:none!important;transform:none!important;transition:none!important}}#panel{width:400px}#container:lang(en) #panel{width:315px}#container:lang(da) #panel,#container:lang(de) #panel,#container:lang(nb) #panel,#container:lang(pl) #panel,#container:lang(sv) #panel,#container:lang(zh) #panel{width:350px}#container:lang(bg) .switch:not(#export-results-item *),#container:lang(es) .switch:not(#export-results-item *){width:225px!important}#container:not(:lang(en)):not(:lang(de)) .switch{width:205px}";
+  var panelStyles = "a,button,code,div,h1,h2,kbd,label,li,ol,p,pre,span,strong,svg,ul{all:unset;box-sizing:border-box!important}:after,:before{all:unset}div{display:block}*{-webkit-font-smoothing:auto!important;font-family:var(--sa11y-font-face)!important}label,li,ol,p,ul{font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px!important;text-align:start;word-break:break-word}.sa11y-overflow{overflow:auto}iframe,img,video{border:0;display:block;height:auto;max-width:100%}audio{max-width:100%}#toggle{align-items:center;background:linear-gradient(0deg,#e040fb,#00bcd4);background-color:var(--sa11y-setting-switch-bg-off);background-size:150% 150%;border-radius:50%;bottom:15px;color:#fff;cursor:pointer;display:flex;height:55px;inset-inline-end:18px;justify-content:center;margin:0;overflow:visible;position:fixed;transition:all .2s ease-in-out;width:55px;z-index:2147483644}#toggle.left,#toggle.top-left{inset-inline-start:18px}#toggle.top-left,#toggle.top-right{bottom:unset;top:15px}@media screen and (forced-colors:active){#toggle{background:ButtonFace!important;border:2px solid transparent}}#toggle svg{height:35px;width:35px}#toggle svg path{fill:var(--sa11y-panel-bg)}#toggle:focus,#toggle:hover{animation:sa11y-toggle-gradient 3s ease}#toggle:disabled:focus,#toggle:disabled:hover{animation:none}#toggle.on{background:linear-gradient(180deg,#e040fb,#00bcd4)}#toggle:disabled{background:unset;background-color:var(--sa11y-setting-switch-bg-off);cursor:not-allowed}#notification-badge{text-wrap:nowrap;align-items:center;background-color:#eb0000;border:1px solid transparent;border-radius:12px;color:#fff;display:none;font-size:13.5px;font-weight:400;justify-content:center;line-height:1;min-width:20px;padding:2.5px;position:absolute;right:-3px;top:-5.5px}#notification-badge.notification-badge-warning{background-color:var(--sa11y-warning-hover);border:1px solid var(--sa11y-warning);color:var(--sa11y-warning-text)}#panel{background:var(--sa11y-panel-bg);border-radius:4px;bottom:25px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15);inset-inline-end:42px;opacity:0;overflow:visible;position:fixed;transform:scale(0);transform-origin:100% 100%;transition:transform .2s,opacity background .2s .2s;visibility:hidden;z-index:2147483643}#panel.left,#panel.top-left{inset-inline-start:42px}#panel.top-left,#panel.top-right{bottom:unset;top:35px}#panel.active{height:auto;opacity:1;transform:scale(1);transform-origin:bottom right;transition:transform .2s,opacity .2s;visibility:visible}@media screen and (forced-colors:active){#panel{border:2px solid transparent}}#panel.active.left,[dir=rtl] #panel.active{transform-origin:bottom left}#panel.active.top-left{transform-origin:top left}#panel.active.top-right{transform-origin:top right}#panel-alert{display:none;opacity:0}#panel-alert.active{display:block;opacity:1}#panel-alert-content{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-primary);line-height:22px;max-height:400px;overflow-y:auto;padding:15px 20px 15px 15px;position:relative}.top-left #panel-alert-content,.top-right #panel-alert-content{border:0}#panel-alert-preview .close-tooltip{display:none}#panel-alert-preview,#panel-alert-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}.panel-alert-preview{background:var(--sa11y-panel-bg-secondary);border:1px dashed var(--sa11y-panel-bg-splitter);border-radius:5px;margin-top:15px;padding:10px}.element-preview{background-color:var(--sa11y-element-preview);border-radius:3.2px;margin-bottom:10px;overflow-wrap:break-word;padding:5px}button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:inline-block;margin:10px 5px 5px 0;margin-inline-end:15px;padding:4px 8px}button[data-sa11y-dismiss]:focus,button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}h2{display:block;font-size:var(--sa11y-large-text);font-weight:700;margin-bottom:3px}strong{font-weight:600}a:not(#outline-list a):not(.edit){border-bottom:0;color:var(--sa11y-hyperlink);cursor:pointer;font-weight:500;text-decoration:underline}a:focus,a:hover{text-decoration:none!important}hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}#dismiss-button,#skip-button{background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:50px;cursor:pointer;display:none;height:36px;margin-inline-end:8px;margin-inline-start:2px;overflow:visible;position:relative;text-align:center;transition:all .1s ease-in-out;width:36px}#dismiss-button.active,#skip-button.active{display:block}#dismiss-button:disabled,#skip-button:disabled{background:none;border:0;box-shadow:none;cursor:default}#dismiss-button:before,#skip-button:before{bottom:-5px;content:\"\";left:-5px;position:absolute;right:-5px;top:-5px}#dismiss-button:focus:not(:disabled),#dismiss-button:hover:not(:disabled),#skip-button:focus:not(:disabled),#skip-button:hover:not(:disabled){background-color:var(--sa11y-shortcut-hover)}#panel.left #dismiss-button,#panel.left #skip-button,#panel.top-left #dismiss-button,#panel.top-left #skip-button{margin-inline-end:2px;margin-inline-start:8px}.dismiss-icon{background:var(--sa11y-setting-switch-bg-off);display:inline-block;height:24px;margin-bottom:-4px;-webkit-mask:var(--sa11y-dismiss-icon) center no-repeat;mask:var(--sa11y-dismiss-icon) center no-repeat;width:24px}@media screen and (forced-colors:active){.dismiss-icon{filter:invert(1)}}#panel-content{align-items:center;color:var(--sa11y-panel-primary);display:flex;padding:6px}#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{height:26px;margin:0 auto;width:26px}#panel-content.errors .panel-icon{background:var(--sa11y-panel-error);margin-top:-2px;-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat}#panel-content.good .panel-icon{background:var(--sa11y-good);-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat}#panel-content.warnings .panel-icon{background:var(--sa11y-warning-svg-color);-webkit-mask:var(--sa11y-warning-svg) center no-repeat;mask:var(--sa11y-warning-svg) center no-repeat;transform:scaleX(var(--sa11y-icon-direction))}@media screen and (forced-colors:active){#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{filter:invert(1)}}#panel.left #panel-content,#panel.top-left #panel-content{flex-direction:row-reverse}#status{font-size:var(--sa11y-large-text)}#status,.panel-count{color:var(--sa11y-panel-primary)}.panel-count{background-color:var(--sa11y-panel-badge);border-radius:4px;font-size:15px;font-weight:400;margin-left:3px;margin-right:3px;padding:2px 4px}#images-panel,#outline-panel,#page-issues,#settings-panel{color:var(--sa11y-panel-primary);display:none;opacity:0}#images-panel.active,#outline-panel.active,#page-issues.active,#settings-panel.active{display:block;opacity:1}.panel-header{padding:10px 15px 0;text-align:start}#about-content{padding-top:5px}#about-content p{display:block;margin-block-end:1em}#images-content,#outline-content,#page-issues-content,#settings-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);padding:0 15px 10px}.top-left #images-content,.top-left #outline-content,.top-left #page-issues-content,.top-left #settings-content,.top-right #images-content,.top-right #outline-content,.top-right #page-issues-content,.top-right #settings-content{border:0}#page-issues-content{max-height:160px;overflow-y:auto}#settings-content{max-height:400px;overflow-y:auto}#images-content,#outline-content{max-height:250px;overflow-y:auto}#outline-panel .outline-list-item.sa11y-red-text,#settings-panel .sa11y-red-text{color:var(--sa11y-red-text)}#outline-list{display:block;margin:0;padding:0}#outline-list a{cursor:pointer;display:block;text-decoration:none}#outline-list li{display:block;list-style-type:none;margin-bottom:3px;margin-top:0;padding:0}#outline-list li:first-child{margin-top:5px}#outline-list li a:focus,#outline-list li a:hover{background:var(--sa11y-panel-outline-hover);border-radius:5px;box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);display:block}#outline-list .outline-2{margin-inline-start:15px}#outline-list .outline-3{margin-inline-start:30px}#outline-list .outline-4{margin-inline-start:45px}#outline-list .outline-5{margin-inline-start:60px}#outline-list .outline-6{margin-inline-start:75px}#images-list{display:block;margin:0;padding:0}#images-list li{border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:block;list-style-type:none;margin:15px 0;overflow:hidden;width:100%}#images-list li:first-child{margin-top:5px}#images-list li:last-child{border:none;margin-bottom:0}#images-list li .alt{padding:2px 5px 10px}#images-list li .edit{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;padding:4px 7px;position:relative;text-decoration:none}#images-list li .edit:focus,#images-list li .edit:hover{background-color:var(--sa11y-shortcut-hover)}#images-list li .edit:before{bottom:-10px;content:\"\";left:-10px;position:absolute;right:-10px;top:-10px}#images-list li img{border-radius:5px;float:inline-start;margin-block-end:15px;margin-inline-end:10px;max-width:110px}#images-list li.warning .alt{color:var(--sa11y-yellow-text)}#images-list li.warning img{background-color:var(--sa11y-yellow-text);border:5px solid var(--sa11y-yellow-text)}#images-list li.error .alt{color:var(--sa11y-error)}#images-list li.error img{background-color:var(--sa11y-error);border:5px solid var(--sa11y-error)}#images-list li.good img{background-color:var(--sa11y-panel-badge);border:5px solid var(--sa11y-panel-badge)}@media screen and (forced-colors:active){#images-list li img{background-color:ButtonBorder!important}}.error-icon{background:var(--sa11y-error-text);display:inline-block;height:16px;margin-bottom:-4px;-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat;width:16px}.hidden-icon{margin-bottom:-3px;-webkit-mask:var(--sa11y-hidden-icon-svg) center no-repeat;mask:var(--sa11y-hidden-icon-svg) center no-repeat}.hidden-icon,.link-icon{background:var(--sa11y-panel-primary);display:inline-block;height:16px;width:16px}.link-icon{margin-bottom:-3.5px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat}.error-badge .hidden-icon,.error-badge .link-icon{background:var(--sa11y-error-text)}.warning-badge .hidden-icon,.warning-badge .link-icon{background:var(--sa11y-panel-bg)}@media screen and (forced-colors:active){.error-icon,.hidden-icon,.link-icon{filter:invert(1)}}#panel-controls{border-bottom:1px solid var(--sa11y-panel-bg-splitter);border-radius:0 0 4px 4px;display:flex;overflow:hidden}#panel-controls button{background:var(--sa11y-panel-bg-secondary);background-color:var(--sa11y-panel-bg-secondary);border-inline-end:1px solid var(--sa11y-panel-bg-splitter);border-top:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-secondary);cursor:pointer;display:block;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;line-height:0;margin:0;opacity:1;outline:0;padding:0;position:relative;text-align:center;transition:background .2s;width:100%}#panel-controls button.active,#panel-controls button:hover{background-color:var(--sa11y-shortcut-hover)}#panel-controls button.active{font-weight:600}#export-results-mode,label{color:var(--sa11y-panel-primary);display:inline-block;font-weight:400;margin:0;width:100%}label:not(#colour-filter-mode,#export-results-mode){cursor:pointer}#settings-panel #export-csv,#settings-panel #export-html{padding:0;text-align:center;width:unset}#settings-panel #export-csv span,#settings-panel #export-html span{background:var(--sa11y-panel-bg-secondary);border-radius:5px;box-shadow:inset 0 0 0 2px var(--sa11y-setting-switch-bg-off);display:block;margin:0 4px;padding:7px 9px;width:65px}#settings-panel #export-csv:focus span,#settings-panel #export-csv:focus-within span,#settings-panel #export-csv:hover span,#settings-panel #export-html:focus span,#settings-panel #export-html:focus-within span,#settings-panel #export-html:hover span{background:var(--sa11y-shortcut-hover)}#settings-panel .switch{background:none;border:0;border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:44px;margin:0;padding:7px 10px;position:relative;text-align:end;width:105px}#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{content:\"\";display:inline-block;height:27px;margin:0 4px 4px;vertical-align:middle;width:27px}#settings-panel .switch[aria-pressed=true]:after{background:var(--sa11y-setting-switch-bg-on);-webkit-mask:var(--sa11y-setting-switch-on-svg) center no-repeat;mask:var(--sa11y-setting-switch-on-svg) center no-repeat}#settings-panel .switch[aria-pressed=false]:after{background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-setting-switch-off-svg) center no-repeat;mask:var(--sa11y-setting-switch-off-svg) center no-repeat}@media screen and (forced-colors:active){#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{filter:invert(1)}}#settings-panel #settings-options li{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:flex;justify-content:space-between;list-style-type:none;padding:1px 0}#settings-panel #settings-options li:last-child{border:none}#page-issues{align-items:center;color:var(--sa11y-panel-primary)}#page-issues-list{display:block;margin-top:4px}#page-issues-list li{display:block;margin:0 0 10px}#page-issues-list strong{display:block}.top-left.has-page-issues #page-issues,.top-right.has-page-issues #page-issues{border-top:1px solid var(--sa11y-panel-bg-splitter);margin-top:-1px}#panel-colour-filters{align-items:center;color:var(--sa11y-panel-primary);display:none;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}#panel-colour-filters.active{display:flex}#panel-colour-filters p{padding:6px 20px 6px 6px;width:100%}#panel-colour-filters[data-colour=protanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image-slice:1}#panel-colour-filters[data-colour=deuteranopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image-slice:1}#panel-colour-filters[data-colour=tritanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image-slice:1}#panel-colour-filters[data-colour=monochromacy]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image-slice:1}#panel-colour-filters[data-colour=protanopia] .panel-icon{background:var(--sa11y-panel-error)}#panel-colour-filters[data-colour=deuteranopia] .panel-icon{background:var(--sa11y-good-hover)}#panel-colour-filters[data-colour=tritanopia] .panel-icon{background:var(--sa11y-blue)}#panel-colour-filters[data-colour=monochromacy] .panel-icon{background:linear-gradient(90deg,#38a459 20%,red 50%,#0077c8 80%)}#panel-colour-filters .panel-icon{height:30px;margin-inline-end:5px;margin-inline-start:10px;-webkit-mask:var(--sa11y-low-vision-icon) center no-repeat;mask:var(--sa11y-low-vision-icon) center no-repeat;width:30px}@media screen and (forced-colors:active){#panel-colour-filters .panel-icon{forced-color-adjust:none}}.select-dropdown{align-items:center;display:flex;position:relative}.select-dropdown:after{border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid var(--sa11y-setting-switch-bg-off);content:\" \";inset-inline-end:14px;position:absolute}#colour-filter-select{-webkit-appearance:none;-moz-appearance:none;appearance:none;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-setting-switch-bg-off);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;margin-inline-end:4px;padding-inline-end:25px;padding-inline-start:5px;position:relative;text-align:end;vertical-align:middle}#colour-filter-select:focus,#colour-filter-select:hover{background:var(--sa11y-shortcut-hover)}#colour-filter-select.active{box-shadow:0 0 0 2px var(--sa11y-setting-switch-bg-on)}#colour-filter-item label,#colour-filter-item select{margin-bottom:9px;margin-top:10px}#readability-panel{display:none;opacity:0}#readability-panel.active{display:block;opacity:1}.top-left #readability-content,.top-right #readability-content{border-top:1px solid var(--sa11y-panel-bg-splitter)}.left #readability-content,.right #readability-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter)}#readability-content{color:var(--sa11y-panel-primary);padding:10px 15px;width:100%}#readability-details{list-style-type:none;margin:0;padding:0;white-space:normal}#readability-details li{display:inline-block;list-style-type:none;margin:0;padding-inline-end:10px}.readability-score{background-color:var(--sa11y-panel-badge);border-radius:4px;color:var(--sa11y-panel-primary);margin-inline-start:5px;padding:2px 5px}#readability-info{margin-inline-start:10px}#skip-to-page-issues{display:none}#panel.has-page-issues #skip-to-page-issues{clip:rect(0,0,0,0);background:var(--sa11y-panel-bg);border:0;border-radius:5px;display:block;height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}#panel.has-page-issues #skip-to-page-issues:focus{clip:auto;height:auto;margin:0;overflow:visible;padding:5px 7px;white-space:normal;width:auto;z-index:1}.hide-settings-border{border-bottom:0!important;padding:0 15px!important}.hide-settings-border li:not(#colour-filter-item){display:none!important}.hide-settings-border #about-content{display:none}.hide-settings-border.scrollable:before{all:unset}#contrast-tools{display:none}::-webkit-scrollbar{height:6px;width:7px}::-webkit-scrollbar-thumb{background-color:var(--sa11y-button-outline);border-radius:6px}*{scrollbar-color:var(--sa11y-button-outline);scrollbar-width:thin}.scrollable:before{animation:fade 1s ease-in-out;background:linear-gradient(180deg,transparent 70%,var(--sa11y-panel-scrollable) 100%);background-position:bottom;bottom:auto;content:\"\";height:250px;left:0;position:absolute;right:0;top:auto;transition:opacity 1s ease-in-out;width:100%;z-index:-1}#settings-content.scrollable:before{height:400px}.top-left .scrollable:before,.top-right .scrollable:before{border-radius:5px}#page-issues-content.scrollable:before{height:160px}#panel-alert.scrollable:before{height:200px}@keyframes sa11y-toggle-gradient{0%{background-position:50% 0}50%{background-position:50% 100%}to{background-position:50% 0}}@keyframes fade{0%{opacity:0}to{opacity:1}}@media (prefers-reduced-motion:reduce){*{animation:none!important;transform:none!important;transition:none!important}}#panel{width:400px}#container:lang(en) #panel{width:315px}#container:lang(da) #panel,#container:lang(de) #panel,#container:lang(nb) #panel,#container:lang(pl) #panel,#container:lang(sv) #panel,#container:lang(zh) #panel{width:350px}#container:lang(bg) .switch:not(#export-results-item *),#container:lang(es) .switch:not(#export-results-item *){width:225px!important}#container:not(:lang(en)):not(:lang(de)) .switch{width:205px}";
 
   class ControlPanel extends HTMLElement {
     connectedCallback() {
@@ -7243,84 +7252,74 @@ ${this.error.stack}
    * For performance reasons, it is only called upon tooltip opening.
    * @param {HTMLElement} container The container where the color suggestion will be inserted.
    */
-  function generateColorSuggestion(container) {
-    const hasContrastDetails = container?.querySelector('[data-sa11y-contrast-details]');
-    if (hasContrastDetails) {
-      const colorObject = hasContrastDetails?.getAttribute('data-sa11y-contrast-details');
-      const details = JSON.parse(colorObject);
-      const { color, background, fontWeight, fontSize, isLargeText } = details;
+  function generateColorSuggestion(contrastDetails) {
+    let adviceContainer;
+    const { color, background, fontWeight, fontSize, isLargeText, type } = contrastDetails;
+    if (color && background && background !== 'image' && type === 'text') {
+      const suggested = Constants.Global.contrastAPCA
+        ? suggestColorAPCA(color, background, fontWeight, fontSize)
+        : suggestColorWCAG(color, background, isLargeText);
 
-      if (color && background && background !== 'image') {
-        const suggested = Constants.Global.contrastAPCA
-          ? suggestColorAPCA(color, background, fontWeight, fontSize)
-          : suggestColorWCAG(color, background, isLargeText);
+      let advice;
+      const hr = '<hr aria-hidden="true">';
+      const style = `color:${suggested.color};background-color:${getHex(contrastDetails.background)};`;
+      const colorBadge = `<strong class="badge" style="${style}">${suggested.color}</strong>`;
+      const sizeBadge = `<strong class="normal-badge">${suggested.size}px</strong>`;
 
-        let advice;
-        const hr = '<hr aria-hidden="true">';
-        const style = `color:${suggested.color};background-color:${getHex(details.background)};`;
-        const colorBadge = `<strong class="badge" style="${style}">${suggested.color}</strong>`;
-        const sizeBadge = `<strong class="normal-badge">${suggested.size}px</strong>`;
-
-        if (!Constants.Global.contrastAPCA) {
-          advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
-        } else if (suggested.color && suggested.size) {
-          advice = `${hr} ${Lang._('CONTRAST_APCA')} ${colorBadge} ${sizeBadge}`;
-        } else if (suggested.color) {
-          advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
-        } else if (suggested.size) {
-          advice = `${hr} ${Lang._('CONTRAST_SIZE')} ${sizeBadge}`;
-        }
-
-        // Append it to contrast details container.
-        const adviceContainer = document.createElement('div');
-        adviceContainer.id = 'advice';
-
-        // If low opacity, suggest increase opacity first.
-        const suggestion = (details.opacity < 1)
-          ? `<hr aria-hidden="true"> ${Lang.sprintf('CONTRAST_OPACITY')}` : advice;
-
-        // Append advice to contrast details container.
-        adviceContainer.innerHTML = suggestion;
-        hasContrastDetails.appendChild(adviceContainer);
+      if (!Constants.Global.contrastAPCA) {
+        advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
+      } else if (suggested.color && suggested.size) {
+        advice = `${hr} ${Lang._('CONTRAST_APCA')} ${colorBadge} ${sizeBadge}`;
+      } else if (suggested.color) {
+        advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
+      } else if (suggested.size) {
+        advice = `${hr} ${Lang._('CONTRAST_SIZE')} ${sizeBadge}`;
       }
+
+      // Append it to contrast details container.
+      adviceContainer = document.createElement('div');
+      adviceContainer.id = 'advice';
+
+      // If low opacity, suggest increase opacity first.
+      const suggestion = (contrastDetails.opacity < 1)
+        ? `<hr aria-hidden="true"> ${Lang.sprintf('CONTRAST_OPACITY')}` : advice;
+
+      // Append advice to contrast details container.
+      adviceContainer.innerHTML = suggestion;
     }
+    return adviceContainer;
   }
 
   /**
    * Inject contrast colour pickers into tooltip.
    * @param {HTMLElement} container The tooltip container to inject the contrast colour pickers.
    */
-  function generateContrastTools(container) {
-    const hasContrastDetails = container?.querySelector('[data-sa11y-contrast-details]');
-    if (hasContrastDetails) {
-      // Get the contrast details object.
-      const colorObject = hasContrastDetails.getAttribute('data-sa11y-contrast-details' );
-      const details = JSON.parse(colorObject);
-      const { sanitizedText, color, background, fontWeight, fontSize, ratio } = details;
+  function generateContrastTools(contrastDetails) {
+    const { sanitizedText, color, background, fontWeight, fontSize, ratio } = contrastDetails;
 
-      // Initialize variables.
-      const hasBackgroundColor = background && background !== 'image';
-      const backgroundHex = hasBackgroundColor ? getHex(background) : '#000000';
-      const foregroundHex = color ? getHex(color) : '#000000';
-      const unknownFG = color ? '' : 'class="unknown"';
-      const unknownBG = background && background !== 'image' ? '' : 'class="unknown"';
-      const hasFontWeight = fontWeight ? `font-weight:${fontWeight};` : '';
-      const hasFontSize = fontSize ? `font-size:${fontSize}px;` : '';
+    // Initialize variables.
+    const hasBackgroundColor = background && background !== 'image';
+    const backgroundHex = hasBackgroundColor ? getHex(background) : '#000000';
+    const foregroundHex = color ? getHex(color) : '#000000';
+    const unknownFG = color ? '' : 'class="unknown"';
+    const unknownBG = background && background !== 'image' ? '' : 'class="unknown"';
+    const hasFontWeight = fontWeight ? `font-weight:${fontWeight};` : '';
+    const hasFontSize = fontSize ? `font-size:${fontSize}px;` : '';
 
-      // Ratio to be displayed.
-      let displayedRatio;
-      if (Constants.Global.contrastAPCA) {
-        // If APCA, don't show "unknown" when value is absolute 0.
-        displayedRatio = Math.abs(ratio) === 0 ? 0 : (Math.abs(ratio) || Lang._('UNKNOWN'));
-      } else {
-        // WCAG 2.0 ratio.
-        displayedRatio = ratio || Lang._('UNKNOWN');
-      }
+    // Ratio to be displayed.
+    let displayedRatio;
+    if (Constants.Global.contrastAPCA) {
+      // If APCA, don't show "unknown" when value is absolute 0.
+      displayedRatio = Math.abs(ratio) === 0 ? 0 : (Math.abs(ratio) || Lang._('UNKNOWN'));
+    } else {
+      // WCAG 2.0 ratio.
+      displayedRatio = ratio || Lang._('UNKNOWN');
+    }
 
-      // Generate HTML layout.
-      const contrastTools = document.createElement('div');
-      contrastTools.id = 'contrast-tools';
-      contrastTools.innerHTML = `
+    // Generate HTML layout.
+    const contrastTools = document.createElement('div');
+    contrastTools.id = 'contrast-tools';
+    contrastTools.innerHTML = `
       <hr aria-hidden="true">
       <div id="contrast" class="badge">${Lang._('CONTRAST')}</div>
       <div id="value" class="badge">${displayedRatio}</div>
@@ -7329,17 +7328,16 @@ ${this.error.stack}
       <div id="body-text" class="badge good-badge" hidden>${Lang._('BODY_TEXT')}</div>
       <div id="apca" class="badge good-badge" hidden>${Lang._('GOOD')}</div>
       <div id="apca-table" hidden></div>
-      <div class="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};` : ''}${hasFontWeight}${hasFontSize}">${sanitizedText}</div>
-      <div class="color-pickers">
-        <label for="fg-text">${Lang._('TEXT')}
+      <div id="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};${sanitizedText.length ? '' : 'display: none;'}` : ''}${hasFontWeight}${hasFontSize}">${sanitizedText}</div>
+      <div id="color-pickers">
+        <label for="fg-text">${Lang._('FG')}
           <input type="color" id="fg-input" value="${foregroundHex}" ${unknownFG}/>
         </label>
         <label for="bg">${Lang._('BG')}
           <input type="color" id="bg-input" value="${backgroundHex}" ${unknownBG}/>
         </label>
       </div>`;
-      hasContrastDetails.appendChild(contrastTools);
-    }
+    return contrastTools;
   }
 
   function createFontSizesTable(container, fontSizes) {
@@ -7383,16 +7381,16 @@ ${this.error.stack}
    * Initializes colour eyedroppers for respective tooltip.
    * This function is referenced within './interface/tooltips.js'.
    * @param {HTMLElement} container The container where the color suggestion will be inserted.
+   * @param {Object} contrastDetails Contrast details object containing colour, background, etc.
    */
-  function initializeContrastTools(container) {
-    const contrastTools = container?.querySelector('[data-sa11y-contrast-details]');
+  function initializeContrastTools(container, contrastDetails) {
+    const contrastTools = container?.querySelector('#contrast-tools');
     if (contrastTools) {
-      const details = JSON.parse(contrastTools.getAttribute('data-sa11y-contrast-details') || '{}');
-      const { fontSize, fontWeight, type } = details;
+      const { fontSize, fontWeight, type } = contrastDetails;
 
       // Cache selectors
       const contrast = container.querySelector('#contrast');
-      const contrastPreview = container.querySelector('.contrast-preview');
+      const contrastPreview = container.querySelector('#contrast-preview');
       const fgInput = container.querySelector('#fg-input');
       const bgInput = container.querySelector('#bg-input');
       const nonText = container.querySelector('#non-text');
@@ -7421,10 +7419,14 @@ ${this.error.stack}
           bgInput.classList.remove('unknown');
         }
 
+        // Adjust colours in preview area.
         contrastPreview.style.color = fgColor;
-        contrastPreview.style.fill = fgColor;
         contrastPreview.style.backgroundColor = bgColor;
         contrastPreview.style.backgroundImage = 'none';
+
+        // Change SVG color if it contains a single <path> element.
+        const path = contrastPreview.querySelectorAll('svg path');
+        if (path.length === 1) path[0].style.fill = fgColor;
 
         const contrastValue = calculateContrast(convertToRGBA(fgColor), convertToRGBA(bgColor));
         const elementsToToggle = [ratio, contrast];
@@ -7437,7 +7439,8 @@ ${this.error.stack}
           let passes;
 
           switch (type) {
-            case 'svg': {
+            case 'svg-error':
+            case 'svg-warning': {
               nonText.hidden = !nonTextPasses;
               passes = nonTextPasses;
               toggleBadges(elementsToToggle, passes);
@@ -7452,7 +7455,7 @@ ${this.error.stack}
             }
             default: {
               const minFontSize = fontArray[Math.floor(fontWeight / 100) - 1];
-              passes = fontSize > minFontSize;
+              passes = fontSize >= minFontSize;
               toggleBadges(elementsToToggle, passes);
               apca.hidden = !passes;
               break;
@@ -7467,7 +7470,8 @@ ${this.error.stack}
           const passes = value > 3;
 
           switch (type) {
-            case 'svg': {
+            case 'svg-error':
+            case 'svg-warning': {
               nonText.hidden = !passes;
               toggleBadges(elementsToToggle, passes);
               break;
@@ -7584,8 +7588,7 @@ ${this.error.stack}
    */
   function checkContrast(results, option) {
     // Initialize contrast results array.
-    const contrastErrors = [];
-    const contrastWarnings = [];
+    const contrastResults = [];
 
     // Iterate through all elements on the page and get computed styles.
     for (let i = 0; i < Elements.Found.Contrast.length; i++) {
@@ -7618,7 +7621,7 @@ ${this.error.stack}
       // Only check elements with text and inputs.
       if (text.length !== 0 || checkInputs) {
         if (color === 'unsupported' || background === 'unsupported') {
-          contrastWarnings.push({
+          contrastResults.push({
             $el,
             type: 'unsupported',
             fontSize,
@@ -7628,7 +7631,7 @@ ${this.error.stack}
             ...(color !== 'unsupported' && { color }),
           });
         } else if (background === 'image') {
-          contrastWarnings.push({
+          contrastResults.push({
             $el,
             type: 'background-image',
             color,
@@ -7641,7 +7644,7 @@ ${this.error.stack}
           const result = checkElementContrast($el, color, background, fontSize, fontWeight, opacity);
           if (result) {
             result.type = checkInputs ? 'input' : 'text';
-            contrastErrors.push(result);
+            contrastResults.push(result);
           }
         }
       }
@@ -7650,13 +7653,83 @@ ${this.error.stack}
     // Warning for all SVGs.
     Elements.Found.Svg.forEach(($el) => {
       const background = getBackground($el);
-      const type = $el.querySelector('text') ? 'svg-text' : 'svg';
-      contrastWarnings.push({
-        $el,
-        type,
-        sanitizedSVG: sanitizeHTMLBlock($el),
-        background,
-      });
+      const paths = $el.querySelectorAll('path');
+
+      if (paths.length === 1) {
+        const path = paths[0];
+        const style = getComputedStyle(path);
+        const { fill, opacity } = style;
+
+        if (fill === 'none') {
+          // No fill, skip contrast checks but log as a warning.
+          contrastResults.push({
+            $el,
+            type: 'svg-warning',
+            background,
+          });
+        } else if (fill.startsWith('url(')) {
+          // Gradient or pattern fill.
+          contrastResults.push({
+            $el,
+            type: 'svg-warning',
+            background,
+          });
+        } else if (fill === 'currentColor') {
+          // Use currentColor from the parent element.
+          const currentColor = getComputedStyle($el).color;
+          const resolvedFill = convertToRGBA(currentColor, opacity);
+          const result = calculateContrast(resolvedFill, background);
+
+          if (option.contrastAPCA && result.ratio < 45) {
+            contrastResults.push({
+              $el,
+              type: 'svg-error',
+              color: resolvedFill,
+              ratio: Math.abs(result.ratio).toFixed(1),
+              background,
+            });
+          } else if (result.ratio < 3) {
+            contrastResults.push({
+              $el,
+              type: 'svg-error',
+              color: resolvedFill,
+              isLargeText: true,
+              ratio: result.ratio.toFixed(2),
+              background,
+            });
+          }
+        } else {
+          // Standard color value (e.g., named color, hex, rgb, hsl).
+          const resolvedFill = convertToRGBA(fill, opacity);
+          const result = calculateContrast(resolvedFill, background);
+          if (option.contrastAPCA && result.ratio < 45) {
+            contrastResults.push({
+              $el,
+              type: 'svg-error',
+              color: resolvedFill,
+              ratio: Math.abs(result.ratio).toFixed(1),
+              background,
+            });
+          } else if (result.ratio < 3) {
+            contrastResults.push({
+              $el,
+              type: 'svg-error',
+              color: resolvedFill,
+              isLargeText: true,
+              ratio: result.ratio.toFixed(2),
+              background,
+            });
+          }
+        }
+      } else {
+        // Handle multiple paths or missing path fills.
+        const type = $el.querySelector('text') ? 'svg-text' : 'svg-warning';
+        contrastResults.push({
+          $el,
+          type,
+          background,
+        });
+      }
     });
 
     // Check contrast of all placeholder elements.
@@ -7671,7 +7744,7 @@ ${this.error.stack}
         const result = checkElementContrast($el, pColor, pBackground, pSize, pWeight, pOpacity);
         if (result) {
           result.type = 'placeholder';
-          contrastErrors.push(result);
+          contrastResults.push(result);
         }
       }
     });
@@ -7708,13 +7781,10 @@ ${this.error.stack}
       mergedWarnings.push(current);
       return mergedWarnings;
     }, []);
-    const processedWarnings = processWarnings(contrastWarnings);
-
-    // Merge errors & warnings arrays.
-    const contrastResults = [...contrastErrors, ...processedWarnings];
+    const processedResults = processWarnings(contrastResults);
 
     // Iterate through all contrast results.
-    contrastResults.forEach((item) => {
+    processedResults.forEach((item) => {
       const { $el, ratio } = item;
       const updatedItem = item;
 
@@ -7749,29 +7819,31 @@ ${this.error.stack}
       let previewText;
       if (item.type === 'placeholder' && $el.placeholder) {
         previewText = sanitizeHTML($el.placeholder);
-      } else if (item.type === 'svg' || item.type === 'svg-text') {
-        previewText = `${sanitizeHTMLBlock($el.outerHTML)}`;
+      } else if (item.type === 'svg-error' || item.type === 'svg-warning' || item.type === 'svg-text') {
+        const sanitizeSvg = sanitizeHTMLBlock(updatedItem.$el.outerHTML, true);
+        previewText = removeWhitespace(sanitizeSvg);
       } else {
         previewText = sanitizedText;
       }
       updatedItem.sanitizedText = previewText;
 
-      const contrastDetails = `<div data-sa11y-contrast-details='${JSON.stringify(updatedItem)}'></div>`;
-
       // Iterate through contrast results based on type.
       switch (item.type) {
         case 'text':
           if (option.checks.CONTRAST_ERROR) {
+            const apcaAdvice = (option.contrastAPCA)
+              ? `<hr aria-hidden="true"> ${Lang._('APCA_ADVICE')}` : '';
             results.push({
               element: $el,
               type: option.checks.CONTRAST_ERROR.type || 'error',
               content: option.checks.CONTRAST_ERROR.content
-                || Lang.sprintf('CONTRAST_ERROR') + contrastDetails,
+                || Lang.sprintf('CONTRAST_ERROR') + apcaAdvice,
               inline: false,
               position: 'beforebegin',
               dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
               dismissAll: option.checks.CONTRAST_ERROR.dismissAll ? 'CONTRAST_ERROR' : false,
               developer: option.checks.CONTRAST_ERROR.developer || false,
+              contrastDetails: updatedItem,
             });
           }
           break;
@@ -7781,12 +7853,13 @@ ${this.error.stack}
               element,
               type: option.checks.CONTRAST_INPUT.type || 'error',
               content: option.checks.CONTRAST_INPUT.content
-                || Lang.sprintf('CONTRAST_INPUT', ratio) + contrastDetails,
+                || Lang.sprintf('CONTRAST_INPUT', ratio),
               inline: false,
               position: 'beforebegin',
               dismiss: prepareDismissal(`CONTRAST${$el.getAttribute('class')}${$el.tagName}${ratio}`),
               dismissAll: option.checks.CONTRAST_INPUT.dismissAll ? 'CONTRAST_INPUT' : false,
               developer: option.checks.CONTRAST_INPUT.developer || true,
+              contrastDetails: updatedItem,
             });
           }
           break;
@@ -7796,46 +7869,63 @@ ${this.error.stack}
               element: $el,
               type: option.checks.CONTRAST_PLACEHOLDER.type || 'error',
               content: option.checks.CONTRAST_PLACEHOLDER.content
-                || Lang.sprintf('CONTRAST_PLACEHOLDER') + contrastDetails,
+                || Lang.sprintf('CONTRAST_PLACEHOLDER'),
               inline: false,
               position: 'afterend',
               dismiss: prepareDismissal(`CPLACEHOLDER${$el.getAttribute('class')}${$el.tagName}${ratio}`),
               dismissAll: option.checks.CONTRAST_PLACEHOLDER.dismissAll ? 'CONTRAST_PLACEHOLDER' : false,
               developer: option.checks.CONTRAST_PLACEHOLDER.developer || true,
+              contrastDetails: updatedItem,
             });
           }
           break;
-        case 'svg':
-        case 'svg-text':
-          if (option.checks.CONTRAST_WARNING) {
+        case 'svg-error':
+          if (option.checks.CONTRAST_ERROR_GRAPHIC) {
             results.push({
               element: $el,
-              type: option.checks.CONTRAST_WARNING.type || 'warning',
-              content: option.checks.CONTRAST_WARNING.content
-                || `${Lang.sprintf('CONTRAST_WARNING')} ${contrastDetails}`,
+              type: option.checks.CONTRAST_ERROR_GRAPHIC.type || 'error',
+              content: option.checks.CONTRAST_ERROR_GRAPHIC.content
+                || Lang.sprintf('CONTRAST_ERROR_GRAPHIC'),
               inline: false,
               position: 'beforebegin',
-              dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
-              dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
-              developer: option.checks.CONTRAST_WARNING.developer || true,
+              dismiss: prepareDismissal(`CONTRAST_GRAPHIC${sanitizedText}`),
+              dismissAll: option.checks.CONTRAST_ERROR_GRAPHIC.dismissAll ? 'CONTRAST_ERROR_GRAPHIC' : false,
+              developer: option.checks.CONTRAST_ERROR_GRAPHIC.developer || true,
+              contrastDetails: updatedItem,
+            });
+          }
+          break;
+        case 'svg-warning':
+        case 'svg-text':
+          if (option.checks.CONTRAST_WARNING_GRAPHIC) {
+            results.push({
+              element: $el,
+              type: option.checks.CONTRAST_WARNING_GRAPHIC.type || 'warning',
+              content: option.checks.CONTRAST_WARNING_GRAPHIC.content
+                || Lang.sprintf('CONTRAST_WARNING_GRAPHIC'),
+              inline: false,
+              position: 'beforebegin',
+              dismiss: prepareDismissal(`CONTRASTGRAPHIC${sanitizedText}`),
+              dismissAll: option.checks.CONTRAST_WARNING_GRAPHIC.dismissAll ? 'CONTRAST_WARNING_GRAPHIC' : false,
+              developer: option.checks.CONTRAST_WARNING_GRAPHIC.developer || true,
+              contrastDetails: updatedItem,
             });
           }
           break;
         case 'unsupported':
         case 'background-image':
           if (option.checks.CONTRAST_WARNING) {
-            const apcaAdvice = (option.contrastAPCA)
-              ? `<hr aria-hidden="true"> ${Lang._('APCA_ADVICE')}` : '';
             results.push({
               element,
               type: option.checks.CONTRAST_WARNING.type || 'warning',
               content: option.checks.CONTRAST_WARNING.content
-                || `${Lang.sprintf('CONTRAST_WARNING')} ${contrastDetails} ${apcaAdvice}`,
+                || Lang.sprintf('CONTRAST_WARNING'),
               inline: false,
               position: 'beforebegin',
               dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
               dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
               developer: option.checks.CONTRAST_WARNING.developer || false,
+              contrastDetails: updatedItem,
             });
           }
           break;
@@ -7887,11 +7977,9 @@ ${this.error.stack}
         appendTo: shadowRoot,
         zIndex: 2147483645,
         onShow(instance) {
-          const openedTooltip = instance.popper;
-
           // Hide previously opened tooltip.
           annotations.forEach((popper) => {
-            if (popper !== openedTooltip) {
+            if (popper !== instance.popper) {
               popper.hide();
             }
           });
@@ -7901,7 +7989,7 @@ ${this.error.stack}
           annotation.setAttribute('data-sa11y-opened', '');
 
           // Close button for tooltip.
-          const closeButton = openedTooltip.querySelector('.close-btn');
+          const closeButton = instance.popper.querySelector('.close-btn');
           const closeButtonHandler = () => {
             instance.hide();
             instance.reference.focus();
@@ -7915,15 +8003,30 @@ ${this.error.stack}
               instance.reference.focus();
             }
           };
-          openedTooltip.addEventListener('keydown', escapeListener);
+          instance.popper.addEventListener('keydown', escapeListener);
 
           // Generate preview, colour pickers, and suggestions for contrast tooltips.
           // Imported from rulesets/contrast.js
-          if (!openedTooltip.hasAttribute('contrast-tools-initialized')) {
-            generateContrastTools(openedTooltip);
-            initializeContrastTools(openedTooltip);
-            generateColorSuggestion(openedTooltip);
-            openedTooltip.setAttribute('contrast-tools-initialized', true);
+          if (!instance.popper.hasAttribute('contrast-tools-initialized')) {
+            const issueID = parseInt(annotation.getAttribute('data-sa11y-annotation'), 10);
+            const issueObject = window.sa11yCheckComplete.results.find((issue) => issue.id === issueID);
+            const { contrastDetails } = issueObject || {};
+
+            if (contrastDetails) {
+              const container = instance.popper.querySelector('[data-sa11y-contrast-details]');
+
+              // Append color pickers and suggested color.
+              const tools = generateContrastTools(contrastDetails);
+              container.appendChild(tools);
+              initializeContrastTools(instance.popper, contrastDetails);
+
+              // Append suggested color.
+              const suggestion = generateColorSuggestion(contrastDetails);
+              if (suggestion) container.appendChild(suggestion);
+
+              // Contrast tools has been initialized.
+              instance.popper.setAttribute('contrast-tools-initialized', true);
+            }
           }
 
           // Make tooltip stay open if colour picker is used. Use 'mousedown' event, because upon click of trigger, it sets focus on close button, which immediately closes colour input on safari.
@@ -7932,18 +8035,18 @@ ${this.error.stack}
             if (firstClick && event.target.matches('input[type="color"]')) {
               instance.reference.click();
               firstClick = false;
-              openedTooltip.removeEventListener('mousedown', handleMouseDown);
+              instance.popper.removeEventListener('mousedown', handleMouseDown);
             }
           }
-          openedTooltip.addEventListener('mousedown', handleMouseDown);
+          instance.popper.addEventListener('mousedown', handleMouseDown);
 
           // Remove all event listeners.
           const onHiddenTooltip = () => {
             closeButton.removeEventListener('click', closeButtonHandler);
-            openedTooltip.removeEventListener('keydown', escapeListener);
-            openedTooltip.removeEventListener('hidden', onHiddenTooltip);
+            instance.popper.removeEventListener('keydown', escapeListener);
+            instance.popper.removeEventListener('hidden', onHiddenTooltip);
           };
-          openedTooltip.addEventListener('hidden', onHiddenTooltip);
+          instance.popper.addEventListener('hidden', onHiddenTooltip);
         },
         onTrigger(instance, event) {
           if (event.type === 'click') {
@@ -7955,8 +8058,7 @@ ${this.error.stack}
           }
         },
         onHide(instance) {
-          const openedTooltip = instance.popper;
-          openedTooltip.querySelector('.close-btn').removeEventListener('click', () => {
+          instance.popper.querySelector('.close-btn').removeEventListener('click', () => {
             instance.hide();
           });
           const annotation = instance.reference.getRootNode().host;
@@ -8040,25 +8142,23 @@ ${this.error.stack}
 
   /**
     * Create annotation buttons.
-    * @param {Node} element: The node or issue element.
-    * @param {String} type: The type of issue (ERROR, WARNING, GOOD).
-    * @param {String} content: The tooltip message.
-    * @param {Boolean} inline: Whether the annotation should be displayed inline with text.
-    * @param {String} position: Position of annotation (beforebegin, afterbegin, e.g.).
-    * @param {Number} index: Index or order of issue.
-    * @param {String} dismissKey: Unique dismiss key to identify element.
+    * @param {Object} issue The issue object.
+    * @param {Object} option The options object.
   */
-  function annotate(
-    element,
-    type,
-    content,
-    inline = false,
-    position,
-    index,
-    dismissKey,
-    dismissAll,
-    option,
-  ) {
+  function annotate(issue, option) {
+    // Get properties of issue object.
+    const {
+      element,
+      type,
+      content,
+      inline = false,
+      position,
+      id,
+      dismiss,
+      dismissAll,
+      contrastDetails,
+    } = issue;
+
     // Validate types to prevent errors.
     const validTypes = ['error', 'warning', 'good'];
     if (validTypes.indexOf(type) === -1) {
@@ -8069,10 +8169,10 @@ ${this.error.stack}
     [type].forEach(($el) => {
       if ($el === 'error' && element !== undefined) {
         const errorAttr = (inline ? 'data-sa11y-error-inline' : 'data-sa11y-error');
-        element.setAttribute(errorAttr, index);
+        element.setAttribute(errorAttr, id);
       } else if ($el === 'warning' && element !== undefined) {
         const warningAttr = (inline ? 'data-sa11y-warning-inline' : 'data-sa11y-warning');
-        element.setAttribute(warningAttr, index);
+        element.setAttribute(warningAttr, id);
       }
     });
 
@@ -8093,19 +8193,19 @@ ${this.error.stack}
     const dismissBtn = (
       option.dismissAnnotations
       && (type === 'warning' || type === 'good')
-      && dismissKey !== undefined)
-      ? `<button data-sa11y-dismiss='${index}' type='button'>${Lang._('DISMISS')}</button>` : '';
+      && dismiss !== undefined)
+      ? `<button data-sa11y-dismiss='${id}' type='button'>${Lang._('DISMISS')}</button>` : '';
 
     // Add dismiss all button if prop enabled & has addition check key.
     const dismissAllBtn = (
       option.dismissAnnotations
       && (option.dismissAll && typeof dismissAll === 'string')
       && (type === 'warning' || type === 'good'))
-      ? `<button data-sa11y-dismiss='${index}' data-sa11y-dismiss-all type='button'>${Lang._('DISMISS_ALL')}</button>` : '';
+      ? `<button data-sa11y-dismiss='${id}' data-sa11y-dismiss-all type='button'>${Lang._('DISMISS_ALL')}</button>` : '';
 
     // Create 'sa11y-annotation' web component for each annotation.
     const instance = document.createElement('sa11y-annotation');
-    instance.setAttribute('data-sa11y-annotation', index);
+    instance.setAttribute('data-sa11y-annotation', id);
 
     // Generate HTML for painted annotations.
     if (element === undefined) {
@@ -8129,7 +8229,9 @@ ${this.error.stack}
       class="sa11y-btn ${[type]}-btn${inline ? '-text' : ''}"
       data-tippy-content=
         "<div lang='${Lang._('LANG_CODE')}' class='${[type]}'>
-          <button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button> <h2>${ariaLabel[type]}</h2> ${escapeHTML(content)}
+          <button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button> <h2>${ariaLabel[type]}</h2>
+          ${escapeHTML(content)}
+          ${contrastDetails ? '<div data-sa11y-contrast-details></div>' : ''}
           <div class='dismiss-group'>${dismissBtn}${dismissAllBtn}</div>
         </div>"
     ></button>`;
@@ -8322,26 +8424,29 @@ ${this.error.stack}
 
   const goToPrev = (results) => {
     determineIndex();
-    if (index > 0) {
-      const button = Elements.Annotations.Array[index - 1].shadowRoot.querySelector('button');
-      const scrollPos = getScrollPosition(button, results);
+    const issues = Elements.Annotations.Array;
 
-      window.scrollTo({
-        top: scrollPos,
-        behavior: `${Constants.Global.scrollBehaviour}`,
-      });
+    // If at first issue, go to last issue.
+    if (index <= 0) index = issues.length;
 
-      if (button.offsetTop !== 0) {
-        button.focus();
-        button.click();
-      }
+    const button = Elements.Annotations.Array[index - 1].shadowRoot.querySelector('button');
+    const scrollPos = getScrollPosition(button, results);
 
-      // Decrease position by 1
-      index -= 1;
+    window.scrollTo({
+      top: scrollPos,
+      behavior: `${Constants.Global.scrollBehaviour}`,
+    });
 
-      // If index is -1, it means that it cycled back to the first annotation. This is needed for when user wants to go to previous annotation from the very last annotation on the page.
-      if (index === -1) index = Elements.Annotations.Array.length - 1;
+    if (button.offsetTop !== 0) {
+      button.focus();
+      button.click();
     }
+
+    // Decrease position by 1
+    index -= 1;
+
+    // If index is -1, it means that it cycled back to the first annotation. This is needed for when user wants to go to previous annotation from the very last annotation on the page.
+    if (index === -1) index = Elements.Annotations.Array.length - 1;
   };
 
   function keyboardShortcut(e, results) {
@@ -8349,10 +8454,10 @@ ${this.error.stack}
       Elements.Annotations.Array.length
       && !Constants.Panel.skipButton.hasAttribute('disabled')
     ) {
-      if (e.altKey && e.code === 'KeyS') {
+      if (e.altKey && (e.code === 'KeyS' || e.code === 'Period')) {
         e.preventDefault();
         goToNext(results);
-      } else if (e.altKey && e.code === 'KeyW') {
+      } else if (e.altKey && (e.code === 'KeyW' || e.code === 'Comma')) {
         e.preventDefault();
         goToPrev(results);
       }
@@ -10812,19 +10917,9 @@ ${this.error.stack}
           /* If panel is OPENED. */
           if (store.getItem('sa11y-panel') === 'Opened') {
             // Paint the page with annotations.
-            this.results.forEach(($el) => {
-              Object.assign($el);
-              annotate(
-                $el.element,
-                $el.type,
-                $el.content,
-                $el.inline,
-                $el.position,
-                $el.id,
-                $el.dismiss,
-                $el.dismissAll,
-                option,
-              );
+            this.results.forEach((issue) => {
+              Object.assign(issue);
+              annotate(issue, option);
             });
 
             // After annotations are painted, find & cache.
@@ -10878,12 +10973,14 @@ ${this.error.stack}
         }
 
         // Dispatch custom event that stores the results array.
+        window.sa11yCheckComplete = null;
         const event = new CustomEvent('sa11y-check-complete', {
           detail: {
             results: this.results,
             page: window.location.pathname,
           },
         });
+        window.sa11yCheckComplete = event.detail;
         document.dispatchEvent(event);
       };
 

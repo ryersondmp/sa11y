@@ -691,6 +691,7 @@ hr {
 #panel-controls {
   display: flex;
   overflow: hidden;
+  border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
   border-radius: 0 0 4px 4px;
 }
 
@@ -698,7 +699,7 @@ hr {
   position: relative;
   display: block;
   width: 100%;
-  min-height: 30px;
+  height: 30px;
   padding: 0;
   margin: 0;
   font-size: var(--sa11y-normal-text);
@@ -710,7 +711,6 @@ hr {
   background: var(--sa11y-panel-bg-secondary);
   background-color: var(--sa11y-panel-bg-secondary);
   border-top: 1px solid var(--sa11y-panel-bg-splitter);
-  border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
   border-inline-end: 1px solid var(--sa11y-panel-bg-splitter);
   outline: 0;
   opacity: 1;

@@ -260,5 +260,12 @@ export default {
     WCAG_ADVICE: 'Kontrastforholdet skal være mindst 4,5:1 for almindelig tekst og 3:1 for stor tekst.',
     APCA_ADVICE: 'Kontrastværdien skal være mindst 60 for brødtekst og 45 for stor tekst.',
     CONTRAST_INPUT: 'Teksten i dette input har ikke nok kontrast til baggrunden. Kontrastforholdet skal være mindst 4,5:1 for normal tekst og 3:1 for stor tekst. <hr> <strong {B}>Kontrastforhold</strong> <strong {B}>%(RATIO)</strong>',
+    CONTRAST: 'Kontrast',
+    UNKNOWN: 'Ukendt',
+    LARGE_TEXT: 'Stor tekst',
+    BODY_TEXT: 'Kropstekst',
+    FG: 'Forgrund',
+    BG: 'Baggrund',
+    NON_TEXT: 'Ikke-tekst',
   },
 };
