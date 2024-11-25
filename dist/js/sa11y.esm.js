@@ -7654,64 +7654,32 @@ function checkContrast(results, option) {
       const style = getComputedStyle(path);
       const { fill, opacity } = style;
 
-      if (fill === 'none') {
-        // No fill, skip contrast checks but log as a warning.
+      if (fill === 'none' || fill.startsWith('url(')) {
+        // Fill equals none or gradient/pattern fill.
         contrastResults.push({
           $el,
           type: 'svg-warning',
           background,
         });
-      } else if (fill.startsWith('url(')) {
-        // Gradient or pattern fill.
-        contrastResults.push({
-          $el,
-          type: 'svg-warning',
-          background,
-        });
-      } else if (fill === 'currentColor') {
-        // Use currentColor from the parent element.
-        const currentColor = getComputedStyle($el).color;
-        const resolvedFill = convertToRGBA(currentColor, opacity);
-        const result = calculateContrast(resolvedFill, background);
-
-        if (option.contrastAPCA && result.ratio < 45) {
-          contrastResults.push({
-            $el,
-            type: 'svg-error',
-            color: resolvedFill,
-            ratio: Math.abs(result.ratio).toFixed(1),
-            background,
-          });
-        } else if (result.ratio < 3) {
-          contrastResults.push({
-            $el,
-            type: 'svg-error',
-            color: resolvedFill,
-            isLargeText: true,
-            ratio: result.ratio.toFixed(2),
-            background,
-          });
-        }
       } else {
-        // Standard color value (e.g., named color, hex, rgb, hsl).
-        const resolvedFill = convertToRGBA(fill, opacity);
+        // Resolve fill color based on type.
+        const resolvedFill = (fill === 'currentColor')
+          ? convertToRGBA(getComputedStyle($el).color, opacity)
+          : convertToRGBA(fill, opacity);
+
         const result = calculateContrast(resolvedFill, background);
-        if (option.contrastAPCA && result.ratio < 45) {
+        const isAPCA = option.contrastAPCA;
+
+        if ((isAPCA && result.ratio < 45) || (!isAPCA && result.ratio < 3)) {
           contrastResults.push({
             $el,
             type: 'svg-error',
             color: resolvedFill,
-            ratio: Math.abs(result.ratio).toFixed(1),
+            ratio: isAPCA
+              ? Math.abs(result.ratio).toFixed(1)
+              : result.ratio.toFixed(2),
             background,
-          });
-        } else if (result.ratio < 3) {
-          contrastResults.push({
-            $el,
-            type: 'svg-error',
-            color: resolvedFill,
-            isLargeText: true,
-            ratio: result.ratio.toFixed(2),
-            background,
+            ...(isAPCA ? {} : { isLargeText: true }),
           });
         }
       }
