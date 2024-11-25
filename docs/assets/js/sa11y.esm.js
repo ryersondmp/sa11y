@@ -7461,7 +7461,7 @@ function initializeContrastTools(container, contrastDetails) {
       if (!Constants.Global.contrastAPCA) {
         const value = contrastValue.ratio.toFixed(2);
         ratio.textContent = `${value}:1`;
-        const passes = value > 3;
+        const passes = value >= 3;
 
         switch (type) {
           case 'svg-error':
@@ -7474,13 +7474,13 @@ function initializeContrastTools(container, contrastDetails) {
             nonText.hidden = !passes;
             toggleBadges(elementsToToggle, passes);
             largeText.hidden = !passes;
-            bodyText.hidden = value < 4.5;
+            bodyText.hidden = value <= 4.5;
             break;
           }
           default: {
             toggleBadges([ratio, contrast], passes);
             largeText.hidden = !passes;
-            bodyText.hidden = value < 4.5;
+            bodyText.hidden = value <= 4.5;
             break;
           }
         }
@@ -7647,20 +7647,49 @@ function checkContrast(results, option) {
   // Warning for all SVGs.
   Elements.Found.Svg.forEach(($el) => {
     const background = getBackground($el);
-    const paths = $el.querySelectorAll('path');
+    const shapes = $el.querySelectorAll('path, polygon, circle, rect, line, ellipse');
 
-    if (paths.length === 1) {
-      const path = paths[0];
+    // For simple SVGs with a single color, we can easily calculate the contrast.
+    if (shapes.length === 1) {
+      const path = shapes[0];
       const style = getComputedStyle(path);
-      const { fill, opacity } = style;
+      const { fill, opacity, stroke, strokeWidth } = style;
 
-      if (fill === 'none' || fill.startsWith('url(')) {
-        // Fill equals none or gradient/pattern fill.
+      if (fill.startsWith('url(')) {
         contrastResults.push({
           $el,
           type: 'svg-warning',
           background,
         });
+      } else if (fill === 'none') {
+        // Check if stroke is present and valid.
+        if (stroke && stroke !== 'none' && strokeWidth !== '0px') {
+          const resolvedStroke = (stroke === 'currentColor')
+            ? convertToRGBA(getComputedStyle($el).color, opacity)
+            : convertToRGBA(stroke, opacity);
+
+          const result = calculateContrast(resolvedStroke, background);
+          const isAPCA = option.contrastAPCA;
+
+          if ((isAPCA && result.ratio < 45) || (!isAPCA && result.ratio < 3)) {
+            contrastResults.push({
+              $el,
+              type: 'svg-error',
+              color: resolvedStroke,
+              ratio: isAPCA
+                ? Math.abs(result.ratio).toFixed(1)
+                : result.ratio.toFixed(2),
+              background,
+              ...(isAPCA ? {} : { isLargeText: true }),
+            });
+          }
+        } else {
+          contrastResults.push({
+            $el,
+            type: 'svg-warning',
+            background,
+          });
+        }
       } else {
         // Resolve fill color based on type.
         const resolvedFill = (fill === 'currentColor')
@@ -7684,7 +7713,7 @@ function checkContrast(results, option) {
         }
       }
     } else {
-      // Handle multiple paths or missing path fills.
+      // Throw a general warning for complex SVGs with multiple shapes/paths.
       const type = $el.querySelector('text') ? 'svg-text' : 'svg-warning';
       contrastResults.push({
         $el,
@@ -7793,13 +7822,11 @@ function checkContrast(results, option) {
     switch (item.type) {
       case 'text':
         if (option.checks.CONTRAST_ERROR) {
-          const apcaAdvice = (option.contrastAPCA)
-            ? `<hr aria-hidden="true"> ${Lang._('APCA_ADVICE')}` : '';
           results.push({
             element: $el,
             type: option.checks.CONTRAST_ERROR.type || 'error',
             content: option.checks.CONTRAST_ERROR.content
-              || Lang.sprintf('CONTRAST_ERROR') + apcaAdvice,
+              || Lang.sprintf('CONTRAST_ERROR'),
             inline: false,
             position: 'beforebegin',
             dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),

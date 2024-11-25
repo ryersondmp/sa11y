@@ -253,7 +253,6 @@ var en = {
     CONTRAST_APCA: 'This is not enough contrast for any size text. Consider using this colour and text size combination?',
     CONTRAST_COLOR: 'Consider using this colour instead?',
     CONTRAST_SIZE: 'Consider making the text size larger for this colour combination?',
-    APCA_ADVICE: 'If no colour combination passes, try increasing the font size.',
     CONTRAST_PLACEHOLDER: 'Placeholder text within this input does not have enough contrast with the background, making it harder to read.',
     CONTRAST_INPUT: 'Text within this input does not have enough contrast with the background, making it harder to read.',
     CONTRAST: 'Contrast',
