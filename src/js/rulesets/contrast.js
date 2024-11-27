@@ -506,10 +506,7 @@ export function initializeContrastTools(container, contrastDetails) {
       const bgColor = bgInput.value;
 
       // Remove question mark from inputs.
-      if (fgInput.classList.contains('unknown') || bgInput.classList.contains('unknown')) {
-        fgInput.classList.remove('unknown');
-        bgInput.classList.remove('unknown');
-      }
+      [fgInput, bgInput].forEach((input) => input.classList.remove('unknown'));
 
       // Adjust colours in preview area.
       contrastPreview.style.color = fgColor;
@@ -517,7 +514,7 @@ export function initializeContrastTools(container, contrastDetails) {
       contrastPreview.style.backgroundImage = 'none';
 
       // Change SVG color if it contains a single <path> element.
-      const path = contrastPreview.querySelectorAll('svg path');
+      const path = contrastPreview.querySelectorAll('svg *');
       if (path.length === 1) path[0].style.fill = fgColor;
 
       const contrastValue = calculateContrast(convertToRGBA(fgColor), convertToRGBA(bgColor));
@@ -746,82 +743,77 @@ export default function checkContrast(results, option) {
     }
   }
 
-  // Warning for all SVGs.
   Elements.Found.Svg.forEach(($el) => {
     const background = getBackground($el);
-    const shapes = $el.querySelectorAll('path, polygon, circle, rect, line, ellipse');
 
-    // For simple SVGs with a single color, we can easily calculate the contrast.
+    // Handle SVGs with <text> element
+    if ($el.querySelector('text')) {
+      contrastResults.push({ $el, type: 'svg-text', background });
+      return;
+    }
+
+    // Process simple SVGs with a single shape.
+    const shapes = $el.querySelectorAll('path, polygon, circle, rect, ellipse');
     if (shapes.length === 1) {
-      const path = shapes[0];
-      const style = getComputedStyle(path);
+      const style = getComputedStyle(shapes[0]);
       const { fill, opacity, stroke, strokeWidth } = style;
 
+      // Background image.
       if (fill.startsWith('url(')) {
-        contrastResults.push({
-          $el,
-          type: 'svg-warning',
-          background,
-        });
-      } else if (fill === 'none') {
-        // Check if stroke is present and valid.
-        if (stroke && stroke !== 'none' && strokeWidth !== '0px') {
-          const resolvedStroke = (stroke === 'currentColor')
-            ? convertToRGBA(getComputedStyle($el).color, opacity)
-            : convertToRGBA(stroke, opacity);
+        contrastResults.push({ $el, type: 'svg-warning', background });
+        return;
+      }
 
-          const result = calculateContrast(resolvedStroke, background);
-          const isAPCA = option.contrastAPCA;
+      const hasFill = fill && fill !== 'none';
+      const hasStroke = stroke && stroke !== 'none' && strokeWidth !== '0px';
 
-          if ((isAPCA && result.ratio < 45) || (!isAPCA && result.ratio < 3)) {
-            contrastResults.push({
-              $el,
-              type: 'svg-error',
-              color: resolvedStroke,
-              ratio: isAPCA
-                ? Math.abs(result.ratio).toFixed(1)
-                : result.ratio.toFixed(2),
-              background,
-              ...(isAPCA ? {} : { isLargeText: true }),
-            });
-          }
-        } else {
-          contrastResults.push({
-            $el,
-            type: 'svg-warning',
-            background,
-          });
-        }
-      } else {
-        // Resolve fill color based on type.
-        const resolvedFill = (fill === 'currentColor')
+      if (!hasFill && !hasStroke) {
+        contrastResults.push({ $el, type: 'svg-warning', background });
+        return;
+      }
+
+      let fillPasses = false;
+      let strokePasses = false;
+
+      // Check fill contrast
+      if (hasFill) {
+        const resolvedFill = fill === 'currentColor'
           ? convertToRGBA(getComputedStyle($el).color, opacity)
           : convertToRGBA(fill, opacity);
 
-        const result = calculateContrast(resolvedFill, background);
-        const isAPCA = option.contrastAPCA;
+        const fillContrast = calculateContrast(resolvedFill, background);
+        fillPasses = option.contrastAPCA
+          ? fillContrast.ratio >= 45
+          : fillContrast.ratio >= 3;
+      }
 
-        if ((isAPCA && result.ratio < 45) || (!isAPCA && result.ratio < 3)) {
-          contrastResults.push({
-            $el,
-            type: 'svg-error',
-            color: resolvedFill,
-            ratio: isAPCA
-              ? Math.abs(result.ratio).toFixed(1)
-              : result.ratio.toFixed(2),
-            background,
-            ...(isAPCA ? {} : { isLargeText: true }),
-          });
-        }
+      // Check stroke contrast
+      if (hasStroke) {
+        const resolvedStroke = stroke === 'currentColor'
+          ? convertToRGBA(getComputedStyle($el).color, opacity)
+          : convertToRGBA(stroke, opacity);
+
+        const strokeContrast = calculateContrast(resolvedStroke, background);
+        strokePasses = option.contrastAPCA
+          ? strokeContrast.ratio >= 45
+          : strokeContrast.ratio >= 3;
+      }
+
+      // Failure conditions
+      const failsBoth = hasFill && hasStroke && !fillPasses && !strokePasses;
+      const failsFill = hasFill && !hasStroke && !fillPasses;
+      const failsStroke = !hasFill && hasStroke && !strokePasses;
+
+      if (failsBoth || failsFill || failsStroke) {
+        contrastResults.push({
+          $el,
+          type: 'svg-error',
+          background,
+        });
       }
     } else {
-      // Throw a general warning for complex SVGs with multiple shapes/paths.
-      const type = $el.querySelector('text') ? 'svg-text' : 'svg-warning';
-      contrastResults.push({
-        $el,
-        type,
-        background,
-      });
+      // Warn for complex SVGs with multiple shapes
+      contrastResults.push({ $el, type: 'svg-warning', background });
     }
   });
 
