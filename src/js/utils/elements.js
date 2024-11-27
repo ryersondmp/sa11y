@@ -15,7 +15,7 @@ const Elements = (function myElements() {
     Found.Images = Found.Everything.filter(($el) => $el.tagName === 'IMG'
       && !Constants.Exclusions.Images.some((selector) => $el.matches(selector)));
 
-    Found.Links = Found.Everything.filter(($el) => $el.tagName === 'A'
+    Found.Links = Found.Everything.filter(($el) => ($el.tagName === 'A' || $el.tagName === 'a')
       && $el.hasAttribute('href')
       && !$el.matches('[role="button"]') // Exclude links with [role="button"]
       && !Constants.Exclusions.Links.some((selector) => $el.matches(selector)));

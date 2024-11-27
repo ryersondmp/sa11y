@@ -166,6 +166,17 @@ export function getHex(color) {
 }
 
 /**
+ * Get the display-friendly contrast value for output.
+ * @param {Object} value - The value object containing the contrast ratio.
+ * @returns {string|number} The formatted contrast ratio.
+ */
+export function ratioToDisplay(value) {
+  return Constants.Global.contrastAPCA
+    ? Math.abs(Number(value.toFixed(1)))
+    : `${value.toFixed(2)}:1`;
+}
+
+/**
  * Calculate the contrast ratio or value between two colours.
  * @param {number[]} color Text colour in [R,G,B,A] format.
  * @param {Array} bg Background colour in [R,G,B,A] format.
@@ -313,7 +324,7 @@ export function suggestColorAPCA(color, background, fontWeight, fontSize) {
       contrast = calculateContrast(adjustedColor, background);
       fontLookup = fontLookupAPCA(contrast.ratio).slice(1);
 
-      // console.log(`%c ${getHex(adjustedColor)} | ${contrast.ratio.toFixed(1)} | ${fontLookup}`, `color:${getHex(adjustedColor)};background:${getHex(background)}`);
+      // console.log(`%c ${getHex(adjustedColor)} | ${ratioToDisplay(contrast.ratio)} | ${fontLookup}`, `color:${getHex(adjustedColor)};background:${getHex(background)}`);
 
       // Save valid colour, go back to previous, and continue with a smaller step.
       if (fontLookup[fontWeightIndex] <= fontSize) {
@@ -514,10 +525,12 @@ export function initializeContrastTools(container, contrastDetails) {
       contrastPreview.style.backgroundImage = 'none';
 
       // Change SVG color if it contains a single <path> element.
-      const path = contrastPreview.querySelectorAll('svg *');
-      const { fill, stroke } = getComputedStyle(path[0]);
-      if (path.length === 1 && fill !== 'none') path[0].style.fill = fgColor;
-      if (path.length === 1 && stroke !== 'none') path[0].style.stroke = fgColor;
+      const child = contrastPreview.querySelectorAll('svg *');
+      if (child.length === 1) {
+        const { fill, stroke } = getComputedStyle(child[0]);
+        if (fill !== 'none') child[0].style.fill = fgColor;
+        if (stroke !== 'none') child[0].style.stroke = fgColor;
+      }
 
       // Get contrast ratio.
       const contrastValue = calculateContrast(convertToRGBA(fgColor), convertToRGBA(bgColor));
@@ -525,8 +538,8 @@ export function initializeContrastTools(container, contrastDetails) {
 
       // APCA
       if (Constants.Global.contrastAPCA) {
-        const value = Math.abs(Number(contrastValue.ratio.toFixed(1)));
-        ratio.textContent = value;
+        const value = contrastValue.ratio;
+        ratio.textContent = ratioToDisplay(value);
         const fontArray = fontLookupAPCA(value).slice(1);
         const nonTextPasses = value >= 45 && fontArray[0] >= 0 && fontArray[0] <= 777;
         let passes;
@@ -558,8 +571,8 @@ export function initializeContrastTools(container, contrastDetails) {
 
       // WCAG 2.0
       if (!Constants.Global.contrastAPCA) {
-        const value = contrastValue.ratio.toFixed(2);
-        ratio.textContent = `${value}:1`;
+        const value = contrastValue.ratio;
+        ratio.textContent = ratioToDisplay(value);
         const passes = value >= 3;
 
         switch (type) {
@@ -611,7 +624,7 @@ export function wcagAlgorithm($el, color, background, fontSize, fontWeight, opac
   if ((isLargeText && hasLowContrast) || (!isLargeText && hasLowContrastNormalText)) {
     return {
       $el,
-      ratio: `${ratio.toFixed(2)}:1`,
+      ratio: ratioToDisplay(ratio),
       color: blendedColor,
       background,
       fontSize,
@@ -647,7 +660,7 @@ export function apcaAlgorithm($el, color, background, fontSize, fontWeight, opac
   if (fontSize < minFontSize) {
     return {
       $el,
-      ratio: Math.abs(ratio.toFixed(1)),
+      ratio: ratioToDisplay(ratio),
       color: blendedColor,
       background,
       fontWeight,
@@ -779,13 +792,11 @@ export default function checkContrast(results, option) {
       let fillPasses = false;
       let strokePasses = false;
       let contrastValue;
-      let colorValue;
       // Check fill contrast
       if (hasFill) {
         const resolvedFill = fill === 'currentColor'
           ? convertToRGBA(getComputedStyle($el).color, opacity)
           : convertToRGBA(fill, opacity);
-        colorValue = resolvedFill;
         contrastValue = calculateContrast(resolvedFill, background);
         fillPasses = option.contrastAPCA
           ? contrastValue.ratio >= 45
@@ -797,7 +808,6 @@ export default function checkContrast(results, option) {
         const resolvedStroke = stroke === 'currentColor'
           ? convertToRGBA(getComputedStyle($el).color, opacity)
           : convertToRGBA(stroke, opacity);
-        colorValue = resolvedStroke;
         contrastValue = calculateContrast(resolvedStroke, background);
         strokePasses = option.contrastAPCA
           ? contrastValue.ratio >= 45
@@ -812,10 +822,8 @@ export default function checkContrast(results, option) {
       if (failsBoth || failsFill || failsStroke) {
         contrastResults.push({
           $el,
-          ratio: option.contrastAPCA
-            ? Math.abs(Number(contrastValue.ratio.toFixed(1)))
-            : contrastValue.ratio.toFixed(2),
-          color: colorValue,
+          ratio: ratioToDisplay(contrastValue.ratio),
+          color: contrastValue.blendedColor,
           type: 'svg-error',
           background,
         });
