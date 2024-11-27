@@ -221,9 +221,14 @@
       },
       CONTRAST_INPUT: true,
       CONTRAST_ERROR: true,
-      CONTRAST_ERROR_GRAPHIC: true,
-      CONTRAST_WARNING_GRAPHIC: true,
       CONTRAST_PLACEHOLDER: true,
+      CONTRAST_ERROR_GRAPHIC: true,
+      CONTRAST_WARNING_GRAPHIC: {
+        dismissAll: true,
+      },
+      CONTRAST_UNSUPPORTED: {
+        dismissAll: true,
+      },
     },
   };
 
@@ -501,7 +506,7 @@
       }
 
       // Contrast exclusions
-      Exclusions.Contrast = ['link', 'hr', 'option:not(:first-child)', 'audio', 'audio *', 'video', 'video *', 'input[type="color"]', 'input[type="range"]', 'progress', 'progress *', 'meter', 'meter *', 'iframe', ...exclusions];
+      Exclusions.Contrast = ['link', 'hr', 'option', 'audio', 'audio *', 'video', 'video *', 'input[type="color"]', 'input[type="range"]', 'progress', 'progress *', 'meter', 'meter *', 'iframe', ...exclusions];
       if (option.contrastIgnore) {
         Exclusions.Contrast = option.contrastIgnore
           .split(',')
@@ -6913,14 +6918,6 @@ ${this.error.stack}
   ///////////////////////////////////////////////////////////////////////////
 
   /**
-   * Rulesets: Contrast
-   * APCA contrast checking is experimental. References:
-   * @link https://github.com/jasonday/color-contrast
-   * @link https://github.com/gka/chroma.js
-   * @link https://github.com/Myndex/SAPC-APCA
-  */
-
-  /**
    * Normalizes a given font weight to a numeric value. Maps keywords to their numeric equivalents.
    * @param {string|number} weight - The font weight, either as a number or a keyword.
    * @returns {number} - The numeric font weight.
@@ -7093,7 +7090,6 @@ ${this.error.stack}
   function calculateContrast(color, bg) {
     let ratio;
     const blendedColor = alphaBlend(color, bg);
-
     if (Constants.Global.contrastAPCA) {
       const foreground = sRGBtoY(blendedColor);
       const background = sRGBtoY(bg);
@@ -7119,8 +7115,7 @@ ${this.error.stack}
     const fgLuminance = getLuminance(color);
     const bgLuminance = getLuminance(background);
 
-    // Choose whether to lighten or darken text colour:
-    // Check contrast of extreme luminance values to see if lightened/darkened text will meet contrast requirement.
+    // Determine if text color should be lightened or darkened (considers extreme values).
     const adjustMode = fgLuminance > bgLuminance
       ? getWCAG2Ratio(1, bgLuminance) > minContrastRatio
       : getWCAG2Ratio(0, bgLuminance) < minContrastRatio;
@@ -7595,350 +7590,6 @@ ${this.error.stack}
     return algorithm($el, color, background, fontSize, fontWeight, opacity);
   }
 
-  /**
-   * Check contrast.
-   * @param {Array} results Sa11y's results array.
-   * @param {Object} option Sa11y's options object.
-   * @returns Contrast results.
-   */
-  function checkContrast(results, option) {
-    // Initialize contrast results array.
-    const contrastResults = [];
-
-    // Iterate through all elements on the page and get computed styles.
-    for (let i = 0; i < Elements.Found.Contrast.length; i++) {
-      const $el = Elements.Found.Contrast[i];
-      const style = getComputedStyle($el);
-
-      // Get computed styles.
-      const opacity = parseFloat(style.opacity);
-      const color = convertToRGBA(style.color, opacity);
-      const fontSize = parseFloat(style.fontSize);
-      const getFontWeight = style.fontWeight;
-      const fontWeight = normalizeFontWeight(getFontWeight);
-      const background = getBackground($el);
-
-      // Check if element is visually hidden to screen readers or explicitly hidden.
-      const isVisuallyHidden = isScreenReaderOnly($el);
-      const isExplicitlyHidden = isElementHidden($el);
-      const isHidden = isExplicitlyHidden || isVisuallyHidden || opacity === 0;
-
-      // Filter only text nodes.
-      const textString = Array.from($el.childNodes)
-        .filter((node) => node.nodeType === 3)
-        .map((node) => node.textContent)
-        .join('');
-      const text = textString.trim();
-
-      // Inputs to check
-      const checkInputs = ['OPTION', 'INPUT', 'TEXTAREA'].includes($el.tagName);
-
-      // Only check elements with text and inputs.
-      if (text.length !== 0 || checkInputs) {
-        if (color === 'unsupported' || background === 'unsupported') {
-          contrastResults.push({
-            $el,
-            type: 'unsupported',
-            fontSize,
-            fontWeight,
-            opacity,
-            ...(background !== 'unsupported' && { background }),
-            ...(color !== 'unsupported' && { color }),
-          });
-        } else if (background === 'image') {
-          contrastResults.push({
-            $el,
-            type: 'background-image',
-            color,
-            background,
-            fontSize,
-            fontWeight,
-            opacity,
-          });
-        } else if ($el.tagName === 'text' && $el.closest('svg')) ; else if (isHidden || getHex(color) === getHex(background)) ; else {
-          const result = checkElementContrast($el, color, background, fontSize, fontWeight, opacity);
-          if (result) {
-            result.type = checkInputs ? 'input' : 'text';
-            contrastResults.push(result);
-          }
-        }
-      }
-    }
-
-    Elements.Found.Svg.forEach(($el) => {
-      const background = getBackground($el);
-
-      // Handle SVGs with <text> element
-      if ($el.querySelector('text')) {
-        contrastResults.push({ $el, type: 'svg-text', background });
-        return;
-      }
-
-      // Process simple SVGs with a single shape.
-      const shapes = $el.querySelectorAll('path, polygon, circle, rect, ellipse');
-      if (shapes.length === 1) {
-        const style = getComputedStyle(shapes[0]);
-        const { fill, opacity, stroke, strokeWidth } = style;
-
-        // Background image.
-        if (fill.startsWith('url(')) {
-          contrastResults.push({ $el, type: 'svg-warning', background });
-          return;
-        }
-
-        const hasFill = fill && fill !== 'none';
-        const hasStroke = stroke && stroke !== 'none' && strokeWidth !== '0px';
-
-        if (!hasFill && !hasStroke) {
-          contrastResults.push({ $el, type: 'svg-warning', background });
-          return;
-        }
-
-        let fillPasses = false;
-        let strokePasses = false;
-        let contrastValue;
-        // Check fill contrast
-        if (hasFill) {
-          const resolvedFill = fill === 'currentColor'
-            ? convertToRGBA(getComputedStyle($el).color, opacity)
-            : convertToRGBA(fill, opacity);
-          contrastValue = calculateContrast(resolvedFill, background);
-          fillPasses = option.contrastAPCA
-            ? contrastValue.ratio >= 45
-            : contrastValue.ratio >= 3;
-        }
-
-        // Check stroke contrast
-        if (hasStroke) {
-          const resolvedStroke = stroke === 'currentColor'
-            ? convertToRGBA(getComputedStyle($el).color, opacity)
-            : convertToRGBA(stroke, opacity);
-          contrastValue = calculateContrast(resolvedStroke, background);
-          strokePasses = option.contrastAPCA
-            ? contrastValue.ratio >= 45
-            : contrastValue.ratio >= 3;
-        }
-
-        // Failure conditions
-        const failsBoth = hasFill && hasStroke && !fillPasses && !strokePasses;
-        const failsFill = hasFill && !hasStroke && !fillPasses;
-        const failsStroke = !hasFill && hasStroke && !strokePasses;
-
-        if (failsBoth || failsFill || failsStroke) {
-          contrastResults.push({
-            $el,
-            ratio: ratioToDisplay(contrastValue.ratio),
-            color: contrastValue.blendedColor,
-            type: 'svg-error',
-            background,
-          });
-        }
-      } else {
-        // Warn for complex SVGs with multiple shapes
-        contrastResults.push({ $el, type: 'svg-warning', background });
-      }
-    });
-
-    // Check contrast of all placeholder elements.
-    Elements.Found.Inputs.forEach(($el) => {
-      if ($el.placeholder && $el.placeholder.length !== 0) {
-        const placeholder = getComputedStyle($el, '::placeholder');
-        const pColor = convertToRGBA(placeholder.getPropertyValue('color'));
-        const pSize = parseFloat(placeholder.fontSize);
-        const pWeight = normalizeFontWeight(placeholder.fontWeight);
-        const pBackground = getBackground($el);
-        const pOpacity = parseFloat(placeholder.opacity);
-        const result = checkElementContrast($el, pColor, pBackground, pSize, pWeight, pOpacity);
-        if (result) {
-          result.type = 'placeholder';
-          contrastResults.push(result);
-        }
-      }
-    });
-
-    // Do some extra processing on warnings.
-    const processWarnings = (warnings) => warnings.reduce((mergedWarnings, current) => {
-      if (current.type === 'background-image') {
-        // For background images, merge nodes that share similar properties to minimize number of annotations.
-        const previous = mergedWarnings[mergedWarnings.length - 1];
-        const hasSameColor = previous
-          && JSON.stringify(current.color) === JSON.stringify(previous.color);
-        const hasSameParent = previous
-          && current.$el.parentNode === previous.$el.parentNode;
-
-        if (!previous || !hasSameColor || !hasSameParent) {
-          mergedWarnings.push({ ...current, mergeCount: 1 });
-          return mergedWarnings;
-        }
-
-        // For APCA, font size and font weight matter.
-        if (option.contrastAPCA) {
-          const hasSameFont = current.fontSize === previous.fontSize
-            && current.fontWeight === previous.fontWeight;
-          if (!hasSameFont) {
-            mergedWarnings.push({ ...current });
-          }
-        } else {
-          previous.mergeCount += 1;
-        }
-        return mergedWarnings;
-      }
-
-      // Return remaining warnings that don't need additional processing.
-      mergedWarnings.push(current);
-      return mergedWarnings;
-    }, []);
-    const processedResults = processWarnings(contrastResults);
-
-    // Iterate through all contrast results.
-    processedResults.forEach((item) => {
-      const { $el, ratio } = item;
-      const updatedItem = item;
-
-      // Annotation placement.
-      let element;
-      if (item.type === 'background-image' && item.mergeCount > 1) {
-        // Get the background image.
-        let parent = $el.parentElement;
-        while (parent) {
-          const computedStyle = window.getComputedStyle(parent);
-          if (computedStyle.backgroundImage !== 'none') break;
-          parent = parent.parentElement;
-        }
-        element = parent || $el;
-        updatedItem.fontWeight = 400;
-        updatedItem.fontSize = 15.5; // For merged objects, reset font size.
-      } else if ($el.tagName === 'OPTION') {
-        element = $el.closest('datalist, select, optgroup');
-      } else {
-        element = $el;
-      }
-
-      // Process text within element.
-      const nodeText = fnIgnore(element, ['option:not(option:first-child)']);
-      const text = getText(nodeText);
-
-      // Content for tooltip.
-      const truncatedText = truncateString(text, 80);
-      const sanitizedText = sanitizeHTML(truncatedText);
-
-      // Preview text
-      let previewText;
-      if (item.type === 'placeholder' && $el.placeholder) {
-        previewText = sanitizeHTML($el.placeholder);
-      } else if (item.type === 'svg-error' || item.type === 'svg-warning' || item.type === 'svg-text') {
-        const sanitizeSvg = sanitizeHTMLBlock(updatedItem.$el.outerHTML, true);
-        previewText = removeWhitespace(sanitizeSvg);
-      } else {
-        previewText = sanitizedText;
-      }
-      updatedItem.sanitizedText = previewText;
-
-      // Iterate through contrast results based on type.
-      switch (item.type) {
-        case 'text':
-          if (option.checks.CONTRAST_ERROR) {
-            results.push({
-              element: $el,
-              type: option.checks.CONTRAST_ERROR.type || 'error',
-              content: option.checks.CONTRAST_ERROR.content
-                || Lang.sprintf('CONTRAST_ERROR'),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
-              dismissAll: option.checks.CONTRAST_ERROR.dismissAll ? 'CONTRAST_ERROR' : false,
-              developer: option.checks.CONTRAST_ERROR.developer || false,
-              contrastDetails: updatedItem,
-            });
-          }
-          break;
-        case 'input':
-          if (option.checks.CONTRAST_INPUT) {
-            results.push({
-              element,
-              type: option.checks.CONTRAST_INPUT.type || 'error',
-              content: option.checks.CONTRAST_INPUT.content
-                || Lang.sprintf('CONTRAST_INPUT', ratio),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: prepareDismissal(`CONTRAST${$el.getAttribute('class')}${$el.tagName}${ratio}`),
-              dismissAll: option.checks.CONTRAST_INPUT.dismissAll ? 'CONTRAST_INPUT' : false,
-              developer: option.checks.CONTRAST_INPUT.developer || true,
-              contrastDetails: updatedItem,
-            });
-          }
-          break;
-        case 'placeholder':
-          if (option.checks.CONTRAST_PLACEHOLDER) {
-            results.push({
-              element: $el,
-              type: option.checks.CONTRAST_PLACEHOLDER.type || 'error',
-              content: option.checks.CONTRAST_PLACEHOLDER.content
-                || Lang.sprintf('CONTRAST_PLACEHOLDER'),
-              inline: false,
-              position: 'afterend',
-              dismiss: prepareDismissal(`CPLACEHOLDER${$el.getAttribute('class')}${$el.tagName}${ratio}`),
-              dismissAll: option.checks.CONTRAST_PLACEHOLDER.dismissAll ? 'CONTRAST_PLACEHOLDER' : false,
-              developer: option.checks.CONTRAST_PLACEHOLDER.developer || true,
-              contrastDetails: updatedItem,
-            });
-          }
-          break;
-        case 'svg-error':
-          if (option.checks.CONTRAST_ERROR_GRAPHIC) {
-            results.push({
-              element: $el,
-              type: option.checks.CONTRAST_ERROR_GRAPHIC.type || 'error',
-              content: option.checks.CONTRAST_ERROR_GRAPHIC.content
-                || Lang.sprintf('CONTRAST_ERROR_GRAPHIC'),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: prepareDismissal(`CONTRAST_GRAPHIC${sanitizedText}`),
-              dismissAll: option.checks.CONTRAST_ERROR_GRAPHIC.dismissAll ? 'CONTRAST_ERROR_GRAPHIC' : false,
-              developer: option.checks.CONTRAST_ERROR_GRAPHIC.developer || true,
-              contrastDetails: updatedItem,
-            });
-          }
-          break;
-        case 'svg-warning':
-        case 'svg-text':
-          if (option.checks.CONTRAST_WARNING_GRAPHIC) {
-            results.push({
-              element: $el,
-              type: option.checks.CONTRAST_WARNING_GRAPHIC.type || 'warning',
-              content: option.checks.CONTRAST_WARNING_GRAPHIC.content
-                || Lang.sprintf('CONTRAST_WARNING_GRAPHIC'),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: prepareDismissal(`CONTRASTGRAPHIC${sanitizedText}`),
-              dismissAll: option.checks.CONTRAST_WARNING_GRAPHIC.dismissAll ? 'CONTRAST_WARNING_GRAPHIC' : false,
-              developer: option.checks.CONTRAST_WARNING_GRAPHIC.developer || true,
-              contrastDetails: updatedItem,
-            });
-          }
-          break;
-        case 'unsupported':
-        case 'background-image':
-          if (option.checks.CONTRAST_WARNING) {
-            results.push({
-              element,
-              type: option.checks.CONTRAST_WARNING.type || 'warning',
-              content: option.checks.CONTRAST_WARNING.content
-                || Lang.sprintf('CONTRAST_WARNING'),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
-              dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
-              developer: option.checks.CONTRAST_WARNING.developer || false,
-              contrastDetails: updatedItem,
-            });
-          }
-          break;
-      }
-    });
-    return results;
-  }
-
   var tooltipStyles = "a,button,code,div,h1,h2,kbd,li,ol,p,span,strong,svg,ul{all:unset;box-sizing:border-box!important}div{display:block}:after,:before{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}@media (forced-colors:active){[data-tippy-root]{border:2px solid transparent;border-radius:5px}}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:0}.tippy-box[data-placement^=top]>.tippy-arrow:before{border-top-color:initial;border-width:8px 8px 0;bottom:-7px;left:0;transform-origin:center top}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:0}.tippy-box[data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:initial;border-width:0 8px 8px;left:0;top:-7px;transform-origin:center bottom}.tippy-box[data-placement^=left]>.tippy-arrow{right:0}.tippy-box[data-placement^=left]>.tippy-arrow:before{border-left-color:initial;border-width:8px 0 8px 8px;right:-7px;transform-origin:center left}.tippy-box[data-placement^=right]>.tippy-arrow{left:0}.tippy-box[data-placement^=right]>.tippy-arrow:before{border-right-color:initial;border-width:8px 8px 8px 0;left:-7px;transform-origin:center right}.tippy-arrow{color:#333;height:16px;width:16px}.tippy-arrow:before{border-color:transparent;border-style:solid;content:\"\";position:absolute}.tippy-content{padding:5px 9px;position:relative;z-index:1}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{word-wrap:break-word;min-width:300px;text-align:start}[role=tooltip]{min-width:185px;text-align:center}.tippy-box[data-theme~=sa11y-panel]{border:1px solid var(--sa11y-panel-bg-splitter);box-shadow:var(--sa11y-box-shadow)}.tippy-box[data-theme~=sa11y-theme]:not([data-theme~=sa11y-panel]){box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15)!important}.tippy-box[data-theme~=sa11y-theme]{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-bg);border-radius:4px;color:var(--sa11y-panel-primary);display:block;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px;outline:0;padding:8px;position:relative;transition-property:transform,visibility,opacity}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:500}.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);letter-spacing:normal;line-height:22px;padding:1.6px 4.8px}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block-end:0;margin-block-start:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{display:list-item;margin:5px 10px 0 20px;padding-bottom:5px}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;font-weight:500;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] a:hover{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin:0}.tippy-box[data-theme~=sa11y-theme] .dismiss-group{margin-top:5px}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:inline-block;margin:10px 5px 5px 0;margin-inline-end:15px;padding:4px 8px}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:focus,.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:hover{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme] .good-icon{background:var(--sa11y-good-text);display:inline-block;height:14px;margin-bottom:-2.5px;-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat;width:14px}.tippy-box[data-theme~=sa11y-theme] .link-icon{background:var(--sa11y-panel-primary);display:inline-block;height:16px;margin-bottom:-3.5px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat;width:16px}.tippy-box[data-theme~=sa11y-theme] .error .badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .error .colour{color:var(--sa11y-red-text)}.tippy-box[data-theme~=sa11y-theme] .error .link-icon{background:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .warning .badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme] .warning .colour{color:var(--sa11y-yellow-text)}.tippy-box[data-theme~=sa11y-theme] .warning .link-icon{background:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme] #apca-table{width:100%}.tippy-box[data-theme~=sa11y-theme] #apca-table .row{display:flex;margin-top:10px}.tippy-box[data-theme~=sa11y-theme] #apca-table .cell{align-items:center;display:flex;flex:1;flex-direction:column;padding:1px}.tippy-box[data-theme~=sa11y-theme] #apca-table .font-weight{font-size:calc(var(--sa11y-normal-text) - 2px);font-weight:700}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{forced-color-adjust:none}.tippy-box[data-theme~=sa11y-theme] .tippy-arrow{z-index:-1}}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:active,.tippy-box[data-theme~=sa11y-theme] button:focus,.tippy-box[data-theme~=sa11y-theme] input:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] input:focus:not(:focus-visible){box-shadow:none;outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus-visible,.tippy-box[data-theme~=sa11y-theme] a:focus-visible,.tippy-box[data-theme~=sa11y-theme] button:focus-visible,.tippy-box[data-theme~=sa11y-theme] input:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.tippy-box[data-theme~=sa11y-theme] .error-icon,.tippy-box[data-theme~=sa11y-theme] .hidden-icon,.tippy-box[data-theme~=sa11y-theme] .link-icon{filter:invert(1)}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:focus{outline:3px solid transparent!important}}";
 
   /**
@@ -8242,9 +7893,7 @@ ${this.error.stack}
     ></button>`;
 
       // Make sure annotations always appended outside of SVGs and interactive elements.
-      const location = element.closest('svg')
-        || element.closest('a, button, [role="link"], [role="button"]')
-        || element;
+      const location = element.closest('a, button, [role="link"], [role="button"]') || element;
       location.insertAdjacentElement(position, instance);
       instance.shadowRoot.appendChild(create);
     }
@@ -9327,6 +8976,370 @@ ${this.error.stack}
             seen[href] = true;
           }
         }
+      }
+    });
+    return results;
+  }
+
+  /**
+   * Rulesets: Contrast
+   * @param {Array} results Sa11y's results array.
+   * @param {Object} option Sa11y's options object.
+   * @returns Contrast results.
+   * APCA contrast checking is experimental. References:
+   * @link https://github.com/jasonday/color-contrast
+   * @link https://github.com/gka/chroma.js
+   * @link https://github.com/Myndex/SAPC-APCA
+   */
+  function checkContrast(results, option) {
+    // Initialize contrast results array.
+    const contrastResults = [];
+
+    // Iterate through all elements on the page and get computed styles.
+    for (let i = 0; i < Elements.Found.Contrast.length; i++) {
+      const $el = Elements.Found.Contrast[i];
+      const style = getComputedStyle($el);
+
+      // Get computed styles.
+      const opacity = parseFloat(style.opacity);
+      const color = convertToRGBA(style.color, opacity);
+      const fontSize = parseFloat(style.fontSize);
+      const getFontWeight = style.fontWeight;
+      const fontWeight = normalizeFontWeight(getFontWeight);
+      const background = getBackground($el);
+
+      // Check if element is visually hidden to screen readers or explicitly hidden.
+      const isVisuallyHidden = isScreenReaderOnly($el);
+      const isExplicitlyHidden = isElementHidden($el);
+      const isHidden = isExplicitlyHidden || isVisuallyHidden || opacity === 0;
+
+      // Filter only text nodes.
+      const textString = Array.from($el.childNodes)
+        .filter((node) => node.nodeType === 3)
+        .map((node) => node.textContent)
+        .join('');
+      const text = textString.trim();
+
+      // Inputs to check
+      const checkInputs = ['SELECT', 'INPUT', 'TEXTAREA'].includes($el.tagName);
+
+      // Only check elements with text and inputs.
+      if (text.length !== 0 || checkInputs) {
+        if (color === 'unsupported' || background === 'unsupported') {
+          contrastResults.push({
+            $el,
+            type: 'unsupported',
+            fontSize,
+            fontWeight,
+            opacity,
+            ...(background !== 'unsupported' && { background }),
+            ...(color !== 'unsupported' && { color }),
+          });
+        } else if (background === 'image') {
+          contrastResults.push({
+            $el,
+            type: 'background-image',
+            color,
+            background,
+            fontSize,
+            fontWeight,
+            opacity,
+          });
+        } else if ($el.tagName === 'text' && $el.closest('svg')) ; else if (isHidden || getHex(color) === getHex(background)) ; else {
+          const result = checkElementContrast($el, color, background, fontSize, fontWeight, opacity);
+          if (result) {
+            result.type = checkInputs ? 'input' : 'text';
+            contrastResults.push(result);
+          }
+        }
+      }
+    }
+
+    // Iterate through all SVGs on the page, seperately.
+    Elements.Found.Svg.forEach(($el) => {
+      const background = getBackground($el);
+
+      // Handle SVGs with <text> element
+      if ($el.querySelector('text')) {
+        contrastResults.push({ $el, type: 'svg-text', background });
+        return;
+      }
+
+      // Process simple SVGs with a single shape.
+      const shapes = $el.querySelectorAll('path, polygon, circle, rect, ellipse');
+      if (shapes.length === 1) {
+        const style = getComputedStyle(shapes[0]);
+        const { fill, opacity, stroke, strokeWidth } = style;
+
+        // Background image.
+        if (fill.startsWith('url(')) {
+          contrastResults.push({ $el, type: 'svg-warning', background });
+          return;
+        }
+
+        const hasFill = fill && fill !== 'none';
+        const hasStroke = stroke && stroke !== 'none' && strokeWidth !== '0px';
+
+        if (!hasFill && !hasStroke) {
+          contrastResults.push({ $el, type: 'svg-warning', background });
+          return;
+        }
+
+        let fillPasses = false;
+        let strokePasses = false;
+        let contrastValue;
+
+        // Check fill contrast.
+        if (hasFill) {
+          const resolvedFill = fill === 'currentColor'
+            ? convertToRGBA(getComputedStyle($el).color, opacity)
+            : convertToRGBA(fill, opacity);
+          contrastValue = calculateContrast(resolvedFill, background);
+          fillPasses = option.contrastAPCA
+            ? contrastValue.ratio >= 45
+            : contrastValue.ratio >= 3;
+        }
+
+        // Check stroke contrast.
+        if (hasStroke) {
+          const resolvedStroke = stroke === 'currentColor'
+            ? convertToRGBA(getComputedStyle($el).color, opacity)
+            : convertToRGBA(stroke, opacity);
+          contrastValue = calculateContrast(resolvedStroke, background);
+          strokePasses = option.contrastAPCA
+            ? contrastValue.ratio >= 45
+            : contrastValue.ratio >= 3;
+        }
+
+        // Failure conditions.
+        const failsBoth = hasFill && hasStroke && !fillPasses && !strokePasses;
+        const failsFill = hasFill && !hasStroke && !fillPasses;
+        const failsStroke = !hasFill && hasStroke && !strokePasses;
+        if (failsBoth || failsFill || failsStroke) {
+          contrastResults.push({
+            $el,
+            ratio: ratioToDisplay(contrastValue.ratio),
+            color: contrastValue.blendedColor,
+            type: 'svg-error',
+            background,
+          });
+        }
+      } else {
+        // Warn for complex SVGs with multiple shapes
+        contrastResults.push({ $el, type: 'svg-warning', background });
+      }
+    });
+
+    // Check contrast of all placeholder elements.
+    Elements.Found.Inputs.forEach(($el) => {
+      if ($el.placeholder && $el.placeholder.length !== 0) {
+        const placeholder = getComputedStyle($el, '::placeholder');
+        const pColor = convertToRGBA(placeholder.getPropertyValue('color'));
+        const pSize = parseFloat(placeholder.fontSize);
+        const pWeight = normalizeFontWeight(placeholder.fontWeight);
+        const pBackground = getBackground($el);
+        const pOpacity = parseFloat(placeholder.opacity);
+        const result = checkElementContrast($el, pColor, pBackground, pSize, pWeight, pOpacity);
+        if (result) {
+          result.type = 'placeholder';
+          contrastResults.push(result);
+        }
+      }
+    });
+
+    // Do some extra processing on warnings.
+    const processWarnings = (warnings) => warnings.reduce((mergedWarnings, current) => {
+      if (current.type === 'background-image') {
+        // For background images, merge nodes that share similar properties to minimize number of annotations.
+        const previous = mergedWarnings[mergedWarnings.length - 1];
+        const hasSameColor = previous
+          && JSON.stringify(current.color) === JSON.stringify(previous.color);
+        const hasSameParent = previous
+          && current.$el.parentNode === previous.$el.parentNode;
+
+        if (!previous || !hasSameColor || !hasSameParent) {
+          mergedWarnings.push({ ...current, mergeCount: 1 });
+          return mergedWarnings;
+        }
+
+        // For APCA, font size and font weight matter.
+        if (option.contrastAPCA) {
+          const hasSameFont = current.fontSize === previous.fontSize
+            && current.fontWeight === previous.fontWeight;
+          if (!hasSameFont) {
+            mergedWarnings.push({ ...current });
+          }
+        } else {
+          previous.mergeCount += 1;
+        }
+        return mergedWarnings;
+      }
+
+      // Return remaining warnings that don't need additional processing.
+      mergedWarnings.push(current);
+      return mergedWarnings;
+    }, []);
+    const processedResults = processWarnings(contrastResults);
+
+    // Iterate through all contrast results.
+    processedResults.forEach((item) => {
+      const { $el, ratio } = item;
+      const updatedItem = item;
+
+      // Annotation placement.
+      let element;
+      if (item.type === 'background-image' && item.mergeCount > 1) {
+        // Get the background image.
+        let parent = $el.parentElement;
+        while (parent) {
+          const computedStyle = window.getComputedStyle(parent);
+          if (computedStyle.backgroundImage !== 'none') break;
+          parent = parent.parentElement;
+        }
+        element = parent || $el;
+        updatedItem.fontWeight = 400;
+        updatedItem.fontSize = 15.5; // For merged objects, reset font size.
+      } else if ($el.tagName === 'OPTION') {
+        element = $el.closest('datalist, select, optgroup');
+      } else {
+        element = $el;
+      }
+
+      // Process text within element.
+      const nodeText = fnIgnore(element, ['option:not(option:first-child)']);
+      const text = getText(nodeText);
+
+      // Content for tooltip.
+      const truncatedText = truncateString(text, 80);
+      const sanitizedText = sanitizeHTML(truncatedText);
+
+      // Preview text
+      let previewText;
+      if (item.type === 'placeholder' && $el.placeholder) {
+        previewText = sanitizeHTML($el.placeholder);
+      } else if (item.type === 'svg-error' || item.type === 'svg-warning' || item.type === 'svg-text') {
+        const sanitizeSvg = sanitizeHTMLBlock(updatedItem.$el.outerHTML, true);
+        previewText = removeWhitespace(sanitizeSvg);
+      } else {
+        previewText = sanitizedText;
+      }
+      updatedItem.sanitizedText = previewText;
+
+      // Iterate through contrast results based on type.
+      switch (item.type) {
+        case 'text':
+          if (option.checks.CONTRAST_ERROR) {
+            results.push({
+              element: $el,
+              type: option.checks.CONTRAST_ERROR.type || 'error',
+              content: option.checks.CONTRAST_ERROR.content
+                || Lang.sprintf('CONTRAST_ERROR'),
+              inline: false,
+              position: 'beforebegin',
+              dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
+              dismissAll: option.checks.CONTRAST_ERROR.dismissAll ? 'CONTRAST_ERROR' : false,
+              developer: option.checks.CONTRAST_ERROR.developer || false,
+              contrastDetails: updatedItem,
+            });
+          }
+          break;
+        case 'input':
+          if (option.checks.CONTRAST_INPUT) {
+            results.push({
+              element,
+              type: option.checks.CONTRAST_INPUT.type || 'error',
+              content: option.checks.CONTRAST_INPUT.content
+                || Lang.sprintf('CONTRAST_INPUT', ratio),
+              inline: false,
+              position: 'beforebegin',
+              dismiss: prepareDismissal(`CONTRAST${$el.getAttribute('class')}${$el.tagName}${ratio}`),
+              dismissAll: option.checks.CONTRAST_INPUT.dismissAll ? 'CONTRAST_INPUT' : false,
+              developer: option.checks.CONTRAST_INPUT.developer || true,
+              contrastDetails: updatedItem,
+            });
+          }
+          break;
+        case 'placeholder':
+          if (option.checks.CONTRAST_PLACEHOLDER) {
+            results.push({
+              element: $el,
+              type: option.checks.CONTRAST_PLACEHOLDER.type || 'error',
+              content: option.checks.CONTRAST_PLACEHOLDER.content
+                || Lang.sprintf('CONTRAST_PLACEHOLDER'),
+              inline: false,
+              position: 'afterend',
+              dismiss: prepareDismissal(`CPLACEHOLDER${$el.getAttribute('class')}${$el.tagName}${ratio}`),
+              dismissAll: option.checks.CONTRAST_PLACEHOLDER.dismissAll ? 'CONTRAST_PLACEHOLDER' : false,
+              developer: option.checks.CONTRAST_PLACEHOLDER.developer || true,
+              contrastDetails: updatedItem,
+            });
+          }
+          break;
+        case 'svg-error':
+          if (option.checks.CONTRAST_ERROR_GRAPHIC) {
+            results.push({
+              element: $el,
+              type: option.checks.CONTRAST_ERROR_GRAPHIC.type || 'error',
+              content: option.checks.CONTRAST_ERROR_GRAPHIC.content
+                || Lang.sprintf('CONTRAST_ERROR_GRAPHIC'),
+              inline: false,
+              position: 'beforebegin',
+              dismiss: prepareDismissal(`CONTRASTERROR${$el.outerHTML}`),
+              dismissAll: option.checks.CONTRAST_ERROR_GRAPHIC.dismissAll ? 'CONTRAST_ERROR_GRAPHIC' : false,
+              developer: option.checks.CONTRAST_ERROR_GRAPHIC.developer || true,
+              contrastDetails: updatedItem,
+            });
+          }
+          break;
+        case 'svg-warning':
+        case 'svg-text':
+          if (option.checks.CONTRAST_WARNING_GRAPHIC) {
+            results.push({
+              element: $el,
+              type: option.checks.CONTRAST_WARNING_GRAPHIC.type || 'warning',
+              content: option.checks.CONTRAST_WARNING_GRAPHIC.content
+                || Lang.sprintf('CONTRAST_WARNING_GRAPHIC'),
+              inline: false,
+              position: 'beforebegin',
+              dismiss: prepareDismissal(`CONTRASTWARNING${$el.outerHTML}`),
+              dismissAll: option.checks.CONTRAST_WARNING_GRAPHIC.dismissAll ? 'CONTRAST_WARNING_GRAPHIC' : false,
+              developer: option.checks.CONTRAST_WARNING_GRAPHIC.developer || true,
+              contrastDetails: updatedItem,
+            });
+          }
+          break;
+        case 'background-image':
+          if (option.checks.CONTRAST_WARNING) {
+            results.push({
+              element,
+              type: option.checks.CONTRAST_WARNING.type || 'warning',
+              content: option.checks.CONTRAST_WARNING.content
+                || Lang.sprintf('CONTRAST_WARNING'),
+              inline: false,
+              position: 'beforebegin',
+              dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
+              dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
+              developer: option.checks.CONTRAST_WARNING.developer || false,
+              contrastDetails: updatedItem,
+            });
+          }
+          break;
+        case 'unsupported':
+          if (option.checks.CONTRAST_UNSUPPORTED) {
+            results.push({
+              element,
+              type: option.checks.CONTRAST_UNSUPPORTED.type || 'warning',
+              content: option.checks.CONTRAST_UNSUPPORTED.content
+                || Lang.sprintf('CONTRAST_WARNING'),
+              inline: false,
+              position: 'beforebegin',
+              dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
+              dismissAll: option.checks.CONTRAST_UNSUPPORTED.dismissAll ? 'CONTRAST_UNSUPPORTED' : false,
+              developer: option.checks.CONTRAST_UNSUPPORTED.developer || false,
+              contrastDetails: updatedItem,
+            });
+          }
+          break;
       }
     });
     return results;

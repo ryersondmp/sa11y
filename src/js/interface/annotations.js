@@ -114,9 +114,7 @@ export function annotate(issue, option) {
     ></button>`;
 
     // Make sure annotations always appended outside of SVGs and interactive elements.
-    const location = element.closest('svg')
-      || element.closest('a, button, [role="link"], [role="button"]')
-      || element;
+    const location = element.closest('a, button, [role="link"], [role="button"]') || element;
     location.insertAdjacentElement(position, instance);
     instance.shadowRoot.appendChild(create);
   }

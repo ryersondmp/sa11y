@@ -203,9 +203,14 @@ const defaultOptions = {
     },
     CONTRAST_INPUT: true,
     CONTRAST_ERROR: true,
-    CONTRAST_ERROR_GRAPHIC: true,
-    CONTRAST_WARNING_GRAPHIC: true,
     CONTRAST_PLACEHOLDER: true,
+    CONTRAST_ERROR_GRAPHIC: true,
+    CONTRAST_WARNING_GRAPHIC: {
+      dismissAll: true,
+    },
+    CONTRAST_UNSUPPORTED: {
+      dismissAll: true,
+    },
   },
 };
 

@@ -3,7 +3,7 @@ import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 import Constants from '../utils/constants';
 import Elements from '../utils/elements';
-import { generateColorSuggestion, generateContrastTools, initializeContrastTools } from '../rulesets/contrast';
+import { generateColorSuggestion, generateContrastTools, initializeContrastTools } from '../utils/contrast-utils';
 
 // Import processed minified styles as a string.
 import tooltipStyles from '../../../dist/css/tooltips.min.css';
