@@ -515,11 +515,15 @@ export function initializeContrastTools(container, contrastDetails) {
 
       // Change SVG color if it contains a single <path> element.
       const path = contrastPreview.querySelectorAll('svg *');
-      if (path.length === 1) path[0].style.fill = fgColor;
+      const { fill, stroke } = getComputedStyle(path[0]);
+      if (path.length === 1 && fill !== 'none') path[0].style.fill = fgColor;
+      if (path.length === 1 && stroke !== 'none') path[0].style.stroke = fgColor;
 
+      // Get contrast ratio.
       const contrastValue = calculateContrast(convertToRGBA(fgColor), convertToRGBA(bgColor));
       const elementsToToggle = [ratio, contrast];
 
+      // APCA
       if (Constants.Global.contrastAPCA) {
         const value = Math.abs(Number(contrastValue.ratio.toFixed(1)));
         ratio.textContent = value;
