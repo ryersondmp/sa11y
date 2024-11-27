@@ -778,17 +778,18 @@ export default function checkContrast(results, option) {
 
       let fillPasses = false;
       let strokePasses = false;
-
+      let contrastValue;
+      let colorValue;
       // Check fill contrast
       if (hasFill) {
         const resolvedFill = fill === 'currentColor'
           ? convertToRGBA(getComputedStyle($el).color, opacity)
           : convertToRGBA(fill, opacity);
-
-        const fillContrast = calculateContrast(resolvedFill, background);
+        colorValue = resolvedFill;
+        contrastValue = calculateContrast(resolvedFill, background);
         fillPasses = option.contrastAPCA
-          ? fillContrast.ratio >= 45
-          : fillContrast.ratio >= 3;
+          ? contrastValue.ratio >= 45
+          : contrastValue.ratio >= 3;
       }
 
       // Check stroke contrast
@@ -796,11 +797,11 @@ export default function checkContrast(results, option) {
         const resolvedStroke = stroke === 'currentColor'
           ? convertToRGBA(getComputedStyle($el).color, opacity)
           : convertToRGBA(stroke, opacity);
-
-        const strokeContrast = calculateContrast(resolvedStroke, background);
+        colorValue = resolvedStroke;
+        contrastValue = calculateContrast(resolvedStroke, background);
         strokePasses = option.contrastAPCA
-          ? strokeContrast.ratio >= 45
-          : strokeContrast.ratio >= 3;
+          ? contrastValue.ratio >= 45
+          : contrastValue.ratio >= 3;
       }
 
       // Failure conditions
@@ -811,6 +812,10 @@ export default function checkContrast(results, option) {
       if (failsBoth || failsFill || failsStroke) {
         contrastResults.push({
           $el,
+          ratio: option.contrastAPCA
+            ? Math.abs(Number(contrastValue.ratio.toFixed(1)))
+            : contrastValue.ratio.toFixed(2),
+          color: colorValue,
           type: 'svg-error',
           background,
         });
