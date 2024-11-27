@@ -7430,6 +7430,7 @@ function initializeContrastTools(container, contrastDetails) {
       const child = contrastPreview.querySelectorAll('svg *');
       if (child.length === 1) {
         const { fill, stroke } = getComputedStyle(child[0]);
+        child[0].style.opacity = 1;
         if (fill !== 'none') child[0].style.fill = fgColor;
         if (stroke !== 'none') child[0].style.stroke = fgColor;
       }
