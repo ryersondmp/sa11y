@@ -8867,7 +8867,7 @@ function checkLinkText(results, option) {
             element: $el,
             type: option.checks.LINK_STOPWORD.type || 'error',
             content: option.checks.LINK_STOPWORD.content
-              || Lang.sprintf('LINK_STOPWORD', error[0]) + Lang.sprintf('LINK_STOPWORD_TIP'),
+              || Lang.sprintf('LINK_STOPWORD', error[0]) + Lang.sprintf('LINK_TIP'),
             inline: true,
             position: 'afterend',
             dismiss: prepareDismissal(`LINKSTOPWORD${href + linkTextTrimmed}`),
@@ -8898,7 +8898,7 @@ function checkLinkText(results, option) {
             results.push({
               element: $el,
               type: option.checks.LINK_URL.type || 'warning',
-              content: option.checks.LINK_URL.content || Lang.sprintf('LINK_URL'),
+              content: option.checks.LINK_URL.content || Lang.sprintf('LINK_URL') + Lang.sprintf('LINK_TIP'),
               inline: true,
               position: 'beforebegin',
               dismiss: prepareDismissal(`LINKURLNAME${href + linkTextTrimmed}`),
@@ -8908,6 +8908,9 @@ function checkLinkText(results, option) {
           }
         }
       } else if (hasAria) {
+        // Computed accessible name,
+        const sanitizedText = sanitizeHTML(linkText);
+
         // General warning for visible non-descript link text, regardless of ARIA label.
         const excludeSpan = fnIgnore($el, Constants.Exclusions.LinkSpan);
         const visibleLinkText = option.linkIgnoreStrings
@@ -8919,34 +8922,15 @@ function checkLinkText(results, option) {
             element: $el,
             type: option.checks.LINK_STOPWORD_ARIA.type || 'warning',
             content: option.checks.LINK_STOPWORD_ARIA.content
-              || Lang.sprintf('LINK_STOPWORD_ARIA', stopword) + Lang.sprintf('LINK_STOPWORD_TIP'),
+              || Lang.sprintf('LINK_STOPWORD_ARIA', stopword, sanitizedText) + Lang.sprintf('LINK_TIP'),
             inline: true,
             position: 'beforebegin',
             dismiss: prepareDismissal(`LINKSTOPWORDARIA${href + linkTextTrimmed}`),
             dismissAll: option.checks.LINK_STOPWORD_ARIA.dismissAll ? ' LINK_STOPWORD_ARIA' : false,
             developer: option.checks.LINK_STOPWORD_ARIA.developer || false,
           });
-        }
-
-        // Button must have visible label as part of their accessible name.
-        const isVisibleTextInAccessibleName$1 = isVisibleTextInAccessibleName($el);
-        if (option.checks.LABEL_IN_NAME && isVisibleTextInAccessibleName$1 && $el.textContent.length !== 0) {
-          const sanitizedText = sanitizeHTML(accName);
-          results.push({
-            element: $el,
-            type: option.checks.LABEL_IN_NAME.type || 'warning',
-            content: option.checks.LABEL_IN_NAME.content || `${Lang.sprintf('LABEL_IN_NAME', sanitizedText)}`,
-            inline: true,
-            position: 'afterend',
-            dismiss: prepareDismissal(`LINKLABELNAME${href + linkTextTrimmed}`),
-            dismissAll: option.checks.LABEL_IN_NAME.dismissAll ? 'BTN_LABEL_IN_NAME' : false,
-            developer: option.checks.LABEL_IN_NAME.developer || true,
-          });
-        }
-
-        // If the link has any ARIA, append a "Good" link button.
-        if (option.checks.LINK_LABEL) {
-          const sanitizedText = sanitizeHTML(linkText);
+        } else if (option.checks.LINK_LABEL) {
+          // If the link has any ARIA, append a "Good" link button.
           results.push({
             element: $el,
             type: option.checks.LINK_LABEL.type || 'good',
@@ -8956,6 +8940,21 @@ function checkLinkText(results, option) {
             dismiss: prepareDismissal(`LINKGOOD${href + linkTextTrimmed}`),
             dismissAll: option.checks.LINK_LABEL.dismissAll ? 'LINK_LABEL' : false,
             developer: option.checks.LINK_LABEL.developer || false,
+          });
+        }
+
+        // Button must have visible label as part of their accessible name.
+        const isVisibleTextInAccessibleName$1 = isVisibleTextInAccessibleName($el);
+        if (option.checks.LABEL_IN_NAME && isVisibleTextInAccessibleName$1 && $el.textContent.length !== 0) {
+          results.push({
+            element: $el,
+            type: option.checks.LABEL_IN_NAME.type || 'warning',
+            content: option.checks.LABEL_IN_NAME.content || `${Lang.sprintf('LABEL_IN_NAME', sanitizedText)}`,
+            inline: true,
+            position: 'afterend',
+            dismiss: prepareDismissal(`LINKLABELNAME${href + linkTextTrimmed}`),
+            dismissAll: option.checks.LABEL_IN_NAME.dismissAll ? 'BTN_LABEL_IN_NAME' : false,
+            developer: option.checks.LABEL_IN_NAME.developer || true,
           });
         }
       } else if (matchedSymbol) {
@@ -8994,7 +8993,8 @@ function checkLinkText(results, option) {
           results.push({
             element: $el,
             type: option.checks.LINK_CLICK_HERE.type || 'warning',
-            content: option.checks.LINK_CLICK_HERE.content || Lang.sprintf('LINK_CLICK_HERE'),
+            content: option.checks.LINK_CLICK_HERE.content
+              || Lang.sprintf('LINK_CLICK_HERE') + Lang.sprintf('LINK_TIP'),
             inline: true,
             position: 'beforebegin',
             dismiss: prepareDismissal(`LINKCLICKHERE${href + linkTextTrimmed}`),
