@@ -369,7 +369,6 @@ export default function checkLinkText(results, option) {
       if (linkTextTrimmed.length !== 0) {
         // Links with identical accessible names have equivalent purpose.
         if (seen[linkTextTrimmed] && !seen[href]) {
-          // Link has identical name as another link.
           if (option.checks.LINK_IDENTICAL_NAME) {
             const sanitizedText = Utils.sanitizeHTML(linkText);
             results.push({
@@ -383,11 +382,13 @@ export default function checkLinkText(results, option) {
               developer: option.checks.LINK_IDENTICAL_NAME.developer || false,
             });
           }
-        } else if (
-          $el.getAttribute('target')?.toLowerCase() === '_blank'
-          && !fileTypeMatch
-          && !containsNewWindowPhrases
-        ) {
+        } else {
+          seen[linkTextTrimmed] = true;
+          seen[href] = true;
+        }
+
+        // Link opens in new tab without warning.
+        if ($el.getAttribute('target')?.toLowerCase() === '_blank' && !fileTypeMatch && !containsNewWindowPhrases) {
           if (option.checks.LINK_NEW_TAB) {
             results.push({
               element: $el,
@@ -400,7 +401,10 @@ export default function checkLinkText(results, option) {
               developer: option.checks.LINK_NEW_TAB.developer || false,
             });
           }
-        } else if (fileTypeMatch && !containsFileTypePhrases) {
+        }
+
+        // Link points to file (non HTML resource) without warning.
+        if (fileTypeMatch && !containsFileTypePhrases) {
           if (option.checks.LINK_FILE_EXT) {
             results.push({
               element: $el,
@@ -413,9 +417,6 @@ export default function checkLinkText(results, option) {
               developer: option.checks.LINK_FILE_EXT.developer || false,
             });
           }
-        } else {
-          seen[linkTextTrimmed] = true;
-          seen[href] = true;
         }
       }
     }

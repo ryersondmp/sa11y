@@ -173,12 +173,31 @@ export function sanitizeHTMLBlock(html, allowStyles = false) {
 }
 
 /**
+ * Creates a clone of an element while ignoring specified elements or elements matching a selector.
+ * Ignored by default: ['noscript', 'script', 'style', 'audio', 'video', 'form', 'iframe']
+ * @param {Element} element The element to clone.
+ * @param {Array[]} selectors The selector to match elements to be excluded from the clone. Optional.
+ * @returns {Element} The cloned element with excluded elements removed.
+ */
+export function fnIgnore(element, selectors = []) {
+  const defaultIgnored = ['noscript', 'script', 'style', 'audio', 'video', 'form', 'iframe'];
+  const ignore = [...defaultIgnored, ...selectors].join(', ');
+  const clone = element.cloneNode(true);
+  const exclude = Array.from(clone.querySelectorAll(ignore));
+  exclude.forEach(($el) => {
+    $el.parentElement.removeChild($el);
+  });
+  return clone;
+}
+
+/**
  * Retrieves the text content of an HTML element and removes extra whitespaces and line breaks.
  * @param {HTMLElement} element The HTML element to retrieve the text content from.
  * @returns {string} The text content of the HTML element with extra whitespaces and line breaks removed.
  */
 export function getText(element) {
-  return element.textContent.replace(/[\r\n]+/g, '').replace(/\s+/g, ' ').trim();
+  const ignore = fnIgnore(element);
+  return ignore.textContent.replace(/[\r\n]+/g, '').replace(/\s+/g, ' ').trim();
 }
 
 /**
@@ -217,24 +236,6 @@ export function debounce(callback, wait) {
       callback(...args);
     }, wait);
   };
-}
-
-/**
- * Creates a clone of an element while ignoring specified elements or elements matching a selector.
- * Ignored by default: ['noscript', 'script', 'style', 'audio', 'video', 'form', 'iframe']
- * @param {Element} element The element to clone.
- * @param {Array[]} selectors The selector to match elements to be excluded from the clone. Optional.
- * @returns {Element} The cloned element with excluded elements removed.
- */
-export function fnIgnore(element, selectors = []) {
-  const defaultIgnored = ['noscript', 'script', 'style', 'audio', 'video', 'form', 'iframe'];
-  const ignore = [...defaultIgnored, ...selectors].join(', ');
-  const clone = element.cloneNode(true);
-  const exclude = Array.from(clone.querySelectorAll(ignore));
-  exclude.forEach(($el) => {
-    $el.parentElement.removeChild($el);
-  });
-  return clone;
 }
 
 /**
@@ -542,10 +543,19 @@ export function isScrollable(scrollArea, container, ariaLabel) {
  */
 export function generateElementPreview(issueObject) {
   const issueElement = issueObject.element;
-  const truncatedHTML = truncateString(issueObject.htmlPath, 600);
+  const cleanHTML = sanitizeHTMLBlock(issueObject.htmlPath);
+  const truncatedHTML = truncateString(cleanHTML, 600);
   const htmlPath = `<pre><code>${escapeHTML(truncatedHTML)}</code></pre>`;
 
+  const simple = (element) => {
+    const text = getText(element);
+    const truncatedText = truncateString(text, 100);
+    return text.length ? sanitizeHTML(truncatedText) : htmlPath;
+  };
+
   const tag = {
+    SPAN: simple,
+    P: simple,
     A: (element) => {
       const text = getText(element);
       const truncatedText = truncateString(text, 100);

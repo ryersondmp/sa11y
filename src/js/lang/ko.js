@@ -175,7 +175,7 @@ export default {
     LINK_TIP: '<hr> <strong>팁!</strong> 링크의 목적지를 설명하는 명확하고 고유한 링크 텍스트를 사용하세요. 일반적으로 페이지나 문서 제목입니다.',
     LINK_CLICK_HERE: '"클릭" 또는 "여기를 클릭하세요"라는 표현은 마우스 사용에 초점을 맞추지만, 많은 사람들이 마우스를 사용하지 않거나 모바일 기기로 웹사이트를 볼 수 있습니다. 작업과 관련된 다른 동사를 사용하는 것을 고려하세요.',
     DUPLICATE_TITLE: '링크와 이미지의 <code>title</code> 속성은 추가 정보를 제공하기 위한 것이며, 텍스트나 alt 텍스트와는 <strong>다른</strong> 것이어야 합니다. 제목 텍스트는 요소 위에 마우스를 올릴 때 나타나지만, 키보드나 터치 입력으로는 접근할 수 없습니다. <a href="https://www.a11yproject.com/posts/title-attributes/">title 속성을 완전히 피하는 것</a>을 고려하세요.',
-    LINK_SYMBOLS: '보조 기술에서 숨겨지지 않는 한, 링크 텍스트 내에서 동작을 유도하는 데 기호를 사용하지 마세요. 다음을 제거하는 것을 고려하세요: <strong {C}>%(ERROR)</strong>',
+    LINK_SYMBOLS: '링크 텍스트 내에서 기호를 행동 요청으로 사용하지 마세요. 보조 기술에서 숨겨져 있지 않으면 스크린 리더가 기호를 소리 내어 읽어 혼란을 줄 수 있습니다. 제거를 고려하세요: <strong {C}>%(ERROR)</strong>',
     LINK_URL: '링크 텍스트로 사용되는 길고 이해하기 어려운 URL은 보조 기술로 이해하기 어려울 수 있습니다. 대부분의 경우 URL 대신 사람이 읽을 수 있는 텍스트를 사용하는 것이 좋습니다. 짧은 URL(예: 사이트 홈페이지)은 괜찮습니다.',
     LINK_DOI: '웹 페이지 또는 온라인 전용 리소스의 경우 <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APA 스타일 가이드</a>에서는 제목 주위에 저작물의 URL 또는 DOI를 감싸는 설명 링크를 사용할 것을 권장합니다. 링크 텍스트로 사용되는 길고 이해하기 어려운 URL은 보조 기술을 사용하여 이해하기 어려울 수 있습니다.',
     LINK_NEW_TAB: '경고 없이 새 탭 또는 새 창에서 링크가 열립니다. 특히 시각적 콘텐츠를 인식하는 데 어려움을 겪는 사람들에게는 혼란을 줄 수 있습니다. 둘째, 다른 사람의 경험을 통제하거나 대신 결정을 내리는 것은 항상 좋은 관행이 아닙니다. 링크 텍스트 내에 링크가 새 창에서 열림 <hr> <strong>팁!</strong> 모범 사례 알아보기임을 표시하세요: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">새 브라우저 창 및 탭에서 링크 열기</a>',

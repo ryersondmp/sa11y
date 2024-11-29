@@ -251,6 +251,18 @@ audio {
   border: 1px dashed var(--sa11y-panel-bg-splitter);
   border-radius: 5px;
 }
+.panel-alert-preview ul {
+  position: relative;
+  padding: 0;
+  margin: 0;
+  margin-block-end: 0;
+  margin-block-start: 0;
+}
+.panel-alert-preview li {
+  display: list-item;
+  padding-bottom: 5px;
+  margin: 5px 10px 0 20px;
+}
 
 .element-preview {
   padding: 5px;
