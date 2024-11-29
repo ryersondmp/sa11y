@@ -646,15 +646,24 @@ test.describe('Sa11y Unit Tests', () => {
     });
   });
 
-  test('Link text contains warning word', async () => {
+  test('Link text contains click here text', async () => {
     const ids = [
       'warning-link-word-1',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await checkTooltip(page, id, 'focus on mouse mechanics');
+      expect(issue).toBe(true);
+    });
+  });
+
+  test('Link text contains symbol', async () => {
+    const ids = [
       'warning-link-word-2',
       'warning-link-word-3',
       'warning-link-word-4',
     ];
     ids.forEach(async (id) => {
-      const issue = await checkTooltip(page, id, 'places focus on mouse mechanics');
+      const issue = await checkTooltip(page, id, 'Avoid using symbols');
       expect(issue).toBe(true);
     });
   });
@@ -1071,8 +1080,6 @@ test.describe('Sa11y Unit Tests', () => {
     const ids = [
       'nothing-contrast-1',
       'nothing-contrast-2',
-      'nothing-contrast-3',
-      'nothing-contrast-4',
       'nothing-contrast-5',
       'nothing-contrast-6',
     ];

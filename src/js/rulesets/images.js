@@ -141,6 +141,7 @@ export default function checkImages(results, option) {
       const altText = Utils.removeWhitespace(sanitizedAlt);
       const error = containsAltTextStopWords(altText);
       const hasAria = $el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby');
+      const titleAttr = $el.getAttribute('title');
       const decorative = (alt === '' || alt === ' ');
 
       // Figure elements.
@@ -380,6 +381,23 @@ export default function checkImages(results, option) {
             dismiss: Utils.prepareDismissal(`IMAGEPASS${src + altText}`),
             dismissAll: option.checks.IMAGE_PASS.dismissAll ? 'IMAGE_PASS' : false,
             developer: option.checks.IMAGE_PASS.developer || false,
+          });
+        }
+      }
+
+      // Image's title attribute is the same as the alt.
+      // Since this is extra, it's okay if it overlaps "good" annotation.
+      if (titleAttr?.toLowerCase() === alt.toLowerCase()) {
+        if (option.checks.DUPLICATE_TITLE) {
+          results.push({
+            element: $el,
+            type: option.checks.DUPLICATE_TITLE.type || 'warning',
+            content: option.checks.DUPLICATE_TITLE.content || Lang.sprintf('DUPLICATE_TITLE'),
+            inline: true,
+            position: 'beforebegin',
+            dismiss: Utils.prepareDismissal(`ALTDUPLICATETITLE${altText}`),
+            dismissAll: option.checks.DUPLICATE_TITLE.dismissAll ? 'DUPLICATE_TITLE' : false,
+            developer: option.checks.DUPLICATE_TITLE.developer || false,
           });
         }
       }

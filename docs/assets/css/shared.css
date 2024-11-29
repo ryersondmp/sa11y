@@ -167,10 +167,10 @@ input[type=color i].unknown::after {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 25px;
+  height: 25px;
   margin: -24px 0;
-  font-size: 1.2rem;
+  font-size: 18px;
   color: #fff;
   pointer-events: none;
   content: "?";

@@ -121,7 +121,7 @@ var en = {
       'view our',
       'website',
     ],
-    WARNING_ALT_STOPWORDS: ['click here'],
+    CLICK: ['click'],
     NEW_WINDOW_PHRASES: ['external', 'new tab', 'new window', 'pop-up', 'pop up'],
     FILE_TYPE_PHRASES: ['document', 'spreadsheet', 'calculation sheet', 'compressed file', 'archived file', 'worksheet', 'powerpoint', 'presentation', 'install', 'video', 'audio', 'pdf'],
 
@@ -150,8 +150,12 @@ var en = {
     LINK_EMPTY: 'Remove empty links without any text.',
     LINK_EMPTY_LABELLEDBY: 'Link has an <code>aria-labelledby</code> value that is empty or does not match the <code>id</code> value of another element on the page.',
     LINK_EMPTY_NO_LABEL: 'Link does not have discernible text that is visible to screen readers and other assistive technology. To fix: <ul><li>Add concise text that describes where the link takes you.</li><li>If it is an <a href="https://a11y-101.com/development/icons-and-links">icon link or SVG,</a> it is likely missing a descriptive label.</li><li>If you think this link is an error due to a copy/paste bug, consider deleting it.</li></ul>',
-    LINK_STOPWORD: 'Link text may not be descriptive enough out of context: <strong {C}>%(ERROR)</strong> <hr> <strong>Tip!</strong> Link text should always be clear, unique, and meaningful. Avoid common words like &quot;click here&quot; or &quot;learn more&quot;',
-    LINK_BEST_PRACTICES: 'Consider replacing the link text: <strong {C}>%(ERROR)</strong> <hr> <ul><li>&quot;Click here&quot; places focus on mouse mechanics, when many people do not use a mouse or may be viewing this website on a mobile device. Consider using a different verb that relates to the task.</li><li>Avoid using HTML symbols as call to actions unless they are hidden to assistive technologies.</li></ul>',
+    LINK_STOPWORD: 'Link text may not be descriptive enough out of context: <strong {C}>%(ERROR)</strong>',
+    LINK_STOPWORD_ARIA: 'Although an accessible name was provided, consider revising the visible link text. Phrases like &quot;<strong {C}>%(ERROR)</strong>&quot; are not meaningful.',
+    LINK_STOPWORD_TIP: '<hr> <strong>Tip!</strong> Use clear and unique link text that describes the destination of the link, typically the page or document title.',
+    LINK_CLICK_HERE: 'The phrase "click" or "click here" places focus on mouse mechanics, when many people do not use a mouse or may be viewing this website on a mobile device. Consider using a different verb that relates to the task.',
+    DUPLICATE_TITLE: 'The <code>title</code> attribute on links and images is meant to provide extra information, and should be <strong>different</strong> than the text or alt text. The title text appears when hovering over an element, but is not accessible with a keyboard or touch input. Consider <a href="https://www.a11yproject.com/posts/title-attributes/">avoiding the title attribute completely.</a>',
+    LINK_SYMBOLS: 'Avoid using symbols as calls to action within link text unless they are hidden from assistive technologies. Consider removing: <strong {C}>%(ERROR)</strong>',
     LINK_URL: 'Longer, less intelligible URLs used as link text might be difficult to comprehend with assistive technology. In most cases, it is better to use human-readable text instead of the URL. Short URLs (such as a site\'s homepage) are okay.<hr><strong>Tip!</strong> Link text should always be clear, unique, and meaningful so it could be understood out of context.',
     LINK_DOI: 'For web pages or online-only resources, the <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APA Style guide</a> recommends using descriptive links by wrapping the URL or DOI of the work around its title. Longer, less intelligible URLs used as link text might be difficult to comprehend with assistive technology.',
 

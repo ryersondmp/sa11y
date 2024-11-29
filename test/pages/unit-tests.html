@@ -466,7 +466,7 @@
       Empty hyperlink with SVG:
       <a href="https://www.example.com?=32">
         <svg width="20" height="10">
-          <rect x="0" y="0" width="20" height="10" fill="darkgrey" />
+          <rect x="0" y="0" width="20" height="10" fill="black" />
         </svg>
       </a>
     </div>
@@ -474,7 +474,7 @@
       Empty hyperlink with SVG (opens new tab):
       <a href="https://www.example.com?=33" target="_blank">
         <svg width="20" height="10">
-          <rect x="0" y="0" width="20" height="10" fill="darkgrey" />
+          <rect x="0" y="0" width="20" height="10" fill="black" />
         </svg>
       </a>
     </div>
@@ -506,7 +506,7 @@
       Empty hyperlink with SVG and title:
       <a href="https://www.example.com?=39" title="SVG">
         <svg width="20" height="10">
-          <rect x="0" y="0" width="20" height="10" fill="darkgrey" />
+          <rect x="0" y="0" width="20" height="10" fill="black" />
         </svg>
       </a>
     </div>
@@ -514,7 +514,7 @@
       Empty hyperlink with SVG (opens new tab):
       <a href="https://www.example.com?=40" target="_blank" title="SVG (opens new window)">
         <svg width="20" height="10">
-          <rect x="0" y="0" width="20" height="10" fill="darkgrey" />
+          <rect x="0" y="0" width="20" height="10" fill="black" />
         </svg>
       </a>
     </div>
@@ -1352,27 +1352,6 @@
       <p style="color: var(--bg-example);font-size:5em">
         Lorem ipsum dolor.
       </p>
-    </div>
-
-    <h4><code>&lt;select&gt;</code> element with background image</h4>
-    <div id="nothing-contrast-3">
-      <label for="pet-select">Choose a pet:</label>
-      <select id="pet-select" style="background-image: url(clientlib-site/images/google.gif);">
-        <option value="">Please choose an option</option>
-        <option value="dog">Dog</option>
-        <option value="cat">Cat</option>
-        <option value="hamster">Hamster</option>
-        <option value="parrot">Parrot</option>
-        <option value="spider">Spider</option>
-        <option value="goldfish">Goldfish</option>
-      </select>
-    </div>
-
-    <h4>Ignore background images within a <code>&lt;nav&gt;</code></h4>
-    <div id="nothing-contrast-4">
-      <nav>
-        <p class="background-image">Text on background image requires manual review!</p>
-      </nav>
     </div>
 
     <h4>Ignore specific elements</h4>

@@ -386,7 +386,7 @@ export function generateColorSuggestion(contrastDetails) {
  * @param {HTMLElement} container The tooltip container to inject the contrast colour pickers.
  */
 export function generateContrastTools(contrastDetails) {
-  const { sanitizedText, color, background, fontWeight, fontSize, ratio } = contrastDetails;
+  const { sanitizedText, color, background, fontWeight, fontSize, ratio, textUnderline } = contrastDetails;
 
   // Initialize variables.
   const hasBackgroundColor = background && background !== 'image';
@@ -396,6 +396,7 @@ export function generateContrastTools(contrastDetails) {
   const unknownBG = background && background !== 'image' ? '' : 'class="unknown"';
   const hasFontWeight = fontWeight ? `font-weight:${fontWeight};` : '';
   const hasFontSize = fontSize ? `font-size:${fontSize}px;` : '';
+  const textDecoration = `text-decoration:${textUnderline}`;
 
   // Ratio to be displayed.
   let displayedRatio;
@@ -419,7 +420,7 @@ export function generateContrastTools(contrastDetails) {
       <div id="body-text" class="badge good-badge" hidden>${Lang._('BODY_TEXT')}</div>
       <div id="apca" class="badge good-badge" hidden>${Lang._('GOOD')}</div>
       <div id="apca-table" hidden></div>
-      <div id="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};${sanitizedText.length ? '' : 'display: none;'}` : ''}${hasFontWeight}${hasFontSize}">${sanitizedText}</div>
+      <div id="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};${sanitizedText.length ? '' : 'display: none;'}` : ''}${hasFontWeight + hasFontSize + textDecoration}">${sanitizedText}</div>
       <div id="color-pickers">
         <label for="fg-text">${Lang._('FG')}
           <input type="color" id="fg-input" value="${foregroundHex}" ${unknownFG}/>
@@ -620,6 +621,7 @@ export function wcagAlgorithm($el, color, background, fontSize, fontWeight, opac
       fontWeight,
       isLargeText,
       opacity,
+      textUnderline: getComputedStyle($el).textDecorationLine,
     };
   }
   return null;
@@ -655,6 +657,7 @@ export function apcaAlgorithm($el, color, background, fontSize, fontWeight, opac
       fontWeight,
       fontSize,
       opacity,
+      textUnderline: getComputedStyle($el).textDecorationLine,
     };
   }
   return null;

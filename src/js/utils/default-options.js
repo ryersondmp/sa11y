@@ -110,10 +110,13 @@ const defaultOptions = {
     IMAGE_PASS: true,
 
     // Link checks
+    DUPLICATE_TITLE: true,
     LINK_EMPTY_LABELLEDBY: true,
     LINK_EMPTY_NO_LABEL: true,
     LINK_STOPWORD: true,
-    LINK_BEST_PRACTICES: true,
+    LINK_STOPWORD_ARIA: true,
+    LINK_SYMBOLS: true,
+    LINK_CLICK_HERE: true,
     LINK_DOI: {
       dismissAll: true,
     },

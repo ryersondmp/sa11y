@@ -109,6 +109,10 @@
     .weight700 {
       font-weight: 700;
     }
+
+    .link-low {
+      color: rgb(136, 199, 255);
+    }
   </style>
 </head>
 
@@ -520,6 +524,10 @@
 
     <h2>Normal text (400 at 16px)</h2>
 
+    <div id="error-link">
+      <a href="https://www.example.com?fklsd" class="link-low">Low text</a>
+    </div>
+
     <h3>Testing extremes 1.01:1 ratio</h3>
     <div id="error-light-grey">
       <p id="light-grey" style="color: #eaeaea">Super light grey</p>
@@ -779,7 +787,7 @@
       checkRoot: 'body',
       developerChecksOnByDefault: false,
       shadowComponents: '#webcomponent',
-      contrastAPCA: true,
+      // contrastAPCA: true,
       checks: {
         IMAGE_DECORATIVE_CAROUSEL: {
           type: 'error',

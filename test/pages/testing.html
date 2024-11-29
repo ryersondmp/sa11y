@@ -109,6 +109,46 @@
       sit!</h3>
 
     <hr>
+    <p dir="auto">Example: Instead of <a href="https://www.britannica.com/biography/George-Orwell" title="Click here"
+        aria-label="Incorrect hyperlink formatting" rel="nofollow">Click here</a> to learn more about George Orwell”,
+      you <a href="https://www.britannica.com/biography/George-Orwell"
+        aria-label="learn more Incorrect hyperlink formatting">learn
+        more</a>
+      could write “Delve into the life and works of <a href="https://www.britannica.com/biography/George-Orwell"
+        rel="nofollow">George Orwell at Britannica</a>.</p>
+
+    <p><a href="https://www.britannica.com/biography/George-Orwell" target="_BLANK">George
+        Orwell at Britannica</a></p>
+
+    <p><a href="https://www.britannica.com/biography/George-Orwell.pdf" target="_BLANK">George
+        Orwell at Britannica</a></p>
+
+    <br>
+    <hr>
+    <h2>Title attribute is same as link text or alt text.</h2>
+
+    <h3>Image</h3>
+    <img src="./assets/placeholder.svg" title="Lorem ipsum, dude!" alt="Lorem ipsum, dude!">
+
+    <h3>Linked image</h3>
+    <a href="https://www.example.com"><img src="./assets/placeholder.svg" title="Lorem ipsum howdy"
+        alt="Lorem ipsum howdy"></a>
+
+    <h3>Link</h3>
+    <a href="https://www.britannica.com/biography/Marie-Curie" title="Marie Curie" rel="nofollow">Marie Curie</a>
+
+    <a href="https://www.britannica.com/biography/Marie-Curie" title="Marie Curie" target="_BLANK" rel="nofollow">Marie
+      Curie</a>
+
+
+    <hr>
+
+    <p dir="auto">Instead of <a href="https://www.britannica.com/biography/George-Orwelllll" title="Learn more"
+        aria-label="Learn more about Orwell" rel="nofollow">Learn more</a> about George Orwell.</p>
+    <br>
+
+    <p><a href="https://www.britannica.com/biography">Next ></a></p>
+    <hr>
 
     <pre><code>
 &lt;svg width="200" height="200" xmlns="http://www.w3.org/2000/svg"&gt;
@@ -189,10 +229,10 @@
     <h2>Two SVGs in a link</h2>
     <a href="https://www.example.com?1241232313">
       <svg width="20" height="10" role="img" aria-label="dark grey circle">
-        <rect x="0" y="0" width="20" height="10" fill="darkgrey" />
+        <rect x="0" y="0" width="20" height="10" fill="black" />
       </svg>
       <svg width="20" height="10" role="img">
-        <rect x="0" y="0" width="20" height="10" fill="darkgrey" />
+        <rect x="0" y="0" width="20" height="10" fill="black" />
         <title>testing</title>
       </svg>
     </a>
