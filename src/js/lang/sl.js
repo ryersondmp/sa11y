@@ -122,9 +122,7 @@ export default {
       'si oglejte naš',
       'spletna stran',
     ],
-    WARNING_ALT_STOPWORDS: [
-      'kliknite tukaj',
-    ],
+    CLICK: ['click', 'klik'],
     NEW_WINDOW_PHRASES: [
       'zunanji',
       'nov zavihek',

@@ -18,6 +18,9 @@
   </header>
   <main>
 
+    <h2>Language files check</h2>
+    <p id="lang-ok">Checking...</p>
+
     <h2>Headings</h2>
 
     <h3>Empty heading</h3>
@@ -1725,32 +1728,7 @@
       $el.append(testShadowElement);
     })
   </script>
-  <script src="../../dist/js/sa11y.umd.min.js"></script>
-  <script src="../../dist/js/lang/en.umd.js"></script>
-  <script>
-    Sa11y.Lang.addI18n(Sa11yLangEn.strings);
-    const sa11y = new Sa11y.Sa11y({
-      checkRoot: "body",
-      headerIgnore: "#nothing-ignore-this-heading *",
-      linkIgnoreSpan: ".sr-only-example",
-      linkIgnoreStrings: '(External)',
-      imageIgnore: ".logo",
-      contrastIgnore: '.background-image-component',
-      showHinPageOutline: 1,
-      exportResultsPlugin: true,
-      autoDetectShadowComponents: true,
-      developerChecksOnByDefault: true,
-
-      checks: {
-        QA_BAD_LINK: {
-          sources: 'a[href*="dev."]',
-        }
-      },
-
-      // showGoodImageButton: false,
-      // showGoodLinkButton: false,
-    });
-  </script>
+  <script type="module" src="./script.js"></script>
 </body>
 
 </html>

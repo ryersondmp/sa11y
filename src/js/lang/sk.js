@@ -120,9 +120,7 @@ export default {
       'pozrite si náš',
       'webová stránka',
     ],
-    WARNING_ALT_STOPWORDS: [
-      'kliknite sem',
-    ],
+    CLICK: ['click', 'kliknutie'],
     NEW_WINDOW_PHRASES: [
       'externé',
       'nová karta',

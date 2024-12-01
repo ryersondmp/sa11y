@@ -121,9 +121,7 @@ export default {
       'prohlédněte si naše',
       'webové stránky',
     ],
-    WARNING_ALT_STOPWORDS: [
-      'klikněte zde',
-    ],
+    CLICK: ['click', 'kliknutí'],
     NEW_WINDOW_PHRASES: [
       'externí',
       'nová karta',

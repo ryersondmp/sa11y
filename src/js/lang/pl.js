@@ -118,7 +118,7 @@ export default {
       'stronę',
       'witrynę',
     ],
-    WARNING_ALT_STOPWORDS: ['kliknij tutaj'],
+    CLICK: ['click', 'kliknięcie'],
     NEW_WINDOW_PHRASES: [
       'zewnętrzny',
       'nowa karta',
@@ -201,6 +201,7 @@ export default {
     EMBED_DATA_VIZ: 'Widżety wizualizacji danych, takie jak ten, są często problematyczne dla osób, które używają klawiatury lub czytnika ekranu do nawigacji, a także mogą stanowić znaczące trudności dla osób słabo widzących lub nie rozróżniających kolorów. Zapewnij te same infromacje w alternatywnym formacie (tekst lub tabela) pod widżetem. <hr> Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/images/complex/">obrazach złożonych.</a>',
     EMBED_MISSING_TITLE: 'Osadzona zawartość wymaga dostępnej nazwy, która opisuje jej treść. Dodaj unikalny <code>title</code> lub atrybutu <code>aria-label</code> do elementu <code>iframe</code>. Dowiedz się więcej o <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrame.</a>',
     EMBED_GENERAL: 'Nie można sprawdzić treści osadzonej. Upewnij się, że obrazy mają tekst alt, filmy mają napisy rozszerzone, tekst ma odpowiedni kontrast, a elementy interaktywne są <a href="https://webaim.org/techniques/keyboard/">dostępne z klawiatury.</a>',
+    EMBED_UNFOCUSABLE: '&lt;code&gt;&lt;iframe&gt;&lt;/code&gt; z elementami, które można wybrać, nie powinno mieć <code>tabindex="-1"</code>. Osadzona zawartość nie będzie dostępna za pomocą klawiatury.',
 
     // Quality assurance
     QA_BAD_LINK: 'Podejrzane łącze. Łącze wydaje się wskazywać środowisko programistyczne. <hr> {L} <strong {C}>%(LINK)</strong>',

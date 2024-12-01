@@ -127,9 +127,7 @@ export default {
       'peržiūrėti mūsų',
       'svetainė',
     ],
-    WARNING_ALT_STOPWORDS: [
-      'spauskite čia',
-    ],
+    CLICK: ['click', 'spustelėkite'],
     NEW_WINDOW_PHRASES: [
       'išorinis',
       'naujas skirtukas',

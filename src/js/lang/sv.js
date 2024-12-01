@@ -108,7 +108,7 @@ export default {
       'visa vår',
       'webbplats',
     ],
-    WARNING_ALT_STOPWORDS: ['klicka här'],
+    CLICK: ['click', 'klicka'],
     NEW_WINDOW_PHRASES: ['extern', 'ny flik', 'nytt fönster', 'pop-up', 'pop up'],
 
     // Only some items in list would need to be translated.

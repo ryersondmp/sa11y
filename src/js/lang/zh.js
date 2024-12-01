@@ -121,9 +121,7 @@ export default {
       '查看我们的',
       '网站',
     ],
-    WARNING_ALT_STOPWORDS: [
-      '点击这里',
-    ],
+    CLICK: ['click', '点击'],
     NEW_WINDOW_PHRASES: [
       '外来的',
       '新标签',

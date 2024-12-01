@@ -131,9 +131,7 @@ export default {
       'bekijk onze',
       'website',
     ],
-    WARNING_ALT_STOPWORDS: [
-      'klik hier',
-    ],
+    CLICK: ['click', 'klik'],
     NEW_WINDOW_PHRASES: [
       'extern',
       'nieuw tabblad',

@@ -109,7 +109,7 @@ export default {
       'view our',
       'website',
     ],
-    WARNING_ALT_STOPWORDS: ['click here'],
+    CLICK: ['click'],
     NEW_WINDOW_PHRASES: ['external', 'new tab', 'new window', 'pop-up', 'pop up'],
     FILE_TYPE_PHRASES: ['document', 'spreadsheet', 'calculation sheet', 'compressed file', 'archived file', 'worksheet', 'powerpoint', 'presentation', 'install', 'video', 'audio', 'pdf'],
 

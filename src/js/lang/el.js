@@ -119,9 +119,7 @@ export default {
       'δείτε το',
       'δικτυακός τόπος',
     ],
-    WARNING_ALT_STOPWORDS: [
-      'κάντε κλικ εδώ',
-    ],
+    CLICK: ['click', 'κλικ'],
     NEW_WINDOW_PHRASES: [
       'εξωτερικό',
       'νέα καρτέλα',

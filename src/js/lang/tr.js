@@ -122,9 +122,7 @@ export default {
       'bizi görüntüleyin',
       'web sitesi',
     ],
-    WARNING_ALT_STOPWORDS: [
-      'buraya tıklayın',
-    ],
+    CLICK: ['click', 'tıklama'],
     NEW_WINDOW_PHRASES: [
       'dış',
       'yeni sekme',

@@ -124,9 +124,7 @@ export default {
       'vizualizați pagina noastră',
       'site',
     ],
-    WARNING_ALT_STOPWORDS: [
-      'click aici',
-    ],
+    CLICK: ['click', 'clic'],
     NEW_WINDOW_PHRASES: [
       'extern',
       'fila nouă',

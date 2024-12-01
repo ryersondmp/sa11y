@@ -126,9 +126,7 @@ export default {
       'se vår',
       'nettsted',
     ],
-    WARNING_ALT_STOPWORDS: [
-      'klikk her',
-    ],
+    CLICK: ['click', 'klikk'],
     NEW_WINDOW_PHRASES: [
       'ekstern',
       'ny fane',

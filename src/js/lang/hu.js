@@ -120,9 +120,7 @@ export default {
       'nézze meg a',
       'weboldal',
     ],
-    WARNING_ALT_STOPWORDS: [
-      'kattintson ide',
-    ],
+    CLICK: ['click', 'kattintás'],
     NEW_WINDOW_PHRASES: [
       'külső',
       'új lap',

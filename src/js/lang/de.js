@@ -126,7 +126,7 @@ export default {
       'view our',
       'website',
     ],
-    WARNING_ALT_STOPWORDS: ['click here', 'hier klicken'],
+    CLICK: ['click', 'klicken'],
     NEW_WINDOW_PHRASES: ['external', 'extern', 'new tab', 'neuer tab', 'new window', 'neues fenster', 'pop-up', 'pop up'],
     FILE_TYPE_PHRASES: ['dokument', 'document', 'spreadsheet', 'tabelle', 'worksheet', 'arbeitsblatt', 'tabellenkalkulation', 'berechnungstabelle', 'komprimierte datei', 'archivierte Datei', 'arbeitsblatt', 'powerpoint', 'präsentation', 'installieren', 'video', 'audio', 'pdf'],
 

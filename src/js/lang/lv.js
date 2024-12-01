@@ -123,9 +123,7 @@ export default {
       'apskatīt mūsu',
       'tīmekļa vietne',
     ],
-    WARNING_ALT_STOPWORDS: [
-      'klikšķiniet šeit',
-    ],
+    CLICK: ['click', 'klikšķis'],
     NEW_WINDOW_PHRASES: [
       'ārējais',
       'jauna cilne',

@@ -104,7 +104,7 @@ export default {
       'consulter notre',
       'site web',
     ],
-    WARNING_ALT_STOPWORDS: ['cliquer ici'],
+    CLICK: ['click', 'cliquer'],
     NEW_WINDOW_PHRASES: ['externe', 'nouvel onglet', 'nouvelle fenêtre', 'fenêtre pop-up', 'pop-up'],
     FILE_TYPE_PHRASES: ['document', 'tableur', 'feuille de calcul', 'feuille de travail', 'fichier compressé', 'fichier archivé', 'feuille de calcul', 'powerpoint', 'présentation', 'installer', 'vidéo', 'audio', 'pdf'],
 

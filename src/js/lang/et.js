@@ -126,9 +126,7 @@ export default {
       'vaadata meie',
       'veebileht',
     ],
-    WARNING_ALT_STOPWORDS: [
-      'kliki siia',
-    ],
+    CLICK: ['click', 'klõps'],
     NEW_WINDOW_PHRASES: [
       'väline',
       'uus vahekaart',

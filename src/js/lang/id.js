@@ -125,9 +125,7 @@ export default {
       'lihat kami',
       'situs web',
     ],
-    WARNING_ALT_STOPWORDS: [
-      'klik di sini',
-    ],
+    CLICK: ['click', 'klik'],
     NEW_WINDOW_PHRASES: [
       'eksternal',
       'tab baru',

@@ -106,7 +106,7 @@ export default {
       'ver nuestro',
       'sitio web',
     ],
-    WARNING_ALT_STOPWORDS: ['clic aquí'],
+    CLICK: ['click', 'clic'],
     NEW_WINDOW_PHRASES: ['externo', 'nueva página', 'nueva ventana', 'ventana emergente'],
     FILE_TYPE_PHRASES: ['documento', 'hoja de cálculo', 'hoja de cálculo', 'archivo comprimido', 'archivo archivado', 'hoja de trabajo', 'powerpoint', 'presentación', 'instalar', 'video', 'audio', 'pdf'],
 

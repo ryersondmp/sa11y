@@ -512,29 +512,8 @@
     </div>
 
   </main>
-
   <footer>No automated unit tests are on this page. Blank slate for testing!</footer>
-  <script src="../../dist/js/sa11y.umd.js"></script>
-  <script src="../../dist/js/lang/en.umd.js"></script>
-  <script>
-    Sa11y.Lang.addI18n(Sa11yLangEn.strings);
-    const sa11y = new Sa11y.Sa11y({
-      checkRoot: 'body',
-      containerIgnore: '.ignore-this, .this-too',
-      developerChecksOnByDefault: false,
-      // autoDetectShadowComponents: true,
-      shadowComponents: '#webcomponent',
-      // contrastAPCA: true,
-      checks: {
-        IMAGE_DECORATIVE_CAROUSEL: {
-          type: 'error',
-        },
-        HEADING_LONG: {
-          type: 'error',
-        }
-      },
-    });
-  </script>
+  <script type="module" src="./script.js"></script>
 </body>
 
 </html>

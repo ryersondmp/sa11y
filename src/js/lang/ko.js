@@ -120,9 +120,7 @@ export default {
       '보기',
       '웹사이트',
     ],
-    WARNING_ALT_STOPWORDS: [
-      '여기를 클릭하세요',
-    ],
+    CLICK: ['click', '클릭'],
     NEW_WINDOW_PHRASES: [
       '외부',
       '새 탭',

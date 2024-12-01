@@ -242,7 +242,8 @@ export default function checkLinkText(results, option) {
             results.push({
               element: $el,
               type: option.checks.LINK_URL.type || 'warning',
-              content: option.checks.LINK_URL.content || Lang.sprintf('LINK_URL') + Lang.sprintf('LINK_TIP'),
+              content: option.checks.LINK_URL.content
+                || Lang.sprintf('LINK_URL') + Lang.sprintf('LINK_TIP'),
               inline: true,
               position: 'beforebegin',
               dismiss: Utils.prepareDismissal(`LINKURLNAME${href + linkTextTrimmed}`),

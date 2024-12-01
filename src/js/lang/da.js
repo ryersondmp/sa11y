@@ -121,9 +121,7 @@ export default {
       'se vores',
       'hjemmeside',
     ],
-    WARNING_ALT_STOPWORDS: [
-      'klik her',
-    ],
+    CLICK: ['click', 'klik'],
     NEW_WINDOW_PHRASES: [
       'ekstern',
       'ny fane',

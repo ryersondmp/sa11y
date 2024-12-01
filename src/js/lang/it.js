@@ -124,9 +124,7 @@ export default {
       'vedere il nostro',
       'sito web',
     ],
-    WARNING_ALT_STOPWORDS: [
-      'clicca qui',
-    ],
+    CLICK: ['click', 'clic'],
     NEW_WINDOW_PHRASES: [
       'esterno',
       'nuova scheda',

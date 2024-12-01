@@ -117,9 +117,7 @@ export default {
       'katso meidän',
       'verkkosivusto',
     ],
-    WARNING_ALT_STOPWORDS: [
-      'klikkaa tästä',
-    ],
+    CLICK: ['click', 'napsauta'],
     NEW_WINDOW_PHRASES: [
       'ulkoinen',
       'uusi välilehti',

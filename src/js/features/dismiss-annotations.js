@@ -82,7 +82,8 @@ const dismissIssueButton = async (e, results, checkAll, resetAll) => {
     // Update dismiss array.
     if (issue.dismiss) {
       // If dismiss all selected, then indicate so within dismiss object.
-      const dismissAllSelected = dismissButton.hasAttribute('data-sa11y-dismiss-all') ? issue.dismissAll : '';
+      const dismissAllSelected = dismissButton.hasAttribute('data-sa11y-dismiss-all')
+        ? issue.dismissAll : '';
       // Dismissal object.
       const dismissalDetails = {
         key: issue.dismiss,

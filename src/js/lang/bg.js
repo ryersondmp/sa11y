@@ -120,9 +120,7 @@ export default {
       'разгледайте нашите',
       'уебсайт',
     ],
-    WARNING_ALT_STOPWORDS: [
-      'Кликнете тук',
-    ],
+    CLICK: ['click', 'щракване'],
     NEW_WINDOW_PHRASES: [
       'външен',
       'нов раздел',

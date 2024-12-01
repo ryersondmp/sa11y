@@ -131,9 +131,7 @@ export default {
       '私たちを見る',
       'ウェブサイト',
     ],
-    WARNING_ALT_STOPWORDS: [
-      'ここをクリック',
-    ],
+    CLICK: ['click', 'クリック'],
     NEW_WINDOW_PHRASES: [
       '外形的',
       'ニュータブ',
