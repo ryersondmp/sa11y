@@ -99,6 +99,11 @@ kbd,
   background: var(--sa11y-yellow-text) !important;
 }
 
+.good-contrast {
+  color: var(--sa11y-good-text) !important;
+  background: var(--sa11y-good) !important;
+}
+
 /* ***************************************** */
 /*            Contrast related               */
 /* ***************************************** */

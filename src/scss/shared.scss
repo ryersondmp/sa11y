@@ -105,6 +105,10 @@ kbd,
   }
 }
 
+.good-contrast {
+  color: var(--sa11y-good-text) !important;
+  background: var(--sa11y-good) !important;
+}
 
 /* ***************************************** */
 /*            Contrast related               */

@@ -415,10 +415,10 @@ export function generateContrastTools(contrastDetails) {
       <hr aria-hidden="true">
       <div id="contrast" class="badge">${Lang._('CONTRAST')}</div>
       <div id="value" class="badge">${displayedRatio}</div>
-      <div id="non-text" class="badge good-badge" hidden>${Lang._('NON_TEXT')}</div>
-      <div id="large-text" class="badge good-badge" hidden>${Lang._('LARGE_TEXT')}</div>
-      <div id="body-text" class="badge good-badge" hidden>${Lang._('BODY_TEXT')}</div>
-      <div id="apca" class="badge good-badge" hidden>${Lang._('GOOD')}</div>
+      <div id="non-text" class="badge good-contrast" hidden>${Lang._('NON_TEXT')}</div>
+      <div id="large-text" class="badge good-contrast" hidden>${Lang._('LARGE_TEXT')}</div>
+      <div id="body-text" class="badge good-contrast" hidden>${Lang._('BODY_TEXT')}</div>
+      <div id="apca" class="badge good-contrast" hidden>${Lang._('GOOD')}</div>
       <div id="apca-table" hidden></div>
       <div id="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};${sanitizedText.length ? '' : 'display: none;'}` : ''}${hasFontWeight + hasFontSize + textDecoration}">${sanitizedText}</div>
       <div id="color-pickers">
@@ -495,7 +495,7 @@ export function initializeContrastTools(container, contrastDetails) {
     // Helper to update badge classes.
     const toggleBadges = (elements, condition) => {
       elements.forEach(($el) => {
-        $el.classList.toggle('good-badge', condition);
+        $el.classList.toggle('good-contrast', condition);
         $el.classList.toggle('error-badge', !condition);
       });
     };
