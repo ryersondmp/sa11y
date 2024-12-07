@@ -648,7 +648,7 @@ hr {
 }
 
 /* **************************************** */
-/*    11. Page & Image Outline extras       */
+/*    11. Various icons                     */
 /* **************************************** */
 .error-icon {
   margin-bottom: -4px;
@@ -687,6 +687,14 @@ hr {
 
 .warning-badge .link-icon,
 .warning-badge .hidden-icon {
+  background: var(--sa11y-panel-bg);
+}
+
+.error .link-icon {
+  background: var(--sa11y-error-text);
+}
+
+.warning .link-icon {
   background: var(--sa11y-panel-bg);
 }
 

@@ -542,12 +542,12 @@ export function isScrollable(scrollArea, container, ariaLabel) {
  * @returns {string} - The best available source URL.
  */
 export function getBestImageSource(element) {
-  const dataSrc = element.getAttribute('data-src') || element.getAttribute('srcset');
-  if (dataSrc && dataSrc.length > 3) return dataSrc;
-  const picture = element.closest('picture');
-  const source = picture?.querySelector('source[srcset]')?.getAttribute('srcset');
-  const lastSrc = source?.split(',').pop()?.trim();
-  if (lastSrc) return lastSrc.split(/\s+/)[0];
+  const getLastSrc = (src) => src?.split(',').pop()?.trim()?.split(/\s+/)[0];
+  const dataSrc = getLastSrc(element.getAttribute('data-src') || element.getAttribute('srcset'));
+  if (dataSrc) return dataSrc;
+  const picture = element.closest('picture')?.querySelector('source[srcset]')?.getAttribute('srcset');
+  const pictureSrc = getLastSrc(picture);
+  if (pictureSrc) return pictureSrc;
   return element.getAttribute('src');
 }
 

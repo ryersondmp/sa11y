@@ -709,7 +709,7 @@ hr {
 }
 
 /* **************************************** */
-/*    11. Page & Image Outline extras       */
+/*    11. Various icons                     */
 /* **************************************** */
 @mixin icon($background, $mask) {
   display: inline-block;
@@ -742,6 +742,18 @@ hr {
 .warning-badge .link-icon,
 .warning-badge .hidden-icon {
   background: var(--sa11y-panel-bg);
+}
+
+.error {
+  .link-icon {
+    background: var(--sa11y-error-text);
+  }
+}
+
+.warning {
+  .link-icon {
+    background: var(--sa11y-panel-bg);
+  }
 }
 
 @media screen and (forced-colors: active) {

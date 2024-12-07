@@ -169,8 +169,13 @@ class Sa11y {
         if (option.contrastPlugin) checkContrast(this.results, option);
         if (option.readabilityPlugin) checkReadability();
 
-        // Flagged issues that are images, for the purpose of generating Image Outline.
-        this.imageResults = this.results.filter((issue) => issue.element?.tagName === 'IMG');
+        // Get all images from results object for Image Outline.
+        this.imageResults = this.results.filter((issue, index, self) => {
+          const tagName = issue.element?.tagName;
+          const outerHTML = issue.element?.outerHTML;
+          // Filter out duplicates based element's HTML.
+          return tagName === 'IMG' && self.findIndex((other) => other.element?.outerHTML === outerHTML) === index;
+        });
 
         /* Custom checks */
         if (option.customChecks === true) {
