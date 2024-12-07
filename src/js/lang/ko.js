@@ -157,7 +157,7 @@ export default {
     // Headings
     HEADING_SKIPPED_LEVEL: '제목은 레벨을 건너뛰거나 <strong>제목 %(PREV_LEVEL)</strong>에서 <strong {C}>제목 %(LEVEL)</strong>로 이동하지 않아야 합니다. 이는 콘텐츠의 순서와 계층을 방해하여 따라가기가 어려워집니다. <hr> <strong {C}>%(HEADING)</strong>이(가) <strong>%(PREV_HEADING)</strong> 섹션에 속한다면, 대신 <strong>제목 %(LEVEL)</strong>으로 포맷하는 것을 고려하세요.',
     HEADING_EMPTY: '빈 제목이 발견되었습니다! 수정하려면 이 줄을 삭제하거나 형식을 <strong {C}>헤딩 %(level)</strong>에서 <strong>일반</strong> 또는 <strong>단락</strong>으로 변경하세요.',
-    HEADING_LONG: '제목이 길어요! 제목은 콘텐츠를 구성하고 구조를 전달하는 데 사용해야 합니다. 제목은 간결하고 유익하며 독창적이어야 합니다. 제목은 160자 이내(한 문장 이하)로 유지하세요. <hr> <strong {B}>%(HEADING_LENGTH) 문자</strong>',
+    HEADING_LONG: '제목이 길어요! 제목은 콘텐츠를 구성하고 구조를 전달하는 데 사용해야 합니다. 제목은 간결하고 유익하며 독창적이어야 합니다. 제목은 %(MAX_LENGTH)자 이내(한 문장 이하)로 유지하세요. <hr> <strong {B}>%(HEADING_LENGTH) 문자</strong>',
     HEADING_FIRST: '페이지의 첫 번째 제목은 일반적으로 제목 1 또는 제목 2여야 합니다. 제목 1은 주요 콘텐츠 섹션의 시작 부분이어야 하며 페이지의 전반적인 목적을 설명하는 주요 제목입니다. <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">헤딩 구조에 대해 자세히 알아보기.</a>',
     HEADING_MISSING_ONE: '제목 1이 누락되었습니다. 제목 1은 주요 콘텐츠 영역의 시작 부분이어야 하며 페이지의 전반적인 목적을 설명하는 기본 제목입니다. <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">헤딩 구조에 대해 자세히 알아보기.</a>',
     HEADING_EMPTY_WITH_IMAGE: '제목에 텍스트가 없지만 이미지가 포함되어 있습니다. 제목이 아닌 경우 형식을 <strong {C}>제목 %(level)</strong>에서 <strong>일반</strong> 또는 <strong>단락</strong>으로 변경합니다. 그렇지 않으면 장식용 이미지가 아닌 경우 이미지에 대체 텍스트를 추가하세요.',

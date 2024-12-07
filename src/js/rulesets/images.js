@@ -92,7 +92,7 @@ export default function checkImages(results, option) {
             || Lang.sprintf('HIDDEN_FOCUSABLE'),
           inline: false,
           position: 'beforebegin',
-          dismiss: Utils.prepareDismissal(`IMAGEHIDDENFOCUSABLE${src}`),
+          dismiss: Utils.prepareDismissal(`IMGHIDDENFOCUSABLE${src}`),
           dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll
             ? 'LINK_HIDDEN_FOCUSABLE' : false,
           developer: option.checks.HIDDEN_FOCUSABLE.developer || true,
@@ -117,7 +117,7 @@ export default function checkImages(results, option) {
               ? 'MISSING_ALT_LINK' : 'MISSING_ALT_LINK_HAS_TEXT'),
             inline: false,
             position: 'beforebegin',
-            dismiss: Utils.prepareDismissal(`LINKIMAGENOALT${src + linkTextContentLength}`),
+            dismiss: Utils.prepareDismissal(`${conditional + src + linkTextContentLength}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
@@ -130,7 +130,7 @@ export default function checkImages(results, option) {
           content: option.checks.MISSING_ALT.content || Lang.sprintf('MISSING_ALT'),
           inline: false,
           position: 'beforebegin',
-          dismiss: Utils.prepareDismissal(`IMAGENOALT${src}`),
+          dismiss: Utils.prepareDismissal(`IMGNOALT${src}`),
           dismissAll: option.checks.MISSING_ALT.dismissAll ? 'MISSING_ALT' : false,
           developer: option.checks.MISSING_ALT.developer || false,
         });
@@ -149,6 +149,10 @@ export default function checkImages(results, option) {
       const figcaption = figure?.querySelector('figcaption');
       const figcaptionText = (figcaption) ? figcaption.textContent.trim() : '';
 
+      // Maximum alt text length
+      const maxAltCharactersLinks = option.checks.LINK_IMAGE_LONG_ALT.maxLength || 250;
+      const maxAltCharacters = option.checks.IMAGE_ALT_TOO_LONG.maxLength || 250;
+
       // If aria-label or aria-labelledby returns empty or invalid.
       if (hasAria && altText === '') {
         if (option.checks.MISSING_ALT) {
@@ -158,7 +162,7 @@ export default function checkImages(results, option) {
             content: option.checks.MISSING_ALT.content || Lang.sprintf('MISSING_ALT'),
             inline: false,
             position: 'beforebegin',
-            dismiss: Utils.prepareDismissal(`IMAGENOALT${src}`),
+            dismiss: Utils.prepareDismissal(`IMGNOALTARIA${src}`),
             dismissAll: option.checks.MISSING_ALT.dismissAll ? 'MISSING_ALT' : false,
             developer: option.checks.MISSING_ALT.developer || false,
           });
@@ -195,7 +199,7 @@ export default function checkImages(results, option) {
               content: rule.content || Lang.sprintf(conditional),
               inline: false,
               position: 'beforebegin',
-              dismiss: Utils.prepareDismissal(`IMAGETEXT${src + linkTextContentLength}`),
+              dismiss: Utils.prepareDismissal(`${conditional + src + linkTextContentLength}`),
               dismissAll: rule.dismissAll ? conditional : false,
               developer: rule.developer || false,
             });
@@ -213,7 +217,7 @@ export default function checkImages(results, option) {
               content: rule.content || Lang.sprintf(conditional),
               inline: false,
               position: 'beforebegin',
-              dismiss: Utils.prepareDismissal(`FIG${src + figcaptionText}`),
+              dismiss: Utils.prepareDismissal(`${conditional + src + figcaptionText}`),
               dismissAll: rule.dismissAll ? conditional : false,
               developer: rule.developer || false,
             });
@@ -248,7 +252,7 @@ export default function checkImages(results, option) {
               ? 'LINK_ALT_FILE_EXT' : 'ALT_FILE_EXT', error[0], altText),
             inline: false,
             position: 'beforebegin',
-            dismiss: Utils.prepareDismissal(`IMAGEEXT${src + altText}`),
+            dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
@@ -267,7 +271,7 @@ export default function checkImages(results, option) {
               ? 'LINK_PLACEHOLDER_ALT' : 'ALT_PLACEHOLDER', altText),
             inline: false,
             position: 'beforebegin',
-            dismiss: Utils.prepareDismissal(`ALTPLACEHOLDER${src + altText}`),
+            dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
@@ -286,14 +290,14 @@ export default function checkImages(results, option) {
               ? 'LINK_SUS_ALT' : 'SUS_ALT', error[1], altText),
             inline: false,
             position: 'beforebegin',
-            dismiss: Utils.prepareDismissal(`SUSALT${src + altText}`),
+            dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
         }
       } else if (link
-        ? alt.length > (option.checks.LINK_IMAGE_LONG_ALT.maxLength || 250)
-        : alt.length > (option.checks.IMAGE_ALT_TOO_LONG.maxLength || 250)) {
+        ? alt.length > maxAltCharactersLinks
+        : alt.length > maxAltCharacters) {
         // Alt is too long.
         const rule = (link)
           ? option.checks.LINK_IMAGE_LONG_ALT
@@ -304,11 +308,11 @@ export default function checkImages(results, option) {
           results.push({
             element: $el,
             type: rule.type || 'warning',
-            content: rule.content || Lang.sprintf(link
-              ? 'LINK_IMAGE_LONG_ALT' : 'IMAGE_ALT_TOO_LONG', alt.length, truncated),
+            content: rule.content
+              || Lang.sprintf(link ? 'LINK_IMAGE_LONG_ALT' : 'IMAGE_ALT_TOO_LONG', alt.length, truncated),
             inline: false,
             position: 'beforebegin',
-            dismiss: Utils.prepareDismissal(`ALTLONG${src + altText}`),
+            dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
@@ -335,7 +339,7 @@ export default function checkImages(results, option) {
             content: rule.content || tooltip,
             inline: false,
             position: 'beforebegin',
-            dismiss: Utils.prepareDismissal(`IMAGELINK${src + altText}`),
+            dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
@@ -364,7 +368,7 @@ export default function checkImages(results, option) {
             content: option.checks.IMAGE_PASS.content || Lang.sprintf('IMAGE_PASS', altText),
             inline: false,
             position: 'beforebegin',
-            dismiss: Utils.prepareDismissal(`IMAGEPASS${src + altText}`),
+            dismiss: Utils.prepareDismissal(`FIGIMGPASS${src + altText}`),
             dismissAll: option.checks.IMAGE_PASS.dismissAll ? 'IMAGE_PASS' : false,
             developer: option.checks.IMAGE_PASS.developer || false,
           });

@@ -13,14 +13,8 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
     const outlineArray = [];
 
     // Find all dismissed headings and update headingOutline array.
-    const findDismissedHeadings = dismissed.map((e) => {
-      const found = headingOutline.find((f) => (e.key.includes(f.dismiss) && e.href === window.location.pathname));
-      if (found === undefined) return '';
-      return found;
-    });
-    findDismissedHeadings.forEach(($el) => {
-      Object.assign($el, { dismissedHeading: true });
-    });
+    const findDismissedHeadings = dismissed.map((e) => headingOutline.find((f) => e.key === f.dismiss && e.href === window.location.pathname)).filter(Boolean);
+    findDismissedHeadings.forEach(($el) => Object.assign($el, { dismissedHeading: true }));
 
     // Show meta page title in Page Outline.
     if (option.showTitleInPageOutline) {

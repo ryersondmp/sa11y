@@ -1178,7 +1178,7 @@ function generateSelectorPath(element) {
  * @link https://hidde.blog/using-javascript-to-trap-focus-in-an-element/
 */
 function trapFocus(element) {
-  const focusable = element.querySelectorAll('a[href]:not([disabled]), button:not([disabled])');
+  const focusable = element.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), input[type="color"]');
   const firstFocusable = focusable[0];
   const lastFocusable = focusable[focusable.length - 1];
   element.addEventListener('keydown', (e) => {
@@ -1328,6 +1328,21 @@ function isScrollable(scrollArea, container, ariaLabel) {
 }
 
 /**
+ * Get the best image source from an element, considering data-src, srcset, and src attributes.
+ * @param {HTMLElement} element - The image element to extract the source from.
+ * @returns {string} - The best available source URL.
+ */
+function getBestImageSource(element) {
+  const dataSrc = element.getAttribute('data-src') || element.getAttribute('srcset');
+  if (dataSrc && dataSrc.length > 3) return dataSrc;
+  const picture = element.closest('picture');
+  const source = picture?.querySelector('source[srcset]')?.getAttribute('srcset');
+  const lastSrc = source?.split(',').pop()?.trim();
+  if (lastSrc) return lastSrc.split(/\s+/)[0];
+  return element.getAttribute('src');
+}
+
+/**
  * Generate an HTML preview for an issue if it's an image, iframe, audio or video element. Otherwise, return escaped HTML within <code> tags. Used for Skip to Issue panel alerts and HTML page export.
  * @param {Object} issueObject The issue object.
  * @returns {html} Returns HTML.
@@ -1358,13 +1373,9 @@ function generateElementPreview(issueObject) {
     IMG: (element) => {
       const anchor = element.closest('a[href]');
       const alt = element.alt ? `alt="${sanitizeHTML(element.alt)}"` : 'alt';
-      const imgSrc = element.src;
+      const source = getBestImageSource(element);
 
-      // Account for lazy loading libraries that use 'data-src' attribute.
-      const dataSrc = element.getAttribute('data-src');
-      const source = (dataSrc && dataSrc.length > 3) ? dataSrc : imgSrc;
-
-      if (imgSrc) {
+      if (source) {
         return anchor
           ? `<a href="${sanitizeURL(anchor.href)}" rel="noopener noreferrer"><img src="${sanitizeURL(source)}" ${alt}/></a>`
           : `<img src="${sanitizeURL(source)}" ${alt}/>`;
@@ -1639,13 +1650,7 @@ function dismissLogic(results, dismissTooltip) {
   const allDismissed = results.filter((issue) => dismissedIssues.some((dismissed) => dismissAll(issue, dismissed)));
 
   // Combine all dismissed results and filter out duplicates.
-  const dismissedResults = [
-    ...new Map(
-      [...soloDismissed, ...allDismissed]
-        .filter((issue) => issue?.id)
-        .map((issue) => [issue.id, issue]),
-    ).values(),
-  ];
+  const dismissedResults = [...soloDismissed, ...allDismissed];
   const dismissCount = dismissedResults.length;
 
   // Update results array (exclude dismissed and dismissed all checks).
@@ -2085,7 +2090,7 @@ const version = '4.0.0';
 
 var styles = ":host{background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);bottom:0;display:block;height:-moz-fit-content;height:fit-content;left:0;position:fixed;right:0;width:100%;z-index:999999}*{-webkit-font-smoothing:auto!important;color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;font-size:var(--sa11y-normal-text);line-height:22px!important}#dialog{margin:20px auto;max-width:900px;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none}p{margin-top:0}.error{background:var(--sa11y-error);border:2px dashed #f08080;color:var(--sa11y-error-text);margin-bottom:0;padding:5px}";
 
-var sharedStyles = ".visually-hidden{clip:rect(1px,1px,1px,1px);border:0;clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}[hidden]{display:none!important}.header-text,.header-text-inline,h2{color:var(--sa11y-panel-primary);display:block;font-size:var(--sa11y-large-text);font-weight:600;margin-bottom:3px}.header-text-inline{display:inline-block!important}code{font-family:monospace!important;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:600}.kbd,code,kbd{background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);padding:1.6px 4.8px}.bold{font-weight:600}.error .colour,.red-text{color:var(--sa11y-red-text);font-family:var(--sa11y-font-face)}.warning .colour,.yellow-text{color:var(--sa11y-yellow-text);font-family:var(--sa11y-font-face)}.badge,.normal-badge{background-color:var(--sa11y-panel-badge);border-radius:10px;color:var(--sa11y-panel-primary);display:inline;font-size:14px;font-weight:700!important;line-height:1;min-width:10px;outline:1px solid transparent;padding:1px 5px 1.75px;text-align:center;vertical-align:baseline;white-space:nowrap}.error .badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.error-badge{background:var(--sa11y-error)!important;color:var(--sa11y-error-text)!important}.warning .badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.warning-badge{background:var(--sa11y-yellow-text)!important;color:var(--sa11y-panel-bg)!important}.good-contrast{background:var(--sa11y-good)!important;color:var(--sa11y-good-text)!important}#contrast-preview{background-color:#e8e8e8;background-image:linear-gradient(45deg,#ccc 25%,transparent 0,transparent 75%,#ccc 0,#ccc),linear-gradient(45deg,#ccc 25%,transparent 0,transparent 75%,#ccc 0,#ccc);background-position:0 0,5px 5px;background-size:10px 10px;border:2px dashed var(--sa11y-panel-bg-splitter);border-radius:3.2px;line-height:1;margin-top:10px;max-height:100px;overflow:clip;overflow-wrap:break-word;padding:5px}#color-pickers{display:flex;justify-content:space-between;margin-bottom:10px;margin-top:10px}#color-pickers label{align-items:center;display:flex}#color-pickers input{margin-inline-start:7px}input[type=color i]{background:var(--sa11y-panel-bg-secondary);block-size:30px;border-color:var(--sa11y-button-outline);border-radius:50%;border-style:solid;border-width:1px;inline-size:30px;padding:2px}input[type=color i]::-webkit-color-swatch-wrapper{padding:1px}input[type=color i]::-webkit-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i]::-moz-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i].unknown:after{align-items:center;color:#fff;content:\"?\";display:flex;font-size:18px;height:25px;justify-content:center;margin:-24px 0;pointer-events:none;position:absolute;width:25px;z-index:2}.close-btn{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;color:var(--sa11y-panel-primary);cursor:pointer;float:var(--sa11y-float-rtl);font-size:var(--sa11y-normal-text);font-weight:400;height:32px;margin:0;position:relative;transition:all .2s ease-in-out;width:32px}.close-btn:focus,.close-btn:hover{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{background:var(--sa11y-setting-switch-bg-off);bottom:-7px;content:\"\";left:-7px;-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute;right:-7px;top:-7px}@media screen and (forced-colors:active){.close-btn:after{filter:invert(1)}}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:not(#panel-controls button):not(.switch):focus,#container input:focus,#container select:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus,#container .switch:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus:not(:focus-visible),#container [tabindex=\"-1\"]:focus:not(:focus-visible),#container [tabindex=\"0\"]:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container input:focus:not(:focus-visible),#container select:focus:not(:focus-visible){box-shadow:none;outline:0}#container [tabindex=\"-1\"]:focus-visible,#container [tabindex=\"0\"]:focus-visible,#container a:focus-visible,#container button:not(#panel-controls button):not(.switch):focus-visible,#container input:focus-visible,#container select:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus-visible,#container .switch:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#panel-controls button:focus{border:3px solid transparent}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container select:focus,.close-btn:focus{outline:3px solid transparent!important}}";
+var sharedStyles = ".visually-hidden{clip:rect(1px,1px,1px,1px);border:0;clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}[hidden]{display:none!important}.header-text,.header-text-inline,h2{color:var(--sa11y-panel-primary);display:block;font-size:var(--sa11y-large-text);font-weight:600;margin-bottom:3px}.header-text-inline{display:inline-block!important}code{font-family:monospace!important;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:600}.kbd,code,kbd{background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);padding:1.6px 4.8px}.bold{font-weight:600}.error .colour,.red-text{color:var(--sa11y-red-text);font-family:var(--sa11y-font-face)}.warning .colour,.yellow-text{color:var(--sa11y-yellow-text);font-family:var(--sa11y-font-face)}.badge,.normal-badge{background-color:var(--sa11y-panel-badge);border-radius:10px;color:var(--sa11y-panel-primary);display:inline;font-size:14px;font-weight:700!important;line-height:1;min-width:10px;outline:1px solid transparent;padding:1px 5px 1.75px;text-align:center;vertical-align:baseline;white-space:nowrap}.error .badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.error-badge{background:var(--sa11y-error)!important;color:var(--sa11y-error-text)!important}.warning .badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.warning-badge{background:var(--sa11y-yellow-text)!important;color:var(--sa11y-panel-bg)!important}.good-contrast{background:var(--sa11y-good)!important;color:var(--sa11y-good-text)!important}#contrast-preview{background-color:#e8e8e8;background-image:linear-gradient(45deg,#ccc 25%,transparent 0,transparent 75%,#ccc 0,#ccc),linear-gradient(45deg,#ccc 25%,transparent 0,transparent 75%,#ccc 0,#ccc);background-position:0 0,5px 5px;background-size:10px 10px;border:2px dashed var(--sa11y-panel-bg-splitter);border-radius:3.2px;line-height:1;margin-top:10px;max-height:100px;overflow:clip;overflow-wrap:break-word;padding:5px}#color-pickers{display:flex;justify-content:space-between;margin-bottom:10px;margin-top:10px}#color-pickers label{align-items:center;display:flex}#color-pickers input{margin-inline-start:7px}input[type=color i]{background:var(--sa11y-panel-bg-secondary);block-size:30px;border-color:var(--sa11y-button-outline);border-radius:50%;border-style:solid;border-width:1px;inline-size:30px;padding:2px}input[type=color i]::-webkit-color-swatch-wrapper{padding:1px}input[type=color i]::-webkit-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i]::-moz-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i].unknown:after{align-items:center;color:#fff;content:\"?\";display:flex;font-size:18px;height:24px;justify-content:center;margin:-24px 0;pointer-events:none;position:absolute;width:24px;z-index:2}.close-btn{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;color:var(--sa11y-panel-primary);cursor:pointer;float:var(--sa11y-float-rtl);font-size:var(--sa11y-normal-text);font-weight:400;height:32px;margin:0;position:relative;transition:all .2s ease-in-out;width:32px}.close-btn:focus,.close-btn:hover{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{background:var(--sa11y-setting-switch-bg-off);bottom:-7px;content:\"\";left:-7px;-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute;right:-7px;top:-7px}@media screen and (forced-colors:active){.close-btn:after{filter:invert(1)}}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:not(#panel-controls button):not(.switch):focus,#container input:focus,#container select:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus,#container .switch:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus:not(:focus-visible),#container [tabindex=\"-1\"]:focus:not(:focus-visible),#container [tabindex=\"0\"]:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container input:focus:not(:focus-visible),#container select:focus:not(:focus-visible){box-shadow:none;outline:0}#container [tabindex=\"-1\"]:focus-visible,#container [tabindex=\"0\"]:focus-visible,#container a:focus-visible,#container button:not(#panel-controls button):not(.switch):focus-visible,#container input:focus-visible,#container select:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus-visible,#container .switch:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#panel-controls button:focus{border:3px solid transparent}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container select:focus,.close-btn:focus{outline:3px solid transparent!important}}";
 
 class ConsoleErrors extends HTMLElement {
   constructor(error) {
@@ -2801,14 +2806,8 @@ function generatePageOutline(dismissed, headingOutline, option) {
     const outlineArray = [];
 
     // Find all dismissed headings and update headingOutline array.
-    const findDismissedHeadings = dismissed.map((e) => {
-      const found = headingOutline.find((f) => (e.key.includes(f.dismiss) && e.href === window.location.pathname));
-      if (found === undefined) return '';
-      return found;
-    });
-    findDismissedHeadings.forEach(($el) => {
-      Object.assign($el, { dismissedHeading: true });
-    });
+    const findDismissedHeadings = dismissed.map((e) => headingOutline.find((f) => e.key === f.dismiss && e.href === window.location.pathname)).filter(Boolean);
+    findDismissedHeadings.forEach(($el) => Object.assign($el, { dismissedHeading: true }));
 
     // Show meta page title in Page Outline.
     if (option.showTitleInPageOutline) {
@@ -3075,21 +3074,17 @@ function generateImageOutline(dismissed, imageResults) {
   };
 
   const imageOutlineHandler = () => {
-    // Create a single array that gets appended to heading outline.
     const imageArray = [];
 
-    // Find all dismissed images and update headingOutline array.
-    const findDismissedImages = dismissed.map((e) => {
-      const found = imageResults.find((f) => (e.key.includes(f.dismiss) && e.href === window.location.pathname));
-      if (found === undefined) return '';
-      return found;
-    });
-
-    findDismissedImages.forEach(($el) => {
-      Object.assign($el, { dismissedImage: true });
-    });
+    // Find all dismissed images.
+    const findDismissedImages = dismissed.map((e) => imageResults.find((f) => e.key === f.dismiss && e.href === window.location.pathname)).filter(Boolean);
 
     imageResults.forEach((image) => {
+      // Filter out dismissed images.
+      const isDismissed = findDismissedImages.some((dismissedImage) => dismissedImage.element.outerHTML.toLowerCase() === image.element.outerHTML.toLowerCase());
+      if (isDismissed) Object.assign(image, { dismissedImage: true });
+
+      // Get image object's properties.
       const issue = image.type;
       const developerCheck = image.developer;
       const { dismissedImage } = image;
@@ -3099,10 +3094,8 @@ function generateImageOutline(dismissed, imageResults) {
       const devChecksOff = store.getItem('sa11y-developer') === 'Off' || store.getItem('sa11y-developer') === null;
       const showDeveloperChecks = devChecksOff && (issue === 'error' || issue === 'warning') && developerCheck === true;
 
-      // Account for lazy loading libraries that use 'data-src' attribute.
-      const { src } = image.element;
-      const dataSrc = image.element.getAttribute('data-src');
-      const source = (dataSrc && dataSrc.length > 3) ? dataSrc : src;
+      // Account for lazy loading libraries.
+      const source = getBestImageSource(image.element);
 
       // Generate edit link if locally hosted image and prop is enabled.
       const edit = generateEditLink(image);
@@ -7315,11 +7308,21 @@ function generateContrastTools(contrastDetails) {
   const hasBackgroundColor = background && background !== 'image';
   const backgroundHex = hasBackgroundColor ? getHex(background) : '#000000';
   const foregroundHex = color ? getHex(color) : '#000000';
-  const unknownFG = color ? '' : 'class="unknown"';
-  const unknownBG = background && background !== 'image' ? '' : 'class="unknown"';
+
+  // Other properties.
   const hasFontWeight = fontWeight ? `font-weight:${fontWeight};` : '';
   const hasFontSize = fontSize ? `font-size:${fontSize}px;` : '';
   const textDecoration = `text-decoration:${textUnderline}`;
+
+  // If colour or background colour is unknown; visually indicate so.
+  const unknownFG = color
+    ? '' : 'class="unknown"';
+  const unknownBG = background && background !== 'image'
+    ? '' : 'class="unknown"';
+  const unknownFGText = color
+    ? '' : `<span class="visually-hidden">(${Lang._('UNKNOWN')})</span>`;
+  const unknownBGText = background
+    ? '' : `<span class="visually-hidden">(${Lang._('UNKNOWN')})</span>`;
 
   // Ratio to be displayed.
   let displayedRatio;
@@ -7345,10 +7348,10 @@ function generateContrastTools(contrastDetails) {
       <div id="apca-table" hidden></div>
       <div id="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};${sanitizedText.length ? '' : 'display: none;'}` : ''}${hasFontWeight + hasFontSize + textDecoration}">${sanitizedText}</div>
       <div id="color-pickers">
-        <label for="fg-text">${Lang._('FG')}
+        <label for="fg-text">${Lang._('FG')} ${unknownFGText}
           <input type="color" id="fg-input" value="${foregroundHex}" ${unknownFG}/>
         </label>
-        <label for="bg">${Lang._('BG')}
+        <label for="bg">${Lang._('BG')} ${unknownBGText}
           <input type="color" id="bg-input" value="${backgroundHex}" ${unknownBG}/>
         </label>
       </div>`;
@@ -8240,7 +8243,7 @@ function checkImages(results, option) {
             || Lang.sprintf('HIDDEN_FOCUSABLE'),
           inline: false,
           position: 'beforebegin',
-          dismiss: prepareDismissal(`IMAGEHIDDENFOCUSABLE${src}`),
+          dismiss: prepareDismissal(`IMGHIDDENFOCUSABLE${src}`),
           dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll
             ? 'LINK_HIDDEN_FOCUSABLE' : false,
           developer: option.checks.HIDDEN_FOCUSABLE.developer || true,
@@ -8265,7 +8268,7 @@ function checkImages(results, option) {
               ? 'MISSING_ALT_LINK' : 'MISSING_ALT_LINK_HAS_TEXT'),
             inline: false,
             position: 'beforebegin',
-            dismiss: prepareDismissal(`LINKIMAGENOALT${src + linkTextContentLength}`),
+            dismiss: prepareDismissal(`${conditional + src + linkTextContentLength}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
@@ -8278,7 +8281,7 @@ function checkImages(results, option) {
           content: option.checks.MISSING_ALT.content || Lang.sprintf('MISSING_ALT'),
           inline: false,
           position: 'beforebegin',
-          dismiss: prepareDismissal(`IMAGENOALT${src}`),
+          dismiss: prepareDismissal(`IMGNOALT${src}`),
           dismissAll: option.checks.MISSING_ALT.dismissAll ? 'MISSING_ALT' : false,
           developer: option.checks.MISSING_ALT.developer || false,
         });
@@ -8297,6 +8300,10 @@ function checkImages(results, option) {
       const figcaption = figure?.querySelector('figcaption');
       const figcaptionText = (figcaption) ? figcaption.textContent.trim() : '';
 
+      // Maximum alt text length
+      const maxAltCharactersLinks = option.checks.LINK_IMAGE_LONG_ALT.maxLength || 250;
+      const maxAltCharacters = option.checks.IMAGE_ALT_TOO_LONG.maxLength || 250;
+
       // If aria-label or aria-labelledby returns empty or invalid.
       if (hasAria && altText === '') {
         if (option.checks.MISSING_ALT) {
@@ -8306,7 +8313,7 @@ function checkImages(results, option) {
             content: option.checks.MISSING_ALT.content || Lang.sprintf('MISSING_ALT'),
             inline: false,
             position: 'beforebegin',
-            dismiss: prepareDismissal(`IMAGENOALT${src}`),
+            dismiss: prepareDismissal(`IMGNOALTARIA${src}`),
             dismissAll: option.checks.MISSING_ALT.dismissAll ? 'MISSING_ALT' : false,
             developer: option.checks.MISSING_ALT.developer || false,
           });
@@ -8343,7 +8350,7 @@ function checkImages(results, option) {
               content: rule.content || Lang.sprintf(conditional),
               inline: false,
               position: 'beforebegin',
-              dismiss: prepareDismissal(`IMAGETEXT${src + linkTextContentLength}`),
+              dismiss: prepareDismissal(`${conditional + src + linkTextContentLength}`),
               dismissAll: rule.dismissAll ? conditional : false,
               developer: rule.developer || false,
             });
@@ -8361,7 +8368,7 @@ function checkImages(results, option) {
               content: rule.content || Lang.sprintf(conditional),
               inline: false,
               position: 'beforebegin',
-              dismiss: prepareDismissal(`FIG${src + figcaptionText}`),
+              dismiss: prepareDismissal(`${conditional + src + figcaptionText}`),
               dismissAll: rule.dismissAll ? conditional : false,
               developer: rule.developer || false,
             });
@@ -8396,7 +8403,7 @@ function checkImages(results, option) {
               ? 'LINK_ALT_FILE_EXT' : 'ALT_FILE_EXT', error[0], altText),
             inline: false,
             position: 'beforebegin',
-            dismiss: prepareDismissal(`IMAGEEXT${src + altText}`),
+            dismiss: prepareDismissal(`${conditional + src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
@@ -8415,7 +8422,7 @@ function checkImages(results, option) {
               ? 'LINK_PLACEHOLDER_ALT' : 'ALT_PLACEHOLDER', altText),
             inline: false,
             position: 'beforebegin',
-            dismiss: prepareDismissal(`ALTPLACEHOLDER${src + altText}`),
+            dismiss: prepareDismissal(`${conditional + src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
@@ -8434,14 +8441,14 @@ function checkImages(results, option) {
               ? 'LINK_SUS_ALT' : 'SUS_ALT', error[1], altText),
             inline: false,
             position: 'beforebegin',
-            dismiss: prepareDismissal(`SUSALT${src + altText}`),
+            dismiss: prepareDismissal(`${conditional + src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
         }
       } else if (link
-        ? alt.length > (option.checks.LINK_IMAGE_LONG_ALT.maxLength || 250)
-        : alt.length > (option.checks.IMAGE_ALT_TOO_LONG.maxLength || 250)) {
+        ? alt.length > maxAltCharactersLinks
+        : alt.length > maxAltCharacters) {
         // Alt is too long.
         const rule = (link)
           ? option.checks.LINK_IMAGE_LONG_ALT
@@ -8452,11 +8459,11 @@ function checkImages(results, option) {
           results.push({
             element: $el,
             type: rule.type || 'warning',
-            content: rule.content || Lang.sprintf(link
-              ? 'LINK_IMAGE_LONG_ALT' : 'IMAGE_ALT_TOO_LONG', alt.length, truncated),
+            content: rule.content
+              || Lang.sprintf(link ? 'LINK_IMAGE_LONG_ALT' : 'IMAGE_ALT_TOO_LONG', alt.length, truncated),
             inline: false,
             position: 'beforebegin',
-            dismiss: prepareDismissal(`ALTLONG${src + altText}`),
+            dismiss: prepareDismissal(`${conditional + src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
@@ -8483,7 +8490,7 @@ function checkImages(results, option) {
             content: rule.content || tooltip,
             inline: false,
             position: 'beforebegin',
-            dismiss: prepareDismissal(`IMAGELINK${src + altText}`),
+            dismiss: prepareDismissal(`${conditional + src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
@@ -8512,7 +8519,7 @@ function checkImages(results, option) {
             content: option.checks.IMAGE_PASS.content || Lang.sprintf('IMAGE_PASS', altText),
             inline: false,
             position: 'beforebegin',
-            dismiss: prepareDismissal(`IMAGEPASS${src + altText}`),
+            dismiss: prepareDismissal(`FIGIMGPASS${src + altText}`),
             dismissAll: option.checks.IMAGE_PASS.dismissAll ? 'IMAGE_PASS' : false,
             developer: option.checks.IMAGE_PASS.developer || false,
           });
@@ -8573,6 +8580,7 @@ function checkHeaders(results, option, headingOutline) {
     // Determine heading level.
     const level = parseInt($el.getAttribute('aria-level') || $el.tagName.slice(1), 10);
     const headingLength = headingText.length;
+    const maxHeadingLength = option.checks.HEADING_LONG.maxLength || 160;
 
     // Default.
     let type = null;
@@ -8613,10 +8621,11 @@ function checkHeaders(results, option, headingOutline) {
         developer = option.checks.HEADING_FIRST.developer || false;
         dismissAll = option.checks.HEADING_FIRST.dismissAll ? 'HEADING_FIRST' : false;
       }
-    } else if (headingLength > (option.checks.HEADING_LONG.maxLength || 170)) {
+    } else if (headingLength > maxHeadingLength) {
       if (option.checks.HEADING_LONG) {
         type = option.checks.HEADING_LONG.type || 'warning';
-        content = option.checks.HEADING_LONG.content || Lang.sprintf('HEADING_LONG', headingLength);
+        content = option.checks.HEADING_LONG.content
+          || Lang.sprintf('HEADING_LONG', maxHeadingLength, headingLength);
         developer = option.checks.HEADING_LONG.developer || false;
         dismissAll = option.checks.HEADING_LONG.dismissAll ? 'HEADING_LONG' : false;
       }
@@ -8630,7 +8639,7 @@ function checkHeaders(results, option, headingOutline) {
         content,
         inline: false,
         position: 'beforebegin',
-        dismiss: prepareDismissal(`HEADING${level + headingText}`),
+        dismiss: prepareDismissal(`H${level + headingText}`),
         dismissAll,
         isWithinRoot,
         developer,
@@ -8654,7 +8663,7 @@ function checkHeaders(results, option, headingOutline) {
       type,
       hidden: hiddenHeading,
       visibleParent: parent,
-      dismiss: prepareDismissal(`HEADING${level + headingText}`),
+      dismiss: prepareDismissal(`H${level + headingText}`),
       isWithinRoot,
     });
   });
@@ -9170,6 +9179,12 @@ function checkContrast(results, option) {
   Elements.Found.Svg.forEach(($el) => {
     const background = getBackground($el);
 
+    // Background image.
+    if (background && background === 'image') {
+      contrastResults.push({ $el, type: 'svg-warning', background });
+      return;
+    }
+
     // Handle SVGs with <text> element
     if ($el.querySelector('text')) {
       contrastResults.push({ $el, type: 'svg-text', background });
@@ -9250,10 +9265,14 @@ function checkContrast(results, option) {
       const pWeight = normalizeFontWeight(placeholder.fontWeight);
       const pBackground = getBackground($el);
       const pOpacity = parseFloat(placeholder.opacity);
-      const result = checkElementContrast($el, pColor, pBackground, pSize, pWeight, pOpacity);
-      if (result) {
-        result.type = 'placeholder';
-        contrastResults.push(result);
+
+      // Placeholder has background image.
+      if (pBackground === 'image') ; else {
+        const result = checkElementContrast($el, pColor, pBackground, pSize, pWeight, pOpacity);
+        if (result) {
+          result.type = 'placeholder';
+          contrastResults.push(result);
+        }
       }
     }
   });
@@ -9326,7 +9345,7 @@ function checkContrast(results, option) {
 
     // Preview text
     let previewText;
-    if (item.type === 'placeholder' && $el.placeholder) {
+    if (item.type === 'placeholder') {
       previewText = sanitizeHTML($el.placeholder);
     } else if (item.type === 'svg-error' || item.type === 'svg-warning' || item.type === 'svg-text') {
       const sanitizeSvg = sanitizeHTMLBlock(updatedItem.$el.outerHTML, true);

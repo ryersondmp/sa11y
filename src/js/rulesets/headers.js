@@ -23,6 +23,7 @@ export default function checkHeaders(results, option, headingOutline) {
     // Determine heading level.
     const level = parseInt($el.getAttribute('aria-level') || $el.tagName.slice(1), 10);
     const headingLength = headingText.length;
+    const maxHeadingLength = option.checks.HEADING_LONG.maxLength || 160;
 
     // Default.
     let type = null;
@@ -63,10 +64,11 @@ export default function checkHeaders(results, option, headingOutline) {
         developer = option.checks.HEADING_FIRST.developer || false;
         dismissAll = option.checks.HEADING_FIRST.dismissAll ? 'HEADING_FIRST' : false;
       }
-    } else if (headingLength > (option.checks.HEADING_LONG.maxLength || 170)) {
+    } else if (headingLength > maxHeadingLength) {
       if (option.checks.HEADING_LONG) {
         type = option.checks.HEADING_LONG.type || 'warning';
-        content = option.checks.HEADING_LONG.content || Lang.sprintf('HEADING_LONG', headingLength);
+        content = option.checks.HEADING_LONG.content
+          || Lang.sprintf('HEADING_LONG', maxHeadingLength, headingLength);
         developer = option.checks.HEADING_LONG.developer || false;
         dismissAll = option.checks.HEADING_LONG.dismissAll ? 'HEADING_LONG' : false;
       }
@@ -80,7 +82,7 @@ export default function checkHeaders(results, option, headingOutline) {
         content,
         inline: false,
         position: 'beforebegin',
-        dismiss: Utils.prepareDismissal(`HEADING${level + headingText}`),
+        dismiss: Utils.prepareDismissal(`H${level + headingText}`),
         dismissAll,
         isWithinRoot,
         developer,
@@ -104,7 +106,7 @@ export default function checkHeaders(results, option, headingOutline) {
       type,
       hidden: hiddenHeading,
       visibleParent: parent,
-      dismiss: Utils.prepareDismissal(`HEADING${level + headingText}`),
+      dismiss: Utils.prepareDismissal(`H${level + headingText}`),
       isWithinRoot,
     });
   });

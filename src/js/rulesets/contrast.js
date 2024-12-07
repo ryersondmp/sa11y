@@ -85,6 +85,12 @@ export default function checkContrast(results, option) {
   Elements.Found.Svg.forEach(($el) => {
     const background = Contrast.getBackground($el);
 
+    // Background image.
+    if (background && background === 'image') {
+      contrastResults.push({ $el, type: 'svg-warning', background });
+      return;
+    }
+
     // Handle SVGs with <text> element
     if ($el.querySelector('text')) {
       contrastResults.push({ $el, type: 'svg-text', background });
@@ -165,10 +171,16 @@ export default function checkContrast(results, option) {
       const pWeight = Contrast.normalizeFontWeight(placeholder.fontWeight);
       const pBackground = Contrast.getBackground($el);
       const pOpacity = parseFloat(placeholder.opacity);
-      const result = Contrast.checkElementContrast($el, pColor, pBackground, pSize, pWeight, pOpacity);
-      if (result) {
-        result.type = 'placeholder';
-        contrastResults.push(result);
+
+      // Placeholder has background image.
+      if (pBackground === 'image') {
+        // There will already be a warning.
+      } else {
+        const result = Contrast.checkElementContrast($el, pColor, pBackground, pSize, pWeight, pOpacity);
+        if (result) {
+          result.type = 'placeholder';
+          contrastResults.push(result);
+        }
       }
     }
   });
@@ -241,7 +253,7 @@ export default function checkContrast(results, option) {
 
     // Preview text
     let previewText;
-    if (item.type === 'placeholder' && $el.placeholder) {
+    if (item.type === 'placeholder') {
       previewText = Utils.sanitizeHTML($el.placeholder);
     } else if (item.type === 'svg-error' || item.type === 'svg-warning' || item.type === 'svg-text') {
       const sanitizeSvg = Utils.sanitizeHTMLBlock(updatedItem.$el.outerHTML, true);

@@ -392,11 +392,21 @@ export function generateContrastTools(contrastDetails) {
   const hasBackgroundColor = background && background !== 'image';
   const backgroundHex = hasBackgroundColor ? getHex(background) : '#000000';
   const foregroundHex = color ? getHex(color) : '#000000';
-  const unknownFG = color ? '' : 'class="unknown"';
-  const unknownBG = background && background !== 'image' ? '' : 'class="unknown"';
+
+  // Other properties.
   const hasFontWeight = fontWeight ? `font-weight:${fontWeight};` : '';
   const hasFontSize = fontSize ? `font-size:${fontSize}px;` : '';
   const textDecoration = `text-decoration:${textUnderline}`;
+
+  // If colour or background colour is unknown; visually indicate so.
+  const unknownFG = color
+    ? '' : 'class="unknown"';
+  const unknownBG = background && background !== 'image'
+    ? '' : 'class="unknown"';
+  const unknownFGText = color
+    ? '' : `<span class="visually-hidden">(${Lang._('UNKNOWN')})</span>`;
+  const unknownBGText = background
+    ? '' : `<span class="visually-hidden">(${Lang._('UNKNOWN')})</span>`;
 
   // Ratio to be displayed.
   let displayedRatio;
@@ -422,10 +432,10 @@ export function generateContrastTools(contrastDetails) {
       <div id="apca-table" hidden></div>
       <div id="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};${sanitizedText.length ? '' : 'display: none;'}` : ''}${hasFontWeight + hasFontSize + textDecoration}">${sanitizedText}</div>
       <div id="color-pickers">
-        <label for="fg-text">${Lang._('FG')}
+        <label for="fg-text">${Lang._('FG')} ${unknownFGText}
           <input type="color" id="fg-input" value="${foregroundHex}" ${unknownFG}/>
         </label>
-        <label for="bg">${Lang._('BG')}
+        <label for="bg">${Lang._('BG')} ${unknownBGText}
           <input type="color" id="bg-input" value="${backgroundHex}" ${unknownBG}/>
         </label>
       </div>`;

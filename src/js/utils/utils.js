@@ -387,7 +387,7 @@ export function generateSelectorPath(element) {
  * @link https://hidde.blog/using-javascript-to-trap-focus-in-an-element/
 */
 export function trapFocus(element) {
-  const focusable = element.querySelectorAll('a[href]:not([disabled]), button:not([disabled])');
+  const focusable = element.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), input[type="color"]');
   const firstFocusable = focusable[0];
   const lastFocusable = focusable[focusable.length - 1];
   element.addEventListener('keydown', (e) => {
@@ -537,6 +537,21 @@ export function isScrollable(scrollArea, container, ariaLabel) {
 }
 
 /**
+ * Get the best image source from an element, considering data-src, srcset, and src attributes.
+ * @param {HTMLElement} element - The image element to extract the source from.
+ * @returns {string} - The best available source URL.
+ */
+export function getBestImageSource(element) {
+  const dataSrc = element.getAttribute('data-src') || element.getAttribute('srcset');
+  if (dataSrc && dataSrc.length > 3) return dataSrc;
+  const picture = element.closest('picture');
+  const source = picture?.querySelector('source[srcset]')?.getAttribute('srcset');
+  const lastSrc = source?.split(',').pop()?.trim();
+  if (lastSrc) return lastSrc.split(/\s+/)[0];
+  return element.getAttribute('src');
+}
+
+/**
  * Generate an HTML preview for an issue if it's an image, iframe, audio or video element. Otherwise, return escaped HTML within <code> tags. Used for Skip to Issue panel alerts and HTML page export.
  * @param {Object} issueObject The issue object.
  * @returns {html} Returns HTML.
@@ -567,13 +582,9 @@ export function generateElementPreview(issueObject) {
     IMG: (element) => {
       const anchor = element.closest('a[href]');
       const alt = element.alt ? `alt="${sanitizeHTML(element.alt)}"` : 'alt';
-      const imgSrc = element.src;
+      const source = getBestImageSource(element);
 
-      // Account for lazy loading libraries that use 'data-src' attribute.
-      const dataSrc = element.getAttribute('data-src');
-      const source = (dataSrc && dataSrc.length > 3) ? dataSrc : imgSrc;
-
-      if (imgSrc) {
+      if (source) {
         return anchor
           ? `<a href="${sanitizeURL(anchor.href)}" rel="noopener noreferrer"><img src="${sanitizeURL(source)}" ${alt}/></a>`
           : `<img src="${sanitizeURL(source)}" ${alt}/>`;

@@ -167,7 +167,7 @@ var ja = {
     // Headings
     HEADING_SKIPPED_LEVEL: '見出しはレベルを飛ばしたり、<strong>見出し %(PREV_LEVEL)</strong> から <strong {C}>見出し %(LEVEL)</strong> へジャンプしたりしてはいけません。これによりコンテンツの順序と階層が乱れ、読みづらくなります。 <hr> <strong {C}>%(HEADING)</strong> が <strong>%(PREV_HEADING)</strong> セクションに該当する場合は、代わりに <strong>見出し %(LEVEL)</strong> としてフォーマットすることを検討してください。',
     HEADING_EMPTY: '空の見出しが見つかりました！修正するには、この行を削除するか、その形式を<strong {C}>見出し%(level)</strong>から<strong>通常</strong>または<strong>段落</strong>に変更してください。',
-    HEADING_LONG: '見出しが長すぎます！見出しはコンテンツを整理し、構造を伝えるために使用されます。簡潔で情報量があり、他と区別される必要があります。見出しは160文字未満に保つようにしてください（1文を超えないでください）。<hr> <strong {B}>%(HEADING_LENGTH) 文字</strong>',
+    HEADING_LONG: '見出しが長すぎます！見出しはコンテンツを整理し、構造を伝えるために使用されます。簡潔で情報量があり、他と区別される必要があります。見出しは%(MAX_LENGTH)文字未満に保つようにしてください（1文を超えないでください）。<hr> <strong {B}>%(HEADING_LENGTH) 文字</strong>',
     HEADING_FIRST: 'ページの最初の見出しは通常、見出し1または見出し2にする必要があります。見出し1はメインコンテンツセクションの開始であり、ページ全体の目的を説明する主要な見出しです。<a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">見出しの構造</a>について詳しくはこちら。',
     HEADING_MISSING_ONE: '見出し1がありません。見出し1はメインコンテンツ領域の開始であり、ページ全体の目的を説明する主要な見出しです。<a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">見出しの構造</a>について詳しくはこちら。',
     HEADING_EMPTY_WITH_IMAGE: '見出しにテキストがありませんが、画像が含まれています。これが見出しでない場合は、その形式を<strong {C}>見出し%(level)</strong>から<strong>通常</strong>または<strong>段落</strong>に変更してください。それ以外の場合は、画像に装飾的でない alt テキストを追加してください。',
