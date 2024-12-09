@@ -29,7 +29,7 @@ export function annotate(issue, option) {
     type,
     content,
     inline = false,
-    position,
+    position = 'beforebegin',
     id,
     dismiss,
     dismissAll,

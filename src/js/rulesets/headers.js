@@ -80,8 +80,6 @@ export default function checkHeaders(results, option, headingOutline) {
         element: $el,
         type,
         content,
-        inline: false,
-        position: 'beforebegin',
         dismiss: Utils.prepareDismissal(`H${level + headingText}`),
         dismissAll,
         isWithinRoot,

@@ -29,9 +29,6 @@ export default function checkLabels(results, option) {
         return;
       }
 
-      // Create dismiss key.
-      const key = Utils.prepareDismissal(`INPUT${type + inputName}`);
-
       // Error: Input with type="image" without accessible name or alt.
       if (type === 'image') {
         if (option.checks.LABELS_MISSING_IMAGE_INPUT && (!alt || alt.trim() === '') && !hasAria && !hasTitle) {
@@ -39,9 +36,7 @@ export default function checkLabels(results, option) {
             element: $el,
             type: option.checks.LABELS_MISSING_IMAGE_INPUT.type || 'error',
             content: option.checks.LABELS_MISSING_IMAGE_INPUT.content || Lang.sprintf('LABELS_MISSING_IMAGE_INPUT'),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
+            dismiss: Utils.prepareDismissal(`INPUTIMAGE${type + inputName}`),
             dismissAll: option.checks.LABELS_MISSING_IMAGE_INPUT.dismissAll ? 'LABELS_MISSING_IMAGE_INPUT' : false,
             developer: option.checks.LABELS_MISSING_IMAGE_INPUT.developer || true,
           });
@@ -56,9 +51,7 @@ export default function checkLabels(results, option) {
             element: $el,
             type: option.checks.LABELS_INPUT_RESET.type || 'warning',
             content: option.checks.LABELS_INPUT_RESET.content || Lang.sprintf('LABELS_INPUT_RESET'),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
+            dismiss: Utils.prepareDismissal(`INPUTRESET${type + inputName}`),
             dismissAll: option.checks.LABELS_INPUT_RESET.dismissAll ? 'LABELS_INPUT_RESET' : false,
             developer: option.checks.LABELS_INPUT_RESET.developer || false,
           });
@@ -74,9 +67,7 @@ export default function checkLabels(results, option) {
               element: $el,
               type: option.checks.LABELS_MISSING_LABEL.type || 'error',
               content: option.checks.LABELS_MISSING_LABEL.content || Lang.sprintf('LABELS_MISSING_LABEL'),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: key,
+              dismiss: Utils.prepareDismissal(`INPUTMISSING${type + inputName}`),
               dismissAll: option.checks.LABELS_MISSING_LABEL.dismissAll ? 'LABELS_MISSING_LABEL' : false,
               developer: option.checks.LABELS_MISSING_LABEL.developer || true,
             });
@@ -87,9 +78,7 @@ export default function checkLabels(results, option) {
             element: $el,
             type: option.checks.LABELS_ARIA_LABEL_INPUT.type || 'warning',
             content: option.checks.LABELS_ARIA_LABEL_INPUT.content || `${Lang.sprintf('LABELS_ARIA_LABEL_INPUT', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
+            dismiss: Utils.prepareDismissal(`INPUTARIA${type + inputName}`),
             dismissAll: option.checks.LABELS_ARIA_LABEL_INPUT.dismissAll ? 'LABELS_ARIA_LABEL_INPUT' : false,
             developer: option.checks.LABELS_ARIA_LABEL_INPUT.developer || true,
           });
@@ -114,9 +103,7 @@ export default function checkLabels(results, option) {
               element: $el,
               type: option.checks.LABELS_NO_FOR_ATTRIBUTE.type || 'error',
               content: option.checks.LABELS_NO_FOR_ATTRIBUTE.content || Lang.sprintf('LABELS_NO_FOR_ATTRIBUTE', id),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: key,
+              dismiss: Utils.prepareDismissal(`INPUTNOFOR${type + inputName}`),
               dismissAll: option.checks.LABELS_NO_FOR_ATTRIBUTE.dismissAll ? 'LABELS_NO_FOR_ATTRIBUTE' : false,
               developer: option.checks.LABELS_NO_FOR_ATTRIBUTE.developer || true,
             });
@@ -128,9 +115,7 @@ export default function checkLabels(results, option) {
           element: $el,
           type: option.checks.LABELS_MISSING_LABEL.type || 'error',
           content: option.checks.LABELS_MISSING_LABEL.content || Lang.sprintf('LABELS_MISSING_LABEL'),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: key,
+          dismiss: Utils.prepareDismissal(`INPUTNOID${type + inputName}`),
           dismissAll: option.checks.LABELS_MISSING_LABEL.dismissAll ? 'LABELS_MISSING_LABEL' : false,
           developer: option.checks.LABELS_MISSING_LABEL.developer || true,
         });
@@ -142,9 +127,7 @@ export default function checkLabels(results, option) {
           element: $el,
           type: option.checks.LABELS_PLACEHOLDER.type || 'warning',
           content: option.checks.LABELS_PLACEHOLDER.content || Lang.sprintf('LABELS_PLACEHOLDER'),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: key,
+          dismiss: Utils.prepareDismissal(`INPUTPLACEHOLDER${type + inputName}`),
           dismissAll: option.checks.LABELS_PLACEHOLDER.dismissAll ? 'LABELS_PLACEHOLDER' : false,
           developer: option.checks.LABELS_PLACEHOLDER.developer || true,
         });

@@ -1568,7 +1568,7 @@
     };
   }());
 
-  var styles$1 = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-clone-image-text]{display:none!important}[data-sa11y-readability-period]{clip:rect(1px,1px,1px,1px)!important;border:0!important;clip-path:inset(50%)!important;display:block!important;height:1px!important;overflow:hidden!important;padding:0!important;position:absolute!important;white-space:nowrap!important;width:1px!important}[data-sa11y-error]{outline:5px solid var(--sa11y-error)!important}[data-sa11y-warning]{outline:5px solid var(--sa11y-warning)!important}[data-sa11y-good]{outline:5px solid var(--sa11y-good)!important}[data-sa11y-error-inline]{background-color:var(--sa11y-error)!important;box-shadow:0 0 0 4px var(--sa11y-error)!important;color:var(--sa11y-error-text)!important}[data-sa11y-error-inline],[data-sa11y-warning-inline]{border-color:transparent!important;border-radius:.25em!important}[data-sa11y-warning-inline]{background-color:var(--sa11y-warning)!important;box-shadow:0 0 0 4px var(--sa11y-warning)!important;color:var(--sa11y-warning-text)!important}[data-sa11y-pulse-border]{animation:pulse 2s 3;box-shadow:0;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:focus,[data-sa11y-pulse-border]:hover{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color)}70%{box-shadow:0 0 0 12px var(--sa11y-pulse-color)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}@media (forced-colors:active){[data-sa11y-error-inline],[data-sa11y-error],[data-sa11y-good],[data-sa11y-pulse-border],[data-sa11y-warning-inline],[data-sa11y-warning]{forced-color-adjust:none}}";
+  var styles$1 = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-clone-image-text]{display:none!important}[data-sa11y-readability-period]{clip:rect(1px,1px,1px,1px)!important;border:0!important;clip-path:inset(50%)!important;display:block!important;height:1px!important;overflow:hidden!important;padding:0!important;position:absolute!important;white-space:nowrap!important;width:1px!important}[data-sa11y-error-inline],[data-sa11y-error]{outline:5px solid var(--sa11y-error)!important;outline-offset:2px}[data-sa11y-warning-inline],[data-sa11y-warning]{outline:5px solid var(--sa11y-warning)!important;outline-offset:2px}[data-sa11y-pulse-border]{animation:pulse 2s 3;box-shadow:0;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:focus,[data-sa11y-pulse-border]:hover{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color)}70%{box-shadow:0 0 0 12px var(--sa11y-pulse-color)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}@media (forced-colors:active){[data-sa11y-error-inline],[data-sa11y-error],[data-sa11y-good],[data-sa11y-pulse-border],[data-sa11y-warning-inline],[data-sa11y-warning]{forced-color-adjust:none}}";
 
   /* ************************************************************ */
   /*  Auto-detect shadow DOM or process provided web components.  */
@@ -7828,7 +7828,7 @@ ${this.error.stack}
       type,
       content,
       inline = false,
-      position,
+      position = 'beforebegin',
       id,
       dismiss,
       dismissAll,
@@ -8247,8 +8247,6 @@ ${this.error.stack}
             type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
             content: option.checks.HIDDEN_FOCUSABLE.content
               || Lang.sprintf('HIDDEN_FOCUSABLE'),
-            inline: false,
-            position: 'beforebegin',
             dismiss: prepareDismissal(`IMGHIDDENFOCUSABLE${src}`),
             dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll
               ? 'LINK_HIDDEN_FOCUSABLE' : false,
@@ -8272,8 +8270,6 @@ ${this.error.stack}
               type: rule.type || 'error',
               content: rule.content || Lang.sprintf(linkTextContentLength === 0
                 ? 'MISSING_ALT_LINK' : 'MISSING_ALT_LINK_HAS_TEXT'),
-              inline: false,
-              position: 'beforebegin',
               dismiss: prepareDismissal(`${conditional + src + linkTextContentLength}`),
               dismissAll: rule.dismissAll ? conditional : false,
               developer: rule.developer || false,
@@ -8285,8 +8281,6 @@ ${this.error.stack}
             element: $el,
             type: option.checks.MISSING_ALT.type || 'error',
             content: option.checks.MISSING_ALT.content || Lang.sprintf('MISSING_ALT'),
-            inline: false,
-            position: 'beforebegin',
             dismiss: prepareDismissal(`IMGNOALT${src}`),
             dismissAll: option.checks.MISSING_ALT.dismissAll ? 'MISSING_ALT' : false,
             developer: option.checks.MISSING_ALT.developer || false,
@@ -8317,8 +8311,6 @@ ${this.error.stack}
               element: $el,
               type: option.checks.MISSING_ALT.type || 'error',
               content: option.checks.MISSING_ALT.content || Lang.sprintf('MISSING_ALT'),
-              inline: false,
-              position: 'beforebegin',
               dismiss: prepareDismissal(`IMGNOALTARIA${src}`),
               dismissAll: option.checks.MISSING_ALT.dismissAll ? 'MISSING_ALT' : false,
               developer: option.checks.MISSING_ALT.developer || false,
@@ -8336,8 +8328,6 @@ ${this.error.stack}
               type: option.checks.IMAGE_DECORATIVE_CAROUSEL.type || 'warning',
               content: option.checks.IMAGE_DECORATIVE_CAROUSEL.content
                 || Lang.sprintf('IMAGE_DECORATIVE_CAROUSEL'),
-              inline: false,
-              position: 'beforebegin',
               dismiss: prepareDismissal(`CAROUSEL${src}`),
               dismissAll: option.checks.IMAGE_DECORATIVE_CAROUSEL.dismissAll
                 ? 'IMAGE_DECORATIVE_CAROUSEL' : false,
@@ -8354,8 +8344,6 @@ ${this.error.stack}
                 element: $el,
                 type: rule.type || (linkTextContentLength === 0 ? 'error' : 'good'),
                 content: rule.content || Lang.sprintf(conditional),
-                inline: false,
-                position: 'beforebegin',
                 dismiss: prepareDismissal(`${conditional + src + linkTextContentLength}`),
                 dismissAll: rule.dismissAll ? conditional : false,
                 developer: rule.developer || false,
@@ -8372,8 +8360,6 @@ ${this.error.stack}
                 element: $el,
                 type: rule.type || 'warning',
                 content: rule.content || Lang.sprintf(conditional),
-                inline: false,
-                position: 'beforebegin',
                 dismiss: prepareDismissal(`${conditional + src + figcaptionText}`),
                 dismissAll: rule.dismissAll ? conditional : false,
                 developer: rule.developer || false,
@@ -8384,8 +8370,6 @@ ${this.error.stack}
               element: $el,
               type: option.checks.IMAGE_DECORATIVE.type || 'warning',
               content: option.checks.IMAGE_DECORATIVE.content || Lang.sprintf('IMAGE_DECORATIVE'),
-              inline: false,
-              position: 'beforebegin',
               dismiss: prepareDismissal(`DECIMAGE${src}`),
               dismissAll: option.checks.IMAGE_DECORATIVE.dismissAll ? 'IMAGE_DECORATIVE' : false,
               developer: option.checks.IMAGE_DECORATIVE.developer || false,
@@ -8407,8 +8391,6 @@ ${this.error.stack}
               type: rule.type || 'error',
               content: rule.content || Lang.sprintf(link
                 ? 'LINK_ALT_FILE_EXT' : 'ALT_FILE_EXT', error[0], altText),
-              inline: false,
-              position: 'beforebegin',
               dismiss: prepareDismissal(`${conditional + src + altText}`),
               dismissAll: rule.dismissAll ? conditional : false,
               developer: rule.developer || false,
@@ -8426,8 +8408,6 @@ ${this.error.stack}
               type: rule.type || 'error',
               content: rule.content || Lang.sprintf(link
                 ? 'LINK_PLACEHOLDER_ALT' : 'ALT_PLACEHOLDER', altText),
-              inline: false,
-              position: 'beforebegin',
               dismiss: prepareDismissal(`${conditional + src + altText}`),
               dismissAll: rule.dismissAll ? conditional : false,
               developer: rule.developer || false,
@@ -8445,8 +8425,6 @@ ${this.error.stack}
               type: rule.type || 'warning',
               content: rule.content || Lang.sprintf(link
                 ? 'LINK_SUS_ALT' : 'SUS_ALT', error[1], altText),
-              inline: false,
-              position: 'beforebegin',
               dismiss: prepareDismissal(`${conditional + src + altText}`),
               dismissAll: rule.dismissAll ? conditional : false,
               developer: rule.developer || false,
@@ -8467,8 +8445,6 @@ ${this.error.stack}
               type: rule.type || 'warning',
               content: rule.content
                 || Lang.sprintf(link ? 'LINK_IMAGE_LONG_ALT' : 'IMAGE_ALT_TOO_LONG', alt.length, truncated),
-              inline: false,
-              position: 'beforebegin',
               dismiss: prepareDismissal(`${conditional + src + altText}`),
               dismissAll: rule.dismissAll ? conditional : false,
               developer: rule.developer || false,
@@ -8494,8 +8470,6 @@ ${this.error.stack}
               element: $el,
               type: rule.type || 'warning',
               content: rule.content || tooltip,
-              inline: false,
-              position: 'beforebegin',
               dismiss: prepareDismissal(`${conditional + src + altText}`),
               dismissAll: rule.dismissAll ? conditional : false,
               developer: rule.developer || false,
@@ -8510,8 +8484,6 @@ ${this.error.stack}
                 element: $el,
                 type: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.type || 'warning',
                 content: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.content || Lang.sprintf('IMAGE_FIGURE_DUPLICATE_ALT', altText),
-                inline: false,
-                position: 'beforebegin',
                 dismiss: prepareDismissal(`FIGDUPLICATE${src}`),
                 dismissAll: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.dismissAll ? 'IMAGE_FIGURE_DUPLICATE_ALT' : false,
                 developer: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.developer || false,
@@ -8523,8 +8495,6 @@ ${this.error.stack}
               element: $el,
               type: option.checks.IMAGE_PASS.type || 'good',
               content: option.checks.IMAGE_PASS.content || Lang.sprintf('IMAGE_PASS', altText),
-              inline: false,
-              position: 'beforebegin',
               dismiss: prepareDismissal(`FIGIMGPASS${src + altText}`),
               dismissAll: option.checks.IMAGE_PASS.dismissAll ? 'IMAGE_PASS' : false,
               developer: option.checks.IMAGE_PASS.developer || false,
@@ -8537,8 +8507,6 @@ ${this.error.stack}
               element: $el,
               type: option.checks.IMAGE_PASS.type || 'good',
               content: option.checks.IMAGE_PASS.content || Lang.sprintf('IMAGE_PASS', altText),
-              inline: false,
-              position: 'beforebegin',
               dismiss: prepareDismissal(`IMAGEPASS${src + altText}`),
               dismissAll: option.checks.IMAGE_PASS.dismissAll ? 'IMAGE_PASS' : false,
               developer: option.checks.IMAGE_PASS.developer || false,
@@ -8555,7 +8523,6 @@ ${this.error.stack}
               type: option.checks.DUPLICATE_TITLE.type || 'warning',
               content: option.checks.DUPLICATE_TITLE.content || Lang.sprintf('DUPLICATE_TITLE'),
               inline: true,
-              position: 'beforebegin',
               dismiss: prepareDismissal(`ALTDUPLICATETITLE${altText}`),
               dismissAll: option.checks.DUPLICATE_TITLE.dismissAll ? 'DUPLICATE_TITLE' : false,
               developer: option.checks.DUPLICATE_TITLE.developer || false,
@@ -8643,8 +8610,6 @@ ${this.error.stack}
           element: $el,
           type,
           content,
-          inline: false,
-          position: 'beforebegin',
           dismiss: prepareDismissal(`H${level + headingText}`),
           dismissAll,
           isWithinRoot,
@@ -8910,7 +8875,6 @@ ${this.error.stack}
                 type: option.checks.LINK_DOI.type || 'warning',
                 content: option.checks.LINK_DOI.content || Lang.sprintf('LINK_DOI'),
                 inline: true,
-                position: 'beforebegin',
                 dismiss: prepareDismissal(`LINKDOI${href + linkTextTrimmed}`),
                 dismissAll: option.checks.LINK_DOI.dismissAll ? 'LINK_DOI' : false,
                 developer: option.checks.LINK_DOI.developer || false,
@@ -8927,7 +8891,6 @@ ${this.error.stack}
                 content: option.checks.LINK_URL.content
                   || Lang.sprintf('LINK_URL') + Lang.sprintf('LINK_TIP'),
                 inline: true,
-                position: 'beforebegin',
                 dismiss: prepareDismissal(`LINKURLNAME${href + linkTextTrimmed}`),
                 dismissAll: option.checks.LINK_URL.dismissAll ? 'LINK_URL' : false,
                 developer: option.checks.LINK_URL.developer || false,
@@ -8951,7 +8914,6 @@ ${this.error.stack}
               content: option.checks.LINK_STOPWORD_ARIA.content
                 || Lang.sprintf('LINK_STOPWORD_ARIA', stopword, sanitizedText) + Lang.sprintf('LINK_TIP'),
               inline: true,
-              position: 'beforebegin',
               dismiss: prepareDismissal(`LINKSTOPWORDARIA${href + linkTextTrimmed}`),
               dismissAll: option.checks.LINK_STOPWORD_ARIA.dismissAll ? ' LINK_STOPWORD_ARIA' : false,
               developer: option.checks.LINK_STOPWORD_ARIA.developer || false,
@@ -8992,7 +8954,6 @@ ${this.error.stack}
               type: option.checks.LINK_SYMBOLS.type || 'warning',
               content: option.checks.LINK_SYMBOLS.content || Lang.sprintf('LINK_SYMBOLS', matchedSymbol),
               inline: true,
-              position: 'beforebegin',
               dismiss: prepareDismissal(`LINKSYMBOL${href + linkTextTrimmed}`),
               dismissAll: option.checks.LINK_SYMBOLS.dismissAll ? 'LINK_SYMBOLS' : false,
               developer: option.checks.LINK_SYMBOLS.developer || false,
@@ -9023,7 +8984,6 @@ ${this.error.stack}
               content: option.checks.LINK_CLICK_HERE.content
                 || Lang.sprintf('LINK_CLICK_HERE') + Lang.sprintf('LINK_TIP'),
               inline: true,
-              position: 'beforebegin',
               dismiss: prepareDismissal(`LINKCLICKHERE${href + linkTextTrimmed}`),
               dismissAll: option.checks.LINK_CLICK_HERE.dismissAll ? 'LINK_CLICK_HERE' : false,
               developer: option.checks.LINK_CLICK_HERE.developer || false,
@@ -9039,7 +8999,6 @@ ${this.error.stack}
               type: option.checks.DUPLICATE_TITLE.type || 'warning',
               content: option.checks.DUPLICATE_TITLE.content || Lang.sprintf('DUPLICATE_TITLE'),
               inline: true,
-              position: 'beforebegin',
               dismiss: prepareDismissal(`LINKDUPLICATETITLE${href + linkTextTrimmed}`),
               dismissAll: option.checks.DUPLICATE_TITLE.dismissAll ? 'DUPLICATE_TITLE' : false,
               developer: option.checks.DUPLICATE_TITLE.developer || false,
@@ -9057,9 +9016,9 @@ ${this.error.stack}
               results.push({
                 element: $el,
                 type: option.checks.LINK_IDENTICAL_NAME.type || 'warning',
-                content: option.checks.LINK_IDENTICAL_NAME.content || `${Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
+                content: option.checks.LINK_IDENTICAL_NAME.content
+                  || `${Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
                 inline: true,
-                position: 'beforebegin',
                 dismiss: prepareDismissal(`LINKSEEN${href + linkTextTrimmed}`),
                 dismissAll: option.checks.LINK_IDENTICAL_NAME.dismissAll ? 'LINK_IDENTICAL_NAME' : false,
                 developer: option.checks.LINK_IDENTICAL_NAME.developer || false,
@@ -9078,7 +9037,6 @@ ${this.error.stack}
                 type: option.checks.LINK_NEW_TAB.type || 'warning',
                 content: option.checks.LINK_NEW_TAB.content || Lang.sprintf('LINK_NEW_TAB'),
                 inline: true,
-                position: 'beforebegin',
                 dismiss: prepareDismissal(`LINKNEWTAB${href + linkTextTrimmed}`),
                 dismissAll: option.checks.LINK_NEW_TAB.dismissAll ? 'LINK_NEW_TAB' : false,
                 developer: option.checks.LINK_NEW_TAB.developer || false,
@@ -9094,7 +9052,6 @@ ${this.error.stack}
                 type: option.checks.LINK_FILE_EXT.type || 'warning',
                 content: option.checks.LINK_FILE_EXT.content || Lang.sprintf('LINK_FILE_EXT'),
                 inline: true,
-                position: 'beforebegin',
                 dismiss: prepareDismissal(`LINKEXT${href + linkTextTrimmed}`),
                 dismissAll: option.checks.LINK_FILE_EXT.dismissAll ? 'LINK_FILE_EXT' : false,
                 developer: option.checks.LINK_FILE_EXT.developer || false,
@@ -9370,8 +9327,6 @@ ${this.error.stack}
               type: option.checks.CONTRAST_ERROR.type || 'error',
               content: option.checks.CONTRAST_ERROR.content
                 || Lang.sprintf('CONTRAST_ERROR'),
-              inline: false,
-              position: 'beforebegin',
               dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
               dismissAll: option.checks.CONTRAST_ERROR.dismissAll ? 'CONTRAST_ERROR' : false,
               developer: option.checks.CONTRAST_ERROR.developer || false,
@@ -9386,8 +9341,6 @@ ${this.error.stack}
               type: option.checks.CONTRAST_INPUT.type || 'error',
               content: option.checks.CONTRAST_INPUT.content
                 || Lang.sprintf('CONTRAST_INPUT', ratio),
-              inline: false,
-              position: 'beforebegin',
               dismiss: prepareDismissal(`CONTRAST${$el.getAttribute('class')}${$el.tagName}${ratio}`),
               dismissAll: option.checks.CONTRAST_INPUT.dismissAll ? 'CONTRAST_INPUT' : false,
               developer: option.checks.CONTRAST_INPUT.developer || true,
@@ -9402,7 +9355,6 @@ ${this.error.stack}
               type: option.checks.CONTRAST_PLACEHOLDER.type || 'error',
               content: option.checks.CONTRAST_PLACEHOLDER.content
                 || Lang.sprintf('CONTRAST_PLACEHOLDER'),
-              inline: false,
               position: 'afterend',
               dismiss: prepareDismissal(`CPLACEHOLDER${$el.getAttribute('class')}${$el.tagName}${ratio}`),
               dismissAll: option.checks.CONTRAST_PLACEHOLDER.dismissAll ? 'CONTRAST_PLACEHOLDER' : false,
@@ -9418,8 +9370,6 @@ ${this.error.stack}
               type: option.checks.CONTRAST_ERROR_GRAPHIC.type || 'error',
               content: option.checks.CONTRAST_ERROR_GRAPHIC.content
                 || Lang.sprintf('CONTRAST_ERROR_GRAPHIC'),
-              inline: false,
-              position: 'beforebegin',
               dismiss: prepareDismissal(`CONTRASTERROR${$el.outerHTML}`),
               dismissAll: option.checks.CONTRAST_ERROR_GRAPHIC.dismissAll ? 'CONTRAST_ERROR_GRAPHIC' : false,
               developer: option.checks.CONTRAST_ERROR_GRAPHIC.developer || true,
@@ -9435,8 +9385,6 @@ ${this.error.stack}
               type: option.checks.CONTRAST_WARNING_GRAPHIC.type || 'warning',
               content: option.checks.CONTRAST_WARNING_GRAPHIC.content
                 || Lang.sprintf('CONTRAST_WARNING_GRAPHIC'),
-              inline: false,
-              position: 'beforebegin',
               dismiss: prepareDismissal(`CONTRASTWARNING${$el.outerHTML}`),
               dismissAll: option.checks.CONTRAST_WARNING_GRAPHIC.dismissAll ? 'CONTRAST_WARNING_GRAPHIC' : false,
               developer: option.checks.CONTRAST_WARNING_GRAPHIC.developer || true,
@@ -9451,8 +9399,6 @@ ${this.error.stack}
               type: option.checks.CONTRAST_WARNING.type || 'warning',
               content: option.checks.CONTRAST_WARNING.content
                 || Lang.sprintf('CONTRAST_WARNING'),
-              inline: false,
-              position: 'beforebegin',
               dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
               dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
               developer: option.checks.CONTRAST_WARNING.developer || false,
@@ -9467,8 +9413,6 @@ ${this.error.stack}
               type: option.checks.CONTRAST_UNSUPPORTED.type || 'warning',
               content: option.checks.CONTRAST_UNSUPPORTED.content
                 || Lang.sprintf('CONTRAST_WARNING'),
-              inline: false,
-              position: 'beforebegin',
               dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
               dismissAll: option.checks.CONTRAST_UNSUPPORTED.dismissAll ? 'CONTRAST_UNSUPPORTED' : false,
               developer: option.checks.CONTRAST_UNSUPPORTED.developer || false,
@@ -9507,9 +9451,6 @@ ${this.error.stack}
           return;
         }
 
-        // Create dismiss key.
-        const key = prepareDismissal(`INPUT${type + inputName}`);
-
         // Error: Input with type="image" without accessible name or alt.
         if (type === 'image') {
           if (option.checks.LABELS_MISSING_IMAGE_INPUT && (!alt || alt.trim() === '') && !hasAria && !hasTitle) {
@@ -9517,9 +9458,7 @@ ${this.error.stack}
               element: $el,
               type: option.checks.LABELS_MISSING_IMAGE_INPUT.type || 'error',
               content: option.checks.LABELS_MISSING_IMAGE_INPUT.content || Lang.sprintf('LABELS_MISSING_IMAGE_INPUT'),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: key,
+              dismiss: prepareDismissal(`INPUTIMAGE${type + inputName}`),
               dismissAll: option.checks.LABELS_MISSING_IMAGE_INPUT.dismissAll ? 'LABELS_MISSING_IMAGE_INPUT' : false,
               developer: option.checks.LABELS_MISSING_IMAGE_INPUT.developer || true,
             });
@@ -9534,9 +9473,7 @@ ${this.error.stack}
               element: $el,
               type: option.checks.LABELS_INPUT_RESET.type || 'warning',
               content: option.checks.LABELS_INPUT_RESET.content || Lang.sprintf('LABELS_INPUT_RESET'),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: key,
+              dismiss: prepareDismissal(`INPUTRESET${type + inputName}`),
               dismissAll: option.checks.LABELS_INPUT_RESET.dismissAll ? 'LABELS_INPUT_RESET' : false,
               developer: option.checks.LABELS_INPUT_RESET.developer || false,
             });
@@ -9552,9 +9489,7 @@ ${this.error.stack}
                 element: $el,
                 type: option.checks.LABELS_MISSING_LABEL.type || 'error',
                 content: option.checks.LABELS_MISSING_LABEL.content || Lang.sprintf('LABELS_MISSING_LABEL'),
-                inline: false,
-                position: 'beforebegin',
-                dismiss: key,
+                dismiss: prepareDismissal(`INPUTMISSING${type + inputName}`),
                 dismissAll: option.checks.LABELS_MISSING_LABEL.dismissAll ? 'LABELS_MISSING_LABEL' : false,
                 developer: option.checks.LABELS_MISSING_LABEL.developer || true,
               });
@@ -9565,9 +9500,7 @@ ${this.error.stack}
               element: $el,
               type: option.checks.LABELS_ARIA_LABEL_INPUT.type || 'warning',
               content: option.checks.LABELS_ARIA_LABEL_INPUT.content || `${Lang.sprintf('LABELS_ARIA_LABEL_INPUT', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
-              inline: false,
-              position: 'beforebegin',
-              dismiss: key,
+              dismiss: prepareDismissal(`INPUTARIA${type + inputName}`),
               dismissAll: option.checks.LABELS_ARIA_LABEL_INPUT.dismissAll ? 'LABELS_ARIA_LABEL_INPUT' : false,
               developer: option.checks.LABELS_ARIA_LABEL_INPUT.developer || true,
             });
@@ -9592,9 +9525,7 @@ ${this.error.stack}
                 element: $el,
                 type: option.checks.LABELS_NO_FOR_ATTRIBUTE.type || 'error',
                 content: option.checks.LABELS_NO_FOR_ATTRIBUTE.content || Lang.sprintf('LABELS_NO_FOR_ATTRIBUTE', id),
-                inline: false,
-                position: 'beforebegin',
-                dismiss: key,
+                dismiss: prepareDismissal(`INPUTNOFOR${type + inputName}`),
                 dismissAll: option.checks.LABELS_NO_FOR_ATTRIBUTE.dismissAll ? 'LABELS_NO_FOR_ATTRIBUTE' : false,
                 developer: option.checks.LABELS_NO_FOR_ATTRIBUTE.developer || true,
               });
@@ -9606,9 +9537,7 @@ ${this.error.stack}
             element: $el,
             type: option.checks.LABELS_MISSING_LABEL.type || 'error',
             content: option.checks.LABELS_MISSING_LABEL.content || Lang.sprintf('LABELS_MISSING_LABEL'),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
+            dismiss: prepareDismissal(`INPUTNOID${type + inputName}`),
             dismissAll: option.checks.LABELS_MISSING_LABEL.dismissAll ? 'LABELS_MISSING_LABEL' : false,
             developer: option.checks.LABELS_MISSING_LABEL.developer || true,
           });
@@ -9620,9 +9549,7 @@ ${this.error.stack}
             element: $el,
             type: option.checks.LABELS_PLACEHOLDER.type || 'warning',
             content: option.checks.LABELS_PLACEHOLDER.content || Lang.sprintf('LABELS_PLACEHOLDER'),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
+            dismiss: prepareDismissal(`INPUTPLACEHOLDER${type + inputName}`),
             dismissAll: option.checks.LABELS_PLACEHOLDER.dismissAll ? 'LABELS_PLACEHOLDER' : false,
             developer: option.checks.LABELS_PLACEHOLDER.developer || true,
           });
@@ -9848,21 +9775,20 @@ ${this.error.stack}
   }
 
   function checkEmbeddedContent(results, option) {
+    // iFrame's SRC attribute.
+    const src = ($el) => ($el.getAttribute('src') !== 'undefined'
+      ? $el.getAttribute('src')
+      : $el.querySelector('[src]')?.getAttribute('src'));
+
     // Warning: Audio content.
     if (option.checks.EMBED_AUDIO) {
       Elements.Found.Audio.forEach(($el) => {
-        const src = ($el.getAttribute('src') !== 'undefined')
-          ? $el.getAttribute('src')
-          : $el.querySelector('[src]')?.getAttribute('src');
-
         // General warning for audio content.
         results.push({
           element: $el,
           type: option.checks.EMBED_AUDIO.type || 'warning',
           content: option.checks.EMBED_AUDIO.content || Lang.sprintf('EMBED_AUDIO'),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: prepareDismissal(`AUDIO${src}`),
+          dismiss: prepareDismissal(`AUDIO${src($el)}`),
           dismissAll: option.checks.EMBED_AUDIO.dismissAll ? 'EMBED_AUDIO' : false,
           developer: option.checks.EMBED_AUDIO.developer || false,
         });
@@ -9872,10 +9798,6 @@ ${this.error.stack}
     // Warning: Video content.
     if (option.checks.EMBED_VIDEO) {
       Elements.Found.Videos.forEach(($el) => {
-        const src = ($el.getAttribute('src') !== 'undefined')
-          ? $el.getAttribute('src')
-          : $el.querySelector('[src]')?.getAttribute('src');
-
         // Warning if <track> doesn't exist, or the <track>'s src is empty.
         const track = $el.querySelector('track');
         const trackSrc = track?.getAttribute('src');
@@ -9884,9 +9806,7 @@ ${this.error.stack}
             element: $el,
             type: option.checks.EMBED_VIDEO.type || 'warning',
             content: option.checks.EMBED_VIDEO.content || Lang.sprintf('EMBED_VIDEO'),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: prepareDismissal(`VIDEO${src}`),
+            dismiss: prepareDismissal(`VIDEO${src($el)}`),
             dismissAll: option.checks.EMBED_VIDEO.dismissAll ? 'EMBED_VIDEO' : false,
             developer: option.checks.EMBED_VIDEO.developer || false,
           });
@@ -9897,18 +9817,12 @@ ${this.error.stack}
     // Warning: Data visualizations.
     if (option.checks.EMBED_DATA_VIZ) {
       Elements.Found.Visualizations.forEach(($el) => {
-        const src = ($el.getAttribute('src') !== 'undefined')
-          ? $el.getAttribute('src')
-          : $el.querySelector('[src]')?.getAttribute('src');
-
         // General warning for data vizualization widgets.
         results.push({
           element: $el,
           type: option.checks.EMBED_DATA_VIZ.type || 'warning',
           content: option.checks.EMBED_DATA_VIZ.content || Lang.sprintf('EMBED_DATA_VIZ'),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: prepareDismissal(`DATAVIZ${src}`),
+          dismiss: prepareDismissal(`DATAVIZ${src($el)}`),
           dismissAll: option.checks.EMBED_DATA_VIZ.dismissAll ? 'EMBED_DATA_VIZ' : false,
           developer: option.checks.EMBED_DATA_VIZ.developer || false,
         });
@@ -9917,12 +9831,6 @@ ${this.error.stack}
 
     /* Error: Check all iFrames for a missing accessible name. */
     Elements.Found.iframes.forEach(($el) => {
-      // Generate dismiss key.
-      const src = ($el.getAttribute('src') !== 'undefined')
-        ? $el.getAttribute('src')
-        : $el.querySelector('[src]')?.getAttribute('src');
-      const key = prepareDismissal(`EMBED${src}`);
-
       // Ignore completely hidden elements and video/audio.
       const hidden = isElementHidden($el);
       const videoAudio = $el.tagName === 'VIDEO' || $el.tagName === 'AUDIO';
@@ -9939,9 +9847,7 @@ ${this.error.stack}
             element: $el,
             type: option.checks.EMBED_UNFOCUSABLE.type || 'error',
             content: option.checks.EMBED_UNFOCUSABLE.content || Lang.sprintf('EMBED_UNFOCUSABLE'),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
+            dismiss: prepareDismissal(`EMBEDUNFOCUSABLE${src($el)}`),
             dismissAll: option.checks.EMBED_UNFOCUSABLE.dismissAll ? 'EMBED_UNFOCUSABLE' : false,
             developer: option.checks.EMBED_UNFOCUSABLE.developer || true,
           });
@@ -9959,9 +9865,7 @@ ${this.error.stack}
             element: $el,
             type: option.checks.EMBED_MISSING_TITLE.type || 'error',
             content: option.checks.EMBED_MISSING_TITLE.content || Lang.sprintf('EMBED_MISSING_TITLE'),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
+            dismiss: prepareDismissal(`EMBEDMISSTITLE${src($el)}`),
             dismissAll: option.checks.EMBED_MISSING_TITLE.dismissAll ? 'EMBED_MISSING_TITLE' : false,
             developer: option.checks.EMBED_MISSING_TITLE.developer || true,
           });
@@ -9985,18 +9889,11 @@ ${this.error.stack}
           return;
         }
 
-        // For dismiss key.
-        const src = ($el.getAttribute('src') !== 'undefined')
-          ? $el.getAttribute('src')
-          : $el.querySelector('[src]')?.getAttribute('src');
-
         results.push({
           element: $el,
           type: option.checks.EMBED_GENERAL.type || 'warning',
           content: option.checks.EMBED_GENERAL.content || Lang.sprintf('EMBED_GENERAL'),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: prepareDismissal(`IFRAME${src}`),
+          dismiss: prepareDismissal(`IFRAMEGENERAL${src($el)}`),
           dismissAll: option.checks.EMBED_GENERAL.dismissAll ? 'EMBED_GENERAL' : false,
           developer: option.checks.EMBED_GENERAL.developer || false,
         });
@@ -10016,7 +9913,6 @@ ${this.error.stack}
           type: option.checks.QA_BAD_LINK.type || 'error',
           content: option.checks.QA_BAD_LINK.content || Lang.sprintf('QA_BAD_LINK', $el),
           inline: true,
-          position: 'beforebegin',
           dismiss: prepareDismissal($el.tagName + $el.textContent),
           dismissAll: option.checks.QA_BAD_LINK.dismissAll ? 'QA_BAD_LINK' : false,
           developer: option.checks.QA_BAD_LINK.developer || false,
@@ -10035,8 +9931,6 @@ ${this.error.stack}
             element: $el.parentNode,
             type: option.checks.QA_STRONG_ITALICS.type || 'warning',
             content: option.checks.QA_STRONG_ITALICS.content || Lang.sprintf('QA_STRONG_ITALICS'),
-            inline: false,
-            position: 'beforebegin',
             dismiss: prepareDismissal($el.tagName + $el.textContent),
             dismissAll: option.checks.QA_STRONG_ITALICS.dismissAll ? 'QA_STRONG_ITALICS' : false,
             developer: option.checks.QA_STRONG_ITALICS.developer || false,
@@ -10055,9 +9949,6 @@ ${this.error.stack}
         // Has file extension.
         const hasExtension = $el.matches(Constants.Global.documentSources);
         const hasPDF = $el.matches('a[href$=".pdf"], a[href*=".pdf?"]');
-
-        // Dismiss key.
-        const key = prepareDismissal(`DOCUMENT${href}`);
 
         // Check for broken same-page links.
         if (option.checks.QA_IN_PAGE_LINK) {
@@ -10079,8 +9970,7 @@ ${this.error.stack}
                 type: option.checks.QA_IN_PAGE_LINK.type || 'error',
                 content: option.checks.QA_IN_PAGE_LINK.content || Lang.sprintf('QA_IN_PAGE_LINK'),
                 inline: true,
-                position: 'beforebegin',
-                dismiss: key,
+                dismiss: prepareDismissal(`QAINPAGE${href}`),
                 dismissAll: option.checks.QA_IN_PAGE_LINK.dismissAll ? 'QA_IN_PAGE_LINK' : false,
                 developer: option.checks.QA_IN_PAGE_LINK.developer || false,
               });
@@ -10095,8 +9985,7 @@ ${this.error.stack}
             type: option.checks.QA_DOCUMENT.type || 'warning',
             content: option.checks.QA_DOCUMENT.content || Lang.sprintf('QA_DOCUMENT'),
             inline: true,
-            position: 'beforebegin',
-            dismiss: key,
+            dismiss: prepareDismissal(`DOC${href}`),
             dismissAll: option.checks.QA_DOCUMENT.dismissAll ? 'QA_DOCUMENT' : false,
             developer: option.checks.QA_DOCUMENT.developer || false,
           });
@@ -10106,8 +9995,7 @@ ${this.error.stack}
             type: option.checks.QA_PDF.type || 'warning',
             content: option.checks.QA_PDF.content || Lang.sprintf('QA_PDF'),
             inline: true,
-            position: 'beforebegin',
-            dismiss: key,
+            dismiss: prepareDismissal(`PDF${href}`),
             dismissAll: option.checks.QA_PDF.dismissAll ? 'QA_PDF' : false,
             developer: option.checks.QA_PDF.developer || false,
           });
@@ -10127,8 +10015,6 @@ ${this.error.stack}
             element: $el,
             type: option.checks.QA_BLOCKQUOTE.type || 'warning',
             content: option.checks.QA_BLOCKQUOTE.content || Lang.sprintf('QA_BLOCKQUOTE', sanitizedText),
-            inline: false,
-            position: 'beforebegin',
             dismiss: prepareDismissal(`BLOCKQUOTE${sanitizedText}`),
             dismissAll: option.checks.QA_BLOCKQUOTE.dismissAll ? 'QA_BLOCKQUOTE' : false,
             developer: option.checks.QA_BLOCKQUOTE.developer || false,
@@ -10150,8 +10036,6 @@ ${this.error.stack}
             element: $el,
             type: option.checks.TABLES_MISSING_HEADINGS.type || 'error',
             content: option.checks.TABLES_MISSING_HEADINGS.content || Lang.sprintf('TABLES_MISSING_HEADINGS'),
-            inline: false,
-            position: 'beforebegin',
             dismiss: key,
             dismissAll: option.checks.TABLES_MISSING_HEADINGS.dismissAll ? 'TABLES_MISSING_HEADINGS' : false,
             developer: option.checks.TABLES_MISSING_HEADINGS.developer || false,
@@ -10163,8 +10047,6 @@ ${this.error.stack}
               element: heading,
               type: option.checks.TABLES_SEMANTIC_HEADING.type || 'error',
               content: option.checks.TABLES_SEMANTIC_HEADING.content || Lang.sprintf('TABLES_SEMANTIC_HEADING'),
-              inline: false,
-              position: 'beforebegin',
               dismiss: key,
               dismissAll: option.checks.TABLES_SEMANTIC_HEADING.dismissAll ? 'TABLES_SEMANTIC_HEADING' : false,
               developer: option.checks.TABLES_SEMANTIC_HEADING.developer || false,
@@ -10177,7 +10059,6 @@ ${this.error.stack}
               element: th,
               type: option.checks.TABLES_EMPTY_HEADING.type || 'error',
               content: option.checks.TABLES_EMPTY_HEADING.content || Lang.sprintf('TABLES_EMPTY_HEADING'),
-              inline: false,
               position: 'afterbegin',
               dismiss: key,
               dismissAll: option.checks.TABLES_EMPTY_HEADING.dismissAll ? 'TABLES_EMPTY_HEADING' : false,
@@ -10197,8 +10078,6 @@ ${this.error.stack}
           element,
           type: option.checks.QA_FAKE_HEADING.type || 'warning',
           content: option.checks.QA_FAKE_HEADING.content || Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
-          inline: false,
-          position: 'beforebegin',
           dismiss: prepareDismissal(`BOLD${sanitizedText}`),
           dismissAll: option.checks.QA_FAKE_HEADING.dismissAll ? 'QA_FAKE_HEADING' : false,
           developer: option.checks.QA_FAKE_HEADING.developer || false,
@@ -10342,8 +10221,6 @@ ${this.error.stack}
               element: p,
               type: option.checks.QA_FAKE_LIST.type || 'warning',
               content: option.checks.QA_FAKE_LIST.content || Lang.sprintf('QA_FAKE_LIST', firstPrefix),
-              inline: false,
-              position: 'beforebegin',
               dismiss: prepareDismissal(`LIST${p.textContent}`),
               dismissAll: option.checks.QA_FAKE_LIST.dismissAll ? 'QA_FAKE_LIST' : false,
               developer: option.checks.QA_FAKE_LIST.developer || false,
@@ -10384,8 +10261,6 @@ ${this.error.stack}
             element: $el,
             type: option.checks.QA_UPPERCASE.type || 'warning',
             content: option.checks.QA_UPPERCASE.content || Lang.sprintf('QA_UPPERCASE'),
-            inline: false,
-            position: 'beforebegin',
             dismiss: prepareDismissal(`UPPERCASE${thisText}`),
             dismissAll: option.checks.QA_UPPERCASE.dismissAll ? 'QA_UPPERCASE' : false,
             developer: option.checks.QA_UPPERCASE.developer || false,
@@ -10408,7 +10283,6 @@ ${this.error.stack}
         type: option.checks.QA_UNDERLINE.type || 'warning',
         content: option.checks.QA_UNDERLINE.content || Lang.sprintf('QA_UNDERLINE'),
         inline: true,
-        position: 'beforebegin',
         dismiss: prepareDismissal(`UNDERLINE${$el.textContent}`),
         dismissAll: option.checks.QA_UNDERLINE.dismissAll ? 'QA_UNDERLINE' : false,
         developer: option.checks.QA_UNDERLINE.developer || false,
@@ -10420,8 +10294,6 @@ ${this.error.stack}
         element: $el,
         type: option.checks.QA_JUSTIFY.type || 'warning',
         content: option.checks.QA_JUSTIFY.content || Lang._('QA_JUSTIFY'),
-        inline: false,
-        position: 'beforebegin',
         dismiss: prepareDismissal(`JUSTIFIED${$el.textContent}`),
         dismissAll: option.checks.QA_JUSTIFY.dismissAll ? 'QA_JUSTIFY' : false,
         developer: option.checks.QA_JUSTIFY.developer || false,
@@ -10433,8 +10305,6 @@ ${this.error.stack}
         element: $el,
         type: option.checks.QA_SMALL_TEXT.type || 'warning',
         content: option.checks.QA_SMALL_TEXT.content || Lang._('QA_SMALL_TEXT'),
-        inline: false,
-        position: 'beforebegin',
         dismiss: prepareDismissal(`SMALL${$el.textContent}`),
         dismissAll: option.checks.QA_SMALL_TEXT.dismissAll ? 'QA_SMALL_TEXT' : false,
         developer: option.checks.QA_SMALL_TEXT.developer || false,
@@ -10446,7 +10316,10 @@ ${this.error.stack}
       const { textDecorationLine, textAlign, fontSize } = style;
 
       /* Check: Underlined text. */
-      if (option.checks.QA_UNDERLINE && textDecorationLine === 'underline' && !$el.closest('a[href]')) {
+      if (option.checks.QA_UNDERLINE
+        && textDecorationLine === 'underline'
+        && !$el.closest('a[href]')
+        && !$el.closest('ABBR')) {
         addUnderlineResult($el);
       }
 
@@ -10503,7 +10376,6 @@ ${this.error.stack}
             type: option.checks.QA_SUBSCRIPT.type || 'warning',
             content: option.checks.QA_SUBSCRIPT.content || Lang.sprintf('QA_SUBSCRIPT'),
             inline: true,
-            position: 'beforebegin',
             dismiss: prepareDismissal($el.tagName + text),
             dismissAll: option.checks.QA_SUBSCRIPT.dismissAll ? 'QA_SUBSCRIPT' : false,
             developer: option.checks.QA_SUBSCRIPT.developer || false,
@@ -10524,8 +10396,6 @@ ${this.error.stack}
             element: $el,
             type: option.checks.QA_NESTED_COMPONENTS.type || 'warning',
             content: option.checks.QA_NESTED_COMPONENTS.content || Lang.sprintf('QA_NESTED_COMPONENTS'),
-            inline: false,
-            position: 'beforebegin',
             dismiss: prepareDismissal(`NESTED${$el.textContent}`),
             dismissAll: option.checks.QA_NESTED_COMPONENTS.dismissAll ? 'QA_NESTED_COMPONENTS' : false,
             developer: option.checks.QA_NESTED_COMPONENTS.developer || false,
@@ -10656,8 +10526,6 @@ ${this.error.stack}
                   element: $el,
                   type: option.checks.DUPLICATE_ID.type || 'error',
                   content: option.checks.DUPLICATE_ID.content || Lang.sprintf('DUPLICATE_ID', id),
-                  inline: false,
-                  position: 'beforebegin',
                   dismiss: prepareDismissal(`DUPLICATEID${id}${$el.textContent}`),
                   dismissAll: option.checks.DUPLICATE_ID.dismissAll ? 'DUPLICATE_ID' : false,
                   developer: option.checks.DUPLICATE_ID.developer || true,
@@ -10708,8 +10576,6 @@ ${this.error.stack}
                 element: $el,
                 type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
                 content: option.checks.HIDDEN_FOCUSABLE.content || Lang.sprintf('HIDDEN_FOCUSABLE'),
-                inline: false,
-                position: 'beforebegin',
                 dismiss: key,
                 dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll ? 'BTN_HIDDEN_FOCUSABLE' : false,
                 developer: option.checks.HIDDEN_FOCUSABLE.developer || true,
@@ -10726,8 +10592,6 @@ ${this.error.stack}
               element: $el,
               type: option.checks.BTN_EMPTY_LABELLEDBY.type || 'error',
               content: option.checks.BTN_EMPTY_LABELLEDBY.content || `${Lang.sprintf('BTN_EMPTY_LABELLEDBY')} ${Lang.sprintf('BTN_TIP')}`,
-              inline: false,
-              position: 'beforebegin',
               dismiss: prepareDismissal(key),
               dismissAll: option.checks.BTN_EMPTY_LABELLEDBY.dismissAll ? 'BTN_EMPTY_LABELLEDBY' : false,
               developer: option.checks.BTN_EMPTY_LABELLEDBY.developer || true,
@@ -10737,8 +10601,6 @@ ${this.error.stack}
               element: $el,
               type: option.checks.BTN_EMPTY.type || 'error',
               content: option.checks.BTN_EMPTY.content || `${Lang.sprintf('BTN_EMPTY')} ${Lang.sprintf('BTN_TIP')}`,
-              inline: false,
-              position: 'beforebegin',
               dismiss: key,
               dismissAll: option.checks.BTN_EMPTY.dismissAll ? 'BTN_EMPTY' : false,
               developer: option.checks.BTN_EMPTY.developer || true,
@@ -10755,8 +10617,6 @@ ${this.error.stack}
             element: $el,
             type: option.checks.LABEL_IN_NAME.type || 'warning',
             content: option.checks.LABEL_IN_NAME.content || `${Lang.sprintf('LABEL_IN_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
-            inline: false,
-            position: 'beforebegin',
             dismiss: key,
             dismissAll: option.checks.LABEL_IN_NAME.dismissAll ? 'BTN_LABEL_IN_NAME' : false,
             developer: option.checks.LABEL_IN_NAME.developer || true,
@@ -10770,8 +10630,6 @@ ${this.error.stack}
             element: $el,
             type: option.checks.BTN_ROLE_IN_NAME.type || 'warning',
             content: option.checks.BTN_ROLE_IN_NAME.content || `${Lang.sprintf('BTN_ROLE_IN_NAME')} ${Lang.sprintf('BTN_TIP')}`,
-            inline: false,
-            position: 'beforebegin',
             dismiss: key,
             dismissAll: option.checks.BTN_ROLE_IN_NAME.dismissAll ? 'BTN_ROLE_IN_NAME' : false,
             developer: option.checks.BTN_ROLE_IN_NAME.developer || true,
@@ -10790,8 +10648,6 @@ ${this.error.stack}
             element: $el,
             type: option.checks.UNCONTAINED_LI.type || 'error',
             content: option.checks.UNCONTAINED_LI.content || Lang.sprintf('UNCONTAINED_LI'),
-            inline: false,
-            position: 'beforebegin',
             dismiss: prepareDismissal(`UNCONTAINEDLI${$el.textContent}`),
             dismissAll: option.checks.UNCONTAINED_LI.dismissAll ? 'UNCONTAINED_LI' : false,
             developer: option.checks.UNCONTAINED_LI.developer || true,
@@ -10809,8 +10665,6 @@ ${this.error.stack}
           element: $el,
           type: option.checks.TABINDEX_ATTR.type || 'error',
           content: option.checks.TABINDEX_ATTR.content || Lang.sprintf('TABINDEX_ATTR'),
-          inline: false,
-          position: 'beforebegin',
           dismiss: prepareDismissal(`TABINDEX${$el.tagName + $el.id + $el.className}`),
           dismissAll: option.checks.TABINDEX_ATTR.dismissAll ? 'TABINDEX_ATTR' : false,
           developer: option.checks.TABINDEX_ATTR.developer || true,

@@ -4,21 +4,20 @@ import Lang from '../utils/lang';
 import { computeAriaLabel } from '../utils/computeAccessibleName';
 
 export default function checkEmbeddedContent(results, option) {
+  // iFrame's SRC attribute.
+  const src = ($el) => ($el.getAttribute('src') !== 'undefined'
+    ? $el.getAttribute('src')
+    : $el.querySelector('[src]')?.getAttribute('src'));
+
   // Warning: Audio content.
   if (option.checks.EMBED_AUDIO) {
     Elements.Found.Audio.forEach(($el) => {
-      const src = ($el.getAttribute('src') !== 'undefined')
-        ? $el.getAttribute('src')
-        : $el.querySelector('[src]')?.getAttribute('src');
-
       // General warning for audio content.
       results.push({
         element: $el,
         type: option.checks.EMBED_AUDIO.type || 'warning',
         content: option.checks.EMBED_AUDIO.content || Lang.sprintf('EMBED_AUDIO'),
-        inline: false,
-        position: 'beforebegin',
-        dismiss: Utils.prepareDismissal(`AUDIO${src}`),
+        dismiss: Utils.prepareDismissal(`AUDIO${src($el)}`),
         dismissAll: option.checks.EMBED_AUDIO.dismissAll ? 'EMBED_AUDIO' : false,
         developer: option.checks.EMBED_AUDIO.developer || false,
       });
@@ -28,10 +27,6 @@ export default function checkEmbeddedContent(results, option) {
   // Warning: Video content.
   if (option.checks.EMBED_VIDEO) {
     Elements.Found.Videos.forEach(($el) => {
-      const src = ($el.getAttribute('src') !== 'undefined')
-        ? $el.getAttribute('src')
-        : $el.querySelector('[src]')?.getAttribute('src');
-
       // Warning if <track> doesn't exist, or the <track>'s src is empty.
       const track = $el.querySelector('track');
       const trackSrc = track?.getAttribute('src');
@@ -40,9 +35,7 @@ export default function checkEmbeddedContent(results, option) {
           element: $el,
           type: option.checks.EMBED_VIDEO.type || 'warning',
           content: option.checks.EMBED_VIDEO.content || Lang.sprintf('EMBED_VIDEO'),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: Utils.prepareDismissal(`VIDEO${src}`),
+          dismiss: Utils.prepareDismissal(`VIDEO${src($el)}`),
           dismissAll: option.checks.EMBED_VIDEO.dismissAll ? 'EMBED_VIDEO' : false,
           developer: option.checks.EMBED_VIDEO.developer || false,
         });
@@ -53,18 +46,12 @@ export default function checkEmbeddedContent(results, option) {
   // Warning: Data visualizations.
   if (option.checks.EMBED_DATA_VIZ) {
     Elements.Found.Visualizations.forEach(($el) => {
-      const src = ($el.getAttribute('src') !== 'undefined')
-        ? $el.getAttribute('src')
-        : $el.querySelector('[src]')?.getAttribute('src');
-
       // General warning for data vizualization widgets.
       results.push({
         element: $el,
         type: option.checks.EMBED_DATA_VIZ.type || 'warning',
         content: option.checks.EMBED_DATA_VIZ.content || Lang.sprintf('EMBED_DATA_VIZ'),
-        inline: false,
-        position: 'beforebegin',
-        dismiss: Utils.prepareDismissal(`DATAVIZ${src}`),
+        dismiss: Utils.prepareDismissal(`DATAVIZ${src($el)}`),
         dismissAll: option.checks.EMBED_DATA_VIZ.dismissAll ? 'EMBED_DATA_VIZ' : false,
         developer: option.checks.EMBED_DATA_VIZ.developer || false,
       });
@@ -73,12 +60,6 @@ export default function checkEmbeddedContent(results, option) {
 
   /* Error: Check all iFrames for a missing accessible name. */
   Elements.Found.iframes.forEach(($el) => {
-    // Generate dismiss key.
-    const src = ($el.getAttribute('src') !== 'undefined')
-      ? $el.getAttribute('src')
-      : $el.querySelector('[src]')?.getAttribute('src');
-    const key = Utils.prepareDismissal(`EMBED${src}`);
-
     // Ignore completely hidden elements and video/audio.
     const hidden = Utils.isElementHidden($el);
     const videoAudio = $el.tagName === 'VIDEO' || $el.tagName === 'AUDIO';
@@ -95,9 +76,7 @@ export default function checkEmbeddedContent(results, option) {
           element: $el,
           type: option.checks.EMBED_UNFOCUSABLE.type || 'error',
           content: option.checks.EMBED_UNFOCUSABLE.content || Lang.sprintf('EMBED_UNFOCUSABLE'),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: key,
+          dismiss: Utils.prepareDismissal(`EMBEDUNFOCUSABLE${src($el)}`),
           dismissAll: option.checks.EMBED_UNFOCUSABLE.dismissAll ? 'EMBED_UNFOCUSABLE' : false,
           developer: option.checks.EMBED_UNFOCUSABLE.developer || true,
         });
@@ -115,9 +94,7 @@ export default function checkEmbeddedContent(results, option) {
           element: $el,
           type: option.checks.EMBED_MISSING_TITLE.type || 'error',
           content: option.checks.EMBED_MISSING_TITLE.content || Lang.sprintf('EMBED_MISSING_TITLE'),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: key,
+          dismiss: Utils.prepareDismissal(`EMBEDMISSTITLE${src($el)}`),
           dismissAll: option.checks.EMBED_MISSING_TITLE.dismissAll ? 'EMBED_MISSING_TITLE' : false,
           developer: option.checks.EMBED_MISSING_TITLE.developer || true,
         });
@@ -141,18 +118,11 @@ export default function checkEmbeddedContent(results, option) {
         return;
       }
 
-      // For dismiss key.
-      const src = ($el.getAttribute('src') !== 'undefined')
-        ? $el.getAttribute('src')
-        : $el.querySelector('[src]')?.getAttribute('src');
-
       results.push({
         element: $el,
         type: option.checks.EMBED_GENERAL.type || 'warning',
         content: option.checks.EMBED_GENERAL.content || Lang.sprintf('EMBED_GENERAL'),
-        inline: false,
-        position: 'beforebegin',
-        dismiss: Utils.prepareDismissal(`IFRAME${src}`),
+        dismiss: Utils.prepareDismissal(`IFRAMEGENERAL${src($el)}`),
         dismissAll: option.checks.EMBED_GENERAL.dismissAll ? 'EMBED_GENERAL' : false,
         developer: option.checks.EMBED_GENERAL.developer || false,
       });
