@@ -270,7 +270,7 @@ var it = {
     // Contrast
     CONTRAST_ERROR: 'Il testo non ha abbastanza contrasto con lo sfondo, rendendolo più difficile da leggere.',
     CONTRAST_WARNING: 'Il contrasto di questo testo è sconosciuto e deve essere verificato manualmente. Assicurarsi che il testo e lo sfondo abbiano colori fortemente contrastanti.',
-    CONTRAST_ERROR_GRAPHIC: 'Il grafico non ha abbastanza contrasto con lo sfondo, rendendolo difficile da percepire.',
+    CONTRAST_ERROR_GRAPHIC: 'La grafica non ha un contrasto sufficiente con lo sfondo, rendendola più difficile da vedere.',
     CONTRAST_WARNING_GRAPHIC: 'Il contrasto di questo grafico è sconosciuto e deve essere verificato manualmente. Assicurarsi che il grafico e lo sfondo abbiano colori fortemente contrastanti.',
     CONTRAST_OPACITY: 'Aumentare l’opacità per una migliore visibilità.',
     CONTRAST_APCA: 'Questo non ha abbastanza contrasto per nessuna dimensione di testo. Considera di usare questa combinazione di colore e dimensione del testo?',

@@ -260,7 +260,7 @@ export default {
     // Contrast
     CONTRAST_ERROR: 'Teksten har ikke nok kontrast med bakgrunnen, noe som gjør det vanskelig å lese.',
     CONTRAST_WARNING: 'Kontrasten til denne teksten er ukjent og må gjennomgås manuelt. Sørg for at tekst og bakgrunn har sterk kontrast.',
-    CONTRAST_ERROR_GRAPHIC: 'Grafikken har ikke nok kontrast med bakgrunnen, noe som gjør det vanskelig å oppfatte.',
+    CONTRAST_ERROR_GRAPHIC: 'Grafikken har ikke nok kontrast mot bakgrunnen, noe som gjør den vanskeligere å se.',
     CONTRAST_WARNING_GRAPHIC: 'Kontrasten til denne grafikken er ukjent og må gjennomgås manuelt. Sørg for at grafikk og bakgrunn har sterk kontrast.',
     CONTRAST_OPACITY: 'Øk opasiteten for bedre synlighet.',
     CONTRAST_APCA: 'Dette er ikke nok kontrast for noen størrelse på tekst. Vurder å bruke denne farge- og tekststørrelseskombinasjonen?',

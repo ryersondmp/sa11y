@@ -257,7 +257,7 @@ export default {
     // Contrast
     CONTRAST_ERROR: 'Tekstam nav pietiekams kontrasts ar fona, padarot to grūti nolasāmu.',
     CONTRAST_WARNING: 'Šī teksta kontrasts nav zināms, un tas jāizskata manuāli. Pārliecinieties, ka tekstam un fonam ir spēcīgs kontrasts.',
-    CONTRAST_ERROR_GRAPHIC: 'Grafikai nav pietiekama kontrasta ar fonu, padarot to grūti uztveramu.',
+    CONTRAST_ERROR_GRAPHIC: 'Grafikai nav pietiekama kontrasta ar fonu, kas apgrūtina tās saskatīšanu.',
     CONTRAST_WARNING_GRAPHIC: 'Šīs grafikas kontrasts nav zināms un to jāizskata manuāli. Pārliecinieties, ka grafikai un fonam ir spēcīgs kontrasts.',
     CONTRAST_OPACITY: 'Palieliniet opacitāti, lai uzlabotu redzamību.',
     CONTRAST_APCA: 'Tas nav pietiekams kontrasts jebkura lieluma tekstam. Apsveriet iespēju izmantot šo krāsu un teksta lieluma kombināciju?',

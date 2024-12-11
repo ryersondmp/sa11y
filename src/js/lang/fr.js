@@ -232,7 +232,7 @@ export default {
     // Contrast
     CONTRAST_ERROR: 'Le texte n’a pas assez de contraste avec l’arrière-plan, ce qui le rend difficile à lire.',
     CONTRAST_WARNING: 'Le contraste de ce texte est inconnu et doit être vérifié manuellement. Assurez-vous que le texte et l’arrière-plan ont des couleurs fortement contrastées.',
-    CONTRAST_ERROR_GRAPHIC: 'Le graphique n’a pas assez de contraste avec l’arrière-plan, ce qui le rend difficile à percevoir.',
+    CONTRAST_ERROR_GRAPHIC: 'Le graphique n’a pas suffisamment de contraste avec l’arrière-plan, ce qui le rend plus difficile à voir.',
     CONTRAST_WARNING_GRAPHIC: 'Le contraste de ce graphique est inconnu et doit être vérifié manuellement. Assurez-vous que le graphique et l’arrière-plan ont des couleurs fortement contrastées.',
     CONTRAST_OPACITY: 'Augmentez l’opacité pour une meilleure visibilité.',
     CONTRAST_APCA: 'Ce contraste n’est pas suffisant pour aucun texte, quelle que soit sa taille. Envisagez d’utiliser cette combinaison de couleur et de taille de texte ?',

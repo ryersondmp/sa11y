@@ -267,7 +267,7 @@ export default {
     // Contrast
     CONTRAST_ERROR: '텍스트가 배경과 충분한 대비가 없어 읽기 어렵습니다.',
     CONTRAST_WARNING: '이 텍스트의 대비는 알 수 없으며 수동으로 검토해야 합니다. 텍스트와 배경에 강한 대비가 있는지 확인하세요.',
-    CONTRAST_ERROR_GRAPHIC: '그래픽이 배경과 충분한 대비가 없어 인식하기 어렵습니다.',
+    CONTRAST_ERROR_GRAPHIC: '이 그래픽은 배경과의 대비가 충분하지 않아 보기가 어려울 수 있습니다.',
     CONTRAST_WARNING_GRAPHIC: '이 그래픽의 대비는 알 수 없으며 수동으로 검토해야 합니다. 그래픽과 배경에 강한 대비가 있는지 확인하세요.',
     CONTRAST_OPACITY: '더 나은 가시성을 위해 불투명도를 증가시키세요.',
     CONTRAST_APCA: '이것은 어떤 텍스트 크기에도 충분한 대비가 없습니다. 이 색상과 텍스트 크기 조합을 사용해 보시겠습니까?',

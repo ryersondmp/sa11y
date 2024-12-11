@@ -138,8 +138,6 @@ const scssConfigs = scssFiles.map((file) => ({
   ],
 }));
 
-console.log('@DEV BOOKMARKLET');
-
 export default [
   ...languageConfigs,
   ...scssConfigs,

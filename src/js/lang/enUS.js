@@ -237,7 +237,7 @@ export default {
     // Contrast
     CONTRAST_ERROR: 'Text does not have enough contrast with the background, making it harder to read.',
     CONTRAST_WARNING: 'The contrast of this text is unknown and needs to be manually reviewed. Ensure the text and the background have strong contrasting colours.',
-    CONTRAST_ERROR_GRAPHIC: 'The graphic does not have enough contrast with the background, making it hard to perceive.',
+    CONTRAST_ERROR_GRAPHIC: 'Graphic does not have enough contrast with the background, making it harder to see.',
     CONTRAST_WARNING_GRAPHIC: 'The contrast of this graphic is unknown and needs to be manually reviewed. Ensure the graphic and the background have strong contrasting colours.',
     CONTRAST_OPACITY: 'Increase the opacity for better visibility.',
     CONTRAST_APCA: 'This is not enough contrast for any size text. Consider using this colour and text size combination?',

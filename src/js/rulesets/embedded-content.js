@@ -60,12 +60,13 @@ export default function checkEmbeddedContent(results, option) {
 
   /* Error: Check all iFrames for a missing accessible name. */
   Elements.Found.iframes.forEach(($el) => {
-    // Ignore completely hidden elements and video/audio.
+    // Ignore hidden elements and video/audio.
+    const presentation = ['presentation', 'none'].includes($el.getAttribute('role'));
     const hidden = Utils.isElementHidden($el);
     const videoAudio = $el.tagName === 'VIDEO' || $el.tagName === 'AUDIO';
     const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
     const negativeTabindex = $el.getAttribute('tabindex') === '-1';
-    if (hidden || videoAudio || (ariaHidden && negativeTabindex)) {
+    if (hidden || videoAudio || (ariaHidden && negativeTabindex) || presentation) {
       return;
     }
 
@@ -105,11 +106,12 @@ export default function checkEmbeddedContent(results, option) {
   /* Warning: for all iFrames (except video, audio, or data visualizations). */
   if (option.checks.EMBED_GENERAL) {
     Elements.Found.EmbeddedContent.forEach(($el) => {
-      // Ignore completely hidden elements.
+      // Ignore hidden elements.
+      const presentation = ['presentation', 'none'].includes($el.getAttribute('role'));
       const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
       const negativeTabindex = $el.getAttribute('tabindex') === '-1';
       const hidden = Utils.isElementHidden($el);
-      if (hidden || (ariaHidden && negativeTabindex)) {
+      if (hidden || (ariaHidden && negativeTabindex) || presentation) {
         return;
       }
 

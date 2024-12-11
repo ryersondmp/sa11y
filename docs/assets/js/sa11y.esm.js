@@ -116,13 +116,19 @@ const defaultOptions = {
     IMAGE_ALT_TOO_LONG: {
       maxLength: 250,
     },
-    LINK_IMAGE_ALT: true,
+    LINK_IMAGE_ALT: {
+      dismissAll: true,
+    },
     LINK_IMAGE_ALT_AND_TEXT: true,
     IMAGE_FIGURE_DUPLICATE_ALT: true,
-    IMAGE_PASS: true,
+    IMAGE_PASS: {
+      dismissAll: true,
+    },
 
     // Link checks
-    DUPLICATE_TITLE: true,
+    DUPLICATE_TITLE: {
+      dismissAll: true,
+    },
     LINK_EMPTY_LABELLEDBY: true,
     LINK_EMPTY_NO_LABEL: true,
     LINK_STOPWORD: true,
@@ -135,7 +141,9 @@ const defaultOptions = {
     LINK_URL: {
       maxLength: 40,
     },
-    LINK_LABEL: true,
+    LINK_LABEL: {
+      dismissAll: true,
+    },
     LINK_EMPTY: true,
     LINK_IDENTICAL_NAME: {
       dismissAll: true,
@@ -503,7 +511,7 @@ const Constants = (function myConstants() {
     }
 
     // Contrast exclusions
-    Exclusions.Contrast = ['link', 'hr', 'option', 'audio', 'audio *', 'video', 'video *', 'input[type="color"]', 'input[type="range"]', 'progress', 'progress *', 'meter', 'meter *', 'iframe', ...exclusions];
+    Exclusions.Contrast = ['link', 'hr', 'option', 'audio', 'audio *', 'video', 'video *', 'input[type="color"]', 'input[type="range"]', 'progress', 'progress *', 'meter', 'meter *', 'iframe', 'svg title', 'svg desc', ...exclusions];
     if (option.contrastIgnore) {
       Exclusions.Contrast = option.contrastIgnore
         .split(',')
@@ -659,15 +667,13 @@ const nextTreeBranch = (tree) => {
 const computeAriaLabel = (element, recursing = false) => {
   const labelledBy = element.getAttribute('aria-labelledby');
   if (!recursing && labelledBy) {
-    const target = labelledBy.split(/\s+/);
-    if (target.length > 0) {
-      let returnText = '';
-      target.forEach((x) => {
-        const targetSelector = document.querySelector(`#${CSS.escape(x)}`);
-        returnText += (!targetSelector) ? '' : `${computeAccessibleName(targetSelector, '', 1)}`;
-      });
-      return returnText;
-    }
+    return labelledBy
+      .split(/\s+/)
+      .filter((id) => id.trim()) // Exclude empty IDs.
+      .map((id) => {
+        const targetElement = document.querySelector(`#${CSS.escape(id)}`);
+        return targetElement ? computeAccessibleName(targetElement, '', 1) : '';
+      }).join('');
   }
 
   const ariaLabel = element.getAttribute('aria-label');
@@ -9113,15 +9119,17 @@ function checkContrast(results, option) {
           ...(color !== 'unsupported' && { color }),
         });
       } else if (background === 'image') {
-        contrastResults.push({
-          $el,
-          type: 'background-image',
-          color,
-          background,
-          fontSize,
-          fontWeight,
-          opacity,
-        });
+        if (isHidden) ; else {
+          contrastResults.push({
+            $el,
+            type: 'background-image',
+            color,
+            background,
+            fontSize,
+            fontWeight,
+            opacity,
+          });
+        }
       } else if ($el.tagName === 'text' && $el.closest('svg')) ; else if (isHidden || getHex(color) === getHex(background)) ; else {
         const result = checkElementContrast($el, color, background, fontSize, fontWeight, opacity);
         if (result) {
@@ -9243,7 +9251,6 @@ function checkContrast(results, option) {
         && JSON.stringify(current.color) === JSON.stringify(previous.color);
       const hasSameParent = previous
         && current.$el.parentNode === previous.$el.parentNode;
-
       if (!previous || !hasSameColor || !hasSameParent) {
         mergedWarnings.push({ ...current, mergeCount: 1 });
         return mergedWarnings;
@@ -9825,12 +9832,13 @@ function checkEmbeddedContent(results, option) {
 
   /* Error: Check all iFrames for a missing accessible name. */
   Elements.Found.iframes.forEach(($el) => {
-    // Ignore completely hidden elements and video/audio.
+    // Ignore hidden elements and video/audio.
+    const presentation = ['presentation', 'none'].includes($el.getAttribute('role'));
     const hidden = isElementHidden($el);
     const videoAudio = $el.tagName === 'VIDEO' || $el.tagName === 'AUDIO';
     const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
     const negativeTabindex = $el.getAttribute('tabindex') === '-1';
-    if (hidden || videoAudio || (ariaHidden && negativeTabindex)) {
+    if (hidden || videoAudio || (ariaHidden && negativeTabindex) || presentation) {
       return;
     }
 
@@ -9870,11 +9878,12 @@ function checkEmbeddedContent(results, option) {
   /* Warning: for all iFrames (except video, audio, or data visualizations). */
   if (option.checks.EMBED_GENERAL) {
     Elements.Found.EmbeddedContent.forEach(($el) => {
-      // Ignore completely hidden elements.
+      // Ignore hidden elements.
+      const presentation = ['presentation', 'none'].includes($el.getAttribute('role'));
       const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
       const negativeTabindex = $el.getAttribute('tabindex') === '-1';
       const hidden = isElementHidden($el);
-      if (hidden || (ariaHidden && negativeTabindex)) {
+      if (hidden || (ariaHidden && negativeTabindex) || presentation) {
         return;
       }
 
@@ -10447,7 +10456,7 @@ function checkDeveloper(results, option) {
         }, {});
 
         // Check for user-scalable parameter.
-        if (option.checks.META_SCALABLE && params['user-scalable'] === 'no') {
+        if (option.checks.META_SCALABLE && (params['user-scalable'] === 'no' || params['user-scalable'] === '0')) {
           results.push({
             type: option.checks.META_SCALABLE.type || 'error',
             content: option.checks.META_SCALABLE.content || Lang.sprintf('META_SCALABLE'),

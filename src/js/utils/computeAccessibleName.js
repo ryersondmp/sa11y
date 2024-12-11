@@ -29,15 +29,13 @@ const nextTreeBranch = (tree) => {
 export const computeAriaLabel = (element, recursing = false) => {
   const labelledBy = element.getAttribute('aria-labelledby');
   if (!recursing && labelledBy) {
-    const target = labelledBy.split(/\s+/);
-    if (target.length > 0) {
-      let returnText = '';
-      target.forEach((x) => {
-        const targetSelector = document.querySelector(`#${CSS.escape(x)}`);
-        returnText += (!targetSelector) ? '' : `${computeAccessibleName(targetSelector, '', 1)}`;
-      });
-      return returnText;
-    }
+    return labelledBy
+      .split(/\s+/)
+      .filter((id) => id.trim()) // Exclude empty IDs.
+      .map((id) => {
+        const targetElement = document.querySelector(`#${CSS.escape(id)}`);
+        return targetElement ? computeAccessibleName(targetElement, '', 1) : '';
+      }).join('');
   }
 
   const ariaLabel = element.getAttribute('aria-label');

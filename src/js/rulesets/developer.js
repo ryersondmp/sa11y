@@ -50,7 +50,7 @@ export default function checkDeveloper(results, option) {
         }, {});
 
         // Check for user-scalable parameter.
-        if (option.checks.META_SCALABLE && params['user-scalable'] === 'no') {
+        if (option.checks.META_SCALABLE && (params['user-scalable'] === 'no' || params['user-scalable'] === '0')) {
           results.push({
             type: option.checks.META_SCALABLE.type || 'error',
             content: option.checks.META_SCALABLE.content || Lang.sprintf('META_SCALABLE'),

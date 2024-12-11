@@ -267,7 +267,7 @@ export default {
     // Contrast
     CONTRAST_ERROR: 'A szövegnek nincs elég kontrasztja a háttérrel, ezért nehezen olvasható.',
     CONTRAST_WARNING: 'A szöveg kontrasztja ismeretlen, és manuálisan kell ellenőrizni. Győződjön meg róla, hogy a szöveg és a háttér erős kontraszttal rendelkezik.',
-    CONTRAST_ERROR_GRAPHIC: 'A grafikának nincs elég kontrasztja a háttérrel, ezért nehezen észlelhető.',
+    CONTRAST_ERROR_GRAPHIC: 'A grafikának nincs elég kontrasztja a háttérrel, ami megnehezíti a láthatóságát.',
     CONTRAST_WARNING_GRAPHIC: 'A grafika kontrasztja ismeretlen, és manuálisan kell ellenőrizni. Győződjön meg róla, hogy a grafika és a háttér erős kontrasztot alkot.',
     CONTRAST_OPACITY: 'Növelje az átlátszóságot a jobb láthatóság érdekében.',
     CONTRAST_APCA: 'Ez nem elég kontrasztos bármilyen szövegmérethez. Fontolja meg ennek a színnek és szövegméretnek a kombinációját?',

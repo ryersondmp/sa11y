@@ -58,15 +58,19 @@ export default function checkContrast(results, option) {
           ...(color !== 'unsupported' && { color }),
         });
       } else if (background === 'image') {
-        contrastResults.push({
-          $el,
-          type: 'background-image',
-          color,
-          background,
-          fontSize,
-          fontWeight,
-          opacity,
-        });
+        if (isHidden) {
+          // Ignore visually hidden.
+        } else {
+          contrastResults.push({
+            $el,
+            type: 'background-image',
+            color,
+            background,
+            fontSize,
+            fontWeight,
+            opacity,
+          });
+        }
       } else if ($el.tagName === 'text' && $el.closest('svg')) {
         // Handle seperately.
       } else if (isHidden || Contrast.getHex(color) === Contrast.getHex(background)) {
@@ -194,7 +198,6 @@ export default function checkContrast(results, option) {
         && JSON.stringify(current.color) === JSON.stringify(previous.color);
       const hasSameParent = previous
         && current.$el.parentNode === previous.$el.parentNode;
-
       if (!previous || !hasSameColor || !hasSameParent) {
         mergedWarnings.push({ ...current, mergeCount: 1 });
         return mergedWarnings;

@@ -266,7 +266,7 @@ export default {
     // Contrast
     CONTRAST_ERROR: 'De tekst heeft niet genoeg contrast met de achtergrond, waardoor het moeilijk te lezen is.',
     CONTRAST_WARNING: 'Het contrast van deze tekst is onbekend en moet handmatig worden gecontroleerd. Zorg ervoor dat de tekst en achtergrond een sterk contrast hebben.',
-    CONTRAST_ERROR_GRAPHIC: 'De afbeelding heeft niet genoeg contrast met de achtergrond, waardoor het moeilijk te zien is.',
+    CONTRAST_ERROR_GRAPHIC: 'De afbeelding heeft niet genoeg contrast met de achtergrond, waardoor deze moeilijker te zien is.',
     CONTRAST_WARNING_GRAPHIC: 'Het contrast van deze afbeelding is onbekend en moet handmatig worden gecontroleerd. Zorg ervoor dat de afbeelding en achtergrond een sterk contrast hebben.',
     CONTRAST_OPACITY: 'Verhoog de dekking voor betere zichtbaarheid.',
     CONTRAST_APCA: 'Dit biedt niet genoeg contrast voor welke tekstgrootte dan ook. Overweeg deze kleur- en tekstgroottecombinatie te gebruiken?',

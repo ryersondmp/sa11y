@@ -239,7 +239,7 @@ export default {
     // Contrast
     CONTRAST_ERROR: 'Texten har inte tillräcklig kontrast mot bakgrunden, vilket gör den svår att läsa.',
     CONTRAST_WARNING: 'Kontrasten för denna text är okänd och kräver manuell kontroll. Se till att texten och bakgrunden har stark kontrast.',
-    CONTRAST_ERROR_GRAPHIC: 'Grafik har inte tillräcklig kontrast mot bakgrunden, vilket gör den svår att uppfatta.',
+    CONTRAST_ERROR_GRAPHIC: 'Grafiken har inte tillräcklig kontrast mot bakgrunden, vilket gör den svårare att se.',
     CONTRAST_WARNING_GRAPHIC: 'Kontrasten för denna grafik är okänd och kräver manuell kontroll. Se till att grafiken och bakgrunden har stark kontrast.',
     CONTRAST_OPACITY: 'Öka opaciteten för bättre synlighet.',
     CONTRAST_APCA: 'Det här ger inte tillräcklig kontrast för någon textstorlek. Överväg att använda denna färgkombination och textstorlek?',

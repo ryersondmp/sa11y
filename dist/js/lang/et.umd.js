@@ -278,7 +278,7 @@
       // Contrast
       CONTRAST_ERROR: 'Tekstil ei ole piisavalt kontrasti taustaga, mistõttu on seda raske lugeda.',
       CONTRAST_WARNING: 'Selle teksti kontrast on teadmata ja seda tuleb käsitsi üle vaadata. Veenduge, et tekstil ja taustal on tugev kontrast.',
-      CONTRAST_ERROR_GRAPHIC: 'Graafikal ei ole piisavalt kontrasti taustaga, mistõttu on seda raske tajuda.',
+      CONTRAST_ERROR_GRAPHIC: 'Graafika ei ole taustaga piisavalt kontrastsuselt eristatav, mis muudab selle raskemini nähtavaks.',
       CONTRAST_WARNING_GRAPHIC: 'Selle graafiku kontrast on teadmata ja seda tuleb käsitsi üle vaadata. Veenduge, et graafikal ja taustal on tugev kontrast.',
       CONTRAST_OPACITY: 'Tõstke opakuse taset parema nähtavuse tagamiseks.',
       CONTRAST_APCA: 'See ei ole piisavalt kontrastne ühegi teksti suuruse jaoks. Kas kaaluksite selle värvi ja teksti suuruse kombinatsiooni kasutamist?',

@@ -261,7 +261,7 @@ export default {
     // Contrast
     CONTRAST_ERROR: 'Tekstui trūksta pakankamo kontrasto su fonu, todėl jį sunku skaityti.',
     CONTRAST_WARNING: 'Šio teksto kontrastas yra nežinomas ir reikia jį patikrinti rankiniu būdu. Įsitikinkite, kad tekstas ir fonas turi stiprų kontrastą.',
-    CONTRAST_ERROR_GRAPHIC: 'Grafikai trūksta pakankamo kontrasto su fonu, todėl ją sunku suvokti.',
+    CONTRAST_ERROR_GRAPHIC: 'Grafika neturi pakankamai kontrasto su fonu, todėl ją sunkiau matyti.',
     CONTRAST_WARNING_GRAPHIC: 'Šios grafikos kontrastas yra nežinomas ir reikia ją patikrinti rankiniu būdu. Įsitikinkite, kad grafika ir fonas turi stiprų kontrastą.',
     CONTRAST_OPACITY: 'Padidinkite nepralaidumą, kad pagerintumėte matomumą.',
     CONTRAST_APCA: 'Šio kontrasto nepakanka bet kokiam teksto dydžiui. Apsvarstykite galimybę naudoti šią spalvą ir teksto dydžio kombinaciją?',

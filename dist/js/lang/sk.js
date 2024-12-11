@@ -279,7 +279,7 @@ var sk = {
     // Contrast
     CONTRAST_ERROR: 'Text nemá dostatočný kontrast s pozadím, čo sťažuje jeho čítanie.',
     CONTRAST_WARNING: 'Kontrast tohto textu je neznámy a je potrebné ho skontrolovať manuálne. Uistite sa, že text a pozadie majú silný kontrast.',
-    CONTRAST_ERROR_GRAPHIC: 'Grafika nemá dostatočný kontrast s pozadím, čo sťažuje jej vnímanie.',
+    CONTRAST_ERROR_GRAPHIC: 'Grafika nemá dostatočný kontrast s pozadím, čo sťažuje jej viditeľnosť.',
     CONTRAST_WARNING_GRAPHIC: 'Kontrast tejto grafiky je neznámy a je potrebné ho skontrolovať manuálne. Uistite sa, že grafika a pozadie majú silný kontrast.',
     CONTRAST_OPACITY: 'Zvýšte nepresnosť pre lepšiu viditeľnosť.',
     CONTRAST_APCA: 'Toto neposkytuje dostatočný kontrast pre žiadnu veľkosť textu. Zvážte použitie tejto kombinácie farby a veľkosti textu?',

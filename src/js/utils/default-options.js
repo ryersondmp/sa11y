@@ -104,13 +104,19 @@ const defaultOptions = {
     IMAGE_ALT_TOO_LONG: {
       maxLength: 250,
     },
-    LINK_IMAGE_ALT: true,
+    LINK_IMAGE_ALT: {
+      dismissAll: true,
+    },
     LINK_IMAGE_ALT_AND_TEXT: true,
     IMAGE_FIGURE_DUPLICATE_ALT: true,
-    IMAGE_PASS: true,
+    IMAGE_PASS: {
+      dismissAll: true,
+    },
 
     // Link checks
-    DUPLICATE_TITLE: true,
+    DUPLICATE_TITLE: {
+      dismissAll: true,
+    },
     LINK_EMPTY_LABELLEDBY: true,
     LINK_EMPTY_NO_LABEL: true,
     LINK_STOPWORD: true,
@@ -123,7 +129,9 @@ const defaultOptions = {
     LINK_URL: {
       maxLength: 40,
     },
-    LINK_LABEL: true,
+    LINK_LABEL: {
+      dismissAll: true,
+    },
     LINK_EMPTY: true,
     LINK_IDENTICAL_NAME: {
       dismissAll: true,

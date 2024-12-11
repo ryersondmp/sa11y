@@ -273,7 +273,7 @@
       // Contrast
       CONTRAST_ERROR: '文本与背景的对比度不足，难以阅读。',
       CONTRAST_WARNING: '该文本的对比度未知，需要手动检查。请确保文本和背景具有强对比度。',
-      CONTRAST_ERROR_GRAPHIC: '图形与背景的对比度不足，难以感知。',
+      CONTRAST_ERROR_GRAPHIC: '此图形与背景的对比度不足，这会使其更难看清。',
       CONTRAST_WARNING_GRAPHIC: '该图形的对比度未知，需要手动检查。请确保图形和背景具有强对比度。',
       CONTRAST_OPACITY: '增加不透明度以提高可见性。',
       CONTRAST_APCA: '这对于任何文本大小都没有足够的对比度。考虑使用这种颜色和文本大小组合？',

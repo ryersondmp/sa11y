@@ -255,7 +255,7 @@ export default {
     // Contrast
     CONTRAST_ERROR: 'Text nemá dostatečný kontrast s pozadím, což ztěžuje jeho čtení.',
     CONTRAST_WARNING: 'Kontrast tohoto textu je neznámý a je třeba jej manuálně zkontrolovat. Ujistěte se, že text a pozadí mají silné kontrastní barvy.',
-    CONTRAST_ERROR_GRAPHIC: 'Grafika nemá dostatečný kontrast s pozadím, což ztěžuje její vnímání.',
+    CONTRAST_ERROR_GRAPHIC: 'Grafika nemá dostatečný kontrast s pozadím, což ztěžuje její viditelnost.',
     CONTRAST_WARNING_GRAPHIC: 'Kontrast této grafiky je neznámý a je třeba jej manuálně zkontrolovat. Ujistěte se, že grafika a pozadí mají silné kontrastní barvy.',
     CONTRAST_OPACITY: 'Zvyšte průhlednost pro lepší viditelnost.',
     CONTRAST_APCA: 'To není dostatečný kontrast pro žádnou velikost textu. Zvažte použití této kombinace barvy a velikosti textu?',

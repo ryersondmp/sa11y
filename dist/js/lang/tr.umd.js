@@ -271,7 +271,7 @@
       // Contrast
       CONTRAST_ERROR: 'Metnin arka planla yeterli kontrastı yok, bu da okunmasını zorlaştırıyor.',
       CONTRAST_WARNING: 'Bu metnin kontrastı bilinmiyor ve manuel olarak kontrol edilmesi gerekiyor. Metin ve arka plan arasında güçlü bir kontrast olduğundan emin olun.',
-      CONTRAST_ERROR_GRAPHIC: 'Grafik, arka planla yeterli kontrasta sahip değil, bu da algılamasını zorlaştırıyor.',
+      CONTRAST_ERROR_GRAPHIC: 'Grafik arka planla yeterli kontrasta sahip değil, bu da görmeyi zorlaştırabilir.',
       CONTRAST_WARNING_GRAPHIC: 'Bu grafiğin kontrastı bilinmiyor ve manuel olarak kontrol edilmesi gerekiyor. Grafik ve arka plan arasında güçlü bir kontrast olduğundan emin olun.',
       CONTRAST_OPACITY: 'Görünürlüğü artırmak için opaklığı artırın.',
       CONTRAST_APCA: 'Bu, herhangi bir metin boyutu için yeterli kontrast sağlamaz. Bu renk ve metin boyutu kombinasyonunu kullanmayı düşünün?',

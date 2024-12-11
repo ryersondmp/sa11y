@@ -269,7 +269,7 @@ var ro = {
     // Contrast
     CONTRAST_ERROR: 'Textul nu are suficient contrast cu fundalul, făcându-l greu de citit.',
     CONTRAST_WARNING: 'Contrastul acestui text este necunoscut și trebuie revizuit manual. Asigurați-vă că textul și fundalul au un contrast puternic.',
-    CONTRAST_ERROR_GRAPHIC: 'Graficul nu are suficient contrast cu fundalul, făcându-l greu de perceput.',
+    CONTRAST_ERROR_GRAPHIC: 'Grafica nu are un contrast suficient cu fundalul, ceea ce îngreunează vizualizarea.',
     CONTRAST_WARNING_GRAPHIC: 'Contrastul acestui grafic este necunoscut și trebuie revizuit manual. Asigurați-vă că graficul și fundalul au un contrast puternic.',
     CONTRAST_OPACITY: 'Creșteți opacitatea pentru o vizibilitate mai bună.',
     CONTRAST_APCA: 'Aceasta nu are suficient contrast pentru niciun dimensiune de text. Luați în considerare utilizarea acestei combinații de culoare și dimensiune a textului?',

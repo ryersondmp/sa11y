@@ -266,7 +266,7 @@ var de = {
     // Contrast
     CONTRAST_ERROR: 'Der Text hat nicht genug Kontrast zum Hintergrund, was das Lesen erschwert.',
     CONTRAST_WARNING: 'Der Kontrast dieses Textes ist unbekannt und muss manuell überprüft werden. Stellen Sie sicher, dass Text und Hintergrund starke Kontrastfarben haben.',
-    CONTRAST_ERROR_GRAPHIC: 'Die Grafik hat nicht genug Kontrast zum Hintergrund, was die Wahrnehmung erschwert.',
+    CONTRAST_ERROR_GRAPHIC: 'Die Grafik hat nicht genug Kontrast zum Hintergrund, was das Erkennen erschwert.',
     CONTRAST_WARNING_GRAPHIC: 'Der Kontrast dieser Grafik ist unbekannt und muss manuell überprüft werden. Stellen Sie sicher, dass die Grafik und der Hintergrund starke Kontrastfarben haben.',
     CONTRAST_OPACITY: 'Erhöhen Sie die Deckkraft für bessere Sichtbarkeit.',
     CONTRAST_APCA: 'Das ist nicht genug Kontrast für Text in beliebiger Größe. Erwägen Sie, diese Farb- und Textgrößenkombination zu verwenden?',

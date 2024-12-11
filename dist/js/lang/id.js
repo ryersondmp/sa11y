@@ -271,7 +271,7 @@ var id = {
     // Contrast
     CONTRAST_ERROR: 'Teks tidak memiliki kontras yang cukup dengan latar belakang, membuatnya sulit dibaca.',
     CONTRAST_WARNING: 'Kontras teks ini tidak diketahui dan perlu ditinjau secara manual. Pastikan teks dan latar belakang memiliki kontras yang kuat.',
-    CONTRAST_ERROR_GRAPHIC: 'Grafik tidak memiliki kontras yang cukup dengan latar belakang, membuatnya sulit untuk dilihat.',
+    CONTRAST_ERROR_GRAPHIC: 'Grafik tidak memiliki kontras yang cukup dengan latar belakang, sehingga sulit untuk dilihat.',
     CONTRAST_WARNING_GRAPHIC: 'Kontras grafik ini tidak diketahui dan perlu ditinjau secara manual. Pastikan grafik dan latar belakang memiliki kontras yang kuat.',
     CONTRAST_OPACITY: 'Tingkatkan opasitas untuk visibilitas yang lebih baik.',
     CONTRAST_APCA: 'Ini tidak memiliki kontras yang cukup untuk teks dengan ukuran apa pun. Pertimbangkan untuk menggunakan kombinasi warna dan ukuran teks ini?',

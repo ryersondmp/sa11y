@@ -252,7 +252,7 @@ export default {
     // Contrast
     CONTRAST_ERROR: 'Tekst nie ma wystarczającego kontrastu z tłem, co utrudnia jego odczytanie.',
     CONTRAST_WARNING: 'Kontrast tego tekstu jest nieznany i wymaga ręcznego sprawdzenia. Upewnij się, że tekst i tło mają silny kontrast.',
-    CONTRAST_ERROR_GRAPHIC: 'Grafika nie ma wystarczającego kontrastu z tłem, co utrudnia jej postrzeganie.',
+    CONTRAST_ERROR_GRAPHIC: 'Grafika nie ma wystarczającego kontrastu z tłem, co utrudnia jej dostrzeżenie.',
     CONTRAST_WARNING_GRAPHIC: 'Kontrast tej grafiki jest nieznany i wymaga ręcznego sprawdzenia. Upewnij się, że grafika i tło mają silny kontrast.',
     CONTRAST_OPACITY: 'Zwiększ przezroczystość dla lepszej widoczności.',
     CONTRAST_APCA: 'To nie zapewnia wystarczającego kontrastu dla żadnego rozmiaru tekstu. Czy rozważyłeś użycie tej kombinacji koloru i rozmiaru tekstu?',

@@ -263,7 +263,7 @@ var fi = {
     // Contrast
     CONTRAST_ERROR: 'Tekstillä ei ole tarpeeksi kontrastia taustan kanssa, mikä tekee sen lukemisesta vaikeaa.',
     CONTRAST_WARNING: 'Tämän tekstin kontrasti on tuntematon ja se on tarkistettava manuaalisesti. Varmista, että tekstissä ja taustassa on vahva kontrasti.',
-    CONTRAST_ERROR_GRAPHIC: 'Grafiikalla ei ole tarpeeksi kontrastia taustan kanssa, mikä vaikeuttaa sen havaitsemista.',
+    CONTRAST_ERROR_GRAPHIC: 'Grafiikalla ei ole riittävää kontrastia taustaan nähden, mikä vaikeuttaa sen näkemistä.',
     CONTRAST_WARNING_GRAPHIC: 'Tämän grafiikan kontrasti on tuntematon ja se on tarkistettava manuaalisesti. Varmista, että grafiikassa ja taustassa on vahva kontrasti.',
     CONTRAST_OPACITY: 'Lisää opasiteettia paremman näkyvyyden saavuttamiseksi.',
     CONTRAST_APCA: 'Tämä ei tarjoa tarpeeksi kontrastia minkään kokoiselle tekstille. Harkitse tämän värin ja tekstikoon yhdistelmän käyttöä?',

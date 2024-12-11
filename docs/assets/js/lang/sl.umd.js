@@ -274,7 +274,7 @@
       // Contrast
       CONTRAST_ERROR: 'Besedilo nima dovolj kontrasta s ozadjem, zaradi česar je težko berljivo.',
       CONTRAST_WARNING: 'Kontrast tega besedila ni znan in ga je treba preveriti ročno. Prepričajte se, da imata besedilo in ozadje močan kontrast.',
-      CONTRAST_ERROR_GRAPHIC: 'Grafika nima dovolj kontrasta s ozadjem, zaradi česar je težko prepoznavna.',
+      CONTRAST_ERROR_GRAPHIC: 'Grafika nima dovolj kontrasta z ozadjem, kar otežuje njeno vidljivost.',
       CONTRAST_WARNING_GRAPHIC: 'Kontrast te grafike ni znan in ga je treba preveriti ročno. Prepričajte se, da ima grafika močan kontrast z ozadjem.',
       CONTRAST_OPACITY: 'Povečajte neprosojnost za boljšo vidnost.',
       CONTRAST_APCA: 'To ne zagotavlja dovolj kontrasta za nobeno velikost besedila. Razmislite o uporabi te kombinacije barve in velikosti besedila?',

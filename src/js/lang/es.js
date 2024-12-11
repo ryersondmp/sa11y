@@ -235,7 +235,7 @@ export default {
     // Contrast
     CONTRAST_ERROR: 'El texto no tiene suficiente contraste con el fondo, lo que dificulta su lectura.',
     CONTRAST_WARNING: 'El contraste de este texto es desconocido y necesita ser revisado manualmente. Asegúrese de que el texto y el fondo tengan colores con un fuerte contraste.',
-    CONTRAST_ERROR_GRAPHIC: 'El gráfico no tiene suficiente contraste con el fondo, lo que dificulta su percepción.',
+    CONTRAST_ERROR_GRAPHIC: 'El gráfico no tiene suficiente contraste con el fondo, lo que dificulta su visualización.',
     CONTRAST_WARNING_GRAPHIC: 'El contraste de este gráfico es desconocido y necesita ser revisado manualmente. Asegúrese de que el gráfico y el fondo tengan colores con un fuerte contraste.',
     CONTRAST_OPACITY: 'Aumente la opacidad para mejorar la visibilidad.',
     CONTRAST_APCA: 'Esto no tiene suficiente contraste para ningún tamaño de texto. ¿Considera usar esta combinación de color y tamaño de texto?',

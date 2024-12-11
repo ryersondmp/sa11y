@@ -275,7 +275,7 @@
       // Contrast
       CONTRAST_ERROR: 'O texto não tem contraste suficiente com o fundo, dificultando a leitura.',
       CONTRAST_WARNING: 'O contraste deste texto é desconhecido e precisa ser revisado manualmente. Garanta que o texto e o fundo tenham cores com forte contraste.',
-      CONTRAST_ERROR_GRAPHIC: 'O gráfico não tem contraste suficiente com o fundo, dificultando a percepção.',
+      CONTRAST_ERROR_GRAPHIC: 'O gráfico não possui contraste suficiente com o fundo, tornando-o mais difícil de ver.',
       CONTRAST_WARNING_GRAPHIC: 'O contraste deste gráfico é desconhecido e precisa ser revisado manualmente. Garanta que o gráfico e o fundo tenham cores com forte contraste.',
       CONTRAST_OPACITY: 'Aumente a opacidade para melhorar a visibilidade.',
       CONTRAST_APCA: 'Este contraste não é suficiente para qualquer tamanho de texto. Considere usar esta combinação de cor e tamanho de texto?',
