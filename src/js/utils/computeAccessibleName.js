@@ -1,6 +1,10 @@
 /* eslint-disable no-use-before-define */
 
 /* Get text content of pseudo elements. */
+/**
+ * @todo Improve pseudo content accessible name computation.
+ * https://developer.mozilla.org/en-US/docs/Web/CSS/content#syntax
+ * */
 export const wrapPseudoContent = (element, string) => {
   const pseudo = [];
   pseudo[0] = window.getComputedStyle(element, ':before').getPropertyValue('content');

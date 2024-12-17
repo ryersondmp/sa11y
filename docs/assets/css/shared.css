@@ -157,6 +157,9 @@ input[type=color i]::-moz-color-swatch {
   border-color: var(--sa11y-button-outline);
   border-radius: 50%;
 }
+input[type=color i].unknown {
+  box-shadow: 0 0 0 2px var(--sa11y-yellow-text);
+}
 input[type=color i].unknown::after {
   position: absolute;
   z-index: 2;

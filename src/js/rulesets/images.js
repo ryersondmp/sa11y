@@ -165,17 +165,25 @@ export default function checkImages(results, option) {
       // Decorative images.
       if (decorative) {
         const carouselSources = option.checks.IMAGE_DECORATIVE_CAROUSEL.sources;
-        if (option.checks.IMAGE_DECORATIVE_CAROUSEL && $el.closest(carouselSources)) {
-          results.push({
-            element: $el,
-            type: option.checks.IMAGE_DECORATIVE_CAROUSEL.type || 'warning',
-            content: option.checks.IMAGE_DECORATIVE_CAROUSEL.content
-              || Lang.sprintf('IMAGE_DECORATIVE_CAROUSEL'),
-            dismiss: Utils.prepareDismissal(`CAROUSEL${src}`),
-            dismissAll: option.checks.IMAGE_DECORATIVE_CAROUSEL.dismissAll
-              ? 'IMAGE_DECORATIVE_CAROUSEL' : false,
-            developer: option.checks.IMAGE_DECORATIVE_CAROUSEL.developer || false,
-          });
+        const carousel = carouselSources ? $el.closest(carouselSources) : '';
+        if (carousel) {
+          const numberOfSlides = carousel.querySelectorAll('img');
+          const rule = (numberOfSlides.length === 1)
+            ? option.checks.IMAGE_DECORATIVE
+            : option.checks.IMAGE_DECORATIVE_CAROUSEL;
+          const conditional = (numberOfSlides.length === 1)
+            ? 'IMAGE_DECORATIVE'
+            : 'IMAGE_DECORATIVE_CAROUSEL';
+          if (rule) {
+            results.push({
+              element: $el,
+              type: rule.type || 'warning',
+              content: rule.content || Lang.sprintf(conditional),
+              dismiss: Utils.prepareDismissal(conditional + src),
+              dismissAll: rule.dismissAll ? conditional : false,
+              developer: rule.developer || false,
+            });
+          }
         } else if (link) {
           const rule = (linkTextContentLength === 0)
             ? option.checks.LINK_IMAGE_NO_ALT_TEXT

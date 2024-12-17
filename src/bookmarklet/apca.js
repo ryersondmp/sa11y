@@ -2,10 +2,8 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-new */
 
-/**
- * Manually adjust version number based on the name of the branch.
- */
-const version = 'dev-4.0.0';
+// Version based on package.json
+const version = Sa11yVersion;
 const loadingSpinnerSVG = `
 <style>
 .loader {
@@ -67,7 +65,7 @@ const onLoadScript = (lang) => {
       customChecks: false,
       exportResultsPlugin: true,
       detectSPArouting: true,
-      // contrastAPCA: true,
+      contrastAPCA: true,
     });
   };
 

@@ -301,6 +301,13 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
+  test('Decorative image in a carousel, but only one image', async () => {
+    const issue = await checkTooltip(
+      page, 'warning-carousel-decorative', 'Image is marked as <strong>decorative</strong>',
+    );
+    expect(issue).toBe(true);
+  });
+
   test('Alt text is too long', async () => {
     const issue = await checkTooltip(
       page, 'warning-alt-text-is-too-long', 'Alt text description is <strong>too long</strong>',

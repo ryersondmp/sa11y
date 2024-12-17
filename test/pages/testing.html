@@ -60,6 +60,23 @@
   </header>
   <main>
 
+    <style>
+      .text-formatted a[href^="http"]:not([href*="hr.ubc.ca"]):not([class*="cta-button--icon"])::after,
+      .link-external::after {
+        position: relative;
+        top: 0.125em;
+        display: inline-block;
+        width: 0.875em;
+        height: 1em;
+        margin-left: 0.25em;
+        content: url(/themes/custom/hr/img/svg/icon-link-external-3.svg) / "Testing";
+      }
+    </style>
+    <h5><a class="unit-button unit-button--block link-external" href="https://ubc.wd10.myworkdayjobs.com/ubcstaffjobs"
+        target="_blank" rel="nofollow"><span class="font-semibold">Staff listings</span></a></h5>
+
+    <hr>
+
     <p>
       <sup>1</sup> Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam dolor libero dignissimos veniam.
       Totam dolores rem eligendi praesentium harum doloremque ducimus dignissimos, exercitationem, omnis ullam autem,
@@ -70,6 +87,7 @@
       <ul>
         <li><a href="/community-alumni/alumni/">Alumni</a></li>
         <li><a href="/community-alumni/giving/">Donors</a></li>
+        <li>Break</li>
         <li><a href="/employers-partners/">Employers and partners</a></li>
         <li><a href="/future-students/">Future students</a></li>
       </ul>
@@ -545,7 +563,15 @@
     <hr>
 
     <h2>Parent div has class of <strong>.carousel</strong></h2>
+
+    <h3>Only 1 image in the carousel</h3>
     <div class="carousel">
+      <img alt src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg">
+    </div>
+
+    <h3>Multiple images</h3>
+    <div class="carousel">
+      <img alt src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg">
       <img alt src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg">
     </div>
 

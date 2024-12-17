@@ -49,6 +49,7 @@ const sa11y = new Sa11y({
   imageIgnore: '.logo',
   contrastIgnore: '.background-image-component',
   showHinPageOutline: 1,
+  // contrastAPCA: true,
 
   exportResultsPlugin: true,
   autoDetectShadowComponents: true,

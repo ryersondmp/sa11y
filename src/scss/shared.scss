@@ -171,6 +171,10 @@ input[type="color" i] {
     border-radius: 50%;
   }
 
+  &.unknown {
+    box-shadow: 0 0 0 2px var(--sa11y-yellow-text);
+  }
+
   &.unknown::after {
     position: absolute;
     z-index: 2;

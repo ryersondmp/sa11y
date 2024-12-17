@@ -57,7 +57,7 @@ export default function checkContrast(results, option) {
           ...(background !== 'unsupported' && { background }),
           ...(color !== 'unsupported' && { color }),
         });
-      } else if (background === 'image') {
+      } else if (background.type === 'image') {
         if (isHidden) {
           // Ignore visually hidden.
         } else {
@@ -90,7 +90,7 @@ export default function checkContrast(results, option) {
     const background = Contrast.getBackground($el);
 
     // Background image.
-    if (background && background === 'image') {
+    if (background && background.type === 'image') {
       contrastResults.push({ $el, type: 'svg-warning', background });
       return;
     }
@@ -177,7 +177,7 @@ export default function checkContrast(results, option) {
       const pOpacity = parseFloat(placeholder.opacity);
 
       // Placeholder has background image.
-      if (pBackground === 'image') {
+      if (pBackground.type === 'image') {
         // There will already be a warning.
       } else {
         const result = Contrast.checkElementContrast($el, pColor, pBackground, pSize, pWeight, pOpacity);
@@ -190,36 +190,38 @@ export default function checkContrast(results, option) {
   });
 
   // Do some extra processing on warnings.
-  const processWarnings = (warnings) => warnings.reduce((mergedWarnings, current) => {
-    if (current.type === 'background-image') {
-      // For background images, merge nodes that share similar properties to minimize number of annotations.
-      const previous = mergedWarnings[mergedWarnings.length - 1];
-      const hasSameColor = previous
-        && JSON.stringify(current.color) === JSON.stringify(previous.color);
-      const hasSameParent = previous
-        && current.$el.parentNode === previous.$el.parentNode;
-      if (!previous || !hasSameColor || !hasSameParent) {
-        mergedWarnings.push({ ...current, mergeCount: 1 });
-        return mergedWarnings;
-      }
+  const processWarnings = (warnings) => {
+    // Separate warnings based on type.
+    const backgroundImages = warnings.filter((warning) => warning.type === 'background-image');
+    const otherWarnings = warnings.filter((warning) => warning.type !== 'background-image');
 
-      // For APCA, font size and font weight matter.
-      if (option.contrastAPCA) {
-        const hasSameFont = current.fontSize === previous.fontSize
-          && current.fontWeight === previous.fontWeight;
-        if (!hasSameFont) {
-          mergedWarnings.push({ ...current });
-        }
-      } else {
-        previous.mergeCount += 1;
-      }
-      return mergedWarnings;
+    let processedBackgroundWarnings;
+
+    // Process background-image warnings based on option.contrastAPCA.
+    if (option.contrastAPCA) {
+      // Do not group warnings, return each warning as-is.
+      processedBackgroundWarnings = backgroundImages.map((warning) => ({ ...warning }));
+    } else {
+      // Group background-image warnings if they share same BG and FG colours.
+      const groupedWarnings = backgroundImages.reduce((groups, warning) => {
+        const grouped = groups;
+        const groupKey = JSON.stringify({
+          background: warning.background.value,
+          color: warning.color,
+        });
+        if (!grouped[groupKey]) grouped[groupKey] = [];
+        grouped[groupKey].push(warning);
+        return grouped;
+      }, {});
+
+      // Process each group.
+      processedBackgroundWarnings = Object.values(groupedWarnings).map((group) => ({ ...group[0] }));
     }
 
-    // Return remaining warnings that don't need additional processing.
-    mergedWarnings.push(current);
-    return mergedWarnings;
-  }, []);
+    // Combine processed background-image warnings with other warnings.
+    return [...processedBackgroundWarnings, ...otherWarnings];
+  };
+
   const processedResults = processWarnings(contrastResults);
 
   // Iterate through all contrast results.
@@ -228,23 +230,7 @@ export default function checkContrast(results, option) {
     const updatedItem = item;
 
     // Annotation placement.
-    let element;
-    if (item.type === 'background-image' && item.mergeCount > 1) {
-      // Get the background image.
-      let parent = $el.parentElement;
-      while (parent) {
-        const computedStyle = window.getComputedStyle(parent);
-        if (computedStyle.backgroundImage !== 'none') break;
-        parent = parent.parentElement;
-      }
-      element = parent || $el;
-      updatedItem.fontWeight = 400;
-      updatedItem.fontSize = 15.5; // For merged objects, reset font size.
-    } else if ($el.tagName === 'OPTION') {
-      element = $el.closest('datalist, select, optgroup');
-    } else {
-      element = $el;
-    }
+    const element = $el.tagName === 'OPTION' ? $el.closest('datalist, select, optgroup') : $el;
 
     // Process text within element.
     const nodeText = Utils.fnIgnore(element, ['option:not(option:first-child)']);
@@ -259,8 +245,12 @@ export default function checkContrast(results, option) {
     if (item.type === 'placeholder') {
       previewText = Utils.sanitizeHTML($el.placeholder);
     } else if (item.type === 'svg-error' || item.type === 'svg-warning' || item.type === 'svg-text') {
-      const sanitizeSvg = Utils.sanitizeHTMLBlock(updatedItem.$el.outerHTML, true);
-      previewText = Utils.removeWhitespace(sanitizeSvg);
+      previewText = '';
+      /**
+       * @todo Better support preview for SVGs.
+       * const sanitizeSvg = Utils.sanitizeHTMLBlock(updatedItem.$el.outerHTML, true);
+       * previewText = Utils.removeWhitespace(sanitizeSvg);
+       * */
     } else {
       previewText = sanitizedText;
     }

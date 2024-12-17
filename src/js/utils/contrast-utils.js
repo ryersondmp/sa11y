@@ -71,7 +71,7 @@ export function getBackground($el) {
     const bgColor = convertToRGBA(styles.backgroundColor);
     const bgImage = styles.backgroundImage;
     if (bgImage !== 'none') {
-      return 'image';
+      return { type: 'image', value: bgImage };
     }
     if (bgColor[3] !== 0 && bgColor !== 'transparent') {
       return bgColor; // Return the first non-transparent background color.
@@ -174,7 +174,7 @@ export function ratioToDisplay(value) {
  */
 export function calculateContrast(color, bg) {
   let ratio;
-  const blendedColor = alphaBlend(color, bg);
+  const blendedColor = alphaBlend(color, bg).slice(0, 4);
   if (Constants.Global.contrastAPCA) {
     const foreground = sRGBtoY(blendedColor);
     const background = sRGBtoY(bg);
@@ -346,7 +346,7 @@ export function suggestColorAPCA(color, background, fontWeight, fontSize) {
 export function generateColorSuggestion(contrastDetails) {
   let adviceContainer;
   const { color, background, fontWeight, fontSize, isLargeText, type } = contrastDetails;
-  if (color && background && background !== 'image' && type === 'text') {
+  if (color && background && background.type !== 'image' && type === 'text') {
     const suggested = Constants.Global.contrastAPCA
       ? suggestColorAPCA(color, background, fontWeight, fontSize)
       : suggestColorWCAG(color, background, isLargeText);
@@ -389,19 +389,19 @@ export function generateContrastTools(contrastDetails) {
   const { sanitizedText, color, background, fontWeight, fontSize, ratio, textUnderline } = contrastDetails;
 
   // Initialize variables.
-  const hasBackgroundColor = background && background !== 'image';
+  const hasBackgroundColor = background && background.type !== 'image';
   const backgroundHex = hasBackgroundColor ? getHex(background) : '#000000';
   const foregroundHex = color ? getHex(color) : '#000000';
 
   // Other properties.
   const hasFontWeight = fontWeight ? `font-weight:${fontWeight};` : '';
   const hasFontSize = fontSize ? `font-size:${fontSize}px;` : '';
-  const textDecoration = `text-decoration:${textUnderline}`;
+  const textDecoration = textUnderline ? `text-decoration:${textUnderline};` : '';
 
   // If colour or background colour is unknown; visually indicate so.
   const unknownFG = color
     ? '' : 'class="unknown"';
-  const unknownBG = background && background !== 'image'
+  const unknownBG = background && background.type !== 'image'
     ? '' : 'class="unknown"';
   const unknownFGText = color
     ? '' : `<span class="visually-hidden">(${Lang._('UNKNOWN')})</span>`;
