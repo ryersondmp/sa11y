@@ -99,7 +99,6 @@ export function annotate(issue, option) {
   } else {
     // Button annotations.
     const create = document.createElement('div');
-    const create = document.createElement('div');
     create.classList.add(`${inline ? 'instance-inline' : 'instance'}`);
     create.innerHTML = `
     <button

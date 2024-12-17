@@ -263,261 +263,247 @@ export default function checkQA(results, option) {
     let activeMatch = ''; // Carried in loop for second paragraph.
     let firstText = ''; // Text of previous paragraph.
     let lastHitWasEmoji = false;
-    // Variables to carry in loop.
-    let activeMatch = ''; // Carried in loop for second paragraph.
-    let firstText = ''; // Text of previous paragraph.
-    let lastHitWasEmoji = false;
 
     Elements.Found.Paragraphs.forEach((p, i) => {
       let secondText = false;
       let hit = false;
       firstText = firstText || Utils.getText(p).replace('(', '');
       const firstPrefix = firstText.substring(0, 2);
-      Elements.Found.Paragraphs.forEach((p, i) => {
-        let secondText = false;
-        let hit = false;
-        firstText = firstText || Utils.getText(p).replace('(', '');
-        const firstPrefix = firstText.substring(0, 2);
 
-        // Grab first two characters.
-        const isAlphabetic = firstPrefix.match(alphabeticMatch);
-        const isNumber = firstPrefix.match(numberMatch);
-        const isEmoji = firstPrefix.match(emojiMatch);
-        const isSpecialChar = specialCharsMatch.test(firstPrefix.charAt(0));
-        // Grab first two characters.
-        const isAlphabetic = firstPrefix.match(alphabeticMatch);
-        const isNumber = firstPrefix.match(numberMatch);
-        const isEmoji = firstPrefix.match(emojiMatch);
-        const isSpecialChar = specialCharsMatch.test(firstPrefix.charAt(0));
+      // Grab first two characters.
+      const isAlphabetic = firstPrefix.match(alphabeticMatch);
+      const isNumber = firstPrefix.match(numberMatch);
+      const isEmoji = firstPrefix.match(emojiMatch);
+      const isSpecialChar = specialCharsMatch.test(firstPrefix.charAt(0));
 
-        if (
-          firstPrefix.length > 0
-          && firstPrefix !== activeMatch
-          && !isNumber
-          && (isAlphabetic || isEmoji || isSpecialChar)
-        ) {
-          // We have a prefix and a possible hit; check next detected paragraph.
-          const secondP = Elements.Found.Paragraphs[i + 1];
-          if (secondP) {
-            secondText = Utils.getText(secondP).replace('(', '').substring(0, 2);
-            if (secondTextNoMatch.includes(secondText?.toLowerCase().trim())) {
-              // A sentence. Another sentence. (A sentence). 1 apple, 1 banana.
-              return;
-            }
-            const secondPrefix = decrement(secondText);
-            if (isAlphabetic) {
-              // Check for repeats (*,*) or increments(a,b)
-              if (firstPrefix !== 'A ' && firstPrefix === secondPrefix) {
-                hit = true;
-              }
-            } else if (isEmoji && !lastHitWasEmoji) {
-              // Check for two paragraphs in a row that start with emoji.
-              if (secondPrefix.match(emojiMatch)) {
-                hit = true;
-                lastHitWasEmoji = true;
-                // This is carried; better miss than have lots of positives.
-              }
-            }
+      if (
+        firstPrefix.length > 0
+        && firstPrefix !== activeMatch
+        && !isNumber
+        && (isAlphabetic || isEmoji || isSpecialChar)
+      ) {
+        // We have a prefix and a possible hit; check next detected paragraph.
+        const secondP = Elements.Found.Paragraphs[i + 1];
+        if (secondP) {
+          secondText = Utils.getText(secondP).replace('(', '').substring(0, 2);
+          if (secondTextNoMatch.includes(secondText?.toLowerCase().trim())) {
+            // A sentence. Another sentence. (A sentence). 1 apple, 1 banana.
+            return;
           }
-          if (!hit) {
-            // Split p by carriage return if there was a firstPrefix and compare.
-            let textAfterBreak = p?.querySelector('br')?.nextSibling?.nodeValue;
-            if (textAfterBreak) {
-              textAfterBreak = textAfterBreak.replace(/<\/?[^>]+(>|$)/g, '').trim().substring(0, 2);
-              const checkForOtherPrefixChars = specialCharsMatch.test(textAfterBreak.charAt(0));
-              if (checkForOtherPrefixChars
-                || firstPrefix === decrement(textAfterBreak)
-                || (!lastHitWasEmoji && textAfterBreak.match(emojiMatch))) {
-                hit = true;
-              }
+          const secondPrefix = decrement(secondText);
+          if (isAlphabetic) {
+            // Check for repeats (*,*) or increments(a,b)
+            if (firstPrefix !== 'A ' && firstPrefix === secondPrefix) {
+              hit = true;
             }
-          } if (hit) {
-            results.push({
-              element: p,
-              type: option.checks.QA_FAKE_LIST.type || 'warning',
-              content: option.checks.QA_FAKE_LIST.content || Lang.sprintf('QA_FAKE_LIST', firstPrefix),
-              dismiss: Utils.prepareDismissal(`LIST${p.textContent}`),
-              dismissAll: option.checks.QA_FAKE_LIST.dismissAll ? 'QA_FAKE_LIST' : false,
-              developer: option.checks.QA_FAKE_LIST.developer || false,
-            });
-            activeMatch = firstPrefix;
-          } else {
-            activeMatch = '';
+          } else if (isEmoji && !lastHitWasEmoji) {
+            // Check for two paragraphs in a row that start with emoji.
+            if (secondPrefix.match(emojiMatch)) {
+              hit = true;
+              lastHitWasEmoji = true;
+              // This is carried; better miss than have lots of positives.
+            }
           }
         }
-        // Reset for next loop, carry over text query if available.
-        firstText = secondText ? '' : secondText;
-      });
-    }
+        if (!hit) {
+          // Split p by carriage return if there was a firstPrefix and compare.
+          let textAfterBreak = p?.querySelector('br')?.nextSibling?.nodeValue;
+          if (textAfterBreak) {
+            textAfterBreak = textAfterBreak.replace(/<\/?[^>]+(>|$)/g, '').trim().substring(0, 2);
+            const checkForOtherPrefixChars = specialCharsMatch.test(textAfterBreak.charAt(0));
+            if (checkForOtherPrefixChars
+              || firstPrefix === decrement(textAfterBreak)
+              || (!lastHitWasEmoji && textAfterBreak.match(emojiMatch))) {
+              hit = true;
+            }
+          }
+        } if (hit) {
+          results.push({
+            element: p,
+            type: option.checks.QA_FAKE_LIST.type || 'warning',
+            content: option.checks.QA_FAKE_LIST.content || Lang.sprintf('QA_FAKE_LIST', firstPrefix),
+            dismiss: Utils.prepareDismissal(`LIST${p.textContent}`),
+            dismissAll: option.checks.QA_FAKE_LIST.dismissAll ? 'QA_FAKE_LIST' : false,
+            developer: option.checks.QA_FAKE_LIST.developer || false,
+          });
+          activeMatch = firstPrefix;
+        } else {
+          activeMatch = '';
+        }
+      }
+      // Reset for next loop, carry over text query if available.
+      firstText = secondText ? '' : secondText;
+    });
+  }
 
   /* **************************************** */
   /*  Warning: Detect uppercase text.         */
   /* **************************************** */
   if (option.checks.QA_UPPERCASE) {
-      const checkCaps = ($el) => {
-        let thisText = '';
-        if ($el.tagName === 'LI') {
-          // Prevent recursion through nested lists.
-          $el.childNodes.forEach((node) => {
-            if (node.nodeType === 3) {
-              thisText += node.textContent;
-            }
-          });
-        } else {
-          thisText = Utils.getText($el);
-        }
-
-        // Patterns
-        const uppercasePattern = /([A-Z]{2,}[ ])([A-Z]{2,}[ ])([A-Z]{2,}[ ])([A-Z]{2,})/g;
-        const detectUpperCase = thisText.match(uppercasePattern);
-
-        if (detectUpperCase && detectUpperCase[0].length > 10) {
-          results.push({
-            element: $el,
-            type: option.checks.QA_UPPERCASE.type || 'warning',
-            content: option.checks.QA_UPPERCASE.content || Lang.sprintf('QA_UPPERCASE'),
-            dismiss: Utils.prepareDismissal(`UPPERCASE${thisText}`),
-            dismissAll: option.checks.QA_UPPERCASE.dismissAll ? 'QA_UPPERCASE' : false,
-            developer: option.checks.QA_UPPERCASE.developer || false,
-          });
-        }
-      };
-      Elements.Found.Paragraphs.forEach(($el) => checkCaps($el));
-      Elements.Found.Headings.forEach(($el) => checkCaps($el));
-      Elements.Found.Lists.forEach(($el) => checkCaps($el));
-      Elements.Found.Blockquotes.forEach(($el) => checkCaps($el));
-    }
-
-    /* ************************************************************** */
-    /*  Various checks: underlines, justify-aligned, and small text.  */
-    /* ************************************************************** */
-    // Check underlined text. Created by Brian Teeman!
-    const addUnderlineResult = ($el) => {
-      results.push({
-        element: $el,
-        type: option.checks.QA_UNDERLINE.type || 'warning',
-        content: option.checks.QA_UNDERLINE.content || Lang.sprintf('QA_UNDERLINE'),
-        inline: true,
-        dismiss: Utils.prepareDismissal(`UNDERLINE${$el.textContent}`),
-        dismissAll: option.checks.QA_UNDERLINE.dismissAll ? 'QA_UNDERLINE' : false,
-        developer: option.checks.QA_UNDERLINE.developer || false,
-      });
-    };
-
-    const addJustifyResult = ($el) => {
-      results.push({
-        element: $el,
-        type: option.checks.QA_JUSTIFY.type || 'warning',
-        content: option.checks.QA_JUSTIFY.content || Lang._('QA_JUSTIFY'),
-        dismiss: Utils.prepareDismissal(`JUSTIFIED${$el.textContent}`),
-        dismissAll: option.checks.QA_JUSTIFY.dismissAll ? 'QA_JUSTIFY' : false,
-        developer: option.checks.QA_JUSTIFY.developer || false,
-      });
-    };
-
-    const addSmallTextResult = ($el) => {
-      results.push({
-        element: $el,
-        type: option.checks.QA_SMALL_TEXT.type || 'warning',
-        content: option.checks.QA_SMALL_TEXT.content || Lang._('QA_SMALL_TEXT'),
-        dismiss: Utils.prepareDismissal(`SMALL${$el.textContent}`),
-        dismissAll: option.checks.QA_SMALL_TEXT.dismissAll ? 'QA_SMALL_TEXT' : false,
-        developer: option.checks.QA_SMALL_TEXT.developer || false,
-      });
-    };
-
-    const computeStyle = ($el) => {
-      const style = getComputedStyle($el);
-      const { textDecorationLine, textAlign, fontSize } = style;
-
-      /* Check: Underlined text. */
-      if (option.checks.QA_UNDERLINE
-        && textDecorationLine === 'underline'
-        && !$el.closest('a[href]')
-        && !$el.closest('ABBR')) {
-        addUnderlineResult($el);
+    const checkCaps = ($el) => {
+      let thisText = '';
+      if ($el.tagName === 'LI') {
+        // Prevent recursion through nested lists.
+        $el.childNodes.forEach((node) => {
+          if (node.nodeType === 3) {
+            thisText += node.textContent;
+          }
+        });
+      } else {
+        thisText = Utils.getText($el);
       }
 
-      /* Check: Font size is greater than 0 and less than 10. */
-      const defaultSize = option.checks.QA_SMALL_TEXT.fontSize || 10;
-      const computedFontSize = parseFloat(fontSize);
+      // Patterns
+      const uppercasePattern = /([A-Z]{2,}[ ])([A-Z]{2,}[ ])([A-Z]{2,}[ ])([A-Z]{2,})/g;
+      const detectUpperCase = thisText.match(uppercasePattern);
 
-      // Compare with parent element's font size.
-      const parentFontSize = $el.parentElement
-        ? parseFloat(getComputedStyle($el.parentElement).fontSize)
-        : null;
-      const isInherited = parentFontSize === computedFontSize;
-
-      // Ensure the font size is specific to the element, not inherited.
-      const withinRange = !isInherited && computedFontSize > 1 && computedFontSize <= defaultSize;
-      if (option.checks.QA_SMALL_TEXT && withinRange) {
-        addSmallTextResult($el);
-      }
-
-      /* Check: Check if text is justify-aligned. */
-      if (option.checks.QA_JUSTIFY && textAlign === 'justify') {
-        addJustifyResult($el);
+      if (detectUpperCase && detectUpperCase[0].length > 10) {
+        results.push({
+          element: $el,
+          type: option.checks.QA_UPPERCASE.type || 'warning',
+          content: option.checks.QA_UPPERCASE.content || Lang.sprintf('QA_UPPERCASE'),
+          dismiss: Utils.prepareDismissal(`UPPERCASE${thisText}`),
+          dismissAll: option.checks.QA_UPPERCASE.dismissAll ? 'QA_UPPERCASE' : false,
+          developer: option.checks.QA_UPPERCASE.developer || false,
+        });
       }
     };
-
-    // Loop through all elements within the root area.
-    if (option.checks.QA_UNDERLINE || option.checks.QA_JUSTIFY || option.checks.QA_SMALL_TEXT) {
-      for (let i = 0; i < Elements.Found.Everything.length; i++) {
-        const $el = Elements.Found.Everything[i];
-
-        // Filter only text nodes.
-        const textString = Array.from($el.childNodes)
-          .filter((node) => node.nodeType === 3)
-          .map((node) => node.textContent)
-          .join('');
-        const text = textString.trim();
-
-        // Only if there's text!
-        if (text.length !== 0) {
-          computeStyle($el);
-        }
-      }
-    }
-
-    /* **************************************************** */
-    /*  Find inappropriate use of <sup> and <sub> tags.     */
-    /* **************************************************** */
-    if (option.checks.QA_SUBSCRIPT) {
-      Elements.Found.Subscripts.forEach(($el) => {
-        const text = Utils.getText($el);
-        if (text.length >= 80) {
-          results.push({
-            element: $el,
-            type: option.checks.QA_SUBSCRIPT.type || 'warning',
-            content: option.checks.QA_SUBSCRIPT.content || Lang.sprintf('QA_SUBSCRIPT'),
-            inline: true,
-            dismiss: Utils.prepareDismissal($el.tagName + text),
-            dismissAll: option.checks.QA_SUBSCRIPT.dismissAll ? 'QA_SUBSCRIPT' : false,
-            developer: option.checks.QA_SUBSCRIPT.developer || false,
-          });
-        }
-      });
-    }
-
-    /* ****************************************** */
-    /*  Find double nested layout components.     */
-    /* ****************************************** */
-    if (option.checks.QA_NESTED_COMPONENTS) {
-      Elements.Found.NestedComponents.forEach(($el) => {
-        const sources = option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
-        const component = $el.querySelector(sources);
-        if (component) {
-          results.push({
-            element: $el,
-            type: option.checks.QA_NESTED_COMPONENTS.type || 'warning',
-            content: option.checks.QA_NESTED_COMPONENTS.content || Lang.sprintf('QA_NESTED_COMPONENTS'),
-            dismiss: Utils.prepareDismissal(`NESTED${$el.textContent}`),
-            dismissAll: option.checks.QA_NESTED_COMPONENTS.dismissAll ? 'QA_NESTED_COMPONENTS' : false,
-            developer: option.checks.QA_NESTED_COMPONENTS.developer || false,
-          });
-        }
-      });
-    }
-
-    return results;
+    Elements.Found.Paragraphs.forEach(($el) => checkCaps($el));
+    Elements.Found.Headings.forEach(($el) => checkCaps($el));
+    Elements.Found.Lists.forEach(($el) => checkCaps($el));
+    Elements.Found.Blockquotes.forEach(($el) => checkCaps($el));
   }
+
+  /* ************************************************************** */
+  /*  Various checks: underlines, justify-aligned, and small text.  */
+  /* ************************************************************** */
+  // Check underlined text. Created by Brian Teeman!
+  const addUnderlineResult = ($el) => {
+    results.push({
+      element: $el,
+      type: option.checks.QA_UNDERLINE.type || 'warning',
+      content: option.checks.QA_UNDERLINE.content || Lang.sprintf('QA_UNDERLINE'),
+      inline: true,
+      dismiss: Utils.prepareDismissal(`UNDERLINE${$el.textContent}`),
+      dismissAll: option.checks.QA_UNDERLINE.dismissAll ? 'QA_UNDERLINE' : false,
+      developer: option.checks.QA_UNDERLINE.developer || false,
+    });
+  };
+
+  const addJustifyResult = ($el) => {
+    results.push({
+      element: $el,
+      type: option.checks.QA_JUSTIFY.type || 'warning',
+      content: option.checks.QA_JUSTIFY.content || Lang._('QA_JUSTIFY'),
+      dismiss: Utils.prepareDismissal(`JUSTIFIED${$el.textContent}`),
+      dismissAll: option.checks.QA_JUSTIFY.dismissAll ? 'QA_JUSTIFY' : false,
+      developer: option.checks.QA_JUSTIFY.developer || false,
+    });
+  };
+
+  const addSmallTextResult = ($el) => {
+    results.push({
+      element: $el,
+      type: option.checks.QA_SMALL_TEXT.type || 'warning',
+      content: option.checks.QA_SMALL_TEXT.content || Lang._('QA_SMALL_TEXT'),
+      dismiss: Utils.prepareDismissal(`SMALL${$el.textContent}`),
+      dismissAll: option.checks.QA_SMALL_TEXT.dismissAll ? 'QA_SMALL_TEXT' : false,
+      developer: option.checks.QA_SMALL_TEXT.developer || false,
+    });
+  };
+
+  const computeStyle = ($el) => {
+    const style = getComputedStyle($el);
+    const { textDecorationLine, textAlign, fontSize } = style;
+
+    /* Check: Underlined text. */
+    if (option.checks.QA_UNDERLINE
+      && textDecorationLine === 'underline'
+      && !$el.closest('a[href]')
+      && !$el.closest('ABBR')) {
+      addUnderlineResult($el);
+    }
+
+    /* Check: Font size is greater than 0 and less than 10. */
+    const defaultSize = option.checks.QA_SMALL_TEXT.fontSize || 10;
+    const computedFontSize = parseFloat(fontSize);
+
+    // Compare with parent element's font size.
+    const parentFontSize = $el.parentElement
+      ? parseFloat(getComputedStyle($el.parentElement).fontSize)
+      : null;
+    const isInherited = parentFontSize === computedFontSize;
+
+    // Ensure the font size is specific to the element, not inherited.
+    const withinRange = !isInherited && computedFontSize > 1 && computedFontSize <= defaultSize;
+    if (option.checks.QA_SMALL_TEXT && withinRange) {
+      addSmallTextResult($el);
+    }
+
+    /* Check: Check if text is justify-aligned. */
+    if (option.checks.QA_JUSTIFY && textAlign === 'justify') {
+      addJustifyResult($el);
+    }
+  };
+
+  // Loop through all elements within the root area.
+  if (option.checks.QA_UNDERLINE || option.checks.QA_JUSTIFY || option.checks.QA_SMALL_TEXT) {
+    for (let i = 0; i < Elements.Found.Everything.length; i++) {
+      const $el = Elements.Found.Everything[i];
+
+      // Filter only text nodes.
+      const textString = Array.from($el.childNodes)
+        .filter((node) => node.nodeType === 3)
+        .map((node) => node.textContent)
+        .join('');
+      const text = textString.trim();
+
+      // Only if there's text!
+      if (text.length !== 0) {
+        computeStyle($el);
+      }
+    }
+  }
+
+  /* **************************************************** */
+  /*  Find inappropriate use of <sup> and <sub> tags.     */
+  /* **************************************************** */
+  if (option.checks.QA_SUBSCRIPT) {
+    Elements.Found.Subscripts.forEach(($el) => {
+      const text = Utils.getText($el);
+      if (text.length >= 80) {
+        results.push({
+          element: $el,
+          type: option.checks.QA_SUBSCRIPT.type || 'warning',
+          content: option.checks.QA_SUBSCRIPT.content || Lang.sprintf('QA_SUBSCRIPT'),
+          inline: true,
+          dismiss: Utils.prepareDismissal($el.tagName + text),
+          dismissAll: option.checks.QA_SUBSCRIPT.dismissAll ? 'QA_SUBSCRIPT' : false,
+          developer: option.checks.QA_SUBSCRIPT.developer || false,
+        });
+      }
+    });
+  }
+
+  /* ****************************************** */
+  /*  Find double nested layout components.     */
+  /* ****************************************** */
+  if (option.checks.QA_NESTED_COMPONENTS) {
+    Elements.Found.NestedComponents.forEach(($el) => {
+      const sources = option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
+      const component = $el.querySelector(sources);
+      if (component) {
+        results.push({
+          element: $el,
+          type: option.checks.QA_NESTED_COMPONENTS.type || 'warning',
+          content: option.checks.QA_NESTED_COMPONENTS.content || Lang.sprintf('QA_NESTED_COMPONENTS'),
+          dismiss: Utils.prepareDismissal(`NESTED${$el.textContent}`),
+          dismissAll: option.checks.QA_NESTED_COMPONENTS.dismissAll ? 'QA_NESTED_COMPONENTS' : false,
+          developer: option.checks.QA_NESTED_COMPONENTS.developer || false,
+        });
+      }
+    });
+  }
+
+  return results;
+}
