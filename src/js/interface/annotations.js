@@ -42,6 +42,7 @@ export function annotate(issue, option) {
     throw Error(`Invalid type [${type}] for annotation`);
   }
 
+
   // Add unique ID and styles to annotation and marked element.
   [type].forEach(($el) => {
     if ($el === 'error' && element !== undefined) {
@@ -81,6 +82,7 @@ export function annotate(issue, option) {
     ? `<button data-sa11y-dismiss='${id}' data-sa11y-dismiss-all type='button'>${Lang._('DISMISS_ALL')}</button>` : '';
 
   // Create 'sa11y-annotation' web component for each annotation.
+  // Create 'sa11y-annotation' web component for each annotation.
   const instance = document.createElement('sa11y-annotation');
   instance.setAttribute('data-sa11y-annotation', id);
 
@@ -96,6 +98,7 @@ export function annotate(issue, option) {
     Constants.Panel.panel.classList.add('has-page-issues');
   } else {
     // Button annotations.
+    const create = document.createElement('div');
     const create = document.createElement('div');
     create.classList.add(`${inline ? 'instance-inline' : 'instance'}`);
     create.innerHTML = `

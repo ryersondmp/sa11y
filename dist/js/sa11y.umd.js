@@ -7851,6 +7851,7 @@ ${this.error.stack}
       throw Error(`Invalid type [${type}] for annotation`);
     }
 
+
     // Add unique ID and styles to annotation and marked element.
     [type].forEach(($el) => {
       if ($el === 'error' && element !== undefined) {
@@ -7889,6 +7890,7 @@ ${this.error.stack}
       && (type === 'warning' || type === 'good'))
       ? `<button data-sa11y-dismiss='${id}' data-sa11y-dismiss-all type='button'>${Lang._('DISMISS_ALL')}</button>` : '';
 
+    // Create 'sa11y-annotation' web component for each annotation.
     // Create 'sa11y-annotation' web component for each annotation.
     const instance = document.createElement('sa11y-annotation');
     instance.setAttribute('data-sa11y-annotation', id);

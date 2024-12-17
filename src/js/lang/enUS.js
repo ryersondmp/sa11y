@@ -22,6 +22,7 @@ export default {
     DECORATIVE: 'Decorative',
     MISSING: 'Missing',
     PAGE_ISSUES: 'Page Issues',
+    MISSING: 'Missing',
     SETTINGS: 'Settings',
     DEVELOPER_CHECKS: 'Developer checks',
     DEVELOPER_DESC: 'Checks for issues that may need coding knowledge to fix.',
