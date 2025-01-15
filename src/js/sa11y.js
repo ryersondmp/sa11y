@@ -336,7 +336,6 @@ class Sa11y {
         'sa11y-tooltips',
         '[data-sa11y-readability-period]',
         '[data-sa11y-clone-image-text]',
-        '.sa11y-css-utilities',
       ], 'document');
 
       // Reset all data attributes.
@@ -378,6 +377,7 @@ class Sa11y {
 
       // Remove data attribute from shadow root elements.
       document.querySelectorAll('[data-sa11y-has-shadow-root]').forEach((el) => {
+        el.shadowRoot.querySelectorAll('style.sa11y-css-utilities').forEach((style) => style.remove());
         el.removeAttribute('data-sa11y-has-shadow-root');
       });
 

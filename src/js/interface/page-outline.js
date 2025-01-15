@@ -17,8 +17,8 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
     findDismissedHeadings.forEach(($el) => Object.assign($el, { dismissedHeading: true }));
 
     // Show meta page title in Page Outline.
+    let outlineItem;
     if (option.showTitleInPageOutline) {
-      let outlineItem;
       const metaTitleElement = document.querySelector('head title');
       if (!metaTitleElement || metaTitleElement.textContent.trim().length === 0) {
         outlineItem = `<li><div class="badge error-badge"><span aria-hidden="true"><span class="error-icon"></span></span> ${Lang._('TITLE')}</div> <div class="badge error-badge">${Lang._('MISSING')}</div></li>`;
@@ -128,8 +128,8 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
     });
 
     // Append headings to Page Outline.
-    Constants.Panel.outlineList.innerHTML = (outlineArray.length === 0)
-      ? `<li>${Lang._('PANEL_NO_HEADINGS')}</li>`
+    Constants.Panel.outlineList.innerHTML = (headingOutline.length === 0)
+      ? `${outlineItem || ''} <li>${Lang._('PANEL_NO_HEADINGS')}</li>`
       : outlineArray.join(' ');
 
     // Make clickable!

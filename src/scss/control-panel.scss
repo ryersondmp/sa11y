@@ -449,7 +449,7 @@ hr {
   }
 
   &.warnings .panel-icon {
-    background: var(--sa11y-warning-svg-color);
+    background: var(--sa11y-yellow-text);
     transform: scaleX(var(--sa11y-icon-direction));
     mask: var(--sa11y-warning-svg) center no-repeat;
   }

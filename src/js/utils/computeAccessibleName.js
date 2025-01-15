@@ -1,17 +1,16 @@
 /* eslint-disable no-use-before-define */
 
 /* Get text content of pseudo elements. */
-/**
- * @todo Improve pseudo content accessible name computation.
- * https://developer.mozilla.org/en-US/docs/Web/CSS/content#syntax
- * */
 export const wrapPseudoContent = (element, string) => {
-  const pseudo = [];
-  pseudo[0] = window.getComputedStyle(element, ':before').getPropertyValue('content');
-  pseudo[1] = window.getComputedStyle(element, ':after').getPropertyValue('content');
-  pseudo[0] = pseudo[0] === 'none' ? '' : pseudo[0].replace(/^"(.*)"$/, '$1');
-  pseudo[1] = pseudo[1] === 'none' ? '' : pseudo[1].replace(/^"(.*)"$/, '$1');
-  return ` ${pseudo[0]}${string}${pseudo[1]}`;
+  const getAltText = (content) => {
+    if (content === 'none') return '';
+    // Match text content after url() and ignore the url part
+    const match = content.match(/(?:url\(['"][^'"]+['"]\)\s*\/\s*)?["']([^"']+)["']/);
+    return match ? match[1] : '';
+  };
+  const before = getAltText(window.getComputedStyle(element, ':before').getPropertyValue('content'));
+  const after = getAltText(window.getComputedStyle(element, ':after').getPropertyValue('content'));
+  return `${before} ${string} ${after}`;
 };
 
 /* Sets treeWalker loop to last node before next branch. */
@@ -116,7 +115,9 @@ export const computeAccessibleName = (element, exclusions = [], recursing = 0) =
     if (currentNodeMatchesExclude) {
       // Exclude noscript, style, script, and selectors via exclusions param.
     } else if (treeWalker.currentNode.nodeType === Node.TEXT_NODE) {
-      computedText += ` ${treeWalker.currentNode.nodeValue}`;
+      if (treeWalker.currentNode.parentNode.tagName !== 'SLOT') {
+        computedText += ` ${treeWalker.currentNode.nodeValue}`;
+      }
     } else if (addTitleIfNoName && !treeWalker.currentNode.closest('a')) {
       if (aText === computedText) {
         computedText += addTitleIfNoName;
@@ -154,6 +155,22 @@ export const computeAccessibleName = (element, exclusions = [], recursing = 0) =
             } else {
               addTitleIfNoName = false;
               aText = false;
+            }
+            computedText += wrapPseudoContent(treeWalker.currentNode, '');
+            break;
+          case 'SLOT':
+            if (treeWalker.currentNode.assignedNodes()) {
+              // Slots have specific shadow DOM methods.
+              const children = treeWalker.currentNode.assignedNodes();
+              let slotText = '';
+              children?.forEach((child) => {
+                if (child.nodeType === Node.ELEMENT_NODE) {
+                  slotText += computeAccessibleName(child);
+                } else if (child.nodeType === Node.TEXT_NODE) {
+                  slotText += child.nodeValue;
+                }
+              });
+              computedText += slotText;
             }
             computedText += wrapPseudoContent(treeWalker.currentNode, '');
             break;

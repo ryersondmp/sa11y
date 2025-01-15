@@ -60,6 +60,123 @@
   </header>
   <main>
 
+    <h2>Another slotted example</h2>
+    <template id="user-card-template">
+      <style>
+        div.card {
+          border: 1px solid #ccc;
+          padding: 10px;
+          margin: 10px;
+          width: 200px;
+          border-radius: 8px;
+          box-shadow: 2px 2px 12px #aaa;
+        }
+
+        h2,
+        p {
+          margin: 5px 0;
+        }
+      </style>
+      <div class="card">
+        <h3>
+          <slot name="user-name">Default User</slot>
+        </h3>
+        <p>
+          <slot name="user-description">No description provided.</slot>
+        </p>
+      </div>
+    </template>
+
+    <script>
+      class UserCard extends HTMLElement {
+        constructor() {
+          super();
+          const templateContent = document.getElementById('user-card-template').content;
+          this.attachShadow({ mode: 'open' }).appendChild(templateContent.cloneNode(true));
+        }
+      }
+      customElements.define('user-card', UserCard);
+    </script>
+
+    <!-- Use the Web Component -->
+    <user-card>
+      <span slot="user-name">John Doe</span>
+      <span slot="user-description">A web developer from NYC. <a href="https://www.example.com?sds">Learn more</a> about
+        stuff.</span>
+    </user-card>
+
+    <hr>
+
+    <h2>Slotted template</h2>
+    <template id="element-details-template">
+      <div id="slot-template">
+        <h4 class="name">
+          <slot name="element-name">Default slot heading</slot>
+        </h4>
+        <h4 class="desc">
+          <slot name="description">Default slot description</slot>
+        </h4>
+        <div>Empty slot:
+          <h4>
+            <slot></slot>
+          </h4>
+        </div>
+      </div>
+    </template>
+
+    <element-details>
+      <span slot="element-name">
+        Skipped level in a slot
+      </span>
+      <span slot="description">Slot content text filling correctly</span>
+    </element-details>
+    <script>
+      customElements.define('element-details',
+        class extends HTMLElement {
+          constructor() {
+            super();
+            const template = document
+              .getElementById('element-details-template')
+              .content;
+            const shadowRoot = this.attachShadow({ mode: 'open' })
+              .appendChild(template.cloneNode(true));
+          }
+        });
+    </script>
+
+    <hr>
+
+    <template id="custom-component" hidden>
+      <div class="custom-container">
+        <slot>
+          <h4>Should not be displayed in DOM</h4>
+        </slot>
+      </div>
+    </template>
+
+    <script>
+      class CustomComponent extends HTMLElement {
+        constructor() {
+          super();
+          const shadow = this.attachShadow({ mode: 'open' });
+          const template = document.getElementById('custom-component').content.cloneNode(true);
+          shadow.appendChild(template);
+        }
+      }
+      customElements.define('custom-component', CustomComponent);
+    </script>
+
+    <!-- Usage Example -->
+    <custom-component>
+      <h6>This is a slotted heading</h6>
+    </custom-component>
+
+    <custom-component>
+      <!-- No slotted content, default heading will appear -->
+    </custom-component>
+
+
+
     <style>
       .text-formatted a[href^="http"]:not([href*="hr.ubc.ca"]):not([class*="cta-button--icon"])::after,
       .link-external::after {
@@ -73,12 +190,13 @@
       }
     </style>
     <h5><a class="unit-button unit-button--block link-external" href="https://ubc.wd10.myworkdayjobs.com/ubcstaffjobs"
-        target="_blank" rel="nofollow"><span class="font-semibold">Staff listings</span></a></h5>
+        target="_blank" rel="nofollow">Staff listing</a></h5>
 
     <hr>
 
     <p>
       <sup>1</sup> Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam dolor libero dignissimos veniam.
+      <span style="color:darkblue;background-color:rgba(235, 52, 52, 0.2)">Testing</span>
       Totam dolores rem eligendi praesentium harum doloremque ducimus dignissimos, exercitationem, omnis ullam autem,
       dolor qui numquam. Et!
     </p>

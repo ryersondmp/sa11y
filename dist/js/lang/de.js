@@ -4,7 +4,7 @@
   * @version 4.0.0
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
-  * @copyright © 2020 - 2024 Toronto Metropolitan University.
+  * @copyright © 2020 - 2025 Toronto Metropolitan University.
   * @contact adam.chaboryk@torontomu.ca
   * GitHub: git+https://github.com/ryersondmp/sa11y.git | Website: https://sa11y.netlify.app
   * For all acknowledgements, please visit: https://sa11y.netlify.app/acknowledgements/

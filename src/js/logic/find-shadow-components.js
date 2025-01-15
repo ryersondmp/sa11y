@@ -4,11 +4,14 @@ import Constants from '../utils/constants';
 /* ************************************************************ */
 /*  Auto-detect shadow DOM or process provided web components.  */
 /* ************************************************************ */
-const addStylestoShadow = (component) => {
-  const style = document.createElement('style');
-  style.setAttribute('class', 'sa11y-css-utilities');
-  style.textContent = styles;
-  component.shadowRoot.appendChild(style);
+const addStyleUtilities = (component) => {
+  const CSSUtils = component.shadowRoot.querySelectorAll('.sa11y-css-utilities');
+  if (CSSUtils.length === 0) {
+    const style = document.createElement('style');
+    style.setAttribute('class', 'sa11y-css-utilities');
+    style.textContent = styles;
+    component.shadowRoot.appendChild(style);
+  }
 };
 
 export default function findShadowComponents(option) {
@@ -26,14 +29,14 @@ export default function findShadowComponents(option) {
     search.forEach((component) => {
       if (component.shadowRoot && component.shadowRoot.mode === 'open') {
         component.setAttribute('data-sa11y-has-shadow-root', '');
-        addStylestoShadow(component);
+        addStyleUtilities(component);
       }
     });
   } else if (option.shadowComponents) {
     const providedShadow = document.querySelectorAll(option.shadowComponents);
     providedShadow.forEach((component) => {
       component.setAttribute('data-sa11y-has-shadow-root', '');
-      addStylestoShadow(component);
+      addStyleUtilities(component);
     });
   }
 }

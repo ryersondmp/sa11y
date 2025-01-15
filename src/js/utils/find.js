@@ -26,11 +26,11 @@ export default function find(selector, desiredRoot, exclude) {
   }
 
   const shadowComponents = document.querySelectorAll('[data-sa11y-has-shadow-root]');
-  const shadow = (shadowComponents) ? ', [data-sa11y-has-shadow-root]' : '';
+  const shadow = shadowComponents ? ', [data-sa11y-has-shadow-root]' : '';
 
   // Exclusions are returned as an array & need to become a string for selector.
   const exclusions = Constants.Exclusions.Container.join(', ');
-  const additionalExclusions = (exclude !== undefined) ? exclude.join(', ') : '';
+  const additionalExclusions = exclude?.join(', ') || '';
 
   // Ensure no trailing commas.
   const additional = additionalExclusions ? `, ${additionalExclusions}` : '';
@@ -55,6 +55,6 @@ export default function find(selector, desiredRoot, exclude) {
       }
     }
   }
-  // 4. Return the cleaned up array.
-  return elements;
+  // 4. Return the cleaned up array, filtering out <slot> placeholders.
+  return elements.filter((node) => node.parentNode.tagName !== 'SLOT');
 }

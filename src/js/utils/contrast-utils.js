@@ -74,7 +74,23 @@ export function getBackground($el) {
       return { type: 'image', value: bgImage };
     }
     if (bgColor[3] !== 0 && bgColor !== 'transparent') {
-      return bgColor; // Return the first non-transparent background color.
+      // If the background colour has an alpha channel.
+      if (bgColor[3] < 1) {
+        // We need to find the first non-transparent parent background and blend them together.
+        let parentEl = targetEl.parentElement;
+        let parentBgColor = 'rgba(0, 0, 0, 0)';
+        while (parentEl && parentEl.nodeType === 1) {
+          const parentStyles = getComputedStyle(parentEl);
+          parentBgColor = parentStyles.backgroundColor;
+          if (parentBgColor !== 'rgba(0, 0, 0, 0)') break; // Stop, valid colour found.
+          parentEl = parentEl.parentElement;
+        }
+        const parentColor = convertToRGBA(parentBgColor || 'rgba(255, 255, 255, 1)');
+        const blendedBG = alphaBlend(bgColor, parentColor);
+        return blendedBG;
+      }
+      // Return solid color immediately if no alpha chanel.
+      return bgColor;
     }
     if (targetEl.tagName === 'HTML') {
       return [255, 255, 255]; // Default to white if we reach the HTML tag.
