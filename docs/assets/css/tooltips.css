@@ -136,6 +136,17 @@ div {
   text-align: center;
 }
 
+/* More visible panel tooltips. */
+.tippy-box[data-theme~=sa11y-panel] {
+  border: 1px solid var(--sa11y-panel-bg-splitter);
+  box-shadow: var(--sa11y-box-shadow);
+}
+
+/* Annotation tooltip boxshadows. */
+.tippy-box[data-theme~=sa11y-theme]:not([data-theme~=sa11y-panel]) {
+  box-shadow: 0 0 20px 4px rgba(154, 161, 177, 0.15), 0 4px 80px -8px rgba(36, 40, 47, 0.25), 0 4px 4px -2px rgba(91, 94, 105, 0.15) !important;
+}
+
 /* Tooltip content */
 .tippy-box[data-theme~=sa11y-theme] {
   position: relative;
@@ -150,9 +161,10 @@ div {
   background-color: var(--sa11y-panel-bg);
   border-radius: 4px;
   outline: 0;
-  box-shadow: 0 0 20px 4px rgba(154, 161, 177, 0.15), 0 4px 80px -8px rgba(36, 40, 47, 0.25), 0 4px 4px -2px rgba(91, 94, 105, 0.15) !important;
   transition-property: transform, visibility, opacity;
   -webkit-font-smoothing: auto;
+  /* Dismiss buttons */
+  /* APCA table */
   /* ************************************* */
   /*                Arrows                 */
   /* ************************************* */
@@ -160,6 +172,7 @@ div {
 .tippy-box[data-theme~=sa11y-theme] code {
   font-family: monospace;
   font-size: calc(var(--sa11y-normal-text) - 1px);
+  font-weight: 500;
 }
 .tippy-box[data-theme~=sa11y-theme] code,
 .tippy-box[data-theme~=sa11y-theme] kbd {
@@ -191,6 +204,7 @@ div {
   margin: 5px 10px 0 20px;
 }
 .tippy-box[data-theme~=sa11y-theme] a {
+  font-weight: 500;
   color: var(--sa11y-hyperlink);
   text-decoration: underline;
   cursor: pointer;
@@ -212,18 +226,31 @@ div {
 .tippy-box[data-theme~=sa11y-theme] button.close-btn {
   margin: 0;
 }
-.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss] {
-  display: block;
+.tippy-box[data-theme~=sa11y-theme] .dismiss-group {
+  margin-top: 5px;
+}
+.tippy-box[data-theme~=sa11y-theme] .dismiss-group button {
+  display: inline-block;
   padding: 4px 8px;
   margin: 10px 5px 5px 0;
+  margin-inline-end: 15px;
   color: var(--sa11y-panel-primary);
   cursor: pointer;
   background: var(--sa11y-panel-bg-secondary);
   border: 2px solid var(--sa11y-button-outline);
   border-radius: 5px;
 }
-.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:hover, .tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:focus {
+.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:hover, .tippy-box[data-theme~=sa11y-theme] .dismiss-group button:focus {
   background: var(--sa11y-shortcut-hover);
+}
+.tippy-box[data-theme~=sa11y-theme] .good-icon {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-bottom: -2.5px;
+  background: var(--sa11y-good-text);
+  -webkit-mask: var(--sa11y-good-svg) center no-repeat;
+          mask: var(--sa11y-good-svg) center no-repeat;
 }
 .tippy-box[data-theme~=sa11y-theme] .link-icon {
   display: inline-block;
@@ -238,6 +265,9 @@ div {
   color: var(--sa11y-error-text);
   background: var(--sa11y-error);
 }
+.tippy-box[data-theme~=sa11y-theme] .error .colour {
+  color: var(--sa11y-red-text);
+}
 .tippy-box[data-theme~=sa11y-theme] .error .link-icon {
   background: var(--sa11y-error-text);
 }
@@ -245,8 +275,29 @@ div {
   color: var(--sa11y-panel-bg);
   background: var(--sa11y-yellow-text);
 }
+.tippy-box[data-theme~=sa11y-theme] .warning .colour {
+  color: var(--sa11y-yellow-text);
+}
 .tippy-box[data-theme~=sa11y-theme] .warning .link-icon {
   background: var(--sa11y-panel-bg);
+}
+.tippy-box[data-theme~=sa11y-theme] #apca-table {
+  width: 100%;
+}
+.tippy-box[data-theme~=sa11y-theme] #apca-table .row {
+  display: flex;
+  margin-top: 10px;
+}
+.tippy-box[data-theme~=sa11y-theme] #apca-table .cell {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  padding: 1px;
+}
+.tippy-box[data-theme~=sa11y-theme] #apca-table .font-weight {
+  font-size: calc(var(--sa11y-normal-text) - 2px);
+  font-weight: bold;
 }
 .tippy-box[data-theme~=sa11y-theme][data-placement^=top] > .tippy-arrow::before {
   border-top-color: var(--sa11y-panel-bg);
@@ -271,6 +322,7 @@ div {
 
 /* Tooltip focus styles */
 .tippy-box[data-theme~=sa11y-theme] a:focus,
+.tippy-box[data-theme~=sa11y-theme] input:focus,
 .tippy-box[data-theme~=sa11y-theme] button:focus,
 .tippy-box[data-theme~=sa11y-theme] button:active,
 .tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus {
@@ -278,6 +330,7 @@ div {
   box-shadow: 0 0 0 5px var(--sa11y-focus-color);
 }
 
+.tippy-box[data-theme~=sa11y-theme] input:focus:not(:focus-visible),
 .tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),
 .tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible),
 .tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus:not(:focus-visible) {
@@ -287,6 +340,7 @@ div {
 
 .tippy-box[data-theme~=sa11y-theme] a:focus-visible,
 .tippy-box[data-theme~=sa11y-theme] button:focus-visible,
+.tippy-box[data-theme~=sa11y-theme] input:focus-visible,
 .tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus-visible {
   outline: 0;
   box-shadow: 0 0 0 5px var(--sa11y-focus-color);

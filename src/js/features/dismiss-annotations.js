@@ -8,25 +8,34 @@ import Lang from '../utils/lang';
 /* ************************************************************ */
 export function dismissLogic(results, dismissTooltip) {
   // Get dismissed items and re-parse back into object.
-  let dismissedIssues = store.getItem('sa11y-dismissed');
-  dismissedIssues = dismissedIssues ? JSON.parse(dismissedIssues) : [];
+  const dismissedIssues = JSON.parse(localStorage.getItem('sa11y-dismissed') || '[]');
+  const currentPath = window.location.pathname;
 
-  // Return element from results array that matches dismiss key and dismiss url. Then filter through matched objects.
-  const findKey = dismissedIssues.map((e) => {
-    const found = results.find((f) => (e.key.includes(f.dismiss) && e.href === window.location.pathname));
-    if (found === undefined) return '';
-    return found;
-  });
+  // Helper function to check if an issue is individually dismissed.
+  const isSoloDismissed = (issue, dismissed) => dismissed.key.includes(issue.dismiss)
+    && dismissed.href === currentPath
+    && (issue.type === 'warning' || issue.type === 'good');
 
-  // Update results array (exclude dismissed items).
-  const updatedResults = results.filter((issue) => !findKey.find((e) => e.dismiss === issue.dismiss));
+  // Helper function to check if "dismiss all".
+  const dismissAll = (issue, dismissed) => typeof dismissed.dismissAll === 'string'
+    && issue.dismissAll === dismissed.dismissAll
+    && dismissed.href === currentPath;
 
-  // Array containing all dismissed results for page.
-  const dismissedResults = results.filter((issue) => findKey.find((e) => e.dismiss === issue.dismiss));
+  // Process individually dismissed issues.
+  const soloDismissed = results.filter((issue) => dismissedIssues.some((dismissed) => isSoloDismissed(issue, dismissed)));
+
+  // Process dismiss all issues.
+  const allDismissed = results.filter((issue) => dismissedIssues.some((dismissed) => dismissAll(issue, dismissed)));
+
+  // Combine all dismissed results and filter out duplicates.
+  const dismissedResults = [...soloDismissed, ...allDismissed];
   const dismissCount = dismissedResults.length;
 
+  // Update results array (exclude dismissed and dismissed all checks).
+  const updatedResults = results.filter((issue) => !dismissedResults.some((dismissed) => dismissed.dismiss === issue.dismiss && (issue.type === 'warning' || issue.type === 'good')));
+
   // Show dismiss button in panel.
-  if (dismissCount >= 1) {
+  if (dismissCount) {
     Constants.Panel.dismissButton.classList.add('active');
     Constants.Panel.dismissTooltip.innerText = Lang.sprintf('PANEL_DISMISS_BUTTON', dismissCount);
     dismissTooltip.object.setContent(Lang.sprintf('PANEL_DISMISS_BUTTON', dismissCount));
@@ -47,15 +56,15 @@ let dismissHandler;
 const dismissIssueButton = async (e, results, checkAll, resetAll) => {
   // Get dismissed array from localStorage.
   let savedDismissKeys = JSON.parse(store.getItem('sa11y-dismissed'));
-  const element = e.target;
-  const dismissContainer = document.querySelector('sa11y-dismiss-tooltip');
+  const dismissButton = e.target;
+  const dismissContainer = document.querySelector('sa11y-panel-tooltips');
   dismissContainer.hidden = false;
 
   // Make sure event listener is attached to dismiss button.
-  if (element.tagName === 'BUTTON' && element.hasAttribute('data-sa11y-dismiss')) {
+  if (dismissButton.tagName === 'BUTTON' && dismissButton.hasAttribute('data-sa11y-dismiss')) {
     // Find corresponding issue within main results object and mark as dismissed.
-    const dismissItem = parseInt(element.getAttribute('data-sa11y-dismiss'), 10);
-    const object = results.find(($el) => $el.id === dismissItem);
+    const dismissItem = parseInt(dismissButton.getAttribute('data-sa11y-dismiss'), 10);
+    const issue = results.find(($el) => $el.id === dismissItem);
 
     // Give a one time reminder that dismissed items are temporary.
     if (savedDismissKeys === null) {
@@ -65,15 +74,19 @@ const dismissIssueButton = async (e, results, checkAll, resetAll) => {
     }
 
     // Update dismiss array.
-    if (object.dismiss) {
+    if (issue.dismiss) {
+      // If dismiss all selected, then indicate so within dismiss object.
+      const dismissAllSelected = dismissButton.hasAttribute('data-sa11y-dismiss-all')
+        ? issue.dismissAll : '';
       // Dismissal object.
       const dismissalDetails = {
-        key: object.dismiss,
+        key: issue.dismiss,
         href: window.location.pathname,
+        ...(dismissAllSelected ? { dismissAll: dismissAllSelected } : {}),
       };
 
       // Get the position of the last annotation that was dismissed.
-      const item = find(`[data-sa11y-annotation='${object.id}']`);
+      const item = find(`[data-sa11y-annotation='${issue.id}']`);
       const latestDismissed = item[0]
         ? item[0].getAttribute('data-sa11y-position') : 0;
       store.setItem('sa11y-latest-dismissed', latestDismissed);
@@ -85,8 +98,11 @@ const dismissIssueButton = async (e, results, checkAll, resetAll) => {
       store.removeItem('sa11y-dismiss-item'); // Remove temporary storage item.
 
       // Remove tooltip.
-      if (element.closest('[data-tippy-root]') !== null) {
-        element.closest('[data-tippy-root]').remove();
+      const tooltip = dismissButton?.closest('[data-tippy-root]');
+      if (tooltip) {
+        setTimeout(() => {
+          tooltip.remove();
+        }, 0);
       }
 
       // Async scan upon dismiss.
@@ -98,7 +114,7 @@ const dismissIssueButton = async (e, results, checkAll, resetAll) => {
 
 /* 2. Restore hidden alerts on the CURRENT page only. */
 const restoreDismissButton = async (dismissed, checkAll, resetAll) => {
-  const dismissContainer = document.querySelector('sa11y-dismiss-tooltip');
+  const dismissContainer = document.querySelector('sa11y-panel-tooltips');
   dismissContainer.hidden = true; // Prevent flash of tooltip.
   const filtered = dismissed.filter((item) => item.href !== window.location.pathname);
   store.setItem('sa11y-dismissed', JSON.stringify(filtered));

@@ -7,9 +7,9 @@ import { store, isScrollable } from '../utils/utils';
 export default function mainToggle(checkAll, resetAll) {
   // Keeps checker active when navigating between pages until it is toggled off.
   Constants.Panel.toggle.addEventListener('click', (e) => {
-    if (store.getItem('sa11y-remember-panel') === 'Opened') {
+    if (store.getItem('sa11y-panel') === 'Opened') {
       e.preventDefault();
-      store.setItem('sa11y-remember-panel', 'Closed');
+      store.setItem('sa11y-panel', 'Closed');
       Constants.Panel.toggle.classList.remove('on');
       Constants.Panel.toggle.setAttribute('aria-expanded', 'false');
       resetAll();
@@ -21,7 +21,7 @@ export default function mainToggle(checkAll, resetAll) {
       }
     } else {
       e.preventDefault();
-      store.setItem('sa11y-remember-panel', 'Opened');
+      store.setItem('sa11y-panel', 'Opened');
       Constants.Panel.toggle.classList.add('on');
       Constants.Panel.toggle.setAttribute('aria-expanded', 'true');
       checkAll();
@@ -30,7 +30,7 @@ export default function mainToggle(checkAll, resetAll) {
   });
 
   // Remember to leave it open
-  if (store.getItem('sa11y-remember-panel') === 'Opened') {
+  if (store.getItem('sa11y-panel') === 'Opened') {
     Constants.Panel.toggle.classList.add('on');
     Constants.Panel.toggle.setAttribute('aria-expanded', 'true');
     Constants.Panel.panel.style.transform = '';

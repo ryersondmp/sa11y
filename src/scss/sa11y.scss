@@ -1,7 +1,9 @@
+@use "./global-utilities.scss" as utils;
+
 :root {
   --sa11y-font-face: system-ui, "Segoe UI", roboto, helvetica, arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "FontAwesome", "Font Awesome 5 Free", "Font Awesome 5 Pro", "Font Awesome 6 Free", "Font Awesome 6 Pro";
-  --sa11y-large-text: 16px;
-  --sa11y-normal-text: 15px;
+  --sa11y-large-text: 16.5px;
+  --sa11y-normal-text: 15.5px;
   --sa11y-small-text: 12px;
   --sa11y-focus-color: rgba(0, 208, 255, .75);
   --sa11y-pulse-color: rgba(0, 208, 255, 0);
@@ -16,7 +18,6 @@
   --sa11y-warning-hover: #ffd226;
   --sa11y-warning-text: #000;
   --sa11y-warning-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='%23505050' d='M504 256c0 136.997-111.043 248-248 248S8 392.997 8 256C8 119.083 119.043 8 256 8s248 111.083 248 248zM262.655 90c-54.497 0-89.255 22.957-116.549 63.758-3.536 5.286-2.353 12.415 2.715 16.258l34.699 26.31c5.205 3.947 12.621 3.008 16.665-2.122 17.864-22.658 30.113-35.797 57.303-35.797 20.429 0 45.698 13.148 45.698 32.958 0 14.976-12.363 22.667-32.534 33.976C247.128 238.528 216 254.941 216 296v4c0 6.627 5.373 12 12 12h56c6.627 0 12-5.373 12-12v-1.333c0-28.462 83.186-29.647 83.186-106.667 0-58.002-60.165-102-116.531-102zM256 338c-25.365 0-46 20.635-46 46 0 25.364 20.635 46 46 46s46-20.636 46-46c0-25.365-20.635-46-46-46z'/%3E%3C/svg%3E");
-  --sa11y-warning-svg-color: #d39c00;
 
   --sa11y-error: #d30017;
   --sa11y-error-hover: #f00;
@@ -60,11 +61,15 @@ html[data-sa11y-theme="light"] {
   --sa11y-panel-secondary: #4d4d4d;
   --sa11y-panel-secondary-hover: #0077c8;
   --sa11y-panel-toggle-active: #c6c6c6;
+  --sa11y-element-preview: #e9e9e9;
   --sa11y-setting-switch-bg-on: #21b5ff;
   --sa11y-setting-switch-bg-off: #959595;
-  --sa11y-hyperlink: #004c9b;
+  --sa11y-hyperlink: #00478f;
   --sa11y-shortcut-hover: #e8e8e8;
   --sa11y-button-outline: #949494;
+  --sa11y-box-shadow: 0 0 20px 4px rgba(154, 161, 177, .15),
+    0 4px 80px -8px rgba(36, 40, 47, .25),
+    0 4px 4px -2px rgba(91, 94, 105, .15);
 }
 
 /* ************************************* */
@@ -72,8 +77,8 @@ html[data-sa11y-theme="light"] {
 /* ************************************* */
 
 @mixin sa11y-dark-mode {
-  --sa11y-red-text: #fe5b5f;
-  --sa11y-yellow-text: #ffc800;
+  --sa11y-red-text: #ffa2a2;
+  --sa11y-yellow-text: #ffdb59;
   --sa11y-panel-badge: #3500c4;
   --sa11y-panel-outline-hover: rgba(53, 0, 196, .8);
   --sa11y-panel-scrollable: rgba(53, 0, 196, .6);
@@ -81,15 +86,19 @@ html[data-sa11y-theme="light"] {
   --sa11y-panel-bg: #0a2051;
   --sa11y-panel-bg-secondary: #072c7c;
   --sa11y-panel-bg-splitter: #0041c9;
-  --sa11y-panel-error: #f00;
-  --sa11y-panel-secondary: #a3c1ff;
+  --sa11y-panel-error: #f77;
+  --sa11y-panel-secondary: #cbeaff;
   --sa11y-panel-secondary-hover: rgb(0 0 0 / 40%);
   --sa11y-panel-toggle-active: #000;
+  --sa11y-element-preview: #0a2051;
   --sa11y-setting-switch-bg-on: #21b5ff;
   --sa11y-setting-switch-bg-off: #bfbfbf;
-  --sa11y-hyperlink: #64b2ff;
+  --sa11y-hyperlink: #94d3ff;
   --sa11y-shortcut-hover: #093698;
   --sa11y-button-outline: #005dff;
+  --sa11y-box-shadow: 0 0 20px 4px rgba(34, 0, 255, .2),
+    0 4px 60px -8px rgba(45, 31, 245, .4),
+    0 4px 4px -2px rgba(0, 84, 220, .3);
 }
 
 html[data-sa11y-theme="dark"] {
@@ -105,8 +114,7 @@ html[data-sa11y-theme="dark"] {
   }
 }
 
-@import "global-utilities.scss";
-@include global-utilities;
+@include utils.global-utilities;
 
 /* *********************************************************************************** */
 /*           Colour vision deficiency filters created using DaltonLens library.        */

@@ -22,7 +22,7 @@ import initializePanelToggles from './logic/control-panel-logic';
 import generatePageOutline from './interface/page-outline';
 import generateImageOutline from './interface/image-outline';
 import { updatePanel, updateBadge, updateCount } from './logic/update-panel';
-import { TooltipComponent, DismissTooltip } from './interface/tooltips';
+import { AnnotationTooltips, PanelTooltips } from './interface/tooltips';
 import { Annotations, annotate, detectOverflow, nudge } from './interface/annotations';
 import { HeadingAnchor, HeadingLabel } from './interface/heading-labels';
 import { skipToIssue, removeSkipBtnListeners } from './logic/skip-to-issue';
@@ -36,6 +36,7 @@ import checkLabels from './rulesets/labels';
 import checkReadability from './rulesets/readability';
 import checkEmbeddedContent from './rulesets/embedded-content';
 import checkQA from './rulesets/quality-assurance';
+import checkDeveloper from './rulesets/developer';
 import checkCustom from './sa11y-custom-checks';
 
 class Sa11y {
@@ -43,6 +44,10 @@ class Sa11y {
     const option = {
       ...defaultOptions,
       ...options,
+      checks: {
+        ...defaultOptions.checks,
+        ...options.checks,
+      },
     };
 
     /* *********************************************************** */
@@ -60,8 +65,8 @@ class Sa11y {
         customElements.define('sa11y-heading-label', HeadingLabel);
         customElements.define('sa11y-heading-anchor', HeadingAnchor);
         customElements.define('sa11y-annotation', Annotations);
-        customElements.define('sa11y-tooltips', TooltipComponent);
-        customElements.define('sa11y-dismiss-tooltip', DismissTooltip);
+        customElements.define('sa11y-tooltips', AnnotationTooltips);
+        customElements.define('sa11y-panel-tooltips', PanelTooltips);
         customElements.define('sa11y-control-panel', ControlPanel);
         customElements.define('sa11y-console-error', ConsoleErrors);
 
@@ -69,15 +74,13 @@ class Sa11y {
         Constants.initializeGlobal(option);
         Constants.initializeReadability(option);
         Constants.initializeExclusions(option);
-        Constants.initializeEmbeddedContent(option);
 
-        // Toggleable checks on by default.
-        const toggleableChecks = ['sa11y-remember-contrast', 'sa11y-remember-labels', 'sa11y-remember-links-advanced'];
-        toggleableChecks.forEach((key) => {
-          if (Utils.store.getItem(key) === null) {
-            Utils.store.setItem(key, 'On');
+        /* Make "Developer checks" on by default or if toggle switch is visually hidden. */
+        if (option.developerChecksOnByDefault) {
+          if (Utils.store.getItem('sa11y-developer') === null || option.checkAllHideToggles) {
+            Utils.store.setItem('sa11y-developer', 'On');
           }
-        });
+        }
 
         // Once document has fully loaded.
         Utils.documentLoadingCheck(() => {
@@ -102,15 +105,18 @@ class Sa11y {
               this.resetAll,
             );
 
-            // Initialize dismiss tooltip.
-            this.dismissTooltip = new DismissTooltip();
-            document.body.appendChild(this.dismissTooltip);
+            // Initialize panel tooltips.
+            this.panelTooltips = new PanelTooltips();
+            document.body.appendChild(this.panelTooltips);
 
             // Disable toggle initially.
             Constants.Panel.toggle.disabled = false;
 
             // Initial check once page is done loading.
-            setTimeout(() => this.checkAll(), option.delayCheck);
+            setTimeout(() => {
+              this.resetAll(); // Make sure there's a clean slate.
+              this.checkAll();
+            }, option.delayCheck);
 
             // Disable button if user needs to wait longer than 700ms.
             if (option.delayCheck >= 700) {
@@ -142,7 +148,7 @@ class Sa11y {
         // Initialize root areas to check.
         const root = document.querySelector(desiredRoot);
         if (!root && option.headless === false) {
-          Utils.createAlert(`${Lang.sprintf('ERROR_MISSING_ROOT_TARGET', desiredRoot)}`);
+          Utils.createAlert(`${Lang.sprintf('MISSING_ROOT', desiredRoot)}`);
         }
         Constants.initializeRoot(desiredRoot, desiredReadabilityRoot);
 
@@ -156,13 +162,20 @@ class Sa11y {
         checkHeaders(this.results, option, this.headingOutline);
         checkLinkText(this.results, option);
         checkImages(this.results, option);
-        checkContrast(this.results, option);
         checkLabels(this.results, option);
         checkQA(this.results, option);
-        checkEmbeddedContent(this.results, option);
-        checkReadability();
+        checkDeveloper(this.results, option);
+        if (option.embeddedContentPlugin) checkEmbeddedContent(this.results, option);
+        if (option.contrastPlugin) checkContrast(this.results, option);
+        if (option.readabilityPlugin) checkReadability();
 
-        this.imageResults = this.results.filter((item) => item.element?.tagName === 'IMG');
+        // Get all images from results object for Image Outline.
+        this.imageResults = this.results.filter((issue, index, self) => {
+          const tagName = issue.element?.tagName;
+          const outerHTML = issue.element?.outerHTML;
+          // Filter out duplicates based element's HTML.
+          return tagName === 'IMG' && self.findIndex((other) => other.element?.outerHTML === outerHTML) === index;
+        });
 
         /* Custom checks */
         if (option.customChecks === true) {
@@ -205,21 +218,26 @@ class Sa11y {
     };
 
     this.updateResults = () => {
-      // Filter out heading issues that are outside of the root target.
-      this.results = this.results.filter((item) => item.isWithinRoot !== false);
+      // Filter out heading issues that are outside of the target root.
+      this.results = this.results.filter((heading) => heading.isWithinRoot !== false);
+
+      // Filter out "Developer checks" if toggled off.
+      if (Utils.store.getItem('sa11y-developer') === 'Off' || Utils.store.getItem('sa11y-developer') === null) {
+        this.results = this.results.filter((issue) => issue.developer !== true);
+      }
 
       // Generate HTML path, and optionally CSS selector path of element.
-      this.results.forEach(($el) => {
+      this.results.forEach(($el, id) => {
         const cssPath = option.selectorPath ? Utils.generateSelectorPath($el.element) : '';
         const htmlPath = $el.element?.outerHTML.replace(/\s{2,}/g, ' ').trim() || '';
-        Object.assign($el, { htmlPath, cssPath });
+        Object.assign($el, { htmlPath, cssPath, id });
       });
 
       if (option.headless === false) {
         // Check for dismissed items and update results array.
         const dismiss = dismissLogic(
           this.results,
-          this.dismissTooltip,
+          this.panelTooltips,
           this.checkAll,
           this.resetAll,
         );
@@ -235,27 +253,18 @@ class Sa11y {
         updateBadge(count.error, count.warning);
 
         /* If panel is OPENED. */
-        if (Utils.store.getItem('sa11y-remember-panel') === 'Opened') {
+        if (Utils.store.getItem('sa11y-panel') === 'Opened') {
           // Paint the page with annotations.
-          this.results.forEach(($el, i) => {
-            Object.assign($el, { id: i });
-            annotate(
-              $el.element,
-              $el.type,
-              $el.content,
-              $el.inline,
-              $el.position,
-              $el.id,
-              $el.dismiss,
-              option,
-            );
+          this.results.forEach((issue) => {
+            Object.assign(issue);
+            annotate(issue, option);
           });
 
           // After annotations are painted, find & cache.
           Elements.initializeAnnotations();
 
           // Initialize tooltips
-          const tooltipComponent = new TooltipComponent();
+          const tooltipComponent = new AnnotationTooltips();
           document.body.appendChild(tooltipComponent);
 
           dismissButtons(
@@ -302,12 +311,14 @@ class Sa11y {
       }
 
       // Dispatch custom event that stores the results array.
+      window.sa11yCheckComplete = null;
       const event = new CustomEvent('sa11y-check-complete', {
         detail: {
           results: this.results,
           page: window.location.pathname,
         },
       });
+      window.sa11yCheckComplete = event.detail;
       document.dispatchEvent(event);
     };
 
@@ -325,7 +336,6 @@ class Sa11y {
         'sa11y-tooltips',
         '[data-sa11y-readability-period]',
         '[data-sa11y-clone-image-text]',
-        '.sa11y-css-utilities',
       ], 'document');
 
       // Reset all data attributes.
@@ -367,6 +377,7 @@ class Sa11y {
 
       // Remove data attribute from shadow root elements.
       document.querySelectorAll('[data-sa11y-has-shadow-root]').forEach((el) => {
+        el.shadowRoot.querySelectorAll('style.sa11y-css-utilities').forEach((style) => style.remove());
         el.removeAttribute('data-sa11y-has-shadow-root');
       });
 
@@ -381,7 +392,7 @@ class Sa11y {
 
     // Method: temporarily disable toggle.
     this.disabled = () => {
-      if (Utils.store.getItem('sa11y-remember-panel') === 'Opened') {
+      if (Utils.store.getItem('sa11y-panel') === 'Opened') {
         Constants.Panel.toggle.click();
       }
       Constants.Panel.toggle.disabled = true;

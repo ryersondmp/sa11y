@@ -1,6 +1,6 @@
 {
   "name": "sa11y",
-  "version": "3.2.3",
+  "version": "4.0.0",
   "description": "Sa11y is an accessibility quality assurance tool that visually highlights common accessibility and usability issues. Geared towards content authors, Sa11y straightforwardly identifies errors or warnings at the source with a simple tooltip on how to fix them.",
   "main": "src/sa11y.js",
   "type": "module",
@@ -52,13 +52,14 @@
     "rollup-plugin-sass": "^1.2.9",
     "rollup-plugin-scss": "^3.0.0",
     "rollup-plugin-terser": "^7.0.2",
-    "sass": "^1.35.1",
+    "sass": "^1.79.5",
     "stylelint": "^15.9.0",
     "stylelint-config-standard": "^33.0.0",
     "stylelint-order": "^6.0.3",
     "stylelint-scss": "^5.0.1"
   },
   "dependencies": {
+    "apca-w3": "^0.1.9",
     "tippy.js": "^6.3.7"
   }
 }

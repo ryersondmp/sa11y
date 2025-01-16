@@ -1,6 +1,7 @@
 import Lang from '../utils/lang';
 import { store } from '../utils/utils';
 import Constants from '../utils/constants';
+import version from '../../../version';
 
 // Import processed minified styles as a string.
 import panelStyles from '../../../dist/css/control-panel.min.css';
@@ -18,10 +19,8 @@ export default class ControlPanel extends HTMLElement {
     // Icon for the main toggle.
     const MainToggleIcon = '<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 48c114.953 0 208 93.029 208 208 0 114.953-93.029 208-208 208-114.953 0-208-93.029-208-208 0-114.953 93.029-208 208-208m0-40C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 56C149.961 64 64 149.961 64 256s85.961 192 192 192 192-85.961 192-192S362.039 64 256 64zm0 44c19.882 0 36 16.118 36 36s-16.118 36-36 36-36-16.118-36-36 16.118-36 36-36zm117.741 98.023c-28.712 6.779-55.511 12.748-82.14 15.807.851 101.023 12.306 123.052 25.037 155.621 3.617 9.26-.957 19.698-10.217 23.315-9.261 3.617-19.699-.957-23.316-10.217-8.705-22.308-17.086-40.636-22.261-78.549h-9.686c-5.167 37.851-13.534 56.208-22.262 78.549-3.615 9.255-14.05 13.836-23.315 10.217-9.26-3.617-13.834-14.056-10.217-23.315 12.713-32.541 24.185-54.541 25.037-155.621-26.629-3.058-53.428-9.027-82.141-15.807-8.6-2.031-13.926-10.648-11.895-19.249s10.647-13.926 19.249-11.895c96.686 22.829 124.283 22.783 220.775 0 8.599-2.03 17.218 3.294 19.249 11.895 2.029 8.601-3.297 17.219-11.897 19.249z"/></svg>';
 
-    const rememberContrast = store.getItem('sa11y-remember-contrast') === 'On';
-    const rememberFormLabels = store.getItem('sa11y-remember-labels') === 'On';
-    const rememberLinksAdvanced = store.getItem('sa11y-remember-links-advanced') === 'On';
-    const rememberReadability = store.getItem('sa11y-remember-readability') === 'On';
+    const rememberDeveloper = store.getItem('sa11y-developer') === 'On';
+    const rememberReadability = store.getItem('sa11y-readability') === 'On';
 
     // If admin wants users to check everything, without toggleable checks.
     const checkAll = Constants.Global.checkAllHideToggles;
@@ -30,36 +29,20 @@ export default class ControlPanel extends HTMLElement {
     const { panelPosition } = Constants.Global;
 
     /* TOGGLEABLE PLUGINS */
-    const contrastPlugin = Constants.Global.contrastPlugin ? `
-      <li id="contrast-item" ${checkAll ? 'hidden' : ''}>
-        <label id="check-contrast" for="contrast-toggle">${Lang._('CONTRAST')}</label>
-        <button id="contrast-toggle"
-          aria-labelledby="check-contrast"
+    const developerPlugin = Constants.Global.developerPlugin ? `
+      <li id="developer-item" ${checkAll ? 'hidden' : ''}>
+        <label id="check-developer" for="developer-toggle">${Lang._('DEVELOPER_CHECKS')}</label>
+        <button id="developer-toggle"
+          aria-labelledby="check-developer"
+          aria-describedby="check-developer-desc"
           class="switch"
-          aria-pressed="${rememberContrast ? 'true' : 'false'}">${rememberContrast ? Lang._('ON') : Lang._('OFF')}</button>
-      </li>` : '';
-
-    const formLabelsPlugin = Constants.Global.formLabelsPlugin ? `
-      <li id="form-labels-item" ${checkAll ? 'hidden' : ''}>
-        <label id="check-labels" for="labels-toggle">${Lang._('FORM_LABELS')}</label>
-        <button id="labels-toggle"
-          aria-labelledby="check-labels"
-          class="switch"
-          aria-pressed="${rememberFormLabels ? 'true' : 'false'}">${rememberFormLabels ? Lang._('ON') : Lang._('OFF')}</button>
-      </li>` : '';
-
-    const linksAdvancedPlugin = Constants.Global.linksAdvancedPlugin ? `
-      <li id="links-advanced-item" ${checkAll ? 'hidden' : ''}>
-        <label id="check-changerequest" for="links-advanced-toggle">${Lang._('LINKS_ADVANCED')} <span class="badge">AAA</span></label>
-        <button id="links-advanced-toggle"
-          aria-labelledby="check-changerequest"
-          class="switch"
-          aria-pressed="${rememberLinksAdvanced ? 'true' : 'false'}">${rememberLinksAdvanced ? Lang._('ON') : Lang._('OFF')}</button>
+          aria-pressed="${rememberDeveloper ? 'true' : 'false'}">${rememberDeveloper ? Lang._('ON') : Lang._('OFF')}</button>
+        <div id="check-developer-desc" hidden>${Lang._('DEVELOPER_DESC')}</div>
       </li>` : '';
 
     const readabilityPlugin = Constants.Readability.Plugin ? `
       <li id="readability-item">
-        <label id="check-readability" for="readability-toggle">${Lang._('LANG_READABILITY')} <span class="badge">AAA</span></label>
+        <label id="check-readability" for="readability-toggle">${Lang._('READABILITY')}</label>
         <button id="readability-toggle"
           aria-labelledby="check-readability"
           class="switch"
@@ -139,7 +122,7 @@ export default class ControlPanel extends HTMLElement {
         </div>
         <div id="readability-panel">
           <div id="readability-content">
-            <h2 class="header-text-inline">${Lang._('LANG_READABILITY')}</h2>
+            <h2 class="header-text-inline">${Lang._('READABILITY')}</h2>
             <p id="readability-info"></p>
             <ul id="readability-details"></ul>
           </div>
@@ -169,9 +152,7 @@ export default class ControlPanel extends HTMLElement {
         </div>
         <div id="settings-content">
           <ul id="settings-options">
-            ${contrastPlugin}
-            ${formLabelsPlugin}
-            ${linksAdvancedPlugin}
+            ${developerPlugin}
             ${readabilityPlugin}
             <li id="dark-mode-item">
               <label id="dark-mode" for="theme-toggle">${Lang._('DARK_MODE')}</label>
@@ -211,7 +192,7 @@ export default class ControlPanel extends HTMLElement {
         </button>
         <button id="skip-button" type="button">
           <div class="panel-icon"></div>
-          <span class="visually-hidden">${Lang._('SHORTCUT_SCREEN_READER')}</span>
+          <span class="visually-hidden">${Lang._('SHORTCUT_SR')}</span>
         </button>
         <button id="dismiss-button" type="button">
           <div class="dismiss-icon"></div>
@@ -244,6 +225,7 @@ export default class ControlPanel extends HTMLElement {
     const container = document.createElement('div');
     container.setAttribute('id', 'container');
     container.setAttribute('role', 'region');
+    container.setAttribute('data-sa11y-version', version);
     container.setAttribute('lang', Lang._('LANG_CODE'));
     container.setAttribute('aria-label', Lang._('CONTAINER_LABEL'));
     container.setAttribute('dir', Constants.Global.langDirection);

@@ -2,12 +2,16 @@
 
 /* Get text content of pseudo elements. */
 export const wrapPseudoContent = (element, string) => {
-  const pseudo = [];
-  pseudo[0] = window.getComputedStyle(element, ':before').getPropertyValue('content');
-  pseudo[1] = window.getComputedStyle(element, ':after').getPropertyValue('content');
-  pseudo[0] = pseudo[0] === 'none' ? '' : pseudo[0].replace(/^"(.*)"$/, '$1');
-  pseudo[1] = pseudo[1] === 'none' ? '' : pseudo[1].replace(/^"(.*)"$/, '$1');
-  return ` ${pseudo[0]}${string}${pseudo[1]}`;
+  const getAltText = (content) => {
+    if (content === 'none') return '';
+    const match = content.includes('url(') || content.includes('image-set(')
+      ? content.match(/\/\s*"([^"]+)"/) // Content after slash, e.g. url('image.jpg') / "alt text";
+      : content.match(/"([^"]+)"/); // Content between quotes, e.g. "alt text";
+    return match ? match[1] : '';
+  };
+  const before = getAltText(window.getComputedStyle(element, ':before').getPropertyValue('content'));
+  const after = getAltText(window.getComputedStyle(element, ':after').getPropertyValue('content'));
+  return `${before}${string}${after}`;
 };
 
 /* Sets treeWalker loop to last node before next branch. */
@@ -29,15 +33,13 @@ const nextTreeBranch = (tree) => {
 export const computeAriaLabel = (element, recursing = false) => {
   const labelledBy = element.getAttribute('aria-labelledby');
   if (!recursing && labelledBy) {
-    const target = labelledBy.split(/\s+/);
-    if (target.length > 0) {
-      let returnText = '';
-      target.forEach((x) => {
-        const targetSelector = document.querySelector(`#${CSS.escape(x)}`);
-        returnText += (!targetSelector) ? '' : `${computeAccessibleName(targetSelector, '', 1)}`;
-      });
-      return returnText;
-    }
+    return labelledBy
+      .split(/\s+/)
+      .filter((id) => id.trim()) // Exclude empty IDs.
+      .map((id) => {
+        const targetElement = document.querySelector(`#${CSS.escape(id)}`);
+        return targetElement ? computeAccessibleName(targetElement, '', 1) : '';
+      }).join(' ');
   }
 
   const ariaLabel = element.getAttribute('aria-label');
@@ -56,11 +58,16 @@ export const computeAriaLabel = (element, recursing = false) => {
  * @kudos to John Jameson, creator of the Editoria11y library, for developing this more robust calculation!
  * @notes Uses a subset of the W3C accessible name algorithm.
 */
-export const computeAccessibleName = (element, exclusions, recursing = 0) => {
+export const computeAccessibleName = (element, exclusions = [], recursing = 0) => {
   // Return immediately if there is an aria label.
   const hasAria = computeAriaLabel(element, recursing);
   if (hasAria !== 'noAria') {
     return hasAria;
+  }
+
+  // Textarea with a title.
+  if (element.tagName === 'TEXTAREA' && element.hasAttribute('title')) {
+    return element.getAttribute('title');
   }
 
   // Return immediately if there is only a text node.
@@ -91,8 +98,14 @@ export const computeAccessibleName = (element, exclusions, recursing = 0) => {
   let count = 0;
   let shouldContinueWalker = true;
 
-  const alwaysExclude = 'noscript, style, script';
-  const exclude = element.querySelectorAll(exclusions ? `${exclusions}, ${alwaysExclude}` : alwaysExclude);
+  const alwaysExclude = ['noscript', 'style', 'script', 'video', 'audio'];
+
+  // Combine exclusions and alwaysExclude arrays, ensuring no trailing commas.
+  const validExclusions = exclusions && exclusions.length ? exclusions.join(', ') : '';
+  const excludeSelector = [...(validExclusions ? [validExclusions] : []), ...alwaysExclude].join(', ');
+
+  // Use the excludeSelector in querySelectorAll
+  const exclude = element.querySelectorAll(excludeSelector);
 
   while (treeWalker.nextNode() && shouldContinueWalker) {
     count += 1;
@@ -103,7 +116,9 @@ export const computeAccessibleName = (element, exclusions, recursing = 0) => {
     if (currentNodeMatchesExclude) {
       // Exclude noscript, style, script, and selectors via exclusions param.
     } else if (treeWalker.currentNode.nodeType === Node.TEXT_NODE) {
-      computedText += ` ${treeWalker.currentNode.nodeValue}`;
+      if (treeWalker.currentNode.parentNode.tagName !== 'SLOT') {
+        computedText += ` ${treeWalker.currentNode.nodeValue}`;
+      }
     } else if (addTitleIfNoName && !treeWalker.currentNode.closest('a')) {
       if (aText === computedText) {
         computedText += addTitleIfNoName;
@@ -125,13 +140,13 @@ export const computeAccessibleName = (element, exclusions, recursing = 0) => {
             }
             break;
           case 'SVG':
-          case 'svg':
-            if (treeWalker.currentNode.getAttribute('role') === 'image'
-              && treeWalker.currentNode.hasAttribute('alt')) {
-              computedText += wrapPseudoContent(
-                treeWalker.currentNode, treeWalker.currentNode.getAttribute('alt'),
-              );
-              if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
+            if (treeWalker.currentNode.hasAttribute('role') === 'img' || treeWalker.currentNode.hasAttribute('role') === 'graphics-document') {
+              computedText += computeAriaLabel(treeWalker.currentNode);
+            } else {
+              const title = treeWalker.currentNode.querySelector('title');
+              if (title) {
+                computedText += title;
+              }
             }
             break;
           case 'A':
@@ -141,6 +156,22 @@ export const computeAccessibleName = (element, exclusions, recursing = 0) => {
             } else {
               addTitleIfNoName = false;
               aText = false;
+            }
+            computedText += wrapPseudoContent(treeWalker.currentNode, '');
+            break;
+          case 'SLOT':
+            if (treeWalker.currentNode.assignedNodes()) {
+              // Slots have specific shadow DOM methods.
+              const children = treeWalker.currentNode.assignedNodes();
+              let slotText = '';
+              children?.forEach((child) => {
+                if (child.nodeType === Node.ELEMENT_NODE) {
+                  slotText += computeAccessibleName(child);
+                } else if (child.nodeType === Node.TEXT_NODE) {
+                  slotText += child.nodeValue;
+                }
+              });
+              computedText += slotText;
             }
             computedText += wrapPseudoContent(treeWalker.currentNode, '');
             break;

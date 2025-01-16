@@ -6,73 +6,27 @@ import Lang from '../utils/lang';
 /*  Initialize all toggle switches within Settings panel.       */
 /* ************************************************************ */
 export default function settingsPanelToggles(checkAll, resetAll) {
-  /* ***************** */
-  /*  Contrast toggle  */
-  /* ***************** */
-  if (Constants.Global.contrastPlugin) {
-    Constants.Panel.contrastToggle.onclick = async () => {
-      if (store.getItem('sa11y-remember-contrast') === 'On') {
-        store.setItem('sa11y-remember-contrast', 'Off');
-        Constants.Panel.contrastToggle.textContent = `${Lang._('OFF')}`;
-        Constants.Panel.contrastToggle.setAttribute('aria-pressed', 'false');
+  /* ************************* */
+  /*  Developer checks toggle  */
+  /* ************************* */
+  if (Constants.Global.developerPlugin) {
+    Constants.Panel.developerToggle.onclick = async () => {
+      if (store.getItem('sa11y-developer') === 'On') {
+        store.setItem('sa11y-developer', 'Off');
+        Constants.Panel.developerToggle.textContent = `${Lang._('OFF')}`;
+        Constants.Panel.developerToggle.setAttribute('aria-pressed', 'false');
         resetAll(false);
         await checkAll();
       } else {
-        store.setItem('sa11y-remember-contrast', 'On');
-        Constants.Panel.contrastToggle.textContent = `${Lang._('ON')}`;
-        Constants.Panel.contrastToggle.setAttribute('aria-pressed', 'true');
+        store.setItem('sa11y-developer', 'On');
+        Constants.Panel.developerToggle.textContent = `${Lang._('ON')}`;
+        Constants.Panel.developerToggle.setAttribute('aria-pressed', 'true');
         resetAll(false);
         await checkAll();
       }
     };
   } else {
-    store.setItem('sa11y-remember-contrast', 'Off');
-  }
-
-  /* ***************** */
-  /*  Form Labels      */
-  /* ***************** */
-  if (Constants.Global.formLabelsPlugin) {
-    Constants.Panel.labelsToggle.onclick = async () => {
-      if (store.getItem('sa11y-remember-labels') === 'On') {
-        store.setItem('sa11y-remember-labels', 'Off');
-        Constants.Panel.labelsToggle.textContent = `${Lang._('OFF')}`;
-        Constants.Panel.labelsToggle.setAttribute('aria-pressed', 'false');
-        resetAll(false);
-        await checkAll();
-      } else {
-        store.setItem('sa11y-remember-labels', 'On');
-        Constants.Panel.labelsToggle.textContent = `${Lang._('ON')}`;
-        Constants.Panel.labelsToggle.setAttribute('aria-pressed', 'true');
-        resetAll(false);
-        await checkAll();
-      }
-    };
-  } else {
-    store.setItem('sa11y-remember-labels', 'Off');
-  }
-
-  /* ****************** */
-  /*  Links (Advanced)  */
-  /* ****************** */
-  if (Constants.Global.linksAdvancedPlugin) {
-    Constants.Panel.linksToggle.onclick = async () => {
-      if (store.getItem('sa11y-remember-links-advanced') === 'On') {
-        store.setItem('sa11y-remember-links-advanced', 'Off');
-        Constants.Panel.linksToggle.textContent = `${Lang._('OFF')}`;
-        Constants.Panel.linksToggle.setAttribute('aria-pressed', 'false');
-        resetAll(false);
-        await checkAll();
-      } else {
-        store.setItem('sa11y-remember-links-advanced', 'On');
-        Constants.Panel.linksToggle.textContent = `${Lang._('ON')}`;
-        Constants.Panel.linksToggle.setAttribute('aria-pressed', 'true');
-        resetAll(false);
-        await checkAll();
-      }
-    };
-  } else {
-    store.setItem('sa11y-remember-links-advanced', 'Off');
+    store.setItem('sa11y-developer', 'Off');
   }
 
   /* ****************** */
@@ -80,15 +34,15 @@ export default function settingsPanelToggles(checkAll, resetAll) {
   /* ****************** */
   if (Constants.Readability.Plugin) {
     Constants.Panel.readabilityToggle.onclick = async () => {
-      if (store.getItem('sa11y-remember-readability') === 'On') {
-        store.setItem('sa11y-remember-readability', 'Off');
+      if (store.getItem('sa11y-readability') === 'On') {
+        store.setItem('sa11y-readability', 'Off');
         Constants.Panel.readabilityToggle.textContent = `${Lang._('OFF')}`;
         Constants.Panel.readabilityToggle.setAttribute('aria-pressed', 'false');
         Constants.Panel.readability.classList.remove('active');
         resetAll(false);
         await checkAll();
       } else {
-        store.setItem('sa11y-remember-readability', 'On');
+        store.setItem('sa11y-readability', 'On');
         Constants.Panel.readabilityToggle.textContent = `${Lang._('ON')}`;
         Constants.Panel.readabilityToggle.setAttribute('aria-pressed', 'true');
         Constants.Panel.readability.classList.add('active');
@@ -97,7 +51,7 @@ export default function settingsPanelToggles(checkAll, resetAll) {
       }
     };
 
-    if (store.getItem('sa11y-remember-readability') === 'On') {
+    if (store.getItem('sa11y-readability') === 'On') {
       Constants.Panel.readability.classList.add('active');
     }
   }
@@ -108,63 +62,31 @@ export default function settingsPanelToggles(checkAll, resetAll) {
    * @link https://derekkedziora.com/blog/dark-mode-revisited
   */
   const systemInitiatedDark = window.matchMedia('(prefers-color-scheme: dark)');
-  if (systemInitiatedDark.matches) {
-    Constants.Panel.themeToggle.textContent = `${Lang._('ON')}`;
-    Constants.Panel.themeToggle.setAttribute('aria-pressed', 'true');
-  } else {
-    Constants.Panel.themeToggle.textContent = `${Lang._('OFF')}`;
-    Constants.Panel.themeToggle.setAttribute('aria-pressed', 'false');
-  }
-  const prefersColorTest = () => {
-    if (systemInitiatedDark.matches) {
-      Constants.Global.html.setAttribute('data-sa11y-theme', 'dark');
-      Constants.Panel.themeToggle.textContent = `${Lang._('ON')}`;
-      Constants.Panel.themeToggle.setAttribute('aria-pressed', 'true');
-      store.setItem('sa11y-remember-theme', '');
-    } else {
-      Constants.Global.html.setAttribute('data-sa11y-theme', 'light');
-      Constants.Panel.themeToggle.textContent = `${Lang._('OFF')}`;
-      Constants.Panel.themeToggle.setAttribute('aria-pressed', 'false');
-      store.setItem('sa11y-remember-theme', '');
-    }
+  const { themeToggle } = Constants.Panel;
+  const { html } = Constants.Global;
+
+  const storeTheme = (theme) => {
+    html.setAttribute('data-sa11y-theme', theme);
+    store.setItem('sa11y-theme', theme);
+    themeToggle.textContent = Lang._(theme === 'dark' ? 'ON' : 'OFF');
+    themeToggle.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
   };
-  systemInitiatedDark.addEventListener('change', prefersColorTest);
-  Constants.Panel.themeToggle.onclick = async () => {
-    const theme = store.getItem('sa11y-remember-theme');
-    if (theme === 'dark') {
-      Constants.Global.html.setAttribute('data-sa11y-theme', 'light');
-      store.setItem('sa11y-remember-theme', 'light');
-      Constants.Panel.themeToggle.textContent = `${Lang._('OFF')}`;
-      Constants.Panel.themeToggle.setAttribute('aria-pressed', 'false');
-    } else if (theme === 'light') {
-      Constants.Global.html.setAttribute('data-sa11y-theme', 'dark');
-      store.setItem('sa11y-remember-theme', 'dark');
-      Constants.Panel.themeToggle.textContent = `${Lang._('ON')}`;
-      Constants.Panel.themeToggle.setAttribute('aria-pressed', 'true');
-    } else if (systemInitiatedDark.matches) {
-      Constants.Global.html.setAttribute('data-sa11y-theme', 'light');
-      store.setItem('sa11y-remember-theme', 'light');
-      Constants.Panel.themeToggle.textContent = `${Lang._('OFF')}`;
-      Constants.Panel.themeToggle.setAttribute('aria-pressed', 'false');
-    } else {
-      Constants.Global.html.setAttribute('data-sa11y-theme', 'dark');
-      store.setItem('sa11y-remember-theme', 'dark');
-      Constants.Panel.themeToggle.textContent = `${Lang._('ON')}`;
-      Constants.Panel.themeToggle.setAttribute('aria-pressed', 'true');
-    }
+
+  // Initial theme setup.
+  const initialTheme = store.getItem('sa11y-theme') || (systemInitiatedDark.matches ? 'dark' : 'light');
+  storeTheme(initialTheme);
+
+  // Listen to system theme changes.
+  systemInitiatedDark.addEventListener('change', () => {
+    storeTheme(systemInitiatedDark.matches ? 'dark' : 'light');
+  });
+
+  // Toggle theme on based on toggle switch.
+  themeToggle.onclick = () => {
+    const currentTheme = store.getItem('sa11y-theme') || (systemInitiatedDark.matches ? 'dark' : 'light');
+    const preferredTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    storeTheme(preferredTheme);
   };
-  const theme = store.getItem('sa11y-remember-theme');
-  if (theme === 'dark') {
-    Constants.Global.html.setAttribute('data-sa11y-theme', 'dark');
-    store.setItem('sa11y-remember-theme', 'dark');
-    Constants.Panel.themeToggle.textContent = `${Lang._('ON')}`;
-    Constants.Panel.themeToggle.setAttribute('aria-pressed', 'true');
-  } else if (theme === 'light') {
-    Constants.Global.html.setAttribute('data-sa11y-theme', 'light');
-    store.setItem('sa11y-remember-theme', 'light');
-    Constants.Panel.themeToggle.textContent = `${Lang._('OFF')}`;
-    Constants.Panel.themeToggle.setAttribute('aria-pressed', 'false');
-  }
 
   /* ****************** */
   /*  Colour filters    */
@@ -189,7 +111,7 @@ export default function settingsPanelToggles(checkAll, resetAll) {
 
       if (option >= 1 && option <= 4) {
         if (window.matchMedia('(forced-colors: active)').matches) {
-          createAlert(Lang._('COLOUR_FILTER_HIGH_CONTRAST_MESSAGE'));
+          createAlert(Lang._('COLOUR_FILTER_HIGH_CONTRAST'));
         } else {
           // Set attributes.
           Constants.Root.areaToCheck.setAttribute('data-sa11y-filter', filters[option - 1]);

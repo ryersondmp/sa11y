@@ -26,10 +26,14 @@ export default function find(selector, desiredRoot, exclude) {
   }
 
   const shadowComponents = document.querySelectorAll('[data-sa11y-has-shadow-root]');
-  const shadow = (shadowComponents) ? ', [data-sa11y-has-shadow-root]' : '';
+  const shadow = shadowComponents ? ', [data-sa11y-has-shadow-root]' : '';
 
-  const exclusions = Constants.Exclusions.Container;
-  const additional = (exclude !== undefined) ? `, ${exclude}` : '';
+  // Exclusions are returned as an array & need to become a string for selector.
+  const exclusions = Constants.Exclusions.Container.join(', ');
+  const additionalExclusions = exclude?.join(', ') || '';
+
+  // Ensure no trailing commas.
+  const additional = additionalExclusions ? `, ${additionalExclusions}` : '';
 
   /* Logic yoinked from Editoria11y */
   // 1. Elements array includes web components in the selector to be used as a placeholder.
@@ -37,7 +41,6 @@ export default function find(selector, desiredRoot, exclude) {
   if (shadowComponents.length) {
     // 2. Dive into the each shadow root and collect an array of its results.
     const shadowFind = [];
-    // Remove first comma and whitespace.
     elements.forEach((el, i) => {
       if (el && el.matches && el.matches('[data-sa11y-has-shadow-root]') && el.shadowRoot) {
         shadowFind[i] = el.shadowRoot.querySelectorAll(`:is(${selector}):not(${exclusions}${additional})`);
@@ -52,6 +55,6 @@ export default function find(selector, desiredRoot, exclude) {
       }
     }
   }
-  // 4. Return the cleaned up array.
-  return elements;
+  // 4. Return the cleaned up array, filtering out <slot> placeholders.
+  return elements.filter((node) => node.parentNode.tagName !== 'SLOT');
 }

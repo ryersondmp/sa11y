@@ -1,10 +1,10 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 3.2.3
+  * @version 4.0.0
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
-  * @copyright © 2020 - 2024 Toronto Metropolitan University.
+  * @copyright © 2020 - 2025 Toronto Metropolitan University.
   * @contact adam.chaboryk@torontomu.ca
   * GitHub: git+https://github.com/ryersondmp/sa11y.git | Website: https://sa11y.netlify.app
   * For all acknowledgements, please visit: https://sa11y.netlify.app/acknowledgements/
@@ -22,7 +22,7 @@
 
     // Exclusions
     containerIgnore: '.sa11y-ignore',
-    contrastIgnore: '.sr-only, [role="menu"] *',
+    contrastIgnore: '.sr-only',
     outlineIgnore: '',
     headerIgnore: '',
     headerIgnoreSpan: '',
@@ -32,91 +32,215 @@
     linkIgnoreSpan: '',
     linkIgnoreStrings: '',
 
-    // Other features
+    // Control panel settings
     aboutContent: '',
-    delayCheck: 0,
-    delayCustomCheck: 500,
-    showGoodLinkButton: true,
-    showGoodImageButton: true,
+    panelPosition: 'right',
+    checkAllHideToggles: false,
+    developerChecksOnByDefault: false,
+
+    // Page outline
     showHinPageOutline: false,
     showTitleInPageOutline: true,
+
+    // Image outline
     showImageOutline: true,
     editImageURLofCMS: '',
     relativePathImageSRC: '',
     relativePathImageID: '',
+
+    // Other features
+    delayCheck: 0,
+    delayCustomCheck: 500,
     detectSPArouting: false,
     doNotRun: '',
-    dismissAnnotations: true,
     headless: false,
     selectorPath: false,
     shadowComponents: '',
     autoDetectShadowComponents: false,
-    panelPosition: 'right',
-    altTextMaxCharLength: 250,
-    susAltStopWords: '',
-    linkStopWords: '',
-    extraPlaceholderStopWords: '',
-    headingMaxCharLength: 170,
-    URLTextMaxCharLength: 40,
-    URLAsLinkTextWarning: true,
+
+    // Annotations
+    showGoodImageButton: true,
+    showGoodLinkButton: true,
+    dismissAnnotations: true,
+    dismissAll: true,
 
     // Readability
     readabilityPlugin: true,
     readabilityRoot: 'body',
     readabilityIgnore: '',
 
-    // Other plugins
+    // Contrast
     contrastPlugin: true,
-    formLabelsPlugin: true,
-    linksAdvancedPlugin: true,
-    colourFilterPlugin: true,
+    contrastAPCA: false,
+
+    // Other plugins
     customChecks: false,
-    checkAllHideToggles: false,
+    linksAdvancedPlugin: true,
+    formLabelsPlugin: true,
+    embeddedContentPlugin: true,
+    developerPlugin: true,
+    colourFilterPlugin: true,
     exportResultsPlugin: false,
 
-    // Specific rulesets
-    linksToFlag: '',
-    linksToDOI: true,
-    missingH1: true,
-    flagLongHeadings: true,
-    nonConsecutiveHeadingIsError: true,
+    // Shared properties for some checks
+    susAltStopWords: '',
+    linkStopWords: '',
+    extraPlaceholderStopWords: '',
 
-    // QA rulesets
-    badLinksQA: true,
-    strongItalicsQA: true,
-    pdfQA: true,
-    documentQA: true,
-    documentLinks: 'a[href$=".doc"], a[href$=".docx"], a[href*=".doc?"], a[href*=".docx?"], a[href$=".ppt"], a[href$=".pptx"], a[href*=".ppt?"], a[href*=".pptx?"], a[href^="https://docs.google"], a[href^="https://sway."]',
-    langQA: true,
-    blockquotesQA: true,
-    allCapsQA: true,
-    fakeHeadingsQA: true,
-    fakeListQA: true,
-    duplicateIdQA: true,
-    underlinedTextQA: true,
-    pageTitleQA: true,
-    subscriptQA: true,
-    inPageLinkQA: true,
+    // All checks
+    checks: {
+      // Heading checks
+      HEADING_SKIPPED_LEVEL: true,
+      HEADING_EMPTY_WITH_IMAGE: true,
+      HEADING_EMPTY: true,
+      HEADING_FIRST: true,
+      HEADING_LONG: {
+        maxLength: 170,
+      },
+      HEADING_MISSING_ONE: true,
 
-    // Tables
-    tablesQA: true,
-    tablesQAmissingTH: true,
-    tablesQAsemanticHeadings: true,
-    tablesQAemptyTH: true,
-    tablesQAemptyTHisError: true,
+      // Image checks
+      MISSING_ALT_LINK: true,
+      MISSING_ALT_LINK_HAS_TEXT: true,
+      MISSING_ALT: true,
+      IMAGE_DECORATIVE_CAROUSEL: {
+        sources: '.carousel',
+      },
+      LINK_IMAGE_NO_ALT_TEXT: true,
+      LINK_IMAGE_TEXT: true,
+      IMAGE_FIGURE_DECORATIVE: true,
+      IMAGE_DECORATIVE: true,
+      LINK_ALT_FILE_EXT: true,
+      ALT_FILE_EXT: true,
+      LINK_PLACEHOLDER_ALT: true,
+      ALT_PLACEHOLDER: true,
+      LINK_SUS_ALT: true,
+      SUS_ALT: true,
+      LINK_IMAGE_LONG_ALT: {
+        maxLength: 250,
+      },
+      IMAGE_ALT_TOO_LONG: {
+        maxLength: 250,
+      },
+      LINK_IMAGE_ALT: {
+        dismissAll: true,
+      },
+      LINK_IMAGE_ALT_AND_TEXT: true,
+      IMAGE_FIGURE_DUPLICATE_ALT: true,
+      IMAGE_PASS: {
+        dismissAll: true,
+      },
 
-    // Embedded content rulesets
-    embeddedContentAll: true,
-    embeddedContentAudio: true,
-    embeddedContentVideo: true,
-    embeddedContentDataViz: true,
-    embeddedContentTitles: true,
-    embeddedContentGeneral: true,
+      // Link checks
+      DUPLICATE_TITLE: {
+        dismissAll: true,
+      },
+      LINK_EMPTY_LABELLEDBY: true,
+      LINK_EMPTY_NO_LABEL: true,
+      LINK_STOPWORD: true,
+      LINK_STOPWORD_ARIA: true,
+      LINK_SYMBOLS: true,
+      LINK_CLICK_HERE: true,
+      LINK_DOI: {
+        dismissAll: true,
+      },
+      LINK_URL: {
+        maxLength: 40,
+      },
+      LINK_LABEL: {
+        dismissAll: true,
+      },
+      LINK_EMPTY: true,
+      LINK_IDENTICAL_NAME: {
+        dismissAll: true,
+      },
+      LINK_NEW_TAB: {
+        dismissAll: true,
+      },
+      LINK_FILE_EXT: true,
 
-    // Embedded content
-    videoContent: 'youtube.com, vimeo.com, yuja.com, panopto.com',
-    audioContent: 'soundcloud.com, simplecast.com, podbean.com, buzzsprout.com, blubrry.com, transistor.fm, fusebox.fm, libsyn.com',
-    dataVizContent: 'datastudio, tableau, lookerstudio, powerbi, qlik',
+      // Form labels checks
+      LABELS_MISSING_IMAGE_INPUT: true,
+      LABELS_INPUT_RESET: true,
+      LABELS_MISSING_LABEL: true,
+      LABELS_ARIA_LABEL_INPUT: true,
+      LABELS_NO_FOR_ATTRIBUTE: true,
+      LABELS_PLACEHOLDER: true,
+
+      // Embedded content checks
+      EMBED_AUDIO: {
+        sources: '',
+      },
+      EMBED_VIDEO: {
+        sources: '',
+      },
+      EMBED_DATA_VIZ: {
+        sources: '',
+      },
+      EMBED_UNFOCUSABLE: true,
+      EMBED_MISSING_TITLE: true,
+      EMBED_GENERAL: true,
+
+      // Quality assurance checks
+      QA_BAD_LINK: {
+        sources: '',
+      },
+      QA_STRONG_ITALICS: true,
+      QA_IN_PAGE_LINK: true,
+      QA_DOCUMENT: {
+        sources: '',
+        dismissAll: true,
+      },
+      QA_PDF: {
+        dismissAll: true,
+      },
+      QA_BLOCKQUOTE: true,
+      TABLES_MISSING_HEADINGS: true,
+      TABLES_SEMANTIC_HEADING: true,
+      TABLES_EMPTY_HEADING: true,
+      QA_FAKE_HEADING: true,
+      QA_FAKE_LIST: true,
+      QA_UPPERCASE: true,
+      QA_UNDERLINE: true,
+      QA_SUBSCRIPT: true,
+      QA_NESTED_COMPONENTS: {
+        sources: '',
+      },
+      QA_JUSTIFY: true,
+      QA_SMALL_TEXT: true,
+
+      // Meta checks
+      META_LANG: true,
+      META_SCALABLE: true,
+      META_MAX: true,
+      META_REFRESH: true,
+
+      // Developer checks
+      DUPLICATE_ID: true,
+      META_TITLE: true,
+      UNCONTAINED_LI: true,
+      TABINDEX_ATTR: true,
+      HIDDEN_FOCUSABLE: true,
+      LABEL_IN_NAME: true,
+      BTN_EMPTY: true,
+      BTN_EMPTY_LABELLEDBY: true,
+      BTN_ROLE_IN_NAME: true,
+
+      // Contrast checks
+      CONTRAST_WARNING: {
+        dismissAll: true,
+      },
+      CONTRAST_INPUT: true,
+      CONTRAST_ERROR: true,
+      CONTRAST_PLACEHOLDER: true,
+      CONTRAST_ERROR_GRAPHIC: true,
+      CONTRAST_WARNING_GRAPHIC: {
+        dismissAll: true,
+      },
+      CONTRAST_UNSUPPORTED: {
+        dismissAll: true,
+      },
+    },
   };
 
   /* Translation object */
@@ -146,8 +270,7 @@
       return $el.replaceAll(/<hr>/g, '<hr aria-hidden="true">')
         .replaceAll(/<a[\s]href=/g, '<a target="_blank" rel="noopener noreferrer" href=')
         .replaceAll(/<\/a>/g, `<span class="visually-hidden"> (${Lang._('NEW_TAB')})</span></a>`)
-        .replaceAll(/{R}/g, 'class="red-text"')
-        .replaceAll(/{W}/g, 'class="yellow-text"')
+        .replaceAll(/{C}/g, 'class="colour"')
         .replaceAll(/{B}/g, 'class="badge"')
         .replaceAll(/{ALT}/g, `<strong class="badge">${Lang._('ALT')}</strong>`)
         .replaceAll(/{L}/g, `<strong class="badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._('LINKED')}</span></strong>`);
@@ -188,11 +311,11 @@
       Global.panelPosition = option.panelPosition;
       Global.dismissAnnotations = option.dismissAnnotations;
       Global.aboutContent = option.aboutContent;
+      Global.contrastAPCA = option.contrastAPCA;
+      Global.contrastSuggestions = option.contrastSuggestions;
 
       // Toggleable plugins
-      Global.contrastPlugin = option.contrastPlugin;
-      Global.formLabelsPlugin = option.formLabelsPlugin;
-      Global.linksAdvancedPlugin = option.linksAdvancedPlugin;
+      Global.developerPlugin = option.developerPlugin;
       Global.colourFilterPlugin = option.colourFilterPlugin;
       Global.checkAllHideToggles = option.checkAllHideToggles;
       Global.exportResultsPlugin = option.exportResultsPlugin;
@@ -211,10 +334,51 @@
       // i18n
       Global.langDirection = (Global.html.getAttribute('dir') === 'rtl') ? 'rtl' : 'ltr';
 
-      // QA: Document links (Quality Assurance module)
-      if (option.documentLinks) {
-        Global.documentLinks = `${option.documentLinks}`;
+      // Check for document types.
+      const documentSources = option.checks.QA_DOCUMENT.sources;
+      const defaultDocumentSources = 'a[href$=".doc"], a[href$=".docx"], a[href*=".doc?"], a[href*=".docx?"], a[href$=".ppt"], a[href$=".pptx"], a[href*=".ppt?"], a[href*=".pptx?"], a[href^="https://drive.google.com/file"], a[href^="https://docs.google."], a[href^="https://sway."]';
+      if (documentSources.length) {
+        Global.documentSources = `${defaultDocumentSources}, ${documentSources}`;
+      } else {
+        Global.documentSources = defaultDocumentSources;
       }
+
+      /* ********************** */
+      /* Embedded Content Setup */
+      /* ********************** */
+
+      // Video sources.
+      const videoSources = option.checks.EMBED_VIDEO.sources;
+      const defaultVideoSources = 'video, [src*="youtube.com"], [src*="vimeo.com"], [src*="yuja.com"], [src*="panopto.com"]';
+      if (videoSources.length) {
+        const videos = videoSources.split(/\s*[\s,]\s*/).map(($el) => `[src*="${$el}"]`);
+        Global.VideoSources = `${defaultVideoSources}, ${videos.join(', ')}`;
+      } else {
+        Global.VideoSources = defaultVideoSources;
+      }
+
+      // Audio sources.
+      const audioSources = option.checks.EMBED_AUDIO.sources;
+      const defaultAudioSources = 'audio, [src*="soundcloud.com"], [src*="simplecast.com"], [src*="podbean.com"], [src*="buzzsprout.com"], [src*="blubrry.com"], [src*="transistor.fm"], [src*="fusebox.fm"], [src*="libsyn.com"], [src*="spotify.com"], [src*="podcasts.apple.com"], [src*="castbox.fm"]';
+      if (audioSources.length) {
+        const audio = audioSources.split(/\s*[\s,]\s*/).map(($el) => `[src*="${$el}"]`);
+        Global.AudioSources = `${defaultAudioSources}, ${audio.join(', ')}`;
+      } else {
+        Global.AudioSources = defaultAudioSources;
+      }
+
+      // Data viz sources.
+      const dataVizSources = option.checks.EMBED_DATA_VIZ.sources;
+      const defaultDataVizSources = '[src*="datastudio"], [src*="tableau"], [src*="lookerstudio"], [src*="powerbi"], [src*="qlik"]';
+      if (dataVizSources.length) {
+        const data = dataVizSources.split(/\s*[\s,]\s*/).map(($el) => `[src*="${$el}"]`);
+        Global.VisualizationSources = `${defaultDataVizSources}, ${data.join(', ')}`;
+      } else {
+        Global.VisualizationSources = defaultDataVizSources;
+      }
+
+      // Embedded content all
+      Global.AllEmbeddedContent = `${Global.VideoSources}, ${Global.AudioSources}, ${Global.VisualizationSources}`;
     }
 
     /* *************** */
@@ -255,17 +419,12 @@
       Panel.settingsContent = Sa11yPanel.getElementById('settings-content');
 
       // Settings toggles
-      Panel.contrastToggle = Sa11yPanel.getElementById('contrast-toggle');
-      Panel.labelsToggle = Sa11yPanel.getElementById('labels-toggle');
-      Panel.linksToggle = Sa11yPanel.getElementById('links-advanced-toggle');
+      Panel.developerToggle = Sa11yPanel.getElementById('developer-toggle');
       Panel.readabilityToggle = Sa11yPanel.getElementById('readability-toggle');
       Panel.themeToggle = Sa11yPanel.getElementById('theme-toggle');
-      Panel.contrastItem = Sa11yPanel.getElementById('contrast-item');
-      Panel.labelsItem = Sa11yPanel.getElementById('form-labels-item');
-      Panel.linksItem = Sa11yPanel.getElementById('links-advanced-item');
+      Panel.developerItem = Sa11yPanel.getElementById('developer-item');
       Panel.readabilityItem = Sa11yPanel.getElementById('readability-item');
       Panel.darkModeItem = Sa11yPanel.getElementById('dark-mode-item');
-
       Panel.colourPanel = Sa11yPanel.getElementById('panel-colour-filters');
       Panel.colourFilterItem = Sa11yPanel.getElementById('colour-filter-item');
       Panel.colourFilterSelect = Sa11yPanel.getElementById('colour-filter-select');
@@ -342,85 +501,72 @@
     /* **************** */
     const Exclusions = {};
     function initializeExclusions(option) {
-      // Main container.
+      // List of Sa11y's interface components.
+      Exclusions.Sa11yElements = ['sa11y-heading-label', 'sa11y-heading-anchor', 'sa11y-annotation', 'sa11y-tooltips', 'sa11y-panel-tooltips', 'sa11y-control-panel', '#sa11y-colour-filters', '#sa11y-colour-filters *'];
+
+      // Global elements to exclude.
+      const exclusions = ['style', 'script', 'noscript'];
+
+      // Main container exclusions.
+      Exclusions.Container = ['#wpadminbar', '#wpadminbar *', ...exclusions];
       if (option.containerIgnore) {
-        const containerSelectors = option.containerIgnore.split(',').map(($el) => `${$el} *, ${$el}`);
-        Exclusions.Container = `#wpadminbar *, #sa11y-colour-filters, #sa11y-colour-filters *, ${containerSelectors.join(', ')}`;
-      } else {
-        Exclusions.Container = '#wpadminbar *, #sa11y-colour-filters, #sa11y-colour-filters *';
+        const containerSelectors = option.containerIgnore.split(',').map((item) => item.trim());
+        Exclusions.Container = Exclusions.Container.concat(
+          containerSelectors.flatMap((item) => [`${item} *`, item]),
+        );
       }
 
       // Contrast exclusions
-      Exclusions.Contrast = 'script, style, link';
+      Exclusions.Contrast = ['link', 'hr', 'option', 'audio', 'audio *', 'video', 'video *', 'input[type="color"]', 'input[type="range"]', 'progress', 'progress *', 'meter', 'meter *', 'iframe', 'svg title', 'svg desc', ...exclusions];
       if (option.contrastIgnore) {
-        Exclusions.Contrast = `${option.contrastIgnore}, ${Exclusions.Contrast}`;
+        Exclusions.Contrast = option.contrastIgnore
+          .split(',')
+          .map(($el) => $el.trim())
+          .flatMap(($el) => [$el, `${$el} *`])
+          .concat(Exclusions.Contrast);
       }
 
       // Ignore specific regions for readability module.
-      Exclusions.Readability = 'nav li, [role="navigation"] li';
+      Exclusions.Readability = ['nav li', '[role="navigation"] li', ...exclusions];
       if (option.readabilityIgnore) {
-        Exclusions.Readability = `${option.readabilityIgnore}, ${Exclusions.Readability}`;
+        Exclusions.Readability = option.readabilityIgnore
+          .split(',')
+          .map(($el) => $el.trim())
+          .flatMap(($el) => [$el, `${$el} *`])
+          .concat(Exclusions.Readability);
       }
 
-      // Ignore specific headings
-      if (option.headerIgnore) {
-        Exclusions.Headings = `${option.headerIgnore}`;
-      }
+      // Ignore specific headings.
+      Exclusions.Headings = option.headerIgnore
+        ? option.headerIgnore.split(',').map(($el) => $el.trim())
+        : [];
+
+      // Ignore specific classes within headings.
+      Exclusions.HeaderSpan = option.headerIgnoreSpan
+        ? option.headerIgnoreSpan.split(',').map(($el) => $el.trim())
+        : [];
 
       // Don't add heading label or include in panel.
-      if (option.outlineIgnore) {
-        Exclusions.Outline = `${option.outlineIgnore}`;
-      }
+      Exclusions.Outline = option.outlineIgnore
+        ? option.outlineIgnore.split(',').map(($el) => $el.trim())
+        : [];
 
       // Ignore specific images.
-      Exclusions.Images = '[role="presentation"]';
+      Exclusions.Images = ['[role="presentation"]'];
       if (option.imageIgnore) {
-        Exclusions.Images = `${option.imageIgnore}, ${Exclusions.Images}`;
+        Exclusions.Images = option.imageIgnore.split(',').map(($el) => $el.trim()).concat(Exclusions.Images);
       }
 
       // Ignore specific links
-      Exclusions.Links = '.anchorjs-link';
+      Exclusions.Links = ['.anchorjs-link'];
       if (option.linkIgnore) {
-        Exclusions.Links = `${option.linkIgnore}, ${Exclusions.Links}`;
+        Exclusions.Links = option.linkIgnore.split(',').map(($el) => $el.trim()).concat(Exclusions.Links);
       }
 
       // Ignore specific classes within links.
-      if (option.linkIgnoreSpan) {
-        Exclusions.LinkSpan = option.linkIgnoreSpan;
-      }
-    }
-
-    /* ********************** */
-    /* Embedded Content Setup */
-    /* ********************** */
-    const EmbeddedContent = {};
-    function initializeEmbeddedContent(option) {
-      // Video sources.
-      if (option.videoContent) {
-        const videos = option.videoContent.split(/\s*[\s,]\s*/).map(($el) => `[src*='${$el}']`);
-        EmbeddedContent.Video = `video, ${videos.join(', ')}`;
-      } else {
-        EmbeddedContent.Video = 'video';
-      }
-
-      // Audio sources.
-      if (option.audioContent) {
-        const audio = option.audioContent.split(/\s*[\s,]\s*/).map(($el) => `[src*='${$el}']`);
-        EmbeddedContent.Audio = `audio, ${audio.join(', ')}`;
-      } else {
-        EmbeddedContent.Audio = 'audio';
-      }
-
-      // Data viz sources.
-      if (option.dataVizContent) {
-        const data = option.dataVizContent.split(/\s*[\s,]\s*/).map(($el) => `[src*='${$el}']`);
-        EmbeddedContent.Visualization = data.join(', ');
-      } else {
-        EmbeddedContent.Visualization = 'datastudio.google.com, tableau';
-      }
-
-      // Embedded content all
-      EmbeddedContent.All = `${EmbeddedContent.Video}, ${EmbeddedContent.Audio}, ${EmbeddedContent.Visualization}`;
+      Exclusions.LinkSpan = option.linkIgnoreSpan
+        ? option.linkIgnoreSpan.split(',').map(($el) => $el.trim())
+        : [];
     }
 
     return {
@@ -434,8 +580,6 @@
       Readability,
       initializeExclusions,
       Exclusions,
-      initializeEmbeddedContent,
-      EmbeddedContent,
     };
   }());
 
@@ -465,10 +609,14 @@
     }
 
     const shadowComponents = document.querySelectorAll('[data-sa11y-has-shadow-root]');
-    const shadow = (shadowComponents) ? ', [data-sa11y-has-shadow-root]' : '';
+    const shadow = shadowComponents ? ', [data-sa11y-has-shadow-root]' : '';
 
-    const exclusions = Constants.Exclusions.Container;
-    const additional = (exclude !== undefined) ? `, ${exclude}` : '';
+    // Exclusions are returned as an array & need to become a string for selector.
+    const exclusions = Constants.Exclusions.Container.join(', ');
+    const additionalExclusions = exclude?.join(', ') || '';
+
+    // Ensure no trailing commas.
+    const additional = additionalExclusions ? `, ${additionalExclusions}` : '';
 
     /* Logic yoinked from Editoria11y */
     // 1. Elements array includes web components in the selector to be used as a placeholder.
@@ -476,7 +624,6 @@
     if (shadowComponents.length) {
       // 2. Dive into the each shadow root and collect an array of its results.
       const shadowFind = [];
-      // Remove first comma and whitespace.
       elements.forEach((el, i) => {
         if (el && el.matches && el.matches('[data-sa11y-has-shadow-root]') && el.shadowRoot) {
           shadowFind[i] = el.shadowRoot.querySelectorAll(`:is(${selector}):not(${exclusions}${additional})`);
@@ -491,9 +638,209 @@
         }
       }
     }
-    // 4. Return the cleaned up array.
-    return elements;
+    // 4. Return the cleaned up array, filtering out <slot> placeholders.
+    return elements.filter((node) => node.parentNode.tagName !== 'SLOT');
   }
+
+  /* eslint-disable no-use-before-define */
+
+  /* Get text content of pseudo elements. */
+  const wrapPseudoContent = (element, string) => {
+    const getAltText = (content) => {
+      if (content === 'none') return '';
+      const match = content.includes('url(') || content.includes('image-set(')
+        ? content.match(/\/\s*"([^"]+)"/) // Content after slash, e.g. url('image.jpg') / "alt text";
+        : content.match(/"([^"]+)"/); // Content between quotes, e.g. "alt text";
+      return match ? match[1] : '';
+    };
+    const before = getAltText(window.getComputedStyle(element, ':before').getPropertyValue('content'));
+    const after = getAltText(window.getComputedStyle(element, ':after').getPropertyValue('content'));
+    return `${before}${string}${after}`;
+  };
+
+  /* Sets treeWalker loop to last node before next branch. */
+  const nextTreeBranch = (tree) => {
+    for (let i = 0; i < 1000; i++) {
+      if (tree.nextSibling()) {
+        // Prepare for continue to advance.
+        return tree.previousNode();
+      }
+      // Next node will be in next branch.
+      if (!tree.parentNode()) {
+        return false;
+      }
+    }
+    return false;
+  };
+
+  /* Compute ARIA attributes. */
+  const computeAriaLabel = (element, recursing = false) => {
+    const labelledBy = element.getAttribute('aria-labelledby');
+    if (!recursing && labelledBy) {
+      return labelledBy
+        .split(/\s+/)
+        .filter((id) => id.trim()) // Exclude empty IDs.
+        .map((id) => {
+          const targetElement = document.querySelector(`#${CSS.escape(id)}`);
+          return targetElement ? computeAccessibleName(targetElement, '', 1) : '';
+        }).join(' ');
+    }
+
+    const ariaLabel = element.getAttribute('aria-label');
+    if (ariaLabel && ariaLabel.trim().length > 0) {
+      return ariaLabel;
+    }
+    return 'noAria';
+  };
+
+  /**
+   * Computes the accessible name of an element.
+   * @param {Element} element The element for which the accessible name needs to be computed.
+   * @param {String} exclusions List of selectors which will be ignored.
+   * @param {Number} recursing Recursion depth.
+   * @returns {string} The computed accessible name of the element.
+   * @kudos to John Jameson, creator of the Editoria11y library, for developing this more robust calculation!
+   * @notes Uses a subset of the W3C accessible name algorithm.
+  */
+  const computeAccessibleName = (element, exclusions = [], recursing = 0) => {
+    // Return immediately if there is an aria label.
+    const hasAria = computeAriaLabel(element, recursing);
+    if (hasAria !== 'noAria') {
+      return hasAria;
+    }
+
+    // Textarea with a title.
+    if (element.tagName === 'TEXTAREA' && element.hasAttribute('title')) {
+      return element.getAttribute('title');
+    }
+
+    // Return immediately if there is only a text node.
+    let computedText = '';
+    if (!element.children.length) {
+      // Just text! Output immediately.
+      computedText = wrapPseudoContent(element, element.textContent);
+      if (!computedText.trim() && element.hasAttribute('title')) {
+        return element.getAttribute('title');
+      }
+      return computedText;
+    }
+
+    // Create tree walker object.
+    function createCustomTreeWalker(rootNode, showElement, showText) {
+      const acceptNode = (node) => {
+        if (showElement && node.nodeType === Node.ELEMENT_NODE) return NodeFilter.FILTER_ACCEPT;
+        if (showText && node.nodeType === Node.TEXT_NODE) return NodeFilter.FILTER_ACCEPT;
+        return NodeFilter.FILTER_REJECT;
+      };
+      return document.createTreeWalker(rootNode, NodeFilter.SHOW_ALL, { acceptNode });
+    }
+    const treeWalker = createCustomTreeWalker(element, true, true);
+
+    // Otherwise, recurse into children.
+    let addTitleIfNoName = false;
+    let aText = false;
+    let count = 0;
+    let shouldContinueWalker = true;
+
+    const alwaysExclude = ['noscript', 'style', 'script', 'video', 'audio'];
+
+    // Combine exclusions and alwaysExclude arrays, ensuring no trailing commas.
+    const validExclusions = exclusions && exclusions.length ? exclusions.join(', ') : '';
+    const excludeSelector = [...(validExclusions ? [validExclusions] : []), ...alwaysExclude].join(', ');
+
+    // Use the excludeSelector in querySelectorAll
+    const exclude = element.querySelectorAll(excludeSelector);
+
+    while (treeWalker.nextNode() && shouldContinueWalker) {
+      count += 1;
+
+      // Exclusions.
+      const currentNodeMatchesExclude = Array.from(exclude).some((excludedNode) => excludedNode.contains(treeWalker.currentNode));
+
+      if (currentNodeMatchesExclude) ; else if (treeWalker.currentNode.nodeType === Node.TEXT_NODE) {
+        if (treeWalker.currentNode.parentNode.tagName !== 'SLOT') {
+          computedText += ` ${treeWalker.currentNode.nodeValue}`;
+        }
+      } else if (addTitleIfNoName && !treeWalker.currentNode.closest('a')) {
+        if (aText === computedText) {
+          computedText += addTitleIfNoName;
+        }
+        addTitleIfNoName = false;
+        aText = false;
+      } else if (treeWalker.currentNode.hasAttribute('aria-hidden') && !(recursing && count < 3)) {
+        if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
+      } else {
+        const aria = computeAriaLabel(treeWalker.currentNode, recursing);
+        if (aria !== 'noAria') {
+          computedText += ` ${aria}`;
+          if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
+        } else {
+          switch (treeWalker.currentNode.tagName) {
+            case 'IMG':
+              if (treeWalker.currentNode.hasAttribute('alt')) {
+                computedText += treeWalker.currentNode.getAttribute('alt');
+              }
+              break;
+            case 'SVG':
+              if (treeWalker.currentNode.hasAttribute('role') === 'img' || treeWalker.currentNode.hasAttribute('role') === 'graphics-document') {
+                computedText += computeAriaLabel(treeWalker.currentNode);
+              } else {
+                const title = treeWalker.currentNode.querySelector('title');
+                if (title) {
+                  computedText += title;
+                }
+              }
+              break;
+            case 'A':
+              if (treeWalker.currentNode.hasAttribute('title')) {
+                addTitleIfNoName = treeWalker.currentNode.getAttribute('title');
+                aText = computedText;
+              } else {
+                addTitleIfNoName = false;
+                aText = false;
+              }
+              computedText += wrapPseudoContent(treeWalker.currentNode, '');
+              break;
+            case 'SLOT':
+              if (treeWalker.currentNode.assignedNodes()) {
+                // Slots have specific shadow DOM methods.
+                const children = treeWalker.currentNode.assignedNodes();
+                let slotText = '';
+                children?.forEach((child) => {
+                  if (child.nodeType === Node.ELEMENT_NODE) {
+                    slotText += computeAccessibleName(child);
+                  } else if (child.nodeType === Node.TEXT_NODE) {
+                    slotText += child.nodeValue;
+                  }
+                });
+                computedText += slotText;
+              }
+              computedText += wrapPseudoContent(treeWalker.currentNode, '');
+              break;
+            default:
+              computedText += wrapPseudoContent(treeWalker.currentNode, '');
+              break;
+          }
+        }
+      }
+    }
+
+    if (addTitleIfNoName && !aText) {
+      computedText += ` ${addTitleIfNoName}`;
+    }
+
+    // Replace Private Use Area (PUA) unicode characters.
+    // https://www.unicode.org/faq/private_use.html
+    const puaRegex = /[\uE000-\uF8FF]/gu;
+    computedText = computedText.replace(puaRegex, '');
+
+    // If computedText returns blank, fallback on title attribute.
+    if (!computedText.trim() && element.hasAttribute('title')) {
+      return element.getAttribute('title');
+    }
+
+    return computedText;
+  };
 
   /**
    * Checks if the document has finished loading, and if so, immediately calls the provided callback function. Otherwise, waits for the 'load' event to fire and then calls the callback function.
@@ -518,6 +865,23 @@
     }
     const compStyles = getComputedStyle(element);
     return compStyles.getPropertyValue('display') === 'none';
+  }
+
+  /**
+   * Determing whether an element is visually hidden (e.g. .sr-only) based on computed properties.
+   * @param {HTMLElement} element The element to check for.
+   * @returns {boolean} Returns true if visually hidden based on properties.
+   */
+  function isScreenReaderOnly(element) {
+    const style = window.getComputedStyle(element);
+    const clipPath = style.getPropertyValue('clip-path');
+    const { position } = style;
+    const width = parseFloat(style.width);
+    const height = parseFloat(style.height);
+    const { overflow } = style;
+    return (
+      (clipPath === 'inset(50%)') || (position === 'absolute' && width === 1 && height === 1 && overflow === 'hidden')
+    );
   }
 
   /**
@@ -592,12 +956,89 @@
   }
 
   /**
+   * Sanitize links (e.g. href and src values).
+   * @param {string} string The URL string to sanitize.
+   * @returns {string} The sanitized URL if valid, or an empty string if invalid.
+   */
+  function sanitizeURL(string) {
+    if (!string) return '#';
+    const sanitizedInput = String(string).trim();
+
+    // Remove protocols.
+    if (/^javascript:/i.test(sanitizedInput)) return '#';
+    if (/^data:/i.test(sanitizedInput)) return '#';
+
+    // Ensure valid protocol.
+    const protocols = ['http:', 'https:', 'mailto:', 'tel:', 'ftp:'];
+    const hasValidProtocol = protocols.some((protocol) => sanitizedInput.toLowerCase().startsWith(protocol));
+
+    // Assume relative URLs.
+    if (!hasValidProtocol && !sanitizedInput.startsWith('/') && !sanitizedInput.startsWith('#')) {
+      return `./${sanitizedInput}`;
+    }
+
+    // Remove any HTML tags.
+    const cleanedString = sanitizedInput.replace(/<[^>]*>/g, '');
+    return encodeURI(cleanedString);
+  }
+
+  /**
+   * Sanitizes HTML by removing script tags, inline event handlers and any dangerous attributes. It returns a clean version of the HTML string.
+   * @param {string} html The HTML string to sanitize.
+   * @param {Boolean} allowStyles Preserve inline style attributes.
+   * @returns {string} The sanitized HTML string.
+   */
+  function sanitizeHTMLBlock(html, allowStyles = false) {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+
+    // Remove blocks.
+    ['script', 'style', 'noscript', 'iframe', 'form'].forEach((tag) => {
+      const elements = tempDiv.getElementsByTagName(tag);
+      while (elements.length > 0) {
+        elements[0].parentNode.removeChild(elements[0]);
+      }
+    });
+
+    // Remove inline event handlers and dangerous attributes.
+    const allElements = Array.from(tempDiv.getElementsByTagName('*'));
+    allElements.forEach((element) => {
+      Array.from(element.attributes).forEach((attr) => {
+        if (attr.name.startsWith('on')) element.removeAttribute(attr.name);
+      });
+      if (!allowStyles) {
+        element.removeAttribute('style');
+      }
+    });
+    return tempDiv.innerHTML;
+  }
+
+  /**
+   * Creates a clone of an element while ignoring specified elements or elements matching a selector.
+   * Ignored by default: ['noscript', 'script', 'style', 'audio', 'video', 'form', 'iframe']
+   * @param {Element} element The element to clone.
+   * @param {Array[]} selectors The selector to match elements to be excluded from the clone. Optional.
+   * @returns {Element} The cloned element with excluded elements removed.
+   */
+  function fnIgnore(element, selectors = []) {
+    const defaultIgnored = ['noscript', 'script', 'style', 'audio', 'video', 'form', 'iframe'];
+    const ignore = [...defaultIgnored, ...selectors].join(', ');
+    const clone = element.cloneNode(true);
+    const exclude = Array.from(clone.querySelectorAll(ignore));
+    exclude.forEach(($el) => {
+      $el.parentElement.removeChild($el);
+    });
+    return clone;
+  }
+
+  /**
    * Retrieves the text content of an HTML element and removes extra whitespaces and line breaks.
    * @param {HTMLElement} element The HTML element to retrieve the text content from.
    * @returns {string} The text content of the HTML element with extra whitespaces and line breaks removed.
    */
   function getText(element) {
-    return element.textContent.replace(/[\r\n]+/g, '').replace(/\s+/g, ' ').trim();
+    const ignore = fnIgnore(element);
+    return ignore.textContent.replace(/[\r\n]+/g, '').replace(/\s+/g, ' ').trim();
   }
 
   /**
@@ -607,6 +1048,17 @@
    */
   function removeWhitespace(string) {
     return string.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+
+  /**
+   * Truncate string.
+   * @param {*} string The string to truncate.
+   * @param {*} maxLength Desired max length of string.
+   * @returns Truncated string.
+   */
+  function truncateString(string, maxLength) {
+    const truncatedString = string.substring(0, maxLength).trimEnd();
+    return string.length > maxLength ? `${truncatedString}...` : string;
   }
 
   /**
@@ -625,23 +1077,6 @@
         callback(...args);
       }, wait);
     };
-  }
-
-  /**
-   * Creates a clone of an element while ignoring specified elements or elements matching a selector.
-   * @param {Element} element The element to clone.
-   * @param {string} selector The selector to match elements to be excluded from the clone. Optional.
-   * @returns {Element} The cloned element with excluded elements removed.
-   */
-  function fnIgnore(element, selector) {
-    const defaultIgnored = 'noscript, script, style';
-    const ignore = (!selector) ? defaultIgnored : `${defaultIgnored}, ${selector}`;
-    const clone = element.cloneNode(true);
-    const exclude = Array.from(clone.querySelectorAll(ignore));
-    exclude.forEach((c) => {
-      c.parentElement.removeChild(c);
-    });
-    return clone;
   }
 
   /**
@@ -777,7 +1212,7 @@
    * @link https://hidde.blog/using-javascript-to-trap-focus-in-an-element/
   */
   function trapFocus(element) {
-    const focusable = element.querySelectorAll('a[href]:not([disabled]), button:not([disabled])');
+    const focusable = element.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), input[type="color"]');
     const firstFocusable = focusable[0];
     const lastFocusable = focusable[focusable.length - 1];
     element.addEventListener('keydown', (e) => {
@@ -801,7 +1236,7 @@
 
   /**
    * Removes the alert from the Sa11y control panel by clearing its content and removing CSS classes.
-   * @description This function clears the content of the alert element and removes CSS classes 'active' from the main alert element, and 'panel-alert-preview' from the alert preview element.
+   * This function clears the content of the alert element and removes CSS classes 'active' from the main alert element, and 'panel-alert-preview' from the alert preview element.
    * @returns {void}
    */
   function removeAlert() {
@@ -927,28 +1362,57 @@
   }
 
   /**
+   * Get the best image source from an element, considering data-src, srcset, and src attributes.
+   * @param {HTMLElement} element - The image element to extract the source from.
+   * @returns {string} - The best available source URL.
+   */
+  function getBestImageSource(element) {
+    const getLastSrc = (src) => src?.split(',').pop()?.trim()?.split(/\s+/)[0];
+    const dataSrc = getLastSrc(element.getAttribute('data-src') || element.getAttribute('srcset'));
+    if (dataSrc) return dataSrc;
+    const picture = element.closest('picture')?.querySelector('source[srcset]')?.getAttribute('srcset');
+    const pictureSrc = getLastSrc(picture);
+    if (pictureSrc) return pictureSrc;
+    return element.getAttribute('src');
+  }
+
+  /**
    * Generate an HTML preview for an issue if it's an image, iframe, audio or video element. Otherwise, return escaped HTML within <code> tags. Used for Skip to Issue panel alerts and HTML page export.
    * @param {Object} issueObject The issue object.
    * @returns {html} Returns HTML.
    */
   function generateElementPreview(issueObject) {
     const issueElement = issueObject.element;
-    const htmlPath = `<pre><code>${escapeHTML(issueObject.htmlPath)}</code></pre>`;
+    const cleanHTML = sanitizeHTMLBlock(issueObject.htmlPath);
+    const truncatedHTML = truncateString(cleanHTML, 600);
+    const htmlPath = `<pre><code>${escapeHTML(truncatedHTML)}</code></pre>`;
+
+    const simple = (element) => {
+      const text = getText(element);
+      const truncatedText = truncateString(text, 100);
+      return text.length ? sanitizeHTML(truncatedText) : htmlPath;
+    };
 
     const tag = {
+      SPAN: simple,
+      P: simple,
+      A: (element) => {
+        const text = getText(element);
+        const truncatedText = truncateString(text, 100);
+        if (text.length > 1 && element.href && !element.hasAttribute('role')) {
+          return `<a href="${sanitizeURL(element.href)}">${sanitizeHTML(truncatedText)}</a>`;
+        }
+        return htmlPath;
+      },
       IMG: (element) => {
         const anchor = element.closest('a[href]');
         const alt = element.alt ? `alt="${sanitizeHTML(element.alt)}"` : 'alt';
-        const imgSrc = element.src;
+        const source = getBestImageSource(element);
 
-        // Account for lazy loading libraries that use 'data-src' attribute.
-        const dataSrc = element.getAttribute('data-src');
-        const source = (dataSrc && dataSrc.length > 3) ? dataSrc : imgSrc;
-
-        if (imgSrc) {
+        if (source) {
           return anchor
-            ? `<a href="${anchor.href}" rel="noopener noreferrer"><img src="${source}" ${alt}/></a>`
-            : `<img src="${source}" ${alt}/>`;
+            ? `<a href="${sanitizeURL(anchor.href)}" rel="noopener noreferrer"><img src="${sanitizeURL(source)}" ${alt}/></a>`
+            : `<img src="${sanitizeURL(source)}" ${alt}/>`;
         }
         return htmlPath;
       },
@@ -959,12 +1423,12 @@
         const ariaLabel = ariaLabelAttr || '';
         if (source) {
           const iframeTitle = ariaLabel || title;
-          return `<iframe src="${source}" aria-label="${sanitizeHTML(iframeTitle)}"></iframe>`;
+          return `<iframe src="${sanitizeURL(source)}" aria-label="${sanitizeHTML(iframeTitle)}"></iframe>`;
         }
         return htmlPath;
       },
-      AUDIO: () => issueObject.htmlPath,
-      VIDEO: () => issueObject.htmlPath,
+      AUDIO: () => sanitizeHTMLBlock(issueObject.htmlPath),
+      VIDEO: () => sanitizeHTMLBlock(issueObject.htmlPath),
     };
 
     const tagHandler = tag[issueElement.tagName];
@@ -972,132 +1436,150 @@
     return elementPreview;
   }
 
+  /**
+   * Check if an element's visible text is included in the accessible name.
+   * To minimize false positives: iterate through all child nodes of the element, checking for visibility.
+   * @param {element} $el The element to test.
+   * @returns {boolean}
+   */
+  function isVisibleTextInAccessibleName($el) {
+    let text = '';
+    const accName = computeAccessibleName($el).toLowerCase();
+    const nodes = $el.childNodes;
+    nodes.forEach((node) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        text += node.textContent;
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        // Only return text content if it's not hidden.
+        if (!isElementVisuallyHiddenOrHidden(node)) {
+          text += node.textContent;
+        }
+      }
+    });
+
+    // Ignore emojis.
+    const emojiRegex = /[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu;
+    let visibleText = text.replace(emojiRegex, '');
+
+    // Final visible text.
+    visibleText = removeWhitespace(visibleText).toLowerCase();
+
+    // If visible text is just an x character, ignore.
+    if (visibleText === 'x') {
+      return false;
+    }
+
+    // Check if visible text is included in accessible name.
+    return visibleText.length !== 0 && !accName.includes(visibleText);
+  }
+
+  /**
+   * Standardize the href attribute of a link by removing any trailing slashes and stripping the protocol (http, https) and 'www.' prefix. Used to minimize false positives for link check module.
+   * @param {HTMLElement} $el - The element from which to retrieve the href attribute.
+   * @returns {string} - The standardized href.
+   */
+  function standardizeHref($el) {
+    let href = $el.getAttribute('href');
+    href = removeWhitespace(href).toLowerCase();
+
+    // Remove trailing slash if it exists.
+    if (href.endsWith('/')) {
+      href = href.slice(0, -1);
+    }
+    // Remove protocol and www., without affecting subdomains.
+    return href.replace(/^https?:\/\/(www\.)?/, '');
+  }
+
   const Elements = (function myElements() {
     const Found = {};
     function initializeElements(option) {
-      // Main selectors
-      Found.Images = find(
-        'img',
-        'root',
-        Constants.Exclusions.Images,
-      );
+      // Since 4.0.0: For performance, we filter elements instead of dozens of querySelectors on the DOM.
+      Found.Everything = find('*', 'root', Constants.Exclusions.Sa11yElements);
 
+      Found.Contrast = Found.Everything.filter(($el) => {
+        const matchesSelector = Constants.Exclusions.Contrast.some((exclusion) => $el.matches(exclusion));
+        return !matchesSelector && !Constants.Exclusions.Contrast.includes($el);
+      });
+
+      Found.Images = Found.Everything.filter(($el) => $el.tagName === 'IMG'
+        && !Constants.Exclusions.Images.some((selector) => $el.matches(selector)));
+
+      Found.Links = Found.Everything.filter(($el) => ($el.tagName === 'A' || $el.tagName === 'a')
+        && $el.hasAttribute('href')
+        && !$el.matches('[role="button"]') // Exclude links with [role="button"]
+        && !Constants.Exclusions.Links.some((selector) => $el.matches(selector)));
+
+      // We want headings from the entire document for the Page Outline.
       Found.Headings = find(
         'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]',
         'document',
         Constants.Exclusions.Headings,
       );
-
       Found.HeadingOne = find(
         'h1, [role="heading"][aria-level="1"]',
         'document',
         Constants.Exclusions.Headings,
       );
-
-      Found.Links = find(
-        'a[href]',
-        'root',
-        Constants.Exclusions.Links,
-      );
-
-      // Toggleable rulesets
-      Found.Inputs = find(
-        'input, select, textarea',
-        'root',
-        Constants.Exclusions.Container,
-      );
-
-      Found.Contrast = find(
-        '*',
-        'root',
-        Constants.Exclusions.Contrast,
-      );
-
-      Found.Labels = find(
-        'label',
-        'root',
-        Constants.Exclusions.Container,
-      );
-
-      Found.Readability = find(
-        'p, li',
-        'readability',
-        Constants.Exclusions.Readability,
-      );
+      Found.ExcludedHeadings = Found.Headings.filter((heading) => Constants.Exclusions.Headings.some((exclusion) => heading.matches(exclusion)));
 
       // Quality assurance module.
-      Found.Paragraphs = find(
-        'p:not(table p)',
-        'root',
-        Constants.Exclusions.Container,
-      );
+      Found.Paragraphs = Found.Everything.filter(($el) => $el.tagName === 'P'
+        && !$el.closest('table'));
 
-      Found.Lists = find(
-        'li',
-        'root',
-        Constants.Exclusions.Container,
-      );
+      Found.Lists = Found.Everything.filter(($el) => $el.tagName === 'LI');
 
-      Found.Spans = find(
-        'span',
-        'root',
-        Constants.Exclusions.Container,
-      );
+      Found.Blockquotes = Found.Everything.filter(($el) => $el.tagName === 'BLOCKQUOTE');
 
-      Found.Blockquotes = find(
-        'blockquote',
-        'root',
-        Constants.Exclusions.Container,
-      );
+      Found.Tables = Found.Everything.filter(($el) => $el.tagName === 'TABLE' && !$el.matches('[role="presentation"]') && !$el.matches('[role="none"]'));
 
-      Found.Tables = find(
-        'table:not([role="presentation"])',
-        'root',
-        Constants.Exclusions.Container,
-      );
+      Found.StrongItalics = Found.Everything.filter(($el) => ['STRONG', 'EM'].includes($el.tagName));
 
-      Found.StrongItalics = find(
-        'strong, em',
-        'root',
-        Constants.Exclusions.Container,
-      );
+      Found.Subscripts = Found.Everything.filter(($el) => ['SUP', 'SUB'].includes($el.tagName));
 
-      Found.Underlines = find(
-        'u',
-        'root',
-        Constants.Exclusions.Container,
-      );
+      const badLinkSources = option.checks.QA_BAD_LINK.sources;
+      Found.CustomErrorLinks = badLinkSources.length
+        ? Found.Links.filter(($el) => badLinkSources.split(',').some((selector) => $el.matches(selector.trim()))) : [];
 
-      Found.Subscripts = find(
-        'sup, sub',
-        'root',
-        Constants.Exclusions.Container,
-      );
+      // Readability.
+      const readabilityExclusions = ($el) => Constants.Root.Readability.contains($el)
+        && !Constants.Exclusions.Readability.some((selector) => $el.matches(selector));
+      Found.Readability = [
+        ...Found.Paragraphs.filter(readabilityExclusions),
+        ...Found.Lists.filter(readabilityExclusions),
+      ];
 
-      Found.Language = Constants.Global.html.getAttribute('lang');
+      // Developer checks.
+      const nestedSources = option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
+      Found.NestedComponents = nestedSources
+        ? Found.Everything.filter(($el) => $el.matches(nestedSources)) : [];
 
-      Found.CustomErrorLinks = option.linksToFlag ? find(
-        option.linksToFlag,
-        'root',
-        Constants.Exclusions.Container,
-      ) : [];
+      Found.TabIndex = Found.Everything.filter(($el) => $el.hasAttribute('tabindex')
+        && $el.getAttribute('tabindex') !== '0'
+        && !$el.getAttribute('tabindex').startsWith('-'));
 
-      // iFrames
-      Found.iframes = find(
-        'iframe:not(hidden), audio, video',
-        'root',
-        Constants.Exclusions.Container,
-      );
+      Found.Svg = Found.Everything.filter(($el) => $el.tagName === 'svg');
 
-      Found.Videos = Found.iframes.filter(($el) => $el.matches(Constants.EmbeddedContent.Video));
-      Found.Audio = Found.iframes.filter(($el) => $el.matches(Constants.EmbeddedContent.Audio));
-      Found.Visualizations = Found.iframes.filter(($el) => $el.matches(Constants.EmbeddedContent.Visualization));
-      Found.EmbeddedContent = Found.iframes.filter(($el) => !$el.matches(Constants.EmbeddedContent.All));
+      Found.Buttons = Found.Everything.filter(($el) => $el.tagName === 'BUTTON' || $el.matches('[role="button"]'));
+
+      Found.Inputs = Found.Everything.filter(($el) => ['INPUT', 'SELECT', 'TEXTAREA', 'METER', 'PROGRESS'].includes($el.tagName));
+
+      Found.Labels = Found.Everything.filter(($el) => $el.tagName === 'LABEL');
+
+      // iFrames.
+      Found.iframes = Found.Everything.filter(($el) => ['IFRAME', 'AUDIO', 'VIDEO'].includes($el.tagName));
+      Found.Videos = Found.iframes.filter(($el) => $el.matches(Constants.Global.VideoSources));
+      Found.Audio = Found.iframes.filter(($el) => $el.matches(Constants.Global.AudioSources));
+      Found.Visualizations = Found.iframes.filter(($el) => $el.matches(Constants.Global.VisualizationSources));
+      Found.EmbeddedContent = Found.iframes.filter(($el) => !$el.matches(Constants.Global.AllEmbeddedContent));
+
+      // Query select <HTML> given that the lang may change on an SPA.
+      const html = document.querySelector('html');
+      Found.Language = html.getAttribute('lang');
     }
 
-    /* ***************** */
-    /* Annotations */
-    /* ***************** */
+    /* ************* */
+    /*  Annotations  */
+    /* ************* */
     const Annotations = {};
     function initializeAnnotations() {
       Annotations.Array = find('sa11y-annotation', 'document');
@@ -1114,39 +1596,44 @@
     };
   }());
 
-  var styles$1 = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-clone-image-text]{display:none!important}[data-sa11y-readability-period]{clip:rect(1px,1px,1px,1px)!important;border:0!important;clip-path:inset(50%)!important;display:block!important;height:1px!important;overflow:hidden!important;padding:0!important;position:absolute!important;white-space:nowrap!important;width:1px!important}[data-sa11y-error]{outline:5px solid var(--sa11y-error)!important}[data-sa11y-warning]{outline:5px solid var(--sa11y-warning)!important}[data-sa11y-good]{outline:5px solid var(--sa11y-good)!important}[data-sa11y-error-inline]{background-color:var(--sa11y-error)!important;box-shadow:0 0 0 4px var(--sa11y-error)!important;color:var(--sa11y-error-text)!important}[data-sa11y-error-inline],[data-sa11y-warning-inline]{border-color:transparent!important;border-radius:.25em!important}[data-sa11y-warning-inline]{background-color:var(--sa11y-warning)!important;box-shadow:0 0 0 4px var(--sa11y-warning)!important;color:var(--sa11y-warning-text)!important}[data-sa11y-pulse-border]{animation:pulse 2s 3;box-shadow:0;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:focus,[data-sa11y-pulse-border]:hover{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color)}70%{box-shadow:0 0 0 12px var(--sa11y-pulse-color)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}@media (forced-colors:active){[data-sa11y-error-inline],[data-sa11y-error],[data-sa11y-good],[data-sa11y-pulse-border],[data-sa11y-warning-inline],[data-sa11y-warning]{forced-color-adjust:none}}";
+  var styles$1 = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-clone-image-text]{display:none!important}[data-sa11y-readability-period]{clip:rect(1px,1px,1px,1px)!important;border:0!important;clip-path:inset(50%)!important;display:block!important;height:1px!important;overflow:hidden!important;padding:0!important;position:absolute!important;white-space:nowrap!important;width:1px!important}[data-sa11y-error-inline],[data-sa11y-error]{outline:5px solid var(--sa11y-error)!important;outline-offset:2px}[data-sa11y-warning-inline],[data-sa11y-warning]{outline:5px solid var(--sa11y-warning)!important;outline-offset:2px}[data-sa11y-pulse-border]{animation:pulse 2s 3;box-shadow:0;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:focus,[data-sa11y-pulse-border]:hover{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color)}70%{box-shadow:0 0 0 12px var(--sa11y-pulse-color)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}@media (forced-colors:active){[data-sa11y-error-inline],[data-sa11y-error],[data-sa11y-good],[data-sa11y-pulse-border],[data-sa11y-warning-inline],[data-sa11y-warning]{forced-color-adjust:none}}";
 
   /* ************************************************************ */
   /*  Auto-detect shadow DOM or process provided web components.  */
   /* ************************************************************ */
-  const addStylestoShadow = (component) => {
-    const style = document.createElement('style');
-    style.setAttribute('class', 'sa11y-css-utilities');
-    style.textContent = styles$1;
-    component.shadowRoot.appendChild(style);
+  const addStyleUtilities = (component) => {
+    const CSSUtils = component.shadowRoot.querySelectorAll('.sa11y-css-utilities');
+    if (CSSUtils.length === 0) {
+      const style = document.createElement('style');
+      style.setAttribute('class', 'sa11y-css-utilities');
+      style.textContent = styles$1;
+      component.shadowRoot.appendChild(style);
+    }
   };
 
   function findShadowComponents(option) {
     if (option.autoDetectShadowComponents) {
       // Elements to ignore.
-      const ignore = 'sa11y-heading-label, sa11y-heading-anchor, sa11y-annotation, sa11y-tooltips, sa11y-dismiss-tooltip, sa11y-control-panel, #sa11y-colour-filters, #sa11y-colour-filters *, script';
+      const ignore = Constants.Exclusions.Sa11yElements;
 
       // Search all elements.
       const root = document.querySelector(option.checkRoot);
-      const search = (root) ? Array.from(root.querySelectorAll(`*:not(${ignore})`)) : Array.from(document.body.querySelectorAll(`*:not(${ignore})`));
+      const search = (root)
+        ? Array.from(root.querySelectorAll(`*:not(${ignore})`))
+        : Array.from(document.body.querySelectorAll(`*:not(${ignore})`));
 
       // Query for open shadow roots & inject CSS utilities into every shadow DOM.
       search.forEach((component) => {
         if (component.shadowRoot && component.shadowRoot.mode === 'open') {
           component.setAttribute('data-sa11y-has-shadow-root', '');
-          addStylestoShadow(component);
+          addStyleUtilities(component);
         }
       });
     } else if (option.shadowComponents) {
       const providedShadow = document.querySelectorAll(option.shadowComponents);
       providedShadow.forEach((component) => {
         component.setAttribute('data-sa11y-has-shadow-root', '');
-        addStylestoShadow(component);
+        addStyleUtilities(component);
       });
     }
   }
@@ -1161,7 +1648,7 @@
       // Debounce function to re-check page.
       const checkURL = debounce$2(async () => {
         if (url !== window.location.href) {
-          if (store.getItem('sa11y-remember-panel') === 'Closed' || !store.getItem('sa11y-remember-panel')) {
+          if (store.getItem('sa11y-panel') === 'Closed' || !store.getItem('sa11y-panel')) {
             checkAll();
           } else {
             resetAll(false);
@@ -1180,25 +1667,34 @@
   /* ************************************************************ */
   function dismissLogic(results, dismissTooltip) {
     // Get dismissed items and re-parse back into object.
-    let dismissedIssues = store.getItem('sa11y-dismissed');
-    dismissedIssues = dismissedIssues ? JSON.parse(dismissedIssues) : [];
+    const dismissedIssues = JSON.parse(localStorage.getItem('sa11y-dismissed') || '[]');
+    const currentPath = window.location.pathname;
 
-    // Return element from results array that matches dismiss key and dismiss url. Then filter through matched objects.
-    const findKey = dismissedIssues.map((e) => {
-      const found = results.find((f) => (e.key.includes(f.dismiss) && e.href === window.location.pathname));
-      if (found === undefined) return '';
-      return found;
-    });
+    // Helper function to check if an issue is individually dismissed.
+    const isSoloDismissed = (issue, dismissed) => dismissed.key.includes(issue.dismiss)
+      && dismissed.href === currentPath
+      && (issue.type === 'warning' || issue.type === 'good');
 
-    // Update results array (exclude dismissed items).
-    const updatedResults = results.filter((issue) => !findKey.find((e) => e.dismiss === issue.dismiss));
+    // Helper function to check if "dismiss all".
+    const dismissAll = (issue, dismissed) => typeof dismissed.dismissAll === 'string'
+      && issue.dismissAll === dismissed.dismissAll
+      && dismissed.href === currentPath;
 
-    // Array containing all dismissed results for page.
-    const dismissedResults = results.filter((issue) => findKey.find((e) => e.dismiss === issue.dismiss));
+    // Process individually dismissed issues.
+    const soloDismissed = results.filter((issue) => dismissedIssues.some((dismissed) => isSoloDismissed(issue, dismissed)));
+
+    // Process dismiss all issues.
+    const allDismissed = results.filter((issue) => dismissedIssues.some((dismissed) => dismissAll(issue, dismissed)));
+
+    // Combine all dismissed results and filter out duplicates.
+    const dismissedResults = [...soloDismissed, ...allDismissed];
     const dismissCount = dismissedResults.length;
 
+    // Update results array (exclude dismissed and dismissed all checks).
+    const updatedResults = results.filter((issue) => !dismissedResults.some((dismissed) => dismissed.dismiss === issue.dismiss && (issue.type === 'warning' || issue.type === 'good')));
+
     // Show dismiss button in panel.
-    if (dismissCount >= 1) {
+    if (dismissCount) {
       Constants.Panel.dismissButton.classList.add('active');
       Constants.Panel.dismissTooltip.innerText = Lang.sprintf('PANEL_DISMISS_BUTTON', dismissCount);
       dismissTooltip.object.setContent(Lang.sprintf('PANEL_DISMISS_BUTTON', dismissCount));
@@ -1219,15 +1715,15 @@
   const dismissIssueButton = async (e, results, checkAll, resetAll) => {
     // Get dismissed array from localStorage.
     let savedDismissKeys = JSON.parse(store.getItem('sa11y-dismissed'));
-    const element = e.target;
-    const dismissContainer = document.querySelector('sa11y-dismiss-tooltip');
+    const dismissButton = e.target;
+    const dismissContainer = document.querySelector('sa11y-panel-tooltips');
     dismissContainer.hidden = false;
 
     // Make sure event listener is attached to dismiss button.
-    if (element.tagName === 'BUTTON' && element.hasAttribute('data-sa11y-dismiss')) {
+    if (dismissButton.tagName === 'BUTTON' && dismissButton.hasAttribute('data-sa11y-dismiss')) {
       // Find corresponding issue within main results object and mark as dismissed.
-      const dismissItem = parseInt(element.getAttribute('data-sa11y-dismiss'), 10);
-      const object = results.find(($el) => $el.id === dismissItem);
+      const dismissItem = parseInt(dismissButton.getAttribute('data-sa11y-dismiss'), 10);
+      const issue = results.find(($el) => $el.id === dismissItem);
 
       // Give a one time reminder that dismissed items are temporary.
       if (savedDismissKeys === null) {
@@ -1237,15 +1733,19 @@
       }
 
       // Update dismiss array.
-      if (object.dismiss) {
+      if (issue.dismiss) {
+        // If dismiss all selected, then indicate so within dismiss object.
+        const dismissAllSelected = dismissButton.hasAttribute('data-sa11y-dismiss-all')
+          ? issue.dismissAll : '';
         // Dismissal object.
         const dismissalDetails = {
-          key: object.dismiss,
+          key: issue.dismiss,
           href: window.location.pathname,
+          ...(dismissAllSelected ? { dismissAll: dismissAllSelected } : {}),
         };
 
         // Get the position of the last annotation that was dismissed.
-        const item = find(`[data-sa11y-annotation='${object.id}']`);
+        const item = find(`[data-sa11y-annotation='${issue.id}']`);
         const latestDismissed = item[0]
           ? item[0].getAttribute('data-sa11y-position') : 0;
         store.setItem('sa11y-latest-dismissed', latestDismissed);
@@ -1257,8 +1757,11 @@
         store.removeItem('sa11y-dismiss-item'); // Remove temporary storage item.
 
         // Remove tooltip.
-        if (element.closest('[data-tippy-root]') !== null) {
-          element.closest('[data-tippy-root]').remove();
+        const tooltip = dismissButton?.closest('[data-tippy-root]');
+        if (tooltip) {
+          setTimeout(() => {
+            tooltip.remove();
+          }, 0);
         }
 
         // Async scan upon dismiss.
@@ -1270,7 +1773,7 @@
 
   /* 2. Restore hidden alerts on the CURRENT page only. */
   const restoreDismissButton = async (dismissed, checkAll, resetAll) => {
-    const dismissContainer = document.querySelector('sa11y-dismiss-tooltip');
+    const dismissContainer = document.querySelector('sa11y-panel-tooltips');
     dismissContainer.hidden = true; // Prevent flash of tooltip.
     const filtered = dismissed.filter((item) => item.href !== window.location.pathname);
     store.setItem('sa11y-dismissed', JSON.stringify(filtered));
@@ -1310,7 +1813,8 @@
 
   /* ************************************************************** */
   /*  DaltonLens SVG filters to simulate color vision deficiencies  */
-  /*  Source: https://daltonlens.org/opensource-cvd-simulation/     */
+  /*  Source: https://daltonlens.org/opensource-cvd-simulation/
+  /*  Achromatopsia: https://github.com/chromelens/chromelens/blob/master/lenses/filters/lens_achromatopsia.js */
   /* ************************************************************** */
   function addColourFilters() {
     if (Constants.Global.colourFilterPlugin) {
@@ -1357,7 +1861,7 @@
             <feBlend in="ProjectionOnPlane1" in2="ProjectionOnPlane2" mode="normal"/>
           </filter>
           <filter id="sa11y-monochromacy">
-            <feColorMatrix values="0.33 0.33 0.33 0 0                           0.33 0.33 0.33 0 0                           0.33 0.33 0.33 0 0                           0 0 0 1 0"></feColorMatrix>
+            <feColorMatrix values="0.299,0.587,0.114,0,0,0.299,0.587,0.114,0,0,0.299,0.587,0.114,0,0,0,0,0,1,0"></feColorMatrix>
           </filter>
         </svg>`;
         document.body.appendChild(svg);
@@ -1619,9 +2123,11 @@
     }
   }
 
+  const version = '4.0.0';
+
   var styles = ":host{background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);bottom:0;display:block;height:-moz-fit-content;height:fit-content;left:0;position:fixed;right:0;width:100%;z-index:999999}*{-webkit-font-smoothing:auto!important;color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;font-size:var(--sa11y-normal-text);line-height:22px!important}#dialog{margin:20px auto;max-width:900px;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none}p{margin-top:0}.error{background:var(--sa11y-error);border:2px dashed #f08080;color:var(--sa11y-error-text);margin-bottom:0;padding:5px}";
 
-  var sharedStyles = ".visually-hidden{clip:rect(1px,1px,1px,1px);border:0;clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}[hidden]{display:none!important}.header-text,.header-text-inline,h2{color:var(--sa11y-panel-primary);display:block;font-size:var(--sa11y-large-text);font-weight:600;margin-bottom:3px}.header-text-inline{display:inline-block!important}code{font-family:monospace!important}.kbd,code,kbd{background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);padding:1.6px 4.8px}.bold{font-weight:600}.red-text{color:var(--sa11y-red-text)}.red-text,.yellow-text{font-family:var(--sa11y-font-face)}.yellow-text{color:var(--sa11y-yellow-text)}.badge{background-color:var(--sa11y-panel-badge);border:1px solid transparent;border-radius:10px;color:var(--sa11y-panel-primary);display:inline;font-size:13px;font-weight:700!important;line-height:1;min-width:10px;padding:1px 4.5px 1.75px;text-align:center;vertical-align:baseline;white-space:nowrap}.error-badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.warning-badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.close-btn{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;color:var(--sa11y-panel-primary);cursor:pointer;float:var(--sa11y-float-rtl);font-size:var(--sa11y-normal-text);font-weight:400;height:32px;margin:0;position:relative;transition:all .2s ease-in-out;width:32px}.close-btn:focus,.close-btn:hover{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{background:var(--sa11y-setting-switch-bg-off);bottom:-7px;content:\"\";left:-7px;-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute;right:-7px;top:-7px}@media screen and (forced-colors:active){.close-btn:after{filter:invert(1)}}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:not(#panel-controls button):not(.switch):focus,#container select:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus,#container .switch:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus:not(:focus-visible),#container [tabindex=\"-1\"]:focus:not(:focus-visible),#container [tabindex=\"0\"]:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container select:focus:not(:focus-visible){box-shadow:none;outline:0}#container [tabindex=\"-1\"]:focus-visible,#container [tabindex=\"0\"]:focus-visible,#container a:focus-visible,#container button:not(#panel-controls button):not(.switch):focus-visible,#container select:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus-visible,#container .switch:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#panel-controls button:focus{border:3px solid transparent}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container select:focus,.close-btn:focus{outline:3px solid transparent!important}}";
+  var sharedStyles = ".visually-hidden{clip:rect(1px,1px,1px,1px);border:0;clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}[hidden]{display:none!important}.header-text,.header-text-inline,h2{color:var(--sa11y-panel-primary);display:block;font-size:var(--sa11y-large-text);font-weight:600;margin-bottom:3px}.header-text-inline{display:inline-block!important}code{font-family:monospace!important;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:600}.kbd,code,kbd{background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);padding:1.6px 4.8px}.bold{font-weight:600}.error .colour,.red-text{color:var(--sa11y-red-text);font-family:var(--sa11y-font-face)}.warning .colour,.yellow-text{color:var(--sa11y-yellow-text);font-family:var(--sa11y-font-face)}.badge,.normal-badge{background-color:var(--sa11y-panel-badge);border-radius:10px;color:var(--sa11y-panel-primary);display:inline;font-size:14px;font-weight:700!important;line-height:1;min-width:10px;outline:1px solid transparent;padding:1px 5px 1.75px;text-align:center;vertical-align:baseline;white-space:nowrap}.error .badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.error-badge{background:var(--sa11y-error)!important;color:var(--sa11y-error-text)!important}.warning .badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.warning-badge{background:var(--sa11y-yellow-text)!important;color:var(--sa11y-panel-bg)!important}.good-contrast{background:var(--sa11y-good)!important;color:var(--sa11y-good-text)!important}#contrast-preview{background-color:#e8e8e8;background-image:linear-gradient(45deg,#ccc 25%,transparent 0,transparent 75%,#ccc 0,#ccc),linear-gradient(45deg,#ccc 25%,transparent 0,transparent 75%,#ccc 0,#ccc);background-position:0 0,5px 5px;background-size:10px 10px;border:2px dashed var(--sa11y-panel-bg-splitter);border-radius:3.2px;line-height:1;margin-top:10px;max-height:100px;overflow:clip;overflow-wrap:break-word;padding:5px}#color-pickers{display:flex;justify-content:space-between;margin-bottom:10px;margin-top:10px}#color-pickers label{align-items:center;display:flex}#color-pickers input{margin-inline-start:7px}input[type=color i]{background:var(--sa11y-panel-bg-secondary);block-size:30px;border-color:var(--sa11y-button-outline);border-radius:50%;border-style:solid;border-width:1px;inline-size:30px;padding:2px}input[type=color i]::-webkit-color-swatch-wrapper{padding:1px}input[type=color i]::-webkit-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i]::-moz-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i].unknown{box-shadow:0 0 0 2px var(--sa11y-yellow-text)}input[type=color i].unknown:after{align-items:center;color:#fff;content:\"?\";display:flex;font-size:18px;height:24px;justify-content:center;margin:-24px 0;pointer-events:none;position:absolute;width:24px;z-index:2}.close-btn{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;color:var(--sa11y-panel-primary);cursor:pointer;float:var(--sa11y-float-rtl);font-size:var(--sa11y-normal-text);font-weight:400;height:32px;margin:0;position:relative;transition:all .2s ease-in-out;width:32px}.close-btn:focus,.close-btn:hover{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{background:var(--sa11y-setting-switch-bg-off);bottom:-7px;content:\"\";left:-7px;-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute;right:-7px;top:-7px}@media screen and (forced-colors:active){.close-btn:after{filter:invert(1)}}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:not(#panel-controls button):not(.switch):focus,#container input:focus,#container select:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus,#container .switch:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus:not(:focus-visible),#container [tabindex=\"-1\"]:focus:not(:focus-visible),#container [tabindex=\"0\"]:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container input:focus:not(:focus-visible),#container select:focus:not(:focus-visible){box-shadow:none;outline:0}#container [tabindex=\"-1\"]:focus-visible,#container [tabindex=\"0\"]:focus-visible,#container a:focus-visible,#container button:not(#panel-controls button):not(.switch):focus-visible,#container input:focus-visible,#container select:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus-visible,#container .switch:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#panel-controls button:focus{border:3px solid transparent}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container select:focus,.close-btn:focus{outline:3px solid transparent!important}}";
 
   class ConsoleErrors extends HTMLElement {
     constructor(error) {
@@ -1645,14 +2151,28 @@
       // Google Form & GitHub error link.
       const url = window.location;
       const google = 'https://forms.gle/sjzK9XykETaoqZv99';
-      const github = `https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report&body=%23%23%20Error%20Description%0A%60%60%60javascript%0A${encodeURIComponent(this.error.stack)}%0A%60%60%60%0A%0A%23%23%20URL%0A%60${url}%60%0A%0A%23%23%20Comments%0A`;
+
+      // GitHub template
+      const template = `## Error Description
+\`\`\`javascript
+${this.error.stack}
+\`\`\`
+
+## Details
+- **URL:** ${url}
+- **Version:** ${version}
+
+## Comments
+`;
+      const encodedTemplate = encodeURIComponent(template);
+      const github = `https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report&body=${encodedTemplate}`;
 
       // Message
       content.innerHTML = `
       <button class="close-btn" aria-label="${Lang._('ALERT_CLOSE')}"></button>
       <h2>${Lang._('ERROR')}</h2>
-      <p>${Lang.sprintf('CONSOLE_ERROR_MESSAGE', google, github)}</p>
-      <p class="error">${escapeHTML(this.error.stack)}<br><br>URL: ${url}</p>
+      <p>${Lang.sprintf('CONSOLE_ERROR', google, github)}</p>
+      <p class="error">${escapeHTML(this.error.stack)}<br><br>Version: ${version} <br> URL: ${url}</p>
     `;
       shadow.appendChild(content);
 
@@ -1677,9 +2197,9 @@
   function mainToggle(checkAll, resetAll) {
     // Keeps checker active when navigating between pages until it is toggled off.
     Constants.Panel.toggle.addEventListener('click', (e) => {
-      if (store.getItem('sa11y-remember-panel') === 'Opened') {
+      if (store.getItem('sa11y-panel') === 'Opened') {
         e.preventDefault();
-        store.setItem('sa11y-remember-panel', 'Closed');
+        store.setItem('sa11y-panel', 'Closed');
         Constants.Panel.toggle.classList.remove('on');
         Constants.Panel.toggle.setAttribute('aria-expanded', 'false');
         resetAll();
@@ -1691,7 +2211,7 @@
         }
       } else {
         e.preventDefault();
-        store.setItem('sa11y-remember-panel', 'Opened');
+        store.setItem('sa11y-panel', 'Opened');
         Constants.Panel.toggle.classList.add('on');
         Constants.Panel.toggle.setAttribute('aria-expanded', 'true');
         checkAll();
@@ -1700,7 +2220,7 @@
     });
 
     // Remember to leave it open
-    if (store.getItem('sa11y-remember-panel') === 'Opened') {
+    if (store.getItem('sa11y-panel') === 'Opened') {
       Constants.Panel.toggle.classList.add('on');
       Constants.Panel.toggle.setAttribute('aria-expanded', 'true');
       Constants.Panel.panel.style.transform = '';
@@ -1716,7 +2236,7 @@
     };
   }
 
-  var panelStyles = "a,button,code,div,h1,h2,kbd,label,li,ol,p,pre,span,strong,svg,ul{all:unset;box-sizing:border-box!important}:after,:before{all:unset}div{display:block}*{-webkit-font-smoothing:auto!important;font-family:var(--sa11y-font-face)!important}label,li,ol,p,ul{font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px!important;text-align:start;word-break:break-word}.sa11y-overflow{overflow:auto}iframe,img,video{border:0;display:block;height:auto;max-width:100%}audio{max-width:100%}#toggle{align-items:center;background:linear-gradient(0deg,#e040fb,#00bcd4);background-color:var(--sa11y-setting-switch-bg-off);background-size:150% 150%;border-radius:50%;bottom:15px;color:#fff;cursor:pointer;display:flex;height:55px;inset-inline-end:18px;justify-content:center;margin:0;overflow:visible;position:fixed;transition:all .2s ease-in-out;width:55px;z-index:2147483644}#toggle.left,#toggle.top-left{inset-inline-start:18px}#toggle.top-left,#toggle.top-right{bottom:unset;top:15px}@media screen and (forced-colors:active){#toggle{background:ButtonFace!important;border:2px solid transparent}}#toggle svg{height:35px;width:35px}#toggle svg path{fill:var(--sa11y-panel-bg)}#toggle:focus,#toggle:hover{animation:sa11y-toggle-gradient 3s ease}#toggle:disabled:focus,#toggle:disabled:hover{animation:none}#toggle.on{background:linear-gradient(180deg,#e040fb,#00bcd4)}#toggle:disabled{background:unset;background-color:var(--sa11y-setting-switch-bg-off);cursor:not-allowed}#notification-badge{text-wrap:nowrap;align-items:center;background-color:#eb0000;border:1px solid transparent;border-radius:12px;color:#fff;display:none;font-size:13.5px;font-weight:400;justify-content:center;line-height:1;min-width:20px;padding:2.5px;position:absolute;right:-3px;top:-5.5px}#notification-badge.notification-badge-warning{background-color:var(--sa11y-warning-hover);border:1px solid var(--sa11y-warning);color:var(--sa11y-warning-text)}#panel{background:var(--sa11y-panel-bg);border-radius:4px;bottom:25px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15);inset-inline-end:42px;opacity:0;overflow:visible;position:fixed;transform:scale(0);transform-origin:100% 100%;transition:transform .2s,opacity background .2s .2s;visibility:hidden;z-index:2147483643}#panel.left,#panel.top-left{inset-inline-start:42px}#panel.top-left,#panel.top-right{bottom:unset;top:35px}#panel.active{height:auto;opacity:1;transform:scale(1);transform-origin:bottom right;transition:transform .2s,opacity .2s;visibility:visible}@media screen and (forced-colors:active){#panel{border:2px solid transparent}}#panel.active.left,[dir=rtl] #panel.active{transform-origin:bottom left}#panel.active.top-left{transform-origin:top left}#panel.active.top-right{transform-origin:top right}#panel-alert{display:none;opacity:0}#panel-alert.active{display:block;opacity:1}#panel-alert-content{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-primary);max-height:400px;overflow-y:auto;padding:15px 20px 15px 15px;position:relative}.top-left #panel-alert-content,.top-right #panel-alert-content{border:0}#panel-alert-preview .close-tooltip{display:none}#panel-alert-preview,#panel-alert-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}.panel-alert-preview{background:var(--sa11y-panel-bg-secondary);border:1px dashed var(--sa11y-panel-bg-splitter);border-radius:5px;margin-top:15px;padding:10px}.element-preview{background-color:var(--sa11y-panel-badge);border-radius:3.2px;margin-bottom:10px;overflow-wrap:break-word;padding:5px}button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}button[data-sa11y-dismiss]:focus,button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}h2{display:block;font-size:var(--sa11y-large-text);margin-bottom:3px}h2,strong{font-weight:600}a:not(#outline-list a):not(.edit){border-bottom:0;color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none!important}hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}#dismiss-button,#skip-button{background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:50px;cursor:pointer;display:none;height:36px;margin-inline-end:8px;margin-inline-start:2px;overflow:visible;position:relative;text-align:center;transition:all .1s ease-in-out;width:36px}#dismiss-button.active,#skip-button.active{display:block}#dismiss-button:disabled,#skip-button:disabled{background:none;border:0;box-shadow:none;cursor:default}#dismiss-button:before,#skip-button:before{bottom:-5px;content:\"\";left:-5px;position:absolute;right:-5px;top:-5px}#dismiss-button:focus:not(:disabled),#dismiss-button:hover:not(:disabled),#skip-button:focus:not(:disabled),#skip-button:hover:not(:disabled){background-color:var(--sa11y-shortcut-hover)}#panel.left #dismiss-button,#panel.left #skip-button,#panel.top-left #dismiss-button,#panel.top-left #skip-button{margin-inline-end:2px;margin-inline-start:8px}.dismiss-icon{background:var(--sa11y-setting-switch-bg-off);display:inline-block;height:24px;margin-bottom:-4px;-webkit-mask:var(--sa11y-dismiss-icon) center no-repeat;mask:var(--sa11y-dismiss-icon) center no-repeat;width:24px}@media screen and (forced-colors:active){.dismiss-icon{filter:invert(1)}}#panel-content{align-items:center;color:var(--sa11y-panel-primary);display:flex;padding:6px}#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{height:26px;margin:0 auto;width:26px}#panel-content.errors .panel-icon{background:var(--sa11y-panel-error);margin-top:-2px;-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat}#panel-content.good .panel-icon{background:var(--sa11y-good);-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat}#panel-content.warnings .panel-icon{background:var(--sa11y-warning-svg-color);-webkit-mask:var(--sa11y-warning-svg) center no-repeat;mask:var(--sa11y-warning-svg) center no-repeat;transform:scaleX(var(--sa11y-icon-direction))}@media screen and (forced-colors:active){#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{filter:invert(1)}}#panel.left #panel-content,#panel.top-left #panel-content{flex-direction:row-reverse}#status{font-size:var(--sa11y-large-text)}#status,.panel-count{color:var(--sa11y-panel-primary)}.panel-count{background-color:var(--sa11y-panel-badge);border-radius:4px;font-size:15px;font-weight:400;margin-left:3px;margin-right:3px;padding:2px 4px}#images-panel,#outline-panel,#page-issues,#settings-panel{color:var(--sa11y-panel-primary);display:none;opacity:0}#images-panel.active,#outline-panel.active,#page-issues.active,#settings-panel.active{display:block;opacity:1}.panel-header{padding:10px 15px 0;text-align:start}#about-content{padding-top:5px}#about-content p{display:block;margin-block-end:1em}#images-content,#outline-content,#page-issues-content,#settings-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);padding:0 15px 10px}.top-left #images-content,.top-left #outline-content,.top-left #page-issues-content,.top-left #settings-content,.top-right #images-content,.top-right #outline-content,.top-right #page-issues-content,.top-right #settings-content{border:0}#page-issues-content{max-height:160px;overflow-y:auto}#settings-content{max-height:400px;overflow-y:auto}#images-content,#outline-content{max-height:250px;overflow-y:auto}#outline-panel .outline-list-item.sa11y-red-text,#settings-panel .sa11y-red-text{color:var(--sa11y-red-text)}#outline-list{display:block;margin:0;padding:0}#outline-list a{cursor:pointer;display:block;text-decoration:none}#outline-list li{display:block;list-style-type:none;margin-bottom:3px;margin-top:0;padding:0}#outline-list li:first-child{margin-top:5px}#outline-list li a:focus,#outline-list li a:hover{background:var(--sa11y-panel-outline-hover);border-radius:5px;box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);display:block}#outline-list .outline-2{margin-inline-start:15px}#outline-list .outline-3{margin-inline-start:30px}#outline-list .outline-4{margin-inline-start:45px}#outline-list .outline-5{margin-inline-start:60px}#outline-list .outline-6{margin-inline-start:75px}#images-list{display:block;margin:0;padding:0}#images-list li{border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:block;list-style-type:none;margin:15px 0;overflow:hidden;width:100%}#images-list li:first-child{margin-top:5px}#images-list li:last-child{border:none;margin-bottom:0}#images-list li .alt{padding:2px 5px 10px}#images-list li .edit{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;padding:4px 7px;position:relative;text-decoration:none}#images-list li .edit:focus,#images-list li .edit:hover{background-color:var(--sa11y-shortcut-hover)}#images-list li .edit:before{bottom:-10px;content:\"\";left:-10px;position:absolute;right:-10px;top:-10px}#images-list li img{border-radius:5px;float:inline-start;margin-block-end:15px;margin-inline-end:10px;max-width:110px}#images-list li.warning .alt{color:var(--sa11y-yellow-text)}#images-list li.warning img{background-color:var(--sa11y-yellow-text);border:5px solid var(--sa11y-yellow-text)}#images-list li.error .alt{color:var(--sa11y-error)}#images-list li.error img{background-color:var(--sa11y-error);border:5px solid var(--sa11y-error)}#images-list li.good img{background-color:var(--sa11y-panel-badge);border:5px solid var(--sa11y-panel-badge)}@media screen and (forced-colors:active){#images-list li img{background-color:ButtonBorder!important}}.error-icon{background:var(--sa11y-error-text);display:inline-block;height:16px;margin-bottom:-4px;-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat;width:16px}.hidden-icon{margin-bottom:-3px;-webkit-mask:var(--sa11y-hidden-icon-svg) center no-repeat;mask:var(--sa11y-hidden-icon-svg) center no-repeat}.hidden-icon,.link-icon{background:var(--sa11y-panel-primary);display:inline-block;height:16px;width:16px}.link-icon{margin-bottom:-3.5px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat}.error-badge .hidden-icon,.error-badge .link-icon{background:var(--sa11y-error-text)}.warning-badge .hidden-icon,.warning-badge .link-icon{background:var(--sa11y-panel-bg)}@media screen and (forced-colors:active){.error-icon,.hidden-icon,.link-icon{filter:invert(1)}}#panel-controls{border-radius:0 0 4px 4px;display:flex;overflow:hidden}#panel-controls button{background:var(--sa11y-panel-bg-secondary);background-color:var(--sa11y-panel-bg-secondary);border-bottom:1px solid var(--sa11y-panel-bg-splitter);border-inline-end:1px solid var(--sa11y-panel-bg-splitter);border-top:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-secondary);cursor:pointer;display:block;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;line-height:0;margin:0;opacity:1;outline:0;padding:0;position:relative;text-align:center;transition:background .2s;width:100%}#panel-controls button.active,#panel-controls button:hover{background-color:var(--sa11y-shortcut-hover)}#panel-controls button.active{font-weight:500}#export-results-mode,label{color:var(--sa11y-panel-primary);display:inline-block;font-weight:400;margin:0;width:100%}label:not(#colour-filter-mode,#export-results-mode){cursor:pointer}#settings-panel #export-csv,#settings-panel #export-html{padding:0;text-align:center;width:unset}#settings-panel #export-csv span,#settings-panel #export-html span{background:var(--sa11y-panel-bg-secondary);border-radius:5px;box-shadow:inset 0 0 0 2px var(--sa11y-setting-switch-bg-off);display:block;margin:0 4px;padding:7px 9px;width:65px}#settings-panel #export-csv:focus span,#settings-panel #export-csv:focus-within span,#settings-panel #export-csv:hover span,#settings-panel #export-html:focus span,#settings-panel #export-html:focus-within span,#settings-panel #export-html:hover span{background:var(--sa11y-shortcut-hover)}#settings-panel .switch{background:none;border:0;border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:44px;margin:0;padding:7px 10px;position:relative;text-align:end;width:105px}#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{content:\"\";display:inline-block;height:27px;margin:0 4px 4px;vertical-align:middle;width:27px}#settings-panel .switch[aria-pressed=true]:after{background:var(--sa11y-setting-switch-bg-on);-webkit-mask:var(--sa11y-setting-switch-on-svg) center no-repeat;mask:var(--sa11y-setting-switch-on-svg) center no-repeat}#settings-panel .switch[aria-pressed=false]:after{background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-setting-switch-off-svg) center no-repeat;mask:var(--sa11y-setting-switch-off-svg) center no-repeat}@media screen and (forced-colors:active){#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{filter:invert(1)}}#settings-panel #settings-options li{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:flex;justify-content:space-between;list-style-type:none;padding:1px 0}#settings-panel #settings-options li:last-child{border:none}#page-issues{align-items:center;color:var(--sa11y-panel-primary)}#page-issues-list{display:block;margin-top:4px}#page-issues-list li{display:block;margin:0 0 10px}#page-issues-list strong{display:block}.top-left.has-page-issues #page-issues,.top-right.has-page-issues #page-issues{border-top:1px solid var(--sa11y-panel-bg-splitter);margin-top:-1px}#panel-colour-filters{align-items:center;color:var(--sa11y-panel-primary);display:none;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}#panel-colour-filters.active{display:flex}#panel-colour-filters p{padding:6px 20px 6px 6px;width:100%}#panel-colour-filters[data-colour=protanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image-slice:1}#panel-colour-filters[data-colour=deuteranopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image-slice:1}#panel-colour-filters[data-colour=tritanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image-slice:1}#panel-colour-filters[data-colour=monochromacy]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image-slice:1}#panel-colour-filters[data-colour=protanopia] .panel-icon{background:var(--sa11y-panel-error)}#panel-colour-filters[data-colour=deuteranopia] .panel-icon{background:var(--sa11y-good-hover)}#panel-colour-filters[data-colour=tritanopia] .panel-icon{background:var(--sa11y-blue)}#panel-colour-filters[data-colour=monochromacy] .panel-icon{background:linear-gradient(90deg,#38a459 20%,red 50%,#0077c8 80%)}#panel-colour-filters .panel-icon{height:30px;margin-inline-end:5px;margin-inline-start:10px;-webkit-mask:var(--sa11y-low-vision-icon) center no-repeat;mask:var(--sa11y-low-vision-icon) center no-repeat;width:30px}@media screen and (forced-colors:active){#panel-colour-filters .panel-icon{forced-color-adjust:none}}.select-dropdown{align-items:center;display:flex;position:relative}.select-dropdown:after{border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid var(--sa11y-setting-switch-bg-off);content:\" \";inset-inline-end:14px;position:absolute}#colour-filter-select{-webkit-appearance:none;-moz-appearance:none;appearance:none;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-setting-switch-bg-off);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;margin-inline-end:4px;padding-inline-end:25px;padding-inline-start:5px;position:relative;text-align:end;vertical-align:middle}#colour-filter-select:focus,#colour-filter-select:hover{background:var(--sa11y-shortcut-hover)}#colour-filter-select.active{box-shadow:0 0 0 2px var(--sa11y-setting-switch-bg-on)}#colour-filter-item label,#colour-filter-item select{margin-bottom:9px;margin-top:10px}#readability-panel{display:none;opacity:0}#readability-panel.active{display:block;opacity:1}.top-left #readability-content,.top-right #readability-content{border-top:1px solid var(--sa11y-panel-bg-splitter)}.left #readability-content,.right #readability-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter)}#readability-content{color:var(--sa11y-panel-primary);padding:10px 15px;width:100%}#readability-details{list-style-type:none;margin:0;padding:0;white-space:normal}#readability-details li{display:inline-block;list-style-type:none;margin:0;padding-inline-end:10px}.readability-score{background-color:var(--sa11y-panel-badge);border-radius:4px;color:var(--sa11y-panel-primary);margin-inline-start:5px;padding:2px 5px}#readability-info{margin-inline-start:10px}#skip-to-page-issues{display:none}#panel.has-page-issues #skip-to-page-issues{clip:rect(0,0,0,0);background:var(--sa11y-panel-bg);border:0;border-radius:5px;display:block;height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}#panel.has-page-issues #skip-to-page-issues:focus{clip:auto;height:auto;margin:0;overflow:visible;padding:5px 7px;white-space:normal;width:auto;z-index:1}.hide-settings-border{border-bottom:0!important;padding:0 15px!important}.hide-settings-border li:not(#colour-filter-item){display:none!important}.hide-settings-border #about-content{display:none}.hide-settings-border.scrollable:before{all:unset}::-webkit-scrollbar{height:6px;width:7px}::-webkit-scrollbar-thumb{background-color:var(--sa11y-button-outline);border-radius:6px}*{scrollbar-color:var(--sa11y-button-outline);scrollbar-width:thin}.scrollable:before{animation:fade 1s ease-in-out;background:linear-gradient(180deg,transparent 70%,var(--sa11y-panel-scrollable) 100%);background-position:bottom;bottom:auto;content:\"\";height:250px;left:0;position:absolute;right:0;top:auto;transition:opacity 1s ease-in-out;width:100%;z-index:-1}#settings-content.scrollable:before{height:400px}.top-left .scrollable:before,.top-right .scrollable:before{border-radius:5px}#page-issues-content.scrollable:before{height:160px}#panel-alert.scrollable:before{height:200px}@keyframes sa11y-toggle-gradient{0%{background-position:50% 0}50%{background-position:50% 100%}to{background-position:50% 0}}@keyframes fade{0%{opacity:0}to{opacity:1}}@media (prefers-reduced-motion:reduce){*{animation:none!important;transform:none!important;transition:none!important}}#panel{width:400px}#container:lang(en) #panel{width:305px}#container:lang(da) #panel,#container:lang(de) #panel,#container:lang(nb) #panel,#container:lang(pl) #panel,#container:lang(sv) #panel,#container:lang(zh) #panel{width:350px}#container:lang(bg) .switch:not(#export-results-item *),#container:lang(es) .switch:not(#export-results-item *){width:225px!important}#container:not(:lang(en)):not(:lang(de)) .switch{width:205px}";
+  var panelStyles = "a,button,code,div,h1,h2,kbd,label,li,ol,p,pre,span,strong,svg,ul{all:unset;box-sizing:border-box!important}:after,:before{all:unset}div{display:block}*{-webkit-font-smoothing:auto!important;font-family:var(--sa11y-font-face)!important}label,li,ol,p,ul{font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px!important;text-align:start;word-break:break-word}.sa11y-overflow{overflow:auto}iframe,img,video{border:0;display:block;height:auto;max-width:100%}audio{max-width:100%}#toggle{align-items:center;background:linear-gradient(0deg,#e040fb,#00bcd4);background-color:var(--sa11y-setting-switch-bg-off);background-size:150% 150%;border-radius:50%;bottom:15px;color:#fff;cursor:pointer;display:flex;height:55px;inset-inline-end:18px;justify-content:center;margin:0;overflow:visible;position:fixed;transition:all .2s ease-in-out;width:55px;z-index:2147483644}#toggle.left,#toggle.top-left{inset-inline-start:18px}#toggle.top-left,#toggle.top-right{bottom:unset;top:15px}@media screen and (forced-colors:active){#toggle{background:ButtonFace!important;border:2px solid transparent}}#toggle svg{height:35px;width:35px}#toggle svg path{fill:var(--sa11y-panel-bg)}#toggle:focus,#toggle:hover{animation:sa11y-toggle-gradient 3s ease}#toggle:disabled:focus,#toggle:disabled:hover{animation:none}#toggle.on{background:linear-gradient(180deg,#e040fb,#00bcd4)}#toggle:disabled{background:unset;background-color:var(--sa11y-setting-switch-bg-off);cursor:not-allowed}#notification-badge{text-wrap:nowrap;align-items:center;background-color:#eb0000;border:1px solid transparent;border-radius:12px;color:#fff;display:none;font-size:13.5px;font-weight:400;justify-content:center;line-height:1;min-width:20px;padding:2.5px;position:absolute;right:-3px;top:-5.5px}#notification-badge.notification-badge-warning{background-color:var(--sa11y-warning-hover);border:1px solid var(--sa11y-warning);color:var(--sa11y-warning-text)}#panel{background:var(--sa11y-panel-bg);border-radius:4px;bottom:25px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15);inset-inline-end:42px;opacity:0;overflow:visible;position:fixed;transform:scale(0);transform-origin:100% 100%;transition:transform .2s,opacity background .2s .2s;visibility:hidden;z-index:2147483643}#panel.left,#panel.top-left{inset-inline-start:42px}#panel.top-left,#panel.top-right{bottom:unset;top:35px}#panel.active{height:auto;opacity:1;transform:scale(1);transform-origin:bottom right;transition:transform .2s,opacity .2s;visibility:visible}@media screen and (forced-colors:active){#panel{border:2px solid transparent}}#panel.active.left,[dir=rtl] #panel.active{transform-origin:bottom left}#panel.active.top-left{transform-origin:top left}#panel.active.top-right{transform-origin:top right}#panel-alert{display:none;opacity:0}#panel-alert.active{display:block;opacity:1}#panel-alert-content{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-primary);line-height:22px;max-height:400px;overflow-y:auto;padding:15px 20px 15px 15px;position:relative}.top-left #panel-alert-content,.top-right #panel-alert-content{border:0}#panel-alert-preview .close-tooltip{display:none}#panel-alert-preview,#panel-alert-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}.panel-alert-preview{background:var(--sa11y-panel-bg-secondary);border:1px dashed var(--sa11y-panel-bg-splitter);border-radius:5px;margin-top:15px;padding:10px}.panel-alert-preview ul{margin:0;margin-block-end:0;margin-block-start:0;padding:0;position:relative}.panel-alert-preview li{display:list-item;margin:5px 10px 0 20px;padding-bottom:5px}.element-preview{background-color:var(--sa11y-element-preview);border-radius:3.2px;margin-bottom:10px;overflow-wrap:break-word;padding:5px}button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:inline-block;margin:10px 5px 5px 0;margin-inline-end:15px;padding:4px 8px}button[data-sa11y-dismiss]:focus,button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}h2{display:block;font-size:var(--sa11y-large-text);font-weight:700;margin-bottom:3px}strong{font-weight:600}a:not(#outline-list a):not(.edit){border-bottom:0;color:var(--sa11y-hyperlink);cursor:pointer;font-weight:500;text-decoration:underline}a:focus,a:hover{text-decoration:none!important}hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}#dismiss-button,#skip-button{background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:50px;cursor:pointer;display:none;height:36px;margin-inline-end:8px;margin-inline-start:2px;overflow:visible;position:relative;text-align:center;transition:all .1s ease-in-out;width:36px}#dismiss-button.active,#skip-button.active{display:block}#dismiss-button:disabled,#skip-button:disabled{background:none;border:0;box-shadow:none;cursor:default}#dismiss-button:before,#skip-button:before{bottom:-5px;content:\"\";left:-5px;position:absolute;right:-5px;top:-5px}#dismiss-button:focus:not(:disabled),#dismiss-button:hover:not(:disabled),#skip-button:focus:not(:disabled),#skip-button:hover:not(:disabled){background-color:var(--sa11y-shortcut-hover)}#panel.left #dismiss-button,#panel.left #skip-button,#panel.top-left #dismiss-button,#panel.top-left #skip-button{margin-inline-end:2px;margin-inline-start:8px}.dismiss-icon{background:var(--sa11y-setting-switch-bg-off);display:inline-block;height:24px;margin-bottom:-4px;-webkit-mask:var(--sa11y-dismiss-icon) center no-repeat;mask:var(--sa11y-dismiss-icon) center no-repeat;width:24px}@media screen and (forced-colors:active){.dismiss-icon{filter:invert(1)}}#panel-content{align-items:center;color:var(--sa11y-panel-primary);display:flex;padding:6px}#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{height:26px;margin:0 auto;width:26px}#panel-content.errors .panel-icon{background:var(--sa11y-panel-error);margin-top:-2px;-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat}#panel-content.good .panel-icon{background:var(--sa11y-good);-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat}#panel-content.warnings .panel-icon{background:var(--sa11y-yellow-text);-webkit-mask:var(--sa11y-warning-svg) center no-repeat;mask:var(--sa11y-warning-svg) center no-repeat;transform:scaleX(var(--sa11y-icon-direction))}@media screen and (forced-colors:active){#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{filter:invert(1)}}#panel.left #panel-content,#panel.top-left #panel-content{flex-direction:row-reverse}#status{font-size:var(--sa11y-large-text)}#status,.panel-count{color:var(--sa11y-panel-primary)}.panel-count{background-color:var(--sa11y-panel-badge);border-radius:4px;font-size:15px;font-weight:400;margin-left:3px;margin-right:3px;padding:2px 4px}#images-panel,#outline-panel,#page-issues,#settings-panel{color:var(--sa11y-panel-primary);display:none;opacity:0}#images-panel.active,#outline-panel.active,#page-issues.active,#settings-panel.active{display:block;opacity:1}.panel-header{padding:10px 15px 0;text-align:start}#about-content{padding-top:5px}#about-content p{display:block;margin-block-end:1em}#images-content,#outline-content,#page-issues-content,#settings-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);padding:0 15px 10px}.top-left #images-content,.top-left #outline-content,.top-left #page-issues-content,.top-left #settings-content,.top-right #images-content,.top-right #outline-content,.top-right #page-issues-content,.top-right #settings-content{border:0}#page-issues-content{max-height:160px;overflow-y:auto}#settings-content{max-height:400px;overflow-y:auto}#images-content,#outline-content{max-height:250px;overflow-y:auto}#outline-panel .outline-list-item.sa11y-red-text,#settings-panel .sa11y-red-text{color:var(--sa11y-red-text)}#outline-list{display:block;margin:0;padding:0}#outline-list a{cursor:pointer;display:block;text-decoration:none}#outline-list li{display:block;list-style-type:none;margin-bottom:3px;margin-top:0;padding:0}#outline-list li:first-child{margin-top:5px}#outline-list li a:focus,#outline-list li a:hover{background:var(--sa11y-panel-outline-hover);border-radius:5px;box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);display:block}#outline-list .outline-2{margin-inline-start:15px}#outline-list .outline-3{margin-inline-start:30px}#outline-list .outline-4{margin-inline-start:45px}#outline-list .outline-5{margin-inline-start:60px}#outline-list .outline-6{margin-inline-start:75px}#images-list{display:block;margin:0;padding:0}#images-list li{border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:block;list-style-type:none;margin:15px 0;overflow:hidden;width:100%}#images-list li:first-child{margin-top:5px}#images-list li:last-child{border:none;margin-bottom:0}#images-list li .alt{padding:2px 5px 10px}#images-list li .edit{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;padding:4px 7px;position:relative;text-decoration:none}#images-list li .edit:focus,#images-list li .edit:hover{background-color:var(--sa11y-shortcut-hover)}#images-list li .edit:before{bottom:-10px;content:\"\";left:-10px;position:absolute;right:-10px;top:-10px}#images-list li img{border-radius:5px;float:inline-start;margin-block-end:15px;margin-inline-end:10px;max-width:110px}#images-list li.warning .alt{color:var(--sa11y-yellow-text)}#images-list li.warning img{background-color:var(--sa11y-yellow-text);border:5px solid var(--sa11y-yellow-text)}#images-list li.error .alt{color:var(--sa11y-error)}#images-list li.error img{background-color:var(--sa11y-error);border:5px solid var(--sa11y-error)}#images-list li.good img{background-color:var(--sa11y-panel-badge);border:5px solid var(--sa11y-panel-badge)}@media screen and (forced-colors:active){#images-list li img{background-color:ButtonBorder!important}}.error-icon{background:var(--sa11y-error-text);display:inline-block;height:16px;margin-bottom:-4px;-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat;width:16px}.hidden-icon{margin-bottom:-3px;-webkit-mask:var(--sa11y-hidden-icon-svg) center no-repeat;mask:var(--sa11y-hidden-icon-svg) center no-repeat}.hidden-icon,.link-icon{background:var(--sa11y-panel-primary);display:inline-block;height:16px;width:16px}.link-icon{margin-bottom:-3.5px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat}.error-badge .hidden-icon,.error-badge .link-icon{background:var(--sa11y-error-text)}.warning-badge .hidden-icon,.warning-badge .link-icon{background:var(--sa11y-panel-bg)}.error .link-icon{background:var(--sa11y-error-text)}.warning .link-icon{background:var(--sa11y-panel-bg)}@media screen and (forced-colors:active){.error-icon,.hidden-icon,.link-icon{filter:invert(1)}}#panel-controls{border-bottom:1px solid var(--sa11y-panel-bg-splitter);border-radius:0 0 4px 4px;display:flex;overflow:hidden}#panel-controls button{background:var(--sa11y-panel-bg-secondary);background-color:var(--sa11y-panel-bg-secondary);border-inline-end:1px solid var(--sa11y-panel-bg-splitter);border-top:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-secondary);cursor:pointer;display:block;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;line-height:0;margin:0;opacity:1;outline:0;padding:0;position:relative;text-align:center;transition:background .2s;width:100%}#panel-controls button.active,#panel-controls button:hover{background-color:var(--sa11y-shortcut-hover)}#panel-controls button.active{font-weight:600}#export-results-mode,label{color:var(--sa11y-panel-primary);display:inline-block;font-weight:400;margin:0;width:100%}label:not(#colour-filter-mode,#export-results-mode){cursor:pointer}#settings-panel #export-csv,#settings-panel #export-html{padding:0;text-align:center;width:unset}#settings-panel #export-csv span,#settings-panel #export-html span{background:var(--sa11y-panel-bg-secondary);border-radius:5px;box-shadow:inset 0 0 0 2px var(--sa11y-setting-switch-bg-off);display:block;margin:0 4px;padding:7px 9px;width:65px}#settings-panel #export-csv:focus span,#settings-panel #export-csv:focus-within span,#settings-panel #export-csv:hover span,#settings-panel #export-html:focus span,#settings-panel #export-html:focus-within span,#settings-panel #export-html:hover span{background:var(--sa11y-shortcut-hover)}#settings-panel .switch{background:none;border:0;border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:44px;margin:0;padding:7px 10px;position:relative;text-align:end;width:105px}#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{content:\"\";display:inline-block;height:27px;margin:0 4px 4px;vertical-align:middle;width:27px}#settings-panel .switch[aria-pressed=true]:after{background:var(--sa11y-setting-switch-bg-on);-webkit-mask:var(--sa11y-setting-switch-on-svg) center no-repeat;mask:var(--sa11y-setting-switch-on-svg) center no-repeat}#settings-panel .switch[aria-pressed=false]:after{background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-setting-switch-off-svg) center no-repeat;mask:var(--sa11y-setting-switch-off-svg) center no-repeat}@media screen and (forced-colors:active){#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{filter:invert(1)}}#settings-panel #settings-options li{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:flex;justify-content:space-between;list-style-type:none;padding:1px 0}#settings-panel #settings-options li:last-child{border:none}#page-issues{align-items:center;color:var(--sa11y-panel-primary)}#page-issues-list{display:block;margin-top:4px}#page-issues-list li{display:block;margin:0 0 10px}#page-issues-list strong{display:block}.top-left.has-page-issues #page-issues,.top-right.has-page-issues #page-issues{border-top:1px solid var(--sa11y-panel-bg-splitter);margin-top:-1px}#panel-colour-filters{align-items:center;color:var(--sa11y-panel-primary);display:none;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}#panel-colour-filters.active{display:flex}#panel-colour-filters p{padding:6px 20px 6px 6px;width:100%}#panel-colour-filters[data-colour=protanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image-slice:1}#panel-colour-filters[data-colour=deuteranopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image-slice:1}#panel-colour-filters[data-colour=tritanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image-slice:1}#panel-colour-filters[data-colour=monochromacy]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image-slice:1}#panel-colour-filters[data-colour=protanopia] .panel-icon{background:var(--sa11y-panel-error)}#panel-colour-filters[data-colour=deuteranopia] .panel-icon{background:var(--sa11y-good-hover)}#panel-colour-filters[data-colour=tritanopia] .panel-icon{background:var(--sa11y-blue)}#panel-colour-filters[data-colour=monochromacy] .panel-icon{background:linear-gradient(90deg,#38a459 20%,red 50%,#0077c8 80%)}#panel-colour-filters .panel-icon{height:30px;margin-inline-end:5px;margin-inline-start:10px;-webkit-mask:var(--sa11y-low-vision-icon) center no-repeat;mask:var(--sa11y-low-vision-icon) center no-repeat;width:30px}@media screen and (forced-colors:active){#panel-colour-filters .panel-icon{forced-color-adjust:none}}.select-dropdown{align-items:center;display:flex;position:relative}.select-dropdown:after{border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid var(--sa11y-setting-switch-bg-off);content:\" \";inset-inline-end:14px;position:absolute}#colour-filter-select{-webkit-appearance:none;-moz-appearance:none;appearance:none;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-setting-switch-bg-off);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;margin-inline-end:4px;padding-inline-end:25px;padding-inline-start:5px;position:relative;text-align:end;vertical-align:middle}#colour-filter-select:focus,#colour-filter-select:hover{background:var(--sa11y-shortcut-hover)}#colour-filter-select.active{box-shadow:0 0 0 2px var(--sa11y-setting-switch-bg-on)}#colour-filter-item label,#colour-filter-item select{margin-bottom:9px;margin-top:10px}#readability-panel{display:none;opacity:0}#readability-panel.active{display:block;opacity:1}.top-left #readability-content,.top-right #readability-content{border-top:1px solid var(--sa11y-panel-bg-splitter)}.left #readability-content,.right #readability-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter)}#readability-content{color:var(--sa11y-panel-primary);padding:10px 15px;width:100%}#readability-details{list-style-type:none;margin:0;padding:0;white-space:normal}#readability-details li{display:inline-block;list-style-type:none;margin:0;padding-inline-end:10px}.readability-score{background-color:var(--sa11y-panel-badge);border-radius:4px;color:var(--sa11y-panel-primary);margin-inline-start:5px;padding:2px 5px}#readability-info{margin-inline-start:10px}#skip-to-page-issues{display:none}#panel.has-page-issues #skip-to-page-issues{clip:rect(0,0,0,0);background:var(--sa11y-panel-bg);border:0;border-radius:5px;display:block;height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}#panel.has-page-issues #skip-to-page-issues:focus{clip:auto;height:auto;margin:0;overflow:visible;padding:5px 7px;white-space:normal;width:auto;z-index:1}.hide-settings-border{border-bottom:0!important;padding:0 15px!important}.hide-settings-border li:not(#colour-filter-item){display:none!important}.hide-settings-border #about-content{display:none}.hide-settings-border.scrollable:before{all:unset}#contrast-tools{display:none}::-webkit-scrollbar{height:6px;width:7px}::-webkit-scrollbar-thumb{background-color:var(--sa11y-button-outline);border-radius:6px}*{scrollbar-color:var(--sa11y-button-outline);scrollbar-width:thin}.scrollable:before{animation:fade 1s ease-in-out;background:linear-gradient(180deg,transparent 70%,var(--sa11y-panel-scrollable) 100%);background-position:bottom;bottom:auto;content:\"\";height:250px;left:0;position:absolute;right:0;top:auto;transition:opacity 1s ease-in-out;width:100%;z-index:-1}#settings-content.scrollable:before{height:400px}.top-left .scrollable:before,.top-right .scrollable:before{border-radius:5px}#page-issues-content.scrollable:before{height:160px}#panel-alert.scrollable:before{height:200px}@keyframes sa11y-toggle-gradient{0%{background-position:50% 0}50%{background-position:50% 100%}to{background-position:50% 0}}@keyframes fade{0%{opacity:0}to{opacity:1}}@media (prefers-reduced-motion:reduce){*{animation:none!important;transform:none!important;transition:none!important}}#panel{width:400px}#container:lang(en) #panel{width:315px}#container:lang(da) #panel,#container:lang(de) #panel,#container:lang(nb) #panel,#container:lang(pl) #panel,#container:lang(sv) #panel,#container:lang(zh) #panel{width:350px}#container:lang(bg) .switch:not(#export-results-item *),#container:lang(es) .switch:not(#export-results-item *){width:225px!important}#container:not(:lang(en)):not(:lang(de)) .switch{width:205px}";
 
   class ControlPanel extends HTMLElement {
     connectedCallback() {
@@ -1730,10 +2250,8 @@
       // Icon for the main toggle.
       const MainToggleIcon = '<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 48c114.953 0 208 93.029 208 208 0 114.953-93.029 208-208 208-114.953 0-208-93.029-208-208 0-114.953 93.029-208 208-208m0-40C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 56C149.961 64 64 149.961 64 256s85.961 192 192 192 192-85.961 192-192S362.039 64 256 64zm0 44c19.882 0 36 16.118 36 36s-16.118 36-36 36-36-16.118-36-36 16.118-36 36-36zm117.741 98.023c-28.712 6.779-55.511 12.748-82.14 15.807.851 101.023 12.306 123.052 25.037 155.621 3.617 9.26-.957 19.698-10.217 23.315-9.261 3.617-19.699-.957-23.316-10.217-8.705-22.308-17.086-40.636-22.261-78.549h-9.686c-5.167 37.851-13.534 56.208-22.262 78.549-3.615 9.255-14.05 13.836-23.315 10.217-9.26-3.617-13.834-14.056-10.217-23.315 12.713-32.541 24.185-54.541 25.037-155.621-26.629-3.058-53.428-9.027-82.141-15.807-8.6-2.031-13.926-10.648-11.895-19.249s10.647-13.926 19.249-11.895c96.686 22.829 124.283 22.783 220.775 0 8.599-2.03 17.218 3.294 19.249 11.895 2.029 8.601-3.297 17.219-11.897 19.249z"/></svg>';
 
-      const rememberContrast = store.getItem('sa11y-remember-contrast') === 'On';
-      const rememberFormLabels = store.getItem('sa11y-remember-labels') === 'On';
-      const rememberLinksAdvanced = store.getItem('sa11y-remember-links-advanced') === 'On';
-      const rememberReadability = store.getItem('sa11y-remember-readability') === 'On';
+      const rememberDeveloper = store.getItem('sa11y-developer') === 'On';
+      const rememberReadability = store.getItem('sa11y-readability') === 'On';
 
       // If admin wants users to check everything, without toggleable checks.
       const checkAll = Constants.Global.checkAllHideToggles;
@@ -1742,36 +2260,20 @@
       const { panelPosition } = Constants.Global;
 
       /* TOGGLEABLE PLUGINS */
-      const contrastPlugin = Constants.Global.contrastPlugin ? `
-      <li id="contrast-item" ${checkAll ? 'hidden' : ''}>
-        <label id="check-contrast" for="contrast-toggle">${Lang._('CONTRAST')}</label>
-        <button id="contrast-toggle"
-          aria-labelledby="check-contrast"
+      const developerPlugin = Constants.Global.developerPlugin ? `
+      <li id="developer-item" ${checkAll ? 'hidden' : ''}>
+        <label id="check-developer" for="developer-toggle">${Lang._('DEVELOPER_CHECKS')}</label>
+        <button id="developer-toggle"
+          aria-labelledby="check-developer"
+          aria-describedby="check-developer-desc"
           class="switch"
-          aria-pressed="${rememberContrast ? 'true' : 'false'}">${rememberContrast ? Lang._('ON') : Lang._('OFF')}</button>
-      </li>` : '';
-
-      const formLabelsPlugin = Constants.Global.formLabelsPlugin ? `
-      <li id="form-labels-item" ${checkAll ? 'hidden' : ''}>
-        <label id="check-labels" for="labels-toggle">${Lang._('FORM_LABELS')}</label>
-        <button id="labels-toggle"
-          aria-labelledby="check-labels"
-          class="switch"
-          aria-pressed="${rememberFormLabels ? 'true' : 'false'}">${rememberFormLabels ? Lang._('ON') : Lang._('OFF')}</button>
-      </li>` : '';
-
-      const linksAdvancedPlugin = Constants.Global.linksAdvancedPlugin ? `
-      <li id="links-advanced-item" ${checkAll ? 'hidden' : ''}>
-        <label id="check-changerequest" for="links-advanced-toggle">${Lang._('LINKS_ADVANCED')} <span class="badge">AAA</span></label>
-        <button id="links-advanced-toggle"
-          aria-labelledby="check-changerequest"
-          class="switch"
-          aria-pressed="${rememberLinksAdvanced ? 'true' : 'false'}">${rememberLinksAdvanced ? Lang._('ON') : Lang._('OFF')}</button>
+          aria-pressed="${rememberDeveloper ? 'true' : 'false'}">${rememberDeveloper ? Lang._('ON') : Lang._('OFF')}</button>
+        <div id="check-developer-desc" hidden>${Lang._('DEVELOPER_DESC')}</div>
       </li>` : '';
 
       const readabilityPlugin = Constants.Readability.Plugin ? `
       <li id="readability-item">
-        <label id="check-readability" for="readability-toggle">${Lang._('LANG_READABILITY')} <span class="badge">AAA</span></label>
+        <label id="check-readability" for="readability-toggle">${Lang._('READABILITY')}</label>
         <button id="readability-toggle"
           aria-labelledby="check-readability"
           class="switch"
@@ -1851,7 +2353,7 @@
         </div>
         <div id="readability-panel">
           <div id="readability-content">
-            <h2 class="header-text-inline">${Lang._('LANG_READABILITY')}</h2>
+            <h2 class="header-text-inline">${Lang._('READABILITY')}</h2>
             <p id="readability-info"></p>
             <ul id="readability-details"></ul>
           </div>
@@ -1881,9 +2383,7 @@
         </div>
         <div id="settings-content">
           <ul id="settings-options">
-            ${contrastPlugin}
-            ${formLabelsPlugin}
-            ${linksAdvancedPlugin}
+            ${developerPlugin}
             ${readabilityPlugin}
             <li id="dark-mode-item">
               <label id="dark-mode" for="theme-toggle">${Lang._('DARK_MODE')}</label>
@@ -1923,7 +2423,7 @@
         </button>
         <button id="skip-button" type="button">
           <div class="panel-icon"></div>
-          <span class="visually-hidden">${Lang._('SHORTCUT_SCREEN_READER')}</span>
+          <span class="visually-hidden">${Lang._('SHORTCUT_SR')}</span>
         </button>
         <button id="dismiss-button" type="button">
           <div class="dismiss-icon"></div>
@@ -1956,6 +2456,7 @@
       const container = document.createElement('div');
       container.setAttribute('id', 'container');
       container.setAttribute('role', 'region');
+      container.setAttribute('data-sa11y-version', version);
       container.setAttribute('lang', Lang._('LANG_CODE'));
       container.setAttribute('aria-label', Lang._('CONTAINER_LABEL'));
       container.setAttribute('dir', Constants.Global.langDirection);
@@ -2000,73 +2501,27 @@
   /*  Initialize all toggle switches within Settings panel.       */
   /* ************************************************************ */
   function settingsPanelToggles(checkAll, resetAll) {
-    /* ***************** */
-    /*  Contrast toggle  */
-    /* ***************** */
-    if (Constants.Global.contrastPlugin) {
-      Constants.Panel.contrastToggle.onclick = async () => {
-        if (store.getItem('sa11y-remember-contrast') === 'On') {
-          store.setItem('sa11y-remember-contrast', 'Off');
-          Constants.Panel.contrastToggle.textContent = `${Lang._('OFF')}`;
-          Constants.Panel.contrastToggle.setAttribute('aria-pressed', 'false');
+    /* ************************* */
+    /*  Developer checks toggle  */
+    /* ************************* */
+    if (Constants.Global.developerPlugin) {
+      Constants.Panel.developerToggle.onclick = async () => {
+        if (store.getItem('sa11y-developer') === 'On') {
+          store.setItem('sa11y-developer', 'Off');
+          Constants.Panel.developerToggle.textContent = `${Lang._('OFF')}`;
+          Constants.Panel.developerToggle.setAttribute('aria-pressed', 'false');
           resetAll(false);
           await checkAll();
         } else {
-          store.setItem('sa11y-remember-contrast', 'On');
-          Constants.Panel.contrastToggle.textContent = `${Lang._('ON')}`;
-          Constants.Panel.contrastToggle.setAttribute('aria-pressed', 'true');
+          store.setItem('sa11y-developer', 'On');
+          Constants.Panel.developerToggle.textContent = `${Lang._('ON')}`;
+          Constants.Panel.developerToggle.setAttribute('aria-pressed', 'true');
           resetAll(false);
           await checkAll();
         }
       };
     } else {
-      store.setItem('sa11y-remember-contrast', 'Off');
-    }
-
-    /* ***************** */
-    /*  Form Labels      */
-    /* ***************** */
-    if (Constants.Global.formLabelsPlugin) {
-      Constants.Panel.labelsToggle.onclick = async () => {
-        if (store.getItem('sa11y-remember-labels') === 'On') {
-          store.setItem('sa11y-remember-labels', 'Off');
-          Constants.Panel.labelsToggle.textContent = `${Lang._('OFF')}`;
-          Constants.Panel.labelsToggle.setAttribute('aria-pressed', 'false');
-          resetAll(false);
-          await checkAll();
-        } else {
-          store.setItem('sa11y-remember-labels', 'On');
-          Constants.Panel.labelsToggle.textContent = `${Lang._('ON')}`;
-          Constants.Panel.labelsToggle.setAttribute('aria-pressed', 'true');
-          resetAll(false);
-          await checkAll();
-        }
-      };
-    } else {
-      store.setItem('sa11y-remember-labels', 'Off');
-    }
-
-    /* ****************** */
-    /*  Links (Advanced)  */
-    /* ****************** */
-    if (Constants.Global.linksAdvancedPlugin) {
-      Constants.Panel.linksToggle.onclick = async () => {
-        if (store.getItem('sa11y-remember-links-advanced') === 'On') {
-          store.setItem('sa11y-remember-links-advanced', 'Off');
-          Constants.Panel.linksToggle.textContent = `${Lang._('OFF')}`;
-          Constants.Panel.linksToggle.setAttribute('aria-pressed', 'false');
-          resetAll(false);
-          await checkAll();
-        } else {
-          store.setItem('sa11y-remember-links-advanced', 'On');
-          Constants.Panel.linksToggle.textContent = `${Lang._('ON')}`;
-          Constants.Panel.linksToggle.setAttribute('aria-pressed', 'true');
-          resetAll(false);
-          await checkAll();
-        }
-      };
-    } else {
-      store.setItem('sa11y-remember-links-advanced', 'Off');
+      store.setItem('sa11y-developer', 'Off');
     }
 
     /* ****************** */
@@ -2074,15 +2529,15 @@
     /* ****************** */
     if (Constants.Readability.Plugin) {
       Constants.Panel.readabilityToggle.onclick = async () => {
-        if (store.getItem('sa11y-remember-readability') === 'On') {
-          store.setItem('sa11y-remember-readability', 'Off');
+        if (store.getItem('sa11y-readability') === 'On') {
+          store.setItem('sa11y-readability', 'Off');
           Constants.Panel.readabilityToggle.textContent = `${Lang._('OFF')}`;
           Constants.Panel.readabilityToggle.setAttribute('aria-pressed', 'false');
           Constants.Panel.readability.classList.remove('active');
           resetAll(false);
           await checkAll();
         } else {
-          store.setItem('sa11y-remember-readability', 'On');
+          store.setItem('sa11y-readability', 'On');
           Constants.Panel.readabilityToggle.textContent = `${Lang._('ON')}`;
           Constants.Panel.readabilityToggle.setAttribute('aria-pressed', 'true');
           Constants.Panel.readability.classList.add('active');
@@ -2091,7 +2546,7 @@
         }
       };
 
-      if (store.getItem('sa11y-remember-readability') === 'On') {
+      if (store.getItem('sa11y-readability') === 'On') {
         Constants.Panel.readability.classList.add('active');
       }
     }
@@ -2102,63 +2557,31 @@
      * @link https://derekkedziora.com/blog/dark-mode-revisited
     */
     const systemInitiatedDark = window.matchMedia('(prefers-color-scheme: dark)');
-    if (systemInitiatedDark.matches) {
-      Constants.Panel.themeToggle.textContent = `${Lang._('ON')}`;
-      Constants.Panel.themeToggle.setAttribute('aria-pressed', 'true');
-    } else {
-      Constants.Panel.themeToggle.textContent = `${Lang._('OFF')}`;
-      Constants.Panel.themeToggle.setAttribute('aria-pressed', 'false');
-    }
-    const prefersColorTest = () => {
-      if (systemInitiatedDark.matches) {
-        Constants.Global.html.setAttribute('data-sa11y-theme', 'dark');
-        Constants.Panel.themeToggle.textContent = `${Lang._('ON')}`;
-        Constants.Panel.themeToggle.setAttribute('aria-pressed', 'true');
-        store.setItem('sa11y-remember-theme', '');
-      } else {
-        Constants.Global.html.setAttribute('data-sa11y-theme', 'light');
-        Constants.Panel.themeToggle.textContent = `${Lang._('OFF')}`;
-        Constants.Panel.themeToggle.setAttribute('aria-pressed', 'false');
-        store.setItem('sa11y-remember-theme', '');
-      }
+    const { themeToggle } = Constants.Panel;
+    const { html } = Constants.Global;
+
+    const storeTheme = (theme) => {
+      html.setAttribute('data-sa11y-theme', theme);
+      store.setItem('sa11y-theme', theme);
+      themeToggle.textContent = Lang._(theme === 'dark' ? 'ON' : 'OFF');
+      themeToggle.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
     };
-    systemInitiatedDark.addEventListener('change', prefersColorTest);
-    Constants.Panel.themeToggle.onclick = async () => {
-      const theme = store.getItem('sa11y-remember-theme');
-      if (theme === 'dark') {
-        Constants.Global.html.setAttribute('data-sa11y-theme', 'light');
-        store.setItem('sa11y-remember-theme', 'light');
-        Constants.Panel.themeToggle.textContent = `${Lang._('OFF')}`;
-        Constants.Panel.themeToggle.setAttribute('aria-pressed', 'false');
-      } else if (theme === 'light') {
-        Constants.Global.html.setAttribute('data-sa11y-theme', 'dark');
-        store.setItem('sa11y-remember-theme', 'dark');
-        Constants.Panel.themeToggle.textContent = `${Lang._('ON')}`;
-        Constants.Panel.themeToggle.setAttribute('aria-pressed', 'true');
-      } else if (systemInitiatedDark.matches) {
-        Constants.Global.html.setAttribute('data-sa11y-theme', 'light');
-        store.setItem('sa11y-remember-theme', 'light');
-        Constants.Panel.themeToggle.textContent = `${Lang._('OFF')}`;
-        Constants.Panel.themeToggle.setAttribute('aria-pressed', 'false');
-      } else {
-        Constants.Global.html.setAttribute('data-sa11y-theme', 'dark');
-        store.setItem('sa11y-remember-theme', 'dark');
-        Constants.Panel.themeToggle.textContent = `${Lang._('ON')}`;
-        Constants.Panel.themeToggle.setAttribute('aria-pressed', 'true');
-      }
+
+    // Initial theme setup.
+    const initialTheme = store.getItem('sa11y-theme') || (systemInitiatedDark.matches ? 'dark' : 'light');
+    storeTheme(initialTheme);
+
+    // Listen to system theme changes.
+    systemInitiatedDark.addEventListener('change', () => {
+      storeTheme(systemInitiatedDark.matches ? 'dark' : 'light');
+    });
+
+    // Toggle theme on based on toggle switch.
+    themeToggle.onclick = () => {
+      const currentTheme = store.getItem('sa11y-theme') || (systemInitiatedDark.matches ? 'dark' : 'light');
+      const preferredTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      storeTheme(preferredTheme);
     };
-    const theme = store.getItem('sa11y-remember-theme');
-    if (theme === 'dark') {
-      Constants.Global.html.setAttribute('data-sa11y-theme', 'dark');
-      store.setItem('sa11y-remember-theme', 'dark');
-      Constants.Panel.themeToggle.textContent = `${Lang._('ON')}`;
-      Constants.Panel.themeToggle.setAttribute('aria-pressed', 'true');
-    } else if (theme === 'light') {
-      Constants.Global.html.setAttribute('data-sa11y-theme', 'light');
-      store.setItem('sa11y-remember-theme', 'light');
-      Constants.Panel.themeToggle.textContent = `${Lang._('OFF')}`;
-      Constants.Panel.themeToggle.setAttribute('aria-pressed', 'false');
-    }
 
     /* ****************** */
     /*  Colour filters    */
@@ -2183,7 +2606,7 @@
 
         if (option >= 1 && option <= 4) {
           if (window.matchMedia('(forced-colors: active)').matches) {
-            createAlert(Lang._('COLOUR_FILTER_HIGH_CONTRAST_MESSAGE'));
+            createAlert(Lang._('COLOUR_FILTER_HIGH_CONTRAST'));
           } else {
             // Set attributes.
             Constants.Root.areaToCheck.setAttribute('data-sa11y-filter', filters[option - 1]);
@@ -2249,7 +2672,7 @@
     Constants.Panel.outlineToggle.classList.add('active');
     Constants.Panel.outline.classList.add('active');
     Constants.Panel.outlineToggle.setAttribute('aria-expanded', 'true');
-    store.setItem('sa11y-remember-outline', 'Opened');
+    store.setItem('sa11y-outline', 'Opened');
     isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
 
     // Toggle visibility of heading labels
@@ -2264,7 +2687,7 @@
     Constants.Panel.outline.classList.remove('active');
     Constants.Panel.outlineToggle.classList.remove('active');
     Constants.Panel.outlineToggle.setAttribute('aria-expanded', 'false');
-    store.setItem('sa11y-remember-outline', 'Closed');
+    store.setItem('sa11y-outline', 'Closed');
 
     // Toggle visibility of heading labels
     const headingLabels = find('sa11y-heading-label', 'root');
@@ -2278,7 +2701,7 @@
     Constants.Panel.imagesToggle.classList.add('active');
     Constants.Panel.images.classList.add('active');
     Constants.Panel.imagesToggle.setAttribute('aria-expanded', 'true');
-    store.setItem('sa11y-remember-images', 'Opened');
+    store.setItem('sa11y-images', 'Opened');
     isScrollable(Constants.Panel.imagesList, Constants.Panel.imagesContent);
 
     const event = new CustomEvent('sa11y-build-image-outline');
@@ -2290,7 +2713,7 @@
       Constants.Panel.imagesToggle.classList.remove('active');
       Constants.Panel.images.classList.remove('active');
       Constants.Panel.imagesToggle.setAttribute('aria-expanded', 'false');
-      store.setItem('sa11y-remember-images', 'Closed');
+      store.setItem('sa11y-images', 'Closed');
     }
   };
 
@@ -2301,7 +2724,7 @@
     Constants.Panel.settingsToggle.classList.add('active');
     Constants.Panel.settings.classList.add('active');
     Constants.Panel.settingsToggle.setAttribute('aria-expanded', 'true');
-    store.setItem('sa11y-remember-settings', 'Opened');
+    store.setItem('sa11y-settings', 'Opened');
     isScrollable(
       Constants.Panel.settingsContent,
       Constants.Panel.settingsContent,
@@ -2313,7 +2736,7 @@
     Constants.Panel.settings.classList.remove('active');
     Constants.Panel.settingsToggle.classList.remove('active');
     Constants.Panel.settingsToggle.setAttribute('aria-expanded', 'false');
-    store.setItem('sa11y-remember-settings', 'Closed');
+    store.setItem('sa11y-settings', 'Closed');
   };
 
   /* **************************************************************** */
@@ -2337,7 +2760,7 @@
     });
 
     // Remember to leave outline open
-    if (store.getItem('sa11y-remember-outline') === 'Opened') {
+    if (store.getItem('sa11y-outline') === 'Opened') {
       openOutline();
     }
 
@@ -2359,7 +2782,7 @@
       });
 
       // Remember to leave outline open
-      if (store.getItem('sa11y-remember-images') === 'Opened') {
+      if (store.getItem('sa11y-images') === 'Opened') {
         openImages();
       }
     }
@@ -2381,7 +2804,7 @@
     });
 
     // Remember to leave settings open
-    if (store.getItem('sa11y-remember-settings') === 'Opened') {
+    if (store.getItem('sa11y-settings') === 'Opened') {
       openSettings();
     }
 
@@ -2420,18 +2843,12 @@
       const outlineArray = [];
 
       // Find all dismissed headings and update headingOutline array.
-      const findDismissedHeadings = dismissed.map((e) => {
-        const found = headingOutline.find((f) => (e.key.includes(f.dismiss) && e.href === window.location.pathname));
-        if (found === undefined) return '';
-        return found;
-      });
-      findDismissedHeadings.forEach(($el) => {
-        Object.assign($el, { dismissedHeading: true });
-      });
+      const findDismissedHeadings = dismissed.map((e) => headingOutline.find((f) => e.key === f.dismiss && e.href === window.location.pathname)).filter(Boolean);
+      findDismissedHeadings.forEach(($el) => Object.assign($el, { dismissedHeading: true }));
 
       // Show meta page title in Page Outline.
+      let outlineItem;
       if (option.showTitleInPageOutline) {
-        let outlineItem;
         const metaTitleElement = document.querySelector('head title');
         if (!metaTitleElement || metaTitleElement.textContent.trim().length === 0) {
           outlineItem = `<li><div class="badge error-badge"><span aria-hidden="true"><span class="error-icon"></span></span> ${Lang._('TITLE')}</div> <div class="badge error-badge">${Lang._('MISSING')}</div></li>`;
@@ -2455,7 +2872,7 @@
         const { isWithinRoot } = heading;
 
         // Filter out specified headings in outlineIgnore prop.
-        const ignoreArray = Constants.Exclusions.Outline ? Array.from(document.querySelectorAll(Constants.Exclusions.Outline)) : [];
+        const ignoreArray = Constants.Exclusions.Outline ? Elements.Found.ExcludedHeadings : [];
 
         if (!ignoreArray.includes($el)) {
           // Indicate if heading is totally hidden or visually hidden.
@@ -2534,15 +2951,15 @@
           label.shadowRoot.appendChild(content);
 
           // Make heading labels visible when panel is open.
-          if (store.getItem('sa11y-remember-outline') === 'Opened') {
+          if (store.getItem('sa11y-outline') === 'Opened') {
             label.hidden = false;
           }
         }
       });
 
       // Append headings to Page Outline.
-      Constants.Panel.outlineList.innerHTML = (outlineArray.length === 0)
-        ? `<li>${Lang._('PANEL_NO_HEADINGS')}</li>`
+      Constants.Panel.outlineList.innerHTML = (headingOutline.length === 0)
+        ? `${outlineItem || ''} <li>${Lang._('PANEL_NO_HEADINGS')}</li>`
         : outlineArray.join(' ');
 
       // Make clickable!
@@ -2578,7 +2995,7 @@
               });
 
               if (outlineLink.classList.contains('hidden-h')) {
-                createAlert(`${Lang._('HEADING_NOT_VISIBLE_ALERT')}`);
+                createAlert(`${Lang._('HEADING_NOT_VISIBLE')}`);
               } else if (Constants.Panel.alert.classList.contains('active')) {
                 removeAlert();
               }
@@ -2641,7 +3058,7 @@
     };
 
     // Generate heading outline based on local storage or if "Outline" button is selected.
-    const rememberOutline = store.getItem('sa11y-remember-outline');
+    const rememberOutline = store.getItem('sa11y-outline');
     if (rememberOutline === 'Opened') outlineHandler();
     document.addEventListener('sa11y-build-heading-outline', outlineHandler);
   }
@@ -2694,29 +3111,28 @@
     };
 
     const imageOutlineHandler = () => {
-      // Create a single array that gets appended to heading outline.
       const imageArray = [];
 
-      // Find all dismissed images and update headingOutline array.
-      const findDismissedImages = dismissed.map((e) => {
-        const found = imageResults.find((f) => (e.key.includes(f.dismiss) && e.href === window.location.pathname));
-        if (found === undefined) return '';
-        return found;
-      });
-
-      findDismissedImages.forEach(($el) => {
-        Object.assign($el, { dismissedImage: true });
-      });
+      // Find all dismissed images.
+      const findDismissedImages = dismissed.map((e) => imageResults.find((f) => e.key === f.dismiss && e.href === window.location.pathname)).filter(Boolean);
 
       imageResults.forEach((image) => {
+        // Filter out dismissed images.
+        const isDismissed = findDismissedImages.some((dismissedImage) => dismissedImage.element.outerHTML.toLowerCase() === image.element.outerHTML.toLowerCase());
+        if (isDismissed) Object.assign(image, { dismissedImage: true });
+
+        // Get image object's properties.
         const issue = image.type;
+        const developerCheck = image.developer;
         const { dismissedImage } = image;
         const altText = escapeHTML(image.element.alt);
 
-        // Account for lazy loading libraries that use 'data-src' attribute.
-        const { src } = image.element;
-        const dataSrc = image.element.getAttribute('data-src');
-        const source = (dataSrc && dataSrc.length > 3) ? dataSrc : src;
+        // Make developer checks don't show images as error if Developer checks are off!
+        const devChecksOff = store.getItem('sa11y-developer') === 'Off' || store.getItem('sa11y-developer') === null;
+        const showDeveloperChecks = devChecksOff && (issue === 'error' || issue === 'warning') && developerCheck === true;
+
+        // Account for lazy loading libraries.
+        const source = getBestImageSource(image.element);
 
         // Generate edit link if locally hosted image and prop is enabled.
         const edit = generateEditLink(image);
@@ -2727,7 +3143,8 @@
           : '';
 
         let append;
-        if (issue === 'error') {
+
+        if (issue === 'error' && !showDeveloperChecks) {
           const missing = altText.length === 0
             ? `<div class="badge error-badge">${Lang._('MISSING')}</div>`
             : `<strong class="red-text">${altText}</strong>`;
@@ -2740,7 +3157,7 @@
           ${edit}
         </li>`;
           imageArray.push(append);
-        } else if (issue === 'warning' && !dismissedImage) {
+        } else if (issue === 'warning' && !dismissedImage && !showDeveloperChecks) {
           const decorative = altText.length === 0
             ? `<div class="badge warning-badge">${Lang._('DECORATIVE')}</div>`
             : '';
@@ -2776,7 +3193,7 @@
 
       // Append headings to Page Outline.
       Constants.Panel.imagesList.innerHTML = (imageArray.length === 0)
-        ? `<li>${Lang._('IMAGES_NOT_FOUND')}</li>`
+        ? `<li>${Lang._('NO_IMAGES')}</li>`
         : imageArray.join(' ');
 
       // Remove event listener.
@@ -2784,7 +3201,7 @@
     };
 
     /* Generate image outline based on local storage or if "Image" button is selected. */
-    const rememberImages = store.getItem('sa11y-remember-images');
+    const rememberImages = store.getItem('sa11y-images');
     if (rememberImages === 'Opened') imageOutlineHandler();
     document.addEventListener('sa11y-build-image-outline', imageOutlineHandler);
   }
@@ -2812,7 +3229,7 @@
       Constants.Panel.skipButton.classList.remove('active');
     } else {
       Constants.Panel.content.setAttribute('class', 'good');
-      Constants.Panel.status.innerHTML = `${Lang._('PANEL_STATUS_NONE')}`;
+      Constants.Panel.status.innerHTML = `${Lang._('NO_ERRORS_FOUND')}`;
     }
 
     // If there are no button annotations, disable the Skip-to-Toggle switch.
@@ -2834,15 +3251,15 @@
     } else if (warningCount > 0 && errorCount === 0) {
       Constants.Panel.notifBadge.classList.add('notification-badge-warning');
       Constants.Panel.notifCount.innerText = `${warningCount}`;
-      Constants.Panel.notifText.innerText = `${Lang._('PANEL_ICON_WARNINGS')}`;
+      Constants.Panel.notifText.innerText = `${Lang._('WARNINGS_FOUND')}`;
     } else {
       Constants.Panel.notifBadge.classList.remove('notification-badge-warning');
       Constants.Panel.notifCount.innerText = `${totalCount}`;
-      Constants.Panel.notifText.innerText = Lang._('PANEL_ICON_TOTAL');
+      Constants.Panel.notifText.innerText = Lang._('TOTAL_FOUND');
     }
 
     // Don't show badge when panel is opened.
-    if (store.getItem('sa11y-remember-panel') === 'Opened' || totalCount === 0) {
+    if (store.getItem('sa11y-panel') === 'Opened' || totalCount === 0) {
       Constants.Panel.notifBadge.style.display = 'none';
     } else {
       Constants.Panel.notifBadge.style.display = 'flex';
@@ -6166,9 +6583,1095 @@
     render: render
   });
 
-  var tooltipStyles = "a,button,code,div,h1,h2,kbd,li,ol,p,span,strong,svg,ul{all:unset;box-sizing:border-box!important}div{display:block}:after,:before{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}@media (forced-colors:active){[data-tippy-root]{border:2px solid transparent;border-radius:5px}}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:0}.tippy-box[data-placement^=top]>.tippy-arrow:before{border-top-color:initial;border-width:8px 8px 0;bottom:-7px;left:0;transform-origin:center top}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:0}.tippy-box[data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:initial;border-width:0 8px 8px;left:0;top:-7px;transform-origin:center bottom}.tippy-box[data-placement^=left]>.tippy-arrow{right:0}.tippy-box[data-placement^=left]>.tippy-arrow:before{border-left-color:initial;border-width:8px 0 8px 8px;right:-7px;transform-origin:center left}.tippy-box[data-placement^=right]>.tippy-arrow{left:0}.tippy-box[data-placement^=right]>.tippy-arrow:before{border-right-color:initial;border-width:8px 8px 8px 0;left:-7px;transform-origin:center right}.tippy-arrow{color:#333;height:16px;width:16px}.tippy-arrow:before{border-color:transparent;border-style:solid;content:\"\";position:absolute}.tippy-content{padding:5px 9px;position:relative;z-index:1}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{word-wrap:break-word;min-width:300px;text-align:start}[role=tooltip]{min-width:185px;text-align:center}.tippy-box[data-theme~=sa11y-theme]{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-bg);border-radius:4px;box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15)!important;color:var(--sa11y-panel-primary);display:block;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px;outline:0;padding:8px;position:relative;transition-property:transform,visibility,opacity}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace;font-size:calc(var(--sa11y-normal-text) - 1px)}.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);letter-spacing:normal;line-height:22px;padding:1.6px 4.8px}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block-end:0;margin-block-start:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{display:list-item;margin:5px 10px 0 20px;padding-bottom:5px}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] a:hover{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin:0}.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;padding:4px 8px}.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:focus,.tippy-box[data-theme~=sa11y-theme] button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme] .link-icon{background:var(--sa11y-panel-primary);display:inline-block;height:16px;margin-bottom:-3.5px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat;width:16px}.tippy-box[data-theme~=sa11y-theme] .error .badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .error .link-icon{background:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .warning .badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme] .warning .link-icon{background:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{forced-color-adjust:none}.tippy-box[data-theme~=sa11y-theme] .tippy-arrow{z-index:-1}}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:active,.tippy-box[data-theme~=sa11y-theme] button:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible){box-shadow:none;outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus-visible,.tippy-box[data-theme~=sa11y-theme] a:focus-visible,.tippy-box[data-theme~=sa11y-theme] button:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.tippy-box[data-theme~=sa11y-theme] .error-icon,.tippy-box[data-theme~=sa11y-theme] .hidden-icon,.tippy-box[data-theme~=sa11y-theme] .link-icon{filter:invert(1)}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:focus{outline:3px solid transparent!important}}";
+  ///////////////////////////////////////////////////////////////////////////////
+  // */ //// END LOCAL TESTING SWITCH
 
-  class TooltipComponent extends HTMLElement {
+
+  /////  Module Scope Object Containing Constants  /////
+  /////   APCA   0.0.98G - 4g - W3 Compatible Constants
+
+  /////  𝒦 SA98G  ///////////////////////////////////
+      const SA98G = {
+
+          mainTRC: 2.4, // 2.4 exponent for emulating actual monitor perception
+
+              // For reverseAPCA
+          get mainTRCencode() { return 1 / this.mainTRC },
+
+                // sRGB coefficients
+          sRco: 0.2126729, 
+          sGco: 0.7151522, 
+          sBco: 0.0721750, 
+
+                // G-4g constants for use with 2.4 exponent
+          normBG: 0.56, 
+          normTXT: 0.57,
+          revTXT: 0.62,
+          revBG: 0.65,
+
+                // G-4g Clamps and Scalers
+          blkThrs: 0.022,
+          blkClmp: 1.414, 
+          scaleBoW: 1.14,
+          scaleWoB: 1.14,
+          loBoWoffset: 0.027,
+          loWoBoffset: 0.027,
+          deltaYmin: 0.0005,
+          loClip: 0.1,
+
+            ///// MAGIC NUMBERS for UNCLAMP, for use with 0.022 & 1.414 /////
+           // Magic Numbers for reverseAPCA
+          mFactor: 1.94685544331710,
+          get mFactInv() { return 1 / this.mFactor},
+          mOffsetIn: 0.03873938165714010,
+          mExpAdj: 0.2833433964208690,
+          get mExp() { return this.mExpAdj / this.blkClmp},
+          mOffsetOut: 0.3128657958707580,
+        };
+
+
+
+
+  //////////////////////////////////////////////////////////////////////////////
+  //////////  APCA CALCULATION FUNCTIONS \/////////////////////////////////////
+
+  //////////  ƒ  APCAcontrast()  ////////////////////////////////////////////
+  function APCAcontrast (txtY,bgY,places = -1) {
+                   // send linear Y (luminance) for text and background.
+                  // txtY and bgY must be between 0.0-1.0
+                 // IMPORTANT: Do not swap, polarity is important.
+
+    const icp = [0.0,1.1];     // input range clamp / input error check
+
+    if(isNaN(txtY)||isNaN(bgY)||Math.min(txtY,bgY)<icp[0]||
+                                Math.max(txtY,bgY)>icp[1]){
+      return 0.0;  // return zero on error
+      // return 'error'; // optional string return for error
+    }
+  //////////   SAPC LOCAL VARS   /////////////////////////////////////////
+
+    let SAPC = 0.0;            // For raw SAPC values
+    let outputContrast = 0.0; // For weighted final values
+    let polCat = 'BoW';      // Alternate Polarity Indicator. N normal R reverse
+
+    // TUTORIAL
+
+    // Use Y for text and BG, and soft clamp black,
+    // return 0 for very close luminances, determine
+    // polarity, and calculate SAPC raw contrast
+    // Then scale for easy to remember levels.
+
+    // Note that reverse contrast (white text on black)
+    // intentionally returns a negative number
+    // Proper polarity is important!
+
+  //////////   BLACK SOFT CLAMP   ////////////////////////////////////////
+
+            // Soft clamps Y for either color if it is near black.
+    txtY = (txtY > SA98G.blkThrs) ? txtY :
+                           txtY + Math.pow(SA98G.blkThrs - txtY, SA98G.blkClmp);
+    bgY = (bgY > SA98G.blkThrs) ? bgY :
+                            bgY + Math.pow(SA98G.blkThrs - bgY, SA98G.blkClmp);
+
+         ///// Return 0 Early for extremely low ∆Y
+    if ( Math.abs(bgY - txtY) < SA98G.deltaYmin ) { return 0.0; }
+
+
+  //////////   APCA/SAPC CONTRAST - LOW CLIP (W3 LICENSE)  ///////////////
+
+    if ( bgY > txtY ) {  // For normal polarity, black text on white (BoW)
+
+                // Calculate the SAPC contrast value and scale
+      SAPC = ( Math.pow(bgY, SA98G.normBG) - 
+               Math.pow(txtY, SA98G.normTXT) ) * SA98G.scaleBoW;
+
+              // Low Contrast smooth rollout to prevent polarity reversal
+             // and also a low-clip for very low contrasts
+      outputContrast = (SAPC < SA98G.loClip) ? 0.0 : SAPC - SA98G.loBoWoffset;
+
+    } else {  // For reverse polarity, light text on dark (WoB)
+             // WoB should always return negative value.
+      polCat = 'WoB';
+
+      SAPC = ( Math.pow(bgY, SA98G.revBG) - 
+               Math.pow(txtY, SA98G.revTXT) ) * SA98G.scaleWoB;
+
+      outputContrast = (SAPC > -SA98G.loClip) ? 0.0 : SAPC + SA98G.loWoBoffset;
+    }
+
+           // return Lc (lightness contrast) as a signed numeric value 
+          // Round to the nearest whole number as string is optional.
+         // Rounded can be a signed INT as output will be within ± 127 
+        // places = -1 returns signed float, 1 or more set that many places
+       // 0 returns rounded string, uses BoW or WoB instead of minus sign
+
+    if(places < 0 ){  // Default (-1) number out, all others are strings
+      return  outputContrast * 100.0;
+    } else if(places == 0 ){
+      return  Math.round(Math.abs(outputContrast)*100.0)+'<sub>'+polCat+'</sub>';
+    } else if(Number.isInteger(places)){
+      return  (outputContrast * 100.0).toFixed(places);
+    } else { return 0.0 }
+
+  } // End APCAcontrast()
+
+
+
+
+  //////////////////////////////////////////////////////////////////////////////
+  //////////  ƒ  fontLookupAPCA()  0.1.7 (G)  \////////////////////////////////
+  /////////                                    \//////////////////////////////
+
+  function fontLookupAPCA (contrast,places=2) {
+
+  ////////////////////////////////////////////////////////////////////////////
+  /////  CONTRAST * FONT WEIGHT & SIZE  /////////////////////////////////////
+
+  // Font size interpolations. Here the chart was re-ordered to put
+  // the main contrast levels each on one line, instead of font size per line.
+  // First column is LC value, then each following column is font size by weight
+
+  // G G G G G G  Public Beta 0.1.7 (G) • MAY 28 2022
+
+  // Lc values under 70 should have Lc 15 ADDED if used for body text
+  // All font sizes are in px and reference font is Barlow
+
+  // 999: prohibited - too low contrast
+  // 777: NON TEXT at this minimum weight stroke
+  // 666 - this is for spot text, not fluent-Things like copyright or placeholder.
+  // 5xx - minimum font at this weight for content, 5xx % 500 for font-size
+  // 4xx - minimum font at this weight for any purpose], 4xx % 400 for font-size
+
+  // MAIN FONT SIZE LOOKUP
+
+  //// ASCENDING SORTED  Public Beta 0.1.7 (G) • MAY 28 2022  ////
+
+  //// Lc 45 * 0.2 = 9 which is the index for the row for Lc 45
+
+  // MAIN FONT LOOKUP May 28 2022 EXPANDED
+  // Sorted by Lc Value
+  // First row is standard weights 100-900
+  // First column is font size in px
+  // All other values are the Lc contrast 
+  // 999 = too low. 777 = non-text and spot text only
+
+
+  const fontMatrixAscend = [
+      ['Lc',100,200,300,400,500,600,700,800,900],
+      [0,999,999,999,999,999,999,999,999,999],
+      [10,999,999,999,999,999,999,999,999,999],
+      [15,777,777,777,777,777,777,777,777,777],
+      [20,777,777,777,777,777,777,777,777,777],
+      [25,777,777,777,120,120,108,96,96,96],
+      [30,777,777,120,108,108,96,72,72,72],
+      [35,777,120,108,96,72,60,48,48,48],
+      [40,120,108,96,60,48,42,32,32,32],
+      [45,108,96,72,42,32,28,24,24,24],
+      [50,96,72,60,32,28,24,21,21,21],
+      [55,80,60,48,28,24,21,18,18,18],
+      [60,72,48,42,24,21,18,16,16,18],
+      [65,68,46,32,21.75,19,17,15,16,18],
+      [70,64,44,28,19.5,18,16,14.5,16,18],
+      [75,60,42,24,18,16,15,14,16,18],
+      [80,56,38.25,23,17.25,15.81,14.81,14,16,18],
+      [85,52,34.5,22,16.5,15.625,14.625,14,16,18],
+      [90,48,32,21,16,15.5,14.5,14,16,18],
+      [95,45,28,19.5,15.5,15,14,13.5,16,18],
+      [100,42,26.5,18.5,15,14.5,13.5,13,16,18],
+      [105,39,25,18,14.5,14,13,12,16,18],
+      [110,36,24,18,14,13,12,11,16,18],
+      [115,34.5,22.5,17.25,12.5,11.875,11.25,10.625,14.5,16.5],
+      [120,33,21,16.5,11,10.75,10.5,10.25,13,15],
+      [125,32,20,16,10,10,10,10,12,14],
+      ];
+
+
+  // ASCENDING SORTED  Public Beta 0.1.7 (G) • MAY 28 2022 ////
+
+  // DELTA - MAIN FONT LOOKUP May 28 2022 EXPANDED
+  // EXPANDED  Sorted by Lc Value ••  DELTA
+  // The pre-calculated deltas of the above array
+
+  const fontDeltaAscend = [
+      ['∆Lc',100,200,300,400,500,600,700,800,900],
+      [0,0,0,0,0,0,0,0,0,0],
+      [10,0,0,0,0,0,0,0,0,0],
+      [15,0,0,0,0,0,0,0,0,0],
+      [20,0,0,0,0,0,0,0,0,0],
+      [25,0,0,0,12,12,12,24,24,24],
+      [30,0,0,12,12,36,36,24,24,24],
+      [35,0,12,12,36,24,18,16,16,16],
+      [40,12,12,24,18,16,14,8,8,8],
+      [45,12,24,12,10,4,4,3,3,3],
+      [50,16,12,12,4,4,3,3,3,3],
+      [55,8,12,6,4,3,3,2,2,0],
+      [60,4,2,10,2.25,2,1,1,0,0],
+      [65,4,2,4,2.25,1,1,0.5,0,0],
+      [70,4,2,4,1.5,2,1,0.5,0,0],
+      [75,4,3.75,1,0.75,0.188,0.188,0,0,0],
+      [80,4,3.75,1,0.75,0.188,0.188,0,0,0],
+      [85,4,2.5,1,0.5,0.125,0.125,0,0,0],
+      [90,3,4,1.5,0.5,0.5,0.5,0.5,0,0],
+      [95,3,1.5,1,0.5,0.5,0.5,0.5,0,0],
+      [100,3,1.5,0.5,0.5,0.5,0.5,1,0,0],
+      [105,3,1,0,0.5,1,1,1,0,0],
+      [110,1.5,1.5,0.75,1.5,1.125,0.75,0.375,1.5,1.5],
+      [115,1.5,1.5,0.75,1.5,1.125,0.75,0.375,1.5,1.5],
+      [120,1,1,0.5,1,0.75,0.5,0.25,1,1],
+      [125,0,0,0,0,0,0,0,0,0],
+      ];
+
+    // APCA CONTRAST FONT LOOKUP TABLES
+    // Copyright © 2022 by Myndex Research and Andrew Somers. All Rights Reserved
+    // Public Beta 0.1.7 (G) • MAY 28 2022
+    // For the following arrays, the Y axis is contrastArrayLen
+    // The two x axis are weightArrayLen and scoreArrayLen
+
+    // MAY 28 2022
+
+    const weightArray = [0,100,200,300,400,500,600,700,800,900];
+    const weightArrayLen = weightArray.length; // X axis
+
+    let returnArray = [contrast.toFixed(places),0,0,0,0,0,0,0,0,0,];
+    returnArray.length; // X axis
+
+  //// Lc 45 * 0.2 = 9, and 9 is the index for the row for Lc 45
+
+    let tempFont = 777;
+    contrast = Math.abs(contrast); // Polarity unneeded for LUT
+    const factor = 0.2; // 1/5 as LUT is in increments of 5
+    const index = (contrast == 0) ?
+                   1 : (contrast * factor) | 0 ; // LUT row... n|0 is bw floor
+    let w = 0; 
+      // scoreAdj interpolates the needed font side per the Lc
+    let scoreAdj = (contrast - fontMatrixAscend[index][w]) * factor;
+
+    w++; // determines column in font matrix LUT
+
+
+  /////////  Font and Score Interpolation  \/////////////////////////////////
+
+  // populate returnArray with interpolated values
+
+    for (; w < weightArrayLen; w++) {
+
+      tempFont = fontMatrixAscend[index][w]; 
+
+      if (tempFont > 400) { // declares a specific minimum for the weight.
+          returnArray[w] = tempFont;
+      } else if (contrast < 14.5 ) {
+          returnArray[w] = 999; //  999 = do not use for anything
+      } else if (contrast < 29.5 ) {
+          returnArray[w] = 777; // 777 =  non-text only
+      } else {
+                  // INTERPOLATION OF FONT SIZE
+                 // sets level for 0.5px size increments of smaller fonts
+                // Note bitwise (n|0) instead of floor
+        (tempFont > 24) ?
+          returnArray[w] =
+              Math.round(tempFont - (fontDeltaAscend[index][w] * scoreAdj)) :
+          returnArray[w] =
+              tempFont - ((2.0 * fontDeltaAscend[index][w] * scoreAdj) | 0) * 0.5;
+                                                        // (n|0) is bitwise floor
+      }
+    }
+  /////////  End Interpolation  ////////////////////////////////////////////
+
+    return returnArray
+  } // end fontLookupAPCA
+
+  /////////\                                      ///////////////////////////\
+  //////////\  END  fontLookupAPCA()  0.1.7 (G)  /////////////////////////////\
+  /////////////////////////////////////////////////////////////////////////////\
+
+
+
+
+  //////////////////////////////////////////////////////////////////////////////
+  //////////  LUMINANCE CONVERTERS  |//////////////////////////////////////////
+
+
+  //////////  ƒ  sRGBtoY()  //////////////////////////////////////////////////
+  function sRGBtoY (rgb = [0,0,0]) { // send sRGB 8bpc (0xFFFFFF) or string
+
+  // NOTE: Currently expects 0-255
+
+  /////   APCA   0.0.98G - 4g - W3 Compatible Constants   ////////////////////
+  /*
+  const mainTRC = 2.4; // 2.4 exponent emulates actual monitor perception
+      
+  const sRco = 0.2126729, 
+        sGco = 0.7151522, 
+        sBco = 0.0721750; // sRGB coefficients
+        */
+  // Future:
+  // 0.2126478133913640	0.7151791475336150	0.0721730390750208
+  // Derived from:
+  // xW	yW	K	xR	yR	xG	yG	xB	yB
+  // 0.312720	0.329030	6504	0.640	0.330	0.300	0.600	0.150	0.060
+
+           // linearize r, g, or b then apply coefficients
+          // and sum then return the resulting luminance
+
+    function simpleExp (chan) { return Math.pow(chan/255.0, SA98G.mainTRC); }
+    return SA98G.sRco * simpleExp(rgb[0]) +
+           SA98G.sGco * simpleExp(rgb[1]) +
+           SA98G.sBco * simpleExp(rgb[2]);
+           
+  } // End sRGBtoY()
+
+
+
+
+  ////////////////////////////////////////////////////////////////////////////
+  //////////  UTILITIES  \///////////////////////////////////////////////////
+
+
+  //////////  ƒ  alphaBlend()  /////////////////////////////////////////////
+
+                        // send rgba array for text/icon, rgb for background.
+                       // Only foreground allows alpha of 0.0 to 1.0 
+                      // This blends using gamma encoded space (standard)
+                     // rounded 0-255 or set round=false for number 0.0-255.0
+  function alphaBlend (rgbaFG=[0,0,0,1.0], rgbBG=[0,0,0], round = true ) {
+  	
+  	rgbaFG[3] = Math.max(Math.min(rgbaFG[3], 1.0), 0.0); // clamp alpha 0-1
+  	let compBlend = 1.0 - rgbaFG[3];
+  	let rgbOut = [0,0,0,1,true]; // or just use rgbBG to retain other elements?
+  	
+  	for (let i=0;i<3;i++) {
+  		rgbOut[i] = rgbBG[i] * compBlend + rgbaFG[i] * rgbaFG[3];
+  		if (round) rgbOut[i] = Math.min(Math.round(rgbOut[i]),255);
+  	}  return rgbOut;
+  } // End alphaBlend()
+
+
+
+
+  //\                                     ////////////////////////////////////////
+  ///\                                   ////////////////////////////////////////
+  ////\                                 ////////////////////////////////////////
+  /////\  END APCA 0.1.9  G-4g  BLOCK  ////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Normalizes a given font weight to a numeric value. Maps keywords to their numeric equivalents.
+   * @param {string|number} weight - The font weight, either as a number or a keyword.
+   * @returns {number} - The numeric font weight.
+  */
+  function normalizeFontWeight(weight) {
+    const numericWeight = parseInt(weight, 10);
+    if (!Number.isNaN(numericWeight)) return numericWeight;
+    const weightMap = {
+      lighter: 100,
+      normal: 400,
+      bold: 700,
+      bolder: 900,
+    };
+    return weightMap[weight] || 400;
+  }
+
+  /**
+   * Convert colour string to RGBA format.
+   * @param {string} color The colour string to convert.
+   * @param {number} opacity The computed opacity of the element (0 to 1).
+   * @returns Returns colour in rgba format with alpha value.
+   */
+  function convertToRGBA(color, opacity) {
+    const colorString = color;
+    let r;
+    let g;
+    let b;
+    let a = 1; // Initialize alpha to 1 by default.
+
+    if (!colorString.startsWith('rgb')) {
+      // Unsupported color spaces.
+      if (colorString.startsWith('color(rec2020') || colorString.startsWith('color(display-p3')) {
+        return 'unsupported';
+      }
+
+      // Let the browser do conversion in rgb for non-supported colour spaces.
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      context.fillStyle = colorString;
+      context.fillRect(0, 0, 1, 1);
+      const imageData = context.getImageData(0, 0, 1, 1);
+      [r, g, b, a] = imageData.data;
+      a = (a / 255).toFixed(2); // Convert alpha to range [0, 1]
+    } else {
+      // Parse RGB or RGBA values from the color string
+      const rgbaArray = colorString.match(/[\d.]+/g).map(Number);
+      [r, g, b, a] = rgbaArray.length === 4 ? rgbaArray : [...rgbaArray, 1];
+    }
+
+    // If element has opacity attribute, amend the foreground text color string.
+    if (opacity && opacity < 1) {
+      a = (a * opacity).toFixed(2); // Adjust alpha based on the opacity
+    }
+    return [r, g, b, Number(a)];
+  }
+
+  /**
+   * Retrieves the background colour of an element by traversing up the DOM tree.
+   * @param {HTMLElement} $el - The DOM element from which to start searching for the background.
+   * @returns {string} - The background color in RGBA format, or "image" if background image.
+  */
+  function getBackground($el) {
+    let targetEl = $el;
+    while (targetEl && targetEl.nodeType === 1) {
+      const styles = getComputedStyle(targetEl);
+      const bgColor = convertToRGBA(styles.backgroundColor);
+      const bgImage = styles.backgroundImage;
+      if (bgImage !== 'none') {
+        return { type: 'image', value: bgImage };
+      }
+      if (bgColor[3] !== 0 && bgColor !== 'transparent') {
+        // If the background colour has an alpha channel.
+        if (bgColor[3] < 1) {
+          // We need to find the first non-transparent parent background and blend them together.
+          let parentEl = targetEl.parentElement;
+          let parentBgColor = 'rgba(255, 255, 255, 1)';
+          while (parentEl && parentEl.nodeType === 1) {
+            const parentStyles = getComputedStyle(parentEl);
+            parentBgColor = parentStyles.backgroundColor;
+
+            // Stop, valid colour found.
+            if (parentBgColor !== 'rgba(0, 0, 0, 0)') break;
+
+            // If we reach the HTML tag, default to white.
+            if (parentBgColor === 'rgba(0, 0, 0, 0)' && parentEl.tagName === 'HTML') {
+              parentBgColor = 'rgba(255, 255, 255, 1)';
+            }
+
+            // Move up the DOM tree.
+            parentEl = parentEl.parentElement;
+          }
+          const parentColor = convertToRGBA(parentBgColor || 'rgba(255, 255, 255, 1)');
+          const blendedBG = alphaBlend(bgColor, parentColor);
+          return blendedBG;
+        }
+        // Return solid color immediately if no alpha chanel.
+        return bgColor;
+      }
+      if (targetEl.tagName === 'HTML') {
+        return [255, 255, 255]; // Default to white if we reach the HTML tag.
+      }
+      targetEl = targetEl.parentNode;
+    }
+    return [255, 255, 255]; // Default to white if no background color is found.
+  }
+
+  /** Get the relative luminance of a colour based on WCAG 2.0
+   * @link http://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef
+   * @param {number[]} color Colour code in [R,G,B] format.
+   * @returns Luminance value.
+   */
+  function getLuminance(color) {
+    const rgb = color.slice(0, 3).map((x) => {
+      const normalized = x / 255;
+      return normalized <= 0.03928 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+  }
+
+  /**
+   * Get WCAG 2.0 contrast ratio from luminance value.
+   * @link http://www.w3.org/TR/2008/REC-WCAG20-20081211/#contrast-ratiodef
+   * @param {number} l1 Luminance value of foreground colour.
+   * @param {number} l2 Luminance value of background colour.
+   * @returns WCAG 2.0 contrast ratio.
+   */
+  function getWCAG2Ratio(l1, l2) {
+    const lighter = Math.max(l1, l2);
+    const darker = Math.min(l1, l2);
+    return (lighter + 0.05) / (darker + 0.05);
+  }
+
+  /**
+   * Brighten a foreground text colour.
+   * @param {number[]} color Text colour in [R,G,B,A] format.
+   * @param {number} amount Number or increment to brighten by.
+   * @returns Lighter foreground text colour.
+   */
+  function brighten(color, amount) {
+    return color.map((value, index) => {
+      if (index < 3) { // Only brighten [R,G,B]
+        const newValue = Math.ceil(value + (255 - value) * amount);
+        return newValue >= 255 ? 255 : newValue;
+      }
+      return value;
+    });
+  }
+
+  /**
+   * Darken a foreground text colour.
+   * @param {number[]} color Text colour in [R,G,B,A] format.
+   * @param {number} amount Number or increment to darken by.
+   * @returns Darker foreground text colour.
+   */
+  function darken(color, amount) {
+    return color.map((value, index) => {
+      if (index < 3) { // Only darken [R,G,B]
+        const newValue = Math.floor(value * (1 - amount));
+        return newValue <= 0 ? 0 : newValue;
+      }
+      return value;
+    });
+  }
+
+  /**
+   * Get the hex code equivalent of an RGB colour.
+   * @param {number[]} color Colour in [R,G,B,A] format.
+   * @returns Hexcode equivalent.
+   */
+  function getHex(color) {
+    const [r, g, b] = color.map((value) => Math.min(255, Math.max(0, value)));
+    const hexR = r.toString(16).padStart(2, '0');
+    const hexG = g.toString(16).padStart(2, '0');
+    const hexB = b.toString(16).padStart(2, '0');
+    return `#${hexR}${hexG}${hexB}`;
+  }
+
+  /**
+   * Get the display-friendly contrast value for output.
+   * @param {Object} value - The value object containing the contrast ratio.
+   * @returns {string|number} The formatted contrast ratio.
+   */
+  function ratioToDisplay(value) {
+    return Constants.Global.contrastAPCA
+      ? Math.abs(Number(value.toFixed(1)))
+      : `${value.toFixed(2)}:1`;
+  }
+
+  /**
+   * Calculate the contrast ratio or value between two colours.
+   * @param {number[]} color Text colour in [R,G,B,A] format.
+   * @param {Array} bg Background colour in [R,G,B,A] format.
+   * @returns Either WCAG 2.0 contrast ratio or APCA contrast value.
+   */
+  function calculateContrast(color, bg) {
+    let ratio;
+    const blendedColor = alphaBlend(color, bg).slice(0, 4);
+    if (Constants.Global.contrastAPCA) {
+      const foreground = sRGBtoY(blendedColor);
+      const background = sRGBtoY(bg);
+      ratio = APCAcontrast(foreground, background);
+    } else {
+      // Uses WCAG 2.0 contrast algorithm based on luminance.
+      const foreground = getLuminance(blendedColor);
+      const background = getLuminance(bg);
+      ratio = getWCAG2Ratio(foreground, background);
+    }
+    return { ratio, blendedColor };
+  }
+
+  /**
+   * Suggest a foreground colour with sufficient contrast.
+   * @param {number[]} color Text colour in [R,G,B,A] format.
+   * @param {number[]} background Background colour in [R,G,B,A] format.
+   * @param {boolean} isLargeText Whether text is normal or large size.
+   * @returns Compliant colour hexcode.
+   */
+  function suggestColorWCAG(color, background, isLargeText) {
+    const minContrastRatio = isLargeText ? 3 : 4.5;
+    const fgLuminance = getLuminance(color);
+    const bgLuminance = getLuminance(background);
+
+    // Determine if text color should be lightened or darkened (considers extreme values).
+    const adjustMode = fgLuminance > bgLuminance
+      ? getWCAG2Ratio(1, bgLuminance) > minContrastRatio
+      : getWCAG2Ratio(0, bgLuminance) < minContrastRatio;
+
+    const adjustColor = (foregroundColor, amount, mode) => (
+      mode ? brighten(foregroundColor, amount) : darken(foregroundColor, amount)
+    );
+
+    let adjustedColor = color;
+    let lastValidColor = adjustedColor;
+    let contrastRatio = getWCAG2Ratio(fgLuminance, bgLuminance);
+    let bestContrast = contrastRatio;
+    let previousColor = color;
+
+    // Loop parameters.
+    let step = 0.16;
+    const percentChange = 0.5;
+    const precision = 0.01;
+
+    while (step >= precision) {
+      adjustedColor = adjustColor(adjustedColor, step, adjustMode);
+      const newLuminance = getLuminance(adjustedColor);
+      contrastRatio = getWCAG2Ratio(newLuminance, bgLuminance);
+
+      // console.log(`%c ${getHex(adjustedColor)} | ${contrastRatio}`, `color:${getHex(adjustedColor)};background:${getHex(background)}`);
+
+      // Save valid colour, go back to previous, and continue with a smaller step.
+      if (contrastRatio >= minContrastRatio) {
+        // Ensure new colour is closer to the contrast minimum than old colour.
+        lastValidColor = (contrastRatio <= bestContrast) ? adjustedColor : lastValidColor;
+        bestContrast = contrastRatio;
+        adjustedColor = previousColor;
+        step *= percentChange;
+      }
+
+      previousColor = adjustedColor;
+    }
+    return { color: getHex(lastValidColor) };
+  }
+
+  /**
+   * Determines the optimal contrasting color (either #000 or #FFF) for a given background color and the minimum font size required to meet APCA.
+   * @param {number[]} background The background color in [R, G, B, A] format.
+   * @param {number} fontWeight The computed weight of the font.
+   * @returns Object containing hex code (#000/#FFF) and the recommended font size.
+   */
+  const getOptimalAPCACombo = (background, fontWeight) => {
+    const contrastWithDark = calculateContrast(background, [0, 0, 0, 1]);
+    const contrastWithLight = calculateContrast(background, [255, 255, 255, 1]);
+    const isDarkBetter = Math.abs(contrastWithDark.ratio) > Math.abs(contrastWithLight.ratio);
+    const suggestedColor = isDarkBetter ? [0, 0, 0, 1] : [255, 255, 255, 1];
+    const bestContrastRatio = isDarkBetter ? contrastWithDark.ratio : contrastWithLight.ratio;
+    const newFontLookup = fontLookupAPCA(bestContrastRatio).slice(1);
+    const size = Math.ceil(newFontLookup[Math.floor(fontWeight / 100) - 1]);
+    return { suggestedColor, size };
+  };
+
+  /**
+   * Suggests a new colour or font size based on APCA contrast algorithm.
+   * @param {number[]} color Text colour in [R,G,B,A] format.
+   * @param {number[]} background Background colour in [R,G,B,A] format.
+   * @param {number} fontWeight Current font weight of the element.
+   * @param {number} fontSize Current font size of the element.
+   * @returns Compliant colour hexcode and/or font size combination.
+   */
+  function suggestColorAPCA(color, background, fontWeight, fontSize) {
+    const bgLuminance = sRGBtoY(background);
+    // https://medium.com/@mikeyullinger/how-chameleon-text-ensures-legibility-ae414d7b069a#:~:text=0.179
+    const adjustColor = (foregroundColor, amount) => (bgLuminance <= 0.179
+      ? brighten(foregroundColor, amount)
+      : darken(foregroundColor, amount));
+
+    let adjustedColor = color;
+
+    // Returns 9 font sizes in px corresponding to weights 100 thru 900.
+    // Returns ['LcValue',100,200,300,400,500,600,700,800,900]
+    let contrast = calculateContrast(adjustedColor, background);
+    let fontLookup = fontLookupAPCA(contrast.ratio).slice(1);
+
+    // Index of the corresponding fontWeight.
+    const fontWeightIndex = Math.floor(fontWeight / 100) - 1;
+    const minimumSizeRequired = fontLookup[fontWeightIndex];
+
+    // Find another colour, because nothing will work at any size.
+    const fails = fontSize < minimumSizeRequired || minimumSizeRequired === 999 || minimumSizeRequired === 777;
+
+    // Needs new font size - no colour will work at current size.
+    const best = getOptimalAPCACombo(background, fontWeight);
+    if (best.size > fontSize) {
+      return { color: getHex(best.suggestedColor), size: best.size };
+    }
+
+    let previousColor = color;
+    let lastValidColor = adjustedColor;
+    let bestContrast = contrast.ratio;
+
+    // Loop parameters.
+    let step = 0.16;
+    const percentChange = 0.5;
+    const precision = 0.01;
+    let iterations = 0;
+    const maxIterations = 50;
+
+    // Loop to find a new colour.
+    if (fails) {
+      while (step >= precision) {
+        iterations += 1;
+        adjustedColor = adjustColor(adjustedColor, step);
+        contrast = calculateContrast(adjustedColor, background);
+        fontLookup = fontLookupAPCA(contrast.ratio).slice(1);
+
+        // console.log(`%c ${getHex(adjustedColor)} | ${ratioToDisplay(contrast.ratio)} | ${fontLookup}`, `color:${getHex(adjustedColor)};background:${getHex(background)}`);
+
+        // Save valid colour, go back to previous, and continue with a smaller step.
+        if (fontLookup[fontWeightIndex] <= fontSize) {
+          // Ensure new colour is closer to the contrast minimum than old colour.
+          lastValidColor = (Math.abs(contrast.ratio) <= Math.abs(bestContrast)) ? adjustedColor : lastValidColor;
+          bestContrast = contrast.ratio;
+          lastValidColor = adjustedColor;
+          adjustedColor = previousColor;
+          step *= percentChange;
+        }
+
+        previousColor = adjustedColor;
+
+        // Just in case, break the loop.
+        if (iterations === maxIterations) {
+          return { color: getHex(best.suggestedColor), size: best.size };
+        }
+      }
+    }
+
+    // Found a valid colour.
+    return { color: getHex(lastValidColor), size: null };
+  }
+
+  /**
+   * Generates and inserts color suggestions for tooltip upon tooltip opening.
+   * This function is referenced within './interface/tooltips.js'.
+   * For performance reasons, it is only called upon tooltip opening.
+   * @param {HTMLElement} container The container where the color suggestion will be inserted.
+   */
+  function generateColorSuggestion(contrastDetails) {
+    let adviceContainer;
+    const { color, background, fontWeight, fontSize, isLargeText, type } = contrastDetails;
+    if (color && background && background.type !== 'image' && type === 'text') {
+      const suggested = Constants.Global.contrastAPCA
+        ? suggestColorAPCA(color, background, fontWeight, fontSize)
+        : suggestColorWCAG(color, background, isLargeText);
+
+      let advice;
+      const hr = '<hr aria-hidden="true">';
+      const style = `color:${suggested.color};background-color:${getHex(contrastDetails.background)};`;
+      const colorBadge = `<strong class="badge" style="${style}">${suggested.color}</strong>`;
+      const sizeBadge = `<strong class="normal-badge">${suggested.size}px</strong>`;
+
+      if (!Constants.Global.contrastAPCA) {
+        advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
+      } else if (suggested.color && suggested.size) {
+        advice = `${hr} ${Lang._('CONTRAST_APCA')} ${colorBadge} ${sizeBadge}`;
+      } else if (suggested.color) {
+        advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
+      } else if (suggested.size) {
+        advice = `${hr} ${Lang._('CONTRAST_SIZE')} ${sizeBadge}`;
+      }
+
+      // Append it to contrast details container.
+      adviceContainer = document.createElement('div');
+      adviceContainer.id = 'advice';
+
+      // If low opacity, suggest increase opacity first.
+      const suggestion = (contrastDetails.opacity < 1)
+        ? `<hr aria-hidden="true"> ${Lang.sprintf('CONTRAST_OPACITY')}` : advice;
+
+      // Append advice to contrast details container.
+      adviceContainer.innerHTML = suggestion;
+    }
+    return adviceContainer;
+  }
+
+  /**
+   * Inject contrast colour pickers into tooltip.
+   * @param {HTMLElement} container The tooltip container to inject the contrast colour pickers.
+   */
+  function generateContrastTools(contrastDetails) {
+    const { sanitizedText, color, background, fontWeight, fontSize, ratio, textUnderline } = contrastDetails;
+
+    // Initialize variables.
+    const hasBackgroundColor = background && background.type !== 'image';
+    const backgroundHex = hasBackgroundColor ? getHex(background) : '#000000';
+    const foregroundHex = color ? getHex(color) : '#000000';
+
+    // Other properties.
+    const hasFontWeight = fontWeight ? `font-weight:${fontWeight};` : '';
+    const hasFontSize = fontSize ? `font-size:${fontSize}px;` : '';
+    const textDecoration = textUnderline ? `text-decoration:${textUnderline};` : '';
+
+    // If colour or background colour is unknown; visually indicate so.
+    const unknownFG = color
+      ? '' : 'class="unknown"';
+    const unknownBG = background && background.type !== 'image'
+      ? '' : 'class="unknown"';
+    const unknownFGText = color
+      ? '' : `<span class="visually-hidden">(${Lang._('UNKNOWN')})</span>`;
+    const unknownBGText = background
+      ? '' : `<span class="visually-hidden">(${Lang._('UNKNOWN')})</span>`;
+
+    // Ratio to be displayed.
+    let displayedRatio;
+    if (Constants.Global.contrastAPCA) {
+      // If APCA, don't show "unknown" when value is absolute 0.
+      displayedRatio = Math.abs(ratio) === 0 ? 0 : (Math.abs(ratio) || Lang._('UNKNOWN'));
+    } else {
+      // WCAG 2.0 ratio.
+      displayedRatio = ratio || Lang._('UNKNOWN');
+    }
+
+    // Generate HTML layout.
+    const contrastTools = document.createElement('div');
+    contrastTools.id = 'contrast-tools';
+    contrastTools.innerHTML = `
+      <hr aria-hidden="true">
+      <div id="contrast" class="badge">${Lang._('CONTRAST')}</div>
+      <div id="value" class="badge">${displayedRatio}</div>
+      <div id="non-text" class="badge good-contrast" hidden>${Lang._('NON_TEXT')}</div>
+      <div id="large-text" class="badge good-contrast" hidden>${Lang._('LARGE_TEXT')}</div>
+      <div id="body-text" class="badge good-contrast" hidden>${Lang._('BODY_TEXT')}</div>
+      <div id="apca" class="badge good-contrast" hidden>${Lang._('GOOD')}</div>
+      <div id="apca-table" hidden></div>
+      <div id="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};${sanitizedText.length ? '' : 'display: none;'}` : ''}${hasFontWeight + hasFontSize + textDecoration}">${sanitizedText}</div>
+      <div id="color-pickers">
+        <label for="fg-text">${Lang._('FG')} ${unknownFGText}
+          <input type="color" id="fg-input" value="${foregroundHex}" ${unknownFG}/>
+        </label>
+        <label for="bg">${Lang._('BG')} ${unknownBGText}
+          <input type="color" id="bg-input" value="${backgroundHex}" ${unknownBG}/>
+        </label>
+      </div>`;
+    return contrastTools;
+  }
+
+  function createFontSizesTable(container, fontSizes) {
+    const apcaTable = container;
+    apcaTable.innerHTML = '';
+    apcaTable.hidden = false;
+
+    const row = document.createElement('div');
+    row.classList.add('row');
+
+    // Show only 200 thru 700 font weights.
+    const filteredFontSizes = fontSizes.slice(1, 7);
+    for (let i = 0; i < filteredFontSizes.length; i++) {
+      const fontSize = filteredFontSizes[i];
+      const fontWeight = (i + 2) * 100;
+
+      // Only render the cell if font size is not 777 or 999.
+      if (fontSize !== 777 && fontSize !== 999) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+
+        // Font size.
+        const sizeElement = document.createElement('div');
+        sizeElement.classList.add('font-size');
+        sizeElement.textContent = `${Math.ceil(fontSize)}px`;
+
+        // Font weight.
+        const weightElement = document.createElement('div');
+        weightElement.classList.add('font-weight');
+        weightElement.textContent = `${fontWeight}`;
+
+        cell.appendChild(sizeElement);
+        cell.appendChild(weightElement);
+        row.appendChild(cell);
+        apcaTable.appendChild(row);
+      }
+    }
+  }
+
+  /**
+   * Initializes colour eyedroppers for respective tooltip.
+   * This function is referenced within './interface/tooltips.js'.
+   * @param {HTMLElement} container The container where the color suggestion will be inserted.
+   * @param {Object} contrastDetails Contrast details object containing colour, background, etc.
+   */
+  function initializeContrastTools(container, contrastDetails) {
+    const contrastTools = container?.querySelector('#contrast-tools');
+    if (contrastTools) {
+      const { fontSize, fontWeight, type } = contrastDetails;
+
+      // Cache selectors
+      const contrast = container.querySelector('#contrast');
+      const contrastPreview = container.querySelector('#contrast-preview');
+      const fgInput = container.querySelector('#fg-input');
+      const bgInput = container.querySelector('#bg-input');
+      const nonText = container.querySelector('#non-text');
+      const bodyText = container.querySelector('#body-text');
+      const largeText = container.querySelector('#large-text');
+      const ratio = container.querySelector('#value');
+      const apca = container.querySelector('#apca');
+      const apcaTable = container.querySelector('#apca-table');
+
+      // Helper to update badge classes.
+      const toggleBadges = (elements, condition) => {
+        elements.forEach(($el) => {
+          $el.classList.toggle('good-contrast', condition);
+          $el.classList.toggle('error-badge', !condition);
+        });
+      };
+
+      // Update preview colors and contrast on input change.
+      const updatePreview = () => {
+        const fgColor = fgInput.value;
+        const bgColor = bgInput.value;
+
+        // Remove question mark from inputs.
+        [fgInput, bgInput].forEach((input) => input.classList.remove('unknown'));
+
+        // Adjust colours in preview area.
+        contrastPreview.style.color = fgColor;
+        contrastPreview.style.backgroundColor = bgColor;
+        contrastPreview.style.backgroundImage = 'none';
+
+        // Change SVG color if it contains a single <path> element.
+        const child = contrastPreview.querySelectorAll('svg *');
+        if (child.length === 1) {
+          const { fill, stroke } = getComputedStyle(child[0]);
+          child[0].style.opacity = 1;
+          if (fill !== 'none') child[0].style.fill = fgColor;
+          if (stroke !== 'none') child[0].style.stroke = fgColor;
+        }
+
+        // Get contrast ratio.
+        const contrastValue = calculateContrast(convertToRGBA(fgColor), convertToRGBA(bgColor));
+        const elementsToToggle = [ratio, contrast];
+
+        // APCA
+        if (Constants.Global.contrastAPCA) {
+          const value = contrastValue.ratio;
+          ratio.textContent = ratioToDisplay(value);
+          const fontArray = fontLookupAPCA(value).slice(1);
+          const nonTextPasses = value >= 45 && fontArray[0] >= 0 && fontArray[0] <= 777;
+          let passes;
+
+          switch (type) {
+            case 'svg-error':
+            case 'svg-warning': {
+              nonText.hidden = !nonTextPasses;
+              passes = nonTextPasses;
+              toggleBadges(elementsToToggle, passes);
+              break;
+            }
+            case 'svg-text': {
+              nonText.hidden = !nonTextPasses;
+              passes = fontArray.slice(1, 7).some((size) => size !== 999 && size !== 777);
+              toggleBadges(elementsToToggle, passes);
+              createFontSizesTable(apcaTable, fontArray);
+              break;
+            }
+            default: {
+              const minFontSize = fontArray[Math.floor(fontWeight / 100) - 1];
+              passes = fontSize >= minFontSize;
+              toggleBadges(elementsToToggle, passes);
+              apca.hidden = !passes;
+              break;
+            }
+          }
+        }
+
+        // WCAG 2.0
+        if (!Constants.Global.contrastAPCA) {
+          const value = contrastValue.ratio;
+          ratio.textContent = ratioToDisplay(value);
+          const passes = value >= 3;
+
+          switch (type) {
+            case 'svg-error':
+            case 'svg-warning': {
+              nonText.hidden = !passes;
+              toggleBadges(elementsToToggle, passes);
+              break;
+            }
+            case 'svg-text': {
+              nonText.hidden = !passes;
+              toggleBadges(elementsToToggle, passes);
+              largeText.hidden = !passes;
+              bodyText.hidden = value <= 4.5;
+              break;
+            }
+            default: {
+              toggleBadges([ratio, contrast], passes);
+              largeText.hidden = !passes;
+              bodyText.hidden = value <= 4.5;
+              break;
+            }
+          }
+        }
+      };
+
+      // Event listeners for both colour inputs.
+      fgInput.addEventListener('input', updatePreview);
+      bgInput.addEventListener('input', updatePreview);
+    }
+  }
+
+  /**
+    * Calculate an elements contrast based on WCAG 2.0 contrast algorithm.
+    * @param {HTMLElement} $el The element in the DOM.
+    * @param {number[]} color Text colour in [R,G,B,A] format.
+    * @param {Array} background Background colour in [R,G,B,A] format.
+    * @param {number} fontSize Element's font size.
+    * @param {number} fontWeight Element's font weight.
+    * @param {number} opacity Element's opacity value.
+    * @returns {Object} Object containing the element, ratio, and extra details.
+    */
+  function wcagAlgorithm($el, color, background, fontSize, fontWeight, opacity) {
+    const { ratio, blendedColor } = calculateContrast(color, background);
+    const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
+    const hasLowContrast = ratio < 3;
+    const hasLowContrastNormalText = ratio > 1 && ratio < 4.5;
+
+    if ((isLargeText && hasLowContrast) || (!isLargeText && hasLowContrastNormalText)) {
+      return {
+        $el,
+        ratio: ratioToDisplay(ratio),
+        color: blendedColor,
+        background,
+        fontSize,
+        fontWeight,
+        isLargeText,
+        opacity,
+        textUnderline: getComputedStyle($el).textDecorationLine,
+      };
+    }
+    return null;
+  }
+
+  /**
+   * Calculate an elements contrast based on APCA algorithm.
+   * @param {HTMLElement} $el The element in the DOM.
+   * @param {number[]} color Text colour in [R,G,B,A] format.
+   * @param {Array} background Background colour in [R,G,B,A] format.
+   * @param {number} fontSize Element's font size.
+   * @param {number} fontWeight Element's font weight.
+   * @param {number} opacity Element's opacity value.
+   * @returns {Object} Object containing the element, ratio, and extra details.
+  */
+  function apcaAlgorithm($el, color, background, fontSize, fontWeight, opacity) {
+    const { ratio, blendedColor } = calculateContrast(color, background);
+
+    // Returns 9 font sizes in px corresponding to weights 100 thru 900.
+    // Returns ['LcValue',100,200,300,400,500,600,700,800,900]
+    const fontLookup = fontLookupAPCA(ratio).slice(1);
+
+    // Get minimum font size based on weight.
+    const fontWeightIndex = Math.floor(fontWeight / 100) - 1;
+    const minFontSize = fontLookup[fontWeightIndex];
+
+    if (fontSize < minFontSize) {
+      return {
+        $el,
+        ratio: ratioToDisplay(ratio),
+        color: blendedColor,
+        background,
+        fontWeight,
+        fontSize,
+        opacity,
+        textUnderline: getComputedStyle($el).textDecorationLine,
+      };
+    }
+    return null;
+  }
+
+  /**
+   * Check an element's contrast based on APCA or WCAG 2.0 algorithm.
+   * @param {HTMLElement} $el The element in the DOM.
+   * @param {number[]} color Text colour in [R,G,B,A] format.
+   * @param {Array} background Background colour in [R,G,B,A] format.
+   * @param {number} fontSize Element's font size.
+   * @param {number} fontWeight Element's font weight.
+   * @param {number} opacity Element's opacity value.
+   * @returns {Object} Object containing the element, ratio, and extra details.
+   */
+  function checkElementContrast($el, color, background, fontSize, fontWeight, opacity) {
+    const algorithm = Constants.Global.contrastAPCA ? apcaAlgorithm : wcagAlgorithm;
+    return algorithm($el, color, background, fontSize, fontWeight, opacity);
+  }
+
+  var tooltipStyles = "a,button,code,div,h1,h2,kbd,li,ol,p,span,strong,svg,ul{all:unset;box-sizing:border-box!important}div{display:block}:after,:before{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}@media (forced-colors:active){[data-tippy-root]{border:2px solid transparent;border-radius:5px}}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:0}.tippy-box[data-placement^=top]>.tippy-arrow:before{border-top-color:initial;border-width:8px 8px 0;bottom:-7px;left:0;transform-origin:center top}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:0}.tippy-box[data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:initial;border-width:0 8px 8px;left:0;top:-7px;transform-origin:center bottom}.tippy-box[data-placement^=left]>.tippy-arrow{right:0}.tippy-box[data-placement^=left]>.tippy-arrow:before{border-left-color:initial;border-width:8px 0 8px 8px;right:-7px;transform-origin:center left}.tippy-box[data-placement^=right]>.tippy-arrow{left:0}.tippy-box[data-placement^=right]>.tippy-arrow:before{border-right-color:initial;border-width:8px 8px 8px 0;left:-7px;transform-origin:center right}.tippy-arrow{color:#333;height:16px;width:16px}.tippy-arrow:before{border-color:transparent;border-style:solid;content:\"\";position:absolute}.tippy-content{padding:5px 9px;position:relative;z-index:1}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{word-wrap:break-word;min-width:300px;text-align:start}[role=tooltip]{min-width:185px;text-align:center}.tippy-box[data-theme~=sa11y-panel]{border:1px solid var(--sa11y-panel-bg-splitter);box-shadow:var(--sa11y-box-shadow)}.tippy-box[data-theme~=sa11y-theme]:not([data-theme~=sa11y-panel]){box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15)!important}.tippy-box[data-theme~=sa11y-theme]{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-bg);border-radius:4px;color:var(--sa11y-panel-primary);display:block;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px;outline:0;padding:8px;position:relative;transition-property:transform,visibility,opacity}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:500}.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);letter-spacing:normal;line-height:22px;padding:1.6px 4.8px}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block-end:0;margin-block-start:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{display:list-item;margin:5px 10px 0 20px;padding-bottom:5px}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;font-weight:500;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] a:hover{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin:0}.tippy-box[data-theme~=sa11y-theme] .dismiss-group{margin-top:5px}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:inline-block;margin:10px 5px 5px 0;margin-inline-end:15px;padding:4px 8px}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:focus,.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:hover{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme] .good-icon{background:var(--sa11y-good-text);display:inline-block;height:14px;margin-bottom:-2.5px;-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat;width:14px}.tippy-box[data-theme~=sa11y-theme] .link-icon{background:var(--sa11y-panel-primary);display:inline-block;height:16px;margin-bottom:-3.5px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat;width:16px}.tippy-box[data-theme~=sa11y-theme] .error .badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .error .colour{color:var(--sa11y-red-text)}.tippy-box[data-theme~=sa11y-theme] .error .link-icon{background:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .warning .badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme] .warning .colour{color:var(--sa11y-yellow-text)}.tippy-box[data-theme~=sa11y-theme] .warning .link-icon{background:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme] #apca-table{width:100%}.tippy-box[data-theme~=sa11y-theme] #apca-table .row{display:flex;margin-top:10px}.tippy-box[data-theme~=sa11y-theme] #apca-table .cell{align-items:center;display:flex;flex:1;flex-direction:column;padding:1px}.tippy-box[data-theme~=sa11y-theme] #apca-table .font-weight{font-size:calc(var(--sa11y-normal-text) - 2px);font-weight:700}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{forced-color-adjust:none}.tippy-box[data-theme~=sa11y-theme] .tippy-arrow{z-index:-1}}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:active,.tippy-box[data-theme~=sa11y-theme] button:focus,.tippy-box[data-theme~=sa11y-theme] input:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] input:focus:not(:focus-visible){box-shadow:none;outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus-visible,.tippy-box[data-theme~=sa11y-theme] a:focus-visible,.tippy-box[data-theme~=sa11y-theme] button:focus-visible,.tippy-box[data-theme~=sa11y-theme] input:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.tippy-box[data-theme~=sa11y-theme] .error-icon,.tippy-box[data-theme~=sa11y-theme] .hidden-icon,.tippy-box[data-theme~=sa11y-theme] .link-icon{filter:invert(1)}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:focus{outline:3px solid transparent!important}}";
+
+  /**
+   * Tooltip container for all annotations.
+   */
+  class AnnotationTooltips extends HTMLElement {
     connectedCallback() {
       const shadowRoot = this.attachShadow({ mode: 'open' });
 
@@ -6190,9 +7693,11 @@
       const annotations = tippy(buttons, {
         interactive: true,
         trigger: 'mouseenter click',
+        hideOnClick: false,
         arrow: true,
         offset: [0, 8],
         delay: [0, 400],
+        maxWidth: 375,
         theme: 'sa11y-theme',
         placement: 'auto-start',
         allowHTML: true,
@@ -6204,11 +7709,9 @@
         appendTo: shadowRoot,
         zIndex: 2147483645,
         onShow(instance) {
-          const openedTooltip = instance.popper;
-
           // Hide previously opened tooltip.
           annotations.forEach((popper) => {
-            if (popper !== openedTooltip) {
+            if (popper !== instance.popper) {
               popper.hide();
             }
           });
@@ -6218,7 +7721,7 @@
           annotation.setAttribute('data-sa11y-opened', '');
 
           // Close button for tooltip.
-          const closeButton = openedTooltip.querySelector('.close-btn');
+          const closeButton = instance.popper.querySelector('.close-btn');
           const closeButtonHandler = () => {
             instance.hide();
             instance.reference.focus();
@@ -6232,15 +7735,50 @@
               instance.reference.focus();
             }
           };
-          openedTooltip.addEventListener('keydown', escapeListener);
+          instance.popper.addEventListener('keydown', escapeListener);
+
+          // Generate preview, colour pickers, and suggestions for contrast tooltips.
+          // Imported from rulesets/contrast.js
+          if (!instance.popper.hasAttribute('contrast-tools-initialized')) {
+            const issueID = parseInt(annotation.getAttribute('data-sa11y-annotation'), 10);
+            const issueObject = window.sa11yCheckComplete.results.find((issue) => issue.id === issueID);
+            const { contrastDetails } = issueObject || {};
+
+            if (contrastDetails) {
+              const container = instance.popper.querySelector('[data-sa11y-contrast-details]');
+
+              // Append color pickers and suggested color.
+              const tools = generateContrastTools(contrastDetails);
+              container.appendChild(tools);
+              initializeContrastTools(instance.popper, contrastDetails);
+
+              // Append suggested color.
+              const suggestion = generateColorSuggestion(contrastDetails);
+              if (suggestion) container.appendChild(suggestion);
+
+              // Contrast tools has been initialized.
+              instance.popper.setAttribute('contrast-tools-initialized', true);
+            }
+          }
+
+          // Make tooltip stay open if colour picker is used. Use 'mousedown' event, because upon click of trigger, it sets focus on close button, which immediately closes colour input on safari.
+          let firstClick = true;
+          function handleMouseDown(event) {
+            if (firstClick && event.target.matches('input[type="color"]')) {
+              instance.reference.click();
+              firstClick = false;
+              instance.popper.removeEventListener('mousedown', handleMouseDown);
+            }
+          }
+          instance.popper.addEventListener('mousedown', handleMouseDown);
 
           // Remove all event listeners.
           const onHiddenTooltip = () => {
             closeButton.removeEventListener('click', closeButtonHandler);
-            openedTooltip.removeEventListener('keydown', escapeListener);
-            openedTooltip.removeEventListener('hidden', onHiddenTooltip);
+            instance.popper.removeEventListener('keydown', escapeListener);
+            instance.popper.removeEventListener('hidden', onHiddenTooltip);
           };
-          openedTooltip.addEventListener('hidden', onHiddenTooltip);
+          instance.popper.addEventListener('hidden', onHiddenTooltip);
         },
         onTrigger(instance, event) {
           if (event.type === 'click') {
@@ -6252,45 +7790,40 @@
           }
         },
         onHide(instance) {
-          const openedTooltip = instance.popper;
-          openedTooltip.querySelector('.close-btn').removeEventListener('click', () => {
+          instance.popper.querySelector('.close-btn').removeEventListener('click', () => {
             instance.hide();
           });
           const annotation = instance.reference.getRootNode().host;
           annotation.removeAttribute('data-sa11y-opened');
         },
       });
+    }
+  }
 
-      /* Skip to Issue toggle button */
-      let keyboardShortcut;
-      if (navigator.userAgent.indexOf('Mac') !== -1) {
-        keyboardShortcut = '<span class="kbd">Option</span> + <span class="kbd">S</span>';
-      } else {
-        keyboardShortcut = '<span class="kbd">Alt</span> + <span class="kbd">S</span>';
-      }
-      tippy(Constants.Panel.skipButton, {
-        content: `${Lang._('SHORTCUT_TOOLTIP')} &raquo; <br> ${keyboardShortcut}`,
+  /**
+   * Tooltip container for the main control panel.
+   */
+  class PanelTooltips extends HTMLElement {
+    connectedCallback() {
+      // Default options for basic tooltips (not popovers).
+      const tooltipOptions = (shadowRoot) => ({
         allowHTML: true,
         delay: [500, 0],
-        offset: [0, 8],
         trigger: 'mouseenter focusin',
         arrow: true,
+        maxWidth: 200,
         placement: 'top',
-        theme: 'sa11y-theme',
-        maxWidth: 165,
+        theme: 'sa11y-theme sa11y-panel',
         role: 'tooltip',
         aria: {
           content: null,
-          expanded: false,
+          expanded: null,
         },
         appendTo: shadowRoot,
         zIndex: 2147483645,
       });
-    }
-  }
 
-  class DismissTooltip extends HTMLElement {
-    connectedCallback() {
+      // Shadow root
       const shadowRoot = this.attachShadow({ mode: 'open' });
 
       // Styles
@@ -6298,22 +7831,31 @@
       style.innerHTML = tooltipStyles + sharedStyles;
       shadowRoot.appendChild(style);
 
-      this.object = tippy(Constants.Panel.dismissButton, {
-        delay: [500, 0],
+      /* 1. Tooltip for "Skip to Issue" button. */
+      const keyboardShortcut = navigator.userAgent.indexOf('Mac') !== -1
+        ? '<span class="kbd">Option</span> + <span class="kbd">S</span>'
+        : '<span class="kbd">Alt</span> + <span class="kbd">S</span>';
+      tippy(Constants.Panel.skipButton, {
+        ...tooltipOptions(shadowRoot),
         offset: [0, 8],
-        trigger: 'mouseenter focusin',
-        arrow: true,
-        placement: 'top',
-        theme: 'sa11y-theme',
-        maxWidth: 165,
-        role: 'tooltip',
-        aria: {
-          content: null,
-          expanded: false,
-        },
-        appendTo: shadowRoot,
-        zIndex: 2147483645,
+        content: `${Lang._('SKIP_TO_ISSUE')} &raquo; <br> ${keyboardShortcut}`,
       });
+
+      /* 2. Tooltip for "Dismiss" button. */
+      this.object = tippy(Constants.Panel.dismissButton, {
+        offset: [0, 8],
+        ...tooltipOptions(shadowRoot),
+      });
+
+      /* 3. Tooltip for "Developer checks" toggle. */
+      if (Constants.Global.developerPlugin) {
+        tippy(Constants.Panel.developerToggle, {
+          ...tooltipOptions(shadowRoot),
+          triggerTarget: [Constants.Panel.developerItem],
+          offset: [0, 0],
+          content: Lang._('DEVELOPER_DESC'),
+        });
+      }
     }
   }
 
@@ -6332,40 +7874,42 @@
 
   /**
     * Create annotation buttons.
-    * @param {Node} element: The node or issue element.
-    * @param {String} type: The type of issue (ERROR, WARNING, GOOD).
-    * @param {String} content: The tooltip message.
-    * @param {Boolean} inline: Whether the annotation should be displayed inline with text.
-    * @param {String} position: Position of annotation (beforebegin, afterbegin, e.g.).
-    * @param {Number} index: Index or order of issue.
+    * @param {Object} issue The issue object.
+    * @param {Object} option The options object.
   */
-  function annotate(
-    element,
-    type,
-    content,
-    inline = false,
-    position,
-    index,
-    dismissKey,
-    option,
-  ) {
+  function annotate(issue, option) {
+    // Get properties of issue object.
+    const {
+      element,
+      type,
+      content,
+      inline = false,
+      position = 'beforebegin',
+      id,
+      dismiss,
+      dismissAll,
+      contrastDetails,
+    } = issue;
+
     // Validate types to prevent errors.
     const validTypes = ['error', 'warning', 'good'];
     if (validTypes.indexOf(type) === -1) {
       throw Error(`Invalid type [${type}] for annotation`);
     }
 
+
     // Add unique ID and styles to annotation and marked element.
     [type].forEach(($el) => {
       if ($el === 'error' && element !== undefined) {
         const errorAttr = (inline ? 'data-sa11y-error-inline' : 'data-sa11y-error');
-        element.setAttribute(errorAttr, index);
+        element.setAttribute(errorAttr, id);
       } else if ($el === 'warning' && element !== undefined) {
         const warningAttr = (inline ? 'data-sa11y-warning-inline' : 'data-sa11y-warning');
-        element.setAttribute(warningAttr, index);
+        element.setAttribute(warningAttr, id);
       }
     });
 
+    // Generate aria-label for annotations.
     const ariaLabel = {
       [validTypes[0]]: Lang._('ERROR'),
       [validTypes[1]]: Lang._('WARNING'),
@@ -6373,24 +7917,38 @@
     };
 
     // Don't paint page with "Good" annotations for images with alt text and links with accessible name.
-    if (option.showGoodImageButton === false && element?.tagName === 'IMG' && type === 'good') return;
-    if (option.showGoodLinkButton === false && element?.tagName === 'A' && type === 'good') return;
+    if (option.showGoodImageButton === false
+      && element?.tagName === 'IMG' && type === 'good') return;
+    if (option.showGoodLinkButton === false
+      && element?.tagName === 'A' && type === 'good') return;
 
     // Add dismiss button if prop enabled & has a dismiss key.
-    const dismiss = (option.dismissAnnotations === true && type === 'warning' && dismissKey !== undefined)
-      ? `<button data-sa11y-dismiss='${index}' type='button'>${Lang._('DISMISS')}</button>` : '';
+    const dismissBtn = (
+      option.dismissAnnotations
+      && (type === 'warning' || type === 'good')
+      && dismiss !== undefined)
+      ? `<button data-sa11y-dismiss='${id}' type='button'>${Lang._('DISMISS')}</button>` : '';
+
+    // Add dismiss all button if prop enabled & has addition check key.
+    const dismissAllBtn = (
+      option.dismissAnnotations
+      && (option.dismissAll && typeof dismissAll === 'string')
+      && (type === 'warning' || type === 'good'))
+      ? `<button data-sa11y-dismiss='${id}' data-sa11y-dismiss-all type='button'>${Lang._('DISMISS_ALL')}</button>` : '';
 
     // Create 'sa11y-annotation' web component for each annotation.
+    // Create 'sa11y-annotation' web component for each annotation.
     const instance = document.createElement('sa11y-annotation');
-    instance.setAttribute('data-sa11y-annotation', index);
+    instance.setAttribute('data-sa11y-annotation', id);
 
+    // Generate HTML for painted annotations.
     if (element === undefined) {
       // Page errors displayed to main panel.
       const listItem = document.createElement('li');
-      listItem.innerHTML = `<strong>${ariaLabel[type]}</strong> ${content}${dismiss}`;
+      listItem.innerHTML = `<strong>${ariaLabel[type]}</strong> ${content}${dismissBtn}`;
       Constants.Panel.pageIssuesList.insertAdjacentElement('afterbegin', listItem);
 
-      // Make "Page Issues" visible.
+      // Display Page Issues panel.
       Constants.Panel.pageIssues.classList.add('active');
       Constants.Panel.panel.classList.add('has-page-issues');
     } else {
@@ -6405,11 +7963,14 @@
       class="sa11y-btn ${[type]}-btn${inline ? '-text' : ''}"
       data-tippy-content=
         "<div lang='${Lang._('LANG_CODE')}' class='${[type]}'>
-          <button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button> <h2>${ariaLabel[type]}</h2> ${escapeHTML(content)} ${dismiss}
+          <button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button> <h2>${ariaLabel[type]}</h2>
+          ${escapeHTML(content)}
+          ${contrastDetails ? '<div data-sa11y-contrast-details></div>' : ''}
+          <div class='dismiss-group'>${dismissBtn}${dismissAllBtn}</div>
         </div>"
     ></button>`;
 
-      // Make sure annotations always appended outside of interactive elements.
+      // Make sure annotations always appended outside of SVGs and interactive elements.
       const location = element.closest('a, button, [role="link"], [role="button"]') || element;
       location.insertAdjacentElement(position, instance);
       instance.shadowRoot.appendChild(create);
@@ -6477,7 +8038,7 @@
         display: inline-block;
         font-family: var(--sa11y-font-face);
         font-weight: 500;
-        font-size: 17px;
+        font-size: 18px;
         line-height: normal;
         letter-spacing: normal;
         margin: -5px 0 0 5px;
@@ -6537,7 +8098,7 @@
       // Alert if tooltip is hidden.
       getHiddenParent($el);
       const tooltip = $el.getAttribute('data-tippy-content');
-      createAlert(`${Lang._('NOT_VISIBLE_ALERT')}`, tooltip, elementPreview);
+      createAlert(`${Lang._('NOT_VISIBLE')}`, tooltip, elementPreview);
 
       closeAnyActiveTooltips();
 
@@ -6597,26 +8158,29 @@
 
   const goToPrev = (results) => {
     determineIndex();
-    if (index > 0) {
-      const button = Elements.Annotations.Array[index - 1].shadowRoot.querySelector('button');
-      const scrollPos = getScrollPosition(button, results);
+    const issues = Elements.Annotations.Array;
 
-      window.scrollTo({
-        top: scrollPos,
-        behavior: `${Constants.Global.scrollBehaviour}`,
-      });
+    // If at first issue, go to last issue.
+    if (index <= 0) index = issues.length;
 
-      if (button.offsetTop !== 0) {
-        button.focus();
-        button.click();
-      }
+    const button = Elements.Annotations.Array[index - 1].shadowRoot.querySelector('button');
+    const scrollPos = getScrollPosition(button, results);
 
-      // Decrease position by 1
-      index -= 1;
+    window.scrollTo({
+      top: scrollPos,
+      behavior: `${Constants.Global.scrollBehaviour}`,
+    });
 
-      // If index is -1, it means that it cycled back to the first annotation. This is needed for when user wants to go to previous annotation from the very last annotation on the page.
-      if (index === -1) index = Elements.Annotations.Array.length - 1;
+    if (button.offsetTop !== 0) {
+      button.focus();
+      button.click();
     }
+
+    // Decrease position by 1
+    index -= 1;
+
+    // If index is -1, it means that it cycled back to the first annotation. This is needed for when user wants to go to previous annotation from the very last annotation on the page.
+    if (index === -1) index = Elements.Annotations.Array.length - 1;
   };
 
   function keyboardShortcut(e, results) {
@@ -6624,10 +8188,10 @@
       Elements.Annotations.Array.length
       && !Constants.Panel.skipButton.hasAttribute('disabled')
     ) {
-      if (e.altKey && e.code === 'KeyS') {
+      if (e.altKey && (e.code === 'KeyS' || e.code === 'Period')) {
         e.preventDefault();
         goToNext(results);
-      } else if (e.altKey && e.code === 'KeyW') {
+      } else if (e.altKey && (e.code === 'KeyW' || e.code === 'Comma')) {
         e.preventDefault();
         goToPrev(results);
       }
@@ -6655,178 +8219,10 @@
     Constants.Panel.skipButton.removeEventListener('click', handleSkipButtonHandler);
   }
 
-  /* eslint-disable no-use-before-define */
-
-  /* Get text content of pseudo elements. */
-  const wrapPseudoContent = (element, string) => {
-    const pseudo = [];
-    pseudo[0] = window.getComputedStyle(element, ':before').getPropertyValue('content');
-    pseudo[1] = window.getComputedStyle(element, ':after').getPropertyValue('content');
-    pseudo[0] = pseudo[0] === 'none' ? '' : pseudo[0].replace(/^"(.*)"$/, '$1');
-    pseudo[1] = pseudo[1] === 'none' ? '' : pseudo[1].replace(/^"(.*)"$/, '$1');
-    return ` ${pseudo[0]}${string}${pseudo[1]}`;
-  };
-
-  /* Sets treeWalker loop to last node before next branch. */
-  const nextTreeBranch = (tree) => {
-    for (let i = 0; i < 1000; i++) {
-      if (tree.nextSibling()) {
-        // Prepare for continue to advance.
-        return tree.previousNode();
-      }
-      // Next node will be in next branch.
-      if (!tree.parentNode()) {
-        return false;
-      }
-    }
-    return false;
-  };
-
-  /* Compute ARIA attributes. */
-  const computeAriaLabel = (element, recursing = false) => {
-    const labelledBy = element.getAttribute('aria-labelledby');
-    if (!recursing && labelledBy) {
-      const target = labelledBy.split(/\s+/);
-      if (target.length > 0) {
-        let returnText = '';
-        target.forEach((x) => {
-          const targetSelector = document.querySelector(`#${CSS.escape(x)}`);
-          returnText += (!targetSelector) ? '' : `${computeAccessibleName(targetSelector, '', 1)}`;
-        });
-        return returnText;
-      }
-    }
-
-    const ariaLabel = element.getAttribute('aria-label');
-    if (ariaLabel && ariaLabel.trim().length > 0) {
-      return ariaLabel;
-    }
-    return 'noAria';
-  };
-
-  /**
-   * Computes the accessible name of an element.
-   * @param {Element} element The element for which the accessible name needs to be computed.
-   * @param {String} exclusions List of selectors which will be ignored.
-   * @param {Number} recursing Recursion depth.
-   * @returns {string} The computed accessible name of the element.
-   * @kudos to John Jameson, creator of the Editoria11y library, for developing this more robust calculation!
-   * @notes Uses a subset of the W3C accessible name algorithm.
-  */
-  const computeAccessibleName = (element, exclusions, recursing = 0) => {
-    // Return immediately if there is an aria label.
-    const hasAria = computeAriaLabel(element, recursing);
-    if (hasAria !== 'noAria') {
-      return hasAria;
-    }
-
-    // Return immediately if there is only a text node.
-    let computedText = '';
-    if (!element.children.length) {
-      // Just text! Output immediately.
-      computedText = wrapPseudoContent(element, element.textContent);
-      if (!computedText.trim() && element.hasAttribute('title')) {
-        return element.getAttribute('title');
-      }
-      return computedText;
-    }
-
-    // Create tree walker object.
-    function createCustomTreeWalker(rootNode, showElement, showText) {
-      const acceptNode = (node) => {
-        if (showElement && node.nodeType === Node.ELEMENT_NODE) return NodeFilter.FILTER_ACCEPT;
-        if (showText && node.nodeType === Node.TEXT_NODE) return NodeFilter.FILTER_ACCEPT;
-        return NodeFilter.FILTER_REJECT;
-      };
-      return document.createTreeWalker(rootNode, NodeFilter.SHOW_ALL, { acceptNode });
-    }
-    const treeWalker = createCustomTreeWalker(element, true, true);
-
-    // Otherwise, recurse into children.
-    let addTitleIfNoName = false;
-    let aText = false;
-    let count = 0;
-    let shouldContinueWalker = true;
-
-    const alwaysExclude = 'noscript, style, script';
-    const exclude = element.querySelectorAll(exclusions ? `${exclusions}, ${alwaysExclude}` : alwaysExclude);
-
-    while (treeWalker.nextNode() && shouldContinueWalker) {
-      count += 1;
-
-      // Exclusions.
-      const currentNodeMatchesExclude = Array.from(exclude).some((excludedNode) => excludedNode.contains(treeWalker.currentNode));
-
-      if (currentNodeMatchesExclude) ; else if (treeWalker.currentNode.nodeType === Node.TEXT_NODE) {
-        computedText += ` ${treeWalker.currentNode.nodeValue}`;
-      } else if (addTitleIfNoName && !treeWalker.currentNode.closest('a')) {
-        if (aText === computedText) {
-          computedText += addTitleIfNoName;
-        }
-        addTitleIfNoName = false;
-        aText = false;
-      } else if (treeWalker.currentNode.hasAttribute('aria-hidden') && !(recursing && count < 3)) {
-        if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
-      } else {
-        const aria = computeAriaLabel(treeWalker.currentNode, recursing);
-        if (aria !== 'noAria') {
-          computedText += ` ${aria}`;
-          if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
-        } else {
-          switch (treeWalker.currentNode.tagName) {
-            case 'IMG':
-              if (treeWalker.currentNode.hasAttribute('alt')) {
-                computedText += treeWalker.currentNode.getAttribute('alt');
-              }
-              break;
-            case 'SVG':
-            case 'svg':
-              if (treeWalker.currentNode.getAttribute('role') === 'image'
-                && treeWalker.currentNode.hasAttribute('alt')) {
-                computedText += wrapPseudoContent(
-                  treeWalker.currentNode, treeWalker.currentNode.getAttribute('alt'),
-                );
-                if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
-              }
-              break;
-            case 'A':
-              if (treeWalker.currentNode.hasAttribute('title')) {
-                addTitleIfNoName = treeWalker.currentNode.getAttribute('title');
-                aText = computedText;
-              } else {
-                addTitleIfNoName = false;
-                aText = false;
-              }
-              computedText += wrapPseudoContent(treeWalker.currentNode, '');
-              break;
-            default:
-              computedText += wrapPseudoContent(treeWalker.currentNode, '');
-              break;
-          }
-        }
-      }
-    }
-
-    if (addTitleIfNoName && !aText) {
-      computedText += ` ${addTitleIfNoName}`;
-    }
-
-    // Replace Private Use Area (PUA) unicode characters.
-    // https://www.unicode.org/faq/private_use.html
-    const puaRegex = /[\uE000-\uF8FF]/gu;
-    computedText = computedText.replace(puaRegex, '');
-
-    // If computedText returns blank, fallback on title attribute.
-    if (!computedText.trim() && element.hasAttribute('title')) {
-      return element.getAttribute('title');
-    }
-
-    return computedText;
-  };
-
   function checkImages(results, option) {
     const containsAltTextStopWords = (alt) => {
       const altUrl = [
+        '.avif',
         '.png',
         '.jpg',
         '.jpeg',
@@ -6834,27 +8230,19 @@
         '.gif',
         '.tiff',
         '.svg',
-        'DSC_',
-        'IMG_',
-        'Photo_',
-        'Pic_',
-        'Pexels_',
-        'AdobeStock_',
-        'ScreenShot_',
-        'Picture_',
-        'Snap_',
-        'Capture_',
+        '.heif',
+        '.heic',
+        'http',
       ];
 
       const hit = [null, null, null];
       altUrl.forEach((word) => {
-        const stopword = word.toLowerCase();
-        if (alt.toLowerCase().indexOf(stopword) >= 0) {
+        if (alt.toLowerCase().indexOf(word.toLowerCase()) !== -1) {
           hit[0] = word;
         }
       });
 
-      const susAltWordsOverride = (option.susAltStopWords) ? option.susAltStopWords.split(',').map((word) => word.trim()) : Lang._('SUSPICIOUS_ALT_STOPWORDS');
+      const susAltWordsOverride = (option.susAltStopWords) ? option.susAltStopWords.split(',').map((word) => word.trim()) : Lang._('SUS_ALT_STOPWORDS');
       susAltWordsOverride.forEach((word) => {
         const susWord = alt.toLowerCase().indexOf(word);
         if (susWord > -1 && susWord < 6) {
@@ -6887,6 +8275,9 @@
       const alt = (computeAriaLabel($el) === 'noAria') ? $el.getAttribute('alt') : computeAriaLabel($el);
       const link = $el.closest('a[href]');
 
+      // Image's source for key.
+      const src = ($el.getAttribute('src')) ? $el.getAttribute('src') : $el.getAttribute('srcset');
+
       // Process link text exclusions.
       const linkSpanExclusions = link
         ? fnIgnore(link, Constants.Exclusions.LinkSpan).textContent : '';
@@ -6900,16 +8291,24 @@
         return;
       }
 
+      // Ignore tracking pixels without explicit aria-hidden or nullified alt.
+      if ($el.height === 1 && $el.width === 1 && isElementHidden($el)) {
+        return;
+      }
+
       if (link && link.getAttribute('aria-hidden') === 'true') {
         // If linked image has aria-hidden, but is still focusable.
         const unfocusable = link.getAttribute('tabindex') === '-1';
-        if (!unfocusable) {
+        if (option.checks.HIDDEN_FOCUSABLE && !unfocusable) {
           results.push({
             element: $el,
-            type: 'error',
-            content: Lang.sprintf('LINK_HIDDEN_FOCUSABLE'),
-            inline: false,
-            position: 'beforebegin',
+            type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
+            content: option.checks.HIDDEN_FOCUSABLE.content
+              || Lang.sprintf('HIDDEN_FOCUSABLE'),
+            dismiss: prepareDismissal(`IMGHIDDENFOCUSABLE${src}`),
+            dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll
+              ? 'LINK_HIDDEN_FOCUSABLE' : false,
+            developer: option.checks.HIDDEN_FOCUSABLE.developer || true,
           });
         }
         return;
@@ -6918,25 +8317,31 @@
       // If alt is missing.
       if (alt === null) {
         if (link) {
-          const content = (linkTextContentLength === 0)
-            ? Lang.sprintf('MISSING_ALT_LINK_MESSAGE')
-            : Lang.sprintf('MISSING_ALT_LINK_BUT_HAS_TEXT_MESSAGE');
-
-          results.push({
-            element: $el,
-            type: 'error',
-            content,
-            inline: false,
-            position: 'beforebegin',
-          });
-        } else {
+          const rule = (linkTextContentLength === 0)
+            ? option.checks.MISSING_ALT_LINK
+            : option.checks.MISSING_ALT_LINK_HAS_TEXT;
+          const conditional = linkTextContentLength === 0
+            ? 'MISSING_ALT_LINK' : 'MISSING_ALT_LINK_HAS_TEXT';
+          if (rule) {
+            results.push({
+              element: $el,
+              type: rule.type || 'error',
+              content: rule.content || Lang.sprintf(linkTextContentLength === 0
+                ? 'MISSING_ALT_LINK' : 'MISSING_ALT_LINK_HAS_TEXT'),
+              dismiss: prepareDismissal(`${conditional + src + linkTextContentLength}`),
+              dismissAll: rule.dismissAll ? conditional : false,
+              developer: rule.developer || false,
+            });
+          }
+        } else if (option.checks.MISSING_ALT) {
           // General failure message if image is missing alt.
           results.push({
             element: $el,
-            type: 'error',
-            content: Lang.sprintf('MISSING_ALT_MESSAGE'),
-            inline: false,
-            position: 'beforebegin',
+            type: option.checks.MISSING_ALT.type || 'error',
+            content: option.checks.MISSING_ALT.content || Lang.sprintf('MISSING_ALT'),
+            dismiss: prepareDismissal(`IMGNOALT${src}`),
+            dismissAll: option.checks.MISSING_ALT.dismissAll ? 'MISSING_ALT' : false,
+            developer: option.checks.MISSING_ALT.developer || false,
           });
         }
       } else {
@@ -6945,6 +8350,7 @@
         const altText = removeWhitespace(sanitizedAlt);
         const error = containsAltTextStopWords(altText);
         const hasAria = $el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby');
+        const titleAttr = $el.getAttribute('title');
         const decorative = (alt === '' || alt === ' ');
 
         // Figure elements.
@@ -6952,58 +8358,87 @@
         const figcaption = figure?.querySelector('figcaption');
         const figcaptionText = (figcaption) ? figcaption.textContent.trim() : '';
 
-        // Image's source for key.
-        const src = ($el.getAttribute('src')) ? $el.getAttribute('src') : $el.getAttribute('srcset');
+        // Maximum alt text length
+        const maxAltCharactersLinks = option.checks.LINK_IMAGE_LONG_ALT.maxLength || 250;
+        const maxAltCharacters = option.checks.IMAGE_ALT_TOO_LONG.maxLength || 250;
 
         // If aria-label or aria-labelledby returns empty or invalid.
         if (hasAria && altText === '') {
-          results.push({
-            element: $el,
-            type: 'error',
-            content: Lang.sprintf('MISSING_ALT_MESSAGE'),
-            inline: false,
-            position: 'beforebegin',
-          });
+          if (option.checks.MISSING_ALT) {
+            results.push({
+              element: $el,
+              type: option.checks.MISSING_ALT.type || 'error',
+              content: option.checks.MISSING_ALT.content || Lang.sprintf('MISSING_ALT'),
+              dismiss: prepareDismissal(`IMGNOALTARIA${src}`),
+              dismissAll: option.checks.MISSING_ALT.dismissAll ? 'MISSING_ALT' : false,
+              developer: option.checks.MISSING_ALT.developer || false,
+            });
+          }
           return;
         }
 
         // Decorative images.
         if (decorative) {
-          const key = prepareDismissal(`DECORATIVE${src}`);
-          if (link) {
-            const type = (linkTextContentLength === 0) ? 'error' : 'good';
-            const content = (linkTextContentLength === 0)
-              ? Lang.sprintf('LINK_IMAGE_NO_ALT_TEXT')
-              : Lang.sprintf('LINK_IMAGE_HAS_TEXT');
-
-            results.push({
-              element: $el,
-              type,
-              content,
-              inline: false,
-              position: 'beforebegin',
-            });
+          const carouselSources = option.checks.IMAGE_DECORATIVE_CAROUSEL.sources;
+          const carousel = carouselSources ? $el.closest(carouselSources) : '';
+          if (carousel) {
+            const numberOfSlides = carousel.querySelectorAll('img');
+            const rule = (numberOfSlides.length === 1)
+              ? option.checks.IMAGE_DECORATIVE
+              : option.checks.IMAGE_DECORATIVE_CAROUSEL;
+            const conditional = (numberOfSlides.length === 1)
+              ? 'IMAGE_DECORATIVE'
+              : 'IMAGE_DECORATIVE_CAROUSEL';
+            if (rule) {
+              results.push({
+                element: $el,
+                type: rule.type || 'warning',
+                content: rule.content || Lang.sprintf(conditional),
+                dismiss: prepareDismissal(conditional + src),
+                dismissAll: rule.dismissAll ? conditional : false,
+                developer: rule.developer || false,
+              });
+            }
+          } else if (link) {
+            const rule = (linkTextContentLength === 0)
+              ? option.checks.LINK_IMAGE_NO_ALT_TEXT
+              : option.checks.LINK_IMAGE_TEXT;
+            const conditional = linkTextContentLength === 0
+              ? 'LINK_IMAGE_NO_ALT_TEXT' : 'LINK_IMAGE_TEXT';
+            if (rule) {
+              results.push({
+                element: $el,
+                type: rule.type || (linkTextContentLength === 0 ? 'error' : 'good'),
+                content: rule.content || Lang.sprintf(conditional),
+                dismiss: prepareDismissal(`${conditional + src + linkTextContentLength}`),
+                dismissAll: rule.dismissAll ? conditional : false,
+                developer: rule.developer || false,
+              });
+            }
           } else if (figure) {
-            const content = (figcaption && figcaptionText.length)
-              ? Lang.sprintf('IMAGE_FIGURE_DECORATIVE')
-              : Lang.sprintf('IMAGE_DECORATIVE');
-
+            const rule = (figcaption && figcaptionText.length)
+              ? option.checks.IMAGE_FIGURE_DECORATIVE
+              : option.checks.IMAGE_DECORATIVE;
+            const conditional = figcaption && figcaptionText.length
+              ? 'IMAGE_FIGURE_DECORATIVE' : 'IMAGE_DECORATIVE';
+            if (rule) {
+              results.push({
+                element: $el,
+                type: rule.type || 'warning',
+                content: rule.content || Lang.sprintf(conditional),
+                dismiss: prepareDismissal(`${conditional + src + figcaptionText}`),
+                dismissAll: rule.dismissAll ? conditional : false,
+                developer: rule.developer || false,
+              });
+            }
+          } else if (option.checks.IMAGE_DECORATIVE) {
             results.push({
               element: $el,
-              type: 'warning',
-              content,
-              inline: false,
-              position: 'beforebegin',
-              dismiss: key,
-            });
-          } else {
-            results.push({
-              element: $el,
-              type: 'warning',
-              content: Lang.sprintf('IMAGE_DECORATIVE'),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: key,
+              type: option.checks.IMAGE_DECORATIVE.type || 'warning',
+              content: option.checks.IMAGE_DECORATIVE.content || Lang.sprintf('IMAGE_DECORATIVE'),
+              dismiss: prepareDismissal(`DECIMAGE${src}`),
+              dismissAll: option.checks.IMAGE_DECORATIVE.dismissAll ? 'IMAGE_DECORATIVE' : false,
+              developer: option.checks.IMAGE_DECORATIVE.developer || false,
             });
           }
           return;
@@ -7012,110 +8447,153 @@
         // Alt text quality.
         if (error[0] !== null) {
           // Has stop words.
-          const content = (link)
-            ? Lang.sprintf('LINK_ALT_HAS_FILE_EXTENSION', error[0], altText)
-            : Lang.sprintf('ALT_HAS_FILE_EXTENSION', error[0], altText);
-
-          results.push({
-            element: $el,
-            type: 'error',
-            content,
-            inline: false,
-            position: 'beforebegin',
-          });
+          const rule = (link)
+            ? option.checks.LINK_ALT_FILE_EXT
+            : option.checks.ALT_FILE_EXT;
+          const conditional = (link) ? 'LINK_ALT_FILE_EXT' : 'ALT_FILE_EXT';
+          if (rule) {
+            results.push({
+              element: $el,
+              type: rule.type || 'error',
+              content: rule.content || Lang.sprintf(link
+                ? 'LINK_ALT_FILE_EXT' : 'ALT_FILE_EXT', error[0], altText),
+              dismiss: prepareDismissal(`${conditional + src + altText}`),
+              dismissAll: rule.dismissAll ? conditional : false,
+              developer: rule.developer || false,
+            });
+          }
         } else if (error[2] !== null) {
           // Placeholder words.
-          const content = (link)
-            ? Lang.sprintf('LINK_IMAGE_PLACEHOLDER_ALT_MESSAGE', altText)
-            : Lang.sprintf('ALT_PLACEHOLDER_MESSAGE', altText);
-
-          results.push({
-            element: $el,
-            type: 'error',
-            content,
-            inline: false,
-            position: 'beforebegin',
-          });
+          const rule = (link)
+            ? option.checks.LINK_PLACEHOLDER_ALT
+            : option.checks.ALT_PLACEHOLDER;
+          const conditional = (link) ? 'LINK_PLACEHOLDER_ALT' : 'ALT_PLACEHOLDER';
+          if (rule) {
+            results.push({
+              element: $el,
+              type: rule.type || 'error',
+              content: rule.content || Lang.sprintf(link
+                ? 'LINK_PLACEHOLDER_ALT' : 'ALT_PLACEHOLDER', altText),
+              dismiss: prepareDismissal(`${conditional + src + altText}`),
+              dismissAll: rule.dismissAll ? conditional : false,
+              developer: rule.developer || false,
+            });
+          }
         } else if (error[1] !== null) {
           // Suspicious words.
-          const key = prepareDismissal(`${src + altText}`);
-          const content = (link)
-            ? Lang.sprintf('LINK_IMAGE_SUS_ALT_MESSAGE', error[1], altText)
-            : Lang.sprintf('ALT_HAS_SUS_WORD', error[1], altText);
-
-          results.push({
-            element: $el,
-            type: 'warning',
-            content,
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
-          });
-        } else if (alt.length > option.altTextMaxCharLength) {
+          const rule = (link)
+            ? option.checks.LINK_SUS_ALT
+            : option.checks.SUS_ALT;
+          const conditional = (link) ? 'LINK_SUS_ALT' : 'SUS_ALT';
+          if (rule) {
+            results.push({
+              element: $el,
+              type: rule.type || 'warning',
+              content: rule.content || Lang.sprintf(link
+                ? 'LINK_SUS_ALT' : 'SUS_ALT', error[1], altText),
+              dismiss: prepareDismissal(`${conditional + src + altText}`),
+              dismissAll: rule.dismissAll ? conditional : false,
+              developer: rule.developer || false,
+            });
+          }
+        } else if (link
+          ? alt.length > maxAltCharactersLinks
+          : alt.length > maxAltCharacters) {
           // Alt is too long.
-          const key = prepareDismissal(`${src + altText + alt.length}`);
-          const content = (link)
-            ? Lang.sprintf('LINK_IMAGE_LONG_ALT', alt.length, altText)
-            : Lang.sprintf('IMAGE_ALT_TOO_LONG', alt.length, altText);
-
-          results.push({
-            element: $el,
-            type: 'warning',
-            content,
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
-          });
+          const rule = (link)
+            ? option.checks.LINK_IMAGE_LONG_ALT
+            : option.checks.IMAGE_ALT_TOO_LONG;
+          const conditional = (link) ? 'LINK_IMAGE_LONG_ALT' : 'IMAGE_ALT_TOO_LONG';
+          const truncated = truncateString(altText, 600);
+          if (rule) {
+            results.push({
+              element: $el,
+              type: rule.type || 'warning',
+              content: rule.content
+                || Lang.sprintf(link ? 'LINK_IMAGE_LONG_ALT' : 'IMAGE_ALT_TOO_LONG', alt.length, truncated),
+              dismiss: prepareDismissal(`${conditional + src + altText}`),
+              dismissAll: rule.dismissAll ? conditional : false,
+              developer: rule.developer || false,
+            });
+          }
         } else if (link) {
-          // Has both link text and alt text.
-          const key = prepareDismissal(`${src + altText}`);
-          const linkAccName = computeAccessibleName(link);
-          const removeWhitespace$1 = removeWhitespace(linkAccName);
-          const sanitizedText = sanitizeHTML(removeWhitespace$1);
-          const content = (linkTextContentLength === 0)
-            ? Lang.sprintf('LINK_IMAGE_ALT_WARNING', altText)
-            : Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT_WARNING', altText, sanitizedText);
+          const rule = (linkTextContentLength === 0)
+            ? option.checks.LINK_IMAGE_ALT
+            : option.checks.LINK_IMAGE_ALT_AND_TEXT;
+          const conditional = (linkTextContentLength === 0) ? 'LINK_IMAGE_ALT' : 'LINK_IMAGE_ALT_AND_TEXT';
 
-          results.push({
-            element: $el,
-            type: 'warning',
-            content,
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
-          });
+          if (rule) {
+            // Has both link text and alt text.
+            const linkAccName = computeAccessibleName(link);
+            const removeWhitespace$1 = removeWhitespace(linkAccName);
+            const sanitizedText = sanitizeHTML(removeWhitespace$1);
+
+            const tooltip = (linkTextContentLength === 0)
+              ? Lang.sprintf('LINK_IMAGE_ALT', altText)
+              : `${Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT', altText, sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`;
+
+            results.push({
+              element: $el,
+              type: rule.type || 'warning',
+              content: rule.content || tooltip,
+              dismiss: prepareDismissal(`${conditional + src + altText}`),
+              dismissAll: rule.dismissAll ? conditional : false,
+              developer: rule.developer || false,
+            });
+          }
         } else if (figure) {
           // Figure element has same alt and caption text.
           const duplicate = !!figcaption && (figcaptionText.toLowerCase() === altText.trim().toLowerCase());
           if (duplicate) {
-            const key = prepareDismissal(`FIGURE${src + altText}`);
-            results.push({
-              element: $el,
-              type: 'warning',
-              content: Lang.sprintf('IMAGE_FIGURE_DUPLICATE_ALT', altText),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: key,
-            });
-          } else {
+            if (option.checks.IMAGE_FIGURE_DUPLICATE_ALT) {
+              results.push({
+                element: $el,
+                type: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.type || 'warning',
+                content: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.content || Lang.sprintf('IMAGE_FIGURE_DUPLICATE_ALT', altText),
+                dismiss: prepareDismissal(`FIGDUPLICATE${src}`),
+                dismissAll: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.dismissAll ? 'IMAGE_FIGURE_DUPLICATE_ALT' : false,
+                developer: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.developer || false,
+              });
+            }
+          } else if (option.checks.IMAGE_PASS) {
             // Figure has alt text!
             results.push({
               element: $el,
-              type: 'good',
-              content: Lang.sprintf('IMAGE_PASS', altText),
-              inline: false,
-              position: 'beforebegin',
+              type: option.checks.IMAGE_PASS.type || 'good',
+              content: option.checks.IMAGE_PASS.content || Lang.sprintf('IMAGE_PASS', altText),
+              dismiss: prepareDismissal(`FIGIMGPASS${src + altText}`),
+              dismissAll: option.checks.IMAGE_PASS.dismissAll ? 'IMAGE_PASS' : false,
+              developer: option.checks.IMAGE_PASS.developer || false,
             });
           }
-        } else {
-          // Image has alt text!
-          results.push({
-            element: $el,
-            type: 'good',
-            content: Lang.sprintf('IMAGE_PASS', altText),
-            inline: false,
-            position: 'beforebegin',
-          });
+        } else if (option.checks.IMAGE_PASS) {
+          if (!$el.closest('button, [role="button"]')) {
+            // Image has alt text!
+            results.push({
+              element: $el,
+              type: option.checks.IMAGE_PASS.type || 'good',
+              content: option.checks.IMAGE_PASS.content || Lang.sprintf('IMAGE_PASS', altText),
+              dismiss: prepareDismissal(`IMAGEPASS${src + altText}`),
+              dismissAll: option.checks.IMAGE_PASS.dismissAll ? 'IMAGE_PASS' : false,
+              developer: option.checks.IMAGE_PASS.developer || false,
+            });
+          }
+        }
+
+        // Image's title attribute is the same as the alt.
+        // Since this is extra, it's okay if it overlaps "good" annotation.
+        if (titleAttr?.toLowerCase() === alt.toLowerCase()) {
+          if (option.checks.DUPLICATE_TITLE) {
+            results.push({
+              element: $el,
+              type: option.checks.DUPLICATE_TITLE.type || 'warning',
+              content: option.checks.DUPLICATE_TITLE.content || Lang.sprintf('DUPLICATE_TITLE'),
+              inline: true,
+              dismiss: prepareDismissal(`ALTDUPLICATETITLE${altText}`),
+              dismissAll: option.checks.DUPLICATE_TITLE.dismissAll ? 'DUPLICATE_TITLE' : false,
+              developer: option.checks.DUPLICATE_TITLE.developer || false,
+            });
+          }
         }
       }
     });
@@ -7124,12 +8602,13 @@
 
   function checkHeaders(results, option, headingOutline) {
     let prevLevel;
+    let prevHeadingText = '';
     Elements.Found.Headings.forEach(($el, i) => {
-      const accName = computeAccessibleName($el, option.headerIgnoreSpan);
+      // Get accessible name of heading.
+      const accName = computeAccessibleName($el, Constants.Exclusions.HeaderSpan);
       const stringMatchExclusions = option.headerIgnoreStrings
         ? accName.replace(option.headerIgnoreStrings, '') : accName;
       const removeWhitespace$1 = removeWhitespace(stringMatchExclusions);
-
       const headingText = sanitizeHTML(removeWhitespace$1);
 
       // Check if heading is within root target area.
@@ -7140,183 +8619,133 @@
       // Determine heading level.
       const level = parseInt($el.getAttribute('aria-level') || $el.tagName.slice(1), 10);
       const headingLength = headingText.length;
+      const maxHeadingLength = option.checks.HEADING_LONG.maxLength || 160;
 
-      let error = null;
-      let warning = null;
+      // Default.
+      let type = null;
+      let content = null;
+      let developer = null;
+      let dismissAll = null;
 
+      // Rulesets.
       if (level - prevLevel > 1 && i !== 0) {
-        if (option.nonConsecutiveHeadingIsError) {
-          error = Lang.sprintf('HEADING_NON_CONSECUTIVE_LEVEL', prevLevel, level);
-          results.push({
-            element: $el,
-            type: 'error',
-            content: error,
-            inline: false,
-            position: 'beforebegin',
-            isWithinRoot,
-          });
-        } else {
-          warning = Lang.sprintf('HEADING_NON_CONSECUTIVE_LEVEL', prevLevel, level);
-          const key = prepareDismissal(`HEADING${level + headingText}`);
-          results.push({
-            element: $el,
-            type: 'warning',
-            content: warning,
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
-            isWithinRoot,
-          });
+        if (option.checks.HEADING_SKIPPED_LEVEL) {
+          type = option.checks.HEADING_SKIPPED_LEVEL.type || 'error';
+          content = option.checks.HEADING_SKIPPED_LEVEL.content
+            || Lang.sprintf('HEADING_SKIPPED_LEVEL', prevLevel, level, truncateString(headingText, 50), truncateString(prevHeadingText, 50), prevLevel + 1);
+          developer = option.checks.HEADING_SKIPPED_LEVEL.developer || false;
+          dismissAll = option.checks.HEADING_SKIPPED_LEVEL.dismissAll ? 'HEADING_SKIPPED_LEVEL' : false;
         }
       } else if (headingLength === 0) {
         if ($el.querySelectorAll('img').length) {
-          const imgalt = $el.querySelector('img').getAttribute('alt');
-          if (imgalt === null || imgalt === ' ' || imgalt === '') {
-            error = Lang.sprintf('HEADING_EMPTY_WITH_IMAGE', level);
-            results.push({
-              element: $el,
-              type: 'error',
-              content: error,
-              inline: false,
-              position: 'beforebegin',
-              isWithinRoot,
-            });
+          const alt = $el.querySelector('img')?.getAttribute('alt');
+          if ($el.querySelector('img') && (!alt || alt.trim() === '')) {
+            if (option.checks.HEADING_EMPTY_WITH_IMAGE) {
+              type = option.checks.HEADING_EMPTY_WITH_IMAGE.type || 'error';
+              content = option.checks.HEADING_EMPTY_WITH_IMAGE.content || Lang.sprintf('HEADING_EMPTY_WITH_IMAGE', level);
+              developer = option.checks.HEADING_EMPTY_WITH_IMAGE.developer || false;
+              dismissAll = option.checks.HEADING_EMPTY_WITH_IMAGE.dismissAll ? 'HEADING_EMPTY_WITH_IMAGE' : false;
+            }
           }
-        } else {
-          error = Lang.sprintf('HEADING_EMPTY', level);
-          results.push({
-            element: $el,
-            type: 'error',
-            content: error,
-            inline: false,
-            position: 'beforebegin',
-            isWithinRoot,
-          });
+        } else if (option.checks.HEADING_EMPTY) {
+          type = option.checks.HEADING_EMPTY.type || 'error';
+          content = option.checks.HEADING_EMPTY.content || Lang.sprintf('HEADING_EMPTY', level);
+          developer = option.checks.HEADING_EMPTY.developer || false;
+          dismissAll = option.checks.HEADING_EMPTY.dismissAll ? 'HEADING_EMPTY' : false;
         }
       } else if (i === 0 && level !== 1 && level !== 2) {
-        error = Lang.sprintf('HEADING_FIRST');
+        if (option.checks.HEADING_FIRST) {
+          type = option.checks.HEADING_FIRST.type || 'error';
+          content = option.checks.HEADING_FIRST.content || Lang.sprintf('HEADING_FIRST');
+          developer = option.checks.HEADING_FIRST.developer || false;
+          dismissAll = option.checks.HEADING_FIRST.dismissAll ? 'HEADING_FIRST' : false;
+        }
+      } else if (headingLength > maxHeadingLength) {
+        if (option.checks.HEADING_LONG) {
+          type = option.checks.HEADING_LONG.type || 'warning';
+          content = option.checks.HEADING_LONG.content
+            || Lang.sprintf('HEADING_LONG', maxHeadingLength, headingLength);
+          developer = option.checks.HEADING_LONG.developer || false;
+          dismissAll = option.checks.HEADING_LONG.dismissAll ? 'HEADING_LONG' : false;
+        }
+      }
+
+      // Create results object.
+      if (content && type) {
         results.push({
           element: $el,
-          type: 'error',
-          content: error,
-          inline: false,
-          position: 'beforebegin',
+          type,
+          content,
+          dismiss: prepareDismissal(`H${level + headingText}`),
+          dismissAll,
           isWithinRoot,
-        });
-      } else if (headingLength > option.headingMaxCharLength && option.flagLongHeadings) {
-        warning = Lang.sprintf('HEADING_LONG', headingLength);
-        const key = prepareDismissal(`HEADING${level + headingText}`);
-        results.push({
-          element: $el,
-          type: 'warning',
-          content: warning,
-          inline: false,
-          position: 'beforebegin',
-          dismiss: key,
-          isWithinRoot,
+          developer,
         });
       }
 
+      // Reset level and text.
       prevLevel = level;
+      prevHeadingText = headingText;
+
+      // Determine if heading is visually hidden or within hidden container.
       const hiddenHeading = isElementVisuallyHiddenOrHidden($el);
       const parent = findVisibleParent($el, 'display', 'none');
 
       // Create an object for heading outline panel.
-      if (error !== null) {
-        headingOutline.push({
-          element: $el,
-          headingLevel: level,
-          text: headingText,
-          index: i,
-          type: 'error',
-          hidden: hiddenHeading,
-          visibleParent: parent,
-          isWithinRoot,
-        });
-      } else if (warning !== null) {
-        const key = prepareDismissal(`HEADING${level + headingText}`);
-        headingOutline.push({
-          element: $el,
-          headingLevel: level,
-          text: headingText,
-          index: i,
-          type: 'warning',
-          hidden: hiddenHeading,
-          visibleParent: parent,
-          dismiss: key,
-          isWithinRoot,
-        });
-      } else if (error === null || warning === null) {
-        headingOutline.push({
-          element: $el,
-          headingLevel: level,
-          text: headingText,
-          index: i,
-          hidden: hiddenHeading,
-          visibleParent: parent,
-          isWithinRoot,
-        });
-      }
+      headingOutline.push({
+        element: $el,
+        headingLevel: level,
+        text: headingText,
+        index: i,
+        type,
+        hidden: hiddenHeading,
+        visibleParent: parent,
+        dismiss: prepareDismissal(`H${level + headingText}`),
+        isWithinRoot,
+      });
     });
 
     // Missing Heading 1
-    if (Elements.Found.HeadingOne.length === 0 && option.missingH1) {
+    if (option.checks.HEADING_MISSING_ONE && Elements.Found.HeadingOne.length === 0) {
       results.push({
-        type: 'warning',
-        content: Lang.sprintf('HEADING_MISSING_ONE'),
-        dismiss: 'missingH1',
+        type: option.checks.HEADING_MISSING_ONE.type || 'warning',
+        content: option.checks.HEADING_MISSING_ONE.content || Lang.sprintf('HEADING_MISSING_ONE'),
+        dismiss: 'MISSINGH1',
+        developer: option.checks.HEADING_MISSING_ONE.developer || false,
       });
     }
     return { results, headingOutline };
   }
 
   function checkLinkText(results, option) {
-    const containsLinkTextStopWords = (textContent) => {
-      const urlText = [
-        'http',
-        'edu/',
-        'com/',
-        'net/',
-        'org/',
-        'us/',
-        'ca/',
-        'de/',
-        'icu/',
-        'uk/',
-        'ru/',
-        'info/',
-        'top/',
-        'xyz/',
-        'tk/',
-        'cn/',
-        'ga/',
-        'cf/',
-        'nl/',
-        'io/',
-        'fr/',
-        'pe/',
-        'nz/',
-        'pt/',
-        'es/',
-        'pl/',
-        'ua/',
-      ];
+    // List of partial alt stop words.
+    const linkStopWords = option.linkStopWords
+      ? [...Lang._('PARTIAL_ALT_STOPWORDS'), ...option.linkStopWords.split(',').map((word) => word.trim())]
+      : Lang._('PARTIAL_ALT_STOPWORDS');
 
+    // Utility function to strip all space and special chars except forward slash.
+    const stripSpecialCharacters = (string) => string.replace(/[^\w\s./]/g, '').replace(/\s+/g, ' ').trim();
+
+    // Utility function to check if text contains stop words.
+    const checkStopWords = (textContent, stopWords) => {
+      const testTextContent = textContent.replace(/\./g, '').toLowerCase();
+      let matchedWord = null;
+      stopWords.forEach((word) => {
+        if (testTextContent.length === word.length && testTextContent.indexOf(word.toLowerCase()) >= 0) {
+          matchedWord = word;
+        }
+      });
+      return matchedWord;
+    };
+
+    // Check for stop words.
+    const containsLinkTextStopWords = (textContent) => {
       const hit = [null, null, null, null];
 
-      // Iterate through all partialStopwords.
-      Lang._('PARTIAL_ALT_STOPWORDS').forEach((word) => {
-        if (
-          textContent.length === word.length && textContent.toLowerCase().indexOf(word) >= 0
-        ) {
-          hit[0] = word;
-        }
-        return false;
-      });
+      hit[0] = checkStopWords(textContent, linkStopWords);
 
-      // Other warnings we want to add.
-      const linkStopWords = (option.linkStopWords) ? option.linkStopWords.split(',').map((word) => word.trim()) : Lang._('WARNING_ALT_STOPWORDS');
-      linkStopWords.forEach((word) => {
+      // When link text contains "click"
+      Lang._('CLICK').forEach((word) => {
         if (textContent.toLowerCase().indexOf(word) >= 0) {
           hit[1] = word;
         }
@@ -7325,14 +8754,14 @@
 
       // Flag citations/references. Check if link text matches a publication source.
       const doi = [
-        'doiorg/', // doi.org
-        'dlacmorg/', // dl.acm.org
-        'linkspringercom/', // link.springer.com
-        'pubmedncbinlmnihgov/', // pubmed.ncbi.nlm.nih.gov
-        'scholargooglecom/', // scholar.google.com
-        'ieeexploreieeeorg/', // ieeexplore.ieee.org
-        'researchgatenet/publication', // researchgate.net/publication
-        'sciencedirectcom/science/article', // sciencedirect.com/science/article
+        'doi.org/',
+        'dl.acm.org/',
+        'link.springer.com/',
+        'pubmed.ncbi.nlm.nih.gov/',
+        'scholar.google.com/',
+        'ieeexplore.ieee.org/',
+        'researchgate.net/publication/',
+        'sciencedirect.com/science/article/',
       ];
       doi.forEach((word) => {
         if (textContent.toLowerCase().indexOf(word) >= 0) {
@@ -7341,8 +8770,17 @@
         return false;
       });
 
-      // Flag link text containing URLs.
-      urlText.forEach((word) => {
+      // URL starts with.
+      ['www.', 'http'].forEach((word) => {
+        if (textContent.toLowerCase().startsWith(word)) {
+          hit[3] = word;
+        }
+        return false;
+      });
+
+      // Flag link containing these typical URL endings.
+      const urlEndings = ['.edu/', '.com/', '.net/', '.org/', '.us/', '.ca/', '.de/', '.icu/', '.uk/', '.ru/', '.info/', '.top/', '.xyz/', '.tk/', '.cn/', '.ga/', '.cf/', '.nl/', '.io/', '.fr/', '.pe/', '.nz/', '.pt/', '.es/', '.pl/', '.ua/'];
+      urlEndings.forEach((word) => {
         if (textContent.toLowerCase().indexOf(word) >= 0) {
           hit[3] = word;
         }
@@ -7354,13 +8792,16 @@
 
     const seen = {};
     Elements.Found.Links.forEach(($el) => {
+      const href = standardizeHref($el);
+
+      // Link text based on COMPUTED ACCESSIBLE NAME.
       const accName = computeAccessibleName($el, Constants.Exclusions.LinkSpan);
       const stringMatchExclusions = option.linkIgnoreStrings
         ? accName.replace(option.linkIgnoreStrings, '') : accName;
       const linkText = removeWhitespace(stringMatchExclusions);
 
       // Ignore special characters (except forward slash).
-      const stripSpecialChars = linkText.replace(/[^\w\s/]/g, '').replace(/\s+/g, ' ').trim();
+      const stripSpecialChars = stripSpecialCharacters(linkText);
       const error = containsLinkTextStopWords(stripSpecialChars);
 
       // Match special characters exactly 1 character in length.
@@ -7372,143 +8813,26 @@
       const matches = linkText.match(htmlSymbols);
       const matchedSymbol = matches ? matches[1] : null;
 
-      // ARIA attributes.
-      const href = $el.getAttribute('href');
+      // Attributes.
+      const titleAttr = $el.getAttribute('title');
       const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
       const negativeTabindex = $el.getAttribute('tabindex') === '-1';
 
       // Has ARIA.
       const hasAria = $el.querySelector(':scope [aria-labelledby], :scope [aria-label]') || $el.getAttribute('aria-labelledby') || $el.getAttribute('aria-label');
-
-      // Has aria-labeledby.
       const hasAriaLabelledby = $el.querySelector(':scope [aria-labelledby]') || $el.getAttribute('aria-labelledby');
 
-      if ($el.querySelectorAll('img').length) ; else if (ariaHidden) {
-        // Has aria-hidden.
-        if (!negativeTabindex) {
-          // If negative tabindex.
-          results.push({
-            element: $el,
-            type: 'error',
-            content: Lang.sprintf('LINK_HIDDEN_FOCUSABLE'),
-            inline: true,
-            position: 'afterend',
-          });
-        }
-      } else if ((href || href === '') && linkText.length === 0) {
-        // Empty hyperlinks.
-        if (hasAriaLabelledby) {
-          // Has ariaLabelledby attribute but empty accessible name.
-          results.push({
-            element: $el,
-            type: 'error',
-            content: Lang.sprintf('LINK_EMPTY_LABELLEDBY'),
-            inline: true,
-            position: 'afterend',
-          });
-        } else if ($el.children.length) {
-          // Has child elements (e.g. SVG or SPAN) <a><i></i></a>
-          results.push({
-            element: $el,
-            type: 'error',
-            content: Lang.sprintf('LINK_EMPTY_LINK_NO_LABEL'),
-            inline: true,
-            position: 'afterend',
-          });
-        } else {
-          // Completely empty <a></a>
-          results.push({
-            element: $el,
-            type: 'error',
-            content: Lang.sprintf('LINK_EMPTY'),
-            inline: true,
-            position: 'afterend',
-          });
-        }
-      } else if (error[0] !== null) {
-        // Contains stop words.
-        results.push({
-          element: $el,
-          type: 'error',
-          content: Lang.sprintf('LINK_STOPWORD', error[0]),
-          inline: true,
-          position: 'afterend',
-        });
-      } else if (error[1] !== null || matchedSymbol !== null) {
-        const key = prepareDismissal(`LINK${linkText + href}`);
-        const stopword = matchedSymbol || error[1];
-        // Contains warning words.
-        results.push({
-          element: $el,
-          type: 'warning',
-          content: Lang.sprintf('LINK_BEST_PRACTICES', stopword),
-          inline: true,
-          position: 'beforebegin',
-          dismiss: key,
-        });
-      } else if (error[2] !== null && option.linksToDOI) {
-        const key = prepareDismissal(`LINK${linkText + error[2] + href}`);
-        // Contains DOI URL in link text.
-        if (linkText.length > 8) {
-          results.push({
-            element: $el,
-            type: 'warning',
-            content: Lang.sprintf('LINK_DOI'),
-            inline: true,
-            position: 'beforebegin',
-            dismiss: key,
-          });
-        }
-      } else if (error[3] !== null && option.URLAsLinkTextWarning) {
-        const key = prepareDismissal(`LINK${linkText + error[2] + href}`);
-        // Contains URL in link text.
-        if (linkText.length > option.URLTextMaxCharLength) {
-          results.push({
-            element: $el,
-            type: 'warning',
-            content: Lang.sprintf('LINK_URL'),
-            inline: true,
-            position: 'beforebegin',
-            dismiss: key,
-          });
-        }
-      } else if (hasAria) {
-        // If the link has any ARIA, append a "Good" link button.
-        if (option.showGoodLinkButton) {
-          const sanitizedText = sanitizeHTML(linkText);
-          results.push({
-            element: $el,
-            type: 'good',
-            content: Lang.sprintf('LINK_LABEL', sanitizedText),
-            inline: true,
-            position: 'afterend',
-          });
-        }
-      } else if (isSingleSpecialChar) {
-        // Link is ONLY a period, comma, or special character.
-        results.push({
-          element: $el,
-          type: 'error',
-          content: Lang.sprintf('LINK_EMPTY'),
-          inline: true,
-          position: 'afterend',
-        });
-      }
+      // New tab or new window.
+      const containsNewWindowPhrases = Lang._('NEW_WINDOW_PHRASES').some((pass) => linkText.toLowerCase().includes(pass));
 
-      /* ********************* */
-      /*  Links (Advanced)     */
-      /* ********************* */
-      if (option.linksAdvancedPlugin) {
-        const toggleCheck = store.getItem('sa11y-remember-links-advanced') === 'On';
-        if (toggleCheck || option.headless || option.checkAllHideToggles) {
-          // New tab or new window.
-          const containsNewWindowPhrases = Lang._('NEW_WINDOW_PHRASES').some((pass) => linkText.toLowerCase().includes(pass));
+      // If visible label is only "Click here"
+      const containsClickPhrase = Lang._('CLICK').some((pass) => $el.textContent.toLowerCase().includes(pass));
 
-          // Link that points to a file type and indicates as such.
-          const defaultFileTypes = ['pdf', 'doc', 'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'];
-          const fileTypes = defaultFileTypes.concat(Lang._('FILE_TYPE_PHRASES'));
-          const containsFileTypePhrases = fileTypes.some((pass) => linkText.toLowerCase().includes(pass));
-          const fileTypeMatch = $el.matches(`
+      // Link that points to a file type and indicates as such.
+      const defaultFileTypes = ['pdf', 'doc', 'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'];
+      const fileTypes = defaultFileTypes.concat(Lang._('FILE_TYPE_PHRASES'));
+      const containsFileTypePhrases = fileTypes.some((pass) => linkText.toLowerCase().includes(pass));
+      const fileTypeMatch = $el.matches(`
           a[href$='.pdf'],
           a[href$='.doc'],
           a[href$='.docx'],
@@ -7528,46 +8852,276 @@
           a[href$='.avi']
         `);
 
-          // Remove whitespace and special characters to improve accuracy and minimize false positives.
-          const linkTextTrimmed = linkText.replace(/'|"|-|\.|\s+/g, '').toLowerCase();
+      // Remove whitespace and special characters to improve accuracy and minimize false positives.
+      const linkTextTrimmed = linkText.replace(/'|"|-|\.|\s+/g, '').toLowerCase();
 
+      // Don't overlap with Alt Text module.
+      if (!$el.querySelectorAll('img').length) {
+        // Has aria-hidden.
+        if (ariaHidden) {
+          if (!negativeTabindex) {
+            // If negative tabindex.
+            if (option.checks.HIDDEN_FOCUSABLE) {
+              results.push({
+                element: $el,
+                type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
+                content: option.checks.HIDDEN_FOCUSABLE.content || Lang.sprintf('HIDDEN_FOCUSABLE'),
+                inline: true,
+                position: 'afterend',
+                dismiss: prepareDismissal(`LINKHIDDENFOCUS${href + linkTextTrimmed}`),
+                dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll ? 'LINK_HIDDEN_FOCUSABLE' : false,
+                developer: option.checks.HIDDEN_FOCUSABLE.developer || true,
+              });
+            }
+          }
+        } else if ((href || href === '') && linkText.length === 0) {
+          // Empty hyperlinks.
+          if (hasAriaLabelledby) {
+            // Has ariaLabelledby attribute but empty accessible name.
+            if (option.checks.LINK_EMPTY_LABELLEDBY) {
+              results.push({
+                element: $el,
+                type: option.checks.LINK_EMPTY_LABELLEDBY.type || 'error',
+                content: option.checks.LINK_EMPTY_LABELLEDBY.content || Lang.sprintf('LINK_EMPTY_LABELLEDBY'),
+                inline: true,
+                position: 'afterend',
+                dismiss: prepareDismissal(`LINKEMPTYLABELLEDBY${href}`),
+                dismissAll: option.checks.LINK_EMPTY_LABELLEDBY.dismissAll ? 'LINK_EMPTY_LABELLEDBY' : false,
+                developer: option.checks.LINK_EMPTY_LABELLEDBY.developer || true,
+              });
+            }
+          } else if ($el.children.length) {
+            // Has child elements (e.g. SVG or SPAN) <a><i></i></a>
+            if (option.checks.LINK_EMPTY_NO_LABEL) {
+              results.push({
+                element: $el,
+                type: option.checks.LINK_EMPTY_NO_LABEL.type || 'error',
+                content: option.checks.LINK_EMPTY_NO_LABEL.content || Lang.sprintf('LINK_EMPTY_NO_LABEL'),
+                inline: true,
+                position: 'afterend',
+                dismiss: prepareDismissal(`LINKEMPTYNOLABEL${href}`),
+                dismissAll: option.checks.LINK_EMPTY_NO_LABEL.dismissAll ? 'LINK_EMPTY_NO_LABEL' : false,
+                developer: option.checks.LINK_EMPTY_NO_LABEL.developer || false,
+              });
+            }
+          } else if (option.checks.LINK_EMPTY) {
+            // Completely empty <a></a>
+            results.push({
+              element: $el,
+              type: option.checks.LINK_EMPTY.type || 'error',
+              content: option.checks.LINK_EMPTY.content || Lang.sprintf('LINK_EMPTY'),
+              inline: true,
+              position: 'afterend',
+              dismiss: prepareDismissal(`LINKEMPTY${href}`),
+              dismissAll: option.checks.LINK_EMPTY.dismissAll ? 'LINK_EMPTY' : false,
+              developer: option.checks.LINK_EMPTY.developer || false,
+            });
+          }
+        } else if (error[0] !== null) {
+          // Contains stop words.
+          if (option.checks.LINK_STOPWORD) {
+            results.push({
+              element: $el,
+              type: option.checks.LINK_STOPWORD.type || 'error',
+              content: option.checks.LINK_STOPWORD.content
+                || Lang.sprintf('LINK_STOPWORD', error[0]) + Lang.sprintf('LINK_TIP'),
+              inline: true,
+              position: 'afterend',
+              dismiss: prepareDismissal(`LINKSTOPWORD${href + linkTextTrimmed}`),
+              dismissAll: option.checks.LINK_STOPWORD.dismissAll ? 'LINK_STOPWORD' : false,
+              developer: option.checks.LINK_STOPWORD.developer || false,
+            });
+          }
+        } else if (error[2] !== null) {
+          // Contains DOI URL in link text.
+          if (linkText.length > 8) {
+            if (option.checks.LINK_DOI) {
+              results.push({
+                element: $el,
+                type: option.checks.LINK_DOI.type || 'warning',
+                content: option.checks.LINK_DOI.content || Lang.sprintf('LINK_DOI'),
+                inline: true,
+                dismiss: prepareDismissal(`LINKDOI${href + linkTextTrimmed}`),
+                dismissAll: option.checks.LINK_DOI.dismissAll ? 'LINK_DOI' : false,
+                developer: option.checks.LINK_DOI.developer || false,
+              });
+            }
+          }
+        } else if (error[3] !== null) {
+          // Contains URL in link text.
+          if (linkText.length > (option.checks.LINK_URL.maxLength || 40)) {
+            if (option.checks.LINK_URL) {
+              results.push({
+                element: $el,
+                type: option.checks.LINK_URL.type || 'warning',
+                content: option.checks.LINK_URL.content
+                  || Lang.sprintf('LINK_URL') + Lang.sprintf('LINK_TIP'),
+                inline: true,
+                dismiss: prepareDismissal(`LINKURLNAME${href + linkTextTrimmed}`),
+                dismissAll: option.checks.LINK_URL.dismissAll ? 'LINK_URL' : false,
+                developer: option.checks.LINK_URL.developer || false,
+              });
+            }
+          }
+        } else if (hasAria) {
+          // Computed accessible name,
+          const sanitizedText = sanitizeHTML(linkText);
+
+          // General warning for visible non-descript link text, regardless of ARIA label.
+          const excludeSpan = fnIgnore($el, Constants.Exclusions.LinkSpan);
+          const visibleLinkText = option.linkIgnoreStrings
+            ? getText(excludeSpan).replace(option.linkIgnoreStrings, '') : getText(excludeSpan);
+          const cleanedString = stripSpecialCharacters(visibleLinkText);
+          const stopword = checkStopWords(cleanedString, linkStopWords);
+          if (option.checks.LINK_STOPWORD_ARIA && stopword !== null) {
+            results.push({
+              element: $el,
+              type: option.checks.LINK_STOPWORD_ARIA.type || 'warning',
+              content: option.checks.LINK_STOPWORD_ARIA.content
+                || Lang.sprintf('LINK_STOPWORD_ARIA', stopword, sanitizedText) + Lang.sprintf('LINK_TIP'),
+              inline: true,
+              dismiss: prepareDismissal(`LINKSTOPWORDARIA${href + linkTextTrimmed}`),
+              dismissAll: option.checks.LINK_STOPWORD_ARIA.dismissAll ? ' LINK_STOPWORD_ARIA' : false,
+              developer: option.checks.LINK_STOPWORD_ARIA.developer || false,
+            });
+          } else if (option.checks.LINK_LABEL) {
+            // If the link has any ARIA, append a "Good" link button.
+            results.push({
+              element: $el,
+              type: option.checks.LINK_LABEL.type || 'good',
+              content: option.checks.LINK_LABEL.content || `${Lang.sprintf('ACC_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
+              inline: true,
+              position: 'afterend',
+              dismiss: prepareDismissal(`LINKGOOD${href + linkTextTrimmed}`),
+              dismissAll: option.checks.LINK_LABEL.dismissAll ? 'LINK_LABEL' : false,
+              developer: option.checks.LINK_LABEL.developer || false,
+            });
+          }
+
+          // Button must have visible label as part of their accessible name.
+          const isVisibleTextInAccessibleName$1 = isVisibleTextInAccessibleName($el);
+          if (option.checks.LABEL_IN_NAME && isVisibleTextInAccessibleName$1 && $el.textContent.length !== 0) {
+            results.push({
+              element: $el,
+              type: option.checks.LABEL_IN_NAME.type || 'warning',
+              content: option.checks.LABEL_IN_NAME.content || `${Lang.sprintf('LABEL_IN_NAME', sanitizedText)}`,
+              inline: true,
+              position: 'afterend',
+              dismiss: prepareDismissal(`LINKLABELNAME${href + linkTextTrimmed}`),
+              dismissAll: option.checks.LABEL_IN_NAME.dismissAll ? 'BTN_LABEL_IN_NAME' : false,
+              developer: option.checks.LABEL_IN_NAME.developer || true,
+            });
+          }
+        } else if (matchedSymbol) {
+          // If link contains a special character used as a CTA.
+          if (option.checks.LINK_SYMBOLS) {
+            results.push({
+              element: $el,
+              type: option.checks.LINK_SYMBOLS.type || 'warning',
+              content: option.checks.LINK_SYMBOLS.content || Lang.sprintf('LINK_SYMBOLS', matchedSymbol),
+              inline: true,
+              dismiss: prepareDismissal(`LINKSYMBOL${href + linkTextTrimmed}`),
+              dismissAll: option.checks.LINK_SYMBOLS.dismissAll ? 'LINK_SYMBOLS' : false,
+              developer: option.checks.LINK_SYMBOLS.developer || false,
+            });
+          }
+        } else if (isSingleSpecialChar) {
+          // Link is ONLY a period, comma, or special character.
+          if (option.checks.LINK_EMPTY) {
+            results.push({
+              element: $el,
+              type: option.checks.LINK_EMPTY.type || 'error',
+              content: option.checks.LINK_EMPTY.content || Lang.sprintf('LINK_EMPTY'),
+              inline: true,
+              position: 'afterend',
+              dismiss: prepareDismissal(`LINKCHAR${href}`),
+              dismissAll: option.checks.LINK_EMPTY.dismissAll ? 'LINK_EMPTY' : false,
+              developer: option.checks.LINK_EMPTY.developer || false,
+            });
+          }
+        }
+
+        // Uses "click here" in the link text or accessible name.
+        if (error[1] !== null || containsClickPhrase) {
+          if (option.checks.LINK_CLICK_HERE) {
+            results.push({
+              element: $el,
+              type: option.checks.LINK_CLICK_HERE.type || 'warning',
+              content: option.checks.LINK_CLICK_HERE.content
+                || Lang.sprintf('LINK_CLICK_HERE') + Lang.sprintf('LINK_TIP'),
+              inline: true,
+              dismiss: prepareDismissal(`LINKCLICKHERE${href + linkTextTrimmed}`),
+              dismissAll: option.checks.LINK_CLICK_HERE.dismissAll ? 'LINK_CLICK_HERE' : false,
+              developer: option.checks.LINK_CLICK_HERE.developer || false,
+            });
+          }
+        }
+
+        // Link's title attribute is the same as the link text.
+        if (getText($el).length !== 0 && titleAttr?.toLowerCase() === linkText.toLowerCase()) {
+          if (option.checks.DUPLICATE_TITLE) {
+            results.push({
+              element: $el,
+              type: option.checks.DUPLICATE_TITLE.type || 'warning',
+              content: option.checks.DUPLICATE_TITLE.content || Lang.sprintf('DUPLICATE_TITLE'),
+              inline: true,
+              dismiss: prepareDismissal(`LINKDUPLICATETITLE${href + linkTextTrimmed}`),
+              dismissAll: option.checks.DUPLICATE_TITLE.dismissAll ? 'DUPLICATE_TITLE' : false,
+              developer: option.checks.DUPLICATE_TITLE.developer || false,
+            });
+          }
+        }
+      }
+
+      if (option.linksAdvancedPlugin) {
+        if (linkTextTrimmed.length !== 0) {
           // Links with identical accessible names have equivalent purpose.
-          if (linkTextTrimmed.length !== 0) {
-            if (seen[linkTextTrimmed] && !seen[href]) {
-              // Link has identical name as another link.
-              const key = prepareDismissal(`LINK${linkTextTrimmed + href}`);
+          if (seen[linkTextTrimmed] && !seen[href]) {
+            if (option.checks.LINK_IDENTICAL_NAME) {
               const sanitizedText = sanitizeHTML(linkText);
               results.push({
                 element: $el,
-                type: 'warning',
-                content: Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText),
+                type: option.checks.LINK_IDENTICAL_NAME.type || 'warning',
+                content: option.checks.LINK_IDENTICAL_NAME.content
+                  || `${Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
                 inline: true,
-                position: 'beforebegin',
-                dismiss: key,
+                dismiss: prepareDismissal(`LINKSEEN${href + linkTextTrimmed}`),
+                dismissAll: option.checks.LINK_IDENTICAL_NAME.dismissAll ? 'LINK_IDENTICAL_NAME' : false,
+                developer: option.checks.LINK_IDENTICAL_NAME.developer || false,
               });
-            } else if ($el.getAttribute('target') === '_blank' && !fileTypeMatch && !containsNewWindowPhrases) {
-              const key = prepareDismissal(`LINK${linkTextTrimmed + href}`);
+            }
+          } else {
+            seen[linkTextTrimmed] = true;
+            seen[href] = true;
+          }
+
+          // Link opens in new tab without warning.
+          if ($el.getAttribute('target')?.toLowerCase() === '_blank' && !fileTypeMatch && !containsNewWindowPhrases) {
+            if (option.checks.LINK_NEW_TAB) {
               results.push({
                 element: $el,
-                type: 'warning',
-                content: Lang.sprintf('NEW_TAB_WARNING'),
+                type: option.checks.LINK_NEW_TAB.type || 'warning',
+                content: option.checks.LINK_NEW_TAB.content || Lang.sprintf('LINK_NEW_TAB'),
                 inline: true,
-                position: 'beforebegin',
-                dismiss: key,
+                dismiss: prepareDismissal(`LINKNEWTAB${href + linkTextTrimmed}`),
+                dismissAll: option.checks.LINK_NEW_TAB.dismissAll ? 'LINK_NEW_TAB' : false,
+                developer: option.checks.LINK_NEW_TAB.developer || false,
               });
-            } else if (fileTypeMatch && !containsFileTypePhrases) {
-              const key = prepareDismissal(`LINK${linkTextTrimmed + href}`);
+            }
+          }
+
+          // Link points to file (non HTML resource) without warning.
+          if (fileTypeMatch && !containsFileTypePhrases) {
+            if (option.checks.LINK_FILE_EXT) {
               results.push({
                 element: $el,
-                type: 'warning',
-                content: Lang.sprintf('FILE_TYPE_WARNING'),
+                type: option.checks.LINK_FILE_EXT.type || 'warning',
+                content: option.checks.LINK_FILE_EXT.content || Lang.sprintf('LINK_FILE_EXT'),
                 inline: true,
-                position: 'beforebegin',
-                dismiss: key,
+                dismiss: prepareDismissal(`LINKEXT${href + linkTextTrimmed}`),
+                dismissAll: option.checks.LINK_FILE_EXT.dismissAll ? 'LINK_FILE_EXT' : false,
+                developer: option.checks.LINK_FILE_EXT.developer || false,
               });
-            } else {
-              seen[linkTextTrimmed] = true;
-              seen[href] = true;
             }
           }
         }
@@ -7577,385 +9131,487 @@
   }
 
   /**
-   * Converts a color string in the format 'color(srgb r g b [a])' to RGBA format.
-   * If alpha value is not provided, it defaults to 1 (fully opaque).
-   * @param {string} colorString The color string in the format 'color(srgb r g b [a])'.
-   * @returns {string} The RGBA color string in the format 'rgba(r, g, b, a)'.
-   * Returns 'invalid-format' if the input format is invalid.
-   */
-  const convertColorToRGBA = (colorString) => {
-    if (colorString.startsWith('color(srgb')) {
-      const rgbaRegex = /srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s+([\d.]+))?/; // Added alpha value regex group
-      const match = colorString.match(rgbaRegex);
-
-      if (match && match.length >= 4) {
-        const [r, g, b, a] = match.slice(1);
-
-        // Ensure the parsed values are within the valid range [0, 1].
-        const parsedR = Math.min(1, parseFloat(r));
-        const parsedG = Math.min(1, parseFloat(g));
-        const parsedB = Math.min(1, parseFloat(b));
-
-        // Parse alpha value or default to 1 if not provided
-        const alpha = a !== undefined ? Math.min(1, parseFloat(a)) : 1;
-
-        // Converting RGB to RGBA.
-        const rgbaColor = `rgba(${Math.round(parsedR * 255)}, ${Math.round(parsedG * 255)}, ${Math.round(parsedB * 255)}, ${alpha})`;
-
-        return rgbaColor;
-      }
-      return 'invalid-format';
-    }
-    return colorString; // Return the original color if it's not in the color() format.
-  };
-
-  /**
    * Rulesets: Contrast
-   * Color contrast plugin by Jason Day.
+   * @param {Array} results Sa11y's results array.
+   * @param {Object} option Sa11y's options object.
+   * @returns Contrast results.
+   * APCA contrast checking is experimental. References:
    * @link https://github.com/jasonday/color-contrast
-   * @link https://github.com/gka/chroma.js (Parse RGB)
-  */
+   * @link https://github.com/gka/chroma.js
+   * @link https://github.com/Myndex/SAPC-APCA
+   */
   function checkContrast(results, option) {
-    if (option.contrastPlugin) {
-      const toggleCheck = store.getItem('sa11y-remember-contrast') === 'On';
-      if (toggleCheck || option.headless || option.checkAllHideToggles) {
-        let contrastErrors = {
-          errors: [],
-          warnings: [],
-        };
+    // Initialize contrast results array.
+    const contrastResults = [];
 
-        /* eslint-disable */
-        const contrastObject = {
-          // Parse rgb(r, g, b) and rgba(r, g, b, a) strings into an array.
-          parseRgb(css) {
-            let i;
-            let m;
-            let rgb;
-            let f;
-            let k;
-            if (m = css.match(/rgb\(\s*(\-?\d+),\s*(\-?\d+)\s*,\s*(\-?\d+)\s*\)/)) {
-              rgb = m.slice(1, 4);
-              for (i = f = 0; f <= 2; i = ++f) {
-                rgb[i] = +rgb[i];
-              }
-              rgb[3] = 1;
-            } else if (m = css.match(/rgba\(\s*(\-?\d+),\s*(\-?\d+)\s*,\s*(\-?\d+)\s*,\s*([01]|[01]?\.\d+)\)/)) {
-              rgb = m.slice(1, 5);
-              for (i = k = 0; k <= 3; i = ++k) {
-                rgb[i] = +rgb[i];
-              }
-            }
-            return rgb;
-          },
-          /**
-           * Based on @link http://www.w3.org/TR/WCAG20/#relativeluminancedef
-          */
-          relativeLuminance(c) {
-            const lum = [];
-            for (let i = 0; i < 3; i++) {
-              const v = c[i] / 255;
-              // eslint-disable-next-line no-restricted-properties
-              lum.push(v < 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
-            }
-            return (0.2126 * lum[0]) + (0.7152 * lum[1]) + (0.0722 * lum[2]);
-          },
-          /**
-           * Based on @link http://www.w3.org/TR/WCAG20/#contrast-ratiodef
-          */
-          contrastRatio(x, y) {
-            const l1 = contrastObject.relativeLuminance(contrastObject.parseRgb(x));
-            const l2 = contrastObject.relativeLuminance(contrastObject.parseRgb(y));
-            return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
-          },
+    // Iterate through all elements on the page and get computed styles.
+    for (let i = 0; i < Elements.Found.Contrast.length; i++) {
+      const $el = Elements.Found.Contrast[i];
+      const style = getComputedStyle($el);
 
-          getBackground(el) {
-            // If item is shadowRoot (nodeType 11)
-            if (el.nodeType === 11) {
-              // find the parentNode outside shadow: most likely the inherited bg colour.
-              const parent = el.getRootNode().host.parentNode;
-              if (parent !== null) {
-                el = parent;
-              } else {
-                // Return warning or manual check otherwise.
-                return 'alpha';
-              }
-            }
+      // Get computed styles.
+      const opacity = parseFloat(style.opacity);
+      const color = convertToRGBA(style.color, opacity);
+      const fontSize = parseFloat(style.fontSize);
+      const getFontWeight = style.fontWeight;
+      const fontWeight = normalizeFontWeight(getFontWeight);
+      const background = getBackground($el);
 
-            const styles = getComputedStyle(el);
-            const bgColor = convertColorToRGBA(styles.backgroundColor);
-            const bgImage = styles.backgroundImage;
-            const rgb = `${contrastObject.parseRgb(bgColor)}`;
-            const alpha = rgb.split(',');
+      // Check if element is visually hidden to screen readers or explicitly hidden.
+      const isVisuallyHidden = isScreenReaderOnly($el);
+      const isExplicitlyHidden = isElementHidden($el);
+      const isHidden = isExplicitlyHidden || isVisuallyHidden || opacity === 0;
 
-            // if background has alpha transparency, flag manual check.
-            if (alpha[3] < 1 && alpha[3] > 0) {
-              return 'alpha';
-            }
+      // Filter only text nodes.
+      const textString = Array.from($el.childNodes)
+        .filter((node) => node.nodeType === 3)
+        .map((node) => node.textContent)
+        .join('');
+      const text = textString.trim();
 
-            if (bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent' && bgImage === 'none' && alpha[3] !== '0') {
-              // if element has no background image, or transparent return bgColor
-              return bgColor;
-            } if (bgImage !== 'none') {
-              return 'image';
-            }
+      // Inputs to check
+      const checkInputs = ['SELECT', 'INPUT', 'TEXTAREA'].includes($el.tagName);
 
-            // retest if not returned above
-            if (el.tagName === 'HTML') {
-              return 'rgb(255, 255, 255)';
-            }
-            return contrastObject.getBackground(el.parentNode);
-          },
-          /* eslint-disable */
-          check() {
-            // resets results
-            contrastErrors = {
-              errors: [],
-              warnings: [],
-            };
-
-            for (let i = 0; i < Elements.Found.Contrast.length; i++) {
-              const elem = Elements.Found.Contrast[i];
-
-              if (Elements.Found.Contrast) {
-                let ratio;
-                let error;
-                let warning;
-
-                const style = getComputedStyle(elem);
-                const color = convertColorToRGBA(style.color);
-                const { fill } = style;
-                const fontSize = parseInt(style.fontSize, 10);
-                const pointSize = fontSize * (3 / 4);
-                const { fontWeight } = style;
-                const htmlTag = elem.tagName;
-                const background = contrastObject.getBackground(elem);
-                const textString = [].reduce.call(elem.childNodes, (a, b) => a + (b.nodeType === 3 ? b.textContent : ''), '');
-                const text = textString.trim();
-
-                // Maybe visually hidden text.
-                const computedStyle = window.getComputedStyle(elem);
-                const clip = computedStyle.clip.replace(/\s/g, '');
-                const clipPath = computedStyle.getPropertyValue('clip-path');
-                const width = parseFloat(computedStyle.width);
-                const height = parseFloat(computedStyle.height);
-                const maybeVisuallyHidden = (width === 1 && height === 1) &&
-                  (clipPath === 'inset(50%)' || /^(rect\(0(,\s*0){3}\)|rect\(1px(,\s*1px){3}\))$/.test(clip));
-
-                if (maybeVisuallyHidden) ; else if (color.startsWith('color(')) {
-                  // Push a warning if using a color() functional notation.
-                  warning = {
-                    elem,
-                  };
-                  contrastErrors.warnings.push(warning);
-                } else if (htmlTag === 'SVG') {
-                  ratio = Math.round(contrastObject.contrastRatio(fill, background) * 100) / 100;
-                  if (ratio < 3) {
-                    error = {
-                      elem,
-                      ratio: `${ratio}:1`,
-                    };
-                    contrastErrors.errors.push(error);
-                  }
-                } else if (text.length || htmlTag === 'INPUT' || htmlTag === 'SELECT' || htmlTag === 'TEXTAREA') {
-                  const type = elem.getAttribute('type');
-                  if (type === 'range' || type === 'color') ; else if (background === 'image') {
-                    warning = {
-                      elem,
-                    };
-                    contrastErrors.warnings.push(warning);
-                  } else if (background === 'alpha') {
-                    warning = {
-                      elem,
-                    };
-                    contrastErrors.warnings.push(warning);
-                  } else {
-                    ratio = Math.round(contrastObject.contrastRatio(color, background) * 100) / 100;
-                    if (pointSize >= 18 || (pointSize >= 14 && fontWeight >= 700)) {
-                      if (ratio < 3) {
-                        error = {
-                          elem,
-                          ratio: `${ratio}:1`,
-                        };
-                        contrastErrors.errors.push(error);
-                      }
-                    } else if (ratio < 4.5) {
-                      error = {
-                        elem,
-                        ratio: `${ratio}:1`,
-                      };
-                      contrastErrors.errors.push(error);
-                    }
-                  }
-                }
-              }
-            }
-            return contrastErrors;
-          },
-        };
-
-        contrastObject.check();
-
-        contrastErrors.errors.forEach((item) => {
-          const name = item.elem;
-          const cratio = item.ratio;
-          const clone = name.cloneNode(true);
-          const nodeText = fnIgnore(clone, 'script, style').textContent;
-          const sanitizedText = sanitizeHTML(nodeText);
-
-          if (name.tagName === 'INPUT') {
-            results.push({
-              element: name,
-              type: 'error',
-              content: Lang.sprintf('CONTRAST_INPUT_ERROR', cratio),
-              inline: false,
-              position: 'beforebegin',
-            });
-          } else {
-            results.push({
-              element: name,
-              type: 'error',
-              content: Lang.sprintf('CONTRAST_ERROR', cratio, sanitizedText),
-              inline: false,
-              position: 'beforebegin',
+      // Only check elements with text and inputs.
+      if (text.length !== 0 || checkInputs) {
+        if (color === 'unsupported' || background === 'unsupported') {
+          contrastResults.push({
+            $el,
+            type: 'unsupported',
+            fontSize,
+            fontWeight,
+            opacity,
+            ...(background !== 'unsupported' && { background }),
+            ...(color !== 'unsupported' && { color }),
+          });
+        } else if (background.type === 'image') {
+          if (isHidden) ; else {
+            contrastResults.push({
+              $el,
+              type: 'background-image',
+              color,
+              background,
+              fontSize,
+              fontWeight,
+              opacity,
             });
           }
-        });
-
-        contrastErrors.warnings.forEach((item) => {
-          const name = item.elem;
-          const clone = name.cloneNode(true);
-          const nodeText = fnIgnore(clone, 'script, style').textContent;
-
-          const key = prepareDismissal(`CONTRAST${nodeText}`);
-          const sanitizedText = sanitizeHTML(nodeText);
-
-          results.push({
-            element: name,
-            type: 'warning',
-            content: Lang.sprintf('CONTRAST_WARNING', sanitizedText),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
-          });
-        });
+        } else if ($el.tagName === 'text' && $el.closest('svg')) ; else if (isHidden || getHex(color) === getHex(background)) ; else {
+          const result = checkElementContrast($el, color, background, fontSize, fontWeight, opacity);
+          if (result) {
+            result.type = checkInputs ? 'input' : 'text';
+            contrastResults.push(result);
+          }
+        }
       }
     }
+
+    // Iterate through all SVGs on the page, seperately.
+    Elements.Found.Svg.forEach(($el) => {
+      const background = getBackground($el);
+
+      // Background image.
+      if (background && background.type === 'image') {
+        contrastResults.push({ $el, type: 'svg-warning', background });
+        return;
+      }
+
+      // Handle SVGs with <text> element
+      if ($el.querySelector('text')) {
+        contrastResults.push({ $el, type: 'svg-text', background });
+        return;
+      }
+
+      // Process simple SVGs with a single shape.
+      const shapes = $el.querySelectorAll('path, polygon, circle, rect, ellipse');
+      if (shapes.length === 1) {
+        const style = getComputedStyle(shapes[0]);
+        const { fill, opacity, stroke, strokeWidth } = style;
+
+        // Background image.
+        if (fill.startsWith('url(')) {
+          contrastResults.push({ $el, type: 'svg-warning', background });
+          return;
+        }
+
+        const hasFill = fill && fill !== 'none';
+        const hasStroke = stroke && stroke !== 'none' && strokeWidth !== '0px';
+
+        if (!hasFill && !hasStroke) {
+          contrastResults.push({ $el, type: 'svg-warning', background });
+          return;
+        }
+
+        let fillPasses = false;
+        let strokePasses = false;
+        let contrastValue;
+
+        // Check fill contrast.
+        if (hasFill) {
+          const resolvedFill = fill === 'currentColor'
+            ? convertToRGBA(getComputedStyle($el).color, opacity)
+            : convertToRGBA(fill, opacity);
+          contrastValue = calculateContrast(resolvedFill, background);
+          fillPasses = option.contrastAPCA
+            ? contrastValue.ratio >= 45
+            : contrastValue.ratio >= 3;
+        }
+
+        // Check stroke contrast.
+        if (hasStroke) {
+          const resolvedStroke = stroke === 'currentColor'
+            ? convertToRGBA(getComputedStyle($el).color, opacity)
+            : convertToRGBA(stroke, opacity);
+          contrastValue = calculateContrast(resolvedStroke, background);
+          strokePasses = option.contrastAPCA
+            ? contrastValue.ratio >= 45
+            : contrastValue.ratio >= 3;
+        }
+
+        // Failure conditions.
+        const failsBoth = hasFill && hasStroke && !fillPasses && !strokePasses;
+        const failsFill = hasFill && !hasStroke && !fillPasses;
+        const failsStroke = !hasFill && hasStroke && !strokePasses;
+        if (failsBoth || failsFill || failsStroke) {
+          contrastResults.push({
+            $el,
+            ratio: ratioToDisplay(contrastValue.ratio),
+            color: contrastValue.blendedColor,
+            type: 'svg-error',
+            background,
+          });
+        }
+      } else {
+        // Warn for complex SVGs with multiple shapes
+        contrastResults.push({ $el, type: 'svg-warning', background });
+      }
+    });
+
+    // Check contrast of all placeholder elements.
+    Elements.Found.Inputs.forEach(($el) => {
+      if ($el.placeholder && $el.placeholder.length !== 0) {
+        const placeholder = getComputedStyle($el, '::placeholder');
+        const pColor = convertToRGBA(placeholder.getPropertyValue('color'));
+        const pSize = parseFloat(placeholder.fontSize);
+        const pWeight = normalizeFontWeight(placeholder.fontWeight);
+        const pBackground = getBackground($el);
+        const pOpacity = parseFloat(placeholder.opacity);
+
+        // Placeholder has background image.
+        if (pBackground.type === 'image') ; else {
+          const result = checkElementContrast($el, pColor, pBackground, pSize, pWeight, pOpacity);
+          if (result) {
+            result.type = 'placeholder';
+            contrastResults.push(result);
+          }
+        }
+      }
+    });
+
+    // Do some extra processing on warnings.
+    const processWarnings = (warnings) => {
+      // Separate warnings based on type.
+      const backgroundImages = warnings.filter((warning) => warning.type === 'background-image');
+      const otherWarnings = warnings.filter((warning) => warning.type !== 'background-image');
+
+      let processedBackgroundWarnings;
+
+      // Process background-image warnings based on option.contrastAPCA.
+      if (option.contrastAPCA) {
+        // Do not group warnings, return each warning as-is.
+        processedBackgroundWarnings = backgroundImages.map((warning) => ({ ...warning }));
+      } else {
+        // Group background-image warnings if they share same BG and FG colours.
+        const groupedWarnings = backgroundImages.reduce((groups, warning) => {
+          const grouped = groups;
+          const groupKey = JSON.stringify({
+            background: warning.background.value,
+            color: warning.color,
+          });
+          if (!grouped[groupKey]) grouped[groupKey] = [];
+          grouped[groupKey].push(warning);
+          return grouped;
+        }, {});
+
+        // Process each group.
+        processedBackgroundWarnings = Object.values(groupedWarnings).map((group) => ({ ...group[0] }));
+      }
+
+      // Combine processed background-image warnings with other warnings.
+      return [...processedBackgroundWarnings, ...otherWarnings];
+    };
+
+    const processedResults = processWarnings(contrastResults);
+
+    // Iterate through all contrast results.
+    processedResults.forEach((item) => {
+      const { $el, ratio } = item;
+      const updatedItem = item;
+
+      // Annotation placement.
+      const element = $el.tagName === 'OPTION' ? $el.closest('datalist, select, optgroup') : $el;
+
+      // Process text within element.
+      const nodeText = fnIgnore(element, ['option:not(option:first-child)']);
+      const text = getText(nodeText);
+
+      // Content for tooltip.
+      const truncatedText = truncateString(text, 80);
+      const sanitizedText = sanitizeHTML(truncatedText);
+
+      // Preview text
+      let previewText;
+      if (item.type === 'placeholder') {
+        previewText = sanitizeHTML($el.placeholder);
+      } else if (item.type === 'svg-error' || item.type === 'svg-warning' || item.type === 'svg-text') {
+        previewText = '';
+        /**
+         * @todo Better support preview for SVGs.
+         * const sanitizeSvg = Utils.sanitizeHTMLBlock(updatedItem.$el.outerHTML, true);
+         * previewText = Utils.removeWhitespace(sanitizeSvg);
+         * */
+      } else {
+        previewText = sanitizedText;
+      }
+      updatedItem.sanitizedText = previewText;
+
+      // Iterate through contrast results based on type.
+      switch (item.type) {
+        case 'text':
+          if (option.checks.CONTRAST_ERROR) {
+            results.push({
+              element: $el,
+              type: option.checks.CONTRAST_ERROR.type || 'error',
+              content: option.checks.CONTRAST_ERROR.content
+                || Lang.sprintf('CONTRAST_ERROR'),
+              dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
+              dismissAll: option.checks.CONTRAST_ERROR.dismissAll ? 'CONTRAST_ERROR' : false,
+              developer: option.checks.CONTRAST_ERROR.developer || false,
+              contrastDetails: updatedItem,
+            });
+          }
+          break;
+        case 'input':
+          if (option.checks.CONTRAST_INPUT) {
+            results.push({
+              element,
+              type: option.checks.CONTRAST_INPUT.type || 'error',
+              content: option.checks.CONTRAST_INPUT.content
+                || Lang.sprintf('CONTRAST_INPUT', ratio),
+              dismiss: prepareDismissal(`CONTRAST${$el.getAttribute('class')}${$el.tagName}${ratio}`),
+              dismissAll: option.checks.CONTRAST_INPUT.dismissAll ? 'CONTRAST_INPUT' : false,
+              developer: option.checks.CONTRAST_INPUT.developer || true,
+              contrastDetails: updatedItem,
+            });
+          }
+          break;
+        case 'placeholder':
+          if (option.checks.CONTRAST_PLACEHOLDER) {
+            results.push({
+              element: $el,
+              type: option.checks.CONTRAST_PLACEHOLDER.type || 'error',
+              content: option.checks.CONTRAST_PLACEHOLDER.content
+                || Lang.sprintf('CONTRAST_PLACEHOLDER'),
+              position: 'afterend',
+              dismiss: prepareDismissal(`CPLACEHOLDER${$el.getAttribute('class')}${$el.tagName}${ratio}`),
+              dismissAll: option.checks.CONTRAST_PLACEHOLDER.dismissAll ? 'CONTRAST_PLACEHOLDER' : false,
+              developer: option.checks.CONTRAST_PLACEHOLDER.developer || true,
+              contrastDetails: updatedItem,
+            });
+          }
+          break;
+        case 'svg-error':
+          if (option.checks.CONTRAST_ERROR_GRAPHIC) {
+            results.push({
+              element: $el,
+              type: option.checks.CONTRAST_ERROR_GRAPHIC.type || 'error',
+              content: option.checks.CONTRAST_ERROR_GRAPHIC.content
+                || Lang.sprintf('CONTRAST_ERROR_GRAPHIC'),
+              dismiss: prepareDismissal(`CONTRASTERROR${$el.outerHTML}`),
+              dismissAll: option.checks.CONTRAST_ERROR_GRAPHIC.dismissAll ? 'CONTRAST_ERROR_GRAPHIC' : false,
+              developer: option.checks.CONTRAST_ERROR_GRAPHIC.developer || true,
+              contrastDetails: updatedItem,
+            });
+          }
+          break;
+        case 'svg-warning':
+        case 'svg-text':
+          if (option.checks.CONTRAST_WARNING_GRAPHIC) {
+            results.push({
+              element: $el,
+              type: option.checks.CONTRAST_WARNING_GRAPHIC.type || 'warning',
+              content: option.checks.CONTRAST_WARNING_GRAPHIC.content
+                || Lang.sprintf('CONTRAST_WARNING_GRAPHIC'),
+              dismiss: prepareDismissal(`CONTRASTWARNING${$el.outerHTML}`),
+              dismissAll: option.checks.CONTRAST_WARNING_GRAPHIC.dismissAll ? 'CONTRAST_WARNING_GRAPHIC' : false,
+              developer: option.checks.CONTRAST_WARNING_GRAPHIC.developer || true,
+              contrastDetails: updatedItem,
+            });
+          }
+          break;
+        case 'background-image':
+          if (option.checks.CONTRAST_WARNING) {
+            results.push({
+              element,
+              type: option.checks.CONTRAST_WARNING.type || 'warning',
+              content: option.checks.CONTRAST_WARNING.content
+                || Lang.sprintf('CONTRAST_WARNING'),
+              dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
+              dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
+              developer: option.checks.CONTRAST_WARNING.developer || false,
+              contrastDetails: updatedItem,
+            });
+          }
+          break;
+        case 'unsupported':
+          if (option.checks.CONTRAST_UNSUPPORTED) {
+            results.push({
+              element,
+              type: option.checks.CONTRAST_UNSUPPORTED.type || 'warning',
+              content: option.checks.CONTRAST_UNSUPPORTED.content
+                || Lang.sprintf('CONTRAST_WARNING'),
+              dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
+              dismissAll: option.checks.CONTRAST_UNSUPPORTED.dismissAll ? 'CONTRAST_UNSUPPORTED' : false,
+              developer: option.checks.CONTRAST_UNSUPPORTED.developer || false,
+              contrastDetails: updatedItem,
+            });
+          }
+          break;
+      }
+    });
     return results;
   }
 
   function checkLabels(results, option) {
     if (option.formLabelsPlugin) {
-      const toggleCheck = store.getItem('sa11y-remember-labels') === 'On';
-      if (toggleCheck || option.headless || option.checkAllHideToggles) {
-        Elements.Found.Inputs.forEach(($el) => {
-          // Ignore completely hidden elements.
-          const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
-          const negativeTabindex = $el.getAttribute('tabindex') === '-1';
-          const hidden = isElementHidden($el);
-          if (hidden || (ariaHidden && negativeTabindex)) {
-            return;
-          }
+      Elements.Found.Inputs.forEach(($el) => {
+        // Ignore completely hidden elements.
+        const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
+        const negativeTabindex = $el.getAttribute('tabindex') === '-1';
+        const hidden = isElementHidden($el);
+        if (hidden || (ariaHidden && negativeTabindex)) {
+          return;
+        }
 
-          // Compute accessible name on input.
-          const computeName = computeAccessibleName($el);
-          const inputName = removeWhitespace(computeName);
+        // Compute accessible name on input.
+        const computeName = computeAccessibleName($el);
+        const inputName = removeWhitespace(computeName);
 
-          // Get attributes.
-          const alt = $el.getAttribute('alt');
-          const type = $el.getAttribute('type');
-          const hasTitle = $el.getAttribute('title');
-          const hasAria = $el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby');
+        // Get attributes.
+        const alt = $el.getAttribute('alt');
+        const type = $el.getAttribute('type');
+        const hasTitle = $el.getAttribute('title');
+        const hasAria = $el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby');
 
-          // Pass: Ignore if it's a submit or hidden button.
-          if (type === 'submit' || type === 'button' || type === 'hidden') {
-            return;
-          }
+        // Pass: Ignore if it's a submit or hidden button.
+        if (type === 'submit' || type === 'button' || type === 'hidden') {
+          return;
+        }
 
-          // Error: Input with type="image" without accessible name or alt.
-          if (type === 'image' && (!alt || alt === ' ')) {
-            if (!hasAria && !hasTitle) {
-              results.push({
-                element: $el,
-                type: 'error',
-                content: Lang.sprintf('LABELS_MISSING_IMAGE_INPUT_MESSAGE'),
-                inline: false,
-                position: 'beforebegin',
-              });
-            }
-            return;
-          }
-
-          // Warning: to remove reset buttons.
-          if (type === 'reset') {
-            const key = prepareDismissal(`INPUT${inputName}`);
+        // Error: Input with type="image" without accessible name or alt.
+        if (type === 'image') {
+          if (option.checks.LABELS_MISSING_IMAGE_INPUT && (!alt || alt.trim() === '') && !hasAria && !hasTitle) {
             results.push({
               element: $el,
-              type: 'warning',
-              content: Lang.sprintf('LABELS_INPUT_RESET_MESSAGE'),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: key,
+              type: option.checks.LABELS_MISSING_IMAGE_INPUT.type || 'error',
+              content: option.checks.LABELS_MISSING_IMAGE_INPUT.content || Lang.sprintf('LABELS_MISSING_IMAGE_INPUT'),
+              dismiss: prepareDismissal(`INPUTIMAGE${type + inputName}`),
+              dismissAll: option.checks.LABELS_MISSING_IMAGE_INPUT.dismissAll ? 'LABELS_MISSING_IMAGE_INPUT' : false,
+              developer: option.checks.LABELS_MISSING_IMAGE_INPUT.developer || true,
             });
-            return;
           }
+          return;
+        }
 
-          // Uses ARIA or title attribute. Warn them to ensure there's a visible label.
-          if (hasAria || hasTitle) {
-            if (inputName.length === 0) {
-              results.push({
-                element: $el,
-                type: 'error',
-                content: Lang.sprintf('LABELS_MISSING_LABEL_MESSAGE'),
-                inline: false,
-                position: 'beforebegin',
-              });
-            } else {
-              const key = prepareDismissal(`INPUT${inputName}`);
-              const sanitizedText = sanitizeHTML(inputName);
-              results.push({
-                element: $el,
-                type: 'warning',
-                content: Lang.sprintf('LABELS_ARIA_LABEL_INPUT_MESSAGE', sanitizedText),
-                inline: false,
-                position: 'beforebegin',
-                dismiss: key,
-              });
-            }
-            return;
-          }
-
-          // Implicit label: <label>First name: <input type="text"/><label>
-          const closestLabel = $el.closest('label');
-          const labelName = (closestLabel) ? removeWhitespace(computeAccessibleName(closestLabel)) : '';
-          if (closestLabel && labelName.length) {
-            return;
-          }
-
-          // Check to see if each label has a matching for and it attribute.
-          const id = $el.getAttribute('id');
-          if (id) {
-            // Find labels without a match.
-            if (!Elements.Found.Labels.some((label) => label.getAttribute('for') === id)) {
-              results.push({
-                element: $el,
-                type: 'error',
-                content: Lang.sprintf('LABELS_NO_FOR_ATTRIBUTE_MESSAGE', id),
-                inline: false,
-                position: 'beforebegin',
-              });
-            }
-          } else {
-            // No id!
+        // Warning: to remove reset buttons.
+        if (type === 'reset') {
+          if (option.checks.LABELS_INPUT_RESET) {
             results.push({
               element: $el,
-              type: 'error',
-              content: Lang.sprintf('LABELS_MISSING_LABEL_MESSAGE'),
-              inline: false,
-              position: 'beforebegin',
+              type: option.checks.LABELS_INPUT_RESET.type || 'warning',
+              content: option.checks.LABELS_INPUT_RESET.content || Lang.sprintf('LABELS_INPUT_RESET'),
+              dismiss: prepareDismissal(`INPUTRESET${type + inputName}`),
+              dismissAll: option.checks.LABELS_INPUT_RESET.dismissAll ? 'LABELS_INPUT_RESET' : false,
+              developer: option.checks.LABELS_INPUT_RESET.developer || false,
             });
           }
-        });
-      }
+          return;
+        }
+
+        // Uses ARIA or title attribute. Warn them to ensure there's a visible label.
+        if (hasAria || hasTitle) {
+          if (inputName.length === 0) {
+            if (option.checks.LABELS_MISSING_LABEL) {
+              results.push({
+                element: $el,
+                type: option.checks.LABELS_MISSING_LABEL.type || 'error',
+                content: option.checks.LABELS_MISSING_LABEL.content || Lang.sprintf('LABELS_MISSING_LABEL'),
+                dismiss: prepareDismissal(`INPUTMISSING${type + inputName}`),
+                dismissAll: option.checks.LABELS_MISSING_LABEL.dismissAll ? 'LABELS_MISSING_LABEL' : false,
+                developer: option.checks.LABELS_MISSING_LABEL.developer || true,
+              });
+            }
+          } else if (option.checks.LABELS_ARIA_LABEL_INPUT) {
+            const sanitizedText = sanitizeHTML(inputName);
+            results.push({
+              element: $el,
+              type: option.checks.LABELS_ARIA_LABEL_INPUT.type || 'warning',
+              content: option.checks.LABELS_ARIA_LABEL_INPUT.content || `${Lang.sprintf('LABELS_ARIA_LABEL_INPUT', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
+              dismiss: prepareDismissal(`INPUTARIA${type + inputName}`),
+              dismissAll: option.checks.LABELS_ARIA_LABEL_INPUT.dismissAll ? 'LABELS_ARIA_LABEL_INPUT' : false,
+              developer: option.checks.LABELS_ARIA_LABEL_INPUT.developer || true,
+            });
+          }
+          return;
+        }
+
+        // Implicit label: <label>First name: <input type="text"/><label>
+        const closestLabel = $el.closest('label');
+        const labelName = (closestLabel) ? removeWhitespace(computeAccessibleName(closestLabel)) : '';
+        if (closestLabel && labelName.length) {
+          return;
+        }
+
+        // Check to see if each label has a matching for and it attribute.
+        const id = $el.getAttribute('id');
+        if (id) {
+          // Find labels without a match.
+          if (!Elements.Found.Labels.some((label) => label.getAttribute('for') === id)) {
+            if (option.checks.LABELS_NO_FOR_ATTRIBUTE) {
+              results.push({
+                element: $el,
+                type: option.checks.LABELS_NO_FOR_ATTRIBUTE.type || 'error',
+                content: option.checks.LABELS_NO_FOR_ATTRIBUTE.content || Lang.sprintf('LABELS_NO_FOR_ATTRIBUTE', id),
+                dismiss: prepareDismissal(`INPUTNOFOR${type + inputName}`),
+                dismissAll: option.checks.LABELS_NO_FOR_ATTRIBUTE.dismissAll ? 'LABELS_NO_FOR_ATTRIBUTE' : false,
+                developer: option.checks.LABELS_NO_FOR_ATTRIBUTE.developer || true,
+              });
+            }
+          }
+        } else if (option.checks.LABELS_MISSING_LABEL) {
+          // No id!
+          results.push({
+            element: $el,
+            type: option.checks.LABELS_MISSING_LABEL.type || 'error',
+            content: option.checks.LABELS_MISSING_LABEL.content || Lang.sprintf('LABELS_MISSING_LABEL'),
+            dismiss: prepareDismissal(`INPUTNOID${type + inputName}`),
+            dismissAll: option.checks.LABELS_MISSING_LABEL.dismissAll ? 'LABELS_MISSING_LABEL' : false,
+            developer: option.checks.LABELS_MISSING_LABEL.developer || true,
+          });
+        }
+
+        // Avoid using placeholder attributes.
+        if ($el.placeholder && $el.placeholder !== 0) {
+          results.push({
+            element: $el,
+            type: option.checks.LABELS_PLACEHOLDER.type || 'warning',
+            content: option.checks.LABELS_PLACEHOLDER.content || Lang.sprintf('LABELS_PLACEHOLDER'),
+            dismiss: prepareDismissal(`INPUTPLACEHOLDER${type + inputName}`),
+            dismissAll: option.checks.LABELS_PLACEHOLDER.dismissAll ? 'LABELS_PLACEHOLDER' : false,
+            developer: option.checks.LABELS_PLACEHOLDER.developer || true,
+          });
+        }
+      });
     }
     return results;
   }
@@ -7973,204 +9629,202 @@
 
   function checkReadability() {
     let results;
-    if (Constants.Readability.Plugin) {
-      const rememberReadability = store.getItem('sa11y-remember-readability') === 'On';
-      if (rememberReadability) {
-        // Crude hack to add a period to the end of list items to make a complete sentence.
-        Elements.Found.Readability.forEach(($el) => {
-          const listText = $el.textContent;
-          if (listText.length >= 120) {
-            if (listText.charAt(listText.length - 1) !== '.') {
-              $el.insertAdjacentHTML('beforeend', '<span data-sa11y-readability-period>.</span>');
-            }
-          }
-        });
-
-        // Combine all page text.
-        const readabilityarray = [];
-        for (let i = 0; i < Elements.Found.Readability.length; i++) {
-          const current = Elements.Found.Readability[i];
-          const ignore = fnIgnore(current); // Ignore unwanted <script> and <style> tags.
-          const getText$1 = getText(ignore); // Get text.
-          if (getText$1 !== '') {
-            readabilityarray.push(getText$1);
+    const rememberReadability = store.getItem('sa11y-readability') === 'On';
+    if (rememberReadability) {
+      // Crude hack to add a period to the end of list items to make a complete sentence.
+      Elements.Found.Readability.forEach(($el) => {
+        const listText = $el.textContent;
+        if (listText.length >= 120) {
+          if (listText.charAt(listText.length - 1) !== '.') {
+            $el.insertAdjacentHTML('beforeend', '<span data-sa11y-readability-period>.</span>');
           }
         }
-        const pageText = readabilityarray.join(' ').toString();
+      });
 
-        /* Flesch Reading Ease for English, French, German, Dutch, and Italian. */
-        if (['en', 'es', 'fr', 'de', 'nl', 'it', 'pt'].includes(Constants.Readability.Lang)) {
-          // Compute syllables
-          const numberOfSyllables = (el) => {
-            let wordCheck = el;
-            wordCheck = wordCheck.toLowerCase().replace('.', '').replace('\n', '');
-            if (wordCheck.length <= 3) {
-              return 1;
-            }
-            wordCheck = wordCheck.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
-            wordCheck = wordCheck.replace(/^y/, '');
-            const syllableString = wordCheck.match(/[aeiouy]{1,2}/g);
-            let syllables = 0;
+      // Combine all page text.
+      const readabilityarray = [];
+      for (let i = 0; i < Elements.Found.Readability.length; i++) {
+        const current = Elements.Found.Readability[i];
+        const ignore = fnIgnore(current); // Ignore unwanted tags.
+        const getText$1 = getText(ignore); // Get text.
+        if (getText$1 !== '') {
+          readabilityarray.push(getText$1);
+        }
+      }
+      const pageText = readabilityarray.join(' ').toString();
 
-            const syllString = !!syllableString;
-            if (syllString) {
-              syllables = syllableString.length;
+      /* Flesch Reading Ease for English, French, German, Dutch, and Italian. */
+      if (['en', 'es', 'fr', 'de', 'nl', 'it', 'pt'].includes(Constants.Readability.Lang)) {
+        // Compute syllables
+        const numberOfSyllables = (el) => {
+          let wordCheck = el;
+          wordCheck = wordCheck.toLowerCase().replace('.', '').replace('\n', '');
+          if (wordCheck.length <= 3) {
+            return 1;
+          }
+          wordCheck = wordCheck.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
+          wordCheck = wordCheck.replace(/^y/, '');
+          const syllableString = wordCheck.match(/[aeiouy]{1,2}/g);
+          let syllables = 0;
+
+          const syllString = !!syllableString;
+          if (syllString) {
+            syllables = syllableString.length;
+          }
+          return syllables;
+        };
+
+        // Words
+        const wordsRaw = pageText.replace(/[.!?-]+/g, ' ').split(' ');
+        let words = 0;
+        for (let i = 0; i < wordsRaw.length; i++) {
+          // eslint-disable-next-line eqeqeq
+          if (wordsRaw[i] != 0) {
+            words += 1;
+          }
+        }
+
+        // Sentences
+        const sentenceRaw = pageText.split(/[.!?]+/);
+        let sentences = 0;
+        for (let i = 0; i < sentenceRaw.length; i++) {
+          if (sentenceRaw[i] !== '') {
+            sentences += 1;
+          }
+        }
+
+        // Syllables
+        let totalSyllables = 0;
+        let syllables1 = 0;
+        let syllables2 = 0;
+        for (let i = 0; i < wordsRaw.length; i++) {
+          // eslint-disable-next-line eqeqeq
+          if (wordsRaw[i] != 0) {
+            const syllableCount = numberOfSyllables(wordsRaw[i]);
+            if (syllableCount === 1) {
+              syllables1 += 1;
             }
-            return syllables;
+            if (syllableCount === 2) {
+              syllables2 += 1;
+            }
+            totalSyllables += syllableCount;
+          }
+        }
+
+        let flesch = false;
+        if (Constants.Readability.Lang === 'en') {
+          flesch = 206.835 - (1.015 * (words / sentences)) - (84.6 * (totalSyllables / words));
+        } else if (Constants.Readability.Lang === 'fr') {
+          flesch = 207 - (1.015 * (words / sentences)) - (73.6 * (totalSyllables / words));
+        } else if (Constants.Readability.Lang === 'es') {
+          flesch = 206.84 - (1.02 * (words / sentences)) - (0.60 * (100 * (totalSyllables / words)));
+        } else if (Constants.Readability.Lang === 'de') {
+          flesch = 180 - (words / sentences) - (58.5 * (totalSyllables / words));
+        } else if (Constants.Readability.Lang === 'nl') {
+          flesch = 206.84 - (0.77 * (100 * (totalSyllables / words))) - (0.93 * (words / sentences));
+        } else if (Constants.Readability.Lang === 'it') {
+          flesch = 217 - (1.3 * (words / sentences)) - (0.6 * (100 * (totalSyllables / words)));
+        } else if (Constants.Readability.Lang === 'pt') {
+          flesch = 248.835 - (1.015 * (words / sentences)) - (84.6 * (totalSyllables / words));
+        }
+
+        // Score must be between 0 and 100%.
+        if (flesch > 100) {
+          flesch = 100;
+        } else if (flesch < 0) {
+          flesch = 0;
+        }
+
+        // Compute scores.
+        const fleschScore = flesch.toFixed(1);
+        const avgWordsPerSentence = (words / sentences).toFixed(1);
+        const complexWords = Math.round(100 * ((words - (syllables1 + syllables2)) / words));
+
+        let difficulty;
+        if (fleschScore >= 0 && fleschScore < 30) {
+          difficulty = Lang._('VERY_DIFFICULT');
+        } else if (fleschScore > 31 && fleschScore < 49) {
+          difficulty = Lang._('DIFFICULT');
+        } else if (fleschScore > 50 && fleschScore < 60) {
+          difficulty = Lang._('FAIRLY_DIFFICULT');
+        } else {
+          difficulty = Lang._('GOOD');
+        }
+
+        // Create object for headless mode.
+        results = {
+          score: fleschScore,
+          averageWordsPerSentence: avgWordsPerSentence,
+          complexWords,
+          difficultyLevel: difficulty,
+          wordCount: words,
+        };
+      } else if (['sv', 'fi', 'da', 'no', 'nb', 'nn'].includes(Constants.Readability.Lang)) {
+        /* Lix: Danish, Finnish, Norwegian (Bokmål & Nynorsk), Swedish. */
+        const calculateLix = (text) => {
+          const lixWords = () => text.replace(/[-'.]/ig, '').split(/[^a-zA-ZöäåÖÄÅÆæØø0-9]/g).filter(Boolean);
+          const splitSentences = () => {
+            const splitter = /\?|!|\.|\n/g;
+            const arrayOfSentences = text.split(splitter).filter(Boolean);
+            return arrayOfSentences;
           };
-
-          // Words
-          const wordsRaw = pageText.replace(/[.!?-]+/g, ' ').split(' ');
-          let words = 0;
-          for (let i = 0; i < wordsRaw.length; i++) {
-            // eslint-disable-next-line eqeqeq
-            if (wordsRaw[i] != 0) {
-              words += 1;
-            }
-          }
-
-          // Sentences
-          const sentenceRaw = pageText.split(/[.!?]+/);
-          let sentences = 0;
-          for (let i = 0; i < sentenceRaw.length; i++) {
-            if (sentenceRaw[i] !== '') {
-              sentences += 1;
-            }
-          }
-
-          // Syllables
-          let totalSyllables = 0;
-          let syllables1 = 0;
-          let syllables2 = 0;
-          for (let i = 0; i < wordsRaw.length; i++) {
-            // eslint-disable-next-line eqeqeq
-            if (wordsRaw[i] != 0) {
-              const syllableCount = numberOfSyllables(wordsRaw[i]);
-              if (syllableCount === 1) {
-                syllables1 += 1;
-              }
-              if (syllableCount === 2) {
-                syllables2 += 1;
-              }
-              totalSyllables += syllableCount;
-            }
-          }
-
-          let flesch = false;
-          if (Constants.Readability.Lang === 'en') {
-            flesch = 206.835 - (1.015 * (words / sentences)) - (84.6 * (totalSyllables / words));
-          } else if (Constants.Readability.Lang === 'fr') {
-            flesch = 207 - (1.015 * (words / sentences)) - (73.6 * (totalSyllables / words));
-          } else if (Constants.Readability.Lang === 'es') {
-            flesch = 206.84 - (1.02 * (words / sentences)) - (0.60 * (100 * (totalSyllables / words)));
-          } else if (Constants.Readability.Lang === 'de') {
-            flesch = 180 - (words / sentences) - (58.5 * (totalSyllables / words));
-          } else if (Constants.Readability.Lang === 'nl') {
-            flesch = 206.84 - (0.77 * (100 * (totalSyllables / words))) - (0.93 * (words / sentences));
-          } else if (Constants.Readability.Lang === 'it') {
-            flesch = 217 - (1.3 * (words / sentences)) - (0.6 * (100 * (totalSyllables / words)));
-          } else if (Constants.Readability.Lang === 'pt') {
-            flesch = 248.835 - (1.015 * (words / sentences)) - (84.6 * (totalSyllables / words));
-          }
-
-          // Score must be between 0 and 100%.
-          if (flesch > 100) {
-            flesch = 100;
-          } else if (flesch < 0) {
-            flesch = 0;
-          }
-
-          // Compute scores.
-          const fleschScore = flesch.toFixed(1);
-          const avgWordsPerSentence = (words / sentences).toFixed(1);
-          const complexWords = Math.round(100 * ((words - (syllables1 + syllables2)) / words));
+          const wordCount = lixWords().length;
+          const longWordsCount = lixWords().filter((wordsArray) => wordsArray.length > 6).length;
+          const sentenceCount = splitSentences().length;
+          const score = Math.round((wordCount / sentenceCount) + ((longWordsCount * 100) / wordCount));
+          const avgWordsPerSentence = (wordCount / sentenceCount).toFixed(1);
+          const complexWords = Math.round(100 * (longWordsCount / wordCount));
 
           let difficulty;
-          if (fleschScore >= 0 && fleschScore < 30) {
-            difficulty = Lang._('LANG_VERY_DIFFICULT');
-          } else if (fleschScore > 31 && fleschScore < 49) {
-            difficulty = Lang._('LANG_DIFFICULT');
-          } else if (fleschScore > 50 && fleschScore < 60) {
-            difficulty = Lang._('LANG_FAIRLY_DIFFICULT');
+          if (score >= 0 && score < 39) {
+            difficulty = Lang._('GOOD');
+          } else if (score > 40 && score < 50) {
+            difficulty = Lang._('FAIRLY_DIFFICULT');
+          } else if (score > 51 && score < 61) {
+            difficulty = Lang._('DIFFICULT');
           } else {
-            difficulty = Lang._('LANG_GOOD');
+            difficulty = Lang._('VERY_DIFFICULT');
           }
-
-          // Create object for headless mode.
-          results = {
-            score: fleschScore,
-            averageWordsPerSentence: avgWordsPerSentence,
-            complexWords,
-            difficultyLevel: difficulty,
-            wordCount: words,
+          return {
+            score, difficulty, avgWordsPerSentence, complexWords, wordCount,
           };
-        } else if (['sv', 'fi', 'da', 'no', 'nb', 'nn'].includes(Constants.Readability.Lang)) {
-          /* Lix: Danish, Finnish, Norwegian (Bokmål & Nynorsk), Swedish. */
-          const calculateLix = (text) => {
-            const lixWords = () => text.replace(/[-'.]/ig, '').split(/[^a-zA-ZöäåÖÄÅÆæØø0-9]/g).filter(Boolean);
-            const splitSentences = () => {
-              const splitter = /\?|!|\.|\n/g;
-              const arrayOfSentences = text.split(splitter).filter(Boolean);
-              return arrayOfSentences;
-            };
-            const wordCount = lixWords().length;
-            const longWordsCount = lixWords().filter((wordsArray) => wordsArray.length > 6).length;
-            const sentenceCount = splitSentences().length;
-            const score = Math.round((wordCount / sentenceCount) + ((longWordsCount * 100) / wordCount));
-            const avgWordsPerSentence = (wordCount / sentenceCount).toFixed(1);
-            const complexWords = Math.round(100 * (longWordsCount / wordCount));
+        };
 
-            let difficulty;
-            if (score >= 0 && score < 39) {
-              difficulty = Lang._('LANG_GOOD');
-            } else if (score > 40 && score < 50) {
-              difficulty = Lang._('LANG_FAIRLY_DIFFICULT');
-            } else if (score > 51 && score < 61) {
-              difficulty = Lang._('LANG_DIFFICULT');
-            } else {
-              difficulty = Lang._('LANG_VERY_DIFFICULT');
-            }
-            return {
-              score, difficulty, avgWordsPerSentence, complexWords, wordCount,
-            };
-          };
+        // Compute LIX
+        const lix = calculateLix(pageText);
 
-          // Compute LIX
-          const lix = calculateLix(pageText);
+        // Create object for headless mode.
+        results = {
+          score: lix.score,
+          averageWordsPerSentence: lix.avgWordsPerSentence,
+          complexWords: lix.complexWords,
+          difficultyLevel: lix.difficulty,
+          wordCount: lix.wordCount,
+        };
+      }
 
-          // Create object for headless mode.
-          results = {
-            score: lix.score,
-            averageWordsPerSentence: lix.avgWordsPerSentence,
-            complexWords: lix.complexWords,
-            difficultyLevel: lix.difficulty,
-            wordCount: lix.wordCount,
-          };
-        }
+      // Update main panel if not in headless mode.
+      if (Constants.Global.headless === false) {
+        if (pageText.length === 0) {
+          Constants.Panel.readabilityInfo.innerHTML = Lang._('READABILITY_NO_CONTENT');
+        } else if (results.wordCount > 30) {
+          Constants.Panel.readabilityInfo.innerHTML = `${results.score} <span class="readability-score">${results.difficultyLevel}</span>`;
 
-        // Update main panel if not in headless mode.
-        if (Constants.Global.headless === false) {
-          if (pageText.length === 0) {
-            Constants.Panel.readabilityInfo.innerHTML = Lang._('READABILITY_NO_P_OR_LI_MESSAGE');
-          } else if (results.wordCount > 30) {
-            Constants.Panel.readabilityInfo.innerHTML = `${results.score} <span class="readability-score">${results.difficultyLevel}</span>`;
-
-            Constants.Panel.readabilityDetails.innerHTML = `
+          Constants.Panel.readabilityDetails.innerHTML = `
             <li>
-              <strong>${Lang._('LANG_AVG_SENTENCE')}</strong>
+              <strong>${Lang._('AVG_SENTENCE')}</strong>
               ${results.averageWordsPerSentence}
             </li>
             <li>
-              <strong>${Lang._('LANG_COMPLEX_WORDS')}</strong>
+              <strong>${Lang._('COMPLEX_WORDS')}</strong>
               ${results.complexWords}%
             </li>
             <li>
-              <strong>${Lang._('LANG_TOTAL_WORDS')}</strong>
+              <strong>${Lang._('TOTAL_WORDS')}</strong>
               ${results.wordCount}
             </li>`;
-          } else {
-            Constants.Panel.readabilityInfo.textContent = Lang._('READABILITY_NOT_ENOUGH_CONTENT_MESSAGE');
-          }
+        } else {
+          Constants.Panel.readabilityInfo.textContent = Lang._('READABILITY_NOT_ENOUGH');
         }
       }
     }
@@ -8178,143 +9832,131 @@
   }
 
   function checkEmbeddedContent(results, option) {
-    if (option.embeddedContentAll) {
-      // Warning: Audio content.
-      if (option.embeddedContentAudio) {
-        Elements.Found.Audio.forEach(($el) => {
-          const src = ($el.getAttribute('src') !== 'undefined')
-            ? $el.getAttribute('src')
-            : $el.querySelector('[src]')?.getAttribute('src');
+    // iFrame's SRC attribute.
+    const src = ($el) => ($el.getAttribute('src') !== 'undefined'
+      ? $el.getAttribute('src')
+      : $el.querySelector('[src]')?.getAttribute('src'));
 
-          // General warning for audio content.
-          const key = prepareDismissal(`AUDIO${src}`);
+    // Warning: Audio content.
+    if (option.checks.EMBED_AUDIO) {
+      Elements.Found.Audio.forEach(($el) => {
+        // General warning for audio content.
+        results.push({
+          element: $el,
+          type: option.checks.EMBED_AUDIO.type || 'warning',
+          content: option.checks.EMBED_AUDIO.content || Lang.sprintf('EMBED_AUDIO'),
+          dismiss: prepareDismissal(`AUDIO${src($el)}`),
+          dismissAll: option.checks.EMBED_AUDIO.dismissAll ? 'EMBED_AUDIO' : false,
+          developer: option.checks.EMBED_AUDIO.developer || false,
+        });
+      });
+    }
+
+    // Warning: Video content.
+    if (option.checks.EMBED_VIDEO) {
+      Elements.Found.Videos.forEach(($el) => {
+        // Warning if <track> doesn't exist, or the <track>'s src is empty.
+        const track = $el.querySelector('track');
+        const trackSrc = track?.getAttribute('src');
+        if (track === null || trackSrc === null || trackSrc.trim().length === 0) {
           results.push({
             element: $el,
-            type: 'warning',
-            content: Lang.sprintf('EMBED_AUDIO'),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
+            type: option.checks.EMBED_VIDEO.type || 'warning',
+            content: option.checks.EMBED_VIDEO.content || Lang.sprintf('EMBED_VIDEO'),
+            dismiss: prepareDismissal(`VIDEO${src($el)}`),
+            dismissAll: option.checks.EMBED_VIDEO.dismissAll ? 'EMBED_VIDEO' : false,
+            developer: option.checks.EMBED_VIDEO.developer || false,
           });
+        }
+      });
+    }
+
+    // Warning: Data visualizations.
+    if (option.checks.EMBED_DATA_VIZ) {
+      Elements.Found.Visualizations.forEach(($el) => {
+        // General warning for data vizualization widgets.
+        results.push({
+          element: $el,
+          type: option.checks.EMBED_DATA_VIZ.type || 'warning',
+          content: option.checks.EMBED_DATA_VIZ.content || Lang.sprintf('EMBED_DATA_VIZ'),
+          dismiss: prepareDismissal(`DATAVIZ${src($el)}`),
+          dismissAll: option.checks.EMBED_DATA_VIZ.dismissAll ? 'EMBED_DATA_VIZ' : false,
+          developer: option.checks.EMBED_DATA_VIZ.developer || false,
         });
+      });
+    }
+
+    /* Error: Check all iFrames for a missing accessible name. */
+    Elements.Found.iframes.forEach(($el) => {
+      // Ignore hidden elements and video/audio.
+      const presentation = ['presentation', 'none'].includes($el.getAttribute('role'));
+      const hidden = isElementHidden($el);
+      const videoAudio = $el.tagName === 'VIDEO' || $el.tagName === 'AUDIO';
+      const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
+      const negativeTabindex = $el.getAttribute('tabindex') === '-1';
+      if (hidden || videoAudio || (ariaHidden && negativeTabindex) || presentation) {
+        return;
       }
 
-      // Warning: Video content.
-      if (option.embeddedContentVideo) {
-        Elements.Found.Videos.forEach(($el) => {
-          const src = ($el.getAttribute('src') !== 'undefined')
-            ? $el.getAttribute('src')
-            : $el.querySelector('[src]')?.getAttribute('src');
-
-          // Warning if <track> doesn't exist, or the <track>'s src is empty.
-          const track = $el.querySelector('track');
-          const trackSrc = track?.getAttribute('src');
-          if (track === null || trackSrc === null || trackSrc.trim().length === 0) {
-            const key = prepareDismissal(`VIDEO${src}`);
-            results.push({
-              element: $el,
-              type: 'warning',
-              content: Lang.sprintf('EMBED_VIDEO'),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: key,
-            });
-          }
-        });
-      }
-
-      // Warning: Data visualizations.
-      if (option.embeddedContentDataViz) {
-        Elements.Found.Visualizations.forEach(($el) => {
-          const src = ($el.getAttribute('src') !== 'undefined')
-            ? $el.getAttribute('src')
-            : $el.querySelector('[src]')?.getAttribute('src');
-
-          // General warning for data vizualization widgets.
-          const key = prepareDismissal(`DATAVIZ${src}`);
+      // Warning if element only has negative tabindex (without aria-hidden). Axe rulecheck.
+      if (negativeTabindex) {
+        if (option.checks.EMBED_UNFOCUSABLE) {
           results.push({
             element: $el,
-            type: 'warning',
-            content: Lang.sprintf('EMBED_DATA_VIZ'),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
+            type: option.checks.EMBED_UNFOCUSABLE.type || 'error',
+            content: option.checks.EMBED_UNFOCUSABLE.content || Lang.sprintf('EMBED_UNFOCUSABLE'),
+            dismiss: prepareDismissal(`EMBEDUNFOCUSABLE${src($el)}`),
+            dismissAll: option.checks.EMBED_UNFOCUSABLE.dismissAll ? 'EMBED_UNFOCUSABLE' : false,
+            developer: option.checks.EMBED_UNFOCUSABLE.developer || true,
           });
-        });
+        }
+        return;
       }
 
-      /* Error: Check all iFrames for a missing accessible name. */
-      if (option.embeddedContentTitles) {
-        Elements.Found.iframes.forEach(($el) => {
-          // Ignore completely hidden elements and video/audio.
-          const hidden = isElementHidden($el);
-          const videoAudio = $el.tagName === 'VIDEO' || $el.tagName === 'AUDIO';
-          const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
-          const negativeTabindex = $el.getAttribute('tabindex') === '-1';
-          if (hidden || videoAudio || (ariaHidden && negativeTabindex)) {
-            return;
-          }
-
-          // Warning if element only has negative tabindex (without aria-hidden). Axe rulecheck.
-          if (negativeTabindex) {
-            results.push({
-              element: $el,
-              type: 'error',
-              content: Lang.sprintf('EMBED_UNFOCUSABLE'),
-              inline: false,
-              position: 'beforebegin',
-            });
-            return;
-          }
-
-          // Accessible name is missing for iFrame.
-          const aria = computeAriaLabel($el);
-          const checkTitle = (aria === 'noAria') ? ($el.getAttribute('title') || '') : aria;
-          const accessibleName = removeWhitespace(checkTitle);
-
-          if (accessibleName.length === 0) {
-            results.push({
-              element: $el,
-              type: 'error',
-              content: Lang.sprintf('EMBED_MISSING_TITLE'),
-              inline: false,
-              position: 'beforebegin',
-            });
-          }
-        });
-      }
-
-      /* Warning: for all iFrames (except video, audio, or data visualizations). */
-      if (option.embeddedContentGeneral) {
-        Elements.Found.EmbeddedContent.forEach(($el) => {
-          // Ignore completely hidden elements.
-          const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
-          const negativeTabindex = $el.getAttribute('tabindex') === '-1';
-          const hidden = isElementHidden($el);
-          if (hidden || (ariaHidden && negativeTabindex)) {
-            return;
-          }
-
-          // Ignore video & audio elements.
-          if ($el.tagName === 'VIDEO' || $el.tagName === 'AUDIO') {
-            return;
-          }
-
-          const src = ($el.getAttribute('src') !== 'undefined')
-            ? $el.getAttribute('src')
-            : $el.querySelector('[src]')?.getAttribute('src');
-
-          const key = prepareDismissal(`IFRAME${src}`);
+      if (option.checks.EMBED_MISSING_TITLE) {
+        // Accessible name is missing for iFrame.
+        const aria = computeAriaLabel($el);
+        const checkTitle = (aria === 'noAria') ? ($el.getAttribute('title') || '') : aria;
+        const accessibleName = removeWhitespace(checkTitle);
+        if (accessibleName.length === 0) {
           results.push({
             element: $el,
-            type: 'warning',
-            content: Lang.sprintf('EMBED_GENERAL_WARNING'),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
+            type: option.checks.EMBED_MISSING_TITLE.type || 'error',
+            content: option.checks.EMBED_MISSING_TITLE.content || Lang.sprintf('EMBED_MISSING_TITLE'),
+            dismiss: prepareDismissal(`EMBEDMISSTITLE${src($el)}`),
+            dismissAll: option.checks.EMBED_MISSING_TITLE.dismissAll ? 'EMBED_MISSING_TITLE' : false,
+            developer: option.checks.EMBED_MISSING_TITLE.developer || true,
           });
-        });
+        }
       }
+    });
+
+    /* Warning: for all iFrames (except video, audio, or data visualizations). */
+    if (option.checks.EMBED_GENERAL) {
+      Elements.Found.EmbeddedContent.forEach(($el) => {
+        // Ignore hidden elements.
+        const presentation = ['presentation', 'none'].includes($el.getAttribute('role'));
+        const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
+        const negativeTabindex = $el.getAttribute('tabindex') === '-1';
+        const hidden = isElementHidden($el);
+        if (hidden || (ariaHidden && negativeTabindex) || presentation) {
+          return;
+        }
+
+        // Ignore video & audio elements.
+        if ($el.tagName === 'VIDEO' || $el.tagName === 'AUDIO') {
+          return;
+        }
+
+        results.push({
+          element: $el,
+          type: option.checks.EMBED_GENERAL.type || 'warning',
+          content: option.checks.EMBED_GENERAL.content || Lang.sprintf('EMBED_GENERAL'),
+          dismiss: prepareDismissal(`IFRAMEGENERAL${src($el)}`),
+          dismissAll: option.checks.EMBED_GENERAL.dismissAll ? 'EMBED_GENERAL' : false,
+          developer: option.checks.EMBED_GENERAL.developer || false,
+        });
+      });
     }
     return results;
   }
@@ -8323,14 +9965,16 @@
     /* *********************************************************** */
     /*  Error: Find all links pointing to development environment. */
     /* *********************************************************** */
-    if (option.badLinksQA) {
+    if (option.checks.QA_BAD_LINK) {
       Elements.Found.CustomErrorLinks.forEach(($el) => {
         results.push({
           element: $el,
-          type: 'error',
-          content: Lang.sprintf('QA_BAD_LINK', $el),
+          type: option.checks.QA_BAD_LINK.type || 'error',
+          content: option.checks.QA_BAD_LINK.content || Lang.sprintf('QA_BAD_LINK', $el),
           inline: true,
-          position: 'beforebegin',
+          dismiss: prepareDismissal($el.tagName + $el.textContent),
+          dismissAll: option.checks.QA_BAD_LINK.dismissAll ? 'QA_BAD_LINK' : false,
+          developer: option.checks.QA_BAD_LINK.developer || false,
         });
       });
     }
@@ -8338,18 +9982,17 @@
     /* *********************************************************** */
     /*  Warning: Excessive bolding or italics.                     */
     /* *********************************************************** */
-    if (option.strongItalicsQA) {
+    if (option.checks.QA_STRONG_ITALICS) {
       Elements.Found.StrongItalics.forEach(($el) => {
-        const strongItalicsText = $el.textContent.trim().length;
-        const key = prepareDismissal($el.tagName + $el.textContent);
-        if (strongItalicsText > 400) {
+        const text = getText($el);
+        if (text.length !== 0 && text.length > 400) {
           results.push({
             element: $el.parentNode,
-            type: 'warning',
-            content: Lang.sprintf('QA_BAD_ITALICS'),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
+            type: option.checks.QA_STRONG_ITALICS.type || 'warning',
+            content: option.checks.QA_STRONG_ITALICS.content || Lang.sprintf('QA_STRONG_ITALICS'),
+            dismiss: prepareDismissal($el.tagName + $el.textContent),
+            dismissAll: option.checks.QA_STRONG_ITALICS.dismissAll ? 'QA_STRONG_ITALICS' : false,
+            developer: option.checks.QA_STRONG_ITALICS.developer || false,
           });
         }
       });
@@ -8363,80 +10006,77 @@
         const href = $el.getAttribute('href');
 
         // Has file extension.
-        const hasExtension = $el.matches(Constants.Global.documentLinks);
+        const hasExtension = $el.matches(Constants.Global.documentSources);
         const hasPDF = $el.matches('a[href$=".pdf"], a[href*=".pdf?"]');
 
-        // Dismiss key.
-        const key = prepareDismissal(`DOCUMENT${href}`);
-
         // Check for broken same-page links.
-        const hasButtonRole = $el.getAttribute('role') === 'button';
-        const hasText = $el.textContent.trim().length !== 0;
-        if (option.inPageLinkQA && (href.startsWith('#') || href === '') && !hasButtonRole && hasText) {
-          const targetId = href.substring(1);
-          const targetElement = document.getElementById(targetId) || document.getElementById(decodeURIComponent(targetId)) || document.getElementById(encodeURIComponent(targetId));
-          if (!targetElement) {
-            results.push({
-              element: $el,
-              type: 'error',
-              content: Lang.sprintf('QA_IN_PAGE_LINK'),
-              inline: true,
-              position: 'beforebegin',
-            });
+        if (option.checks.QA_IN_PAGE_LINK) {
+          const hasAttributes = $el.getAttribute('role') === 'button' || $el.hasAttribute('aria-haspopup') || $el.hasAttribute('aria-expanded') || $el.hasAttribute('onclick');
+          const hasText = getText($el).length !== 0;
+          if ((href.startsWith('#') || href === '') && !hasAttributes && hasText) {
+            const targetId = href.substring(1);
+            const ariaControls = $el.getAttribute('aria-controls');
+            const targetElement = document.getElementById(targetId)
+              || document.getElementById(decodeURIComponent(targetId))
+              || document.getElementById(encodeURIComponent(targetId))
+              || document.getElementById(ariaControls)
+              || document.querySelector(`a[name="${targetId}"]`);
+
+            // If reference ID doesn't exist.
+            if (!targetElement) {
+              results.push({
+                element: $el,
+                type: option.checks.QA_IN_PAGE_LINK.type || 'error',
+                content: option.checks.QA_IN_PAGE_LINK.content || Lang.sprintf('QA_IN_PAGE_LINK'),
+                inline: true,
+                dismiss: prepareDismissal(`QAINPAGE${href}`),
+                dismissAll: option.checks.QA_IN_PAGE_LINK.dismissAll ? 'QA_IN_PAGE_LINK' : false,
+                developer: option.checks.QA_IN_PAGE_LINK.developer || false,
+              });
+            }
           }
         }
 
         // Manually inspect documents & PDF for accessibility.
-        if (option.documentQA && hasExtension) {
+        if (option.checks.QA_DOCUMENT && hasExtension) {
           results.push({
             element: $el,
-            type: 'warning',
-            content: Lang.sprintf('QA_DOCUMENT'),
+            type: option.checks.QA_DOCUMENT.type || 'warning',
+            content: option.checks.QA_DOCUMENT.content || Lang.sprintf('QA_DOCUMENT'),
             inline: true,
-            position: 'beforebegin',
-            dismiss: key,
+            dismiss: prepareDismissal(`DOC${href}`),
+            dismissAll: option.checks.QA_DOCUMENT.dismissAll ? 'QA_DOCUMENT' : false,
+            developer: option.checks.QA_DOCUMENT.developer || false,
           });
-        } else if (option.pdfQA && hasPDF) {
+        } else if (option.checks.QA_PDF && hasPDF) {
           results.push({
             element: $el,
-            type: 'warning',
-            content: Lang.sprintf('QA_PDF'),
+            type: option.checks.QA_PDF.type || 'warning',
+            content: option.checks.QA_PDF.content || Lang.sprintf('QA_PDF'),
             inline: true,
-            position: 'beforebegin',
-            dismiss: key,
+            dismiss: prepareDismissal(`PDF${href}`),
+            dismissAll: option.checks.QA_PDF.dismissAll ? 'QA_PDF' : false,
+            developer: option.checks.QA_PDF.developer || false,
           });
         }
       }
     });
 
     /* *************************************************************** */
-    /*  Error: Missing language tag. Lang should be at least 2 chars.  */
-    /* *************************************************************** */
-    if (option.langQA) {
-      if (!Elements.Found.Language || Elements.Found.Language.length < 2) {
-        results.push({
-          type: 'error',
-          content: Lang.sprintf('QA_PAGE_LANGUAGE'),
-        });
-      }
-    }
-
-    /* *************************************************************** */
     /*  Warning: Find blockquotes used as headers.                     */
     /* *************************************************************** */
-    if (option.blockquotesQA) {
+    if (option.checks.QA_BLOCKQUOTE) {
       Elements.Found.Blockquotes.forEach(($el) => {
-        const bqHeadingText = $el.textContent;
-        if (bqHeadingText.trim().length < 25) {
-          const sanitizedText = sanitizeHTML(bqHeadingText);
-          const key = prepareDismissal(`BLOCKQUOTE${sanitizedText}`);
+        const text = getText($el);
+        if (text.length !== 0 && text.length < 25) {
+          const sanitizedText = sanitizeHTML(text);
           results.push({
             element: $el,
-            type: 'warning',
-            content: Lang.sprintf('QA_BLOCKQUOTE_MESSAGE', sanitizedText),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
+            type: option.checks.QA_BLOCKQUOTE.type || 'warning',
+            content: option.checks.QA_BLOCKQUOTE.content || Lang.sprintf('QA_BLOCKQUOTE', sanitizedText),
+            dismiss: prepareDismissal(`BLOCKQUOTE${sanitizedText}`),
+            dismissAll: option.checks.QA_BLOCKQUOTE.dismissAll ? 'QA_BLOCKQUOTE' : false,
+            developer: option.checks.QA_BLOCKQUOTE.developer || false,
           });
         }
       });
@@ -8445,71 +10085,83 @@
     /* *************************************************************** */
     /*  Errors: Check HTML tables for issues.                          */
     /* *************************************************************** */
-    if (option.tablesQA) {
-      Elements.Found.Tables.forEach(($el) => {
+    Elements.Found.Tables.forEach(($el) => {
+      if (isElementHidden($el) === false) {
         const tableHeaders = $el.querySelectorAll('th');
         const semanticHeadings = $el.querySelectorAll('h1, h2, h3, h4, h5, h6');
-        if (option.tablesQAmissingTH && tableHeaders.length === 0) {
+        const key = prepareDismissal(`TABLE${$el.textContent}`);
+        if (option.checks.TABLES_MISSING_HEADINGS && tableHeaders.length === 0) {
           results.push({
             element: $el,
-            type: 'error',
-            content: Lang.sprintf('TABLES_MISSING_HEADINGS'),
-            inline: false,
-            position: 'beforebegin',
+            type: option.checks.TABLES_MISSING_HEADINGS.type || 'error',
+            content: option.checks.TABLES_MISSING_HEADINGS.content || Lang.sprintf('TABLES_MISSING_HEADINGS'),
+            dismiss: key,
+            dismissAll: option.checks.TABLES_MISSING_HEADINGS.dismissAll ? 'TABLES_MISSING_HEADINGS' : false,
+            developer: option.checks.TABLES_MISSING_HEADINGS.developer || false,
           });
         }
-        if (option.tablesQAsemanticHeadings && semanticHeadings.length > 0) {
+        if (option.checks.TABLES_SEMANTIC_HEADING && semanticHeadings.length > 0) {
           semanticHeadings.forEach((heading) => {
             results.push({
               element: heading,
-              type: 'error',
-              content: Lang.sprintf('TABLES_SEMANTIC_HEADING'),
-              inline: false,
-              position: 'beforebegin',
+              type: option.checks.TABLES_SEMANTIC_HEADING.type || 'error',
+              content: option.checks.TABLES_SEMANTIC_HEADING.content || Lang.sprintf('TABLES_SEMANTIC_HEADING'),
+              dismiss: key,
+              dismissAll: option.checks.TABLES_SEMANTIC_HEADING.dismissAll ? 'TABLES_SEMANTIC_HEADING' : false,
+              developer: option.checks.TABLES_SEMANTIC_HEADING.developer || false,
             });
           });
         }
         tableHeaders.forEach((th) => {
-          if (option.tablesQAemptyTH && th.textContent.trim().length === 0) {
-            const issueType = (option.tablesQAemptyTHisError) ? 'error' : 'warning';
-            const key = prepareDismissal(`TABLE${$el.textContent}`);
+          if (option.checks.TABLES_EMPTY_HEADING && th.textContent.trim().length === 0) {
             results.push({
               element: th,
-              type: issueType,
-              content: Lang.sprintf('TABLES_EMPTY_HEADING'),
-              inline: false,
+              type: option.checks.TABLES_EMPTY_HEADING.type || 'error',
+              content: option.checks.TABLES_EMPTY_HEADING.content || Lang.sprintf('TABLES_EMPTY_HEADING'),
               position: 'afterbegin',
               dismiss: key,
+              dismissAll: option.checks.TABLES_EMPTY_HEADING.dismissAll ? 'TABLES_EMPTY_HEADING' : false,
+              developer: option.checks.TABLES_EMPTY_HEADING.developer || false,
             });
           }
         });
-      });
-    }
+      }
+    });
 
     /* ****************************************************************** */
     /*  Warning: Detect fake headings                                     */
     /* ****************************************************************** */
-    if (option.fakeHeadingsQA) {
-      const ignoreParents = 'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level], blockquote, table';
+    if (option.checks.QA_FAKE_HEADING) {
+      const addResult = (element, sanitizedText) => {
+        results.push({
+          element,
+          type: option.checks.QA_FAKE_HEADING.type || 'warning',
+          content: option.checks.QA_FAKE_HEADING.content || Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
+          dismiss: prepareDismissal(`BOLD${sanitizedText}`),
+          dismissAll: option.checks.QA_FAKE_HEADING.dismissAll ? 'QA_FAKE_HEADING' : false,
+          developer: option.checks.QA_FAKE_HEADING.developer || false,
+        });
+      };
+
+      // To minimize false positives/number of warnings...
+      const isPreviousElementAHeading = (p) => {
+        const previousElement = p.previousElementSibling;
+        if (!previousElement) return false;
+        const headingTags = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'];
+        return headingTags.includes(previousElement.tagName);
+      };
 
       // Find large text as heading.
+      const ignoreParents = 'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level], blockquote, table';
       const computeLargeParagraphs = (p) => {
         const size = getComputedStyle(p).fontSize.replace('px', '');
         const getText$1 = getText(p);
         const maybeSentence = getText$1.match(/[.;?!"]/) === null;
         const typicalHeadingLength = getText$1.length >= 4 && getText$1.length <= 120;
 
-        if (size >= 24 && !p.closest(ignoreParents) && typicalHeadingLength && maybeSentence) {
+        if (size >= 24 && !p.closest(ignoreParents) && typicalHeadingLength && maybeSentence && !isPreviousElementAHeading(p)) {
           const sanitizedText = sanitizeHTML(getText$1);
-          const key = prepareDismissal(`BOLD${sanitizedText}`);
-          results.push({
-            element: p,
-            type: 'warning',
-            content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
-          });
+          addResult(p, sanitizedText);
         }
       };
 
@@ -8527,21 +10179,13 @@
 
           if (typicalHeadingLength && notASentence) {
             // Be a little forgiving if it's a small paragraph.
-            const nonHeadingTextLength = fnIgnore(p, 'strong, bold').textContent.trim().length;
+            const nonHeadingTextLength = fnIgnore(p, ['strong', 'b']).textContent.trim().length;
             if (nonHeadingTextLength !== 0 && nonHeadingTextLength <= 250) {
               return;
             }
 
             const sanitizedText = sanitizeHTML(possibleHeadingText);
-            const key = prepareDismissal(`BOLD${sanitizedText}`);
-            results.push({
-              element: possibleHeading,
-              type: 'warning',
-              content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: key,
-            });
+            addResult(possibleHeading, sanitizedText);
           }
         }
       };
@@ -8556,7 +10200,7 @@
     /*  Warning: Detect paragraphs that should be lists.               */
     /*  Thanks to John Jameson from PrincetonU for this ruleset!       */
     /* *************************************************************** */
-    if (option.fakeListQA) {
+    if (option.checks.QA_FAKE_LIST) {
       const numberMatch = new RegExp(/(([023456789][\d\s])|(1\d))/, ''); // All numbers but 1.
       const alphabeticMatch = new RegExp(/(^[aA1αаΑ]|[^\p{Alphabetic}\s])[-\s.)]/, 'u');
       const emojiMatch = new RegExp(/\p{Extended_Pictographic}/, 'u');
@@ -8632,14 +10276,13 @@
               }
             }
           } if (hit) {
-            const key = prepareDismissal(`LIST${p.textContent}`);
             results.push({
               element: p,
-              type: 'warning',
-              content: Lang.sprintf('QA_SHOULD_BE_LIST', firstPrefix),
-              inline: false,
-              position: 'beforebegin',
-              dismiss: key,
+              type: option.checks.QA_FAKE_LIST.type || 'warning',
+              content: option.checks.QA_FAKE_LIST.content || Lang.sprintf('QA_FAKE_LIST', firstPrefix),
+              dismiss: prepareDismissal(`LIST${p.textContent}`),
+              dismissAll: option.checks.QA_FAKE_LIST.dismissAll ? 'QA_FAKE_LIST' : false,
+              developer: option.checks.QA_FAKE_LIST.developer || false,
             });
             activeMatch = firstPrefix;
           } else {
@@ -8651,10 +10294,10 @@
       });
     }
 
-    /* *************************************************************** */
-    /*  Warning: Detect uppercase text.                                */
-    /* *************************************************************** */
-    if (option.allCapsQA) {
+    /* **************************************** */
+    /*  Warning: Detect uppercase text.         */
+    /* **************************************** */
+    if (option.checks.QA_UPPERCASE) {
       const checkCaps = ($el) => {
         let thisText = '';
         if ($el.tagName === 'LI') {
@@ -8667,18 +10310,19 @@
         } else {
           thisText = getText($el);
         }
+
+        // Patterns
         const uppercasePattern = /([A-Z]{2,}[ ])([A-Z]{2,}[ ])([A-Z]{2,}[ ])([A-Z]{2,})/g;
         const detectUpperCase = thisText.match(uppercasePattern);
 
         if (detectUpperCase && detectUpperCase[0].length > 10) {
-          const key = prepareDismissal(`UPPERCASE${thisText}`);
           results.push({
             element: $el,
-            type: 'warning',
-            content: Lang.sprintf('QA_UPPERCASE_WARNING'),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
+            type: option.checks.QA_UPPERCASE.type || 'warning',
+            content: option.checks.QA_UPPERCASE.content || Lang.sprintf('QA_UPPERCASE'),
+            dismiss: prepareDismissal(`UPPERCASE${thisText}`),
+            dismissAll: option.checks.QA_UPPERCASE.dismissAll ? 'QA_UPPERCASE' : false,
+            developer: option.checks.QA_UPPERCASE.developer || false,
           });
         }
       };
@@ -8688,10 +10332,228 @@
       Elements.Found.Blockquotes.forEach(($el) => checkCaps($el));
     }
 
+    /* ************************************************************** */
+    /*  Various checks: underlines, justify-aligned, and small text.  */
+    /* ************************************************************** */
+    // Check underlined text. Created by Brian Teeman!
+    const addUnderlineResult = ($el) => {
+      results.push({
+        element: $el,
+        type: option.checks.QA_UNDERLINE.type || 'warning',
+        content: option.checks.QA_UNDERLINE.content || Lang.sprintf('QA_UNDERLINE'),
+        inline: true,
+        dismiss: prepareDismissal(`UNDERLINE${$el.textContent}`),
+        dismissAll: option.checks.QA_UNDERLINE.dismissAll ? 'QA_UNDERLINE' : false,
+        developer: option.checks.QA_UNDERLINE.developer || false,
+      });
+    };
+
+    const addJustifyResult = ($el) => {
+      results.push({
+        element: $el,
+        type: option.checks.QA_JUSTIFY.type || 'warning',
+        content: option.checks.QA_JUSTIFY.content || Lang._('QA_JUSTIFY'),
+        dismiss: prepareDismissal(`JUSTIFIED${$el.textContent}`),
+        dismissAll: option.checks.QA_JUSTIFY.dismissAll ? 'QA_JUSTIFY' : false,
+        developer: option.checks.QA_JUSTIFY.developer || false,
+      });
+    };
+
+    const addSmallTextResult = ($el) => {
+      results.push({
+        element: $el,
+        type: option.checks.QA_SMALL_TEXT.type || 'warning',
+        content: option.checks.QA_SMALL_TEXT.content || Lang._('QA_SMALL_TEXT'),
+        dismiss: prepareDismissal(`SMALL${$el.textContent}`),
+        dismissAll: option.checks.QA_SMALL_TEXT.dismissAll ? 'QA_SMALL_TEXT' : false,
+        developer: option.checks.QA_SMALL_TEXT.developer || false,
+      });
+    };
+
+    const computeStyle = ($el) => {
+      const style = getComputedStyle($el);
+      const { textDecorationLine, textAlign, fontSize } = style;
+
+      /* Check: Underlined text. */
+      if (option.checks.QA_UNDERLINE
+        && textDecorationLine === 'underline'
+        && !$el.closest('a[href]')
+        && !$el.closest('ABBR')) {
+        addUnderlineResult($el);
+      }
+
+      /* Check: Font size is greater than 0 and less than 10. */
+      const defaultSize = option.checks.QA_SMALL_TEXT.fontSize || 10;
+      const computedFontSize = parseFloat(fontSize);
+
+      // Compare with parent element's font size.
+      const parentFontSize = $el.parentElement
+        ? parseFloat(getComputedStyle($el.parentElement).fontSize)
+        : null;
+      const isInherited = parentFontSize === computedFontSize;
+
+      // Ensure the font size is specific to the element, not inherited.
+      const withinRange = !isInherited && computedFontSize > 1 && computedFontSize <= defaultSize;
+      if (option.checks.QA_SMALL_TEXT && withinRange) {
+        addSmallTextResult($el);
+      }
+
+      /* Check: Check if text is justify-aligned. */
+      if (option.checks.QA_JUSTIFY && textAlign === 'justify') {
+        addJustifyResult($el);
+      }
+    };
+
+    // Loop through all elements within the root area.
+    if (option.checks.QA_UNDERLINE || option.checks.QA_JUSTIFY || option.checks.QA_SMALL_TEXT) {
+      for (let i = 0; i < Elements.Found.Everything.length; i++) {
+        const $el = Elements.Found.Everything[i];
+
+        // Filter only text nodes.
+        const textString = Array.from($el.childNodes)
+          .filter((node) => node.nodeType === 3)
+          .map((node) => node.textContent)
+          .join('');
+        const text = textString.trim();
+
+        // Only if there's text!
+        if (text.length !== 0) {
+          computeStyle($el);
+        }
+      }
+    }
+
+    /* **************************************************** */
+    /*  Find inappropriate use of <sup> and <sub> tags.     */
+    /* **************************************************** */
+    if (option.checks.QA_SUBSCRIPT) {
+      Elements.Found.Subscripts.forEach(($el) => {
+        const text = getText($el);
+        if (text.length >= 80) {
+          results.push({
+            element: $el,
+            type: option.checks.QA_SUBSCRIPT.type || 'warning',
+            content: option.checks.QA_SUBSCRIPT.content || Lang.sprintf('QA_SUBSCRIPT'),
+            inline: true,
+            dismiss: prepareDismissal($el.tagName + text),
+            dismissAll: option.checks.QA_SUBSCRIPT.dismissAll ? 'QA_SUBSCRIPT' : false,
+            developer: option.checks.QA_SUBSCRIPT.developer || false,
+          });
+        }
+      });
+    }
+
+    /* ****************************************** */
+    /*  Find double nested layout components.     */
+    /* ****************************************** */
+    if (option.checks.QA_NESTED_COMPONENTS) {
+      Elements.Found.NestedComponents.forEach(($el) => {
+        const sources = option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
+        const component = $el.querySelector(sources);
+        if (component) {
+          results.push({
+            element: $el,
+            type: option.checks.QA_NESTED_COMPONENTS.type || 'warning',
+            content: option.checks.QA_NESTED_COMPONENTS.content || Lang.sprintf('QA_NESTED_COMPONENTS'),
+            dismiss: prepareDismissal(`NESTED${$el.textContent}`),
+            dismissAll: option.checks.QA_NESTED_COMPONENTS.dismissAll ? 'QA_NESTED_COMPONENTS' : false,
+            developer: option.checks.QA_NESTED_COMPONENTS.developer || false,
+          });
+        }
+      });
+    }
+
+    return results;
+  }
+
+  function checkDeveloper(results, option) {
     /* *************************************************************** */
-    /*  Error: Duplicate IDs                                           */
+    /*  Error: Missing language tag. Lang should be at least 2 chars.  */
     /* *************************************************************** */
-    if (option.duplicateIdQA) {
+    if (option.checks.META_LANG) {
+      if (!Elements.Found.Language || Elements.Found.Language.length < 2) {
+        results.push({
+          type: option.checks.META_LANG.type || 'error',
+          content: option.checks.META_LANG.content || Lang.sprintf('META_LANG'),
+          dismiss: prepareDismissal('LANG'),
+          developer: option.checks.META_LANG.developer || true,
+        });
+      }
+    }
+
+    /* *************************************************************** */
+    /*  Check for missing meta page title <title>                      */
+    /* *************************************************************** */
+    if (option.checks.META_TITLE) {
+      const metaTitle = document.querySelector('title:not(svg title)');
+      if (!metaTitle || metaTitle.textContent.trim().length === 0) {
+        results.push({
+          type: option.checks.META_TITLE.type || 'error',
+          content: option.checks.META_TITLE.content || Lang.sprintf('META_TITLE'),
+          dismiss: prepareDismissal('TITLE'),
+          developer: option.checks.META_TITLE.developer || true,
+        });
+      }
+    }
+
+    /* ********************************************* */
+    /*  Zooming and scaling must not be disabled.    */
+    /* ********************************************* */
+    if (option.checks.META_SCALABLE || option.checks.META_MAX) {
+      const metaViewport = document.querySelector('meta[name="viewport"]');
+      if (metaViewport) {
+        const content = metaViewport.getAttribute('content');
+        if (content) {
+          // Parse the content attribute to extract parameters.
+          const params = content.split(',').reduce((acc, param) => {
+            const [key, value] = param.split('=').map((s) => s.trim());
+            acc[key] = value;
+            return acc;
+          }, {});
+
+          // Check for user-scalable parameter.
+          if (option.checks.META_SCALABLE && (params['user-scalable'] === 'no' || params['user-scalable'] === '0')) {
+            results.push({
+              type: option.checks.META_SCALABLE.type || 'error',
+              content: option.checks.META_SCALABLE.content || Lang.sprintf('META_SCALABLE'),
+              dismiss: prepareDismissal('SCALABLE'),
+              developer: option.checks.META_SCALABLE.developer || true,
+            });
+          }
+
+          // Check maximum-scale parameter.
+          const maxScale = parseFloat(params['maximum-scale']);
+          if (option.checks.META_MAX && !Number.isNaN(maxScale) && maxScale < 2) {
+            results.push({
+              type: option.checks.META_MAX.type || 'error',
+              content: option.checks.META_MAX.content || Lang.sprintf('META_MAX'),
+              dismiss: prepareDismissal('MAXSCALE'),
+              developer: option.checks.META_MAX.developer || true,
+            });
+          }
+        }
+      }
+    }
+
+    /* ****************************************** */
+    /*  Page shouldn't automatically refresh.     */
+    /* ****************************************** */
+    if (option.checks.META_REFRESH) {
+      const metaRefresh = document.querySelector('meta[http-equiv="refresh"]');
+      if (metaRefresh) {
+        results.push({
+          type: option.checks.META_REFRESH.type || 'error',
+          content: option.checks.META_REFRESH.content || Lang.sprintf('META_REFRESH'),
+          dismiss: prepareDismissal('REFRESH'),
+          developer: option.checks.META_REFRESH.developer || true,
+        });
+      }
+    }
+
+    /* *************************************************************** */
+    /*  Check for duplicate IDs that are referenced by other elements. */
+    /* *************************************************************** */
+    if (option.checks.DUPLICATE_ID) {
       // Look for duplicate IDs within each DOM.
       const doms = document.querySelectorAll('body, [data-sa11y-has-shadow-root]');
       doms.forEach((dom) => {
@@ -8721,10 +10583,11 @@
               if (ariaReference.length > 0) {
                 results.push({
                   element: $el,
-                  type: 'error',
-                  content: Lang.sprintf('QA_DUPLICATE_ID', id),
-                  inline: true,
-                  position: 'beforebegin',
+                  type: option.checks.DUPLICATE_ID.type || 'error',
+                  content: option.checks.DUPLICATE_ID.content || Lang.sprintf('DUPLICATE_ID', id),
+                  dismiss: prepareDismissal(`DUPLICATEID${id}${$el.textContent}`),
+                  dismissAll: option.checks.DUPLICATE_ID.dismissAll ? 'DUPLICATE_ID' : false,
+                  developer: option.checks.DUPLICATE_ID.developer || true,
                 });
               }
             }
@@ -8747,80 +10610,127 @@
       });
     }
 
-    /* *************************************************************** */
-    /*  Warning: Flag underlined text.                                 */
-    /*  Created by Brian Teeman.                                       */
-    /* *************************************************************** */
-    if (option.underlinedTextQA) {
-      // Find all <u> tags.
-      Elements.Found.Underlines.forEach(($el) => {
-        const text = getText($el);
-        const key = prepareDismissal(`UNDERLINE${text}`);
+    /* ********************************************* */
+    /*  Buttons must have an accessible name.        */
+    /* ********************************************* */
+    if (option.checks.BTN_EMPTY || option.checks.BTN_EMPTY_LABELLEDBY || option.checks.BTN_LABEL || option.checks.HIDDEN_FOCUSABLE || option.checks.LABEL_IN_NAME) {
+      Elements.Found.Buttons.forEach(($el) => {
+        const accName = computeAccessibleName($el);
+        const buttonText = accName.replace(/'|"|-|\.|\s+/g, '').toLowerCase();
+
+        // Dismissal key.
+        const key = prepareDismissal(`BTN${$el.tagName + $el.id + $el.className + accName}`);
+
+        // Has ARIA
+        const hasAria = $el.querySelector(':scope [aria-labelledby], :scope [aria-label]') || $el.getAttribute('aria-labelledby') || $el.getAttribute('aria-label');
+        const hasAriaLabelledby = $el.querySelector(':scope [aria-labelledby]') || $el.getAttribute('aria-labelledby');
+        const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
+        const negativeTabindex = $el.getAttribute('tabindex') === '-1';
+
+        // Button has aria-hidden but is still focusable.
+        if (ariaHidden) {
+          if (!negativeTabindex) {
+            if (option.checks.HIDDEN_FOCUSABLE) {
+              results.push({
+                element: $el,
+                type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
+                content: option.checks.HIDDEN_FOCUSABLE.content || Lang.sprintf('HIDDEN_FOCUSABLE'),
+                dismiss: key,
+                dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll ? 'BTN_HIDDEN_FOCUSABLE' : false,
+                developer: option.checks.HIDDEN_FOCUSABLE.developer || true,
+              });
+            }
+          }
+          return;
+        }
+
+        // Button doesn't have an accessible name.
+        if (buttonText.length === 0) {
+          if (option.checks.BTN_EMPTY_LABELLEDBY && hasAriaLabelledby) {
+            results.push({
+              element: $el,
+              type: option.checks.BTN_EMPTY_LABELLEDBY.type || 'error',
+              content: option.checks.BTN_EMPTY_LABELLEDBY.content || `${Lang.sprintf('BTN_EMPTY_LABELLEDBY')} ${Lang.sprintf('BTN_TIP')}`,
+              dismiss: prepareDismissal(key),
+              dismissAll: option.checks.BTN_EMPTY_LABELLEDBY.dismissAll ? 'BTN_EMPTY_LABELLEDBY' : false,
+              developer: option.checks.BTN_EMPTY_LABELLEDBY.developer || true,
+            });
+          } else if (option.checks.BTN_EMPTY) {
+            results.push({
+              element: $el,
+              type: option.checks.BTN_EMPTY.type || 'error',
+              content: option.checks.BTN_EMPTY.content || `${Lang.sprintf('BTN_EMPTY')} ${Lang.sprintf('BTN_TIP')}`,
+              dismiss: key,
+              dismissAll: option.checks.BTN_EMPTY.dismissAll ? 'BTN_EMPTY' : false,
+              developer: option.checks.BTN_EMPTY.developer || true,
+            });
+          }
+          return;
+        }
+
+        // Button must have visible label as part of their accessible name.
+        const isVisibleTextInAccessibleName$1 = isVisibleTextInAccessibleName($el);
+        if (option.checks.LABEL_IN_NAME && hasAria && isVisibleTextInAccessibleName$1) {
+          const sanitizedText = sanitizeHTML(accName);
+          results.push({
+            element: $el,
+            type: option.checks.LABEL_IN_NAME.type || 'warning',
+            content: option.checks.LABEL_IN_NAME.content || `${Lang.sprintf('LABEL_IN_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
+            dismiss: key,
+            dismissAll: option.checks.LABEL_IN_NAME.dismissAll ? 'BTN_LABEL_IN_NAME' : false,
+            developer: option.checks.LABEL_IN_NAME.developer || true,
+          });
+          return;
+        }
+
+        // Has "button" in the accessible name.
+        if (option.checks.BTN_ROLE_IN_NAME && accName.includes(Lang._('BTN'))) {
+          results.push({
+            element: $el,
+            type: option.checks.BTN_ROLE_IN_NAME.type || 'warning',
+            content: option.checks.BTN_ROLE_IN_NAME.content || `${Lang.sprintf('BTN_ROLE_IN_NAME')} ${Lang.sprintf('BTN_TIP')}`,
+            dismiss: key,
+            dismissAll: option.checks.BTN_ROLE_IN_NAME.dismissAll ? 'BTN_ROLE_IN_NAME' : false,
+            developer: option.checks.BTN_ROLE_IN_NAME.developer || true,
+          });
+        }
+      });
+    }
+
+    /* ********************************************************** */
+    /* <li> elements must be contained in a <ul>/<ol>/<menu>.     */
+    /* ********************************************************** */
+    if (option.checks.UNCONTAINED_LI) {
+      Elements.Found.Lists.forEach(($el) => {
+        if (!$el.closest('ul, ol, menu')) {
+          results.push({
+            element: $el,
+            type: option.checks.UNCONTAINED_LI.type || 'error',
+            content: option.checks.UNCONTAINED_LI.content || Lang.sprintf('UNCONTAINED_LI'),
+            dismiss: prepareDismissal(`UNCONTAINEDLI${$el.textContent}`),
+            dismissAll: option.checks.UNCONTAINED_LI.dismissAll ? 'UNCONTAINED_LI' : false,
+            developer: option.checks.UNCONTAINED_LI.developer || true,
+          });
+        }
+      });
+    }
+
+    /* ****************************************** */
+    /*  No tabindex values greater than 0.        */
+    /* ****************************************** */
+    if (option.checks.TABINDEX_ATTR) {
+      Elements.Found.TabIndex.forEach(($el) => {
         results.push({
           element: $el,
-          type: 'warning',
-          content: Lang.sprintf('QA_TEXT_UNDERLINE_WARNING'),
-          inline: true,
-          position: 'beforebegin',
-          dismiss: key,
+          type: option.checks.TABINDEX_ATTR.type || 'error',
+          content: option.checks.TABINDEX_ATTR.content || Lang.sprintf('TABINDEX_ATTR'),
+          dismiss: prepareDismissal(`TABINDEX${$el.tagName + $el.id + $el.className}`),
+          dismissAll: option.checks.TABINDEX_ATTR.dismissAll ? 'TABINDEX_ATTR' : false,
+          developer: option.checks.TABINDEX_ATTR.developer || true,
         });
       });
-      // Find underline based on computed style.
-      const computeUnderline = ($el) => {
-        const style = getComputedStyle($el);
-        const decoration = style.textDecorationLine;
-        const text = getText($el);
-        if (decoration === 'underline') {
-          const key = prepareDismissal(`UNDERLINE${text}`);
-          results.push({
-            element: $el,
-            type: 'warning',
-            content: Lang.sprintf('QA_TEXT_UNDERLINE_WARNING'),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
-          });
-        }
-      };
-      Elements.Found.Paragraphs.forEach(($el) => computeUnderline($el));
-      Elements.Found.Headings.forEach(($el) => computeUnderline($el));
-      Elements.Found.Lists.forEach(($el) => computeUnderline($el));
-      Elements.Found.Blockquotes.forEach(($el) => computeUnderline($el));
-      Elements.Found.Spans.forEach(($el) => computeUnderline($el));
     }
 
-    /* *************************************************************** */
-    /*  Error: Page is missing meta page <title>                       */
-    /* *************************************************************** */
-    if (option.pageTitleQA) {
-      const metaTitle = document.querySelector('head title');
-      if (!metaTitle || metaTitle.textContent.trim().length === 0) {
-        results.push({
-          type: 'error',
-          content: Lang.sprintf('QA_PAGE_TITLE'),
-        });
-      }
-    }
-
-    /* *************************************************************** */
-    /*  Warning: Find inappropriate use of <sup> and <sub> tags.       */
-    /* *************************************************************** */
-    if (option.subscriptQA) {
-      Elements.Found.Subscripts.forEach(($el) => {
-        const text = getText($el);
-        if (text.length >= 80) {
-          const key = prepareDismissal($el.tagName + text);
-          results.push({
-            element: $el,
-            type: 'warning',
-            content: Lang.sprintf('QA_SUBSCRIPT_WARNING'),
-            inline: true,
-            position: 'beforebegin',
-            dismiss: key,
-          });
-        }
-      });
-    }
     return results;
   }
 
@@ -8839,6 +10749,7 @@
           inline: false,
           position: 'beforebegin',
           dismiss: key,
+          developer: false,
         });
       }
     }
@@ -8854,6 +10765,7 @@
           content: 'Do <strong>not nest forms</strong> within the Accordion component. If the form contains validation issues, a person may not see the form feedback since the accordion panel goes back to its original closed state.',
           inline: false,
           position: 'beforebegin',
+          developer: false,
         });
       }
     }); */
@@ -8868,6 +10780,10 @@
       const option = {
         ...defaultOptions,
         ...options,
+        checks: {
+          ...defaultOptions.checks,
+          ...options.checks,
+        },
       };
 
       /* *********************************************************** */
@@ -8885,8 +10801,8 @@
           customElements.define('sa11y-heading-label', HeadingLabel);
           customElements.define('sa11y-heading-anchor', HeadingAnchor);
           customElements.define('sa11y-annotation', Annotations);
-          customElements.define('sa11y-tooltips', TooltipComponent);
-          customElements.define('sa11y-dismiss-tooltip', DismissTooltip);
+          customElements.define('sa11y-tooltips', AnnotationTooltips);
+          customElements.define('sa11y-panel-tooltips', PanelTooltips);
           customElements.define('sa11y-control-panel', ControlPanel);
           customElements.define('sa11y-console-error', ConsoleErrors);
 
@@ -8894,15 +10810,13 @@
           Constants.initializeGlobal(option);
           Constants.initializeReadability(option);
           Constants.initializeExclusions(option);
-          Constants.initializeEmbeddedContent(option);
 
-          // Toggleable checks on by default.
-          const toggleableChecks = ['sa11y-remember-contrast', 'sa11y-remember-labels', 'sa11y-remember-links-advanced'];
-          toggleableChecks.forEach((key) => {
-            if (store.getItem(key) === null) {
-              store.setItem(key, 'On');
+          /* Make "Developer checks" on by default or if toggle switch is visually hidden. */
+          if (option.developerChecksOnByDefault) {
+            if (store.getItem('sa11y-developer') === null || option.checkAllHideToggles) {
+              store.setItem('sa11y-developer', 'On');
             }
-          });
+          }
 
           // Once document has fully loaded.
           documentLoadingCheck(() => {
@@ -8927,15 +10841,18 @@
                 this.resetAll,
               );
 
-              // Initialize dismiss tooltip.
-              this.dismissTooltip = new DismissTooltip();
-              document.body.appendChild(this.dismissTooltip);
+              // Initialize panel tooltips.
+              this.panelTooltips = new PanelTooltips();
+              document.body.appendChild(this.panelTooltips);
 
               // Disable toggle initially.
               Constants.Panel.toggle.disabled = false;
 
               // Initial check once page is done loading.
-              setTimeout(() => this.checkAll(), option.delayCheck);
+              setTimeout(() => {
+                this.resetAll(); // Make sure there's a clean slate.
+                this.checkAll();
+              }, option.delayCheck);
 
               // Disable button if user needs to wait longer than 700ms.
               if (option.delayCheck >= 700) {
@@ -8967,7 +10884,7 @@
           // Initialize root areas to check.
           const root = document.querySelector(desiredRoot);
           if (!root && option.headless === false) {
-            createAlert(`${Lang.sprintf('ERROR_MISSING_ROOT_TARGET', desiredRoot)}`);
+            createAlert(`${Lang.sprintf('MISSING_ROOT', desiredRoot)}`);
           }
           Constants.initializeRoot(desiredRoot, desiredReadabilityRoot);
 
@@ -8981,13 +10898,20 @@
           checkHeaders(this.results, option, this.headingOutline);
           checkLinkText(this.results, option);
           checkImages(this.results, option);
-          checkContrast(this.results, option);
           checkLabels(this.results, option);
           checkQA(this.results, option);
-          checkEmbeddedContent(this.results, option);
-          checkReadability();
+          checkDeveloper(this.results, option);
+          if (option.embeddedContentPlugin) checkEmbeddedContent(this.results, option);
+          if (option.contrastPlugin) checkContrast(this.results, option);
+          if (option.readabilityPlugin) checkReadability();
 
-          this.imageResults = this.results.filter((item) => item.element?.tagName === 'IMG');
+          // Get all images from results object for Image Outline.
+          this.imageResults = this.results.filter((issue, index, self) => {
+            const tagName = issue.element?.tagName;
+            const outerHTML = issue.element?.outerHTML;
+            // Filter out duplicates based element's HTML.
+            return tagName === 'IMG' && self.findIndex((other) => other.element?.outerHTML === outerHTML) === index;
+          });
 
           /* Custom checks */
           if (option.customChecks === true) {
@@ -9030,21 +10954,26 @@
       };
 
       this.updateResults = () => {
-        // Filter out heading issues that are outside of the root target.
-        this.results = this.results.filter((item) => item.isWithinRoot !== false);
+        // Filter out heading issues that are outside of the target root.
+        this.results = this.results.filter((heading) => heading.isWithinRoot !== false);
+
+        // Filter out "Developer checks" if toggled off.
+        if (store.getItem('sa11y-developer') === 'Off' || store.getItem('sa11y-developer') === null) {
+          this.results = this.results.filter((issue) => issue.developer !== true);
+        }
 
         // Generate HTML path, and optionally CSS selector path of element.
-        this.results.forEach(($el) => {
+        this.results.forEach(($el, id) => {
           const cssPath = option.selectorPath ? generateSelectorPath($el.element) : '';
           const htmlPath = $el.element?.outerHTML.replace(/\s{2,}/g, ' ').trim() || '';
-          Object.assign($el, { htmlPath, cssPath });
+          Object.assign($el, { htmlPath, cssPath, id });
         });
 
         if (option.headless === false) {
           // Check for dismissed items and update results array.
           const dismiss = dismissLogic(
             this.results,
-            this.dismissTooltip,
+            this.panelTooltips,
             this.checkAll,
             this.resetAll,
           );
@@ -9060,27 +10989,18 @@
           updateBadge(count.error, count.warning);
 
           /* If panel is OPENED. */
-          if (store.getItem('sa11y-remember-panel') === 'Opened') {
+          if (store.getItem('sa11y-panel') === 'Opened') {
             // Paint the page with annotations.
-            this.results.forEach(($el, i) => {
-              Object.assign($el, { id: i });
-              annotate(
-                $el.element,
-                $el.type,
-                $el.content,
-                $el.inline,
-                $el.position,
-                $el.id,
-                $el.dismiss,
-                option,
-              );
+            this.results.forEach((issue) => {
+              Object.assign(issue);
+              annotate(issue, option);
             });
 
             // After annotations are painted, find & cache.
             Elements.initializeAnnotations();
 
             // Initialize tooltips
-            const tooltipComponent = new TooltipComponent();
+            const tooltipComponent = new AnnotationTooltips();
             document.body.appendChild(tooltipComponent);
 
             dismissButtons(
@@ -9127,12 +11047,14 @@
         }
 
         // Dispatch custom event that stores the results array.
+        window.sa11yCheckComplete = null;
         const event = new CustomEvent('sa11y-check-complete', {
           detail: {
             results: this.results,
             page: window.location.pathname,
           },
         });
+        window.sa11yCheckComplete = event.detail;
         document.dispatchEvent(event);
       };
 
@@ -9150,7 +11072,6 @@
           'sa11y-tooltips',
           '[data-sa11y-readability-period]',
           '[data-sa11y-clone-image-text]',
-          '.sa11y-css-utilities',
         ], 'document');
 
         // Reset all data attributes.
@@ -9192,6 +11113,7 @@
 
         // Remove data attribute from shadow root elements.
         document.querySelectorAll('[data-sa11y-has-shadow-root]').forEach((el) => {
+          el.shadowRoot.querySelectorAll('style.sa11y-css-utilities').forEach((style) => style.remove());
           el.removeAttribute('data-sa11y-has-shadow-root');
         });
 
@@ -9206,7 +11128,7 @@
 
       // Method: temporarily disable toggle.
       this.disabled = () => {
-        if (store.getItem('sa11y-remember-panel') === 'Opened') {
+        if (store.getItem('sa11y-panel') === 'Opened') {
           Constants.Panel.toggle.click();
         }
         Constants.Panel.toggle.disabled = true;

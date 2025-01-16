@@ -20,7 +20,7 @@ export class HeadingLabel extends HTMLElement {
         display: inline-block;
         font-family: var(--sa11y-font-face);
         font-weight: 500;
-        font-size: 17px;
+        font-size: 18px;
         line-height: normal;
         letter-spacing: normal;
         margin: -5px 0 0 5px;

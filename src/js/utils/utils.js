@@ -1,4 +1,5 @@
 import find from './find';
+import { computeAccessibleName } from './computeAccessibleName';
 
 /**
  * Checks if the document has finished loading, and if so, immediately calls the provided callback function. Otherwise, waits for the 'load' event to fire and then calls the callback function.
@@ -23,6 +24,23 @@ export function isElementVisuallyHiddenOrHidden(element) {
   }
   const compStyles = getComputedStyle(element);
   return compStyles.getPropertyValue('display') === 'none';
+}
+
+/**
+ * Determing whether an element is visually hidden (e.g. .sr-only) based on computed properties.
+ * @param {HTMLElement} element The element to check for.
+ * @returns {boolean} Returns true if visually hidden based on properties.
+ */
+export function isScreenReaderOnly(element) {
+  const style = window.getComputedStyle(element);
+  const clipPath = style.getPropertyValue('clip-path');
+  const { position } = style;
+  const width = parseFloat(style.width);
+  const height = parseFloat(style.height);
+  const { overflow } = style;
+  return (
+    (clipPath === 'inset(50%)') || (position === 'absolute' && width === 1 && height === 1 && overflow === 'hidden')
+  );
 }
 
 /**
@@ -97,12 +115,89 @@ export function sanitizeHTML(string) {
 }
 
 /**
+ * Sanitize links (e.g. href and src values).
+ * @param {string} string The URL string to sanitize.
+ * @returns {string} The sanitized URL if valid, or an empty string if invalid.
+ */
+export function sanitizeURL(string) {
+  if (!string) return '#';
+  const sanitizedInput = String(string).trim();
+
+  // Remove protocols.
+  if (/^javascript:/i.test(sanitizedInput)) return '#';
+  if (/^data:/i.test(sanitizedInput)) return '#';
+
+  // Ensure valid protocol.
+  const protocols = ['http:', 'https:', 'mailto:', 'tel:', 'ftp:'];
+  const hasValidProtocol = protocols.some((protocol) => sanitizedInput.toLowerCase().startsWith(protocol));
+
+  // Assume relative URLs.
+  if (!hasValidProtocol && !sanitizedInput.startsWith('/') && !sanitizedInput.startsWith('#')) {
+    return `./${sanitizedInput}`;
+  }
+
+  // Remove any HTML tags.
+  const cleanedString = sanitizedInput.replace(/<[^>]*>/g, '');
+  return encodeURI(cleanedString);
+}
+
+/**
+ * Sanitizes HTML by removing script tags, inline event handlers and any dangerous attributes. It returns a clean version of the HTML string.
+ * @param {string} html The HTML string to sanitize.
+ * @param {Boolean} allowStyles Preserve inline style attributes.
+ * @returns {string} The sanitized HTML string.
+ */
+export function sanitizeHTMLBlock(html, allowStyles = false) {
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = html;
+
+  // Remove blocks.
+  ['script', 'style', 'noscript', 'iframe', 'form'].forEach((tag) => {
+    const elements = tempDiv.getElementsByTagName(tag);
+    while (elements.length > 0) {
+      elements[0].parentNode.removeChild(elements[0]);
+    }
+  });
+
+  // Remove inline event handlers and dangerous attributes.
+  const allElements = Array.from(tempDiv.getElementsByTagName('*'));
+  allElements.forEach((element) => {
+    Array.from(element.attributes).forEach((attr) => {
+      if (attr.name.startsWith('on')) element.removeAttribute(attr.name);
+    });
+    if (!allowStyles) {
+      element.removeAttribute('style');
+    }
+  });
+  return tempDiv.innerHTML;
+}
+
+/**
+ * Creates a clone of an element while ignoring specified elements or elements matching a selector.
+ * Ignored by default: ['noscript', 'script', 'style', 'audio', 'video', 'form', 'iframe']
+ * @param {Element} element The element to clone.
+ * @param {Array[]} selectors The selector to match elements to be excluded from the clone. Optional.
+ * @returns {Element} The cloned element with excluded elements removed.
+ */
+export function fnIgnore(element, selectors = []) {
+  const defaultIgnored = ['noscript', 'script', 'style', 'audio', 'video', 'form', 'iframe'];
+  const ignore = [...defaultIgnored, ...selectors].join(', ');
+  const clone = element.cloneNode(true);
+  const exclude = Array.from(clone.querySelectorAll(ignore));
+  exclude.forEach(($el) => {
+    $el.parentElement.removeChild($el);
+  });
+  return clone;
+}
+
+/**
  * Retrieves the text content of an HTML element and removes extra whitespaces and line breaks.
  * @param {HTMLElement} element The HTML element to retrieve the text content from.
  * @returns {string} The text content of the HTML element with extra whitespaces and line breaks removed.
  */
 export function getText(element) {
-  return element.textContent.replace(/[\r\n]+/g, '').replace(/\s+/g, ' ').trim();
+  const ignore = fnIgnore(element);
+  return ignore.textContent.replace(/[\r\n]+/g, '').replace(/\s+/g, ' ').trim();
 }
 
 /**
@@ -112,6 +207,17 @@ export function getText(element) {
  */
 export function removeWhitespace(string) {
   return string.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+/**
+ * Truncate string.
+ * @param {*} string The string to truncate.
+ * @param {*} maxLength Desired max length of string.
+ * @returns Truncated string.
+ */
+export function truncateString(string, maxLength) {
+  const truncatedString = string.substring(0, maxLength).trimEnd();
+  return string.length > maxLength ? `${truncatedString}...` : string;
 }
 
 /**
@@ -130,23 +236,6 @@ export function debounce(callback, wait) {
       callback(...args);
     }, wait);
   };
-}
-
-/**
- * Creates a clone of an element while ignoring specified elements or elements matching a selector.
- * @param {Element} element The element to clone.
- * @param {string} selector The selector to match elements to be excluded from the clone. Optional.
- * @returns {Element} The cloned element with excluded elements removed.
- */
-export function fnIgnore(element, selector) {
-  const defaultIgnored = 'noscript, script, style';
-  const ignore = (!selector) ? defaultIgnored : `${defaultIgnored}, ${selector}`;
-  const clone = element.cloneNode(true);
-  const exclude = Array.from(clone.querySelectorAll(ignore));
-  exclude.forEach((c) => {
-    c.parentElement.removeChild(c);
-  });
-  return clone;
 }
 
 /**
@@ -298,7 +387,7 @@ export function generateSelectorPath(element) {
  * @link https://hidde.blog/using-javascript-to-trap-focus-in-an-element/
 */
 export function trapFocus(element) {
-  const focusable = element.querySelectorAll('a[href]:not([disabled]), button:not([disabled])');
+  const focusable = element.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), input[type="color"]');
   const firstFocusable = focusable[0];
   const lastFocusable = focusable[focusable.length - 1];
   element.addEventListener('keydown', (e) => {
@@ -322,7 +411,7 @@ export function trapFocus(element) {
 
 /**
  * Removes the alert from the Sa11y control panel by clearing its content and removing CSS classes.
- * @description This function clears the content of the alert element and removes CSS classes 'active' from the main alert element, and 'panel-alert-preview' from the alert preview element.
+ * This function clears the content of the alert element and removes CSS classes 'active' from the main alert element, and 'panel-alert-preview' from the alert preview element.
  * @returns {void}
  */
 export function removeAlert() {
@@ -448,28 +537,57 @@ export function isScrollable(scrollArea, container, ariaLabel) {
 }
 
 /**
+ * Get the best image source from an element, considering data-src, srcset, and src attributes.
+ * @param {HTMLElement} element - The image element to extract the source from.
+ * @returns {string} - The best available source URL.
+ */
+export function getBestImageSource(element) {
+  const getLastSrc = (src) => src?.split(',').pop()?.trim()?.split(/\s+/)[0];
+  const dataSrc = getLastSrc(element.getAttribute('data-src') || element.getAttribute('srcset'));
+  if (dataSrc) return dataSrc;
+  const picture = element.closest('picture')?.querySelector('source[srcset]')?.getAttribute('srcset');
+  const pictureSrc = getLastSrc(picture);
+  if (pictureSrc) return pictureSrc;
+  return element.getAttribute('src');
+}
+
+/**
  * Generate an HTML preview for an issue if it's an image, iframe, audio or video element. Otherwise, return escaped HTML within <code> tags. Used for Skip to Issue panel alerts and HTML page export.
  * @param {Object} issueObject The issue object.
  * @returns {html} Returns HTML.
  */
 export function generateElementPreview(issueObject) {
   const issueElement = issueObject.element;
-  const htmlPath = `<pre><code>${escapeHTML(issueObject.htmlPath)}</code></pre>`;
+  const cleanHTML = sanitizeHTMLBlock(issueObject.htmlPath);
+  const truncatedHTML = truncateString(cleanHTML, 600);
+  const htmlPath = `<pre><code>${escapeHTML(truncatedHTML)}</code></pre>`;
+
+  const simple = (element) => {
+    const text = getText(element);
+    const truncatedText = truncateString(text, 100);
+    return text.length ? sanitizeHTML(truncatedText) : htmlPath;
+  };
 
   const tag = {
+    SPAN: simple,
+    P: simple,
+    A: (element) => {
+      const text = getText(element);
+      const truncatedText = truncateString(text, 100);
+      if (text.length > 1 && element.href && !element.hasAttribute('role')) {
+        return `<a href="${sanitizeURL(element.href)}">${sanitizeHTML(truncatedText)}</a>`;
+      }
+      return htmlPath;
+    },
     IMG: (element) => {
       const anchor = element.closest('a[href]');
       const alt = element.alt ? `alt="${sanitizeHTML(element.alt)}"` : 'alt';
-      const imgSrc = element.src;
+      const source = getBestImageSource(element);
 
-      // Account for lazy loading libraries that use 'data-src' attribute.
-      const dataSrc = element.getAttribute('data-src');
-      const source = (dataSrc && dataSrc.length > 3) ? dataSrc : imgSrc;
-
-      if (imgSrc) {
+      if (source) {
         return anchor
-          ? `<a href="${anchor.href}" rel="noopener noreferrer"><img src="${source}" ${alt}/></a>`
-          : `<img src="${source}" ${alt}/>`;
+          ? `<a href="${sanitizeURL(anchor.href)}" rel="noopener noreferrer"><img src="${sanitizeURL(source)}" ${alt}/></a>`
+          : `<img src="${sanitizeURL(source)}" ${alt}/>`;
       }
       return htmlPath;
     },
@@ -480,15 +598,69 @@ export function generateElementPreview(issueObject) {
       const ariaLabel = ariaLabelAttr || '';
       if (source) {
         const iframeTitle = ariaLabel || title;
-        return `<iframe src="${source}" aria-label="${sanitizeHTML(iframeTitle)}"></iframe>`;
+        return `<iframe src="${sanitizeURL(source)}" aria-label="${sanitizeHTML(iframeTitle)}"></iframe>`;
       }
       return htmlPath;
     },
-    AUDIO: () => issueObject.htmlPath,
-    VIDEO: () => issueObject.htmlPath,
+    AUDIO: () => sanitizeHTMLBlock(issueObject.htmlPath),
+    VIDEO: () => sanitizeHTMLBlock(issueObject.htmlPath),
   };
 
   const tagHandler = tag[issueElement.tagName];
   const elementPreview = tagHandler ? tagHandler(issueElement) : htmlPath;
   return elementPreview;
+}
+
+/**
+ * Check if an element's visible text is included in the accessible name.
+ * To minimize false positives: iterate through all child nodes of the element, checking for visibility.
+ * @param {element} $el The element to test.
+ * @returns {boolean}
+ */
+export function isVisibleTextInAccessibleName($el) {
+  let text = '';
+  const accName = computeAccessibleName($el).toLowerCase();
+  const nodes = $el.childNodes;
+  nodes.forEach((node) => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      text += node.textContent;
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      // Only return text content if it's not hidden.
+      if (!isElementVisuallyHiddenOrHidden(node)) {
+        text += node.textContent;
+      }
+    }
+  });
+
+  // Ignore emojis.
+  const emojiRegex = /[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu;
+  let visibleText = text.replace(emojiRegex, '');
+
+  // Final visible text.
+  visibleText = removeWhitespace(visibleText).toLowerCase();
+
+  // If visible text is just an x character, ignore.
+  if (visibleText === 'x') {
+    return false;
+  }
+
+  // Check if visible text is included in accessible name.
+  return visibleText.length !== 0 && !accName.includes(visibleText);
+}
+
+/**
+ * Standardize the href attribute of a link by removing any trailing slashes and stripping the protocol (http, https) and 'www.' prefix. Used to minimize false positives for link check module.
+ * @param {HTMLElement} $el - The element from which to retrieve the href attribute.
+ * @returns {string} - The standardized href.
+ */
+export function standardizeHref($el) {
+  let href = $el.getAttribute('href');
+  href = removeWhitespace(href).toLowerCase();
+
+  // Remove trailing slash if it exists.
+  if (href.endsWith('/')) {
+    href = href.slice(0, -1);
+  }
+  // Remove protocol and www., without affecting subdomains.
+  return href.replace(/^https?:\/\/(www\.)?/, '');
 }

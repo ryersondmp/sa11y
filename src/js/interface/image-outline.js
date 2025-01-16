@@ -49,29 +49,28 @@ export default function generateImageOutline(dismissed, imageResults) {
   };
 
   const imageOutlineHandler = () => {
-    // Create a single array that gets appended to heading outline.
     const imageArray = [];
 
-    // Find all dismissed images and update headingOutline array.
-    const findDismissedImages = dismissed.map((e) => {
-      const found = imageResults.find((f) => (e.key.includes(f.dismiss) && e.href === window.location.pathname));
-      if (found === undefined) return '';
-      return found;
-    });
-
-    findDismissedImages.forEach(($el) => {
-      Object.assign($el, { dismissedImage: true });
-    });
+    // Find all dismissed images.
+    const findDismissedImages = dismissed.map((e) => imageResults.find((f) => e.key === f.dismiss && e.href === window.location.pathname)).filter(Boolean);
 
     imageResults.forEach((image) => {
+      // Filter out dismissed images.
+      const isDismissed = findDismissedImages.some((dismissedImage) => dismissedImage.element.outerHTML.toLowerCase() === image.element.outerHTML.toLowerCase());
+      if (isDismissed) Object.assign(image, { dismissedImage: true });
+
+      // Get image object's properties.
       const issue = image.type;
+      const developerCheck = image.developer;
       const { dismissedImage } = image;
       const altText = Utils.escapeHTML(image.element.alt);
 
-      // Account for lazy loading libraries that use 'data-src' attribute.
-      const { src } = image.element;
-      const dataSrc = image.element.getAttribute('data-src');
-      const source = (dataSrc && dataSrc.length > 3) ? dataSrc : src;
+      // Make developer checks don't show images as error if Developer checks are off!
+      const devChecksOff = Utils.store.getItem('sa11y-developer') === 'Off' || Utils.store.getItem('sa11y-developer') === null;
+      const showDeveloperChecks = devChecksOff && (issue === 'error' || issue === 'warning') && developerCheck === true;
+
+      // Account for lazy loading libraries.
+      const source = Utils.getBestImageSource(image.element);
 
       // Generate edit link if locally hosted image and prop is enabled.
       const edit = generateEditLink(image);
@@ -82,7 +81,8 @@ export default function generateImageOutline(dismissed, imageResults) {
         : '';
 
       let append;
-      if (issue === 'error') {
+
+      if (issue === 'error' && !showDeveloperChecks) {
         const missing = altText.length === 0
           ? `<div class="badge error-badge">${Lang._('MISSING')}</div>`
           : `<strong class="red-text">${altText}</strong>`;
@@ -95,7 +95,7 @@ export default function generateImageOutline(dismissed, imageResults) {
           ${edit}
         </li>`;
         imageArray.push(append);
-      } else if (issue === 'warning' && !dismissedImage) {
+      } else if (issue === 'warning' && !dismissedImage && !showDeveloperChecks) {
         const decorative = altText.length === 0
           ? `<div class="badge warning-badge">${Lang._('DECORATIVE')}</div>`
           : '';
@@ -131,7 +131,7 @@ export default function generateImageOutline(dismissed, imageResults) {
 
     // Append headings to Page Outline.
     Constants.Panel.imagesList.innerHTML = (imageArray.length === 0)
-      ? `<li>${Lang._('IMAGES_NOT_FOUND')}</li>`
+      ? `<li>${Lang._('NO_IMAGES')}</li>`
       : imageArray.join(' ');
 
     // Remove event listener.
@@ -139,7 +139,7 @@ export default function generateImageOutline(dismissed, imageResults) {
   };
 
   /* Generate image outline based on local storage or if "Image" button is selected. */
-  const rememberImages = Utils.store.getItem('sa11y-remember-images');
+  const rememberImages = Utils.store.getItem('sa11y-images');
   if (rememberImages === 'Opened') imageOutlineHandler();
   document.addEventListener('sa11y-build-image-outline', imageOutlineHandler);
 }

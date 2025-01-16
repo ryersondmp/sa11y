@@ -16,6 +16,7 @@ export default function checkCustom(results) {
         inline: false,
         position: 'beforebegin',
         dismiss: key,
+        developer: false,
       });
     }
   }
@@ -31,6 +32,7 @@ export default function checkCustom(results) {
         content: 'Do <strong>not nest forms</strong> within the Accordion component. If the form contains validation issues, a person may not see the form feedback since the accordion panel goes back to its original closed state.',
         inline: false,
         position: 'beforebegin',
+        developer: false,
       });
     }
   }); */

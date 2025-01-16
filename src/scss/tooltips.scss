@@ -142,6 +142,19 @@ div {
   text-align: center;
 }
 
+/* More visible panel tooltips. */
+.tippy-box[data-theme~="sa11y-panel"] {
+  border: 1px solid var(--sa11y-panel-bg-splitter);
+  box-shadow: var(--sa11y-box-shadow);
+}
+
+/* Annotation tooltip boxshadows. */
+.tippy-box[data-theme~="sa11y-theme"]:not([data-theme~="sa11y-panel"]) {
+  box-shadow: 0 0 20px 4px rgba(154, 161, 177, .15),
+    0 4px 80px -8px rgba(36, 40, 47, .25),
+    0 4px 4px -2px rgba(91, 94, 105, .15) !important;
+}
+
 /* Tooltip content */
 .tippy-box[data-theme~="sa11y-theme"] {
   position: relative;
@@ -156,15 +169,13 @@ div {
   background-color: var(--sa11y-panel-bg);
   border-radius: 4px;
   outline: 0;
-  box-shadow: 0 0 20px 4px rgba(154, 161, 177, .15),
-    0 4px 80px -8px rgba(36, 40, 47, .25),
-    0 4px 4px -2px rgba(91, 94, 105, .15) !important;
   transition-property: transform, visibility, opacity;
   -webkit-font-smoothing: auto;
 
   code {
     font-family: monospace;
     font-size: calc(var(--sa11y-normal-text) - 1px);
+    font-weight: 500;
   }
 
   code,
@@ -202,6 +213,7 @@ div {
   }
 
   a {
+    font-weight: 500;
     color: var(--sa11y-hyperlink);
     text-decoration: underline;
     cursor: pointer;
@@ -229,20 +241,36 @@ div {
     margin: 0;
   }
 
-  button[data-sa11y-dismiss] {
-    display: block;
-    padding: 4px 8px;
-    margin: 10px 5px 5px 0;
-    color: var(--sa11y-panel-primary);
-    cursor: pointer;
-    background: var(--sa11y-panel-bg-secondary);
-    border: 2px solid var(--sa11y-button-outline);
-    border-radius: 5px;
+  /* Dismiss buttons */
+  .dismiss-group {
+    margin-top: 5px;
 
-    &:hover,
-    &:focus {
-      background: var(--sa11y-shortcut-hover);
+    button {
+      display: inline-block;
+      padding: 4px 8px;
+      margin: 10px 5px 5px 0;
+      margin-inline-end: 15px;
+      color: var(--sa11y-panel-primary);
+      cursor: pointer;
+      background: var(--sa11y-panel-bg-secondary);
+      border: 2px solid var(--sa11y-button-outline);
+      border-radius: 5px;
+
+      &:hover,
+      &:focus {
+        background: var(--sa11y-shortcut-hover);
+      }
     }
+  }
+
+  // For contrast badge
+  .good-icon {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-bottom: -2.5px;
+    background: var(--sa11y-good-text);
+    mask: var(--sa11y-good-svg) center no-repeat;
   }
 
   // Link icon
@@ -261,6 +289,10 @@ div {
       background: var(--sa11y-error);
     }
 
+    .colour {
+      color: var(--sa11y-red-text);
+    }
+
     .link-icon {
       background: var(--sa11y-error-text);
     }
@@ -272,8 +304,35 @@ div {
       background: var(--sa11y-yellow-text);
     }
 
+    .colour {
+      color: var(--sa11y-yellow-text);
+    }
+
     .link-icon {
       background: var(--sa11y-panel-bg);
+    }
+  }
+
+  /* APCA table */
+  #apca-table {
+    width: 100%;
+
+    .row {
+      display: flex;
+      margin-top: 10px;
+    }
+
+    .cell {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      align-items: center;
+      padding: 1px;
+    }
+
+    .font-weight {
+      font-size: calc(var(--sa11y-normal-text) - 2px);
+      font-weight: bold;
     }
   }
 
@@ -316,6 +375,7 @@ div {
 .tippy-box[data-theme~="sa11y-theme"] {
 
   a:focus,
+  input:focus,
   button:focus,
   button:active,
   [tabindex="-1"]:focus {
@@ -327,6 +387,7 @@ div {
 // B) Remove default focus styles for mouse users ONLY if :focus-visible is supported.
 .tippy-box[data-theme~="sa11y-theme"] {
 
+  input:focus:not(:focus-visible),
   a:focus:not(:focus-visible),
   button:focus:not(:focus-visible),
   [tabindex="-1"]:focus:not(:focus-visible) {
@@ -340,6 +401,7 @@ div {
 
   a:focus-visible,
   button:focus-visible,
+  input:focus-visible,
   [tabindex="-1"]:focus-visible {
     outline: 0;
     box-shadow: 0 0 0 5px var(--sa11y-focus-color);

@@ -28,32 +28,16 @@
   /* ************************************* */
   /*    Links, text, and image borders     */
   /* ************************************* */
-  [data-sa11y-error] {
-    outline: 5px solid var(--sa11y-error) !important;
-  }
-
-  [data-sa11y-warning] {
-    outline: 5px solid var(--sa11y-warning) !important;
-  }
-
-  [data-sa11y-good] {
-    outline: 5px solid var(--sa11y-good) !important;
-  }
-
+  [data-sa11y-error],
   [data-sa11y-error-inline] {
-    color: var(--sa11y-error-text) !important;
-    background-color: var(--sa11y-error) !important;
-    border-color: transparent !important;
-    border-radius: .25em !important;
-    box-shadow: 0 0 0 4px var(--sa11y-error) !important;
+    outline: 5px solid var(--sa11y-error) !important;
+    outline-offset: 2px;
   }
 
+  [data-sa11y-warning],
   [data-sa11y-warning-inline] {
-    color: var(--sa11y-warning-text) !important;
-    background-color: var(--sa11y-warning) !important;
-    border-color: transparent !important;
-    border-radius: .25em !important;
-    box-shadow: 0 0 0 4px var(--sa11y-warning) !important;
+    outline: 5px solid var(--sa11y-warning) !important;
+    outline-offset: 2px;
   }
 
   /* *************************************************** */

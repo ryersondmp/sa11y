@@ -25,7 +25,7 @@ export function updatePanel(dismissCount, errorCount, warningCount) {
     Constants.Panel.skipButton.classList.remove('active');
   } else {
     Constants.Panel.content.setAttribute('class', 'good');
-    Constants.Panel.status.innerHTML = `${Lang._('PANEL_STATUS_NONE')}`;
+    Constants.Panel.status.innerHTML = `${Lang._('NO_ERRORS_FOUND')}`;
   }
 
   // If there are no button annotations, disable the Skip-to-Toggle switch.
@@ -47,15 +47,15 @@ export function updateBadge(errorCount, warningCount) {
   } else if (warningCount > 0 && errorCount === 0) {
     Constants.Panel.notifBadge.classList.add('notification-badge-warning');
     Constants.Panel.notifCount.innerText = `${warningCount}`;
-    Constants.Panel.notifText.innerText = `${Lang._('PANEL_ICON_WARNINGS')}`;
+    Constants.Panel.notifText.innerText = `${Lang._('WARNINGS_FOUND')}`;
   } else {
     Constants.Panel.notifBadge.classList.remove('notification-badge-warning');
     Constants.Panel.notifCount.innerText = `${totalCount}`;
-    Constants.Panel.notifText.innerText = Lang._('PANEL_ICON_TOTAL');
+    Constants.Panel.notifText.innerText = Lang._('TOTAL_FOUND');
   }
 
   // Don't show badge when panel is opened.
-  if (store.getItem('sa11y-remember-panel') === 'Opened' || totalCount === 0) {
+  if (store.getItem('sa11y-panel') === 'Opened' || totalCount === 0) {
     Constants.Panel.notifBadge.style.display = 'none';
   } else {
     Constants.Panel.notifBadge.style.display = 'flex';

@@ -34,11 +34,11 @@ const Constants = (function myConstants() {
     Global.panelPosition = option.panelPosition;
     Global.dismissAnnotations = option.dismissAnnotations;
     Global.aboutContent = option.aboutContent;
+    Global.contrastAPCA = option.contrastAPCA;
+    Global.contrastSuggestions = option.contrastSuggestions;
 
     // Toggleable plugins
-    Global.contrastPlugin = option.contrastPlugin;
-    Global.formLabelsPlugin = option.formLabelsPlugin;
-    Global.linksAdvancedPlugin = option.linksAdvancedPlugin;
+    Global.developerPlugin = option.developerPlugin;
     Global.colourFilterPlugin = option.colourFilterPlugin;
     Global.checkAllHideToggles = option.checkAllHideToggles;
     Global.exportResultsPlugin = option.exportResultsPlugin;
@@ -57,10 +57,51 @@ const Constants = (function myConstants() {
     // i18n
     Global.langDirection = (Global.html.getAttribute('dir') === 'rtl') ? 'rtl' : 'ltr';
 
-    // QA: Document links (Quality Assurance module)
-    if (option.documentLinks) {
-      Global.documentLinks = `${option.documentLinks}`;
+    // Check for document types.
+    const documentSources = option.checks.QA_DOCUMENT.sources;
+    const defaultDocumentSources = 'a[href$=".doc"], a[href$=".docx"], a[href*=".doc?"], a[href*=".docx?"], a[href$=".ppt"], a[href$=".pptx"], a[href*=".ppt?"], a[href*=".pptx?"], a[href^="https://drive.google.com/file"], a[href^="https://docs.google."], a[href^="https://sway."]';
+    if (documentSources.length) {
+      Global.documentSources = `${defaultDocumentSources}, ${documentSources}`;
+    } else {
+      Global.documentSources = defaultDocumentSources;
     }
+
+    /* ********************** */
+    /* Embedded Content Setup */
+    /* ********************** */
+
+    // Video sources.
+    const videoSources = option.checks.EMBED_VIDEO.sources;
+    const defaultVideoSources = 'video, [src*="youtube.com"], [src*="vimeo.com"], [src*="yuja.com"], [src*="panopto.com"]';
+    if (videoSources.length) {
+      const videos = videoSources.split(/\s*[\s,]\s*/).map(($el) => `[src*="${$el}"]`);
+      Global.VideoSources = `${defaultVideoSources}, ${videos.join(', ')}`;
+    } else {
+      Global.VideoSources = defaultVideoSources;
+    }
+
+    // Audio sources.
+    const audioSources = option.checks.EMBED_AUDIO.sources;
+    const defaultAudioSources = 'audio, [src*="soundcloud.com"], [src*="simplecast.com"], [src*="podbean.com"], [src*="buzzsprout.com"], [src*="blubrry.com"], [src*="transistor.fm"], [src*="fusebox.fm"], [src*="libsyn.com"], [src*="spotify.com"], [src*="podcasts.apple.com"], [src*="castbox.fm"]';
+    if (audioSources.length) {
+      const audio = audioSources.split(/\s*[\s,]\s*/).map(($el) => `[src*="${$el}"]`);
+      Global.AudioSources = `${defaultAudioSources}, ${audio.join(', ')}`;
+    } else {
+      Global.AudioSources = defaultAudioSources;
+    }
+
+    // Data viz sources.
+    const dataVizSources = option.checks.EMBED_DATA_VIZ.sources;
+    const defaultDataVizSources = '[src*="datastudio"], [src*="tableau"], [src*="lookerstudio"], [src*="powerbi"], [src*="qlik"]';
+    if (dataVizSources.length) {
+      const data = dataVizSources.split(/\s*[\s,]\s*/).map(($el) => `[src*="${$el}"]`);
+      Global.VisualizationSources = `${defaultDataVizSources}, ${data.join(', ')}`;
+    } else {
+      Global.VisualizationSources = defaultDataVizSources;
+    }
+
+    // Embedded content all
+    Global.AllEmbeddedContent = `${Global.VideoSources}, ${Global.AudioSources}, ${Global.VisualizationSources}`;
   }
 
   /* *************** */
@@ -101,17 +142,12 @@ const Constants = (function myConstants() {
     Panel.settingsContent = Sa11yPanel.getElementById('settings-content');
 
     // Settings toggles
-    Panel.contrastToggle = Sa11yPanel.getElementById('contrast-toggle');
-    Panel.labelsToggle = Sa11yPanel.getElementById('labels-toggle');
-    Panel.linksToggle = Sa11yPanel.getElementById('links-advanced-toggle');
+    Panel.developerToggle = Sa11yPanel.getElementById('developer-toggle');
     Panel.readabilityToggle = Sa11yPanel.getElementById('readability-toggle');
     Panel.themeToggle = Sa11yPanel.getElementById('theme-toggle');
-    Panel.contrastItem = Sa11yPanel.getElementById('contrast-item');
-    Panel.labelsItem = Sa11yPanel.getElementById('form-labels-item');
-    Panel.linksItem = Sa11yPanel.getElementById('links-advanced-item');
+    Panel.developerItem = Sa11yPanel.getElementById('developer-item');
     Panel.readabilityItem = Sa11yPanel.getElementById('readability-item');
     Panel.darkModeItem = Sa11yPanel.getElementById('dark-mode-item');
-
     Panel.colourPanel = Sa11yPanel.getElementById('panel-colour-filters');
     Panel.colourFilterItem = Sa11yPanel.getElementById('colour-filter-item');
     Panel.colourFilterSelect = Sa11yPanel.getElementById('colour-filter-select');
@@ -188,85 +224,72 @@ const Constants = (function myConstants() {
   /* **************** */
   const Exclusions = {};
   function initializeExclusions(option) {
-    // Main container.
+    // List of Sa11y's interface components.
+    Exclusions.Sa11yElements = ['sa11y-heading-label', 'sa11y-heading-anchor', 'sa11y-annotation', 'sa11y-tooltips', 'sa11y-panel-tooltips', 'sa11y-control-panel', '#sa11y-colour-filters', '#sa11y-colour-filters *'];
+
+    // Global elements to exclude.
+    const exclusions = ['style', 'script', 'noscript'];
+
+    // Main container exclusions.
+    Exclusions.Container = ['#wpadminbar', '#wpadminbar *', ...exclusions];
     if (option.containerIgnore) {
-      const containerSelectors = option.containerIgnore.split(',').map(($el) => `${$el} *, ${$el}`);
-      Exclusions.Container = `#wpadminbar *, #sa11y-colour-filters, #sa11y-colour-filters *, ${containerSelectors.join(', ')}`;
-    } else {
-      Exclusions.Container = '#wpadminbar *, #sa11y-colour-filters, #sa11y-colour-filters *';
+      const containerSelectors = option.containerIgnore.split(',').map((item) => item.trim());
+      Exclusions.Container = Exclusions.Container.concat(
+        containerSelectors.flatMap((item) => [`${item} *`, item]),
+      );
     }
 
     // Contrast exclusions
-    Exclusions.Contrast = 'script, style, link';
+    Exclusions.Contrast = ['link', 'hr', 'option', 'audio', 'audio *', 'video', 'video *', 'input[type="color"]', 'input[type="range"]', 'progress', 'progress *', 'meter', 'meter *', 'iframe', 'svg title', 'svg desc', ...exclusions];
     if (option.contrastIgnore) {
-      Exclusions.Contrast = `${option.contrastIgnore}, ${Exclusions.Contrast}`;
+      Exclusions.Contrast = option.contrastIgnore
+        .split(',')
+        .map(($el) => $el.trim())
+        .flatMap(($el) => [$el, `${$el} *`])
+        .concat(Exclusions.Contrast);
     }
 
     // Ignore specific regions for readability module.
-    Exclusions.Readability = 'nav li, [role="navigation"] li';
+    Exclusions.Readability = ['nav li', '[role="navigation"] li', ...exclusions];
     if (option.readabilityIgnore) {
-      Exclusions.Readability = `${option.readabilityIgnore}, ${Exclusions.Readability}`;
+      Exclusions.Readability = option.readabilityIgnore
+        .split(',')
+        .map(($el) => $el.trim())
+        .flatMap(($el) => [$el, `${$el} *`])
+        .concat(Exclusions.Readability);
     }
 
-    // Ignore specific headings
-    if (option.headerIgnore) {
-      Exclusions.Headings = `${option.headerIgnore}`;
-    }
+    // Ignore specific headings.
+    Exclusions.Headings = option.headerIgnore
+      ? option.headerIgnore.split(',').map(($el) => $el.trim())
+      : [];
+
+    // Ignore specific classes within headings.
+    Exclusions.HeaderSpan = option.headerIgnoreSpan
+      ? option.headerIgnoreSpan.split(',').map(($el) => $el.trim())
+      : [];
 
     // Don't add heading label or include in panel.
-    if (option.outlineIgnore) {
-      Exclusions.Outline = `${option.outlineIgnore}`;
-    }
+    Exclusions.Outline = option.outlineIgnore
+      ? option.outlineIgnore.split(',').map(($el) => $el.trim())
+      : [];
 
     // Ignore specific images.
-    Exclusions.Images = '[role="presentation"]';
+    Exclusions.Images = ['[role="presentation"]'];
     if (option.imageIgnore) {
-      Exclusions.Images = `${option.imageIgnore}, ${Exclusions.Images}`;
+      Exclusions.Images = option.imageIgnore.split(',').map(($el) => $el.trim()).concat(Exclusions.Images);
     }
 
     // Ignore specific links
-    Exclusions.Links = '.anchorjs-link';
+    Exclusions.Links = ['.anchorjs-link'];
     if (option.linkIgnore) {
-      Exclusions.Links = `${option.linkIgnore}, ${Exclusions.Links}`;
+      Exclusions.Links = option.linkIgnore.split(',').map(($el) => $el.trim()).concat(Exclusions.Links);
     }
 
     // Ignore specific classes within links.
-    if (option.linkIgnoreSpan) {
-      Exclusions.LinkSpan = option.linkIgnoreSpan;
-    }
-  }
-
-  /* ********************** */
-  /* Embedded Content Setup */
-  /* ********************** */
-  const EmbeddedContent = {};
-  function initializeEmbeddedContent(option) {
-    // Video sources.
-    if (option.videoContent) {
-      const videos = option.videoContent.split(/\s*[\s,]\s*/).map(($el) => `[src*='${$el}']`);
-      EmbeddedContent.Video = `video, ${videos.join(', ')}`;
-    } else {
-      EmbeddedContent.Video = 'video';
-    }
-
-    // Audio sources.
-    if (option.audioContent) {
-      const audio = option.audioContent.split(/\s*[\s,]\s*/).map(($el) => `[src*='${$el}']`);
-      EmbeddedContent.Audio = `audio, ${audio.join(', ')}`;
-    } else {
-      EmbeddedContent.Audio = 'audio';
-    }
-
-    // Data viz sources.
-    if (option.dataVizContent) {
-      const data = option.dataVizContent.split(/\s*[\s,]\s*/).map(($el) => `[src*='${$el}']`);
-      EmbeddedContent.Visualization = data.join(', ');
-    } else {
-      EmbeddedContent.Visualization = 'datastudio.google.com, tableau';
-    }
-
-    // Embedded content all
-    EmbeddedContent.All = `${EmbeddedContent.Video}, ${EmbeddedContent.Audio}, ${EmbeddedContent.Visualization}`;
+    Exclusions.LinkSpan = option.linkIgnoreSpan
+      ? option.linkIgnoreSpan.split(',').map(($el) => $el.trim())
+      : [];
   }
 
   return {
@@ -280,8 +303,6 @@ const Constants = (function myConstants() {
     Readability,
     initializeExclusions,
     Exclusions,
-    initializeEmbeddedContent,
-    EmbeddedContent,
   };
 }());
 

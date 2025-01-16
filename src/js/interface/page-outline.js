@@ -4,6 +4,7 @@
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 import Constants from '../utils/constants';
+import Elements from '../utils/elements';
 import find from '../utils/find';
 
 export default function generatePageOutline(dismissed, headingOutline, option) {
@@ -12,18 +13,12 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
     const outlineArray = [];
 
     // Find all dismissed headings and update headingOutline array.
-    const findDismissedHeadings = dismissed.map((e) => {
-      const found = headingOutline.find((f) => (e.key.includes(f.dismiss) && e.href === window.location.pathname));
-      if (found === undefined) return '';
-      return found;
-    });
-    findDismissedHeadings.forEach(($el) => {
-      Object.assign($el, { dismissedHeading: true });
-    });
+    const findDismissedHeadings = dismissed.map((e) => headingOutline.find((f) => e.key === f.dismiss && e.href === window.location.pathname)).filter(Boolean);
+    findDismissedHeadings.forEach(($el) => Object.assign($el, { dismissedHeading: true }));
 
     // Show meta page title in Page Outline.
+    let outlineItem;
     if (option.showTitleInPageOutline) {
-      let outlineItem;
       const metaTitleElement = document.querySelector('head title');
       if (!metaTitleElement || metaTitleElement.textContent.trim().length === 0) {
         outlineItem = `<li><div class="badge error-badge"><span aria-hidden="true"><span class="error-icon"></span></span> ${Lang._('TITLE')}</div> <div class="badge error-badge">${Lang._('MISSING')}</div></li>`;
@@ -47,7 +42,7 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
       const { isWithinRoot } = heading;
 
       // Filter out specified headings in outlineIgnore prop.
-      const ignoreArray = Constants.Exclusions.Outline ? Array.from(document.querySelectorAll(Constants.Exclusions.Outline)) : [];
+      const ignoreArray = Constants.Exclusions.Outline ? Elements.Found.ExcludedHeadings : [];
 
       if (!ignoreArray.includes($el)) {
         // Indicate if heading is totally hidden or visually hidden.
@@ -126,15 +121,15 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
         label.shadowRoot.appendChild(content);
 
         // Make heading labels visible when panel is open.
-        if (Utils.store.getItem('sa11y-remember-outline') === 'Opened') {
+        if (Utils.store.getItem('sa11y-outline') === 'Opened') {
           label.hidden = false;
         }
       }
     });
 
     // Append headings to Page Outline.
-    Constants.Panel.outlineList.innerHTML = (outlineArray.length === 0)
-      ? `<li>${Lang._('PANEL_NO_HEADINGS')}</li>`
+    Constants.Panel.outlineList.innerHTML = (headingOutline.length === 0)
+      ? `${outlineItem || ''} <li>${Lang._('PANEL_NO_HEADINGS')}</li>`
       : outlineArray.join(' ');
 
     // Make clickable!
@@ -170,7 +165,7 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
             });
 
             if (outlineLink.classList.contains('hidden-h')) {
-              Utils.createAlert(`${Lang._('HEADING_NOT_VISIBLE_ALERT')}`);
+              Utils.createAlert(`${Lang._('HEADING_NOT_VISIBLE')}`);
             } else if (Constants.Panel.alert.classList.contains('active')) {
               Utils.removeAlert();
             }
@@ -233,7 +228,7 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
   };
 
   // Generate heading outline based on local storage or if "Outline" button is selected.
-  const rememberOutline = Utils.store.getItem('sa11y-remember-outline');
+  const rememberOutline = Utils.store.getItem('sa11y-outline');
   if (rememberOutline === 'Opened') outlineHandler();
   document.addEventListener('sa11y-build-heading-outline', outlineHandler);
 }

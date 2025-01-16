@@ -7,14 +7,16 @@ export default function checkQA(results, option) {
   /* *********************************************************** */
   /*  Error: Find all links pointing to development environment. */
   /* *********************************************************** */
-  if (option.badLinksQA) {
+  if (option.checks.QA_BAD_LINK) {
     Elements.Found.CustomErrorLinks.forEach(($el) => {
       results.push({
         element: $el,
-        type: 'error',
-        content: Lang.sprintf('QA_BAD_LINK', $el),
+        type: option.checks.QA_BAD_LINK.type || 'error',
+        content: option.checks.QA_BAD_LINK.content || Lang.sprintf('QA_BAD_LINK', $el),
         inline: true,
-        position: 'beforebegin',
+        dismiss: Utils.prepareDismissal($el.tagName + $el.textContent),
+        dismissAll: option.checks.QA_BAD_LINK.dismissAll ? 'QA_BAD_LINK' : false,
+        developer: option.checks.QA_BAD_LINK.developer || false,
       });
     });
   }
@@ -22,18 +24,17 @@ export default function checkQA(results, option) {
   /* *********************************************************** */
   /*  Warning: Excessive bolding or italics.                     */
   /* *********************************************************** */
-  if (option.strongItalicsQA) {
+  if (option.checks.QA_STRONG_ITALICS) {
     Elements.Found.StrongItalics.forEach(($el) => {
-      const strongItalicsText = $el.textContent.trim().length;
-      const key = Utils.prepareDismissal($el.tagName + $el.textContent);
-      if (strongItalicsText > 400) {
+      const text = Utils.getText($el);
+      if (text.length !== 0 && text.length > 400) {
         results.push({
           element: $el.parentNode,
-          type: 'warning',
-          content: Lang.sprintf('QA_BAD_ITALICS'),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: key,
+          type: option.checks.QA_STRONG_ITALICS.type || 'warning',
+          content: option.checks.QA_STRONG_ITALICS.content || Lang.sprintf('QA_STRONG_ITALICS'),
+          dismiss: Utils.prepareDismissal($el.tagName + $el.textContent),
+          dismissAll: option.checks.QA_STRONG_ITALICS.dismissAll ? 'QA_STRONG_ITALICS' : false,
+          developer: option.checks.QA_STRONG_ITALICS.developer || false,
         });
       }
     });
@@ -47,80 +48,77 @@ export default function checkQA(results, option) {
       const href = $el.getAttribute('href');
 
       // Has file extension.
-      const hasExtension = $el.matches(Constants.Global.documentLinks);
+      const hasExtension = $el.matches(Constants.Global.documentSources);
       const hasPDF = $el.matches('a[href$=".pdf"], a[href*=".pdf?"]');
 
-      // Dismiss key.
-      const key = Utils.prepareDismissal(`DOCUMENT${href}`);
-
       // Check for broken same-page links.
-      const hasButtonRole = $el.getAttribute('role') === 'button';
-      const hasText = $el.textContent.trim().length !== 0;
-      if (option.inPageLinkQA && (href.startsWith('#') || href === '') && !hasButtonRole && hasText) {
-        const targetId = href.substring(1);
-        const targetElement = document.getElementById(targetId) || document.getElementById(decodeURIComponent(targetId)) || document.getElementById(encodeURIComponent(targetId));
-        if (!targetElement) {
-          results.push({
-            element: $el,
-            type: 'error',
-            content: Lang.sprintf('QA_IN_PAGE_LINK'),
-            inline: true,
-            position: 'beforebegin',
-          });
+      if (option.checks.QA_IN_PAGE_LINK) {
+        const hasAttributes = $el.getAttribute('role') === 'button' || $el.hasAttribute('aria-haspopup') || $el.hasAttribute('aria-expanded') || $el.hasAttribute('onclick');
+        const hasText = Utils.getText($el).length !== 0;
+        if ((href.startsWith('#') || href === '') && !hasAttributes && hasText) {
+          const targetId = href.substring(1);
+          const ariaControls = $el.getAttribute('aria-controls');
+          const targetElement = document.getElementById(targetId)
+            || document.getElementById(decodeURIComponent(targetId))
+            || document.getElementById(encodeURIComponent(targetId))
+            || document.getElementById(ariaControls)
+            || document.querySelector(`a[name="${targetId}"]`);
+
+          // If reference ID doesn't exist.
+          if (!targetElement) {
+            results.push({
+              element: $el,
+              type: option.checks.QA_IN_PAGE_LINK.type || 'error',
+              content: option.checks.QA_IN_PAGE_LINK.content || Lang.sprintf('QA_IN_PAGE_LINK'),
+              inline: true,
+              dismiss: Utils.prepareDismissal(`QAINPAGE${href}`),
+              dismissAll: option.checks.QA_IN_PAGE_LINK.dismissAll ? 'QA_IN_PAGE_LINK' : false,
+              developer: option.checks.QA_IN_PAGE_LINK.developer || false,
+            });
+          }
         }
       }
 
       // Manually inspect documents & PDF for accessibility.
-      if (option.documentQA && hasExtension) {
+      if (option.checks.QA_DOCUMENT && hasExtension) {
         results.push({
           element: $el,
-          type: 'warning',
-          content: Lang.sprintf('QA_DOCUMENT'),
+          type: option.checks.QA_DOCUMENT.type || 'warning',
+          content: option.checks.QA_DOCUMENT.content || Lang.sprintf('QA_DOCUMENT'),
           inline: true,
-          position: 'beforebegin',
-          dismiss: key,
+          dismiss: Utils.prepareDismissal(`DOC${href}`),
+          dismissAll: option.checks.QA_DOCUMENT.dismissAll ? 'QA_DOCUMENT' : false,
+          developer: option.checks.QA_DOCUMENT.developer || false,
         });
-      } else if (option.pdfQA && hasPDF) {
+      } else if (option.checks.QA_PDF && hasPDF) {
         results.push({
           element: $el,
-          type: 'warning',
-          content: Lang.sprintf('QA_PDF'),
+          type: option.checks.QA_PDF.type || 'warning',
+          content: option.checks.QA_PDF.content || Lang.sprintf('QA_PDF'),
           inline: true,
-          position: 'beforebegin',
-          dismiss: key,
+          dismiss: Utils.prepareDismissal(`PDF${href}`),
+          dismissAll: option.checks.QA_PDF.dismissAll ? 'QA_PDF' : false,
+          developer: option.checks.QA_PDF.developer || false,
         });
       }
     }
   });
 
   /* *************************************************************** */
-  /*  Error: Missing language tag. Lang should be at least 2 chars.  */
-  /* *************************************************************** */
-  if (option.langQA) {
-    if (!Elements.Found.Language || Elements.Found.Language.length < 2) {
-      results.push({
-        type: 'error',
-        content: Lang.sprintf('QA_PAGE_LANGUAGE'),
-      });
-    }
-  }
-
-  /* *************************************************************** */
   /*  Warning: Find blockquotes used as headers.                     */
   /* *************************************************************** */
-  if (option.blockquotesQA) {
+  if (option.checks.QA_BLOCKQUOTE) {
     Elements.Found.Blockquotes.forEach(($el) => {
-      const bqHeadingText = $el.textContent;
-      if (bqHeadingText.trim().length < 25) {
-        const sanitizedText = Utils.sanitizeHTML(bqHeadingText);
-        const key = Utils.prepareDismissal(`BLOCKQUOTE${sanitizedText}`);
+      const text = Utils.getText($el);
+      if (text.length !== 0 && text.length < 25) {
+        const sanitizedText = Utils.sanitizeHTML(text);
         results.push({
           element: $el,
-          type: 'warning',
-          content: Lang.sprintf('QA_BLOCKQUOTE_MESSAGE', sanitizedText),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: key,
+          type: option.checks.QA_BLOCKQUOTE.type || 'warning',
+          content: option.checks.QA_BLOCKQUOTE.content || Lang.sprintf('QA_BLOCKQUOTE', sanitizedText),
+          dismiss: Utils.prepareDismissal(`BLOCKQUOTE${sanitizedText}`),
+          dismissAll: option.checks.QA_BLOCKQUOTE.dismissAll ? 'QA_BLOCKQUOTE' : false,
+          developer: option.checks.QA_BLOCKQUOTE.developer || false,
         });
       }
     });
@@ -129,71 +127,83 @@ export default function checkQA(results, option) {
   /* *************************************************************** */
   /*  Errors: Check HTML tables for issues.                          */
   /* *************************************************************** */
-  if (option.tablesQA) {
-    Elements.Found.Tables.forEach(($el) => {
+  Elements.Found.Tables.forEach(($el) => {
+    if (Utils.isElementHidden($el) === false) {
       const tableHeaders = $el.querySelectorAll('th');
       const semanticHeadings = $el.querySelectorAll('h1, h2, h3, h4, h5, h6');
-      if (option.tablesQAmissingTH && tableHeaders.length === 0) {
+      const key = Utils.prepareDismissal(`TABLE${$el.textContent}`);
+      if (option.checks.TABLES_MISSING_HEADINGS && tableHeaders.length === 0) {
         results.push({
           element: $el,
-          type: 'error',
-          content: Lang.sprintf('TABLES_MISSING_HEADINGS'),
-          inline: false,
-          position: 'beforebegin',
+          type: option.checks.TABLES_MISSING_HEADINGS.type || 'error',
+          content: option.checks.TABLES_MISSING_HEADINGS.content || Lang.sprintf('TABLES_MISSING_HEADINGS'),
+          dismiss: key,
+          dismissAll: option.checks.TABLES_MISSING_HEADINGS.dismissAll ? 'TABLES_MISSING_HEADINGS' : false,
+          developer: option.checks.TABLES_MISSING_HEADINGS.developer || false,
         });
       }
-      if (option.tablesQAsemanticHeadings && semanticHeadings.length > 0) {
+      if (option.checks.TABLES_SEMANTIC_HEADING && semanticHeadings.length > 0) {
         semanticHeadings.forEach((heading) => {
           results.push({
             element: heading,
-            type: 'error',
-            content: Lang.sprintf('TABLES_SEMANTIC_HEADING'),
-            inline: false,
-            position: 'beforebegin',
+            type: option.checks.TABLES_SEMANTIC_HEADING.type || 'error',
+            content: option.checks.TABLES_SEMANTIC_HEADING.content || Lang.sprintf('TABLES_SEMANTIC_HEADING'),
+            dismiss: key,
+            dismissAll: option.checks.TABLES_SEMANTIC_HEADING.dismissAll ? 'TABLES_SEMANTIC_HEADING' : false,
+            developer: option.checks.TABLES_SEMANTIC_HEADING.developer || false,
           });
         });
       }
       tableHeaders.forEach((th) => {
-        if (option.tablesQAemptyTH && th.textContent.trim().length === 0) {
-          const issueType = (option.tablesQAemptyTHisError) ? 'error' : 'warning';
-          const key = Utils.prepareDismissal(`TABLE${$el.textContent}`);
+        if (option.checks.TABLES_EMPTY_HEADING && th.textContent.trim().length === 0) {
           results.push({
             element: th,
-            type: issueType,
-            content: Lang.sprintf('TABLES_EMPTY_HEADING'),
-            inline: false,
+            type: option.checks.TABLES_EMPTY_HEADING.type || 'error',
+            content: option.checks.TABLES_EMPTY_HEADING.content || Lang.sprintf('TABLES_EMPTY_HEADING'),
             position: 'afterbegin',
             dismiss: key,
+            dismissAll: option.checks.TABLES_EMPTY_HEADING.dismissAll ? 'TABLES_EMPTY_HEADING' : false,
+            developer: option.checks.TABLES_EMPTY_HEADING.developer || false,
           });
         }
       });
-    });
-  }
+    }
+  });
 
   /* ****************************************************************** */
   /*  Warning: Detect fake headings                                     */
   /* ****************************************************************** */
-  if (option.fakeHeadingsQA) {
-    const ignoreParents = 'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level], blockquote, table';
+  if (option.checks.QA_FAKE_HEADING) {
+    const addResult = (element, sanitizedText) => {
+      results.push({
+        element,
+        type: option.checks.QA_FAKE_HEADING.type || 'warning',
+        content: option.checks.QA_FAKE_HEADING.content || Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
+        dismiss: Utils.prepareDismissal(`BOLD${sanitizedText}`),
+        dismissAll: option.checks.QA_FAKE_HEADING.dismissAll ? 'QA_FAKE_HEADING' : false,
+        developer: option.checks.QA_FAKE_HEADING.developer || false,
+      });
+    };
+
+    // To minimize false positives/number of warnings...
+    const isPreviousElementAHeading = (p) => {
+      const previousElement = p.previousElementSibling;
+      if (!previousElement) return false;
+      const headingTags = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'];
+      return headingTags.includes(previousElement.tagName);
+    };
 
     // Find large text as heading.
+    const ignoreParents = 'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level], blockquote, table';
     const computeLargeParagraphs = (p) => {
       const size = getComputedStyle(p).fontSize.replace('px', '');
       const getText = Utils.getText(p);
       const maybeSentence = getText.match(/[.;?!"]/) === null;
       const typicalHeadingLength = getText.length >= 4 && getText.length <= 120;
 
-      if (size >= 24 && !p.closest(ignoreParents) && typicalHeadingLength && maybeSentence) {
+      if (size >= 24 && !p.closest(ignoreParents) && typicalHeadingLength && maybeSentence && !isPreviousElementAHeading(p)) {
         const sanitizedText = Utils.sanitizeHTML(getText);
-        const key = Utils.prepareDismissal(`BOLD${sanitizedText}`);
-        results.push({
-          element: p,
-          type: 'warning',
-          content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: key,
-        });
+        addResult(p, sanitizedText);
       }
     };
 
@@ -211,21 +221,13 @@ export default function checkQA(results, option) {
 
         if (typicalHeadingLength && notASentence) {
           // Be a little forgiving if it's a small paragraph.
-          const nonHeadingTextLength = Utils.fnIgnore(p, 'strong, bold').textContent.trim().length;
+          const nonHeadingTextLength = Utils.fnIgnore(p, ['strong', 'b']).textContent.trim().length;
           if (nonHeadingTextLength !== 0 && nonHeadingTextLength <= 250) {
             return;
           }
 
           const sanitizedText = Utils.sanitizeHTML(possibleHeadingText);
-          const key = Utils.prepareDismissal(`BOLD${sanitizedText}`);
-          results.push({
-            element: possibleHeading,
-            type: 'warning',
-            content: Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
-          });
+          addResult(possibleHeading, sanitizedText);
         }
       }
     };
@@ -240,7 +242,7 @@ export default function checkQA(results, option) {
   /*  Warning: Detect paragraphs that should be lists.               */
   /*  Thanks to John Jameson from PrincetonU for this ruleset!       */
   /* *************************************************************** */
-  if (option.fakeListQA) {
+  if (option.checks.QA_FAKE_LIST) {
     const numberMatch = new RegExp(/(([023456789][\d\s])|(1\d))/, ''); // All numbers but 1.
     const alphabeticMatch = new RegExp(/(^[aA1αаΑ]|[^\p{Alphabetic}\s])[-\s.)]/, 'u');
     const emojiMatch = new RegExp(/\p{Extended_Pictographic}/, 'u');
@@ -316,14 +318,13 @@ export default function checkQA(results, option) {
             }
           }
         } if (hit) {
-          const key = Utils.prepareDismissal(`LIST${p.textContent}`);
           results.push({
             element: p,
-            type: 'warning',
-            content: Lang.sprintf('QA_SHOULD_BE_LIST', firstPrefix),
-            inline: false,
-            position: 'beforebegin',
-            dismiss: key,
+            type: option.checks.QA_FAKE_LIST.type || 'warning',
+            content: option.checks.QA_FAKE_LIST.content || Lang.sprintf('QA_FAKE_LIST', firstPrefix),
+            dismiss: Utils.prepareDismissal(`LIST${p.textContent}`),
+            dismissAll: option.checks.QA_FAKE_LIST.dismissAll ? 'QA_FAKE_LIST' : false,
+            developer: option.checks.QA_FAKE_LIST.developer || false,
           });
           activeMatch = firstPrefix;
         } else {
@@ -335,10 +336,10 @@ export default function checkQA(results, option) {
     });
   }
 
-  /* *************************************************************** */
-  /*  Warning: Detect uppercase text.                                */
-  /* *************************************************************** */
-  if (option.allCapsQA) {
+  /* **************************************** */
+  /*  Warning: Detect uppercase text.         */
+  /* **************************************** */
+  if (option.checks.QA_UPPERCASE) {
     const checkCaps = ($el) => {
       let thisText = '';
       if ($el.tagName === 'LI') {
@@ -351,18 +352,19 @@ export default function checkQA(results, option) {
       } else {
         thisText = Utils.getText($el);
       }
+
+      // Patterns
       const uppercasePattern = /([A-Z]{2,}[ ])([A-Z]{2,}[ ])([A-Z]{2,}[ ])([A-Z]{2,})/g;
       const detectUpperCase = thisText.match(uppercasePattern);
 
       if (detectUpperCase && detectUpperCase[0].length > 10) {
-        const key = Utils.prepareDismissal(`UPPERCASE${thisText}`);
         results.push({
           element: $el,
-          type: 'warning',
-          content: Lang.sprintf('QA_UPPERCASE_WARNING'),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: key,
+          type: option.checks.QA_UPPERCASE.type || 'warning',
+          content: option.checks.QA_UPPERCASE.content || Lang.sprintf('QA_UPPERCASE'),
+          dismiss: Utils.prepareDismissal(`UPPERCASE${thisText}`),
+          dismissAll: option.checks.QA_UPPERCASE.dismissAll ? 'QA_UPPERCASE' : false,
+          developer: option.checks.QA_UPPERCASE.developer || false,
         });
       }
     };
@@ -372,138 +374,136 @@ export default function checkQA(results, option) {
     Elements.Found.Blockquotes.forEach(($el) => checkCaps($el));
   }
 
-  /* *************************************************************** */
-  /*  Error: Duplicate IDs                                           */
-  /* *************************************************************** */
-  if (option.duplicateIdQA) {
-    // Look for duplicate IDs within each DOM.
-    const doms = document.querySelectorAll('body, [data-sa11y-has-shadow-root]');
-    doms.forEach((dom) => {
-      const allIds = new Set();
-      const findDuplicateIds = (ids, withinDOM) => {
-        ids.forEach(($el) => {
-          const { id } = $el;
-
-          // Ignore empty IDs.
-          if (typeof id !== 'string' || id.trim().length === 0) {
-            return;
-          }
-
-          // Only flag duplicate IDs being referenced by same-page links, aria or a label.
-          // Reference: https://accessibilityinsights.io/info-examples/web/duplicate-id-aria/
-          if (id && !allIds.has(id)) {
-            allIds.add(id);
-          } else {
-            const ariaReference = Array.from(
-              withinDOM.querySelectorAll(`
-                a[href*="${id}"],
-                label[for*="${id}"],
-                [aria-labelledby*="${id}"],
-                [aria-controls*="${id}"],
-                [aria-owns*="${id}"]`),
-            );
-            if (ariaReference.length > 0) {
-              results.push({
-                element: $el,
-                type: 'error',
-                content: Lang.sprintf('QA_DUPLICATE_ID', id),
-                inline: true,
-                position: 'beforebegin',
-              });
-            }
-          }
-        });
-      };
-
-      // Look for duplicate IDs within shadow DOMs.
-      if (dom.shadowRoot) {
-        const shadowRootIds = Array.from(
-          dom.shadowRoot.querySelectorAll(`[id]:not(${Constants.Exclusions.Container})`),
-        );
-        findDuplicateIds(shadowRootIds, dom.shadowRoot);
-      }
-
-      // Look for duplicates IDs in document body.
-      const regularIds = Array.from(
-        dom.querySelectorAll(`[id]:not(${Constants.Exclusions.Container})`),
-      );
-      findDuplicateIds(regularIds, dom);
+  /* ************************************************************** */
+  /*  Various checks: underlines, justify-aligned, and small text.  */
+  /* ************************************************************** */
+  // Check underlined text. Created by Brian Teeman!
+  const addUnderlineResult = ($el) => {
+    results.push({
+      element: $el,
+      type: option.checks.QA_UNDERLINE.type || 'warning',
+      content: option.checks.QA_UNDERLINE.content || Lang.sprintf('QA_UNDERLINE'),
+      inline: true,
+      dismiss: Utils.prepareDismissal(`UNDERLINE${$el.textContent}`),
+      dismissAll: option.checks.QA_UNDERLINE.dismissAll ? 'QA_UNDERLINE' : false,
+      developer: option.checks.QA_UNDERLINE.developer || false,
     });
-  }
+  };
 
-  /* *************************************************************** */
-  /*  Warning: Flag underlined text.                                 */
-  /*  Created by Brian Teeman.                                       */
-  /* *************************************************************** */
-  if (option.underlinedTextQA) {
-    // Find all <u> tags.
-    Elements.Found.Underlines.forEach(($el) => {
-      const text = Utils.getText($el);
-      const key = Utils.prepareDismissal(`UNDERLINE${text}`);
-      results.push({
-        element: $el,
-        type: 'warning',
-        content: Lang.sprintf('QA_TEXT_UNDERLINE_WARNING'),
-        inline: true,
-        position: 'beforebegin',
-        dismiss: key,
-      });
+  const addJustifyResult = ($el) => {
+    results.push({
+      element: $el,
+      type: option.checks.QA_JUSTIFY.type || 'warning',
+      content: option.checks.QA_JUSTIFY.content || Lang._('QA_JUSTIFY'),
+      dismiss: Utils.prepareDismissal(`JUSTIFIED${$el.textContent}`),
+      dismissAll: option.checks.QA_JUSTIFY.dismissAll ? 'QA_JUSTIFY' : false,
+      developer: option.checks.QA_JUSTIFY.developer || false,
     });
-    // Find underline based on computed style.
-    const computeUnderline = ($el) => {
-      const style = getComputedStyle($el);
-      const decoration = style.textDecorationLine;
-      const text = Utils.getText($el);
-      if (decoration === 'underline') {
-        const key = Utils.prepareDismissal(`UNDERLINE${text}`);
-        results.push({
-          element: $el,
-          type: 'warning',
-          content: Lang.sprintf('QA_TEXT_UNDERLINE_WARNING'),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: key,
-        });
-      }
-    };
-    Elements.Found.Paragraphs.forEach(($el) => computeUnderline($el));
-    Elements.Found.Headings.forEach(($el) => computeUnderline($el));
-    Elements.Found.Lists.forEach(($el) => computeUnderline($el));
-    Elements.Found.Blockquotes.forEach(($el) => computeUnderline($el));
-    Elements.Found.Spans.forEach(($el) => computeUnderline($el));
-  }
+  };
 
-  /* *************************************************************** */
-  /*  Error: Page is missing meta page <title>                       */
-  /* *************************************************************** */
-  if (option.pageTitleQA) {
-    const metaTitle = document.querySelector('head title');
-    if (!metaTitle || metaTitle.textContent.trim().length === 0) {
-      results.push({
-        type: 'error',
-        content: Lang.sprintf('QA_PAGE_TITLE'),
-      });
+  const addSmallTextResult = ($el) => {
+    results.push({
+      element: $el,
+      type: option.checks.QA_SMALL_TEXT.type || 'warning',
+      content: option.checks.QA_SMALL_TEXT.content || Lang._('QA_SMALL_TEXT'),
+      dismiss: Utils.prepareDismissal(`SMALL${$el.textContent}`),
+      dismissAll: option.checks.QA_SMALL_TEXT.dismissAll ? 'QA_SMALL_TEXT' : false,
+      developer: option.checks.QA_SMALL_TEXT.developer || false,
+    });
+  };
+
+  const computeStyle = ($el) => {
+    const style = getComputedStyle($el);
+    const { textDecorationLine, textAlign, fontSize } = style;
+
+    /* Check: Underlined text. */
+    if (option.checks.QA_UNDERLINE
+      && textDecorationLine === 'underline'
+      && !$el.closest('a[href]')
+      && !$el.closest('ABBR')) {
+      addUnderlineResult($el);
+    }
+
+    /* Check: Font size is greater than 0 and less than 10. */
+    const defaultSize = option.checks.QA_SMALL_TEXT.fontSize || 10;
+    const computedFontSize = parseFloat(fontSize);
+
+    // Compare with parent element's font size.
+    const parentFontSize = $el.parentElement
+      ? parseFloat(getComputedStyle($el.parentElement).fontSize)
+      : null;
+    const isInherited = parentFontSize === computedFontSize;
+
+    // Ensure the font size is specific to the element, not inherited.
+    const withinRange = !isInherited && computedFontSize > 1 && computedFontSize <= defaultSize;
+    if (option.checks.QA_SMALL_TEXT && withinRange) {
+      addSmallTextResult($el);
+    }
+
+    /* Check: Check if text is justify-aligned. */
+    if (option.checks.QA_JUSTIFY && textAlign === 'justify') {
+      addJustifyResult($el);
+    }
+  };
+
+  // Loop through all elements within the root area.
+  if (option.checks.QA_UNDERLINE || option.checks.QA_JUSTIFY || option.checks.QA_SMALL_TEXT) {
+    for (let i = 0; i < Elements.Found.Everything.length; i++) {
+      const $el = Elements.Found.Everything[i];
+
+      // Filter only text nodes.
+      const textString = Array.from($el.childNodes)
+        .filter((node) => node.nodeType === 3)
+        .map((node) => node.textContent)
+        .join('');
+      const text = textString.trim();
+
+      // Only if there's text!
+      if (text.length !== 0) {
+        computeStyle($el);
+      }
     }
   }
 
-  /* *************************************************************** */
-  /*  Warning: Find inappropriate use of <sup> and <sub> tags.       */
-  /* *************************************************************** */
-  if (option.subscriptQA) {
+  /* **************************************************** */
+  /*  Find inappropriate use of <sup> and <sub> tags.     */
+  /* **************************************************** */
+  if (option.checks.QA_SUBSCRIPT) {
     Elements.Found.Subscripts.forEach(($el) => {
       const text = Utils.getText($el);
       if (text.length >= 80) {
-        const key = Utils.prepareDismissal($el.tagName + text);
         results.push({
           element: $el,
-          type: 'warning',
-          content: Lang.sprintf('QA_SUBSCRIPT_WARNING'),
+          type: option.checks.QA_SUBSCRIPT.type || 'warning',
+          content: option.checks.QA_SUBSCRIPT.content || Lang.sprintf('QA_SUBSCRIPT'),
           inline: true,
-          position: 'beforebegin',
-          dismiss: key,
+          dismiss: Utils.prepareDismissal($el.tagName + text),
+          dismissAll: option.checks.QA_SUBSCRIPT.dismissAll ? 'QA_SUBSCRIPT' : false,
+          developer: option.checks.QA_SUBSCRIPT.developer || false,
         });
       }
     });
   }
+
+  /* ****************************************** */
+  /*  Find double nested layout components.     */
+  /* ****************************************** */
+  if (option.checks.QA_NESTED_COMPONENTS) {
+    Elements.Found.NestedComponents.forEach(($el) => {
+      const sources = option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
+      const component = $el.querySelector(sources);
+      if (component) {
+        results.push({
+          element: $el,
+          type: option.checks.QA_NESTED_COMPONENTS.type || 'warning',
+          content: option.checks.QA_NESTED_COMPONENTS.content || Lang.sprintf('QA_NESTED_COMPONENTS'),
+          dismiss: Utils.prepareDismissal(`NESTED${$el.textContent}`),
+          dismissAll: option.checks.QA_NESTED_COMPONENTS.dismissAll ? 'QA_NESTED_COMPONENTS' : false,
+          developer: option.checks.QA_NESTED_COMPONENTS.developer || false,
+        });
+      }
+    });
+  }
+
   return results;
 }

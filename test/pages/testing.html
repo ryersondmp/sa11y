@@ -3,10 +3,12 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>Testing</title>
   <link rel="stylesheet" href="./assets/main.css">
   <link rel="stylesheet" href="../../dist/css/sa11y.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+  <meta http-equiv="refresh" content="1000">
   <style>
     .color-mix {
       color: color-mix(in srgb, rgba(235, 52, 52, 1) 90%, white);
@@ -21,6 +23,34 @@
     .color {
       color: color(display-p3 1 8 0 / .5);
     }
+
+    .carousel {
+      padding: 40px;
+      background: lightblue;
+    }
+
+    .a-test {
+      font-size: 3em;
+    }
+
+    .a-test:hover,
+    .a-test:focus {
+      opacity: 0.8;
+    }
+
+    .slick-sr-only {
+      border: 0 !important;
+      clip: rect(1px, 1px, 1px, 1px) !important;
+      -webkit-clip-path: inset(50%) !important;
+      clip-path: inset(50%) !important;
+      height: 1px !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      padding: 0 !important;
+      position: absolute !important;
+      width: 1px !important;
+      white-space: nowrap !important;
+    }
   </style>
 </head>
 
@@ -29,99 +59,694 @@
     <h2>Sa11y (Random) Unit Tests</h2>
   </header>
   <main>
-    <p class="color-mix">This uses color-mix.</p>
-    <p class="color">This uses color().</p>
-    <p class="hsl">This uses hsl</p>
-    <p class="visually-hidden">testing</p>
-    <h2>A blank slate for testing.</h2>
+
+    <h2>Another slotted example</h2>
+    <template id="user-card-template">
+      <style>
+        div.card {
+          border: 1px solid #ccc;
+          padding: 10px;
+          margin: 10px;
+          width: 200px;
+          border-radius: 8px;
+          box-shadow: 2px 2px 12px #aaa;
+        }
+
+        h2,
+        p {
+          margin: 5px 0;
+        }
+      </style>
+      <div class="card">
+        <h3>
+          <slot name="user-name">Default User</slot>
+        </h3>
+        <p>
+          <slot name="user-description">No description provided.</slot>
+        </p>
+      </div>
+    </template>
+
+    <script>
+      class UserCard extends HTMLElement {
+        constructor() {
+          super();
+          const templateContent = document.getElementById('user-card-template').content;
+          this.attachShadow({ mode: 'open' }).appendChild(templateContent.cloneNode(true));
+        }
+      }
+      customElements.define('user-card', UserCard);
+    </script>
+
+    <!-- Use the Web Component -->
+    <user-card>
+      <span slot="user-name">John Doe</span>
+      <span slot="user-description">A web developer from NYC. <a href="https://www.example.com?sds">Learn more</a> about
+        stuff.</span>
+    </user-card>
+
+    <hr>
+
+    <h2>Slotted template</h2>
+    <template id="element-details-template">
+      <div id="slot-template">
+        <h4 class="name">
+          <slot name="element-name">Default slot heading</slot>
+        </h4>
+        <h4 class="desc">
+          <slot name="description">Default slot description</slot>
+        </h4>
+        <div>Empty slot:
+          <h4>
+            <slot></slot>
+          </h4>
+        </div>
+      </div>
+    </template>
+
+    <element-details>
+      <span slot="element-name">
+        Skipped level in a slot
+      </span>
+      <span slot="description">Slot content text filling correctly</span>
+    </element-details>
+    <script>
+      customElements.define('element-details',
+        class extends HTMLElement {
+          constructor() {
+            super();
+            const template = document
+              .getElementById('element-details-template')
+              .content;
+            const shadowRoot = this.attachShadow({ mode: 'open' })
+              .appendChild(template.cloneNode(true));
+          }
+        });
+    </script>
+
+    <hr>
+
+    <template id="custom-component" hidden>
+      <div class="custom-container">
+        <slot>
+          <h4>Should not be displayed in DOM</h4>
+        </slot>
+      </div>
+    </template>
+
+    <script>
+      class CustomComponent extends HTMLElement {
+        constructor() {
+          super();
+          const shadow = this.attachShadow({ mode: 'open' });
+          const template = document.getElementById('custom-component').content.cloneNode(true);
+          shadow.appendChild(template);
+        }
+      }
+      customElements.define('custom-component', CustomComponent);
+    </script>
+
+    <!-- Usage Example -->
+    <custom-component>
+      <h6>This is a slotted heading</h6>
+    </custom-component>
+
+    <custom-component>
+      <!-- No slotted content, default heading will appear -->
+    </custom-component>
+
+
+
+    <style>
+      .text-formatted a[href^="http"]:not([href*="hr.ubc.ca"]):not([class*="cta-button--icon"])::after,
+      .link-external::after {
+        position: relative;
+        top: 0.125em;
+        display: inline-block;
+        width: 0.875em;
+        height: 1em;
+        margin-left: 0.25em;
+        content: url("/themes/custom/hr/img/svg/icon-link-external-3.svg") / "Testing";
+      }
+    </style>
+    <hr>
+    <h2>Pseudo content</h2>
+    <h5><a class="unit-button unit-button--block link-external" href="https://ubc.wd10.myworkdayjobs.com/ubcstaffjobs"
+        target="_blank" rel="nofollow">Staff listing</a></h5>
+
+    <style>
+      .asc:after {
+        content: "Before";
+      }
+    </style>
+    <h5 class="asc" id="kl" aria-labelledby="kl nvb">Testing</h5>
+    <span hidden id="nvb">123</span>
+    <hr>
+
+    <p>
+      <sup>1</sup> Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam dolor libero dignissimos veniam.
+      <span style="color:darkblue;background-color:rgba(235, 52, 52, 0.2)">Testing</span>
+      Totam dolores rem eligendi praesentium harum doloremque ducimus dignissimos, exercitationem, omnis ullam autem,
+      dolor qui numquam. Et!
+    </p>
+
+    <div class="background-image">
+      <ul>
+        <li><a href="/community-alumni/alumni/">Alumni</a></li>
+        <li><a href="/community-alumni/giving/">Donors</a></li>
+        <li>Break</li>
+        <li><a href="/employers-partners/">Employers and partners</a></li>
+        <li><a href="/future-students/">Future students</a></li>
+      </ul>
+    </div>
+
+    <iframe role="presentation" src="javascript:false" style="width: 0px; height: 0px; border: 0px;"></iframe>
+
+    <hr>
+
+    <div style="background:#000">
+      <a href="https://www.viu.ca/contact" class="img-link">
+        <svg fill="currentColor" class="icon" aria-describedby="desc-phone-square">
+          <title>phone-square</title>
+          <desc id="desc-phone-square">phone-square icon</desc>
+          <use xlink:href="https://www.viu.ca/themes/custom/viupal/dist/icons.svg#phone-square"></use>
+        </svg>
+      </a>
+    </div>
+
+    <hr>
+    <a style="background:lightcoral" href="https://www.example.com?sdasdsd2"
+      aria-label="learn more about stuff and things">learn more</a>
+
+    <hr>
+
+    <address>
+      350 Victoria Street<br>
+      Toronto, ON M5B 2K3<br>
+      <abbr title="Phone">P:</abbr> <a href="tel:+14169795000">416-979-5000</a>
+    </address>
+
+    <hr>
+
+    <img src="./assets/placeholder.svg" alt="">
+    <img src="./assets/placeholder.svg" alt="">
+    <img src="./assets/placeholder.svg" alt="">
+
+    <hr>
+
+    <a class="navbar-brand" href="https://www.torontomu.ca/"> <img
+        src="https://www.torontomu.ca/etc.clientlibs/ryecms/static/clientlib-site/resources/images/tmu_logo.svg"
+        alt="Toronto Metropolitan University" title="Toronto Metropolitan University">
+    </a>
+
+    <hr>
+
+    <figure><img fetchpriority="high" decoding="async" width="1024" height="469"
+        src="https://www.yorku.ca/wp-content/uploads/2024/12/The-Rap_R101-4-Treated-v2-1024x469.png"
+        alt="Raptor dunking in basket" class="wp-image-358271"
+        srcset="https://www.yorku.ca/wp-content/uploads/2024/12/The-Rap_R101-4-Treated-v2-1024x469.png 1024w, https://www.yorku.ca/wp-content/uploads/2024/12/The-Rap_R101-4-Treated-v2-300x137.png 300w, https://www.yorku.ca/wp-content/uploads/2024/12/The-Rap_R101-4-Treated-v2.png 1500w"
+        sizes="(max-width: 1024px) 100vw, 1024px"></figure>
+
+    <input type="text" placeholder="Hai" class="background-image">
+    <hr>
+
+    <svg height="40" width="200" xmlns="http://www.w3.org/2000/svg">
+      <text x="5" y="30" fill="none" stroke="red" font-size="35">I love SVG!</text>
+      <text x="5" y="30" fill="lightblue" stroke="none" font-size="12">Cool.</text>
+    </svg>
+
+    <div id="nothing-input-3">
+      <meter id="fuel" min="0" max="100" low="33" high="66" optimum="80" value="50">at 50/100</meter>
+    </div>
+
+    <h3>Progress</h3>
+    <div id="nothing-input-4">
+      <progress id="progress-bar" value="70" max="100">70 %</progress>
+    </div>
+
+    <table style="display:none"></table>
+    <h2>Some hidden text</h2>
+    <div hidden>
+      <p style="color:hotpink">Some text within a hidden div.</p>
+    </div>
+
+    <p>Original: <a href="https://www.torontomu.ca/" data-sa11y-error-inline="300">TMU Website</a></p>
+
+    <h2>URL Variations</h2>
+    <p><a href="https://www.torontomu.ca/">TMU Website</a> - https://www.torontomu.ca/ [Same URL, should not be
+      flagged]
+    </p>
+    <p><a href="https://torontomu.ca/">TMU Website</a> - https://torontomu.ca/</p>
+    <p><a href="http://www.torontomu.ca/">TMU Website</a> - http://www.torontomu.ca/</p>
+    <p><a href="https://www.torontomu.ca">TMU Website</a> - https://www.torontomu.ca</p>
+    <p><a href="HTTPS://WWW.TORONTOMU.CA/">TMU Website</a> - HTTPS://WWW.TORONTOMU.CA/</p>
+    <p><a href="https://www.torontomu.ca/ ">TMU Website</a> - https://www.torontomu.ca/ with trailing space</p>
+    <p><a href=" https://www.torontomu.ca/">TMU Website</a> - https://www.torontomu.ca/ with preceding space</p>
+    <p><a href="https://www.torontomu.ca/   ">TMU Website</a> - https://www.torontomu.ca/ with trailing tab</p>
+
+    <h2>Dismiss Bug</h2>
+    <p>Opens in a new tab without warning: <a href="https://www.torontomu.ca/" target="_blank">TMU Website descriptive
+        link
+        text</a></p>
+
+    <hr>
+
+    <p style="color:orange;display:none;">Some text within a hidden div.</p>
+
+    <h2>Heading too long</h2>
+    <p>Using prop to convert warning to error.</p>
     <h3>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellat porro doloribus magnam nobis nisi! Officia
       earum reiciendis sequi cum voluptate cupiditate eaque asperiores quos, non voluptatum id mollitia, voluptatibus
       sit!</h3>
 
-    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Animi repellendus vero excepturi veritatis debitis
-      laborum ipsa nam ea dolorum? Architecto earum deserunt, magnam hic adipisci porro quo optio quibusdam laboriosam.
-      <a href="https://www.example.com/asdad.doc.htm">Not an actual document</a> and this is still a PDF <a
-        href="https://www.example.com/asdasd.pdf?asds">Another PDF document</a>.
-    </p>
+    <hr>
+    <p dir="auto">Example: Instead of <a href="https://www.britannica.com/biography/George-Orwell" title="Click here"
+        aria-label="Incorrect hyperlink formatting" rel="nofollow">Click here</a> to learn more about George Orwell”,
+      you <a href="https://www.britannica.com/biography/George-Orwell"
+        aria-label="learn more Incorrect hyperlink formatting">learn
+        more</a>
+      could write “Delve into the life and works of <a href="https://www.britannica.com/biography/George-Orwell"
+        rel="nofollow">George Orwell at Britannica</a>.</p>
 
-    <img src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg">
+    <p><a href="https://www.britannica.com/biography/George-Orwell" target="_BLANK">George
+        Orwell at Britannica</a></p>
 
-    <img
-      src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGFkbDR3emdreTVxZnZqNzZsYWE1dXU2b21xZWM3dDZ6bXlmcDhsOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GQ9InpECkHgJO/giphy.gif"
-      alt="An image of Michael Scott saying: Why are you the way that you are?">
+    <p><a href="https://www.britannica.com/biography/George-Orwell.pdf" target="_BLANK">George
+        Orwell at Britannica</a></p>
 
-    <img
-      src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGFkbDR3emdreTVxZnZqNzZsYWE1dXU2b21xZWM3dDZ6bXlmcDhsOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GQ9InpECkHgJO/giphy.gif"
-      alt="Untitled design - Test">
+    <br>
+    <hr>
+    <h2>Title attribute is same as link text or alt text.</h2>
+
+    <h3>Image</h3>
+    <img src="./assets/placeholder.svg" title="Lorem ipsum, dude!" alt="Lorem ipsum, dude!">
+
+    <h3>Linked image</h3>
+    <a href="https://www.example.com"><img src="./assets/placeholder.svg" title="Lorem ipsum howdy"
+        alt="Lorem ipsum howdy"></a>
+
+    <h3>Link</h3>
+    <a href="https://www.britannica.com/biography/Marie-Curie" title="Marie Curie" rel="nofollow">Marie Curie</a>
+
+    <a href="https://www.britannica.com/biography/Marie-Curie" title="Marie Curie" target="_BLANK" rel="nofollow">Marie
+      Curie</a>
+
 
     <hr>
-    <p style="color:antiquewhite">Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci tenetur quam magnam
-      corrupti, facere rerum autem excepturi mollitia voluptatibus dolorum nesciunt quod quibusdam, non quaerat aperiam,
-      quae harum natus dolores.</p>
+
+    <p dir="auto">Instead of <a href="https://www.britannica.com/biography/George-Orwelllll" title="Learn more"
+        aria-label="Learn more about Orwell" rel="nofollow">Learn more</a> about George Orwell.</p>
+    <br>
+
+    <p><a href="https://www.britannica.com/biography">Next ></a></p>
     <hr>
 
-    <a href="#"><img
-        src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGFkbDR3emdreTVxZnZqNzZsYWE1dXU2b21xZWM3dDZ6bXlmcDhsOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GQ9InpECkHgJO/giphy.gif"
-        alt="placeh.png"></a>
+    <pre><code>
+&lt;svg width="200" height="200" xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;image href="./assets/placeholder.svg" height="200" width="200" /&gt;
+&lt;/svg&gt;</code></pre>
 
+    <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+      <image href="./assets/placeholder.svg" height="200" width="200" />
+    </svg>
+
+    <hr>
+
+    <a href="/en/support/solutions/articles/6000210871-nature-com-upgraded-to-the-https-protocol">Nature.com upgraded
+      to
+      the
+      HTTPS protocol</a>
+    <a href="/en/support/solutions/articles/6000210871-nature-com-upgraded-to-the-https-protocol">http.Nature.com
+      upgraded to
+      the
+      HTTPS protocol</a>
+
+
+    <hr>
     <div hidden>
-      <img
-        src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGFkbDR3emdreTVxZnZqNzZsYWE1dXU2b21xZWM3dDZ6bXlmcDhsOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GQ9InpECkHgJO/giphy.gif"
-        alt="What thumbnail">
+      <video width="320" height="240" controls>
+        <source src="https://www.w3schools.com/html/movie.mp4" type="video/mp4">
+        <source src="https://www.w3schools.com/html/movie.ogg" type="video/ogg">
+        Your browser does not support the video tag.
+        <style>
+          video {
+            padding: 20px;
+            background: hotpink;
+          }
+        </style>
+      </video>
+      <a href="javascript:console.log('hacked')">https://www.example.com/asdasdasdasdasdasdasdasdasdasdasdasda
+        Lorem
+        ipsum dolor sit amet consectetur adipisicing elit. Ut provident consectetur accusamus quos excepturi dolore
+        neque iste? Doloremque recusandae libero commodi quod nam in! Ut, ratione eaque. Voluptatibus, inventore
+        suscipit! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolorem temporibus vitae reiciendis
+        molestias libero similique odit aspernatur labore? Hic, sit incidunt omnis totam dignissimos aspernatur
+        eligendi
+        voluptatibus ducimus porro facilis! Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium
+        aliquid soluta, dolore inventore cupiditate, error eius maxime laudantium delectus eos neque odit doloribus
+        cumque repudiandae. Necessitatibus nemo natus pariatur laborum. Lorem, ipsum dolor sit amet consectetur
+        adipisicing elit. Tenetur, harum minima ipsum expedita corrupti sint, ex quod temporibus suscipit
+        reprehenderit
+        dignissimos! Corporis quam voluptate doloribus, voluptatem optio rem libero fugiat.
+      </a>
+
+      <a href="https://www.example.com?sdsdccccf" role="button" style="Lorem
+        ipsum dolor sit amet consectetur adipisicing elit. Ut provident consectetur accusamus quos excepturi dolore
+        neque iste? Doloremque recusandae libero commodi quod nam in! Ut, ratione eaque. Voluptatibus, inventore
+        suscipit! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolorem temporibus vitae reiciendis
+        molestias libero similique odit aspernatur labore? Hic, sit incidunt omnis totam dignissimos aspernatur eligendi
+        voluptatibus ducimus porro facilis! Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium
+        aliquid soluta, dolore inventore cupiditate, error eius maxime laudantium delectus eos neque odit doloribus
+        cumque repudiandae. Necessitatibus nemo natus pariatur laborum. Lorem, ipsum dolor sit amet consectetur
+        adipisicing elit. Tenetur, harum minima ipsum expedita corrupti sint, ex quod temporibus suscipit reprehenderit
+        dignissimos! Corporis quam voluptate doloribus, voluptatem optio rem libero fugiat.Lorem
+        ipsum dolor sit amet consectetur adipisicing elit. Ut provident consectetur accusamus quos excepturi dolore
+        neque iste? Doloremque recusandae libero commodi quod nam in! Ut, ratione eaque. Voluptatibus, inventore
+        suscipit! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolorem temporibus vitae reiciendis
+        molestias libero similique odit aspernatur labore? Hic, sit incidunt omnis totam dignissimos aspernatur eligendi
+        voluptatibus ducimus porro facilis! Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium
+        aliquid soluta, dolore inventore cupiditate, error eius maxime laudantium delectus eos neque odit doloribus
+        cumque repudiandae. Necessitatibus nemo natus pariatur laborum. Lorem, ipsum dolor sit amet consectetur
+        adipisicing elit. Tenetur, harum minima ipsum expedita corrupti sint, ex quod temporibus suscipit reprehenderit
+        dignissimos! Corporis quam voluptate doloribus, voluptatem optio rem libero fugiat."></a>
+      <a href="https://www.example.com?sdcf13"></a>
     </div>
     <hr>
-    <img
-      src="https://imageio.forbes.com/specials-images/imageserve/663c5a05627bd75cb76db0fd/The-Office/960x0.jpg?format=jpg&width=960">
-    <a href="https://www.example.com"><img
-        src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ3RwYzJ4cjNoMHluZnFiODJudWtkZ3BsN3czdjY4dmVwYjd6YnJsMCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/jOpLbiGmHR9S0/giphy.gif"
-        alt="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam tempora accusantium doloribus perspiciatis? Ex voluptates labore ullam dolorem aliquid voluptatum, quos voluptatem explicabo minima molestiae praesentium deserunt odit sequi ipsa. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam tempora accusantium doloribus perspiciatis? Ex voluptates labore ullam dolorem aliquid voluptatum, quos voluptatem explicabo minima molestiae praesentium deserunt odit sequi ipsa."></a>
-    <hr>
-    <img class="ignore"
-      src="https://imageio.forbes.com/specials-images/imageserve/663c5a05627bd75cb76db0fd/The-Office/960x0.jpg?format=jpg&width=960"
-      alt="Dwight Shrute">
+
+    <details>
+      <summary>Summary of issues</summary>
+      <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Exercitationem unde qui veniam voluptatem, ad sequi
+        rem, temporibus deserunt incidunt dolorum quis soluta ab sapiente nobis atque facilis, nam labore! Quae.</p>
+    </details>
     <hr>
 
-    <img
-      src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGFkbDR3emdreTVxZnZqNzZsYWE1dXU2b21xZWM3dDZ6bXlmcDhsOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GQ9InpECkHgJO/giphy.gif"
-      alt="Michael Scott: why are you the way you are?">
+    <h2>Two SVGs in a link</h2>
+    <a href="https://www.example.com?1241232313">
+      <svg width="20" height="10" role="img" aria-label="dark grey circle">
+        <rect x="0" y="0" width="20" height="10" fill="black" />
+      </svg>
+      <svg width="20" height="10" role="img">
+        <rect x="0" y="0" width="20" height="10" fill="black" />
+        <title>testing</title>
+      </svg>
+    </a>
+
     <hr>
-    <h5>Test</h5>
+
+    <h3>Linked image contains both alt and link text</h3>
+    <div id="warning-alt-and-link-text">
+      <a href="https://www.example.com?=5">
+        <img src="./assets/placeholder.svg" alt="Lorem ipsum, dude!">
+        Learn more about, Lorem.
+      </a>
+    </div>
 
 
-    <h2>Relative image</h2>
-    <div></div>
-    <img class="wp-image-333" src="http://localhost:8080/test/pages/assets/placeholder.svg" alt="Not michael scott." />
+    <hr>
+    <style>
+      .sr-only {
+        position: absolute !important;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      .underline {
+        text-decoration: underline;
+      }
+    </style>
+    <a href="/" class="nav-item">
+      <span class="underline">asdasdsd</span>
+    </a>
+
+    <hr>
+
+    <label for="name">Name:</label>
+    <input id="name" disabled name="name" style="color:aliceblue" type="text" />
+
+    <hr>
+
+    <a href="/" class="nav-item">
+      <u>asdasdsd</u>
+    </a>
+
+    <hr>
+    <u>asdasdsd</u>
+
+    <p class="hsl">HSL Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem ea corporis nulla quidem
+      culpa. Ratione autem nemo atque quam, doloremque libero officiis minima quasi debitis ducimus, nisi molestiae
+      pariatur eveniet.</p>
+
+    <p class="color-mix">color() Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem ea corporis nulla quidem
+      culpa. Ratione autem nemo atque quam, doloremque libero officiis minima quasi debitis ducimus, nisi molestiae
+      pariatur eveniet.</p>
+
+    <p style="color:rgba(255,0,0,0.35);background:rgba(255,0,255,0.95)">Testing rgba... Lorem ipsum dolor sit amet
+      consectetur, adipisicing elit.
+      Ratione dolores sint
+      atque est accusamus. Saepe laboriosam, ad voluptas porro non enim quam cupiditate eius perferendis nostrum,
+      recusandae quisquam quae illo!</p>
+
+    <hr>
+    <h2>Testing testing</h2>
+    <p style="font-size:30px;">Building a vibrant community of creative and accomplished people from around the world
+    </p>
+
+    <a href="#">Top</a>
+
+    <hr>
+    <h2>Slick sr-only class</h2>
+    <span class=" slick-sr-only">Go to slide 2</span>
+    <hr>
+    <h2>Empty div contrast?</h2>
+    <div id="lightboxOverlay" class="lightboxOverlay" style="display: none;opacity:0.8;"></div>
+    <hr>
+    <a class="link" href="/features/2024/fall/laurier-welcomes-first-students-to-milton-campus.html" target="">
+      <img class="background" alt="Admissions" src="./assets/placeholder.svg">
+      <video controls="">
+        Your browser doesn't support
+      </video>
+      test
+    </a>
+
+    <hr>
+    <p>Small font size but no text</p>
+    <p style="font-size:10px;"></p>
+
+    <hr>
+    <a href="https://www.example.com?sdadsdsds">Attempt/Threaten Suicide Information on CPIC</a>
+
+    <hr>
+    <a href="https://www.example.com/adam">learn more...</a>
+
+    <hr>
+    <h2>Link too long</h2>
+    <a href="https://www.example.com/adam">www.example.pt/asdsaasdsadsa/sdsdsdasdasdsddasdasds</a>
+    <br>
+    <a href="http://example.com/adam/">www.example.pt/asdsaasdsadsa/dasdasds</a>
+
+    <hr>
+
+    <ul>
+      <li style="font-size:6px;">
+        <a href="www.example.com/?asdasd" style="font-size:15px">Example</a>
+      </li>
+      <li style="font-size:16px;">
+        <a href="www.example.com/?asdasd" style="font-size:5px">Example 2</a>
+      </li>
+    </ul>
+
+    <hr>
+
+    <textarea title="" readonly=""
+      rows="7">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Officiis consequuntur accusamus necessitatibus alias ipsum deleniti delectus at similique animi est? Reiciendis esse corporis saepe fuga modi vero ipsam assumenda libero.</textarea>
+
+    <textarea title="Article Summary" readonly="" rows="7">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Officiis consequuntur accusamus necessitatibus alias ipsum
+      deleniti delectus at similique animi est? Reiciendis esse corporis saepe fuga modi vero ipsam assumenda
+      libero.</textarea>
+    <hr>
+
+    <h2>Sa11y Ignore</h2>
+    <p style="color:bisque" class="sa11y-ignore">
+      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora
+      libero
+      illo magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum
+      dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero illo
+      magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum dolor,
+    </p>
+
+    <h2>Long text</h2>
+    <p style="color:bisque">
+      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora
+      libero
+      illo magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum
+      dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero illo
+      magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum dolor,
+    </p>
+
+    <button aria-controls="menu-671033185f2ad-dropdown" aria-expanded="false" aria-label="Toggle Main Menu"
+      class="mega-menu-item__button">
+      <span class="mega-menu-item__button-contents">
+        <img decoding="async" alt="Close" class="mega-menu-item__close"
+          src="https://news.harvard.edu/wp-content/themes/harvard-gazette/assets/svg/close.svg">
+        <img decoding="async" alt="Open" class="mega-menu-item__open"
+          src="https://news.harvard.edu/wp-content/themes/harvard-gazette/assets/svg/hamburger.svg">
+        <span class="mega-menu-item__text">
+          Menu </span>
+      </span>
+    </button>
+
+    <hr>
+
+    <button aria-controls="menu-671033185f2ad-dropdown" aria-expanded="false" aria-label="Toggle Main Menu"
+      class="mega-menu-item__button">
+      <span class="mega-menu-item__button-contents">
+        <img decoding="async" class="mega-menu-item__close"
+          src="https://news.harvard.edu/wp-content/themes/harvard-gazette/assets/svg/close.svg">
+        <img decoding="async" class="mega-menu-item__open"
+          src="https://news.harvard.edu/wp-content/themes/harvard-gazette/assets/svg/hamburger.svg">
+        <span class="mega-menu-item__text">
+          Menu </span>
+      </span>
+    </button>
+
+    <div id="nothing-container" class="ignore-this">
+      <h2>Ignore this container</h2>
+      <button aria-controls="menu-671033185f2ad-dropdown" aria-expanded="false" aria-label="Toggle Main Menu"
+        class="mega-menu-item__button">
+        <span class="mega-menu-item__button-contents">
+          <img decoding="async" class="mega-menu-item__close"
+            src="https://news.harvard.edu/wp-content/themes/harvard-gazette/assets/svg/close.svg">
+          <img decoding="async" class="mega-menu-item__open"
+            src="https://news.harvard.edu/wp-content/themes/harvard-gazette/assets/svg/hamburger.svg">
+          <span class="mega-menu-item__text">
+            Menu </span>
+        </span>
+      </button>
+    </div>
+
+    <div id="nothing-container-2" class="this-too">
+      <button aria-controls="menu-671033185f2ad-dropdown" aria-expanded="false" aria-label="Toggle Main Menu"
+        class="mega-menu-item__button">
+        <span class="mega-menu-item__button-contents">
+          <img decoding="async" class="mega-menu-item__close"
+            src="https://news.harvard.edu/wp-content/themes/harvard-gazette/assets/svg/close.svg">
+        </span>
+      </button>
+    </div>
+
+    <hr>
+    <img src="./assets/placeholder.svg" alt="Points to https://www.google.com">
+
+    <hr>
+    <a href="#" class="btn dropdown-toggle" type="button" data-toggle="dropdown" role="none" aria-haspopup="true"
+      aria-expanded="false" tabindex="0">Information for</a>
+    <hr>
+    <a class="a-test" href="https://www.example.com?rearsdsd">Some text here</a>
+    <hr>
+
+    <h2>Link too long?</h2>
+    <p>
+      <a href="https://www.example.com?sdasdsd33">100 characters. consectetur adipisicing elit. Doloribus magnam
+        laudantium
+        enim voluptas tempo libero</a>
+    </p>
+
+    <p><a href="https://www.example.com?sdasdsdddddd">
+        200 characters. consectetur adipisicing elit. Doloribus magnam laudantium 100 characters. consectetur
+        adipisicing
+        elit.
+        Lorem ipsum dolor, porem ipsum dolor, sit amet consectetur adipisicing how bouts
+      </a></p>
+
+    <p><a href="https://www.example.com?sdasdsdddddd">
+        300 characters. consectetur adipisicing elit. Doloribus magnam laudantium 100 characters. consectetur
+        adipisicing elit.
+        Lorem ipsum dolor, porem ipsum dolor, sit amet consectetur adipisicing how bouts. Lorem ipsum dolor sit amet,
+        consectetur adipiscing elit. Cras aliquet quam tellus, a aliquet arcuc
+      </a></p>
+
+    <h3>300 characters. consectetur adipisicing elit. Doloribus magnam laudantium 100 characters. consectetur
+      adipisicing elit.
+      Lorem ipsum dolor, porem ipsum dolor, sit amet consectetur adipisicing how bouts. Lorem ipsum dolor sit amet,
+      consectetur adipiscing elit. Cras aliquet quam tellus, a aliquet arcuc </h3>
+
+    <h2>Dismiss all</h2>
+    <ul>
+      <li><a href="https://www.example.com/asdsd" target="_blank">Test 1</a></li>
+      <li><a href="https://www.example.com/asdsd" target="_blank">Test 2</a></li>
+      <li><a href="https://www.example.com/asdsd" target="_blank">Test 3</a></li>
+      <li><a href="https://www.example.com/asdsd" target="_blank">Test 4</a></li>
+      <li><a href="https://www.example.com/asdsd" target="_blank">Test 5</a></li>
+    </ul>
+
+
+    <hr>
+
+    <picture>
+      <source media="(min-width:650px)" srcset="https://www.w3schools.com/tags/img_pink_flowers.jpg">
+      <source media="(min-width:465px)" srcset="https://www.w3schools.com/tags/img_white_flower.jpg">
+      <img src="https://www.w3schools.com/tags/img_orange_flowers.jpg" alt="Flowers" style="width:auto;">
+    </picture>
+
+    <hr>
+
+    <h2>Parent div has class of <strong>.carousel</strong></h2>
+
+    <h3>Only 1 image in the carousel</h3>
+    <div class="carousel">
+      <img alt src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg">
+    </div>
+
+    <h3>Multiple images</h3>
+    <div class="carousel">
+      <img alt src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg">
+      <img alt src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg">
+    </div>
+
+    <h2>Alt too long for tooltip</h2>
+    <div class="carousel">
+      <img alt="Lorem ipsum lorem ipsum Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero
+      illo magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum
+      dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero illo
+      magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum dolor,Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero
+      illo magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum
+      dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero illo
+      magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum dolor,Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero
+      illo magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum
+      dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero illo
+      magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum dolor,Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero
+      illo magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum
+      dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero illo
+      magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum dolor,Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero
+      illo magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum
+      dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero illo
+      magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum dolor,"
+        src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg">
+    </div>
+
+    <hr>
+
+    <h2>Inside the shadow dom!</h2>
+    <noscript>hi</noscript>
+    <div id="webcomponent">
+      <template shadowrootmode="open">
+        <div style="background-color:black;padding:20px">
+          <h3 style="color:white">Heading in the shadow dom</h3>
+          <a href="https://developer.mozilla.org/en-US/" aria-hidden="true">
+            <img alt="MDN" src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg">
+          </a>
+        </div>
+      </template>
+    </div>
+
   </main>
-  <div id="webcomponent">
-    <template shadowrootmode="open">
-      <h3>Test</h3>
-      <img src="http://localhost:8080/test/pages/assets/placehkolder.svg">
-    </template>
-  </div>
-
-  <footer></footer>
-  <script src="../../dist/js/sa11y.umd.js"></script>
-  <script src="../../dist/js/lang/enUS.umd.js"></script>
-  <script>
-    Sa11y.Lang.addI18n(Sa11yLangEnUS.strings);
-    const sa11y = new Sa11y.Sa11y({
-      checkRoot: 'body',
-      aboutHeader: 'Help',
-      aboutContent: '<h2>Help</h2><p>Questions? Review the <a href="#">accessibility guide</a>. For help, please contact <a href="mailto:help@torontomu.ca">help@torontomu.ca</a>. This tool was created by the Toronto Metropolitan University.</p><p><a href="https://forms.gle/sjzK9XykETaoqZv99">Report bugs &amp; feedback</a></p>',
-      autoDetectShadowComponents: false,
-      panelPosition: 'right',
-      shadowComponents: '#webcomponent',
-      // showTitleinPageOutline: false,
-      extraPlaceholderStopWords: 'untitled design',
-      imageIgnore: '.ignore',
-      exportResultsPlugin: true,
-      showImageOutline: true,
-      relativePathImageID: 'wp-image-',
-      showGoodImageButton: false,
-      // relativePathImageSRC: '',
-      editImageURLofCMS: 'https://aemauthor.torontomu.ca/assets.html/content/dam',
-    });
-  </script>
+  <footer>No automated unit tests are on this page. Blank slate for testing!</footer>
+  <script type="module" src="./script.js"></script>
 </body>
 
 </html>

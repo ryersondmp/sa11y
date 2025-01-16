@@ -13,7 +13,7 @@ import autoprefixer from 'autoprefixer';
 import pkg from './package.json';
 
 /* Speed up compile time when developing by excluding language builds. */
-const developmentMode = false;
+export const developmentMode = false;
 
 /* Copyright notice */
 const banner = `
@@ -215,6 +215,48 @@ export default [
         file: 'bookmarklet/v2-en.js',
         format: 'umd',
         name: 'Sa11yLangBookmarkletEn',
+        plugins: [terser()],
+      },
+    ],
+  },
+  // Development bookmarklet.
+  {
+    input: 'src/bookmarklet/dev.js',
+    plugins: [
+      nodeResolve(),
+      css(),
+      replace({
+        preventAssignment: true,
+        'process.env.NODE_ENV': JSON.stringify('production'),
+        Sa11yVersion: JSON.stringify(pkg.version),
+      }),
+    ],
+    output: [
+      {
+        file: 'bookmarklet/dev.js',
+        format: 'umd',
+        name: 'Sa11yLangBookmarklet',
+        plugins: [terser()],
+      },
+    ],
+  },
+  // APCA bookmarklet - Automatic language detection.
+  {
+    input: 'src/bookmarklet/apca.js',
+    plugins: [
+      nodeResolve(),
+      css(),
+      replace({
+        preventAssignment: true,
+        'process.env.NODE_ENV': JSON.stringify('production'),
+        Sa11yVersion: JSON.stringify(pkg.version),
+      }),
+    ],
+    output: [
+      {
+        file: 'bookmarklet/apca.js',
+        format: 'umd',
+        name: 'Sa11yLangBookmarkletAPCA',
         plugins: [terser()],
       },
     ],

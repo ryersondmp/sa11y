@@ -2,7 +2,8 @@ import Constants from '../utils/constants';
 
 /* ************************************************************** */
 /*  DaltonLens SVG filters to simulate color vision deficiencies  */
-/*  Source: https://daltonlens.org/opensource-cvd-simulation/     */
+/*  Source: https://daltonlens.org/opensource-cvd-simulation/
+/*  Achromatopsia: https://github.com/chromelens/chromelens/blob/master/lenses/filters/lens_achromatopsia.js */
 /* ************************************************************** */
 export function addColourFilters() {
   if (Constants.Global.colourFilterPlugin) {
@@ -49,7 +50,7 @@ export function addColourFilters() {
             <feBlend in="ProjectionOnPlane1" in2="ProjectionOnPlane2" mode="normal"/>
           </filter>
           <filter id="sa11y-monochromacy">
-            <feColorMatrix values="0.33 0.33 0.33 0 0                           0.33 0.33 0.33 0 0                           0.33 0.33 0.33 0 0                           0 0 0 1 0"></feColorMatrix>
+            <feColorMatrix values="0.299,0.587,0.114,0,0,0.299,0.587,0.114,0,0,0.299,0.587,0.114,0,0,0,0,0,1,0"></feColorMatrix>
           </filter>
         </svg>`;
       document.body.appendChild(svg);

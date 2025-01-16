@@ -44,7 +44,7 @@ const getScrollPosition = ($el, results) => {
     // Alert if tooltip is hidden.
     getHiddenParent($el);
     const tooltip = $el.getAttribute('data-tippy-content');
-    Utils.createAlert(`${Lang._('NOT_VISIBLE_ALERT')}`, tooltip, elementPreview);
+    Utils.createAlert(`${Lang._('NOT_VISIBLE')}`, tooltip, elementPreview);
 
     closeAnyActiveTooltips();
 
@@ -104,26 +104,29 @@ const goToNext = (results) => {
 
 const goToPrev = (results) => {
   determineIndex();
-  if (index > 0) {
-    const button = Elements.Annotations.Array[index - 1].shadowRoot.querySelector('button');
-    const scrollPos = getScrollPosition(button, results);
+  const issues = Elements.Annotations.Array;
 
-    window.scrollTo({
-      top: scrollPos,
-      behavior: `${Constants.Global.scrollBehaviour}`,
-    });
+  // If at first issue, go to last issue.
+  if (index <= 0) index = issues.length;
 
-    if (button.offsetTop !== 0) {
-      button.focus();
-      button.click();
-    }
+  const button = Elements.Annotations.Array[index - 1].shadowRoot.querySelector('button');
+  const scrollPos = getScrollPosition(button, results);
 
-    // Decrease position by 1
-    index -= 1;
+  window.scrollTo({
+    top: scrollPos,
+    behavior: `${Constants.Global.scrollBehaviour}`,
+  });
 
-    // If index is -1, it means that it cycled back to the first annotation. This is needed for when user wants to go to previous annotation from the very last annotation on the page.
-    if (index === -1) index = Elements.Annotations.Array.length - 1;
+  if (button.offsetTop !== 0) {
+    button.focus();
+    button.click();
   }
+
+  // Decrease position by 1
+  index -= 1;
+
+  // If index is -1, it means that it cycled back to the first annotation. This is needed for when user wants to go to previous annotation from the very last annotation on the page.
+  if (index === -1) index = Elements.Annotations.Array.length - 1;
 };
 
 function keyboardShortcut(e, results) {
@@ -131,10 +134,10 @@ function keyboardShortcut(e, results) {
     Elements.Annotations.Array.length
     && !Constants.Panel.skipButton.hasAttribute('disabled')
   ) {
-    if (e.altKey && e.code === 'KeyS') {
+    if (e.altKey && (e.code === 'KeyS' || e.code === 'Period')) {
       e.preventDefault();
       goToNext(results);
-    } else if (e.altKey && e.code === 'KeyW') {
+    } else if (e.altKey && (e.code === 'KeyW' || e.code === 'Comma')) {
       e.preventDefault();
       goToPrev(results);
     }

@@ -1,5 +1,5 @@
 
-    const version = '3.2.3';
+    const version = '4.0.0';
     const webV = document.getElementById("v");
     webV.innerHTML = version;
   

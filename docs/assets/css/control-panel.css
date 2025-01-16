@@ -222,6 +222,7 @@ audio {
   max-height: 400px;
   padding: 15px 20px 15px 15px;
   overflow-y: auto;
+  line-height: 22px;
   color: var(--sa11y-panel-primary);
   border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
 }
@@ -250,18 +251,30 @@ audio {
   border: 1px dashed var(--sa11y-panel-bg-splitter);
   border-radius: 5px;
 }
+.panel-alert-preview ul {
+  position: relative;
+  padding: 0;
+  margin: 0;
+  margin-block-end: 0;
+  margin-block-start: 0;
+}
+.panel-alert-preview li {
+  display: list-item;
+  padding-bottom: 5px;
+  margin: 5px 10px 0 20px;
+}
 
 .element-preview {
   padding: 5px;
   margin-bottom: 10px;
   overflow-wrap: break-word;
-  background-color: var(--sa11y-panel-badge);
+  background-color: var(--sa11y-element-preview);
   border-radius: 3.2px;
 }
 
 /* Dismiss button for issues */
 button[data-sa11y-dismiss] {
-  display: block;
+  display: inline-block;
   padding: 4px 8px;
   margin: 10px 5px 5px 0;
   color: var(--sa11y-panel-primary);
@@ -269,6 +282,7 @@ button[data-sa11y-dismiss] {
   background: var(--sa11y-panel-bg-secondary);
   border: 2px solid var(--sa11y-button-outline);
   border-radius: 5px;
+  margin-inline-end: 15px;
 }
 button[data-sa11y-dismiss]:hover, button[data-sa11y-dismiss]:focus {
   background: var(--sa11y-shortcut-hover);
@@ -281,7 +295,7 @@ h2 {
   display: block;
   margin-bottom: 3px;
   font-size: var(--sa11y-large-text);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 strong {
@@ -289,6 +303,7 @@ strong {
 }
 
 a:not(#outline-list a):not(.edit) {
+  font-weight: 500;
   color: var(--sa11y-hyperlink);
   text-decoration: underline;
   cursor: pointer;
@@ -404,7 +419,7 @@ hr {
           mask: var(--sa11y-good-svg) center no-repeat;
 }
 #panel-content.warnings .panel-icon {
-  background: var(--sa11y-warning-svg-color);
+  background: var(--sa11y-yellow-text);
   transform: scaleX(var(--sa11y-icon-direction));
   -webkit-mask: var(--sa11y-warning-svg) center no-repeat;
           mask: var(--sa11y-warning-svg) center no-repeat;
@@ -633,7 +648,7 @@ hr {
 }
 
 /* **************************************** */
-/*    11. Page & Image Outline extras       */
+/*    11. Various icons                     */
 /* **************************************** */
 .error-icon {
   margin-bottom: -4px;
@@ -675,6 +690,14 @@ hr {
   background: var(--sa11y-panel-bg);
 }
 
+.error .link-icon {
+  background: var(--sa11y-error-text);
+}
+
+.warning .link-icon {
+  background: var(--sa11y-panel-bg);
+}
+
 @media screen and (forced-colors: active) {
   .error-icon,
   .link-icon,
@@ -688,6 +711,7 @@ hr {
 #panel-controls {
   display: flex;
   overflow: hidden;
+  border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
   border-radius: 0 0 4px 4px;
 }
 
@@ -707,7 +731,6 @@ hr {
   background: var(--sa11y-panel-bg-secondary);
   background-color: var(--sa11y-panel-bg-secondary);
   border-top: 1px solid var(--sa11y-panel-bg-splitter);
-  border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
   border-inline-end: 1px solid var(--sa11y-panel-bg-splitter);
   outline: 0;
   opacity: 1;
@@ -717,7 +740,7 @@ hr {
   background-color: var(--sa11y-shortcut-hover);
 }
 #panel-controls button.active {
-  font-weight: 500;
+  font-weight: 600;
 }
 
 #export-results-mode,
@@ -1055,6 +1078,10 @@ label:not(#colour-filter-mode, #export-results-mode) {
   all: unset;
 }
 
+#contrast-tools {
+  display: none;
+}
+
 /* ***************************************** */
 /*         19. Scrollbar styling             */
 /* ***************************************** */
@@ -1143,7 +1170,7 @@ label:not(#colour-filter-mode, #export-results-mode) {
 }
 
 #container:lang(en) #panel {
-  width: 305px;
+  width: 315px;
 }
 
 #container:lang(nb) #panel,

@@ -1,12 +1,11 @@
 import { Sa11y, Lang } from '../assets/js/sa11y.esm.js';
 
-// Translations
 import Sa11yLangEn from '../assets/js/lang/en.js';
-import Sa11yLangFr from '../assets/js/lang/fr.js';
 import Sa11yLangPl from '../assets/js/lang/pl.js';
+import Sa11yLangFr from '../assets/js/lang/fr.js';
+import Sa11yLangDe from '../assets/js/lang/de.js';
 import Sa11yLangUa from '../assets/js/lang/ua.js';
-import SallyLangSv from '../assets/js/lang/sv.js';
-import SallyLangDe from '../assets/js/lang/de.js';
+import Sa11yLangSv from '../assets/js/lang/sv.js';
 
 // Set translations
 const url = window.location.href;
@@ -17,9 +16,9 @@ if (url.indexOf("/pl/") > -1) {
 } else if (url.indexOf("/ua/") > -1) {
   Lang.addI18n(Sa11yLangUa.strings);
 } else if (url.indexOf("/sv/") > -1) {
-  Lang.addI18n(SallyLangSv.strings);
+  Lang.addI18n(Sa11yLangSv.strings);
 } else if (url.indexOf("/de/") > -1) {
-  Lang.addI18n(SallyLangDe.strings);
+  Lang.addI18n(Sa11yLangDe.strings);
 } else {
   Lang.addI18n(Sa11yLangEn.strings);
 }
@@ -41,6 +40,7 @@ if ($checkAnnouncement.length > 1) {
       content: 'More than one Announcement component found! The Announcement component should be used strategically and sparingly. It should be used to get attention or indicate that something is important. Misuse of this component makes it less effective or impactful. Secondly, this component is semantically labeled as an Announcement for people who use screen readers.',
       inline: false,
       position: 'beforebegin',
+      developer: false,
     });
   }
 }
@@ -55,6 +55,7 @@ $checkAccordions.forEach(($el) => {
       content: 'Do <strong>not nest forms</strong> within the Accordion component. If the form contains validation issues, a person may not see the form feedback since the accordion panel goes back to its original closed state.',
       inline: false,
       position: 'beforebegin',
+      developer: true,
     });
   }
 });
@@ -103,17 +104,13 @@ const sa11y = new Sa11y({
   shadowComponents: '',
   autoDetectShadowComponents: true,
   panelPosition: 'right',
-
-  // Specific checks
-  linksToDOI: true,
-  missingH1: true,
-  nonConsecutiveHeadingIsError: true,
+  // checkAllHideToggles: true,
 });
 
-/* Console all results
+/* Console all results */
 document.addEventListener('sa11y-check-complete', (e) => {
   console.log(e.detail)
-}); */
+});
 
 /**
  * Custom checks via event listeners.

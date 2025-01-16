@@ -1,274 +1,366 @@
 import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
-
-/**
- * Converts a color string in the format 'color(srgb r g b [a])' to RGBA format.
- * If alpha value is not provided, it defaults to 1 (fully opaque).
- * @param {string} colorString The color string in the format 'color(srgb r g b [a])'.
- * @returns {string} The RGBA color string in the format 'rgba(r, g, b, a)'.
- * Returns 'invalid-format' if the input format is invalid.
- */
-const convertColorToRGBA = (colorString) => {
-  if (colorString.startsWith('color(srgb')) {
-    const rgbaRegex = /srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s+([\d.]+))?/; // Added alpha value regex group
-    const match = colorString.match(rgbaRegex);
-
-    if (match && match.length >= 4) {
-      const [r, g, b, a] = match.slice(1);
-
-      // Ensure the parsed values are within the valid range [0, 1].
-      const parsedR = Math.min(1, parseFloat(r));
-      const parsedG = Math.min(1, parseFloat(g));
-      const parsedB = Math.min(1, parseFloat(b));
-
-      // Parse alpha value or default to 1 if not provided
-      const alpha = a !== undefined ? Math.min(1, parseFloat(a)) : 1;
-
-      // Converting RGB to RGBA.
-      const rgbaColor = `rgba(${Math.round(parsedR * 255)}, ${Math.round(parsedG * 255)}, ${Math.round(parsedB * 255)}, ${alpha})`;
-
-      return rgbaColor;
-    }
-    return 'invalid-format';
-  }
-  return colorString; // Return the original color if it's not in the color() format.
-};
+import * as Contrast from '../utils/contrast-utils';
 
 /**
  * Rulesets: Contrast
- * Color contrast plugin by Jason Day.
+ * @param {Array} results Sa11y's results array.
+ * @param {Object} option Sa11y's options object.
+ * @returns Contrast results.
+ * APCA contrast checking is experimental. References:
  * @link https://github.com/jasonday/color-contrast
- * @link https://github.com/gka/chroma.js (Parse RGB)
-*/
+ * @link https://github.com/gka/chroma.js
+ * @link https://github.com/Myndex/SAPC-APCA
+ */
 export default function checkContrast(results, option) {
-  if (option.contrastPlugin) {
-    const toggleCheck = Utils.store.getItem('sa11y-remember-contrast') === 'On';
-    if (toggleCheck || option.headless || option.checkAllHideToggles) {
-      let contrastErrors = {
-        errors: [],
-        warnings: [],
-      };
+  // Initialize contrast results array.
+  const contrastResults = [];
 
-      /* eslint-disable */
-      const contrastObject = {
-        // Parse rgb(r, g, b) and rgba(r, g, b, a) strings into an array.
-        parseRgb(css) {
-          let i;
-          let m;
-          let rgb;
-          let f;
-          let k;
-          if (m = css.match(/rgb\(\s*(\-?\d+),\s*(\-?\d+)\s*,\s*(\-?\d+)\s*\)/)) {
-            rgb = m.slice(1, 4);
-            for (i = f = 0; f <= 2; i = ++f) {
-              rgb[i] = +rgb[i];
-            }
-            rgb[3] = 1;
-          } else if (m = css.match(/rgba\(\s*(\-?\d+),\s*(\-?\d+)\s*,\s*(\-?\d+)\s*,\s*([01]|[01]?\.\d+)\)/)) {
-            rgb = m.slice(1, 5);
-            for (i = k = 0; k <= 3; i = ++k) {
-              rgb[i] = +rgb[i];
-            }
-          }
-          return rgb;
-        },
-        /**
-         * Based on @link http://www.w3.org/TR/WCAG20/#relativeluminancedef
-        */
-        relativeLuminance(c) {
-          const lum = [];
-          for (let i = 0; i < 3; i++) {
-            const v = c[i] / 255;
-            // eslint-disable-next-line no-restricted-properties
-            lum.push(v < 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
-          }
-          return (0.2126 * lum[0]) + (0.7152 * lum[1]) + (0.0722 * lum[2]);
-        },
-        /**
-         * Based on @link http://www.w3.org/TR/WCAG20/#contrast-ratiodef
-        */
-        contrastRatio(x, y) {
-          const l1 = contrastObject.relativeLuminance(contrastObject.parseRgb(x));
-          const l2 = contrastObject.relativeLuminance(contrastObject.parseRgb(y));
-          return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
-        },
+  // Iterate through all elements on the page and get computed styles.
+  for (let i = 0; i < Elements.Found.Contrast.length; i++) {
+    const $el = Elements.Found.Contrast[i];
+    const style = getComputedStyle($el);
 
-        getBackground(el) {
-          // If item is shadowRoot (nodeType 11)
-          if (el.nodeType === 11) {
-            // find the parentNode outside shadow: most likely the inherited bg colour.
-            const parent = el.getRootNode().host.parentNode;
-            if (parent !== null) {
-              el = parent;
-            } else {
-              // Return warning or manual check otherwise.
-              return 'alpha';
-            }
-          }
+    // Get computed styles.
+    const opacity = parseFloat(style.opacity);
+    const color = Contrast.convertToRGBA(style.color, opacity);
+    const fontSize = parseFloat(style.fontSize);
+    const getFontWeight = style.fontWeight;
+    const fontWeight = Contrast.normalizeFontWeight(getFontWeight);
+    const background = Contrast.getBackground($el);
 
-          const styles = getComputedStyle(el);
-          const bgColor = convertColorToRGBA(styles.backgroundColor);
-          const bgImage = styles.backgroundImage;
-          const rgb = `${contrastObject.parseRgb(bgColor)}`;
-          const alpha = rgb.split(',');
+    // Check if element is visually hidden to screen readers or explicitly hidden.
+    const isVisuallyHidden = Utils.isScreenReaderOnly($el);
+    const isExplicitlyHidden = Utils.isElementHidden($el);
+    const isHidden = isExplicitlyHidden || isVisuallyHidden || opacity === 0;
 
-          // if background has alpha transparency, flag manual check.
-          if (alpha[3] < 1 && alpha[3] > 0) {
-            return 'alpha';
-          }
+    // Filter only text nodes.
+    const textString = Array.from($el.childNodes)
+      .filter((node) => node.nodeType === 3)
+      .map((node) => node.textContent)
+      .join('');
+    const text = textString.trim();
 
-          if (bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent' && bgImage === 'none' && alpha[3] !== '0') {
-            // if element has no background image, or transparent return bgColor
-            return bgColor;
-          } if (bgImage !== 'none') {
-            return 'image';
-          }
+    // Inputs to check
+    const checkInputs = ['SELECT', 'INPUT', 'TEXTAREA'].includes($el.tagName);
 
-          // retest if not returned above
-          if (el.tagName === 'HTML') {
-            return 'rgb(255, 255, 255)';
-          }
-          return contrastObject.getBackground(el.parentNode);
-        },
-        /* eslint-disable */
-        check() {
-          // resets results
-          contrastErrors = {
-            errors: [],
-            warnings: [],
-          };
-
-          for (let i = 0; i < Elements.Found.Contrast.length; i++) {
-            const elem = Elements.Found.Contrast[i];
-
-            if (Elements.Found.Contrast) {
-              let ratio;
-              let error;
-              let warning;
-
-              const style = getComputedStyle(elem);
-              const color = convertColorToRGBA(style.color);
-              const { fill } = style;
-              const fontSize = parseInt(style.fontSize, 10);
-              const pointSize = fontSize * (3 / 4);
-              const { fontWeight } = style;
-              const htmlTag = elem.tagName;
-              const background = contrastObject.getBackground(elem);
-              const textString = [].reduce.call(elem.childNodes, (a, b) => a + (b.nodeType === 3 ? b.textContent : ''), '');
-              const text = textString.trim();
-
-              // Maybe visually hidden text.
-              const computedStyle = window.getComputedStyle(elem);
-              const clip = computedStyle.clip.replace(/\s/g, '');
-              const clipPath = computedStyle.getPropertyValue('clip-path');
-              const width = parseFloat(computedStyle.width);
-              const height = parseFloat(computedStyle.height);
-              const maybeVisuallyHidden = (width === 1 && height === 1) &&
-                (clipPath === 'inset(50%)' || /^(rect\(0(,\s*0){3}\)|rect\(1px(,\s*1px){3}\))$/.test(clip));
-
-              if (maybeVisuallyHidden) {
-                // Ignore if visually hidden for screen readers.
-              } else if (color.startsWith('color(')) {
-                // Push a warning if using a color() functional notation.
-                warning = {
-                  elem,
-                };
-                contrastErrors.warnings.push(warning);
-              } else if (htmlTag === 'SVG') {
-                ratio = Math.round(contrastObject.contrastRatio(fill, background) * 100) / 100;
-                if (ratio < 3) {
-                  error = {
-                    elem,
-                    ratio: `${ratio}:1`,
-                  };
-                  contrastErrors.errors.push(error);
-                }
-              } else if (text.length || htmlTag === 'INPUT' || htmlTag === 'SELECT' || htmlTag === 'TEXTAREA') {
-                const type = elem.getAttribute('type');
-                if (type === 'range' || type === 'color') {
-                  // Ignore specific input types.
-                } else if (background === 'image') {
-                  warning = {
-                    elem,
-                  };
-                  contrastErrors.warnings.push(warning);
-                } else if (background === 'alpha') {
-                  warning = {
-                    elem,
-                  };
-                  contrastErrors.warnings.push(warning);
-                } else {
-                  ratio = Math.round(contrastObject.contrastRatio(color, background) * 100) / 100;
-                  if (pointSize >= 18 || (pointSize >= 14 && fontWeight >= 700)) {
-                    if (ratio < 3) {
-                      error = {
-                        elem,
-                        ratio: `${ratio}:1`,
-                      };
-                      contrastErrors.errors.push(error);
-                    }
-                  } else if (ratio < 4.5) {
-                    error = {
-                      elem,
-                      ratio: `${ratio}:1`,
-                    };
-                    contrastErrors.errors.push(error);
-                  }
-                }
-              }
-            }
-          }
-          return contrastErrors;
-        },
-      };
-
-      contrastObject.check();
-
-      contrastErrors.errors.forEach((item) => {
-        const name = item.elem;
-        const cratio = item.ratio;
-        const clone = name.cloneNode(true);
-        const nodeText = Utils.fnIgnore(clone, 'script, style').textContent;
-        const sanitizedText = Utils.sanitizeHTML(nodeText);
-
-        if (name.tagName === 'INPUT') {
-          results.push({
-            element: name,
-            type: 'error',
-            content: Lang.sprintf('CONTRAST_INPUT_ERROR', cratio),
-            inline: false,
-            position: 'beforebegin',
-          });
+    // Only check elements with text and inputs.
+    if (text.length !== 0 || checkInputs) {
+      if (color === 'unsupported' || background === 'unsupported') {
+        contrastResults.push({
+          $el,
+          type: 'unsupported',
+          fontSize,
+          fontWeight,
+          opacity,
+          ...(background !== 'unsupported' && { background }),
+          ...(color !== 'unsupported' && { color }),
+        });
+      } else if (background.type === 'image') {
+        if (isHidden) {
+          // Ignore visually hidden.
         } else {
-          results.push({
-            element: name,
-            type: 'error',
-            content: Lang.sprintf('CONTRAST_ERROR', cratio, sanitizedText),
-            inline: false,
-            position: 'beforebegin',
+          contrastResults.push({
+            $el,
+            type: 'background-image',
+            color,
+            background,
+            fontSize,
+            fontWeight,
+            opacity,
           });
         }
-      });
-
-      contrastErrors.warnings.forEach((item) => {
-        const name = item.elem;
-        const clone = name.cloneNode(true);
-        const nodeText = Utils.fnIgnore(clone, 'script, style').textContent;
-
-        const key = Utils.prepareDismissal(`CONTRAST${nodeText}`);
-        const sanitizedText = Utils.sanitizeHTML(nodeText);
-
-        results.push({
-          element: name,
-          type: 'warning',
-          content: Lang.sprintf('CONTRAST_WARNING', sanitizedText),
-          inline: false,
-          position: 'beforebegin',
-          dismiss: key,
-        });
-      });
+      } else if ($el.tagName === 'text' && $el.closest('svg')) {
+        // Handle seperately.
+      } else if (isHidden || Contrast.getHex(color) === Contrast.getHex(background)) {
+        // Ignore visually hidden elements.
+      } else {
+        const result = Contrast.checkElementContrast($el, color, background, fontSize, fontWeight, opacity);
+        if (result) {
+          result.type = checkInputs ? 'input' : 'text';
+          contrastResults.push(result);
+        }
+      }
     }
   }
+
+  // Iterate through all SVGs on the page, seperately.
+  Elements.Found.Svg.forEach(($el) => {
+    const background = Contrast.getBackground($el);
+
+    // Background image.
+    if (background && background.type === 'image') {
+      contrastResults.push({ $el, type: 'svg-warning', background });
+      return;
+    }
+
+    // Handle SVGs with <text> element
+    if ($el.querySelector('text')) {
+      contrastResults.push({ $el, type: 'svg-text', background });
+      return;
+    }
+
+    // Process simple SVGs with a single shape.
+    const shapes = $el.querySelectorAll('path, polygon, circle, rect, ellipse');
+    if (shapes.length === 1) {
+      const style = getComputedStyle(shapes[0]);
+      const { fill, opacity, stroke, strokeWidth } = style;
+
+      // Background image.
+      if (fill.startsWith('url(')) {
+        contrastResults.push({ $el, type: 'svg-warning', background });
+        return;
+      }
+
+      const hasFill = fill && fill !== 'none';
+      const hasStroke = stroke && stroke !== 'none' && strokeWidth !== '0px';
+
+      if (!hasFill && !hasStroke) {
+        contrastResults.push({ $el, type: 'svg-warning', background });
+        return;
+      }
+
+      let fillPasses = false;
+      let strokePasses = false;
+      let contrastValue;
+
+      // Check fill contrast.
+      if (hasFill) {
+        const resolvedFill = fill === 'currentColor'
+          ? Contrast.convertToRGBA(getComputedStyle($el).color, opacity)
+          : Contrast.convertToRGBA(fill, opacity);
+        contrastValue = Contrast.calculateContrast(resolvedFill, background);
+        fillPasses = option.contrastAPCA
+          ? contrastValue.ratio >= 45
+          : contrastValue.ratio >= 3;
+      }
+
+      // Check stroke contrast.
+      if (hasStroke) {
+        const resolvedStroke = stroke === 'currentColor'
+          ? Contrast.convertToRGBA(getComputedStyle($el).color, opacity)
+          : Contrast.convertToRGBA(stroke, opacity);
+        contrastValue = Contrast.calculateContrast(resolvedStroke, background);
+        strokePasses = option.contrastAPCA
+          ? contrastValue.ratio >= 45
+          : contrastValue.ratio >= 3;
+      }
+
+      // Failure conditions.
+      const failsBoth = hasFill && hasStroke && !fillPasses && !strokePasses;
+      const failsFill = hasFill && !hasStroke && !fillPasses;
+      const failsStroke = !hasFill && hasStroke && !strokePasses;
+      if (failsBoth || failsFill || failsStroke) {
+        contrastResults.push({
+          $el,
+          ratio: Contrast.ratioToDisplay(contrastValue.ratio),
+          color: contrastValue.blendedColor,
+          type: 'svg-error',
+          background,
+        });
+      }
+    } else {
+      // Warn for complex SVGs with multiple shapes
+      contrastResults.push({ $el, type: 'svg-warning', background });
+    }
+  });
+
+  // Check contrast of all placeholder elements.
+  Elements.Found.Inputs.forEach(($el) => {
+    if ($el.placeholder && $el.placeholder.length !== 0) {
+      const placeholder = getComputedStyle($el, '::placeholder');
+      const pColor = Contrast.convertToRGBA(placeholder.getPropertyValue('color'));
+      const pSize = parseFloat(placeholder.fontSize);
+      const pWeight = Contrast.normalizeFontWeight(placeholder.fontWeight);
+      const pBackground = Contrast.getBackground($el);
+      const pOpacity = parseFloat(placeholder.opacity);
+
+      // Placeholder has background image.
+      if (pBackground.type === 'image') {
+        // There will already be a warning.
+      } else {
+        const result = Contrast.checkElementContrast($el, pColor, pBackground, pSize, pWeight, pOpacity);
+        if (result) {
+          result.type = 'placeholder';
+          contrastResults.push(result);
+        }
+      }
+    }
+  });
+
+  // Do some extra processing on warnings.
+  const processWarnings = (warnings) => {
+    // Separate warnings based on type.
+    const backgroundImages = warnings.filter((warning) => warning.type === 'background-image');
+    const otherWarnings = warnings.filter((warning) => warning.type !== 'background-image');
+
+    let processedBackgroundWarnings;
+
+    // Process background-image warnings based on option.contrastAPCA.
+    if (option.contrastAPCA) {
+      // Do not group warnings, return each warning as-is.
+      processedBackgroundWarnings = backgroundImages.map((warning) => ({ ...warning }));
+    } else {
+      // Group background-image warnings if they share same BG and FG colours.
+      const groupedWarnings = backgroundImages.reduce((groups, warning) => {
+        const grouped = groups;
+        const groupKey = JSON.stringify({
+          background: warning.background.value,
+          color: warning.color,
+        });
+        if (!grouped[groupKey]) grouped[groupKey] = [];
+        grouped[groupKey].push(warning);
+        return grouped;
+      }, {});
+
+      // Process each group.
+      processedBackgroundWarnings = Object.values(groupedWarnings).map((group) => ({ ...group[0] }));
+    }
+
+    // Combine processed background-image warnings with other warnings.
+    return [...processedBackgroundWarnings, ...otherWarnings];
+  };
+
+  const processedResults = processWarnings(contrastResults);
+
+  // Iterate through all contrast results.
+  processedResults.forEach((item) => {
+    const { $el, ratio } = item;
+    const updatedItem = item;
+
+    // Annotation placement.
+    const element = $el.tagName === 'OPTION' ? $el.closest('datalist, select, optgroup') : $el;
+
+    // Process text within element.
+    const nodeText = Utils.fnIgnore(element, ['option:not(option:first-child)']);
+    const text = Utils.getText(nodeText);
+
+    // Content for tooltip.
+    const truncatedText = Utils.truncateString(text, 80);
+    const sanitizedText = Utils.sanitizeHTML(truncatedText);
+
+    // Preview text
+    let previewText;
+    if (item.type === 'placeholder') {
+      previewText = Utils.sanitizeHTML($el.placeholder);
+    } else if (item.type === 'svg-error' || item.type === 'svg-warning' || item.type === 'svg-text') {
+      previewText = '';
+      /**
+       * @todo Better support preview for SVGs.
+       * const sanitizeSvg = Utils.sanitizeHTMLBlock(updatedItem.$el.outerHTML, true);
+       * previewText = Utils.removeWhitespace(sanitizeSvg);
+       * */
+    } else {
+      previewText = sanitizedText;
+    }
+    updatedItem.sanitizedText = previewText;
+
+    // Iterate through contrast results based on type.
+    switch (item.type) {
+      case 'text':
+        if (option.checks.CONTRAST_ERROR) {
+          results.push({
+            element: $el,
+            type: option.checks.CONTRAST_ERROR.type || 'error',
+            content: option.checks.CONTRAST_ERROR.content
+              || Lang.sprintf('CONTRAST_ERROR'),
+            dismiss: Utils.prepareDismissal(`CONTRAST${sanitizedText}`),
+            dismissAll: option.checks.CONTRAST_ERROR.dismissAll ? 'CONTRAST_ERROR' : false,
+            developer: option.checks.CONTRAST_ERROR.developer || false,
+            contrastDetails: updatedItem,
+          });
+        }
+        break;
+      case 'input':
+        if (option.checks.CONTRAST_INPUT) {
+          results.push({
+            element,
+            type: option.checks.CONTRAST_INPUT.type || 'error',
+            content: option.checks.CONTRAST_INPUT.content
+              || Lang.sprintf('CONTRAST_INPUT', ratio),
+            dismiss: Utils.prepareDismissal(`CONTRAST${$el.getAttribute('class')}${$el.tagName}${ratio}`),
+            dismissAll: option.checks.CONTRAST_INPUT.dismissAll ? 'CONTRAST_INPUT' : false,
+            developer: option.checks.CONTRAST_INPUT.developer || true,
+            contrastDetails: updatedItem,
+          });
+        }
+        break;
+      case 'placeholder':
+        if (option.checks.CONTRAST_PLACEHOLDER) {
+          results.push({
+            element: $el,
+            type: option.checks.CONTRAST_PLACEHOLDER.type || 'error',
+            content: option.checks.CONTRAST_PLACEHOLDER.content
+              || Lang.sprintf('CONTRAST_PLACEHOLDER'),
+            position: 'afterend',
+            dismiss: Utils.prepareDismissal(`CPLACEHOLDER${$el.getAttribute('class')}${$el.tagName}${ratio}`),
+            dismissAll: option.checks.CONTRAST_PLACEHOLDER.dismissAll ? 'CONTRAST_PLACEHOLDER' : false,
+            developer: option.checks.CONTRAST_PLACEHOLDER.developer || true,
+            contrastDetails: updatedItem,
+          });
+        }
+        break;
+      case 'svg-error':
+        if (option.checks.CONTRAST_ERROR_GRAPHIC) {
+          results.push({
+            element: $el,
+            type: option.checks.CONTRAST_ERROR_GRAPHIC.type || 'error',
+            content: option.checks.CONTRAST_ERROR_GRAPHIC.content
+              || Lang.sprintf('CONTRAST_ERROR_GRAPHIC'),
+            dismiss: Utils.prepareDismissal(`CONTRASTERROR${$el.outerHTML}`),
+            dismissAll: option.checks.CONTRAST_ERROR_GRAPHIC.dismissAll ? 'CONTRAST_ERROR_GRAPHIC' : false,
+            developer: option.checks.CONTRAST_ERROR_GRAPHIC.developer || true,
+            contrastDetails: updatedItem,
+          });
+        }
+        break;
+      case 'svg-warning':
+      case 'svg-text':
+        if (option.checks.CONTRAST_WARNING_GRAPHIC) {
+          results.push({
+            element: $el,
+            type: option.checks.CONTRAST_WARNING_GRAPHIC.type || 'warning',
+            content: option.checks.CONTRAST_WARNING_GRAPHIC.content
+              || Lang.sprintf('CONTRAST_WARNING_GRAPHIC'),
+            dismiss: Utils.prepareDismissal(`CONTRASTWARNING${$el.outerHTML}`),
+            dismissAll: option.checks.CONTRAST_WARNING_GRAPHIC.dismissAll ? 'CONTRAST_WARNING_GRAPHIC' : false,
+            developer: option.checks.CONTRAST_WARNING_GRAPHIC.developer || true,
+            contrastDetails: updatedItem,
+          });
+        }
+        break;
+      case 'background-image':
+        if (option.checks.CONTRAST_WARNING) {
+          results.push({
+            element,
+            type: option.checks.CONTRAST_WARNING.type || 'warning',
+            content: option.checks.CONTRAST_WARNING.content
+              || Lang.sprintf('CONTRAST_WARNING'),
+            dismiss: Utils.prepareDismissal(`CONTRAST${sanitizedText}`),
+            dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
+            developer: option.checks.CONTRAST_WARNING.developer || false,
+            contrastDetails: updatedItem,
+          });
+        }
+        break;
+      case 'unsupported':
+        if (option.checks.CONTRAST_UNSUPPORTED) {
+          results.push({
+            element,
+            type: option.checks.CONTRAST_UNSUPPORTED.type || 'warning',
+            content: option.checks.CONTRAST_UNSUPPORTED.content
+              || Lang.sprintf('CONTRAST_WARNING'),
+            dismiss: Utils.prepareDismissal(`CONTRAST${sanitizedText}`),
+            dismissAll: option.checks.CONTRAST_UNSUPPORTED.dismissAll ? 'CONTRAST_UNSUPPORTED' : false,
+            developer: option.checks.CONTRAST_UNSUPPORTED.developer || false,
+            contrastDetails: updatedItem,
+          });
+        }
+        break;
+      default:
+        break;
+    }
+  });
   return results;
-};
+}
