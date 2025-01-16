@@ -72,7 +72,7 @@ export default function checkContrast(results, option) {
           });
         }
       } else if ($el.tagName === 'text' && $el.closest('svg')) {
-        // Handle seperately.
+        // Handle separately.
       } else if (isHidden || Contrast.getHex(color) === Contrast.getHex(background)) {
         // Ignore visually hidden elements.
       } else {
@@ -85,7 +85,7 @@ export default function checkContrast(results, option) {
     }
   }
 
-  // Iterate through all SVGs on the page, seperately.
+  // Iterate through all SVGs on the page, separately.
   Elements.Found.Svg.forEach(($el) => {
     const background = Contrast.getBackground($el);
 
