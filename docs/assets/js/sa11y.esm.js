@@ -7025,11 +7025,20 @@ function getBackground($el) {
       if (bgColor[3] < 1) {
         // We need to find the first non-transparent parent background and blend them together.
         let parentEl = targetEl.parentElement;
-        let parentBgColor = 'rgba(0, 0, 0, 0)';
+        let parentBgColor = 'rgba(255, 255, 255, 1)';
         while (parentEl && parentEl.nodeType === 1) {
           const parentStyles = getComputedStyle(parentEl);
           parentBgColor = parentStyles.backgroundColor;
-          if (parentBgColor !== 'rgba(0, 0, 0, 0)') break; // Stop, valid colour found.
+
+          // Stop, valid colour found.
+          if (parentBgColor !== 'rgba(0, 0, 0, 0)') break;
+
+          // If we reach the HTML tag, default to white.
+          if (parentBgColor === 'rgba(0, 0, 0, 0)' && parentEl.tagName === 'HTML') {
+            parentBgColor = 'rgba(255, 255, 255, 1)';
+          }
+
+          // Move up the DOM tree.
           parentEl = parentEl.parentElement;
         }
         const parentColor = convertToRGBA(parentBgColor || 'rgba(255, 255, 255, 1)');
