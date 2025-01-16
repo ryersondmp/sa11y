@@ -186,12 +186,21 @@
         width: 0.875em;
         height: 1em;
         margin-left: 0.25em;
-        content: url(/themes/custom/hr/img/svg/icon-link-external-3.svg) / "Testing";
+        content: url("/themes/custom/hr/img/svg/icon-link-external-3.svg") / "Testing";
       }
     </style>
+    <hr>
+    <h2>Pseudo content</h2>
     <h5><a class="unit-button unit-button--block link-external" href="https://ubc.wd10.myworkdayjobs.com/ubcstaffjobs"
         target="_blank" rel="nofollow">Staff listing</a></h5>
 
+    <style>
+      .asc:after {
+        content: "Before";
+      }
+    </style>
+    <h5 class="asc" id="kl" aria-labelledby="kl nvb">Testing</h5>
+    <span hidden id="nvb">123</span>
     <hr>
 
     <p>
@@ -284,7 +293,8 @@
     <p>Original: <a href="https://www.torontomu.ca/" data-sa11y-error-inline="300">TMU Website</a></p>
 
     <h2>URL Variations</h2>
-    <p><a href="https://www.torontomu.ca/">TMU Website</a> - https://www.torontomu.ca/ [Same URL, should not be flagged]
+    <p><a href="https://www.torontomu.ca/">TMU Website</a> - https://www.torontomu.ca/ [Same URL, should not be
+      flagged]
     </p>
     <p><a href="https://torontomu.ca/">TMU Website</a> - https://torontomu.ca/</p>
     <p><a href="http://www.torontomu.ca/">TMU Website</a> - http://www.torontomu.ca/</p>
@@ -362,7 +372,8 @@
 
     <hr>
 
-    <a href="/en/support/solutions/articles/6000210871-nature-com-upgraded-to-the-https-protocol">Nature.com upgraded to
+    <a href="/en/support/solutions/articles/6000210871-nature-com-upgraded-to-the-https-protocol">Nature.com upgraded
+      to
       the
       HTTPS protocol</a>
     <a href="/en/support/solutions/articles/6000210871-nature-com-upgraded-to-the-https-protocol">http.Nature.com
@@ -389,11 +400,13 @@
         ipsum dolor sit amet consectetur adipisicing elit. Ut provident consectetur accusamus quos excepturi dolore
         neque iste? Doloremque recusandae libero commodi quod nam in! Ut, ratione eaque. Voluptatibus, inventore
         suscipit! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolorem temporibus vitae reiciendis
-        molestias libero similique odit aspernatur labore? Hic, sit incidunt omnis totam dignissimos aspernatur eligendi
+        molestias libero similique odit aspernatur labore? Hic, sit incidunt omnis totam dignissimos aspernatur
+        eligendi
         voluptatibus ducimus porro facilis! Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium
         aliquid soluta, dolore inventore cupiditate, error eius maxime laudantium delectus eos neque odit doloribus
         cumque repudiandae. Necessitatibus nemo natus pariatur laborum. Lorem, ipsum dolor sit amet consectetur
-        adipisicing elit. Tenetur, harum minima ipsum expedita corrupti sint, ex quod temporibus suscipit reprehenderit
+        adipisicing elit. Tenetur, harum minima ipsum expedita corrupti sint, ex quod temporibus suscipit
+        reprehenderit
         dignissimos! Corporis quam voluptate doloribus, voluptatem optio rem libero fugiat.
       </a>
 
@@ -559,7 +572,8 @@
 
     <h2>Sa11y Ignore</h2>
     <p style="color:bisque" class="sa11y-ignore">
-      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero
+      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora
+      libero
       illo magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum
       dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero illo
       magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum dolor,
@@ -567,7 +581,8 @@
 
     <h2>Long text</h2>
     <p style="color:bisque">
-      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero
+      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora
+      libero
       illo magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum
       dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero illo
       magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum dolor,

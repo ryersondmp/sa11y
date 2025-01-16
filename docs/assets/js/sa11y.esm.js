@@ -642,13 +642,14 @@ function find(selector, desiredRoot, exclude) {
 const wrapPseudoContent = (element, string) => {
   const getAltText = (content) => {
     if (content === 'none') return '';
-    // Match text content after url() and ignore the url part
-    const match = content.match(/(?:url\(['"][^'"]+['"]\)\s*\/\s*)?["']([^"']+)["']/);
+    const match = content.includes('url(') || content.includes('image-set(')
+      ? content.match(/\/\s*"([^"]+)"/) // Content after slash, e.g. url('image.jpg') / "alt text";
+      : content.match(/"([^"]+)"/); // Content between quotes, e.g. "alt text";
     return match ? match[1] : '';
   };
   const before = getAltText(window.getComputedStyle(element, ':before').getPropertyValue('content'));
   const after = getAltText(window.getComputedStyle(element, ':after').getPropertyValue('content'));
-  return `${before} ${string} ${after}`;
+  return `${before}${string}${after}`;
 };
 
 /* Sets treeWalker loop to last node before next branch. */
@@ -676,7 +677,7 @@ const computeAriaLabel = (element, recursing = false) => {
       .map((id) => {
         const targetElement = document.querySelector(`#${CSS.escape(id)}`);
         return targetElement ? computeAccessibleName(targetElement, '', 1) : '';
-      }).join('');
+      }).join(' ');
   }
 
   const ariaLabel = element.getAttribute('aria-label');
