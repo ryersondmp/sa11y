@@ -46,7 +46,7 @@ export default function checkEmbeddedContent(results, option) {
   // Warning: Data visualizations.
   if (option.checks.EMBED_DATA_VIZ) {
     Elements.Found.Visualizations.forEach(($el) => {
-      // General warning for data vizualization widgets.
+      // General warning for data visualization widgets.
       results.push({
         element: $el,
         type: option.checks.EMBED_DATA_VIZ.type || 'warning',

@@ -98,7 +98,7 @@ export function getBackground($el) {
         const blendedBG = alphaBlend(bgColor, parentColor);
         return blendedBG;
       }
-      // Return solid color immediately if no alpha chanel.
+      // Return solid color immediately if no alpha channel.
       return bgColor;
     }
     if (targetEl.tagName === 'HTML') {

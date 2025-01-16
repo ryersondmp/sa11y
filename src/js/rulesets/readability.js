@@ -6,7 +6,7 @@
  * @link https://github.com/Yoast/YoastSEO.js/issues/267
  * @link http://stackoverflow.com/questions/5686483/how-to-compute-number-of-syllables-in-a-word-in-javascript
  * @link https://www.simoahava.com/analytics/calculate-readability-scores-for-content/#commento-58ac602191e5c6dc391015c5a6933cf3e4fc99d1dc92644024c331f1ee9b6093
- * @link https://oaji.net/articles/2017/601-1498133639.pdf (Portugese adaptation).
+ * @link https://oaji.net/articles/2017/601-1498133639.pdf (Portuguese adaptation).
 */
 import Constants from '../utils/constants';
 import Elements from '../utils/elements';

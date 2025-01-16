@@ -27,7 +27,7 @@ export function isElementVisuallyHiddenOrHidden(element) {
 }
 
 /**
- * Determing whether an element is visually hidden (e.g. .sr-only) based on computed properties.
+ * Determine whether an element is visually hidden (e.g. .sr-only) based on computed properties.
  * @param {HTMLElement} element The element to check for.
  * @returns {boolean} Returns true if visually hidden based on properties.
  */
