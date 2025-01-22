@@ -22,7 +22,7 @@ export default function checkHeaders(results, option, headingOutline) {
 
     // Determine heading level.
     const level = parseInt($el.getAttribute('aria-level') || $el.tagName.slice(1), 10);
-    const headingLength = headingText.length;
+    const headingLength = removeWhitespace.length;
     const maxHeadingLength = option.checks.HEADING_LONG.maxLength || 160;
 
     // Default.

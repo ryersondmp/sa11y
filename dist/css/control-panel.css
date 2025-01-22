@@ -274,7 +274,7 @@ audio {
 
 /* Dismiss button for issues */
 button[data-sa11y-dismiss] {
-  display: inline-block;
+  display: block;
   padding: 4px 8px;
   margin: 10px 5px 5px 0;
   color: var(--sa11y-panel-primary);
