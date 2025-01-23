@@ -152,7 +152,7 @@ export default function checkLinkText(results, option) {
             results.push({
               element: $el,
               type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
-              content: option.checks.HIDDEN_FOCUSABLE.content || Lang.sprintf('HIDDEN_FOCUSABLE'),
+              content: Lang.sprintf(option.checks.HIDDEN_FOCUSABLE.content || 'HIDDEN_FOCUSABLE'),
               inline: true,
               position: 'afterend',
               dismiss: Utils.prepareDismissal(`LINKHIDDENFOCUS${href + linkTextTrimmed}`),
@@ -169,7 +169,7 @@ export default function checkLinkText(results, option) {
             results.push({
               element: $el,
               type: option.checks.LINK_EMPTY_LABELLEDBY.type || 'error',
-              content: option.checks.LINK_EMPTY_LABELLEDBY.content || Lang.sprintf('LINK_EMPTY_LABELLEDBY'),
+              content: Lang.sprintf(option.checks.LINK_EMPTY_LABELLEDBY.content || 'LINK_EMPTY_LABELLEDBY'),
               inline: true,
               position: 'afterend',
               dismiss: Utils.prepareDismissal(`LINKEMPTYLABELLEDBY${href}`),
@@ -183,7 +183,7 @@ export default function checkLinkText(results, option) {
             results.push({
               element: $el,
               type: option.checks.LINK_EMPTY_NO_LABEL.type || 'error',
-              content: option.checks.LINK_EMPTY_NO_LABEL.content || Lang.sprintf('LINK_EMPTY_NO_LABEL'),
+              content: Lang.sprintf(option.checks.LINK_EMPTY_NO_LABEL.content || 'LINK_EMPTY_NO_LABEL'),
               inline: true,
               position: 'afterend',
               dismiss: Utils.prepareDismissal(`LINKEMPTYNOLABEL${href}`),
@@ -196,7 +196,7 @@ export default function checkLinkText(results, option) {
           results.push({
             element: $el,
             type: option.checks.LINK_EMPTY.type || 'error',
-            content: option.checks.LINK_EMPTY.content || Lang.sprintf('LINK_EMPTY'),
+            content: Lang.sprintf(option.checks.LINK_EMPTY.content || 'LINK_EMPTY'),
             inline: true,
             position: 'afterend',
             dismiss: Utils.prepareDismissal(`LINKEMPTY${href}`),
@@ -211,7 +211,8 @@ export default function checkLinkText(results, option) {
             element: $el,
             type: option.checks.LINK_STOPWORD.type || 'error',
             content: option.checks.LINK_STOPWORD.content
-              || Lang.sprintf('LINK_STOPWORD', error[0]) + Lang.sprintf('LINK_TIP'),
+              ? Lang.sprintf(option.checks.LINK_STOPWORD.content, error[0])
+              : Lang.sprintf('LINK_STOPWORD', error[0]) + Lang.sprintf('LINK_TIP'),
             inline: true,
             position: 'afterend',
             dismiss: Utils.prepareDismissal(`LINKSTOPWORD${href + linkTextTrimmed}`),
@@ -226,7 +227,7 @@ export default function checkLinkText(results, option) {
             results.push({
               element: $el,
               type: option.checks.LINK_DOI.type || 'warning',
-              content: option.checks.LINK_DOI.content || Lang.sprintf('LINK_DOI'),
+              content: Lang.sprintf(option.checks.LINK_DOI.content || 'LINK_DOI'),
               inline: true,
               dismiss: Utils.prepareDismissal(`LINKDOI${href + linkTextTrimmed}`),
               dismissAll: option.checks.LINK_DOI.dismissAll ? 'LINK_DOI' : false,
@@ -242,7 +243,8 @@ export default function checkLinkText(results, option) {
               element: $el,
               type: option.checks.LINK_URL.type || 'warning',
               content: option.checks.LINK_URL.content
-                || Lang.sprintf('LINK_URL') + Lang.sprintf('LINK_TIP'),
+                ? Lang.sprintf(option.checks.LINK_URL.content)
+                : Lang.sprintf('LINK_URL') + Lang.sprintf('LINK_TIP'),
               inline: true,
               dismiss: Utils.prepareDismissal(`LINKURLNAME${href + linkTextTrimmed}`),
               dismissAll: option.checks.LINK_URL.dismissAll ? 'LINK_URL' : false,
@@ -265,7 +267,8 @@ export default function checkLinkText(results, option) {
             element: $el,
             type: option.checks.LINK_STOPWORD_ARIA.type || 'warning',
             content: option.checks.LINK_STOPWORD_ARIA.content
-              || Lang.sprintf('LINK_STOPWORD_ARIA', stopword, sanitizedText) + Lang.sprintf('LINK_TIP'),
+              ? Lang.sprintf(option.checks.LINK_STOPWORD_ARIA.content, stopword, sanitizedText)
+              : Lang.sprintf('LINK_STOPWORD_ARIA', stopword, sanitizedText) + Lang.sprintf('LINK_TIP'),
             inline: true,
             dismiss: Utils.prepareDismissal(`LINKSTOPWORDARIA${href + linkTextTrimmed}`),
             dismissAll: option.checks.LINK_STOPWORD_ARIA.dismissAll ? ' LINK_STOPWORD_ARIA' : false,
@@ -276,7 +279,9 @@ export default function checkLinkText(results, option) {
           results.push({
             element: $el,
             type: option.checks.LINK_LABEL.type || 'good',
-            content: option.checks.LINK_LABEL.content || `${Lang.sprintf('ACC_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
+            content: option.checks.LINK_LABEL.content
+              ? Lang.sprintf(option.checks.LINK_LABEL.content, sanitizedText)
+              : `${Lang.sprintf('ACC_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
             inline: true,
             position: 'afterend',
             dismiss: Utils.prepareDismissal(`LINKGOOD${href + linkTextTrimmed}`),
@@ -291,7 +296,7 @@ export default function checkLinkText(results, option) {
           results.push({
             element: $el,
             type: option.checks.LABEL_IN_NAME.type || 'warning',
-            content: option.checks.LABEL_IN_NAME.content || `${Lang.sprintf('LABEL_IN_NAME', sanitizedText)}`,
+            content: Lang.sprintf(option.checks.LABEL_IN_NAME.content || 'LABEL_IN_NAME', sanitizedText),
             inline: true,
             position: 'afterend',
             dismiss: Utils.prepareDismissal(`LINKLABELNAME${href + linkTextTrimmed}`),
@@ -305,7 +310,7 @@ export default function checkLinkText(results, option) {
           results.push({
             element: $el,
             type: option.checks.LINK_SYMBOLS.type || 'warning',
-            content: option.checks.LINK_SYMBOLS.content || Lang.sprintf('LINK_SYMBOLS', matchedSymbol),
+            content: Lang.sprintf(option.checks.LINK_SYMBOLS.content || 'LINK_SYMBOLS', matchedSymbol),
             inline: true,
             dismiss: Utils.prepareDismissal(`LINKSYMBOL${href + linkTextTrimmed}`),
             dismissAll: option.checks.LINK_SYMBOLS.dismissAll ? 'LINK_SYMBOLS' : false,
@@ -318,7 +323,7 @@ export default function checkLinkText(results, option) {
           results.push({
             element: $el,
             type: option.checks.LINK_EMPTY.type || 'error',
-            content: option.checks.LINK_EMPTY.content || Lang.sprintf('LINK_EMPTY'),
+            content: Lang.sprintf(option.checks.LINK_EMPTY.content || 'LINK_EMPTY'),
             inline: true,
             position: 'afterend',
             dismiss: Utils.prepareDismissal(`LINKCHAR${href}`),
@@ -335,7 +340,8 @@ export default function checkLinkText(results, option) {
             element: $el,
             type: option.checks.LINK_CLICK_HERE.type || 'warning',
             content: option.checks.LINK_CLICK_HERE.content
-              || Lang.sprintf('LINK_CLICK_HERE') + Lang.sprintf('LINK_TIP'),
+              ? Lang.sprintf(option.checks.LINK_CLICK_HERE.content)
+              : Lang.sprintf('LINK_CLICK_HERE') + Lang.sprintf('LINK_TIP'),
             inline: true,
             dismiss: Utils.prepareDismissal(`LINKCLICKHERE${href + linkTextTrimmed}`),
             dismissAll: option.checks.LINK_CLICK_HERE.dismissAll ? 'LINK_CLICK_HERE' : false,
@@ -350,7 +356,7 @@ export default function checkLinkText(results, option) {
           results.push({
             element: $el,
             type: option.checks.DUPLICATE_TITLE.type || 'warning',
-            content: option.checks.DUPLICATE_TITLE.content || Lang.sprintf('DUPLICATE_TITLE'),
+            content: Lang.sprintf(option.checks.DUPLICATE_TITLE.content || 'DUPLICATE_TITLE'),
             inline: true,
             dismiss: Utils.prepareDismissal(`LINKDUPLICATETITLE${href + linkTextTrimmed}`),
             dismissAll: option.checks.DUPLICATE_TITLE.dismissAll ? 'DUPLICATE_TITLE' : false,
@@ -370,7 +376,8 @@ export default function checkLinkText(results, option) {
               element: $el,
               type: option.checks.LINK_IDENTICAL_NAME.type || 'warning',
               content: option.checks.LINK_IDENTICAL_NAME.content
-                || `${Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
+                ? Lang.sprintf(option.checks.LINK_IDENTICAL_NAME.content, sanitizedText)
+                : `${Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
               inline: true,
               dismiss: Utils.prepareDismissal(`LINKSEEN${href + linkTextTrimmed}`),
               dismissAll: option.checks.LINK_IDENTICAL_NAME.dismissAll ? 'LINK_IDENTICAL_NAME' : false,
@@ -388,7 +395,7 @@ export default function checkLinkText(results, option) {
             results.push({
               element: $el,
               type: option.checks.LINK_NEW_TAB.type || 'warning',
-              content: option.checks.LINK_NEW_TAB.content || Lang.sprintf('LINK_NEW_TAB'),
+              content: Lang.sprintf(option.checks.LINK_NEW_TAB.content || 'LINK_NEW_TAB'),
               inline: true,
               dismiss: Utils.prepareDismissal(`LINKNEWTAB${href + linkTextTrimmed}`),
               dismissAll: option.checks.LINK_NEW_TAB.dismissAll ? 'LINK_NEW_TAB' : false,
@@ -403,7 +410,7 @@ export default function checkLinkText(results, option) {
             results.push({
               element: $el,
               type: option.checks.LINK_FILE_EXT.type || 'warning',
-              content: option.checks.LINK_FILE_EXT.content || Lang.sprintf('LINK_FILE_EXT'),
+              content: Lang.sprintf(option.checks.LINK_FILE_EXT.content || 'LINK_FILE_EXT'),
               inline: true,
               dismiss: Utils.prepareDismissal(`LINKEXT${href + linkTextTrimmed}`),
               dismissAll: option.checks.LINK_FILE_EXT.dismissAll ? 'LINK_FILE_EXT' : false,

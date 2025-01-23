@@ -263,8 +263,7 @@ export default function checkContrast(results, option) {
           results.push({
             element: $el,
             type: option.checks.CONTRAST_ERROR.type || 'error',
-            content: option.checks.CONTRAST_ERROR.content
-              || Lang.sprintf('CONTRAST_ERROR'),
+            content: Lang.sprintf(option.checks.CONTRAST_ERROR.content || 'CONTRAST_ERROR'),
             dismiss: Utils.prepareDismissal(`CONTRAST${sanitizedText}`),
             dismissAll: option.checks.CONTRAST_ERROR.dismissAll ? 'CONTRAST_ERROR' : false,
             developer: option.checks.CONTRAST_ERROR.developer || false,
@@ -277,8 +276,7 @@ export default function checkContrast(results, option) {
           results.push({
             element,
             type: option.checks.CONTRAST_INPUT.type || 'error',
-            content: option.checks.CONTRAST_INPUT.content
-              || Lang.sprintf('CONTRAST_INPUT', ratio),
+            content: Lang.sprintf(option.checks.CONTRAST_INPUT.content || 'CONTRAST_INPUT', ratio),
             dismiss: Utils.prepareDismissal(`CONTRAST${$el.getAttribute('class')}${$el.tagName}${ratio}`),
             dismissAll: option.checks.CONTRAST_INPUT.dismissAll ? 'CONTRAST_INPUT' : false,
             developer: option.checks.CONTRAST_INPUT.developer || true,
@@ -291,8 +289,7 @@ export default function checkContrast(results, option) {
           results.push({
             element: $el,
             type: option.checks.CONTRAST_PLACEHOLDER.type || 'error',
-            content: option.checks.CONTRAST_PLACEHOLDER.content
-              || Lang.sprintf('CONTRAST_PLACEHOLDER'),
+            content: Lang.sprintf(option.checks.CONTRAST_PLACEHOLDER.content || 'CONTRAST_PLACEHOLDER'),
             position: 'afterend',
             dismiss: Utils.prepareDismissal(`CPLACEHOLDER${$el.getAttribute('class')}${$el.tagName}${ratio}`),
             dismissAll: option.checks.CONTRAST_PLACEHOLDER.dismissAll ? 'CONTRAST_PLACEHOLDER' : false,
@@ -306,8 +303,7 @@ export default function checkContrast(results, option) {
           results.push({
             element: $el,
             type: option.checks.CONTRAST_ERROR_GRAPHIC.type || 'error',
-            content: option.checks.CONTRAST_ERROR_GRAPHIC.content
-              || Lang.sprintf('CONTRAST_ERROR_GRAPHIC'),
+            content: Lang.sprintf(option.checks.CONTRAST_ERROR_GRAPHIC.content || 'CONTRAST_ERROR_GRAPHIC'),
             dismiss: Utils.prepareDismissal(`CONTRASTERROR${$el.outerHTML}`),
             dismissAll: option.checks.CONTRAST_ERROR_GRAPHIC.dismissAll ? 'CONTRAST_ERROR_GRAPHIC' : false,
             developer: option.checks.CONTRAST_ERROR_GRAPHIC.developer || true,
@@ -321,8 +317,7 @@ export default function checkContrast(results, option) {
           results.push({
             element: $el,
             type: option.checks.CONTRAST_WARNING_GRAPHIC.type || 'warning',
-            content: option.checks.CONTRAST_WARNING_GRAPHIC.content
-              || Lang.sprintf('CONTRAST_WARNING_GRAPHIC'),
+            content: Lang.sprintf(option.checks.CONTRAST_WARNING_GRAPHIC.content || 'CONTRAST_WARNING_GRAPHIC'),
             dismiss: Utils.prepareDismissal(`CONTRASTWARNING${$el.outerHTML}`),
             dismissAll: option.checks.CONTRAST_WARNING_GRAPHIC.dismissAll ? 'CONTRAST_WARNING_GRAPHIC' : false,
             developer: option.checks.CONTRAST_WARNING_GRAPHIC.developer || true,
@@ -335,8 +330,7 @@ export default function checkContrast(results, option) {
           results.push({
             element,
             type: option.checks.CONTRAST_WARNING.type || 'warning',
-            content: option.checks.CONTRAST_WARNING.content
-              || Lang.sprintf('CONTRAST_WARNING'),
+            content: Lang.sprintf(option.checks.CONTRAST_WARNING.content || 'CONTRAST_WARNING'),
             dismiss: Utils.prepareDismissal(`CONTRAST${sanitizedText}`),
             dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
             developer: option.checks.CONTRAST_WARNING.developer || false,
@@ -349,8 +343,7 @@ export default function checkContrast(results, option) {
           results.push({
             element,
             type: option.checks.CONTRAST_UNSUPPORTED.type || 'warning',
-            content: option.checks.CONTRAST_UNSUPPORTED.content
-              || Lang.sprintf('CONTRAST_WARNING'),
+            content: Lang.sprintf(option.checks.CONTRAST_UNSUPPORTED.content || 'CONTRAST_WARNING'),
             dismiss: Utils.prepareDismissal(`CONTRAST${sanitizedText}`),
             dismissAll: option.checks.CONTRAST_UNSUPPORTED.dismissAll ? 'CONTRAST_UNSUPPORTED' : false,
             developer: option.checks.CONTRAST_UNSUPPORTED.developer || false,

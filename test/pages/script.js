@@ -60,6 +60,9 @@ const sa11y = new Sa11y({
     QA_BAD_LINK: {
       sources: 'a[href*="dev."]',
     },
+    IMAGE_ALT_TOO_LONG: {
+      content: 'Alt text description is <strong>too long</strong>. Fix it please! This is testing the <kbd>content</kbd> override. <hr> {ALT} <strong {B}>%(altLength) Characters</strong> <strong {C}>%(ALT_TEXT)</strong>',
+    },
   },
 });
 

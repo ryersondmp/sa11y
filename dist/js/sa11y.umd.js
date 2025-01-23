@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.1
+  * @version 4.0.2
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -2123,7 +2123,7 @@
     }
   }
 
-  const version = '4.0.1';
+  const version = '4.0.2';
 
   var styles = ":host{background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);bottom:0;display:block;height:-moz-fit-content;height:fit-content;left:0;position:fixed;right:0;width:100%;z-index:999999}*{-webkit-font-smoothing:auto!important;color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;font-size:var(--sa11y-normal-text);line-height:22px!important}#dialog{margin:20px auto;max-width:900px;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none}p{margin-top:0}.error{background:var(--sa11y-error);border:2px dashed #f08080;color:var(--sa11y-error-text);margin-bottom:0;padding:5px}";
 
@@ -8303,8 +8303,7 @@ ${this.error.stack}
           results.push({
             element: $el,
             type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
-            content: option.checks.HIDDEN_FOCUSABLE.content
-              || Lang.sprintf('HIDDEN_FOCUSABLE'),
+            content: Lang.sprintf(option.checks.HIDDEN_FOCUSABLE.content || 'HIDDEN_FOCUSABLE'),
             dismiss: prepareDismissal(`IMGHIDDENFOCUSABLE${src}`),
             dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll
               ? 'LINK_HIDDEN_FOCUSABLE' : false,
@@ -8326,7 +8325,7 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: rule.type || 'error',
-              content: rule.content || Lang.sprintf(linkTextContentLength === 0
+              content: Lang.sprintf(rule.content || linkTextContentLength === 0
                 ? 'MISSING_ALT_LINK' : 'MISSING_ALT_LINK_HAS_TEXT'),
               dismiss: prepareDismissal(`${conditional + src + linkTextContentLength}`),
               dismissAll: rule.dismissAll ? conditional : false,
@@ -8338,7 +8337,7 @@ ${this.error.stack}
           results.push({
             element: $el,
             type: option.checks.MISSING_ALT.type || 'error',
-            content: option.checks.MISSING_ALT.content || Lang.sprintf('MISSING_ALT'),
+            content: Lang.sprintf(option.checks.MISSING_ALT.content || 'MISSING_ALT'),
             dismiss: prepareDismissal(`IMGNOALT${src}`),
             dismissAll: option.checks.MISSING_ALT.dismissAll ? 'MISSING_ALT' : false,
             developer: option.checks.MISSING_ALT.developer || false,
@@ -8368,7 +8367,7 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: option.checks.MISSING_ALT.type || 'error',
-              content: option.checks.MISSING_ALT.content || Lang.sprintf('MISSING_ALT'),
+              content: Lang.sprintf(option.checks.MISSING_ALT.content || 'MISSING_ALT'),
               dismiss: prepareDismissal(`IMGNOALTARIA${src}`),
               dismissAll: option.checks.MISSING_ALT.dismissAll ? 'MISSING_ALT' : false,
               developer: option.checks.MISSING_ALT.developer || false,
@@ -8393,7 +8392,7 @@ ${this.error.stack}
               results.push({
                 element: $el,
                 type: rule.type || 'warning',
-                content: rule.content || Lang.sprintf(conditional),
+                content: Lang.sprintf(rule.content || conditional),
                 dismiss: prepareDismissal(conditional + src),
                 dismissAll: rule.dismissAll ? conditional : false,
                 developer: rule.developer || false,
@@ -8409,7 +8408,7 @@ ${this.error.stack}
               results.push({
                 element: $el,
                 type: rule.type || (linkTextContentLength === 0 ? 'error' : 'good'),
-                content: rule.content || Lang.sprintf(conditional),
+                content: Lang.sprintf(rule.content || conditional),
                 dismiss: prepareDismissal(`${conditional + src + linkTextContentLength}`),
                 dismissAll: rule.dismissAll ? conditional : false,
                 developer: rule.developer || false,
@@ -8425,7 +8424,7 @@ ${this.error.stack}
               results.push({
                 element: $el,
                 type: rule.type || 'warning',
-                content: rule.content || Lang.sprintf(conditional),
+                content: Lang.sprintf(rule.content || conditional),
                 dismiss: prepareDismissal(`${conditional + src + figcaptionText}`),
                 dismissAll: rule.dismissAll ? conditional : false,
                 developer: rule.developer || false,
@@ -8435,7 +8434,7 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: option.checks.IMAGE_DECORATIVE.type || 'warning',
-              content: option.checks.IMAGE_DECORATIVE.content || Lang.sprintf('IMAGE_DECORATIVE'),
+              content: Lang.sprintf(option.checks.IMAGE_DECORATIVE.content || 'IMAGE_DECORATIVE'),
               dismiss: prepareDismissal(`DECIMAGE${src}`),
               dismissAll: option.checks.IMAGE_DECORATIVE.dismissAll ? 'IMAGE_DECORATIVE' : false,
               developer: option.checks.IMAGE_DECORATIVE.developer || false,
@@ -8455,7 +8454,7 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: rule.type || 'error',
-              content: rule.content || Lang.sprintf(link
+              content: Lang.sprintf(rule.content || link
                 ? 'LINK_ALT_FILE_EXT' : 'ALT_FILE_EXT', error[0], altText),
               dismiss: prepareDismissal(`${conditional + src + altText}`),
               dismissAll: rule.dismissAll ? conditional : false,
@@ -8472,7 +8471,7 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: rule.type || 'error',
-              content: rule.content || Lang.sprintf(link
+              content: Lang.sprintf(rule.content || link
                 ? 'LINK_PLACEHOLDER_ALT' : 'ALT_PLACEHOLDER', altText),
               dismiss: prepareDismissal(`${conditional + src + altText}`),
               dismissAll: rule.dismissAll ? conditional : false,
@@ -8489,7 +8488,7 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: rule.type || 'warning',
-              content: rule.content || Lang.sprintf(link
+              content: Lang.sprintf(rule.content || link
                 ? 'LINK_SUS_ALT' : 'SUS_ALT', error[1], altText),
               dismiss: prepareDismissal(`${conditional + src + altText}`),
               dismissAll: rule.dismissAll ? conditional : false,
@@ -8509,8 +8508,7 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: rule.type || 'warning',
-              content: rule.content
-                || Lang.sprintf(link ? 'LINK_IMAGE_LONG_ALT' : 'IMAGE_ALT_TOO_LONG', alt.length, truncated),
+              content: Lang.sprintf(rule.content || (link ? 'LINK_IMAGE_LONG_ALT' : 'IMAGE_ALT_TOO_LONG'), alt.length, truncated),
               dismiss: prepareDismissal(`${conditional + src + altText}`),
               dismissAll: rule.dismissAll ? conditional : false,
               developer: rule.developer || false,
@@ -8535,7 +8533,9 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: rule.type || 'warning',
-              content: rule.content || tooltip,
+              content: rule.content
+                ? Lang.sprintf(rule.content, altText, sanitizedText)
+                : tooltip,
               dismiss: prepareDismissal(`${conditional + src + altText}`),
               dismissAll: rule.dismissAll ? conditional : false,
               developer: rule.developer || false,
@@ -8549,7 +8549,7 @@ ${this.error.stack}
               results.push({
                 element: $el,
                 type: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.type || 'warning',
-                content: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.content || Lang.sprintf('IMAGE_FIGURE_DUPLICATE_ALT', altText),
+                content: Lang.sprintf(option.checks.IMAGE_FIGURE_DUPLICATE_ALT.content || 'IMAGE_FIGURE_DUPLICATE_ALT', altText),
                 dismiss: prepareDismissal(`FIGDUPLICATE${src}`),
                 dismissAll: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.dismissAll ? 'IMAGE_FIGURE_DUPLICATE_ALT' : false,
                 developer: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.developer || false,
@@ -8560,7 +8560,7 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: option.checks.IMAGE_PASS.type || 'good',
-              content: option.checks.IMAGE_PASS.content || Lang.sprintf('IMAGE_PASS', altText),
+              content: Lang.sprintf(option.checks.IMAGE_PASS.content || 'IMAGE_PASS', altText),
               dismiss: prepareDismissal(`FIGIMGPASS${src + altText}`),
               dismissAll: option.checks.IMAGE_PASS.dismissAll ? 'IMAGE_PASS' : false,
               developer: option.checks.IMAGE_PASS.developer || false,
@@ -8572,7 +8572,7 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: option.checks.IMAGE_PASS.type || 'good',
-              content: option.checks.IMAGE_PASS.content || Lang.sprintf('IMAGE_PASS', altText),
+              content: Lang.sprintf(option.checks.IMAGE_PASS.content || 'IMAGE_PASS', altText),
               dismiss: prepareDismissal(`IMAGEPASS${src + altText}`),
               dismissAll: option.checks.IMAGE_PASS.dismissAll ? 'IMAGE_PASS' : false,
               developer: option.checks.IMAGE_PASS.developer || false,
@@ -8587,7 +8587,7 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: option.checks.DUPLICATE_TITLE.type || 'warning',
-              content: option.checks.DUPLICATE_TITLE.content || Lang.sprintf('DUPLICATE_TITLE'),
+              content: Lang.sprintf(option.checks.DUPLICATE_TITLE.content || 'DUPLICATE_TITLE'),
               inline: true,
               dismiss: prepareDismissal(`ALTDUPLICATETITLE${altText}`),
               dismissAll: option.checks.DUPLICATE_TITLE.dismissAll ? 'DUPLICATE_TITLE' : false,
@@ -8631,8 +8631,7 @@ ${this.error.stack}
       if (level - prevLevel > 1 && i !== 0) {
         if (option.checks.HEADING_SKIPPED_LEVEL) {
           type = option.checks.HEADING_SKIPPED_LEVEL.type || 'error';
-          content = option.checks.HEADING_SKIPPED_LEVEL.content
-            || Lang.sprintf('HEADING_SKIPPED_LEVEL', prevLevel, level, truncateString(headingText, 50), truncateString(prevHeadingText, 50), prevLevel + 1);
+          content = Lang.sprintf(option.checks.HEADING_SKIPPED_LEVEL.content || 'HEADING_SKIPPED_LEVEL', prevLevel, level, truncateString(headingText, 60), truncateString(prevHeadingText, 60), prevLevel + 1);
           developer = option.checks.HEADING_SKIPPED_LEVEL.developer || false;
           dismissAll = option.checks.HEADING_SKIPPED_LEVEL.dismissAll ? 'HEADING_SKIPPED_LEVEL' : false;
         }
@@ -8642,29 +8641,28 @@ ${this.error.stack}
           if ($el.querySelector('img') && (!alt || alt.trim() === '')) {
             if (option.checks.HEADING_EMPTY_WITH_IMAGE) {
               type = option.checks.HEADING_EMPTY_WITH_IMAGE.type || 'error';
-              content = option.checks.HEADING_EMPTY_WITH_IMAGE.content || Lang.sprintf('HEADING_EMPTY_WITH_IMAGE', level);
+              content = Lang.sprintf(option.checks.HEADING_EMPTY_WITH_IMAGE.content || 'HEADING_EMPTY_WITH_IMAGE', level);
               developer = option.checks.HEADING_EMPTY_WITH_IMAGE.developer || false;
               dismissAll = option.checks.HEADING_EMPTY_WITH_IMAGE.dismissAll ? 'HEADING_EMPTY_WITH_IMAGE' : false;
             }
           }
         } else if (option.checks.HEADING_EMPTY) {
           type = option.checks.HEADING_EMPTY.type || 'error';
-          content = option.checks.HEADING_EMPTY.content || Lang.sprintf('HEADING_EMPTY', level);
+          content = Lang.sprintf(option.checks.HEADING_EMPTY.content || 'HEADING_EMPTY', level);
           developer = option.checks.HEADING_EMPTY.developer || false;
           dismissAll = option.checks.HEADING_EMPTY.dismissAll ? 'HEADING_EMPTY' : false;
         }
       } else if (i === 0 && level !== 1 && level !== 2) {
         if (option.checks.HEADING_FIRST) {
           type = option.checks.HEADING_FIRST.type || 'error';
-          content = option.checks.HEADING_FIRST.content || Lang.sprintf('HEADING_FIRST');
+          content = Lang.sprintf(option.checks.HEADING_FIRST.content || 'HEADING_FIRST');
           developer = option.checks.HEADING_FIRST.developer || false;
           dismissAll = option.checks.HEADING_FIRST.dismissAll ? 'HEADING_FIRST' : false;
         }
       } else if (headingLength > maxHeadingLength) {
         if (option.checks.HEADING_LONG) {
           type = option.checks.HEADING_LONG.type || 'warning';
-          content = option.checks.HEADING_LONG.content
-            || Lang.sprintf('HEADING_LONG', maxHeadingLength, headingLength);
+          content = Lang.sprintf(option.checks.HEADING_LONG.content || 'HEADING_LONG', maxHeadingLength, headingLength);
           developer = option.checks.HEADING_LONG.developer || false;
           dismissAll = option.checks.HEADING_LONG.dismissAll ? 'HEADING_LONG' : false;
         }
@@ -8709,7 +8707,7 @@ ${this.error.stack}
     if (option.checks.HEADING_MISSING_ONE && Elements.Found.HeadingOne.length === 0) {
       results.push({
         type: option.checks.HEADING_MISSING_ONE.type || 'warning',
-        content: option.checks.HEADING_MISSING_ONE.content || Lang.sprintf('HEADING_MISSING_ONE'),
+        content: Lang.sprintf(option.checks.HEADING_MISSING_ONE.content || 'HEADING_MISSING_ONE'),
         dismiss: 'MISSINGH1',
         developer: option.checks.HEADING_MISSING_ONE.developer || false,
       });
@@ -8865,7 +8863,7 @@ ${this.error.stack}
               results.push({
                 element: $el,
                 type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
-                content: option.checks.HIDDEN_FOCUSABLE.content || Lang.sprintf('HIDDEN_FOCUSABLE'),
+                content: Lang.sprintf(option.checks.HIDDEN_FOCUSABLE.content || 'HIDDEN_FOCUSABLE'),
                 inline: true,
                 position: 'afterend',
                 dismiss: prepareDismissal(`LINKHIDDENFOCUS${href + linkTextTrimmed}`),
@@ -8882,7 +8880,7 @@ ${this.error.stack}
               results.push({
                 element: $el,
                 type: option.checks.LINK_EMPTY_LABELLEDBY.type || 'error',
-                content: option.checks.LINK_EMPTY_LABELLEDBY.content || Lang.sprintf('LINK_EMPTY_LABELLEDBY'),
+                content: Lang.sprintf(option.checks.LINK_EMPTY_LABELLEDBY.content || 'LINK_EMPTY_LABELLEDBY'),
                 inline: true,
                 position: 'afterend',
                 dismiss: prepareDismissal(`LINKEMPTYLABELLEDBY${href}`),
@@ -8896,7 +8894,7 @@ ${this.error.stack}
               results.push({
                 element: $el,
                 type: option.checks.LINK_EMPTY_NO_LABEL.type || 'error',
-                content: option.checks.LINK_EMPTY_NO_LABEL.content || Lang.sprintf('LINK_EMPTY_NO_LABEL'),
+                content: Lang.sprintf(option.checks.LINK_EMPTY_NO_LABEL.content || 'LINK_EMPTY_NO_LABEL'),
                 inline: true,
                 position: 'afterend',
                 dismiss: prepareDismissal(`LINKEMPTYNOLABEL${href}`),
@@ -8909,7 +8907,7 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: option.checks.LINK_EMPTY.type || 'error',
-              content: option.checks.LINK_EMPTY.content || Lang.sprintf('LINK_EMPTY'),
+              content: Lang.sprintf(option.checks.LINK_EMPTY.content || 'LINK_EMPTY'),
               inline: true,
               position: 'afterend',
               dismiss: prepareDismissal(`LINKEMPTY${href}`),
@@ -8924,7 +8922,8 @@ ${this.error.stack}
               element: $el,
               type: option.checks.LINK_STOPWORD.type || 'error',
               content: option.checks.LINK_STOPWORD.content
-                || Lang.sprintf('LINK_STOPWORD', error[0]) + Lang.sprintf('LINK_TIP'),
+                ? Lang.sprintf(option.checks.LINK_STOPWORD.content, error[0])
+                : Lang.sprintf('LINK_STOPWORD', error[0]) + Lang.sprintf('LINK_TIP'),
               inline: true,
               position: 'afterend',
               dismiss: prepareDismissal(`LINKSTOPWORD${href + linkTextTrimmed}`),
@@ -8939,7 +8938,7 @@ ${this.error.stack}
               results.push({
                 element: $el,
                 type: option.checks.LINK_DOI.type || 'warning',
-                content: option.checks.LINK_DOI.content || Lang.sprintf('LINK_DOI'),
+                content: Lang.sprintf(option.checks.LINK_DOI.content || 'LINK_DOI'),
                 inline: true,
                 dismiss: prepareDismissal(`LINKDOI${href + linkTextTrimmed}`),
                 dismissAll: option.checks.LINK_DOI.dismissAll ? 'LINK_DOI' : false,
@@ -8955,7 +8954,8 @@ ${this.error.stack}
                 element: $el,
                 type: option.checks.LINK_URL.type || 'warning',
                 content: option.checks.LINK_URL.content
-                  || Lang.sprintf('LINK_URL') + Lang.sprintf('LINK_TIP'),
+                  ? Lang.sprintf(option.checks.LINK_URL.content)
+                  : Lang.sprintf('LINK_URL') + Lang.sprintf('LINK_TIP'),
                 inline: true,
                 dismiss: prepareDismissal(`LINKURLNAME${href + linkTextTrimmed}`),
                 dismissAll: option.checks.LINK_URL.dismissAll ? 'LINK_URL' : false,
@@ -8978,7 +8978,8 @@ ${this.error.stack}
               element: $el,
               type: option.checks.LINK_STOPWORD_ARIA.type || 'warning',
               content: option.checks.LINK_STOPWORD_ARIA.content
-                || Lang.sprintf('LINK_STOPWORD_ARIA', stopword, sanitizedText) + Lang.sprintf('LINK_TIP'),
+                ? Lang.sprintf(option.checks.LINK_STOPWORD_ARIA.content, stopword, sanitizedText)
+                : Lang.sprintf('LINK_STOPWORD_ARIA', stopword, sanitizedText) + Lang.sprintf('LINK_TIP'),
               inline: true,
               dismiss: prepareDismissal(`LINKSTOPWORDARIA${href + linkTextTrimmed}`),
               dismissAll: option.checks.LINK_STOPWORD_ARIA.dismissAll ? ' LINK_STOPWORD_ARIA' : false,
@@ -8989,7 +8990,9 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: option.checks.LINK_LABEL.type || 'good',
-              content: option.checks.LINK_LABEL.content || `${Lang.sprintf('ACC_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
+              content: option.checks.LINK_LABEL.content
+                ? Lang.sprintf(option.checks.LINK_LABEL.content, sanitizedText)
+                : `${Lang.sprintf('ACC_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
               inline: true,
               position: 'afterend',
               dismiss: prepareDismissal(`LINKGOOD${href + linkTextTrimmed}`),
@@ -9004,7 +9007,7 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: option.checks.LABEL_IN_NAME.type || 'warning',
-              content: option.checks.LABEL_IN_NAME.content || `${Lang.sprintf('LABEL_IN_NAME', sanitizedText)}`,
+              content: Lang.sprintf(option.checks.LABEL_IN_NAME.content || 'LABEL_IN_NAME', sanitizedText),
               inline: true,
               position: 'afterend',
               dismiss: prepareDismissal(`LINKLABELNAME${href + linkTextTrimmed}`),
@@ -9018,7 +9021,7 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: option.checks.LINK_SYMBOLS.type || 'warning',
-              content: option.checks.LINK_SYMBOLS.content || Lang.sprintf('LINK_SYMBOLS', matchedSymbol),
+              content: Lang.sprintf(option.checks.LINK_SYMBOLS.content || 'LINK_SYMBOLS', matchedSymbol),
               inline: true,
               dismiss: prepareDismissal(`LINKSYMBOL${href + linkTextTrimmed}`),
               dismissAll: option.checks.LINK_SYMBOLS.dismissAll ? 'LINK_SYMBOLS' : false,
@@ -9031,7 +9034,7 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: option.checks.LINK_EMPTY.type || 'error',
-              content: option.checks.LINK_EMPTY.content || Lang.sprintf('LINK_EMPTY'),
+              content: Lang.sprintf(option.checks.LINK_EMPTY.content || 'LINK_EMPTY'),
               inline: true,
               position: 'afterend',
               dismiss: prepareDismissal(`LINKCHAR${href}`),
@@ -9048,7 +9051,8 @@ ${this.error.stack}
               element: $el,
               type: option.checks.LINK_CLICK_HERE.type || 'warning',
               content: option.checks.LINK_CLICK_HERE.content
-                || Lang.sprintf('LINK_CLICK_HERE') + Lang.sprintf('LINK_TIP'),
+                ? Lang.sprintf(option.checks.LINK_CLICK_HERE.content)
+                : Lang.sprintf('LINK_CLICK_HERE') + Lang.sprintf('LINK_TIP'),
               inline: true,
               dismiss: prepareDismissal(`LINKCLICKHERE${href + linkTextTrimmed}`),
               dismissAll: option.checks.LINK_CLICK_HERE.dismissAll ? 'LINK_CLICK_HERE' : false,
@@ -9063,7 +9067,7 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: option.checks.DUPLICATE_TITLE.type || 'warning',
-              content: option.checks.DUPLICATE_TITLE.content || Lang.sprintf('DUPLICATE_TITLE'),
+              content: Lang.sprintf(option.checks.DUPLICATE_TITLE.content || 'DUPLICATE_TITLE'),
               inline: true,
               dismiss: prepareDismissal(`LINKDUPLICATETITLE${href + linkTextTrimmed}`),
               dismissAll: option.checks.DUPLICATE_TITLE.dismissAll ? 'DUPLICATE_TITLE' : false,
@@ -9083,7 +9087,8 @@ ${this.error.stack}
                 element: $el,
                 type: option.checks.LINK_IDENTICAL_NAME.type || 'warning',
                 content: option.checks.LINK_IDENTICAL_NAME.content
-                  || `${Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
+                  ? Lang.sprintf(option.checks.LINK_IDENTICAL_NAME.content, sanitizedText)
+                  : `${Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
                 inline: true,
                 dismiss: prepareDismissal(`LINKSEEN${href + linkTextTrimmed}`),
                 dismissAll: option.checks.LINK_IDENTICAL_NAME.dismissAll ? 'LINK_IDENTICAL_NAME' : false,
@@ -9101,7 +9106,7 @@ ${this.error.stack}
               results.push({
                 element: $el,
                 type: option.checks.LINK_NEW_TAB.type || 'warning',
-                content: option.checks.LINK_NEW_TAB.content || Lang.sprintf('LINK_NEW_TAB'),
+                content: Lang.sprintf(option.checks.LINK_NEW_TAB.content || 'LINK_NEW_TAB'),
                 inline: true,
                 dismiss: prepareDismissal(`LINKNEWTAB${href + linkTextTrimmed}`),
                 dismissAll: option.checks.LINK_NEW_TAB.dismissAll ? 'LINK_NEW_TAB' : false,
@@ -9116,7 +9121,7 @@ ${this.error.stack}
               results.push({
                 element: $el,
                 type: option.checks.LINK_FILE_EXT.type || 'warning',
-                content: option.checks.LINK_FILE_EXT.content || Lang.sprintf('LINK_FILE_EXT'),
+                content: Lang.sprintf(option.checks.LINK_FILE_EXT.content || 'LINK_FILE_EXT'),
                 inline: true,
                 dismiss: prepareDismissal(`LINKEXT${href + linkTextTrimmed}`),
                 dismissAll: option.checks.LINK_FILE_EXT.dismissAll ? 'LINK_FILE_EXT' : false,
@@ -9382,8 +9387,7 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: option.checks.CONTRAST_ERROR.type || 'error',
-              content: option.checks.CONTRAST_ERROR.content
-                || Lang.sprintf('CONTRAST_ERROR'),
+              content: Lang.sprintf(option.checks.CONTRAST_ERROR.content || 'CONTRAST_ERROR'),
               dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
               dismissAll: option.checks.CONTRAST_ERROR.dismissAll ? 'CONTRAST_ERROR' : false,
               developer: option.checks.CONTRAST_ERROR.developer || false,
@@ -9396,8 +9400,7 @@ ${this.error.stack}
             results.push({
               element,
               type: option.checks.CONTRAST_INPUT.type || 'error',
-              content: option.checks.CONTRAST_INPUT.content
-                || Lang.sprintf('CONTRAST_INPUT', ratio),
+              content: Lang.sprintf(option.checks.CONTRAST_INPUT.content || 'CONTRAST_INPUT', ratio),
               dismiss: prepareDismissal(`CONTRAST${$el.getAttribute('class')}${$el.tagName}${ratio}`),
               dismissAll: option.checks.CONTRAST_INPUT.dismissAll ? 'CONTRAST_INPUT' : false,
               developer: option.checks.CONTRAST_INPUT.developer || true,
@@ -9410,8 +9413,7 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: option.checks.CONTRAST_PLACEHOLDER.type || 'error',
-              content: option.checks.CONTRAST_PLACEHOLDER.content
-                || Lang.sprintf('CONTRAST_PLACEHOLDER'),
+              content: Lang.sprintf(option.checks.CONTRAST_PLACEHOLDER.content || 'CONTRAST_PLACEHOLDER'),
               position: 'afterend',
               dismiss: prepareDismissal(`CPLACEHOLDER${$el.getAttribute('class')}${$el.tagName}${ratio}`),
               dismissAll: option.checks.CONTRAST_PLACEHOLDER.dismissAll ? 'CONTRAST_PLACEHOLDER' : false,
@@ -9425,8 +9427,7 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: option.checks.CONTRAST_ERROR_GRAPHIC.type || 'error',
-              content: option.checks.CONTRAST_ERROR_GRAPHIC.content
-                || Lang.sprintf('CONTRAST_ERROR_GRAPHIC'),
+              content: Lang.sprintf(option.checks.CONTRAST_ERROR_GRAPHIC.content || 'CONTRAST_ERROR_GRAPHIC'),
               dismiss: prepareDismissal(`CONTRASTERROR${$el.outerHTML}`),
               dismissAll: option.checks.CONTRAST_ERROR_GRAPHIC.dismissAll ? 'CONTRAST_ERROR_GRAPHIC' : false,
               developer: option.checks.CONTRAST_ERROR_GRAPHIC.developer || true,
@@ -9440,8 +9441,7 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: option.checks.CONTRAST_WARNING_GRAPHIC.type || 'warning',
-              content: option.checks.CONTRAST_WARNING_GRAPHIC.content
-                || Lang.sprintf('CONTRAST_WARNING_GRAPHIC'),
+              content: Lang.sprintf(option.checks.CONTRAST_WARNING_GRAPHIC.content || 'CONTRAST_WARNING_GRAPHIC'),
               dismiss: prepareDismissal(`CONTRASTWARNING${$el.outerHTML}`),
               dismissAll: option.checks.CONTRAST_WARNING_GRAPHIC.dismissAll ? 'CONTRAST_WARNING_GRAPHIC' : false,
               developer: option.checks.CONTRAST_WARNING_GRAPHIC.developer || true,
@@ -9454,8 +9454,7 @@ ${this.error.stack}
             results.push({
               element,
               type: option.checks.CONTRAST_WARNING.type || 'warning',
-              content: option.checks.CONTRAST_WARNING.content
-                || Lang.sprintf('CONTRAST_WARNING'),
+              content: Lang.sprintf(option.checks.CONTRAST_WARNING.content || 'CONTRAST_WARNING'),
               dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
               dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
               developer: option.checks.CONTRAST_WARNING.developer || false,
@@ -9468,8 +9467,7 @@ ${this.error.stack}
             results.push({
               element,
               type: option.checks.CONTRAST_UNSUPPORTED.type || 'warning',
-              content: option.checks.CONTRAST_UNSUPPORTED.content
-                || Lang.sprintf('CONTRAST_WARNING'),
+              content: Lang.sprintf(option.checks.CONTRAST_UNSUPPORTED.content || 'CONTRAST_WARNING'),
               dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
               dismissAll: option.checks.CONTRAST_UNSUPPORTED.dismissAll ? 'CONTRAST_UNSUPPORTED' : false,
               developer: option.checks.CONTRAST_UNSUPPORTED.developer || false,
@@ -9514,7 +9512,7 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: option.checks.LABELS_MISSING_IMAGE_INPUT.type || 'error',
-              content: option.checks.LABELS_MISSING_IMAGE_INPUT.content || Lang.sprintf('LABELS_MISSING_IMAGE_INPUT'),
+              content: Lang.sprintf(option.checks.LABELS_MISSING_IMAGE_INPUT.content || 'LABELS_MISSING_IMAGE_INPUT'),
               dismiss: prepareDismissal(`INPUTIMAGE${type + inputName}`),
               dismissAll: option.checks.LABELS_MISSING_IMAGE_INPUT.dismissAll ? 'LABELS_MISSING_IMAGE_INPUT' : false,
               developer: option.checks.LABELS_MISSING_IMAGE_INPUT.developer || true,
@@ -9529,7 +9527,7 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: option.checks.LABELS_INPUT_RESET.type || 'warning',
-              content: option.checks.LABELS_INPUT_RESET.content || Lang.sprintf('LABELS_INPUT_RESET'),
+              content: Lang.sprintf(option.checks.LABELS_INPUT_RESET.content || 'LABELS_INPUT_RESET'),
               dismiss: prepareDismissal(`INPUTRESET${type + inputName}`),
               dismissAll: option.checks.LABELS_INPUT_RESET.dismissAll ? 'LABELS_INPUT_RESET' : false,
               developer: option.checks.LABELS_INPUT_RESET.developer || false,
@@ -9545,7 +9543,7 @@ ${this.error.stack}
               results.push({
                 element: $el,
                 type: option.checks.LABELS_MISSING_LABEL.type || 'error',
-                content: option.checks.LABELS_MISSING_LABEL.content || Lang.sprintf('LABELS_MISSING_LABEL'),
+                content: Lang.sprintf(option.checks.LABELS_MISSING_LABEL.content || 'LABELS_MISSING_LABEL'),
                 dismiss: prepareDismissal(`INPUTMISSING${type + inputName}`),
                 dismissAll: option.checks.LABELS_MISSING_LABEL.dismissAll ? 'LABELS_MISSING_LABEL' : false,
                 developer: option.checks.LABELS_MISSING_LABEL.developer || true,
@@ -9556,7 +9554,9 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: option.checks.LABELS_ARIA_LABEL_INPUT.type || 'warning',
-              content: option.checks.LABELS_ARIA_LABEL_INPUT.content || `${Lang.sprintf('LABELS_ARIA_LABEL_INPUT', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
+              content: option.checks.LABELS_ARIA_LABEL_INPUT.content
+                ? Lang.sprintf(option.checks.LABELS_ARIA_LABEL_INPUT.content, sanitizedText)
+                : `${Lang.sprintf('LABELS_ARIA_LABEL_INPUT', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
               dismiss: prepareDismissal(`INPUTARIA${type + inputName}`),
               dismissAll: option.checks.LABELS_ARIA_LABEL_INPUT.dismissAll ? 'LABELS_ARIA_LABEL_INPUT' : false,
               developer: option.checks.LABELS_ARIA_LABEL_INPUT.developer || true,
@@ -9581,7 +9581,7 @@ ${this.error.stack}
               results.push({
                 element: $el,
                 type: option.checks.LABELS_NO_FOR_ATTRIBUTE.type || 'error',
-                content: option.checks.LABELS_NO_FOR_ATTRIBUTE.content || Lang.sprintf('LABELS_NO_FOR_ATTRIBUTE', id),
+                content: Lang.sprintf(option.checks.LABELS_NO_FOR_ATTRIBUTE.content || 'LABELS_NO_FOR_ATTRIBUTE', id),
                 dismiss: prepareDismissal(`INPUTNOFOR${type + inputName}`),
                 dismissAll: option.checks.LABELS_NO_FOR_ATTRIBUTE.dismissAll ? 'LABELS_NO_FOR_ATTRIBUTE' : false,
                 developer: option.checks.LABELS_NO_FOR_ATTRIBUTE.developer || true,
@@ -9593,7 +9593,7 @@ ${this.error.stack}
           results.push({
             element: $el,
             type: option.checks.LABELS_MISSING_LABEL.type || 'error',
-            content: option.checks.LABELS_MISSING_LABEL.content || Lang.sprintf('LABELS_MISSING_LABEL'),
+            content: Lang.sprintf(option.checks.LABELS_MISSING_LABEL.content || 'LABELS_MISSING_LABEL'),
             dismiss: prepareDismissal(`INPUTNOID${type + inputName}`),
             dismissAll: option.checks.LABELS_MISSING_LABEL.dismissAll ? 'LABELS_MISSING_LABEL' : false,
             developer: option.checks.LABELS_MISSING_LABEL.developer || true,
@@ -9605,7 +9605,7 @@ ${this.error.stack}
           results.push({
             element: $el,
             type: option.checks.LABELS_PLACEHOLDER.type || 'warning',
-            content: option.checks.LABELS_PLACEHOLDER.content || Lang.sprintf('LABELS_PLACEHOLDER'),
+            content: Lang.sprintf(option.checks.LABELS_PLACEHOLDER.content || 'LABELS_PLACEHOLDER'),
             dismiss: prepareDismissal(`INPUTPLACEHOLDER${type + inputName}`),
             dismissAll: option.checks.LABELS_PLACEHOLDER.dismissAll ? 'LABELS_PLACEHOLDER' : false,
             developer: option.checks.LABELS_PLACEHOLDER.developer || true,
@@ -9844,7 +9844,7 @@ ${this.error.stack}
         results.push({
           element: $el,
           type: option.checks.EMBED_AUDIO.type || 'warning',
-          content: option.checks.EMBED_AUDIO.content || Lang.sprintf('EMBED_AUDIO'),
+          content: Lang.sprintf(option.checks.EMBED_AUDIO.content || 'EMBED_AUDIO'),
           dismiss: prepareDismissal(`AUDIO${src($el)}`),
           dismissAll: option.checks.EMBED_AUDIO.dismissAll ? 'EMBED_AUDIO' : false,
           developer: option.checks.EMBED_AUDIO.developer || false,
@@ -9862,7 +9862,7 @@ ${this.error.stack}
           results.push({
             element: $el,
             type: option.checks.EMBED_VIDEO.type || 'warning',
-            content: option.checks.EMBED_VIDEO.content || Lang.sprintf('EMBED_VIDEO'),
+            content: Lang.sprintf(option.checks.EMBED_VIDEO.content || 'EMBED_VIDEO'),
             dismiss: prepareDismissal(`VIDEO${src($el)}`),
             dismissAll: option.checks.EMBED_VIDEO.dismissAll ? 'EMBED_VIDEO' : false,
             developer: option.checks.EMBED_VIDEO.developer || false,
@@ -9878,7 +9878,7 @@ ${this.error.stack}
         results.push({
           element: $el,
           type: option.checks.EMBED_DATA_VIZ.type || 'warning',
-          content: option.checks.EMBED_DATA_VIZ.content || Lang.sprintf('EMBED_DATA_VIZ'),
+          content: Lang.sprintf(option.checks.EMBED_DATA_VIZ.content || 'EMBED_DATA_VIZ'),
           dismiss: prepareDismissal(`DATAVIZ${src($el)}`),
           dismissAll: option.checks.EMBED_DATA_VIZ.dismissAll ? 'EMBED_DATA_VIZ' : false,
           developer: option.checks.EMBED_DATA_VIZ.developer || false,
@@ -9904,7 +9904,7 @@ ${this.error.stack}
           results.push({
             element: $el,
             type: option.checks.EMBED_UNFOCUSABLE.type || 'error',
-            content: option.checks.EMBED_UNFOCUSABLE.content || Lang.sprintf('EMBED_UNFOCUSABLE'),
+            content: Lang.sprintf(option.checks.EMBED_UNFOCUSABLE.content || 'EMBED_UNFOCUSABLE'),
             dismiss: prepareDismissal(`EMBEDUNFOCUSABLE${src($el)}`),
             dismissAll: option.checks.EMBED_UNFOCUSABLE.dismissAll ? 'EMBED_UNFOCUSABLE' : false,
             developer: option.checks.EMBED_UNFOCUSABLE.developer || true,
@@ -9922,7 +9922,7 @@ ${this.error.stack}
           results.push({
             element: $el,
             type: option.checks.EMBED_MISSING_TITLE.type || 'error',
-            content: option.checks.EMBED_MISSING_TITLE.content || Lang.sprintf('EMBED_MISSING_TITLE'),
+            content: Lang.sprintf(option.checks.EMBED_MISSING_TITLE.content || 'EMBED_MISSING_TITLE'),
             dismiss: prepareDismissal(`EMBEDMISSTITLE${src($el)}`),
             dismissAll: option.checks.EMBED_MISSING_TITLE.dismissAll ? 'EMBED_MISSING_TITLE' : false,
             developer: option.checks.EMBED_MISSING_TITLE.developer || true,
@@ -9951,7 +9951,7 @@ ${this.error.stack}
         results.push({
           element: $el,
           type: option.checks.EMBED_GENERAL.type || 'warning',
-          content: option.checks.EMBED_GENERAL.content || Lang.sprintf('EMBED_GENERAL'),
+          content: Lang.sprintf(option.checks.EMBED_GENERAL.content || 'EMBED_GENERAL'),
           dismiss: prepareDismissal(`IFRAMEGENERAL${src($el)}`),
           dismissAll: option.checks.EMBED_GENERAL.dismissAll ? 'EMBED_GENERAL' : false,
           developer: option.checks.EMBED_GENERAL.developer || false,
@@ -9970,7 +9970,7 @@ ${this.error.stack}
         results.push({
           element: $el,
           type: option.checks.QA_BAD_LINK.type || 'error',
-          content: option.checks.QA_BAD_LINK.content || Lang.sprintf('QA_BAD_LINK', $el),
+          content: Lang.sprintf(option.checks.QA_BAD_LINK.content || 'QA_BAD_LINK', $el),
           inline: true,
           dismiss: prepareDismissal($el.tagName + $el.textContent),
           dismissAll: option.checks.QA_BAD_LINK.dismissAll ? 'QA_BAD_LINK' : false,
@@ -9989,7 +9989,7 @@ ${this.error.stack}
           results.push({
             element: $el.parentNode,
             type: option.checks.QA_STRONG_ITALICS.type || 'warning',
-            content: option.checks.QA_STRONG_ITALICS.content || Lang.sprintf('QA_STRONG_ITALICS'),
+            content: Lang.sprintf(option.checks.QA_STRONG_ITALICS.content || 'QA_STRONG_ITALICS'),
             dismiss: prepareDismissal($el.tagName + $el.textContent),
             dismissAll: option.checks.QA_STRONG_ITALICS.dismissAll ? 'QA_STRONG_ITALICS' : false,
             developer: option.checks.QA_STRONG_ITALICS.developer || false,
@@ -10027,7 +10027,7 @@ ${this.error.stack}
               results.push({
                 element: $el,
                 type: option.checks.QA_IN_PAGE_LINK.type || 'error',
-                content: option.checks.QA_IN_PAGE_LINK.content || Lang.sprintf('QA_IN_PAGE_LINK'),
+                content: Lang.sprintf(option.checks.QA_IN_PAGE_LINK.content || 'QA_IN_PAGE_LINK'),
                 inline: true,
                 dismiss: prepareDismissal(`QAINPAGE${href}`),
                 dismissAll: option.checks.QA_IN_PAGE_LINK.dismissAll ? 'QA_IN_PAGE_LINK' : false,
@@ -10042,7 +10042,7 @@ ${this.error.stack}
           results.push({
             element: $el,
             type: option.checks.QA_DOCUMENT.type || 'warning',
-            content: option.checks.QA_DOCUMENT.content || Lang.sprintf('QA_DOCUMENT'),
+            content: Lang.sprintf(option.checks.QA_DOCUMENT.content || 'QA_DOCUMENT'),
             inline: true,
             dismiss: prepareDismissal(`DOC${href}`),
             dismissAll: option.checks.QA_DOCUMENT.dismissAll ? 'QA_DOCUMENT' : false,
@@ -10052,7 +10052,7 @@ ${this.error.stack}
           results.push({
             element: $el,
             type: option.checks.QA_PDF.type || 'warning',
-            content: option.checks.QA_PDF.content || Lang.sprintf('QA_PDF'),
+            content: Lang.sprintf(option.checks.QA_PDF.content || 'QA_PDF'),
             inline: true,
             dismiss: prepareDismissal(`PDF${href}`),
             dismissAll: option.checks.QA_PDF.dismissAll ? 'QA_PDF' : false,
@@ -10073,7 +10073,7 @@ ${this.error.stack}
           results.push({
             element: $el,
             type: option.checks.QA_BLOCKQUOTE.type || 'warning',
-            content: option.checks.QA_BLOCKQUOTE.content || Lang.sprintf('QA_BLOCKQUOTE', sanitizedText),
+            content: Lang.sprintf(option.checks.QA_BLOCKQUOTE.content || 'QA_BLOCKQUOTE', sanitizedText),
             dismiss: prepareDismissal(`BLOCKQUOTE${sanitizedText}`),
             dismissAll: option.checks.QA_BLOCKQUOTE.dismissAll ? 'QA_BLOCKQUOTE' : false,
             developer: option.checks.QA_BLOCKQUOTE.developer || false,
@@ -10094,7 +10094,7 @@ ${this.error.stack}
           results.push({
             element: $el,
             type: option.checks.TABLES_MISSING_HEADINGS.type || 'error',
-            content: option.checks.TABLES_MISSING_HEADINGS.content || Lang.sprintf('TABLES_MISSING_HEADINGS'),
+            content: Lang.sprintf(option.checks.TABLES_MISSING_HEADINGS.content || 'TABLES_MISSING_HEADINGS'),
             dismiss: key,
             dismissAll: option.checks.TABLES_MISSING_HEADINGS.dismissAll ? 'TABLES_MISSING_HEADINGS' : false,
             developer: option.checks.TABLES_MISSING_HEADINGS.developer || false,
@@ -10105,7 +10105,7 @@ ${this.error.stack}
             results.push({
               element: heading,
               type: option.checks.TABLES_SEMANTIC_HEADING.type || 'error',
-              content: option.checks.TABLES_SEMANTIC_HEADING.content || Lang.sprintf('TABLES_SEMANTIC_HEADING'),
+              content: Lang.sprintf(option.checks.TABLES_SEMANTIC_HEADING.content || 'TABLES_SEMANTIC_HEADING'),
               dismiss: key,
               dismissAll: option.checks.TABLES_SEMANTIC_HEADING.dismissAll ? 'TABLES_SEMANTIC_HEADING' : false,
               developer: option.checks.TABLES_SEMANTIC_HEADING.developer || false,
@@ -10117,7 +10117,7 @@ ${this.error.stack}
             results.push({
               element: th,
               type: option.checks.TABLES_EMPTY_HEADING.type || 'error',
-              content: option.checks.TABLES_EMPTY_HEADING.content || Lang.sprintf('TABLES_EMPTY_HEADING'),
+              content: Lang.sprintf(option.checks.TABLES_EMPTY_HEADING.content || 'TABLES_EMPTY_HEADING'),
               position: 'afterbegin',
               dismiss: key,
               dismissAll: option.checks.TABLES_EMPTY_HEADING.dismissAll ? 'TABLES_EMPTY_HEADING' : false,
@@ -10136,7 +10136,7 @@ ${this.error.stack}
         results.push({
           element,
           type: option.checks.QA_FAKE_HEADING.type || 'warning',
-          content: option.checks.QA_FAKE_HEADING.content || Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
+          content: Lang.sprintf(option.checks.QA_FAKE_HEADING.content || 'QA_FAKE_HEADING', sanitizedText),
           dismiss: prepareDismissal(`BOLD${sanitizedText}`),
           dismissAll: option.checks.QA_FAKE_HEADING.dismissAll ? 'QA_FAKE_HEADING' : false,
           developer: option.checks.QA_FAKE_HEADING.developer || false,
@@ -10279,7 +10279,7 @@ ${this.error.stack}
             results.push({
               element: p,
               type: option.checks.QA_FAKE_LIST.type || 'warning',
-              content: option.checks.QA_FAKE_LIST.content || Lang.sprintf('QA_FAKE_LIST', firstPrefix),
+              content: Lang.sprintf(option.checks.QA_FAKE_LIST.content || 'QA_FAKE_LIST', firstPrefix),
               dismiss: prepareDismissal(`LIST${p.textContent}`),
               dismissAll: option.checks.QA_FAKE_LIST.dismissAll ? 'QA_FAKE_LIST' : false,
               developer: option.checks.QA_FAKE_LIST.developer || false,
@@ -10319,7 +10319,7 @@ ${this.error.stack}
           results.push({
             element: $el,
             type: option.checks.QA_UPPERCASE.type || 'warning',
-            content: option.checks.QA_UPPERCASE.content || Lang.sprintf('QA_UPPERCASE'),
+            content: Lang.sprintf(option.checks.QA_UPPERCASE.content || 'QA_UPPERCASE'),
             dismiss: prepareDismissal(`UPPERCASE${thisText}`),
             dismissAll: option.checks.QA_UPPERCASE.dismissAll ? 'QA_UPPERCASE' : false,
             developer: option.checks.QA_UPPERCASE.developer || false,
@@ -10340,7 +10340,7 @@ ${this.error.stack}
       results.push({
         element: $el,
         type: option.checks.QA_UNDERLINE.type || 'warning',
-        content: option.checks.QA_UNDERLINE.content || Lang.sprintf('QA_UNDERLINE'),
+        content: Lang.sprintf(option.checks.QA_UNDERLINE.content || 'QA_UNDERLINE'),
         inline: true,
         dismiss: prepareDismissal(`UNDERLINE${$el.textContent}`),
         dismissAll: option.checks.QA_UNDERLINE.dismissAll ? 'QA_UNDERLINE' : false,
@@ -10352,7 +10352,7 @@ ${this.error.stack}
       results.push({
         element: $el,
         type: option.checks.QA_JUSTIFY.type || 'warning',
-        content: option.checks.QA_JUSTIFY.content || Lang._('QA_JUSTIFY'),
+        content: Lang.sprintf(option.checks.QA_JUSTIFY.content || 'QA_JUSTIFY'),
         dismiss: prepareDismissal(`JUSTIFIED${$el.textContent}`),
         dismissAll: option.checks.QA_JUSTIFY.dismissAll ? 'QA_JUSTIFY' : false,
         developer: option.checks.QA_JUSTIFY.developer || false,
@@ -10363,7 +10363,7 @@ ${this.error.stack}
       results.push({
         element: $el,
         type: option.checks.QA_SMALL_TEXT.type || 'warning',
-        content: option.checks.QA_SMALL_TEXT.content || Lang._('QA_SMALL_TEXT'),
+        content: Lang.sprintf(option.checks.QA_SMALL_TEXT.content || 'QA_SMALL_TEXT'),
         dismiss: prepareDismissal(`SMALL${$el.textContent}`),
         dismissAll: option.checks.QA_SMALL_TEXT.dismissAll ? 'QA_SMALL_TEXT' : false,
         developer: option.checks.QA_SMALL_TEXT.developer || false,
@@ -10377,6 +10377,7 @@ ${this.error.stack}
       /* Check: Underlined text. */
       if (option.checks.QA_UNDERLINE
         && textDecorationLine === 'underline'
+        && !$el.closest('[onclick]')
         && !$el.closest('a[href]')
         && !$el.closest('ABBR')) {
         addUnderlineResult($el);
@@ -10433,7 +10434,7 @@ ${this.error.stack}
           results.push({
             element: $el,
             type: option.checks.QA_SUBSCRIPT.type || 'warning',
-            content: option.checks.QA_SUBSCRIPT.content || Lang.sprintf('QA_SUBSCRIPT'),
+            content: Lang.sprintf(option.checks.QA_SUBSCRIPT.content || 'QA_SUBSCRIPT'),
             inline: true,
             dismiss: prepareDismissal($el.tagName + text),
             dismissAll: option.checks.QA_SUBSCRIPT.dismissAll ? 'QA_SUBSCRIPT' : false,
@@ -10454,7 +10455,7 @@ ${this.error.stack}
           results.push({
             element: $el,
             type: option.checks.QA_NESTED_COMPONENTS.type || 'warning',
-            content: option.checks.QA_NESTED_COMPONENTS.content || Lang.sprintf('QA_NESTED_COMPONENTS'),
+            content: Lang.sprintf(option.checks.QA_NESTED_COMPONENTS.content || 'QA_NESTED_COMPONENTS'),
             dismiss: prepareDismissal(`NESTED${$el.textContent}`),
             dismissAll: option.checks.QA_NESTED_COMPONENTS.dismissAll ? 'QA_NESTED_COMPONENTS' : false,
             developer: option.checks.QA_NESTED_COMPONENTS.developer || false,
@@ -10474,7 +10475,7 @@ ${this.error.stack}
       if (!Elements.Found.Language || Elements.Found.Language.length < 2) {
         results.push({
           type: option.checks.META_LANG.type || 'error',
-          content: option.checks.META_LANG.content || Lang.sprintf('META_LANG'),
+          content: Lang.sprintf(option.checks.META_LANG.content || 'META_LANG'),
           dismiss: prepareDismissal('LANG'),
           developer: option.checks.META_LANG.developer || true,
         });
@@ -10489,7 +10490,7 @@ ${this.error.stack}
       if (!metaTitle || metaTitle.textContent.trim().length === 0) {
         results.push({
           type: option.checks.META_TITLE.type || 'error',
-          content: option.checks.META_TITLE.content || Lang.sprintf('META_TITLE'),
+          content: Lang.sprintf(option.checks.META_TITLE.content || 'META_TITLE'),
           dismiss: prepareDismissal('TITLE'),
           developer: option.checks.META_TITLE.developer || true,
         });
@@ -10515,7 +10516,7 @@ ${this.error.stack}
           if (option.checks.META_SCALABLE && (params['user-scalable'] === 'no' || params['user-scalable'] === '0')) {
             results.push({
               type: option.checks.META_SCALABLE.type || 'error',
-              content: option.checks.META_SCALABLE.content || Lang.sprintf('META_SCALABLE'),
+              content: Lang.sprintf(option.checks.META_SCALABLE.content || 'META_SCALABLE'),
               dismiss: prepareDismissal('SCALABLE'),
               developer: option.checks.META_SCALABLE.developer || true,
             });
@@ -10526,7 +10527,7 @@ ${this.error.stack}
           if (option.checks.META_MAX && !Number.isNaN(maxScale) && maxScale < 2) {
             results.push({
               type: option.checks.META_MAX.type || 'error',
-              content: option.checks.META_MAX.content || Lang.sprintf('META_MAX'),
+              content: Lang.sprintf(option.checks.META_MAX.content || 'META_MAX'),
               dismiss: prepareDismissal('MAXSCALE'),
               developer: option.checks.META_MAX.developer || true,
             });
@@ -10543,7 +10544,7 @@ ${this.error.stack}
       if (metaRefresh) {
         results.push({
           type: option.checks.META_REFRESH.type || 'error',
-          content: option.checks.META_REFRESH.content || Lang.sprintf('META_REFRESH'),
+          content: Lang.sprintf(option.checks.META_REFRESH.content || 'META_REFRESH'),
           dismiss: prepareDismissal('REFRESH'),
           developer: option.checks.META_REFRESH.developer || true,
         });
@@ -10584,7 +10585,7 @@ ${this.error.stack}
                 results.push({
                   element: $el,
                   type: option.checks.DUPLICATE_ID.type || 'error',
-                  content: option.checks.DUPLICATE_ID.content || Lang.sprintf('DUPLICATE_ID', id),
+                  content: Lang.sprintf(option.checks.DUPLICATE_ID.content || 'DUPLICATE_ID', id),
                   dismiss: prepareDismissal(`DUPLICATEID${id}${$el.textContent}`),
                   dismissAll: option.checks.DUPLICATE_ID.dismissAll ? 'DUPLICATE_ID' : false,
                   developer: option.checks.DUPLICATE_ID.developer || true,
@@ -10634,7 +10635,7 @@ ${this.error.stack}
               results.push({
                 element: $el,
                 type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
-                content: option.checks.HIDDEN_FOCUSABLE.content || Lang.sprintf('HIDDEN_FOCUSABLE'),
+                content: Lang.sprintf(option.checks.HIDDEN_FOCUSABLE.content || 'HIDDEN_FOCUSABLE'),
                 dismiss: key,
                 dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll ? 'BTN_HIDDEN_FOCUSABLE' : false,
                 developer: option.checks.HIDDEN_FOCUSABLE.developer || true,
@@ -10650,7 +10651,9 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: option.checks.BTN_EMPTY_LABELLEDBY.type || 'error',
-              content: option.checks.BTN_EMPTY_LABELLEDBY.content || `${Lang.sprintf('BTN_EMPTY_LABELLEDBY')} ${Lang.sprintf('BTN_TIP')}`,
+              content: option.checks.BTN_EMPTY_LABELLEDBY.content
+                ? Lang.sprintf(option.checks.BTN_EMPTY_LABELLEDBY.content)
+                : `${Lang.sprintf('BTN_EMPTY_LABELLEDBY')} ${Lang.sprintf('BTN_TIP')}`,
               dismiss: prepareDismissal(key),
               dismissAll: option.checks.BTN_EMPTY_LABELLEDBY.dismissAll ? 'BTN_EMPTY_LABELLEDBY' : false,
               developer: option.checks.BTN_EMPTY_LABELLEDBY.developer || true,
@@ -10659,7 +10662,9 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: option.checks.BTN_EMPTY.type || 'error',
-              content: option.checks.BTN_EMPTY.content || `${Lang.sprintf('BTN_EMPTY')} ${Lang.sprintf('BTN_TIP')}`,
+              content: option.checks.BTN_EMPTY.content
+                ? Lang.sprintf(option.checks.BTN_EMPTY.content)
+                : `${Lang.sprintf('BTN_EMPTY')} ${Lang.sprintf('BTN_TIP')}`,
               dismiss: key,
               dismissAll: option.checks.BTN_EMPTY.dismissAll ? 'BTN_EMPTY' : false,
               developer: option.checks.BTN_EMPTY.developer || true,
@@ -10675,7 +10680,9 @@ ${this.error.stack}
           results.push({
             element: $el,
             type: option.checks.LABEL_IN_NAME.type || 'warning',
-            content: option.checks.LABEL_IN_NAME.content || `${Lang.sprintf('LABEL_IN_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
+            content: option.checks.LABEL_IN_NAME.content
+              ? Lang.sprintf(option.checks.LABEL_IN_NAME.content, sanitizedText)
+              : `${Lang.sprintf('LABEL_IN_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
             dismiss: key,
             dismissAll: option.checks.LABEL_IN_NAME.dismissAll ? 'BTN_LABEL_IN_NAME' : false,
             developer: option.checks.LABEL_IN_NAME.developer || true,
@@ -10688,7 +10695,9 @@ ${this.error.stack}
           results.push({
             element: $el,
             type: option.checks.BTN_ROLE_IN_NAME.type || 'warning',
-            content: option.checks.BTN_ROLE_IN_NAME.content || `${Lang.sprintf('BTN_ROLE_IN_NAME')} ${Lang.sprintf('BTN_TIP')}`,
+            content: option.checks.BTN_ROLE_IN_NAME.content
+              ? Lang.sprintf(option.checks.BTN_ROLE_IN_NAME.content)
+              : `${Lang.sprintf('BTN_ROLE_IN_NAME')} ${Lang.sprintf('BTN_TIP')}`,
             dismiss: key,
             dismissAll: option.checks.BTN_ROLE_IN_NAME.dismissAll ? 'BTN_ROLE_IN_NAME' : false,
             developer: option.checks.BTN_ROLE_IN_NAME.developer || true,
@@ -10706,7 +10715,7 @@ ${this.error.stack}
           results.push({
             element: $el,
             type: option.checks.UNCONTAINED_LI.type || 'error',
-            content: option.checks.UNCONTAINED_LI.content || Lang.sprintf('UNCONTAINED_LI'),
+            content: Lang.sprintf(option.checks.UNCONTAINED_LI.content || 'UNCONTAINED_LI'),
             dismiss: prepareDismissal(`UNCONTAINEDLI${$el.textContent}`),
             dismissAll: option.checks.UNCONTAINED_LI.dismissAll ? 'UNCONTAINED_LI' : false,
             developer: option.checks.UNCONTAINED_LI.developer || true,
@@ -10723,7 +10732,7 @@ ${this.error.stack}
         results.push({
           element: $el,
           type: option.checks.TABINDEX_ATTR.type || 'error',
-          content: option.checks.TABINDEX_ATTR.content || Lang.sprintf('TABINDEX_ATTR'),
+          content: Lang.sprintf(option.checks.TABINDEX_ATTR.content || 'TABINDEX_ATTR'),
           dismiss: prepareDismissal(`TABINDEX${$el.tagName + $el.id + $el.className}`),
           dismissAll: option.checks.TABINDEX_ATTR.dismissAll ? 'TABINDEX_ATTR' : false,
           developer: option.checks.TABINDEX_ATTR.developer || true,
