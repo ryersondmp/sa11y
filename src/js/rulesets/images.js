@@ -88,8 +88,7 @@ export default function checkImages(results, option) {
         results.push({
           element: $el,
           type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
-          content: option.checks.HIDDEN_FOCUSABLE.content
-            || Lang.sprintf('HIDDEN_FOCUSABLE'),
+          content: Lang.sprintf(option.checks.HIDDEN_FOCUSABLE.content || 'HIDDEN_FOCUSABLE'),
           dismiss: Utils.prepareDismissal(`IMGHIDDENFOCUSABLE${src}`),
           dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll
             ? 'LINK_HIDDEN_FOCUSABLE' : false,
@@ -111,7 +110,7 @@ export default function checkImages(results, option) {
           results.push({
             element: $el,
             type: rule.type || 'error',
-            content: rule.content || Lang.sprintf(linkTextContentLength === 0
+            content: Lang.sprintf(rule.content || linkTextContentLength === 0
               ? 'MISSING_ALT_LINK' : 'MISSING_ALT_LINK_HAS_TEXT'),
             dismiss: Utils.prepareDismissal(`${conditional + src + linkTextContentLength}`),
             dismissAll: rule.dismissAll ? conditional : false,
@@ -123,7 +122,7 @@ export default function checkImages(results, option) {
         results.push({
           element: $el,
           type: option.checks.MISSING_ALT.type || 'error',
-          content: option.checks.MISSING_ALT.content || Lang.sprintf('MISSING_ALT'),
+          content: Lang.sprintf(option.checks.MISSING_ALT.content || 'MISSING_ALT'),
           dismiss: Utils.prepareDismissal(`IMGNOALT${src}`),
           dismissAll: option.checks.MISSING_ALT.dismissAll ? 'MISSING_ALT' : false,
           developer: option.checks.MISSING_ALT.developer || false,
@@ -153,7 +152,7 @@ export default function checkImages(results, option) {
           results.push({
             element: $el,
             type: option.checks.MISSING_ALT.type || 'error',
-            content: option.checks.MISSING_ALT.content || Lang.sprintf('MISSING_ALT'),
+            content: Lang.sprintf(option.checks.MISSING_ALT.content || 'MISSING_ALT'),
             dismiss: Utils.prepareDismissal(`IMGNOALTARIA${src}`),
             dismissAll: option.checks.MISSING_ALT.dismissAll ? 'MISSING_ALT' : false,
             developer: option.checks.MISSING_ALT.developer || false,
@@ -178,7 +177,7 @@ export default function checkImages(results, option) {
             results.push({
               element: $el,
               type: rule.type || 'warning',
-              content: rule.content || Lang.sprintf(conditional),
+              content: Lang.sprintf(rule.content || conditional),
               dismiss: Utils.prepareDismissal(conditional + src),
               dismissAll: rule.dismissAll ? conditional : false,
               developer: rule.developer || false,
@@ -194,7 +193,7 @@ export default function checkImages(results, option) {
             results.push({
               element: $el,
               type: rule.type || (linkTextContentLength === 0 ? 'error' : 'good'),
-              content: rule.content || Lang.sprintf(conditional),
+              content: Lang.sprintf(rule.content || conditional),
               dismiss: Utils.prepareDismissal(`${conditional + src + linkTextContentLength}`),
               dismissAll: rule.dismissAll ? conditional : false,
               developer: rule.developer || false,
@@ -210,7 +209,7 @@ export default function checkImages(results, option) {
             results.push({
               element: $el,
               type: rule.type || 'warning',
-              content: rule.content || Lang.sprintf(conditional),
+              content: Lang.sprintf(rule.content || conditional),
               dismiss: Utils.prepareDismissal(`${conditional + src + figcaptionText}`),
               dismissAll: rule.dismissAll ? conditional : false,
               developer: rule.developer || false,
@@ -220,7 +219,7 @@ export default function checkImages(results, option) {
           results.push({
             element: $el,
             type: option.checks.IMAGE_DECORATIVE.type || 'warning',
-            content: option.checks.IMAGE_DECORATIVE.content || Lang.sprintf('IMAGE_DECORATIVE'),
+            content: Lang.sprintf(option.checks.IMAGE_DECORATIVE.content || 'IMAGE_DECORATIVE'),
             dismiss: Utils.prepareDismissal(`DECIMAGE${src}`),
             dismissAll: option.checks.IMAGE_DECORATIVE.dismissAll ? 'IMAGE_DECORATIVE' : false,
             developer: option.checks.IMAGE_DECORATIVE.developer || false,
@@ -240,7 +239,7 @@ export default function checkImages(results, option) {
           results.push({
             element: $el,
             type: rule.type || 'error',
-            content: rule.content || Lang.sprintf(link
+            content: Lang.sprintf(rule.content || link
               ? 'LINK_ALT_FILE_EXT' : 'ALT_FILE_EXT', error[0], altText),
             dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
@@ -257,7 +256,7 @@ export default function checkImages(results, option) {
           results.push({
             element: $el,
             type: rule.type || 'error',
-            content: rule.content || Lang.sprintf(link
+            content: Lang.sprintf(rule.content || link
               ? 'LINK_PLACEHOLDER_ALT' : 'ALT_PLACEHOLDER', altText),
             dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
@@ -274,7 +273,7 @@ export default function checkImages(results, option) {
           results.push({
             element: $el,
             type: rule.type || 'warning',
-            content: rule.content || Lang.sprintf(link
+            content: Lang.sprintf(rule.content || link
               ? 'LINK_SUS_ALT' : 'SUS_ALT', error[1], altText),
             dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
@@ -294,8 +293,7 @@ export default function checkImages(results, option) {
           results.push({
             element: $el,
             type: rule.type || 'warning',
-            content: rule.content
-              || Lang.sprintf(link ? 'LINK_IMAGE_LONG_ALT' : 'IMAGE_ALT_TOO_LONG', alt.length, truncated),
+            content: Lang.sprintf(rule.content || (link ? 'LINK_IMAGE_LONG_ALT' : 'IMAGE_ALT_TOO_LONG'), alt.length, truncated),
             dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
@@ -320,7 +318,9 @@ export default function checkImages(results, option) {
           results.push({
             element: $el,
             type: rule.type || 'warning',
-            content: rule.content || tooltip,
+            content: rule.content
+              ? Lang.sprintf(rule.content, altText, sanitizedText)
+              : tooltip,
             dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
@@ -334,7 +334,7 @@ export default function checkImages(results, option) {
             results.push({
               element: $el,
               type: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.type || 'warning',
-              content: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.content || Lang.sprintf('IMAGE_FIGURE_DUPLICATE_ALT', altText),
+              content: Lang.sprintf(option.checks.IMAGE_FIGURE_DUPLICATE_ALT.content || 'IMAGE_FIGURE_DUPLICATE_ALT', altText),
               dismiss: Utils.prepareDismissal(`FIGDUPLICATE${src}`),
               dismissAll: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.dismissAll ? 'IMAGE_FIGURE_DUPLICATE_ALT' : false,
               developer: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.developer || false,
@@ -345,7 +345,7 @@ export default function checkImages(results, option) {
           results.push({
             element: $el,
             type: option.checks.IMAGE_PASS.type || 'good',
-            content: option.checks.IMAGE_PASS.content || Lang.sprintf('IMAGE_PASS', altText),
+            content: Lang.sprintf(option.checks.IMAGE_PASS.content || 'IMAGE_PASS', altText),
             dismiss: Utils.prepareDismissal(`FIGIMGPASS${src + altText}`),
             dismissAll: option.checks.IMAGE_PASS.dismissAll ? 'IMAGE_PASS' : false,
             developer: option.checks.IMAGE_PASS.developer || false,
@@ -357,7 +357,7 @@ export default function checkImages(results, option) {
           results.push({
             element: $el,
             type: option.checks.IMAGE_PASS.type || 'good',
-            content: option.checks.IMAGE_PASS.content || Lang.sprintf('IMAGE_PASS', altText),
+            content: Lang.sprintf(option.checks.IMAGE_PASS.content || 'IMAGE_PASS', altText),
             dismiss: Utils.prepareDismissal(`IMAGEPASS${src + altText}`),
             dismissAll: option.checks.IMAGE_PASS.dismissAll ? 'IMAGE_PASS' : false,
             developer: option.checks.IMAGE_PASS.developer || false,
@@ -372,7 +372,7 @@ export default function checkImages(results, option) {
           results.push({
             element: $el,
             type: option.checks.DUPLICATE_TITLE.type || 'warning',
-            content: option.checks.DUPLICATE_TITLE.content || Lang.sprintf('DUPLICATE_TITLE'),
+            content: Lang.sprintf(option.checks.DUPLICATE_TITLE.content || 'DUPLICATE_TITLE'),
             inline: true,
             dismiss: Utils.prepareDismissal(`ALTDUPLICATETITLE${altText}`),
             dismissAll: option.checks.DUPLICATE_TITLE.dismissAll ? 'DUPLICATE_TITLE' : false,

@@ -12,7 +12,7 @@ export default function checkDeveloper(results, option) {
     if (!Elements.Found.Language || Elements.Found.Language.length < 2) {
       results.push({
         type: option.checks.META_LANG.type || 'error',
-        content: option.checks.META_LANG.content || Lang.sprintf('META_LANG'),
+        content: Lang.sprintf(option.checks.META_LANG.content || 'META_LANG'),
         dismiss: Utils.prepareDismissal('LANG'),
         developer: option.checks.META_LANG.developer || true,
       });
@@ -27,7 +27,7 @@ export default function checkDeveloper(results, option) {
     if (!metaTitle || metaTitle.textContent.trim().length === 0) {
       results.push({
         type: option.checks.META_TITLE.type || 'error',
-        content: option.checks.META_TITLE.content || Lang.sprintf('META_TITLE'),
+        content: Lang.sprintf(option.checks.META_TITLE.content || 'META_TITLE'),
         dismiss: Utils.prepareDismissal('TITLE'),
         developer: option.checks.META_TITLE.developer || true,
       });
@@ -53,7 +53,7 @@ export default function checkDeveloper(results, option) {
         if (option.checks.META_SCALABLE && (params['user-scalable'] === 'no' || params['user-scalable'] === '0')) {
           results.push({
             type: option.checks.META_SCALABLE.type || 'error',
-            content: option.checks.META_SCALABLE.content || Lang.sprintf('META_SCALABLE'),
+            content: Lang.sprintf(option.checks.META_SCALABLE.content || 'META_SCALABLE'),
             dismiss: Utils.prepareDismissal('SCALABLE'),
             developer: option.checks.META_SCALABLE.developer || true,
           });
@@ -64,7 +64,7 @@ export default function checkDeveloper(results, option) {
         if (option.checks.META_MAX && !Number.isNaN(maxScale) && maxScale < 2) {
           results.push({
             type: option.checks.META_MAX.type || 'error',
-            content: option.checks.META_MAX.content || Lang.sprintf('META_MAX'),
+            content: Lang.sprintf(option.checks.META_MAX.content || 'META_MAX'),
             dismiss: Utils.prepareDismissal('MAXSCALE'),
             developer: option.checks.META_MAX.developer || true,
           });
@@ -81,7 +81,7 @@ export default function checkDeveloper(results, option) {
     if (metaRefresh) {
       results.push({
         type: option.checks.META_REFRESH.type || 'error',
-        content: option.checks.META_REFRESH.content || Lang.sprintf('META_REFRESH'),
+        content: Lang.sprintf(option.checks.META_REFRESH.content || 'META_REFRESH'),
         dismiss: Utils.prepareDismissal('REFRESH'),
         developer: option.checks.META_REFRESH.developer || true,
       });
@@ -122,7 +122,7 @@ export default function checkDeveloper(results, option) {
               results.push({
                 element: $el,
                 type: option.checks.DUPLICATE_ID.type || 'error',
-                content: option.checks.DUPLICATE_ID.content || Lang.sprintf('DUPLICATE_ID', id),
+                content: Lang.sprintf(option.checks.DUPLICATE_ID.content || 'DUPLICATE_ID', id),
                 dismiss: Utils.prepareDismissal(`DUPLICATEID${id}${$el.textContent}`),
                 dismissAll: option.checks.DUPLICATE_ID.dismissAll ? 'DUPLICATE_ID' : false,
                 developer: option.checks.DUPLICATE_ID.developer || true,
@@ -172,7 +172,7 @@ export default function checkDeveloper(results, option) {
             results.push({
               element: $el,
               type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
-              content: option.checks.HIDDEN_FOCUSABLE.content || Lang.sprintf('HIDDEN_FOCUSABLE'),
+              content: Lang.sprintf(option.checks.HIDDEN_FOCUSABLE.content || 'HIDDEN_FOCUSABLE'),
               dismiss: key,
               dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll ? 'BTN_HIDDEN_FOCUSABLE' : false,
               developer: option.checks.HIDDEN_FOCUSABLE.developer || true,
@@ -188,7 +188,9 @@ export default function checkDeveloper(results, option) {
           results.push({
             element: $el,
             type: option.checks.BTN_EMPTY_LABELLEDBY.type || 'error',
-            content: option.checks.BTN_EMPTY_LABELLEDBY.content || `${Lang.sprintf('BTN_EMPTY_LABELLEDBY')} ${Lang.sprintf('BTN_TIP')}`,
+            content: option.checks.BTN_EMPTY_LABELLEDBY.content
+              ? Lang.sprintf(option.checks.BTN_EMPTY_LABELLEDBY.content)
+              : `${Lang.sprintf('BTN_EMPTY_LABELLEDBY')} ${Lang.sprintf('BTN_TIP')}`,
             dismiss: Utils.prepareDismissal(key),
             dismissAll: option.checks.BTN_EMPTY_LABELLEDBY.dismissAll ? 'BTN_EMPTY_LABELLEDBY' : false,
             developer: option.checks.BTN_EMPTY_LABELLEDBY.developer || true,
@@ -197,7 +199,9 @@ export default function checkDeveloper(results, option) {
           results.push({
             element: $el,
             type: option.checks.BTN_EMPTY.type || 'error',
-            content: option.checks.BTN_EMPTY.content || `${Lang.sprintf('BTN_EMPTY')} ${Lang.sprintf('BTN_TIP')}`,
+            content: option.checks.BTN_EMPTY.content
+              ? Lang.sprintf(option.checks.BTN_EMPTY.content)
+              : `${Lang.sprintf('BTN_EMPTY')} ${Lang.sprintf('BTN_TIP')}`,
             dismiss: key,
             dismissAll: option.checks.BTN_EMPTY.dismissAll ? 'BTN_EMPTY' : false,
             developer: option.checks.BTN_EMPTY.developer || true,
@@ -213,7 +217,9 @@ export default function checkDeveloper(results, option) {
         results.push({
           element: $el,
           type: option.checks.LABEL_IN_NAME.type || 'warning',
-          content: option.checks.LABEL_IN_NAME.content || `${Lang.sprintf('LABEL_IN_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
+          content: option.checks.LABEL_IN_NAME.content
+            ? Lang.sprintf(option.checks.LABEL_IN_NAME.content, sanitizedText)
+            : `${Lang.sprintf('LABEL_IN_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
           dismiss: key,
           dismissAll: option.checks.LABEL_IN_NAME.dismissAll ? 'BTN_LABEL_IN_NAME' : false,
           developer: option.checks.LABEL_IN_NAME.developer || true,
@@ -226,7 +232,9 @@ export default function checkDeveloper(results, option) {
         results.push({
           element: $el,
           type: option.checks.BTN_ROLE_IN_NAME.type || 'warning',
-          content: option.checks.BTN_ROLE_IN_NAME.content || `${Lang.sprintf('BTN_ROLE_IN_NAME')} ${Lang.sprintf('BTN_TIP')}`,
+          content: option.checks.BTN_ROLE_IN_NAME.content
+            ? Lang.sprintf(option.checks.BTN_ROLE_IN_NAME.content)
+            : `${Lang.sprintf('BTN_ROLE_IN_NAME')} ${Lang.sprintf('BTN_TIP')}`,
           dismiss: key,
           dismissAll: option.checks.BTN_ROLE_IN_NAME.dismissAll ? 'BTN_ROLE_IN_NAME' : false,
           developer: option.checks.BTN_ROLE_IN_NAME.developer || true,
@@ -244,7 +252,7 @@ export default function checkDeveloper(results, option) {
         results.push({
           element: $el,
           type: option.checks.UNCONTAINED_LI.type || 'error',
-          content: option.checks.UNCONTAINED_LI.content || Lang.sprintf('UNCONTAINED_LI'),
+          content: Lang.sprintf(option.checks.UNCONTAINED_LI.content || 'UNCONTAINED_LI'),
           dismiss: Utils.prepareDismissal(`UNCONTAINEDLI${$el.textContent}`),
           dismissAll: option.checks.UNCONTAINED_LI.dismissAll ? 'UNCONTAINED_LI' : false,
           developer: option.checks.UNCONTAINED_LI.developer || true,
@@ -261,7 +269,7 @@ export default function checkDeveloper(results, option) {
       results.push({
         element: $el,
         type: option.checks.TABINDEX_ATTR.type || 'error',
-        content: option.checks.TABINDEX_ATTR.content || Lang.sprintf('TABINDEX_ATTR'),
+        content: Lang.sprintf(option.checks.TABINDEX_ATTR.content || 'TABINDEX_ATTR'),
         dismiss: Utils.prepareDismissal(`TABINDEX${$el.tagName + $el.id + $el.className}`),
         dismissAll: option.checks.TABINDEX_ATTR.dismissAll ? 'TABINDEX_ATTR' : false,
         developer: option.checks.TABINDEX_ATTR.developer || true,

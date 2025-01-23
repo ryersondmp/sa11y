@@ -35,7 +35,7 @@ export default function checkLabels(results, option) {
           results.push({
             element: $el,
             type: option.checks.LABELS_MISSING_IMAGE_INPUT.type || 'error',
-            content: option.checks.LABELS_MISSING_IMAGE_INPUT.content || Lang.sprintf('LABELS_MISSING_IMAGE_INPUT'),
+            content: Lang.sprintf(option.checks.LABELS_MISSING_IMAGE_INPUT.content || 'LABELS_MISSING_IMAGE_INPUT'),
             dismiss: Utils.prepareDismissal(`INPUTIMAGE${type + inputName}`),
             dismissAll: option.checks.LABELS_MISSING_IMAGE_INPUT.dismissAll ? 'LABELS_MISSING_IMAGE_INPUT' : false,
             developer: option.checks.LABELS_MISSING_IMAGE_INPUT.developer || true,
@@ -50,7 +50,7 @@ export default function checkLabels(results, option) {
           results.push({
             element: $el,
             type: option.checks.LABELS_INPUT_RESET.type || 'warning',
-            content: option.checks.LABELS_INPUT_RESET.content || Lang.sprintf('LABELS_INPUT_RESET'),
+            content: Lang.sprintf(option.checks.LABELS_INPUT_RESET.content || 'LABELS_INPUT_RESET'),
             dismiss: Utils.prepareDismissal(`INPUTRESET${type + inputName}`),
             dismissAll: option.checks.LABELS_INPUT_RESET.dismissAll ? 'LABELS_INPUT_RESET' : false,
             developer: option.checks.LABELS_INPUT_RESET.developer || false,
@@ -66,7 +66,7 @@ export default function checkLabels(results, option) {
             results.push({
               element: $el,
               type: option.checks.LABELS_MISSING_LABEL.type || 'error',
-              content: option.checks.LABELS_MISSING_LABEL.content || Lang.sprintf('LABELS_MISSING_LABEL'),
+              content: Lang.sprintf(option.checks.LABELS_MISSING_LABEL.content || 'LABELS_MISSING_LABEL'),
               dismiss: Utils.prepareDismissal(`INPUTMISSING${type + inputName}`),
               dismissAll: option.checks.LABELS_MISSING_LABEL.dismissAll ? 'LABELS_MISSING_LABEL' : false,
               developer: option.checks.LABELS_MISSING_LABEL.developer || true,
@@ -77,7 +77,9 @@ export default function checkLabels(results, option) {
           results.push({
             element: $el,
             type: option.checks.LABELS_ARIA_LABEL_INPUT.type || 'warning',
-            content: option.checks.LABELS_ARIA_LABEL_INPUT.content || `${Lang.sprintf('LABELS_ARIA_LABEL_INPUT', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
+            content: option.checks.LABELS_ARIA_LABEL_INPUT.content
+              ? Lang.sprintf(option.checks.LABELS_ARIA_LABEL_INPUT.content, sanitizedText)
+              : `${Lang.sprintf('LABELS_ARIA_LABEL_INPUT', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
             dismiss: Utils.prepareDismissal(`INPUTARIA${type + inputName}`),
             dismissAll: option.checks.LABELS_ARIA_LABEL_INPUT.dismissAll ? 'LABELS_ARIA_LABEL_INPUT' : false,
             developer: option.checks.LABELS_ARIA_LABEL_INPUT.developer || true,
@@ -102,7 +104,7 @@ export default function checkLabels(results, option) {
             results.push({
               element: $el,
               type: option.checks.LABELS_NO_FOR_ATTRIBUTE.type || 'error',
-              content: option.checks.LABELS_NO_FOR_ATTRIBUTE.content || Lang.sprintf('LABELS_NO_FOR_ATTRIBUTE', id),
+              content: Lang.sprintf(option.checks.LABELS_NO_FOR_ATTRIBUTE.content || 'LABELS_NO_FOR_ATTRIBUTE', id),
               dismiss: Utils.prepareDismissal(`INPUTNOFOR${type + inputName}`),
               dismissAll: option.checks.LABELS_NO_FOR_ATTRIBUTE.dismissAll ? 'LABELS_NO_FOR_ATTRIBUTE' : false,
               developer: option.checks.LABELS_NO_FOR_ATTRIBUTE.developer || true,
@@ -114,7 +116,7 @@ export default function checkLabels(results, option) {
         results.push({
           element: $el,
           type: option.checks.LABELS_MISSING_LABEL.type || 'error',
-          content: option.checks.LABELS_MISSING_LABEL.content || Lang.sprintf('LABELS_MISSING_LABEL'),
+          content: Lang.sprintf(option.checks.LABELS_MISSING_LABEL.content || 'LABELS_MISSING_LABEL'),
           dismiss: Utils.prepareDismissal(`INPUTNOID${type + inputName}`),
           dismissAll: option.checks.LABELS_MISSING_LABEL.dismissAll ? 'LABELS_MISSING_LABEL' : false,
           developer: option.checks.LABELS_MISSING_LABEL.developer || true,
@@ -126,7 +128,7 @@ export default function checkLabels(results, option) {
         results.push({
           element: $el,
           type: option.checks.LABELS_PLACEHOLDER.type || 'warning',
-          content: option.checks.LABELS_PLACEHOLDER.content || Lang.sprintf('LABELS_PLACEHOLDER'),
+          content: Lang.sprintf(option.checks.LABELS_PLACEHOLDER.content || 'LABELS_PLACEHOLDER'),
           dismiss: Utils.prepareDismissal(`INPUTPLACEHOLDER${type + inputName}`),
           dismissAll: option.checks.LABELS_PLACEHOLDER.dismissAll ? 'LABELS_PLACEHOLDER' : false,
           developer: option.checks.LABELS_PLACEHOLDER.developer || true,

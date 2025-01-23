@@ -12,7 +12,7 @@ export default function checkQA(results, option) {
       results.push({
         element: $el,
         type: option.checks.QA_BAD_LINK.type || 'error',
-        content: option.checks.QA_BAD_LINK.content || Lang.sprintf('QA_BAD_LINK', $el),
+        content: Lang.sprintf(option.checks.QA_BAD_LINK.content || 'QA_BAD_LINK', $el),
         inline: true,
         dismiss: Utils.prepareDismissal($el.tagName + $el.textContent),
         dismissAll: option.checks.QA_BAD_LINK.dismissAll ? 'QA_BAD_LINK' : false,
@@ -31,7 +31,7 @@ export default function checkQA(results, option) {
         results.push({
           element: $el.parentNode,
           type: option.checks.QA_STRONG_ITALICS.type || 'warning',
-          content: option.checks.QA_STRONG_ITALICS.content || Lang.sprintf('QA_STRONG_ITALICS'),
+          content: Lang.sprintf(option.checks.QA_STRONG_ITALICS.content || 'QA_STRONG_ITALICS'),
           dismiss: Utils.prepareDismissal($el.tagName + $el.textContent),
           dismissAll: option.checks.QA_STRONG_ITALICS.dismissAll ? 'QA_STRONG_ITALICS' : false,
           developer: option.checks.QA_STRONG_ITALICS.developer || false,
@@ -69,7 +69,7 @@ export default function checkQA(results, option) {
             results.push({
               element: $el,
               type: option.checks.QA_IN_PAGE_LINK.type || 'error',
-              content: option.checks.QA_IN_PAGE_LINK.content || Lang.sprintf('QA_IN_PAGE_LINK'),
+              content: Lang.sprintf(option.checks.QA_IN_PAGE_LINK.content || 'QA_IN_PAGE_LINK'),
               inline: true,
               dismiss: Utils.prepareDismissal(`QAINPAGE${href}`),
               dismissAll: option.checks.QA_IN_PAGE_LINK.dismissAll ? 'QA_IN_PAGE_LINK' : false,
@@ -84,7 +84,7 @@ export default function checkQA(results, option) {
         results.push({
           element: $el,
           type: option.checks.QA_DOCUMENT.type || 'warning',
-          content: option.checks.QA_DOCUMENT.content || Lang.sprintf('QA_DOCUMENT'),
+          content: Lang.sprintf(option.checks.QA_DOCUMENT.content || 'QA_DOCUMENT'),
           inline: true,
           dismiss: Utils.prepareDismissal(`DOC${href}`),
           dismissAll: option.checks.QA_DOCUMENT.dismissAll ? 'QA_DOCUMENT' : false,
@@ -94,7 +94,7 @@ export default function checkQA(results, option) {
         results.push({
           element: $el,
           type: option.checks.QA_PDF.type || 'warning',
-          content: option.checks.QA_PDF.content || Lang.sprintf('QA_PDF'),
+          content: Lang.sprintf(option.checks.QA_PDF.content || 'QA_PDF'),
           inline: true,
           dismiss: Utils.prepareDismissal(`PDF${href}`),
           dismissAll: option.checks.QA_PDF.dismissAll ? 'QA_PDF' : false,
@@ -115,7 +115,7 @@ export default function checkQA(results, option) {
         results.push({
           element: $el,
           type: option.checks.QA_BLOCKQUOTE.type || 'warning',
-          content: option.checks.QA_BLOCKQUOTE.content || Lang.sprintf('QA_BLOCKQUOTE', sanitizedText),
+          content: Lang.sprintf(option.checks.QA_BLOCKQUOTE.content || 'QA_BLOCKQUOTE', sanitizedText),
           dismiss: Utils.prepareDismissal(`BLOCKQUOTE${sanitizedText}`),
           dismissAll: option.checks.QA_BLOCKQUOTE.dismissAll ? 'QA_BLOCKQUOTE' : false,
           developer: option.checks.QA_BLOCKQUOTE.developer || false,
@@ -136,7 +136,7 @@ export default function checkQA(results, option) {
         results.push({
           element: $el,
           type: option.checks.TABLES_MISSING_HEADINGS.type || 'error',
-          content: option.checks.TABLES_MISSING_HEADINGS.content || Lang.sprintf('TABLES_MISSING_HEADINGS'),
+          content: Lang.sprintf(option.checks.TABLES_MISSING_HEADINGS.content || 'TABLES_MISSING_HEADINGS'),
           dismiss: key,
           dismissAll: option.checks.TABLES_MISSING_HEADINGS.dismissAll ? 'TABLES_MISSING_HEADINGS' : false,
           developer: option.checks.TABLES_MISSING_HEADINGS.developer || false,
@@ -147,7 +147,7 @@ export default function checkQA(results, option) {
           results.push({
             element: heading,
             type: option.checks.TABLES_SEMANTIC_HEADING.type || 'error',
-            content: option.checks.TABLES_SEMANTIC_HEADING.content || Lang.sprintf('TABLES_SEMANTIC_HEADING'),
+            content: Lang.sprintf(option.checks.TABLES_SEMANTIC_HEADING.content || 'TABLES_SEMANTIC_HEADING'),
             dismiss: key,
             dismissAll: option.checks.TABLES_SEMANTIC_HEADING.dismissAll ? 'TABLES_SEMANTIC_HEADING' : false,
             developer: option.checks.TABLES_SEMANTIC_HEADING.developer || false,
@@ -159,7 +159,7 @@ export default function checkQA(results, option) {
           results.push({
             element: th,
             type: option.checks.TABLES_EMPTY_HEADING.type || 'error',
-            content: option.checks.TABLES_EMPTY_HEADING.content || Lang.sprintf('TABLES_EMPTY_HEADING'),
+            content: Lang.sprintf(option.checks.TABLES_EMPTY_HEADING.content || 'TABLES_EMPTY_HEADING'),
             position: 'afterbegin',
             dismiss: key,
             dismissAll: option.checks.TABLES_EMPTY_HEADING.dismissAll ? 'TABLES_EMPTY_HEADING' : false,
@@ -178,7 +178,7 @@ export default function checkQA(results, option) {
       results.push({
         element,
         type: option.checks.QA_FAKE_HEADING.type || 'warning',
-        content: option.checks.QA_FAKE_HEADING.content || Lang.sprintf('QA_FAKE_HEADING', sanitizedText),
+        content: Lang.sprintf(option.checks.QA_FAKE_HEADING.content || 'QA_FAKE_HEADING', sanitizedText),
         dismiss: Utils.prepareDismissal(`BOLD${sanitizedText}`),
         dismissAll: option.checks.QA_FAKE_HEADING.dismissAll ? 'QA_FAKE_HEADING' : false,
         developer: option.checks.QA_FAKE_HEADING.developer || false,
@@ -321,7 +321,7 @@ export default function checkQA(results, option) {
           results.push({
             element: p,
             type: option.checks.QA_FAKE_LIST.type || 'warning',
-            content: option.checks.QA_FAKE_LIST.content || Lang.sprintf('QA_FAKE_LIST', firstPrefix),
+            content: Lang.sprintf(option.checks.QA_FAKE_LIST.content || 'QA_FAKE_LIST', firstPrefix),
             dismiss: Utils.prepareDismissal(`LIST${p.textContent}`),
             dismissAll: option.checks.QA_FAKE_LIST.dismissAll ? 'QA_FAKE_LIST' : false,
             developer: option.checks.QA_FAKE_LIST.developer || false,
@@ -361,7 +361,7 @@ export default function checkQA(results, option) {
         results.push({
           element: $el,
           type: option.checks.QA_UPPERCASE.type || 'warning',
-          content: option.checks.QA_UPPERCASE.content || Lang.sprintf('QA_UPPERCASE'),
+          content: Lang.sprintf(option.checks.QA_UPPERCASE.content || 'QA_UPPERCASE'),
           dismiss: Utils.prepareDismissal(`UPPERCASE${thisText}`),
           dismissAll: option.checks.QA_UPPERCASE.dismissAll ? 'QA_UPPERCASE' : false,
           developer: option.checks.QA_UPPERCASE.developer || false,
@@ -382,7 +382,7 @@ export default function checkQA(results, option) {
     results.push({
       element: $el,
       type: option.checks.QA_UNDERLINE.type || 'warning',
-      content: option.checks.QA_UNDERLINE.content || Lang.sprintf('QA_UNDERLINE'),
+      content: Lang.sprintf(option.checks.QA_UNDERLINE.content || 'QA_UNDERLINE'),
       inline: true,
       dismiss: Utils.prepareDismissal(`UNDERLINE${$el.textContent}`),
       dismissAll: option.checks.QA_UNDERLINE.dismissAll ? 'QA_UNDERLINE' : false,
@@ -394,7 +394,7 @@ export default function checkQA(results, option) {
     results.push({
       element: $el,
       type: option.checks.QA_JUSTIFY.type || 'warning',
-      content: option.checks.QA_JUSTIFY.content || Lang._('QA_JUSTIFY'),
+      content: Lang.sprintf(option.checks.QA_JUSTIFY.content || 'QA_JUSTIFY'),
       dismiss: Utils.prepareDismissal(`JUSTIFIED${$el.textContent}`),
       dismissAll: option.checks.QA_JUSTIFY.dismissAll ? 'QA_JUSTIFY' : false,
       developer: option.checks.QA_JUSTIFY.developer || false,
@@ -405,7 +405,7 @@ export default function checkQA(results, option) {
     results.push({
       element: $el,
       type: option.checks.QA_SMALL_TEXT.type || 'warning',
-      content: option.checks.QA_SMALL_TEXT.content || Lang._('QA_SMALL_TEXT'),
+      content: Lang.sprintf(option.checks.QA_SMALL_TEXT.content || 'QA_SMALL_TEXT'),
       dismiss: Utils.prepareDismissal(`SMALL${$el.textContent}`),
       dismissAll: option.checks.QA_SMALL_TEXT.dismissAll ? 'QA_SMALL_TEXT' : false,
       developer: option.checks.QA_SMALL_TEXT.developer || false,
@@ -419,6 +419,7 @@ export default function checkQA(results, option) {
     /* Check: Underlined text. */
     if (option.checks.QA_UNDERLINE
       && textDecorationLine === 'underline'
+      && !$el.closest('[onclick]')
       && !$el.closest('a[href]')
       && !$el.closest('ABBR')) {
       addUnderlineResult($el);
@@ -475,7 +476,7 @@ export default function checkQA(results, option) {
         results.push({
           element: $el,
           type: option.checks.QA_SUBSCRIPT.type || 'warning',
-          content: option.checks.QA_SUBSCRIPT.content || Lang.sprintf('QA_SUBSCRIPT'),
+          content: Lang.sprintf(option.checks.QA_SUBSCRIPT.content || 'QA_SUBSCRIPT'),
           inline: true,
           dismiss: Utils.prepareDismissal($el.tagName + text),
           dismissAll: option.checks.QA_SUBSCRIPT.dismissAll ? 'QA_SUBSCRIPT' : false,
@@ -496,7 +497,7 @@ export default function checkQA(results, option) {
         results.push({
           element: $el,
           type: option.checks.QA_NESTED_COMPONENTS.type || 'warning',
-          content: option.checks.QA_NESTED_COMPONENTS.content || Lang.sprintf('QA_NESTED_COMPONENTS'),
+          content: Lang.sprintf(option.checks.QA_NESTED_COMPONENTS.content || 'QA_NESTED_COMPONENTS'),
           dismiss: Utils.prepareDismissal(`NESTED${$el.textContent}`),
           dismissAll: option.checks.QA_NESTED_COMPONENTS.dismissAll ? 'QA_NESTED_COMPONENTS' : false,
           developer: option.checks.QA_NESTED_COMPONENTS.developer || false,

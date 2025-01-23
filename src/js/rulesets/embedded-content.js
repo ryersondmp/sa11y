@@ -16,7 +16,7 @@ export default function checkEmbeddedContent(results, option) {
       results.push({
         element: $el,
         type: option.checks.EMBED_AUDIO.type || 'warning',
-        content: option.checks.EMBED_AUDIO.content || Lang.sprintf('EMBED_AUDIO'),
+        content: Lang.sprintf(option.checks.EMBED_AUDIO.content || 'EMBED_AUDIO'),
         dismiss: Utils.prepareDismissal(`AUDIO${src($el)}`),
         dismissAll: option.checks.EMBED_AUDIO.dismissAll ? 'EMBED_AUDIO' : false,
         developer: option.checks.EMBED_AUDIO.developer || false,
@@ -34,7 +34,7 @@ export default function checkEmbeddedContent(results, option) {
         results.push({
           element: $el,
           type: option.checks.EMBED_VIDEO.type || 'warning',
-          content: option.checks.EMBED_VIDEO.content || Lang.sprintf('EMBED_VIDEO'),
+          content: Lang.sprintf(option.checks.EMBED_VIDEO.content || 'EMBED_VIDEO'),
           dismiss: Utils.prepareDismissal(`VIDEO${src($el)}`),
           dismissAll: option.checks.EMBED_VIDEO.dismissAll ? 'EMBED_VIDEO' : false,
           developer: option.checks.EMBED_VIDEO.developer || false,
@@ -50,7 +50,7 @@ export default function checkEmbeddedContent(results, option) {
       results.push({
         element: $el,
         type: option.checks.EMBED_DATA_VIZ.type || 'warning',
-        content: option.checks.EMBED_DATA_VIZ.content || Lang.sprintf('EMBED_DATA_VIZ'),
+        content: Lang.sprintf(option.checks.EMBED_DATA_VIZ.content || 'EMBED_DATA_VIZ'),
         dismiss: Utils.prepareDismissal(`DATAVIZ${src($el)}`),
         dismissAll: option.checks.EMBED_DATA_VIZ.dismissAll ? 'EMBED_DATA_VIZ' : false,
         developer: option.checks.EMBED_DATA_VIZ.developer || false,
@@ -76,7 +76,7 @@ export default function checkEmbeddedContent(results, option) {
         results.push({
           element: $el,
           type: option.checks.EMBED_UNFOCUSABLE.type || 'error',
-          content: option.checks.EMBED_UNFOCUSABLE.content || Lang.sprintf('EMBED_UNFOCUSABLE'),
+          content: Lang.sprintf(option.checks.EMBED_UNFOCUSABLE.content || 'EMBED_UNFOCUSABLE'),
           dismiss: Utils.prepareDismissal(`EMBEDUNFOCUSABLE${src($el)}`),
           dismissAll: option.checks.EMBED_UNFOCUSABLE.dismissAll ? 'EMBED_UNFOCUSABLE' : false,
           developer: option.checks.EMBED_UNFOCUSABLE.developer || true,
@@ -94,7 +94,7 @@ export default function checkEmbeddedContent(results, option) {
         results.push({
           element: $el,
           type: option.checks.EMBED_MISSING_TITLE.type || 'error',
-          content: option.checks.EMBED_MISSING_TITLE.content || Lang.sprintf('EMBED_MISSING_TITLE'),
+          content: Lang.sprintf(option.checks.EMBED_MISSING_TITLE.content || 'EMBED_MISSING_TITLE'),
           dismiss: Utils.prepareDismissal(`EMBEDMISSTITLE${src($el)}`),
           dismissAll: option.checks.EMBED_MISSING_TITLE.dismissAll ? 'EMBED_MISSING_TITLE' : false,
           developer: option.checks.EMBED_MISSING_TITLE.developer || true,
@@ -123,7 +123,7 @@ export default function checkEmbeddedContent(results, option) {
       results.push({
         element: $el,
         type: option.checks.EMBED_GENERAL.type || 'warning',
-        content: option.checks.EMBED_GENERAL.content || Lang.sprintf('EMBED_GENERAL'),
+        content: Lang.sprintf(option.checks.EMBED_GENERAL.content || 'EMBED_GENERAL'),
         dismiss: Utils.prepareDismissal(`IFRAMEGENERAL${src($el)}`),
         dismissAll: option.checks.EMBED_GENERAL.dismissAll ? 'EMBED_GENERAL' : false,
         developer: option.checks.EMBED_GENERAL.developer || false,
