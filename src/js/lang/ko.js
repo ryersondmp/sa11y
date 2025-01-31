@@ -25,7 +25,7 @@ export default {
     PAGE_ISSUES: '페이지 문제',
     SETTINGS: '설정',
     DEVELOPER_CHECKS: '개발자 검사',
-    DEVELOPER_DESC: '수정하는 데 프로그래밍 지식이 필요할 수 있는 문제를 확인합니다.',
+    DEVELOPER_DESC: 'HTML 속성, 양식 등 수정에 코딩 지식이 필요할 수 있는 문제를 확인합니다.',
     DARK_MODE: '다크 모드',
     SHORTCUT_SR: '문제로 건너뛰기. 키보드 단축키: Alt S',
     SKIP_TO_ISSUE: '문제로 건너뛰기',

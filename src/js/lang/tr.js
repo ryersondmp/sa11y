@@ -25,7 +25,7 @@ export default {
     PAGE_ISSUES: 'Sayfa Sorunları',
     SETTINGS: 'Ayarlar',
     DEVELOPER_CHECKS: 'Geliştirici kontrolleri',
-    DEVELOPER_DESC: 'Düzeltilmesi için kodlama bilgisi gerektirebilecek sorunları kontrol eder.',
+    DEVELOPER_DESC: 'HTML öznitelikleri, formlar gibi düzeltilmesi için kodlama bilgisi gerektirebilecek sorunları kontrol eder.',
     DARK_MODE: 'Karanlık mod',
     SHORTCUT_SR: 'Konuya geç. Klavye kısayolu: Alt S',
     SKIP_TO_ISSUE: 'Konuya geç',

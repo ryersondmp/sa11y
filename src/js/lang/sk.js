@@ -25,7 +25,7 @@ export default {
     PAGE_ISSUES: 'Problémy so stránkami',
     SETTINGS: 'Nastavenia',
     DEVELOPER_CHECKS: 'Kontroly vývojáře',
-    DEVELOPER_DESC: 'Kontroluje problémy, ktoré môžu vyžadovať znalosť programovania na opravu.',
+    DEVELOPER_DESC: 'Kontroluje problémy, ktorých oprava môže vyžadovať znalosti kódovania, ako sú HTML atribúty, formuláre a ďalšie.',
     DARK_MODE: 'Tmavý režim',
     SHORTCUT_SR: 'Prejsť na vydanie. Klávesová skratka: Alt S',
     SKIP_TO_ISSUE: 'Prejsť na vydanie',

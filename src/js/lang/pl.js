@@ -24,7 +24,7 @@ export default {
     PAGE_ISSUES: 'Problemy ze stroną',
     SETTINGS: 'Ustawienia',
     DEVELOPER_CHECKS: 'Kontrole dewelopera',
-    DEVELOPER_DESC: 'Sprawdza problemy, które mogą wymagać znajomości kodowania do naprawy.',
+    DEVELOPER_DESC: 'Sprawdza problemy, których naprawa może wymagać znajomości kodowania, takie jak atrybuty HTML, formularze i inne.',
     DARK_MODE: 'Tryb ciemny',
     SHORTCUT_SR: 'Przejdź do problemu. Klawisze skrótu: lewy Option',
     SKIP_TO_ISSUE: 'Przejdź do problemu',

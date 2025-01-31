@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.2
+  * @version 4.0.3
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -43,7 +43,7 @@
       PAGE_ISSUES: 'Problemas de página',
       SETTINGS: 'Configurações',
       DEVELOPER_CHECKS: 'Verificações do desenvolvedor',
-      DEVELOPER_DESC: 'Verifica problemas que podem precisar de conhecimentos de programação para serem corrigidos.',
+      DEVELOPER_DESC: 'Verifica problemas que podem exigir conhecimento de codificação para correção, como atributos HTML, formulários e mais.',
       DARK_MODE: 'Modo escuro',
       SHORTCUT_SR: 'Pular para a edição. Atalho de teclado: Alt S',
       SKIP_TO_ISSUE: 'Pular para a edição',

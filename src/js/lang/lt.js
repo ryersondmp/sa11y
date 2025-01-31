@@ -25,7 +25,7 @@ export default {
     PAGE_ISSUES: 'Puslapio problemos',
     SETTINGS: 'Nustatymai',
     DEVELOPER_CHECKS: 'Kūrėjo patikros',
-    DEVELOPER_DESC: 'Patikrina problemas, kurias gali prireikti išspręsti turint programavimo žinių.',
+    DEVELOPER_DESC: 'Tikrina problemas, kurioms išspręsti gali prireikti kodavimo žinių, pavyzdžiui, HTML atributus, formas ir kt.',
     DARK_MODE: 'Tamsusis režimas',
     SHORTCUT_SR: 'Pereiti prie klausimo. Spartusis klavišo klavišas: Alt S',
     SKIP_TO_ISSUE: 'Pereiti prie klausimo',

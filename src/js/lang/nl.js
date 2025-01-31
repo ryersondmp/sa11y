@@ -25,7 +25,7 @@ export default {
     PAGE_ISSUES: 'Pagina problemen',
     SETTINGS: 'Instellingen',
     DEVELOPER_CHECKS: 'Ontwikkelaarscontroles',
-    DEVELOPER_DESC: 'Controleert op problemen die mogelijk programmeerkennis vereisen om op te lossen.',
+    DEVELOPER_DESC: 'Controleert op problemen die mogelijk programmeerkennis vereisen om op te lossen, zoals HTML-attributen, formulieren en meer.',
     DARK_MODE: 'Donkere modus',
     SHORTCUT_SR: 'Naar uitgave gaan. Sneltoets: Alt S',
     SKIP_TO_ISSUE: 'Doorgaan naar uitgave',

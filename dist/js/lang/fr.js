@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.2
+  * @version 4.0.3
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -36,7 +36,7 @@ var fr = {
     PAGE_ISSUES: 'Problèmes de pages',
     SETTINGS: 'Paramètres',
     DEVELOPER_CHECKS: 'Vérifications du développeur',
-    DEVELOPER_DESC: 'Vérifie les problèmes qui peuvent nécessiter des compétences en programmation pour les résoudre.',
+    DEVELOPER_DESC: 'Vérifie les problèmes qui peuvent nécessiter des connaissances en programmation pour être corrigés, comme les attributs HTML, les formulaires et plus encore.',
     DARK_MODE: 'Mode sombre',
     SHORTCUT_SR: 'Passer à l’édition. Raccourci clavier: Alt et point',
     SKIP_TO_ISSUE: 'Passer à l’édition',

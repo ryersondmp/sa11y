@@ -25,7 +25,7 @@ export default {
     PAGE_ISSUES: 'Questões de página',
     SETTINGS: 'Definições',
     DEVELOPER_CHECKS: 'Verificações do desenvolvedor',
-    DEVELOPER_DESC: 'Verifica problemas que podem precisar de conhecimentos de programação para serem corrigidos.',
+    DEVELOPER_DESC: 'Verifica problemas que podem exigir conhecimentos de programação para serem corrigidos, como atributos HTML, formulários e mais.',
     DARK_MODE: 'Modo escuro',
     SHORTCUT_SR: 'Saltar para a edição. Atalho de teclado: Alt S',
     SKIP_TO_ISSUE: 'Saltar para a edição',

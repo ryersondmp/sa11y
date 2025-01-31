@@ -24,7 +24,7 @@ export default {
     PAGE_ISSUES: 'Problemas de la Página',
     SETTINGS: 'Ajustes',
     DEVELOPER_CHECKS: 'Verificaciones del desarrollador',
-    DEVELOPER_DESC: 'Verifica problemas que pueden requerir conocimientos de programación para solucionarse.',
+    DEVELOPER_DESC: 'Verifica problemas que pueden requerir conocimientos de programación para solucionarse, como atributos HTML, formularios y más.',
     DARK_MODE: 'Modo Oscuro',
     SHORTCUT_SR: 'Saltar Problema. Atajo de teclado: Alt S',
     SKIP_TO_ISSUE: 'Saltar Problema',

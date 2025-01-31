@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.2
+  * @version 4.0.3
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -37,7 +37,7 @@ var el = {
     PAGE_ISSUES: 'Ζητήματα σελίδας',
     SETTINGS: 'Ρυθμίσεις',
     DEVELOPER_CHECKS: 'Έλεγχοι προγραμματιστή',
-    DEVELOPER_DESC: 'Ελέγχει για προβλήματα που μπορεί να απαιτούν γνώσεις προγραμματισμού για επίλυση.',
+    DEVELOPER_DESC: 'Ελέγχει για προβλήματα που μπορεί να απαιτούν γνώσεις προγραμματισμού για την επίλυση τους, όπως HTML χαρακτηριστικά, φόρμες και άλλα.',
     DARK_MODE: 'Σκοτεινή λειτουργία',
     SHORTCUT_SR: 'Μετάβαση στο θέμα. Συντόμευση πληκτρολογίου: S',
     SKIP_TO_ISSUE: 'Μετάβαση στο θέμα',

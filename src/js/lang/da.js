@@ -25,7 +25,7 @@ export default {
     PAGE_ISSUES: 'Side Problemer',
     SETTINGS: 'Indstillinger',
     DEVELOPER_CHECKS: 'Udviklerkontroller',
-    DEVELOPER_DESC: 'Tjekker for problemer, der muligvis kræver kodningskendskab for at løse.',
+    DEVELOPER_DESC: 'Tjekker for problemer, der kan kræve kendskab til kodning for at blive løst, såsom HTML-attributter, formularer og mere.',
     DARK_MODE: 'Mørk tilstand',
     SHORTCUT_SR: 'Gå videre til udgaven. Tastaturgenvej: Alt S',
     SKIP_TO_ISSUE: 'Spring til nummer',

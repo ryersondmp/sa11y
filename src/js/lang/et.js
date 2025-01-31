@@ -25,7 +25,7 @@ export default {
     PAGE_ISSUES: 'Lehekülje probleemid',
     SETTINGS: 'Seaded',
     DEVELOPER_CHECKS: 'Arendaja kontrollid',
-    DEVELOPER_DESC: 'Kontrollib probleeme, mille lahendamiseks võib olla vajalik kodeerimisoskus.',
+    DEVELOPER_DESC: 'Kontrollib probleeme, mille lahendamiseks võib vaja minna kodeerimise teadmisi, näiteks HTML atribuudid, vormid ja muu.',
     DARK_MODE: 'Tume režiim',
     SHORTCUT_SR: 'Hüpake väljaandele. Klaviatuuri otsetee: S',
     SKIP_TO_ISSUE: 'Väljundi juurde hüpata',

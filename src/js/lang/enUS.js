@@ -24,7 +24,7 @@ export default {
     PAGE_ISSUES: 'Page Issues',
     SETTINGS: 'Settings',
     DEVELOPER_CHECKS: 'Developer checks',
-    DEVELOPER_DESC: 'Checks for issues that may need coding knowledge to fix.',
+    DEVELOPER_DESC: 'Checks for issues that may need coding knowledge to fix, such as HTML attributes, forms, and more.',
     DARK_MODE: 'Dark mode',
     SHORTCUT_SR: 'Skip to issue. Keyboard shortcut: Alt S',
     SKIP_TO_ISSUE: 'Skip to issue',

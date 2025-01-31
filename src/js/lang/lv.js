@@ -25,7 +25,7 @@ export default {
     PAGE_ISSUES: 'Lapas problēmas',
     SETTINGS: 'Iestatījumi',
     DEVELOPER_CHECKS: 'Izstrādātāja pārbaudes',
-    DEVELOPER_DESC: 'Pārbauda problēmas, kurām iespējams nepieciešamas programmēšanas zināšanas, lai tās novērstu.',
+    DEVELOPER_DESC: 'Pārbauda problēmas, kuru novēršanai var būt nepieciešamas programmēšanas zināšanas, piemēram, HTML atribūtus, veidlapas un citus.',
     DARK_MODE: 'Tumšais režīms',
     SHORTCUT_SR: 'Pāriet uz nākamo numuru. Tastatūras saīsne: Alt S',
     SKIP_TO_ISSUE: 'Pāriet uz jautājumu',

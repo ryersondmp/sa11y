@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.2
+  * @version 4.0.3
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -37,7 +37,7 @@ var lv = {
     PAGE_ISSUES: 'Lapas problēmas',
     SETTINGS: 'Iestatījumi',
     DEVELOPER_CHECKS: 'Izstrādātāja pārbaudes',
-    DEVELOPER_DESC: 'Pārbauda problēmas, kurām iespējams nepieciešamas programmēšanas zināšanas, lai tās novērstu.',
+    DEVELOPER_DESC: 'Pārbauda problēmas, kuru novēršanai var būt nepieciešamas programmēšanas zināšanas, piemēram, HTML atribūtus, veidlapas un citus.',
     DARK_MODE: 'Tumšais režīms',
     SHORTCUT_SR: 'Pāriet uz nākamo numuru. Tastatūras saīsne: Alt S',
     SKIP_TO_ISSUE: 'Pāriet uz jautājumu',

@@ -25,7 +25,7 @@ export default {
     PAGE_ISSUES: 'Sivukysymykset',
     SETTINGS: 'Asetukset',
     DEVELOPER_CHECKS: 'Kehittäjä tarkistukset',
-    DEVELOPER_DESC: 'Tarkistaa ongelmat, jotka saattavat vaatia ohjelmointitaitoja korjaamiseen.',
+    DEVELOPER_DESC: 'Tarkistaa ongelmat, joiden korjaaminen saattaa vaatia koodausosaamista, kuten HTML-attribuutit, lomakkeet ja muut.',
     DARK_MODE: 'Tumma tila',
     SHORTCUT_SR: 'Siirry aiheeseen. Pikanäppäin: S',
     SKIP_TO_ISSUE: 'Siirry asiaan',

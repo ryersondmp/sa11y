@@ -25,7 +25,7 @@ export default {
     PAGE_ISSUES: 'Oldalproblémák',
     SETTINGS: 'Beállítások',
     DEVELOPER_CHECKS: 'Fejlesztői ellenőrzések',
-    DEVELOPER_DESC: 'Ellenőrzi azokat a problémákat, amelyek javításához programozási ismeretekre lehet szükség.',
+    DEVELOPER_DESC: 'Ellenőrzi azokat a problémákat, amelyek kijavításához kódolási ismeretekre lehet szükség, például HTML attribútumokat, űrlapokat és egyebeket.',
     DARK_MODE: 'Sötét üzemmód',
     SHORTCUT_SR: 'Ugrás a kérdésre. Billentyűzet gyorsbillentyű: S',
     SKIP_TO_ISSUE: 'Ugrás a kérdésre',
