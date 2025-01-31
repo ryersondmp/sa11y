@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.2
+  * @version 4.0.3
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -34,7 +34,7 @@ var bg = {
     NO_IMAGES: 'Изображения не са намерени.',
     DECORATIVE: 'Декоративен',
     DEVELOPER_CHECKS: 'Проверки на разработчика',
-    DEVELOPER_DESC: 'Проверява за проблеми, които може да изискват знания по програмиране за отстраняване.',
+    DEVELOPER_DESC: 'Проверява за проблеми, които може да изискват познания по програмиране за отстраняване, като HTML атрибути, формуляри и други.',
     MISSING: 'Липсващ',
     PAGE_ISSUES: 'Проблеми на страницата',
     SETTINGS: 'Настройки',

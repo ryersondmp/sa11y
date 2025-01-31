@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.2
+  * @version 4.0.3
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -43,7 +43,7 @@
       PAGE_ISSUES: 'Sayfa Sorunları',
       SETTINGS: 'Ayarlar',
       DEVELOPER_CHECKS: 'Geliştirici kontrolleri',
-      DEVELOPER_DESC: 'Düzeltilmesi için kodlama bilgisi gerektirebilecek sorunları kontrol eder.',
+      DEVELOPER_DESC: 'HTML öznitelikleri, formlar gibi düzeltilmesi için kodlama bilgisi gerektirebilecek sorunları kontrol eder.',
       DARK_MODE: 'Karanlık mod',
       SHORTCUT_SR: 'Konuya geç. Klavye kısayolu: Alt S',
       SKIP_TO_ISSUE: 'Konuya geç',

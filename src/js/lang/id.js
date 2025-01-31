@@ -25,7 +25,7 @@ export default {
     PAGE_ISSUES: 'Masalah Halaman',
     SETTINGS: 'Pengaturan',
     DEVELOPER_CHECKS: 'Pemeriksaan pengembang',
-    DEVELOPER_DESC: 'Memeriksa masalah yang mungkin memerlukan pengetahuan pemrograman untuk diperbaiki.',
+    DEVELOPER_DESC: 'Memeriksa masalah yang mungkin memerlukan pengetahuan pemrograman untuk diperbaiki, seperti atribut HTML, formulir, dan lainnya.',
     DARK_MODE: 'Mode gelap',
     SHORTCUT_SR: 'Loncat ke masalah. Pintasan papan ketik: Alt S',
     SKIP_TO_ISSUE: 'Loncat ke masalah',

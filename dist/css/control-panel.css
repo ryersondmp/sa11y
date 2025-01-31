@@ -759,6 +759,10 @@ label:not(#colour-filter-mode, #export-results-mode) {
 /* ***************************************** */
 /*           13. Settings Panel              */
 /* ***************************************** */
+#settings-panel #info-icon {
+  vertical-align: middle;
+  fill: var(--sa11y-panel-primary);
+}
 #settings-panel #export-csv,
 #settings-panel #export-html {
   width: unset;

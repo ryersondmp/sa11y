@@ -25,7 +25,7 @@ export default {
     PAGE_ISSUES: 'Sidproblem',
     SETTINGS: 'Inställningar',
     DEVELOPER_CHECKS: 'Utvecklarkontroller',
-    DEVELOPER_DESC: 'Kontrollerar problem som kan kräva kodningskunskaper för att åtgärda.',
+    DEVELOPER_DESC: 'Kontrollerar problem som kan kräva kodningskunskaper för att åtgärdas, såsom HTML-attribut, formulär och mer.',
     DARK_MODE: 'Mörkt läge',
     SHORTCUT_SR: 'Hoppa till problem. Kortkommando: Alt + punkt',
     SKIP_TO_ISSUE: 'Hoppa till problem',

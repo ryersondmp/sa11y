@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.2
+  * @version 4.0.3
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -36,7 +36,7 @@ var enUS = {
     PAGE_ISSUES: 'Page Issues',
     SETTINGS: 'Settings',
     DEVELOPER_CHECKS: 'Developer checks',
-    DEVELOPER_DESC: 'Checks for issues that may need coding knowledge to fix.',
+    DEVELOPER_DESC: 'Checks for issues that may need coding knowledge to fix, such as HTML attributes, forms, and more.',
     DARK_MODE: 'Dark mode',
     SHORTCUT_SR: 'Skip to issue. Keyboard shortcut: Alt S',
     SKIP_TO_ISSUE: 'Skip to issue',

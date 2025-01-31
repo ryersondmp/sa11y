@@ -25,7 +25,7 @@ export default {
     PAGE_ISSUES: 'ページの問題',
     SETTINGS: '設定方法',
     DEVELOPER_CHECKS: '開発者チェック',
-    DEVELOPER_DESC: '修正にプログラミング知識が必要な可能性のある問題をチェックします。',
+    DEVELOPER_DESC: 'HTML属性、フォームなど、修正にコーディング知識が必要な可能性がある問題をチェックします。',
     DARK_MODE: 'ダークモード',
     SHORTCUT_SR: '問題にスキップします。キーボードショートカットAlt S',
     SKIP_TO_ISSUE: '発行物へスキップ',

@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.2
+  * @version 4.0.3
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -37,7 +37,7 @@ var id = {
     PAGE_ISSUES: 'Masalah Halaman',
     SETTINGS: 'Pengaturan',
     DEVELOPER_CHECKS: 'Pemeriksaan pengembang',
-    DEVELOPER_DESC: 'Memeriksa masalah yang mungkin memerlukan pengetahuan pemrograman untuk diperbaiki.',
+    DEVELOPER_DESC: 'Memeriksa masalah yang mungkin memerlukan pengetahuan pemrograman untuk diperbaiki, seperti atribut HTML, formulir, dan lainnya.',
     DARK_MODE: 'Mode gelap',
     SHORTCUT_SR: 'Loncat ke masalah. Pintasan papan ketik: Alt S',
     SKIP_TO_ISSUE: 'Loncat ke masalah',

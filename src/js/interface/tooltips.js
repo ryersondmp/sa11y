@@ -152,7 +152,6 @@ export class PanelTooltips extends HTMLElement {
       delay: [500, 0],
       trigger: 'mouseenter focusin',
       arrow: true,
-      maxWidth: 200,
       placement: 'top',
       theme: 'sa11y-theme sa11y-panel',
       role: 'tooltip',
@@ -179,21 +178,25 @@ export class PanelTooltips extends HTMLElement {
     tippy(Constants.Panel.skipButton, {
       ...tooltipOptions(shadowRoot),
       offset: [0, 8],
+      maxWidth: 200,
       content: `${Lang._('SKIP_TO_ISSUE')} &raquo; <br> ${keyboardShortcut}`,
     });
 
     /* 2. Tooltip for "Dismiss" button. */
     this.object = tippy(Constants.Panel.dismissButton, {
       offset: [0, 8],
+      maxWidth: 200,
       ...tooltipOptions(shadowRoot),
     });
 
     /* 3. Tooltip for "Developer checks" toggle. */
     if (Constants.Global.developerPlugin) {
-      tippy(Constants.Panel.developerToggle, {
+      const infoIcon = Constants.Panel.developerItem.querySelector('#info-icon');
+      tippy(infoIcon, {
         ...tooltipOptions(shadowRoot),
         triggerTarget: [Constants.Panel.developerItem],
-        offset: [0, 0],
+        offset: [0, 10],
+        maxWidth: 250,
         content: Lang._('DEVELOPER_DESC'),
       });
     }

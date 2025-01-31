@@ -24,7 +24,7 @@ export default {
     PAGE_ISSUES: 'Seitenprobleme',
     SETTINGS: 'Einstellungen',
     DEVELOPER_CHECKS: 'Entwicklerprüfungen',
-    DEVELOPER_DESC: 'Überprüft Probleme, die möglicherweise Programmierkenntnisse zur Behebung erfordern.',
+    DEVELOPER_DESC: 'Überprüft Probleme, deren Behebung Programmierkenntnisse erfordern kann, wie HTML-Attribute, Formulare und mehr.',
     DARK_MODE: 'Dark mode',
     SHORTCUT_SR: 'Zum Eintrag springen. Keyboard shortcut: Alt Punkt',
     SKIP_TO_ISSUE: 'Zum Eintrag springen',

@@ -25,7 +25,7 @@ export default {
     PAGE_ISSUES: '页码问题',
     SETTINGS: '设置',
     DEVELOPER_CHECKS: '开发者检查',
-    DEVELOPER_DESC: '检查可能需要编码知识来修复的问题。',
+    DEVELOPER_DESC: '检查可能需要编码知识来修复的问题，例如 HTML 属性、表单等。',
     DARK_MODE: '黑暗模式',
     SHORTCUT_SR: '跳到问题。键盘快捷方式: Alt S',
     SKIP_TO_ISSUE: '跳到问题',

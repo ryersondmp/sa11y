@@ -25,7 +25,7 @@ export default {
     PAGE_ISSUES: 'Vprašanja strani',
     SETTINGS: 'Nastavitve',
     DEVELOPER_CHECKS: 'Preverjanje razvijalca',
-    DEVELOPER_DESC: 'Preveri težave, ki morda zahtevajo znanje programiranja za odpravo.',
+    DEVELOPER_DESC: 'Preverja težave, katerih odpravljanje lahko zahteva znanje kodiranja, kot so HTML atributi, obrazci in drugo.',
     DARK_MODE: 'Temni način',
     SHORTCUT_SR: 'Preskoči na številko. Bližnjica do tipkovnice: Alt S',
     SKIP_TO_ISSUE: 'Preskoči na vprašanje',
