@@ -1,5 +1,4 @@
 import Lang from './lang';
-import { store } from './utils';
 
 const Constants = (function myConstants() {
   /* **************** */
@@ -22,8 +21,9 @@ const Constants = (function myConstants() {
         Root.Readability = Root.areaToCheck;
 
         // Create a warning if the desired readability root is not found.
-        const { readabilityDetails } = Constants.Panel;
-        if (readabilityDetails && store.getItem('sa11y-readability') === 'On') {
+        const { readabilityDetails, readabilityToggle } = Constants.Panel;
+        const readabilityOn = readabilityToggle.getAttribute('aria-pressed') === 'true';
+        if (readabilityDetails && readabilityOn) {
           const note = document.createElement('div');
           note.id = 'readability-alert';
           note.innerHTML = `<hr aria-hidden="true"><p>${Lang.sprintf('MISSING_READABILITY_ROOT',
