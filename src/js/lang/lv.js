@@ -37,6 +37,7 @@ export default {
     TOTAL_FOUND: 'kopējais atrasto problēmu skaits.',
     NOT_VISIBLE: 'Mēģinātais apskatīt vienums nav redzams; iespējams, tas ir paslēpts vai atrodas akordeona vai cilnes komponenta iekšpusē. Šeit ir priekšskatījums:',
     MISSING_ROOT: 'Tika pārbaudīta visas lapas pieejamība, jo mērķa apgabals <code>%(root)</code> nepastāv.',
+    MISSING_READABILITY_ROOT: 'Lasāmības vērtējums ir balstīts uz satura apgabalu <code>%(fallback)</code>, jo mērķa apgabals <code>%(root)</code> nepastāv.',
     HEADING_NOT_VISIBLE: 'Virsraksts nav redzams; tas var būt paslēpts vai akordeona vai cilnes komponenta iekšpusē.',
     SKIP_TO_PAGE_ISSUES: 'Pāriet uz lapas jautājumiem',
     CONSOLE_ERROR: 'Atvainojiet, bet šajā lapā ir problēma ar pieejamības pārbaudītāju. Vai varat, lūdzu, <a href="%(link)">ziņot par to, izmantojot šo formu</a> vai <a href="%(link)">GitHub</a>?',

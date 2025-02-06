@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.3
+  * @version 4.0.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -55,6 +55,7 @@
       TOTAL_FOUND: 'totalt antall problemer funnet.',
       NOT_VISIBLE: 'Elementet du prøver å se, er ikke synlig; det kan være skjult eller inne i en trekkspill- eller fanekomponent. Her er en forhåndsvisning:',
       MISSING_ROOT: 'Hele siden ble kontrollert for tilgjengelighet fordi målområdet <code>%(root)</code> ikke finnes.',
+      MISSING_READABILITY_ROOT: 'Lesbarhetspoengene er basert på innholdsområdet <code>%(fallback)</code>, fordi målområdet <code>%(root)</code> ikke finnes.',
       HEADING_NOT_VISIBLE: 'Overskriften er ikke synlig; den kan være skjult eller inne i en trekkspill- eller fanekomponent.',
       SKIP_TO_PAGE_ISSUES: 'Gå til sideproblemer',
       CONSOLE_ERROR: 'Beklager, men det er et problem med tilgjengelighetskontrollen på denne siden. Kan du <a href="%(link)">rapportere det via dette skjemaet</a> eller på <a href="%(link)">GitHub</a>?',

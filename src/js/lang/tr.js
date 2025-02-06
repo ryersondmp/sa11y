@@ -37,6 +37,7 @@ export default {
     TOTAL_FOUND: 'toplam sorun bulundu.',
     NOT_VISIBLE: 'Görüntülemeye çalıştığınız öğe görünmüyor; gizli veya bir akordeon ya da sekme bileşeninin içinde olabilir. İşte bir önizleme:',
     MISSING_ROOT: '<code>%(root)</code> hedef alanı mevcut olmadığı için sayfanın tamamı erişilebilirlik açısından kontrol edildi.',
+    MISSING_READABILITY_ROOT: 'Okunabilirlik puanı, <code>%(fallback)</code> içerik alanına dayanmaktadır çünkü hedef alan <code>%(root)</code> mevcut değildir.',
     HEADING_NOT_VISIBLE: 'Başlık görünür değildir; gizli veya bir akordeon ya da sekme bileşeninin içinde olabilir.',
     SKIP_TO_PAGE_ISSUES: 'Sayfa Sorunlarına Geç',
     CONSOLE_ERROR: 'Üzgünüz, ancak bu sayfadaki erişilebilirlik denetleyicisinde bir sorun var. Lütfen <a href="%(link)">bu form</a> aracılığıyla veya <a href="%(link)">GitHub</a> üzerinden bildirebilir misiniz?',

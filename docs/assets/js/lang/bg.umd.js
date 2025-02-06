@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.3
+  * @version 4.0.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -55,6 +55,7 @@
       TOTAL_FOUND: 'общ брой намерени проблеми.',
       NOT_VISIBLE: 'Елементът, който се опитвате да видите, не е видим; може да е скрит или да се намира в компонент на акордеон или таб. Ето един преглед:',
       MISSING_ROOT: 'Цялата страница беше проверена за достъпност, тъй като целевата област <code>%(root)</code> не съществува.',
+      MISSING_READABILITY_ROOT: 'Оценката за четимост се основава на съдържателната област <code>%(fallback)</code>, тъй като целевата област <code>%(root)</code> не съществува.',
       HEADING_NOT_VISIBLE: 'Заглавието не е видимо; то може да е скрито или да се намира в компонент на акордеон или таб.',
       SKIP_TO_PAGE_ISSUES: 'Преминаване към страница Проблеми',
       CONSOLE_ERROR: 'Съжаляваме, но има проблем с проверката за достъпност на тази страница. Можете ли да го <a href="%(link)">докладвате чрез този формуляр</a> или на <a href="%(link)">GitHub</a>?',

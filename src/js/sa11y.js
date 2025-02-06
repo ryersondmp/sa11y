@@ -360,6 +360,7 @@ class Sa11y {
       Constants.Panel.readabilityDetails.innerHTML = '';
       Constants.Panel.panel.classList.remove('has-page-issues');
       Constants.Panel.pageIssues.classList.remove('active');
+      Constants.Panel.panel.querySelector('#readability-alert')?.remove();
 
       // Remove any active alerts from panel.
       Utils.removeAlert();

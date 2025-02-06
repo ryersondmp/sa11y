@@ -37,6 +37,7 @@ export default {
     TOTAL_FOUND: 'が見つかりました。',
     NOT_VISIBLE: '表示しようとしているアイテムは表示されていません。非表示になっているか、アコーディオンやタブコンポーネントの中に入っている可能性があります。以下はプレビューです：',
     MISSING_ROOT: '対象領域<code>%(root)</code>が存在しないため、全ページのアクセシビリティを確認しました。',
+    MISSING_READABILITY_ROOT: '可読性スコアは<code>%(fallback)</code>のコンテンツ領域に基づいています。ターゲット領域<code>%(root)</code>が存在しないためです。',
     HEADING_NOT_VISIBLE: '見出しは表示されません。非表示になっていたり、アコーディオンやタブコンポーネントの中に入っていたりすることがあります。',
     SKIP_TO_PAGE_ISSUES: 'ページの先頭へ戻る',
     CONSOLE_ERROR: '申し訳ありませんが、このページのアクセシビリティチェッカーに問題があります。<a href="%(link)">このフォーム</a>または<a href="%(link)">GitHub</a>で報告していただけませんでしょうか',

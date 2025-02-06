@@ -1,4 +1,5 @@
 import Lang from './lang';
+import { store } from './utils';
 
 const Constants = (function myConstants() {
   /* **************** */
@@ -17,9 +18,18 @@ const Constants = (function myConstants() {
       if (!Root.areaToCheck) {
         Root.Readability = document.querySelector('body');
       } else {
+        // If desired root area is not found, use the root target area.
         Root.Readability = Root.areaToCheck;
-        // eslint-disable-next-line no-console
-        console.error(`Sa11y configuration error: The selector '${desiredReadabilityRoot}' used for the property 'readabilityRoot' does not exist. '${Root.areaToCheck.tagName}' was used as a fallback.`);
+
+        // Create a warning if the desired readability root is not found.
+        const { readabilityDetails } = Constants.Panel;
+        if (readabilityDetails && store.getItem('sa11y-readability') === 'On') {
+          const note = document.createElement('div');
+          note.id = 'readability-alert';
+          note.innerHTML = `<hr aria-hidden="true"><p>${Lang.sprintf('MISSING_READABILITY_ROOT',
+            Root.areaToCheck.tagName.toLowerCase(), desiredReadabilityRoot)}</p>`;
+          readabilityDetails.insertAdjacentElement('afterend', note);
+        }
       }
     }
   }

@@ -595,6 +595,9 @@ hr {
 #images-list li .alt {
   padding: 2px 5px 10px;
 }
+#images-list li .edit-block {
+  margin-bottom: 15px;
+}
 #images-list li .edit {
   position: relative;
   padding: 4px 7px;

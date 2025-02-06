@@ -37,6 +37,7 @@ export default {
     TOTAL_FOUND: 'iš viso rasta problemų.',
     NOT_VISIBLE: 'Elementas, kurį bandote peržiūrėti, nėra matomas; jis gali būti paslėptas arba būti akordeono ar skirtuko komponento viduje. Čia pateikiama peržiūra:',
     MISSING_ROOT: 'Buvo patikrintas viso puslapio prieinamumas, nes tikslinė sritis <code>%(root)</code> neegzistuoja.',
+    MISSING_READABILITY_ROOT: 'Skaitymo įvertinimas pagrįstas turinio sritimi <code>%(fallback)</code>, nes tikslinė sritis <code>%(root)</code> neegzistuoja.',
     HEADING_NOT_VISIBLE: 'Antraštė nėra matoma; ji gali būti paslėpta arba akordeono ar skirtuko komponento viduje.',
     SKIP_TO_PAGE_ISSUES: 'Pereiti prie puslapio klausimų',
     CONSOLE_ERROR: 'Atsiprašome, bet šiame puslapyje yra problema su prieinamumo tikrintuvu. Ar galite apie tai <a href="%(link)">pranešti per šią formą</a> arba <a href="%(link)">GitHub</a>?',

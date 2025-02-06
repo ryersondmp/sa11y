@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.3
+  * @version 4.0.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -48,6 +48,7 @@ var es = {
     TOTAL_FOUND: 'Total de problemas encontrados.',
     NOT_VISIBLE: 'El item que estas intentando ver no es visible; puede estar oculto o dentro de un componente de acordeón o pestaña. Aquí hay una vista previa:',
     MISSING_ROOT: 'Se comprobó la accesibilidad de la página completa porque el área de destino <code>%(root)</code> no existe.',
+    MISSING_READABILITY_ROOT: 'La puntuación de legibilidad se basa en el área de contenido <code>%(fallback)</code>, porque el área objetivo <code>%(root)</code> no existe.',
     HEADING_NOT_VISIBLE: 'El encabezado no es visible; puede estar oculto o dentro de un componente de acordeón o pestaña.',
     SKIP_TO_PAGE_ISSUES: 'Saltar problemas de la página',
     CONSOLE_ERROR: 'Lo siento, pero hay un problema con el comprobador de accesibilidad en esta página. Puedes por favor <a href="%(link)">reportarlo a través de este formulario</a> or on <a href="%(link)">GitHub</a>?',

@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.3
+  * @version 4.0.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -48,6 +48,7 @@ var de = {
     TOTAL_FOUND: 'Einträge insgesamt gefunden.',
     NOT_VISIBLE: 'Das Element, das Sie anzeigen möchten, ist nicht sichtbar; es ist möglicherweise ausgeblendet oder befindet sich in einer Akkordeon- oder Registerkartenkomponente. Hier ist eine Vorschau:',
     MISSING_ROOT: 'Die gesamte Seite wurde auf Barrierefreiheit geprüft, da der Zielbereich <code>%(root)</code> nicht existiert.',
+    MISSING_READABILITY_ROOT: 'Die Lesbarkeitsbewertung basiert auf dem Inhaltsbereich <code>%(fallback)</code>, da der Zielbereich <code>%(root)</code> nicht existiert.',
     HEADING_NOT_VISIBLE: 'Die Überschrift ist nicht sichtbar; sie kann ausgeblendet sein oder sich innerhalb einer Akkordeon- oder Registerkartenkomponente befinden.',
     SKIP_TO_PAGE_ISSUES: 'Zu Seitenproblemen springen',
     CONSOLE_ERROR: 'Leider liegt ein Problem mit der Barrierefreiheitsprüfung auf dieser Seite vor. Können Sie es bitte <a href="%(link)">über dieses Formular</a> oder auf <a href="%(link)">GitHub</a> melden?',

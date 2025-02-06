@@ -37,6 +37,7 @@ export default {
     TOTAL_FOUND: 'löydettyjen ongelmien kokonaismäärä.',
     NOT_VISIBLE: 'Kohde, jota yrität tarkastella, ei ole näkyvissä; se voi olla piilossa tai harmonikka- tai välilehtikomponentin sisällä. Tässä on esikatselu:',
     MISSING_ROOT: 'Koko sivun saavutettavuus tarkistettiin, koska kohdealuetta <code>%(root)</code> ei ole olemassa.',
+    MISSING_READABILITY_ROOT: 'Luettavuuspisteytys perustuu sisältöalueeseen <code>%(fallback)</code>, koska kohdealue <code>%(root)</code> ei ole olemassa.',
     HEADING_NOT_VISIBLE: 'Otsikko ei ole näkyvissä; se voi olla piilotettu tai harmonikka- tai välilehtiosan sisällä.',
     SKIP_TO_PAGE_ISSUES: 'Siirry sivulle Issues',
     CONSOLE_ERROR: 'Anteeksi, mutta tämän sivun saavutettavuuden tarkistuksessa on ongelma. Voisitko <a href="%(link)">ilmoittaa siitä tällä lomakkeella</a> tai <a href="%(link)">GitHubissa</a>?',

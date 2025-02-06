@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.3
+  * @version 4.0.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -55,6 +55,7 @@
       TOTAL_FOUND: '총 문제 발견.',
       NOT_VISIBLE: '보려는 항목이 보이지 않습니다. 숨겨져 있거나 아코디언 또는 탭 컴포넌트 안에 있을 수 있습니다. 미리 보기:',
       MISSING_ROOT: '타겟 영역 <code>%(root)</code>이(가) 없기 때문에 전체 페이지에 대한 접근성을 확인했습니다.',
+      MISSING_READABILITY_ROOT: '가독성 점수는 <code>%(fallback)</code> 콘텐츠 영역을 기반으로 합니다. 대상 영역 <code>%(root)</code>가 존재하지 않기 때문입니다.',
       HEADING_NOT_VISIBLE: '표시되지 않는 제목입니다. 숨겨져 있거나 아코디언 또는 탭 컴포넌트 안에 있을 수 있습니다.',
       SKIP_TO_PAGE_ISSUES: '페이지 문제로 건너뛰기',
       CONSOLE_ERROR: '죄송합니다. 이 페이지에서 접근성 점검기에 문제가 있습니다. <a href="%(link)">이 양식</a>이나 <a href="%(link)">GitHub</a>을 통해 신고해 주십시오.',
