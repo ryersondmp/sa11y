@@ -21,12 +21,10 @@ export default class ControlPanel extends HTMLElement {
 
     const rememberDeveloper = store.getItem('sa11y-developer') === 'On';
     const rememberReadability = store.getItem('sa11y-readability') === 'On';
+    const rememberPanelPosition = store.getItem('sa11y-position');
 
     // If admin wants users to check everything, without toggleable checks.
     const checkAll = Constants.Global.checkAllHideToggles;
-
-    // Panel position: left or right side.
-    const { panelPosition } = Constants.Global;
 
     /* TOGGLEABLE PLUGINS */
     const developerPlugin = Constants.Global.developerPlugin ? `
@@ -93,7 +91,7 @@ export default class ControlPanel extends HTMLElement {
 
     /* MAIN TOGGLE */
     const mainToggle = `
-      <button type="button" aria-expanded="false" id="toggle" aria-describedby="notification-badge" aria-label="${Lang._('MAIN_TOGGLE_LABEL')}" class="${panelPosition}" disabled>
+      <button type="button" aria-expanded="false" id="toggle" aria-describedby="notification-badge" aria-label="${Lang._('MAIN_TOGGLE_LABEL')}" class="${rememberPanelPosition}" disabled>
         ${MainToggleIcon}
         <div id="notification-badge">
           <span id="notification-count"></span>
@@ -150,10 +148,15 @@ export default class ControlPanel extends HTMLElement {
       </div>` : '';
 
     /* PAGE SETTINGS */
+    const panelPositionLabel = rememberPanelPosition === 'left' || rememberPanelPosition === 'top-left'
+      ? Lang._('PANEL_RIGHT') : Lang._('PANEL_LEFT');
     const pageSettings = `
       <div id="settings-panel" role="tabpanel" aria-labelledby="settings-header">
         <div class="panel-header">
           <h2 id="settings-header" tabindex="-1">${Lang._('SETTINGS')}</h2>
+          <button id="switch-sides" aria-label="${panelPositionLabel}">
+            <svg width="15" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="var(--sa11y-setting-switch-bg-off)"d="M438.6 150.6c12.5-12.5 12.5-32.8 0-45.3l-96-96c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.7 96 32 96C14.3 96 0 110.3 0 128s14.3 32 32 32l306.7 0-41.4 41.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l96-96zm-333.3 352c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 416 416 416c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0 41.4-41.4c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-96 96c-12.5 12.5-12.5 32.8 0 45.3l96 96z"/></svg>
+          </button>
         </div>
         <div id="settings-content">
           <ul id="settings-options">
@@ -212,18 +215,11 @@ export default class ControlPanel extends HTMLElement {
     /* OUTLINE & SETTING TAB TOGGLES. */
     const imageToggleButton = `<button type="button" role="tab" aria-expanded="false" id="images-toggle" aria-controls="images-panel">${Lang._('IMAGES')}</button>`;
 
-    // Spacer for toggle width...
-    const spacer = Constants.Global.showImageOutline
-      ? '<div style="width:80px"></div>'
-      : '<div style="width:40px"></div>';
-
     const tabToggles = `
       <div id="panel-controls" role="tablist" aria-orientation="horizontal">
-        ${(panelPosition === 'left') ? spacer : ''}
         <button type="button" role="tab" aria-expanded="false" id="outline-toggle" aria-controls="outline-panel">${Lang._('OUTLINE')}</button>
         ${Constants.Global.showImageOutline ? imageToggleButton : ''}
         <button type="button" role="tab" aria-expanded="false" id="settings-toggle" aria-controls="settings-panel">${Lang._('SETTINGS')}</button>
-        ${(panelPosition === 'right') ? spacer : ''}
       </div>`;
 
     /* MAIN CONTAINER */
@@ -235,10 +231,10 @@ export default class ControlPanel extends HTMLElement {
     container.setAttribute('aria-label', Lang._('CONTAINER_LABEL'));
     container.setAttribute('dir', Constants.Global.langDirection);
 
-    if (panelPosition === 'top-left' || panelPosition === 'top-right') {
+    if (rememberPanelPosition === 'top-left' || rememberPanelPosition === 'top-right') {
       container.innerHTML = `
         ${mainToggle}
-        <div id="panel" class="${panelPosition}">
+        <div id="panel" class="${rememberPanelPosition}">
           ${panelStatus}
           ${colourFilterPanel}
           ${tabToggles}
@@ -251,7 +247,7 @@ export default class ControlPanel extends HTMLElement {
     } else {
       container.innerHTML = `
         ${mainToggle}
-        <div id="panel" class="${panelPosition}">
+        <div id="panel" class="${rememberPanelPosition}">
           ${pageIssues}
           ${pageOutline}
           ${imagesOutline}

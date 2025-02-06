@@ -45,6 +45,7 @@ const defaultOptions = {
   showGoodLinkButton: true,
   dismissAnnotations: true,
   dismissAll: true,
+  ignoreHiddenOverflow: '',
 
   // Readability
   readabilityPlugin: true,

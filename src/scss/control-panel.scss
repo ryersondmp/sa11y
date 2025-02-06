@@ -506,6 +506,8 @@ hr {
 }
 
 .panel-header {
+  display: flex;
+  justify-content: space-between;
   padding: 10px 15px 0;
   text-align: start;
 }
@@ -639,6 +641,8 @@ hr {
     }
 
     .edit-block {
+      display: flex;
+      justify-content: flex-end;
       margin-bottom: 15px;
     }
 
@@ -823,6 +827,20 @@ label:not(#colour-filter-mode, #export-results-mode) {
   cursor: pointer;
 }
 
+// Insert space between the panel controls and main toggle if Image Outline is enabled.
+#panel.right {
+  #panel-controls:has(#images-toggle)::after {
+    width: 80px;
+    content: "";
+  }
+}
+
+#panel.left {
+  #panel-controls:has(#images-toggle)::before {
+    width: 40px;
+    content: "";
+  }
+}
 
 /* ***************************************** */
 /*           13. Settings Panel              */

@@ -162,6 +162,7 @@ const Constants = (function myConstants() {
     Panel.colourFilterItem = Sa11yPanel.getElementById('colour-filter-item');
     Panel.colourFilterSelect = Sa11yPanel.getElementById('colour-filter-select');
     Panel.colourFilterIcon = Sa11yPanel.getElementById('filter-icon');
+    Panel.switchSides = Sa11yPanel.getElementById('switch-sides');
 
     // Buttons
     Panel.toggle = Sa11yPanel.getElementById('toggle');

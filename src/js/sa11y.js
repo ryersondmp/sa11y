@@ -75,7 +75,7 @@ class Sa11y {
         Constants.initializeReadability(option);
         Constants.initializeExclusions(option);
 
-        /* Make "Developer checks" on by default or if toggle switch is visually hidden. */
+        // Make "Developer checks" on by default or if toggle switch is visually hidden.
         if (option.developerChecksOnByDefault) {
           if (Utils.store.getItem('sa11y-developer') === null || option.checkAllHideToggles) {
             Utils.store.setItem('sa11y-developer', 'On');
@@ -89,6 +89,12 @@ class Sa11y {
             this.checkAll();
             Utils.store.removeItem('sa11y-dismissed');
           } else {
+            // Remember panel position preference.
+            const { panelPosition } = Constants.Global;
+            if (Utils.store.getItem('sa11y-position') === null) {
+              Utils.store.setItem('sa11y-position', panelPosition);
+            }
+
             // Build control panel.
             const controlPanel = new ControlPanel();
             document.body.appendChild(controlPanel);
@@ -302,7 +308,7 @@ class Sa11y {
           Utils.isScrollable(Constants.Panel.pageIssuesList, Constants.Panel.pageIssuesContent);
 
           // Extras
-          detectOverflow();
+          detectOverflow(option.ignoreHiddenOverflow);
           nudge();
         }
 

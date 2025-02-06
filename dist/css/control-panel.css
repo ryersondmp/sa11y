@@ -472,6 +472,8 @@ hr {
 }
 
 .panel-header {
+  display: flex;
+  justify-content: space-between;
   padding: 10px 15px 0;
   text-align: start;
 }
@@ -596,6 +598,8 @@ hr {
   padding: 2px 5px 10px;
 }
 #images-list li .edit-block {
+  display: flex;
+  justify-content: flex-end;
   margin-bottom: 15px;
 }
 #images-list li .edit {
@@ -757,6 +761,16 @@ label {
 
 label:not(#colour-filter-mode, #export-results-mode) {
   cursor: pointer;
+}
+
+#panel.right #panel-controls:has(#images-toggle)::after {
+  width: 80px;
+  content: "";
+}
+
+#panel.left #panel-controls:has(#images-toggle)::before {
+  width: 40px;
+  content: "";
 }
 
 /* ***************************************** */
