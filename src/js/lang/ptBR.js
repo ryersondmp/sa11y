@@ -37,6 +37,7 @@ export default {
     TOTAL_FOUND: 'total de problemas encontrados.',
     NOT_VISIBLE: 'O item que você está tentando visualizar não está visível; ele pode estar oculto ou dentro de um componente de acordeão ou guia. Aqui está uma visualização:',
     MISSING_ROOT: 'A página inteira foi verificada quanto à acessibilidade porque a área de destino <code>%(root)</code> não existe.',
+    MISSING_READABILITY_ROOT: 'A pontuação de legibilidade é baseada na área de conteúdo <code>%(fallback)</code>, pois a área alvo <code>%(root)</code> não existe.',
     HEADING_NOT_VISIBLE: 'O cabeçalho não é visível; ele pode estar oculto ou dentro de um componente de acordeão ou guia.',
     SKIP_TO_PAGE_ISSUES: 'Pular para os problemas da página',
     CONSOLE_ERROR: 'Desculpe, mas há um problema com o verificador de acessibilidade nesta página. Você pode <a href="%(link)">relatar o problema por meio deste formulário</a> ou no <a href="%(link)">GitHub</a>?',

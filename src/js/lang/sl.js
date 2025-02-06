@@ -37,6 +37,7 @@ export default {
     TOTAL_FOUND: 'skupno število najdenih vprašanj.',
     NOT_VISIBLE: 'Element, ki si ga želite ogledati, ni viden; morda je skrit ali pa je znotraj komponente harmonike ali zavihka. Tukaj je predogled:',
     MISSING_ROOT: 'Celotna stran je bila preverjena glede dostopnosti, ker ciljno območje <code>%(root)</code> ne obstaja.',
+    MISSING_READABILITY_ROOT: 'Ocena berljivosti temelji na vsebinski površini <code>%(fallback)</code>, ker ciljno območje <code>%(root)</code> ne obstaja.',
     HEADING_NOT_VISIBLE: 'Glava ni vidna; lahko je skrita ali znotraj komponente harmonike ali zavihka.',
     SKIP_TO_PAGE_ISSUES: 'Preskoči na stran Vprašanja',
     CONSOLE_ERROR: 'Opravičujemo se, vendar je na tej strani prišlo do težave s preverjanjem dostopnosti. Ali jo lahko <a href="%(link)">prijavite prek tega obrazca</a> ali na <a href="%(link)">GitHub</a>?',

@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.3
+  * @version 4.0.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -49,6 +49,7 @@ var cs = {
     TOTAL_FOUND: 'celkový počet nalezených problémů.',
     NOT_VISIBLE: 'Položka, kterou se snažíte zobrazit, není viditelná; může být skrytá nebo se může nacházet uvnitř akordeonu nebo karty. Zde je náhled:',
     MISSING_ROOT: 'Byla zkontrolována přístupnost celé stránky, protože cílová oblast <code>%(root)</code> neexistuje.',
+    MISSING_READABILITY_ROOT: 'Skóre čitelnosti je založeno na obsahové oblasti <code>%(fallback)</code>, protože cílová oblast <code>%(root)</code> neexistuje.',
     HEADING_NOT_VISIBLE: 'Záhlaví není viditelné; může být skryté nebo se může nacházet v komponentě akordeonu nebo karty.',
     SKIP_TO_PAGE_ISSUES: 'Přeskočit na stránku Problémy',
     CONSOLE_ERROR: 'Omlouváme se, ale na této stránce je problém s kontrolou přístupnosti. Můžete ji prosím <a href="%(link)">nahlásit prostřednictvím tohoto formuláře</a> nebo na <a href="%(link)">GitHubu</a>?',

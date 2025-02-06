@@ -5,49 +5,58 @@ import Constants from '../utils/constants';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 
-export default function generateImageOutline(dismissed, imageResults) {
-  const generateEditLink = (image) => {
-    let finalURL;
-    // Only generate edit link if prop is populated.
-    if (Constants.Global.editImageURLofCMS.length !== 0) {
-      const { src } = image.element;
+/**
+ * Generate an "Edit" button for images in the Image outline.
+ * @param {Object} image - Image object.
+ * @returns {String} - HTML of edit button if hosted on the same domain.
+ */
+const generateEditLink = (image) => {
+  // Only generate edit link if prop is populated.
+  if (!Constants.Global.editImageURLofCMS.length) return '';
 
-      // Check if image's SRC attribute is hosted on same domain or is relative path.
-      const relativePath = Constants.Global.relativePathImageSRC
-        ? Constants.Global.relativePathImageSRC
-        : window.location.host;
+  // Image's src attribute.
+  const { src } = image.element;
 
-      const parts = src.split(relativePath);
-      const fileExtension = parts.length > 1 ? parts[1] : '';
+  // Check if image's SRC attribute is hosted on same domain or is relative path.
+  const relativePath = Constants.Global.relativePathImageSRC || window.location.host;
+  const fileExtension = src.split(relativePath)[1] || '';
 
-      const imageID = Constants.Global.relativePathImageID;
-      let imageUniqueID;
-      if (imageID.length && image.element.classList.length) {
-        image.element.classList.forEach((className) => {
-          if (className.startsWith(imageID)) {
-            const [digit] = className.match(/\d+/) || [];
-            imageUniqueID = digit;
-          }
-        });
+  // If admin specifies a unique class name for images via prop.
+  const imageID = Constants.Global.relativePathImageID;
+  let imageUniqueID;
+  if (imageID.length && image.element.classList.length) {
+    image.element.classList.forEach((className) => {
+      if (className.startsWith(imageID)) {
+        const [digit] = className.match(/\d+/) || [];
+        imageUniqueID = digit;
       }
+    });
+  }
 
-      const editURL = (relativePath && imageID.length)
-        ? Constants.Global.editImageURLofCMS + imageUniqueID
-        : Constants.Global.editImageURLofCMS + fileExtension;
+  // Create the href value for the image.
+  const editURL = (relativePath && imageID.length)
+    ? Constants.Global.editImageURLofCMS + imageUniqueID
+    : Constants.Global.editImageURLofCMS + fileExtension;
 
-      // Only add edit button to relative (locally hosted) images.
-      const isRelativeLink = (imageSrc) => imageSrc.includes(window.location.host) || imageSrc.startsWith(relativePath);
-      finalURL = (isRelativeLink(src) && imageUniqueID !== undefined)
-        ? `<div class="edit-block"><a
-            href="${encodeURI(editURL)}"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="edit">${Lang._('EDIT')}</a></div>`
-        : '';
-    }
-    return finalURL ?? '';
-  };
+  // Only add edit button to relative (locally hosted) images.
+  const isRelativeLink = (imageSrc) => imageSrc.includes(window.location.host)
+    || imageSrc.startsWith(relativePath);
 
+  // Generate final HTML of edit button.
+  if ((imageID.length && imageUniqueID !== undefined) || !imageID) {
+    return isRelativeLink(src)
+      ? `<div class="edit-block"><a href="${encodeURI(editURL)}" target="_blank" rel="noopener noreferrer" class="edit">${Lang._('EDIT')}</a></div>`
+      : '';
+  }
+  return '';
+};
+
+/**
+ * Generate Image outline.
+ * @param {Object[]} dismissed - Array of dismissed objects.
+ * @param {Object[]} imageResults - Array of all issues objects that is an <img> element.
+ */
+export default function generateImageOutline(dismissed, imageResults) {
   const imageOutlineHandler = () => {
     const imageArray = [];
 
@@ -81,7 +90,6 @@ export default function generateImageOutline(dismissed, imageResults) {
         : '';
 
       let append;
-
       if (issue === 'error' && !showDeveloperChecks) {
         const missing = altText.length === 0
           ? `<div class="badge error-badge">${Lang._('MISSING')}</div>`

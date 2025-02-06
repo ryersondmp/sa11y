@@ -37,6 +37,7 @@ export default {
     TOTAL_FOUND: 'samlede problemer fundet.',
     NOT_VISIBLE: 'Det element, du prøver at se, er ikke synligt; det kan være skjult eller inde i en harmonika- eller fanekomponent. Her er en forhåndsvisning:',
     MISSING_ROOT: 'Hele siden blev kontrolleret for tilgængelighed, fordi målområdet <code>%(root)</code> ikke findes.',
+    MISSING_READABILITY_ROOT: 'Læsbarhedsscoren er baseret på indholdsområdet <code>%(fallback)</code>, da målområdet <code>%(root)</code> ikke findes.',
     HEADING_NOT_VISIBLE: 'Overskriften er ikke synlig; den kan være skjult eller inde i en harmonika- eller fanekomponent.',
     SKIP_TO_PAGE_ISSUES: 'Spring til sideudgaver',
     CONSOLE_ERROR: 'Beklager, men der er et problem med tilgængelighedstjekkeren på denne side. Kan du venligst <a href="%(link)">rapportere det via denne formular</a> eller på <a href="%(link)">GitHub</a>?',

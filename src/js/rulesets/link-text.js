@@ -31,9 +31,10 @@ export default function checkLinkText(results, option) {
 
     hit[0] = checkStopWords(textContent, linkStopWords);
 
-    // When link text contains "click"
+    // When link text contains "click".
     Lang._('CLICK').forEach((word) => {
-      if (textContent.toLowerCase().indexOf(word) >= 0) {
+      const regex = new RegExp(`\\b${word}\\b`, 'i'); // Word boundary.
+      if (regex.test(textContent)) {
         hit[1] = word;
       }
       return false;
@@ -112,8 +113,11 @@ export default function checkLinkText(results, option) {
     // New tab or new window.
     const containsNewWindowPhrases = Lang._('NEW_WINDOW_PHRASES').some((pass) => linkText.toLowerCase().includes(pass));
 
-    // If visible label is only "Click here"
-    const containsClickPhrase = Lang._('CLICK').some((pass) => $el.textContent.toLowerCase().includes(pass));
+    // If visible label contains word "click" (regardless of accessible name).
+    const containsClickPhrase = Lang._('CLICK').some((pass) => {
+      const regex = new RegExp(`\\b${pass}\\b`, 'i'); // Word boundary.
+      return regex.test($el.textContent);
+    });
 
     // Link that points to a file type and indicates as such.
     const defaultFileTypes = ['pdf', 'doc', 'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'];

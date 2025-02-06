@@ -37,6 +37,7 @@ export default {
     TOTAL_FOUND: 'kõik leitud probleemid kokku.',
     NOT_VISIBLE: 'Objekt, mida üritate vaadata, ei ole nähtav; see võib olla peidetud või olla akordioni või vahekaardikomponendi sees. Siin on eelvaade:',
     MISSING_ROOT: 'Täielik lehekülg kontrolliti ligipääsetavuse osas, sest sihtala <code>%(root)</code> ei ole olemas.',
+    MISSING_READABILITY_ROOT: 'Loetavuse skoor põhineb sisu alal <code>%(fallback)</code>, kuna sihtpiirkond <code>%(root)</code> ei eksisteeri.',
     HEADING_NOT_VISIBLE: 'Pealkiri ei ole nähtav; see võib olla peidetud või olla akordioni või vahekaardikomponendi sees.',
     SKIP_TO_PAGE_ISSUES: 'Skip to Page Issues (lehekülje probleemid)',
     CONSOLE_ERROR: 'Vabandame, kuid selle lehekülje ligipääsetavuse kontrolliga on probleem. Kas te saaksite <a href="%(link)">teavitada sellest selle vormi kaudu</a> või <a href="%(link)">GitHubis</a>?',

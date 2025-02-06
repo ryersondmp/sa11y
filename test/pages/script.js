@@ -43,6 +43,7 @@ $checkAccordions.forEach(($el) => {
 Lang.addI18n(Sa11yLangEn.strings);
 const sa11y = new Sa11y({
   checkRoot: 'body',
+  readabilityRoot: '.foo',
   headerIgnore: '#nothing-ignore-this-heading *',
   linkIgnoreSpan: '.sr-only-example',
   linkIgnoreStrings: '(External)',
@@ -51,6 +52,7 @@ const sa11y = new Sa11y({
   showHinPageOutline: 1,
   showTitleInPageOutline: 1,
   // contrastAPCA: true,
+  // editImageURLofCMS: 'localhost',
 
   exportResultsPlugin: true,
   autoDetectShadowComponents: true,

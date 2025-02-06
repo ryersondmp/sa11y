@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.3
+  * @version 4.0.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -54,6 +54,7 @@
       TOTAL_FOUND: 'problème(s) trouvé(s) au total.',
       NOT_VISIBLE: 'L’élément que vous tentez de consulter n’est pas visible; il peut être masqué, à l’intérieur de l’accordéon ou dans le volet de l’onglet. Voir l’aperçu:',
       MISSING_ROOT: 'L\'accessibilité de la page entière a été vérifiée, car la zone cible <code>%(root)</code> n\'existe pas.',
+      MISSING_READABILITY_ROOT: 'Le score de lisibilité est basé sur la zone de contenu <code>%(fallback)</code>, car la zone cible <code>%(root)</code> n’existe pas.',
       HEADING_NOT_VISIBLE: 'L\'en-tête n\'est pas visible ; il peut être caché ou à l\'intérieur d\'un accordéon ou d\'un composant d\'onglet.',
       SKIP_TO_PAGE_ISSUES: 'Passer aux problèmes de page',
       CONSOLE_ERROR: 'Désolé, mais il y a un problème avec le vérificateur d\'accessibilité sur cette page. Pouvez-vous s\'il vous plaît <a href="%(link)">le signaler via ce formulaire</a> ou sur <a href="%(link)">GitHub</a> ?',

@@ -37,6 +37,7 @@ export default {
     TOTAL_FOUND: 'összes talált probléma.',
     NOT_VISIBLE: 'A megjeleníteni kívánt elem nem látható; lehet, hogy el van rejtve, vagy egy harmonika- vagy lapkomponens belsejében van. Itt egy előnézet:',
     MISSING_ROOT: 'A teljes oldal elérhetőségi ellenőrzése azért történt, mert a célterület <code>%(root)</code> nem létezik.',
+    MISSING_READABILITY_ROOT: 'Az olvashatósági pontszám a <code>%(fallback)</code> tartalomterületen alapul, mert a célterület <code>%(root)</code> nem létezik.',
     HEADING_NOT_VISIBLE: 'A fejléc nem látható; lehet rejtett vagy egy harmonika- vagy fülkomponens belsejében.',
     SKIP_TO_PAGE_ISSUES: 'Ugrás az oldalra problémák',
     CONSOLE_ERROR: 'Sajnáljuk, de probléma van az oldal hozzáférhetőségi ellenőrzőjével. Megtenné, hogy <a href="%(link)">bejelenti ezen az űrlapon</a> vagy a <a href="%(link)">GitHubon</a>?',

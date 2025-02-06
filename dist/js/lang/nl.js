@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.3
+  * @version 4.0.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -49,6 +49,7 @@ var nl = {
     TOTAL_FOUND: 'totaal aantal gevonden problemen.',
     NOT_VISIBLE: 'Het item dat je probeert te bekijken is niet zichtbaar; het kan verborgen zijn of in een accordeon of tabbladcomponent zitten. Hier is een voorbeeld:',
     MISSING_ROOT: 'De volledige pagina is gecontroleerd op toegankelijkheid omdat het doelgebied <code>%(root)</code> niet bestaat.',
+    MISSING_READABILITY_ROOT: 'De leesbaarheidsscore is gebaseerd op het inhoudsgebied <code>%(fallback)</code>, omdat het doelgebied <code>%(root)</code> niet bestaat.',
     HEADING_NOT_VISIBLE: 'De kop is niet zichtbaar; hij kan verborgen zijn of in een accordeon- of tabbladcomponent staan.',
     SKIP_TO_PAGE_ISSUES: 'Doorgaan naar paginanummers',
     CONSOLE_ERROR: 'Sorry, maar er is een probleem met de toegankelijkheidscontrole op deze pagina. Kunt u dit alstublieft <a href="%(link)">melden via dit formulier</a> of op <a href="%(link)">GitHub</a>?',
