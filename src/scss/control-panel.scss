@@ -652,6 +652,7 @@ hr {
       color: var(--sa11y-panel-primary);
       text-decoration: none;
       cursor: pointer;
+      margin-inline-end: 5px;
       background: var(--sa11y-panel-bg-secondary);
       border: 2px solid var(--sa11y-button-outline);
       border-radius: 5px;
@@ -846,6 +847,40 @@ label:not(#colour-filter-mode, #export-results-mode) {
 /*           13. Settings Panel              */
 /* ***************************************** */
 #settings-panel {
+
+  #switch-sides {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    width: 44px;
+    min-height: 26px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 5px;
+
+    svg {
+      width: 17px;
+    }
+
+    svg path {
+      fill: var(--sa11y-setting-switch-bg-off);
+    }
+
+    &:hover,
+    &:focus,
+    &:focus-within {
+      background: var(--sa11y-shortcut-hover);
+    }
+
+    &:before {
+      position: absolute;
+      top: -17px;
+      right: -5px;
+      bottom: 0;
+      left: -5px;
+      content: "";
+    }
+  }
 
   #info-icon {
     vertical-align: middle;

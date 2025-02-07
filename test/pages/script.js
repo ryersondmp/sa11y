@@ -54,7 +54,8 @@ const sa11y = new Sa11y({
   // contrastAPCA: true,
   editImageURLofCMS: 'localhost',
   ignoreHiddenOverflow: '.overlay, .modal',
-  // panelPosition: 'right',
+  // panelPosition: 'top-right',
+  // panelPositionToggle: false,
   // showImageOutline: false,
 
   exportResultsPlugin: true,

@@ -90,8 +90,8 @@ class Sa11y {
             Utils.store.removeItem('sa11y-dismissed');
           } else {
             // Remember panel position preference.
-            const { panelPosition } = Constants.Global;
-            if (Utils.store.getItem('sa11y-position') === null) {
+            if (Constants.Global.panelPositionToggle && Utils.store.getItem('sa11y-position') === null) {
+              const { panelPosition } = Constants.Global;
               Utils.store.setItem('sa11y-position', panelPosition);
             }
 

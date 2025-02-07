@@ -6,28 +6,27 @@ import Lang from '../utils/lang';
 /*  Initialize all toggle switches within Settings panel.       */
 /* ************************************************************ */
 export default function settingsPanelToggles(checkAll, resetAll) {
-  Constants.Panel.switchSides.onclick = async () => {
-    const panelPosition = store.getItem('sa11y-position');
-    if (panelPosition === 'right' || panelPosition === 'left') {
-      const position = panelPosition === 'right' ? 'left' : 'right';
-      store.setItem('sa11y-position', position);
-
-      const label = position === 'left' ? Lang._('PANEL_RIGHT') : Lang._('PANEL_LEFT');
-      Constants.Panel.switchSides.setAttribute('aria-label', label);
-
-      Constants.Panel.toggle.classList.replace(position === 'left' ? 'right' : 'left', position);
-      Constants.Panel.panel.classList.replace(position === 'left' ? 'right' : 'left', position);
-    } else if (panelPosition === 'top-right' || panelPosition === 'top-left') {
-      const position = panelPosition === 'top-right' ? 'top-left' : 'top-right';
-      store.setItem('sa11y-position', position);
-
-      const label = position === 'top-left' ? Lang._('PANEL_RIGHT') : Lang._('PANEL_LEFT');
-      Constants.Panel.switchSides.setAttribute('aria-label', label);
-
-      Constants.Panel.toggle.classList.replace(position === 'top-left' ? 'top-right' : 'top-left', position);
-      Constants.Panel.panel.classList.replace(position === 'top-left' ? 'top-right' : 'top-left', position);
-    }
-  };
+  /* ************************* */
+  /*  Panel position toggle    */
+  /* ************************* */
+  if (Constants.Global.panelPositionToggle) {
+    Constants.Panel.switchSides.onclick = async () => {
+      const panelPosition = store.getItem('sa11y-position');
+      if (panelPosition === 'right' || panelPosition === 'left') {
+        const position = panelPosition === 'right' ? 'left' : 'right';
+        store.setItem('sa11y-position', position);
+        Constants.Panel.toggle.classList.replace(position === 'left' ? 'right' : 'left', position);
+        Constants.Panel.panel.classList.replace(position === 'left' ? 'right' : 'left', position);
+        Constants.Panel.switchSides.setAttribute('aria-pressed', panelPosition === 'left' ? 'false' : 'true');
+      } else if (panelPosition === 'top-right' || panelPosition === 'top-left') {
+        const position = panelPosition === 'top-right' ? 'top-left' : 'top-right';
+        store.setItem('sa11y-position', position);
+        Constants.Panel.toggle.classList.replace(position === 'top-left' ? 'top-right' : 'top-left', position);
+        Constants.Panel.panel.classList.replace(position === 'top-left' ? 'top-right' : 'top-left', position);
+        Constants.Panel.switchSides.setAttribute('aria-pressed', panelPosition === 'top-left' ? 'false' : 'true');
+      }
+    };
+  }
 
   /* ************************* */
   /*  Developer checks toggle  */
