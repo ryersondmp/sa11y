@@ -29,11 +29,8 @@ export default class ControlPanel extends HTMLElement {
     /* TOGGLEABLE PLUGINS */
     const developerPlugin = Constants.Global.developerPlugin ? `
       <li id="developer-item" ${checkAll ? 'hidden' : ''}>
-        <label id="check-developer" for="developer-toggle">${Lang._('DEVELOPER_CHECKS')}
-          <svg id="info-icon" xmlns="http://www.w3.org/2000/svg" width="18" viewBox="0 0 16 16">
-            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-            <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
-          </svg>
+        <label id="check-developer" for="developer-toggle">
+          ${Lang._('DEVELOPER_CHECKS')} <span class="info-icon"></span>
         </label>
         <button id="developer-toggle"
           aria-labelledby="check-developer"
@@ -148,10 +145,11 @@ export default class ControlPanel extends HTMLElement {
       </div>` : '';
 
     /* PANEL POSITION TOGGLE */
-    const panelPositionToggle = Constants.Global.panelPositionToggle
-      ? `<button id="switch-sides" aria-label="${Lang._('PANEL_POSITION')}">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M438.6 150.6c12.5-12.5 12.5-32.8 0-45.3l-96-96c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.7 96 32 96C14.3 96 0 110.3 0 128s14.3 32 32 32l306.7 0-41.4 41.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l96-96zm-333.3 352c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 416 416 416c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0 41.4-41.4c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-96 96c-12.5 12.5-12.5 32.8 0 45.3l96 96z"/></svg>
-          </button>` : '';
+    const leftPressed = rememberPanelPosition === 'left' || rememberPanelPosition === 'top-left';
+    const movePanelLabel = leftPressed ? Lang._('MOVE_RIGHT') : Lang._('MOVE_LEFT');
+    const panelPositionToggle = Constants.Global.showMovePanelToggle
+      ? `<button id="move-panel" aria-label="${movePanelLabel}"><span class="move-panel-icon"></span></button>`
+      : '';
 
     /* PAGE SETTINGS */
     const pageSettings = `

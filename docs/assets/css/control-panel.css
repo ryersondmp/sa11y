@@ -172,6 +172,7 @@ audio {
 }
 #panel.left, #panel.top-left {
   inset-inline-start: 42px;
+  inset-inline-end: unset;
 }
 #panel.top-right, #panel.top-left {
   top: 35px;
@@ -770,16 +771,17 @@ label:not(#colour-filter-mode, #export-results-mode) {
 }
 
 #panel.left #panel-controls:has(#images-toggle)::before {
-  width: 40px;
+  width: 50px;
   content: "";
 }
 
 /* ***************************************** */
 /*           13. Settings Panel              */
 /* ***************************************** */
-#settings-panel #switch-sides {
+#settings-panel #move-panel {
   position: relative;
   display: flex;
+  align-items: center;
   justify-content: center;
   width: 44px;
   min-height: 26px;
@@ -787,16 +789,20 @@ label:not(#colour-filter-mode, #export-results-mode) {
   cursor: pointer;
   border-radius: 5px;
 }
-#settings-panel #switch-sides svg {
+#settings-panel #move-panel .move-panel-icon {
+  display: inline-block;
   width: 17px;
+  height: 17px;
+  background-color: var(--sa11y-setting-switch-bg-off);
+  -webkit-mask: var(--sa11y-move-panel-svg) no-repeat center;
+          mask: var(--sa11y-move-panel-svg) no-repeat center;
+  -webkit-mask-size: contain;
+          mask-size: contain;
 }
-#settings-panel #switch-sides svg path {
-  fill: var(--sa11y-setting-switch-bg-off);
-}
-#settings-panel #switch-sides:hover, #settings-panel #switch-sides:focus, #settings-panel #switch-sides:focus-within {
+#settings-panel #move-panel:hover, #settings-panel #move-panel:focus, #settings-panel #move-panel:focus-within {
   background: var(--sa11y-shortcut-hover);
 }
-#settings-panel #switch-sides:before {
+#settings-panel #move-panel:before {
   position: absolute;
   top: -17px;
   right: -5px;
@@ -804,9 +810,16 @@ label:not(#colour-filter-mode, #export-results-mode) {
   left: -5px;
   content: "";
 }
-#settings-panel #info-icon {
+#settings-panel .info-icon {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
   vertical-align: middle;
-  fill: var(--sa11y-panel-primary);
+  background-color: var(--sa11y-panel-primary);
+  -webkit-mask: var(--sa11y-info-icon-svg) no-repeat center;
+          mask: var(--sa11y-info-icon-svg) no-repeat center;
+  -webkit-mask-size: contain;
+          mask-size: contain;
 }
 #settings-panel #export-csv,
 #settings-panel #export-html {

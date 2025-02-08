@@ -17,7 +17,7 @@ const defaultOptions = {
   // Control panel settings
   aboutContent: '',
   panelPosition: 'right',
-  panelPositionToggle: true,
+  showMovePanelToggle: true,
   checkAllHideToggles: false,
   developerChecksOnByDefault: false,
 

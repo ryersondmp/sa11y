@@ -247,7 +247,7 @@ input[type="color" i] {
   [tabindex="-1"]:focus,
   input:focus,
   select:focus,
-  button:not(#panel-controls button):not(.switch):not(#switch-sides):focus,
+  button:not(#panel-controls button):not(.switch):not(#move-panel):focus,
   a:focus {
     outline: 0;
     box-shadow: 0 0 0 5px var(--sa11y-focus-color);

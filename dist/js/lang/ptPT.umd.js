@@ -59,6 +59,8 @@
       HEADING_NOT_VISIBLE: 'O cabeçalho não é visível; pode estar oculto ou dentro de um componente de acordeão ou separador.',
       SKIP_TO_PAGE_ISSUES: 'Saltar para os problemas da página',
       CONSOLE_ERROR: 'Desculpe, mas há um problema com o verificador de acessibilidade nesta página. Pode, por favor, <a href="%(link)">relatar o problema através deste formulário</a> ou no <a href="%(link)">GitHub</a>?',
+      MOVE_LEFT: 'Mover painel para a esquerda',
+      MOVE_RIGHT: 'Mover painel para a direita',
 
       // Dismiss
       PANEL_DISMISS_BUTTON: 'Mostrar %(dismissCount) ignorados',

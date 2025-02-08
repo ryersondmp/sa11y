@@ -55,7 +55,7 @@ const sa11y = new Sa11y({
   editImageURLofCMS: 'localhost',
   ignoreHiddenOverflow: '.overlay, .modal',
   // panelPosition: 'top-right',
-  // panelPositionToggle: false,
+  // showMovePanelToggle: false,
   // showImageOutline: false,
 
   exportResultsPlugin: true,

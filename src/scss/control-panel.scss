@@ -187,6 +187,7 @@ audio {
   &.left,
   &.top-left {
     inset-inline-start: 42px;
+    inset-inline-end: unset;
   }
 
   &.top-right,
@@ -838,7 +839,7 @@ label:not(#colour-filter-mode, #export-results-mode) {
 
 #panel.left {
   #panel-controls:has(#images-toggle)::before {
-    width: 40px;
+    width: 50px;
     content: "";
   }
 }
@@ -848,9 +849,10 @@ label:not(#colour-filter-mode, #export-results-mode) {
 /* ***************************************** */
 #settings-panel {
 
-  #switch-sides {
+  #move-panel {
     position: relative;
     display: flex;
+    align-items: center;
     justify-content: center;
     width: 44px;
     min-height: 26px;
@@ -858,12 +860,13 @@ label:not(#colour-filter-mode, #export-results-mode) {
     cursor: pointer;
     border-radius: 5px;
 
-    svg {
+    .move-panel-icon {
+      display: inline-block;
       width: 17px;
-    }
-
-    svg path {
-      fill: var(--sa11y-setting-switch-bg-off);
+      height: 17px;
+      background-color: var(--sa11y-setting-switch-bg-off);
+      mask: var(--sa11y-move-panel-svg) no-repeat center;
+      mask-size: contain;
     }
 
     &:hover,
@@ -882,9 +885,14 @@ label:not(#colour-filter-mode, #export-results-mode) {
     }
   }
 
-  #info-icon {
+  .info-icon {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
     vertical-align: middle;
-    fill: var(--sa11y-panel-primary);
+    background-color: var(--sa11y-panel-primary);
+    mask: var(--sa11y-info-icon-svg) no-repeat center;
+    mask-size: contain;
   }
 
   #export-csv,

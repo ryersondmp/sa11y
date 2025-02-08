@@ -52,6 +52,8 @@ var de = {
     HEADING_NOT_VISIBLE: 'Die Überschrift ist nicht sichtbar; sie kann ausgeblendet sein oder sich innerhalb einer Akkordeon- oder Registerkartenkomponente befinden.',
     SKIP_TO_PAGE_ISSUES: 'Zu Seitenproblemen springen',
     CONSOLE_ERROR: 'Leider liegt ein Problem mit der Barrierefreiheitsprüfung auf dieser Seite vor. Können Sie es bitte <a href="%(link)">über dieses Formular</a> oder auf <a href="%(link)">GitHub</a> melden?',
+    MOVE_LEFT: 'Panel nach links verschieben',
+    MOVE_RIGHT: 'Panel nach rechts verschieben',
 
     // Dismiss
     PANEL_DISMISS_BUTTON: 'Zeige %(dismissCount) abgelehnte',

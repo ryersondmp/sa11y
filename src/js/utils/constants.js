@@ -56,7 +56,7 @@ const Constants = (function myConstants() {
     Global.editImageURLofCMS = option.editImageURLofCMS;
     Global.relativePathImageSRC = option.relativePathImageSRC;
     Global.relativePathImageID = option.relativePathImageID;
-    Global.panelPositionToggle = option.panelPositionToggle;
+    Global.showMovePanelToggle = option.showMovePanelToggle;
 
     // A11y: Determine scroll behaviour
     let reducedMotion = false;
@@ -163,13 +163,13 @@ const Constants = (function myConstants() {
     Panel.colourFilterItem = Sa11yPanel.getElementById('colour-filter-item');
     Panel.colourFilterSelect = Sa11yPanel.getElementById('colour-filter-select');
     Panel.colourFilterIcon = Sa11yPanel.getElementById('filter-icon');
-    Panel.switchSides = Sa11yPanel.getElementById('switch-sides');
 
     // Buttons
     Panel.toggle = Sa11yPanel.getElementById('toggle');
     Panel.outlineToggle = Sa11yPanel.getElementById('outline-toggle');
     Panel.imagesToggle = Sa11yPanel.getElementById('images-toggle');
     Panel.settingsToggle = Sa11yPanel.getElementById('settings-toggle');
+    Panel.movePanelToggle = Sa11yPanel.getElementById('move-panel');
     Panel.skipButton = Sa11yPanel.getElementById('skip-button');
     Panel.dismissButton = Sa11yPanel.getElementById('dismiss-button');
     Panel.dismissTooltip = Sa11yPanel.getElementById('dismiss-tooltip');

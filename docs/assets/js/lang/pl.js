@@ -52,6 +52,8 @@ var pl = {
     HEADING_NOT_VISIBLE: 'Nagłówek nie jest widoczny; może być ukryty lub wewnątrz komponentu akordeonu lub tabulatora.',
     SKIP_TO_PAGE_ISSUES: 'Przejdź do problemów ze stroną',
     CONSOLE_ERROR: 'Przepraszamy, ale wystąpił problem z narzędziem do sprawdzania ułatwień dostępu na tej stronie. Czy możesz <a href="%(link)">zgłosić to za pomocą tego formularza</a> lub na <a href="%(link)">GitHub</a>?',
+    MOVE_LEFT: 'Przenieś panel w lewo',
+    MOVE_RIGHT: 'Przenieś panel w prawo',
 
     // Dismiss
     PANEL_DISMISS_BUTTON: 'Pokaż %(dismissCount) odrzucone',
