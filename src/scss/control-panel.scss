@@ -719,7 +719,6 @@ hr {
   display: inline-block;
   background: $background;
   mask: $mask;
-  mask-size: cover;
   mask-position: center;
   mask-repeat: no-repeat;
 }
@@ -927,8 +926,8 @@ label:not(#colour-filter-mode, #export-results-mode) {
     padding: 7px 10px;
     margin: 0;
     font-size: var(--sa11y-normal-text);
-    font-weight: normal;
-    color: var(--sa11y-panel-primary);
+    font-weight: 600;
+    color: var(--sa11y-setting-switch-bg-off);
     text-align: end;
     cursor: pointer;
     background: none;
@@ -1106,7 +1105,7 @@ label:not(#colour-filter-mode, #export-results-mode) {
   position: relative;
   height: 30px;
   font-size: var(--sa11y-normal-text);
-  font-weight: normal;
+  font-weight: 600;
   color: var(--sa11y-panel-primary);
   text-align: end;
   vertical-align: middle;
@@ -1212,6 +1211,7 @@ label:not(#colour-filter-mode, #export-results-mode) {
   margin: -1px;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
+  font-weight: 600;
   white-space: nowrap;
   background: var(--sa11y-panel-bg);
   border: 0;
@@ -1222,7 +1222,7 @@ label:not(#colour-filter-mode, #export-results-mode) {
   z-index: 1;
   width: auto;
   height: auto;
-  padding: 5px 7px;
+  padding: 7px 10px;
   margin: 0;
   overflow: visible;
   clip: auto;

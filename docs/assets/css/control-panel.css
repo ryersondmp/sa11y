@@ -661,8 +661,6 @@ hr {
   background: var(--sa11y-setting-switch-bg-off);
   -webkit-mask: var(--sa11y-move-panel-icon);
           mask: var(--sa11y-move-panel-icon);
-  -webkit-mask-size: cover;
-          mask-size: cover;
   -webkit-mask-position: center;
           mask-position: center;
   -webkit-mask-repeat: no-repeat;
@@ -677,8 +675,6 @@ hr {
   background: var(--sa11y-setting-switch-bg-off);
   -webkit-mask: var(--sa11y-info-icon);
           mask: var(--sa11y-info-icon);
-  -webkit-mask-size: cover;
-          mask-size: cover;
   -webkit-mask-position: center;
           mask-position: center;
   -webkit-mask-repeat: no-repeat;
@@ -693,8 +689,6 @@ hr {
   background: var(--sa11y-setting-switch-bg-off);
   -webkit-mask: var(--sa11y-sun-icon);
           mask: var(--sa11y-sun-icon);
-  -webkit-mask-size: cover;
-          mask-size: cover;
   -webkit-mask-position: center;
           mask-position: center;
   -webkit-mask-repeat: no-repeat;
@@ -709,8 +703,6 @@ hr {
   background: var(--sa11y-setting-switch-bg-off);
   -webkit-mask: var(--sa11y-moon-icon);
           mask: var(--sa11y-moon-icon);
-  -webkit-mask-size: cover;
-          mask-size: cover;
   -webkit-mask-position: center;
           mask-position: center;
   -webkit-mask-repeat: no-repeat;
@@ -725,8 +717,6 @@ hr {
   background: var(--sa11y-error-text);
   -webkit-mask: var(--sa11y-error-svg);
           mask: var(--sa11y-error-svg);
-  -webkit-mask-size: cover;
-          mask-size: cover;
   -webkit-mask-position: center;
           mask-position: center;
   -webkit-mask-repeat: no-repeat;
@@ -741,8 +731,6 @@ hr {
   background: var(--sa11y-panel-primary);
   -webkit-mask: var(--sa11y-hidden-icon-svg);
           mask: var(--sa11y-hidden-icon-svg);
-  -webkit-mask-size: cover;
-          mask-size: cover;
   -webkit-mask-position: center;
           mask-position: center;
   -webkit-mask-repeat: no-repeat;
@@ -757,8 +745,6 @@ hr {
   background: var(--sa11y-panel-primary);
   -webkit-mask: var(--sa11y-link-icon-svg);
           mask: var(--sa11y-link-icon-svg);
-  -webkit-mask-size: cover;
-          mask-size: cover;
   -webkit-mask-position: center;
           mask-position: center;
   -webkit-mask-repeat: no-repeat;
@@ -904,8 +890,8 @@ label:not(#colour-filter-mode, #export-results-mode) {
   padding: 7px 10px;
   margin: 0;
   font-size: var(--sa11y-normal-text);
-  font-weight: normal;
-  color: var(--sa11y-panel-primary);
+  font-weight: 600;
+  color: var(--sa11y-setting-switch-bg-off);
   text-align: end;
   cursor: pointer;
   background: none;
@@ -1065,7 +1051,7 @@ label:not(#colour-filter-mode, #export-results-mode) {
   position: relative;
   height: 30px;
   font-size: var(--sa11y-normal-text);
-  font-weight: normal;
+  font-weight: 600;
   color: var(--sa11y-panel-primary);
   text-align: end;
   vertical-align: middle;
@@ -1160,6 +1146,7 @@ label:not(#colour-filter-mode, #export-results-mode) {
   margin: -1px;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
+  font-weight: 600;
   white-space: nowrap;
   background: var(--sa11y-panel-bg);
   border: 0;
@@ -1170,7 +1157,7 @@ label:not(#colour-filter-mode, #export-results-mode) {
   z-index: 1;
   width: auto;
   height: auto;
-  padding: 5px 7px;
+  padding: 7px 10px;
   margin: 0;
   overflow: visible;
   clip: auto;

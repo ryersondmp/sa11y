@@ -139,8 +139,11 @@ export default class ControlPanel extends HTMLElement {
     const leftPressed = rememberPanelPosition === 'left' || rememberPanelPosition === 'top-left';
     const panelMoved = leftPressed ? 'true' : 'false';
     const panelPositionToggle = Constants.Global.showMovePanelToggle
-      ? `<button type="button" id="move-panel" aria-label="${Lang._('MOVE_PANEL')}" aria-pressed="${panelMoved}">
-          <span class="move-panel-icon"></span>
+      ? `<button type="button" id="move-panel"
+          aria-label="${Lang._('MOVE_PANEL')}"
+          aria-pressed="${panelMoved}"
+          aria-describedby="appearance-mode"
+          ><span class="move-panel-icon"></span>
         </button>`
       : '';
 
@@ -160,6 +163,7 @@ export default class ControlPanel extends HTMLElement {
                 <button type="button" id="theme-toggle"
                   aria-label="${Lang._('DARK_MODE')}"
                   aria-pressed=${rememberTheme === 'dark' ? 'true' : 'false'}
+                  aria-describedby="appearance-mode"
                 ><span class="moon-icon"></span></button>
                 ${panelPositionToggle}
               </div>
