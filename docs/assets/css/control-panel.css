@@ -659,8 +659,14 @@ hr {
   height: 18px;
   display: inline-block;
   background: var(--sa11y-setting-switch-bg-off);
-  -webkit-mask: var(--sa11y-move-panel-icon) center no-repeat;
-          mask: var(--sa11y-move-panel-icon) center no-repeat;
+  -webkit-mask: var(--sa11y-move-panel-icon);
+          mask: var(--sa11y-move-panel-icon);
+  -webkit-mask-size: cover;
+          mask-size: cover;
+  -webkit-mask-position: center;
+          mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
 }
 
 .info-icon {
@@ -669,8 +675,14 @@ hr {
   height: 20px;
   display: inline-block;
   background: var(--sa11y-setting-switch-bg-off);
-  -webkit-mask: var(--sa11y-info-icon) center no-repeat;
-          mask: var(--sa11y-info-icon) center no-repeat;
+  -webkit-mask: var(--sa11y-info-icon);
+          mask: var(--sa11y-info-icon);
+  -webkit-mask-size: cover;
+          mask-size: cover;
+  -webkit-mask-position: center;
+          mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
 }
 
 .sun-icon {
@@ -679,8 +691,14 @@ hr {
   height: 18px;
   display: inline-block;
   background: var(--sa11y-setting-switch-bg-off);
-  -webkit-mask: var(--sa11y-sun-icon) center no-repeat;
-          mask: var(--sa11y-sun-icon) center no-repeat;
+  -webkit-mask: var(--sa11y-sun-icon);
+          mask: var(--sa11y-sun-icon);
+  -webkit-mask-size: cover;
+          mask-size: cover;
+  -webkit-mask-position: center;
+          mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
 }
 
 .moon-icon {
@@ -689,8 +707,14 @@ hr {
   height: 18px;
   display: inline-block;
   background: var(--sa11y-setting-switch-bg-off);
-  -webkit-mask: var(--sa11y-moon-icon) center no-repeat;
-          mask: var(--sa11y-moon-icon) center no-repeat;
+  -webkit-mask: var(--sa11y-moon-icon);
+          mask: var(--sa11y-moon-icon);
+  -webkit-mask-size: cover;
+          mask-size: cover;
+  -webkit-mask-position: center;
+          mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
 }
 
 .error-icon {
@@ -699,8 +723,14 @@ hr {
   height: 16px;
   display: inline-block;
   background: var(--sa11y-error-text);
-  -webkit-mask: var(--sa11y-error-svg) center no-repeat;
-          mask: var(--sa11y-error-svg) center no-repeat;
+  -webkit-mask: var(--sa11y-error-svg);
+          mask: var(--sa11y-error-svg);
+  -webkit-mask-size: cover;
+          mask-size: cover;
+  -webkit-mask-position: center;
+          mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
 }
 
 .hidden-icon {
@@ -709,8 +739,14 @@ hr {
   height: 16px;
   display: inline-block;
   background: var(--sa11y-panel-primary);
-  -webkit-mask: var(--sa11y-hidden-icon-svg) center no-repeat;
-          mask: var(--sa11y-hidden-icon-svg) center no-repeat;
+  -webkit-mask: var(--sa11y-hidden-icon-svg);
+          mask: var(--sa11y-hidden-icon-svg);
+  -webkit-mask-size: cover;
+          mask-size: cover;
+  -webkit-mask-position: center;
+          mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
 }
 
 .link-icon {
@@ -719,8 +755,14 @@ hr {
   height: 16px;
   display: inline-block;
   background: var(--sa11y-panel-primary);
-  -webkit-mask: var(--sa11y-link-icon-svg) center no-repeat;
-          mask: var(--sa11y-link-icon-svg) center no-repeat;
+  -webkit-mask: var(--sa11y-link-icon-svg);
+          mask: var(--sa11y-link-icon-svg);
+  -webkit-mask-size: cover;
+          mask-size: cover;
+  -webkit-mask-position: center;
+          mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
 }
 
 .error-badge .link-icon,

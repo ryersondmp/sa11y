@@ -718,7 +718,10 @@ hr {
 @mixin icon($background, $mask) {
   display: inline-block;
   background: $background;
-  mask: $mask center no-repeat;
+  mask: $mask;
+  mask-size: cover;
+  mask-position: center;
+  mask-repeat: no-repeat;
 }
 
 @mixin icon-size($size: 16px) {
