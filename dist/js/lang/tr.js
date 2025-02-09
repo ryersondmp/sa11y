@@ -53,8 +53,8 @@ var tr = {
     HEADING_NOT_VISIBLE: 'Başlık görünür değildir; gizli veya bir akordeon ya da sekme bileşeninin içinde olabilir.',
     SKIP_TO_PAGE_ISSUES: 'Sayfa Sorunlarına Geç',
     CONSOLE_ERROR: 'Üzgünüz, ancak bu sayfadaki erişilebilirlik denetleyicisinde bir sorun var. Lütfen <a href="%(link)">bu form</a> aracılığıyla veya <a href="%(link)">GitHub</a> üzerinden bildirebilir misiniz?',
-    MOVE_LEFT: 'Paneli sola taşı',
-    MOVE_RIGHT: 'Paneli sağa taşı',
+    APPEARANCE: 'Görünüm',
+    MOVE_PANEL: 'Paneli taşı',
 
     // Dismiss
     PANEL_DISMISS_BUTTON: 'Göster %(dismissCount) reddedilmiş',

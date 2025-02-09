@@ -53,8 +53,8 @@ var et = {
     HEADING_NOT_VISIBLE: 'Pealkiri ei ole nähtav; see võib olla peidetud või olla akordioni või vahekaardikomponendi sees.',
     SKIP_TO_PAGE_ISSUES: 'Skip to Page Issues (lehekülje probleemid)',
     CONSOLE_ERROR: 'Vabandame, kuid selle lehekülje ligipääsetavuse kontrolliga on probleem. Kas te saaksite <a href="%(link)">teavitada sellest selle vormi kaudu</a> või <a href="%(link)">GitHubis</a>?',
-    MOVE_LEFT: 'Liiguta paneeli vasakule',
-    MOVE_RIGHT: 'Liiguta paneeli paremale',
+    APPEARANCE: 'Välimus',
+    MOVE_PANEL: 'Liiguta paneel',
 
     // Dismiss
     PANEL_DISMISS_BUTTON: 'Kuva %(dismissCount) eiratud',

@@ -58,8 +58,8 @@
       HEADING_NOT_VISIBLE: 'L\'en-tête n\'est pas visible ; il peut être caché ou à l\'intérieur d\'un accordéon ou d\'un composant d\'onglet.',
       SKIP_TO_PAGE_ISSUES: 'Passer aux problèmes de page',
       CONSOLE_ERROR: 'Désolé, mais il y a un problème avec le vérificateur d\'accessibilité sur cette page. Pouvez-vous s\'il vous plaît <a href="%(link)">le signaler via ce formulaire</a> ou sur <a href="%(link)">GitHub</a> ?',
-      MOVE_LEFT: 'Déplacer le panneau à gauche',
-      MOVE_RIGHT: 'Déplacer le panneau à droite',
+      APPEARANCE: 'Apparence',
+      MOVE_PANEL: 'Déplacer le panneau',
 
       // Export
       DATE: 'Date',

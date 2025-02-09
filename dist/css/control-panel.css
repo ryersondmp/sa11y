@@ -358,10 +358,7 @@ hr {
 #dismiss-button:before,
 #skip-button:before {
   position: absolute;
-  top: -5px;
-  right: -5px;
-  bottom: -5px;
-  left: -5px;
+  inset: -5px;
   content: "";
 }
 #dismiss-button:hover:not(:disabled), #dismiss-button:focus:not(:disabled),
@@ -619,10 +616,7 @@ hr {
 }
 #images-list li .edit::before {
   position: absolute;
-  top: -10px;
-  right: -10px;
-  bottom: -10px;
-  left: -10px;
+  inset: -10px;
   content: "";
 }
 #images-list li img {
@@ -659,11 +653,51 @@ hr {
 /* **************************************** */
 /*    11. Various icons                     */
 /* **************************************** */
+.move-panel-icon {
+  vertical-align: middle;
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  background: var(--sa11y-setting-switch-bg-off);
+  -webkit-mask: var(--sa11y-move-panel-icon) center no-repeat;
+          mask: var(--sa11y-move-panel-icon) center no-repeat;
+}
+
+.info-icon {
+  vertical-align: middle;
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  background: var(--sa11y-setting-switch-bg-off);
+  -webkit-mask: var(--sa11y-info-icon) center no-repeat;
+          mask: var(--sa11y-info-icon) center no-repeat;
+}
+
+.sun-icon {
+  vertical-align: middle;
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  background: var(--sa11y-setting-switch-bg-off);
+  -webkit-mask: var(--sa11y-sun-icon) center no-repeat;
+          mask: var(--sa11y-sun-icon) center no-repeat;
+}
+
+.moon-icon {
+  vertical-align: middle;
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  background: var(--sa11y-setting-switch-bg-off);
+  -webkit-mask: var(--sa11y-moon-icon) center no-repeat;
+          mask: var(--sa11y-moon-icon) center no-repeat;
+}
+
 .error-icon {
   margin-bottom: -4px;
-  display: inline-block;
   width: 16px;
   height: 16px;
+  display: inline-block;
   background: var(--sa11y-error-text);
   -webkit-mask: var(--sa11y-error-svg) center no-repeat;
           mask: var(--sa11y-error-svg) center no-repeat;
@@ -671,9 +705,9 @@ hr {
 
 .hidden-icon {
   margin-bottom: -3px;
-  display: inline-block;
   width: 16px;
   height: 16px;
+  display: inline-block;
   background: var(--sa11y-panel-primary);
   -webkit-mask: var(--sa11y-hidden-icon-svg) center no-repeat;
           mask: var(--sa11y-hidden-icon-svg) center no-repeat;
@@ -681,9 +715,9 @@ hr {
 
 .link-icon {
   margin-bottom: -3.5px;
-  display: inline-block;
   width: 16px;
   height: 16px;
+  display: inline-block;
   background: var(--sa11y-panel-primary);
   -webkit-mask: var(--sa11y-link-icon-svg) center no-repeat;
           mask: var(--sa11y-link-icon-svg) center no-repeat;
@@ -708,6 +742,10 @@ hr {
 }
 
 @media screen and (forced-colors: active) {
+  .move-panel-icon,
+  .sun-icon,
+  .moon-icon,
+  .info-icon,
   .error-icon,
   .link-icon,
   .hidden-icon {
@@ -778,71 +816,44 @@ label:not(#colour-filter-mode, #export-results-mode) {
 /* ***************************************** */
 /*           13. Settings Panel              */
 /* ***************************************** */
-#settings-panel #move-panel {
+#settings-panel .export-results-group,
+#settings-panel .appearance-group {
+  display: flex;
+  margin: 5px 0;
+}
+#settings-panel .export-results-group button,
+#settings-panel .appearance-group button {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  min-height: 26px;
+  min-width: 44px;
+  min-height: 34px;
   text-align: center;
+  white-space: nowrap;
   cursor: pointer;
+  border: 2px solid var(--sa11y-setting-switch-bg-off);
   border-radius: 5px;
+  margin-inline-start: 8px;
+  margin-inline-end: 4px;
 }
-#settings-panel #move-panel .move-panel-icon {
-  display: inline-block;
-  width: 17px;
-  height: 17px;
-  background-color: var(--sa11y-setting-switch-bg-off);
-  -webkit-mask: var(--sa11y-move-panel-svg) no-repeat center;
-          mask: var(--sa11y-move-panel-svg) no-repeat center;
-  -webkit-mask-size: contain;
-          mask-size: contain;
-}
-#settings-panel #move-panel:hover, #settings-panel #move-panel:focus, #settings-panel #move-panel:focus-within {
+#settings-panel .export-results-group button:hover, #settings-panel .export-results-group button:focus, #settings-panel .export-results-group button:focus-within,
+#settings-panel .appearance-group button:hover,
+#settings-panel .appearance-group button:focus,
+#settings-panel .appearance-group button:focus-within {
   background: var(--sa11y-shortcut-hover);
 }
-#settings-panel #move-panel:before {
+#settings-panel .export-results-group button:before,
+#settings-panel .appearance-group button:before {
   position: absolute;
-  top: -17px;
-  right: -5px;
-  bottom: 0;
-  left: -5px;
+  inset: -7px;
   content: "";
 }
-#settings-panel .info-icon {
-  display: inline-block;
-  width: 18px;
-  height: 18px;
-  margin-bottom: 1px;
-  vertical-align: middle;
-  background-color: var(--sa11y-setting-switch-bg-off);
-  -webkit-mask: var(--sa11y-info-icon-svg) no-repeat center;
-          mask: var(--sa11y-info-icon-svg) no-repeat center;
-  -webkit-mask-size: contain;
-          mask-size: contain;
-}
-#settings-panel #export-csv,
-#settings-panel #export-html {
-  width: unset;
-  padding: 0;
-  text-align: center;
-}
-#settings-panel #export-csv span,
-#settings-panel #export-html span {
-  display: block;
-  width: 65px;
-  padding: 7px 9px;
-  margin: 0 4px;
-  background: var(--sa11y-panel-bg-secondary);
-  border-radius: 5px;
-  box-shadow: inset 0 0 0 2px var(--sa11y-setting-switch-bg-off);
-}
-#settings-panel #export-csv:hover span, #settings-panel #export-csv:focus span, #settings-panel #export-csv:focus-within span,
-#settings-panel #export-html:hover span,
-#settings-panel #export-html:focus span,
-#settings-panel #export-html:focus-within span {
-  background: var(--sa11y-shortcut-hover);
+#settings-panel .export-results-group button .text,
+#settings-panel .appearance-group button .text {
+  padding: 0 6px;
+  font-weight: 600;
+  color: var(--sa11y-setting-switch-bg-off);
 }
 #settings-panel .switch {
   position: relative;

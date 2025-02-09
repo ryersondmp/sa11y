@@ -59,8 +59,8 @@
       HEADING_NOT_VISIBLE: 'Judul tidak terlihat; judul mungkin tersembunyi atau berada di dalam komponen akordeon atau tab.',
       SKIP_TO_PAGE_ISSUES: 'Loncat ke Halaman Masalah',
       CONSOLE_ERROR: 'Maaf, ada masalah dengan pemeriksa aksesibilitas di halaman ini. Bisakah Anda <a href="%(link)">melaporkannya melalui formulir ini</a> atau di <a href="%(link)">GitHub</a>?',
-      MOVE_LEFT: 'Pindahkan panel ke kiri',
-      MOVE_RIGHT: 'Pindahkan panel ke kanan',
+      APPEARANCE: 'Tampilan',
+      MOVE_PANEL: 'Pindahkan panel',
 
       // Dismiss
       PANEL_DISMISS_BUTTON: 'Tampilkan %(dismissCount) diabaikan',

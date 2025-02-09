@@ -59,8 +59,8 @@
       HEADING_NOT_VISIBLE: 'Rubrica nu este vizibilă; poate fi ascunsă sau în interiorul unui acordeon sau al unei componente de tablă.',
       SKIP_TO_PAGE_ISSUES: 'Treceți la pagina Probleme',
       CONSOLE_ERROR: 'Ne pare rău, dar există o problemă cu verificatorul de accesibilitate de pe această pagină. Puteți vă rog <a href="%(link)">raportați-o prin intermediul acestui formular</a> sau pe <a href="%(link)">GitHub</a>?',
-      MOVE_LEFT: 'Mută panoul la stânga',
-      MOVE_RIGHT: 'Mută panoul la dreapta',
+      APPEARANCE: 'Aparență',
+      MOVE_PANEL: 'Mută panoul',
 
       // Dismiss
       PANEL_DISMISS_BUTTON: 'Arată %(dismissCount) respinse',
