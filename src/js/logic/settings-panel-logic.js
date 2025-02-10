@@ -7,6 +7,29 @@ import Lang from '../utils/lang';
 /* ************************************************************ */
 export default function settingsPanelToggles(checkAll, resetAll) {
   /* ************************* */
+  /*  Panel position toggle    */
+  /* ************************* */
+  if (Constants.Global.showMovePanelToggle) {
+    Constants.Panel.movePanelToggle.onclick = async () => {
+      const panelPosition = store.getItem('sa11y-position');
+      const [position1, position2] = panelPosition.includes('top')
+        ? ['top-right', 'top-left']
+        : ['right', 'left'];
+
+      const newPosition = panelPosition === position1 ? position2 : position1;
+      store.setItem('sa11y-position', newPosition);
+
+      [position1, position2].forEach((classname) => {
+        Constants.Panel.toggle.classList.replace(classname, newPosition);
+        Constants.Panel.panel.classList.replace(classname, newPosition);
+      });
+
+      Constants.Panel.movePanelToggle.setAttribute('aria-pressed',
+        panelPosition === position1 ? 'true' : 'false');
+    };
+  }
+
+  /* ************************* */
   /*  Developer checks toggle  */
   /* ************************* */
   if (Constants.Global.developerPlugin) {
@@ -68,7 +91,9 @@ export default function settingsPanelToggles(checkAll, resetAll) {
   const storeTheme = (theme) => {
     html.setAttribute('data-sa11y-theme', theme);
     store.setItem('sa11y-theme', theme);
-    themeToggle.textContent = Lang._(theme === 'dark' ? 'ON' : 'OFF');
+    const icon = themeToggle.querySelector('span').classList;
+    icon.toggle('moon-icon', theme === 'light');
+    icon.toggle('sun-icon', theme === 'dark');
     themeToggle.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
   };
 

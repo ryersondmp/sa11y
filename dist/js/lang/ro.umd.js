@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.5
+  * @version 4.0.6
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -59,6 +59,8 @@
       HEADING_NOT_VISIBLE: 'Rubrica nu este vizibilă; poate fi ascunsă sau în interiorul unui acordeon sau al unei componente de tablă.',
       SKIP_TO_PAGE_ISSUES: 'Treceți la pagina Probleme',
       CONSOLE_ERROR: 'Ne pare rău, dar există o problemă cu verificatorul de accesibilitate de pe această pagină. Puteți vă rog <a href="%(link)">raportați-o prin intermediul acestui formular</a> sau pe <a href="%(link)">GitHub</a>?',
+      APPEARANCE: 'Aparență',
+      MOVE_PANEL: 'Mută panoul',
 
       // Dismiss
       PANEL_DISMISS_BUTTON: 'Arată %(dismissCount) respinse',

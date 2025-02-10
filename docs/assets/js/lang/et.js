@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.5
+  * @version 4.0.6
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -53,6 +53,8 @@ var et = {
     HEADING_NOT_VISIBLE: 'Pealkiri ei ole nähtav; see võib olla peidetud või olla akordioni või vahekaardikomponendi sees.',
     SKIP_TO_PAGE_ISSUES: 'Skip to Page Issues (lehekülje probleemid)',
     CONSOLE_ERROR: 'Vabandame, kuid selle lehekülje ligipääsetavuse kontrolliga on probleem. Kas te saaksite <a href="%(link)">teavitada sellest selle vormi kaudu</a> või <a href="%(link)">GitHubis</a>?',
+    APPEARANCE: 'Välimus',
+    MOVE_PANEL: 'Liiguta paneel',
 
     // Dismiss
     PANEL_DISMISS_BUTTON: 'Kuva %(dismissCount) eiratud',

@@ -191,7 +191,7 @@ export class PanelTooltips extends HTMLElement {
 
     /* 3. Tooltip for "Developer checks" toggle. */
     if (Constants.Global.developerPlugin) {
-      const infoIcon = Constants.Panel.developerItem.querySelector('#info-icon');
+      const infoIcon = Constants.Panel.developerItem.querySelector('.info-icon');
       tippy(infoIcon, {
         ...tooltipOptions(shadowRoot),
         triggerTarget: [Constants.Panel.developerItem],

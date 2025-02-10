@@ -40,6 +40,8 @@ export default {
     HEADING_NOT_VISIBLE: 'El encabezado no es visible; puede estar oculto o dentro de un componente de acordeón o pestaña.',
     SKIP_TO_PAGE_ISSUES: 'Saltar problemas de la página',
     CONSOLE_ERROR: 'Lo siento, pero hay un problema con el comprobador de accesibilidad en esta página. Puedes por favor <a href="%(link)">reportarlo a través de este formulario</a> or on <a href="%(link)">GitHub</a>?',
+    APPEARANCE: 'Apariencia',
+    MOVE_PANEL: 'Mover panel',
 
     // Export
     DATE: 'Fecha',

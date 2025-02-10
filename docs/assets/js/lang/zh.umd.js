@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.5
+  * @version 4.0.6
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -59,6 +59,8 @@
       HEADING_NOT_VISIBLE: '标题是不可见的；它可能是隐藏的或在手风琴或标签组件内。',
       SKIP_TO_PAGE_ISSUES: '跳到页面问题',
       CONSOLE_ERROR: '对不起, 本页面的可访问性检查器有问题。您能否<a href="%(link)">通过此表格</a>或<a href="%(link)">GitHub</a>报告?',
+      APPEARANCE: '外观',
+      MOVE_PANEL: '移动面板',
 
       // Dismiss
       PANEL_DISMISS_BUTTON: '显示 %(dismissCount) 被忽略的',

@@ -41,6 +41,8 @@ export default {
     HEADING_NOT_VISIBLE: '見出しは表示されません。非表示になっていたり、アコーディオンやタブコンポーネントの中に入っていたりすることがあります。',
     SKIP_TO_PAGE_ISSUES: 'ページの先頭へ戻る',
     CONSOLE_ERROR: '申し訳ありませんが、このページのアクセシビリティチェッカーに問題があります。<a href="%(link)">このフォーム</a>または<a href="%(link)">GitHub</a>で報告していただけませんでしょうか',
+    APPEARANCE: '外観',
+    MOVE_PANEL: 'パネルを移動',
 
     // Dismiss
     PANEL_DISMISS_BUTTON: '%(dismissCount) 無視を表示',

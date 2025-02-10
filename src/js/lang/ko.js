@@ -41,6 +41,8 @@ export default {
     HEADING_NOT_VISIBLE: '표시되지 않는 제목입니다. 숨겨져 있거나 아코디언 또는 탭 컴포넌트 안에 있을 수 있습니다.',
     SKIP_TO_PAGE_ISSUES: '페이지 문제로 건너뛰기',
     CONSOLE_ERROR: '죄송합니다. 이 페이지에서 접근성 점검기에 문제가 있습니다. <a href="%(link)">이 양식</a>이나 <a href="%(link)">GitHub</a>을 통해 신고해 주십시오.',
+    APPEARANCE: '모양',
+    MOVE_PANEL: '패널을 이동',
 
     // Export
     DATE: '날짜',

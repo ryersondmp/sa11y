@@ -199,10 +199,7 @@ input[type=color i].unknown::after {
 }
 .close-btn:after {
   position: absolute;
-  top: -7px;
-  right: -7px;
-  bottom: -7px;
-  left: -7px;
+  inset: -7px;
   content: "";
   background: var(--sa11y-setting-switch-bg-off);
   -webkit-mask: var(--sa11y-close-btn-svg) center no-repeat;
@@ -227,7 +224,7 @@ input[type=color i].unknown::after {
 #container [tabindex="-1"]:focus,
 #container input:focus,
 #container select:focus,
-#container button:not(#panel-controls button):not(.switch):focus,
+#container button:focus,
 #container a:focus {
   outline: 0;
   box-shadow: 0 0 0 5px var(--sa11y-focus-color);

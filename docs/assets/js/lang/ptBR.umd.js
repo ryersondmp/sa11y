@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.5
+  * @version 4.0.6
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -59,6 +59,8 @@
       HEADING_NOT_VISIBLE: 'O cabeçalho não é visível; ele pode estar oculto ou dentro de um componente de acordeão ou guia.',
       SKIP_TO_PAGE_ISSUES: 'Pular para os problemas da página',
       CONSOLE_ERROR: 'Desculpe, mas há um problema com o verificador de acessibilidade nesta página. Você pode <a href="%(link)">relatar o problema por meio deste formulário</a> ou no <a href="%(link)">GitHub</a>?',
+      APPEARANCE: 'Aparência',
+      MOVE_PANEL: 'Mover painel',
 
       // Dismiss
       PANEL_DISMISS_BUTTON: 'Mostrar %(dismissCount) ignorados',

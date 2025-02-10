@@ -41,6 +41,8 @@ export default {
     HEADING_NOT_VISIBLE: 'Glava ni vidna; lahko je skrita ali znotraj komponente harmonike ali zavihka.',
     SKIP_TO_PAGE_ISSUES: 'Preskoči na stran Vprašanja',
     CONSOLE_ERROR: 'Opravičujemo se, vendar je na tej strani prišlo do težave s preverjanjem dostopnosti. Ali jo lahko <a href="%(link)">prijavite prek tega obrazca</a> ali na <a href="%(link)">GitHub</a>?',
+    APPEARANCE: 'Izgled',
+    MOVE_PANEL: 'Premakni ploščo',
 
     // Dismiss
     PANEL_DISMISS_BUTTON: 'Pokaži %(dismissCount) zavrnjeno',

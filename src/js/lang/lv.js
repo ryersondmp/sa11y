@@ -41,6 +41,8 @@ export default {
     HEADING_NOT_VISIBLE: 'Virsraksts nav redzams; tas var būt paslēpts vai akordeona vai cilnes komponenta iekšpusē.',
     SKIP_TO_PAGE_ISSUES: 'Pāriet uz lapas jautājumiem',
     CONSOLE_ERROR: 'Atvainojiet, bet šajā lapā ir problēma ar pieejamības pārbaudītāju. Vai varat, lūdzu, <a href="%(link)">ziņot par to, izmantojot šo formu</a> vai <a href="%(link)">GitHub</a>?',
+    APPEARANCE: 'Izskats',
+    MOVE_PANEL: 'Pārvietot paneli',
 
     // Dismiss
     PANEL_DISMISS_BUTTON: 'Rādīt %(dismissCount) noraidītos',

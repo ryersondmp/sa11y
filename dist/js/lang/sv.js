@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.5
+  * @version 4.0.6
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -53,6 +53,8 @@ var sv = {
     HEADING_NOT_VISIBLE: 'Rubriken är inte synlig; den kan vara gömd eller inuti ett dragspel eller en flikkomponent.',
     SKIP_TO_PAGE_ISSUES: 'Hoppa till sidans problem',
     CONSOLE_ERROR: 'Tyvärr, men det finns ett problem med tillgänglighetskontrollen på den här sidan. Kan du <a href="%(link)">rapportera det via det här formuläret</a> eller på <a href="%(link)">GitHub</a>?',
+    APPEARANCE: 'Utseende',
+    MOVE_PANEL: 'Flytta panel',
 
     // Export
     DATE: 'Datum',

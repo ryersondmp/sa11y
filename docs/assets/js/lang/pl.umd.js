@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.5
+  * @version 4.0.6
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -58,6 +58,8 @@
       HEADING_NOT_VISIBLE: 'Nagłówek nie jest widoczny; może być ukryty lub wewnątrz komponentu akordeonu lub tabulatora.',
       SKIP_TO_PAGE_ISSUES: 'Przejdź do problemów ze stroną',
       CONSOLE_ERROR: 'Przepraszamy, ale wystąpił problem z narzędziem do sprawdzania ułatwień dostępu na tej stronie. Czy możesz <a href="%(link)">zgłosić to za pomocą tego formularza</a> lub na <a href="%(link)">GitHub</a>?',
+      APPEARANCE: 'Wygląd',
+      MOVE_PANEL: 'Przenieś panel',
 
       // Dismiss
       PANEL_DISMISS_BUTTON: 'Pokaż %(dismissCount) odrzucone',

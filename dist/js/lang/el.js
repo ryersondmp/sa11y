@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.5
+  * @version 4.0.6
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -53,6 +53,8 @@ var el = {
     HEADING_NOT_VISIBLE: 'Η επικεφαλίδα δεν είναι ορατή- μπορεί να είναι κρυμμένη ή μέσα σε ένα στοιχείο ακορντεόν ή καρτέλας.',
     SKIP_TO_PAGE_ISSUES: 'Μετάβαση στα θέματα της σελίδας',
     CONSOLE_ERROR: 'Συγγνώμη, αλλά υπάρχει πρόβλημα με τον ελεγκτή προσβασιμότητας σε αυτή τη σελίδα. Μπορείτε να το αναφέρετε, παρακαλώ, <a href="%(link)">μέσω αυτής της φόρμας</a> ή στο <a href="%(link)">GitHub</a>',
+    APPEARANCE: 'Εμφάνιση',
+    MOVE_PANEL: 'Μετακίνηση πίνακα',
 
     // Dismiss
     PANEL_DISMISS_BUTTON: 'Εμφάνιση %(dismissCount) απορριφθέντων',

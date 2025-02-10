@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.5
+  * @version 4.0.6
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -53,6 +53,8 @@ var hu = {
     HEADING_NOT_VISIBLE: 'A fejléc nem látható; lehet rejtett vagy egy harmonika- vagy fülkomponens belsejében.',
     SKIP_TO_PAGE_ISSUES: 'Ugrás az oldalra problémák',
     CONSOLE_ERROR: 'Sajnáljuk, de probléma van az oldal hozzáférhetőségi ellenőrzőjével. Megtenné, hogy <a href="%(link)">bejelenti ezen az űrlapon</a> vagy a <a href="%(link)">GitHubon</a>?',
+    APPEARANCE: 'Megjelenés',
+    MOVE_PANEL: 'Panel mozgatása',
 
     // Dismiss
     PANEL_DISMISS_BUTTON: 'Mutasd %(dismissCount) elutasított',

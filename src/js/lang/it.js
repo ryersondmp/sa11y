@@ -41,6 +41,8 @@ export default {
     HEADING_NOT_VISIBLE: "L'intestazione non è visibile; può essere nascosta o all'interno di un componente fisarmonica o scheda.",
     SKIP_TO_PAGE_ISSUES: 'Vai alla pagina Problemi',
     CONSOLE_ERROR: "Siamo spiacenti, ma c'è un problema con il verificatore di accessibilità di questa pagina. Puoi per favore <a href=\"%(link)\">riportarlo attraverso questo modulo</a> o su <a href=\"%(link)\">GitHub</a>?",
+    APPEARANCE: 'Aspetto',
+    MOVE_PANEL: 'Sposta pannello',
 
     // Dismiss
     PANEL_DISMISS_BUTTON: 'Mostra %(dismissCount) scartati',

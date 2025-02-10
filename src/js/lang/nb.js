@@ -41,6 +41,8 @@ export default {
     HEADING_NOT_VISIBLE: 'Overskriften er ikke synlig; den kan være skjult eller inne i en trekkspill- eller fanekomponent.',
     SKIP_TO_PAGE_ISSUES: 'Gå til sideproblemer',
     CONSOLE_ERROR: 'Beklager, men det er et problem med tilgjengelighetskontrollen på denne siden. Kan du <a href="%(link)">rapportere det via dette skjemaet</a> eller på <a href="%(link)">GitHub</a>?',
+    APPEARANCE: 'Utseende',
+    MOVE_PANEL: 'Flytt panel',
 
     // Dismiss
     PANEL_DISMISS_BUTTON: 'Vis %(dismissCount) avviste',

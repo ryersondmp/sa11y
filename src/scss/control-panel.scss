@@ -187,6 +187,7 @@ audio {
   &.left,
   &.top-left {
     inset-inline-start: 42px;
+    inset-inline-end: unset;
   }
 
   &.top-right,
@@ -381,10 +382,7 @@ hr {
 
   &:before {
     position: absolute;
-    top: -5px;
-    right: -5px;
-    bottom: -5px;
-    left: -5px;
+    inset: -5px;
     content: "";
   }
 
@@ -506,6 +504,8 @@ hr {
 }
 
 .panel-header {
+  display: flex;
+  justify-content: space-between;
   padding: 10px 15px 0;
   text-align: start;
 }
@@ -639,6 +639,8 @@ hr {
     }
 
     .edit-block {
+      display: flex;
+      justify-content: flex-end;
       margin-bottom: 15px;
     }
 
@@ -648,6 +650,7 @@ hr {
       color: var(--sa11y-panel-primary);
       text-decoration: none;
       cursor: pointer;
+      margin-inline-end: 5px;
       background: var(--sa11y-panel-bg-secondary);
       border: 2px solid var(--sa11y-button-outline);
       border-radius: 5px;
@@ -659,10 +662,7 @@ hr {
 
       &::before {
         position: absolute;
-        top: -10px;
-        right: -10px;
-        bottom: -10px;
-        left: -10px;
+        inset: -10px;
         content: "";
       }
     }
@@ -717,24 +717,57 @@ hr {
 /* **************************************** */
 @mixin icon($background, $mask) {
   display: inline-block;
-  width: 16px;
-  height: 16px;
   background: $background;
-  mask: $mask center no-repeat;
+  mask: $mask;
+  mask-position: center;
+  mask-repeat: no-repeat;
+}
+
+@mixin icon-size($size: 16px) {
+  width: $size;
+  height: $size;
+}
+
+.move-panel-icon {
+  vertical-align: middle;
+  @include icon-size(18px);
+  @include icon(var(--sa11y-setting-switch-bg-off), var(--sa11y-move-panel-icon));
+}
+
+.info-icon {
+  margin-top: -2px;
+  vertical-align: middle;
+  @include icon-size(20px);
+  @include icon(var(--sa11y-setting-switch-bg-off), var(--sa11y-info-icon));
+}
+
+.sun-icon {
+  vertical-align: middle;
+  @include icon-size(18px);
+  @include icon(var(--sa11y-setting-switch-bg-off), var(--sa11y-sun-icon));
+}
+
+.moon-icon {
+  vertical-align: middle;
+  @include icon-size(18px);
+  @include icon(var(--sa11y-setting-switch-bg-off), var(--sa11y-moon-icon));
 }
 
 .error-icon {
   margin-bottom: -4px;
+  @include icon-size(16px);
   @include icon(var(--sa11y-error-text), var(--sa11y-error-svg));
 }
 
 .hidden-icon {
   margin-bottom: -3px;
+  @include icon-size(16px);
   @include icon(var(--sa11y-panel-primary), var(--sa11y-hidden-icon-svg));
 }
 
 .link-icon {
   margin-bottom: -3.5px;
+  @include icon-size(16px);
   @include icon(var(--sa11y-panel-primary), var(--sa11y-link-icon-svg));
 }
 
@@ -762,6 +795,10 @@ hr {
 
 @media screen and (forced-colors: active) {
 
+  .move-panel-icon,
+  .sun-icon,
+  .moon-icon,
+  .info-icon,
   .error-icon,
   .link-icon,
   .hidden-icon {
@@ -823,37 +860,64 @@ label:not(#colour-filter-mode, #export-results-mode) {
   cursor: pointer;
 }
 
+// Insert space between the panel controls and main toggle if Image Outline is enabled.
+#panel.right {
+  #panel-controls:has(#images-toggle)::after {
+    width: 80px;
+    content: "";
+  }
+}
+
+#panel.left {
+  #panel-controls:has(#images-toggle)::before {
+    width: 50px;
+    content: "";
+  }
+}
 
 /* ***************************************** */
 /*           13. Settings Panel              */
 /* ***************************************** */
 #settings-panel {
 
-  #info-icon {
-    vertical-align: middle;
-    fill: var(--sa11y-panel-primary);
-  }
+  .export-results-group,
+  .appearance-group {
+    display: flex;
+    margin: 5px 0;
 
-  #export-csv,
-  #export-html {
-    width: unset;
-    padding: 0;
-    text-align: center;
-
-    span {
-      display: block;
-      width: 65px;
-      padding: 7px 9px;
-      margin: 0 4px;
-      background: var(--sa11y-panel-bg-secondary);
+    button {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      min-height: 34px;
+      margin: 2px 0;
+      text-align: center;
+      white-space: nowrap;
+      cursor: pointer;
+      border: 2px solid var(--sa11y-setting-switch-bg-off);
       border-radius: 5px;
-      box-shadow: inset 0 0 0 2px var(--sa11y-setting-switch-bg-off);
-    }
+      margin-inline-start: 8px;
+      margin-inline-end: 4px;
 
-    &:hover span,
-    &:focus span,
-    &:focus-within span {
-      background: var(--sa11y-shortcut-hover);
+      &:hover,
+      &:focus,
+      &:focus-within {
+        background: var(--sa11y-shortcut-hover);
+      }
+
+      &:before {
+        position: absolute;
+        inset: -7px;
+        content: "";
+      }
+
+      .text {
+        padding: 0 6px;
+        font-weight: 600;
+        color: var(--sa11y-setting-switch-bg-off);
+      }
     }
   }
 
@@ -864,8 +928,8 @@ label:not(#colour-filter-mode, #export-results-mode) {
     padding: 7px 10px;
     margin: 0;
     font-size: var(--sa11y-normal-text);
-    font-weight: normal;
-    color: var(--sa11y-panel-primary);
+    font-weight: 600;
+    color: var(--sa11y-setting-switch-bg-off);
     text-align: end;
     cursor: pointer;
     background: none;
@@ -939,7 +1003,6 @@ label:not(#colour-filter-mode, #export-results-mode) {
 
 .top-left,
 .top-right {
-
   &.has-page-issues #page-issues {
     /* Hide double border. */
     margin-top: -1px;
@@ -1044,12 +1107,12 @@ label:not(#colour-filter-mode, #export-results-mode) {
   position: relative;
   height: 30px;
   font-size: var(--sa11y-normal-text);
-  font-weight: normal;
-  color: var(--sa11y-panel-primary);
+  font-weight: 600;
+  color: var(--sa11y-setting-switch-bg-off);
   text-align: end;
   vertical-align: middle;
   cursor: pointer;
-  background: var(--sa11y-panel-bg-secondary);
+  background: var(--sa11y-panel-bg);
   border: 2px solid var(--sa11y-setting-switch-bg-off);
   border-radius: 5px;
   padding-inline-end: 25px;
@@ -1150,6 +1213,7 @@ label:not(#colour-filter-mode, #export-results-mode) {
   margin: -1px;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
+  font-weight: 600;
   white-space: nowrap;
   background: var(--sa11y-panel-bg);
   border: 0;
@@ -1160,7 +1224,7 @@ label:not(#colour-filter-mode, #export-results-mode) {
   z-index: 1;
   width: auto;
   height: auto;
-  padding: 5px 7px;
+  padding: 7px 10px;
   margin: 0;
   overflow: visible;
   clip: auto;

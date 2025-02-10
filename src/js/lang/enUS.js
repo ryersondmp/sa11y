@@ -40,6 +40,8 @@ export default {
     HEADING_NOT_VISIBLE: 'Heading is not visible; it may be hidden or inside of an accordion or tab component.',
     SKIP_TO_PAGE_ISSUES: 'Skip to Page Issues',
     CONSOLE_ERROR: 'Sorry, but there is an issue with the accessibility checker on this page. Can you please <a href="%(link)">report it through this form</a> or on <a href="%(link)">GitHub</a>?',
+    APPEARANCE: 'Appearance',
+    MOVE_PANEL: 'Move panel',
 
     // Export
     DATE: 'Date',

@@ -17,6 +17,7 @@ const defaultOptions = {
   // Control panel settings
   aboutContent: '',
   panelPosition: 'right',
+  showMovePanelToggle: true,
   checkAllHideToggles: false,
   developerChecksOnByDefault: false,
 
@@ -45,6 +46,7 @@ const defaultOptions = {
   showGoodLinkButton: true,
   dismissAnnotations: true,
   dismissAll: true,
+  ignoreHiddenOverflow: '',
 
   // Readability
   readabilityPlugin: true,

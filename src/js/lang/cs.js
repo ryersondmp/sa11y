@@ -41,6 +41,8 @@ export default {
     HEADING_NOT_VISIBLE: 'Záhlaví není viditelné; může být skryté nebo se může nacházet v komponentě akordeonu nebo karty.',
     SKIP_TO_PAGE_ISSUES: 'Přeskočit na stránku Problémy',
     CONSOLE_ERROR: 'Omlouváme se, ale na této stránce je problém s kontrolou přístupnosti. Můžete ji prosím <a href="%(link)">nahlásit prostřednictvím tohoto formuláře</a> nebo na <a href="%(link)">GitHubu</a>?',
+    APPEARANCE: 'Vzhled',
+    MOVE_PANEL: 'Přesunout panel',
 
     // Dismiss
     PANEL_DISMISS_BUTTON: 'Zobrazit %(dismissCount) zamítnutá',

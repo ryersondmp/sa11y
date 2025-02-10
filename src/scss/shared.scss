@@ -218,10 +218,7 @@ input[type="color" i] {
 
   &:after {
     position: absolute;
-    top: -7px;
-    right: -7px;
-    bottom: -7px;
-    left: -7px;
+    inset: -7px;
     content: "";
     background: var(--sa11y-setting-switch-bg-off);
     mask: var(--sa11y-close-btn-svg) center no-repeat;
@@ -247,7 +244,7 @@ input[type="color" i] {
   [tabindex="-1"]:focus,
   input:focus,
   select:focus,
-  button:not(#panel-controls button):not(.switch):focus,
+  button:focus,
   a:focus {
     outline: 0;
     box-shadow: 0 0 0 5px var(--sa11y-focus-color);

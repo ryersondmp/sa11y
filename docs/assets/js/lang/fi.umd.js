@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.5
+  * @version 4.0.6
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -59,6 +59,8 @@
       HEADING_NOT_VISIBLE: 'Otsikko ei ole näkyvissä; se voi olla piilotettu tai harmonikka- tai välilehtiosan sisällä.',
       SKIP_TO_PAGE_ISSUES: 'Siirry sivulle Issues',
       CONSOLE_ERROR: 'Anteeksi, mutta tämän sivun saavutettavuuden tarkistuksessa on ongelma. Voisitko <a href="%(link)">ilmoittaa siitä tällä lomakkeella</a> tai <a href="%(link)">GitHubissa</a>?',
+      APPEARANCE: 'Ulkonäkö',
+      MOVE_PANEL: 'Siirrä paneeli',
 
       // Dismiss
       PANEL_DISMISS_BUTTON: 'Näytä %(dismissCount) ohitetut',

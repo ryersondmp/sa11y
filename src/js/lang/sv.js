@@ -41,6 +41,8 @@ export default {
     HEADING_NOT_VISIBLE: 'Rubriken är inte synlig; den kan vara gömd eller inuti ett dragspel eller en flikkomponent.',
     SKIP_TO_PAGE_ISSUES: 'Hoppa till sidans problem',
     CONSOLE_ERROR: 'Tyvärr, men det finns ett problem med tillgänglighetskontrollen på den här sidan. Kan du <a href="%(link)">rapportera det via det här formuläret</a> eller på <a href="%(link)">GitHub</a>?',
+    APPEARANCE: 'Utseende',
+    MOVE_PANEL: 'Flytta panel',
 
     // Export
     DATE: 'Datum',

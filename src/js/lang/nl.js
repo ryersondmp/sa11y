@@ -41,6 +41,8 @@ export default {
     HEADING_NOT_VISIBLE: 'De kop is niet zichtbaar; hij kan verborgen zijn of in een accordeon- of tabbladcomponent staan.',
     SKIP_TO_PAGE_ISSUES: 'Doorgaan naar paginanummers',
     CONSOLE_ERROR: 'Sorry, maar er is een probleem met de toegankelijkheidscontrole op deze pagina. Kunt u dit alstublieft <a href="%(link)">melden via dit formulier</a> of op <a href="%(link)">GitHub</a>?',
+    APPEARANCE: 'Uiterlijk',
+    MOVE_PANEL: 'Verplaats paneel',
 
     // Dismiss
     PANEL_DISMISS_BUTTON: 'Toon %(dismissCount) afgewezen',

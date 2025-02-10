@@ -21,37 +21,31 @@ export default class ControlPanel extends HTMLElement {
 
     const rememberDeveloper = store.getItem('sa11y-developer') === 'On';
     const rememberReadability = store.getItem('sa11y-readability') === 'On';
+    const rememberTheme = store.getItem('sa11y-theme');
+    const rememberPanelPosition = store.getItem('sa11y-position');
 
     // If admin wants users to check everything, without toggleable checks.
     const checkAll = Constants.Global.checkAllHideToggles;
 
-    // Panel position: left or right side.
-    const { panelPosition } = Constants.Global;
-
     /* TOGGLEABLE PLUGINS */
     const developerPlugin = Constants.Global.developerPlugin ? `
       <li id="developer-item" ${checkAll ? 'hidden' : ''}>
-        <label id="check-developer" for="developer-toggle">${Lang._('DEVELOPER_CHECKS')}
-          <svg id="info-icon" xmlns="http://www.w3.org/2000/svg" width="18" viewBox="0 0 16 16">
-            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-            <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
-          </svg>
+        <label id="check-developer" for="developer-toggle">
+          ${Lang._('DEVELOPER_CHECKS')} <span class="info-icon"></span>
         </label>
-        <button id="developer-toggle"
-          aria-labelledby="check-developer"
-          aria-describedby="check-developer-desc"
-          class="switch"
-          aria-pressed="${rememberDeveloper ? 'true' : 'false'}">${rememberDeveloper ? Lang._('ON') : Lang._('OFF')}</button>
+        <button type="button" id="developer-toggle" class="switch"
+          aria-labelledby="check-developer" aria-describedby="check-developer-desc"
+          aria-pressed="${rememberDeveloper ? 'true' : 'false'}"
+        >${rememberDeveloper ? Lang._('ON') : Lang._('OFF')}</button>
         <div id="check-developer-desc" hidden>${Lang._('DEVELOPER_DESC')}</div>
       </li>` : '';
 
     const readabilityPlugin = Constants.Readability.Plugin ? `
       <li id="readability-item">
         <label id="check-readability" for="readability-toggle">${Lang._('READABILITY')}</label>
-        <button id="readability-toggle"
-          aria-labelledby="check-readability"
-          class="switch"
-          aria-pressed="${rememberReadability ? 'true' : 'false'}">${rememberReadability ? Lang._('ON') : Lang._('OFF')}</button>
+        <button type="button" id="readability-toggle" aria-labelledby="check-readability" class="switch"
+          aria-pressed="${rememberReadability ? 'true' : 'false'}"
+        >${rememberReadability ? Lang._('ON') : Lang._('OFF')}</button>
       </li>` : '';
 
     const colourFilterPlugin = Constants.Global.colourFilterPlugin ? `
@@ -77,23 +71,23 @@ export default class ControlPanel extends HTMLElement {
     const exportResultsPlugin = Constants.Global.exportResultsPlugin ? `
       <li id="export-results-item">
         <span id="export-results-mode">${Lang._('EXPORT_RESULTS')}</span>
-        <button id="export-csv" class="switch" aria-describedby="export-results-mode">
-          <span>CSV</span>
-        </button>
-        <button id="export-html" class="switch" aria-describedby="export-results-mode">
-          <span>HTML</span>
-        </button>
+        <div class="export-results-group">
+          <button type="button" id="export-csv" aria-describedby="export-results-mode">
+            <span class="text">CSV</span>
+          </button>
+          <button type="button" id="export-html" aria-describedby="export-results-mode">
+            <span class="text">HTML</span>
+          </button>
+        </div>
       </li>` : '';
 
     /* CUSTOMIZABLE ABOUT SECTION */
     const aboutSection = Constants.Global.aboutContent ? `
-      <div id="about-content">
-        ${Constants.Global.aboutContent}
-      </div>` : '';
+      <div id="about-content">${Constants.Global.aboutContent}</div>` : '';
 
     /* MAIN TOGGLE */
     const mainToggle = `
-      <button type="button" aria-expanded="false" id="toggle" aria-describedby="notification-badge" aria-label="${Lang._('MAIN_TOGGLE_LABEL')}" class="${panelPosition}" disabled>
+      <button type="button" aria-expanded="false" id="toggle" aria-describedby="notification-badge" aria-label="${Lang._('MAIN_TOGGLE_LABEL')}" class="${rememberPanelPosition}" disabled>
         ${MainToggleIcon}
         <div id="notification-badge">
           <span id="notification-count"></span>
@@ -119,11 +113,7 @@ export default class ControlPanel extends HTMLElement {
           <h2 id="outline-header" tabindex="-1">${Lang._('OUTLINE')}</h2>
         </div>
         <div id="outline-content">
-          <ul
-            id="outline-list"
-            tabindex="0"
-            role="list"
-            aria-labelledby="outline-header"></ul>
+          <ul id="outline-list" tabindex="0" role="list" aria-labelledby="outline-header"></ul>
         </div>
         <div id="readability-panel">
           <div id="readability-content">
@@ -141,13 +131,20 @@ export default class ControlPanel extends HTMLElement {
           <h2 id="images-header" tabindex="-1">${Lang._('IMAGES')}</h2>
         </div>
         <div id="images-content">
-          <ul
-            id="images-list"
-            tabindex="0"
-            role="list"
-            aria-labelledby="images-header"></ul>
+          <ul id="images-list" tabindex="0" role="list" aria-labelledby="images-header"></ul>
         </div>
       </div>` : '';
+
+    /* PANEL POSITION TOGGLE */
+    const leftPressed = rememberPanelPosition === 'left' || rememberPanelPosition === 'top-left';
+    const panelMoved = leftPressed ? 'true' : 'false';
+    const panelPositionToggle = Constants.Global.showMovePanelToggle
+      ? `<button type="button" id="move-panel"
+          aria-label="${Lang._('MOVE_PANEL')}"
+          aria-pressed="${panelMoved}"
+          ><span class="move-panel-icon"></span>
+        </button>`
+      : '';
 
     /* PAGE SETTINGS */
     const pageSettings = `
@@ -159,11 +156,15 @@ export default class ControlPanel extends HTMLElement {
           <ul id="settings-options">
             ${developerPlugin}
             ${readabilityPlugin}
-            <li id="dark-mode-item">
-              <label id="dark-mode" for="theme-toggle">${Lang._('DARK_MODE')}</label>
-              <button id="theme-toggle"
-                aria-labelledby="dark-mode"
-                class="switch"></button>
+            <li id="appearance-item">
+              <span id="appearance-mode">${Lang._('APPEARANCE')}</span>
+              <div class="appearance-group">
+                <button type="button" id="theme-toggle"
+                  aria-label="${Lang._('DARK_MODE')}"
+                  aria-pressed=${rememberTheme === 'dark' ? 'true' : 'false'}
+                ><span class="moon-icon"></span></button>
+                ${panelPositionToggle}
+              </div>
             </li>
             ${exportResultsPlugin}
             ${colourFilterPlugin}
@@ -174,14 +175,10 @@ export default class ControlPanel extends HTMLElement {
 
     /* PANEL ALERTS */
     const panelAlerts = `
-      <div
-        id="panel-alert"
-        role="alertdialog"
-        aria-labelledby="alert-heading"
-        aria-describedby="panel-alert-text">
+      <div id="panel-alert" role="alertdialog" aria-labelledby="alert-heading" aria-describedby="panel-alert-text">
         <div id="panel-alert-content">
           <div class="header-text">
-            <button id="close-alert" class="close-btn" aria-label="${Lang._('ALERT_CLOSE')}"></button>
+            <button type="button" id="close-alert" class="close-btn" aria-label="${Lang._('ALERT_CLOSE')}"></button>
             <h2 id="alert-heading">${Lang._('ALERT_TEXT')}</h2>
           </div>
           <p id="panel-alert-text"></p>
@@ -192,14 +189,14 @@ export default class ControlPanel extends HTMLElement {
     /* PANEL STATUS */
     const panelStatus = `
       <div id="panel-content">
-        <button id="skip-to-page-issues" type="button">
+        <button type="button" id="skip-to-page-issues">
           ${Lang._('SKIP_TO_PAGE_ISSUES')}
         </button>
-        <button id="skip-button" type="button">
+        <button type="button" id="skip-button">
           <div class="panel-icon"></div>
           <span class="visually-hidden">${Lang._('SHORTCUT_SR')}</span>
         </button>
-        <button id="dismiss-button" type="button">
+        <button type="button" id="dismiss-button">
           <div class="dismiss-icon"></div>
           <span id="dismiss-tooltip" class="visually-hidden"></span>
         </button>
@@ -212,18 +209,11 @@ export default class ControlPanel extends HTMLElement {
     /* OUTLINE & SETTING TAB TOGGLES. */
     const imageToggleButton = `<button type="button" role="tab" aria-expanded="false" id="images-toggle" aria-controls="images-panel">${Lang._('IMAGES')}</button>`;
 
-    // Spacer for toggle width...
-    const spacer = Constants.Global.showImageOutline
-      ? '<div style="width:80px"></div>'
-      : '<div style="width:40px"></div>';
-
     const tabToggles = `
       <div id="panel-controls" role="tablist" aria-orientation="horizontal">
-        ${(panelPosition === 'left') ? spacer : ''}
         <button type="button" role="tab" aria-expanded="false" id="outline-toggle" aria-controls="outline-panel">${Lang._('OUTLINE')}</button>
         ${Constants.Global.showImageOutline ? imageToggleButton : ''}
         <button type="button" role="tab" aria-expanded="false" id="settings-toggle" aria-controls="settings-panel">${Lang._('SETTINGS')}</button>
-        ${(panelPosition === 'right') ? spacer : ''}
       </div>`;
 
     /* MAIN CONTAINER */
@@ -235,10 +225,10 @@ export default class ControlPanel extends HTMLElement {
     container.setAttribute('aria-label', Lang._('CONTAINER_LABEL'));
     container.setAttribute('dir', Constants.Global.langDirection);
 
-    if (panelPosition === 'top-left' || panelPosition === 'top-right') {
+    if (rememberPanelPosition === 'top-left' || rememberPanelPosition === 'top-right') {
       container.innerHTML = `
         ${mainToggle}
-        <div id="panel" class="${panelPosition}">
+        <div id="panel" class="${rememberPanelPosition}">
           ${panelStatus}
           ${colourFilterPanel}
           ${tabToggles}
@@ -251,7 +241,7 @@ export default class ControlPanel extends HTMLElement {
     } else {
       container.innerHTML = `
         ${mainToggle}
-        <div id="panel" class="${panelPosition}">
+        <div id="panel" class="${rememberPanelPosition}">
           ${pageIssues}
           ${pageOutline}
           ${imagesOutline}

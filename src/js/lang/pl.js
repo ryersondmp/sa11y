@@ -40,6 +40,8 @@ export default {
     HEADING_NOT_VISIBLE: 'Nagłówek nie jest widoczny; może być ukryty lub wewnątrz komponentu akordeonu lub tabulatora.',
     SKIP_TO_PAGE_ISSUES: 'Przejdź do problemów ze stroną',
     CONSOLE_ERROR: 'Przepraszamy, ale wystąpił problem z narzędziem do sprawdzania ułatwień dostępu na tej stronie. Czy możesz <a href="%(link)">zgłosić to za pomocą tego formularza</a> lub na <a href="%(link)">GitHub</a>?',
+    APPEARANCE: 'Wygląd',
+    MOVE_PANEL: 'Przenieś panel',
 
     // Dismiss
     PANEL_DISMISS_BUTTON: 'Pokaż %(dismissCount) odrzucone',

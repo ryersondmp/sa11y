@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.5
+  * @version 4.0.6
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -59,6 +59,8 @@
       HEADING_NOT_VISIBLE: 'Judul tidak terlihat; judul mungkin tersembunyi atau berada di dalam komponen akordeon atau tab.',
       SKIP_TO_PAGE_ISSUES: 'Loncat ke Halaman Masalah',
       CONSOLE_ERROR: 'Maaf, ada masalah dengan pemeriksa aksesibilitas di halaman ini. Bisakah Anda <a href="%(link)">melaporkannya melalui formulir ini</a> atau di <a href="%(link)">GitHub</a>?',
+      APPEARANCE: 'Tampilan',
+      MOVE_PANEL: 'Pindahkan panel',
 
       // Dismiss
       PANEL_DISMISS_BUTTON: 'Tampilkan %(dismissCount) diabaikan',

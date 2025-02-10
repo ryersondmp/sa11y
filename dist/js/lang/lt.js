@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.5
+  * @version 4.0.6
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -53,6 +53,8 @@ var lt = {
     HEADING_NOT_VISIBLE: 'Antraštė nėra matoma; ji gali būti paslėpta arba akordeono ar skirtuko komponento viduje.',
     SKIP_TO_PAGE_ISSUES: 'Pereiti prie puslapio klausimų',
     CONSOLE_ERROR: 'Atsiprašome, bet šiame puslapyje yra problema su prieinamumo tikrintuvu. Ar galite apie tai <a href="%(link)">pranešti per šią formą</a> arba <a href="%(link)">GitHub</a>?',
+    APPEARANCE: 'Išvaizda',
+    MOVE_PANEL: 'Perkelti skydelį',
 
     // Dismiss
     PANEL_DISMISS_BUTTON: 'Rodyti %(dismissCount) atmestų',

@@ -41,6 +41,8 @@ export default {
     HEADING_NOT_VISIBLE: 'A fejléc nem látható; lehet rejtett vagy egy harmonika- vagy fülkomponens belsejében.',
     SKIP_TO_PAGE_ISSUES: 'Ugrás az oldalra problémák',
     CONSOLE_ERROR: 'Sajnáljuk, de probléma van az oldal hozzáférhetőségi ellenőrzőjével. Megtenné, hogy <a href="%(link)">bejelenti ezen az űrlapon</a> vagy a <a href="%(link)">GitHubon</a>?',
+    APPEARANCE: 'Megjelenés',
+    MOVE_PANEL: 'Panel mozgatása',
 
     // Dismiss
     PANEL_DISMISS_BUTTON: 'Mutasd %(dismissCount) elutasított',

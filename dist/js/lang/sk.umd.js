@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.5
+  * @version 4.0.6
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -59,6 +59,8 @@
       HEADING_NOT_VISIBLE: 'Záhlavie nie je viditeľné; môže byť skryté alebo sa nachádzať v komponente akordeónu alebo karty.',
       SKIP_TO_PAGE_ISSUES: 'Prejsť na stránku Problémy',
       CONSOLE_ERROR: 'Je nám ľúto, ale na tejto stránke je problém s kontrolou prístupnosti. Môžete to prosím <a href="%(link)">nahlásiť prostredníctvom tohto formulára</a> alebo na <a href="%(link)">GitHub</a>?',
+      APPEARANCE: 'Vzhľad',
+      MOVE_PANEL: 'Presunúť panel',
 
       // Dismiss
       PANEL_DISMISS_BUTTON: 'Zobraziť %(dismissCount) zamietnuté',

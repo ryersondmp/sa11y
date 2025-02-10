@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.5
+  * @version 4.0.6
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -58,6 +58,8 @@
       HEADING_NOT_VISIBLE: 'Die Überschrift ist nicht sichtbar; sie kann ausgeblendet sein oder sich innerhalb einer Akkordeon- oder Registerkartenkomponente befinden.',
       SKIP_TO_PAGE_ISSUES: 'Zu Seitenproblemen springen',
       CONSOLE_ERROR: 'Leider liegt ein Problem mit der Barrierefreiheitsprüfung auf dieser Seite vor. Können Sie es bitte <a href="%(link)">über dieses Formular</a> oder auf <a href="%(link)">GitHub</a> melden?',
+      APPEARANCE: 'Erscheinungsbild',
+      MOVE_PANEL: 'Panel verschieben',
 
       // Dismiss
       PANEL_DISMISS_BUTTON: 'Zeige %(dismissCount) abgelehnte',

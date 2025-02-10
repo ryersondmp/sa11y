@@ -42,7 +42,6 @@ export function annotate(issue, option) {
     throw Error(`Invalid type [${type}] for annotation`);
   }
 
-
   // Add unique ID and styles to annotation and marked element.
   [type].forEach(($el) => {
     if ($el === 'error' && element !== undefined) {
@@ -122,10 +121,11 @@ export function annotate(issue, option) {
   }
 }
 
-// ============================================================
-// Detect parent containers that have hidden overflow.
-// ============================================================
-export const detectOverflow = () => {
+/**
+ * Utility function for annotations that modifies the parent container with overflow: hidden, making it visible and scrollable so content authors can access Sa11y's annotations.
+ * @param {string} ignoreHiddenOverflow A string of selectors to ignore and not apply overflow detection.
+ */
+export const detectOverflow = (ignoreHiddenOverflow) => {
   const findParentWithOverflow = (element, property, value) => {
     let $el = element;
     while ($el !== null) {
@@ -142,14 +142,21 @@ export const detectOverflow = () => {
   annotations.forEach(($el) => {
     const overflowing = findParentWithOverflow($el, 'overflow', 'hidden');
     if (overflowing !== null) {
+      // Skip if selectors passed via ignoreHiddenOverflow prop.
+      if (ignoreHiddenOverflow) {
+        const selectors = ignoreHiddenOverflow.split(',');
+        const matches = selectors.flatMap((selector) => [...document.querySelectorAll(selector)]);
+        if (matches.includes(overflowing)) return;
+      }
+      // All other `overflow: hidden` containers will be made visible and scrollable.
       overflowing.setAttribute('data-sa11y-overflow', '');
     }
   });
 };
 
-// ============================================================
-// Nudge buttons if they overlap.
-// ============================================================
+/**
+ * Utility function that will visually move overlapping annotations so they can be seen.
+ */
 export const nudge = () => {
   const annotations = document.querySelectorAll('sa11y-annotation');
   annotations.forEach(($el) => {
