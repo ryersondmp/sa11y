@@ -857,6 +857,7 @@ label:not(#colour-filter-mode, #export-results-mode) {
   justify-content: center;
   min-width: 44px;
   min-height: 34px;
+  margin: 2px 0;
   text-align: center;
   white-space: nowrap;
   cursor: pointer;
@@ -1052,11 +1053,11 @@ label:not(#colour-filter-mode, #export-results-mode) {
   height: 30px;
   font-size: var(--sa11y-normal-text);
   font-weight: 600;
-  color: var(--sa11y-panel-primary);
+  color: var(--sa11y-setting-switch-bg-off);
   text-align: end;
   vertical-align: middle;
   cursor: pointer;
-  background: var(--sa11y-panel-bg-secondary);
+  background: var(--sa11y-panel-bg);
   border: 2px solid var(--sa11y-setting-switch-bg-off);
   border-radius: 5px;
   padding-inline-end: 25px;

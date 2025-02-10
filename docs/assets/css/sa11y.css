@@ -140,10 +140,10 @@ html[data-sa11y-theme=light] {
   --sa11y-panel-toggle-active: #c6c6c6;
   --sa11y-element-preview: #e9e9e9;
   --sa11y-setting-switch-bg-on: #21b5ff;
-  --sa11y-setting-switch-bg-off: #606060;
+  --sa11y-setting-switch-bg-off: #595959;
   --sa11y-hyperlink: #00478f;
   --sa11y-shortcut-hover: #e8e8e8;
-  --sa11y-button-outline: #606060;
+  --sa11y-button-outline: #595959;
   --sa11y-box-shadow: 0 0 20px 4px rgba(154, 161, 177, .15),
     0 4px 80px -8px rgba(36, 40, 47, .25),
     0 4px 4px -2px rgba(91, 94, 105, .15);
