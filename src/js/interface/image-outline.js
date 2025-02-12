@@ -56,7 +56,7 @@ const generateEditLink = (image) => {
  * @param {Object[]} dismissed - Array of dismissed objects.
  * @param {Object[]} imageResults - Array of all issues objects that is an <img> element.
  */
-export default function generateImageOutline(dismissed, imageResults) {
+export default function generateImageOutline(dismissed, imageResults, option) {
   const imageOutlineHandler = () => {
     const imageArray = [];
 
@@ -85,7 +85,10 @@ export default function generateImageOutline(dismissed, imageResults) {
       const edit = generateEditLink(image);
 
       // If image is linked.
-      const linked = (image.element.closest('a[href]'))
+      const anchor = option.imageWithinLightbox
+        ? `a[href]:not(${option.imageWithinLightbox})`
+        : 'a[href]';
+      const linked = (image.element.closest(anchor))
         ? `<div class="badge ${issue}-badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._('LINKED')}</span></div>`
         : '';
 
