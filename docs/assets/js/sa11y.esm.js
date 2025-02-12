@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.7
+  * @version 4.0.8
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -3148,7 +3148,7 @@ const generateEditLink = (image) => {
  * @param {Object[]} dismissed - Array of dismissed objects.
  * @param {Object[]} imageResults - Array of all issues objects that is an <img> element.
  */
-function generateImageOutline(dismissed, imageResults) {
+function generateImageOutline(dismissed, imageResults, option) {
   const imageOutlineHandler = () => {
     const imageArray = [];
 
@@ -3177,7 +3177,10 @@ function generateImageOutline(dismissed, imageResults) {
       const edit = generateEditLink(image);
 
       // If image is linked.
-      const linked = (image.element.closest('a[href]'))
+      const anchor = option.imageWithinLightbox
+        ? `a[href]:not(${option.imageWithinLightbox})`
+        : 'a[href]';
+      const linked = (image.element.closest(anchor))
         ? `<div class="badge ${issue}-badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._('LINKED')}</span></div>`
         : '';
 
@@ -11093,7 +11096,7 @@ class Sa11y {
           );
 
           if (option.showImageOutline) {
-            generateImageOutline(this.dismissed, this.imageResults);
+            generateImageOutline(this.dismissed, this.imageResults, option);
           }
 
           updatePanel(

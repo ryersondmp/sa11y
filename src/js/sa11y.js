@@ -289,7 +289,7 @@ class Sa11y {
           );
 
           if (option.showImageOutline) {
-            generateImageOutline(this.dismissed, this.imageResults);
+            generateImageOutline(this.dismissed, this.imageResults, option);
           }
 
           updatePanel(
