@@ -22,7 +22,7 @@ const Constants = (function myConstants() {
 
         // Create a warning if the desired readability root is not found.
         const { readabilityDetails, readabilityToggle } = Constants.Panel;
-        const readabilityOn = readabilityToggle.getAttribute('aria-pressed') === 'true';
+        const readabilityOn = readabilityToggle?.getAttribute('aria-pressed') === 'true';
         if (readabilityDetails && readabilityOn) {
           const note = document.createElement('div');
           note.id = 'readability-alert';

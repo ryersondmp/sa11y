@@ -2,17 +2,19 @@
 <html lang="en" dir="ltr">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>Testing</title>
-  <link rel="stylesheet" href="./assets/main.css">
+  <link rel="stylesheet" href="./assets/main.css" />
   <link rel="stylesheet" href="../../dist/css/sa11y.min.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
-  <meta http-equiv="refresh" content="1000">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" />
+  <meta http-equiv="refresh" content="1000" />
   <style>
     .color-mix {
       color: color-mix(in srgb, rgba(235, 52, 52, 1) 90%, white);
-      background-color: color-mix(in srgb, rgba(52, 201, 235, 0.9) 50%, white);
+      background-color: color-mix(in srgb,
+          rgba(52, 201, 235, 0.9) 50%,
+          white);
     }
 
     .hsl {
@@ -21,7 +23,7 @@
     }
 
     .color {
-      color: color(display-p3 1 8 0 / .5);
+      color: color(display-p3 1 8 0 / 0.5);
     }
 
     .carousel {
@@ -59,26 +61,101 @@
     <h2>Sa11y (Random) Unit Tests</h2>
   </header>
   <main>
+    <h2>
+      Check for "new tab" or file type warning text should bypass <code>linkIgnoreSpan</code> prop
+    </h2>
+    <p>These used to incorrectly get a warning for missing "new tab" or file type text because of
+      <code>linkIgnoreSpan</code> prop.
+    </p>
+    <div id="nothing-example">
+      <p><a href="https://www.example.com/sdsdsdsss" target="_blank">testing <span class="sr-only-example">(new
+            tab)</span></a></p>
 
-    <hr>
-    <p>Misc bug fix where the word iclicker would get flagged for using word click.</p>
+      <p><a href="https://www.example.com/sdsdsdssssss.zip" target="_blank">Download this folder <span
+            class="sr-only-example">(archive/zip)</span></a></p>
+    </div>
+    <div id="error">
+      <p><a href="https://www.example.com/sdsdsdssssss" target="_blank">learn more <span class="sr-only-example">(new
+            tab)</span></a></p>
+
+      <p><a href="https://www.example.com/sdsdsdssssss.zip" target="_blank">learn more <span
+            class="sr-only-example">(archive/zip)</span></a></p>
+    </div>
+
+    <h2>New prop: insertAnnotationBefore</h2>
+    <style>
+      .background-container {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      .background-image-comp {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .overlay-text {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 100;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+
+      .content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10;
+        color: white;
+        text-align: center;
+      }
+    </style>
+    <div class="background-container">
+      <div class="overlay-text"></div>
+      <div class="content">Your Content Here</div>
+      <img id="background" class="background-image-comp" src="assets/placeholder.svg" />
+    </div>
+
+    <hr />
+    <p>
+      Misc bug fix where the word iclicker would get flagged for using word
+      click.
+    </p>
 
     <p>Learn more about <a href="https://iclicker.com">iclicker</a></p>
-    <p>Learn more about <a href="https://iclicker.com">click here to learn more about stuff and things</a></p>
-    <p>Learn more about <a href="https://iclicker.com">now click over there</a></p>
-    <p>Learn more about <a href="https://iclicker.com" aria-label="Learn more about">cliCk</a></p>
+    <p>
+      Learn more about
+      <a href="https://iclicker.com">click here to learn more about stuff and things</a>
+    </p>
+    <p>
+      Learn more about <a href="https://iclicker.com">now click over there</a>
+    </p>
+    <p>
+      Learn more about
+      <a href="https://iclicker.com" aria-label="Learn more about">cliCk</a>
+    </p>
 
-    <hr>
+    <hr />
 
-    <p>When an anchor has <code>onclick</code> handler, and is wrapped around <code>&lt;u&gt;</code> elements.</p>
+    <p>
+      When an anchor has <code>onclick</code> handler, and is wrapped around
+      <code>&lt;u&gt;</code> elements.
+    </p>
     <a onclick="alert('Hello!')"><u>Click me (has onclick handler)</u></a>
 
-    <hr>
+    <hr />
 
-    <div style="overflow:hidden;height:40px;" class="overlay">
+    <div style="overflow: hidden; height: 40px" class="overlay">
       <img src="./assets/placeholder.svg"
         alt="Placeholder image. Lorem ipsum dolor sit amet consectetur adipisicing elit. Some really large passage of text. The quick brown fox jumps over the lazy dog. Placeholder image. Lorem ipsum dolor sit amet consectetur adipisicing elit. Some really large passage of text. The quick brown fox jumps over the lazy dog. Placeholder image. Lorem ipsum dolor sit amet consectetur adipisicing elit. Some really large passage of text. The quick brown fox jumps over the lazy dog."
-        class="wp-image-34">
+        class="wp-image-34" />
     </div>
 
     <h2>Another slotted example</h2>
@@ -112,21 +189,25 @@
       class UserCard extends HTMLElement {
         constructor() {
           super();
-          const templateContent = document.getElementById('user-card-template').content;
-          this.attachShadow({ mode: 'open' }).appendChild(templateContent.cloneNode(true));
+          const templateContent =
+            document.getElementById("user-card-template").content;
+          this.attachShadow({ mode: "open" }).appendChild(
+            templateContent.cloneNode(true)
+          );
         }
       }
-      customElements.define('user-card', UserCard);
+      customElements.define("user-card", UserCard);
     </script>
 
     <!-- Use the Web Component -->
     <user-card>
       <span slot="user-name">John Doe</span>
-      <span slot="user-description">A web developer from NYC. <a href="https://www.example.com?sds">Learn more</a> about
+      <span slot="user-description">A web developer from NYC.
+        <a href="https://www.example.com?sds">Learn more</a> about
         stuff.</span>
     </user-card>
 
-    <hr>
+    <hr />
 
     <h2>Slotted template</h2>
     <template id="element-details-template">
@@ -137,7 +218,8 @@
         <h4 class="desc">
           <slot name="description">Default slot description</slot>
         </h4>
-        <div>Empty slot:
+        <div>
+          Empty slot:
           <h4>
             <slot></slot>
           </h4>
@@ -146,26 +228,27 @@
     </template>
 
     <element-details>
-      <span slot="element-name">
-        Skipped level in a slot
-      </span>
+      <span slot="element-name"> Skipped level in a slot </span>
       <span slot="description">Slot content text filling correctly</span>
     </element-details>
     <script>
-      customElements.define('element-details',
+      customElements.define(
+        "element-details",
         class extends HTMLElement {
           constructor() {
             super();
-            const template = document
-              .getElementById('element-details-template')
-              .content;
-            const shadowRoot = this.attachShadow({ mode: 'open' })
-              .appendChild(template.cloneNode(true));
+            const template = document.getElementById(
+              "element-details-template"
+            ).content;
+            const shadowRoot = this.attachShadow({
+              mode: "open",
+            }).appendChild(template.cloneNode(true));
           }
-        });
+        }
+      );
     </script>
 
-    <hr>
+    <hr />
 
     <template id="custom-component" hidden>
       <div class="custom-container">
@@ -179,12 +262,14 @@
       class CustomComponent extends HTMLElement {
         constructor() {
           super();
-          const shadow = this.attachShadow({ mode: 'open' });
-          const template = document.getElementById('custom-component').content.cloneNode(true);
+          const shadow = this.attachShadow({ mode: "open" });
+          const template = document
+            .getElementById("custom-component")
+            .content.cloneNode(true);
           shadow.appendChild(template);
         }
       }
-      customElements.define('custom-component', CustomComponent);
+      customElements.define("custom-component", CustomComponent);
     </script>
 
     <!-- Usage Example -->
@@ -195,8 +280,6 @@
     <custom-component>
       <!-- No slotted content, default heading will appear -->
     </custom-component>
-
-
 
     <style>
       .text-formatted a[href^="http"]:not([href*="hr.ubc.ca"]):not([class*="cta-button--icon"])::after,
@@ -210,10 +293,12 @@
         content: url("/themes/custom/hr/img/svg/icon-link-external-3.svg") / "Testing";
       }
     </style>
-    <hr>
+    <hr />
     <h2>Pseudo content</h2>
-    <h5><a class="unit-button unit-button--block link-external" href="https://ubc.wd10.myworkdayjobs.com/ubcstaffjobs"
-        target="_blank" rel="nofollow">Staff listing</a></h5>
+    <h5>
+      <a class="unit-button unit-button--block link-external" href="https://ubc.wd10.myworkdayjobs.com/ubcstaffjobs"
+        target="_blank" rel="nofollow">Staff listing</a>
+    </h5>
 
     <style>
       .asc:after {
@@ -222,13 +307,14 @@
     </style>
     <h5 class="asc" id="kl" aria-labelledby="kl nvb">Testing</h5>
     <span hidden id="nvb">123</span>
-    <hr>
+    <hr />
 
     <p>
-      <sup>1</sup> Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam dolor libero dignissimos veniam.
-      <span style="color:darkblue;background-color:rgba(235, 52, 52, 0.2)">Testing</span>
-      Totam dolores rem eligendi praesentium harum doloremque ducimus dignissimos, exercitationem, omnis ullam autem,
-      dolor qui numquam. Et!
+      <sup>1</sup> Lorem ipsum dolor sit amet consectetur adipisicing elit.
+      Aperiam dolor libero dignissimos veniam.
+      <span style="color: darkblue; background-color: rgba(235, 52, 52, 0.2)">Testing</span>
+      Totam dolores rem eligendi praesentium harum doloremque ducimus
+      dignissimos, exercitationem, omnis ullam autem, dolor qui numquam. Et!
     </p>
 
     <div class="background-image">
@@ -241,11 +327,11 @@
       </ul>
     </div>
 
-    <iframe role="presentation" src="javascript:false" style="width: 0px; height: 0px; border: 0px;"></iframe>
+    <iframe role="presentation" src="javascript:false" style="width: 0px; height: 0px; border: 0px"></iframe>
 
-    <hr>
+    <hr />
 
-    <div style="background:#000">
+    <div style="background: #000">
       <a href="https://www.viu.ca/contact" class="img-link">
         <svg fill="currentColor" class="icon" aria-describedby="desc-phone-square">
           <title>phone-square</title>
@@ -255,49 +341,60 @@
       </a>
     </div>
 
-    <hr>
-    <a style="background:lightcoral" href="https://www.example.com?sdasdsd2"
+    <hr />
+    <a style="background: lightcoral" href="https://www.example.com?sdasdsd2"
       aria-label="learn more about stuff and things">learn more</a>
 
-    <hr>
+    <hr />
 
     <address>
-      350 Victoria Street<br>
-      Toronto, ON M5B 2K3<br>
-      <abbr title="Phone">P:</abbr> <a href="tel:+14169795000">416-979-5000</a>
+      350 Victoria Street<br />
+      Toronto, ON M5B 2K3<br />
+      <abbr title="Phone">P:</abbr>
+      <a href="tel:+14169795000">416-979-5000</a>
     </address>
 
-    <hr>
+    <hr />
 
-    <img src="./assets/placeholder.svg" alt="">
-    <img src="./assets/placeholder.svg" alt="">
-    <img src="./assets/placeholder.svg" alt="">
+    <img src="./assets/placeholder.svg" alt="" />
+    <img src="./assets/placeholder.svg" alt="" />
+    <img src="./assets/placeholder.svg" alt="" />
 
-    <hr>
+    <hr />
 
-    <a class="navbar-brand" href="https://www.torontomu.ca/"> <img
-        src="https://www.torontomu.ca/etc.clientlibs/ryecms/static/clientlib-site/resources/images/tmu_logo.svg"
-        alt="Toronto Metropolitan University" title="Toronto Metropolitan University">
+    <a class="navbar-brand" href="https://www.torontomu.ca/">
+      <img src="https://www.torontomu.ca/etc.clientlibs/ryecms/static/clientlib-site/resources/images/tmu_logo.svg"
+        alt="Toronto Metropolitan University" title="Toronto Metropolitan University" />
     </a>
 
-    <hr>
+    <hr />
 
-    <figure><img fetchpriority="high" decoding="async" width="1024" height="469"
+    <figure>
+      <img fetchpriority="high" decoding="async" width="1024" height="469"
         src="https://www.yorku.ca/wp-content/uploads/2024/12/The-Rap_R101-4-Treated-v2-1024x469.png"
-        alt="Raptor dunking in basket" class="wp-image-358271"
-        srcset="https://www.yorku.ca/wp-content/uploads/2024/12/The-Rap_R101-4-Treated-v2-1024x469.png 1024w, https://www.yorku.ca/wp-content/uploads/2024/12/The-Rap_R101-4-Treated-v2-300x137.png 300w, https://www.yorku.ca/wp-content/uploads/2024/12/The-Rap_R101-4-Treated-v2.png 1500w"
-        sizes="(max-width: 1024px) 100vw, 1024px"></figure>
+        alt="Raptor dunking in basket" class="wp-image-358271" srcset="
+						https://www.yorku.ca/wp-content/uploads/2024/12/The-Rap_R101-4-Treated-v2-1024x469.png 1024w,
+						https://www.yorku.ca/wp-content/uploads/2024/12/The-Rap_R101-4-Treated-v2-300x137.png   300w,
+						https://www.yorku.ca/wp-content/uploads/2024/12/The-Rap_R101-4-Treated-v2.png          1500w
+					" sizes="(max-width: 1024px) 100vw, 1024px" />
+    </figure>
 
-    <input type="text" placeholder="Hai" class="background-image">
-    <hr>
+    <input type="text" placeholder="Hai" class="background-image" />
+    <hr />
 
     <svg height="40" width="200" xmlns="http://www.w3.org/2000/svg">
-      <text x="5" y="30" fill="none" stroke="red" font-size="35">I love SVG!</text>
-      <text x="5" y="30" fill="lightblue" stroke="none" font-size="12">Cool.</text>
+      <text x="5" y="30" fill="none" stroke="red" font-size="35">
+        I love SVG!
+      </text>
+      <text x="5" y="30" fill="lightblue" stroke="none" font-size="12">
+        Cool.
+      </text>
     </svg>
 
     <div id="nothing-input-3">
-      <meter id="fuel" min="0" max="100" low="33" high="66" optimum="80" value="50">at 50/100</meter>
+      <meter id="fuel" min="0" max="100" low="33" high="66" optimum="80" value="50">
+        at 50/100
+      </meter>
     </div>
 
     <h3>Progress</h3>
@@ -305,66 +402,99 @@
       <progress id="progress-bar" value="70" max="100">70 %</progress>
     </div>
 
-    <table style="display:none"></table>
+    <table style="display: none"></table>
     <h2>Some hidden text</h2>
     <div hidden>
-      <p style="color:hotpink">Some text within a hidden div.</p>
+      <p style="color: hotpink">Some text within a hidden div.</p>
     </div>
 
-    <p>Original: <a href="https://www.torontomu.ca/" data-sa11y-error-inline="300">TMU Website</a></p>
+    <p>
+      Original:
+      <a href="https://www.torontomu.ca/" data-sa11y-error-inline="300">TMU Website</a>
+    </p>
 
     <h2>URL Variations</h2>
-    <p><a href="https://www.torontomu.ca/">TMU Website</a> - https://www.torontomu.ca/ [Same URL, should not be
-      flagged]
+    <p>
+      <a href="https://www.torontomu.ca/">TMU Website</a> -
+      https://www.torontomu.ca/ [Same URL, should not be flagged]
     </p>
-    <p><a href="https://torontomu.ca/">TMU Website</a> - https://torontomu.ca/</p>
-    <p><a href="http://www.torontomu.ca/">TMU Website</a> - http://www.torontomu.ca/</p>
-    <p><a href="https://www.torontomu.ca">TMU Website</a> - https://www.torontomu.ca</p>
-    <p><a href="HTTPS://WWW.TORONTOMU.CA/">TMU Website</a> - HTTPS://WWW.TORONTOMU.CA/</p>
-    <p><a href="https://www.torontomu.ca/ ">TMU Website</a> - https://www.torontomu.ca/ with trailing space</p>
-    <p><a href=" https://www.torontomu.ca/">TMU Website</a> - https://www.torontomu.ca/ with preceding space</p>
-    <p><a href="https://www.torontomu.ca/   ">TMU Website</a> - https://www.torontomu.ca/ with trailing tab</p>
+    <p>
+      <a href="https://torontomu.ca/">TMU Website</a> - https://torontomu.ca/
+    </p>
+    <p>
+      <a href="http://www.torontomu.ca/">TMU Website</a> -
+      http://www.torontomu.ca/
+    </p>
+    <p>
+      <a href="https://www.torontomu.ca">TMU Website</a> -
+      https://www.torontomu.ca
+    </p>
+    <p>
+      <a href="HTTPS://WWW.TORONTOMU.CA/">TMU Website</a> -
+      HTTPS://WWW.TORONTOMU.CA/
+    </p>
+    <p>
+      <a href="https://www.torontomu.ca/ ">TMU Website</a> -
+      https://www.torontomu.ca/ with trailing space
+    </p>
+    <p>
+      <a href=" https://www.torontomu.ca/">TMU Website</a> -
+      https://www.torontomu.ca/ with preceding space
+    </p>
+    <p>
+      <a href="https://www.torontomu.ca/   ">TMU Website</a> -
+      https://www.torontomu.ca/ with trailing tab
+    </p>
 
     <h2>Dismiss Bug</h2>
-    <p>Opens in a new tab without warning: <a href="https://www.torontomu.ca/" target="_blank">TMU Website descriptive
-        link
-        text</a></p>
+    <p>
+      Opens in a new tab without warning:
+      <a href="https://www.torontomu.ca/" target="_blank">TMU Website descriptive link text</a>
+    </p>
 
-    <hr>
+    <hr />
 
-    <p style="color:orange;display:none;">Some text within a hidden div.</p>
+    <p style="color: orange; display: none">Some text within a hidden div.</p>
 
     <h2>Heading too long</h2>
     <p>Using prop to convert warning to error.</p>
-    <h3>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellat porro doloribus magnam nobis nisi! Officia
-      earum reiciendis sequi cum voluptate cupiditate eaque asperiores quos, non voluptatum id mollitia, voluptatibus
-      sit!</h3>
+    <h3>
+      Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellat porro
+      doloribus magnam nobis nisi! Officia earum reiciendis sequi cum
+      voluptate cupiditate eaque asperiores quos, non voluptatum id mollitia,
+      voluptatibus sit!
+    </h3>
 
-    <hr>
-    <p dir="auto">Example: Instead of <a href="https://www.britannica.com/biography/George-Orwell" title="Click here"
-        aria-label="Incorrect hyperlink formatting" rel="nofollow">Click here</a> to learn more about George Orwell”,
-      you <a href="https://www.britannica.com/biography/George-Orwell"
-        aria-label="learn more Incorrect hyperlink formatting">learn
-        more</a>
-      could write “Delve into the life and works of <a href="https://www.britannica.com/biography/George-Orwell"
-        rel="nofollow">George Orwell at Britannica</a>.</p>
+    <hr />
+    <p dir="auto">
+      Example: Instead of
+      <a href="https://www.britannica.com/biography/George-Orwell" title="Click here"
+        aria-label="Incorrect hyperlink formatting" rel="nofollow">Click here</a>
+      to learn more about George Orwell”, you
+      <a href="https://www.britannica.com/biography/George-Orwell"
+        aria-label="learn more Incorrect hyperlink formatting">learn more</a>
+      could write “Delve into the life and works of
+      <a href="https://www.britannica.com/biography/George-Orwell" rel="nofollow">George Orwell at Britannica</a>.
+    </p>
 
-    <p><a href="https://www.britannica.com/biography/George-Orwell" target="_BLANK">George
-        Orwell at Britannica</a></p>
+    <p>
+      <a href="https://www.britannica.com/biography/George-Orwell" target="_BLANK">George Orwell at Britannica</a>
+    </p>
 
-    <p><a href="https://www.britannica.com/biography/George-Orwell.pdf" target="_BLANK">George
-        Orwell at Britannica</a></p>
+    <p>
+      <a href="https://www.britannica.com/biography/George-Orwell.pdf" target="_BLANK">George Orwell at Britannica</a>
+    </p>
 
-    <br>
-    <hr>
+    <br />
+    <hr />
     <h2>Title attribute is same as link text or alt text.</h2>
 
     <h3>Image</h3>
-    <img src="./assets/placeholder.svg" title="Lorem ipsum, dude!" alt="Lorem ipsum, dude!">
+    <img src="./assets/placeholder.svg" title="Lorem ipsum, dude!" alt="Lorem ipsum, dude!" />
 
     <h3>Linked image</h3>
     <a href="https://www.example.com"><img src="./assets/placeholder.svg" title="Lorem ipsum howdy"
-        alt="Lorem ipsum howdy"></a>
+        alt="Lorem ipsum howdy" /></a>
 
     <h3>Link</h3>
     <a href="https://www.britannica.com/biography/Marie-Curie" title="Marie Curie" rel="nofollow">Marie Curie</a>
@@ -372,15 +502,18 @@
     <a href="https://www.britannica.com/biography/Marie-Curie" title="Marie Curie" target="_BLANK" rel="nofollow">Marie
       Curie</a>
 
+    <hr />
 
-    <hr>
-
-    <p dir="auto">Instead of <a href="https://www.britannica.com/biography/George-Orwelllll" title="Learn more"
-        aria-label="Learn more about Orwell" rel="nofollow">Learn more</a> about George Orwell.</p>
-    <br>
+    <p dir="auto">
+      Instead of
+      <a href="https://www.britannica.com/biography/George-Orwelllll" title="Learn more"
+        aria-label="Learn more about Orwell" rel="nofollow">Learn more</a>
+      about George Orwell.
+    </p>
+    <br />
 
     <p><a href="https://www.britannica.com/biography">Next ></a></p>
-    <hr>
+    <hr />
 
     <pre><code>
 &lt;svg width="200" height="200" xmlns="http://www.w3.org/2000/svg"&gt;
@@ -391,23 +524,18 @@
       <image href="./assets/placeholder.svg" height="200" width="200" />
     </svg>
 
-    <hr>
+    <hr />
 
-    <a href="/en/support/solutions/articles/6000210871-nature-com-upgraded-to-the-https-protocol">Nature.com upgraded
-      to
-      the
-      HTTPS protocol</a>
+    <a href="/en/support/solutions/articles/6000210871-nature-com-upgraded-to-the-https-protocol">Nature.com upgraded to
+      the HTTPS protocol</a>
     <a href="/en/support/solutions/articles/6000210871-nature-com-upgraded-to-the-https-protocol">http.Nature.com
-      upgraded to
-      the
-      HTTPS protocol</a>
+      upgraded to the HTTPS protocol</a>
 
-
-    <hr>
+    <hr />
     <div hidden>
       <video width="320" height="240" controls>
-        <source src="https://www.w3schools.com/html/movie.mp4" type="video/mp4">
-        <source src="https://www.w3schools.com/html/movie.ogg" type="video/ogg">
+        <source src="https://www.w3schools.com/html/movie.mp4" type="video/mp4" />
+        <source src="https://www.w3schools.com/html/movie.ogg" type="video/ogg" />
         Your browser does not support the video tag.
         <style>
           video {
@@ -416,19 +544,22 @@
           }
         </style>
       </video>
-      <a href="javascript:console.log('hacked')">https://www.example.com/asdasdasdasdasdasdasdasdasdasdasdasda
-        Lorem
-        ipsum dolor sit amet consectetur adipisicing elit. Ut provident consectetur accusamus quos excepturi dolore
-        neque iste? Doloremque recusandae libero commodi quod nam in! Ut, ratione eaque. Voluptatibus, inventore
-        suscipit! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolorem temporibus vitae reiciendis
-        molestias libero similique odit aspernatur labore? Hic, sit incidunt omnis totam dignissimos aspernatur
-        eligendi
-        voluptatibus ducimus porro facilis! Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium
-        aliquid soluta, dolore inventore cupiditate, error eius maxime laudantium delectus eos neque odit doloribus
-        cumque repudiandae. Necessitatibus nemo natus pariatur laborum. Lorem, ipsum dolor sit amet consectetur
-        adipisicing elit. Tenetur, harum minima ipsum expedita corrupti sint, ex quod temporibus suscipit
-        reprehenderit
-        dignissimos! Corporis quam voluptate doloribus, voluptatem optio rem libero fugiat.
+      <a href="javascript:console.log('hacked')">https://www.example.com/asdasdasdasdasdasdasdasdasdasdasdasda Lorem
+        ipsum dolor sit amet consectetur adipisicing elit. Ut provident
+        consectetur accusamus quos excepturi dolore neque iste? Doloremque
+        recusandae libero commodi quod nam in! Ut, ratione eaque.
+        Voluptatibus, inventore suscipit! Lorem, ipsum dolor sit amet
+        consectetur adipisicing elit. Dolorem temporibus vitae reiciendis
+        molestias libero similique odit aspernatur labore? Hic, sit incidunt
+        omnis totam dignissimos aspernatur eligendi voluptatibus ducimus porro
+        facilis! Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+        Accusantium aliquid soluta, dolore inventore cupiditate, error eius
+        maxime laudantium delectus eos neque odit doloribus cumque
+        repudiandae. Necessitatibus nemo natus pariatur laborum. Lorem, ipsum
+        dolor sit amet consectetur adipisicing elit. Tenetur, harum minima
+        ipsum expedita corrupti sint, ex quod temporibus suscipit
+        reprehenderit dignissimos! Corporis quam voluptate doloribus,
+        voluptatem optio rem libero fugiat.
       </a>
 
       <a href="https://www.example.com?sdsdccccf" role="button" style="Lorem
@@ -452,14 +583,18 @@
         dignissimos! Corporis quam voluptate doloribus, voluptatem optio rem libero fugiat."></a>
       <a href="https://www.example.com?sdcf13"></a>
     </div>
-    <hr>
+    <hr />
 
     <details>
       <summary>Summary of issues</summary>
-      <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Exercitationem unde qui veniam voluptatem, ad sequi
-        rem, temporibus deserunt incidunt dolorum quis soluta ab sapiente nobis atque facilis, nam labore! Quae.</p>
+      <p>
+        Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+        Exercitationem unde qui veniam voluptatem, ad sequi rem, temporibus
+        deserunt incidunt dolorum quis soluta ab sapiente nobis atque facilis,
+        nam labore! Quae.
+      </p>
     </details>
-    <hr>
+    <hr />
 
     <h2>Two SVGs in a link</h2>
     <a href="https://www.example.com?1241232313">
@@ -472,18 +607,17 @@
       </svg>
     </a>
 
-    <hr>
+    <hr />
 
     <h3>Linked image contains both alt and link text</h3>
     <div id="warning-alt-and-link-text">
       <a href="https://www.example.com?=5">
-        <img src="./assets/placeholder.svg" alt="Lorem ipsum, dude!">
+        <img src="./assets/placeholder.svg" alt="Lorem ipsum, dude!" />
         Learn more about, Lorem.
       </a>
     </div>
 
-
-    <hr>
+    <hr />
     <style>
       .sr-only {
         position: absolute !important;
@@ -504,134 +638,147 @@
       <span class="underline">asdasdsd</span>
     </a>
 
-    <hr>
+    <hr />
 
     <label for="name">Name:</label>
-    <input id="name" disabled name="name" style="color:aliceblue" type="text" />
+    <input id="name" disabled name="name" style="color: aliceblue" type="text" />
 
-    <hr>
+    <hr />
 
     <a href="/" class="nav-item">
       <u>asdasdsd</u>
     </a>
 
-    <hr>
+    <hr />
     <u>asdasdsd</u>
 
-    <p class="hsl">HSL Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem ea corporis nulla quidem
-      culpa. Ratione autem nemo atque quam, doloremque libero officiis minima quasi debitis ducimus, nisi molestiae
-      pariatur eveniet.</p>
+    <p class="hsl">
+      HSL Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem ea
+      corporis nulla quidem culpa. Ratione autem nemo atque quam, doloremque
+      libero officiis minima quasi debitis ducimus, nisi molestiae pariatur
+      eveniet.
+    </p>
 
-    <p class="color-mix">color() Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem ea corporis nulla quidem
-      culpa. Ratione autem nemo atque quam, doloremque libero officiis minima quasi debitis ducimus, nisi molestiae
-      pariatur eveniet.</p>
+    <p class="color-mix">
+      color() Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem ea
+      corporis nulla quidem culpa. Ratione autem nemo atque quam, doloremque
+      libero officiis minima quasi debitis ducimus, nisi molestiae pariatur
+      eveniet.
+    </p>
 
-    <p style="color:rgba(255,0,0,0.35);background:rgba(255,0,255,0.95)">Testing rgba... Lorem ipsum dolor sit amet
-      consectetur, adipisicing elit.
-      Ratione dolores sint
-      atque est accusamus. Saepe laboriosam, ad voluptas porro non enim quam cupiditate eius perferendis nostrum,
-      recusandae quisquam quae illo!</p>
+    <p style="
+					color: rgba(255, 0, 0, 0.35);
+					background: rgba(255, 0, 255, 0.95);
+				">
+      Testing rgba... Lorem ipsum dolor sit amet consectetur, adipisicing
+      elit. Ratione dolores sint atque est accusamus. Saepe laboriosam, ad
+      voluptas porro non enim quam cupiditate eius perferendis nostrum,
+      recusandae quisquam quae illo!
+    </p>
 
-    <hr>
+    <hr />
     <h2>Testing testing</h2>
-    <p style="font-size:30px;">Building a vibrant community of creative and accomplished people from around the world
+    <p style="font-size: 30px">
+      Building a vibrant community of creative and accomplished people from
+      around the world
     </p>
 
     <a href="#">Top</a>
 
-    <hr>
+    <hr />
     <h2>Slick sr-only class</h2>
-    <span class=" slick-sr-only">Go to slide 2</span>
-    <hr>
+    <span class="slick-sr-only">Go to slide 2</span>
+    <hr />
     <h2>Empty div contrast?</h2>
-    <div id="lightboxOverlay" class="lightboxOverlay" style="display: none;opacity:0.8;"></div>
-    <hr>
+    <div id="lightboxOverlay" class="lightboxOverlay" style="display: none; opacity: 0.8"></div>
+    <hr />
     <a class="link" href="/features/2024/fall/laurier-welcomes-first-students-to-milton-campus.html" target="">
-      <img class="background" alt="Admissions" src="./assets/placeholder.svg">
-      <video controls="">
-        Your browser doesn't support
-      </video>
+      <img class="background" alt="Admissions" src="./assets/placeholder.svg" />
+      <video controls="">Your browser doesn't support</video>
       test
     </a>
 
-    <hr>
+    <hr />
     <p>Small font size but no text</p>
-    <p style="font-size:10px;"></p>
+    <p style="font-size: 10px"></p>
 
-    <hr>
+    <hr />
     <a href="https://www.example.com?sdadsdsds">Attempt/Threaten Suicide Information on CPIC</a>
 
-    <hr>
+    <hr />
     <a href="https://www.example.com/adam">learn more...</a>
 
-    <hr>
+    <hr />
     <h2>Link too long</h2>
     <a href="https://www.example.com/adam">www.example.pt/asdsaasdsadsa/sdsdsdasdasdsddasdasds</a>
-    <br>
+    <br />
     <a href="http://example.com/adam/">www.example.pt/asdsaasdsadsa/dasdasds</a>
 
-    <hr>
+    <hr />
 
     <ul>
-      <li style="font-size:6px;">
-        <a href="www.example.com/?asdasd" style="font-size:15px">Example</a>
+      <li style="font-size: 6px">
+        <a href="www.example.com/?asdasd" style="font-size: 15px">Example</a>
       </li>
-      <li style="font-size:16px;">
-        <a href="www.example.com/?asdasd" style="font-size:5px">Example 2</a>
+      <li style="font-size: 16px">
+        <a href="www.example.com/?asdasd" style="font-size: 5px">Example 2</a>
       </li>
     </ul>
 
-    <hr>
+    <hr />
 
-    <textarea title="" readonly=""
-      rows="7">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Officiis consequuntur accusamus necessitatibus alias ipsum deleniti delectus at similique animi est? Reiciendis esse corporis saepe fuga modi vero ipsam assumenda libero.</textarea>
+    <textarea title="" readonly="" rows="7">
+Lorem, ipsum dolor sit amet consectetur adipisicing elit. Officiis consequuntur accusamus necessitatibus alias ipsum deleniti delectus at similique animi est? Reiciendis esse corporis saepe fuga modi vero ipsam assumenda libero.</textarea>
 
-    <textarea title="Article Summary" readonly="" rows="7">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Officiis consequuntur accusamus necessitatibus alias ipsum
+    <textarea title="Article Summary" readonly="" rows="7">
+Lorem, ipsum dolor sit amet consectetur adipisicing elit. Officiis consequuntur accusamus necessitatibus alias ipsum
       deleniti delectus at similique animi est? Reiciendis esse corporis saepe fuga modi vero ipsam assumenda
       libero.</textarea>
-    <hr>
+    <hr />
 
     <h2>Sa11y Ignore</h2>
-    <p style="color:bisque" class="sa11y-ignore">
-      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora
-      libero
-      illo magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum
-      dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero illo
-      magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum dolor,
+    <p style="color: bisque" class="sa11y-ignore">
+      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloribus
+      magnam laudantium enim voluptas tempora libero illo magni aut,
+      voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto
+      illum vero ea.Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+      Doloribus magnam laudantium enim voluptas tempora libero illo magni aut,
+      voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto
+      illum vero ea.Lorem ipsum dolor,
     </p>
 
     <h2>Long text</h2>
-    <p style="color:bisque">
-      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora
-      libero
-      illo magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum
-      dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero illo
-      magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum dolor,
+    <p style="color: bisque">
+      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloribus
+      magnam laudantium enim voluptas tempora libero illo magni aut,
+      voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto
+      illum vero ea.Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+      Doloribus magnam laudantium enim voluptas tempora libero illo magni aut,
+      voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto
+      illum vero ea.Lorem ipsum dolor,
     </p>
 
     <button aria-controls="menu-671033185f2ad-dropdown" aria-expanded="false" aria-label="Toggle Main Menu"
       class="mega-menu-item__button">
       <span class="mega-menu-item__button-contents">
         <img decoding="async" alt="Close" class="mega-menu-item__close"
-          src="https://news.harvard.edu/wp-content/themes/harvard-gazette/assets/svg/close.svg">
+          src="https://news.harvard.edu/wp-content/themes/harvard-gazette/assets/svg/close.svg" />
         <img decoding="async" alt="Open" class="mega-menu-item__open"
-          src="https://news.harvard.edu/wp-content/themes/harvard-gazette/assets/svg/hamburger.svg">
-        <span class="mega-menu-item__text">
-          Menu </span>
+          src="https://news.harvard.edu/wp-content/themes/harvard-gazette/assets/svg/hamburger.svg" />
+        <span class="mega-menu-item__text"> Menu </span>
       </span>
     </button>
 
-    <hr>
+    <hr />
 
     <button aria-controls="menu-671033185f2ad-dropdown" aria-expanded="false" aria-label="Toggle Main Menu"
       class="mega-menu-item__button">
       <span class="mega-menu-item__button-contents">
         <img decoding="async" class="mega-menu-item__close"
-          src="https://news.harvard.edu/wp-content/themes/harvard-gazette/assets/svg/close.svg">
+          src="https://news.harvard.edu/wp-content/themes/harvard-gazette/assets/svg/close.svg" />
         <img decoding="async" class="mega-menu-item__open"
-          src="https://news.harvard.edu/wp-content/themes/harvard-gazette/assets/svg/hamburger.svg">
-        <span class="mega-menu-item__text">
-          Menu </span>
+          src="https://news.harvard.edu/wp-content/themes/harvard-gazette/assets/svg/hamburger.svg" />
+        <span class="mega-menu-item__text"> Menu </span>
       </span>
     </button>
 
@@ -641,11 +788,10 @@
         class="mega-menu-item__button">
         <span class="mega-menu-item__button-contents">
           <img decoding="async" class="mega-menu-item__close"
-            src="https://news.harvard.edu/wp-content/themes/harvard-gazette/assets/svg/close.svg">
+            src="https://news.harvard.edu/wp-content/themes/harvard-gazette/assets/svg/close.svg" />
           <img decoding="async" class="mega-menu-item__open"
-            src="https://news.harvard.edu/wp-content/themes/harvard-gazette/assets/svg/hamburger.svg">
-          <span class="mega-menu-item__text">
-            Menu </span>
+            src="https://news.harvard.edu/wp-content/themes/harvard-gazette/assets/svg/hamburger.svg" />
+          <span class="mega-menu-item__text"> Menu </span>
         </span>
       </button>
     </div>
@@ -655,78 +801,93 @@
         class="mega-menu-item__button">
         <span class="mega-menu-item__button-contents">
           <img decoding="async" class="mega-menu-item__close"
-            src="https://news.harvard.edu/wp-content/themes/harvard-gazette/assets/svg/close.svg">
+            src="https://news.harvard.edu/wp-content/themes/harvard-gazette/assets/svg/close.svg" />
         </span>
       </button>
     </div>
 
-    <hr>
-    <img src="./assets/placeholder.svg" alt="Points to https://www.google.com">
+    <hr />
+    <img src="./assets/placeholder.svg" alt="Points to https://www.google.com" />
 
-    <hr>
+    <hr />
     <a href="#" class="btn dropdown-toggle" type="button" data-toggle="dropdown" role="none" aria-haspopup="true"
       aria-expanded="false" tabindex="0">Information for</a>
-    <hr>
+    <hr />
     <a class="a-test" href="https://www.example.com?rearsdsd">Some text here</a>
-    <hr>
+    <hr />
 
     <h2>Link too long?</h2>
     <p>
       <a href="https://www.example.com?sdasdsd33">100 characters. consectetur adipisicing elit. Doloribus magnam
-        laudantium
-        enim voluptas tempo libero</a>
+        laudantium enim voluptas tempo libero</a>
     </p>
 
-    <p><a href="https://www.example.com?sdasdsdddddd">
-        200 characters. consectetur adipisicing elit. Doloribus magnam laudantium 100 characters. consectetur
-        adipisicing
-        elit.
-        Lorem ipsum dolor, porem ipsum dolor, sit amet consectetur adipisicing how bouts
-      </a></p>
+    <p>
+      <a href="https://www.example.com?sdasdsdddddd">
+        200 characters. consectetur adipisicing elit. Doloribus magnam
+        laudantium 100 characters. consectetur adipisicing elit. Lorem ipsum
+        dolor, porem ipsum dolor, sit amet consectetur adipisicing how bouts
+      </a>
+    </p>
 
-    <p><a href="https://www.example.com?sdasdsdddddd">
-        300 characters. consectetur adipisicing elit. Doloribus magnam laudantium 100 characters. consectetur
-        adipisicing elit.
-        Lorem ipsum dolor, porem ipsum dolor, sit amet consectetur adipisicing how bouts. Lorem ipsum dolor sit amet,
-        consectetur adipiscing elit. Cras aliquet quam tellus, a aliquet arcuc
-      </a></p>
+    <p>
+      <a href="https://www.example.com?sdasdsdddddd">
+        300 characters. consectetur adipisicing elit. Doloribus magnam
+        laudantium 100 characters. consectetur adipisicing elit. Lorem ipsum
+        dolor, porem ipsum dolor, sit amet consectetur adipisicing how bouts.
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet
+        quam tellus, a aliquet arcuc
+      </a>
+    </p>
 
-    <h3>300 characters. consectetur adipisicing elit. Doloribus magnam laudantium 100 characters. consectetur
-      adipisicing elit.
-      Lorem ipsum dolor, porem ipsum dolor, sit amet consectetur adipisicing how bouts. Lorem ipsum dolor sit amet,
-      consectetur adipiscing elit. Cras aliquet quam tellus, a aliquet arcuc </h3>
+    <h3>
+      300 characters. consectetur adipisicing elit. Doloribus magnam
+      laudantium 100 characters. consectetur adipisicing elit. Lorem ipsum
+      dolor, porem ipsum dolor, sit amet consectetur adipisicing how bouts.
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet
+      quam tellus, a aliquet arcuc
+    </h3>
 
     <h2>Dismiss all</h2>
     <ul>
-      <li><a href="https://www.example.com/asdsd" target="_blank">Test 1</a></li>
-      <li><a href="https://www.example.com/asdsd" target="_blank">Test 2</a></li>
-      <li><a href="https://www.example.com/asdsd" target="_blank">Test 3</a></li>
-      <li><a href="https://www.example.com/asdsd" target="_blank">Test 4</a></li>
-      <li><a href="https://www.example.com/asdsd" target="_blank">Test 5</a></li>
+      <li>
+        <a href="https://www.example.com/asdsd" target="_blank">Test 1</a>
+      </li>
+      <li>
+        <a href="https://www.example.com/asdsd" target="_blank">Test 2</a>
+      </li>
+      <li>
+        <a href="https://www.example.com/asdsd" target="_blank">Test 3</a>
+      </li>
+      <li>
+        <a href="https://www.example.com/asdsd" target="_blank">Test 4</a>
+      </li>
+      <li>
+        <a href="https://www.example.com/asdsd" target="_blank">Test 5</a>
+      </li>
     </ul>
 
-
-    <hr>
+    <hr />
 
     <picture>
-      <source media="(min-width:650px)" srcset="https://www.w3schools.com/tags/img_pink_flowers.jpg">
-      <source media="(min-width:465px)" srcset="https://www.w3schools.com/tags/img_white_flower.jpg">
-      <img src="https://www.w3schools.com/tags/img_orange_flowers.jpg" alt="Flowers" style="width:auto;">
+      <source media="(min-width:650px)" srcset="https://www.w3schools.com/tags/img_pink_flowers.jpg" />
+      <source media="(min-width:465px)" srcset="https://www.w3schools.com/tags/img_white_flower.jpg" />
+      <img src="https://www.w3schools.com/tags/img_orange_flowers.jpg" alt="Flowers" style="width: auto" />
     </picture>
 
-    <hr>
+    <hr />
 
     <h2>Parent div has class of <strong>.carousel</strong></h2>
 
     <h3>Only 1 image in the carousel</h3>
     <div class="carousel">
-      <img alt src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg">
+      <img alt src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg" />
     </div>
 
     <h3>Multiple images</h3>
     <div class="carousel">
-      <img alt src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg">
-      <img alt src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg">
+      <img alt src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg" />
+      <img alt src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg" />
     </div>
 
     <h2>Alt too long for tooltip</h2>
@@ -747,26 +908,27 @@
       illo magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum
       dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero illo
       magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum dolor,"
-        src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg">
+        src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg" />
     </div>
 
-    <hr>
+    <hr />
 
     <h2>Inside the shadow dom!</h2>
     <noscript>hi</noscript>
     <div id="webcomponent">
       <template shadowrootmode="open">
-        <div style="background-color:black;padding:20px">
-          <h3 style="color:white">Heading in the shadow dom</h3>
+        <div style="background-color: black; padding: 20px">
+          <h3 style="color: white">Heading in the shadow dom</h3>
           <a href="https://developer.mozilla.org/en-US/" aria-hidden="true">
-            <img alt="MDN" src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg">
+            <img alt="MDN" src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg" />
           </a>
         </div>
       </template>
     </div>
-
   </main>
-  <footer>No automated unit tests are on this page. Blank slate for testing!</footer>
+  <footer>
+    No automated unit tests are on this page. Blank slate for testing!
+  </footer>
   <script type="module" src="./script.js"></script>
 </body>
 

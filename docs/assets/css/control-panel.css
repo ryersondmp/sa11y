@@ -3,6 +3,7 @@
 /* ************************************* */
 h1,
 h2,
+h3,
 div,
 p,
 span,
@@ -297,6 +298,13 @@ h2 {
   margin-bottom: 3px;
   font-size: var(--sa11y-large-text);
   font-weight: 700;
+}
+
+h3 {
+  display: block;
+  margin-bottom: 3px;
+  font-size: calc(var(--sa11y-large-text) - 1px);
+  font-weight: 600;
 }
 
 strong {
@@ -950,9 +958,6 @@ label:not(#colour-filter-mode, #export-results-mode) {
 #page-issues-list li {
   display: block;
   margin: 0 0 10px;
-}
-#page-issues-list strong {
-  display: block;
 }
 
 .top-left.has-page-issues #page-issues,

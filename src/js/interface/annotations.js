@@ -89,7 +89,7 @@ export function annotate(issue, option) {
   if (element === undefined) {
     // Page errors displayed to main panel.
     const listItem = document.createElement('li');
-    listItem.innerHTML = `<strong>${ariaLabel[type]}</strong> ${content}${dismissBtn}`;
+    listItem.innerHTML = `<h3>${ariaLabel[type]}</h3> ${content}${dismissBtn}`;
     Constants.Panel.pageIssuesList.insertAdjacentElement('afterbegin', listItem);
 
     // Display Page Issues panel.
@@ -115,7 +115,8 @@ export function annotate(issue, option) {
     ></button>`;
 
     // Make sure annotations always appended outside of SVGs and interactive elements.
-    const location = element.closest('a, button, [role="link"], [role="button"]') || element;
+    const insertBefore = option.insertAnnotationBefore ? `, ${option.insertAnnotationBefore}` : '';
+    const location = element.closest(`a, button, [role="link"], [role="button"] ${insertBefore}`) || element;
     location.insertAdjacentElement(position, instance);
     instance.shadowRoot.appendChild(create);
   }
