@@ -401,10 +401,12 @@ class Sa11y {
 
     // Method: temporarily disable toggle.
     this.disabled = () => {
-      if (Utils.store.getItem('sa11y-panel') === 'Opened') {
-        Constants.Panel.toggle.click();
-      }
-      Constants.Panel.toggle.disabled = true;
+      setTimeout(() => {
+        if (Utils.store.getItem('sa11y-panel') === 'Opened') {
+          Constants.Panel.toggle.click();
+        }
+        Constants.Panel.toggle.disabled = true;
+      }, option.delayCheck + 10);
     };
 
     // Method: re-enable toggle.
