@@ -111,7 +111,8 @@ export default function checkLinkText(results, option) {
     const hasAriaLabelledby = $el.querySelector(':scope [aria-labelledby]') || $el.getAttribute('aria-labelledby');
 
     // New tab or new window.
-    const containsNewWindowPhrases = Lang._('NEW_WINDOW_PHRASES').some((pass) => linkText.toLowerCase().includes(pass));
+    // Evaluate $el.textContent in addition to accessible name to bypass `linkIgnoreSpan` prop.
+    const containsNewWindowPhrases = Lang._('NEW_WINDOW_PHRASES').some((pass) => linkText.toLowerCase().includes(pass) || Utils.getText($el).toLowerCase().includes(pass));
 
     // If visible label contains word "click" (regardless of accessible name).
     const containsClickPhrase = Lang._('CLICK').some((pass) => {
@@ -122,7 +123,8 @@ export default function checkLinkText(results, option) {
     // Link that points to a file type and indicates as such.
     const defaultFileTypes = ['pdf', 'doc', 'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'];
     const fileTypes = defaultFileTypes.concat(Lang._('FILE_TYPE_PHRASES'));
-    const containsFileTypePhrases = fileTypes.some((pass) => linkText.toLowerCase().includes(pass));
+    // Evaluate $el.textContent in addition to accessible name to bypass `linkIgnoreSpan` prop.
+    const containsFileTypePhrases = fileTypes.some((pass) => linkText.toLowerCase().includes(pass) || Utils.getText($el).toLowerCase().includes(pass));
     const fileTypeMatch = $el.matches(`
           a[href$='.pdf'],
           a[href$='.doc'],

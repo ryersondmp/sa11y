@@ -58,7 +58,11 @@ export default function checkImages(results, option) {
 
   Elements.Found.Images.forEach(($el) => {
     const alt = (computeAriaLabel($el) === 'noAria') ? $el.getAttribute('alt') : computeAriaLabel($el);
-    const link = $el.closest('a[href]');
+
+    // If selectors passed via prop, it will treat that image as an unlinked image.
+    const link = $el.closest(option.imageWithinLightbox
+      ? `a[href]:not(${option.imageWithinLightbox})`
+      : 'a[href]');
 
     // Image's source for key.
     const src = ($el.getAttribute('src')) ? $el.getAttribute('src') : $el.getAttribute('srcset');

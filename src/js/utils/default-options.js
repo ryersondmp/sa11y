@@ -10,7 +10,7 @@ const defaultOptions = {
   headerIgnoreSpan: '',
   headerIgnoreStrings: '',
   imageIgnore: '',
-  linkIgnore: 'nav *, [role="navigation"] *',
+  linkIgnore: '',
   linkIgnoreSpan: '',
   linkIgnoreStrings: '',
 
@@ -47,6 +47,7 @@ const defaultOptions = {
   dismissAnnotations: true,
   dismissAll: true,
   ignoreHiddenOverflow: '',
+  insertAnnotationBefore: '',
 
   // Readability
   readabilityPlugin: true,
@@ -70,6 +71,7 @@ const defaultOptions = {
   susAltStopWords: '',
   linkStopWords: '',
   extraPlaceholderStopWords: '',
+  imageWithinLightbox: '',
 
   // All checks
   checks: {

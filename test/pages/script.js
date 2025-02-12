@@ -54,14 +54,14 @@ const sa11y = new Sa11y({
   // contrastAPCA: true,
   editImageURLofCMS: 'localhost',
   ignoreHiddenOverflow: '.overlay, .modal',
+  insertAnnotationBefore: '.background-container',
   // panelPosition: 'top-right',
   // showMovePanelToggle: false,
   // showImageOutline: false,
-
   exportResultsPlugin: true,
   autoDetectShadowComponents: true,
   developerChecksOnByDefault: true,
-
+  imageWithinLightbox: '.lightbox',
   checks: {
     QA_BAD_LINK: {
       sources: 'a[href*="dev."]',
