@@ -124,7 +124,10 @@ export default function generateImageOutline(dismissed, imageResults, option) {
         const decorative = altText.length === 0
           ? `<div class="badge">${Lang._('DECORATIVE')}</div>`
           : '';
-        const goodLinked = (image.element.closest('a[href]'))
+        const goodAnchor = option.imageWithinLightbox
+          ? `a[href]:not(${option.imageWithinLightbox})`
+          : 'a[href]';
+        const goodLinked = (image.element.closest(goodAnchor))
           ? `<div class="badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._('LINKED')}</span></div>`
           : '';
         append = `
