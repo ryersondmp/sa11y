@@ -161,10 +161,8 @@ export default function settingsPanelToggles(checkAll, resetAll) {
           Constants.Panel.skipButton.disabled = true;
           Constants.Panel.pageIssues.classList.remove('active');
 
-          // Brings select menu closer to the colour filter panel by hiding the Setting's border.
-          if (Constants.Global.panelPosition === 'left' || Constants.Global.panelPosition === 'right') {
-            Constants.Panel.settingsContent.classList.add('hide-settings-border');
-          }
+          // Hide all settings while Colour Filters are enabled.
+          Constants.Panel.settingsContent.classList.add('hide-settings-border');
 
           // Make panel visible.
           Constants.Panel.colourFilterSelect.classList.add('active');

@@ -442,7 +442,11 @@ export default function checkQA(results, option) {
     }
 
     /* Check: Check if text is justify-aligned. */
-    if (option.checks.QA_JUSTIFY && textAlign === 'justify') {
+    const parentJustify = $el.parentElement
+      ? getComputedStyle($el.parentElement).textAlign
+      : null;
+    const justifyInherited = parentJustify === textAlign;
+    if (option.checks.QA_JUSTIFY && textAlign === 'justify' && !justifyInherited) {
       addJustifyResult($el);
     }
   };

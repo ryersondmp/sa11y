@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.0.9
+  * @version 4.1.0
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -364,7 +364,7 @@
 
       // Video sources.
       const videoSources = option.checks.EMBED_VIDEO.sources;
-      const defaultVideoSources = 'video, [src*="youtube.com"], [src*="vimeo.com"], [src*="yuja.com"], [src*="panopto.com"]';
+      const defaultVideoSources = 'video, [src*="Video"], [src*="video"], [src*="watch"], [src*="youtube.com"], [src*="vimeo.com"], [src*="panopto.com"], [src*="wistia.com"], [src*="dailymotion.com"], [src*="brightcove.com"], [src*="vidyard.com"]';
       if (videoSources.length) {
         const videos = videoSources.split(/\s*[\s,]\s*/).map(($el) => `[src*="${$el}"]`);
         Global.VideoSources = `${defaultVideoSources}, ${videos.join(', ')}`;
@@ -374,7 +374,7 @@
 
       // Audio sources.
       const audioSources = option.checks.EMBED_AUDIO.sources;
-      const defaultAudioSources = 'audio, [src*="soundcloud.com"], [src*="simplecast.com"], [src*="podbean.com"], [src*="buzzsprout.com"], [src*="blubrry.com"], [src*="transistor.fm"], [src*="fusebox.fm"], [src*="libsyn.com"], [src*="spotify.com"], [src*="podcasts.apple.com"], [src*="castbox.fm"]';
+      const defaultAudioSources = 'audio, [src*="soundcloud.com"], [src*="simplecast.com"], [src*="podbean.com"], [src*="buzzsprout.com"], [src*="blubrry.com"], [src*="transistor.fm"], [src*="fusebox.fm"], [src*="libsyn.com"], [src*="spotify.com"], [src*="podcasts.apple.com"], [src*="castbox.fm"], [src*="megaphone.fm"], [src*="spreaker.com"], [src*="anchor.fm"], [src*="rss.com"], [src*="redcircle.com"]';
       if (audioSources.length) {
         const audio = audioSources.split(/\s*[\s,]\s*/).map(($el) => `[src*="${$el}"]`);
         Global.AudioSources = `${defaultAudioSources}, ${audio.join(', ')}`;
@@ -1612,7 +1612,7 @@
     };
   }());
 
-  var styles$1 = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-clone-image-text]{display:none!important}[data-sa11y-readability-period]{clip:rect(1px,1px,1px,1px)!important;border:0!important;clip-path:inset(50%)!important;display:block!important;height:1px!important;overflow:hidden!important;padding:0!important;position:absolute!important;white-space:nowrap!important;width:1px!important}[data-sa11y-error-inline],[data-sa11y-error]{outline:5px solid var(--sa11y-error)!important;outline-offset:2px}[data-sa11y-warning-inline],[data-sa11y-warning]{outline:5px solid var(--sa11y-warning)!important;outline-offset:2px}[data-sa11y-pulse-border]{animation:pulse 2s 3;box-shadow:0;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:focus,[data-sa11y-pulse-border]:hover{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color)}70%{box-shadow:0 0 0 12px var(--sa11y-pulse-color)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}@media (forced-colors:active){[data-sa11y-error-inline],[data-sa11y-error],[data-sa11y-good],[data-sa11y-pulse-border],[data-sa11y-warning-inline],[data-sa11y-warning]{forced-color-adjust:none}}";
+  var styles$1 = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-clone-image-text]{display:none!important}[data-sa11y-readability-period]{clip:rect(1px,1px,1px,1px)!important;border:0!important;clip-path:inset(50%)!important;display:block!important;height:1px!important;overflow:hidden!important;padding:0!important;position:absolute!important;white-space:nowrap!important;width:1px!important}[data-sa11y-error-inline],[data-sa11y-error]{outline:5px solid var(--sa11y-error)!important;outline-offset:2px}[data-sa11y-warning-inline]:not([data-sa11y-error-inline]),[data-sa11y-warning]:not([data-sa11y-error]){outline:5px solid var(--sa11y-warning)!important;outline-offset:2px}[data-sa11y-pulse-border]{animation:pulse 2s 3;box-shadow:0;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:focus,[data-sa11y-pulse-border]:hover{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color)}70%{box-shadow:0 0 0 12px var(--sa11y-pulse-color)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}@media (forced-colors:active){[data-sa11y-error-inline],[data-sa11y-error],[data-sa11y-good],[data-sa11y-pulse-border],[data-sa11y-warning-inline],[data-sa11y-warning]{forced-color-adjust:none}}";
 
   /* ************************************************************ */
   /*  Auto-detect shadow DOM or process provided web components.  */
@@ -2139,7 +2139,7 @@
     }
   }
 
-  const version = '4.0.9';
+  const version = '4.1.0';
 
   var styles = ":host{background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);bottom:0;display:block;height:-moz-fit-content;height:fit-content;left:0;position:fixed;right:0;width:100%;z-index:999999}*{-webkit-font-smoothing:auto!important;color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;font-size:var(--sa11y-normal-text);line-height:22px!important}#dialog{margin:20px auto;max-width:900px;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none}p{margin-top:0}.error{background:var(--sa11y-error);border:2px dashed #f08080;color:var(--sa11y-error-text);margin-bottom:0;padding:5px}";
 
@@ -2667,10 +2667,8 @@ ${this.error.stack}
             Constants.Panel.skipButton.disabled = true;
             Constants.Panel.pageIssues.classList.remove('active');
 
-            // Brings select menu closer to the colour filter panel by hiding the Setting's border.
-            if (Constants.Global.panelPosition === 'left' || Constants.Global.panelPosition === 'right') {
-              Constants.Panel.settingsContent.classList.add('hide-settings-border');
-            }
+            // Hide all settings while Colour Filters are enabled.
+            Constants.Panel.settingsContent.classList.add('hide-settings-border');
 
             // Make panel visible.
             Constants.Panel.colourFilterSelect.classList.add('active');
@@ -10471,7 +10469,11 @@ ${this.error.stack}
       }
 
       /* Check: Check if text is justify-aligned. */
-      if (option.checks.QA_JUSTIFY && textAlign === 'justify') {
+      const parentJustify = $el.parentElement
+        ? getComputedStyle($el.parentElement).textAlign
+        : null;
+      const justifyInherited = parentJustify === textAlign;
+      if (option.checks.QA_JUSTIFY && textAlign === 'justify' && !justifyInherited) {
         addJustifyResult($el);
       }
     };
@@ -11184,6 +11186,7 @@ ${this.error.stack}
         Constants.Panel.readabilityDetails.innerHTML = '';
         Constants.Panel.panel.classList.remove('has-page-issues');
         Constants.Panel.pageIssues.classList.remove('active');
+        Constants.Panel.settingsContent.classList.remove('hide-settings-border');
         Constants.Panel.panel.querySelector('#readability-alert')?.remove();
 
         // Remove any active alerts from panel.
@@ -11227,7 +11230,9 @@ ${this.error.stack}
 
       // Method: re-enable toggle.
       this.enabled = () => {
-        Constants.Panel.toggle.disabled = false;
+        if (Constants.Panel.toggle) {
+          Constants.Panel.toggle.disabled = false;
+        }
       };
 
       // Method: find utility.
