@@ -368,6 +368,7 @@ class Sa11y {
       Constants.Panel.readabilityDetails.innerHTML = '';
       Constants.Panel.panel.classList.remove('has-page-issues');
       Constants.Panel.pageIssues.classList.remove('active');
+      Constants.Panel.settingsContent.classList.remove('hide-settings-border');
       Constants.Panel.panel.querySelector('#readability-alert')?.remove();
 
       // Remove any active alerts from panel.
@@ -411,7 +412,9 @@ class Sa11y {
 
     // Method: re-enable toggle.
     this.enabled = () => {
-      Constants.Panel.toggle.disabled = false;
+      if (Constants.Panel.toggle) {
+        Constants.Panel.toggle.disabled = false;
+      }
     };
 
     // Method: find utility.

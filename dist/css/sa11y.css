@@ -32,8 +32,8 @@
   outline-offset: 2px;
 }
 
-[data-sa11y-warning],
-[data-sa11y-warning-inline] {
+[data-sa11y-warning]:not([data-sa11y-error]),
+[data-sa11y-warning-inline]:not([data-sa11y-error-inline]) {
   outline: 5px solid var(--sa11y-warning) !important;
   outline-offset: 2px;
 }
@@ -234,8 +234,8 @@ html[data-sa11y-theme=dark] {
   outline-offset: 2px;
 }
 
-[data-sa11y-warning],
-[data-sa11y-warning-inline] {
+[data-sa11y-warning]:not([data-sa11y-error]),
+[data-sa11y-warning-inline]:not([data-sa11y-error-inline]) {
   outline: 5px solid var(--sa11y-warning) !important;
   outline-offset: 2px;
 }
