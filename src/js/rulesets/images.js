@@ -24,6 +24,13 @@ export default function checkImages(results, option) {
     altUrl.forEach((word) => {
       if (alt.toLowerCase().indexOf(word.toLowerCase()) !== -1) {
         hit[0] = word;
+      } else {
+        // Checking for image dimensions in alt text.
+        const imageDimensions = /\b\d{2,6}\s*x\s*\d{2,6}\b/;
+        const match = alt.toLowerCase().match(imageDimensions);
+        if (match) {
+          [hit[0]] = match;
+        }
       }
     });
 

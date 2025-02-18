@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.0
+  * @version 4.1.1
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -199,10 +199,10 @@ var hu = {
     MISSING_ALT_LINK_HAS_TEXT: 'A képet linkként használják a körülötte lévő szöveggel, bár az alt attribútumot dekoratívnak vagy nullának kell jelölni.',
     MISSING_ALT_LINK: 'A képet linkként használják, de hiányzik az alt szöveg! Kérjük, gondoskodjon arról, hogy az alt szöveg leírja, hová vezet a link.',
     MISSING_ALT: 'Hiányzó alt szöveg! Ha a kép történetet, hangulatot vagy fontos információt közvetít - mindenképpen írja le a képet.',
-    LINK_ALT_FILE_EXT: 'Fájlkiterjesztés az alt szövegben található. Győződjön meg róla, hogy az alt szöveg a link célját írja le, nem pedig a kép szó szerinti leírását. Távolítsa el: <strong {C}>%(ERROR)</strong> <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
+    LINK_ALT_FILE_EXT: 'Az alternatív szöveg nem tartalmazhat fájlkiterjesztéseket vagy képméreteket. Győződjön meg róla, hogy az alt szöveg a link célját írja le, nem pedig a kép szó szerinti leírását. Távolítsa el: <strong {C}>%(ERROR)</strong> <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_PLACEHOLDER_ALT: 'Nem leíró vagy helyőrző alt szöveg a linkelt képen belül. Győződjön meg róla, hogy az alt szöveg a link célját írja le, nem pedig a kép szó szerinti leírását. Cserélje ki a következő alt szöveget. <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_SUS_ALT: 'A segítő technológiák már jelzik, hogy ez egy kép, így a &quot;<strong {C}>%(ERROR)</strong>&quot; felesleges lehet. Győződjön meg róla, hogy az alt szöveg a link célját írja le, nem pedig a kép szó szerinti leírását. <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
-    ALT_FILE_EXT: 'Fájlkiterjesztés az alt szövegben található. Ha a kép történetet, hangulatot vagy fontos információt közvetít - mindenképpen írja le a képet. Távolítsa el: <strong {C}>%(ERROR)</strong> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+    ALT_FILE_EXT: 'Az alternatív szöveg nem tartalmazhat fájlkiterjesztéseket vagy képméreteket. Ha a kép történetet, hangulatot vagy fontos információt közvetít - mindenképpen írja le a képet. Távolítsa el: <strong {C}>%(ERROR)</strong> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     ALT_PLACEHOLDER: 'Nem leíró vagy helyőrző alt szöveg található. Cserélje ki a következő alt szöveget valami értelmesebbre. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     SUS_ALT: 'A segítő technológiák már jelzik, hogy ez egy kép, így a &quot;<strong {C}>%(ERROR)</strong>&quot; felesleges lehet. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_IMAGE_NO_ALT_TEXT: 'A linkben lévő kép dekoratívnak van jelölve, és nincs linkszöveg. Kérjük, adjon a képhez alt szöveget, amely leírja a link célját.',

@@ -324,7 +324,14 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Alt has file extension', async () => {
     const issue = await checkTooltip(
-      page, 'error-alt-text-has-file-extension', 'File extension within the alt text found.',
+      page, 'error-alt-text-has-file-extension', 'Alt text should not include file extensions or image dimensions',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Alt has image dimensions', async () => {
+    const issue = await checkTooltip(
+      page, 'error-alt-text-has-image-dimensions', 'Alt text should not include file extensions or image dimensions',
     );
     expect(issue).toBe(true);
   });
@@ -408,7 +415,7 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Linked image has alt text containing file extension', async () => {
     const issue = await checkTooltip(
-      page, 'error-linked-alt-file-extension', 'File extension within the alt text found. Ensure the alt text describes the destination of the link, not a literal description of the image.',
+      page, 'error-linked-alt-file-extension', 'Alt text should not include file extensions or image dimensions. Ensure the alt text describes the destination of the link, not a literal description of the image.',
     );
     expect(issue).toBe(true);
   });

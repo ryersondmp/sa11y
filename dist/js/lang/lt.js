@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.0
+  * @version 4.1.1
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -193,10 +193,10 @@ var lt = {
     MISSING_ALT_LINK_HAS_TEXT: 'Paveikslas naudojamas kaip nuoroda su aplinkiniu tekstu, nors atributas alt turėtų būti pažymėtas kaip dekoratyvinis arba nulinis.',
     MISSING_ALT_LINK: 'Paveiksliukas naudojamas kaip nuoroda, bet nėra teksto alt! Užtikrinkite, kad alt tekste būtų aprašyta, kur nukreipia nuoroda.',
     MISSING_ALT: 'Trūksta alt teksto! Jei paveikslėlis perteikia istoriją, nuotaiką ar svarbią informaciją, būtinai jį aprašykite.',
-    LINK_ALT_FILE_EXT: 'Rastas failo plėtinys alt tekste. Užtikrinkite, kad alt tekstas apibūdintų nuorodos paskirties vietą, o ne pažodinį paveikslėlio aprašymą. Pašalinti: <strong {C}>%(ERROR)</strong>.<hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
+    LINK_ALT_FILE_EXT: 'Alternatyvus tekstas neturėtų apimti failų plėtinių ar atvaizdų matmenų. Užtikrinkite, kad alt tekstas apibūdintų nuorodos paskirties vietą, o ne pažodinį paveikslėlio aprašymą. Pašalinti: <strong {C}>%(ERROR)</strong>.<hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_PLACEHOLDER_ALT: 'Rastas ne aprašomasis arba pakaitinis alt tekstas susietame paveikslėlyje. Užtikrinkite, kad alt tekstas apibūdintų nuorodos paskirties vietą, o ne pažodinį paveikslėlio aprašymą. Pakeiskite šį alt tekstą. <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_SUS_ALT: 'Pagalbinėse technologijose jau nurodoma, kad tai yra paveikslėlis, todėl &quot;<strong {C}>%(ERROR)</strong>&quot; gali būti nereikalingas. Užtikrinkite, kad alt tekstas apibūdintų nuorodos paskirties vietą, o ne pažodinį paveikslėlio aprašymą. <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
-    ALT_FILE_EXT: 'Rastas failo plėtinys alt tekste. Jei vaizdas perteikia istoriją, nuotaiką ar svarbią informaciją, būtinai aprašykite vaizdą. Pašalinti: <strong {C}>%(ERROR)</strong> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+    ALT_FILE_EXT: 'Alternatyvus tekstas neturėtų apimti failų plėtinių ar atvaizdų matmenų. Jei vaizdas perteikia istoriją, nuotaiką ar svarbią informaciją, būtinai aprašykite vaizdą. Pašalinti: <strong {C}>%(ERROR)</strong> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     ALT_PLACEHOLDER: 'Rastas neaprašytas arba pakaitinis alt tekstas. Pakeiskite šį alt tekstą į prasmingesnį. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     SUS_ALT: 'Pagalbinėse technologijose jau nurodoma, kad tai yra paveikslėlis, todėl &quot;<strong {C}>%(ERROR)</strong>&quot; gali būti nereikalingas. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_IMAGE_NO_ALT_TEXT: 'Nuorodoje esantis paveikslėlis pažymėtas kaip dekoratyvinis, o nuorodos teksto nėra. Prie paveikslėlio pridėkite alt tekstą, kuriame būtų aprašyta nuorodos paskirtis.',

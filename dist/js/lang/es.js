@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.0
+  * @version 4.1.1
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -166,10 +166,10 @@ var es = {
     MISSING_ALT_LINK_HAS_TEXT: 'La imagen se utiliza como vínculo con el texto circundante, aunque el atributo alt debe marcarse como decorativo o nulo.',
     MISSING_ALT_LINK: 'La imagen se está utilizando como enlace, ¡pero falta el texto alternativo! Asegúrese de que el texto alternativo describa a dónde lo lleva el enlace.',
     MISSING_ALT: '¡Falta el texto alternativo! Si la imagen transmite una historia, un estado de ánimo o información importante, asegúrese de describir la imagen.',
-    LINK_ALT_FILE_EXT: 'Extensión de archivo dentro del texto alternativo encontrado. Asegúrese de que el texto alternativo describa el destino del enlace, no una descripción literal de la imagen. Eliminar: <strong {C}>%(ERROR)</strong> <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
+    LINK_ALT_FILE_EXT: 'El texto alternativo no debe incluir extensiones de archivos ni dimensiones de imágenes. Asegúrese de que el texto alternativo describa el destino del enlace, no una descripción literal de la imagen. Eliminar: <strong {C}>%(ERROR)</strong> <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_PLACEHOLDER_ALT: 'Se encontró texto alternativo no descriptivo o de marcador de posición dentro de una imagen vinculada. Asegúrese de que el texto alternativo describa el destino del enlace, no una descripción literal de la imagen. Reemplace el siguiente texto alternativo. <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_SUS_ALT: 'Las tecnologías de asistencia ya indican que se trata de una imagen, por lo que &quot;<strong {C}>%(ERROR)</strong>&quot; puede ser redundante. Asegúrese de que el texto alternativo describa el destino del enlace, no una descripción literal de la imagen. <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
-    ALT_FILE_EXT: 'Extensión de archivo dentro del texto alternativo encontrado. Si la imagen transmite una historia, un estado de ánimo o información importante, asegúrese de describir la imagen. Eliminar: <strong {C}>%(ERROR)</strong> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+    ALT_FILE_EXT: 'El texto alternativo no debe incluir extensiones de archivos ni dimensiones de imágenes. Si la imagen transmite una historia, un estado de ánimo o información importante, asegúrese de describir la imagen. Eliminar: <strong {C}>%(ERROR)</strong> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     ALT_PLACEHOLDER: 'Se encontró texto alternativo no descriptivo o de marcador de posición. Reemplace el siguiente texto alternativo con algo más significativo. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     SUS_ALT: 'Las tecnologías de asistencia ya indican que se trata de una imagen, por lo que &quot;<strong {C}>%(ERROR)</strong>&quot; puede ser redundante. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_IMAGE_NO_ALT_TEXT: 'La imagen dentro del enlace está marcada como decorativa y no hay texto de enlace. Agregue texto alternativo a la imagen que describa el destino del enlace.',
