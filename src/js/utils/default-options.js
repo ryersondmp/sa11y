@@ -30,6 +30,8 @@ const defaultOptions = {
   editImageURLofCMS: '',
   relativePathImageSRC: '',
   relativePathImageID: '',
+  ignoreEditImageURL: [],
+  ignoreEditImageClass: [],
 
   // Other features
   delayCheck: 0,

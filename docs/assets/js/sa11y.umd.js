@@ -48,6 +48,8 @@
     editImageURLofCMS: '',
     relativePathImageSRC: '',
     relativePathImageID: '',
+    ignoreEditImageURL: [],
+    ignoreEditImageClass: [],
 
     // Other features
     delayCheck: 0,
@@ -337,6 +339,8 @@
       Global.editImageURLofCMS = option.editImageURLofCMS;
       Global.relativePathImageSRC = option.relativePathImageSRC;
       Global.relativePathImageID = option.relativePathImageID;
+      Global.ignoreEditImageURL = option.ignoreEditImageURL;
+      Global.ignoreEditImageClass = option.ignoreEditImageClass;
       Global.showMovePanelToggle = option.showMovePanelToggle;
 
       // A11y: Determine scroll behaviour
@@ -3107,11 +3111,13 @@ ${this.error.stack}
    * @returns {String} - HTML of edit button if hosted on the same domain.
    */
   const generateEditLink = (image) => {
-    // Only generate edit link if prop is populated.
-    if (!Constants.Global.editImageURLofCMS.length) return '';
-
     // Image's src attribute.
     const { src } = image.element;
+
+    // Exclusions. Don't show "Edit" button if image src contains string or has class.
+    const urlExclusions = Constants.Global.ignoreEditImageURL.some((ignore) => src.includes(ignore));
+    const classExclusions = Constants.Global.ignoreEditImageClass.some((ignore) => image.element.classList.contains(ignore));
+    if (urlExclusions || classExclusions) return '';
 
     // Check if image's SRC attribute is hosted on same domain or is relative path.
     const relativePath = Constants.Global.relativePathImageSRC || window.location.host;
@@ -3178,7 +3184,7 @@ ${this.error.stack}
         const source = getBestImageSource(image.element);
 
         // Generate edit link if locally hosted image and prop is enabled.
-        const edit = generateEditLink(image);
+        const edit = Constants.Global.editImageURLofCMS ? generateEditLink(image) : '';
 
         // If image is linked.
         const anchor = option.imageWithinLightbox
