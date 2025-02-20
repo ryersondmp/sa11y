@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.0
+  * @version 4.1.1
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -42,6 +42,8 @@ const defaultOptions = {
   editImageURLofCMS: '',
   relativePathImageSRC: '',
   relativePathImageID: '',
+  ignoreEditImageURL: [],
+  ignoreEditImageClass: [],
 
   // Other features
   delayCheck: 0,
@@ -331,6 +333,8 @@ const Constants = (function myConstants() {
     Global.editImageURLofCMS = option.editImageURLofCMS;
     Global.relativePathImageSRC = option.relativePathImageSRC;
     Global.relativePathImageID = option.relativePathImageID;
+    Global.ignoreEditImageURL = option.ignoreEditImageURL;
+    Global.ignoreEditImageClass = option.ignoreEditImageClass;
     Global.showMovePanelToggle = option.showMovePanelToggle;
 
     // A11y: Determine scroll behaviour
@@ -2133,7 +2137,7 @@ function removeExportListeners() {
   }
 }
 
-const version = '4.1.0';
+const version = '4.1.1';
 
 var styles = ":host{background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);bottom:0;display:block;height:-moz-fit-content;height:fit-content;left:0;position:fixed;right:0;width:100%;z-index:999999}*{-webkit-font-smoothing:auto!important;color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;font-size:var(--sa11y-normal-text);line-height:22px!important}#dialog{margin:20px auto;max-width:900px;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none}p{margin-top:0}.error{background:var(--sa11y-error);border:2px dashed #f08080;color:var(--sa11y-error-text);margin-bottom:0;padding:5px}";
 
@@ -3101,11 +3105,13 @@ function generatePageOutline(dismissed, headingOutline, option) {
  * @returns {String} - HTML of edit button if hosted on the same domain.
  */
 const generateEditLink = (image) => {
-  // Only generate edit link if prop is populated.
-  if (!Constants.Global.editImageURLofCMS.length) return '';
-
   // Image's src attribute.
   const { src } = image.element;
+
+  // Exclusions. Don't show "Edit" button if image src contains string or has class.
+  const urlExclusions = Constants.Global.ignoreEditImageURL.some((ignore) => src.includes(ignore));
+  const classExclusions = Constants.Global.ignoreEditImageClass.some((ignore) => image.element.classList.contains(ignore));
+  if (urlExclusions || classExclusions) return '';
 
   // Check if image's SRC attribute is hosted on same domain or is relative path.
   const relativePath = Constants.Global.relativePathImageSRC || window.location.host;
@@ -3172,7 +3178,7 @@ function generateImageOutline(dismissed, imageResults, option) {
       const source = getBestImageSource(image.element);
 
       // Generate edit link if locally hosted image and prop is enabled.
-      const edit = generateEditLink(image);
+      const edit = Constants.Global.editImageURLofCMS ? generateEditLink(image) : '';
 
       // If image is linked.
       const anchor = option.imageWithinLightbox
@@ -8292,6 +8298,13 @@ function checkImages(results, option) {
     altUrl.forEach((word) => {
       if (alt.toLowerCase().indexOf(word.toLowerCase()) !== -1) {
         hit[0] = word;
+      } else {
+        // Checking for image dimensions in alt text.
+        const imageDimensions = /\b\d{2,6}\s*x\s*\d{2,6}\b/;
+        const match = alt.toLowerCase().match(imageDimensions);
+        if (match) {
+          [hit[0]] = match;
+        }
       }
     });
 

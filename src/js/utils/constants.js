@@ -56,6 +56,8 @@ const Constants = (function myConstants() {
     Global.editImageURLofCMS = option.editImageURLofCMS;
     Global.relativePathImageSRC = option.relativePathImageSRC;
     Global.relativePathImageID = option.relativePathImageID;
+    Global.ignoreEditImageURL = option.ignoreEditImageURL;
+    Global.ignoreEditImageClass = option.ignoreEditImageClass;
     Global.showMovePanelToggle = option.showMovePanelToggle;
 
     // A11y: Determine scroll behaviour

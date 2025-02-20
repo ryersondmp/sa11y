@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.0
+  * @version 4.1.1
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -171,10 +171,10 @@ var sv = {
     MISSING_ALT_LINK_HAS_TEXT: 'Bilden används som en länk med omgivande text, dock borde alt-attributet markeras som dekorativt eller null.',
     MISSING_ALT_LINK: 'Bilden används som länk men saknar alt-text! Se till att alt-texten beskriver vart länken tar dig.',
     MISSING_ALT: 'Saknar alt-text! Om bilden förmedlar en historia, stämning eller viktig information – se till att beskriva bilden.',
-    LINK_ALT_FILE_EXT: 'Filändelse hittades i alt-texten. Se till att alt-texten beskriver destinationen för länken, inte en bokstavlig beskrivning av bilden. Ta bort: <strong {C}>%(ERROR)</strong> <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
+    LINK_ALT_FILE_EXT: 'Alternativtext ska inte inkludera filändelser eller bilddimensioner. Se till att alt-texten beskriver destinationen för länken, inte en bokstavlig beskrivning av bilden. Ta bort: <strong {C}>%(ERROR)</strong> <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_PLACEHOLDER_ALT: 'Hittade icke-beskrivande eller platshållande alt-text i en länkad bild. Se till att alt-texten beskriver länkens destination, och inte är en bokstavlig beskrivning av bilden. Ersätt följande alt-text. <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_SUS_ALT: 'Hjälpmedel visar redan att detta är en bild, så &quot;<strong {C}>%(ERROR)</strong>&quot; kan vara överflödig. Se till att alt-texten beskriver länkens destination, och inte är en bokstavlig beskrivning av bilden. <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
-    ALT_FILE_EXT: 'Filändelse hittades i alt-texten. Om bilden förmedlar en historia, stämning eller viktig information – se till att beskriva bilden. Ta bort: <strong {C}>%(ERROR)</strong> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+    ALT_FILE_EXT: 'Alternativtext ska inte inkludera filändelser eller bilddimensioner. Om bilden förmedlar en historia, stämning eller viktig information – se till att beskriva bilden. Ta bort: <strong {C}>%(ERROR)</strong> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     ALT_PLACEHOLDER: 'Hittade icke-beskrivande eller platshållande alt-text. Ersätt följande alt-text med något mer meningsfullt. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     SUS_ALT: 'Hjälpmedel visar redan att detta är en bild, så &quot;<strong {C}>%(ERROR)</strong>&quot; kan vara överflödig. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_IMAGE_NO_ALT_TEXT: 'Bilden i länken är markerad som dekorativ och det finns ingen länktext. Vänligen lägg till alternativ text till bilden som beskriver länkens destination.',

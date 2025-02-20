@@ -62,8 +62,48 @@
   </header>
   <main>
 
+    <h2>Image panel's edit button exclusions</h2>
+    <p>Edit button won't appear if URL or class contained in respective exclusion prop.</p>
+
+    <h3>Ignores by URL</h3>
+    <div style="display:flex">
+      <img width="5" src="./assets/ignore/placeholder.svg" alt="Hello (400x800)" />
+      <img width="5" src="./assets/ignore/placeholder.svg" alt="Hello it's me (ignore URL)." />
+    </div>
+
+    <h3>Ignores by class</h3>
+    <div style="display:flex">
+      <img width="5" src="./assets/placeholder.svg" class="ignore-me-edit-btn" alt="Hello (405x830)" />
+      <img width="5" src="./assets/placeholder.svg" class="ignore-me-edit-btn" alt="Hello it's me (class name)." />
+    </div>
+
+    <hr>
+
+    <h2>Image dimensions in alt text</h2>
+    <p>Regex <code>/\b\d{2,6}\s*x\s*\d{2,6}\b/</code> matches stuff like 400x800, 400 x 800, 400 X 800, etc. </p>
+    <div style="display:flex">
+      <img width="5" src="./assets/placeholder.svg" alt="Hello (400x800)" />
+      <img width="5" src="./assets/placeholder.svg" alt="Something-1400x1800 - 1" />
+      <img width="5" src="./assets/placeholder.svg" alt="Something-91400x91800 - 1" />
+      <img width="5" src="./assets/placeholder.svg" alt="Grey-405x803 - 1" />
+      <img width="5" src="./assets/placeholder.svg" alt="Grey-405 x 803" />
+      <img width="5" src="./assets/placeholder.svg" alt="something.jpeg" />
+    </div>
+    <h3>Alts that should be fine</h3>
+    <div style="display:flex">
+      <img width="5" src="./assets/placeholder.svg" alt="Canon 5D x 7 lens" />
+      <img width="5" src="./assets/placeholder.svg" alt="It has 100x zoom" />
+      <img width="5" src="./assets/placeholder.svg" alt="16x9 format" />
+      <img width="5" src="./assets/placeholder.svg" alt="A few 2 x 4s" />
+    </div>
+
+    <hr>
+
     <h2>Error border should take precedence</h2>
     <p><a title="learn more" href="/contesdsdsdng-xi/">learn more</a></p>
+
+    <hr>
+
     <h2>Bug fix: multiple warnings for justified text that has anchors</h2>
     <p style="text-align: justify;">The majority of research in this stream is in collaborations with&nbsp;<b><a
           href="/content/ryerson/aerospace/people/faculty/fengfeng-xi/">Dr. Jeff Xi</a></b>&nbsp;and&nbsp;<b><a
@@ -71,10 +111,14 @@
             class="sr-only-no-select">&nbsp;(external link)&nbsp;</span></a></b>. Despite rapid advances in smart
       environments, aircraft interiors and flight experience have been nearly unchanged for many years. With
       technologies.</p>
+
+    <hr>
+
     <h2>Matching more iframe src attributes that contain "Video" or "video"</h2>
     <iframe title="Listen to article" width="560" height="20" src="https://example.com/V/Video?v=114828" frameborder="0"
       webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" loading="lazy"></iframe>
 
+    <hr>
     <h2>
       Check for "new tab" or file type warning text should bypass <code>linkIgnoreSpan</code> prop
     </h2>
@@ -137,7 +181,7 @@
       <img id="background" class="background-image-comp" src="assets/placeholder.svg" />
     </div>
 
-    <hr />
+    <hr>
     <p>
       Misc bug fix where the word iclicker would get flagged for using word
       click.

@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.0
+  * @version 4.1.1
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -195,10 +195,10 @@
       MISSING_ALT_LINK_HAS_TEXT: 'Imaginea este utilizată ca link cu text în jur, deși atributul alt ar trebui să fie marcat ca fiind decorativ sau nul.',
       MISSING_ALT_LINK: 'Imaginea este folosită ca link, dar lipsește textul alt! Vă rugăm să vă asigurați că textul alternativ descrie unde vă duce link-ul.',
       MISSING_ALT: 'Lipsește alt text! Dacă imaginea transmite o poveste, o stare de spirit sau o informație importantă, nu uitați să descrieți imaginea.',
-      LINK_ALT_FILE_EXT: 'Extensia fișierului din textul alternativ găsit. Asigurați-vă că textul alternativ descrie destinația linkului și nu o descriere literală a imaginii. Eliminați: <strong {C}>%(ERROR)</strong> <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
+      LINK_ALT_FILE_EXT: 'Textul alternativ nu trebuie să includă extensii de fișiere sau dimensiuni ale imaginii. Asigurați-vă că textul alternativ descrie destinația linkului și nu o descriere literală a imaginii. Eliminați: <strong {C}>%(ERROR)</strong> <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
       LINK_PLACEHOLDER_ALT: 'Text alt necorespunzător sau cu caracter de locțiitor într-o imagine legată găsit. Asigurați-vă că textul alternativ descrie destinația linkului și nu o descriere literală a imaginii. Înlocuiți următorul text alt. <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>.',
       LINK_SUS_ALT: 'Tehnologiile asistive indică deja că aceasta este o imagine, astfel încât &quot;<strong {C}>%(ERROR)</strong>&quot; poate fi redundant. Asigurați-vă că textul alt descrie destinația linkului, nu o descriere literală a imaginii. <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
-      ALT_FILE_EXT: 'Extensia fișierului din textul alternativ găsit. Dacă imaginea transmite o poveste, o stare de spirit sau o informație importantă, nu uitați să descrieți imaginea. Eliminați: <strong {C}>%(ERROR)</strong> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+      ALT_FILE_EXT: 'Textul alternativ nu trebuie să includă extensii de fișiere sau dimensiuni ale imaginii. Dacă imaginea transmite o poveste, o stare de spirit sau o informație importantă, nu uitați să descrieți imaginea. Eliminați: <strong {C}>%(ERROR)</strong> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
       ALT_PLACEHOLDER: 'A fost găsit un text alt nedescriptat sau un text alt de tip placeholder. Înlocuiți următorul text alt cu ceva mai semnificativ. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>.',
       SUS_ALT: 'Tehnologiile asistive indică deja că aceasta este o imagine, astfel încât &quot;<strong {C}>%(ERROR)</strong>&quot; poate fi redundant. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
       LINK_IMAGE_NO_ALT_TEXT: 'Imaginea din cadrul linkului este marcată ca fiind decorativă și nu există text de link. Vă rugăm să adăugați la imagine un text alt care să descrie destinația linkului.',

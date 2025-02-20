@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.0
+  * @version 4.1.1
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -205,10 +205,10 @@
       MISSING_ALT_LINK_HAS_TEXT: 'Obrázok sa používa ako odkaz s okolitým textom, hoci atribút alt by mal byť označený ako dekoratívny alebo nulový.',
       MISSING_ALT_LINK: 'Obrázok sa používa ako odkaz, ale chýba text alt! Uistite sa, že text alt opisuje, kam vás odkaz zavedie.',
       MISSING_ALT: 'Chýbajúci text alt! Ak obrázok vyjadruje príbeh, náladu alebo dôležitú informáciu, nezabudnite ho opísať.',
-      LINK_ALT_FILE_EXT: 'Nájdená prípona súboru v texte alt. Uistite sa, že text alt opisuje cieľ odkazu, nie doslovný opis obrázka. Odstráňte: <strong {C}>%(ERROR)</strong> <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
+      LINK_ALT_FILE_EXT: 'Alternatívny text by nemal obsahovať prípony súborov alebo rozmery obrázkov. Uistite sa, že text alt opisuje cieľ odkazu, nie doslovný opis obrázka. Odstráňte: <strong {C}>%(ERROR)</strong> <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
       LINK_PLACEHOLDER_ALT: 'Nájdený text alt bez popisu alebo zástupný text v rámci prepojeného obrázka. Uistite sa, že text alt opisuje cieľ odkazu, nie doslovný opis obrázka. Nahraďte nasledujúci text alt. <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
       LINK_SUS_ALT: 'Asistenčné technológie už indikujú, že ide o obrázok, takže &quot;<strong {C}>%(ERROR)</strong>&quot; môže byť zbytočné. Uistite sa, že alt text opisuje cieľ odkazu, nie doslovný opis obrázka. <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
-      ALT_FILE_EXT: 'Nájdená prípona súboru v texte alt. Ak obrázok vyjadruje príbeh, náladu alebo dôležitú informáciu, nezabudnite ho opísať. Odstráňte: <strong {C}>%(ERROR)</strong> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+      ALT_FILE_EXT: 'Alternatívny text by nemal obsahovať prípony súborov alebo rozmery obrázkov. Ak obrázok vyjadruje príbeh, náladu alebo dôležitú informáciu, nezabudnite ho opísať. Odstráňte: <strong {C}>%(ERROR)</strong> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
       ALT_PLACEHOLDER: 'Nájdený text alt bez popisu alebo zástupného textu. Nahraďte nasledujúci alt text niečím zmysluplnejším. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
       SUS_ALT: 'Asistenčné technológie už indikujú, že ide o obrázok, takže &quot;<strong {C}>%(ERROR)</strong>&quot; môže byť zbytočné. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
       LINK_IMAGE_NO_ALT_TEXT: 'Obrázok v rámci odkazu je označený ako dekoratívny a nie je v ňom žiadny text odkazu. K obrázku pridajte text alt, ktorý opisuje cieľ odkazu.',

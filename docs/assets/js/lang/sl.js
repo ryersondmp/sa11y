@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.0
+  * @version 4.1.1
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -188,10 +188,10 @@ var sl = {
     MISSING_ALT_LINK_HAS_TEXT: 'Slika se uporablja kot povezava z okoliškim besedilom, čeprav bi moral biti atribut alt označen kot okrasni ali ničen.',
     MISSING_ALT_LINK: 'Slika se uporablja kot povezava, vendar nima besedila Alt! Prepričajte se, da besedilo alt opisuje, kam vas bo povezava pripeljala.',
     MISSING_ALT: 'Manjka besedilo alt! Če slika sporoča zgodbo, razpoloženje ali pomembne informacije, jo obvezno opišite.',
-    LINK_ALT_FILE_EXT: 'Najdena razširitev datoteke v besedilu alt. Prepričajte se, da besedilo alt opisuje cilj povezave in ne dobesednega opisa slike. Odstrani: <strong {C}>%(ERROR)</strong> <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
+    LINK_ALT_FILE_EXT: 'Alternativni tekst ne sme vsebovati končnice datotek ali dimenzije slik. Prepričajte se, da besedilo alt opisuje cilj povezave in ne dobesednega opisa slike. Odstrani: <strong {C}>%(ERROR)</strong> <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_PLACEHOLDER_ALT: 'V povezani sliki je bilo najdeno neopisno ali nadomestno besedilo alt. Prepričajte se, da besedilo alt opisuje cilj povezave in ne dobesednega opisa slike. Zamenjajte naslednje besedilo alt. <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_SUS_ALT: 'Pomožne tehnologije že označujejo, da gre za sliko, zato je &quot;<strong {C}>%(ERROR)</strong>&quot; morda odveč. Zagotovite, da besedilo alt opisuje cilj povezave in ne dobesednega opisa slike. <hr> {ALT} {L} <strong {C}>%(ALT_TEXT)</strong>',
-    ALT_FILE_EXT: 'Najdena razširitev datoteke v besedilu alt. Če slika sporoča zgodbo, razpoloženje ali pomembne informacije, jo obvezno opišite. Odstrani: <strong {C}>%(ERROR)</strong> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+    ALT_FILE_EXT: 'Alternativni tekst ne sme vsebovati končnice datotek ali dimenzije slik. Če slika sporoča zgodbo, razpoloženje ali pomembne informacije, jo obvezno opišite. Odstrani: <strong {C}>%(ERROR)</strong> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     ALT_PLACEHOLDER: 'Najdeno neopisno ali nadomestno besedilo alt. Naslednje besedilo alt zamenjajte z bolj smiselnim. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     SUS_ALT: 'Pomožne tehnologije že označujejo, da gre za sliko, zato je &quot;<strong {C}>%(ERROR)</strong>&quot; morda odveč. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_IMAGE_NO_ALT_TEXT: 'Slika v povezavi je označena kot okrasna in nima besedila povezave. Sliki dodajte besedilo alt, ki opisuje cilj povezave.',
