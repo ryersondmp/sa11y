@@ -44,10 +44,11 @@ Lang.addI18n(Sa11yLangEn.strings);
 const sa11y = new Sa11y({
   checkRoot: 'body',
   readabilityRoot: '.foo',
-  headerIgnore: '#nothing-ignore-this-heading *',
+  headerIgnore: '#nothing-ignore-this-heading *, .ignore-this-heading',
   linkIgnoreSpan: '.sr-only-example',
   linkIgnoreStrings: '(External)',
   imageIgnore: '.logo',
+  outlineIgnore: '.outline-ignore',
   contrastIgnore: '.background-image-component',
   showHinPageOutline: 1,
   showTitleInPageOutline: 1,

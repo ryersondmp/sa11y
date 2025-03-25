@@ -31,7 +31,15 @@ const Elements = (function myElements() {
       'document',
       Constants.Exclusions.Headings,
     );
+
+    // Excluded via headerIgore.
     Found.ExcludedHeadings = Found.Headings.filter((heading) => Constants.Exclusions.Headings.some((exclusion) => heading.matches(exclusion)));
+
+    // Excluded via outlineIgnore.
+    Found.ExcludedOutlineHeadings = Found.Headings.filter((heading) => Constants.Exclusions.Outline.some((exclusion) => heading.matches(exclusion)));
+
+    // Merge both headerIgnore and outlineIgnore.
+    Found.OutlineIgnore = Elements.Found.ExcludedOutlineHeadings.concat(Elements.Found.ExcludedHeadings);
 
     // Quality assurance module.
     Found.Paragraphs = Found.Everything.filter(($el) => $el.tagName === 'P'

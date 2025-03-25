@@ -41,10 +41,8 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
       const dismissedH = heading.dismissedHeading;
       const { isWithinRoot } = heading;
 
-      // Filter out specified headings in outlineIgnore prop.
-      const ignoreArray = Constants.Exclusions.Outline ? Elements.Found.ExcludedHeadings : [];
-
-      if (!ignoreArray.includes($el)) {
+      // Filter out specified headings in outlineIgnore and headerIgnore props.
+      if (!Elements.Found.OutlineIgnore.includes($el)) {
         // Indicate if heading is totally hidden or visually hidden.
         const visibleIcon = (visibility === true) ? '<span class="hidden-icon"></span><span class="visually-hidden">Hidden</span>' : '';
         const visibleStatus = (visibility === true) ? 'class="hidden-h"' : '';
@@ -53,77 +51,77 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
         let append;
         if (issue === 'error' && isWithinRoot === true) {
           append = `
-        <li class="outline-${level}">
-          <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
-            <span class="badge error-badge">
-            <span aria-hidden="true">${visibleIcon}
-              <span class="error-icon"></span>
-            </span>
-            <span class="visually-hidden">${Lang._('ERROR')}</span> ${badgeH + level}</span>
-            <strong class="outline-list-item red-text">${headingText}</strong>
-          </a>
-        </li>`;
+            <li class="outline-${level}">
+              <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
+                <span class="badge error-badge">
+                <span aria-hidden="true">${visibleIcon}
+                  <span class="error-icon"></span>
+                </span>
+                <span class="visually-hidden">${Lang._('ERROR')}</span> ${badgeH + level}</span>
+                <strong class="outline-list-item red-text">${headingText}</strong>
+              </a>
+            </li>`;
           outlineArray.push(append);
         } else if (issue === 'warning' && !dismissedH && isWithinRoot === true) {
           append = `
-        <li class="outline-${level}">
-          <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
-            <span class="badge warning-badge">
-            <span aria-hidden="true">${visibleIcon} &#x3f;</span>
-            <span class="visually-hidden">${Lang._('WARNING')}</span> ${badgeH + level}</span>
-            <strong class="outline-list-item yellow-text">${headingText}</strong>
-          </a>
-        </li>`;
+            <li class="outline-${level}">
+              <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
+                <span class="badge warning-badge">
+                <span aria-hidden="true">${visibleIcon} &#x3f;</span>
+                <span class="visually-hidden">${Lang._('WARNING')}</span> ${badgeH + level}</span>
+                <strong class="outline-list-item yellow-text">${headingText}</strong>
+              </a>
+            </li>`;
           outlineArray.push(append);
         } else {
           append = `
-        <li class="outline-${level}">
-          <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
-            <span class="badge">${visibleIcon} ${badgeH + level}</span>
-            <span class="outline-list-item">${headingText}</span>
-          </a>
-        </li>`;
+            <li class="outline-${level}">
+              <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
+                <span class="badge">${visibleIcon} ${badgeH + level}</span>
+                <span class="outline-list-item">${headingText}</span>
+              </a>
+            </li>`;
           outlineArray.push(append);
         }
+      }
 
-        /**
+      /**
         * Append heading labels.
-        */
-        const label = document.createElement('sa11y-heading-label');
-        const anchor = document.createElement('sa11y-heading-anchor');
-        label.hidden = true;
+      */
+      const label = document.createElement('sa11y-heading-label');
+      const anchor = document.createElement('sa11y-heading-anchor');
+      label.hidden = true;
 
-        // If heading is in a hidden container, place the anchor just before it's most visible parent.
-        if (parent !== null) {
-          $el.insertAdjacentElement('beforeend', label);
-          const hiddenParent = parent.previousElementSibling;
-          anchor.setAttribute('id', `sa11y-h${i}`);
-          if (hiddenParent) {
-            hiddenParent.insertAdjacentElement('beforebegin', anchor);
-            hiddenParent.setAttribute('data-sa11y-parent', `h${i}`);
-          } else {
-            parent.parentNode.insertAdjacentElement('beforebegin', anchor);
-            parent.parentNode.setAttribute('data-sa11y-parent', `h${i}`);
-          }
+      // If heading is in a hidden container, place the anchor just before it's most visible parent.
+      if (parent !== null) {
+        $el.insertAdjacentElement('beforeend', label);
+        const hiddenParent = parent.previousElementSibling;
+        anchor.setAttribute('id', `sa11y-h${i}`);
+        if (hiddenParent) {
+          hiddenParent.insertAdjacentElement('beforebegin', anchor);
+          hiddenParent.setAttribute('data-sa11y-parent', `h${i}`);
         } else {
-          // If the heading isn't hidden, append visible label.
-          $el.insertAdjacentElement('beforeend', label);
-
-          // Create anchor above visible label.
-          label.insertAdjacentElement('beforebegin', anchor);
-          anchor.setAttribute('id', `sa11y-h${i}`);
+          parent.parentNode.insertAdjacentElement('beforebegin', anchor);
+          parent.parentNode.setAttribute('data-sa11y-parent', `h${i}`);
         }
+      } else {
+        // If the heading isn't hidden, append visible label.
+        $el.insertAdjacentElement('beforeend', label);
 
-        // Populate heading label.
-        const content = document.createElement('span');
-        content.classList.add('heading-label');
-        content.innerHTML = `H${level}`;
-        label.shadowRoot.appendChild(content);
+        // Create anchor above visible label.
+        label.insertAdjacentElement('beforebegin', anchor);
+        anchor.setAttribute('id', `sa11y-h${i}`);
+      }
 
-        // Make heading labels visible when panel is open.
-        if (Utils.store.getItem('sa11y-outline') === 'Opened') {
-          label.hidden = false;
-        }
+      // Populate heading label.
+      const content = document.createElement('span');
+      content.classList.add('heading-label');
+      content.innerHTML = `H${level}`;
+      label.shadowRoot.appendChild(content);
+
+      // Make heading labels visible when panel is open.
+      if (Utils.store.getItem('sa11y-outline') === 'Opened') {
+        label.hidden = false;
       }
     });
 
