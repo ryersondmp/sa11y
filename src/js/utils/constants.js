@@ -73,7 +73,7 @@ const Constants = (function myConstants() {
     // Check for document types.
     const documentSources = option.checks.QA_DOCUMENT.sources;
     const defaultDocumentSources = 'a[href$=".doc"], a[href$=".docx"], a[href*=".doc?"], a[href*=".docx?"], a[href$=".ppt"], a[href$=".pptx"], a[href*=".ppt?"], a[href*=".pptx?"], a[href^="https://drive.google.com/file"], a[href^="https://docs.google."], a[href^="https://sway."]';
-    if (documentSources.length) {
+    if (documentSources) {
       Global.documentSources = `${defaultDocumentSources}, ${documentSources}`;
     } else {
       Global.documentSources = defaultDocumentSources;
@@ -86,7 +86,7 @@ const Constants = (function myConstants() {
     // Video sources.
     const videoSources = option.checks.EMBED_VIDEO.sources;
     const defaultVideoSources = 'video, [src*="Video"], [src*="video"], [src*="watch"], [src*="youtube.com"], [src*="vimeo.com"], [src*="panopto.com"], [src*="wistia.com"], [src*="dailymotion.com"], [src*="brightcove.com"], [src*="vidyard.com"]';
-    if (videoSources.length) {
+    if (videoSources) {
       const videos = videoSources.split(/\s*[\s,]\s*/).map(($el) => `[src*="${$el}"]`);
       Global.VideoSources = `${defaultVideoSources}, ${videos.join(', ')}`;
     } else {
@@ -96,7 +96,7 @@ const Constants = (function myConstants() {
     // Audio sources.
     const audioSources = option.checks.EMBED_AUDIO.sources;
     const defaultAudioSources = 'audio, [src*="soundcloud.com"], [src*="simplecast.com"], [src*="podbean.com"], [src*="buzzsprout.com"], [src*="blubrry.com"], [src*="transistor.fm"], [src*="fusebox.fm"], [src*="libsyn.com"], [src*="spotify.com"], [src*="podcasts.apple.com"], [src*="castbox.fm"], [src*="megaphone.fm"], [src*="spreaker.com"], [src*="anchor.fm"], [src*="rss.com"], [src*="redcircle.com"]';
-    if (audioSources.length) {
+    if (audioSources) {
       const audio = audioSources.split(/\s*[\s,]\s*/).map(($el) => `[src*="${$el}"]`);
       Global.AudioSources = `${defaultAudioSources}, ${audio.join(', ')}`;
     } else {
@@ -106,7 +106,7 @@ const Constants = (function myConstants() {
     // Data viz sources.
     const dataVizSources = option.checks.EMBED_DATA_VIZ.sources;
     const defaultDataVizSources = '[src*="datastudio"], [src*="tableau"], [src*="lookerstudio"], [src*="powerbi"], [src*="qlik"]';
-    if (dataVizSources.length) {
+    if (dataVizSources) {
       const data = dataVizSources.split(/\s*[\s,]\s*/).map(($el) => `[src*="${$el}"]`);
       Global.VisualizationSources = `${defaultDataVizSources}, ${data.join(', ')}`;
     } else {
