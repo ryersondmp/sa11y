@@ -543,12 +543,18 @@ export function isScrollable(scrollArea, container, ariaLabel) {
  */
 export function getBestImageSource(element) {
   const getLastSrc = (src) => src?.split(',').pop()?.trim()?.split(/\s+/)[0];
+
+  // Return absolute URLs. Necessary for HTML export.
+  const resolveUrl = (src) => (src ? new URL(src, window.location.href).href : null);
+
   const dataSrc = getLastSrc(element.getAttribute('data-src') || element.getAttribute('srcset'));
-  if (dataSrc) return dataSrc;
+  if (dataSrc) return resolveUrl(dataSrc);
+
   const picture = element.closest('picture')?.querySelector('source[srcset]')?.getAttribute('srcset');
   const pictureSrc = getLastSrc(picture);
-  if (pictureSrc) return pictureSrc;
-  return element.getAttribute('src');
+
+  if (pictureSrc) return resolveUrl(pictureSrc);
+  return resolveUrl(element.getAttribute('src'));
 }
 
 /**

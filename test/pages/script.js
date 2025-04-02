@@ -52,6 +52,7 @@ const sa11y = new Sa11y({
   contrastIgnore: '.background-image-component',
   showHinPageOutline: 1,
   showTitleInPageOutline: 1,
+  // contrastAAA: true,
   // contrastAPCA: true,
   ignoreHiddenOverflow: '.overlay, .modal',
   insertAnnotationBefore: '.background-container',

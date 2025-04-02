@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.3
+  * @version 4.1.4
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -76,6 +76,7 @@
 
     // Contrast
     contrastPlugin: true,
+    contrastAAA: false,
     contrastAPCA: false,
 
     // Other plugins
@@ -329,6 +330,7 @@
       Global.aboutContent = option.aboutContent;
       Global.contrastAPCA = option.contrastAPCA;
       Global.contrastSuggestions = option.contrastSuggestions;
+      Global.contrastAAA = option.contrastAAA;
 
       // Toggleable plugins
       Global.developerPlugin = option.developerPlugin;
@@ -1388,12 +1390,18 @@
    */
   function getBestImageSource(element) {
     const getLastSrc = (src) => src?.split(',').pop()?.trim()?.split(/\s+/)[0];
+
+    // Return absolute URLs. Necessary for HTML export.
+    const resolveUrl = (src) => (src ? new URL(src, window.location.href).href : null);
+
     const dataSrc = getLastSrc(element.getAttribute('data-src') || element.getAttribute('srcset'));
-    if (dataSrc) return dataSrc;
+    if (dataSrc) return resolveUrl(dataSrc);
+
     const picture = element.closest('picture')?.querySelector('source[srcset]')?.getAttribute('srcset');
     const pictureSrc = getLastSrc(picture);
-    if (pictureSrc) return pictureSrc;
-    return element.getAttribute('src');
+
+    if (pictureSrc) return resolveUrl(pictureSrc);
+    return resolveUrl(element.getAttribute('src'));
   }
 
   /**
@@ -2151,7 +2159,7 @@
     }
   }
 
-  const version = '4.1.2';
+  const version = '4.1.4';
 
   var styles = ":host{background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);bottom:0;display:block;height:-moz-fit-content;height:fit-content;left:0;position:fixed;right:0;width:100%;z-index:999999}*{-webkit-font-smoothing:auto!important;color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;font-size:var(--sa11y-normal-text);line-height:22px!important}#dialog{margin:20px auto;max-width:900px;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none}p{margin-top:0}.error{background:var(--sa11y-error);border:2px dashed #f08080;color:var(--sa11y-error-text);margin-bottom:0;padding:5px}";
 
@@ -7199,9 +7207,15 @@ ${this.error.stack}
    * @returns {string|number} The formatted contrast ratio.
    */
   function ratioToDisplay(value) {
-    return Constants.Global.contrastAPCA
-      ? Math.abs(Number(value.toFixed(1)))
-      : `${value.toFixed(2)}:1`;
+    if (Constants.Global.contrastAPCA) {
+      return Math.abs(Number(value.toFixed(1)));
+    }
+    // Round to decimal places, and display without decimals if integer.
+    const rounded = Math.round(value * 100) / 100;
+    if (Number.isInteger(rounded)) {
+      return `${rounded}:1`;
+    }
+    return `${rounded.toFixed(2)}:1`;
   }
 
   /**
@@ -7231,10 +7245,18 @@ ${this.error.stack}
    * @param {number[]} color Text colour in [R,G,B,A] format.
    * @param {number[]} background Background colour in [R,G,B,A] format.
    * @param {boolean} isLargeText Whether text is normal or large size.
+   * @param {boolean} contrastAAA Use WCAG AAA thresholds.
    * @returns Compliant colour hexcode.
    */
-  function suggestColorWCAG(color, background, isLargeText) {
-    const minContrastRatio = isLargeText ? 3 : 4.5;
+  function suggestColorWCAG(color, background, isLargeText, contrastAAA = false) {
+    let minContrastRatio;
+    if (contrastAAA) {
+      minContrastRatio = isLargeText ? 4.5 : 7;
+    } else {
+      minContrastRatio = isLargeText ? 3 : 4.5;
+    }
+
+    // Get luminance
     const fgLuminance = getLuminance(color);
     const bgLuminance = getLuminance(background);
 
@@ -7257,8 +7279,17 @@ ${this.error.stack}
     let step = 0.16;
     const percentChange = 0.5;
     const precision = 0.01;
+    let iterations = 0;
+    const maxIterations = 100;
 
     while (step >= precision) {
+      iterations += 1;
+
+      // Return null if no colour found.
+      if (iterations > maxIterations) {
+        return { color: null };
+      }
+
       adjustedColor = adjustColor(adjustedColor, step, adjustMode);
       const newLuminance = getLuminance(adjustedColor);
       contrastRatio = getWCAG2Ratio(newLuminance, bgLuminance);
@@ -7387,7 +7418,7 @@ ${this.error.stack}
     if (color && background && background.type !== 'image' && type === 'text') {
       const suggested = Constants.Global.contrastAPCA
         ? suggestColorAPCA(color, background, fontWeight, fontSize)
-        : suggestColorWCAG(color, background, isLargeText);
+        : suggestColorWCAG(color, background, isLargeText, Constants.Global.contrastAAA);
 
       let advice;
       const hr = '<hr aria-hidden="true">';
@@ -7396,7 +7427,11 @@ ${this.error.stack}
       const sizeBadge = `<strong class="normal-badge">${suggested.size}px</strong>`;
 
       if (!Constants.Global.contrastAPCA) {
-        advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
+        if (suggested.color === null) {
+          advice = `${hr} ${Lang._('NO_SUGGESTION')}`;
+        } else {
+          advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
+        }
       } else if (suggested.color && suggested.size) {
         advice = `${hr} ${Lang._('CONTRAST_APCA')} ${colorBadge} ${sizeBadge}`;
       } else if (suggested.color) {
@@ -7463,10 +7498,7 @@ ${this.error.stack}
       <hr aria-hidden="true">
       <div id="contrast" class="badge">${Lang._('CONTRAST')}</div>
       <div id="value" class="badge">${displayedRatio}</div>
-      <div id="non-text" class="badge good-contrast" hidden>${Lang._('NON_TEXT')}</div>
-      <div id="large-text" class="badge good-contrast" hidden>${Lang._('LARGE_TEXT')}</div>
-      <div id="body-text" class="badge good-contrast" hidden>${Lang._('BODY_TEXT')}</div>
-      <div id="apca" class="badge good-contrast" hidden>${Lang._('GOOD')}</div>
+      <div id="good" class="badge good-contrast" hidden>${Lang._('GOOD')} <span class="good-icon"></span></div>
       <div id="apca-table" hidden></div>
       <div id="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};${sanitizedText.length ? '' : 'display: none;'}` : ''}${hasFontWeight + hasFontSize + textDecoration}">${sanitizedText}</div>
       <div id="color-pickers">
@@ -7526,18 +7558,15 @@ ${this.error.stack}
   function initializeContrastTools(container, contrastDetails) {
     const contrastTools = container?.querySelector('#contrast-tools');
     if (contrastTools) {
-      const { fontSize, fontWeight, type } = contrastDetails;
+      const { fontSize, fontWeight, type, isLargeText } = contrastDetails;
 
       // Cache selectors
       const contrast = container.querySelector('#contrast');
       const contrastPreview = container.querySelector('#contrast-preview');
       const fgInput = container.querySelector('#fg-input');
       const bgInput = container.querySelector('#bg-input');
-      const nonText = container.querySelector('#non-text');
-      const bodyText = container.querySelector('#body-text');
-      const largeText = container.querySelector('#large-text');
       const ratio = container.querySelector('#value');
-      const apca = container.querySelector('#apca');
+      const good = container.querySelector('#good');
       const apcaTable = container.querySelector('#apca-table');
 
       // Helper to update badge classes.
@@ -7585,13 +7614,13 @@ ${this.error.stack}
           switch (type) {
             case 'svg-error':
             case 'svg-warning': {
-              nonText.hidden = !nonTextPasses;
+              good.hidden = !nonTextPasses;
               passes = nonTextPasses;
               toggleBadges(elementsToToggle, passes);
               break;
             }
             case 'svg-text': {
-              nonText.hidden = !nonTextPasses;
+              good.hidden = !nonTextPasses;
               passes = fontArray.slice(1, 7).some((size) => size !== 999 && size !== 777);
               toggleBadges(elementsToToggle, passes);
               createFontSizesTable(apcaTable, fontArray);
@@ -7601,7 +7630,7 @@ ${this.error.stack}
               const minFontSize = fontArray[Math.floor(fontWeight / 100) - 1];
               passes = fontSize >= minFontSize;
               toggleBadges(elementsToToggle, passes);
-              apca.hidden = !passes;
+              good.hidden = !passes;
               break;
             }
           }
@@ -7611,26 +7640,32 @@ ${this.error.stack}
         if (!Constants.Global.contrastAPCA) {
           const value = contrastValue.ratio;
           ratio.textContent = ratioToDisplay(value);
-          const passes = value >= 3;
+
+          const useAAA = Constants.Global.contrastAAA; // Use AAA thresholds if true, otherwise AA
+          const nonTextThreshold = 3;
+          const normalTextThreshold = useAAA ? 7 : 4.5;
+          const largeTextThreshold = useAAA ? 4.5 : 3;
+
+          const passesNonText = value >= nonTextThreshold;
+          const passesNormalText = value >= normalTextThreshold;
+          const passesLargeText = value >= largeTextThreshold;
 
           switch (type) {
             case 'svg-error':
+            case 'svg-text':
             case 'svg-warning': {
-              nonText.hidden = !passes;
-              toggleBadges(elementsToToggle, passes);
-              break;
-            }
-            case 'svg-text': {
-              nonText.hidden = !passes;
-              toggleBadges(elementsToToggle, passes);
-              largeText.hidden = !passes;
-              bodyText.hidden = value <= 4.5;
+              good.hidden = !passesNonText;
+              toggleBadges(elementsToToggle, passesNonText);
               break;
             }
             default: {
-              toggleBadges([ratio, contrast], passes);
-              largeText.hidden = !passes;
-              bodyText.hidden = value <= 4.5;
+              if (isLargeText) {
+                toggleBadges([ratio, contrast], passesLargeText);
+                good.hidden = !passesLargeText;
+              } else {
+                toggleBadges([ratio, contrast], passesNormalText);
+                good.hidden = !passesNormalText;
+              }
               break;
             }
           }
@@ -7651,15 +7686,22 @@ ${this.error.stack}
     * @param {number} fontSize Element's font size.
     * @param {number} fontWeight Element's font weight.
     * @param {number} opacity Element's opacity value.
+    * @param {boolean} contrastAAA Check if AAA threshold is required.
     * @returns {Object} Object containing the element, ratio, and extra details.
     */
-  function wcagAlgorithm($el, color, background, fontSize, fontWeight, opacity) {
+  function wcagAlgorithm($el, color, background, fontSize, fontWeight, opacity, contrastAAA = false) {
     const { ratio, blendedColor } = calculateContrast(color, background);
     const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
-    const hasLowContrast = ratio < 3;
-    const hasLowContrastNormalText = ratio > 1 && ratio < 4.5;
 
-    if ((isLargeText && hasLowContrast) || (!isLargeText && hasLowContrastNormalText)) {
+    let hasLowContrast;
+    if (contrastAAA) {
+      hasLowContrast = isLargeText ? ratio < 4.5 : ratio < 7;
+    } else {
+      const hasLowContrastNormalText = ratio > 1 && ratio < 4.5;
+      hasLowContrast = isLargeText ? ratio < 3 : hasLowContrastNormalText;
+    }
+
+    if (hasLowContrast) {
       return {
         $el,
         ratio: ratioToDisplay(ratio),
@@ -7719,11 +7761,14 @@ ${this.error.stack}
    * @param {number} fontSize Element's font size.
    * @param {number} fontWeight Element's font weight.
    * @param {number} opacity Element's opacity value.
+   * @param {boolean} contrastAAA Use WCAG 2.0 AAA thresholds.
    * @returns {Object} Object containing the element, ratio, and extra details.
    */
-  function checkElementContrast($el, color, background, fontSize, fontWeight, opacity) {
+  function checkElementContrast(
+    $el, color, background, fontSize, fontWeight, opacity, contrastAAA = false,
+  ) {
     const algorithm = Constants.Global.contrastAPCA ? apcaAlgorithm : wcagAlgorithm;
-    return algorithm($el, color, background, fontSize, fontWeight, opacity);
+    return algorithm($el, color, background, fontSize, fontWeight, opacity, contrastAAA);
   }
 
   var tooltipStyles = "a,button,code,div,h1,h2,kbd,li,ol,p,span,strong,svg,ul{all:unset;box-sizing:border-box!important}div{display:block}:after,:before{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}@media (forced-colors:active){[data-tippy-root]{border:2px solid transparent;border-radius:5px}}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:0}.tippy-box[data-placement^=top]>.tippy-arrow:before{border-top-color:initial;border-width:8px 8px 0;bottom:-7px;left:0;transform-origin:center top}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:0}.tippy-box[data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:initial;border-width:0 8px 8px;left:0;top:-7px;transform-origin:center bottom}.tippy-box[data-placement^=left]>.tippy-arrow{right:0}.tippy-box[data-placement^=left]>.tippy-arrow:before{border-left-color:initial;border-width:8px 0 8px 8px;right:-7px;transform-origin:center left}.tippy-box[data-placement^=right]>.tippy-arrow{left:0}.tippy-box[data-placement^=right]>.tippy-arrow:before{border-right-color:initial;border-width:8px 8px 8px 0;left:-7px;transform-origin:center right}.tippy-arrow{color:#333;height:16px;width:16px}.tippy-arrow:before{border-color:transparent;border-style:solid;content:\"\";position:absolute}.tippy-content{padding:5px 9px;position:relative;z-index:1}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{word-wrap:break-word;min-width:300px;text-align:start}[role=tooltip]{min-width:185px;text-align:center}.tippy-box[data-theme~=sa11y-panel]{border:1px solid var(--sa11y-panel-bg-splitter);box-shadow:var(--sa11y-box-shadow)}.tippy-box[data-theme~=sa11y-theme]:not([data-theme~=sa11y-panel]){box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15)!important}.tippy-box[data-theme~=sa11y-theme]{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-bg);border-radius:4px;color:var(--sa11y-panel-primary);display:block;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px;outline:0;padding:8px;position:relative;transition-property:transform,visibility,opacity}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:500}.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);letter-spacing:normal;line-height:22px;padding:1.6px 4.8px}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block-end:0;margin-block-start:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{display:list-item;margin:5px 10px 0 20px;padding-bottom:5px}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;font-weight:500;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] a:hover{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin:0}.tippy-box[data-theme~=sa11y-theme] .dismiss-group{margin-top:5px}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:inline-block;margin:10px 5px 5px 0;margin-inline-end:15px;padding:4px 8px}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:focus,.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:hover{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme] .good-icon{background:var(--sa11y-good-text);display:inline-block;height:14px;margin-bottom:-2.5px;-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat;width:14px}.tippy-box[data-theme~=sa11y-theme] .link-icon{background:var(--sa11y-panel-primary);display:inline-block;height:16px;margin-bottom:-3.5px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat;width:16px}.tippy-box[data-theme~=sa11y-theme] .error .badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .error .colour{color:var(--sa11y-red-text)}.tippy-box[data-theme~=sa11y-theme] .error .link-icon{background:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .warning .badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme] .warning .colour{color:var(--sa11y-yellow-text)}.tippy-box[data-theme~=sa11y-theme] .warning .link-icon{background:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme] #apca-table{width:100%}.tippy-box[data-theme~=sa11y-theme] #apca-table .row{display:flex;margin-top:10px}.tippy-box[data-theme~=sa11y-theme] #apca-table .cell{align-items:center;display:flex;flex:1;flex-direction:column;padding:1px}.tippy-box[data-theme~=sa11y-theme] #apca-table .font-weight{font-size:calc(var(--sa11y-normal-text) - 2px);font-weight:700}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{forced-color-adjust:none}.tippy-box[data-theme~=sa11y-theme] .tippy-arrow{z-index:-1}}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:active,.tippy-box[data-theme~=sa11y-theme] button:focus,.tippy-box[data-theme~=sa11y-theme] input:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] input:focus:not(:focus-visible){box-shadow:none;outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus-visible,.tippy-box[data-theme~=sa11y-theme] a:focus-visible,.tippy-box[data-theme~=sa11y-theme] button:focus-visible,.tippy-box[data-theme~=sa11y-theme] input:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.tippy-box[data-theme~=sa11y-theme] .error-icon,.tippy-box[data-theme~=sa11y-theme] .hidden-icon,.tippy-box[data-theme~=sa11y-theme] .link-icon{filter:invert(1)}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:focus{outline:3px solid transparent!important}}";
@@ -9268,21 +9313,25 @@ ${this.error.stack}
       // Only check elements with text and inputs.
       if (text.length !== 0 || checkInputs) {
         if (color === 'unsupported' || background === 'unsupported') {
+          const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
           contrastResults.push({
             $el,
             type: 'unsupported',
             fontSize,
             fontWeight,
+            isLargeText,
             opacity,
             ...(background !== 'unsupported' && { background }),
             ...(color !== 'unsupported' && { color }),
           });
         } else if (background.type === 'image') {
           if (isHidden) ; else {
+            const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
             contrastResults.push({
               $el,
               type: 'background-image',
               color,
+              isLargeText,
               background,
               fontSize,
               fontWeight,
@@ -9290,7 +9339,9 @@ ${this.error.stack}
             });
           }
         } else if ($el.tagName === 'text' && $el.closest('svg')) ; else if (isHidden || getHex(color) === getHex(background)) ; else {
-          const result = checkElementContrast($el, color, background, fontSize, fontWeight, opacity);
+          const result = checkElementContrast(
+            $el, color, background, fontSize, fontWeight, opacity, option.contrastAAA,
+          );
           if (result) {
             result.type = checkInputs ? 'input' : 'text';
             contrastResults.push(result);
@@ -9392,7 +9443,7 @@ ${this.error.stack}
 
         // Placeholder has background image.
         if (pBackground.type === 'image') ; else {
-          const result = checkElementContrast($el, pColor, pBackground, pSize, pWeight, pOpacity);
+          const result = checkElementContrast($el, pColor, pBackground, pSize, pWeight, pOpacity, option.contrastAAA);
           if (result) {
             result.type = 'placeholder';
             contrastResults.push(result);
@@ -9420,6 +9471,7 @@ ${this.error.stack}
           const groupKey = JSON.stringify({
             background: warning.background.value,
             color: warning.color,
+            isLargeText: warning.isLargeText,
           });
           if (!grouped[groupKey]) grouped[groupKey] = [];
           grouped[groupKey].push(warning);
@@ -9468,6 +9520,17 @@ ${this.error.stack}
       }
       updatedItem.sanitizedText = previewText;
 
+      // Reference necessary ratios for compliance.
+      let ratioTip = '';
+      if (!option.contrastAPCA) {
+        const normal = option.contrastAAA ? '7:1' : '4.5:1';
+        const large = option.contrastAAA ? '4.5:1' : '3:1';
+        const ratioToDisplay = item.isLargeText ? large : normal;
+        const ratioRequirement = item.isLargeText ? 'CONTRAST_LARGE' : 'CONTRAST_NORMAL';
+        ratioTip = ` ${Lang.sprintf(ratioRequirement, ratioToDisplay)}`;
+      }
+      const graphicsTip = option.contrastAPCA ? '' : ` ${Lang.sprintf('CONTRAST_TIP_GRAPHIC')}`;
+
       // Iterate through contrast results based on type.
       switch (item.type) {
         case 'text':
@@ -9475,7 +9538,9 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: option.checks.CONTRAST_ERROR.type || 'error',
-              content: Lang.sprintf(option.checks.CONTRAST_ERROR.content || 'CONTRAST_ERROR'),
+              content: option.checks.CONTRAST_ERROR.content
+                ? Lang.sprintf(option.checks.CONTRAST_ERROR.content)
+                : Lang.sprintf('CONTRAST_ERROR') + ratioTip,
               dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
               dismissAll: option.checks.CONTRAST_ERROR.dismissAll ? 'CONTRAST_ERROR' : false,
               developer: option.checks.CONTRAST_ERROR.developer || false,
@@ -9488,7 +9553,9 @@ ${this.error.stack}
             results.push({
               element,
               type: option.checks.CONTRAST_INPUT.type || 'error',
-              content: Lang.sprintf(option.checks.CONTRAST_INPUT.content || 'CONTRAST_INPUT', ratio),
+              content: option.checks.CONTRAST_INPUT.content
+                ? Lang.sprintf(option.checks.CONTRAST_INPUT.content)
+                : Lang.sprintf('CONTRAST_INPUT', ratio) + ratioTip,
               dismiss: prepareDismissal(`CONTRAST${$el.getAttribute('class')}${$el.tagName}${ratio}`),
               dismissAll: option.checks.CONTRAST_INPUT.dismissAll ? 'CONTRAST_INPUT' : false,
               developer: option.checks.CONTRAST_INPUT.developer || true,
@@ -9501,7 +9568,9 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: option.checks.CONTRAST_PLACEHOLDER.type || 'error',
-              content: Lang.sprintf(option.checks.CONTRAST_PLACEHOLDER.content || 'CONTRAST_PLACEHOLDER'),
+              content: option.checks.CONTRAST_PLACEHOLDER.content
+                ? Lang.sprintf(option.checks.CONTRAST_PLACEHOLDER.content)
+                : Lang.sprintf('CONTRAST_PLACEHOLDER') + ratioTip,
               position: 'afterend',
               dismiss: prepareDismissal(`CPLACEHOLDER${$el.getAttribute('class')}${$el.tagName}${ratio}`),
               dismissAll: option.checks.CONTRAST_PLACEHOLDER.dismissAll ? 'CONTRAST_PLACEHOLDER' : false,
@@ -9515,7 +9584,9 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: option.checks.CONTRAST_ERROR_GRAPHIC.type || 'error',
-              content: Lang.sprintf(option.checks.CONTRAST_ERROR_GRAPHIC.content || 'CONTRAST_ERROR_GRAPHIC'),
+              content: option.checks.CONTRAST_ERROR_GRAPHIC.content
+                ? Lang.sprintf(option.checks.CONTRAST_ERROR_GRAPHIC.content)
+                : Lang.sprintf('CONTRAST_ERROR_GRAPHIC') + graphicsTip,
               dismiss: prepareDismissal(`CONTRASTERROR${$el.outerHTML}`),
               dismissAll: option.checks.CONTRAST_ERROR_GRAPHIC.dismissAll ? 'CONTRAST_ERROR_GRAPHIC' : false,
               developer: option.checks.CONTRAST_ERROR_GRAPHIC.developer || true,
@@ -9529,7 +9600,9 @@ ${this.error.stack}
             results.push({
               element: $el,
               type: option.checks.CONTRAST_WARNING_GRAPHIC.type || 'warning',
-              content: Lang.sprintf(option.checks.CONTRAST_WARNING_GRAPHIC.content || 'CONTRAST_WARNING_GRAPHIC'),
+              content: option.checks.CONTRAST_WARNING_GRAPHIC.content
+                ? Lang.sprintf(option.checks.CONTRAST_WARNING_GRAPHIC.content)
+                : Lang.sprintf('CONTRAST_WARNING_GRAPHIC') + graphicsTip,
               dismiss: prepareDismissal(`CONTRASTWARNING${$el.outerHTML}`),
               dismissAll: option.checks.CONTRAST_WARNING_GRAPHIC.dismissAll ? 'CONTRAST_WARNING_GRAPHIC' : false,
               developer: option.checks.CONTRAST_WARNING_GRAPHIC.developer || true,
@@ -9542,7 +9615,9 @@ ${this.error.stack}
             results.push({
               element,
               type: option.checks.CONTRAST_WARNING.type || 'warning',
-              content: Lang.sprintf(option.checks.CONTRAST_WARNING.content || 'CONTRAST_WARNING'),
+              content: option.checks.CONTRAST_WARNING.content
+                ? Lang.sprintf(option.checks.CONTRAST_WARNING.content)
+                : Lang.sprintf('CONTRAST_WARNING') + ratioTip,
               dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
               dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
               developer: option.checks.CONTRAST_WARNING.developer || false,
@@ -9555,7 +9630,9 @@ ${this.error.stack}
             results.push({
               element,
               type: option.checks.CONTRAST_UNSUPPORTED.type || 'warning',
-              content: Lang.sprintf(option.checks.CONTRAST_UNSUPPORTED.content || 'CONTRAST_WARNING'),
+              content: option.checks.CONTRAST_UNSUPPORTED.content
+                ? Lang.sprintf(option.checks.CONTRAST_UNSUPPORTED.content)
+                : Lang.sprintf('CONTRAST_WARNING') + ratioTip,
               dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
               dismissAll: option.checks.CONTRAST_UNSUPPORTED.dismissAll ? 'CONTRAST_UNSUPPORTED' : false,
               developer: option.checks.CONTRAST_UNSUPPORTED.developer || false,

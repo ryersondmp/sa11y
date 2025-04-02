@@ -186,9 +186,15 @@ export function getHex(color) {
  * @returns {string|number} The formatted contrast ratio.
  */
 export function ratioToDisplay(value) {
-  return Constants.Global.contrastAPCA
-    ? Math.abs(Number(value.toFixed(1)))
-    : `${value.toFixed(2)}:1`;
+  if (Constants.Global.contrastAPCA) {
+    return Math.abs(Number(value.toFixed(1)));
+  }
+  // Round to decimal places, and display without decimals if integer.
+  const rounded = Math.round(value * 100) / 100;
+  if (Number.isInteger(rounded)) {
+    return `${rounded}:1`;
+  }
+  return `${rounded.toFixed(2)}:1`;
 }
 
 /**
@@ -218,10 +224,18 @@ export function calculateContrast(color, bg) {
  * @param {number[]} color Text colour in [R,G,B,A] format.
  * @param {number[]} background Background colour in [R,G,B,A] format.
  * @param {boolean} isLargeText Whether text is normal or large size.
+ * @param {boolean} contrastAAA Use WCAG AAA thresholds.
  * @returns Compliant colour hexcode.
  */
-export function suggestColorWCAG(color, background, isLargeText) {
-  const minContrastRatio = isLargeText ? 3 : 4.5;
+export function suggestColorWCAG(color, background, isLargeText, contrastAAA = false) {
+  let minContrastRatio;
+  if (contrastAAA) {
+    minContrastRatio = isLargeText ? 4.5 : 7;
+  } else {
+    minContrastRatio = isLargeText ? 3 : 4.5;
+  }
+
+  // Get luminance
   const fgLuminance = getLuminance(color);
   const bgLuminance = getLuminance(background);
 
@@ -244,8 +258,17 @@ export function suggestColorWCAG(color, background, isLargeText) {
   let step = 0.16;
   const percentChange = 0.5;
   const precision = 0.01;
+  let iterations = 0;
+  const maxIterations = 100;
 
   while (step >= precision) {
+    iterations += 1;
+
+    // Return null if no colour found.
+    if (iterations > maxIterations) {
+      return { color: null };
+    }
+
     adjustedColor = adjustColor(adjustedColor, step, adjustMode);
     const newLuminance = getLuminance(adjustedColor);
     contrastRatio = getWCAG2Ratio(newLuminance, bgLuminance);
@@ -374,7 +397,7 @@ export function generateColorSuggestion(contrastDetails) {
   if (color && background && background.type !== 'image' && type === 'text') {
     const suggested = Constants.Global.contrastAPCA
       ? suggestColorAPCA(color, background, fontWeight, fontSize)
-      : suggestColorWCAG(color, background, isLargeText);
+      : suggestColorWCAG(color, background, isLargeText, Constants.Global.contrastAAA);
 
     let advice;
     const hr = '<hr aria-hidden="true">';
@@ -383,7 +406,11 @@ export function generateColorSuggestion(contrastDetails) {
     const sizeBadge = `<strong class="normal-badge">${suggested.size}px</strong>`;
 
     if (!Constants.Global.contrastAPCA) {
-      advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
+      if (suggested.color === null) {
+        advice = `${hr} ${Lang._('NO_SUGGESTION')}`;
+      } else {
+        advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
+      }
     } else if (suggested.color && suggested.size) {
       advice = `${hr} ${Lang._('CONTRAST_APCA')} ${colorBadge} ${sizeBadge}`;
     } else if (suggested.color) {
@@ -450,10 +477,7 @@ export function generateContrastTools(contrastDetails) {
       <hr aria-hidden="true">
       <div id="contrast" class="badge">${Lang._('CONTRAST')}</div>
       <div id="value" class="badge">${displayedRatio}</div>
-      <div id="non-text" class="badge good-contrast" hidden>${Lang._('NON_TEXT')}</div>
-      <div id="large-text" class="badge good-contrast" hidden>${Lang._('LARGE_TEXT')}</div>
-      <div id="body-text" class="badge good-contrast" hidden>${Lang._('BODY_TEXT')}</div>
-      <div id="apca" class="badge good-contrast" hidden>${Lang._('GOOD')}</div>
+      <div id="good" class="badge good-contrast" hidden>${Lang._('GOOD')} <span class="good-icon"></span></div>
       <div id="apca-table" hidden></div>
       <div id="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};${sanitizedText.length ? '' : 'display: none;'}` : ''}${hasFontWeight + hasFontSize + textDecoration}">${sanitizedText}</div>
       <div id="color-pickers">
@@ -513,18 +537,15 @@ export function createFontSizesTable(container, fontSizes) {
 export function initializeContrastTools(container, contrastDetails) {
   const contrastTools = container?.querySelector('#contrast-tools');
   if (contrastTools) {
-    const { fontSize, fontWeight, type } = contrastDetails;
+    const { fontSize, fontWeight, type, isLargeText } = contrastDetails;
 
     // Cache selectors
     const contrast = container.querySelector('#contrast');
     const contrastPreview = container.querySelector('#contrast-preview');
     const fgInput = container.querySelector('#fg-input');
     const bgInput = container.querySelector('#bg-input');
-    const nonText = container.querySelector('#non-text');
-    const bodyText = container.querySelector('#body-text');
-    const largeText = container.querySelector('#large-text');
     const ratio = container.querySelector('#value');
-    const apca = container.querySelector('#apca');
+    const good = container.querySelector('#good');
     const apcaTable = container.querySelector('#apca-table');
 
     // Helper to update badge classes.
@@ -572,13 +593,13 @@ export function initializeContrastTools(container, contrastDetails) {
         switch (type) {
           case 'svg-error':
           case 'svg-warning': {
-            nonText.hidden = !nonTextPasses;
+            good.hidden = !nonTextPasses;
             passes = nonTextPasses;
             toggleBadges(elementsToToggle, passes);
             break;
           }
           case 'svg-text': {
-            nonText.hidden = !nonTextPasses;
+            good.hidden = !nonTextPasses;
             passes = fontArray.slice(1, 7).some((size) => size !== 999 && size !== 777);
             toggleBadges(elementsToToggle, passes);
             createFontSizesTable(apcaTable, fontArray);
@@ -588,7 +609,7 @@ export function initializeContrastTools(container, contrastDetails) {
             const minFontSize = fontArray[Math.floor(fontWeight / 100) - 1];
             passes = fontSize >= minFontSize;
             toggleBadges(elementsToToggle, passes);
-            apca.hidden = !passes;
+            good.hidden = !passes;
             break;
           }
         }
@@ -598,26 +619,32 @@ export function initializeContrastTools(container, contrastDetails) {
       if (!Constants.Global.contrastAPCA) {
         const value = contrastValue.ratio;
         ratio.textContent = ratioToDisplay(value);
-        const passes = value >= 3;
+
+        const useAAA = Constants.Global.contrastAAA; // Use AAA thresholds if true, otherwise AA
+        const nonTextThreshold = 3;
+        const normalTextThreshold = useAAA ? 7 : 4.5;
+        const largeTextThreshold = useAAA ? 4.5 : 3;
+
+        const passesNonText = value >= nonTextThreshold;
+        const passesNormalText = value >= normalTextThreshold;
+        const passesLargeText = value >= largeTextThreshold;
 
         switch (type) {
           case 'svg-error':
+          case 'svg-text':
           case 'svg-warning': {
-            nonText.hidden = !passes;
-            toggleBadges(elementsToToggle, passes);
-            break;
-          }
-          case 'svg-text': {
-            nonText.hidden = !passes;
-            toggleBadges(elementsToToggle, passes);
-            largeText.hidden = !passes;
-            bodyText.hidden = value <= 4.5;
+            good.hidden = !passesNonText;
+            toggleBadges(elementsToToggle, passesNonText);
             break;
           }
           default: {
-            toggleBadges([ratio, contrast], passes);
-            largeText.hidden = !passes;
-            bodyText.hidden = value <= 4.5;
+            if (isLargeText) {
+              toggleBadges([ratio, contrast], passesLargeText);
+              good.hidden = !passesLargeText;
+            } else {
+              toggleBadges([ratio, contrast], passesNormalText);
+              good.hidden = !passesNormalText;
+            }
             break;
           }
         }
@@ -638,15 +665,22 @@ export function initializeContrastTools(container, contrastDetails) {
   * @param {number} fontSize Element's font size.
   * @param {number} fontWeight Element's font weight.
   * @param {number} opacity Element's opacity value.
+  * @param {boolean} contrastAAA Check if AAA threshold is required.
   * @returns {Object} Object containing the element, ratio, and extra details.
   */
-export function wcagAlgorithm($el, color, background, fontSize, fontWeight, opacity) {
+export function wcagAlgorithm($el, color, background, fontSize, fontWeight, opacity, contrastAAA = false) {
   const { ratio, blendedColor } = calculateContrast(color, background);
   const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
-  const hasLowContrast = ratio < 3;
-  const hasLowContrastNormalText = ratio > 1 && ratio < 4.5;
 
-  if ((isLargeText && hasLowContrast) || (!isLargeText && hasLowContrastNormalText)) {
+  let hasLowContrast;
+  if (contrastAAA) {
+    hasLowContrast = isLargeText ? ratio < 4.5 : ratio < 7;
+  } else {
+    const hasLowContrastNormalText = ratio > 1 && ratio < 4.5;
+    hasLowContrast = isLargeText ? ratio < 3 : hasLowContrastNormalText;
+  }
+
+  if (hasLowContrast) {
     return {
       $el,
       ratio: ratioToDisplay(ratio),
@@ -706,9 +740,12 @@ export function apcaAlgorithm($el, color, background, fontSize, fontWeight, opac
  * @param {number} fontSize Element's font size.
  * @param {number} fontWeight Element's font weight.
  * @param {number} opacity Element's opacity value.
+ * @param {boolean} contrastAAA Use WCAG 2.0 AAA thresholds.
  * @returns {Object} Object containing the element, ratio, and extra details.
  */
-export function checkElementContrast($el, color, background, fontSize, fontWeight, opacity) {
+export function checkElementContrast(
+  $el, color, background, fontSize, fontWeight, opacity, contrastAAA = false,
+) {
   const algorithm = Constants.Global.contrastAPCA ? apcaAlgorithm : wcagAlgorithm;
-  return algorithm($el, color, background, fontSize, fontWeight, opacity);
+  return algorithm($el, color, background, fontSize, fontWeight, opacity, contrastAAA);
 }

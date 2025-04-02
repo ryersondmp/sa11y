@@ -58,6 +58,7 @@ const defaultOptions = {
 
   // Contrast
   contrastPlugin: true,
+  contrastAAA: false,
   contrastAPCA: false,
 
   // Other plugins

@@ -48,11 +48,13 @@ export default function checkContrast(results, option) {
     // Only check elements with text and inputs.
     if (text.length !== 0 || checkInputs) {
       if (color === 'unsupported' || background === 'unsupported') {
+        const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
         contrastResults.push({
           $el,
           type: 'unsupported',
           fontSize,
           fontWeight,
+          isLargeText,
           opacity,
           ...(background !== 'unsupported' && { background }),
           ...(color !== 'unsupported' && { color }),
@@ -61,10 +63,12 @@ export default function checkContrast(results, option) {
         if (isHidden) {
           // Ignore visually hidden.
         } else {
+          const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
           contrastResults.push({
             $el,
             type: 'background-image',
             color,
+            isLargeText,
             background,
             fontSize,
             fontWeight,
@@ -76,7 +80,9 @@ export default function checkContrast(results, option) {
       } else if (isHidden || Contrast.getHex(color) === Contrast.getHex(background)) {
         // Ignore visually hidden elements.
       } else {
-        const result = Contrast.checkElementContrast($el, color, background, fontSize, fontWeight, opacity);
+        const result = Contrast.checkElementContrast(
+          $el, color, background, fontSize, fontWeight, opacity, option.contrastAAA,
+        );
         if (result) {
           result.type = checkInputs ? 'input' : 'text';
           contrastResults.push(result);
@@ -180,7 +186,7 @@ export default function checkContrast(results, option) {
       if (pBackground.type === 'image') {
         // There will already be a warning.
       } else {
-        const result = Contrast.checkElementContrast($el, pColor, pBackground, pSize, pWeight, pOpacity);
+        const result = Contrast.checkElementContrast($el, pColor, pBackground, pSize, pWeight, pOpacity, option.contrastAAA);
         if (result) {
           result.type = 'placeholder';
           contrastResults.push(result);
@@ -208,6 +214,7 @@ export default function checkContrast(results, option) {
         const groupKey = JSON.stringify({
           background: warning.background.value,
           color: warning.color,
+          isLargeText: warning.isLargeText,
         });
         if (!grouped[groupKey]) grouped[groupKey] = [];
         grouped[groupKey].push(warning);
@@ -256,6 +263,17 @@ export default function checkContrast(results, option) {
     }
     updatedItem.sanitizedText = previewText;
 
+    // Reference necessary ratios for compliance.
+    let ratioTip = '';
+    if (!option.contrastAPCA) {
+      const normal = option.contrastAAA ? '7:1' : '4.5:1';
+      const large = option.contrastAAA ? '4.5:1' : '3:1';
+      const ratioToDisplay = item.isLargeText ? large : normal;
+      const ratioRequirement = item.isLargeText ? 'CONTRAST_LARGE' : 'CONTRAST_NORMAL';
+      ratioTip = ` ${Lang.sprintf(ratioRequirement, ratioToDisplay)}`;
+    }
+    const graphicsTip = option.contrastAPCA ? '' : ` ${Lang.sprintf('CONTRAST_TIP_GRAPHIC')}`;
+
     // Iterate through contrast results based on type.
     switch (item.type) {
       case 'text':
@@ -263,7 +281,9 @@ export default function checkContrast(results, option) {
           results.push({
             element: $el,
             type: option.checks.CONTRAST_ERROR.type || 'error',
-            content: Lang.sprintf(option.checks.CONTRAST_ERROR.content || 'CONTRAST_ERROR'),
+            content: option.checks.CONTRAST_ERROR.content
+              ? Lang.sprintf(option.checks.CONTRAST_ERROR.content)
+              : Lang.sprintf('CONTRAST_ERROR') + ratioTip,
             dismiss: Utils.prepareDismissal(`CONTRAST${sanitizedText}`),
             dismissAll: option.checks.CONTRAST_ERROR.dismissAll ? 'CONTRAST_ERROR' : false,
             developer: option.checks.CONTRAST_ERROR.developer || false,
@@ -276,7 +296,9 @@ export default function checkContrast(results, option) {
           results.push({
             element,
             type: option.checks.CONTRAST_INPUT.type || 'error',
-            content: Lang.sprintf(option.checks.CONTRAST_INPUT.content || 'CONTRAST_INPUT', ratio),
+            content: option.checks.CONTRAST_INPUT.content
+              ? Lang.sprintf(option.checks.CONTRAST_INPUT.content)
+              : Lang.sprintf('CONTRAST_INPUT', ratio) + ratioTip,
             dismiss: Utils.prepareDismissal(`CONTRAST${$el.getAttribute('class')}${$el.tagName}${ratio}`),
             dismissAll: option.checks.CONTRAST_INPUT.dismissAll ? 'CONTRAST_INPUT' : false,
             developer: option.checks.CONTRAST_INPUT.developer || true,
@@ -289,7 +311,9 @@ export default function checkContrast(results, option) {
           results.push({
             element: $el,
             type: option.checks.CONTRAST_PLACEHOLDER.type || 'error',
-            content: Lang.sprintf(option.checks.CONTRAST_PLACEHOLDER.content || 'CONTRAST_PLACEHOLDER'),
+            content: option.checks.CONTRAST_PLACEHOLDER.content
+              ? Lang.sprintf(option.checks.CONTRAST_PLACEHOLDER.content)
+              : Lang.sprintf('CONTRAST_PLACEHOLDER') + ratioTip,
             position: 'afterend',
             dismiss: Utils.prepareDismissal(`CPLACEHOLDER${$el.getAttribute('class')}${$el.tagName}${ratio}`),
             dismissAll: option.checks.CONTRAST_PLACEHOLDER.dismissAll ? 'CONTRAST_PLACEHOLDER' : false,
@@ -303,7 +327,9 @@ export default function checkContrast(results, option) {
           results.push({
             element: $el,
             type: option.checks.CONTRAST_ERROR_GRAPHIC.type || 'error',
-            content: Lang.sprintf(option.checks.CONTRAST_ERROR_GRAPHIC.content || 'CONTRAST_ERROR_GRAPHIC'),
+            content: option.checks.CONTRAST_ERROR_GRAPHIC.content
+              ? Lang.sprintf(option.checks.CONTRAST_ERROR_GRAPHIC.content)
+              : Lang.sprintf('CONTRAST_ERROR_GRAPHIC') + graphicsTip,
             dismiss: Utils.prepareDismissal(`CONTRASTERROR${$el.outerHTML}`),
             dismissAll: option.checks.CONTRAST_ERROR_GRAPHIC.dismissAll ? 'CONTRAST_ERROR_GRAPHIC' : false,
             developer: option.checks.CONTRAST_ERROR_GRAPHIC.developer || true,
@@ -317,7 +343,9 @@ export default function checkContrast(results, option) {
           results.push({
             element: $el,
             type: option.checks.CONTRAST_WARNING_GRAPHIC.type || 'warning',
-            content: Lang.sprintf(option.checks.CONTRAST_WARNING_GRAPHIC.content || 'CONTRAST_WARNING_GRAPHIC'),
+            content: option.checks.CONTRAST_WARNING_GRAPHIC.content
+              ? Lang.sprintf(option.checks.CONTRAST_WARNING_GRAPHIC.content)
+              : Lang.sprintf('CONTRAST_WARNING_GRAPHIC') + graphicsTip,
             dismiss: Utils.prepareDismissal(`CONTRASTWARNING${$el.outerHTML}`),
             dismissAll: option.checks.CONTRAST_WARNING_GRAPHIC.dismissAll ? 'CONTRAST_WARNING_GRAPHIC' : false,
             developer: option.checks.CONTRAST_WARNING_GRAPHIC.developer || true,
@@ -330,7 +358,9 @@ export default function checkContrast(results, option) {
           results.push({
             element,
             type: option.checks.CONTRAST_WARNING.type || 'warning',
-            content: Lang.sprintf(option.checks.CONTRAST_WARNING.content || 'CONTRAST_WARNING'),
+            content: option.checks.CONTRAST_WARNING.content
+              ? Lang.sprintf(option.checks.CONTRAST_WARNING.content)
+              : Lang.sprintf('CONTRAST_WARNING') + ratioTip,
             dismiss: Utils.prepareDismissal(`CONTRAST${sanitizedText}`),
             dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
             developer: option.checks.CONTRAST_WARNING.developer || false,
@@ -343,7 +373,9 @@ export default function checkContrast(results, option) {
           results.push({
             element,
             type: option.checks.CONTRAST_UNSUPPORTED.type || 'warning',
-            content: Lang.sprintf(option.checks.CONTRAST_UNSUPPORTED.content || 'CONTRAST_WARNING'),
+            content: option.checks.CONTRAST_UNSUPPORTED.content
+              ? Lang.sprintf(option.checks.CONTRAST_UNSUPPORTED.content)
+              : Lang.sprintf('CONTRAST_WARNING') + ratioTip,
             dismiss: Utils.prepareDismissal(`CONTRAST${sanitizedText}`),
             dismissAll: option.checks.CONTRAST_UNSUPPORTED.dismissAll ? 'CONTRAST_UNSUPPORTED' : false,
             developer: option.checks.CONTRAST_UNSUPPORTED.developer || false,

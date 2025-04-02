@@ -241,10 +241,13 @@ export default {
     TABLES_EMPTY_HEADING: 'Empty table header found! Table headers should <strong>never</strong> be empty. It is important to designate row and/or column headers to convey their relationship. This information provides context to people who use assistive technology. Please keep in mind that tables should be used for tabular data only. <hr> Learn more about <a href="https://www.w3.org/WAI/tutorials/tables/">accessible tables.</a>',
 
     // Contrast
+    CONTRAST_NORMAL: 'Normal-sized text should have at least a %(RATIO) ratio.',
+    CONTRAST_LARGE: 'Large-sized text should have at least a %(RATIO) ratio.',
     CONTRAST_ERROR: 'Text does not have enough contrast with the background, making it harder to read.',
     CONTRAST_WARNING: 'The contrast of this text is unknown and needs to be manually reviewed. Ensure the text and the background have strong contrasting colours.',
     CONTRAST_ERROR_GRAPHIC: 'Graphic does not have enough contrast with the background, making it harder to see.',
-    CONTRAST_WARNING_GRAPHIC: 'The contrast of this graphic is unknown and needs to be manually reviewed. Ensure the graphic and the background have strong contrasting colours.',
+    CONTRAST_WARNING_GRAPHIC: 'The contrast of this graphic is unknown and needs to be manually reviewed.',
+    CONTRAST_TIP_GRAPHIC: 'Graphics and user interface elements should have at least a 3:1 ratio.',
     CONTRAST_OPACITY: 'Increase the opacity for better visibility.',
     CONTRAST_APCA: 'This is not enough contrast for any size text. Consider using this colour and text size combination?',
     CONTRAST_COLOR: 'Consider using this colour instead?',
@@ -253,10 +256,8 @@ export default {
     CONTRAST_INPUT: 'Text within this input does not have enough contrast with the background, making it harder to read.',
     CONTRAST: 'Contrast',
     UNKNOWN: 'Unknown',
-    LARGE_TEXT: 'Large Text',
-    BODY_TEXT: 'Body Text',
     FG: 'Foreground',
     BG: 'Background',
-    NON_TEXT: 'Non-Text',
+    NO_SUGGESTION: 'No accessible combination can be found by changing the text colour. Try changing the background colour.',
   },
 };
