@@ -32,7 +32,7 @@ const Elements = (function myElements() {
       Constants.Exclusions.Headings,
     );
 
-    // Excluded via headerIgore.
+    // Excluded via headerIgnore.
     Found.ExcludedHeadings = Found.Headings.filter((heading) => Constants.Exclusions.Headings.some((exclusion) => heading.matches(exclusion)));
 
     // Excluded via outlineIgnore.
