@@ -62,6 +62,31 @@
   </header>
   <main>
 
+    <h2>Images within an HTML Report export are converted to Base64</h2>
+    <h3>Local host</h3>
+    <img src="./assets/aussie.avif" />
+
+    <h3>External origin</h3>
+    <img src="https://www.akc.org/wp-content/uploads/2017/11/Australian-Shepherd.1.jpg" width="300" alt="placeholder" />
+
+    <h3>Accordion</h3>
+    <p>Image is just hidden in a div to simulate an accordion for the purpose of testing Skip-to-issue button.</p>
+    <div hidden>
+      <img src="./assets/aussie.avif" alt="placeholder" />
+    </div>
+
+    <h3>Existing base64 image on the page</h3>
+    <img
+      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII"
+      alt="placeholder" />
+
+    <h3>Existing base64 image in a hidden div</h3>
+    <div hidden>
+      <img
+        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII"
+        alt="placeholder" />
+    </div>
+
     <h2>outlineIgnore prop</h2>
     <p>Both items have a class of 'outline-ignore' but the error shouldn't be hidden from the Page Outline.</p>
     <h3 class="outline-ignore">This should not appear in Outline</h3>

@@ -558,16 +558,39 @@ export function getBestImageSource(element) {
 }
 
 /**
- * Generate an HTML preview for an issue if it's an image, iframe, audio or video element. Otherwise, return escaped HTML within <code> tags. Used for Skip to Issue panel alerts and HTML page export.
+ * Converts a Blob object to a Base64-encoded string.
+ * @param {Blob} blob - The Blob object to convert.
+ * @returns {Promise<string>} A promise that resolves to a Base64 string representation of the Blob.
+ */
+export const blobToBase64 = (blob) => new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onloadend = () => {
+    let { result } = reader;
+    // Ensure the correct MIME type if it's missing or wrong. Necessary for uncommon image formats.
+    const detectedMime = blob.type && blob.type.startsWith('image/') ? blob.type : 'image/png'; // Default fallback
+    if (result.startsWith('data:application/octet-stream')) {
+      result = result.replace('data:application/octet-stream', `data:${detectedMime}`);
+    }
+    resolve(result);
+  };
+  reader.onerror = reject;
+  reader.readAsDataURL(blob);
+});
+
+/**
+ * Generate an HTML preview for an issue if it's an image, iframe, audio, or video element.
+ * Otherwise, return escaped HTML within <code> tags. Used for Skip to Issue panel alerts and HTML page export.
  * @param {Object} issueObject The issue object.
+ * @param {boolean} convertBase64 Optional. Convert image to Base64.
  * @returns {html} Returns HTML.
  */
-export function generateElementPreview(issueObject) {
+export function generateElementPreview(issueObject, convertBase64 = false) {
   const issueElement = issueObject.element;
   const cleanHTML = sanitizeHTMLBlock(issueObject.htmlPath);
   const truncatedHTML = truncateString(cleanHTML, 600);
   const htmlPath = `<pre><code>${escapeHTML(truncatedHTML)}</code></pre>`;
 
+  // Simple output for basic text elements.
   const simple = (element) => {
     const text = getText(element);
     const truncatedText = truncateString(text, 100);
@@ -590,11 +613,43 @@ export function generateElementPreview(issueObject) {
       const alt = element.alt ? `alt="${sanitizeHTML(element.alt)}"` : 'alt';
       const source = getBestImageSource(element);
 
-      if (source) {
+      function createImageElement(src) {
         return anchor
-          ? `<a href="${sanitizeURL(anchor.href)}" rel="noopener noreferrer"><img src="${sanitizeURL(source)}" ${alt}/></a>`
-          : `<img src="${sanitizeURL(source)}" ${alt}/>`;
+          ? `<a href="${sanitizeURL(anchor.href)}" rel="noopener noreferrer"><img src="${src}" ${alt}/></a>`
+          : `<img src="${src}" ${alt}/>`;
       }
+
+      // Async handling if converting images to Base64 (for HTML export).
+      if (convertBase64) {
+        return new Promise((resolve) => {
+          if (source) {
+            // Make sure we're only converting images from the same domain.
+            const isSameDomain = new URL(source, window.location.origin).origin === window.location.origin;
+            if (isSameDomain) {
+              fetch(source)
+                .then((response) => response.blob())
+                .then((blob) => blobToBase64(blob))
+                .then((base64Source) => {
+                  const imageSource = base64Source.startsWith('data:image/')
+                    ? base64Source : sanitizeURL(base64Source);
+                  resolve(createImageElement(imageSource));
+                })
+                .catch(() => {
+                  resolve(createImageElement(source));
+                });
+            } else {
+              const imageSource = source.startsWith('data:image/') ? source : sanitizeURL(source);
+              resolve(createImageElement(imageSource));
+            }
+          } else {
+            resolve(htmlPath);
+          }
+        });
+      }
+
+      // Synchronous handling for skip-to-issue.
+      const sanitized = source.startsWith('data:image/') ? source : sanitizeURL(source);
+      if (source) return createImageElement(sanitized);
       return htmlPath;
     },
     IFRAME: (element) => {

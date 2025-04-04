@@ -420,6 +420,10 @@ hr {
   mask: var(--sa11y-dismiss-icon) center no-repeat;
 }
 
+.dismiss-group {
+  display: flex;
+}
+
 @media screen and (forced-colors: active) {
   .dismiss-icon {
     filter: invert(1);

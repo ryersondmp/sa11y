@@ -26,12 +26,12 @@ function generateMetaData() {
 }
 
 // Generate HTML template for download.
-function generateHTMLTemplate(results, dismissResults) {
+async function generateHTMLTemplate(results, dismissResults) {
   const errors = results.filter((issue) => issue.type === 'error');
   const warnings = results.filter((issue) => issue.type === 'warning');
   const count = { error: errors.length, warning: warnings.length, dismiss: dismissResults.length };
 
-  function generateList(issues, type) {
+  async function generateList(issues, type) {
     const types = {
       error: Lang._('ERRORS'),
       warning: Lang._('WARNINGS'),
@@ -43,7 +43,7 @@ function generateHTMLTemplate(results, dismissResults) {
     if (!hasIssues) return '';
 
     let list = `<h2>${heading}</h2>`;
-    let listOpeningTag = '<ol>';
+    let listOpeningTag = `<ol class="${type}">`;
     let listClosingTag = '</ol>';
 
     if (type === 'dismissed') {
@@ -51,53 +51,43 @@ function generateHTMLTemplate(results, dismissResults) {
       listClosingTag = '</details>';
     }
 
-    // Opening tag
+    // Opening tag.
     list += listOpeningTag;
 
-    issues.forEach((issue) => {
+    // Create an array of promises and wait for all of them to resolve.
+    const issuePromises = issues.map(async (issue) => {
       let elementPreview = '';
       if (issue.element) {
         const allowedTags = ['IMG', 'IFRAME', 'AUDIO', 'VIDEO'];
+        const preview = await generateElementPreview(issue, true);
         if (allowedTags.includes(issue.element.tagName)) {
-          elementPreview = `
-              <li>
-                <strong>${Lang._('PREVIEW')}:</strong>
-                ${generateElementPreview(issue)}
-              </li>
-              <li>
-                <strong>${Lang._('ELEMENT')}:</strong>
-                <pre><code>${escapeHTML(issue.htmlPath)}</code></pre>
-              </li>`;
+          elementPreview = `<li><strong>${Lang._('PREVIEW')}:</strong> ${preview}</li><li><strong>${Lang._('ELEMENT')}:</strong> <pre><code>${escapeHTML(issue.htmlPath)}</code></pre></li>`;
         } else {
-          elementPreview = `
-              <li>
-                <strong>${Lang._('ELEMENT')}:</strong>
-                <pre><code>${escapeHTML(issue.htmlPath)}</code></pre>
-              </li>`;
+          elementPreview = `<li><strong>${Lang._('ELEMENT')}:</strong> <pre><code>${escapeHTML(issue.htmlPath)}</code></pre></li>`;
         }
       }
       const cssPath = issue.cssPath
-        ? `<li>
-            <strong>${Lang._('PATH')}:</strong>
-            <pre><code>${issue.cssPath}</code></pre>
-          </li>` : '';
-
-      list += `<li>
-                <p>${issue.content.replace('<hr aria-hidden="true">', ' | ')}</p>
-                <ul>${elementPreview}${cssPath}</ul>
-              </li>`;
+        ? `<li><strong>${Lang._('PATH')}:</strong> <pre><code>${issue.cssPath}</code></pre></li>`
+        : '';
+      return `<li>${issue.content} <ul>${elementPreview}${cssPath}</ul></li>`;
     });
+
+    // Wait for all promises to resolve.
+    const resolvedIssues = await Promise.all(issuePromises);
+
+    // Add resolved issues to the list.
+    list += resolvedIssues.join('');
 
     // Closing tag.
     list += listClosingTag;
     return list;
   }
 
-  const errorsList = generateList(errors, 'error');
-  const warningList = generateList(warnings, 'warning');
-  const dismissedList = generateList(dismissResults, 'dismissed');
+  const errorsList = await generateList(errors, 'error');
+  const warningList = await generateList(warnings, 'warning');
+  const dismissedList = await generateList(dismissResults, 'dismissed');
 
-  // Meta information.
+  // Meta information
   const meta = generateMetaData();
   const metaTitle = !meta.titleCheck
     ? `<dt>${Lang._('PAGE_TITLE')}</dt><dd>${meta.metaTitle}</dd>` : '';
@@ -136,9 +126,11 @@ function generateHTMLTemplate(results, dismissResults) {
             </div>
         </dl>
         </header>
-        ${errorsList}
-        ${warningList}
-        ${dismissedList}
+        <main>
+          ${errorsList}
+          ${warningList}
+          ${dismissedList}
+        </main>
         <footer>
           <p>${Lang.sprintf('GENERATED', tool)}</p>
         </footer>
@@ -149,8 +141,8 @@ function generateHTMLTemplate(results, dismissResults) {
 }
 
 /* HTML Blob */
-function downloadHTMLTemplate(results, dismissResults) {
-  const htmlContent = generateHTMLTemplate(results, dismissResults);
+async function downloadHTMLTemplate(results, dismissResults) {
+  const htmlContent = await generateHTMLTemplate(results, dismissResults);
   const meta = generateMetaData();
 
   // Create blob
@@ -201,7 +193,7 @@ function downloadCSVTemplate(results) {
   const headers = Object.keys(filteredObjects[0]);
   const csvContent = `${headers.join(',')}\n${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(',')).join('\n')}`;
 
-  // Create blob
+  // Create blob.
   const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
   const blob = new Blob([bom, csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = window.URL.createObjectURL(blob);
@@ -213,7 +205,7 @@ function downloadCSVTemplate(results) {
   document.body.appendChild(link);
   link.click();
 
-  // Remove blob
+  // Remove blob.
   setTimeout(() => {
     document.body.removeChild(link);
     window.URL.revokeObjectURL(link.href);
@@ -225,13 +217,12 @@ let exportHTMLHandler;
 let exportCSVHandler;
 export function exportResults(results, dismissResults) {
   if (Constants.Global.exportResultsPlugin) {
-    exportHTMLHandler = () => {
-      downloadHTMLTemplate(results, dismissResults);
+    exportHTMLHandler = async () => {
+      await downloadHTMLTemplate(results, dismissResults);
     };
     exportCSVHandler = () => {
       downloadCSVTemplate(results, dismissResults);
     };
-
     Constants.Panel.exportHTML.addEventListener('click', exportHTMLHandler);
     Constants.Panel.exportCSV.addEventListener('click', exportCSVHandler);
   }
