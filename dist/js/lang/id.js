@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.5
+  * @version 4.1.6
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -26,7 +26,8 @@ var id = {
     OFF: 'Mati',
     ALERT_TEXT: 'Waspada',
     ALERT_CLOSE: 'Tutup',
-    OUTLINE: 'Halaman',
+    OUTLINE: 'Kerangka',
+    READABILITY_DESC: 'Menampilkan skor keterbacaan di tab <strong>Kerangka</strong> untuk membantu mengukur kesulitan membaca.',
     TITLE: 'Judul',
     ALT: 'ALT',
     IMAGES: 'Gambar',

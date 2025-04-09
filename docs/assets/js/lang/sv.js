@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.5
+  * @version 4.1.6
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -27,6 +27,7 @@ var sv = {
     ALERT_TEXT: 'Varning',
     ALERT_CLOSE: 'Stäng',
     OUTLINE: 'Sidöversikt',
+    READABILITY_DESC: 'Visar läsbarhetspoängen på fliken <strong>Sidöversikt</strong> för att hjälpa till att bedöma lässvårigheten.',
     TITLE: 'Titel',
     ALT: 'ALT',
     IMAGES: 'Bilder',

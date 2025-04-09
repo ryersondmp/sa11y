@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.5
+  * @version 4.1.6
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -26,7 +26,8 @@ var lt = {
     OFF: 'Išjungta',
     ALERT_TEXT: 'Įspėjimas',
     ALERT_CLOSE: 'Uždaryti',
-    OUTLINE: 'Apžvalga',
+    OUTLINE: 'Struktūra',
+    READABILITY_DESC: 'Skirtuke <strong>Struktūra</strong> rodomas skaitomumo balas, padedantis įvertinti skaitymo sudėtingumą.',
     TITLE: 'Pavadinimas',
     ALT: 'ALT',
     IMAGES: 'Vaizdai',

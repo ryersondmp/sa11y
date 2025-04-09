@@ -62,6 +62,21 @@
   </header>
   <main>
 
+    <h2>Using CSS variables to override position of toggle and panel</h2>
+    <pre><code>
+      :root {
+      --sa11y-toggle-y-offset: 40px;
+      --sa11y-toggle-x-offset: 40px;
+      }
+    </code></pre>
+
+    <style>
+      :root {
+        --sa11y-toggle-y-offset: 40px;
+        --sa11y-toggle-x-offset: 40px;
+      }
+    </style>
+
     <h2>Images within an HTML Report export are converted to Base64</h2>
     <h3>Local host</h3>
     <img src="./assets/aussie.avif" />

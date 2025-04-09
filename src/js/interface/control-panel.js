@@ -42,10 +42,11 @@ export default class ControlPanel extends HTMLElement {
 
     const readabilityPlugin = Constants.Readability.Plugin ? `
       <li id="readability-item">
-        <label id="check-readability" for="readability-toggle">${Lang._('READABILITY')}</label>
+        <label id="check-readability" for="readability-toggle">${Lang._('READABILITY')} <span class="info-icon"></span></label>
         <button type="button" id="readability-toggle" aria-labelledby="check-readability" class="switch"
           aria-pressed="${rememberReadability ? 'true' : 'false'}"
         >${rememberReadability ? Lang._('ON') : Lang._('OFF')}</button>
+        <div id="check-readability-desc" hidden>${Lang._('READABILITY_DESC')}</div>
       </li>` : '';
 
     const colourFilterPlugin = Constants.Global.colourFilterPlugin ? `
@@ -87,7 +88,7 @@ export default class ControlPanel extends HTMLElement {
 
     /* MAIN TOGGLE */
     const mainToggle = `
-      <button type="button" aria-expanded="false" id="toggle" aria-describedby="notification-badge" aria-label="${Lang._('MAIN_TOGGLE_LABEL')}" class="${rememberPanelPosition}" disabled>
+      <button type="button" aria-expanded="false" id="toggle" part="toggle" aria-describedby="notification-badge" aria-label="${Lang._('MAIN_TOGGLE_LABEL')}" class="${rememberPanelPosition}" disabled>
         ${MainToggleIcon}
         <div id="notification-badge">
           <span id="notification-count"></span>
@@ -228,7 +229,7 @@ export default class ControlPanel extends HTMLElement {
     if (rememberPanelPosition === 'top-left' || rememberPanelPosition === 'top-right') {
       container.innerHTML = `
         ${mainToggle}
-        <div id="panel" class="${rememberPanelPosition}">
+        <div id="panel" class="${rememberPanelPosition}" part="panel">
           ${panelStatus}
           ${colourFilterPanel}
           ${tabToggles}
@@ -241,7 +242,7 @@ export default class ControlPanel extends HTMLElement {
     } else {
       container.innerHTML = `
         ${mainToggle}
-        <div id="panel" class="${rememberPanelPosition}">
+        <div id="panel" class="${rememberPanelPosition}" part="panel">
           ${pageIssues}
           ${pageOutline}
           ${imagesOutline}

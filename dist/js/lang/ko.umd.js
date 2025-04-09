@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.5
+  * @version 4.1.6
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -32,7 +32,8 @@
       OFF: '꺼짐',
       ALERT_TEXT: '경고',
       ALERT_CLOSE: '닫기',
-      OUTLINE: '윤곽',
+      OUTLINE: '개요',
+      READABILITY_DESC: '<strong>개요</strong> 탭에 가독성 점수를 표시하여 읽기 난이도를 측정하는 데 도움을 줍니다.',
       TITLE: '제목',
       ALT: '대체 텍스트',
       IMAGES: '이미지',

@@ -15,6 +15,7 @@ export default {
     ALERT_TEXT: 'Opozorilo',
     ALERT_CLOSE: 'Zapri',
     OUTLINE: 'Oris',
+    READABILITY_DESC: 'Prikaže oceno berljivosti na zavihku <strong>Oris</strong> za lažjo oceno težavnosti branja.',
     TITLE: 'Naslov',
     ALT: 'ALT',
     IMAGES: 'Slike',

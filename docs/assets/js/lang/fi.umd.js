@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.5
+  * @version 4.1.6
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -32,7 +32,8 @@
       OFF: 'Pois päältä',
       ALERT_TEXT: 'Hälytys',
       ALERT_CLOSE: 'Sulje',
-      OUTLINE: 'Sivuluettelo',
+      OUTLINE: 'Jäsennys',
+      READABILITY_DESC: 'Näyttää luettavuuspisteet <strong>Jäsennys</strong>-välilehdellä auttaakseen lukemisen vaikeuden arvioinnissa.',
       TITLE: 'Otsikko',
       ALT: 'ALT',
       IMAGES: 'Kuvat',

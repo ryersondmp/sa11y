@@ -200,5 +200,17 @@ export class PanelTooltips extends HTMLElement {
         content: Lang._('DEVELOPER_DESC'),
       });
     }
+
+    /* 4. Tooltip for "Readability" toggle. */
+    if (Constants.Global.readabilityPlugin) {
+      const infoIcon = Constants.Panel.readabilityItem.querySelector('.info-icon');
+      tippy(infoIcon, {
+        ...tooltipOptions(shadowRoot),
+        triggerTarget: [Constants.Panel.readabilityItem],
+        offset: [0, 10],
+        maxWidth: 250,
+        content: Lang._('READABILITY_DESC'),
+      });
+    }
   }
 }

@@ -14,6 +14,7 @@ export default {
     ALERT_TEXT: 'Alarm',
     ALERT_CLOSE: 'Schließen',
     OUTLINE: 'Seitenumriss',
+    READABILITY_DESC: 'Zeigt den Lesbarkeitswert im Tab <strong>Seitenumriss</strong> an, um die Leseschwierigkeit einzuschätzen.',
     TITLE: 'Titel',
     ALT: 'ALT',
     IMAGES: 'Bilder',

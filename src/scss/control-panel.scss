@@ -73,7 +73,7 @@ audio {
 /* ************************************* */
 #toggle {
   position: fixed;
-  bottom: 15px;
+  bottom: var(--sa11y-toggle-y-offset);
   z-index: 2147483644;
   display: flex;
   align-items: center;
@@ -89,16 +89,16 @@ audio {
   background-size: 150% 150%;
   border-radius: 50%;
   transition: all .2s ease-in-out;
-  inset-inline-end: 18px;
+  inset-inline-end: var(--sa11y-toggle-x-offset);
 
   &.left,
   &.top-left {
-    inset-inline-start: 18px;
+    inset-inline-start: var(--sa11y-toggle-x-offset);
   }
 
   &.top-left,
   &.top-right {
-    top: 15px;
+    top: var(--sa11y-toggle-y-offset);
     bottom: unset;
   }
 
@@ -170,7 +170,7 @@ audio {
 /* ************************************* */
 #panel {
   position: fixed;
-  bottom: 25px;
+  bottom: calc(var(--sa11y-toggle-y-offset) + var(--sa11y-panel-y-gap));
   z-index: 2147483643;
   overflow: visible;
   visibility: hidden;
@@ -183,17 +183,18 @@ audio {
   transition: transform .2s, opacity .2s background .2s;
   transform: scale(0);
   transform-origin: 100% 100%;
-  inset-inline-end: 42px;
+  inset-inline-end: calc(var(--sa11y-toggle-x-offset) + var(--sa11y-panel-x-gap));
 
   &.left,
   &.top-left {
-    inset-inline-start: 42px;
+    inset-inline-start: calc(var(--sa11y-toggle-x-offset) + var(--sa11y-panel-x-gap));
     inset-inline-end: unset;
   }
 
   &.top-right,
   &.top-left {
-    top: 35px;
+    /* Top needs 10px extra. */
+    top: calc(var(--sa11y-toggle-y-offset) + var(--sa11y-panel-y-gap) + 10px);
     bottom: unset;
   }
 

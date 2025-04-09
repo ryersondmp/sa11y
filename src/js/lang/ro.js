@@ -15,6 +15,7 @@ export default {
     ALERT_TEXT: 'Alertă',
     ALERT_CLOSE: 'Închideți',
     OUTLINE: 'Schiță',
+    READABILITY_DESC: 'Afișează scorul de lizibilitate în fila <strong>Schiță</strong> pentru a ajuta la evaluarea dificultății de citire.',
     TITLE: 'Titlu',
     ALT: 'ALT',
     IMAGES: 'Imagini',

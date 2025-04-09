@@ -15,6 +15,7 @@ export default {
     ALERT_TEXT: 'Varning',
     ALERT_CLOSE: 'Stäng',
     OUTLINE: 'Sidöversikt',
+    READABILITY_DESC: 'Visar läsbarhetspoängen på fliken <strong>Sidöversikt</strong> för att hjälpa till att bedöma lässvårigheten.',
     TITLE: 'Titel',
     ALT: 'ALT',
     IMAGES: 'Bilder',

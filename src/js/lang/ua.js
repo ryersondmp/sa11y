@@ -14,6 +14,7 @@ export default {
     ALERT_TEXT: 'Попередження',
     ALERT_CLOSE: 'Закрити',
     OUTLINE: 'Структура',
+    READABILITY_DESC: 'Показує показник читабельності на вкладці <strong>Структура</strong>, щоб допомогти оцінити складність читання.',
     TITLE: 'Назва',
     ALT: 'АЛЬТ',
     IMAGES: 'Зображення',

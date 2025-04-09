@@ -39,6 +39,12 @@
   /* i18n: utility to flip icons for transform: scaleX(y) */
   --sa11y-icon-direction: 1;
   --sa11y-float-rtl: right;
+
+  /* Sa11y control panel position */
+  --sa11y-panel-x-gap: 24px;
+  --sa11y-panel-y-gap: 10px;
+  --sa11y-toggle-x-offset: 18px;
+  --sa11y-toggle-y-offset: 15px;
 }
 
 [dir=rtl] {

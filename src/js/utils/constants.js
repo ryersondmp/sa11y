@@ -53,6 +53,7 @@ const Constants = (function myConstants() {
     Global.colourFilterPlugin = option.colourFilterPlugin;
     Global.checkAllHideToggles = option.checkAllHideToggles;
     Global.exportResultsPlugin = option.exportResultsPlugin;
+    Global.readabilityPlugin = option.readabilityPlugin;
     Global.showImageOutline = option.showImageOutline;
     Global.editImageURLofCMS = option.editImageURLofCMS;
     Global.relativePathImageSRC = option.relativePathImageSRC;

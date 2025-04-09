@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.5
+  * @version 4.1.6
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -32,7 +32,8 @@
       OFF: 'Spento',
       ALERT_TEXT: 'Allarme',
       ALERT_CLOSE: 'Chiudere',
-      OUTLINE: 'Schema',
+      OUTLINE: 'Struttura',
+      READABILITY_DESC: 'Mostra il punteggio di leggibilità nella scheda <strong>Struttura</strong> per aiutare a valutare la difficoltà di lettura.',
       TITLE: 'Titolo',
       ALT: 'ALT',
       IMAGES: 'Immagini',

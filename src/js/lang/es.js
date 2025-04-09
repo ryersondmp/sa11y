@@ -14,6 +14,7 @@ export default {
     ALERT_TEXT: 'Alerta',
     ALERT_CLOSE: 'Cerrar',
     OUTLINE: 'Esquema',
+    READABILITY_DESC: 'Muestra la puntuación de legibilidad en la pestaña <strong>Esquema</strong> para ayudar a evaluar la dificultad de lectura.',
     TITLE: 'Título',
     ALT: 'ALT',
     IMAGES: 'Imágenes',

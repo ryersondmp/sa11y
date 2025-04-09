@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.5
+  * @version 4.1.6
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -26,7 +26,8 @@ var sk = {
     OFF: 'Vypnuté',
     ALERT_TEXT: 'Upozornenie',
     ALERT_CLOSE: 'Zatvoriť',
-    OUTLINE: 'Náčrt',
+    OUTLINE: 'Osnova',
+    READABILITY_DESC: 'Zobrazuje skóre čitateľnosti na karte <strong>Osnova</strong>, ktoré pomáha posúdiť náročnosť čítania.',
     TITLE: 'Titul',
     ALT: 'ALT',
     IMAGES: 'Obrázky',

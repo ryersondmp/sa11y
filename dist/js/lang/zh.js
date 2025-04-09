@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.5
+  * @version 4.1.6
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -27,6 +27,7 @@ var zh = {
     ALERT_TEXT: '警报',
     ALERT_CLOSE: '关闭',
     OUTLINE: '大纲',
+    READABILITY_DESC: '在<strong>大纲</strong>标签页中显示可读性得分，以帮助衡量阅读难度。',
     TITLE: '标题',
     ALT: 'ALT',
     IMAGES: '图片',

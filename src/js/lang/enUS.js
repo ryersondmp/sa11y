@@ -14,6 +14,7 @@ export default {
     ALERT_TEXT: 'Alert',
     ALERT_CLOSE: 'Close',
     OUTLINE: 'Outline',
+    READABILITY_DESC: 'Shows the readability score in the <strong>Outline</strong> tab to help gauge reading difficulty.',
     TITLE: 'Title',
     ALT: 'ALT',
     IMAGES: 'Images',

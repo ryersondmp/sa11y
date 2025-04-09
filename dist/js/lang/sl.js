@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.5
+  * @version 4.1.6
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -27,6 +27,7 @@ var sl = {
     ALERT_TEXT: 'Opozorilo',
     ALERT_CLOSE: 'Zapri',
     OUTLINE: 'Oris',
+    READABILITY_DESC: 'Prikaže oceno berljivosti na zavihku <strong>Oris</strong> za lažjo oceno težavnosti branja.',
     TITLE: 'Naslov',
     ALT: 'ALT',
     IMAGES: 'Slike',

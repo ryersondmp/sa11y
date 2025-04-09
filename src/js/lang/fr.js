@@ -14,6 +14,7 @@ export default {
     ALERT_TEXT: 'Alerte',
     ALERT_CLOSE: 'Fermer',
     OUTLINE: 'Schéma',
+    READABILITY_DESC: 'Affiche le score de lisibilité dans l\'onglet <strong>Schéma</strong> pour aider à évaluer la difficulté de lecture.',
     TITLE: 'Titre',
     ALT: 'ALT',
     IMAGES: 'Images',
