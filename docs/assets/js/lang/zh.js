@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.6
+  * @version 4.1.7
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -281,6 +281,7 @@ var zh = {
     CONTRAST_COLOR: '考虑使用此颜色？',
     CONTRAST_SIZE: '考虑增加文本大小以适配此颜色组合？',
     CONTRAST_PLACEHOLDER: '此输入框中的占位符文本与背景的对比度不足，可能导致难以阅读。',
+    CONTRAST_PLACEHOLDER_UNSUPPORTED: '此占位符文本的对比度未知，需要手动检查。请确保文本与背景具有强烈的对比色。',
     CONTRAST_INPUT: '此输入框中的文本与背景的对比度不足，可能导致难以阅读。',
     CONTRAST: '对比度',
     UNKNOWN: '未知',

@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.6
+  * @version 4.1.7
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -290,6 +290,7 @@
       CONTRAST_COLOR: 'Considera di utilizzare questo colore invece?',
       CONTRAST_SIZE: 'Considera di aumentare la dimensione del testo per questa combinazione di colori?',
       CONTRAST_PLACEHOLDER: 'Il testo del segnaposto in questo campo non ha abbastanza contrasto con lo sfondo, rendendolo difficile da leggere.',
+      CONTRAST_PLACEHOLDER_UNSUPPORTED: 'Il contrasto di questo testo segnaposto è sconosciuto e deve essere esaminato manualmente. Assicurati che il testo e lo sfondo abbiano colori fortemente contrastanti.',
       CONTRAST_INPUT: 'Il testo in questo campo non ha abbastanza contrasto con lo sfondo, rendendolo difficile da leggere.',
       CONTRAST: 'Contrasto',
       UNKNOWN: 'Sconosciuto',

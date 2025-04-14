@@ -254,6 +254,7 @@ export default {
     CONTRAST_COLOR: 'Consider using this colour instead?',
     CONTRAST_SIZE: 'Consider making the text size larger for this colour combination?',
     CONTRAST_PLACEHOLDER: 'Placeholder text within this input does not have enough contrast with the background, making it harder to read.',
+    CONTRAST_PLACEHOLDER_UNSUPPORTED: 'The contrast of this placeholder text is unknown and needs to be manually reviewed. Ensure the text and the background have strong contrasting colours.',
     CONTRAST_INPUT: 'Text within this input does not have enough contrast with the background, making it harder to read.',
     CONTRAST: 'Contrast',
     UNKNOWN: 'Unknown',

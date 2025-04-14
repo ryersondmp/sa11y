@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.6
+  * @version 4.1.7
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -264,6 +264,7 @@
       CONTRAST_COLOR: 'Розгляньте можливість використання цього кольору?',
       CONTRAST_SIZE: 'Розгляньте можливість збільшення розміру тексту для цієї комбінації кольорів?',
       CONTRAST_PLACEHOLDER: 'Текст-заповнювач у цьому полі введення має недостатній контраст із фоном, що ускладнює його читання.',
+      CONTRAST_PLACEHOLDER_UNSUPPORTED: 'Контраст цього тексту-заповнювача невідомий і потребує ручної перевірки. Переконайтеся, що текст і фон мають сильно контрастні кольори.',
       CONTRAST_INPUT: 'Текст у цьому полі введення має недостатній контраст із фоном, що ускладнює його читання.',
       CONTRAST: 'Контраст',
       UNKNOWN: 'Невідомо',

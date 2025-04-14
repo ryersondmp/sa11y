@@ -281,6 +281,7 @@ export default {
     CONTRAST_COLOR: '이 색상을 대신 사용하는 것을 고려해 보세요.',
     CONTRAST_SIZE: '이 색상 조합에 대해 텍스트 크기를 더 크게 만드는 것을 고려해 보세요.',
     CONTRAST_PLACEHOLDER: '이 입력란의 자리 표시자 텍스트는 배경과의 대비가 충분하지 않아 읽기 어렵습니다.',
+    CONTRAST_PLACEHOLDER_UNSUPPORTED: '이 자리 표시자 텍스트의 대비는 알려지지 않았으며 수동으로 검토해야 합니다. 텍스트와 배경이 강한 대비 색상을 갖도록 하세요.',
     CONTRAST_INPUT: '이 입력란의 텍스트는 배경과의 대비가 충분하지 않아 읽기 어렵습니다.',
     CONTRAST: '대비',
     UNKNOWN: '알 수 없음',

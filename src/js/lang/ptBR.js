@@ -271,6 +271,7 @@ export default {
     CONTRAST_COLOR: 'Considere usar esta cor em vez dessa?',
     CONTRAST_SIZE: 'Considere aumentar o tamanho do texto para esta combinação de cores?',
     CONTRAST_PLACEHOLDER: 'O texto do marcador neste campo de entrada não tem contraste suficiente com o fundo, dificultando a leitura.',
+    CONTRAST_PLACEHOLDER_UNSUPPORTED: 'O contraste deste texto de espaço reservado é desconhecido e precisa ser revisado manualmente. Certifique-se de que o texto e o fundo tenham cores fortemente contrastantes.',
     CONTRAST_INPUT: 'O texto neste campo de entrada não tem contraste suficiente com o fundo, dificultando a leitura.',
     CONTRAST: 'Contraste',
     UNKNOWN: 'Desconhecido',

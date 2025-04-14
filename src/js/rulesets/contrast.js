@@ -132,32 +132,42 @@ export default function checkContrast(results, option) {
       let contrastValue;
 
       // Check fill contrast.
+      let resolvedFill;
       if (hasFill) {
-        const resolvedFill = fill === 'currentColor'
+        resolvedFill = fill === 'currentColor'
           ? Contrast.convertToRGBA(getComputedStyle($el).color, opacity)
           : Contrast.convertToRGBA(fill, opacity);
-        contrastValue = Contrast.calculateContrast(resolvedFill, background);
-        fillPasses = option.contrastAPCA
-          ? contrastValue.ratio >= 45
-          : contrastValue.ratio >= 3;
+        if (resolvedFill !== 'unsupported') {
+          contrastValue = Contrast.calculateContrast(resolvedFill, background);
+          fillPasses = option.contrastAPCA
+            ? contrastValue.ratio >= 45
+            : contrastValue.ratio >= 3;
+        }
       }
 
       // Check stroke contrast.
+      let resolvedStroke;
       if (hasStroke) {
-        const resolvedStroke = stroke === 'currentColor'
+        resolvedStroke = stroke === 'currentColor'
           ? Contrast.convertToRGBA(getComputedStyle($el).color, opacity)
           : Contrast.convertToRGBA(stroke, opacity);
-        contrastValue = Contrast.calculateContrast(resolvedStroke, background);
-        strokePasses = option.contrastAPCA
-          ? contrastValue.ratio >= 45
-          : contrastValue.ratio >= 3;
+        if (resolvedStroke !== 'unsupported') {
+          contrastValue = Contrast.calculateContrast(resolvedStroke, background);
+          strokePasses = option.contrastAPCA
+            ? contrastValue.ratio >= 45
+            : contrastValue.ratio >= 3;
+        }
       }
 
       // Failure conditions.
       const failsBoth = hasFill && hasStroke && !fillPasses && !strokePasses;
       const failsFill = hasFill && !hasStroke && !fillPasses;
       const failsStroke = !hasFill && hasStroke && !strokePasses;
-      if (failsBoth || failsFill || failsStroke) {
+      if (resolvedFill === 'unsupported' || resolvedStroke === 'unsupported') {
+        // Fill or stroke uses unsupported colour space.
+        contrastResults.push({ $el, type: 'svg-warning', background });
+      } else if (failsBoth || failsFill || failsStroke) {
+        // Push an error for simple SVGs.
         contrastResults.push({
           $el,
           ratio: Contrast.ratioToDisplay(contrastValue.ratio),
@@ -183,7 +193,10 @@ export default function checkContrast(results, option) {
       const pOpacity = parseFloat(placeholder.opacity);
 
       // Placeholder has background image.
-      if (pBackground.type === 'image') {
+      if (pColor === 'unsupported') {
+        // Unsupported colour
+        contrastResults.push({ $el, type: 'placeholder-unsupported' });
+      } else if (pBackground.type === 'image') {
         // There will already be a warning.
       } else {
         const result = Contrast.checkElementContrast($el, pColor, pBackground, pSize, pWeight, pOpacity, option.contrastAAA);
@@ -249,7 +262,7 @@ export default function checkContrast(results, option) {
 
     // Preview text
     let previewText;
-    if (item.type === 'placeholder') {
+    if (item.type === 'placeholder' || item.type === 'placeholder-unsupported') {
       previewText = Utils.sanitizeHTML($el.placeholder);
     } else if (item.type === 'svg-error' || item.type === 'svg-warning' || item.type === 'svg-text') {
       previewText = '';
@@ -318,6 +331,23 @@ export default function checkContrast(results, option) {
             dismiss: Utils.prepareDismissal(`CPLACEHOLDER${$el.getAttribute('class')}${$el.tagName}${ratio}`),
             dismissAll: option.checks.CONTRAST_PLACEHOLDER.dismissAll ? 'CONTRAST_PLACEHOLDER' : false,
             developer: option.checks.CONTRAST_PLACEHOLDER.developer || true,
+            contrastDetails: updatedItem,
+          });
+        }
+        break;
+      case 'placeholder-unsupported':
+        if (option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED) {
+          results.push({
+            element: $el,
+            type: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.type || 'warning',
+            content: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.content
+              ? Lang.sprintf(option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.content)
+              : Lang.sprintf('CONTRAST_PLACEHOLDER_UNSUPPORTED') + ratioTip,
+            position: 'afterend',
+            dismiss: Utils.prepareDismissal(`CPLACEHOLDERUN${$el.getAttribute('class')}${$el.tagName}${ratio}`),
+            dismissAll: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.dismissAll
+              ? 'CONTRAST_PLACEHOLDER_UNSUPPORTED' : false,
+            developer: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.developer || true,
             contrastDetails: updatedItem,
           });
         }

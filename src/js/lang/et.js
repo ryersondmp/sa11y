@@ -274,6 +274,7 @@ export default {
     CONTRAST_COLOR: 'Kas kaalute selle värvi kasutamist?',
     CONTRAST_SIZE: 'Kas kaalute teksti suurendamist selle värvikombinatsiooni jaoks?',
     CONTRAST_PLACEHOLDER: 'Selle sisendi kohatäite tekstil pole taustaga piisavalt kontrasti, mistõttu on seda raskem lugeda.',
+    CONTRAST_PLACEHOLDER_UNSUPPORTED: 'Selle kohatäite teksti kontrastsus on teadmata ja vajab käsitsi ülevaatamist. Veenduge, et tekstil ja taustal oleksid tugevalt kontrastsed värvid.',
     CONTRAST_INPUT: 'Selle sisendi tekstil pole taustaga piisavalt kontrasti, mistõttu on seda raskem lugeda.',
     CONTRAST: 'Kontrastsus',
     UNKNOWN: 'Teadmata',

@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.6
+  * @version 4.1.7
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -293,6 +293,7 @@
       CONTRAST_COLOR: 'Apsvarstykite galimybę naudoti šią spalvą vietoj šios?',
       CONTRAST_SIZE: 'Apsvarstykite galimybę padidinti teksto dydį šiai spalvų kombinacijai?',
       CONTRAST_PLACEHOLDER: 'Šio įvesties laukelio užpildymo tekstas neturi pakankamo kontrasto su fonu, todėl jį sunku skaityti.',
+      CONTRAST_PLACEHOLDER_UNSUPPORTED: 'Šio vietos rezervavimo teksto kontrastas nežinomas ir turi būti peržiūrėtas rankiniu būdu. Įsitikinkite, kad tekstas ir fonas turi stipriai kontrastuojančias spalvas.',
       CONTRAST_INPUT: 'Šio įvesties laukelio tekstas neturi pakankamo kontrasto su fonu, todėl jį sunku skaityti.',
       CONTRAST: 'Kontrastas',
       UNKNOWN: 'Nežinomas',

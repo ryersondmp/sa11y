@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.6
+  * @version 4.1.7
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -234,6 +234,7 @@ const defaultOptions = {
     CONTRAST_INPUT: true,
     CONTRAST_ERROR: true,
     CONTRAST_PLACEHOLDER: true,
+    CONTRAST_PLACEHOLDER_UNSUPPORTED: true,
     CONTRAST_ERROR_GRAPHIC: true,
     CONTRAST_WARNING_GRAPHIC: {
       dismissAll: true,
@@ -9445,32 +9446,42 @@ function checkContrast(results, option) {
       let contrastValue;
 
       // Check fill contrast.
+      let resolvedFill;
       if (hasFill) {
-        const resolvedFill = fill === 'currentColor'
+        resolvedFill = fill === 'currentColor'
           ? convertToRGBA(getComputedStyle($el).color, opacity)
           : convertToRGBA(fill, opacity);
-        contrastValue = calculateContrast(resolvedFill, background);
-        fillPasses = option.contrastAPCA
-          ? contrastValue.ratio >= 45
-          : contrastValue.ratio >= 3;
+        if (resolvedFill !== 'unsupported') {
+          contrastValue = calculateContrast(resolvedFill, background);
+          fillPasses = option.contrastAPCA
+            ? contrastValue.ratio >= 45
+            : contrastValue.ratio >= 3;
+        }
       }
 
       // Check stroke contrast.
+      let resolvedStroke;
       if (hasStroke) {
-        const resolvedStroke = stroke === 'currentColor'
+        resolvedStroke = stroke === 'currentColor'
           ? convertToRGBA(getComputedStyle($el).color, opacity)
           : convertToRGBA(stroke, opacity);
-        contrastValue = calculateContrast(resolvedStroke, background);
-        strokePasses = option.contrastAPCA
-          ? contrastValue.ratio >= 45
-          : contrastValue.ratio >= 3;
+        if (resolvedStroke !== 'unsupported') {
+          contrastValue = calculateContrast(resolvedStroke, background);
+          strokePasses = option.contrastAPCA
+            ? contrastValue.ratio >= 45
+            : contrastValue.ratio >= 3;
+        }
       }
 
       // Failure conditions.
       const failsBoth = hasFill && hasStroke && !fillPasses && !strokePasses;
       const failsFill = hasFill && !hasStroke && !fillPasses;
       const failsStroke = !hasFill && hasStroke && !strokePasses;
-      if (failsBoth || failsFill || failsStroke) {
+      if (resolvedFill === 'unsupported' || resolvedStroke === 'unsupported') {
+        // Fill or stroke uses unsupported colour space.
+        contrastResults.push({ $el, type: 'svg-warning', background });
+      } else if (failsBoth || failsFill || failsStroke) {
+        // Push an error for simple SVGs.
         contrastResults.push({
           $el,
           ratio: ratioToDisplay(contrastValue.ratio),
@@ -9496,7 +9507,10 @@ function checkContrast(results, option) {
       const pOpacity = parseFloat(placeholder.opacity);
 
       // Placeholder has background image.
-      if (pBackground.type === 'image') ; else {
+      if (pColor === 'unsupported') {
+        // Unsupported colour
+        contrastResults.push({ $el, type: 'placeholder-unsupported' });
+      } else if (pBackground.type === 'image') ; else {
         const result = checkElementContrast($el, pColor, pBackground, pSize, pWeight, pOpacity, option.contrastAAA);
         if (result) {
           result.type = 'placeholder';
@@ -9560,7 +9574,7 @@ function checkContrast(results, option) {
 
     // Preview text
     let previewText;
-    if (item.type === 'placeholder') {
+    if (item.type === 'placeholder' || item.type === 'placeholder-unsupported') {
       previewText = sanitizeHTML($el.placeholder);
     } else if (item.type === 'svg-error' || item.type === 'svg-warning' || item.type === 'svg-text') {
       previewText = '';
@@ -9629,6 +9643,23 @@ function checkContrast(results, option) {
             dismiss: prepareDismissal(`CPLACEHOLDER${$el.getAttribute('class')}${$el.tagName}${ratio}`),
             dismissAll: option.checks.CONTRAST_PLACEHOLDER.dismissAll ? 'CONTRAST_PLACEHOLDER' : false,
             developer: option.checks.CONTRAST_PLACEHOLDER.developer || true,
+            contrastDetails: updatedItem,
+          });
+        }
+        break;
+      case 'placeholder-unsupported':
+        if (option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED) {
+          results.push({
+            element: $el,
+            type: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.type || 'warning',
+            content: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.content
+              ? Lang.sprintf(option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.content)
+              : Lang.sprintf('CONTRAST_PLACEHOLDER_UNSUPPORTED') + ratioTip,
+            position: 'afterend',
+            dismiss: prepareDismissal(`CPLACEHOLDERUN${$el.getAttribute('class')}${$el.tagName}${ratio}`),
+            dismissAll: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.dismissAll
+              ? 'CONTRAST_PLACEHOLDER_UNSUPPORTED' : false,
+            developer: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.developer || true,
             contrastDetails: updatedItem,
           });
         }

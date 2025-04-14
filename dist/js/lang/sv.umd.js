@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.6
+  * @version 4.1.7
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -271,6 +271,7 @@
       CONTRAST_COLOR: 'Överväg att använda denna färg istället?',
       CONTRAST_SIZE: 'Överväg att göra textstorleken större för denna färgkombination?',
       CONTRAST_PLACEHOLDER: 'Platshållartexten i detta inmatningsfält har inte tillräcklig kontrast mot bakgrunden, vilket gör den svårare att läsa.',
+      CONTRAST_PLACEHOLDER_UNSUPPORTED: 'Kontrasten för denna platshållartext är okänd och måste granskas manuellt. Se till att texten och bakgrunden har starkt kontrasterande färger.',
       CONTRAST_INPUT: 'Texten i detta inmatningsfält har inte tillräcklig kontrast mot bakgrunden, vilket gör den svårare att läsa.',
       CONTRAST: 'Kontrast',
       UNKNOWN: 'Okänd',

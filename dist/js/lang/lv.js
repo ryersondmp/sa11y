@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.6
+  * @version 4.1.7
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -283,6 +283,7 @@ var lv = {
     CONTRAST_COLOR: 'Apsveriet iespēju izmantot šo krāsu tā vietā?',
     CONTRAST_SIZE: 'Apsveriet iespēju palielināt teksta izmēru šai krāsu kombinācijai?',
     CONTRAST_PLACEHOLDER: 'Šī ievades lauka aizvietotājteksts nav pietiekami kontrastējošs ar fonu, tāpēc to ir grūti lasīt.',
+    CONTRAST_PLACEHOLDER_UNSUPPORTED: 'Šī vietturētāja teksta kontrasts nav zināms un tas jāizvērtē manuāli. Pārliecinieties, ka tekstam un fonam ir spēcīgi kontrastējošas krāsas.',
     CONTRAST_INPUT: 'Šī ievades lauka teksts nav pietiekami kontrastējošs ar fonu, tāpēc to ir grūti lasīt.',
     CONTRAST: 'Kontrasts',
     UNKNOWN: 'Nezināms',

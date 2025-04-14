@@ -62,6 +62,21 @@
   </header>
   <main>
 
+    <h2>Text input with ::placeholder using colour spaces</h2>
+    <label for="input-2">Sample</label>
+    <input id="input-2" type="text" placeholder="Lorem ipsum">
+
+    <style>
+      #input-2::placeholder {
+          color: color(display-p3 0.1098 0.6902 0.9647);
+        }
+    </style>
+
+    <h2>SVGs that use unsupported colour spaces</h2>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 28 28" fill="none" style="user-select:auto">
+      <path d="M20.3639 3.39807H8.30268C5.92405 3.39807 3.99512 5.327 3.99512 7.70564V19.7668C3.99512 22.1455 5.92405 24.0744 8.30268 24.0744H20.3639C22.7434 24.0744 24.6714 22.1455 24.6714 19.7668V7.70564C24.6714 5.327 22.7434 3.39807 20.3639 3.39807ZM10.8872 19.7668H8.30268V10.2902H10.8872V19.7668ZM9.59496 9.19778C8.76273 9.19778 8.08731 8.51718 8.08731 7.67807C8.08731 6.83896 8.76273 6.15836 9.59496 6.15836C10.4272 6.15836 11.1026 6.83896 11.1026 7.67807C11.1026 8.51718 10.428 9.19778 9.59496 9.19778ZM21.2254 19.7668H18.6408V14.9389C18.6408 12.0373 15.1948 12.257 15.1948 14.9389V19.7668H12.6103V10.2902H15.1948V11.8108C16.3975 9.58288 21.2254 9.41833 21.2254 13.9439V19.7668Z" fill="#1CB0F6" style="fill:color(display-p3 0.1098 0.6902 0.9647);fill-opacity:1;user-select:auto"></path>
+    </svg>
+
     <h2>Using CSS variables to override position of toggle and panel</h2>
     <pre><code>
       :root {

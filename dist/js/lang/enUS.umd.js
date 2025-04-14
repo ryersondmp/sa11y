@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.6
+  * @version 4.1.7
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -270,6 +270,7 @@
       CONTRAST_COLOR: 'Consider using this color instead?',
       CONTRAST_SIZE: 'Consider making the text size larger for this color combination?',
       CONTRAST_PLACEHOLDER: 'Placeholder text within this input does not have enough contrast with the background, making it harder to read.',
+      CONTRAST_PLACEHOLDER_UNSUPPORTED: 'The contrast of this placeholder text is unknown and needs to be manually reviewed. Ensure the text and the background have strong contrasting colours.',
       CONTRAST_INPUT: 'Text within this input does not have enough contrast with the background, making it harder to read.',
       CONTRAST: 'Contrast',
       UNKNOWN: 'Unknown',

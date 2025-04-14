@@ -270,6 +270,7 @@ export default {
     CONTRAST_COLOR: 'Razmislite o uporabi te barve namesto te?',
     CONTRAST_SIZE: 'Razmislite o povečanju velikosti besedila za to barvno kombinacijo?',
     CONTRAST_PLACEHOLDER: 'Nadomestno besedilo v tem vnosnem polju nima dovolj kontrasta s ozadjem, zaradi česar je težje berljivo.',
+    CONTRAST_PLACEHOLDER_UNSUPPORTED: 'Kontrast tega nadomestnega besedila ni znan in ga je treba ročno pregledati. Poskrbite, da imata besedilo in ozadje močno kontrastne barve.',
     CONTRAST_INPUT: 'Besedilo v tem vnosnem polju nima dovolj kontrasta s ozadjem, zaradi česar je težje berljivo.',
     CONTRAST: 'Kontrast',
     UNKNOWN: 'Neznano',

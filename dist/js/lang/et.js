@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.6
+  * @version 4.1.7
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -286,6 +286,7 @@ var et = {
     CONTRAST_COLOR: 'Kas kaalute selle värvi kasutamist?',
     CONTRAST_SIZE: 'Kas kaalute teksti suurendamist selle värvikombinatsiooni jaoks?',
     CONTRAST_PLACEHOLDER: 'Selle sisendi kohatäite tekstil pole taustaga piisavalt kontrasti, mistõttu on seda raskem lugeda.',
+    CONTRAST_PLACEHOLDER_UNSUPPORTED: 'Selle kohatäite teksti kontrastsus on teadmata ja vajab käsitsi ülevaatamist. Veenduge, et tekstil ja taustal oleksid tugevalt kontrastsed värvid.',
     CONTRAST_INPUT: 'Selle sisendi tekstil pole taustaga piisavalt kontrasti, mistõttu on seda raskem lugeda.',
     CONTRAST: 'Kontrastsus',
     UNKNOWN: 'Teadmata',

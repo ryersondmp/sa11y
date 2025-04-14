@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.6
+  * @version 4.1.7
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -291,6 +291,7 @@ var ja = {
     CONTRAST_COLOR: 'この色を代わりに使用することを検討しますか？',
     CONTRAST_SIZE: 'この色の組み合わせでテキストサイズを大きくすることを検討しますか？',
     CONTRAST_PLACEHOLDER: 'この入力のプレースホルダーテキストは背景とのコントラストが不十分で、読みづらくなっています。',
+    CONTRAST_PLACEHOLDER_UNSUPPORTED: 'このプレースホルダーテキストのコントラストは不明であり、手動で確認する必要があります。テキストと背景に強いコントラストのある色を使用してください。',
     CONTRAST_INPUT: 'この入力内のテキストは背景とのコントラストが不十分で、読みづらくなっています。',
     CONTRAST: 'コントラスト',
     UNKNOWN: '不明',

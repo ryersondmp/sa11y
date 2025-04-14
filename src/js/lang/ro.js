@@ -271,6 +271,7 @@ export default {
     CONTRAST_COLOR: 'Luați în considerare utilizarea acestei culori în locul celei?',
     CONTRAST_SIZE: 'Luați în considerare mărirea dimensiunii textului pentru această combinație de culori?',
     CONTRAST_PLACEHOLDER: 'Textul de substituție din acest câmp de introducere nu are un contrast suficient cu fundalul, făcându-l mai greu de citit.',
+    CONTRAST_PLACEHOLDER_UNSUPPORTED: 'Contrastul acestui text substituent este necunoscut și trebuie revizuit manual. Asigurați-vă că textul și fundalul au culori puternic contrastante.',
     CONTRAST_INPUT: 'Textul din acest câmp de introducere nu are un contrast suficient cu fundalul, făcându-l mai greu de citit.',
     CONTRAST: 'Contrast',
     UNKNOWN: 'Necunoscut',

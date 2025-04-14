@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.6
+  * @version 4.1.7
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -277,6 +277,7 @@ var fi = {
     CONTRAST_COLOR: 'Harkitse tämän värin käyttöä sen sijaan?',
     CONTRAST_SIZE: 'Harkitse tekstikoon suurentamista tämän värikombinaation avulla?',
     CONTRAST_PLACEHOLDER: 'Tämän syötteen paikkamerkintätekstissä ei ole tarpeeksi kontrastia taustaan nähden, joten sitä on vaikea lukea.',
+    CONTRAST_PLACEHOLDER_UNSUPPORTED: 'Tämän paikkamerkkitekstin kontrasti on tuntematon ja se on tarkistettava manuaalisesti. Varmista, että teksti ja tausta ovat voimakkaasti kontrastisia värejä.',
     CONTRAST_INPUT: 'Tässä syötteessä ei ole tarpeeksi kontrastia taustaan nähden, joten sitä on vaikea lukea.',
     CONTRAST: 'Kontrasti',
     UNKNOWN: 'Tuntematon',

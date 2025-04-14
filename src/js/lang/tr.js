@@ -267,6 +267,7 @@ export default {
     CONTRAST_COLOR: 'Bunun yerine bu rengi kullanmayı düşünün?',
     CONTRAST_SIZE: 'Bu renk kombinasyonu için metin boyutunu büyütmeyi düşünün?',
     CONTRAST_PLACEHOLDER: 'Bu giriş alanındaki yer tutucu metin, arka planla yeterli kontrasta sahip değil, bu da okunmasını zorlaştırıyor.',
+    CONTRAST_PLACEHOLDER_UNSUPPORTED: 'Bu yer tutucu metnin kontrastı bilinmiyor ve manuel olarak incelenmesi gerekiyor. Metin ve arka planın güçlü zıt renklere sahip olduğundan emin olun.',
     CONTRAST_INPUT: 'Bu giriş alanındaki metin, arka planla yeterli kontrasta sahip değil, bu da okunmasını zorlaştırıyor.',
     CONTRAST: 'Kontrast',
     UNKNOWN: 'Bilinmiyor',

@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.6
+  * @version 4.1.7
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -286,6 +286,7 @@
       CONTRAST_COLOR: 'Erwägen Sie, stattdessen diese Farbe zu verwenden?',
       CONTRAST_SIZE: 'Erwägen Sie, die Textgröße für diese Farbkombination zu vergrößern?',
       CONTRAST_PLACEHOLDER: 'Platzhaltertext in diesem Eingabefeld hat nicht genug Kontrast zum Hintergrund, was das Lesen erschwert.',
+      CONTRAST_PLACEHOLDER_UNSUPPORTED: 'Der Kontrast dieses Platzhaltertexts ist unbekannt und muss manuell überprüft werden. Stellen Sie sicher, dass der Text und der Hintergrund starke Kontrastfarben haben.',
       CONTRAST_INPUT: 'Text in diesem Eingabefeld hat nicht genug Kontrast zum Hintergrund, was das Lesen erschwert.',
       CONTRAST: 'Kontrast',
       UNKNOWN: 'Unbekannt',

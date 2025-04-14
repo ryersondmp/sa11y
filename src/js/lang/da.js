@@ -269,6 +269,7 @@ export default {
     CONTRAST_COLOR: 'Overvej at bruge denne farve i stedet?',
     CONTRAST_SIZE: 'Overvej at gøre tekststørrelsen større for denne farvekombination?',
     CONTRAST_PLACEHOLDER: 'Pladsholderteksten i dette inputfelt har ikke tilstrækkelig kontrast med baggrunden, hvilket gør den sværere at læse.',
+    CONTRAST_PLACEHOLDER_UNSUPPORTED: 'Kontrasten for denne pladsholdertekst er ukendt og skal gennemgås manuelt. Sørg for, at teksten og baggrunden har stærke kontrastfarver.',
     CONTRAST_INPUT: 'Teksten i dette inputfelt har ikke tilstrækkelig kontrast med baggrunden, hvilket gør den sværere at læse.',
     CONTRAST: 'Kontrast',
     UNKNOWN: 'Ukendt',

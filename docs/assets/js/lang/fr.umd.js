@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.6
+  * @version 4.1.7
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -264,6 +264,7 @@
       CONTRAST_COLOR: 'Envisagez-vous d\'utiliser cette couleur à la place ?',
       CONTRAST_SIZE: 'Envisagez-vous d\'augmenter la taille du texte pour cette combinaison de couleurs ?',
       CONTRAST_PLACEHOLDER: 'Le texte de l\'espace réservé dans ce champ de saisie n\'a pas suffisamment de contraste avec l\'arrière-plan, ce qui le rend difficile à lire.',
+      CONTRAST_PLACEHOLDER_UNSUPPORTED: 'Le contraste de ce texte de remplacement est inconnu et doit être vérifié manuellement. Assurez-vous que le texte et l’arrière-plan ont des couleurs fortement contrastées.',
       CONTRAST_INPUT: 'Le texte dans ce champ de saisie n\'a pas suffisamment de contraste avec l\'arrière-plan, ce qui le rend difficile à lire.',
       CONTRAST: 'Contraste',
       UNKNOWN: 'Inconnu',

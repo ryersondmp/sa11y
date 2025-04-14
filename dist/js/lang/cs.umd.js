@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.6
+  * @version 4.1.7
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -287,6 +287,7 @@
       CONTRAST_COLOR: 'Zvažte použití této barvy místo této?',
       CONTRAST_SIZE: 'Zvažte zvětšení velikosti textu pro tuto barevnou kombinaci?',
       CONTRAST_PLACEHOLDER: 'Zástupný text v tomto vstupním poli nemá dostatečný kontrast s pozadím, což ztěžuje jeho čtení.',
+      CONTRAST_PLACEHOLDER_UNSUPPORTED: 'Kontrast tohoto zástupného textu není znám a je třeba jej ručně zkontrolovat. Ujistěte se, že text a pozadí mají silně kontrastní barvy.',
       CONTRAST_INPUT: 'Text v tomto vstupním poli nemá dostatečný kontrast s pozadím, což ztěžuje jeho čtení.',
       CONTRAST: 'Kontrast',
       UNKNOWN: 'Neznámý',

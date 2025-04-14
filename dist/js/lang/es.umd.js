@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.6
+  * @version 4.1.7
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -267,6 +267,7 @@
       CONTRAST_COLOR: '¿Considera usar este color en su lugar?',
       CONTRAST_SIZE: '¿Considera aumentar el tamaño del texto para esta combinación de colores?',
       CONTRAST_PLACEHOLDER: 'El texto del marcador de posición en esta entrada no tiene suficiente contraste con el fondo, lo que dificulta su lectura.',
+      CONTRAST_PLACEHOLDER_UNSUPPORTED: 'El contraste de este texto de marcador de posición es desconocido y debe revisarse manualmente. Asegúrese de que el texto y el fondo tengan colores fuertemente contrastantes.',
       CONTRAST_INPUT: 'El texto en esta entrada no tiene suficiente contraste con el fondo, lo que dificulta su lectura.',
       CONTRAST: 'Contraste',
       UNKNOWN: 'Desconocido',

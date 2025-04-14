@@ -273,6 +273,7 @@ export default {
     CONTRAST_COLOR: 'Apakah Anda ingin menggunakan warna ini sebagai gantinya?',
     CONTRAST_SIZE: 'Apakah Anda ingin memperbesar ukuran teks untuk kombinasi warna ini?',
     CONTRAST_PLACEHOLDER: 'Teks placeholder dalam input ini tidak memiliki kontras yang cukup dengan latar belakang, sehingga sulit dibaca.',
+    CONTRAST_PLACEHOLDER_UNSUPPORTED: 'Kontras dari teks placeholder ini tidak diketahui dan perlu ditinjau secara manual. Pastikan teks dan latar belakang memiliki warna yang sangat kontras.',
     CONTRAST_INPUT: 'Teks dalam input ini tidak memiliki kontras yang cukup dengan latar belakang, sehingga sulit dibaca.',
     CONTRAST: 'Kontras',
     UNKNOWN: 'Tidak diketahui',

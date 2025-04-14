@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.6
+  * @version 4.1.7
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -293,6 +293,7 @@ var hu = {
     CONTRAST_COLOR: 'Fontolja meg ennek a színnek a használatát?',
     CONTRAST_SIZE: 'Fontolja meg a szöveg méretének növelését ehhez a színkombinációhoz?',
     CONTRAST_PLACEHOLDER: 'A kitöltő szöveg ennek a bemeneti mezőnek nem rendelkezik elegendő kontraszttal a háttérrel, így nehezebb olvasni.',
+    CONTRAST_PLACEHOLDER_UNSUPPORTED: 'Ennek a helyőrző szövegnek a kontrasztja ismeretlen, és manuálisan kell ellenőrizni. Győződjön meg róla, hogy a szöveg és a háttér erősen kontrasztos színekkel rendelkeznek.',
     CONTRAST_INPUT: 'Ennek a bemeneti mezőnek a szövege nem rendelkezik elegendő kontraszttal a háttérrel, így nehezebb olvasni.',
     CONTRAST: 'Kontraszt',
     UNKNOWN: 'Ismeretlen',

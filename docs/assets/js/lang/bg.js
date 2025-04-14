@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.6
+  * @version 4.1.7
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -293,6 +293,7 @@ var bg = {
     CONTRAST_COLOR: 'Обмислете използването на този цвят вместо?',
     CONTRAST_SIZE: 'Обмислете увеличаването на размера на текста за тази цветова комбинация?',
     CONTRAST_PLACEHOLDER: 'Заместващият текст в това поле за въвеждане няма достатъчен контраст с фона, което го прави по-труден за четене.',
+    CONTRAST_PLACEHOLDER_UNSUPPORTED: 'Контрастът на този текст на заместителя е неизвестен и трябва да бъде ръчно прегледан. Уверете се, че текстът и фонът имат силно контрастиращи цветове.',
     CONTRAST_INPUT: 'Текстът в това поле за въвеждане няма достатъчен контраст с фона, което го прави по-труден за четене.',
     CONTRAST: 'Контраст',
     UNKNOWN: 'Неизвестно',
