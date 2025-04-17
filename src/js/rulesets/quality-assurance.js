@@ -180,6 +180,7 @@ export default function checkQA(results, option) {
         type: option.checks.QA_FAKE_HEADING.type || 'warning',
         content: Lang.sprintf(option.checks.QA_FAKE_HEADING.content || 'QA_FAKE_HEADING', sanitizedText),
         dismiss: Utils.prepareDismissal(`BOLD${sanitizedText}`),
+        inline: true,
         dismissAll: option.checks.QA_FAKE_HEADING.dismissAll ? 'QA_FAKE_HEADING' : false,
         developer: option.checks.QA_FAKE_HEADING.developer || false,
       });
