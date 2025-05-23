@@ -2920,20 +2920,22 @@ ${this.error.stack}
     /*  Better keyboard accessibility.  */
     /* ******************************** */
     const tabs = Constants.Panel.panel.querySelectorAll('[role=tab]');
-    let currentIndex = Array.from(tabs).findIndex((tab) => tab.classList.contains('active'));
-    tabs.forEach((tab) => {
-      tab.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight') {
-          e.preventDefault();
-          currentIndex = (currentIndex + 1) % tabs.length;
-          tabs[currentIndex].focus();
-        } else if (e.key === 'ArrowLeft') {
-          e.preventDefault();
-          currentIndex = (currentIndex - 1 + tabs.length) % tabs.length;
-          tabs[currentIndex].focus();
-        }
+    if (tabs.length !== 0) {
+      let currentIndex = Array.from(tabs).findIndex((tab) => tab.classList.contains('active'));
+      tabs.forEach((tab) => {
+        tab.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            currentIndex = (currentIndex + 1) % tabs.length;
+            tabs[currentIndex].focus();
+          } else if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            currentIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+            tabs[currentIndex].focus();
+          }
+        });
       });
-    });
+    }
   }
 
   /**
@@ -8005,25 +8007,29 @@ ${this.error.stack}
       /* 3. Tooltip for "Developer checks" toggle. */
       if (Constants.Global.developerPlugin) {
         const infoIcon = Constants.Panel.developerItem.querySelector('.info-icon');
-        tippy(infoIcon, {
-          ...tooltipOptions(shadowRoot),
-          triggerTarget: [Constants.Panel.developerItem],
-          offset: [0, 10],
-          maxWidth: 250,
-          content: Lang._('DEVELOPER_DESC'),
-        });
+        if (infoIcon) {
+          tippy(infoIcon, {
+            ...tooltipOptions(shadowRoot),
+            triggerTarget: [Constants.Panel.developerItem],
+            offset: [0, 10],
+            maxWidth: 250,
+            content: Lang._('DEVELOPER_DESC'),
+          });
+        }
       }
 
       /* 4. Tooltip for "Readability" toggle. */
       if (Constants.Global.readabilityPlugin) {
         const infoIcon = Constants.Panel.readabilityItem.querySelector('.info-icon');
-        tippy(infoIcon, {
-          ...tooltipOptions(shadowRoot),
-          triggerTarget: [Constants.Panel.readabilityItem],
-          offset: [0, 10],
-          maxWidth: 250,
-          content: Lang._('READABILITY_DESC'),
-        });
+        if (infoIcon) {
+          tippy(infoIcon, {
+            ...tooltipOptions(shadowRoot),
+            triggerTarget: [Constants.Panel.readabilityItem],
+            offset: [0, 10],
+            maxWidth: 250,
+            content: Lang._('READABILITY_DESC'),
+          });
+        }
       }
     }
   }
@@ -11185,10 +11191,13 @@ ${this.error.stack}
 
           // Get all images from results object for Image Outline.
           this.imageResults = this.results.filter((issue, index, self) => {
-            const tagName = issue.element?.tagName;
-            const outerHTML = issue.element?.outerHTML;
-            // Filter out duplicates based element's HTML.
-            return tagName === 'IMG' && self.findIndex((other) => other.element?.outerHTML === outerHTML) === index;
+            const { element } = issue;
+            if (!element || element.tagName !== 'IMG' || !element.outerHTML) return false;
+            return (
+              self.findIndex(
+                (other) => other.element?.outerHTML === element.outerHTML,
+              ) === index
+            );
           });
 
           /* Custom checks */
