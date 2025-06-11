@@ -32,14 +32,7 @@ export default function checkHeaders(results, option, headingOutline) {
     let dismissAll = null;
 
     // Rulesets.
-    if (level - prevLevel > 1 && i !== 0) {
-      if (option.checks.HEADING_SKIPPED_LEVEL) {
-        type = option.checks.HEADING_SKIPPED_LEVEL.type || 'error';
-        content = Lang.sprintf(option.checks.HEADING_SKIPPED_LEVEL.content || 'HEADING_SKIPPED_LEVEL', prevLevel, level, Utils.truncateString(headingText, 60), Utils.truncateString(prevHeadingText, 60), prevLevel + 1);
-        developer = option.checks.HEADING_SKIPPED_LEVEL.developer || false;
-        dismissAll = option.checks.HEADING_SKIPPED_LEVEL.dismissAll ? 'HEADING_SKIPPED_LEVEL' : false;
-      }
-    } else if (headingLength === 0) {
+    if (headingLength === 0) {
       if ($el.querySelectorAll('img').length) {
         const alt = $el.querySelector('img')?.getAttribute('alt');
         if ($el.querySelector('img') && (!alt || alt.trim() === '')) {
@@ -55,6 +48,13 @@ export default function checkHeaders(results, option, headingOutline) {
         content = Lang.sprintf(option.checks.HEADING_EMPTY.content || 'HEADING_EMPTY', level);
         developer = option.checks.HEADING_EMPTY.developer || false;
         dismissAll = option.checks.HEADING_EMPTY.dismissAll ? 'HEADING_EMPTY' : false;
+      }
+    } else if (level - prevLevel > 1 && i !== 0) {
+      if (option.checks.HEADING_SKIPPED_LEVEL) {
+        type = option.checks.HEADING_SKIPPED_LEVEL.type || 'error';
+        content = Lang.sprintf(option.checks.HEADING_SKIPPED_LEVEL.content || 'HEADING_SKIPPED_LEVEL', prevLevel, level, Utils.truncateString(headingText, 60), Utils.truncateString(prevHeadingText, 60), prevLevel + 1);
+        developer = option.checks.HEADING_SKIPPED_LEVEL.developer || false;
+        dismissAll = option.checks.HEADING_SKIPPED_LEVEL.dismissAll ? 'HEADING_SKIPPED_LEVEL' : false;
       }
     } else if (i === 0 && level !== 1 && level !== 2) {
       if (option.checks.HEADING_FIRST) {

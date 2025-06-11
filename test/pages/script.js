@@ -68,6 +68,7 @@ const sa11y = new Sa11y({
   editImageURLofCMS: 'localhost',
   ignoreEditImageURL: ['/ignore/'],
   ignoreEditImageClass: ['ignore-me-edit-btn'],
+  extraPlaceholderStopWords: 'untitled, asset',
 
   // Customize checks.
   checks: {
