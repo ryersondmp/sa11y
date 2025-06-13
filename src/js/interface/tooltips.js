@@ -192,25 +192,29 @@ export class PanelTooltips extends HTMLElement {
     /* 3. Tooltip for "Developer checks" toggle. */
     if (Constants.Global.developerPlugin) {
       const infoIcon = Constants.Panel.developerItem.querySelector('.info-icon');
-      tippy(infoIcon, {
-        ...tooltipOptions(shadowRoot),
-        triggerTarget: [Constants.Panel.developerItem],
-        offset: [0, 10],
-        maxWidth: 250,
-        content: Lang._('DEVELOPER_DESC'),
-      });
+      if (infoIcon) {
+        tippy(infoIcon, {
+          ...tooltipOptions(shadowRoot),
+          triggerTarget: [Constants.Panel.developerItem],
+          offset: [0, 10],
+          maxWidth: 250,
+          content: Lang._('DEVELOPER_DESC'),
+        });
+      }
     }
 
     /* 4. Tooltip for "Readability" toggle. */
     if (Constants.Global.readabilityPlugin) {
       const infoIcon = Constants.Panel.readabilityItem.querySelector('.info-icon');
-      tippy(infoIcon, {
-        ...tooltipOptions(shadowRoot),
-        triggerTarget: [Constants.Panel.readabilityItem],
-        offset: [0, 10],
-        maxWidth: 250,
-        content: Lang._('READABILITY_DESC'),
-      });
+      if (infoIcon) {
+        tippy(infoIcon, {
+          ...tooltipOptions(shadowRoot),
+          triggerTarget: [Constants.Panel.readabilityItem],
+          offset: [0, 10],
+          maxWidth: 250,
+          content: Lang._('READABILITY_DESC'),
+        });
+      }
     }
   }
 }

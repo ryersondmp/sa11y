@@ -121,8 +121,7 @@ export default function checkImages(results, option) {
           results.push({
             element: $el,
             type: rule.type || 'error',
-            content: Lang.sprintf(rule.content || linkTextContentLength === 0
-              ? 'MISSING_ALT_LINK' : 'MISSING_ALT_LINK_HAS_TEXT'),
+            content: Lang.sprintf(rule.content || conditional),
             dismiss: Utils.prepareDismissal(`${conditional + src + linkTextContentLength}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
@@ -250,8 +249,7 @@ export default function checkImages(results, option) {
           results.push({
             element: $el,
             type: rule.type || 'error',
-            content: Lang.sprintf(rule.content || link
-              ? 'LINK_ALT_FILE_EXT' : 'ALT_FILE_EXT', error[0], altText),
+            content: Lang.sprintf(rule.content || conditional, error[0], altText),
             dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
@@ -267,8 +265,7 @@ export default function checkImages(results, option) {
           results.push({
             element: $el,
             type: rule.type || 'error',
-            content: Lang.sprintf(rule.content || link
-              ? 'LINK_PLACEHOLDER_ALT' : 'ALT_PLACEHOLDER', altText),
+            content: Lang.sprintf(rule.content || conditional, altText),
             dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
@@ -284,8 +281,7 @@ export default function checkImages(results, option) {
           results.push({
             element: $el,
             type: rule.type || 'warning',
-            content: Lang.sprintf(rule.content || link
-              ? 'LINK_SUS_ALT' : 'SUS_ALT', error[1], altText),
+            content: Lang.sprintf(rule.content || conditional, error[1], altText),
             dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
@@ -304,7 +300,7 @@ export default function checkImages(results, option) {
           results.push({
             element: $el,
             type: rule.type || 'warning',
-            content: Lang.sprintf(rule.content || (link ? 'LINK_IMAGE_LONG_ALT' : 'IMAGE_ALT_TOO_LONG'), alt.length, truncated),
+            content: Lang.sprintf(rule.content || conditional, alt.length, truncated),
             dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,

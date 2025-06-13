@@ -158,18 +158,20 @@ export default function initializePanelToggles() {
   /*  Better keyboard accessibility.  */
   /* ******************************** */
   const tabs = Constants.Panel.panel.querySelectorAll('[role=tab]');
-  let currentIndex = Array.from(tabs).findIndex((tab) => tab.classList.contains('active'));
-  tabs.forEach((tab) => {
-    tab.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowRight') {
-        e.preventDefault();
-        currentIndex = (currentIndex + 1) % tabs.length;
-        tabs[currentIndex].focus();
-      } else if (e.key === 'ArrowLeft') {
-        e.preventDefault();
-        currentIndex = (currentIndex - 1 + tabs.length) % tabs.length;
-        tabs[currentIndex].focus();
-      }
+  if (tabs.length !== 0) {
+    let currentIndex = Array.from(tabs).findIndex((tab) => tab.classList.contains('active'));
+    tabs.forEach((tab) => {
+      tab.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          currentIndex = (currentIndex + 1) % tabs.length;
+          tabs[currentIndex].focus();
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          currentIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+          tabs[currentIndex].focus();
+        }
+      });
     });
-  });
+  }
 }

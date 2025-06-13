@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.8
+  * @version 4.1.9
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -2201,7 +2201,7 @@ function removeExportListeners() {
   }
 }
 
-const version = '4.1.8';
+const version = '4.1.9';
 
 var styles = ":host{background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);bottom:0;display:block;height:-moz-fit-content;height:fit-content;left:0;position:fixed;right:0;width:100%;z-index:999999}*{-webkit-font-smoothing:auto!important;color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;font-size:var(--sa11y-normal-text);line-height:22px!important}#dialog{margin:20px auto;max-width:900px;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none}p{margin-top:0}.error{background:var(--sa11y-error);border:2px dashed #f08080;color:var(--sa11y-error-text);margin-bottom:0;padding:5px}";
 
@@ -2914,20 +2914,22 @@ function initializePanelToggles() {
   /*  Better keyboard accessibility.  */
   /* ******************************** */
   const tabs = Constants.Panel.panel.querySelectorAll('[role=tab]');
-  let currentIndex = Array.from(tabs).findIndex((tab) => tab.classList.contains('active'));
-  tabs.forEach((tab) => {
-    tab.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowRight') {
-        e.preventDefault();
-        currentIndex = (currentIndex + 1) % tabs.length;
-        tabs[currentIndex].focus();
-      } else if (e.key === 'ArrowLeft') {
-        e.preventDefault();
-        currentIndex = (currentIndex - 1 + tabs.length) % tabs.length;
-        tabs[currentIndex].focus();
-      }
+  if (tabs.length !== 0) {
+    let currentIndex = Array.from(tabs).findIndex((tab) => tab.classList.contains('active'));
+    tabs.forEach((tab) => {
+      tab.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          currentIndex = (currentIndex + 1) % tabs.length;
+          tabs[currentIndex].focus();
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          currentIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+          tabs[currentIndex].focus();
+        }
+      });
     });
-  });
+  }
 }
 
 /**
@@ -7999,25 +8001,29 @@ class PanelTooltips extends HTMLElement {
     /* 3. Tooltip for "Developer checks" toggle. */
     if (Constants.Global.developerPlugin) {
       const infoIcon = Constants.Panel.developerItem.querySelector('.info-icon');
-      tippy(infoIcon, {
-        ...tooltipOptions(shadowRoot),
-        triggerTarget: [Constants.Panel.developerItem],
-        offset: [0, 10],
-        maxWidth: 250,
-        content: Lang._('DEVELOPER_DESC'),
-      });
+      if (infoIcon) {
+        tippy(infoIcon, {
+          ...tooltipOptions(shadowRoot),
+          triggerTarget: [Constants.Panel.developerItem],
+          offset: [0, 10],
+          maxWidth: 250,
+          content: Lang._('DEVELOPER_DESC'),
+        });
+      }
     }
 
     /* 4. Tooltip for "Readability" toggle. */
     if (Constants.Global.readabilityPlugin) {
       const infoIcon = Constants.Panel.readabilityItem.querySelector('.info-icon');
-      tippy(infoIcon, {
-        ...tooltipOptions(shadowRoot),
-        triggerTarget: [Constants.Panel.readabilityItem],
-        offset: [0, 10],
-        maxWidth: 250,
-        content: Lang._('READABILITY_DESC'),
-      });
+      if (infoIcon) {
+        tippy(infoIcon, {
+          ...tooltipOptions(shadowRoot),
+          triggerTarget: [Constants.Panel.readabilityItem],
+          offset: [0, 10],
+          maxWidth: 250,
+          content: Lang._('READABILITY_DESC'),
+        });
+      }
     }
   }
 }
@@ -8507,8 +8513,7 @@ function checkImages(results, option) {
           results.push({
             element: $el,
             type: rule.type || 'error',
-            content: Lang.sprintf(rule.content || linkTextContentLength === 0
-              ? 'MISSING_ALT_LINK' : 'MISSING_ALT_LINK_HAS_TEXT'),
+            content: Lang.sprintf(rule.content || conditional),
             dismiss: prepareDismissal(`${conditional + src + linkTextContentLength}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
@@ -8636,8 +8641,7 @@ function checkImages(results, option) {
           results.push({
             element: $el,
             type: rule.type || 'error',
-            content: Lang.sprintf(rule.content || link
-              ? 'LINK_ALT_FILE_EXT' : 'ALT_FILE_EXT', error[0], altText),
+            content: Lang.sprintf(rule.content || conditional, error[0], altText),
             dismiss: prepareDismissal(`${conditional + src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
@@ -8653,8 +8657,7 @@ function checkImages(results, option) {
           results.push({
             element: $el,
             type: rule.type || 'error',
-            content: Lang.sprintf(rule.content || link
-              ? 'LINK_PLACEHOLDER_ALT' : 'ALT_PLACEHOLDER', altText),
+            content: Lang.sprintf(rule.content || conditional, altText),
             dismiss: prepareDismissal(`${conditional + src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
@@ -8670,8 +8673,7 @@ function checkImages(results, option) {
           results.push({
             element: $el,
             type: rule.type || 'warning',
-            content: Lang.sprintf(rule.content || link
-              ? 'LINK_SUS_ALT' : 'SUS_ALT', error[1], altText),
+            content: Lang.sprintf(rule.content || conditional, error[1], altText),
             dismiss: prepareDismissal(`${conditional + src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
@@ -8690,7 +8692,7 @@ function checkImages(results, option) {
           results.push({
             element: $el,
             type: rule.type || 'warning',
-            content: Lang.sprintf(rule.content || (link ? 'LINK_IMAGE_LONG_ALT' : 'IMAGE_ALT_TOO_LONG'), alt.length, truncated),
+            content: Lang.sprintf(rule.content || conditional, alt.length, truncated),
             dismiss: prepareDismissal(`${conditional + src + altText}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
@@ -8810,14 +8812,7 @@ function checkHeaders(results, option, headingOutline) {
     let dismissAll = null;
 
     // Rulesets.
-    if (level - prevLevel > 1 && i !== 0) {
-      if (option.checks.HEADING_SKIPPED_LEVEL) {
-        type = option.checks.HEADING_SKIPPED_LEVEL.type || 'error';
-        content = Lang.sprintf(option.checks.HEADING_SKIPPED_LEVEL.content || 'HEADING_SKIPPED_LEVEL', prevLevel, level, truncateString(headingText, 60), truncateString(prevHeadingText, 60), prevLevel + 1);
-        developer = option.checks.HEADING_SKIPPED_LEVEL.developer || false;
-        dismissAll = option.checks.HEADING_SKIPPED_LEVEL.dismissAll ? 'HEADING_SKIPPED_LEVEL' : false;
-      }
-    } else if (headingLength === 0) {
+    if (headingLength === 0) {
       if ($el.querySelectorAll('img').length) {
         const alt = $el.querySelector('img')?.getAttribute('alt');
         if ($el.querySelector('img') && (!alt || alt.trim() === '')) {
@@ -8833,6 +8828,13 @@ function checkHeaders(results, option, headingOutline) {
         content = Lang.sprintf(option.checks.HEADING_EMPTY.content || 'HEADING_EMPTY', level);
         developer = option.checks.HEADING_EMPTY.developer || false;
         dismissAll = option.checks.HEADING_EMPTY.dismissAll ? 'HEADING_EMPTY' : false;
+      }
+    } else if (level - prevLevel > 1 && i !== 0) {
+      if (option.checks.HEADING_SKIPPED_LEVEL) {
+        type = option.checks.HEADING_SKIPPED_LEVEL.type || 'error';
+        content = Lang.sprintf(option.checks.HEADING_SKIPPED_LEVEL.content || 'HEADING_SKIPPED_LEVEL', prevLevel, level, truncateString(headingText, 60), truncateString(prevHeadingText, 60), prevLevel + 1);
+        developer = option.checks.HEADING_SKIPPED_LEVEL.developer || false;
+        dismissAll = option.checks.HEADING_SKIPPED_LEVEL.dismissAll ? 'HEADING_SKIPPED_LEVEL' : false;
       }
     } else if (i === 0 && level !== 1 && level !== 2) {
       if (option.checks.HEADING_FIRST) {
@@ -11179,10 +11181,13 @@ class Sa11y {
 
         // Get all images from results object for Image Outline.
         this.imageResults = this.results.filter((issue, index, self) => {
-          const tagName = issue.element?.tagName;
-          const outerHTML = issue.element?.outerHTML;
-          // Filter out duplicates based element's HTML.
-          return tagName === 'IMG' && self.findIndex((other) => other.element?.outerHTML === outerHTML) === index;
+          const { element } = issue;
+          if (!element || element.tagName !== 'IMG' || !element.outerHTML) return false;
+          return (
+            self.findIndex(
+              (other) => other.element?.outerHTML === element.outerHTML,
+            ) === index
+          );
         });
 
         /* Custom checks */

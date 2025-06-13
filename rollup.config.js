@@ -261,4 +261,25 @@ export default [
       },
     ],
   },
+  // Unminified bookmarklet.
+  {
+    input: 'src/bookmarklet/unminified.js',
+    plugins: [
+      nodeResolve(),
+      css(),
+      replace({
+        preventAssignment: true,
+        'process.env.NODE_ENV': JSON.stringify('production'),
+        Sa11yVersion: JSON.stringify(pkg.version),
+      }),
+    ],
+    output: [
+      {
+        file: 'bookmarklet/unminified.js',
+        format: 'umd',
+        name: 'Sa11yLangBookmarkletUnminified',
+        plugins: [terser()],
+      },
+    ],
+  },
 ];
