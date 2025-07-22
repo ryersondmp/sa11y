@@ -132,7 +132,7 @@ export default {
       'website',
     ],
     CLICK: ['click', 'klicken'],
-    NEW_WINDOW_PHRASES: ['extern', 'externer link', 'externe seite', 'new tab', 'neuer tab', 'neuem tab', 'new window', 'neues fenster', 'neuem fenster', 'pupup', 'pop-up', 'pop up'],
+    NEW_WINDOW_PHRASES: ['extern', 'externer link', 'externe seite', 'new tab', 'neuer tab', 'neuem tab', 'new window', 'neues fenster', 'neuem fenster', 'popup', 'pop-up', 'pop up'],
     FILE_TYPE_PHRASES: ['dokument', 'document', 'spreadsheet', 'tabelle', 'worksheet', 'arbeitsblatt', 'tabellenkalkulation', 'berechnungstabelle', 'komprimierte datei', 'dateiarchiv', 'archivierte Datei', 'arbeitsblatt', 'powerpoint', 'präsentation', 'installieren', 'video', 'audio', 'pdf', 'zip'],
 
     // Readability
