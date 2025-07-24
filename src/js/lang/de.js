@@ -107,6 +107,7 @@ export default {
       'learn',
       'learn more',
       'mehr erfahren',
+			'weitere informationen',
       'learn to',
       'more',
       'mehr',
@@ -131,8 +132,8 @@ export default {
       'website',
     ],
     CLICK: ['click', 'klicken'],
-    NEW_WINDOW_PHRASES: ['external', 'extern', 'new tab', 'neuer tab', 'new window', 'neues fenster', 'pop-up', 'pop up'],
-    FILE_TYPE_PHRASES: ['dokument', 'document', 'spreadsheet', 'tabelle', 'worksheet', 'arbeitsblatt', 'tabellenkalkulation', 'berechnungstabelle', 'komprimierte datei', 'archivierte Datei', 'arbeitsblatt', 'powerpoint', 'präsentation', 'installieren', 'video', 'audio', 'pdf'],
+    NEW_WINDOW_PHRASES: ['extern', 'externer link', 'externe seite', 'new tab', 'neuer tab', 'neuem tab', 'new window', 'neues fenster', 'neuem fenster', 'popup', 'pop-up', 'pop up'],
+    FILE_TYPE_PHRASES: ['dokument', 'document', 'spreadsheet', 'tabelle', 'worksheet', 'arbeitsblatt', 'tabellenkalkulation', 'berechnungstabelle', 'komprimierte datei', 'dateiarchiv', 'archivierte Datei', 'arbeitsblatt', 'powerpoint', 'präsentation', 'installieren', 'video', 'audio', 'pdf', 'zip'],
 
     // Readability
     READABILITY: 'Lesbarkeit',
