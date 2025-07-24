@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.9
+  * @version 4.1.10
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -125,6 +125,7 @@
         'learn',
         'learn more',
         'mehr erfahren',
+  			'weitere informationen',
         'learn to',
         'more',
         'mehr',
@@ -149,8 +150,8 @@
         'website',
       ],
       CLICK: ['click', 'klicken'],
-      NEW_WINDOW_PHRASES: ['external', 'extern', 'new tab', 'neuer tab', 'new window', 'neues fenster', 'pop-up', 'pop up'],
-      FILE_TYPE_PHRASES: ['dokument', 'document', 'spreadsheet', 'tabelle', 'worksheet', 'arbeitsblatt', 'tabellenkalkulation', 'berechnungstabelle', 'komprimierte datei', 'archivierte Datei', 'arbeitsblatt', 'powerpoint', 'präsentation', 'installieren', 'video', 'audio', 'pdf'],
+      NEW_WINDOW_PHRASES: ['extern', 'externer link', 'externe seite', 'new tab', 'neuer tab', 'neuem tab', 'new window', 'neues fenster', 'neuem fenster', 'popup', 'pop-up', 'pop up'],
+      FILE_TYPE_PHRASES: ['dokument', 'document', 'spreadsheet', 'tabelle', 'worksheet', 'arbeitsblatt', 'tabellenkalkulation', 'berechnungstabelle', 'komprimierte datei', 'dateiarchiv', 'archivierte Datei', 'arbeitsblatt', 'powerpoint', 'präsentation', 'installieren', 'video', 'audio', 'pdf', 'zip'],
 
       // Readability
       READABILITY: 'Lesbarkeit',

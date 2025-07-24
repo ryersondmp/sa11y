@@ -1294,7 +1294,7 @@ label:not(#colour-filter-mode, #export-results-mode) {
 #container:lang(de) #panel,
 #container:lang(sv) #panel,
 #container:lang(zh) #panel {
-  width: 350px;
+  width: 365px;
 }
 
 #container:lang(bg) .switch:not(#export-results-item *),
