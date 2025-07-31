@@ -37,7 +37,7 @@ export default function checkImages(results, option) {
     const susAltWordsOverride = (option.susAltStopWords) ? option.susAltStopWords.split(',').map((word) => word.trim()) : Lang._('SUS_ALT_STOPWORDS');
     susAltWordsOverride.forEach((word) => {
       const susWord = alt.toLowerCase().indexOf(word);
-      if (susWord > -1 && susWord < 6) {
+      if ((susWord > -1 && susWord < 6) || alt.toLowerCase().endsWith(word)) {
         hit[1] = word;
       }
     });

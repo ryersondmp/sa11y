@@ -280,6 +280,13 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
+  test('Alt text has suspicious stop word at the end', async () => {
+    const issue = await checkTooltip(
+      page, 'warning-alt-text-has-suspicious-stop-word', 'Assistive technologies already indicate that this is an image',
+    );
+    expect(issue).toBe(true);
+  });
+
   test('Decorative image', async () => {
     const issue = await checkTooltip(
       page, 'warning-image-is-decorative', 'Image is marked as <strong>decorative</strong>',
