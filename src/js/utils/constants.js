@@ -47,6 +47,7 @@ const Constants = (function myConstants() {
     Global.contrastAPCA = option.contrastAPCA;
     Global.contrastSuggestions = option.contrastSuggestions;
     Global.contrastAAA = option.contrastAAA;
+    Global.shadowDetection = option.shadowComponents.length > 0 || option.autoDetectShadowComponents === true;
 
     // Toggleable plugins
     Global.developerPlugin = option.developerPlugin;

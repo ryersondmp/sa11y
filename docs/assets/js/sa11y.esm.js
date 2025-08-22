@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.1.10
+  * @version 4.2.0
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -326,6 +326,7 @@ const Constants = (function myConstants() {
     Global.contrastAPCA = option.contrastAPCA;
     Global.contrastSuggestions = option.contrastSuggestions;
     Global.contrastAAA = option.contrastAAA;
+    Global.shadowDetection = option.shadowComponents.length > 0 || option.autoDetectShadowComponents === true;
 
     // Toggleable plugins
     Global.developerPlugin = option.developerPlugin;
@@ -660,6 +661,7 @@ function find(selector, desiredRoot, exclude) {
   return elements.filter((node) => node.parentNode.tagName !== 'SLOT');
 }
 
+/* eslint-disable no-continue */
 /* eslint-disable no-use-before-define */
 
 /* Get text content of pseudo elements. */
@@ -712,20 +714,19 @@ const computeAriaLabel = (element, recursing = false) => {
 };
 
 /**
- * Computes the accessible name of an element.
- * @param {Element} element The element for which the accessible name needs to be computed.
- * @param {String} exclusions List of selectors which will be ignored.
- * @param {Number} recursing Recursion depth.
- * @returns {string} The computed accessible name of the element.
- * @kudos to John Jameson, creator of the Editoria11y library, for developing this more robust calculation!
- * @notes Uses a subset of the W3C accessible name algorithm.
-*/
+ * Compute the accessible name of an element.
+ * Implements a subset of the W3C Accessible Name algorithm.
+ * Based on John Jameson’s Editoria11y library.
+ *
+ * @param {Element} element Target element.
+ * @param {string[]} exclusions CSS selectors to ignore.
+ * @param {number} recursing Recursion depth.
+ * @returns {string} Accessible name.
+ */
 const computeAccessibleName = (element, exclusions = [], recursing = 0) => {
   // Return immediately if there is an aria label.
-  const hasAria = computeAriaLabel(element, recursing);
-  if (hasAria !== 'noAria') {
-    return hasAria;
-  }
+  const ariaLabel = computeAriaLabel(element, recursing);
+  if (ariaLabel !== 'noAria') return ariaLabel;
 
   // Textarea with a title.
   if (element.tagName === 'TEXTAREA' && element.hasAttribute('title')) {
@@ -735,7 +736,6 @@ const computeAccessibleName = (element, exclusions = [], recursing = 0) => {
   // Return immediately if there is only a text node.
   let computedText = '';
   if (!element.children.length) {
-    // Just text! Output immediately.
     computedText = wrapPseudoContent(element, element.textContent);
     if (!computedText.trim() && element.hasAttribute('title')) {
       return element.getAttribute('title');
@@ -744,102 +744,115 @@ const computeAccessibleName = (element, exclusions = [], recursing = 0) => {
   }
 
   // Create tree walker object.
-  function createCustomTreeWalker(rootNode, showElement, showText) {
+  function createTreeWalker(root, showElement, showText) {
     const acceptNode = (node) => {
       if (showElement && node.nodeType === Node.ELEMENT_NODE) return NodeFilter.FILTER_ACCEPT;
       if (showText && node.nodeType === Node.TEXT_NODE) return NodeFilter.FILTER_ACCEPT;
       return NodeFilter.FILTER_REJECT;
     };
-    return document.createTreeWalker(rootNode, NodeFilter.SHOW_ALL, { acceptNode });
+    return document.createTreeWalker(root, NodeFilter.SHOW_ALL, { acceptNode });
   }
-  const treeWalker = createCustomTreeWalker(element, true, true);
+  const treeWalker = createTreeWalker(element, true, true);
 
-  // Otherwise, recurse into children.
+  // Exclusions
+  const alwaysExclude = ['noscript', 'style', 'script', 'video', 'audio'];
+  const excludeSelector = [...exclusions, ...alwaysExclude].join(', ');
+  const exclude = excludeSelector ? element.querySelectorAll(excludeSelector) : [];
+
+  // Recurse into children.
   let addTitleIfNoName = false;
   let aText = false;
   let count = 0;
-  let shouldContinueWalker = true;
+  let continueWalker = true;
 
-  const alwaysExclude = ['noscript', 'style', 'script', 'video', 'audio'];
-
-  // Combine exclusions and alwaysExclude arrays, ensuring no trailing commas.
-  const validExclusions = exclusions && exclusions.length ? exclusions.join(', ') : '';
-  const excludeSelector = [...(validExclusions ? [validExclusions] : []), ...alwaysExclude].join(', ');
-
-  // Use the excludeSelector in querySelectorAll
-  const exclude = element.querySelectorAll(excludeSelector);
-
-  while (treeWalker.nextNode() && shouldContinueWalker) {
+  while (treeWalker.nextNode() && continueWalker) {
     count += 1;
+    const node = treeWalker.currentNode;
+    const excluded = Array.from(exclude).some((ex) => ex.contains(node));
 
-    // Exclusions.
-    const currentNodeMatchesExclude = Array.from(exclude).some((excludedNode) => excludedNode.contains(treeWalker.currentNode));
+    // Matches exclusion.
+    if (excluded) {
+      continue;
+    }
 
-    if (currentNodeMatchesExclude) ; else if (treeWalker.currentNode.nodeType === Node.TEXT_NODE) {
-      if (treeWalker.currentNode.parentNode.tagName !== 'SLOT') {
-        computedText += ` ${treeWalker.currentNode.nodeValue}`;
-      }
-    } else if (addTitleIfNoName && !treeWalker.currentNode.closest('a')) {
-      if (aText === computedText) {
-        computedText += addTitleIfNoName;
-      }
-      addTitleIfNoName = false;
-      aText = false;
-    } else if (treeWalker.currentNode.hasAttribute('aria-hidden') && !(recursing && count < 3)) {
-      if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
-    } else {
-      const aria = computeAriaLabel(treeWalker.currentNode, recursing);
-      if (aria !== 'noAria') {
-        computedText += ` ${aria}`;
-        if (!nextTreeBranch(treeWalker)) shouldContinueWalker = false;
-      } else {
-        switch (treeWalker.currentNode.tagName) {
-          case 'IMG':
-            if (treeWalker.currentNode.hasAttribute('alt')) {
-              computedText += treeWalker.currentNode.getAttribute('alt');
-            }
-            break;
-          case 'SVG':
-            if (treeWalker.currentNode.hasAttribute('role') === 'img' || treeWalker.currentNode.hasAttribute('role') === 'graphics-document') {
-              computedText += computeAriaLabel(treeWalker.currentNode);
-            } else {
-              const title = treeWalker.currentNode.querySelector('title');
-              if (title) {
-                computedText += title;
-              }
-            }
-            break;
-          case 'A':
-            if (treeWalker.currentNode.hasAttribute('title')) {
-              addTitleIfNoName = treeWalker.currentNode.getAttribute('title');
-              aText = computedText;
-            } else {
-              addTitleIfNoName = false;
-              aText = false;
-            }
-            computedText += wrapPseudoContent(treeWalker.currentNode, '');
-            break;
-          case 'SLOT':
-            if (treeWalker.currentNode.assignedNodes()) {
-              // Slots have specific shadow DOM methods.
-              const children = treeWalker.currentNode.assignedNodes();
-              let slotText = '';
-              children?.forEach((child) => {
-                if (child.nodeType === Node.ELEMENT_NODE) {
-                  slotText += computeAccessibleName(child);
-                } else if (child.nodeType === Node.TEXT_NODE) {
-                  slotText += child.nodeValue;
-                }
-              });
-              computedText += slotText;
-            }
-            computedText += wrapPseudoContent(treeWalker.currentNode, '');
-            break;
-          default:
-            computedText += wrapPseudoContent(treeWalker.currentNode, '');
-            break;
+    // Inner nodes with shadowRoots.
+    if (node.shadowRoot) {
+      const shadowChildren = node.shadowRoot.querySelectorAll('*');
+      for (let i = 0; i < shadowChildren.length; i++) {
+        const child = shadowChildren[i];
+        if (!excludeSelector || !child.closest(excludeSelector)) {
+          computedText += computeAccessibleName(child, exclusions, recursing + 1);
         }
       }
+    }
+
+    // Return text from text nodes.
+    if (node.nodeType === Node.TEXT_NODE) {
+      if (node.parentNode.tagName !== 'SLOT') {
+        computedText += ` ${node.nodeValue}`;
+      }
+      continue;
+    }
+
+    if (addTitleIfNoName && !node.closest('a')) {
+      if (aText === computedText) computedText += addTitleIfNoName;
+      addTitleIfNoName = false;
+      aText = false;
+    }
+
+    if (node.hasAttribute('aria-hidden') && !(recursing && count < 3)) {
+      if (!nextTreeBranch(treeWalker)) continueWalker = false;
+      continue;
+    }
+
+    const aria = computeAriaLabel(node, recursing);
+    if (aria !== 'noAria') {
+      computedText += ` ${aria}`;
+      if (!nextTreeBranch(treeWalker)) continueWalker = false;
+      continue;
+    }
+
+    switch (node.tagName) {
+      case 'IMG':
+        if (node.hasAttribute('alt')) {
+          computedText += node.getAttribute('alt');
+        }
+        break;
+      case 'SVG':
+        if (node.getAttribute('role') === 'img' || node.getAttribute('role') === 'graphics-document') {
+          computedText += computeAriaLabel(node);
+        } else {
+          const title = node.querySelector('title');
+          if (title) computedText += title.textContent;
+        }
+        break;
+      case 'A':
+        if (node.hasAttribute('title')) {
+          addTitleIfNoName = node.getAttribute('title');
+          aText = computedText;
+        } else {
+          addTitleIfNoName = false;
+          aText = false;
+        }
+        computedText += wrapPseudoContent(node, '');
+        break;
+      case 'SLOT': {
+        const children = node.assignedNodes?.() || [];
+        let slotText = '';
+        children.forEach((child) => {
+          if (child.nodeType === Node.ELEMENT_NODE) {
+            slotText += computeAccessibleName(child);
+          } else if (child.nodeType === Node.TEXT_NODE) {
+            slotText += child.nodeValue;
+          }
+        });
+        computedText += slotText;
+        computedText += wrapPseudoContent(node, '');
+        break;
+      }
+      default:
+        computedText += wrapPseudoContent(node, '');
+        break;
     }
   }
 
@@ -849,8 +862,7 @@ const computeAccessibleName = (element, exclusions = [], recursing = 0) => {
 
   // Replace Private Use Area (PUA) unicode characters.
   // https://www.unicode.org/faq/private_use.html
-  const puaRegex = /[\uE000-\uF8FF]/gu;
-  computedText = computedText.replace(puaRegex, '');
+  computedText = computedText.replace(/[\uE000-\uF8FF]/gu, '');
 
   // If computedText returns blank, fallback on title attribute.
   if (!computedText.trim() && element.hasAttribute('title')) {
@@ -2201,7 +2213,7 @@ function removeExportListeners() {
   }
 }
 
-const version = '4.1.10';
+const version = '4.1.11';
 
 var styles = ":host{background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);bottom:0;display:block;height:-moz-fit-content;height:fit-content;left:0;position:fixed;right:0;width:100%;z-index:999999}*{-webkit-font-smoothing:auto!important;color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;font-size:var(--sa11y-normal-text);line-height:22px!important}#dialog{margin:20px auto;max-width:900px;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none}p{margin-top:0}.error{background:var(--sa11y-error);border:2px dashed #f08080;color:var(--sa11y-error-text);margin-bottom:0;padding:5px}";
 
@@ -7133,12 +7145,42 @@ function convertToRGBA(color, opacity) {
 function getBackground($el) {
   let targetEl = $el;
   while (targetEl && targetEl.nodeType === 1) {
+    // Element is within a shadow component.
+    if (Constants.Global.shadowDetection) {
+      const root = targetEl.getRootNode();
+      if (root instanceof ShadowRoot) {
+        // Traverse upward until the shadow root's host.
+        let node = targetEl;
+        while (node && node !== root.host) {
+          const styles = getComputedStyle(node);
+
+          // Background image check.
+          if (styles.backgroundImage && styles.backgroundImage !== 'none') {
+            return { type: 'image', value: styles.backgroundImage };
+          }
+
+          // Background colour check.
+          const bgColor = convertToRGBA(styles.backgroundColor);
+          if (bgColor[3] !== 0 && bgColor !== 'transparent') {
+            return bgColor;
+          }
+          node = node.parentElement;
+        }
+
+        // If nothing found within the shadow tree, continue with the host.
+        return getBackground(root.host);
+      }
+    }
+
+    // Element has background image.
     const styles = getComputedStyle(targetEl);
-    const bgColor = convertToRGBA(styles.backgroundColor);
     const bgImage = styles.backgroundImage;
     if (bgImage !== 'none') {
       return { type: 'image', value: bgImage };
     }
+
+    // Element has background colour.
+    const bgColor = convertToRGBA(styles.backgroundColor);
     if (bgColor[3] !== 0 && bgColor !== 'transparent') {
       // If the background colour has an alpha channel.
       if (bgColor[3] < 1) {
