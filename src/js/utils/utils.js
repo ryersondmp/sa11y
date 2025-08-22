@@ -719,9 +719,13 @@ export function standardizeHref($el) {
   href = removeWhitespace(href).toLowerCase();
 
   // Remove trailing slash if it exists.
-  if (href.endsWith('/')) {
-    href = href.slice(0, -1);
-  }
+  if (href.endsWith('/')) href = href.slice(0, -1);
+
   // Remove protocol and www., without affecting subdomains.
-  return href.replace(/^https?:\/\/(www\.)?/, '');
+  href = href.replace(/^https?:\/\/(www\.)?/, '');
+
+  // Remove common file extensions at the end.
+  href = href.replace(/\.(html|php|htm|asp|aspx)$/i, '');
+
+  return href;
 }

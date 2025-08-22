@@ -62,7 +62,9 @@ const sa11y = new Sa11y({
   exportResultsPlugin: true,
   autoDetectShadowComponents: true,
   developerChecksOnByDefault: true,
+  // externalDeveloperChecks: true,
   imageWithinLightbox: '.lightbox',
+  // customChecks: 'listen',
 
   // Configure image panel edit button
   editImageURLofCMS: 'localhost',
@@ -101,6 +103,7 @@ document.addEventListener('sa11y-custom-checks', () => {
         inline: false,
         position: 'beforebegin',
         dismiss: key,
+        // external: true,
       });
     }
   }

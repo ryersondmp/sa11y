@@ -79,6 +79,7 @@ const defaultOptions = {
   formLabelsPlugin: true,
   embeddedContentPlugin: true,
   developerPlugin: true,
+  externalDeveloperChecks: false,
   colourFilterPlugin: true,
   exportResultsPlugin: false,
 
@@ -1574,11 +1575,15 @@ function standardizeHref($el) {
   href = removeWhitespace(href).toLowerCase();
 
   // Remove trailing slash if it exists.
-  if (href.endsWith('/')) {
-    href = href.slice(0, -1);
-  }
+  if (href.endsWith('/')) href = href.slice(0, -1);
+
   // Remove protocol and www., without affecting subdomains.
-  return href.replace(/^https?:\/\/(www\.)?/, '');
+  href = href.replace(/^https?:\/\/(www\.)?/, '');
+
+  // Remove common file extensions at the end.
+  href = href.replace(/\.(html|php|htm|asp|aspx)$/i, '');
+
+  return href;
 }
 
 const Elements = (function myElements() {
@@ -2213,7 +2218,7 @@ function removeExportListeners() {
   }
 }
 
-const version = '4.1.11';
+const version = '4.2.0';
 
 var styles = ":host{background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);bottom:0;display:block;height:-moz-fit-content;height:fit-content;left:0;position:fixed;right:0;width:100%;z-index:999999}*{-webkit-font-smoothing:auto!important;color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;font-size:var(--sa11y-normal-text);line-height:22px!important}#dialog{margin:20px auto;max-width:900px;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none}p{margin-top:0}.error{background:var(--sa11y-error);border:2px dashed #f08080;color:var(--sa11y-error-text);margin-bottom:0;padding:5px}";
 
@@ -11276,9 +11281,15 @@ class Sa11y {
       // Filter out heading issues that are outside of the target root.
       this.results = this.results.filter((heading) => heading.isWithinRoot !== false);
 
-      // Filter out "Developer checks" if toggled off.
-      if (store.getItem('sa11y-developer') === 'Off' || store.getItem('sa11y-developer') === null) {
+      // Filter out "Developer checks" if toggled off or if using externally supplied developer checks.
+      const devChecks = store.getItem('sa11y-developer') === 'Off' || store.getItem('sa11y-developer') === null;
+      if (devChecks || option.externalDeveloperChecks === true) {
         this.results = this.results.filter((issue) => issue.developer !== true);
+      }
+
+      // Filter out external vendor results based on "Developer checks" state.
+      if (devChecks) {
+        this.results = this.results.filter((issue) => issue.external !== true);
       }
 
       // Generate HTML path, and optionally CSS selector path of element.
