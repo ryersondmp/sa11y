@@ -435,6 +435,9 @@ class Sa11y {
     // Method: sanitize HTML.
     this.sanitizeHTML = (string) => Utils.sanitizeHTML(string);
 
+    // Method: truncate string.
+    this.truncateString = (string, maxLength) => Utils.truncateString(string, maxLength);
+
     /* *********************************************************** */
     /*  Initialize Sa11y.                                          */
     /* *********************************************************** */

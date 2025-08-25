@@ -169,11 +169,17 @@ div {
   /*                Arrows                 */
   /* ************************************* */
 }
+.tippy-box[data-theme~=sa11y-theme] pre:has(code) {
+  display: block;
+  overflow: auto;
+  white-space: pre-wrap;
+}
 .tippy-box[data-theme~=sa11y-theme] code {
   font-family: monospace;
   font-size: calc(var(--sa11y-normal-text) - 1px);
   font-weight: 500;
 }
+.tippy-box[data-theme~=sa11y-theme] pre,
 .tippy-box[data-theme~=sa11y-theme] code,
 .tippy-box[data-theme~=sa11y-theme] kbd {
   padding: 1.6px 4.8px;
