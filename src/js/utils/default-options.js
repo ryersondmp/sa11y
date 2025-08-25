@@ -67,6 +67,7 @@ const defaultOptions = {
   formLabelsPlugin: true,
   embeddedContentPlugin: true,
   developerPlugin: true,
+  externalDeveloperChecks: false,
   colourFilterPlugin: true,
   exportResultsPlugin: false,
 

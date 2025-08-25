@@ -172,12 +172,19 @@ div {
   transition-property: transform, visibility, opacity;
   -webkit-font-smoothing: auto;
 
+  pre:has(code) {
+    display: block;
+    overflow: auto;
+    white-space: pre-wrap;
+  }
+
   code {
     font-family: monospace;
     font-size: calc(var(--sa11y-normal-text) - 1px);
     font-weight: 500;
   }
 
+  pre,
   code,
   kbd {
     padding: 1.6px 4.8px;

@@ -278,7 +278,7 @@ export default function checkLinkText(results, option) {
             inline: true,
             dismiss: Utils.prepareDismissal(`LINKSTOPWORDARIA${href + linkTextTrimmed}`),
             dismissAll: option.checks.LINK_STOPWORD_ARIA.dismissAll ? ' LINK_STOPWORD_ARIA' : false,
-            developer: option.checks.LINK_STOPWORD_ARIA.developer || false,
+            developer: option.checks.LINK_STOPWORD_ARIA.developer || true,
           });
         } else if (option.checks.LINK_LABEL) {
           // If the link has any ARIA, append a "Good" link button.

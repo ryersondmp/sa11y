@@ -232,9 +232,15 @@ class Sa11y {
       // Filter out heading issues that are outside of the target root.
       this.results = this.results.filter((heading) => heading.isWithinRoot !== false);
 
-      // Filter out "Developer checks" if toggled off.
-      if (Utils.store.getItem('sa11y-developer') === 'Off' || Utils.store.getItem('sa11y-developer') === null) {
+      // Filter out "Developer checks" if toggled off or if using externally supplied developer checks.
+      const devChecks = Utils.store.getItem('sa11y-developer') === 'Off' || Utils.store.getItem('sa11y-developer') === null;
+      if (devChecks || option.externalDeveloperChecks === true) {
         this.results = this.results.filter((issue) => issue.developer !== true);
+      }
+
+      // Filter out external vendor results based on "Developer checks" state.
+      if (devChecks) {
+        this.results = this.results.filter((issue) => issue.external !== true);
       }
 
       // Generate HTML path, and optionally CSS selector path of element.
@@ -428,6 +434,9 @@ class Sa11y {
 
     // Method: sanitize HTML.
     this.sanitizeHTML = (string) => Utils.sanitizeHTML(string);
+
+    // Method: truncate string.
+    this.truncateString = (string, maxLength) => Utils.truncateString(string, maxLength);
 
     /* *********************************************************** */
     /*  Initialize Sa11y.                                          */

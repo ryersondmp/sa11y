@@ -67,12 +67,42 @@ export function convertToRGBA(color, opacity) {
 export function getBackground($el) {
   let targetEl = $el;
   while (targetEl && targetEl.nodeType === 1) {
+    // Element is within a shadow component.
+    if (Constants.Global.shadowDetection) {
+      const root = targetEl.getRootNode();
+      if (root instanceof ShadowRoot) {
+        // Traverse upward until the shadow root's host.
+        let node = targetEl;
+        while (node && node !== root.host) {
+          const styles = getComputedStyle(node);
+
+          // Background image check.
+          if (styles.backgroundImage && styles.backgroundImage !== 'none') {
+            return { type: 'image', value: styles.backgroundImage };
+          }
+
+          // Background colour check.
+          const bgColor = convertToRGBA(styles.backgroundColor);
+          if (bgColor[3] !== 0 && bgColor !== 'transparent') {
+            return bgColor;
+          }
+          node = node.parentElement;
+        }
+
+        // If nothing found within the shadow tree, continue with the host.
+        return getBackground(root.host);
+      }
+    }
+
+    // Element has background image.
     const styles = getComputedStyle(targetEl);
-    const bgColor = convertToRGBA(styles.backgroundColor);
     const bgImage = styles.backgroundImage;
     if (bgImage !== 'none') {
       return { type: 'image', value: bgImage };
     }
+
+    // Element has background colour.
+    const bgColor = convertToRGBA(styles.backgroundColor);
     if (bgColor[3] !== 0 && bgColor !== 'transparent') {
       // If the background colour has an alpha channel.
       if (bgColor[3] < 1) {

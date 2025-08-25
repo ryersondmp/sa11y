@@ -38,6 +38,13 @@ code {
   font-weight: 600;
 }
 
+pre:has(code) {
+  display: block;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
+pre,
 code,
 kbd,
 .kbd {

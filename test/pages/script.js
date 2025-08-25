@@ -62,7 +62,9 @@ const sa11y = new Sa11y({
   exportResultsPlugin: true,
   autoDetectShadowComponents: true,
   developerChecksOnByDefault: true,
+  // externalDeveloperChecks: true,
   imageWithinLightbox: '.lightbox',
+  customChecks: 'listen',
 
   // Configure image panel edit button
   editImageURLofCMS: 'localhost',
@@ -97,10 +99,11 @@ document.addEventListener('sa11y-custom-checks', () => {
       sa11y.results.push({
         element: $checkAnnouncement[i],
         type: 'warning',
-        content: 'More than one Announcement component found! The Announcement component should be used strategically and sparingly. It should be used to get attention or indicate that something is important. Misuse of this component makes it less effective or impactful. Secondly, this component is semantically labeled as an Announcement for people who use screen readers.',
+        content: `More than one Announcement component found! The Announcement component should be used strategically and sparingly. It should be used to get attention or indicate that something is important. Misuse of this component makes it less effective or impactful. Secondly, this component is semantically labeled as an Announcement for people who use screen readers. <hr> <pre><code>${sa11y.truncateString(sa11y.sanitizeHTML($checkAnnouncement[i].outerHTML), 100)}</pre></code>`,
         inline: false,
         position: 'beforebegin',
         dismiss: key,
+        // external: true,
       });
     }
   }
