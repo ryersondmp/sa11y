@@ -74,7 +74,6 @@ const sa11y = new Sa11y({
 
   // Customize checks.
   checks: {
-    // LABELS_PLACEHOLDER: false,
     QA_BAD_LINK: {
       sources: 'a[href*="dev."]',
     },

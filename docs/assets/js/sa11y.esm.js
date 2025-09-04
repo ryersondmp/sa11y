@@ -9471,7 +9471,7 @@ function checkContrast(results, option) {
     }
 
     // Process simple SVGs with a single shape.
-    const shapes = $el.querySelectorAll('path, polygon, circle, rect, ellipse');
+    const shapes = $el.querySelectorAll('path, polygon, circle, rect, ellipse, use');
     if (shapes.length === 1) {
       const style = getComputedStyle(shapes[0]);
       const { fill, opacity, stroke, strokeWidth } = style;
