@@ -63,6 +63,50 @@
   <main>
 
 
+    <h2>SVGs that use &lt;use&gt;</h2>
+    <style>
+      a.svg-inline {
+        display: flex;
+        align-items: center;
+        gap: 0.2rem;
+        color: blue;
+      }
+
+      svg {
+        width: 2rem;
+        height: 2rem;
+      }
+    </style>
+
+    <a class="svg-inline" href="https://sa11y.netlify.app/">
+      Go to Sa11y
+      <svg>
+        <use href="#svg_new_tab"></use>
+      </svg>
+    </a>
+
+
+    <a class="svg-inline" href="https://sa11y.netlify.app/">
+      Go to Sa11y
+      <svg>
+        <use href="#svg_new_tab"></use>
+      </svg>
+    </a>
+
+
+    <a class="svg-inline" href="https://sa11y.netlify.app/">
+      Go to Sa11y
+      <svg>
+        <use href="#svg_new_tab"></use>
+      </svg>
+    </a>
+
+    <div hidden><svg fill="currentColor" id="svg_new_tab">
+        <path
+          d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z" />
+      </svg>
+    </div>
+
     <h2>Testing &lt;pre&gt; within tooltip</h2>
     <p class="sa11y-announcement-component">Announcement</p>
     <p class="sa11y-announcement-component">Lorem ipsum dulce, some really long text passage.</p>
@@ -75,12 +119,20 @@
     </ul>
 
     <h2>Shadow DOM bug</h2>
-    <h3><web-component></web-component><span aria-label="test"></span><style>something {.test { color: red}}</style></h3>
+    <h3><web-component></web-component><span aria-label="test"></span>
+      <style>
+        something {
+          .test {
+            color: red
+          }
+        }
+      </style>
+    </h3>
     <script>
       class SomeBugs extends HTMLElement {
         constructor() {
           super();
-          this.attachShadow({mode: 'open'});
+          this.attachShadow({ mode: 'open' });
           this.shadowRoot.innerHTML = `
           <style>:host { background: red}</style>
           <span>Learn more about something</span>
@@ -96,7 +148,7 @@
       class SomeBugs2 extends HTMLElement {
         constructor() {
           super();
-          this.attachShadow({mode: 'open'});
+          this.attachShadow({ mode: 'open' });
           this.shadowRoot.innerHTML = `
           <style>:host { background: red}</style>
           <span>Learn more about something</span>

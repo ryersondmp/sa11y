@@ -124,7 +124,7 @@ export default function checkLabels(results, option) {
       }
 
       // Avoid using placeholder attributes.
-      if ($el.placeholder && $el.placeholder !== 0) {
+      if (option.checks.LABELS_PLACEHOLDER && $el.placeholder && $el.placeholder !== 0) {
         results.push({
           element: $el,
           type: option.checks.LABELS_PLACEHOLDER.type || 'warning',
