@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.2.1
+  * @version 4.2.2
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -2224,7 +2224,7 @@
     }
   }
 
-  const version = '4.2.1';
+  const version = '4.2.2';
 
   var styles = ":host{background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);bottom:0;display:block;height:-moz-fit-content;height:fit-content;left:0;position:fixed;right:0;width:100%;z-index:999999}*{-webkit-font-smoothing:auto!important;color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;font-size:var(--sa11y-normal-text);line-height:22px!important}#dialog{margin:20px auto;max-width:900px;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none}p{margin-top:0}.error{background:var(--sa11y-error);border:2px dashed #f08080;color:var(--sa11y-error-text);margin-bottom:0;padding:5px}";
 
@@ -2938,18 +2938,20 @@ ${this.error.stack}
     /* ******************************** */
     const tabs = Constants.Panel.panel.querySelectorAll('[role=tab]');
     if (tabs.length !== 0) {
-      let currentIndex = Array.from(tabs).findIndex((tab) => tab.classList.contains('active'));
       tabs.forEach((tab) => {
         tab.addEventListener('keydown', (e) => {
+          if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+          e.preventDefault();
+
+          // Compute index from the event target.
+          const currentIndex = Array.from(tabs).indexOf(e.currentTarget);
+          let nextIndex;
           if (e.key === 'ArrowRight') {
-            e.preventDefault();
-            currentIndex = (currentIndex + 1) % tabs.length;
-            tabs[currentIndex].focus();
-          } else if (e.key === 'ArrowLeft') {
-            e.preventDefault();
-            currentIndex = (currentIndex - 1 + tabs.length) % tabs.length;
-            tabs[currentIndex].focus();
+            nextIndex = (currentIndex + 1) % tabs.length;
+          } else {
+            nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
           }
+          tabs[nextIndex].focus();
         });
       });
     }
@@ -8053,7 +8055,7 @@ ${this.error.stack}
 
       /* 3. Tooltip for "Developer checks" toggle. */
       if (Constants.Global.developerPlugin) {
-        const infoIcon = Constants.Panel.developerItem.querySelector('.info-icon');
+        const infoIcon = Constants.Panel.developerItem?.querySelector('.info-icon');
         if (infoIcon) {
           tippy(infoIcon, {
             ...tooltipOptions(shadowRoot),
@@ -8067,7 +8069,7 @@ ${this.error.stack}
 
       /* 4. Tooltip for "Readability" toggle. */
       if (Constants.Global.readabilityPlugin) {
-        const infoIcon = Constants.Panel.readabilityItem.querySelector('.info-icon');
+        const infoIcon = Constants.Panel.readabilityItem?.querySelector('.info-icon');
         if (infoIcon) {
           tippy(infoIcon, {
             ...tooltipOptions(shadowRoot),
@@ -11234,13 +11236,17 @@ ${this.error.stack}
 
           // Get all images from results object for Image Outline.
           this.imageResults = this.results.filter((issue, index, self) => {
+            if (!issue?.element) return false;
+
+            // Only keep <img> elements.
             const { element } = issue;
-            if (!element || element.tagName !== 'IMG' || !element.outerHTML) return false;
-            return (
-              self.findIndex(
-                (other) => other.element?.outerHTML === element.outerHTML,
-              ) === index
-            );
+            if (element.tagName !== 'IMG') return false;
+            if (!element.outerHTML) return false;
+
+            // Ensure uniqueness, keep first occurrence only.
+            return self.findIndex(
+              (other) => other?.element?.outerHTML === element.outerHTML,
+            ) === index;
           });
 
           /* Custom checks */

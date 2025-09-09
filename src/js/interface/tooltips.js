@@ -191,7 +191,7 @@ export class PanelTooltips extends HTMLElement {
 
     /* 3. Tooltip for "Developer checks" toggle. */
     if (Constants.Global.developerPlugin) {
-      const infoIcon = Constants.Panel.developerItem.querySelector('.info-icon');
+      const infoIcon = Constants.Panel.developerItem?.querySelector('.info-icon');
       if (infoIcon) {
         tippy(infoIcon, {
           ...tooltipOptions(shadowRoot),
@@ -205,7 +205,7 @@ export class PanelTooltips extends HTMLElement {
 
     /* 4. Tooltip for "Readability" toggle. */
     if (Constants.Global.readabilityPlugin) {
-      const infoIcon = Constants.Panel.readabilityItem.querySelector('.info-icon');
+      const infoIcon = Constants.Panel.readabilityItem?.querySelector('.info-icon');
       if (infoIcon) {
         tippy(infoIcon, {
           ...tooltipOptions(shadowRoot),

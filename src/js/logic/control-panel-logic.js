@@ -159,18 +159,20 @@ export default function initializePanelToggles() {
   /* ******************************** */
   const tabs = Constants.Panel.panel.querySelectorAll('[role=tab]');
   if (tabs.length !== 0) {
-    let currentIndex = Array.from(tabs).findIndex((tab) => tab.classList.contains('active'));
     tabs.forEach((tab) => {
       tab.addEventListener('keydown', (e) => {
+        if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+        e.preventDefault();
+
+        // Compute index from the event target.
+        const currentIndex = Array.from(tabs).indexOf(e.currentTarget);
+        let nextIndex;
         if (e.key === 'ArrowRight') {
-          e.preventDefault();
-          currentIndex = (currentIndex + 1) % tabs.length;
-          tabs[currentIndex].focus();
-        } else if (e.key === 'ArrowLeft') {
-          e.preventDefault();
-          currentIndex = (currentIndex - 1 + tabs.length) % tabs.length;
-          tabs[currentIndex].focus();
+          nextIndex = (currentIndex + 1) % tabs.length;
+        } else {
+          nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
         }
+        tabs[nextIndex].focus();
       });
     });
   }
