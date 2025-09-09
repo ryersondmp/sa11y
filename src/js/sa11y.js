@@ -179,13 +179,17 @@ class Sa11y {
 
         // Get all images from results object for Image Outline.
         this.imageResults = this.results.filter((issue, index, self) => {
+          if (!issue?.element) return false;
+
+          // Only keep <img> elements.
           const { element } = issue;
-          if (!element || element.tagName !== 'IMG' || !element.outerHTML) return false;
-          return (
-            self.findIndex(
-              (other) => other.element?.outerHTML === element.outerHTML,
-            ) === index
-          );
+          if (element.tagName !== 'IMG') return false;
+          if (!element.outerHTML) return false;
+
+          // Ensure uniqueness, keep first occurrence only.
+          return self.findIndex(
+            (other) => other?.element?.outerHTML === element.outerHTML,
+          ) === index;
         });
 
         /* Custom checks */
