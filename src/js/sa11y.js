@@ -178,7 +178,7 @@ class Sa11y {
         if (option.readabilityPlugin) checkReadability();
 
         // Get all images from results object for Image Outline.
-        this.imageResults = Array.isArray(this.results) ? this.results.filter((issue, index, self) => {
+        this.imageResults = Array.isArray(this.results) ? this.results.filter((issue, index) => {
           if (!issue?.element) return false;
 
           // Only keep <img> elements.
@@ -187,7 +187,7 @@ class Sa11y {
           if (!element.outerHTML) return false;
 
           // Ensure uniqueness, keep first occurrence only.
-          return self.findIndex(
+          return this.results.findIndex(
             (other) => other?.element?.outerHTML === element.outerHTML,
           ) === index;
         }) : [];

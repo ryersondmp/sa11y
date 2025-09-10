@@ -5,7 +5,7 @@
 /**
  * Manually adjust version number based on the name of the branch.
  */
-const version = 'dev-4.0.0';
+const version = '4.2.4-dev';
 const loadingSpinnerSVG = `
 <style>
 .loader {
