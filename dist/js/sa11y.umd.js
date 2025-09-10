@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.2.2
+  * @version 4.2.3
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -11235,7 +11235,7 @@ ${this.error.stack}
           if (option.readabilityPlugin) checkReadability();
 
           // Get all images from results object for Image Outline.
-          this.imageResults = this.results.filter((issue, index, self) => {
+          this.imageResults = Array.isArray(this.results) ? this.results.filter((issue, index, self) => {
             if (!issue?.element) return false;
 
             // Only keep <img> elements.
@@ -11247,7 +11247,7 @@ ${this.error.stack}
             return self.findIndex(
               (other) => other?.element?.outerHTML === element.outerHTML,
             ) === index;
-          });
+          }) : [];
 
           /* Custom checks */
           if (option.customChecks === true) {
