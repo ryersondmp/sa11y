@@ -178,7 +178,7 @@ class Sa11y {
         if (option.readabilityPlugin) checkReadability();
 
         // Get all images from results object for Image Outline.
-        this.imageResults = this.results.filter((issue, index, self) => {
+        this.imageResults = Array.isArray(this.results) ? this.results.filter((issue, index, self) => {
           if (!issue?.element) return false;
 
           // Only keep <img> elements.
@@ -190,7 +190,7 @@ class Sa11y {
           return self.findIndex(
             (other) => other?.element?.outerHTML === element.outerHTML,
           ) === index;
-        });
+        }) : [];
 
         /* Custom checks */
         if (option.customChecks === true) {
