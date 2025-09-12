@@ -28,7 +28,8 @@ export function dismissLogic(results, dismissTooltip) {
   const allDismissed = results.filter((issue) => dismissedIssues.some((dismissed) => dismissAll(issue, dismissed)));
 
   // Combine all dismissed results and filter out duplicates.
-  const dismissedResults = [...soloDismissed, ...allDismissed];
+  const mergeDismissed = [...soloDismissed, ...allDismissed];
+  const dismissedResults = [...new Map(mergeDismissed.map((issue) => [issue.dismiss, issue])).values()];
   const dismissCount = dismissedResults.length;
 
   // Update results array (exclude dismissed and dismissed all checks).
