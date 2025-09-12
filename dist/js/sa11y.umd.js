@@ -1898,9 +1898,7 @@
   function dismissButtons(results, dismissed, checkAll, resetAll) {
     if (Constants.Global.dismissAnnotations) {
       // Dismiss buttons.
-      dismissHandler = (e) => {
-        dismissIssueButton(e, results, checkAll, resetAll);
-      };
+      dismissHandler = (e) => dismissIssueButton(e, results, checkAll, resetAll);
 
       // Dismiss button exists in both tooltip and control panel.
       const tooltips = document.querySelector('sa11y-tooltips').shadowRoot;
@@ -1909,9 +1907,7 @@
     }
 
     // Initialize restore alerts button regardless if plugin enabled or not.
-    restoreDismissedHandler = () => {
-      restoreDismissButton(dismissed, checkAll, resetAll);
-    };
+    restoreDismissedHandler = () => restoreDismissButton(dismissed, checkAll, resetAll);
     Constants.Panel.dismissButton?.addEventListener('click', restoreDismissedHandler);
   }
 
@@ -2967,7 +2963,7 @@ ${this.error.stack}
       const outlineArray = [];
 
       // Find all dismissed headings and update headingOutline array.
-      const findDismissedHeadings = dismissed.map((e) => headingOutline.find((f) => e.key === f.dismiss && e.href === window.location.pathname)).filter(Boolean);
+      const findDismissedHeadings = dismissed.map((e) => headingOutline.find((f) => e.dismiss === f.dismiss)).filter(Boolean);
       findDismissedHeadings.forEach(($el) => Object.assign($el, { dismissedHeading: true }));
 
       // Show meta page title in Page Outline.
@@ -3245,24 +3241,20 @@ ${this.error.stack}
   function generateImageOutline(dismissed, imageResults, option) {
     const imageOutlineHandler = () => {
       const imageArray = [];
-
-      // Find all dismissed images.
-      const findDismissedImages = dismissed.map((e) => imageResults.find((f) => e.key === f.dismiss && e.href === window.location.pathname)).filter(Boolean);
-
       imageResults.forEach((image) => {
-        // Filter out dismissed images.
-        const isDismissed = findDismissedImages.some((dismissedImage) => dismissedImage.element.outerHTML.toLowerCase() === image.element.outerHTML.toLowerCase());
+        // Match dismissed images.
+        const isDismissed = dismissed.some((i) => i.dismiss === image.dismiss);
         if (isDismissed) Object.assign(image, { dismissedImage: true });
 
         // Get image object's properties.
-        const issue = image.type;
-        const developerCheck = image.developer;
-        const { dismissedImage } = image;
-        const altText = escapeHTML(image.element.alt);
+        const { element, type, developer, dismissedImage } = image;
+        const altText = computeAriaLabel(element) === 'noAria'
+          ? escapeHTML(element.getAttribute('alt'))
+          : computeAriaLabel(element);
 
         // Make developer checks don't show images as error if Developer checks are off!
         const devChecksOff = store.getItem('sa11y-developer') === 'Off' || store.getItem('sa11y-developer') === null;
-        const showDeveloperChecks = devChecksOff && (issue === 'error' || issue === 'warning') && developerCheck === true;
+        const showDeveloperChecks = devChecksOff && (type === 'error' || type === 'warning') && developer === true;
 
         // Account for lazy loading libraries.
         const source = getBestImageSource(image.element);
@@ -3270,16 +3262,19 @@ ${this.error.stack}
         // Generate edit link if locally hosted image and prop is enabled.
         const edit = Constants.Global.editImageURLofCMS ? generateEditLink(image) : '';
 
+        // Image is decorative (has null alt)
+        const isDecorative = element.hasAttribute('alt') && removeWhitespace(altText).length === 0;
+
         // If image is linked.
         const anchor = option.imageWithinLightbox
           ? `a[href]:not(${option.imageWithinLightbox})`
           : 'a[href]';
-        const linked = (image.element.closest(anchor))
-          ? `<div class="badge ${issue}-badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._('LINKED')}</span></div>`
+        const linked = (element.closest(anchor))
+          ? `<div class="badge ${type}-badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._('LINKED')}</span></div>`
           : '';
 
         let append;
-        if (issue === 'error' && !showDeveloperChecks) {
+        if (type === 'error' && !showDeveloperChecks) {
           const missing = altText.length === 0
             ? `<div class="badge error-badge">${Lang._('MISSING')}</div>`
             : `<strong class="red-text">${altText}</strong>`;
@@ -3292,8 +3287,8 @@ ${this.error.stack}
           ${edit}
         </li>`;
           imageArray.push(append);
-        } else if (issue === 'warning' && !dismissedImage && !showDeveloperChecks) {
-          const decorative = altText.length === 0
+        } else if (type === 'warning' && !dismissedImage && !showDeveloperChecks) {
+          const decorative = isDecorative
             ? `<div class="badge warning-badge">${Lang._('DECORATIVE')}</div>`
             : '';
           append = `
@@ -3307,13 +3302,13 @@ ${this.error.stack}
         </li>`;
           imageArray.push(append);
         } else {
-          const decorative = altText.length === 0
+          const decorative = isDecorative
             ? `<div class="badge">${Lang._('DECORATIVE')}</div>`
             : '';
           const goodAnchor = option.imageWithinLightbox
             ? `a[href]:not(${option.imageWithinLightbox})`
             : 'a[href]';
-          const goodLinked = (image.element.closest(goodAnchor))
+          const goodLinked = (element.closest(goodAnchor))
             ? `<div class="badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._('LINKED')}</span></div>`
             : '';
           append = `
@@ -10140,9 +10135,10 @@ ${this.error.stack}
 
   function checkEmbeddedContent(results, option) {
     // iFrame's SRC attribute.
-    const src = ($el) => ($el.getAttribute('src') !== 'undefined'
-      ? $el.getAttribute('src')
-      : $el.querySelector('[src]')?.getAttribute('src'));
+    const src = ($el) => $el.getAttribute('src')
+      || $el.querySelector('source[src]')?.getAttribute('src')
+      || $el.querySelector('[src]')?.getAttribute('src')
+      || null;
 
     // Warning: Audio content.
     if (option.checks.EMBED_AUDIO) {
@@ -11205,7 +11201,6 @@ ${this.error.stack}
         try {
           this.results = [];
           this.headingOutline = [];
-          this.imageOutline = [];
           this.errorCount = 0;
           this.warningCount = 0;
           this.customChecksRunning = false;
@@ -11234,20 +11229,16 @@ ${this.error.stack}
           if (option.contrastPlugin) checkContrast(this.results, option);
           if (option.readabilityPlugin) checkReadability();
 
-          // Get all images from results object for Image Outline.
-          this.imageResults = Array.isArray(this.results) ? this.results.filter((issue, index) => {
-            if (!issue?.element) return false;
-
-            // Only keep <img> elements.
-            const { element } = issue;
-            if (element.tagName !== 'IMG') return false;
-            if (!element.outerHTML) return false;
-
-            // Ensure uniqueness, keep first occurrence only.
-            return this.results.findIndex(
-              (other) => other?.element?.outerHTML === element.outerHTML,
-            ) === index;
-          }) : [];
+          // Build array of images to be used for image panel.
+          this.imageResults = Elements.Found.Images.map((image) => {
+            const match = this.results.find((i) => i.element === image);
+            return match && {
+              element: image,
+              type: match.type,
+              dismiss: match.dismiss,
+              developer: match.developer,
+            };
+          }).filter(Boolean);
 
           /* Custom checks */
           if (option.customChecks === true) {
@@ -11321,6 +11312,7 @@ ${this.error.stack}
           );
           this.results = dismiss.updatedResults;
           this.dismissed = dismiss.dismissedIssues;
+          this.dismissedPageResults = dismiss.dismissedResults;
 
           // Update count & badge.
           const count = updateCount(
@@ -11353,13 +11345,17 @@ ${this.error.stack}
             );
 
             generatePageOutline(
-              this.dismissed,
+              this.dismissedPageResults,
               this.headingOutline,
               option,
             );
 
             if (option.showImageOutline) {
-              generateImageOutline(this.dismissed, this.imageResults, option);
+              generateImageOutline(
+                this.dismissedPageResults,
+                this.imageResults,
+                option,
+              );
             }
 
             updatePanel(

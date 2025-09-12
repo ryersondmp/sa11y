@@ -3,6 +3,7 @@
 */
 import Constants from '../utils/constants';
 import * as Utils from '../utils/utils';
+import { computeAriaLabel } from '../utils/computeAccessibleName';
 import Lang from '../utils/lang';
 
 /**
@@ -61,24 +62,20 @@ const generateEditLink = (image) => {
 export default function generateImageOutline(dismissed, imageResults, option) {
   const imageOutlineHandler = () => {
     const imageArray = [];
-
-    // Find all dismissed images.
-    const findDismissedImages = dismissed.map((e) => imageResults.find((f) => e.key === f.dismiss && e.href === window.location.pathname)).filter(Boolean);
-
     imageResults.forEach((image) => {
-      // Filter out dismissed images.
-      const isDismissed = findDismissedImages.some((dismissedImage) => dismissedImage.element.outerHTML.toLowerCase() === image.element.outerHTML.toLowerCase());
+      // Match dismissed images.
+      const isDismissed = dismissed.some((i) => i.dismiss === image.dismiss);
       if (isDismissed) Object.assign(image, { dismissedImage: true });
 
       // Get image object's properties.
-      const issue = image.type;
-      const developerCheck = image.developer;
-      const { dismissedImage } = image;
-      const altText = Utils.escapeHTML(image.element.alt);
+      const { element, type, developer, dismissedImage } = image;
+      const altText = computeAriaLabel(element) === 'noAria'
+        ? Utils.escapeHTML(element.getAttribute('alt'))
+        : computeAriaLabel(element);
 
       // Make developer checks don't show images as error if Developer checks are off!
       const devChecksOff = Utils.store.getItem('sa11y-developer') === 'Off' || Utils.store.getItem('sa11y-developer') === null;
-      const showDeveloperChecks = devChecksOff && (issue === 'error' || issue === 'warning') && developerCheck === true;
+      const showDeveloperChecks = devChecksOff && (type === 'error' || type === 'warning') && developer === true;
 
       // Account for lazy loading libraries.
       const source = Utils.getBestImageSource(image.element);
@@ -86,16 +83,19 @@ export default function generateImageOutline(dismissed, imageResults, option) {
       // Generate edit link if locally hosted image and prop is enabled.
       const edit = Constants.Global.editImageURLofCMS ? generateEditLink(image) : '';
 
+      // Image is decorative (has null alt)
+      const isDecorative = element.hasAttribute('alt') && Utils.removeWhitespace(altText).length === 0;
+
       // If image is linked.
       const anchor = option.imageWithinLightbox
         ? `a[href]:not(${option.imageWithinLightbox})`
         : 'a[href]';
-      const linked = (image.element.closest(anchor))
-        ? `<div class="badge ${issue}-badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._('LINKED')}</span></div>`
+      const linked = (element.closest(anchor))
+        ? `<div class="badge ${type}-badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._('LINKED')}</span></div>`
         : '';
 
       let append;
-      if (issue === 'error' && !showDeveloperChecks) {
+      if (type === 'error' && !showDeveloperChecks) {
         const missing = altText.length === 0
           ? `<div class="badge error-badge">${Lang._('MISSING')}</div>`
           : `<strong class="red-text">${altText}</strong>`;
@@ -108,8 +108,8 @@ export default function generateImageOutline(dismissed, imageResults, option) {
           ${edit}
         </li>`;
         imageArray.push(append);
-      } else if (issue === 'warning' && !dismissedImage && !showDeveloperChecks) {
-        const decorative = altText.length === 0
+      } else if (type === 'warning' && !dismissedImage && !showDeveloperChecks) {
+        const decorative = isDecorative
           ? `<div class="badge warning-badge">${Lang._('DECORATIVE')}</div>`
           : '';
         append = `
@@ -123,13 +123,13 @@ export default function generateImageOutline(dismissed, imageResults, option) {
         </li>`;
         imageArray.push(append);
       } else {
-        const decorative = altText.length === 0
+        const decorative = isDecorative
           ? `<div class="badge">${Lang._('DECORATIVE')}</div>`
           : '';
         const goodAnchor = option.imageWithinLightbox
           ? `a[href]:not(${option.imageWithinLightbox})`
           : 'a[href]';
-        const goodLinked = (image.element.closest(goodAnchor))
+        const goodLinked = (element.closest(goodAnchor))
           ? `<div class="badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._('LINKED')}</span></div>`
           : '';
         append = `

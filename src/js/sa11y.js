@@ -148,7 +148,6 @@ class Sa11y {
       try {
         this.results = [];
         this.headingOutline = [];
-        this.imageOutline = [];
         this.errorCount = 0;
         this.warningCount = 0;
         this.customChecksRunning = false;
@@ -177,20 +176,16 @@ class Sa11y {
         if (option.contrastPlugin) checkContrast(this.results, option);
         if (option.readabilityPlugin) checkReadability();
 
-        // Get all images from results object for Image Outline.
-        this.imageResults = Array.isArray(this.results) ? this.results.filter((issue, index) => {
-          if (!issue?.element) return false;
-
-          // Only keep <img> elements.
-          const { element } = issue;
-          if (element.tagName !== 'IMG') return false;
-          if (!element.outerHTML) return false;
-
-          // Ensure uniqueness, keep first occurrence only.
-          return this.results.findIndex(
-            (other) => other?.element?.outerHTML === element.outerHTML,
-          ) === index;
-        }) : [];
+        // Build array of images to be used for image panel.
+        this.imageResults = Elements.Found.Images.map((image) => {
+          const match = this.results.find((i) => i.element === image);
+          return match && {
+            element: image,
+            type: match.type,
+            dismiss: match.dismiss,
+            developer: match.developer,
+          };
+        }).filter(Boolean);
 
         /* Custom checks */
         if (option.customChecks === true) {
@@ -264,6 +259,7 @@ class Sa11y {
         );
         this.results = dismiss.updatedResults;
         this.dismissed = dismiss.dismissedIssues;
+        this.dismissedPageResults = dismiss.dismissedResults;
 
         // Update count & badge.
         const count = updateCount(
@@ -296,13 +292,17 @@ class Sa11y {
           );
 
           generatePageOutline(
-            this.dismissed,
+            this.dismissedPageResults,
             this.headingOutline,
             option,
           );
 
           if (option.showImageOutline) {
-            generateImageOutline(this.dismissed, this.imageResults, option);
+            generateImageOutline(
+              this.dismissedPageResults,
+              this.imageResults,
+              option,
+            );
           }
 
           updatePanel(
