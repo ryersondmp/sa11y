@@ -337,7 +337,8 @@ strong {
   font-weight: 600;
 }
 
-a:not(#outline-list a):not(.edit) {
+// to-do remove!
+a:not(#outline-list a):not(#images-list a) {
   font-weight: 500;
   color: var(--sa11y-hyperlink);
   text-decoration: underline;
@@ -532,8 +533,8 @@ hr {
   }
 }
 
-#page-issues-content,
 #images-content,
+#page-issues-content,
 #settings-content,
 #outline-content {
   padding: 0 15px 10px;
@@ -543,6 +544,10 @@ hr {
   .top-left & {
     border: 0;
   }
+}
+
+#images-content {
+  padding-inline: 10px;
 }
 
 #page-issues-content {
@@ -575,30 +580,30 @@ hr {
   padding: 0;
   margin: 0;
 
-  a {
+  button {
     display: block;
     text-decoration: none;
     cursor: pointer;
+
+    &:hover,
+    &:focus {
+      display: block;
+      background: var(--sa11y-panel-outline-hover);
+      border-radius: 5px;
+      box-shadow: 0 0 0 2px var(--sa11y-panel-outline-hover);
+    }
   }
 
   li {
     display: block;
     padding: 0;
     margin-top: 0;
-    margin-bottom: 3px;
+    margin-bottom: 4.5px;
     list-style-type: none;
-  }
 
-  li:first-child {
-    margin-top: 5px;
-  }
-
-  li a:hover,
-  li a:focus {
-    display: block;
-    background: var(--sa11y-panel-outline-hover);
-    border-radius: 5px;
-    box-shadow: 0 0 0 2px var(--sa11y-panel-outline-hover);
+    &:first-child {
+      margin-top: 5px;
+    }
   }
 
   .outline-2 {
@@ -630,17 +635,29 @@ hr {
   padding: 0;
   margin: 0;
 
-  li {
+  button {
     display: block;
+    min-height: 44px;
+    margin: 10px 5px;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+      display: block;
+      background: var(--sa11y-panel-outline-hover);
+      border-radius: 5px;
+      box-shadow: 0 0 0 2px var(--sa11y-panel-outline-hover);
+    }
+  }
+
+  li {
+    display: flex;
+    flex-direction: column;
     width: 100%;
-    margin: 15px 0;
     overflow: hidden;
     list-style-type: none;
     border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
-
-    &:first-child {
-      margin-top: 5px;
-    }
 
     &:last-child {
       margin-bottom: 0;
@@ -683,8 +700,7 @@ hr {
     img {
       float: inline-start;
       max-width: 110px;
-      margin-inline-end: 10px;
-      margin-block-end: 15px;
+      margin: 5px;
       border-radius: 5px;
     }
 

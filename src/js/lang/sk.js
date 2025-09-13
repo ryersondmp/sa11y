@@ -36,14 +36,14 @@ export default {
     NO_ERRORS_FOUND: 'Nenašli sa žiadne chyby.',
     WARNINGS_FOUND: 'nájdené varovania.',
     TOTAL_FOUND: 'celkový počet nájdených problémov.',
-    NOT_VISIBLE: 'Položka, ktorú sa snažíte zobraziť, nie je viditeľná; môže byť skrytá alebo sa nachádza v komponente akordeónu alebo karty. Tu je náhľad:',
+    NOT_VISIBLE: 'Položka, ktorú sa snažíte zobraziť, nie je viditeľná; môže byť skrytá alebo sa nachádza v komponente akordeónu alebo karty.',
     MISSING_ROOT: 'Celá stránka bola skontrolovaná z hľadiska prístupnosti, pretože cieľová oblasť <code>%(root)</code> neexistuje.',
     MISSING_READABILITY_ROOT: 'Skóre čitateľnosti je založené na obsahovej oblasti <code>%(fallback)</code>, pretože cieľová oblasť <code>%(root)</code> neexistuje.',
-    HEADING_NOT_VISIBLE: 'Záhlavie nie je viditeľné; môže byť skryté alebo sa nachádzať v komponente akordeónu alebo karty.',
     SKIP_TO_PAGE_ISSUES: 'Prejsť na stránku Problémy',
     CONSOLE_ERROR: 'Je nám ľúto, ale na tejto stránke je problém s kontrolou prístupnosti. Môžete to prosím <a href="%(link)">nahlásiť prostredníctvom tohto formulára</a> alebo na <a href="%(link)">GitHub</a>?',
     APPEARANCE: 'Vzhľad',
     MOVE_PANEL: 'Presunúť panel',
+    HIDDEN: 'Skryté',
 
     // Dismiss
     PANEL_DISMISS_BUTTON: 'Zobraziť %(dismissCount) zamietnuté',

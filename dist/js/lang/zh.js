@@ -48,14 +48,14 @@ var zh = {
     NO_ERRORS_FOUND: '没有发现错误。',
     WARNINGS_FOUND: '发现的警告。',
     TOTAL_FOUND: '发现的总问题。',
-    NOT_VISIBLE: '你试图查看的项目是不可见的；它可能是隐藏的或在一个手风琴或标签组件内。这里有一个预览: ',
+    NOT_VISIBLE: '你试图查看的项目是不可见的；它可能是隐藏的或在一个手风琴或标签组件内。',
     MISSING_ROOT: '由于目标区域<code>%(root)</code>不存在, 全页面被检查为可访问性。',
     MISSING_READABILITY_ROOT: '可读性评分基于<code>%(fallback)</code>内容区域，因为目标区域<code>%(root)</code>不存在。',
-    HEADING_NOT_VISIBLE: '标题是不可见的；它可能是隐藏的或在手风琴或标签组件内。',
     SKIP_TO_PAGE_ISSUES: '跳到页面问题',
     CONSOLE_ERROR: '对不起, 本页面的可访问性检查器有问题。您能否<a href="%(link)">通过此表格</a>或<a href="%(link)">GitHub</a>报告?',
     APPEARANCE: '外观',
     MOVE_PANEL: '移动面板',
+    HIDDEN: '隐藏',
 
     // Dismiss
     PANEL_DISMISS_BUTTON: '显示 %(dismissCount) 被忽略的',

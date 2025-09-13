@@ -36,14 +36,14 @@ export default {
     NO_ERRORS_FOUND: 'Nu s-au găsit erori.',
     WARNINGS_FOUND: 'avertismente găsite.',
     TOTAL_FOUND: 'numărul total de probleme găsite.',
-    NOT_VISIBLE: 'Elementul pe care încercați să îl vizualizați nu este vizibil; este posibil să fie ascuns sau să se afle în interiorul unui acordeon sau al unei componente de tablă. Iată o previzualizare:',
+    NOT_VISIBLE: 'Elementul pe care încercați să îl vizualizați nu este vizibil; este posibil să fie ascuns sau să se afle în interiorul unui acordeon sau al unei componente de tablă.',
     MISSING_ROOT: 'Pagina completă a fost verificată din punct de vedere al accesibilității deoarece zona țintă <code>%(root)</code> nu există.',
     MISSING_READABILITY_ROOT: 'Scorul de lizibilitate se bazează pe zona de conținut <code>%(fallback)</code>, deoarece zona țintă <code>%(root)</code> nu există.',
-    HEADING_NOT_VISIBLE: 'Rubrica nu este vizibilă; poate fi ascunsă sau în interiorul unui acordeon sau al unei componente de tablă.',
     SKIP_TO_PAGE_ISSUES: 'Treceți la pagina Probleme',
     CONSOLE_ERROR: 'Ne pare rău, dar există o problemă cu verificatorul de accesibilitate de pe această pagină. Puteți vă rog <a href="%(link)">raportați-o prin intermediul acestui formular</a> sau pe <a href="%(link)">GitHub</a>?',
     APPEARANCE: 'Aparență',
     MOVE_PANEL: 'Mută panoul',
+    HIDDEN: 'Ascuns',
 
     // Dismiss
     PANEL_DISMISS_BUTTON: 'Arată %(dismissCount) respinse',

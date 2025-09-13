@@ -48,14 +48,14 @@ var nb = {
     NO_ERRORS_FOUND: 'Ingen feil funnet.',
     WARNINGS_FOUND: 'advarsler funnet.',
     TOTAL_FOUND: 'totalt antall problemer funnet.',
-    NOT_VISIBLE: 'Elementet du prøver å se, er ikke synlig; det kan være skjult eller inne i en trekkspill- eller fanekomponent. Her er en forhåndsvisning:',
+    NOT_VISIBLE: 'Elementet du prøver å se, er ikke synlig; det kan være skjult eller inne i en trekkspill- eller fanekomponent.',
     MISSING_ROOT: 'Hele siden ble kontrollert for tilgjengelighet fordi målområdet <code>%(root)</code> ikke finnes.',
     MISSING_READABILITY_ROOT: 'Lesbarhetspoengene er basert på innholdsområdet <code>%(fallback)</code>, fordi målområdet <code>%(root)</code> ikke finnes.',
-    HEADING_NOT_VISIBLE: 'Overskriften er ikke synlig; den kan være skjult eller inne i en trekkspill- eller fanekomponent.',
     SKIP_TO_PAGE_ISSUES: 'Gå til sideproblemer',
     CONSOLE_ERROR: 'Beklager, men det er et problem med tilgjengelighetskontrollen på denne siden. Kan du <a href="%(link)">rapportere det via dette skjemaet</a> eller på <a href="%(link)">GitHub</a>?',
     APPEARANCE: 'Utseende',
     MOVE_PANEL: 'Flytt panel',
+    HIDDEN: 'Skjult',
 
     // Dismiss
     PANEL_DISMISS_BUTTON: 'Vis %(dismissCount) avviste',

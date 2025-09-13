@@ -729,3 +729,52 @@ export function standardizeHref($el) {
 
   return href;
 }
+
+/**
+ * Roving tabindex menu for page outline.
+ * Thanks to Srijan for this snippet!
+ * @param {HTMLElement} container - Parent element (e.g., ul, div).
+ * @param {HTMLElement[]} children - Focusable child elements inside container.
+*/
+export function initRovingTabindex(container, children) {
+  let current = 0;
+  const handleKeyDown = (e) => {
+    if (!['ArrowUp', 'ArrowDown', 'Space'].includes(e.code)) return;
+    if (e.code === 'Space') {
+      children[current].click();
+      e.preventDefault();
+      return;
+    }
+    const selected = children[current];
+    selected.setAttribute('tabindex', -1);
+    let next;
+    if (e.code === 'ArrowDown') {
+      next = current + 1;
+      if (current === children.length - 1) {
+        next = 0;
+      }
+    } else if ((e.code === 'ArrowUp')) {
+      next = current - 1;
+      if (current === 0) {
+        next = children.length - 1;
+      }
+    }
+    children[next].setAttribute('tabindex', 0);
+    children[next].focus();
+    current = next;
+    e.preventDefault();
+  };
+
+  container.addEventListener('focus', () => {
+    if (children.length > 0) {
+      container.setAttribute('tabindex', -1);
+      children[current].setAttribute('tabindex', 0);
+      children[current].focus();
+    }
+    container.addEventListener('keydown', handleKeyDown);
+  });
+
+  container.addEventListener('blur', () => {
+    container.removeEventListener('keydown', handleKeyDown);
+  });
+}

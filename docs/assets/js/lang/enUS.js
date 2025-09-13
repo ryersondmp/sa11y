@@ -47,14 +47,14 @@ var enUS = {
     NO_ERRORS_FOUND: 'No errors found.',
     WARNINGS_FOUND: 'warnings found.',
     TOTAL_FOUND: 'total issues found.',
-    NOT_VISIBLE: 'The item you are trying to view is not visible; it may be hidden or inside of an accordion or tab component. Here is a preview:',
+    NOT_VISIBLE: 'Item is not visible; it may be hidden or inside of an accordion or tab component.',
     MISSING_ROOT: 'The full page was checked for accessibility because the target area <code>%(root)</code> does not exist.',
     MISSING_READABILITY_ROOT: 'The readability score is based on the <code>%(fallback)</code> content area, because the target area <code>%(root)</code> does not exist.',
-    HEADING_NOT_VISIBLE: 'Heading is not visible; it may be hidden or inside of an accordion or tab component.',
     SKIP_TO_PAGE_ISSUES: 'Skip to Page Issues',
     CONSOLE_ERROR: 'Sorry, but there is an issue with the accessibility checker on this page. Can you please <a href="%(link)">report it through this form</a> or on <a href="%(link)">GitHub</a>?',
     APPEARANCE: 'Appearance',
     MOVE_PANEL: 'Move panel',
+    HIDDEN: 'Hidden',
 
     // Export
     DATE: 'Date',

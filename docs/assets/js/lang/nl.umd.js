@@ -54,14 +54,14 @@
       NO_ERRORS_FOUND: 'Geen fouten gevonden.',
       WARNINGS_FOUND: 'waarschuwingen gevonden.',
       TOTAL_FOUND: 'totaal aantal gevonden problemen.',
-      NOT_VISIBLE: 'Het item dat je probeert te bekijken is niet zichtbaar; het kan verborgen zijn of in een accordeon of tabbladcomponent zitten. Hier is een voorbeeld:',
+      NOT_VISIBLE: 'Het item dat je probeert te bekijken is niet zichtbaar; het kan verborgen zijn of in een accordeon of tabbladcomponent zitten.',
       MISSING_ROOT: 'De volledige pagina is gecontroleerd op toegankelijkheid omdat het doelgebied <code>%(root)</code> niet bestaat.',
       MISSING_READABILITY_ROOT: 'De leesbaarheidsscore is gebaseerd op het inhoudsgebied <code>%(fallback)</code>, omdat het doelgebied <code>%(root)</code> niet bestaat.',
-      HEADING_NOT_VISIBLE: 'De kop is niet zichtbaar; hij kan verborgen zijn of in een accordeon- of tabbladcomponent staan.',
       SKIP_TO_PAGE_ISSUES: 'Doorgaan naar paginaproblemen',
       CONSOLE_ERROR: 'Sorry, maar er is een probleem met de toegankelijkheidscontrole op deze pagina. Kunt u dit alstublieft <a href="%(link)">melden via dit formulier</a> of op <a href="%(link)">GitHub</a>?',
       APPEARANCE: 'Uiterlijk',
       MOVE_PANEL: 'Verplaats paneel',
+      HIDDEN: 'Verborgen',
 
       // Dismiss
       PANEL_DISMISS_BUTTON: 'Toon %(dismissCount) afgewezen',

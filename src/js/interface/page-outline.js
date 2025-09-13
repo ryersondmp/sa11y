@@ -9,7 +9,6 @@ import find from '../utils/find';
 
 export default function generatePageOutline(dismissed, headingOutline, option) {
   const outlineHandler = () => {
-    // Create a single array that gets appended to heading outline.
     const outlineArray = [];
 
     // Find all dismissed headings and update headingOutline array.
@@ -44,7 +43,8 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
       // Filter out specified headings in outlineIgnore and headerIgnore props.
       if (!Elements.Found.OutlineIgnore.includes($el)) {
         // Indicate if heading is totally hidden or visually hidden.
-        const visibleIcon = (visibility === true) ? '<span class="hidden-icon"></span><span class="visually-hidden">Hidden</span>' : '';
+        const visibleIcon = (visibility === true)
+          ? `<span class="hidden-icon"></span><span class="visually-hidden">${Lang._('HIDDEN')}</span>` : '';
         const visibleStatus = (visibility === true) ? 'class="hidden-h"' : '';
         const badgeH = (option.showHinPageOutline === true || option.showHinPageOutline === 1) ? 'H' : '';
 
@@ -52,41 +52,41 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
         if (issue === 'error' && isWithinRoot === true) {
           append = `
             <li class="outline-${level}">
-              <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
+              <button tabindex="-1" ${visibleStatus}>
                 <span class="badge error-badge">
                 <span aria-hidden="true">${visibleIcon}
                   <span class="error-icon"></span>
                 </span>
                 <span class="visually-hidden">${Lang._('ERROR')}</span> ${badgeH + level}</span>
                 <strong class="outline-list-item red-text">${headingText}</strong>
-              </a>
+              </button>
             </li>`;
           outlineArray.push(append);
         } else if (issue === 'warning' && !dismissedH && isWithinRoot === true) {
           append = `
             <li class="outline-${level}">
-              <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
+              <button tabindex="-1" ${visibleStatus}>
                 <span class="badge warning-badge">
                 <span aria-hidden="true">${visibleIcon} &#x3f;</span>
                 <span class="visually-hidden">${Lang._('WARNING')}</span> ${badgeH + level}</span>
                 <strong class="outline-list-item yellow-text">${headingText}</strong>
-              </a>
+              </button>
             </li>`;
           outlineArray.push(append);
         } else {
           append = `
             <li class="outline-${level}">
-              <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
+              <button tabindex="-1" ${visibleStatus}>
                 <span class="badge">${visibleIcon} ${badgeH + level}</span>
                 <span class="outline-list-item">${headingText}</span>
-              </a>
+              </button>
             </li>`;
           outlineArray.push(append);
         }
       }
 
       /**
-        * Append heading labels.
+       * Append heading labels.
       */
       const label = document.createElement('sa11y-heading-label');
       const anchor = document.createElement('sa11y-heading-anchor');
@@ -120,9 +120,7 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
       label.shadowRoot.appendChild(content);
 
       // Make heading labels visible when panel is open.
-      if (Utils.store.getItem('sa11y-outline') === 'Opened') {
-        label.hidden = false;
-      }
+      if (Utils.store.getItem('sa11y-outline') === 'Opened') label.hidden = false;
     });
 
     // Append headings to Page Outline.
@@ -132,101 +130,27 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
 
     // Make clickable!
     setTimeout(() => {
-      const panel = document.querySelector('sa11y-control-panel');
-      const shadow = panel.shadowRoot;
-      const children = Array.from(shadow.querySelectorAll('#outline-list a'));
+      const buttons = Constants.Panel.outlineList.querySelectorAll('button');
+      buttons.forEach(($el, i) => {
+        $el.addEventListener('click', () => {
+          const heading = find(`#sa11y-h${i}, [data-sa11y-parent="h${i}"]`, 'document', Constants.Exclusions.Container);
+          heading[0].scrollIntoView({ behavior: `${Constants.Global.scrollBehaviour}`, block: 'center' });
+          Utils.addPulse(heading[0].parentElement);
 
-      children.forEach(($el, i) => {
-        // Make Page Outline clickable.
-        const outlineLink = shadow.getElementById(`sa11y-link-${i}`);
-
-        const headingID = find(
-          `#sa11y-h${i}, [data-sa11y-parent="h${i}"]`,
-          'document',
-          Constants.Exclusions.Container,
-        );
-
-        // Scroll to.
-        const pulseAndScroll = (heading) => {
-          Utils.addPulse(heading.parentElement);
-          heading.scrollIntoView({
-            behavior: `${Constants.Global.scrollBehaviour}`,
-            block: 'center',
-          });
-        };
-
-        // Add pulse.
-        const smoothPulse = (e) => {
-          if ((e.type === 'keyup' && e.code === 'Enter') || e.type === 'click') {
-            headingID.forEach((heading) => {
-              pulseAndScroll(heading);
-            });
-
-            if (outlineLink.classList.contains('hidden-h')) {
-              Utils.createAlert(`${Lang._('HEADING_NOT_VISIBLE')}`);
-            } else if (Constants.Panel.alert.classList.contains('active')) {
-              Utils.removeAlert();
-            }
-          }
-          e.preventDefault();
-        };
-
-        // Attach event listeners.
-        outlineLink?.addEventListener('click', smoothPulse, false);
-        outlineLink?.addEventListener('keyup', smoothPulse, false);
+          // Alert if hidden.
+          Utils.removeAlert();
+          if ($el.classList.contains('hidden-h')) Utils.createAlert(Lang._('NOT_VISIBLE'));
+        });
       });
 
-      /**
-       * Roving tabindex menu for page outline.
-       * Thanks to Srijan for this snippet!
-       * @link https://blog.srij.dev/roving-tabindex-from-scratch
-      */
-      let current = 0;
-      const handleKeyDown = (e) => {
-        if (!['ArrowUp', 'ArrowDown', 'Space'].includes(e.code)) return;
-        if (e.code === 'Space') {
-          children[current].click();
-          return;
-        }
-        const selected = children[current];
-        selected.setAttribute('tabindex', -1);
-        let next;
-        if (e.code === 'ArrowDown') {
-          next = current + 1;
-          if (current === children.length - 1) {
-            next = 0;
-          }
-        } else if ((e.code === 'ArrowUp')) {
-          next = current - 1;
-          if (current === 0) {
-            next = children.length - 1;
-          }
-        }
-        children[next].setAttribute('tabindex', 0);
-        children[next].focus();
-        current = next;
-        e.preventDefault();
-      };
-      Constants.Panel.outlineList.addEventListener('focus', () => {
-        if (children.length > 0) {
-          Constants.Panel.outlineList.setAttribute('tabindex', -1);
-          children[current].setAttribute('tabindex', 0);
-          children[current].focus();
-        }
-        Constants.Panel.outlineList.addEventListener('keydown', handleKeyDown);
-      });
-      Constants.Panel.outlineList.addEventListener('blur', () => {
-        Constants.Panel.outlineList.removeEventListener('keydown', handleKeyDown);
-      });
+      Utils.initRovingTabindex(Constants.Panel.outlineList, buttons);
     }, 0);
 
     // Remove event listener and returned dismissed results.
     document.removeEventListener('sa11y-build-heading-outline', outlineHandler);
-    return dismissed;
   };
 
   // Generate heading outline based on local storage or if "Outline" button is selected.
-  const rememberOutline = Utils.store.getItem('sa11y-outline');
-  if (rememberOutline === 'Opened') outlineHandler();
+  if (Utils.store.getItem('sa11y-outline') === 'Opened') outlineHandler();
   document.addEventListener('sa11y-build-heading-outline', outlineHandler);
 }

@@ -53,14 +53,14 @@
       NO_ERRORS_FOUND: 'Nie znaleziono błędów.',
       WARNINGS_FOUND: 'ostrzeżeń do przeglądu.',
       TOTAL_FOUND: 'ogółem wykrytych problemów.',
-      NOT_VISIBLE: 'Element, który próbujesz wyświetlić, nie jest widoczny; może być ukryty lub znajdować się wewnątrz akordeonu lub karty. Tutaj jest podgląd:',
+      NOT_VISIBLE: 'Element, który próbujesz wyświetlić, nie jest widoczny; może być ukryty lub znajdować się wewnątrz akordeonu lub karty.',
       MISSING_ROOT: 'Sprawdzono dostępność całej strony, ponieważ obszar docelowy nie istnieje: <code>%(root)</code>',
       MISSING_READABILITY_ROOT: 'Ocena czytelności opiera się na obszarze treści <code>%(fallback)</code>, ponieważ docelowy obszar <code>%(root)</code> nie istnieje.',
-      HEADING_NOT_VISIBLE: 'Nagłówek nie jest widoczny; może być ukryty lub wewnątrz komponentu akordeonu lub tabulatora.',
       SKIP_TO_PAGE_ISSUES: 'Przejdź do problemów ze stroną',
       CONSOLE_ERROR: 'Przepraszamy, ale wystąpił problem z narzędziem do sprawdzania ułatwień dostępu na tej stronie. Czy możesz <a href="%(link)">zgłosić to za pomocą tego formularza</a> lub na <a href="%(link)">GitHub</a>?',
       APPEARANCE: 'Wygląd',
       MOVE_PANEL: 'Przenieś panel',
+      HIDDEN: 'Ukryty',
 
       // Dismiss
       PANEL_DISMISS_BUTTON: 'Pokaż %(dismissCount) odrzucone',
