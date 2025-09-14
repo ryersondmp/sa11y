@@ -133,7 +133,10 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
       const buttons = Constants.Panel.outlineList.querySelectorAll('button');
       buttons.forEach(($el, i) => {
         $el.addEventListener('click', () => {
+          // Query DOM for target elements.
           const heading = find(`#sa11y-h${i}, [data-sa11y-parent="h${i}"]`, 'document', Constants.Exclusions.Container);
+
+          // Scroll to and pulse.
           heading[0].scrollIntoView({ behavior: `${Constants.Global.scrollBehaviour}`, block: 'center' });
           Utils.addPulse(heading[0].parentElement);
 

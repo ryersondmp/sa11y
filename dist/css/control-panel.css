@@ -515,7 +515,7 @@ hr {
 }
 
 #images-content {
-  padding-inline: 10px;
+  padding-inline: 5px;
 }
 
 #page-issues-content {
@@ -613,6 +613,9 @@ hr {
   overflow: hidden;
   list-style-type: none;
   border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
+}
+#images-list li.no-images {
+  padding-inline: 10px;
 }
 #images-list li:last-child {
   margin-bottom: 0;

@@ -78,15 +78,15 @@ export default function generateImageOutline(dismissed, imageResults, option) {
       if (hidden) {
         const parent = Utils.findVisibleParent(element, 'display', 'none');
         const anchor = document.createElement('sa11y-image-anchor');
-        parent.insertAdjacentElement('beforebegin', anchor);
         anchor.setAttribute('data-sa11y-image-hidden', i);
+        parent.insertAdjacentElement('beforebegin', anchor);
       } else {
         element.setAttribute('data-sa11y-image', i);
       }
 
       // Make developer checks don't show images as error if Developer checks are off!
-      const devChecksOff = Utils.store.getItem('sa11y-developer') === 'Off'
-        || Utils.store.getItem('sa11y-developer') === null;
+      const dev = Utils.store.getItem('sa11y-developer');
+      const devChecksOff = dev === 'Off' || dev === null;
       const showDeveloperChecks = devChecksOff && (type === 'error' || type === 'warning') && developer === true;
 
       // Account for lazy loading libraries.
@@ -114,9 +114,7 @@ export default function generateImageOutline(dismissed, imageResults, option) {
         <li class="error">
           <button tabindex="-1">
             <img src="${source}" alt/>
-            <div class="alt">
-              ${visibleIcon}
-              ${linked}
+            <div class="alt"> ${visibleIcon} ${linked}
               <div class="badge"><span class="error-icon"></span><span class="visually-hidden">${Lang._('ERROR')}</span> ${Lang._('ALT')}</div> ${missing}
             </div>
           </button>
@@ -128,9 +126,7 @@ export default function generateImageOutline(dismissed, imageResults, option) {
         <li class="warning">
           <button tabindex="-1">
             <img src="${source}" alt/>
-            <div class="alt">
-              ${visibleIcon}
-              ${linked}
+            <div class="alt"> ${visibleIcon} ${linked}
               <div class="badge"><span aria-hidden="true">&#63;</span> <span class="visually-hidden">${Lang._('WARNING')}</span> ${Lang._('ALT')}</div>
               ${decorative} <strong class="yellow-text">${altText}</strong>
             </div>
@@ -143,9 +139,7 @@ export default function generateImageOutline(dismissed, imageResults, option) {
         <li class="good">
           <button tabindex="-1">
             <img src="${source}" alt/>
-            <div class="alt">
-              ${visibleIcon}
-              ${linked}
+            <div class="alt"> ${visibleIcon} ${linked}
               <div class="badge">${Lang._('ALT')}</div>
               ${decorative} ${altText}
             </div>
@@ -158,14 +152,17 @@ export default function generateImageOutline(dismissed, imageResults, option) {
 
     // Append headings to Page Outline.
     Constants.Panel.imagesList.innerHTML = (imageArray.length === 0)
-      ? `<li>${Lang._('NO_IMAGES')}</li>` : imageArray.join(' ');
+      ? `<li class="no-images">${Lang._('NO_IMAGES')}</li>` : imageArray.join(' ');
 
     // Make clickable!
     setTimeout(() => {
       const buttons = Constants.Panel.imagesList.querySelectorAll('button');
       buttons.forEach(($el, i) => {
         $el.addEventListener('click', () => {
+          // Query DOM for target elements.
           const image = find(`[data-sa11y-image='${i}'], [data-sa11y-image-hidden='${i}']`, 'document', Constants.Exclusions.Container);
+
+          // Scroll to and pulse.
           image[0].scrollIntoView({ behavior: `${Constants.Global.scrollBehaviour}`, block: 'center' });
           Utils.addPulse(image[0]);
 
