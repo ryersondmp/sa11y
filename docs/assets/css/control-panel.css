@@ -790,10 +790,12 @@ hr {
   background: var(--sa11y-panel-bg);
 }
 
+.error .hidden-icon,
 .error .link-icon {
   background: var(--sa11y-error-text);
 }
 
+.warning .hidden-icon,
 .warning .link-icon {
   background: var(--sa11y-panel-bg);
 }

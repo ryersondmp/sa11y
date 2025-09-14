@@ -89,10 +89,6 @@ export default function checkHeaders(results, option, headingOutline) {
     prevLevel = level;
     prevHeadingText = headingText;
 
-    // Determine if heading is visually hidden or within hidden container.
-    const hiddenHeading = Utils.isElementVisuallyHiddenOrHidden($el);
-    const parent = Utils.findVisibleParent($el, 'display', 'none');
-
     // Create an object for heading outline panel.
     headingOutline.push({
       element: $el,
@@ -100,8 +96,6 @@ export default function checkHeaders(results, option, headingOutline) {
       text: headingText,
       index: i,
       type,
-      hidden: hiddenHeading,
-      visibleParent: parent,
       dismiss: Utils.prepareDismissal(`H${level + headingText}`),
       isWithinRoot,
     });

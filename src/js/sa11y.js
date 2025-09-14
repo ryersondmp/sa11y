@@ -370,7 +370,6 @@ class Sa11y {
         'data-sa11y-warning-inline',
         'data-sa11y-overflow',
         'data-sa11y-image',
-        'data-sa11y-image-hidden',
         'data-sa11y-pulse-border',
         'data-sa11y-filter',
         'data-sa11y-has-shadow-root',

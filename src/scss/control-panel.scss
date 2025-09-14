@@ -815,12 +815,16 @@ hr {
 }
 
 .error {
+
+  .hidden-icon,
   .link-icon {
     background: var(--sa11y-error-text);
   }
 }
 
 .warning {
+
+  .hidden-icon,
   .link-icon {
     background: var(--sa11y-panel-bg);
   }

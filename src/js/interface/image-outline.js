@@ -77,9 +77,10 @@ export default function generateImageOutline(dismissed, imageResults, option) {
       const hidden = Utils.isElementVisuallyHiddenOrHidden(element);
       if (hidden) {
         const parent = Utils.findVisibleParent(element, 'display', 'none');
+        const target = parent.previousElementSibling || parent.parentNode;
         const anchor = document.createElement('sa11y-image-anchor');
-        anchor.setAttribute('data-sa11y-image-hidden', i);
-        parent.insertAdjacentElement('beforebegin', anchor);
+        anchor.setAttribute('data-sa11y-parent', `image${i}`);
+        target?.insertAdjacentElement('beforebegin', anchor);
       } else {
         element.setAttribute('data-sa11y-image', i);
       }
@@ -112,7 +113,7 @@ export default function generateImageOutline(dismissed, imageResults, option) {
           ? `<div class="badge">${Lang._('MISSING')}</div>` : `<strong class="red-text">${altText}</strong>`;
         append = `
         <li class="error">
-          <button tabindex="-1">
+          <button type="button" tabindex="-1">
             <img src="${source}" alt/>
             <div class="alt"> ${visibleIcon} ${linked}
               <div class="badge"><span class="error-icon"></span><span class="visually-hidden">${Lang._('ERROR')}</span> ${Lang._('ALT')}</div> ${missing}
@@ -124,7 +125,7 @@ export default function generateImageOutline(dismissed, imageResults, option) {
       } else if (type === 'warning' && !dismissedImage && !showDeveloperChecks) {
         append = `
         <li class="warning">
-          <button tabindex="-1">
+          <button type="button" tabindex="-1">
             <img src="${source}" alt/>
             <div class="alt"> ${visibleIcon} ${linked}
               <div class="badge"><span aria-hidden="true">&#63;</span> <span class="visually-hidden">${Lang._('WARNING')}</span> ${Lang._('ALT')}</div>
@@ -137,7 +138,7 @@ export default function generateImageOutline(dismissed, imageResults, option) {
       } else {
         append = `
         <li class="good">
-          <button tabindex="-1">
+          <button type="button" tabindex="-1">
             <img src="${source}" alt/>
             <div class="alt"> ${visibleIcon} ${linked}
               <div class="badge">${Lang._('ALT')}</div>
@@ -160,15 +161,19 @@ export default function generateImageOutline(dismissed, imageResults, option) {
       buttons.forEach(($el, i) => {
         $el.addEventListener('click', () => {
           // Query DOM for target elements.
-          const image = find(`[data-sa11y-image='${i}'], [data-sa11y-image-hidden='${i}']`, 'document', Constants.Exclusions.Container);
+          const image = find(
+            `[data-sa11y-image='${i}'], [data-sa11y-parent='image${i}']`,
+            'document',
+            Constants.Exclusions.Container,
+          );
 
           // Scroll to and pulse.
           image[0].scrollIntoView({ behavior: `${Constants.Global.scrollBehaviour}`, block: 'center' });
-          Utils.addPulse(image[0]);
+          Utils.addPulse(image[0]?.parentElement || image[0]);
 
           // Alert if hidden.
           Utils.removeAlert();
-          if (image[0].hasAttribute(['data-sa11y-image-hidden'])) Utils.createAlert(Lang._('NOT_VISIBLE'));
+          if (image[0].hasAttribute('data-sa11y-parent')) Utils.createAlert(Lang._('NOT_VISIBLE'));
         });
       });
 
