@@ -84,18 +84,18 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
       */
       const label = document.createElement('sa11y-heading-label');
       label.hidden = true;
-      element.insertAdjacentElement('beforeend', label);
+      element?.insertAdjacentElement('beforeend', label);
 
       // Create anchors to focus on if heading is not visible.
       const anchor = document.createElement('sa11y-heading-anchor');
       anchor.id = `sa11y-h${index}`;
       if (hidden) {
         const parent = Utils.findVisibleParent(element, 'display', 'none');
-        const target = parent.previousElementSibling || parent.parentNode;
+        const target = parent?.previousElementSibling || parent?.parentNode;
         target?.insertAdjacentElement('beforebegin', anchor);
         target?.setAttribute('data-sa11y-parent', `h${index}`);
       } else {
-        label.insertAdjacentElement('beforebegin', anchor);
+        label?.insertAdjacentElement('beforebegin', anchor);
       }
 
       // Populate heading label.
@@ -127,7 +127,7 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
 
           // Scroll to and pulse.
           heading[0].scrollIntoView({ behavior: `${Constants.Global.scrollBehaviour}`, block: 'center' });
-          Utils.addPulse(heading[0]);
+          Utils.addPulse(heading[0].parentNode || heading[0]);
 
           // Alert if hidden.
           Utils.removeAlert();

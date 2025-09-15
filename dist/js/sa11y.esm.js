@@ -3080,18 +3080,18 @@ function generatePageOutline(dismissed, headingOutline, option) {
       */
       const label = document.createElement('sa11y-heading-label');
       label.hidden = true;
-      element.insertAdjacentElement('beforeend', label);
+      element?.insertAdjacentElement('beforeend', label);
 
       // Create anchors to focus on if heading is not visible.
       const anchor = document.createElement('sa11y-heading-anchor');
       anchor.id = `sa11y-h${index}`;
       if (hidden) {
         const parent = findVisibleParent(element, 'display', 'none');
-        const target = parent.previousElementSibling || parent.parentNode;
+        const target = parent?.previousElementSibling || parent?.parentNode;
         target?.insertAdjacentElement('beforebegin', anchor);
         target?.setAttribute('data-sa11y-parent', `h${index}`);
       } else {
-        label.insertAdjacentElement('beforebegin', anchor);
+        label?.insertAdjacentElement('beforebegin', anchor);
       }
 
       // Populate heading label.
@@ -3123,7 +3123,7 @@ function generatePageOutline(dismissed, headingOutline, option) {
 
           // Scroll to and pulse.
           heading[0].scrollIntoView({ behavior: `${Constants.Global.scrollBehaviour}`, block: 'center' });
-          addPulse(heading[0]);
+          addPulse(heading[0].parentNode || heading[0]);
 
           // Alert if hidden.
           removeAlert();
@@ -3217,9 +3217,9 @@ function generateImageOutline(dismissed, imageResults, option) {
       const hidden = isElementVisuallyHiddenOrHidden(element);
       if (hidden) {
         const parent = findVisibleParent(element, 'display', 'none');
-        const target = parent.previousElementSibling || parent.parentNode;
         const anchor = document.createElement('sa11y-image-anchor');
         anchor.setAttribute('data-sa11y-parent', `image${i}`);
+        const target = parent?.previousElementSibling || parent?.parentNode;
         target?.insertAdjacentElement('beforebegin', anchor);
       } else {
         element.setAttribute('data-sa11y-image', i);

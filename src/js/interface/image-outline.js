@@ -77,9 +77,9 @@ export default function generateImageOutline(dismissed, imageResults, option) {
       const hidden = Utils.isElementVisuallyHiddenOrHidden(element);
       if (hidden) {
         const parent = Utils.findVisibleParent(element, 'display', 'none');
-        const target = parent.previousElementSibling || parent.parentNode;
         const anchor = document.createElement('sa11y-image-anchor');
         anchor.setAttribute('data-sa11y-parent', `image${i}`);
+        const target = parent?.previousElementSibling || parent?.parentNode;
         target?.insertAdjacentElement('beforebegin', anchor);
       } else {
         element.setAttribute('data-sa11y-image', i);
