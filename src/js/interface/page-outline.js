@@ -127,7 +127,7 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
 
           // Scroll to and pulse.
           heading[0].scrollIntoView({ behavior: `${Constants.Global.scrollBehaviour}`, block: 'center' });
-          Utils.addPulse(heading[0]?.parentElement || heading[0]);
+          Utils.addPulse(heading[0]);
 
           // Alert if hidden.
           Utils.removeAlert();

@@ -3127,7 +3127,7 @@ ${this.error.stack}
 
             // Scroll to and pulse.
             heading[0].scrollIntoView({ behavior: `${Constants.Global.scrollBehaviour}`, block: 'center' });
-            addPulse(heading[0]?.parentElement || heading[0]);
+            addPulse(heading[0]);
 
             // Alert if hidden.
             removeAlert();
@@ -3313,7 +3313,7 @@ ${this.error.stack}
 
             // Scroll to and pulse.
             image[0].scrollIntoView({ behavior: `${Constants.Global.scrollBehaviour}`, block: 'center' });
-            addPulse(image[0]?.parentElement || image[0]);
+            addPulse(image[0]);
 
             // Alert if hidden.
             removeAlert();
@@ -8546,8 +8546,8 @@ ${this.error.stack}
         return;
       }
 
-      // If alt is missing.
-      if (alt === null) {
+      // If alt is missing or non-vocalized character.
+      if (alt === null || alt.replace(/"|'|\?|\.|-|\s+/g, '') === '') {
         if (link) {
           const rule = (linkTextContentLength === 0)
             ? option.checks.MISSING_ALT_LINK

@@ -169,7 +169,7 @@ export default function generateImageOutline(dismissed, imageResults, option) {
 
           // Scroll to and pulse.
           image[0].scrollIntoView({ behavior: `${Constants.Global.scrollBehaviour}`, block: 'center' });
-          Utils.addPulse(image[0]?.parentElement || image[0]);
+          Utils.addPulse(image[0]);
 
           // Alert if hidden.
           Utils.removeAlert();

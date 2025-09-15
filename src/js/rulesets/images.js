@@ -109,8 +109,8 @@ export default function checkImages(results, option) {
       return;
     }
 
-    // If alt is missing.
-    if (alt === null) {
+    // If alt is missing or non-vocalized character.
+    if (alt === null || alt.replace(/"|'|\?|\.|-|\s+/g, '') === '') {
       if (link) {
         const rule = (linkTextContentLength === 0)
           ? option.checks.MISSING_ALT_LINK
