@@ -282,4 +282,25 @@ export default [
       },
     ],
   },
+  // Unminified GitHub bookmarklet.
+  {
+    input: 'src/bookmarklet/github.js',
+    plugins: [
+      nodeResolve(),
+      css(),
+      replace({
+        preventAssignment: true,
+        'process.env.NODE_ENV': JSON.stringify('production'),
+        Sa11yVersion: JSON.stringify(pkg.version),
+      }),
+    ],
+    output: [
+      {
+        file: 'bookmarklet/github.js',
+        format: 'umd',
+        name: 'Sa11yLangBookmarkletUnminifiedGithub',
+        plugins: [terser()],
+      },
+    ],
+  },
 ];
