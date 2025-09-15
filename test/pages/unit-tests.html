@@ -140,11 +140,6 @@
       <img src="./assets/decorative.svg" alt>
     </div>
 
-    <h3>Decorative image using using empty space</h3>
-    <div id="warning-image-is-decorative-using-empty-space">
-      <img src="./assets/decorative.svg" alt=" ">
-    </div>
-
     <h3>Decorative image within a carousel component</h3>
     <p>The default source is <code>.carousel, .slideshow</code></p>
     <div id="warning-image-decorative-carousel" class="carousel">
@@ -166,6 +161,38 @@
     <h3>Missing alt text</h3>
     <div id="error-missing-alt-text">
       <img src="./assets/placeholder.svg">
+    </div>
+
+    <h3>Image using empty space for alt</h3>
+    <div id="error-unpronounceable-empty-space">
+      <img src="./assets/placeholder.svg" alt=" ">
+    </div>
+
+    <h3>Linked image using empty space</h3>
+    <div id="error-linked-empty-space">
+      <a href="https://www.example.com?=8">
+        <img src="./assets/placeholder.svg" alt=" ">
+      </a>
+    </div>
+
+    <h3>Image using unpronounceable character for alt</h3>
+    <div id="error-unpronounceable-character">
+      <img src="./assets/placeholder.svg" alt="&quot;&quot;">
+    </div>
+
+    <h3>Linked image using unpronounceable character for alt</h3>
+    <div id="error-unpronounceable-character-linked">
+      <a href="https://www.example.com?=1njhs">
+        <img src="./assets/placeholder.svg" alt="&quot;&quot;">
+      </a>
+    </div>
+
+    <h3>Linked image using unpronounceable character for alt with surrounding text</h3>
+    <div id="warning-unpronounceable-character-with-surrounding-text">
+      <a href="https://www.example.com?=1njhs">
+        Something
+        <img src="./assets/placeholder.svg" alt="&quot;&quot;">
+      </a>
     </div>
 
     <h3>Alt has file extension</h3>
@@ -232,13 +259,6 @@
     <div id="error-linked-decorative-image">
       <a href="https://www.example.com?=7">
         <img src="./assets/decorative.svg" alt>
-      </a>
-    </div>
-
-    <h3>Linked decorative image using empty space</h3>
-    <div id="error-linked-decorative-empty-space">
-      <a href="https://www.example.com?=8">
-        <img src="./assets/decorative.svg" alt=" ">
       </a>
     </div>
 

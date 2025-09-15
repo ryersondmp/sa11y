@@ -132,6 +132,8 @@ const defaultOptions = {
     IMAGE_PASS: {
       dismissAll: true,
     },
+    ALT_UNPRONOUNCEABLE: true,
+    LINK_ALT_UNPRONOUNCEABLE: true,
 
     // Link checks
     DUPLICATE_TITLE: {
@@ -3235,7 +3237,7 @@ function generateImageOutline(dismissed, imageResults, option) {
       const edit = Constants.Global.editImageURLofCMS ? generateEditLink(image) : '';
 
       // Image is decorative (has null alt)
-      const decorative = (element.hasAttribute('alt') && removeWhitespace(altText).length === 0)
+      const decorative = (element.hasAttribute('alt') && altText === '')
         ? `<div class="badge">${Lang._('DECORATIVE')}</div>` : '';
 
       // If image is linked.
@@ -3247,14 +3249,13 @@ function generateImageOutline(dismissed, imageResults, option) {
 
       let append;
       if (type === 'error' && !showDeveloperChecks) {
-        const missing = altText.length === 0
-          ? `<div class="badge">${Lang._('MISSING')}</div>` : `<strong class="red-text">${altText}</strong>`;
+        const missing = altText.length === 0 ? `<div class="badge">${Lang._('MISSING')}</div>` : '';
         append = `
         <li class="error">
           <button type="button" tabindex="-1">
             <img src="${source}" alt/>
-            <div class="alt"> ${visibleIcon} ${linked}
-              <div class="badge"><span class="error-icon"></span><span class="visually-hidden">${Lang._('ERROR')}</span> ${Lang._('ALT')}</div> ${missing}
+            <div class="alt"> ${visibleIcon} ${linked} ${missing}
+              <div class="badge"><span class="error-icon"></span><span class="visually-hidden">${Lang._('ERROR')}</span> ${Lang._('ALT')}</div> <strong class="red-text">${altText}</strong>
             </div>
           </button>
           ${edit}
@@ -3265,9 +3266,8 @@ function generateImageOutline(dismissed, imageResults, option) {
         <li class="warning">
           <button type="button" tabindex="-1">
             <img src="${source}" alt/>
-            <div class="alt"> ${visibleIcon} ${linked}
-              <div class="badge"><span aria-hidden="true">&#63;</span> <span class="visually-hidden">${Lang._('WARNING')}</span> ${Lang._('ALT')}</div>
-              ${decorative} <strong class="yellow-text">${altText}</strong>
+            <div class="alt"> ${visibleIcon} ${linked} ${decorative}
+              <div class="badge"><span aria-hidden="true">&#63;</span> <span class="visually-hidden">${Lang._('WARNING')}</span> ${Lang._('ALT')}</div> <strong class="yellow-text">${altText}</strong>
             </div>
           </button>
           ${edit}
@@ -3278,9 +3278,8 @@ function generateImageOutline(dismissed, imageResults, option) {
         <li class="good">
           <button type="button" tabindex="-1">
             <img src="${source}" alt/>
-            <div class="alt"> ${visibleIcon} ${linked}
-              <div class="badge">${Lang._('ALT')}</div>
-              ${decorative} ${altText}
+            <div class="alt"> ${visibleIcon} ${linked} ${decorative}
+              <div class="badge">${Lang._('ALT')}</div> ${altText}
             </div>
           </button>
           ${edit}
@@ -8510,7 +8509,7 @@ function checkImages(results, option) {
       ? fnIgnore(link, Constants.Exclusions.LinkSpan).textContent : '';
     const stringMatchExclusions = option.linkIgnoreStrings
       ? linkSpanExclusions.replace(option.linkIgnoreStrings, '') : linkSpanExclusions;
-    const linkTextContentLength = link
+    const linkTextLength = link
       ? removeWhitespace(stringMatchExclusions).length : 0;
 
     // Has aria-hidden.
@@ -8540,20 +8539,20 @@ function checkImages(results, option) {
       return;
     }
 
-    // If alt is missing or non-vocalized character.
-    if (alt === null || alt.replace(/"|'|\?|\.|-|\s+/g, '') === '') {
+    // If alt is missing.
+    if (alt === null) {
       if (link) {
-        const rule = (linkTextContentLength === 0)
+        const rule = (linkTextLength === 0)
           ? option.checks.MISSING_ALT_LINK
           : option.checks.MISSING_ALT_LINK_HAS_TEXT;
-        const conditional = linkTextContentLength === 0
+        const conditional = linkTextLength === 0
           ? 'MISSING_ALT_LINK' : 'MISSING_ALT_LINK_HAS_TEXT';
         if (rule) {
           results.push({
             element: $el,
             type: rule.type || 'error',
             content: Lang.sprintf(rule.content || conditional),
-            dismiss: prepareDismissal(`${conditional + src + linkTextContentLength}`),
+            dismiss: prepareDismissal(`${conditional + src + linkTextLength}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
@@ -8576,7 +8575,7 @@ function checkImages(results, option) {
       const error = containsAltTextStopWords(altText);
       const hasAria = $el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby');
       const titleAttr = $el.getAttribute('title');
-      const decorative = (alt === '' || alt === ' ');
+      const decorative = (alt === '');
 
       // Figure elements.
       const figure = $el.closest('figure');
@@ -8588,8 +8587,8 @@ function checkImages(results, option) {
       const maxAltCharacters = option.checks.IMAGE_ALT_TOO_LONG.maxLength || 250;
 
       // If aria-label or aria-labelledby returns empty or invalid.
-      if (hasAria && altText === '') {
-        if (option.checks.MISSING_ALT) {
+      if (option.checks.MISSING_ALT) {
+        if (hasAria && altText === '') {
           results.push({
             element: $el,
             type: option.checks.MISSING_ALT.type || 'error',
@@ -8598,8 +8597,8 @@ function checkImages(results, option) {
             dismissAll: option.checks.MISSING_ALT.dismissAll ? 'MISSING_ALT' : false,
             developer: option.checks.MISSING_ALT.developer || false,
           });
+          return;
         }
-        return;
       }
 
       // Decorative images.
@@ -8625,17 +8624,17 @@ function checkImages(results, option) {
             });
           }
         } else if (link) {
-          const rule = (linkTextContentLength === 0)
+          const rule = (linkTextLength === 0)
             ? option.checks.LINK_IMAGE_NO_ALT_TEXT
             : option.checks.LINK_IMAGE_TEXT;
-          const conditional = linkTextContentLength === 0
+          const conditional = linkTextLength === 0
             ? 'LINK_IMAGE_NO_ALT_TEXT' : 'LINK_IMAGE_TEXT';
           if (rule) {
             results.push({
               element: $el,
-              type: rule.type || (linkTextContentLength === 0 ? 'error' : 'good'),
+              type: rule.type || (linkTextLength === 0 ? 'error' : 'good'),
               content: Lang.sprintf(rule.content || conditional),
-              dismiss: prepareDismissal(`${conditional + src + linkTextContentLength}`),
+              dismiss: prepareDismissal(`${conditional + src + linkTextLength}`),
               dismissAll: rule.dismissAll ? conditional : false,
               developer: rule.developer || false,
             });
@@ -8667,6 +8666,24 @@ function checkImages(results, option) {
           });
         }
         return;
+      }
+
+      // Alt is unpronounceable.
+      const unpronounceable = (link)
+        ? option.checks.LINK_ALT_UNPRONOUNCEABLE : option.checks.ALT_UNPRONOUNCEABLE;
+      if (unpronounceable) {
+        if (alt.replace(/"|'|\?|\.|-|\s+/g, '') === '' && linkTextLength === 0) {
+          const condition = (link) ? 'LINK_ALT_UNPRONOUNCEABLE' : 'ALT_UNPRONOUNCEABLE';
+          results.push({
+            element: $el,
+            type: unpronounceable.type || 'error',
+            content: Lang.sprintf(unpronounceable.content || condition, altText),
+            dismiss: prepareDismissal(`UNPRONOUNCEABLE${src}`),
+            dismissAll: unpronounceable.dismissAll ? 'ALT_UNPRONOUNCEABLE' : false,
+            developer: unpronounceable.developer || false,
+          });
+          return;
+        }
       }
 
       // Alt text quality.
@@ -8738,10 +8755,10 @@ function checkImages(results, option) {
           });
         }
       } else if (link) {
-        const rule = (linkTextContentLength === 0)
+        const rule = (linkTextLength === 0)
           ? option.checks.LINK_IMAGE_ALT
           : option.checks.LINK_IMAGE_ALT_AND_TEXT;
-        const conditional = (linkTextContentLength === 0) ? 'LINK_IMAGE_ALT' : 'LINK_IMAGE_ALT_AND_TEXT';
+        const conditional = (linkTextLength === 0) ? 'LINK_IMAGE_ALT' : 'LINK_IMAGE_ALT_AND_TEXT';
 
         if (rule) {
           // Has both link text and alt text.
@@ -8749,7 +8766,7 @@ function checkImages(results, option) {
           const removeWhitespace$1 = removeWhitespace(linkAccName);
           const sanitizedText = sanitizeHTML(removeWhitespace$1);
 
-          const tooltip = (linkTextContentLength === 0)
+          const tooltip = (linkTextLength === 0)
             ? Lang.sprintf('LINK_IMAGE_ALT', altText)
             : `${Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT', altText, sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`;
 

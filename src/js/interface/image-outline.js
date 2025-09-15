@@ -97,7 +97,7 @@ export default function generateImageOutline(dismissed, imageResults, option) {
       const edit = Constants.Global.editImageURLofCMS ? generateEditLink(image) : '';
 
       // Image is decorative (has null alt)
-      const decorative = (element.hasAttribute('alt') && Utils.removeWhitespace(altText).length === 0)
+      const decorative = (element.hasAttribute('alt') && altText === '')
         ? `<div class="badge">${Lang._('DECORATIVE')}</div>` : '';
 
       // If image is linked.
@@ -109,14 +109,13 @@ export default function generateImageOutline(dismissed, imageResults, option) {
 
       let append;
       if (type === 'error' && !showDeveloperChecks) {
-        const missing = altText.length === 0
-          ? `<div class="badge">${Lang._('MISSING')}</div>` : `<strong class="red-text">${altText}</strong>`;
+        const missing = altText.length === 0 ? `<div class="badge">${Lang._('MISSING')}</div>` : '';
         append = `
         <li class="error">
           <button type="button" tabindex="-1">
             <img src="${source}" alt/>
-            <div class="alt"> ${visibleIcon} ${linked}
-              <div class="badge"><span class="error-icon"></span><span class="visually-hidden">${Lang._('ERROR')}</span> ${Lang._('ALT')}</div> ${missing}
+            <div class="alt"> ${visibleIcon} ${linked} ${missing}
+              <div class="badge"><span class="error-icon"></span><span class="visually-hidden">${Lang._('ERROR')}</span> ${Lang._('ALT')}</div> <strong class="red-text">${altText}</strong>
             </div>
           </button>
           ${edit}
@@ -127,9 +126,8 @@ export default function generateImageOutline(dismissed, imageResults, option) {
         <li class="warning">
           <button type="button" tabindex="-1">
             <img src="${source}" alt/>
-            <div class="alt"> ${visibleIcon} ${linked}
-              <div class="badge"><span aria-hidden="true">&#63;</span> <span class="visually-hidden">${Lang._('WARNING')}</span> ${Lang._('ALT')}</div>
-              ${decorative} <strong class="yellow-text">${altText}</strong>
+            <div class="alt"> ${visibleIcon} ${linked} ${decorative}
+              <div class="badge"><span aria-hidden="true">&#63;</span> <span class="visually-hidden">${Lang._('WARNING')}</span> ${Lang._('ALT')}</div> <strong class="yellow-text">${altText}</strong>
             </div>
           </button>
           ${edit}
@@ -140,9 +138,8 @@ export default function generateImageOutline(dismissed, imageResults, option) {
         <li class="good">
           <button type="button" tabindex="-1">
             <img src="${source}" alt/>
-            <div class="alt"> ${visibleIcon} ${linked}
-              <div class="badge">${Lang._('ALT')}</div>
-              ${decorative} ${altText}
+            <div class="alt"> ${visibleIcon} ${linked} ${decorative}
+              <div class="badge">${Lang._('ALT')}</div> ${altText}
             </div>
           </button>
           ${edit}
