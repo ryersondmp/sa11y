@@ -235,7 +235,7 @@ export default [
       {
         file: 'bookmarklet/dev.js',
         format: 'umd',
-        name: 'Sa11yLangBookmarklet',
+        name: 'Sa11yDevBookmarklet',
         plugins: [terser()],
       },
     ],
@@ -278,27 +278,6 @@ export default [
         file: 'bookmarklet/unminified.js',
         format: 'umd',
         name: 'Sa11yLangBookmarkletUnminified',
-        plugins: [terser()],
-      },
-    ],
-  },
-  // Unminified GitHack bookmarklet.
-  {
-    input: 'src/bookmarklet/githack.js',
-    plugins: [
-      nodeResolve(),
-      css(),
-      replace({
-        preventAssignment: true,
-        'process.env.NODE_ENV': JSON.stringify('production'),
-        Sa11yVersion: JSON.stringify(pkg.version),
-      }),
-    ],
-    output: [
-      {
-        file: 'bookmarklet/githack.js',
-        format: 'umd',
-        name: 'Sa11yLangBookmarkletUnminifiedGithack',
         plugins: [terser()],
       },
     ],
