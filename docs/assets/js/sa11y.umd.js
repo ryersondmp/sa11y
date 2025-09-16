@@ -929,9 +929,7 @@
    * @returns {boolean} 'true' if the element is hidden (display: none).
    */
   function isElementHidden(element) {
-    if (element.getAttribute('hidden')) {
-      return true;
-    }
+    if (element.getAttribute('hidden')) return true;
     const compStyles = getComputedStyle(element);
     return compStyles.getPropertyValue('display') === 'none';
   }
@@ -942,9 +940,9 @@
    * @returns {string} The escaped string with HTML special characters replaced by their corresponding entities.
    */
   function escapeHTML(string) {
-    const $div = document.createElement('div');
-    $div.textContent = string;
-    return $div.innerHTML.replaceAll('"', '&quot;').replaceAll("'", '&#039;').replaceAll('`', '&#x60;');
+    const div = document.createElement('div');
+    div.textContent = string;
+    return div.innerHTML.replaceAll('"', '&quot;').replaceAll("'", '&#039;').replaceAll('`', '&#x60;');
   }
 
   /**
@@ -1127,12 +1125,10 @@
    */
   function findVisibleParent(element, property, value) {
     let $el = element;
-    while ($el !== null) {
+    while ($el) {
       const style = window.getComputedStyle($el);
       const propValue = style.getPropertyValue(property);
-      if (propValue === value) {
-        return $el;
-      }
+      if (propValue === value) return $el;
       $el = $el.parentElement;
     }
     return null;
@@ -1146,9 +1142,7 @@
   function offsetTop(element) {
     const rect = element.getBoundingClientRect();
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    return {
-      top: rect.top + scrollTop,
-    };
+    return { top: rect.top + scrollTop };
   }
 
   /**
@@ -1194,9 +1188,7 @@
   function addPulse(element) {
     const border = 'data-sa11y-pulse-border';
     element.setAttribute(border, '');
-    setTimeout(() => {
-      element.removeAttribute(border);
-    }, 2500);
+    setTimeout(() => element.removeAttribute(border), 2500);
   }
 
   /**
@@ -1217,28 +1209,28 @@
   */
   function generateSelectorPath(element) {
     const path = [];
-    let currElement = element;
-    while (currElement) {
-      let selector = currElement.localName;
-      if (currElement.id) {
-        selector += `#${currElement.id}`;
+    let currentElement = element;
+    while (currentElement) {
+      let selector = currentElement.localName;
+      if (currentElement.id) {
+        selector += `#${currentElement.id}`;
         path.unshift(selector);
         break;
-      } else if (currElement.className) {
-        selector += `.${currElement.className.replace(/\s+/g, '.')}`;
+      } else if (currentElement.className) {
+        selector += `.${currentElement.className.replace(/\s+/g, '.')}`;
       }
-      const parentElement = currElement.parentNode;
+      const parentElement = currentElement.parentNode;
       if (parentElement) {
         const siblings = parentElement.children;
         if (siblings.length > 1) {
-          const index = Array.prototype.indexOf.call(siblings, currElement) + 1;
+          const index = Array.prototype.indexOf.call(siblings, currentElement) + 1;
           selector += `:nth-child(${index})`;
         }
         path.unshift(selector);
       } else {
         break;
       }
-      currElement = currElement.parentNode.host || currElement.parentNode;
+      currentElement = currentElement.parentNode.host || currentElement.parentNode;
     }
     return path.join(' > ');
   }
@@ -1323,9 +1315,7 @@
     }
 
     // A little time before setting focus on the close button.
-    setTimeout(() => {
-      alertClose.focus();
-    }, 300);
+    setTimeout(() => alertClose.focus(), 300);
 
     // Closing alert sets focus back to Skip to Issue toggle.
     function closeAlert() {
@@ -1757,7 +1747,7 @@
     };
   }());
 
-  var styles$1 = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-clone-image-text]{display:none!important}[data-sa11y-readability-period]{clip:rect(1px,1px,1px,1px)!important;border:0!important;clip-path:inset(50%)!important;display:block!important;height:1px!important;overflow:hidden!important;padding:0!important;position:absolute!important;white-space:nowrap!important;width:1px!important}[data-sa11y-error-inline],[data-sa11y-error]{outline:5px solid var(--sa11y-error)!important;outline-offset:2px}[data-sa11y-warning-inline]:not([data-sa11y-error-inline]),[data-sa11y-warning]:not([data-sa11y-error]){outline:5px solid var(--sa11y-warning)!important;outline-offset:2px}[data-sa11y-pulse-border]{animation:pulse 1s 2;box-shadow:0;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:focus,[data-sa11y-pulse-border]:hover{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color);opacity:1;transform:scale(1)}50%{box-shadow:0 0 0 12px var(--sa11y-pulse-color);opacity:.7;transform:scale(1.02)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color);opacity:1;transform:scale(1)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}@media (forced-colors:active){[data-sa11y-error-inline],[data-sa11y-error],[data-sa11y-good],[data-sa11y-pulse-border],[data-sa11y-warning-inline],[data-sa11y-warning]{forced-color-adjust:none}}";
+  var styles$1 = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-clone-image-text]{display:none!important}[data-sa11y-readability-period]{clip:rect(1px,1px,1px,1px)!important;border:0!important;clip-path:inset(50%)!important;display:block!important;height:1px!important;overflow:hidden!important;padding:0!important;position:absolute!important;white-space:nowrap!important;width:1px!important}[data-sa11y-error-inline],[data-sa11y-error]{outline:5px solid var(--sa11y-error)!important;outline-offset:2px}[data-sa11y-warning-inline]:not([data-sa11y-error-inline]),[data-sa11y-warning]:not([data-sa11y-error]){outline:5px solid var(--sa11y-warning)!important;outline-offset:2px}[data-sa11y-pulse-border]{animation:pulse 1s 2;box-shadow:0;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:focus,[data-sa11y-pulse-border]:hover{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color)}50%{box-shadow:0 0 0 12px var(--sa11y-pulse-color)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color)}}h1[data-sa11y-pulse-border],h2[data-sa11y-pulse-border],h3[data-sa11y-pulse-border],h4[data-sa11y-pulse-border],h5[data-sa11y-pulse-border],h6[data-sa11y-pulse-border],img[data-sa11y-pulse-border]{animation:pulse-scale 1s 2}@keyframes pulse-scale{0%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.02)}to{opacity:1;transform:scale(1)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}@media (forced-colors:active){[data-sa11y-error-inline],[data-sa11y-error],[data-sa11y-good],[data-sa11y-pulse-border],[data-sa11y-warning-inline],[data-sa11y-warning]{forced-color-adjust:none}}";
 
   /* ************************************************************ */
   /*  Auto-detect shadow DOM or process provided web components.  */
@@ -8197,7 +8187,8 @@ ${this.error.stack}
     ></button>`;
 
       // Make sure annotations always appended outside of SVGs and interactive elements.
-      const insertBefore = option.insertAnnotationBefore ? `, ${option.insertAnnotationBefore}` : '';
+      const insertBefore = option.insertAnnotationBefore
+        ? `, ${option.insertAnnotationBefore}` : '';
       const location = element.closest(`a, button, [role="link"], [role="button"] ${insertBefore}`) || element;
       location.insertAdjacentElement(position, instance);
       instance.shadowRoot.appendChild(create);
@@ -8209,30 +8200,15 @@ ${this.error.stack}
    * @param {string} ignoreHiddenOverflow A string of selectors to ignore and not apply overflow detection.
    */
   const detectOverflow = (ignoreHiddenOverflow) => {
-    const findParentWithOverflow = (element, property, value) => {
-      let $el = element;
-      while ($el !== null) {
-        const style = window.getComputedStyle($el);
-        const propValue = style.getPropertyValue(property);
-        if (propValue === value) {
-          return $el;
-        }
-        $el = $el.parentElement;
-      }
-      return null;
-    };
+    const ignoredElements = ignoreHiddenOverflow
+      ? ignoreHiddenOverflow.split(',').flatMap((selector) => [...document.querySelectorAll(selector)])
+      : [];
+
     const annotations = document.querySelectorAll('sa11y-annotation');
     annotations.forEach(($el) => {
-      const overflowing = findParentWithOverflow($el, 'overflow', 'hidden');
-      if (overflowing !== null) {
-        // Skip if selectors passed via ignoreHiddenOverflow prop.
-        if (ignoreHiddenOverflow) {
-          const selectors = ignoreHiddenOverflow.split(',');
-          const matches = selectors.flatMap((selector) => [...document.querySelectorAll(selector)]);
-          if (matches.includes(overflowing)) return;
-        }
-        // All other `overflow: hidden` containers will be made visible and scrollable.
-        overflowing.setAttribute('data-sa11y-overflow', '');
+      const parent = findVisibleParent($el, 'overflow', 'hidden');
+      if (parent && !ignoredElements.includes(parent)) {
+        parent.setAttribute('data-sa11y-overflow', '');
       }
     });
   };
@@ -8245,7 +8221,7 @@ ${this.error.stack}
     annotations.forEach(($el) => {
       const sibling = $el.nextElementSibling;
       const css = 'margin: -5px -15px !important;';
-      if (sibling !== null && sibling.tagName === 'SA11Y-ANNOTATION' && customElements.get('sa11y-annotation')) {
+      if (sibling?.tagName === 'SA11Y-ANNOTATION' && customElements.get('sa11y-annotation')) {
         sibling.shadowRoot.querySelector('button').setAttribute('style', css);
       }
     });

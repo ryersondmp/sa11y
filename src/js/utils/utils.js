@@ -49,9 +49,7 @@ export function isScreenReaderOnly(element) {
  * @returns {boolean} 'true' if the element is hidden (display: none).
  */
 export function isElementHidden(element) {
-  if (element.getAttribute('hidden')) {
-    return true;
-  }
+  if (element.getAttribute('hidden')) return true;
   const compStyles = getComputedStyle(element);
   return compStyles.getPropertyValue('display') === 'none';
 }
@@ -62,9 +60,9 @@ export function isElementHidden(element) {
  * @returns {string} The escaped string with HTML special characters replaced by their corresponding entities.
  */
 export function escapeHTML(string) {
-  const $div = document.createElement('div');
-  $div.textContent = string;
-  return $div.innerHTML.replaceAll('"', '&quot;').replaceAll("'", '&#039;').replaceAll('`', '&#x60;');
+  const div = document.createElement('div');
+  div.textContent = string;
+  return div.innerHTML.replaceAll('"', '&quot;').replaceAll("'", '&#039;').replaceAll('`', '&#x60;');
 }
 
 /**
@@ -247,12 +245,10 @@ export function debounce(callback, wait) {
  */
 export function findVisibleParent(element, property, value) {
   let $el = element;
-  while ($el !== null) {
+  while ($el) {
     const style = window.getComputedStyle($el);
     const propValue = style.getPropertyValue(property);
-    if (propValue === value) {
-      return $el;
-    }
+    if (propValue === value) return $el;
     $el = $el.parentElement;
   }
   return null;
@@ -266,9 +262,7 @@ export function findVisibleParent(element, property, value) {
 export function offsetTop(element) {
   const rect = element.getBoundingClientRect();
   const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-  return {
-    top: rect.top + scrollTop,
-  };
+  return { top: rect.top + scrollTop };
 }
 
 /**
@@ -314,9 +308,7 @@ export const store = {
 export function addPulse(element) {
   const border = 'data-sa11y-pulse-border';
   element.setAttribute(border, '');
-  setTimeout(() => {
-    element.removeAttribute(border);
-  }, 2500);
+  setTimeout(() => element.removeAttribute(border), 2500);
 }
 
 /**
@@ -353,28 +345,28 @@ export function prepareDismissal(string) {
 */
 export function generateSelectorPath(element) {
   const path = [];
-  let currElement = element;
-  while (currElement) {
-    let selector = currElement.localName;
-    if (currElement.id) {
-      selector += `#${currElement.id}`;
+  let currentElement = element;
+  while (currentElement) {
+    let selector = currentElement.localName;
+    if (currentElement.id) {
+      selector += `#${currentElement.id}`;
       path.unshift(selector);
       break;
-    } else if (currElement.className) {
-      selector += `.${currElement.className.replace(/\s+/g, '.')}`;
+    } else if (currentElement.className) {
+      selector += `.${currentElement.className.replace(/\s+/g, '.')}`;
     }
-    const parentElement = currElement.parentNode;
+    const parentElement = currentElement.parentNode;
     if (parentElement) {
       const siblings = parentElement.children;
       if (siblings.length > 1) {
-        const index = Array.prototype.indexOf.call(siblings, currElement) + 1;
+        const index = Array.prototype.indexOf.call(siblings, currentElement) + 1;
         selector += `:nth-child(${index})`;
       }
       path.unshift(selector);
     } else {
       break;
     }
-    currElement = currElement.parentNode.host || currElement.parentNode;
+    currentElement = currentElement.parentNode.host || currentElement.parentNode;
   }
   return path.join(' > ');
 }
@@ -459,9 +451,7 @@ export function createAlert(alertMessage, errorPreview, extendedPreview) {
   }
 
   // A little time before setting focus on the close button.
-  setTimeout(() => {
-    alertClose.focus();
-  }, 300);
+  setTimeout(() => alertClose.focus(), 300);
 
   // Closing alert sets focus back to Skip to Issue toggle.
   function closeAlert() {
