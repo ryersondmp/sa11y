@@ -46,7 +46,7 @@
   [data-sa11y-pulse-border] {
     outline: 5px solid var(--sa11y-focus-color) !important;
     box-shadow: 0;
-    animation: pulse 2s 3;
+    animation: pulse 1s 2;
 
     &:hover,
     &:focus {
@@ -61,10 +61,10 @@
       transform: scale(1);
     }
 
-    70% {
+    50% {
       box-shadow: 0 0 0 12px var(--sa11y-pulse-color);
-      opacity: .8;
-      transform: scale(1.01);
+      opacity: .7;
+      transform: scale(1.02);
     }
 
     100% {
