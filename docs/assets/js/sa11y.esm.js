@@ -3119,15 +3119,22 @@ function generatePageOutline(dismissed, headingOutline, option) {
             `#sa11y-h${i}, [data-sa11y-parent="h${i}"]`,
             'document',
             Constants.Exclusions.Container,
-          );
+          )[0];
 
-          // Scroll to and pulse.
-          heading[0].scrollIntoView({ behavior: `${Constants.Global.scrollBehaviour}`, block: 'center' });
-          addPulse(heading[0].parentNode || heading[0]);
+          // Scroll to heading and add pulsing border.
+          if (heading) {
+            heading.scrollIntoView({
+              behavior: `${Constants.Global.scrollBehaviour}`,
+              block: 'center',
+            });
+            addPulse(heading.parentNode || heading);
+          }
 
-          // Alert if hidden.
+          // Alert if hidden or doesn't exist.
           removeAlert();
-          if (heading[0].hasAttribute('data-sa11y-parent')) createAlert(Lang._('NOT_VISIBLE'));
+          if (!heading || heading.hasAttribute('data-sa11y-parent')) {
+            createAlert(Lang._('NOT_VISIBLE'));
+          }
         });
       });
 
@@ -3302,15 +3309,22 @@ function generateImageOutline(dismissed, imageResults, option) {
             `[data-sa11y-image='${i}'], [data-sa11y-parent='image${i}']`,
             'document',
             Constants.Exclusions.Container,
-          );
+          )[0];
 
           // Scroll to and pulse.
-          image[0].scrollIntoView({ behavior: `${Constants.Global.scrollBehaviour}`, block: 'center' });
-          addPulse(image[0]);
+          if (image) {
+            image.scrollIntoView({
+              behavior: `${Constants.Global.scrollBehaviour}`,
+              block: 'center',
+            });
+            addPulse(image);
+          }
 
-          // Alert if hidden.
+          // Alert if hidden or doesn't exist.
           removeAlert();
-          if (image[0].hasAttribute('data-sa11y-parent')) createAlert(Lang._('NOT_VISIBLE'));
+          if (!image || image.hasAttribute('data-sa11y-parent')) {
+            createAlert(Lang._('NOT_VISIBLE'));
+          }
         });
       });
 

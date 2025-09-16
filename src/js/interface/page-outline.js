@@ -123,15 +123,22 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
             `#sa11y-h${i}, [data-sa11y-parent="h${i}"]`,
             'document',
             Constants.Exclusions.Container,
-          );
+          )[0];
 
-          // Scroll to and pulse.
-          heading[0].scrollIntoView({ behavior: `${Constants.Global.scrollBehaviour}`, block: 'center' });
-          Utils.addPulse(heading[0].parentNode || heading[0]);
+          // Scroll to heading and add pulsing border.
+          if (heading) {
+            heading.scrollIntoView({
+              behavior: `${Constants.Global.scrollBehaviour}`,
+              block: 'center',
+            });
+            Utils.addPulse(heading.parentNode || heading);
+          }
 
-          // Alert if hidden.
+          // Alert if hidden or doesn't exist.
           Utils.removeAlert();
-          if (heading[0].hasAttribute('data-sa11y-parent')) Utils.createAlert(Lang._('NOT_VISIBLE'));
+          if (!heading || heading.hasAttribute('data-sa11y-parent')) {
+            Utils.createAlert(Lang._('NOT_VISIBLE'));
+          }
         });
       });
 
