@@ -1400,7 +1400,7 @@ function isScrollable(scrollArea, container, ariaLabel) {
  * @returns {string} - The best available source URL.
  */
 function getBestImageSource(element) {
-  const getLastSrc = (src) => src?.split(',').pop()?.trim()?.split(/\s+/)[0];
+  const getLastSrc = (src) => src?.split(/,\s+/).pop()?.trim()?.split(/\s+/)[0];
 
   // Return absolute URLs. Necessary for HTML export.
   const resolveUrl = (src) => (src ? new URL(src, window.location.href).href : null);
