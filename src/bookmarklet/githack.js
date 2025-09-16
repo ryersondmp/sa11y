@@ -49,7 +49,7 @@ const loadStyleSheet = () => new Promise((resolve, reject) => {
 const loadScript = (lang) => new Promise((resolve, reject) => {
   const urls = [
     `https://raw.githack.com/ryersondmp/sa11y/${version}/dist/js/sa11y.umd.js`,
-    `https://raw.githack.com/ryersondmp/sa11y/${version}//dist/js/lang/${lang}.umd.js`,
+    `https://raw.githack.com/ryersondmp/sa11y/${version}/dist/js/lang/${lang}.umd.js`,
   ];
   let i = 0;
   // eslint-disable-next-line consistent-return
