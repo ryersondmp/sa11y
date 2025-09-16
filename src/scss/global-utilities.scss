@@ -57,14 +57,20 @@
   @keyframes pulse {
     0% {
       box-shadow: 0 0 0 5px var(--sa11y-focus-color);
+      opacity: 1;
+      transform: scale(1);
     }
 
     70% {
       box-shadow: 0 0 0 12px var(--sa11y-pulse-color);
+      opacity: .8;
+      transform: scale(1.01);
     }
 
     100% {
       box-shadow: 0 0 0 5px var(--sa11y-pulse-color);
+      opacity: 1;
+      transform: scale(1);
     }
   }
 
