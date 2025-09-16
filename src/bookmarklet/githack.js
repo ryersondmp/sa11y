@@ -39,7 +39,7 @@ const loadingSpinnerSVG = `
 const loadStyleSheet = () => new Promise((resolve, reject) => {
   const link = document.createElement('link');
   link.rel = 'stylesheet';
-  link.href = `https://raw.githubusercontent.com/ryersondmp/sa11y/${version}/dist/css/sa11y.min.css`;
+  link.href = `https://raw.githack.com/ryersondmp/sa11y/${version}/dist/css/sa11y.min.css`;
   link.onload = resolve;
   link.onerror = reject;
   document.head.appendChild(link);
@@ -48,8 +48,8 @@ const loadStyleSheet = () => new Promise((resolve, reject) => {
 // Then inject Sa11y's javascript in the body of the page.
 const loadScript = (lang) => new Promise((resolve, reject) => {
   const urls = [
-    `https://raw.githubusercontent.com/ryersondmp/sa11y/${version}/dist/js/sa11y.umd.js`,
-    `https://raw.githubusercontent.com/ryersondmp/sa11y/${version}/dist/js/lang/${lang}.umd.js`,
+    `https://raw.githack.com/ryersondmp/sa11y/${version}/dist/js/sa11y.umd.js`,
+    `https://raw.githack.com/ryersondmp/sa11y/${version}//dist/js/lang/${lang}.umd.js`,
   ];
   let i = 0;
   // eslint-disable-next-line consistent-return

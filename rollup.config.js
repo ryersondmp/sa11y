@@ -282,9 +282,9 @@ export default [
       },
     ],
   },
-  // Unminified GitHub bookmarklet.
+  // Unminified GitHack bookmarklet.
   {
-    input: 'src/bookmarklet/github.js',
+    input: 'src/bookmarklet/githack.js',
     plugins: [
       nodeResolve(),
       css(),
@@ -296,9 +296,9 @@ export default [
     ],
     output: [
       {
-        file: 'bookmarklet/github.js',
+        file: 'bookmarklet/githack.js',
         format: 'umd',
-        name: 'Sa11yLangBookmarkletUnminifiedGithub',
+        name: 'Sa11yLangBookmarkletUnminifiedGithack',
         plugins: [terser()],
       },
     ],
