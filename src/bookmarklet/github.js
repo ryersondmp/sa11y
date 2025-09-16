@@ -46,7 +46,7 @@ const loadStyleSheet = () => new Promise((resolve, reject) => {
 });
 
 // Then inject Sa11y's javascript in the body of the page.
-const loadScript = () => new Promise((resolve, reject) => {
+const loadScript = (lang) => new Promise((resolve, reject) => {
   const urls = [
     `https://raw.githubusercontent.com/ryersondmp/sa11y/${version}/dist/js/sa11y.umd.js`,
     `https://raw.githubusercontent.com/ryersondmp/sa11y/${version}/dist/js/lang/${lang}.umd.js`,
