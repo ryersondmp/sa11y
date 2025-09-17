@@ -140,17 +140,3 @@ export const detectOverflow = (ignoreHiddenOverflow) => {
     }
   });
 };
-
-/**
- * Utility function that will visually move overlapping annotations so they can be seen.
- */
-export const nudge = () => {
-  const annotations = document.querySelectorAll('sa11y-annotation');
-  annotations.forEach(($el) => {
-    const sibling = $el.nextElementSibling;
-    const css = 'margin: -5px -15px !important;';
-    if (sibling?.tagName === 'SA11Y-ANNOTATION' && customElements.get('sa11y-annotation')) {
-      sibling.shadowRoot.querySelector('button').setAttribute('style', css);
-    }
-  });
-};

@@ -14,7 +14,6 @@
 
 button {
   position: absolute;
-  z-index: 8888;
   display: block;
   width: 36px;
   height: 36px;
@@ -35,13 +34,16 @@ button:after {
 }
 
 /* To prevent overlap. */
+.error-btn {
+  margin: 10px;
+}
+
 .warning-btn {
   margin: 20px;
 }
 
-.good-btn,
-.error-btn {
-  margin: 10px;
+.good-btn {
+  margin: 15px;
 }
 
 .error-btn-text,
@@ -53,6 +55,7 @@ button:after {
 /* Error */
 .error-btn,
 .error-btn-text {
+  z-index: 9999;
   background: 50% 50% var(--sa11y-error-svg) no-repeat;
   background-color: var(--sa11y-error);
   background-size: 22px;
@@ -67,6 +70,7 @@ button:after {
 /* Pass button */
 .good-btn,
 .good-btn-text {
+  z-index: 9977;
   background: 50% 50% var(--sa11y-good) var(--sa11y-good-svg) no-repeat;
   background-color: var(--sa11y-good);
   background-size: 20px;
@@ -81,6 +85,7 @@ button:after {
 /* Warning button */
 .warning-btn,
 .warning-btn-text {
+  z-index: 9988;
   background: 50% 50% var(--sa11y-warning) var(--sa11y-warning-svg) no-repeat;
   background-color: var(--sa11y-warning);
   background-size: 24px;

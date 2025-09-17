@@ -23,7 +23,7 @@ import generatePageOutline from './interface/page-outline';
 import generateImageOutline from './interface/image-outline';
 import { updatePanel, updateBadge, updateCount } from './logic/update-panel';
 import { AnnotationTooltips, PanelTooltips } from './interface/tooltips';
-import { Annotations, annotate, detectOverflow, nudge } from './interface/annotations';
+import { Annotations, annotate, detectOverflow } from './interface/annotations';
 import { HeadingAnchor, HeadingLabel } from './interface/heading-labels';
 import { skipToIssue, removeSkipBtnListeners } from './logic/skip-to-issue';
 
@@ -324,7 +324,6 @@ class Sa11y {
 
           // Extras
           detectOverflow(option.ignoreHiddenOverflow);
-          nudge();
         }
 
         // Make sure toggle isn't disabled after checking.
