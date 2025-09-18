@@ -195,20 +195,7 @@ export default function checkReadability() {
         Constants.Panel.readabilityInfo.innerHTML = Lang._('READABILITY_NO_CONTENT');
       } else if (results.wordCount > 30) {
         Constants.Panel.readabilityInfo.innerHTML = `${results.score} <span class="readability-score">${results.difficultyLevel}</span>`;
-
-        Constants.Panel.readabilityDetails.innerHTML = `
-            <li>
-              <strong>${Lang._('AVG_SENTENCE')}</strong>
-              ${results.averageWordsPerSentence}
-            </li>
-            <li>
-              <strong>${Lang._('COMPLEX_WORDS')}</strong>
-              ${results.complexWords}%
-            </li>
-            <li>
-              <strong>${Lang._('TOTAL_WORDS')}</strong>
-              ${results.wordCount}
-            </li>`;
+        Constants.Panel.readabilityDetails.innerHTML = `<li><strong>${Lang._('AVG_SENTENCE')}</strong> ${results.averageWordsPerSentence}</li><li><strong>${Lang._('COMPLEX_WORDS')}</strong> ${results.complexWords}%</li><li><strong>${Lang._('TOTAL_WORDS')}</strong> ${results.wordCount}</li>`;
       } else {
         Constants.Panel.readabilityInfo.textContent = Lang._('READABILITY_NOT_ENOUGH');
       }

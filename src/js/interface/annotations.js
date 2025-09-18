@@ -44,13 +44,14 @@ export function annotate(issue, option) {
 
   // Add unique ID and styles to annotation and marked element.
   [type].forEach(($el) => {
-    if ($el === 'error' && element !== undefined) {
-      const errorAttr = (inline ? 'data-sa11y-error-inline' : 'data-sa11y-error');
-      element.setAttribute(errorAttr, id);
-    } else if ($el === 'warning' && element !== undefined) {
-      const warningAttr = (inline ? 'data-sa11y-warning-inline' : 'data-sa11y-warning');
-      element.setAttribute(warningAttr, id);
+    if (element === undefined) return;
+    let attr = null;
+    if ($el === 'error') {
+      attr = inline ? 'data-sa11y-error-inline' : 'data-sa11y-error';
+    } else if ($el === 'warning') {
+      attr = inline ? 'data-sa11y-warning-inline' : 'data-sa11y-warning';
     }
+    if (attr) element.setAttribute(attr, id);
   });
 
   // Generate aria-label for annotations.
@@ -61,16 +62,13 @@ export function annotate(issue, option) {
   };
 
   // Don't paint page with "Good" annotations for images with alt text and links with accessible name.
-  if (option.showGoodImageButton === false
-    && element?.tagName === 'IMG' && type === 'good') return;
-  if (option.showGoodLinkButton === false
-    && element?.tagName === 'A' && type === 'good') return;
+  if (type === 'good') {
+    if (!option.showGoodImageButton && element?.tagName === 'IMG') return;
+    if (!option.showGoodLinkButton && element?.tagName === 'A') return;
+  }
 
   // Add dismiss button if prop enabled & has a dismiss key.
-  const dismissBtn = (
-    option.dismissAnnotations
-    && (type === 'warning' || type === 'good')
-    && dismiss !== undefined)
+  const dismissBtn = (option.dismissAnnotations && (type === 'warning' || type === 'good') && dismiss)
     ? `<button data-sa11y-dismiss='${id}' type='button'>${Lang._('DISMISS')}</button>` : '';
 
   // Add dismiss all button if prop enabled & has addition check key.
@@ -80,7 +78,6 @@ export function annotate(issue, option) {
     && (type === 'warning' || type === 'good'))
     ? `<button data-sa11y-dismiss='${id}' data-sa11y-dismiss-all type='button'>${Lang._('DISMISS_ALL')}</button>` : '';
 
-  // Create 'sa11y-annotation' web component for each annotation.
   // Create 'sa11y-annotation' web component for each annotation.
   const instance = document.createElement('sa11y-annotation');
   instance.setAttribute('data-sa11y-annotation', id);
