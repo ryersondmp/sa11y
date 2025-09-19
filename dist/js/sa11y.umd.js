@@ -4369,7 +4369,7 @@ ${this.error.stack}
     return offsets;
   }
 
-  function detectOverflow$1(state, options) {
+  function detectOverflow(state, options) {
     if (options === void 0) {
       options = {};
     }
@@ -4452,7 +4452,7 @@ ${this.error.stack}
 
 
     var overflows = allowedPlacements.reduce(function (acc, placement) {
-      acc[placement] = detectOverflow$1(state, {
+      acc[placement] = detectOverflow(state, {
         placement: placement,
         boundary: boundary,
         rootBoundary: rootBoundary,
@@ -4523,7 +4523,7 @@ ${this.error.stack}
       var isStartVariation = getVariation(placement) === start;
       var isVertical = [top, bottom].indexOf(_basePlacement) >= 0;
       var len = isVertical ? 'width' : 'height';
-      var overflow = detectOverflow$1(state, {
+      var overflow = detectOverflow(state, {
         placement: placement,
         boundary: boundary,
         rootBoundary: rootBoundary,
@@ -4633,10 +4633,10 @@ ${this.error.stack}
     var referenceRect = state.rects.reference;
     var popperRect = state.rects.popper;
     var preventedOffsets = state.modifiersData.preventOverflow;
-    var referenceOverflow = detectOverflow$1(state, {
+    var referenceOverflow = detectOverflow(state, {
       elementContext: 'reference'
     });
-    var popperAltOverflow = detectOverflow$1(state, {
+    var popperAltOverflow = detectOverflow(state, {
       altBoundary: true
     });
     var referenceClippingOffsets = getSideOffsets(referenceOverflow, referenceRect);
@@ -4760,7 +4760,7 @@ ${this.error.stack}
         tether = _options$tether === void 0 ? true : _options$tether,
         _options$tetherOffset = options.tetherOffset,
         tetherOffset = _options$tetherOffset === void 0 ? 0 : _options$tetherOffset;
-    var overflow = detectOverflow$1(state, {
+    var overflow = detectOverflow(state, {
       boundary: boundary,
       rootBoundary: rootBoundary,
       padding: padding,
@@ -8189,26 +8189,17 @@ ${this.error.stack}
       const location = element.closest(`a, button, [role="link"], [role="button"] ${insertBefore}`) || element;
       location.insertAdjacentElement(position, instance);
       instance.shadowRoot.appendChild(create);
-    }
-  }
 
-  /**
-   * Utility function for annotations that modifies the parent container with overflow: hidden, making it visible and scrollable so content authors can access Sa11y's annotations.
-   * @param {string} ignoreHiddenOverflow A string of selectors to ignore and not apply overflow detection.
-   */
-  const detectOverflow = (ignoreHiddenOverflow) => {
-    const ignoredElements = ignoreHiddenOverflow
-      ? ignoreHiddenOverflow.split(',').flatMap((selector) => [...document.querySelectorAll(selector)])
-      : [];
-
-    const annotations = document.querySelectorAll('sa11y-annotation');
-    annotations.forEach(($el) => {
-      const parent = findVisibleParent($el, 'overflow', 'hidden');
+      // Modifies the annotation's parent container with overflow: hidden, making it visible and scrollable so content authors can access it.
+      const ignoredElements = option.ignoreHiddenOverflow
+        ? option.ignoreHiddenOverflow.split(',').flatMap((selector) => [...document.querySelectorAll(selector)])
+        : [];
+      const parent = findVisibleParent(element, 'overflow', 'hidden');
       if (parent && !ignoredElements.includes(parent)) {
         parent.setAttribute('data-sa11y-overflow', '');
       }
-    });
-  };
+    }
+  }
 
   // Empty anchors appended to the hidden heading's visible parent.
   class HeadingAnchor extends HTMLElement {
@@ -11292,7 +11283,6 @@ ${this.error.stack}
           if (store.getItem('sa11y-panel') === 'Opened') {
             // Paint the page with annotations.
             this.results.forEach((issue) => {
-              Object.assign(issue);
               annotate(issue, option);
             });
 
@@ -11340,9 +11330,6 @@ ${this.error.stack}
 
             // Page issues: add gradient if scrollable list.
             isScrollable(Constants.Panel.pageIssuesList, Constants.Panel.pageIssuesContent);
-
-            // Extras
-            detectOverflow(option.ignoreHiddenOverflow);
           }
 
           // Make sure toggle isn't disabled after checking.

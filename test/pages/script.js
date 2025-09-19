@@ -59,6 +59,7 @@ const sa11y = new Sa11y({
   // panelPosition: 'top-right',
   // showMovePanelToggle: false,
   // showImageOutline: false,
+  // showGoodImageButton: false,
   exportResultsPlugin: true,
   autoDetectShadowComponents: true,
   developerChecksOnByDefault: true,

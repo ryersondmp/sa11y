@@ -23,7 +23,7 @@ import generatePageOutline from './interface/page-outline';
 import generateImageOutline from './interface/image-outline';
 import { updatePanel, updateBadge, updateCount } from './logic/update-panel';
 import { AnnotationTooltips, PanelTooltips } from './interface/tooltips';
-import { Annotations, annotate, detectOverflow } from './interface/annotations';
+import { Annotations, annotate } from './interface/annotations';
 import { HeadingAnchor, HeadingLabel } from './interface/heading-labels';
 import { skipToIssue, removeSkipBtnListeners } from './logic/skip-to-issue';
 
@@ -273,7 +273,6 @@ class Sa11y {
         if (Utils.store.getItem('sa11y-panel') === 'Opened') {
           // Paint the page with annotations.
           this.results.forEach((issue) => {
-            Object.assign(issue);
             annotate(issue, option);
           });
 
@@ -321,9 +320,6 @@ class Sa11y {
 
           // Page issues: add gradient if scrollable list.
           Utils.isScrollable(Constants.Panel.pageIssuesList, Constants.Panel.pageIssuesContent);
-
-          // Extras
-          detectOverflow(option.ignoreHiddenOverflow);
         }
 
         // Make sure toggle isn't disabled after checking.

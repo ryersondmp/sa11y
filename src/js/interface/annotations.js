@@ -117,23 +117,14 @@ export function annotate(issue, option) {
     const location = element.closest(`a, button, [role="link"], [role="button"] ${insertBefore}`) || element;
     location.insertAdjacentElement(position, instance);
     instance.shadowRoot.appendChild(create);
-  }
-}
 
-/**
- * Utility function for annotations that modifies the parent container with overflow: hidden, making it visible and scrollable so content authors can access Sa11y's annotations.
- * @param {string} ignoreHiddenOverflow A string of selectors to ignore and not apply overflow detection.
- */
-export const detectOverflow = (ignoreHiddenOverflow) => {
-  const ignoredElements = ignoreHiddenOverflow
-    ? ignoreHiddenOverflow.split(',').flatMap((selector) => [...document.querySelectorAll(selector)])
-    : [];
-
-  const annotations = document.querySelectorAll('sa11y-annotation');
-  annotations.forEach(($el) => {
-    const parent = findVisibleParent($el, 'overflow', 'hidden');
+    // Modifies the annotation's parent container with overflow: hidden, making it visible and scrollable so content authors can access it.
+    const ignoredElements = option.ignoreHiddenOverflow
+      ? option.ignoreHiddenOverflow.split(',').flatMap((selector) => [...document.querySelectorAll(selector)])
+      : [];
+    const parent = findVisibleParent(element, 'overflow', 'hidden');
     if (parent && !ignoredElements.includes(parent)) {
       parent.setAttribute('data-sa11y-overflow', '');
     }
-  });
-};
+  }
+}
