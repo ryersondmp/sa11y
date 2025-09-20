@@ -1627,6 +1627,14 @@ function initRovingTabindex(container, children) {
   });
 }
 
+/**
+ * Detects if the browser supports CSS Anchor Positioning.
+ * @link https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning
+ */
+function supportsAnchorPositioning() {
+  return CSS.supports('anchor-name: --sa11y') && CSS.supports('position-anchor: --sa11y');
+}
+
 const Elements = (function myElements() {
   const Found = {};
   function initializeElements(option) {
@@ -8148,6 +8156,21 @@ function annotate(issue, option) {
   const instance = document.createElement('sa11y-annotation');
   instance.setAttribute('data-sa11y-annotation', id);
 
+  // Anchor positioning on sa11y-annotation web component.
+  if (supportsAnchorPositioning()) {
+    instance.style.position = 'absolute';
+    instance.style.positionAnchor = `--sa11y-anchor-${id}`;
+    instance.style.top = 'anchor(top)';
+    instance.style.left = 'anchor(left)';
+    if (element) {
+      // Preserve original anchor name.
+      const existing = element.style.anchorName;
+      element.style.anchorName = existing
+        ? `${existing}, --sa11y-anchor-${id}`
+        : `--sa11y-anchor-${id}`;
+    }
+  }
+
   // Generate HTML for painted annotations.
   if (element === undefined) {
     // Page errors displayed to main panel.
@@ -8168,9 +8191,9 @@ function annotate(issue, option) {
       aria-label="${ariaLabel[type]}"
       aria-haspopup="dialog"
       class="sa11y-btn ${[type]}-btn${inline ? '-text' : ''}"
-      data-tippy-content=
-        "<div lang='${Lang._('LANG_CODE')}' class='${[type]}'>
-          <button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button> <h2>${ariaLabel[type]}</h2>
+      data-tippy-content="<div lang='${Lang._('LANG_CODE')}' class='${[type]}'>
+          <button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button>
+          <h2>${ariaLabel[type]}</h2>
           ${escapeHTML(content)}
           ${contrastDetails ? '<div data-sa11y-contrast-details></div>' : ''}
           <div class='dismiss-group'>${dismissBtn}${dismissAllBtn}</div>
@@ -10422,7 +10445,7 @@ function checkQA(results, option) {
 
     // Find bolded text as headings.
     const computeBoldTextParagraphs = (p) => {
-      const startsWithBold = /^(<strong>|<b>)/i.test(p.innerHTML.trim());
+      const startsWithBold = /^<\s*(strong|b)(\s+[^>]*)?>/i.test(p.innerHTML.trim());
 
       if (startsWithBold && !p.closest(ignoreParents)) {
         const possibleHeading = p.querySelector('strong, b');
@@ -10632,9 +10655,8 @@ function checkQA(results, option) {
     /* Check: Underlined text. */
     if (option.checks.QA_UNDERLINE
       && textDecorationLine === 'underline'
-      && !$el.closest('[onclick]')
-      && !$el.closest('a[href]')
-      && !$el.closest('ABBR')) {
+      && !$el.closest('[onclick], a[href], button, abbr, [role="link"], [role="button"], [tabindex="0"]')
+    ) {
       addUnderlineResult($el);
     }
 
@@ -11404,6 +11426,22 @@ class Sa11y {
         el.shadowRoot.querySelectorAll('style.sa11y-css-utilities').forEach((style) => style.remove());
         el.removeAttribute('data-sa11y-has-shadow-root');
       });
+
+      // Remove Sa11y anchor positioning markup (while preserving any existing anchors).
+      if (supportsAnchorPositioning()) {
+        document.querySelectorAll('[style*="anchor-name"]').forEach(($el) => {
+          const anchor = $el;
+          const anchors = (anchor.style.anchorName || '')
+            .split(',')
+            .map((s) => s.trim())
+            .filter((s) => s && !s.startsWith('--sa11y-anchor'));
+          if (anchors.length) {
+            anchor.style.anchorName = anchors.join(', ');
+          } else {
+            anchor.style.removeProperty('anchor-name');
+          }
+        });
+      }
 
       if (restartPanel) {
         Constants.Panel.panel.classList.remove('active');

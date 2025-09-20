@@ -1,6 +1,6 @@
 import Lang from '../utils/lang';
 import Constants from '../utils/constants';
-import { escapeHTML, findVisibleParent } from '../utils/utils';
+import { escapeHTML, findVisibleParent, supportsAnchorPositioning } from '../utils/utils';
 
 // Import processed minified styles as a string.
 import annotationStyles from '../../../dist/css/annotations.min.css';
@@ -82,6 +82,21 @@ export function annotate(issue, option) {
   const instance = document.createElement('sa11y-annotation');
   instance.setAttribute('data-sa11y-annotation', id);
 
+  // Anchor positioning on sa11y-annotation web component.
+  if (supportsAnchorPositioning()) {
+    instance.style.position = 'absolute';
+    instance.style.positionAnchor = `--sa11y-anchor-${id}`;
+    instance.style.top = 'anchor(top)';
+    instance.style.left = 'anchor(left)';
+    if (element) {
+      // Preserve original anchor name.
+      const existing = element.style.anchorName;
+      element.style.anchorName = existing
+        ? `${existing}, --sa11y-anchor-${id}`
+        : `--sa11y-anchor-${id}`;
+    }
+  }
+
   // Generate HTML for painted annotations.
   if (element === undefined) {
     // Page errors displayed to main panel.
@@ -102,9 +117,9 @@ export function annotate(issue, option) {
       aria-label="${ariaLabel[type]}"
       aria-haspopup="dialog"
       class="sa11y-btn ${[type]}-btn${inline ? '-text' : ''}"
-      data-tippy-content=
-        "<div lang='${Lang._('LANG_CODE')}' class='${[type]}'>
-          <button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button> <h2>${ariaLabel[type]}</h2>
+      data-tippy-content="<div lang='${Lang._('LANG_CODE')}' class='${[type]}'>
+          <button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button>
+          <h2>${ariaLabel[type]}</h2>
           ${escapeHTML(content)}
           ${contrastDetails ? '<div data-sa11y-contrast-details></div>' : ''}
           <div class='dismiss-group'>${dismissBtn}${dismissAllBtn}</div>

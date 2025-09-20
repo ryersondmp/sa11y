@@ -210,7 +210,7 @@ export default function checkQA(results, option) {
 
     // Find bolded text as headings.
     const computeBoldTextParagraphs = (p) => {
-      const startsWithBold = /^(<strong>|<b>)/i.test(p.innerHTML.trim());
+      const startsWithBold = /^<\s*(strong|b)(\s+[^>]*)?>/i.test(p.innerHTML.trim());
 
       if (startsWithBold && !p.closest(ignoreParents)) {
         const possibleHeading = p.querySelector('strong, b');
@@ -420,9 +420,8 @@ export default function checkQA(results, option) {
     /* Check: Underlined text. */
     if (option.checks.QA_UNDERLINE
       && textDecorationLine === 'underline'
-      && !$el.closest('[onclick]')
-      && !$el.closest('a[href]')
-      && !$el.closest('ABBR')) {
+      && !$el.closest('[onclick], a[href], button, abbr, [role="link"], [role="button"], [tabindex="0"]')
+    ) {
       addUnderlineResult($el);
     }
 

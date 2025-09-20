@@ -768,3 +768,11 @@ export function initRovingTabindex(container, children) {
     container.removeEventListener('keydown', handleKeyDown);
   });
 }
+
+/**
+ * Detects if the browser supports CSS Anchor Positioning.
+ * @link https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning
+ */
+export function supportsAnchorPositioning() {
+  return CSS.supports('anchor-name: --sa11y') && CSS.supports('position-anchor: --sa11y');
+}

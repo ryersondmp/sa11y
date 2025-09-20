@@ -401,6 +401,22 @@ class Sa11y {
         el.removeAttribute('data-sa11y-has-shadow-root');
       });
 
+      // Remove Sa11y anchor positioning markup (while preserving any existing anchors).
+      if (Utils.supportsAnchorPositioning()) {
+        document.querySelectorAll('[style*="anchor-name"]').forEach(($el) => {
+          const anchor = $el;
+          const anchors = (anchor.style.anchorName || '')
+            .split(',')
+            .map((s) => s.trim())
+            .filter((s) => s && !s.startsWith('--sa11y-anchor'));
+          if (anchors.length) {
+            anchor.style.anchorName = anchors.join(', ');
+          } else {
+            anchor.style.removeProperty('anchor-name');
+          }
+        });
+      }
+
       if (restartPanel) {
         Constants.Panel.panel.classList.remove('active');
       }
