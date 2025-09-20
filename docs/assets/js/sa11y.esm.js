@@ -1749,7 +1749,7 @@ const Elements = (function myElements() {
   };
 }());
 
-var styles$1 = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-clone-image-text]{display:none!important}[data-sa11y-readability-period]{clip:rect(1px,1px,1px,1px)!important;border:0!important;clip-path:inset(50%)!important;display:block!important;height:1px!important;overflow:hidden!important;padding:0!important;position:absolute!important;white-space:nowrap!important;width:1px!important}[data-sa11y-error-inline],[data-sa11y-error]{outline:5px solid var(--sa11y-error)!important;outline-offset:2px}[data-sa11y-warning-inline]:not([data-sa11y-error-inline]),[data-sa11y-warning]:not([data-sa11y-error]){outline:5px solid var(--sa11y-warning)!important;outline-offset:2px}[data-sa11y-pulse-border]{animation:pulse 1s 2;box-shadow:0;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:focus,[data-sa11y-pulse-border]:hover{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color)}50%{box-shadow:0 0 0 12px var(--sa11y-pulse-color)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color)}}h1[data-sa11y-pulse-border],h2[data-sa11y-pulse-border],h3[data-sa11y-pulse-border],h4[data-sa11y-pulse-border],h5[data-sa11y-pulse-border],h6[data-sa11y-pulse-border],img[data-sa11y-pulse-border]{animation:pulse-scale 1s 2}@keyframes pulse-scale{0%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.02)}to{opacity:1;transform:scale(1)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}@media (forced-colors:active){[data-sa11y-error-inline],[data-sa11y-error],[data-sa11y-good],[data-sa11y-pulse-border],[data-sa11y-warning-inline],[data-sa11y-warning]{forced-color-adjust:none}}";
+var styles$1 = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-clone-image-text]{display:none!important}[data-sa11y-readability-period]{clip:rect(1px,1px,1px,1px)!important;border:0!important;clip-path:inset(50%)!important;display:block!important;height:1px!important;overflow:hidden!important;padding:0!important;position:absolute!important;white-space:nowrap!important;width:1px!important}[data-sa11y-error]{outline:5px solid var(--sa11y-error)!important;outline-offset:2px}[data-sa11y-warning]:not([data-sa11y-error]){outline:5px solid var(--sa11y-warning)!important;outline-offset:2px}[data-sa11y-pulse-border]{animation:pulse 1s 2;box-shadow:0;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:focus,[data-sa11y-pulse-border]:hover{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color)}50%{box-shadow:0 0 0 12px var(--sa11y-pulse-color)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color)}}h1[data-sa11y-pulse-border],h2[data-sa11y-pulse-border],h3[data-sa11y-pulse-border],h4[data-sa11y-pulse-border],h5[data-sa11y-pulse-border],h6[data-sa11y-pulse-border],img[data-sa11y-pulse-border]{animation:pulse-scale 1s 2}@keyframes pulse-scale{0%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.02)}to{opacity:1;transform:scale(1)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}@media (forced-colors:active){[data-sa11y-error-inline],[data-sa11y-error],[data-sa11y-good],[data-sa11y-pulse-border],[data-sa11y-warning-inline],[data-sa11y-warning]{forced-color-adjust:none}}";
 
 /* ************************************************************ */
 /*  Auto-detect shadow DOM or process provided web components.  */
@@ -2779,8 +2779,6 @@ function settingsPanelToggles(checkAll, resetAll) {
             'data-sa11y-error',
             'data-sa11y-warning',
             'data-sa11y-good',
-            'data-sa11y-error-inline',
-            'data-sa11y-warning-inline',
             'data-sa11y-overflow',
           ], 'document');
           remove([
@@ -8117,16 +8115,14 @@ function annotate(issue, option) {
   }
 
   // Add unique ID and styles to annotation and marked element.
-  [type].forEach(($el) => {
-    if (element === undefined) return;
-    let attr = null;
-    if ($el === 'error') {
-      attr = inline ? 'data-sa11y-error-inline' : 'data-sa11y-error';
-    } else if ($el === 'warning') {
-      attr = inline ? 'data-sa11y-warning-inline' : 'data-sa11y-warning';
-    }
-    if (attr) element.setAttribute(attr, id);
-  });
+  if (element) {
+    const map = {
+      [validTypes[0]]: 'data-sa11y-error',
+      [validTypes[1]]: 'data-sa11y-warning',
+      [validTypes[2]]: 'data-sa11y-good',
+    };
+    [type].forEach(($el) => map[$el] && element.setAttribute(map[$el], ''));
+  }
 
   // Generate aria-label for annotations.
   const ariaLabel = {
@@ -8185,20 +8181,7 @@ function annotate(issue, option) {
     // Button annotations.
     const create = document.createElement('div');
     create.classList.add(`${inline ? 'instance-inline' : 'instance'}`);
-    create.innerHTML = `
-    <button
-      type="button"
-      aria-label="${ariaLabel[type]}"
-      aria-haspopup="dialog"
-      class="sa11y-btn ${[type]}-btn${inline ? '-text' : ''}"
-      data-tippy-content="<div lang='${Lang._('LANG_CODE')}' class='${[type]}'>
-          <button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button>
-          <h2>${ariaLabel[type]}</h2>
-          ${escapeHTML(content)}
-          ${contrastDetails ? '<div data-sa11y-contrast-details></div>' : ''}
-          <div class='dismiss-group'>${dismissBtn}${dismissAllBtn}</div>
-        </div>"
-    ></button>`;
+    create.innerHTML = `<button type="button" aria-label="${ariaLabel[type]}" aria-haspopup="dialog" class="sa11y-btn ${[type]}-btn${inline ? '-text' : ''}" data-tippy-content="<div lang='${Lang._('LANG_CODE')}' class='${[type]}'><button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button><h2>${ariaLabel[type]}</h2> ${escapeHTML(content)} ${contrastDetails ? '<div data-sa11y-contrast-details></div>' : ''}<div class='dismiss-group'>${dismissBtn}${dismissAllBtn}</div></div>"></button>`;
 
     // Make sure annotations always appended outside of SVGs and interactive elements.
     const insertBefore = option.insertAnnotationBefore
@@ -11381,14 +11364,27 @@ class Sa11y {
         '[data-sa11y-clone-image-text]',
       ], 'document');
 
+      // Remove Sa11y anchor positioning markup (while preserving any existing anchors).
+      if (supportsAnchorPositioning()) {
+        find('[data-sa11y-error], [data-sa11y-warning], [data-sa11y-good]', 'document').forEach(($el) => {
+          const anchor = $el;
+          const anchors = (anchor.style.anchorName || '')
+            .split(',').map((s) => s.trim()).filter((s) => s && !s.startsWith('--sa11y-anchor'));
+          if (anchors.length) {
+            anchor.style.anchorName = anchors.join(', ');
+          } else {
+            anchor.style.removeProperty('anchor-name');
+            if (!anchor.style.length) anchor.removeAttribute('style');
+          }
+        });
+      }
+
       // Reset all data attributes.
       resetAttributes([
         'data-sa11y-parent',
         'data-sa11y-error',
         'data-sa11y-warning',
         'data-sa11y-good',
-        'data-sa11y-error-inline',
-        'data-sa11y-warning-inline',
         'data-sa11y-overflow',
         'data-sa11y-image',
         'data-sa11y-pulse-border',
@@ -11426,24 +11422,6 @@ class Sa11y {
         el.shadowRoot.querySelectorAll('style.sa11y-css-utilities').forEach((style) => style.remove());
         el.removeAttribute('data-sa11y-has-shadow-root');
       });
-
-      // Remove Sa11y anchor positioning markup (while preserving any existing anchors).
-      if (supportsAnchorPositioning()) {
-        document.querySelectorAll('[style*="anchor-name"]').forEach(($el) => {
-          const anchor = $el;
-          const anchors = (anchor.style.anchorName || '')
-            .split(',')
-            .map((s) => s.trim())
-            .filter((s) => s && !s.startsWith('--sa11y-anchor'));
-
-          if (anchors.length) {
-            anchor.style.anchorName = anchors.join(', ');
-          } else {
-            anchor.style.removeProperty('anchor-name');
-            if (!anchor.style.length) anchor.removeAttribute('style');
-          }
-        });
-      }
 
       if (restartPanel) {
         Constants.Panel.panel.classList.remove('active');

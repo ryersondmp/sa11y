@@ -26,14 +26,12 @@
 /* ************************************* */
 /*    Links, text, and image borders     */
 /* ************************************* */
-[data-sa11y-error],
-[data-sa11y-error-inline] {
+[data-sa11y-error] {
   outline: 5px solid var(--sa11y-error) !important;
   outline-offset: 2px;
 }
 
-[data-sa11y-warning]:not([data-sa11y-error]),
-[data-sa11y-warning-inline]:not([data-sa11y-error-inline]) {
+[data-sa11y-warning]:not([data-sa11y-error]) {
   outline: 5px solid var(--sa11y-warning) !important;
   outline-offset: 2px;
 }

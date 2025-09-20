@@ -355,14 +355,27 @@ class Sa11y {
         '[data-sa11y-clone-image-text]',
       ], 'document');
 
+      // Remove Sa11y anchor positioning markup (while preserving any existing anchors).
+      if (Utils.supportsAnchorPositioning()) {
+        find('[data-sa11y-error], [data-sa11y-warning], [data-sa11y-good]', 'document').forEach(($el) => {
+          const anchor = $el;
+          const anchors = (anchor.style.anchorName || '')
+            .split(',').map((s) => s.trim()).filter((s) => s && !s.startsWith('--sa11y-anchor'));
+          if (anchors.length) {
+            anchor.style.anchorName = anchors.join(', ');
+          } else {
+            anchor.style.removeProperty('anchor-name');
+            if (!anchor.style.length) anchor.removeAttribute('style');
+          }
+        });
+      }
+
       // Reset all data attributes.
       Utils.resetAttributes([
         'data-sa11y-parent',
         'data-sa11y-error',
         'data-sa11y-warning',
         'data-sa11y-good',
-        'data-sa11y-error-inline',
-        'data-sa11y-warning-inline',
         'data-sa11y-overflow',
         'data-sa11y-image',
         'data-sa11y-pulse-border',
@@ -400,24 +413,6 @@ class Sa11y {
         el.shadowRoot.querySelectorAll('style.sa11y-css-utilities').forEach((style) => style.remove());
         el.removeAttribute('data-sa11y-has-shadow-root');
       });
-
-      // Remove Sa11y anchor positioning markup (while preserving any existing anchors).
-      if (Utils.supportsAnchorPositioning()) {
-        document.querySelectorAll('[style*="anchor-name"]').forEach(($el) => {
-          const anchor = $el;
-          const anchors = (anchor.style.anchorName || '')
-            .split(',')
-            .map((s) => s.trim())
-            .filter((s) => s && !s.startsWith('--sa11y-anchor'));
-
-          if (anchors.length) {
-            anchor.style.anchorName = anchors.join(', ');
-          } else {
-            anchor.style.removeProperty('anchor-name');
-            if (!anchor.style.length) anchor.removeAttribute('style');
-          }
-        });
-      }
 
       if (restartPanel) {
         Constants.Panel.panel.classList.remove('active');

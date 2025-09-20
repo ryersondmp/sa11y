@@ -43,16 +43,14 @@ export function annotate(issue, option) {
   }
 
   // Add unique ID and styles to annotation and marked element.
-  [type].forEach(($el) => {
-    if (element === undefined) return;
-    let attr = null;
-    if ($el === 'error') {
-      attr = inline ? 'data-sa11y-error-inline' : 'data-sa11y-error';
-    } else if ($el === 'warning') {
-      attr = inline ? 'data-sa11y-warning-inline' : 'data-sa11y-warning';
-    }
-    if (attr) element.setAttribute(attr, id);
-  });
+  if (element) {
+    const map = {
+      [validTypes[0]]: 'data-sa11y-error',
+      [validTypes[1]]: 'data-sa11y-warning',
+      [validTypes[2]]: 'data-sa11y-good',
+    };
+    [type].forEach(($el) => map[$el] && element.setAttribute(map[$el], ''));
+  }
 
   // Generate aria-label for annotations.
   const ariaLabel = {
@@ -111,20 +109,7 @@ export function annotate(issue, option) {
     // Button annotations.
     const create = document.createElement('div');
     create.classList.add(`${inline ? 'instance-inline' : 'instance'}`);
-    create.innerHTML = `
-    <button
-      type="button"
-      aria-label="${ariaLabel[type]}"
-      aria-haspopup="dialog"
-      class="sa11y-btn ${[type]}-btn${inline ? '-text' : ''}"
-      data-tippy-content="<div lang='${Lang._('LANG_CODE')}' class='${[type]}'>
-          <button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button>
-          <h2>${ariaLabel[type]}</h2>
-          ${escapeHTML(content)}
-          ${contrastDetails ? '<div data-sa11y-contrast-details></div>' : ''}
-          <div class='dismiss-group'>${dismissBtn}${dismissAllBtn}</div>
-        </div>"
-    ></button>`;
+    create.innerHTML = `<button type="button" aria-label="${ariaLabel[type]}" aria-haspopup="dialog" class="sa11y-btn ${[type]}-btn${inline ? '-text' : ''}" data-tippy-content="<div lang='${Lang._('LANG_CODE')}' class='${[type]}'><button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button><h2>${ariaLabel[type]}</h2> ${escapeHTML(content)} ${contrastDetails ? '<div data-sa11y-contrast-details></div>' : ''}<div class='dismiss-group'>${dismissBtn}${dismissAllBtn}</div></div>"></button>`;
 
     // Make sure annotations always appended outside of SVGs and interactive elements.
     const insertBefore = option.insertAnnotationBefore
