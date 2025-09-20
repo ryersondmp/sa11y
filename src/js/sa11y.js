@@ -409,10 +409,12 @@ class Sa11y {
             .split(',')
             .map((s) => s.trim())
             .filter((s) => s && !s.startsWith('--sa11y-anchor'));
+
           if (anchors.length) {
             anchor.style.anchorName = anchors.join(', ');
           } else {
             anchor.style.removeProperty('anchor-name');
+            if (!anchor.style.length) anchor.removeAttribute('style');
           }
         });
       }
