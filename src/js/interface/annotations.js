@@ -42,16 +42,6 @@ export function annotate(issue, option) {
     throw Error(`Invalid type [${type}] for annotation`);
   }
 
-  // Add unique ID and styles to annotation and marked element.
-  if (element) {
-    const map = {
-      [validTypes[0]]: 'data-sa11y-error',
-      [validTypes[1]]: 'data-sa11y-warning',
-      [validTypes[2]]: 'data-sa11y-good',
-    };
-    [type].forEach(($el) => map[$el] && element.setAttribute(map[$el], ''));
-  }
-
   // Generate aria-label for annotations.
   const ariaLabel = {
     [validTypes[0]]: Lang._('ERROR'),
@@ -59,54 +49,53 @@ export function annotate(issue, option) {
     [validTypes[2]]: Lang._('GOOD'),
   };
 
-  // Don't paint page with "Good" annotations for images with alt text and links with accessible name.
-  if (type === 'good') {
-    if (!option.showGoodImageButton && element?.tagName === 'IMG') return;
-    if (!option.showGoodLinkButton && element?.tagName === 'A') return;
-  }
-
   // Add dismiss button if prop enabled & has a dismiss key.
   const dismissBtn = (option.dismissAnnotations && (type === 'warning' || type === 'good') && dismiss)
     ? `<button data-sa11y-dismiss='${id}' type='button'>${Lang._('DISMISS')}</button>` : '';
 
-  // Add dismiss all button if prop enabled & has addition check key.
-  const dismissAllBtn = (
-    option.dismissAnnotations
-    && (option.dismissAll && typeof dismissAll === 'string')
-    && (type === 'warning' || type === 'good'))
-    ? `<button data-sa11y-dismiss='${id}' data-sa11y-dismiss-all type='button'>${Lang._('DISMISS_ALL')}</button>` : '';
+  // Generate HTML for painted annotations.
+  if (element) {
+    // Don't paint page with "Good" annotations (if prop enabled).
+    if (type === 'good') {
+      if (!option.showGoodImageButton && element?.tagName === 'IMG') return;
+      if (!option.showGoodLinkButton && element?.tagName === 'A') return;
+    }
 
-  // Create 'sa11y-annotation' web component for each annotation.
-  const instance = document.createElement('sa11y-annotation');
-  instance.setAttribute('data-sa11y-annotation', id);
+    // Tag element with border outline.
+    const tag = {
+      [validTypes[0]]: 'data-sa11y-error',
+      [validTypes[1]]: 'data-sa11y-warning',
+      [validTypes[2]]: 'data-sa11y-good',
+    };
+    [type].forEach(($el) => tag[$el] && element.setAttribute(tag[$el], ''));
 
-  // Anchor positioning on sa11y-annotation web component.
-  if (supportsAnchorPositioning()) {
-    instance.style.position = 'absolute';
-    instance.style.positionAnchor = `--sa11y-anchor-${id}`;
-    instance.style.top = 'anchor(top)';
-    instance.style.left = 'anchor(left)';
-    if (element) {
+    // Create 'sa11y-annotation' web component for each annotation.
+    const instance = document.createElement('sa11y-annotation');
+    instance.setAttribute('data-sa11y-annotation', id);
+
+    // Add anchor positioning on <sa11y-annotation> web component to improve accuracy of positioning.
+    if (supportsAnchorPositioning()) {
+      instance.style.position = 'absolute';
+      instance.style.positionAnchor = `--sa11y-anchor-${id}`;
+      instance.style.top = 'anchor(top)';
+      instance.style.left = 'anchor(left)';
+
       // Preserve original anchor name.
       const existing = element.style.anchorName;
       element.style.anchorName = existing
         ? `${existing}, --sa11y-anchor-${id}`
         : `--sa11y-anchor-${id}`;
     }
-  }
 
-  // Generate HTML for painted annotations.
-  if (element === undefined) {
-    // Page errors displayed to main panel.
-    const listItem = document.createElement('li');
-    listItem.innerHTML = `<h3>${ariaLabel[type]}</h3> ${content}${dismissBtn}`;
-    Constants.Panel.pageIssuesList.insertAdjacentElement('afterbegin', listItem);
+    // Add dismiss all button if prop enabled & has addition check key.
+    const dismissAllBtn = (
+      option.dismissAnnotations
+      && (option.dismissAll && typeof dismissAll === 'string')
+      && (type === 'warning' || type === 'good'))
+      ? `<button data-sa11y-dismiss='${id}' data-sa11y-dismiss-all type='button'>${Lang._('DISMISS_ALL')}</button>`
+      : '';
 
-    // Display Page Issues panel.
-    Constants.Panel.pageIssues.classList.add('active');
-    Constants.Panel.panel.classList.add('has-page-issues');
-  } else {
-    // Button annotations.
+    // Create button annotations.
     const create = document.createElement('div');
     create.classList.add(`${inline ? 'instance-inline' : 'instance'}`);
     create.innerHTML = `<button type="button" aria-label="${ariaLabel[type]}" aria-haspopup="dialog" class="sa11y-btn ${[type]}-btn${inline ? '-text' : ''}" data-tippy-content="<div lang='${Lang._('LANG_CODE')}' class='${[type]}'><button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button><h2>${ariaLabel[type]}</h2> ${escapeHTML(content)} ${contrastDetails ? '<div data-sa11y-contrast-details></div>' : ''}<div class='dismiss-group'>${dismissBtn}${dismissAllBtn}</div></div>"></button>`;
@@ -126,5 +115,14 @@ export function annotate(issue, option) {
     if (parent && !ignoredElements.includes(parent)) {
       parent.setAttribute('data-sa11y-overflow', '');
     }
+  } else {
+    // If no valid element, send issue to main panel.
+    const listItem = document.createElement('li');
+    listItem.innerHTML = `<h3>${ariaLabel[type]}</h3> ${content}${dismissBtn}`;
+    Constants.Panel.pageIssuesList.insertAdjacentElement('afterbegin', listItem);
+
+    // Display Page Issues panel.
+    Constants.Panel.pageIssues.classList.add('active');
+    Constants.Panel.panel.classList.add('has-page-issues');
   }
 }
