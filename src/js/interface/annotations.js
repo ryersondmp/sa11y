@@ -79,6 +79,7 @@ export function annotate(issue, option) {
       instance.style.positionAnchor = `--sa11y-anchor-${id}`;
       instance.style.top = 'anchor(top)';
       instance.style.left = 'anchor(left)';
+      instance.style.setProperty('position-try-fallbacks', 'flip-inline');
 
       // Preserve original anchor name.
       const existing = element.style.anchorName;
