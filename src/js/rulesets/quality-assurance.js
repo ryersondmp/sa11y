@@ -418,9 +418,12 @@ export default function checkQA(results, option) {
     const { textDecorationLine, textAlign, fontSize } = style;
 
     /* Check: Underlined text. */
-    if (option.checks.QA_UNDERLINE
-      && textDecorationLine === 'underline'
-      && !$el.closest('[onclick], a[href], button, abbr, [role="link"], [role="button"], [tabindex="0"]')
+    const interactive = 'a[href], button, abbr, [role="link"], [role="button"], [tabindex="0"], [onclick]';
+    if (
+      option.checks.QA_UNDERLINE
+      && ($el.closest('u') || textDecorationLine === 'underline')
+      && !$el.closest(interactive)
+      && !$el.matches(interactive)
     ) {
       addUnderlineResult($el);
     }

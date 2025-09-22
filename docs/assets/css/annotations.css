@@ -1,12 +1,12 @@
 /* ************************************* */
 /*   Error, Warning, Pass annotations    */
 /* ************************************* */
-.instance {
+.annotation {
   position: relative;
   display: block;
 }
 
-.instance-inline {
+.annotation-inline {
   position: relative;
   display: inline-block;
   text-align: end;

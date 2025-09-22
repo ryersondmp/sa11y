@@ -1,6 +1,6 @@
 import Lang from '../utils/lang';
 import Constants from '../utils/constants';
-import { escapeHTML, findVisibleParent, supportsAnchorPositioning } from '../utils/utils';
+import { findVisibleParent, supportsAnchorPositioning } from '../utils/utils';
 
 // Import processed minified styles as a string.
 import annotationStyles from '../../../dist/css/annotations.min.css';
@@ -16,6 +16,9 @@ export class Annotations extends HTMLElement {
     shadow.appendChild(style);
   }
 }
+
+// Array of all annotation triggers/buttons, imported by tooltip.js
+export const annotationButtons = [];
 
 /**
   * Create annotation buttons.
@@ -71,15 +74,15 @@ export function annotate(issue, option) {
     [type].forEach(($el) => tag[$el] && element.setAttribute(tag[$el], ''));
 
     // Create 'sa11y-annotation' web component for each annotation.
-    const instance = document.createElement('sa11y-annotation');
-    instance.setAttribute('data-sa11y-annotation', id);
+    const annotation = document.createElement('sa11y-annotation');
+    annotation.setAttribute('data-sa11y-annotation', id);
 
     // Add anchor positioning on <sa11y-annotation> web component to improve accuracy of positioning.
     if (supportsAnchorPositioning()) {
-      instance.style.position = 'absolute';
-      instance.style.positionAnchor = `--sa11y-anchor-${id}`;
-      instance.style.top = 'anchor(top)';
-      instance.style.left = 'anchor(left)';
+      annotation.style.position = 'absolute';
+      annotation.style.positionAnchor = `--sa11y-anchor-${id}`;
+      annotation.style.top = 'anchor(top)';
+      annotation.style.left = 'anchor(left)';
 
       // Preserve original anchor name.
       const existing = element.style.anchorName;
@@ -97,16 +100,23 @@ export function annotate(issue, option) {
       : '';
 
     // Create button annotations.
-    const create = document.createElement('div');
-    create.classList.add(`${inline ? 'instance-inline' : 'instance'}`);
-    create.innerHTML = `<button type="button" aria-label="${ariaLabel[type]}" aria-haspopup="dialog" class="sa11y-btn ${[type]}-btn" style="margin:${inline ? '-10px' : ''} ${margin}" data-tippy-content="<div lang='${Lang._('LANG_CODE')}' class='${[type]}'><button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button><h2>${ariaLabel[type]}</h2> ${escapeHTML(content)} ${contrastDetails ? '<div data-sa11y-contrast-details></div>' : ''}<div class='dismiss-group'>${dismissBtn}${dismissAllBtn}</div></div>"></button>`;
+    const buttonWrapper = document.createElement('div');
+    buttonWrapper.classList.add(inline ? 'annotation-inline' : 'annotation');
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = `${type}-btn`;
+    button.setAttribute('aria-label', ariaLabel[type]);
+    button.setAttribute('aria-haspopup', 'dialog');
+    button.style.margin = `${inline ? '-10px' : ''} ${margin}`;
+    button.dataset.tippyContent = `<div lang='${Lang._('LANG_CODE')}' class='${type}'><button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button><h2>${ariaLabel[type]}</h2> ${content} ${contrastDetails ? '<div data-sa11y-contrast-details></div>' : ''} <div class='dismiss-group'>${dismissBtn}${dismissAllBtn}</div></div>`;
+    buttonWrapper.appendChild(button);
+    annotationButtons.push(button);
 
     // Make sure annotations always appended outside of SVGs and interactive elements.
-    const insertBefore = option.insertAnnotationBefore
-      ? `, ${option.insertAnnotationBefore}` : '';
+    const insertBefore = option.insertAnnotationBefore ? `, ${option.insertAnnotationBefore}` : '';
     const location = element.closest(`a, button, [role="link"], [role="button"] ${insertBefore}`) || element;
-    location.insertAdjacentElement(position, instance);
-    instance.shadowRoot.appendChild(create);
+    location.insertAdjacentElement(position, annotation);
+    annotation.shadowRoot.appendChild(buttonWrapper);
 
     // Modifies the annotation's parent container with overflow: hidden, making it visible and scrollable so content authors can access it.
     const ignoredElements = option.ignoreHiddenOverflow

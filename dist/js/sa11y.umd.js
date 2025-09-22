@@ -7870,6 +7870,140 @@ ${this.error.stack}
     return algorithm($el, color, background, fontSize, fontWeight, opacity, contrastAAA);
   }
 
+  var annotationStyles = ".annotation{display:block;position:relative}.annotation-inline{display:inline-block;position:relative;text-align:end}button{border-radius:50%;box-shadow:0 0 16px 0 rgba(0,0,0,.31);cursor:pointer;display:block;padding:0;transition:all .2s ease-in-out}button,button:after{height:36px;position:absolute;width:36px}button:after{content:\"\";left:-7px;padding:7px;top:-7px}.error-btn{background:50% 50% var(--sa11y-error-svg) no-repeat;background-color:var(--sa11y-error);background-size:22px;border:1px solid var(--sa11y-error);z-index:9999}.error-btn:focus,.error-btn:hover{background-color:var(--sa11y-error-hover)}.good-btn{background:50% 50% var(--sa11y-good) var(--sa11y-good-svg) no-repeat;background-color:var(--sa11y-good);background-size:20px;border:1px solid var(--sa11y-good);z-index:9977}.good-btn:focus,.good-btn:hover{background-color:var(--sa11y-good-hover)}.warning-btn{background:50% 50% var(--sa11y-warning) var(--sa11y-warning-svg) no-repeat;background-color:var(--sa11y-warning);background-size:24px;border:1px solid var(--sa11y-warning);transform:scaleX(var(--sa11y-icon-direction));z-index:9988}.warning-btn:focus,.warning-btn:hover{background-color:var(--sa11y-warning-hover)}.sa11y-btn:active,.sa11y-btn:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.sa11y-btn{border:1px solid transparent!important;forced-color-adjust:none;outline:3px solid transparent!important}}";
+
+  class Annotations extends HTMLElement {
+    connectedCallback() {
+      const shadow = this.attachShadow({ mode: 'open' });
+
+      // Styles
+      const style = document.createElement('style');
+      style.innerHTML = annotationStyles + sharedStyles;
+      shadow.appendChild(style);
+    }
+  }
+
+  // Array of all annotation triggers/buttons, imported by tooltip.js
+  const annotationButtons = [];
+
+  /**
+    * Create annotation buttons.
+    * @param {Object} issue The issue object.
+    * @param {Object} option The options object.
+  */
+  function annotate(issue, option) {
+    // Get properties of issue object.
+    const {
+      element,
+      type,
+      content,
+      inline = false,
+      position = 'beforebegin',
+      id,
+      dismiss,
+      dismissAll,
+      contrastDetails,
+      margin,
+    } = issue;
+
+    // Validate types to prevent errors.
+    const validTypes = ['error', 'warning', 'good'];
+    if (validTypes.indexOf(type) === -1) {
+      throw Error(`Invalid type [${type}] for annotation`);
+    }
+
+    // Generate aria-label for annotations.
+    const ariaLabel = {
+      [validTypes[0]]: Lang._('ERROR'),
+      [validTypes[1]]: Lang._('WARNING'),
+      [validTypes[2]]: Lang._('GOOD'),
+    };
+
+    // Add dismiss button if prop enabled & has a dismiss key.
+    const dismissBtn = (option.dismissAnnotations && (type === 'warning' || type === 'good') && dismiss)
+      ? `<button data-sa11y-dismiss='${id}' type='button'>${Lang._('DISMISS')}</button>` : '';
+
+    // Generate HTML for painted annotations.
+    if (element) {
+      // Don't paint page with "Good" annotations (if prop enabled).
+      if (type === 'good') {
+        if (!option.showGoodImageButton && element?.tagName === 'IMG') return;
+        if (!option.showGoodLinkButton && element?.tagName === 'A') return;
+      }
+
+      // Tag element with border outline.
+      const tag = {
+        [validTypes[0]]: 'data-sa11y-error',
+        [validTypes[1]]: 'data-sa11y-warning',
+        [validTypes[2]]: 'data-sa11y-good',
+      };
+      [type].forEach(($el) => tag[$el] && element.setAttribute(tag[$el], ''));
+
+      // Create 'sa11y-annotation' web component for each annotation.
+      const annotation = document.createElement('sa11y-annotation');
+      annotation.setAttribute('data-sa11y-annotation', id);
+
+      // Add anchor positioning on <sa11y-annotation> web component to improve accuracy of positioning.
+      if (supportsAnchorPositioning()) {
+        annotation.style.position = 'absolute';
+        annotation.style.positionAnchor = `--sa11y-anchor-${id}`;
+        annotation.style.top = 'anchor(top)';
+        annotation.style.left = 'anchor(left)';
+
+        // Preserve original anchor name.
+        const existing = element.style.anchorName;
+        element.style.anchorName = existing
+          ? `${existing}, --sa11y-anchor-${id}`
+          : `--sa11y-anchor-${id}`;
+      }
+
+      // Add dismiss all button if prop enabled & has addition check key.
+      const dismissAllBtn = (
+        option.dismissAnnotations
+        && (option.dismissAll && typeof dismissAll === 'string')
+        && (type === 'warning' || type === 'good'))
+        ? `<button data-sa11y-dismiss='${id}' data-sa11y-dismiss-all type='button'>${Lang._('DISMISS_ALL')}</button>`
+        : '';
+
+      // Create button annotations.
+      const buttonWrapper = document.createElement('div');
+      buttonWrapper.classList.add(inline ? 'annotation-inline' : 'annotation');
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = `${type}-btn`;
+      button.setAttribute('aria-label', ariaLabel[type]);
+      button.setAttribute('aria-haspopup', 'dialog');
+      button.style.margin = `${inline ? '-10px' : ''} ${margin}`;
+      button.dataset.tippyContent = `<div lang='${Lang._('LANG_CODE')}' class='${type}'><button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button><h2>${ariaLabel[type]}</h2> ${content} ${contrastDetails ? '<div data-sa11y-contrast-details></div>' : ''} <div class='dismiss-group'>${dismissBtn}${dismissAllBtn}</div></div>`;
+      buttonWrapper.appendChild(button);
+      annotationButtons.push(button);
+
+      // Make sure annotations always appended outside of SVGs and interactive elements.
+      const insertBefore = option.insertAnnotationBefore ? `, ${option.insertAnnotationBefore}` : '';
+      const location = element.closest(`a, button, [role="link"], [role="button"] ${insertBefore}`) || element;
+      location.insertAdjacentElement(position, annotation);
+      annotation.shadowRoot.appendChild(buttonWrapper);
+
+      // Modifies the annotation's parent container with overflow: hidden, making it visible and scrollable so content authors can access it.
+      const ignoredElements = option.ignoreHiddenOverflow
+        ? option.ignoreHiddenOverflow.split(',').flatMap((selector) => [...document.querySelectorAll(selector)])
+        : [];
+      const parent = findVisibleParent(element, 'overflow', 'hidden');
+      if (parent && !ignoredElements.includes(parent)) {
+        parent.setAttribute('data-sa11y-overflow', '');
+      }
+    } else {
+      // If no valid element, send issue to main panel.
+      const listItem = document.createElement('li');
+      listItem.innerHTML = `<h3>${ariaLabel[type]}</h3> ${content}${dismissBtn}`;
+      Constants.Panel.pageIssuesList.insertAdjacentElement('afterbegin', listItem);
+
+      // Display Page Issues panel.
+      Constants.Panel.pageIssues.classList.add('active');
+      Constants.Panel.panel.classList.add('has-page-issues');
+    }
+  }
+
   var tooltipStyles = "a,button,code,div,h1,h2,kbd,li,ol,p,span,strong,svg,ul{all:unset;box-sizing:border-box!important}div{display:block}:after,:before{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}@media (forced-colors:active){[data-tippy-root]{border:2px solid transparent;border-radius:5px}}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:0}.tippy-box[data-placement^=top]>.tippy-arrow:before{border-top-color:initial;border-width:8px 8px 0;bottom:-7px;left:0;transform-origin:center top}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:0}.tippy-box[data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:initial;border-width:0 8px 8px;left:0;top:-7px;transform-origin:center bottom}.tippy-box[data-placement^=left]>.tippy-arrow{right:0}.tippy-box[data-placement^=left]>.tippy-arrow:before{border-left-color:initial;border-width:8px 0 8px 8px;right:-7px;transform-origin:center left}.tippy-box[data-placement^=right]>.tippy-arrow{left:0}.tippy-box[data-placement^=right]>.tippy-arrow:before{border-right-color:initial;border-width:8px 8px 8px 0;left:-7px;transform-origin:center right}.tippy-arrow{color:#333;height:16px;width:16px}.tippy-arrow:before{border-color:transparent;border-style:solid;content:\"\";position:absolute}.tippy-content{padding:5px 9px;position:relative;z-index:1}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{word-wrap:break-word;min-width:300px;text-align:start}[role=tooltip]{min-width:185px;text-align:center}.tippy-box[data-theme~=sa11y-panel]{border:1px solid var(--sa11y-panel-bg-splitter);box-shadow:var(--sa11y-box-shadow)}.tippy-box[data-theme~=sa11y-theme]:not([data-theme~=sa11y-panel]){box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15)!important}.tippy-box[data-theme~=sa11y-theme]{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-bg);border-radius:4px;color:var(--sa11y-panel-primary);display:block;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px;outline:0;padding:8px;position:relative;transition-property:transform,visibility,opacity}.tippy-box[data-theme~=sa11y-theme] pre:has(code){display:block;overflow:auto;white-space:pre-wrap}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:500}.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd,.tippy-box[data-theme~=sa11y-theme] pre{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);letter-spacing:normal;line-height:22px;padding:1.6px 4.8px}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block-end:0;margin-block-start:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{display:list-item;margin:5px 10px 0 20px;padding-bottom:5px}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;font-weight:500;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] a:hover{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin:0}.tippy-box[data-theme~=sa11y-theme] .dismiss-group{margin-top:5px}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:inline-block;margin:10px 5px 5px 0;margin-inline-end:15px;padding:4px 8px}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:focus,.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:hover{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme] .good-icon{background:var(--sa11y-good-text);display:inline-block;height:14px;margin-bottom:-2.5px;-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat;width:14px}.tippy-box[data-theme~=sa11y-theme] .link-icon{background:var(--sa11y-panel-primary);display:inline-block;height:16px;margin-bottom:-3.5px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat;width:16px}.tippy-box[data-theme~=sa11y-theme] .error .badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .error .colour{color:var(--sa11y-red-text)}.tippy-box[data-theme~=sa11y-theme] .error .link-icon{background:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .warning .badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme] .warning .colour{color:var(--sa11y-yellow-text)}.tippy-box[data-theme~=sa11y-theme] .warning .link-icon{background:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme] #apca-table{width:100%}.tippy-box[data-theme~=sa11y-theme] #apca-table .row{display:flex;margin-top:10px}.tippy-box[data-theme~=sa11y-theme] #apca-table .cell{align-items:center;display:flex;flex:1;flex-direction:column;padding:1px}.tippy-box[data-theme~=sa11y-theme] #apca-table .font-weight{font-size:calc(var(--sa11y-normal-text) - 2px);font-weight:700}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{forced-color-adjust:none}.tippy-box[data-theme~=sa11y-theme] .tippy-arrow{z-index:-1}}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:active,.tippy-box[data-theme~=sa11y-theme] button:focus,.tippy-box[data-theme~=sa11y-theme] input:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] input:focus:not(:focus-visible){box-shadow:none;outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus-visible,.tippy-box[data-theme~=sa11y-theme] a:focus-visible,.tippy-box[data-theme~=sa11y-theme] button:focus-visible,.tippy-box[data-theme~=sa11y-theme] input:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.tippy-box[data-theme~=sa11y-theme] .error-icon,.tippy-box[data-theme~=sa11y-theme] .hidden-icon,.tippy-box[data-theme~=sa11y-theme] .link-icon{filter:invert(1)}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:focus{outline:3px solid transparent!important}}";
 
   /**
@@ -7884,17 +8018,8 @@ ${this.error.stack}
       style.innerHTML = tooltipStyles + sharedStyles;
       shadowRoot.appendChild(style);
 
-      // Get all annotations on page
-      const buttons = [];
-      Elements.Annotations.Array.forEach((annotation) => {
-        const annotationButtons = annotation.shadowRoot.querySelectorAll('.sa11y-btn');
-        if (annotationButtons) {
-          buttons.push(...Array.from(annotationButtons));
-        }
-      });
-
       // Instantiate tippy.js
-      const annotations = tippy(buttons, {
+      const annotations = tippy(annotationButtons, {
         interactive: true,
         trigger: 'mouseenter click',
         hideOnClick: false,
@@ -8079,130 +8204,6 @@ ${this.error.stack}
           });
         }
       }
-    }
-  }
-
-  var annotationStyles = ".instance{display:block;position:relative}.instance-inline{display:inline-block;position:relative;text-align:end}button{border-radius:50%;box-shadow:0 0 16px 0 rgba(0,0,0,.31);cursor:pointer;display:block;padding:0;transition:all .2s ease-in-out}button,button:after{height:36px;position:absolute;width:36px}button:after{content:\"\";left:-7px;padding:7px;top:-7px}.error-btn{background:50% 50% var(--sa11y-error-svg) no-repeat;background-color:var(--sa11y-error);background-size:22px;border:1px solid var(--sa11y-error);z-index:9999}.error-btn:focus,.error-btn:hover{background-color:var(--sa11y-error-hover)}.good-btn{background:50% 50% var(--sa11y-good) var(--sa11y-good-svg) no-repeat;background-color:var(--sa11y-good);background-size:20px;border:1px solid var(--sa11y-good);z-index:9977}.good-btn:focus,.good-btn:hover{background-color:var(--sa11y-good-hover)}.warning-btn{background:50% 50% var(--sa11y-warning) var(--sa11y-warning-svg) no-repeat;background-color:var(--sa11y-warning);background-size:24px;border:1px solid var(--sa11y-warning);transform:scaleX(var(--sa11y-icon-direction));z-index:9988}.warning-btn:focus,.warning-btn:hover{background-color:var(--sa11y-warning-hover)}.sa11y-btn:active,.sa11y-btn:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.sa11y-btn{border:1px solid transparent!important;forced-color-adjust:none;outline:3px solid transparent!important}}";
-
-  class Annotations extends HTMLElement {
-    connectedCallback() {
-      const shadow = this.attachShadow({ mode: 'open' });
-
-      // Styles
-      const style = document.createElement('style');
-      style.innerHTML = annotationStyles + sharedStyles;
-      shadow.appendChild(style);
-    }
-  }
-
-  /**
-    * Create annotation buttons.
-    * @param {Object} issue The issue object.
-    * @param {Object} option The options object.
-  */
-  function annotate(issue, option) {
-    // Get properties of issue object.
-    const {
-      element,
-      type,
-      content,
-      inline = false,
-      position = 'beforebegin',
-      id,
-      dismiss,
-      dismissAll,
-      contrastDetails,
-      margin,
-    } = issue;
-
-    // Validate types to prevent errors.
-    const validTypes = ['error', 'warning', 'good'];
-    if (validTypes.indexOf(type) === -1) {
-      throw Error(`Invalid type [${type}] for annotation`);
-    }
-
-    // Generate aria-label for annotations.
-    const ariaLabel = {
-      [validTypes[0]]: Lang._('ERROR'),
-      [validTypes[1]]: Lang._('WARNING'),
-      [validTypes[2]]: Lang._('GOOD'),
-    };
-
-    // Add dismiss button if prop enabled & has a dismiss key.
-    const dismissBtn = (option.dismissAnnotations && (type === 'warning' || type === 'good') && dismiss)
-      ? `<button data-sa11y-dismiss='${id}' type='button'>${Lang._('DISMISS')}</button>` : '';
-
-    // Generate HTML for painted annotations.
-    if (element) {
-      // Don't paint page with "Good" annotations (if prop enabled).
-      if (type === 'good') {
-        if (!option.showGoodImageButton && element?.tagName === 'IMG') return;
-        if (!option.showGoodLinkButton && element?.tagName === 'A') return;
-      }
-
-      // Tag element with border outline.
-      const tag = {
-        [validTypes[0]]: 'data-sa11y-error',
-        [validTypes[1]]: 'data-sa11y-warning',
-        [validTypes[2]]: 'data-sa11y-good',
-      };
-      [type].forEach(($el) => tag[$el] && element.setAttribute(tag[$el], ''));
-
-      // Create 'sa11y-annotation' web component for each annotation.
-      const instance = document.createElement('sa11y-annotation');
-      instance.setAttribute('data-sa11y-annotation', id);
-
-      // Add anchor positioning on <sa11y-annotation> web component to improve accuracy of positioning.
-      if (supportsAnchorPositioning()) {
-        instance.style.position = 'absolute';
-        instance.style.positionAnchor = `--sa11y-anchor-${id}`;
-        instance.style.top = 'anchor(top)';
-        instance.style.left = 'anchor(left)';
-
-        // Preserve original anchor name.
-        const existing = element.style.anchorName;
-        element.style.anchorName = existing
-          ? `${existing}, --sa11y-anchor-${id}`
-          : `--sa11y-anchor-${id}`;
-      }
-
-      // Add dismiss all button if prop enabled & has addition check key.
-      const dismissAllBtn = (
-        option.dismissAnnotations
-        && (option.dismissAll && typeof dismissAll === 'string')
-        && (type === 'warning' || type === 'good'))
-        ? `<button data-sa11y-dismiss='${id}' data-sa11y-dismiss-all type='button'>${Lang._('DISMISS_ALL')}</button>`
-        : '';
-
-      // Create button annotations.
-      const create = document.createElement('div');
-      create.classList.add(`${inline ? 'instance-inline' : 'instance'}`);
-      create.innerHTML = `<button type="button" aria-label="${ariaLabel[type]}" aria-haspopup="dialog" class="sa11y-btn ${[type]}-btn" style="margin:${inline ? '-10px' : ''} ${margin}" data-tippy-content="<div lang='${Lang._('LANG_CODE')}' class='${[type]}'><button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button><h2>${ariaLabel[type]}</h2> ${escapeHTML(content)} ${contrastDetails ? '<div data-sa11y-contrast-details></div>' : ''}<div class='dismiss-group'>${dismissBtn}${dismissAllBtn}</div></div>"></button>`;
-
-      // Make sure annotations always appended outside of SVGs and interactive elements.
-      const insertBefore = option.insertAnnotationBefore
-        ? `, ${option.insertAnnotationBefore}` : '';
-      const location = element.closest(`a, button, [role="link"], [role="button"] ${insertBefore}`) || element;
-      location.insertAdjacentElement(position, instance);
-      instance.shadowRoot.appendChild(create);
-
-      // Modifies the annotation's parent container with overflow: hidden, making it visible and scrollable so content authors can access it.
-      const ignoredElements = option.ignoreHiddenOverflow
-        ? option.ignoreHiddenOverflow.split(',').flatMap((selector) => [...document.querySelectorAll(selector)])
-        : [];
-      const parent = findVisibleParent(element, 'overflow', 'hidden');
-      if (parent && !ignoredElements.includes(parent)) {
-        parent.setAttribute('data-sa11y-overflow', '');
-      }
-    } else {
-      // If no valid element, send issue to main panel.
-      const listItem = document.createElement('li');
-      listItem.innerHTML = `<h3>${ariaLabel[type]}</h3> ${content}${dismissBtn}`;
-      Constants.Panel.pageIssuesList.insertAdjacentElement('afterbegin', listItem);
-
-      // Display Page Issues panel.
-      Constants.Panel.pageIssues.classList.add('active');
-      Constants.Panel.panel.classList.add('has-page-issues');
     }
   }
 
@@ -10641,9 +10642,12 @@ ${this.error.stack}
       const { textDecorationLine, textAlign, fontSize } = style;
 
       /* Check: Underlined text. */
-      if (option.checks.QA_UNDERLINE
-        && textDecorationLine === 'underline'
-        && !$el.closest('[onclick], a[href], button, abbr, [role="link"], [role="button"], [tabindex="0"]')
+      const interactive = 'a[href], button, abbr, [role="link"], [role="button"], [tabindex="0"], [onclick]';
+      if (
+        option.checks.QA_UNDERLINE
+        && ($el.closest('u') || textDecorationLine === 'underline')
+        && !$el.closest(interactive)
+        && !$el.matches(interactive)
       ) {
         addUnderlineResult($el);
       }

@@ -2,8 +2,8 @@ import tippy from 'tippy.js';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 import Constants from '../utils/constants';
-import Elements from '../utils/elements';
 import { generateColorSuggestion, generateContrastTools, initializeContrastTools } from '../utils/contrast-utils';
+import { annotationButtons } from './annotations';
 
 // Import processed minified styles as a string.
 import tooltipStyles from '../../../dist/css/tooltips.min.css';
@@ -21,17 +21,8 @@ export class AnnotationTooltips extends HTMLElement {
     style.innerHTML = tooltipStyles + sharedStyles;
     shadowRoot.appendChild(style);
 
-    // Get all annotations on page
-    const buttons = [];
-    Elements.Annotations.Array.forEach((annotation) => {
-      const annotationButtons = annotation.shadowRoot.querySelectorAll('.sa11y-btn');
-      if (annotationButtons) {
-        buttons.push(...Array.from(annotationButtons));
-      }
-    });
-
     // Instantiate tippy.js
-    const annotations = tippy(buttons, {
+    const annotations = tippy(annotationButtons, {
       interactive: true,
       trigger: 'mouseenter click',
       hideOnClick: false,
