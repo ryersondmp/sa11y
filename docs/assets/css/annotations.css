@@ -33,58 +33,32 @@ button:after {
   content: "";
 }
 
-/* To prevent overlap. */
-.error-btn {
-  margin: 10px;
-}
-
-.warning-btn {
-  margin: 20px;
-}
-
-.good-btn {
-  margin: 15px;
-}
-
-.error-btn-text,
-.good-btn-text,
-.warning-btn-text {
-  margin: -30px 10px;
-}
-
 /* Error */
-.error-btn,
-.error-btn-text {
+.error-btn {
   z-index: 9999;
   background: 50% 50% var(--sa11y-error-svg) no-repeat;
   background-color: var(--sa11y-error);
   background-size: 22px;
   border: 1px solid var(--sa11y-error);
 }
-.error-btn:hover, .error-btn:focus,
-.error-btn-text:hover,
-.error-btn-text:focus {
+.error-btn:hover, .error-btn:focus {
   background-color: var(--sa11y-error-hover);
 }
 
 /* Pass button */
-.good-btn,
-.good-btn-text {
+.good-btn {
   z-index: 9977;
   background: 50% 50% var(--sa11y-good) var(--sa11y-good-svg) no-repeat;
   background-color: var(--sa11y-good);
   background-size: 20px;
   border: 1px solid var(--sa11y-good);
 }
-.good-btn:hover, .good-btn:focus,
-.good-btn-text:hover,
-.good-btn-text:focus {
+.good-btn:hover, .good-btn:focus {
   background-color: var(--sa11y-good-hover);
 }
 
 /* Warning button */
-.warning-btn,
-.warning-btn-text {
+.warning-btn {
   z-index: 9988;
   background: 50% 50% var(--sa11y-warning) var(--sa11y-warning-svg) no-repeat;
   background-color: var(--sa11y-warning);
@@ -92,9 +66,7 @@ button:after {
   border: 1px solid var(--sa11y-warning);
   transform: scaleX(var(--sa11y-icon-direction));
 }
-.warning-btn:hover, .warning-btn:focus,
-.warning-btn-text:hover,
-.warning-btn-text:focus {
+.warning-btn:hover, .warning-btn:focus {
   background-color: var(--sa11y-warning-hover);
 }
 

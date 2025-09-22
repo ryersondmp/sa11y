@@ -34,6 +34,7 @@ export function annotate(issue, option) {
     dismiss,
     dismissAll,
     contrastDetails,
+    margin,
   } = issue;
 
   // Validate types to prevent errors.
@@ -79,7 +80,6 @@ export function annotate(issue, option) {
       instance.style.positionAnchor = `--sa11y-anchor-${id}`;
       instance.style.top = 'anchor(top)';
       instance.style.left = 'anchor(left)';
-      instance.style.setProperty('position-try-fallbacks', 'flip-inline');
 
       // Preserve original anchor name.
       const existing = element.style.anchorName;
@@ -99,7 +99,7 @@ export function annotate(issue, option) {
     // Create button annotations.
     const create = document.createElement('div');
     create.classList.add(`${inline ? 'instance-inline' : 'instance'}`);
-    create.innerHTML = `<button type="button" aria-label="${ariaLabel[type]}" aria-haspopup="dialog" class="sa11y-btn ${[type]}-btn${inline ? '-text' : ''}" data-tippy-content="<div lang='${Lang._('LANG_CODE')}' class='${[type]}'><button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button><h2>${ariaLabel[type]}</h2> ${escapeHTML(content)} ${contrastDetails ? '<div data-sa11y-contrast-details></div>' : ''}<div class='dismiss-group'>${dismissBtn}${dismissAllBtn}</div></div>"></button>`;
+    create.innerHTML = `<button type="button" aria-label="${ariaLabel[type]}" aria-haspopup="dialog" class="sa11y-btn ${[type]}-btn" style="margin:${inline ? '-10px' : ''} ${margin}" data-tippy-content="<div lang='${Lang._('LANG_CODE')}' class='${[type]}'><button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button><h2>${ariaLabel[type]}</h2> ${escapeHTML(content)} ${contrastDetails ? '<div data-sa11y-contrast-details></div>' : ''}<div class='dismiss-group'>${dismissBtn}${dismissAllBtn}</div></div>"></button>`;
 
     // Make sure annotations always appended outside of SVGs and interactive elements.
     const insertBefore = option.insertAnnotationBefore

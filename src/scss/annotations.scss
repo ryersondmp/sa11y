@@ -35,28 +35,8 @@ button {
   }
 }
 
-/* To prevent overlap. */
-.error-btn {
-  margin: 10px;
-}
-
-.warning-btn {
-  margin: 20px;
-}
-
-.good-btn {
-  margin: 15px;
-}
-
-.error-btn-text,
-.good-btn-text,
-.warning-btn-text {
-  margin: -30px 10px;
-}
-
 /* Error */
-.error-btn,
-.error-btn-text {
+.error-btn {
   z-index: 9999;
   background: 50% 50% var(--sa11y-error-svg) no-repeat;
   background-color: var(--sa11y-error);
@@ -70,8 +50,7 @@ button {
 }
 
 /* Pass button */
-.good-btn,
-.good-btn-text {
+.good-btn {
   z-index: 9977;
   background: 50% 50% var(--sa11y-good) var(--sa11y-good-svg) no-repeat;
   background-color: var(--sa11y-good);
@@ -85,8 +64,7 @@ button {
 }
 
 /* Warning button */
-.warning-btn,
-.warning-btn-text {
+.warning-btn {
   z-index: 9988;
   background: 50% 50% var(--sa11y-warning) var(--sa11y-warning-svg) no-repeat;
   background-color: var(--sa11y-warning);

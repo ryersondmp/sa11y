@@ -8076,7 +8076,7 @@ class PanelTooltips extends HTMLElement {
   }
 }
 
-var annotationStyles = ".instance{display:block;position:relative}.instance-inline{display:inline-block;position:relative;text-align:end}button{border-radius:50%;box-shadow:0 0 16px 0 rgba(0,0,0,.31);cursor:pointer;display:block;padding:0;transition:all .2s ease-in-out}button,button:after{height:36px;position:absolute;width:36px}button:after{content:\"\";left:-7px;padding:7px;top:-7px}.error-btn{margin:10px}.warning-btn{margin:20px}.good-btn{margin:15px}.error-btn-text,.good-btn-text,.warning-btn-text{margin:-30px 10px}.error-btn,.error-btn-text{background:50% 50% var(--sa11y-error-svg) no-repeat;background-color:var(--sa11y-error);background-size:22px;border:1px solid var(--sa11y-error);z-index:9999}.error-btn-text:focus,.error-btn-text:hover,.error-btn:focus,.error-btn:hover{background-color:var(--sa11y-error-hover)}.good-btn,.good-btn-text{background:50% 50% var(--sa11y-good) var(--sa11y-good-svg) no-repeat;background-color:var(--sa11y-good);background-size:20px;border:1px solid var(--sa11y-good);z-index:9977}.good-btn-text:focus,.good-btn-text:hover,.good-btn:focus,.good-btn:hover{background-color:var(--sa11y-good-hover)}.warning-btn,.warning-btn-text{background:50% 50% var(--sa11y-warning) var(--sa11y-warning-svg) no-repeat;background-color:var(--sa11y-warning);background-size:24px;border:1px solid var(--sa11y-warning);transform:scaleX(var(--sa11y-icon-direction));z-index:9988}.warning-btn-text:focus,.warning-btn-text:hover,.warning-btn:focus,.warning-btn:hover{background-color:var(--sa11y-warning-hover)}.sa11y-btn:active,.sa11y-btn:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.sa11y-btn{border:1px solid transparent!important;forced-color-adjust:none;outline:3px solid transparent!important}}";
+var annotationStyles = ".instance{display:block;position:relative}.instance-inline{display:inline-block;position:relative;text-align:end}button{border-radius:50%;box-shadow:0 0 16px 0 rgba(0,0,0,.31);cursor:pointer;display:block;padding:0;transition:all .2s ease-in-out}button,button:after{height:36px;position:absolute;width:36px}button:after{content:\"\";left:-7px;padding:7px;top:-7px}.error-btn{background:50% 50% var(--sa11y-error-svg) no-repeat;background-color:var(--sa11y-error);background-size:22px;border:1px solid var(--sa11y-error);z-index:9999}.error-btn:focus,.error-btn:hover{background-color:var(--sa11y-error-hover)}.good-btn{background:50% 50% var(--sa11y-good) var(--sa11y-good-svg) no-repeat;background-color:var(--sa11y-good);background-size:20px;border:1px solid var(--sa11y-good);z-index:9977}.good-btn:focus,.good-btn:hover{background-color:var(--sa11y-good-hover)}.warning-btn{background:50% 50% var(--sa11y-warning) var(--sa11y-warning-svg) no-repeat;background-color:var(--sa11y-warning);background-size:24px;border:1px solid var(--sa11y-warning);transform:scaleX(var(--sa11y-icon-direction));z-index:9988}.warning-btn:focus,.warning-btn:hover{background-color:var(--sa11y-warning-hover)}.sa11y-btn:active,.sa11y-btn:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.sa11y-btn{border:1px solid transparent!important;forced-color-adjust:none;outline:3px solid transparent!important}}";
 
 class Annotations extends HTMLElement {
   connectedCallback() {
@@ -8106,6 +8106,7 @@ function annotate(issue, option) {
     dismiss,
     dismissAll,
     contrastDetails,
+    margin,
   } = issue;
 
   // Validate types to prevent errors.
@@ -8151,7 +8152,6 @@ function annotate(issue, option) {
       instance.style.positionAnchor = `--sa11y-anchor-${id}`;
       instance.style.top = 'anchor(top)';
       instance.style.left = 'anchor(left)';
-      instance.style.setProperty('position-try-fallbacks', 'flip-inline');
 
       // Preserve original anchor name.
       const existing = element.style.anchorName;
@@ -8171,7 +8171,7 @@ function annotate(issue, option) {
     // Create button annotations.
     const create = document.createElement('div');
     create.classList.add(`${inline ? 'instance-inline' : 'instance'}`);
-    create.innerHTML = `<button type="button" aria-label="${ariaLabel[type]}" aria-haspopup="dialog" class="sa11y-btn ${[type]}-btn${inline ? '-text' : ''}" data-tippy-content="<div lang='${Lang._('LANG_CODE')}' class='${[type]}'><button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button><h2>${ariaLabel[type]}</h2> ${escapeHTML(content)} ${contrastDetails ? '<div data-sa11y-contrast-details></div>' : ''}<div class='dismiss-group'>${dismissBtn}${dismissAllBtn}</div></div>"></button>`;
+    create.innerHTML = `<button type="button" aria-label="${ariaLabel[type]}" aria-haspopup="dialog" class="sa11y-btn ${[type]}-btn" style="margin:${inline ? '-10px' : ''} ${margin}" data-tippy-content="<div lang='${Lang._('LANG_CODE')}' class='${[type]}'><button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button><h2>${ariaLabel[type]}</h2> ${escapeHTML(content)} ${contrastDetails ? '<div data-sa11y-contrast-details></div>' : ''}<div class='dismiss-group'>${dismissBtn}${dismissAllBtn}</div></div>"></button>`;
 
     // Make sure annotations always appended outside of SVGs and interactive elements.
     const insertBefore = option.insertAnnotationBefore
@@ -11280,8 +11280,18 @@ class Sa11y {
         /* If panel is OPENED. */
         if (store.getItem('sa11y-panel') === 'Opened') {
           // Paint the page with annotations.
+          const counts = new Map();
           this.results.forEach((issue) => {
-            annotate(issue, option);
+            if (issue.element) {
+              // Increase margin of annotations by 30px increments if an element has multiple issues.
+              const index = counts.get(issue.element) || 0;
+              counts.set(issue.element, index + 1);
+              const offset = issue.inline ? 25 : 10;
+              annotate({ ...issue, margin: `${index * 30 + offset}px` }, option);
+            } else {
+              // Process page issues.
+              annotate(issue, option);
+            }
           });
 
           // After annotations are painted, find & cache.

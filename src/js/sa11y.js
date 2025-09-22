@@ -272,8 +272,18 @@ class Sa11y {
         /* If panel is OPENED. */
         if (Utils.store.getItem('sa11y-panel') === 'Opened') {
           // Paint the page with annotations.
+          const counts = new Map();
           this.results.forEach((issue) => {
-            annotate(issue, option);
+            if (issue.element) {
+              // Increase margin of annotations by 30px increments if an element has multiple issues.
+              const index = counts.get(issue.element) || 0;
+              counts.set(issue.element, index + 1);
+              const offset = issue.inline ? 25 : 10;
+              annotate({ ...issue, margin: `${index * 30 + offset}px` }, option);
+            } else {
+              // Process page issues.
+              annotate(issue, option);
+            }
           });
 
           // After annotations are painted, find & cache.
