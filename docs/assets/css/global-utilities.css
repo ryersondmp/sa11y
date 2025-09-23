@@ -6,23 +6,6 @@
   overflow: auto !important;
 }
 
-[data-sa11y-clone-image-text] {
-  display: none !important;
-}
-
-[data-sa11y-readability-period] {
-  position: absolute !important;
-  display: block !important;
-  width: 1px !important;
-  height: 1px !important;
-  padding: 0 !important;
-  overflow: hidden !important;
-  clip: rect(1px, 1px, 1px, 1px) !important;
-  white-space: nowrap !important;
-  border: 0 !important;
-  clip-path: inset(50%) !important;
-}
-
 /* ************************************* */
 /*    Links, text, and image borders     */
 /* ************************************* */

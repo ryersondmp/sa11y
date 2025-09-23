@@ -361,8 +361,6 @@ class Sa11y {
         'sa11y-heading-anchor',
         'sa11y-image-anchor',
         'sa11y-tooltips',
-        '[data-sa11y-readability-period]',
-        '[data-sa11y-clone-image-text]',
       ], 'document');
 
       // Remove Sa11y anchor positioning markup (while preserving any existing anchors).

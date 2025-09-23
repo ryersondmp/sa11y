@@ -47,8 +47,8 @@ export default function checkContrast(results, option) {
 
     // Only check elements with text and inputs.
     if (text.length !== 0 || checkInputs) {
+      const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
       if (color === 'unsupported' || background === 'unsupported') {
-        const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
         contrastResults.push({
           $el,
           type: 'unsupported',
@@ -60,10 +60,7 @@ export default function checkContrast(results, option) {
           ...(color !== 'unsupported' && { color }),
         });
       } else if (background.type === 'image') {
-        if (isHidden) {
-          // Ignore visually hidden.
-        } else {
-          const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
+        if (!isHidden) {
           contrastResults.push({
             $el,
             type: 'background-image',
@@ -77,9 +74,7 @@ export default function checkContrast(results, option) {
         }
       } else if ($el.tagName === 'text' && $el.closest('svg')) {
         // Handle separately.
-      } else if (isHidden || Contrast.getHex(color) === Contrast.getHex(background)) {
-        // Ignore visually hidden elements.
-      } else {
+      } else if (!isHidden && Contrast.getHex(color) !== Contrast.getHex(background)) {
         const result = Contrast.checkElementContrast(
           $el, color, background, fontSize, fontWeight, opacity, option.contrastAAA,
         );

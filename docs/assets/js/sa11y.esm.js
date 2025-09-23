@@ -1749,7 +1749,7 @@ const Elements = (function myElements() {
   };
 }());
 
-var styles$1 = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-clone-image-text]{display:none!important}[data-sa11y-readability-period]{clip:rect(1px,1px,1px,1px)!important;border:0!important;clip-path:inset(50%)!important;display:block!important;height:1px!important;overflow:hidden!important;padding:0!important;position:absolute!important;white-space:nowrap!important;width:1px!important}[data-sa11y-error]{outline:5px solid var(--sa11y-error)!important;outline-offset:2px}[data-sa11y-warning]:not([data-sa11y-error]){outline:5px solid var(--sa11y-warning)!important;outline-offset:2px}[data-sa11y-pulse-border]{animation:pulse 1s 2;box-shadow:0;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:focus,[data-sa11y-pulse-border]:hover{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color)}50%{box-shadow:0 0 0 12px var(--sa11y-pulse-color)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color)}}h1[data-sa11y-pulse-border],h2[data-sa11y-pulse-border],h3[data-sa11y-pulse-border],h4[data-sa11y-pulse-border],h5[data-sa11y-pulse-border],h6[data-sa11y-pulse-border],img[data-sa11y-pulse-border]{animation:pulse-scale 1s 2}@keyframes pulse-scale{0%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.02)}to{opacity:1;transform:scale(1)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}@media (forced-colors:active){[data-sa11y-error-inline],[data-sa11y-error],[data-sa11y-good],[data-sa11y-pulse-border],[data-sa11y-warning-inline],[data-sa11y-warning]{forced-color-adjust:none}}";
+var styles$1 = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-error]{outline:5px solid var(--sa11y-error)!important;outline-offset:2px}[data-sa11y-warning]:not([data-sa11y-error]){outline:5px solid var(--sa11y-warning)!important;outline-offset:2px}[data-sa11y-pulse-border]{animation:pulse 1s 2;box-shadow:0;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:focus,[data-sa11y-pulse-border]:hover{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color)}50%{box-shadow:0 0 0 12px var(--sa11y-pulse-color)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color)}}h1[data-sa11y-pulse-border],h2[data-sa11y-pulse-border],h3[data-sa11y-pulse-border],h4[data-sa11y-pulse-border],h5[data-sa11y-pulse-border],h6[data-sa11y-pulse-border],img[data-sa11y-pulse-border]{animation:pulse-scale 1s 2}@keyframes pulse-scale{0%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.02)}to{opacity:1;transform:scale(1)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}@media (forced-colors:active){[data-sa11y-error-inline],[data-sa11y-error],[data-sa11y-good],[data-sa11y-pulse-border],[data-sa11y-warning-inline],[data-sa11y-warning]{forced-color-adjust:none}}";
 
 /* ************************************************************ */
 /*  Auto-detect shadow DOM or process provided web components.  */
@@ -9389,8 +9389,8 @@ function checkContrast(results, option) {
 
     // Only check elements with text and inputs.
     if (text.length !== 0 || checkInputs) {
+      const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
       if (color === 'unsupported' || background === 'unsupported') {
-        const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
         contrastResults.push({
           $el,
           type: 'unsupported',
@@ -9402,8 +9402,7 @@ function checkContrast(results, option) {
           ...(color !== 'unsupported' && { color }),
         });
       } else if (background.type === 'image') {
-        if (isHidden) ; else {
-          const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
+        if (!isHidden) {
           contrastResults.push({
             $el,
             type: 'background-image',
@@ -9415,7 +9414,7 @@ function checkContrast(results, option) {
             opacity,
           });
         }
-      } else if ($el.tagName === 'text' && $el.closest('svg')) ; else if (isHidden || getHex(color) === getHex(background)) ; else {
+      } else if ($el.tagName === 'text' && $el.closest('svg')) ; else if (!isHidden && getHex(color) !== getHex(background)) {
         const result = checkElementContrast(
           $el, color, background, fontSize, fontWeight, opacity, option.contrastAAA,
         );
@@ -9903,27 +9902,22 @@ function checkReadability() {
   let results;
   const rememberReadability = store.getItem('sa11y-readability') === 'On';
   if (rememberReadability) {
-    // Crude hack to add a period to the end of list items to make a complete sentence.
-    Elements.Found.Readability.forEach(($el) => {
-      const listText = $el.textContent;
-      if (listText.length >= 120) {
-        if (listText.charAt(listText.length - 1) !== '.') {
-          $el.insertAdjacentHTML('beforeend', '<span data-sa11y-readability-period>.</span>');
+    const readabilityArray = [];
+    // Improve the accuracy of a readability analysis by ensuring that long list items are treated as complete sentences.
+    Elements.Found.Readability.forEach((el) => {
+      const ignore = fnIgnore(el);
+      const text = getText(ignore);
+      if (text.length > 0) {
+        const lastChar = text.charAt(text.length - 1);
+        const punctuation = ['.', '?', '!', ';'];
+        if (el.tagName === 'LI' && text.length >= 120 && !punctuation.includes(lastChar)) {
+          readabilityArray.push(`${text}.`);
+        } else {
+          readabilityArray.push(text);
         }
       }
     });
-
-    // Combine all page text.
-    const readabilityarray = [];
-    for (let i = 0; i < Elements.Found.Readability.length; i++) {
-      const current = Elements.Found.Readability[i];
-      const ignore = fnIgnore(current); // Ignore unwanted tags.
-      const getText$1 = getText(ignore); // Get text.
-      if (getText$1 !== '') {
-        readabilityarray.push(getText$1);
-      }
-    }
-    const pageText = readabilityarray.join(' ').toString();
+    const pageText = readabilityArray.join(' ');
 
     /* Flesch Reading Ease for English, French, German, Dutch, and Italian. */
     if (['en', 'es', 'fr', 'de', 'nl', 'it', 'pt'].includes(Constants.Readability.Lang)) {
@@ -10080,8 +10074,8 @@ function checkReadability() {
       if (pageText.length === 0) {
         Constants.Panel.readabilityInfo.innerHTML = Lang._('READABILITY_NO_CONTENT');
       } else if (results.wordCount > 30) {
-        Constants.Panel.readabilityInfo.innerHTML = `${results.score} <span class="readability-score">${results.difficultyLevel}</span>`;
-        Constants.Panel.readabilityDetails.innerHTML = `<li><strong>${Lang._('AVG_SENTENCE')}</strong> ${results.averageWordsPerSentence}</li><li><strong>${Lang._('COMPLEX_WORDS')}</strong> ${results.complexWords}%</li><li><strong>${Lang._('TOTAL_WORDS')}</strong> ${results.wordCount}</li>`;
+        Constants.Panel.readabilityInfo.innerHTML = `${Math.ceil(results.score)} <span class="readability-score">${results.difficultyLevel}</span>`;
+        Constants.Panel.readabilityDetails.innerHTML = `<li><strong>${Lang._('AVG_SENTENCE')}</strong> ${Math.ceil(results.averageWordsPerSentence)}</li><li><strong>${Lang._('COMPLEX_WORDS')}</strong> ${results.complexWords}%</li><li><strong>${Lang._('TOTAL_WORDS')}</strong> ${results.wordCount}</li>`;
       } else {
         Constants.Panel.readabilityInfo.textContent = Lang._('READABILITY_NOT_ENOUGH');
       }
@@ -11373,8 +11367,6 @@ class Sa11y {
         'sa11y-heading-anchor',
         'sa11y-image-anchor',
         'sa11y-tooltips',
-        '[data-sa11y-readability-period]',
-        '[data-sa11y-clone-image-text]',
       ], 'document');
 
       // Remove Sa11y anchor positioning markup (while preserving any existing anchors).
