@@ -9375,7 +9375,7 @@ function checkContrast(results, option) {
     // Check if element is visually hidden to screen readers or explicitly hidden.
     const isVisuallyHidden = isScreenReaderOnly($el);
     const isExplicitlyHidden = isElementHidden($el);
-    const isHidden = isExplicitlyHidden || isVisuallyHidden || opacity === 0;
+    const isHidden = isExplicitlyHidden || isVisuallyHidden || opacity === 0 || fontSize === 0;
 
     // Filter only text nodes.
     const textString = Array.from($el.childNodes)
