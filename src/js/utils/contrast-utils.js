@@ -508,8 +508,7 @@ export function generateContrastTools(contrastDetails) {
       <div id="contrast" class="badge">${Lang._('CONTRAST')}</div>
       <div id="value" class="badge">${displayedRatio}</div>
       <div id="good" class="badge good-contrast" hidden>${Lang._('GOOD')} <span class="good-icon"></span></div>
-      <div id="apca-table" hidden></div>
-      <div id="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};${sanitizedText.length ? '' : 'display: none;'}` : ''}${hasFontWeight + hasFontSize + textDecoration}">${sanitizedText}</div>
+      <div id="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};` : ''}${hasFontWeight + hasFontSize + textDecoration}">${sanitizedText}</div>
       <div id="color-pickers">
         <label for="fg-text">${Lang._('FG')} ${unknownFGText}
           <input type="color" id="fg-input" value="${foregroundHex}" ${unknownFG}/>
@@ -519,43 +518,6 @@ export function generateContrastTools(contrastDetails) {
         </label>
       </div>`;
   return contrastTools;
-}
-
-export function createFontSizesTable(container, fontSizes) {
-  const apcaTable = container;
-  apcaTable.innerHTML = '';
-  apcaTable.hidden = false;
-
-  const row = document.createElement('div');
-  row.classList.add('row');
-
-  // Show only 200 thru 700 font weights.
-  const filteredFontSizes = fontSizes.slice(1, 7);
-  for (let i = 0; i < filteredFontSizes.length; i++) {
-    const fontSize = filteredFontSizes[i];
-    const fontWeight = (i + 2) * 100;
-
-    // Only render the cell if font size is not 777 or 999.
-    if (fontSize !== 777 && fontSize !== 999) {
-      const cell = document.createElement('div');
-      cell.classList.add('cell');
-
-      // Font size.
-      const sizeElement = document.createElement('div');
-      sizeElement.classList.add('font-size');
-      sizeElement.textContent = `${Math.ceil(fontSize)}px`;
-
-      // Font weight.
-      const weightElement = document.createElement('div');
-      weightElement.classList.add('font-weight');
-      weightElement.textContent = `${fontWeight}`;
-
-      cell.appendChild(sizeElement);
-      cell.appendChild(weightElement);
-      row.appendChild(cell);
-      apcaTable.appendChild(row);
-    }
-  }
 }
 
 /**
@@ -576,7 +538,6 @@ export function initializeContrastTools(container, contrastDetails) {
     const bgInput = container.querySelector('#bg-input');
     const ratio = container.querySelector('#value');
     const good = container.querySelector('#good');
-    const apcaTable = container.querySelector('#apca-table');
 
     // Helper to update badge classes.
     const toggleBadges = (elements, condition) => {
@@ -626,13 +587,6 @@ export function initializeContrastTools(container, contrastDetails) {
             good.hidden = !nonTextPasses;
             passes = nonTextPasses;
             toggleBadges(elementsToToggle, passes);
-            break;
-          }
-          case 'svg-text': {
-            good.hidden = !nonTextPasses;
-            passes = fontArray.slice(1, 7).some((size) => size !== 999 && size !== 777);
-            toggleBadges(elementsToToggle, passes);
-            createFontSizesTable(apcaTable, fontArray);
             break;
           }
           default: {

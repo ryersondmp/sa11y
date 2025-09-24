@@ -128,6 +128,9 @@ kbd,
   border: 2px dashed var(--sa11y-panel-bg-splitter);
   border-radius: 3.2px;
 }
+#contrast-preview:empty {
+  display: none;
+}
 
 #color-pickers {
   display: flex;

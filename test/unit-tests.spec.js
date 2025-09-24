@@ -1124,6 +1124,46 @@ test.describe('Sa11y Unit Tests', () => {
     });
   });
 
+  test('SVG contrast passes', async () => {
+    const ids = [
+      'nothing-svg-1',
+      'nothing-svg-2',
+      'nothing-svg-3',
+      'nothing-svg-4',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await noAnnotation(page, id);
+      expect(issue).toBe(true);
+    });
+  });
+
+  test('SVG contrast fails', async () => {
+    const ids = [
+      'error-svg-1',
+      'error-svg-2',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await checkTooltip(page, id, 'Graphic does not have enough contrast');
+      expect(issue).toBe(true);
+    });
+  });
+
+  test('SVG general warnings', async () => {
+    const ids = [
+      'warning-svg-1',
+      'warning-svg-2',
+      'warning-svg-3',
+      'warning-svg-4',
+      'warning-svg-5',
+      'warning-svg-6',
+      'warning-svg-7',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await checkTooltip(page, id, 'contrast of this graphic is unknown');
+      expect(issue).toBe(true);
+    });
+  });
+
   /* **************** */
   /*  Inputs          */
   /* **************** */
