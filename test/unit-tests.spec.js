@@ -1130,6 +1130,7 @@ test.describe('Sa11y Unit Tests', () => {
       'nothing-svg-2',
       'nothing-svg-3',
       'nothing-svg-4',
+      'nothing-svg-5',
     ];
     ids.forEach(async (id) => {
       const issue = await noAnnotation(page, id);
@@ -1141,6 +1142,7 @@ test.describe('Sa11y Unit Tests', () => {
     const ids = [
       'error-svg-1',
       'error-svg-2',
+      'error-svg-3',
     ];
     ids.forEach(async (id) => {
       const issue = await checkTooltip(page, id, 'Graphic does not have enough contrast');
