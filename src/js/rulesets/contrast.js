@@ -89,8 +89,27 @@ export default function checkContrast(results, option) {
     const background = Contrast.getBackground($el);
 
     // Process simple SVGs with a single shape.
-    const shapes = $el.querySelectorAll('path, polygon, circle, rect, ellipse, use');
-    if (shapes.length === 1) {
+    const shapes = $el.querySelectorAll('path, rect, circle, ellipse, line, polyline, polygon, text, tspan, textPath, use');
+
+    // Check if all nodes within the SVG have the same fill/stroke.
+    let sameFill = true;
+    let sameStroke = true;
+    let firstFill;
+    let firstStroke;
+    if (shapes) {
+      shapes.forEach((node) => {
+        const style = getComputedStyle(node);
+        const { fill, stroke } = style;
+        if (firstFill === undefined) firstFill = fill;
+        else if (fill !== firstFill) sameFill = false;
+        if (firstStroke === undefined) firstStroke = stroke;
+        else if (stroke !== firstStroke) sameStroke = false;
+      });
+    }
+    const allSame = shapes[0] && sameFill && sameStroke;
+
+    // If simple SVG or SVG with multiple shapes are the same colour.
+    if (shapes.length === 1 || allSame) {
       const style = getComputedStyle(shapes[0]);
       const { fill, stroke, strokeWidth, opacity } = style;
 
@@ -112,11 +131,11 @@ export default function checkContrast(results, option) {
       // Get computed stroke & fill.
       const hasFill = fill && (fill !== 'none' || !fill.startsWith('url('));
       const resolvedFill = hasFill && fill === 'currentColor'
-        ? Contrast.convertToRGBA(getComputedStyle($el).color, opacity)
+        ? Contrast.convertToRGBA(getComputedStyle(shapes[0]).color, opacity)
         : Contrast.convertToRGBA(fill, opacity);
 
       const resolvedStroke = hasStroke && stroke === 'currentColor'
-        ? Contrast.convertToRGBA(getComputedStyle($el).color, opacity)
+        ? Contrast.convertToRGBA(getComputedStyle(shapes[0]).color, opacity)
         : Contrast.convertToRGBA(stroke, opacity);
 
       // Unsupported colour spaces.
@@ -368,6 +387,7 @@ export default function checkContrast(results, option) {
             dismissAll: option.checks.CONTRAST_ERROR_GRAPHIC.dismissAll ? 'CONTRAST_ERROR_GRAPHIC' : false,
             developer: option.checks.CONTRAST_ERROR_GRAPHIC.developer || true,
             contrastDetails: updatedItem,
+            margin: '-20px -20px',
           });
         }
         break;
@@ -383,6 +403,7 @@ export default function checkContrast(results, option) {
             dismissAll: option.checks.CONTRAST_WARNING_GRAPHIC.dismissAll ? 'CONTRAST_WARNING_GRAPHIC' : false,
             developer: option.checks.CONTRAST_WARNING_GRAPHIC.developer || true,
             contrastDetails: updatedItem,
+            margin: '-20px -20px',
           });
         }
         break;

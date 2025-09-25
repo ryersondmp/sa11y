@@ -9391,8 +9391,27 @@ ${this.error.stack}
       const background = getBackground($el);
 
       // Process simple SVGs with a single shape.
-      const shapes = $el.querySelectorAll('path, polygon, circle, rect, ellipse, use');
-      if (shapes.length === 1) {
+      const shapes = $el.querySelectorAll('path, rect, circle, ellipse, line, polyline, polygon, text, tspan, textPath, use');
+
+      // Check if all nodes within the SVG have the same fill/stroke.
+      let sameFill = true;
+      let sameStroke = true;
+      let firstFill;
+      let firstStroke;
+      if (shapes) {
+        shapes.forEach((node) => {
+          const style = getComputedStyle(node);
+          const { fill, stroke } = style;
+          if (firstFill === undefined) firstFill = fill;
+          else if (fill !== firstFill) sameFill = false;
+          if (firstStroke === undefined) firstStroke = stroke;
+          else if (stroke !== firstStroke) sameStroke = false;
+        });
+      }
+      const allSame = shapes[0] && sameFill && sameStroke;
+
+      // If simple SVG or SVG with multiple shapes are the same colour.
+      if (shapes.length === 1 || allSame) {
         const style = getComputedStyle(shapes[0]);
         const { fill, stroke, strokeWidth, opacity } = style;
 
@@ -9414,11 +9433,11 @@ ${this.error.stack}
         // Get computed stroke & fill.
         const hasFill = fill && (fill !== 'none' || !fill.startsWith('url('));
         const resolvedFill = hasFill && fill === 'currentColor'
-          ? convertToRGBA(getComputedStyle($el).color, opacity)
+          ? convertToRGBA(getComputedStyle(shapes[0]).color, opacity)
           : convertToRGBA(fill, opacity);
 
         const resolvedStroke = hasStroke && stroke === 'currentColor'
-          ? convertToRGBA(getComputedStyle($el).color, opacity)
+          ? convertToRGBA(getComputedStyle(shapes[0]).color, opacity)
           : convertToRGBA(stroke, opacity);
 
         // Unsupported colour spaces.
@@ -9668,6 +9687,7 @@ ${this.error.stack}
               dismissAll: option.checks.CONTRAST_ERROR_GRAPHIC.dismissAll ? 'CONTRAST_ERROR_GRAPHIC' : false,
               developer: option.checks.CONTRAST_ERROR_GRAPHIC.developer || true,
               contrastDetails: updatedItem,
+              margin: '-20px -20px',
             });
           }
           break;
@@ -9683,6 +9703,7 @@ ${this.error.stack}
               dismissAll: option.checks.CONTRAST_WARNING_GRAPHIC.dismissAll ? 'CONTRAST_WARNING_GRAPHIC' : false,
               developer: option.checks.CONTRAST_WARNING_GRAPHIC.developer || true,
               contrastDetails: updatedItem,
+              margin: '-20px -20px',
             });
           }
           break;
@@ -11250,16 +11271,15 @@ ${this.error.stack}
             // Paint the page with annotations.
             const counts = new Map();
             this.results.forEach((issue) => {
-              if (issue.element) {
-                // Increase margin of annotations by 30px increments if an element has multiple issues.
+              let updatedIssue = issue;
+              // Dynamically alter margins if an element has multiple issues.
+              if (issue.element && !issue.margin) {
                 const index = counts.get(issue.element) || 0;
                 counts.set(issue.element, index + 1);
-                const offset = issue.inline ? 25 : 10;
-                annotate({ ...issue, margin: `${index * 30 + offset}px` }, option);
-              } else {
-                // Process page issues.
-                annotate(issue, option);
+                const offset = issue.inline ? 0 : 15;
+                updatedIssue = { ...issue, margin: `${index * 30 + offset}px` };
               }
+              annotate(updatedIssue, option);
             });
 
             // After annotations are painted, find & cache.

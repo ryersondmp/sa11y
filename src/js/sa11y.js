@@ -274,16 +274,15 @@ class Sa11y {
           // Paint the page with annotations.
           const counts = new Map();
           this.results.forEach((issue) => {
-            if (issue.element) {
-              // Increase margin of annotations by 30px increments if an element has multiple issues.
+            let updatedIssue = issue;
+            // Dynamically alter margins if an element has multiple issues.
+            if (issue.element && !issue.margin) {
               const index = counts.get(issue.element) || 0;
               counts.set(issue.element, index + 1);
-              const offset = issue.inline ? 25 : 10;
-              annotate({ ...issue, margin: `${index * 30 + offset}px` }, option);
-            } else {
-              // Process page issues.
-              annotate(issue, option);
+              const offset = issue.inline ? 0 : 15;
+              updatedIssue = { ...issue, margin: `${index * 30 + offset}px` };
             }
+            annotate(updatedIssue, option);
           });
 
           // After annotations are painted, find & cache.
