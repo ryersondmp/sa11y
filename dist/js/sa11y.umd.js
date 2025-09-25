@@ -9687,7 +9687,7 @@ ${this.error.stack}
               dismissAll: option.checks.CONTRAST_ERROR_GRAPHIC.dismissAll ? 'CONTRAST_ERROR_GRAPHIC' : false,
               developer: option.checks.CONTRAST_ERROR_GRAPHIC.developer || true,
               contrastDetails: updatedItem,
-              margin: '-20px -20px',
+              margin: '-25px',
             });
           }
           break;
@@ -9703,7 +9703,7 @@ ${this.error.stack}
               dismissAll: option.checks.CONTRAST_WARNING_GRAPHIC.dismissAll ? 'CONTRAST_WARNING_GRAPHIC' : false,
               developer: option.checks.CONTRAST_WARNING_GRAPHIC.developer || true,
               contrastDetails: updatedItem,
-              margin: '-20px -20px',
+              margin: '-25px',
             });
           }
           break;
