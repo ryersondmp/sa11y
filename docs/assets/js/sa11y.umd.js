@@ -8448,7 +8448,7 @@ ${this.error.stack}
       }
 
       // Ignore tracking pixels without explicit aria-hidden or nullified alt.
-      if ($el.height === 1 && $el.width === 1 && isElementHidden($el)) {
+      if ($el.height < 2 && $el.width < 2 && isElementHidden($el)) {
         return;
       }
 
@@ -10256,7 +10256,7 @@ ${this.error.stack}
 
         // Check for broken same-page links.
         if (option.checks.QA_IN_PAGE_LINK) {
-          const hasAttributes = $el.getAttribute('role') === 'button' || $el.hasAttribute('aria-haspopup') || $el.hasAttribute('aria-expanded') || $el.hasAttribute('onclick');
+          const hasAttributes = $el.getAttribute('role') === 'button' || $el.hasAttribute('aria-haspopup') || $el.hasAttribute('aria-expanded') || $el.hasAttribute('onclick') || $el.closest('nav, [role="navigation"]');
           const hasText = getText($el).length !== 0;
           if ((href.startsWith('#') || href === '') && !hasAttributes && hasText) {
             const targetId = href.substring(1);

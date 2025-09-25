@@ -53,7 +53,7 @@ export default function checkQA(results, option) {
 
       // Check for broken same-page links.
       if (option.checks.QA_IN_PAGE_LINK) {
-        const hasAttributes = $el.getAttribute('role') === 'button' || $el.hasAttribute('aria-haspopup') || $el.hasAttribute('aria-expanded') || $el.hasAttribute('onclick');
+        const hasAttributes = $el.getAttribute('role') === 'button' || $el.hasAttribute('aria-haspopup') || $el.hasAttribute('aria-expanded') || $el.hasAttribute('onclick') || $el.closest('nav, [role="navigation"]');
         const hasText = Utils.getText($el).length !== 0;
         if ((href.startsWith('#') || href === '') && !hasAttributes && hasText) {
           const targetId = href.substring(1);
