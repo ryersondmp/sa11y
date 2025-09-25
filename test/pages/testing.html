@@ -77,6 +77,18 @@
   </header>
   <main>
 
+    <h2>aria-hidden=false on a node within a button</h2>
+    <button class="button button--play homepage-hero__play-btn js-play-btn">
+      <span class="button__content" tabindex="-1">
+        <i class="material-icons homepage-hero__play-icon js-play-icon hidden" aria-label="Play"
+          aria-hidden="true">play_arrow</i>
+        <i class="material-icons homepage-hero__play-icon js-pause-icon" aria-hidden="false" data-nosnippet=""
+          aria-label="Pause">pause</i>
+      </span>
+    </button>
+
+    <hr>
+
     <h2>SVG contrast checking refactored</h2>
     <div>
       <div class="socials">

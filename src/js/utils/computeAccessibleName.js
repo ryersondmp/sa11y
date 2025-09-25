@@ -137,7 +137,7 @@ export const computeAccessibleName = (element, exclusions = [], recursing = 0) =
       aText = false;
     }
 
-    if (node.hasAttribute('aria-hidden') && !(recursing && count < 3)) {
+    if (node.getAttribute('aria-hidden') === 'true' && !(recursing && count < 3)) {
       if (!nextTreeBranch(treeWalker)) continueWalker = false;
       continue;
     }
