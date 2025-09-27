@@ -917,8 +917,8 @@
     const offscreen = style.position === 'absolute'
       && ['left', 'right', 'top', 'bottom'].some((p) => Math.abs(parseInt(style[p], 10)) >= 5000);
     const tinyBox = style.position === 'absolute'
-      && parseFloat(style.width) < 2
-      && parseFloat(style.height) < 2
+      && element.offsetWidth < 2
+      && element.offsetHeight < 2
       && style.overflow === 'hidden';
     const zeroFont = parseFloat(style.fontSize) < 2;
     const indent = parseInt(style.textIndent, 10);
