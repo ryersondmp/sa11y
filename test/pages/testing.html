@@ -73,6 +73,13 @@
       left: -9999px;
       position: absolute;
     }
+
+    .element-invisible {
+      position: absolute !important;
+      clip: rect(0, 0, 0, 0);
+      overflow: hidden;
+      height: 1px;
+    }
   </style>
 </head>
 
@@ -85,6 +92,8 @@
     <h2>Better sr-only detection.</h2>
     <p>Invisible contrast error below is ignored because sr-only text.</p>
     <p style="color:lightblue;" class="screen-reader">Off screen</p>
+
+    <p style="color:lightcoral;" class="element-invisible">Off screen element-invisible</p>
 
     <h2>Clickable suggested colour</h2>
     <p>Clicking on suggested colour updates preview and saves hex to clipboard.</p>

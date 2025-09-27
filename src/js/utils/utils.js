@@ -37,13 +37,15 @@ export function isScreenReaderOnly(element) {
   const offscreen = style.position === 'absolute'
     && ['left', 'right', 'top', 'bottom'].some((p) => Math.abs(parseInt(style[p], 10)) >= 5000);
   const tinyBox = style.position === 'absolute'
-    && element.offsetWidth < 2
-    && element.offsetHeight < 2
+    && parseFloat(style.width) < 2
+    && parseFloat(style.height) < 2
     && style.overflow === 'hidden';
   const zeroFont = parseFloat(style.fontSize) < 2;
   const indent = parseInt(style.textIndent, 10);
-  const offscreenText = !Number.isNaN(indent) && Math.abs(indent) >= 5000;
-  return offscreen || clip.startsWith('inset') || tinyBox || zeroFont || offscreenText;
+  const offscreenIndent = !Number.isNaN(indent) && Math.abs(indent) >= 5000;
+  const clipped = style.clip === 'rect(1px, 1px, 1px, 1px)'
+    || style.clip === 'rect(0px, 0px, 0px, 0px)' || clip.startsWith('inset');
+  return offscreen || tinyBox || zeroFont || offscreenIndent || clipped;
 }
 
 /**
