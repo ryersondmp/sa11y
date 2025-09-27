@@ -1517,6 +1517,18 @@
       </svg>
     </div>
 
+    <h4>Simple SVG with poor stroke/no fill</h4>
+    <div id="error-svg-5">
+      <a href="https://bsky.app/">
+        <div class="visually-hidden">BlueSky</div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="44"
+          viewBox="0 0 576 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+          <path fill="none" stroke="#fcffc1" stroke-width="15"
+            d="M407.8 294.7c-3.3-.4-6.7-.8-10-1.3c3.4 .4 6.7 .9 10 1.3zM288 227.1C261.9 176.4 190.9 81.9 124.9 35.3C61.6-9.4 37.5-1.7 21.6 5.5C3.3 13.8 0 41.9 0 58.4S9.1 194 15 213.9c19.5 65.7 89.1 87.9 153.2 80.7c3.3-.5 6.6-.9 10-1.4c-3.3 .5-6.6 1-10 1.4C74.3 308.6-9.1 342.8 100.3 464.5C220.6 589.1 265.1 437.8 288 361.1c22.9 76.7 49.2 222.5 185.6 103.4c102.4-103.4 28.1-156-65.8-169.9c-3.3-.4-6.7-.8-10-1.3c3.4 .4 6.7 .9 10 1.3c64.1 7.1 133.6-15.1 153.2-80.7C566.9 194 576 75 576 58.4s-3.3-44.7-21.6-52.9c-15.8-7.1-40-14.9-103.2 29.8C385.1 81.9 314.1 176.4 288 227.1z" />
+        </svg>
+      </a>
+    </div>
+
     <h4>SVG with unsupported colour space foreground</h4>
     <div id="warning-svg-1">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50">
@@ -1648,6 +1660,111 @@
         <path
           d="M26.462 7.456c0 1.060-0.859 1.919-1.919 1.919s-1.919-0.859-1.919-1.919c0-1.060 0.859-1.919 1.919-1.919s1.919 0.859 1.919 1.919z">
         </path>
+      </svg>
+    </div>
+
+    <h4>SVG with linear gradient for fill</h4>
+    <div id="warning-svg-10">
+      <svg width="200" height="200">
+        <defs>
+          <linearGradient id="linear-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:blue;stop-opacity:1"></stop>
+            <stop offset="100%" style="stop-color:red;stop-opacity:1"></stop>
+          </linearGradient>
+        </defs>
+        <path d="M10 80 C 40 10, 65 10, 95 80 S 150 150, 180 80" fill="url(#linear-gradient)" stroke-width="2"></path>
+      </svg>
+    </div>
+
+    <h4>SVG without a &lt;path&gt; node</h4>
+    <div id="warning-svg-11">
+      <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+        <!-- Background rectangle -->
+        <rect width="200" height="200" fill="#f0f0f0" />
+
+        <!-- Circle -->
+        <circle cx="100" cy="100" r="50" fill="blue" stroke="black" stroke-width="2" />
+
+        <!-- Rectangle -->
+        <rect x="50" y="50" width="30" height="60" fill="red" stroke="black" stroke-width="1" />
+
+        <!-- Line -->
+        <line x1="20" y1="20" x2="180" y2="180" stroke="green" stroke-width="2" />
+
+        <!-- Polygon -->
+        <polygon points="60,10 90,40 30,40" fill="yellow" stroke="orange" stroke-width="1" />
+
+        <!-- Text -->
+        <text x="100" y="190" font-family="Arial" font-size="12" text-anchor="middle" fill="black">
+          SVG without a &lt;path&gt;
+        </text>
+      </svg>
+    </div>
+
+    <h4>Empty svg</h4>
+    <div id="warning-svg-12">
+      <svg width="10" height="10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"></svg>
+    </div>
+
+    <h4>SVG with linear gradient background</h4>
+    <div id="warning-svg-13">
+      <style>
+        #complex-svg-diff-stroke path {
+          fill: rgb(57, 134, 160)
+        }
+      </style>
+      <svg id="complex-svg-diff-stroke" version="1.1" xmlns="http://www.w3.org/2000/svg" width="50" viewBox="0 0 32 32"
+        style="background: linear-gradient(90deg, #003f5b, #2b4b7d, #5f5195, #98509d, #cc4c91, #f25375, #ff6f4e, #ff9913);">
+        <title>Follow on Instagram</title>
+        <path
+          d=" M16 2.881c4.275 0 4.781 0.019 6.462 0.094 1.563 0.069 2.406 0.331 2.969 0.55 0.744 0.288 1.281 0.638
+        1.837 1.194 0.563 0.563 0.906 1.094 1.2 1.838 0.219 0.563 0.481 1.412 0.55 2.969 0.075 1.688 0.094 2.194 0.094
+        6.463s-0.019 4.781-0.094 6.463c-0.069 1.563-0.331 2.406-0.55 2.969-0.288 0.744-0.637 1.281-1.194 1.837-0.563
+        0.563-1.094 0.906-1.837 1.2-0.563 0.219-1.413 0.481-2.969 0.55-1.688 0.075-2.194 0.094-6.463
+        0.094s-4.781-0.019-6.463-0.094c-1.563-0.069-2.406-0.331-2.969-0.55-0.744-0.288-1.281-0.637-1.838-1.194-0.563-0.563-0.906-1.094-1.2-1.837-0.219-0.563-0.481-1.413-0.55-2.969-0.075-1.688-0.094-2.194-0.094-6.463s0.019-4.781
+        0.094-6.463c0.069-1.563 0.331-2.406 0.55-2.969 0.288-0.744 0.638-1.281 1.194-1.838 0.563-0.563 1.094-0.906
+        1.838-1.2 0.563-0.219 1.412-0.481 2.969-0.55 1.681-0.075 2.188-0.094 6.463-0.094zM16 0c-4.344 0-4.887
+        0.019-6.594 0.094-1.7 0.075-2.869 0.35-3.881 0.744-1.056 0.412-1.95 0.956-2.837 1.85-0.894 0.888-1.438
+        1.781-1.85 2.831-0.394 1.019-0.669 2.181-0.744 3.881-0.075 1.713-0.094 2.256-0.094 6.6s0.019 4.887 0.094
+        6.594c0.075 1.7 0.35 2.869 0.744 3.881 0.413 1.056 0.956 1.95 1.85 2.837 0.887 0.887 1.781 1.438 2.831 1.844
+        1.019 0.394 2.181 0.669 3.881 0.744 1.706 0.075 2.25 0.094 6.594 0.094s4.888-0.019 6.594-0.094c1.7-0.075
+        2.869-0.35 3.881-0.744 1.050-0.406 1.944-0.956 2.831-1.844s1.438-1.781 1.844-2.831c0.394-1.019 0.669-2.181
+        0.744-3.881 0.075-1.706 0.094-2.25
+        0.094-6.594s-0.019-4.887-0.094-6.594c-0.075-1.7-0.35-2.869-0.744-3.881-0.394-1.063-0.938-1.956-1.831-2.844-0.887-0.887-1.781-1.438-2.831-1.844-1.019-0.394-2.181-0.669-3.881-0.744-1.712-0.081-2.256-0.1-6.6-0.1v0z">
+        </path>
+        <path
+          d="M16 7.781c-4.537 0-8.219 3.681-8.219 8.219s3.681 8.219 8.219 8.219 8.219-3.681 8.219-8.219c0-4.537-3.681-8.219-8.219-8.219zM16 21.331c-2.944 0-5.331-2.387-5.331-5.331s2.387-5.331 5.331-5.331c2.944 0 5.331 2.387 5.331 5.331s-2.387 5.331-5.331 5.331z">
+        </path>
+        <path
+          d="M26.462 7.456c0 1.060-0.859 1.919-1.919 1.919s-1.919-0.859-1.919-1.919c0-1.060 0.859-1.919 1.919-1.919s1.919 0.859 1.919 1.919z">
+        </path>
+      </svg>
+    </div>
+
+    <h4>SVG with background: url()</h4>
+    <div id="warning-svg-14" style="background: lightblue url('./assets/aussie.avif') no-repeat fixed center;">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50">
+        <path fill="darkgreen"
+          d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM229.4 385.9C249.8 413.9 282.8 432 320 432C357.2 432 390.2 413.9 410.6 385.9C418.4 375.2 433.4 372.8 444.1 380.6C454.8 388.4 457.2 403.4 449.4 414.1C420.3 454 373.2 480 320 480C266.8 480 219.7 454 190.6 414.1C182.8 403.4 185.2 388.4 195.9 380.6C206.6 372.8 221.6 375.2 229.4 385.9zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z" />
+      </svg>
+    </div>
+
+    <h4>Other SVGs, like filters</h4>
+    <div id="warning-svg-15">
+      <svg width="230" height="120" xmlns="http://www.w3.org/2000/svg">
+        <filter id="blurMe">
+          <feGaussianBlur stdDeviation="5" />
+        </filter>
+        <circle cx="170" cy="60" r="50" fill="green" filter="url(#blurMe)" />
+      </svg>
+    </div>
+
+    <h4>Other SVGs, like animations</h4>
+    <div id="warning-svg-16">
+      <svg width="100%" height="100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="50" style="fill:red;">
+          <animate attributeName="cx" begin="0s" dur="8s" from="50" to="90%" fill="freeze" />
+        </circle>
       </svg>
     </div>
 

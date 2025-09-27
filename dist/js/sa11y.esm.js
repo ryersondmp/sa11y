@@ -2268,7 +2268,7 @@ const version = 'dev-4.3.0';
 
 var styles = ":host{background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);bottom:0;display:block;height:-moz-fit-content;height:fit-content;left:0;position:fixed;right:0;width:100%;z-index:999999}*{-webkit-font-smoothing:auto!important;color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;font-size:var(--sa11y-normal-text);line-height:22px!important}#dialog{margin:20px auto;max-width:900px;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none}p{margin-top:0}.error{background:var(--sa11y-error);border:2px dashed #f08080;color:var(--sa11y-error-text);margin-bottom:0;padding:5px}";
 
-var sharedStyles = ".visually-hidden{clip:rect(1px,1px,1px,1px);border:0;clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}[hidden]{display:none!important}.header-text,.header-text-inline,h2{color:var(--sa11y-panel-primary);display:block;font-size:var(--sa11y-large-text);font-weight:600;margin-bottom:3px}.header-text-inline{display:inline-block!important}code{font-family:monospace!important;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:600}pre:has(code){display:block;overflow:auto;white-space:pre-wrap}.kbd,code,kbd,pre{background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);padding:1.6px 4.8px}.bold{font-weight:600}.error .colour,.red-text{color:var(--sa11y-red-text);font-family:var(--sa11y-font-face)}.warning .colour,.yellow-text{color:var(--sa11y-yellow-text);font-family:var(--sa11y-font-face)}.badge,.normal-badge{background-color:var(--sa11y-panel-badge);border-radius:10px;color:var(--sa11y-panel-primary);display:inline;font-size:14px;font-weight:700!important;line-height:1;min-width:10px;outline:1px solid transparent;padding:1px 5px 1.75px;text-align:center;vertical-align:baseline;white-space:nowrap}.error .badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.error-badge{background:var(--sa11y-error)!important;color:var(--sa11y-error-text)!important}.warning .badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.warning-badge{background:var(--sa11y-yellow-text)!important;color:var(--sa11y-panel-bg)!important}.good-contrast{background:var(--sa11y-good)!important;color:var(--sa11y-good-text)!important}#contrast-preview{background-color:#e8e8e8;background-image:linear-gradient(45deg,#ccc 25%,transparent 0,transparent 75%,#ccc 0,#ccc),linear-gradient(45deg,#ccc 25%,transparent 0,transparent 75%,#ccc 0,#ccc);background-position:0 0,5px 5px;background-size:10px 10px;border:2px dashed var(--sa11y-panel-bg-splitter);border-radius:3.2px;line-height:1;margin-top:10px;max-height:100px;overflow:clip;overflow-wrap:break-word;padding:5px}#contrast-preview:empty{display:none}#color-pickers{display:flex;justify-content:space-between;margin-bottom:10px;margin-top:10px}#color-pickers label{align-items:center;display:flex}#color-pickers input{margin-inline-start:7px}input[type=color i]{background:var(--sa11y-panel-bg-secondary);block-size:30px;border-color:var(--sa11y-button-outline);border-radius:50%;border-style:solid;border-width:1px;inline-size:30px;padding:2px}input[type=color i]::-webkit-color-swatch-wrapper{padding:1px}input[type=color i]::-webkit-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i]::-moz-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i].unknown{box-shadow:0 0 0 2px var(--sa11y-yellow-text)}input[type=color i].unknown:after{align-items:center;color:#fff;content:\"?\";display:flex;font-size:18px;height:24px;justify-content:center;margin:-24px 0;pointer-events:none;position:absolute;width:24px;z-index:2}.close-btn{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;color:var(--sa11y-panel-primary);cursor:pointer;float:var(--sa11y-float-rtl);font-size:var(--sa11y-normal-text);font-weight:400;height:32px;margin:0;position:relative;transition:all .2s ease-in-out;width:32px}.close-btn:focus,.close-btn:hover{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{background:var(--sa11y-setting-switch-bg-off);content:\"\";inset:-7px;-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute}@media screen and (forced-colors:active){.close-btn:after{filter:invert(1)}}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container input:focus,#container select:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus,#container .switch:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus:not(:focus-visible),#container [tabindex=\"-1\"]:focus:not(:focus-visible),#container [tabindex=\"0\"]:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container input:focus:not(:focus-visible),#container select:focus:not(:focus-visible){box-shadow:none;outline:0}#container [tabindex=\"-1\"]:focus-visible,#container [tabindex=\"0\"]:focus-visible,#container a:focus-visible,#container button:not(#panel-controls button):not(.switch):focus-visible,#container input:focus-visible,#container select:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus-visible,#container .switch:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#panel-controls button:focus{border:3px solid transparent}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container select:focus,.close-btn:focus{outline:3px solid transparent!important}}";
+var sharedStyles = ".visually-hidden{clip:rect(1px,1px,1px,1px);border:0;clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}[hidden]{display:none!important}.header-text,.header-text-inline,h2{color:var(--sa11y-panel-primary);display:block;font-size:var(--sa11y-large-text);font-weight:600;margin-bottom:3px}.header-text-inline{display:inline-block!important}code{font-family:monospace!important;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:600}pre:has(code){display:block;overflow:auto;white-space:pre-wrap}.kbd,code,kbd,pre{background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);padding:1.6px 4.8px}.bold{font-weight:600}.error .colour,.red-text{color:var(--sa11y-red-text);font-family:var(--sa11y-font-face)}.warning .colour,.yellow-text{color:var(--sa11y-yellow-text);font-family:var(--sa11y-font-face)}.badge,.normal-badge{background-color:var(--sa11y-panel-badge);border-radius:10px;color:var(--sa11y-panel-primary);display:inline;font-size:14px;font-weight:700!important;line-height:1;min-width:10px;outline:1px solid transparent;padding:1px 5px 1.75px;text-align:center;vertical-align:baseline;white-space:nowrap}.error .badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.error-badge{background:var(--sa11y-error)!important;color:var(--sa11y-error-text)!important}.warning .badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.warning-badge{background:var(--sa11y-yellow-text)!important;color:var(--sa11y-panel-bg)!important}.good-contrast{background:var(--sa11y-good)!important;color:var(--sa11y-good-text)!important}#contrast-preview{background-color:#e8e8e8;background-image:linear-gradient(45deg,#ccc 25%,transparent 0,transparent 75%,#ccc 0,#ccc),linear-gradient(45deg,#ccc 25%,transparent 0,transparent 75%,#ccc 0,#ccc);background-position:0 0,5px 5px;background-size:10px 10px;border:2px dashed var(--sa11y-panel-bg-splitter);border-radius:3.2px;line-height:1;margin-top:10px;max-height:100px;overflow:clip;overflow-wrap:break-word;padding:5px}#contrast-preview:empty{display:none}#color-pickers{display:flex;justify-content:space-between;margin-bottom:10px;margin-top:10px}#color-pickers label{align-items:center;display:flex}#color-pickers input{cursor:pointer;margin-inline-start:7px}input[type=color i]{background:var(--sa11y-panel-bg-secondary);block-size:44px;border-color:var(--sa11y-button-outline);border-radius:50%;border-style:solid;border-width:1px;inline-size:44px;padding:2px}input[type=color i]::-webkit-color-swatch-wrapper{padding:1px}input[type=color i]::-webkit-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i]::-moz-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i].unknown{box-shadow:0 0 0 2px var(--sa11y-yellow-text)}input[type=color i].unknown:after{align-items:center;color:#fff;content:\"?\";display:flex;font-size:22px;height:44px;justify-content:center;margin:-40px -3px;pointer-events:none;position:absolute;width:44px;z-index:2}.close-btn{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;color:var(--sa11y-panel-primary);cursor:pointer;float:var(--sa11y-float-rtl);font-size:var(--sa11y-normal-text);font-weight:400;height:32px;margin:0;position:relative;transition:all .2s ease-in-out;width:32px}.close-btn:focus,.close-btn:hover{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{background:var(--sa11y-setting-switch-bg-off);content:\"\";inset:-7px;-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute}@media screen and (forced-colors:active){.close-btn:after{filter:invert(1)}}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container input:focus,#container select:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus,#container .switch:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus:not(:focus-visible),#container [tabindex=\"-1\"]:focus:not(:focus-visible),#container [tabindex=\"0\"]:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container input:focus:not(:focus-visible),#container select:focus:not(:focus-visible){box-shadow:none;outline:0}#container [tabindex=\"-1\"]:focus-visible,#container [tabindex=\"0\"]:focus-visible,#container a:focus-visible,#container button:not(#panel-controls button):not(.switch):focus-visible,#container input:focus-visible,#container select:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus-visible,#container .switch:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#panel-controls button:focus{border:3px solid transparent}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container select:focus,.close-btn:focus{outline:3px solid transparent!important}}";
 
 class ConsoleErrors extends HTMLElement {
   constructor(error) {
@@ -7118,7 +7118,11 @@ function convertToRGBA(color, opacity) {
 
   if (!colorString.startsWith('rgb')) {
     // Unsupported color spaces.
-    if (colorString.startsWith('color(rec2020') || colorString.startsWith('color(display-p3')) {
+    if (
+      colorString.startsWith('color(rec2020')
+      || colorString.startsWith('color(display-p3')
+      || colorString.startsWith('url(')
+    ) {
       return 'unsupported';
     }
 
@@ -7304,11 +7308,11 @@ function ratioToDisplay(value) {
     return Math.abs(Number(value.toFixed(1)));
   }
   // Round to decimal places, and display without decimals if integer.
-  const rounded = Math.round(value * 100) / 100;
-  if (Number.isInteger(rounded)) {
-    return `${rounded}:1`;
-  }
-  return `${rounded.toFixed(2)}:1`;
+  const truncatedRatio = Math.trunc(value * 10) / 10;
+  const formattedRatio = Number.isInteger(truncatedRatio)
+    ? truncatedRatio.toFixed(0)
+    : truncatedRatio;
+  return `${formattedRatio}:1`;
 }
 
 /**
@@ -7508,7 +7512,10 @@ function suggestColorAPCA(color, background, fontWeight, fontSize) {
 function generateColorSuggestion(contrastDetails) {
   let adviceContainer;
   const { color, background, fontWeight, fontSize, isLargeText, type } = contrastDetails;
-  if (color && background && background.type !== 'image' && type === 'text') {
+  if (
+    color && background && background.type !== 'image'
+    && (type === 'text' || type === 'svg-error' || type === 'input')
+  ) {
     const suggested = Constants.Global.contrastAPCA
       ? suggestColorAPCA(color, background, fontWeight, fontSize)
       : suggestColorWCAG(color, background, isLargeText, Constants.Global.contrastAAA);
@@ -7516,7 +7523,7 @@ function generateColorSuggestion(contrastDetails) {
     let advice;
     const hr = '<hr aria-hidden="true">';
     const style = `color:${suggested.color};background-color:${getHex(contrastDetails.background)};`;
-    const colorBadge = `<strong class="badge" style="${style}">${suggested.color}</strong>`;
+    const colorBadge = `<button id="suggest" class="badge" style="${style}">${suggested.color}</button>`;
     const sizeBadge = `<strong class="normal-badge">${suggested.size}px</strong>`;
 
     if (!Constants.Global.contrastAPCA) {
@@ -7644,15 +7651,6 @@ function initializeContrastTools(container, contrastDetails) {
       contrastPreview.style.backgroundColor = bgColor;
       contrastPreview.style.backgroundImage = 'none';
 
-      // Change SVG color if it contains a single <path> element.
-      const child = contrastPreview.querySelectorAll('svg *');
-      if (child.length === 1) {
-        const { fill, stroke } = getComputedStyle(child[0]);
-        child[0].style.opacity = 1;
-        if (fill !== 'none') child[0].style.fill = fgColor;
-        if (stroke !== 'none') child[0].style.stroke = fgColor;
-      }
-
       // Get contrast ratio.
       const contrastValue = calculateContrast(convertToRGBA(fgColor), convertToRGBA(bgColor));
       const elementsToToggle = [ratio, contrast];
@@ -7722,6 +7720,20 @@ function initializeContrastTools(container, contrastDetails) {
     // Event listeners for both colour inputs.
     fgInput.addEventListener('input', updatePreview);
     bgInput.addEventListener('input', updatePreview);
+
+    // Clicking on suggested colour updates preview and saves value to clipboard.
+    setTimeout(() => {
+      const suggest = container.querySelector('#suggest');
+      if (suggest) {
+        const updatePreviewWithSuggested = () => {
+          const hex = suggest.textContent;
+          fgInput.value = hex;
+          updatePreview();
+          navigator.clipboard.writeText(hex).catch(() => { });
+        };
+        suggest.addEventListener('click', updatePreviewWithSuggested);
+      }
+    }, 0);
   }
 }
 
@@ -7952,7 +7964,7 @@ function annotate(issue, option) {
   }
 }
 
-var tooltipStyles = "a,button,code,div,h1,h2,kbd,li,ol,p,span,strong,svg,ul{all:unset;box-sizing:border-box!important}div{display:block}:after,:before{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}@media (forced-colors:active){[data-tippy-root]{border:2px solid transparent;border-radius:5px}}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:0}.tippy-box[data-placement^=top]>.tippy-arrow:before{border-top-color:initial;border-width:8px 8px 0;bottom:-7px;left:0;transform-origin:center top}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:0}.tippy-box[data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:initial;border-width:0 8px 8px;left:0;top:-7px;transform-origin:center bottom}.tippy-box[data-placement^=left]>.tippy-arrow{right:0}.tippy-box[data-placement^=left]>.tippy-arrow:before{border-left-color:initial;border-width:8px 0 8px 8px;right:-7px;transform-origin:center left}.tippy-box[data-placement^=right]>.tippy-arrow{left:0}.tippy-box[data-placement^=right]>.tippy-arrow:before{border-right-color:initial;border-width:8px 8px 8px 0;left:-7px;transform-origin:center right}.tippy-arrow{color:#333;height:16px;width:16px}.tippy-arrow:before{border-color:transparent;border-style:solid;content:\"\";position:absolute}.tippy-content{padding:5px 9px;position:relative;z-index:1}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{word-wrap:break-word;min-width:300px;text-align:start}[role=tooltip]{min-width:185px;text-align:center}.tippy-box[data-theme~=sa11y-panel]{border:1px solid var(--sa11y-panel-bg-splitter);box-shadow:var(--sa11y-box-shadow)}.tippy-box[data-theme~=sa11y-theme]:not([data-theme~=sa11y-panel]){box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15)!important}.tippy-box[data-theme~=sa11y-theme]{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-bg);border-radius:4px;color:var(--sa11y-panel-primary);display:block;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px;outline:0;padding:8px;position:relative;transition-property:transform,visibility,opacity}.tippy-box[data-theme~=sa11y-theme] pre:has(code){display:block;overflow:auto;white-space:pre-wrap}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:500}.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd,.tippy-box[data-theme~=sa11y-theme] pre{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);letter-spacing:normal;line-height:22px;padding:1.6px 4.8px}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block-end:0;margin-block-start:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{display:list-item;margin:5px 10px 0 20px;padding-bottom:5px}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;font-weight:500;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] a:hover{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin:0}.tippy-box[data-theme~=sa11y-theme] .dismiss-group{margin-top:5px}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:inline-block;margin:10px 5px 5px 0;margin-inline-end:15px;padding:4px 8px}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:focus,.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:hover{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme] .good-icon{background:var(--sa11y-good-text);display:inline-block;height:14px;margin-bottom:-2.5px;-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat;width:14px}.tippy-box[data-theme~=sa11y-theme] .link-icon{background:var(--sa11y-panel-primary);display:inline-block;height:16px;margin-bottom:-3.5px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat;width:16px}.tippy-box[data-theme~=sa11y-theme] .error .badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .error .colour{color:var(--sa11y-red-text)}.tippy-box[data-theme~=sa11y-theme] .error .link-icon{background:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .warning .badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme] .warning .colour{color:var(--sa11y-yellow-text)}.tippy-box[data-theme~=sa11y-theme] .warning .link-icon{background:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{forced-color-adjust:none}.tippy-box[data-theme~=sa11y-theme] .tippy-arrow{z-index:-1}}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:active,.tippy-box[data-theme~=sa11y-theme] button:focus,.tippy-box[data-theme~=sa11y-theme] input:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] input:focus:not(:focus-visible){box-shadow:none;outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus-visible,.tippy-box[data-theme~=sa11y-theme] a:focus-visible,.tippy-box[data-theme~=sa11y-theme] button:focus-visible,.tippy-box[data-theme~=sa11y-theme] input:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.tippy-box[data-theme~=sa11y-theme] .error-icon,.tippy-box[data-theme~=sa11y-theme] .hidden-icon,.tippy-box[data-theme~=sa11y-theme] .link-icon{filter:invert(1)}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:focus{outline:3px solid transparent!important}}";
+var tooltipStyles = "a,button,code,div,h1,h2,kbd,li,ol,p,span,strong,svg,ul{all:unset;box-sizing:border-box!important}div{display:block}:after,:before{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}@media (forced-colors:active){[data-tippy-root]{border:2px solid transparent;border-radius:5px}}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:0}.tippy-box[data-placement^=top]>.tippy-arrow:before{border-top-color:initial;border-width:8px 8px 0;bottom:-7px;left:0;transform-origin:center top}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:0}.tippy-box[data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:initial;border-width:0 8px 8px;left:0;top:-7px;transform-origin:center bottom}.tippy-box[data-placement^=left]>.tippy-arrow{right:0}.tippy-box[data-placement^=left]>.tippy-arrow:before{border-left-color:initial;border-width:8px 0 8px 8px;right:-7px;transform-origin:center left}.tippy-box[data-placement^=right]>.tippy-arrow{left:0}.tippy-box[data-placement^=right]>.tippy-arrow:before{border-right-color:initial;border-width:8px 8px 8px 0;left:-7px;transform-origin:center right}.tippy-arrow{color:#333;height:16px;width:16px}.tippy-arrow:before{border-color:transparent;border-style:solid;content:\"\";position:absolute}.tippy-content{padding:5px 9px;position:relative;z-index:1}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{word-wrap:break-word;min-width:300px;text-align:start}[role=tooltip]{min-width:185px;text-align:center}.tippy-box[data-theme~=sa11y-panel]{border:1px solid var(--sa11y-panel-bg-splitter);box-shadow:var(--sa11y-box-shadow)}.tippy-box[data-theme~=sa11y-theme]:not([data-theme~=sa11y-panel]){box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15)!important}.tippy-box[data-theme~=sa11y-theme]{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-bg);border-radius:4px;color:var(--sa11y-panel-primary);display:block;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px;outline:0;padding:8px;position:relative;transition-property:transform,visibility,opacity}.tippy-box[data-theme~=sa11y-theme] pre:has(code){display:block;overflow:auto;white-space:pre-wrap}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:500}.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd,.tippy-box[data-theme~=sa11y-theme] pre{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);letter-spacing:normal;line-height:22px;padding:1.6px 4.8px}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block-end:0;margin-block-start:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{display:list-item;margin:5px 10px 0 20px;padding-bottom:5px}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;font-weight:500;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] a:hover{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin:0}.tippy-box[data-theme~=sa11y-theme] button#suggest{cursor:pointer;padding:.2rem;position:relative;transition:background-color .2s,color .2s}.tippy-box[data-theme~=sa11y-theme] button#suggest:after{bottom:-14px;content:\"\";left:-5px;position:absolute;right:-5px;top:-10px}.tippy-box[data-theme~=sa11y-theme] button#suggest:focus-visible,.tippy-box[data-theme~=sa11y-theme] button#suggest:hover{background-color:#fff!important;color:#000!important}.tippy-box[data-theme~=sa11y-theme] .dismiss-group{margin-top:5px}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:inline-block;margin:10px 5px 5px 0;margin-inline-end:15px;padding:4px 8px}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:focus,.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:hover{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme] .good-icon{background:var(--sa11y-good-text);display:inline-block;height:14px;margin-bottom:-2.5px;-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat;width:14px}.tippy-box[data-theme~=sa11y-theme] .link-icon{background:var(--sa11y-panel-primary);display:inline-block;height:16px;margin-bottom:-3.5px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat;width:16px}.tippy-box[data-theme~=sa11y-theme] .error .badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .error .colour{color:var(--sa11y-red-text)}.tippy-box[data-theme~=sa11y-theme] .error .link-icon{background:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .warning .badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme] .warning .colour{color:var(--sa11y-yellow-text)}.tippy-box[data-theme~=sa11y-theme] .warning .link-icon{background:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{forced-color-adjust:none}.tippy-box[data-theme~=sa11y-theme] .tippy-arrow{z-index:-1}}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:active,.tippy-box[data-theme~=sa11y-theme] button:focus,.tippy-box[data-theme~=sa11y-theme] input:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] input:focus:not(:focus-visible){box-shadow:none;outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus-visible,.tippy-box[data-theme~=sa11y-theme] a:focus-visible,.tippy-box[data-theme~=sa11y-theme] button:focus-visible,.tippy-box[data-theme~=sa11y-theme] input:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.tippy-box[data-theme~=sa11y-theme] .error-icon,.tippy-box[data-theme~=sa11y-theme] .hidden-icon,.tippy-box[data-theme~=sa11y-theme] .link-icon{filter:invert(1)}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:focus{outline:3px solid transparent!important}}";
 
 /**
  * Tooltip container for all annotations.
@@ -9382,30 +9394,36 @@ function checkContrast(results, option) {
 
   // Iterate through all SVGs on the page, separately.
   Elements.Found.Svg.forEach(($el) => {
+    const generalWarning = { $el, type: 'svg-warning' };
+
+    // Get background.
     const background = getBackground($el);
+    const hasBackground = background !== 'unsupported' && background.type !== 'image';
 
     // Process simple SVGs with a single shape.
-    const shapes = $el.querySelectorAll('path, rect, circle, ellipse, line, polyline, polygon, text, tspan, textPath, use');
+    const shapes = $el.querySelectorAll('path, rect, circle, ellipse, polygon, text, use');
 
-    // Check if all nodes within the SVG have the same fill/stroke.
-    let sameFill = true;
-    let sameStroke = true;
-    let firstFill;
-    let firstStroke;
-    if (shapes) {
-      shapes.forEach((node) => {
+    // Push a general warning for any complex SVGs.
+    const complex = $el.querySelectorAll('*:not(path):not(rect):not(circle):not(ellipse):not(polygon):not(text):not(use):not(title)');
+
+    // Check if all nodes within the SVG have the same fill/stroke/opacity.
+    let allSameColour = false;
+    if (shapes.length) {
+      const ref = getComputedStyle(shapes[0]);
+      allSameColour = Array.from(shapes).every((node) => {
         const style = getComputedStyle(node);
-        const { fill, stroke } = style;
-        if (firstFill === undefined) firstFill = fill;
-        else if (fill !== firstFill) sameFill = false;
-        if (firstStroke === undefined) firstStroke = stroke;
-        else if (stroke !== firstStroke) sameStroke = false;
+        return (
+          style.fill === ref.fill
+          && style.fillOpacity === ref.fillOpacity
+          && style.stroke === ref.stroke
+          && style.strokeOpacity === ref.strokeOpacity
+          && style.opacity === ref.opacity
+        );
       });
     }
-    const allSame = shapes[0] && sameFill && sameStroke;
 
-    // If simple SVG or SVG with multiple shapes are the same colour.
-    if (shapes.length === 1 || allSame) {
+    // If simple SVG (single path) or complex SVG with same colour.
+    if ((shapes.length === 1 || allSameColour) && complex.length === 0) {
       const style = getComputedStyle(shapes[0]);
       const { fill, stroke, strokeWidth, opacity } = style;
 
@@ -9420,90 +9438,86 @@ function checkContrast(results, option) {
             ? 1 : parseFloat(strokeWidth);
         }
       }
+
       // Threshold is arbitrary/not WCAG. Smaller threshold for smaller SVGs.
       const threshold = Math.min(width, height) < 50 ? 1 : 3;
-      const hasStroke = stroke && strokePx >= threshold;
+      const hasStroke = stroke && strokePx >= threshold && stroke !== 'none';
 
-      // Get computed stroke & fill.
-      const hasFill = fill && (fill !== 'none' || !fill.startsWith('url('));
-      const resolvedFill = hasFill && fill === 'currentColor'
+      // Get resolved fill colour.
+      const hasFill = fill && fill !== 'none' && !fill.startsWith('url(');
+      const resolvedFill = fill === 'currentColor'
         ? convertToRGBA(getComputedStyle(shapes[0]).color, opacity)
         : convertToRGBA(fill, opacity);
 
-      const resolvedStroke = hasStroke && stroke === 'currentColor'
+      // Get resolved stroke colour.
+      const resolvedStroke = stroke === 'currentColor'
         ? convertToRGBA(getComputedStyle(shapes[0]).color, opacity)
         : convertToRGBA(stroke, opacity);
 
-      // Unsupported colour spaces.
-      if ([resolvedFill, resolvedStroke, background].includes('unsupported')) {
-        contrastResults.push({ $el, type: 'svg-warning' });
-        return;
-      }
+      // If supported colours and has background, we can calculate contrast.
+      const supported = ![resolvedFill, resolvedStroke].includes('unsupported');
+      if (supported && hasBackground) {
+        let contrastValue;
+        let fillPasses = false;
+        let strokePasses = false;
 
-      // If background image.
-      if (background.type === 'image') {
-        contrastResults.push({
-          $el,
-          color: resolvedFill || resolvedStroke,
-          type: 'svg-warning',
-          background,
-        });
-        return;
-      }
-
-      let contrastValue;
-      let fillPasses = false;
-      let strokePasses = false;
-
-      if (hasFill) {
-        contrastValue = calculateContrast(resolvedFill, background);
-        fillPasses = option.contrastAPCA
-          ? contrastValue.ratio >= 45
-          : contrastValue.ratio >= 3;
-      }
-
-      if (hasStroke) {
-        contrastValue = calculateContrast(resolvedStroke, background);
-        strokePasses = option.contrastAPCA
-          ? contrastValue.ratio >= 45
-          : contrastValue.ratio >= 3;
-      }
-
-      // Calculate contrast of both stroke and fill.
-      const failsBoth = hasFill && hasStroke && !fillPasses && !strokePasses;
-      const failsFill = hasFill && !hasStroke && !fillPasses;
-      const failsStroke = !hasFill && hasStroke && !strokePasses;
-
-      // Fails
-      if (failsBoth || failsFill || failsStroke) {
-        // Get hex values.
-        const bgHex = getHex(background);
-        const fillHex = getHex(resolvedFill);
-        const strokeHex = getHex(resolvedStroke);
-
-        // Ignore if foreground equals background.
-        if ((fillHex === bgHex && !hasStroke) || (strokeHex === bgHex && !hasFill)) {
-          return;
+        if (hasFill) {
+          contrastValue = calculateContrast(resolvedFill, background);
+          fillPasses = option.contrastAPCA
+            ? contrastValue.ratio >= 45
+            : contrastValue.ratio >= 3;
         }
 
-        // Push an error for simple SVGs.
-        contrastResults.push({
-          $el,
-          ratio: ratioToDisplay(contrastValue.ratio),
-          color: contrastValue.blendedColor,
-          type: 'svg-error',
-          background,
-        });
-      }
-      return;
-    }
+        if (hasStroke) {
+          contrastValue = calculateContrast(resolvedStroke, background);
+          strokePasses = option.contrastAPCA
+            ? contrastValue.ratio >= 45
+            : contrastValue.ratio >= 3;
+        }
 
-    // General warning for complex SVGs with multiple shapes.
-    contrastResults.push({
-      $el,
-      type: 'svg-warning',
-      ...(background !== 'unsupported' && { background }),
-    });
+        // Calculate contrast of both stroke and fill.
+        const failsBoth = hasFill && hasStroke && !fillPasses && !strokePasses;
+        const failsFill = hasFill && !hasStroke && !fillPasses;
+        const failsStroke = !hasFill && hasStroke && !strokePasses;
+
+        // Fails
+        if (failsBoth || failsFill || failsStroke) {
+          // Get hex values.
+          const bgHex = getHex(background);
+          const fillHex = getHex(resolvedFill);
+          const strokeHex = getHex(resolvedStroke);
+
+          // Ignore if foreground equals background.
+          if ((fillHex === bgHex && !hasStroke) || (strokeHex === bgHex && !hasFill)) {
+            return;
+          }
+
+          // Push an error for simple SVGs.
+          contrastResults.push({
+            $el,
+            ratio: ratioToDisplay(contrastValue.ratio),
+            color: contrastValue.blendedColor,
+            type: 'svg-error',
+            isLargeText: true, // To push a suggested colour (3:1).
+            background,
+          });
+        }
+      } else {
+        // General warning for complex SVGs with multiple shapes.
+        // Push whatever colour is valid.
+        if (hasFill && resolvedFill !== 'unsupported') {
+          generalWarning.color = resolvedFill;
+        } else if (hasStroke && resolvedStroke !== 'unsupported') {
+          generalWarning.color = resolvedStroke;
+        }
+        if (hasBackground) generalWarning.background = background;
+        contrastResults.push(generalWarning);
+      }
+    } else {
+      // General warning for complex SVGs.
+      if (hasBackground) generalWarning.background = background;
+      contrastResults.push(generalWarning);
+    }
   });
 
   // Check contrast of all placeholder elements.
@@ -9623,13 +9637,14 @@ function checkContrast(results, option) {
         break;
       case 'input':
         if (option.checks.CONTRAST_INPUT) {
+          const sanitizedInput = sanitizeHTMLBlock($el.outerHTML);
           results.push({
             element,
             type: option.checks.CONTRAST_INPUT.type || 'error',
             content: option.checks.CONTRAST_INPUT.content
               ? Lang.sprintf(option.checks.CONTRAST_INPUT.content)
               : Lang.sprintf('CONTRAST_INPUT', ratio) + ratioTip,
-            dismiss: prepareDismissal(`CONTRAST${$el.getAttribute('class')}${$el.tagName}${ratio}`),
+            dismiss: prepareDismissal(`CONTRAST${sanitizedInput}`),
             dismissAll: option.checks.CONTRAST_INPUT.dismissAll ? 'CONTRAST_INPUT' : false,
             developer: option.checks.CONTRAST_INPUT.developer || true,
             contrastDetails: updatedItem,
@@ -9638,6 +9653,7 @@ function checkContrast(results, option) {
         break;
       case 'placeholder':
         if (option.checks.CONTRAST_PLACEHOLDER) {
+          const sanitizedPlaceholder = sanitizeHTMLBlock($el.outerHTML);
           results.push({
             element: $el,
             type: option.checks.CONTRAST_PLACEHOLDER.type || 'error',
@@ -9645,7 +9661,7 @@ function checkContrast(results, option) {
               ? Lang.sprintf(option.checks.CONTRAST_PLACEHOLDER.content)
               : Lang.sprintf('CONTRAST_PLACEHOLDER') + ratioTip,
             position: 'afterend',
-            dismiss: prepareDismissal(`CPLACEHOLDER${$el.getAttribute('class')}${$el.tagName}${ratio}`),
+            dismiss: prepareDismissal(`CPLACEHOLDER${sanitizedPlaceholder}`),
             dismissAll: option.checks.CONTRAST_PLACEHOLDER.dismissAll ? 'CONTRAST_PLACEHOLDER' : false,
             developer: option.checks.CONTRAST_PLACEHOLDER.developer || true,
             contrastDetails: updatedItem,
@@ -9654,6 +9670,7 @@ function checkContrast(results, option) {
         break;
       case 'placeholder-unsupported':
         if (option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED) {
+          const sanitizedPlaceholder = sanitizeHTMLBlock($el.outerHTML);
           results.push({
             element: $el,
             type: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.type || 'warning',
@@ -9661,7 +9678,7 @@ function checkContrast(results, option) {
               ? Lang.sprintf(option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.content)
               : Lang.sprintf('CONTRAST_PLACEHOLDER_UNSUPPORTED') + ratioTip,
             position: 'afterend',
-            dismiss: prepareDismissal(`CPLACEHOLDERUN${$el.getAttribute('class')}${$el.tagName}${ratio}`),
+            dismiss: prepareDismissal(`CPLACEHOLDERUN${sanitizedPlaceholder}`),
             dismissAll: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.dismissAll
               ? 'CONTRAST_PLACEHOLDER_UNSUPPORTED' : false,
             developer: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.developer || true,
@@ -9671,13 +9688,14 @@ function checkContrast(results, option) {
         break;
       case 'svg-error':
         if (option.checks.CONTRAST_ERROR_GRAPHIC) {
+          const sanitizedSVG = sanitizeHTMLBlock($el.outerHTML);
           results.push({
             element: $el,
             type: option.checks.CONTRAST_ERROR_GRAPHIC.type || 'error',
             content: option.checks.CONTRAST_ERROR_GRAPHIC.content
               ? Lang.sprintf(option.checks.CONTRAST_ERROR_GRAPHIC.content)
               : Lang.sprintf('CONTRAST_ERROR_GRAPHIC') + graphicsTip,
-            dismiss: prepareDismissal(`CONTRASTERROR${$el.outerHTML}`),
+            dismiss: prepareDismissal(`CONTRASTERROR${sanitizedSVG}`),
             dismissAll: option.checks.CONTRAST_ERROR_GRAPHIC.dismissAll ? 'CONTRAST_ERROR_GRAPHIC' : false,
             developer: option.checks.CONTRAST_ERROR_GRAPHIC.developer || true,
             contrastDetails: updatedItem,
@@ -9687,13 +9705,14 @@ function checkContrast(results, option) {
         break;
       case 'svg-warning':
         if (option.checks.CONTRAST_WARNING_GRAPHIC) {
+          const sanitizedSVG = sanitizeHTMLBlock($el.outerHTML);
           results.push({
             element: $el,
             type: option.checks.CONTRAST_WARNING_GRAPHIC.type || 'warning',
             content: option.checks.CONTRAST_WARNING_GRAPHIC.content
               ? Lang.sprintf(option.checks.CONTRAST_WARNING_GRAPHIC.content)
               : Lang.sprintf('CONTRAST_WARNING_GRAPHIC') + graphicsTip,
-            dismiss: prepareDismissal(`CONTRASTWARNING${$el.outerHTML}`),
+            dismiss: prepareDismissal(`CONTRASTWARNING${sanitizedSVG}`),
             dismissAll: option.checks.CONTRAST_WARNING_GRAPHIC.dismissAll ? 'CONTRAST_WARNING_GRAPHIC' : false,
             developer: option.checks.CONTRAST_WARNING_GRAPHIC.developer || true,
             contrastDetails: updatedItem,

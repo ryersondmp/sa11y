@@ -1144,6 +1144,7 @@ test.describe('Sa11y Unit Tests', () => {
       'error-svg-2',
       'error-svg-3',
       'error-svg-4',
+      'error-svg-5',
     ];
     ids.forEach(async (id) => {
       const issue = await checkTooltip(page, id, 'Graphic does not have enough contrast');
@@ -1162,6 +1163,13 @@ test.describe('Sa11y Unit Tests', () => {
       'warning-svg-7',
       'warning-svg-8',
       'warning-svg-9',
+      'warning-svg-10',
+      'warning-svg-11',
+      'warning-svg-12',
+      'warning-svg-13',
+      'warning-svg-14',
+      'warning-svg-15',
+      'warning-svg-16',
     ];
     ids.forEach(async (id) => {
       const issue = await checkTooltip(page, id, 'contrast of this graphic is unknown');

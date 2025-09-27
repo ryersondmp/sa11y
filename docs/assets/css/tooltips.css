@@ -231,6 +231,24 @@ div {
 .tippy-box[data-theme~=sa11y-theme] button.close-btn {
   margin: 0;
 }
+.tippy-box[data-theme~=sa11y-theme] button#suggest {
+  position: relative;
+  padding: 0.2rem;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+.tippy-box[data-theme~=sa11y-theme] button#suggest:after {
+  position: absolute;
+  top: -10px;
+  right: -5px;
+  bottom: -14px;
+  left: -5px;
+  content: "";
+}
+.tippy-box[data-theme~=sa11y-theme] button#suggest:hover, .tippy-box[data-theme~=sa11y-theme] button#suggest:focus-visible {
+  color: #000 !important;
+  background-color: #fff !important;
+}
 .tippy-box[data-theme~=sa11y-theme] .dismiss-group {
   margin-top: 5px;
 }
