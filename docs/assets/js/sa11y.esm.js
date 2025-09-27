@@ -915,7 +915,9 @@ function isScreenReaderOnly(element) {
     && parseFloat(style.height) < 2
     && style.overflow === 'hidden';
   const zeroFont = parseFloat(style.fontSize) < 2;
-  return offscreen || clip.startsWith('inset') || tinyBox || zeroFont;
+  const indent = parseInt(style.textIndent, 10);
+  const offscreenText = !Number.isNaN(indent) && Math.abs(indent) >= 5000;
+  return offscreen || clip.startsWith('inset') || tinyBox || zeroFont || offscreenText;
 }
 
 /**
