@@ -8470,7 +8470,7 @@ ${this.error.stack}
       }
 
       // Ignore tracking pixels without explicit aria-hidden or nullified alt.
-      if ($el.height < 2 && $el.width < 2 && isElementHidden($el)) {
+      if ($el.height < 2 && $el.width < 2 && (isElementHidden($el) || alt === '')) {
         return;
       }
 

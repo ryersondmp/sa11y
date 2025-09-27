@@ -276,7 +276,7 @@ label {
   font-weight: 500;
 }
 
-img {
+img:not(img.beacon) {
   width: 80px;
 }
 
