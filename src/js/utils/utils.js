@@ -32,15 +32,16 @@ export function isElementVisuallyHiddenOrHidden(element) {
  * @returns {boolean} Returns true if visually hidden based on properties.
  */
 export function isScreenReaderOnly(element) {
-  const style = window.getComputedStyle(element);
-  const clipPath = style.getPropertyValue('clip-path');
-  const { position } = style;
-  const width = parseFloat(style.width);
-  const height = parseFloat(style.height);
-  const { overflow } = style;
-  return (
-    (clipPath === 'inset(50%)') || (position === 'absolute' && width === 1 && height === 1 && overflow === 'hidden')
-  );
+  const style = getComputedStyle(element);
+  const clip = style.getPropertyValue('clip-path');
+  const offscreen = style.position === 'absolute'
+    && ['left', 'right', 'top', 'bottom'].some((p) => Math.abs(parseInt(style[p], 10)) >= 5000);
+  const tinyBox = style.position === 'absolute'
+    && parseFloat(style.width) < 2
+    && parseFloat(style.height) < 2
+    && style.overflow === 'hidden';
+  const zeroFont = parseFloat(style.fontSize) < 2;
+  return offscreen || clip.startsWith('inset') || tinyBox || zeroFont;
 }
 
 /**

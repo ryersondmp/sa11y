@@ -68,6 +68,11 @@
       position: relative;
       z-index: 9;
     }
+
+    .screen-reader {
+      left: -9999px;
+      position: absolute;
+    }
   </style>
 </head>
 
@@ -76,6 +81,10 @@
     <h2>Sa11y (Random) Unit Tests</h2>
   </header>
   <main>
+
+    <h2>Better sr-only detection.</h2>
+    <p>Invisible contrast error below is ignored because sr-only text.</p>
+    <p style="color:lightblue;" class="screen-reader">Off screen</p>
 
     <h2>Clickable suggested colour</h2>
     <p>Clicking on suggested colour updates preview and saves hex to clipboard.</p>

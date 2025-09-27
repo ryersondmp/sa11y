@@ -906,15 +906,16 @@ function isElementVisuallyHiddenOrHidden(element) {
  * @returns {boolean} Returns true if visually hidden based on properties.
  */
 function isScreenReaderOnly(element) {
-  const style = window.getComputedStyle(element);
-  const clipPath = style.getPropertyValue('clip-path');
-  const { position } = style;
-  const width = parseFloat(style.width);
-  const height = parseFloat(style.height);
-  const { overflow } = style;
-  return (
-    (clipPath === 'inset(50%)') || (position === 'absolute' && width === 1 && height === 1 && overflow === 'hidden')
-  );
+  const style = getComputedStyle(element);
+  const clip = style.getPropertyValue('clip-path');
+  const offscreen = style.position === 'absolute'
+    && ['left', 'right', 'top', 'bottom'].some((p) => Math.abs(parseInt(style[p], 10)) >= 5000);
+  const tinyBox = style.position === 'absolute'
+    && parseFloat(style.width) < 2
+    && parseFloat(style.height) < 2
+    && style.overflow === 'hidden';
+  const zeroFont = parseFloat(style.fontSize) < 2;
+  return offscreen || clip.startsWith('inset') || tinyBox || zeroFont;
 }
 
 /**
@@ -7830,7 +7831,7 @@ function checkElementContrast(
   return algorithm($el, color, background, fontSize, fontWeight, opacity, contrastAAA);
 }
 
-var annotationStyles = ".annotation{display:block;position:relative}.annotation-inline{display:inline-block;position:relative;text-align:end}button{border-radius:50%;box-shadow:0 0 16px 0 rgba(0,0,0,.31);cursor:pointer;display:block;padding:0;transition:all .2s ease-in-out}button,button:after{height:36px;position:absolute;width:36px}button:after{content:\"\";left:-7px;padding:7px;top:-7px}.error-btn{background:50% 50% var(--sa11y-error-svg) no-repeat;background-color:var(--sa11y-error);background-size:22px;border:1px solid var(--sa11y-error);z-index:9999}.error-btn:focus,.error-btn:hover{background-color:var(--sa11y-error-hover)}.good-btn{background:50% 50% var(--sa11y-good) var(--sa11y-good-svg) no-repeat;background-color:var(--sa11y-good);background-size:20px;border:1px solid var(--sa11y-good);z-index:9977}.good-btn:focus,.good-btn:hover{background-color:var(--sa11y-good-hover)}.warning-btn{background:50% 50% var(--sa11y-warning) var(--sa11y-warning-svg) no-repeat;background-color:var(--sa11y-warning);background-size:24px;border:1px solid var(--sa11y-warning);transform:scaleX(var(--sa11y-icon-direction));z-index:9988}.warning-btn:focus,.warning-btn:hover{background-color:var(--sa11y-warning-hover)}.sa11y-btn:active,.sa11y-btn:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.sa11y-btn{border:1px solid transparent!important;forced-color-adjust:none;outline:3px solid transparent!important}}";
+var annotationStyles = ".annotation{display:block;position:relative}.annotation-inline{display:inline-block;position:relative;text-align:end}button{border-radius:50%;box-shadow:0 0 16px 0 rgba(0,0,0,.31);cursor:pointer;display:block;padding:0;transition:all .2s ease-in-out}button,button:after{height:36px;position:absolute;width:36px}button:after{content:\"\";left:-7px;padding:7px;top:-7px}.error-btn{background:50% 50% var(--sa11y-error-svg) no-repeat;background-color:var(--sa11y-error);background-size:22px;border:1px solid var(--sa11y-error);z-index:9999}.error-btn:focus,.error-btn:hover{background-color:var(--sa11y-error-hover)}.good-btn{background:50% 50% var(--sa11y-good) var(--sa11y-good-svg) no-repeat;background-color:var(--sa11y-good);background-size:20px;border:1px solid var(--sa11y-good);z-index:9977}.good-btn:focus,.good-btn:hover{background-color:var(--sa11y-good-hover)}.warning-btn{background:50% 50% var(--sa11y-warning) var(--sa11y-warning-svg) no-repeat;background-color:var(--sa11y-warning);background-size:24px;border:1px solid var(--sa11y-warning);transform:scaleX(var(--sa11y-icon-direction));z-index:9988}.warning-btn:focus,.warning-btn:hover{background-color:var(--sa11y-warning-hover)}button:active,button:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){button{border:1px solid transparent!important;forced-color-adjust:none;outline:3px solid transparent!important}}";
 
 class Annotations extends HTMLElement {
   connectedCallback() {
@@ -8802,6 +8803,7 @@ function checkHeaders(results, option, headingOutline) {
     let content = null;
     let developer = null;
     let dismissAll = null;
+    let margin = null;
 
     // Rulesets.
     if (headingLength === 0) {
@@ -8813,6 +8815,7 @@ function checkHeaders(results, option, headingOutline) {
             content = Lang.sprintf(option.checks.HEADING_EMPTY_WITH_IMAGE.content || 'HEADING_EMPTY_WITH_IMAGE', level);
             developer = option.checks.HEADING_EMPTY_WITH_IMAGE.developer || false;
             dismissAll = option.checks.HEADING_EMPTY_WITH_IMAGE.dismissAll ? 'HEADING_EMPTY_WITH_IMAGE' : false;
+            margin = '-15px 30px';
           }
         }
       } else if (option.checks.HEADING_EMPTY) {
@@ -8820,6 +8823,7 @@ function checkHeaders(results, option, headingOutline) {
         content = Lang.sprintf(option.checks.HEADING_EMPTY.content || 'HEADING_EMPTY', level);
         developer = option.checks.HEADING_EMPTY.developer || false;
         dismissAll = option.checks.HEADING_EMPTY.dismissAll ? 'HEADING_EMPTY' : false;
+        margin = '0';
       }
     } else if (level - prevLevel > 1 && i !== 0) {
       if (option.checks.HEADING_SKIPPED_LEVEL) {
@@ -8854,6 +8858,7 @@ function checkHeaders(results, option, headingOutline) {
         dismissAll,
         isWithinRoot,
         developer,
+        margin,
       });
     }
 

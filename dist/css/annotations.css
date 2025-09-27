@@ -73,15 +73,15 @@ button:after {
 /* ************************************* */
 /* Keyboard focus styles for annotations */
 /* ************************************* */
-.sa11y-btn:active,
-.sa11y-btn:focus {
+button:active,
+button:focus {
   outline: 0;
   box-shadow: 0 0 0 5px var(--sa11y-focus-color);
 }
 
 /* High Contrast Mode */
 @media screen and (forced-colors: active) {
-  .sa11y-btn {
+  button {
     border: 1px solid transparent !important;
     forced-color-adjust: none;
     outline: transparent solid 3px !important;
