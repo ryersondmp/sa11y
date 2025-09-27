@@ -894,38 +894,34 @@
   }
 
   /**
-   * Checks if an element is visually hidden or hidden based on its attributes and styles.
-   * @param {HTMLElement} element The element to check for visibility.
-   * @returns {boolean} `true` if the element is visually hidden or hidden, `false` otherwise.
-   */
-  function isElementVisuallyHiddenOrHidden(element) {
-    if (element.getAttribute('hidden') || (element.offsetWidth === 0 && element.offsetHeight === 0) || (element.clientHeight === 1 && element.clientWidth === 1)) {
-      return true;
-    }
-    const compStyles = getComputedStyle(element);
-    return compStyles.getPropertyValue('display') === 'none';
-  }
-
-  /**
    * Determine whether an element is visually hidden (e.g. .sr-only) based on computed properties.
    * @param {HTMLElement} element The element to check for.
    * @returns {boolean} Returns true if visually hidden based on properties.
    */
   function isScreenReaderOnly(element) {
     const style = getComputedStyle(element);
-    const clip = style.getPropertyValue('clip-path');
-    const offscreen = style.position === 'absolute'
-      && ['left', 'right', 'top', 'bottom'].some((p) => Math.abs(parseInt(style[p], 10)) >= 5000);
-    const tinyBox = style.position === 'absolute'
-      && parseFloat(style.width) < 2
-      && parseFloat(style.height) < 2
-      && style.overflow === 'hidden';
-    const zeroFont = parseFloat(style.fontSize) < 2;
+
+    // Modern technique: clip-path inset(50%).
+    if (style.getPropertyValue('clip-path').startsWith('inset(50%)')) return true;
+
+    // Legacy clipping.
+    if (style.clip === 'rect(1px, 1px, 1px, 1px)'
+      || style.clip === 'rect(0px, 0px, 0px, 0px)') return true;
+
+    // Large text-indent offscreen.
     const indent = parseInt(style.textIndent, 10);
-    const offscreenIndent = !Number.isNaN(indent) && Math.abs(indent) >= 5000;
-    const clipped = style.clip === 'rect(1px, 1px, 1px, 1px)'
-      || style.clip === 'rect(0px, 0px, 0px, 0px)' || clip.startsWith('inset');
-    return offscreen || tinyBox || zeroFont || offscreenIndent || clipped;
+    if (!Number.isNaN(indent) && Math.abs(indent) > 5000) return true;
+
+    // Tiny box offscreen.
+    if (style.overflow === 'hidden'
+      && parseFloat(style.width) < 2 && parseFloat(style.height) < 2) return true;
+
+    // Absolute positioned far offscreen.
+    if (style.position === 'absolute'
+      && ['left', 'right', 'top', 'bottom'].some((p) => Math.abs(parseInt(style[p], 10)) > 5000)) return true;
+
+    // Font size 1px or 0px.
+    return parseFloat(style.fontSize) < 2;
   }
 
   /**
@@ -934,9 +930,18 @@
    * @returns {boolean} 'true' if the element is hidden (display: none).
    */
   function isElementHidden(element) {
-    if (element.getAttribute('hidden')) return true;
-    const compStyles = getComputedStyle(element);
-    return compStyles.getPropertyValue('display') === 'none';
+    return element.hidden || getComputedStyle(element).getPropertyValue('display') === 'none';
+  }
+
+  /**
+   * Checks if an element is invisible in layout.
+   * @param {HTMLElement} element The element to check for visibility.
+   * @returns {boolean} `true` if the element is visually hidden or hidden, `false` otherwise.
+   */
+  function isElementVisuallyHiddenOrHidden(element) {
+    if ((element.offsetWidth === 0 && element.offsetHeight === 0)
+      || (element.clientHeight === 1 && element.clientWidth === 1)) return true;
+    return isElementHidden(element);
   }
 
   /**
