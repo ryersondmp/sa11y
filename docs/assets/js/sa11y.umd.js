@@ -9188,7 +9188,7 @@ ${this.error.stack}
               position: 'afterend',
               dismiss: prepareDismissal(`LINKGOOD${href + linkTextTrimmed}`),
               dismissAll: option.checks.LINK_LABEL.dismissAll ? 'LINK_LABEL' : false,
-              developer: option.checks.LINK_LABEL.developer || false,
+              developer: option.checks.LINK_LABEL.developer || true,
             });
           }
 

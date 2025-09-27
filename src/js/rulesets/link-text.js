@@ -292,7 +292,7 @@ export default function checkLinkText(results, option) {
             position: 'afterend',
             dismiss: Utils.prepareDismissal(`LINKGOOD${href + linkTextTrimmed}`),
             dismissAll: option.checks.LINK_LABEL.dismissAll ? 'LINK_LABEL' : false,
-            developer: option.checks.LINK_LABEL.developer || false,
+            developer: option.checks.LINK_LABEL.developer || true,
           });
         }
 
