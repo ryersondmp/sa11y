@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version dev-4.3.0
+  * @version 4.3.0
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -2274,7 +2274,7 @@ function removeExportListeners() {
   }
 }
 
-const version = 'dev-4.3.0';
+const version = '4.3.0';
 
 var styles = ":host{background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);bottom:0;display:block;height:-moz-fit-content;height:fit-content;left:0;position:fixed;right:0;width:100%;z-index:999999}*{-webkit-font-smoothing:auto!important;color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;font-size:var(--sa11y-normal-text);line-height:22px!important}#dialog{margin:20px auto;max-width:900px;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none}p{margin-top:0}.error{background:var(--sa11y-error);border:2px dashed #f08080;color:var(--sa11y-error-text);margin-bottom:0;padding:5px}";
 
@@ -11304,7 +11304,7 @@ class Sa11y {
               const index = counts.get(issue.element) || 0;
               counts.set(issue.element, index + 1);
               const offset = issue.inline ? 0 : 15;
-              updatedIssue = { ...issue, margin: `${index * 30 + offset}px` };
+              updatedIssue = { ...issue, margin: `${index * 20 + offset}px` };
             }
             annotate(updatedIssue, option);
           });

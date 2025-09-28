@@ -280,7 +280,7 @@ class Sa11y {
               const index = counts.get(issue.element) || 0;
               counts.set(issue.element, index + 1);
               const offset = issue.inline ? 0 : 15;
-              updatedIssue = { ...issue, margin: `${index * 30 + offset}px` };
+              updatedIssue = { ...issue, margin: `${index * 20 + offset}px` };
             }
             annotate(updatedIssue, option);
           });
