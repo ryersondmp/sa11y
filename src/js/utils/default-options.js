@@ -120,6 +120,8 @@ const defaultOptions = {
     IMAGE_PASS: {
       dismissAll: true,
     },
+    ALT_UNPRONOUNCEABLE: true,
+    LINK_ALT_UNPRONOUNCEABLE: true,
 
     // Link checks
     DUPLICATE_TITLE: {

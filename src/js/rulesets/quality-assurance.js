@@ -53,7 +53,7 @@ export default function checkQA(results, option) {
 
       // Check for broken same-page links.
       if (option.checks.QA_IN_PAGE_LINK) {
-        const hasAttributes = $el.getAttribute('role') === 'button' || $el.hasAttribute('aria-haspopup') || $el.hasAttribute('aria-expanded') || $el.hasAttribute('onclick');
+        const hasAttributes = $el.getAttribute('role') === 'button' || $el.hasAttribute('aria-haspopup') || $el.hasAttribute('aria-expanded') || $el.hasAttribute('onclick') || $el.closest('nav, [role="navigation"]');
         const hasText = Utils.getText($el).length !== 0;
         if ((href.startsWith('#') || href === '') && !hasAttributes && hasText) {
           const targetId = href.substring(1);
@@ -210,7 +210,7 @@ export default function checkQA(results, option) {
 
     // Find bolded text as headings.
     const computeBoldTextParagraphs = (p) => {
-      const startsWithBold = /^(<strong>|<b>)/i.test(p.innerHTML.trim());
+      const startsWithBold = /^<\s*(strong|b)(\s+[^>]*)?>/i.test(p.innerHTML.trim());
 
       if (startsWithBold && !p.closest(ignoreParents)) {
         const possibleHeading = p.querySelector('strong, b');
@@ -418,11 +418,13 @@ export default function checkQA(results, option) {
     const { textDecorationLine, textAlign, fontSize } = style;
 
     /* Check: Underlined text. */
-    if (option.checks.QA_UNDERLINE
-      && textDecorationLine === 'underline'
-      && !$el.closest('[onclick]')
-      && !$el.closest('a[href]')
-      && !$el.closest('ABBR')) {
+    const interactive = 'a[href], button, abbr, [role="link"], [role="button"], [tabindex="0"], [onclick]';
+    if (
+      option.checks.QA_UNDERLINE
+      && ($el.closest('u') || textDecorationLine === 'underline')
+      && !$el.closest(interactive)
+      && !$el.matches(interactive)
+    ) {
       addUnderlineResult($el);
     }
 

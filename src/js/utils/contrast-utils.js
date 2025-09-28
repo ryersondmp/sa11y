@@ -34,7 +34,11 @@ export function convertToRGBA(color, opacity) {
 
   if (!colorString.startsWith('rgb')) {
     // Unsupported color spaces.
-    if (colorString.startsWith('color(rec2020') || colorString.startsWith('color(display-p3')) {
+    if (
+      colorString.startsWith('color(rec2020')
+      || colorString.startsWith('color(display-p3')
+      || colorString.startsWith('url(')
+    ) {
       return 'unsupported';
     }
 
@@ -220,11 +224,11 @@ export function ratioToDisplay(value) {
     return Math.abs(Number(value.toFixed(1)));
   }
   // Round to decimal places, and display without decimals if integer.
-  const rounded = Math.round(value * 100) / 100;
-  if (Number.isInteger(rounded)) {
-    return `${rounded}:1`;
-  }
-  return `${rounded.toFixed(2)}:1`;
+  const truncatedRatio = Math.trunc(value * 10) / 10;
+  const formattedRatio = Number.isInteger(truncatedRatio)
+    ? truncatedRatio.toFixed(0)
+    : truncatedRatio;
+  return `${formattedRatio}:1`;
 }
 
 /**
@@ -424,7 +428,10 @@ export function suggestColorAPCA(color, background, fontWeight, fontSize) {
 export function generateColorSuggestion(contrastDetails) {
   let adviceContainer;
   const { color, background, fontWeight, fontSize, isLargeText, type } = contrastDetails;
-  if (color && background && background.type !== 'image' && type === 'text') {
+  if (
+    color && background && background.type !== 'image'
+    && (type === 'text' || type === 'svg-error' || type === 'input')
+  ) {
     const suggested = Constants.Global.contrastAPCA
       ? suggestColorAPCA(color, background, fontWeight, fontSize)
       : suggestColorWCAG(color, background, isLargeText, Constants.Global.contrastAAA);
@@ -432,7 +439,7 @@ export function generateColorSuggestion(contrastDetails) {
     let advice;
     const hr = '<hr aria-hidden="true">';
     const style = `color:${suggested.color};background-color:${getHex(contrastDetails.background)};`;
-    const colorBadge = `<strong class="badge" style="${style}">${suggested.color}</strong>`;
+    const colorBadge = `<button id="suggest" class="badge" style="${style}">${suggested.color}</button>`;
     const sizeBadge = `<strong class="normal-badge">${suggested.size}px</strong>`;
 
     if (!Constants.Global.contrastAPCA) {
@@ -508,8 +515,7 @@ export function generateContrastTools(contrastDetails) {
       <div id="contrast" class="badge">${Lang._('CONTRAST')}</div>
       <div id="value" class="badge">${displayedRatio}</div>
       <div id="good" class="badge good-contrast" hidden>${Lang._('GOOD')} <span class="good-icon"></span></div>
-      <div id="apca-table" hidden></div>
-      <div id="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};${sanitizedText.length ? '' : 'display: none;'}` : ''}${hasFontWeight + hasFontSize + textDecoration}">${sanitizedText}</div>
+      <div id="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};` : ''}${hasFontWeight + hasFontSize + textDecoration}">${sanitizedText}</div>
       <div id="color-pickers">
         <label for="fg-text">${Lang._('FG')} ${unknownFGText}
           <input type="color" id="fg-input" value="${foregroundHex}" ${unknownFG}/>
@@ -519,43 +525,6 @@ export function generateContrastTools(contrastDetails) {
         </label>
       </div>`;
   return contrastTools;
-}
-
-export function createFontSizesTable(container, fontSizes) {
-  const apcaTable = container;
-  apcaTable.innerHTML = '';
-  apcaTable.hidden = false;
-
-  const row = document.createElement('div');
-  row.classList.add('row');
-
-  // Show only 200 thru 700 font weights.
-  const filteredFontSizes = fontSizes.slice(1, 7);
-  for (let i = 0; i < filteredFontSizes.length; i++) {
-    const fontSize = filteredFontSizes[i];
-    const fontWeight = (i + 2) * 100;
-
-    // Only render the cell if font size is not 777 or 999.
-    if (fontSize !== 777 && fontSize !== 999) {
-      const cell = document.createElement('div');
-      cell.classList.add('cell');
-
-      // Font size.
-      const sizeElement = document.createElement('div');
-      sizeElement.classList.add('font-size');
-      sizeElement.textContent = `${Math.ceil(fontSize)}px`;
-
-      // Font weight.
-      const weightElement = document.createElement('div');
-      weightElement.classList.add('font-weight');
-      weightElement.textContent = `${fontWeight}`;
-
-      cell.appendChild(sizeElement);
-      cell.appendChild(weightElement);
-      row.appendChild(cell);
-      apcaTable.appendChild(row);
-    }
-  }
 }
 
 /**
@@ -576,7 +545,6 @@ export function initializeContrastTools(container, contrastDetails) {
     const bgInput = container.querySelector('#bg-input');
     const ratio = container.querySelector('#value');
     const good = container.querySelector('#good');
-    const apcaTable = container.querySelector('#apca-table');
 
     // Helper to update badge classes.
     const toggleBadges = (elements, condition) => {
@@ -599,15 +567,6 @@ export function initializeContrastTools(container, contrastDetails) {
       contrastPreview.style.backgroundColor = bgColor;
       contrastPreview.style.backgroundImage = 'none';
 
-      // Change SVG color if it contains a single <path> element.
-      const child = contrastPreview.querySelectorAll('svg *');
-      if (child.length === 1) {
-        const { fill, stroke } = getComputedStyle(child[0]);
-        child[0].style.opacity = 1;
-        if (fill !== 'none') child[0].style.fill = fgColor;
-        if (stroke !== 'none') child[0].style.stroke = fgColor;
-      }
-
       // Get contrast ratio.
       const contrastValue = calculateContrast(convertToRGBA(fgColor), convertToRGBA(bgColor));
       const elementsToToggle = [ratio, contrast];
@@ -626,13 +585,6 @@ export function initializeContrastTools(container, contrastDetails) {
             good.hidden = !nonTextPasses;
             passes = nonTextPasses;
             toggleBadges(elementsToToggle, passes);
-            break;
-          }
-          case 'svg-text': {
-            good.hidden = !nonTextPasses;
-            passes = fontArray.slice(1, 7).some((size) => size !== 999 && size !== 777);
-            toggleBadges(elementsToToggle, passes);
-            createFontSizesTable(apcaTable, fontArray);
             break;
           }
           default: {
@@ -684,6 +636,20 @@ export function initializeContrastTools(container, contrastDetails) {
     // Event listeners for both colour inputs.
     fgInput.addEventListener('input', updatePreview);
     bgInput.addEventListener('input', updatePreview);
+
+    // Clicking on suggested colour updates preview and saves value to clipboard.
+    setTimeout(() => {
+      const suggest = container.querySelector('#suggest');
+      if (suggest) {
+        const updatePreviewWithSuggested = () => {
+          const hex = suggest.textContent;
+          fgInput.value = hex;
+          updatePreview();
+          navigator.clipboard.writeText(hex).catch(() => { });
+        };
+        suggest.addEventListener('click', updatePreviewWithSuggested);
+      }
+    }, 0);
   }
 }
 

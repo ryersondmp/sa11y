@@ -14,33 +14,34 @@ export function documentLoadingCheck(callback) {
 }
 
 /**
- * Checks if an element is visually hidden or hidden based on its attributes and styles.
- * @param {HTMLElement} element The element to check for visibility.
- * @returns {boolean} `true` if the element is visually hidden or hidden, `false` otherwise.
- */
-export function isElementVisuallyHiddenOrHidden(element) {
-  if (element.getAttribute('hidden') || (element.offsetWidth === 0 && element.offsetHeight === 0) || (element.clientHeight === 1 && element.clientWidth === 1)) {
-    return true;
-  }
-  const compStyles = getComputedStyle(element);
-  return compStyles.getPropertyValue('display') === 'none';
-}
-
-/**
  * Determine whether an element is visually hidden (e.g. .sr-only) based on computed properties.
  * @param {HTMLElement} element The element to check for.
  * @returns {boolean} Returns true if visually hidden based on properties.
  */
 export function isScreenReaderOnly(element) {
-  const style = window.getComputedStyle(element);
-  const clipPath = style.getPropertyValue('clip-path');
-  const { position } = style;
-  const width = parseFloat(style.width);
-  const height = parseFloat(style.height);
-  const { overflow } = style;
-  return (
-    (clipPath === 'inset(50%)') || (position === 'absolute' && width === 1 && height === 1 && overflow === 'hidden')
-  );
+  const style = getComputedStyle(element);
+
+  // Modern technique: clip-path inset(50%).
+  if (style.getPropertyValue('clip-path').startsWith('inset(50%)')) return true;
+
+  // Legacy clipping.
+  if (style.clip === 'rect(1px, 1px, 1px, 1px)'
+    || style.clip === 'rect(0px, 0px, 0px, 0px)') return true;
+
+  // Large text-indent offscreen.
+  const indent = parseInt(style.textIndent, 10);
+  if (!Number.isNaN(indent) && Math.abs(indent) > 5000) return true;
+
+  // Tiny box offscreen.
+  if (style.overflow === 'hidden'
+    && parseFloat(style.width) < 2 && parseFloat(style.height) < 2) return true;
+
+  // Absolute positioned far offscreen.
+  if (style.position === 'absolute'
+    && ['left', 'right', 'top', 'bottom'].some((p) => Math.abs(parseInt(style[p], 10)) > 5000)) return true;
+
+  // Font size 1px or 0px.
+  return parseFloat(style.fontSize) < 2;
 }
 
 /**
@@ -49,11 +50,18 @@ export function isScreenReaderOnly(element) {
  * @returns {boolean} 'true' if the element is hidden (display: none).
  */
 export function isElementHidden(element) {
-  if (element.getAttribute('hidden')) {
-    return true;
-  }
-  const compStyles = getComputedStyle(element);
-  return compStyles.getPropertyValue('display') === 'none';
+  return element.hidden || getComputedStyle(element).getPropertyValue('display') === 'none';
+}
+
+/**
+ * Checks if an element is invisible in layout.
+ * @param {HTMLElement} element The element to check for visibility.
+ * @returns {boolean} `true` if the element is visually hidden or hidden, `false` otherwise.
+ */
+export function isElementVisuallyHiddenOrHidden(element) {
+  if ((element.offsetWidth === 0 && element.offsetHeight === 0)
+    || (element.clientHeight === 1 && element.clientWidth === 1)) return true;
+  return isElementHidden(element);
 }
 
 /**
@@ -62,9 +70,9 @@ export function isElementHidden(element) {
  * @returns {string} The escaped string with HTML special characters replaced by their corresponding entities.
  */
 export function escapeHTML(string) {
-  const $div = document.createElement('div');
-  $div.textContent = string;
-  return $div.innerHTML.replaceAll('"', '&quot;').replaceAll("'", '&#039;').replaceAll('`', '&#x60;');
+  const div = document.createElement('div');
+  div.textContent = string;
+  return div.innerHTML.replaceAll('"', '&quot;').replaceAll("'", '&#039;').replaceAll('`', '&#x60;');
 }
 
 /**
@@ -247,12 +255,10 @@ export function debounce(callback, wait) {
  */
 export function findVisibleParent(element, property, value) {
   let $el = element;
-  while ($el !== null) {
+  while ($el) {
     const style = window.getComputedStyle($el);
     const propValue = style.getPropertyValue(property);
-    if (propValue === value) {
-      return $el;
-    }
+    if (propValue === value) return $el;
     $el = $el.parentElement;
   }
   return null;
@@ -266,9 +272,7 @@ export function findVisibleParent(element, property, value) {
 export function offsetTop(element) {
   const rect = element.getBoundingClientRect();
   const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-  return {
-    top: rect.top + scrollTop,
-  };
+  return { top: rect.top + scrollTop };
 }
 
 /**
@@ -314,9 +318,7 @@ export const store = {
 export function addPulse(element) {
   const border = 'data-sa11y-pulse-border';
   element.setAttribute(border, '');
-  setTimeout(() => {
-    element.removeAttribute(border);
-  }, 2500);
+  setTimeout(() => element.removeAttribute(border), 2500);
 }
 
 /**
@@ -353,28 +355,28 @@ export function prepareDismissal(string) {
 */
 export function generateSelectorPath(element) {
   const path = [];
-  let currElement = element;
-  while (currElement) {
-    let selector = currElement.localName;
-    if (currElement.id) {
-      selector += `#${currElement.id}`;
+  let currentElement = element;
+  while (currentElement) {
+    let selector = currentElement.localName;
+    if (currentElement.id) {
+      selector += `#${currentElement.id}`;
       path.unshift(selector);
       break;
-    } else if (currElement.className) {
-      selector += `.${currElement.className.replace(/\s+/g, '.')}`;
+    } else if (currentElement.className) {
+      selector += `.${currentElement.className.replace(/\s+/g, '.')}`;
     }
-    const parentElement = currElement.parentNode;
+    const parentElement = currentElement.parentNode;
     if (parentElement) {
       const siblings = parentElement.children;
       if (siblings.length > 1) {
-        const index = Array.prototype.indexOf.call(siblings, currElement) + 1;
+        const index = Array.prototype.indexOf.call(siblings, currentElement) + 1;
         selector += `:nth-child(${index})`;
       }
       path.unshift(selector);
     } else {
       break;
     }
-    currElement = currElement.parentNode.host || currElement.parentNode;
+    currentElement = currentElement.parentNode.host || currentElement.parentNode;
   }
   return path.join(' > ');
 }
@@ -459,9 +461,7 @@ export function createAlert(alertMessage, errorPreview, extendedPreview) {
   }
 
   // A little time before setting focus on the close button.
-  setTimeout(() => {
-    alertClose.focus();
-  }, 300);
+  setTimeout(() => alertClose.focus(), 300);
 
   // Closing alert sets focus back to Skip to Issue toggle.
   function closeAlert() {
@@ -542,7 +542,7 @@ export function isScrollable(scrollArea, container, ariaLabel) {
  * @returns {string} - The best available source URL.
  */
 export function getBestImageSource(element) {
-  const getLastSrc = (src) => src?.split(',').pop()?.trim()?.split(/\s+/)[0];
+  const getLastSrc = (src) => src?.split(/,\s+/).pop()?.trim()?.split(/\s+/)[0];
 
   // Return absolute URLs. Necessary for HTML export.
   const resolveUrl = (src) => (src ? new URL(src, window.location.href).href : null);
@@ -728,4 +728,61 @@ export function standardizeHref($el) {
   href = href.replace(/\.(html|php|htm|asp|aspx)$/i, '');
 
   return href;
+}
+
+/**
+ * Roving tabindex menu for page outline.
+ * Thanks to Srijan for this snippet!
+ * @param {HTMLElement} container - Parent element (e.g., ul, div).
+ * @param {HTMLElement[]} children - Focusable child elements inside container.
+*/
+export function initRovingTabindex(container, children) {
+  let current = 0;
+  const handleKeyDown = (e) => {
+    if (!['ArrowUp', 'ArrowDown', 'Space'].includes(e.code)) return;
+    if (e.code === 'Space') {
+      children[current].click();
+      e.preventDefault();
+      return;
+    }
+    const selected = children[current];
+    selected.setAttribute('tabindex', -1);
+    let next;
+    if (e.code === 'ArrowDown') {
+      next = current + 1;
+      if (current === children.length - 1) {
+        next = 0;
+      }
+    } else if ((e.code === 'ArrowUp')) {
+      next = current - 1;
+      if (current === 0) {
+        next = children.length - 1;
+      }
+    }
+    children[next].setAttribute('tabindex', 0);
+    children[next].focus();
+    current = next;
+    e.preventDefault();
+  };
+
+  container.addEventListener('focus', () => {
+    if (children.length > 0) {
+      container.setAttribute('tabindex', -1);
+      children[current].setAttribute('tabindex', 0);
+      children[current].focus();
+    }
+    container.addEventListener('keydown', handleKeyDown);
+  });
+
+  container.addEventListener('blur', () => {
+    container.removeEventListener('keydown', handleKeyDown);
+  });
+}
+
+/**
+ * Detects if the browser supports CSS Anchor Positioning.
+ * @link https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning
+ */
+export function supportsAnchorPositioning() {
+  return CSS.supports('anchor-name: --sa11y') && CSS.supports('position-anchor: --sa11y');
 }

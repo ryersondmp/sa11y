@@ -33,7 +33,7 @@ export default function checkContrast(results, option) {
     // Check if element is visually hidden to screen readers or explicitly hidden.
     const isVisuallyHidden = Utils.isScreenReaderOnly($el);
     const isExplicitlyHidden = Utils.isElementHidden($el);
-    const isHidden = isExplicitlyHidden || isVisuallyHidden || opacity === 0;
+    const isHidden = isExplicitlyHidden || isVisuallyHidden || opacity === 0 || fontSize === 0;
 
     // Filter only text nodes.
     const textString = Array.from($el.childNodes)
@@ -47,8 +47,8 @@ export default function checkContrast(results, option) {
 
     // Only check elements with text and inputs.
     if (text.length !== 0 || checkInputs) {
+      const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
       if (color === 'unsupported' || background === 'unsupported') {
-        const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
         contrastResults.push({
           $el,
           type: 'unsupported',
@@ -60,10 +60,7 @@ export default function checkContrast(results, option) {
           ...(color !== 'unsupported' && { color }),
         });
       } else if (background.type === 'image') {
-        if (isHidden) {
-          // Ignore visually hidden.
-        } else {
-          const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
+        if (!isHidden) {
           contrastResults.push({
             $el,
             type: 'background-image',
@@ -75,11 +72,7 @@ export default function checkContrast(results, option) {
             opacity,
           });
         }
-      } else if ($el.tagName === 'text' && $el.closest('svg')) {
-        // Handle separately.
-      } else if (isHidden || Contrast.getHex(color) === Contrast.getHex(background)) {
-        // Ignore visually hidden elements.
-      } else {
+      } else if (!isHidden && Contrast.getHex(color) !== Contrast.getHex(background)) {
         const result = Contrast.checkElementContrast(
           $el, color, background, fontSize, fontWeight, opacity, option.contrastAAA,
         );
@@ -93,92 +86,129 @@ export default function checkContrast(results, option) {
 
   // Iterate through all SVGs on the page, separately.
   Elements.Found.Svg.forEach(($el) => {
+    const generalWarning = { $el, type: 'svg-warning' };
+
+    // Get background.
     const background = Contrast.getBackground($el);
-
-    // Background image.
-    if (background && background.type === 'image') {
-      contrastResults.push({ $el, type: 'svg-warning', background });
-      return;
-    }
-
-    // Handle SVGs with <text> element
-    if ($el.querySelector('text')) {
-      contrastResults.push({ $el, type: 'svg-text', background });
-      return;
-    }
+    const hasBackground = background !== 'unsupported' && background.type !== 'image';
 
     // Process simple SVGs with a single shape.
-    const shapes = $el.querySelectorAll('path, polygon, circle, rect, ellipse, use');
-    if (shapes.length === 1) {
+    const shapes = $el.querySelectorAll('path, rect, circle, ellipse, polygon, text, use');
+
+    // Push a general warning for any complex SVGs.
+    const complex = $el.querySelectorAll('*:not(path):not(rect):not(circle):not(ellipse):not(polygon):not(text):not(use):not(title)');
+
+    // Check if all nodes within the SVG have the same fill/stroke/opacity.
+    let allSameColour = false;
+    if (shapes.length) {
+      const ref = getComputedStyle(shapes[0]);
+      allSameColour = Array.from(shapes).every((node) => {
+        const style = getComputedStyle(node);
+        return (
+          style.fill === ref.fill
+          && style.fillOpacity === ref.fillOpacity
+          && style.stroke === ref.stroke
+          && style.strokeOpacity === ref.strokeOpacity
+          && style.opacity === ref.opacity
+        );
+      });
+    }
+
+    // If simple SVG (single path) or complex SVG with same colour.
+    if ((shapes.length === 1 || allSameColour) && complex.length === 0) {
       const style = getComputedStyle(shapes[0]);
-      const { fill, opacity, stroke, strokeWidth } = style;
+      const { fill, stroke, strokeWidth, opacity } = style;
 
-      // Background image.
-      if (fill.startsWith('url(')) {
-        contrastResults.push({ $el, type: 'svg-warning', background });
-        return;
+      // Get computed stroke width/convert % to number.
+      let strokePx = 0;
+      const { width, height } = $el.getBBox();
+      if (stroke && stroke !== 'none') {
+        if (strokeWidth.endsWith('%')) {
+          strokePx = (parseFloat(strokeWidth) / 100) * Math.min(width, height);
+        } else {
+          strokePx = ['inherit', 'initial', 'unset'].includes(strokeWidth)
+            ? 1 : parseFloat(strokeWidth);
+        }
       }
 
-      const hasFill = fill && fill !== 'none';
-      const hasStroke = stroke && stroke !== 'none' && strokeWidth !== '0px';
+      // Threshold is arbitrary/not WCAG. Smaller threshold for smaller SVGs.
+      const threshold = Math.min(width, height) < 50 ? 1 : 3;
+      const hasStroke = stroke && strokePx >= threshold && stroke !== 'none';
 
-      if (!hasFill && !hasStroke) {
-        contrastResults.push({ $el, type: 'svg-warning', background });
-        return;
-      }
+      // Get resolved fill colour.
+      const hasFill = fill && fill !== 'none' && !fill.startsWith('url(');
+      const resolvedFill = fill === 'currentColor'
+        ? Contrast.convertToRGBA(getComputedStyle(shapes[0]).color, opacity)
+        : Contrast.convertToRGBA(fill, opacity);
 
-      let fillPasses = false;
-      let strokePasses = false;
-      let contrastValue;
+      // Get resolved stroke colour.
+      const resolvedStroke = stroke === 'currentColor'
+        ? Contrast.convertToRGBA(getComputedStyle(shapes[0]).color, opacity)
+        : Contrast.convertToRGBA(stroke, opacity);
 
-      // Check fill contrast.
-      let resolvedFill;
-      if (hasFill) {
-        resolvedFill = fill === 'currentColor'
-          ? Contrast.convertToRGBA(getComputedStyle($el).color, opacity)
-          : Contrast.convertToRGBA(fill, opacity);
-        if (resolvedFill !== 'unsupported') {
+      // If supported colours and has background, we can calculate contrast.
+      const supported = ![resolvedFill, resolvedStroke].includes('unsupported');
+      if (supported && hasBackground) {
+        let contrastValue;
+        let fillPasses = false;
+        let strokePasses = false;
+
+        if (hasFill) {
           contrastValue = Contrast.calculateContrast(resolvedFill, background);
           fillPasses = option.contrastAPCA
             ? contrastValue.ratio >= 45
             : contrastValue.ratio >= 3;
         }
-      }
 
-      // Check stroke contrast.
-      let resolvedStroke;
-      if (hasStroke) {
-        resolvedStroke = stroke === 'currentColor'
-          ? Contrast.convertToRGBA(getComputedStyle($el).color, opacity)
-          : Contrast.convertToRGBA(stroke, opacity);
-        if (resolvedStroke !== 'unsupported') {
+        if (hasStroke) {
           contrastValue = Contrast.calculateContrast(resolvedStroke, background);
           strokePasses = option.contrastAPCA
             ? contrastValue.ratio >= 45
             : contrastValue.ratio >= 3;
         }
-      }
 
-      // Failure conditions.
-      const failsBoth = hasFill && hasStroke && !fillPasses && !strokePasses;
-      const failsFill = hasFill && !hasStroke && !fillPasses;
-      const failsStroke = !hasFill && hasStroke && !strokePasses;
-      if (resolvedFill === 'unsupported' || resolvedStroke === 'unsupported') {
-        // Fill or stroke uses unsupported colour space.
-        contrastResults.push({ $el, type: 'svg-warning', background });
-      } else if (failsBoth || failsFill || failsStroke) {
-        // Push an error for simple SVGs.
-        contrastResults.push({
-          $el,
-          ratio: Contrast.ratioToDisplay(contrastValue.ratio),
-          color: contrastValue.blendedColor,
-          type: 'svg-error',
-          background,
-        });
+        // Calculate contrast of both stroke and fill.
+        const failsBoth = hasFill && hasStroke && !fillPasses && !strokePasses;
+        const failsFill = hasFill && !hasStroke && !fillPasses;
+        const failsStroke = !hasFill && hasStroke && !strokePasses;
+
+        // Fails
+        if (failsBoth || failsFill || failsStroke) {
+          // Get hex values.
+          const bgHex = Contrast.getHex(background);
+          const fillHex = Contrast.getHex(resolvedFill);
+          const strokeHex = Contrast.getHex(resolvedStroke);
+
+          // Ignore if foreground equals background.
+          if ((fillHex === bgHex && !hasStroke) || (strokeHex === bgHex && !hasFill)) {
+            return;
+          }
+
+          // Push an error for simple SVGs.
+          contrastResults.push({
+            $el,
+            ratio: Contrast.ratioToDisplay(contrastValue.ratio),
+            color: contrastValue.blendedColor,
+            type: 'svg-error',
+            isLargeText: true, // To push a suggested colour (3:1).
+            background,
+          });
+        }
+      } else {
+        // General warning for complex SVGs with multiple shapes.
+        // Push whatever colour is valid.
+        if (hasFill && resolvedFill !== 'unsupported') {
+          generalWarning.color = resolvedFill;
+        } else if (hasStroke && resolvedStroke !== 'unsupported') {
+          generalWarning.color = resolvedStroke;
+        }
+        if (hasBackground) generalWarning.background = background;
+        contrastResults.push(generalWarning);
       }
     } else {
-      // Warn for complex SVGs with multiple shapes
-      contrastResults.push({ $el, type: 'svg-warning', background });
+      // General warning for complex SVGs.
+      if (hasBackground) generalWarning.background = background;
+      contrastResults.push(generalWarning);
     }
   });
 
@@ -264,13 +294,8 @@ export default function checkContrast(results, option) {
     let previewText;
     if (item.type === 'placeholder' || item.type === 'placeholder-unsupported') {
       previewText = Utils.sanitizeHTML($el.placeholder);
-    } else if (item.type === 'svg-error' || item.type === 'svg-warning' || item.type === 'svg-text') {
+    } else if (item.type === 'svg-error' || item.type === 'svg-warning') {
       previewText = '';
-      /**
-       * @todo Better support preview for SVGs.
-       * const sanitizeSvg = Utils.sanitizeHTMLBlock(updatedItem.$el.outerHTML, true);
-       * previewText = Utils.removeWhitespace(sanitizeSvg);
-       * */
     } else {
       previewText = sanitizedText;
     }
@@ -306,13 +331,14 @@ export default function checkContrast(results, option) {
         break;
       case 'input':
         if (option.checks.CONTRAST_INPUT) {
+          const sanitizedInput = Utils.sanitizeHTMLBlock($el.outerHTML);
           results.push({
             element,
             type: option.checks.CONTRAST_INPUT.type || 'error',
             content: option.checks.CONTRAST_INPUT.content
               ? Lang.sprintf(option.checks.CONTRAST_INPUT.content)
               : Lang.sprintf('CONTRAST_INPUT', ratio) + ratioTip,
-            dismiss: Utils.prepareDismissal(`CONTRAST${$el.getAttribute('class')}${$el.tagName}${ratio}`),
+            dismiss: Utils.prepareDismissal(`CONTRAST${sanitizedInput}`),
             dismissAll: option.checks.CONTRAST_INPUT.dismissAll ? 'CONTRAST_INPUT' : false,
             developer: option.checks.CONTRAST_INPUT.developer || true,
             contrastDetails: updatedItem,
@@ -321,6 +347,7 @@ export default function checkContrast(results, option) {
         break;
       case 'placeholder':
         if (option.checks.CONTRAST_PLACEHOLDER) {
+          const sanitizedPlaceholder = Utils.sanitizeHTMLBlock($el.outerHTML);
           results.push({
             element: $el,
             type: option.checks.CONTRAST_PLACEHOLDER.type || 'error',
@@ -328,7 +355,7 @@ export default function checkContrast(results, option) {
               ? Lang.sprintf(option.checks.CONTRAST_PLACEHOLDER.content)
               : Lang.sprintf('CONTRAST_PLACEHOLDER') + ratioTip,
             position: 'afterend',
-            dismiss: Utils.prepareDismissal(`CPLACEHOLDER${$el.getAttribute('class')}${$el.tagName}${ratio}`),
+            dismiss: Utils.prepareDismissal(`CPLACEHOLDER${sanitizedPlaceholder}`),
             dismissAll: option.checks.CONTRAST_PLACEHOLDER.dismissAll ? 'CONTRAST_PLACEHOLDER' : false,
             developer: option.checks.CONTRAST_PLACEHOLDER.developer || true,
             contrastDetails: updatedItem,
@@ -337,6 +364,7 @@ export default function checkContrast(results, option) {
         break;
       case 'placeholder-unsupported':
         if (option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED) {
+          const sanitizedPlaceholder = Utils.sanitizeHTMLBlock($el.outerHTML);
           results.push({
             element: $el,
             type: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.type || 'warning',
@@ -344,7 +372,7 @@ export default function checkContrast(results, option) {
               ? Lang.sprintf(option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.content)
               : Lang.sprintf('CONTRAST_PLACEHOLDER_UNSUPPORTED') + ratioTip,
             position: 'afterend',
-            dismiss: Utils.prepareDismissal(`CPLACEHOLDERUN${$el.getAttribute('class')}${$el.tagName}${ratio}`),
+            dismiss: Utils.prepareDismissal(`CPLACEHOLDERUN${sanitizedPlaceholder}`),
             dismissAll: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.dismissAll
               ? 'CONTRAST_PLACEHOLDER_UNSUPPORTED' : false,
             developer: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.developer || true,
@@ -354,32 +382,35 @@ export default function checkContrast(results, option) {
         break;
       case 'svg-error':
         if (option.checks.CONTRAST_ERROR_GRAPHIC) {
+          const sanitizedSVG = Utils.sanitizeHTMLBlock($el.outerHTML);
           results.push({
             element: $el,
             type: option.checks.CONTRAST_ERROR_GRAPHIC.type || 'error',
             content: option.checks.CONTRAST_ERROR_GRAPHIC.content
               ? Lang.sprintf(option.checks.CONTRAST_ERROR_GRAPHIC.content)
               : Lang.sprintf('CONTRAST_ERROR_GRAPHIC') + graphicsTip,
-            dismiss: Utils.prepareDismissal(`CONTRASTERROR${$el.outerHTML}`),
+            dismiss: Utils.prepareDismissal(`CONTRASTERROR${sanitizedSVG}`),
             dismissAll: option.checks.CONTRAST_ERROR_GRAPHIC.dismissAll ? 'CONTRAST_ERROR_GRAPHIC' : false,
             developer: option.checks.CONTRAST_ERROR_GRAPHIC.developer || true,
             contrastDetails: updatedItem,
+            margin: '-25px',
           });
         }
         break;
       case 'svg-warning':
-      case 'svg-text':
         if (option.checks.CONTRAST_WARNING_GRAPHIC) {
+          const sanitizedSVG = Utils.sanitizeHTMLBlock($el.outerHTML);
           results.push({
             element: $el,
             type: option.checks.CONTRAST_WARNING_GRAPHIC.type || 'warning',
             content: option.checks.CONTRAST_WARNING_GRAPHIC.content
               ? Lang.sprintf(option.checks.CONTRAST_WARNING_GRAPHIC.content)
               : Lang.sprintf('CONTRAST_WARNING_GRAPHIC') + graphicsTip,
-            dismiss: Utils.prepareDismissal(`CONTRASTWARNING${$el.outerHTML}`),
+            dismiss: Utils.prepareDismissal(`CONTRASTWARNING${sanitizedSVG}`),
             dismissAll: option.checks.CONTRAST_WARNING_GRAPHIC.dismissAll ? 'CONTRAST_WARNING_GRAPHIC' : false,
             developer: option.checks.CONTRAST_WARNING_GRAPHIC.developer || true,
             contrastDetails: updatedItem,
+            margin: '-25px',
           });
         }
         break;

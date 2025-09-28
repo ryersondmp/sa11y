@@ -9,11 +9,10 @@ import find from '../utils/find';
 
 export default function generatePageOutline(dismissed, headingOutline, option) {
   const outlineHandler = () => {
-    // Create a single array that gets appended to heading outline.
     const outlineArray = [];
 
     // Find all dismissed headings and update headingOutline array.
-    const findDismissedHeadings = dismissed.map((e) => headingOutline.find((f) => e.key === f.dismiss && e.href === window.location.pathname)).filter(Boolean);
+    const findDismissedHeadings = dismissed.map((e) => headingOutline.find((f) => e.dismiss === f.dismiss)).filter(Boolean);
     findDismissedHeadings.forEach(($el) => Object.assign($el, { dismissedHeading: true }));
 
     // Show meta page title in Page Outline.
@@ -31,98 +30,82 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
 
     // Iterate through object that contains all headings (and error type).
     headingOutline.forEach((heading) => {
-      const $el = heading.element;
-      const level = heading.headingLevel;
-      const headingText = heading.text;
-      const i = heading.index;
-      const issue = heading.type;
-      const visibility = heading.hidden;
-      const parent = heading.visibleParent;
-      const dismissedH = heading.dismissedHeading;
-      const { isWithinRoot } = heading;
+      const { element, headingLevel, text, index, type, dismissedHeading, isWithinRoot } = heading;
+
+      // Determine if heading is visually hidden or within hidden container.
+      const hidden = Utils.isElementVisuallyHiddenOrHidden(element);
 
       // Filter out specified headings in outlineIgnore and headerIgnore props.
-      if (!Elements.Found.OutlineIgnore.includes($el)) {
+      if (!Elements.Found.OutlineIgnore.includes(element)) {
         // Indicate if heading is totally hidden or visually hidden.
-        const visibleIcon = (visibility === true) ? '<span class="hidden-icon"></span><span class="visually-hidden">Hidden</span>' : '';
-        const visibleStatus = (visibility === true) ? 'class="hidden-h"' : '';
+        const visibleIcon = (hidden === true)
+          ? `<span class="hidden-icon"></span><span class="visually-hidden">${Lang._('HIDDEN')}</span>` : '';
         const badgeH = (option.showHinPageOutline === true || option.showHinPageOutline === 1) ? 'H' : '';
 
         let append;
-        if (issue === 'error' && isWithinRoot === true) {
+        if (type === 'error' && isWithinRoot === true) {
           append = `
-            <li class="outline-${level}">
-              <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
+            <li class="outline-${headingLevel}">
+              <button type="button" tabindex="-1">
                 <span class="badge error-badge">
                 <span aria-hidden="true">${visibleIcon}
                   <span class="error-icon"></span>
                 </span>
-                <span class="visually-hidden">${Lang._('ERROR')}</span> ${badgeH + level}</span>
-                <strong class="outline-list-item red-text">${headingText}</strong>
-              </a>
+                <span class="visually-hidden">${Lang._('ERROR')}</span> ${badgeH + headingLevel}</span>
+                <strong class="outline-list-item red-text">${text}</strong>
+              </button>
             </li>`;
           outlineArray.push(append);
-        } else if (issue === 'warning' && !dismissedH && isWithinRoot === true) {
+        } else if (type === 'warning' && !dismissedHeading && isWithinRoot === true) {
           append = `
-            <li class="outline-${level}">
-              <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
+            <li class="outline-${headingLevel}">
+              <button type="button" tabindex="-1">
                 <span class="badge warning-badge">
                 <span aria-hidden="true">${visibleIcon} &#x3f;</span>
-                <span class="visually-hidden">${Lang._('WARNING')}</span> ${badgeH + level}</span>
-                <strong class="outline-list-item yellow-text">${headingText}</strong>
-              </a>
+                <span class="visually-hidden">${Lang._('WARNING')}</span> ${badgeH + headingLevel}</span>
+                <strong class="outline-list-item yellow-text">${text}</strong>
+              </button>
             </li>`;
           outlineArray.push(append);
         } else {
           append = `
-            <li class="outline-${level}">
-              <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
-                <span class="badge">${visibleIcon} ${badgeH + level}</span>
-                <span class="outline-list-item">${headingText}</span>
-              </a>
+            <li class="outline-${headingLevel}">
+              <button type="button" tabindex="-1">
+                <span class="badge">${visibleIcon} ${badgeH + headingLevel}</span>
+                <span class="outline-list-item">${text}</span>
+              </button>
             </li>`;
           outlineArray.push(append);
         }
       }
 
       /**
-        * Append heading labels.
+       * Append heading labels.
       */
       const label = document.createElement('sa11y-heading-label');
-      const anchor = document.createElement('sa11y-heading-anchor');
       label.hidden = true;
+      element?.insertAdjacentElement('beforeend', label);
 
-      // If heading is in a hidden container, place the anchor just before it's most visible parent.
-      if (parent !== null) {
-        $el.insertAdjacentElement('beforeend', label);
-        const hiddenParent = parent.previousElementSibling;
-        anchor.setAttribute('id', `sa11y-h${i}`);
-        if (hiddenParent) {
-          hiddenParent.insertAdjacentElement('beforebegin', anchor);
-          hiddenParent.setAttribute('data-sa11y-parent', `h${i}`);
-        } else {
-          parent.parentNode.insertAdjacentElement('beforebegin', anchor);
-          parent.parentNode.setAttribute('data-sa11y-parent', `h${i}`);
-        }
+      // Create anchors to focus on if heading is not visible.
+      const anchor = document.createElement('sa11y-heading-anchor');
+      anchor.id = `sa11y-h${index}`;
+      if (hidden) {
+        const parent = Utils.findVisibleParent(element, 'display', 'none');
+        const target = parent?.previousElementSibling || parent?.parentNode;
+        target?.insertAdjacentElement('beforebegin', anchor);
+        target?.setAttribute('data-sa11y-parent', `h${index}`);
       } else {
-        // If the heading isn't hidden, append visible label.
-        $el.insertAdjacentElement('beforeend', label);
-
-        // Create anchor above visible label.
-        label.insertAdjacentElement('beforebegin', anchor);
-        anchor.setAttribute('id', `sa11y-h${i}`);
+        label?.insertAdjacentElement('beforebegin', anchor);
       }
 
       // Populate heading label.
       const content = document.createElement('span');
       content.classList.add('heading-label');
-      content.innerHTML = `H${level}`;
+      content.innerHTML = `H${headingLevel}`;
       label.shadowRoot.appendChild(content);
 
       // Make heading labels visible when panel is open.
-      if (Utils.store.getItem('sa11y-outline') === 'Opened') {
-        label.hidden = false;
-      }
+      if (Utils.store.getItem('sa11y-outline') === 'Opened') label.hidden = false;
     });
 
     // Append headings to Page Outline.
@@ -132,101 +115,41 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
 
     // Make clickable!
     setTimeout(() => {
-      const panel = document.querySelector('sa11y-control-panel');
-      const shadow = panel.shadowRoot;
-      const children = Array.from(shadow.querySelectorAll('#outline-list a'));
+      const buttons = Constants.Panel.outlineList.querySelectorAll('button');
+      buttons.forEach((button, i) => {
+        button.addEventListener('click', () => {
+          // Query DOM for target elements.
+          const heading = find(
+            `#sa11y-h${i}, [data-sa11y-parent="h${i}"]`,
+            'document',
+            Constants.Exclusions.Container,
+          )[0];
 
-      children.forEach(($el, i) => {
-        // Make Page Outline clickable.
-        const outlineLink = shadow.getElementById(`sa11y-link-${i}`);
-
-        const headingID = find(
-          `#sa11y-h${i}, [data-sa11y-parent="h${i}"]`,
-          'document',
-          Constants.Exclusions.Container,
-        );
-
-        // Scroll to.
-        const pulseAndScroll = (heading) => {
-          Utils.addPulse(heading.parentElement);
-          heading.scrollIntoView({
-            behavior: `${Constants.Global.scrollBehaviour}`,
-            block: 'center',
-          });
-        };
-
-        // Add pulse.
-        const smoothPulse = (e) => {
-          if ((e.type === 'keyup' && e.code === 'Enter') || e.type === 'click') {
-            headingID.forEach((heading) => {
-              pulseAndScroll(heading);
+          // Scroll to heading and add pulsing border.
+          if (heading) {
+            heading.scrollIntoView({
+              behavior: `${Constants.Global.scrollBehaviour}`,
+              block: 'center',
             });
-
-            if (outlineLink.classList.contains('hidden-h')) {
-              Utils.createAlert(`${Lang._('HEADING_NOT_VISIBLE')}`);
-            } else if (Constants.Panel.alert.classList.contains('active')) {
-              Utils.removeAlert();
-            }
+            Utils.addPulse(heading.parentNode || heading);
           }
-          e.preventDefault();
-        };
 
-        // Attach event listeners.
-        outlineLink?.addEventListener('click', smoothPulse, false);
-        outlineLink?.addEventListener('keyup', smoothPulse, false);
+          // Alert if hidden or doesn't exist.
+          Utils.removeAlert();
+          if (!heading || heading.hasAttribute('data-sa11y-parent')) {
+            Utils.createAlert(Lang._('NOT_VISIBLE'));
+          }
+        });
       });
 
-      /**
-       * Roving tabindex menu for page outline.
-       * Thanks to Srijan for this snippet!
-       * @link https://blog.srij.dev/roving-tabindex-from-scratch
-      */
-      let current = 0;
-      const handleKeyDown = (e) => {
-        if (!['ArrowUp', 'ArrowDown', 'Space'].includes(e.code)) return;
-        if (e.code === 'Space') {
-          children[current].click();
-          return;
-        }
-        const selected = children[current];
-        selected.setAttribute('tabindex', -1);
-        let next;
-        if (e.code === 'ArrowDown') {
-          next = current + 1;
-          if (current === children.length - 1) {
-            next = 0;
-          }
-        } else if ((e.code === 'ArrowUp')) {
-          next = current - 1;
-          if (current === 0) {
-            next = children.length - 1;
-          }
-        }
-        children[next].setAttribute('tabindex', 0);
-        children[next].focus();
-        current = next;
-        e.preventDefault();
-      };
-      Constants.Panel.outlineList.addEventListener('focus', () => {
-        if (children.length > 0) {
-          Constants.Panel.outlineList.setAttribute('tabindex', -1);
-          children[current].setAttribute('tabindex', 0);
-          children[current].focus();
-        }
-        Constants.Panel.outlineList.addEventListener('keydown', handleKeyDown);
-      });
-      Constants.Panel.outlineList.addEventListener('blur', () => {
-        Constants.Panel.outlineList.removeEventListener('keydown', handleKeyDown);
-      });
+      Utils.initRovingTabindex(Constants.Panel.outlineList, buttons);
     }, 0);
 
     // Remove event listener and returned dismissed results.
     document.removeEventListener('sa11y-build-heading-outline', outlineHandler);
-    return dismissed;
   };
 
   // Generate heading outline based on local storage or if "Outline" button is selected.
-  const rememberOutline = Utils.store.getItem('sa11y-outline');
-  if (rememberOutline === 'Opened') outlineHandler();
+  if (Utils.store.getItem('sa11y-outline') === 'Opened') outlineHandler();
   document.addEventListener('sa11y-build-heading-outline', outlineHandler);
 }

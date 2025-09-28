@@ -147,8 +147,6 @@ export default function settingsPanelToggles(checkAll, resetAll) {
             'data-sa11y-error',
             'data-sa11y-warning',
             'data-sa11y-good',
-            'data-sa11y-error-inline',
-            'data-sa11y-warning-inline',
             'data-sa11y-overflow',
           ], 'document');
           remove([

@@ -6,34 +6,15 @@
   overflow: auto !important;
 }
 
-[data-sa11y-clone-image-text] {
-  display: none !important;
-}
-
-[data-sa11y-readability-period] {
-  position: absolute !important;
-  display: block !important;
-  width: 1px !important;
-  height: 1px !important;
-  padding: 0 !important;
-  overflow: hidden !important;
-  clip: rect(1px, 1px, 1px, 1px) !important;
-  white-space: nowrap !important;
-  border: 0 !important;
-  clip-path: inset(50%) !important;
-}
-
 /* ************************************* */
 /*    Links, text, and image borders     */
 /* ************************************* */
-[data-sa11y-error],
-[data-sa11y-error-inline] {
+[data-sa11y-error] {
   outline: 5px solid var(--sa11y-error) !important;
   outline-offset: 2px;
 }
 
-[data-sa11y-warning]:not([data-sa11y-error]),
-[data-sa11y-warning-inline]:not([data-sa11y-error-inline]) {
+[data-sa11y-warning]:not([data-sa11y-error]) {
   outline: 5px solid var(--sa11y-warning) !important;
   outline-offset: 2px;
 }
@@ -44,7 +25,7 @@
 [data-sa11y-pulse-border] {
   outline: 5px solid var(--sa11y-focus-color) !important;
   box-shadow: 0;
-  animation: pulse 2s 3;
+  animation: pulse 1s 2;
 }
 [data-sa11y-pulse-border]:hover, [data-sa11y-pulse-border]:focus {
   animation: none;
@@ -54,11 +35,36 @@
   0% {
     box-shadow: 0 0 0 5px var(--sa11y-focus-color);
   }
-  70% {
+  50% {
     box-shadow: 0 0 0 12px var(--sa11y-pulse-color);
   }
   100% {
     box-shadow: 0 0 0 5px var(--sa11y-pulse-color);
+  }
+}
+/* Add scale/opacity only for images and headings. */
+img[data-sa11y-pulse-border],
+h1[data-sa11y-pulse-border],
+h2[data-sa11y-pulse-border],
+h3[data-sa11y-pulse-border],
+h4[data-sa11y-pulse-border],
+h5[data-sa11y-pulse-border],
+h6[data-sa11y-pulse-border] {
+  animation: pulse-scale 1s 2;
+}
+
+@keyframes pulse-scale {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -213,34 +219,15 @@ html[data-sa11y-theme=dark] {
   overflow: auto !important;
 }
 
-[data-sa11y-clone-image-text] {
-  display: none !important;
-}
-
-[data-sa11y-readability-period] {
-  position: absolute !important;
-  display: block !important;
-  width: 1px !important;
-  height: 1px !important;
-  padding: 0 !important;
-  overflow: hidden !important;
-  clip: rect(1px, 1px, 1px, 1px) !important;
-  white-space: nowrap !important;
-  border: 0 !important;
-  clip-path: inset(50%) !important;
-}
-
 /* ************************************* */
 /*    Links, text, and image borders     */
 /* ************************************* */
-[data-sa11y-error],
-[data-sa11y-error-inline] {
+[data-sa11y-error] {
   outline: 5px solid var(--sa11y-error) !important;
   outline-offset: 2px;
 }
 
-[data-sa11y-warning]:not([data-sa11y-error]),
-[data-sa11y-warning-inline]:not([data-sa11y-error-inline]) {
+[data-sa11y-warning]:not([data-sa11y-error]) {
   outline: 5px solid var(--sa11y-warning) !important;
   outline-offset: 2px;
 }
@@ -251,7 +238,7 @@ html[data-sa11y-theme=dark] {
 [data-sa11y-pulse-border] {
   outline: 5px solid var(--sa11y-focus-color) !important;
   box-shadow: 0;
-  animation: pulse 2s 3;
+  animation: pulse 1s 2;
 }
 [data-sa11y-pulse-border]:hover, [data-sa11y-pulse-border]:focus {
   animation: none;
@@ -261,11 +248,36 @@ html[data-sa11y-theme=dark] {
   0% {
     box-shadow: 0 0 0 5px var(--sa11y-focus-color);
   }
-  70% {
+  50% {
     box-shadow: 0 0 0 12px var(--sa11y-pulse-color);
   }
   100% {
     box-shadow: 0 0 0 5px var(--sa11y-pulse-color);
+  }
+}
+/* Add scale/opacity only for images and headings. */
+img[data-sa11y-pulse-border],
+h1[data-sa11y-pulse-border],
+h2[data-sa11y-pulse-border],
+h3[data-sa11y-pulse-border],
+h4[data-sa11y-pulse-border],
+h5[data-sa11y-pulse-border],
+h6[data-sa11y-pulse-border] {
+  animation: pulse-scale 1s 2;
+}
+
+@keyframes pulse-scale {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 @media (prefers-reduced-motion: reduce) {

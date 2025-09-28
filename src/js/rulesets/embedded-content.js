@@ -5,9 +5,10 @@ import { computeAriaLabel } from '../utils/computeAccessibleName';
 
 export default function checkEmbeddedContent(results, option) {
   // iFrame's SRC attribute.
-  const src = ($el) => ($el.getAttribute('src') !== 'undefined'
-    ? $el.getAttribute('src')
-    : $el.querySelector('[src]')?.getAttribute('src'));
+  const src = ($el) => $el.getAttribute('src')
+    || $el.querySelector('source[src]')?.getAttribute('src')
+    || $el.querySelector('[src]')?.getAttribute('src')
+    || null;
 
   // Warning: Audio content.
   if (option.checks.EMBED_AUDIO) {

@@ -2,10 +2,8 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-new */
 
-/**
- * Manually adjust version number based on the name of the branch.
- */
-const version = 'dev-4.0.0';
+// Version based on package.json
+const version = Sa11yVersion;
 const loadingSpinnerSVG = `
 <style>
 .loader {
@@ -41,7 +39,7 @@ const loadingSpinnerSVG = `
 const loadStyleSheet = () => new Promise((resolve, reject) => {
   const link = document.createElement('link');
   link.rel = 'stylesheet';
-  link.href = `https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@${version}/dist/css/sa11y.min.css`;
+  link.href = `https://raw.githack.com/ryersondmp/sa11y/${version}/dist/css/sa11y.css`;
   link.onload = resolve;
   link.onerror = reject;
   document.head.appendChild(link);
@@ -49,11 +47,22 @@ const loadStyleSheet = () => new Promise((resolve, reject) => {
 
 // Then inject Sa11y's javascript in the body of the page.
 const loadScript = (lang) => new Promise((resolve, reject) => {
-  const script = document.createElement('script');
-  script.src = `https://cdn.jsdelivr.net/combine/gh/ryersondmp/sa11y@${version}/dist/js/lang/${lang}.umd.min.js,gh/ryersondmp/sa11y@${version}/dist/js/sa11y.umd.min.js`;
-  script.onload = resolve;
-  script.onerror = reject;
-  document.body.appendChild(script);
+  const urls = [
+    `https://raw.githack.com/ryersondmp/sa11y/${version}/dist/js/sa11y.umd.js`,
+    `https://raw.githack.com/ryersondmp/sa11y/${version}/dist/js/lang/${lang}.umd.js`,
+  ];
+  let i = 0;
+  // eslint-disable-next-line consistent-return
+  function loadNext() {
+    if (i >= urls.length) return resolve();
+    const script = document.createElement('script');
+    // eslint-disable-next-line no-plusplus
+    script.src = urls[i++];
+    script.onload = loadNext;
+    script.onerror = reject;
+    document.body.appendChild(script);
+  }
+  loadNext();
 });
 
 // Once scripts are loaded, instantiate Sa11y.
@@ -67,7 +76,6 @@ const onLoadScript = (lang) => {
       customChecks: false,
       exportResultsPlugin: true,
       detectSPArouting: true,
-      // contrastAPCA: true,
     });
   };
 

@@ -43,7 +43,7 @@ export const computeAriaLabel = (element, recursing = false) => {
       }).join(' ');
   }
 
-  const ariaLabel = element.getAttribute('aria-label');
+  const { ariaLabel } = element;
   if (ariaLabel && ariaLabel.trim().length > 0) {
     return ariaLabel;
   }
@@ -137,7 +137,7 @@ export const computeAccessibleName = (element, exclusions = [], recursing = 0) =
       aText = false;
     }
 
-    if (node.hasAttribute('aria-hidden') && !(recursing && count < 3)) {
+    if (node.ariaHidden === 'true' && !(recursing && count < 3)) {
       if (!nextTreeBranch(treeWalker)) continueWalker = false;
       continue;
     }
@@ -151,12 +151,12 @@ export const computeAccessibleName = (element, exclusions = [], recursing = 0) =
 
     switch (node.tagName) {
       case 'IMG':
-        if (node.hasAttribute('alt')) {
+        if (node.hasAttribute('alt') && node.role !== 'presentation') {
           computedText += node.getAttribute('alt');
         }
         break;
       case 'SVG':
-        if (node.getAttribute('role') === 'img' || node.getAttribute('role') === 'graphics-document') {
+        if (node.role === 'img' || node.role === 'graphics-document') {
           computedText += computeAriaLabel(node);
         } else {
           const title = node.querySelector('title');

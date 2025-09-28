@@ -135,6 +135,10 @@ kbd,
   background-size: 10px 10px;
   border: 2px dashed var(--sa11y-panel-bg-splitter);
   border-radius: 3.2px;
+
+  &:empty {
+    display: none;
+  }
 }
 
 #color-pickers {
@@ -150,6 +154,7 @@ kbd,
 
   input {
     margin-inline-start: 7px;
+    cursor: pointer;
   }
 }
 
@@ -160,9 +165,8 @@ input[type="color" i] {
   border-style: solid;
   border-width: 1px;
   border-radius: 50%;
-  inline-size: 30px;
-  block-size: 30px;
-
+  inline-size: 44px;
+  block-size: 44px;
 
   &::-webkit-color-swatch-wrapper {
     padding: 1px;
@@ -188,10 +192,10 @@ input[type="color" i] {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
-    margin: -24px 0;
-    font-size: 18px;
+    width: 44px;
+    height: 44px;
+    margin: -40px -3px;
+    font-size: 22px;
     color: #fff;
     pointer-events: none;
     content: "?";

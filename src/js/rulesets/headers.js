@@ -30,6 +30,7 @@ export default function checkHeaders(results, option, headingOutline) {
     let content = null;
     let developer = null;
     let dismissAll = null;
+    let margin = null;
 
     // Rulesets.
     if (headingLength === 0) {
@@ -41,6 +42,7 @@ export default function checkHeaders(results, option, headingOutline) {
             content = Lang.sprintf(option.checks.HEADING_EMPTY_WITH_IMAGE.content || 'HEADING_EMPTY_WITH_IMAGE', level);
             developer = option.checks.HEADING_EMPTY_WITH_IMAGE.developer || false;
             dismissAll = option.checks.HEADING_EMPTY_WITH_IMAGE.dismissAll ? 'HEADING_EMPTY_WITH_IMAGE' : false;
+            margin = '-15px 30px';
           }
         }
       } else if (option.checks.HEADING_EMPTY) {
@@ -48,6 +50,7 @@ export default function checkHeaders(results, option, headingOutline) {
         content = Lang.sprintf(option.checks.HEADING_EMPTY.content || 'HEADING_EMPTY', level);
         developer = option.checks.HEADING_EMPTY.developer || false;
         dismissAll = option.checks.HEADING_EMPTY.dismissAll ? 'HEADING_EMPTY' : false;
+        margin = '0';
       }
     } else if (level - prevLevel > 1 && i !== 0) {
       if (option.checks.HEADING_SKIPPED_LEVEL) {
@@ -82,16 +85,13 @@ export default function checkHeaders(results, option, headingOutline) {
         dismissAll,
         isWithinRoot,
         developer,
+        margin,
       });
     }
 
     // Reset level and text.
     prevLevel = level;
     prevHeadingText = headingText;
-
-    // Determine if heading is visually hidden or within hidden container.
-    const hiddenHeading = Utils.isElementVisuallyHiddenOrHidden($el);
-    const parent = Utils.findVisibleParent($el, 'display', 'none');
 
     // Create an object for heading outline panel.
     headingOutline.push({
@@ -100,8 +100,6 @@ export default function checkHeaders(results, option, headingOutline) {
       text: headingText,
       index: i,
       type,
-      hidden: hiddenHeading,
-      visibleParent: parent,
       dismiss: Utils.prepareDismissal(`H${level + headingText}`),
       isWithinRoot,
     });

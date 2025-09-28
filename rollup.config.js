@@ -235,7 +235,7 @@ export default [
       {
         file: 'bookmarklet/dev.js',
         format: 'umd',
-        name: 'Sa11yLangBookmarklet',
+        name: 'Sa11yDevBookmarklet',
         plugins: [terser()],
       },
     ],

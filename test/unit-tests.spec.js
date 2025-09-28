@@ -287,13 +287,6 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
-  test('Decorative image using using empty space', async () => {
-    const issue = await checkTooltip(
-      page, 'warning-image-is-decorative-using-empty-space', 'Image is marked as <strong>decorative</strong>',
-    );
-    expect(issue).toBe(true);
-  });
-
   test('Decorative image within a carousel component', async () => {
     const issue = await checkTooltip(
       page, 'warning-image-decorative-carousel', 'images in a carousel or gallery',
@@ -318,6 +311,34 @@ test.describe('Sa11y Unit Tests', () => {
   test('Missing alt text', async () => {
     const issue = await checkTooltip(
       page, 'error-missing-alt-text', 'Missing alt text!',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Image using empty space as alt', async () => {
+    const issue = await checkTooltip(
+      page, 'error-unpronounceable-empty-space', 'contains unpronounceable',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Image using unpronounceable character for alt', async () => {
+    const issue = await checkTooltip(
+      page, 'error-unpronounceable-character', 'contains unpronounceable',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Linked image using unpronounceable character for alt', async () => {
+    const issue = await checkTooltip(
+      page, 'error-unpronounceable-character-linked', 'linked image only contains unpronounceable',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Linked image using unpronounceable character for alt with surrounding text', async () => {
+    const issue = await checkTooltip(
+      page, 'warning-unpronounceable-character-with-surrounding-text', 'both alt text and surrounding link text',
     );
     expect(issue).toBe(true);
   });
@@ -392,9 +413,9 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
-  test('Linked decorative image using empty space', async () => {
+  test('Linked image using empty space', async () => {
     const issue = await checkTooltip(
-      page, 'error-linked-decorative-empty-space', 'Image within link is marked as decorative and there is no link text.',
+      page, 'error-linked-empty-space', 'linked image only contains unpronounceable',
     );
     expect(issue).toBe(true);
   });
@@ -1099,6 +1120,59 @@ test.describe('Sa11y Unit Tests', () => {
     ];
     ids.forEach(async (id) => {
       const issue = await noAnnotation(page, id);
+      expect(issue).toBe(true);
+    });
+  });
+
+  test('SVG contrast passes', async () => {
+    const ids = [
+      'nothing-svg-1',
+      'nothing-svg-2',
+      'nothing-svg-3',
+      'nothing-svg-4',
+      'nothing-svg-5',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await noAnnotation(page, id);
+      expect(issue).toBe(true);
+    });
+  });
+
+  test('SVG contrast fails', async () => {
+    const ids = [
+      'error-svg-1',
+      'error-svg-2',
+      'error-svg-3',
+      'error-svg-4',
+      'error-svg-5',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await checkTooltip(page, id, 'Graphic does not have enough contrast');
+      expect(issue).toBe(true);
+    });
+  });
+
+  test('SVG general warnings', async () => {
+    const ids = [
+      'warning-svg-1',
+      'warning-svg-2',
+      'warning-svg-3',
+      'warning-svg-4',
+      'warning-svg-5',
+      'warning-svg-6',
+      'warning-svg-7',
+      'warning-svg-8',
+      'warning-svg-9',
+      'warning-svg-10',
+      'warning-svg-11',
+      'warning-svg-12',
+      'warning-svg-13',
+      'warning-svg-14',
+      'warning-svg-15',
+      'warning-svg-16',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await checkTooltip(page, id, 'contrast of this graphic is unknown');
       expect(issue).toBe(true);
     });
   });

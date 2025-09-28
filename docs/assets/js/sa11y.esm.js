@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.2.3
+  * @version 4.3.0
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -132,6 +132,8 @@ const defaultOptions = {
     IMAGE_PASS: {
       dismissAll: true,
     },
+    ALT_UNPRONOUNCEABLE: true,
+    LINK_ALT_UNPRONOUNCEABLE: true,
 
     // Link checks
     DUPLICATE_TITLE: {
@@ -707,7 +709,7 @@ const computeAriaLabel = (element, recursing = false) => {
       }).join(' ');
   }
 
-  const ariaLabel = element.getAttribute('aria-label');
+  const { ariaLabel } = element;
   if (ariaLabel && ariaLabel.trim().length > 0) {
     return ariaLabel;
   }
@@ -801,7 +803,7 @@ const computeAccessibleName = (element, exclusions = [], recursing = 0) => {
       aText = false;
     }
 
-    if (node.hasAttribute('aria-hidden') && !(recursing && count < 3)) {
+    if (node.ariaHidden === 'true' && !(recursing && count < 3)) {
       if (!nextTreeBranch(treeWalker)) continueWalker = false;
       continue;
     }
@@ -815,12 +817,12 @@ const computeAccessibleName = (element, exclusions = [], recursing = 0) => {
 
     switch (node.tagName) {
       case 'IMG':
-        if (node.hasAttribute('alt')) {
+        if (node.hasAttribute('alt') && node.role !== 'presentation') {
           computedText += node.getAttribute('alt');
         }
         break;
       case 'SVG':
-        if (node.getAttribute('role') === 'img' || node.getAttribute('role') === 'graphics-document') {
+        if (node.role === 'img' || node.role === 'graphics-document') {
           computedText += computeAriaLabel(node);
         } else {
           const title = node.querySelector('title');
@@ -886,33 +888,34 @@ function documentLoadingCheck(callback) {
 }
 
 /**
- * Checks if an element is visually hidden or hidden based on its attributes and styles.
- * @param {HTMLElement} element The element to check for visibility.
- * @returns {boolean} `true` if the element is visually hidden or hidden, `false` otherwise.
- */
-function isElementVisuallyHiddenOrHidden(element) {
-  if (element.getAttribute('hidden') || (element.offsetWidth === 0 && element.offsetHeight === 0) || (element.clientHeight === 1 && element.clientWidth === 1)) {
-    return true;
-  }
-  const compStyles = getComputedStyle(element);
-  return compStyles.getPropertyValue('display') === 'none';
-}
-
-/**
  * Determine whether an element is visually hidden (e.g. .sr-only) based on computed properties.
  * @param {HTMLElement} element The element to check for.
  * @returns {boolean} Returns true if visually hidden based on properties.
  */
 function isScreenReaderOnly(element) {
-  const style = window.getComputedStyle(element);
-  const clipPath = style.getPropertyValue('clip-path');
-  const { position } = style;
-  const width = parseFloat(style.width);
-  const height = parseFloat(style.height);
-  const { overflow } = style;
-  return (
-    (clipPath === 'inset(50%)') || (position === 'absolute' && width === 1 && height === 1 && overflow === 'hidden')
-  );
+  const style = getComputedStyle(element);
+
+  // Modern technique: clip-path inset(50%).
+  if (style.getPropertyValue('clip-path').startsWith('inset(50%)')) return true;
+
+  // Legacy clipping.
+  if (style.clip === 'rect(1px, 1px, 1px, 1px)'
+    || style.clip === 'rect(0px, 0px, 0px, 0px)') return true;
+
+  // Large text-indent offscreen.
+  const indent = parseInt(style.textIndent, 10);
+  if (!Number.isNaN(indent) && Math.abs(indent) > 5000) return true;
+
+  // Tiny box offscreen.
+  if (style.overflow === 'hidden'
+    && parseFloat(style.width) < 2 && parseFloat(style.height) < 2) return true;
+
+  // Absolute positioned far offscreen.
+  if (style.position === 'absolute'
+    && ['left', 'right', 'top', 'bottom'].some((p) => Math.abs(parseInt(style[p], 10)) > 5000)) return true;
+
+  // Font size 1px or 0px.
+  return parseFloat(style.fontSize) < 2;
 }
 
 /**
@@ -921,11 +924,18 @@ function isScreenReaderOnly(element) {
  * @returns {boolean} 'true' if the element is hidden (display: none).
  */
 function isElementHidden(element) {
-  if (element.getAttribute('hidden')) {
-    return true;
-  }
-  const compStyles = getComputedStyle(element);
-  return compStyles.getPropertyValue('display') === 'none';
+  return element.hidden || getComputedStyle(element).getPropertyValue('display') === 'none';
+}
+
+/**
+ * Checks if an element is invisible in layout.
+ * @param {HTMLElement} element The element to check for visibility.
+ * @returns {boolean} `true` if the element is visually hidden or hidden, `false` otherwise.
+ */
+function isElementVisuallyHiddenOrHidden(element) {
+  if ((element.offsetWidth === 0 && element.offsetHeight === 0)
+    || (element.clientHeight === 1 && element.clientWidth === 1)) return true;
+  return isElementHidden(element);
 }
 
 /**
@@ -934,9 +944,9 @@ function isElementHidden(element) {
  * @returns {string} The escaped string with HTML special characters replaced by their corresponding entities.
  */
 function escapeHTML(string) {
-  const $div = document.createElement('div');
-  $div.textContent = string;
-  return $div.innerHTML.replaceAll('"', '&quot;').replaceAll("'", '&#039;').replaceAll('`', '&#x60;');
+  const div = document.createElement('div');
+  div.textContent = string;
+  return div.innerHTML.replaceAll('"', '&quot;').replaceAll("'", '&#039;').replaceAll('`', '&#x60;');
 }
 
 /**
@@ -1119,12 +1129,10 @@ function debounce$2(callback, wait) {
  */
 function findVisibleParent(element, property, value) {
   let $el = element;
-  while ($el !== null) {
+  while ($el) {
     const style = window.getComputedStyle($el);
     const propValue = style.getPropertyValue(property);
-    if (propValue === value) {
-      return $el;
-    }
+    if (propValue === value) return $el;
     $el = $el.parentElement;
   }
   return null;
@@ -1138,9 +1146,7 @@ function findVisibleParent(element, property, value) {
 function offsetTop(element) {
   const rect = element.getBoundingClientRect();
   const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-  return {
-    top: rect.top + scrollTop,
-  };
+  return { top: rect.top + scrollTop };
 }
 
 /**
@@ -1186,9 +1192,7 @@ const store = {
 function addPulse(element) {
   const border = 'data-sa11y-pulse-border';
   element.setAttribute(border, '');
-  setTimeout(() => {
-    element.removeAttribute(border);
-  }, 2500);
+  setTimeout(() => element.removeAttribute(border), 2500);
 }
 
 /**
@@ -1209,28 +1213,28 @@ function prepareDismissal(string) {
 */
 function generateSelectorPath(element) {
   const path = [];
-  let currElement = element;
-  while (currElement) {
-    let selector = currElement.localName;
-    if (currElement.id) {
-      selector += `#${currElement.id}`;
+  let currentElement = element;
+  while (currentElement) {
+    let selector = currentElement.localName;
+    if (currentElement.id) {
+      selector += `#${currentElement.id}`;
       path.unshift(selector);
       break;
-    } else if (currElement.className) {
-      selector += `.${currElement.className.replace(/\s+/g, '.')}`;
+    } else if (currentElement.className) {
+      selector += `.${currentElement.className.replace(/\s+/g, '.')}`;
     }
-    const parentElement = currElement.parentNode;
+    const parentElement = currentElement.parentNode;
     if (parentElement) {
       const siblings = parentElement.children;
       if (siblings.length > 1) {
-        const index = Array.prototype.indexOf.call(siblings, currElement) + 1;
+        const index = Array.prototype.indexOf.call(siblings, currentElement) + 1;
         selector += `:nth-child(${index})`;
       }
       path.unshift(selector);
     } else {
       break;
     }
-    currElement = currElement.parentNode.host || currElement.parentNode;
+    currentElement = currentElement.parentNode.host || currentElement.parentNode;
   }
   return path.join(' > ');
 }
@@ -1315,9 +1319,7 @@ function createAlert(alertMessage, errorPreview, extendedPreview) {
   }
 
   // A little time before setting focus on the close button.
-  setTimeout(() => {
-    alertClose.focus();
-  }, 300);
+  setTimeout(() => alertClose.focus(), 300);
 
   // Closing alert sets focus back to Skip to Issue toggle.
   function closeAlert() {
@@ -1398,7 +1400,7 @@ function isScrollable(scrollArea, container, ariaLabel) {
  * @returns {string} - The best available source URL.
  */
 function getBestImageSource(element) {
-  const getLastSrc = (src) => src?.split(',').pop()?.trim()?.split(/\s+/)[0];
+  const getLastSrc = (src) => src?.split(/,\s+/).pop()?.trim()?.split(/\s+/)[0];
 
   // Return absolute URLs. Necessary for HTML export.
   const resolveUrl = (src) => (src ? new URL(src, window.location.href).href : null);
@@ -1586,6 +1588,63 @@ function standardizeHref($el) {
   return href;
 }
 
+/**
+ * Roving tabindex menu for page outline.
+ * Thanks to Srijan for this snippet!
+ * @param {HTMLElement} container - Parent element (e.g., ul, div).
+ * @param {HTMLElement[]} children - Focusable child elements inside container.
+*/
+function initRovingTabindex(container, children) {
+  let current = 0;
+  const handleKeyDown = (e) => {
+    if (!['ArrowUp', 'ArrowDown', 'Space'].includes(e.code)) return;
+    if (e.code === 'Space') {
+      children[current].click();
+      e.preventDefault();
+      return;
+    }
+    const selected = children[current];
+    selected.setAttribute('tabindex', -1);
+    let next;
+    if (e.code === 'ArrowDown') {
+      next = current + 1;
+      if (current === children.length - 1) {
+        next = 0;
+      }
+    } else if ((e.code === 'ArrowUp')) {
+      next = current - 1;
+      if (current === 0) {
+        next = children.length - 1;
+      }
+    }
+    children[next].setAttribute('tabindex', 0);
+    children[next].focus();
+    current = next;
+    e.preventDefault();
+  };
+
+  container.addEventListener('focus', () => {
+    if (children.length > 0) {
+      container.setAttribute('tabindex', -1);
+      children[current].setAttribute('tabindex', 0);
+      children[current].focus();
+    }
+    container.addEventListener('keydown', handleKeyDown);
+  });
+
+  container.addEventListener('blur', () => {
+    container.removeEventListener('keydown', handleKeyDown);
+  });
+}
+
+/**
+ * Detects if the browser supports CSS Anchor Positioning.
+ * @link https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning
+ */
+function supportsAnchorPositioning() {
+  return CSS.supports('anchor-name: --sa11y') && CSS.supports('position-anchor: --sa11y');
+}
+
 const Elements = (function myElements() {
   const Found = {};
   function initializeElements(option) {
@@ -1700,7 +1759,7 @@ const Elements = (function myElements() {
   };
 }());
 
-var styles$1 = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-clone-image-text]{display:none!important}[data-sa11y-readability-period]{clip:rect(1px,1px,1px,1px)!important;border:0!important;clip-path:inset(50%)!important;display:block!important;height:1px!important;overflow:hidden!important;padding:0!important;position:absolute!important;white-space:nowrap!important;width:1px!important}[data-sa11y-error-inline],[data-sa11y-error]{outline:5px solid var(--sa11y-error)!important;outline-offset:2px}[data-sa11y-warning-inline]:not([data-sa11y-error-inline]),[data-sa11y-warning]:not([data-sa11y-error]){outline:5px solid var(--sa11y-warning)!important;outline-offset:2px}[data-sa11y-pulse-border]{animation:pulse 2s 3;box-shadow:0;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:focus,[data-sa11y-pulse-border]:hover{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color)}70%{box-shadow:0 0 0 12px var(--sa11y-pulse-color)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}@media (forced-colors:active){[data-sa11y-error-inline],[data-sa11y-error],[data-sa11y-good],[data-sa11y-pulse-border],[data-sa11y-warning-inline],[data-sa11y-warning]{forced-color-adjust:none}}";
+var styles$1 = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-error]{outline:5px solid var(--sa11y-error)!important;outline-offset:2px}[data-sa11y-warning]:not([data-sa11y-error]){outline:5px solid var(--sa11y-warning)!important;outline-offset:2px}[data-sa11y-pulse-border]{animation:pulse 1s 2;box-shadow:0;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:focus,[data-sa11y-pulse-border]:hover{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color)}50%{box-shadow:0 0 0 12px var(--sa11y-pulse-color)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color)}}h1[data-sa11y-pulse-border],h2[data-sa11y-pulse-border],h3[data-sa11y-pulse-border],h4[data-sa11y-pulse-border],h5[data-sa11y-pulse-border],h6[data-sa11y-pulse-border],img[data-sa11y-pulse-border]{animation:pulse-scale 1s 2}@keyframes pulse-scale{0%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.02)}to{opacity:1;transform:scale(1)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}@media (forced-colors:active){[data-sa11y-error-inline],[data-sa11y-error],[data-sa11y-good],[data-sa11y-pulse-border],[data-sa11y-warning-inline],[data-sa11y-warning]{forced-color-adjust:none}}";
 
 /* ************************************************************ */
 /*  Auto-detect shadow DOM or process provided web components.  */
@@ -1791,7 +1850,8 @@ function dismissLogic(results, dismissTooltip) {
   const allDismissed = results.filter((issue) => dismissedIssues.some((dismissed) => dismissAll(issue, dismissed)));
 
   // Combine all dismissed results and filter out duplicates.
-  const dismissedResults = [...soloDismissed, ...allDismissed];
+  const mergeDismissed = [...soloDismissed, ...allDismissed];
+  const dismissedResults = [...new Map(mergeDismissed.map((issue) => [issue.dismiss, issue])).values()];
   const dismissCount = dismissedResults.length;
 
   // Update results array (exclude dismissed and dismissed all checks).
@@ -1892,9 +1952,7 @@ const restoreDismissButton = async (dismissed, checkAll, resetAll) => {
 function dismissButtons(results, dismissed, checkAll, resetAll) {
   if (Constants.Global.dismissAnnotations) {
     // Dismiss buttons.
-    dismissHandler = (e) => {
-      dismissIssueButton(e, results, checkAll, resetAll);
-    };
+    dismissHandler = (e) => dismissIssueButton(e, results, checkAll, resetAll);
 
     // Dismiss button exists in both tooltip and control panel.
     const tooltips = document.querySelector('sa11y-tooltips').shadowRoot;
@@ -1903,9 +1961,7 @@ function dismissButtons(results, dismissed, checkAll, resetAll) {
   }
 
   // Initialize restore alerts button regardless if plugin enabled or not.
-  restoreDismissedHandler = () => {
-    restoreDismissButton(dismissed, checkAll, resetAll);
-  };
+  restoreDismissedHandler = () => restoreDismissButton(dismissed, checkAll, resetAll);
   Constants.Panel.dismissButton?.addEventListener('click', restoreDismissedHandler);
 }
 
@@ -2218,11 +2274,11 @@ function removeExportListeners() {
   }
 }
 
-const version = '4.2.3';
+const version = '4.3.0';
 
 var styles = ":host{background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);bottom:0;display:block;height:-moz-fit-content;height:fit-content;left:0;position:fixed;right:0;width:100%;z-index:999999}*{-webkit-font-smoothing:auto!important;color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;font-size:var(--sa11y-normal-text);line-height:22px!important}#dialog{margin:20px auto;max-width:900px;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none}p{margin-top:0}.error{background:var(--sa11y-error);border:2px dashed #f08080;color:var(--sa11y-error-text);margin-bottom:0;padding:5px}";
 
-var sharedStyles = ".visually-hidden{clip:rect(1px,1px,1px,1px);border:0;clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}[hidden]{display:none!important}.header-text,.header-text-inline,h2{color:var(--sa11y-panel-primary);display:block;font-size:var(--sa11y-large-text);font-weight:600;margin-bottom:3px}.header-text-inline{display:inline-block!important}code{font-family:monospace!important;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:600}pre:has(code){display:block;overflow:auto;white-space:pre-wrap}.kbd,code,kbd,pre{background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);padding:1.6px 4.8px}.bold{font-weight:600}.error .colour,.red-text{color:var(--sa11y-red-text);font-family:var(--sa11y-font-face)}.warning .colour,.yellow-text{color:var(--sa11y-yellow-text);font-family:var(--sa11y-font-face)}.badge,.normal-badge{background-color:var(--sa11y-panel-badge);border-radius:10px;color:var(--sa11y-panel-primary);display:inline;font-size:14px;font-weight:700!important;line-height:1;min-width:10px;outline:1px solid transparent;padding:1px 5px 1.75px;text-align:center;vertical-align:baseline;white-space:nowrap}.error .badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.error-badge{background:var(--sa11y-error)!important;color:var(--sa11y-error-text)!important}.warning .badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.warning-badge{background:var(--sa11y-yellow-text)!important;color:var(--sa11y-panel-bg)!important}.good-contrast{background:var(--sa11y-good)!important;color:var(--sa11y-good-text)!important}#contrast-preview{background-color:#e8e8e8;background-image:linear-gradient(45deg,#ccc 25%,transparent 0,transparent 75%,#ccc 0,#ccc),linear-gradient(45deg,#ccc 25%,transparent 0,transparent 75%,#ccc 0,#ccc);background-position:0 0,5px 5px;background-size:10px 10px;border:2px dashed var(--sa11y-panel-bg-splitter);border-radius:3.2px;line-height:1;margin-top:10px;max-height:100px;overflow:clip;overflow-wrap:break-word;padding:5px}#color-pickers{display:flex;justify-content:space-between;margin-bottom:10px;margin-top:10px}#color-pickers label{align-items:center;display:flex}#color-pickers input{margin-inline-start:7px}input[type=color i]{background:var(--sa11y-panel-bg-secondary);block-size:30px;border-color:var(--sa11y-button-outline);border-radius:50%;border-style:solid;border-width:1px;inline-size:30px;padding:2px}input[type=color i]::-webkit-color-swatch-wrapper{padding:1px}input[type=color i]::-webkit-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i]::-moz-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i].unknown{box-shadow:0 0 0 2px var(--sa11y-yellow-text)}input[type=color i].unknown:after{align-items:center;color:#fff;content:\"?\";display:flex;font-size:18px;height:24px;justify-content:center;margin:-24px 0;pointer-events:none;position:absolute;width:24px;z-index:2}.close-btn{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;color:var(--sa11y-panel-primary);cursor:pointer;float:var(--sa11y-float-rtl);font-size:var(--sa11y-normal-text);font-weight:400;height:32px;margin:0;position:relative;transition:all .2s ease-in-out;width:32px}.close-btn:focus,.close-btn:hover{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{background:var(--sa11y-setting-switch-bg-off);content:\"\";inset:-7px;-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute}@media screen and (forced-colors:active){.close-btn:after{filter:invert(1)}}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container input:focus,#container select:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus,#container .switch:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus:not(:focus-visible),#container [tabindex=\"-1\"]:focus:not(:focus-visible),#container [tabindex=\"0\"]:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container input:focus:not(:focus-visible),#container select:focus:not(:focus-visible){box-shadow:none;outline:0}#container [tabindex=\"-1\"]:focus-visible,#container [tabindex=\"0\"]:focus-visible,#container a:focus-visible,#container button:not(#panel-controls button):not(.switch):focus-visible,#container input:focus-visible,#container select:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus-visible,#container .switch:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#panel-controls button:focus{border:3px solid transparent}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container select:focus,.close-btn:focus{outline:3px solid transparent!important}}";
+var sharedStyles = ".visually-hidden{clip:rect(1px,1px,1px,1px);border:0;clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}[hidden]{display:none!important}.header-text,.header-text-inline,h2{color:var(--sa11y-panel-primary);display:block;font-size:var(--sa11y-large-text);font-weight:600;margin-bottom:3px}.header-text-inline{display:inline-block!important}code{font-family:monospace!important;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:600}pre:has(code){display:block;overflow:auto;white-space:pre-wrap}.kbd,code,kbd,pre{background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);padding:1.6px 4.8px}.bold{font-weight:600}.error .colour,.red-text{color:var(--sa11y-red-text);font-family:var(--sa11y-font-face)}.warning .colour,.yellow-text{color:var(--sa11y-yellow-text);font-family:var(--sa11y-font-face)}.badge,.normal-badge{background-color:var(--sa11y-panel-badge);border-radius:10px;color:var(--sa11y-panel-primary);display:inline;font-size:14px;font-weight:700!important;line-height:1;min-width:10px;outline:1px solid transparent;padding:1px 5px 1.75px;text-align:center;vertical-align:baseline;white-space:nowrap}.error .badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.error-badge{background:var(--sa11y-error)!important;color:var(--sa11y-error-text)!important}.warning .badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.warning-badge{background:var(--sa11y-yellow-text)!important;color:var(--sa11y-panel-bg)!important}.good-contrast{background:var(--sa11y-good)!important;color:var(--sa11y-good-text)!important}#contrast-preview{background-color:#e8e8e8;background-image:linear-gradient(45deg,#ccc 25%,transparent 0,transparent 75%,#ccc 0,#ccc),linear-gradient(45deg,#ccc 25%,transparent 0,transparent 75%,#ccc 0,#ccc);background-position:0 0,5px 5px;background-size:10px 10px;border:2px dashed var(--sa11y-panel-bg-splitter);border-radius:3.2px;line-height:1;margin-top:10px;max-height:100px;overflow:clip;overflow-wrap:break-word;padding:5px}#contrast-preview:empty{display:none}#color-pickers{display:flex;justify-content:space-between;margin-bottom:10px;margin-top:10px}#color-pickers label{align-items:center;display:flex}#color-pickers input{cursor:pointer;margin-inline-start:7px}input[type=color i]{background:var(--sa11y-panel-bg-secondary);block-size:44px;border-color:var(--sa11y-button-outline);border-radius:50%;border-style:solid;border-width:1px;inline-size:44px;padding:2px}input[type=color i]::-webkit-color-swatch-wrapper{padding:1px}input[type=color i]::-webkit-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i]::-moz-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i].unknown{box-shadow:0 0 0 2px var(--sa11y-yellow-text)}input[type=color i].unknown:after{align-items:center;color:#fff;content:\"?\";display:flex;font-size:22px;height:44px;justify-content:center;margin:-40px -3px;pointer-events:none;position:absolute;width:44px;z-index:2}.close-btn{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;color:var(--sa11y-panel-primary);cursor:pointer;float:var(--sa11y-float-rtl);font-size:var(--sa11y-normal-text);font-weight:400;height:32px;margin:0;position:relative;transition:all .2s ease-in-out;width:32px}.close-btn:focus,.close-btn:hover{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{background:var(--sa11y-setting-switch-bg-off);content:\"\";inset:-7px;-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute}@media screen and (forced-colors:active){.close-btn:after{filter:invert(1)}}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container input:focus,#container select:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus,#container .switch:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus:not(:focus-visible),#container [tabindex=\"-1\"]:focus:not(:focus-visible),#container [tabindex=\"0\"]:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container input:focus:not(:focus-visible),#container select:focus:not(:focus-visible){box-shadow:none;outline:0}#container [tabindex=\"-1\"]:focus-visible,#container [tabindex=\"0\"]:focus-visible,#container a:focus-visible,#container button:not(#panel-controls button):not(.switch):focus-visible,#container input:focus-visible,#container select:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus-visible,#container .switch:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#panel-controls button:focus{border:3px solid transparent}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container select:focus,.close-btn:focus{outline:3px solid transparent!important}}";
 
 class ConsoleErrors extends HTMLElement {
   constructor(error) {
@@ -2331,7 +2387,7 @@ function mainToggle(checkAll, resetAll) {
   };
 }
 
-var panelStyles = "a,button,code,div,h1,h2,h3,kbd,label,li,ol,p,pre,span,strong,svg,ul{all:unset;box-sizing:border-box!important}:after,:before{all:unset}div{display:block}*{-webkit-font-smoothing:auto!important;font-family:var(--sa11y-font-face)!important}label,li,ol,p,ul{font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px!important;text-align:start;word-break:break-word}.sa11y-overflow{overflow:auto}iframe,img,video{border:0;display:block;height:auto;max-width:100%}audio{max-width:100%}#toggle{align-items:center;background:linear-gradient(0deg,#e040fb,#00bcd4);background-color:var(--sa11y-setting-switch-bg-off);background-size:150% 150%;border-radius:50%;bottom:var(--sa11y-toggle-y-offset);color:#fff;cursor:pointer;display:flex;height:55px;inset-inline-end:var(--sa11y-toggle-x-offset);justify-content:center;margin:0;overflow:visible;position:fixed;transition:all .2s ease-in-out;width:55px;z-index:2147483644}#toggle.left,#toggle.top-left{inset-inline-start:var(--sa11y-toggle-x-offset)}#toggle.top-left,#toggle.top-right{bottom:unset;top:var(--sa11y-toggle-y-offset)}@media screen and (forced-colors:active){#toggle{background:ButtonFace!important;border:2px solid transparent}}#toggle svg{height:35px;width:35px}#toggle svg path{fill:var(--sa11y-panel-bg)}#toggle:focus,#toggle:hover{animation:sa11y-toggle-gradient 3s ease}#toggle:disabled:focus,#toggle:disabled:hover{animation:none}#toggle.on{background:linear-gradient(180deg,#e040fb,#00bcd4)}#toggle:disabled{background:unset;background-color:var(--sa11y-setting-switch-bg-off);cursor:not-allowed}#notification-badge{text-wrap:nowrap;align-items:center;background-color:#eb0000;border:1px solid transparent;border-radius:12px;color:#fff;display:none;font-size:13.5px;font-weight:400;justify-content:center;line-height:1;min-width:20px;padding:2.5px;position:absolute;right:-3px;top:-5.5px}#notification-badge.notification-badge-warning{background-color:var(--sa11y-warning-hover);border:1px solid var(--sa11y-warning);color:var(--sa11y-warning-text)}#panel{background:var(--sa11y-panel-bg);border-radius:4px;bottom:calc(var(--sa11y-toggle-y-offset) + var(--sa11y-panel-y-gap));box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15);inset-inline-end:calc(var(--sa11y-toggle-x-offset) + var(--sa11y-panel-x-gap));opacity:0;overflow:visible;position:fixed;transform:scale(0);transform-origin:100% 100%;transition:transform .2s,opacity background .2s .2s;visibility:hidden;z-index:2147483643}#panel.left,#panel.top-left{inset-inline-end:unset;inset-inline-start:calc(var(--sa11y-toggle-x-offset) + var(--sa11y-panel-x-gap))}#panel.top-left,#panel.top-right{bottom:unset;top:calc(var(--sa11y-toggle-y-offset) + var(--sa11y-panel-y-gap) + 10px)}#panel.active{height:auto;opacity:1;transform:scale(1);transform-origin:bottom right;transition:transform .2s,opacity .2s;visibility:visible}@media screen and (forced-colors:active){#panel{border:2px solid transparent}}#panel.active.left,[dir=rtl] #panel.active{transform-origin:bottom left}#panel.active.top-left{transform-origin:top left}#panel.active.top-right{transform-origin:top right}#panel-alert{display:none;opacity:0}#panel-alert.active{display:block;opacity:1}#panel-alert-content{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-primary);line-height:22px;max-height:400px;overflow-y:auto;padding:15px 20px 15px 15px;position:relative}.top-left #panel-alert-content,.top-right #panel-alert-content{border:0}#panel-alert-preview .close-tooltip{display:none}#panel-alert-preview,#panel-alert-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}.panel-alert-preview{background:var(--sa11y-panel-bg-secondary);border:1px dashed var(--sa11y-panel-bg-splitter);border-radius:5px;margin-top:15px;padding:10px}.panel-alert-preview ul{margin:0;margin-block-end:0;margin-block-start:0;padding:0;position:relative}.panel-alert-preview li{display:list-item;margin:5px 10px 0 20px;padding-bottom:5px}.element-preview{background-color:var(--sa11y-element-preview);border-radius:3.2px;margin-bottom:10px;overflow-wrap:break-word;padding:5px}button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;margin-inline-end:15px;padding:4px 8px}button[data-sa11y-dismiss]:focus,button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}h2{font-size:var(--sa11y-large-text);font-weight:700}h2,h3{display:block;margin-bottom:3px}h3{font-size:calc(var(--sa11y-large-text) - 1px)}h3,strong{font-weight:600}a:not(#outline-list a):not(.edit){border-bottom:0;color:var(--sa11y-hyperlink);cursor:pointer;font-weight:500;text-decoration:underline}a:focus,a:hover{text-decoration:none!important}hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}#dismiss-button,#skip-button{background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:50px;cursor:pointer;display:none;height:36px;margin-inline-end:8px;margin-inline-start:2px;overflow:visible;position:relative;text-align:center;transition:all .1s ease-in-out;width:36px}#dismiss-button.active,#skip-button.active{display:block}#dismiss-button:disabled,#skip-button:disabled{background:none;border:0;box-shadow:none;cursor:default}#dismiss-button:before,#skip-button:before{content:\"\";inset:-5px;position:absolute}#dismiss-button:focus:not(:disabled),#dismiss-button:hover:not(:disabled),#skip-button:focus:not(:disabled),#skip-button:hover:not(:disabled){background-color:var(--sa11y-shortcut-hover)}#panel.left #dismiss-button,#panel.left #skip-button,#panel.top-left #dismiss-button,#panel.top-left #skip-button{margin-inline-end:2px;margin-inline-start:8px}.dismiss-icon{background:var(--sa11y-setting-switch-bg-off);display:inline-block;height:24px;margin-bottom:-4px;-webkit-mask:var(--sa11y-dismiss-icon) center no-repeat;mask:var(--sa11y-dismiss-icon) center no-repeat;width:24px}.dismiss-group{display:flex}@media screen and (forced-colors:active){.dismiss-icon{filter:invert(1)}}#panel-content{align-items:center;color:var(--sa11y-panel-primary);display:flex;padding:6px}#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{height:26px;margin:0 auto;width:26px}#panel-content.errors .panel-icon{background:var(--sa11y-panel-error);margin-top:-2px;-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat}#panel-content.good .panel-icon{background:var(--sa11y-good);-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat}#panel-content.warnings .panel-icon{background:var(--sa11y-yellow-text);-webkit-mask:var(--sa11y-warning-svg) center no-repeat;mask:var(--sa11y-warning-svg) center no-repeat;transform:scaleX(var(--sa11y-icon-direction))}@media screen and (forced-colors:active){#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{filter:invert(1)}}#panel.left #panel-content,#panel.top-left #panel-content{flex-direction:row-reverse}#status{font-size:var(--sa11y-large-text)}#status,.panel-count{color:var(--sa11y-panel-primary)}.panel-count{background-color:var(--sa11y-panel-badge);border-radius:4px;font-size:15px;font-weight:400;margin-left:3px;margin-right:3px;padding:2px 4px}#images-panel,#outline-panel,#page-issues,#settings-panel{color:var(--sa11y-panel-primary);display:none;opacity:0}#images-panel.active,#outline-panel.active,#page-issues.active,#settings-panel.active{display:block;opacity:1}.panel-header{display:flex;justify-content:space-between;padding:10px 15px 0;text-align:start}#about-content{padding-top:5px}#about-content p{display:block;margin-block-end:1em}#images-content,#outline-content,#page-issues-content,#settings-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);padding:0 15px 10px}.top-left #images-content,.top-left #outline-content,.top-left #page-issues-content,.top-left #settings-content,.top-right #images-content,.top-right #outline-content,.top-right #page-issues-content,.top-right #settings-content{border:0}#page-issues-content{max-height:160px;overflow-y:auto}#settings-content{max-height:400px;overflow-y:auto}#images-content,#outline-content{max-height:250px;overflow-y:auto}#outline-panel .outline-list-item.sa11y-red-text,#settings-panel .sa11y-red-text{color:var(--sa11y-red-text)}#outline-list{display:block;margin:0;padding:0}#outline-list a{cursor:pointer;display:block;text-decoration:none}#outline-list li{display:block;list-style-type:none;margin-bottom:3px;margin-top:0;padding:0}#outline-list li:first-child{margin-top:5px}#outline-list li a:focus,#outline-list li a:hover{background:var(--sa11y-panel-outline-hover);border-radius:5px;box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);display:block}#outline-list .outline-2{margin-inline-start:15px}#outline-list .outline-3{margin-inline-start:30px}#outline-list .outline-4{margin-inline-start:45px}#outline-list .outline-5{margin-inline-start:60px}#outline-list .outline-6{margin-inline-start:75px}#images-list{display:block;margin:0;padding:0}#images-list li{border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:block;list-style-type:none;margin:15px 0;overflow:hidden;width:100%}#images-list li:first-child{margin-top:5px}#images-list li:last-child{border:none;margin-bottom:0}#images-list li .alt{padding:2px 5px 10px}#images-list li .edit-block{display:flex;justify-content:flex-end;margin-bottom:15px}#images-list li .edit{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;margin-inline-end:5px;padding:4px 7px;position:relative;text-decoration:none}#images-list li .edit:focus,#images-list li .edit:hover{background-color:var(--sa11y-shortcut-hover)}#images-list li .edit:before{content:\"\";inset:-10px;position:absolute}#images-list li img{border-radius:5px;float:inline-start;margin-block-end:15px;margin-inline-end:10px;max-width:110px}#images-list li.warning .alt{color:var(--sa11y-yellow-text)}#images-list li.warning img{background-color:var(--sa11y-yellow-text);border:5px solid var(--sa11y-yellow-text)}#images-list li.error .alt{color:var(--sa11y-error)}#images-list li.error img{background-color:var(--sa11y-error);border:5px solid var(--sa11y-error)}#images-list li.good img{background-color:var(--sa11y-panel-badge);border:5px solid var(--sa11y-panel-badge)}@media screen and (forced-colors:active){#images-list li img{background-color:ButtonBorder!important}}.move-panel-icon{height:18px;-webkit-mask:var(--sa11y-move-panel-icon);mask:var(--sa11y-move-panel-icon);-webkit-mask-position:center;mask-position:center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;width:18px}.info-icon,.move-panel-icon{background:var(--sa11y-setting-switch-bg-off);display:inline-block;vertical-align:middle}.info-icon{height:20px;margin-top:-2px;-webkit-mask:var(--sa11y-info-icon);mask:var(--sa11y-info-icon);-webkit-mask-position:center;mask-position:center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;width:20px}.sun-icon{-webkit-mask:var(--sa11y-sun-icon);mask:var(--sa11y-sun-icon);-webkit-mask-position:center;mask-position:center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}.moon-icon,.sun-icon{background:var(--sa11y-setting-switch-bg-off);display:inline-block;height:18px;vertical-align:middle;width:18px}.moon-icon{-webkit-mask:var(--sa11y-moon-icon);mask:var(--sa11y-moon-icon);-webkit-mask-position:center;mask-position:center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}.error-icon{background:var(--sa11y-error-text);margin-bottom:-4px;-webkit-mask:var(--sa11y-error-svg);mask:var(--sa11y-error-svg);-webkit-mask-position:center;mask-position:center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}.error-icon,.hidden-icon{display:inline-block;height:16px;width:16px}.hidden-icon{margin-bottom:-3px;-webkit-mask:var(--sa11y-hidden-icon-svg);mask:var(--sa11y-hidden-icon-svg);-webkit-mask-position:center;mask-position:center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}.hidden-icon,.link-icon{background:var(--sa11y-panel-primary)}.link-icon{display:inline-block;height:16px;margin-bottom:-3.5px;-webkit-mask:var(--sa11y-link-icon-svg);mask:var(--sa11y-link-icon-svg);-webkit-mask-position:center;mask-position:center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;width:16px}.error-badge .hidden-icon,.error-badge .link-icon{background:var(--sa11y-error-text)}.warning-badge .hidden-icon,.warning-badge .link-icon{background:var(--sa11y-panel-bg)}.error .link-icon{background:var(--sa11y-error-text)}.warning .link-icon{background:var(--sa11y-panel-bg)}@media screen and (forced-colors:active){.error-icon,.hidden-icon,.info-icon,.link-icon,.moon-icon,.move-panel-icon,.sun-icon{filter:invert(1)}}#panel-controls{border-bottom:1px solid var(--sa11y-panel-bg-splitter);border-radius:0 0 4px 4px;display:flex;overflow:hidden}#panel-controls button{background:var(--sa11y-panel-bg-secondary);background-color:var(--sa11y-panel-bg-secondary);border-inline-end:1px solid var(--sa11y-panel-bg-splitter);border-top:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-secondary);cursor:pointer;display:block;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;line-height:0;margin:0;opacity:1;outline:0;padding:0;position:relative;text-align:center;transition:background .2s;width:100%}#panel-controls button.active,#panel-controls button:hover{background-color:var(--sa11y-shortcut-hover)}#panel-controls button.active{font-weight:600}#export-results-mode,label{color:var(--sa11y-panel-primary);display:inline-block;font-weight:400;margin:0;width:100%}label:not(#colour-filter-mode,#export-results-mode){cursor:pointer}#panel.right #panel-controls:has(#images-toggle):after{content:\"\";width:80px}#panel.left #panel-controls:has(#images-toggle):before{content:\"\";width:50px}#settings-panel .appearance-group,#settings-panel .export-results-group{display:flex;margin:5px 0}#settings-panel .appearance-group button,#settings-panel .export-results-group button{align-items:center;border:2px solid var(--sa11y-setting-switch-bg-off);border-radius:5px;cursor:pointer;display:flex;justify-content:center;margin:2px 0;margin-inline-end:4px;margin-inline-start:8px;min-height:34px;min-width:44px;position:relative;text-align:center;white-space:nowrap}#settings-panel .appearance-group button:focus,#settings-panel .appearance-group button:focus-within,#settings-panel .appearance-group button:hover,#settings-panel .export-results-group button:focus,#settings-panel .export-results-group button:focus-within,#settings-panel .export-results-group button:hover{background:var(--sa11y-shortcut-hover)}#settings-panel .appearance-group button:before,#settings-panel .export-results-group button:before{content:\"\";inset:-7px;position:absolute}#settings-panel .appearance-group button .text,#settings-panel .export-results-group button .text{color:var(--sa11y-setting-switch-bg-off);font-weight:600;padding:0 6px}#settings-panel .switch{background:none;border:0;border-radius:5px;color:var(--sa11y-setting-switch-bg-off);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:600;height:44px;margin:0;padding:7px 10px;position:relative;text-align:end;width:105px}#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{content:\"\";display:inline-block;height:27px;margin:0 4px 4px;vertical-align:middle;width:27px}#settings-panel .switch[aria-pressed=true]:after{background:var(--sa11y-setting-switch-bg-on);-webkit-mask:var(--sa11y-setting-switch-on-svg) center no-repeat;mask:var(--sa11y-setting-switch-on-svg) center no-repeat}#settings-panel .switch[aria-pressed=false]:after{background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-setting-switch-off-svg) center no-repeat;mask:var(--sa11y-setting-switch-off-svg) center no-repeat}@media screen and (forced-colors:active){#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{filter:invert(1)}}#settings-panel #settings-options li{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:flex;justify-content:space-between;list-style-type:none;padding:1px 0}#settings-panel #settings-options li:last-child{border:none}#page-issues{align-items:center;color:var(--sa11y-panel-primary)}#page-issues-list{display:block;margin-top:4px}#page-issues-list li{display:block;margin:0 0 10px}.top-left.has-page-issues #page-issues,.top-right.has-page-issues #page-issues{border-top:1px solid var(--sa11y-panel-bg-splitter);margin-top:-1px}#panel-colour-filters{align-items:center;color:var(--sa11y-panel-primary);display:none;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}#panel-colour-filters.active{display:flex}#panel-colour-filters p{padding:6px 20px 6px 6px;width:100%}#panel-colour-filters[data-colour=protanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image-slice:1}#panel-colour-filters[data-colour=deuteranopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image-slice:1}#panel-colour-filters[data-colour=tritanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image-slice:1}#panel-colour-filters[data-colour=monochromacy]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image-slice:1}#panel-colour-filters[data-colour=protanopia] .panel-icon{background:var(--sa11y-panel-error)}#panel-colour-filters[data-colour=deuteranopia] .panel-icon{background:var(--sa11y-good-hover)}#panel-colour-filters[data-colour=tritanopia] .panel-icon{background:var(--sa11y-blue)}#panel-colour-filters[data-colour=monochromacy] .panel-icon{background:linear-gradient(90deg,#38a459 20%,red 50%,#0077c8 80%)}#panel-colour-filters .panel-icon{height:30px;margin-inline-end:5px;margin-inline-start:10px;-webkit-mask:var(--sa11y-low-vision-icon) center no-repeat;mask:var(--sa11y-low-vision-icon) center no-repeat;width:30px}@media screen and (forced-colors:active){#panel-colour-filters .panel-icon{forced-color-adjust:none}}.select-dropdown{align-items:center;display:flex;position:relative}.select-dropdown:after{border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid var(--sa11y-setting-switch-bg-off);content:\" \";inset-inline-end:14px;position:absolute}#colour-filter-select{-webkit-appearance:none;-moz-appearance:none;appearance:none;background:var(--sa11y-panel-bg);border:2px solid var(--sa11y-setting-switch-bg-off);border-radius:5px;color:var(--sa11y-setting-switch-bg-off);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:600;height:30px;margin-inline-end:4px;padding-inline-end:25px;padding-inline-start:5px;position:relative;text-align:end;vertical-align:middle}#colour-filter-select:focus,#colour-filter-select:hover{background:var(--sa11y-shortcut-hover)}#colour-filter-select.active{box-shadow:0 0 0 2px var(--sa11y-setting-switch-bg-on)}#colour-filter-item label,#colour-filter-item select{margin-bottom:9px;margin-top:10px}#readability-panel{display:none;opacity:0}#readability-panel.active{display:block;opacity:1}.top-left #readability-content,.top-right #readability-content{border-top:1px solid var(--sa11y-panel-bg-splitter)}.left #readability-content,.right #readability-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter)}#readability-content{color:var(--sa11y-panel-primary);padding:10px 15px;width:100%}#readability-details{list-style-type:none;margin:0;padding:0;white-space:normal}#readability-details li{display:inline-block;list-style-type:none;margin:0;padding-inline-end:10px}.readability-score{background-color:var(--sa11y-panel-badge);border-radius:4px;color:var(--sa11y-panel-primary);margin-inline-start:5px;padding:2px 5px}#readability-info{margin-inline-start:10px}#skip-to-page-issues{display:none}#panel.has-page-issues #skip-to-page-issues{clip:rect(0,0,0,0);background:var(--sa11y-panel-bg);border:0;border-radius:5px;display:block;font-weight:600;height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}#panel.has-page-issues #skip-to-page-issues:focus{clip:auto;height:auto;margin:0;overflow:visible;padding:7px 10px;white-space:normal;width:auto;z-index:1}.hide-settings-border{border-bottom:0!important;padding:0 15px!important}.hide-settings-border li:not(#colour-filter-item){display:none!important}.hide-settings-border #about-content{display:none}.hide-settings-border.scrollable:before{all:unset}#contrast-tools{display:none}::-webkit-scrollbar{height:6px;width:7px}::-webkit-scrollbar-thumb{background-color:var(--sa11y-button-outline);border-radius:6px}*{scrollbar-color:var(--sa11y-button-outline);scrollbar-width:thin}.scrollable:before{animation:fade 1s ease-in-out;background:linear-gradient(180deg,transparent 70%,var(--sa11y-panel-scrollable) 100%);background-position:bottom;bottom:auto;content:\"\";height:250px;left:0;position:absolute;right:0;top:auto;transition:opacity 1s ease-in-out;width:100%;z-index:-1}#settings-content.scrollable:before{height:400px}.top-left .scrollable:before,.top-right .scrollable:before{border-radius:5px}#page-issues-content.scrollable:before{height:160px}#panel-alert.scrollable:before{height:200px}@keyframes sa11y-toggle-gradient{0%{background-position:50% 0}50%{background-position:50% 100%}to{background-position:50% 0}}@keyframes fade{0%{opacity:0}to{opacity:1}}@media (prefers-reduced-motion:reduce){*{animation:none!important;transform:none!important;transition:none!important}}#panel{width:400px}#container:lang(en) #panel{width:315px}#container:lang(da) #panel,#container:lang(de) #panel,#container:lang(nb) #panel,#container:lang(pl) #panel,#container:lang(sv) #panel,#container:lang(zh) #panel{width:365px}#container:lang(bg) .switch:not(#export-results-item *),#container:lang(es) .switch:not(#export-results-item *){width:225px!important}#container:not(:lang(en)):not(:lang(de)) .switch{width:205px}";
+var panelStyles = "a,button,code,div,h1,h2,h3,kbd,label,li,ol,p,pre,span,strong,svg,ul{all:unset;box-sizing:border-box!important}:after,:before{all:unset}div{display:block}*{-webkit-font-smoothing:auto!important;font-family:var(--sa11y-font-face)!important}label,li,ol,p,ul{font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px!important;text-align:start;word-break:break-word}.sa11y-overflow{overflow:auto}iframe,img,video{border:0;display:block;height:auto;max-width:100%}audio{max-width:100%}#toggle{align-items:center;background:linear-gradient(0deg,#e040fb,#00bcd4);background-color:var(--sa11y-setting-switch-bg-off);background-size:150% 150%;border-radius:50%;bottom:var(--sa11y-toggle-y-offset);color:#fff;cursor:pointer;display:flex;height:55px;inset-inline-end:var(--sa11y-toggle-x-offset);justify-content:center;margin:0;overflow:visible;position:fixed;transition:all .2s ease-in-out;width:55px;z-index:2147483644}#toggle.left,#toggle.top-left{inset-inline-start:var(--sa11y-toggle-x-offset)}#toggle.top-left,#toggle.top-right{bottom:unset;top:var(--sa11y-toggle-y-offset)}@media screen and (forced-colors:active){#toggle{background:ButtonFace!important;border:2px solid transparent}}#toggle svg{height:35px;width:35px}#toggle svg path{fill:var(--sa11y-panel-bg)}#toggle:focus,#toggle:hover{animation:sa11y-toggle-gradient 3s ease}#toggle:disabled:focus,#toggle:disabled:hover{animation:none}#toggle.on{background:linear-gradient(180deg,#e040fb,#00bcd4)}#toggle:disabled{background:unset;background-color:var(--sa11y-setting-switch-bg-off);cursor:not-allowed}#notification-badge{text-wrap:nowrap;align-items:center;background-color:#eb0000;border:1px solid transparent;border-radius:12px;color:#fff;display:none;font-size:13.5px;font-weight:400;justify-content:center;line-height:1;min-width:20px;padding:2.5px;position:absolute;right:-3px;top:-5.5px}#notification-badge.notification-badge-warning{background-color:var(--sa11y-warning-hover);border:1px solid var(--sa11y-warning);color:var(--sa11y-warning-text)}#panel{background:var(--sa11y-panel-bg);border-radius:4px;bottom:calc(var(--sa11y-toggle-y-offset) + var(--sa11y-panel-y-gap));box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15);inset-inline-end:calc(var(--sa11y-toggle-x-offset) + var(--sa11y-panel-x-gap));opacity:0;overflow:visible;position:fixed;transform:scale(0);transform-origin:100% 100%;transition:transform .2s,opacity background .2s .2s;visibility:hidden;z-index:2147483643}#panel.left,#panel.top-left{inset-inline-end:unset;inset-inline-start:calc(var(--sa11y-toggle-x-offset) + var(--sa11y-panel-x-gap))}#panel.top-left,#panel.top-right{bottom:unset;top:calc(var(--sa11y-toggle-y-offset) + var(--sa11y-panel-y-gap) + 10px)}#panel.active{height:auto;opacity:1;transform:scale(1);transform-origin:bottom right;transition:transform .2s,opacity .2s;visibility:visible}@media screen and (forced-colors:active){#panel{border:2px solid transparent}}#panel.active.left,[dir=rtl] #panel.active{transform-origin:bottom left}#panel.active.top-left{transform-origin:top left}#panel.active.top-right{transform-origin:top right}#panel-alert{display:none;opacity:0}#panel-alert.active{display:block;opacity:1}#panel-alert-content{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-primary);line-height:22px;max-height:400px;overflow-y:auto;padding:15px 20px 15px 15px;position:relative}.top-left #panel-alert-content,.top-right #panel-alert-content{border:0}#panel-alert-preview .close-tooltip{display:none}#panel-alert-preview,#panel-alert-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}.panel-alert-preview{background:var(--sa11y-panel-bg-secondary);border:1px dashed var(--sa11y-panel-bg-splitter);border-radius:5px;margin-top:15px;padding:10px}.panel-alert-preview ul{margin:0;margin-block-end:0;margin-block-start:0;padding:0;position:relative}.panel-alert-preview li{display:list-item;margin:5px 10px 0 20px;padding-bottom:5px}.element-preview{background-color:var(--sa11y-element-preview);border-radius:3.2px;margin-bottom:10px;overflow-wrap:break-word;padding:5px}button[data-sa11y-dismiss]{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:block;margin:10px 5px 5px 0;margin-inline-end:15px;padding:4px 8px}button[data-sa11y-dismiss]:focus,button[data-sa11y-dismiss]:hover{background:var(--sa11y-shortcut-hover)}h2{font-size:var(--sa11y-large-text);font-weight:700}h2,h3{display:block;margin-bottom:3px}h3{font-size:calc(var(--sa11y-large-text) - 1px)}h3,strong{font-weight:600}a:not(#outline-list a):not(#images-list a){border-bottom:0;color:var(--sa11y-hyperlink);cursor:pointer;font-weight:500;text-decoration:underline}a:focus,a:hover{text-decoration:none!important}hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}#dismiss-button,#skip-button{background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:50px;cursor:pointer;display:none;height:36px;margin-inline-end:8px;margin-inline-start:2px;overflow:visible;position:relative;text-align:center;transition:all .1s ease-in-out;width:36px}#dismiss-button.active,#skip-button.active{display:block}#dismiss-button:disabled,#skip-button:disabled{background:none;border:0;box-shadow:none;cursor:default}#dismiss-button:before,#skip-button:before{content:\"\";inset:-5px;position:absolute}#dismiss-button:focus:not(:disabled),#dismiss-button:hover:not(:disabled),#skip-button:focus:not(:disabled),#skip-button:hover:not(:disabled){background-color:var(--sa11y-shortcut-hover)}#panel.left #dismiss-button,#panel.left #skip-button,#panel.top-left #dismiss-button,#panel.top-left #skip-button{margin-inline-end:2px;margin-inline-start:8px}.dismiss-icon{background:var(--sa11y-setting-switch-bg-off);display:inline-block;height:24px;margin-bottom:-4px;-webkit-mask:var(--sa11y-dismiss-icon) center no-repeat;mask:var(--sa11y-dismiss-icon) center no-repeat;width:24px}.dismiss-group{display:flex}@media screen and (forced-colors:active){.dismiss-icon{filter:invert(1)}}#panel-content{align-items:center;color:var(--sa11y-panel-primary);display:flex;padding:6px}#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{height:26px;margin:0 auto;width:26px}#panel-content.errors .panel-icon{background:var(--sa11y-panel-error);margin-top:-2px;-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat}#panel-content.good .panel-icon{background:var(--sa11y-good);-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat}#panel-content.warnings .panel-icon{background:var(--sa11y-yellow-text);-webkit-mask:var(--sa11y-warning-svg) center no-repeat;mask:var(--sa11y-warning-svg) center no-repeat;transform:scaleX(var(--sa11y-icon-direction))}@media screen and (forced-colors:active){#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{filter:invert(1)}}#panel.left #panel-content,#panel.top-left #panel-content{flex-direction:row-reverse}#status{font-size:var(--sa11y-large-text)}#status,.panel-count{color:var(--sa11y-panel-primary)}.panel-count{background-color:var(--sa11y-panel-badge);border-radius:4px;font-size:15px;font-weight:400;margin-left:3px;margin-right:3px;padding:2px 4px}#images-panel,#outline-panel,#page-issues,#settings-panel{color:var(--sa11y-panel-primary);display:none;opacity:0}#images-panel.active,#outline-panel.active,#page-issues.active,#settings-panel.active{display:block;opacity:1}.panel-header{display:flex;justify-content:space-between;padding:10px 15px 0;text-align:start}#about-content{padding-top:5px}#about-content p{display:block;margin-block-end:1em}#images-content,#outline-content,#page-issues-content,#settings-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);padding:0 15px 10px}.top-left #images-content,.top-left #outline-content,.top-left #page-issues-content,.top-left #settings-content,.top-right #images-content,.top-right #outline-content,.top-right #page-issues-content,.top-right #settings-content{border:0}#images-content{padding-inline:5px}#page-issues-content{max-height:160px;overflow-y:auto}#settings-content{max-height:400px;overflow-y:auto}#images-content,#outline-content{max-height:250px;overflow-y:auto}#outline-panel .outline-list-item.sa11y-red-text,#settings-panel .sa11y-red-text{color:var(--sa11y-red-text)}#outline-list{display:block;margin:0;padding:0}#outline-list button{cursor:pointer;display:block;text-decoration:none}#outline-list button:focus,#outline-list button:hover{background:var(--sa11y-panel-outline-hover);border-radius:5px;box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);display:block}#outline-list li{display:block;list-style-type:none;margin-bottom:4.5px;margin-top:0;padding:0}#outline-list li:first-child{margin-top:5px}#outline-list .outline-2{margin-inline-start:15px}#outline-list .outline-3{margin-inline-start:30px}#outline-list .outline-4{margin-inline-start:45px}#outline-list .outline-5{margin-inline-start:60px}#outline-list .outline-6{margin-inline-start:75px}#images-list{display:block;margin:0;padding:0}#images-list button{cursor:pointer;display:block;margin:10px 5px;min-height:44px;text-decoration:none}#images-list button:focus,#images-list button:hover{background:var(--sa11y-panel-outline-hover);border-radius:5px;box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);display:block}#images-list li{border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:flex;flex-direction:column;list-style-type:none;overflow:hidden;width:100%}#images-list li.no-images{padding-inline:10px}#images-list li:last-child{border:none;margin-bottom:0}#images-list li .alt{padding:2px 5px 10px}#images-list li .edit-block{display:flex;justify-content:flex-end;margin-bottom:15px}#images-list li .edit{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;margin-inline-end:5px;padding:4px 7px;position:relative;text-decoration:none}#images-list li .edit:focus,#images-list li .edit:hover{background-color:var(--sa11y-shortcut-hover)}#images-list li .edit:before{content:\"\";inset:-10px;position:absolute}#images-list li img{border-radius:5px;float:inline-start;margin:5px;max-width:110px}#images-list li.warning .alt{color:var(--sa11y-yellow-text)}#images-list li.warning img{background-color:var(--sa11y-yellow-text);border:5px solid var(--sa11y-yellow-text)}#images-list li.error .alt{color:var(--sa11y-error)}#images-list li.error img{background-color:var(--sa11y-error);border:5px solid var(--sa11y-error)}#images-list li.good img{background-color:var(--sa11y-panel-badge);border:5px solid var(--sa11y-panel-badge)}@media screen and (forced-colors:active){#images-list li img{background-color:ButtonBorder!important}}.move-panel-icon{height:18px;-webkit-mask:var(--sa11y-move-panel-icon);mask:var(--sa11y-move-panel-icon);-webkit-mask-position:center;mask-position:center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;width:18px}.info-icon,.move-panel-icon{background:var(--sa11y-setting-switch-bg-off);display:inline-block;vertical-align:middle}.info-icon{height:20px;margin-top:-2px;-webkit-mask:var(--sa11y-info-icon);mask:var(--sa11y-info-icon);-webkit-mask-position:center;mask-position:center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;width:20px}.sun-icon{-webkit-mask:var(--sa11y-sun-icon);mask:var(--sa11y-sun-icon);-webkit-mask-position:center;mask-position:center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}.moon-icon,.sun-icon{background:var(--sa11y-setting-switch-bg-off);display:inline-block;height:18px;vertical-align:middle;width:18px}.moon-icon{-webkit-mask:var(--sa11y-moon-icon);mask:var(--sa11y-moon-icon);-webkit-mask-position:center;mask-position:center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}.error-icon{background:var(--sa11y-error-text);margin-bottom:-4px;-webkit-mask:var(--sa11y-error-svg);mask:var(--sa11y-error-svg);-webkit-mask-position:center;mask-position:center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}.error-icon,.hidden-icon{display:inline-block;height:16px;width:16px}.hidden-icon{margin-bottom:-3px;-webkit-mask:var(--sa11y-hidden-icon-svg);mask:var(--sa11y-hidden-icon-svg);-webkit-mask-position:center;mask-position:center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}.hidden-icon,.link-icon{background:var(--sa11y-panel-primary)}.link-icon{display:inline-block;height:16px;margin-bottom:-3.5px;-webkit-mask:var(--sa11y-link-icon-svg);mask:var(--sa11y-link-icon-svg);-webkit-mask-position:center;mask-position:center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;width:16px}.error-badge .hidden-icon,.error-badge .link-icon{background:var(--sa11y-error-text)}.warning-badge .hidden-icon,.warning-badge .link-icon{background:var(--sa11y-panel-bg)}.error .hidden-icon,.error .link-icon{background:var(--sa11y-error-text)}.warning .hidden-icon,.warning .link-icon{background:var(--sa11y-panel-bg)}@media screen and (forced-colors:active){.error-icon,.hidden-icon,.info-icon,.link-icon,.moon-icon,.move-panel-icon,.sun-icon{filter:invert(1)}}#panel-controls{border-bottom:1px solid var(--sa11y-panel-bg-splitter);border-radius:0 0 4px 4px;display:flex;overflow:hidden}#panel-controls button{background:var(--sa11y-panel-bg-secondary);background-color:var(--sa11y-panel-bg-secondary);border-inline-end:1px solid var(--sa11y-panel-bg-splitter);border-top:1px solid var(--sa11y-panel-bg-splitter);color:var(--sa11y-panel-secondary);cursor:pointer;display:block;font-size:var(--sa11y-normal-text);font-weight:400;height:30px;line-height:0;margin:0;opacity:1;outline:0;padding:0;position:relative;text-align:center;transition:background .2s;width:100%}#panel-controls button.active,#panel-controls button:hover{background-color:var(--sa11y-shortcut-hover)}#panel-controls button.active{font-weight:600}#export-results-mode,label{color:var(--sa11y-panel-primary);display:inline-block;font-weight:400;margin:0;width:100%}label:not(#colour-filter-mode,#export-results-mode){cursor:pointer}#panel.right #panel-controls:has(#images-toggle):after{content:\"\";width:80px}#panel.left #panel-controls:has(#images-toggle):before{content:\"\";width:50px}#settings-panel .appearance-group,#settings-panel .export-results-group{display:flex;margin:5px 0}#settings-panel .appearance-group button,#settings-panel .export-results-group button{align-items:center;border:2px solid var(--sa11y-setting-switch-bg-off);border-radius:5px;cursor:pointer;display:flex;justify-content:center;margin:2px 0;margin-inline-end:4px;margin-inline-start:8px;min-height:34px;min-width:44px;position:relative;text-align:center;white-space:nowrap}#settings-panel .appearance-group button:focus,#settings-panel .appearance-group button:focus-within,#settings-panel .appearance-group button:hover,#settings-panel .export-results-group button:focus,#settings-panel .export-results-group button:focus-within,#settings-panel .export-results-group button:hover{background:var(--sa11y-shortcut-hover)}#settings-panel .appearance-group button:before,#settings-panel .export-results-group button:before{content:\"\";inset:-7px;position:absolute}#settings-panel .appearance-group button .text,#settings-panel .export-results-group button .text{color:var(--sa11y-setting-switch-bg-off);font-weight:600;padding:0 6px}#settings-panel .switch{background:none;border:0;border-radius:5px;color:var(--sa11y-setting-switch-bg-off);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:600;height:44px;margin:0;padding:7px 10px;position:relative;text-align:end;width:105px}#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{content:\"\";display:inline-block;height:27px;margin:0 4px 4px;vertical-align:middle;width:27px}#settings-panel .switch[aria-pressed=true]:after{background:var(--sa11y-setting-switch-bg-on);-webkit-mask:var(--sa11y-setting-switch-on-svg) center no-repeat;mask:var(--sa11y-setting-switch-on-svg) center no-repeat}#settings-panel .switch[aria-pressed=false]:after{background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-setting-switch-off-svg) center no-repeat;mask:var(--sa11y-setting-switch-off-svg) center no-repeat}@media screen and (forced-colors:active){#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{filter:invert(1)}}#settings-panel #settings-options li{align-items:center;border-bottom:1px solid var(--sa11y-panel-bg-splitter);display:flex;justify-content:space-between;list-style-type:none;padding:1px 0}#settings-panel #settings-options li:last-child{border:none}#page-issues{align-items:center;color:var(--sa11y-panel-primary)}#page-issues-list{display:block;margin-top:4px}#page-issues-list li{display:block;margin:0 0 10px}.top-left.has-page-issues #page-issues,.top-right.has-page-issues #page-issues{border-top:1px solid var(--sa11y-panel-bg-splitter);margin-top:-1px}#panel-colour-filters{align-items:center;color:var(--sa11y-panel-primary);display:none;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}#panel-colour-filters.active{display:flex}#panel-colour-filters p{padding:6px 20px 6px 6px;width:100%}#panel-colour-filters[data-colour=protanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image:linear-gradient(94deg,#786719 11%,#e0c600 36%,#e0c600 47%,#0059e3 75%,#0042aa 91%);border-image-slice:1}#panel-colour-filters[data-colour=deuteranopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image:linear-gradient(270deg,#567fdb,#a4a28d 48%,#c3ad14 69%,#a79505);border-image-slice:1}#panel-colour-filters[data-colour=tritanopia]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image:linear-gradient(270deg,#b1506f,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c);border-image-slice:1}#panel-colour-filters[data-colour=monochromacy]{border-bottom:6px solid transparent;-o-border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image:linear-gradient(270deg,#000,#a7a7a7 50%,#000);border-image-slice:1}#panel-colour-filters[data-colour=protanopia] .panel-icon{background:var(--sa11y-panel-error)}#panel-colour-filters[data-colour=deuteranopia] .panel-icon{background:var(--sa11y-good-hover)}#panel-colour-filters[data-colour=tritanopia] .panel-icon{background:var(--sa11y-blue)}#panel-colour-filters[data-colour=monochromacy] .panel-icon{background:linear-gradient(90deg,#38a459 20%,red 50%,#0077c8 80%)}#panel-colour-filters .panel-icon{height:30px;margin-inline-end:5px;margin-inline-start:10px;-webkit-mask:var(--sa11y-low-vision-icon) center no-repeat;mask:var(--sa11y-low-vision-icon) center no-repeat;width:30px}@media screen and (forced-colors:active){#panel-colour-filters .panel-icon{forced-color-adjust:none}}.select-dropdown{align-items:center;display:flex;position:relative}.select-dropdown:after{border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid var(--sa11y-setting-switch-bg-off);content:\" \";inset-inline-end:14px;position:absolute}#colour-filter-select{-webkit-appearance:none;-moz-appearance:none;appearance:none;background:var(--sa11y-panel-bg);border:2px solid var(--sa11y-setting-switch-bg-off);border-radius:5px;color:var(--sa11y-setting-switch-bg-off);cursor:pointer;font-size:var(--sa11y-normal-text);font-weight:600;height:30px;margin-inline-end:4px;padding-inline-end:25px;padding-inline-start:5px;position:relative;text-align:end;vertical-align:middle}#colour-filter-select:focus,#colour-filter-select:hover{background:var(--sa11y-shortcut-hover)}#colour-filter-select.active{box-shadow:0 0 0 2px var(--sa11y-setting-switch-bg-on)}#colour-filter-item label,#colour-filter-item select{margin-bottom:9px;margin-top:10px}#readability-panel{display:none;opacity:0}#readability-panel.active{display:block;opacity:1}.top-left #readability-content,.top-right #readability-content{border-top:1px solid var(--sa11y-panel-bg-splitter)}.left #readability-content,.right #readability-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter)}#readability-content{color:var(--sa11y-panel-primary);padding:10px 15px;width:100%}#readability-details{list-style-type:none;margin:0;padding:0;white-space:normal}#readability-details li{display:inline-block;list-style-type:none;margin:0;padding-inline-end:10px}.readability-score{background-color:var(--sa11y-panel-badge);border-radius:4px;color:var(--sa11y-panel-primary);margin-inline-start:5px;padding:2px 5px}#readability-info{margin-inline-start:10px}#skip-to-page-issues{display:none}#panel.has-page-issues #skip-to-page-issues{clip:rect(0,0,0,0);background:var(--sa11y-panel-bg);border:0;border-radius:5px;display:block;font-weight:600;height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}#panel.has-page-issues #skip-to-page-issues:focus{clip:auto;height:auto;margin:0;overflow:visible;padding:7px 10px;white-space:normal;width:auto;z-index:1}.hide-settings-border{border-bottom:0!important;padding:0 15px!important}.hide-settings-border li:not(#colour-filter-item){display:none!important}.hide-settings-border #about-content{display:none}.hide-settings-border.scrollable:before{all:unset}#contrast-tools{display:none}::-webkit-scrollbar{height:6px;width:7px}::-webkit-scrollbar-thumb{background-color:var(--sa11y-button-outline);border-radius:6px}*{scrollbar-color:var(--sa11y-button-outline);scrollbar-width:thin}.scrollable:before{animation:fade 1s ease-in-out;background:linear-gradient(180deg,transparent 70%,var(--sa11y-panel-scrollable) 100%);background-position:bottom;bottom:auto;content:\"\";height:250px;left:0;position:absolute;right:0;top:auto;transition:opacity 1s ease-in-out;width:100%;z-index:-1}#settings-content.scrollable:before{height:400px}.top-left .scrollable:before,.top-right .scrollable:before{border-radius:5px}#page-issues-content.scrollable:before{height:160px}#panel-alert.scrollable:before{height:200px}@keyframes sa11y-toggle-gradient{0%{background-position:50% 0}50%{background-position:50% 100%}to{background-position:50% 0}}@keyframes fade{0%{opacity:0}to{opacity:1}}@media (prefers-reduced-motion:reduce){*{animation:none!important;transform:none!important;transition:none!important}}#panel{width:400px}#container:lang(en) #panel{width:315px}#container:lang(da) #panel,#container:lang(de) #panel,#container:lang(nb) #panel,#container:lang(pl) #panel,#container:lang(sv) #panel,#container:lang(zh) #panel{width:365px}#container:lang(bg) .switch:not(#export-results-item *),#container:lang(es) .switch:not(#export-results-item *){width:225px!important}#container:not(:lang(en)):not(:lang(de)) .switch{width:205px}";
 
 class ControlPanel extends HTMLElement {
   connectedCallback() {
@@ -2733,8 +2789,6 @@ function settingsPanelToggles(checkAll, resetAll) {
             'data-sa11y-error',
             'data-sa11y-warning',
             'data-sa11y-good',
-            'data-sa11y-error-inline',
-            'data-sa11y-warning-inline',
             'data-sa11y-overflow',
           ], 'document');
           remove([
@@ -2957,11 +3011,10 @@ function initializePanelToggles() {
 
 function generatePageOutline(dismissed, headingOutline, option) {
   const outlineHandler = () => {
-    // Create a single array that gets appended to heading outline.
     const outlineArray = [];
 
     // Find all dismissed headings and update headingOutline array.
-    const findDismissedHeadings = dismissed.map((e) => headingOutline.find((f) => e.key === f.dismiss && e.href === window.location.pathname)).filter(Boolean);
+    const findDismissedHeadings = dismissed.map((e) => headingOutline.find((f) => e.dismiss === f.dismiss)).filter(Boolean);
     findDismissedHeadings.forEach(($el) => Object.assign($el, { dismissedHeading: true }));
 
     // Show meta page title in Page Outline.
@@ -2979,98 +3032,82 @@ function generatePageOutline(dismissed, headingOutline, option) {
 
     // Iterate through object that contains all headings (and error type).
     headingOutline.forEach((heading) => {
-      const $el = heading.element;
-      const level = heading.headingLevel;
-      const headingText = heading.text;
-      const i = heading.index;
-      const issue = heading.type;
-      const visibility = heading.hidden;
-      const parent = heading.visibleParent;
-      const dismissedH = heading.dismissedHeading;
-      const { isWithinRoot } = heading;
+      const { element, headingLevel, text, index, type, dismissedHeading, isWithinRoot } = heading;
+
+      // Determine if heading is visually hidden or within hidden container.
+      const hidden = isElementVisuallyHiddenOrHidden(element);
 
       // Filter out specified headings in outlineIgnore and headerIgnore props.
-      if (!Elements.Found.OutlineIgnore.includes($el)) {
+      if (!Elements.Found.OutlineIgnore.includes(element)) {
         // Indicate if heading is totally hidden or visually hidden.
-        const visibleIcon = (visibility === true) ? '<span class="hidden-icon"></span><span class="visually-hidden">Hidden</span>' : '';
-        const visibleStatus = (visibility === true) ? 'class="hidden-h"' : '';
+        const visibleIcon = (hidden === true)
+          ? `<span class="hidden-icon"></span><span class="visually-hidden">${Lang._('HIDDEN')}</span>` : '';
         const badgeH = (option.showHinPageOutline === true || option.showHinPageOutline === 1) ? 'H' : '';
 
         let append;
-        if (issue === 'error' && isWithinRoot === true) {
+        if (type === 'error' && isWithinRoot === true) {
           append = `
-            <li class="outline-${level}">
-              <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
+            <li class="outline-${headingLevel}">
+              <button type="button" tabindex="-1">
                 <span class="badge error-badge">
                 <span aria-hidden="true">${visibleIcon}
                   <span class="error-icon"></span>
                 </span>
-                <span class="visually-hidden">${Lang._('ERROR')}</span> ${badgeH + level}</span>
-                <strong class="outline-list-item red-text">${headingText}</strong>
-              </a>
+                <span class="visually-hidden">${Lang._('ERROR')}</span> ${badgeH + headingLevel}</span>
+                <strong class="outline-list-item red-text">${text}</strong>
+              </button>
             </li>`;
           outlineArray.push(append);
-        } else if (issue === 'warning' && !dismissedH && isWithinRoot === true) {
+        } else if (type === 'warning' && !dismissedHeading && isWithinRoot === true) {
           append = `
-            <li class="outline-${level}">
-              <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
+            <li class="outline-${headingLevel}">
+              <button type="button" tabindex="-1">
                 <span class="badge warning-badge">
                 <span aria-hidden="true">${visibleIcon} &#x3f;</span>
-                <span class="visually-hidden">${Lang._('WARNING')}</span> ${badgeH + level}</span>
-                <strong class="outline-list-item yellow-text">${headingText}</strong>
-              </a>
+                <span class="visually-hidden">${Lang._('WARNING')}</span> ${badgeH + headingLevel}</span>
+                <strong class="outline-list-item yellow-text">${text}</strong>
+              </button>
             </li>`;
           outlineArray.push(append);
         } else {
           append = `
-            <li class="outline-${level}">
-              <a role="button" id="sa11y-link-${i}" tabindex="-1" ${visibleStatus}>
-                <span class="badge">${visibleIcon} ${badgeH + level}</span>
-                <span class="outline-list-item">${headingText}</span>
-              </a>
+            <li class="outline-${headingLevel}">
+              <button type="button" tabindex="-1">
+                <span class="badge">${visibleIcon} ${badgeH + headingLevel}</span>
+                <span class="outline-list-item">${text}</span>
+              </button>
             </li>`;
           outlineArray.push(append);
         }
       }
 
       /**
-        * Append heading labels.
+       * Append heading labels.
       */
       const label = document.createElement('sa11y-heading-label');
-      const anchor = document.createElement('sa11y-heading-anchor');
       label.hidden = true;
+      element?.insertAdjacentElement('beforeend', label);
 
-      // If heading is in a hidden container, place the anchor just before it's most visible parent.
-      if (parent !== null) {
-        $el.insertAdjacentElement('beforeend', label);
-        const hiddenParent = parent.previousElementSibling;
-        anchor.setAttribute('id', `sa11y-h${i}`);
-        if (hiddenParent) {
-          hiddenParent.insertAdjacentElement('beforebegin', anchor);
-          hiddenParent.setAttribute('data-sa11y-parent', `h${i}`);
-        } else {
-          parent.parentNode.insertAdjacentElement('beforebegin', anchor);
-          parent.parentNode.setAttribute('data-sa11y-parent', `h${i}`);
-        }
+      // Create anchors to focus on if heading is not visible.
+      const anchor = document.createElement('sa11y-heading-anchor');
+      anchor.id = `sa11y-h${index}`;
+      if (hidden) {
+        const parent = findVisibleParent(element, 'display', 'none');
+        const target = parent?.previousElementSibling || parent?.parentNode;
+        target?.insertAdjacentElement('beforebegin', anchor);
+        target?.setAttribute('data-sa11y-parent', `h${index}`);
       } else {
-        // If the heading isn't hidden, append visible label.
-        $el.insertAdjacentElement('beforeend', label);
-
-        // Create anchor above visible label.
-        label.insertAdjacentElement('beforebegin', anchor);
-        anchor.setAttribute('id', `sa11y-h${i}`);
+        label?.insertAdjacentElement('beforebegin', anchor);
       }
 
       // Populate heading label.
       const content = document.createElement('span');
       content.classList.add('heading-label');
-      content.innerHTML = `H${level}`;
+      content.innerHTML = `H${headingLevel}`;
       label.shadowRoot.appendChild(content);
 
       // Make heading labels visible when panel is open.
-      if (store.getItem('sa11y-outline') === 'Opened') {
-        label.hidden = false;
-      }
+      if (store.getItem('sa11y-outline') === 'Opened') label.hidden = false;
     });
 
     // Append headings to Page Outline.
@@ -3080,102 +3117,42 @@ function generatePageOutline(dismissed, headingOutline, option) {
 
     // Make clickable!
     setTimeout(() => {
-      const panel = document.querySelector('sa11y-control-panel');
-      const shadow = panel.shadowRoot;
-      const children = Array.from(shadow.querySelectorAll('#outline-list a'));
+      const buttons = Constants.Panel.outlineList.querySelectorAll('button');
+      buttons.forEach((button, i) => {
+        button.addEventListener('click', () => {
+          // Query DOM for target elements.
+          const heading = find(
+            `#sa11y-h${i}, [data-sa11y-parent="h${i}"]`,
+            'document',
+            Constants.Exclusions.Container,
+          )[0];
 
-      children.forEach(($el, i) => {
-        // Make Page Outline clickable.
-        const outlineLink = shadow.getElementById(`sa11y-link-${i}`);
-
-        const headingID = find(
-          `#sa11y-h${i}, [data-sa11y-parent="h${i}"]`,
-          'document',
-          Constants.Exclusions.Container,
-        );
-
-        // Scroll to.
-        const pulseAndScroll = (heading) => {
-          addPulse(heading.parentElement);
-          heading.scrollIntoView({
-            behavior: `${Constants.Global.scrollBehaviour}`,
-            block: 'center',
-          });
-        };
-
-        // Add pulse.
-        const smoothPulse = (e) => {
-          if ((e.type === 'keyup' && e.code === 'Enter') || e.type === 'click') {
-            headingID.forEach((heading) => {
-              pulseAndScroll(heading);
+          // Scroll to heading and add pulsing border.
+          if (heading) {
+            heading.scrollIntoView({
+              behavior: `${Constants.Global.scrollBehaviour}`,
+              block: 'center',
             });
-
-            if (outlineLink.classList.contains('hidden-h')) {
-              createAlert(`${Lang._('HEADING_NOT_VISIBLE')}`);
-            } else if (Constants.Panel.alert.classList.contains('active')) {
-              removeAlert();
-            }
+            addPulse(heading.parentNode || heading);
           }
-          e.preventDefault();
-        };
 
-        // Attach event listeners.
-        outlineLink?.addEventListener('click', smoothPulse, false);
-        outlineLink?.addEventListener('keyup', smoothPulse, false);
+          // Alert if hidden or doesn't exist.
+          removeAlert();
+          if (!heading || heading.hasAttribute('data-sa11y-parent')) {
+            createAlert(Lang._('NOT_VISIBLE'));
+          }
+        });
       });
 
-      /**
-       * Roving tabindex menu for page outline.
-       * Thanks to Srijan for this snippet!
-       * @link https://blog.srij.dev/roving-tabindex-from-scratch
-      */
-      let current = 0;
-      const handleKeyDown = (e) => {
-        if (!['ArrowUp', 'ArrowDown', 'Space'].includes(e.code)) return;
-        if (e.code === 'Space') {
-          children[current].click();
-          return;
-        }
-        const selected = children[current];
-        selected.setAttribute('tabindex', -1);
-        let next;
-        if (e.code === 'ArrowDown') {
-          next = current + 1;
-          if (current === children.length - 1) {
-            next = 0;
-          }
-        } else if ((e.code === 'ArrowUp')) {
-          next = current - 1;
-          if (current === 0) {
-            next = children.length - 1;
-          }
-        }
-        children[next].setAttribute('tabindex', 0);
-        children[next].focus();
-        current = next;
-        e.preventDefault();
-      };
-      Constants.Panel.outlineList.addEventListener('focus', () => {
-        if (children.length > 0) {
-          Constants.Panel.outlineList.setAttribute('tabindex', -1);
-          children[current].setAttribute('tabindex', 0);
-          children[current].focus();
-        }
-        Constants.Panel.outlineList.addEventListener('keydown', handleKeyDown);
-      });
-      Constants.Panel.outlineList.addEventListener('blur', () => {
-        Constants.Panel.outlineList.removeEventListener('keydown', handleKeyDown);
-      });
+      initRovingTabindex(Constants.Panel.outlineList, buttons);
     }, 0);
 
     // Remove event listener and returned dismissed results.
     document.removeEventListener('sa11y-build-heading-outline', outlineHandler);
-    return dismissed;
   };
 
   // Generate heading outline based on local storage or if "Outline" button is selected.
-  const rememberOutline = store.getItem('sa11y-outline');
-  if (rememberOutline === 'Opened') outlineHandler();
+  if (store.getItem('sa11y-outline') === 'Opened') outlineHandler();
   document.addEventListener('sa11y-build-heading-outline', outlineHandler);
 }
 
@@ -3225,8 +3202,7 @@ const generateEditLink = (image) => {
   // Generate final HTML of edit button.
   if ((imageID.length && imageUniqueID !== undefined) || !imageID) {
     return isRelativeLink(src)
-      ? `<div class="edit-block"><a href="${encodeURI(editURL)}" target="_blank" rel="noopener noreferrer" class="edit">${Lang._('EDIT')}</a></div>`
-      : '';
+      ? `<div class="edit-block"><a href="${encodeURI(editURL)}" tabindex="-1" target="_blank" rel="noopener noreferrer" class="edit">${Lang._('EDIT')}</a></div>` : '';
   }
   return '';
 };
@@ -3239,24 +3215,33 @@ const generateEditLink = (image) => {
 function generateImageOutline(dismissed, imageResults, option) {
   const imageOutlineHandler = () => {
     const imageArray = [];
-
-    // Find all dismissed images.
-    const findDismissedImages = dismissed.map((e) => imageResults.find((f) => e.key === f.dismiss && e.href === window.location.pathname)).filter(Boolean);
-
-    imageResults.forEach((image) => {
-      // Filter out dismissed images.
-      const isDismissed = findDismissedImages.some((dismissedImage) => dismissedImage.element.outerHTML.toLowerCase() === image.element.outerHTML.toLowerCase());
+    imageResults.forEach((image, i) => {
+      // Match dismissed images.
+      const isDismissed = dismissed.some((key) => key.dismiss === image.dismiss);
       if (isDismissed) Object.assign(image, { dismissedImage: true });
 
       // Get image object's properties.
-      const issue = image.type;
-      const developerCheck = image.developer;
-      const { dismissedImage } = image;
-      const altText = escapeHTML(image.element.alt);
+      const { element, type, developer, dismissedImage } = image;
+      const altText = computeAriaLabel(element) === 'noAria'
+        ? escapeHTML(element.getAttribute('alt'))
+        : computeAriaLabel(element);
+
+      // Check visibility of image.
+      const hidden = isElementVisuallyHiddenOrHidden(element);
+      if (hidden) {
+        const parent = findVisibleParent(element, 'display', 'none');
+        const anchor = document.createElement('sa11y-image-anchor');
+        anchor.setAttribute('data-sa11y-parent', `image${i}`);
+        const target = parent?.previousElementSibling || parent?.parentNode;
+        target?.insertAdjacentElement('beforebegin', anchor);
+      } else {
+        element.setAttribute('data-sa11y-image', i);
+      }
 
       // Make developer checks don't show images as error if Developer checks are off!
-      const devChecksOff = store.getItem('sa11y-developer') === 'Off' || store.getItem('sa11y-developer') === null;
-      const showDeveloperChecks = devChecksOff && (issue === 'error' || issue === 'warning') && developerCheck === true;
+      const dev = store.getItem('sa11y-developer');
+      const devChecksOff = dev === 'Off' || dev === null;
+      const showDeveloperChecks = devChecksOff && (type === 'error' || type === 'warning') && developer === true;
 
       // Account for lazy loading libraries.
       const source = getBestImageSource(image.element);
@@ -3264,59 +3249,52 @@ function generateImageOutline(dismissed, imageResults, option) {
       // Generate edit link if locally hosted image and prop is enabled.
       const edit = Constants.Global.editImageURLofCMS ? generateEditLink(image) : '';
 
+      // Image is decorative (has null alt)
+      const decorative = (element.hasAttribute('alt') && altText === '')
+        ? `<div class="badge">${Lang._('DECORATIVE')}</div>` : '';
+
       // If image is linked.
-      const anchor = option.imageWithinLightbox
-        ? `a[href]:not(${option.imageWithinLightbox})`
-        : 'a[href]';
-      const linked = (image.element.closest(anchor))
-        ? `<div class="badge ${issue}-badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._('LINKED')}</span></div>`
-        : '';
+      const anchor = option.imageWithinLightbox ? `a[href]:not(${option.imageWithinLightbox})` : 'a[href]';
+      const linked = (element.closest(anchor))
+        ? `<div class="badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._('LINKED')}</span></div>` : '';
+      const visibleIcon = (hidden === true)
+        ? `<div class="badge"><span class="hidden-icon"></span><span class="visually-hidden">${Lang._('HIDDEN')}</span></div>` : '';
 
       let append;
-      if (issue === 'error' && !showDeveloperChecks) {
-        const missing = altText.length === 0
-          ? `<div class="badge error-badge">${Lang._('MISSING')}</div>`
-          : `<strong class="red-text">${altText}</strong>`;
+      if (type === 'error' && !showDeveloperChecks) {
+        const missing = altText.length === 0 ? `<div class="badge">${Lang._('MISSING')}</div>` : '';
         append = `
         <li class="error">
-          <img src="${source}" alt/>
-          <div class="alt">
-            <div class="badge error-badge"><span class="error-icon"></span><span class="visually-hidden">${Lang._('ERROR')}</span> ${Lang._('ALT')}</div> ${linked} ${missing}
-          </div>
+          <button type="button" tabindex="-1">
+            <img src="${source}" alt/>
+            <div class="alt"> ${visibleIcon} ${linked} ${missing}
+              <div class="badge"><span class="error-icon"></span><span class="visually-hidden">${Lang._('ERROR')}</span> ${Lang._('ALT')}</div> <strong class="red-text">${altText}</strong>
+            </div>
+          </button>
           ${edit}
         </li>`;
         imageArray.push(append);
-      } else if (issue === 'warning' && !dismissedImage && !showDeveloperChecks) {
-        const decorative = altText.length === 0
-          ? `<div class="badge warning-badge">${Lang._('DECORATIVE')}</div>`
-          : '';
+      } else if (type === 'warning' && !dismissedImage && !showDeveloperChecks) {
         append = `
         <li class="warning">
-          <img src="${source}" alt/>
-          <div class="alt">
-            <div class="badge warning-badge"><span aria-hidden="true">&#63;</span> <span class="visually-hidden">${Lang._('WARNING')}</span> ${Lang._('ALT')}</div>
-            ${linked} ${decorative} <strong class="yellow-text">${altText}</strong>
-          </div>
+          <button type="button" tabindex="-1">
+            <img src="${source}" alt/>
+            <div class="alt"> ${visibleIcon} ${linked} ${decorative}
+              <div class="badge"><span aria-hidden="true">&#63;</span> <span class="visually-hidden">${Lang._('WARNING')}</span> ${Lang._('ALT')}</div> <strong class="yellow-text">${altText}</strong>
+            </div>
+          </button>
           ${edit}
         </li>`;
         imageArray.push(append);
       } else {
-        const decorative = altText.length === 0
-          ? `<div class="badge">${Lang._('DECORATIVE')}</div>`
-          : '';
-        const goodAnchor = option.imageWithinLightbox
-          ? `a[href]:not(${option.imageWithinLightbox})`
-          : 'a[href]';
-        const goodLinked = (image.element.closest(goodAnchor))
-          ? `<div class="badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._('LINKED')}</span></div>`
-          : '';
         append = `
         <li class="good">
-          <img src="${source}" alt/>
-          <div class="alt">
-            <div class="badge">${Lang._('ALT')}</div>
-            ${goodLinked} ${decorative} ${altText}
-          </div>
+          <button type="button" tabindex="-1">
+            <img src="${source}" alt/>
+            <div class="alt"> ${visibleIcon} ${linked} ${decorative}
+              <div class="badge">${Lang._('ALT')}</div> ${altText}
+            </div>
+          </button>
           ${edit}
         </li>`;
         imageArray.push(append);
@@ -3325,16 +3303,47 @@ function generateImageOutline(dismissed, imageResults, option) {
 
     // Append headings to Page Outline.
     Constants.Panel.imagesList.innerHTML = (imageArray.length === 0)
-      ? `<li>${Lang._('NO_IMAGES')}</li>`
-      : imageArray.join(' ');
+      ? `<li class="no-images">${Lang._('NO_IMAGES')}</li>` : imageArray.join(' ');
+
+    // Make clickable!
+    setTimeout(() => {
+      const buttons = Constants.Panel.imagesList.querySelectorAll('button');
+      buttons.forEach(($el, i) => {
+        $el.addEventListener('click', () => {
+          // Query DOM for target elements.
+          const image = find(
+            `[data-sa11y-image='${i}'], [data-sa11y-parent='image${i}']`,
+            'document',
+            Constants.Exclusions.Container,
+          )[0];
+
+          // Scroll to and pulse.
+          if (image) {
+            image.scrollIntoView({
+              behavior: `${Constants.Global.scrollBehaviour}`,
+              block: 'center',
+            });
+            addPulse(image);
+          }
+
+          // Alert if hidden or doesn't exist.
+          removeAlert();
+          if (!image || image.hasAttribute('data-sa11y-parent')) {
+            createAlert(Lang._('NOT_VISIBLE'));
+          }
+        });
+      });
+
+      const tabbable = Constants.Panel.imagesList.querySelectorAll('a, button');
+      initRovingTabindex(Constants.Panel.imagesList, tabbable);
+    }, 0);
 
     // Remove event listener.
     document.removeEventListener('sa11y-build-image-outline', imageOutlineHandler);
   };
 
   /* Generate image outline based on local storage or if "Image" button is selected. */
-  const rememberImages = store.getItem('sa11y-images');
-  if (rememberImages === 'Opened') imageOutlineHandler();
+  if (store.getItem('sa11y-images') === 'Opened') imageOutlineHandler();
   document.addEventListener('sa11y-build-image-outline', imageOutlineHandler);
 }
 
@@ -4370,7 +4379,7 @@ function computeOffsets(_ref) {
   return offsets;
 }
 
-function detectOverflow$1(state, options) {
+function detectOverflow(state, options) {
   if (options === void 0) {
     options = {};
   }
@@ -4453,7 +4462,7 @@ function computeAutoPlacement(state, options) {
 
 
   var overflows = allowedPlacements.reduce(function (acc, placement) {
-    acc[placement] = detectOverflow$1(state, {
+    acc[placement] = detectOverflow(state, {
       placement: placement,
       boundary: boundary,
       rootBoundary: rootBoundary,
@@ -4524,7 +4533,7 @@ function flip(_ref) {
     var isStartVariation = getVariation(placement) === start;
     var isVertical = [top, bottom].indexOf(_basePlacement) >= 0;
     var len = isVertical ? 'width' : 'height';
-    var overflow = detectOverflow$1(state, {
+    var overflow = detectOverflow(state, {
       placement: placement,
       boundary: boundary,
       rootBoundary: rootBoundary,
@@ -4634,10 +4643,10 @@ function hide(_ref) {
   var referenceRect = state.rects.reference;
   var popperRect = state.rects.popper;
   var preventedOffsets = state.modifiersData.preventOverflow;
-  var referenceOverflow = detectOverflow$1(state, {
+  var referenceOverflow = detectOverflow(state, {
     elementContext: 'reference'
   });
-  var popperAltOverflow = detectOverflow$1(state, {
+  var popperAltOverflow = detectOverflow(state, {
     altBoundary: true
   });
   var referenceClippingOffsets = getSideOffsets(referenceOverflow, referenceRect);
@@ -4761,7 +4770,7 @@ function preventOverflow(_ref) {
       tether = _options$tether === void 0 ? true : _options$tether,
       _options$tetherOffset = options.tetherOffset,
       tetherOffset = _options$tetherOffset === void 0 ? 0 : _options$tetherOffset;
-  var overflow = detectOverflow$1(state, {
+  var overflow = detectOverflow(state, {
     boundary: boundary,
     rootBoundary: rootBoundary,
     padding: padding,
@@ -7119,7 +7128,11 @@ function convertToRGBA(color, opacity) {
 
   if (!colorString.startsWith('rgb')) {
     // Unsupported color spaces.
-    if (colorString.startsWith('color(rec2020') || colorString.startsWith('color(display-p3')) {
+    if (
+      colorString.startsWith('color(rec2020')
+      || colorString.startsWith('color(display-p3')
+      || colorString.startsWith('url(')
+    ) {
       return 'unsupported';
     }
 
@@ -7305,11 +7318,11 @@ function ratioToDisplay(value) {
     return Math.abs(Number(value.toFixed(1)));
   }
   // Round to decimal places, and display without decimals if integer.
-  const rounded = Math.round(value * 100) / 100;
-  if (Number.isInteger(rounded)) {
-    return `${rounded}:1`;
-  }
-  return `${rounded.toFixed(2)}:1`;
+  const truncatedRatio = Math.trunc(value * 10) / 10;
+  const formattedRatio = Number.isInteger(truncatedRatio)
+    ? truncatedRatio.toFixed(0)
+    : truncatedRatio;
+  return `${formattedRatio}:1`;
 }
 
 /**
@@ -7509,7 +7522,10 @@ function suggestColorAPCA(color, background, fontWeight, fontSize) {
 function generateColorSuggestion(contrastDetails) {
   let adviceContainer;
   const { color, background, fontWeight, fontSize, isLargeText, type } = contrastDetails;
-  if (color && background && background.type !== 'image' && type === 'text') {
+  if (
+    color && background && background.type !== 'image'
+    && (type === 'text' || type === 'svg-error' || type === 'input')
+  ) {
     const suggested = Constants.Global.contrastAPCA
       ? suggestColorAPCA(color, background, fontWeight, fontSize)
       : suggestColorWCAG(color, background, isLargeText, Constants.Global.contrastAAA);
@@ -7517,7 +7533,7 @@ function generateColorSuggestion(contrastDetails) {
     let advice;
     const hr = '<hr aria-hidden="true">';
     const style = `color:${suggested.color};background-color:${getHex(contrastDetails.background)};`;
-    const colorBadge = `<strong class="badge" style="${style}">${suggested.color}</strong>`;
+    const colorBadge = `<button id="suggest" class="badge" style="${style}">${suggested.color}</button>`;
     const sizeBadge = `<strong class="normal-badge">${suggested.size}px</strong>`;
 
     if (!Constants.Global.contrastAPCA) {
@@ -7593,8 +7609,7 @@ function generateContrastTools(contrastDetails) {
       <div id="contrast" class="badge">${Lang._('CONTRAST')}</div>
       <div id="value" class="badge">${displayedRatio}</div>
       <div id="good" class="badge good-contrast" hidden>${Lang._('GOOD')} <span class="good-icon"></span></div>
-      <div id="apca-table" hidden></div>
-      <div id="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};${sanitizedText.length ? '' : 'display: none;'}` : ''}${hasFontWeight + hasFontSize + textDecoration}">${sanitizedText}</div>
+      <div id="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};` : ''}${hasFontWeight + hasFontSize + textDecoration}">${sanitizedText}</div>
       <div id="color-pickers">
         <label for="fg-text">${Lang._('FG')} ${unknownFGText}
           <input type="color" id="fg-input" value="${foregroundHex}" ${unknownFG}/>
@@ -7604,43 +7619,6 @@ function generateContrastTools(contrastDetails) {
         </label>
       </div>`;
   return contrastTools;
-}
-
-function createFontSizesTable(container, fontSizes) {
-  const apcaTable = container;
-  apcaTable.innerHTML = '';
-  apcaTable.hidden = false;
-
-  const row = document.createElement('div');
-  row.classList.add('row');
-
-  // Show only 200 thru 700 font weights.
-  const filteredFontSizes = fontSizes.slice(1, 7);
-  for (let i = 0; i < filteredFontSizes.length; i++) {
-    const fontSize = filteredFontSizes[i];
-    const fontWeight = (i + 2) * 100;
-
-    // Only render the cell if font size is not 777 or 999.
-    if (fontSize !== 777 && fontSize !== 999) {
-      const cell = document.createElement('div');
-      cell.classList.add('cell');
-
-      // Font size.
-      const sizeElement = document.createElement('div');
-      sizeElement.classList.add('font-size');
-      sizeElement.textContent = `${Math.ceil(fontSize)}px`;
-
-      // Font weight.
-      const weightElement = document.createElement('div');
-      weightElement.classList.add('font-weight');
-      weightElement.textContent = `${fontWeight}`;
-
-      cell.appendChild(sizeElement);
-      cell.appendChild(weightElement);
-      row.appendChild(cell);
-      apcaTable.appendChild(row);
-    }
-  }
 }
 
 /**
@@ -7661,7 +7639,6 @@ function initializeContrastTools(container, contrastDetails) {
     const bgInput = container.querySelector('#bg-input');
     const ratio = container.querySelector('#value');
     const good = container.querySelector('#good');
-    const apcaTable = container.querySelector('#apca-table');
 
     // Helper to update badge classes.
     const toggleBadges = (elements, condition) => {
@@ -7684,15 +7661,6 @@ function initializeContrastTools(container, contrastDetails) {
       contrastPreview.style.backgroundColor = bgColor;
       contrastPreview.style.backgroundImage = 'none';
 
-      // Change SVG color if it contains a single <path> element.
-      const child = contrastPreview.querySelectorAll('svg *');
-      if (child.length === 1) {
-        const { fill, stroke } = getComputedStyle(child[0]);
-        child[0].style.opacity = 1;
-        if (fill !== 'none') child[0].style.fill = fgColor;
-        if (stroke !== 'none') child[0].style.stroke = fgColor;
-      }
-
       // Get contrast ratio.
       const contrastValue = calculateContrast(convertToRGBA(fgColor), convertToRGBA(bgColor));
       const elementsToToggle = [ratio, contrast];
@@ -7711,13 +7679,6 @@ function initializeContrastTools(container, contrastDetails) {
             good.hidden = !nonTextPasses;
             passes = nonTextPasses;
             toggleBadges(elementsToToggle, passes);
-            break;
-          }
-          case 'svg-text': {
-            good.hidden = !nonTextPasses;
-            passes = fontArray.slice(1, 7).some((size) => size !== 999 && size !== 777);
-            toggleBadges(elementsToToggle, passes);
-            createFontSizesTable(apcaTable, fontArray);
             break;
           }
           default: {
@@ -7769,6 +7730,20 @@ function initializeContrastTools(container, contrastDetails) {
     // Event listeners for both colour inputs.
     fgInput.addEventListener('input', updatePreview);
     bgInput.addEventListener('input', updatePreview);
+
+    // Clicking on suggested colour updates preview and saves value to clipboard.
+    setTimeout(() => {
+      const suggest = container.querySelector('#suggest');
+      if (suggest) {
+        const updatePreviewWithSuggested = () => {
+          const hex = suggest.textContent;
+          fgInput.value = hex;
+          updatePreview();
+          navigator.clipboard.writeText(hex).catch(() => { });
+        };
+        suggest.addEventListener('click', updatePreviewWithSuggested);
+      }
+    }, 0);
   }
 }
 
@@ -7865,7 +7840,141 @@ function checkElementContrast(
   return algorithm($el, color, background, fontSize, fontWeight, opacity, contrastAAA);
 }
 
-var tooltipStyles = "a,button,code,div,h1,h2,kbd,li,ol,p,span,strong,svg,ul{all:unset;box-sizing:border-box!important}div{display:block}:after,:before{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}@media (forced-colors:active){[data-tippy-root]{border:2px solid transparent;border-radius:5px}}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:0}.tippy-box[data-placement^=top]>.tippy-arrow:before{border-top-color:initial;border-width:8px 8px 0;bottom:-7px;left:0;transform-origin:center top}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:0}.tippy-box[data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:initial;border-width:0 8px 8px;left:0;top:-7px;transform-origin:center bottom}.tippy-box[data-placement^=left]>.tippy-arrow{right:0}.tippy-box[data-placement^=left]>.tippy-arrow:before{border-left-color:initial;border-width:8px 0 8px 8px;right:-7px;transform-origin:center left}.tippy-box[data-placement^=right]>.tippy-arrow{left:0}.tippy-box[data-placement^=right]>.tippy-arrow:before{border-right-color:initial;border-width:8px 8px 8px 0;left:-7px;transform-origin:center right}.tippy-arrow{color:#333;height:16px;width:16px}.tippy-arrow:before{border-color:transparent;border-style:solid;content:\"\";position:absolute}.tippy-content{padding:5px 9px;position:relative;z-index:1}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{word-wrap:break-word;min-width:300px;text-align:start}[role=tooltip]{min-width:185px;text-align:center}.tippy-box[data-theme~=sa11y-panel]{border:1px solid var(--sa11y-panel-bg-splitter);box-shadow:var(--sa11y-box-shadow)}.tippy-box[data-theme~=sa11y-theme]:not([data-theme~=sa11y-panel]){box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15)!important}.tippy-box[data-theme~=sa11y-theme]{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-bg);border-radius:4px;color:var(--sa11y-panel-primary);display:block;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px;outline:0;padding:8px;position:relative;transition-property:transform,visibility,opacity}.tippy-box[data-theme~=sa11y-theme] pre:has(code){display:block;overflow:auto;white-space:pre-wrap}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:500}.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd,.tippy-box[data-theme~=sa11y-theme] pre{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);letter-spacing:normal;line-height:22px;padding:1.6px 4.8px}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block-end:0;margin-block-start:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{display:list-item;margin:5px 10px 0 20px;padding-bottom:5px}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;font-weight:500;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] a:hover{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin:0}.tippy-box[data-theme~=sa11y-theme] .dismiss-group{margin-top:5px}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:inline-block;margin:10px 5px 5px 0;margin-inline-end:15px;padding:4px 8px}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:focus,.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:hover{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme] .good-icon{background:var(--sa11y-good-text);display:inline-block;height:14px;margin-bottom:-2.5px;-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat;width:14px}.tippy-box[data-theme~=sa11y-theme] .link-icon{background:var(--sa11y-panel-primary);display:inline-block;height:16px;margin-bottom:-3.5px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat;width:16px}.tippy-box[data-theme~=sa11y-theme] .error .badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .error .colour{color:var(--sa11y-red-text)}.tippy-box[data-theme~=sa11y-theme] .error .link-icon{background:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .warning .badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme] .warning .colour{color:var(--sa11y-yellow-text)}.tippy-box[data-theme~=sa11y-theme] .warning .link-icon{background:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme] #apca-table{width:100%}.tippy-box[data-theme~=sa11y-theme] #apca-table .row{display:flex;margin-top:10px}.tippy-box[data-theme~=sa11y-theme] #apca-table .cell{align-items:center;display:flex;flex:1;flex-direction:column;padding:1px}.tippy-box[data-theme~=sa11y-theme] #apca-table .font-weight{font-size:calc(var(--sa11y-normal-text) - 2px);font-weight:700}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{forced-color-adjust:none}.tippy-box[data-theme~=sa11y-theme] .tippy-arrow{z-index:-1}}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:active,.tippy-box[data-theme~=sa11y-theme] button:focus,.tippy-box[data-theme~=sa11y-theme] input:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] input:focus:not(:focus-visible){box-shadow:none;outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus-visible,.tippy-box[data-theme~=sa11y-theme] a:focus-visible,.tippy-box[data-theme~=sa11y-theme] button:focus-visible,.tippy-box[data-theme~=sa11y-theme] input:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.tippy-box[data-theme~=sa11y-theme] .error-icon,.tippy-box[data-theme~=sa11y-theme] .hidden-icon,.tippy-box[data-theme~=sa11y-theme] .link-icon{filter:invert(1)}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:focus{outline:3px solid transparent!important}}";
+var annotationStyles = ".annotation{display:block;position:relative}.annotation-inline{display:inline-block;position:relative;text-align:end}button{border-radius:50%;box-shadow:0 0 16px 0 rgba(0,0,0,.31);cursor:pointer;display:block;padding:0;transition:all .2s ease-in-out}button,button:after{height:36px;position:absolute;width:36px}button:after{content:\"\";left:-7px;padding:7px;top:-7px}.error-btn{background:50% 50% var(--sa11y-error-svg) no-repeat;background-color:var(--sa11y-error);background-size:22px;border:1px solid var(--sa11y-error);z-index:9999}.error-btn:focus,.error-btn:hover{background-color:var(--sa11y-error-hover)}.good-btn{background:50% 50% var(--sa11y-good) var(--sa11y-good-svg) no-repeat;background-color:var(--sa11y-good);background-size:20px;border:1px solid var(--sa11y-good);z-index:9977}.good-btn:focus,.good-btn:hover{background-color:var(--sa11y-good-hover)}.warning-btn{background:50% 50% var(--sa11y-warning) var(--sa11y-warning-svg) no-repeat;background-color:var(--sa11y-warning);background-size:24px;border:1px solid var(--sa11y-warning);transform:scaleX(var(--sa11y-icon-direction));z-index:9988}.warning-btn:focus,.warning-btn:hover{background-color:var(--sa11y-warning-hover)}button:active,button:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){button{border:1px solid transparent!important;forced-color-adjust:none;outline:3px solid transparent!important}}";
+
+class Annotations extends HTMLElement {
+  connectedCallback() {
+    const shadow = this.attachShadow({ mode: 'open' });
+
+    // Styles
+    const style = document.createElement('style');
+    style.innerHTML = annotationStyles + sharedStyles;
+    shadow.appendChild(style);
+  }
+}
+
+// Array of all annotation triggers/buttons, imported by tooltip.js
+const annotationButtons = [];
+
+/**
+  * Create annotation buttons.
+  * @param {Object} issue The issue object.
+  * @param {Object} option The options object.
+*/
+function annotate(issue, option) {
+  // Get properties of issue object.
+  const {
+    element,
+    type,
+    content,
+    inline = false,
+    position = 'beforebegin',
+    id,
+    dismiss,
+    dismissAll,
+    contrastDetails,
+    margin,
+  } = issue;
+
+  // Validate types to prevent errors.
+  const validTypes = ['error', 'warning', 'good'];
+  if (validTypes.indexOf(type) === -1) {
+    throw Error(`Invalid type [${type}] for annotation`);
+  }
+
+  // Generate aria-label for annotations.
+  const ariaLabel = {
+    [validTypes[0]]: Lang._('ERROR'),
+    [validTypes[1]]: Lang._('WARNING'),
+    [validTypes[2]]: Lang._('GOOD'),
+  };
+
+  // Add dismiss button if prop enabled & has a dismiss key.
+  const dismissBtn = (option.dismissAnnotations && (type === 'warning' || type === 'good') && dismiss)
+    ? `<button data-sa11y-dismiss='${id}' type='button'>${Lang._('DISMISS')}</button>` : '';
+
+  // Generate HTML for painted annotations.
+  if (element) {
+    // Don't paint page with "Good" annotations (if prop enabled).
+    if (type === 'good') {
+      if (!option.showGoodImageButton && element?.tagName === 'IMG') return;
+      if (!option.showGoodLinkButton && element?.tagName === 'A') return;
+    }
+
+    // Tag element with border outline.
+    const tag = {
+      [validTypes[0]]: 'data-sa11y-error',
+      [validTypes[1]]: 'data-sa11y-warning',
+      [validTypes[2]]: 'data-sa11y-good',
+    };
+    [type].forEach(($el) => tag[$el] && element.setAttribute(tag[$el], ''));
+
+    // Create 'sa11y-annotation' web component for each annotation.
+    const annotation = document.createElement('sa11y-annotation');
+    annotation.setAttribute('data-sa11y-annotation', id);
+
+    // Add anchor positioning on <sa11y-annotation> web component to improve accuracy of positioning.
+    if (supportsAnchorPositioning()) {
+      annotation.style.position = 'absolute';
+      annotation.style.positionAnchor = `--sa11y-anchor-${id}`;
+      annotation.style.top = 'anchor(top)';
+      annotation.style.left = 'anchor(left)';
+
+      // Preserve original anchor name.
+      const existing = element.style.anchorName;
+      element.style.anchorName = existing
+        ? `${existing}, --sa11y-anchor-${id}`
+        : `--sa11y-anchor-${id}`;
+    }
+
+    // Add dismiss all button if prop enabled & has addition check key.
+    const dismissAllBtn = (
+      option.dismissAnnotations
+      && (option.dismissAll && typeof dismissAll === 'string')
+      && (type === 'warning' || type === 'good'))
+      ? `<button data-sa11y-dismiss='${id}' data-sa11y-dismiss-all type='button'>${Lang._('DISMISS_ALL')}</button>`
+      : '';
+
+    // Create button annotations.
+    const buttonWrapper = document.createElement('div');
+    buttonWrapper.classList.add(inline ? 'annotation-inline' : 'annotation');
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = `${type}-btn`;
+    button.setAttribute('aria-label', ariaLabel[type]);
+    button.setAttribute('aria-haspopup', 'dialog');
+    button.style.margin = `${inline ? '-10px' : ''} ${margin}`;
+    button.dataset.tippyContent = `<div lang='${Lang._('LANG_CODE')}' class='${type}'><button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button><h2>${ariaLabel[type]}</h2> ${content} ${contrastDetails ? '<div data-sa11y-contrast-details></div>' : ''} <div class='dismiss-group'>${dismissBtn}${dismissAllBtn}</div></div>`;
+    buttonWrapper.appendChild(button);
+    annotationButtons.push(button);
+
+    // Make sure annotations always appended outside of SVGs and interactive elements.
+    const insertBefore = option.insertAnnotationBefore ? `, ${option.insertAnnotationBefore}` : '';
+    const location = element.closest(`a, button, [role="link"], [role="button"] ${insertBefore}`) || element;
+    location.insertAdjacentElement(position, annotation);
+    annotation.shadowRoot.appendChild(buttonWrapper);
+
+    // Modifies the annotation's parent container with overflow: hidden, making it visible and scrollable so content authors can access it.
+    const ignoredElements = option.ignoreHiddenOverflow
+      ? option.ignoreHiddenOverflow.split(',').flatMap((selector) => [...document.querySelectorAll(selector)])
+      : [];
+    const parent = findVisibleParent(element, 'overflow', 'hidden');
+    if (parent && !ignoredElements.includes(parent)) {
+      parent.setAttribute('data-sa11y-overflow', '');
+    }
+  } else {
+    // If no valid element, send issue to main panel.
+    const listItem = document.createElement('li');
+    listItem.innerHTML = `<h3>${ariaLabel[type]}</h3> ${content}${dismissBtn}`;
+    Constants.Panel.pageIssuesList.insertAdjacentElement('afterbegin', listItem);
+
+    // Display Page Issues panel.
+    Constants.Panel.pageIssues.classList.add('active');
+    Constants.Panel.panel.classList.add('has-page-issues');
+  }
+}
+
+var tooltipStyles = "a,button,code,div,h1,h2,kbd,li,ol,p,span,strong,svg,ul{all:unset;box-sizing:border-box!important}div{display:block}:after,:before{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}@media (forced-colors:active){[data-tippy-root]{border:2px solid transparent;border-radius:5px}}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:0}.tippy-box[data-placement^=top]>.tippy-arrow:before{border-top-color:initial;border-width:8px 8px 0;bottom:-7px;left:0;transform-origin:center top}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:0}.tippy-box[data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:initial;border-width:0 8px 8px;left:0;top:-7px;transform-origin:center bottom}.tippy-box[data-placement^=left]>.tippy-arrow{right:0}.tippy-box[data-placement^=left]>.tippy-arrow:before{border-left-color:initial;border-width:8px 0 8px 8px;right:-7px;transform-origin:center left}.tippy-box[data-placement^=right]>.tippy-arrow{left:0}.tippy-box[data-placement^=right]>.tippy-arrow:before{border-right-color:initial;border-width:8px 8px 8px 0;left:-7px;transform-origin:center right}.tippy-arrow{color:#333;height:16px;width:16px}.tippy-arrow:before{border-color:transparent;border-style:solid;content:\"\";position:absolute}.tippy-content{padding:5px 9px;position:relative;z-index:1}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{word-wrap:break-word;min-width:300px;text-align:start}[role=tooltip]{min-width:185px;text-align:center}.tippy-box[data-theme~=sa11y-panel]{border:1px solid var(--sa11y-panel-bg-splitter);box-shadow:var(--sa11y-box-shadow)}.tippy-box[data-theme~=sa11y-theme]:not([data-theme~=sa11y-panel]){box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15)!important}.tippy-box[data-theme~=sa11y-theme]{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-bg);border-radius:4px;color:var(--sa11y-panel-primary);display:block;font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;letter-spacing:normal;line-height:22px;outline:0;padding:8px;position:relative;transition-property:transform,visibility,opacity}.tippy-box[data-theme~=sa11y-theme] pre:has(code){display:block;overflow:auto;white-space:pre-wrap}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:500}.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd,.tippy-box[data-theme~=sa11y-theme] pre{-webkit-font-smoothing:auto;background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);letter-spacing:normal;line-height:22px;padding:1.6px 4.8px}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block-end:0;margin-block-start:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{display:list-item;margin:5px 10px 0 20px;padding-bottom:5px}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;font-weight:500;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] a:hover{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);border:none;height:1px;margin:10px 0;opacity:1;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin:0}.tippy-box[data-theme~=sa11y-theme] button#suggest{cursor:pointer;padding:.2rem;position:relative;transition:background-color .2s,color .2s}.tippy-box[data-theme~=sa11y-theme] button#suggest:after{bottom:-14px;content:\"\";left:-5px;position:absolute;right:-5px;top:-10px}.tippy-box[data-theme~=sa11y-theme] button#suggest:focus-visible,.tippy-box[data-theme~=sa11y-theme] button#suggest:hover{background-color:#fff!important;color:#000!important}.tippy-box[data-theme~=sa11y-theme] .dismiss-group{margin-top:5px}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;color:var(--sa11y-panel-primary);cursor:pointer;display:inline-block;margin:10px 5px 5px 0;margin-inline-end:15px;padding:4px 8px}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:focus,.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:hover{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme] .good-icon{background:var(--sa11y-good-text);display:inline-block;height:14px;margin-bottom:-2.5px;-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat;width:14px}.tippy-box[data-theme~=sa11y-theme] .link-icon{background:var(--sa11y-panel-primary);display:inline-block;height:16px;margin-bottom:-3.5px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat;width:16px}.tippy-box[data-theme~=sa11y-theme] .error .badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .error .colour{color:var(--sa11y-red-text)}.tippy-box[data-theme~=sa11y-theme] .error .link-icon{background:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .warning .badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme] .warning .colour{color:var(--sa11y-yellow-text)}.tippy-box[data-theme~=sa11y-theme] .warning .link-icon{background:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=left]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=right]>.tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=top]>.tippy-arrow:before{forced-color-adjust:none}.tippy-box[data-theme~=sa11y-theme] .tippy-arrow{z-index:-1}}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:active,.tippy-box[data-theme~=sa11y-theme] button:focus,.tippy-box[data-theme~=sa11y-theme] input:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] input:focus:not(:focus-visible){box-shadow:none;outline:0}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus-visible,.tippy-box[data-theme~=sa11y-theme] a:focus-visible,.tippy-box[data-theme~=sa11y-theme] button:focus-visible,.tippy-box[data-theme~=sa11y-theme] input:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.tippy-box[data-theme~=sa11y-theme] .error-icon,.tippy-box[data-theme~=sa11y-theme] .hidden-icon,.tippy-box[data-theme~=sa11y-theme] .link-icon{filter:invert(1)}.tippy-box[data-theme~=sa11y-theme] [tabindex=\"-1\"]:focus,.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:focus{outline:3px solid transparent!important}}";
 
 /**
  * Tooltip container for all annotations.
@@ -7879,17 +7988,8 @@ class AnnotationTooltips extends HTMLElement {
     style.innerHTML = tooltipStyles + sharedStyles;
     shadowRoot.appendChild(style);
 
-    // Get all annotations on page
-    const buttons = [];
-    Elements.Annotations.Array.forEach((annotation) => {
-      const annotationButtons = annotation.shadowRoot.querySelectorAll('.sa11y-btn');
-      if (annotationButtons) {
-        buttons.push(...Array.from(annotationButtons));
-      }
-    });
-
     // Instantiate tippy.js
-    const annotations = tippy(buttons, {
+    const annotations = tippy(annotationButtons, {
       interactive: true,
       trigger: 'mouseenter click',
       hideOnClick: false,
@@ -8076,171 +8176,6 @@ class PanelTooltips extends HTMLElement {
     }
   }
 }
-
-var annotationStyles = ".instance{display:block;position:relative}.instance-inline{display:inline-block;position:relative;text-align:end}button{border-radius:50%;box-shadow:0 0 16px 0 rgba(0,0,0,.31);cursor:pointer;display:block;padding:0;transition:all .2s ease-in-out;z-index:8888}button,button:after{height:36px;position:absolute;width:36px}button:after{content:\"\";left:-7px;padding:7px;top:-7px}.warning-btn{margin:20px}.error-btn,.good-btn{margin:10px}.error-btn-text,.good-btn-text,.warning-btn-text{margin:-30px 10px}.error-btn,.error-btn-text{background:50% 50% var(--sa11y-error-svg) no-repeat;background-color:var(--sa11y-error);background-size:22px;border:1px solid var(--sa11y-error)}.error-btn-text:focus,.error-btn-text:hover,.error-btn:focus,.error-btn:hover{background-color:var(--sa11y-error-hover)}.good-btn,.good-btn-text{background:50% 50% var(--sa11y-good) var(--sa11y-good-svg) no-repeat;background-color:var(--sa11y-good);background-size:20px;border:1px solid var(--sa11y-good)}.good-btn-text:focus,.good-btn-text:hover,.good-btn:focus,.good-btn:hover{background-color:var(--sa11y-good-hover)}.warning-btn,.warning-btn-text{background:50% 50% var(--sa11y-warning) var(--sa11y-warning-svg) no-repeat;background-color:var(--sa11y-warning);background-size:24px;border:1px solid var(--sa11y-warning);transform:scaleX(var(--sa11y-icon-direction))}.warning-btn-text:focus,.warning-btn-text:hover,.warning-btn:focus,.warning-btn:hover{background-color:var(--sa11y-warning-hover)}.sa11y-btn:active,.sa11y-btn:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.sa11y-btn{border:1px solid transparent!important;forced-color-adjust:none;outline:3px solid transparent!important}}";
-
-class Annotations extends HTMLElement {
-  connectedCallback() {
-    const shadow = this.attachShadow({ mode: 'open' });
-
-    // Styles
-    const style = document.createElement('style');
-    style.innerHTML = annotationStyles + sharedStyles;
-    shadow.appendChild(style);
-  }
-}
-
-/**
-  * Create annotation buttons.
-  * @param {Object} issue The issue object.
-  * @param {Object} option The options object.
-*/
-function annotate(issue, option) {
-  // Get properties of issue object.
-  const {
-    element,
-    type,
-    content,
-    inline = false,
-    position = 'beforebegin',
-    id,
-    dismiss,
-    dismissAll,
-    contrastDetails,
-  } = issue;
-
-  // Validate types to prevent errors.
-  const validTypes = ['error', 'warning', 'good'];
-  if (validTypes.indexOf(type) === -1) {
-    throw Error(`Invalid type [${type}] for annotation`);
-  }
-
-  // Add unique ID and styles to annotation and marked element.
-  [type].forEach(($el) => {
-    if ($el === 'error' && element !== undefined) {
-      const errorAttr = (inline ? 'data-sa11y-error-inline' : 'data-sa11y-error');
-      element.setAttribute(errorAttr, id);
-    } else if ($el === 'warning' && element !== undefined) {
-      const warningAttr = (inline ? 'data-sa11y-warning-inline' : 'data-sa11y-warning');
-      element.setAttribute(warningAttr, id);
-    }
-  });
-
-  // Generate aria-label for annotations.
-  const ariaLabel = {
-    [validTypes[0]]: Lang._('ERROR'),
-    [validTypes[1]]: Lang._('WARNING'),
-    [validTypes[2]]: Lang._('GOOD'),
-  };
-
-  // Don't paint page with "Good" annotations for images with alt text and links with accessible name.
-  if (option.showGoodImageButton === false
-    && element?.tagName === 'IMG' && type === 'good') return;
-  if (option.showGoodLinkButton === false
-    && element?.tagName === 'A' && type === 'good') return;
-
-  // Add dismiss button if prop enabled & has a dismiss key.
-  const dismissBtn = (
-    option.dismissAnnotations
-    && (type === 'warning' || type === 'good')
-    && dismiss !== undefined)
-    ? `<button data-sa11y-dismiss='${id}' type='button'>${Lang._('DISMISS')}</button>` : '';
-
-  // Add dismiss all button if prop enabled & has addition check key.
-  const dismissAllBtn = (
-    option.dismissAnnotations
-    && (option.dismissAll && typeof dismissAll === 'string')
-    && (type === 'warning' || type === 'good'))
-    ? `<button data-sa11y-dismiss='${id}' data-sa11y-dismiss-all type='button'>${Lang._('DISMISS_ALL')}</button>` : '';
-
-  // Create 'sa11y-annotation' web component for each annotation.
-  // Create 'sa11y-annotation' web component for each annotation.
-  const instance = document.createElement('sa11y-annotation');
-  instance.setAttribute('data-sa11y-annotation', id);
-
-  // Generate HTML for painted annotations.
-  if (element === undefined) {
-    // Page errors displayed to main panel.
-    const listItem = document.createElement('li');
-    listItem.innerHTML = `<h3>${ariaLabel[type]}</h3> ${content}${dismissBtn}`;
-    Constants.Panel.pageIssuesList.insertAdjacentElement('afterbegin', listItem);
-
-    // Display Page Issues panel.
-    Constants.Panel.pageIssues.classList.add('active');
-    Constants.Panel.panel.classList.add('has-page-issues');
-  } else {
-    // Button annotations.
-    const create = document.createElement('div');
-    create.classList.add(`${inline ? 'instance-inline' : 'instance'}`);
-    create.innerHTML = `
-    <button
-      type="button"
-      aria-label="${ariaLabel[type]}"
-      aria-haspopup="dialog"
-      class="sa11y-btn ${[type]}-btn${inline ? '-text' : ''}"
-      data-tippy-content=
-        "<div lang='${Lang._('LANG_CODE')}' class='${[type]}'>
-          <button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button> <h2>${ariaLabel[type]}</h2>
-          ${escapeHTML(content)}
-          ${contrastDetails ? '<div data-sa11y-contrast-details></div>' : ''}
-          <div class='dismiss-group'>${dismissBtn}${dismissAllBtn}</div>
-        </div>"
-    ></button>`;
-
-    // Make sure annotations always appended outside of SVGs and interactive elements.
-    const insertBefore = option.insertAnnotationBefore ? `, ${option.insertAnnotationBefore}` : '';
-    const location = element.closest(`a, button, [role="link"], [role="button"] ${insertBefore}`) || element;
-    location.insertAdjacentElement(position, instance);
-    instance.shadowRoot.appendChild(create);
-  }
-}
-
-/**
- * Utility function for annotations that modifies the parent container with overflow: hidden, making it visible and scrollable so content authors can access Sa11y's annotations.
- * @param {string} ignoreHiddenOverflow A string of selectors to ignore and not apply overflow detection.
- */
-const detectOverflow = (ignoreHiddenOverflow) => {
-  const findParentWithOverflow = (element, property, value) => {
-    let $el = element;
-    while ($el !== null) {
-      const style = window.getComputedStyle($el);
-      const propValue = style.getPropertyValue(property);
-      if (propValue === value) {
-        return $el;
-      }
-      $el = $el.parentElement;
-    }
-    return null;
-  };
-  const annotations = document.querySelectorAll('sa11y-annotation');
-  annotations.forEach(($el) => {
-    const overflowing = findParentWithOverflow($el, 'overflow', 'hidden');
-    if (overflowing !== null) {
-      // Skip if selectors passed via ignoreHiddenOverflow prop.
-      if (ignoreHiddenOverflow) {
-        const selectors = ignoreHiddenOverflow.split(',');
-        const matches = selectors.flatMap((selector) => [...document.querySelectorAll(selector)]);
-        if (matches.includes(overflowing)) return;
-      }
-      // All other `overflow: hidden` containers will be made visible and scrollable.
-      overflowing.setAttribute('data-sa11y-overflow', '');
-    }
-  });
-};
-
-/**
- * Utility function that will visually move overlapping annotations so they can be seen.
- */
-const nudge = () => {
-  const annotations = document.querySelectorAll('sa11y-annotation');
-  annotations.forEach(($el) => {
-    const sibling = $el.nextElementSibling;
-    const css = 'margin: -5px -15px !important;';
-    if (sibling !== null && sibling.tagName === 'SA11Y-ANNOTATION' && customElements.get('sa11y-annotation')) {
-      sibling.shadowRoot.querySelector('button').setAttribute('style', css);
-    }
-  });
-};
 
 // Empty anchors appended to the hidden heading's visible parent.
 class HeadingAnchor extends HTMLElement {
@@ -8520,7 +8455,7 @@ function checkImages(results, option) {
       ? fnIgnore(link, Constants.Exclusions.LinkSpan).textContent : '';
     const stringMatchExclusions = option.linkIgnoreStrings
       ? linkSpanExclusions.replace(option.linkIgnoreStrings, '') : linkSpanExclusions;
-    const linkTextContentLength = link
+    const linkTextLength = link
       ? removeWhitespace(stringMatchExclusions).length : 0;
 
     // Has aria-hidden.
@@ -8529,7 +8464,7 @@ function checkImages(results, option) {
     }
 
     // Ignore tracking pixels without explicit aria-hidden or nullified alt.
-    if ($el.height === 1 && $el.width === 1 && isElementHidden($el)) {
+    if ($el.height < 2 && $el.width < 2 && (isElementHidden($el) || alt === '')) {
       return;
     }
 
@@ -8553,17 +8488,17 @@ function checkImages(results, option) {
     // If alt is missing.
     if (alt === null) {
       if (link) {
-        const rule = (linkTextContentLength === 0)
+        const rule = (linkTextLength === 0)
           ? option.checks.MISSING_ALT_LINK
           : option.checks.MISSING_ALT_LINK_HAS_TEXT;
-        const conditional = linkTextContentLength === 0
+        const conditional = linkTextLength === 0
           ? 'MISSING_ALT_LINK' : 'MISSING_ALT_LINK_HAS_TEXT';
         if (rule) {
           results.push({
             element: $el,
             type: rule.type || 'error',
             content: Lang.sprintf(rule.content || conditional),
-            dismiss: prepareDismissal(`${conditional + src + linkTextContentLength}`),
+            dismiss: prepareDismissal(`${conditional + src + linkTextLength}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
@@ -8586,7 +8521,7 @@ function checkImages(results, option) {
       const error = containsAltTextStopWords(altText);
       const hasAria = $el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby');
       const titleAttr = $el.getAttribute('title');
-      const decorative = (alt === '' || alt === ' ');
+      const decorative = (alt === '');
 
       // Figure elements.
       const figure = $el.closest('figure');
@@ -8598,8 +8533,8 @@ function checkImages(results, option) {
       const maxAltCharacters = option.checks.IMAGE_ALT_TOO_LONG.maxLength || 250;
 
       // If aria-label or aria-labelledby returns empty or invalid.
-      if (hasAria && altText === '') {
-        if (option.checks.MISSING_ALT) {
+      if (option.checks.MISSING_ALT) {
+        if (hasAria && altText === '') {
           results.push({
             element: $el,
             type: option.checks.MISSING_ALT.type || 'error',
@@ -8608,8 +8543,8 @@ function checkImages(results, option) {
             dismissAll: option.checks.MISSING_ALT.dismissAll ? 'MISSING_ALT' : false,
             developer: option.checks.MISSING_ALT.developer || false,
           });
+          return;
         }
-        return;
       }
 
       // Decorative images.
@@ -8635,17 +8570,17 @@ function checkImages(results, option) {
             });
           }
         } else if (link) {
-          const rule = (linkTextContentLength === 0)
+          const rule = (linkTextLength === 0)
             ? option.checks.LINK_IMAGE_NO_ALT_TEXT
             : option.checks.LINK_IMAGE_TEXT;
-          const conditional = linkTextContentLength === 0
+          const conditional = linkTextLength === 0
             ? 'LINK_IMAGE_NO_ALT_TEXT' : 'LINK_IMAGE_TEXT';
           if (rule) {
             results.push({
               element: $el,
-              type: rule.type || (linkTextContentLength === 0 ? 'error' : 'good'),
+              type: rule.type || (linkTextLength === 0 ? 'error' : 'good'),
               content: Lang.sprintf(rule.content || conditional),
-              dismiss: prepareDismissal(`${conditional + src + linkTextContentLength}`),
+              dismiss: prepareDismissal(`${conditional + src + linkTextLength}`),
               dismissAll: rule.dismissAll ? conditional : false,
               developer: rule.developer || false,
             });
@@ -8677,6 +8612,24 @@ function checkImages(results, option) {
           });
         }
         return;
+      }
+
+      // Alt is unpronounceable.
+      const unpronounceable = (link)
+        ? option.checks.LINK_ALT_UNPRONOUNCEABLE : option.checks.ALT_UNPRONOUNCEABLE;
+      if (unpronounceable) {
+        if (alt.replace(/"|'|\?|\.|-|\s+/g, '') === '' && linkTextLength === 0) {
+          const condition = (link) ? 'LINK_ALT_UNPRONOUNCEABLE' : 'ALT_UNPRONOUNCEABLE';
+          results.push({
+            element: $el,
+            type: unpronounceable.type || 'error',
+            content: Lang.sprintf(unpronounceable.content || condition, altText),
+            dismiss: prepareDismissal(`UNPRONOUNCEABLE${src}`),
+            dismissAll: unpronounceable.dismissAll ? 'ALT_UNPRONOUNCEABLE' : false,
+            developer: unpronounceable.developer || false,
+          });
+          return;
+        }
       }
 
       // Alt text quality.
@@ -8748,10 +8701,10 @@ function checkImages(results, option) {
           });
         }
       } else if (link) {
-        const rule = (linkTextContentLength === 0)
+        const rule = (linkTextLength === 0)
           ? option.checks.LINK_IMAGE_ALT
           : option.checks.LINK_IMAGE_ALT_AND_TEXT;
-        const conditional = (linkTextContentLength === 0) ? 'LINK_IMAGE_ALT' : 'LINK_IMAGE_ALT_AND_TEXT';
+        const conditional = (linkTextLength === 0) ? 'LINK_IMAGE_ALT' : 'LINK_IMAGE_ALT_AND_TEXT';
 
         if (rule) {
           // Has both link text and alt text.
@@ -8759,7 +8712,7 @@ function checkImages(results, option) {
           const removeWhitespace$1 = removeWhitespace(linkAccName);
           const sanitizedText = sanitizeHTML(removeWhitespace$1);
 
-          const tooltip = (linkTextContentLength === 0)
+          const tooltip = (linkTextLength === 0)
             ? Lang.sprintf('LINK_IMAGE_ALT', altText)
             : `${Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT', altText, sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`;
 
@@ -8859,6 +8812,7 @@ function checkHeaders(results, option, headingOutline) {
     let content = null;
     let developer = null;
     let dismissAll = null;
+    let margin = null;
 
     // Rulesets.
     if (headingLength === 0) {
@@ -8870,6 +8824,7 @@ function checkHeaders(results, option, headingOutline) {
             content = Lang.sprintf(option.checks.HEADING_EMPTY_WITH_IMAGE.content || 'HEADING_EMPTY_WITH_IMAGE', level);
             developer = option.checks.HEADING_EMPTY_WITH_IMAGE.developer || false;
             dismissAll = option.checks.HEADING_EMPTY_WITH_IMAGE.dismissAll ? 'HEADING_EMPTY_WITH_IMAGE' : false;
+            margin = '-15px 30px';
           }
         }
       } else if (option.checks.HEADING_EMPTY) {
@@ -8877,6 +8832,7 @@ function checkHeaders(results, option, headingOutline) {
         content = Lang.sprintf(option.checks.HEADING_EMPTY.content || 'HEADING_EMPTY', level);
         developer = option.checks.HEADING_EMPTY.developer || false;
         dismissAll = option.checks.HEADING_EMPTY.dismissAll ? 'HEADING_EMPTY' : false;
+        margin = '0';
       }
     } else if (level - prevLevel > 1 && i !== 0) {
       if (option.checks.HEADING_SKIPPED_LEVEL) {
@@ -8911,16 +8867,13 @@ function checkHeaders(results, option, headingOutline) {
         dismissAll,
         isWithinRoot,
         developer,
+        margin,
       });
     }
 
     // Reset level and text.
     prevLevel = level;
     prevHeadingText = headingText;
-
-    // Determine if heading is visually hidden or within hidden container.
-    const hiddenHeading = isElementVisuallyHiddenOrHidden($el);
-    const parent = findVisibleParent($el, 'display', 'none');
 
     // Create an object for heading outline panel.
     headingOutline.push({
@@ -8929,8 +8882,6 @@ function checkHeaders(results, option, headingOutline) {
       text: headingText,
       index: i,
       type,
-      hidden: hiddenHeading,
-      visibleParent: parent,
       dismiss: prepareDismissal(`H${level + headingText}`),
       isWithinRoot,
     });
@@ -9236,7 +9187,7 @@ function checkLinkText(results, option) {
             position: 'afterend',
             dismiss: prepareDismissal(`LINKGOOD${href + linkTextTrimmed}`),
             dismissAll: option.checks.LINK_LABEL.dismissAll ? 'LINK_LABEL' : false,
-            developer: option.checks.LINK_LABEL.developer || false,
+            developer: option.checks.LINK_LABEL.developer || true,
           });
         }
 
@@ -9404,7 +9355,7 @@ function checkContrast(results, option) {
     // Check if element is visually hidden to screen readers or explicitly hidden.
     const isVisuallyHidden = isScreenReaderOnly($el);
     const isExplicitlyHidden = isElementHidden($el);
-    const isHidden = isExplicitlyHidden || isVisuallyHidden || opacity === 0;
+    const isHidden = isExplicitlyHidden || isVisuallyHidden || opacity === 0 || fontSize === 0;
 
     // Filter only text nodes.
     const textString = Array.from($el.childNodes)
@@ -9418,8 +9369,8 @@ function checkContrast(results, option) {
 
     // Only check elements with text and inputs.
     if (text.length !== 0 || checkInputs) {
+      const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
       if (color === 'unsupported' || background === 'unsupported') {
-        const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
         contrastResults.push({
           $el,
           type: 'unsupported',
@@ -9431,8 +9382,7 @@ function checkContrast(results, option) {
           ...(color !== 'unsupported' && { color }),
         });
       } else if (background.type === 'image') {
-        if (isHidden) ; else {
-          const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
+        if (!isHidden) {
           contrastResults.push({
             $el,
             type: 'background-image',
@@ -9444,7 +9394,7 @@ function checkContrast(results, option) {
             opacity,
           });
         }
-      } else if ($el.tagName === 'text' && $el.closest('svg')) ; else if (isHidden || getHex(color) === getHex(background)) ; else {
+      } else if (!isHidden && getHex(color) !== getHex(background)) {
         const result = checkElementContrast(
           $el, color, background, fontSize, fontWeight, opacity, option.contrastAAA,
         );
@@ -9458,92 +9408,129 @@ function checkContrast(results, option) {
 
   // Iterate through all SVGs on the page, separately.
   Elements.Found.Svg.forEach(($el) => {
+    const generalWarning = { $el, type: 'svg-warning' };
+
+    // Get background.
     const background = getBackground($el);
-
-    // Background image.
-    if (background && background.type === 'image') {
-      contrastResults.push({ $el, type: 'svg-warning', background });
-      return;
-    }
-
-    // Handle SVGs with <text> element
-    if ($el.querySelector('text')) {
-      contrastResults.push({ $el, type: 'svg-text', background });
-      return;
-    }
+    const hasBackground = background !== 'unsupported' && background.type !== 'image';
 
     // Process simple SVGs with a single shape.
-    const shapes = $el.querySelectorAll('path, polygon, circle, rect, ellipse, use');
-    if (shapes.length === 1) {
+    const shapes = $el.querySelectorAll('path, rect, circle, ellipse, polygon, text, use');
+
+    // Push a general warning for any complex SVGs.
+    const complex = $el.querySelectorAll('*:not(path):not(rect):not(circle):not(ellipse):not(polygon):not(text):not(use):not(title)');
+
+    // Check if all nodes within the SVG have the same fill/stroke/opacity.
+    let allSameColour = false;
+    if (shapes.length) {
+      const ref = getComputedStyle(shapes[0]);
+      allSameColour = Array.from(shapes).every((node) => {
+        const style = getComputedStyle(node);
+        return (
+          style.fill === ref.fill
+          && style.fillOpacity === ref.fillOpacity
+          && style.stroke === ref.stroke
+          && style.strokeOpacity === ref.strokeOpacity
+          && style.opacity === ref.opacity
+        );
+      });
+    }
+
+    // If simple SVG (single path) or complex SVG with same colour.
+    if ((shapes.length === 1 || allSameColour) && complex.length === 0) {
       const style = getComputedStyle(shapes[0]);
-      const { fill, opacity, stroke, strokeWidth } = style;
+      const { fill, stroke, strokeWidth, opacity } = style;
 
-      // Background image.
-      if (fill.startsWith('url(')) {
-        contrastResults.push({ $el, type: 'svg-warning', background });
-        return;
+      // Get computed stroke width/convert % to number.
+      let strokePx = 0;
+      const { width, height } = $el.getBBox();
+      if (stroke && stroke !== 'none') {
+        if (strokeWidth.endsWith('%')) {
+          strokePx = (parseFloat(strokeWidth) / 100) * Math.min(width, height);
+        } else {
+          strokePx = ['inherit', 'initial', 'unset'].includes(strokeWidth)
+            ? 1 : parseFloat(strokeWidth);
+        }
       }
 
-      const hasFill = fill && fill !== 'none';
-      const hasStroke = stroke && stroke !== 'none' && strokeWidth !== '0px';
+      // Threshold is arbitrary/not WCAG. Smaller threshold for smaller SVGs.
+      const threshold = Math.min(width, height) < 50 ? 1 : 3;
+      const hasStroke = stroke && strokePx >= threshold && stroke !== 'none';
 
-      if (!hasFill && !hasStroke) {
-        contrastResults.push({ $el, type: 'svg-warning', background });
-        return;
-      }
+      // Get resolved fill colour.
+      const hasFill = fill && fill !== 'none' && !fill.startsWith('url(');
+      const resolvedFill = fill === 'currentColor'
+        ? convertToRGBA(getComputedStyle(shapes[0]).color, opacity)
+        : convertToRGBA(fill, opacity);
 
-      let fillPasses = false;
-      let strokePasses = false;
-      let contrastValue;
+      // Get resolved stroke colour.
+      const resolvedStroke = stroke === 'currentColor'
+        ? convertToRGBA(getComputedStyle(shapes[0]).color, opacity)
+        : convertToRGBA(stroke, opacity);
 
-      // Check fill contrast.
-      let resolvedFill;
-      if (hasFill) {
-        resolvedFill = fill === 'currentColor'
-          ? convertToRGBA(getComputedStyle($el).color, opacity)
-          : convertToRGBA(fill, opacity);
-        if (resolvedFill !== 'unsupported') {
+      // If supported colours and has background, we can calculate contrast.
+      const supported = ![resolvedFill, resolvedStroke].includes('unsupported');
+      if (supported && hasBackground) {
+        let contrastValue;
+        let fillPasses = false;
+        let strokePasses = false;
+
+        if (hasFill) {
           contrastValue = calculateContrast(resolvedFill, background);
           fillPasses = option.contrastAPCA
             ? contrastValue.ratio >= 45
             : contrastValue.ratio >= 3;
         }
-      }
 
-      // Check stroke contrast.
-      let resolvedStroke;
-      if (hasStroke) {
-        resolvedStroke = stroke === 'currentColor'
-          ? convertToRGBA(getComputedStyle($el).color, opacity)
-          : convertToRGBA(stroke, opacity);
-        if (resolvedStroke !== 'unsupported') {
+        if (hasStroke) {
           contrastValue = calculateContrast(resolvedStroke, background);
           strokePasses = option.contrastAPCA
             ? contrastValue.ratio >= 45
             : contrastValue.ratio >= 3;
         }
-      }
 
-      // Failure conditions.
-      const failsBoth = hasFill && hasStroke && !fillPasses && !strokePasses;
-      const failsFill = hasFill && !hasStroke && !fillPasses;
-      const failsStroke = !hasFill && hasStroke && !strokePasses;
-      if (resolvedFill === 'unsupported' || resolvedStroke === 'unsupported') {
-        // Fill or stroke uses unsupported colour space.
-        contrastResults.push({ $el, type: 'svg-warning', background });
-      } else if (failsBoth || failsFill || failsStroke) {
-        // Push an error for simple SVGs.
-        contrastResults.push({
-          $el,
-          ratio: ratioToDisplay(contrastValue.ratio),
-          color: contrastValue.blendedColor,
-          type: 'svg-error',
-          background,
-        });
+        // Calculate contrast of both stroke and fill.
+        const failsBoth = hasFill && hasStroke && !fillPasses && !strokePasses;
+        const failsFill = hasFill && !hasStroke && !fillPasses;
+        const failsStroke = !hasFill && hasStroke && !strokePasses;
+
+        // Fails
+        if (failsBoth || failsFill || failsStroke) {
+          // Get hex values.
+          const bgHex = getHex(background);
+          const fillHex = getHex(resolvedFill);
+          const strokeHex = getHex(resolvedStroke);
+
+          // Ignore if foreground equals background.
+          if ((fillHex === bgHex && !hasStroke) || (strokeHex === bgHex && !hasFill)) {
+            return;
+          }
+
+          // Push an error for simple SVGs.
+          contrastResults.push({
+            $el,
+            ratio: ratioToDisplay(contrastValue.ratio),
+            color: contrastValue.blendedColor,
+            type: 'svg-error',
+            isLargeText: true, // To push a suggested colour (3:1).
+            background,
+          });
+        }
+      } else {
+        // General warning for complex SVGs with multiple shapes.
+        // Push whatever colour is valid.
+        if (hasFill && resolvedFill !== 'unsupported') {
+          generalWarning.color = resolvedFill;
+        } else if (hasStroke && resolvedStroke !== 'unsupported') {
+          generalWarning.color = resolvedStroke;
+        }
+        if (hasBackground) generalWarning.background = background;
+        contrastResults.push(generalWarning);
       }
     } else {
-      // Warn for complex SVGs with multiple shapes
-      contrastResults.push({ $el, type: 'svg-warning', background });
+      // General warning for complex SVGs.
+      if (hasBackground) generalWarning.background = background;
+      contrastResults.push(generalWarning);
     }
   });
 
@@ -9627,13 +9614,8 @@ function checkContrast(results, option) {
     let previewText;
     if (item.type === 'placeholder' || item.type === 'placeholder-unsupported') {
       previewText = sanitizeHTML($el.placeholder);
-    } else if (item.type === 'svg-error' || item.type === 'svg-warning' || item.type === 'svg-text') {
+    } else if (item.type === 'svg-error' || item.type === 'svg-warning') {
       previewText = '';
-      /**
-       * @todo Better support preview for SVGs.
-       * const sanitizeSvg = Utils.sanitizeHTMLBlock(updatedItem.$el.outerHTML, true);
-       * previewText = Utils.removeWhitespace(sanitizeSvg);
-       * */
     } else {
       previewText = sanitizedText;
     }
@@ -9669,13 +9651,14 @@ function checkContrast(results, option) {
         break;
       case 'input':
         if (option.checks.CONTRAST_INPUT) {
+          const sanitizedInput = sanitizeHTMLBlock($el.outerHTML);
           results.push({
             element,
             type: option.checks.CONTRAST_INPUT.type || 'error',
             content: option.checks.CONTRAST_INPUT.content
               ? Lang.sprintf(option.checks.CONTRAST_INPUT.content)
               : Lang.sprintf('CONTRAST_INPUT', ratio) + ratioTip,
-            dismiss: prepareDismissal(`CONTRAST${$el.getAttribute('class')}${$el.tagName}${ratio}`),
+            dismiss: prepareDismissal(`CONTRAST${sanitizedInput}`),
             dismissAll: option.checks.CONTRAST_INPUT.dismissAll ? 'CONTRAST_INPUT' : false,
             developer: option.checks.CONTRAST_INPUT.developer || true,
             contrastDetails: updatedItem,
@@ -9684,6 +9667,7 @@ function checkContrast(results, option) {
         break;
       case 'placeholder':
         if (option.checks.CONTRAST_PLACEHOLDER) {
+          const sanitizedPlaceholder = sanitizeHTMLBlock($el.outerHTML);
           results.push({
             element: $el,
             type: option.checks.CONTRAST_PLACEHOLDER.type || 'error',
@@ -9691,7 +9675,7 @@ function checkContrast(results, option) {
               ? Lang.sprintf(option.checks.CONTRAST_PLACEHOLDER.content)
               : Lang.sprintf('CONTRAST_PLACEHOLDER') + ratioTip,
             position: 'afterend',
-            dismiss: prepareDismissal(`CPLACEHOLDER${$el.getAttribute('class')}${$el.tagName}${ratio}`),
+            dismiss: prepareDismissal(`CPLACEHOLDER${sanitizedPlaceholder}`),
             dismissAll: option.checks.CONTRAST_PLACEHOLDER.dismissAll ? 'CONTRAST_PLACEHOLDER' : false,
             developer: option.checks.CONTRAST_PLACEHOLDER.developer || true,
             contrastDetails: updatedItem,
@@ -9700,6 +9684,7 @@ function checkContrast(results, option) {
         break;
       case 'placeholder-unsupported':
         if (option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED) {
+          const sanitizedPlaceholder = sanitizeHTMLBlock($el.outerHTML);
           results.push({
             element: $el,
             type: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.type || 'warning',
@@ -9707,7 +9692,7 @@ function checkContrast(results, option) {
               ? Lang.sprintf(option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.content)
               : Lang.sprintf('CONTRAST_PLACEHOLDER_UNSUPPORTED') + ratioTip,
             position: 'afterend',
-            dismiss: prepareDismissal(`CPLACEHOLDERUN${$el.getAttribute('class')}${$el.tagName}${ratio}`),
+            dismiss: prepareDismissal(`CPLACEHOLDERUN${sanitizedPlaceholder}`),
             dismissAll: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.dismissAll
               ? 'CONTRAST_PLACEHOLDER_UNSUPPORTED' : false,
             developer: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.developer || true,
@@ -9717,32 +9702,35 @@ function checkContrast(results, option) {
         break;
       case 'svg-error':
         if (option.checks.CONTRAST_ERROR_GRAPHIC) {
+          const sanitizedSVG = sanitizeHTMLBlock($el.outerHTML);
           results.push({
             element: $el,
             type: option.checks.CONTRAST_ERROR_GRAPHIC.type || 'error',
             content: option.checks.CONTRAST_ERROR_GRAPHIC.content
               ? Lang.sprintf(option.checks.CONTRAST_ERROR_GRAPHIC.content)
               : Lang.sprintf('CONTRAST_ERROR_GRAPHIC') + graphicsTip,
-            dismiss: prepareDismissal(`CONTRASTERROR${$el.outerHTML}`),
+            dismiss: prepareDismissal(`CONTRASTERROR${sanitizedSVG}`),
             dismissAll: option.checks.CONTRAST_ERROR_GRAPHIC.dismissAll ? 'CONTRAST_ERROR_GRAPHIC' : false,
             developer: option.checks.CONTRAST_ERROR_GRAPHIC.developer || true,
             contrastDetails: updatedItem,
+            margin: '-25px',
           });
         }
         break;
       case 'svg-warning':
-      case 'svg-text':
         if (option.checks.CONTRAST_WARNING_GRAPHIC) {
+          const sanitizedSVG = sanitizeHTMLBlock($el.outerHTML);
           results.push({
             element: $el,
             type: option.checks.CONTRAST_WARNING_GRAPHIC.type || 'warning',
             content: option.checks.CONTRAST_WARNING_GRAPHIC.content
               ? Lang.sprintf(option.checks.CONTRAST_WARNING_GRAPHIC.content)
               : Lang.sprintf('CONTRAST_WARNING_GRAPHIC') + graphicsTip,
-            dismiss: prepareDismissal(`CONTRASTWARNING${$el.outerHTML}`),
+            dismiss: prepareDismissal(`CONTRASTWARNING${sanitizedSVG}`),
             dismissAll: option.checks.CONTRAST_WARNING_GRAPHIC.dismissAll ? 'CONTRAST_WARNING_GRAPHIC' : false,
             developer: option.checks.CONTRAST_WARNING_GRAPHIC.developer || true,
             contrastDetails: updatedItem,
+            margin: '-25px',
           });
         }
         break;
@@ -9932,27 +9920,22 @@ function checkReadability() {
   let results;
   const rememberReadability = store.getItem('sa11y-readability') === 'On';
   if (rememberReadability) {
-    // Crude hack to add a period to the end of list items to make a complete sentence.
-    Elements.Found.Readability.forEach(($el) => {
-      const listText = $el.textContent;
-      if (listText.length >= 120) {
-        if (listText.charAt(listText.length - 1) !== '.') {
-          $el.insertAdjacentHTML('beforeend', '<span data-sa11y-readability-period>.</span>');
+    const readabilityArray = [];
+    // Improve the accuracy of a readability analysis by ensuring that long list items are treated as complete sentences.
+    Elements.Found.Readability.forEach((el) => {
+      const ignore = fnIgnore(el);
+      const text = getText(ignore);
+      if (text.length > 0) {
+        const lastChar = text.charAt(text.length - 1);
+        const punctuation = ['.', '?', '!', ';'];
+        if (el.tagName === 'LI' && text.length >= 120 && !punctuation.includes(lastChar)) {
+          readabilityArray.push(`${text}.`);
+        } else {
+          readabilityArray.push(text);
         }
       }
     });
-
-    // Combine all page text.
-    const readabilityarray = [];
-    for (let i = 0; i < Elements.Found.Readability.length; i++) {
-      const current = Elements.Found.Readability[i];
-      const ignore = fnIgnore(current); // Ignore unwanted tags.
-      const getText$1 = getText(ignore); // Get text.
-      if (getText$1 !== '') {
-        readabilityarray.push(getText$1);
-      }
-    }
-    const pageText = readabilityarray.join(' ').toString();
+    const pageText = readabilityArray.join(' ');
 
     /* Flesch Reading Ease for English, French, German, Dutch, and Italian. */
     if (['en', 'es', 'fr', 'de', 'nl', 'it', 'pt'].includes(Constants.Readability.Lang)) {
@@ -10109,21 +10092,8 @@ function checkReadability() {
       if (pageText.length === 0) {
         Constants.Panel.readabilityInfo.innerHTML = Lang._('READABILITY_NO_CONTENT');
       } else if (results.wordCount > 30) {
-        Constants.Panel.readabilityInfo.innerHTML = `${results.score} <span class="readability-score">${results.difficultyLevel}</span>`;
-
-        Constants.Panel.readabilityDetails.innerHTML = `
-            <li>
-              <strong>${Lang._('AVG_SENTENCE')}</strong>
-              ${results.averageWordsPerSentence}
-            </li>
-            <li>
-              <strong>${Lang._('COMPLEX_WORDS')}</strong>
-              ${results.complexWords}%
-            </li>
-            <li>
-              <strong>${Lang._('TOTAL_WORDS')}</strong>
-              ${results.wordCount}
-            </li>`;
+        Constants.Panel.readabilityInfo.innerHTML = `${Math.ceil(results.score)} <span class="readability-score">${results.difficultyLevel}</span>`;
+        Constants.Panel.readabilityDetails.innerHTML = `<li><strong>${Lang._('AVG_SENTENCE')}</strong> ${Math.ceil(results.averageWordsPerSentence)}</li><li><strong>${Lang._('COMPLEX_WORDS')}</strong> ${results.complexWords}%</li><li><strong>${Lang._('TOTAL_WORDS')}</strong> ${results.wordCount}</li>`;
       } else {
         Constants.Panel.readabilityInfo.textContent = Lang._('READABILITY_NOT_ENOUGH');
       }
@@ -10134,9 +10104,10 @@ function checkReadability() {
 
 function checkEmbeddedContent(results, option) {
   // iFrame's SRC attribute.
-  const src = ($el) => ($el.getAttribute('src') !== 'undefined'
-    ? $el.getAttribute('src')
-    : $el.querySelector('[src]')?.getAttribute('src'));
+  const src = ($el) => $el.getAttribute('src')
+    || $el.querySelector('source[src]')?.getAttribute('src')
+    || $el.querySelector('[src]')?.getAttribute('src')
+    || null;
 
   // Warning: Audio content.
   if (option.checks.EMBED_AUDIO) {
@@ -10312,7 +10283,7 @@ function checkQA(results, option) {
 
       // Check for broken same-page links.
       if (option.checks.QA_IN_PAGE_LINK) {
-        const hasAttributes = $el.getAttribute('role') === 'button' || $el.hasAttribute('aria-haspopup') || $el.hasAttribute('aria-expanded') || $el.hasAttribute('onclick');
+        const hasAttributes = $el.getAttribute('role') === 'button' || $el.hasAttribute('aria-haspopup') || $el.hasAttribute('aria-expanded') || $el.hasAttribute('onclick') || $el.closest('nav, [role="navigation"]');
         const hasText = getText($el).length !== 0;
         if ((href.startsWith('#') || href === '') && !hasAttributes && hasText) {
           const targetId = href.substring(1);
@@ -10469,7 +10440,7 @@ function checkQA(results, option) {
 
     // Find bolded text as headings.
     const computeBoldTextParagraphs = (p) => {
-      const startsWithBold = /^(<strong>|<b>)/i.test(p.innerHTML.trim());
+      const startsWithBold = /^<\s*(strong|b)(\s+[^>]*)?>/i.test(p.innerHTML.trim());
 
       if (startsWithBold && !p.closest(ignoreParents)) {
         const possibleHeading = p.querySelector('strong, b');
@@ -10677,11 +10648,13 @@ function checkQA(results, option) {
     const { textDecorationLine, textAlign, fontSize } = style;
 
     /* Check: Underlined text. */
-    if (option.checks.QA_UNDERLINE
-      && textDecorationLine === 'underline'
-      && !$el.closest('[onclick]')
-      && !$el.closest('a[href]')
-      && !$el.closest('ABBR')) {
+    const interactive = 'a[href], button, abbr, [role="link"], [role="button"], [tabindex="0"], [onclick]';
+    if (
+      option.checks.QA_UNDERLINE
+      && ($el.closest('u') || textDecorationLine === 'underline')
+      && !$el.closest(interactive)
+      && !$el.matches(interactive)
+    ) {
       addUnderlineResult($el);
     }
 
@@ -11199,7 +11172,6 @@ class Sa11y {
       try {
         this.results = [];
         this.headingOutline = [];
-        this.imageOutline = [];
         this.errorCount = 0;
         this.warningCount = 0;
         this.customChecksRunning = false;
@@ -11228,20 +11200,16 @@ class Sa11y {
         if (option.contrastPlugin) checkContrast(this.results, option);
         if (option.readabilityPlugin) checkReadability();
 
-        // Get all images from results object for Image Outline.
-        this.imageResults = Array.isArray(this.results) ? this.results.filter((issue, index, self) => {
-          if (!issue?.element) return false;
-
-          // Only keep <img> elements.
-          const { element } = issue;
-          if (element.tagName !== 'IMG') return false;
-          if (!element.outerHTML) return false;
-
-          // Ensure uniqueness, keep first occurrence only.
-          return self.findIndex(
-            (other) => other?.element?.outerHTML === element.outerHTML,
-          ) === index;
-        }) : [];
+        // Build array of images to be used for image panel.
+        this.imageResults = Elements.Found.Images.map((image) => {
+          const match = this.results.find((i) => i.element === image);
+          return match && {
+            element: image,
+            type: match.type,
+            dismiss: match.dismiss,
+            developer: match.developer,
+          };
+        }).filter(Boolean);
 
         /* Custom checks */
         if (option.customChecks === true) {
@@ -11315,6 +11283,7 @@ class Sa11y {
         );
         this.results = dismiss.updatedResults;
         this.dismissed = dismiss.dismissedIssues;
+        this.dismissedPageResults = dismiss.dismissedResults;
 
         // Update count & badge.
         const count = updateCount(
@@ -11327,9 +11296,17 @@ class Sa11y {
         /* If panel is OPENED. */
         if (store.getItem('sa11y-panel') === 'Opened') {
           // Paint the page with annotations.
+          const counts = new Map();
           this.results.forEach((issue) => {
-            Object.assign(issue);
-            annotate(issue, option);
+            let updatedIssue = issue;
+            // Dynamically alter margins if an element has multiple issues.
+            if (issue.element && !issue.margin) {
+              const index = counts.get(issue.element) || 0;
+              counts.set(issue.element, index + 1);
+              const offset = issue.inline ? 0 : 15;
+              updatedIssue = { ...issue, margin: `${index * 20 + offset}px` };
+            }
+            annotate(updatedIssue, option);
           });
 
           // After annotations are painted, find & cache.
@@ -11347,13 +11324,17 @@ class Sa11y {
           );
 
           generatePageOutline(
-            this.dismissed,
+            this.dismissedPageResults,
             this.headingOutline,
             option,
           );
 
           if (option.showImageOutline) {
-            generateImageOutline(this.dismissed, this.imageResults, option);
+            generateImageOutline(
+              this.dismissedPageResults,
+              this.imageResults,
+              option,
+            );
           }
 
           updatePanel(
@@ -11372,10 +11353,6 @@ class Sa11y {
 
           // Page issues: add gradient if scrollable list.
           isScrollable(Constants.Panel.pageIssuesList, Constants.Panel.pageIssuesContent);
-
-          // Extras
-          detectOverflow(option.ignoreHiddenOverflow);
-          nudge();
         }
 
         // Make sure toggle isn't disabled after checking.
@@ -11405,10 +11382,24 @@ class Sa11y {
         'sa11y-annotation',
         'sa11y-heading-label',
         'sa11y-heading-anchor',
+        'sa11y-image-anchor',
         'sa11y-tooltips',
-        '[data-sa11y-readability-period]',
-        '[data-sa11y-clone-image-text]',
       ], 'document');
+
+      // Remove Sa11y anchor positioning markup (while preserving any existing anchors).
+      if (supportsAnchorPositioning()) {
+        find('[data-sa11y-error], [data-sa11y-warning], [data-sa11y-good]', 'document').forEach(($el) => {
+          const anchor = $el;
+          const anchors = (anchor.style.anchorName || '')
+            .split(',').map((s) => s.trim()).filter((s) => s && !s.startsWith('--sa11y-anchor'));
+          if (anchors.length) {
+            anchor.style.anchorName = anchors.join(', ');
+          } else {
+            anchor.style.removeProperty('anchor-name');
+            if (!anchor.style.length) anchor.removeAttribute('style');
+          }
+        });
+      }
 
       // Reset all data attributes.
       resetAttributes([
@@ -11416,9 +11407,8 @@ class Sa11y {
         'data-sa11y-error',
         'data-sa11y-warning',
         'data-sa11y-good',
-        'data-sa11y-error-inline',
-        'data-sa11y-warning-inline',
         'data-sa11y-overflow',
+        'data-sa11y-image',
         'data-sa11y-pulse-border',
         'data-sa11y-filter',
         'data-sa11y-has-shadow-root',

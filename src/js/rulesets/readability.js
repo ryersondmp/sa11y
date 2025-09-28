@@ -17,27 +17,22 @@ export default function checkReadability() {
   let results;
   const rememberReadability = Utils.store.getItem('sa11y-readability') === 'On';
   if (rememberReadability) {
-    // Crude hack to add a period to the end of list items to make a complete sentence.
-    Elements.Found.Readability.forEach(($el) => {
-      const listText = $el.textContent;
-      if (listText.length >= 120) {
-        if (listText.charAt(listText.length - 1) !== '.') {
-          $el.insertAdjacentHTML('beforeend', '<span data-sa11y-readability-period>.</span>');
+    const readabilityArray = [];
+    // Improve the accuracy of a readability analysis by ensuring that long list items are treated as complete sentences.
+    Elements.Found.Readability.forEach((el) => {
+      const ignore = Utils.fnIgnore(el);
+      const text = Utils.getText(ignore);
+      if (text.length > 0) {
+        const lastChar = text.charAt(text.length - 1);
+        const punctuation = ['.', '?', '!', ';'];
+        if (el.tagName === 'LI' && text.length >= 120 && !punctuation.includes(lastChar)) {
+          readabilityArray.push(`${text}.`);
+        } else {
+          readabilityArray.push(text);
         }
       }
     });
-
-    // Combine all page text.
-    const readabilityarray = [];
-    for (let i = 0; i < Elements.Found.Readability.length; i++) {
-      const current = Elements.Found.Readability[i];
-      const ignore = Utils.fnIgnore(current); // Ignore unwanted tags.
-      const getText = Utils.getText(ignore); // Get text.
-      if (getText !== '') {
-        readabilityarray.push(getText);
-      }
-    }
-    const pageText = readabilityarray.join(' ').toString();
+    const pageText = readabilityArray.join(' ');
 
     /* Flesch Reading Ease for English, French, German, Dutch, and Italian. */
     if (['en', 'es', 'fr', 'de', 'nl', 'it', 'pt'].includes(Constants.Readability.Lang)) {
@@ -194,21 +189,8 @@ export default function checkReadability() {
       if (pageText.length === 0) {
         Constants.Panel.readabilityInfo.innerHTML = Lang._('READABILITY_NO_CONTENT');
       } else if (results.wordCount > 30) {
-        Constants.Panel.readabilityInfo.innerHTML = `${results.score} <span class="readability-score">${results.difficultyLevel}</span>`;
-
-        Constants.Panel.readabilityDetails.innerHTML = `
-            <li>
-              <strong>${Lang._('AVG_SENTENCE')}</strong>
-              ${results.averageWordsPerSentence}
-            </li>
-            <li>
-              <strong>${Lang._('COMPLEX_WORDS')}</strong>
-              ${results.complexWords}%
-            </li>
-            <li>
-              <strong>${Lang._('TOTAL_WORDS')}</strong>
-              ${results.wordCount}
-            </li>`;
+        Constants.Panel.readabilityInfo.innerHTML = `${Math.ceil(results.score)} <span class="readability-score">${results.difficultyLevel}</span>`;
+        Constants.Panel.readabilityDetails.innerHTML = `<li><strong>${Lang._('AVG_SENTENCE')}</strong> ${Math.ceil(results.averageWordsPerSentence)}</li><li><strong>${Lang._('COMPLEX_WORDS')}</strong> ${results.complexWords}%</li><li><strong>${Lang._('TOTAL_WORDS')}</strong> ${results.wordCount}</li>`;
       } else {
         Constants.Panel.readabilityInfo.textContent = Lang._('READABILITY_NOT_ENOUGH');
       }

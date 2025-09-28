@@ -79,7 +79,7 @@ export default function checkImages(results, option) {
       ? Utils.fnIgnore(link, Constants.Exclusions.LinkSpan).textContent : '';
     const stringMatchExclusions = option.linkIgnoreStrings
       ? linkSpanExclusions.replace(option.linkIgnoreStrings, '') : linkSpanExclusions;
-    const linkTextContentLength = link
+    const linkTextLength = link
       ? Utils.removeWhitespace(stringMatchExclusions).length : 0;
 
     // Has aria-hidden.
@@ -88,7 +88,7 @@ export default function checkImages(results, option) {
     }
 
     // Ignore tracking pixels without explicit aria-hidden or nullified alt.
-    if ($el.height === 1 && $el.width === 1 && Utils.isElementHidden($el)) {
+    if ($el.height < 2 && $el.width < 2 && (Utils.isElementHidden($el) || alt === '')) {
       return;
     }
 
@@ -112,17 +112,17 @@ export default function checkImages(results, option) {
     // If alt is missing.
     if (alt === null) {
       if (link) {
-        const rule = (linkTextContentLength === 0)
+        const rule = (linkTextLength === 0)
           ? option.checks.MISSING_ALT_LINK
           : option.checks.MISSING_ALT_LINK_HAS_TEXT;
-        const conditional = linkTextContentLength === 0
+        const conditional = linkTextLength === 0
           ? 'MISSING_ALT_LINK' : 'MISSING_ALT_LINK_HAS_TEXT';
         if (rule) {
           results.push({
             element: $el,
             type: rule.type || 'error',
             content: Lang.sprintf(rule.content || conditional),
-            dismiss: Utils.prepareDismissal(`${conditional + src + linkTextContentLength}`),
+            dismiss: Utils.prepareDismissal(`${conditional + src + linkTextLength}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
@@ -145,7 +145,7 @@ export default function checkImages(results, option) {
       const error = containsAltTextStopWords(altText);
       const hasAria = $el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby');
       const titleAttr = $el.getAttribute('title');
-      const decorative = (alt === '' || alt === ' ');
+      const decorative = (alt === '');
 
       // Figure elements.
       const figure = $el.closest('figure');
@@ -157,8 +157,8 @@ export default function checkImages(results, option) {
       const maxAltCharacters = option.checks.IMAGE_ALT_TOO_LONG.maxLength || 250;
 
       // If aria-label or aria-labelledby returns empty or invalid.
-      if (hasAria && altText === '') {
-        if (option.checks.MISSING_ALT) {
+      if (option.checks.MISSING_ALT) {
+        if (hasAria && altText === '') {
           results.push({
             element: $el,
             type: option.checks.MISSING_ALT.type || 'error',
@@ -167,8 +167,8 @@ export default function checkImages(results, option) {
             dismissAll: option.checks.MISSING_ALT.dismissAll ? 'MISSING_ALT' : false,
             developer: option.checks.MISSING_ALT.developer || false,
           });
+          return;
         }
-        return;
       }
 
       // Decorative images.
@@ -194,17 +194,17 @@ export default function checkImages(results, option) {
             });
           }
         } else if (link) {
-          const rule = (linkTextContentLength === 0)
+          const rule = (linkTextLength === 0)
             ? option.checks.LINK_IMAGE_NO_ALT_TEXT
             : option.checks.LINK_IMAGE_TEXT;
-          const conditional = linkTextContentLength === 0
+          const conditional = linkTextLength === 0
             ? 'LINK_IMAGE_NO_ALT_TEXT' : 'LINK_IMAGE_TEXT';
           if (rule) {
             results.push({
               element: $el,
-              type: rule.type || (linkTextContentLength === 0 ? 'error' : 'good'),
+              type: rule.type || (linkTextLength === 0 ? 'error' : 'good'),
               content: Lang.sprintf(rule.content || conditional),
-              dismiss: Utils.prepareDismissal(`${conditional + src + linkTextContentLength}`),
+              dismiss: Utils.prepareDismissal(`${conditional + src + linkTextLength}`),
               dismissAll: rule.dismissAll ? conditional : false,
               developer: rule.developer || false,
             });
@@ -236,6 +236,24 @@ export default function checkImages(results, option) {
           });
         }
         return;
+      }
+
+      // Alt is unpronounceable.
+      const unpronounceable = (link)
+        ? option.checks.LINK_ALT_UNPRONOUNCEABLE : option.checks.ALT_UNPRONOUNCEABLE;
+      if (unpronounceable) {
+        if (alt.replace(/"|'|\?|\.|-|\s+/g, '') === '' && linkTextLength === 0) {
+          const condition = (link) ? 'LINK_ALT_UNPRONOUNCEABLE' : 'ALT_UNPRONOUNCEABLE';
+          results.push({
+            element: $el,
+            type: unpronounceable.type || 'error',
+            content: Lang.sprintf(unpronounceable.content || condition, altText),
+            dismiss: Utils.prepareDismissal(`UNPRONOUNCEABLE${src}`),
+            dismissAll: unpronounceable.dismissAll ? 'ALT_UNPRONOUNCEABLE' : false,
+            developer: unpronounceable.developer || false,
+          });
+          return;
+        }
       }
 
       // Alt text quality.
@@ -307,10 +325,10 @@ export default function checkImages(results, option) {
           });
         }
       } else if (link) {
-        const rule = (linkTextContentLength === 0)
+        const rule = (linkTextLength === 0)
           ? option.checks.LINK_IMAGE_ALT
           : option.checks.LINK_IMAGE_ALT_AND_TEXT;
-        const conditional = (linkTextContentLength === 0) ? 'LINK_IMAGE_ALT' : 'LINK_IMAGE_ALT_AND_TEXT';
+        const conditional = (linkTextLength === 0) ? 'LINK_IMAGE_ALT' : 'LINK_IMAGE_ALT_AND_TEXT';
 
         if (rule) {
           // Has both link text and alt text.
@@ -318,7 +336,7 @@ export default function checkImages(results, option) {
           const removeWhitespace = Utils.removeWhitespace(linkAccName);
           const sanitizedText = Utils.sanitizeHTML(removeWhitespace);
 
-          const tooltip = (linkTextContentLength === 0)
+          const tooltip = (linkTextLength === 0)
             ? Lang.sprintf('LINK_IMAGE_ALT', altText)
             : `${Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT', altText, sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`;
 

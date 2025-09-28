@@ -164,7 +164,6 @@ div {
   transition-property: transform, visibility, opacity;
   -webkit-font-smoothing: auto;
   /* Dismiss buttons */
-  /* APCA table */
   /* ************************************* */
   /*                Arrows                 */
   /* ************************************* */
@@ -232,6 +231,24 @@ div {
 .tippy-box[data-theme~=sa11y-theme] button.close-btn {
   margin: 0;
 }
+.tippy-box[data-theme~=sa11y-theme] button#suggest {
+  position: relative;
+  padding: 0.2rem;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+.tippy-box[data-theme~=sa11y-theme] button#suggest:after {
+  position: absolute;
+  top: -10px;
+  right: -5px;
+  bottom: -14px;
+  left: -5px;
+  content: "";
+}
+.tippy-box[data-theme~=sa11y-theme] button#suggest:hover, .tippy-box[data-theme~=sa11y-theme] button#suggest:focus-visible {
+  color: #000 !important;
+  background-color: #fff !important;
+}
 .tippy-box[data-theme~=sa11y-theme] .dismiss-group {
   margin-top: 5px;
 }
@@ -286,24 +303,6 @@ div {
 }
 .tippy-box[data-theme~=sa11y-theme] .warning .link-icon {
   background: var(--sa11y-panel-bg);
-}
-.tippy-box[data-theme~=sa11y-theme] #apca-table {
-  width: 100%;
-}
-.tippy-box[data-theme~=sa11y-theme] #apca-table .row {
-  display: flex;
-  margin-top: 10px;
-}
-.tippy-box[data-theme~=sa11y-theme] #apca-table .cell {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
-  padding: 1px;
-}
-.tippy-box[data-theme~=sa11y-theme] #apca-table .font-weight {
-  font-size: calc(var(--sa11y-normal-text) - 2px);
-  font-weight: bold;
 }
 .tippy-box[data-theme~=sa11y-theme][data-placement^=top] > .tippy-arrow::before {
   border-top-color: var(--sa11y-panel-bg);

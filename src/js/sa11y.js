@@ -23,7 +23,7 @@ import generatePageOutline from './interface/page-outline';
 import generateImageOutline from './interface/image-outline';
 import { updatePanel, updateBadge, updateCount } from './logic/update-panel';
 import { AnnotationTooltips, PanelTooltips } from './interface/tooltips';
-import { Annotations, annotate, detectOverflow, nudge } from './interface/annotations';
+import { Annotations, annotate } from './interface/annotations';
 import { HeadingAnchor, HeadingLabel } from './interface/heading-labels';
 import { skipToIssue, removeSkipBtnListeners } from './logic/skip-to-issue';
 
@@ -148,7 +148,6 @@ class Sa11y {
       try {
         this.results = [];
         this.headingOutline = [];
-        this.imageOutline = [];
         this.errorCount = 0;
         this.warningCount = 0;
         this.customChecksRunning = false;
@@ -177,20 +176,16 @@ class Sa11y {
         if (option.contrastPlugin) checkContrast(this.results, option);
         if (option.readabilityPlugin) checkReadability();
 
-        // Get all images from results object for Image Outline.
-        this.imageResults = Array.isArray(this.results) ? this.results.filter((issue, index, self) => {
-          if (!issue?.element) return false;
-
-          // Only keep <img> elements.
-          const { element } = issue;
-          if (element.tagName !== 'IMG') return false;
-          if (!element.outerHTML) return false;
-
-          // Ensure uniqueness, keep first occurrence only.
-          return self.findIndex(
-            (other) => other?.element?.outerHTML === element.outerHTML,
-          ) === index;
-        }) : [];
+        // Build array of images to be used for image panel.
+        this.imageResults = Elements.Found.Images.map((image) => {
+          const match = this.results.find((i) => i.element === image);
+          return match && {
+            element: image,
+            type: match.type,
+            dismiss: match.dismiss,
+            developer: match.developer,
+          };
+        }).filter(Boolean);
 
         /* Custom checks */
         if (option.customChecks === true) {
@@ -264,6 +259,7 @@ class Sa11y {
         );
         this.results = dismiss.updatedResults;
         this.dismissed = dismiss.dismissedIssues;
+        this.dismissedPageResults = dismiss.dismissedResults;
 
         // Update count & badge.
         const count = updateCount(
@@ -276,9 +272,17 @@ class Sa11y {
         /* If panel is OPENED. */
         if (Utils.store.getItem('sa11y-panel') === 'Opened') {
           // Paint the page with annotations.
+          const counts = new Map();
           this.results.forEach((issue) => {
-            Object.assign(issue);
-            annotate(issue, option);
+            let updatedIssue = issue;
+            // Dynamically alter margins if an element has multiple issues.
+            if (issue.element && !issue.margin) {
+              const index = counts.get(issue.element) || 0;
+              counts.set(issue.element, index + 1);
+              const offset = issue.inline ? 0 : 15;
+              updatedIssue = { ...issue, margin: `${index * 20 + offset}px` };
+            }
+            annotate(updatedIssue, option);
           });
 
           // After annotations are painted, find & cache.
@@ -296,13 +300,17 @@ class Sa11y {
           );
 
           generatePageOutline(
-            this.dismissed,
+            this.dismissedPageResults,
             this.headingOutline,
             option,
           );
 
           if (option.showImageOutline) {
-            generateImageOutline(this.dismissed, this.imageResults, option);
+            generateImageOutline(
+              this.dismissedPageResults,
+              this.imageResults,
+              option,
+            );
           }
 
           updatePanel(
@@ -321,10 +329,6 @@ class Sa11y {
 
           // Page issues: add gradient if scrollable list.
           Utils.isScrollable(Constants.Panel.pageIssuesList, Constants.Panel.pageIssuesContent);
-
-          // Extras
-          detectOverflow(option.ignoreHiddenOverflow);
-          nudge();
         }
 
         // Make sure toggle isn't disabled after checking.
@@ -354,10 +358,24 @@ class Sa11y {
         'sa11y-annotation',
         'sa11y-heading-label',
         'sa11y-heading-anchor',
+        'sa11y-image-anchor',
         'sa11y-tooltips',
-        '[data-sa11y-readability-period]',
-        '[data-sa11y-clone-image-text]',
       ], 'document');
+
+      // Remove Sa11y anchor positioning markup (while preserving any existing anchors).
+      if (Utils.supportsAnchorPositioning()) {
+        find('[data-sa11y-error], [data-sa11y-warning], [data-sa11y-good]', 'document').forEach(($el) => {
+          const anchor = $el;
+          const anchors = (anchor.style.anchorName || '')
+            .split(',').map((s) => s.trim()).filter((s) => s && !s.startsWith('--sa11y-anchor'));
+          if (anchors.length) {
+            anchor.style.anchorName = anchors.join(', ');
+          } else {
+            anchor.style.removeProperty('anchor-name');
+            if (!anchor.style.length) anchor.removeAttribute('style');
+          }
+        });
+      }
 
       // Reset all data attributes.
       Utils.resetAttributes([
@@ -365,9 +383,8 @@ class Sa11y {
         'data-sa11y-error',
         'data-sa11y-warning',
         'data-sa11y-good',
-        'data-sa11y-error-inline',
-        'data-sa11y-warning-inline',
         'data-sa11y-overflow',
+        'data-sa11y-image',
         'data-sa11y-pulse-border',
         'data-sa11y-filter',
         'data-sa11y-has-shadow-root',

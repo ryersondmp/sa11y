@@ -53,6 +53,33 @@
       width: 1px !important;
       white-space: nowrap !important;
     }
+
+    .socials svg {
+      fill: #fff;
+      width: 20px;
+      height: 20px;
+      transition: .5s all ease;
+      margin-inline-end: 20px;
+    }
+
+    .site-footer {
+      background: linear-gradient(to bottom, rgba(102, 102, 102, 0) 24%, #030303 91%) #071e4e;
+      color: #c2d1d9;
+      position: relative;
+      z-index: 9;
+    }
+
+    .screen-reader {
+      left: -9999px;
+      position: absolute;
+    }
+
+    .element-invisible {
+      position: absolute !important;
+      clip: rect(0, 0, 0, 0);
+      overflow: hidden;
+      height: 1px;
+    }
   </style>
 </head>
 
@@ -62,8 +89,201 @@
   </header>
   <main>
 
+    <h2>Better sr-only detection.</h2>
+    <p>Invisible contrast error below is ignored because sr-only text.</p>
+    <p style="color:lightblue;" class="screen-reader">Off screen</p>
 
-    <h2>SVGs that use &lt;use&gt;</h2>
+    <p style="color:lightcoral;" class="element-invisible">Off screen element-invisible</p>
+
+    <h2>Clickable suggested colour</h2>
+    <p>Clicking on suggested colour updates preview and saves hex to clipboard.</p>
+    <p style="color:#ED7323;background:white">#ED7323</p>
+
+    <h2>Better detection of tracking beacons</h2>
+
+    <img alt="" class="beacon" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==">
+
+
+    <img id="batBeacon164590204450" width="0" height="0" alt="" src="https://example.com"
+      style="width: 0px; height: 0px; display: none; visibility: hidden;">
+
+    <h2>Broken link check ignored if within nav</h2>
+    <nav>
+      <a href="#">Menu item</a>
+    </nav>
+
+    <div role="navigation">
+      <a href="#">Menu item</a>
+    </div>
+
+    <h2>aria-hidden=false on a node within a button</h2>
+    <button class="button button--play homepage-hero__play-btn js-play-btn">
+      <span class="button__content" tabindex="-1">
+        <i class="material-icons homepage-hero__play-icon js-play-icon hidden" aria-label="Play"
+          aria-hidden="true">play_arrow</i>
+        <i class="material-icons homepage-hero__play-icon js-pause-icon" aria-hidden="false" data-nosnippet=""
+          aria-label="Pause">pause</i>
+      </span>
+    </button>
+
+    <hr>
+
+    <h2>SVG contrast checking refactored</h2>
+    <div>
+      <div class="socials">
+        <svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 25" width="24" height="25">
+          <title>Follow on X</title>
+          <path fill-rule="evenodd" fill="lightblue" stroke="lightblue"
+            d="m17.8 3.6h3l-6.7 7.6 7.9 10.4h-6.2l-4.8-6.3-5.5 6.3h-3.1l7.2-8.2-7.6-9.8h6.3l4.4 5.7zm-1.1 16.3h1.7l-11-14.5h-1.8z">
+          </path>
+        </svg>
+        <svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 25" width="24" height="25">
+          <title>Follow on X</title>
+          <path fill-rule="evenodd" fill="lightblue"
+            d="m17.8 3.6h3l-6.7 7.6 7.9 10.4h-6.2l-4.8-6.3-5.5 6.3h-3.1l7.2-8.2-7.6-9.8h6.3l4.4 5.7zm-1.1 16.3h1.7l-11-14.5h-1.8z">
+          </path>
+        </svg>
+
+        <svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 25" width="24" height="25">
+          <title>Follow on X</title>
+          <path fill-rule="evenodd" fill="lightblue" stroke="black" stroke-width="1"
+            d="m17.8 3.6h3l-6.7 7.6 7.9 10.4h-6.2l-4.8-6.3-5.5 6.3h-3.1l7.2-8.2-7.6-9.8h6.3l4.4 5.7zm-1.1 16.3h1.7l-11-14.5h-1.8z">
+          </path>
+        </svg>
+
+        <svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 25" width="24" height="25">
+          <title>Follow on X</title>
+          <path fill-rule="evenodd" fill="black" stroke="lightblue"
+            d="m17.8 3.6h3l-6.7 7.6 7.9 10.4h-6.2l-4.8-6.3-5.5 6.3h-3.1l7.2-8.2-7.6-9.8h6.3l4.4 5.7zm-1.1 16.3h1.7l-11-14.5h-1.8z">
+          </path>
+        </svg>
+
+        <svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 25" width="24" height="25">
+          <title>Follow on X</title>
+          <path fill-rule="evenodd" fill="#ffffff"
+            d="m17.8 3.6h3l-6.7 7.6 7.9 10.4h-6.2l-4.8-6.3-5.5 6.3h-3.1l7.2-8.2-7.6-9.8h6.3l4.4 5.7zm-1.1 16.3h1.7l-11-14.5h-1.8z">
+          </path>
+        </svg>
+
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24px" height="24px">
+          <title>Follow on Facebook</title>
+          <path stroke="lightblue"
+            d="M16.403,9H14V7c0-1.032,0.084-1.682,1.563-1.682h0.868c0.552,0,1-0.448,1-1V3.064c0-0.523-0.401-0.97-0.923-1.005 C15.904,2.018,15.299,1.999,14.693,2C11.98,2,10,3.657,10,6.699V9H8c-0.552,0-1,0.448-1,1v2c0,0.552,0.448,1,1,1l2-0.001V21 c0,0.552,0.448,1,1,1h2c0.552,0,1-0.448,1-1v-8.003l2.174-0.001c0.508,0,0.935-0.381,0.993-0.886l0.229-1.996 C17.465,9.521,17.001,9,16.403,9z">
+          </path>
+        </svg>
+
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+          <title>Follow on Instagram</title>
+          <path
+            d="M16 2.881c4.275 0 4.781 0.019 6.462 0.094 1.563 0.069 2.406 0.331 2.969 0.55 0.744 0.288 1.281 0.638 1.837 1.194 0.563 0.563 0.906 1.094 1.2 1.838 0.219 0.563 0.481 1.412 0.55 2.969 0.075 1.688 0.094 2.194 0.094 6.463s-0.019 4.781-0.094 6.463c-0.069 1.563-0.331 2.406-0.55 2.969-0.288 0.744-0.637 1.281-1.194 1.837-0.563 0.563-1.094 0.906-1.837 1.2-0.563 0.219-1.413 0.481-2.969 0.55-1.688 0.075-2.194 0.094-6.463 0.094s-4.781-0.019-6.463-0.094c-1.563-0.069-2.406-0.331-2.969-0.55-0.744-0.288-1.281-0.637-1.838-1.194-0.563-0.563-0.906-1.094-1.2-1.837-0.219-0.563-0.481-1.413-0.55-2.969-0.075-1.688-0.094-2.194-0.094-6.463s0.019-4.781 0.094-6.463c0.069-1.563 0.331-2.406 0.55-2.969 0.288-0.744 0.638-1.281 1.194-1.838 0.563-0.563 1.094-0.906 1.838-1.2 0.563-0.219 1.412-0.481 2.969-0.55 1.681-0.075 2.188-0.094 6.463-0.094zM16 0c-4.344 0-4.887 0.019-6.594 0.094-1.7 0.075-2.869 0.35-3.881 0.744-1.056 0.412-1.95 0.956-2.837 1.85-0.894 0.888-1.438 1.781-1.85 2.831-0.394 1.019-0.669 2.181-0.744 3.881-0.075 1.713-0.094 2.256-0.094 6.6s0.019 4.887 0.094 6.594c0.075 1.7 0.35 2.869 0.744 3.881 0.413 1.056 0.956 1.95 1.85 2.837 0.887 0.887 1.781 1.438 2.831 1.844 1.019 0.394 2.181 0.669 3.881 0.744 1.706 0.075 2.25 0.094 6.594 0.094s4.888-0.019 6.594-0.094c1.7-0.075 2.869-0.35 3.881-0.744 1.050-0.406 1.944-0.956 2.831-1.844s1.438-1.781 1.844-2.831c0.394-1.019 0.669-2.181 0.744-3.881 0.075-1.706 0.094-2.25 0.094-6.594s-0.019-4.887-0.094-6.594c-0.075-1.7-0.35-2.869-0.744-3.881-0.394-1.063-0.938-1.956-1.831-2.844-0.887-0.887-1.781-1.438-2.831-1.844-1.019-0.394-2.181-0.669-3.881-0.744-1.712-0.081-2.256-0.1-6.6-0.1v0z">
+          </path>
+          <path
+            d="M16 7.781c-4.537 0-8.219 3.681-8.219 8.219s3.681 8.219 8.219 8.219 8.219-3.681 8.219-8.219c0-4.537-3.681-8.219-8.219-8.219zM16 21.331c-2.944 0-5.331-2.387-5.331-5.331s2.387-5.331 5.331-5.331c2.944 0 5.331 2.387 5.331 5.331s-2.387 5.331-5.331 5.331z">
+          </path>
+          <path
+            d="M26.462 7.456c0 1.060-0.859 1.919-1.919 1.919s-1.919-0.859-1.919-1.919c0-1.060 0.859-1.919 1.919-1.919s1.919 0.859 1.919 1.919z">
+          </path>
+        </svg>
+
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"
+          style="background: url();">
+          <title>Follow on Instagram</title>
+          <path
+            d="M16 2.881c4.275 0 4.781 0.019 6.462 0.094 1.563 0.069 2.406 0.331 2.969 0.55 0.744 0.288 1.281 0.638 1.837 1.194 0.563 0.563 0.906 1.094 1.2 1.838 0.219 0.563 0.481 1.412 0.55 2.969 0.075 1.688 0.094 2.194 0.094 6.463s-0.019 4.781-0.094 6.463c-0.069 1.563-0.331 2.406-0.55 2.969-0.288 0.744-0.637 1.281-1.194 1.837-0.563 0.563-1.094 0.906-1.837 1.2-0.563 0.219-1.413 0.481-2.969 0.55-1.688 0.075-2.194 0.094-6.463 0.094s-4.781-0.019-6.463-0.094c-1.563-0.069-2.406-0.331-2.969-0.55-0.744-0.288-1.281-0.637-1.838-1.194-0.563-0.563-0.906-1.094-1.2-1.837-0.219-0.563-0.481-1.413-0.55-2.969-0.075-1.688-0.094-2.194-0.094-6.463s0.019-4.781 0.094-6.463c0.069-1.563 0.331-2.406 0.55-2.969 0.288-0.744 0.638-1.281 1.194-1.838 0.563-0.563 1.094-0.906 1.838-1.2 0.563-0.219 1.412-0.481 2.969-0.55 1.681-0.075 2.188-0.094 6.463-0.094zM16 0c-4.344 0-4.887 0.019-6.594 0.094-1.7 0.075-2.869 0.35-3.881 0.744-1.056 0.412-1.95 0.956-2.837 1.85-0.894 0.888-1.438 1.781-1.85 2.831-0.394 1.019-0.669 2.181-0.744 3.881-0.075 1.713-0.094 2.256-0.094 6.6s0.019 4.887 0.094 6.594c0.075 1.7 0.35 2.869 0.744 3.881 0.413 1.056 0.956 1.95 1.85 2.837 0.887 0.887 1.781 1.438 2.831 1.844 1.019 0.394 2.181 0.669 3.881 0.744 1.706 0.075 2.25 0.094 6.594 0.094s4.888-0.019 6.594-0.094c1.7-0.075 2.869-0.35 3.881-0.744 1.050-0.406 1.944-0.956 2.831-1.844s1.438-1.781 1.844-2.831c0.394-1.019 0.669-2.181 0.744-3.881 0.075-1.706 0.094-2.25 0.094-6.594s-0.019-4.887-0.094-6.594c-0.075-1.7-0.35-2.869-0.744-3.881-0.394-1.063-0.938-1.956-1.831-2.844-0.887-0.887-1.781-1.438-2.831-1.844-1.019-0.394-2.181-0.669-3.881-0.744-1.712-0.081-2.256-0.1-6.6-0.1v0z">
+          </path>
+          <path
+            d="M16 7.781c-4.537 0-8.219 3.681-8.219 8.219s3.681 8.219 8.219 8.219 8.219-3.681 8.219-8.219c0-4.537-3.681-8.219-8.219-8.219zM16 21.331c-2.944 0-5.331-2.387-5.331-5.331s2.387-5.331 5.331-5.331c2.944 0 5.331 2.387 5.331 5.331s-2.387 5.331-5.331 5.331z">
+          </path>
+          <path
+            d="M26.462 7.456c0 1.060-0.859 1.919-1.919 1.919s-1.919-0.859-1.919-1.919c0-1.060 0.859-1.919 1.919-1.919s1.919 0.859 1.919 1.919z">
+          </path>
+        </svg>
+      </div>
+    </div>
+
+    <p>Previously it would through unknown for both foreground and background, despite it being possible to compute svg
+      foreground colour.</p>
+    <div class="site-footer">
+      <div class="socials"><a class="linkdin icon" href="https://www.linkedin.com/school/university-of-toronto"
+          rel="noreferrer"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" width="30px" height="30px">
+            <title>Follow on LinkedIn</title>
+            <path
+              d="M9,25H4V10h5V25z M6.501,8C5.118,8,4,6.879,4,5.499S5.12,3,6.501,3C7.879,3,9,4.121,9,5.499C9,6.879,7.879,8,6.501,8z M27,25h-4.807v-7.3c0-1.741-0.033-3.98-2.499-3.98c-2.503,0-2.888,1.896-2.888,3.854V25H12V9.989h4.614v2.051h0.065 c0.642-1.18,2.211-2.424,4.551-2.424c4.87,0,5.77,3.109,5.77,7.151C27,16.767,27,25,27,25z">
+            </path>
+          </svg></a> <a class="youtube icon" href="https://www.youtube.com/user/universitytoronto" rel="noreferrer">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="50px" height="50px">
+            <title>Follow on YouTube</title>
+            <path
+              d="M 44.898438 14.5 C 44.5 12.300781 42.601563 10.699219 40.398438 10.199219 C 37.101563 9.5 31 9 24.398438 9 C 17.800781 9 11.601563 9.5 8.300781 10.199219 C 6.101563 10.699219 4.199219 12.199219 3.800781 14.5 C 3.398438 17 3 20.5 3 25 C 3 29.5 3.398438 33 3.898438 35.5 C 4.300781 37.699219 6.199219 39.300781 8.398438 39.800781 C 11.898438 40.5 17.898438 41 24.5 41 C 31.101563 41 37.101563 40.5 40.601563 39.800781 C 42.800781 39.300781 44.699219 37.800781 45.101563 35.5 C 45.5 33 46 29.398438 46.101563 25 C 45.898438 20.5 45.398438 17 44.898438 14.5 Z M 19 32 L 19 18 L 31.199219 25 Z">
+            </path>
+          </svg>
+        </a></div>
+    </div>
+
+    <hr>
+
+    <h2>Don't flag contrast issues when font size is 0</h2>
+    <p style="color:rgb(240, 240, 240);font-size:0">Test</p>
+
+    <h2>Underlined text flagging improvements</h2>
+    <p style="text-decoration:underline" onclick=""><strong>Undergraduate Student
+        Progressive
+        Discipline</strong></p>
+    <p style="text-decoration:underline"><strong>Undergraduate Student
+        Progressive
+        Discipline</strong></p>
+
+    <p><a href="https://www.example.com?cn384rs"><u><strong>Undergraduate Student Progressive
+            Discipline</strong></u></a></p>
+
+    <p><u><strong>Undergraduate Student Progressive Discipline</strong></u></p>
+
+    <hr>
+
+    <p style="text-align: justify;"><a href="/content/ryerson/aerospace/people/faculty/fengfeng-xi/" target="_blank">Dr.
+        Jeff Xi</a>The
+      majority of research in this stream is in collaborations with&nbsp;<b></b>&nbsp;and&nbsp;<b><a
+          href="https://bombardier.com/en" class="absoluteLinkHover" data-original-title="" title="">Bombardier<span
+            class="sr-only-no-select">&nbsp;(external link)&nbsp;</span></a></b>. Despite rapid advances in smart
+      environments, aircraft interiors and flight experience have been nearly unchanged for many years. With
+      technologies.</p>
+
+    <h2>Support for anchor positioning</h2>
+    <div><img src="https://continuing.torontomu.ca/ru/upload/expert_assess.jpg"
+        style="height: 50px; float: right; anchor-name: --something;">
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quam dicta delectus rem alias harum maxime voluptas
+        suscipit impedit, dignissimos, quo officia pariatur sapiente consequatur aperiam? Totam hic beatae doloribus
+        doloremque!</p>
+    </div>
+
+    <h2>Minimize false positives for underlined content</h2>
+    <span role="link"><u>something</u></span>
+
+    <h2>Overflow hidden improvements</h2>
+    <h3>With overflow detection</h3>
+    <div id="nothing-bg-overflow-1" style="height:5px;overflow: hidden;">
+      <img src="assets/placeholder.svg" alt="Overflowing 1" />
+    </div>
+    <h3>Overflow detection disabled via prop</h3>
+    <div id="nothing-bg-overflow-1" style="height:5px;overflow: hidden;" class="overlay">
+      <img src="assets/placeholder.svg" alt="Overflowing 1" />
+    </div>
+    <hr>
+    <h2>Non-vocalized characters in alt</h2>
+    <br>
+    <a class="navbar-brand" href="https://www.torontomu.ca/">
+      <img src="https://www.torontomu.ca/etc.clientlibs/ryecms/static/clientlib-site/resources/images/tmu_logo.svg"
+        alt="." />
+    </a>
+    <br><br>
+    <img alt="&quot;&quot;"
+      src="https://www.torontomu.ca/etc.clientlibs/ryecms/static/clientlib-site/resources/images/tmu_logo.svg"
+      alt="." />
+    <br><br>
+    <hr>
+    <a href="https://www.abc.xyz">
+      <h2>SVGs that use &lt;use&gt;</h2>
+    </a>
     <style>
       a.svg-inline {
         display: flex;
@@ -101,7 +321,10 @@
       </svg>
     </a>
 
-    <div hidden><svg fill="currentColor" id="svg_new_tab">
+    <div hidden>
+      <h4>Somthing</h4>
+
+      <svg fill="currentColor" id="svg_new_tab">
         <path
           d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z" />
       </svg>
@@ -175,6 +398,8 @@
       }
     </style>
 
+    <hr>
+
     <h2>SVGs that use unsupported colour spaces</h2>
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 28 28" fill="none"
       style="user-select:auto">
@@ -182,6 +407,14 @@
         d="M20.3639 3.39807H8.30268C5.92405 3.39807 3.99512 5.327 3.99512 7.70564V19.7668C3.99512 22.1455 5.92405 24.0744 8.30268 24.0744H20.3639C22.7434 24.0744 24.6714 22.1455 24.6714 19.7668V7.70564C24.6714 5.327 22.7434 3.39807 20.3639 3.39807ZM10.8872 19.7668H8.30268V10.2902H10.8872V19.7668ZM9.59496 9.19778C8.76273 9.19778 8.08731 8.51718 8.08731 7.67807C8.08731 6.83896 8.76273 6.15836 9.59496 6.15836C10.4272 6.15836 11.1026 6.83896 11.1026 7.67807C11.1026 8.51718 10.428 9.19778 9.59496 9.19778ZM21.2254 19.7668H18.6408V14.9389C18.6408 12.0373 15.1948 12.257 15.1948 14.9389V19.7668H12.6103V10.2902H15.1948V11.8108C16.3975 9.58288 21.2254 9.41833 21.2254 13.9439V19.7668Z"
         fill="#1CB0F6" style="fill:color(display-p3 0.1098 0.6902 0.9647);fill-opacity:1;user-select:auto"></path>
     </svg>
+
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 28 28" fill="none"
+      style="user-select:auto;background:url(image.png);">
+      <path
+        d="M20.3639 3.39807H8.30268C5.92405 3.39807 3.99512 5.327 3.99512 7.70564V19.7668C3.99512 22.1455 5.92405 24.0744 8.30268 24.0744H20.3639C22.7434 24.0744 24.6714 22.1455 24.6714 19.7668V7.70564C24.6714 5.327 22.7434 3.39807 20.3639 3.39807ZM10.8872 19.7668H8.30268V10.2902H10.8872V19.7668ZM9.59496 9.19778C8.76273 9.19778 8.08731 8.51718 8.08731 7.67807C8.08731 6.83896 8.76273 6.15836 9.59496 6.15836C10.4272 6.15836 11.1026 6.83896 11.1026 7.67807C11.1026 8.51718 10.428 9.19778 9.59496 9.19778ZM21.2254 19.7668H18.6408V14.9389C18.6408 12.0373 15.1948 12.257 15.1948 14.9389V19.7668H12.6103V10.2902H15.1948V11.8108C16.3975 9.58288 21.2254 9.41833 21.2254 13.9439V19.7668Z"
+        fill="#1CB0F6" style="fill:color(display-p3 0.1098 0.6902 0.9647);fill-opacity:1;user-select:auto"></path>
+    </svg>
+    <hr>
 
     <h2>Using CSS variables to override position of toggle and panel</h2>
     <pre><code>
@@ -209,6 +442,8 @@
     <p>Image is just hidden in a div to simulate an accordion for the purpose of testing Skip-to-issue button.</p>
     <div hidden>
       <img src="./assets/aussie.avif" alt="placeholder" />
+
+      <a href="https://www.google.com?sdsdq342"><img src="./assets/aussie.avif" alt="placeholder" /></a>
     </div>
 
     <h3>Existing base64 image on the page</h3>
@@ -311,8 +546,8 @@
     <style>
       .background-container {
         position: relative;
-        width: 100%;
-        height: 100vh;
+        width: 100px;
+        height: 100px;
         overflow: hidden;
       }
 
@@ -375,13 +610,7 @@
     </p>
     <a onclick="alert('Hello!')"><u>Click me (has onclick handler)</u></a>
 
-    <hr />
-
-    <div style="overflow: hidden; height: 40px" class="overlay">
-      <img src="./assets/placeholder.svg"
-        alt="Placeholder image. Lorem ipsum dolor sit amet consectetur adipisicing elit. Some really large passage of text. The quick brown fox jumps over the lazy dog. Placeholder image. Lorem ipsum dolor sit amet consectetur adipisicing elit. Some really large passage of text. The quick brown fox jumps over the lazy dog. Placeholder image. Lorem ipsum dolor sit amet consectetur adipisicing elit. Some really large passage of text. The quick brown fox jumps over the lazy dog."
-        class="wp-image-34" />
-    </div>
+    <hr>
 
     <h2>Another slotted example</h2>
     <template id="user-card-template">

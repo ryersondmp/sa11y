@@ -28,7 +28,8 @@ export function dismissLogic(results, dismissTooltip) {
   const allDismissed = results.filter((issue) => dismissedIssues.some((dismissed) => dismissAll(issue, dismissed)));
 
   // Combine all dismissed results and filter out duplicates.
-  const dismissedResults = [...soloDismissed, ...allDismissed];
+  const mergeDismissed = [...soloDismissed, ...allDismissed];
+  const dismissedResults = [...new Map(mergeDismissed.map((issue) => [issue.dismiss, issue])).values()];
   const dismissCount = dismissedResults.length;
 
   // Update results array (exclude dismissed and dismissed all checks).
@@ -129,9 +130,7 @@ const restoreDismissButton = async (dismissed, checkAll, resetAll) => {
 export function dismissButtons(results, dismissed, checkAll, resetAll) {
   if (Constants.Global.dismissAnnotations) {
     // Dismiss buttons.
-    dismissHandler = (e) => {
-      dismissIssueButton(e, results, checkAll, resetAll);
-    };
+    dismissHandler = (e) => dismissIssueButton(e, results, checkAll, resetAll);
 
     // Dismiss button exists in both tooltip and control panel.
     const tooltips = document.querySelector('sa11y-tooltips').shadowRoot;
@@ -140,9 +139,7 @@ export function dismissButtons(results, dismissed, checkAll, resetAll) {
   }
 
   // Initialize restore alerts button regardless if plugin enabled or not.
-  restoreDismissedHandler = () => {
-    restoreDismissButton(dismissed, checkAll, resetAll);
-  };
+  restoreDismissedHandler = () => restoreDismissButton(dismissed, checkAll, resetAll);
   Constants.Panel.dismissButton?.addEventListener('click', restoreDismissedHandler);
 }
 

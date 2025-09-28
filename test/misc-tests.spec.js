@@ -198,7 +198,7 @@ test.describe('Sa11y miscellaneous tests', () => {
 
       return new Promise((resolve) => {
         setTimeout(() => {
-          const alert = panel.getElementById('panel-alert-text').textContent.includes('item you are trying to view is not visible');
+          const alert = panel.getElementById('panel-alert-text').textContent.includes('Item is not visible');
           resolve(alert);
         }, 100);
       });
