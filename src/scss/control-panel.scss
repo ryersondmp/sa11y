@@ -1383,7 +1383,7 @@ label:not(#colour-filter-mode, #export-results-mode) {
 
 // Default panel width.
 #panel {
-  width: 400px;
+  width: 440px;
 }
 
 // English
@@ -1407,7 +1407,7 @@ label:not(#colour-filter-mode, #export-results-mode) {
 #container:lang(bg),
 #container:lang(es) {
   .switch:not(#export-results-item *) {
-    width: 225px !important;
+    width: 230px !important;
   }
 }
 

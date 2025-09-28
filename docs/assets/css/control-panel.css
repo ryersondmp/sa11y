@@ -1298,7 +1298,7 @@ label:not(#colour-filter-mode, #export-results-mode) {
 /*     21. Internationalization (i18n)       */
 /* ***************************************** */
 #panel {
-  width: 400px;
+  width: 440px;
 }
 
 #container:lang(en) #panel {
@@ -1316,7 +1316,7 @@ label:not(#colour-filter-mode, #export-results-mode) {
 
 #container:lang(bg) .switch:not(#export-results-item *),
 #container:lang(es) .switch:not(#export-results-item *) {
-  width: 225px !important;
+  width: 230px !important;
 }
 
 #container:not(:lang(en)):not(:lang(de)) .switch {
