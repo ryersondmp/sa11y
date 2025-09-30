@@ -376,7 +376,9 @@ export default function checkLinkText(results, option) {
       if (linkTextTrimmed.length !== 0) {
         // Links with identical accessible names have equivalent purpose.
         if (seen[linkTextTrimmed] && !seen[href]) {
-          if (option.checks.LINK_IDENTICAL_NAME) {
+          const ignored = $el.ariaHidden === 'true' && $el.getAttribute('tabindex') === '-1';
+          const hasAttributes = $el.hasAttribute('role') || $el.hasAttribute('disabled');
+          if (option.checks.LINK_IDENTICAL_NAME && !hasAttributes && !ignored) {
             const sanitizedText = Utils.sanitizeHTML(linkText);
             results.push({
               element: $el,

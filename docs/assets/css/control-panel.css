@@ -1135,6 +1135,7 @@ label:not(#colour-filter-mode, #export-results-mode) {
 }
 
 #readability-details {
+  display: block;
   padding: 0;
   margin: 0;
   white-space: normal;

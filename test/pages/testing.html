@@ -89,6 +89,22 @@
   </header>
   <main>
 
+    <h2>Same page broken link check will ignore links with ARIA roles</h2>
+    <p><a href="#" role="menuitem">Test</a>&NonBreakingSpace; <a href="#" aria-hidden="true" tabindex="-1">Test</a></p>
+    <h2>Same link text but different location should ignore links with ARIA roles</h2>
+    <ul>
+      <li><a href="https://www.torontomu.ca/accessibility/guides-resources">
+          Accessibility</a> - Regular link</li>
+      <li><a href="https://www.torontomu.ca/accessibility/access-tmu">Accessibility</a> - Regular link</li>
+      <li><a href="https://www.torontomu.ca/accessibility/access-tmssssu" aria-hidden="true"
+          tabindex="-1">Accessibility</a> -
+        aria-hidden and negative tabindex</li>
+      <li><a href="https://www.torontomu.ca/accessibility/access-tmssssu" disabled>Accessibility</a>
+        - disabled attribute</li>
+      <li><a href="https://www.torontomu.ca/accessibility/contact" role="TAB">Accessibility</a> - has
+        tab role</li>
+    </ul>
+
     <h2>Better sr-only detection.</h2>
     <p>Invisible contrast error below is ignored because sr-only text.</p>
     <p style="color:lightblue;" class="screen-reader">Off screen</p>
