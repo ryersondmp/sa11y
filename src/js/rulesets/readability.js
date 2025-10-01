@@ -19,18 +19,14 @@ export default function checkReadability() {
   if (rememberReadability) {
     const readabilityArray = [];
     // Improve the accuracy of a readability analysis by ensuring that long list items are treated as complete sentences.
-    Elements.Found.Readability.forEach((el) => {
-      const ignore = Utils.fnIgnore(el);
+    const punctuation = ['.', '?', '!'];
+    Elements.Found.Readability.forEach(($el) => {
+      const ignore = Utils.fnIgnore($el);
       const text = Utils.getText(ignore);
-      if (text.length > 0) {
-        const lastChar = text.charAt(text.length - 1);
-        const punctuation = ['.', '?', '!', ';'];
-        if (el.tagName === 'LI' && text.length >= 120 && !punctuation.includes(lastChar)) {
-          readabilityArray.push(`${text}.`);
-        } else {
-          readabilityArray.push(text);
-        }
-      }
+      if (!text) return;
+      const lastCharacter = text[text.length - 1];
+      const sentence = punctuation.includes(lastCharacter) ? text : `${text}.`;
+      readabilityArray.push(sentence);
     });
     const pageText = readabilityArray.join(' ');
 
