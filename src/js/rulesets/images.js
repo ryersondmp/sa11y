@@ -256,6 +256,27 @@ export default function checkImages(results, option) {
         }
       }
 
+      // Potentially contains auto-generated placeholder text.
+      const maybeBadAlt = (link)
+        ? option.checks.LINK_ALT_MAYBE_BAD : option.checks.ALT_MAYBE_BAD;
+      if (maybeBadAlt) {
+        const minLength = maybeBadAlt.minLength || 15;
+        const isTooLongSingleWord = new RegExp(`^\\S{${minLength},}$`);
+        const containsNonAlphaChar = /[^\p{L}\-,.!?]/u.test(alt);
+        if (isTooLongSingleWord.test(alt) && containsNonAlphaChar) {
+          const conditional = (link) ? 'LINK_ALT_MAYBE_BAD' : 'ALT_MAYBE_BAD';
+          results.push({
+            element: $el,
+            type: maybeBadAlt.type || 'warning',
+            content: Lang.sprintf(maybeBadAlt.content || conditional, altText),
+            dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
+            dismissAll: maybeBadAlt.dismissAll ? conditional : false,
+            developer: maybeBadAlt.developer || false,
+          });
+          return;
+        }
+      }
+
       // Alt text quality.
       if (error[0] !== null) {
         // Has stop words.
