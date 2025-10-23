@@ -207,6 +207,8 @@ export default {
     IMAGE_DECORATIVE_CAROUSEL: 'Obrázok je označený ako dekoratívny, ale všetky obrázky v kolotoči alebo galérii by mali obsahovať popisný alternatívny text, aby sa zabezpečil rovnocenný zážitok pre každého.',
     IMAGE_ALT_TOO_LONG: 'Alt text popisu je <strong>príliš dlhý</strong>. Alt text by mal byť stručný, ale výstižný ako <em>tweet</em> (približne 100 znakov). Ak ide o zložitý obrázok alebo graf, zvážte umiestnenie dlhého popisu obrázka do textu pod ním alebo do akordeónového komponentu. <hr> {ALT} <strong {B}>%(altLength) Znakov</strong> <strong {C}>%(ALT_TEXT)</strong>',
     IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+    LINK_ALT_MAYBE_BAD: 'Odkaz na obrázok môže mať alternatívny text, ktorý neposkytuje užitočné informácie alebo nie je popisný. Uistite sa, že alt text popisuje cieľ odkazu. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+    ALT_MAYBE_BAD: 'Alt text nemusí poskytovať užitočné informácie alebo nie je popisný. Vylepšite nasledujúci alt text: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
 
     // Form labels
     LABELS_MISSING_IMAGE_INPUT: 'V tlačidle obrázka chýba text alt. Pridajte text alt a uveďte prístupný názov. Napríklad: <em>Vyhľadať</em> alebo <em>Odoslať</em>.',

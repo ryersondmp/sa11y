@@ -228,9 +228,6 @@ input[type=color i].unknown::after {
 /**
  * A) Default focus styles.
  **/
-#container {
-  /* These elements MUST use inset outlines */
-}
 #container [tabindex="0"]:focus,
 #container [tabindex="-1"]:focus,
 #container input:focus,
@@ -239,6 +236,9 @@ input[type=color i].unknown::after {
 #container a:focus {
   outline: 0;
   box-shadow: 0 0 0 5px var(--sa11y-focus-color);
+}
+#container {
+  /* These elements MUST use inset outlines */
 }
 #container .switch:focus,
 #container #panel-controls button:focus {

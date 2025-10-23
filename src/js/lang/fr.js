@@ -172,6 +172,8 @@ export default {
     IMAGE_DECORATIVE_CAROUSEL: 'L\'image est marquée comme décorative, mais toutes les images dans un carrousel ou une galerie devraient inclure un texte alternatif descriptif pour garantir une expérience équivalente pour tout le monde.',
     IMAGE_ALT_TOO_LONG: 'La description du texte de remplacement est <strong>trop longue</strong>. Le texte de remplacement doit être précis, mais significatif tout comme un <em>gazouillis (micromessage) </em> (environ 100 caractères). S’il s’agit d’une image complexe ou d’une illustration, ajoutez une longue description de l’image dans le texte ci-dessous ou dans la composante accordéon. <hr> {ALT} <strong {B}>%(altLength) Caractères</strong> <strong {C}>%(ALT_TEXT)</strong>',
     IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+    LINK_ALT_MAYBE_BAD: "Le lien d'image a un texte alternatif qui peut ne pas fournir d'informations utiles ou est non descriptif. Assurez-vous que le texte alt décrit la destination du lien. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
+    ALT_MAYBE_BAD: "Le texte alternatif peut ne pas fournir d'informations utiles ou est non descriptif. Améliorez le texte alt suivant : <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
 
     // Labels
     LABELS_MISSING_IMAGE_INPUT: 'Le bouton de l’image manque un texte de remplacement. Veuillez ajouter un texte de remplacement pour fournir un nom accessible. Par exemple: <em>Rechercher</em> ou <em>Soumettre</em>.',

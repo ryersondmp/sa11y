@@ -595,6 +595,21 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
+  test('Image has bad alt text', async () => {
+    const issue = await checkTooltip(page, 'warning-bad-alt', 'Alt text may not provide useful information or contains non-descript text.');
+    expect(issue).toBe(true);
+  });
+
+  test('Non-english characters, single word, long alt text', async () => {
+    const issue = await checkTooltip(page, 'pass-bad-alt', 'Good');
+    expect(issue).toBe(true);
+  });
+
+  test('Linked image has bad alt text', async () => {
+    const issue = await checkTooltip(page, 'warning-bad-alt-linked', 'Image link has alt text that may not provide useful information or contains non-descript text. Ensure the alt text describes the destination of the link.');
+    expect(issue).toBe(true);
+  });
+
   /* **************** */
   /*  Links           */
   /* **************** */
