@@ -178,6 +178,8 @@ export default {
     IMAGE_DECORATIVE_CAROUSEL: 'Image is marked as <strong>decorative</strong>, but all images in a carousel or gallery should include descriptive alt text to ensure an equivalent experience for everyone.',
     IMAGE_ALT_TOO_LONG: 'Alt text description is <strong>too long</strong>. Alt text should be concise, yet meaningful like a <em>tweet</em> (around 100 characters). If this is a complex image or a graph, consider putting the long description of the image in the text below or an accordion component. <hr> {ALT} <strong {B}>%(altLength) Characters</strong> <strong {C}>%(ALT_TEXT)</strong>',
     IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+    LINK_ALT_MAYBE_BAD: 'Image link has alt text that may not provide useful information or contains non-descript text. Ensure the alt text describes the destination of the link. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+    ALT_MAYBE_BAD: 'Alt text may not provide useful information or contains non-descript text. Improve the following alt text: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
 
     // Labels
     LABELS_MISSING_IMAGE_INPUT: 'Image button is missing alt text. Please add alt text to provide an accessible name. For example: <em>Search</em> or <em>Submit</em>.',

@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.3.4
+  * @version 4.3.5
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -197,6 +197,8 @@
       IMAGE_DECORATIVE_CAROUSEL: 'Bilden är markerad som dekorativ, men alla bilder i en karusell eller ett galleri bör inkludera beskrivende alt-texter för att säkerställa en likvärdig upplevelse för alla.',
       IMAGE_ALT_TOO_LONG: 'Alt-texten är <strong>för lång</strong>. Alt-text ska vara kortfattad men meningsfull som en <em>tweet</em> (cirka 100 tecken). Om detta är en komplex bild eller en graf, överväg att lägga in den längre beskrivningen av bilden i under bilden, eller i en dragspelskomponent. <hr> {ALT} <strong {B}>%(altLength) Tecken</strong> <strong {C}>%(ALT_TEXT)</strong>',
       IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+      LINK_ALT_MAYBE_BAD: 'Bildlänken kan ha alternativtext som inte ger användbar information eller är otydlig. Se till att alt-texten beskriver länkens mål. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+      ALT_MAYBE_BAD: 'Alt-texten ger kanske inte användbar information eller är otydlig. Förbättra följande alt-text: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
 
       // Labels
       LABELS_MISSING_IMAGE_INPUT: 'Bildknappen saknar alternativ text. Lägg till alt-text för att ge knappen ett tillgängligt namn. Till exempel: <em>Sök</em> eller <em>Skicka</em>.',

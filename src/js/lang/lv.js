@@ -197,6 +197,8 @@ export default {
     IMAGE_DECORATIVE_CAROUSEL: 'Attēls ir atzīmēts kā dekoratīvs, taču visiem attēliem karuselē vai galerijā jāiekļauj aprakstošs alternatīvs teksts, lai nodrošinātu vienādu pieredzi visiem.',
     IMAGE_ALT_TOO_LONG: 'Alt teksta apraksts ir <strong>pārāk garš</strong>. Alt tekstam ir jābūt īsam, bet jēgpilnam kā <em>tweet</em> (apmēram 100 rakstzīmes). Ja tas ir sarežģīts attēls vai grafiks, apsveriet iespēju ievietot garu attēla aprakstu tekstā zemāk vai akordeona komponentē. <hr> {ALT} <strong {B}>%(altLength) Rakstzīmes</strong> <strong {C}>%(ALT_TEXT)</strong>',
     IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+    LINK_ALT_MAYBE_BAD: 'Attēla saitei var būt alt teksts, kas nesniedz noderīgu informāciju vai nav aprakstošs. Pārliecinieties, ka alt teksts apraksta saites galamērķi. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+    ALT_MAYBE_BAD: 'Alt teksts var nesniegt noderīgu informāciju vai nebūt aprakstošs. Uzlabojiet šo alt tekstu: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
 
     // Form labels
     LABELS_MISSING_IMAGE_INPUT: 'Attēla pogai trūkst alt teksta. Lūdzu, pievienojiet alt tekstu, lai nodrošinātu pieejamu nosaukumu. Piemēram: Piemēram, <em>Meklēšana</em> vai <em>Nosūtīt</em>.',

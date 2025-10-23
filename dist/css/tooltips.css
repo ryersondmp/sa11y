@@ -163,10 +163,6 @@ div {
   outline: 0;
   transition-property: transform, visibility, opacity;
   -webkit-font-smoothing: auto;
-  /* Dismiss buttons */
-  /* ************************************* */
-  /*                Arrows                 */
-  /* ************************************* */
 }
 .tippy-box[data-theme~=sa11y-theme] pre:has(code) {
   display: block;
@@ -229,7 +225,8 @@ div {
   opacity: 1;
 }
 .tippy-box[data-theme~=sa11y-theme] button.close-btn {
-  margin: 0;
+  margin-inline-start: 10px;
+  margin-bottom: 10px;
 }
 .tippy-box[data-theme~=sa11y-theme] button#suggest {
   position: relative;
@@ -248,6 +245,9 @@ div {
 .tippy-box[data-theme~=sa11y-theme] button#suggest:hover, .tippy-box[data-theme~=sa11y-theme] button#suggest:focus-visible {
   color: #000 !important;
   background-color: #fff !important;
+}
+.tippy-box[data-theme~=sa11y-theme] {
+  /* Dismiss buttons */
 }
 .tippy-box[data-theme~=sa11y-theme] .dismiss-group {
   margin-top: 5px;
@@ -303,6 +303,11 @@ div {
 }
 .tippy-box[data-theme~=sa11y-theme] .warning .link-icon {
   background: var(--sa11y-panel-bg);
+}
+.tippy-box[data-theme~=sa11y-theme] {
+  /* ************************************* */
+  /*                Arrows                 */
+  /* ************************************* */
 }
 .tippy-box[data-theme~=sa11y-theme][data-placement^=top] > .tippy-arrow::before {
   border-top-color: var(--sa11y-panel-bg);

@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.3.4
+  * @version 4.3.5
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -217,6 +217,8 @@
       IMAGE_DECORATIVE_CAROUSEL: 'Gambar ditandai sebagai dekoratif, tetapi semua gambar di carousel atau galeri harus menyertakan teks alt deskriptif untuk memastikan pengalaman yang setara bagi semua orang.',
       IMAGE_ALT_TOO_LONG: 'Deskripsi teks alt terlalu panjang. Teks alt harus ringkas, namun bermakna seperti <em>tweet</em> (sekitar 100 karakter). Jika ini adalah gambar yang rumit atau grafik, pertimbangkan untuk meletakkan deskripsi gambar yang panjang dalam teks di bawah ini atau komponen akordeon. <hr> {ALT} <strong {B}>%(altLength) Karakter</strong> <strong {C}>%(ALT_TEXT)</strong>',
       IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+      LINK_ALT_MAYBE_BAD: 'Tautan gambar memiliki teks alt yang mungkin tidak memberikan informasi berguna atau tidak deskriptif. Pastikan teks alt menjelaskan tujuan tautan. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+      ALT_MAYBE_BAD: 'Teks alt mungkin tidak memberikan informasi berguna atau tidak deskriptif. Perbaiki teks alt berikut: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
 
       // Form labels
       LABELS_MISSING_IMAGE_INPUT: 'Tombol gambar tidak memiliki teks alt. Tambahkan teks alt untuk memberikan nama yang dapat diakses. Sebagai contoh: <em>Cari</em> atau <em>Kirim</em>.',

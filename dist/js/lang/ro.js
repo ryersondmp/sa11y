@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.3.4
+  * @version 4.3.5
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -209,6 +209,8 @@ var ro = {
     IMAGE_DECORATIVE_CAROUSEL: 'Imaginea este marcată ca decorativă, dar toate imaginile dintr-un carusel sau galerie ar trebui să includă un text descriptiv alternativ pentru a asigura o experiență echivalentă pentru toată lumea.',
     IMAGE_ALT_TOO_LONG: 'Descrierea textului Alt este <strong>prea lungă</strong>. Textul Alt ar trebui să fie concis, dar semnificativ, ca un <em>tweet</em> (aproximativ 100 de caractere). Dacă este vorba de o imagine complexă sau de un grafic, luați în considerare posibilitatea de a pune descrierea lungă a imaginii în textul de mai jos sau într-o componentă acordeon. <hr> {ALT} <strong {B}>%(altLength) Caractere</strong> <strong {C}>%(ALT_TEXT)</strong>',
     IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+    LINK_ALT_MAYBE_BAD: 'Linkul imaginii poate avea un text alternativ care nu oferă informații utile sau nu este descriptiv. Asigură-te că textul alt descrie destinația linkului. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+    ALT_MAYBE_BAD: 'Textul alternativ poate să nu ofere informații utile sau să nu fie descriptiv. Îmbunătățește următorul text alt: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
 
     // Form labels
     LABELS_MISSING_IMAGE_INPUT: 'Butonul de imagine nu are text alternativ. Vă rugăm să adăugați un alt text pentru a oferi un nume accesibil. De exemplu: <em>Cercetare</em> sau <em>Submitere</em>.',

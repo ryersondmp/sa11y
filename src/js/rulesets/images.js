@@ -256,6 +256,12 @@ export default function checkImages(results, option) {
         }
       }
 
+      // Potentially contains auto-generated placeholder text.
+      const maybeBadAlt = (link)
+        ? option.checks.LINK_ALT_MAYBE_BAD : option.checks.ALT_MAYBE_BAD;
+      const isTooLongSingleWord = new RegExp(`^\\S{${maybeBadAlt.minLength || 15},}$`);
+      const containsNonAlphaChar = /[^\p{L}\-,.!?]/u.test(alt);
+
       // Alt text quality.
       if (error[0] !== null) {
         // Has stop words.
@@ -305,6 +311,17 @@ export default function checkImages(results, option) {
             developer: rule.developer || false,
           });
         }
+      } else if (maybeBadAlt && (isTooLongSingleWord.test(alt) && containsNonAlphaChar)) {
+        // Alt text is a single word greater than 15 characters that is potentially auto-generated.
+        const conditional = (link) ? 'LINK_ALT_MAYBE_BAD' : 'ALT_MAYBE_BAD';
+        results.push({
+          element: $el,
+          type: maybeBadAlt.type || 'warning',
+          content: Lang.sprintf(maybeBadAlt.content || conditional, altText),
+          dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
+          dismissAll: maybeBadAlt.dismissAll ? conditional : false,
+          developer: maybeBadAlt.developer || false,
+        });
       } else if (link
         ? alt.length > maxAltCharactersLinks
         : alt.length > maxAltCharacters) {

@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.3.4
+  * @version 4.3.5
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -216,6 +216,8 @@
       IMAGE_DECORATIVE_CAROUSEL: 'L\'immagine è contrassegnata come decorativa, ma tutte le immagini in un carosello o galleria dovrebbero includere un testo alternativo descrittivo per garantire un\'esperienza equivalente per tutti.',
       IMAGE_ALT_TOO_LONG: "La descrizione del testo Alt è <strong>troppo lunga</strong>. Il testo Alt dovrebbe essere conciso, ma significativo come un <em>tweet</em> (circa 100 caratteri). Se si tratta di un'immagine complessa o di un grafico, considerate la possibilità di inserire la lunga descrizione dell'immagine nel testo sottostante o in un componente a fisarmonica. <hr> {ALT} <strong {B}>%(altLength) Caratteri</strong> <strong {C}>%(ALT_TEXT)</strong>",
       IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+      LINK_ALT_MAYBE_BAD: 'Il collegamento dell’immagine potrebbe avere un testo alt che non fornisce informazioni utili o non è descrittivo. Assicurati che il testo alt descriva la destinazione del collegamento. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+      ALT_MAYBE_BAD: 'Il testo alt potrebbe non fornire informazioni utili o non essere descrittivo. Migliora il seguente testo alt: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
 
       // Form labels
       LABELS_MISSING_IMAGE_INPUT: "Il pulsante dell'immagine manca del testo alt. Aggiungere il testo alt per fornire un nome accessibile. Ad esempio: <em>Cerca</em> o <em>Invio</em>.",

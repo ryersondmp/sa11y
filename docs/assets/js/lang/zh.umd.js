@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.3.4
+  * @version 4.3.5
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -213,6 +213,8 @@
       IMAGE_DECORATIVE_CAROUSEL: '图像被标记为装饰性，但轮播或画廊中的所有图像都应包括描述性替代文本，以确保每个人都能获得同等的体验。',
       IMAGE_ALT_TOO_LONG: 'Alt文本描述<strong>太长</strong>。Alt文本应该是简洁的, 但又像<em>tweet</em>一样有意义 (大约100个字符) 。如果这是一张复杂的图片或图表, 可以考虑将图片的长篇描述放在下面的文字或手风琴组件中。<hr> {ALT} <strong {B}>%(altLength) 字符</strong> <strong {C}>%(ALT_TEXT)</strong>',
       IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+      LINK_ALT_MAYBE_BAD: '图像链接的替代文本可能未提供有用信息或不具描述性。请确保替代文本描述链接的目标。<hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+      ALT_MAYBE_BAD: '替代文本可能未提供有用信息或不具描述性。请改进以下替代文本：<hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
 
       // Form labels
       LABELS_MISSING_IMAGE_INPUT: '图片按钮缺少alt文本。请添加alt文本, 提供一个可访问的名称。比如说: <em>Search</em>或<em>Submit</em>。',

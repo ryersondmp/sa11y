@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.3.4
+  * @version 4.3.5
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -213,6 +213,8 @@
       IMAGE_ALT_TOO_LONG: 'Die Beschreibung des Alt-Textes ist <strong>zu lang</strong>. Der Alt-Text sollte prägnant, aber aussagekräftig wie ein <em>Tweet</em> sein (etwa 100 Zeichen). Wenn es sich um ein komplexes Bild oder eine Grafik handelt, sollten Sie erwägen, die lange Beschreibung des Bildes in den Text darunter oder in eine Akkordeonkomponente zu integrieren. <hr> {ALT} <strong {B}>%(altLength) Zeichen</strong> <strong {C}>%(ALT_TEXT)</strong>',
       IMAGE_DECORATIVE_CAROUSEL: 'Das Bild ist als dekorativ gekennzeichnet, aber alle Bilder in einem Karussell oder einer Galerie sollten beschreibenden Alt-Text enthalten, um ein gleichwertiges Erlebnis für alle zu gewährleisten.',
       IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+      LINK_ALT_MAYBE_BAD: 'Bildlink hat möglicherweise Alt-Text, der keine nützlichen Informationen liefert oder nicht beschreibend ist. Stellen Sie sicher, dass der Alt-Text das Ziel des Links beschreibt. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+      ALT_MAYBE_BAD: 'Alt-Text liefert möglicherweise keine nützlichen Informationen oder ist nicht beschreibend. Verbessern Sie den folgenden Alt-Text: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
 
       // Labels
       LABELS_MISSING_IMAGE_INPUT: 'Bildschaltfläche fehlt Alt-Text. Bitte füge alternativen Text hinzu, um einen barrierefreien Namen bereitzustellen. Zum Beispiel: <em>Suchen</em> oder <em>Senden</em>.',

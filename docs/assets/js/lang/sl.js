@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.3.4
+  * @version 4.3.5
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -208,6 +208,8 @@ var sl = {
     IMAGE_DECORATIVE_CAROUSEL: 'Slika je označena kot dekorativna, vendar morajo vse slike v vrtiljaku ali galeriji vključevati opisno nadomestno besedilo, da se zagotovi enakovredna izkušnja za vse.',
     IMAGE_ALT_TOO_LONG: 'Opis besedila Alt je <strong>predolg</strong>. Besedilo Alt mora biti jedrnato, vendar smiselno kot <em>tweet</em> (približno 100 znakov). Če gre za zapleteno sliko ali graf, razmislite o tem, da bi dolg opis slike umestili v spodnje besedilo ali komponento harmonike. <hr> {ALT} <strong {B}>%(altLength) Znakov</strong> <strong {C}>%(ALT_TEXT)</strong>',
     IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+    LINK_ALT_MAYBE_BAD: 'Povezava slike ima lahko nadomestno besedilo, ki ne zagotavlja koristnih informacij ali ni opisno. Preverite, ali nadomestno besedilo opisuje cilj povezave. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+    ALT_MAYBE_BAD: 'Nadomestno besedilo morda ne zagotavlja koristnih informacij ali ni opisno. Izboljšajte naslednje nadomestno besedilo: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
 
     // Form labels
     LABELS_MISSING_IMAGE_INPUT: 'V gumbu za sliko manjka besedilo alt. Dodajte besedilo alt in zagotovite dostopno ime. Na primer: <em>Poišči</em> ali <em>Oddaj</em>.',

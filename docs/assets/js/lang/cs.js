@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.3.4
+  * @version 4.3.5
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -207,6 +207,8 @@ var cs = {
     IMAGE_ALT_TOO_LONG: 'Alt text popisu je <strong>příliš dlouhý</strong>. Alt text by měl být stručný, ale výstižný jako <em>tweet</em> (přibližně 100 znaků). Pokud se jedná o složitý obrázek nebo graf, zvažte umístění dlouhého popisu obrázku do textu pod ním nebo do akordeonové komponenty. <hr> {ALT} <strong {B}>%(altLength) Znaků</strong> <strong {C}>%(ALT_TEXT)</strong>',
     IMAGE_DECORATIVE_CAROUSEL: 'Obrázek je označen jako dekorativní, ale všechny obrázky v kolotoči nebo galerii by měly obsahovat popisný alternativní text, aby byla zajištěna rovnocenná zkušenost pro každého.',
     IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+    LINK_ALT_MAYBE_BAD: 'Odkaz na obrázek může mít alternativní text, který neposkytuje užitečné informace nebo není popisný. Ujistěte se, že alt text popisuje cíl odkazu. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+    ALT_MAYBE_BAD: 'Alt text nemusí poskytovat užitečné informace nebo není popisný. Vylepšete následující alt text: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
 
     // Form labels
     LABELS_MISSING_IMAGE_INPUT: 'U tlačítka obrázku chybí text alt. Přidejte prosím text alt a uveďte přístupný název. Například: <em>Hledat</em> nebo <em>Odeslat</em>.',

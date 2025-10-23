@@ -78,6 +78,9 @@ const sa11y = new Sa11y({
     QA_BAD_LINK: {
       sources: 'a[href*="dev."]',
     },
+    /* ALT_MAYBE_BAD: {
+      type: 'error',
+    }, */
   },
 });
 

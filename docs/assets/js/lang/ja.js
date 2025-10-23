@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.3.4
+  * @version 4.3.5
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -217,6 +217,8 @@ var ja = {
     IMAGE_DECORATIVE_CAROUSEL: '画像は装飾的としてマークされていますが、カルーセルやギャラリー内のすべての画像には、すべての人に等しい体験を提供するために説明的な代替テキストを含める必要があります。',
     IMAGE_ALT_TOO_LONG: 'altテキストの説明が<strong>長すぎます</strong>。altテキストは簡潔でありながら意味のあるものである必要があります（ツイートのように、約100文字）。これが複雑な画像やグラフの場合は、画像の長い説明を以下のテキストまたは折りたたみコンポーネントに入れることを検討してください。<hr> {ALT} <strong {B}>%(altLength) 文字</strong> <strong {C}>%(ALT_TEXT)</strong>',
     IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+    LINK_ALT_MAYBE_BAD: '画像リンクの代替テキストが有用な情報を提供していないか、説明的でない可能性があります。代替テキストがリンク先を説明していることを確認してください。<hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+    ALT_MAYBE_BAD: '代替テキストが有用な情報を提供していないか、説明的でない可能性があります。次の代替テキストを改善してください。<hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
 
     // Form labels
     LABELS_MISSING_IMAGE_INPUT: '画像ボタンにaltテキストがありません。アクセス可能な名前を提供するためにaltテキストを追加してください。例：<em>検索</em>または<em>送信</em>。',

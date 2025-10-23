@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.3.4
+  * @version 4.3.5
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -204,6 +204,8 @@ var pl = {
     IMAGE_DECORATIVE_CAROUSEL: 'Obraz jest oznaczony jako dekoracyjny, ale wszystkie obrazy w karuzeli lub galerii powinny zawierać opisowy tekst alternatywny, aby zapewnić równoważne doświadczenie dla wszystkich.',
     IMAGE_ALT_TOO_LONG: 'Tekst alternatywny obrazu jest <strong>zbyt długi</strong>. Tekst alternatywny powinien być zwięzły, ale znaczący jak <em>tweet</em> (około 100 znaków). Jeśli jest to złożony obraz lub wykres, należy rozważyć umieszczenie długiego opisu obrazu w tekście poniżej lub w akordeonie. <hr> {ALT} <strong {B}>%(altLength) Znaków</strong> <strong {C}>%(ALT_TEXT)</strong>',
     IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+    LINK_ALT_MAYBE_BAD: 'Link do obrazu może mieć tekst alternatywny, który nie dostarcza przydatnych informacji lub nie jest opisowy. Upewnij się, że tekst alt opisuje cel linku. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+    ALT_MAYBE_BAD: 'Tekst alternatywny może nie dostarczać przydatnych informacji lub nie być opisowy. Popraw poniższy tekst alt: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
 
     // Form labels
     LABELS_MISSING_IMAGE_INPUT: 'Przycisk graficzny nie ma tekstu alternatywneego. Dodaj tekst alt, aby zapewnić dostępną nazwę. Na przykład: <em>Szukaj</em> lub <em>Wyślij</em>.',

@@ -122,6 +122,12 @@ const defaultOptions = {
     },
     ALT_UNPRONOUNCEABLE: true,
     LINK_ALT_UNPRONOUNCEABLE: true,
+    ALT_MAYBE_BAD: {
+      minLength: 15,
+    },
+    LINK_ALT_MAYBE_BAD: {
+      minLength: 15,
+    },
 
     // Link checks
     DUPLICATE_TITLE: {

@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.3.4
+  * @version 4.3.5
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -225,6 +225,8 @@
       IMAGE_ALT_TOO_LONG: 'Описанието на Alt текста е <strong>прекалено дълго</strong>. Alt текстът трябва да бъде кратък, но съдържателен като <em>tweet</em> (около 100 знака). Ако става въпрос за сложно изображение или графика, помислете дали да не поставите дългото описание на изображението в текста под него или в компонент на хармоника. <hr> {ALT} <strong {B}>%(altLength) Символа</strong> <strong {C}>%(ALT_TEXT)</strong>',
       IMAGE_DECORATIVE_CAROUSEL: 'Изображението е маркирано като декоративно, но всички изображения в въртележка или галерия трябва да включват описателен алтернативен текст, за да се осигури равностоен опит за всеки.',
       IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+      LINK_ALT_MAYBE_BAD: 'Връзката с изображение може да има alt текст, който не предоставя полезна информация или не е описателен. Уверете се, че alt текстът описва целта на връзката. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+      ALT_MAYBE_BAD: 'Alt текстът може да не предоставя полезна информация или да не е описателен. Подобрете следния alt текст: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
 
       // Form labels
       LABELS_MISSING_IMAGE_INPUT: 'В бутона за изображения липсва текст alt. Моля, добавете alt текст, за да предоставите достъпно име. Например: <em>Издирване</em> или <em>Изпращане</em>.',

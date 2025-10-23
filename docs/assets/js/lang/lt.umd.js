@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.3.4
+  * @version 4.3.5
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -219,6 +219,8 @@
       IMAGE_DECORATIVE_CAROUSEL: 'Vaizdas pažymėtas kaip dekoratyvinis, tačiau visi karuselėje ar galerijoje esantys vaizdai turėtų turėti aprašomąjį alternatyvų tekstą, kad būtų užtikrinta vienoda patirtis visiems.',
       IMAGE_ALT_TOO_LONG: 'Alt teksto aprašymas yra <strong>per ilgas</strong>. Alt tekstas turėtų būti glaustas, bet prasmingas, kaip <em>tweet</em> (apie 100 simbolių). Jei tai sudėtingas paveikslėlis arba grafikas, apsvarstykite galimybę ilgą paveikslėlio aprašymą pateikti žemiau esančiame tekste arba akordeono komponente. <hr> {ALT} <strong {B}>%(altLength) Ženklai</strong> <strong {C}>%(ALT_TEXT)</strong>',
       IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+      LINK_ALT_MAYBE_BAD: 'Paveikslo nuoroda gali turėti alternatyvų tekstą, kuris nesuteikia naudingos informacijos arba nėra aprašomasis. Įsitikinkite, kad alt tekstas apibūdina nuorodos paskirtį. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+      ALT_MAYBE_BAD: 'Alt tekstas gali nesuteikti naudingos informacijos arba būti neaprašomasis. Patobulinkite šį alt tekstą: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
 
       // Form labels
       LABELS_MISSING_IMAGE_INPUT: 'Nėra paveikslėlio mygtuko alt teksto. Pridėkite alt tekstą ir pateikite prieinamą pavadinimą. Pavyzdžiui: <em>Ieškoti</em> arba <em>Pateikti</em>.',

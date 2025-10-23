@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.3.4
+  * @version 4.3.5
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -213,6 +213,10 @@
       IMAGE_DECORATIVE_CAROUSEL: 'Görüntü dekoratif olarak işaretlenmiş, ancak bir döngü veya galerideki tüm görüntüler herkes için eşdeğer bir deneyim sağlamak için açıklayıcı alt metin içermelidir.',
       IMAGE_ALT_TOO_LONG: 'Alt metin açıklaması <strong>çok uzun</strong>. Alt metin kısa, ancak bir <em>tweet</em> gibi anlamlı olmalıdır (yaklaşık 100 karakter). Bu karmaşık bir görsel veya grafikse, görselin uzun açıklamasını aşağıdaki metne veya bir akordeon bileşenine koymayı düşünün. <hr> {ALT} <strong {B}>%(altLength) Karakter</strong> <strong {C}>%(ALT_TEXT)</strong>',
       IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+      LINK_ALT_MAYBE_BAD: 'Görsel bağlantısının alternatif metni yararlı bilgi sağlamayabilir veya açıklayıcı olmayabilir. Alternatif metnin bağlantının hedefini açıkladığından emin olun. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+      ALT_MAYBE_BAD: 'Alternatif metin yararlı bilgi sağlamayabilir veya açıklayıcı olmayabilir. Aşağıdaki alternatif metni iyileştirin: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+
+      // Labels
       LABELS_MISSING_IMAGE_INPUT: 'Resim düğmesinin alt metni eksik. Lütfen erişilebilir bir ad sağlamak için alt metin ekleyin. Örneğin: <em>Arama</em> veya <em>Gönder</em>.',
       LABELS_INPUT_RESET: 'Sıfırla düğmeleri özellikle gerekmedikçe <strong>kullanılmamalıdır</strong> çünkü yanlışlıkla etkinleştirilmeleri kolaydır. <hr> <strong>İpucu!</strong> <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Reset ve İptal düğmelerinin neden kullanılabilirlik sorunları oluşturduğunu öğrenin.</a>',
       LABELS_ARIA_LABEL_INPUT: 'Girdinin erişilebilir bir adı vardır, ancak lütfen görünür bir etiket olduğundan da emin olun. <hr> <strong {B}>Erişilebilir ad</strong> <strong {C}>%(TEXT)</strong>',

@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.3.4
+  * @version 4.3.5
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -219,6 +219,8 @@ var hu = {
     IMAGE_DECORATIVE_CAROUSEL: 'A kép dekoratívnak van jelölve, de minden képnek a karusszelben vagy galériában tartalmaznia kell leíró alt szöveget, hogy biztosítsák az egyenértékű élményt mindenki számára.',
     IMAGE_ALT_TOO_LONG: 'Az Alt szöveges leírás <strong>túl hosszú</strong>. Az Alt szövegnek tömörnek, mégis értelmesnek kell lennie, mint egy <em>tweet</em> (kb. 100 karakter). Ha összetett képről vagy grafikonról van szó, fontolja meg, hogy a kép hosszú leírását az alatta lévő szövegben vagy egy harmonika komponensben helyezze el. <hr> {ALT} <strong {B}>%(altLength) Karakterek</strong> <strong {C}>%(ALT_TEXT)</strong>',
     IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+    LINK_ALT_MAYBE_BAD: 'A képhivatkozás alt szövege nem biztos, hogy hasznos információt ad, vagy nem leíró. Győződj meg arról, hogy az alt szöveg leírja a hivatkozás célját. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+    ALT_MAYBE_BAD: 'Az alt szöveg nem biztos, hogy hasznos információt ad, vagy nem leíró. Javítsd a következő alt szöveget: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
 
     // Form labels
     LABELS_MISSING_IMAGE_INPUT: 'A képgombból hiányzik az alt szöveg. Kérjük, adjon hozzá alt szöveget, hogy elérhető nevet adjon. Például: <em>Keresés</em> vagy <em>Submit</em>.',

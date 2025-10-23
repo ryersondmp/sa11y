@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.3.4
+  * @version 4.3.5
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -207,6 +207,8 @@ var da = {
     IMAGE_ALT_TOO_LONG: 'Alt-tekstbeskrivelsen er <strong>for lang</strong>. Alt-teksten skal være kortfattet, men alligevel meningsfuld som et <em>tweet</em> (omkring 100 tegn). Hvis det er et komplekst billede eller en graf, kan du overveje at placere den lange beskrivelse af billedet i teksten nedenfor eller i en harmonika-komponent. <hr> {ALT} <strong {B}>%(altLength) Tegn</strong> <strong {C}>%(ALT_TEXT)</strong>',
     IMAGE_DECORATIVE_CAROUSEL: 'Billedet er markeret som dekorativt, men alle billeder i en karrusel eller galleri bør inkludere beskrivende alt-tekst for at sikre en tilsvarende oplevelse for alle.',
     IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+    LINK_ALT_MAYBE_BAD: 'Billedlink har muligvis alt-tekst, der ikke giver nyttig information eller indeholder ikke-beskrivende tekst. Sørg for, at alt-teksten beskriver linkets destination. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+    ALT_MAYBE_BAD: 'Alt-tekst giver muligvis ikke nyttig information eller indeholder ikke-beskrivende tekst. Forbedr følgende alt-tekst: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
 
     // Form labels
     LABELS_MISSING_IMAGE_INPUT: 'Billedknappen mangler alt-tekst. Tilføj venligst alt-tekst for at give et tilgængeligt navn. For eksempel: <em>Søg</em> eller <em>Send</em>.',

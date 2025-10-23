@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.3.4
+  * @version 4.3.5
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -218,6 +218,8 @@
       IMAGE_DECORATIVE_CAROUSEL: 'Pilt on märgitud dekoratiivseks, kuid kõik karusselli või galerii pildid peaksid sisaldama kirjeldavat alternatiivteksti, et tagada kõigile võrdväärne kogemus.',
       IMAGE_ALT_TOO_LONG: 'Alt-teksti kirjeldus on <strong>liiga pikk</strong>. Alt-tekst peaks olema lühike, kuid sisukas nagu <em>tweet</em> (umbes 100 tähemärki). Kui tegemist on keerulise pildi või graafikuga, kaaluge pildi pika kirjelduse paigutamist allolevasse teksti või akordionikomponenti. <hr> {ALT} <strong {B}>%(altLength) Tähemärki</strong> <strong {C}>%(ALT_TEXT)</strong>',
       IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+      LINK_ALT_MAYBE_BAD: 'Pildilink võib sisaldada alt-teksti, mis ei anna kasulikku teavet või ei ole kirjeldav. Veendu, et alt-tekst kirjeldaks lingi sihtkohta. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+      ALT_MAYBE_BAD: 'Alt-tekst ei pruugi anda kasulikku teavet või ei ole kirjeldav. Paranda järgmine alt-tekst: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
 
       // Form labels
       LABELS_MISSING_IMAGE_INPUT: 'Pildi nupul puudub alt-tekst. Palun lisage alt-tekst, et anda ligipääsetav nimi. Näiteks: <em>Search</em> või <em>Submit</em>.',

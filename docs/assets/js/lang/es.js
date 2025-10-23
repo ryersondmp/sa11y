@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.3.4
+  * @version 4.3.5
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -186,6 +186,8 @@ var es = {
     IMAGE_DECORATIVE_CAROUSEL: 'La imagen está marcada como decorativa, pero todas las imágenes en un carrusel o galería deben incluir un texto alternativo descriptivo para garantizar una experiencia equivalente para todos.',
     IMAGE_ALT_TOO_LONG: 'La descripción del texto alternativo es <strong>demasiado larga</strong>. El texto alternativo debe ser conciso, pero significativo como un <em>tweet</em> (alrededor de 100 caracteres). Si se trata de una imagen compleja o un gráfico, considere colocar la descripción larga de la imagen en el texto a continuación o en un componente de acordeón. <hr> {ALT} <strong {B}>%(altLength) Caracteres</strong> <strong {C}>%(ALT_TEXT)</strong>',
     IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+    LINK_ALT_MAYBE_BAD: 'El enlace de imagen tiene texto alternativo que puede no ser útil o no ser descriptivo. Asegúrate de que el texto alternativo describa el destino del enlace. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+    ALT_MAYBE_BAD: 'El texto alternativo puede no ser útil o no ser descriptivo. Mejora el siguiente texto alternativo: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
 
     // Labels
     LABELS_MISSING_IMAGE_INPUT: 'Al botón de imagen le falta el texto alternativo. Agregue texto alternativo para proporcionar un nombre accesible. Por ejemplo: <em>Buscar</em> o <em>Enviar</em>.',
