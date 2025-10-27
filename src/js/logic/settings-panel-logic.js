@@ -139,7 +139,7 @@ export default function settingsPanelToggles(checkAll, resetAll) {
           createAlert(Lang._('COLOUR_FILTER_HIGH_CONTRAST'));
         } else {
           // Set attributes.
-          Constants.Root.areaToCheck.setAttribute('data-sa11y-filter', filters[option - 1]);
+          Constants.Root.forEach((root) => root.setAttribute('data-sa11y-filter', filters[option - 1]));
           Constants.Panel.colourFilterIcon.setAttribute('aria-label', icons[option - 1]);
 
           // Remove page markup while filters are applied. Otherwise it may confuse content authors.
@@ -172,7 +172,7 @@ export default function settingsPanelToggles(checkAll, resetAll) {
         }
       } else {
         // Restore panel.
-        Constants.Root.areaToCheck.removeAttribute('data-sa11y-filter');
+        Constants.Root.forEach((root) => root.removeAttribute('data-sa11y-filter'));
         Constants.Panel.settingsContent.classList.remove('hide-settings-border');
 
         // Hide colour filter panel.

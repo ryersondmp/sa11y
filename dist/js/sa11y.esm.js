@@ -13,6 +13,7 @@
 const defaultOptions = {
   // Target area to check
   checkRoot: 'body',
+  fixedRoots: false,
 
   // Exclusions
   containerIgnore: '.sa11y-ignore',
@@ -292,32 +293,34 @@ const Constants = (function myConstants() {
   /* **************** */
   /* Initialize Roots */
   /* **************** */
-  const Root = {};
-  function initializeRoot(desiredRoot, desiredReadabilityRoot) {
-    Root.areaToCheck = document.querySelector(desiredRoot);
-    if (!Root.areaToCheck) {
-      Root.areaToCheck = document.querySelector('body');
-    }
+  const Root = [];
+  const Readability = {};
+
+  function initializeRoot(desiredRoots, desiredReadabilityRoot) {
+    // @todo Merge Discuss: I am converting strings to DOM refs here.
+    // temp;
+    // @todo Merge work needed: need multiple roots?
+    desiredRoots.forEach((area) => {
+      Root.push(area);
+    });
+    // @todo Merge Discuss: moved fallbacks back to the calling function.
 
     // Readability target area to check.
-    Root.Readability = document.querySelector(desiredReadabilityRoot);
-    if (!Root.Readability) {
-      if (!Root.areaToCheck) {
-        Root.Readability = document.querySelector('body');
-      } else {
-        // If desired root area is not found, use the root target area.
-        Root.Readability = Root.areaToCheck;
+    Readability.Root = desiredReadabilityRoot;
+    if (!Readability.Root) {
+      // If desired root area is not found, use the first root target area.
+      Readability.Root = Root.find((x) => x !== undefined);
 
-        // Create a warning if the desired readability root is not found.
-        const { readabilityDetails, readabilityToggle } = Constants.Panel;
-        const readabilityOn = readabilityToggle?.getAttribute('aria-pressed') === 'true';
-        if (readabilityDetails && readabilityOn) {
-          const note = document.createElement('div');
-          note.id = 'readability-alert';
-          note.innerHTML = `<hr aria-hidden="true"><p>${Lang.sprintf('MISSING_READABILITY_ROOT',
-            Root.areaToCheck.tagName.toLowerCase(), desiredReadabilityRoot)}</p>`;
-          readabilityDetails.insertAdjacentElement('afterend', note);
-        }
+      // Create a warning if the desired readability root is not found.
+      const { readabilityDetails, readabilityToggle } = Constants.Panel;
+      const readabilityOn = readabilityToggle?.getAttribute('aria-pressed') === 'true';
+      if (readabilityDetails && readabilityOn) {
+        const note = document.createElement('div');
+        note.id = 'readability-alert';
+        note.innerHTML = `<hr aria-hidden="true"><p>${Lang.sprintf('MISSING_READABILITY_ROOT',
+          desiredReadabilityRoot.tagName.toLowerCase(), desiredReadabilityRoot)}</p>`;
+        // @todo Merge work needed: does this reset between runs or stack?.
+        readabilityDetails.insertAdjacentElement('afterend', note);
       }
     }
   }
@@ -350,6 +353,8 @@ const Constants = (function myConstants() {
     Global.ignoreEditImageURL = option.ignoreEditImageURL;
     Global.ignoreEditImageClass = option.ignoreEditImageClass;
     Global.showMovePanelToggle = option.showMovePanelToggle;
+    // @todo Merge do I actually need this?
+    Global.fixedRoots = option.fixedRoots;
 
     // A11y: Determine scroll behaviour
     let reducedMotion = false;
@@ -485,7 +490,6 @@ const Constants = (function myConstants() {
   /* ***************** */
   /* Readability Setup */
   /* ***************** */
-  const Readability = {};
   function initializeReadability(option) {
     if (option.readabilityPlugin) {
       // Set `readabilityLang` property based on language file.
@@ -614,60 +618,65 @@ const Constants = (function myConstants() {
 /**
  * Finds elements in the DOM that match the given selector, within the specified root element, and excluding any specified elements.
  * @param {string} selector - The CSS selector to match elements against.
- * @param {string} desiredRoot - The root element to start the search from. Can be one of 'document', 'readability', 'root', or a custom selector for the desired root element.
+ * @param {string} desiredRoot - The root element to start the search from. Can be one of 'document', 'readability', 'heading', 'check', or a custom selector for the desired root element.
  * @param {string} exclude - Elements to exclude from the search, specified as a CSS selector (optional).
  * @returns {Array} - An array of elements that match the given selector.
  */
 function find(selector, desiredRoot, exclude) {
-  let root;
+  let root = [];
   if (desiredRoot === 'document') {
-    root = document;
+    root.push(document);
   } else if (desiredRoot === 'readability') {
-    root = Constants.Readability.Root;
-    if (!root) root = Constants.Root.areaToCheck;
+    root.push(Constants.Readability.Root);
+    if (!root) root = Constants.Root.find((x) => x !== undefined);
   } else if (desiredRoot === 'root') {
-    root = Constants.Root.areaToCheck;
-    if (!root) root = document.body;
+    root = Constants.Root;
   } else if (desiredRoot === 'panel') {
     root = Constants.Panel.panel;
-    if (!root) root = document.body;
   } else {
-    root = document.querySelector(desiredRoot);
-    if (!root) root = document.body;
+    root = document.querySelectorAll(desiredRoot);
   }
-
-  const shadowComponents = document.querySelectorAll('[data-sa11y-has-shadow-root]');
-  const shadow = shadowComponents ? ', [data-sa11y-has-shadow-root]' : '';
+  if (root.length === 0) {
+    root = [document.body];
+  }
 
   // Exclusions are returned as an array & need to become a string for selector.
   const exclusions = Constants.Exclusions.Container.join(', ');
+  // @todo Merge discuss: the next line. You can't join a string type.
   const additionalExclusions = exclude?.join(', ') || '';
 
   // Ensure no trailing commas.
   const additional = additionalExclusions ? `, ${additionalExclusions}` : '';
+  let list = [];
+  root?.forEach((r) => {
+    const shadowComponents = r?.querySelectorAll('[data-sa11y-has-shadow-root]');
+    const shadow = shadowComponents ? ', [data-sa11y-has-shadow-root]' : '';
 
-  /* Logic yoinked from Editoria11y */
-  // 1. Elements array includes web components in the selector to be used as a placeholder.
-  const elements = Array.from(root.querySelectorAll(`:is(${selector}${shadow}):not(${exclusions}${additional})`));
-  if (shadowComponents.length) {
-    // 2. Dive into the each shadow root and collect an array of its results.
-    const shadowFind = [];
-    elements.forEach((el, i) => {
-      if (el && el.matches && el.matches('[data-sa11y-has-shadow-root]') && el.shadowRoot) {
-        shadowFind[i] = el.shadowRoot.querySelectorAll(`:is(${selector}):not(${exclusions}${additional})`);
-      }
-    });
-    // 3. Replace the placeholder with any hits found in the shadow root.
-    if (shadowFind.length > 0) {
-      for (let index = shadowFind.length - 1; index >= 0; index--) {
-        if (shadowFind[index]) {
-          elements.splice(index, 1, ...shadowFind[index]);
+    /* Logic yoinked from Editoria11y */
+    // 1. Elements array includes web components in the selector to be used as a placeholder.
+    const elements = Array.from(r.querySelectorAll(`:is(${selector}${shadow}):not(${exclusions}${additional})`));
+    if (shadowComponents.length) {
+      // 2. Dive into each shadow root and collect an array of its results.
+      const shadowFind = [];
+      elements.forEach((el, i) => {
+        if (el && el.matches && el.matches('[data-sa11y-has-shadow-root]') && el.shadowRoot) {
+          shadowFind[i] = el.shadowRoot.querySelectorAll(`:is(${selector}):not(${exclusions}${additional})`);
+        }
+      });
+      // 3. Replace the placeholder with any hits found in the shadow root.
+      if (shadowFind.length > 0) {
+        for (let index = shadowFind.length - 1; index >= 0; index--) {
+          if (shadowFind[index]) {
+            elements.splice(index, 1, ...shadowFind[index]);
+          }
         }
       }
     }
-  }
+    list = list.concat(elements.filter((node) => node.parentNode.tagName !== 'SLOT'));
+  });
+
   // 4. Return the cleaned up array, filtering out <slot> placeholders.
-  return elements.filter((node) => node.parentNode.tagName !== 'SLOT');
+  return list;
 }
 
 /* eslint-disable no-continue */
@@ -1299,7 +1308,7 @@ function removeAlert() {
  * @param {string} extendedPreview The issue's HTML or escaped HTML to be previewed (optional).
  * @returns {void}
  */
-function createAlert(alertMessage, errorPreview, extendedPreview) {
+function createAlert(alertMessage, errorPreview = '', extendedPreview = '') {
   // Clear alert first before creating new one.
   removeAlert();
 
@@ -1314,10 +1323,12 @@ function createAlert(alertMessage, errorPreview, extendedPreview) {
   alert.classList.add('active');
   alertText.innerHTML = alertMessage;
 
+  // @todo Merge test that adding default value to clear eslint error doesn't mess up this '?'.
   // If the issue's element is being previewed.
   const elementPreview = (extendedPreview)
     ? `<div class="element-preview">${extendedPreview}</div>` : '';
 
+  // @todo Merge test that adding default value to clear eslint error doesn't mess up this.
   // Alert message or tooltip's message.
   if (errorPreview) {
     alertPreview.classList.add('panel-alert-preview');
@@ -1673,12 +1684,12 @@ const Elements = (function myElements() {
     // We want headings from the entire document for the Page Outline.
     Found.Headings = find(
       'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]',
-      'document',
+      'root',
       Constants.Exclusions.Headings,
     );
     Found.HeadingOne = find(
       'h1, [role="heading"][aria-level="1"]',
-      'document',
+      'root',
       Constants.Exclusions.Headings,
     );
 
@@ -1710,7 +1721,7 @@ const Elements = (function myElements() {
       ? Found.Links.filter(($el) => badLinkSources.split(',').some((selector) => $el.matches(selector.trim()))) : [];
 
     // Readability.
-    const readabilityExclusions = ($el) => Constants.Root.Readability.contains($el)
+    const readabilityExclusions = ($el) => Constants.Readability.Root.contains($el)
       && !Constants.Exclusions.Readability.some((selector) => $el.matches(selector));
     Found.Readability = [
       ...Found.Paragraphs.filter(readabilityExclusions),
@@ -1751,7 +1762,7 @@ const Elements = (function myElements() {
   /* ************* */
   const Annotations = {};
   function initializeAnnotations() {
-    Annotations.Array = find('sa11y-annotation', 'document');
+    Annotations.Array = find('sa11y-annotation', 'annotationRoot');
     Annotations.Array.forEach((annotation, i) => {
       annotation.setAttribute('data-sa11y-position', i);
     });
@@ -2787,7 +2798,7 @@ function settingsPanelToggles(checkAll, resetAll) {
           createAlert(Lang._('COLOUR_FILTER_HIGH_CONTRAST'));
         } else {
           // Set attributes.
-          Constants.Root.areaToCheck.setAttribute('data-sa11y-filter', filters[option - 1]);
+          Constants.Root.forEach((root) => root.setAttribute('data-sa11y-filter', filters[option - 1]));
           Constants.Panel.colourFilterIcon.setAttribute('aria-label', icons[option - 1]);
 
           // Remove page markup while filters are applied. Otherwise it may confuse content authors.
@@ -2820,7 +2831,7 @@ function settingsPanelToggles(checkAll, resetAll) {
         }
       } else {
         // Restore panel.
-        Constants.Root.areaToCheck.removeAttribute('data-sa11y-filter');
+        Constants.Root.forEach((root) => root.removeAttribute('data-sa11y-filter'));
         Constants.Panel.settingsContent.classList.remove('hide-settings-border');
 
         // Hide colour filter panel.
@@ -7956,7 +7967,10 @@ function annotate(issue, option) {
 
     // Make sure annotations always appended outside of SVGs and interactive elements.
     const insertBefore = option.insertAnnotationBefore ? `, ${option.insertAnnotationBefore}` : '';
-    const location = element.closest(`a, button, [role="link"], [role="button"] ${insertBefore}`) || element;
+    let location = element.closest(`a, button, [role="link"], [role="button"] ${insertBefore}`) || element;
+    if (Constants.Global.fixedRoots) {
+      location = document.body;
+    }
     location.insertAdjacentElement(position, annotation);
     annotation.shadowRoot.appendChild(buttonWrapper);
 
@@ -8694,6 +8708,7 @@ function checkImages(results, option) {
           });
         }
       } else if (maybeBadAlt && (isTooLongSingleWord.test(alt) && containsNonAlphaChar)) {
+        // Alt text is a single word greater than 15 characters that is potentially auto-generated.
         const conditional = (link) ? 'LINK_ALT_MAYBE_BAD' : 'ALT_MAYBE_BAD';
         results.push({
           element: $el,
@@ -8820,8 +8835,8 @@ function checkHeaders(results, option, headingOutline) {
     const headingText = sanitizeHTML(removeWhitespace$1);
 
     // Check if heading is within root target area.
-    const rootContainsHeading = Constants.Root.areaToCheck.contains($el);
-    const rootContainsShadowHeading = Constants.Root.areaToCheck.contains($el.getRootNode().host);
+    const rootContainsHeading = Constants.Root.some((root) => root.contains($el));
+    const rootContainsShadowHeading = Constants.Root.some((root) => root.contains($el.getRootNode().host));
     const isWithinRoot = rootContainsHeading || rootContainsShadowHeading;
 
     // Determine heading level.
@@ -11195,6 +11210,7 @@ class Sa11y {
     this.checkAll = async (
       desiredRoot = option.checkRoot,
       desiredReadabilityRoot = option.readabilityRoot,
+      fixedRoots = option.fixedRoots,
     ) => {
       try {
         this.results = [];
@@ -11202,18 +11218,30 @@ class Sa11y {
         this.errorCount = 0;
         this.warningCount = 0;
         this.customChecksRunning = false;
+        Constants.Root.length = 0;
+        Constants.Readability.Root = false;
 
         // Initialize root areas to check.
-        const root = document.querySelector(desiredRoot);
-        if (!root && option.headless === false) {
-          createAlert(`${Lang.sprintf('MISSING_ROOT', desiredRoot)}`);
+        if (fixedRoots) {
+          fixedRoots.forEach((root) => {
+            Constants.initializeRoot(root, root);
+          });
+        } else {
+          let roots = document.querySelectorAll(desiredRoot);
+          const readabilityRoot = document.querySelector(desiredReadabilityRoot);
+          if (!roots && option.headless === false) {
+            createAlert(`${Lang.sprintf('MISSING_ROOT', desiredRoot)}`);
+            roots = document.querySelectorAll('body');
+          }
+          Constants.initializeRoot(roots, readabilityRoot);
         }
-        Constants.initializeRoot(desiredRoot, desiredReadabilityRoot);
 
         // Find all web components on the page.
+        // @todo Merge work needed.
         findShadowComponents(option);
 
         // Find and cache elements.
+        // @todo Merge work needed.
         Elements.initializeElements(option);
 
         // Ruleset checks
@@ -11428,6 +11456,7 @@ class Sa11y {
         });
       }
 
+      // @todo Merge work needed. Maybe an external positioner param?
       // Reset all data attributes.
       resetAttributes([
         'data-sa11y-parent',

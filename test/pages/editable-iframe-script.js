@@ -7,9 +7,9 @@ import Sa11yLangEn from '../../dist/js/lang/en.js';
 
 /*
 let results = [];
-const root = document.querySelector('main');
+const fixedRoots = document.querySelector('iframe').contentWindow.document.body.querySelector('main');
 
-const $checkAnnouncement = root.querySelectorAll('.sa11y-announcement-component');
+const $checkAnnouncement = fixedRoot.querySelectorAll('.sa11y-announcement-component');
 if ($checkAnnouncement.length > 1) {
   for (let i = 1; i < $checkAnnouncement.length; i++) {
     results.push({
@@ -23,7 +23,7 @@ if ($checkAnnouncement.length > 1) {
   }
 }
 
-const $checkAccordions = root.querySelectorAll('.sa11y-accordion-example');
+const $checkAccordions = fixedRoot.querySelectorAll('.sa11y-accordion-example');
 $checkAccordions.forEach(($el) => {
   const checkForm = $el.querySelector('form');
   if (!!checkForm && checkForm.length) {
@@ -41,48 +41,53 @@ $checkAccordions.forEach(($el) => {
 
 // Instantiate
 Lang.addI18n(Sa11yLangEn.strings);
-const sa11y = new Sa11y({
-  checkRoot: 'main, footer',
-  readabilityRoot: '.foo',
-  headerIgnore: '#nothing-ignore-this-heading *, .ignore-this-heading',
-  linkIgnoreSpan: '.sr-only-example',
-  linkIgnoreStrings: '(External)',
-  imageIgnore: '.logo',
-  outlineIgnore: '.outline-ignore',
-  contrastIgnore: '.background-image-component',
-  showHinPageOutline: 1,
-  showTitleInPageOutline: 1,
-  // contrastAAA: true,
-  // contrastAPCA: true,
-  ignoreHiddenOverflow: '.overlay, .modal',
-  insertAnnotationBefore: '.background-container',
-  // panelPosition: 'top-right',
-  // showMovePanelToggle: false,
-  // showImageOutline: false,
-  // showGoodImageButton: false,
-  exportResultsPlugin: true,
-  autoDetectShadowComponents: true,
-  developerChecksOnByDefault: true,
-  // externalDeveloperChecks: true,
-  imageWithinLightbox: '.lightbox',
-  customChecks: 'listen',
+window.setTimeout(function() {
 
-  // Configure image panel edit button
-  editImageURLofCMS: 'localhost',
-  ignoreEditImageURL: ['/ignore/'],
-  ignoreEditImageClass: ['ignore-me-edit-btn'],
-  extraPlaceholderStopWords: 'untitled, asset',
+  const fixedRoots = document.querySelector('iframe').contentWindow.document.body.querySelector('main');
+  const sa11y = new Sa11y({
+    checkRoot: 'body',
+    fixedRoots: [fixedRoots],
+    readabilityRoot: '.foo',
+    headerIgnore: '#nothing-ignore-this-heading *, .ignore-this-heading',
+    linkIgnoreSpan: '.sr-only-example',
+    linkIgnoreStrings: '(External)',
+    imageIgnore: '.logo',
+    outlineIgnore: '.outline-ignore',
+    contrastIgnore: '.background-image-component',
+    showHinPageOutline: 1,
+    showTitleInPageOutline: 1,
+    // contrastAAA: true,
+    // contrastAPCA: true,
+    ignoreHiddenOverflow: '.overlay, .modal',
+    insertAnnotationBefore: 'iframe',
+    // panelPosition: 'top-right',
+    // showMovePanelToggle: false,
+    // showImageOutline: false,
+    // showGoodImageButton: false,
+    exportResultsPlugin: false,
+    autoDetectShadowComponents: false,
+    developerChecksOnByDefault: true,
+    // externalDeveloperChecks: true,
+    imageWithinLightbox: '.lightbox',
+    customChecks: 'listen',
 
-  // Customize checks.
-  checks: {
-    QA_BAD_LINK: {
-      sources: 'a[href*="dev."]',
+    // Configure image panel edit button
+    editImageURLofCMS: 'localhost',
+    ignoreEditImageURL: ['/ignore/'],
+    ignoreEditImageClass: ['ignore-me-edit-btn'],
+    extraPlaceholderStopWords: 'untitled, asset',
+
+    // Customize checks.
+    checks: {
+      QA_BAD_LINK: {
+        sources: 'a[href*="dev."]',
+      },
+      /* ALT_MAYBE_BAD: {
+        type: 'error',
+      }, */
     },
-    /* ALT_MAYBE_BAD: {
-      type: 'error',
-    }, */
-  },
-});
+  });
+}, 100);
 
 /* Console all results */
 document.addEventListener('sa11y-check-complete', (e) => {

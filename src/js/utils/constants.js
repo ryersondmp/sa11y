@@ -4,32 +4,34 @@ const Constants = (function myConstants() {
   /* **************** */
   /* Initialize Roots */
   /* **************** */
-  const Root = {};
-  function initializeRoot(desiredRoot, desiredReadabilityRoot) {
-    Root.areaToCheck = document.querySelector(desiredRoot);
-    if (!Root.areaToCheck) {
-      Root.areaToCheck = document.querySelector('body');
-    }
+  const Root = [];
+  const Readability = {};
+
+  function initializeRoot(desiredRoots, desiredReadabilityRoot) {
+    // @todo Merge Discuss: I am converting strings to DOM refs here.
+    // temp;
+    // @todo Merge work needed: need multiple roots?
+    desiredRoots.forEach((area) => {
+      Root.push(area);
+    });
+    // @todo Merge Discuss: moved fallbacks back to the calling function.
 
     // Readability target area to check.
-    Root.Readability = document.querySelector(desiredReadabilityRoot);
-    if (!Root.Readability) {
-      if (!Root.areaToCheck) {
-        Root.Readability = document.querySelector('body');
-      } else {
-        // If desired root area is not found, use the root target area.
-        Root.Readability = Root.areaToCheck;
+    Readability.Root = desiredReadabilityRoot;
+    if (!Readability.Root) {
+      // If desired root area is not found, use the first root target area.
+      Readability.Root = Root.find((x) => x !== undefined);
 
-        // Create a warning if the desired readability root is not found.
-        const { readabilityDetails, readabilityToggle } = Constants.Panel;
-        const readabilityOn = readabilityToggle?.getAttribute('aria-pressed') === 'true';
-        if (readabilityDetails && readabilityOn) {
-          const note = document.createElement('div');
-          note.id = 'readability-alert';
-          note.innerHTML = `<hr aria-hidden="true"><p>${Lang.sprintf('MISSING_READABILITY_ROOT',
-            Root.areaToCheck.tagName.toLowerCase(), desiredReadabilityRoot)}</p>`;
-          readabilityDetails.insertAdjacentElement('afterend', note);
-        }
+      // Create a warning if the desired readability root is not found.
+      const { readabilityDetails, readabilityToggle } = Constants.Panel;
+      const readabilityOn = readabilityToggle?.getAttribute('aria-pressed') === 'true';
+      if (readabilityDetails && readabilityOn) {
+        const note = document.createElement('div');
+        note.id = 'readability-alert';
+        note.innerHTML = `<hr aria-hidden="true"><p>${Lang.sprintf('MISSING_READABILITY_ROOT',
+          desiredReadabilityRoot.tagName.toLowerCase(), desiredReadabilityRoot)}</p>`;
+        // @todo Merge work needed: does this reset between runs or stack?.
+        readabilityDetails.insertAdjacentElement('afterend', note);
       }
     }
   }
@@ -62,6 +64,8 @@ const Constants = (function myConstants() {
     Global.ignoreEditImageURL = option.ignoreEditImageURL;
     Global.ignoreEditImageClass = option.ignoreEditImageClass;
     Global.showMovePanelToggle = option.showMovePanelToggle;
+    // @todo Merge do I actually need this?
+    Global.fixedRoots = option.fixedRoots;
 
     // A11y: Determine scroll behaviour
     let reducedMotion = false;
@@ -197,7 +201,6 @@ const Constants = (function myConstants() {
   /* ***************** */
   /* Readability Setup */
   /* ***************** */
-  const Readability = {};
   function initializeReadability(option) {
     if (option.readabilityPlugin) {
       // Set `readabilityLang` property based on language file.

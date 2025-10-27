@@ -13,7 +13,7 @@ import autoprefixer from 'autoprefixer';
 import pkg from './package.json';
 
 /* Speed up compile time when developing by excluding language builds. */
-export const developmentMode = false;
+export const developmentMode = true;
 
 /* Copyright notice */
 const banner = `

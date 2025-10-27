@@ -144,6 +144,7 @@ class Sa11y {
     this.checkAll = async (
       desiredRoot = option.checkRoot,
       desiredReadabilityRoot = option.readabilityRoot,
+      fixedRoots = option.fixedRoots,
     ) => {
       try {
         this.results = [];
@@ -151,18 +152,30 @@ class Sa11y {
         this.errorCount = 0;
         this.warningCount = 0;
         this.customChecksRunning = false;
+        Constants.Root.length = 0;
+        Constants.Readability.Root = false;
 
         // Initialize root areas to check.
-        const root = document.querySelector(desiredRoot);
-        if (!root && option.headless === false) {
-          Utils.createAlert(`${Lang.sprintf('MISSING_ROOT', desiredRoot)}`);
+        if (fixedRoots) {
+          fixedRoots.forEach((root) => {
+            Constants.initializeRoot(root, root);
+          });
+        } else {
+          let roots = document.querySelectorAll(desiredRoot);
+          const readabilityRoot = document.querySelector(desiredReadabilityRoot);
+          if (!roots && option.headless === false) {
+            Utils.createAlert(`${Lang.sprintf('MISSING_ROOT', desiredRoot)}`);
+            roots = document.querySelectorAll('body');
+          }
+          Constants.initializeRoot(roots, readabilityRoot);
         }
-        Constants.initializeRoot(desiredRoot, desiredReadabilityRoot);
 
         // Find all web components on the page.
+        // @todo Merge work needed.
         findShadowComponents(option);
 
         // Find and cache elements.
+        // @todo Merge work needed.
         Elements.initializeElements(option);
 
         // Ruleset checks
@@ -377,6 +390,7 @@ class Sa11y {
         });
       }
 
+      // @todo Merge work needed. Maybe an external positioner param?
       // Reset all data attributes.
       Utils.resetAttributes([
         'data-sa11y-parent',

@@ -1,0 +1,2155 @@
+<!DOCTYPE html>
+<html lang="en">
+<link rel="stylesheet" href="./assets/main.css">
+<!-- Sa11y -->
+<link rel="stylesheet" href="../../dist/css/sa11y.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sa11y Unit Tests</title>
+  <style>
+    [contenteditable] [data-sa11y-annotation],
+    [contenteditable] [data-sa11y-error],
+    [contenteditable] [data-sa11y-warning] {
+      border: 3px dotted blue;
+      padding: 3px;
+      &:before {
+        content: "Inserted";
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Sa11y Unit Tests</h1>
+    <p>All annotations at a glance.</p>
+  </header>
+  <main>
+    <div contenteditable="true" style="max-height: 80vh; overflow: auto; box-shadow: 0 0 3px; padding: 1rem;">
+      <h2>Headings</h2>
+
+      <h3>Empty heading</h3>
+      <div id="error-empty-heading">
+        <h4></h4>
+      </div>
+
+      <h3>Skipped heading</h3>
+      <div id="error-skipped-heading">
+        <h3>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quas, asperiores esse ut quo adipisci.</h3>
+        <h6>Laboriosam hic corrupti repellendus nemo perferendis nesciunt at nostrum!</h6>
+      </div>
+
+      <h3>Ignored headings</h3>
+      <div id="nothing-ignore-this-heading">
+        <h6>This Heading 6 is ignored.</h6>
+      </div>
+
+      <h3>Headings that are too long</h3>
+      <div id="warning-headings-too-long">
+        <h4>Lorem ipsum dolor sit amet consectetur adipisicing elit. At ea ullam
+          reiciendis quis veritatis recusandae ducimus laudantium culpa incidunt?
+          Hic, dignissimos blanditiis accusantium sed accusamus voluptates
+          perferendis nobis fuga aliquid!</h4>
+      </div>
+
+      <h3>Blockquotes used as headings</h3>
+      <div id="warning-blockquote-headings">
+        <blockquote>About the team</blockquote>
+      </div>
+
+      <div id="nothing-blockquote-long-enough">
+        <blockquote>"To be, or not to be, that is the question."</blockquote>
+      </div>
+
+      <h3>Empty heading contains a decorative image</h3>
+      <div id="error-empty-heading-decorative-image">
+        <h4><img src="./assets/decorative.svg" alt width="100"></h4>
+      </div>
+
+      <h3>Heading contains an image with alt text</h3>
+      <div id="pass-heading-image-alt">
+        <h4><img src="./assets/placeholder.svg" alt="A beautiful square." width="100"></h4>
+      </div>
+
+      <h3>Bolded text used as heading</h3>
+      <div id="warning-bold-fake-heading">
+        <p><strong>About the team</strong></p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis
+          tristique sollicitudin nibh. Etiam erat velit scelerisque in dictum
+          non
+          consectetur. Augue lacus viverra vitae congue eu consequat. Egestas
+          maecenas pharetra convallis posuere morbi leo urna.</p>
+      </div>
+
+      <div id="warning-bold-heading-br">
+        <p><strong>This will be flagged</strong><br>
+          Because it's uses a line break and has a large paragraph following.
+          Lorem, ipsum dolor sit amet
+          consectetur adipisicing elit. Eum, harum? Sit ut quidem sequi odit
+          consequatur eveniet provident illo a voluptatibus suscipit obcaecati
+          praesentium necessitatibus, vero at excepturi sapiente nobis!</p>
+      </div>
+
+      <div id="nothing-long-bold-text">
+        <p><strong>This shouldn't be flagged since it's long and not necessarily a
+          heading but just a bolded sentence for extra emphasis.</strong></p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis
+          tristique sollicitudin nibh. Etiam erat velit scelerisque in dictum
+          non
+          consectetur. Augue lacus viverra vitae congue eu consequat. Egestas
+          maecenas pharetra convallis posuere morbi leo urna.</p>
+      </div>
+
+      <h3>Large paragraph text as heading</h3>
+      <div id="warning-large-p-heading">
+        <p style="font-size: 24px">About us</p>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Corporis
+          blanditiis repellat ducimus dolores suscipit itaque provident eos,
+          mollitia explicabo maxime quae ab recusandae velit, odit quibusdam
+          incidunt quidem quas ipsum.</p>
+      </div>
+
+      <div id="nothing-large-p-punctuation">
+        <p style="font-size: 24px">How are you doing?</p>
+        <p>Since it has punctuation, assume it's not a heading. Lorem
+          ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ut
+          consectetur arcu, vitae luctus lacus. Ut euismod arcu sed leo porta
+          suscipit.</p>
+      </div>
+
+      <hr>
+
+      <h2>Shadow DOM</h2>
+      <div id="error-shadow-dom" class="shadow-root"></div>
+
+      <hr>
+
+      <h2>Images</h2>
+
+      <h3>Image has alt text</h3>
+      <div id="pass-image-has-alt-text">
+        <img src="./assets/placeholder.svg" alt="Large mountains of sand in the Namibian desert.">
+      </div>
+
+      <h3>Alt text has suspicious stop word in the beginning</h3>
+      <div id="warning-alt-text-has-suspicious-stop-word">
+        <img src="./assets/placeholder.svg" alt="An image of a bird.">
+      </div>
+
+      <h3>Alt text has suspicious stop word towards the end</h3>
+      <div id="pass-alt-text-has-suspicious-stop-word-end">
+        <img src="./assets/placeholder.svg" alt="A black and white image of a bird.">
+      </div>
+
+      <h3>Decorative image</h3>
+      <div id="warning-image-is-decorative">
+        <img src="./assets/decorative.svg" alt>
+      </div>
+
+      <h3>Decorative image within a carousel component</h3>
+      <p>The default source is <code>.carousel, .slideshow</code></p>
+      <div id="warning-image-decorative-carousel" class="carousel">
+        <img src="./assets/decorative.svg" alt>
+        <img src="./assets/decorative.svg" alt>
+      </div>
+
+      <h4>This only has one image, so it should be a general decorative image warning.</h4>
+      <div id="warning-carousel-decorative" class="carousel">
+        <img src="./assets/decorative.svg" alt>
+      </div>
+
+      <h3>Alt text is too long</h3>
+      <div id="warning-alt-text-is-too-long">
+        <img src="./assets/placeholder.svg"
+             alt="Zebras are several species of African equids (horse family) united by their distinctive black-and-white striped coats. Their stripes come in different patterns, unique to each individual. They are generally social animals that live in small harems to large herds. Unlike their closest relatives, horses and donkeys, zebras have never been truly domesticated. Source: Wikipedia.">
+      </div>
+
+      <h3>Missing alt text</h3>
+      <div id="error-missing-alt-text">
+        <img src="./assets/placeholder.svg">
+      </div>
+
+      <h3>Image using empty space for alt</h3>
+      <div id="error-unpronounceable-empty-space">
+        <img src="./assets/placeholder.svg" alt=" ">
+      </div>
+
+      <h3>Linked image using empty space</h3>
+      <div id="error-linked-empty-space">
+        <a href="https://www.example.com?=8">
+          <img src="./assets/placeholder.svg" alt=" ">
+        </a>
+      </div>
+
+      <h3>Image using unpronounceable character for alt</h3>
+      <div id="error-unpronounceable-character">
+        <img src="./assets/placeholder.svg" alt="&quot;&quot;">
+      </div>
+
+      <h3>Linked image using unpronounceable character for alt</h3>
+      <div id="error-unpronounceable-character-linked">
+        <a href="https://www.example.com?=1njhs">
+          <img src="./assets/placeholder.svg" alt="&quot;&quot;">
+        </a>
+      </div>
+
+      <h3>Linked image using unpronounceable character for alt with surrounding text</h3>
+      <div id="warning-unpronounceable-character-with-surrounding-text">
+        <a href="https://www.example.com?=1njhs">
+          Something
+          <img src="./assets/placeholder.svg" alt="&quot;&quot;">
+        </a>
+      </div>
+
+      <h3>Alt has file extension</h3>
+      <div id="error-alt-text-has-file-extension">
+        <img src="./assets/placeholder.svg" alt="birdy.jpg">
+      </div>
+
+      <h3>Alt has image dimensions</h3>
+      <div id="error-alt-text-has-image-dimensions">
+        <img src="./assets/placeholder.svg" alt="birdy-480x590-1">
+      </div>
+
+      <h3>Alt has placeholder text</h3>
+      <div id="error-alt-text-has-placeholder-text">
+        <img src="./assets/placeholder.svg" alt="image">
+      </div>
+
+      <h3>Linked decorative image with surrounding link text</h3>
+      <div id="pass-linked-decorative-image-surrounding-text">
+        <a href="https://www.example.com?=1">
+          <img src="./assets/decorative.svg" alt>
+          Learn more about Tigers
+        </a>
+      </div>
+
+      <h3>Linked image with alt text</h3>
+      <div id="warning-link-has-alt-text">
+        <a href="https://www.example.com?=2">
+          <img src="./assets/placeholder.svg" alt="Large mountains of sand in the Nambian desert.">
+        </a>
+      </div>
+
+      <h3>Linked image has alt text that contains a stop word</h3>
+      <div id="warning-alt-stop-word">
+        <a href="https://www.example.com?=3">
+          <img src="./assets/placeholder.svg" alt="An image of a bird.">
+        </a>
+      </div>
+
+      <h3>Linked image has long alt</h3>
+      <div id="warning-link-alt-too-long">
+        <a href="https://www.example.com?=4">
+          <img src="./assets/placeholder.svg"
+               alt="Zebras are several species of African equids (horse family) united by their distinctive black-and-white striped coats. Their stripes come in different patterns, unique to each individual. They are generally social animals that live in small harems to large herds. Unlike their closest relatives, horses & donkeys, zebras have never been truly domesticated. Source: Wikipedia.">
+        </a>
+      </div>
+
+      <h3>Linked image contains both alt and link text</h3>
+      <div id="warning-alt-and-link-text">
+        <a href="https://www.example.com?=5">
+          <img src="./assets/placeholder.svg" alt="Lorem ipsum, dude!">
+          Learn more about, Lorem.
+        </a>
+      </div>
+
+      <h3>Linked image missing alt text</h3>
+      <div id="error-missing-alt">
+        <a href="https://www.example.com?=6">
+          <img src="./assets/placeholder.svg">
+        </a>
+      </div>
+
+      <h3>Linked decorative image</h3>
+      <div id="error-linked-decorative-image">
+        <a href="https://www.example.com?=7">
+          <img src="./assets/decorative.svg" alt>
+        </a>
+      </div>
+
+      <h3>Linked image with missing alt and contains link text</h3>
+      <div id="error-missing-alt-contains-link-text">
+        <a href="https://www.example.com?=9">
+          <img src="./assets/placeholder.svg">
+          Learn more about Lorem
+        </a>
+      </div>
+
+      <h3>Linked image has alt text containing placeholder stop words</h3>
+      <div id="error-linked-alt-placeholder-stopword">
+        <a href="https://www.example.com?=10">
+          <img src="./assets/placeholder.svg" alt="image">
+        </a>
+      </div>
+
+      <h3>Linked image has alt text containing file extension</h3>
+      <div id="error-linked-alt-file-extension">
+        <a href="https://www.example.com?=11">
+          <img src="./assets/placeholder.svg" alt="doggy.jpg">
+        </a>
+      </div>
+
+      <h3>Figure image with different alt and caption text</h3>
+      <div id="pass-figure-different-alt-caption">
+        <figure>
+          <img src="./assets/placeholder.svg" alt="Alt text for figure.">
+          <figcaption>Figure's caption text.</figcaption>
+        </figure>
+      </div>
+
+      <h3>Figure image with alt but without figcaption</h3>
+      <div id="pass-figure-without-figcaption">
+        <figure>
+          <img src="./assets/placeholder.svg" alt="Two australian shepherds.">
+        </figure>
+      </div>
+
+      <h3>Decorative figure image</h3>
+      <div id="warning-decorative-figure-element">
+        <figure>
+          <img src="./assets/decorative.svg" alt>
+        </figure>
+      </div>
+
+      <h3>Decorative figure image and figcaption</h3>
+      <div id="warning-decorative-figure-element-with-figcaption">
+        <figure aria-describedby="caption-attachment-28">
+          <img src="./assets/decorative.svg" alt>
+          <figcaption>Fig. 1: Nambian desert (Source: unknown)</figcaption>
+        </figure>
+      </div>
+
+      <h3>Figure element has duplicate alt and caption text</h3>
+      <div id="warning-figure-duplicate-alt-caption">
+        <figure>
+          <img src="./assets/placeholder.svg" alt="Two australian shepherds">
+          <figcaption>Two australian shepherds</figcaption>
+        </figure>
+      </div>
+
+      <h3>Linked figure with alt but without figcaption</h3>
+      <div id="warning-linked-figure-alt-without-figcaption">
+        <a href="https://www.example.com?=11">
+          <figure>
+            <img src="./assets/placeholder.svg" alt="Lorem ipsum.">
+          </figure>
+        </a>
+      </div>
+
+      <h3>Linked image opens in new tab</h3>
+      <div id="warning-hyperlinked-image-opens-in-new-tab">
+        <a href="https://www.example.com?=12" target="_blank">
+          <img src="./assets/placeholder.svg" alt="Beautiful square.">
+        </a>
+      </div>
+
+      <h3>Linked image opens in new tab, alt text provides warning</h3>
+      <div id="warning-linked-image-opens-in-new-tab">
+        <a href="https://www.example.com?=13" target="_blank">
+          <img src="./assets/placeholder.svg" alt="Two australian shepherds. Opens in new tab.">
+        </a>
+      </div>
+
+      <h3>Ignore noscript tags</h3>
+      <div id="warning-bug-testing-ignore-noscript-tags">
+        <a href="https://www.example.com?=14">
+          <img src="./assets/placeholder.svg" alt="Beautiful square.">
+          <noscript>asdfg</noscript>
+        </a>
+      </div>
+
+      <h3>Linked image should ignore text within link</h3>
+      <div id="warning-image-link-should-ignore-text-within-link">
+        <a href="https://www.example.com?=15">
+          <img src="./assets/placeholder.svg" alt="Another beautiful square.">
+          <span class="sr-only-example">Text ignored.</span>
+        </a>
+      </div>
+
+      <h3>Linked image should ignore text within link via string match</h3>
+      <div id="warning-image-link-should-ignore-text-within-link-string-match">
+        <a href="https://www.example.com?=16">
+          <img src="./assets/placeholder.svg" alt="Link text ignored."> (External)
+        </a>
+      </div>
+
+      <h3>Linked image has aria-hidden, but still focusable</h3>
+      <div id="error-hyperlinked-image-aria-hidden-focusable">
+        <a href="https://www.example.com?=17" aria-hidden="true">
+          <img src="./assets/decorative.svg" alt>
+        </a>
+      </div>
+
+      <h3>Image has aria-hidden</h3>
+      <div id="nothing-image-has-aria-hidden-true">
+        <img src="./assets/placeholder.svg" aria-hidden="true" alt="Lorem ipsum.">
+      </div>
+
+      <h3>Linked image has aria-hidden and negative tabindex</h3>
+      <div id="nothing-linked-image-aria-hidden-negative-tabindex">
+        <a href="https://www.example.com?=18" aria-hidden="true" tabindex="-1">
+          <img src="./assets/decorative.svg" alt>
+        </a>
+      </div>
+
+      <h3>Linked image with aria-hidden, negative tabindex, and alt</h3>
+      <div id="nothing-hyperlinked-image-aria-hidden-negative-tabindex-alt">
+        <a href="https://www.example.com?=19" aria-hidden="true" tabindex="-1">
+          <img src="./assets/placeholder.svg" alt="Testing 123">
+        </a>
+      </div>
+
+      <h3>Image's alt supplied via <code>aria-label</code></h3>
+      <div id="pass-alt-via-aria-label">
+        <img src="./assets/placeholder.svg" aria-label="A square box rectangle thing." width="100" />
+      </div>
+
+      <h3>Image with empty <code>aria-label=""</code></h3>
+      <div id="error-image-empty-aria-label">
+        <img src="./assets/placeholder.svg" aria-label="" width="100" />
+      </div>
+
+      <h3>Image with empty space for <code>aria-label=" "</code></h3>
+      <div id="error-image-empty-space-aria-label">
+        <img src="./assets/placeholder.svg" aria-label=" " width="100" />
+      </div>
+
+      <h3>Image with invalid <code>aria-labelledby</code></h3>
+      <div id="error-image-invalid-aria-labelledby">
+        <img src="./assets/placeholder.svg" aria-labelledby="square" width="100" />
+      </div>
+
+      <h3>Image with valid <code>aria-labelledby</code></h3>
+      <div id="pass-image-valid-aria-labelledby">
+        <img src="./assets/placeholder.svg" aria-labelledby="apples" width="100" />
+      </div>
+
+      <h3>Linked image with valid <code>aria-label</code></h3>
+      <div id="warning-image-link-valid-aria-label">
+        <a href="https://www.example.com?=15sdas">
+          <img src="./assets/placeholder.svg" aria-label="Off to example.com" width="100" />
+        </a>
+      </div>
+
+      <h3>Ignore tracking pixels</h3>
+      <p>If width and height is explicitly set as 1px and has <code>display: none;</code></p>
+      <div id="nothing-tracking-pixel">
+        <img src="#" height="1" width="1" style="display: none;">
+      </div>
+
+      <h3>Excluded image via prop</h3>
+      <p>Image excluded by class via prop <code>imageIgnore</code></p>
+      <div id="nothing-image-ignore-prop">
+        <img src="./assets/placeholder.svg" alt="Logo" class="logo" width="100" />
+      </div>
+
+      <h3>Alt text that may be bad</h3>
+      <p>Basically an alt text that is a single word greater than 15 characters that contains non-alpha characters.</p>
+      <div id="warning-bad-alt">
+        <img src="./assets/placeholder.svg" alt="~ai-3a3cb8f0-1554-4e2b-b159-77f7176853d0_" width="100" />
+      </div>
+      <h4>Non-english characters, single word, long alt text</h4>
+      <div id="pass-bad-alt">
+        <img src="./assets/placeholder.svg" alt="epäjärjestelmällistyttämättömyydellänsäkään!" width="100" />
+      </div>
+
+      <h3>Linked image that has potentially bad alt text</h3>
+      <div id="warning-bad-alt-linked">
+        <a href="https://www.example.com/sdsad">
+          <img src="./assets/placeholder.svg" alt="~ai-3a3cb8f0-1554-4e2b-b159-77f7176853d0_" width="100" />
+        </a>
+      </div>
+
+      <hr>
+
+      <h2>Links</h2>
+
+      <h3>Non descript link text</h3>
+      <div id="error-non-descript-link-1">
+        <a href="https://www.example.com?=learnmore">Learn more &gt;</a>
+      </div>
+
+      <div id="error-non-descript-link-2">
+        <a href="https://www.example.com?=21">More.</a>
+      </div>
+
+      <div id="error-non-descript-link-3">
+        <a href="https://www.example.com?=22">This?</a>
+      </div>
+
+      <h3>Descriptive link text</h3>
+      <div id="nothing-descriptive-link">
+        <a href="https://www.example.com?=23">Learn more about Sa11y</a>
+      </div>
+
+      <h3>Non descript links using exclusions prop</h3>
+      <div id="error-non-descript-exclusions-prop">
+        <a href="https://www.example.com?=learnmore">learn more <span class="sr-only-example">(This is
+          ignored)</span></a>
+      </div>
+
+      <h3>Non descript link uses string ignore prop</h3>
+      <div id="error-non-descript-string-exclusions-prop">
+        <a href="https://www.example.com?=learnmore">learn more (External)</a>
+      </div>
+
+      <h3>Flag custom links via prop <code>linksToFlag</code></h3>
+      <div id="error-custom-error-links">
+        <a href="https://www.dev.example.com?linksToFlag">Development environment</a>
+      </div>
+
+      <h3>Empty links</h3>
+      <div id="error-empty-1">Empty hyperlink: <a href="https://www.example.com?=26"></a></div>
+      <div id="error-empty-2">Empty hyperlink with space: <a href="https://www.example.com?=27"> </a></div>
+      <div id="error-empty-3">Single character: <a href="https://www.example.com?=28">.</a></div>
+      <div id="error-empty-4">Non-breaking space: <a href="https://www.example.com?=29">&nbsp;</a></div>
+      <div id="error-empty-5">Empty href: <a href></a></div>
+
+
+      <h3>Empty icon links</h3>
+      <div id="error-empty-icon-link-1">
+        Empty hyperlink with icon font:
+        <a href="https://www.example.com?=30"><i class="bi bi-emoji-smile-fill"></i></a>
+      </div>
+      <div id="error-empty-icon-link-2">
+        Empty hyperlink with icon font (opens new tab):
+        <a href="https://www.example.com?=31" target="_blank"><i class="bi bi-emoji-smile-fill"></i></a>
+      </div>
+      <div id="error-empty-icon-link-3">
+        Empty hyperlink with SVG:
+        <a href="https://www.example.com?=32">
+          <svg width="20" height="10">
+            <rect x="0" y="0" width="20" height="10" fill="black" />
+          </svg>
+        </a>
+      </div>
+      <div id="error-empty-icon-link-4">
+        Empty hyperlink with SVG (opens new tab):
+        <a href="https://www.example.com?=33" target="_blank">
+          <svg width="20" height="10">
+            <rect x="0" y="0" width="20" height="10" fill="black" />
+          </svg>
+        </a>
+      </div>
+
+      <h3>Empty hyperlinks with accessible name via title attribute</h3>
+      <div id="nothing-link-title-1">
+        Empty hyperlink with title:
+        <a href="https://www.example.com?=34" title="Pass"></a>
+      </div>
+      <div id="nothing-link-title-2">
+        Empty hyperlink with space and title:
+        <a href="https://www.example.com?=35" title="Pass (1)"> </a>
+      </div>
+      <div id="nothing-link-title-3">
+        Non-breaking space and title:
+        <a href="https://www.example.com?=36" title="Pass (2)">&nbsp;</a>
+      </div>
+      <div id="nothing-link-title-4">
+        Empty hyperlink with icon font and title:
+        <a href="https://www.example.com?=37" title="Pass (3)"><i></i></a>
+      </div>
+      <div id="nothing-link-title-5">
+        Empty hyperlink with icon font (opens new tab) and title:
+        <a href="https://www.example.com?=38" target="_blank" title="Balloon (Opens new tab)">
+          <i class="bi bi-emoji-smile-fill"></i>
+        </a>
+      </div>
+      <div id="nothing-link-title-6">
+        Empty hyperlink with SVG and title:
+        <a href="https://www.example.com?=39" title="SVG">
+          <svg width="20" height="10">
+            <rect x="0" y="0" width="20" height="10" fill="black" />
+          </svg>
+        </a>
+      </div>
+      <div id="nothing-link-title-7">
+        Empty hyperlink with SVG (opens new tab):
+        <a href="https://www.example.com?=40" target="_blank" title="SVG (opens new window)">
+          <svg width="20" height="10">
+            <rect x="0" y="0" width="20" height="10" fill="black" />
+          </svg>
+        </a>
+      </div>
+
+      <h3>Link text contains warning word</h3>
+      <div id="warning-link-word-1">
+        <a href="https://www.example.com?=41">Click here to view our
+          programs</a>
+      </div>
+      <div id="warning-link-word-2">
+        <a href="https://www.example.com?=42">Next ></a>
+      </div>
+      <div id="warning-link-word-3">
+        <a href="https://www.example.com?=43">&lt; Previous</a>
+      </div>
+      <div id="warning-link-word-4">
+        <a href="https://www.example.com?=44">← Left</a>
+      </div>
+      <div id="warning-link-word-5">
+        <a href="https://www.example.com?=45">« Previous</a>
+      </div>
+
+      <h3>Long URLs used as link text</h3>
+      <div id="warning-long-url-link-text">
+        <a href="https://sa11y.netlify.app/developers/custom-checks/">
+          https://sa11y.netlify.app/developers/custom-checks/
+        </a>
+      </div>
+      <div id="nothing-short-url-link-text">
+        <a href="https://sa11y.netlify.app">https://sa11y.netlify.app</a>
+      </div>
+
+      <h3>Links that have the same name but different URL</h3>
+      <div id="warning-same-name-diff-url-1">
+        <a href="www.example.com?=46">some link</a> and <a href="www.google.com/">some
+        link</a>
+      </div>
+      <div id="warning-same-name-diff-url-2">
+        <a href="www.example.com?=47">learn more has aria label</a>
+        and <a href="www.google.com/" aria-label="learn more has aria label">learn more</a>
+      </div>
+
+      <h3>Links to DOI</h3>
+      <div id="warning-links-to-doi">
+        <p>Adam Chaboryk. 2022. <strong>Creating an open source, customizable
+          accessibility checker for content authors.</strong> In Proceedings of
+          the 19th International Web for All Conference (W4A '22). Association for
+          Computing Machinery, New York, NY, USA, Article. 6, 1–2.<br>
+          <a href="https://doi.org/10.1145/3493612.3520468">doi.org/10.1145/3493612.3520468</a>
+        </p>
+      </div>
+
+      <h3>Links to file without warning</h3>
+      <div id="warning-link-file">
+        <a href="https://www.example.com?=assets.zip">Branding assets</a>
+      </div>
+      <div id="nothing-link-file">
+        <a href="https://www.example.com?=assets.zip?342">Branding assets (ZIP)</a>
+      </div>
+
+      <h3>Hyperlinks with ARIA</h3>
+      <p>Testing ARIA computation.</p>
+
+      <h4>Link with aria-label</h4>
+      <div id="pass-aria-link-1">
+        <a href="https://www.example.com?=48" aria-label="Learn more about dogs">Learn more</a>
+      </div>
+
+      <h4>Child with aria-label</h4>
+      <div id="pass-aria-link-2">
+        <a href="https://www.example.com?=49">Learn more <span aria-label="about WCAG"></span></a>
+      </div>
+
+      <h4>Multiple children with aria-label</h4>
+      <div id="pass-aria-link-3">
+        <a href="https://www.example.com?=50">Learn more <span aria-label="about accessibility"></span> <i
+                aria-label="(Links externally)">🔗</i></a>
+      </div>
+
+      <h4>Single aria-labelledby attribute</h4>
+      <div id="pass-aria-link-4">
+        <div hidden id="apples">Learn more about apples</div>
+        <a href="https://www.example.com?=51" aria-labelledby="apples">Learn more</a>
+      </div>
+
+      <h4>Multiple ARIA-labelledby attributes</h4>
+      <div id="pass-aria-link-5">
+        <div hidden id="xdf">about apples</div>
+        <div hidden id="oranges">and oranges</div>
+        <a href="https://www.example.com?=52" id="self" aria-labelledby="self xdf x oranges">Learn
+          more</a>
+      </div>
+
+      <h4>Child with ARIA-labelledby attributes</h4>
+      <div id="pass-aria-link-6">
+        <div hidden id="lotr">about Lord of the Rings and</div>
+        <div hidden id="rtk">the Return of the King</div>
+        <a href="https://www.example.com?=53">Learn more<span aria-labelledby="lotr x rtk"></span></a>
+      </div>
+
+      <h4>Link with pseudo content</h4>
+      <div id="pass-aria-link-7">
+        <a href="https://www.example.com?=54">Learn more about <span aria-labelledby="rtk"></span> <span
+                class="lotr"></span></a>
+      </div>
+
+      <h3>Links with aria-hidden</h3>
+      <h4>Link with aria-hidden, but still focusable</h4>
+      <div id="error-link-aria-hidden-focusable">
+        <a href="https://www.example.com?=learnmore" aria-hidden="true">Learn more</a>
+      </div>
+
+      <h4>Link with aria-hidden and not focusable</h4>
+      <div id="nothing-link-aria-hidden-unfocusable">
+        <a href="https://www.example.com?=learnmore" aria-hidden="true" tabindex="-1">Learn more</a>
+      </div>
+
+      <h4>Link with aria-labelledby referencing invalid ID</h4>
+      <div id="error-arialabelledby-invalid-reference">
+        <a href="https://www.example.com?=57" aria-labelledby="content">References non-existent ID on page</a>
+      </div>
+
+      <h4>Link with aria-label that doesn't contain visible text</h4>
+      <div id="warning-link-label-in-name">
+        <a href="https://www.example.com/asdsffs" aria-label="Delete item">
+          Remove <span class="visually-hidden">item</span>
+        </a>
+      </div>
+
+      <hr>
+
+      <h2>Tables</h2>
+      <h3>Table without issues</h3>
+      <div id="nothing-table-1">
+        <table>
+          <tbody>
+          <tr class="table-primary">
+            <th>Event Name</th>
+            <th>Time</th>
+            <th>Location</th>
+          </tr>
+          <tr>
+            <td>Keynote</td>
+            <td>9:00 AM</td>
+            <td>Auditorium</td>
+          </tr>
+          <tr>
+            <td>Lunch</td>
+            <td>12:00 PM</td>
+            <td>Skyline Room</td>
+          </tr>
+          <tr>
+            <td>Closing Dinner</td>
+            <td>5:00 PM</td>
+            <td>Metropolitan Room</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Table with <code>role="presentation"</code></h3>
+      <div id="nothing-table-2">
+        <table role="presentation">
+          <tbody>
+          <tr class="table-primary">
+            <th>Event Name</th>
+            <th></th>
+            <th></th>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Table explicitly hidden with <code>display:none</code></h3>
+      <div id="nothing-table-3">
+        <table style="display:none">
+          <tbody>
+          <tr>
+            <th></th>
+            <th></th>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Missing table headers</h3>
+      <div id="error-table-missing-headers">
+        <table>
+          <tbody>
+          <tr>
+            <td>Event Name</td>
+            <td>Time</td>
+            <td>Location</td>
+          </tr>
+          <tr>
+            <td>Keynote</td>
+            <td>9:00 AM</td>
+            <td>Auditorium</td>
+          </tr>
+          <tr>
+            <td>Lunch</td>
+            <td>12:00 PM</td>
+            <td>Skyline Room</td>
+          </tr>
+          <tr>
+            <td>Closing Dinner</td>
+            <td>5:00 PM</td>
+            <td>Metropolitan Room</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Table with empty header</h3>
+      <div id="error-empty-table-header">
+        <table>
+          <tbody>
+          <tr>
+            <th></th>
+            <th>Time</th>
+            <th>Location</th>
+          </tr>
+          <tr>
+            <td>Keynote</td>
+            <td>9:00 AM</td>
+            <td>Auditorium</td>
+          </tr>
+          <tr>
+            <td>Lunch</td>
+            <td>12:00 PM</td>
+            <td>Skyline Room</td>
+          </tr>
+          <tr>
+            <td>Closing Dinner</td>
+            <td>5:00 PM</td>
+            <td>Metropolitan Room</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Table with semantic headings</h3>
+      <div id="error-table-has-semantic-headings">
+        <table>
+          <tbody>
+          <tr>
+            <th>
+              <h4>Event</h4>
+            </th>
+            <th>
+              <h4>Time</h4>
+            </th>
+            <th>
+              <h4>Location</h4>
+            </th>
+          </tr>
+          <tr>
+            <td>Keynote</td>
+            <td>9:00 AM</td>
+            <td>Auditorium</td>
+          </tr>
+          <tr>
+            <td>Lunch</td>
+            <td>12:00 PM</td>
+            <td>Skyline Room
+              <p><strong>fake heading</strong></p>
+            </td>
+          </tr>
+          <tr>
+            <td>Closing Dinner</td>
+            <td>5:00 PM</td>
+            <td>Metropolitan Room</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <hr>
+
+      <h2>PDFs</h2>
+      <div id="warning-pdf">
+        <a href="https://www.example.com?=example.pdf">Admissions Handbook (PDF)</a>
+      </div>
+
+      <h3>PDF link with trailing characters</h3>
+      <div id="warning-pdf-trailing-characters">
+        <a href="https://www.example.com?=example.pdf?121">Course Outline (PDF)</a>
+      </div>
+
+      <h2>Documents</h2>
+      <div id="warning-google-doc">
+        <a href="https://docs.google.com/sheets/">Monthly expenditure (Google Sheet)</a>
+      </div>
+
+      <div id="warning-word-doc">
+        <a href="https://www.example.com?=example.docx">Brochure template (Word)</a>
+      </div>
+
+      <h2>Justify-aligned text</h2>
+      <div id="warning-justify">
+        <p class="justify">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex sequi tempora consequuntur debitis ratione quae quis
+          esse, iure numquam dolorum deleniti explicabo. Explicabo veritatis hic modi odio qui nisi rerum? Lorem ipsum
+          dolor
+          sit amet consectetur adipisicing elit. Consectetur nemo ipsa officiis, ad sit adipisci, totam illo, iusto
+          repudiandae natus quis temporibus deleniti doloremque necessitatibus at numquam qui! Quo, eveniet?
+        </p>
+      </div>
+
+      <h2>Text is too small</h2>
+
+      <h3>1em</h3>
+      <div id="nothing-small-text-1">
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+      </div>
+
+      <h3>.75em</h3>
+      <div id="nothing-small-text-2">
+        <p style="font-size: 0.75em">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+      </div>
+
+      <h3>0.6em which is roughly 10px</h3>
+      <div id="warning-small-text-1">
+        <p style="font-size: 0.6em">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+      </div>
+
+      <h3>50%</h3>
+      <div id="warning-small-text-2">
+        <p style="font-size: 50%">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+      </div>
+
+      <h3>Ignore if <code>font-size: 0;</code></h3>
+      <style>
+        .input-group-btn {
+          position: relative;
+          font-size: 0;
+          white-space: nowrap;
+        }
+      </style>
+      <div id="nothing-small-text">
+      <span class="input-group-btn">
+        <button aria-label="Search" class="btn btn-default">
+          <i class="fa fa-search" title="Search Torontomu.ca"></i>
+        </button>
+      </span>
+      </div>
+
+      <h2>Uppercase text</h2>
+
+      <div id="warning-allcaps-1">
+        <p>FOR EXAMPLE, THIS WILL BE FLAGGED.</p>
+      </div>
+
+      <div id="warning-allcaps-2">
+        <ul>
+          <li>UPPERCASE TEXT WITHIN BULLETS will be flagged too.</li>
+        </ul>
+      </div>
+
+      <div id="warning-allcaps-3">
+        <h3>LET'S NOT FORGET ABOUT HEADINGS TOO!</h3>
+      </div>
+
+      <div id="warning-allcaps-4">
+        <p><a href="https://www.example.com?=58">UPPERCASE TEXT WITHIN HYPERLINKS</a></p>
+      </div>
+
+      <div id="nothing-allcaps">
+        <p>FOR EXAMPLE, this WILL NOT be flagged.</p>
+      </div>
+
+      <h2>Underlined text</h2>
+      <div id="warning-underline-1">
+        <p class="underline">This will be flagged.</p>
+      </div>
+
+      <div id="warning-underline-2">
+        <p>This will be <u>&lt;u&gt;flagged.&lt;/u&gt;</u></p>
+      </div>
+
+      <div id="warning-underline-3">
+        <ul>
+          <li class="underline">List items</li>
+        </ul>
+      </div>
+
+      <div id="warning-underline-4">
+        <h3 class="underline">Headings</h3>
+      </div>
+
+      <div id="warning-underline-5">
+        <p><span class="underline">Spans</span> within a paragraph.</p>
+      </div>
+
+      <div id="nothing-underline">
+        <p>Underlined text within a <a href="https://www.example.com?sdssn98"><span class="underline">hyperlink</span></a>
+        </p>
+      </div>
+
+      <div id="nothing-underline-2">
+        <p>Underlined text within a <abbr title="Abbreviation">ABBR</abbr> element.
+        </p>
+      </div>
+
+      <h2>Non-semantic lists</h2>
+      <div id="warning-list-1">
+        <p>a) Sometimes people will manually create a list<br>
+          b) using fake list prefixes<br>
+          c) instead of using a semantic list.</p>
+      </div>
+
+      <div id="warning-list-2">
+        <p>(1) Bananas</p>
+        <p>(2) Pears</p>
+        <p>(3) Apples</p>
+      </div>
+
+      <div id="warning-list-3">
+        <p>1. Bananas</p>
+        <p>2. Pears</p>
+        <p>3. Apples</p>
+      </div>
+
+      <div id="warning-list-4">
+        <p lang="ua">а) Іноді люди створюють список вручну <br>
+          б) використовуючи підроблені префікси списку <br>
+          г) замість використання семантичного списку.</p>
+      </div>
+
+      <div id="warning-list-5">
+        <p>👉 Bananas</p>
+        <p>👉 Pears</p>
+        <p>👉 Apples</p>
+      </div>
+
+      <div id="warning-list-6">
+        <p>(a) Bears<br>
+          (b) Beats<br>
+          (c) Battlestar gallactica</p>
+      </div>
+
+      <div id="warning-list-7">
+        <p>- First<br>
+          - Second<br>
+          - Third</p>
+      </div>
+
+      <div id="warning-list-8">
+        <p>#1 Bears<br>
+          #2 Beats<br>
+          #3 Battlestar gallactica</p>
+      </div>
+
+      <div id="warning-list-9">
+        <p>+ Bananas</p>
+        <p>+ Pears</p>
+        <p>+ Apples</p>
+      </div>
+
+      <h3>Previous false positive within a table</h3>
+      <p>In an earlier version, multiple warnings would appear within a table like this.</p>
+      <div id="nothing-warning-list-table">
+        <table cellspacing="0" cellpadding="0" border="1"
+               summary="Table has 8 columns and 6 rows. Read each column from top to bottom for sleep diary details for each day of the week."
+               role="table">
+          <thead>
+          <tr>
+            <td></td>
+            <th valign="top">
+              <p dir="auto">Mon</p>
+            </th>
+            <th valign="top">
+              <p dir="auto">Tue</p>
+            </th>
+            <th valign="top">
+              <p dir="auto">Wed</p>
+            </th>
+            <th valign="top">
+              <p dir="auto">Thu</p>
+            </th>
+            <th valign="top">
+              <p dir="auto">Fri</p>
+            </th>
+            <th valign="top">
+              <p dir="auto">Sat</p>
+            </th>
+            <th valign="top">
+              <p dir="auto">Sun</p>
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <th valign="top">
+              <p dir="auto">1. Bedtime</p>
+            </th>
+            <td valign="top">
+              <p dir="auto">11:00 pm</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">11:30 pm</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">11:05 pm</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">10:35 pm</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">10:55 pm</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">12:15 am</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">10:15 pm</p>
+            </td>
+          </tr>
+          <tr>
+            <th valign="top">
+              <p dir="auto">2. Time to fall asleep</p>
+            </th>
+            <td>
+              <p dir="auto">25</p>
+            </td>
+            <td>
+              <p dir="auto">20</p>
+            </td>
+            <td>
+              <p dir="auto">40</p>
+            </td>
+            <td>
+              <p dir="auto">60</p>
+            </td>
+            <td>
+              <p dir="auto">35</p>
+            </td>
+            <td>
+              <p dir="auto">15</p>
+            </td>
+            <td>
+              <p dir="auto">95</p>
+            </td>
+          </tr>
+          <tr>
+            <th valign="top">
+              <p dir="auto">3. Time awake during night</p>
+            </th>
+            <td>
+              <p dir="auto">20</p>
+            </td>
+            <td>
+              <p dir="auto">25</p>
+            </td>
+            <td>
+              <p dir="auto">15</p>
+            </td>
+            <td>
+              <p dir="auto">35</p>
+            </td>
+            <td>
+              <p dir="auto">20</p>
+            </td>
+            <td>
+              <p dir="auto">45</p>
+            </td>
+            <td>
+              <p dir="auto">60</p>
+            </td>
+          </tr>
+          <tr>
+            <th valign="top">
+              <p dir="auto">4. Wake time</p>
+            </th>
+            <td valign="top">
+              <p dir="auto">7 am</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">7 am</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">7 am</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">7 am</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">7 am</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">8:40 am</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">7:50 am</p>
+            </td>
+          </tr>
+          <tr>
+            <th valign="top">
+              <p dir="auto">5. Rise time</p>
+            </th>
+            <td valign="top">
+              <p dir="auto">7:15 am</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">7:20 am</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">7 am</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">7:25 am</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">7:15 am</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">10:50 am</p>
+            </td>
+            <td valign="top">
+              <p dir="auto">11:45 am</p>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Uncontained list items</h2>
+      <p>List items may be contained in either unordered (bullet) lists or ordered (sequentially numbered) lists.</p>
+      <div id="error-uncontained-list-items">
+        <li>Apples</li>
+        <li>Bananas</li>
+        <li>Pears</li>
+      </div>
+
+      <h2>Same-page links</h2>
+      <h3>Link with empty href or &lt;a href&gt;</h3>
+      <div id="error-broken-same-page-empty-href">
+        <a href>test</a>
+      </div>
+
+      <h3>Link used as button without roles</h3>
+      <div id="error-broken-same-page">
+        <a href="#">User</a>
+      </div>
+
+      <h3>Link used as button with proper role</h3>
+      <div id="nothing-same-page-with-role">
+        <a href="#" role="button">Settings</a>
+      </div>
+
+      <h3>Link with <code>onclick</code> handler</h3>
+      <div id="nothing-same-page-onclick">
+        <a href="#" id="forgotUserNameLink" onclick="return submitForgotUsername('forgotUserNameLink', this.form);">Forgot
+          Username?</a>
+      </div>
+
+      <h3>Link with valid <code>aria-controls</code></h3>
+      <div id="nothing-same-page-ariacontrols">
+        <a data-toggle="dropdown" href="#" id="loginDropdownMenuLink"
+           class="headerStudentLoginDropdownLink dropdown-toggle" aria-haspopup="true" aria-expanded="false"
+           aria-controls="collapseLoginMenuOptions">
+          Login
+        </a>
+        <div id="collapseLoginMenuOptions">Example menu</div>
+      </div>
+
+      <h3>Link with valid <code>name</code> attribute</h3>
+      <div id="nothing-same-page-name-attr">
+        <a href="#skip-to-name">Skip to <code>name</code> attribute.</a>
+        <br><br><br>
+        <p><a name="skip-to-name"></a>Using <code>name</code> attribute.</p>
+      </div>
+
+      <h3>Valid links with encoded or decoded <code>href</code> or <code>id</code> values</h3>
+
+      <h4>Encoded <kbd>href</kbd> and <kbd>id</kbd></h4>
+      <div id="nothing-encoded-id-and-href" lang="ua">
+        <a href="#%D0%BC%D0%B0%D0%B3%D0%B0%D0%B7%D0%B8%D0%BD"><strong>магазин</strong></a><br>
+        <span id="%D0%BC%D0%B0%D0%B3%D0%B0%D0%B7%D0%B8%D0%BD">магазин</span>
+      </div>
+
+      <h4>Encoded <kbd>href</kbd></h4>
+      <div id="nothing-encoded-href" lang="zh-CN">
+        <a href="#%E7%94%B5%E5%AD%90%E4%B9%A6"><strong>电子书</strong></a><br>
+        <span id="电子书">电子书</span>
+      </div>
+
+      <h4>Encoded <kbd>id</kbd></h4>
+      <div id="nothing-encoded-id" lang="ua">
+        <a href="#книга"><strong>книга</strong></a><br>
+        <span id="%D0%BA%D0%BD%D0%B8%D0%B3%D0%B0">电子书</span>
+      </div>
+
+      <h4>Emoji <kbd>href</kbd> and <kbd>id</kbd></h4>
+      <div id="nothing-emoji-href">
+        <a href="#😃"><strong>😃</strong></a><br>
+        <span id="😃">😃😃😃</span>
+      </div>
+
+      <h4>Encoded emoji <kbd>href</kbd> and <kbd>id</kbd></h4>
+      <div id="nothing-encoded-emoji-href-id">
+        <a href="#%F0%9F%A7%99%E2%80%8D%E2%99%82%EF%B8%8F"><strong>🧙‍♂️</strong></a><br>
+        <span id="%F0%9F%A7%99%E2%80%8D%E2%99%82%EF%B8%8F">🧙‍♂️🧙‍♂️🧙‍♂️</span>
+      </div>
+
+      <h4>Emoji encoded <kbd>href</kbd> and decoded <kbd>id</kbd></h4>
+      <div id="nothing-encoded-emoji-href-decoded-id">
+        <a href="#%F0%9F%A4%A0"><strong>🤠</strong></a><br>
+        <span id="🤠">🤠🤠🤠</span>
+      </div>
+
+      <h2>Duplicate IDs</h2>
+      <h3>Elements with duplicate IDs but not referenced by anything</h3>
+      <div id="nothing-duplicate-id">
+        <p><span id="duplicate">Element 1</span> and <span id="duplicate">Element 2</span>
+          have the same <kbd>id</kbd> attribute but are not referenced by any label, aria-labelledby, etc.</p>
+      </div>
+
+      <h3>In-page link referencing duplicate IDs</h3>
+      <div id="error-broken-same-page-duplicate-id">
+        <a href="#asdfgh">Skip to Lorem Ipsum</a>
+        <p id="asdfgh">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Natus nam voluptate doloribus, iure alias
+          possimus distinctio recusandae impedit asperiores necessitatibus! Amet perferendis laborum accusantium,
+          dignissimos iste voluptatum nam id alias!</p>
+        <p id="asdfgh">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Natus nam voluptate doloribus, iure alias
+          possimus distinctio recusandae impedit asperiores necessitatibus! Amet perferendis laborum accusantium,
+          dignissimos
+          iste voluptatum nam id alias!</p>
+      </div>
+
+      <h3>Interactive element using aria-labelledby referencing duplicate IDs</h3>
+      <div id="error-same-aria-labelledby-duplicate-ids">
+        <button aria-labelledby="another">Learn more</button>
+        <p id="another">Learn more about apples</p>
+        <p id="another">Pears</p>
+      </div>
+
+      <h3>Two buttons with same ID</h3>
+      <div id="nothing-duplicate-button-ids">
+        <button id="play">Play</button>
+        <button id="play">Play</button>
+      </div>
+
+      <h3>Duplicate ID within the Shadow DOM</h3>
+      <div id="error-shadow-dom-duplicate-id" class="shadow-root-duplicate-id"></div>
+
+      <hr>
+
+      <h3>Subscript & superscript</h3>
+      <div id="warning-supsub-1">
+        <p>A subscript or superscript <sub>is a character that is set slightly below or
+          above
+          the normal line of type, respectively. It is usually smaller than the rest of
+          the text. Subscripts appear at or below the baseline, while superscripts are
+          above. Wikipedia.</sub></p>
+      </div>
+      <div id="warning-supsub-2">
+        <p>A subscript or superscript <sup>is a character that is set slightly below or
+          above the normal line of type, respectively. It is usually smaller than the rest
+          of the text. Subscripts appear at or below the baseline, while superscripts are
+          above. Wikipedia.</sup></p>
+      </div>
+
+      <hr>
+
+      <h3>Double nested interactive layout components</h3>
+      <div id="warning-nested-1">
+        <details>
+          <summary>Details</summary>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste autem numquam ullam illum, aliquid quaerat dolor.
+          <details>
+            <summary>Surprise!</summary>
+            Rome is the capital city of Italy. It is also the capital of the Lazio region, the centre of the Metropolitan
+            City of Rome Capital, and a special comune (municipality) named Comune di Roma
+            Capitale.
+          </details>
+        </details>
+      </div>
+
+      <h4>Using <code>[role="tablist"]</code></h4>
+      <div id="warning-nested-2">
+        <div role="tablist" style="background:lightblue;padding:5px">
+          Some text.
+          <div role="tablist" style="background:darkgray">Some more text nested within.</div>
+        </div>
+      </div>
+
+      <hr>
+
+      <h2>Contrast</h2>
+      <div id="error-contrast-1">
+        <p style="color: coral">This colour fails at normal size.</p>
+      </div>
+
+      <div id="error-contrast-2">
+        <p style="color: aqua">
+          <script>document.write("Generated via document.write()")</script>
+        </p>
+      </div>
+      <div id="error-contrast-3">
+        <h3 class="h1" style="color:coral;">This colour also fails at a large size.</h3>
+      </div>
+      <div id="error-contrast-4">
+        <label>Name
+          <input type="text" style="color:coral">
+        </label>
+      </div>
+      <div id="error-contrast-5">
+        <label for="pet-select-2">Choose a pet:</label>
+        <select id="pet-select-2" style="color:aliceblue">
+          <option value="">Please choose an option</option>
+          <option value="dog">Dog</option>
+          <option value="cat">Cat</option>
+        </select>
+      </div>
+      <div id="error-contrast-6">
+        <p style="font-size:5em; opacity: 0.05;">
+          Lorem ipsum dolor. Low opacity text.
+        </p>
+      </div>
+
+      <h3>Contrast warning</h3>
+      <div id="warning-contrast">
+        <h4 class="background-image">Text on background image requires manual review!</h4>
+      </div>
+
+      <h3>Contrast ignore</h3>
+      <h4>Ignore elements with exactly 1:1 contrast ratio</h4>
+      <p>In most cases, any time there's been a 1:1 ratio it's because it's a background image... as no one should
+        intentionally make something 1:1...</p>
+      <div id="nothing-contrast-1">
+        <p style="color: var(--bg-example);">
+          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Numquam quasi ipsa assumenda aliquam dolore amet
+          mollitia similique ab consequuntur magnam id veritatis explicabo accusamus, ipsum iusto ea eligendi
+          necessitatibus
+          iure?
+        </p>
+      </div>
+      <h4>Large size text with 1:1</h4>
+      <div id="nothing-contrast-2">
+        <p style="color: var(--bg-example);font-size:5em">
+          Lorem ipsum dolor.
+        </p>
+      </div>
+
+      <h4>Ignore specific elements</h4>
+      <div id="nothing-contrast-5">
+        <label>
+          Range
+          <input type="range">
+        </label>
+        <label>
+          Color picker
+          <input type="color">
+        </label>
+      </div>
+
+      <h4>Ignore specific elements via prop</h4>
+      <div id="nothing-contrast-6">
+        <div class="background-image-component">
+          <p class="background-image">Ignore via <code>contrastIgnore</code> prop.</p>
+        </div>
+      </div>
+
+      <h2>SVG contrast</h2>
+      <h3>Simple SVGs</h3>
+      <h4>SVG with good contrast</h4>
+      <div id="nothing-svg-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50">
+          <path fill="black"
+                d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM229.4 385.9C249.8 413.9 282.8 432 320 432C357.2 432 390.2 413.9 410.6 385.9C418.4 375.2 433.4 372.8 444.1 380.6C454.8 388.4 457.2 403.4 449.4 414.1C420.3 454 373.2 480 320 480C266.8 480 219.7 454 190.6 414.1C182.8 403.4 185.2 388.4 195.9 380.6C206.6 372.8 221.6 375.2 229.4 385.9zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z" />
+        </svg>
+      </div>
+      <h4>SVG with bad fill but good stroke</h4>
+      <div id="nothing-svg-2">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50" stroke-width="5">
+          <path fill="aliceblue" stroke="black"
+                d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM229.4 385.9C249.8 413.9 282.8 432 320 432C357.2 432 390.2 413.9 410.6 385.9C418.4 375.2 433.4 372.8 444.1 380.6C454.8 388.4 457.2 403.4 449.4 414.1C420.3 454 373.2 480 320 480C266.8 480 219.7 454 190.6 414.1C182.8 403.4 185.2 388.4 195.9 380.6C206.6 372.8 221.6 375.2 229.4 385.9zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z" />
+        </svg>
+      </div>
+
+      <h4>SVG with good fill but bad stroke</h4>
+      <div id="nothing-svg-3">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50" stroke-width="5">
+          <path fill="black" stroke="lightblue"
+                d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM229.4 385.9C249.8 413.9 282.8 432 320 432C357.2 432 390.2 413.9 410.6 385.9C418.4 375.2 433.4 372.8 444.1 380.6C454.8 388.4 457.2 403.4 449.4 414.1C420.3 454 373.2 480 320 480C266.8 480 219.7 454 190.6 414.1C182.8 403.4 185.2 388.4 195.9 380.6C206.6 372.8 221.6 375.2 229.4 385.9zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z" />
+        </svg>
+      </div>
+
+      <h4>SVG foreground is same as background</h4>
+      <div id="nothing-svg-4">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50" stroke-width="5">
+          <path fill="#ececec"
+                d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM229.4 385.9C249.8 413.9 282.8 432 320 432C357.2 432 390.2 413.9 410.6 385.9C418.4 375.2 433.4 372.8 444.1 380.6C454.8 388.4 457.2 403.4 449.4 414.1C420.3 454 373.2 480 320 480C266.8 480 219.7 454 190.6 414.1C182.8 403.4 185.2 388.4 195.9 380.6C206.6 372.8 221.6 375.2 229.4 385.9zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z" />
+        </svg>
+      </div>
+
+      <h4>Large SVG with bad fill but good stroke</h4>
+      <div id="nothing-svg-5">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="100" stroke-width="4">
+          <path fill="aliceblue" stroke="black"
+                d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM229.4 385.9C249.8 413.9 282.8 432 320 432C357.2 432 390.2 413.9 410.6 385.9C418.4 375.2 433.4 372.8 444.1 380.6C454.8 388.4 457.2 403.4 449.4 414.1C420.3 454 373.2 480 320 480C266.8 480 219.7 454 190.6 414.1C182.8 403.4 185.2 388.4 195.9 380.6C206.6 372.8 221.6 375.2 229.4 385.9zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z" />
+        </svg>
+      </div>
+
+      <h4>Complex SVG but all of the paths are the same colour (good contrast)</h4>
+      <div id="nothing-svg-4">
+        <style>
+          #complex-svg-good path {
+            fill: rgb(31, 59, 68)
+          }
+        </style>
+        <svg id="complex-svg-good" version="1.1" xmlns="http://www.w3.org/2000/svg" width="50" viewBox="0 0 32 32">
+          <title>Follow on Instagram</title>
+          <path
+                  d="M16 2.881c4.275 0 4.781 0.019 6.462 0.094 1.563 0.069 2.406 0.331 2.969 0.55 0.744 0.288 1.281 0.638 1.837 1.194 0.563 0.563 0.906 1.094 1.2 1.838 0.219 0.563 0.481 1.412 0.55 2.969 0.075 1.688 0.094 2.194 0.094 6.463s-0.019 4.781-0.094 6.463c-0.069 1.563-0.331 2.406-0.55 2.969-0.288 0.744-0.637 1.281-1.194 1.837-0.563 0.563-1.094 0.906-1.837 1.2-0.563 0.219-1.413 0.481-2.969 0.55-1.688 0.075-2.194 0.094-6.463 0.094s-4.781-0.019-6.463-0.094c-1.563-0.069-2.406-0.331-2.969-0.55-0.744-0.288-1.281-0.637-1.838-1.194-0.563-0.563-0.906-1.094-1.2-1.837-0.219-0.563-0.481-1.413-0.55-2.969-0.075-1.688-0.094-2.194-0.094-6.463s0.019-4.781 0.094-6.463c0.069-1.563 0.331-2.406 0.55-2.969 0.288-0.744 0.638-1.281 1.194-1.838 0.563-0.563 1.094-0.906 1.838-1.2 0.563-0.219 1.412-0.481 2.969-0.55 1.681-0.075 2.188-0.094 6.463-0.094zM16 0c-4.344 0-4.887 0.019-6.594 0.094-1.7 0.075-2.869 0.35-3.881 0.744-1.056 0.412-1.95 0.956-2.837 1.85-0.894 0.888-1.438 1.781-1.85 2.831-0.394 1.019-0.669 2.181-0.744 3.881-0.075 1.713-0.094 2.256-0.094 6.6s0.019 4.887 0.094 6.594c0.075 1.7 0.35 2.869 0.744 3.881 0.413 1.056 0.956 1.95 1.85 2.837 0.887 0.887 1.781 1.438 2.831 1.844 1.019 0.394 2.181 0.669 3.881 0.744 1.706 0.075 2.25 0.094 6.594 0.094s4.888-0.019 6.594-0.094c1.7-0.075 2.869-0.35 3.881-0.744 1.050-0.406 1.944-0.956 2.831-1.844s1.438-1.781 1.844-2.831c0.394-1.019 0.669-2.181 0.744-3.881 0.075-1.706 0.094-2.25 0.094-6.594s-0.019-4.887-0.094-6.594c-0.075-1.7-0.35-2.869-0.744-3.881-0.394-1.063-0.938-1.956-1.831-2.844-0.887-0.887-1.781-1.438-2.831-1.844-1.019-0.394-2.181-0.669-3.881-0.744-1.712-0.081-2.256-0.1-6.6-0.1v0z">
+          </path>
+          <path
+                  d="M16 7.781c-4.537 0-8.219 3.681-8.219 8.219s3.681 8.219 8.219 8.219 8.219-3.681 8.219-8.219c0-4.537-3.681-8.219-8.219-8.219zM16 21.331c-2.944 0-5.331-2.387-5.331-5.331s2.387-5.331 5.331-5.331c2.944 0 5.331 2.387 5.331 5.331s-2.387 5.331-5.331 5.331z">
+          </path>
+          <path
+                  d="M26.462 7.456c0 1.060-0.859 1.919-1.919 1.919s-1.919-0.859-1.919-1.919c0-1.060 0.859-1.919 1.919-1.919s1.919 0.859 1.919 1.919z">
+          </path>
+        </svg>
+      </div>
+
+      <h4>SVG with poor fill contrast (no stroke)</h4>
+      <div id="error-svg-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50">
+          <path fill="lightblue"
+                d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM229.4 385.9C249.8 413.9 282.8 432 320 432C357.2 432 390.2 413.9 410.6 385.9C418.4 375.2 433.4 372.8 444.1 380.6C454.8 388.4 457.2 403.4 449.4 414.1C420.3 454 373.2 480 320 480C266.8 480 219.7 454 190.6 414.1C182.8 403.4 185.2 388.4 195.9 380.6C206.6 372.8 221.6 375.2 229.4 385.9zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z" />
+        </svg>
+      </div>
+
+      <h4>SVG with poor fill contrast and poor stroke contrast</h4>
+      <div id="error-svg-2">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50">
+          <path stroke="lightblue" stroke-width="50" fill="aliceblue"
+                d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM229.4 385.9C249.8 413.9 282.8 432 320 432C357.2 432 390.2 413.9 410.6 385.9C418.4 375.2 433.4 372.8 444.1 380.6C454.8 388.4 457.2 403.4 449.4 414.1C420.3 454 373.2 480 320 480C266.8 480 219.7 454 190.6 414.1C182.8 403.4 185.2 388.4 195.9 380.6C206.6 372.8 221.6 375.2 229.4 385.9zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z" />
+        </svg>
+      </div>
+
+      <h4>SVG with poor fill contrast and skinny stroke (with good contrast)</h4>
+      <div id="error-svg-3">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="100">
+          <path stroke="black" stroke-width="1" fill="aliceblue"
+                d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM229.4 385.9C249.8 413.9 282.8 432 320 432C357.2 432 390.2 413.9 410.6 385.9C418.4 375.2 433.4 372.8 444.1 380.6C454.8 388.4 457.2 403.4 449.4 414.1C420.3 454 373.2 480 320 480C266.8 480 219.7 454 190.6 414.1C182.8 403.4 185.2 388.4 195.9 380.6C206.6 372.8 221.6 375.2 229.4 385.9zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z" />
+        </svg>
+      </div>
+
+      <h4>Complex SVG but all of the paths are the same colour (poor contrast)</h4>
+      <div id="error-svg-4">
+        <style>
+          #ig-6 path {
+            fill: lightblue
+          }
+        </style>
+        <svg id="ig-6" version="1.1" xmlns="http://www.w3.org/2000/svg" width="50" viewBox="0 0 32 32">
+          <title>Follow on Instagram</title>
+          <path
+                  d="M16 2.881c4.275 0 4.781 0.019 6.462 0.094 1.563 0.069 2.406 0.331 2.969 0.55 0.744 0.288 1.281 0.638 1.837 1.194 0.563 0.563 0.906 1.094 1.2 1.838 0.219 0.563 0.481 1.412 0.55 2.969 0.075 1.688 0.094 2.194 0.094 6.463s-0.019 4.781-0.094 6.463c-0.069 1.563-0.331 2.406-0.55 2.969-0.288 0.744-0.637 1.281-1.194 1.837-0.563 0.563-1.094 0.906-1.837 1.2-0.563 0.219-1.413 0.481-2.969 0.55-1.688 0.075-2.194 0.094-6.463 0.094s-4.781-0.019-6.463-0.094c-1.563-0.069-2.406-0.331-2.969-0.55-0.744-0.288-1.281-0.637-1.838-1.194-0.563-0.563-0.906-1.094-1.2-1.837-0.219-0.563-0.481-1.413-0.55-2.969-0.075-1.688-0.094-2.194-0.094-6.463s0.019-4.781 0.094-6.463c0.069-1.563 0.331-2.406 0.55-2.969 0.288-0.744 0.638-1.281 1.194-1.838 0.563-0.563 1.094-0.906 1.838-1.2 0.563-0.219 1.412-0.481 2.969-0.55 1.681-0.075 2.188-0.094 6.463-0.094zM16 0c-4.344 0-4.887 0.019-6.594 0.094-1.7 0.075-2.869 0.35-3.881 0.744-1.056 0.412-1.95 0.956-2.837 1.85-0.894 0.888-1.438 1.781-1.85 2.831-0.394 1.019-0.669 2.181-0.744 3.881-0.075 1.713-0.094 2.256-0.094 6.6s0.019 4.887 0.094 6.594c0.075 1.7 0.35 2.869 0.744 3.881 0.413 1.056 0.956 1.95 1.85 2.837 0.887 0.887 1.781 1.438 2.831 1.844 1.019 0.394 2.181 0.669 3.881 0.744 1.706 0.075 2.25 0.094 6.594 0.094s4.888-0.019 6.594-0.094c1.7-0.075 2.869-0.35 3.881-0.744 1.050-0.406 1.944-0.956 2.831-1.844s1.438-1.781 1.844-2.831c0.394-1.019 0.669-2.181 0.744-3.881 0.075-1.706 0.094-2.25 0.094-6.594s-0.019-4.887-0.094-6.594c-0.075-1.7-0.35-2.869-0.744-3.881-0.394-1.063-0.938-1.956-1.831-2.844-0.887-0.887-1.781-1.438-2.831-1.844-1.019-0.394-2.181-0.669-3.881-0.744-1.712-0.081-2.256-0.1-6.6-0.1v0z">
+          </path>
+          <path
+                  d="M16 7.781c-4.537 0-8.219 3.681-8.219 8.219s3.681 8.219 8.219 8.219 8.219-3.681 8.219-8.219c0-4.537-3.681-8.219-8.219-8.219zM16 21.331c-2.944 0-5.331-2.387-5.331-5.331s2.387-5.331 5.331-5.331c2.944 0 5.331 2.387 5.331 5.331s-2.387 5.331-5.331 5.331z">
+          </path>
+          <path
+                  d="M26.462 7.456c0 1.060-0.859 1.919-1.919 1.919s-1.919-0.859-1.919-1.919c0-1.060 0.859-1.919 1.919-1.919s1.919 0.859 1.919 1.919z">
+          </path>
+        </svg>
+      </div>
+
+      <h4>Simple SVG with poor stroke/no fill</h4>
+      <div id="error-svg-5">
+        <a href="https://bsky.app/">
+          <div class="visually-hidden">BlueSky</div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="44"
+               viewBox="0 0 576 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+            <path fill="none" stroke="#fcffc1" stroke-width="15"
+                  d="M407.8 294.7c-3.3-.4-6.7-.8-10-1.3c3.4 .4 6.7 .9 10 1.3zM288 227.1C261.9 176.4 190.9 81.9 124.9 35.3C61.6-9.4 37.5-1.7 21.6 5.5C3.3 13.8 0 41.9 0 58.4S9.1 194 15 213.9c19.5 65.7 89.1 87.9 153.2 80.7c3.3-.5 6.6-.9 10-1.4c-3.3 .5-6.6 1-10 1.4C74.3 308.6-9.1 342.8 100.3 464.5C220.6 589.1 265.1 437.8 288 361.1c22.9 76.7 49.2 222.5 185.6 103.4c102.4-103.4 28.1-156-65.8-169.9c-3.3-.4-6.7-.8-10-1.3c3.4 .4 6.7 .9 10 1.3c64.1 7.1 133.6-15.1 153.2-80.7C566.9 194 576 75 576 58.4s-3.3-44.7-21.6-52.9c-15.8-7.1-40-14.9-103.2 29.8C385.1 81.9 314.1 176.4 288 227.1z" />
+          </svg>
+        </a>
+      </div>
+
+      <h4>SVG with unsupported colour space foreground</h4>
+      <div id="warning-svg-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50">
+          <path fill="color(display-p3 1 0.5 0)"
+                d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM229.4 385.9C249.8 413.9 282.8 432 320 432C357.2 432 390.2 413.9 410.6 385.9C418.4 375.2 433.4 372.8 444.1 380.6C454.8 388.4 457.2 403.4 449.4 414.1C420.3 454 373.2 480 320 480C266.8 480 219.7 454 190.6 414.1C182.8 403.4 185.2 388.4 195.9 380.6C206.6 372.8 221.6 375.2 229.4 385.9zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z" />
+        </svg>
+      </div>
+
+      <h4>SVG with unsupported colour space background</h4>
+      <div id="warning-svg-2">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50"
+             style="background: color(display-p3 1 0.5 0)">
+          <path fill="red"
+                d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM229.4 385.9C249.8 413.9 282.8 432 320 432C357.2 432 390.2 413.9 410.6 385.9C418.4 375.2 433.4 372.8 444.1 380.6C454.8 388.4 457.2 403.4 449.4 414.1C420.3 454 373.2 480 320 480C266.8 480 219.7 454 190.6 414.1C182.8 403.4 185.2 388.4 195.9 380.6C206.6 372.8 221.6 375.2 229.4 385.9zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z" />
+        </svg>
+      </div>
+
+      <h4>SVG with background image</h4>
+      <div id="warning-svg-3">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50"
+             style="background: linear-gradient(to bottom, rgba(102, 102, 102, 0) 24%, #be0b0b 91%) #071e4e;">
+          <path fill="white"
+                d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM229.4 385.9C249.8 413.9 282.8 432 320 432C357.2 432 390.2 413.9 410.6 385.9C418.4 375.2 433.4 372.8 444.1 380.6C454.8 388.4 457.2 403.4 449.4 414.1C420.3 454 373.2 480 320 480C266.8 480 219.7 454 190.6 414.1C182.8 403.4 185.2 388.4 195.9 380.6C206.6 372.8 221.6 375.2 229.4 385.9zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z" />
+        </svg>
+      </div>
+
+      <h4>Complex SVGs has different fill colours</h4>
+      <div id="warning-svg-4">
+        <svg id="ig-5" version="1.1" xmlns="http://www.w3.org/2000/svg" width="50" viewBox="0 0 32 32">
+          <title>Follow on Instagram</title>
+          <path fill="red"
+                d="M16 2.881c4.275 0 4.781 0.019 6.462 0.094 1.563 0.069 2.406 0.331 2.969 0.55 0.744 0.288 1.281 0.638 1.837 1.194 0.563 0.563 0.906 1.094 1.2 1.838 0.219 0.563 0.481 1.412 0.55 2.969 0.075 1.688 0.094 2.194 0.094 6.463s-0.019 4.781-0.094 6.463c-0.069 1.563-0.331 2.406-0.55 2.969-0.288 0.744-0.637 1.281-1.194 1.837-0.563 0.563-1.094 0.906-1.837 1.2-0.563 0.219-1.413 0.481-2.969 0.55-1.688 0.075-2.194 0.094-6.463 0.094s-4.781-0.019-6.463-0.094c-1.563-0.069-2.406-0.331-2.969-0.55-0.744-0.288-1.281-0.637-1.838-1.194-0.563-0.563-0.906-1.094-1.2-1.837-0.219-0.563-0.481-1.413-0.55-2.969-0.075-1.688-0.094-2.194-0.094-6.463s0.019-4.781 0.094-6.463c0.069-1.563 0.331-2.406 0.55-2.969 0.288-0.744 0.638-1.281 1.194-1.838 0.563-0.563 1.094-0.906 1.838-1.2 0.563-0.219 1.412-0.481 2.969-0.55 1.681-0.075 2.188-0.094 6.463-0.094zM16 0c-4.344 0-4.887 0.019-6.594 0.094-1.7 0.075-2.869 0.35-3.881 0.744-1.056 0.412-1.95 0.956-2.837 1.85-0.894 0.888-1.438 1.781-1.85 2.831-0.394 1.019-0.669 2.181-0.744 3.881-0.075 1.713-0.094 2.256-0.094 6.6s0.019 4.887 0.094 6.594c0.075 1.7 0.35 2.869 0.744 3.881 0.413 1.056 0.956 1.95 1.85 2.837 0.887 0.887 1.781 1.438 2.831 1.844 1.019 0.394 2.181 0.669 3.881 0.744 1.706 0.075 2.25 0.094 6.594 0.094s4.888-0.019 6.594-0.094c1.7-0.075 2.869-0.35 3.881-0.744 1.050-0.406 1.944-0.956 2.831-1.844s1.438-1.781 1.844-2.831c0.394-1.019 0.669-2.181 0.744-3.881 0.075-1.706 0.094-2.25 0.094-6.594s-0.019-4.887-0.094-6.594c-0.075-1.7-0.35-2.869-0.744-3.881-0.394-1.063-0.938-1.956-1.831-2.844-0.887-0.887-1.781-1.438-2.831-1.844-1.019-0.394-2.181-0.669-3.881-0.744-1.712-0.081-2.256-0.1-6.6-0.1v0z">
+          </path>
+          <path fill="blue"
+                d="M16 7.781c-4.537 0-8.219 3.681-8.219 8.219s3.681 8.219 8.219 8.219 8.219-3.681 8.219-8.219c0-4.537-3.681-8.219-8.219-8.219zM16 21.331c-2.944 0-5.331-2.387-5.331-5.331s2.387-5.331 5.331-5.331c2.944 0 5.331 2.387 5.331 5.331s-2.387 5.331-5.331 5.331z">
+          </path>
+          <path fill="green"
+                d="M26.462 7.456c0 1.060-0.859 1.919-1.919 1.919s-1.919-0.859-1.919-1.919c0-1.060 0.859-1.919 1.919-1.919s1.919 0.859 1.919 1.919z">
+          </path>
+        </svg>
+      </div>
+
+      <h4>Unsupported background colour</h4>
+      <div id="warning-svg-5">
+        <style>
+          #ig-2 path {
+            fill: blue
+          }
+
+          #ig-2 {
+            background: color(display-p3 1 0.5 0);
+          }
+        </style>
+        <svg id="ig-2" version="1.1" xmlns="http://www.w3.org/2000/svg" width="50" viewBox="0 0 32 32">
+          <title>Follow on Instagram</title>
+          <path
+                  d="M16 2.881c4.275 0 4.781 0.019 6.462 0.094 1.563 0.069 2.406 0.331 2.969 0.55 0.744 0.288 1.281 0.638 1.837 1.194 0.563 0.563 0.906 1.094 1.2 1.838 0.219 0.563 0.481 1.412 0.55 2.969 0.075 1.688 0.094 2.194 0.094 6.463s-0.019 4.781-0.094 6.463c-0.069 1.563-0.331 2.406-0.55 2.969-0.288 0.744-0.637 1.281-1.194 1.837-0.563 0.563-1.094 0.906-1.837 1.2-0.563 0.219-1.413 0.481-2.969 0.55-1.688 0.075-2.194 0.094-6.463 0.094s-4.781-0.019-6.463-0.094c-1.563-0.069-2.406-0.331-2.969-0.55-0.744-0.288-1.281-0.637-1.838-1.194-0.563-0.563-0.906-1.094-1.2-1.837-0.219-0.563-0.481-1.413-0.55-2.969-0.075-1.688-0.094-2.194-0.094-6.463s0.019-4.781 0.094-6.463c0.069-1.563 0.331-2.406 0.55-2.969 0.288-0.744 0.638-1.281 1.194-1.838 0.563-0.563 1.094-0.906 1.838-1.2 0.563-0.219 1.412-0.481 2.969-0.55 1.681-0.075 2.188-0.094 6.463-0.094zM16 0c-4.344 0-4.887 0.019-6.594 0.094-1.7 0.075-2.869 0.35-3.881 0.744-1.056 0.412-1.95 0.956-2.837 1.85-0.894 0.888-1.438 1.781-1.85 2.831-0.394 1.019-0.669 2.181-0.744 3.881-0.075 1.713-0.094 2.256-0.094 6.6s0.019 4.887 0.094 6.594c0.075 1.7 0.35 2.869 0.744 3.881 0.413 1.056 0.956 1.95 1.85 2.837 0.887 0.887 1.781 1.438 2.831 1.844 1.019 0.394 2.181 0.669 3.881 0.744 1.706 0.075 2.25 0.094 6.594 0.094s4.888-0.019 6.594-0.094c1.7-0.075 2.869-0.35 3.881-0.744 1.050-0.406 1.944-0.956 2.831-1.844s1.438-1.781 1.844-2.831c0.394-1.019 0.669-2.181 0.744-3.881 0.075-1.706 0.094-2.25 0.094-6.594s-0.019-4.887-0.094-6.594c-0.075-1.7-0.35-2.869-0.744-3.881-0.394-1.063-0.938-1.956-1.831-2.844-0.887-0.887-1.781-1.438-2.831-1.844-1.019-0.394-2.181-0.669-3.881-0.744-1.712-0.081-2.256-0.1-6.6-0.1v0z">
+          </path>
+          <path
+                  d="M16 7.781c-4.537 0-8.219 3.681-8.219 8.219s3.681 8.219 8.219 8.219 8.219-3.681 8.219-8.219c0-4.537-3.681-8.219-8.219-8.219zM16 21.331c-2.944 0-5.331-2.387-5.331-5.331s2.387-5.331 5.331-5.331c2.944 0 5.331 2.387 5.331 5.331s-2.387 5.331-5.331 5.331z">
+          </path>
+          <path
+                  d="M26.462 7.456c0 1.060-0.859 1.919-1.919 1.919s-1.919-0.859-1.919-1.919c0-1.060 0.859-1.919 1.919-1.919s1.919 0.859 1.919 1.919z">
+          </path>
+        </svg>
+      </div>
+
+      <h4>Unsupported foreground colour</h4>
+      <div id="warning-svg-6">
+        <style>
+          #ig-3 path {
+            fill: color(display-p3 0.5 0.5 1);
+          }
+        </style>
+        <svg id="ig-3" version="1.1" xmlns="http://www.w3.org/2000/svg" width="50" viewBox="0 0 32 32">
+          <title>Follow on Instagram</title>
+          <path
+                  d="M16 2.881c4.275 0 4.781 0.019 6.462 0.094 1.563 0.069 2.406 0.331 2.969 0.55 0.744 0.288 1.281 0.638 1.837 1.194 0.563 0.563 0.906 1.094 1.2 1.838 0.219 0.563 0.481 1.412 0.55 2.969 0.075 1.688 0.094 2.194 0.094 6.463s-0.019 4.781-0.094 6.463c-0.069 1.563-0.331 2.406-0.55 2.969-0.288 0.744-0.637 1.281-1.194 1.837-0.563 0.563-1.094 0.906-1.837 1.2-0.563 0.219-1.413 0.481-2.969 0.55-1.688 0.075-2.194 0.094-6.463 0.094s-4.781-0.019-6.463-0.094c-1.563-0.069-2.406-0.331-2.969-0.55-0.744-0.288-1.281-0.637-1.838-1.194-0.563-0.563-0.906-1.094-1.2-1.837-0.219-0.563-0.481-1.413-0.55-2.969-0.075-1.688-0.094-2.194-0.094-6.463s0.019-4.781 0.094-6.463c0.069-1.563 0.331-2.406 0.55-2.969 0.288-0.744 0.638-1.281 1.194-1.838 0.563-0.563 1.094-0.906 1.838-1.2 0.563-0.219 1.412-0.481 2.969-0.55 1.681-0.075 2.188-0.094 6.463-0.094zM16 0c-4.344 0-4.887 0.019-6.594 0.094-1.7 0.075-2.869 0.35-3.881 0.744-1.056 0.412-1.95 0.956-2.837 1.85-0.894 0.888-1.438 1.781-1.85 2.831-0.394 1.019-0.669 2.181-0.744 3.881-0.075 1.713-0.094 2.256-0.094 6.6s0.019 4.887 0.094 6.594c0.075 1.7 0.35 2.869 0.744 3.881 0.413 1.056 0.956 1.95 1.85 2.837 0.887 0.887 1.781 1.438 2.831 1.844 1.019 0.394 2.181 0.669 3.881 0.744 1.706 0.075 2.25 0.094 6.594 0.094s4.888-0.019 6.594-0.094c1.7-0.075 2.869-0.35 3.881-0.744 1.050-0.406 1.944-0.956 2.831-1.844s1.438-1.781 1.844-2.831c0.394-1.019 0.669-2.181 0.744-3.881 0.075-1.706 0.094-2.25 0.094-6.594s-0.019-4.887-0.094-6.594c-0.075-1.7-0.35-2.869-0.744-3.881-0.394-1.063-0.938-1.956-1.831-2.844-0.887-0.887-1.781-1.438-2.831-1.844-1.019-0.394-2.181-0.669-3.881-0.744-1.712-0.081-2.256-0.1-6.6-0.1v0z">
+          </path>
+          <path
+                  d="M16 7.781c-4.537 0-8.219 3.681-8.219 8.219s3.681 8.219 8.219 8.219 8.219-3.681 8.219-8.219c0-4.537-3.681-8.219-8.219-8.219zM16 21.331c-2.944 0-5.331-2.387-5.331-5.331s2.387-5.331 5.331-5.331c2.944 0 5.331 2.387 5.331 5.331s-2.387 5.331-5.331 5.331z">
+          </path>
+          <path
+                  d="M26.462 7.456c0 1.060-0.859 1.919-1.919 1.919s-1.919-0.859-1.919-1.919c0-1.060 0.859-1.919 1.919-1.919s1.919 0.859 1.919 1.919z">
+          </path>
+        </svg>
+      </div>
+
+      <h4>SVG with <kbd>&lt;text&gt;</kbd></h4>
+      <div id="warning-svg-7">
+        <svg height="200" width="500" xmlns="http://www.w3.org/2000/svg">
+          <text x="5" y="20" fill="none" stroke="red" font-size="35" onclick="doSomething()">I love SVG!</text>
+          <text x="15" y="80" fill="lightblue" stroke="none" font-size="300">Cool.</text>
+          <text x="20" y="160" fill="aliceblue" stroke="black" font-size="20">What about this.</text>
+        </svg>
+      </div>
+
+      <h4>Complex SVGs has different fill colours and poor contrast</h4>
+      <div id="warning-svg-8">
+        <svg id="ig-5" version="1.1" xmlns="http://www.w3.org/2000/svg" width="50" viewBox="0 0 32 32">
+          <title>Follow on Instagram</title>
+          <path fill="aliceblue"
+                d="M16 2.881c4.275 0 4.781 0.019 6.462 0.094 1.563 0.069 2.406 0.331 2.969 0.55 0.744 0.288 1.281 0.638 1.837 1.194 0.563 0.563 0.906 1.094 1.2 1.838 0.219 0.563 0.481 1.412 0.55 2.969 0.075 1.688 0.094 2.194 0.094 6.463s-0.019 4.781-0.094 6.463c-0.069 1.563-0.331 2.406-0.55 2.969-0.288 0.744-0.637 1.281-1.194 1.837-0.563 0.563-1.094 0.906-1.837 1.2-0.563 0.219-1.413 0.481-2.969 0.55-1.688 0.075-2.194 0.094-6.463 0.094s-4.781-0.019-6.463-0.094c-1.563-0.069-2.406-0.331-2.969-0.55-0.744-0.288-1.281-0.637-1.838-1.194-0.563-0.563-0.906-1.094-1.2-1.837-0.219-0.563-0.481-1.413-0.55-2.969-0.075-1.688-0.094-2.194-0.094-6.463s0.019-4.781 0.094-6.463c0.069-1.563 0.331-2.406 0.55-2.969 0.288-0.744 0.638-1.281 1.194-1.838 0.563-0.563 1.094-0.906 1.838-1.2 0.563-0.219 1.412-0.481 2.969-0.55 1.681-0.075 2.188-0.094 6.463-0.094zM16 0c-4.344 0-4.887 0.019-6.594 0.094-1.7 0.075-2.869 0.35-3.881 0.744-1.056 0.412-1.95 0.956-2.837 1.85-0.894 0.888-1.438 1.781-1.85 2.831-0.394 1.019-0.669 2.181-0.744 3.881-0.075 1.713-0.094 2.256-0.094 6.6s0.019 4.887 0.094 6.594c0.075 1.7 0.35 2.869 0.744 3.881 0.413 1.056 0.956 1.95 1.85 2.837 0.887 0.887 1.781 1.438 2.831 1.844 1.019 0.394 2.181 0.669 3.881 0.744 1.706 0.075 2.25 0.094 6.594 0.094s4.888-0.019 6.594-0.094c1.7-0.075 2.869-0.35 3.881-0.744 1.050-0.406 1.944-0.956 2.831-1.844s1.438-1.781 1.844-2.831c0.394-1.019 0.669-2.181 0.744-3.881 0.075-1.706 0.094-2.25 0.094-6.594s-0.019-4.887-0.094-6.594c-0.075-1.7-0.35-2.869-0.744-3.881-0.394-1.063-0.938-1.956-1.831-2.844-0.887-0.887-1.781-1.438-2.831-1.844-1.019-0.394-2.181-0.669-3.881-0.744-1.712-0.081-2.256-0.1-6.6-0.1v0z">
+          </path>
+          <path fill="grey"
+                d="M16 7.781c-4.537 0-8.219 3.681-8.219 8.219s3.681 8.219 8.219 8.219 8.219-3.681 8.219-8.219c0-4.537-3.681-8.219-8.219-8.219zM16 21.331c-2.944 0-5.331-2.387-5.331-5.331s2.387-5.331 5.331-5.331c2.944 0 5.331 2.387 5.331 5.331s-2.387 5.331-5.331 5.331z">
+          </path>
+          <path fill="#ececec"
+                d="M26.462 7.456c0 1.060-0.859 1.919-1.919 1.919s-1.919-0.859-1.919-1.919c0-1.060 0.859-1.919 1.919-1.919s1.919 0.859 1.919 1.919z">
+          </path>
+        </svg>
+      </div>
+
+      <h4>Complex SVG but all of the paths are same fill BUT different stroke</h4>
+      <div id="warning-svg-9">
+        <style>
+          #complex-svg-diff-stroke path {
+            fill: rgb(57, 134, 160)
+          }
+        </style>
+        <svg id="complex-svg-diff-stroke" version="1.1" xmlns="http://www.w3.org/2000/svg" width="50" viewBox="0 0 32 32">
+          <title>Follow on Instagram</title>
+          <path
+                  d="M16 2.881c4.275 0 4.781 0.019 6.462 0.094 1.563 0.069 2.406 0.331 2.969 0.55 0.744 0.288 1.281 0.638 1.837 1.194 0.563 0.563 0.906 1.094 1.2 1.838 0.219 0.563 0.481 1.412 0.55 2.969 0.075 1.688 0.094 2.194 0.094 6.463s-0.019 4.781-0.094 6.463c-0.069 1.563-0.331 2.406-0.55 2.969-0.288 0.744-0.637 1.281-1.194 1.837-0.563 0.563-1.094 0.906-1.837 1.2-0.563 0.219-1.413 0.481-2.969 0.55-1.688 0.075-2.194 0.094-6.463 0.094s-4.781-0.019-6.463-0.094c-1.563-0.069-2.406-0.331-2.969-0.55-0.744-0.288-1.281-0.637-1.838-1.194-0.563-0.563-0.906-1.094-1.2-1.837-0.219-0.563-0.481-1.413-0.55-2.969-0.075-1.688-0.094-2.194-0.094-6.463s0.019-4.781 0.094-6.463c0.069-1.563 0.331-2.406 0.55-2.969 0.288-0.744 0.638-1.281 1.194-1.838 0.563-0.563 1.094-0.906 1.838-1.2 0.563-0.219 1.412-0.481 2.969-0.55 1.681-0.075 2.188-0.094 6.463-0.094zM16 0c-4.344 0-4.887 0.019-6.594 0.094-1.7 0.075-2.869 0.35-3.881 0.744-1.056 0.412-1.95 0.956-2.837 1.85-0.894 0.888-1.438 1.781-1.85 2.831-0.394 1.019-0.669 2.181-0.744 3.881-0.075 1.713-0.094 2.256-0.094 6.6s0.019 4.887 0.094 6.594c0.075 1.7 0.35 2.869 0.744 3.881 0.413 1.056 0.956 1.95 1.85 2.837 0.887 0.887 1.781 1.438 2.831 1.844 1.019 0.394 2.181 0.669 3.881 0.744 1.706 0.075 2.25 0.094 6.594 0.094s4.888-0.019 6.594-0.094c1.7-0.075 2.869-0.35 3.881-0.744 1.050-0.406 1.944-0.956 2.831-1.844s1.438-1.781 1.844-2.831c0.394-1.019 0.669-2.181 0.744-3.881 0.075-1.706 0.094-2.25 0.094-6.594s-0.019-4.887-0.094-6.594c-0.075-1.7-0.35-2.869-0.744-3.881-0.394-1.063-0.938-1.956-1.831-2.844-0.887-0.887-1.781-1.438-2.831-1.844-1.019-0.394-2.181-0.669-3.881-0.744-1.712-0.081-2.256-0.1-6.6-0.1v0z">
+          </path>
+          <path stroke="black" stroke-width="5"
+                d="M16 7.781c-4.537 0-8.219 3.681-8.219 8.219s3.681 8.219 8.219 8.219 8.219-3.681 8.219-8.219c0-4.537-3.681-8.219-8.219-8.219zM16 21.331c-2.944 0-5.331-2.387-5.331-5.331s2.387-5.331 5.331-5.331c2.944 0 5.331 2.387 5.331 5.331s-2.387 5.331-5.331 5.331z">
+          </path>
+          <path
+                  d="M26.462 7.456c0 1.060-0.859 1.919-1.919 1.919s-1.919-0.859-1.919-1.919c0-1.060 0.859-1.919 1.919-1.919s1.919 0.859 1.919 1.919z">
+          </path>
+        </svg>
+      </div>
+
+      <h4>SVG with linear gradient for fill</h4>
+      <div id="warning-svg-10">
+        <svg width="200" height="200">
+          <defs>
+            <linearGradient id="linear-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color:blue;stop-opacity:1"></stop>
+              <stop offset="100%" style="stop-color:red;stop-opacity:1"></stop>
+            </linearGradient>
+          </defs>
+          <path d="M10 80 C 40 10, 65 10, 95 80 S 150 150, 180 80" fill="url(#linear-gradient)" stroke-width="2"></path>
+        </svg>
+      </div>
+
+      <h4>SVG without a &lt;path&gt; node</h4>
+      <div id="warning-svg-11">
+        <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+          <!-- Background rectangle -->
+          <rect width="200" height="200" fill="#f0f0f0" />
+
+          <!-- Circle -->
+          <circle cx="100" cy="100" r="50" fill="blue" stroke="black" stroke-width="2" />
+
+          <!-- Rectangle -->
+          <rect x="50" y="50" width="30" height="60" fill="red" stroke="black" stroke-width="1" />
+
+          <!-- Line -->
+          <line x1="20" y1="20" x2="180" y2="180" stroke="green" stroke-width="2" />
+
+          <!-- Polygon -->
+          <polygon points="60,10 90,40 30,40" fill="yellow" stroke="orange" stroke-width="1" />
+
+          <!-- Text -->
+          <text x="100" y="190" font-family="Arial" font-size="12" text-anchor="middle" fill="black">
+            SVG without a &lt;path&gt;
+          </text>
+        </svg>
+      </div>
+
+      <h4>Empty svg</h4>
+      <div id="warning-svg-12">
+        <svg width="10" height="10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"></svg>
+      </div>
+
+      <h4>SVG with linear gradient background</h4>
+      <div id="warning-svg-13">
+        <style>
+          #complex-svg-diff-stroke path {
+            fill: rgb(57, 134, 160)
+          }
+        </style>
+        <svg id="complex-svg-diff-stroke" version="1.1" xmlns="http://www.w3.org/2000/svg" width="50" viewBox="0 0 32 32"
+             style="background: linear-gradient(90deg, #003f5b, #2b4b7d, #5f5195, #98509d, #cc4c91, #f25375, #ff6f4e, #ff9913);">
+          <title>Follow on Instagram</title>
+          <path
+                  d=" M16 2.881c4.275 0 4.781 0.019 6.462 0.094 1.563 0.069 2.406 0.331 2.969 0.55 0.744 0.288 1.281 0.638
+        1.837 1.194 0.563 0.563 0.906 1.094 1.2 1.838 0.219 0.563 0.481 1.412 0.55 2.969 0.075 1.688 0.094 2.194 0.094
+        6.463s-0.019 4.781-0.094 6.463c-0.069 1.563-0.331 2.406-0.55 2.969-0.288 0.744-0.637 1.281-1.194 1.837-0.563
+        0.563-1.094 0.906-1.837 1.2-0.563 0.219-1.413 0.481-2.969 0.55-1.688 0.075-2.194 0.094-6.463
+        0.094s-4.781-0.019-6.463-0.094c-1.563-0.069-2.406-0.331-2.969-0.55-0.744-0.288-1.281-0.637-1.838-1.194-0.563-0.563-0.906-1.094-1.2-1.837-0.219-0.563-0.481-1.413-0.55-2.969-0.075-1.688-0.094-2.194-0.094-6.463s0.019-4.781
+        0.094-6.463c0.069-1.563 0.331-2.406 0.55-2.969 0.288-0.744 0.638-1.281 1.194-1.838 0.563-0.563 1.094-0.906
+        1.838-1.2 0.563-0.219 1.412-0.481 2.969-0.55 1.681-0.075 2.188-0.094 6.463-0.094zM16 0c-4.344 0-4.887
+        0.019-6.594 0.094-1.7 0.075-2.869 0.35-3.881 0.744-1.056 0.412-1.95 0.956-2.837 1.85-0.894 0.888-1.438
+        1.781-1.85 2.831-0.394 1.019-0.669 2.181-0.744 3.881-0.075 1.713-0.094 2.256-0.094 6.6s0.019 4.887 0.094
+        6.594c0.075 1.7 0.35 2.869 0.744 3.881 0.413 1.056 0.956 1.95 1.85 2.837 0.887 0.887 1.781 1.438 2.831 1.844
+        1.019 0.394 2.181 0.669 3.881 0.744 1.706 0.075 2.25 0.094 6.594 0.094s4.888-0.019 6.594-0.094c1.7-0.075
+        2.869-0.35 3.881-0.744 1.050-0.406 1.944-0.956 2.831-1.844s1.438-1.781 1.844-2.831c0.394-1.019 0.669-2.181
+        0.744-3.881 0.075-1.706 0.094-2.25
+        0.094-6.594s-0.019-4.887-0.094-6.594c-0.075-1.7-0.35-2.869-0.744-3.881-0.394-1.063-0.938-1.956-1.831-2.844-0.887-0.887-1.781-1.438-2.831-1.844-1.019-0.394-2.181-0.669-3.881-0.744-1.712-0.081-2.256-0.1-6.6-0.1v0z">
+          </path>
+          <path
+                  d="M16 7.781c-4.537 0-8.219 3.681-8.219 8.219s3.681 8.219 8.219 8.219 8.219-3.681 8.219-8.219c0-4.537-3.681-8.219-8.219-8.219zM16 21.331c-2.944 0-5.331-2.387-5.331-5.331s2.387-5.331 5.331-5.331c2.944 0 5.331 2.387 5.331 5.331s-2.387 5.331-5.331 5.331z">
+          </path>
+          <path
+                  d="M26.462 7.456c0 1.060-0.859 1.919-1.919 1.919s-1.919-0.859-1.919-1.919c0-1.060 0.859-1.919 1.919-1.919s1.919 0.859 1.919 1.919z">
+          </path>
+        </svg>
+      </div>
+
+      <h4>SVG with background: url()</h4>
+      <div id="warning-svg-14" style="background: lightblue url('./assets/aussie.avif') no-repeat fixed center;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50">
+          <path fill="darkgreen"
+                d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM229.4 385.9C249.8 413.9 282.8 432 320 432C357.2 432 390.2 413.9 410.6 385.9C418.4 375.2 433.4 372.8 444.1 380.6C454.8 388.4 457.2 403.4 449.4 414.1C420.3 454 373.2 480 320 480C266.8 480 219.7 454 190.6 414.1C182.8 403.4 185.2 388.4 195.9 380.6C206.6 372.8 221.6 375.2 229.4 385.9zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z" />
+        </svg>
+      </div>
+
+      <h4>Other SVGs, like filters</h4>
+      <div id="warning-svg-15">
+        <svg width="230" height="120" xmlns="http://www.w3.org/2000/svg">
+          <filter id="blurMe">
+            <feGaussianBlur stdDeviation="5" />
+          </filter>
+          <circle cx="170" cy="60" r="50" fill="green" filter="url(#blurMe)" />
+        </svg>
+      </div>
+
+      <h4>Other SVGs, like animations</h4>
+      <div id="warning-svg-16">
+        <svg width="100%" height="100" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="50" style="fill:red;">
+            <animate attributeName="cx" begin="0s" dur="8s" from="50" to="90%" fill="freeze" />
+          </circle>
+        </svg>
+      </div>
+
+      <h2>Inputs</h2>
+      <h3>Hidden inputs</h3>
+      <div id="nothing-input-1">
+        <input type="text" hidden="">
+      </div>
+
+      <h3>Inputs that have labels</h3>
+      <h4>Input has <code>id</code> and label has corresponding <code>for</code> attribute
+      </h4>
+      <div id="nothing-input-2">
+        <input type="text" id="asd"><br>
+        <label for="asd">First name</label>
+      </div>
+
+      <h4>Input that is <code>type='submit'</code> or <code>type='button'</code></h4>
+      <div id="nothing-input-3">
+        <input type="submit">
+        <input type="button" value="Input Button">
+      </div>
+
+      <h4>Implicit label has text</h4>
+      <div id="nothing-input-4">
+        <label>First name:<input type="text"></label>
+      </div>
+
+      <h4>Text area</h4>
+      <div id="nothing-input-5">
+        <label for="review">Review:</label><br>
+        <textarea id="review" rows="2" cols="30"></textarea>
+      </div>
+
+      <h4>Select</h4>
+      <div id="nothing-input-6">
+        <label for="pet-select-3">Choose a pet:</label>
+        <select name="pets" id="pet-select-3">
+          <option value="">Choose</option>
+          <option value="dog">Dog</option>
+          <option value="cat">Cat</option>
+        </select>
+      </div>
+
+      <h3>Inputs missing labels</h3>
+
+      <h4>Input without a label or missing <code>id</code></h4>
+      <div id="error-input-1">
+        <input type="text">
+      </div>
+
+      <h4>Implicit labels without text</h4>
+      <div id="error-input-2">
+        <label><input type="text"></label>
+      </div>
+
+      <h4><code>&lt;textarea&gt;</code> without label</h4>
+      <div id="error-input-3">
+        <label>Feedback</label>
+        <textarea rows="2" cols="20"></textarea>
+      </div>
+
+      <h4><code>&lt;select&gt;</code> without label</h4>
+      <div id="error-input-4">
+        <label>Choose a car:</label>
+        <select name="cars">
+          <option value="volvo">Volvo</option>
+          <option value="saab">Saab</option>
+          <option value="mercedes">Mercedes</option>
+          <option value="audi">Audi</option>
+        </select>
+      </div>
+
+      <h4>Input where accessible name is empty</h4>
+      <div id="error-input-5">
+        <input aria-labelledby="vaxcjsk" type="text">
+      </div>
+
+      <h4>Input with ID although label does not have a <code>for</code> attribute</h4>
+      <div id="error-input-has-id">
+        <label>Name</label>
+        <input type="text" id="asdfg">
+      </div>
+
+      <h4>Input where <code>type="image"</code> does not have accessible name</h4>
+      <div id="error-input-img">
+        <label for="q">Search:</label>
+        <input type="text" id="q"><input type="image" alt=" " width="20"
+                                         src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Vector_search_icon.svg/1280px-Vector_search_icon.svg.png">
+      </div>
+
+      <h3 id="vv">Input warnings</h3>
+      <h4>Input is using title, aria-label or aria-labelledby attribute</h4>
+      <div id="warning-input-1">
+        <input aria-label="First name" type="text">
+      </div>
+      <div id="warning-input-2">
+        <input aria-labelledby="vv" type="text">
+      </div>
+      <div id="warning-input-3">
+        <input type="text" title="Phone number">
+      </div>
+
+      <h4>Input that is <code>type='reset'</code></h4>
+      <div id="warning-input-reset">
+        <input type="reset">
+      </div>
+
+      <hr>
+
+      <h2>iFrames</h2>
+      <p>iFrame purposely have broken <code>src</code> attributes so they delay page load.</p>
+
+      <h3>iFrame has <code>aria-hidden="true"</code> and <code>tabindex="-1"</code></h3>
+      <div id="nothing-hidden">
+        <iframe loading="lazy" src="https:www.example.com/" aria-hidden="true" tabindex="-1"></iframe>
+      </div>
+
+      <h3>iFrame has <code>tabindex="-1"</code></h3>
+      <div id="error-focusable-content">
+        <iframe loading="lazy" src="https:www.example.com/" tabindex="-1"></iframe>
+      </div>
+
+      <h3>iFrame has missing accessible name</h3>
+      <div id="error-missing-acc-name">
+        <iframe loading="lazy" src="https:www.example.com/"></iframe>
+      </div>
+
+      <h3>General iFrame</h3>
+      <div id="warning-iframe">
+        <iframe loading="lazy" src="https:www.example.com/" title="Example"></iframe>
+      </div>
+
+      <h3>iFrame with video source</h3>
+      <div id="warning-iframe-youtube">
+        <iframe loading="lazy" src="https://www.youtube.com/embed/..." title="Queen's Bohemiam Rhapsody" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen></iframe>
+      </div>
+
+      <h3>iFrame with audio source</h3>
+      <div id="warning-iframe-soundcloud">
+        <iframe loading="lazy" title="SoundCloud widget" src="https://w.soundcloud.com/player/..."></iframe>
+      </div>
+
+      <h3>iFrame with data visualization source</h3>
+      <div id="warning-iframe-dataviz">
+        <iframe loading="lazy" title="Google Looker Studio dashboard"
+                src="https://lookerstudio.google.com/embed/..."></iframe>
+      </div>
+
+      <h2>HTML5 video and audio</h2>
+      <h3>Video without track element</h3>
+      <div id="warning-video">
+        <video width="300" controls="" src="#"></video>
+      </div>
+
+      <h3>Video with track element (empty <code>src</code>)</h3>
+      <div id="warning-video-null-track">
+        <video controls="">
+          <track default="" kind="captions" srclang="en" src>
+        </video>
+      </div>
+
+      <h3>Video with track element</h3>
+      <div id="nothing-video">
+        <video controls="">
+          <track default="" kind="captions" srclang="en" src="#">
+        </video>
+      </div>
+
+      <h3>Audio</h3>
+      <div id="warning-audio">
+        <audio controls="">
+          <source src="https://www.w3schools.com/html/horse.ogg" type="audio/ogg">
+          <source src="https://www.w3schools.com/html/horse.mp3" type="audio/mpeg">
+        </audio>
+      </div>
+
+      <hr>
+
+      <h2>Misc developer checks</h2>
+      <h3>Tabindex attribute greater than 0</h3>
+      <div id="error-positive-tabindex">
+        <p tabindex="1">[tabindex="1"]</p>
+      </div>
+      <div id="nothing-tabindex-0">
+        <p tabindex="0">[tabindex="0"]</p>
+      </div>
+      <div id="nothing-negative-tabindex">
+        <p tabindex="-1">[tabindex="-1"]</p>
+      </div>
+
+      <hr>
+
+      <h2>Buttons</h2>
+
+      <h3>Buttons without an accessible name</h3>
+
+      <h4>Empty button</h4>
+      <div id="error-button-empty-1">
+        <button class="btn-primary"></button>
+      </div>
+
+      <h4>Empty button with icon font</h4>
+      <div id="error-button-empty-2">
+        <button class="btn-primary"><i class="bi bi-trash"></i></button>
+      </div>
+
+      <h3>Button with broken aria-labelledby attribute</h3>
+      <div id="error-button-arialabelledby">
+        <button aria-labelledby="asd"><i class="bi bi-trash"></i></button>
+      </div>
+
+      <h3>Button with aria-hidden</h3>
+      <div id="error-button-ariahidden">
+        <button aria-hidden="true" class="btn-primary"><i class="bi bi-trash"></i></button>
+      </div>
+      <p>With negative tabindex</p>
+      <div id="nothing-button-1">
+        <button aria-hidden="true" tabindex="-1" class="btn-primary"><i class="bi bi-trash"></i></button>
+      </div>
+
+      <h3>Button has "button" within the accessible name</h3>
+      <p>Uses visually hidden class to hide "button".</p>
+      <div id="warning-button-with-button-text-1">
+        <button class="btn-primary"><i class="bi bi-trash"></i>
+          Delete <span class="visually-hidden">button</span>
+        </button>
+      </div>
+      <p>Uses aria-label to hide "button".</p>
+      <div id="warning-button-with-button-text-2">
+        <button class="btn-primary"><i class="bi bi-trash"></i>
+          Delete <span aria-label="button"></span>
+        </button>
+      </div>
+
+      <h3>Button has accessible name</h3>
+
+      <h4>Button has visible text</h4>
+      <div id="nothing-button-2">
+        <button class="btn-primary"><i class="bi bi-trash"></i> Delete</button>
+      </div>
+
+      <h4>Button has aria-label</h4>
+      <div id="nothing-button-3">
+        <button aria-label="Delete"><i class="bi bi-trash"></i></button>
+      </div>
+
+      <h3>Label in name</h3>
+
+      <h4>Visible text not within aria-label</h4>
+      <div id="warning-label-in-name-1">
+        <button type="button" aria-label="Trash">
+          <i class="bi bi-trash"></i> Delete
+        </button>
+      </div>
+
+      <h4>Visible text not within aria-label (within an accordion)</h4>
+      <p>(Testing visually hidden function)</p>
+      <div id="warning-label-in-name-2">
+        <details>
+          <summary>Open me!</summary>
+          <button type="button" aria-label="Trash">
+            <i class="bi bi-trash"></i> Delete
+          </button>
+        </details>
+      </div>
+
+      <h4>No visible text</h4>
+      <div id="nothing-button-4">
+        <button type="button" aria-label="Trash">
+          <i class="bi bi-trash"></i>
+          <span class="visually-hidden">Delete</span>
+        </button>
+      </div>
+
+      <h4>Mixed case letters</h4>
+      <div id="nothing-button-5">
+        <button type="button" aria-label="Please delete!">
+          <i class="bi bi-trash"></i> DeLeTe
+        </button>
+      </div>
+
+      <h4>Testing mixed visually hidden children of button</h4>
+      <div id="nothing-button-6">
+        <button type="button" aria-label="please delete">
+          <i class="bi bi-trash"></i><span class="visually-hidden">Please</span> Delete
+        </button>
+      </div>
+
+      <h4>Testing hidden children of button, but parent element is also hidden</h4>
+      <div id="nothing-button-7">
+        <div hidden>
+          <button type="button" aria-label="please delete">
+            <i class="bi bi-trash"></i><span class="visually-hidden">Please</span> Delete
+          </button>
+        </div>
+      </div>
+
+      <h4>Button only has an "x" (e.g. a close button)</h4>
+      <div id="nothing-button-8">
+        <button type="button" aria-label="Close">
+          X
+        </button>
+      </div>
+    </div>
+
+  </main>
+  <footer></footer>
+  <script>
+    class shadowTest extends HTMLElement {
+      constructor() {
+        super();
+      }
+      connectedCallback() {
+        if (!this.initialized) {
+          const shadow = this.attachShadow({ mode: 'open' });
+          const div = document.createElement('div');
+          div.innerHTML = `<h4>Header skip in the shadow DOM</h4>`
+          shadow.appendChild(div);
+          this.initialized = true;
+        }
+      }
+    }
+    customElements.define('shadow-test', shadowTest);
+    document.querySelectorAll('.shadow-root').forEach(($el) => {
+      let testShadowElement = document.createElement('shadow-test');
+      $el.append(testShadowElement);
+    })
+  </script>
+  <script>
+    class shadowTestDuplicateID extends HTMLElement {
+      constructor() {
+        super();
+      }
+      connectedCallback() {
+        if (!this.initialized) {
+          const shadow = this.attachShadow({ mode: 'open' });
+          const div = document.createElement('div');
+          div.innerHTML = `
+                <label for="foo">Phone</label>
+                <input id="foo">
+                <input id="foo">
+            `
+          shadow.appendChild(div);
+          this.initialized = true;
+        }
+      }
+    }
+    customElements.define('shadow-test-duplicate-id', shadowTestDuplicateID);
+    document.querySelectorAll('.shadow-root-duplicate-id').forEach(($el) => {
+      let testShadowElement = document.createElement('shadow-test-duplicate-id');
+      $el.append(testShadowElement);
+    })
+  </script>
+  <script type="module" src="./editable-script.js"></script>
+</body>
+
+</html>

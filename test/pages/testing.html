@@ -1396,6 +1396,22 @@ Lorem, ipsum dolor sit amet consectetur adipisicing elit. Officiis consequuntur 
       <img alt src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg" />
     </div>
 
+    <hr />
+
+    <h2>Inside the shadow dom!</h2>
+    <noscript>hi</noscript>
+    <div id="webcomponent">
+      <template shadowrootmode="open">
+        <div style="background-color: black; padding: 20px">
+          <h3 style="color: white">Heading in the shadow dom</h3>
+          <a href="https://developer.mozilla.org/en-US/" aria-hidden="true">
+            <img alt="MDN" src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg" />
+          </a>
+        </div>
+      </template>
+    </div>
+  </main>
+  <footer>
     <h2>Alt too long for tooltip</h2>
     <div class="carousel">
       <img alt="Lorem ipsum lorem ipsum Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero
@@ -1414,25 +1430,8 @@ Lorem, ipsum dolor sit amet consectetur adipisicing elit. Officiis consequuntur 
       illo magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum
       dolor, sit amet consectetur adipisicing elit. Doloribus magnam laudantium enim voluptas tempora libero illo
       magni aut, voluptatibus laborum placeat, et dolore quaerat? Ullam fugiat iusto illum vero ea.Lorem ipsum dolor,"
-        src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg" />
+           src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg" />
     </div>
-
-    <hr />
-
-    <h2>Inside the shadow dom!</h2>
-    <noscript>hi</noscript>
-    <div id="webcomponent">
-      <template shadowrootmode="open">
-        <div style="background-color: black; padding: 20px">
-          <h3 style="color: white">Heading in the shadow dom</h3>
-          <a href="https://developer.mozilla.org/en-US/" aria-hidden="true">
-            <img alt="MDN" src="https://hacks.mozilla.org/wp-content/themes/Hax/img/mdn-logo-mono.svg" />
-          </a>
-        </div>
-      </template>
-    </div>
-  </main>
-  <footer>
     No automated unit tests are on this page. Blank slate for testing!
   </footer>
   <script type="module" src="./script.js"></script>

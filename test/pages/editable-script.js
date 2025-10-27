@@ -42,7 +42,7 @@ $checkAccordions.forEach(($el) => {
 // Instantiate
 Lang.addI18n(Sa11yLangEn.strings);
 const sa11y = new Sa11y({
-  checkRoot: 'main, footer',
+  checkRoot: 'body',
   readabilityRoot: '.foo',
   headerIgnore: '#nothing-ignore-this-heading *, .ignore-this-heading',
   linkIgnoreSpan: '.sr-only-example',
@@ -55,7 +55,7 @@ const sa11y = new Sa11y({
   // contrastAAA: true,
   // contrastAPCA: true,
   ignoreHiddenOverflow: '.overlay, .modal',
-  insertAnnotationBefore: '.background-container',
+  insertAnnotationBefore: '.background-container, [contenteditable]',
   // panelPosition: 'top-right',
   // showMovePanelToggle: false,
   // showImageOutline: false,
