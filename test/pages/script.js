@@ -66,6 +66,7 @@ const sa11y = new Sa11y({
   // externalDeveloperChecks: true,
   imageWithinLightbox: '.lightbox',
   customChecks: 'listen',
+  fixedRoots: document.querySelectorAll('body'),
 
   // Configure image panel edit button
   editImageURLofCMS: 'localhost',

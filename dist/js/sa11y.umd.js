@@ -95,6 +95,7 @@
     linkStopWords: '',
     extraPlaceholderStopWords: '',
     imageWithinLightbox: '',
+    ignoreContentOutsideRoots: false,
 
     // All checks
     checks: {
@@ -297,41 +298,6 @@
 
   const Constants = (function myConstants() {
     /* **************** */
-    /* Initialize Roots */
-    /* **************** */
-    const Root = [];
-    const Readability = {};
-
-    function initializeRoot(desiredRoots, desiredReadabilityRoot) {
-      // @todo Merge Discuss: I am converting strings to DOM refs here.
-      // temp;
-      // @todo Merge work needed: need multiple roots?
-      desiredRoots.forEach((area) => {
-        Root.push(area);
-      });
-      // @todo Merge Discuss: moved fallbacks back to the calling function.
-
-      // Readability target area to check.
-      Readability.Root = desiredReadabilityRoot;
-      if (!Readability.Root) {
-        // If desired root area is not found, use the first root target area.
-        Readability.Root = Root.find((x) => x !== undefined);
-
-        // Create a warning if the desired readability root is not found.
-        const { readabilityDetails, readabilityToggle } = Constants.Panel;
-        const readabilityOn = readabilityToggle?.getAttribute('aria-pressed') === 'true';
-        if (readabilityDetails && readabilityOn) {
-          const note = document.createElement('div');
-          note.id = 'readability-alert';
-          note.innerHTML = `<hr aria-hidden="true"><p>${Lang.sprintf('MISSING_READABILITY_ROOT',
-          desiredReadabilityRoot.tagName.toLowerCase(), desiredReadabilityRoot)}</p>`;
-          // @todo Merge work needed: does this reset between runs or stack?.
-          readabilityDetails.insertAdjacentElement('afterend', note);
-        }
-      }
-    }
-
-    /* **************** */
     /* Global constants */
     /* **************** */
     const Global = {};
@@ -358,6 +324,7 @@
       Global.relativePathImageID = option.relativePathImageID;
       Global.ignoreEditImageURL = option.ignoreEditImageURL;
       Global.ignoreEditImageClass = option.ignoreEditImageClass;
+      Global.ignoreContentOutsideRoots = option.ignoreContentOutsideRoots;
       Global.showMovePanelToggle = option.showMovePanelToggle;
       // @todo Merge do I actually need this?
       Global.fixedRoots = option.fixedRoots;
@@ -417,6 +384,50 @@
 
       // Embedded content all
       Global.AllEmbeddedContent = `${Global.VideoSources}, ${Global.AudioSources}, ${Global.VisualizationSources}`;
+    }
+
+    /* **************** */
+    /* Initialize Roots */
+    /* **************** */
+    const Root = [];
+    const Readability = {};
+
+    function initializeRoot(desiredRoot, desiredReadabilityRoot, fixedRoots) {
+      Root.length = 0;
+      Readability.Root = false;
+      // Initialize root areas to check.
+      if (fixedRoots) {
+        fixedRoots.forEach((root) => {
+          Root.push(root);
+        });
+        // @todo Merge convert Readability to multiRoot too.
+        Readability.Root = Array.from(fixedRoots).find((x) => x !== undefined);
+      } else {
+        Root.push(...document.querySelectorAll(desiredRoot));
+        if (Root.length === 0 && Global.headless === false) {
+          createAlert(`${Lang.sprintf('MISSING_ROOT', desiredRoot)}`);
+          Root.push(document.querySelectorAll('body'));
+        }
+        // Readability target area to check.
+        Readability.Root = document.querySelector(desiredReadabilityRoot);
+      }
+
+      if (!Readability.Root) {
+        // If desired root area is not found, use the first root target area.
+        Readability.Root = Root.find((x) => x !== undefined);
+
+        // Create a warning if the desired readability root is not found.
+        const { readabilityDetails, readabilityToggle } = Constants.Panel;
+        const readabilityOn = readabilityToggle?.getAttribute('aria-pressed') === 'true';
+        if (readabilityDetails && readabilityOn) {
+          const note = document.createElement('div');
+          note.id = 'readability-alert';
+          note.innerHTML = `<hr aria-hidden="true"><p>${Lang.sprintf('MISSING_READABILITY_ROOT',
+          desiredReadabilityRoot.tagName.toLowerCase(), desiredReadabilityRoot)}</p>`;
+          // @todo Merge work needed: does this reset between runs or stack?.
+          readabilityDetails.insertAdjacentElement('afterend', note);
+        }
+      }
     }
 
     /* *************** */
@@ -624,14 +635,14 @@
   /**
    * Finds elements in the DOM that match the given selector, within the specified root element, and excluding any specified elements.
    * @param {string} selector - The CSS selector to match elements against.
-   * @param {string} desiredRoot - The root element to start the search from. Can be one of 'document', 'readability', 'heading', 'check', or a custom selector for the desired root element.
+   * @param {string} desiredRoot - The root element to start the search from. Can be one of 'document', 'readability', 'root' or a custom selector for the desired root element.
    * @param {string} exclude - Elements to exclude from the search, specified as a CSS selector (optional).
    * @returns {Array} - An array of elements that match the given selector.
    */
   function find(selector, desiredRoot, exclude) {
     let root = [];
     if (desiredRoot === 'document') {
-      root.push(document);
+      root.push(document.querySelector('body'));
     } else if (desiredRoot === 'readability') {
       root.push(Constants.Readability.Root);
       if (!root) root = Constants.Root.find((x) => x !== undefined);
@@ -640,7 +651,7 @@
     } else if (desiredRoot === 'panel') {
       root = Constants.Panel.panel;
     } else {
-      root = document.querySelectorAll(desiredRoot);
+      root.push(document.querySelectorAll(desiredRoot));
     }
     if (root.length === 0) {
       root = [document.body];
@@ -648,7 +659,7 @@
 
     // Exclusions are returned as an array & need to become a string for selector.
     const exclusions = Constants.Exclusions.Container.join(', ');
-    // @todo Merge discuss: the next line. You can't join a string type.
+    // @todo Merge discuss: does the next line work? Isn't Exclude a string?
     const additionalExclusions = exclude?.join(', ') || '';
 
     // Ensure no trailing commas.
@@ -657,7 +668,6 @@
     root?.forEach((r) => {
       const shadowComponents = r?.querySelectorAll('[data-sa11y-has-shadow-root]');
       const shadow = shadowComponents ? ', [data-sa11y-has-shadow-root]' : '';
-
       /* Logic yoinked from Editoria11y */
       // 1. Elements array includes web components in the selector to be used as a placeholder.
       const elements = Array.from(r.querySelectorAll(`:is(${selector}${shadow}):not(${exclusions}${additional})`));
@@ -1688,14 +1698,15 @@
         && !Constants.Exclusions.Links.some((selector) => $el.matches(selector)));
 
       // We want headings from the entire document for the Page Outline.
+      // @todo Merge discuss: multi-root handling with heading outlines.
       Found.Headings = find(
         'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]',
-        'root',
+        Constants.Global.ignoreContentOutsideRoots ? 'root' : 'document',
         Constants.Exclusions.Headings,
       );
       Found.HeadingOne = find(
         'h1, [role="heading"][aria-level="1"]',
-        'root',
+        Constants.Global.ignoreContentOutsideRoots ? 'root' : 'document',
         Constants.Exclusions.Headings,
       );
 
@@ -1768,7 +1779,7 @@
     /* ************* */
     const Annotations = {};
     function initializeAnnotations() {
-      Annotations.Array = find('sa11y-annotation', 'annotationRoot');
+      Annotations.Array = find('sa11y-annotation', 'document');
       Annotations.Array.forEach((annotation, i) => {
         annotation.setAttribute('data-sa11y-position', i);
       });
@@ -7973,10 +7984,7 @@ ${this.error.stack}
 
       // Make sure annotations always appended outside of SVGs and interactive elements.
       const insertBefore = option.insertAnnotationBefore ? `, ${option.insertAnnotationBefore}` : '';
-      let location = element.closest(`a, button, [role="link"], [role="button"] ${insertBefore}`) || element;
-      if (Constants.Global.fixedRoots) {
-        location = document.body;
-      }
+      const location = element.closest(`a, button, [role="link"], [role="button"] ${insertBefore}`) || element;
       location.insertAdjacentElement(position, annotation);
       annotation.shadowRoot.appendChild(buttonWrapper);
 
@@ -11219,28 +11227,15 @@ ${this.error.stack}
         fixedRoots = option.fixedRoots,
       ) => {
         try {
+          // @todo merge does Editoria11y need to separate out these clears?
           this.results = [];
           this.headingOutline = [];
           this.errorCount = 0;
           this.warningCount = 0;
           this.customChecksRunning = false;
-          Constants.Root.length = 0;
-          Constants.Readability.Root = false;
 
           // Initialize root areas to check.
-          if (fixedRoots) {
-            fixedRoots.forEach((root) => {
-              Constants.initializeRoot(root, root);
-            });
-          } else {
-            let roots = document.querySelectorAll(desiredRoot);
-            const readabilityRoot = document.querySelector(desiredReadabilityRoot);
-            if (!roots && option.headless === false) {
-              createAlert(`${Lang.sprintf('MISSING_ROOT', desiredRoot)}`);
-              roots = document.querySelectorAll('body');
-            }
-            Constants.initializeRoot(roots, readabilityRoot);
-          }
+          Constants.initializeRoot(desiredRoot, desiredReadabilityRoot, fixedRoots);
 
           // Find all web components on the page.
           // @todo Merge work needed.

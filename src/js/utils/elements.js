@@ -21,14 +21,15 @@ const Elements = (function myElements() {
       && !Constants.Exclusions.Links.some((selector) => $el.matches(selector)));
 
     // We want headings from the entire document for the Page Outline.
+    // @todo Merge discuss: multi-root handling with heading outlines.
     Found.Headings = find(
       'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]',
-      'root',
+      Constants.Global.ignoreContentOutsideRoots ? 'root' : 'document',
       Constants.Exclusions.Headings,
     );
     Found.HeadingOne = find(
       'h1, [role="heading"][aria-level="1"]',
-      'root',
+      Constants.Global.ignoreContentOutsideRoots ? 'root' : 'document',
       Constants.Exclusions.Headings,
     );
 
@@ -101,7 +102,7 @@ const Elements = (function myElements() {
   /* ************* */
   const Annotations = {};
   function initializeAnnotations() {
-    Annotations.Array = find('sa11y-annotation', 'annotationRoot');
+    Annotations.Array = find('sa11y-annotation', 'document');
     Annotations.Array.forEach((annotation, i) => {
       annotation.setAttribute('data-sa11y-position', i);
     });

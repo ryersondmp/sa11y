@@ -3,14 +3,14 @@ import Constants from './constants';
 /**
  * Finds elements in the DOM that match the given selector, within the specified root element, and excluding any specified elements.
  * @param {string} selector - The CSS selector to match elements against.
- * @param {string} desiredRoot - The root element to start the search from. Can be one of 'document', 'readability', 'heading', 'check', or a custom selector for the desired root element.
+ * @param {string} desiredRoot - The root element to start the search from. Can be one of 'document', 'readability', 'root' or a custom selector for the desired root element.
  * @param {string} exclude - Elements to exclude from the search, specified as a CSS selector (optional).
  * @returns {Array} - An array of elements that match the given selector.
  */
 export default function find(selector, desiredRoot, exclude) {
   let root = [];
   if (desiredRoot === 'document') {
-    root.push(document);
+    root.push(document.querySelector('body'));
   } else if (desiredRoot === 'readability') {
     root.push(Constants.Readability.Root);
     if (!root) root = Constants.Root.find((x) => x !== undefined);
@@ -19,7 +19,7 @@ export default function find(selector, desiredRoot, exclude) {
   } else if (desiredRoot === 'panel') {
     root = Constants.Panel.panel;
   } else {
-    root = document.querySelectorAll(desiredRoot);
+    root.push(document.querySelectorAll(desiredRoot));
   }
   if (root.length === 0) {
     root = [document.body];
@@ -27,7 +27,7 @@ export default function find(selector, desiredRoot, exclude) {
 
   // Exclusions are returned as an array & need to become a string for selector.
   const exclusions = Constants.Exclusions.Container.join(', ');
-  // @todo Merge discuss: the next line. You can't join a string type.
+  // @todo Merge discuss: does the next line work? Isn't Exclude a string?
   const additionalExclusions = exclude?.join(', ') || '';
 
   // Ensure no trailing commas.
@@ -36,7 +36,6 @@ export default function find(selector, desiredRoot, exclude) {
   root?.forEach((r) => {
     const shadowComponents = r?.querySelectorAll('[data-sa11y-has-shadow-root]');
     const shadow = shadowComponents ? ', [data-sa11y-has-shadow-root]' : '';
-
     /* Logic yoinked from Editoria11y */
     // 1. Elements array includes web components in the selector to be used as a placeholder.
     const elements = Array.from(r.querySelectorAll(`:is(${selector}${shadow}):not(${exclusions}${additional})`));

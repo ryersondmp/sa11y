@@ -77,6 +77,7 @@ const defaultOptions = {
   linkStopWords: '',
   extraPlaceholderStopWords: '',
   imageWithinLightbox: '',
+  ignoreContentOutsideRoots: false,
 
   // All checks
   checks: {

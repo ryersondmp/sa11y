@@ -147,28 +147,15 @@ class Sa11y {
       fixedRoots = option.fixedRoots,
     ) => {
       try {
+        // @todo merge does Editoria11y need to separate out these clears?
         this.results = [];
         this.headingOutline = [];
         this.errorCount = 0;
         this.warningCount = 0;
         this.customChecksRunning = false;
-        Constants.Root.length = 0;
-        Constants.Readability.Root = false;
 
         // Initialize root areas to check.
-        if (fixedRoots) {
-          fixedRoots.forEach((root) => {
-            Constants.initializeRoot(root, root);
-          });
-        } else {
-          let roots = document.querySelectorAll(desiredRoot);
-          const readabilityRoot = document.querySelector(desiredReadabilityRoot);
-          if (!roots && option.headless === false) {
-            Utils.createAlert(`${Lang.sprintf('MISSING_ROOT', desiredRoot)}`);
-            roots = document.querySelectorAll('body');
-          }
-          Constants.initializeRoot(roots, readabilityRoot);
-        }
+        Constants.initializeRoot(desiredRoot, desiredReadabilityRoot, fixedRoots);
 
         // Find all web components on the page.
         // @todo Merge work needed.

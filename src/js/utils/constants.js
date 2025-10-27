@@ -1,41 +1,7 @@
 import Lang from './lang';
+import * as Utils from './utils.js';
 
 const Constants = (function myConstants() {
-  /* **************** */
-  /* Initialize Roots */
-  /* **************** */
-  const Root = [];
-  const Readability = {};
-
-  function initializeRoot(desiredRoots, desiredReadabilityRoot) {
-    // @todo Merge Discuss: I am converting strings to DOM refs here.
-    // temp;
-    // @todo Merge work needed: need multiple roots?
-    desiredRoots.forEach((area) => {
-      Root.push(area);
-    });
-    // @todo Merge Discuss: moved fallbacks back to the calling function.
-
-    // Readability target area to check.
-    Readability.Root = desiredReadabilityRoot;
-    if (!Readability.Root) {
-      // If desired root area is not found, use the first root target area.
-      Readability.Root = Root.find((x) => x !== undefined);
-
-      // Create a warning if the desired readability root is not found.
-      const { readabilityDetails, readabilityToggle } = Constants.Panel;
-      const readabilityOn = readabilityToggle?.getAttribute('aria-pressed') === 'true';
-      if (readabilityDetails && readabilityOn) {
-        const note = document.createElement('div');
-        note.id = 'readability-alert';
-        note.innerHTML = `<hr aria-hidden="true"><p>${Lang.sprintf('MISSING_READABILITY_ROOT',
-          desiredReadabilityRoot.tagName.toLowerCase(), desiredReadabilityRoot)}</p>`;
-        // @todo Merge work needed: does this reset between runs or stack?.
-        readabilityDetails.insertAdjacentElement('afterend', note);
-      }
-    }
-  }
-
   /* **************** */
   /* Global constants */
   /* **************** */
@@ -63,6 +29,7 @@ const Constants = (function myConstants() {
     Global.relativePathImageID = option.relativePathImageID;
     Global.ignoreEditImageURL = option.ignoreEditImageURL;
     Global.ignoreEditImageClass = option.ignoreEditImageClass;
+    Global.ignoreContentOutsideRoots = option.ignoreContentOutsideRoots;
     Global.showMovePanelToggle = option.showMovePanelToggle;
     // @todo Merge do I actually need this?
     Global.fixedRoots = option.fixedRoots;
@@ -122,6 +89,50 @@ const Constants = (function myConstants() {
 
     // Embedded content all
     Global.AllEmbeddedContent = `${Global.VideoSources}, ${Global.AudioSources}, ${Global.VisualizationSources}`;
+  }
+
+  /* **************** */
+  /* Initialize Roots */
+  /* **************** */
+  const Root = [];
+  const Readability = {};
+
+  function initializeRoot(desiredRoot, desiredReadabilityRoot, fixedRoots) {
+    Root.length = 0;
+    Readability.Root = false;
+    // Initialize root areas to check.
+    if (fixedRoots) {
+      fixedRoots.forEach((root) => {
+        Root.push(root);
+      });
+      // @todo Merge convert Readability to multiRoot too.
+      Readability.Root = Array.from(fixedRoots).find((x) => x !== undefined);
+    } else {
+      Root.push(...document.querySelectorAll(desiredRoot));
+      if (Root.length === 0 && Global.headless === false) {
+        Utils.createAlert(`${Lang.sprintf('MISSING_ROOT', desiredRoot)}`);
+        Root.push(document.querySelectorAll('body'));
+      }
+      // Readability target area to check.
+      Readability.Root = document.querySelector(desiredReadabilityRoot);
+    }
+
+    if (!Readability.Root) {
+      // If desired root area is not found, use the first root target area.
+      Readability.Root = Root.find((x) => x !== undefined);
+
+      // Create a warning if the desired readability root is not found.
+      const { readabilityDetails, readabilityToggle } = Constants.Panel;
+      const readabilityOn = readabilityToggle?.getAttribute('aria-pressed') === 'true';
+      if (readabilityDetails && readabilityOn) {
+        const note = document.createElement('div');
+        note.id = 'readability-alert';
+        note.innerHTML = `<hr aria-hidden="true"><p>${Lang.sprintf('MISSING_READABILITY_ROOT',
+          desiredReadabilityRoot.tagName.toLowerCase(), desiredReadabilityRoot)}</p>`;
+        // @todo Merge work needed: does this reset between runs or stack?.
+        readabilityDetails.insertAdjacentElement('afterend', note);
+      }
+    }
   }
 
   /* *************** */
