@@ -1,6 +1,7 @@
 const defaultOptions = {
   // Target area to check
   checkRoot: 'body',
+  fixedRoots: false,
 
   // Exclusions
   containerIgnore: '.sa11y-ignore',
@@ -76,6 +77,7 @@ const defaultOptions = {
   linkStopWords: '',
   extraPlaceholderStopWords: '',
   imageWithinLightbox: '',
+  ignoreContentOutsideRoots: false,
 
   // All checks
   checks: {

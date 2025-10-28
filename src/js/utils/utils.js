@@ -435,7 +435,7 @@ export function removeAlert() {
  * @param {string} extendedPreview The issue's HTML or escaped HTML to be previewed (optional).
  * @returns {void}
  */
-export function createAlert(alertMessage, errorPreview, extendedPreview) {
+export function createAlert(alertMessage, errorPreview = '', extendedPreview = '') {
   // Clear alert first before creating new one.
   removeAlert();
 
@@ -450,10 +450,12 @@ export function createAlert(alertMessage, errorPreview, extendedPreview) {
   alert.classList.add('active');
   alertText.innerHTML = alertMessage;
 
+  // @todo Merge test that adding default value to clear eslint error doesn't mess up this '?'.
   // If the issue's element is being previewed.
   const elementPreview = (extendedPreview)
     ? `<div class="element-preview">${extendedPreview}</div>` : '';
 
+  // @todo Merge test that adding default value to clear eslint error doesn't mess up this.
   // Alert message or tooltip's message.
   if (errorPreview) {
     alertPreview.classList.add('panel-alert-preview');

@@ -144,8 +144,10 @@ class Sa11y {
     this.checkAll = async (
       desiredRoot = option.checkRoot,
       desiredReadabilityRoot = option.readabilityRoot,
+      fixedRoots = option.fixedRoots,
     ) => {
       try {
+        // @todo merge does Editoria11y need to separate out these clears?
         this.results = [];
         this.headingOutline = [];
         this.errorCount = 0;
@@ -153,16 +155,14 @@ class Sa11y {
         this.customChecksRunning = false;
 
         // Initialize root areas to check.
-        const root = document.querySelector(desiredRoot);
-        if (!root && option.headless === false) {
-          Utils.createAlert(`${Lang.sprintf('MISSING_ROOT', desiredRoot)}`);
-        }
-        Constants.initializeRoot(desiredRoot, desiredReadabilityRoot);
+        Constants.initializeRoot(desiredRoot, desiredReadabilityRoot, fixedRoots);
 
         // Find all web components on the page.
+        // @todo Merge work needed.
         findShadowComponents(option);
 
         // Find and cache elements.
+        // @todo Merge work needed.
         Elements.initializeElements(option);
 
         // Ruleset checks
@@ -377,6 +377,7 @@ class Sa11y {
         });
       }
 
+      // @todo Merge work needed. Maybe an external positioner param?
       // Reset all data attributes.
       Utils.resetAttributes([
         'data-sa11y-parent',

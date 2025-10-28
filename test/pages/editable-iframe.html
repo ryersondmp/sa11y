@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<link rel="stylesheet" href="./assets/main.css">
+<!-- Sa11y -->
+<link rel="stylesheet" href="../../dist/css/sa11y.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sa11y Unit Tests</title>
+    <style>
+        [contenteditable] [data-sa11y-annotation],
+        [contenteditable] [data-sa11y-error],
+        [contenteditable] [data-sa11y-warning] {
+            border: 3px dotted blue;
+            padding: 3px;
+            &:before {
+                content: "Inserted";
+            }
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <h1>Sa11y Unit Tests</h1>
+    <p>All annotations at a glance.</p>
+</header>
+<main>
+    <iframe src="editable-iframe-inner.html"></iframe>
+
+</main>
+<footer></footer>
+
+<script type="module" src="./editable-iframe-script.js"></script>
+</body>
+
+</html>

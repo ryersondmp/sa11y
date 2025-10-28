@@ -1,39 +1,7 @@
 import Lang from './lang';
+import * as Utils from './utils.js';
 
 const Constants = (function myConstants() {
-  /* **************** */
-  /* Initialize Roots */
-  /* **************** */
-  const Root = {};
-  function initializeRoot(desiredRoot, desiredReadabilityRoot) {
-    Root.areaToCheck = document.querySelector(desiredRoot);
-    if (!Root.areaToCheck) {
-      Root.areaToCheck = document.querySelector('body');
-    }
-
-    // Readability target area to check.
-    Root.Readability = document.querySelector(desiredReadabilityRoot);
-    if (!Root.Readability) {
-      if (!Root.areaToCheck) {
-        Root.Readability = document.querySelector('body');
-      } else {
-        // If desired root area is not found, use the root target area.
-        Root.Readability = Root.areaToCheck;
-
-        // Create a warning if the desired readability root is not found.
-        const { readabilityDetails, readabilityToggle } = Constants.Panel;
-        const readabilityOn = readabilityToggle?.getAttribute('aria-pressed') === 'true';
-        if (readabilityDetails && readabilityOn) {
-          const note = document.createElement('div');
-          note.id = 'readability-alert';
-          note.innerHTML = `<hr aria-hidden="true"><p>${Lang.sprintf('MISSING_READABILITY_ROOT',
-            Root.areaToCheck.tagName.toLowerCase(), desiredReadabilityRoot)}</p>`;
-          readabilityDetails.insertAdjacentElement('afterend', note);
-        }
-      }
-    }
-  }
-
   /* **************** */
   /* Global constants */
   /* **************** */
@@ -61,7 +29,10 @@ const Constants = (function myConstants() {
     Global.relativePathImageID = option.relativePathImageID;
     Global.ignoreEditImageURL = option.ignoreEditImageURL;
     Global.ignoreEditImageClass = option.ignoreEditImageClass;
+    Global.ignoreContentOutsideRoots = option.ignoreContentOutsideRoots;
     Global.showMovePanelToggle = option.showMovePanelToggle;
+    // @todo Merge do I actually need this?
+    Global.fixedRoots = option.fixedRoots;
 
     // A11y: Determine scroll behaviour
     let reducedMotion = false;
@@ -118,6 +89,50 @@ const Constants = (function myConstants() {
 
     // Embedded content all
     Global.AllEmbeddedContent = `${Global.VideoSources}, ${Global.AudioSources}, ${Global.VisualizationSources}`;
+  }
+
+  /* **************** */
+  /* Initialize Roots */
+  /* **************** */
+  const Root = [];
+  const Readability = {};
+
+  function initializeRoot(desiredRoot, desiredReadabilityRoot, fixedRoots) {
+    Root.length = 0;
+    Readability.Root = false;
+    // Initialize root areas to check.
+    if (fixedRoots) {
+      fixedRoots.forEach((root) => {
+        Root.push(root);
+      });
+      // @todo Merge convert Readability to multiRoot too.
+      Readability.Root = Array.from(fixedRoots).find((x) => x !== undefined);
+    } else {
+      Root.push(...document.querySelectorAll(desiredRoot));
+      if (Root.length === 0 && Global.headless === false) {
+        Utils.createAlert(`${Lang.sprintf('MISSING_ROOT', desiredRoot)}`);
+        Root.push(document.querySelectorAll('body'));
+      }
+      // Readability target area to check.
+      Readability.Root = document.querySelector(desiredReadabilityRoot);
+    }
+
+    if (!Readability.Root) {
+      // If desired root area is not found, use the first root target area.
+      Readability.Root = Root.find((x) => x !== undefined);
+
+      // Create a warning if the desired readability root is not found.
+      const { readabilityDetails, readabilityToggle } = Constants.Panel;
+      const readabilityOn = readabilityToggle?.getAttribute('aria-pressed') === 'true';
+      if (readabilityDetails && readabilityOn) {
+        const note = document.createElement('div');
+        note.id = 'readability-alert';
+        note.innerHTML = `<hr aria-hidden="true"><p>${Lang.sprintf('MISSING_READABILITY_ROOT',
+          desiredReadabilityRoot.tagName.toLowerCase(), desiredReadabilityRoot)}</p>`;
+        // @todo Merge work needed: does this reset between runs or stack?.
+        readabilityDetails.insertAdjacentElement('afterend', note);
+      }
+    }
   }
 
   /* *************** */
@@ -197,7 +212,6 @@ const Constants = (function myConstants() {
   /* ***************** */
   /* Readability Setup */
   /* ***************** */
-  const Readability = {};
   function initializeReadability(option) {
     if (option.readabilityPlugin) {
       // Set `readabilityLang` property based on language file.
