@@ -9,20 +9,17 @@ import Constants from './constants';
  */
 export default function find(selector, desiredRoot, exclude) {
   let root = [];
-  if (desiredRoot === 'document') {
-    root.push(document.querySelector('body'));
+  if (desiredRoot === 'all') {
+    root = Constants.Root.concat(document.body);
+  } else if (desiredRoot === 'document' || root.length === 0) {
+    root = [document.body];
   } else if (desiredRoot === 'readability') {
     root.push(Constants.Readability.Root);
     if (!root) root = Constants.Root.find((x) => x !== undefined);
   } else if (desiredRoot === 'root') {
     root = Constants.Root;
-  } else if (desiredRoot === 'panel') {
-    root = Constants.Panel.panel;
   } else {
     root.push(document.querySelectorAll(desiredRoot));
-  }
-  if (root.length === 0) {
-    root = [document.body];
   }
 
   // Exclusions are returned as an array & need to become a string for selector.

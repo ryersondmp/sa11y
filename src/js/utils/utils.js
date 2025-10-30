@@ -513,7 +513,7 @@ export function remove(elements, root) {
     `${root}`,
   );
   allElements.forEach(($el) => {
-    $el.parentNode.removeChild($el);
+    $el?.parentNode?.removeChild($el);
   });
 }
 

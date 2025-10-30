@@ -360,11 +360,11 @@ class Sa11y {
         'sa11y-heading-anchor',
         'sa11y-image-anchor',
         'sa11y-tooltips',
-      ], 'document');
+      ], 'all');
 
       // Remove Sa11y anchor positioning markup (while preserving any existing anchors).
       if (Utils.supportsAnchorPositioning()) {
-        find('[data-sa11y-error], [data-sa11y-warning], [data-sa11y-good]', 'document').forEach(($el) => {
+        find('[data-sa11y-error], [data-sa11y-warning], [data-sa11y-good]', 'all').forEach(($el) => {
           const anchor = $el;
           const anchors = (anchor.style.anchorName || '')
             .split(',').map((s) => s.trim()).filter((s) => s && !s.startsWith('--sa11y-anchor'));
@@ -389,7 +389,7 @@ class Sa11y {
         'data-sa11y-pulse-border',
         'data-sa11y-filter',
         'data-sa11y-has-shadow-root',
-      ], 'document');
+      ], 'all');
 
       // Remove from panel.
       Constants.Panel.outlineList.innerHTML = '';

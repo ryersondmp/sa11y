@@ -296,6 +296,8 @@
     },
   };
 
+  // import * as Utils from './utils.js';
+
   const Constants = (function myConstants() {
     /* **************** */
     /* Global constants */
@@ -405,7 +407,7 @@
       } else {
         Root.push(...document.querySelectorAll(desiredRoot));
         if (Root.length === 0 && Global.headless === false) {
-          createAlert(`${Lang.sprintf('MISSING_ROOT', desiredRoot)}`);
+          // Utils.createAlert(`${Lang.sprintf('MISSING_ROOT', desiredRoot)}`);
           Root.push(document.querySelectorAll('body'));
         }
         // Readability target area to check.
@@ -641,20 +643,17 @@
    */
   function find(selector, desiredRoot, exclude) {
     let root = [];
-    if (desiredRoot === 'document') {
-      root.push(document.querySelector('body'));
+    if (desiredRoot === 'all') {
+      root = Constants.Root.concat(document.body);
+    } else if (desiredRoot === 'document' || root.length === 0) {
+      root = [document.body];
     } else if (desiredRoot === 'readability') {
       root.push(Constants.Readability.Root);
       if (!root) root = Constants.Root.find((x) => x !== undefined);
     } else if (desiredRoot === 'root') {
       root = Constants.Root;
-    } else if (desiredRoot === 'panel') {
-      root = Constants.Panel.panel;
     } else {
       root.push(document.querySelectorAll(desiredRoot));
-    }
-    if (root.length === 0) {
-      root = [document.body];
     }
 
     // Exclusions are returned as an array & need to become a string for selector.
@@ -1402,7 +1401,7 @@
       `${root}`,
     );
     allElements.forEach(($el) => {
-      $el.parentNode.removeChild($el);
+      $el?.parentNode?.removeChild($el);
     });
   }
 
@@ -1701,12 +1700,12 @@
       // @todo Merge discuss: multi-root handling with heading outlines.
       Found.Headings = find(
         'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]',
-        Constants.Global.ignoreContentOutsideRoots ? 'root' : 'document',
+        Constants.Global.ignoreContentOutsideRoots ? 'root' : 'all',
         Constants.Exclusions.Headings,
       );
       Found.HeadingOne = find(
         'h1, [role="heading"][aria-level="1"]',
-        Constants.Global.ignoreContentOutsideRoots ? 'root' : 'document',
+        Constants.Global.ignoreContentOutsideRoots ? 'root' : 'all',
         Constants.Exclusions.Headings,
       );
 
@@ -1779,7 +1778,7 @@
     /* ************* */
     const Annotations = {};
     function initializeAnnotations() {
-      Annotations.Array = find('sa11y-annotation', 'document');
+      Annotations.Array = find('sa11y-annotation', 'root');
       Annotations.Array.forEach((annotation, i) => {
         annotation.setAttribute('data-sa11y-position', i);
       });
@@ -1922,7 +1921,6 @@
       // Find corresponding issue within main results object and mark as dismissed.
       const dismissItem = parseInt(dismissButton.getAttribute('data-sa11y-dismiss'), 10);
       const issue = results.find(($el) => $el.id === dismissItem);
-
       // Give a one time reminder that dismissed items are temporary.
       if (savedDismissKeys === null) {
         setTimeout(() => createAlert(Lang._('DISMISS_REMINDER')), 0);
@@ -1943,7 +1941,7 @@
         };
 
         // Get the position of the last annotation that was dismissed.
-        const item = find(`[data-sa11y-annotation='${issue.id}']`);
+        const item = find(`[data-sa11y-annotation='${issue.id}']`, 'root');
         const latestDismissed = item[0]
           ? item[0].getAttribute('data-sa11y-position') : 0;
         store.setItem('sa11y-latest-dismissed', latestDismissed);
@@ -2878,7 +2876,7 @@ ${this.error.stack}
     isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
 
     // Toggle visibility of heading labels
-    const headingLabels = find('sa11y-heading-label', 'root');
+    const headingLabels = find('sa11y-heading-label', 'all');
     headingLabels.forEach(($el) => $el.hidden = false);
 
     const event = new CustomEvent('sa11y-build-heading-outline');
@@ -2892,7 +2890,7 @@ ${this.error.stack}
     store.setItem('sa11y-outline', 'Closed');
 
     // Toggle visibility of heading labels
-    const headingLabels = find('sa11y-heading-label', 'root');
+    const headingLabels = find('sa11y-heading-label', 'all');
     headingLabels.forEach(($el) => $el.hidden = true);
   };
 
@@ -3113,35 +3111,35 @@ ${this.error.stack}
             </li>`;
             outlineArray.push(append);
           }
+
+          /**
+           * Append heading labels.
+          */
+          const label = document.createElement('sa11y-heading-label');
+          label.hidden = true;
+          element?.insertAdjacentElement('beforeend', label);
+
+          // Create anchors to focus on if heading is not visible.
+          const anchor = document.createElement('sa11y-heading-anchor');
+          anchor.id = `sa11y-h${index}`;
+          if (hidden) {
+            const parent = findVisibleParent(element, 'display', 'none');
+            const target = parent?.previousElementSibling || parent?.parentNode;
+            target?.insertAdjacentElement('beforebegin', anchor);
+            target?.setAttribute('data-sa11y-parent', `h${index}`);
+          } else {
+            label?.insertAdjacentElement('beforebegin', anchor);
+          }
+
+          // Populate heading label.
+          const content = document.createElement('span');
+          content.classList.add('heading-label');
+          content.innerHTML = `H${headingLevel}`;
+          label.shadowRoot.appendChild(content);
+
+          // Make heading labels visible when panel is open.
+          if (store.getItem('sa11y-outline') === 'Opened') label.hidden = false;
         }
-
-        /**
-         * Append heading labels.
-        */
-        const label = document.createElement('sa11y-heading-label');
-        label.hidden = true;
-        element?.insertAdjacentElement('beforeend', label);
-
-        // Create anchors to focus on if heading is not visible.
-        const anchor = document.createElement('sa11y-heading-anchor');
-        anchor.id = `sa11y-h${index}`;
-        if (hidden) {
-          const parent = findVisibleParent(element, 'display', 'none');
-          const target = parent?.previousElementSibling || parent?.parentNode;
-          target?.insertAdjacentElement('beforebegin', anchor);
-          target?.setAttribute('data-sa11y-parent', `h${index}`);
-        } else {
-          label?.insertAdjacentElement('beforebegin', anchor);
-        }
-
-        // Populate heading label.
-        const content = document.createElement('span');
-        content.classList.add('heading-label');
-        content.innerHTML = `H${headingLevel}`;
-        label.shadowRoot.appendChild(content);
-
-        // Make heading labels visible when panel is open.
-        if (store.getItem('sa11y-outline') === 'Opened') label.hidden = false;
       });
 
       // Append headings to Page Outline.
@@ -3157,7 +3155,7 @@ ${this.error.stack}
             // Query DOM for target elements.
             const heading = find(
               `#sa11y-h${i}, [data-sa11y-parent="h${i}"]`,
-              'document',
+              'root',
               Constants.Exclusions.Container,
             )[0];
 
@@ -3347,7 +3345,7 @@ ${this.error.stack}
             // Query DOM for target elements.
             const image = find(
               `[data-sa11y-image='${i}'], [data-sa11y-parent='image${i}']`,
-              'document',
+              'root',
               Constants.Exclusions.Container,
             )[0];
 
@@ -3408,7 +3406,7 @@ ${this.error.stack}
     }
 
     // If there are no button annotations, disable the Skip-to-Toggle switch.
-    const annotations = document.querySelectorAll('sa11y-annotation');
+    const annotations = find('sa11y-annotation', 'root');
     if (annotations.length === 0) {
       Constants.Panel.skipButton.disabled = true;
     }
@@ -11440,11 +11438,11 @@ ${this.error.stack}
           'sa11y-heading-anchor',
           'sa11y-image-anchor',
           'sa11y-tooltips',
-        ], 'document');
+        ], 'all');
 
         // Remove Sa11y anchor positioning markup (while preserving any existing anchors).
         if (supportsAnchorPositioning()) {
-          find('[data-sa11y-error], [data-sa11y-warning], [data-sa11y-good]', 'document').forEach(($el) => {
+          find('[data-sa11y-error], [data-sa11y-warning], [data-sa11y-good]', 'all').forEach(($el) => {
             const anchor = $el;
             const anchors = (anchor.style.anchorName || '')
               .split(',').map((s) => s.trim()).filter((s) => s && !s.startsWith('--sa11y-anchor'));
@@ -11469,7 +11467,7 @@ ${this.error.stack}
           'data-sa11y-pulse-border',
           'data-sa11y-filter',
           'data-sa11y-has-shadow-root',
-        ], 'document');
+        ], 'all');
 
         // Remove from panel.
         Constants.Panel.outlineList.innerHTML = '';

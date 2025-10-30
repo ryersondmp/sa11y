@@ -1,5 +1,6 @@
 import Constants from '../utils/constants';
 import { store } from '../utils/utils';
+import find from '../utils/find';
 import Lang from '../utils/lang';
 
 /* ************************************************************ */
@@ -29,7 +30,7 @@ export function updatePanel(dismissCount, errorCount, warningCount) {
   }
 
   // If there are no button annotations, disable the Skip-to-Toggle switch.
-  const annotations = document.querySelectorAll('sa11y-annotation');
+  const annotations = find('sa11y-annotation', 'root');
   if (annotations.length === 0) {
     Constants.Panel.skipButton.disabled = true;
   }

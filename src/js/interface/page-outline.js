@@ -77,35 +77,35 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
             </li>`;
           outlineArray.push(append);
         }
+
+        /**
+         * Append heading labels.
+        */
+        const label = document.createElement('sa11y-heading-label');
+        label.hidden = true;
+        element?.insertAdjacentElement('beforeend', label);
+
+        // Create anchors to focus on if heading is not visible.
+        const anchor = document.createElement('sa11y-heading-anchor');
+        anchor.id = `sa11y-h${index}`;
+        if (hidden) {
+          const parent = Utils.findVisibleParent(element, 'display', 'none');
+          const target = parent?.previousElementSibling || parent?.parentNode;
+          target?.insertAdjacentElement('beforebegin', anchor);
+          target?.setAttribute('data-sa11y-parent', `h${index}`);
+        } else {
+          label?.insertAdjacentElement('beforebegin', anchor);
+        }
+
+        // Populate heading label.
+        const content = document.createElement('span');
+        content.classList.add('heading-label');
+        content.innerHTML = `H${headingLevel}`;
+        label.shadowRoot.appendChild(content);
+
+        // Make heading labels visible when panel is open.
+        if (Utils.store.getItem('sa11y-outline') === 'Opened') label.hidden = false;
       }
-
-      /**
-       * Append heading labels.
-      */
-      const label = document.createElement('sa11y-heading-label');
-      label.hidden = true;
-      element?.insertAdjacentElement('beforeend', label);
-
-      // Create anchors to focus on if heading is not visible.
-      const anchor = document.createElement('sa11y-heading-anchor');
-      anchor.id = `sa11y-h${index}`;
-      if (hidden) {
-        const parent = Utils.findVisibleParent(element, 'display', 'none');
-        const target = parent?.previousElementSibling || parent?.parentNode;
-        target?.insertAdjacentElement('beforebegin', anchor);
-        target?.setAttribute('data-sa11y-parent', `h${index}`);
-      } else {
-        label?.insertAdjacentElement('beforebegin', anchor);
-      }
-
-      // Populate heading label.
-      const content = document.createElement('span');
-      content.classList.add('heading-label');
-      content.innerHTML = `H${headingLevel}`;
-      label.shadowRoot.appendChild(content);
-
-      // Make heading labels visible when panel is open.
-      if (Utils.store.getItem('sa11y-outline') === 'Opened') label.hidden = false;
     });
 
     // Append headings to Page Outline.
@@ -121,7 +121,7 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
           // Query DOM for target elements.
           const heading = find(
             `#sa11y-h${i}, [data-sa11y-parent="h${i}"]`,
-            'document',
+            'root',
             Constants.Exclusions.Container,
           )[0];
 

@@ -1,5 +1,5 @@
 import Lang from './lang';
-import * as Utils from './utils.js';
+// import * as Utils from './utils.js';
 
 const Constants = (function myConstants() {
   /* **************** */
@@ -110,7 +110,7 @@ const Constants = (function myConstants() {
     } else {
       Root.push(...document.querySelectorAll(desiredRoot));
       if (Root.length === 0 && Global.headless === false) {
-        Utils.createAlert(`${Lang.sprintf('MISSING_ROOT', desiredRoot)}`);
+        // Utils.createAlert(`${Lang.sprintf('MISSING_ROOT', desiredRoot)}`);
         Root.push(document.querySelectorAll('body'));
       }
       // Readability target area to check.

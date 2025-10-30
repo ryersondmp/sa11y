@@ -66,7 +66,6 @@ const dismissIssueButton = async (e, results, checkAll, resetAll) => {
     // Find corresponding issue within main results object and mark as dismissed.
     const dismissItem = parseInt(dismissButton.getAttribute('data-sa11y-dismiss'), 10);
     const issue = results.find(($el) => $el.id === dismissItem);
-
     // Give a one time reminder that dismissed items are temporary.
     if (savedDismissKeys === null) {
       setTimeout(() => createAlert(Lang._('DISMISS_REMINDER')), 0);
@@ -87,7 +86,7 @@ const dismissIssueButton = async (e, results, checkAll, resetAll) => {
       };
 
       // Get the position of the last annotation that was dismissed.
-      const item = find(`[data-sa11y-annotation='${issue.id}']`);
+      const item = find(`[data-sa11y-annotation='${issue.id}']`, 'root');
       const latestDismissed = item[0]
         ? item[0].getAttribute('data-sa11y-position') : 0;
       store.setItem('sa11y-latest-dismissed', latestDismissed);

@@ -42,7 +42,7 @@ $checkAccordions.forEach(($el) => {
 // Instantiate
 Lang.addI18n(Sa11yLangEn.strings);
 const sa11y = new Sa11y({
-  checkRoot: 'main, footer',
+  checkRoot: 'main',
   readabilityRoot: '.foo',
   headerIgnore: '#nothing-ignore-this-heading *, .ignore-this-heading',
   linkIgnoreSpan: '.sr-only-example',

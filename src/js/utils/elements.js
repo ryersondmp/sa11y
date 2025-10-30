@@ -24,12 +24,12 @@ const Elements = (function myElements() {
     // @todo Merge discuss: multi-root handling with heading outlines.
     Found.Headings = find(
       'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]',
-      Constants.Global.ignoreContentOutsideRoots ? 'root' : 'document',
+      Constants.Global.ignoreContentOutsideRoots ? 'root' : 'all',
       Constants.Exclusions.Headings,
     );
     Found.HeadingOne = find(
       'h1, [role="heading"][aria-level="1"]',
-      Constants.Global.ignoreContentOutsideRoots ? 'root' : 'document',
+      Constants.Global.ignoreContentOutsideRoots ? 'root' : 'all',
       Constants.Exclusions.Headings,
     );
 
@@ -102,7 +102,7 @@ const Elements = (function myElements() {
   /* ************* */
   const Annotations = {};
   function initializeAnnotations() {
-    Annotations.Array = find('sa11y-annotation', 'document');
+    Annotations.Array = find('sa11y-annotation', 'root');
     Annotations.Array.forEach((annotation, i) => {
       annotation.setAttribute('data-sa11y-position', i);
     });

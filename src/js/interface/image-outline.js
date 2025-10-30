@@ -160,7 +160,7 @@ export default function generateImageOutline(dismissed, imageResults, option) {
           // Query DOM for target elements.
           const image = find(
             `[data-sa11y-image='${i}'], [data-sa11y-parent='image${i}']`,
-            'document',
+            'root',
             Constants.Exclusions.Container,
           )[0];
 
