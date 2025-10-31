@@ -2,6 +2,7 @@
 import defaultOptions from './utils/default-options';
 import Lang from './utils/lang';
 import * as Utils from './utils/utils';
+import { removeAlert } from './interface/alert';
 import Constants from './utils/constants';
 import Elements from './utils/elements';
 import find from './utils/find';
@@ -145,86 +146,82 @@ class Sa11y {
       desiredRoot = option.checkRoot,
       desiredReadabilityRoot = option.readabilityRoot,
     ) => {
-      try {
-        this.results = [];
-        this.headingOutline = [];
-        this.errorCount = 0;
-        this.warningCount = 0;
-        this.customChecksRunning = false;
+      // try {
+      this.results = [];
+      this.headingOutline = [];
+      this.errorCount = 0;
+      this.warningCount = 0;
+      this.customChecksRunning = false;
 
-        // Initialize root areas to check.
-        const root = document.querySelector(desiredRoot);
-        if (!root && option.headless === false) {
-          Utils.createAlert(`${Lang.sprintf('MISSING_ROOT', desiredRoot)}`);
-        }
-        Constants.initializeRoot(desiredRoot, desiredReadabilityRoot);
+      // Initialize root areas to check.
+      Constants.initializeRoot(desiredRoot, desiredReadabilityRoot);
 
-        // Find all web components on the page.
-        findShadowComponents(option);
+      // Find all web components on the page.
+      findShadowComponents(option);
 
-        // Find and cache elements.
-        Elements.initializeElements(option);
+      // Find and cache elements.
+      Elements.initializeElements(option);
 
-        // Ruleset checks
-        checkHeaders(this.results, option, this.headingOutline);
-        checkLinkText(this.results, option);
-        checkImages(this.results, option);
-        checkLabels(this.results, option);
-        checkQA(this.results, option);
-        checkDeveloper(this.results, option);
-        if (option.embeddedContentPlugin) checkEmbeddedContent(this.results, option);
-        if (option.contrastPlugin) checkContrast(this.results, option);
-        if (option.readabilityPlugin) checkReadability();
+      // Ruleset checks
+      checkHeaders(this.results, option, this.headingOutline);
+      checkLinkText(this.results, option);
+      checkImages(this.results, option);
+      checkLabels(this.results, option);
+      checkQA(this.results, option);
+      checkDeveloper(this.results, option);
+      if (option.embeddedContentPlugin) checkEmbeddedContent(this.results, option);
+      if (option.contrastPlugin) checkContrast(this.results, option);
+      if (option.readabilityPlugin) checkReadability();
 
-        // Build array of images to be used for image panel.
-        this.imageResults = Elements.Found.Images.map((image) => {
-          const match = this.results.find((i) => i.element === image);
-          return match && {
-            element: image,
-            type: match.type,
-            dismiss: match.dismiss,
-            developer: match.developer,
-          };
-        }).filter(Boolean);
+      // Build array of images to be used for image panel.
+      this.imageResults = Elements.Found.Images.map((image) => {
+        const match = this.results.find((i) => i.element === image);
+        return match && {
+          element: image,
+          type: match.type,
+          dismiss: match.dismiss,
+          developer: match.developer,
+        };
+      }).filter(Boolean);
 
-        /* Custom checks */
-        if (option.customChecks === true) {
-          // Option 1: Provide via sa11y-custom-checks.js
-          checkCustom(this.results);
-        } else if (typeof option.customChecks === 'object') {
-          // Option 2: Provide as an object when instantiated.
-          this.results.push(...option.customChecks);
-        } else if (option.customChecks === 'listen') {
-          // Option 3: Provide via event listener. Yoinked from Editoria11y!
-          this.customChecksRunning = true;
-          this.customChecksFinished = 0;
-          document.addEventListener('sa11y-resume', () => {
-            this.customChecksFinished += 1;
-            if (this.customChecksFinished === 1) {
-              this.customChecksRunning = false;
-              this.updateResults();
-            }
-          });
-          window.setTimeout(() => {
-            if (this.customChecksRunning === true) {
-              this.customChecksRunning = false;
-              this.updateResults();
-              throw Error('Sa11y: No custom checks were returned.');
-            }
-          }, option.delayCustomCheck);
-          window.setTimeout(() => {
-            const customChecks = new CustomEvent('sa11y-custom-checks');
-            document.dispatchEvent(customChecks);
-          }, 0);
-        }
+      /* Custom checks */
+      if (option.customChecks === true) {
+        // Option 1: Provide via sa11y-custom-checks.js
+        checkCustom(this.results);
+      } else if (typeof option.customChecks === 'object') {
+        // Option 2: Provide as an object when instantiated.
+        this.results.push(...option.customChecks);
+      } else if (option.customChecks === 'listen') {
+        // Option 3: Provide via event listener. Yoinked from Editoria11y!
+        this.customChecksRunning = true;
+        this.customChecksFinished = 0;
+        document.addEventListener('sa11y-resume', () => {
+          this.customChecksFinished += 1;
+          if (this.customChecksFinished === 1) {
+            this.customChecksRunning = false;
+            this.updateResults();
+          }
+        });
+        window.setTimeout(() => {
+          if (this.customChecksRunning === true) {
+            this.customChecksRunning = false;
+            this.updateResults();
+            throw Error('Sa11y: No custom checks were returned.');
+          }
+        }, option.delayCustomCheck);
+        window.setTimeout(() => {
+          const customChecks = new CustomEvent('sa11y-custom-checks');
+          document.dispatchEvent(customChecks);
+        }, 0);
+      }
 
-        // No custom checks running.
-        if (!this.customChecksRunning) this.updateResults();
-      } catch (error) {
+      // No custom checks running.
+      if (!this.customChecksRunning) this.updateResults();
+      /* } catch (error) {
         const consoleErrors = new ConsoleErrors(error);
         document.body.appendChild(consoleErrors);
         throw Error(error);
-      }
+      } */
     };
 
     this.updateResults = () => {
@@ -360,11 +357,11 @@ class Sa11y {
         'sa11y-heading-anchor',
         'sa11y-image-anchor',
         'sa11y-tooltips',
-      ], 'document');
+      ], 'all');
 
       // Remove Sa11y anchor positioning markup (while preserving any existing anchors).
       if (Utils.supportsAnchorPositioning()) {
-        find('[data-sa11y-error], [data-sa11y-warning], [data-sa11y-good]', 'document').forEach(($el) => {
+        find('[data-sa11y-error], [data-sa11y-warning], [data-sa11y-good]', 'all').forEach(($el) => {
           const anchor = $el;
           const anchors = (anchor.style.anchorName || '')
             .split(',').map((s) => s.trim()).filter((s) => s && !s.startsWith('--sa11y-anchor'));
@@ -388,7 +385,7 @@ class Sa11y {
         'data-sa11y-pulse-border',
         'data-sa11y-filter',
         'data-sa11y-has-shadow-root',
-      ], 'document');
+      ], 'all');
 
       // Remove from panel.
       Constants.Panel.outlineList.innerHTML = '';
@@ -402,7 +399,7 @@ class Sa11y {
       Constants.Panel.panel.querySelector('#readability-alert')?.remove();
 
       // Remove any active alerts from panel.
-      Utils.removeAlert();
+      removeAlert();
 
       // Remove EventListeners.
       removeSkipBtnListeners();

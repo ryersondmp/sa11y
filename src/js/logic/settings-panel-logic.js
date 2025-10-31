@@ -1,5 +1,6 @@
 import Constants from '../utils/constants';
-import { store, remove, resetAttributes, createAlert } from '../utils/utils';
+import { store, remove, resetAttributes } from '../utils/utils';
+import { createAlert } from '../interface/alert';
 import Lang from '../utils/lang';
 
 /* ************************************************************ */

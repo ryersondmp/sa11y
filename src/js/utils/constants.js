@@ -1,39 +1,8 @@
+/* eslint-disable no-console */
 import Lang from './lang';
+import { createAlert } from '../interface/alert';
 
 const Constants = (function myConstants() {
-  /* **************** */
-  /* Initialize Roots */
-  /* **************** */
-  const Root = {};
-  function initializeRoot(desiredRoot, desiredReadabilityRoot) {
-    Root.areaToCheck = document.querySelector(desiredRoot);
-    if (!Root.areaToCheck) {
-      Root.areaToCheck = document.querySelector('body');
-    }
-
-    // Readability target area to check.
-    Root.Readability = document.querySelector(desiredReadabilityRoot);
-    if (!Root.Readability) {
-      if (!Root.areaToCheck) {
-        Root.Readability = document.querySelector('body');
-      } else {
-        // If desired root area is not found, use the root target area.
-        Root.Readability = Root.areaToCheck;
-
-        // Create a warning if the desired readability root is not found.
-        const { readabilityDetails, readabilityToggle } = Constants.Panel;
-        const readabilityOn = readabilityToggle?.getAttribute('aria-pressed') === 'true';
-        if (readabilityDetails && readabilityOn) {
-          const note = document.createElement('div');
-          note.id = 'readability-alert';
-          note.innerHTML = `<hr aria-hidden="true"><p>${Lang.sprintf('MISSING_READABILITY_ROOT',
-            Root.areaToCheck.tagName.toLowerCase(), desiredReadabilityRoot)}</p>`;
-          readabilityDetails.insertAdjacentElement('afterend', note);
-        }
-      }
-    }
-  }
-
   /* **************** */
   /* Global constants */
   /* **************** */
@@ -61,6 +30,7 @@ const Constants = (function myConstants() {
     Global.relativePathImageID = option.relativePathImageID;
     Global.ignoreEditImageURL = option.ignoreEditImageURL;
     Global.ignoreEditImageClass = option.ignoreEditImageClass;
+    Global.ignoreContentOutsideRoots = option.ignoreContentOutsideRoots;
     Global.showMovePanelToggle = option.showMovePanelToggle;
 
     // A11y: Determine scroll behaviour
@@ -118,6 +88,82 @@ const Constants = (function myConstants() {
 
     // Embedded content all
     Global.AllEmbeddedContent = `${Global.VideoSources}, ${Global.AudioSources}, ${Global.VisualizationSources}`;
+  }
+
+  /* **************** */
+  /* Initialize Roots */
+  /* **************** */
+  const Root = {};
+  function initializeRoot(desiredRoot, desiredReadabilityRoot) {
+    Root.areaToCheck = [];
+    Root.Readability = [];
+
+    /* Main target area */
+    if (Array.isArray(desiredRoot)) {
+      // If array of elements are passed, pass as is.
+      Root.areaToCheck = desiredRoot;
+    } else {
+      // Iterate through each selector passed, and push valid ones to final root array.
+      try {
+        const selectorList = desiredRoot.split(',').map((selector) => selector.trim());
+        selectorList.forEach((selector) => {
+          const root = document.querySelector(selector);
+          if (root) Root.areaToCheck.push(root);
+          else console.error(`Sa11y: The target root (${selector}) does not exist.`);
+        });
+      } catch {
+        Root.areaToCheck.length = 0;
+      }
+
+      // Push a visible UI alert if not headless and no roots at all are found.
+      if (Root.areaToCheck.length === 0 && Global.headless === false) {
+        createAlert(Lang.sprintf('MISSING_ROOT', desiredRoot));
+        Root.areaToCheck.push(document.body);
+      }
+    }
+
+    /* Readability target area */
+    if (Array.isArray(desiredReadabilityRoot)) {
+      Root.Readability = desiredReadabilityRoot;
+    } else {
+      try {
+        const selectorList = desiredReadabilityRoot.split(',').map((selector) => selector.trim());
+        selectorList.forEach((selector) => {
+          const root = document.querySelector(selector);
+          if (root) Root.Readability.push(root);
+          else console.error(`Sa11y: The target readability root (${selector}) does not exist.`);
+        });
+      } catch {
+        Root.Readability.length = 0;
+      }
+
+      if (Root.Readability.length === 0 && Global.headless === false) {
+        if (Root.areaToCheck.length === 0) {
+          Root.Readability.push(document.body);
+        } else {
+          // If desired root area is not found, use the root target area.
+          Root.Readability = Root.areaToCheck;
+
+          // Create a warning if the desired readability root is not found.
+          const { readabilityDetails, readabilityToggle } = Constants.Panel;
+          const readabilityOn = readabilityToggle?.getAttribute('aria-pressed') === 'true';
+          if (readabilityDetails && readabilityOn) {
+            // Roots that readability will be based on.
+            const roots = Root.areaToCheck.map((el) => {
+              if (el.id) return `#${el.id}`;
+              if (el.className) return `.${el.className.split(/\s+/).filter(Boolean).join('.')}`;
+              return el.tagName.toLowerCase();
+            }).join(', ');
+
+            // Append note to Readability panel.
+            const note = document.createElement('div');
+            note.id = 'readability-alert';
+            note.innerHTML = `<hr aria-hidden="true"><p>${Lang.sprintf('MISSING_READABILITY_ROOT', roots, desiredReadabilityRoot)}</p>`;
+            readabilityDetails.insertAdjacentElement('afterend', note);
+          }
+        }
+      }
+    }
   }
 
   /* *************** */

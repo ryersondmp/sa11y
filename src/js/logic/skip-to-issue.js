@@ -1,4 +1,5 @@
 import * as Utils from '../utils/utils';
+import { createAlert, removeAlert } from '../interface/alert';
 import find from '../utils/find';
 import Lang from '../utils/lang';
 import Constants from '../utils/constants';
@@ -44,7 +45,7 @@ const getScrollPosition = ($el, results) => {
     // Alert if tooltip is hidden.
     getHiddenParent($el);
     const tooltip = $el.getAttribute('data-tippy-content');
-    Utils.createAlert(`${Lang._('NOT_VISIBLE')}`, tooltip, elementPreview);
+    createAlert(`${Lang._('NOT_VISIBLE')}`, tooltip, elementPreview);
 
     closeAnyActiveTooltips();
 
@@ -58,7 +59,7 @@ const getScrollPosition = ($el, results) => {
       return Utils.offsetTop(parentNode).top - 150;
     }
   } else {
-    Utils.removeAlert();
+    removeAlert();
     Constants.Panel.skipButton.focus();
   }
   return Utils.offsetTop($el).top - 150;

@@ -3,6 +3,7 @@
 */
 import Constants from '../utils/constants';
 import * as Utils from '../utils/utils';
+import { createAlert, removeAlert } from './alert';
 import { computeAriaLabel } from '../utils/computeAccessibleName';
 import Lang from '../utils/lang';
 import find from '../utils/find';
@@ -174,9 +175,9 @@ export default function generateImageOutline(dismissed, imageResults, option) {
           }
 
           // Alert if hidden or doesn't exist.
-          Utils.removeAlert();
+          removeAlert();
           if (!image || image.hasAttribute('data-sa11y-parent')) {
-            Utils.createAlert(Lang._('NOT_VISIBLE'));
+            createAlert(Lang._('NOT_VISIBLE'));
           }
         });
       });

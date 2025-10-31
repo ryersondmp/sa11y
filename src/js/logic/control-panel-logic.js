@@ -17,7 +17,7 @@ const openOutline = () => {
   isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
 
   // Toggle visibility of heading labels
-  const headingLabels = find('sa11y-heading-label', 'root');
+  const headingLabels = find('sa11y-heading-label', 'document');
   headingLabels.forEach(($el) => $el.hidden = false);
 
   const event = new CustomEvent('sa11y-build-heading-outline');
@@ -31,7 +31,7 @@ const closeOutline = () => {
   store.setItem('sa11y-outline', 'Closed');
 
   // Toggle visibility of heading labels
-  const headingLabels = find('sa11y-heading-label', 'root');
+  const headingLabels = find('sa11y-heading-label', 'document');
   headingLabels.forEach(($el) => $el.hidden = true);
 };
 

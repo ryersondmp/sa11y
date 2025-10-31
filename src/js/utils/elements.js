@@ -23,12 +23,12 @@ const Elements = (function myElements() {
     // We want headings from the entire document for the Page Outline.
     Found.Headings = find(
       'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]',
-      'document',
+      Constants.Global.ignoreContentOutsideRoots ? 'root' : 'document',
       Constants.Exclusions.Headings,
     );
     Found.HeadingOne = find(
       'h1, [role="heading"][aria-level="1"]',
-      'document',
+      Constants.Global.ignoreContentOutsideRoots ? 'root' : 'document',
       Constants.Exclusions.Headings,
     );
 
@@ -60,8 +60,9 @@ const Elements = (function myElements() {
       ? Found.Links.filter(($el) => badLinkSources.split(',').some((selector) => $el.matches(selector.trim()))) : [];
 
     // Readability.
-    const readabilityExclusions = ($el) => Constants.Root.Readability.contains($el)
+    const readabilityExclusions = ($el) => Constants.Root.Readability.some((rootEl) => rootEl.contains($el))
       && !Constants.Exclusions.Readability.some((selector) => $el.matches(selector));
+
     Found.Readability = [
       ...Found.Paragraphs.filter(readabilityExclusions),
       ...Found.Lists.filter(readabilityExclusions),

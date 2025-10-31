@@ -4,6 +4,7 @@
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 import Constants from '../utils/constants';
+import { createAlert, removeAlert } from './alert';
 import Elements from '../utils/elements';
 import find from '../utils/find';
 
@@ -135,9 +136,9 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
           }
 
           // Alert if hidden or doesn't exist.
-          Utils.removeAlert();
+          removeAlert();
           if (!heading || heading.hasAttribute('data-sa11y-parent')) {
-            Utils.createAlert(Lang._('NOT_VISIBLE'));
+            createAlert(Lang._('NOT_VISIBLE'));
           }
         });
       });

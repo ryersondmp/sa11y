@@ -1,5 +1,6 @@
 import Constants from '../utils/constants';
-import { store, createAlert } from '../utils/utils';
+import { store } from '../utils/utils';
+import { createAlert } from '../interface/alert';
 import find from '../utils/find';
 import Lang from '../utils/lang';
 
@@ -87,7 +88,7 @@ const dismissIssueButton = async (e, results, checkAll, resetAll) => {
       };
 
       // Get the position of the last annotation that was dismissed.
-      const item = find(`[data-sa11y-annotation='${issue.id}']`);
+      const item = find(`[data-sa11y-annotation='${issue.id}']`, 'root');
       const latestDismissed = item[0]
         ? item[0].getAttribute('data-sa11y-position') : 0;
       store.setItem('sa11y-latest-dismissed', latestDismissed);

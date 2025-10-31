@@ -13,6 +13,7 @@ const defaultOptions = {
   linkIgnore: '',
   linkIgnoreSpan: '',
   linkIgnoreStrings: '',
+  ignoreContentOutsideRoots: false,
 
   // Control panel settings
   aboutContent: '',

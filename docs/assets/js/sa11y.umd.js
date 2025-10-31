@@ -1,7 +1,7 @@
 
 /*!
   * Sa11y, the accessibility quality assurance assistant.
-  * @version 4.3.5
+  * @version 4.4.0
   * @author Adam Chaboryk
   * @license GPL-2.0-or-later
   * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -31,6 +31,7 @@
     linkIgnore: '',
     linkIgnoreSpan: '',
     linkIgnoreStrings: '',
+    ignoreContentOutsideRoots: false,
 
     // Control panel settings
     aboutContent: '',
@@ -294,40 +295,80 @@
     },
   };
 
-  const Constants = (function myConstants() {
-    /* **************** */
-    /* Initialize Roots */
-    /* **************** */
-    const Root = {};
-    function initializeRoot(desiredRoot, desiredReadabilityRoot) {
-      Root.areaToCheck = document.querySelector(desiredRoot);
-      if (!Root.areaToCheck) {
-        Root.areaToCheck = document.querySelector('body');
-      }
+  /**
+   * Removes the alert from the Sa11y control panel by clearing its content and removing CSS classes.
+   * This function clears the content of the alert element and removes CSS classes 'active' from the main alert element, and 'panel-alert-preview' from the alert preview element.
+   * @returns {void}
+   */
+  function removeAlert() {
+    const Sa11yPanel = document.querySelector('sa11y-control-panel').shadowRoot;
+    const alert = Sa11yPanel.getElementById('panel-alert');
+    const alertText = Sa11yPanel.getElementById('panel-alert-text');
+    const alertPreview = Sa11yPanel.getElementById('panel-alert-preview');
 
-      // Readability target area to check.
-      Root.Readability = document.querySelector(desiredReadabilityRoot);
-      if (!Root.Readability) {
-        if (!Root.areaToCheck) {
-          Root.Readability = document.querySelector('body');
-        } else {
-          // If desired root area is not found, use the root target area.
-          Root.Readability = Root.areaToCheck;
+    alert.classList.remove('active');
+    alertPreview.classList.remove('panel-alert-preview');
+    while (alertText.firstChild) alertText.removeChild(alertText.firstChild);
+    while (alertPreview.firstChild) alertPreview.removeChild(alertPreview.firstChild);
+  }
 
-          // Create a warning if the desired readability root is not found.
-          const { readabilityDetails, readabilityToggle } = Constants.Panel;
-          const readabilityOn = readabilityToggle?.getAttribute('aria-pressed') === 'true';
-          if (readabilityDetails && readabilityOn) {
-            const note = document.createElement('div');
-            note.id = 'readability-alert';
-            note.innerHTML = `<hr aria-hidden="true"><p>${Lang.sprintf('MISSING_READABILITY_ROOT',
-            Root.areaToCheck.tagName.toLowerCase(), desiredReadabilityRoot)}</p>`;
-            readabilityDetails.insertAdjacentElement('afterend', note);
-          }
-        }
-      }
+  /**
+   * Creates an alert in the Sa11y control panel with the given alert message and error preview.
+   * @param {string} alertMessage The alert message.
+   * @param {string} errorPreview The issue's tooltip message (optional).
+   * @param {string} extendedPreview The issue's HTML or escaped HTML to be previewed (optional).
+   * @returns {void}
+   */
+  function createAlert(alertMessage, errorPreview, extendedPreview) {
+    // Clear alert first before creating new one.
+    removeAlert();
+
+    // Constants
+    const Sa11yPanel = document.querySelector('sa11y-control-panel').shadowRoot;
+    const alert = Sa11yPanel.getElementById('panel-alert');
+    const alertText = Sa11yPanel.getElementById('panel-alert-text');
+    const alertPreview = Sa11yPanel.getElementById('panel-alert-preview');
+    const alertClose = Sa11yPanel.getElementById('close-alert');
+    const skipButton = Sa11yPanel.getElementById('skip-button');
+
+    alert.classList.add('active');
+    alertText.innerHTML = alertMessage;
+
+    // If the issue's element is being previewed.
+    const elementPreview = (extendedPreview)
+      ? `<div class="element-preview">${extendedPreview}</div>` : '';
+
+    // Alert message or tooltip's message.
+    if (errorPreview) {
+      alertPreview.classList.add('panel-alert-preview');
+      alertPreview.innerHTML = `${elementPreview}<div class="preview-message">${errorPreview}</div>`;
     }
 
+    // A little time before setting focus on the close button.
+    setTimeout(() => alertClose.focus(), 300);
+
+    // Closing alert sets focus back to Skip to Issue toggle.
+    function closeAlert() {
+      removeAlert();
+      const focusTarget = skipButton.hasAttribute('disabled')
+        ? Sa11yPanel.getElementById('toggle')
+        : skipButton;
+      focusTarget.focus();
+    }
+    alertClose.addEventListener('click', closeAlert);
+
+    // Escape key to close alert.
+    alert.onkeydown = (e) => {
+      const evt = e || window.event;
+      if (evt.key === 'Escape' && alert.classList.contains('active')) {
+        closeAlert();
+      }
+    };
+  }
+
+  /* eslint-disable no-console */
+
+  const Constants = (function myConstants() {
     /* **************** */
     /* Global constants */
     /* **************** */
@@ -355,6 +396,7 @@
       Global.relativePathImageID = option.relativePathImageID;
       Global.ignoreEditImageURL = option.ignoreEditImageURL;
       Global.ignoreEditImageClass = option.ignoreEditImageClass;
+      Global.ignoreContentOutsideRoots = option.ignoreContentOutsideRoots;
       Global.showMovePanelToggle = option.showMovePanelToggle;
 
       // A11y: Determine scroll behaviour
@@ -412,6 +454,82 @@
 
       // Embedded content all
       Global.AllEmbeddedContent = `${Global.VideoSources}, ${Global.AudioSources}, ${Global.VisualizationSources}`;
+    }
+
+    /* **************** */
+    /* Initialize Roots */
+    /* **************** */
+    const Root = {};
+    function initializeRoot(desiredRoot, desiredReadabilityRoot) {
+      Root.areaToCheck = [];
+      Root.Readability = [];
+
+      /* Main target area */
+      if (Array.isArray(desiredRoot)) {
+        // If array of elements are passed, pass as is.
+        Root.areaToCheck = desiredRoot;
+      } else {
+        // Iterate through each selector passed, and push valid ones to final root array.
+        try {
+          const selectorList = desiredRoot.split(',').map((selector) => selector.trim());
+          selectorList.forEach((selector) => {
+            const root = document.querySelector(selector);
+            if (root) Root.areaToCheck.push(root);
+            else console.error(`Sa11y: The target root (${selector}) does not exist.`);
+          });
+        } catch {
+          Root.areaToCheck.length = 0;
+        }
+
+        // Push a visible UI alert if not headless and no roots at all are found.
+        if (Root.areaToCheck.length === 0 && Global.headless === false) {
+          createAlert(Lang.sprintf('MISSING_ROOT', desiredRoot));
+          Root.areaToCheck.push(document.body);
+        }
+      }
+
+      /* Readability target area */
+      if (Array.isArray(desiredReadabilityRoot)) {
+        Root.Readability = desiredReadabilityRoot;
+      } else {
+        try {
+          const selectorList = desiredReadabilityRoot.split(',').map((selector) => selector.trim());
+          selectorList.forEach((selector) => {
+            const root = document.querySelector(selector);
+            if (root) Root.Readability.push(root);
+            else console.error(`Sa11y: The target readability root (${selector}) does not exist.`);
+          });
+        } catch {
+          Root.Readability.length = 0;
+        }
+
+        if (Root.Readability.length === 0 && Global.headless === false) {
+          if (Root.areaToCheck.length === 0) {
+            Root.Readability.push(document.body);
+          } else {
+            // If desired root area is not found, use the root target area.
+            Root.Readability = Root.areaToCheck;
+
+            // Create a warning if the desired readability root is not found.
+            const { readabilityDetails, readabilityToggle } = Constants.Panel;
+            const readabilityOn = readabilityToggle?.getAttribute('aria-pressed') === 'true';
+            if (readabilityDetails && readabilityOn) {
+              // Roots that readability will be based on.
+              const roots = Root.areaToCheck.map((el) => {
+                if (el.id) return `#${el.id}`;
+                if (el.className) return `.${el.className.split(/\s+/).filter(Boolean).join('.')}`;
+                return el.tagName.toLowerCase();
+              }).join(', ');
+
+              // Append note to Readability panel.
+              const note = document.createElement('div');
+              note.id = 'readability-alert';
+              note.innerHTML = `<hr aria-hidden="true"><p>${Lang.sprintf('MISSING_READABILITY_ROOT', roots, desiredReadabilityRoot)}</p>`;
+              readabilityDetails.insertAdjacentElement('afterend', note);
+            }
+          }
+        }
+      }
     }
 
     /* *************** */
@@ -620,30 +738,25 @@
   /**
    * Finds elements in the DOM that match the given selector, within the specified root element, and excluding any specified elements.
    * @param {string} selector - The CSS selector to match elements against.
-   * @param {string} desiredRoot - The root element to start the search from. Can be one of 'document', 'readability', 'root', or a custom selector for the desired root element.
+   * @param {string} desiredRoot - The root element to start the search from. Can be one of 'document', 'root', or a custom selector for the desired root element.
    * @param {string} exclude - Elements to exclude from the search, specified as a CSS selector (optional).
    * @returns {Array} - An array of elements that match the given selector.
+   * @credits Logic yoinked from Editoria11y.
    */
   function find(selector, desiredRoot, exclude) {
-    let root;
-    if (desiredRoot === 'document') {
-      root = document;
-    } else if (desiredRoot === 'readability') {
-      root = Constants.Readability.Root;
-      if (!root) root = Constants.Root.areaToCheck;
+    const root = [];
+    if (desiredRoot === 'all') {
+      root.push(document.body);
+      if (Array.isArray(Constants.Root.areaToCheck)) {
+        root.push(...Constants.Root.areaToCheck);
+      }
+    } else if (desiredRoot === 'document') {
+      root.push(document.body);
     } else if (desiredRoot === 'root') {
-      root = Constants.Root.areaToCheck;
-      if (!root) root = document.body;
-    } else if (desiredRoot === 'panel') {
-      root = Constants.Panel.panel;
-      if (!root) root = document.body;
+      root.push(Constants.Root.areaToCheck);
     } else {
-      root = document.querySelector(desiredRoot);
-      if (!root) root = document.body;
+      root.push(document.querySelectorAll(desiredRoot));
     }
-
-    const shadowComponents = document.querySelectorAll('[data-sa11y-has-shadow-root]');
-    const shadow = shadowComponents ? ', [data-sa11y-has-shadow-root]' : '';
 
     // Exclusions are returned as an array & need to become a string for selector.
     const exclusions = Constants.Exclusions.Container.join(', ');
@@ -652,28 +765,35 @@
     // Ensure no trailing commas.
     const additional = additionalExclusions ? `, ${additionalExclusions}` : '';
 
-    /* Logic yoinked from Editoria11y */
-    // 1. Elements array includes web components in the selector to be used as a placeholder.
-    const elements = Array.from(root.querySelectorAll(`:is(${selector}${shadow}):not(${exclusions}${additional})`));
-    if (shadowComponents.length) {
-      // 2. Dive into the each shadow root and collect an array of its results.
-      const shadowFind = [];
-      elements.forEach((el, i) => {
-        if (el && el.matches && el.matches('[data-sa11y-has-shadow-root]') && el.shadowRoot) {
-          shadowFind[i] = el.shadowRoot.querySelectorAll(`:is(${selector}):not(${exclusions}${additional})`);
-        }
-      });
-      // 3. Replace the placeholder with any hits found in the shadow root.
-      if (shadowFind.length > 0) {
-        for (let index = shadowFind.length - 1; index >= 0; index--) {
-          if (shadowFind[index]) {
-            elements.splice(index, 1, ...shadowFind[index]);
+    let list = [];
+    root.flat().filter(Boolean)?.forEach((r) => {
+      const shadowComponents = r?.querySelectorAll('[data-sa11y-has-shadow-root]');
+      const shadow = shadowComponents ? ', [data-sa11y-has-shadow-root]' : '';
+
+      // 1. Elements array includes web components in the selector to be used as a placeholder.
+      const elements = Array.from(r.querySelectorAll(`:is(${selector}${shadow}):not(${exclusions}${additional})`));
+      if (shadowComponents.length) {
+        // 2. Dive into each shadow root and collect an array of its results.
+        const shadowFind = [];
+        elements.forEach((el, i) => {
+          if (el && el.matches && el.matches('[data-sa11y-has-shadow-root]') && el.shadowRoot) {
+            shadowFind[i] = el.shadowRoot.querySelectorAll(`:is(${selector}):not(${exclusions}${additional})`);
+          }
+        });
+        // 3. Replace the placeholder with any hits found in the shadow root.
+        if (shadowFind.length > 0) {
+          for (let index = shadowFind.length - 1; index >= 0; index--) {
+            if (shadowFind[index]) {
+              elements.splice(index, 1, ...shadowFind[index]);
+            }
           }
         }
       }
-    }
+      list = list.concat(elements.filter((node) => node.parentNode.tagName !== 'SLOT'));
+    });
+
     // 4. Return the cleaned up array, filtering out <slot> placeholders.
-    return elements.filter((node) => node.parentNode.tagName !== 'SLOT');
+    return list;
   }
 
   /* eslint-disable no-continue */
@@ -1282,77 +1402,6 @@
   }
 
   /**
-   * Removes the alert from the Sa11y control panel by clearing its content and removing CSS classes.
-   * This function clears the content of the alert element and removes CSS classes 'active' from the main alert element, and 'panel-alert-preview' from the alert preview element.
-   * @returns {void}
-   */
-  function removeAlert() {
-    const Sa11yPanel = document.querySelector('sa11y-control-panel').shadowRoot;
-    const alert = Sa11yPanel.getElementById('panel-alert');
-    const alertText = Sa11yPanel.getElementById('panel-alert-text');
-    const alertPreview = Sa11yPanel.getElementById('panel-alert-preview');
-
-    alert.classList.remove('active');
-    alertPreview.classList.remove('panel-alert-preview');
-    while (alertText.firstChild) alertText.removeChild(alertText.firstChild);
-    while (alertPreview.firstChild) alertPreview.removeChild(alertPreview.firstChild);
-  }
-
-  /**
-   * Creates an alert in the Sa11y control panel with the given alert message and error preview.
-   * @param {string} alertMessage The alert message.
-   * @param {string} errorPreview The issue's tooltip message (optional).
-   * @param {string} extendedPreview The issue's HTML or escaped HTML to be previewed (optional).
-   * @returns {void}
-   */
-  function createAlert(alertMessage, errorPreview, extendedPreview) {
-    // Clear alert first before creating new one.
-    removeAlert();
-
-    // Constants
-    const Sa11yPanel = document.querySelector('sa11y-control-panel').shadowRoot;
-    const alert = Sa11yPanel.getElementById('panel-alert');
-    const alertText = Sa11yPanel.getElementById('panel-alert-text');
-    const alertPreview = Sa11yPanel.getElementById('panel-alert-preview');
-    const alertClose = Sa11yPanel.getElementById('close-alert');
-    const skipButton = Sa11yPanel.getElementById('skip-button');
-
-    alert.classList.add('active');
-    alertText.innerHTML = alertMessage;
-
-    // If the issue's element is being previewed.
-    const elementPreview = (extendedPreview)
-      ? `<div class="element-preview">${extendedPreview}</div>` : '';
-
-    // Alert message or tooltip's message.
-    if (errorPreview) {
-      alertPreview.classList.add('panel-alert-preview');
-      alertPreview.innerHTML = `${elementPreview}<div class="preview-message">${errorPreview}</div>`;
-    }
-
-    // A little time before setting focus on the close button.
-    setTimeout(() => alertClose.focus(), 300);
-
-    // Closing alert sets focus back to Skip to Issue toggle.
-    function closeAlert() {
-      removeAlert();
-      const focusTarget = skipButton.hasAttribute('disabled')
-        ? Sa11yPanel.getElementById('toggle')
-        : skipButton;
-      focusTarget.focus();
-    }
-    alertClose.addEventListener('click', closeAlert);
-
-    // Escape key to close alert.
-    alert.onkeydown = (e) => {
-      const evt = e || window.event;
-      if (evt.key === 'Escape' && alert.classList.contains('active')) {
-        closeAlert();
-      }
-    };
-  }
-
-  /**
    * Finds all data-attributes specified in array, and removes them from the document.
    * @param {Array<string>} attributes The array of data-attributes to be reset.
    * @param {string} root The root element to search for elements (optional, defaults to 'document').
@@ -1381,7 +1430,7 @@
       `${root}`,
     );
     allElements.forEach(($el) => {
-      $el.parentNode.removeChild($el);
+      $el?.parentNode?.removeChild($el);
     });
   }
 
@@ -1679,12 +1728,12 @@
       // We want headings from the entire document for the Page Outline.
       Found.Headings = find(
         'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]',
-        'document',
+        Constants.Global.ignoreContentOutsideRoots ? 'root' : 'document',
         Constants.Exclusions.Headings,
       );
       Found.HeadingOne = find(
         'h1, [role="heading"][aria-level="1"]',
-        'document',
+        Constants.Global.ignoreContentOutsideRoots ? 'root' : 'document',
         Constants.Exclusions.Headings,
       );
 
@@ -1716,8 +1765,9 @@
         ? Found.Links.filter(($el) => badLinkSources.split(',').some((selector) => $el.matches(selector.trim()))) : [];
 
       // Readability.
-      const readabilityExclusions = ($el) => Constants.Root.Readability.contains($el)
+      const readabilityExclusions = ($el) => Constants.Root.Readability.some((rootEl) => rootEl.contains($el))
         && !Constants.Exclusions.Readability.some((selector) => $el.matches(selector));
+
       Found.Readability = [
         ...Found.Paragraphs.filter(readabilityExclusions),
         ...Found.Lists.filter(readabilityExclusions),
@@ -1921,7 +1971,7 @@
         };
 
         // Get the position of the last annotation that was dismissed.
-        const item = find(`[data-sa11y-annotation='${issue.id}']`);
+        const item = find(`[data-sa11y-annotation='${issue.id}']`, 'root');
         const latestDismissed = item[0]
           ? item[0].getAttribute('data-sa11y-position') : 0;
         store.setItem('sa11y-latest-dismissed', latestDismissed);
@@ -2286,7 +2336,7 @@
     }
   }
 
-  const version = '4.3.5';
+  const version = '4.4.0';
 
   var styles = ":host{background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);bottom:0;display:block;height:-moz-fit-content;height:fit-content;left:0;position:fixed;right:0;width:100%;z-index:999999}*{-webkit-font-smoothing:auto!important;color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;font-size:var(--sa11y-normal-text);line-height:22px!important}#dialog{margin:20px auto;max-width:900px;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none}p{margin-top:0}.error{background:var(--sa11y-error);border:2px dashed #f08080;color:var(--sa11y-error-text);margin-bottom:0;padding:5px}";
 
@@ -2856,7 +2906,7 @@ ${this.error.stack}
     isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
 
     // Toggle visibility of heading labels
-    const headingLabels = find('sa11y-heading-label', 'root');
+    const headingLabels = find('sa11y-heading-label', 'document');
     headingLabels.forEach(($el) => $el.hidden = false);
 
     const event = new CustomEvent('sa11y-build-heading-outline');
@@ -2870,7 +2920,7 @@ ${this.error.stack}
     store.setItem('sa11y-outline', 'Closed');
 
     // Toggle visibility of heading labels
-    const headingLabels = find('sa11y-heading-label', 'root');
+    const headingLabels = find('sa11y-heading-label', 'document');
     headingLabels.forEach(($el) => $el.hidden = true);
   };
 
@@ -8700,6 +8750,7 @@ ${this.error.stack}
             });
           }
         } else if (maybeBadAlt && (isTooLongSingleWord.test(alt) && containsNonAlphaChar)) {
+          // Alt text is a single word greater than 15 characters that is potentially auto-generated.
           const conditional = (link) ? 'LINK_ALT_MAYBE_BAD' : 'ALT_MAYBE_BAD';
           results.push({
             element: $el,
@@ -8826,8 +8877,8 @@ ${this.error.stack}
       const headingText = sanitizeHTML(removeWhitespace$1);
 
       // Check if heading is within root target area.
-      const rootContainsHeading = Constants.Root.areaToCheck.contains($el);
-      const rootContainsShadowHeading = Constants.Root.areaToCheck.contains($el.getRootNode().host);
+      const rootContainsHeading = Constants.Root.areaToCheck.some((root) => root.contains($el));
+      const rootContainsShadowHeading = Constants.Root.areaToCheck.some((root) => root.contains($el.getRootNode().host));
       const isWithinRoot = rootContainsHeading || rootContainsShadowHeading;
 
       // Determine heading level.
@@ -11202,86 +11253,82 @@ ${this.error.stack}
         desiredRoot = option.checkRoot,
         desiredReadabilityRoot = option.readabilityRoot,
       ) => {
-        try {
-          this.results = [];
-          this.headingOutline = [];
-          this.errorCount = 0;
-          this.warningCount = 0;
-          this.customChecksRunning = false;
+        // try {
+        this.results = [];
+        this.headingOutline = [];
+        this.errorCount = 0;
+        this.warningCount = 0;
+        this.customChecksRunning = false;
 
-          // Initialize root areas to check.
-          const root = document.querySelector(desiredRoot);
-          if (!root && option.headless === false) {
-            createAlert(`${Lang.sprintf('MISSING_ROOT', desiredRoot)}`);
-          }
-          Constants.initializeRoot(desiredRoot, desiredReadabilityRoot);
+        // Initialize root areas to check.
+        Constants.initializeRoot(desiredRoot, desiredReadabilityRoot);
 
-          // Find all web components on the page.
-          findShadowComponents(option);
+        // Find all web components on the page.
+        findShadowComponents(option);
 
-          // Find and cache elements.
-          Elements.initializeElements(option);
+        // Find and cache elements.
+        Elements.initializeElements(option);
 
-          // Ruleset checks
-          checkHeaders(this.results, option, this.headingOutline);
-          checkLinkText(this.results, option);
-          checkImages(this.results, option);
-          checkLabels(this.results, option);
-          checkQA(this.results, option);
-          checkDeveloper(this.results, option);
-          if (option.embeddedContentPlugin) checkEmbeddedContent(this.results, option);
-          if (option.contrastPlugin) checkContrast(this.results, option);
-          if (option.readabilityPlugin) checkReadability();
+        // Ruleset checks
+        checkHeaders(this.results, option, this.headingOutline);
+        checkLinkText(this.results, option);
+        checkImages(this.results, option);
+        checkLabels(this.results, option);
+        checkQA(this.results, option);
+        checkDeveloper(this.results, option);
+        if (option.embeddedContentPlugin) checkEmbeddedContent(this.results, option);
+        if (option.contrastPlugin) checkContrast(this.results, option);
+        if (option.readabilityPlugin) checkReadability();
 
-          // Build array of images to be used for image panel.
-          this.imageResults = Elements.Found.Images.map((image) => {
-            const match = this.results.find((i) => i.element === image);
-            return match && {
-              element: image,
-              type: match.type,
-              dismiss: match.dismiss,
-              developer: match.developer,
-            };
-          }).filter(Boolean);
+        // Build array of images to be used for image panel.
+        this.imageResults = Elements.Found.Images.map((image) => {
+          const match = this.results.find((i) => i.element === image);
+          return match && {
+            element: image,
+            type: match.type,
+            dismiss: match.dismiss,
+            developer: match.developer,
+          };
+        }).filter(Boolean);
 
-          /* Custom checks */
-          if (option.customChecks === true) {
-            // Option 1: Provide via sa11y-custom-checks.js
-            checkCustom(this.results);
-          } else if (typeof option.customChecks === 'object') {
-            // Option 2: Provide as an object when instantiated.
-            this.results.push(...option.customChecks);
-          } else if (option.customChecks === 'listen') {
-            // Option 3: Provide via event listener. Yoinked from Editoria11y!
-            this.customChecksRunning = true;
-            this.customChecksFinished = 0;
-            document.addEventListener('sa11y-resume', () => {
-              this.customChecksFinished += 1;
-              if (this.customChecksFinished === 1) {
-                this.customChecksRunning = false;
-                this.updateResults();
-              }
-            });
-            window.setTimeout(() => {
-              if (this.customChecksRunning === true) {
-                this.customChecksRunning = false;
-                this.updateResults();
-                throw Error('Sa11y: No custom checks were returned.');
-              }
-            }, option.delayCustomCheck);
-            window.setTimeout(() => {
-              const customChecks = new CustomEvent('sa11y-custom-checks');
-              document.dispatchEvent(customChecks);
-            }, 0);
-          }
+        /* Custom checks */
+        if (option.customChecks === true) {
+          // Option 1: Provide via sa11y-custom-checks.js
+          checkCustom(this.results);
+        } else if (typeof option.customChecks === 'object') {
+          // Option 2: Provide as an object when instantiated.
+          this.results.push(...option.customChecks);
+        } else if (option.customChecks === 'listen') {
+          // Option 3: Provide via event listener. Yoinked from Editoria11y!
+          this.customChecksRunning = true;
+          this.customChecksFinished = 0;
+          document.addEventListener('sa11y-resume', () => {
+            this.customChecksFinished += 1;
+            if (this.customChecksFinished === 1) {
+              this.customChecksRunning = false;
+              this.updateResults();
+            }
+          });
+          window.setTimeout(() => {
+            if (this.customChecksRunning === true) {
+              this.customChecksRunning = false;
+              this.updateResults();
+              throw Error('Sa11y: No custom checks were returned.');
+            }
+          }, option.delayCustomCheck);
+          window.setTimeout(() => {
+            const customChecks = new CustomEvent('sa11y-custom-checks');
+            document.dispatchEvent(customChecks);
+          }, 0);
+        }
 
-          // No custom checks running.
-          if (!this.customChecksRunning) this.updateResults();
-        } catch (error) {
+        // No custom checks running.
+        if (!this.customChecksRunning) this.updateResults();
+        /* } catch (error) {
           const consoleErrors = new ConsoleErrors(error);
           document.body.appendChild(consoleErrors);
           throw Error(error);
-        }
+        } */
       };
 
       this.updateResults = () => {
@@ -11417,11 +11464,11 @@ ${this.error.stack}
           'sa11y-heading-anchor',
           'sa11y-image-anchor',
           'sa11y-tooltips',
-        ], 'document');
+        ], 'all');
 
         // Remove Sa11y anchor positioning markup (while preserving any existing anchors).
         if (supportsAnchorPositioning()) {
-          find('[data-sa11y-error], [data-sa11y-warning], [data-sa11y-good]', 'document').forEach(($el) => {
+          find('[data-sa11y-error], [data-sa11y-warning], [data-sa11y-good]', 'all').forEach(($el) => {
             const anchor = $el;
             const anchors = (anchor.style.anchorName || '')
               .split(',').map((s) => s.trim()).filter((s) => s && !s.startsWith('--sa11y-anchor'));
@@ -11445,7 +11492,7 @@ ${this.error.stack}
           'data-sa11y-pulse-border',
           'data-sa11y-filter',
           'data-sa11y-has-shadow-root',
-        ], 'document');
+        ], 'all');
 
         // Remove from panel.
         Constants.Panel.outlineList.innerHTML = '';
