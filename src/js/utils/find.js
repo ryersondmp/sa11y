@@ -10,13 +10,9 @@ import Constants from './constants';
  */
 export default function find(selector, desiredRoot, exclude) {
   const root = [];
-  if (desiredRoot === 'all') {
+  if (desiredRoot === 'document') {
     root.push(document.body);
-    if (Array.isArray(Constants.Root.areaToCheck)) {
-      root.push(...Constants.Root.areaToCheck);
-    }
-  } else if (desiredRoot === 'document') {
-    root.push(document.body);
+    if (Constants.Global.fixedRoots) root.push(Constants.Global.fixedRoots);
   } else if (desiredRoot === 'root') {
     root.push(Constants.Root.areaToCheck);
   } else {

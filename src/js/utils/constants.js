@@ -17,6 +17,7 @@ const Constants = (function myConstants() {
     Global.contrastSuggestions = option.contrastSuggestions;
     Global.contrastAAA = option.contrastAAA;
     Global.shadowDetection = option.shadowComponents.length > 0 || option.autoDetectShadowComponents === true;
+    Global.fixedRoots = option.fixedRoots;
 
     // Toggleable plugins
     Global.developerPlugin = option.developerPlugin;
@@ -94,60 +95,61 @@ const Constants = (function myConstants() {
   /* Initialize Roots */
   /* **************** */
   const Root = {};
-  function initializeRoot(desiredRoot, desiredReadabilityRoot) {
+  function initializeRoot(desiredRoot, desiredReadabilityRoot, fixedRoots) {
     Root.areaToCheck = [];
     Root.Readability = [];
 
-    /* Main target area */
-    if (Array.isArray(desiredRoot)) {
-      // If array of elements are passed, pass as is.
-      Root.areaToCheck = desiredRoot;
-    } else {
-      // Iterate through each selector passed, and push valid ones to final root array.
-      try {
-        const selectorList = desiredRoot.split(',').map((selector) => selector.trim());
-        selectorList.forEach((selector) => {
-          const root = document.querySelector(selector);
-          if (root) Root.areaToCheck.push(root);
-          else console.error(`Sa11y: The target root (${selector}) does not exist.`);
-        });
-      } catch {
-        Root.areaToCheck.length = 0;
-      }
+    // If fixed roots provided.
+    if (fixedRoots) {
+      Root.areaToCheck = fixedRoots;
+      Root.Readability = fixedRoots;
+      return;
+    }
 
-      // Push a visible UI alert if not headless and no roots at all are found.
-      if (Root.areaToCheck.length === 0 && Global.headless === false) {
-        createAlert(Lang.sprintf('MISSING_ROOT', desiredRoot));
-        Root.areaToCheck.push(document.body);
-      }
+    /* Main target area */
+    try {
+      // Iterate through each selector passed, and push valid ones to final root array.
+      const selectorList = desiredRoot.split(',').map((selector) => selector.trim());
+      selectorList.forEach((selector) => {
+        const root = document.querySelector(selector);
+        if (root) Root.areaToCheck.push(root);
+        else console.error(`Sa11y: The target root (${selector}) does not exist.`);
+      });
+    } catch {
+      Root.areaToCheck.length = 0;
+    }
+
+    // Push a visible UI alert if not headless and no roots at all are found.
+    if (Root.areaToCheck.length === 0 && Global.headless === false) {
+      createAlert(Lang.sprintf('MISSING_ROOT', desiredRoot));
+      Root.areaToCheck.push(document.body);
     }
 
     /* Readability target area */
-    if (Array.isArray(desiredReadabilityRoot)) {
-      Root.Readability = desiredReadabilityRoot;
-    } else {
-      try {
-        const selectorList = desiredReadabilityRoot.split(',').map((selector) => selector.trim());
-        selectorList.forEach((selector) => {
-          const root = document.querySelector(selector);
-          if (root) Root.Readability.push(root);
-          else console.error(`Sa11y: The target readability root (${selector}) does not exist.`);
-        });
-      } catch {
-        Root.Readability.length = 0;
-      }
+    try {
+      const selectorList = desiredReadabilityRoot.split(',').map((selector) => selector.trim());
+      selectorList.forEach((selector) => {
+        const root = document.querySelector(selector);
+        if (root) Root.Readability.push(root);
+        else console.error(`Sa11y: The target readability root (${selector}) does not exist.`);
+      });
+    } catch {
+      Root.Readability.length = 0;
+    }
 
-      if (Root.Readability.length === 0 && Global.headless === false) {
-        if (Root.areaToCheck.length === 0) {
-          Root.Readability.push(document.body);
-        } else {
-          // If desired root area is not found, use the root target area.
-          Root.Readability = Root.areaToCheck;
+    if (Root.Readability.length === 0 && Global.headless === false) {
+      if (Root.areaToCheck.length === 0) {
+        Root.Readability.push(document.body);
+      } else {
+        // If desired root area is not found, use the root target area.
+        Root.Readability = Root.areaToCheck;
 
-          // Create a warning if the desired readability root is not found.
+        // Create a warning if the desired readability root is not found.
+        setTimeout(() => {
           const { readabilityDetails, readabilityToggle } = Constants.Panel;
           const readabilityOn = readabilityToggle?.getAttribute('aria-pressed') === 'true';
-          if (readabilityDetails && readabilityOn) {
+          const alert = Constants.Panel.readability.querySelector('#readability-alert');
+          if (readabilityDetails && readabilityOn && !alert) {
             // Roots that readability will be based on.
             const roots = Root.areaToCheck.map((el) => {
               if (el.id) return `#${el.id}`;
@@ -158,10 +160,10 @@ const Constants = (function myConstants() {
             // Append note to Readability panel.
             const note = document.createElement('div');
             note.id = 'readability-alert';
-            note.innerHTML = `<hr aria-hidden="true"><p>${Lang.sprintf('MISSING_READABILITY_ROOT', roots, desiredReadabilityRoot)}</p>`;
+            note.innerHTML = `<hr><p>${Lang.sprintf('MISSING_READABILITY_ROOT', roots, desiredReadabilityRoot)}</p>`;
             readabilityDetails.insertAdjacentElement('afterend', note);
           }
-        }
+        }, 100);
       }
     }
   }

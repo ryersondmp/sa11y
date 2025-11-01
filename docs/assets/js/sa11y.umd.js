@@ -19,6 +19,7 @@
   const defaultOptions = {
     // Target area to check
     checkRoot: 'body',
+    fixedRoots: false,
 
     // Exclusions
     containerIgnore: '.sa11y-ignore',
@@ -383,6 +384,7 @@
       Global.contrastSuggestions = option.contrastSuggestions;
       Global.contrastAAA = option.contrastAAA;
       Global.shadowDetection = option.shadowComponents.length > 0 || option.autoDetectShadowComponents === true;
+      Global.fixedRoots = option.fixedRoots;
 
       // Toggleable plugins
       Global.developerPlugin = option.developerPlugin;
@@ -460,60 +462,61 @@
     /* Initialize Roots */
     /* **************** */
     const Root = {};
-    function initializeRoot(desiredRoot, desiredReadabilityRoot) {
+    function initializeRoot(desiredRoot, desiredReadabilityRoot, fixedRoots) {
       Root.areaToCheck = [];
       Root.Readability = [];
 
-      /* Main target area */
-      if (Array.isArray(desiredRoot)) {
-        // If array of elements are passed, pass as is.
-        Root.areaToCheck = desiredRoot;
-      } else {
-        // Iterate through each selector passed, and push valid ones to final root array.
-        try {
-          const selectorList = desiredRoot.split(',').map((selector) => selector.trim());
-          selectorList.forEach((selector) => {
-            const root = document.querySelector(selector);
-            if (root) Root.areaToCheck.push(root);
-            else console.error(`Sa11y: The target root (${selector}) does not exist.`);
-          });
-        } catch {
-          Root.areaToCheck.length = 0;
-        }
+      // If fixed roots provided.
+      if (fixedRoots) {
+        Root.areaToCheck = fixedRoots;
+        Root.Readability = fixedRoots;
+        return;
+      }
 
-        // Push a visible UI alert if not headless and no roots at all are found.
-        if (Root.areaToCheck.length === 0 && Global.headless === false) {
-          createAlert(Lang.sprintf('MISSING_ROOT', desiredRoot));
-          Root.areaToCheck.push(document.body);
-        }
+      /* Main target area */
+      try {
+        // Iterate through each selector passed, and push valid ones to final root array.
+        const selectorList = desiredRoot.split(',').map((selector) => selector.trim());
+        selectorList.forEach((selector) => {
+          const root = document.querySelector(selector);
+          if (root) Root.areaToCheck.push(root);
+          else console.error(`Sa11y: The target root (${selector}) does not exist.`);
+        });
+      } catch {
+        Root.areaToCheck.length = 0;
+      }
+
+      // Push a visible UI alert if not headless and no roots at all are found.
+      if (Root.areaToCheck.length === 0 && Global.headless === false) {
+        createAlert(Lang.sprintf('MISSING_ROOT', desiredRoot));
+        Root.areaToCheck.push(document.body);
       }
 
       /* Readability target area */
-      if (Array.isArray(desiredReadabilityRoot)) {
-        Root.Readability = desiredReadabilityRoot;
-      } else {
-        try {
-          const selectorList = desiredReadabilityRoot.split(',').map((selector) => selector.trim());
-          selectorList.forEach((selector) => {
-            const root = document.querySelector(selector);
-            if (root) Root.Readability.push(root);
-            else console.error(`Sa11y: The target readability root (${selector}) does not exist.`);
-          });
-        } catch {
-          Root.Readability.length = 0;
-        }
+      try {
+        const selectorList = desiredReadabilityRoot.split(',').map((selector) => selector.trim());
+        selectorList.forEach((selector) => {
+          const root = document.querySelector(selector);
+          if (root) Root.Readability.push(root);
+          else console.error(`Sa11y: The target readability root (${selector}) does not exist.`);
+        });
+      } catch {
+        Root.Readability.length = 0;
+      }
 
-        if (Root.Readability.length === 0 && Global.headless === false) {
-          if (Root.areaToCheck.length === 0) {
-            Root.Readability.push(document.body);
-          } else {
-            // If desired root area is not found, use the root target area.
-            Root.Readability = Root.areaToCheck;
+      if (Root.Readability.length === 0 && Global.headless === false) {
+        if (Root.areaToCheck.length === 0) {
+          Root.Readability.push(document.body);
+        } else {
+          // If desired root area is not found, use the root target area.
+          Root.Readability = Root.areaToCheck;
 
-            // Create a warning if the desired readability root is not found.
+          // Create a warning if the desired readability root is not found.
+          setTimeout(() => {
             const { readabilityDetails, readabilityToggle } = Constants.Panel;
             const readabilityOn = readabilityToggle?.getAttribute('aria-pressed') === 'true';
-            if (readabilityDetails && readabilityOn) {
+            const alert = Constants.Panel.readability.querySelector('#readability-alert');
+            if (readabilityDetails && readabilityOn && !alert) {
               // Roots that readability will be based on.
               const roots = Root.areaToCheck.map((el) => {
                 if (el.id) return `#${el.id}`;
@@ -524,10 +527,10 @@
               // Append note to Readability panel.
               const note = document.createElement('div');
               note.id = 'readability-alert';
-              note.innerHTML = `<hr aria-hidden="true"><p>${Lang.sprintf('MISSING_READABILITY_ROOT', roots, desiredReadabilityRoot)}</p>`;
+              note.innerHTML = `<hr><p>${Lang.sprintf('MISSING_READABILITY_ROOT', roots, desiredReadabilityRoot)}</p>`;
               readabilityDetails.insertAdjacentElement('afterend', note);
             }
-          }
+          }, 100);
         }
       }
     }
@@ -745,13 +748,9 @@
    */
   function find(selector, desiredRoot, exclude) {
     const root = [];
-    if (desiredRoot === 'all') {
+    if (desiredRoot === 'document') {
       root.push(document.body);
-      if (Array.isArray(Constants.Root.areaToCheck)) {
-        root.push(...Constants.Root.areaToCheck);
-      }
-    } else if (desiredRoot === 'document') {
-      root.push(document.body);
+      if (Constants.Global.fixedRoots) root.push(Constants.Global.fixedRoots);
     } else if (desiredRoot === 'root') {
       root.push(Constants.Root.areaToCheck);
     } else {
@@ -1728,12 +1727,14 @@
       // We want headings from the entire document for the Page Outline.
       Found.Headings = find(
         'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]',
-        Constants.Global.ignoreContentOutsideRoots ? 'root' : 'document',
+        Constants.Global.ignoreContentOutsideRoots || option.fixedRoots
+          ? 'root' : 'document',
         Constants.Exclusions.Headings,
       );
       Found.HeadingOne = find(
         'h1, [role="heading"][aria-level="1"]',
-        Constants.Global.ignoreContentOutsideRoots ? 'root' : 'document',
+        Constants.Global.ignoreContentOutsideRoots || option.fixedRoots
+          ? 'root' : 'document',
         Constants.Exclusions.Headings,
       );
 
@@ -11252,83 +11253,84 @@ ${this.error.stack}
       this.checkAll = async (
         desiredRoot = option.checkRoot,
         desiredReadabilityRoot = option.readabilityRoot,
+        fixedRoots = option.fixedRoots,
       ) => {
-        // try {
-        this.results = [];
-        this.headingOutline = [];
-        this.errorCount = 0;
-        this.warningCount = 0;
-        this.customChecksRunning = false;
+        try {
+          this.results = [];
+          this.headingOutline = [];
+          this.errorCount = 0;
+          this.warningCount = 0;
+          this.customChecksRunning = false;
 
-        // Initialize root areas to check.
-        Constants.initializeRoot(desiredRoot, desiredReadabilityRoot);
+          // Initialize root areas to check.
+          Constants.initializeRoot(desiredRoot, desiredReadabilityRoot, fixedRoots);
 
-        // Find all web components on the page.
-        findShadowComponents(option);
+          // Find all web components on the page.
+          findShadowComponents(option);
 
-        // Find and cache elements.
-        Elements.initializeElements(option);
+          // Find and cache elements.
+          Elements.initializeElements(option);
 
-        // Ruleset checks
-        checkHeaders(this.results, option, this.headingOutline);
-        checkLinkText(this.results, option);
-        checkImages(this.results, option);
-        checkLabels(this.results, option);
-        checkQA(this.results, option);
-        checkDeveloper(this.results, option);
-        if (option.embeddedContentPlugin) checkEmbeddedContent(this.results, option);
-        if (option.contrastPlugin) checkContrast(this.results, option);
-        if (option.readabilityPlugin) checkReadability();
+          // Ruleset checks
+          checkHeaders(this.results, option, this.headingOutline);
+          checkLinkText(this.results, option);
+          checkImages(this.results, option);
+          checkLabels(this.results, option);
+          checkQA(this.results, option);
+          checkDeveloper(this.results, option);
+          if (option.embeddedContentPlugin) checkEmbeddedContent(this.results, option);
+          if (option.contrastPlugin) checkContrast(this.results, option);
+          if (option.readabilityPlugin) checkReadability();
 
-        // Build array of images to be used for image panel.
-        this.imageResults = Elements.Found.Images.map((image) => {
-          const match = this.results.find((i) => i.element === image);
-          return match && {
-            element: image,
-            type: match.type,
-            dismiss: match.dismiss,
-            developer: match.developer,
-          };
-        }).filter(Boolean);
+          // Build array of images to be used for image panel.
+          this.imageResults = Elements.Found.Images.map((image) => {
+            const match = this.results.find((i) => i.element === image);
+            return match && {
+              element: image,
+              type: match.type,
+              dismiss: match.dismiss,
+              developer: match.developer,
+            };
+          }).filter(Boolean);
 
-        /* Custom checks */
-        if (option.customChecks === true) {
-          // Option 1: Provide via sa11y-custom-checks.js
-          checkCustom(this.results);
-        } else if (typeof option.customChecks === 'object') {
-          // Option 2: Provide as an object when instantiated.
-          this.results.push(...option.customChecks);
-        } else if (option.customChecks === 'listen') {
-          // Option 3: Provide via event listener. Yoinked from Editoria11y!
-          this.customChecksRunning = true;
-          this.customChecksFinished = 0;
-          document.addEventListener('sa11y-resume', () => {
-            this.customChecksFinished += 1;
-            if (this.customChecksFinished === 1) {
-              this.customChecksRunning = false;
-              this.updateResults();
-            }
-          });
-          window.setTimeout(() => {
-            if (this.customChecksRunning === true) {
-              this.customChecksRunning = false;
-              this.updateResults();
-              throw Error('Sa11y: No custom checks were returned.');
-            }
-          }, option.delayCustomCheck);
-          window.setTimeout(() => {
-            const customChecks = new CustomEvent('sa11y-custom-checks');
-            document.dispatchEvent(customChecks);
-          }, 0);
-        }
+          /* Custom checks */
+          if (option.customChecks === true) {
+            // Option 1: Provide via sa11y-custom-checks.js
+            checkCustom(this.results);
+          } else if (typeof option.customChecks === 'object') {
+            // Option 2: Provide as an object when instantiated.
+            this.results.push(...option.customChecks);
+          } else if (option.customChecks === 'listen') {
+            // Option 3: Provide via event listener. Yoinked from Editoria11y!
+            this.customChecksRunning = true;
+            this.customChecksFinished = 0;
+            document.addEventListener('sa11y-resume', () => {
+              this.customChecksFinished += 1;
+              if (this.customChecksFinished === 1) {
+                this.customChecksRunning = false;
+                this.updateResults();
+              }
+            });
+            window.setTimeout(() => {
+              if (this.customChecksRunning === true) {
+                this.customChecksRunning = false;
+                this.updateResults();
+                throw Error('Sa11y: No custom checks were returned.');
+              }
+            }, option.delayCustomCheck);
+            window.setTimeout(() => {
+              const customChecks = new CustomEvent('sa11y-custom-checks');
+              document.dispatchEvent(customChecks);
+            }, 0);
+          }
 
-        // No custom checks running.
-        if (!this.customChecksRunning) this.updateResults();
-        /* } catch (error) {
+          // No custom checks running.
+          if (!this.customChecksRunning) this.updateResults();
+        } catch (error) {
           const consoleErrors = new ConsoleErrors(error);
           document.body.appendChild(consoleErrors);
           throw Error(error);
-        } */
+        }
       };
 
       this.updateResults = () => {
@@ -11464,11 +11466,11 @@ ${this.error.stack}
           'sa11y-heading-anchor',
           'sa11y-image-anchor',
           'sa11y-tooltips',
-        ], 'all');
+        ], 'document');
 
         // Remove Sa11y anchor positioning markup (while preserving any existing anchors).
         if (supportsAnchorPositioning()) {
-          find('[data-sa11y-error], [data-sa11y-warning], [data-sa11y-good]', 'all').forEach(($el) => {
+          find('[data-sa11y-error], [data-sa11y-warning], [data-sa11y-good]', 'document').forEach(($el) => {
             const anchor = $el;
             const anchors = (anchor.style.anchorName || '')
               .split(',').map((s) => s.trim()).filter((s) => s && !s.startsWith('--sa11y-anchor'));
@@ -11492,7 +11494,7 @@ ${this.error.stack}
           'data-sa11y-pulse-border',
           'data-sa11y-filter',
           'data-sa11y-has-shadow-root',
-        ], 'all');
+        ], 'document');
 
         // Remove from panel.
         Constants.Panel.outlineList.innerHTML = '';

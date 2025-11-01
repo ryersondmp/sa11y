@@ -32,7 +32,8 @@
     <section id="root1">
       <h2>Area A</h2>
       <img src="./assets/ignore/placeholder.svg" style="float:right;">
-      <p>Flumble the sprocket when the moon wiggles sideways, and don’t forget to twirl the jelly knobs before the
+      <p><a href="https://www.example.com?" target="_blank">Flumble</a> the sprocket when the moon wiggles sideways, and
+        don’t forget to twirl the jelly knobs before the
         snooze alarm
         honks. In the land of Wizzleton, the air smells like blueberry socks and hums quietly when you blink too fast.
       </p>
@@ -54,7 +55,7 @@
     <section id="root2">
       <h2>Area B</h2>
       <img src="./assets/ignore/placeholder.svg" alt="placeholder" style="float:right;">
-      <p>Upon the oscillation of the lunar curvature, the sprocket must be flumbled with meticulous precision, lest the
+      <p>UPON THE OSCILLATION OF THE LUNAR curvature, the sprocket must be flumbled with meticulous precision, lest the
         jelly
         knobs congeal into dissonant resonance. In the realm of Wizzleton, atmospheric densities emit olfactory traces
         reminiscent of fermented azure hosiery, accompanied by a faint harmonic tremor perceptible only during
@@ -78,7 +79,7 @@
     Sa11y.Lang.addI18n(Sa11yLangEn.strings);
     const sa11y = new Sa11y.Sa11y({
       checkRoot: '#root1, #root2, #rootThatDoesNotExist',
-      readabilityRoot: '.foo',
+      // readabilityRoot: '.foo',
       exportResultsPlugin: true,
       ignoreContentOutsideRoots: true,
       containerIgnore: '.ignore, #ignoreMe2',

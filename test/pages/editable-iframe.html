@@ -26,9 +26,7 @@
     setTimeout(() => {
       const fixedRoots = document.querySelector('iframe').contentWindow.document.body.querySelector('main');
       const sa11y = new Sa11y.Sa11y({
-        checkRoot: [fixedRoots],
-        readabilityRoot: [fixedRoots],
-        insertAnnotationBefore: 'iframe',
+        fixedRoots: [fixedRoots],
       });
     }, 100);
   </script>
