@@ -13,7 +13,7 @@ const defaultOptions = {
   imageIgnore: '',
   linkIgnore: '',
   linkIgnoreSpan: '',
-  linkIgnoreStrings: '',
+  linkIgnoreStrings: [],
   ignoreContentOutsideRoots: false,
 
   // Control panel settings
@@ -72,6 +72,10 @@ const defaultOptions = {
   externalDeveloperChecks: false,
   colourFilterPlugin: true,
   exportResultsPlugin: false,
+
+  // Options for accName computation: Ignore ARIA on these elements.
+  ignoreAriaOnElements: false, // e.g. 'h1,h2,h3,h4,h5,h6'
+  ignoreTextInElements: false, // e.g. '.inner-node-hidden-in-CSS'
 
   // Shared properties for some checks
   susAltStopWords: '',

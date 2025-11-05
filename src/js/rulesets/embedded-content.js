@@ -15,6 +15,7 @@ export default function checkEmbeddedContent(results, option) {
     Elements.Found.Audio.forEach(($el) => {
       // General warning for audio content.
       results.push({
+        test: 'EMBED_AUDIO',
         element: $el,
         type: option.checks.EMBED_AUDIO.type || 'warning',
         content: Lang.sprintf(option.checks.EMBED_AUDIO.content || 'EMBED_AUDIO'),
@@ -33,6 +34,7 @@ export default function checkEmbeddedContent(results, option) {
       const trackSrc = track?.getAttribute('src');
       if (track === null || trackSrc === null || trackSrc.trim().length === 0) {
         results.push({
+          test: 'EMBED_VIDEO',
           element: $el,
           type: option.checks.EMBED_VIDEO.type || 'warning',
           content: Lang.sprintf(option.checks.EMBED_VIDEO.content || 'EMBED_VIDEO'),
@@ -49,6 +51,7 @@ export default function checkEmbeddedContent(results, option) {
     Elements.Found.Visualizations.forEach(($el) => {
       // General warning for data visualization widgets.
       results.push({
+        test: 'EMBED_DATA_VIZ',
         element: $el,
         type: option.checks.EMBED_DATA_VIZ.type || 'warning',
         content: Lang.sprintf(option.checks.EMBED_DATA_VIZ.content || 'EMBED_DATA_VIZ'),
@@ -75,6 +78,7 @@ export default function checkEmbeddedContent(results, option) {
     if (negativeTabindex) {
       if (option.checks.EMBED_UNFOCUSABLE) {
         results.push({
+          test: 'EMBED_UNFOCUSABLE',
           element: $el,
           type: option.checks.EMBED_UNFOCUSABLE.type || 'error',
           content: Lang.sprintf(option.checks.EMBED_UNFOCUSABLE.content || 'EMBED_UNFOCUSABLE'),
@@ -93,6 +97,7 @@ export default function checkEmbeddedContent(results, option) {
       const accessibleName = Utils.removeWhitespace(checkTitle);
       if (accessibleName.length === 0) {
         results.push({
+          test: 'EMBED_MISSING_TITLE',
           element: $el,
           type: option.checks.EMBED_MISSING_TITLE.type || 'error',
           content: Lang.sprintf(option.checks.EMBED_MISSING_TITLE.content || 'EMBED_MISSING_TITLE'),
@@ -122,6 +127,7 @@ export default function checkEmbeddedContent(results, option) {
       }
 
       results.push({
+        test: 'EMBED_GENERAL',
         element: $el,
         type: option.checks.EMBED_GENERAL.type || 'warning',
         content: Lang.sprintf(option.checks.EMBED_GENERAL.content || 'EMBED_GENERAL'),

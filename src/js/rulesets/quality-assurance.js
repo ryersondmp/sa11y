@@ -10,6 +10,7 @@ export default function checkQA(results, option) {
   if (option.checks.QA_BAD_LINK) {
     Elements.Found.CustomErrorLinks.forEach(($el) => {
       results.push({
+        test: 'QA_BAD_LINK',
         element: $el,
         type: option.checks.QA_BAD_LINK.type || 'error',
         content: Lang.sprintf(option.checks.QA_BAD_LINK.content || 'QA_BAD_LINK', $el),
@@ -29,6 +30,7 @@ export default function checkQA(results, option) {
       const text = Utils.getText($el);
       if (text.length !== 0 && text.length > 400) {
         results.push({
+          test: 'QA_STRONG_ITALICS',
           element: $el.parentNode,
           type: option.checks.QA_STRONG_ITALICS.type || 'warning',
           content: Lang.sprintf(option.checks.QA_STRONG_ITALICS.content || 'QA_STRONG_ITALICS'),
@@ -74,6 +76,7 @@ export default function checkQA(results, option) {
           // If reference ID doesn't exist.
           if (!targetElement) {
             results.push({
+              test: 'QA_IN_PAGE_LINK',
               element: $el,
               type: option.checks.QA_IN_PAGE_LINK.type || 'error',
               content: Lang.sprintf(option.checks.QA_IN_PAGE_LINK.content || 'QA_IN_PAGE_LINK'),
@@ -89,6 +92,7 @@ export default function checkQA(results, option) {
       // Manually inspect documents & PDF for accessibility.
       if (option.checks.QA_DOCUMENT && hasExtension) {
         results.push({
+          test: 'QA_DOCUMENT',
           element: $el,
           type: option.checks.QA_DOCUMENT.type || 'warning',
           content: Lang.sprintf(option.checks.QA_DOCUMENT.content || 'QA_DOCUMENT'),
@@ -99,6 +103,7 @@ export default function checkQA(results, option) {
         });
       } else if (option.checks.QA_PDF && hasPDF) {
         results.push({
+          test: 'QA_PDF',
           element: $el,
           type: option.checks.QA_PDF.type || 'warning',
           content: Lang.sprintf(option.checks.QA_PDF.content || 'QA_PDF'),
@@ -120,6 +125,7 @@ export default function checkQA(results, option) {
       if (text.length !== 0 && text.length < 25) {
         const sanitizedText = Utils.sanitizeHTML(text);
         results.push({
+          test: 'QA_BLOCKQUOTE',
           element: $el,
           type: option.checks.QA_BLOCKQUOTE.type || 'warning',
           content: Lang.sprintf(option.checks.QA_BLOCKQUOTE.content || 'QA_BLOCKQUOTE', sanitizedText),
@@ -141,6 +147,7 @@ export default function checkQA(results, option) {
       const key = Utils.prepareDismissal(`TABLE${$el.textContent}`);
       if (option.checks.TABLES_MISSING_HEADINGS && tableHeaders.length === 0) {
         results.push({
+          test: 'TABLES_MISSING_HEADINGS',
           element: $el,
           type: option.checks.TABLES_MISSING_HEADINGS.type || 'error',
           content: Lang.sprintf(option.checks.TABLES_MISSING_HEADINGS.content || 'TABLES_MISSING_HEADINGS'),
@@ -152,6 +159,7 @@ export default function checkQA(results, option) {
       if (option.checks.TABLES_SEMANTIC_HEADING && semanticHeadings.length > 0) {
         semanticHeadings.forEach((heading) => {
           results.push({
+            test: 'TABLES_SEMANTIC_HEADING',
             element: heading,
             type: option.checks.TABLES_SEMANTIC_HEADING.type || 'error',
             content: Lang.sprintf(option.checks.TABLES_SEMANTIC_HEADING.content || 'TABLES_SEMANTIC_HEADING'),
@@ -164,6 +172,7 @@ export default function checkQA(results, option) {
       tableHeaders.forEach((th) => {
         if (option.checks.TABLES_EMPTY_HEADING && th.textContent.trim().length === 0) {
           results.push({
+            test: 'TABLES_EMPTY_HEADING',
             element: th,
             type: option.checks.TABLES_EMPTY_HEADING.type || 'error',
             content: Lang.sprintf(option.checks.TABLES_EMPTY_HEADING.content || 'TABLES_EMPTY_HEADING'),
@@ -183,6 +192,7 @@ export default function checkQA(results, option) {
   if (option.checks.QA_FAKE_HEADING) {
     const addResult = (element, sanitizedText) => {
       results.push({
+        test: 'QA_FAKE_HEADING',
         element,
         type: option.checks.QA_FAKE_HEADING.type || 'warning',
         content: Lang.sprintf(option.checks.QA_FAKE_HEADING.content || 'QA_FAKE_HEADING', sanitizedText),
@@ -327,6 +337,7 @@ export default function checkQA(results, option) {
           }
         } if (hit) {
           results.push({
+            test: 'QA_FAKE_LIST',
             element: p,
             type: option.checks.QA_FAKE_LIST.type || 'warning',
             content: Lang.sprintf(option.checks.QA_FAKE_LIST.content || 'QA_FAKE_LIST', firstPrefix),
@@ -367,6 +378,7 @@ export default function checkQA(results, option) {
 
       if (detectUpperCase && detectUpperCase[0].length > 10) {
         results.push({
+          test: 'QA_UPPERCASE',
           element: $el,
           type: option.checks.QA_UPPERCASE.type || 'warning',
           content: Lang.sprintf(option.checks.QA_UPPERCASE.content || 'QA_UPPERCASE'),
@@ -388,6 +400,7 @@ export default function checkQA(results, option) {
   // Check underlined text. Created by Brian Teeman!
   const addUnderlineResult = ($el) => {
     results.push({
+      test: 'QA_UNDERLINE',
       element: $el,
       type: option.checks.QA_UNDERLINE.type || 'warning',
       content: Lang.sprintf(option.checks.QA_UNDERLINE.content || 'QA_UNDERLINE'),
@@ -400,6 +413,7 @@ export default function checkQA(results, option) {
 
   const addJustifyResult = ($el) => {
     results.push({
+      test: 'QA_JUSTIFY',
       element: $el,
       type: option.checks.QA_JUSTIFY.type || 'warning',
       content: Lang.sprintf(option.checks.QA_JUSTIFY.content || 'QA_JUSTIFY'),
@@ -411,6 +425,7 @@ export default function checkQA(results, option) {
 
   const addSmallTextResult = ($el) => {
     results.push({
+      test: 'QA_SMALL_TEXT',
       element: $el,
       type: option.checks.QA_SMALL_TEXT.type || 'warning',
       content: Lang.sprintf(option.checks.QA_SMALL_TEXT.content || 'QA_SMALL_TEXT'),
@@ -488,6 +503,7 @@ export default function checkQA(results, option) {
       const text = Utils.getText($el);
       if (text.length >= 80) {
         results.push({
+          test: 'QA_SUBSCRIPT',
           element: $el,
           type: option.checks.QA_SUBSCRIPT.type || 'warning',
           content: Lang.sprintf(option.checks.QA_SUBSCRIPT.content || 'QA_SUBSCRIPT'),
@@ -509,6 +525,7 @@ export default function checkQA(results, option) {
       const component = $el.querySelector(sources);
       if (component) {
         results.push({
+          test: 'QA_NESTED_COMPONENTS',
           element: $el,
           type: option.checks.QA_NESTED_COMPONENTS.type || 'warning',
           content: Lang.sprintf(option.checks.QA_NESTED_COMPONENTS.content || 'QA_NESTED_COMPONENTS'),

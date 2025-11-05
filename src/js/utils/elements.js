@@ -23,13 +23,13 @@ const Elements = (function myElements() {
     // We want headings from the entire document for the Page Outline.
     Found.Headings = find(
       'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]',
-      Constants.Global.ignoreContentOutsideRoots || option.fixedRoots
+      option.ignoreContentOutsideRoots || option.fixedRoots
         ? 'root' : 'document',
       Constants.Exclusions.Headings,
     );
     Found.HeadingOne = find(
       'h1, [role="heading"][aria-level="1"]',
-      Constants.Global.ignoreContentOutsideRoots || option.fixedRoots
+      option.ignoreContentOutsideRoots || option.fixedRoots
         ? 'root' : 'document',
       Constants.Exclusions.Headings,
     );

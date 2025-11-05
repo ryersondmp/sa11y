@@ -5,7 +5,6 @@ import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 import Constants from '../utils/constants';
 import { createAlert, removeAlert } from './alert';
-import Elements from '../utils/elements';
 import find from '../utils/find';
 
 export default function generatePageOutline(dismissed, headingOutline, option) {
@@ -30,22 +29,20 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
     }
 
     // Iterate through object that contains all headings (and error type).
-    headingOutline.forEach((heading) => {
-      const { element, headingLevel, text, index, type, dismissedHeading, isWithinRoot } = heading;
+    headingOutline.forEach((heading, i) => {
+      const { element, headingLevel, text, type, dismissedHeading, isWithinRoot } = heading;
 
       // Determine if heading is visually hidden or within hidden container.
       const hidden = Utils.isElementVisuallyHiddenOrHidden(element);
 
-      // Filter out specified headings in outlineIgnore and headerIgnore props.
-      if (!Elements.Found.OutlineIgnore.includes(element)) {
-        // Indicate if heading is totally hidden or visually hidden.
-        const visibleIcon = (hidden === true)
-          ? `<span class="hidden-icon"></span><span class="visually-hidden">${Lang._('HIDDEN')}</span>` : '';
-        const badgeH = (option.showHinPageOutline === true || option.showHinPageOutline === 1) ? 'H' : '';
+      // Indicate if heading is totally hidden or visually hidden.
+      const visibleIcon = (hidden === true)
+        ? `<span class="hidden-icon"></span><span class="visually-hidden">${Lang._('HIDDEN')}</span>` : '';
+      const badgeH = (option.showHinPageOutline === true || option.showHinPageOutline === 1) ? 'H' : '';
 
-        let append;
-        if (type === 'error' && isWithinRoot === true) {
-          append = `
+      let append;
+      if (type === 'error' && isWithinRoot === true) {
+        append = `
             <li class="outline-${headingLevel}">
               <button type="button" tabindex="-1">
                 <span class="badge error-badge">
@@ -56,9 +53,9 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
                 <strong class="outline-list-item red-text">${text}</strong>
               </button>
             </li>`;
-          outlineArray.push(append);
-        } else if (type === 'warning' && !dismissedHeading && isWithinRoot === true) {
-          append = `
+        outlineArray.push(append);
+      } else if (type === 'warning' && !dismissedHeading && isWithinRoot === true) {
+        append = `
             <li class="outline-${headingLevel}">
               <button type="button" tabindex="-1">
                 <span class="badge warning-badge">
@@ -67,17 +64,16 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
                 <strong class="outline-list-item yellow-text">${text}</strong>
               </button>
             </li>`;
-          outlineArray.push(append);
-        } else {
-          append = `
+        outlineArray.push(append);
+      } else {
+        append = `
             <li class="outline-${headingLevel}">
               <button type="button" tabindex="-1">
                 <span class="badge">${visibleIcon} ${badgeH + headingLevel}</span>
                 <span class="outline-list-item">${text}</span>
               </button>
             </li>`;
-          outlineArray.push(append);
-        }
+        outlineArray.push(append);
       }
 
       /**
@@ -89,12 +85,12 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
 
       // Create anchors to focus on if heading is not visible.
       const anchor = document.createElement('sa11y-heading-anchor');
-      anchor.id = `sa11y-h${index}`;
+      anchor.id = `sa11y-h${i}`;
       if (hidden) {
         const parent = Utils.findVisibleParent(element, 'display', 'none');
         const target = parent?.previousElementSibling || parent?.parentNode;
         target?.insertAdjacentElement('beforebegin', anchor);
-        target?.setAttribute('data-sa11y-parent', `h${index}`);
+        target?.setAttribute('data-sa11y-parent', `h${i}`);
       } else {
         label?.insertAdjacentElement('beforebegin', anchor);
       }

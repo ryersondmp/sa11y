@@ -84,8 +84,9 @@ export default function checkLinkText(results, option) {
 
     // Link text based on COMPUTED ACCESSIBLE NAME.
     const accName = computeAccessibleName($el, Constants.Exclusions.LinkSpan);
-    const stringMatchExclusions = option.linkIgnoreStrings
-      ? accName.replace(option.linkIgnoreStrings, '') : accName;
+    const stringMatchExclusions = Array.isArray(option.linkIgnoreStrings)
+      ? option.linkIgnoreStrings.reduce((result, str) => result.replace(str, ''), accName)
+      : accName;
     const linkText = Utils.removeWhitespace(stringMatchExclusions);
 
     // Ignore special characters (except forward slash).
@@ -148,6 +149,27 @@ export default function checkLinkText(results, option) {
     // Remove whitespace and special characters to improve accuracy and minimize false positives.
     const linkTextTrimmed = linkText.replace(/'|"|-|\.|\s+/g, '').toLowerCase();
 
+    // Original preserved text to lowercase.
+    const originalLinkText = $el.textContent.trim().toLowerCase();
+
+    const addStopWordResult = (element, stopword) => {
+      if (option.checks.LINK_STOPWORD) {
+        results.push({
+          test: 'LINK_STOPWORD',
+          element,
+          type: option.checks.LINK_STOPWORD.type || 'error',
+          content: option.checks.LINK_STOPWORD.content
+            ? Lang.sprintf(option.checks.LINK_STOPWORD.content, stopword)
+            : Lang.sprintf('LINK_STOPWORD', stopword) + Lang.sprintf('LINK_TIP'),
+          inline: true,
+          position: 'afterend',
+          dismiss: Utils.prepareDismissal(`LINKSTOPWORD${href + linkTextTrimmed}`),
+          dismissAll: option.checks.LINK_STOPWORD.dismissAll ? 'LINK_STOPWORD' : false,
+          developer: option.checks.LINK_STOPWORD.developer || false,
+        });
+      }
+    };
+
     // Don't overlap with Alt Text module.
     if (!$el.querySelectorAll('img').length) {
       // Has aria-hidden.
@@ -156,6 +178,7 @@ export default function checkLinkText(results, option) {
           // If negative tabindex.
           if (option.checks.HIDDEN_FOCUSABLE) {
             results.push({
+              test: 'HIDDEN_FOCUSABLE',
               element: $el,
               type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
               content: Lang.sprintf(option.checks.HIDDEN_FOCUSABLE.content || 'HIDDEN_FOCUSABLE'),
@@ -167,12 +190,35 @@ export default function checkLinkText(results, option) {
             });
           }
         }
-      } else if ((href || href === '') && linkText.length === 0) {
-        // Empty hyperlinks.
+        return;
+      }
+
+      // If link text is ONLY "new window" or similar phrases.
+      if (containsNewWindowPhrases) {
+        const matchedPhrase = Lang._('NEW_WINDOW_PHRASES').find((phrase) => phrase.toLowerCase() === originalLinkText);
+        if (originalLinkText === matchedPhrase) {
+          addStopWordResult($el, matchedPhrase);
+        }
+      }
+
+      // If link text is ONLY strings that were passed in via prop.
+      let isLinkIgnoreStrings = false;
+      if (option.linkIgnoreStrings) {
+        option.linkIgnoreStrings.forEach((string) => {
+          if (originalLinkText === string.toLowerCase()) {
+            addStopWordResult($el, string);
+            isLinkIgnoreStrings = true;
+          }
+        });
+      }
+
+      // Empty hyperlinks.
+      if ((href || href === '') && linkText.length === 0) {
         if (hasAriaLabelledby) {
           // Has ariaLabelledby attribute but empty accessible name.
           if (option.checks.LINK_EMPTY_LABELLEDBY) {
             results.push({
+              test: 'LINK_EMPTY_LABELLEDBY',
               element: $el,
               type: option.checks.LINK_EMPTY_LABELLEDBY.type || 'error',
               content: Lang.sprintf(option.checks.LINK_EMPTY_LABELLEDBY.content || 'LINK_EMPTY_LABELLEDBY'),
@@ -184,9 +230,23 @@ export default function checkLinkText(results, option) {
             });
           }
         } else if ($el.children.length) {
+          // Add correct warning when link text is only linkIgnoreSpan text.
+          let hasStopWordWarning = false;
+          if (option.linkIgnoreSpan) {
+            const spanEl = $el.querySelector(option.linkIgnoreSpan);
+            if (spanEl) {
+              const spanText = stripSpecialCharacters(spanEl.textContent).trim().toLowerCase();
+              if (spanText === originalLinkText) {
+                addStopWordResult($el, spanText);
+                hasStopWordWarning = true;
+              }
+            }
+          }
+
           // Has child elements (e.g. SVG or SPAN) <a><i></i></a>
-          if (option.checks.LINK_EMPTY_NO_LABEL) {
+          if (!hasStopWordWarning && option.checks.LINK_EMPTY_NO_LABEL) {
             results.push({
+              test: 'LINK_EMPTY_NO_LABEL',
               element: $el,
               type: option.checks.LINK_EMPTY_NO_LABEL.type || 'error',
               content: Lang.sprintf(option.checks.LINK_EMPTY_NO_LABEL.content || 'LINK_EMPTY_NO_LABEL'),
@@ -197,9 +257,10 @@ export default function checkLinkText(results, option) {
               developer: option.checks.LINK_EMPTY_NO_LABEL.developer || false,
             });
           }
-        } else if (option.checks.LINK_EMPTY) {
+        } else if (!isLinkIgnoreStrings && option.checks.LINK_EMPTY) {
           // Completely empty <a></a>
           results.push({
+            test: 'LINK_EMPTY',
             element: $el,
             type: option.checks.LINK_EMPTY.type || 'error',
             content: Lang.sprintf(option.checks.LINK_EMPTY.content || 'LINK_EMPTY'),
@@ -211,26 +272,13 @@ export default function checkLinkText(results, option) {
           });
         }
       } else if (error[0] !== null) {
-        // Contains stop words.
-        if (option.checks.LINK_STOPWORD) {
-          results.push({
-            element: $el,
-            type: option.checks.LINK_STOPWORD.type || 'error',
-            content: option.checks.LINK_STOPWORD.content
-              ? Lang.sprintf(option.checks.LINK_STOPWORD.content, error[0])
-              : Lang.sprintf('LINK_STOPWORD', error[0]) + Lang.sprintf('LINK_TIP'),
-            inline: true,
-            position: 'afterend',
-            dismiss: Utils.prepareDismissal(`LINKSTOPWORD${href + linkTextTrimmed}`),
-            dismissAll: option.checks.LINK_STOPWORD.dismissAll ? 'LINK_STOPWORD' : false,
-            developer: option.checks.LINK_STOPWORD.developer || false,
-          });
-        }
+        addStopWordResult($el, error[0]);
       } else if (error[2] !== null) {
         // Contains DOI URL in link text.
         if (linkText.length > 8) {
           if (option.checks.LINK_DOI) {
             results.push({
+              test: 'LINK_DOI',
               element: $el,
               type: option.checks.LINK_DOI.type || 'warning',
               content: Lang.sprintf(option.checks.LINK_DOI.content || 'LINK_DOI'),
@@ -246,6 +294,7 @@ export default function checkLinkText(results, option) {
         if (linkText.length > (option.checks.LINK_URL.maxLength || 40)) {
           if (option.checks.LINK_URL) {
             results.push({
+              test: 'LINK_URL',
               element: $el,
               type: option.checks.LINK_URL.type || 'warning',
               content: option.checks.LINK_URL.content
@@ -270,6 +319,7 @@ export default function checkLinkText(results, option) {
         const stopword = checkStopWords(cleanedString, linkStopWords);
         if (option.checks.LINK_STOPWORD_ARIA && stopword !== null) {
           results.push({
+            test: 'LINK_STOPWORD_ARIA',
             element: $el,
             type: option.checks.LINK_STOPWORD_ARIA.type || 'warning',
             content: option.checks.LINK_STOPWORD_ARIA.content
@@ -283,6 +333,7 @@ export default function checkLinkText(results, option) {
         } else if (option.checks.LINK_LABEL) {
           // If the link has any ARIA, append a "Good" link button.
           results.push({
+            test: 'LINK_LABEL',
             element: $el,
             type: option.checks.LINK_LABEL.type || 'good',
             content: option.checks.LINK_LABEL.content
@@ -300,6 +351,7 @@ export default function checkLinkText(results, option) {
         const isVisibleTextInAccessibleName = Utils.isVisibleTextInAccessibleName($el);
         if (option.checks.LABEL_IN_NAME && isVisibleTextInAccessibleName && $el.textContent.length !== 0) {
           results.push({
+            test: 'LABEL_IN_NAME',
             element: $el,
             type: option.checks.LABEL_IN_NAME.type || 'warning',
             content: Lang.sprintf(option.checks.LABEL_IN_NAME.content || 'LABEL_IN_NAME', sanitizedText),
@@ -314,6 +366,7 @@ export default function checkLinkText(results, option) {
         // If link contains a special character used as a CTA.
         if (option.checks.LINK_SYMBOLS) {
           results.push({
+            test: 'LINK_SYMBOLS',
             element: $el,
             type: option.checks.LINK_SYMBOLS.type || 'warning',
             content: Lang.sprintf(option.checks.LINK_SYMBOLS.content || 'LINK_SYMBOLS', matchedSymbol),
@@ -327,6 +380,7 @@ export default function checkLinkText(results, option) {
         // Link is ONLY a period, comma, or special character.
         if (option.checks.LINK_EMPTY) {
           results.push({
+            test: 'LINK_EMPTY',
             element: $el,
             type: option.checks.LINK_EMPTY.type || 'error',
             content: Lang.sprintf(option.checks.LINK_EMPTY.content || 'LINK_EMPTY'),
@@ -343,6 +397,7 @@ export default function checkLinkText(results, option) {
       if (error[1] !== null || containsClickPhrase) {
         if (option.checks.LINK_CLICK_HERE) {
           results.push({
+            test: 'LINK_CLICK_HERE',
             element: $el,
             type: option.checks.LINK_CLICK_HERE.type || 'warning',
             content: option.checks.LINK_CLICK_HERE.content
@@ -360,6 +415,7 @@ export default function checkLinkText(results, option) {
       if (Utils.getText($el).length !== 0 && titleAttr?.toLowerCase() === linkText.toLowerCase()) {
         if (option.checks.DUPLICATE_TITLE) {
           results.push({
+            test: 'DUPLICATE_TITLE',
             element: $el,
             type: option.checks.DUPLICATE_TITLE.type || 'warning',
             content: Lang.sprintf(option.checks.DUPLICATE_TITLE.content || 'DUPLICATE_TITLE'),
@@ -381,6 +437,7 @@ export default function checkLinkText(results, option) {
           if (option.checks.LINK_IDENTICAL_NAME && !hasAttributes && !ignored) {
             const sanitizedText = Utils.sanitizeHTML(linkText);
             results.push({
+              test: 'LINK_IDENTICAL_NAME',
               element: $el,
               type: option.checks.LINK_IDENTICAL_NAME.type || 'warning',
               content: option.checks.LINK_IDENTICAL_NAME.content
@@ -401,6 +458,7 @@ export default function checkLinkText(results, option) {
         if ($el.getAttribute('target')?.toLowerCase() === '_blank' && !fileTypeMatch && !containsNewWindowPhrases) {
           if (option.checks.LINK_NEW_TAB) {
             results.push({
+              test: 'LINK_NEW_TAB',
               element: $el,
               type: option.checks.LINK_NEW_TAB.type || 'warning',
               content: Lang.sprintf(option.checks.LINK_NEW_TAB.content || 'LINK_NEW_TAB'),
@@ -416,6 +474,7 @@ export default function checkLinkText(results, option) {
         if (fileTypeMatch && !containsFileTypePhrases) {
           if (option.checks.LINK_FILE_EXT) {
             results.push({
+              test: 'LINK_FILE_EXT',
               element: $el,
               type: option.checks.LINK_FILE_EXT.type || 'warning',
               content: Lang.sprintf(option.checks.LINK_FILE_EXT.content || 'LINK_FILE_EXT'),

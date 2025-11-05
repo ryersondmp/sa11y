@@ -172,7 +172,7 @@ class Sa11y {
         checkDeveloper(this.results, option);
         if (option.embeddedContentPlugin) checkEmbeddedContent(this.results, option);
         if (option.contrastPlugin) checkContrast(this.results, option);
-        if (option.readabilityPlugin) checkReadability();
+        if (option.readabilityPlugin) checkReadability(this.results);
 
         // Build array of images to be used for image panel.
         this.imageResults = Elements.Found.Images.map((image) => {

@@ -25,7 +25,7 @@ const defaultOptions = {
   imageIgnore: '',
   linkIgnore: '',
   linkIgnoreSpan: '',
-  linkIgnoreStrings: '',
+  linkIgnoreStrings: [],
   ignoreContentOutsideRoots: false,
 
   // Control panel settings
@@ -84,6 +84,10 @@ const defaultOptions = {
   externalDeveloperChecks: false,
   colourFilterPlugin: true,
   exportResultsPlugin: false,
+
+  // Options for accName computation: Ignore ARIA on these elements.
+  ignoreAriaOnElements: false, // e.g. 'h1,h2,h3,h4,h5,h6'
+  ignoreTextInElements: false, // e.g. '.inner-node-hidden-in-CSS'
 
   // Shared properties for some checks
   susAltStopWords: '',
@@ -379,6 +383,8 @@ const Constants = (function myConstants() {
     Global.contrastAAA = option.contrastAAA;
     Global.shadowDetection = option.shadowComponents.length > 0 || option.autoDetectShadowComponents === true;
     Global.fixedRoots = option.fixedRoots;
+    Global.ignoreAriaOnElements = option.ignoreAriaOnElements;
+    Global.ignoreTextInElements = option.ignoreTextInElements;
 
     // Toggleable plugins
     Global.developerPlugin = option.developerPlugin;
@@ -392,7 +398,6 @@ const Constants = (function myConstants() {
     Global.relativePathImageID = option.relativePathImageID;
     Global.ignoreEditImageURL = option.ignoreEditImageURL;
     Global.ignoreEditImageClass = option.ignoreEditImageClass;
-    Global.ignoreContentOutsideRoots = option.ignoreContentOutsideRoots;
     Global.showMovePanelToggle = option.showMovePanelToggle;
 
     // A11y: Determine scroll behaviour
@@ -790,7 +795,6 @@ function find(selector, desiredRoot, exclude) {
 }
 
 /* eslint-disable no-continue */
-/* eslint-disable no-use-before-define */
 
 /* Get text content of pseudo elements. */
 const wrapPseudoContent = (element, string) => {
@@ -823,6 +827,15 @@ const nextTreeBranch = (tree) => {
 
 /* Compute ARIA attributes. */
 const computeAriaLabel = (element, recursing = false) => {
+  // Ignore ARIA on these elements.
+  if (Constants.Global.ignoreAriaOnElements && element.matches(Constants.Global.ignoreAriaOnElements)) {
+    return 'noAria';
+  }
+
+  if (Constants.Global.ignoreTextInElements && element.matches(Constants.Global.ignoreTextInElements)) {
+    return '';
+  }
+
   const labelledBy = element.getAttribute('aria-labelledby');
   if (!recursing && labelledBy) {
     return labelledBy
@@ -1721,13 +1734,13 @@ const Elements = (function myElements() {
     // We want headings from the entire document for the Page Outline.
     Found.Headings = find(
       'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]',
-      Constants.Global.ignoreContentOutsideRoots || option.fixedRoots
+      option.ignoreContentOutsideRoots || option.fixedRoots
         ? 'root' : 'document',
       Constants.Exclusions.Headings,
     );
     Found.HeadingOne = find(
       'h1, [role="heading"][aria-level="1"]',
-      Constants.Global.ignoreContentOutsideRoots || option.fixedRoots
+      option.ignoreContentOutsideRoots || option.fixedRoots
         ? 'root' : 'document',
       Constants.Exclusions.Headings,
     );
@@ -3088,22 +3101,20 @@ function generatePageOutline(dismissed, headingOutline, option) {
     }
 
     // Iterate through object that contains all headings (and error type).
-    headingOutline.forEach((heading) => {
-      const { element, headingLevel, text, index, type, dismissedHeading, isWithinRoot } = heading;
+    headingOutline.forEach((heading, i) => {
+      const { element, headingLevel, text, type, dismissedHeading, isWithinRoot } = heading;
 
       // Determine if heading is visually hidden or within hidden container.
       const hidden = isElementVisuallyHiddenOrHidden(element);
 
-      // Filter out specified headings in outlineIgnore and headerIgnore props.
-      if (!Elements.Found.OutlineIgnore.includes(element)) {
-        // Indicate if heading is totally hidden or visually hidden.
-        const visibleIcon = (hidden === true)
-          ? `<span class="hidden-icon"></span><span class="visually-hidden">${Lang._('HIDDEN')}</span>` : '';
-        const badgeH = (option.showHinPageOutline === true || option.showHinPageOutline === 1) ? 'H' : '';
+      // Indicate if heading is totally hidden or visually hidden.
+      const visibleIcon = (hidden === true)
+        ? `<span class="hidden-icon"></span><span class="visually-hidden">${Lang._('HIDDEN')}</span>` : '';
+      const badgeH = (option.showHinPageOutline === true || option.showHinPageOutline === 1) ? 'H' : '';
 
-        let append;
-        if (type === 'error' && isWithinRoot === true) {
-          append = `
+      let append;
+      if (type === 'error' && isWithinRoot === true) {
+        append = `
             <li class="outline-${headingLevel}">
               <button type="button" tabindex="-1">
                 <span class="badge error-badge">
@@ -3114,9 +3125,9 @@ function generatePageOutline(dismissed, headingOutline, option) {
                 <strong class="outline-list-item red-text">${text}</strong>
               </button>
             </li>`;
-          outlineArray.push(append);
-        } else if (type === 'warning' && !dismissedHeading && isWithinRoot === true) {
-          append = `
+        outlineArray.push(append);
+      } else if (type === 'warning' && !dismissedHeading && isWithinRoot === true) {
+        append = `
             <li class="outline-${headingLevel}">
               <button type="button" tabindex="-1">
                 <span class="badge warning-badge">
@@ -3125,17 +3136,16 @@ function generatePageOutline(dismissed, headingOutline, option) {
                 <strong class="outline-list-item yellow-text">${text}</strong>
               </button>
             </li>`;
-          outlineArray.push(append);
-        } else {
-          append = `
+        outlineArray.push(append);
+      } else {
+        append = `
             <li class="outline-${headingLevel}">
               <button type="button" tabindex="-1">
                 <span class="badge">${visibleIcon} ${badgeH + headingLevel}</span>
                 <span class="outline-list-item">${text}</span>
               </button>
             </li>`;
-          outlineArray.push(append);
-        }
+        outlineArray.push(append);
       }
 
       /**
@@ -3147,12 +3157,12 @@ function generatePageOutline(dismissed, headingOutline, option) {
 
       // Create anchors to focus on if heading is not visible.
       const anchor = document.createElement('sa11y-heading-anchor');
-      anchor.id = `sa11y-h${index}`;
+      anchor.id = `sa11y-h${i}`;
       if (hidden) {
         const parent = findVisibleParent(element, 'display', 'none');
         const target = parent?.previousElementSibling || parent?.parentNode;
         target?.insertAdjacentElement('beforebegin', anchor);
-        target?.setAttribute('data-sa11y-parent', `h${index}`);
+        target?.setAttribute('data-sa11y-parent', `h${i}`);
       } else {
         label?.insertAdjacentElement('beforebegin', anchor);
       }
@@ -3310,6 +3320,9 @@ function generateImageOutline(dismissed, imageResults, option) {
       const decorative = (element.hasAttribute('alt') && altText === '')
         ? `<div class="badge">${Lang._('DECORATIVE')}</div>` : '';
 
+      // If alt text starts with a very specific string provided via props; treat as decorative.
+      const startsWithSpecificAlt = option.altPlaceholder && option.altPlaceholder.some((text) => altText.toLowerCase().startsWith(text.toLowerCase()));
+
       // If image is linked.
       const anchor = option.imageWithinLightbox ? `a[href]:not(${option.imageWithinLightbox})` : 'a[href]';
       const linked = (element.closest(anchor))
@@ -3325,7 +3338,7 @@ function generateImageOutline(dismissed, imageResults, option) {
           <button type="button" tabindex="-1">
             <img src="${source}" alt/>
             <div class="alt"> ${visibleIcon} ${linked} ${missing}
-              <div class="badge"><span class="error-icon"></span><span class="visually-hidden">${Lang._('ERROR')}</span> ${Lang._('ALT')}</div> <strong class="red-text">${altText}</strong>
+              <div class="badge"><span class="error-icon"></span><span class="visually-hidden">${Lang._('ERROR')}</span> ${Lang._('ALT')}</div> <strong class="red-text">${startsWithSpecificAlt ? '' : altText}</strong>
             </div>
           </button>
           ${edit}
@@ -3337,7 +3350,7 @@ function generateImageOutline(dismissed, imageResults, option) {
           <button type="button" tabindex="-1">
             <img src="${source}" alt/>
             <div class="alt"> ${visibleIcon} ${linked} ${decorative}
-              <div class="badge"><span aria-hidden="true">&#63;</span> <span class="visually-hidden">${Lang._('WARNING')}</span> ${Lang._('ALT')}</div> <strong class="yellow-text">${altText}</strong>
+              <div class="badge"><span aria-hidden="true">&#63;</span> <span class="visually-hidden">${Lang._('WARNING')}</span> ${Lang._('ALT')}</div> <strong class="yellow-text">${startsWithSpecificAlt ? '' : altText}</strong>
             </div>
           </button>
           ${edit}
@@ -7935,6 +7948,7 @@ function annotate(issue, option) {
 
   // Validate types to prevent errors.
   const validTypes = ['error', 'warning', 'good'];
+  if (!type && !element) return; // Readability issue object.
   if (validTypes.indexOf(type) === -1) {
     throw Error(`Invalid type [${type}] for annotation`);
   }
@@ -8510,8 +8524,11 @@ function checkImages(results, option) {
     // Process link text exclusions.
     const linkSpanExclusions = link
       ? fnIgnore(link, Constants.Exclusions.LinkSpan).textContent : '';
-    const stringMatchExclusions = option.linkIgnoreStrings
-      ? linkSpanExclusions.replace(option.linkIgnoreStrings, '') : linkSpanExclusions;
+
+    const stringMatchExclusions = Array.isArray(option.linkIgnoreStrings)
+      ? option.linkIgnoreStrings.reduce((result, str) => result.replace(str, ''), linkSpanExclusions)
+      : linkSpanExclusions;
+
     const linkTextLength = link
       ? removeWhitespace(stringMatchExclusions).length : 0;
 
@@ -8530,6 +8547,7 @@ function checkImages(results, option) {
       const unfocusable = link.getAttribute('tabindex') === '-1';
       if (option.checks.HIDDEN_FOCUSABLE && !unfocusable) {
         results.push({
+          test: 'HIDDEN_FOCUSABLE',
           element: $el,
           type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
           content: Lang.sprintf(option.checks.HIDDEN_FOCUSABLE.content || 'HIDDEN_FOCUSABLE'),
@@ -8552,6 +8570,7 @@ function checkImages(results, option) {
           ? 'MISSING_ALT_LINK' : 'MISSING_ALT_LINK_HAS_TEXT';
         if (rule) {
           results.push({
+            test: conditional,
             element: $el,
             type: rule.type || 'error',
             content: Lang.sprintf(rule.content || conditional),
@@ -8563,6 +8582,7 @@ function checkImages(results, option) {
       } else if (option.checks.MISSING_ALT) {
         // General failure message if image is missing alt.
         results.push({
+          test: 'MISSING_ALT',
           element: $el,
           type: option.checks.MISSING_ALT.type || 'error',
           content: Lang.sprintf(option.checks.MISSING_ALT.content || 'MISSING_ALT'),
@@ -8593,6 +8613,7 @@ function checkImages(results, option) {
       if (option.checks.MISSING_ALT) {
         if (hasAria && altText === '') {
           results.push({
+            test: 'MISSING_ALT',
             element: $el,
             type: option.checks.MISSING_ALT.type || 'error',
             content: Lang.sprintf(option.checks.MISSING_ALT.content || 'MISSING_ALT'),
@@ -8604,8 +8625,11 @@ function checkImages(results, option) {
         }
       }
 
+      // If alt text starts with a very specific string provided via props.
+      const startsWithSpecificAlt = option.altPlaceholder && option.altPlaceholder.some((text) => alt.toLowerCase().startsWith(text.toLowerCase()));
+
       // Decorative images.
-      if (decorative) {
+      if (decorative || startsWithSpecificAlt) {
         const carouselSources = option.checks.IMAGE_DECORATIVE_CAROUSEL.sources;
         const carousel = carouselSources ? $el.closest(carouselSources) : '';
         if (carousel) {
@@ -8618,6 +8642,7 @@ function checkImages(results, option) {
             : 'IMAGE_DECORATIVE_CAROUSEL';
           if (rule) {
             results.push({
+              test: conditional,
               element: $el,
               type: rule.type || 'warning',
               content: Lang.sprintf(rule.content || conditional),
@@ -8634,6 +8659,7 @@ function checkImages(results, option) {
             ? 'LINK_IMAGE_NO_ALT_TEXT' : 'LINK_IMAGE_TEXT';
           if (rule) {
             results.push({
+              test: conditional,
               element: $el,
               type: rule.type || (linkTextLength === 0 ? 'error' : 'good'),
               content: Lang.sprintf(rule.content || conditional),
@@ -8650,6 +8676,7 @@ function checkImages(results, option) {
             ? 'IMAGE_FIGURE_DECORATIVE' : 'IMAGE_DECORATIVE';
           if (rule) {
             results.push({
+              test: conditional,
               element: $el,
               type: rule.type || 'warning',
               content: Lang.sprintf(rule.content || conditional),
@@ -8660,6 +8687,7 @@ function checkImages(results, option) {
           }
         } else if (option.checks.IMAGE_DECORATIVE) {
           results.push({
+            test: 'IMAGE_DECORATIVE',
             element: $el,
             type: option.checks.IMAGE_DECORATIVE.type || 'warning',
             content: Lang.sprintf(option.checks.IMAGE_DECORATIVE.content || 'IMAGE_DECORATIVE'),
@@ -8676,11 +8704,12 @@ function checkImages(results, option) {
         ? option.checks.LINK_ALT_UNPRONOUNCEABLE : option.checks.ALT_UNPRONOUNCEABLE;
       if (unpronounceable) {
         if (alt.replace(/"|'|\?|\.|-|\s+/g, '') === '' && linkTextLength === 0) {
-          const condition = (link) ? 'LINK_ALT_UNPRONOUNCEABLE' : 'ALT_UNPRONOUNCEABLE';
+          const conditional = (link) ? 'LINK_ALT_UNPRONOUNCEABLE' : 'ALT_UNPRONOUNCEABLE';
           results.push({
+            test: conditional,
             element: $el,
             type: unpronounceable.type || 'error',
-            content: Lang.sprintf(unpronounceable.content || condition, altText),
+            content: Lang.sprintf(unpronounceable.content || conditional, altText),
             dismiss: prepareDismissal(`UNPRONOUNCEABLE${src}`),
             dismissAll: unpronounceable.dismissAll ? 'ALT_UNPRONOUNCEABLE' : false,
             developer: unpronounceable.developer || false,
@@ -8704,6 +8733,7 @@ function checkImages(results, option) {
         const conditional = (link) ? 'LINK_ALT_FILE_EXT' : 'ALT_FILE_EXT';
         if (rule) {
           results.push({
+            test: conditional,
             element: $el,
             type: rule.type || 'error',
             content: Lang.sprintf(rule.content || conditional, error[0], altText),
@@ -8720,6 +8750,7 @@ function checkImages(results, option) {
         const conditional = (link) ? 'LINK_PLACEHOLDER_ALT' : 'ALT_PLACEHOLDER';
         if (rule) {
           results.push({
+            test: conditional,
             element: $el,
             type: rule.type || 'error',
             content: Lang.sprintf(rule.content || conditional, altText),
@@ -8736,6 +8767,7 @@ function checkImages(results, option) {
         const conditional = (link) ? 'LINK_SUS_ALT' : 'SUS_ALT';
         if (rule) {
           results.push({
+            test: conditional,
             element: $el,
             type: rule.type || 'warning',
             content: Lang.sprintf(rule.content || conditional, error[1], altText),
@@ -8748,6 +8780,7 @@ function checkImages(results, option) {
         // Alt text is a single word greater than 15 characters that is potentially auto-generated.
         const conditional = (link) ? 'LINK_ALT_MAYBE_BAD' : 'ALT_MAYBE_BAD';
         results.push({
+          test: conditional,
           element: $el,
           type: maybeBadAlt.type || 'warning',
           content: Lang.sprintf(maybeBadAlt.content || conditional, altText),
@@ -8766,6 +8799,7 @@ function checkImages(results, option) {
         const truncated = truncateString(altText, 600);
         if (rule) {
           results.push({
+            test: conditional,
             element: $el,
             type: rule.type || 'warning',
             content: Lang.sprintf(rule.content || conditional, alt.length, truncated),
@@ -8791,6 +8825,7 @@ function checkImages(results, option) {
             : `${Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT', altText, sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`;
 
           results.push({
+            test: conditional,
             element: $el,
             type: rule.type || 'warning',
             content: rule.content
@@ -8807,6 +8842,7 @@ function checkImages(results, option) {
         if (duplicate) {
           if (option.checks.IMAGE_FIGURE_DUPLICATE_ALT) {
             results.push({
+              test: 'IMAGE_FIGURE_DUPLICATE_ALT',
               element: $el,
               type: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.type || 'warning',
               content: Lang.sprintf(option.checks.IMAGE_FIGURE_DUPLICATE_ALT.content || 'IMAGE_FIGURE_DUPLICATE_ALT', altText),
@@ -8818,6 +8854,7 @@ function checkImages(results, option) {
         } else if (option.checks.IMAGE_PASS) {
           // Figure has alt text!
           results.push({
+            test: 'IMAGE_PASS',
             element: $el,
             type: option.checks.IMAGE_PASS.type || 'good',
             content: Lang.sprintf(option.checks.IMAGE_PASS.content || 'IMAGE_PASS', altText),
@@ -8830,6 +8867,7 @@ function checkImages(results, option) {
         if (!$el.closest('button, [role="button"]')) {
           // Image has alt text!
           results.push({
+            test: 'IMAGE_PASS',
             element: $el,
             type: option.checks.IMAGE_PASS.type || 'good',
             content: Lang.sprintf(option.checks.IMAGE_PASS.content || 'IMAGE_PASS', altText),
@@ -8845,6 +8883,7 @@ function checkImages(results, option) {
       if (titleAttr?.toLowerCase() === alt.toLowerCase()) {
         if (option.checks.DUPLICATE_TITLE) {
           results.push({
+            test: 'DUPLICATE_TITLE',
             element: $el,
             type: option.checks.DUPLICATE_TITLE.type || 'warning',
             content: Lang.sprintf(option.checks.DUPLICATE_TITLE.content || 'DUPLICATE_TITLE'),
@@ -8882,6 +8921,7 @@ function checkHeaders(results, option, headingOutline) {
     const maxHeadingLength = option.checks.HEADING_LONG.maxLength || 160;
 
     // Default.
+    let test = null;
     let type = null;
     let content = null;
     let developer = null;
@@ -8894,6 +8934,7 @@ function checkHeaders(results, option, headingOutline) {
         const alt = $el.querySelector('img')?.getAttribute('alt');
         if ($el.querySelector('img') && (!alt || alt.trim() === '')) {
           if (option.checks.HEADING_EMPTY_WITH_IMAGE) {
+            test = 'HEADING_EMPTY_WITH_IMAGE';
             type = option.checks.HEADING_EMPTY_WITH_IMAGE.type || 'error';
             content = Lang.sprintf(option.checks.HEADING_EMPTY_WITH_IMAGE.content || 'HEADING_EMPTY_WITH_IMAGE', level);
             developer = option.checks.HEADING_EMPTY_WITH_IMAGE.developer || false;
@@ -8902,6 +8943,7 @@ function checkHeaders(results, option, headingOutline) {
           }
         }
       } else if (option.checks.HEADING_EMPTY) {
+        test = 'HEADING_EMPTY';
         type = option.checks.HEADING_EMPTY.type || 'error';
         content = Lang.sprintf(option.checks.HEADING_EMPTY.content || 'HEADING_EMPTY', level);
         developer = option.checks.HEADING_EMPTY.developer || false;
@@ -8910,6 +8952,7 @@ function checkHeaders(results, option, headingOutline) {
       }
     } else if (level - prevLevel > 1 && i !== 0) {
       if (option.checks.HEADING_SKIPPED_LEVEL) {
+        test = 'HEADING_SKIPPED_LEVEL';
         type = option.checks.HEADING_SKIPPED_LEVEL.type || 'error';
         content = Lang.sprintf(option.checks.HEADING_SKIPPED_LEVEL.content || 'HEADING_SKIPPED_LEVEL', prevLevel, level, truncateString(headingText, 60), truncateString(prevHeadingText, 60), prevLevel + 1);
         developer = option.checks.HEADING_SKIPPED_LEVEL.developer || false;
@@ -8917,6 +8960,7 @@ function checkHeaders(results, option, headingOutline) {
       }
     } else if (i === 0 && level !== 1 && level !== 2) {
       if (option.checks.HEADING_FIRST) {
+        test = 'HEADING_FIRST';
         type = option.checks.HEADING_FIRST.type || 'error';
         content = Lang.sprintf(option.checks.HEADING_FIRST.content || 'HEADING_FIRST');
         developer = option.checks.HEADING_FIRST.developer || false;
@@ -8924,6 +8968,7 @@ function checkHeaders(results, option, headingOutline) {
       }
     } else if (headingLength > maxHeadingLength) {
       if (option.checks.HEADING_LONG) {
+        test = 'HEADING_LONG';
         type = option.checks.HEADING_LONG.type || 'warning';
         content = Lang.sprintf(option.checks.HEADING_LONG.content || 'HEADING_LONG', maxHeadingLength, headingLength);
         developer = option.checks.HEADING_LONG.developer || false;
@@ -8934,6 +8979,7 @@ function checkHeaders(results, option, headingOutline) {
     // Create results object.
     if (content && type) {
       results.push({
+        test,
         element: $el,
         type,
         content,
@@ -8950,20 +8996,23 @@ function checkHeaders(results, option, headingOutline) {
     prevHeadingText = headingText;
 
     // Create an object for heading outline panel.
-    headingOutline.push({
-      element: $el,
-      headingLevel: level,
-      text: headingText,
-      index: i,
-      type,
-      dismiss: prepareDismissal(`H${level + headingText}`),
-      isWithinRoot,
-    });
+    // Filter out specified headings in outlineIgnore and headerIgnore props.
+    if (!Elements.Found.OutlineIgnore.includes($el)) {
+      headingOutline.push({
+        element: $el,
+        headingLevel: level,
+        text: headingText,
+        type,
+        dismiss: prepareDismissal(`H${level + headingText}`),
+        isWithinRoot,
+      });
+    }
   });
 
   // Missing Heading 1
   if (option.checks.HEADING_MISSING_ONE && Elements.Found.HeadingOne.length === 0) {
     results.push({
+      test: 'HEADING_MISSING_ONE',
       type: option.checks.HEADING_MISSING_ONE.type || 'warning',
       content: Lang.sprintf(option.checks.HEADING_MISSING_ONE.content || 'HEADING_MISSING_ONE'),
       dismiss: 'MISSINGH1',
@@ -9053,8 +9102,9 @@ function checkLinkText(results, option) {
 
     // Link text based on COMPUTED ACCESSIBLE NAME.
     const accName = computeAccessibleName($el, Constants.Exclusions.LinkSpan);
-    const stringMatchExclusions = option.linkIgnoreStrings
-      ? accName.replace(option.linkIgnoreStrings, '') : accName;
+    const stringMatchExclusions = Array.isArray(option.linkIgnoreStrings)
+      ? option.linkIgnoreStrings.reduce((result, str) => result.replace(str, ''), accName)
+      : accName;
     const linkText = removeWhitespace(stringMatchExclusions);
 
     // Ignore special characters (except forward slash).
@@ -9117,6 +9167,27 @@ function checkLinkText(results, option) {
     // Remove whitespace and special characters to improve accuracy and minimize false positives.
     const linkTextTrimmed = linkText.replace(/'|"|-|\.|\s+/g, '').toLowerCase();
 
+    // Original preserved text to lowercase.
+    const originalLinkText = $el.textContent.trim().toLowerCase();
+
+    const addStopWordResult = (element, stopword) => {
+      if (option.checks.LINK_STOPWORD) {
+        results.push({
+          test: 'LINK_STOPWORD',
+          element,
+          type: option.checks.LINK_STOPWORD.type || 'error',
+          content: option.checks.LINK_STOPWORD.content
+            ? Lang.sprintf(option.checks.LINK_STOPWORD.content, stopword)
+            : Lang.sprintf('LINK_STOPWORD', stopword) + Lang.sprintf('LINK_TIP'),
+          inline: true,
+          position: 'afterend',
+          dismiss: prepareDismissal(`LINKSTOPWORD${href + linkTextTrimmed}`),
+          dismissAll: option.checks.LINK_STOPWORD.dismissAll ? 'LINK_STOPWORD' : false,
+          developer: option.checks.LINK_STOPWORD.developer || false,
+        });
+      }
+    };
+
     // Don't overlap with Alt Text module.
     if (!$el.querySelectorAll('img').length) {
       // Has aria-hidden.
@@ -9125,6 +9196,7 @@ function checkLinkText(results, option) {
           // If negative tabindex.
           if (option.checks.HIDDEN_FOCUSABLE) {
             results.push({
+              test: 'HIDDEN_FOCUSABLE',
               element: $el,
               type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
               content: Lang.sprintf(option.checks.HIDDEN_FOCUSABLE.content || 'HIDDEN_FOCUSABLE'),
@@ -9136,12 +9208,35 @@ function checkLinkText(results, option) {
             });
           }
         }
-      } else if ((href || href === '') && linkText.length === 0) {
-        // Empty hyperlinks.
+        return;
+      }
+
+      // If link text is ONLY "new window" or similar phrases.
+      if (containsNewWindowPhrases) {
+        const matchedPhrase = Lang._('NEW_WINDOW_PHRASES').find((phrase) => phrase.toLowerCase() === originalLinkText);
+        if (originalLinkText === matchedPhrase) {
+          addStopWordResult($el, matchedPhrase);
+        }
+      }
+
+      // If link text is ONLY strings that were passed in via prop.
+      let isLinkIgnoreStrings = false;
+      if (option.linkIgnoreStrings) {
+        option.linkIgnoreStrings.forEach((string) => {
+          if (originalLinkText === string.toLowerCase()) {
+            addStopWordResult($el, string);
+            isLinkIgnoreStrings = true;
+          }
+        });
+      }
+
+      // Empty hyperlinks.
+      if ((href || href === '') && linkText.length === 0) {
         if (hasAriaLabelledby) {
           // Has ariaLabelledby attribute but empty accessible name.
           if (option.checks.LINK_EMPTY_LABELLEDBY) {
             results.push({
+              test: 'LINK_EMPTY_LABELLEDBY',
               element: $el,
               type: option.checks.LINK_EMPTY_LABELLEDBY.type || 'error',
               content: Lang.sprintf(option.checks.LINK_EMPTY_LABELLEDBY.content || 'LINK_EMPTY_LABELLEDBY'),
@@ -9153,9 +9248,23 @@ function checkLinkText(results, option) {
             });
           }
         } else if ($el.children.length) {
+          // Add correct warning when link text is only linkIgnoreSpan text.
+          let hasStopWordWarning = false;
+          if (option.linkIgnoreSpan) {
+            const spanEl = $el.querySelector(option.linkIgnoreSpan);
+            if (spanEl) {
+              const spanText = stripSpecialCharacters(spanEl.textContent).trim().toLowerCase();
+              if (spanText === originalLinkText) {
+                addStopWordResult($el, spanText);
+                hasStopWordWarning = true;
+              }
+            }
+          }
+
           // Has child elements (e.g. SVG or SPAN) <a><i></i></a>
-          if (option.checks.LINK_EMPTY_NO_LABEL) {
+          if (!hasStopWordWarning && option.checks.LINK_EMPTY_NO_LABEL) {
             results.push({
+              test: 'LINK_EMPTY_NO_LABEL',
               element: $el,
               type: option.checks.LINK_EMPTY_NO_LABEL.type || 'error',
               content: Lang.sprintf(option.checks.LINK_EMPTY_NO_LABEL.content || 'LINK_EMPTY_NO_LABEL'),
@@ -9166,9 +9275,10 @@ function checkLinkText(results, option) {
               developer: option.checks.LINK_EMPTY_NO_LABEL.developer || false,
             });
           }
-        } else if (option.checks.LINK_EMPTY) {
+        } else if (!isLinkIgnoreStrings && option.checks.LINK_EMPTY) {
           // Completely empty <a></a>
           results.push({
+            test: 'LINK_EMPTY',
             element: $el,
             type: option.checks.LINK_EMPTY.type || 'error',
             content: Lang.sprintf(option.checks.LINK_EMPTY.content || 'LINK_EMPTY'),
@@ -9180,26 +9290,13 @@ function checkLinkText(results, option) {
           });
         }
       } else if (error[0] !== null) {
-        // Contains stop words.
-        if (option.checks.LINK_STOPWORD) {
-          results.push({
-            element: $el,
-            type: option.checks.LINK_STOPWORD.type || 'error',
-            content: option.checks.LINK_STOPWORD.content
-              ? Lang.sprintf(option.checks.LINK_STOPWORD.content, error[0])
-              : Lang.sprintf('LINK_STOPWORD', error[0]) + Lang.sprintf('LINK_TIP'),
-            inline: true,
-            position: 'afterend',
-            dismiss: prepareDismissal(`LINKSTOPWORD${href + linkTextTrimmed}`),
-            dismissAll: option.checks.LINK_STOPWORD.dismissAll ? 'LINK_STOPWORD' : false,
-            developer: option.checks.LINK_STOPWORD.developer || false,
-          });
-        }
+        addStopWordResult($el, error[0]);
       } else if (error[2] !== null) {
         // Contains DOI URL in link text.
         if (linkText.length > 8) {
           if (option.checks.LINK_DOI) {
             results.push({
+              test: 'LINK_DOI',
               element: $el,
               type: option.checks.LINK_DOI.type || 'warning',
               content: Lang.sprintf(option.checks.LINK_DOI.content || 'LINK_DOI'),
@@ -9215,6 +9312,7 @@ function checkLinkText(results, option) {
         if (linkText.length > (option.checks.LINK_URL.maxLength || 40)) {
           if (option.checks.LINK_URL) {
             results.push({
+              test: 'LINK_URL',
               element: $el,
               type: option.checks.LINK_URL.type || 'warning',
               content: option.checks.LINK_URL.content
@@ -9239,6 +9337,7 @@ function checkLinkText(results, option) {
         const stopword = checkStopWords(cleanedString, linkStopWords);
         if (option.checks.LINK_STOPWORD_ARIA && stopword !== null) {
           results.push({
+            test: 'LINK_STOPWORD_ARIA',
             element: $el,
             type: option.checks.LINK_STOPWORD_ARIA.type || 'warning',
             content: option.checks.LINK_STOPWORD_ARIA.content
@@ -9252,6 +9351,7 @@ function checkLinkText(results, option) {
         } else if (option.checks.LINK_LABEL) {
           // If the link has any ARIA, append a "Good" link button.
           results.push({
+            test: 'LINK_LABEL',
             element: $el,
             type: option.checks.LINK_LABEL.type || 'good',
             content: option.checks.LINK_LABEL.content
@@ -9269,6 +9369,7 @@ function checkLinkText(results, option) {
         const isVisibleTextInAccessibleName$1 = isVisibleTextInAccessibleName($el);
         if (option.checks.LABEL_IN_NAME && isVisibleTextInAccessibleName$1 && $el.textContent.length !== 0) {
           results.push({
+            test: 'LABEL_IN_NAME',
             element: $el,
             type: option.checks.LABEL_IN_NAME.type || 'warning',
             content: Lang.sprintf(option.checks.LABEL_IN_NAME.content || 'LABEL_IN_NAME', sanitizedText),
@@ -9283,6 +9384,7 @@ function checkLinkText(results, option) {
         // If link contains a special character used as a CTA.
         if (option.checks.LINK_SYMBOLS) {
           results.push({
+            test: 'LINK_SYMBOLS',
             element: $el,
             type: option.checks.LINK_SYMBOLS.type || 'warning',
             content: Lang.sprintf(option.checks.LINK_SYMBOLS.content || 'LINK_SYMBOLS', matchedSymbol),
@@ -9296,6 +9398,7 @@ function checkLinkText(results, option) {
         // Link is ONLY a period, comma, or special character.
         if (option.checks.LINK_EMPTY) {
           results.push({
+            test: 'LINK_EMPTY',
             element: $el,
             type: option.checks.LINK_EMPTY.type || 'error',
             content: Lang.sprintf(option.checks.LINK_EMPTY.content || 'LINK_EMPTY'),
@@ -9312,6 +9415,7 @@ function checkLinkText(results, option) {
       if (error[1] !== null || containsClickPhrase) {
         if (option.checks.LINK_CLICK_HERE) {
           results.push({
+            test: 'LINK_CLICK_HERE',
             element: $el,
             type: option.checks.LINK_CLICK_HERE.type || 'warning',
             content: option.checks.LINK_CLICK_HERE.content
@@ -9329,6 +9433,7 @@ function checkLinkText(results, option) {
       if (getText($el).length !== 0 && titleAttr?.toLowerCase() === linkText.toLowerCase()) {
         if (option.checks.DUPLICATE_TITLE) {
           results.push({
+            test: 'DUPLICATE_TITLE',
             element: $el,
             type: option.checks.DUPLICATE_TITLE.type || 'warning',
             content: Lang.sprintf(option.checks.DUPLICATE_TITLE.content || 'DUPLICATE_TITLE'),
@@ -9350,6 +9455,7 @@ function checkLinkText(results, option) {
           if (option.checks.LINK_IDENTICAL_NAME && !hasAttributes && !ignored) {
             const sanitizedText = sanitizeHTML(linkText);
             results.push({
+              test: 'LINK_IDENTICAL_NAME',
               element: $el,
               type: option.checks.LINK_IDENTICAL_NAME.type || 'warning',
               content: option.checks.LINK_IDENTICAL_NAME.content
@@ -9370,6 +9476,7 @@ function checkLinkText(results, option) {
         if ($el.getAttribute('target')?.toLowerCase() === '_blank' && !fileTypeMatch && !containsNewWindowPhrases) {
           if (option.checks.LINK_NEW_TAB) {
             results.push({
+              test: 'LINK_NEW_TAB',
               element: $el,
               type: option.checks.LINK_NEW_TAB.type || 'warning',
               content: Lang.sprintf(option.checks.LINK_NEW_TAB.content || 'LINK_NEW_TAB'),
@@ -9385,6 +9492,7 @@ function checkLinkText(results, option) {
         if (fileTypeMatch && !containsFileTypePhrases) {
           if (option.checks.LINK_FILE_EXT) {
             results.push({
+              test: 'LINK_FILE_EXT',
               element: $el,
               type: option.checks.LINK_FILE_EXT.type || 'warning',
               content: Lang.sprintf(option.checks.LINK_FILE_EXT.content || 'LINK_FILE_EXT'),
@@ -9713,6 +9821,7 @@ function checkContrast(results, option) {
       case 'text':
         if (option.checks.CONTRAST_ERROR) {
           results.push({
+            test: 'CONTRAST_ERROR',
             element: $el,
             type: option.checks.CONTRAST_ERROR.type || 'error',
             content: option.checks.CONTRAST_ERROR.content
@@ -9729,6 +9838,7 @@ function checkContrast(results, option) {
         if (option.checks.CONTRAST_INPUT) {
           const sanitizedInput = sanitizeHTMLBlock($el.outerHTML);
           results.push({
+            test: 'CONTRAST_INPUT',
             element,
             type: option.checks.CONTRAST_INPUT.type || 'error',
             content: option.checks.CONTRAST_INPUT.content
@@ -9745,6 +9855,7 @@ function checkContrast(results, option) {
         if (option.checks.CONTRAST_PLACEHOLDER) {
           const sanitizedPlaceholder = sanitizeHTMLBlock($el.outerHTML);
           results.push({
+            test: 'CONTRAST_PLACEHOLDER',
             element: $el,
             type: option.checks.CONTRAST_PLACEHOLDER.type || 'error',
             content: option.checks.CONTRAST_PLACEHOLDER.content
@@ -9762,6 +9873,7 @@ function checkContrast(results, option) {
         if (option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED) {
           const sanitizedPlaceholder = sanitizeHTMLBlock($el.outerHTML);
           results.push({
+            test: 'CONTRAST_PLACEHOLDER_UNSUPPORTED',
             element: $el,
             type: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.type || 'warning',
             content: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.content
@@ -9780,6 +9892,7 @@ function checkContrast(results, option) {
         if (option.checks.CONTRAST_ERROR_GRAPHIC) {
           const sanitizedSVG = sanitizeHTMLBlock($el.outerHTML);
           results.push({
+            test: 'CONTRAST_ERROR_GRAPHIC',
             element: $el,
             type: option.checks.CONTRAST_ERROR_GRAPHIC.type || 'error',
             content: option.checks.CONTRAST_ERROR_GRAPHIC.content
@@ -9797,6 +9910,7 @@ function checkContrast(results, option) {
         if (option.checks.CONTRAST_WARNING_GRAPHIC) {
           const sanitizedSVG = sanitizeHTMLBlock($el.outerHTML);
           results.push({
+            test: 'CONTRAST_WARNING_GRAPHIC',
             element: $el,
             type: option.checks.CONTRAST_WARNING_GRAPHIC.type || 'warning',
             content: option.checks.CONTRAST_WARNING_GRAPHIC.content
@@ -9813,6 +9927,7 @@ function checkContrast(results, option) {
       case 'background-image':
         if (option.checks.CONTRAST_WARNING) {
           results.push({
+            test: 'CONTRAST_WARNING',
             element,
             type: option.checks.CONTRAST_WARNING.type || 'warning',
             content: option.checks.CONTRAST_WARNING.content
@@ -9828,6 +9943,7 @@ function checkContrast(results, option) {
       case 'unsupported':
         if (option.checks.CONTRAST_UNSUPPORTED) {
           results.push({
+            test: 'CONTRAST_UNSUPPORTED',
             element,
             type: option.checks.CONTRAST_UNSUPPORTED.type || 'warning',
             content: option.checks.CONTRAST_UNSUPPORTED.content
@@ -9875,6 +9991,7 @@ function checkLabels(results, option) {
       if (type === 'image') {
         if (option.checks.LABELS_MISSING_IMAGE_INPUT && (!alt || alt.trim() === '') && !hasAria && !hasTitle) {
           results.push({
+            test: 'LABELS_MISSING_IMAGE_INPUT',
             element: $el,
             type: option.checks.LABELS_MISSING_IMAGE_INPUT.type || 'error',
             content: Lang.sprintf(option.checks.LABELS_MISSING_IMAGE_INPUT.content || 'LABELS_MISSING_IMAGE_INPUT'),
@@ -9890,6 +10007,7 @@ function checkLabels(results, option) {
       if (type === 'reset') {
         if (option.checks.LABELS_INPUT_RESET) {
           results.push({
+            test: 'LABELS_INPUT_RESET',
             element: $el,
             type: option.checks.LABELS_INPUT_RESET.type || 'warning',
             content: Lang.sprintf(option.checks.LABELS_INPUT_RESET.content || 'LABELS_INPUT_RESET'),
@@ -9906,6 +10024,7 @@ function checkLabels(results, option) {
         if (inputName.length === 0) {
           if (option.checks.LABELS_MISSING_LABEL) {
             results.push({
+              test: 'LABELS_MISSING_LABEL',
               element: $el,
               type: option.checks.LABELS_MISSING_LABEL.type || 'error',
               content: Lang.sprintf(option.checks.LABELS_MISSING_LABEL.content || 'LABELS_MISSING_LABEL'),
@@ -9917,6 +10036,7 @@ function checkLabels(results, option) {
         } else if (option.checks.LABELS_ARIA_LABEL_INPUT) {
           const sanitizedText = sanitizeHTML(inputName);
           results.push({
+            test: 'LABELS_ARIA_LABEL_INPUT',
             element: $el,
             type: option.checks.LABELS_ARIA_LABEL_INPUT.type || 'warning',
             content: option.checks.LABELS_ARIA_LABEL_INPUT.content
@@ -9944,6 +10064,7 @@ function checkLabels(results, option) {
         if (!Elements.Found.Labels.some((label) => label.getAttribute('for') === id)) {
           if (option.checks.LABELS_NO_FOR_ATTRIBUTE) {
             results.push({
+              test: 'LABELS_NO_FOR_ATTRIBUTE',
               element: $el,
               type: option.checks.LABELS_NO_FOR_ATTRIBUTE.type || 'error',
               content: Lang.sprintf(option.checks.LABELS_NO_FOR_ATTRIBUTE.content || 'LABELS_NO_FOR_ATTRIBUTE', id),
@@ -9956,6 +10077,7 @@ function checkLabels(results, option) {
       } else if (option.checks.LABELS_MISSING_LABEL) {
         // No id!
         results.push({
+          test: 'LABELS_MISSING_LABEL',
           element: $el,
           type: option.checks.LABELS_MISSING_LABEL.type || 'error',
           content: Lang.sprintf(option.checks.LABELS_MISSING_LABEL.content || 'LABELS_MISSING_LABEL'),
@@ -9968,6 +10090,7 @@ function checkLabels(results, option) {
       // Avoid using placeholder attributes.
       if (option.checks.LABELS_PLACEHOLDER && $el.placeholder && $el.placeholder !== 0) {
         results.push({
+          test: 'LABELS_PLACEHOLDER',
           element: $el,
           type: option.checks.LABELS_PLACEHOLDER.type || 'warning',
           content: Lang.sprintf(option.checks.LABELS_PLACEHOLDER.content || 'LABELS_PLACEHOLDER'),
@@ -9992,8 +10115,8 @@ function checkLabels(results, option) {
  * @link https://oaji.net/articles/2017/601-1498133639.pdf (Portuguese adaptation).
 */
 
-function checkReadability() {
-  let results;
+function checkReadability(results) {
+  let readabilityResults;
   const rememberReadability = store.getItem('sa11y-readability') === 'On';
   if (rememberReadability) {
     const readabilityArray = [];
@@ -10108,13 +10231,15 @@ function checkReadability() {
       }
 
       // Create object for headless mode.
-      results = {
+      readabilityResults = {
+        test: 'READABILITY',
         score: fleschScore,
         averageWordsPerSentence: avgWordsPerSentence,
         complexWords,
         difficultyLevel: difficulty,
         wordCount: words,
       };
+      results.push(readabilityResults);
     } else if (['sv', 'fi', 'da', 'no', 'nb', 'nn'].includes(Constants.Readability.Lang)) {
       /* Lix: Danish, Finnish, Norwegian (Bokmål & Nynorsk), Swedish. */
       const calculateLix = (text) => {
@@ -10150,22 +10275,24 @@ function checkReadability() {
       const lix = calculateLix(pageText);
 
       // Create object for headless mode.
-      results = {
+      readabilityResults = {
+        test: 'READABILITY',
         score: lix.score,
         averageWordsPerSentence: lix.avgWordsPerSentence,
         complexWords: lix.complexWords,
         difficultyLevel: lix.difficulty,
         wordCount: lix.wordCount,
       };
+      results.push(readabilityResults);
     }
 
     // Update main panel if not in headless mode.
     if (Constants.Global.headless === false) {
       if (pageText.length === 0) {
         Constants.Panel.readabilityInfo.innerHTML = Lang._('READABILITY_NO_CONTENT');
-      } else if (results.wordCount > 30) {
-        Constants.Panel.readabilityInfo.innerHTML = `${Math.ceil(results.score)} <span class="readability-score">${results.difficultyLevel}</span>`;
-        Constants.Panel.readabilityDetails.innerHTML = `<li><strong>${Lang._('AVG_SENTENCE')}</strong> ${Math.ceil(results.averageWordsPerSentence)}</li><li><strong>${Lang._('COMPLEX_WORDS')}</strong> ${results.complexWords}%</li><li><strong>${Lang._('TOTAL_WORDS')}</strong> ${results.wordCount}</li>`;
+      } else if (readabilityResults.wordCount > 30) {
+        Constants.Panel.readabilityInfo.innerHTML = `${Math.ceil(readabilityResults.score)} <span class="readability-score">${readabilityResults.difficultyLevel}</span>`;
+        Constants.Panel.readabilityDetails.innerHTML = `<li><strong>${Lang._('AVG_SENTENCE')}</strong> ${Math.ceil(readabilityResults.averageWordsPerSentence)}</li><li><strong>${Lang._('COMPLEX_WORDS')}</strong> ${readabilityResults.complexWords}%</li><li><strong>${Lang._('TOTAL_WORDS')}</strong> ${readabilityResults.wordCount}</li>`;
       } else {
         Constants.Panel.readabilityInfo.textContent = Lang._('READABILITY_NOT_ENOUGH');
       }
@@ -10186,6 +10313,7 @@ function checkEmbeddedContent(results, option) {
     Elements.Found.Audio.forEach(($el) => {
       // General warning for audio content.
       results.push({
+        test: 'EMBED_AUDIO',
         element: $el,
         type: option.checks.EMBED_AUDIO.type || 'warning',
         content: Lang.sprintf(option.checks.EMBED_AUDIO.content || 'EMBED_AUDIO'),
@@ -10204,6 +10332,7 @@ function checkEmbeddedContent(results, option) {
       const trackSrc = track?.getAttribute('src');
       if (track === null || trackSrc === null || trackSrc.trim().length === 0) {
         results.push({
+          test: 'EMBED_VIDEO',
           element: $el,
           type: option.checks.EMBED_VIDEO.type || 'warning',
           content: Lang.sprintf(option.checks.EMBED_VIDEO.content || 'EMBED_VIDEO'),
@@ -10220,6 +10349,7 @@ function checkEmbeddedContent(results, option) {
     Elements.Found.Visualizations.forEach(($el) => {
       // General warning for data visualization widgets.
       results.push({
+        test: 'EMBED_DATA_VIZ',
         element: $el,
         type: option.checks.EMBED_DATA_VIZ.type || 'warning',
         content: Lang.sprintf(option.checks.EMBED_DATA_VIZ.content || 'EMBED_DATA_VIZ'),
@@ -10246,6 +10376,7 @@ function checkEmbeddedContent(results, option) {
     if (negativeTabindex) {
       if (option.checks.EMBED_UNFOCUSABLE) {
         results.push({
+          test: 'EMBED_UNFOCUSABLE',
           element: $el,
           type: option.checks.EMBED_UNFOCUSABLE.type || 'error',
           content: Lang.sprintf(option.checks.EMBED_UNFOCUSABLE.content || 'EMBED_UNFOCUSABLE'),
@@ -10264,6 +10395,7 @@ function checkEmbeddedContent(results, option) {
       const accessibleName = removeWhitespace(checkTitle);
       if (accessibleName.length === 0) {
         results.push({
+          test: 'EMBED_MISSING_TITLE',
           element: $el,
           type: option.checks.EMBED_MISSING_TITLE.type || 'error',
           content: Lang.sprintf(option.checks.EMBED_MISSING_TITLE.content || 'EMBED_MISSING_TITLE'),
@@ -10293,6 +10425,7 @@ function checkEmbeddedContent(results, option) {
       }
 
       results.push({
+        test: 'EMBED_GENERAL',
         element: $el,
         type: option.checks.EMBED_GENERAL.type || 'warning',
         content: Lang.sprintf(option.checks.EMBED_GENERAL.content || 'EMBED_GENERAL'),
@@ -10312,6 +10445,7 @@ function checkQA(results, option) {
   if (option.checks.QA_BAD_LINK) {
     Elements.Found.CustomErrorLinks.forEach(($el) => {
       results.push({
+        test: 'QA_BAD_LINK',
         element: $el,
         type: option.checks.QA_BAD_LINK.type || 'error',
         content: Lang.sprintf(option.checks.QA_BAD_LINK.content || 'QA_BAD_LINK', $el),
@@ -10331,6 +10465,7 @@ function checkQA(results, option) {
       const text = getText($el);
       if (text.length !== 0 && text.length > 400) {
         results.push({
+          test: 'QA_STRONG_ITALICS',
           element: $el.parentNode,
           type: option.checks.QA_STRONG_ITALICS.type || 'warning',
           content: Lang.sprintf(option.checks.QA_STRONG_ITALICS.content || 'QA_STRONG_ITALICS'),
@@ -10376,6 +10511,7 @@ function checkQA(results, option) {
           // If reference ID doesn't exist.
           if (!targetElement) {
             results.push({
+              test: 'QA_IN_PAGE_LINK',
               element: $el,
               type: option.checks.QA_IN_PAGE_LINK.type || 'error',
               content: Lang.sprintf(option.checks.QA_IN_PAGE_LINK.content || 'QA_IN_PAGE_LINK'),
@@ -10391,6 +10527,7 @@ function checkQA(results, option) {
       // Manually inspect documents & PDF for accessibility.
       if (option.checks.QA_DOCUMENT && hasExtension) {
         results.push({
+          test: 'QA_DOCUMENT',
           element: $el,
           type: option.checks.QA_DOCUMENT.type || 'warning',
           content: Lang.sprintf(option.checks.QA_DOCUMENT.content || 'QA_DOCUMENT'),
@@ -10401,6 +10538,7 @@ function checkQA(results, option) {
         });
       } else if (option.checks.QA_PDF && hasPDF) {
         results.push({
+          test: 'QA_PDF',
           element: $el,
           type: option.checks.QA_PDF.type || 'warning',
           content: Lang.sprintf(option.checks.QA_PDF.content || 'QA_PDF'),
@@ -10422,6 +10560,7 @@ function checkQA(results, option) {
       if (text.length !== 0 && text.length < 25) {
         const sanitizedText = sanitizeHTML(text);
         results.push({
+          test: 'QA_BLOCKQUOTE',
           element: $el,
           type: option.checks.QA_BLOCKQUOTE.type || 'warning',
           content: Lang.sprintf(option.checks.QA_BLOCKQUOTE.content || 'QA_BLOCKQUOTE', sanitizedText),
@@ -10443,6 +10582,7 @@ function checkQA(results, option) {
       const key = prepareDismissal(`TABLE${$el.textContent}`);
       if (option.checks.TABLES_MISSING_HEADINGS && tableHeaders.length === 0) {
         results.push({
+          test: 'TABLES_MISSING_HEADINGS',
           element: $el,
           type: option.checks.TABLES_MISSING_HEADINGS.type || 'error',
           content: Lang.sprintf(option.checks.TABLES_MISSING_HEADINGS.content || 'TABLES_MISSING_HEADINGS'),
@@ -10454,6 +10594,7 @@ function checkQA(results, option) {
       if (option.checks.TABLES_SEMANTIC_HEADING && semanticHeadings.length > 0) {
         semanticHeadings.forEach((heading) => {
           results.push({
+            test: 'TABLES_SEMANTIC_HEADING',
             element: heading,
             type: option.checks.TABLES_SEMANTIC_HEADING.type || 'error',
             content: Lang.sprintf(option.checks.TABLES_SEMANTIC_HEADING.content || 'TABLES_SEMANTIC_HEADING'),
@@ -10466,6 +10607,7 @@ function checkQA(results, option) {
       tableHeaders.forEach((th) => {
         if (option.checks.TABLES_EMPTY_HEADING && th.textContent.trim().length === 0) {
           results.push({
+            test: 'TABLES_EMPTY_HEADING',
             element: th,
             type: option.checks.TABLES_EMPTY_HEADING.type || 'error',
             content: Lang.sprintf(option.checks.TABLES_EMPTY_HEADING.content || 'TABLES_EMPTY_HEADING'),
@@ -10485,6 +10627,7 @@ function checkQA(results, option) {
   if (option.checks.QA_FAKE_HEADING) {
     const addResult = (element, sanitizedText) => {
       results.push({
+        test: 'QA_FAKE_HEADING',
         element,
         type: option.checks.QA_FAKE_HEADING.type || 'warning',
         content: Lang.sprintf(option.checks.QA_FAKE_HEADING.content || 'QA_FAKE_HEADING', sanitizedText),
@@ -10629,6 +10772,7 @@ function checkQA(results, option) {
           }
         } if (hit) {
           results.push({
+            test: 'QA_FAKE_LIST',
             element: p,
             type: option.checks.QA_FAKE_LIST.type || 'warning',
             content: Lang.sprintf(option.checks.QA_FAKE_LIST.content || 'QA_FAKE_LIST', firstPrefix),
@@ -10669,6 +10813,7 @@ function checkQA(results, option) {
 
       if (detectUpperCase && detectUpperCase[0].length > 10) {
         results.push({
+          test: 'QA_UPPERCASE',
           element: $el,
           type: option.checks.QA_UPPERCASE.type || 'warning',
           content: Lang.sprintf(option.checks.QA_UPPERCASE.content || 'QA_UPPERCASE'),
@@ -10690,6 +10835,7 @@ function checkQA(results, option) {
   // Check underlined text. Created by Brian Teeman!
   const addUnderlineResult = ($el) => {
     results.push({
+      test: 'QA_UNDERLINE',
       element: $el,
       type: option.checks.QA_UNDERLINE.type || 'warning',
       content: Lang.sprintf(option.checks.QA_UNDERLINE.content || 'QA_UNDERLINE'),
@@ -10702,6 +10848,7 @@ function checkQA(results, option) {
 
   const addJustifyResult = ($el) => {
     results.push({
+      test: 'QA_JUSTIFY',
       element: $el,
       type: option.checks.QA_JUSTIFY.type || 'warning',
       content: Lang.sprintf(option.checks.QA_JUSTIFY.content || 'QA_JUSTIFY'),
@@ -10713,6 +10860,7 @@ function checkQA(results, option) {
 
   const addSmallTextResult = ($el) => {
     results.push({
+      test: 'QA_SMALL_TEXT',
       element: $el,
       type: option.checks.QA_SMALL_TEXT.type || 'warning',
       content: Lang.sprintf(option.checks.QA_SMALL_TEXT.content || 'QA_SMALL_TEXT'),
@@ -10790,6 +10938,7 @@ function checkQA(results, option) {
       const text = getText($el);
       if (text.length >= 80) {
         results.push({
+          test: 'QA_SUBSCRIPT',
           element: $el,
           type: option.checks.QA_SUBSCRIPT.type || 'warning',
           content: Lang.sprintf(option.checks.QA_SUBSCRIPT.content || 'QA_SUBSCRIPT'),
@@ -10811,6 +10960,7 @@ function checkQA(results, option) {
       const component = $el.querySelector(sources);
       if (component) {
         results.push({
+          test: 'QA_NESTED_COMPONENTS',
           element: $el,
           type: option.checks.QA_NESTED_COMPONENTS.type || 'warning',
           content: Lang.sprintf(option.checks.QA_NESTED_COMPONENTS.content || 'QA_NESTED_COMPONENTS'),
@@ -10832,6 +10982,7 @@ function checkDeveloper(results, option) {
   if (option.checks.META_LANG) {
     if (!Elements.Found.Language || Elements.Found.Language.length < 2) {
       results.push({
+        test: 'META_LANG',
         type: option.checks.META_LANG.type || 'error',
         content: Lang.sprintf(option.checks.META_LANG.content || 'META_LANG'),
         dismiss: prepareDismissal('LANG'),
@@ -10847,6 +10998,7 @@ function checkDeveloper(results, option) {
     const metaTitle = document.querySelector('title:not(svg title)');
     if (!metaTitle || metaTitle.textContent.trim().length === 0) {
       results.push({
+        test: 'META_TITLE',
         type: option.checks.META_TITLE.type || 'error',
         content: Lang.sprintf(option.checks.META_TITLE.content || 'META_TITLE'),
         dismiss: prepareDismissal('TITLE'),
@@ -10873,6 +11025,7 @@ function checkDeveloper(results, option) {
         // Check for user-scalable parameter.
         if (option.checks.META_SCALABLE && (params['user-scalable'] === 'no' || params['user-scalable'] === '0')) {
           results.push({
+            test: 'META_SCALABLE',
             type: option.checks.META_SCALABLE.type || 'error',
             content: Lang.sprintf(option.checks.META_SCALABLE.content || 'META_SCALABLE'),
             dismiss: prepareDismissal('SCALABLE'),
@@ -10884,6 +11037,7 @@ function checkDeveloper(results, option) {
         const maxScale = parseFloat(params['maximum-scale']);
         if (option.checks.META_MAX && !Number.isNaN(maxScale) && maxScale < 2) {
           results.push({
+            test: 'META_MAX',
             type: option.checks.META_MAX.type || 'error',
             content: Lang.sprintf(option.checks.META_MAX.content || 'META_MAX'),
             dismiss: prepareDismissal('MAXSCALE'),
@@ -10901,6 +11055,7 @@ function checkDeveloper(results, option) {
     const metaRefresh = document.querySelector('meta[http-equiv="refresh"]');
     if (metaRefresh) {
       results.push({
+        test: 'META_REFRESH',
         type: option.checks.META_REFRESH.type || 'error',
         content: Lang.sprintf(option.checks.META_REFRESH.content || 'META_REFRESH'),
         dismiss: prepareDismissal('REFRESH'),
@@ -10941,6 +11096,7 @@ function checkDeveloper(results, option) {
             );
             if (ariaReference.length > 0) {
               results.push({
+                test: 'DUPLICATE_ID',
                 element: $el,
                 type: option.checks.DUPLICATE_ID.type || 'error',
                 content: Lang.sprintf(option.checks.DUPLICATE_ID.content || 'DUPLICATE_ID', id),
@@ -10991,6 +11147,7 @@ function checkDeveloper(results, option) {
         if (!negativeTabindex) {
           if (option.checks.HIDDEN_FOCUSABLE) {
             results.push({
+              test: 'HIDDEN_FOCUSABLE',
               element: $el,
               type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
               content: Lang.sprintf(option.checks.HIDDEN_FOCUSABLE.content || 'HIDDEN_FOCUSABLE'),
@@ -11007,6 +11164,7 @@ function checkDeveloper(results, option) {
       if (buttonText.length === 0) {
         if (option.checks.BTN_EMPTY_LABELLEDBY && hasAriaLabelledby) {
           results.push({
+            test: 'BTN_EMPTY_LABELLEDBY',
             element: $el,
             type: option.checks.BTN_EMPTY_LABELLEDBY.type || 'error',
             content: option.checks.BTN_EMPTY_LABELLEDBY.content
@@ -11018,6 +11176,7 @@ function checkDeveloper(results, option) {
           });
         } else if (option.checks.BTN_EMPTY) {
           results.push({
+            test: 'BTN_EMPTY',
             element: $el,
             type: option.checks.BTN_EMPTY.type || 'error',
             content: option.checks.BTN_EMPTY.content
@@ -11036,6 +11195,7 @@ function checkDeveloper(results, option) {
       if (option.checks.LABEL_IN_NAME && hasAria && isVisibleTextInAccessibleName$1) {
         const sanitizedText = sanitizeHTML(accName);
         results.push({
+          test: 'LABEL_IN_NAME',
           element: $el,
           type: option.checks.LABEL_IN_NAME.type || 'warning',
           content: option.checks.LABEL_IN_NAME.content
@@ -11051,6 +11211,7 @@ function checkDeveloper(results, option) {
       // Has "button" in the accessible name.
       if (option.checks.BTN_ROLE_IN_NAME && accName.includes(Lang._('BTN'))) {
         results.push({
+          test: 'BTN_ROLE_IN_NAME',
           element: $el,
           type: option.checks.BTN_ROLE_IN_NAME.type || 'warning',
           content: option.checks.BTN_ROLE_IN_NAME.content
@@ -11071,6 +11232,7 @@ function checkDeveloper(results, option) {
     Elements.Found.Lists.forEach(($el) => {
       if (!$el.closest('ul, ol, menu')) {
         results.push({
+          test: 'UNCONTAINED_LI',
           element: $el,
           type: option.checks.UNCONTAINED_LI.type || 'error',
           content: Lang.sprintf(option.checks.UNCONTAINED_LI.content || 'UNCONTAINED_LI'),
@@ -11088,6 +11250,7 @@ function checkDeveloper(results, option) {
   if (option.checks.TABINDEX_ATTR) {
     Elements.Found.TabIndex.forEach(($el) => {
       results.push({
+        test: 'TABINDEX_ATTR',
         element: $el,
         type: option.checks.TABINDEX_ATTR.type || 'error',
         content: Lang.sprintf(option.checks.TABINDEX_ATTR.content || 'TABINDEX_ATTR'),
@@ -11274,7 +11437,7 @@ class Sa11y {
         checkDeveloper(this.results, option);
         if (option.embeddedContentPlugin) checkEmbeddedContent(this.results, option);
         if (option.contrastPlugin) checkContrast(this.results, option);
-        if (option.readabilityPlugin) checkReadability();
+        if (option.readabilityPlugin) checkReadability(this.results);
 
         // Build array of images to be used for image panel.
         this.imageResults = Elements.Found.Images.map((image) => {

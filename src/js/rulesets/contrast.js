@@ -317,6 +317,7 @@ export default function checkContrast(results, option) {
       case 'text':
         if (option.checks.CONTRAST_ERROR) {
           results.push({
+            test: 'CONTRAST_ERROR',
             element: $el,
             type: option.checks.CONTRAST_ERROR.type || 'error',
             content: option.checks.CONTRAST_ERROR.content
@@ -333,6 +334,7 @@ export default function checkContrast(results, option) {
         if (option.checks.CONTRAST_INPUT) {
           const sanitizedInput = Utils.sanitizeHTMLBlock($el.outerHTML);
           results.push({
+            test: 'CONTRAST_INPUT',
             element,
             type: option.checks.CONTRAST_INPUT.type || 'error',
             content: option.checks.CONTRAST_INPUT.content
@@ -349,6 +351,7 @@ export default function checkContrast(results, option) {
         if (option.checks.CONTRAST_PLACEHOLDER) {
           const sanitizedPlaceholder = Utils.sanitizeHTMLBlock($el.outerHTML);
           results.push({
+            test: 'CONTRAST_PLACEHOLDER',
             element: $el,
             type: option.checks.CONTRAST_PLACEHOLDER.type || 'error',
             content: option.checks.CONTRAST_PLACEHOLDER.content
@@ -366,6 +369,7 @@ export default function checkContrast(results, option) {
         if (option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED) {
           const sanitizedPlaceholder = Utils.sanitizeHTMLBlock($el.outerHTML);
           results.push({
+            test: 'CONTRAST_PLACEHOLDER_UNSUPPORTED',
             element: $el,
             type: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.type || 'warning',
             content: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.content
@@ -384,6 +388,7 @@ export default function checkContrast(results, option) {
         if (option.checks.CONTRAST_ERROR_GRAPHIC) {
           const sanitizedSVG = Utils.sanitizeHTMLBlock($el.outerHTML);
           results.push({
+            test: 'CONTRAST_ERROR_GRAPHIC',
             element: $el,
             type: option.checks.CONTRAST_ERROR_GRAPHIC.type || 'error',
             content: option.checks.CONTRAST_ERROR_GRAPHIC.content
@@ -401,6 +406,7 @@ export default function checkContrast(results, option) {
         if (option.checks.CONTRAST_WARNING_GRAPHIC) {
           const sanitizedSVG = Utils.sanitizeHTMLBlock($el.outerHTML);
           results.push({
+            test: 'CONTRAST_WARNING_GRAPHIC',
             element: $el,
             type: option.checks.CONTRAST_WARNING_GRAPHIC.type || 'warning',
             content: option.checks.CONTRAST_WARNING_GRAPHIC.content
@@ -417,6 +423,7 @@ export default function checkContrast(results, option) {
       case 'background-image':
         if (option.checks.CONTRAST_WARNING) {
           results.push({
+            test: 'CONTRAST_WARNING',
             element,
             type: option.checks.CONTRAST_WARNING.type || 'warning',
             content: option.checks.CONTRAST_WARNING.content
@@ -432,6 +439,7 @@ export default function checkContrast(results, option) {
       case 'unsupported':
         if (option.checks.CONTRAST_UNSUPPORTED) {
           results.push({
+            test: 'CONTRAST_UNSUPPORTED',
             element,
             type: option.checks.CONTRAST_UNSUPPORTED.type || 'warning',
             content: option.checks.CONTRAST_UNSUPPORTED.content

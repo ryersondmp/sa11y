@@ -18,6 +18,8 @@ const Constants = (function myConstants() {
     Global.contrastAAA = option.contrastAAA;
     Global.shadowDetection = option.shadowComponents.length > 0 || option.autoDetectShadowComponents === true;
     Global.fixedRoots = option.fixedRoots;
+    Global.ignoreAriaOnElements = option.ignoreAriaOnElements;
+    Global.ignoreTextInElements = option.ignoreTextInElements;
 
     // Toggleable plugins
     Global.developerPlugin = option.developerPlugin;
@@ -31,7 +33,6 @@ const Constants = (function myConstants() {
     Global.relativePathImageID = option.relativePathImageID;
     Global.ignoreEditImageURL = option.ignoreEditImageURL;
     Global.ignoreEditImageClass = option.ignoreEditImageClass;
-    Global.ignoreContentOutsideRoots = option.ignoreContentOutsideRoots;
     Global.showMovePanelToggle = option.showMovePanelToggle;
 
     // A11y: Determine scroll behaviour

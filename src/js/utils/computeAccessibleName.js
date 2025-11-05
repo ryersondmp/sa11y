@@ -1,5 +1,6 @@
 /* eslint-disable no-continue */
 /* eslint-disable no-use-before-define */
+import Constants from './constants';
 
 /* Get text content of pseudo elements. */
 export const wrapPseudoContent = (element, string) => {
@@ -32,6 +33,15 @@ const nextTreeBranch = (tree) => {
 
 /* Compute ARIA attributes. */
 export const computeAriaLabel = (element, recursing = false) => {
+  // Ignore ARIA on these elements.
+  if (Constants.Global.ignoreAriaOnElements && element.matches(Constants.Global.ignoreAriaOnElements)) {
+    return 'noAria';
+  }
+
+  if (Constants.Global.ignoreTextInElements && element.matches(Constants.Global.ignoreTextInElements)) {
+    return '';
+  }
+
   const labelledBy = element.getAttribute('aria-labelledby');
   if (!recursing && labelledBy) {
     return labelledBy

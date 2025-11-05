@@ -42,6 +42,7 @@ export function annotate(issue, option) {
 
   // Validate types to prevent errors.
   const validTypes = ['error', 'warning', 'good'];
+  if (!type && !element) return; // Readability issue object.
   if (validTypes.indexOf(type) === -1) {
     throw Error(`Invalid type [${type}] for annotation`);
   }

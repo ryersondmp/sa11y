@@ -127,7 +127,7 @@ var en = {
       'website',
     ],
     CLICK: ['click'],
-    NEW_WINDOW_PHRASES: ['external', 'new tab', 'new window', 'pop-up', 'pop up'],
+    NEW_WINDOW_PHRASES: ['external', 'new tab', 'new window', 'pop-up', 'pop up', 'opens new tab', 'opens new window'],
     FILE_TYPE_PHRASES: ['document', 'spreadsheet', 'calculation sheet', 'compressed file', 'archived file', 'worksheet', 'powerpoint', 'presentation', 'install', 'video', 'audio', 'pdf'],
 
     // Readability

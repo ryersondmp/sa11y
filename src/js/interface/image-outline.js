@@ -101,6 +101,9 @@ export default function generateImageOutline(dismissed, imageResults, option) {
       const decorative = (element.hasAttribute('alt') && altText === '')
         ? `<div class="badge">${Lang._('DECORATIVE')}</div>` : '';
 
+      // If alt text starts with a very specific string provided via props; treat as decorative.
+      const startsWithSpecificAlt = option.altPlaceholder && option.altPlaceholder.some((text) => altText.toLowerCase().startsWith(text.toLowerCase()));
+
       // If image is linked.
       const anchor = option.imageWithinLightbox ? `a[href]:not(${option.imageWithinLightbox})` : 'a[href]';
       const linked = (element.closest(anchor))
@@ -116,7 +119,7 @@ export default function generateImageOutline(dismissed, imageResults, option) {
           <button type="button" tabindex="-1">
             <img src="${source}" alt/>
             <div class="alt"> ${visibleIcon} ${linked} ${missing}
-              <div class="badge"><span class="error-icon"></span><span class="visually-hidden">${Lang._('ERROR')}</span> ${Lang._('ALT')}</div> <strong class="red-text">${altText}</strong>
+              <div class="badge"><span class="error-icon"></span><span class="visually-hidden">${Lang._('ERROR')}</span> ${Lang._('ALT')}</div> <strong class="red-text">${startsWithSpecificAlt ? '' : altText}</strong>
             </div>
           </button>
           ${edit}
@@ -128,7 +131,7 @@ export default function generateImageOutline(dismissed, imageResults, option) {
           <button type="button" tabindex="-1">
             <img src="${source}" alt/>
             <div class="alt"> ${visibleIcon} ${linked} ${decorative}
-              <div class="badge"><span aria-hidden="true">&#63;</span> <span class="visually-hidden">${Lang._('WARNING')}</span> ${Lang._('ALT')}</div> <strong class="yellow-text">${altText}</strong>
+              <div class="badge"><span aria-hidden="true">&#63;</span> <span class="visually-hidden">${Lang._('WARNING')}</span> ${Lang._('ALT')}</div> <strong class="yellow-text">${startsWithSpecificAlt ? '' : altText}</strong>
             </div>
           </button>
           ${edit}

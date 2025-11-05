@@ -46,7 +46,7 @@ const sa11y = new Sa11y({
   readabilityRoot: '.foo',
   headerIgnore: '#nothing-ignore-this-heading *, .ignore-this-heading',
   linkIgnoreSpan: '.sr-only-example',
-  linkIgnoreStrings: '(External)',
+  linkIgnoreStrings: ['(External link)'],
   imageIgnore: '.logo',
   outlineIgnore: '.outline-ignore',
   contrastIgnore: '.background-image-component',
@@ -72,6 +72,7 @@ const sa11y = new Sa11y({
   ignoreEditImageURL: ['/ignore/'],
   ignoreEditImageClass: ['ignore-me-edit-btn'],
   extraPlaceholderStopWords: 'untitled, asset',
+  altPlaceholder: ['This image has an empty alt attribute', 'esta imagen tiene un atributo alt vacío'],
 
   // Customize checks.
   checks: {

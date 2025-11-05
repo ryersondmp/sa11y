@@ -26,6 +26,7 @@ export default function checkHeaders(results, option, headingOutline) {
     const maxHeadingLength = option.checks.HEADING_LONG.maxLength || 160;
 
     // Default.
+    let test = null;
     let type = null;
     let content = null;
     let developer = null;
@@ -38,6 +39,7 @@ export default function checkHeaders(results, option, headingOutline) {
         const alt = $el.querySelector('img')?.getAttribute('alt');
         if ($el.querySelector('img') && (!alt || alt.trim() === '')) {
           if (option.checks.HEADING_EMPTY_WITH_IMAGE) {
+            test = 'HEADING_EMPTY_WITH_IMAGE';
             type = option.checks.HEADING_EMPTY_WITH_IMAGE.type || 'error';
             content = Lang.sprintf(option.checks.HEADING_EMPTY_WITH_IMAGE.content || 'HEADING_EMPTY_WITH_IMAGE', level);
             developer = option.checks.HEADING_EMPTY_WITH_IMAGE.developer || false;
@@ -46,6 +48,7 @@ export default function checkHeaders(results, option, headingOutline) {
           }
         }
       } else if (option.checks.HEADING_EMPTY) {
+        test = 'HEADING_EMPTY';
         type = option.checks.HEADING_EMPTY.type || 'error';
         content = Lang.sprintf(option.checks.HEADING_EMPTY.content || 'HEADING_EMPTY', level);
         developer = option.checks.HEADING_EMPTY.developer || false;
@@ -54,6 +57,7 @@ export default function checkHeaders(results, option, headingOutline) {
       }
     } else if (level - prevLevel > 1 && i !== 0) {
       if (option.checks.HEADING_SKIPPED_LEVEL) {
+        test = 'HEADING_SKIPPED_LEVEL';
         type = option.checks.HEADING_SKIPPED_LEVEL.type || 'error';
         content = Lang.sprintf(option.checks.HEADING_SKIPPED_LEVEL.content || 'HEADING_SKIPPED_LEVEL', prevLevel, level, Utils.truncateString(headingText, 60), Utils.truncateString(prevHeadingText, 60), prevLevel + 1);
         developer = option.checks.HEADING_SKIPPED_LEVEL.developer || false;
@@ -61,6 +65,7 @@ export default function checkHeaders(results, option, headingOutline) {
       }
     } else if (i === 0 && level !== 1 && level !== 2) {
       if (option.checks.HEADING_FIRST) {
+        test = 'HEADING_FIRST';
         type = option.checks.HEADING_FIRST.type || 'error';
         content = Lang.sprintf(option.checks.HEADING_FIRST.content || 'HEADING_FIRST');
         developer = option.checks.HEADING_FIRST.developer || false;
@@ -68,6 +73,7 @@ export default function checkHeaders(results, option, headingOutline) {
       }
     } else if (headingLength > maxHeadingLength) {
       if (option.checks.HEADING_LONG) {
+        test = 'HEADING_LONG';
         type = option.checks.HEADING_LONG.type || 'warning';
         content = Lang.sprintf(option.checks.HEADING_LONG.content || 'HEADING_LONG', maxHeadingLength, headingLength);
         developer = option.checks.HEADING_LONG.developer || false;
@@ -78,6 +84,7 @@ export default function checkHeaders(results, option, headingOutline) {
     // Create results object.
     if (content && type) {
       results.push({
+        test,
         element: $el,
         type,
         content,
@@ -94,20 +101,23 @@ export default function checkHeaders(results, option, headingOutline) {
     prevHeadingText = headingText;
 
     // Create an object for heading outline panel.
-    headingOutline.push({
-      element: $el,
-      headingLevel: level,
-      text: headingText,
-      index: i,
-      type,
-      dismiss: Utils.prepareDismissal(`H${level + headingText}`),
-      isWithinRoot,
-    });
+    // Filter out specified headings in outlineIgnore and headerIgnore props.
+    if (!Elements.Found.OutlineIgnore.includes($el)) {
+      headingOutline.push({
+        element: $el,
+        headingLevel: level,
+        text: headingText,
+        type,
+        dismiss: Utils.prepareDismissal(`H${level + headingText}`),
+        isWithinRoot,
+      });
+    }
   });
 
   // Missing Heading 1
   if (option.checks.HEADING_MISSING_ONE && Elements.Found.HeadingOne.length === 0) {
     results.push({
+      test: 'HEADING_MISSING_ONE',
       type: option.checks.HEADING_MISSING_ONE.type || 'warning',
       content: Lang.sprintf(option.checks.HEADING_MISSING_ONE.content || 'HEADING_MISSING_ONE'),
       dismiss: 'MISSINGH1',

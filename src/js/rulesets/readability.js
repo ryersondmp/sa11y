@@ -13,8 +13,8 @@ import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 
-export default function checkReadability() {
-  let results;
+export default function checkReadability(results) {
+  let readabilityResults;
   const rememberReadability = Utils.store.getItem('sa11y-readability') === 'On';
   if (rememberReadability) {
     const readabilityArray = [];
@@ -129,13 +129,15 @@ export default function checkReadability() {
       }
 
       // Create object for headless mode.
-      results = {
+      readabilityResults = {
+        test: 'READABILITY',
         score: fleschScore,
         averageWordsPerSentence: avgWordsPerSentence,
         complexWords,
         difficultyLevel: difficulty,
         wordCount: words,
       };
+      results.push(readabilityResults);
     } else if (['sv', 'fi', 'da', 'no', 'nb', 'nn'].includes(Constants.Readability.Lang)) {
       /* Lix: Danish, Finnish, Norwegian (Bokmål & Nynorsk), Swedish. */
       const calculateLix = (text) => {
@@ -171,22 +173,24 @@ export default function checkReadability() {
       const lix = calculateLix(pageText);
 
       // Create object for headless mode.
-      results = {
+      readabilityResults = {
+        test: 'READABILITY',
         score: lix.score,
         averageWordsPerSentence: lix.avgWordsPerSentence,
         complexWords: lix.complexWords,
         difficultyLevel: lix.difficulty,
         wordCount: lix.wordCount,
       };
+      results.push(readabilityResults);
     }
 
     // Update main panel if not in headless mode.
     if (Constants.Global.headless === false) {
       if (pageText.length === 0) {
         Constants.Panel.readabilityInfo.innerHTML = Lang._('READABILITY_NO_CONTENT');
-      } else if (results.wordCount > 30) {
-        Constants.Panel.readabilityInfo.innerHTML = `${Math.ceil(results.score)} <span class="readability-score">${results.difficultyLevel}</span>`;
-        Constants.Panel.readabilityDetails.innerHTML = `<li><strong>${Lang._('AVG_SENTENCE')}</strong> ${Math.ceil(results.averageWordsPerSentence)}</li><li><strong>${Lang._('COMPLEX_WORDS')}</strong> ${results.complexWords}%</li><li><strong>${Lang._('TOTAL_WORDS')}</strong> ${results.wordCount}</li>`;
+      } else if (readabilityResults.wordCount > 30) {
+        Constants.Panel.readabilityInfo.innerHTML = `${Math.ceil(readabilityResults.score)} <span class="readability-score">${readabilityResults.difficultyLevel}</span>`;
+        Constants.Panel.readabilityDetails.innerHTML = `<li><strong>${Lang._('AVG_SENTENCE')}</strong> ${Math.ceil(readabilityResults.averageWordsPerSentence)}</li><li><strong>${Lang._('COMPLEX_WORDS')}</strong> ${readabilityResults.complexWords}%</li><li><strong>${Lang._('TOTAL_WORDS')}</strong> ${readabilityResults.wordCount}</li>`;
       } else {
         Constants.Panel.readabilityInfo.textContent = Lang._('READABILITY_NOT_ENOUGH');
       }

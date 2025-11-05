@@ -31,7 +31,7 @@
     imageIgnore: '',
     linkIgnore: '',
     linkIgnoreSpan: '',
-    linkIgnoreStrings: '',
+    linkIgnoreStrings: [],
     ignoreContentOutsideRoots: false,
 
     // Control panel settings
@@ -90,6 +90,10 @@
     externalDeveloperChecks: false,
     colourFilterPlugin: true,
     exportResultsPlugin: false,
+
+    // Options for accName computation: Ignore ARIA on these elements.
+    ignoreAriaOnElements: false, // e.g. 'h1,h2,h3,h4,h5,h6'
+    ignoreTextInElements: false, // e.g. '.inner-node-hidden-in-CSS'
 
     // Shared properties for some checks
     susAltStopWords: '',
@@ -385,6 +389,8 @@
       Global.contrastAAA = option.contrastAAA;
       Global.shadowDetection = option.shadowComponents.length > 0 || option.autoDetectShadowComponents === true;
       Global.fixedRoots = option.fixedRoots;
+      Global.ignoreAriaOnElements = option.ignoreAriaOnElements;
+      Global.ignoreTextInElements = option.ignoreTextInElements;
 
       // Toggleable plugins
       Global.developerPlugin = option.developerPlugin;
@@ -398,7 +404,6 @@
       Global.relativePathImageID = option.relativePathImageID;
       Global.ignoreEditImageURL = option.ignoreEditImageURL;
       Global.ignoreEditImageClass = option.ignoreEditImageClass;
-      Global.ignoreContentOutsideRoots = option.ignoreContentOutsideRoots;
       Global.showMovePanelToggle = option.showMovePanelToggle;
 
       // A11y: Determine scroll behaviour
@@ -796,7 +801,6 @@
   }
 
   /* eslint-disable no-continue */
-  /* eslint-disable no-use-before-define */
 
   /* Get text content of pseudo elements. */
   const wrapPseudoContent = (element, string) => {
@@ -829,6 +833,15 @@
 
   /* Compute ARIA attributes. */
   const computeAriaLabel = (element, recursing = false) => {
+    // Ignore ARIA on these elements.
+    if (Constants.Global.ignoreAriaOnElements && element.matches(Constants.Global.ignoreAriaOnElements)) {
+      return 'noAria';
+    }
+
+    if (Constants.Global.ignoreTextInElements && element.matches(Constants.Global.ignoreTextInElements)) {
+      return '';
+    }
+
     const labelledBy = element.getAttribute('aria-labelledby');
     if (!recursing && labelledBy) {
       return labelledBy
@@ -1727,13 +1740,13 @@
       // We want headings from the entire document for the Page Outline.
       Found.Headings = find(
         'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]',
-        Constants.Global.ignoreContentOutsideRoots || option.fixedRoots
+        option.ignoreContentOutsideRoots || option.fixedRoots
           ? 'root' : 'document',
         Constants.Exclusions.Headings,
       );
       Found.HeadingOne = find(
         'h1, [role="heading"][aria-level="1"]',
-        Constants.Global.ignoreContentOutsideRoots || option.fixedRoots
+        option.ignoreContentOutsideRoots || option.fixedRoots
           ? 'root' : 'document',
         Constants.Exclusions.Headings,
       );
@@ -3094,22 +3107,20 @@ ${this.error.stack}
       }
 
       // Iterate through object that contains all headings (and error type).
-      headingOutline.forEach((heading) => {
-        const { element, headingLevel, text, index, type, dismissedHeading, isWithinRoot } = heading;
+      headingOutline.forEach((heading, i) => {
+        const { element, headingLevel, text, type, dismissedHeading, isWithinRoot } = heading;
 
         // Determine if heading is visually hidden or within hidden container.
         const hidden = isElementVisuallyHiddenOrHidden(element);
 
-        // Filter out specified headings in outlineIgnore and headerIgnore props.
-        if (!Elements.Found.OutlineIgnore.includes(element)) {
-          // Indicate if heading is totally hidden or visually hidden.
-          const visibleIcon = (hidden === true)
-            ? `<span class="hidden-icon"></span><span class="visually-hidden">${Lang._('HIDDEN')}</span>` : '';
-          const badgeH = (option.showHinPageOutline === true || option.showHinPageOutline === 1) ? 'H' : '';
+        // Indicate if heading is totally hidden or visually hidden.
+        const visibleIcon = (hidden === true)
+          ? `<span class="hidden-icon"></span><span class="visually-hidden">${Lang._('HIDDEN')}</span>` : '';
+        const badgeH = (option.showHinPageOutline === true || option.showHinPageOutline === 1) ? 'H' : '';
 
-          let append;
-          if (type === 'error' && isWithinRoot === true) {
-            append = `
+        let append;
+        if (type === 'error' && isWithinRoot === true) {
+          append = `
             <li class="outline-${headingLevel}">
               <button type="button" tabindex="-1">
                 <span class="badge error-badge">
@@ -3120,9 +3131,9 @@ ${this.error.stack}
                 <strong class="outline-list-item red-text">${text}</strong>
               </button>
             </li>`;
-            outlineArray.push(append);
-          } else if (type === 'warning' && !dismissedHeading && isWithinRoot === true) {
-            append = `
+          outlineArray.push(append);
+        } else if (type === 'warning' && !dismissedHeading && isWithinRoot === true) {
+          append = `
             <li class="outline-${headingLevel}">
               <button type="button" tabindex="-1">
                 <span class="badge warning-badge">
@@ -3131,17 +3142,16 @@ ${this.error.stack}
                 <strong class="outline-list-item yellow-text">${text}</strong>
               </button>
             </li>`;
-            outlineArray.push(append);
-          } else {
-            append = `
+          outlineArray.push(append);
+        } else {
+          append = `
             <li class="outline-${headingLevel}">
               <button type="button" tabindex="-1">
                 <span class="badge">${visibleIcon} ${badgeH + headingLevel}</span>
                 <span class="outline-list-item">${text}</span>
               </button>
             </li>`;
-            outlineArray.push(append);
-          }
+          outlineArray.push(append);
         }
 
         /**
@@ -3153,12 +3163,12 @@ ${this.error.stack}
 
         // Create anchors to focus on if heading is not visible.
         const anchor = document.createElement('sa11y-heading-anchor');
-        anchor.id = `sa11y-h${index}`;
+        anchor.id = `sa11y-h${i}`;
         if (hidden) {
           const parent = findVisibleParent(element, 'display', 'none');
           const target = parent?.previousElementSibling || parent?.parentNode;
           target?.insertAdjacentElement('beforebegin', anchor);
-          target?.setAttribute('data-sa11y-parent', `h${index}`);
+          target?.setAttribute('data-sa11y-parent', `h${i}`);
         } else {
           label?.insertAdjacentElement('beforebegin', anchor);
         }
@@ -3316,6 +3326,9 @@ ${this.error.stack}
         const decorative = (element.hasAttribute('alt') && altText === '')
           ? `<div class="badge">${Lang._('DECORATIVE')}</div>` : '';
 
+        // If alt text starts with a very specific string provided via props; treat as decorative.
+        const startsWithSpecificAlt = option.altPlaceholder && option.altPlaceholder.some((text) => altText.toLowerCase().startsWith(text.toLowerCase()));
+
         // If image is linked.
         const anchor = option.imageWithinLightbox ? `a[href]:not(${option.imageWithinLightbox})` : 'a[href]';
         const linked = (element.closest(anchor))
@@ -3331,7 +3344,7 @@ ${this.error.stack}
           <button type="button" tabindex="-1">
             <img src="${source}" alt/>
             <div class="alt"> ${visibleIcon} ${linked} ${missing}
-              <div class="badge"><span class="error-icon"></span><span class="visually-hidden">${Lang._('ERROR')}</span> ${Lang._('ALT')}</div> <strong class="red-text">${altText}</strong>
+              <div class="badge"><span class="error-icon"></span><span class="visually-hidden">${Lang._('ERROR')}</span> ${Lang._('ALT')}</div> <strong class="red-text">${startsWithSpecificAlt ? '' : altText}</strong>
             </div>
           </button>
           ${edit}
@@ -3343,7 +3356,7 @@ ${this.error.stack}
           <button type="button" tabindex="-1">
             <img src="${source}" alt/>
             <div class="alt"> ${visibleIcon} ${linked} ${decorative}
-              <div class="badge"><span aria-hidden="true">&#63;</span> <span class="visually-hidden">${Lang._('WARNING')}</span> ${Lang._('ALT')}</div> <strong class="yellow-text">${altText}</strong>
+              <div class="badge"><span aria-hidden="true">&#63;</span> <span class="visually-hidden">${Lang._('WARNING')}</span> ${Lang._('ALT')}</div> <strong class="yellow-text">${startsWithSpecificAlt ? '' : altText}</strong>
             </div>
           </button>
           ${edit}
@@ -7941,6 +7954,7 @@ ${this.error.stack}
 
     // Validate types to prevent errors.
     const validTypes = ['error', 'warning', 'good'];
+    if (!type && !element) return; // Readability issue object.
     if (validTypes.indexOf(type) === -1) {
       throw Error(`Invalid type [${type}] for annotation`);
     }
@@ -8516,8 +8530,11 @@ ${this.error.stack}
       // Process link text exclusions.
       const linkSpanExclusions = link
         ? fnIgnore(link, Constants.Exclusions.LinkSpan).textContent : '';
-      const stringMatchExclusions = option.linkIgnoreStrings
-        ? linkSpanExclusions.replace(option.linkIgnoreStrings, '') : linkSpanExclusions;
+
+      const stringMatchExclusions = Array.isArray(option.linkIgnoreStrings)
+        ? option.linkIgnoreStrings.reduce((result, str) => result.replace(str, ''), linkSpanExclusions)
+        : linkSpanExclusions;
+
       const linkTextLength = link
         ? removeWhitespace(stringMatchExclusions).length : 0;
 
@@ -8536,6 +8553,7 @@ ${this.error.stack}
         const unfocusable = link.getAttribute('tabindex') === '-1';
         if (option.checks.HIDDEN_FOCUSABLE && !unfocusable) {
           results.push({
+            test: 'HIDDEN_FOCUSABLE',
             element: $el,
             type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
             content: Lang.sprintf(option.checks.HIDDEN_FOCUSABLE.content || 'HIDDEN_FOCUSABLE'),
@@ -8558,6 +8576,7 @@ ${this.error.stack}
             ? 'MISSING_ALT_LINK' : 'MISSING_ALT_LINK_HAS_TEXT';
           if (rule) {
             results.push({
+              test: conditional,
               element: $el,
               type: rule.type || 'error',
               content: Lang.sprintf(rule.content || conditional),
@@ -8569,6 +8588,7 @@ ${this.error.stack}
         } else if (option.checks.MISSING_ALT) {
           // General failure message if image is missing alt.
           results.push({
+            test: 'MISSING_ALT',
             element: $el,
             type: option.checks.MISSING_ALT.type || 'error',
             content: Lang.sprintf(option.checks.MISSING_ALT.content || 'MISSING_ALT'),
@@ -8599,6 +8619,7 @@ ${this.error.stack}
         if (option.checks.MISSING_ALT) {
           if (hasAria && altText === '') {
             results.push({
+              test: 'MISSING_ALT',
               element: $el,
               type: option.checks.MISSING_ALT.type || 'error',
               content: Lang.sprintf(option.checks.MISSING_ALT.content || 'MISSING_ALT'),
@@ -8610,8 +8631,11 @@ ${this.error.stack}
           }
         }
 
+        // If alt text starts with a very specific string provided via props.
+        const startsWithSpecificAlt = option.altPlaceholder && option.altPlaceholder.some((text) => alt.toLowerCase().startsWith(text.toLowerCase()));
+
         // Decorative images.
-        if (decorative) {
+        if (decorative || startsWithSpecificAlt) {
           const carouselSources = option.checks.IMAGE_DECORATIVE_CAROUSEL.sources;
           const carousel = carouselSources ? $el.closest(carouselSources) : '';
           if (carousel) {
@@ -8624,6 +8648,7 @@ ${this.error.stack}
               : 'IMAGE_DECORATIVE_CAROUSEL';
             if (rule) {
               results.push({
+                test: conditional,
                 element: $el,
                 type: rule.type || 'warning',
                 content: Lang.sprintf(rule.content || conditional),
@@ -8640,6 +8665,7 @@ ${this.error.stack}
               ? 'LINK_IMAGE_NO_ALT_TEXT' : 'LINK_IMAGE_TEXT';
             if (rule) {
               results.push({
+                test: conditional,
                 element: $el,
                 type: rule.type || (linkTextLength === 0 ? 'error' : 'good'),
                 content: Lang.sprintf(rule.content || conditional),
@@ -8656,6 +8682,7 @@ ${this.error.stack}
               ? 'IMAGE_FIGURE_DECORATIVE' : 'IMAGE_DECORATIVE';
             if (rule) {
               results.push({
+                test: conditional,
                 element: $el,
                 type: rule.type || 'warning',
                 content: Lang.sprintf(rule.content || conditional),
@@ -8666,6 +8693,7 @@ ${this.error.stack}
             }
           } else if (option.checks.IMAGE_DECORATIVE) {
             results.push({
+              test: 'IMAGE_DECORATIVE',
               element: $el,
               type: option.checks.IMAGE_DECORATIVE.type || 'warning',
               content: Lang.sprintf(option.checks.IMAGE_DECORATIVE.content || 'IMAGE_DECORATIVE'),
@@ -8682,11 +8710,12 @@ ${this.error.stack}
           ? option.checks.LINK_ALT_UNPRONOUNCEABLE : option.checks.ALT_UNPRONOUNCEABLE;
         if (unpronounceable) {
           if (alt.replace(/"|'|\?|\.|-|\s+/g, '') === '' && linkTextLength === 0) {
-            const condition = (link) ? 'LINK_ALT_UNPRONOUNCEABLE' : 'ALT_UNPRONOUNCEABLE';
+            const conditional = (link) ? 'LINK_ALT_UNPRONOUNCEABLE' : 'ALT_UNPRONOUNCEABLE';
             results.push({
+              test: conditional,
               element: $el,
               type: unpronounceable.type || 'error',
-              content: Lang.sprintf(unpronounceable.content || condition, altText),
+              content: Lang.sprintf(unpronounceable.content || conditional, altText),
               dismiss: prepareDismissal(`UNPRONOUNCEABLE${src}`),
               dismissAll: unpronounceable.dismissAll ? 'ALT_UNPRONOUNCEABLE' : false,
               developer: unpronounceable.developer || false,
@@ -8710,6 +8739,7 @@ ${this.error.stack}
           const conditional = (link) ? 'LINK_ALT_FILE_EXT' : 'ALT_FILE_EXT';
           if (rule) {
             results.push({
+              test: conditional,
               element: $el,
               type: rule.type || 'error',
               content: Lang.sprintf(rule.content || conditional, error[0], altText),
@@ -8726,6 +8756,7 @@ ${this.error.stack}
           const conditional = (link) ? 'LINK_PLACEHOLDER_ALT' : 'ALT_PLACEHOLDER';
           if (rule) {
             results.push({
+              test: conditional,
               element: $el,
               type: rule.type || 'error',
               content: Lang.sprintf(rule.content || conditional, altText),
@@ -8742,6 +8773,7 @@ ${this.error.stack}
           const conditional = (link) ? 'LINK_SUS_ALT' : 'SUS_ALT';
           if (rule) {
             results.push({
+              test: conditional,
               element: $el,
               type: rule.type || 'warning',
               content: Lang.sprintf(rule.content || conditional, error[1], altText),
@@ -8754,6 +8786,7 @@ ${this.error.stack}
           // Alt text is a single word greater than 15 characters that is potentially auto-generated.
           const conditional = (link) ? 'LINK_ALT_MAYBE_BAD' : 'ALT_MAYBE_BAD';
           results.push({
+            test: conditional,
             element: $el,
             type: maybeBadAlt.type || 'warning',
             content: Lang.sprintf(maybeBadAlt.content || conditional, altText),
@@ -8772,6 +8805,7 @@ ${this.error.stack}
           const truncated = truncateString(altText, 600);
           if (rule) {
             results.push({
+              test: conditional,
               element: $el,
               type: rule.type || 'warning',
               content: Lang.sprintf(rule.content || conditional, alt.length, truncated),
@@ -8797,6 +8831,7 @@ ${this.error.stack}
               : `${Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT', altText, sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`;
 
             results.push({
+              test: conditional,
               element: $el,
               type: rule.type || 'warning',
               content: rule.content
@@ -8813,6 +8848,7 @@ ${this.error.stack}
           if (duplicate) {
             if (option.checks.IMAGE_FIGURE_DUPLICATE_ALT) {
               results.push({
+                test: 'IMAGE_FIGURE_DUPLICATE_ALT',
                 element: $el,
                 type: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.type || 'warning',
                 content: Lang.sprintf(option.checks.IMAGE_FIGURE_DUPLICATE_ALT.content || 'IMAGE_FIGURE_DUPLICATE_ALT', altText),
@@ -8824,6 +8860,7 @@ ${this.error.stack}
           } else if (option.checks.IMAGE_PASS) {
             // Figure has alt text!
             results.push({
+              test: 'IMAGE_PASS',
               element: $el,
               type: option.checks.IMAGE_PASS.type || 'good',
               content: Lang.sprintf(option.checks.IMAGE_PASS.content || 'IMAGE_PASS', altText),
@@ -8836,6 +8873,7 @@ ${this.error.stack}
           if (!$el.closest('button, [role="button"]')) {
             // Image has alt text!
             results.push({
+              test: 'IMAGE_PASS',
               element: $el,
               type: option.checks.IMAGE_PASS.type || 'good',
               content: Lang.sprintf(option.checks.IMAGE_PASS.content || 'IMAGE_PASS', altText),
@@ -8851,6 +8889,7 @@ ${this.error.stack}
         if (titleAttr?.toLowerCase() === alt.toLowerCase()) {
           if (option.checks.DUPLICATE_TITLE) {
             results.push({
+              test: 'DUPLICATE_TITLE',
               element: $el,
               type: option.checks.DUPLICATE_TITLE.type || 'warning',
               content: Lang.sprintf(option.checks.DUPLICATE_TITLE.content || 'DUPLICATE_TITLE'),
@@ -8888,6 +8927,7 @@ ${this.error.stack}
       const maxHeadingLength = option.checks.HEADING_LONG.maxLength || 160;
 
       // Default.
+      let test = null;
       let type = null;
       let content = null;
       let developer = null;
@@ -8900,6 +8940,7 @@ ${this.error.stack}
           const alt = $el.querySelector('img')?.getAttribute('alt');
           if ($el.querySelector('img') && (!alt || alt.trim() === '')) {
             if (option.checks.HEADING_EMPTY_WITH_IMAGE) {
+              test = 'HEADING_EMPTY_WITH_IMAGE';
               type = option.checks.HEADING_EMPTY_WITH_IMAGE.type || 'error';
               content = Lang.sprintf(option.checks.HEADING_EMPTY_WITH_IMAGE.content || 'HEADING_EMPTY_WITH_IMAGE', level);
               developer = option.checks.HEADING_EMPTY_WITH_IMAGE.developer || false;
@@ -8908,6 +8949,7 @@ ${this.error.stack}
             }
           }
         } else if (option.checks.HEADING_EMPTY) {
+          test = 'HEADING_EMPTY';
           type = option.checks.HEADING_EMPTY.type || 'error';
           content = Lang.sprintf(option.checks.HEADING_EMPTY.content || 'HEADING_EMPTY', level);
           developer = option.checks.HEADING_EMPTY.developer || false;
@@ -8916,6 +8958,7 @@ ${this.error.stack}
         }
       } else if (level - prevLevel > 1 && i !== 0) {
         if (option.checks.HEADING_SKIPPED_LEVEL) {
+          test = 'HEADING_SKIPPED_LEVEL';
           type = option.checks.HEADING_SKIPPED_LEVEL.type || 'error';
           content = Lang.sprintf(option.checks.HEADING_SKIPPED_LEVEL.content || 'HEADING_SKIPPED_LEVEL', prevLevel, level, truncateString(headingText, 60), truncateString(prevHeadingText, 60), prevLevel + 1);
           developer = option.checks.HEADING_SKIPPED_LEVEL.developer || false;
@@ -8923,6 +8966,7 @@ ${this.error.stack}
         }
       } else if (i === 0 && level !== 1 && level !== 2) {
         if (option.checks.HEADING_FIRST) {
+          test = 'HEADING_FIRST';
           type = option.checks.HEADING_FIRST.type || 'error';
           content = Lang.sprintf(option.checks.HEADING_FIRST.content || 'HEADING_FIRST');
           developer = option.checks.HEADING_FIRST.developer || false;
@@ -8930,6 +8974,7 @@ ${this.error.stack}
         }
       } else if (headingLength > maxHeadingLength) {
         if (option.checks.HEADING_LONG) {
+          test = 'HEADING_LONG';
           type = option.checks.HEADING_LONG.type || 'warning';
           content = Lang.sprintf(option.checks.HEADING_LONG.content || 'HEADING_LONG', maxHeadingLength, headingLength);
           developer = option.checks.HEADING_LONG.developer || false;
@@ -8940,6 +8985,7 @@ ${this.error.stack}
       // Create results object.
       if (content && type) {
         results.push({
+          test,
           element: $el,
           type,
           content,
@@ -8956,20 +9002,23 @@ ${this.error.stack}
       prevHeadingText = headingText;
 
       // Create an object for heading outline panel.
-      headingOutline.push({
-        element: $el,
-        headingLevel: level,
-        text: headingText,
-        index: i,
-        type,
-        dismiss: prepareDismissal(`H${level + headingText}`),
-        isWithinRoot,
-      });
+      // Filter out specified headings in outlineIgnore and headerIgnore props.
+      if (!Elements.Found.OutlineIgnore.includes($el)) {
+        headingOutline.push({
+          element: $el,
+          headingLevel: level,
+          text: headingText,
+          type,
+          dismiss: prepareDismissal(`H${level + headingText}`),
+          isWithinRoot,
+        });
+      }
     });
 
     // Missing Heading 1
     if (option.checks.HEADING_MISSING_ONE && Elements.Found.HeadingOne.length === 0) {
       results.push({
+        test: 'HEADING_MISSING_ONE',
         type: option.checks.HEADING_MISSING_ONE.type || 'warning',
         content: Lang.sprintf(option.checks.HEADING_MISSING_ONE.content || 'HEADING_MISSING_ONE'),
         dismiss: 'MISSINGH1',
@@ -9059,8 +9108,9 @@ ${this.error.stack}
 
       // Link text based on COMPUTED ACCESSIBLE NAME.
       const accName = computeAccessibleName($el, Constants.Exclusions.LinkSpan);
-      const stringMatchExclusions = option.linkIgnoreStrings
-        ? accName.replace(option.linkIgnoreStrings, '') : accName;
+      const stringMatchExclusions = Array.isArray(option.linkIgnoreStrings)
+        ? option.linkIgnoreStrings.reduce((result, str) => result.replace(str, ''), accName)
+        : accName;
       const linkText = removeWhitespace(stringMatchExclusions);
 
       // Ignore special characters (except forward slash).
@@ -9123,6 +9173,27 @@ ${this.error.stack}
       // Remove whitespace and special characters to improve accuracy and minimize false positives.
       const linkTextTrimmed = linkText.replace(/'|"|-|\.|\s+/g, '').toLowerCase();
 
+      // Original preserved text to lowercase.
+      const originalLinkText = $el.textContent.trim().toLowerCase();
+
+      const addStopWordResult = (element, stopword) => {
+        if (option.checks.LINK_STOPWORD) {
+          results.push({
+            test: 'LINK_STOPWORD',
+            element,
+            type: option.checks.LINK_STOPWORD.type || 'error',
+            content: option.checks.LINK_STOPWORD.content
+              ? Lang.sprintf(option.checks.LINK_STOPWORD.content, stopword)
+              : Lang.sprintf('LINK_STOPWORD', stopword) + Lang.sprintf('LINK_TIP'),
+            inline: true,
+            position: 'afterend',
+            dismiss: prepareDismissal(`LINKSTOPWORD${href + linkTextTrimmed}`),
+            dismissAll: option.checks.LINK_STOPWORD.dismissAll ? 'LINK_STOPWORD' : false,
+            developer: option.checks.LINK_STOPWORD.developer || false,
+          });
+        }
+      };
+
       // Don't overlap with Alt Text module.
       if (!$el.querySelectorAll('img').length) {
         // Has aria-hidden.
@@ -9131,6 +9202,7 @@ ${this.error.stack}
             // If negative tabindex.
             if (option.checks.HIDDEN_FOCUSABLE) {
               results.push({
+                test: 'HIDDEN_FOCUSABLE',
                 element: $el,
                 type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
                 content: Lang.sprintf(option.checks.HIDDEN_FOCUSABLE.content || 'HIDDEN_FOCUSABLE'),
@@ -9142,12 +9214,35 @@ ${this.error.stack}
               });
             }
           }
-        } else if ((href || href === '') && linkText.length === 0) {
-          // Empty hyperlinks.
+          return;
+        }
+
+        // If link text is ONLY "new window" or similar phrases.
+        if (containsNewWindowPhrases) {
+          const matchedPhrase = Lang._('NEW_WINDOW_PHRASES').find((phrase) => phrase.toLowerCase() === originalLinkText);
+          if (originalLinkText === matchedPhrase) {
+            addStopWordResult($el, matchedPhrase);
+          }
+        }
+
+        // If link text is ONLY strings that were passed in via prop.
+        let isLinkIgnoreStrings = false;
+        if (option.linkIgnoreStrings) {
+          option.linkIgnoreStrings.forEach((string) => {
+            if (originalLinkText === string.toLowerCase()) {
+              addStopWordResult($el, string);
+              isLinkIgnoreStrings = true;
+            }
+          });
+        }
+
+        // Empty hyperlinks.
+        if ((href || href === '') && linkText.length === 0) {
           if (hasAriaLabelledby) {
             // Has ariaLabelledby attribute but empty accessible name.
             if (option.checks.LINK_EMPTY_LABELLEDBY) {
               results.push({
+                test: 'LINK_EMPTY_LABELLEDBY',
                 element: $el,
                 type: option.checks.LINK_EMPTY_LABELLEDBY.type || 'error',
                 content: Lang.sprintf(option.checks.LINK_EMPTY_LABELLEDBY.content || 'LINK_EMPTY_LABELLEDBY'),
@@ -9159,9 +9254,23 @@ ${this.error.stack}
               });
             }
           } else if ($el.children.length) {
+            // Add correct warning when link text is only linkIgnoreSpan text.
+            let hasStopWordWarning = false;
+            if (option.linkIgnoreSpan) {
+              const spanEl = $el.querySelector(option.linkIgnoreSpan);
+              if (spanEl) {
+                const spanText = stripSpecialCharacters(spanEl.textContent).trim().toLowerCase();
+                if (spanText === originalLinkText) {
+                  addStopWordResult($el, spanText);
+                  hasStopWordWarning = true;
+                }
+              }
+            }
+
             // Has child elements (e.g. SVG or SPAN) <a><i></i></a>
-            if (option.checks.LINK_EMPTY_NO_LABEL) {
+            if (!hasStopWordWarning && option.checks.LINK_EMPTY_NO_LABEL) {
               results.push({
+                test: 'LINK_EMPTY_NO_LABEL',
                 element: $el,
                 type: option.checks.LINK_EMPTY_NO_LABEL.type || 'error',
                 content: Lang.sprintf(option.checks.LINK_EMPTY_NO_LABEL.content || 'LINK_EMPTY_NO_LABEL'),
@@ -9172,9 +9281,10 @@ ${this.error.stack}
                 developer: option.checks.LINK_EMPTY_NO_LABEL.developer || false,
               });
             }
-          } else if (option.checks.LINK_EMPTY) {
+          } else if (!isLinkIgnoreStrings && option.checks.LINK_EMPTY) {
             // Completely empty <a></a>
             results.push({
+              test: 'LINK_EMPTY',
               element: $el,
               type: option.checks.LINK_EMPTY.type || 'error',
               content: Lang.sprintf(option.checks.LINK_EMPTY.content || 'LINK_EMPTY'),
@@ -9186,26 +9296,13 @@ ${this.error.stack}
             });
           }
         } else if (error[0] !== null) {
-          // Contains stop words.
-          if (option.checks.LINK_STOPWORD) {
-            results.push({
-              element: $el,
-              type: option.checks.LINK_STOPWORD.type || 'error',
-              content: option.checks.LINK_STOPWORD.content
-                ? Lang.sprintf(option.checks.LINK_STOPWORD.content, error[0])
-                : Lang.sprintf('LINK_STOPWORD', error[0]) + Lang.sprintf('LINK_TIP'),
-              inline: true,
-              position: 'afterend',
-              dismiss: prepareDismissal(`LINKSTOPWORD${href + linkTextTrimmed}`),
-              dismissAll: option.checks.LINK_STOPWORD.dismissAll ? 'LINK_STOPWORD' : false,
-              developer: option.checks.LINK_STOPWORD.developer || false,
-            });
-          }
+          addStopWordResult($el, error[0]);
         } else if (error[2] !== null) {
           // Contains DOI URL in link text.
           if (linkText.length > 8) {
             if (option.checks.LINK_DOI) {
               results.push({
+                test: 'LINK_DOI',
                 element: $el,
                 type: option.checks.LINK_DOI.type || 'warning',
                 content: Lang.sprintf(option.checks.LINK_DOI.content || 'LINK_DOI'),
@@ -9221,6 +9318,7 @@ ${this.error.stack}
           if (linkText.length > (option.checks.LINK_URL.maxLength || 40)) {
             if (option.checks.LINK_URL) {
               results.push({
+                test: 'LINK_URL',
                 element: $el,
                 type: option.checks.LINK_URL.type || 'warning',
                 content: option.checks.LINK_URL.content
@@ -9245,6 +9343,7 @@ ${this.error.stack}
           const stopword = checkStopWords(cleanedString, linkStopWords);
           if (option.checks.LINK_STOPWORD_ARIA && stopword !== null) {
             results.push({
+              test: 'LINK_STOPWORD_ARIA',
               element: $el,
               type: option.checks.LINK_STOPWORD_ARIA.type || 'warning',
               content: option.checks.LINK_STOPWORD_ARIA.content
@@ -9258,6 +9357,7 @@ ${this.error.stack}
           } else if (option.checks.LINK_LABEL) {
             // If the link has any ARIA, append a "Good" link button.
             results.push({
+              test: 'LINK_LABEL',
               element: $el,
               type: option.checks.LINK_LABEL.type || 'good',
               content: option.checks.LINK_LABEL.content
@@ -9275,6 +9375,7 @@ ${this.error.stack}
           const isVisibleTextInAccessibleName$1 = isVisibleTextInAccessibleName($el);
           if (option.checks.LABEL_IN_NAME && isVisibleTextInAccessibleName$1 && $el.textContent.length !== 0) {
             results.push({
+              test: 'LABEL_IN_NAME',
               element: $el,
               type: option.checks.LABEL_IN_NAME.type || 'warning',
               content: Lang.sprintf(option.checks.LABEL_IN_NAME.content || 'LABEL_IN_NAME', sanitizedText),
@@ -9289,6 +9390,7 @@ ${this.error.stack}
           // If link contains a special character used as a CTA.
           if (option.checks.LINK_SYMBOLS) {
             results.push({
+              test: 'LINK_SYMBOLS',
               element: $el,
               type: option.checks.LINK_SYMBOLS.type || 'warning',
               content: Lang.sprintf(option.checks.LINK_SYMBOLS.content || 'LINK_SYMBOLS', matchedSymbol),
@@ -9302,6 +9404,7 @@ ${this.error.stack}
           // Link is ONLY a period, comma, or special character.
           if (option.checks.LINK_EMPTY) {
             results.push({
+              test: 'LINK_EMPTY',
               element: $el,
               type: option.checks.LINK_EMPTY.type || 'error',
               content: Lang.sprintf(option.checks.LINK_EMPTY.content || 'LINK_EMPTY'),
@@ -9318,6 +9421,7 @@ ${this.error.stack}
         if (error[1] !== null || containsClickPhrase) {
           if (option.checks.LINK_CLICK_HERE) {
             results.push({
+              test: 'LINK_CLICK_HERE',
               element: $el,
               type: option.checks.LINK_CLICK_HERE.type || 'warning',
               content: option.checks.LINK_CLICK_HERE.content
@@ -9335,6 +9439,7 @@ ${this.error.stack}
         if (getText($el).length !== 0 && titleAttr?.toLowerCase() === linkText.toLowerCase()) {
           if (option.checks.DUPLICATE_TITLE) {
             results.push({
+              test: 'DUPLICATE_TITLE',
               element: $el,
               type: option.checks.DUPLICATE_TITLE.type || 'warning',
               content: Lang.sprintf(option.checks.DUPLICATE_TITLE.content || 'DUPLICATE_TITLE'),
@@ -9356,6 +9461,7 @@ ${this.error.stack}
             if (option.checks.LINK_IDENTICAL_NAME && !hasAttributes && !ignored) {
               const sanitizedText = sanitizeHTML(linkText);
               results.push({
+                test: 'LINK_IDENTICAL_NAME',
                 element: $el,
                 type: option.checks.LINK_IDENTICAL_NAME.type || 'warning',
                 content: option.checks.LINK_IDENTICAL_NAME.content
@@ -9376,6 +9482,7 @@ ${this.error.stack}
           if ($el.getAttribute('target')?.toLowerCase() === '_blank' && !fileTypeMatch && !containsNewWindowPhrases) {
             if (option.checks.LINK_NEW_TAB) {
               results.push({
+                test: 'LINK_NEW_TAB',
                 element: $el,
                 type: option.checks.LINK_NEW_TAB.type || 'warning',
                 content: Lang.sprintf(option.checks.LINK_NEW_TAB.content || 'LINK_NEW_TAB'),
@@ -9391,6 +9498,7 @@ ${this.error.stack}
           if (fileTypeMatch && !containsFileTypePhrases) {
             if (option.checks.LINK_FILE_EXT) {
               results.push({
+                test: 'LINK_FILE_EXT',
                 element: $el,
                 type: option.checks.LINK_FILE_EXT.type || 'warning',
                 content: Lang.sprintf(option.checks.LINK_FILE_EXT.content || 'LINK_FILE_EXT'),
@@ -9719,6 +9827,7 @@ ${this.error.stack}
         case 'text':
           if (option.checks.CONTRAST_ERROR) {
             results.push({
+              test: 'CONTRAST_ERROR',
               element: $el,
               type: option.checks.CONTRAST_ERROR.type || 'error',
               content: option.checks.CONTRAST_ERROR.content
@@ -9735,6 +9844,7 @@ ${this.error.stack}
           if (option.checks.CONTRAST_INPUT) {
             const sanitizedInput = sanitizeHTMLBlock($el.outerHTML);
             results.push({
+              test: 'CONTRAST_INPUT',
               element,
               type: option.checks.CONTRAST_INPUT.type || 'error',
               content: option.checks.CONTRAST_INPUT.content
@@ -9751,6 +9861,7 @@ ${this.error.stack}
           if (option.checks.CONTRAST_PLACEHOLDER) {
             const sanitizedPlaceholder = sanitizeHTMLBlock($el.outerHTML);
             results.push({
+              test: 'CONTRAST_PLACEHOLDER',
               element: $el,
               type: option.checks.CONTRAST_PLACEHOLDER.type || 'error',
               content: option.checks.CONTRAST_PLACEHOLDER.content
@@ -9768,6 +9879,7 @@ ${this.error.stack}
           if (option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED) {
             const sanitizedPlaceholder = sanitizeHTMLBlock($el.outerHTML);
             results.push({
+              test: 'CONTRAST_PLACEHOLDER_UNSUPPORTED',
               element: $el,
               type: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.type || 'warning',
               content: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.content
@@ -9786,6 +9898,7 @@ ${this.error.stack}
           if (option.checks.CONTRAST_ERROR_GRAPHIC) {
             const sanitizedSVG = sanitizeHTMLBlock($el.outerHTML);
             results.push({
+              test: 'CONTRAST_ERROR_GRAPHIC',
               element: $el,
               type: option.checks.CONTRAST_ERROR_GRAPHIC.type || 'error',
               content: option.checks.CONTRAST_ERROR_GRAPHIC.content
@@ -9803,6 +9916,7 @@ ${this.error.stack}
           if (option.checks.CONTRAST_WARNING_GRAPHIC) {
             const sanitizedSVG = sanitizeHTMLBlock($el.outerHTML);
             results.push({
+              test: 'CONTRAST_WARNING_GRAPHIC',
               element: $el,
               type: option.checks.CONTRAST_WARNING_GRAPHIC.type || 'warning',
               content: option.checks.CONTRAST_WARNING_GRAPHIC.content
@@ -9819,6 +9933,7 @@ ${this.error.stack}
         case 'background-image':
           if (option.checks.CONTRAST_WARNING) {
             results.push({
+              test: 'CONTRAST_WARNING',
               element,
               type: option.checks.CONTRAST_WARNING.type || 'warning',
               content: option.checks.CONTRAST_WARNING.content
@@ -9834,6 +9949,7 @@ ${this.error.stack}
         case 'unsupported':
           if (option.checks.CONTRAST_UNSUPPORTED) {
             results.push({
+              test: 'CONTRAST_UNSUPPORTED',
               element,
               type: option.checks.CONTRAST_UNSUPPORTED.type || 'warning',
               content: option.checks.CONTRAST_UNSUPPORTED.content
@@ -9881,6 +9997,7 @@ ${this.error.stack}
         if (type === 'image') {
           if (option.checks.LABELS_MISSING_IMAGE_INPUT && (!alt || alt.trim() === '') && !hasAria && !hasTitle) {
             results.push({
+              test: 'LABELS_MISSING_IMAGE_INPUT',
               element: $el,
               type: option.checks.LABELS_MISSING_IMAGE_INPUT.type || 'error',
               content: Lang.sprintf(option.checks.LABELS_MISSING_IMAGE_INPUT.content || 'LABELS_MISSING_IMAGE_INPUT'),
@@ -9896,6 +10013,7 @@ ${this.error.stack}
         if (type === 'reset') {
           if (option.checks.LABELS_INPUT_RESET) {
             results.push({
+              test: 'LABELS_INPUT_RESET',
               element: $el,
               type: option.checks.LABELS_INPUT_RESET.type || 'warning',
               content: Lang.sprintf(option.checks.LABELS_INPUT_RESET.content || 'LABELS_INPUT_RESET'),
@@ -9912,6 +10030,7 @@ ${this.error.stack}
           if (inputName.length === 0) {
             if (option.checks.LABELS_MISSING_LABEL) {
               results.push({
+                test: 'LABELS_MISSING_LABEL',
                 element: $el,
                 type: option.checks.LABELS_MISSING_LABEL.type || 'error',
                 content: Lang.sprintf(option.checks.LABELS_MISSING_LABEL.content || 'LABELS_MISSING_LABEL'),
@@ -9923,6 +10042,7 @@ ${this.error.stack}
           } else if (option.checks.LABELS_ARIA_LABEL_INPUT) {
             const sanitizedText = sanitizeHTML(inputName);
             results.push({
+              test: 'LABELS_ARIA_LABEL_INPUT',
               element: $el,
               type: option.checks.LABELS_ARIA_LABEL_INPUT.type || 'warning',
               content: option.checks.LABELS_ARIA_LABEL_INPUT.content
@@ -9950,6 +10070,7 @@ ${this.error.stack}
           if (!Elements.Found.Labels.some((label) => label.getAttribute('for') === id)) {
             if (option.checks.LABELS_NO_FOR_ATTRIBUTE) {
               results.push({
+                test: 'LABELS_NO_FOR_ATTRIBUTE',
                 element: $el,
                 type: option.checks.LABELS_NO_FOR_ATTRIBUTE.type || 'error',
                 content: Lang.sprintf(option.checks.LABELS_NO_FOR_ATTRIBUTE.content || 'LABELS_NO_FOR_ATTRIBUTE', id),
@@ -9962,6 +10083,7 @@ ${this.error.stack}
         } else if (option.checks.LABELS_MISSING_LABEL) {
           // No id!
           results.push({
+            test: 'LABELS_MISSING_LABEL',
             element: $el,
             type: option.checks.LABELS_MISSING_LABEL.type || 'error',
             content: Lang.sprintf(option.checks.LABELS_MISSING_LABEL.content || 'LABELS_MISSING_LABEL'),
@@ -9974,6 +10096,7 @@ ${this.error.stack}
         // Avoid using placeholder attributes.
         if (option.checks.LABELS_PLACEHOLDER && $el.placeholder && $el.placeholder !== 0) {
           results.push({
+            test: 'LABELS_PLACEHOLDER',
             element: $el,
             type: option.checks.LABELS_PLACEHOLDER.type || 'warning',
             content: Lang.sprintf(option.checks.LABELS_PLACEHOLDER.content || 'LABELS_PLACEHOLDER'),
@@ -9998,8 +10121,8 @@ ${this.error.stack}
    * @link https://oaji.net/articles/2017/601-1498133639.pdf (Portuguese adaptation).
   */
 
-  function checkReadability() {
-    let results;
+  function checkReadability(results) {
+    let readabilityResults;
     const rememberReadability = store.getItem('sa11y-readability') === 'On';
     if (rememberReadability) {
       const readabilityArray = [];
@@ -10114,13 +10237,15 @@ ${this.error.stack}
         }
 
         // Create object for headless mode.
-        results = {
+        readabilityResults = {
+          test: 'READABILITY',
           score: fleschScore,
           averageWordsPerSentence: avgWordsPerSentence,
           complexWords,
           difficultyLevel: difficulty,
           wordCount: words,
         };
+        results.push(readabilityResults);
       } else if (['sv', 'fi', 'da', 'no', 'nb', 'nn'].includes(Constants.Readability.Lang)) {
         /* Lix: Danish, Finnish, Norwegian (Bokmål & Nynorsk), Swedish. */
         const calculateLix = (text) => {
@@ -10156,22 +10281,24 @@ ${this.error.stack}
         const lix = calculateLix(pageText);
 
         // Create object for headless mode.
-        results = {
+        readabilityResults = {
+          test: 'READABILITY',
           score: lix.score,
           averageWordsPerSentence: lix.avgWordsPerSentence,
           complexWords: lix.complexWords,
           difficultyLevel: lix.difficulty,
           wordCount: lix.wordCount,
         };
+        results.push(readabilityResults);
       }
 
       // Update main panel if not in headless mode.
       if (Constants.Global.headless === false) {
         if (pageText.length === 0) {
           Constants.Panel.readabilityInfo.innerHTML = Lang._('READABILITY_NO_CONTENT');
-        } else if (results.wordCount > 30) {
-          Constants.Panel.readabilityInfo.innerHTML = `${Math.ceil(results.score)} <span class="readability-score">${results.difficultyLevel}</span>`;
-          Constants.Panel.readabilityDetails.innerHTML = `<li><strong>${Lang._('AVG_SENTENCE')}</strong> ${Math.ceil(results.averageWordsPerSentence)}</li><li><strong>${Lang._('COMPLEX_WORDS')}</strong> ${results.complexWords}%</li><li><strong>${Lang._('TOTAL_WORDS')}</strong> ${results.wordCount}</li>`;
+        } else if (readabilityResults.wordCount > 30) {
+          Constants.Panel.readabilityInfo.innerHTML = `${Math.ceil(readabilityResults.score)} <span class="readability-score">${readabilityResults.difficultyLevel}</span>`;
+          Constants.Panel.readabilityDetails.innerHTML = `<li><strong>${Lang._('AVG_SENTENCE')}</strong> ${Math.ceil(readabilityResults.averageWordsPerSentence)}</li><li><strong>${Lang._('COMPLEX_WORDS')}</strong> ${readabilityResults.complexWords}%</li><li><strong>${Lang._('TOTAL_WORDS')}</strong> ${readabilityResults.wordCount}</li>`;
         } else {
           Constants.Panel.readabilityInfo.textContent = Lang._('READABILITY_NOT_ENOUGH');
         }
@@ -10192,6 +10319,7 @@ ${this.error.stack}
       Elements.Found.Audio.forEach(($el) => {
         // General warning for audio content.
         results.push({
+          test: 'EMBED_AUDIO',
           element: $el,
           type: option.checks.EMBED_AUDIO.type || 'warning',
           content: Lang.sprintf(option.checks.EMBED_AUDIO.content || 'EMBED_AUDIO'),
@@ -10210,6 +10338,7 @@ ${this.error.stack}
         const trackSrc = track?.getAttribute('src');
         if (track === null || trackSrc === null || trackSrc.trim().length === 0) {
           results.push({
+            test: 'EMBED_VIDEO',
             element: $el,
             type: option.checks.EMBED_VIDEO.type || 'warning',
             content: Lang.sprintf(option.checks.EMBED_VIDEO.content || 'EMBED_VIDEO'),
@@ -10226,6 +10355,7 @@ ${this.error.stack}
       Elements.Found.Visualizations.forEach(($el) => {
         // General warning for data visualization widgets.
         results.push({
+          test: 'EMBED_DATA_VIZ',
           element: $el,
           type: option.checks.EMBED_DATA_VIZ.type || 'warning',
           content: Lang.sprintf(option.checks.EMBED_DATA_VIZ.content || 'EMBED_DATA_VIZ'),
@@ -10252,6 +10382,7 @@ ${this.error.stack}
       if (negativeTabindex) {
         if (option.checks.EMBED_UNFOCUSABLE) {
           results.push({
+            test: 'EMBED_UNFOCUSABLE',
             element: $el,
             type: option.checks.EMBED_UNFOCUSABLE.type || 'error',
             content: Lang.sprintf(option.checks.EMBED_UNFOCUSABLE.content || 'EMBED_UNFOCUSABLE'),
@@ -10270,6 +10401,7 @@ ${this.error.stack}
         const accessibleName = removeWhitespace(checkTitle);
         if (accessibleName.length === 0) {
           results.push({
+            test: 'EMBED_MISSING_TITLE',
             element: $el,
             type: option.checks.EMBED_MISSING_TITLE.type || 'error',
             content: Lang.sprintf(option.checks.EMBED_MISSING_TITLE.content || 'EMBED_MISSING_TITLE'),
@@ -10299,6 +10431,7 @@ ${this.error.stack}
         }
 
         results.push({
+          test: 'EMBED_GENERAL',
           element: $el,
           type: option.checks.EMBED_GENERAL.type || 'warning',
           content: Lang.sprintf(option.checks.EMBED_GENERAL.content || 'EMBED_GENERAL'),
@@ -10318,6 +10451,7 @@ ${this.error.stack}
     if (option.checks.QA_BAD_LINK) {
       Elements.Found.CustomErrorLinks.forEach(($el) => {
         results.push({
+          test: 'QA_BAD_LINK',
           element: $el,
           type: option.checks.QA_BAD_LINK.type || 'error',
           content: Lang.sprintf(option.checks.QA_BAD_LINK.content || 'QA_BAD_LINK', $el),
@@ -10337,6 +10471,7 @@ ${this.error.stack}
         const text = getText($el);
         if (text.length !== 0 && text.length > 400) {
           results.push({
+            test: 'QA_STRONG_ITALICS',
             element: $el.parentNode,
             type: option.checks.QA_STRONG_ITALICS.type || 'warning',
             content: Lang.sprintf(option.checks.QA_STRONG_ITALICS.content || 'QA_STRONG_ITALICS'),
@@ -10382,6 +10517,7 @@ ${this.error.stack}
             // If reference ID doesn't exist.
             if (!targetElement) {
               results.push({
+                test: 'QA_IN_PAGE_LINK',
                 element: $el,
                 type: option.checks.QA_IN_PAGE_LINK.type || 'error',
                 content: Lang.sprintf(option.checks.QA_IN_PAGE_LINK.content || 'QA_IN_PAGE_LINK'),
@@ -10397,6 +10533,7 @@ ${this.error.stack}
         // Manually inspect documents & PDF for accessibility.
         if (option.checks.QA_DOCUMENT && hasExtension) {
           results.push({
+            test: 'QA_DOCUMENT',
             element: $el,
             type: option.checks.QA_DOCUMENT.type || 'warning',
             content: Lang.sprintf(option.checks.QA_DOCUMENT.content || 'QA_DOCUMENT'),
@@ -10407,6 +10544,7 @@ ${this.error.stack}
           });
         } else if (option.checks.QA_PDF && hasPDF) {
           results.push({
+            test: 'QA_PDF',
             element: $el,
             type: option.checks.QA_PDF.type || 'warning',
             content: Lang.sprintf(option.checks.QA_PDF.content || 'QA_PDF'),
@@ -10428,6 +10566,7 @@ ${this.error.stack}
         if (text.length !== 0 && text.length < 25) {
           const sanitizedText = sanitizeHTML(text);
           results.push({
+            test: 'QA_BLOCKQUOTE',
             element: $el,
             type: option.checks.QA_BLOCKQUOTE.type || 'warning',
             content: Lang.sprintf(option.checks.QA_BLOCKQUOTE.content || 'QA_BLOCKQUOTE', sanitizedText),
@@ -10449,6 +10588,7 @@ ${this.error.stack}
         const key = prepareDismissal(`TABLE${$el.textContent}`);
         if (option.checks.TABLES_MISSING_HEADINGS && tableHeaders.length === 0) {
           results.push({
+            test: 'TABLES_MISSING_HEADINGS',
             element: $el,
             type: option.checks.TABLES_MISSING_HEADINGS.type || 'error',
             content: Lang.sprintf(option.checks.TABLES_MISSING_HEADINGS.content || 'TABLES_MISSING_HEADINGS'),
@@ -10460,6 +10600,7 @@ ${this.error.stack}
         if (option.checks.TABLES_SEMANTIC_HEADING && semanticHeadings.length > 0) {
           semanticHeadings.forEach((heading) => {
             results.push({
+              test: 'TABLES_SEMANTIC_HEADING',
               element: heading,
               type: option.checks.TABLES_SEMANTIC_HEADING.type || 'error',
               content: Lang.sprintf(option.checks.TABLES_SEMANTIC_HEADING.content || 'TABLES_SEMANTIC_HEADING'),
@@ -10472,6 +10613,7 @@ ${this.error.stack}
         tableHeaders.forEach((th) => {
           if (option.checks.TABLES_EMPTY_HEADING && th.textContent.trim().length === 0) {
             results.push({
+              test: 'TABLES_EMPTY_HEADING',
               element: th,
               type: option.checks.TABLES_EMPTY_HEADING.type || 'error',
               content: Lang.sprintf(option.checks.TABLES_EMPTY_HEADING.content || 'TABLES_EMPTY_HEADING'),
@@ -10491,6 +10633,7 @@ ${this.error.stack}
     if (option.checks.QA_FAKE_HEADING) {
       const addResult = (element, sanitizedText) => {
         results.push({
+          test: 'QA_FAKE_HEADING',
           element,
           type: option.checks.QA_FAKE_HEADING.type || 'warning',
           content: Lang.sprintf(option.checks.QA_FAKE_HEADING.content || 'QA_FAKE_HEADING', sanitizedText),
@@ -10635,6 +10778,7 @@ ${this.error.stack}
             }
           } if (hit) {
             results.push({
+              test: 'QA_FAKE_LIST',
               element: p,
               type: option.checks.QA_FAKE_LIST.type || 'warning',
               content: Lang.sprintf(option.checks.QA_FAKE_LIST.content || 'QA_FAKE_LIST', firstPrefix),
@@ -10675,6 +10819,7 @@ ${this.error.stack}
 
         if (detectUpperCase && detectUpperCase[0].length > 10) {
           results.push({
+            test: 'QA_UPPERCASE',
             element: $el,
             type: option.checks.QA_UPPERCASE.type || 'warning',
             content: Lang.sprintf(option.checks.QA_UPPERCASE.content || 'QA_UPPERCASE'),
@@ -10696,6 +10841,7 @@ ${this.error.stack}
     // Check underlined text. Created by Brian Teeman!
     const addUnderlineResult = ($el) => {
       results.push({
+        test: 'QA_UNDERLINE',
         element: $el,
         type: option.checks.QA_UNDERLINE.type || 'warning',
         content: Lang.sprintf(option.checks.QA_UNDERLINE.content || 'QA_UNDERLINE'),
@@ -10708,6 +10854,7 @@ ${this.error.stack}
 
     const addJustifyResult = ($el) => {
       results.push({
+        test: 'QA_JUSTIFY',
         element: $el,
         type: option.checks.QA_JUSTIFY.type || 'warning',
         content: Lang.sprintf(option.checks.QA_JUSTIFY.content || 'QA_JUSTIFY'),
@@ -10719,6 +10866,7 @@ ${this.error.stack}
 
     const addSmallTextResult = ($el) => {
       results.push({
+        test: 'QA_SMALL_TEXT',
         element: $el,
         type: option.checks.QA_SMALL_TEXT.type || 'warning',
         content: Lang.sprintf(option.checks.QA_SMALL_TEXT.content || 'QA_SMALL_TEXT'),
@@ -10796,6 +10944,7 @@ ${this.error.stack}
         const text = getText($el);
         if (text.length >= 80) {
           results.push({
+            test: 'QA_SUBSCRIPT',
             element: $el,
             type: option.checks.QA_SUBSCRIPT.type || 'warning',
             content: Lang.sprintf(option.checks.QA_SUBSCRIPT.content || 'QA_SUBSCRIPT'),
@@ -10817,6 +10966,7 @@ ${this.error.stack}
         const component = $el.querySelector(sources);
         if (component) {
           results.push({
+            test: 'QA_NESTED_COMPONENTS',
             element: $el,
             type: option.checks.QA_NESTED_COMPONENTS.type || 'warning',
             content: Lang.sprintf(option.checks.QA_NESTED_COMPONENTS.content || 'QA_NESTED_COMPONENTS'),
@@ -10838,6 +10988,7 @@ ${this.error.stack}
     if (option.checks.META_LANG) {
       if (!Elements.Found.Language || Elements.Found.Language.length < 2) {
         results.push({
+          test: 'META_LANG',
           type: option.checks.META_LANG.type || 'error',
           content: Lang.sprintf(option.checks.META_LANG.content || 'META_LANG'),
           dismiss: prepareDismissal('LANG'),
@@ -10853,6 +11004,7 @@ ${this.error.stack}
       const metaTitle = document.querySelector('title:not(svg title)');
       if (!metaTitle || metaTitle.textContent.trim().length === 0) {
         results.push({
+          test: 'META_TITLE',
           type: option.checks.META_TITLE.type || 'error',
           content: Lang.sprintf(option.checks.META_TITLE.content || 'META_TITLE'),
           dismiss: prepareDismissal('TITLE'),
@@ -10879,6 +11031,7 @@ ${this.error.stack}
           // Check for user-scalable parameter.
           if (option.checks.META_SCALABLE && (params['user-scalable'] === 'no' || params['user-scalable'] === '0')) {
             results.push({
+              test: 'META_SCALABLE',
               type: option.checks.META_SCALABLE.type || 'error',
               content: Lang.sprintf(option.checks.META_SCALABLE.content || 'META_SCALABLE'),
               dismiss: prepareDismissal('SCALABLE'),
@@ -10890,6 +11043,7 @@ ${this.error.stack}
           const maxScale = parseFloat(params['maximum-scale']);
           if (option.checks.META_MAX && !Number.isNaN(maxScale) && maxScale < 2) {
             results.push({
+              test: 'META_MAX',
               type: option.checks.META_MAX.type || 'error',
               content: Lang.sprintf(option.checks.META_MAX.content || 'META_MAX'),
               dismiss: prepareDismissal('MAXSCALE'),
@@ -10907,6 +11061,7 @@ ${this.error.stack}
       const metaRefresh = document.querySelector('meta[http-equiv="refresh"]');
       if (metaRefresh) {
         results.push({
+          test: 'META_REFRESH',
           type: option.checks.META_REFRESH.type || 'error',
           content: Lang.sprintf(option.checks.META_REFRESH.content || 'META_REFRESH'),
           dismiss: prepareDismissal('REFRESH'),
@@ -10947,6 +11102,7 @@ ${this.error.stack}
               );
               if (ariaReference.length > 0) {
                 results.push({
+                  test: 'DUPLICATE_ID',
                   element: $el,
                   type: option.checks.DUPLICATE_ID.type || 'error',
                   content: Lang.sprintf(option.checks.DUPLICATE_ID.content || 'DUPLICATE_ID', id),
@@ -10997,6 +11153,7 @@ ${this.error.stack}
           if (!negativeTabindex) {
             if (option.checks.HIDDEN_FOCUSABLE) {
               results.push({
+                test: 'HIDDEN_FOCUSABLE',
                 element: $el,
                 type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
                 content: Lang.sprintf(option.checks.HIDDEN_FOCUSABLE.content || 'HIDDEN_FOCUSABLE'),
@@ -11013,6 +11170,7 @@ ${this.error.stack}
         if (buttonText.length === 0) {
           if (option.checks.BTN_EMPTY_LABELLEDBY && hasAriaLabelledby) {
             results.push({
+              test: 'BTN_EMPTY_LABELLEDBY',
               element: $el,
               type: option.checks.BTN_EMPTY_LABELLEDBY.type || 'error',
               content: option.checks.BTN_EMPTY_LABELLEDBY.content
@@ -11024,6 +11182,7 @@ ${this.error.stack}
             });
           } else if (option.checks.BTN_EMPTY) {
             results.push({
+              test: 'BTN_EMPTY',
               element: $el,
               type: option.checks.BTN_EMPTY.type || 'error',
               content: option.checks.BTN_EMPTY.content
@@ -11042,6 +11201,7 @@ ${this.error.stack}
         if (option.checks.LABEL_IN_NAME && hasAria && isVisibleTextInAccessibleName$1) {
           const sanitizedText = sanitizeHTML(accName);
           results.push({
+            test: 'LABEL_IN_NAME',
             element: $el,
             type: option.checks.LABEL_IN_NAME.type || 'warning',
             content: option.checks.LABEL_IN_NAME.content
@@ -11057,6 +11217,7 @@ ${this.error.stack}
         // Has "button" in the accessible name.
         if (option.checks.BTN_ROLE_IN_NAME && accName.includes(Lang._('BTN'))) {
           results.push({
+            test: 'BTN_ROLE_IN_NAME',
             element: $el,
             type: option.checks.BTN_ROLE_IN_NAME.type || 'warning',
             content: option.checks.BTN_ROLE_IN_NAME.content
@@ -11077,6 +11238,7 @@ ${this.error.stack}
       Elements.Found.Lists.forEach(($el) => {
         if (!$el.closest('ul, ol, menu')) {
           results.push({
+            test: 'UNCONTAINED_LI',
             element: $el,
             type: option.checks.UNCONTAINED_LI.type || 'error',
             content: Lang.sprintf(option.checks.UNCONTAINED_LI.content || 'UNCONTAINED_LI'),
@@ -11094,6 +11256,7 @@ ${this.error.stack}
     if (option.checks.TABINDEX_ATTR) {
       Elements.Found.TabIndex.forEach(($el) => {
         results.push({
+          test: 'TABINDEX_ATTR',
           element: $el,
           type: option.checks.TABINDEX_ATTR.type || 'error',
           content: Lang.sprintf(option.checks.TABINDEX_ATTR.content || 'TABINDEX_ATTR'),
@@ -11280,7 +11443,7 @@ ${this.error.stack}
           checkDeveloper(this.results, option);
           if (option.embeddedContentPlugin) checkEmbeddedContent(this.results, option);
           if (option.contrastPlugin) checkContrast(this.results, option);
-          if (option.readabilityPlugin) checkReadability();
+          if (option.readabilityPlugin) checkReadability(this.results);
 
           // Build array of images to be used for image panel.
           this.imageResults = Elements.Found.Images.map((image) => {

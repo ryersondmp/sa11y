@@ -27,6 +27,7 @@
       const fixedRoots = document.querySelector('iframe').contentWindow.document.body.querySelector('main');
       const sa11y = new Sa11y.Sa11y({
         fixedRoots: [fixedRoots],
+        ignoreAriaOnElements: 'h2',
       });
     }, 100);
   </script>
