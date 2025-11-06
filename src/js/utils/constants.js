@@ -341,7 +341,7 @@ const Constants = (function myConstants() {
       : [];
 
     // Ignore specific images.
-    Exclusions.Images = ['[role="presentation"]'];
+    Exclusions.Images = ['img[role="presentation"]:not(a img[role="presentation"]), img[aria-hidden="true"]:not(a img[aria-hidden="true"])'];
     if (option.imageIgnore) {
       Exclusions.Images = option.imageIgnore.split(',').map(($el) => $el.trim()).concat(Exclusions.Images);
     }

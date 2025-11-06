@@ -94,6 +94,24 @@ const defaultOptions = {
   linkStopWords: '',
   extraPlaceholderStopWords: '',
   imageWithinLightbox: '',
+  editorHeadingLevel: [
+    // Sets previous heading level for contentEditable fields.
+    // With 'ignore' set, first heading level is ignored in editable zones.
+    // This is ideal for systems with separate backend editing pages.
+    // Set to 'inherit' for fields edited in a frontend context.
+    /* {
+      selector: '.example-inherit',
+      previousHeading: 'inherit',
+    },
+    {
+      selector: '.example-l3',
+      previousHeading: 3,
+    }, */
+    {
+      selector: '*',
+      previousHeading: 0, // Ignores first heading for level skip detection.
+    },
+  ],
 
   // All checks
   checks: {
@@ -706,7 +724,7 @@ const Constants = (function myConstants() {
       : [];
 
     // Ignore specific images.
-    Exclusions.Images = ['[role="presentation"]'];
+    Exclusions.Images = ['img[role="presentation"]:not(a img[role="presentation"]), img[aria-hidden="true"]:not(a img[aria-hidden="true"])'];
     if (option.imageIgnore) {
       Exclusions.Images = option.imageIgnore.split(',').map(($el) => $el.trim()).concat(Exclusions.Images);
     }
@@ -2051,11 +2069,10 @@ function addColourFilters() {
     if (Constants.Global.headless === false) {
       const svg = document.createElement('div');
       svg.id = 'sa11y-colour-filters';
-      svg.setAttribute('aria-hidden', 'true');
       // Note: Do not set 'display: none;' on parent container, otherwise it won't render in Firefox.
       svg.innerHTML = `
         <!-- DaltonLens SVG filters to simulate color vision deficiencies -->
-        <svg id="sa11y-svg-filters" xmlns="http://www.w3.org/2000/svg">
+        <svg id="sa11y-svg-filters" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
           <filter id="sa11y-protanopia" color-interpolation-filters="linearRGB">
             <feColorMatrix type="matrix" in="SourceGraphic" values="
                 0.10889,0.89111,-0.00000,0,0
@@ -8532,11 +8549,6 @@ function checkImages(results, option) {
     const linkTextLength = link
       ? removeWhitespace(stringMatchExclusions).length : 0;
 
-    // Has aria-hidden.
-    if ($el.getAttribute('aria-hidden') === 'true') {
-      return;
-    }
-
     // Ignore tracking pixels without explicit aria-hidden or nullified alt.
     if ($el.height < 2 && $el.width < 2 && (isElementHidden($el) || alt === '')) {
       return;
@@ -8902,6 +8914,7 @@ function checkImages(results, option) {
 function checkHeaders(results, option, headingOutline) {
   let prevLevel;
   let prevHeadingText = '';
+  let prevEditable = false;
   Elements.Found.Headings.forEach(($el, i) => {
     // Get accessible name of heading.
     const accName = computeAccessibleName($el, Constants.Exclusions.HeaderSpan);
@@ -8927,6 +8940,24 @@ function checkHeaders(results, option, headingOutline) {
     let developer = null;
     let dismissAll = null;
     let margin = null;
+
+    if ($el.isContentEditable !== prevEditable) {
+      const editableParent = $el.closest('[contenteditable]');
+      // first in editable zone
+      if (editableParent) {
+        option.editorHeadingLevel.some((headingLevel) => {
+          if (editableParent.closest(headingLevel.selector)) {
+            if (headingLevel.previousHeading === 'inherit') {
+              return true; // Inherit levels
+            }
+            prevLevel = headingLevel.previousHeading;
+            return true;
+          }
+          return false;
+        });
+      }
+      prevEditable = $el.isContentEditable;
+    }
 
     // Rulesets.
     if (headingLength === 0) {

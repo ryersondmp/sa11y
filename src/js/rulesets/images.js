@@ -85,11 +85,6 @@ export default function checkImages(results, option) {
     const linkTextLength = link
       ? Utils.removeWhitespace(stringMatchExclusions).length : 0;
 
-    // Has aria-hidden.
-    if ($el.getAttribute('aria-hidden') === 'true') {
-      return;
-    }
-
     // Ignore tracking pixels without explicit aria-hidden or nullified alt.
     if ($el.height < 2 && $el.width < 2 && (Utils.isElementHidden($el) || alt === '')) {
       return;

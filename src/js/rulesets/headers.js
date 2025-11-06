@@ -7,6 +7,7 @@ import { computeAccessibleName } from '../utils/computeAccessibleName';
 export default function checkHeaders(results, option, headingOutline) {
   let prevLevel;
   let prevHeadingText = '';
+  let prevEditable = false;
   Elements.Found.Headings.forEach(($el, i) => {
     // Get accessible name of heading.
     const accName = computeAccessibleName($el, Constants.Exclusions.HeaderSpan);
@@ -32,6 +33,24 @@ export default function checkHeaders(results, option, headingOutline) {
     let developer = null;
     let dismissAll = null;
     let margin = null;
+
+    if ($el.isContentEditable !== prevEditable) {
+      const editableParent = $el.closest('[contenteditable]');
+      // first in editable zone
+      if (editableParent) {
+        option.editorHeadingLevel.some((headingLevel) => {
+          if (editableParent.closest(headingLevel.selector)) {
+            if (headingLevel.previousHeading === 'inherit') {
+              return true; // Inherit levels
+            }
+            prevLevel = headingLevel.previousHeading;
+            return true;
+          }
+          return false;
+        });
+      }
+      prevEditable = $el.isContentEditable;
+    }
 
     // Rulesets.
     if (headingLength === 0) {
