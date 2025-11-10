@@ -34,6 +34,19 @@ const Elements = (function myElements() {
       Constants.Exclusions.Headings,
     );
 
+    Found.HeadingOverrideStart = new WeakMap();
+    Found.HeadingOverrideEnd = new WeakMap();
+    if (option.initialHeadingLevel) {
+      option.initialHeadingLevel.forEach((section) => {
+        const headingsInSection = find(`${section.selector} :is(h1,h2,h3,h4,h5,h6,[aria-role=heading][aria-level])`, option.ignoreContentOutsideRoots || option.fixedRoots
+          ? 'root' : 'document', Constants.Exclusions.Headings);
+        if (headingsInSection) {
+          Found.HeadingOverrideStart.set(headingsInSection[0], section.previousHeading);
+          Found.HeadingOverrideEnd.set(headingsInSection.pop(), section.previousHeading);
+        }
+      });
+    }
+
     // Excluded via headerIgnore.
     Found.ExcludedHeadings = Found.Headings.filter((heading) => Constants.Exclusions.Headings.some((exclusion) => heading.matches(exclusion)));
 

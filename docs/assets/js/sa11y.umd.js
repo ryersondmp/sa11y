@@ -100,24 +100,7 @@
     linkStopWords: '',
     extraPlaceholderStopWords: '',
     imageWithinLightbox: '',
-    editorHeadingLevel: [
-      // Sets previous heading level for contentEditable fields.
-      // With 'ignore' set, first heading level is ignored in editable zones.
-      // This is ideal for systems with separate backend editing pages.
-      // Set to 'inherit' for fields edited in a frontend context.
-      /* {
-        selector: '.example-inherit',
-        previousHeading: 'inherit',
-      },
-      {
-        selector: '.example-l3',
-        previousHeading: 3,
-      }, */
-      {
-        selector: '*',
-        previousHeading: 0, // Ignores first heading for level skip detection.
-      },
-    ],
+    initialHeadingLevel: [],
 
     // All checks
     checks: {
@@ -1768,6 +1751,19 @@
           ? 'root' : 'document',
         Constants.Exclusions.Headings,
       );
+
+      Found.HeadingOverrideStart = new WeakMap();
+      Found.HeadingOverrideEnd = new WeakMap();
+      if (option.initialHeadingLevel) {
+        option.initialHeadingLevel.forEach((section) => {
+          const headingsInSection = find(`${section.selector} :is(h1,h2,h3,h4,h5,h6,[aria-role=heading][aria-level])`, option.ignoreContentOutsideRoots || option.fixedRoots
+            ? 'root' : 'document', Constants.Exclusions.Headings);
+          if (headingsInSection) {
+            Found.HeadingOverrideStart.set(headingsInSection[0], section.previousHeading);
+            Found.HeadingOverrideEnd.set(headingsInSection.pop(), section.previousHeading);
+          }
+        });
+      }
 
       // Excluded via headerIgnore.
       Found.ExcludedHeadings = Found.Headings.filter((heading) => Constants.Exclusions.Headings.some((exclusion) => heading.matches(exclusion)));
@@ -8920,7 +8916,6 @@ ${this.error.stack}
   function checkHeaders(results, option, headingOutline) {
     let prevLevel;
     let prevHeadingText = '';
-    let prevEditable = false;
     Elements.Found.Headings.forEach(($el, i) => {
       // Get accessible name of heading.
       const accName = computeAccessibleName($el, Constants.Exclusions.HeaderSpan);
@@ -8934,6 +8929,12 @@ ${this.error.stack}
       const rootContainsShadowHeading = Constants.Root.areaToCheck.some((root) => root.contains($el.getRootNode().host));
       const isWithinRoot = rootContainsHeading || rootContainsShadowHeading;
 
+      // Check if heading starts an override zone.
+      const headingStartsOverride = Elements.Found.HeadingOverrideStart.get($el);
+      if (headingStartsOverride) {
+        prevLevel = headingStartsOverride;
+      }
+
       // Determine heading level.
       const level = parseInt($el.getAttribute('aria-level') || $el.tagName.slice(1), 10);
       const headingLength = removeWhitespace$1.length;
@@ -8946,24 +8947,6 @@ ${this.error.stack}
       let developer = null;
       let dismissAll = null;
       let margin = null;
-
-      if ($el.isContentEditable !== prevEditable) {
-        const editableParent = $el.closest('[contenteditable]');
-        // first in editable zone
-        if (editableParent) {
-          option.editorHeadingLevel.some((headingLevel) => {
-            if (editableParent.closest(headingLevel.selector)) {
-              if (headingLevel.previousHeading === 'inherit') {
-                return true; // Inherit levels
-              }
-              prevLevel = headingLevel.previousHeading;
-              return true;
-            }
-            return false;
-          });
-        }
-        prevEditable = $el.isContentEditable;
-      }
 
       // Rulesets.
       if (headingLength === 0) {
@@ -9138,11 +9121,10 @@ ${this.error.stack}
       const href = standardizeHref($el);
 
       // Link text based on COMPUTED ACCESSIBLE NAME.
-      const accName = computeAccessibleName($el, Constants.Exclusions.LinkSpan);
-      const stringMatchExclusions = Array.isArray(option.linkIgnoreStrings)
+      const accName = removeWhitespace(computeAccessibleName($el, Constants.Exclusions.LinkSpan));
+      const linkText = Array.isArray(option.linkIgnoreStrings)
         ? option.linkIgnoreStrings.reduce((result, str) => result.replace(str, ''), accName)
         : accName;
-      const linkText = removeWhitespace(stringMatchExclusions);
 
       // Ignore special characters (except forward slash).
       const stripSpecialChars = stripSpecialCharacters(linkText);
@@ -9167,8 +9149,7 @@ ${this.error.stack}
       const hasAriaLabelledby = $el.querySelector(':scope [aria-labelledby]') || $el.getAttribute('aria-labelledby');
 
       // New tab or new window.
-      // Evaluate $el.textContent in addition to accessible name to bypass `linkIgnoreSpan` prop.
-      const containsNewWindowPhrases = Lang._('NEW_WINDOW_PHRASES').some((pass) => linkText.toLowerCase().includes(pass) || getText($el).toLowerCase().includes(pass));
+      const containsNewWindowPhrases = Lang._('NEW_WINDOW_PHRASES').some((pass) => accName.toLowerCase().includes(pass));
 
       // If visible label contains word "click" (regardless of accessible name).
       const containsClickPhrase = Lang._('CLICK').some((pass) => {

@@ -49,6 +49,7 @@ let page;
 test.describe('Sa11y Unit Tests', () => {
   test.beforeAll(async ({ browser }) => {
     page = await browser.newPage();
+    // page.on('console', (msg) => console.log(msg.text()));
   });
 
   // Close everything down after running through all tests.
@@ -863,7 +864,7 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Table with semantic headings has 3 errors', async () => {
     const issue = await page.evaluate(async () => {
-      const semanticTable = document.getElementById('error-table-has-semantic-headings');
+      const semanticTable = document.querySelector('#error-table-has-semantic-headings');
       return semanticTable.querySelectorAll('sa11y-annotation').length;
     });
     expect(issue).toBe(3);

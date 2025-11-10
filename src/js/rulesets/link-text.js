@@ -83,11 +83,10 @@ export default function checkLinkText(results, option) {
     const href = Utils.standardizeHref($el);
 
     // Link text based on COMPUTED ACCESSIBLE NAME.
-    const accName = computeAccessibleName($el, Constants.Exclusions.LinkSpan);
-    const stringMatchExclusions = Array.isArray(option.linkIgnoreStrings)
+    const accName = Utils.removeWhitespace(computeAccessibleName($el, Constants.Exclusions.LinkSpan));
+    const linkText = Array.isArray(option.linkIgnoreStrings)
       ? option.linkIgnoreStrings.reduce((result, str) => result.replace(str, ''), accName)
       : accName;
-    const linkText = Utils.removeWhitespace(stringMatchExclusions);
 
     // Ignore special characters (except forward slash).
     const stripSpecialChars = stripSpecialCharacters(linkText);
@@ -112,8 +111,7 @@ export default function checkLinkText(results, option) {
     const hasAriaLabelledby = $el.querySelector(':scope [aria-labelledby]') || $el.getAttribute('aria-labelledby');
 
     // New tab or new window.
-    // Evaluate $el.textContent in addition to accessible name to bypass `linkIgnoreSpan` prop.
-    const containsNewWindowPhrases = Lang._('NEW_WINDOW_PHRASES').some((pass) => linkText.toLowerCase().includes(pass) || Utils.getText($el).toLowerCase().includes(pass));
+    const containsNewWindowPhrases = Lang._('NEW_WINDOW_PHRASES').some((pass) => accName.toLowerCase().includes(pass));
 
     // If visible label contains word "click" (regardless of accessible name).
     const containsClickPhrase = Lang._('CLICK').some((pass) => {
