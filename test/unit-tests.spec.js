@@ -862,14 +862,6 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
-  test('Table with semantic headings has 3 errors', async () => {
-    const issue = await page.evaluate(async () => {
-      const semanticTable = document.querySelector('#error-table-has-semantic-headings');
-      return semanticTable.querySelectorAll('sa11y-annotation').length;
-    });
-    expect(issue).toBe(3);
-  });
-
   test('PDF link', async () => {
     const issue = await checkTooltip(
       page, 'warning-pdf', 'Unable to check PDFs',

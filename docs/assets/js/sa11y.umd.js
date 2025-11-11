@@ -984,6 +984,12 @@
           }
           computedText += wrapPseudoContent(node, '');
           break;
+        case 'INPUT':
+          computedText += wrapPseudoContent(treeWalker.currentNode, '');
+          if (treeWalker.currentNode.hasAttribute('title')) {
+            addTitleIfNoName = treeWalker.currentNode.getAttribute('title');
+          }
+          break;
         case 'SLOT': {
           const children = node.assignedNodes?.() || [];
           let slotText = '';
