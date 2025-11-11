@@ -40,7 +40,7 @@ const Elements = (function myElements() {
       option.initialHeadingLevel.forEach((section) => {
         const headingsInSection = find(`${section.selector} :is(h1,h2,h3,h4,h5,h6,[aria-role=heading][aria-level])`, option.ignoreContentOutsideRoots || option.fixedRoots
           ? 'root' : 'document', Constants.Exclusions.Headings);
-        if (headingsInSection) {
+        if (headingsInSection.length > 0) {
           Found.HeadingOverrideStart.set(headingsInSection[0], section.previousHeading);
           Found.HeadingOverrideEnd.set(headingsInSection.pop(), section.previousHeading);
         }
