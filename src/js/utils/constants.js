@@ -110,12 +110,14 @@ const Constants = (function myConstants() {
     /* Main target area */
     try {
       // Iterate through each selector passed, and push valid ones to final root array.
-      const selectorList = desiredRoot.split(',').map((selector) => selector.trim());
-      selectorList.forEach((selector) => {
-        const root = document.querySelector(selector);
-        if (root) Root.areaToCheck.push(root);
-        else console.error(`Sa11y: The target root (${selector}) does not exist.`);
-      });
+      const roots = document.querySelectorAll(desiredRoot);
+      if (roots.length > 0) {
+        roots.forEach((root) => {
+          Constants.Root.areaToCheck.push(root);
+        });
+      } else {
+        console.error(`Sa11y: The target root (${desiredRoot}) does not exist.`);
+      }
     } catch {
       Root.areaToCheck.length = 0;
     }
@@ -128,12 +130,14 @@ const Constants = (function myConstants() {
 
     /* Readability target area */
     try {
-      const selectorList = desiredReadabilityRoot.split(',').map((selector) => selector.trim());
-      selectorList.forEach((selector) => {
-        const root = document.querySelector(selector);
-        if (root) Root.Readability.push(root);
-        else console.error(`Sa11y: The target readability root (${selector}) does not exist.`);
-      });
+      const roots = document.querySelectorAll(desiredReadabilityRoot);
+      if (roots.length > 0) {
+        roots.forEach((root) => {
+          Constants.Root.Readability.push(root);
+        });
+      } else {
+        console.error(`Sa11y: The target readability root (${desiredReadabilityRoot}) does not exist.`);
+      }
     } catch {
       Root.Readability.length = 0;
     }
