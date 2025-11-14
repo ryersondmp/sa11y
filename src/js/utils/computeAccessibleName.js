@@ -75,11 +75,6 @@ export const computeAccessibleName = (element, exclusions = [], recursing = 0) =
   const ariaLabel = computeAriaLabel(element, recursing);
   if (ariaLabel !== 'noAria') return ariaLabel;
 
-  // Textarea with a title.
-  if (element.tagName === 'TEXTAREA' && element.hasAttribute('title')) {
-    return element.getAttribute('title');
-  }
-
   // Return immediately if there is only a text node.
   let computedText = '';
   if (!element.children.length) {

@@ -880,11 +880,6 @@
     const ariaLabel = computeAriaLabel(element, recursing);
     if (ariaLabel !== 'noAria') return ariaLabel;
 
-    // Textarea with a title.
-    if (element.tagName === 'TEXTAREA' && element.hasAttribute('title')) {
-      return element.getAttribute('title');
-    }
-
     // Return immediately if there is only a text node.
     let computedText = '';
     if (!element.children.length) {
@@ -10008,6 +10003,7 @@ ${this.error.stack}
         const alt = $el.getAttribute('alt');
         const type = $el.getAttribute('type');
         const hasTitle = $el.getAttribute('title');
+        const hasPlaceholder = $el.placeholder && $el.placeholder !== 0;
         const hasAria = $el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby');
 
         // Pass: Ignore if it's a submit or hidden button.
@@ -10048,8 +10044,19 @@ ${this.error.stack}
         }
 
         // Uses ARIA or title attribute. Warn them to ensure there's a visible label.
-        if (hasAria || hasTitle) {
-          if (inputName.length === 0) {
+        if (hasAria || hasTitle || hasPlaceholder) {
+          // Avoid using placeholder attributes.
+          if (hasPlaceholder && option.checks.LABELS_PLACEHOLDER) {
+            results.push({
+              test: 'LABELS_PLACEHOLDER',
+              element: $el,
+              type: option.checks.LABELS_PLACEHOLDER.type || 'warning',
+              content: Lang.sprintf(option.checks.LABELS_PLACEHOLDER.content || 'LABELS_PLACEHOLDER'),
+              dismiss: prepareDismissal(`INPUTPLACEHOLDER${type + inputName}`),
+              dismissAll: option.checks.LABELS_PLACEHOLDER.dismissAll ? 'LABELS_PLACEHOLDER' : false,
+              developer: option.checks.LABELS_PLACEHOLDER.developer || true,
+            });
+          } else if (inputName.length === 0) {
             if (option.checks.LABELS_MISSING_LABEL) {
               results.push({
                 test: 'LABELS_MISSING_LABEL',
@@ -10112,19 +10119,6 @@ ${this.error.stack}
             dismiss: prepareDismissal(`INPUTNOID${type + inputName}`),
             dismissAll: option.checks.LABELS_MISSING_LABEL.dismissAll ? 'LABELS_MISSING_LABEL' : false,
             developer: option.checks.LABELS_MISSING_LABEL.developer || true,
-          });
-        }
-
-        // Avoid using placeholder attributes.
-        if (option.checks.LABELS_PLACEHOLDER && $el.placeholder && $el.placeholder !== 0) {
-          results.push({
-            test: 'LABELS_PLACEHOLDER',
-            element: $el,
-            type: option.checks.LABELS_PLACEHOLDER.type || 'warning',
-            content: Lang.sprintf(option.checks.LABELS_PLACEHOLDER.content || 'LABELS_PLACEHOLDER'),
-            dismiss: prepareDismissal(`INPUTPLACEHOLDER${type + inputName}`),
-            dismissAll: option.checks.LABELS_PLACEHOLDER.dismissAll ? 'LABELS_PLACEHOLDER' : false,
-            developer: option.checks.LABELS_PLACEHOLDER.developer || true,
           });
         }
       });

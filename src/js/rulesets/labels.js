@@ -22,6 +22,7 @@ export default function checkLabels(results, option) {
       const alt = $el.getAttribute('alt');
       const type = $el.getAttribute('type');
       const hasTitle = $el.getAttribute('title');
+      const hasPlaceholder = $el.placeholder && $el.placeholder !== 0;
       const hasAria = $el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby');
 
       // Pass: Ignore if it's a submit or hidden button.
@@ -62,8 +63,19 @@ export default function checkLabels(results, option) {
       }
 
       // Uses ARIA or title attribute. Warn them to ensure there's a visible label.
-      if (hasAria || hasTitle) {
-        if (inputName.length === 0) {
+      if (hasAria || hasTitle || hasPlaceholder) {
+        // Avoid using placeholder attributes.
+        if (hasPlaceholder && option.checks.LABELS_PLACEHOLDER) {
+          results.push({
+            test: 'LABELS_PLACEHOLDER',
+            element: $el,
+            type: option.checks.LABELS_PLACEHOLDER.type || 'warning',
+            content: Lang.sprintf(option.checks.LABELS_PLACEHOLDER.content || 'LABELS_PLACEHOLDER'),
+            dismiss: Utils.prepareDismissal(`INPUTPLACEHOLDER${type + inputName}`),
+            dismissAll: option.checks.LABELS_PLACEHOLDER.dismissAll ? 'LABELS_PLACEHOLDER' : false,
+            developer: option.checks.LABELS_PLACEHOLDER.developer || true,
+          });
+        } else if (inputName.length === 0) {
           if (option.checks.LABELS_MISSING_LABEL) {
             results.push({
               test: 'LABELS_MISSING_LABEL',
@@ -126,19 +138,6 @@ export default function checkLabels(results, option) {
           dismiss: Utils.prepareDismissal(`INPUTNOID${type + inputName}`),
           dismissAll: option.checks.LABELS_MISSING_LABEL.dismissAll ? 'LABELS_MISSING_LABEL' : false,
           developer: option.checks.LABELS_MISSING_LABEL.developer || true,
-        });
-      }
-
-      // Avoid using placeholder attributes.
-      if (option.checks.LABELS_PLACEHOLDER && $el.placeholder && $el.placeholder !== 0) {
-        results.push({
-          test: 'LABELS_PLACEHOLDER',
-          element: $el,
-          type: option.checks.LABELS_PLACEHOLDER.type || 'warning',
-          content: Lang.sprintf(option.checks.LABELS_PLACEHOLDER.content || 'LABELS_PLACEHOLDER'),
-          dismiss: Utils.prepareDismissal(`INPUTPLACEHOLDER${type + inputName}`),
-          dismissAll: option.checks.LABELS_PLACEHOLDER.dismissAll ? 'LABELS_PLACEHOLDER' : false,
-          developer: option.checks.LABELS_PLACEHOLDER.developer || true,
         });
       }
     });
