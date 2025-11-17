@@ -362,9 +362,16 @@ export function generateSelectorPath(element) {
       selector += `#${currentElement.id}`;
       path.unshift(selector);
       break;
-    } else if (currentElement.className) {
-      selector += `.${currentElement.className.replace(/\s+/g, '.')}`;
+    } else {
+      const classAttr = currentElement.getAttribute ? currentElement.getAttribute('class') : null;
+      if (classAttr) {
+        const classSelector = classAttr.trim().replace(/\s+/g, '.');
+        if (classSelector) {
+          selector += `.${classSelector}`;
+        }
+      }
     }
+
     const parentElement = currentElement.parentNode;
     if (parentElement) {
       const siblings = parentElement.children;
