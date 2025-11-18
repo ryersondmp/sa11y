@@ -72,88 +72,6 @@ export function APCAcontrast(txtY, bgY, places = -1) {
   } else { return 0.0 }
 }
 
-/**
- * BridgePCA: simplified version of the APCA math to bridge from WCAG_2 contrast math to the future, while being 100% backwards compatible with WCAG_2 contrast. By "backwards compatible" we mean if bridge-pca passes it, it will automatically pass WCAG_2 contrast.
- *
- * @link https://github.com/Myndex/bridge-pca
- */
-
-export function BPCAcontrast(txtY, bgY, places = -1) {
-  const icp = [0.0, 1.1];
-  if (Number.isNaN(txtY) || Number.isNaN(bgY) || Math.min(txtY, bgY) < icp[0] || Math.max(txtY, bgY) > icp[1]) {
-    return 0;
-  }
-  const normBG = 0.56;
-  const normTXT = 0.57;
-  const revTXT = 0.62;
-  const revBG = 0.65;
-  const blkThrs = 0.022;
-  const blkClmp = 1.414;
-  const scaleBoW = 1.14;
-  const scaleWoB = 1.14;
-  const loBoWoffset = 0.027;
-  const loWoBoffset = 0.027;
-  const bridgeWoBfact = 0.1414;
-  const bridgeWoBpivot = 0.84;
-  const loClip = 0.1;
-  const deltaYmin = 0.0005;
-  let SAPC = 0.0;
-  let outputContrast = 0.0;
-  let polCat = 'BoW';
-  txtY = (txtY > blkThrs) ? txtY
-    : txtY + Math.pow(blkThrs - txtY, blkClmp);
-  bgY = (bgY > blkThrs) ? bgY
-    : bgY + Math.pow(blkThrs - bgY, blkClmp);
-  if (Math.abs(bgY - txtY) < deltaYmin) { return 0.0; }
-  if (bgY > txtY) {
-    SAPC = (Math.pow(bgY, normBG) - Math.pow(txtY, normTXT)) * scaleBoW;
-    outputContrast = (SAPC < loClip) ? 0.0 : SAPC - loBoWoffset;
-  } else {
-    polCat = 'WoB';
-    SAPC = (Math.pow(bgY, revBG) - Math.pow(txtY, revTXT)) * scaleWoB;
-    const bridge = Math.max(0, txtY / bridgeWoBpivot - 1.0) * bridgeWoBfact;
-    outputContrast = (SAPC > -loClip) ? 0.0 : SAPC + loWoBoffset + bridge;
-  }
-
-  if (places < 0) {
-    return outputContrast * 100.0;
-  } if (places == 0) {
-    return `${Math.round(Math.abs(outputContrast) * 100.0)}<sub>${polCat}</sub>`;
-  } if (Number.isInteger(places)) {
-    return (outputContrast * 100.0).toFixed(places);
-  } throw 'Err-3';
-}
-
-export function bridgeRatio(contrastLc = 0, txtY, bgY, places = 1) {
-  const maxY = Math.max(txtY, bgY);
-  const offsetA = 0.2693;
-  const preScale = -0.0561;
-  const powerShift = 4.537;
-  const mainFactor = 1.113946;
-  const loThresh = 0.3;
-  const loExp = 0.48;
-  const preEmph = 0.42;
-  const postDe = 0.6594;
-  const hiTrim = 0.0785;
-  const loTrim = 0.0815;
-  const trimThresh = 0.506;
-  let addTrim = loTrim + hiTrim;
-  if (maxY > trimThresh) {
-    const adjFact = (1.0 - maxY) / (1.0 - trimThresh);
-    addTrim = loTrim * adjFact + hiTrim;
-  }
-  contrastLc = Math.max(0, Math.abs(parseFloat(contrastLc) * 0.01));
-  let wcagContrast = (Math.pow(contrastLc + preScale, powerShift) + offsetA)
-    * mainFactor * contrastLc + addTrim;
-
-  wcagContrast = (wcagContrast > loThresh)
-    ? 10.0 * wcagContrast
-    : (contrastLc < 0.06) ? 0
-      : 10.0 * wcagContrast
-      - (Math.pow(loThresh - wcagContrast + preEmph, loExp) - postDe);
-  return (wcagContrast).toFixed(places);
-}
-
 export function sRGBtoY(rgba = [0, 0, 0]) {
   const mainTRC = 2.4;
   const sRco = 0.2126478133913640;
@@ -163,29 +81,6 @@ export function sRGBtoY(rgba = [0, 0, 0]) {
   return sRco * simpleExp(rgba[0])
     + sGco * simpleExp(rgba[1])
     + sBco * simpleExp(rgba[2]);
-}
-
-export function displayP3toY(rgba = [0, 0, 0]) {
-  const mainTRC = 2.4;
-  const sRco = 0.2289829594805780;
-  const sGco = 0.6917492625852380;
-  const sBco = 0.0792677779341829;
-  function simpleExp(chan) { return Math.pow(chan / 255.0, mainTRC); }
-  return sRco * simpleExp(rgba[0])
-    + sGco * simpleExp(rgba[1])
-    + sBco * simpleExp(rgba[2]);
-}
-
-export function adobeRGBtoY(rgb = [0, 0, 0]) {
-  const mainTRC = 2.35;
-  const sRco = 0.2973550227113810;
-  const sGco = 0.6273727497145280;
-  const sBco = 0.0752722275740913;
-  function simpleExp(chan) { return Math.pow(chan / 255.0, mainTRC); }
-
-  return sRco * simpleExp(rgb[0])
-    + sGco * simpleExp(rgb[1])
-    + sBco * simpleExp(rgb[2]);
 }
 
 export function alphaBlend(rgbaFG = [0, 0, 0, 1.0], rgbBG = [0, 0, 0], isInt = true) {
@@ -199,16 +94,6 @@ export function alphaBlend(rgbaFG = [0, 0, 0, 1.0], rgbBG = [0, 0, 0], isInt = t
     }
     return rgbOut;
   } return rgbaFG;
-}
-
-export function calcBPCA(textColor, bgColor, places = -1, isInt = true) {
-  let bgClr = bgColor;
-  let txClr = textColor;
-  let hasAlpha = (txClr[3] != '' && txClr[3] < 1) ? true : false;
-
-  if (hasAlpha) { txClr = alphaBlend(txClr, bgClr, isInt); };
-
-  return BPCAcontrast(sRGBtoY(txClr), sRGBtoY(bgClr), places)
 }
 
 export function fontLookupAPCA(contrast, places = 2) {
