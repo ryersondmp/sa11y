@@ -59,7 +59,6 @@
     "stylelint-scss": "^5.0.1"
   },
   "dependencies": {
-    "apca-w3": "^0.1.9",
-    "tippy.js": "^6.3.7"
+    "tippy.js": "6.3.7"
   }
 }

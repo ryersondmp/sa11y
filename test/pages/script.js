@@ -39,6 +39,8 @@ $checkAccordions.forEach(($el) => {
 });
 */
 
+const apca = window.location.href.includes('http://localhost:8080/test/pages/contrast');
+
 // Instantiate
 Lang.addI18n(Sa11yLangEn.strings);
 const sa11y = new Sa11y({
@@ -53,7 +55,7 @@ const sa11y = new Sa11y({
   showHinPageOutline: 1,
   showTitleInPageOutline: 1,
   // contrastAAA: true,
-  // contrastAPCA: true,
+  contrastAPCA: apca,
   ignoreHiddenOverflow: '.overlay, .modal',
   insertAnnotationBefore: '.background-container',
   // panelPosition: 'top-right',

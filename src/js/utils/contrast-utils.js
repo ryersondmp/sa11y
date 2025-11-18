@@ -1,6 +1,6 @@
-import { alphaBlend, sRGBtoY, APCAcontrast, fontLookupAPCA } from 'apca-w3';
 import Constants from './constants';
 import Lang from './lang';
+import { alphaBlend, sRGBtoY, APCAcontrast, fontLookupAPCA } from './apca';
 
 /**
  * Normalizes a given font weight to a numeric value. Maps keywords to their numeric equivalents.
