@@ -9006,8 +9006,10 @@ function checkLinkText(results, option) {
     // Original preserved text to lowercase.
     const originalLinkText = $el.textContent.trim().toLowerCase();
 
+    let oneStop;
     const addStopWordResult = (element, stopword) => {
-      if (option.checks.LINK_STOPWORD) {
+      if (option.checks.LINK_STOPWORD && !oneStop) {
+        oneStop = true;
         results.push({
           test: 'LINK_STOPWORD',
           element,
@@ -10337,11 +10339,11 @@ function checkQA(results, option) {
         if ((href.startsWith('#') || href === '') && hasText && !ignored && !hasAttributes) {
           const targetId = href.substring(1);
           const ariaControls = $el.getAttribute('aria-controls');
-          const targetElement = document.getElementById(targetId)
+          const targetElement = targetId && (document.getElementById(targetId)
             || document.getElementById(decodeURIComponent(targetId))
             || document.getElementById(encodeURIComponent(targetId))
             || document.getElementById(ariaControls)
-            || document.querySelector(`a[name="${targetId}"]`);
+            || document.querySelector(`a[name="${targetId}"]`));
 
           // If reference ID doesn't exist.
           if (!targetElement) {

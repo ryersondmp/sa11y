@@ -150,8 +150,10 @@ export default function checkLinkText(results, option) {
     // Original preserved text to lowercase.
     const originalLinkText = $el.textContent.trim().toLowerCase();
 
+    let oneStop;
     const addStopWordResult = (element, stopword) => {
-      if (option.checks.LINK_STOPWORD) {
+      if (option.checks.LINK_STOPWORD && !oneStop) {
+        oneStop = true;
         results.push({
           test: 'LINK_STOPWORD',
           element,

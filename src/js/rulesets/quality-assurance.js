@@ -67,11 +67,11 @@ export default function checkQA(results, option) {
         if ((href.startsWith('#') || href === '') && hasText && !ignored && !hasAttributes) {
           const targetId = href.substring(1);
           const ariaControls = $el.getAttribute('aria-controls');
-          const targetElement = document.getElementById(targetId)
+          const targetElement = targetId && (document.getElementById(targetId)
             || document.getElementById(decodeURIComponent(targetId))
             || document.getElementById(encodeURIComponent(targetId))
             || document.getElementById(ariaControls)
-            || document.querySelector(`a[name="${targetId}"]`);
+            || document.querySelector(`a[name="${targetId}"]`));
 
           // If reference ID doesn't exist.
           if (!targetElement) {
