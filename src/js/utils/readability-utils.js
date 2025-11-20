@@ -16,8 +16,6 @@
  * @returns Readability object.
  */
 export default function computeReadability(textArray, lang) {
-  if (!textArray || !lang) return null;
-
   // If array item does not end with punctuation, add period to improve accuracy.
   const readabilityArray = [];
   const punctuation = ['.', '?', '!'];
@@ -27,6 +25,7 @@ export default function computeReadability(textArray, lang) {
     readabilityArray.push(sentence);
   });
   const pageText = readabilityArray.join(' ');
+  if (pageText.length === 0) return null;
 
   // Flesch Reading Ease: English, French, German, Dutch, Italian, Spanish, Portuguese
   if (['en', 'es', 'fr', 'de', 'nl', 'it', 'pt'].includes(lang)) {
@@ -80,8 +79,6 @@ export default function computeReadability(textArray, lang) {
       }
     }
 
-    if (!words || !sentences) return null;
-
     let flesch = false;
     if (lang === 'en') {
       flesch = 206.835 - (1.015 * (words / sentences)) - (84.6 * (totalSyllables / words));
@@ -99,12 +96,14 @@ export default function computeReadability(textArray, lang) {
       flesch = 248.835 - (1.015 * (words / sentences)) - (84.6 * (totalSyllables / words));
     }
 
+    // Score must be between 0 and 100%.
     if (flesch > 100) {
       flesch = 100;
     } else if (flesch < 0) {
       flesch = 0;
     }
 
+    // Compute scores.
     const fleschScore = Number(flesch.toFixed(1));
     const avgWordsPerSentence = Number((words / sentences).toFixed(1));
     const complexWords = Math.round(100 * ((words - (syllables1 + syllables2)) / words));
@@ -121,7 +120,6 @@ export default function computeReadability(textArray, lang) {
     }
 
     return {
-      test: 'READABILITY',
       score: fleschScore,
       averageWordsPerSentence: avgWordsPerSentence,
       complexWords,
@@ -145,11 +143,8 @@ export default function computeReadability(textArray, lang) {
 
     const wordsArr = lixWords(pageText);
     const wordCount = wordsArr.length;
-    if (!wordCount) return null;
-
     const longWordsCount = wordsArr.filter((w) => w.length > 6).length;
     const sentenceCount = splitSentences(pageText).length || 1;
-
     const score = Math.round(
       (wordCount / sentenceCount) + ((longWordsCount * 100) / wordCount),
     );
@@ -168,7 +163,6 @@ export default function computeReadability(textArray, lang) {
     }
 
     return {
-      test: 'READABILITY',
       score,
       averageWordsPerSentence: avgWordsPerSentence,
       complexWords,

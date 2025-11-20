@@ -9959,8 +9959,6 @@ function checkLabels(results, option) {
  * @returns Readability object.
  */
 function computeReadability(textArray, lang) {
-  if (!textArray || !lang) return null;
-
   // If array item does not end with punctuation, add period to improve accuracy.
   const readabilityArray = [];
   const punctuation = ['.', '?', '!'];
@@ -9970,6 +9968,7 @@ function computeReadability(textArray, lang) {
     readabilityArray.push(sentence);
   });
   const pageText = readabilityArray.join(' ');
+  if (pageText.length === 0) return null;
 
   // Flesch Reading Ease: English, French, German, Dutch, Italian, Spanish, Portuguese
   if (['en', 'es', 'fr', 'de', 'nl', 'it', 'pt'].includes(lang)) {
@@ -10023,8 +10022,6 @@ function computeReadability(textArray, lang) {
       }
     }
 
-    if (!words || !sentences) return null;
-
     let flesch = false;
     if (lang === 'en') {
       flesch = 206.835 - (1.015 * (words / sentences)) - (84.6 * (totalSyllables / words));
@@ -10042,12 +10039,14 @@ function computeReadability(textArray, lang) {
       flesch = 248.835 - (1.015 * (words / sentences)) - (84.6 * (totalSyllables / words));
     }
 
+    // Score must be between 0 and 100%.
     if (flesch > 100) {
       flesch = 100;
     } else if (flesch < 0) {
       flesch = 0;
     }
 
+    // Compute scores.
     const fleschScore = Number(flesch.toFixed(1));
     const avgWordsPerSentence = Number((words / sentences).toFixed(1));
     const complexWords = Math.round(100 * ((words - (syllables1 + syllables2)) / words));
@@ -10064,7 +10063,6 @@ function computeReadability(textArray, lang) {
     }
 
     return {
-      test: 'READABILITY',
       score: fleschScore,
       averageWordsPerSentence: avgWordsPerSentence,
       complexWords,
@@ -10088,11 +10086,8 @@ function computeReadability(textArray, lang) {
 
     const wordsArr = lixWords();
     const wordCount = wordsArr.length;
-    if (!wordCount) return null;
-
     const longWordsCount = wordsArr.filter((w) => w.length > 6).length;
     const sentenceCount = splitSentences().length || 1;
-
     const score = Math.round(
       (wordCount / sentenceCount) + ((longWordsCount * 100) / wordCount),
     );
@@ -10111,7 +10106,6 @@ function computeReadability(textArray, lang) {
     }
 
     return {
-      test: 'READABILITY',
       score,
       averageWordsPerSentence: avgWordsPerSentence,
       complexWords,
@@ -10124,155 +10118,37 @@ function computeReadability(textArray, lang) {
   return null;
 }
 
-/**
- * Build readability UI results UI.
- * @param {Object} output Readability results object.
- */
-function readabilityUI(output) {
+function checkReadability(results) {
+  // Get text.
+  const pageText = Elements.Found.Readability
+    .map(($el) => getText(fnIgnore($el)))
+    .filter(Boolean);
+
+  // Compute.
+  const computed = computeReadability(pageText, Constants.Readability.Lang);
+
+  // Generate result object.
+  let result;
+  if (computed) {
+    result = {
+      test: 'READABILITY',
+      difficultyLevel: Lang._(computed.difficultyToken),
+      ...computed,
+    };
+    results.push(result);
+  }
+
+  // Paint UI.
   if (Constants.Global.headless === false) {
-    if (output.charCount === 0) {
-      Constants.Panel.readabilityInfo.innerHTML = Lang._('READABILITY_NO_CONTENT');
-    } else if (output.wordCount > 30) {
-      Constants.Panel.readabilityInfo.innerHTML = `${Math.ceil(output.score)} <span class="readability-score">${output.difficultyLevel}</span>`;
-      Constants.Panel.readabilityDetails.innerHTML = `<li><strong>${Lang._('AVG_SENTENCE')}</strong> ${Math.ceil(output.averageWordsPerSentence)}</li><li><strong>${Lang._('COMPLEX_WORDS')}</strong> ${output.complexWords}%</li><li><strong>${Lang._('TOTAL_WORDS')}</strong> ${output.wordCount}</li>`;
+    if (computed && result.wordCount > 30) {
+      Constants.Panel.readabilityInfo.innerHTML = `${Math.ceil(result.score)} <span class="readability-score">${result.difficultyLevel}</span>`;
+      Constants.Panel.readabilityDetails.innerHTML = `<li><strong>${Lang._('AVG_SENTENCE')}</strong> ${Math.ceil(result.averageWordsPerSentence)}</li><li><strong>${Lang._('COMPLEX_WORDS')}</strong> ${result.complexWords}%</li><li><strong>${Lang._('TOTAL_WORDS')}</strong> ${result.wordCount}</li>`;
     } else {
       Constants.Panel.readabilityInfo.textContent = Lang._('READABILITY_NOT_ENOUGH');
     }
   }
-}
 
-/**
- * Turn core result into final object pushed to `results`.
- */
-function handleReadabilityResult(coreResult, results, source) {
-  if (!coreResult) return;
-
-  const result = {
-    ...coreResult,
-    processedBy: source,
-    difficultyLevel: Lang._(coreResult.difficultyToken),
-  };
-  results.push(result);
-  readabilityUI(result);
-
-  // Dispatch custom event when readability results are complete.
-  window.sa11yReadabilityComplete = null;
-  const event = new CustomEvent('sa11y-readability-result', {
-    detail: { detail: result },
-  });
-  window.sa11yReadabilityComplete = event.detail;
-  document.dispatchEvent(event);
-}
-
-/**
- * Synchronous computation on the main thread.
- */
-function computeOnMainThread(pageText, results) {
-  handleReadabilityResult(
-    computeReadability(pageText, Constants.Readability.Lang), results, 'main thread',
-  );
-}
-
-/**
- * Create web worker URL once.
- */
-let readabilityWorkerUrl = null;
-function getReadabilityWorkerUrl() {
-  if (readabilityWorkerUrl) return readabilityWorkerUrl;
-
-  const workerSource = `
-    ${computeReadability.toString()}
-    self.onmessage = function (e) {
-      const data = e.data || {};
-      const result = computeReadability(data.pageText, data.lang);
-      self.postMessage(result);
-    };
-  `;
-  const blob = new Blob([workerSource], { type: 'text/javascript' });
-  readabilityWorkerUrl = URL.createObjectURL(blob);
-  return readabilityWorkerUrl;
-}
-
-const workerSupported = typeof Worker !== 'undefined'
-  && typeof Blob !== 'undefined'
-  && typeof URL !== 'undefined'
-  && typeof URL.createObjectURL === 'function';
-
-/**
- * Create and cache worker.
- */
-let readabilityWorker = null;
-function getReadabilityWorker() {
-  if (!workerSupported) return null;
-  if (readabilityWorker) return readabilityWorker;
-  try {
-    readabilityWorker = new Worker(getReadabilityWorkerUrl());
-    console.log('[readability] Worker created');
-  } catch (e) {
-    console.warn('[readability] Worker creation failed, using main thread', e);
-    readabilityWorker = null;
-  }
-  return readabilityWorker;
-}
-
-/**
- * Try to compute via (cached) worker; fall back to main thread on failure.
- */
-function computeWithWorker(pageText, results, source = 'worker') {
-  const worker = getReadabilityWorker();
-  if (!worker) {
-    computeOnMainThread(pageText, results);
-    return;
-  }
-
-  worker.onmessage = (event) => {
-    handleReadabilityResult(event.data || null, results, source);
-  };
-
-  worker.onerror = (err) => {
-    console.error('[readability] Worker error, falling back', err);
-    try {
-      worker.terminate();
-    } catch (e) {
-      console.error('[readability] Worker error, falling back', e);
-    }
-    readabilityWorker = null;
-    computeOnMainThread(pageText, results);
-  };
-
-  try {
-    worker.postMessage({
-      pageText,
-      lang: Constants.Readability.Lang,
-    });
-  } catch (e) {
-    console.error('[readability] postMessage failed, falling back', e);
-    try {
-      worker.terminate();
-    } catch (err) {
-      // ignore
-    }
-    readabilityWorker = null;
-    computeOnMainThread(pageText, results);
-  }
-}
-
-function checkReadability(results) {
-  // Get text.
-  const pageText = [];
-  Elements.Found.Readability.forEach(($el) => {
-    const ignore = fnIgnore($el);
-    const text = getText(ignore);
-    if (!text) return;
-    pageText.push(text);
-  });
-
-  // Compute readability analysis.
-  if (Constants.Global.headless) {
-    computeOnMainThread(pageText, results);
-  } else {
-    computeWithWorker(pageText, results);
-  }
+  // Return readability result object back to this.results array.
   return results;
 }
 
@@ -11404,10 +11280,6 @@ class Sa11y {
         Elements.initializeElements(option);
 
         // Ruleset checks
-        if (option.readabilityPlugin && store.getItem('sa11y-readability') === 'On') {
-          checkReadability(this.results);
-        }
-
         checkHeaders(this.results, option, this.headingOutline);
         checkLinkText(this.results, option);
         checkImages(this.results, option);
@@ -11416,6 +11288,9 @@ class Sa11y {
         checkDeveloper(this.results, option);
         if (option.embeddedContentPlugin) checkEmbeddedContent(this.results, option);
         if (option.contrastPlugin) checkContrast(this.results, option);
+        if (option.readabilityPlugin && store.getItem('sa11y-readability') === 'On') {
+          checkReadability(this.results);
+        }
 
         // Build array of images to be used for image panel.
         this.imageResults = Elements.Found.Images.map((image) => {

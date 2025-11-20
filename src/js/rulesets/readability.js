@@ -4,154 +4,36 @@ import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 import computeReadability from '../utils/readability-utils';
 
-/**
- * Build readability UI results UI.
- * @param {Object} output Readability results object.
- */
-function readabilityUI(output) {
+export default function checkReadability(results) {
+  // Get text.
+  const pageText = Elements.Found.Readability
+    .map(($el) => Utils.getText(Utils.fnIgnore($el)))
+    .filter(Boolean);
+
+  // Compute.
+  const computed = computeReadability(pageText, Constants.Readability.Lang);
+
+  // Generate result object.
+  let result;
+  if (computed) {
+    result = {
+      test: 'READABILITY',
+      difficultyLevel: Lang._(computed.difficultyToken),
+      ...computed,
+    };
+    results.push(result);
+  }
+
+  // Paint UI.
   if (Constants.Global.headless === false) {
-    if (output.charCount === 0) {
-      Constants.Panel.readabilityInfo.innerHTML = Lang._('READABILITY_NO_CONTENT');
-    } else if (output.wordCount > 30) {
-      Constants.Panel.readabilityInfo.innerHTML = `${Math.ceil(output.score)} <span class="readability-score">${output.difficultyLevel}</span>`;
-      Constants.Panel.readabilityDetails.innerHTML = `<li><strong>${Lang._('AVG_SENTENCE')}</strong> ${Math.ceil(output.averageWordsPerSentence)}</li><li><strong>${Lang._('COMPLEX_WORDS')}</strong> ${output.complexWords}%</li><li><strong>${Lang._('TOTAL_WORDS')}</strong> ${output.wordCount}</li>`;
+    if (computed && result.wordCount > 30) {
+      Constants.Panel.readabilityInfo.innerHTML = `${Math.ceil(result.score)} <span class="readability-score">${result.difficultyLevel}</span>`;
+      Constants.Panel.readabilityDetails.innerHTML = `<li><strong>${Lang._('AVG_SENTENCE')}</strong> ${Math.ceil(result.averageWordsPerSentence)}</li><li><strong>${Lang._('COMPLEX_WORDS')}</strong> ${result.complexWords}%</li><li><strong>${Lang._('TOTAL_WORDS')}</strong> ${result.wordCount}</li>`;
     } else {
       Constants.Panel.readabilityInfo.textContent = Lang._('READABILITY_NOT_ENOUGH');
     }
   }
-}
 
-/**
- * Turn core result into final object pushed to `results`.
- */
-function handleReadabilityResult(coreResult, results, source) {
-  if (!coreResult) return;
-
-  const result = {
-    ...coreResult,
-    processedBy: source,
-    difficultyLevel: Lang._(coreResult.difficultyToken),
-  };
-  results.push(result);
-  readabilityUI(result);
-
-  // Dispatch custom event when readability results are complete.
-  window.sa11yReadabilityComplete = null;
-  const event = new CustomEvent('sa11y-readability-result', {
-    detail: { detail: result },
-  });
-  window.sa11yReadabilityComplete = event.detail;
-  document.dispatchEvent(event);
-}
-
-/**
- * Synchronous computation on the main thread.
- */
-function computeOnMainThread(pageText, results) {
-  handleReadabilityResult(
-    computeReadability(pageText, Constants.Readability.Lang), results, 'main thread',
-  );
-}
-
-/**
- * Create web worker URL once.
- */
-let readabilityWorkerUrl = null;
-function getReadabilityWorkerUrl() {
-  if (readabilityWorkerUrl) return readabilityWorkerUrl;
-
-  const workerSource = `
-    ${computeReadability.toString()}
-    self.onmessage = function (e) {
-      const data = e.data || {};
-      const result = computeReadability(data.pageText, data.lang);
-      self.postMessage(result);
-    };
-  `;
-  const blob = new Blob([workerSource], { type: 'text/javascript' });
-  readabilityWorkerUrl = URL.createObjectURL(blob);
-  return readabilityWorkerUrl;
-}
-
-const workerSupported = typeof Worker !== 'undefined'
-  && typeof Blob !== 'undefined'
-  && typeof URL !== 'undefined'
-  && typeof URL.createObjectURL === 'function';
-
-/**
- * Create and cache worker.
- */
-let readabilityWorker = null;
-function getReadabilityWorker() {
-  if (!workerSupported) return null;
-  if (readabilityWorker) return readabilityWorker;
-  try {
-    readabilityWorker = new Worker(getReadabilityWorkerUrl());
-    console.log('[readability] Worker created');
-  } catch (e) {
-    console.warn('[readability] Worker creation failed, using main thread', e);
-    readabilityWorker = null;
-  }
-  return readabilityWorker;
-}
-
-/**
- * Try to compute via (cached) worker; fall back to main thread on failure.
- */
-function computeWithWorker(pageText, results, source = 'worker') {
-  const worker = getReadabilityWorker();
-  if (!worker) {
-    computeOnMainThread(pageText, results);
-    return;
-  }
-
-  worker.onmessage = (event) => {
-    handleReadabilityResult(event.data || null, results, source);
-  };
-
-  worker.onerror = (err) => {
-    console.error('[readability] Worker error, falling back', err);
-    try {
-      worker.terminate();
-    } catch (e) {
-      console.error('[readability] Worker error, falling back', e);
-    }
-    readabilityWorker = null;
-    computeOnMainThread(pageText, results);
-  };
-
-  try {
-    worker.postMessage({
-      pageText,
-      lang: Constants.Readability.Lang,
-    });
-  } catch (e) {
-    console.error('[readability] postMessage failed, falling back', e);
-    try {
-      worker.terminate();
-    } catch (err) {
-      // ignore
-    }
-    readabilityWorker = null;
-    computeOnMainThread(pageText, results);
-  }
-}
-
-export default function checkReadability(results) {
-  // Get text.
-  const pageText = [];
-  Elements.Found.Readability.forEach(($el) => {
-    const ignore = Utils.fnIgnore($el);
-    const text = Utils.getText(ignore);
-    if (!text) return;
-    pageText.push(text);
-  });
-
-  // Compute readability analysis.
-  if (Constants.Global.headless) {
-    computeOnMainThread(pageText, results);
-  } else {
-    computeWithWorker(pageText, results);
-  }
+  // Return readability result object back to this.results array.
   return results;
 }
