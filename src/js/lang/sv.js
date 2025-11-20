@@ -127,7 +127,6 @@ export default {
     VERY_DIFFICULT: 'Mycket svårt',
     DIFFICULT: 'Svårt',
     FAIRLY_DIFFICULT: 'Ganska svårt',
-    READABILITY_NO_CONTENT: 'Det går inte att beräkna läsbarhetspoäng. Inget stycke <code>&lt;p&gt;</code> eller listinnehåll <code>&lt;li&gt;</code> hittades.',
     READABILITY_NOT_ENOUGH: 'Inte tillräckligt innehåll för att beräkna läsbarhetspoäng.',
 
     // Headings

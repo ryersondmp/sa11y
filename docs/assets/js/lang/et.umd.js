@@ -166,7 +166,6 @@
       VERY_DIFFICULT: 'Väga raske',
       DIFFICULT: 'Raske',
       FAIRLY_DIFFICULT: 'Üsna raske',
-      READABILITY_NO_CONTENT: 'Ei saa arvutada loetavuse skoori. Ei leitud lõiget <code>&lt;p&gt;</code> või loetelu sisu <code>&lt;li&gt;</code>.',
       READABILITY_NOT_ENOUGH: 'Loetavuse hinde arvutamiseks ei ole piisavalt sisu.',
 
       // Headings

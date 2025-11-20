@@ -173,7 +173,6 @@
       VERY_DIFFICULT: 'Nagyon nehéz',
       DIFFICULT: 'Nehéz',
       FAIRLY_DIFFICULT: 'Elég nehéz',
-      READABILITY_NO_CONTENT: 'Nem lehet kiszámítani az olvashatósági pontszámot. Nem találtunk bekezdést <code>&lt;p&gt;</code> vagy listatartalmat <code>&lt;li&gt;</code>.',
       READABILITY_NOT_ENOUGH: 'Nem elég tartalom az olvashatósági pontszám kiszámításához.',
 
       // Headings

@@ -160,7 +160,6 @@ var nb = {
     VERY_DIFFICULT: 'Svært vanskelig',
     DIFFICULT: 'Vanskelig',
     FAIRLY_DIFFICULT: 'Ganske vanskelig',
-    READABILITY_NO_CONTENT: 'Kunne ikke beregne lesbarhetspoeng. Ingen avsnitt <code>&lt;p&gt;</code> eller listeinnhold <code>&lt;li&gt;</code> funnet.',
     READABILITY_NOT_ENOUGH: 'Ikke nok innhold til å beregne lesbarhetspoeng.',
 
     // Headings

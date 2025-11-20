@@ -157,7 +157,6 @@ var lv = {
     VERY_DIFFICULT: 'Ļoti grūti',
     DIFFICULT: 'Grūtības',
     FAIRLY_DIFFICULT: 'Diezgan grūti',
-    READABILITY_NO_CONTENT: 'Nav iespējams aprēķināt lasāmības rezultātu. Nav atrasta neviena rindkopa <code>&lt;p&gt;</code> vai saraksta saturs <code>&lt;li&gt;</code>.',
     READABILITY_NOT_ENOUGH: 'Nepietiek satura, lai aprēķinātu lasāmības rādītāju.',
 
     // Headings

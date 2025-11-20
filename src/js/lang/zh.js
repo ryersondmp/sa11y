@@ -143,7 +143,6 @@ export default {
     VERY_DIFFICULT: '非常困难',
     DIFFICULT: '困难的',
     FAIRLY_DIFFICULT: '相当困难',
-    READABILITY_NO_CONTENT: '无法计算可读性得分。没有找到段落<code>&lt;p&gt;</code>或列表内容<code>&lt;li&gt;</code>。',
     READABILITY_NOT_ENOUGH: '没有足够的内容来计算可读性得分。',
 
     // Headings

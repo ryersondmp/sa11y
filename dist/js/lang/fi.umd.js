@@ -157,7 +157,6 @@
       VERY_DIFFICULT: 'Erittäin vaikeaa',
       DIFFICULT: 'Vaikea',
       FAIRLY_DIFFICULT: 'Melko vaikeaa',
-      READABILITY_NO_CONTENT: 'Luettavuuspistemäärää ei pystytä laskemaan. Kappaletta <code>&lt;p&gt;</code> tai luettelon sisältöä <code>&lt;li&gt;</code> ei löytynyt.',
       READABILITY_NOT_ENOUGH: 'Ei tarpeeksi sisältöä luettavuuspisteiden laskemiseksi.',
 
       // Headings

@@ -170,7 +170,6 @@ var nl = {
     VERY_DIFFICULT: 'Zeer moeilijk',
     DIFFICULT: 'Moeilijk',
     FAIRLY_DIFFICULT: 'Redelijk moeilijk',
-    READABILITY_NO_CONTENT: 'Kan de leesbaarheidsscore niet berekenen. Geen paragraaf <code>&lt;p&gt;</code> of lijstinhoud <code>&lt;li&gt;</code> gevonden.',
     READABILITY_NOT_ENOUGH: 'Niet genoeg inhoud om een leesbaarheidsscore te berekenen.',
 
     // Headings

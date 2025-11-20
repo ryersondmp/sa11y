@@ -138,7 +138,6 @@ var enUS = {
     VERY_DIFFICULT: 'Very difficult',
     DIFFICULT: 'Difficult',
     FAIRLY_DIFFICULT: 'Fairly difficult',
-    READABILITY_NO_CONTENT: 'Unable to calculate readability score. No paragraph <code>&lt;p&gt;</code> or list content <code>&lt;li&gt;</code> found.',
     READABILITY_NOT_ENOUGH: 'Not enough content to calculate readability score.',
 
     // Headings

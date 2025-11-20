@@ -155,7 +155,6 @@ var cs = {
     VERY_DIFFICULT: 'Velmi obtížné',
     DIFFICULT: 'Obtížné',
     FAIRLY_DIFFICULT: 'Poměrně obtížné',
-    READABILITY_NO_CONTENT: 'Nelze vypočítat skóre čitelnosti. Nebyl nalezen žádný odstavec <code>&lt;p&gt;</code> ani obsah seznamu <code>&lt;li&gt;</code>.',
     READABILITY_NOT_ENOUGH: 'Nedostatečný obsah pro výpočet skóre čitelnosti.',
 
     // Headings

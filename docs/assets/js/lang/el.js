@@ -153,7 +153,6 @@ var el = {
     VERY_DIFFICULT: 'Πολύ δύσκολο',
     DIFFICULT: 'Δύσκολο',
     FAIRLY_DIFFICULT: 'Αρκετά δύσκολο',
-    READABILITY_NO_CONTENT: 'Αδυναμία υπολογισμού της βαθμολογίας αναγνωσιμότητας. Δεν βρέθηκε παράγραφος <code>&lt;p&gt;</code> ή περιεχόμενο λίστας <code>&lt;li&gt;</code>.',
     READABILITY_NOT_ENOUGH: 'Δεν υπάρχει αρκετό περιεχόμενο για τον υπολογισμό της βαθμολογίας αναγνωσιμότητας.',
 
     // Headings

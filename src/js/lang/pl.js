@@ -140,7 +140,6 @@ export default {
     VERY_DIFFICULT: 'Bardzo trudne',
     DIFFICULT: 'Trudne',
     FAIRLY_DIFFICULT: 'Dość trudne',
-    READABILITY_NO_CONTENT: 'Nie można oszacować wyników testu czytelności. Nie znaleziono treści w akapitach <code>&lt;p&gt;</code> lub listach <code>&lt;li&gt;</code>',
     READABILITY_NOT_ENOUGH: 'Za mało treści, aby ocenić czytelność.',
 
     // Headings

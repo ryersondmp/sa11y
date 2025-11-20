@@ -120,7 +120,6 @@ export default {
     VERY_DIFFICULT: 'Très difficile',
     DIFFICULT: 'Difficile',
     FAIRLY_DIFFICULT: 'Assez difficile',
-    READABILITY_NO_CONTENT: 'Incapable de calculer le taux de lisibilité. Aucun paragraphe <code>&lt;p&gt;</code> ou liste de contenu <code>&lt;li&gt;</code> trouvé.',
     READABILITY_NOT_ENOUGH: 'Pas suffisamment de contenu pour calculer le taux de lisibilité.',
 
     // Headings

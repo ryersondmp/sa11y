@@ -143,7 +143,6 @@ export default {
     VERY_DIFFICULT: 'Meget vanskeligt',
     DIFFICULT: 'Vanskeligt',
     FAIRLY_DIFFICULT: 'Temmelig vanskelig',
-    READABILITY_NO_CONTENT: 'Kunne ikke beregne læsbarhedsscore. Intet afsnit <code>&lt;p&gt;</code> eller listeindhold <code>&lt;li&gt;</code> fundet.',
     READABILITY_NOT_ENOUGH: 'Ikke nok indhold til at beregne læsbarhedsscore.',
 
     // Headings

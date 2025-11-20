@@ -161,7 +161,6 @@ var lt = {
     VERY_DIFFICULT: 'Labai sunku',
     DIFFICULT: 'Sudėtinga',
     FAIRLY_DIFFICULT: 'Gana sudėtinga',
-    READABILITY_NO_CONTENT: 'Nepavyksta apskaičiuoti skaitomumo balo. Nerastas nei paragrafas <code>&lt;p&gt;</code>, nei sąrašo turinys <code>&lt;li&gt;</code>.',
     READABILITY_NOT_ENOUGH: 'Nepakankamai turinio, kad būtų galima apskaičiuoti skaitomumo balą.',
 
     // Headings

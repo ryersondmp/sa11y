@@ -173,7 +173,6 @@
       VERY_DIFFICULT: 'Много трудно',
       DIFFICULT: 'Трудно',
       FAIRLY_DIFFICULT: 'Доста трудно',
-      READABILITY_NO_CONTENT: 'Невъзможно е да се изчисли оценката за четимост. Не е намерен параграф <code>&lt;p&gt;</code> или съдържание на списък <code>&lt;li&gt;</code>.',
       READABILITY_NOT_ENOUGH: 'Недостатъчно съдържание за изчисляване на оценката за четимост.',
 
       // Headings

@@ -140,7 +140,6 @@
       VERY_DIFFICULT: 'Muy difícil',
       DIFFICULT: 'Dificultad',
       FAIRLY_DIFFICULT: 'Bastante defícil',
-      READABILITY_NO_CONTENT: 'No se puede calcular la puntuación de legibilidad. No se encontró contenido de parrafo <code>&lt;p&gt;</code> or list <code>&lt;li&gt;</code>.',
       READABILITY_NOT_ENOUGH: 'No hay suficiente contenido para calcular la puntuación de legibilidad.',
 
       // Headings

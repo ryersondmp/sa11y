@@ -164,7 +164,6 @@
       VERY_DIFFICULT: 'Molto difficile',
       DIFFICULT: 'Difficile',
       FAIRLY_DIFFICULT: 'Abbastanza difficile',
-      READABILITY_NO_CONTENT: 'Impossibile calcolare il punteggio di leggibilità. Nessun paragrafo <code>&lt;p&gt;</code> o contenuto di elenco <code>&lt;li&gt;</code> trovato.',
       READABILITY_NOT_ENOUGH: 'Non ci sono abbastanza contenuti per calcolare il punteggio di leggibilità.',
 
       // Headings

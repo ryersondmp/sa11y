@@ -167,7 +167,6 @@ var ko = {
     VERY_DIFFICULT: '매우 어려움',
     DIFFICULT: '어려움',
     FAIRLY_DIFFICULT: '상당히 어려움',
-    READABILITY_NO_CONTENT: '가독성 점수를 계산할 수 없습니다. 단락 <code>&lt;p&gt;</code> 또는 목록 콘텐츠 < code>&lt;li&gt;</code>를 찾을 수 없습니다.',
     READABILITY_NOT_ENOUGH: '가독성 점수를 계산할 콘텐츠가 충분하지 않습니다.',
 
     // Headings

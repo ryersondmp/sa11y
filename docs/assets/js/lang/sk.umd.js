@@ -173,7 +173,6 @@
       VERY_DIFFICULT: 'Veľmi ťažké',
       DIFFICULT: 'Ťažké',
       FAIRLY_DIFFICULT: 'Pomerne ťažké',
-      READABILITY_NO_CONTENT: 'Nie je možné vypočítať skóre čitateľnosti. Nenašiel sa žiadny odsek <code>&lt;p&gt;</code> ani obsah zoznamu <code>&lt;li&gt;</code>.',
       READABILITY_NOT_ENOUGH: 'Nedostatok obsahu na výpočet skóre čitateľnosti.',
 
       // Heading

@@ -138,7 +138,6 @@
       VERY_DIFFICULT: 'Дуже складно',
       DIFFICULT: 'Складно',
       FAIRLY_DIFFICULT: 'Достатньо складно',
-      READABILITY_NO_CONTENT: 'Неможливо визначити показник читабельності. Не знайдено жодного абзацу <code>&lt;p&gt;</code> або вмісту списку <code>&lt;li&gt;</code>.',
       READABILITY_NOT_ENOUGH: 'Недостатньо вмісту для розрахунку оцінки читабельності.',
 
       // Headings

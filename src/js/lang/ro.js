@@ -145,7 +145,6 @@ export default {
     VERY_DIFFICULT: 'Foarte dificil',
     DIFFICULT: 'Dificil',
     FAIRLY_DIFFICULT: 'Destul de dificil',
-    READABILITY_NO_CONTENT: 'Nu se poate calcula scorul de lizibilitate. Nu s-a găsit niciun paragraf <code>&lt;p&gt;</code> sau conținut de listă <code>&lt;li&gt;</code>.',
     READABILITY_NOT_ENOUGH: 'Nu există suficient conținut pentru a calcula scorul de lizibilitate.',
 
     // Headings

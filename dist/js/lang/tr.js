@@ -155,7 +155,6 @@ var tr = {
     VERY_DIFFICULT: 'Çok zor',
     DIFFICULT: 'Zor',
     FAIRLY_DIFFICULT: 'Oldukça zor',
-    READABILITY_NO_CONTENT: 'Okunabilirlik puanı hesaplanamıyor. Paragraf <code>&lt;p&gt;</code> veya liste içeriği <code>&lt;li&gt;</code> bulunamadı.',
     READABILITY_NOT_ENOUGH: 'Okunabilirlik puanını hesaplamak için yeterli içerik yok.',
 
     // Headings

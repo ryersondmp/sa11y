@@ -161,7 +161,6 @@
       VERY_DIFFICULT: 'Sehr schwierig',
       DIFFICULT: 'Schwierig',
       FAIRLY_DIFFICULT: 'Ziemlich schwierig',
-      READABILITY_NO_CONTENT: 'Die Lesbarkeitsbewertung kann nicht berechnet werden. Kein Absatz- <code>&lt;p&gt;</code> oder Listeninhalt <code>&lt;li&gt;</code> gefunden.',
       READABILITY_NOT_ENOUGH: 'Nicht genügend Inhalt für die Berechnung der Lesbarkeitsbewertung.',
 
       // Headings

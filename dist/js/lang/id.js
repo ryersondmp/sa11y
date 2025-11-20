@@ -159,7 +159,6 @@ var id = {
     VERY_DIFFICULT: 'Sangat sulit',
     DIFFICULT: 'Sulit',
     FAIRLY_DIFFICULT: 'Cukup sulit',
-    READABILITY_NO_CONTENT: 'Tidak dapat menghitung skor keterbacaan. Tidak ditemukan paragraf <code>&lt;p&gt;</code> atau konten daftar <code>&lt;li&gt;</code>.',
     READABILITY_NOT_ENOUGH: 'Konten tidak cukup untuk menghitung skor keterbacaan.',
 
     // Headings

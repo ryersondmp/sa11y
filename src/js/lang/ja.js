@@ -153,7 +153,6 @@ export default {
     VERY_DIFFICULT: '非常に難しい',
     DIFFICULT: '難しい',
     FAIRLY_DIFFICULT: 'かなり難しい',
-    READABILITY_NO_CONTENT: '読みやすさのスコアを計算することができません。段落 <code>&lt;p&gt;</code> またはリストコンテンツ <code>&lt;li&gt;</code> が見つかりませんでした。',
     READABILITY_NOT_ENOUGH: '読みやすさのスコアを計算するためのコンテンツが十分でない。',
 
     // Headings

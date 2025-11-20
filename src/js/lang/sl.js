@@ -144,7 +144,6 @@ export default {
     VERY_DIFFICULT: 'Zelo težko',
     DIFFICULT: 'Težavno',
     FAIRLY_DIFFICULT: 'Precej težko',
-    READABILITY_NO_CONTENT: 'Ni mogoče izračunati ocene berljivosti. Ni najden odstavek <code>&lt;p&gt;</code> ali vsebina seznama <code>&lt;li&gt;</code>.',
     READABILITY_NOT_ENOUGH: 'Premalo vsebine za izračun ocene berljivosti.',
 
     // Headings
