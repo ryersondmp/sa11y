@@ -164,6 +164,7 @@ class Sa11y {
         Elements.initializeElements(option);
 
         // Ruleset checks
+        if (option.readabilityPlugin) checkReadability(this.results);
         checkHeaders(this.results, option, this.headingOutline);
         checkLinkText(this.results, option);
         checkImages(this.results, option);
@@ -172,7 +173,6 @@ class Sa11y {
         checkDeveloper(this.results, option);
         if (option.embeddedContentPlugin) checkEmbeddedContent(this.results, option);
         if (option.contrastPlugin) checkContrast(this.results, option);
-        if (option.readabilityPlugin) checkReadability(this.results);
 
         // Build array of images to be used for image panel.
         this.imageResults = Elements.Found.Images.map((image) => {

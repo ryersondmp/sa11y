@@ -112,6 +112,10 @@ document.addEventListener('sa11y-check-complete', (e) => {
   console.log(e.detail)
 });
 
+document.addEventListener('sa11y-readability-result', (e) => {
+  console.log(e.detail)
+});
+
 /**
  * Custom checks via event listeners.
  */
