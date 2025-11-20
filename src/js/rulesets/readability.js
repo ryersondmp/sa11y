@@ -36,14 +36,12 @@ function handleReadabilityResult(coreResult, results, source) {
   readabilityUI(result);
 
   // Dispatch custom event when readability results are complete.
-  if (source === 'worker') {
-    window.sa11yReadabilityComplete = null;
-    const event = new CustomEvent('sa11y-readability-result', {
-      detail: { detail: result },
-    });
-    window.sa11yReadabilityComplete = event.detail;
-    document.dispatchEvent(event);
-  }
+  window.sa11yReadabilityComplete = null;
+  const event = new CustomEvent('sa11y-readability-result', {
+    detail: { detail: result },
+  });
+  window.sa11yReadabilityComplete = event.detail;
+  document.dispatchEvent(event);
 }
 
 /**
@@ -81,32 +79,44 @@ const workerSupported = typeof Worker !== 'undefined'
   && typeof URL.createObjectURL === 'function';
 
 /**
- * Try to compute via inline worker; fall back to main thread on failure.
+ * Create and cache worker.
  */
-function computeWithWorker(pageText, results, source = 'worker') {
-  if (!workerSupported) {
-    console.warn('[readability] Workers not supported, using main thread');
-    computeOnMainThread(pageText, results);
-    return;
-  }
-
-  let worker;
+let readabilityWorker = null;
+function getReadabilityWorker() {
+  if (!workerSupported) return null;
+  if (readabilityWorker) return readabilityWorker;
   try {
-    worker = new Worker(getReadabilityWorkerUrl());
+    readabilityWorker = new Worker(getReadabilityWorkerUrl());
+    console.log('[readability] Worker created');
   } catch (e) {
     console.warn('[readability] Worker creation failed, using main thread', e);
+    readabilityWorker = null;
+  }
+  return readabilityWorker;
+}
+
+/**
+ * Try to compute via (cached) worker; fall back to main thread on failure.
+ */
+function computeWithWorker(pageText, results, source = 'worker') {
+  const worker = getReadabilityWorker();
+  if (!worker) {
     computeOnMainThread(pageText, results);
     return;
   }
 
   worker.onmessage = (event) => {
     handleReadabilityResult(event.data || null, results, source);
-    worker.terminate();
   };
 
   worker.onerror = (err) => {
     console.error('[readability] Worker error, falling back', err);
-    worker.terminate();
+    try {
+      worker.terminate();
+    } catch (e) {
+      console.error('[readability] Worker error, falling back', e);
+    }
+    readabilityWorker = null;
     computeOnMainThread(pageText, results);
   };
 
@@ -117,7 +127,12 @@ function computeWithWorker(pageText, results, source = 'worker') {
     });
   } catch (e) {
     console.error('[readability] postMessage failed, falling back', e);
-    worker.terminate();
+    try {
+      worker.terminate();
+    } catch (err) {
+      // ignore
+    }
+    readabilityWorker = null;
     computeOnMainThread(pageText, results);
   }
 }
