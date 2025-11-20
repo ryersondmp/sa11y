@@ -164,7 +164,10 @@ class Sa11y {
         Elements.initializeElements(option);
 
         // Ruleset checks
-        if (option.readabilityPlugin) checkReadability(this.results);
+        if (option.readabilityPlugin && Utils.store.getItem('sa11y-readability') === 'On') {
+          checkReadability(this.results);
+        }
+
         checkHeaders(this.results, option, this.headingOutline);
         checkLinkText(this.results, option);
         checkImages(this.results, option);

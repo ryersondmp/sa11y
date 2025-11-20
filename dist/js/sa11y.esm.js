@@ -10243,8 +10243,6 @@ function computeWithWorker(pageText, results, source = 'worker') {
 }
 
 function checkReadability(results) {
-  if (store.getItem('sa11y-readability') !== 'On') return results;
-
   // Get text.
   const pageText = [];
   Elements.Found.Readability.forEach(($el) => {
@@ -11391,7 +11389,10 @@ class Sa11y {
         Elements.initializeElements(option);
 
         // Ruleset checks
-        if (option.readabilityPlugin) checkReadability(this.results);
+        if (option.readabilityPlugin && store.getItem('sa11y-readability') === 'On') {
+          checkReadability(this.results);
+        }
+
         checkHeaders(this.results, option, this.headingOutline);
         checkLinkText(this.results, option);
         checkImages(this.results, option);

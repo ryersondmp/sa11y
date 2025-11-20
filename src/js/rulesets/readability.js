@@ -123,8 +123,6 @@ function computeWithWorker(pageText, results, source = 'worker') {
 }
 
 export default function checkReadability(results) {
-  if (Utils.store.getItem('sa11y-readability') !== 'On') return results;
-
   // Get text.
   const pageText = [];
   Elements.Found.Readability.forEach(($el) => {
