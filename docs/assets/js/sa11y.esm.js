@@ -10157,9 +10157,12 @@ function handleReadabilityResult(coreResult, results, source) {
 
   // Dispatch custom event when readability results are complete.
   if (source === 'worker') {
-    document.dispatchEvent(
-      new CustomEvent('sa11y-readability-result', { detail: result }),
-    );
+    window.sa11yReadabilityComplete = null;
+    const event = new CustomEvent('sa11y-readability-result', {
+      detail: { detail: result },
+    });
+    window.sa11yReadabilityComplete = event.detail;
+    document.dispatchEvent(event);
   }
 }
 
