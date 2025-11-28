@@ -1407,6 +1407,8 @@ test.describe('Sa11y Unit Tests', () => {
     const ids = [
       'warning-label-in-name-1',
       'warning-label-in-name-2',
+      'warning-label-in-name-3',
+      'warning-label-in-name-4',
     ];
     ids.forEach(async (id) => {
       const issue = await checkTooltip(page, id, 'The visible text for this element appears to be different than the accessible name');

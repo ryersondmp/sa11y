@@ -122,27 +122,10 @@ export default function checkLinkText(results, option) {
     // Link that points to a file type and indicates as such.
     const defaultFileTypes = ['pdf', 'doc', 'docx', 'word', 'mp3', 'ppt', 'text', 'pptx', 'txt', 'exe', 'dmg', 'rtf', 'windows', 'macos', 'csv', 'xls', 'xlsx', 'mp4', 'mov', 'avi', 'zip'];
     const fileTypes = defaultFileTypes.concat(Lang._('FILE_TYPE_PHRASES'));
+
     // Evaluate $el.textContent in addition to accessible name to bypass `linkIgnoreSpan` prop.
     const containsFileTypePhrases = fileTypes.some((pass) => linkText.toLowerCase().includes(pass) || Utils.getText($el).toLowerCase().includes(pass));
-    const fileTypeMatch = $el.matches(`
-          a[href$='.pdf'],
-          a[href$='.doc'],
-          a[href$='.docx'],
-          a[href$='.zip'],
-          a[href$='.mp3'],
-          a[href$='.txt'],
-          a[href$='.exe'],
-          a[href$='.dmg'],
-          a[href$='.rtf'],
-          a[href$='.pptx'],
-          a[href$='.ppt'],
-          a[href$='.xls'],
-          a[href$='.xlsx'],
-          a[href$='.csv'],
-          a[href$='.mp4'],
-          a[href$='.mov'],
-          a[href$='.avi']
-        `);
+    const fileTypeMatch = $el.matches('a[href$=".pdf"], a[href$=".doc"], a[href$=".docx"], a[href$=".zip"], a[href$=".mp3"], a[href$=".txt"], a[href$=".exe"], a[href$=".dmg"], a[href$=".rtf"], a[href$=".pptx"], a[href$=".ppt"], a[href$=".xls"], a[href$=".xlsx"], a[href$=".csv"], a[href$=".mp4"], a[href$=".mov"], a[href$=".avi"]');
 
     // Remove whitespace and special characters to improve accuracy and minimize false positives.
     const linkTextTrimmed = linkText.replace(/'|"|-|\.|\s+/g, '').toLowerCase();
@@ -150,27 +133,9 @@ export default function checkLinkText(results, option) {
     // Original preserved text to lowercase.
     const originalLinkText = $el.textContent.trim().toLowerCase();
 
-    let oneStop;
-    const addStopWordResult = (element, stopword) => {
-      if (option.checks.LINK_STOPWORD && !oneStop) {
-        oneStop = true;
-        results.push({
-          test: 'LINK_STOPWORD',
-          element,
-          type: option.checks.LINK_STOPWORD.type || 'error',
-          content: option.checks.LINK_STOPWORD.content
-            ? Lang.sprintf(option.checks.LINK_STOPWORD.content, stopword)
-            : Lang.sprintf('LINK_STOPWORD', stopword) + Lang.sprintf('LINK_TIP'),
-          inline: true,
-          position: 'afterend',
-          dismiss: Utils.prepareDismissal(`LINKSTOPWORD${href + linkTextTrimmed}`),
-          dismissAll: option.checks.LINK_STOPWORD.dismissAll ? 'LINK_STOPWORD' : false,
-          developer: option.checks.LINK_STOPWORD.developer || false,
-        });
-      }
-    };
-
-    // Don't overlap with Alt Text module.
+    /**
+      * Don't overlap with Alt Text module.
+    */
     if (!$el.querySelectorAll('img').length) {
       // Has aria-hidden.
       if (ariaHidden) {
@@ -193,6 +158,29 @@ export default function checkLinkText(results, option) {
         return;
       }
 
+      /**
+       * If link text is only "new window" or similar phrases.
+      */
+      let oneStop;
+      const addStopWordResult = (element, stopword) => {
+        if (option.checks.LINK_STOPWORD && !oneStop) {
+          oneStop = true;
+          results.push({
+            test: 'LINK_STOPWORD',
+            element,
+            type: option.checks.LINK_STOPWORD.type || 'error',
+            content: option.checks.LINK_STOPWORD.content
+              ? Lang.sprintf(option.checks.LINK_STOPWORD.content, stopword)
+              : Lang.sprintf('LINK_STOPWORD', stopword) + Lang.sprintf('LINK_TIP'),
+            inline: true,
+            position: 'afterend',
+            dismiss: Utils.prepareDismissal(`LINKSTOPWORD${href + linkTextTrimmed}`),
+            dismissAll: option.checks.LINK_STOPWORD.dismissAll ? 'LINK_STOPWORD' : false,
+            developer: option.checks.LINK_STOPWORD.developer || false,
+          });
+        }
+      };
+
       // If link text is ONLY "new window" or similar phrases.
       if (containsNewWindowPhrases) {
         const matchedPhrase = Lang._('NEW_WINDOW_PHRASES').find((phrase) => phrase.toLowerCase() === originalLinkText);
@@ -212,8 +200,72 @@ export default function checkLinkText(results, option) {
         });
       }
 
-      // Empty hyperlinks.
-      if ((href || href === '') && linkText.length === 0) {
+      /**
+       * Links with ARIA
+      */
+      if (hasAria && linkText.length !== 0) {
+        // Computed accessible name,
+        const sanitizedText = Utils.sanitizeHTML(linkText);
+
+        // General warning for visible non-descript link text, regardless of ARIA label.
+        const excludeSpan = Utils.fnIgnore($el, Constants.Exclusions.LinkSpan);
+        const visibleLinkText = option.linkIgnoreStrings
+          ? Utils.getText(excludeSpan).replace(option.linkIgnoreStrings, '') : Utils.getText(excludeSpan);
+        const cleanedString = stripSpecialCharacters(visibleLinkText);
+        const stopword = checkStopWords(cleanedString, linkStopWords);
+
+        // Label in name.
+        const isVisibleTextInAccessibleName = Utils.isVisibleTextInAccessibleName($el);
+
+        // ARIA label contains stop word.
+        if (option.checks.LINK_STOPWORD_ARIA && stopword !== null) {
+          results.push({
+            test: 'LINK_STOPWORD_ARIA',
+            element: $el,
+            type: option.checks.LINK_STOPWORD_ARIA.type || 'warning',
+            content: option.checks.LINK_STOPWORD_ARIA.content
+              ? Lang.sprintf(option.checks.LINK_STOPWORD_ARIA.content, stopword, sanitizedText)
+              : Lang.sprintf('LINK_STOPWORD_ARIA', stopword, sanitizedText) + Lang.sprintf('LINK_TIP'),
+            inline: true,
+            dismiss: Utils.prepareDismissal(`LINKSTOPWORDARIA${href + linkTextTrimmed}`),
+            dismissAll: option.checks.LINK_STOPWORD_ARIA.dismissAll ? ' LINK_STOPWORD_ARIA' : false,
+            developer: option.checks.LINK_STOPWORD_ARIA.developer || true,
+          });
+        } else if (option.checks.LABEL_IN_NAME && isVisibleTextInAccessibleName && $el.textContent.length !== 0) {
+          // Link must have visible label as part of their accessible name.
+          results.push({
+            test: 'LABEL_IN_NAME',
+            element: $el,
+            type: option.checks.LABEL_IN_NAME.type || 'warning',
+            content: Lang.sprintf(option.checks.LABEL_IN_NAME.content || 'LABEL_IN_NAME', sanitizedText),
+            inline: true,
+            position: 'afterend',
+            dismiss: Utils.prepareDismissal(`LINKLABELNAME${href + linkTextTrimmed}`),
+            dismissAll: option.checks.LABEL_IN_NAME.dismissAll ? 'BTN_LABEL_IN_NAME' : false,
+            developer: option.checks.LABEL_IN_NAME.developer || true,
+          });
+        } else if (option.checks.LINK_LABEL) {
+          // If the link has any ARIA, append a "Good" link button.
+          results.push({
+            test: 'LINK_LABEL',
+            element: $el,
+            type: option.checks.LINK_LABEL.type || 'good',
+            content: option.checks.LINK_LABEL.content
+              ? Lang.sprintf(option.checks.LINK_LABEL.content, sanitizedText)
+              : `${Lang.sprintf('ACC_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
+            inline: true,
+            position: 'afterend',
+            dismiss: Utils.prepareDismissal(`LINKGOOD${href + linkTextTrimmed}`),
+            dismissAll: option.checks.LINK_LABEL.dismissAll ? 'LINK_LABEL' : false,
+            developer: option.checks.LINK_LABEL.developer || true,
+          });
+        }
+      }
+
+      /**
+       * Empty hyperlinks.
+      */
+      if (linkText.length === 0) {
         if (hasAriaLabelledby) {
           // Has ariaLabelledby attribute but empty accessible name.
           if (option.checks.LINK_EMPTY_LABELLEDBY) {
@@ -290,8 +342,8 @@ export default function checkLinkText(results, option) {
           }
         }
       } else if (error[3] !== null) {
-        // Contains URL in link text.
-        if (linkText.length > (option.checks.LINK_URL.maxLength || 40)) {
+        // Contains URL in link text (for non ARIA links)
+        if (!hasAria && linkText.length > (option.checks.LINK_URL.maxLength || 40)) {
           if (option.checks.LINK_URL) {
             results.push({
               test: 'LINK_URL',
@@ -306,61 +358,6 @@ export default function checkLinkText(results, option) {
               developer: option.checks.LINK_URL.developer || false,
             });
           }
-        }
-      } else if (hasAria) {
-        // Computed accessible name,
-        const sanitizedText = Utils.sanitizeHTML(linkText);
-
-        // General warning for visible non-descript link text, regardless of ARIA label.
-        const excludeSpan = Utils.fnIgnore($el, Constants.Exclusions.LinkSpan);
-        const visibleLinkText = option.linkIgnoreStrings
-          ? Utils.getText(excludeSpan).replace(option.linkIgnoreStrings, '') : Utils.getText(excludeSpan);
-        const cleanedString = stripSpecialCharacters(visibleLinkText);
-        const stopword = checkStopWords(cleanedString, linkStopWords);
-        if (option.checks.LINK_STOPWORD_ARIA && stopword !== null) {
-          results.push({
-            test: 'LINK_STOPWORD_ARIA',
-            element: $el,
-            type: option.checks.LINK_STOPWORD_ARIA.type || 'warning',
-            content: option.checks.LINK_STOPWORD_ARIA.content
-              ? Lang.sprintf(option.checks.LINK_STOPWORD_ARIA.content, stopword, sanitizedText)
-              : Lang.sprintf('LINK_STOPWORD_ARIA', stopword, sanitizedText) + Lang.sprintf('LINK_TIP'),
-            inline: true,
-            dismiss: Utils.prepareDismissal(`LINKSTOPWORDARIA${href + linkTextTrimmed}`),
-            dismissAll: option.checks.LINK_STOPWORD_ARIA.dismissAll ? ' LINK_STOPWORD_ARIA' : false,
-            developer: option.checks.LINK_STOPWORD_ARIA.developer || true,
-          });
-        } else if (option.checks.LINK_LABEL) {
-          // If the link has any ARIA, append a "Good" link button.
-          results.push({
-            test: 'LINK_LABEL',
-            element: $el,
-            type: option.checks.LINK_LABEL.type || 'good',
-            content: option.checks.LINK_LABEL.content
-              ? Lang.sprintf(option.checks.LINK_LABEL.content, sanitizedText)
-              : `${Lang.sprintf('ACC_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
-            inline: true,
-            position: 'afterend',
-            dismiss: Utils.prepareDismissal(`LINKGOOD${href + linkTextTrimmed}`),
-            dismissAll: option.checks.LINK_LABEL.dismissAll ? 'LINK_LABEL' : false,
-            developer: option.checks.LINK_LABEL.developer || true,
-          });
-        }
-
-        // Button must have visible label as part of their accessible name.
-        const isVisibleTextInAccessibleName = Utils.isVisibleTextInAccessibleName($el);
-        if (option.checks.LABEL_IN_NAME && isVisibleTextInAccessibleName && $el.textContent.length !== 0) {
-          results.push({
-            test: 'LABEL_IN_NAME',
-            element: $el,
-            type: option.checks.LABEL_IN_NAME.type || 'warning',
-            content: Lang.sprintf(option.checks.LABEL_IN_NAME.content || 'LABEL_IN_NAME', sanitizedText),
-            inline: true,
-            position: 'afterend',
-            dismiss: Utils.prepareDismissal(`LINKLABELNAME${href + linkTextTrimmed}`),
-            dismissAll: option.checks.LABEL_IN_NAME.dismissAll ? 'BTN_LABEL_IN_NAME' : false,
-            developer: option.checks.LABEL_IN_NAME.developer || true,
-          });
         }
       } else if (matchedSymbol) {
         // If link contains a special character used as a CTA.
@@ -393,7 +390,9 @@ export default function checkLinkText(results, option) {
         }
       }
 
-      // Uses "click here" in the link text or accessible name.
+      /**
+        * Uses "click here" in the link text or accessible name.
+      */
       if (error[1] !== null || containsClickPhrase) {
         if (option.checks.LINK_CLICK_HERE) {
           results.push({
@@ -411,7 +410,9 @@ export default function checkLinkText(results, option) {
         }
       }
 
-      // Link's title attribute is the same as the link text.
+      /**
+       *  Link's title attribute is the same as the link text.
+      */
       if (Utils.getText($el).length !== 0 && titleAttr?.toLowerCase() === linkText.toLowerCase()) {
         if (option.checks.DUPLICATE_TITLE) {
           results.push({
