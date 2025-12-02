@@ -2,7 +2,7 @@ import tippy from 'tippy.js';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 import Constants from '../utils/constants';
-import { generateColorSuggestion, generateContrastTools, initializeContrastTools } from '../utils/contrast-utils';
+import { generateContrastTools, initializeContrastTools, generateColorSuggestion } from '../contrast/ui-tools';
 import { annotationButtons } from './annotations';
 
 // Import processed minified styles as a string.

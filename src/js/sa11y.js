@@ -32,7 +32,7 @@ import { skipToIssue, removeSkipBtnListeners } from './logic/skip-to-issue';
 import checkImages from './rulesets/images';
 import checkHeaders from './rulesets/headers';
 import checkLinkText from './rulesets/link-text';
-import checkContrast from './rulesets/contrast';
+import checkContrast from './contrast/checkContrast';
 import checkLabels from './rulesets/labels';
 import checkReadability from './rulesets/readability';
 import checkEmbeddedContent from './rulesets/embedded-content';

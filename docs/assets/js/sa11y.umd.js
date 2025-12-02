@@ -78,8 +78,7 @@
 
     // Contrast
     contrastPlugin: true,
-    contrastAAA: false,
-    contrastAPCA: false,
+    contrastAlgorithm: 'AA', // AA, AAA, APCA
 
     // Other plugins
     customChecks: false,
@@ -385,13 +384,14 @@
       Global.panelPosition = option.panelPosition;
       Global.dismissAnnotations = option.dismissAnnotations;
       Global.aboutContent = option.aboutContent;
-      Global.contrastAPCA = option.contrastAPCA;
-      Global.contrastSuggestions = option.contrastSuggestions;
-      Global.contrastAAA = option.contrastAAA;
       Global.shadowDetection = option.shadowComponents.length > 0 || option.autoDetectShadowComponents === true;
       Global.fixedRoots = option.fixedRoots;
       Global.ignoreAriaOnElements = option.ignoreAriaOnElements;
       Global.ignoreTextInElements = option.ignoreTextInElements;
+
+      // Contrast
+      Global.contrastSuggestions = option.contrastSuggestions;
+      Global.contrastAlgorithm = option.contrastAlgorithm.toUpperCase();
 
       // Toggleable plugins
       Global.developerPlugin = option.developerPlugin;
@@ -2383,7 +2383,7 @@
 
   var styles = ":host{background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);bottom:0;display:block;height:-moz-fit-content;height:fit-content;left:0;position:fixed;right:0;width:100%;z-index:999999}*{-webkit-font-smoothing:auto!important;color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;font-size:var(--sa11y-normal-text);line-height:22px!important}#dialog{margin:20px auto;max-width:900px;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:focus,a:hover{text-decoration:none}p{margin-top:0}.error{background:var(--sa11y-error);border:2px dashed #f08080;color:var(--sa11y-error-text);margin-bottom:0;padding:5px}";
 
-  var sharedStyles = ".visually-hidden{clip:rect(1px,1px,1px,1px);border:0;clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}[hidden]{display:none!important}.header-text,.header-text-inline,h2{color:var(--sa11y-panel-primary);display:block;font-size:var(--sa11y-large-text);font-weight:600;margin-bottom:3px}.header-text-inline{display:inline-block!important}code{font-family:monospace!important;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:600}pre:has(code){display:block;overflow:auto;white-space:pre-wrap}.kbd,code,kbd,pre{background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);padding:1.6px 4.8px}.bold{font-weight:600}.error .colour,.red-text{color:var(--sa11y-red-text);font-family:var(--sa11y-font-face)}.warning .colour,.yellow-text{color:var(--sa11y-yellow-text);font-family:var(--sa11y-font-face)}.badge,.normal-badge{background-color:var(--sa11y-panel-badge);border-radius:10px;color:var(--sa11y-panel-primary);display:inline;font-size:14px;font-weight:700!important;line-height:1;min-width:10px;outline:1px solid transparent;padding:1px 5px 1.75px;text-align:center;vertical-align:baseline;white-space:nowrap}.error .badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.error-badge{background:var(--sa11y-error)!important;color:var(--sa11y-error-text)!important}.warning .badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.warning-badge{background:var(--sa11y-yellow-text)!important;color:var(--sa11y-panel-bg)!important}.good-contrast{background:var(--sa11y-good)!important;color:var(--sa11y-good-text)!important}#contrast-preview{background-color:#e8e8e8;background-image:linear-gradient(45deg,#ccc 25%,transparent 0,transparent 75%,#ccc 0,#ccc),linear-gradient(45deg,#ccc 25%,transparent 0,transparent 75%,#ccc 0,#ccc);background-position:0 0,5px 5px;background-size:10px 10px;border:2px dashed var(--sa11y-panel-bg-splitter);border-radius:3.2px;line-height:1;margin-top:10px;max-height:100px;overflow:clip;overflow-wrap:break-word;padding:5px}#contrast-preview:empty{display:none}#color-pickers{display:flex;justify-content:space-between;margin-bottom:10px;margin-top:10px}#color-pickers label{align-items:center;display:flex}#color-pickers input{cursor:pointer;margin-inline-start:7px}input[type=color i]{background:var(--sa11y-panel-bg-secondary);block-size:44px;border-color:var(--sa11y-button-outline);border-radius:50%;border-style:solid;border-width:1px;inline-size:44px;padding:2px}input[type=color i]::-webkit-color-swatch-wrapper{padding:1px}input[type=color i]::-webkit-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i]::-moz-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i].unknown{box-shadow:0 0 0 2px var(--sa11y-yellow-text)}input[type=color i].unknown:after{align-items:center;color:#fff;content:\"?\";display:flex;font-size:22px;height:44px;justify-content:center;margin:-40px -3px;pointer-events:none;position:absolute;width:44px;z-index:2}.close-btn{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;color:var(--sa11y-panel-primary);cursor:pointer;float:var(--sa11y-float-rtl);font-size:var(--sa11y-normal-text);font-weight:400;height:32px;margin:0;position:relative;transition:all .2s ease-in-out;width:32px}.close-btn:focus,.close-btn:hover{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{background:var(--sa11y-setting-switch-bg-off);content:\"\";inset:-7px;-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute}@media screen and (forced-colors:active){.close-btn:after{filter:invert(1)}}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container input:focus,#container select:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus,#container .switch:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus:not(:focus-visible),#container [tabindex=\"-1\"]:focus:not(:focus-visible),#container [tabindex=\"0\"]:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container input:focus:not(:focus-visible),#container select:focus:not(:focus-visible){box-shadow:none;outline:0}#container [tabindex=\"-1\"]:focus-visible,#container [tabindex=\"0\"]:focus-visible,#container a:focus-visible,#container button:not(#panel-controls button):not(.switch):focus-visible,#container input:focus-visible,#container select:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus-visible,#container .switch:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#panel-controls button:focus{border:3px solid transparent}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container select:focus,.close-btn:focus{outline:3px solid transparent!important}}";
+  var sharedStyles = ".visually-hidden{clip:rect(1px,1px,1px,1px);border:0;clip-path:inset(50%);display:block;height:1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}[hidden]{display:none!important}.header-text,.header-text-inline,h2{color:var(--sa11y-panel-primary);display:block;font-size:var(--sa11y-large-text);font-weight:600;margin-bottom:3px}.header-text-inline{display:inline-block!important}code{font-family:monospace!important;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:600}pre:has(code){display:block;overflow:auto;white-space:pre-wrap}.kbd,code,kbd,pre{background-color:var(--sa11y-panel-badge);border-radius:3.2px;color:var(--sa11y-panel-primary);padding:1.6px 4.8px}.bold{font-weight:600}.error .colour,.red-text{color:var(--sa11y-red-text);font-family:var(--sa11y-font-face)}.warning .colour,.yellow-text{color:var(--sa11y-yellow-text);font-family:var(--sa11y-font-face)}.badge,.normal-badge{background-color:var(--sa11y-panel-badge);border-radius:10px;color:var(--sa11y-panel-primary);display:inline;font-size:14px;font-weight:700!important;line-height:1;min-width:10px;outline:1px solid transparent;padding:1px 5px 1.75px;text-align:center;vertical-align:baseline;white-space:nowrap}.error .badge{background:var(--sa11y-error);color:var(--sa11y-error-text)}.error-badge{background:var(--sa11y-error)!important;color:var(--sa11y-error-text)!important}.warning .badge{background:var(--sa11y-yellow-text);color:var(--sa11y-panel-bg)}.warning-badge{background:var(--sa11y-yellow-text)!important;color:var(--sa11y-panel-bg)!important}.good-contrast{background:var(--sa11y-good)!important;color:var(--sa11y-good-text)!important}#contrast-preview{background-color:#e8e8e8;background-image:linear-gradient(45deg,#ccc 25%,transparent 0,transparent 75%,#ccc 0,#ccc),linear-gradient(45deg,#ccc 25%,transparent 0,transparent 75%,#ccc 0,#ccc);background-position:0 0,5px 5px;background-size:10px 10px;border:2px dashed var(--sa11y-panel-bg-splitter);border-radius:3.2px;line-height:1;margin-top:10px;max-height:100px;overflow:clip;overflow-wrap:break-word;padding:5px}#contrast-preview:empty{display:none}#color-pickers{display:flex;justify-content:space-between;margin-bottom:10px;margin-top:10px}#color-pickers label{align-items:center;display:flex}#color-pickers input{cursor:pointer;margin-inline-start:7px}input[type=color i]{background:var(--sa11y-panel-bg-secondary);block-size:44px;border-color:var(--sa11y-button-outline);border-radius:50%;border-style:solid;border-width:1px;inline-size:44px;padding:2px}input[type=color i]::-webkit-color-swatch-wrapper{padding:1px}input[type=color i]::-webkit-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i]::-moz-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i].unknown{box-shadow:0 0 0 3px var(--sa11y-yellow-text)}input[type=color i].unknown:after{align-items:center;color:#fff;content:\"?\";display:flex;font-size:22px;height:44px;justify-content:center;margin:-40px -3px;pointer-events:none;position:absolute;width:44px;z-index:2}.close-btn{background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;color:var(--sa11y-panel-primary);cursor:pointer;float:var(--sa11y-float-rtl);font-size:var(--sa11y-normal-text);font-weight:400;height:32px;margin:0;position:relative;transition:all .2s ease-in-out;width:32px}.close-btn:focus,.close-btn:hover{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{background:var(--sa11y-setting-switch-bg-off);content:\"\";inset:-7px;-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute}@media screen and (forced-colors:active){.close-btn:after{filter:invert(1)}}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container input:focus,#container select:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus,#container .switch:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus:not(:focus-visible),#container [tabindex=\"-1\"]:focus:not(:focus-visible),#container [tabindex=\"0\"]:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container input:focus:not(:focus-visible),#container select:focus:not(:focus-visible){box-shadow:none;outline:0}#container [tabindex=\"-1\"]:focus-visible,#container [tabindex=\"0\"]:focus-visible,#container a:focus-visible,#container button:not(#panel-controls button):not(.switch):focus-visible,#container input:focus-visible,#container select:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container #panel-controls button:focus-visible,#container .switch:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#panel-controls button:focus{border:3px solid transparent}#container [tabindex=\"-1\"]:focus,#container [tabindex=\"0\"]:focus,#container a:focus,#container button:focus,#container select:focus,.close-btn:focus{outline:3px solid transparent!important}}";
 
   class ConsoleErrors extends HTMLElement {
     constructor(error) {
@@ -7077,13 +7077,14 @@ ${this.error.stack}
   /**
    * Retrieves the background colour of an element by traversing up the DOM tree.
    * @param {HTMLElement} $el - The DOM element from which to start searching for the background.
+   * @param {Boolean} shadowDetection - Whether to traverse shadow DOM.
    * @returns {string} - The background color in RGBA format, or "image" if background image.
   */
-  function getBackground($el) {
+  function getBackground($el, shadowDetection) {
     let targetEl = $el;
     while (targetEl && targetEl.nodeType === 1) {
       // Element is within a shadow component.
-      if (Constants.Global.shadowDetection) {
+      if (shadowDetection) {
         const root = targetEl.getRootNode();
         if (root instanceof ShadowRoot) {
           // Traverse upward until the shadow root's host.
@@ -7228,10 +7229,11 @@ ${this.error.stack}
   /**
    * Get the display-friendly contrast value for output.
    * @param {Object} value - The value object containing the contrast ratio.
+   * @param {String} contrastAlgorithm - Preferred contrast algorithm.
    * @returns {string|number} The formatted contrast ratio.
    */
-  function ratioToDisplay(value) {
-    if (Constants.Global.contrastAPCA) {
+  function ratioToDisplay(value, contrastAlgorithm) {
+    if (contrastAlgorithm === 'APCA') {
       return Math.abs(Number(value.toFixed(1)));
     }
     // Round to decimal places, and display without decimals if integer.
@@ -7246,12 +7248,13 @@ ${this.error.stack}
    * Calculate the contrast ratio or value between two colours.
    * @param {number[]} color Text colour in [R,G,B,A] format.
    * @param {Array} bg Background colour in [R,G,B,A] format.
+   * @param {String} contrastAlgorithm Preferred algorithm.
    * @returns Either WCAG 2.0 contrast ratio or APCA contrast value.
    */
-  function calculateContrast(color, bg) {
+  function calculateContrast(color, bg, contrastAlgorithm) {
     let ratio;
     const blendedColor = alphaBlend(color, bg).slice(0, 4);
-    if (Constants.Global.contrastAPCA) {
+    if (contrastAlgorithm === 'APCA') {
       const foreground = sRGBtoY(blendedColor);
       const background = sRGBtoY(bg);
       ratio = APCAcontrast(foreground, background);
@@ -7269,12 +7272,12 @@ ${this.error.stack}
    * @param {number[]} color Text colour in [R,G,B,A] format.
    * @param {number[]} background Background colour in [R,G,B,A] format.
    * @param {boolean} isLargeText Whether text is normal or large size.
-   * @param {boolean} contrastAAA Use WCAG AAA thresholds.
+   * @param {boolean} contrastAlgorithm Preferred contrast algorithm
    * @returns Compliant colour hexcode.
    */
-  function suggestColorWCAG(color, background, isLargeText, contrastAAA = false) {
+  function suggestColorWCAG(color, background, isLargeText, contrastAlgorithm) {
     let minContrastRatio;
-    if (contrastAAA) {
+    if (contrastAlgorithm === 'AAA') {
       minContrastRatio = isLargeText ? 4.5 : 7;
     } else {
       minContrastRatio = isLargeText ? 3 : 4.5;
@@ -7431,54 +7434,96 @@ ${this.error.stack}
   }
 
   /**
-   * Generates and inserts color suggestions for tooltip upon tooltip opening.
-   * This function is referenced within './interface/tooltips.js'.
-   * For performance reasons, it is only called upon tooltip opening.
-   * @param {HTMLElement} container The container where the color suggestion will be inserted.
-   */
-  function generateColorSuggestion(contrastDetails) {
-    let adviceContainer;
-    const { color, background, fontWeight, fontSize, isLargeText, type } = contrastDetails;
-    if (
-      color && background && background.type !== 'image'
-      && (type === 'text' || type === 'svg-error' || type === 'input')
-    ) {
-      const suggested = Constants.Global.contrastAPCA
-        ? suggestColorAPCA(color, background, fontWeight, fontSize)
-        : suggestColorWCAG(color, background, isLargeText, Constants.Global.contrastAAA);
+    * Calculate an elements contrast based on WCAG 2.0 contrast algorithm.
+    * @param {HTMLElement} $el The element in the DOM.
+    * @param {number[]} color Text colour in [R,G,B,A] format.
+    * @param {Array} background Background colour in [R,G,B,A] format.
+    * @param {number} fontSize Element's font size.
+    * @param {number} fontWeight Element's font weight.
+    * @param {number} opacity Element's opacity value.
+    * @param {boolean} contrastAlgorithm Preferred contrast algorithm.
+    * @returns {Object} Object containing the element, ratio, and extra details.
+    */
+  function wcagAlgorithm($el, color, background, fontSize, fontWeight, opacity, contrastAlgorithm) {
+    const { ratio, blendedColor } = calculateContrast(color, background);
+    const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
 
-      let advice;
-      const hr = '<hr aria-hidden="true">';
-      const style = `color:${suggested.color};background-color:${getHex(contrastDetails.background)};`;
-      const colorBadge = `<button id="suggest" class="badge" style="${style}">${suggested.color}</button>`;
-      const sizeBadge = `<strong class="normal-badge">${suggested.size}px</strong>`;
-
-      if (!Constants.Global.contrastAPCA) {
-        if (suggested.color === null) {
-          advice = `${hr} ${Lang._('NO_SUGGESTION')}`;
-        } else {
-          advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
-        }
-      } else if (suggested.color && suggested.size) {
-        advice = `${hr} ${Lang._('CONTRAST_APCA')} ${colorBadge} ${sizeBadge}`;
-      } else if (suggested.color) {
-        advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
-      } else if (suggested.size) {
-        advice = `${hr} ${Lang._('CONTRAST_SIZE')} ${sizeBadge}`;
-      }
-
-      // Append it to contrast details container.
-      adviceContainer = document.createElement('div');
-      adviceContainer.id = 'advice';
-
-      // If low opacity, suggest increase opacity first.
-      const suggestion = (contrastDetails.opacity < 1)
-        ? `<hr aria-hidden="true"> ${Lang.sprintf('CONTRAST_OPACITY')}` : advice;
-
-      // Append advice to contrast details container.
-      adviceContainer.innerHTML = suggestion;
+    let hasLowContrast;
+    if (contrastAlgorithm === 'AAA') {
+      hasLowContrast = isLargeText ? ratio < 4.5 : ratio < 7;
+    } else {
+      const hasLowContrastNormalText = ratio > 1 && ratio < 4.5;
+      hasLowContrast = isLargeText ? ratio < 3 : hasLowContrastNormalText;
     }
-    return adviceContainer;
+
+    if (hasLowContrast) {
+      return {
+        $el,
+        ratio: ratioToDisplay(ratio),
+        color: blendedColor,
+        background,
+        fontSize,
+        fontWeight,
+        isLargeText,
+        opacity,
+        textUnderline: getComputedStyle($el).textDecorationLine,
+      };
+    }
+    return null;
+  }
+
+  /**
+   * Calculate an elements contrast based on APCA algorithm.
+   * @param {HTMLElement} $el The element in the DOM.
+   * @param {number[]} color Text colour in [R,G,B,A] format.
+   * @param {Array} background Background colour in [R,G,B,A] format.
+   * @param {number} fontSize Element's font size.
+   * @param {number} fontWeight Element's font weight.
+   * @param {number} opacity Element's opacity value.
+   * @returns {Object} Object containing the element, ratio, and extra details.
+  */
+  function apcaAlgorithm($el, color, background, fontSize, fontWeight, opacity, contrastAlgorithm) {
+    const { ratio, blendedColor } = calculateContrast(color, background, contrastAlgorithm);
+
+    // Returns 9 font sizes in px corresponding to weights 100 thru 900.
+    // Returns ['LcValue',100,200,300,400,500,600,700,800,900]
+    const fontLookup = fontLookupAPCA(ratio).slice(1);
+
+    // Get minimum font size based on weight.
+    const fontWeightIndex = Math.floor(fontWeight / 100) - 1;
+    const minFontSize = fontLookup[fontWeightIndex];
+
+    if (fontSize < minFontSize) {
+      return {
+        $el,
+        ratio: ratioToDisplay(ratio, contrastAlgorithm),
+        color: blendedColor,
+        background,
+        fontWeight,
+        fontSize,
+        opacity,
+        textUnderline: getComputedStyle($el).textDecorationLine,
+      };
+    }
+    return null;
+  }
+
+  /**
+   * Check an element's contrast based on APCA or WCAG 2.0 algorithm.
+   * @param {HTMLElement} $el The element in the DOM.
+   * @param {number[]} color Text colour in [R,G,B,A] format.
+   * @param {Array} background Background colour in [R,G,B,A] format.
+   * @param {number} fontSize Element's font size.
+   * @param {number} fontWeight Element's font weight.
+   * @param {number} opacity Element's opacity value.
+   * @param {boolean} contrastAlgorithm Which algorithm to use.
+   * @returns {Object} Object containing the element, ratio, and extra details.
+   */
+  function checkElementContrast(
+    $el, color, background, fontSize, fontWeight, opacity, contrastAlgorithm,
+  ) {
+    const algorithm = contrastAlgorithm === 'APCA' ? apcaAlgorithm : wcagAlgorithm;
+    return algorithm($el, color, background, fontSize, fontWeight, opacity, contrastAlgorithm);
   }
 
   /**
@@ -7510,7 +7555,7 @@ ${this.error.stack}
 
     // Ratio to be displayed.
     let displayedRatio;
-    if (Constants.Global.contrastAPCA) {
+    if (Constants.Global.contrastAlgorithm === 'APCA') {
       // If APCA, don't show "unknown" when value is absolute 0.
       displayedRatio = Math.abs(ratio) === 0 ? 0 : (Math.abs(ratio) || Lang._('UNKNOWN'));
     } else {
@@ -7583,7 +7628,7 @@ ${this.error.stack}
         const elementsToToggle = [ratio, contrast];
 
         // APCA
-        if (Constants.Global.contrastAPCA) {
+        if (Constants.Global.contrastAlgorithm === 'APCA') {
           const value = contrastValue.ratio;
           ratio.textContent = ratioToDisplay(value);
           const fontArray = fontLookupAPCA(value).slice(1);
@@ -7609,11 +7654,11 @@ ${this.error.stack}
         }
 
         // WCAG 2.0
-        if (!Constants.Global.contrastAPCA) {
+        if (Constants.Global.contrastAlgorithm === 'AA' || Constants.Global.contrastAlgorithm === 'AAA') {
           const value = contrastValue.ratio;
           ratio.textContent = ratioToDisplay(value);
 
-          const useAAA = Constants.Global.contrastAAA; // Use AAA thresholds if true, otherwise AA
+          const useAAA = Constants.Global.contrastAlgorithm === 'AAA';
           const nonTextThreshold = 3;
           const normalTextThreshold = useAAA ? 7 : 4.5;
           const largeTextThreshold = useAAA ? 4.5 : 3;
@@ -7665,96 +7710,54 @@ ${this.error.stack}
   }
 
   /**
-    * Calculate an elements contrast based on WCAG 2.0 contrast algorithm.
-    * @param {HTMLElement} $el The element in the DOM.
-    * @param {number[]} color Text colour in [R,G,B,A] format.
-    * @param {Array} background Background colour in [R,G,B,A] format.
-    * @param {number} fontSize Element's font size.
-    * @param {number} fontWeight Element's font weight.
-    * @param {number} opacity Element's opacity value.
-    * @param {boolean} contrastAAA Check if AAA threshold is required.
-    * @returns {Object} Object containing the element, ratio, and extra details.
-    */
-  function wcagAlgorithm($el, color, background, fontSize, fontWeight, opacity, contrastAAA = false) {
-    const { ratio, blendedColor } = calculateContrast(color, background);
-    const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
-
-    let hasLowContrast;
-    if (contrastAAA) {
-      hasLowContrast = isLargeText ? ratio < 4.5 : ratio < 7;
-    } else {
-      const hasLowContrastNormalText = ratio > 1 && ratio < 4.5;
-      hasLowContrast = isLargeText ? ratio < 3 : hasLowContrastNormalText;
-    }
-
-    if (hasLowContrast) {
-      return {
-        $el,
-        ratio: ratioToDisplay(ratio),
-        color: blendedColor,
-        background,
-        fontSize,
-        fontWeight,
-        isLargeText,
-        opacity,
-        textUnderline: getComputedStyle($el).textDecorationLine,
-      };
-    }
-    return null;
-  }
-
-  /**
-   * Calculate an elements contrast based on APCA algorithm.
-   * @param {HTMLElement} $el The element in the DOM.
-   * @param {number[]} color Text colour in [R,G,B,A] format.
-   * @param {Array} background Background colour in [R,G,B,A] format.
-   * @param {number} fontSize Element's font size.
-   * @param {number} fontWeight Element's font weight.
-   * @param {number} opacity Element's opacity value.
-   * @returns {Object} Object containing the element, ratio, and extra details.
-  */
-  function apcaAlgorithm($el, color, background, fontSize, fontWeight, opacity) {
-    const { ratio, blendedColor } = calculateContrast(color, background);
-
-    // Returns 9 font sizes in px corresponding to weights 100 thru 900.
-    // Returns ['LcValue',100,200,300,400,500,600,700,800,900]
-    const fontLookup = fontLookupAPCA(ratio).slice(1);
-
-    // Get minimum font size based on weight.
-    const fontWeightIndex = Math.floor(fontWeight / 100) - 1;
-    const minFontSize = fontLookup[fontWeightIndex];
-
-    if (fontSize < minFontSize) {
-      return {
-        $el,
-        ratio: ratioToDisplay(ratio),
-        color: blendedColor,
-        background,
-        fontWeight,
-        fontSize,
-        opacity,
-        textUnderline: getComputedStyle($el).textDecorationLine,
-      };
-    }
-    return null;
-  }
-
-  /**
-   * Check an element's contrast based on APCA or WCAG 2.0 algorithm.
-   * @param {HTMLElement} $el The element in the DOM.
-   * @param {number[]} color Text colour in [R,G,B,A] format.
-   * @param {Array} background Background colour in [R,G,B,A] format.
-   * @param {number} fontSize Element's font size.
-   * @param {number} fontWeight Element's font weight.
-   * @param {number} opacity Element's opacity value.
-   * @param {boolean} contrastAAA Use WCAG 2.0 AAA thresholds.
-   * @returns {Object} Object containing the element, ratio, and extra details.
+   * Generates and inserts color suggestions for tooltip upon tooltip opening.
+   * This function is referenced within './interface/tooltips.js'.
+   * For performance reasons, it is only called upon tooltip opening.
+   * @param {HTMLElement} container The container where the color suggestion will be inserted.
    */
-  function checkElementContrast(
-    $el, color, background, fontSize, fontWeight, opacity, contrastAAA = false,
-  ) {
-    const algorithm = Constants.Global.contrastAPCA ? apcaAlgorithm : wcagAlgorithm;
-    return algorithm($el, color, background, fontSize, fontWeight, opacity, contrastAAA);
+  function generateColorSuggestion(contrastDetails) {
+    let adviceContainer;
+    const { color, background, fontWeight, fontSize, isLargeText, type } = contrastDetails;
+    if (
+      color && background && background.type !== 'image'
+      && (type === 'text' || type === 'svg-error' || type === 'input')
+    ) {
+      const suggested = Constants.Global.contrastAlgorithm === 'APCA'
+        ? suggestColorAPCA(color, background, fontWeight, fontSize)
+        : suggestColorWCAG(color, background, isLargeText, Constants.Global.contrastAlgorithm);
+
+      let advice;
+      const hr = '<hr aria-hidden="true">';
+      const style = `color:${suggested.color};background-color:${getHex(contrastDetails.background)};`;
+      const colorBadge = `<button id="suggest" class="badge" style="${style}">${suggested.color}</button>`;
+      const sizeBadge = `<strong class="normal-badge">${suggested.size}px</strong>`;
+
+      if (Constants.Global.contrastAlgorithm === 'AA' || Constants.Global.contrastAlgorithm === 'AAA') {
+        if (suggested.color === null) {
+          advice = `${hr} ${Lang._('NO_SUGGESTION')}`;
+        } else {
+          advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
+        }
+      } else if (suggested.color && suggested.size) {
+        advice = `${hr} ${Lang._('CONTRAST_APCA')} ${colorBadge} ${sizeBadge}`;
+      } else if (suggested.color) {
+        advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
+      } else if (suggested.size) {
+        advice = `${hr} ${Lang._('CONTRAST_SIZE')} ${sizeBadge}`;
+      }
+
+      // Append it to contrast details container.
+      adviceContainer = document.createElement('div');
+      adviceContainer.id = 'advice';
+
+      // If low opacity, suggest increase opacity first.
+      const suggestion = (contrastDetails.opacity < 1)
+        ? `<hr aria-hidden="true"> ${Lang.sprintf('CONTRAST_OPACITY')}` : advice;
+
+      // Append advice to contrast details container.
+      adviceContainer.innerHTML = suggestion;
+    }
+    return adviceContainer;
   }
 
   var annotationStyles = ".annotation{display:block;position:relative}.annotation-inline{display:inline-block;position:relative;text-align:end}button{border-radius:50%;box-shadow:0 0 16px 0 rgba(0,0,0,.31);cursor:pointer;display:block;padding:0;transition:all .2s ease-in-out}button,button:after{height:36px;position:absolute;width:36px}button:after{content:\"\";left:-7px;padding:7px;top:-7px}.error-btn{background:50% 50% var(--sa11y-error-svg) no-repeat;background-color:var(--sa11y-error);background-size:22px;border:1px solid var(--sa11y-error);z-index:9999}.error-btn:focus,.error-btn:hover{background-color:var(--sa11y-error-hover)}.good-btn{background:50% 50% var(--sa11y-good) var(--sa11y-good-svg) no-repeat;background-color:var(--sa11y-good);background-size:20px;border:1px solid var(--sa11y-good);z-index:9977}.good-btn:focus,.good-btn:hover{background-color:var(--sa11y-good-hover)}.warning-btn{background:50% 50% var(--sa11y-warning) var(--sa11y-warning-svg) no-repeat;background-color:var(--sa11y-warning);background-size:24px;border:1px solid var(--sa11y-warning);transform:scaleX(var(--sa11y-icon-direction));z-index:9988}.warning-btn:focus,.warning-btn:hover{background-color:var(--sa11y-warning-hover)}button:active,button:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){button{border:1px solid transparent!important;forced-color-adjust:none;outline:3px solid transparent!important}}";
@@ -9383,7 +9386,7 @@ ${this.error.stack}
       const fontSize = parseFloat(style.fontSize);
       const getFontWeight = style.fontWeight;
       const fontWeight = normalizeFontWeight(getFontWeight);
-      const background = getBackground($el);
+      const background = getBackground($el, Constants.Global.shadowDetection);
 
       // Check if element is visually hidden to screen readers or explicitly hidden.
       const isVisuallyHidden = isScreenReaderOnly($el);
@@ -9429,7 +9432,7 @@ ${this.error.stack}
           }
         } else if (!isHidden && getHex(color) !== getHex(background)) {
           const result = checkElementContrast(
-            $el, color, background, fontSize, fontWeight, opacity, option.contrastAAA,
+            $el, color, background, fontSize, fontWeight, opacity, option.contrastAlgorithm,
           );
           if (result) {
             result.type = checkInputs ? 'input' : 'text';
@@ -9444,7 +9447,7 @@ ${this.error.stack}
       const generalWarning = { $el, type: 'svg-warning' };
 
       // Get background.
-      const background = getBackground($el);
+      const background = getBackground($el, Constants.Global.shadowDetection);
       const hasBackground = background !== 'unsupported' && background.type !== 'image';
 
       // Process simple SVGs with a single shape.
@@ -9510,14 +9513,14 @@ ${this.error.stack}
 
           if (hasFill) {
             contrastValue = calculateContrast(resolvedFill, background);
-            fillPasses = option.contrastAPCA
+            fillPasses = option.contrastAlgorithm === 'APCA'
               ? contrastValue.ratio >= 45
               : contrastValue.ratio >= 3;
           }
 
           if (hasStroke) {
             contrastValue = calculateContrast(resolvedStroke, background);
-            strokePasses = option.contrastAPCA
+            strokePasses = option.contrastAlgorithm === 'APCA'
               ? contrastValue.ratio >= 45
               : contrastValue.ratio >= 3;
           }
@@ -9574,7 +9577,7 @@ ${this.error.stack}
         const pColor = convertToRGBA(placeholder.getPropertyValue('color'));
         const pSize = parseFloat(placeholder.fontSize);
         const pWeight = normalizeFontWeight(placeholder.fontWeight);
-        const pBackground = getBackground($el);
+        const pBackground = getBackground($el, Constants.Global.shadowDetection);
         const pOpacity = parseFloat(placeholder.opacity);
 
         // Placeholder has background image.
@@ -9582,7 +9585,9 @@ ${this.error.stack}
           // Unsupported colour
           contrastResults.push({ $el, type: 'placeholder-unsupported' });
         } else if (pBackground.type === 'image') ; else {
-          const result = checkElementContrast($el, pColor, pBackground, pSize, pWeight, pOpacity, option.contrastAAA);
+          const result = checkElementContrast(
+            $el, pColor, pBackground, pSize, pWeight, pOpacity, option.contrastAlgorithm,
+          );
           if (result) {
             result.type = 'placeholder';
             contrastResults.push(result);
@@ -9599,8 +9604,8 @@ ${this.error.stack}
 
       let processedBackgroundWarnings;
 
-      // Process background-image warnings based on option.contrastAPCA.
-      if (option.contrastAPCA) {
+      // Process background-image warnings based on prop.
+      if (option.contrastAlgorithm === 'APCA') {
         // Do not group warnings, return each warning as-is.
         processedBackgroundWarnings = backgroundImages.map((warning) => ({ ...warning }));
       } else {
@@ -9656,14 +9661,14 @@ ${this.error.stack}
 
       // Reference necessary ratios for compliance.
       let ratioTip = '';
-      if (!option.contrastAPCA) {
-        const normal = option.contrastAAA ? '7:1' : '4.5:1';
-        const large = option.contrastAAA ? '4.5:1' : '3:1';
+      if (option.contrastAlgorithm === 'AA' || option.contrastAlgorithm === 'AAA') {
+        const normal = option.contrastAlgorithm === 'AAA' ? '7:1' : '4.5:1';
+        const large = option.contrastAlgorithm === 'AAA' ? '4.5:1' : '3:1';
         const ratioToDisplay = item.isLargeText ? large : normal;
         const ratioRequirement = item.isLargeText ? 'CONTRAST_LARGE' : 'CONTRAST_NORMAL';
         ratioTip = ` ${Lang.sprintf(ratioRequirement, ratioToDisplay)}`;
       }
-      const graphicsTip = option.contrastAPCA ? '' : ` ${Lang.sprintf('CONTRAST_TIP_GRAPHIC')}`;
+      const graphicsTip = option.contrastAlgorithm === 'APCA' ? '' : ` ${Lang.sprintf('CONTRAST_TIP_GRAPHIC')}`;
 
       // Iterate through contrast results based on type.
       switch (item.type) {

@@ -60,8 +60,7 @@ const defaultOptions = {
 
   // Contrast
   contrastPlugin: true,
-  contrastAAA: false,
-  contrastAPCA: false,
+  contrastAlgorithm: 'AA', // AA, AAA, APCA
 
   // Other plugins
   customChecks: false,

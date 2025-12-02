@@ -169,7 +169,7 @@ input[type=color i]::-moz-color-swatch {
   border-radius: 50%;
 }
 input[type=color i].unknown {
-  box-shadow: 0 0 0 2px var(--sa11y-yellow-text);
+  box-shadow: 0 0 0 3px var(--sa11y-yellow-text);
 }
 input[type=color i].unknown::after {
   position: absolute;

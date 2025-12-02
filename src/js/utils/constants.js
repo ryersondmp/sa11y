@@ -13,13 +13,14 @@ const Constants = (function myConstants() {
     Global.panelPosition = option.panelPosition;
     Global.dismissAnnotations = option.dismissAnnotations;
     Global.aboutContent = option.aboutContent;
-    Global.contrastAPCA = option.contrastAPCA;
-    Global.contrastSuggestions = option.contrastSuggestions;
-    Global.contrastAAA = option.contrastAAA;
     Global.shadowDetection = option.shadowComponents.length > 0 || option.autoDetectShadowComponents === true;
     Global.fixedRoots = option.fixedRoots;
     Global.ignoreAriaOnElements = option.ignoreAriaOnElements;
     Global.ignoreTextInElements = option.ignoreTextInElements;
+
+    // Contrast
+    Global.contrastSuggestions = option.contrastSuggestions;
+    Global.contrastAlgorithm = option.contrastAlgorithm.toUpperCase();
 
     // Toggleable plugins
     Global.developerPlugin = option.developerPlugin;

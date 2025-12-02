@@ -1,7 +1,8 @@
 import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
-import * as Contrast from '../utils/contrast-utils';
+import * as Contrast from './utils';
+import Constants from '../utils/constants';
 
 /**
  * Rulesets: Contrast
@@ -28,7 +29,7 @@ export default function checkContrast(results, option) {
     const fontSize = parseFloat(style.fontSize);
     const getFontWeight = style.fontWeight;
     const fontWeight = Contrast.normalizeFontWeight(getFontWeight);
-    const background = Contrast.getBackground($el);
+    const background = Contrast.getBackground($el, Constants.Global.shadowDetection);
 
     // Check if element is visually hidden to screen readers or explicitly hidden.
     const isVisuallyHidden = Utils.isScreenReaderOnly($el);
@@ -74,7 +75,7 @@ export default function checkContrast(results, option) {
         }
       } else if (!isHidden && Contrast.getHex(color) !== Contrast.getHex(background)) {
         const result = Contrast.checkElementContrast(
-          $el, color, background, fontSize, fontWeight, opacity, option.contrastAAA,
+          $el, color, background, fontSize, fontWeight, opacity, option.contrastAlgorithm,
         );
         if (result) {
           result.type = checkInputs ? 'input' : 'text';
@@ -89,7 +90,7 @@ export default function checkContrast(results, option) {
     const generalWarning = { $el, type: 'svg-warning' };
 
     // Get background.
-    const background = Contrast.getBackground($el);
+    const background = Contrast.getBackground($el, Constants.Global.shadowDetection);
     const hasBackground = background !== 'unsupported' && background.type !== 'image';
 
     // Process simple SVGs with a single shape.
@@ -155,14 +156,14 @@ export default function checkContrast(results, option) {
 
         if (hasFill) {
           contrastValue = Contrast.calculateContrast(resolvedFill, background);
-          fillPasses = option.contrastAPCA
+          fillPasses = option.contrastAlgorithm === 'APCA'
             ? contrastValue.ratio >= 45
             : contrastValue.ratio >= 3;
         }
 
         if (hasStroke) {
           contrastValue = Contrast.calculateContrast(resolvedStroke, background);
-          strokePasses = option.contrastAPCA
+          strokePasses = option.contrastAlgorithm === 'APCA'
             ? contrastValue.ratio >= 45
             : contrastValue.ratio >= 3;
         }
@@ -219,7 +220,7 @@ export default function checkContrast(results, option) {
       const pColor = Contrast.convertToRGBA(placeholder.getPropertyValue('color'));
       const pSize = parseFloat(placeholder.fontSize);
       const pWeight = Contrast.normalizeFontWeight(placeholder.fontWeight);
-      const pBackground = Contrast.getBackground($el);
+      const pBackground = Contrast.getBackground($el, Constants.Global.shadowDetection);
       const pOpacity = parseFloat(placeholder.opacity);
 
       // Placeholder has background image.
@@ -229,7 +230,9 @@ export default function checkContrast(results, option) {
       } else if (pBackground.type === 'image') {
         // There will already be a warning.
       } else {
-        const result = Contrast.checkElementContrast($el, pColor, pBackground, pSize, pWeight, pOpacity, option.contrastAAA);
+        const result = Contrast.checkElementContrast(
+          $el, pColor, pBackground, pSize, pWeight, pOpacity, option.contrastAlgorithm,
+        );
         if (result) {
           result.type = 'placeholder';
           contrastResults.push(result);
@@ -246,8 +249,8 @@ export default function checkContrast(results, option) {
 
     let processedBackgroundWarnings;
 
-    // Process background-image warnings based on option.contrastAPCA.
-    if (option.contrastAPCA) {
+    // Process background-image warnings based on prop.
+    if (option.contrastAlgorithm === 'APCA') {
       // Do not group warnings, return each warning as-is.
       processedBackgroundWarnings = backgroundImages.map((warning) => ({ ...warning }));
     } else {
@@ -303,14 +306,14 @@ export default function checkContrast(results, option) {
 
     // Reference necessary ratios for compliance.
     let ratioTip = '';
-    if (!option.contrastAPCA) {
-      const normal = option.contrastAAA ? '7:1' : '4.5:1';
-      const large = option.contrastAAA ? '4.5:1' : '3:1';
+    if (option.contrastAlgorithm === 'AA' || option.contrastAlgorithm === 'AAA') {
+      const normal = option.contrastAlgorithm === 'AAA' ? '7:1' : '4.5:1';
+      const large = option.contrastAlgorithm === 'AAA' ? '4.5:1' : '3:1';
       const ratioToDisplay = item.isLargeText ? large : normal;
       const ratioRequirement = item.isLargeText ? 'CONTRAST_LARGE' : 'CONTRAST_NORMAL';
       ratioTip = ` ${Lang.sprintf(ratioRequirement, ratioToDisplay)}`;
     }
-    const graphicsTip = option.contrastAPCA ? '' : ` ${Lang.sprintf('CONTRAST_TIP_GRAPHIC')}`;
+    const graphicsTip = option.contrastAlgorithm === 'APCA' ? '' : ` ${Lang.sprintf('CONTRAST_TIP_GRAPHIC')}`;
 
     // Iterate through contrast results based on type.
     switch (item.type) {
