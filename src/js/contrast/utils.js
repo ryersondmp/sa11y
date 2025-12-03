@@ -155,6 +155,14 @@ export function getLuminance(color) {
   return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
 }
 
+export function getAPCAValue(color, bg) {
+  const blendedColor = alphaBlend(color, bg).slice(0, 4);
+  const foreground = sRGBtoY(blendedColor);
+  const background = sRGBtoY(bg);
+  const ratio = APCAcontrast(foreground, background);
+  return { ratio, blendedColor };
+}
+
 /**
  * Get WCAG 2.0 contrast ratio from luminance value.
  * @link http://www.w3.org/TR/2008/REC-WCAG20-20081211/#contrast-ratiodef
@@ -331,8 +339,8 @@ export function suggestColorWCAG(color, background, isLargeText, contrastAlgorit
  * @returns Object containing hex code (#000/#FFF) and the recommended font size.
  */
 const getOptimalAPCACombo = (background, fontWeight) => {
-  const contrastWithDark = calculateContrast(background, [0, 0, 0, 1]);
-  const contrastWithLight = calculateContrast(background, [255, 255, 255, 1]);
+  const contrastWithDark = getAPCAValue(background, [0, 0, 0, 1]);
+  const contrastWithLight = getAPCAValue(background, [255, 255, 255, 1]);
   const isDarkBetter = Math.abs(contrastWithDark.ratio) > Math.abs(contrastWithLight.ratio);
   const suggestedColor = isDarkBetter ? [0, 0, 0, 1] : [255, 255, 255, 1];
   const bestContrastRatio = isDarkBetter ? contrastWithDark.ratio : contrastWithLight.ratio;
@@ -343,87 +351,116 @@ const getOptimalAPCACombo = (background, fontWeight) => {
 
 /**
  * Suggests a new colour or font size based on APCA contrast algorithm.
- * @param {number[]} color Text colour in [R,G,B,A] format.
- * @param {number[]} background Background colour in [R,G,B,A] format.
+ * @param {Array[]} color Text colour in [R,G,B,A] format.
+ * @param {Array[]} background Background colour in [R,G,B,A] format.
  * @param {number} fontWeight Current font weight of the element.
  * @param {number} fontSize Current font size of the element.
  * @returns Compliant colour hexcode and/or font size combination.
  */
 export function suggestColorAPCA(color, background, fontWeight, fontSize) {
+  const graphicMinLc = 45;
+  const isGraphic = fontWeight == null || fontSize == null;
   const bgLuminance = sRGBtoY(background);
-  // https://medium.com/@mikeyullinger/how-chameleon-text-ensures-legibility-ae414d7b069a#:~:text=0.179
+
   const adjustColor = (foregroundColor, amount) => (bgLuminance <= 0.179
     ? brighten(foregroundColor, amount)
     : darken(foregroundColor, amount));
 
   let adjustedColor = color;
+  let contrast = getAPCAValue(adjustedColor, background);
+  let { ratio } = contrast;
 
-  // Returns 9 font sizes in px corresponding to weights 100 thru 900.
-  // Returns ['LcValue',100,200,300,400,500,600,700,800,900]
-  let contrast = calculateContrast(adjustedColor, background);
-  let fontLookup = fontLookupAPCA(contrast.ratio).slice(1);
+  let bestTextCombo = null;
+  let bestContrast = ratio;
+  let lastValidColor = null;
 
-  // Index of the corresponding fontWeight.
-  const fontWeightIndex = Math.floor(fontWeight / 100) - 1;
-  const minimumSizeRequired = fontLookup[fontWeightIndex];
+  let fontLookup;
+  let fontWeightIndex;
+  let minimumSizeRequired;
 
-  // Find another colour, because nothing will work at any size.
-  const fails = fontSize < minimumSizeRequired || minimumSizeRequired === 999 || minimumSizeRequired === 777;
+  const passesText = () => {
+    fontLookup = fontLookupAPCA(ratio).slice(1);
+    fontWeightIndex = Math.min(
+      Math.max(Math.floor(fontWeight / 100) - 1, 0),
+      fontLookup.length - 1,
+    );
+    minimumSizeRequired = fontLookup[fontWeightIndex];
+    return (
+      minimumSizeRequired <= fontSize
+      && minimumSizeRequired !== 999
+      && minimumSizeRequired !== 777
+    );
+  };
 
-  // Needs new font size - no colour will work at current size.
-  const best = getOptimalAPCACombo(background, fontWeight);
-  if (best.size > fontSize) {
-    return { color: getHex(best.suggestedColor), size: best.size };
+  const passesGraphic = () => Math.abs(ratio) >= graphicMinLc;
+
+  if (!isGraphic) {
+    bestTextCombo = getOptimalAPCACombo(background, fontWeight);
+
+    // If only bigger text will work, return that suggestion.
+    if (bestTextCombo.size > fontSize) {
+      return {
+        color: getHex(bestTextCombo.suggestedColor),
+        size: bestTextCombo.size,
+      };
+    }
+
+    // If current combo already passes, no need to adjust colour.
+    if (passesText()) {
+      return { color: getHex(color), size: null };
+    }
+  } else if (passesGraphic()) {
+    return { color: getHex(color), size: null };
   }
 
   let previousColor = color;
-  let lastValidColor = adjustedColor;
-  let bestContrast = contrast.ratio;
-
-  // Loop parameters.
   let step = 0.16;
   const percentChange = 0.5;
   const precision = 0.01;
   let iterations = 0;
   const maxIterations = 50;
 
-  // Loop to find a new colour.
-  if (fails) {
-    while (step >= precision) {
-      iterations += 1;
-      adjustedColor = adjustColor(adjustedColor, step);
-      contrast = calculateContrast(adjustedColor, background);
-      fontLookup = fontLookupAPCA(contrast.ratio).slice(1);
+  while (step >= precision && iterations < maxIterations) {
+    iterations += 1;
+    adjustedColor = adjustColor(adjustedColor, step);
 
-      // console.log(`%c ${getHex(adjustedColor)} | ${ratioToDisplay(contrast.ratio)} | ${fontLookup}`, `color:${getHex(adjustedColor)};background:${getHex(background)}`);
+    contrast = getAPCAValue(adjustedColor, background);
+    ratio = contrast.ratio;
 
-      // Save valid colour, go back to previous, and continue with a smaller step.
-      if (fontLookup[fontWeightIndex] <= fontSize) {
-        // Ensure new colour is closer to the contrast minimum than old colour.
-        lastValidColor = (Math.abs(contrast.ratio) <= Math.abs(bestContrast)) ? adjustedColor : lastValidColor;
-        bestContrast = contrast.ratio;
+    const passes = isGraphic ? passesGraphic() : passesText();
+
+    // console.log(`%c ${getHex(adjustedColor)} | ${ratioToDisplay(ratio, 'APCA')} | ${isGraphic ? `Lc≥${graphicMinLc}` : fontLookup}`, `color:${getHex(adjustedColor)};background:${getHex(background)}`);
+
+    if (passes) {
+      if (Math.abs(ratio) <= Math.abs(bestContrast) || !lastValidColor) {
         lastValidColor = adjustedColor;
-        adjustedColor = previousColor;
-        step *= percentChange;
+        bestContrast = ratio;
       }
-
-      previousColor = adjustedColor;
-
-      // Just in case, break the loop.
-      if (iterations === maxIterations) {
-        return { color: getHex(best.suggestedColor), size: best.size };
-      }
+      adjustedColor = previousColor;
+      step *= percentChange;
     }
+
+    previousColor = adjustedColor;
   }
 
-  // Found a valid colour.
-  return { color: getHex(lastValidColor), size: null };
+  if (lastValidColor) {
+    return { color: getHex(lastValidColor), size: null };
+  }
+
+  if (!isGraphic && bestTextCombo) {
+    return {
+      color: getHex(bestTextCombo.suggestedColor),
+      size: bestTextCombo.size,
+    };
+  }
+
+  return { color: getHex(color), size: null };
 }
 
 /**
   * Calculate an elements contrast based on WCAG 2.0 contrast algorithm.
   * @param {HTMLElement} $el The element in the DOM.
-  * @param {number[]} color Text colour in [R,G,B,A] format.
+  * @param {Array} color Text colour in [R,G,B,A] format.
   * @param {Array} background Background colour in [R,G,B,A] format.
   * @param {number} fontSize Element's font size.
   * @param {number} fontWeight Element's font weight.

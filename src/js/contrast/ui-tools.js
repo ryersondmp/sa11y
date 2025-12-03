@@ -101,13 +101,17 @@ export function initializeContrastTools(container, contrastDetails) {
       contrastPreview.style.backgroundImage = 'none';
 
       // Get contrast ratio.
-      const contrastValue = calculateContrast(convertToRGBA(fgColor), convertToRGBA(bgColor));
+      const contrastValue = calculateContrast(
+        convertToRGBA(fgColor),
+        convertToRGBA(bgColor),
+        Constants.Global.contrastAlgorithm,
+      );
       const elementsToToggle = [ratio, contrast];
 
       // APCA
       if (Constants.Global.contrastAlgorithm === 'APCA') {
         const value = contrastValue.ratio;
-        ratio.textContent = ratioToDisplay(value);
+        ratio.textContent = ratioToDisplay(value, Constants.Global.contrastAlgorithm);
         const fontArray = fontLookupAPCA(value).slice(1);
         const nonTextPasses = value >= 45 && fontArray[0] >= 0 && fontArray[0] <= 777;
         let passes;
@@ -133,7 +137,7 @@ export function initializeContrastTools(container, contrastDetails) {
       // WCAG 2.0
       if (Constants.Global.contrastAlgorithm === 'AA' || Constants.Global.contrastAlgorithm === 'AAA') {
         const value = contrastValue.ratio;
-        ratio.textContent = ratioToDisplay(value);
+        ratio.textContent = ratioToDisplay(value, Constants.Global.contrastAlgorithm);
 
         const useAAA = Constants.Global.contrastAlgorithm === 'AAA';
         const nonTextThreshold = 3;

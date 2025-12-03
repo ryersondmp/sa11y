@@ -155,14 +155,14 @@ export default function checkContrast(results, option) {
         let strokePasses = false;
 
         if (hasFill) {
-          contrastValue = Contrast.calculateContrast(resolvedFill, background);
+          contrastValue = Contrast.calculateContrast(resolvedFill, background, option.contrastAlgorithm);
           fillPasses = option.contrastAlgorithm === 'APCA'
             ? contrastValue.ratio >= 45
             : contrastValue.ratio >= 3;
         }
 
         if (hasStroke) {
-          contrastValue = Contrast.calculateContrast(resolvedStroke, background);
+          contrastValue = Contrast.calculateContrast(resolvedStroke, background, option.contrastAlgorithm);
           strokePasses = option.contrastAlgorithm === 'APCA'
             ? contrastValue.ratio >= 45
             : contrastValue.ratio >= 3;
@@ -188,7 +188,7 @@ export default function checkContrast(results, option) {
           // Push an error for simple SVGs.
           contrastResults.push({
             $el,
-            ratio: Contrast.ratioToDisplay(contrastValue.ratio),
+            ratio: Contrast.ratioToDisplay(contrastValue.ratio, option.contrastAlgorithm),
             color: contrastValue.blendedColor,
             type: 'svg-error',
             isLargeText: true, // To push a suggested colour (3:1).
