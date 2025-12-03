@@ -56,7 +56,7 @@ const sa11y = new Sa11y({
   showTitleInPageOutline: 1,
   // contrastAAA: true,
   // contrastAPCA: apca,
-  contrastAlgorithm: apca,
+  contrastAlgorithm: apca, // AA, AAA
   ignoreHiddenOverflow: '.overlay, .modal',
   insertAnnotationBefore: '.background-container',
   // panelPosition: 'top-right',

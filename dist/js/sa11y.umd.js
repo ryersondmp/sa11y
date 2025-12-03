@@ -7155,7 +7155,8 @@ ${this.error.stack}
     return [255, 255, 255]; // Default to white if no background color is found.
   }
 
-  /** Get the relative luminance of a colour based on WCAG 2.0
+  /**
+   * Get the relative luminance of a colour based on WCAG 2.0
    * @link http://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef
    * @param {number[]} color Colour code in [R,G,B] format.
    * @returns Luminance value.
@@ -7168,6 +7169,13 @@ ${this.error.stack}
     return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
   }
 
+  /**
+   * Compute an APCA (Advanced Perceptual Contrast Algorithm) contrast value
+   * between a foreground color and a background color.
+   * @param {number[]} color - Foreground color in `[R, G, B, A]` format.
+   * @param {number[]} bg - Background color in `[R, G, B, A]` format.
+   * @returns {{ ratio: number, blendedColor: number[] }} Computed APCA value & alpha-blended foreground.
+   */
   function getAPCAValue(color, bg) {
     const blendedColor = alphaBlend(color, bg).slice(0, 4);
     const foreground = sRGBtoY(blendedColor);
@@ -7235,21 +7243,38 @@ ${this.error.stack}
   }
 
   /**
+   * Get the display-friendly APCA contrast value for output.
+   * @param {Object} value - The value object containing the contrast ratio.
+   * @returns {string|number} The formatted APCA contrast value.
+   */
+  function displayAPCAValue(value) {
+    return Math.abs(Number(value.toFixed(1)));
+  }
+
+  /**
+   * Get the display-friendly WCAG ratio for output.
+   * @param {Object} value - The value object containing the contrast ratio.
+   * @returns {string|number} The formatted contrast ratio.
+   */
+  function displayWCAGRatio(value) {
+    const truncatedRatio = Math.trunc(value * 10) / 10;
+    // Round to decimal places, and display without decimals if integer.
+    const formattedRatio = Number.isInteger(truncatedRatio)
+      ? truncatedRatio.toFixed(0)
+      : truncatedRatio;
+    return `${formattedRatio}:1`;
+  }
+
+  /**
    * Get the display-friendly contrast value for output.
    * @param {Object} value - The value object containing the contrast ratio.
    * @param {String} contrastAlgorithm - Preferred contrast algorithm.
    * @returns {string|number} The formatted contrast ratio.
    */
   function ratioToDisplay(value, contrastAlgorithm) {
-    if (contrastAlgorithm === 'APCA') {
-      return Math.abs(Number(value.toFixed(1)));
-    }
-    // Round to decimal places, and display without decimals if integer.
-    const truncatedRatio = Math.trunc(value * 10) / 10;
-    const formattedRatio = Number.isInteger(truncatedRatio)
-      ? truncatedRatio.toFixed(0)
-      : truncatedRatio;
-    return `${formattedRatio}:1`;
+    return contrastAlgorithm === 'APCA'
+      ? displayAPCAValue(value)
+      : displayWCAGRatio(value);
   }
 
   /**
@@ -7442,7 +7467,7 @@ ${this.error.stack}
 
       const passes = isGraphic ? passesGraphic() : passesText();
 
-      // console.log(`%c ${getHex(adjustedColor)} | ${ratioToDisplay(ratio, 'APCA')} | ${isGraphic ? `Lc≥${graphicMinLc}` : fontLookup}`, `color:${getHex(adjustedColor)};background:${getHex(background)}`);
+      // console.log(`%c ${getHex(adjustedColor)} | ${displayAPCAValue(ratio)} | ${isGraphic ? `Lc≥${graphicMinLc}` : fontLookup}`, `color:${getHex(adjustedColor)};background:${getHex(background)}`);
 
       if (passes) {
         if (Math.abs(ratio) <= Math.abs(bestContrast) || !lastValidColor) {
@@ -7496,7 +7521,7 @@ ${this.error.stack}
     if (hasLowContrast) {
       return {
         $el,
-        ratio: ratioToDisplay(ratio),
+        ratio: displayWCAGRatio(ratio),
         color: blendedColor,
         background,
         fontSize,
@@ -7533,7 +7558,7 @@ ${this.error.stack}
     if (fontSize < minFontSize) {
       return {
         $el,
-        ratio: ratioToDisplay(ratio, contrastAlgorithm),
+        ratio: displayAPCAValue(ratio),
         color: blendedColor,
         background,
         fontWeight,
