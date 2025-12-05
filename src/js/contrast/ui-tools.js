@@ -1,4 +1,4 @@
-import { getHex, ratioToDisplay, convertToRGBA, calculateContrast, suggestColorAPCA, suggestColorWCAG } from './utils';
+import * as Contrast from './utils';
 import { fontLookupAPCA } from './apca';
 import Lang from '../utils/lang';
 import Constants from '../utils/constants';
@@ -12,8 +12,8 @@ export function generateContrastTools(contrastDetails) {
 
   // Initialize variables.
   const hasBackgroundColor = background && background.type !== 'image';
-  const backgroundHex = hasBackgroundColor ? getHex(background) : '#000000';
-  const foregroundHex = color ? getHex(color) : '#000000';
+  const backgroundHex = hasBackgroundColor ? Contrast.getHex(background) : '#000000';
+  const foregroundHex = color ? Contrast.getHex(color) : '#000000';
 
   // Other properties.
   const hasFontWeight = fontWeight ? `font-weight:${fontWeight};` : '';
@@ -69,7 +69,7 @@ export function generateContrastTools(contrastDetails) {
 export function initializeContrastTools(container, contrastDetails) {
   const contrastTools = container?.querySelector('#contrast-tools');
   if (contrastTools) {
-    const { fontSize, fontWeight, type, isLargeText } = contrastDetails;
+    const { fontSize: initialFontSize, fontWeight, type, isLargeText } = contrastDetails;
 
     // Cache selectors
     const contrast = container.querySelector('#contrast');
@@ -87,10 +87,30 @@ export function initializeContrastTools(container, contrastDetails) {
       });
     };
 
+    // Helper to get the current preview font size in px.
+    const getPreviewFontSize = () => {
+      // Prefer inline style if present (e.g., from #suggest-size click).
+      if (contrastPreview.style.fontSize) {
+        const match = contrastPreview.style.fontSize.match(/([\d.]+)/);
+        if (match) return parseFloat(match[1]);
+      }
+
+      // Fallback to computed style.
+      const computed = getComputedStyle(contrastPreview).fontSize;
+      if (computed) {
+        const match = computed.match(/([\d.]+)/);
+        if (match) return parseFloat(match[1]);
+      }
+
+      // Final fallback to original size from contrastDetails.
+      return initialFontSize;
+    };
+
     // Update preview colors and contrast on input change.
     const updatePreview = () => {
       const fgColor = fgInput.value;
       const bgColor = bgInput.value;
+      const currentFontSize = getPreviewFontSize(); // 🔑 use live font size
 
       // Remove question mark from inputs.
       [fgInput, bgInput].forEach((input) => input.classList.remove('unknown'));
@@ -101,9 +121,9 @@ export function initializeContrastTools(container, contrastDetails) {
       contrastPreview.style.backgroundImage = 'none';
 
       // Get contrast ratio.
-      const contrastValue = calculateContrast(
-        convertToRGBA(fgColor),
-        convertToRGBA(bgColor),
+      const contrastValue = Contrast.calculateContrast(
+        Contrast.convertToRGBA(fgColor),
+        Contrast.convertToRGBA(bgColor),
         Constants.Global.contrastAlgorithm,
       );
       const elementsToToggle = [ratio, contrast];
@@ -111,7 +131,7 @@ export function initializeContrastTools(container, contrastDetails) {
       // APCA
       if (Constants.Global.contrastAlgorithm === 'APCA') {
         const value = contrastValue.ratio;
-        ratio.textContent = ratioToDisplay(value, Constants.Global.contrastAlgorithm);
+        ratio.textContent = Contrast.displayAPCAValue(value);
         const fontArray = fontLookupAPCA(value).slice(1);
         const nonTextPasses = value >= 45 && fontArray[0] >= 0 && fontArray[0] <= 777;
         let passes;
@@ -126,7 +146,7 @@ export function initializeContrastTools(container, contrastDetails) {
           }
           default: {
             const minFontSize = fontArray[Math.floor(fontWeight / 100) - 1];
-            passes = fontSize >= minFontSize;
+            passes = currentFontSize >= minFontSize;
             toggleBadges(elementsToToggle, passes);
             good.hidden = !passes;
             break;
@@ -137,7 +157,7 @@ export function initializeContrastTools(container, contrastDetails) {
       // WCAG 2.0
       if (Constants.Global.contrastAlgorithm === 'AA' || Constants.Global.contrastAlgorithm === 'AAA') {
         const value = contrastValue.ratio;
-        ratio.textContent = ratioToDisplay(value, Constants.Global.contrastAlgorithm);
+        ratio.textContent = Contrast.displayWCAGRatio(value);
 
         const useAAA = Constants.Global.contrastAlgorithm === 'AAA';
         const nonTextThreshold = 3;
@@ -145,6 +165,12 @@ export function initializeContrastTools(container, contrastDetails) {
         const largeTextThreshold = useAAA ? 4.5 : 3;
 
         const passesNonText = value >= nonTextThreshold;
+
+        // WCAG: large = 18pt (~24px) normal, or 14pt (~18.66px) bold+.
+        const dynamicIsLargeText = currentFontSize >= 24
+          || (currentFontSize >= 18.66 && fontWeight >= 700)
+          || isLargeText; // keep original flag as a fallback
+
         const passesNormalText = value >= normalTextThreshold;
         const passesLargeText = value >= largeTextThreshold;
 
@@ -157,7 +183,7 @@ export function initializeContrastTools(container, contrastDetails) {
             break;
           }
           default: {
-            if (isLargeText) {
+            if (dynamicIsLargeText) {
               toggleBadges([ratio, contrast], passesLargeText);
               good.hidden = !passesLargeText;
             } else {
@@ -174,18 +200,20 @@ export function initializeContrastTools(container, contrastDetails) {
     fgInput.addEventListener('input', updatePreview);
     bgInput.addEventListener('input', updatePreview);
 
-    // Clicking on suggested colour updates preview and saves value to clipboard.
+    // Clicking on suggested colour or font size updates preview and saves value to clipboard.
     setTimeout(() => {
-      const suggest = container.querySelector('#suggest');
-      if (suggest) {
-        const updatePreviewWithSuggested = () => {
-          const hex = suggest.textContent;
-          fgInput.value = hex;
+      const handleSuggest = (selector, apply) => {
+        const $el = container.querySelector(selector);
+        if (!$el) return;
+        $el.addEventListener('click', () => {
+          const val = $el.textContent;
+          apply(val);
           updatePreview();
-          navigator.clipboard.writeText(hex).catch(() => { });
-        };
-        suggest.addEventListener('click', updatePreviewWithSuggested);
-      }
+          navigator.clipboard.writeText(val).catch(() => { });
+        });
+      };
+      handleSuggest('#suggest', (hex) => { fgInput.value = hex; });
+      handleSuggest('#suggest-size', (size) => { contrastPreview.style.fontSize = size; });
     }, 0);
   }
 }
@@ -204,14 +232,15 @@ export function generateColorSuggestion(contrastDetails) {
     && (type === 'text' || type === 'svg-error' || type === 'input')
   ) {
     const suggested = Constants.Global.contrastAlgorithm === 'APCA'
-      ? suggestColorAPCA(color, background, fontWeight, fontSize)
-      : suggestColorWCAG(color, background, isLargeText, Constants.Global.contrastAlgorithm);
+      ? Contrast.suggestColorAPCA(color, background, fontWeight, fontSize)
+      : Contrast.suggestColorWCAG(color, background, isLargeText, Constants.Global.contrastAlgorithm);
 
     let advice;
     const hr = '<hr aria-hidden="true">';
-    const style = `color:${suggested.color};background-color:${getHex(contrastDetails.background)};`;
+    const bgHex = Contrast.getHex(contrastDetails.background);
+    const style = `color:${suggested.color};background-color:${bgHex};`;
     const colorBadge = `<button id="suggest" class="badge" style="${style}">${suggested.color}</button>`;
-    const sizeBadge = `<strong class="normal-badge">${suggested.size}px</strong>`;
+    const sizeBadge = `<button id="suggest-size" class="normal-badge">${suggested.size}px</button>`;
 
     if (Constants.Global.contrastAlgorithm === 'AA' || Constants.Global.contrastAlgorithm === 'AAA') {
       if (suggested.color === null) {

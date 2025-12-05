@@ -2,7 +2,7 @@ import { promises as fsPromises } from 'fs';
 import fs from 'fs/promises';
 import { join } from 'path';
 
-const { readdir, mkdir, copyFile, readFile, writeFile } = fsPromises;
+const { readdir, mkdir, copyFile, writeFile } = fsPromises;
 
 const copyDirectory = async (src, dest) => {
   const [entries] = await Promise.all([
@@ -22,11 +22,8 @@ const copyDirectory = async (src, dest) => {
 };
 
 (async () => {
-  copyDirectory('./dist/js', './docs/assets/js');
-  copyDirectory('./dist/css', './docs/assets/css');
-
-  const scriptSource = await readFile('./docs/demo/script.js', 'utf8');
-  await writeFile('./docs/demo/script.js', scriptSource.replace(/\.\.\/dist\//g, 'assets/'), 'utf8');
+  copyDirectory('./dist/js', './docs/dist/js');
+  copyDirectory('./dist/css', './docs/dist/css');
 })();
 
 // Automatically update Sa11y version number within docs.
