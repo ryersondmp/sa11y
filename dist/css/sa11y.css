@@ -1,32 +1,23 @@
-/* **********************************************************/
-/*  These CSS utilities are injected into every shadow DOM. */
-/*      Using data attributes to increase specificity.      */
-/* ******************************************************** */
 [data-sa11y-overflow] {
   overflow: auto !important;
 }
 
-/* ************************************* */
-/*    Links, text, and image borders     */
-/* ************************************* */
 [data-sa11y-error] {
-  outline: 5px solid var(--sa11y-error) !important;
   outline-offset: 2px;
+  outline: 5px solid var(--sa11y-error) !important;
 }
 
 [data-sa11y-warning]:not([data-sa11y-error]) {
-  outline: 5px solid var(--sa11y-warning) !important;
   outline-offset: 2px;
+  outline: 5px solid var(--sa11y-warning) !important;
 }
 
-/* *************************************************** */
-/*  Pulsing border: https://codepen.io/olam/pen/zcqea  */
-/* *************************************************** */
 [data-sa11y-pulse-border] {
-  outline: 5px solid var(--sa11y-focus-color) !important;
   box-shadow: 0;
-  animation: pulse 1s 2;
+  animation: 1s 2 pulse;
+  outline: 5px solid var(--sa11y-focus-color) !important;
 }
+
 [data-sa11y-pulse-border]:hover, [data-sa11y-pulse-border]:focus {
   animation: none;
 }
@@ -35,22 +26,18 @@
   0% {
     box-shadow: 0 0 0 5px var(--sa11y-focus-color);
   }
+
   50% {
     box-shadow: 0 0 0 12px var(--sa11y-pulse-color);
   }
+
   100% {
     box-shadow: 0 0 0 5px var(--sa11y-pulse-color);
   }
 }
-/* Add scale/opacity only for images and headings. */
-img[data-sa11y-pulse-border],
-h1[data-sa11y-pulse-border],
-h2[data-sa11y-pulse-border],
-h3[data-sa11y-pulse-border],
-h4[data-sa11y-pulse-border],
-h5[data-sa11y-pulse-border],
-h6[data-sa11y-pulse-border] {
-  animation: pulse-scale 1s 2;
+
+img[data-sa11y-pulse-border], h1[data-sa11y-pulse-border], h2[data-sa11y-pulse-border], h3[data-sa11y-pulse-border], h4[data-sa11y-pulse-border], h5[data-sa11y-pulse-border], h6[data-sa11y-pulse-border] {
+  animation: 1s 2 pulse-scale;
 }
 
 @keyframes pulse-scale {
@@ -58,40 +45,37 @@ h6[data-sa11y-pulse-border] {
     opacity: 1;
     transform: scale(1);
   }
+
   50% {
-    opacity: 0.7;
+    opacity: .7;
     transform: scale(1.02);
   }
+
   100% {
     opacity: 1;
     transform: scale(1);
   }
 }
+
 @media (prefers-reduced-motion: reduce) {
   [data-sa11y-pulse-border] {
     animation: none !important;
   }
 }
-/* ****************************************************** */
-/*   High contrast mode should preserve outlines colours  */
-/* ****************************************************** */
+
 @media (forced-colors: active) {
-  [data-sa11y-error],
-  [data-sa11y-warning],
-  [data-sa11y-good],
-  [data-sa11y-error-inline],
-  [data-sa11y-warning-inline],
-  [data-sa11y-pulse-border] {
+  [data-sa11y-error], [data-sa11y-warning], [data-sa11y-good], [data-sa11y-error-inline], [data-sa11y-warning-inline], [data-sa11y-pulse-border] {
     forced-color-adjust: none;
   }
 }
+
 :root {
   --sa11y-font-face: system-ui, "Segoe UI", roboto, helvetica, arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "FontAwesome", "Font Awesome 5 Free", "Font Awesome 5 Pro", "Font Awesome 6 Free", "Font Awesome 6 Pro";
   --sa11y-large-text: 16.5px;
   --sa11y-normal-text: 15.5px;
   --sa11y-small-text: 12px;
-  --sa11y-focus-color: rgba(0, 208, 255, .75);
-  --sa11y-pulse-color: rgba(0, 208, 255, 0);
+  --sa11y-focus-color: #00d0ffbf;
+  --sa11y-pulse-color: #00d0ff00;
   --sa11y-blue: #005dff;
   --sa11y-good: #36844e;
   --sa11y-good-hover: #38a459;
@@ -102,7 +86,7 @@ h6[data-sa11y-pulse-border] {
   --sa11y-warning-text: #000;
   --sa11y-warning-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='%23505050' d='M504 256c0 136.997-111.043 248-248 248S8 392.997 8 256C8 119.083 119.043 8 256 8s248 111.083 248 248zM262.655 90c-54.497 0-89.255 22.957-116.549 63.758-3.536 5.286-2.353 12.415 2.715 16.258l34.699 26.31c5.205 3.947 12.621 3.008 16.665-2.122 17.864-22.658 30.113-35.797 57.303-35.797 20.429 0 45.698 13.148 45.698 32.958 0 14.976-12.363 22.667-32.534 33.976C247.128 238.528 216 254.941 216 296v4c0 6.627 5.373 12 12 12h56c6.627 0 12-5.373 12-12v-1.333c0-28.462 83.186-29.647 83.186-106.667 0-58.002-60.165-102-116.531-102zM256 338c-25.365 0-46 20.635-46 46 0 25.364 20.635 46 46 46s46-20.636 46-46c0-25.365-20.635-46-46-46z'/%3E%3C/svg%3E");
   --sa11y-error: #d30017;
-  --sa11y-error-hover: #f00;
+  --sa11y-error-hover: red;
   --sa11y-error-text: #fff;
   --sa11y-error-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 576 576' %3E%3Cpath fill='%23ffffff' d='M569.517 440.013C587.975 472.007 564.806 512 527.94 512H48.054c-36.937 0-59.999-40.055-41.577-71.987L246.423 23.985c18.467-32.009 64.72-31.951 83.154 0l239.94 416.028zM288 354c-25.405 0-46 20.595-46 46s20.595 46 46 46 46-20.595 46-46-20.595-46-46-46zm-43.673-165.346l7.418 136c.347 6.364 5.609 11.346 11.982 11.346h48.546c6.373 0 11.635-4.982 11.982-11.346l7.418-136c.375-6.874-5.098-12.654-11.982-12.654h-63.383c-6.884 0-12.356 5.78-11.981 12.654z'%3E%3C/path%3E%3C/svg%3E");
   --sa11y-setting-switch-on-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 576 512'%3E%3Cpath fill='%23000000' d='M384 64H192C86 64 0 150 0 256s86 192 192 192h192c106 0 192-86 192-192S490 64 384 64zm0 320c-70.8 0-128-57.3-128-128 0-70.8 57.3-128 128-128 70.8 0 128 57.3 128 128 0 70.8-57.3 128-128 128z'/%3E%3C/svg%3E");
@@ -116,31 +100,25 @@ h6[data-sa11y-pulse-border] {
   --sa11y-info-icon: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M256,56C145.72,56,56,145.72,56,256s89.72,200,200,200,200-89.72,200-200S366.28,56,256,56Zm0,82a26,26,0,1,1-26,26A26,26,0,0,1,256,138Zm48,226H216a16,16,0,0,1,0-32h28V244H228a16,16,0,0,1,0-32h32a16,16,0,0,1,16,16V332h28a16,16,0,0,1,0,32Z'/%3E%3C/svg%3E");
   --sa11y-moon-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath d='M223.5 32C100 32 0 132.3 0 256S100 480 223.5 480c60.6 0 115.5-24.2 155.8-63.4c5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6c-96.9 0-175.5-78.8-175.5-176c0-65.8 36-123.1 89.3-153.3c6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-6.3-.5-12.6-.8-19-.8z'/%3E%3C/svg%3E");
   --sa11y-sun-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath d='M361.5 1.2c5 2.1 8.6 6.6 9.6 11.9L391 121l107.9 19.8c5.3 1 9.8 4.6 11.9 9.6s1.5 10.7-1.6 15.2L446.9 256l62.3 90.3c3.1 4.5 3.7 10.2 1.6 15.2s-6.6 8.6-11.9 9.6L391 391 371.1 498.9c-1 5.3-4.6 9.8-9.6 11.9s-10.7 1.5-15.2-1.6L256 446.9l-90.3 62.3c-4.5 3.1-10.2 3.7-15.2 1.6s-8.6-6.6-9.6-11.9L121 391 13.1 371.1c-5.3-1-9.8-4.6-11.9-9.6s-1.5-10.7 1.6-15.2L65.1 256 2.8 165.7c-3.1-4.5-3.7-10.2-1.6-15.2s6.6-8.6 11.9-9.6L121 121 140.9 13.1c1-5.3 4.6-9.8 9.6-11.9s10.7-1.5 15.2 1.6L256 65.1 346.3 2.8c4.5-3.1 10.2-3.7 15.2-1.6zM160 256a96 96 0 1 1 192 0 96 96 0 1 1 -192 0zm224 0a128 128 0 1 0 -256 0 128 128 0 1 0 256 0z'/%3E%3C/svg%3E");
-  /* i18n: utility to flip icons for transform: scaleX(y) */
   --sa11y-icon-direction: 1;
   --sa11y-float-rtl: right;
-  /* Sa11y control panel position */
   --sa11y-panel-x-gap: 24px;
   --sa11y-panel-y-gap: 10px;
   --sa11y-toggle-x-offset: 18px;
   --sa11y-toggle-y-offset: 15px;
 }
 
-[dir=rtl] {
+[dir="rtl"] {
   --sa11y-icon-direction: -1;
   --sa11y-float-rtl: left;
 }
 
-/* ************************************* */
-/*             Light theme               */
-/* ************************************* */
-html,
-html[data-sa11y-theme=light] {
+html, html[data-sa11y-theme="light"] {
   --sa11y-red-text: #d30017;
   --sa11y-yellow-text: #966f0d;
   --sa11y-panel-badge: #e9e9e9;
-  --sa11y-panel-outline-hover: rgba(233, 233, 233, .8);
-  --sa11y-panel-scrollable: rgba(233, 233, 233, .7);
+  --sa11y-panel-outline-hover: #e9e9e9cc;
+  --sa11y-panel-scrollable: #e9e9e9b3;
   --sa11y-panel-primary: #333;
   --sa11y-panel-bg: #fff;
   --sa11y-panel-bg-secondary: #f6f6f6;
@@ -155,27 +133,22 @@ html[data-sa11y-theme=light] {
   --sa11y-hyperlink: #00478f;
   --sa11y-shortcut-hover: #e8e8e8;
   --sa11y-button-outline: #595959;
-  --sa11y-box-shadow: 0 0 20px 4px rgba(154, 161, 177, .15),
-    0 4px 80px -8px rgba(36, 40, 47, .25),
-    0 4px 4px -2px rgba(91, 94, 105, .15);
+  --sa11y-box-shadow: 0 0 20px 4px #9aa1b126, 0 4px 80px -8px #24282f40, 0 4px 4px -2px #5b5e6926;
 }
 
-/* ************************************* */
-/*             Dark theme                */
-/* ************************************* */
-html[data-sa11y-theme=dark] {
+html[data-sa11y-theme="dark"] {
   --sa11y-red-text: #ffa2a2;
   --sa11y-yellow-text: #ffdb59;
   --sa11y-panel-badge: #3500c4;
-  --sa11y-panel-outline-hover: rgba(53, 0, 196, .8);
-  --sa11y-panel-scrollable: rgba(53, 0, 196, .6);
+  --sa11y-panel-outline-hover: #3500c4cc;
+  --sa11y-panel-scrollable: #3500c499;
   --sa11y-panel-primary: #dde8ff;
   --sa11y-panel-bg: #0a2051;
   --sa11y-panel-bg-secondary: #072c7c;
   --sa11y-panel-bg-splitter: #0041c9;
   --sa11y-panel-error: #f77;
   --sa11y-panel-secondary: #cbeaff;
-  --sa11y-panel-secondary-hover: rgb(0 0 0 / 40%);
+  --sa11y-panel-secondary-hover: #0006;
   --sa11y-panel-toggle-active: #000;
   --sa11y-element-preview: #0a2051;
   --sa11y-setting-switch-bg-on: #21b5ff;
@@ -183,26 +156,23 @@ html[data-sa11y-theme=dark] {
   --sa11y-hyperlink: #94d3ff;
   --sa11y-shortcut-hover: #093698;
   --sa11y-button-outline: #2169ff;
-  --sa11y-box-shadow: 0 0 20px 4px rgba(34, 0, 255, .2),
-    0 4px 60px -8px rgba(45, 31, 245, .4),
-    0 4px 4px -2px rgba(0, 84, 220, .3);
+  --sa11y-box-shadow: 0 0 20px 4px #20f3, 0 4px 60px -8px #2d1ff566, 0 4px 4px -2px #0054dc4d;
 }
 
 @media (prefers-color-scheme: dark) {
-  html,
-  html[data-sa11y-theme=dark] {
+  html, html[data-sa11y-theme="dark"] {
     --sa11y-red-text: #ffa2a2;
     --sa11y-yellow-text: #ffdb59;
     --sa11y-panel-badge: #3500c4;
-    --sa11y-panel-outline-hover: rgba(53, 0, 196, .8);
-    --sa11y-panel-scrollable: rgba(53, 0, 196, .6);
+    --sa11y-panel-outline-hover: #3500c4cc;
+    --sa11y-panel-scrollable: #3500c499;
     --sa11y-panel-primary: #dde8ff;
     --sa11y-panel-bg: #0a2051;
     --sa11y-panel-bg-secondary: #072c7c;
     --sa11y-panel-bg-splitter: #0041c9;
     --sa11y-panel-error: #f77;
     --sa11y-panel-secondary: #cbeaff;
-    --sa11y-panel-secondary-hover: rgb(0 0 0 / 40%);
+    --sa11y-panel-secondary-hover: #0006;
     --sa11y-panel-toggle-active: #000;
     --sa11y-element-preview: #0a2051;
     --sa11y-setting-switch-bg-on: #21b5ff;
@@ -210,128 +180,37 @@ html[data-sa11y-theme=dark] {
     --sa11y-hyperlink: #94d3ff;
     --sa11y-shortcut-hover: #093698;
     --sa11y-button-outline: #2169ff;
-    --sa11y-box-shadow: 0 0 20px 4px rgba(34, 0, 255, .2),
-      0 4px 60px -8px rgba(45, 31, 245, .4),
-      0 4px 4px -2px rgba(0, 84, 220, .3);
+    --sa11y-box-shadow: 0 0 20px 4px #20f3, 0 4px 60px -8px #2d1ff566, 0 4px 4px -2px #0054dc4d;
   }
-}
-[data-sa11y-overflow] {
-  overflow: auto !important;
 }
 
-/* ************************************* */
-/*    Links, text, and image borders     */
-/* ************************************* */
-[data-sa11y-error] {
-  outline: 5px solid var(--sa11y-error) !important;
-  outline-offset: 2px;
-}
-
-[data-sa11y-warning]:not([data-sa11y-error]) {
-  outline: 5px solid var(--sa11y-warning) !important;
-  outline-offset: 2px;
-}
-
-/* *************************************************** */
-/*  Pulsing border: https://codepen.io/olam/pen/zcqea  */
-/* *************************************************** */
-[data-sa11y-pulse-border] {
-  outline: 5px solid var(--sa11y-focus-color) !important;
-  box-shadow: 0;
-  animation: pulse 1s 2;
-}
-[data-sa11y-pulse-border]:hover, [data-sa11y-pulse-border]:focus {
-  animation: none;
-}
-
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 5px var(--sa11y-focus-color);
-  }
-  50% {
-    box-shadow: 0 0 0 12px var(--sa11y-pulse-color);
-  }
-  100% {
-    box-shadow: 0 0 0 5px var(--sa11y-pulse-color);
-  }
-}
-/* Add scale/opacity only for images and headings. */
-img[data-sa11y-pulse-border],
-h1[data-sa11y-pulse-border],
-h2[data-sa11y-pulse-border],
-h3[data-sa11y-pulse-border],
-h4[data-sa11y-pulse-border],
-h5[data-sa11y-pulse-border],
-h6[data-sa11y-pulse-border] {
-  animation: pulse-scale 1s 2;
-}
-
-@keyframes pulse-scale {
-  0% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.02);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  [data-sa11y-pulse-border] {
-    animation: none !important;
-  }
-}
-/* ****************************************************** */
-/*   High contrast mode should preserve outlines colours  */
-/* ****************************************************** */
-@media (forced-colors: active) {
-  [data-sa11y-error],
-  [data-sa11y-warning],
-  [data-sa11y-good],
-  [data-sa11y-error-inline],
-  [data-sa11y-warning-inline],
-  [data-sa11y-pulse-border] {
-    forced-color-adjust: none;
-  }
-}
-/* *********************************************************************************** */
-/*           Colour vision deficiency filters created using DaltonLens library.        */
-/*  https: //github.com/DaltonLens/libDaltonLens/blob/master/svg/cvd_svg_filters.html  */
-/* *********************************************************************************** */
-#sa11y-colour-filters,
-#sa11y-svg-filters {
-  /* Performance: Make SVG fit the screen, rather than entire viewport. */
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
+#sa11y-colour-filters, #sa11y-svg-filters {
   z-index: -99999 !important;
   width: 100vh !important;
   height: 100vh !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  overflow: hidden !important;
-  line-height: 0 !important;
-  transform: translate3d(0, 0, 0) !important;
-  /* Supposedly enables hardware acceleration to help performance. */
   transform-style: preserve-3d !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 0 !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  overflow: hidden !important;
+  transform: translate3d(0, 0, 0) !important;
 }
 
-[data-sa11y-filter=protanopia] *:not(sa11y-control-panel, sa11y-dismiss-tooltip) {
+[data-sa11y-filter="protanopia"] :not(sa11y-control-panel, sa11y-dismiss-tooltip) {
   filter: url("#sa11y-protanopia");
 }
 
-[data-sa11y-filter=deuteranopia] *:not(sa11y-control-panel, sa11y-dismiss-tooltip) {
+[data-sa11y-filter="deuteranopia"] :not(sa11y-control-panel, sa11y-dismiss-tooltip) {
   filter: url("#sa11y-deuteranopia");
 }
 
-[data-sa11y-filter=tritanopia] *:not(sa11y-control-panel, sa11y-dismiss-tooltip) {
+[data-sa11y-filter="tritanopia"] :not(sa11y-control-panel, sa11y-dismiss-tooltip) {
   filter: url("#sa11y-tritanopia");
 }
 
-[data-sa11y-filter=monochromacy] *:not(sa11y-control-panel, sa11y-dismiss-tooltip) {
+[data-sa11y-filter="monochromacy"] :not(sa11y-control-panel, sa11y-dismiss-tooltip) {
   filter: url("#sa11y-monochromacy");
 }

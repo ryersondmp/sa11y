@@ -1,15 +1,8 @@
 /* eslint-disable no-shadow */
 import { nodeResolve } from '@rollup/plugin-node-resolve';
-import css from 'rollup-plugin-import-css';
 import replace from '@rollup/plugin-replace';
 import { terser } from 'rollup-plugin-terser';
-import sass from 'rollup-plugin-sass';
-import cssnano from 'cssnano';
-import postcss from 'postcss';
-import { existsSync } from 'fs';
-import { mkdir, writeFile } from 'fs/promises';
-import { dirname } from 'path';
-import autoprefixer from 'autoprefixer';
+import css from 'rollup-plugin-import-css';
 import pkg from './package.json';
 
 /* Speed up compile time when developing by excluding language builds. */
@@ -29,66 +22,10 @@ const banner = `
   * The above copyright notice shall be included in all copies or substantial portions of the Software.
 **/`;
 
-/**
- * Reusable function to process SCSS files.
- * @param {string} input - Input SCSS file path.
- * @param {string} output - Output CSS file path.
- * @param {string} outputMin - Output minified CSS file path.
- * @returns {Promise<string>} - Empty string.
- */
-const processSCSS = async (input, output, outputMin) => {
-  const result = await postcss([autoprefixer]).process(input, { from: undefined });
-  const path = `dist/css/${output}`;
-  const pathMin = `dist/css/${outputMin}`;
-
-  if (!existsSync(dirname(path))) {
-    await mkdir(dirname(path), { recursive: true });
-  }
-  await writeFile(path, result.css, { encoding: 'utf8' });
-
-  const minifiedResult = await postcss([cssnano]).process(result.css, { from: undefined });
-  if (!existsSync(dirname(pathMin))) {
-    await mkdir(dirname(pathMin), { recursive: true });
-  }
-  await writeFile(pathMin, minifiedResult.css, { encoding: 'utf8' });
-  return '';
-};
-
 /* ********************* */
 /*    Language files     */
 /* ********************* */
-const languages = (developmentMode) ? ['en'] : [
-  'bg',
-  'cs',
-  'da',
-  'de',
-  'el',
-  'en',
-  'enUS',
-  'es',
-  'et',
-  'fi',
-  'fr',
-  'hu',
-  'id',
-  'it',
-  'ja',
-  'ko',
-  'lt',
-  'lv',
-  'nb',
-  'nl',
-  'pl',
-  'ptBR',
-  'ptPT',
-  'ro',
-  'sk',
-  'sl',
-  'sv',
-  'tr',
-  'ua',
-  'zh',
-];
+const languages = (developmentMode) ? ['en'] : ['bg', 'cs', 'da', 'de', 'el', 'en', 'enUS', 'es', 'et', 'fi', 'fr', 'hu', 'id', 'it', 'ja', 'ko', 'lt', 'lv', 'nb', 'nl', 'pl', 'ptBR', 'ptPT', 'ro', 'sk', 'sl', 'sv', 'tr', 'ua', 'zh'];
 const languageConfigs = languages.flatMap((lang) => [
   {
     input: `src/js/lang/${lang}.js`,
@@ -115,32 +52,8 @@ const languageConfigs = languages.flatMap((lang) => [
   },
 ]);
 
-/* ********************* */
-/*      SCSS files       */
-/* ********************* */
-const scssFiles = [
-  'sa11y',
-  'control-panel',
-  'shared',
-  'annotations',
-  'tooltips',
-  'global-utilities',
-  'console-errors',
-  'export-results',
-];
-const scssConfigs = scssFiles.map((file) => ({
-  input: `src/scss/${file}.scss`,
-  plugins: [
-    sass({
-      output: false,
-      processor: (css) => processSCSS(css, `${file}.css`, `${file}.min.css`),
-    }),
-  ],
-}));
-
 export default [
   ...languageConfigs,
-  ...scssConfigs,
 
   /* ********************* */
   /*      Javascript       */

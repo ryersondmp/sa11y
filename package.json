@@ -22,10 +22,11 @@
     "accessibility"
   ],
   "scripts": {
-    "build": "rimraf dist && node ./node_modules/rollup/dist/bin/rollup -c rollup.config.js",
+    "build:css": "node build-css.js",
+    "build": "rimraf dist && npm run build:css && node ./node_modules/rollup/dist/bin/rollup -c rollup.config.js",
     "lint": "npm run lint:css && npm run lint:js",
     "lint:js": "node ./node_modules/eslint/bin/eslint.js src",
-    "lint:css": "stylelint --config .stylelintrc.json -s scss \"src/scss/**/*.scss\"",
+    "lint:css": "stylelint --config .stylelintrc.json -s css \"src/css/**/*.css\"",
     "serve": "npm run build && node ./docs.js && light-server -p 8080 -b localhost -s ./ -w \"src/**/* # npm run build && node ./docs.js # reload\"",
     "test": "npx playwright test"
   },
@@ -37,26 +38,20 @@
     "@rollup/plugin-node-resolve": "^13.0.0",
     "@rollup/plugin-replace": "^3.0.0",
     "@types/node": "^20.10.8",
-    "autoprefixer": "^10.2.6",
-    "caniuse-lite": "^1.0.30001418",
-    "cssnano": "^5.0.6",
+    "browserslist": "^4.28.1",
     "eslint": "^7.30.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.23.4",
     "light-server": "^2.9.1",
-    "postcss": "^8.3.10",
+    "lightningcss": "^1.30.2",
     "rimraf": "^3.0.2",
     "rollup": "^2.52.7",
-    "rollup-plugin-import-css": "^3.0.2",
-    "rollup-plugin-sass": "^1.2.9",
-    "rollup-plugin-scss": "^3.0.0",
+    "rollup-plugin-import-css": "^4.1.2",
     "rollup-plugin-terser": "^7.0.2",
-    "sass": "^1.79.5",
     "stylelint": "^15.9.0",
     "stylelint-config-standard": "^33.0.0",
-    "stylelint-order": "^6.0.3",
-    "stylelint-scss": "^5.0.1"
+    "stylelint-order": "^6.0.3"
   },
   "dependencies": {
     "tippy.js": "6.3.7"

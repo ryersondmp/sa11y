@@ -88,28 +88,30 @@ kbd,
   outline: 1px solid transparent;
 }
 
+/* Error badge */
 .error {
   .badge {
     color: var(--sa11y-error-text);
     background: var(--sa11y-error);
   }
-
-  &-badge {
-    color: var(--sa11y-error-text) !important;
-    background: var(--sa11y-error) !important;
-  }
 }
 
+.error-badge {
+  color: var(--sa11y-error-text) !important;
+  background: var(--sa11y-error) !important;
+}
+
+/* Warning badge */
 .warning {
   .badge {
     color: var(--sa11y-panel-bg);
     background: var(--sa11y-yellow-text);
   }
+}
 
-  &-badge {
-    color: var(--sa11y-panel-bg) !important;
-    background: var(--sa11y-yellow-text) !important;
-  }
+.warning-badge {
+  color: var(--sa11y-panel-bg) !important;
+  background: var(--sa11y-yellow-text) !important;
 }
 
 .good-contrast {
@@ -227,7 +229,7 @@ input[type="color" i] {
     background-color: var(--sa11y-shortcut-hover);
   }
 
-  &:after {
+  &::after {
     position: absolute;
     inset: -7px;
     content: "";
@@ -236,7 +238,7 @@ input[type="color" i] {
   }
 
   @media screen and (forced-colors: active) {
-    &:after {
+    &::after {
       filter: invert(1);
     }
   }
@@ -291,7 +293,7 @@ input[type="color" i] {
 #container {
 
   a:focus-visible,
-  button:not(#panel-controls button):not(.switch):focus-visible,
+  button:not(#panel-controls button, .switch):focus-visible,
   select:focus-visible,
   input:focus-visible,
   [tabindex="0"]:focus-visible,
@@ -300,7 +302,7 @@ input[type="color" i] {
     box-shadow: 0 0 0 5px var(--sa11y-focus-color);
   }
 
-  // These elements MUST use inset outlines.
+  /* These elements MUST use inset outlines. */
   .switch:focus-visible,
   #panel-controls button:focus-visible {
     outline: 0;
@@ -322,7 +324,7 @@ input[type="color" i] {
     outline: transparent solid 3px !important;
   }
 
-  // Control panel
+  /* Control panel */
   #container {
 
     a:focus,

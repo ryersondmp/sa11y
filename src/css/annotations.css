@@ -24,7 +24,7 @@ button {
   box-shadow: 0 0 16px 0 #0000004f;
   transition: all .2s ease-in-out;
 
-  &:after {
+  &::after {
     position: absolute;
     top: -7px;
     left: -7px;

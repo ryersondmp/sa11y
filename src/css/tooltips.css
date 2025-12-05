@@ -24,9 +24,7 @@ div {
 }
 
 *::before,
-*:before,
-*::after,
-*:after {
+*::after {
   all: unset;
 }
 
@@ -42,7 +40,7 @@ div {
   max-width: calc(100vw - 10px);
 }
 
-// High contrast mode.
+/* High contrast mode. */
 @media (forced-colors: active) {
   [data-tippy-root] {
     border: 2px solid transparent;
@@ -54,7 +52,7 @@ div {
   bottom: 0;
 }
 
-.tippy-box[data-placement^="top"]>.tippy-arrow:before {
+.tippy-box[data-placement^="top"]>.tippy-arrow::before {
   bottom: -7px;
   left: 0;
   border-width: 8px 8px 0;
@@ -66,7 +64,7 @@ div {
   top: 0;
 }
 
-.tippy-box[data-placement^="bottom"]>.tippy-arrow:before {
+.tippy-box[data-placement^="bottom"]>.tippy-arrow::before {
   top: -7px;
   left: 0;
   border-width: 0 8px 8px;
@@ -78,7 +76,7 @@ div {
   right: 0;
 }
 
-.tippy-box[data-placement^="left"]>.tippy-arrow:before {
+.tippy-box[data-placement^="left"]>.tippy-arrow::before {
   right: -7px;
   border-width: 8px 0 8px 8px;
   border-left-color: initial;
@@ -89,7 +87,7 @@ div {
   left: 0;
 }
 
-.tippy-box[data-placement^="right"]>.tippy-arrow:before {
+.tippy-box[data-placement^="right"]>.tippy-arrow::before {
   left: -7px;
   border-width: 8px 8px 8px 0;
   border-right-color: initial;
@@ -102,7 +100,7 @@ div {
   color: #333;
 }
 
-.tippy-arrow:before {
+.tippy-arrow::before {
   position: absolute;
   content: "";
   border-color: transparent;
@@ -118,7 +116,7 @@ div {
 /* ************************************* */
 /*        Custom theme for Sa11y         */
 /* ************************************* */
-.tippy-box[data-theme~="sa11y-theme"][role=tooltip] {
+.tippy-box[data-theme~="sa11y-theme"][role="tooltip"] {
   box-sizing: border-box !important;
 
   &[data-animation="fade"][data-state="hidden"] {
@@ -130,7 +128,7 @@ div {
   }
 }
 
-// Minimum width for annotations.
+/* Minimum width for annotations. */
 [role="dialog"] {
   min-width: 300px;
   text-align: start;
@@ -150,9 +148,9 @@ div {
 
 /* Annotation tooltip boxshadows. */
 .tippy-box[data-theme~="sa11y-theme"]:not([data-theme~="sa11y-panel"]) {
-  box-shadow: 0 0 20px 4px rgba(154, 161, 177, .15),
-    0 4px 80px -8px rgba(36, 40, 47, .25),
-    0 4px 4px -2px rgba(91, 94, 105, .15) !important;
+  box-shadow: 0 0 20px 4px rgb(154 161 177 / 15%),
+    0 4px 80px -8px rgb(36 40 47 / 25%),
+    0 4px 4px -2px rgb(91 94 105 / 15%) !important;
 }
 
 /* Tooltip content */
@@ -209,8 +207,7 @@ div {
     position: relative;
     padding: 0;
     margin: 0;
-    margin-block-end: 0;
-    margin-block-start: 0;
+    margin-block: 0 0;
   }
 
   li {
@@ -256,12 +253,9 @@ div {
     cursor: pointer;
     transition: background-color .2s, color .2s;
 
-    &:after {
+    &::after {
       position: absolute;
-      top: -10px;
-      right: -5px;
-      bottom: -14px;
-      left: -5px;
+      inset: -10px -5px -14px;
       content: "";
     }
 
@@ -294,7 +288,7 @@ div {
     }
   }
 
-  // For contrast badge
+  /* For contrast badge */
   .good-icon {
     display: inline-block;
     width: 14px;
@@ -304,7 +298,7 @@ div {
     mask: var(--sa11y-good-svg) center no-repeat;
   }
 
-  // Link icon
+  /* Link icon */
   .link-icon {
     display: inline-block;
     width: 16px;
@@ -379,7 +373,7 @@ div {
 }
 
 /* Tooltip focus styles */
-// A) Default styles
+/* A) Default styles */
 .tippy-box[data-theme~="sa11y-theme"] {
 
   a:focus,
@@ -392,7 +386,7 @@ div {
   }
 }
 
-// B) Remove default focus styles for mouse users ONLY if :focus-visible is supported.
+/* B) Remove default focus styles for mouse users ONLY if :focus-visible is supported. */
 .tippy-box[data-theme~="sa11y-theme"] {
 
   input:focus:not(:focus-visible),
@@ -404,7 +398,7 @@ div {
   }
 }
 
-// C) :focus-visible supported
+/* C) :focus-visible supported */
 .tippy-box[data-theme~="sa11y-theme"] {
 
   a:focus-visible,
@@ -416,7 +410,7 @@ div {
   }
 }
 
-// High contrast focus styles
+/* High contrast focus styles */
 @media screen and (forced-colors: active) {
   .tippy-box[data-theme~="sa11y-theme"] {
 

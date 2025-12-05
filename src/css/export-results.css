@@ -1,6 +1,6 @@
 :root {
   --font-primary: system-ui, "Segoe UI", roboto, helvetica, arial, sans-serif;
-  --font-secondary: Consolas, monaco, "Ubuntu Mono", "Liberation Mono", "Courier New", Courier, monospace;
+  --font-secondary: consolas, monaco, "Ubuntu Mono", "Liberation Mono", "Courier New", courier, monospace;
   --body-text: #333;
   --bg-primary: #fff;
   --bg-secondary: #f6f8fa;
@@ -287,7 +287,6 @@ audio {
 }
 
 .error {
-
   .colour {
     color: var(--red-text);
   }
@@ -299,7 +298,6 @@ audio {
 }
 
 .warning {
-
   .colour {
     color: var(--warning-text);
   }
@@ -310,7 +308,6 @@ audio {
   }
 }
 
-// Link icon
 .link-icon {
   display: inline-block;
   width: 16px;
