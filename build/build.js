@@ -163,7 +163,7 @@ const runBuild = async (config) => {
     { input: 'v2-en.js', name: 'Sa11yLangBookmarkletEn', file: 'v2-en.js' },
     { input: 'dev.js', name: 'Sa11yDevBookmarklet', file: 'dev.js' },
     { input: 'apca.js', name: 'Sa11yLangBookmarkletAPCA', file: 'apca.js' },
-    { input: 'unminified.js', name: 'Sa11yLangBookmarkletUnminified', file: 'unminified.js', minify: false },
+    { input: 'unminified.js', name: 'Sa11yLangBookmarkletUnminified', file: 'unminified.js' },
   ];
 
   for (const b of bookmarklets) {
@@ -171,11 +171,10 @@ const runBuild = async (config) => {
       define: getDefine(),
       plugins: [
         injectCSSintoJS(),
-        addBanner(),
       ],
       build: {
         emptyOutDir: false,
-        minify: b.minify !== false,
+        minify: true,
         outDir: 'bookmarklet',
         lib: {
           entry: path.resolve(dirname, `../src/bookmarklet/${b.input}`),

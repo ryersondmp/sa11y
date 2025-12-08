@@ -1,14 +1,4 @@
-/*!
-      * Sa11y, the accessibility quality assurance assistant.
-      * @version 4.4.0
-      * @author Adam Chaboryk
-      * @license GPL-2.0-or-later
-      * @copyright © 2020 - 2025 Toronto Metropolitan University.
-      * @contact adam.chaboryk@torontomu.ca
-      * GitHub: git+https://github.com/ryersondmp/sa11y.git | Website: https://sa11y.netlify.app
-      * The above copyright notice shall be included in all copies or substantial portions of the Software.
-    **/
-(function(r){typeof define=="function"&&define.amd?define(r):r()})((function(){"use strict";const r="4.4.0",d=`
+(function(r){typeof define=="function"&&define.amd?define(r):r()})((function(){"use strict";const r="dev-4.4.0",d=`
 <style>
 .loader {
   height: 55px;
