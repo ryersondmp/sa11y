@@ -8768,13 +8768,16 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
       };
       this.resetAll = (restartPanel = true) => {
         Constants.Global.html.removeAttribute("data-sa11y-active");
-        remove([
-          "sa11y-annotation",
-          "sa11y-heading-label",
-          "sa11y-heading-anchor",
-          "sa11y-image-anchor",
-          "sa11y-tooltips"
-        ], "document");
+        remove(
+          [
+            "sa11y-annotation",
+            "sa11y-heading-label",
+            "sa11y-heading-anchor",
+            "sa11y-image-anchor",
+            "sa11y-tooltips"
+          ],
+          "document"
+        );
         if (supportsAnchorPositioning()) {
           find("[data-sa11y-error], [data-sa11y-warning], [data-sa11y-good]", "document").forEach(
             ($el) => {
@@ -8791,17 +8794,20 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
             }
           );
         }
-        resetAttributes([
-          "data-sa11y-parent",
-          "data-sa11y-error",
-          "data-sa11y-warning",
-          "data-sa11y-good",
-          "data-sa11y-overflow",
-          "data-sa11y-image",
-          "data-sa11y-pulse-border",
-          "data-sa11y-filter",
-          "data-sa11y-has-shadow-root"
-        ], "document");
+        resetAttributes(
+          [
+            "data-sa11y-parent",
+            "data-sa11y-error",
+            "data-sa11y-warning",
+            "data-sa11y-good",
+            "data-sa11y-overflow",
+            "data-sa11y-image",
+            "data-sa11y-pulse-border",
+            "data-sa11y-filter",
+            "data-sa11y-has-shadow-root"
+          ],
+          "document"
+        );
         Constants.Panel.outlineList.innerHTML = "";
         if (option.showImageOutline) {
           Constants.Panel.imagesList.innerHTML = "";

@@ -9,99 +9,99 @@ import { decodeHTML, escapeHTML, generateElementPreview, stripHTMLtags } from '.
 
 // Generate meta date for both HTML and CSV templates.
 function generateMetaData() {
-	const today = new Date();
-	const day = String(today.getDate()).padStart(2, '0');
-	const month = String(today.getMonth() + 1).padStart(2, '0');
-	const year = today.getFullYear();
-	const date = new Date().toLocaleString();
-	const numericDate = `${month}-${day}-${year}`;
+  const today = new Date();
+  const day = String(today.getDate()).padStart(2, '0');
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const year = today.getFullYear();
+  const date = new Date().toLocaleString();
+  const numericDate = `${month}-${day}-${year}`;
 
-	// Page title & URL
-	const title = document.querySelector('head title');
-	const titleCheck = !title || title.textContent.trim().length === 0;
-	const metaTitle = !titleCheck ? title.textContent : '';
-	const pageURL = window.location.href;
+  // Page title & URL
+  const title = document.querySelector('head title');
+  const titleCheck = !title || title.textContent.trim().length === 0;
+  const metaTitle = !titleCheck ? title.textContent : '';
+  const pageURL = window.location.href;
 
-	return { date, numericDate, titleCheck, metaTitle, pageURL };
+  return { date, numericDate, titleCheck, metaTitle, pageURL };
 }
 
 // Generate HTML template for download.
 async function generateHTMLTemplate(results, dismissResults) {
-	const errors = results.filter((issue) => issue.type === 'error');
-	const warnings = results.filter((issue) => issue.type === 'warning');
-	const count = { error: errors.length, warning: warnings.length, dismiss: dismissResults.length };
+  const errors = results.filter((issue) => issue.type === 'error');
+  const warnings = results.filter((issue) => issue.type === 'warning');
+  const count = { error: errors.length, warning: warnings.length, dismiss: dismissResults.length };
 
-	async function generateList(issues, type) {
-		const types = {
-			error: Lang._('ERRORS'),
-			warning: Lang._('WARNINGS'),
-			dismissed: Lang._('DISMISSED'),
-		};
-		const heading = types[type];
-		const hasIssues = issues.length > 0;
+  async function generateList(issues, type) {
+    const types = {
+      error: Lang._('ERRORS'),
+      warning: Lang._('WARNINGS'),
+      dismissed: Lang._('DISMISSED'),
+    };
+    const heading = types[type];
+    const hasIssues = issues.length > 0;
 
-		if (!hasIssues) {
-			return '';
-		}
+    if (!hasIssues) {
+      return '';
+    }
 
-		let list = `<h2>${heading}</h2>`;
-		let listOpeningTag = `<ol class="${type}">`;
-		let listClosingTag = '</ol>';
+    let list = `<h2>${heading}</h2>`;
+    let listOpeningTag = `<ol class="${type}">`;
+    let listClosingTag = '</ol>';
 
-		if (type === 'dismissed') {
-			listOpeningTag = `<details><summary>${Lang.sprintf('PANEL_DISMISS_BUTTON', count.dismiss)}</summary><ol>`;
-			listClosingTag = '</details>';
-		}
+    if (type === 'dismissed') {
+      listOpeningTag = `<details><summary>${Lang.sprintf('PANEL_DISMISS_BUTTON', count.dismiss)}</summary><ol>`;
+      listClosingTag = '</details>';
+    }
 
-		// Opening tag.
-		list += listOpeningTag;
+    // Opening tag.
+    list += listOpeningTag;
 
-		// Create an array of promises and wait for all of them to resolve.
-		const issuePromises = issues.map(async (issue) => {
-			let elementPreview = '';
-			if (issue.element) {
-				const allowedTags = ['IMG', 'IFRAME', 'AUDIO', 'VIDEO'];
-				const preview = await generateElementPreview(issue, true);
-				if (allowedTags.includes(issue.element.tagName)) {
-					elementPreview = `<li><strong>${Lang._('PREVIEW')}:</strong> ${preview}</li><li><strong>${Lang._('ELEMENT')}:</strong> <pre><code>${escapeHTML(issue.htmlPath)}</code></pre></li>`;
-				} else {
-					elementPreview = `<li><strong>${Lang._('ELEMENT')}:</strong> <pre><code>${escapeHTML(issue.htmlPath)}</code></pre></li>`;
-				}
-			}
-			const cssPath = issue.cssPath
-				? `<li><strong>${Lang._('PATH')}:</strong> <pre><code>${issue.cssPath}</code></pre></li>`
-				: '';
-			return `<li>${issue.content} <ul>${elementPreview}${cssPath}</ul></li>`;
-		});
+    // Create an array of promises and wait for all of them to resolve.
+    const issuePromises = issues.map(async (issue) => {
+      let elementPreview = '';
+      if (issue.element) {
+        const allowedTags = ['IMG', 'IFRAME', 'AUDIO', 'VIDEO'];
+        const preview = await generateElementPreview(issue, true);
+        if (allowedTags.includes(issue.element.tagName)) {
+          elementPreview = `<li><strong>${Lang._('PREVIEW')}:</strong> ${preview}</li><li><strong>${Lang._('ELEMENT')}:</strong> <pre><code>${escapeHTML(issue.htmlPath)}</code></pre></li>`;
+        } else {
+          elementPreview = `<li><strong>${Lang._('ELEMENT')}:</strong> <pre><code>${escapeHTML(issue.htmlPath)}</code></pre></li>`;
+        }
+      }
+      const cssPath = issue.cssPath
+        ? `<li><strong>${Lang._('PATH')}:</strong> <pre><code>${issue.cssPath}</code></pre></li>`
+        : '';
+      return `<li>${issue.content} <ul>${elementPreview}${cssPath}</ul></li>`;
+    });
 
-		// Wait for all promises to resolve.
-		const resolvedIssues = await Promise.all(issuePromises);
+    // Wait for all promises to resolve.
+    const resolvedIssues = await Promise.all(issuePromises);
 
-		// Add resolved issues to the list.
-		list += resolvedIssues.join('');
+    // Add resolved issues to the list.
+    list += resolvedIssues.join('');
 
-		// Closing tag.
-		list += listClosingTag;
-		return list;
-	}
+    // Closing tag.
+    list += listClosingTag;
+    return list;
+  }
 
-	const errorsList = await generateList(errors, 'error');
-	const warningList = await generateList(warnings, 'warning');
-	const dismissedList = await generateList(dismissResults, 'dismissed');
+  const errorsList = await generateList(errors, 'error');
+  const warningList = await generateList(warnings, 'warning');
+  const dismissedList = await generateList(dismissResults, 'dismissed');
 
-	// Meta information
-	const meta = generateMetaData();
-	const metaTitle = !meta.titleCheck
-		? `<dt>${Lang._('PAGE_TITLE')}</dt><dd>${meta.metaTitle}</dd>`
-		: '';
-	const metaErrors = count.error !== 0 ? `<dt>${Lang._('ERRORS')}</dt><dd>${count.error}</dd>` : '';
-	const metaWarnings =
-		count.warning !== 0 ? `<dt>${Lang._('WARNINGS')}</dt><dd>${count.warning}</dd>` : '';
-	const metaDismissed =
-		count.dismiss !== 0 ? `<dt>${Lang._('DISMISSED')}</dt><dd>${count.dismiss}</dd>` : '';
-	const tool = '<a href="https://sa11y.netlify.app">Sa11y</a>';
+  // Meta information
+  const meta = generateMetaData();
+  const metaTitle = !meta.titleCheck
+    ? `<dt>${Lang._('PAGE_TITLE')}</dt><dd>${meta.metaTitle}</dd>`
+    : '';
+  const metaErrors = count.error !== 0 ? `<dt>${Lang._('ERRORS')}</dt><dd>${count.error}</dd>` : '';
+  const metaWarnings =
+    count.warning !== 0 ? `<dt>${Lang._('WARNINGS')}</dt><dd>${count.warning}</dd>` : '';
+  const metaDismissed =
+    count.dismiss !== 0 ? `<dt>${Lang._('DISMISSED')}</dt><dd>${count.dismiss}</dd>` : '';
+  const tool = '<a href="https://sa11y.netlify.app">Sa11y</a>';
 
-	const htmlTemplate = `
+  const htmlTemplate = `
       <!DOCTYPE html>
       <html lang="${Lang._('LANG_CODE')}">
       <head>
@@ -139,104 +139,104 @@ async function generateHTMLTemplate(results, dismissResults) {
       </body>
       </html>
     `;
-	return htmlTemplate;
+  return htmlTemplate;
 }
 
 /* HTML Blob */
 async function downloadHTMLTemplate(results, dismissResults) {
-	const htmlContent = await generateHTMLTemplate(results, dismissResults);
-	const meta = generateMetaData();
+  const htmlContent = await generateHTMLTemplate(results, dismissResults);
+  const meta = generateMetaData();
 
-	// Create blob
-	const blob = new Blob([htmlContent], { type: 'text/html' });
-	const link = document.createElement('a');
-	const title = !meta.titleCheck ? `_${meta.metaTitle.trim().replace(/ /g, '')}` : '';
-	link.href = window.URL.createObjectURL(blob);
-	link.download = `Sa11y_${meta.numericDate + title}.html`;
-	document.body.appendChild(link);
-	link.click();
+  // Create blob
+  const blob = new Blob([htmlContent], { type: 'text/html' });
+  const link = document.createElement('a');
+  const title = !meta.titleCheck ? `_${meta.metaTitle.trim().replace(/ /g, '')}` : '';
+  link.href = window.URL.createObjectURL(blob);
+  link.download = `Sa11y_${meta.numericDate + title}.html`;
+  document.body.appendChild(link);
+  link.click();
 
-	// Remove blob
-	setTimeout(() => {
-		document.body.removeChild(link);
-		window.URL.revokeObjectURL(link.href);
-	}, 100);
+  // Remove blob
+  setTimeout(() => {
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(link.href);
+  }, 100);
 }
 
 /* CSV Blob */
 function downloadCSVTemplate(results) {
-	const meta = generateMetaData();
-	// CSV header row
-	const filteredObjects = results
-		.filter((issue) => issue.type === 'warning' || issue.type === 'error')
-		.map((issue) => {
-			const { type, content, htmlPath, cssPath } = issue;
+  const meta = generateMetaData();
+  // CSV header row
+  const filteredObjects = results
+    .filter((issue) => issue.type === 'warning' || issue.type === 'error')
+    .map((issue) => {
+      const { type, content, htmlPath, cssPath } = issue;
 
-			// Make issue messages more readable in CSV format.
-			const prepContent = content
-				.replaceAll(/<span\s+class="visually-hidden"[^>]*>.*?<\/span>/gi, '')
-				.replaceAll('<hr aria-hidden="true">', ' | ')
-				.replaceAll(/"/g, '""');
-			const stripHTML = stripHTMLtags(String(prepContent));
-			const encoded = decodeHTML(stripHTML);
+      // Make issue messages more readable in CSV format.
+      const prepContent = content
+        .replaceAll(/<span\s+class="visually-hidden"[^>]*>.*?<\/span>/gi, '')
+        .replaceAll('<hr aria-hidden="true">', ' | ')
+        .replaceAll(/"/g, '""');
+      const stripHTML = stripHTMLtags(String(prepContent));
+      const encoded = decodeHTML(stripHTML);
 
-			// Column headers.
-			const columns = {
-				Title: `"${meta.metaTitle}"`,
-				URL: `"${meta.pageURL}"`,
-				Type: `"${String(type)}"`,
-				Issue: `"${encoded}"`,
-				Element: `"${htmlPath}"`,
-			};
-			if (cssPath) {
-				columns.Path = `"${cssPath}"`;
-			}
-			return columns;
-		});
+      // Column headers.
+      const columns = {
+        Title: `"${meta.metaTitle}"`,
+        URL: `"${meta.pageURL}"`,
+        Type: `"${String(type)}"`,
+        Issue: `"${encoded}"`,
+        Element: `"${htmlPath}"`,
+      };
+      if (cssPath) {
+        columns.Path = `"${cssPath}"`;
+      }
+      return columns;
+    });
 
-	// CSV content
-	const headers = Object.keys(filteredObjects[0]);
-	const csvContent = `${headers.join(',')}\n${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(',')).join('\n')}`;
+  // CSV content
+  const headers = Object.keys(filteredObjects[0]);
+  const csvContent = `${headers.join(',')}\n${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(',')).join('\n')}`;
 
-	// Create blob.
-	const bom = new Uint8Array([0xef, 0xbb, 0xbf]);
-	const blob = new Blob([bom, csvContent], { type: 'text/csv;charset=utf-8;' });
-	const url = window.URL.createObjectURL(blob);
-	const link = document.createElement('a');
-	link.href = url;
-	link.href = window.URL.createObjectURL(blob);
-	const fileNameTitle = !meta.titleCheck ? `_${meta.metaTitle.trim().replace(/ /g, '')}` : '';
-	link.setAttribute('download', `Sa11y_${meta.numericDate + fileNameTitle}.csv`);
-	document.body.appendChild(link);
-	link.click();
+  // Create blob.
+  const bom = new Uint8Array([0xef, 0xbb, 0xbf]);
+  const blob = new Blob([bom, csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.href = window.URL.createObjectURL(blob);
+  const fileNameTitle = !meta.titleCheck ? `_${meta.metaTitle.trim().replace(/ /g, '')}` : '';
+  link.setAttribute('download', `Sa11y_${meta.numericDate + fileNameTitle}.csv`);
+  document.body.appendChild(link);
+  link.click();
 
-	// Remove blob.
-	setTimeout(() => {
-		document.body.removeChild(link);
-		window.URL.revokeObjectURL(link.href);
-	}, 100);
+  // Remove blob.
+  setTimeout(() => {
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(link.href);
+  }, 100);
 }
 
 // Attach event listeners.
 let exportHTMLHandler;
 let exportCSVHandler;
 export function exportResults(results, dismissResults) {
-	if (Constants.Global.exportResultsPlugin) {
-		exportHTMLHandler = async () => {
-			await downloadHTMLTemplate(results, dismissResults);
-		};
-		exportCSVHandler = () => {
-			downloadCSVTemplate(results, dismissResults);
-		};
-		Constants.Panel.exportHTML.addEventListener('click', exportHTMLHandler);
-		Constants.Panel.exportCSV.addEventListener('click', exportCSVHandler);
-	}
+  if (Constants.Global.exportResultsPlugin) {
+    exportHTMLHandler = async () => {
+      await downloadHTMLTemplate(results, dismissResults);
+    };
+    exportCSVHandler = () => {
+      downloadCSVTemplate(results, dismissResults);
+    };
+    Constants.Panel.exportHTML.addEventListener('click', exportHTMLHandler);
+    Constants.Panel.exportCSV.addEventListener('click', exportCSVHandler);
+  }
 }
 
 // Imported by Reset function.
 export function removeExportListeners() {
-	if (Constants.Global.exportResultsPlugin) {
-		Constants.Panel.exportHTML.removeEventListener('click', exportHTMLHandler);
-		Constants.Panel.exportCSV.removeEventListener('click', exportCSVHandler);
-	}
+  if (Constants.Global.exportResultsPlugin) {
+    Constants.Panel.exportHTML.removeEventListener('click', exportHTMLHandler);
+    Constants.Panel.exportCSV.removeEventListener('click', exportCSVHandler);
+  }
 }

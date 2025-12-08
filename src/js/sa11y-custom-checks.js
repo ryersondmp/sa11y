@@ -3,7 +3,7 @@ import find from './utils/find';
 import * as Utils from './utils/utils';
 
 export default function checkCustom(results) {
-	/* Add custom rulesets here.
+  /* Add custom rulesets here.
 
   // Example #1
   const $checkAnnouncement = find('.sa11y-announcement-component', 'root');
@@ -38,5 +38,5 @@ export default function checkCustom(results) {
     }
   }); */
 
-	return results;
+  return results;
 }

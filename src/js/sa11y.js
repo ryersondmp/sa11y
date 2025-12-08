@@ -8,11 +8,14 @@ import findShadowComponents from './logic/find-shadow-components';
 import { removeAlert } from './interface/alert';
 import * as Utils from './utils/utils';
 
-
 // Extras
 import ConsoleErrors from './interface/console-error';
 import detectPageChanges from './features/detect-page-changes';
-import { dismissLogic, dismissButtons, removeDismissListeners } from './features/dismiss-annotations';
+import {
+  dismissLogic,
+  dismissButtons,
+  removeDismissListeners,
+} from './features/dismiss-annotations';
 import { addColourFilters, resetColourFilters } from './features/colour-filters';
 import { exportResults, removeExportListeners } from './features/export-results';
 
@@ -343,13 +346,16 @@ class Sa11y {
       Constants.Global.html.removeAttribute('data-sa11y-active');
 
       // Remove from page.
-      Utils.remove([
-        'sa11y-annotation',
-        'sa11y-heading-label',
-        'sa11y-heading-anchor',
-        'sa11y-image-anchor',
-        'sa11y-tooltips',
-      ], 'document');
+      Utils.remove(
+        [
+          'sa11y-annotation',
+          'sa11y-heading-label',
+          'sa11y-heading-anchor',
+          'sa11y-image-anchor',
+          'sa11y-tooltips',
+        ],
+        'document',
+      );
 
       // Remove Sa11y anchor positioning markup (while preserving any existing anchors).
       if (Utils.supportsAnchorPositioning()) {
@@ -373,17 +379,20 @@ class Sa11y {
       }
 
       // Reset all data attributes.
-      Utils.resetAttributes([
-        'data-sa11y-parent',
-        'data-sa11y-error',
-        'data-sa11y-warning',
-        'data-sa11y-good',
-        'data-sa11y-overflow',
-        'data-sa11y-image',
-        'data-sa11y-pulse-border',
-        'data-sa11y-filter',
-        'data-sa11y-has-shadow-root',
-      ], 'document');
+      Utils.resetAttributes(
+        [
+          'data-sa11y-parent',
+          'data-sa11y-error',
+          'data-sa11y-warning',
+          'data-sa11y-good',
+          'data-sa11y-overflow',
+          'data-sa11y-image',
+          'data-sa11y-pulse-border',
+          'data-sa11y-filter',
+          'data-sa11y-has-shadow-root',
+        ],
+        'document',
+      );
 
       // Remove from panel.
       Constants.Panel.outlineList.innerHTML = '';
