@@ -6,12 +6,12 @@ import Constants from '../utils/constants';
 /*  Achromatopsia: https://github.com/chromelens/chromelens/blob/master/lenses/filters/lens_achromatopsia.js */
 /* ************************************************************** */
 export function addColourFilters() {
-  if (Constants.Global.colourFilterPlugin) {
-    if (Constants.Global.headless === false) {
-      const svg = document.createElement('div');
-      svg.id = 'sa11y-colour-filters';
-      // Note: Do not set 'display: none;' on parent container, otherwise it won't render in Firefox.
-      svg.innerHTML = `
+	if (Constants.Global.colourFilterPlugin) {
+		if (Constants.Global.headless === false) {
+			const svg = document.createElement('div');
+			svg.id = 'sa11y-colour-filters';
+			// Note: Do not set 'display: none;' on parent container, otherwise it won't render in Firefox.
+			svg.innerHTML = `
         <!-- DaltonLens SVG filters to simulate color vision deficiencies -->
         <svg id="sa11y-svg-filters" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
           <filter id="sa11y-protanopia" color-interpolation-filters="linearRGB">
@@ -52,17 +52,17 @@ export function addColourFilters() {
             <feColorMatrix values="0.299,0.587,0.114,0,0,0.299,0.587,0.114,0,0,0.299,0.587,0.114,0,0,0,0,0,1,0"></feColorMatrix>
           </filter>
         </svg>`;
-      document.body.appendChild(svg);
-    }
-  }
+			document.body.appendChild(svg);
+		}
+	}
 }
 
 // Reset colour filters
 export function resetColourFilters() {
-  if (Constants.Global.colourFilterPlugin) {
-    Constants.Panel.colourFilterSelect.value = 0;
-    Constants.Panel.colourPanel.classList.remove('active');
-    Constants.Panel.colourFilterSelect.classList.remove('active');
-    Constants.Panel.content.hidden = false;
-  }
+	if (Constants.Global.colourFilterPlugin) {
+		Constants.Panel.colourFilterSelect.value = 0;
+		Constants.Panel.colourPanel.classList.remove('active');
+		Constants.Panel.colourFilterSelect.classList.remove('active');
+		Constants.Panel.content.hidden = false;
+	}
 }

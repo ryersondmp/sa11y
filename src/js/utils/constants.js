@@ -1,6 +1,5 @@
-/* eslint-disable no-console */
-import Lang from './lang';
 import { createAlert } from '../interface/alert';
+import Lang from './lang';
 
 const Constants = (function myConstants() {
   /* **************** */
@@ -13,7 +12,8 @@ const Constants = (function myConstants() {
     Global.panelPosition = option.panelPosition;
     Global.dismissAnnotations = option.dismissAnnotations;
     Global.aboutContent = option.aboutContent;
-    Global.shadowDetection = option.shadowComponents.length > 0 || option.autoDetectShadowComponents === true;
+    Global.shadowDetection =
+      option.shadowComponents.length > 0 || option.autoDetectShadowComponents === true;
     Global.fixedRoots = option.fixedRoots;
     Global.ignoreAriaOnElements = option.ignoreAriaOnElements;
     Global.ignoreTextInElements = option.ignoreTextInElements;
@@ -41,14 +41,15 @@ const Constants = (function myConstants() {
     if (typeof window.matchMedia === 'function') {
       reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     }
-    Global.scrollBehaviour = (!reducedMotion || reducedMotion.matches) ? 'auto' : 'smooth';
+    Global.scrollBehaviour = !reducedMotion || reducedMotion.matches ? 'auto' : 'smooth';
 
     // i18n
-    Global.langDirection = (Global.html.getAttribute('dir') === 'rtl') ? 'rtl' : 'ltr';
+    Global.langDirection = Global.html.getAttribute('dir') === 'rtl' ? 'rtl' : 'ltr';
 
     // Check for document types.
     const documentSources = option.checks.QA_DOCUMENT.sources;
-    const defaultDocumentSources = 'a[href$=".doc"], a[href$=".docx"], a[href*=".doc?"], a[href*=".docx?"], a[href$=".ppt"], a[href$=".pptx"], a[href*=".ppt?"], a[href*=".pptx?"], a[href^="https://drive.google.com/file"], a[href^="https://docs.google."], a[href^="https://sway."]';
+    const defaultDocumentSources =
+      'a[href$=".doc"], a[href$=".docx"], a[href*=".doc?"], a[href*=".docx?"], a[href$=".ppt"], a[href$=".pptx"], a[href*=".ppt?"], a[href*=".pptx?"], a[href^="https://drive.google.com/file"], a[href^="https://docs.google."], a[href^="https://sway."]';
     if (documentSources) {
       Global.documentSources = `${defaultDocumentSources}, ${documentSources}`;
     } else {
@@ -61,7 +62,8 @@ const Constants = (function myConstants() {
 
     // Video sources.
     const videoSources = option.checks.EMBED_VIDEO.sources;
-    const defaultVideoSources = 'video, [src*="Video"], [src*="video"], [src*="watch"], [src*="youtube.com"], [src*="vimeo.com"], [src*="panopto.com"], [src*="wistia.com"], [src*="dailymotion.com"], [src*="brightcove.com"], [src*="vidyard.com"]';
+    const defaultVideoSources =
+      'video, [src*="Video"], [src*="video"], [src*="watch"], [src*="youtube.com"], [src*="vimeo.com"], [src*="panopto.com"], [src*="wistia.com"], [src*="dailymotion.com"], [src*="brightcove.com"], [src*="vidyard.com"]';
     if (videoSources) {
       const videos = videoSources.split(/\s*[\s,]\s*/).map(($el) => `[src*="${$el}"]`);
       Global.VideoSources = `${defaultVideoSources}, ${videos.join(', ')}`;
@@ -71,7 +73,8 @@ const Constants = (function myConstants() {
 
     // Audio sources.
     const audioSources = option.checks.EMBED_AUDIO.sources;
-    const defaultAudioSources = 'audio, [src*="soundcloud.com"], [src*="simplecast.com"], [src*="podbean.com"], [src*="buzzsprout.com"], [src*="blubrry.com"], [src*="transistor.fm"], [src*="fusebox.fm"], [src*="libsyn.com"], [src*="spotify.com"], [src*="podcasts.apple.com"], [src*="castbox.fm"], [src*="megaphone.fm"], [src*="spreaker.com"], [src*="anchor.fm"], [src*="rss.com"], [src*="redcircle.com"]';
+    const defaultAudioSources =
+      'audio, [src*="soundcloud.com"], [src*="simplecast.com"], [src*="podbean.com"], [src*="buzzsprout.com"], [src*="blubrry.com"], [src*="transistor.fm"], [src*="fusebox.fm"], [src*="libsyn.com"], [src*="spotify.com"], [src*="podcasts.apple.com"], [src*="castbox.fm"], [src*="megaphone.fm"], [src*="spreaker.com"], [src*="anchor.fm"], [src*="rss.com"], [src*="redcircle.com"]';
     if (audioSources) {
       const audio = audioSources.split(/\s*[\s,]\s*/).map(($el) => `[src*="${$el}"]`);
       Global.AudioSources = `${defaultAudioSources}, ${audio.join(', ')}`;
@@ -81,7 +84,8 @@ const Constants = (function myConstants() {
 
     // Data viz sources.
     const dataVizSources = option.checks.EMBED_DATA_VIZ.sources;
-    const defaultDataVizSources = '[src*="datastudio"], [src*="tableau"], [src*="lookerstudio"], [src*="powerbi"], [src*="qlik"]';
+    const defaultDataVizSources =
+      '[src*="datastudio"], [src*="tableau"], [src*="lookerstudio"], [src*="powerbi"], [src*="qlik"]';
     if (dataVizSources) {
       const data = dataVizSources.split(/\s*[\s,]\s*/).map(($el) => `[src*="${$el}"]`);
       Global.VisualizationSources = `${defaultDataVizSources}, ${data.join(', ')}`;
@@ -137,7 +141,9 @@ const Constants = (function myConstants() {
           Constants.Root.Readability.push(root);
         });
       } else {
-        console.error(`Sa11y: The target readability root (${desiredReadabilityRoot}) does not exist.`);
+        console.error(
+          `Sa11y: The target readability root (${desiredReadabilityRoot}) does not exist.`,
+        );
       }
     } catch {
       Root.Readability.length = 0;
@@ -157,11 +163,17 @@ const Constants = (function myConstants() {
           const alert = Constants.Panel.readability.querySelector('#readability-alert');
           if (readabilityDetails && readabilityOn && !alert) {
             // Roots that readability will be based on.
-            const roots = Root.areaToCheck.map((el) => {
-              if (el.id) return `#${el.id}`;
-              if (el.className) return `.${el.className.split(/\s+/).filter(Boolean).join('.')}`;
-              return el.tagName.toLowerCase();
-            }).join(', ');
+            const roots = Root.areaToCheck
+              .map((el) => {
+                if (el.id) {
+                  return `#${el.id}`;
+                }
+                if (el.className) {
+                  return `.${el.className.split(/\s+/).filter(Boolean).join('.')}`;
+                }
+                return el.tagName.toLowerCase();
+              })
+              .join(', ');
 
             // Append note to Readability panel.
             const note = document.createElement('div');
@@ -296,7 +308,16 @@ const Constants = (function myConstants() {
   const Exclusions = {};
   function initializeExclusions(option) {
     // List of Sa11y's interface components.
-    Exclusions.Sa11yElements = ['sa11y-heading-label', 'sa11y-heading-anchor', 'sa11y-annotation', 'sa11y-tooltips', 'sa11y-panel-tooltips', 'sa11y-control-panel', '#sa11y-colour-filters', '#sa11y-colour-filters *'];
+    Exclusions.Sa11yElements = [
+      'sa11y-heading-label',
+      'sa11y-heading-anchor',
+      'sa11y-annotation',
+      'sa11y-tooltips',
+      'sa11y-panel-tooltips',
+      'sa11y-control-panel',
+      '#sa11y-colour-filters',
+      '#sa11y-colour-filters *',
+    ];
 
     // Global elements to exclude.
     const exclusions = ['style', 'script', 'noscript'];
@@ -311,7 +332,25 @@ const Constants = (function myConstants() {
     }
 
     // Contrast exclusions
-    Exclusions.Contrast = ['link', 'hr', 'option', 'audio', 'audio *', 'video', 'video *', 'input[type="color"]', 'input[type="range"]', 'progress', 'progress *', 'meter', 'meter *', 'iframe', 'svg title', 'svg desc', ...exclusions];
+    Exclusions.Contrast = [
+      'link',
+      'hr',
+      'option',
+      'audio',
+      'audio *',
+      'video',
+      'video *',
+      'input[type="color"]',
+      'input[type="range"]',
+      'progress',
+      'progress *',
+      'meter',
+      'meter *',
+      'iframe',
+      'svg title',
+      'svg desc',
+      ...exclusions,
+    ];
     if (option.contrastIgnore) {
       Exclusions.Contrast = option.contrastIgnore
         .split(',')
@@ -346,15 +385,23 @@ const Constants = (function myConstants() {
       : [];
 
     // Ignore specific images.
-    Exclusions.Images = ['img[role="presentation"]:not(a img[role="presentation"]), img[aria-hidden="true"]:not(a img[aria-hidden="true"])'];
+    Exclusions.Images = [
+      'img[role="presentation"]:not(a img[role="presentation"]), img[aria-hidden="true"]:not(a img[aria-hidden="true"])',
+    ];
     if (option.imageIgnore) {
-      Exclusions.Images = option.imageIgnore.split(',').map(($el) => $el.trim()).concat(Exclusions.Images);
+      Exclusions.Images = option.imageIgnore
+        .split(',')
+        .map(($el) => $el.trim())
+        .concat(Exclusions.Images);
     }
 
     // Ignore specific links
     Exclusions.Links = ['.anchorjs-link'];
     if (option.linkIgnore) {
-      Exclusions.Links = option.linkIgnore.split(',').map(($el) => $el.trim()).concat(Exclusions.Links);
+      Exclusions.Links = option.linkIgnore
+        .split(',')
+        .map(($el) => $el.trim())
+        .concat(Exclusions.Links);
     }
 
     // Ignore specific classes within links.
@@ -375,6 +422,6 @@ const Constants = (function myConstants() {
     initializeExclusions,
     Exclusions,
   };
-}());
+})();
 
 export default Constants;

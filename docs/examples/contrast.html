@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>APCA Contrast</title>
+  <script src="./misc/script.js"></script>
+  <link href="./assets/main.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+  <style>
+    /* RGB */
+    .rgb {
+      color: rgb(51, 187, 255);
+      background: rgb(255, 217, 0);
+    }
+
+    /* RGBA */
+    .rgba {
+      color: rgba(255, 51, 224, 0.5);
+      background: rgba(3, 249, 3, 1);
+    }
+
+    /* Hex */
+    .hex {
+      color: #FF5733;
+      background: #33bbff;
+    }
+
+    /* HSL */
+    .hsl {
+      color: hsl(14, 100%, 60%);
+      background: hsl(0, 100%, 24%);
+    }
+
+    /* HSLA */
+    .hsla {
+      color: hsla(115, 100%, 60%, 0.5);
+      background: hsl(115, 100%, 14%);
+    }
+
+    /* Display P3 */
+    .display-p3 {
+      color: color(display-p3 1 0.3 0.2);
+    }
+
+    .display-p3-bg {
+      color: color(display-p3 1 0.3 0.2);
+      background: color(display-p3 0.9 0 0.7 / 1);
+    }
+
+    /* Lab */
+    .lab {
+      color: lab(60% 50 20);
+    }
+
+    /* LCH */
+    .lch {
+      color: lch(60% 80 40);
+    }
+
+    /* OKLab */
+    .oklab {
+      color: oklab(60% 0.1 0.2);
+    }
+
+    /* OKLCH */
+    .oklch {
+      color: oklch(60% 0.2 40);
+    }
+
+    /* HWB */
+    .hwb {
+      color: hwb(14 0% 0%);
+    }
+
+    /* Named color */
+    .aliceblue {
+      color: aliceblue;
+    }
+
+    .rebeccapurple {
+      color: rebeccapurple;
+    }
+
+    /* Rec. 2020 */
+    .rec2020 {
+      color: color(rec2020 0.9 0.4 0.2);
+    }
+
+    #input-1 {
+      color: lightblue;
+    }
+
+    /* Font sizes */
+    .size24 {
+      font-size: 24px;
+    }
+
+    .weight700 {
+      font-weight: 700;
+    }
+
+    .link-low {
+      color: rgb(136, 199, 255);
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>APCA Contrast</h1>
+  </header>
+  <main>
+    <h2>Blended background colours</h2>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam dolor libero dignissimos veniam.
+      <span style="color:darkblue;background-color:rgba(235, 52, 52, 0.2)">Testing</span>
+      Totam dolores rem eligendi praesentium harum doloremque ducimus dignissimos, exercitationem, omnis ullam autem,
+      dolor qui numquam. Et!
+    </p>
+
+    <p style="background:grey">Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam dolor libero dignissimos
+      veniam.
+      <span style="color:darkblue;background-color:rgba(235, 52, 52, 0.2)">Testing</span>
+      Totam dolores rem eligendi praesentium harum doloremque ducimus dignissimos, exercitationem, omnis ullam autem,
+      dolor qui numquam. Et!
+    </p>
+
+    <h2>Misc</h2>
+    <p style="color:#030303; background:black">hai</p>
+
+    <h2>Background images</h2>
+    <h3>Multiple nodes shared background</h3>
+    <h4>Different colour nodes with shared background</h4>
+    <div id="warning-contrast-1">
+      <div class="background-image">
+        <h3 style="font-weight:800">Lorem ipsum</h3>
+        <script>const test123 = "a variable";</script> <noscript>Some noscript text</noscript>
+        <p>Adipisci, quidem! Expedita nulla excepturi
+          reprehenderit cumque perferendis? Commodi odio, voluptatem nobis perspiciatis, modi facilis nostrum.</p>
+        <p style="color:hotpink">Reprehenderit aperiam incidunt ad, fugiat eligendi!</p>
+        <a href="https://www.example.com?sdsx">Learn more about example</a>
+        <p class="visually-hidden">This should be ignored by contrast check</p>
+
+      </div>
+    </div>
+
+    <h4>Same colour nodes with shared background</h4>
+    <div id="warning-contrast-1">
+      <div class="background-image">
+
+        <h2>Lorem ipsum</h2>
+        <noscript>Some noscript text</noscript>
+        <p>Adipisci, quidem! Expedita nulla excepturi
+          reprehenderit cumque perferendis? Commodi odio, voluptatem nobis perspiciatis, modi facilis nostrum.</p>
+        <p>Reprehenderit aperiam incidunt ad, fugiat eligendi!</p>
+      </div>
+    </div>
+
+    <h3>Single node within background image</h3>
+    <div id="warning-contrast-2">
+      <p class="background-image-3" style="color:hotpink">Text on background image requires manual review!</p>
+    </div>
+
+    <h3>Single node within background image</h3>
+    <div id="warning-contrast-3">
+      <p class="background-image-4" style="color:hotpink">Text on background image requires manual review!</p>
+    </div>
+
+    <h3>Background image within accordion</h3>
+    <div id="warning-contrast-2">
+      <div hidden>
+        <p class="background-image" style="color:hotpink">Text on background image requires manual review!</p>
+
+        <span style="color:aliceblue">asdsdsdss</span>
+
+      </div>
+    </div>
+
+    <h3>No text within background image</h3>
+    <div id="nothing-background-image">
+      <p class="background-image"></p>
+    </div>
+
+    <h2>1:1 ratio</h2>
+    <p>1:1 means invisible to all, or potentially false positive.</p>
+    <h3>Normal size text</h3>
+    <div id="nothing-contrast-1">
+      <p style="color: var(--bg-example);">
+        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Numquam quasi ipsa assumenda aliquam dolore amet
+        mollitia similique ab consequuntur magnam id veritatis explicabo accusamus, ipsum iusto ea eligendi
+        necessitatibus
+        iure?
+      </p>
+    </div>
+
+    <h4>Large size text</h4>
+    <div id="nothing-contrast-2">
+      <p style="color: var(--bg-example);font-size:5em">
+        Has 0 opacity.
+      </p>
+    </div>
+
+    <h2>SVGs</h2>
+    <div id="warning-svg">
+      <svg height="200" width="500" xmlns="http://www.w3.org/2000/svg">
+        <text x="5" y="20" fill="none" stroke="red" font-size="35" onclick="doSomething()">I love SVG!</text>
+        <text x="15" y="80" fill="lightblue" stroke="none" font-size="300">Cool.</text>
+        <text x="20" y="160" fill="aliceblue" stroke="black" font-size="20">What about this.</text>
+      </svg>
+    </div>
+
+    <div id="nothing-svg-2">
+      <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60"
+        viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+        <path
+          d="M96 256H128V512H0V352H32V320H64V288H96V256zM512 352V512H384V256H416V288H448V320H480V352H512zM320 64H352V448H320V416H192V448H160V64H192V32H224V0H288V32H320V64zM288 128H224V192H288V128z" />
+      </svg>
+    </div>
+
+    <div id="warning-svg-3">
+      <svg height="40" width="200" xmlns="http://www.w3.org/2000/svg">
+        <text x="5" y="30" fill="none" stroke="red" font-size="35">It's SVG!</text>
+        <text x="5" y="30" fill="lightblue" stroke="none" font-size="12">Cool.</text>
+      </svg>
+    </div>
+
+    <div id="warning-svg-3">
+      <svg height="40" width="200" xmlns="http://www.w3.org/2000/svg">
+        <text x="5" y="30" fill="none" stroke="red" font-size="35">It's SVG!</text>
+      </svg>
+    </div>
+
+    <div id="nothing-svg-4">
+      <a href="https://bsky.app/">
+        <div class="visually-hidden">BlueSky</div>
+        <svg width="80" xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 576 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+          <path
+            d="M234.7 42.7L197 56.8c-3 1.1-5 4-5 7.2s2 6.1 5 7.2l37.7 14.1L248.8 123c1.1 3 4 5 7.2 5s6.1-2 7.2-5l14.1-37.7L315 71.2c3-1.1 5-4 5-7.2s-2-6.1-5-7.2L277.3 42.7 263.2 5c-1.1-3-4-5-7.2-5s-6.1 2-7.2 5L234.7 42.7zM46.1 395.4c-18.7 18.7-18.7 49.1 0 67.9l34.6 34.6c18.7 18.7 49.1 18.7 67.9 0L529.9 116.5c18.7-18.7 18.7-49.1 0-67.9L495.3 14.1c-18.7-18.7-49.1-18.7-67.9 0L46.1 395.4zM484.6 82.6l-105 105-23.3-23.3 105-105 23.3 23.3zM7.5 117.2C3 118.9 0 123.2 0 128s3 9.1 7.5 10.8L64 160l21.2 56.5c1.7 4.5 6 7.5 10.8 7.5s9.1-3 10.8-7.5L128 160l56.5-21.2c4.5-1.7 7.5-6 7.5-10.8s-3-9.1-7.5-10.8L128 96 106.8 39.5C105.1 35 100.8 32 96 32s-9.1 3-10.8 7.5L64 96 7.5 117.2zm352 256c-4.5 1.7-7.5 6-7.5 10.8s3 9.1 7.5 10.8L416 416l21.2 56.5c1.7 4.5 6 7.5 10.8 7.5s9.1-3 10.8-7.5L480 416l56.5-21.2c4.5-1.7 7.5-6 7.5-10.8s-3-9.1-7.5-10.8L480 352l-21.2-56.5c-1.7-4.5-6-7.5-10.8-7.5s-9.1 3-10.8 7.5L416 352l-56.5 21.2z" />
+        </svg>
+      </a>
+    </div>
+
+    <div id="nothing-svg-4">
+      <a href="https://bsky.app/">
+        <div class="visually-hidden">BlueSky</div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="44"
+          viewBox="0 0 576 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+          <path fill="#4a4cff"
+            d="M407.8 294.7c-3.3-.4-6.7-.8-10-1.3c3.4 .4 6.7 .9 10 1.3zM288 227.1C261.9 176.4 190.9 81.9 124.9 35.3C61.6-9.4 37.5-1.7 21.6 5.5C3.3 13.8 0 41.9 0 58.4S9.1 194 15 213.9c19.5 65.7 89.1 87.9 153.2 80.7c3.3-.5 6.6-.9 10-1.4c-3.3 .5-6.6 1-10 1.4C74.3 308.6-9.1 342.8 100.3 464.5C220.6 589.1 265.1 437.8 288 361.1c22.9 76.7 49.2 222.5 185.6 103.4c102.4-103.4 28.1-156-65.8-169.9c-3.3-.4-6.7-.8-10-1.3c3.4 .4 6.7 .9 10 1.3c64.1 7.1 133.6-15.1 153.2-80.7C566.9 194 576 75 576 58.4s-3.3-44.7-21.6-52.9c-15.8-7.1-40-14.9-103.2 29.8C385.1 81.9 314.1 176.4 288 227.1z" />
+        </svg>
+      </a>
+    </div>
+
+    <div id="warning-svg-4">
+      <a href="https://bsky.app/">
+        <div class="visually-hidden">BlueSky</div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="66" height="66" viewBox="0 0 24 24" class="duoicon duoicon-cake"
+          style="color: rgb(99, 102, 241);">
+          <path fill="currentColor"
+            d="M17.707 15.707a.414.414 0 0 1 .586 0 2.414 2.414 0 0 0 2.707.491V20a1 1 0 1 1 0 2H3a1 1 0 1 1 0-2v-3.802c.89.405 1.975.241 2.707-.49a.414.414 0 0 1 .586 0 2.414 2.414 0 0 0 3.414 0 .414.414 0 0 1 .586 0 2.414 2.414 0 0 0 3.414 0 .414.414 0 0 1 .586 0 2.414 2.414 0 0 0 3.414 0v-.001ZM16.5 2c-.319.638-.028 1.05.225 1.41.144.203.275.39.275.59a1 1 0 1 1-2 0c0-.552.5-1.5 1.5-2Zm-8 0c-.319.638-.028 1.05.225 1.41.144.203.275.39.275.59a1 1 0 1 1-2 0c0-.552.5-1.5 1.5-2Zm4 0c-.319.638-.028 1.05.225 1.41.144.203.275.39.275.59a1 1 0 1 1-2 0c0-.552.5-1.5 1.5-2Z"
+            class="duoicon-primary-layer"></path>
+          <path fill="currentColor"
+            d="M16 6a1 1 0 0 1 1 1v2h1a3 3 0 0 1 3 3v1.586l-.707.707a.414.414 0 0 1-.586 0 2.414 2.414 0 0 0-3.414 0 .414.414 0 0 1-.586 0 2.414 2.414 0 0 0-3.414 0 .414.414 0 0 1-.586 0 2.414 2.414 0 0 0-3.414 0 .414.414 0 0 1-.586 0 2.414 2.414 0 0 0-3.414 0 .414.414 0 0 1-.586 0L3 13.586V12a3 3 0 0 1 3-3h1V7a1 1 0 1 1 2 0v2h2V7a1 1 0 1 1 2 0v2h2V7a1 1 0 0 1 1-1Z"
+            class="duoicon-secondary-layer" opacity=".3"></path>
+        </svg>
+      </a>
+    </div>
+
+    <div id="error-svg-4">
+      <a href="https://bsky.app/">
+        <div class="visually-hidden">BlueSky</div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="50"
+          viewBox="0 0 576 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+          <path fill="#fcffc1"
+            d="M234.7 42.7L197 56.8c-3 1.1-5 4-5 7.2s2 6.1 5 7.2l37.7 14.1L248.8 123c1.1 3 4 5 7.2 5s6.1-2 7.2-5l14.1-37.7L315 71.2c3-1.1 5-4 5-7.2s-2-6.1-5-7.2L277.3 42.7 263.2 5c-1.1-3-4-5-7.2-5s-6.1 2-7.2 5L234.7 42.7zM46.1 395.4c-18.7 18.7-18.7 49.1 0 67.9l34.6 34.6c18.7 18.7 49.1 18.7 67.9 0L529.9 116.5c18.7-18.7 18.7-49.1 0-67.9L495.3 14.1c-18.7-18.7-49.1-18.7-67.9 0L46.1 395.4zM484.6 82.6l-105 105-23.3-23.3 105-105 23.3 23.3zM7.5 117.2C3 118.9 0 123.2 0 128s3 9.1 7.5 10.8L64 160l21.2 56.5c1.7 4.5 6 7.5 10.8 7.5s9.1-3 10.8-7.5L128 160l56.5-21.2c4.5-1.7 7.5-6 7.5-10.8s-3-9.1-7.5-10.8L128 96 106.8 39.5C105.1 35 100.8 32 96 32s-9.1 3-10.8 7.5L64 96 7.5 117.2zm352 256c-4.5 1.7-7.5 6-7.5 10.8s3 9.1 7.5 10.8L416 416l21.2 56.5c1.7 4.5 6 7.5 10.8 7.5s9.1-3 10.8-7.5L480 416l56.5-21.2c4.5-1.7 7.5-6 7.5-10.8s-3-9.1-7.5-10.8L480 352l-21.2-56.5c-1.7-4.5-6-7.5-10.8-7.5s-9.1 3-10.8 7.5L416 352l-56.5 21.2z" />
+        </svg>
+
+      </a>
+    </div>
+
+    <div id="warning-svg-5">
+      <svg width="100" height="100">
+        <defs>
+          <radialGradient id="radial-gradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+            <stop offset="0%" style="stop-color:yellow;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:green;stop-opacity:1" />
+          </radialGradient>
+        </defs>
+        <circle cx="100" cy="100" r="90" fill="url(#radial-gradient)" />
+      </svg>
+    </div>
+
+    <div id="warning-svg-6">
+      <svg width="200" height="200">
+        <defs>
+          <linearGradient id="linear-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:blue;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:red;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        <path d="M10 80 C 40 10, 65 10, 95 80 S 150 150, 180 80" fill="url(#linear-gradient)" stroke-width="2" />
+      </svg>
+    </div>
+
+    <div id="warning-svg-7">
+      <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+        <!-- Background rectangle -->
+        <rect width="200" height="200" fill="#f0f0f0" />
+
+        <!-- Circle -->
+        <circle cx="100" cy="100" r="50" fill="blue" stroke="black" stroke-width="2" />
+
+        <!-- Rectangle -->
+        <rect x="50" y="50" width="30" height="60" fill="red" stroke="black" stroke-width="1" />
+
+        <!-- Line -->
+        <line x1="20" y1="20" x2="180" y2="180" stroke="green" stroke-width="2" />
+
+        <!-- Polygon -->
+        <polygon points="60,10 90,40 30,40" fill="yellow" stroke="orange" stroke-width="1" />
+
+        <!-- Text -->
+        <text x="100" y="190" font-family="Arial" font-size="12" text-anchor="middle" fill="black">
+          SVG without a &lt;path&gt;
+        </text>
+      </svg>
+    </div>
+
+    <div id="warning-svg-8">
+      <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+        <rect width="200" height="200" fill="#ff0" />
+      </svg>
+    </div>
+
+    <h3>Stroke</h3>
+    <div id="error-svg-4">
+      <a href="https://bsky.app/">
+        <div class="visually-hidden">BlueSky</div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="44"
+          viewBox="0 0 576 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+          <path fill="none" stroke="#fcffc1" stroke-width="15"
+            d="M407.8 294.7c-3.3-.4-6.7-.8-10-1.3c3.4 .4 6.7 .9 10 1.3zM288 227.1C261.9 176.4 190.9 81.9 124.9 35.3C61.6-9.4 37.5-1.7 21.6 5.5C3.3 13.8 0 41.9 0 58.4S9.1 194 15 213.9c19.5 65.7 89.1 87.9 153.2 80.7c3.3-.5 6.6-.9 10-1.4c-3.3 .5-6.6 1-10 1.4C74.3 308.6-9.1 342.8 100.3 464.5C220.6 589.1 265.1 437.8 288 361.1c22.9 76.7 49.2 222.5 185.6 103.4c102.4-103.4 28.1-156-65.8-169.9c-3.3-.4-6.7-.8-10-1.3c3.4 .4 6.7 .9 10 1.3c64.1 7.1 133.6-15.1 153.2-80.7C566.9 194 576 75 576 58.4s-3.3-44.7-21.6-52.9c-15.8-7.1-40-14.9-103.2 29.8C385.1 81.9 314.1 176.4 288 227.1z" />
+        </svg>
+      </a>
+    </div>
+
+    <div id="nothing-svg">
+      <a href="https://bsky.app/">
+        <div class="visually-hidden">BlueSky</div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="44"
+          viewBox="0 0 576 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+          <path fill="none" stroke="#000" stroke-width="20"
+            d="M407.8 294.7c-3.3-.4-6.7-.8-10-1.3c3.4 .4 6.7 .9 10 1.3zM288 227.1C261.9 176.4 190.9 81.9 124.9 35.3C61.6-9.4 37.5-1.7 21.6 5.5C3.3 13.8 0 41.9 0 58.4S9.1 194 15 213.9c19.5 65.7 89.1 87.9 153.2 80.7c3.3-.5 6.6-.9 10-1.4c-3.3 .5-6.6 1-10 1.4C74.3 308.6-9.1 342.8 100.3 464.5C220.6 589.1 265.1 437.8 288 361.1c22.9 76.7 49.2 222.5 185.6 103.4c102.4-103.4 28.1-156-65.8-169.9c-3.3-.4-6.7-.8-10-1.3c3.4 .4 6.7 .9 10 1.3c64.1 7.1 133.6-15.1 153.2-80.7C566.9 194 576 75 576 58.4s-3.3-44.7-21.6-52.9c-15.8-7.1-40-14.9-103.2 29.8C385.1 81.9 314.1 176.4 288 227.1z" />
+        </svg>
+      </a>
+    </div>
+
+    <div id="nothing-svg">
+      <a href="https://bsky.app/">
+        <div class="visually-hidden">BlueSky</div>
+        <style>
+          #pink {
+            width: 20px;
+          }
+        </style>
+        <svg xmlns="http://www.w3.org/2000/svg" id="pink"
+          viewBox="0 0 576 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+          <path fill="hotpink" stroke-width="20"
+            d="M407.8 294.7c-3.3-.4-6.7-.8-10-1.3c3.4 .4 6.7 .9 10 1.3zM288 227.1C261.9 176.4 190.9 81.9 124.9 35.3C61.6-9.4 37.5-1.7 21.6 5.5C3.3 13.8 0 41.9 0 58.4S9.1 194 15 213.9c19.5 65.7 89.1 87.9 153.2 80.7c3.3-.5 6.6-.9 10-1.4c-3.3 .5-6.6 1-10 1.4C74.3 308.6-9.1 342.8 100.3 464.5C220.6 589.1 265.1 437.8 288 361.1c22.9 76.7 49.2 222.5 185.6 103.4c102.4-103.4 28.1-156-65.8-169.9c-3.3-.4-6.7-.8-10-1.3c3.4 .4 6.7 .9 10 1.3c64.1 7.1 133.6-15.1 153.2-80.7C566.9 194 576 75 576 58.4s-3.3-44.7-21.6-52.9c-15.8-7.1-40-14.9-103.2 29.8C385.1 81.9 314.1 176.4 288 227.1z" />
+        </svg>
+      </a>
+    </div>
+
+    <div id="nothing-svg-2">
+      <svg xmlns="http://www.w3.org/2000/svg" width="44"
+        viewBox="0 0 576 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+        <path fill="aliceblue" stroke="#000" stroke-width="20"
+          d="M407.8 294.7c-3.3-.4-6.7-.8-10-1.3c3.4 .4 6.7 .9 10 1.3zM288 227.1C261.9 176.4 190.9 81.9 124.9 35.3C61.6-9.4 37.5-1.7 21.6 5.5C3.3 13.8 0 41.9 0 58.4S9.1 194 15 213.9c19.5 65.7 89.1 87.9 153.2 80.7c3.3-.5 6.6-.9 10-1.4c-3.3 .5-6.6 1-10 1.4C74.3 308.6-9.1 342.8 100.3 464.5C220.6 589.1 265.1 437.8 288 361.1c22.9 76.7 49.2 222.5 185.6 103.4c102.4-103.4 28.1-156-65.8-169.9c-3.3-.4-6.7-.8-10-1.3c3.4 .4 6.7 .9 10 1.3c64.1 7.1 133.6-15.1 153.2-80.7C566.9 194 576 75 576 58.4s-3.3-44.7-21.6-52.9c-15.8-7.1-40-14.9-103.2 29.8C385.1 81.9 314.1 176.4 288 227.1z" />
+      </svg>
+    </div>
+
+    <div id="error-svg-2">
+      <svg xmlns="http://www.w3.org/2000/svg" width="44"
+        viewBox="0 0 576 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+        <path fill="aliceblue" stroke="white" stroke-width="20"
+          d="M407.8 294.7c-3.3-.4-6.7-.8-10-1.3c3.4 .4 6.7 .9 10 1.3zM288 227.1C261.9 176.4 190.9 81.9 124.9 35.3C61.6-9.4 37.5-1.7 21.6 5.5C3.3 13.8 0 41.9 0 58.4S9.1 194 15 213.9c19.5 65.7 89.1 87.9 153.2 80.7c3.3-.5 6.6-.9 10-1.4c-3.3 .5-6.6 1-10 1.4C74.3 308.6-9.1 342.8 100.3 464.5C220.6 589.1 265.1 437.8 288 361.1c22.9 76.7 49.2 222.5 185.6 103.4c102.4-103.4 28.1-156-65.8-169.9c-3.3-.4-6.7-.8-10-1.3c3.4 .4 6.7 .9 10 1.3c64.1 7.1 133.6-15.1 153.2-80.7C566.9 194 576 75 576 58.4s-3.3-44.7-21.6-52.9c-15.8-7.1-40-14.9-103.2 29.8C385.1 81.9 314.1 176.4 288 227.1z" />
+      </svg>
+    </div>
+
+    <div id="warning-svg-9">
+      <svg height="250" width="350" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="circle2" markerWidth="8" markerHeight="8" refX="5" refY="5">
+            <circle cx="5" cy="5" r="3" fill="black" />
+          </marker>
+          <marker id="arrow2" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="lightgray" />
+          </marker>
+        </defs>
+        <line x1="10" y1="10" x2="300" y2="200" stroke="lightgray" stroke-width="3" marker-start="url(#circle2)"
+          marker-end="url(#arrow2)" />
+      </svg>
+    </div>
+
+    <div id="warning-svg-10">
+      <svg height="250" width="350" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="circle" markerWidth="8" markerHeight="8" refX="5" refY="5">
+            <circle cx="5" cy="5" r="3" fill="lightgray" />
+          </marker>
+          <marker id="arrow" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="black" />
+          </marker>
+        </defs>
+        <line x1="10" y1="10" x2="300" y2="200" stroke="lightgray" stroke-width="3" marker-start="url(#circle)"
+          marker-end="url(#arrow)" />
+      </svg>
+    </div>
+
+    <div id="warning-svg-10">
+      <svg height="250" width="350" xmlns="http://www.w3.org/2000/svg">
+        <line x1="10" y1="10" x2="300" y2="200" stroke="lightgray" stroke-width="3" marker-start="url(#circle)"
+          marker-end="url(#arrow)" />
+      </svg>
+    </div>
+
+    <div id="error-svg">
+      <svg height="100" width="200" xmlns="http://www.w3.org/2000/svg">
+        <a href="https://www.w3schools.com/graphics/" target="_blank">
+          <circle r="45" cx="50" cy="50" fill="red" />
+        </a>
+      </svg>
+    </div>
+
+    <div id="error-svg">
+      <svg width="300" height="130" xmlns="http://www.w3.org/2000/svg">
+        <rect width="200" height="100" x="10" y="10" rx="20" ry="20" fill="rgb(51, 51, 51)" opacity="0.05"
+          stroke-width="0" />
+      </svg>
+    </div>
+
+    <h2>Opacity</h2>
+    <h3>Text has low opacity via explicit <code>opacity</code> attribute</h3>
+    <div id="error-opacity">
+      <code>opacity: 0.05;</code>
+      <p style="font-size:4em; opacity: 0.05;">
+        Text has 0.5 opacity.
+      </p>
+    </div>
+
+    <h3>Opacity is set to 0</h3>
+    <div id="nothing-opacity">
+      <code>opacity: 0;</code>
+      <p style="font-size:5em; opacity: 0;">
+        Lorem ipsum dolor.
+      </p>
+    </div>
+
+    <h2>Inside the shadow dom</h2>
+    <div id="error-shadow-dom">
+      <div id="webcomponent">
+        <template shadowrootmode="open">
+          <div style="background-color:hotpink;padding:20px">
+            <h3 style="color:white">Heading in the shadow dom</h3>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <h2>Inputs</h2>
+
+    <h3>Colour input</h3>
+    <div id="nothing-input-1">
+      <label for="input-color">Color:</label>
+      <input id="input-color" type="color" />
+    </div>
+
+    <h3>Range</h3>
+    <div id="nothing-input-2">
+      <label for="input-range">Range</label>
+      <input id="input-range" type="range" />
+    </div>
+
+    <h3>Meter</h3>
+    <div id="nothing-input-3">
+      <label for="fuel">Fuel</label>
+      <meter id="fuel" min="0" max="100" low="33" high="66" optimum="80" value="50">at 50/100</meter>
+    </div>
+
+    <h3>Progress</h3>
+    <div id="nothing-input-4">
+      <label for="progress-bar">Uploading Document</label>
+      <progress id="progress-bar" value="70" max="100">70 %</progress>
+    </div>
+
+    <h3><code>&lt;select&gt;</code> with low contrast</h3>
+    <div id="error-input-1">
+      <label for="pet-select-a">Choose a pet:</label>
+      <select id="pet-select-a" style="color:aliceblue">
+        <option value="" style="color:red !important">Please choose an option</option>
+        <option value="dog">Dog</option>
+        <option value="cat">Cat</option>
+        <option value="hamster">Hamster</option>
+        <option value="parrot">Parrot</option>
+        <option value="spider">Spider</option>
+        <option value="goldfish">Goldfish</option>
+      </select>
+    </div>
+
+    <h3><code>&lt;select&gt;</code> element with background image</h3>
+    <div id="warning-contrast-select">
+      <label for="pet-select">Choose a pet:</label>
+      <select id="pet-select" class="background-image">
+        <option value="">Please choose an option</option>
+        <option value="dog">Dog</option>
+        <option value="cat">Cat</option>
+        <option value="hamster">Hamster</option>
+        <option value="parrot">Parrot</option>
+        <option value="spider">Spider</option>
+        <option value="goldfish">Goldfish</option>
+      </select>
+    </div>
+
+    <h3>Input</h3>
+    <div id="error-input-1">
+      <label for="input-1">Name:</label>
+      <input type="text" id="input-1" />
+    </div>
+
+    <div id="error-input-2">
+      <style>
+        #input-2 {
+          color: #676767;
+        }
+
+        #input-2::placeholder {
+          color: lightgrey
+        }
+      </style>
+      <label for="input-2">Phone:</label>
+      <input type="text" id="input-2" placeholder="E.g. 416-967-711" />
+    </div>
+
+    <h2>Text area</h2>
+    <div id="error-text-area">
+      <label for="textarea-a">Address:</label>
+      <textarea class="rgb" id="textarea-a">Test...</textarea>
+    </div>
+
+
+
+    <h2>Normal text (400 at 16px)</h2>
+
+    <div id="error-link">
+      <a href="https://www.example.com?fklsd" class="link-low">Low text</a>
+    </div>
+
+    <h3>Testing extremes 1.01:1 ratio</h3>
+    <div id="error-light-grey">
+      <p id="light-grey" style="color: #eaeaea">Super light grey</p>
+      <p id="black" style="color: rgb(6, 6, 6);background:black;">What about this</p>
+    </div>
+
+    <h3>RGB</h3>
+    <div id="error-rgb">
+      <p class="rgb">This is using the RGB colour space.
+        <script>const test12s3 = "a variable";</script> <noscript>Some noscript text</noscript>
+      </p>
+    </div>
+
+    <h3>RGBA</h3>
+    <div id="error-rgba">
+      <p class="rgba">This is using the RGBA colour space. Lorem ipsum dolor sit amet consectetur adipisicing elit.
+        Quisquam dolorum eligendi inventore ad vel, recusandae unde excepturi fugiat, sapiente beatae, reiciendis
+        obcaecati sunt rem quod aliquam tempore fuga. Vero, repellendus!</p>
+    </div>
+
+    <h3>Hex</h3>
+    <div id="error-hex">
+      <p class="hex">This is using the Hex colour space.</p>
+      <p style="color:white;background:#33BAFE;font-size:24px;">This is using the Hex colour space.</p>
+    </div>
+
+    <h3>HSL</h3>
+    <div id="error-hsl">
+      <p class="hsl">This is using the HSL colour space.</p>
+    </div>
+
+    <h3>HSLA</h3>
+    <div id="error-hsla">
+      <p class="hsla">This is using the HSLA colour space.</p>
+    </div>
+
+    <h3>Display P3</h3>
+    <div id="warning-display-p3">
+      <p class="display-p3">This is using the Display P3 colour space.</p>
+    </div>
+
+    <h3>Display P3 Background</h3>
+    <div id="warning-display-p3-bg">
+      <p class="display-p3-bg">This is using the Display P3 with background.</p>
+    </div>
+
+    <h3>Lab</h3>
+    <div id="error-lab">
+      <p class="lab">This is using the Lab colour space.</p>
+    </div>
+
+    <h3>LCH</h3>
+    <div id="error-lch">
+      <p class="lch">This is using the LCH colour space.</p>
+    </div>
+
+    <h3>OKLab</h3>
+    <div id="error-oklab">
+      <p class="oklab">This is using the OKLab colour space.</p>
+    </div>
+
+    <h3>OKLCH</h3>
+    <div id="error-oklch">
+      <p class="oklch">This is using the OKLCH colour space.</p>
+    </div>
+
+    <h3>HWB</h3>
+    <div id="error-hwb">
+      <p class="hwb">This is using the HWB colour space.</p>
+    </div>
+
+    <h3>Named color</h3>
+    <div id="error-aliceblue">
+      <p class="aliceblue">This is using the named colour AliceBlue</p>
+    </div>
+
+    <h3>Rec. 2020</h3>
+    <div id="warning-rec2020">
+      <p class="rec2020">This is using the Rec. 2020 colour space.</p>
+    </div>
+
+    <hr>
+
+    <h2>Large text (400 at 24px)</h2>
+    <h3>AAA</h3>
+    <div id="error-aaa">
+      <p class="size24" style="color:red;background:rgb(63, 0, 0);">This is using the RGB colour space.</p>
+    </div>
+
+    <h3>RGB</h3>
+    <div id="error-rgb">
+      <p class="rgb size24">This is using the RGB colour space.</p>
+    </div>
+
+    <h3>RGBA</h3>
+    <div id="error-rgba">
+      <p class="rgba size24">This is using the RGBA colour space.</p>
+    </div>
+
+    <h3>Hex</h3>
+    <div id="error-hex">
+      <p class="hex size24">This is using the Hex colour space.</p>
+    </div>
+
+    <h3>HSL</h3>
+    <div id="nothing-hsl">
+      <p class="hsl size24">This is using the HSL colour space.</p>
+    </div>
+
+    <h3>HSLA</h3>
+    <div id="nothing-hsla">
+      <p class="hsla size24">This is using the HSLA colour space.</p>
+    </div>
+
+    <h3>Display P3</h3>
+    <div id="warning-display-p3">
+      <p class="display-p3 size24">This is using the Display P3 colour space.</p>
+    </div>
+
+    <h3>Lab</h3>
+    <div id="error-lab">
+      <p class="lab size24">This is using the Lab colour space.</p>
+    </div>
+
+    <h3>LCH</h3>
+    <div id="error-lch">
+      <p class="lch size24">This is using the LCH colour space.</p>
+    </div>
+
+    <h3>OKLab</h3>
+    <div id="nothing-oklab">
+      <p class="oklab size24">This is using the OKLab colour space.</p>
+    </div>
+
+    <h3>OKLCH</h3>
+    <div id="nothing-oklch">
+      <p class="oklch size24">This is using the OKLCH colour space.</p>
+    </div>
+
+    <h3>HWB</h3>
+    <div id="nothing-hwb">
+      <p class="hwb size24">This is using the HWB colour space.</p>
+    </div>
+
+    <h3>Named Color (RebeccaPurple)</h3>
+    <div id="nothing-rebeccapurple">
+      <p class="rebeccapurple size24">This is using the named colour RebeccaPurple.</p>
+    </div>
+
+    <h3>Rec. 2020</h3>
+    <div id="warning-rec2020">
+      <p class="rec2020 size24">This is using the Rec. 2020 colour space.</p>
+    </div>
+
+    <hr>
+
+    <h2>Large text (700 at 24px)</h2>
+    <h3>RGB</h3>
+    <div id="error-rgb-24-700">
+      <p class="rgb size24 weight700">This is using the RGB colour space.</p>
+    </div>
+
+    <h3>RGBA</h3>
+    <div id="error-rgba-24-700">
+      <p class="rgba size24 weight700">This is using the RGBA colour space.</p>
+    </div>
+
+    <h3>Hex</h3>
+    <div id="error-hex-24-700">
+      <p class="hex size24 weight700">This is using the Hex colour space.</p>
+    </div>
+
+    <h3>HSL</h3>
+    <div id="nothing-hsl-24-700">
+      <p class="hsl size24 weight700">This is using the HSL colour space.</p>
+    </div>
+
+    <h3>HSLA</h3>
+    <div id="nothing-hsla-24-700">
+      <p class="hsla size24 weight700">This is using the HSLA colour space.</p>
+    </div>
+
+    <h3>Display P3</h3>
+    <div id="warning-display-p3-24-700">
+      <p class="display-p3 size24 weight700">This is using the Display P3 colour space.</p>
+    </div>
+
+    <h3>Lab</h3>
+    <div id="error-lab-24-700">
+      <p class="lab size24 weight700">This is using the Lab colour space.</p>
+    </div>
+
+    <h3>LCH</h3>
+    <div id="error-lch-24-700">
+      <p class="lch size24 weight700">This is using the LCH colour space.</p>
+    </div>
+
+    <h3>OKLab</h3>
+    <div id="nothing-oklab-24-700">
+      <p class="oklab size24 weight700">This is using the OKLab colour space.</p>
+    </div>
+
+    <h3>OKLCH</h3>
+    <div id="nothing-oklch-24-700">
+      <p class="oklch size24 weight700">This is using the OKLCH colour space.</p>
+    </div>
+
+    <h3>HWB</h3>
+    <div id="nothing-hwb-24-700">
+      <p class="hwb size24 weight700">This is using the HWB colour space.</p>
+    </div>
+
+    <h3>Named Color (RebeccaPurple)</h3>
+    <div id="nothing-rebeccapurple-24-700">
+      <p class="rebeccapurple size24 weight700">This is using the named colour RebeccaPurple.</p>
+    </div>
+
+    <h3>Rec. 2020</h3>
+    <div id="warning-rec2020-24-700">
+      <p class="rec2020 size24 weight700">This is using the Rec. 2020 colour space.</p>
+    </div>
+
+    <hr>
+
+    <h2>hsla</h2>
+    <div id="error-hsla">
+      <p class="hsla">This is using HSLA colour.</p>
+    </div>
+
+    <h2>Visually hidden content</h2>
+    <div id="nothing-visually-hidden">
+      <p class="visually-hidden">This is visually hidden.</p>
+    </div>
+
+    <h2>Large text passing</h2>
+    <div id="nothing">
+      <h2 style="color:brown">Some large brown text</h2>
+    </div>
+
+    <h2>Colour name</h2>
+    <div id="error-colour-name">
+      <p class="colour-name">This is using a colour name.</p>
+    </div>
+
+    <h2>Transparency</h2>
+    <div id="error-rgba-transparency">
+      <p class="rgba-transparency">RGBA with various transparency</p>
+    </div>
+
+    <h2>Color mix</h2>
+    <div id="error-color-mix">
+      <p class="color-mix">Colour mix</p>
+    </div>
+  </main>
+
+  <footer>No automated unit tests are on this page. Blank slate for testing!</footer>
+
+  <!-- Sa11y (UMD) -->
+  <link rel="stylesheet" href="../cc-dist/css/sa11y.css">
+  <script src="../cc-dist/js/sa11y.umd.js"></script>
+  <script src="../cc-dist/js/lang/en.umd.js"></script>
+  <script>
+    Sa11y.Lang.addI18n(Sa11yLangEn.strings);
+    const sa11y = new Sa11y.Sa11y({
+      checkRoot: 'body',
+      contrastAlgorithm: 'APCA' // AA, AAA
+    });
+  </script>
+  <!-- End of Sa11y-->
+
+</body>
+
+</html>

@@ -1,1 +1,145 @@
-!function(e){"function"==typeof define&&define.amd?define(e):e()}(function(){"use strict";const e="4.4.0";(()=>{const n=document.createElement("div");n.id="sa11y-loading";const t=n.attachShadow({mode:"open"}),o=document.createElement("div");o.classList.add("loader"),o.innerHTML='\n<style>\n.loader {\n  height: 55px;\n  width: 55px;\n  background: linear-gradient(0deg, #e040fb, #00bcd4);\n  background-color: var(--sa11y-setting-switch-bg-off);\n  background-size: 150% 150%;\n  border-radius: 50%;\n  text-align: center;\n  vertical-align: middle;\n  bottom: 15px;\n  inset-inline-end: 18px;\n  position: fixed;\n  z-index: 9999;\n}\n</style>\n\n\x3c!-- Credit: https://codepen.io/aurer/pen/ZEJxpO --\x3e\n<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="55px" height="55px" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">\n  <path fill="#FFF" d="M25.251,6.461c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615V6.461z">\n  <animateTransform attributeType="xml"\n    attributeName="transform"\n    type="rotate"\n    from="0 25 25"\n    to="360 25 25"\n    dur="1.2s"\n    repeatCount="indefinite"/>\n  </path>\n</svg>',t.appendChild(o),document.body.appendChild(n);const s=(document.documentElement.lang||"en").split("-");let d=s[0];const i=s[1]?s[1].toLowerCase():"";["bg","cs","da","de","el","en","es","et","fi","fr","hu","id","it","ja","ko","lt","lv","nb","nl","pl","pt","ro","sl","sk","sv","tr","uk","ua","zh"].includes(d)?"pt"===d?d="br"===i?"ptBR":"ptPT":"uk"===d?d="ua":"en"===d&&(d="us"===i?"enUS":"en"):d="en",new Promise((n,t)=>{const o=document.createElement("link");o.rel="stylesheet",o.href=`https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@${e}/dist/css/sa11y.min.css`,o.onload=n,o.onerror=t,document.head.appendChild(o)}).then(()=>(n=>new Promise((t,o)=>{const s=document.createElement("script");s.src=`https://cdn.jsdelivr.net/combine/gh/ryersondmp/sa11y@${e}/dist/js/lang/${n}.umd.js,gh/ryersondmp/sa11y@${e}/dist/js/sa11y.umd.js`,s.onload=t,s.onerror=o,document.body.appendChild(s)}))(d)).then(()=>(e=>{const n=()=>{const n=`Sa11yLang${e.charAt(0).toUpperCase()+e.slice(1)}`;Sa11y.Lang.addI18n(window[n].strings),new Sa11y.Sa11y({autoDetectShadowComponents:!0,customChecks:!1,exportResultsPlugin:!0,detectSPArouting:!0})};if(window.location.href.includes("https://360.articulate.com/review/content")){const e=document.querySelector("iframe.player"),t=e.getAttribute("src");e&&t?(document.getElementById("sa11y-loading").remove(),window.confirm("Press OK to be redirected to a page where you can check the accessibility of the content. The page will open in a new tab.")&&window.open(t,"_blank")):n()}else n(),document.getElementById("sa11y-loading").remove()})(d)).catch(e=>new Error("Error loading Sa11y:",e))})()});
+/*!
+      * Sa11y, the accessibility quality assurance assistant.
+      * @version 4.4.0
+      * @author Adam Chaboryk
+      * @license GPL-2.0-or-later
+      * @copyright © 2020 - 2025 Toronto Metropolitan University.
+      * @contact adam.chaboryk@torontomu.ca
+      * GitHub: git+https://github.com/ryersondmp/sa11y.git | Website: https://sa11y.netlify.app
+      * The above copyright notice shall be included in all copies or substantial portions of the Software.
+    **/
+(function(factory) {
+  typeof define === "function" && define.amd ? define(factory) : factory();
+})((function() {
+  "use strict";
+  const version = "4.4.0";
+  const loadingSpinnerSVG = `
+<style>
+.loader {
+  height: 55px;
+  width: 55px;
+  background: linear-gradient(0deg, #e040fb, #00bcd4);
+  background-color: var(--sa11y-setting-switch-bg-off);
+  background-size: 150% 150%;
+  border-radius: 50%;
+  text-align: center;
+  vertical-align: middle;
+  bottom: 15px;
+  inset-inline-end: 18px;
+  position: fixed;
+  z-index: 9999;
+}
+</style>
+
+<!-- Credit: https://codepen.io/aurer/pen/ZEJxpO -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="55px" height="55px" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
+  <path fill="#FFF" d="M25.251,6.461c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615V6.461z">
+  <animateTransform attributeType="xml"
+    attributeName="transform"
+    type="rotate"
+    from="0 25 25"
+    to="360 25 25"
+    dur="1.2s"
+    repeatCount="indefinite"/>
+  </path>
+</svg>`;
+  const loadStyleSheet = () => new Promise((resolve, reject) => {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = `https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@${version}/dist/css/sa11y.min.css`;
+    link.onload = resolve;
+    link.onerror = reject;
+    document.head.appendChild(link);
+  });
+  const loadScript = (lang) => new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = `https://cdn.jsdelivr.net/combine/gh/ryersondmp/sa11y@${version}/dist/js/lang/${lang}.umd.js,gh/ryersondmp/sa11y@${version}/dist/js/sa11y.umd.js`;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.body.appendChild(script);
+  });
+  const onLoadScript = (lang) => {
+    const instantiate = () => {
+      const objectKey = `Sa11yLang${lang.charAt(0).toUpperCase() + lang.slice(1)}`;
+      Sa11y.Lang.addI18n(window[objectKey].strings);
+      new Sa11y.Sa11y({
+        autoDetectShadowComponents: true,
+        customChecks: false,
+        exportResultsPlugin: true,
+        detectSPArouting: true
+      });
+    };
+    const url = window.location.href;
+    if (url.includes("https://360.articulate.com/review/content")) {
+      const iframe = document.querySelector("iframe.player");
+      const src = iframe.getAttribute("src");
+      if (iframe && src) {
+        document.getElementById("sa11y-loading").remove();
+        if (window.confirm("Press OK to be redirected to a page where you can check the accessibility of the content. The page will open in a new tab.")) {
+          window.open(src, "_blank");
+        }
+      } else {
+        instantiate();
+      }
+    } else {
+      instantiate();
+      document.getElementById("sa11y-loading").remove();
+    }
+  };
+  const initialize = () => {
+    const loadingSpinner = document.createElement("div");
+    loadingSpinner.id = "sa11y-loading";
+    const shadowRoot = loadingSpinner.attachShadow({ mode: "open" });
+    const loadingSpinnerContent = document.createElement("div");
+    loadingSpinnerContent.classList.add("loader");
+    loadingSpinnerContent.innerHTML = loadingSpinnerSVG;
+    shadowRoot.appendChild(loadingSpinnerContent);
+    document.body.appendChild(loadingSpinner);
+    const getLangResult = document.documentElement.lang || "en";
+    const splitLang = getLangResult.split("-");
+    let lang = splitLang[0];
+    const country = splitLang[1] ? splitLang[1].toLowerCase() : "";
+    const supportedLang = [
+      "bg",
+      "cs",
+      "da",
+      "de",
+      "el",
+      "en",
+      "es",
+      "et",
+      "fi",
+      "fr",
+      "hu",
+      "id",
+      "it",
+      "ja",
+      "ko",
+      "lt",
+      "lv",
+      "nb",
+      "nl",
+      "pl",
+      "pt",
+      "ro",
+      "sl",
+      "sk",
+      "sv",
+      "tr",
+      "uk",
+      "ua",
+      "zh"
+    ];
+    if (!supportedLang.includes(lang)) {
+      lang = "en";
+    } else if (lang === "pt") {
+      lang = country === "br" ? "ptBR" : "ptPT";
+    } else if (lang === "uk") {
+      lang = "ua";
+    } else if (lang === "en") {
+      lang = country === "us" ? "enUS" : "en";
+    }
+    loadStyleSheet().then(() => loadScript(lang)).then(() => onLoadScript(lang)).catch((error) => new Error("Error loading Sa11y:", error));
+  };
+  initialize();
+}));

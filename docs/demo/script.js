@@ -1,11 +1,11 @@
-import { Sa11y, Lang } from '../dist/js/sa11y.esm.js';
+import { Sa11y, Lang } from '../cc-dist/js/sa11y.esm.js';
 
-import Sa11yLangEn from '../dist/js/lang/en.js';
-import Sa11yLangPl from '../dist/js/lang/pl.js';
-import Sa11yLangFr from '../dist/js/lang/fr.js';
-import Sa11yLangDe from '../dist/js/lang/de.js';
-import Sa11yLangUa from '../dist/js/lang/ua.js';
-import Sa11yLangSv from '../dist/js/lang/sv.js';
+import Sa11yLangEn from '../cc-dist/js/lang/en.js';
+import Sa11yLangPl from '../cc-dist/js/lang/pl.js';
+import Sa11yLangFr from '../cc-dist/js/lang/fr.js';
+import Sa11yLangDe from '../cc-dist/js/lang/de.js';
+import Sa11yLangUa from '../cc-dist/js/lang/ua.js';
+import Sa11yLangSv from '../cc-dist/js/lang/sv.js';
 
 // Set translations
 const url = window.location.href;

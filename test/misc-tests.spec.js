@@ -19,7 +19,7 @@ test.describe('Sa11y miscellaneous tests', () => {
 
   test('Navigate to page with no errors and toggle Sa11y', async () => {
     // Navigate to unit tests page.
-    await page.goto('http://localhost:8080/docs/unit-tests/no-errors.html');
+    await page.goto('http://localhost:8080/test/pages/no-errors.html');
 
     // Toggle main toggle.
     await page.evaluate(async () => {
@@ -127,11 +127,17 @@ test.describe('Sa11y miscellaneous tests', () => {
 
   /* Navigate to Warnings page. */
   test('Navigate to warnings page (Count: 4)', async () => {
-    await page.goto('http://localhost:8080/docs/unit-tests/warnings.html');
-    const warningStatus = await page.evaluate(async () => {
-      const panel = document.querySelector('sa11y-control-panel').shadowRoot;
-      const status = panel.getElementById('warning-count').textContent === '4';
-      return status;
+    await page.goto('http://localhost:8080/test/pages/warnings.html');
+    await page.waitForFunction(() => {
+      const host = document.querySelector('sa11y-control-panel');
+      if (!host || !host.shadowRoot) return false;
+      return !!host.shadowRoot.getElementById('warning-count');
+    });
+    const warningStatus = await page.evaluate(() => {
+      const host = document.querySelector('sa11y-control-panel');
+      const panel = host.shadowRoot;
+      const el = panel.getElementById('warning-count');
+      return el && el.textContent === '4';
     });
     expect(warningStatus).toBe(true);
   });

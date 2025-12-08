@@ -1,3 +1,5 @@
+/** biome-ignore-all lint/style/noDescendingSpecificity: It's fine. */
+
 /* ************************************* */
 /*          1. CSS Reset                 */
 /* ************************************* */
@@ -86,7 +88,7 @@ audio {
   background-color: var(--sa11y-setting-switch-bg-off);
   background-size: 150% 150%;
   border-radius: 50%;
-  transition: all .2s ease-in-out;
+  transition: all 0.2s ease-in-out;
   inset-inline-end: var(--sa11y-toggle-x-offset);
 
   &.left,
@@ -174,11 +176,14 @@ audio {
   visibility: hidden;
   background: var(--sa11y-panel-bg);
   border-radius: 4px;
-  box-shadow: 0 0 20px 4px rgb(154 161 177 / 15%),
+  box-shadow:
+    0 0 20px 4px rgb(154 161 177 / 15%),
     0 4px 80px -8px rgb(36 40 47 / 25%),
     0 4px 4px -2px rgb(91 94 105 / 15%);
   opacity: 0;
-  transition: transform .2s, opacity .2s background .2s;
+  transition:
+    transform 0.2s,
+    opacity 0.2s background 0.2s;
   transform: scale(0);
   transform-origin: 100% 100%;
   inset-inline-end: calc(var(--sa11y-toggle-x-offset) + var(--sa11y-panel-x-gap));
@@ -200,7 +205,9 @@ audio {
     height: auto;
     visibility: visible;
     opacity: 1;
-    transition: transform .2s, opacity .2s;
+    transition:
+      transform 0.2s,
+      opacity 0.2s;
     transform: scale(1);
     transform-origin: bottom right;
   }
@@ -372,7 +379,7 @@ hr {
   background: var(--sa11y-panel-bg-secondary);
   border: 1px solid var(--sa11y-button-outline);
   border-radius: 50px;
-  transition: all .1s ease-in-out;
+  transition: all 0.1s ease-in-out;
   margin-inline: 2px 8px;
 
   &.active {
@@ -883,7 +890,7 @@ hr {
   border-inline-end: 1px solid var(--sa11y-panel-bg-splitter);
   outline: 0;
   opacity: 1;
-  transition: background .2s;
+  transition: background 0.2s;
 
   &:hover,
   &.active {
@@ -1083,19 +1090,36 @@ label:not(#colour-filter-mode, #export-results-mode) {
   }
 
   &[data-colour="protanopia"] {
-    border-image: linear-gradient(94deg, rgb(120 103 25 / 100%) 11%, rgb(224 198 0 / 100%) 36%, rgb(224 198 0 / 100%) 47%, rgb(0 89 227 / 100%) 75%, rgb(0 66 170 / 100%) 91%);
+    border-image: linear-gradient(94deg,
+        rgb(120 103 25 / 100%) 11%,
+        rgb(224 198 0 / 100%) 36%,
+        rgb(224 198 0 / 100%) 47%,
+        rgb(0 89 227 / 100%) 75%,
+        rgb(0 66 170 / 100%) 91%);
   }
 
   &[data-colour="deuteranopia"] {
-    border-image: linear-gradient(270deg, rgb(86 127 219 / 100%) 0%, rgb(164 162 141 / 100%) 48%, rgb(195 173 20 / 100%) 69%, rgb(167 149 5 / 100%) 100%);
+    border-image: linear-gradient(270deg,
+        rgb(86 127 219 / 100%) 0%,
+        rgb(164 162 141 / 100%) 48%,
+        rgb(195 173 20 / 100%) 69%,
+        rgb(167 149 5 / 100%) 100%);
   }
 
   &[data-colour="tritanopia"] {
-    border-image: linear-gradient(270deg, rgb(177 80 111 / 100%) 0%, rgb(6 150 193 / 100%) 35%, rgb(243 169 186 / 100%) 70%, rgb(217 28 93 / 100%) 87%, rgb(254 1 92 / 100%) 100%);
+    border-image: linear-gradient(270deg,
+        rgb(177 80 111 / 100%) 0%,
+        rgb(6 150 193 / 100%) 35%,
+        rgb(243 169 186 / 100%) 70%,
+        rgb(217 28 93 / 100%) 87%,
+        rgb(254 1 92 / 100%) 100%);
   }
 
   &[data-colour="monochromacy"] {
-    border-image: linear-gradient(270deg, rgb(0 0 0 / 100%) 0%, rgb(167 167 167 / 100%) 50%, rgb(0 0 0 / 100%) 100%);
+    border-image: linear-gradient(270deg,
+        rgb(0 0 0 / 100%) 0%,
+        rgb(167 167 167 / 100%) 50%,
+        rgb(0 0 0 / 100%) 100%);
   }
 
   &[data-colour="protanopia"] .panel-icon {
@@ -1111,7 +1135,10 @@ label:not(#colour-filter-mode, #export-results-mode) {
   }
 
   &[data-colour="monochromacy"] .panel-icon {
-    background: linear-gradient(90deg, rgb(56 164 89 / 100%) 20%, #f00 50%, rgb(0 119 200 / 100%) 80%);
+    background: linear-gradient(90deg,
+        rgb(56 164 89 / 100%) 20%,
+        #f00 50%,
+        rgb(0 119 200 / 100%) 80%);
   }
 
   .panel-icon {
@@ -1148,7 +1175,7 @@ label:not(#colour-filter-mode, #export-results-mode) {
   position: relative;
   height: 30px;
   font-size: var(--sa11y-normal-text);
-  font-weight: 600;
+  font-weight: 400;
   color: var(--sa11y-setting-switch-bg-off);
   text-align: end;
   vertical-align: middle;

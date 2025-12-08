@@ -1,16 +1,16 @@
 // Empty anchors appended to the hidden heading's visible parent.
 export class HeadingAnchor extends HTMLElement {
-  connectedCallback() {
-    this.attachShadow({ mode: 'open' });
-  }
+	connectedCallback() {
+		this.attachShadow({ mode: 'open' });
+	}
 }
 
 // Visible heading annotations.
 export class HeadingLabel extends HTMLElement {
-  connectedCallback() {
-    const shadow = this.attachShadow({ mode: 'open' });
-    const style = document.createElement('style');
-    style.textContent = `
+	connectedCallback() {
+		const shadow = this.attachShadow({ mode: 'open' });
+		const style = document.createElement('style');
+		style.textContent = `
       span.heading-label {
         background-color: #777678;
         background-image: linear-gradient(to bottom right, #b629ce, #16aec2);
@@ -36,6 +36,6 @@ export class HeadingLabel extends HTMLElement {
           border: 2px solid transparent;
         }
       }`;
-    shadow.appendChild(style);
-  }
+		shadow.appendChild(style);
+	}
 }

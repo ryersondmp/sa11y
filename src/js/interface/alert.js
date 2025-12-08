@@ -4,15 +4,19 @@
  * @returns {void}
  */
 export function removeAlert() {
-  const Sa11yPanel = document.querySelector('sa11y-control-panel').shadowRoot;
-  const alert = Sa11yPanel.getElementById('panel-alert');
-  const alertText = Sa11yPanel.getElementById('panel-alert-text');
-  const alertPreview = Sa11yPanel.getElementById('panel-alert-preview');
+	const Sa11yPanel = document.querySelector('sa11y-control-panel').shadowRoot;
+	const alert = Sa11yPanel.getElementById('panel-alert');
+	const alertText = Sa11yPanel.getElementById('panel-alert-text');
+	const alertPreview = Sa11yPanel.getElementById('panel-alert-preview');
 
-  alert.classList.remove('active');
-  alertPreview.classList.remove('panel-alert-preview');
-  while (alertText.firstChild) alertText.removeChild(alertText.firstChild);
-  while (alertPreview.firstChild) alertPreview.removeChild(alertPreview.firstChild);
+	alert.classList.remove('active');
+	alertPreview.classList.remove('panel-alert-preview');
+	while (alertText.firstChild) {
+		alertText.removeChild(alertText.firstChild);
+	}
+	while (alertPreview.firstChild) {
+		alertPreview.removeChild(alertPreview.firstChild);
+	}
 }
 
 /**
@@ -23,48 +27,49 @@ export function removeAlert() {
  * @returns {void}
  */
 export function createAlert(alertMessage, errorPreview, extendedPreview) {
-  // Clear alert first before creating new one.
-  removeAlert();
+	// Clear alert first before creating new one.
+	removeAlert();
 
-  // Constants
-  const Sa11yPanel = document.querySelector('sa11y-control-panel').shadowRoot;
-  const alert = Sa11yPanel.getElementById('panel-alert');
-  const alertText = Sa11yPanel.getElementById('panel-alert-text');
-  const alertPreview = Sa11yPanel.getElementById('panel-alert-preview');
-  const alertClose = Sa11yPanel.getElementById('close-alert');
-  const skipButton = Sa11yPanel.getElementById('skip-button');
+	// Constants
+	const Sa11yPanel = document.querySelector('sa11y-control-panel').shadowRoot;
+	const alert = Sa11yPanel.getElementById('panel-alert');
+	const alertText = Sa11yPanel.getElementById('panel-alert-text');
+	const alertPreview = Sa11yPanel.getElementById('panel-alert-preview');
+	const alertClose = Sa11yPanel.getElementById('close-alert');
+	const skipButton = Sa11yPanel.getElementById('skip-button');
 
-  alert.classList.add('active');
-  alertText.innerHTML = alertMessage;
+	alert.classList.add('active');
+	alertText.innerHTML = alertMessage;
 
-  // If the issue's element is being previewed.
-  const elementPreview = (extendedPreview)
-    ? `<div class="element-preview">${extendedPreview}</div>` : '';
+	// If the issue's element is being previewed.
+	const elementPreview = extendedPreview
+		? `<div class="element-preview">${extendedPreview}</div>`
+		: '';
 
-  // Alert message or tooltip's message.
-  if (errorPreview) {
-    alertPreview.classList.add('panel-alert-preview');
-    alertPreview.innerHTML = `${elementPreview}<div class="preview-message">${errorPreview}</div>`;
-  }
+	// Alert message or tooltip's message.
+	if (errorPreview) {
+		alertPreview.classList.add('panel-alert-preview');
+		alertPreview.innerHTML = `${elementPreview}<div class="preview-message">${errorPreview}</div>`;
+	}
 
-  // A little time before setting focus on the close button.
-  setTimeout(() => alertClose.focus(), 300);
+	// A little time before setting focus on the close button.
+	setTimeout(() => alertClose.focus(), 300);
 
-  // Closing alert sets focus back to Skip to Issue toggle.
-  function closeAlert() {
-    removeAlert();
-    const focusTarget = skipButton.hasAttribute('disabled')
-      ? Sa11yPanel.getElementById('toggle')
-      : skipButton;
-    focusTarget.focus();
-  }
-  alertClose.addEventListener('click', closeAlert);
+	// Closing alert sets focus back to Skip to Issue toggle.
+	function closeAlert() {
+		removeAlert();
+		const focusTarget = skipButton.hasAttribute('disabled')
+			? Sa11yPanel.getElementById('toggle')
+			: skipButton;
+		focusTarget.focus();
+	}
+	alertClose.addEventListener('click', closeAlert);
 
-  // Escape key to close alert.
-  alert.onkeydown = (e) => {
-    const evt = e || window.event;
-    if (evt.key === 'Escape' && alert.classList.contains('active')) {
-      closeAlert();
-    }
-  };
+	// Escape key to close alert.
+	alert.onkeydown = (e) => {
+		const evt = e || window.event;
+		if (evt.key === 'Escape' && alert.classList.contains('active')) {
+			closeAlert();
+		}
+	};
 }
