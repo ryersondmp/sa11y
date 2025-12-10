@@ -163,6 +163,27 @@ kbd,
   }
 }
 
+#fg-color-wrapper.unknown,
+#bg-color-wrapper.unknown {
+  position: relative;
+  display: inline-block;
+
+  &::after {
+    position: absolute;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin: -46px 7px;
+    font-size: 22px;
+    color: #fff;
+    pointer-events: none;
+    content: "?";
+  }
+}
+
 input[type="color" i] {
   padding: 2px;
   background: var(--sa11y-panel-bg-secondary);
@@ -190,21 +211,6 @@ input[type="color" i] {
   &.unknown {
     box-shadow: 0 0 0 3px var(--sa11y-yellow-text);
   }
-
-  &.unknown::after {
-    position: absolute;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    margin: -40px -3px;
-    font-size: 22px;
-    color: #fff;
-    pointer-events: none;
-    content: "?";
-  }
 }
 
 /* ***************************************** */
@@ -231,19 +237,19 @@ input[type="color" i] {
   &:focus {
     background-color: var(--sa11y-shortcut-hover);
   }
+}
 
-  &::after {
-    position: absolute;
-    inset: -7px;
-    content: "";
-    background: var(--sa11y-setting-switch-bg-off);
-    mask: var(--sa11y-close-btn-svg) center no-repeat;
-  }
+.close-btn::after {
+  position: absolute;
+  inset: -7px;
+  content: "";
+  background: var(--sa11y-setting-switch-bg-off);
+  mask: var(--sa11y-close-btn-svg) center no-repeat;
+}
 
-  @media screen and (forced-colors: active) {
-    &::after {
-      filter: invert(1);
-    }
+@media screen and (forced-colors: active) {
+  .close-btn::after {
+    filter: invert(1);
   }
 }
 

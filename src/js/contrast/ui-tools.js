@@ -50,10 +50,14 @@ export function generateContrastTools(contrastDetails) {
       <div id="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};` : ''}${hasFontWeight + hasFontSize + textDecoration}">${sanitizedText}</div>
       <div id="color-pickers">
         <label for="fg-text">${Lang._('FG')} ${unknownFGText}
-          <input type="color" id="fg-input" value="${foregroundHex}" ${unknownFG}/>
+          <div id="fg-color-wrapper" ${unknownFG}>
+            <input type="color" id="fg-input" value="${foregroundHex}" ${unknownFG}/>
+          </div>
         </label>
         <label for="bg">${Lang._('BG')} ${unknownBGText}
-          <input type="color" id="bg-input" value="${backgroundHex}" ${unknownBG}/>
+          <div id="bg-color-wrapper" ${unknownBG}>
+            <input type="color" id="bg-input" value="${backgroundHex}" ${unknownBG}/>
+          </div>
         </label>
       </div>`;
   return contrastTools;
