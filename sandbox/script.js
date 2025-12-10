@@ -23,6 +23,10 @@ const sa11y = new Sa11y({
   showAltAboveImage: '.carousel',
   URLAsLinkTextWarning: true,
   exportResultsPlugin: true,
+  altPlaceholder: [
+    'This image has an empty alt attribute; its file name is',
+    'Esta imagen tiene un atributo alt vacío; its file name is'
+  ],
 
   // showHinPageOutline: true,
   readabilityPlugin: true,

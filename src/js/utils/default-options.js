@@ -77,6 +77,7 @@ const defaultOptions = {
   ignoreTextInElements: false, // e.g. '.inner-node-hidden-in-CSS'
 
   // Shared properties for some checks
+  altPlaceholder: [],
   susAltStopWords: '',
   linkStopWords: '',
   extraPlaceholderStopWords: '',

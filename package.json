@@ -36,7 +36,6 @@
   "devDependencies": {
     "@biomejs/biome": "^2.3.8",
     "@playwright/test": "^1.40.1",
-    "@types/node": "^20.10.8",
     "browserslist": "^4.28.1",
     "lightningcss": "^1.30.2",
     "rimraf": "^3.0.2",
