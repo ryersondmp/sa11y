@@ -76,6 +76,7 @@
       customChecks: 'listen',
       externalDeveloperChecks: true, // Suppress Sa11y's internal developer checks.
       autoDetectShadowComponents: true,
+      exportResultsPlugin: true,
       checkRoot: "body",
       readabilityRoot: "main",
       containerIgnore: 'footer',
@@ -119,7 +120,7 @@
               element: node.element.tagName === 'HTML'
                 ? undefined : node.element,
               type: 'error',
-              content: `${violation.description}. <pre><code>${htmlCode}</code></pre> ${formatted} <hr> Learn more <a href="${violation.helpUrl}" target="_blank">about this axe-core issue.</a>`,
+              content: `${violation.description}. <pre><code>${htmlCode}</code></pre> ${formatted} <hr aria-hidden="true"> Learn more <a href="${violation.helpUrl}" target="_blank">about this axe-core issue.</a>`,
               inline: true,
               position: 'beforebegin',
               external: true, // IMPORTANT: Pass in 'external: true'

@@ -231,11 +231,6 @@ ul {
   padding-left: 2rem;
 }
 
-li li:has(pre, img, iframe, video, audio) {
-  margin-top: 1rem;
-  list-style: none;
-}
-
 ol li:not(li li) {
   margin-bottom: 4rem;
 }
@@ -316,4 +311,18 @@ audio {
   margin-bottom: -3.5px;
   background: #fff;
   mask: var(--sa11y-link-icon-svg) center no-repeat;
+}
+
+li pre,
+li li pre,
+li li img,
+li li iframe,
+li li video,
+li li audio {
+  margin-top: 1rem;
+}
+
+li li {
+  margin-top: 1rem;
+  list-style: none;
 }

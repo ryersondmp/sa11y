@@ -912,14 +912,14 @@ label:not(#colour-filter-mode, #export-results-mode) {
 
 /* Insert space between the panel controls and main toggle if Image Outline is enabled. */
 #panel.right {
-  #panel-controls:has(#images-toggle)::after {
+  #panel-controls[data-image-panel]::after {
     width: 80px;
     content: "";
   }
 }
 
 #panel.left {
-  #panel-controls:has(#images-toggle)::before {
+  #panel-controls[data-image-panel]::before {
     width: 50px;
     content: "";
   }

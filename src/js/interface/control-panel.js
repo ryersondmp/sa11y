@@ -222,8 +222,9 @@ export default class ControlPanel extends HTMLElement {
     /* OUTLINE & SETTING TAB TOGGLES. */
     const imageToggleButton = `<button type="button" role="tab" aria-expanded="false" id="images-toggle" aria-controls="images-panel">${Lang._('IMAGES')}</button>`;
 
+    const imagePanelEnabled = Constants.Global.showImageOutline ? 'data-image-panel' : '';
     const tabToggles = `
-      <div id="panel-controls" role="tablist" aria-orientation="horizontal">
+      <div id="panel-controls" role="tablist" aria-orientation="horizontal" ${imagePanelEnabled}>
         <button type="button" role="tab" aria-expanded="false" id="outline-toggle" aria-controls="outline-panel">${Lang._('OUTLINE')}</button>
         ${Constants.Global.showImageOutline ? imageToggleButton : ''}
         <button type="button" role="tab" aria-expanded="false" id="settings-toggle" aria-controls="settings-panel">${Lang._('SETTINGS')}</button>
