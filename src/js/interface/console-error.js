@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/correctness/noUndeclaredVariables: Sa11yVersion swapped on compilation. */
 import styles from '../../css/console-errors.css?inline';
 import sharedStyles from '../../css/shared.css?inline';
 import Constants from '../utils/constants';
@@ -35,7 +36,7 @@ ${this.error.stack}
 
 ## Details
 - **URL:** ${url}
-- **Version:** ${version}
+- **Version:** ${Sa11yVersion}
 
 ## Comments
 `;

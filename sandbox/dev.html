@@ -88,6 +88,14 @@
   </header>
   <main>
 
+    <h2>False positive link that is single char but has title attr</h2>
+    <style>
+      .toc-anchor:before {
+        content: "#"
+      }
+    </style>
+    <a class="toc-anchor" title="Permalink to this headline" href="#s-flexibility-meet-simplicity"></a>
+
     <h2>String and selector exclusions extended to visibleTextInAccName check</h2>
     <p><a href="https://www.youtube.com/watch?v=DLzxrzFCyOs">Blah blah <span class="link-purpose"
           aria-label="download">^</span></a></p>

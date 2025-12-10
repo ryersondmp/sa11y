@@ -465,7 +465,7 @@ export default function checkLinkText(results, option) {
             developer: option.checks.LINK_SYMBOLS.developer || false,
           });
         }
-      } else if (isSingleSpecialChar) {
+      } else if (isSingleSpecialChar && !titleAttr) {
         // Link is ONLY a period, comma, or special character.
         if (option.checks.LINK_EMPTY) {
           results.push({

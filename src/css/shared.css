@@ -38,7 +38,7 @@ code {
   font-weight: 600;
 }
 
-pre:has(code) {
+pre code {
   display: block;
   overflow: auto;
   white-space: pre-wrap;

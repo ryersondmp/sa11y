@@ -48,5 +48,5 @@ const copy = async (src, dest) => {
     const webV = document.getElementById("v");
     if(webV) webV.innerHTML = version;
   `);
-  console.log(`✅ v${pkg.version} /dist/ files have been synced to /docs/`);
+  console.log(`✅ Version ${pkg.version} /dist/ files have been synced to /docs/`);
 })();

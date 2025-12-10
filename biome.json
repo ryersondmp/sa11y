@@ -39,7 +39,8 @@
         "noImportantStyles": "off"
       },
       "correctness": {
-        "noUnusedVariables": "error"
+        "noUnusedVariables": "error",
+        "noUndeclaredVariables": "error"
       },
       "suspicious": {
         "noConsole": {
