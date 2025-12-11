@@ -6,6 +6,10 @@ import { findVisibleParent, supportsAnchorPositioning } from '../utils/utils';
 
 export class Annotations extends HTMLElement {
   connectedCallback() {
+    if (this.shadowRoot) {
+      return;
+    }
+
     const shadow = this.attachShadow({ mode: 'open' });
 
     // Styles
