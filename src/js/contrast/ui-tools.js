@@ -114,20 +114,24 @@ export function initializeContrastTools(container, contrastDetails) {
     };
 
     // Update preview colors and contrast on input change.
-    const updatePreview = () => {
+    const updatePreview = (e) => {
       const fgColor = fgInput.value;
       const bgColor = bgInput.value;
-      const currentFontSize = getPreviewFontSize(); // 🔑 use live font size
-
-      // Remove question mark from inputs.
-      [fgInput, bgInput].forEach((input) => {
-        input.classList.remove('unknown');
-      });
+      const currentFontSize = getPreviewFontSize();
 
       // Adjust colours in preview area.
       contrastPreview.style.color = fgColor;
       contrastPreview.style.backgroundColor = bgColor;
       contrastPreview.style.backgroundImage = 'none';
+
+      // Remove question mark from inputs.
+      e.target.classList.remove('unknown');
+      e.target.parentElement.classList.remove('unknown');
+
+      // Do not check contrast if either fg or bg value does not exist.
+      if (fgInput.classList.contains('unknown') || bgInput.classList.contains('unknown')) {
+        return;
+      }
 
       // Get contrast ratio.
       const contrastValue = Contrast.calculateContrast(

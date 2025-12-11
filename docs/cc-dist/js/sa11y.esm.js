@@ -5690,16 +5690,18 @@ function initializeContrastTools(container, contrastDetails) {
       }
       return initialFontSize;
     };
-    const updatePreview = () => {
+    const updatePreview = (e) => {
       const fgColor = fgInput.value;
       const bgColor = bgInput.value;
       const currentFontSize = getPreviewFontSize();
-      [fgInput, bgInput].forEach((input) => {
-        input.classList.remove("unknown");
-      });
       contrastPreview.style.color = fgColor;
       contrastPreview.style.backgroundColor = bgColor;
       contrastPreview.style.backgroundImage = "none";
+      e.target.classList.remove("unknown");
+      e.target.parentElement.classList.remove("unknown");
+      if (fgInput.classList.contains("unknown") || bgInput.classList.contains("unknown")) {
+        return;
+      }
       const contrastValue = calculateContrast(
         convertToRGBA(fgColor),
         convertToRGBA(bgColor),
