@@ -5697,13 +5697,15 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
       const updatePreview = (e) => {
         const fgColor = fgInput.value;
         const bgColor = bgInput.value;
+        const unknownFG = fgInput.classList.contains("unknown");
+        const unknownBG = bgInput.classList.contains("unknown");
         const currentFontSize = getPreviewFontSize();
-        contrastPreview.style.color = fgColor;
-        contrastPreview.style.backgroundColor = bgColor;
-        contrastPreview.style.backgroundImage = "none";
+        contrastPreview.style.color = unknownFG ? "" : fgColor;
+        contrastPreview.style.backgroundColor = unknownBG ? "" : bgColor;
+        contrastPreview.style.backgroundImage = unknownBG ? "" : "none";
         e.target.classList.remove("unknown");
         e.target.parentElement.classList.remove("unknown");
-        if (fgInput.classList.contains("unknown") || bgInput.classList.contains("unknown")) {
+        if (unknownFG || unknownBG) {
           return;
         }
         const contrastValue = calculateContrast(
