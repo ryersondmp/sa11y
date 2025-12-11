@@ -25,7 +25,7 @@
     "docs": "node build/docs.js",
     "build:css": "node build/build-css.js",
     "build:js": "node build/build.js",
-    "build": "rimraf dist && npm run build:css && npm run build:js",
+    "build": "npm run lint:fix && rimraf dist && npm run build:css && npm run build:js",
     "postbuild": "npm run docs",
     "lint": "biome check src",
     "lint:fix": "biome check --write src",
