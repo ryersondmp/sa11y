@@ -385,16 +385,6 @@ button:focus {
   background-color: #cacaca;
 }
 
-[tabindex] {
-  padding: 5px;
-  border: 2px #fa8072 solid;
-}
-
-[tabindex]:focus,
-[tabindex]:hover {
-  outline: 5px #fa8072 dashed;
-}
-
 .justify {
   /* stylelint-disable-next-line declaration-property-value-allowed-list */
   text-align: justify;

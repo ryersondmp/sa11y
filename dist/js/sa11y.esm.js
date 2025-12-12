@@ -5677,12 +5677,12 @@ function initializeContrastTools(container, contrastDetails) {
   const getPreviewFontSize = () => {
     if (contrastPreview.style.fontSize) {
       const match = contrastPreview.style.fontSize.match(/([\d.]+)/);
-      if (match) parseFloat(match[1]);
+      if (match) return parseFloat(match[1]);
     }
     const computed = getComputedStyle(contrastPreview).fontSize;
     if (computed) {
       const match = computed.match(/([\d.]+)/);
-      if (match) parseFloat(match[1]);
+      if (match) return parseFloat(match[1]);
     }
     return initialFontSize;
   };

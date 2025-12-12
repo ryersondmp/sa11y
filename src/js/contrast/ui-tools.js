@@ -98,14 +98,14 @@ export function initializeContrastTools(container, contrastDetails) {
     // Prefer inline style if present (e.g., from #suggest-size click).
     if (contrastPreview.style.fontSize) {
       const match = contrastPreview.style.fontSize.match(/([\d.]+)/);
-      if (match) parseFloat(match[1]);
+      if (match) return parseFloat(match[1]);
     }
 
     // Fallback to computed style.
     const computed = getComputedStyle(contrastPreview).fontSize;
     if (computed) {
       const match = computed.match(/([\d.]+)/);
-      if (match) parseFloat(match[1]);
+      if (match) return parseFloat(match[1]);
     }
 
     // Final fallback to original size from contrastDetails.

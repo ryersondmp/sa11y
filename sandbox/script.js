@@ -31,6 +31,7 @@ const sa11y = new Sa11y({
   // showHinPageOutline: true,
   readabilityPlugin: true,
   contrastPlugin: true,
+  // contrastAlgorithm: 'APCA',
   formLabelsPlugin: true,
   colourFilterPlugin: true,
   linksAdvancedPlugin: true,
