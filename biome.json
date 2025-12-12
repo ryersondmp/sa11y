@@ -29,7 +29,7 @@
     "rules": {
       "recommended": true,
       "style": {
-        "useBlockStatements": "error",
+        "useBlockStatements": "off",
         "useTemplate": "error",
         "useConst": "error",
         "useSelfClosingElements": "error"

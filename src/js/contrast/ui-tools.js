@@ -24,10 +24,12 @@ export function generateContrastTools(contrastDetails) {
   // If colour or background colour is unknown; visually indicate so.
   const unknownFG = color ? '' : 'class="unknown"';
   const unknownBG = background && background.type !== 'image' ? '' : 'class="unknown"';
-  const unknownFGText = color ? '' : `<span class="visually-hidden">(${Lang._('UNKNOWN')})</span>`;
+  const unknownFGText = color
+    ? ''
+    : `<span id="fg-input-unknown" class="visually-hidden">(${Lang._('UNKNOWN')})</span>`;
   const unknownBGText = background
     ? ''
-    : `<span class="visually-hidden">(${Lang._('UNKNOWN')})</span>`;
+    : `<span id="bg-input-unknown" class="visually-hidden">(${Lang._('UNKNOWN')})</span>`;
 
   // Ratio to be displayed.
   let displayedRatio;
@@ -71,174 +73,164 @@ export function generateContrastTools(contrastDetails) {
  */
 export function initializeContrastTools(container, contrastDetails) {
   const contrastTools = container?.querySelector('#contrast-tools');
-  if (contrastTools) {
-    const { fontSize: initialFontSize, fontWeight, type, isLargeText } = contrastDetails;
+  if (!contrastTools) return;
 
-    // Cache selectors
-    const contrast = container.querySelector('#contrast');
-    const contrastPreview = container.querySelector('#contrast-preview');
-    const fgInput = container.querySelector('#fg-input');
-    const bgInput = container.querySelector('#bg-input');
-    const ratio = container.querySelector('#value');
-    const good = container.querySelector('#good');
+  const { fontSize: initialFontSize, fontWeight, type, isLargeText } = contrastDetails;
 
-    // Helper to update badge classes.
-    const toggleBadges = (elements, condition) => {
-      elements.forEach(($el) => {
-        $el.classList.toggle('good-contrast', condition);
-        $el.classList.toggle('error-badge', !condition);
-      });
-    };
+  // Selectors.
+  const contrast = container.querySelector('#contrast');
+  const contrastPreview = container.querySelector('#contrast-preview');
+  const fgInput = container.querySelector('#fg-input');
+  const bgInput = container.querySelector('#bg-input');
+  const ratio = container.querySelector('#value');
+  const good = container.querySelector('#good');
 
-    // Helper to get the current preview font size in px.
-    const getPreviewFontSize = () => {
-      // Prefer inline style if present (e.g., from #suggest-size click).
-      if (contrastPreview.style.fontSize) {
-        const match = contrastPreview.style.fontSize.match(/([\d.]+)/);
-        if (match) {
-          return parseFloat(match[1]);
-        }
-      }
+  // Helper to update badge classes.
+  const toggleBadges = (elements, condition) => {
+    elements.forEach(($el) => {
+      $el.classList.toggle('good-contrast', condition);
+      $el.classList.toggle('error-badge', !condition);
+    });
+  };
 
-      // Fallback to computed style.
-      const computed = getComputedStyle(contrastPreview).fontSize;
-      if (computed) {
-        const match = computed.match(/([\d.]+)/);
-        if (match) {
-          return parseFloat(match[1]);
-        }
-      }
+  // Helper to get the current preview font size in px.
+  const getPreviewFontSize = () => {
+    // Prefer inline style if present (e.g., from #suggest-size click).
+    if (contrastPreview.style.fontSize) {
+      const match = contrastPreview.style.fontSize.match(/([\d.]+)/);
+      if (match) parseFloat(match[1]);
+    }
 
-      // Final fallback to original size from contrastDetails.
-      return initialFontSize;
-    };
+    // Fallback to computed style.
+    const computed = getComputedStyle(contrastPreview).fontSize;
+    if (computed) {
+      const match = computed.match(/([\d.]+)/);
+      if (match) parseFloat(match[1]);
+    }
 
-    // Update preview colors and contrast on input change.
-    const updatePreview = (e) => {
-      const fgColor = fgInput.value;
-      const bgColor = bgInput.value;
+    // Final fallback to original size from contrastDetails.
+    return initialFontSize;
+  };
+
+  // Update preview colors and contrast on input change.
+  const updatePreview = (e) => {
+    const fgColor = fgInput.value;
+    const bgColor = bgInput.value;
+    const currentFontSize = getPreviewFontSize();
+
+    // Adjust colours in preview area.
+    setTimeout(() => {
       const unknownFG = fgInput.classList.contains('unknown');
       const unknownBG = bgInput.classList.contains('unknown');
-      const currentFontSize = getPreviewFontSize();
-
-      // Adjust colours in preview area.
       contrastPreview.style.color = unknownFG ? '' : fgColor;
       contrastPreview.style.backgroundColor = unknownBG ? '' : bgColor;
       contrastPreview.style.backgroundImage = unknownBG ? '' : 'none';
+    }, 0);
 
-      // Remove question mark from inputs.
+    // Remove question mark from inputs.
+    if (e?.target) {
       e.target.classList.remove('unknown');
       e.target.parentElement.classList.remove('unknown');
+      container.querySelector(`#${e.target.id}-unknown`)?.remove();
+    }
 
-      // Do not check contrast if either fg or bg value does not exist.
-      if (unknownFG || unknownBG) {
-        return;
-      }
+    // Do not calculcate contrast or update badges if either FG or BG is unknown.
+    if (fgInput.classList.contains('unknown') || bgInput.classList.contains('unknown')) return;
 
-      // Get contrast ratio.
-      const contrastValue = Contrast.calculateContrast(
-        Contrast.convertToRGBA(fgColor),
-        Contrast.convertToRGBA(bgColor),
-        Constants.Global.contrastAlgorithm,
-      );
-      const elementsToToggle = [ratio, contrast];
+    // Get contrast ratio.
+    const algorithm = Constants.Global.contrastAlgorithm;
+    const contrastValue = Contrast.calculateContrast(
+      Contrast.convertToRGBA(fgColor),
+      Contrast.convertToRGBA(bgColor),
+      Constants.Global.contrastAlgorithm,
+    );
+    const elementsToToggle = [ratio, contrast];
 
-      // APCA
-      if (Constants.Global.contrastAlgorithm === 'APCA') {
-        const value = contrastValue.ratio;
-        ratio.textContent = Contrast.displayAPCAValue(value);
-        const fontArray = fontLookupAPCA(value).slice(1);
-        const nonTextPasses = value >= 45 && fontArray[0] >= 0 && fontArray[0] <= 777;
-        let passes;
+    // APCA
+    if (algorithm === 'APCA') {
+      const value = contrastValue.ratio;
+      ratio.textContent = Contrast.displayAPCAValue(value);
+      const fontArray = fontLookupAPCA(value).slice(1);
+      const nonTextPasses = value >= 45 && fontArray[0] >= 0 && fontArray[0] <= 777;
+      let passes;
 
-        switch (type) {
-          case 'svg-error':
-          case 'svg-warning': {
-            good.hidden = !nonTextPasses;
-            passes = nonTextPasses;
-            toggleBadges(elementsToToggle, passes);
-            break;
-          }
-          default: {
-            const minFontSize = fontArray[Math.floor(fontWeight / 100) - 1];
-            passes = currentFontSize >= minFontSize;
-            toggleBadges(elementsToToggle, passes);
-            good.hidden = !passes;
-            break;
-          }
+      switch (type) {
+        case 'svg-error':
+        case 'svg-warning': {
+          good.hidden = !nonTextPasses;
+          passes = nonTextPasses;
+          toggleBadges(elementsToToggle, passes);
+          break;
+        }
+        default: {
+          const minFontSize = fontArray[Math.floor(fontWeight / 100) - 1];
+          passes = currentFontSize >= minFontSize;
+          toggleBadges(elementsToToggle, passes);
+          good.hidden = !passes;
+          break;
         }
       }
+    } else {
+      // WCAG
+      const value = contrastValue.ratio;
+      ratio.textContent = Contrast.displayWCAGRatio(value);
 
-      // WCAG 2.0
-      if (
-        Constants.Global.contrastAlgorithm === 'AA' ||
-        Constants.Global.contrastAlgorithm === 'AAA'
-      ) {
-        const value = contrastValue.ratio;
-        ratio.textContent = Contrast.displayWCAGRatio(value);
+      const useAAA = algorithm === 'AAA';
+      const nonTextThreshold = 3;
+      const normalTextThreshold = useAAA ? 7 : 4.5;
+      const largeTextThreshold = useAAA ? 4.5 : 3;
+      const passesNonText = value >= nonTextThreshold;
 
-        const useAAA = Constants.Global.contrastAlgorithm === 'AAA';
-        const nonTextThreshold = 3;
-        const normalTextThreshold = useAAA ? 7 : 4.5;
-        const largeTextThreshold = useAAA ? 4.5 : 3;
+      // WCAG: large = 18pt (~24px) normal, or 14pt (~18.66px) bold+.
+      const dynamicIsLargeText =
+        currentFontSize >= 24 || (currentFontSize >= 18.66 && fontWeight >= 700) || isLargeText;
+      const passesNormalText = value >= normalTextThreshold;
+      const passesLargeText = value >= largeTextThreshold;
 
-        const passesNonText = value >= nonTextThreshold;
-
-        // WCAG: large = 18pt (~24px) normal, or 14pt (~18.66px) bold+.
-        const dynamicIsLargeText =
-          currentFontSize >= 24 || (currentFontSize >= 18.66 && fontWeight >= 700) || isLargeText; // keep original flag as a fallback
-
-        const passesNormalText = value >= normalTextThreshold;
-        const passesLargeText = value >= largeTextThreshold;
-
-        switch (type) {
-          case 'svg-error':
-          case 'svg-text':
-          case 'svg-warning': {
-            good.hidden = !passesNonText;
-            toggleBadges(elementsToToggle, passesNonText);
-            break;
+      switch (type) {
+        case 'svg-error':
+        case 'svg-text':
+        case 'svg-warning': {
+          good.hidden = !passesNonText;
+          toggleBadges(elementsToToggle, passesNonText);
+          break;
+        }
+        default: {
+          if (dynamicIsLargeText) {
+            toggleBadges([ratio, contrast], passesLargeText);
+            good.hidden = !passesLargeText;
+          } else {
+            toggleBadges([ratio, contrast], passesNormalText);
+            good.hidden = !passesNormalText;
           }
-          default: {
-            if (dynamicIsLargeText) {
-              toggleBadges([ratio, contrast], passesLargeText);
-              good.hidden = !passesLargeText;
-            } else {
-              toggleBadges([ratio, contrast], passesNormalText);
-              good.hidden = !passesNormalText;
-            }
-            break;
-          }
+          break;
         }
       }
+    }
+  };
+
+  // Event listeners for both colour inputs.
+  fgInput.addEventListener('input', updatePreview);
+  bgInput.addEventListener('input', updatePreview);
+
+  // Clicking on suggested colour or font size updates preview and saves value to clipboard.
+  setTimeout(() => {
+    const bindSuggest = (id, action) => {
+      const el = container.querySelector(id);
+      if (!el) return;
+      el.addEventListener('click', () => {
+        action(el.textContent);
+        updatePreview();
+        navigator.clipboard.writeText(el.textContent).catch(() => {});
+      });
     };
-
-    // Event listeners for both colour inputs.
-    fgInput.addEventListener('input', updatePreview);
-    bgInput.addEventListener('input', updatePreview);
-
-    // Clicking on suggested colour or font size updates preview and saves value to clipboard.
-    setTimeout(() => {
-      const handleSuggest = (selector, apply) => {
-        const $el = container.querySelector(selector);
-        if (!$el) {
-          return;
-        }
-        $el.addEventListener('click', () => {
-          const val = $el.textContent;
-          apply(val);
-          updatePreview();
-          navigator.clipboard.writeText(val).catch(() => {});
-        });
-      };
-      handleSuggest('#suggest', (hex) => {
-        fgInput.value = hex;
-      });
-      handleSuggest('#suggest-size', (size) => {
-        contrastPreview.style.fontSize = size;
-      });
-    }, 0);
-  }
+    bindSuggest('#suggest', (val) => {
+      fgInput.value = val;
+    });
+    bindSuggest('#suggest-size', (val) => {
+      contrastPreview.style.fontSize = val;
+    });
+  }, 0);
 }
 
 /**

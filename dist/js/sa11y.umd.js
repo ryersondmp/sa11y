@@ -5632,8 +5632,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
     const textDecoration = textUnderline ? `text-decoration:${textUnderline};` : "";
     const unknownFG = color ? "" : 'class="unknown"';
     const unknownBG = background && background.type !== "image" ? "" : 'class="unknown"';
-    const unknownFGText = color ? "" : `<span class="visually-hidden">(${Lang._("UNKNOWN")})</span>`;
-    const unknownBGText = background ? "" : `<span class="visually-hidden">(${Lang._("UNKNOWN")})</span>`;
+    const unknownFGText = color ? "" : `<span id="fg-input-unknown" class="visually-hidden">(${Lang._("UNKNOWN")})</span>`;
+    const unknownBGText = background ? "" : `<span id="bg-input-unknown" class="visually-hidden">(${Lang._("UNKNOWN")})</span>`;
     let displayedRatio;
     if (Constants.Global.contrastAlgorithm === "APCA") {
       displayedRatio = Math.abs(ratio) === 0 ? 0 : Math.abs(ratio) || Lang._("UNKNOWN");
@@ -5664,135 +5664,130 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
   }
   function initializeContrastTools(container, contrastDetails) {
     const contrastTools = container?.querySelector("#contrast-tools");
-    if (contrastTools) {
-      const { fontSize: initialFontSize, fontWeight, type, isLargeText } = contrastDetails;
-      const contrast = container.querySelector("#contrast");
-      const contrastPreview = container.querySelector("#contrast-preview");
-      const fgInput = container.querySelector("#fg-input");
-      const bgInput = container.querySelector("#bg-input");
-      const ratio = container.querySelector("#value");
-      const good = container.querySelector("#good");
-      const toggleBadges = (elements, condition) => {
-        elements.forEach(($el) => {
-          $el.classList.toggle("good-contrast", condition);
-          $el.classList.toggle("error-badge", !condition);
-        });
-      };
-      const getPreviewFontSize = () => {
-        if (contrastPreview.style.fontSize) {
-          const match = contrastPreview.style.fontSize.match(/([\d.]+)/);
-          if (match) {
-            return parseFloat(match[1]);
-          }
-        }
-        const computed = getComputedStyle(contrastPreview).fontSize;
-        if (computed) {
-          const match = computed.match(/([\d.]+)/);
-          if (match) {
-            return parseFloat(match[1]);
-          }
-        }
-        return initialFontSize;
-      };
-      const updatePreview = (e) => {
-        const fgColor = fgInput.value;
-        const bgColor = bgInput.value;
+    if (!contrastTools) return;
+    const { fontSize: initialFontSize, fontWeight, type, isLargeText } = contrastDetails;
+    const contrast = container.querySelector("#contrast");
+    const contrastPreview = container.querySelector("#contrast-preview");
+    const fgInput = container.querySelector("#fg-input");
+    const bgInput = container.querySelector("#bg-input");
+    const ratio = container.querySelector("#value");
+    const good = container.querySelector("#good");
+    const toggleBadges = (elements, condition) => {
+      elements.forEach(($el) => {
+        $el.classList.toggle("good-contrast", condition);
+        $el.classList.toggle("error-badge", !condition);
+      });
+    };
+    const getPreviewFontSize = () => {
+      if (contrastPreview.style.fontSize) {
+        const match = contrastPreview.style.fontSize.match(/([\d.]+)/);
+        if (match) parseFloat(match[1]);
+      }
+      const computed = getComputedStyle(contrastPreview).fontSize;
+      if (computed) {
+        const match = computed.match(/([\d.]+)/);
+        if (match) parseFloat(match[1]);
+      }
+      return initialFontSize;
+    };
+    const updatePreview = (e) => {
+      const fgColor = fgInput.value;
+      const bgColor = bgInput.value;
+      const currentFontSize = getPreviewFontSize();
+      setTimeout(() => {
         const unknownFG = fgInput.classList.contains("unknown");
         const unknownBG = bgInput.classList.contains("unknown");
-        const currentFontSize = getPreviewFontSize();
         contrastPreview.style.color = unknownFG ? "" : fgColor;
         contrastPreview.style.backgroundColor = unknownBG ? "" : bgColor;
         contrastPreview.style.backgroundImage = unknownBG ? "" : "none";
+      }, 0);
+      if (e?.target) {
         e.target.classList.remove("unknown");
         e.target.parentElement.classList.remove("unknown");
-        if (unknownFG || unknownBG) {
-          return;
-        }
-        const contrastValue = calculateContrast(
-          convertToRGBA(fgColor),
-          convertToRGBA(bgColor),
-          Constants.Global.contrastAlgorithm
-        );
-        const elementsToToggle = [ratio, contrast];
-        if (Constants.Global.contrastAlgorithm === "APCA") {
-          const value = contrastValue.ratio;
-          ratio.textContent = displayAPCAValue(value);
-          const fontArray = fontLookupAPCA(value).slice(1);
-          const nonTextPasses = value >= 45 && fontArray[0] >= 0 && fontArray[0] <= 777;
-          let passes;
-          switch (type) {
-            case "svg-error":
-            case "svg-warning": {
-              good.hidden = !nonTextPasses;
-              passes = nonTextPasses;
-              toggleBadges(elementsToToggle, passes);
-              break;
-            }
-            default: {
-              const minFontSize = fontArray[Math.floor(fontWeight / 100) - 1];
-              passes = currentFontSize >= minFontSize;
-              toggleBadges(elementsToToggle, passes);
-              good.hidden = !passes;
-              break;
-            }
+        container.querySelector(`#${e.target.id}-unknown`)?.remove();
+      }
+      if (fgInput.classList.contains("unknown") || bgInput.classList.contains("unknown")) return;
+      const algorithm = Constants.Global.contrastAlgorithm;
+      const contrastValue = calculateContrast(
+        convertToRGBA(fgColor),
+        convertToRGBA(bgColor),
+        Constants.Global.contrastAlgorithm
+      );
+      const elementsToToggle = [ratio, contrast];
+      if (algorithm === "APCA") {
+        const value = contrastValue.ratio;
+        ratio.textContent = displayAPCAValue(value);
+        const fontArray = fontLookupAPCA(value).slice(1);
+        const nonTextPasses = value >= 45 && fontArray[0] >= 0 && fontArray[0] <= 777;
+        let passes;
+        switch (type) {
+          case "svg-error":
+          case "svg-warning": {
+            good.hidden = !nonTextPasses;
+            passes = nonTextPasses;
+            toggleBadges(elementsToToggle, passes);
+            break;
+          }
+          default: {
+            const minFontSize = fontArray[Math.floor(fontWeight / 100) - 1];
+            passes = currentFontSize >= minFontSize;
+            toggleBadges(elementsToToggle, passes);
+            good.hidden = !passes;
+            break;
           }
         }
-        if (Constants.Global.contrastAlgorithm === "AA" || Constants.Global.contrastAlgorithm === "AAA") {
-          const value = contrastValue.ratio;
-          ratio.textContent = displayWCAGRatio(value);
-          const useAAA = Constants.Global.contrastAlgorithm === "AAA";
-          const nonTextThreshold = 3;
-          const normalTextThreshold = useAAA ? 7 : 4.5;
-          const largeTextThreshold = useAAA ? 4.5 : 3;
-          const passesNonText = value >= nonTextThreshold;
-          const dynamicIsLargeText = currentFontSize >= 24 || currentFontSize >= 18.66 && fontWeight >= 700 || isLargeText;
-          const passesNormalText = value >= normalTextThreshold;
-          const passesLargeText = value >= largeTextThreshold;
-          switch (type) {
-            case "svg-error":
-            case "svg-text":
-            case "svg-warning": {
-              good.hidden = !passesNonText;
-              toggleBadges(elementsToToggle, passesNonText);
-              break;
+      } else {
+        const value = contrastValue.ratio;
+        ratio.textContent = displayWCAGRatio(value);
+        const useAAA = algorithm === "AAA";
+        const nonTextThreshold = 3;
+        const normalTextThreshold = useAAA ? 7 : 4.5;
+        const largeTextThreshold = useAAA ? 4.5 : 3;
+        const passesNonText = value >= nonTextThreshold;
+        const dynamicIsLargeText = currentFontSize >= 24 || currentFontSize >= 18.66 && fontWeight >= 700 || isLargeText;
+        const passesNormalText = value >= normalTextThreshold;
+        const passesLargeText = value >= largeTextThreshold;
+        switch (type) {
+          case "svg-error":
+          case "svg-text":
+          case "svg-warning": {
+            good.hidden = !passesNonText;
+            toggleBadges(elementsToToggle, passesNonText);
+            break;
+          }
+          default: {
+            if (dynamicIsLargeText) {
+              toggleBadges([ratio, contrast], passesLargeText);
+              good.hidden = !passesLargeText;
+            } else {
+              toggleBadges([ratio, contrast], passesNormalText);
+              good.hidden = !passesNormalText;
             }
-            default: {
-              if (dynamicIsLargeText) {
-                toggleBadges([ratio, contrast], passesLargeText);
-                good.hidden = !passesLargeText;
-              } else {
-                toggleBadges([ratio, contrast], passesNormalText);
-                good.hidden = !passesNormalText;
-              }
-              break;
-            }
+            break;
           }
         }
-      };
-      fgInput.addEventListener("input", updatePreview);
-      bgInput.addEventListener("input", updatePreview);
-      setTimeout(() => {
-        const handleSuggest = (selector, apply) => {
-          const $el = container.querySelector(selector);
-          if (!$el) {
-            return;
-          }
-          $el.addEventListener("click", () => {
-            const val = $el.textContent;
-            apply(val);
-            updatePreview();
-            navigator.clipboard.writeText(val).catch(() => {
-            });
+      }
+    };
+    fgInput.addEventListener("input", updatePreview);
+    bgInput.addEventListener("input", updatePreview);
+    setTimeout(() => {
+      const bindSuggest = (id, action) => {
+        const el = container.querySelector(id);
+        if (!el) return;
+        el.addEventListener("click", () => {
+          action(el.textContent);
+          updatePreview();
+          navigator.clipboard.writeText(el.textContent).catch(() => {
           });
-        };
-        handleSuggest("#suggest", (hex) => {
-          fgInput.value = hex;
         });
-        handleSuggest("#suggest-size", (size) => {
-          contrastPreview.style.fontSize = size;
-        });
-      }, 0);
-    }
+      };
+      bindSuggest("#suggest", (val) => {
+        fgInput.value = val;
+      });
+      bindSuggest("#suggest-size", (val) => {
+        contrastPreview.style.fontSize = val;
+      });
+    }, 0);
   }
   function generateColorSuggestion(contrastDetails) {
     let adviceContainer;
