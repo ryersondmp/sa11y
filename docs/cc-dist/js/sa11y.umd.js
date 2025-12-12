@@ -1,6 +1,6 @@
 /*!
       * Sa11y, the accessibility quality assurance assistant.
-      * @version dev-4.4.0
+      * @version 4.4.0
       * @author Adam Chaboryk
       * @license GPL-2.0-or-later
       * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -1286,7 +1286,7 @@ ${this.error.stack}
 
 ## Details
 - **URL:** ${url}
-- **Version:** ${"dev-4.4.0"}
+- **Version:** ${"4.4.0"}
 
 ## Comments
 `;
@@ -1296,7 +1296,7 @@ ${this.error.stack}
       <button class="close-btn" aria-label="${Lang._("ALERT_CLOSE")}"></button>
       <h2>${Lang._("ERROR")}</h2>
       <p>${Lang.sprintf("CONSOLE_ERROR", google, github)}</p>
-      <p class="error">${escapeHTML(this.error.stack)}<br><br>Version: ${"dev-4.4.0"} <br> URL: ${url}</p>
+      <p class="error">${escapeHTML(this.error.stack)}<br><br>Version: ${"4.4.0"} <br> URL: ${url}</p>
     `;
       shadow.appendChild(content);
       setTimeout(() => {
@@ -1869,7 +1869,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
       const container = document.createElement("div");
       container.setAttribute("id", "container");
       container.setAttribute("role", "region");
-      container.setAttribute("data-sa11y-version", "dev-4.4.0");
+      container.setAttribute("data-sa11y-version", "4.4.0");
       container.setAttribute("lang", Lang._("LANG_CODE"));
       container.setAttribute("aria-label", Lang._("CONTAINER_LABEL"));
       container.setAttribute("dir", Constants.Global.langDirection);
