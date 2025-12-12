@@ -94,6 +94,7 @@ export default {
       'platshållare',
       'platshållarbild',
       'mellanlägg',
+      'test',
     ],
     PARTIAL_ALT_STOPWORDS: [
       'klicka',

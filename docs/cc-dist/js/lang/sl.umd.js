@@ -83,7 +83,8 @@
         "dekorativni",
         "namestnik",
         "nadomestna slika",
-        "distančnik"
+        "distančnik",
+        "test"
       ],
       PARTIAL_ALT_STOPWORDS: [
         "kliknite",

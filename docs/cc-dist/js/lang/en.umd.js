@@ -90,7 +90,8 @@
         "todo",
         "to do",
         "thumbnail",
-        "icon"
+        "icon",
+        "test"
       ],
       PARTIAL_ALT_STOPWORDS: [
         "click",

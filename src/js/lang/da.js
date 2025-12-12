@@ -93,6 +93,7 @@ export default {
       'pladsholder',
       'pladsholder-billede',
       'afstandsstykke',
+      'test',
     ],
     PARTIAL_ALT_STOPWORDS: [
       'klik',

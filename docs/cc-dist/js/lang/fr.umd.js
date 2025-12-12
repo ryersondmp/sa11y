@@ -84,7 +84,8 @@
         "photographie",
         "support d’affichage",
         "support d’affichage d’image",
-        "séparateur"
+        "séparateur",
+        "test"
       ],
       PARTIAL_ALT_STOPWORDS: [
         "clic",

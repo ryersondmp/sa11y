@@ -93,6 +93,7 @@ export default {
       'プレースホルダ',
       '待受画像',
       'スペーサ',
+      'テスト',
     ],
     PARTIAL_ALT_STOPWORDS: [
       'クリック',

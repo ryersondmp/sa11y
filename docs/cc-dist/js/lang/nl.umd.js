@@ -98,7 +98,8 @@
         "afstandhouder",
         "photo",
         "graphic",
-        "placeholder"
+        "placeholder",
+        "test"
       ],
       PARTIAL_ALT_STOPWORDS: [
         "klik op",

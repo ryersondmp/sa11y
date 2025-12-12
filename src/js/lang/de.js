@@ -99,6 +99,7 @@ export default {
       'platzhalter photo',
       'spacer',
       'abstand',
+      'test',
     ],
     PARTIAL_ALT_STOPWORDS: [
       'click',

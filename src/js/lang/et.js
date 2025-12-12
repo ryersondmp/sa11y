@@ -96,6 +96,7 @@ export default {
       'photo',
       'image',
       'graphic',
+      'test',
     ],
     PARTIAL_ALT_STOPWORDS: [
       'kliki',

@@ -83,7 +83,9 @@
         "dekoratív",
         "helytartó",
         "helyőrző kép",
-        "távtartó"
+        "távtartó",
+        "test",
+        "teszt"
       ],
       PARTIAL_ALT_STOPWORDS: [
         "kattints a  címre.",

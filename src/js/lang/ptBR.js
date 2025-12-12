@@ -96,6 +96,8 @@ export default {
       'espaço reservado',
       'imagem de espaço reservado',
       'espaçador',
+      'test',
+      'teste',
     ],
     PARTIAL_ALT_STOPWORDS: [
       'clique',

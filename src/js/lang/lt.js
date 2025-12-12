@@ -105,6 +105,8 @@ export default {
       'photo',
       'image',
       'graphic',
+      'testas',
+      'test',
     ],
     PARTIAL_ALT_STOPWORDS: [
       'spustelėkite',

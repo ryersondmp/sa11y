@@ -91,7 +91,9 @@ const lt = {
       "tarpinė",
       "photo",
       "image",
-      "graphic"
+      "graphic",
+      "testas",
+      "test"
     ],
     PARTIAL_ALT_STOPWORDS: [
       "spustelėkite",

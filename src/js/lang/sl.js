@@ -92,6 +92,7 @@ export default {
       'namestnik',
       'nadomestna slika',
       'distančnik',
+      'test',
     ],
     PARTIAL_ALT_STOPWORDS: [
       'kliknite',

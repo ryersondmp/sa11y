@@ -93,6 +93,7 @@ export default {
       'zástupný symbol',
       'zástupný obrázok',
       'dištančný rámik',
+      'test',
     ],
     PARTIAL_ALT_STOPWORDS: [
       'kliknite na',

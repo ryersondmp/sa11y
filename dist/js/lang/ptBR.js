@@ -82,7 +82,9 @@ const ptBR = {
       "graphic",
       "espaço reservado",
       "imagem de espaço reservado",
-      "espaçador"
+      "espaçador",
+      "test",
+      "teste"
     ],
     PARTIAL_ALT_STOPWORDS: [
       "clique",

@@ -95,6 +95,8 @@ export default {
       'placeholder',
       'εικόνα καταλόγου',
       'αποστάτης',
+      'test',
+      'δοκιμή',
     ],
     PARTIAL_ALT_STOPWORDS: [
       'κάντε κλικ στο',

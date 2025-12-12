@@ -88,7 +88,9 @@
         "foto",
         "decorativo",
         "marcador de posición",
-        "espaciador"
+        "espaciador",
+        "test",
+        "prueba"
       ],
       PARTIAL_ALT_STOPWORDS: [
         "clic",

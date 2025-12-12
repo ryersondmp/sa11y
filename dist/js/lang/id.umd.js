@@ -86,7 +86,9 @@
         "dekoratif",
         "penampung",
         "gambar penampung",
-        "spacer"
+        "spacer",
+        "test",
+        "tes"
       ],
       PARTIAL_ALT_STOPWORDS: [
         "klik",

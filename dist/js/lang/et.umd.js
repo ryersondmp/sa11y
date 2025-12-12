@@ -86,7 +86,8 @@
         "distantsi",
         "photo",
         "image",
-        "graphic"
+        "graphic",
+        "test"
       ],
       PARTIAL_ALT_STOPWORDS: [
         "kliki",

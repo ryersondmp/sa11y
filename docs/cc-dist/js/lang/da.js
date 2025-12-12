@@ -79,7 +79,8 @@ const da = {
       "dekorativ",
       "pladsholder",
       "pladsholder-billede",
-      "afstandsstykke"
+      "afstandsstykke",
+      "test"
     ],
     PARTIAL_ALT_STOPWORDS: [
       "klik",

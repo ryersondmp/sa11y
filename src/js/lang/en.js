@@ -99,6 +99,7 @@ export default {
       'to do',
       'thumbnail',
       'icon',
+      'test',
     ],
     PARTIAL_ALT_STOPWORDS: [
       'click',

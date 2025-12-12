@@ -90,7 +90,8 @@
         "platzhalter foto",
         "platzhalter photo",
         "spacer",
-        "abstand"
+        "abstand",
+        "test"
       ],
       PARTIAL_ALT_STOPWORDS: [
         "click",

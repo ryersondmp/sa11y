@@ -86,7 +86,8 @@
         "decorativo",
         "segnaposto",
         "immagine segnaposto",
-        "distanziatore"
+        "distanziatore",
+        "test"
       ],
       PARTIAL_ALT_STOPWORDS: [
         "clicca",

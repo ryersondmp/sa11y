@@ -96,6 +96,8 @@ export default {
       'vietvārds',
       'aizvietotāja attēls',
       'starplikas',
+      'tests',
+      'test',
     ],
     PARTIAL_ALT_STOPWORDS: [
       'noklikšķiniet uz',

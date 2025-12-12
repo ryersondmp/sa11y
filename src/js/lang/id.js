@@ -95,6 +95,8 @@ export default {
       'penampung',
       'gambar penampung',
       'spacer',
+      'test',
+      'tes',
     ],
     PARTIAL_ALT_STOPWORDS: [
       'klik',

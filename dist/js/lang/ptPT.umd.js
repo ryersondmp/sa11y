@@ -86,7 +86,9 @@
         "graphic",
         "marcador de posição",
         "imagem de marcador de posição",
-        "espaçador"
+        "espaçador",
+        "test",
+        "teste"
       ],
       PARTIAL_ALT_STOPWORDS: [
         "clique",

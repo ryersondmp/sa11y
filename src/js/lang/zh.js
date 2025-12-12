@@ -89,6 +89,7 @@ export default {
       '占位符',
       '占位图片',
       '垫片',
+      '测试',
     ],
     PARTIAL_ALT_STOPWORDS: [
       '点击',

@@ -136,6 +136,7 @@ export default {
       'view',
       'view our',
       'website',
+      'test',
     ],
     CLICK: ['click'],
     NEW_WINDOW_PHRASES: [

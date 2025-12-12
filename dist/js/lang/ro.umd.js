@@ -85,7 +85,7 @@
         "placeholder",
         "imagine de tip placeholder",
         "distanțier",
-        "."
+        "test"
       ],
       PARTIAL_ALT_STOPWORDS: [
         "click",

@@ -86,7 +86,9 @@
         "graphic",
         "vietvārds",
         "aizvietotāja attēls",
-        "starplikas"
+        "starplikas",
+        "tests",
+        "test"
       ],
       PARTIAL_ALT_STOPWORDS: [
         "noklikšķiniet uz",

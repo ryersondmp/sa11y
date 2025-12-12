@@ -96,6 +96,7 @@ export default {
       'segnaposto',
       'immagine segnaposto',
       'distanziatore',
+      'test',
     ],
     PARTIAL_ALT_STOPWORDS: [
       'clicca',

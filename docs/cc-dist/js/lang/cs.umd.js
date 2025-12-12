@@ -83,7 +83,8 @@
         "dekorativní",
         "zástupný symbol",
         "zástupný obrázek",
-        "distanční rámeček"
+        "distanční rámeček",
+        "test"
       ],
       PARTIAL_ALT_STOPWORDS: [
         "klikněte na",

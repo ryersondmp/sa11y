@@ -94,6 +94,7 @@ export default {
       'graphic',
       'picture',
       'photo',
+      'test',
     ],
     PLACEHOLDER_ALT_STOPWORDS: [
       'alt',

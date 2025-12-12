@@ -92,6 +92,7 @@ export default {
       '자리 표시자',
       '플레이스홀더 이미지',
       '스페이서',
+      '테스트',
     ],
     PARTIAL_ALT_STOPWORDS: [
       '클릭',

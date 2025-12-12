@@ -97,6 +97,8 @@ export default {
       'decorativo',
       'marcador de posición',
       'espaciador',
+      'test',
+      'prueba',
     ],
     PARTIAL_ALT_STOPWORDS: [
       'clic',

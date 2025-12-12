@@ -79,7 +79,8 @@ const sk = {
       "dekoratívne",
       "zástupný symbol",
       "zástupný obrázok",
-      "dištančný rámik"
+      "dištančný rámik",
+      "test"
     ],
     PARTIAL_ALT_STOPWORDS: [
       "kliknite na",

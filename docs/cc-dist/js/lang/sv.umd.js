@@ -84,7 +84,8 @@
         "fotografi",
         "platshållare",
         "platshållarbild",
-        "mellanlägg"
+        "mellanlägg",
+        "test"
       ],
       PARTIAL_ALT_STOPWORDS: [
         "klicka",

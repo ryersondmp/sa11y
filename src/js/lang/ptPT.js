@@ -96,6 +96,8 @@ export default {
       'marcador de posição',
       'imagem de marcador de posição',
       'espaçador',
+      'test',
+      'teste',
     ],
     PARTIAL_ALT_STOPWORDS: [
       'clique',

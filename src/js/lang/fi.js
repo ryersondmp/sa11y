@@ -91,6 +91,8 @@ export default {
       'paikanhaltija',
       'mielikuvamerkki',
       'välikappale',
+      'test',
+      'testi',
     ],
     PARTIAL_ALT_STOPWORDS: [
       'klikkaa',

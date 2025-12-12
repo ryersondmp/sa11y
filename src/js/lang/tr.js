@@ -93,6 +93,7 @@ export default {
       'yer tutucu',
       'yer tutucu resim',
       'ara parça',
+      'test',
     ],
     PARTIAL_ALT_STOPWORDS: [
       'tıklayın',

@@ -108,6 +108,7 @@ export default {
       'photo',
       'graphic',
       'placeholder',
+      'test',
     ],
     PARTIAL_ALT_STOPWORDS: [
       'klik op',

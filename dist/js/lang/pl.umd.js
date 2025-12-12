@@ -85,7 +85,8 @@
         "image",
         "graphic",
         "picture",
-        "photo"
+        "photo",
+        "test"
       ],
       PLACEHOLDER_ALT_STOPWORDS: [
         "alt",

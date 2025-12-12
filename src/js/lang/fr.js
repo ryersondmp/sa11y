@@ -94,6 +94,7 @@ export default {
       'support d’affichage',
       'support d’affichage d’image',
       'séparateur',
+      'test',
     ],
     PARTIAL_ALT_STOPWORDS: [
       'clic',

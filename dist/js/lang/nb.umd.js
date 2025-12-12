@@ -86,7 +86,8 @@
         "graphic",
         "plassholder",
         "plassholderbilde",
-        "avstandsstykke"
+        "avstandsstykke",
+        "test"
       ],
       PARTIAL_ALT_STOPWORDS: [
         "klikk på",

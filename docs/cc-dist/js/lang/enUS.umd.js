@@ -127,7 +127,8 @@
         "this form",
         "view",
         "view our",
-        "website"
+        "website",
+        "test"
       ],
       CLICK: ["click"],
       NEW_WINDOW_PHRASES: [

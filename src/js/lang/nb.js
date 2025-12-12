@@ -96,6 +96,7 @@ export default {
       'plassholder',
       'plassholderbilde',
       'avstandsstykke',
+      'test',
     ],
     PARTIAL_ALT_STOPWORDS: [
       'klikk på',

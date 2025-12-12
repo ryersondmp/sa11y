@@ -78,7 +78,9 @@ const fi = {
       "koristeellinen",
       "paikanhaltija",
       "mielikuvamerkki",
-      "välikappale"
+      "välikappale",
+      "test",
+      "testi"
     ],
     PARTIAL_ALT_STOPWORDS: [
       "klikkaa",

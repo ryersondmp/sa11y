@@ -83,7 +83,8 @@
         "dekoratif",
         "yer tutucu",
         "yer tutucu resim",
-        "ara parça"
+        "ara parça",
+        "test"
       ],
       PARTIAL_ALT_STOPWORDS: [
         "tıklayın",
