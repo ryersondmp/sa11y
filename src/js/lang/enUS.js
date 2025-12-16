@@ -99,6 +99,12 @@ export default {
       'to do',
       'thumbnail',
       'icon',
+      'test',
+      'hero image',
+      'hero image',
+      'hero slide',
+      'homepage feature image',
+      'untitled',
     ],
     PARTIAL_ALT_STOPWORDS: [
       'click',
@@ -136,7 +142,6 @@ export default {
       'view',
       'view our',
       'website',
-      'test',
     ],
     CLICK: ['click'],
     NEW_WINDOW_PHRASES: [

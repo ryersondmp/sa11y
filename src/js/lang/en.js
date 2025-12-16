@@ -100,6 +100,10 @@ export default {
       'thumbnail',
       'icon',
       'test',
+      'hero image',
+      'hero slide',
+      'homepage feature image',
+      'untitled',
     ],
     PARTIAL_ALT_STOPWORDS: [
       'click',

@@ -16,7 +16,7 @@ const sa11y = new Sa11y({
   linkIgnoreSpan: '.sr-only-example, .link-purpose',
   detectSPArouting: true,
   headless: false,
-  outlineIgnore: 'header *',
+  // outlineIgnore: 'header *',
   dismissAnnotations: true,
   selectorPath: false,
   checkAllHideToggles: false,
@@ -27,6 +27,7 @@ const sa11y = new Sa11y({
     'This image has an empty alt attribute; its file name is',
     'Esta imagen tiene un atributo alt vacío; its file name is'
   ],
+  extraPlaceholderStopWords: 'untitled',
 
   // showHinPageOutline: true,
   readabilityPlugin: true,

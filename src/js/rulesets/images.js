@@ -4,70 +4,93 @@ import Elements from '../utils/elements';
 import Lang from '../utils/lang';
 import * as Utils from '../utils/utils';
 
+const url = [
+  '.avif',
+  '.png',
+  '.jpg',
+  '.jpeg',
+  '.webp',
+  '.gif',
+  '.tiff',
+  '.svg',
+  '.heif',
+  '.heic',
+  'http',
+];
+
 export default function checkImages(results, option) {
+  // Generate suspicious alt stop words list.
+  const susAltWords = option.susAltStopWords
+    ? option.susAltStopWords
+        .split(',')
+        .map((word) => word.trim().toLowerCase())
+        .filter(Boolean)
+    : Lang._('SUS_ALT_STOPWORDS');
+
+  // Generate placeholder stop words set.
+  const PLACEHOLDER_ALT_ARR = new Set(Lang._('PLACEHOLDER_ALT_STOPWORDS'));
+
+  // Generate supplied placeholder stop words.
+  const extraPlaceholderStopWords = option.extraPlaceholderStopWords
+    .split(',')
+    .map((word) => word.trim().toLowerCase())
+    .filter(Boolean);
+
+  // Utility function to process alt text for stop words.
   const containsAltTextStopWords = (alt) => {
-    const altUrl = [
-      '.avif',
-      '.png',
-      '.jpg',
-      '.jpeg',
-      '.webp',
-      '.gif',
-      '.tiff',
-      '.svg',
-      '.heif',
-      '.heic',
-      'http',
-    ];
-
+    const altLowerCase = alt.toLowerCase();
+    const altNoNumbers = altLowerCase.replace(/\d+/g, '').trim();
     const hit = [null, null, null];
-    altUrl.forEach((word) => {
-      if (alt.toLowerCase().indexOf(word.toLowerCase()) !== -1) {
-        hit[0] = word;
-      } else {
-        // Checking for image dimensions in alt text.
-        const imageDimensions = /\b\d{2,6}\s*x\s*\d{2,6}\b/;
-        const match = alt.toLowerCase().match(imageDimensions);
-        if (match) {
-          [hit[0]] = match;
-        }
-      }
-    });
 
-    const susAltWordsOverride = option.susAltStopWords
-      ? option.susAltStopWords.split(',').map((word) => word.trim())
-      : Lang._('SUS_ALT_STOPWORDS');
-    susAltWordsOverride.forEach((word) => {
-      const susWord = alt.toLowerCase().indexOf(word);
-      if (susWord > -1 && susWord < 6) {
-        hit[1] = word;
+    // 1) URL hit.
+    for (const urlHit of url) {
+      if (altLowerCase.includes(urlHit)) {
+        hit[0] = urlHit;
+        break;
       }
-    });
-
-    Lang._('PLACEHOLDER_ALT_STOPWORDS').forEach((word) => {
-      if (alt.length === word.length && alt.toLowerCase().indexOf(word) >= 0) {
-        hit[2] = word;
-      }
-    });
-
-    // Additional placeholder stopwords to flag as an error.
-    const { extraPlaceholderStopWords } = option;
-    if (extraPlaceholderStopWords.length) {
-      const array = extraPlaceholderStopWords.split(',').map((word) => word.trim());
-      array.forEach((word) => {
-        const susWord = alt.toLowerCase().indexOf(word);
-        if (susWord > -1 && susWord < 6) {
-          hit[2] = word;
-        }
-      });
     }
 
+    // 2) Only if no URL hit, check dimensions, e.g. '123x456' or '123 X 456'
+    if (!hit[0]) {
+      const match = altLowerCase.match(/\b\d{2,6}\s*x\s*\d{2,6}\b/);
+      if (match) hit[0] = match[0];
+    }
+
+    // 3) Suspicious alt words near the beginning of a string.
+    for (const word of susAltWords) {
+      const index = altLowerCase.indexOf(word);
+      if (index > -1 && index < 6) {
+        hit[1] = word;
+        break;
+      }
+    }
+
+    // 4) Catch placeholder alt text, e.g. "placeholder", "hero image 1"
+    if (PLACEHOLDER_ALT_ARR.has(altLowerCase) || PLACEHOLDER_ALT_ARR.has(altNoNumbers)) {
+      hit[2] = alt;
+    }
+
+    // 5) Extra placeholder stopwords (near the start of alt)
+    if (extraPlaceholderStopWords.length) {
+      for (const word of extraPlaceholderStopWords) {
+        const index = altLowerCase.indexOf(word);
+        if (index > -1 && index < 6) {
+          hit[2] = word;
+          break;
+        }
+      }
+    }
     return hit;
   };
 
   Elements.Found.Images.forEach(($el) => {
     const alt =
       computeAriaLabel($el) === 'noAria' ? $el.getAttribute('alt') : computeAriaLabel($el);
+
+    // Ignore tracking pixels without explicit aria-hidden or nullified alt.
+    if ($el.height < 2 && $el.width < 2 && (Utils.isElementHidden($el) || alt === '')) {
+      return;
+    }
 
     // If selectors passed via prop, it will treat that image as an unlinked image.
     const link = $el.closest(
@@ -90,11 +113,6 @@ export default function checkImages(results, option) {
       : linkSpanExclusions;
 
     const linkTextLength = link ? Utils.removeWhitespace(stringMatchExclusions).length : 0;
-
-    // Ignore tracking pixels without explicit aria-hidden or nullified alt.
-    if ($el.height < 2 && $el.width < 2 && (Utils.isElementHidden($el) || alt === '')) {
-      return;
-    }
 
     if (link && link.getAttribute('aria-hidden') === 'true') {
       // If linked image has aria-hidden, but is still focusable.

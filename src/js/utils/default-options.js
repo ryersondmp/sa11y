@@ -64,7 +64,6 @@ const defaultOptions = {
 
   // Other plugins
   customChecks: false,
-  linksAdvancedPlugin: true,
   formLabelsPlugin: true,
   embeddedContentPlugin: true,
   developerPlugin: true,
