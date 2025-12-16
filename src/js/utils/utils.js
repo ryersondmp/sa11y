@@ -230,14 +230,17 @@ export function sanitizeHTMLBlock(html, allowStyles = false) {
  * @param {Array[]} selectors The selector to match elements to be excluded from the clone. Optional.
  * @returns {Element} The cloned element with excluded elements removed.
  */
-export function fnIgnore(element, selectors = []) {
-  const defaultIgnored = ['noscript', 'script', 'style', 'audio', 'video', 'form', 'iframe'];
-  const ignore = [...defaultIgnored, ...selectors].join(', ');
+export function fnIgnore(element, selectors) {
+  let ignoreQuery = 'noscript,script,style,audio,video,form,iframe';
+  if (selectors && selectors.length > 0) {
+    ignoreQuery = `${ignoreQuery},${selectors.join(',')}`;
+  }
   const clone = element.cloneNode(true);
-  const exclude = Array.from(clone.querySelectorAll(ignore));
-  exclude.forEach(($el) => {
-    $el.parentElement.removeChild($el);
-  });
+  const toRemove = clone.querySelectorAll(ignoreQuery);
+  let i = toRemove.length;
+  while (i--) {
+    toRemove[i].remove();
+  }
   return clone;
 }
 

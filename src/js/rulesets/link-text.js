@@ -88,6 +88,9 @@ export default function checkLinkText(results, option) {
 
   // Generate linkIgnoreStrings set.
   const linkIgnoreStrings = new Set(option.linkIgnoreStrings.map((word) => word.toLowerCase()));
+  const ignorePattern = option.linkIgnoreStrings?.length
+    ? new RegExp(option.linkIgnoreStrings.join('|'), 'gi')
+    : null;
 
   // Start the loop!
   const seen = {};
@@ -99,21 +102,20 @@ export default function checkLinkText(results, option) {
     const negativeTabindex = $el.getAttribute('tabindex') === '-1';
     const targetBlank = $el.getAttribute('target')?.toLowerCase() === '_blank';
 
-    // Get ARIA attributes.
-    const hasAria =
-      $el.getAttribute('aria-label') ||
-      $el.getAttribute('aria-labelledby') ||
-      $el.querySelector(':scope [aria-labelledby], :scope [aria-label]');
-    const hasAriaLabelledby =
-      $el.getAttribute('aria-labelledby') || $el.querySelector(':scope [aria-labelledby]');
+    // Get ARIA attributes: caches attributes and uses short-circuit logic to prevent redundant DOM queries.
+    const ariaLabel = $el.getAttribute('aria-label');
+    const ariaLabelledby = $el.getAttribute('aria-labelledby');
+    const childLabelledby = !ariaLabelledby ? $el.querySelector('[aria-labelledby]') : null;
+    const hasAriaLabelledby = ariaLabelledby || childLabelledby;
+    const hasAria = hasAriaLabelledby || ariaLabel || $el.querySelector('[aria-label]');
 
     // Link text based on COMPUTED ACCESSIBLE NAME.
     const accName = Utils.removeWhitespace(
       computeAccessibleName($el, Constants.Exclusions.LinkSpan),
     );
-    const linkText = Array.isArray(option.linkIgnoreStrings)
-      ? option.linkIgnoreStrings.reduce((result, str) => result.replace(str, ''), accName)
-      : accName;
+
+    // Strip away text from linkIgnoreStrings prop.
+    const linkText = ignorePattern ? accName.replace(ignorePattern, '') : accName;
 
     // Accessible name (lower case) for regex matching.
     const lowercaseLinkText = linkText.toLowerCase();
@@ -127,45 +129,16 @@ export default function checkLinkText(results, option) {
     // Original preserved text to lowercase.
     const textContent = Utils.getText($el).toLowerCase();
 
-    /**
-     * TEST CONDITIONS
-     */
-
-    // 1. Check for exact stop words.
-    const isStopWord = checkStopWords(normalized, linkStopWords);
-
-    // 2. Check for "click" words anywhere within string.
-    const hasClickWord =
-      normalized.match(clickRegex)?.[0] || textContent.match(clickRegex)?.[0] || null;
-
-    // 3. Check for citations/references.
-    const isCitation = normalized.match(citationPattern)?.[0] || null;
-
-    // 4. If link text resembles a URL.
-    const urlCheck = normalized.startsWith('www.') || normalized.startsWith('http');
-    const isUrlFragment = urlCheck ? 'URL Prefix' : normalized.match(urlEndings)?.[0] || null;
-
-    // 5. Match special characters exactly 1 character in length.
-    const isSingleSpecialChar = linkText.length === 1 && specialCharPattern.test(linkText);
-
-    // 6. Match HTML symbols.
-    const matchedSymbol = lowercaseLinkText.match(htmlSymbols)?.[0] || null;
-
-    // 7. Match new tab or new window strings.
-    const containsNewWindowPhrases = lowercaseLinkText.match(newWindowRegex)?.[0] || null;
-
-    // 8. Find exact stop word matches that are passed via linkIgnoreStrings prop.
-    const isLinkIgnoreStrings = checkStopWords(textContent, linkIgnoreStrings);
-
-    // 9. Match file types.
+    // Shared tests.
+    const containsNewWindowPhrases = lowercaseLinkText.match(newWindowRegex)?.[0];
     const containsFileTypePhrases =
-      lowercaseLinkText.match(fileTypeRegex)?.[0] || textContent.match(fileTypeRegex) || null;
+      lowercaseLinkText.match(fileTypeRegex)?.[0] || textContent.match(fileTypeRegex);
     const fileTypeMatch = $el.matches(cssFileTypeSelectors);
 
     /**
      * Don't overlap with Alt Text module.
      */
-    if (!$el.querySelectorAll('img').length) {
+    if (!$el.querySelector('img')) {
       // Has aria-hidden.
       if (ariaHidden) {
         if (!negativeTabindex) {
@@ -187,39 +160,6 @@ export default function checkLinkText(results, option) {
           }
         }
         return;
-      }
-
-      /**
-       * If link text is only "new window" or similar phrases.
-       */
-      let oneStop;
-      const addStopWordResult = (element, stopword) => {
-        if (option.checks.LINK_STOPWORD && !oneStop) {
-          oneStop = true;
-          results.push({
-            test: 'LINK_STOPWORD',
-            element,
-            type: option.checks.LINK_STOPWORD.type || 'error',
-            content: option.checks.LINK_STOPWORD.content
-              ? Lang.sprintf(option.checks.LINK_STOPWORD.content, stopword)
-              : Lang.sprintf('LINK_STOPWORD', stopword) + Lang.sprintf('LINK_TIP'),
-            inline: true,
-            position: 'afterend',
-            dismiss: Utils.prepareDismissal(`LINKSTOPWORD${href + strippedLinkText}`),
-            dismissAll: option.checks.LINK_STOPWORD.dismissAll ? 'LINK_STOPWORD' : false,
-            developer: option.checks.LINK_STOPWORD.developer || false,
-          });
-        }
-      };
-
-      // If link text is ONLY "new window" or similar phrases.
-      if (textContent === containsNewWindowPhrases) {
-        addStopWordResult($el, containsNewWindowPhrases);
-      }
-
-      // If link text is ONLY strings that were passed in via prop.
-      if (isLinkIgnoreStrings === textContent) {
-        addStopWordResult($el, isLinkIgnoreStrings);
       }
 
       /**
@@ -295,6 +235,32 @@ export default function checkLinkText(results, option) {
       }
 
       /**
+       * If link text is only "new window" or similar phrases.
+       */
+      let oneStop;
+      const addStopWordResult = (element, stopword) => {
+        if (option.checks.LINK_STOPWORD && !oneStop) {
+          oneStop = true;
+          results.push({
+            test: 'LINK_STOPWORD',
+            element,
+            type: option.checks.LINK_STOPWORD.type || 'error',
+            content: option.checks.LINK_STOPWORD.content
+              ? Lang.sprintf(option.checks.LINK_STOPWORD.content, stopword)
+              : Lang.sprintf('LINK_STOPWORD', stopword) + Lang.sprintf('LINK_TIP'),
+            inline: true,
+            position: 'afterend',
+            dismiss: Utils.prepareDismissal(`LINKSTOPWORD${href + strippedLinkText}`),
+            dismissAll: option.checks.LINK_STOPWORD.dismissAll ? 'LINK_STOPWORD' : false,
+            developer: option.checks.LINK_STOPWORD.developer || false,
+          });
+        }
+      };
+
+      // Find exact stop word matches that are passed via linkIgnoreStrings prop.
+      const isLinkIgnoreStrings = checkStopWords(textContent, linkIgnoreStrings);
+
+      /**
        * Empty hyperlinks.
        */
       if (linkText.length === 0) {
@@ -323,9 +289,7 @@ export default function checkLinkText(results, option) {
           if (option.linkIgnoreSpan) {
             const spanEl = $el.querySelector(option.linkIgnoreSpan);
             if (spanEl) {
-              const spanText = Utils.stripSpecialCharacters(spanEl.textContent)
-                .trim()
-                .toLowerCase();
+              const spanText = Utils.stripSpecialCharacters(spanEl.textContent).toLowerCase();
               if (spanText === textContent) {
                 addStopWordResult($el, spanText);
                 hasStopWordWarning = true;
@@ -365,7 +329,40 @@ export default function checkLinkText(results, option) {
             developer: option.checks.LINK_EMPTY.developer || false,
           });
         }
+        return;
+      }
+
+      /**
+       * Alt quality/stop word checks.
+       */
+
+      // 1. Check for exact stop words.
+      const isStopWord = checkStopWords(normalized, linkStopWords);
+
+      // 2. Check for "click" words anywhere within string.
+      const hasClickWord = normalized.match(clickRegex)?.[0] || textContent.match(clickRegex)?.[0];
+
+      // 3. Check for citations/references.
+      const isCitation = normalized.match(citationPattern)?.[0];
+
+      // 4. If link text resembles a URL.
+      const urlCheck = normalized.startsWith('www.') || normalized.startsWith('http');
+      const isUrlFragment = urlCheck ? 'URL Prefix' : normalized.match(urlEndings)?.[0];
+
+      // 5. Match special characters exactly 1 character in length.
+      const isSingleSpecialChar = linkText.length === 1 && specialCharPattern.test(linkText);
+
+      // 6. Match HTML symbols.
+      const matchedSymbol = lowercaseLinkText.match(htmlSymbols)?.[0];
+
+      if (containsNewWindowPhrases === textContent) {
+        // If link text is ONLY "new window" or similar phrases.
+        addStopWordResult($el, containsNewWindowPhrases);
+      } else if (isLinkIgnoreStrings === textContent) {
+        // If link text is ONLY strings that were passed in via prop.
+        addStopWordResult($el, isLinkIgnoreStrings);
       } else if (isStopWord) {
+        // Link is exact stop word.
         addStopWordResult($el, isStopWord);
       } else if (isCitation) {
         // Contains DOI URL in link text.
@@ -433,6 +430,7 @@ export default function checkLinkText(results, option) {
             developer: option.checks.LINK_EMPTY.developer || false,
           });
         }
+        return;
       }
 
       /**
@@ -456,7 +454,7 @@ export default function checkLinkText(results, option) {
       }
 
       /**
-       *  Link's title attribute is the same as the link text.
+       * Link's title attribute is the same as the link text.
        */
       if (textContent.length !== 0 && titleAttr?.toLowerCase() === linkText.toLowerCase()) {
         if (option.checks.DUPLICATE_TITLE) {

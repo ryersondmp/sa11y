@@ -12,7 +12,7 @@ const sa11y = new Sa11y({
   headerIgnore: '.ignore-this-heading',
   contrastIgnore: '.card-footer *, #player *',
   containerIgnore: 'footer',
-  linkIgnoreStrings: ['(External link)'],
+  linkIgnoreStrings: ['(External link)', '(ignore me)'],
   linkIgnoreSpan: '.sr-only-example, .link-purpose',
   detectSPArouting: true,
   headless: false,

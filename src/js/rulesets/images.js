@@ -22,13 +22,16 @@ export default function checkImages(results, option) {
   // Generate suspicious alt stop words list.
   const susAltWords = option.susAltStopWords
     ? option.susAltStopWords
-        .split(',')
-        .map((word) => word.trim().toLowerCase())
-        .filter(Boolean)
+      .split(',')
+      .map((word) => word.trim().toLowerCase())
+      .filter(Boolean)
     : Lang._('SUS_ALT_STOPWORDS');
 
   // Generate placeholder stop words set.
   const PLACEHOLDER_ALT_ARR = new Set(Lang._('PLACEHOLDER_ALT_STOPWORDS'));
+
+  // Generate placeholder stop words that are that the START of an alt string.
+  const altPlaceholderPattern = new RegExp(`^(${option.altPlaceholder.join('|')})`, 'i');
 
   // Generate supplied placeholder stop words.
   const extraPlaceholderStopWords = option.extraPlaceholderStopWords
@@ -83,6 +86,9 @@ export default function checkImages(results, option) {
     return hit;
   };
 
+  /** ************************ */
+  /*  Loop through all images  */
+  /* ************************* */
   Elements.Found.Images.forEach(($el) => {
     const alt =
       computeAriaLabel($el) === 'noAria' ? $el.getAttribute('alt') : computeAriaLabel($el);
@@ -105,15 +111,17 @@ export default function checkImages(results, option) {
       ? Utils.fnIgnore(link, Constants.Exclusions.LinkSpan).textContent
       : '';
 
+    // Process linkIgnoreStrings on parent link.
     const stringMatchExclusions = Array.isArray(option.linkIgnoreStrings)
       ? option.linkIgnoreStrings.reduce(
-          (result, str) => result.replace(str, ''),
-          linkSpanExclusions,
-        )
+        (result, str) => result.replace(str, ''),
+        linkSpanExclusions,
+      )
       : linkSpanExclusions;
 
-    const linkTextLength = link ? Utils.removeWhitespace(stringMatchExclusions).length : 0;
-
+    /** ******************** */
+    /*  HIDDEN BUT FOCUSABE  */
+    /* ********************* */
     if (link && link.getAttribute('aria-hidden') === 'true') {
       // If linked image has aria-hidden, but is still focusable.
       const unfocusable = link.getAttribute('tabindex') === '-1';
@@ -131,7 +139,12 @@ export default function checkImages(results, option) {
       return;
     }
 
-    // If alt is missing.
+    // Get link text length.
+    const linkTextLength = link ? Utils.removeWhitespace(stringMatchExclusions).length : 0;
+
+    /** **************** */
+    /*  ALT IS MISSING   */
+    /* ***************** */
     if (alt === null) {
       if (link) {
         const rule =
@@ -162,212 +175,68 @@ export default function checkImages(results, option) {
           developer: option.checks.MISSING_ALT.developer || false,
         });
       }
-    } else {
-      // If image has alt.
-      const sanitizedAlt = Utils.sanitizeHTML(alt);
-      const altText = Utils.removeWhitespace(sanitizedAlt);
-      const error = containsAltTextStopWords(altText);
-      const hasAria = $el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby');
-      const titleAttr = $el.getAttribute('title');
-      const decorative = alt === '';
+      return;
+    }
 
-      // Figure elements.
-      const figure = $el.closest('figure');
-      const figcaption = figure?.querySelector('figcaption');
-      const figcaptionText = figcaption ? figcaption.textContent.trim() : '';
+    /** *************** */
+    /*  HAS ALT TEXT    */
+    /* **************** */
+    const sanitizedAlt = Utils.sanitizeHTML(alt);
+    const altText = Utils.removeWhitespace(sanitizedAlt);
+    const hasAria = $el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby');
 
-      // Maximum alt text length
-      const maxAltCharactersLinks = option.checks.LINK_IMAGE_LONG_ALT.maxLength || 250;
-      const maxAltCharacters = option.checks.IMAGE_ALT_TOO_LONG.maxLength || 250;
-
-      // If aria-label or aria-labelledby returns empty or invalid.
-      if (option.checks.MISSING_ALT) {
-        if (hasAria && altText === '') {
-          results.push({
-            test: 'MISSING_ALT',
-            element: $el,
-            type: option.checks.MISSING_ALT.type || 'error',
-            content: Lang.sprintf(option.checks.MISSING_ALT.content || 'MISSING_ALT'),
-            dismiss: Utils.prepareDismissal(`IMGNOALTARIA${src}`),
-            dismissAll: option.checks.MISSING_ALT.dismissAll ? 'MISSING_ALT' : false,
-            developer: option.checks.MISSING_ALT.developer || false,
-          });
-          return;
-        }
-      }
-
-      // If alt text starts with a very specific string provided via props.
-      const startsWithSpecificAlt = option.altPlaceholder?.some((text) =>
-        alt.toLowerCase().startsWith(text.toLowerCase()),
-      );
-
-      // Decorative images.
-      if (decorative || startsWithSpecificAlt) {
-        const carouselSources = option.checks.IMAGE_DECORATIVE_CAROUSEL.sources;
-        const carousel = carouselSources ? $el.closest(carouselSources) : '';
-        if (carousel) {
-          const numberOfSlides = carousel.querySelectorAll('img');
-          const rule =
-            numberOfSlides.length === 1
-              ? option.checks.IMAGE_DECORATIVE
-              : option.checks.IMAGE_DECORATIVE_CAROUSEL;
-          const conditional =
-            numberOfSlides.length === 1 ? 'IMAGE_DECORATIVE' : 'IMAGE_DECORATIVE_CAROUSEL';
-          if (rule) {
-            results.push({
-              test: conditional,
-              element: $el,
-              type: rule.type || 'warning',
-              content: Lang.sprintf(rule.content || conditional),
-              dismiss: Utils.prepareDismissal(conditional + src),
-              dismissAll: rule.dismissAll ? conditional : false,
-              developer: rule.developer || false,
-            });
-          }
-        } else if (link) {
-          const rule =
-            linkTextLength === 0
-              ? option.checks.LINK_IMAGE_NO_ALT_TEXT
-              : option.checks.LINK_IMAGE_TEXT;
-          const conditional = linkTextLength === 0 ? 'LINK_IMAGE_NO_ALT_TEXT' : 'LINK_IMAGE_TEXT';
-          if (rule) {
-            results.push({
-              test: conditional,
-              element: $el,
-              type: rule.type || (linkTextLength === 0 ? 'error' : 'good'),
-              content: Lang.sprintf(rule.content || conditional),
-              dismiss: Utils.prepareDismissal(`${conditional + src + linkTextLength}`),
-              dismissAll: rule.dismissAll ? conditional : false,
-              developer: rule.developer || false,
-            });
-          }
-        } else if (figure) {
-          const rule =
-            figcaption && figcaptionText.length
-              ? option.checks.IMAGE_FIGURE_DECORATIVE
-              : option.checks.IMAGE_DECORATIVE;
-          const conditional =
-            figcaption && figcaptionText.length ? 'IMAGE_FIGURE_DECORATIVE' : 'IMAGE_DECORATIVE';
-          if (rule) {
-            results.push({
-              test: conditional,
-              element: $el,
-              type: rule.type || 'warning',
-              content: Lang.sprintf(rule.content || conditional),
-              dismiss: Utils.prepareDismissal(`${conditional + src + figcaptionText}`),
-              dismissAll: rule.dismissAll ? conditional : false,
-              developer: rule.developer || false,
-            });
-          }
-        } else if (option.checks.IMAGE_DECORATIVE) {
-          results.push({
-            test: 'IMAGE_DECORATIVE',
-            element: $el,
-            type: option.checks.IMAGE_DECORATIVE.type || 'warning',
-            content: Lang.sprintf(option.checks.IMAGE_DECORATIVE.content || 'IMAGE_DECORATIVE'),
-            dismiss: Utils.prepareDismissal(`DECIMAGE${src}`),
-            dismissAll: option.checks.IMAGE_DECORATIVE.dismissAll ? 'IMAGE_DECORATIVE' : false,
-            developer: option.checks.IMAGE_DECORATIVE.developer || false,
-          });
-        }
+    // If aria-label or aria-labelledby returns empty or invalid.
+    if (option.checks.MISSING_ALT) {
+      if (hasAria && altText === '') {
+        results.push({
+          test: 'MISSING_ALT',
+          element: $el,
+          type: option.checks.MISSING_ALT.type || 'error',
+          content: Lang.sprintf(option.checks.MISSING_ALT.content || 'MISSING_ALT'),
+          dismiss: Utils.prepareDismissal(`IMGNOALTARIA${src}`),
+          dismissAll: option.checks.MISSING_ALT.dismissAll ? 'MISSING_ALT' : false,
+          developer: option.checks.MISSING_ALT.developer || false,
+        });
         return;
       }
+    }
 
-      // Alt is unpronounceable.
-      const unpronounceable = link
-        ? option.checks.LINK_ALT_UNPRONOUNCEABLE
-        : option.checks.ALT_UNPRONOUNCEABLE;
-      if (unpronounceable) {
-        if (alt.replace(/"|'|\?|\.|-|\s+/g, '') === '' && linkTextLength === 0) {
-          const conditional = link ? 'LINK_ALT_UNPRONOUNCEABLE' : 'ALT_UNPRONOUNCEABLE';
-          results.push({
-            test: conditional,
-            element: $el,
-            type: unpronounceable.type || 'error',
-            content: Lang.sprintf(unpronounceable.content || conditional, altText),
-            dismiss: Utils.prepareDismissal(`UNPRONOUNCEABLE${src}`),
-            dismissAll: unpronounceable.dismissAll ? 'ALT_UNPRONOUNCEABLE' : false,
-            developer: unpronounceable.developer || false,
-          });
-          return;
-        }
-      }
+    /* ************** */
+    /*  DECORATIVE    */
+    /* ************** */
+    const decorative = alt === '';
 
-      // Potentially contains auto-generated placeholder text.
-      const maybeBadAlt = link ? option.checks.LINK_ALT_MAYBE_BAD : option.checks.ALT_MAYBE_BAD;
-      const isTooLongSingleWord = new RegExp(`^\\S{${maybeBadAlt.minLength || 15},}$`);
-      const containsNonAlphaChar = /[^\p{L}\-,.!?]/u.test(alt);
+    // Figure elements.
+    const figure = $el.closest('figure');
+    const figcaption = figure?.querySelector('figcaption');
+    const figcaptionText = figcaption ? Utils.getText(figcaption) : '';
 
-      // Alt text quality.
-      if (error[0] !== null) {
-        // Has stop words.
-        const rule = link ? option.checks.LINK_ALT_FILE_EXT : option.checks.ALT_FILE_EXT;
-        const conditional = link ? 'LINK_ALT_FILE_EXT' : 'ALT_FILE_EXT';
-        if (rule) {
-          results.push({
-            test: conditional,
-            element: $el,
-            type: rule.type || 'error',
-            content: Lang.sprintf(rule.content || conditional, error[0], altText),
-            dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
-            dismissAll: rule.dismissAll ? conditional : false,
-            developer: rule.developer || false,
-          });
-        }
-      } else if (error[2] !== null) {
-        // Placeholder words.
-        const rule = link ? option.checks.LINK_PLACEHOLDER_ALT : option.checks.ALT_PLACEHOLDER;
-        const conditional = link ? 'LINK_PLACEHOLDER_ALT' : 'ALT_PLACEHOLDER';
-        if (rule) {
-          results.push({
-            test: conditional,
-            element: $el,
-            type: rule.type || 'error',
-            content: Lang.sprintf(rule.content || conditional, altText),
-            dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
-            dismissAll: rule.dismissAll ? conditional : false,
-            developer: rule.developer || false,
-          });
-        }
-      } else if (error[1] !== null) {
-        // Suspicious words.
-        const rule = link ? option.checks.LINK_SUS_ALT : option.checks.SUS_ALT;
-        const conditional = link ? 'LINK_SUS_ALT' : 'SUS_ALT';
+    // Maximum alt text length
+    const maxAltCharactersLinks = option.checks.LINK_IMAGE_LONG_ALT.maxLength || 250;
+    const maxAltCharacters = option.checks.IMAGE_ALT_TOO_LONG.maxLength || 250;
+
+    // If alt text starts with a very specific string provided via props.
+    const startsWithSpecificAlt = alt.match(altPlaceholderPattern)?.[0];
+
+    // Decorative images.
+    if (decorative || startsWithSpecificAlt) {
+      const carouselSources = option.checks.IMAGE_DECORATIVE_CAROUSEL.sources;
+      const carousel = carouselSources ? $el.closest(carouselSources) : '';
+      if (carousel) {
+        const numberOfSlides = carousel.querySelectorAll('img');
+        const rule =
+          numberOfSlides.length === 1
+            ? option.checks.IMAGE_DECORATIVE
+            : option.checks.IMAGE_DECORATIVE_CAROUSEL;
+        const conditional =
+          numberOfSlides.length === 1 ? 'IMAGE_DECORATIVE' : 'IMAGE_DECORATIVE_CAROUSEL';
         if (rule) {
           results.push({
             test: conditional,
             element: $el,
             type: rule.type || 'warning',
-            content: Lang.sprintf(rule.content || conditional, error[1], altText),
-            dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
-            dismissAll: rule.dismissAll ? conditional : false,
-            developer: rule.developer || false,
-          });
-        }
-      } else if (maybeBadAlt && isTooLongSingleWord.test(alt) && containsNonAlphaChar) {
-        // Alt text is a single word greater than 15 characters that is potentially auto-generated.
-        const conditional = link ? 'LINK_ALT_MAYBE_BAD' : 'ALT_MAYBE_BAD';
-        results.push({
-          test: conditional,
-          element: $el,
-          type: maybeBadAlt.type || 'warning',
-          content: Lang.sprintf(maybeBadAlt.content || conditional, altText),
-          dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
-          dismissAll: maybeBadAlt.dismissAll ? conditional : false,
-          developer: maybeBadAlt.developer || false,
-        });
-      } else if (link ? alt.length > maxAltCharactersLinks : alt.length > maxAltCharacters) {
-        // Alt is too long.
-        const rule = link ? option.checks.LINK_IMAGE_LONG_ALT : option.checks.IMAGE_ALT_TOO_LONG;
-        const conditional = link ? 'LINK_IMAGE_LONG_ALT' : 'IMAGE_ALT_TOO_LONG';
-        const truncated = Utils.truncateString(altText, 600);
-        if (rule) {
-          results.push({
-            test: conditional,
-            element: $el,
-            type: rule.type || 'warning',
-            content: Lang.sprintf(rule.content || conditional, alt.length, truncated),
-            dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
+            content: Lang.sprintf(rule.content || conditional),
+            dismiss: Utils.prepareDismissal(conditional + src),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
@@ -375,94 +244,246 @@ export default function checkImages(results, option) {
       } else if (link) {
         const rule =
           linkTextLength === 0
-            ? option.checks.LINK_IMAGE_ALT
-            : option.checks.LINK_IMAGE_ALT_AND_TEXT;
-        const conditional = linkTextLength === 0 ? 'LINK_IMAGE_ALT' : 'LINK_IMAGE_ALT_AND_TEXT';
-
+            ? option.checks.LINK_IMAGE_NO_ALT_TEXT
+            : option.checks.LINK_IMAGE_TEXT;
+        const conditional = linkTextLength === 0 ? 'LINK_IMAGE_NO_ALT_TEXT' : 'LINK_IMAGE_TEXT';
         if (rule) {
-          // Has both link text and alt text.
-          const linkAccName = computeAccessibleName(link);
-          const removeWhitespace = Utils.removeWhitespace(linkAccName);
-          const sanitizedText = Utils.sanitizeHTML(removeWhitespace);
-
-          const tooltip =
-            linkTextLength === 0
-              ? Lang.sprintf('LINK_IMAGE_ALT', altText)
-              : `${Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT', altText, sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`;
-
           results.push({
             test: conditional,
             element: $el,
-            type: rule.type || 'warning',
-            content: rule.content ? Lang.sprintf(rule.content, altText, sanitizedText) : tooltip,
-            dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
+            type: rule.type || (linkTextLength === 0 ? 'error' : 'good'),
+            content: Lang.sprintf(rule.content || conditional),
+            dismiss: Utils.prepareDismissal(`${conditional + src + linkTextLength}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false,
           });
         }
       } else if (figure) {
-        // Figure element has same alt and caption text.
-        const duplicate =
-          !!figcaption && figcaptionText.toLowerCase() === altText.trim().toLowerCase();
-        if (duplicate) {
-          if (option.checks.IMAGE_FIGURE_DUPLICATE_ALT) {
-            results.push({
-              test: 'IMAGE_FIGURE_DUPLICATE_ALT',
-              element: $el,
-              type: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.type || 'warning',
-              content: Lang.sprintf(
-                option.checks.IMAGE_FIGURE_DUPLICATE_ALT.content || 'IMAGE_FIGURE_DUPLICATE_ALT',
-                altText,
-              ),
-              dismiss: Utils.prepareDismissal(`FIGDUPLICATE${src}`),
-              dismissAll: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.dismissAll
-                ? 'IMAGE_FIGURE_DUPLICATE_ALT'
-                : false,
-              developer: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.developer || false,
-            });
-          }
-        } else if (option.checks.IMAGE_PASS) {
-          // Figure has alt text!
+        const rule =
+          figcaption && figcaptionText.length
+            ? option.checks.IMAGE_FIGURE_DECORATIVE
+            : option.checks.IMAGE_DECORATIVE;
+        const conditional =
+          figcaption && figcaptionText.length ? 'IMAGE_FIGURE_DECORATIVE' : 'IMAGE_DECORATIVE';
+        if (rule) {
           results.push({
-            test: 'IMAGE_PASS',
+            test: conditional,
             element: $el,
-            type: option.checks.IMAGE_PASS.type || 'good',
-            content: Lang.sprintf(option.checks.IMAGE_PASS.content || 'IMAGE_PASS', altText),
-            dismiss: Utils.prepareDismissal(`FIGIMGPASS${src + altText}`),
-            dismissAll: option.checks.IMAGE_PASS.dismissAll ? 'IMAGE_PASS' : false,
-            developer: option.checks.IMAGE_PASS.developer || false,
+            type: rule.type || 'warning',
+            content: Lang.sprintf(rule.content || conditional),
+            dismiss: Utils.prepareDismissal(`${conditional + src + figcaptionText}`),
+            dismissAll: rule.dismissAll ? conditional : false,
+            developer: rule.developer || false,
+          });
+        }
+      } else if (option.checks.IMAGE_DECORATIVE) {
+        results.push({
+          test: 'IMAGE_DECORATIVE',
+          element: $el,
+          type: option.checks.IMAGE_DECORATIVE.type || 'warning',
+          content: Lang.sprintf(option.checks.IMAGE_DECORATIVE.content || 'IMAGE_DECORATIVE'),
+          dismiss: Utils.prepareDismissal(`DECIMAGE${src}`),
+          dismissAll: option.checks.IMAGE_DECORATIVE.dismissAll ? 'IMAGE_DECORATIVE' : false,
+          developer: option.checks.IMAGE_DECORATIVE.developer || false,
+        });
+      }
+      return;
+    }
+
+    /* ********************** */
+    /*  UNPRONOUNCEABLE ALT   */
+    /* ********************** */
+    const unpronounceable = link
+      ? option.checks.LINK_ALT_UNPRONOUNCEABLE
+      : option.checks.ALT_UNPRONOUNCEABLE;
+    if (unpronounceable) {
+      if (alt.replace(/"|'|\?|\.|-|\s+/g, '') === '' && linkTextLength === 0) {
+        const conditional = link ? 'LINK_ALT_UNPRONOUNCEABLE' : 'ALT_UNPRONOUNCEABLE';
+        results.push({
+          test: conditional,
+          element: $el,
+          type: unpronounceable.type || 'error',
+          content: Lang.sprintf(unpronounceable.content || conditional, altText),
+          dismiss: Utils.prepareDismissal(`UNPRONOUNCEABLE${src}`),
+          dismissAll: unpronounceable.dismissAll ? 'ALT_UNPRONOUNCEABLE' : false,
+          developer: unpronounceable.developer || false,
+        });
+        return;
+      }
+    }
+
+    /* ********************* */
+    /*  ALT TEXT QUALITY     */
+    /* ********************* */
+    const error = containsAltTextStopWords(altText);
+
+    // Potentially contains auto-generated placeholder text.
+    const maybeBadAlt = link ? option.checks.LINK_ALT_MAYBE_BAD : option.checks.ALT_MAYBE_BAD;
+    const isTooLongSingleWord = new RegExp(`^\\S{${maybeBadAlt.minLength || 15},}$`);
+    const containsNonAlphaChar = /[^\p{L}\-,.!?]/u.test(alt);
+
+    if (error[0] !== null) {
+      // Has stop words.
+      const rule = link ? option.checks.LINK_ALT_FILE_EXT : option.checks.ALT_FILE_EXT;
+      const conditional = link ? 'LINK_ALT_FILE_EXT' : 'ALT_FILE_EXT';
+      if (rule) {
+        results.push({
+          test: conditional,
+          element: $el,
+          type: rule.type || 'error',
+          content: Lang.sprintf(rule.content || conditional, error[0], altText),
+          dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
+          dismissAll: rule.dismissAll ? conditional : false,
+          developer: rule.developer || false,
+        });
+      }
+    } else if (error[2] !== null) {
+      // Placeholder words.
+      const rule = link ? option.checks.LINK_PLACEHOLDER_ALT : option.checks.ALT_PLACEHOLDER;
+      const conditional = link ? 'LINK_PLACEHOLDER_ALT' : 'ALT_PLACEHOLDER';
+      if (rule) {
+        results.push({
+          test: conditional,
+          element: $el,
+          type: rule.type || 'error',
+          content: Lang.sprintf(rule.content || conditional, altText),
+          dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
+          dismissAll: rule.dismissAll ? conditional : false,
+          developer: rule.developer || false,
+        });
+      }
+    } else if (error[1] !== null) {
+      // Suspicious words.
+      const rule = link ? option.checks.LINK_SUS_ALT : option.checks.SUS_ALT;
+      const conditional = link ? 'LINK_SUS_ALT' : 'SUS_ALT';
+      if (rule) {
+        results.push({
+          test: conditional,
+          element: $el,
+          type: rule.type || 'warning',
+          content: Lang.sprintf(rule.content || conditional, error[1], altText),
+          dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
+          dismissAll: rule.dismissAll ? conditional : false,
+          developer: rule.developer || false,
+        });
+      }
+    } else if (maybeBadAlt && isTooLongSingleWord.test(alt) && containsNonAlphaChar) {
+      // Alt text is a single word greater than 15 characters that is potentially auto-generated.
+      const conditional = link ? 'LINK_ALT_MAYBE_BAD' : 'ALT_MAYBE_BAD';
+      results.push({
+        test: conditional,
+        element: $el,
+        type: maybeBadAlt.type || 'warning',
+        content: Lang.sprintf(maybeBadAlt.content || conditional, altText),
+        dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
+        dismissAll: maybeBadAlt.dismissAll ? conditional : false,
+        developer: maybeBadAlt.developer || false,
+      });
+    } else if (link ? alt.length > maxAltCharactersLinks : alt.length > maxAltCharacters) {
+      // Alt is too long.
+      const rule = link ? option.checks.LINK_IMAGE_LONG_ALT : option.checks.IMAGE_ALT_TOO_LONG;
+      const conditional = link ? 'LINK_IMAGE_LONG_ALT' : 'IMAGE_ALT_TOO_LONG';
+      const truncated = Utils.truncateString(altText, 600);
+      if (rule) {
+        results.push({
+          test: conditional,
+          element: $el,
+          type: rule.type || 'warning',
+          content: Lang.sprintf(rule.content || conditional, alt.length, truncated),
+          dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
+          dismissAll: rule.dismissAll ? conditional : false,
+          developer: rule.developer || false,
+        });
+      }
+    } else if (link) {
+      const rule =
+        linkTextLength === 0 ? option.checks.LINK_IMAGE_ALT : option.checks.LINK_IMAGE_ALT_AND_TEXT;
+      const conditional = linkTextLength === 0 ? 'LINK_IMAGE_ALT' : 'LINK_IMAGE_ALT_AND_TEXT';
+
+      if (rule) {
+        // Has both link text and alt text.
+        const linkAccName = computeAccessibleName(link);
+        const removeWhitespace = Utils.removeWhitespace(linkAccName);
+        const sanitizedText = Utils.sanitizeHTML(removeWhitespace);
+
+        const tooltip =
+          linkTextLength === 0
+            ? Lang.sprintf('LINK_IMAGE_ALT', altText)
+            : `${Lang.sprintf('LINK_IMAGE_ALT_AND_TEXT', altText, sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`;
+
+        results.push({
+          test: conditional,
+          element: $el,
+          type: rule.type || 'warning',
+          content: rule.content ? Lang.sprintf(rule.content, altText, sanitizedText) : tooltip,
+          dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
+          dismissAll: rule.dismissAll ? conditional : false,
+          developer: rule.developer || false,
+        });
+      }
+    } else if (figure) {
+      // Figure element has same alt and caption text.
+      const duplicate = !!figcaption && figcaptionText.toLowerCase() === altText.toLowerCase();
+      if (duplicate) {
+        if (option.checks.IMAGE_FIGURE_DUPLICATE_ALT) {
+          results.push({
+            test: 'IMAGE_FIGURE_DUPLICATE_ALT',
+            element: $el,
+            type: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.type || 'warning',
+            content: Lang.sprintf(
+              option.checks.IMAGE_FIGURE_DUPLICATE_ALT.content || 'IMAGE_FIGURE_DUPLICATE_ALT',
+              altText,
+            ),
+            dismiss: Utils.prepareDismissal(`FIGDUPLICATE${src}`),
+            dismissAll: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.dismissAll
+              ? 'IMAGE_FIGURE_DUPLICATE_ALT'
+              : false,
+            developer: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.developer || false,
           });
         }
       } else if (option.checks.IMAGE_PASS) {
-        if (!$el.closest('button, [role="button"]')) {
-          // Image has alt text!
-          results.push({
-            test: 'IMAGE_PASS',
-            element: $el,
-            type: option.checks.IMAGE_PASS.type || 'good',
-            content: Lang.sprintf(option.checks.IMAGE_PASS.content || 'IMAGE_PASS', altText),
-            dismiss: Utils.prepareDismissal(`IMAGEPASS${src + altText}`),
-            dismissAll: option.checks.IMAGE_PASS.dismissAll ? 'IMAGE_PASS' : false,
-            developer: option.checks.IMAGE_PASS.developer || false,
-          });
-        }
+        // Figure has alt text!
+        results.push({
+          test: 'IMAGE_PASS',
+          element: $el,
+          type: option.checks.IMAGE_PASS.type || 'good',
+          content: Lang.sprintf(option.checks.IMAGE_PASS.content || 'IMAGE_PASS', altText),
+          dismiss: Utils.prepareDismissal(`FIGIMGPASS${src + altText}`),
+          dismissAll: option.checks.IMAGE_PASS.dismissAll ? 'IMAGE_PASS' : false,
+          developer: option.checks.IMAGE_PASS.developer || false,
+        });
       }
+    } else if (option.checks.IMAGE_PASS) {
+      if (!$el.closest('button, [role="button"]')) {
+        // Image has alt text!
+        results.push({
+          test: 'IMAGE_PASS',
+          element: $el,
+          type: option.checks.IMAGE_PASS.type || 'good',
+          content: Lang.sprintf(option.checks.IMAGE_PASS.content || 'IMAGE_PASS', altText),
+          dismiss: Utils.prepareDismissal(`IMAGEPASS${src + altText}`),
+          dismissAll: option.checks.IMAGE_PASS.dismissAll ? 'IMAGE_PASS' : false,
+          developer: option.checks.IMAGE_PASS.developer || false,
+        });
+      }
+    }
 
-      // Image's title attribute is the same as the alt.
-      // Since this is extra, it's okay if it overlaps "good" annotation.
-      if (titleAttr?.toLowerCase() === alt.toLowerCase()) {
-        if (option.checks.DUPLICATE_TITLE) {
-          results.push({
-            test: 'DUPLICATE_TITLE',
-            element: $el,
-            type: option.checks.DUPLICATE_TITLE.type || 'warning',
-            content: Lang.sprintf(option.checks.DUPLICATE_TITLE.content || 'DUPLICATE_TITLE'),
-            inline: true,
-            dismiss: Utils.prepareDismissal(`ALTDUPLICATETITLE${altText}`),
-            dismissAll: option.checks.DUPLICATE_TITLE.dismissAll ? 'DUPLICATE_TITLE' : false,
-            developer: option.checks.DUPLICATE_TITLE.developer || false,
-          });
-        }
+    /* ************************ */
+    /*  DUPLICATE ALT & TITLE.  */
+    /* ************************ */
+    const titleAttr = $el.getAttribute('title');
+    if (titleAttr?.toLowerCase() === alt.toLowerCase()) {
+      if (option.checks.DUPLICATE_TITLE) {
+        results.push({
+          test: 'DUPLICATE_TITLE',
+          element: $el,
+          type: option.checks.DUPLICATE_TITLE.type || 'warning',
+          content: Lang.sprintf(option.checks.DUPLICATE_TITLE.content || 'DUPLICATE_TITLE'),
+          inline: true,
+          dismiss: Utils.prepareDismissal(`ALTDUPLICATETITLE${altText}`),
+          dismissAll: option.checks.DUPLICATE_TITLE.dismissAll ? 'DUPLICATE_TITLE' : false,
+          developer: option.checks.DUPLICATE_TITLE.developer || false,
+        });
       }
     }
   });
