@@ -46,10 +46,9 @@ const specialCharPattern = /[^a-zA-Z0-9]/g;
 // Regex pattern to match HTML symbols commonly used as CTAs in link text.
 const htmlSymbols = /([<>↣↳←→↓«»↴]+)/;
 
-// Utility function for exact stop word matches.
+// Utility function for exact stop word matches. Remove periods to improve accuracy.
 const checkStopWords = (textContent, stopWordsSet) => {
-  const testTextContent = textContent.replace(/\./g, '').toLowerCase();
-  if (stopWordsSet.has(testTextContent)) return textContent;
+  if (stopWordsSet.has(textContent)) return textContent;
   return null;
 };
 
@@ -97,26 +96,22 @@ export default function checkLinkText(results, option) {
     const lowercaseLinkText = linkText.toLowerCase();
 
     // Ignore special characters (except forward slash).
-    const normalized = Utils.stripSpecialCharacters(linkText).toLowerCase();
-
-    // Remove whitespace and special characters to improve accuracy and minimize false positives.
-    const strippedLinkText = normalized.replace(/'|"|-|\.|\s+/g, '');
+    const strippedLinkText = Utils.stripAllSpecialCharacters(lowercaseLinkText);
 
     // Original preserved text to lowercase.
     const textContent = Utils.getText($el).toLowerCase();
 
     // Shared tests.
-    const containsNewWindowPhrases = lowercaseLinkText.match(newWindowRegex)?.[0]
-      || textContent.match(newWindowRegex)?.[0];
-    const containsFileTypePhrases = lowercaseLinkText.match(fileTypeRegex)?.[0]
-      || textContent.match(fileTypeRegex)?.[0];
+    const containsNewWindowPhrases =
+      lowercaseLinkText.match(newWindowRegex)?.[0] || textContent.match(newWindowRegex)?.[0];
+    const containsFileTypePhrases =
+      lowercaseLinkText.match(fileTypeRegex)?.[0] || textContent.match(fileTypeRegex)?.[0];
     const fileTypeMatch = $el.matches(cssFileTypeSelectors);
 
     /**
      * Don't overlap with Alt Text module.
      */
     if (!$el.querySelector('img')) {
-
       // Has aria-hidden.
       if (ariaHidden) {
         if (!negativeTabindex) {
@@ -149,10 +144,8 @@ export default function checkLinkText(results, option) {
 
         // General warning for visible non-descript link text, regardless of ARIA label.
         const excludeSpan = Utils.fnIgnore($el, Constants.Exclusions.LinkSpan);
-        const visibleLinkText = option.linkIgnoreStrings
-          ? Utils.getText(excludeSpan).replace(option.linkIgnoreStrings, '')
-          : Utils.getText(excludeSpan);
-        const cleanedString = Utils.stripSpecialCharacters(visibleLinkText);
+        const visibleLinkText = Utils.getText(excludeSpan).replace(ignorePattern, '');
+        const cleanedString = Utils.stripAllSpecialCharacters(visibleLinkText);
         const stopword = checkStopWords(cleanedString, linkStopWords);
 
         // Label in name.
@@ -172,7 +165,7 @@ export default function checkLinkText(results, option) {
             content: option.checks.LINK_STOPWORD_ARIA.content
               ? Lang.sprintf(option.checks.LINK_STOPWORD_ARIA.content, stopword, sanitizedText)
               : Lang.sprintf('LINK_STOPWORD_ARIA', stopword, sanitizedText) +
-              Lang.sprintf('LINK_TIP'),
+                Lang.sprintf('LINK_TIP'),
             inline: true,
             dismiss: Utils.prepareDismissal(`LINKSTOPWORDARIA${href + strippedLinkText}`),
             dismissAll: option.checks.LINK_STOPWORD_ARIA.dismissAll ? ' LINK_STOPWORD_ARIA' : false,
@@ -241,10 +234,13 @@ export default function checkLinkText(results, option) {
       /**
        * If link text is ONLY strings that were passed in via prop.
        * Note: these two MUST come before empty hyperlink checks.
-      */
-      if (isLinkIgnoreStrings === textContent) {
+       */
+      if (isLinkIgnoreStrings === textContent || isLinkIgnoreStrings === strippedLinkText) {
         addStopWordResult($el, isLinkIgnoreStrings);
-      } else if (containsNewWindowPhrases === textContent) {
+      } else if (
+        containsNewWindowPhrases === textContent ||
+        containsNewWindowPhrases === strippedLinkText
+      ) {
         addStopWordResult($el, containsNewWindowPhrases);
         return;
       }
@@ -278,7 +274,7 @@ export default function checkLinkText(results, option) {
           if (option.linkIgnoreSpan) {
             const spanEl = $el.querySelector(option.linkIgnoreSpan);
             if (spanEl) {
-              const spanText = Utils.stripSpecialCharacters(spanEl.textContent)
+              const spanText = Utils.stripAllSpecialCharacters(spanEl.textContent)
                 .trim()
                 .toLowerCase();
               if (spanText === textContent) {
@@ -325,20 +321,21 @@ export default function checkLinkText(results, option) {
 
       /**
        * Alt quality/stop word checks.
-      */
+       */
 
       // 1. Check for exact stop words.
-      const isStopWord = checkStopWords(normalized, linkStopWords);
+      const isStopWord = checkStopWords(strippedLinkText, linkStopWords);
 
       // 2. Check for "click" words anywhere within string.
-      const hasClickWord = normalized.match(clickRegex)?.[0] || textContent.match(clickRegex)?.[0];
+      const hasClickWord =
+        strippedLinkText.match(clickRegex)?.[0] || textContent.match(clickRegex)?.[0];
 
       // 3. Check for citations/references.
-      const isCitation = normalized.match(citationPattern)?.[0];
+      const isCitation = lowercaseLinkText.match(citationPattern)?.[0];
 
       // 4. If link text resembles a URL.
-      const urlCheck = normalized.startsWith('www.') || normalized.startsWith('http');
-      const isUrlFragment = urlCheck ? 'URL Prefix' : normalized.match(urlEndings)?.[0];
+      const urlCheck = lowercaseLinkText.startsWith('www.') || lowercaseLinkText.startsWith('http');
+      const isUrlFragment = urlCheck ? 'URL Prefix' : lowercaseLinkText.match(urlEndings)?.[0];
 
       // 5. Match special characters exactly 1 character in length.
       const isSingleSpecialChar = linkText.length === 1 && specialCharPattern.test(linkText);
@@ -440,7 +437,7 @@ export default function checkLinkText(results, option) {
 
       /**
        * Link's title attribute is the same as the link text.
-      */
+       */
       if (textContent.length !== 0 && titleAttr?.toLowerCase() === linkText.toLowerCase()) {
         if (option.checks.DUPLICATE_TITLE) {
           results.push({
@@ -456,7 +453,6 @@ export default function checkLinkText(results, option) {
         }
       }
     }
-
 
     if (strippedLinkText.length !== 0) {
       // Links with identical accessible names have equivalent purpose.

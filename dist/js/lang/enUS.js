@@ -86,7 +86,13 @@ const enUS = {
       "todo",
       "to do",
       "thumbnail",
-      "icon"
+      "icon",
+      "test",
+      "hero image",
+      "hero image",
+      "hero slide",
+      "homepage feature image",
+      "untitled"
     ],
     PARTIAL_ALT_STOPWORDS: [
       "click",
@@ -123,8 +129,7 @@ const enUS = {
       "this form",
       "view",
       "view our",
-      "website",
-      "test"
+      "website"
     ],
     CLICK: ["click"],
     NEW_WINDOW_PHRASES: [

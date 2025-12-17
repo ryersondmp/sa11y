@@ -133,14 +133,13 @@ export function stripHTMLtags(string) {
 }
 
 /**
- * Removes non-alphanumeric characters from a string—except for dots, slashes,
- * and underscores—and normalizes whitespace.
+ * Removes ALL non-alphanumeric characters and normalizes whitespace.
  * @param {string} string - The input text to be sanitized.
  * @returns {string} The sanitized and trimmed string.
  */
-export function stripSpecialCharacters(string) {
+export function stripAllSpecialCharacters(string) {
   return string
-    .replace(/[^\w\s./]/g, '')
+    .replace(/[^\p{L}\p{N}\s]/gu, '')
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -161,18 +160,12 @@ export function sanitizeHTML(string) {
  * @returns {string} The sanitized URL if valid, or an empty string if invalid.
  */
 export function sanitizeURL(string) {
-  if (!string) {
-    return '#';
-  }
+  if (!string) return '#';
   const sanitizedInput = String(string).trim();
 
   // Remove protocols.
-  if (/^javascript:/i.test(sanitizedInput)) {
-    return '#';
-  }
-  if (/^data:/i.test(sanitizedInput)) {
-    return '#';
-  }
+  if (/^javascript:/i.test(sanitizedInput)) return '#';
+  if (/^data:/i.test(sanitizedInput)) return '#';
 
   // Ensure valid protocol.
   const protocols = ['http:', 'https:', 'mailto:', 'tel:', 'ftp:'];
@@ -838,13 +831,13 @@ export function generateRegexString(input, matchStart = false) {
   if (Array.isArray(input)) {
     patterns = input;
   } else if (typeof input === 'string') {
-    patterns = input.split(',').map(s => s.trim());
+    patterns = input.split(',').map((s) => s.trim());
   } else {
     return null;
   }
 
   // Filter out empty entries to prevent matching 'everything' (empty regex issue).
-  patterns = patterns.filter(p => p && p.length > 0);
+  patterns = patterns.filter((p) => p && p.length > 0);
   if (patterns.length === 0) return null;
 
   // Helper to escape special regex characters.
@@ -856,10 +849,8 @@ export function generateRegexString(input, matchStart = false) {
   const joinedPatterns = patterns.map(escapeRegExp).join('|');
 
   // If matchStart is true, wrap in ^(?: ... ) to anchor the entire group to the start.
-  const finalPattern = matchStart
-    ? `^(?:${joinedPatterns})`
-    : joinedPatterns;
+  const finalPattern = matchStart ? `^(?:${joinedPatterns})` : joinedPatterns;
 
   // Compile final case-insensitive regex.
   return new RegExp(finalPattern, 'gi');
-};
+}

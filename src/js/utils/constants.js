@@ -165,12 +165,8 @@ const Constants = (function myConstants() {
             // Roots that readability will be based on.
             const roots = Root.areaToCheck
               .map((el) => {
-                if (el.id) {
-                  return `#${el.id}`;
-                }
-                if (el.className) {
-                  return `.${el.className.split(/\s+/).filter(Boolean).join('.')}`;
-                }
+                if (el.id) return `#${el.id}`;
+                if (el.className) return `.${el.className.split(/\s+/).filter(Boolean).join('.')}`;
                 return el.tagName.toLowerCase();
               })
               .join(', ');

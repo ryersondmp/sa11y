@@ -87,7 +87,11 @@ const en = {
       "to do",
       "thumbnail",
       "icon",
-      "test"
+      "test",
+      "hero image",
+      "hero slide",
+      "homepage feature image",
+      "untitled"
     ],
     PARTIAL_ALT_STOPWORDS: [
       "click",
