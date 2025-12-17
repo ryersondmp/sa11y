@@ -611,6 +611,21 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
+  test('Placeholder alt text (e.g. hero image 1) with trailing numbers', async () => {
+    const issue = await checkTooltip(page, 'error-bad-alt-placeholder', 'Non-descript or placeholder alt text found. Replace the following alt text with something more meaningful.');
+    expect(issue).toBe(true);
+  });
+
+  test('Linked placeholder alt text (e.g. hero image 1) with trailing numbers', async () => {
+    const issue = await checkTooltip(page, 'error-bad-alt-placeholder-link', 'Non-descript or placeholder alt text within a linked image found. Ensure the alt text describes the destination of the link, not a literal description of the image. Replace the following alt text.');
+    expect(issue).toBe(true);
+  });
+
+  test('Placeholder alt text (e.g. hero image 1 and something) with other words', async () => {
+    const issue = await checkTooltip(page, 'pass-bad-alt-placeholder', 'Good');
+    expect(issue).toBe(true);
+  });
+
   /* **************** */
   /*  Links           */
   /* **************** */
@@ -620,6 +635,29 @@ test.describe('Sa11y Unit Tests', () => {
       'error-non-descript-link-1',
       'error-non-descript-link-2',
       'error-non-descript-link-3',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await checkTooltip(page, id, 'Link text may not be descriptive enough out of context');
+      expect(issue).toBe(true);
+    });
+  });
+
+  test('Non descript link text - i18n (non-Latin characters)', async () => {
+    const ids = [
+      'error-non-descript-cyrillic',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await checkTooltip(page, id, 'Link text may not be descriptive enough out of context');
+      expect(issue).toBe(true);
+    });
+  });
+
+  test('Non descript link text based on "new tab" or option.linkIgnoreString phrases', async () => {
+    const ids = [
+      'error-new-tab-link-text-1',
+      'error-new-tab-link-text-2',
+      'error-new-tab-link-text-3',
+      'error-new-tab-link-text-4',
     ];
     ids.forEach(async (id) => {
       const issue = await checkTooltip(page, id, 'Link text may not be descriptive enough out of context');

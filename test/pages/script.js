@@ -23,6 +23,7 @@ const sa11y = new Sa11y({
   developerChecksOnByDefault: true,
   imageIgnore: '.logo',
   customChecks: 'listen',
+  linkStopWords: 'взнати більше',
 
   // Customize checks.
   checks: {
