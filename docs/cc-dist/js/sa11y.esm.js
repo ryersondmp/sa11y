@@ -6265,6 +6265,7 @@ function checkImages(results, option) {
   const susAltWords = option.susAltStopWords ? option.susAltStopWords.split(",").map((word) => word.trim().toLowerCase()).filter(Boolean) : Lang._("SUS_ALT_STOPWORDS");
   const placeholderAltSet = new Set(Lang._("PLACEHOLDER_ALT_STOPWORDS"));
   const altPlaceholderPattern = generateRegexString(option.altPlaceholder, true);
+  const linkIgnoreStringPattern = generateRegexString(option.linkIgnoreStrings);
   const extraPlaceholderStopWords = option.extraPlaceholderStopWords.split(",").map((word) => word.trim().toLowerCase()).filter(Boolean);
   const containsAltTextStopWords = (alt) => {
     const altLowerCase = alt.toLowerCase();
@@ -6310,11 +6311,11 @@ function checkImages(results, option) {
       option.imageWithinLightbox ? `a[href]:not(${option.imageWithinLightbox})` : "a[href]"
     );
     const src = $el.getAttribute("src") ? $el.getAttribute("src") : $el.getAttribute("srcset");
-    const linkSpanExclusions = link ? fnIgnore(link, Constants.Exclusions.LinkSpan).textContent : "";
-    const stringMatchExclusions = Array.isArray(option.linkIgnoreStrings) ? option.linkIgnoreStrings.reduce(
-      (result, str) => result.replace(str, ""),
-      linkSpanExclusions
-    ) : linkSpanExclusions;
+    const linkText = link ? fnIgnore(link, Constants.Exclusions.LinkSpan).textContent.replace(
+      linkIgnoreStringPattern,
+      ""
+    ) : "";
+    const linkTextLength = removeWhitespace(linkText).length;
     if (link && link.getAttribute("aria-hidden") === "true") {
       const unfocusable = link.getAttribute("tabindex") === "-1";
       if (option.checks.HIDDEN_FOCUSABLE && !unfocusable) {
@@ -6330,7 +6331,6 @@ function checkImages(results, option) {
       }
       return;
     }
-    const linkTextLength = link ? removeWhitespace(stringMatchExclusions).length : 0;
     if (alt === null) {
       if (link) {
         const rule = linkTextLength === 0 ? option.checks.MISSING_ALT_LINK : option.checks.MISSING_ALT_LINK_HAS_TEXT;

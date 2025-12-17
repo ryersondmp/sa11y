@@ -8,78 +8,6 @@
   <link href="../docs/examples/assets/main.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" />
   <meta http-equiv="refresh" content="1000" />
-  <style>
-    .color-mix {
-      color: color-mix(in srgb, rgba(235, 52, 52, 1) 90%, white);
-      background-color: color-mix(in srgb,
-          rgba(52, 201, 235, 0.9) 50%,
-          white);
-    }
-
-    .hsl {
-      color: black;
-      background-color: hsl(248, 100%, 50%);
-    }
-
-    .color {
-      color: color(display-p3 1 8 0 / 0.5);
-    }
-
-    .carousel {
-      padding: 40px;
-      background: lightblue;
-    }
-
-    .a-test {
-      font-size: 3em;
-    }
-
-    .a-test:hover,
-    .a-test:focus {
-      opacity: 0.8;
-    }
-
-    .slick-sr-only {
-      border: 0 !important;
-      clip: rect(1px, 1px, 1px, 1px) !important;
-      -webkit-clip-path: inset(50%) !important;
-      clip-path: inset(50%) !important;
-      height: 1px !important;
-      margin: -1px !important;
-      overflow: hidden !important;
-      padding: 0 !important;
-      position: absolute !important;
-      width: 1px !important;
-      white-space: nowrap !important;
-    }
-
-    .socials svg {
-      fill: #fff;
-      width: 20px;
-      height: 20px;
-      transition: .5s all ease;
-      margin-inline-end: 20px;
-    }
-
-    .site-footer {
-      background: linear-gradient(to bottom, rgba(102, 102, 102, 0) 24%, #030303 91%) #071e4e;
-      color: #c2d1d9;
-      position: relative;
-      z-index: 9;
-    }
-
-    .screen-reader {
-      left: -9999px;
-      position: absolute;
-    }
-
-    .element-invisible {
-      position: absolute !important;
-      clip: rect(0, 0, 0, 0);
-      overflow: hidden;
-      height: 1px;
-    }
-  </style>
 </head>
 
 <body>
@@ -87,6 +15,144 @@
     <h2>Sandbox</h2>
   </header>
   <main>
+
+    <h2>Testing non-descript text or link is only new window phrases</h2>
+    <div id="error-new-tab-link-text-1">
+      <a href="https://www.example.com?=40249">opens new tab</a>
+    </div>
+    <div id="error-new-tab-link-text-2">
+      <a href="https://www.example.com?=40249rf">(opens new tab)</a>
+    </div>
+    <div id="error-new-tab-link-text-3">
+      <a href="https://www.example.com?=40s249rf">new tab.</a>
+    </div>
+    <div id="error-new-tab-link-text-3">
+      <a href="https://www.example.com?=40s249rf">learn more/</a>
+    </div>
+    <div id="error-new-tab-link-text-3">
+      <a href="https://www.example.com?=40s249rf">learn more!</a>
+    </div>
+    <div id="error-new-tab-link-text-3">
+      <a href="https://www.example.com?=40s249rf">- learn more -</a>
+    </div>
+
+    <p>Link with ignored substring: <a target="_blank" href="https://www.youtube.com/watch?v=DLzxrzFCyOs">You were
+        warned
+        (opens in new window)</a></p>
+    <p>Link with new window icon: <a target="_blank" href="https://www.youtube.com/watch?v=DLzxrzFCyOs">You were warned
+        <em class="link-purpose">(opens in new window)</em></a></p>
+
+    <h2>Example (AnchorJS)</h2>
+
+    <a href="https://princeton.edu">.</a>
+
+    <br><br> Everything here should be stripped away:
+    <a href="https://princeton.edu">. (ignore me) (External)</a>
+
+    <hr>
+
+    <a href="https://www.youtube.com/watch?v=DLzxrzFCyOs" target="_blank" class="">An informative video (opens in new
+      window).</a>
+
+    <hr>
+    <a href="https://www.example.com?=424"><span class="sr-only-example">ignore me</span></a>
+    <br>
+    <br>
+    <a href="https://www.example.com?=424">Opens new window</a>
+    <br>
+    <br>
+    <a href="https://www.example.com?=424">(External link)</a>
+    <hr>
+
+    <img src="https://newsocietyinstitute.ca/wp-content/uploads/2025/11/nsi-home-feature-redux.jpg" alt="placeholder"
+      width="400">
+
+    <hr>
+
+    <img src="https://newsocietyinstitute.ca/wp-content/uploads/2025/11/nsi-home-feature-redux.jpg"
+      alt="Homepage Feature Image" width="400">
+
+    <hr>
+    <img src="https://newsocietyinstitute.ca/wp-content/uploads/2025/11/nsi-hero-homeA-1920x1080.jpg" alt="Hero Slide 1"
+      width="400">
+
+    <hr>
+    <img src="https://newsocietyinstitute.ca/wp-content/uploads/2025/11/nsi-hero-homeA-1920x1080.jpg"
+      alt="Hero Slide 1, and the return of PowerPoint" width="400">
+
+
+    <style>
+      .color-mix {
+        color: color-mix(in srgb, rgba(235, 52, 52, 1) 90%, white);
+        background-color: color-mix(in srgb,
+            rgba(52, 201, 235, 0.9) 50%,
+            white);
+      }
+
+      .hsl {
+        color: black;
+        background-color: hsl(248, 100%, 50%);
+      }
+
+      .color {
+        color: color(display-p3 1 8 0 / 0.5);
+      }
+
+      .carousel {
+        padding: 40px;
+        background: lightblue;
+      }
+
+      .a-test {
+        font-size: 3em;
+      }
+
+      .a-test:hover,
+      .a-test:focus {
+        opacity: 0.8;
+      }
+
+      .slick-sr-only {
+        border: 0 !important;
+        clip: rect(1px, 1px, 1px, 1px) !important;
+        -webkit-clip-path: inset(50%) !important;
+        clip-path: inset(50%) !important;
+        height: 1px !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        padding: 0 !important;
+        position: absolute !important;
+        width: 1px !important;
+        white-space: nowrap !important;
+      }
+
+      .socials svg {
+        fill: #fff;
+        width: 20px;
+        height: 20px;
+        transition: .5s all ease;
+        margin-inline-end: 20px;
+      }
+
+      .site-footer {
+        background: linear-gradient(to bottom, rgba(102, 102, 102, 0) 24%, #030303 91%) #071e4e;
+        color: #c2d1d9;
+        position: relative;
+        z-index: 9;
+      }
+
+      .screen-reader {
+        left: -9999px;
+        position: absolute;
+      }
+
+      .element-invisible {
+        position: absolute !important;
+        clip: rect(0, 0, 0, 0);
+        overflow: hidden;
+        height: 1px;
+      }
+    </style>
 
     <h2>New placeholder stopword: "test"</h2>
     <img src="../docs/examples/assets/placeholder.svg" alt="test" />

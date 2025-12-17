@@ -133,7 +133,7 @@ export function stripHTMLtags(string) {
 }
 
 /**
- * Removes ALL non-alphanumeric characters and normalizes whitespace.
+ * Removes ALL non-alphanumeric characters and normalizes whitespace. Accounts for non-Latin characters.
  * @param {string} string - The input text to be sanitized.
  * @returns {string} The sanitized and trimmed string.
  */

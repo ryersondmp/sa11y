@@ -32,6 +32,7 @@ export default function checkImages(results, option) {
 
   // Generate placeholder stop words that are that the START of an alt string.
   const altPlaceholderPattern = Utils.generateRegexString(option.altPlaceholder, true);
+  const linkIgnoreStringPattern = Utils.generateRegexString(option.linkIgnoreStrings);
 
   // Generate supplied placeholder stop words.
   const extraPlaceholderStopWords = option.extraPlaceholderStopWords
@@ -107,17 +108,13 @@ export default function checkImages(results, option) {
     const src = $el.getAttribute('src') ? $el.getAttribute('src') : $el.getAttribute('srcset');
 
     // Process link text exclusions.
-    const linkSpanExclusions = link
-      ? Utils.fnIgnore(link, Constants.Exclusions.LinkSpan).textContent
-      : '';
-
-    // Process linkIgnoreStrings on parent link.
-    const stringMatchExclusions = Array.isArray(option.linkIgnoreStrings)
-      ? option.linkIgnoreStrings.reduce(
-          (result, str) => result.replace(str, ''),
-          linkSpanExclusions,
+    const linkText = link
+      ? Utils.fnIgnore(link, Constants.Exclusions.LinkSpan).textContent.replace(
+          linkIgnoreStringPattern,
+          '',
         )
-      : linkSpanExclusions;
+      : '';
+    const linkTextLength = Utils.removeWhitespace(linkText).length;
 
     /** ******************** */
     /*  HIDDEN BUT FOCUSABE  */
@@ -138,9 +135,6 @@ export default function checkImages(results, option) {
       }
       return;
     }
-
-    // Get link text length.
-    const linkTextLength = link ? Utils.removeWhitespace(stringMatchExclusions).length : 0;
 
     /** **************** */
     /*  ALT IS MISSING   */
