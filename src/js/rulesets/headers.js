@@ -7,12 +7,13 @@ import * as Utils from '../utils/utils';
 export default function checkHeaders(results, option, headingOutline) {
   let prevLevel;
   let prevHeadingText = '';
+  const stringExclusionPattern = Utils.generateRegexString(option.headerIgnoreStrings);
+
+  // Start the loop!
   Elements.Found.Headings.forEach(($el, i) => {
     // Get accessible name of heading.
     const accName = computeAccessibleName($el, Constants.Exclusions.HeaderSpan);
-    const stringMatchExclusions = option.headerIgnoreStrings
-      ? accName.replace(option.headerIgnoreStrings, '')
-      : accName;
+    const stringMatchExclusions = accName.replace(stringExclusionPattern, '');
     const removeWhitespace = Utils.removeWhitespace(stringMatchExclusions);
     const headingText = Utils.sanitizeHTML(removeWhitespace);
 
@@ -44,9 +45,10 @@ export default function checkHeaders(results, option, headingOutline) {
 
     // Rulesets.
     if (headingLength === 0) {
-      if ($el.querySelectorAll('img').length) {
-        const alt = $el.querySelector('img')?.getAttribute('alt');
-        if ($el.querySelector('img') && (!alt || alt.trim() === '')) {
+      const image = $el.querySelector('img');
+      if (image) {
+        const alt = image?.getAttribute('alt');
+        if (image && (!alt || alt.trim() === '')) {
           if (option.checks.HEADING_EMPTY_WITH_IMAGE) {
             test = 'HEADING_EMPTY_WITH_IMAGE';
             type = option.checks.HEADING_EMPTY_WITH_IMAGE.type || 'error';

@@ -820,3 +820,46 @@ export function initRovingTabindex(container, children) {
 export function supportsAnchorPositioning() {
   return CSS.supports('anchor-name: --sa11y') && CSS.supports('position-anchor: --sa11y');
 }
+
+/**
+ * Generates a Regex pattern from an array OR a comma-separated string. Safely escapes all special characters.
+ * @param {string[]|string} input - Array of strings (e.g. ['(External)']) OR string (e.g. "(External), [draft]").
+ * @param {boolean} [exactMatch=false] - If true, wraps each pattern in word boundaries (\b) for whole-word matching.
+ * @returns {RegExp|null} The compiled Regex object, or null if input is empty/invalid.
+ */
+export function generateRegexString(input, matchStart = false) {
+  if (!input) return null;
+
+  // Return RegExp directly.
+  if (input instanceof RegExp) return input;
+
+  // Normalize input.
+  let patterns = [];
+  if (Array.isArray(input)) {
+    patterns = input;
+  } else if (typeof input === 'string') {
+    patterns = input.split(',').map(s => s.trim());
+  } else {
+    return null;
+  }
+
+  // Filter out empty entries to prevent matching 'everything' (empty regex issue).
+  patterns = patterns.filter(p => p && p.length > 0);
+  if (patterns.length === 0) return null;
+
+  // Helper to escape special regex characters.
+  const escapeRegExp = (string) => {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  };
+
+  // Build the pattern string.
+  const joinedPatterns = patterns.map(escapeRegExp).join('|');
+
+  // If matchStart is true, wrap in ^(?: ... ) to anchor the entire group to the start.
+  const finalPattern = matchStart
+    ? `^(?:${joinedPatterns})`
+    : joinedPatterns;
+
+  // Compile final case-insensitive regex.
+  return new RegExp(finalPattern, 'gi');
+};

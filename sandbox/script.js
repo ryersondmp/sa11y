@@ -10,6 +10,7 @@ const sa11y = new Sa11y({
   // delayCheck: 500,
   videoContent: 'youtube.com, vimeo.com, yuja.com, panopto.com, torontomu.ca',
   headerIgnore: '.ignore-this-heading',
+  headerIgnoreStrings: /\(AnchorJS\)/gi,
   contrastIgnore: '.card-footer *, #player *',
   containerIgnore: 'footer',
   linkIgnoreStrings: ['(External link)', '(ignore me)'],

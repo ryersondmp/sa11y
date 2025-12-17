@@ -55,42 +55,18 @@ const checkStopWords = (textContent, stopWordsSet) => {
 
 // Main check link text function.
 export default function checkLinkText(results, option) {
-  // Generate full list of stop words.
+  // Generate full list of EXACT stop words. These will leverage Set() instead of regex for slightly better performance.
   const customStopWords = option.linkStopWords
     ? option.linkStopWords.split(',').map((word) => word.toLowerCase().trim())
     : [];
   const linkStopWords = new Set([...Lang._('PARTIAL_ALT_STOPWORDS'), ...customStopWords]);
-
-  // Generate 'click' regex pattern.
-  const clickRegex = new RegExp(
-    Lang._('CLICK')
-      .map((word) => `\\b${word}\\b`)
-      .join('|'),
-    'i',
-  );
-
-  // Generate 'new window' phrases regex pattern.
-  const newWindowRegex = new RegExp(
-    Lang._('NEW_WINDOW_PHRASES')
-      .map((word) => `\\b${word}\\b`)
-      .join('|'),
-    'i',
-  );
-
-  // Generate file type phrases regex pattern.
-  const fileTypeRegex = new RegExp(
-    defaultFileTypes
-      .concat(Lang._('FILE_TYPE_PHRASES'))
-      .map((word) => `\\b${word}\\b`)
-      .join('|'),
-    'i',
-  );
-
-  // Generate linkIgnoreStrings set.
   const linkIgnoreStrings = new Set(option.linkIgnoreStrings.map((word) => word.toLowerCase()));
-  const ignorePattern = option.linkIgnoreStrings?.length
-    ? new RegExp(option.linkIgnoreStrings.join('|'), 'gi')
-    : null;
+
+  // Generate regex patterns from arrays.
+  const clickRegex = Utils.generateRegexString(Lang._('CLICK'));
+  const newWindowRegex = Utils.generateRegexString(Lang._('NEW_WINDOW_PHRASES'));
+  const fileTypeRegex = Utils.generateRegexString(defaultFileTypes);
+  const ignorePattern = Utils.generateRegexString(option.linkIgnoreStrings);
 
   // Start the loop!
   const seen = {};
@@ -115,7 +91,7 @@ export default function checkLinkText(results, option) {
     );
 
     // Strip away text from linkIgnoreStrings prop.
-    const linkText = ignorePattern ? accName.replace(ignorePattern, '') : accName;
+    const linkText = accName.replace(ignorePattern, '');
 
     // Accessible name (lower case) for regex matching.
     const lowercaseLinkText = linkText.toLowerCase();
@@ -130,15 +106,17 @@ export default function checkLinkText(results, option) {
     const textContent = Utils.getText($el).toLowerCase();
 
     // Shared tests.
-    const containsNewWindowPhrases = lowercaseLinkText.match(newWindowRegex)?.[0];
-    const containsFileTypePhrases =
-      lowercaseLinkText.match(fileTypeRegex)?.[0] || textContent.match(fileTypeRegex);
+    const containsNewWindowPhrases = lowercaseLinkText.match(newWindowRegex)?.[0]
+      || textContent.match(newWindowRegex)?.[0];
+    const containsFileTypePhrases = lowercaseLinkText.match(fileTypeRegex)?.[0]
+      || textContent.match(fileTypeRegex)?.[0];
     const fileTypeMatch = $el.matches(cssFileTypeSelectors);
 
     /**
      * Don't overlap with Alt Text module.
      */
     if (!$el.querySelector('img')) {
+
       // Has aria-hidden.
       if (ariaHidden) {
         if (!negativeTabindex) {
@@ -194,7 +172,7 @@ export default function checkLinkText(results, option) {
             content: option.checks.LINK_STOPWORD_ARIA.content
               ? Lang.sprintf(option.checks.LINK_STOPWORD_ARIA.content, stopword, sanitizedText)
               : Lang.sprintf('LINK_STOPWORD_ARIA', stopword, sanitizedText) +
-                Lang.sprintf('LINK_TIP'),
+              Lang.sprintf('LINK_TIP'),
             inline: true,
             dismiss: Utils.prepareDismissal(`LINKSTOPWORDARIA${href + strippedLinkText}`),
             dismissAll: option.checks.LINK_STOPWORD_ARIA.dismissAll ? ' LINK_STOPWORD_ARIA' : false,
@@ -261,6 +239,17 @@ export default function checkLinkText(results, option) {
       const isLinkIgnoreStrings = checkStopWords(textContent, linkIgnoreStrings);
 
       /**
+       * If link text is ONLY strings that were passed in via prop.
+       * Note: these two MUST come before empty hyperlink checks.
+      */
+      if (isLinkIgnoreStrings === textContent) {
+        addStopWordResult($el, isLinkIgnoreStrings);
+      } else if (containsNewWindowPhrases === textContent) {
+        addStopWordResult($el, containsNewWindowPhrases);
+        return;
+      }
+
+      /**
        * Empty hyperlinks.
        */
       if (linkText.length === 0) {
@@ -289,7 +278,9 @@ export default function checkLinkText(results, option) {
           if (option.linkIgnoreSpan) {
             const spanEl = $el.querySelector(option.linkIgnoreSpan);
             if (spanEl) {
-              const spanText = Utils.stripSpecialCharacters(spanEl.textContent).toLowerCase();
+              const spanText = Utils.stripSpecialCharacters(spanEl.textContent)
+                .trim()
+                .toLowerCase();
               if (spanText === textContent) {
                 addStopWordResult($el, spanText);
                 hasStopWordWarning = true;
@@ -334,7 +325,7 @@ export default function checkLinkText(results, option) {
 
       /**
        * Alt quality/stop word checks.
-       */
+      */
 
       // 1. Check for exact stop words.
       const isStopWord = checkStopWords(normalized, linkStopWords);
@@ -355,13 +346,7 @@ export default function checkLinkText(results, option) {
       // 6. Match HTML symbols.
       const matchedSymbol = lowercaseLinkText.match(htmlSymbols)?.[0];
 
-      if (containsNewWindowPhrases === textContent) {
-        // If link text is ONLY "new window" or similar phrases.
-        addStopWordResult($el, containsNewWindowPhrases);
-      } else if (isLinkIgnoreStrings === textContent) {
-        // If link text is ONLY strings that were passed in via prop.
-        addStopWordResult($el, isLinkIgnoreStrings);
-      } else if (isStopWord) {
+      if (isStopWord) {
         // Link is exact stop word.
         addStopWordResult($el, isStopWord);
       } else if (isCitation) {
@@ -455,7 +440,7 @@ export default function checkLinkText(results, option) {
 
       /**
        * Link's title attribute is the same as the link text.
-       */
+      */
       if (textContent.length !== 0 && titleAttr?.toLowerCase() === linkText.toLowerCase()) {
         if (option.checks.DUPLICATE_TITLE) {
           results.push({
@@ -471,6 +456,7 @@ export default function checkLinkText(results, option) {
         }
       }
     }
+
 
     if (strippedLinkText.length !== 0) {
       // Links with identical accessible names have equivalent purpose.

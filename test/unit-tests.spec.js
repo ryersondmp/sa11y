@@ -753,6 +753,27 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
+  test('Links to DOI (doi.org) without trailing characters', async () => {
+    const issue = await noAnnotation(
+      page, 'nothing-doi',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Link opens in new tab WITHOUT warning', async () => {
+    const issue = await checkTooltip(
+      page, 'warning-link-new-tab', 'Link opens in a new tab or window without warning',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Link opens in new tab WITH warning', async () => {
+    const issue = await noAnnotation(
+      page, 'nothing-link-new-tab',
+    );
+    expect(issue).toBe(true);
+  });
+
   test('Links to file without warning', async () => {
     const issue = await checkTooltip(
       page, 'warning-link-file', 'Link points to a PDF or downloadable file',

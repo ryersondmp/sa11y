@@ -28,10 +28,10 @@ export default function checkImages(results, option) {
     : Lang._('SUS_ALT_STOPWORDS');
 
   // Generate placeholder stop words set.
-  const PLACEHOLDER_ALT_ARR = new Set(Lang._('PLACEHOLDER_ALT_STOPWORDS'));
+  const placeholderAltSet = new Set(Lang._('PLACEHOLDER_ALT_STOPWORDS'));
 
   // Generate placeholder stop words that are that the START of an alt string.
-  const altPlaceholderPattern = new RegExp(`^(${option.altPlaceholder.join('|')})`, 'i');
+  const altPlaceholderPattern = Utils.generateRegexString(option.altPlaceholder, true);
 
   // Generate supplied placeholder stop words.
   const extraPlaceholderStopWords = option.extraPlaceholderStopWords
@@ -69,7 +69,7 @@ export default function checkImages(results, option) {
     }
 
     // 4) Catch placeholder alt text, e.g. "placeholder", "hero image 1"
-    if (PLACEHOLDER_ALT_ARR.has(altLowerCase) || PLACEHOLDER_ALT_ARR.has(altNoNumbers)) {
+    if (placeholderAltSet.has(altLowerCase) || placeholderAltSet.has(altNoNumbers)) {
       hit[2] = alt;
     }
 
