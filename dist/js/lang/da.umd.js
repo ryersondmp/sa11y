@@ -75,7 +75,18 @@
       MONO_EYE: "Rød, blå og grøn blind.",
       COLOUR_FILTER_HIGH_CONTRAST: "Farvefiltre fungerer ikke i højkontrasttilstand.",
       // Alternative text stop words
-      SUS_ALT_STOPWORDS: ["billede", "grafik", "billede", "foto"],
+      SUS_ALT_STOPWORDS: [
+        "billede",
+        "grafik",
+        "billede",
+        "foto",
+        "image",
+        "graphic",
+        "picture",
+        "photo",
+        "thumbnail",
+        "icon"
+      ],
       PLACEHOLDER_ALT_STOPWORDS: [
         "alt",
         "billede",
@@ -84,9 +95,27 @@
         "pladsholder",
         "pladsholder-billede",
         "afstandsstykke",
-        "test"
+        "chart",
+        "decorative",
+        "image",
+        "graphic",
+        "photo",
+        "placeholder",
+        "placeholder image",
+        "spacer",
+        "tbd",
+        "todo",
+        "to do",
+        "thumbnail",
+        "icon",
+        "test",
+        "hero image",
+        "hero slide",
+        "homepage feature image",
+        "featured image",
+        "untitled"
       ],
-      PARTIAL_ALT_STOPWORDS: [
+      LINK_STOPWORDS: [
         "klik",
         "klik her",
         "klik her for mere",

@@ -71,7 +71,16 @@ const fr = {
     MONO_EYE: "Daltonisme rouge, vert et bleu.",
     COLOUR_FILTER_HIGH_CONTRAST: "Les filtres de couleur ne fonctionnent pas en mode contraste élevé.",
     // Alternative text stop words
-    SUS_ALT_STOPWORDS: ["image", "illustration", "photo", "photographie", "graphic"],
+    SUS_ALT_STOPWORDS: [
+      "illustration",
+      "photographie",
+      "image",
+      "graphic",
+      "picture",
+      "photo",
+      "thumbnail",
+      "icon"
+    ],
     PLACEHOLDER_ALT_STOPWORDS: [
       "alt",
       "image",
@@ -81,9 +90,26 @@ const fr = {
       "support d’affichage",
       "support d’affichage d’image",
       "séparateur",
-      "test"
+      "chart",
+      "decorative",
+      "graphic",
+      "photo",
+      "placeholder",
+      "placeholder image",
+      "spacer",
+      "tbd",
+      "todo",
+      "to do",
+      "thumbnail",
+      "icon",
+      "test",
+      "hero image",
+      "hero slide",
+      "homepage feature image",
+      "featured image",
+      "untitled"
     ],
-    PARTIAL_ALT_STOPWORDS: [
+    LINK_STOPWORDS: [
       "clic",
       "cliquer ici",
       "cliquer pour plus de détails",

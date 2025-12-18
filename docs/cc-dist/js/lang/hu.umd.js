@@ -75,7 +75,18 @@
       MONO_EYE: "Vörös, kék és zöld vakok.",
       COLOUR_FILTER_HIGH_CONTRAST: "A színszűrők nem működnek nagy kontrasztú üzemmódban.",
       // Alternative text stop words
-      SUS_ALT_STOPWORDS: ["kép", "grafika", "kép", "fotó"],
+      SUS_ALT_STOPWORDS: [
+        "kép",
+        "grafika",
+        "kép",
+        "fotó",
+        "image",
+        "graphic",
+        "picture",
+        "photo",
+        "thumbnail",
+        "icon"
+      ],
       PLACEHOLDER_ALT_STOPWORDS: [
         "alt",
         "kép",
@@ -84,10 +95,28 @@
         "helytartó",
         "helyőrző kép",
         "távtartó",
+        "teszt",
+        "chart",
+        "decorative",
+        "image",
+        "graphic",
+        "photo",
+        "placeholder",
+        "placeholder image",
+        "spacer",
+        "tbd",
+        "todo",
+        "to do",
+        "thumbnail",
+        "icon",
         "test",
-        "teszt"
+        "hero image",
+        "hero slide",
+        "homepage feature image",
+        "featured image",
+        "untitled"
       ],
-      PARTIAL_ALT_STOPWORDS: [
+      LINK_STOPWORDS: [
         "kattints a  címre.",
         "kattintson ide",
         "kattints ide további információkért",

@@ -71,7 +71,18 @@ const it = {
     MONO_EYE: "Cieco rosso, blu e verde.",
     COLOUR_FILTER_HIGH_CONTRAST: "I filtri colore non funzionano in modalità alto contrasto.",
     // Alternative text stop words
-    SUS_ALT_STOPWORDS: ["immagine", "grafico", "immagine", "foto", "photo", "image", "graphic"],
+    SUS_ALT_STOPWORDS: [
+      "immagine",
+      "grafico",
+      "immagine",
+      "foto",
+      "image",
+      "graphic",
+      "picture",
+      "photo",
+      "thumbnail",
+      "icon"
+    ],
     PLACEHOLDER_ALT_STOPWORDS: [
       "alt",
       "immagine",
@@ -83,9 +94,24 @@ const it = {
       "segnaposto",
       "immagine segnaposto",
       "distanziatore",
-      "test"
+      "test",
+      "chart",
+      "decorative",
+      "placeholder",
+      "placeholder image",
+      "spacer",
+      "tbd",
+      "todo",
+      "to do",
+      "thumbnail",
+      "icon",
+      "hero image",
+      "hero slide",
+      "homepage feature image",
+      "featured image",
+      "untitled"
     ],
-    PARTIAL_ALT_STOPWORDS: [
+    LINK_STOPWORDS: [
       "clicca",
       "clicca qui",
       "clicca qui per saperne di più",

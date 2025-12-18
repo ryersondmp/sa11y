@@ -71,7 +71,16 @@ const de = {
     MONO_EYE: "Rot-, Grün- und Blaublindheit.",
     COLOUR_FILTER_HIGH_CONTRAST: "Farbfilter funktionieren nicht im Hochkontrastmodus.",
     // Alternative text stop words
-    SUS_ALT_STOPWORDS: ["image", "graphic", "picture", "photo", "foto", "bild"],
+    SUS_ALT_STOPWORDS: [
+      "image",
+      "graphic",
+      "picture",
+      "photo",
+      "foto",
+      "bild",
+      "thumbnail",
+      "icon"
+    ],
     PLACEHOLDER_ALT_STOPWORDS: [
       "alt",
       "image",
@@ -87,9 +96,28 @@ const de = {
       "platzhalter photo",
       "spacer",
       "abstand",
-      "test"
+      "test",
+      "chart",
+      "decorative",
+      "image",
+      "graphic",
+      "photo",
+      "placeholder",
+      "placeholder image",
+      "spacer",
+      "tbd",
+      "todo",
+      "to do",
+      "thumbnail",
+      "icon",
+      "test",
+      "hero image",
+      "hero slide",
+      "homepage feature image",
+      "featured image",
+      "untitled"
     ],
-    PARTIAL_ALT_STOPWORDS: [
+    LINK_STOPWORDS: [
       "click",
       "klick",
       "click here",

@@ -92,9 +92,10 @@ const enUS = {
       "hero image",
       "hero slide",
       "homepage feature image",
+      "featured image",
       "untitled"
     ],
-    PARTIAL_ALT_STOPWORDS: [
+    LINK_STOPWORDS: [
       "click",
       "click here",
       "click here for more",

@@ -82,7 +82,8 @@ const pl = {
       "graphic",
       "picture",
       "photo",
-      "test"
+      "thumbnail",
+      "icon"
     ],
     PLACEHOLDER_ALT_STOPWORDS: [
       "alt",
@@ -97,9 +98,24 @@ const pl = {
       "decorative",
       "placeholder",
       "placeholder image",
-      "spacer"
+      "spacer",
+      "chart",
+      "decorative",
+      "placeholder",
+      "placeholder image",
+      "spacer",
+      "tbd",
+      "todo",
+      "to do",
+      "thumbnail",
+      "icon",
+      "hero image",
+      "hero slide",
+      "homepage feature image",
+      "featured image",
+      "untitled"
     ],
-    PARTIAL_ALT_STOPWORDS: [
+    LINK_STOPWORDS: [
       "kliknij",
       "kliknij tutaj",
       "kliknij tu",

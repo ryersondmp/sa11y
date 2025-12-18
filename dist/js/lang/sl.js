@@ -71,7 +71,17 @@ const sl = {
     MONO_EYE: "Rdeči, modri in zeleni slepi.",
     COLOUR_FILTER_HIGH_CONTRAST: "Barvni filtri ne delujejo v načinu visokega kontrasta.",
     // Alternative text stop words
-    SUS_ALT_STOPWORDS: ["slika", "grafični", "fotografija"],
+    SUS_ALT_STOPWORDS: [
+      "slika",
+      "grafični",
+      "fotografija",
+      "image",
+      "graphic",
+      "picture",
+      "photo",
+      "thumbnail",
+      "icon"
+    ],
     PLACEHOLDER_ALT_STOPWORDS: [
       "alt",
       "slika",
@@ -80,9 +90,27 @@ const sl = {
       "namestnik",
       "nadomestna slika",
       "distančnik",
-      "test"
+      "chart",
+      "decorative",
+      "image",
+      "graphic",
+      "photo",
+      "placeholder",
+      "placeholder image",
+      "spacer",
+      "tbd",
+      "todo",
+      "to do",
+      "thumbnail",
+      "icon",
+      "test",
+      "hero image",
+      "hero slide",
+      "homepage feature image",
+      "featured image",
+      "untitled"
     ],
-    PARTIAL_ALT_STOPWORDS: [
+    LINK_STOPWORDS: [
       "kliknite",
       "kliknite tukaj",
       "kliknite tukaj za več",

@@ -71,7 +71,18 @@ const id = {
     MONO_EYE: "Buta merah, biru, dan hijau.",
     COLOUR_FILTER_HIGH_CONTRAST: "Filter warna tidak berfungsi dalam mode kontras tinggi.",
     // Alternative text stop words
-    SUS_ALT_STOPWORDS: ["gambar", "grafik", "gambar", "foto", "photo", "image", "graphic"],
+    SUS_ALT_STOPWORDS: [
+      "gambar",
+      "grafik",
+      "gambar",
+      "foto",
+      "image",
+      "graphic",
+      "picture",
+      "photo",
+      "thumbnail",
+      "icon"
+    ],
     PLACEHOLDER_ALT_STOPWORDS: [
       "alt",
       "gambar",
@@ -84,9 +95,24 @@ const id = {
       "gambar penampung",
       "spacer",
       "test",
-      "tes"
+      "tes",
+      "chart",
+      "decorative",
+      "placeholder",
+      "placeholder image",
+      "spacer",
+      "tbd",
+      "todo",
+      "to do",
+      "thumbnail",
+      "icon",
+      "hero image",
+      "hero slide",
+      "homepage feature image",
+      "featured image",
+      "untitled"
     ],
-    PARTIAL_ALT_STOPWORDS: [
+    LINK_STOPWORDS: [
       "klik",
       "klik di sini",
       "klik di sini untuk informasi lebih lanjut",

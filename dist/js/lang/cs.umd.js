@@ -75,7 +75,18 @@
       MONO_EYE: "Červená, modrá a zelená barva pro nevidomé.",
       COLOUR_FILTER_HIGH_CONTRAST: "Barevné filtry nefungují v režimu vysokého kontrastu.",
       // Alternative text stop words
-      SUS_ALT_STOPWORDS: ["obrázek", "grafika", "obrázek", "foto"],
+      SUS_ALT_STOPWORDS: [
+        "obrázek",
+        "grafika",
+        "obrázek",
+        "foto",
+        "image",
+        "graphic",
+        "picture",
+        "photo",
+        "thumbnail",
+        "icon"
+      ],
       PLACEHOLDER_ALT_STOPWORDS: [
         "alt",
         "obrázek",
@@ -84,9 +95,27 @@
         "zástupný symbol",
         "zástupný obrázek",
         "distanční rámeček",
-        "test"
+        "chart",
+        "decorative",
+        "image",
+        "graphic",
+        "photo",
+        "placeholder",
+        "placeholder image",
+        "spacer",
+        "tbd",
+        "todo",
+        "to do",
+        "thumbnail",
+        "icon",
+        "test",
+        "hero image",
+        "hero slide",
+        "homepage feature image",
+        "featured image",
+        "untitled"
       ],
-      PARTIAL_ALT_STOPWORDS: [
+      LINK_STOPWORDS: [
         "klikněte na",
         "klikněte zde",
         "klikněte zde pro více informací",

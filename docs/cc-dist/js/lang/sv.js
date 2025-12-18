@@ -71,7 +71,18 @@ const sv = {
     MONO_EYE: "Röd, grön och blå blindhet.",
     COLOUR_FILTER_HIGH_CONTRAST: "Färgfilter fungerar inte i högkontrastläge.",
     // Alternative text module stop words
-    SUS_ALT_STOPWORDS: ["bild", "grafik", "fotografi", "foto"],
+    SUS_ALT_STOPWORDS: [
+      "bild",
+      "grafik",
+      "fotografi",
+      "foto",
+      "image",
+      "graphic",
+      "picture",
+      "photo",
+      "thumbnail",
+      "icon"
+    ],
     PLACEHOLDER_ALT_STOPWORDS: [
       "alt",
       "bild",
@@ -81,9 +92,27 @@ const sv = {
       "platshållare",
       "platshållarbild",
       "mellanlägg",
-      "test"
+      "chart",
+      "decorative",
+      "image",
+      "graphic",
+      "photo",
+      "placeholder",
+      "placeholder image",
+      "spacer",
+      "tbd",
+      "todo",
+      "to do",
+      "thumbnail",
+      "icon",
+      "test",
+      "hero image",
+      "hero slide",
+      "homepage feature image",
+      "featured image",
+      "untitled"
     ],
-    PARTIAL_ALT_STOPWORDS: [
+    LINK_STOPWORDS: [
       "klicka",
       "klicka här",
       "klicka här för mer",

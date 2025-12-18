@@ -75,7 +75,17 @@
       MONO_EYE: "Ciego rojo, azul y verde.",
       COLOUR_FILTER_HIGH_CONTRAST: "Los filtros de color no funcionan en el modo de alto contraste.",
       // Alternative text stop words
-      SUS_ALT_STOPWORDS: ["imagen", "gráfico", "foto"],
+      SUS_ALT_STOPWORDS: [
+        "imagen",
+        "gráfico",
+        "foto",
+        "image",
+        "graphic",
+        "picture",
+        "photo",
+        "thumbnail",
+        "icon"
+      ],
       PLACEHOLDER_ALT_STOPWORDS: [
         "alt",
         "image",
@@ -90,9 +100,23 @@
         "marcador de posición",
         "espaciador",
         "test",
-        "prueba"
+        "prueba",
+        "alt",
+        "chart",
+        "decorative",
+        "graphic",
+        "tbd",
+        "todo",
+        "to do",
+        "thumbnail",
+        "icon",
+        "hero image",
+        "hero slide",
+        "homepage feature image",
+        "featured image",
+        "untitled"
       ],
-      PARTIAL_ALT_STOPWORDS: [
+      LINK_STOPWORDS: [
         "clic",
         "clic aquí",
         "clic aquí para mas",

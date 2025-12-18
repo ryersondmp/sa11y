@@ -58,7 +58,7 @@ export default function checkLinkText(results, option) {
   const customStopWords = option.linkStopWords
     ? option.linkStopWords.split(',').map((word) => word.toLowerCase().trim())
     : [];
-  const linkStopWords = new Set([...Lang._('PARTIAL_ALT_STOPWORDS'), ...customStopWords]);
+  const linkStopWords = new Set([...Lang._('LINK_STOPWORDS'), ...customStopWords]);
   const linkIgnoreStrings = new Set(option.linkIgnoreStrings.map((word) => word.toLowerCase()));
 
   // Generate regex patterns from arrays.

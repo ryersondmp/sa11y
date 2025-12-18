@@ -75,7 +75,18 @@
       MONO_EYE: "빨간색, 파란색, 녹색 블라인드.",
       COLOUR_FILTER_HIGH_CONTRAST: "고대비 모드에서는 컬러 필터가 작동하지 않습니다.",
       // Alternative text stop words
-      SUS_ALT_STOPWORDS: ["이미지", "그래픽", "사진", "사진"],
+      SUS_ALT_STOPWORDS: [
+        "이미지",
+        "그래픽",
+        "사진",
+        "사진",
+        "image",
+        "graphic",
+        "picture",
+        "photo",
+        "thumbnail",
+        "icon"
+      ],
       PLACEHOLDER_ALT_STOPWORDS: [
         "alt",
         "이미지",
@@ -84,9 +95,29 @@
         "자리 표시자",
         "플레이스홀더 이미지",
         "스페이서",
-        "테스트"
+        "테스트",
+        "alt",
+        "chart",
+        "decorative",
+        "image",
+        "graphic",
+        "photo",
+        "placeholder",
+        "placeholder image",
+        "spacer",
+        "tbd",
+        "todo",
+        "to do",
+        "thumbnail",
+        "icon",
+        "test",
+        "hero image",
+        "hero slide",
+        "homepage feature image",
+        "featured image",
+        "untitled"
       ],
-      PARTIAL_ALT_STOPWORDS: [
+      LINK_STOPWORDS: [
         "클릭",
         "여기를 클릭하세요",
         "자세한 내용을 보려면 여기를 클릭하세요.",

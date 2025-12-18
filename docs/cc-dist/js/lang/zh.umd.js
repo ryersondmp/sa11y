@@ -75,7 +75,18 @@
       MONO_EYE: "红、蓝、绿三色盲。",
       COLOUR_FILTER_HIGH_CONTRAST: "彩色滤镜在高对比度模式下不工作。",
       // Alternative text stop words
-      SUS_ALT_STOPWORDS: ["形象", "图形", "图片", "照片"],
+      SUS_ALT_STOPWORDS: [
+        "形象",
+        "图形",
+        "图片",
+        "照片",
+        "image",
+        "graphic",
+        "picture",
+        "photo",
+        "thumbnail",
+        "icon"
+      ],
       PLACEHOLDER_ALT_STOPWORDS: [
         "备选",
         "形象",
@@ -85,9 +96,29 @@
         "占位符",
         "占位图片",
         "垫片",
-        "测试"
+        "测试",
+        "alt",
+        "chart",
+        "decorative",
+        "image",
+        "graphic",
+        "photo",
+        "placeholder",
+        "placeholder image",
+        "spacer",
+        "tbd",
+        "todo",
+        "to do",
+        "thumbnail",
+        "icon",
+        "test",
+        "hero image",
+        "hero slide",
+        "homepage feature image",
+        "featured image",
+        "untitled"
       ],
-      PARTIAL_ALT_STOPWORDS: [
+      LINK_STOPWORDS: [
         "点击",
         "点击这里",
         "点击这里了解更多",

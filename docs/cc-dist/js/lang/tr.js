@@ -71,7 +71,18 @@ const tr = {
     MONO_EYE: "Kırmızı, mavi ve yeşil kör.",
     COLOUR_FILTER_HIGH_CONTRAST: "Renk filtreleri yüksek kontrast modunda çalışmaz.",
     // Alternative text stop words
-    SUS_ALT_STOPWORDS: ["görüntü", "grafik", "resim", "fotoğraf"],
+    SUS_ALT_STOPWORDS: [
+      "görüntü",
+      "grafik",
+      "resim",
+      "fotoğraf",
+      "image",
+      "graphic",
+      "picture",
+      "photo",
+      "thumbnail",
+      "icon"
+    ],
     PLACEHOLDER_ALT_STOPWORDS: [
       "alt",
       "görüntü",
@@ -80,9 +91,27 @@ const tr = {
       "yer tutucu",
       "yer tutucu resim",
       "ara parça",
-      "test"
+      "chart",
+      "decorative",
+      "image",
+      "graphic",
+      "photo",
+      "placeholder",
+      "placeholder image",
+      "spacer",
+      "tbd",
+      "todo",
+      "to do",
+      "thumbnail",
+      "icon",
+      "test",
+      "hero image",
+      "hero slide",
+      "homepage feature image",
+      "featured image",
+      "untitled"
     ],
-    PARTIAL_ALT_STOPWORDS: [
+    LINK_STOPWORDS: [
       "tıklayın",
       "buraya tıklayın",
       "daha fazlası için buraya tıklayın",

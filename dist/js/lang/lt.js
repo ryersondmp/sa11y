@@ -76,9 +76,12 @@ const lt = {
       "grafinis",
       "paveikslėlis",
       "nuotrauka",
-      "photo",
       "image",
-      "graphic"
+      "graphic",
+      "picture",
+      "photo",
+      "thumbnail",
+      "icon"
     ],
     PLACEHOLDER_ALT_STOPWORDS: [
       "alt",
@@ -93,9 +96,23 @@ const lt = {
       "image",
       "graphic",
       "testas",
-      "test"
+      "test",
+      "chart",
+      "placeholder",
+      "placeholder image",
+      "spacer",
+      "tbd",
+      "todo",
+      "to do",
+      "thumbnail",
+      "icon",
+      "hero image",
+      "hero slide",
+      "homepage feature image",
+      "featured image",
+      "untitled"
     ],
-    PARTIAL_ALT_STOPWORDS: [
+    LINK_STOPWORDS: [
       "spustelėkite",
       "spauskite čia",
       "spausdami čia",

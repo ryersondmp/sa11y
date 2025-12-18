@@ -75,7 +75,16 @@
       MONO_EYE: "Punainen, sininen ja vihreä sokea.",
       COLOUR_FILTER_HIGH_CONTRAST: "Värisuodattimet eivät toimi korkean kontrastin tilassa.",
       // Alternative text stop words
-      SUS_ALT_STOPWORDS: ["kuva", "graafinen", "image", "photo"],
+      SUS_ALT_STOPWORDS: [
+        "kuva",
+        "graafinen",
+        "image",
+        "graphic",
+        "picture",
+        "photo",
+        "thumbnail",
+        "icon"
+      ],
       PLACEHOLDER_ALT_STOPWORDS: [
         "alt",
         "kuva",
@@ -84,9 +93,28 @@
         "mielikuvamerkki",
         "välikappale",
         "test",
-        "testi"
+        "testi",
+        "chart",
+        "decorative",
+        "image",
+        "graphic",
+        "photo",
+        "placeholder",
+        "placeholder image",
+        "spacer",
+        "tbd",
+        "todo",
+        "to do",
+        "thumbnail",
+        "icon",
+        "test",
+        "hero image",
+        "hero slide",
+        "homepage feature image",
+        "featured image",
+        "untitled"
       ],
-      PARTIAL_ALT_STOPWORDS: [
+      LINK_STOPWORDS: [
         "klikkaa",
         "klikkaa tästä",
         "klikkaa tästä lisää",

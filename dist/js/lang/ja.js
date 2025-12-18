@@ -71,7 +71,18 @@ const ja = {
     MONO_EYE: "赤、青、緑のブラインド。",
     COLOUR_FILTER_HIGH_CONTRAST: "ハイコントラストモードでは、カラーフィルターは機能しません。",
     // Alternative text stop words
-    SUS_ALT_STOPWORDS: ["イマージュ", "グラフィック", "がぞう", "写真"],
+    SUS_ALT_STOPWORDS: [
+      "イマージュ",
+      "グラフィック",
+      "がぞう",
+      "写真",
+      "image",
+      "graphic",
+      "picture",
+      "photo",
+      "thumbnail",
+      "icon"
+    ],
     PLACEHOLDER_ALT_STOPWORDS: [
       "アルト",
       "イマージュ",
@@ -81,9 +92,29 @@ const ja = {
       "プレースホルダ",
       "待受画像",
       "スペーサ",
-      "テスト"
+      "テスト",
+      "alt",
+      "chart",
+      "decorative",
+      "image",
+      "graphic",
+      "photo",
+      "placeholder",
+      "placeholder image",
+      "spacer",
+      "tbd",
+      "todo",
+      "to do",
+      "thumbnail",
+      "icon",
+      "test",
+      "hero image",
+      "hero slide",
+      "homepage feature image",
+      "featured image",
+      "untitled"
     ],
-    PARTIAL_ALT_STOPWORDS: [
+    LINK_STOPWORDS: [
       "クリック",
       "ここをクリック",
       "続きはこちら",

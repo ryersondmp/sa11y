@@ -75,7 +75,17 @@
       MONO_EYE: "Punane, sinine ja roheline pime.",
       COLOUR_FILTER_HIGH_CONTRAST: "Värvifiltrid ei tööta kõrge kontrastsusega režiimis.",
       // Alternative text stop words
-      SUS_ALT_STOPWORDS: ["pilt", "graafiline", "foto", "photo", "image", "graphic"],
+      SUS_ALT_STOPWORDS: [
+        "pilt",
+        "graafiline",
+        "foto",
+        "image",
+        "graphic",
+        "picture",
+        "photo",
+        "thumbnail",
+        "icon"
+      ],
       PLACEHOLDER_ALT_STOPWORDS: [
         "alt",
         "pilt",
@@ -84,12 +94,27 @@
         "platsihoidja",
         "kohaomaniku pilt",
         "distantsi",
-        "photo",
+        "chart",
+        "decorative",
         "image",
         "graphic",
-        "test"
+        "photo",
+        "placeholder",
+        "placeholder image",
+        "spacer",
+        "tbd",
+        "todo",
+        "to do",
+        "thumbnail",
+        "icon",
+        "test",
+        "hero image",
+        "hero slide",
+        "homepage feature image",
+        "featured image",
+        "untitled"
       ],
-      PARTIAL_ALT_STOPWORDS: [
+      LINK_STOPWORDS: [
         "kliki",
         "kliki siia",
         "kliki siia rohkem",

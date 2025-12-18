@@ -71,7 +71,18 @@ const bg = {
     MONO_EYE: "Червени, сини и зелени слепи.",
     COLOUR_FILTER_HIGH_CONTRAST: "Цветните филтри не работят в режим на висок контраст.",
     // Alternative text stop words
-    SUS_ALT_STOPWORDS: ["изображение", "графичен", "снимка", "снимка"],
+    SUS_ALT_STOPWORDS: [
+      "изображение",
+      "графичен",
+      "снимка",
+      "снимка",
+      "image",
+      "graphic",
+      "picture",
+      "photo",
+      "thumbnail",
+      "icon"
+    ],
     PLACEHOLDER_ALT_STOPWORDS: [
       "alt",
       "изображение",
@@ -80,9 +91,27 @@ const bg = {
       "заместител",
       "заместващо изображение",
       "Разделител",
-      "тест"
+      "тест",
+      "decorative",
+      "image",
+      "graphic",
+      "photo",
+      "placeholder",
+      "placeholder image",
+      "spacer",
+      "tbd",
+      "todo",
+      "to do",
+      "thumbnail",
+      "icon",
+      "test",
+      "hero image",
+      "hero slide",
+      "homepage feature image",
+      "featured image",
+      "untitled"
     ],
-    PARTIAL_ALT_STOPWORDS: [
+    LINK_STOPWORDS: [
       "кликнете върху",
       "Кликнете тук",
       "кликнете тук за повече",

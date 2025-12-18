@@ -75,7 +75,18 @@
       MONO_EYE: "Cego para vermelho, azul e verde.",
       COLOUR_FILTER_HIGH_CONTRAST: "Os filtros de cores não funcionam no modo de alto contraste.",
       // Alternative text stop words
-      SUS_ALT_STOPWORDS: ["imagem", "gráfico", "imagem", "foto", "photo", "image", "graphic"],
+      SUS_ALT_STOPWORDS: [
+        "imagem",
+        "gráfico",
+        "imagem",
+        "foto",
+        "image",
+        "graphic",
+        "picture",
+        "photo",
+        "thumbnail",
+        "icon"
+      ],
       PLACEHOLDER_ALT_STOPWORDS: [
         "alt",
         "imagem",
@@ -88,9 +99,24 @@
         "imagem de espaço reservado",
         "espaçador",
         "test",
-        "teste"
+        "teste",
+        "chart",
+        "decorative",
+        "placeholder",
+        "placeholder image",
+        "spacer",
+        "tbd",
+        "todo",
+        "to do",
+        "thumbnail",
+        "icon",
+        "hero image",
+        "hero slide",
+        "homepage feature image",
+        "featured image",
+        "untitled"
       ],
-      PARTIAL_ALT_STOPWORDS: [
+      LINK_STOPWORDS: [
         "clique",
         "clique aqui",
         "clique aqui para saber mais",

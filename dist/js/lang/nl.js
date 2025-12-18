@@ -78,9 +78,12 @@ const nl = {
       "foto",
       "miniatuur",
       "icoon",
-      "photo",
       "image",
-      "graphic"
+      "graphic",
+      "picture",
+      "photo",
+      "thumbnail",
+      "icon"
     ],
     PLACEHOLDER_ALT_STOPWORDS: [
       "alt",
@@ -95,9 +98,23 @@ const nl = {
       "photo",
       "graphic",
       "placeholder",
-      "test"
+      "test",
+      "chart",
+      "decorative",
+      "placeholder image",
+      "spacer",
+      "tbd",
+      "todo",
+      "to do",
+      "thumbnail",
+      "icon",
+      "hero image",
+      "hero slide",
+      "homepage feature image",
+      "featured image",
+      "untitled"
     ],
-    PARTIAL_ALT_STOPWORDS: [
+    LINK_STOPWORDS: [
       "klik op",
       "klik hier",
       "klik hier voor meer",

@@ -75,7 +75,18 @@
       MONO_EYE: "Червона, зелена і синя сліпота.",
       COLOUR_FILTER_HIGH_CONTRAST: "Кольорові фільтри не працюють у режимі високої контрастності.",
       // Alternative text module stop words
-      SUS_ALT_STOPWORDS: ["зображення", "графічний об’єкт", "малюнок", "фото"],
+      SUS_ALT_STOPWORDS: [
+        "зображення",
+        "графічний об’єкт",
+        "малюнок",
+        "фото",
+        "image",
+        "graphic",
+        "picture",
+        "photo",
+        "thumbnail",
+        "icon"
+      ],
       PLACEHOLDER_ALT_STOPWORDS: [
         "alt",
         "зображення",
@@ -85,10 +96,28 @@
         "заповнювач",
         "зображення-заповнювач",
         "роздільник",
+        "тест",
+        "chart",
+        "decorative",
+        "image",
+        "graphic",
+        "photo",
+        "placeholder",
+        "placeholder image",
+        "spacer",
+        "tbd",
+        "todo",
+        "to do",
+        "thumbnail",
+        "icon",
         "test",
-        "тест"
+        "hero image",
+        "hero slide",
+        "homepage feature image",
+        "featured image",
+        "untitled"
       ],
-      PARTIAL_ALT_STOPWORDS: [
+      LINK_STOPWORDS: [
         "натиснути",
         "натиснути тут",
         "натиснути тут щоб дізнатися більше",

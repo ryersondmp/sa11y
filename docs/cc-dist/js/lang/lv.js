@@ -71,7 +71,17 @@ const lv = {
     MONO_EYE: "Sarkans, zils un zaļš akls.",
     COLOUR_FILTER_HIGH_CONTRAST: "Krāsu filtri nedarbojas augsta kontrasta režīmā.",
     // Alternative text stop words
-    SUS_ALT_STOPWORDS: ["attēls", "grafikas", "foto", "photo", "image", "graphic"],
+    SUS_ALT_STOPWORDS: [
+      "attēls",
+      "grafikas",
+      "foto",
+      "image",
+      "graphic",
+      "picture",
+      "photo",
+      "thumbnail",
+      "icon"
+    ],
     PLACEHOLDER_ALT_STOPWORDS: [
       "alt",
       "attēls",
@@ -84,9 +94,24 @@ const lv = {
       "aizvietotāja attēls",
       "starplikas",
       "tests",
-      "test"
+      "chart",
+      "decorative",
+      "placeholder",
+      "placeholder image",
+      "spacer",
+      "tbd",
+      "todo",
+      "to do",
+      "thumbnail",
+      "icon",
+      "test",
+      "hero image",
+      "hero slide",
+      "homepage feature image",
+      "featured image",
+      "untitled"
     ],
-    PARTIAL_ALT_STOPWORDS: [
+    LINK_STOPWORDS: [
       "noklikšķiniet uz",
       "klikšķiniet šeit",
       "klikšķiniet šeit, lai uzzinātu vairāk",

@@ -75,9 +75,18 @@
       MONO_EYE: "Κόκκινο, μπλε και πράσινο τυφλό.",
       COLOUR_FILTER_HIGH_CONTRAST: "Τα χρωματικά φίλτρα δεν λειτουργούν στη λειτουργία υψηλής αντίθεσης.",
       // Alternative text stop words
-      SUS_ALT_STOPWORDS: ["εικόνα", "γραφικό", "φωτογραφία"],
+      SUS_ALT_STOPWORDS: [
+        "εικόνα",
+        "γραφικό",
+        "φωτογραφία",
+        "image",
+        "graphic",
+        "picture",
+        "photo",
+        "thumbnail",
+        "icon"
+      ],
       PLACEHOLDER_ALT_STOPWORDS: [
-        "alt",
         "εικόνα",
         "φωτογραφία",
         "διακοσμητικό",
@@ -85,10 +94,29 @@
         "placeholder",
         "εικόνα καταλόγου",
         "αποστάτης",
+        "δοκιμή",
+        "alt",
+        "chart",
+        "decorative",
+        "image",
+        "graphic",
+        "photo",
+        "placeholder",
+        "placeholder image",
+        "spacer",
+        "tbd",
+        "todo",
+        "to do",
+        "thumbnail",
+        "icon",
         "test",
-        "δοκιμή"
+        "hero image",
+        "hero slide",
+        "homepage feature image",
+        "featured image",
+        "untitled"
       ],
-      PARTIAL_ALT_STOPWORDS: [
+      LINK_STOPWORDS: [
         "κάντε κλικ στο",
         "κάντε κλικ εδώ",
         "κάντε κλικ εδώ για περισσότερα",
