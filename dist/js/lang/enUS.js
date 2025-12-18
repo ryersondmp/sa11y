@@ -140,7 +140,9 @@ const enUS = {
       "pop-up",
       "pop up",
       "opens new tab",
-      "opens new window"
+      "opens new window",
+      "opens in a new window",
+      "opens in a new tab"
     ],
     FILE_TYPE_PHRASES: [
       "document",

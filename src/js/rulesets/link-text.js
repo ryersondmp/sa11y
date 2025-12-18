@@ -46,9 +46,17 @@ const specialCharPattern = /[^a-zA-Z0-9]/g;
 // Regex pattern to match HTML symbols commonly used as CTAs in link text.
 const htmlSymbols = /([<>↣↳←→↓«»↴]+)/;
 
-// Utility function for exact stop word matches. Remove periods to improve accuracy.
-const checkStopWords = (textContent, stopWordsSet) => {
-  if (stopWordsSet.has(textContent)) return textContent;
+/**
+ * Checks a string for an EXACT match against a set of predefined stop words/phrases.
+ * Case-sensitive and performs an exact match on the final processed string.
+ * @param {string} textContent The input string to check.
+ * @param {Set<string>} stopWordsSet A Set() of words or phrases to check for an exact match.
+ * @param {RegExp} stripStrings A regular expression pattern used to strip words/phrases.
+ * @returns {string | null} The matched stop word/phrase if an exact match is found, otherwise null.
+ */
+const checkStopWords = (textContent, stopWordsSet, stripStrings) => {
+  const stripped = textContent.replace(stripStrings, '').trim();
+  if (stopWordsSet.has(stripped)) return stripped;
   return null;
 };
 
@@ -323,8 +331,8 @@ export default function checkLinkText(results, option) {
        * Alt quality/stop word checks.
        */
 
-      // 1. Check for exact stop words.
-      const isStopWord = checkStopWords(strippedLinkText, linkStopWords);
+      // 1. Check for exact stop words. Strip "new window" phrases by default.
+      const isStopWord = checkStopWords(strippedLinkText, linkStopWords, newWindowRegex);
 
       // 2. Check for "click" words anywhere within string.
       const hasClickWord =

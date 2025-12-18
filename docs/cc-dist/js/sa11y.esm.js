@@ -6760,8 +6760,9 @@ const citationPattern = /(doi\.org\/|dl\.acm\.org\/|link\.springer\.com\/|pubmed
 const urlEndings = /\b(?:\.edu\/|\.gob\/|\.gov\/|\.app\/|\.com\/|\.net\/|\.org\/|\.us\/|\.ca\/|\.de\/|\.icu\/|\.uk\/|\.ru\/|\.info\/|\.top\/|\.xyz\/|\.tk\/|\.cn\/|\.ga\/|\.cf\/|\.nl\/|\.io\/|\.fr\/|\.pe\/|\.nz\/|\.pt\/|\.es\/|\.pl\/|\.ua\/)\b/i;
 const specialCharPattern = /[^a-zA-Z0-9]/g;
 const htmlSymbols = /([<>↣↳←→↓«»↴]+)/;
-const checkStopWords = (textContent, stopWordsSet) => {
-  if (stopWordsSet.has(textContent)) return textContent;
+const checkStopWords = (textContent, stopWordsSet, stripStrings) => {
+  const stripped = textContent.replace(stripStrings, "").trim();
+  if (stopWordsSet.has(stripped)) return stripped;
   return null;
 };
 function checkLinkText(results, option) {
@@ -6948,7 +6949,7 @@ function checkLinkText(results, option) {
         }
         return;
       }
-      const isStopWord = checkStopWords(strippedLinkText, linkStopWords);
+      const isStopWord = checkStopWords(strippedLinkText, linkStopWords, newWindowRegex);
       const hasClickWord = strippedLinkText.match(clickRegex)?.[0] || textContent.match(clickRegex)?.[0];
       const isCitation = lowercaseLinkText.match(citationPattern)?.[0];
       const urlCheck = lowercaseLinkText.startsWith("www.") || lowercaseLinkText.startsWith("http");

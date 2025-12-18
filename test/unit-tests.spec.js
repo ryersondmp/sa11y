@@ -693,6 +693,13 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
+  test('Non descript link check strips "new tab" or similar phrases', async () => {
+    const issue = await checkTooltip(
+      page, 'error-non-descript-text-strip-new-tab-phrase', 'Link text may not be descriptive',
+    );
+    expect(issue).toBe(true);
+  });
+
   test('Empty links', async () => {
     const issue1 = await checkTooltip(page, 'error-empty-1', 'Remove empty links');
     expect(issue1).toBe(true);
