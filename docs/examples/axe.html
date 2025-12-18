@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Example Axe-core integration</title>
+  <link href="./assets/main.css" rel="stylesheet">
+  <script src="./misc/script.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+  <style>
+    /* Table visuals only */
+    .row {
+      display: flex;
+      padding: 10px;
+    }
+
+    .cell {
+      flex: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Example Axe-core integration</h1>
+    <p>All of the issues on this page were detected by axe-core, and passed into Sa11y as data.</p>
+  </header>
+  <main>
+
+    <!-- ❌ Using <div> as a table -->
+    <div class="row" role="table">
+      <div class="cell" role="rowheader">Feature</div>
+      <div class="cell">Status</div>
+      <div class="cell">Owner</div>
+    </div>
+    <div class="row" role="row">
+      <div class="cell">API Overhaul</div>
+      <div class="cell">In Progress</div>
+      <div class="cell">J. Devbert</div>
+    </div>
+    <div class="row" role="row">
+      <div class="cell">UI Refactor</div>
+      <div class="cell">Completed</div>
+      <div class="cell">A. Codeman</div>
+    </div>
+
+
+    <h2>Feedback</h2>
+    <form>
+      <input id="name">
+      <!-- ❌ No label for name -->
+
+      <input id="email" placeholder="Email">
+      <!-- ❌ Placeholder ≠ Label -->
+
+      <!-- ❌ Textarea missing label -->
+      <textarea></textarea>
+
+      <button>Submit</button> <!-- ❌ No descriptive text, should clarify purpose -->
+    </form>
+
+  </main>
+  <footer>No automated unit tests are on this page. Blank slate for testing!</footer>
+
+  <!-- Axe-Core -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.10.3/axe.js"></script>
+
+  <!-- Sa11y - Regular script -->
+  <link rel="stylesheet" href="../cc-dist/css/sa11y.css">
+  <script src="../cc-dist/js/sa11y.umd.js"></script>
+  <script src="../cc-dist/js/lang/en.umd.js"></script>
+  <script>
+    // Instantiate
+    Sa11y.Lang.addI18n(Sa11yLangEn.strings);
+    const sa11y = new Sa11y.Sa11y({
+      customChecks: 'listen',
+      externalDeveloperChecks: true, // Suppress Sa11y's internal developer checks.
+      autoDetectShadowComponents: true,
+      exportResultsPlugin: true,
+      checkRoot: "body",
+      readabilityRoot: "main",
+      containerIgnore: 'footer',
+      linksToFlag: "a[href^='https://www.dev.']",
+      linkIgnoreSpan: '.sr-only-example',
+    });
+
+    document.addEventListener('sa11y-custom-checks', () => {
+      axe.run(['main'], {
+        // Turn off some of axe-core checks to prevent duplication of issues.
+        rules: {
+          'color-contrast': { enabled: false },
+          'image-alt': { enabled: false },
+          'heading-order': { enabled: false },
+          'image-redundant-alt': { enabled: false },
+          'p-as-heading': { enabled: false },
+        },
+        elementRef: true,
+        iframes: false,
+        preload: false,
+        resultTypes: ['violations'],
+      }).then((results) => {
+        results.violations.forEach((violation) => {
+          violation.nodes.forEach((node) => {
+            const selector = node.target[0];
+            const element = document.querySelector(selector);
+            if (!element) return;
+
+            // Format failure summary.
+            const parts = node.failureSummary.split('\n');
+            const firstLine = parts[0];
+            const listItems = parts.slice(1).map(line => `<li>${sa11y.sanitizeHTML(line.trim())}.</li>`).join('');
+            const formatted = `${firstLine}<ul>${sa11y.truncateString(listItems, 250)}</ul>`;
+
+            // HTML of element.
+            const html = sa11y.sanitizeHTML(node.html);
+            const htmlCode = sa11y.truncateString(html, 120);
+
+            // Push results.
+            sa11y.results.push({
+              element: node.element.tagName === 'HTML'
+                ? undefined : node.element,
+              type: 'error',
+              content: `${violation.description}. <pre><code>${htmlCode}</code></pre> ${formatted} <hr aria-hidden="true"> Learn more <a href="${violation.helpUrl}" target="_blank">about this axe-core issue.</a>`,
+              inline: true,
+              position: 'beforebegin',
+              external: true, // IMPORTANT: Pass in 'external: true'
+            });
+          });
+        });
+
+        const allDone = new CustomEvent('sa11y-resume');
+        document.dispatchEvent(allDone);
+      });
+    });
+  </script>
+</body>
+
+</html>

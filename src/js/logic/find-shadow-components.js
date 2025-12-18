@@ -1,4 +1,4 @@
-import styles from '../../../dist/css/global-utilities.min.css';
+import styles from '../../css/global-utilities.css?inline';
 import Constants from '../utils/constants';
 
 /* ************************************************************ */
@@ -21,7 +21,7 @@ export default function findShadowComponents(option) {
 
     // Search all elements.
     const root = document.querySelector(option.checkRoot);
-    const search = (root)
+    const search = root
       ? Array.from(root.querySelectorAll(`*:not(${ignore})`))
       : Array.from(document.body.querySelectorAll(`*:not(${ignore})`));
 

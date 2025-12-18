@@ -1,5 +1,6 @@
-import * as Utils from './utils/utils';
+/** biome-ignore-all lint/correctness/noUnusedImports: Helpers for custom checks. */
 import find from './utils/find';
+import * as Utils from './utils/utils';
 
 export default function checkCustom(results) {
   /* Add custom rulesets here.

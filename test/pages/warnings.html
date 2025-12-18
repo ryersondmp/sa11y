@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-<link rel="stylesheet" href="./assets/main.css">
-<!-- Sa11y -->
-<link rel="stylesheet" href="../../dist/css/sa11y.min.css" />
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Warnings - Sa11y Unit Tests</title>
+  <link rel="stylesheet" href="../../docs/examples/assets/main.css">
 </head>
 
 <body>
   <header>
-    <span class="h1">Sa11y Unit Tests</span>
+    <strong class="h1">Sa11y Unit Tests</strong>
     <p>Some warnings and props.</p>
+    <p>
+      <a href="./unit-tests.html">Unit tests</a> | <a href="./no-errors.html">No errors</a> | <strong>Warnings</strong>
+    </p>
   </header>
   <main>
 
@@ -56,22 +57,9 @@
     </div>
 
   </main>
-  <script src="../../dist/js/sa11y.umd.min.js"></script>
-  <script src="../../dist/js/lang/en.umd.js"></script>
-  <script>
-    Sa11y.Lang.addI18n(Sa11yLangEn.strings);
-    const sa11y = new Sa11y.Sa11y({
-      checkRoot: 'main',
-      checks: {
-        HEADING_SKIPPED_LEVEL: {
-          type: 'warning',
-        },
-        TABLES_EMPTY_HEADING: {
-          type: 'warning',
-        }
-      }
-    });
-  </script>
+  <!-- Sa11y -->
+  <link rel="stylesheet" href="../../src/css/sa11y.css" />
+  <script type="module" src="./script.js"></script>
 </body>
 
 </html>

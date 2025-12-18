@@ -1,13 +1,15 @@
 import tippy from 'tippy.js';
-import * as Utils from '../utils/utils';
-import Lang from '../utils/lang';
+import sharedStyles from '../../css/shared.css?inline';
+import tooltipStyles from '../../css/tooltips.css?inline';
+import {
+  generateColorSuggestion,
+  generateContrastTools,
+  initializeContrastTools,
+} from '../contrast/ui-tools';
 import Constants from '../utils/constants';
-import { generateColorSuggestion, generateContrastTools, initializeContrastTools } from '../utils/contrast-utils';
+import Lang from '../utils/lang';
+import * as Utils from '../utils/utils';
 import { annotationButtons } from './annotations';
-
-// Import processed minified styles as a string.
-import tooltipStyles from '../../../dist/css/tooltips.min.css';
-import sharedStyles from '../../../dist/css/shared.min.css';
 
 /**
  * Tooltip container for all annotations.
@@ -73,7 +75,9 @@ export class AnnotationTooltips extends HTMLElement {
         // Imported from rulesets/contrast.js
         if (!instance.popper.hasAttribute('contrast-tools-initialized')) {
           const issueID = parseInt(annotation.getAttribute('data-sa11y-annotation'), 10);
-          const issueObject = window.sa11yCheckComplete.results.find((issue) => issue.id === issueID);
+          const issueObject = window.sa11yCheckComplete.results.find(
+            (issue) => issue.id === issueID,
+          );
           const { contrastDetails } = issueObject || {};
 
           if (contrastDetails) {
@@ -86,7 +90,9 @@ export class AnnotationTooltips extends HTMLElement {
 
             // Append suggested color.
             const suggestion = generateColorSuggestion(contrastDetails);
-            if (suggestion) container.appendChild(suggestion);
+            if (suggestion) {
+              container.appendChild(suggestion);
+            }
 
             // Contrast tools has been initialized.
             instance.popper.setAttribute('contrast-tools-initialized', true);
@@ -163,9 +169,10 @@ export class PanelTooltips extends HTMLElement {
     shadowRoot.appendChild(style);
 
     /* 1. Tooltip for "Skip to Issue" button. */
-    const keyboardShortcut = navigator.userAgent.indexOf('Mac') !== -1
-      ? '<span class="kbd">Option</span> + <span class="kbd">S</span>'
-      : '<span class="kbd">Alt</span> + <span class="kbd">S</span>';
+    const keyboardShortcut =
+      navigator.userAgent.indexOf('Mac') !== -1
+        ? '<span class="kbd">Option</span> + <span class="kbd">S</span>'
+        : '<span class="kbd">Alt</span> + <span class="kbd">S</span>';
     tippy(Constants.Panel.skipButton, {
       ...tooltipOptions(shadowRoot),
       offset: [0, 8],

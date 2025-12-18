@@ -1,18 +1,23 @@
 // Options, language object, constants, and utilities.
 import defaultOptions from './utils/default-options';
 import Lang from './utils/lang';
-import * as Utils from './utils/utils';
 import Constants from './utils/constants';
 import Elements from './utils/elements';
 import find from './utils/find';
 import findShadowComponents from './logic/find-shadow-components';
+import { removeAlert } from './interface/alert';
+import * as Utils from './utils/utils';
 
 // Extras
+import ConsoleErrors from './interface/console-error';
 import detectPageChanges from './features/detect-page-changes';
-import { dismissLogic, dismissButtons, removeDismissListeners } from './features/dismiss-annotations';
+import {
+  dismissLogic,
+  dismissButtons,
+  removeDismissListeners,
+} from './features/dismiss-annotations';
 import { addColourFilters, resetColourFilters } from './features/colour-filters';
 import { exportResults, removeExportListeners } from './features/export-results';
-import ConsoleErrors from './interface/console-error';
 
 // Create UI/interface elements
 import mainToggle from './logic/main-toggle-logic';
@@ -31,7 +36,7 @@ import { skipToIssue, removeSkipBtnListeners } from './logic/skip-to-issue';
 import checkImages from './rulesets/images';
 import checkHeaders from './rulesets/headers';
 import checkLinkText from './rulesets/link-text';
-import checkContrast from './rulesets/contrast';
+import checkContrast from './contrast/checkContrast';
 import checkLabels from './rulesets/labels';
 import checkReadability from './rulesets/readability';
 import checkEmbeddedContent from './rulesets/embedded-content';
@@ -92,8 +97,11 @@ class Sa11y {
             // Save panel position preference if not already set or if position changes via props.
             const rememberPosition = Utils.store.getItem('sa11y-position');
             const { panelPosition } = option;
-            if (option.showMovePanelToggle
-              && (!rememberPosition || !rememberPosition.includes('top') !== !panelPosition.includes('top'))) {
+            if (
+              option.showMovePanelToggle &&
+              (!rememberPosition ||
+                !rememberPosition.includes('top') !== !panelPosition.includes('top'))
+            ) {
               Utils.store.setItem('sa11y-position', panelPosition);
             }
 
@@ -107,11 +115,7 @@ class Sa11y {
             addColourFilters();
 
             // Detect page changes (for SPAs).
-            detectPageChanges(
-              option.detectSPArouting,
-              this.checkAll,
-              this.resetAll,
-            );
+            detectPageChanges(option.detectSPArouting, this.checkAll, this.resetAll);
 
             // Initialize panel tooltips.
             this.panelTooltips = new PanelTooltips();
@@ -144,6 +148,7 @@ class Sa11y {
     this.checkAll = async (
       desiredRoot = option.checkRoot,
       desiredReadabilityRoot = option.readabilityRoot,
+      fixedRoots = option.fixedRoots,
     ) => {
       try {
         this.results = [];
@@ -153,11 +158,7 @@ class Sa11y {
         this.customChecksRunning = false;
 
         // Initialize root areas to check.
-        const root = document.querySelector(desiredRoot);
-        if (!root && option.headless === false) {
-          Utils.createAlert(`${Lang.sprintf('MISSING_ROOT', desiredRoot)}`);
-        }
-        Constants.initializeRoot(desiredRoot, desiredReadabilityRoot);
+        Constants.initializeRoot(desiredRoot, desiredReadabilityRoot, fixedRoots);
 
         // Find all web components on the page.
         findShadowComponents(option);
@@ -172,19 +173,27 @@ class Sa11y {
         checkLabels(this.results, option);
         checkQA(this.results, option);
         checkDeveloper(this.results, option);
-        if (option.embeddedContentPlugin) checkEmbeddedContent(this.results, option);
-        if (option.contrastPlugin) checkContrast(this.results, option);
-        if (option.readabilityPlugin) checkReadability();
+        if (option.embeddedContentPlugin) {
+          checkEmbeddedContent(this.results, option);
+        }
+        if (option.contrastPlugin) {
+          checkContrast(this.results, option);
+        }
+        if (option.readabilityPlugin && Utils.store.getItem('sa11y-readability') === 'On') {
+          checkReadability(this.results);
+        }
 
         // Build array of images to be used for image panel.
         this.imageResults = Elements.Found.Images.map((image) => {
           const match = this.results.find((i) => i.element === image);
-          return match && {
-            element: image,
-            type: match.type,
-            dismiss: match.dismiss,
-            developer: match.developer,
-          };
+          return (
+            match && {
+              element: image,
+              type: match.type,
+              dismiss: match.dismiss,
+              developer: match.developer,
+            }
+          );
         }).filter(Boolean);
 
         /* Custom checks */
@@ -219,7 +228,9 @@ class Sa11y {
         }
 
         // No custom checks running.
-        if (!this.customChecksRunning) this.updateResults();
+        if (!this.customChecksRunning) {
+          this.updateResults();
+        }
       } catch (error) {
         const consoleErrors = new ConsoleErrors(error);
         document.body.appendChild(consoleErrors);
@@ -232,7 +243,9 @@ class Sa11y {
       this.results = this.results.filter((heading) => heading.isWithinRoot !== false);
 
       // Filter out "Developer checks" if toggled off or if using externally supplied developer checks.
-      const devChecks = Utils.store.getItem('sa11y-developer') === 'Off' || Utils.store.getItem('sa11y-developer') === null;
+      const devChecks =
+        Utils.store.getItem('sa11y-developer') === 'Off' ||
+        Utils.store.getItem('sa11y-developer') === null;
       if (devChecks || option.externalDeveloperChecks === true) {
         this.results = this.results.filter((issue) => issue.developer !== true);
       }
@@ -262,11 +275,7 @@ class Sa11y {
         this.dismissedPageResults = dismiss.dismissedResults;
 
         // Update count & badge.
-        const count = updateCount(
-          this.results,
-          this.errorCount,
-          this.warningCount,
-        );
+        const count = updateCount(this.results, this.errorCount, this.warningCount);
         updateBadge(count.error, count.warning);
 
         /* If panel is OPENED. */
@@ -292,32 +301,15 @@ class Sa11y {
           const tooltipComponent = new AnnotationTooltips();
           document.body.appendChild(tooltipComponent);
 
-          dismissButtons(
-            this.results,
-            this.dismissed,
-            this.checkAll,
-            this.resetAll,
-          );
+          dismissButtons(this.results, this.dismissed, this.checkAll, this.resetAll);
 
-          generatePageOutline(
-            this.dismissedPageResults,
-            this.headingOutline,
-            option,
-          );
+          generatePageOutline(this.dismissedPageResults, this.headingOutline, option);
 
           if (option.showImageOutline) {
-            generateImageOutline(
-              this.dismissedPageResults,
-              this.imageResults,
-              option,
-            );
+            generateImageOutline(this.dismissedPageResults, this.imageResults, option);
           }
 
-          updatePanel(
-            dismiss.dismissCount,
-            count.error,
-            count.warning,
-          );
+          updatePanel(dismiss.dismissCount, count.error, count.warning);
 
           // Initialize Skip to Issue button.
           skipToIssue(this.results);
@@ -354,45 +346,59 @@ class Sa11y {
       Constants.Global.html.removeAttribute('data-sa11y-active');
 
       // Remove from page.
-      Utils.remove([
-        'sa11y-annotation',
-        'sa11y-heading-label',
-        'sa11y-heading-anchor',
-        'sa11y-image-anchor',
-        'sa11y-tooltips',
-      ], 'document');
+      Utils.remove(
+        [
+          'sa11y-annotation',
+          'sa11y-heading-label',
+          'sa11y-heading-anchor',
+          'sa11y-image-anchor',
+          'sa11y-tooltips',
+        ],
+        'document',
+      );
 
       // Remove Sa11y anchor positioning markup (while preserving any existing anchors).
       if (Utils.supportsAnchorPositioning()) {
-        find('[data-sa11y-error], [data-sa11y-warning], [data-sa11y-good]', 'document').forEach(($el) => {
-          const anchor = $el;
-          const anchors = (anchor.style.anchorName || '')
-            .split(',').map((s) => s.trim()).filter((s) => s && !s.startsWith('--sa11y-anchor'));
-          if (anchors.length) {
-            anchor.style.anchorName = anchors.join(', ');
-          } else {
-            anchor.style.removeProperty('anchor-name');
-            if (!anchor.style.length) anchor.removeAttribute('style');
-          }
-        });
+        find('[data-sa11y-error], [data-sa11y-warning], [data-sa11y-good]', 'document').forEach(
+          ($el) => {
+            const anchor = $el;
+            const anchors = (anchor.style.anchorName || '')
+              .split(',')
+              .map((s) => s.trim())
+              .filter((s) => s && !s.startsWith('--sa11y-anchor'));
+            if (anchors.length) {
+              anchor.style.anchorName = anchors.join(', ');
+            } else {
+              anchor.style.removeProperty('anchor-name');
+              if (!anchor.style.length) {
+                anchor.removeAttribute('style');
+              }
+            }
+          },
+        );
       }
 
       // Reset all data attributes.
-      Utils.resetAttributes([
-        'data-sa11y-parent',
-        'data-sa11y-error',
-        'data-sa11y-warning',
-        'data-sa11y-good',
-        'data-sa11y-overflow',
-        'data-sa11y-image',
-        'data-sa11y-pulse-border',
-        'data-sa11y-filter',
-        'data-sa11y-has-shadow-root',
-      ], 'document');
+      Utils.resetAttributes(
+        [
+          'data-sa11y-parent',
+          'data-sa11y-error',
+          'data-sa11y-warning',
+          'data-sa11y-good',
+          'data-sa11y-overflow',
+          'data-sa11y-image',
+          'data-sa11y-pulse-border',
+          'data-sa11y-filter',
+          'data-sa11y-has-shadow-root',
+        ],
+        'document',
+      );
 
       // Remove from panel.
       Constants.Panel.outlineList.innerHTML = '';
-      if (option.showImageOutline) Constants.Panel.imagesList.innerHTML = '';
+      if (option.showImageOutline) {
+        Constants.Panel.imagesList.innerHTML = '';
+      }
       Constants.Panel.pageIssuesList.innerHTML = '';
       Constants.Panel.readabilityInfo.innerHTML = '';
       Constants.Panel.readabilityDetails.innerHTML = '';
@@ -402,7 +408,7 @@ class Sa11y {
       Constants.Panel.panel.querySelector('#readability-alert')?.remove();
 
       // Remove any active alerts from panel.
-      Utils.removeAlert();
+      removeAlert();
 
       // Remove EventListeners.
       removeSkipBtnListeners();
@@ -413,11 +419,15 @@ class Sa11y {
       resetColourFilters();
 
       // Main panel warning and error count.
-      while (Constants.Panel.status.firstChild) Constants.Panel.status.removeChild(Constants.Panel.status.firstChild);
+      while (Constants.Panel.status.firstChild) {
+        Constants.Panel.status.removeChild(Constants.Panel.status.firstChild);
+      }
 
       // Remove data attribute from shadow root elements.
       document.querySelectorAll('[data-sa11y-has-shadow-root]').forEach((el) => {
-        el.shadowRoot.querySelectorAll('style.sa11y-css-utilities').forEach((style) => style.remove());
+        el.shadowRoot.querySelectorAll('style.sa11y-css-utilities').forEach((style) => {
+          style.remove();
+        });
         el.removeAttribute('data-sa11y-has-shadow-root');
       });
 
@@ -466,7 +476,4 @@ class Sa11y {
   }
 }
 
-export {
-  Lang,
-  Sa11y,
-};
+export { Lang, Sa11y };

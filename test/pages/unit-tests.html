@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-<link rel="stylesheet" href="./assets/main.css">
-<!-- Sa11y -->
-<link rel="stylesheet" href="../../dist/css/sa11y.min.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sa11y Unit Tests</title>
+  <link rel="stylesheet" href="../../docs/examples/assets/main.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
 </head>
 
 <body>
   <header>
     <h1>Sa11y Unit Tests</h1>
     <p>All annotations at a glance.</p>
+    <p>
+      <strong>Unit tests</strong> | <a href="./no-errors.html">No errors</a> | <a href="./warnings.html">Warnings</a>
+    </p>
   </header>
   <main>
 
@@ -55,12 +56,12 @@
 
     <h3>Empty heading contains a decorative image</h3>
     <div id="error-empty-heading-decorative-image">
-      <h4><img src="./assets/decorative.svg" alt width="100"></h4>
+      <h4><img src="../../docs/examples/assets/placeholder.svg" alt width="100"></h4>
     </div>
 
     <h3>Heading contains an image with alt text</h3>
     <div id="pass-heading-image-alt">
-      <h4><img src="./assets/placeholder.svg" alt="A beautiful square." width="100"></h4>
+      <h4><img src="../../docs/examples/assets/placeholder.svg" alt="A beautiful square." width="100"></h4>
     </div>
 
     <h3>Bolded text used as heading</h3>
@@ -122,68 +123,68 @@
 
     <h3>Image has alt text</h3>
     <div id="pass-image-has-alt-text">
-      <img src="./assets/placeholder.svg" alt="Large mountains of sand in the Namibian desert.">
+      <img src="../../docs/examples/assets/placeholder.svg" alt="Large mountains of sand in the Namibian desert.">
     </div>
 
     <h3>Alt text has suspicious stop word in the beginning</h3>
     <div id="warning-alt-text-has-suspicious-stop-word">
-      <img src="./assets/placeholder.svg" alt="An image of a bird.">
+      <img src="../../docs/examples/assets/placeholder.svg" alt="An image of a bird.">
     </div>
 
     <h3>Alt text has suspicious stop word towards the end</h3>
     <div id="pass-alt-text-has-suspicious-stop-word-end">
-      <img src="./assets/placeholder.svg" alt="A black and white image of a bird.">
+      <img src="../../docs/examples/assets/placeholder.svg" alt="A black and white image of a bird.">
     </div>
 
     <h3>Decorative image</h3>
     <div id="warning-image-is-decorative">
-      <img src="./assets/decorative.svg" alt>
+      <img src="../../docs/examples/assets//placeholder.svg" alt>
     </div>
 
     <h3>Decorative image within a carousel component</h3>
     <p>The default source is <code>.carousel, .slideshow</code></p>
     <div id="warning-image-decorative-carousel" class="carousel">
-      <img src="./assets/decorative.svg" alt>
-      <img src="./assets/decorative.svg" alt>
+      <img src="../../docs/examples/assets/placeholder.svg" alt>
+      <img src="../../docs/examples/assets/placeholder.svg" alt>
     </div>
 
     <h4>This only has one image, so it should be a general decorative image warning.</h4>
     <div id="warning-carousel-decorative" class="carousel">
-      <img src="./assets/decorative.svg" alt>
+      <img src="../../docs/examples/assets/placeholder.svg" alt>
     </div>
 
     <h3>Alt text is too long</h3>
     <div id="warning-alt-text-is-too-long">
-      <img src="./assets/placeholder.svg"
+      <img src="../../docs/examples/assets/placeholder.svg"
         alt="Zebras are several species of African equids (horse family) united by their distinctive black-and-white striped coats. Their stripes come in different patterns, unique to each individual. They are generally social animals that live in small harems to large herds. Unlike their closest relatives, horses and donkeys, zebras have never been truly domesticated. Source: Wikipedia.">
     </div>
 
     <h3>Missing alt text</h3>
     <div id="error-missing-alt-text">
-      <img src="./assets/placeholder.svg">
+      <img src="../../docs/examples/assets/placeholder.svg">
     </div>
 
     <h3>Image using empty space for alt</h3>
     <div id="error-unpronounceable-empty-space">
-      <img src="./assets/placeholder.svg" alt=" ">
+      <img src="../../docs/examples/assets/placeholder.svg" alt=" ">
     </div>
 
     <h3>Linked image using empty space</h3>
     <div id="error-linked-empty-space">
       <a href="https://www.example.com?=8">
-        <img src="./assets/placeholder.svg" alt=" ">
+        <img src="../../docs/examples/assets/placeholder.svg" alt=" ">
       </a>
     </div>
 
     <h3>Image using unpronounceable character for alt</h3>
     <div id="error-unpronounceable-character">
-      <img src="./assets/placeholder.svg" alt="&quot;&quot;">
+      <img src="../../docs/examples/assets/placeholder.svg" alt="&quot;&quot;">
     </div>
 
     <h3>Linked image using unpronounceable character for alt</h3>
     <div id="error-unpronounceable-character-linked">
       <a href="https://www.example.com?=1njhs">
-        <img src="./assets/placeholder.svg" alt="&quot;&quot;">
+        <img src="../../docs/examples/assets/placeholder.svg" alt="&quot;&quot;">
       </a>
     </div>
 
@@ -191,29 +192,29 @@
     <div id="warning-unpronounceable-character-with-surrounding-text">
       <a href="https://www.example.com?=1njhs">
         Something
-        <img src="./assets/placeholder.svg" alt="&quot;&quot;">
+        <img src="../../docs/examples/assets/placeholder.svg" alt="&quot;&quot;">
       </a>
     </div>
 
     <h3>Alt has file extension</h3>
     <div id="error-alt-text-has-file-extension">
-      <img src="./assets/placeholder.svg" alt="birdy.jpg">
+      <img src="../../docs/examples/assets/placeholder.svg" alt="birdy.jpg">
     </div>
 
     <h3>Alt has image dimensions</h3>
     <div id="error-alt-text-has-image-dimensions">
-      <img src="./assets/placeholder.svg" alt="birdy-480x590-1">
+      <img src="../../docs/examples/assets/placeholder.svg" alt="birdy-480x590-1">
     </div>
 
     <h3>Alt has placeholder text</h3>
     <div id="error-alt-text-has-placeholder-text">
-      <img src="./assets/placeholder.svg" alt="image">
+      <img src="../../docs/examples/assets/placeholder.svg" alt="image">
     </div>
 
     <h3>Linked decorative image with surrounding link text</h3>
     <div id="pass-linked-decorative-image-surrounding-text">
       <a href="https://www.example.com?=1">
-        <img src="./assets/decorative.svg" alt>
+        <img src="../../docs/examples/assets/placeholder.svg" alt>
         Learn more about Tigers
       </a>
     </div>
@@ -221,21 +222,21 @@
     <h3>Linked image with alt text</h3>
     <div id="warning-link-has-alt-text">
       <a href="https://www.example.com?=2">
-        <img src="./assets/placeholder.svg" alt="Large mountains of sand in the Nambian desert.">
+        <img src="../../docs/examples/assets/placeholder.svg" alt="Large mountains of sand in the Nambian desert.">
       </a>
     </div>
 
     <h3>Linked image has alt text that contains a stop word</h3>
     <div id="warning-alt-stop-word">
       <a href="https://www.example.com?=3">
-        <img src="./assets/placeholder.svg" alt="An image of a bird.">
+        <img src="../../docs/examples/assets/placeholder.svg" alt="An image of a bird.">
       </a>
     </div>
 
     <h3>Linked image has long alt</h3>
     <div id="warning-link-alt-too-long">
       <a href="https://www.example.com?=4">
-        <img src="./assets/placeholder.svg"
+        <img src="../../docs/examples/assets/placeholder.svg"
           alt="Zebras are several species of African equids (horse family) united by their distinctive black-and-white striped coats. Their stripes come in different patterns, unique to each individual. They are generally social animals that live in small harems to large herds. Unlike their closest relatives, horses & donkeys, zebras have never been truly domesticated. Source: Wikipedia.">
       </a>
     </div>
@@ -243,29 +244,69 @@
     <h3>Linked image contains both alt and link text</h3>
     <div id="warning-alt-and-link-text">
       <a href="https://www.example.com?=5">
-        <img src="./assets/placeholder.svg" alt="Lorem ipsum, dude!">
+        <img src="../../docs/examples/assets/placeholder.svg" alt="Lorem ipsum, dude!">
         Learn more about, Lorem.
       </a>
     </div>
 
     <h3>Linked image missing alt text</h3>
     <div id="error-missing-alt">
-      <a href="https://www.example.com?=6">
-        <img src="./assets/placeholder.svg">
+      <a href="https://www.example.com?=6fef">
+        <img src="../../docs/examples/assets/placeholder.svg">
       </a>
+    </div>
+
+    <h3>Linked image missing alt text but has aria-hidden</h3>
+    <div id="error-missing-alt-but-aria-hidden">
+      <a href="https://www.example.com?=6xsa">
+        <img aria-hidden="true" src="../../docs/examples/assets/placeholder.svg">
+      </a>
+    </div>
+
+    <h3>Linked image missing alt text but has presentation role</h3>
+    <div id="error-missing-alt-but-presentation-role">
+      <a href="https://www.example.com?=3246">
+        <img role="presentation" src="../../docs/examples/assets/placeholder.svg">
+      </a>
+    </div>
+
+    <h3>Linked image missing alt text but has aria-hidden with surrounding text</h3>
+    <div id="nothing-missing-alt-but-aria-hidden-and-surrounding-text">
+      <a href="https://www.example.com?=6rxdsa">
+        <img aria-hidden="true" src="../../docs/examples/assets/placeholder.svg">
+        Explore something else
+      </a>
+    </div>
+
+    <h3>Linked image missing alt text but has presentation role with surrounding text</h3>
+    <div id="nothing-missing-alt-but-presentation-role-and-surrounding-text">
+      <a href="https://www.example.com?=612uy">
+        <img role="presentation" src="../../docs/examples/assets/placeholder.svg">
+        Explore something else again
+      </a>
+    </div>
+
+    <h3>Regular image with missing alt but has aria-hidden</h3>
+    <div id="nothing-missing-alt-but-aria-hidden">
+      <img aria-hidden="true" src="../../docs/examples/assets/placeholder.svg">
+    </div>
+
+    <h3>Regular image with missing alt but has role="presentation"</h3>
+    <div id="nothing-missing-alt-presentation-role">
+      <img role="presentation" src="../../docs/examples/assets/placeholder.svg">
     </div>
 
     <h3>Linked decorative image</h3>
     <div id="error-linked-decorative-image">
-      <a href="https://www.example.com?=7">
-        <img src="./assets/decorative.svg" alt>
+      <a href="https://www.example.com?=7xsd">
+        <img src="../../docs/examples/assets/placeholder.svg" alt>
       </a>
     </div>
 
     <h3>Linked image with missing alt and contains link text</h3>
     <div id="error-missing-alt-contains-link-text">
       <a href="https://www.example.com?=9">
-        <img src="./assets/placeholder.svg">
+        <img src="../../docs/examples/assets/placeholder.svg">
         Learn more about Lorem
       </a>
     </div>
@@ -273,21 +314,21 @@
     <h3>Linked image has alt text containing placeholder stop words</h3>
     <div id="error-linked-alt-placeholder-stopword">
       <a href="https://www.example.com?=10">
-        <img src="./assets/placeholder.svg" alt="image">
+        <img src="../../docs/examples/assets/placeholder.svg" alt="image">
       </a>
     </div>
 
     <h3>Linked image has alt text containing file extension</h3>
     <div id="error-linked-alt-file-extension">
       <a href="https://www.example.com?=11">
-        <img src="./assets/placeholder.svg" alt="doggy.jpg">
+        <img src="../../docs/examples/assets/placeholder.svg" alt="doggy.jpg">
       </a>
     </div>
 
     <h3>Figure image with different alt and caption text</h3>
     <div id="pass-figure-different-alt-caption">
       <figure>
-        <img src="./assets/placeholder.svg" alt="Alt text for figure.">
+        <img src="../../docs/examples/assets/placeholder.svg" alt="Alt text for figure.">
         <figcaption>Figure's caption text.</figcaption>
       </figure>
     </div>
@@ -295,21 +336,21 @@
     <h3>Figure image with alt but without figcaption</h3>
     <div id="pass-figure-without-figcaption">
       <figure>
-        <img src="./assets/placeholder.svg" alt="Two australian shepherds.">
+        <img src="../../docs/examples/assets/placeholder.svg" alt="Two australian shepherds.">
       </figure>
     </div>
 
     <h3>Decorative figure image</h3>
     <div id="warning-decorative-figure-element">
       <figure>
-        <img src="./assets/decorative.svg" alt>
+        <img src="../../docs/examples/assets/placeholder.svg" alt>
       </figure>
     </div>
 
     <h3>Decorative figure image and figcaption</h3>
     <div id="warning-decorative-figure-element-with-figcaption">
       <figure aria-describedby="caption-attachment-28">
-        <img src="./assets/decorative.svg" alt>
+        <img src="../../docs/examples/assets/placeholder.svg" alt>
         <figcaption>Fig. 1: Nambian desert (Source: unknown)</figcaption>
       </figure>
     </div>
@@ -317,7 +358,7 @@
     <h3>Figure element has duplicate alt and caption text</h3>
     <div id="warning-figure-duplicate-alt-caption">
       <figure>
-        <img src="./assets/placeholder.svg" alt="Two australian shepherds">
+        <img src="../../docs/examples/assets/placeholder.svg" alt="Two australian shepherds">
         <figcaption>Two australian shepherds</figcaption>
       </figure>
     </div>
@@ -326,7 +367,7 @@
     <div id="warning-linked-figure-alt-without-figcaption">
       <a href="https://www.example.com?=11">
         <figure>
-          <img src="./assets/placeholder.svg" alt="Lorem ipsum.">
+          <img src="../../docs/examples/assets/placeholder.svg" alt="Lorem ipsum.">
         </figure>
       </a>
     </div>
@@ -334,21 +375,21 @@
     <h3>Linked image opens in new tab</h3>
     <div id="warning-hyperlinked-image-opens-in-new-tab">
       <a href="https://www.example.com?=12" target="_blank">
-        <img src="./assets/placeholder.svg" alt="Beautiful square.">
+        <img src="../../docs/examples/assets/placeholder.svg" alt="Beautiful square.">
       </a>
     </div>
 
     <h3>Linked image opens in new tab, alt text provides warning</h3>
     <div id="warning-linked-image-opens-in-new-tab">
       <a href="https://www.example.com?=13" target="_blank">
-        <img src="./assets/placeholder.svg" alt="Two australian shepherds. Opens in new tab.">
+        <img src="../../docs/examples/assets/placeholder.svg" alt="Two australian shepherds. Opens in new tab.">
       </a>
     </div>
 
     <h3>Ignore noscript tags</h3>
     <div id="warning-bug-testing-ignore-noscript-tags">
       <a href="https://www.example.com?=14">
-        <img src="./assets/placeholder.svg" alt="Beautiful square.">
+        <img src="../../docs/examples/assets/placeholder.svg" alt="Beautiful square.">
         <noscript>asdfg</noscript>
       </a>
     </div>
@@ -356,7 +397,7 @@
     <h3>Linked image should ignore text within link</h3>
     <div id="warning-image-link-should-ignore-text-within-link">
       <a href="https://www.example.com?=15">
-        <img src="./assets/placeholder.svg" alt="Another beautiful square.">
+        <img src="../../docs/examples/assets/placeholder.svg" alt="Another beautiful square.">
         <span class="sr-only-example">Text ignored.</span>
       </a>
     </div>
@@ -364,65 +405,65 @@
     <h3>Linked image should ignore text within link via string match</h3>
     <div id="warning-image-link-should-ignore-text-within-link-string-match">
       <a href="https://www.example.com?=16">
-        <img src="./assets/placeholder.svg" alt="Link text ignored."> (External)
+        <img src="../../docs/examples/assets/placeholder.svg" alt="Link text ignored."> (External link)
       </a>
     </div>
 
     <h3>Linked image has aria-hidden, but still focusable</h3>
     <div id="error-hyperlinked-image-aria-hidden-focusable">
       <a href="https://www.example.com?=17" aria-hidden="true">
-        <img src="./assets/decorative.svg" alt>
+        <img src="../../docs/examples/assets/placeholder.svg" alt>
       </a>
     </div>
 
     <h3>Image has aria-hidden</h3>
     <div id="nothing-image-has-aria-hidden-true">
-      <img src="./assets/placeholder.svg" aria-hidden="true" alt="Lorem ipsum.">
+      <img src="../../docs/examples/assets/placeholder.svg" aria-hidden="true" alt="Lorem ipsum.">
     </div>
 
     <h3>Linked image has aria-hidden and negative tabindex</h3>
     <div id="nothing-linked-image-aria-hidden-negative-tabindex">
       <a href="https://www.example.com?=18" aria-hidden="true" tabindex="-1">
-        <img src="./assets/decorative.svg" alt>
+        <img src="../../docs/examples/assets/placeholder.svg" alt>
       </a>
     </div>
 
     <h3>Linked image with aria-hidden, negative tabindex, and alt</h3>
     <div id="nothing-hyperlinked-image-aria-hidden-negative-tabindex-alt">
       <a href="https://www.example.com?=19" aria-hidden="true" tabindex="-1">
-        <img src="./assets/placeholder.svg" alt="Testing 123">
+        <img src="../../docs/examples/assets/placeholder.svg" alt="Testing 123">
       </a>
     </div>
 
     <h3>Image's alt supplied via <code>aria-label</code></h3>
     <div id="pass-alt-via-aria-label">
-      <img src="./assets/placeholder.svg" aria-label="A square box rectangle thing." width="100" />
+      <img src="../../docs/examples/assets/placeholder.svg" aria-label="A square box rectangle thing." width="100" />
     </div>
 
     <h3>Image with empty <code>aria-label=""</code></h3>
     <div id="error-image-empty-aria-label">
-      <img src="./assets/placeholder.svg" aria-label="" width="100" />
+      <img src="../../docs/examples/assets/placeholder.svg" aria-label="" width="100" />
     </div>
 
     <h3>Image with empty space for <code>aria-label=" "</code></h3>
     <div id="error-image-empty-space-aria-label">
-      <img src="./assets/placeholder.svg" aria-label=" " width="100" />
+      <img src="../../docs/examples/assets/placeholder.svg" aria-label=" " width="100" />
     </div>
 
     <h3>Image with invalid <code>aria-labelledby</code></h3>
     <div id="error-image-invalid-aria-labelledby">
-      <img src="./assets/placeholder.svg" aria-labelledby="square" width="100" />
+      <img src="../../docs/examples/assets/placeholder.svg" aria-labelledby="square" width="100" />
     </div>
 
     <h3>Image with valid <code>aria-labelledby</code></h3>
     <div id="pass-image-valid-aria-labelledby">
-      <img src="./assets/placeholder.svg" aria-labelledby="apples" width="100" />
+      <img src="../../docs/examples/assets/placeholder.svg" aria-labelledby="apples" width="100" />
     </div>
 
     <h3>Linked image with valid <code>aria-label</code></h3>
     <div id="warning-image-link-valid-aria-label">
       <a href="https://www.example.com?=15sdas">
-        <img src="./assets/placeholder.svg" aria-label="Off to example.com" width="100" />
+        <img src="../../docs/examples/assets/placeholder.svg" aria-label="Off to example.com" width="100" />
       </a>
     </div>
 
@@ -435,24 +476,42 @@
     <h3>Excluded image via prop</h3>
     <p>Image excluded by class via prop <code>imageIgnore</code></p>
     <div id="nothing-image-ignore-prop">
-      <img src="./assets/placeholder.svg" alt="Logo" class="logo" width="100" />
+      <img src="../../docs/examples/assets/placeholder.svg" alt="Logo" class="logo" width="100" />
     </div>
 
     <h3>Alt text that may be bad</h3>
     <p>Basically an alt text that is a single word greater than 15 characters that contains non-alpha characters.</p>
-    <div id="warning-bad-alt">
-      <img src="./assets/placeholder.svg" alt="~ai-3a3cb8f0-1554-4e2b-b159-77f7176853d0_" width="100" />
+    <div id="error-bad-alt">
+      <img src="../../docs/examples/assets/placeholder.svg" alt="~ai-3a3cb8f0-1554-4e2b-b159-77f7176853d0_"
+        width="100" />
     </div>
     <h4>Non-english characters, single word, long alt text</h4>
     <div id="pass-bad-alt">
-      <img src="./assets/placeholder.svg" alt="epäjärjestelmällistyttämättömyydellänsäkään!" width="100" />
+      <img src="../../docs/examples/assets/placeholder.svg" alt="epäjärjestelmällistyttämättömyydellänsäkään!"
+        width="100" />
     </div>
 
     <h3>Linked image that has potentially bad alt text</h3>
-    <div id="warning-bad-alt-linked">
+    <div id="error-bad-alt-linked">
       <a href="https://www.example.com/sdsad">
-        <img src="./assets/placeholder.svg" alt="~ai-3a3cb8f0-1554-4e2b-b159-77f7176853d0_" width="100" />
+        <img src="../../docs/examples/assets/placeholder.svg" alt="~ai-3a3cb8f0-1554-4e2b-b159-77f7176853d0_"
+          width="100" />
       </a>
+    </div>
+
+    <h3>Placeholder alt accompanied with random number</h3>
+    <div id="error-bad-alt-placeholder">
+      <img src="../../docs/examples/assets/placeholder.svg" alt="hero slide 1" width="100" />
+    </div>
+
+    <div id="error-bad-alt-placeholder-link">
+      <a href="https://www.example.com/sdsadxxxxasd">
+        <img src="../../docs/examples/assets/placeholder.svg" alt="hero slide 4" width="100" />
+      </a>
+    </div>
+
+    <div id="pass-bad-alt-placeholder">
+      <img src="../../docs/examples/assets/placeholder.svg" alt="hero slide 1 and some random text" width="100" />
     </div>
 
     <hr>
@@ -472,6 +531,12 @@
       <a href="https://www.example.com?=22">This?</a>
     </div>
 
+    <h3>Non descript link text (Cyrillic i18n test)</h3>
+    <p>Ukrainian "learn more" string passed in via linkStopWord prop.</p>
+    <div id="error-non-descript-cyrillic">
+      <a href="https://www.example.com?=2sx342">взнати більше.</a>
+    </div>
+
     <h3>Descriptive link text</h3>
     <div id="nothing-descriptive-link">
       <a href="https://www.example.com?=23">Learn more about Sa11y</a>
@@ -485,12 +550,17 @@
 
     <h3>Non descript link uses string ignore prop</h3>
     <div id="error-non-descript-string-exclusions-prop">
-      <a href="https://www.example.com?=learnmore">learn more (External)</a>
+      <a href="https://www.example.com?=learnmore">learn more (External link)</a>
     </div>
 
     <h3>Flag custom links via prop <code>linksToFlag</code></h3>
     <div id="error-custom-error-links">
       <a href="https://www.dev.example.com?linksToFlag">Development environment</a>
+    </div>
+
+    <h3>Non-descript link check text strips "new window" phrases</h3>
+    <div id="error-non-descript-text-strip-new-tab-phrase">
+      <p><a href="https://www.example.com/?sdssnewtabs">learn more (opens new tab)</a></p>
     </div>
 
     <h3>Empty links</h3>
@@ -614,6 +684,21 @@
         <a href="https://doi.org/10.1145/3493612.3520468">doi.org/10.1145/3493612.3520468</a>
       </p>
     </div>
+    <div id="nothing-doi">
+      <p>
+        <a href="https://doi.org">doi.org</a>
+      </p>
+    </div>
+
+    <h3>Links open in new tab without warning</h3>
+    <div id="warning-link-new-tab">
+      <p><a target="_BLANK" href="https://www.youtube.com/watch?v=DLzxrzFCyOs">You were
+          NOT warned</a></p>
+    </div>
+    <div id="nothing-link-new-tab">
+      <p><a target="_BLANK" href="https://www.youtube.com/watch?v=DLzxrzFCyOs">You were
+          warned (opens in new tab)</a></p>
+    </div>
 
     <h3>Links to file without warning</h3>
     <div id="warning-link-file">
@@ -621,6 +706,20 @@
     </div>
     <div id="nothing-link-file">
       <a href="https://www.example.com?=assets.zip?342">Branding assets (ZIP)</a>
+    </div>
+
+    <h3>Links where link text is "opens new tab" or similar phrase</h3>
+    <div id="error-new-tab-link-text-1">
+      <a href="https://www.example.com?=40249">opens new tab</a>
+    </div>
+    <div id="error-new-tab-link-text-2">
+      <a href="https://www.example.com?=40249rf">(opens new tab)</a>
+    </div>
+    <div id="error-new-tab-link-text-3">
+      <a href="https://www.example.com?=40s249rf">new tab.</a>
+    </div>
+    <div id="error-new-tab-link-text-4">
+      <a href="https://www.example.com?=40s249rf">(External link)</a>
     </div>
 
     <h3>Hyperlinks with ARIA</h3>
@@ -689,6 +788,13 @@
     <div id="warning-link-label-in-name">
       <a href="https://www.example.com/asdsffs" aria-label="Delete item">
         Remove <span class="visually-hidden">item</span>
+      </a>
+    </div>
+
+    <h4>Label in name with <code>linkIgnoreStrings</code></h4>
+    <div id="pass-link-label-in-name-linkIgnoreStrings">
+      <a href="https://www.example.com/asdsffs" aria-label="Delete item ">
+        (External link) Delete <span class="visually-hidden">item</span>
       </a>
     </div>
 
@@ -1759,7 +1865,8 @@
     </div>
 
     <h4>SVG with background: url()</h4>
-    <div id="warning-svg-14" style="background: lightblue url('./assets/aussie.avif') no-repeat fixed center;">
+    <div id="warning-svg-14"
+      style="background: lightblue url('../../docs/examples/assets/aussie.avif') no-repeat fixed center;">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50">
         <path fill="darkgreen"
           d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM229.4 385.9C249.8 413.9 282.8 432 320 432C357.2 432 390.2 413.9 410.6 385.9C418.4 375.2 433.4 372.8 444.1 380.6C454.8 388.4 457.2 403.4 449.4 414.1C420.3 454 373.2 480 320 480C266.8 480 219.7 454 190.6 414.1C182.8 403.4 185.2 388.4 195.9 380.6C206.6 372.8 221.6 375.2 229.4 385.9zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z" />
@@ -2051,6 +2158,18 @@
       </details>
     </div>
 
+    <h4>Link (label in name)</h4>
+    <div id="warning-label-in-name-3">
+      <a href="https://www.example.com?231sss" aria-label="Trash">
+        Delete
+      </a>
+    </div>
+
+    <div id="warning-label-in-name-4">
+      <a aria-label="Go to https://www.gov.nl.ca/hcs/files/HealthHumanResourcesPlanReportMay-2025" class=""
+        href="https://www.gov.nl.ca/hcs/files/HealthHumanResourcesPlanReportMay-2025">526-page report</a>
+    </div>
+
     <h4>No visible text</h4>
     <div id="nothing-button-4">
       <button type="button" aria-label="Trash">
@@ -2137,6 +2256,9 @@
       $el.append(testShadowElement);
     })
   </script>
+
+  <!-- Sa11y -->
+  <link rel="stylesheet" href="../../src/css/sa11y.css" />
   <script type="module" src="./script.js"></script>
 </body>
 

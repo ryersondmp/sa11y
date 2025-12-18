@@ -1,7 +1,7 @@
+import exportResultsStyles from '../../css/export-results.css?inline';
 import Constants from '../utils/constants';
 import Lang from '../utils/lang';
-import { stripHTMLtags, decodeHTML, escapeHTML, generateElementPreview } from '../utils/utils';
-import exportResultsStyles from '../../../dist/css/export-results.min.css';
+import { decodeHTML, escapeHTML, generateElementPreview, stripHTMLtags } from '../utils/utils';
 
 /* ************************************************************ */
 /*  Export results as CSV or HTML via Blob API.                 */
@@ -40,7 +40,9 @@ async function generateHTMLTemplate(results, dismissResults) {
     const heading = types[type];
     const hasIssues = issues.length > 0;
 
-    if (!hasIssues) return '';
+    if (!hasIssues) {
+      return '';
+    }
 
     let list = `<h2>${heading}</h2>`;
     let listOpeningTag = `<ol class="${type}">`;
@@ -90,13 +92,13 @@ async function generateHTMLTemplate(results, dismissResults) {
   // Meta information
   const meta = generateMetaData();
   const metaTitle = !meta.titleCheck
-    ? `<dt>${Lang._('PAGE_TITLE')}</dt><dd>${meta.metaTitle}</dd>` : '';
-  const metaErrors = count.error !== 0
-    ? `<dt>${Lang._('ERRORS')}</dt><dd>${count.error}</dd>` : '';
-  const metaWarnings = count.warning !== 0
-    ? `<dt>${Lang._('WARNINGS')}</dt><dd>${count.warning}</dd>` : '';
-  const metaDismissed = count.dismiss !== 0
-    ? `<dt>${Lang._('DISMISSED')}</dt><dd>${count.dismiss}</dd>` : '';
+    ? `<dt>${Lang._('PAGE_TITLE')}</dt><dd>${meta.metaTitle}</dd>`
+    : '';
+  const metaErrors = count.error !== 0 ? `<dt>${Lang._('ERRORS')}</dt><dd>${count.error}</dd>` : '';
+  const metaWarnings =
+    count.warning !== 0 ? `<dt>${Lang._('WARNINGS')}</dt><dd>${count.warning}</dd>` : '';
+  const metaDismissed =
+    count.dismiss !== 0 ? `<dt>${Lang._('DISMISSED')}</dt><dd>${count.dismiss}</dd>` : '';
   const tool = '<a href="https://sa11y.netlify.app">Sa11y</a>';
 
   const htmlTemplate = `
@@ -165,7 +167,8 @@ async function downloadHTMLTemplate(results, dismissResults) {
 function downloadCSVTemplate(results) {
   const meta = generateMetaData();
   // CSV header row
-  const filteredObjects = results.filter((issue) => issue.type === 'warning' || issue.type === 'error')
+  const filteredObjects = results
+    .filter((issue) => issue.type === 'warning' || issue.type === 'error')
     .map((issue) => {
       const { type, content, htmlPath, cssPath } = issue;
 
@@ -185,7 +188,9 @@ function downloadCSVTemplate(results) {
         Issue: `"${encoded}"`,
         Element: `"${htmlPath}"`,
       };
-      if (cssPath) columns.Path = `"${cssPath}"`;
+      if (cssPath) {
+        columns.Path = `"${cssPath}"`;
+      }
       return columns;
     });
 
@@ -194,7 +199,7 @@ function downloadCSVTemplate(results) {
   const csvContent = `${headers.join(',')}\n${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(',')).join('\n')}`;
 
   // Create blob.
-  const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+  const bom = new Uint8Array([0xef, 0xbb, 0xbf]);
   const blob = new Blob([bom, csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = window.URL.createObjectURL(blob);
   const link = document.createElement('a');

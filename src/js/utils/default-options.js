@@ -1,6 +1,7 @@
 const defaultOptions = {
   // Target area to check
   checkRoot: 'body',
+  fixedRoots: false,
 
   // Exclusions
   containerIgnore: '.sa11y-ignore',
@@ -12,7 +13,8 @@ const defaultOptions = {
   imageIgnore: '',
   linkIgnore: '',
   linkIgnoreSpan: '',
-  linkIgnoreStrings: '',
+  linkIgnoreStrings: [],
+  ignoreContentOutsideRoots: false,
 
   // Control panel settings
   aboutContent: '',
@@ -58,12 +60,10 @@ const defaultOptions = {
 
   // Contrast
   contrastPlugin: true,
-  contrastAAA: false,
-  contrastAPCA: false,
+  contrastAlgorithm: 'AA', // AA, AAA, APCA
 
   // Other plugins
   customChecks: false,
-  linksAdvancedPlugin: true,
   formLabelsPlugin: true,
   embeddedContentPlugin: true,
   developerPlugin: true,
@@ -71,11 +71,17 @@ const defaultOptions = {
   colourFilterPlugin: true,
   exportResultsPlugin: false,
 
+  // Options for accName computation: Ignore ARIA on these elements.
+  ignoreAriaOnElements: false, // e.g. 'h1,h2,h3,h4,h5,h6'
+  ignoreTextInElements: false, // e.g. '.inner-node-hidden-in-CSS'
+
   // Shared properties for some checks
+  altPlaceholder: [],
   susAltStopWords: '',
   linkStopWords: '',
   extraPlaceholderStopWords: '',
   imageWithinLightbox: '',
+  initialHeadingLevel: [],
 
   // All checks
   checks: {

@@ -1,0 +1,1453 @@
+/** biome-ignore-all lint/style/noDescendingSpecificity: It's fine. */
+
+/* ************************************* */
+/*          1. CSS Reset                 */
+/* ************************************* */
+h1,
+h2,
+h3,
+div,
+p,
+span,
+ol,
+ul,
+li,
+a,
+label,
+button,
+svg,
+strong,
+kbd,
+pre,
+code {
+  all: unset;
+  box-sizing: border-box !important;
+}
+
+*::before,
+*::after {
+  all: unset;
+}
+
+div {
+  display: block;
+}
+
+* {
+  font-family: var(--sa11y-font-face) !important;
+  -webkit-font-smoothing: auto !important;
+}
+
+p,
+ol,
+ul,
+li,
+label {
+  font-size: var(--sa11y-normal-text);
+  font-weight: normal;
+  line-height: 22px !important;
+  text-align: start;
+  letter-spacing: normal;
+  word-break: break-word;
+}
+
+.sa11y-overflow {
+  overflow: auto;
+}
+
+img,
+video,
+iframe {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border: 0;
+}
+
+audio {
+  max-width: 100%;
+}
+
+/* ************************************* */
+/*          2. Main toggle               */
+/* ************************************* */
+#toggle {
+  position: fixed;
+  bottom: var(--sa11y-toggle-y-offset);
+  z-index: 2147483644;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 55px;
+  height: 55px;
+  margin: 0;
+  overflow: visible;
+  color: #fff;
+  cursor: pointer;
+  background: linear-gradient(to top, #e040fb, #00bcd4);
+  background-color: var(--sa11y-setting-switch-bg-off);
+  background-size: 150% 150%;
+  border-radius: 50%;
+  transition: all 0.2s ease-in-out;
+  inset-inline-end: var(--sa11y-toggle-x-offset);
+
+  &.left,
+  &.top-left {
+    inset-inline-start: var(--sa11y-toggle-x-offset);
+  }
+
+  &.top-left,
+  &.top-right {
+    top: var(--sa11y-toggle-y-offset);
+    bottom: unset;
+  }
+
+  @media screen and (forced-colors: active) {
+    background: ButtonFace !important;
+    border: 2px solid transparent;
+  }
+
+  svg {
+    width: 35px;
+    height: 35px;
+
+    path {
+      fill: var(--sa11y-panel-bg);
+    }
+  }
+
+  &:hover,
+  &:focus {
+    animation: sa11y-toggle-gradient 3s ease;
+  }
+
+  &:disabled:hover,
+  &:disabled:focus {
+    animation: none;
+  }
+
+  &.on {
+    background: linear-gradient(to bottom, #e040fb, #00bcd4);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    background: unset;
+    background-color: var(--sa11y-setting-switch-bg-off);
+  }
+}
+
+/* ************************************* */
+/*        3. Notification badge          */
+/* ************************************* */
+#notification-badge {
+  position: absolute;
+  top: -5.5px;
+  right: -3px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  padding: 2.5px;
+  font-size: 13.5px;
+  font-weight: normal;
+  line-height: 1;
+  color: #fff;
+  text-wrap: nowrap;
+  background-color: #eb0000;
+  border: 1px solid transparent;
+  border-radius: 12px;
+
+  &.notification-badge-warning {
+    color: var(--sa11y-warning-text);
+    background-color: var(--sa11y-warning-hover);
+    border: 1px solid var(--sa11y-warning);
+  }
+}
+
+/* ************************************* */
+/*            4. Main panel              */
+/* ************************************* */
+#panel {
+  position: fixed;
+  bottom: calc(var(--sa11y-toggle-y-offset) + var(--sa11y-panel-y-gap));
+  z-index: 2147483643;
+  overflow: visible;
+  visibility: hidden;
+  background: var(--sa11y-panel-bg);
+  border-radius: 4px;
+  box-shadow:
+    0 0 20px 4px rgb(154 161 177 / 15%),
+    0 4px 80px -8px rgb(36 40 47 / 25%),
+    0 4px 4px -2px rgb(91 94 105 / 15%);
+  opacity: 0;
+  transition:
+    transform 0.2s,
+    opacity 0.2s background 0.2s;
+  transform: scale(0);
+  transform-origin: 100% 100%;
+  inset-inline-end: calc(var(--sa11y-toggle-x-offset) + var(--sa11y-panel-x-gap));
+
+  &.left,
+  &.top-left {
+    inset-inline-start: calc(var(--sa11y-toggle-x-offset) + var(--sa11y-panel-x-gap));
+    inset-inline-end: unset;
+  }
+
+  &.top-right,
+  &.top-left {
+    /* Top needs 10px extra. */
+    top: calc(var(--sa11y-toggle-y-offset) + var(--sa11y-panel-y-gap) + 10px);
+    bottom: unset;
+  }
+
+  &.active {
+    height: auto;
+    visibility: visible;
+    opacity: 1;
+    transition:
+      transform 0.2s,
+      opacity 0.2s;
+    transform: scale(1);
+    transform-origin: bottom right;
+  }
+
+  @media screen and (forced-colors: active) {
+    border: 2px solid transparent;
+  }
+}
+
+#panel.active.left,
+[dir="rtl"] #panel.active {
+  transform-origin: bottom left;
+}
+
+#panel.active.top-left {
+  transform-origin: top left;
+}
+
+#panel.active.top-right {
+  transform-origin: top right;
+}
+
+/* ************************************* */
+/*            5. Panel alerts            */
+/* ************************************* */
+#panel-alert {
+  display: none;
+  opacity: 0;
+
+  &.active {
+    display: block;
+    opacity: 1;
+  }
+}
+
+#panel-alert-content {
+  position: relative;
+  align-items: center;
+  max-height: 400px;
+  padding: 15px 20px 15px 15px;
+  overflow-y: auto;
+  line-height: 22px;
+  color: var(--sa11y-panel-primary);
+  border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
+}
+
+.top-left,
+.top-right {
+  #panel-alert-content {
+    border: 0;
+  }
+}
+
+#panel-alert-preview .close-tooltip {
+  display: none;
+}
+
+#panel-alert-preview,
+#panel-alert-text {
+  font-family: var(--sa11y-font-face);
+  font-size: var(--sa11y-normal-text);
+  font-weight: normal;
+  line-height: 22px;
+}
+
+.panel-alert-preview {
+  padding: 10px;
+  margin-top: 15px;
+  background: var(--sa11y-panel-bg-secondary);
+  border: 1px dashed var(--sa11y-panel-bg-splitter);
+  border-radius: 5px;
+
+  ul {
+    position: relative;
+    padding: 0;
+    margin: 0;
+    margin-block: 0 0;
+  }
+
+  li {
+    display: list-item;
+    padding-bottom: 5px;
+    margin: 5px 10px 0 20px;
+  }
+}
+
+.element-preview {
+  padding: 5px;
+  margin-bottom: 10px;
+  overflow-wrap: break-word;
+  background-color: var(--sa11y-element-preview);
+  border-radius: 3.2px;
+}
+
+/* Dismiss button for issues */
+button[data-sa11y-dismiss] {
+  display: block;
+  padding: 4px 8px;
+  margin: 10px 5px 5px 0;
+  color: var(--sa11y-panel-primary);
+  cursor: pointer;
+  background: var(--sa11y-panel-bg-secondary);
+  border: 2px solid var(--sa11y-button-outline);
+  border-radius: 5px;
+  margin-inline-end: 15px;
+
+  &:hover,
+  &:focus {
+    background: var(--sa11y-shortcut-hover);
+  }
+}
+
+/* ************************************* */
+/*          6. General styles            */
+/* ************************************* */
+h2 {
+  display: block;
+  margin-bottom: 3px;
+  font-size: var(--sa11y-large-text);
+  font-weight: 700;
+}
+
+h3 {
+  display: block;
+  margin-bottom: 3px;
+  font-size: calc(var(--sa11y-large-text) - 1px);
+  font-weight: 600;
+}
+
+strong {
+  font-weight: 600;
+}
+
+/* to-do remove! */
+a:not(#outline-list a, #images-list a) {
+  font-weight: 500;
+  color: var(--sa11y-hyperlink);
+  text-decoration: underline;
+  cursor: pointer;
+  border-bottom: 0;
+}
+
+a:hover,
+a:focus {
+  text-decoration: none !important;
+}
+
+hr {
+  height: 1px;
+  padding: 0;
+  margin: 10px 0;
+  background: var(--sa11y-panel-bg-splitter);
+  border: none;
+  opacity: 1;
+}
+
+/* ******************************************** */
+/*  7. Base styling for dismiss & skip buttons  */
+/* ******************************************** */
+#dismiss-button,
+#skip-button {
+  position: relative;
+  display: none;
+  width: 36px;
+  height: 36px;
+  overflow: visible;
+  text-align: center;
+  cursor: pointer;
+  background: var(--sa11y-panel-bg-secondary);
+  border: 1px solid var(--sa11y-button-outline);
+  border-radius: 50px;
+  transition: all 0.1s ease-in-out;
+  margin-inline: 2px 8px;
+
+  &.active {
+    display: block;
+  }
+
+  &:disabled {
+    cursor: default;
+    background: none;
+    border: 0;
+    box-shadow: none;
+  }
+
+  &::before {
+    position: absolute;
+    inset: -5px;
+    content: "";
+  }
+
+  &:hover:not(:disabled),
+  &:focus:not(:disabled) {
+    background-color: var(--sa11y-shortcut-hover);
+  }
+}
+
+#panel.top-left,
+#panel.left {
+  #dismiss-button,
+  #skip-button {
+    margin-inline: 8px 2px;
+  }
+}
+
+/* Dismiss button */
+.dismiss-icon {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  margin-bottom: -4px;
+  background: var(--sa11y-setting-switch-bg-off);
+  mask: var(--sa11y-dismiss-icon) center no-repeat;
+}
+
+.dismiss-group {
+  display: flex;
+}
+
+@media screen and (forced-colors: active) {
+  .dismiss-icon {
+    filter: invert(1);
+  }
+}
+
+/* ***************************************** */
+/*  8. Panel status, Skip To Issue, Dismiss  */
+/* ***************************************** */
+#panel-content {
+  display: flex;
+  align-items: center;
+  padding: 6px;
+  color: var(--sa11y-panel-primary);
+
+  &.errors .panel-icon,
+  &.good .panel-icon,
+  &.warnings .panel-icon {
+    width: 26px;
+    height: 26px;
+    margin: 0 auto;
+  }
+
+  &.errors .panel-icon {
+    margin-top: -2px;
+    background: var(--sa11y-panel-error);
+    mask: var(--sa11y-error-svg) center no-repeat;
+  }
+
+  &.good .panel-icon {
+    background: var(--sa11y-good);
+    mask: var(--sa11y-good-svg) center no-repeat;
+  }
+
+  &.warnings .panel-icon {
+    background: var(--sa11y-yellow-text);
+    transform: scaleX(var(--sa11y-icon-direction));
+    mask: var(--sa11y-warning-svg) center no-repeat;
+  }
+
+  @media screen and (forced-colors: active) {
+    &.errors .panel-icon,
+    &.good .panel-icon,
+    &.warnings .panel-icon {
+      filter: invert(1);
+    }
+  }
+}
+
+#panel.top-left #panel-content,
+#panel.left #panel-content {
+  flex-direction: row-reverse;
+}
+
+#status {
+  font-size: var(--sa11y-large-text);
+  color: var(--sa11y-panel-primary);
+}
+
+.panel-count {
+  padding: 2px 4px;
+  margin-right: 3px;
+  margin-left: 3px;
+  font-size: 15px;
+  font-weight: normal;
+  color: var(--sa11y-panel-primary);
+  background-color: var(--sa11y-panel-badge);
+  border-radius: 4px;
+}
+
+/* ***************************************** */
+/*   9. Outline and Settings shared styles   */
+/* ***************************************** */
+#page-issues,
+#images-panel,
+#settings-panel,
+#outline-panel {
+  display: none;
+  color: var(--sa11y-panel-primary);
+  opacity: 0;
+}
+
+#page-issues.active,
+#images-panel.active,
+#settings-panel.active,
+#outline-panel.active {
+  display: block;
+  opacity: 1;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 15px 0;
+  text-align: start;
+}
+
+#about-content {
+  padding-top: 5px;
+
+  p {
+    display: block;
+    margin-block-end: 1em;
+  }
+}
+
+#images-content,
+#page-issues-content,
+#settings-content,
+#outline-content {
+  padding: 0 15px 10px;
+  border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
+
+  .top-right &,
+  .top-left & {
+    border: 0;
+  }
+}
+
+#images-content {
+  padding-inline: 5px;
+}
+
+#page-issues-content {
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+#settings-content {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Note to self: stop tinkering with the max-height. This is the max height that will accommodate the Page Issues and Readability panel on your average 13" screen. */
+#images-content,
+#outline-content {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+#settings-panel .sa11y-red-text,
+#outline-panel .outline-list-item.sa11y-red-text {
+  color: var(--sa11y-red-text);
+}
+
+/* ***************************************** */
+/*          10. Page Outline list            */
+/* ***************************************** */
+#outline-list {
+  display: block;
+  padding: 0;
+  margin: 0;
+
+  button {
+    display: block;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+      display: block;
+      background: var(--sa11y-panel-outline-hover);
+      border-radius: 5px;
+      box-shadow: 0 0 0 2px var(--sa11y-panel-outline-hover);
+    }
+  }
+
+  li {
+    display: block;
+    padding: 0;
+    margin-top: 0;
+    margin-bottom: 4.5px;
+    list-style-type: none;
+
+    &:first-child {
+      margin-top: 5px;
+    }
+  }
+
+  .outline-2 {
+    margin-inline-start: 15px;
+  }
+
+  .outline-3 {
+    margin-inline-start: 30px;
+  }
+
+  .outline-4 {
+    margin-inline-start: 45px;
+  }
+
+  .outline-5 {
+    margin-inline-start: 60px;
+  }
+
+  .outline-6 {
+    margin-inline-start: 75px;
+  }
+}
+
+/* ***************************************** */
+/*          10A. Images list            */
+/* ***************************************** */
+#images-list {
+  display: block;
+  padding: 0;
+  margin: 0;
+
+  button {
+    display: block;
+    min-height: 44px;
+    margin: 10px 5px;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+      display: block;
+      background: var(--sa11y-panel-outline-hover);
+      border-radius: 5px;
+      box-shadow: 0 0 0 2px var(--sa11y-panel-outline-hover);
+    }
+  }
+
+  li {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow: hidden;
+    list-style-type: none;
+    border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
+
+    &.no-images {
+      padding-inline: 10px;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+      border: none;
+    }
+
+    .alt {
+      padding: 2px 5px 10px;
+    }
+
+    .edit-block {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 15px;
+    }
+
+    .edit {
+      position: relative;
+      padding: 4px 7px;
+      color: var(--sa11y-panel-primary);
+      text-decoration: none;
+      cursor: pointer;
+      margin-inline-end: 5px;
+      background: var(--sa11y-panel-bg-secondary);
+      border: 2px solid var(--sa11y-button-outline);
+      border-radius: 5px;
+
+      &:hover,
+      &:focus {
+        background-color: var(--sa11y-shortcut-hover);
+      }
+
+      &::before {
+        position: absolute;
+        inset: -10px;
+        content: "";
+      }
+    }
+
+    img {
+      float: inline-start;
+      max-width: 110px;
+      margin: 5px;
+      border-radius: 5px;
+    }
+
+    &.warning {
+      .alt {
+        color: var(--sa11y-yellow-text);
+      }
+
+      img {
+        background-color: var(--sa11y-yellow-text);
+        border: 5px solid var(--sa11y-yellow-text);
+      }
+    }
+
+    &.error {
+      .alt {
+        color: var(--sa11y-error);
+      }
+
+      img {
+        background-color: var(--sa11y-error);
+        border: 5px solid var(--sa11y-error);
+      }
+    }
+
+    &.good {
+      img {
+        background-color: var(--sa11y-panel-badge);
+        border: 5px solid var(--sa11y-panel-badge);
+      }
+    }
+
+    @media screen and (forced-colors: active) {
+      img {
+        background-color: ButtonBorder !important;
+      }
+    }
+  }
+}
+
+/* **************************************** */
+/*    11. Various icons                     */
+/* **************************************** */
+
+.move-panel-icon {
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+  background: var(--sa11y-setting-switch-bg-off);
+  mask: var(--sa11y-move-panel-icon);
+}
+
+.info-icon {
+  width: 20px;
+  height: 20px;
+  margin-top: -2px;
+  vertical-align: middle;
+  background: var(--sa11y-setting-switch-bg-off);
+  mask: var(--sa11y-info-icon);
+}
+
+.sun-icon {
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+  background: var(--sa11y-setting-switch-bg-off);
+  mask: var(--sa11y-sun-icon);
+}
+
+.moon-icon {
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+  background: var(--sa11y-setting-switch-bg-off);
+  mask: var(--sa11y-moon-icon);
+}
+
+.error-icon {
+  width: 16px;
+  height: 16px;
+  margin-bottom: -4px;
+  background: var(--sa11y-error-text);
+  mask: var(--sa11y-error-svg);
+}
+
+.hidden-icon {
+  width: 16px;
+  height: 16px;
+  margin-bottom: -3px;
+  background: var(--sa11y-panel-primary);
+  mask: var(--sa11y-hidden-icon-svg);
+}
+
+.link-icon {
+  width: 16px;
+  height: 16px;
+  margin-bottom: -3.5px;
+  background: var(--sa11y-panel-primary);
+  mask: var(--sa11y-link-icon-svg);
+}
+
+/* Shared properties */
+.move-panel-icon,
+.info-icon,
+.sun-icon,
+.moon-icon,
+.error-icon,
+.hidden-icon,
+.link-icon {
+  display: inline-block;
+  mask-position: center;
+  mask-repeat: no-repeat;
+}
+
+/* Badge colour */
+.error-badge .link-icon,
+.error-badge .hidden-icon {
+  background: var(--sa11y-error-text) !important;
+}
+
+.warning-badge .link-icon,
+.warning-badge .hidden-icon {
+  background: var(--sa11y-panel-bg);
+}
+
+.error {
+  .hidden-icon,
+  .link-icon {
+    background: var(--sa11y-error-text);
+  }
+}
+
+.warning {
+  .hidden-icon,
+  .link-icon {
+    background: var(--sa11y-panel-bg);
+  }
+}
+
+@media screen and (forced-colors: active) {
+  .move-panel-icon,
+  .sun-icon,
+  .moon-icon,
+  .info-icon,
+  .error-icon,
+  .link-icon,
+  .hidden-icon {
+    filter: invert(1);
+  }
+}
+
+/* ***************************************** */
+/*    12. Page Outline & Settings toggles    */
+/* ***************************************** */
+#panel-controls {
+  display: flex;
+  overflow: hidden;
+  border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
+  border-radius: 0 0 4px 4px;
+}
+
+#panel-controls button {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 30px;
+  padding: 0;
+  margin: 0;
+  font-size: var(--sa11y-normal-text);
+  font-weight: 400;
+  line-height: 0;
+  color: var(--sa11y-panel-secondary);
+  text-align: center;
+  cursor: pointer;
+  background: var(--sa11y-panel-bg-secondary);
+  background-color: var(--sa11y-panel-bg-secondary);
+  border-top: 1px solid var(--sa11y-panel-bg-splitter);
+  border-inline-end: 1px solid var(--sa11y-panel-bg-splitter);
+  outline: 0;
+  opacity: 1;
+  transition: background 0.2s;
+
+  &:hover,
+  &.active {
+    background-color: var(--sa11y-shortcut-hover);
+  }
+
+  &.active {
+    font-weight: 600;
+  }
+}
+
+#export-results-mode,
+label {
+  display: inline-block;
+  width: 100%;
+  margin: 0;
+  font-weight: normal;
+  color: var(--sa11y-panel-primary);
+}
+
+label:not(#colour-filter-mode, #export-results-mode) {
+  cursor: pointer;
+}
+
+/* Insert space between the panel controls and main toggle if Image Outline is enabled. */
+#panel.right {
+  #panel-controls[data-image-panel]::after {
+    width: 80px;
+    content: "";
+  }
+}
+
+#panel.left {
+  #panel-controls[data-image-panel]::before {
+    width: 50px;
+    content: "";
+  }
+}
+
+/* ***************************************** */
+/*           13. Settings Panel              */
+/* ***************************************** */
+#settings-panel {
+  .export-results-group,
+  .appearance-group {
+    display: flex;
+    margin: 5px 0;
+
+    button {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      min-height: 34px;
+      margin: 2px 0;
+      text-align: center;
+      white-space: nowrap;
+      cursor: pointer;
+      border: 2px solid var(--sa11y-setting-switch-bg-off);
+      border-radius: 5px;
+      margin-inline: 8px 4px;
+
+      &:hover,
+      &:focus,
+      &:focus-within {
+        background: var(--sa11y-shortcut-hover);
+      }
+
+      &::before {
+        position: absolute;
+        inset: -7px;
+        content: "";
+      }
+
+      .text {
+        padding: 0 6px;
+        font-weight: 600;
+        color: var(--sa11y-setting-switch-bg-off);
+      }
+    }
+  }
+
+  .switch {
+    position: relative;
+    width: 105px;
+    height: 44px;
+    padding: 7px 10px;
+    margin: 0;
+    font-size: var(--sa11y-normal-text);
+    font-weight: 600;
+    color: var(--sa11y-setting-switch-bg-off);
+    text-align: end;
+    cursor: pointer;
+    background: none;
+    border: 0;
+    border-radius: 5px;
+
+    &[aria-pressed="true"]::after,
+    &[aria-pressed="false"]::after {
+      display: inline-block;
+      width: 27px;
+      height: 27px;
+      margin: 0 4px 4px;
+      vertical-align: middle;
+      content: "";
+    }
+
+    &[aria-pressed="true"]::after {
+      background: var(--sa11y-setting-switch-bg-on);
+      mask: var(--sa11y-setting-switch-on-svg) center no-repeat;
+    }
+
+    &[aria-pressed="false"]::after {
+      background: var(--sa11y-setting-switch-bg-off);
+      mask: var(--sa11y-setting-switch-off-svg) center no-repeat;
+    }
+
+    @media screen and (forced-colors: active) {
+      &[aria-pressed="false"]::after,
+      &[aria-pressed="true"]::after {
+        filter: invert(1);
+      }
+    }
+  }
+
+  #settings-options li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1px 0;
+    list-style-type: none;
+    border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
+
+    &:last-child {
+      border: none;
+    }
+  }
+}
+
+/* ************************************* */
+/*            14. Page issues            */
+/* ************************************* */
+#page-issues {
+  align-items: center;
+  color: var(--sa11y-panel-primary);
+}
+
+#page-issues-list {
+  display: block;
+  margin-top: 4px;
+
+  li {
+    display: block;
+    margin: 0 0 10px;
+  }
+}
+
+.top-left,
+.top-right {
+  &.has-page-issues #page-issues {
+    /* Hide double border. */
+    margin-top: -1px;
+    border-top: 1px solid var(--sa11y-panel-bg-splitter);
+  }
+}
+
+/* ************************************* */
+/*      15. Colour filters plugin        */
+/* ************************************* */
+#panel-colour-filters {
+  display: none;
+  align-items: center;
+  font-family: var(--sa11y-font-face);
+  font-size: var(--sa11y-normal-text);
+  font-weight: 400;
+  line-height: 22px;
+  color: var(--sa11y-panel-primary);
+
+  &.active {
+    display: flex;
+  }
+
+  p {
+    width: 100%;
+    padding: 6px 20px 6px 6px;
+  }
+
+  &[data-colour="protanopia"],
+  &[data-colour="deuteranopia"],
+  &[data-colour="tritanopia"],
+  &[data-colour="monochromacy"] {
+    border-bottom: 6px solid transparent;
+    border-image-slice: 1;
+  }
+
+  &[data-colour="protanopia"] {
+    border-image: linear-gradient(
+      94deg,
+      rgb(120 103 25 / 100%) 11%,
+      rgb(224 198 0 / 100%) 36%,
+      rgb(224 198 0 / 100%) 47%,
+      rgb(0 89 227 / 100%) 75%,
+      rgb(0 66 170 / 100%) 91%
+    );
+  }
+
+  &[data-colour="deuteranopia"] {
+    border-image: linear-gradient(
+      270deg,
+      rgb(86 127 219 / 100%) 0%,
+      rgb(164 162 141 / 100%) 48%,
+      rgb(195 173 20 / 100%) 69%,
+      rgb(167 149 5 / 100%) 100%
+    );
+  }
+
+  &[data-colour="tritanopia"] {
+    border-image: linear-gradient(
+      270deg,
+      rgb(177 80 111 / 100%) 0%,
+      rgb(6 150 193 / 100%) 35%,
+      rgb(243 169 186 / 100%) 70%,
+      rgb(217 28 93 / 100%) 87%,
+      rgb(254 1 92 / 100%) 100%
+    );
+  }
+
+  &[data-colour="monochromacy"] {
+    border-image: linear-gradient(
+      270deg,
+      rgb(0 0 0 / 100%) 0%,
+      rgb(167 167 167 / 100%) 50%,
+      rgb(0 0 0 / 100%) 100%
+    );
+  }
+
+  &[data-colour="protanopia"] .panel-icon {
+    background: var(--sa11y-panel-error);
+  }
+
+  &[data-colour="deuteranopia"] .panel-icon {
+    background: var(--sa11y-good-hover);
+  }
+
+  &[data-colour="tritanopia"] .panel-icon {
+    background: var(--sa11y-blue);
+  }
+
+  &[data-colour="monochromacy"] .panel-icon {
+    background: linear-gradient(
+      90deg,
+      rgb(56 164 89 / 100%) 20%,
+      #f00 50%,
+      rgb(0 119 200 / 100%) 80%
+    );
+  }
+
+  .panel-icon {
+    width: 30px;
+    height: 30px;
+    margin-inline: 10px 5px;
+    mask: var(--sa11y-low-vision-icon) center no-repeat;
+  }
+
+  @media screen and (forced-colors: active) {
+    .panel-icon {
+      forced-color-adjust: none;
+    }
+  }
+}
+
+.select-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.select-dropdown::after {
+  position: absolute;
+  content: " ";
+  border-top: 5px solid var(--sa11y-setting-switch-bg-off);
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
+  inset-inline-end: 14px;
+}
+
+#colour-filter-select {
+  appearance: none;
+  position: relative;
+  height: 30px;
+  font-size: var(--sa11y-normal-text);
+  font-weight: 400;
+  color: var(--sa11y-setting-switch-bg-off);
+  text-align: end;
+  vertical-align: middle;
+  cursor: pointer;
+  background: var(--sa11y-panel-bg);
+  border: 2px solid var(--sa11y-setting-switch-bg-off);
+  border-radius: 5px;
+  padding-inline: 5px 25px;
+  margin-inline-end: 4px;
+
+  &:hover,
+  &:focus {
+    background: var(--sa11y-shortcut-hover);
+  }
+}
+
+#colour-filter-select.active {
+  box-shadow: 0 0 0 2px var(--sa11y-setting-switch-bg-on);
+}
+
+#colour-filter-item label,
+#colour-filter-item select {
+  margin-top: 10px;
+  margin-bottom: 9px;
+}
+
+/* ***************************************** */
+/*            16. Readability                */
+/* ***************************************** */
+#readability-panel {
+  display: none;
+  opacity: 0;
+
+  &.active {
+    display: block;
+    opacity: 1;
+  }
+}
+
+.top-left,
+.top-right {
+  #readability-content {
+    border-top: 1px solid var(--sa11y-panel-bg-splitter);
+  }
+}
+
+.left,
+.right {
+  #readability-content {
+    border-bottom: 1px solid var(--sa11y-panel-bg-splitter);
+  }
+}
+
+#readability-content {
+  width: 100%;
+  padding: 10px 15px;
+  color: var(--sa11y-panel-primary);
+}
+
+#readability-details {
+  display: block;
+  padding: 0;
+  margin: 0;
+  white-space: normal;
+  list-style-type: none;
+
+  li {
+    display: inline-block;
+    margin: 0;
+    list-style-type: none;
+    padding-inline-end: 10px;
+  }
+}
+
+.readability-score {
+  padding: 2px 5px;
+  color: var(--sa11y-panel-primary);
+  background-color: var(--sa11y-panel-badge);
+  border-radius: 4px;
+  margin-inline-start: 5px;
+}
+
+#readability-info {
+  margin-inline-start: 10px;
+}
+
+/* ************************************* */
+/*   17. Skip to Page Issues skip link   */
+/* ************************************* */
+
+/* Skip to Page Issues initially. */
+#skip-to-page-issues {
+  display: none;
+}
+
+/* If panel has page issues, make skip link active. */
+#panel.has-page-issues #skip-to-page-issues {
+  position: absolute;
+  display: block;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  font-weight: 600;
+  white-space: nowrap;
+  background: var(--sa11y-panel-bg);
+  border: 0;
+  border-radius: 5px;
+}
+
+#panel.has-page-issues #skip-to-page-issues:focus {
+  z-index: 1;
+  width: auto;
+  height: auto;
+  padding: 7px 10px;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* ***************************************** */
+/*          18. Misc utilities               */
+/* ***************************************** */
+
+/* Used to hide bottom border when colour filter is enabled. */
+.hide-settings-border {
+  padding: 0 15px !important;
+  border-bottom: 0 !important;
+
+  li:not(#colour-filter-item) {
+    display: none !important;
+  }
+
+  #about-content {
+    display: none;
+  }
+
+  &.scrollable::before {
+    all: unset;
+  }
+}
+
+/* Hide colour picker within control panel since element is hidden. */
+#contrast-tools {
+  display: none;
+}
+
+/* ***************************************** */
+/*         19. Scrollbar styling             */
+/* ***************************************** */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--sa11y-button-outline);
+  border-radius: 6px;
+}
+
+* {
+  scrollbar-color: var(--sa11y-button-outline);
+  scrollbar-width: thin;
+}
+
+.scrollable::before {
+  position: absolute;
+  inset: auto 0;
+  z-index: -1;
+  width: 100%;
+  height: 250px;
+  content: "";
+  background: linear-gradient(180deg, rgb(0 0 0 / 0%) 70%, var(--sa11y-panel-scrollable) 100%);
+  background-position: bottom;
+  transition: opacity 1s ease-in-out;
+  animation: fade 1s ease-in-out;
+}
+
+#settings-content.scrollable::before {
+  height: 400px;
+}
+
+.top-right .scrollable::before,
+.top-left .scrollable::before {
+  border-radius: 5px;
+}
+
+#page-issues-content.scrollable::before {
+  height: 160px;
+}
+
+#panel-alert.scrollable::before {
+  height: 200px;
+}
+
+/* ***************************************** */
+/*           20. Animations                  */
+/* ***************************************** */
+@keyframes sa11y-toggle-gradient {
+  0% {
+    background-position: 50% 0%;
+  }
+
+  50% {
+    background-position: 50% 100%;
+  }
+
+  100% {
+    background-position: 50% 0%;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    transform: none !important;
+    animation: none !important;
+  }
+}
+
+/* ***************************************** */
+/*     21. Internationalization (i18n)       */
+/* ***************************************** */
+
+/* Default panel width. */
+#panel {
+  width: 440px;
+}
+
+/* English */
+#container:lang(en) #panel {
+  width: 315px;
+}
+
+/* Medium panel width. */
+#container:lang(nb),
+#container:lang(da),
+#container:lang(pl),
+#container:lang(de),
+#container:lang(sv),
+#container:lang(zh) {
+  #panel {
+    width: 365px;
+  }
+}
+
+/* Setting switches that need some extra width. */
+#container:lang(bg),
+#container:lang(es) {
+  .switch:not(#export-results-item *) {
+    width: 230px !important;
+  }
+}
+
+#container:not(:lang(en), :lang(de)) {
+  .switch {
+    width: 205px;
+  }
+}

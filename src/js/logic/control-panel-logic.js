@@ -2,9 +2,9 @@
 /* eslint-disable no-param-reassign */
 
 import Constants from '../utils/constants';
-import { store, isScrollable } from '../utils/utils';
-import Lang from '../utils/lang';
 import find from '../utils/find';
+import Lang from '../utils/lang';
+import { isScrollable, store } from '../utils/utils';
 
 /**
  * OUTLINE PANEL.
@@ -17,8 +17,10 @@ const openOutline = () => {
   isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
 
   // Toggle visibility of heading labels
-  const headingLabels = find('sa11y-heading-label', 'root');
-  headingLabels.forEach(($el) => $el.hidden = false);
+  const headingLabels = find('sa11y-heading-label', 'document');
+  headingLabels.forEach(($el) => {
+    $el.hidden = false;
+  });
 
   const event = new CustomEvent('sa11y-build-heading-outline');
   document.dispatchEvent(event);
@@ -31,8 +33,10 @@ const closeOutline = () => {
   store.setItem('sa11y-outline', 'Closed');
 
   // Toggle visibility of heading labels
-  const headingLabels = find('sa11y-heading-label', 'root');
-  headingLabels.forEach(($el) => $el.hidden = true);
+  const headingLabels = find('sa11y-heading-label', 'document');
+  headingLabels.forEach(($el) => {
+    $el.hidden = true;
+  });
 };
 
 /**
@@ -161,7 +165,9 @@ export default function initializePanelToggles() {
   if (tabs.length !== 0) {
     tabs.forEach((tab) => {
       tab.addEventListener('keydown', (e) => {
-        if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+        if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') {
+          return;
+        }
         e.preventDefault();
 
         // Compute index from the event target.

@@ -1,16 +1,20 @@
-/* eslint-disable no-continue */
-/* eslint-disable no-use-before-define */
+import Constants from './constants';
 
 /* Get text content of pseudo elements. */
 export const wrapPseudoContent = (element, string) => {
   const getAltText = (content) => {
-    if (content === 'none') return '';
-    const match = content.includes('url(') || content.includes('image-set(')
-      ? content.match(/\/\s*"([^"]+)"/) // Content after slash, e.g. url('image.jpg') / "alt text";
-      : content.match(/"([^"]+)"/); // Content between quotes, e.g. "alt text";
+    if (content === 'none') {
+      return '';
+    }
+    const match =
+      content.includes('url(') || content.includes('image-set(')
+        ? content.match(/\/\s*"([^"]+)"/) // Content after slash, e.g. url('image.jpg') / "alt text";
+        : content.match(/"([^"]+)"/); // Content between quotes, e.g. "alt text";
     return match ? match[1] : '';
   };
-  const before = getAltText(window.getComputedStyle(element, ':before').getPropertyValue('content'));
+  const before = getAltText(
+    window.getComputedStyle(element, ':before').getPropertyValue('content'),
+  );
   const after = getAltText(window.getComputedStyle(element, ':after').getPropertyValue('content'));
   return `${before}${string}${after}`;
 };
@@ -32,6 +36,21 @@ const nextTreeBranch = (tree) => {
 
 /* Compute ARIA attributes. */
 export const computeAriaLabel = (element, recursing = false) => {
+  // Ignore ARIA on these elements.
+  if (
+    Constants.Global.ignoreAriaOnElements &&
+    element.matches(Constants.Global.ignoreAriaOnElements)
+  ) {
+    return 'noAria';
+  }
+
+  if (
+    Constants.Global.ignoreTextInElements &&
+    element.matches(Constants.Global.ignoreTextInElements)
+  ) {
+    return '';
+  }
+
   const labelledBy = element.getAttribute('aria-labelledby');
   if (!recursing && labelledBy) {
     return labelledBy
@@ -40,7 +59,8 @@ export const computeAriaLabel = (element, recursing = false) => {
       .map((id) => {
         const targetElement = document.querySelector(`#${CSS.escape(id)}`);
         return targetElement ? computeAccessibleName(targetElement, '', 1) : '';
-      }).join(' ');
+      })
+      .join(' ');
   }
 
   const { ariaLabel } = element;
@@ -63,13 +83,9 @@ export const computeAriaLabel = (element, recursing = false) => {
 export const computeAccessibleName = (element, exclusions = [], recursing = 0) => {
   // Return immediately if there is an aria label.
   const ariaLabel = computeAriaLabel(element, recursing);
-  if (ariaLabel !== 'noAria') return ariaLabel;
-
-  // Textarea with a title.
-  if (element.tagName === 'TEXTAREA' && element.hasAttribute('title')) {
-    return element.getAttribute('title');
+  if (ariaLabel !== 'noAria') {
+    return ariaLabel;
   }
-
   // Return immediately if there is only a text node.
   let computedText = '';
   if (!element.children.length) {
@@ -83,8 +99,12 @@ export const computeAccessibleName = (element, exclusions = [], recursing = 0) =
   // Create tree walker object.
   function createTreeWalker(root, showElement, showText) {
     const acceptNode = (node) => {
-      if (showElement && node.nodeType === Node.ELEMENT_NODE) return NodeFilter.FILTER_ACCEPT;
-      if (showText && node.nodeType === Node.TEXT_NODE) return NodeFilter.FILTER_ACCEPT;
+      if (showElement && node.nodeType === Node.ELEMENT_NODE) {
+        return NodeFilter.FILTER_ACCEPT;
+      }
+      if (showText && node.nodeType === Node.TEXT_NODE) {
+        return NodeFilter.FILTER_ACCEPT;
+      }
       return NodeFilter.FILTER_REJECT;
     };
     return document.createTreeWalker(root, NodeFilter.SHOW_ALL, { acceptNode });
@@ -132,20 +152,26 @@ export const computeAccessibleName = (element, exclusions = [], recursing = 0) =
     }
 
     if (addTitleIfNoName && !node.closest('a')) {
-      if (aText === computedText) computedText += addTitleIfNoName;
+      if (aText === computedText) {
+        computedText += addTitleIfNoName;
+      }
       addTitleIfNoName = false;
       aText = false;
     }
 
     if (node.ariaHidden === 'true' && !(recursing && count < 3)) {
-      if (!nextTreeBranch(treeWalker)) continueWalker = false;
+      if (!nextTreeBranch(treeWalker)) {
+        continueWalker = false;
+      }
       continue;
     }
 
     const aria = computeAriaLabel(node, recursing);
     if (aria !== 'noAria') {
       computedText += ` ${aria}`;
-      if (!nextTreeBranch(treeWalker)) continueWalker = false;
+      if (!nextTreeBranch(treeWalker)) {
+        continueWalker = false;
+      }
       continue;
     }
 
@@ -160,7 +186,9 @@ export const computeAccessibleName = (element, exclusions = [], recursing = 0) =
           computedText += computeAriaLabel(node);
         } else {
           const title = node.querySelector('title');
-          if (title) computedText += title.textContent;
+          if (title) {
+            computedText += title.textContent;
+          }
         }
         break;
       case 'A':
@@ -172,6 +200,12 @@ export const computeAccessibleName = (element, exclusions = [], recursing = 0) =
           aText = false;
         }
         computedText += wrapPseudoContent(node, '');
+        break;
+      case 'INPUT':
+        computedText += wrapPseudoContent(treeWalker.currentNode, '');
+        if (treeWalker.currentNode.hasAttribute('title')) {
+          addTitleIfNoName = treeWalker.currentNode.getAttribute('title');
+        }
         break;
       case 'SLOT': {
         const children = node.assignedNodes?.() || [];

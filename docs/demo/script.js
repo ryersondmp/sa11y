@@ -1,11 +1,11 @@
-import { Sa11y, Lang } from '../assets/js/sa11y.esm.js';
+import { Sa11y, Lang } from '../cc-dist/js/sa11y.esm.js';
 
-import Sa11yLangEn from '../assets/js/lang/en.js';
-import Sa11yLangPl from '../assets/js/lang/pl.js';
-import Sa11yLangFr from '../assets/js/lang/fr.js';
-import Sa11yLangDe from '../assets/js/lang/de.js';
-import Sa11yLangUa from '../assets/js/lang/ua.js';
-import Sa11yLangSv from '../assets/js/lang/sv.js';
+import Sa11yLangEn from '../cc-dist/js/lang/en.js';
+import Sa11yLangPl from '../cc-dist/js/lang/pl.js';
+import Sa11yLangFr from '../cc-dist/js/lang/fr.js';
+import Sa11yLangDe from '../cc-dist/js/lang/de.js';
+import Sa11yLangUa from '../cc-dist/js/lang/ua.js';
+import Sa11yLangSv from '../cc-dist/js/lang/sv.js';
 
 // Set translations
 const url = window.location.href;
@@ -82,7 +82,6 @@ const sa11y = new Sa11y({
   headerIgnore: '.ignore-this-heading',
   contrastIgnore: '.card-footer *, #player *',
   containerIgnore: 'footer',
-  linksToFlag: "a[href^='https://www.dev.']",
   linkIgnoreSpan: '.sr-only-example',
   detectSPArouting: true,
   headless: false,
@@ -104,6 +103,12 @@ const sa11y = new Sa11y({
   shadowComponents: '',
   autoDetectShadowComponents: true,
   panelPosition: 'right',
+
+  checks: {
+    QA_BAD_LINK: {
+      sources: "a[href^='https://www.dev.']",
+    }
+  }
   // checkAllHideToggles: true,
 });
 

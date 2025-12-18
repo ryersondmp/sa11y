@@ -11,7 +11,6 @@
   <meta name="theme-color" content="#7952b3">
   <link rel="icon" href="../assets/favicon.ico" />
   <link href="../assets/main.css" rel="stylesheet">
-  <link rel="stylesheet" href="../../assets/css/sa11y.min.css" />
 </head>
 
 <body>
@@ -29,9 +28,6 @@
               <a class="nav-link" href="index.html">Everything</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="toggleable.html">Toggleable</a>
-            </li>
-            <li class="nav-item">
               <a class="nav-link" href="custom.html">Custom checks</a>
             </li>
             <li class="nav-item">
@@ -45,9 +41,6 @@
             </li>
             <li class="nav-item">
               <a class="nav-link active" aria-current="page" href="pass.html">Good</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="rtl.html">RTL</a>
             </li>
           </ul>
         </div>
@@ -172,8 +165,10 @@
   <!--<script type="module" src="../script.js"></script>-->
 
   <!-- Sa11y - Regular script -->
-  <script src="../../assets/js/sa11y.umd.min.js"></script>
-  <script src="../../assets/js/lang/enUS.umd.js"></script>
+  <link rel="stylesheet" href="../../cc-dist/css/sa11y.min.css" />
+  <script src="../../cc-dist/js/sa11y.umd.min.js"></script>
+  <script src="../../cc-dist/js/lang/enUS.umd.js"></script>
+
   <script>
     // Instantiate
     Sa11y.Lang.addI18n(Sa11yLangEnUS.strings);

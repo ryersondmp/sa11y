@@ -1,7 +1,8 @@
+import { createAlert } from '../interface/alert';
 import Constants from '../utils/constants';
-import { store, createAlert } from '../utils/utils';
 import find from '../utils/find';
 import Lang from '../utils/lang';
+import { store } from '../utils/utils';
 
 /* ************************************************************ */
 /*  Update results array before painting annotations to page.   */
@@ -12,28 +13,43 @@ export function dismissLogic(results, dismissTooltip) {
   const currentPath = window.location.pathname;
 
   // Helper function to check if an issue is individually dismissed.
-  const isSoloDismissed = (issue, dismissed) => dismissed.key.includes(issue.dismiss)
-    && dismissed.href === currentPath
-    && (issue.type === 'warning' || issue.type === 'good');
+  const isSoloDismissed = (issue, dismissed) =>
+    dismissed.key.includes(issue.dismiss) &&
+    dismissed.href === currentPath &&
+    (issue.type === 'warning' || issue.type === 'good');
 
   // Helper function to check if "dismiss all".
-  const dismissAll = (issue, dismissed) => typeof dismissed.dismissAll === 'string'
-    && issue.dismissAll === dismissed.dismissAll
-    && dismissed.href === currentPath;
+  const dismissAll = (issue, dismissed) =>
+    typeof dismissed.dismissAll === 'string' &&
+    issue.dismissAll === dismissed.dismissAll &&
+    dismissed.href === currentPath;
 
   // Process individually dismissed issues.
-  const soloDismissed = results.filter((issue) => dismissedIssues.some((dismissed) => isSoloDismissed(issue, dismissed)));
+  const soloDismissed = results.filter((issue) =>
+    dismissedIssues.some((dismissed) => isSoloDismissed(issue, dismissed)),
+  );
 
   // Process dismiss all issues.
-  const allDismissed = results.filter((issue) => dismissedIssues.some((dismissed) => dismissAll(issue, dismissed)));
+  const allDismissed = results.filter((issue) =>
+    dismissedIssues.some((dismissed) => dismissAll(issue, dismissed)),
+  );
 
   // Combine all dismissed results and filter out duplicates.
   const mergeDismissed = [...soloDismissed, ...allDismissed];
-  const dismissedResults = [...new Map(mergeDismissed.map((issue) => [issue.dismiss, issue])).values()];
+  const dismissedResults = [
+    ...new Map(mergeDismissed.map((issue) => [issue.dismiss, issue])).values(),
+  ];
   const dismissCount = dismissedResults.length;
 
   // Update results array (exclude dismissed and dismissed all checks).
-  const updatedResults = results.filter((issue) => !dismissedResults.some((dismissed) => dismissed.dismiss === issue.dismiss && (issue.type === 'warning' || issue.type === 'good')));
+  const updatedResults = results.filter(
+    (issue) =>
+      !dismissedResults.some(
+        (dismissed) =>
+          dismissed.dismiss === issue.dismiss &&
+          (issue.type === 'warning' || issue.type === 'good'),
+      ),
+  );
 
   // Show dismiss button in panel.
   if (dismissCount) {
@@ -78,7 +94,8 @@ const dismissIssueButton = async (e, results, checkAll, resetAll) => {
     if (issue.dismiss) {
       // If dismiss all selected, then indicate so within dismiss object.
       const dismissAllSelected = dismissButton.hasAttribute('data-sa11y-dismiss-all')
-        ? issue.dismissAll : '';
+        ? issue.dismissAll
+        : '';
       // Dismissal object.
       const dismissalDetails = {
         key: issue.dismiss,
@@ -87,9 +104,8 @@ const dismissIssueButton = async (e, results, checkAll, resetAll) => {
       };
 
       // Get the position of the last annotation that was dismissed.
-      const item = find(`[data-sa11y-annotation='${issue.id}']`);
-      const latestDismissed = item[0]
-        ? item[0].getAttribute('data-sa11y-position') : 0;
+      const item = find(`[data-sa11y-annotation='${issue.id}']`, 'root');
+      const latestDismissed = item[0] ? item[0].getAttribute('data-sa11y-position') : 0;
       store.setItem('sa11y-latest-dismissed', latestDismissed);
 
       // Add dismissed item to local storage object.
