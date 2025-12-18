@@ -407,6 +407,48 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
+  test('Linked image missing alt text and has aria-hidden="true"', async () => {
+    const issue = await checkTooltip(
+      page, 'error-missing-alt-but-aria-hidden', 'Image is being used as a link but is missing alt text!',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Linked image missing alt text and has presentation role', async () => {
+    const issue = await checkTooltip(
+      page, 'error-missing-alt-but-presentation-role', 'Image is being used as a link but is missing alt text!',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Linked image missing alt text but has aria-hidden with surrounding text', async () => {
+    const issue = await noAnnotation(
+      page, 'nothing-missing-alt-but-aria-hidden-and-surrounding-text',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Linked image missing alt text but has presentation role with surrounding text', async () => {
+    const issue = await noAnnotation(
+      page, 'nothing-missing-alt-but-presentation-role-and-surrounding-text',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Regular image with missing alt but has aria-hidden', async () => {
+    const issue = await noAnnotation(
+      page, 'nothing-missing-alt-but-aria-hidden',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Regular image with missing alt but has role="presentation"', async () => {
+    const issue = await noAnnotation(
+      page, 'nothing-missing-alt-presentation-role',
+    );
+    expect(issue).toBe(true);
+  });
+
   test('Linked decorative image', async () => {
     const issue = await checkTooltip(
       page, 'error-linked-decorative-image', 'Image within link is marked as decorative and there is no link text.',

@@ -251,14 +251,54 @@
 
     <h3>Linked image missing alt text</h3>
     <div id="error-missing-alt">
-      <a href="https://www.example.com?=6">
+      <a href="https://www.example.com?=6fef">
         <img src="../../docs/examples/assets/placeholder.svg">
       </a>
     </div>
 
+    <h3>Linked image missing alt text but has aria-hidden</h3>
+    <div id="error-missing-alt-but-aria-hidden">
+      <a href="https://www.example.com?=6xsa">
+        <img aria-hidden="true" src="../../docs/examples/assets/placeholder.svg">
+      </a>
+    </div>
+
+    <h3>Linked image missing alt text but has presentation role</h3>
+    <div id="error-missing-alt-but-presentation-role">
+      <a href="https://www.example.com?=3246">
+        <img role="presentation" src="../../docs/examples/assets/placeholder.svg">
+      </a>
+    </div>
+
+    <h3>Linked image missing alt text but has aria-hidden with surrounding text</h3>
+    <div id="nothing-missing-alt-but-aria-hidden-and-surrounding-text">
+      <a href="https://www.example.com?=6rxdsa">
+        <img aria-hidden="true" src="../../docs/examples/assets/placeholder.svg">
+        Explore something else
+      </a>
+    </div>
+
+    <h3>Linked image missing alt text but has presentation role with surrounding text</h3>
+    <div id="nothing-missing-alt-but-presentation-role-and-surrounding-text">
+      <a href="https://www.example.com?=612uy">
+        <img role="presentation" src="../../docs/examples/assets/placeholder.svg">
+        Explore something else again
+      </a>
+    </div>
+
+    <h3>Regular image with missing alt but has aria-hidden</h3>
+    <div id="nothing-missing-alt-but-aria-hidden">
+      <img aria-hidden="true" src="../../docs/examples/assets/placeholder.svg">
+    </div>
+
+    <h3>Regular image with missing alt but has role="presentation"</h3>
+    <div id="nothing-missing-alt-presentation-role">
+      <img role="presentation" src="../../docs/examples/assets/placeholder.svg">
+    </div>
+
     <h3>Linked decorative image</h3>
     <div id="error-linked-decorative-image">
-      <a href="https://www.example.com?=7">
+      <a href="https://www.example.com?=7xsd">
         <img src="../../docs/examples/assets/placeholder.svg" alt>
       </a>
     </div>

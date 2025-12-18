@@ -6304,6 +6304,8 @@ function checkImages(results, option) {
   };
   Elements.Found.Images.forEach(($el) => {
     const alt = computeAriaLabel($el) === "noAria" ? $el.getAttribute("alt") : computeAriaLabel($el);
+    const ariaHidden = $el?.getAttribute("aria-hidden") === "true";
+    const presentationRole = $el?.getAttribute("role") === "presentation";
     if ($el.height < 2 && $el.width < 2 && (isElementHidden($el) || alt === "")) {
       return;
     }
@@ -6333,18 +6335,21 @@ function checkImages(results, option) {
     }
     if (alt === null) {
       if (link) {
-        const rule = linkTextLength === 0 ? option.checks.MISSING_ALT_LINK : option.checks.MISSING_ALT_LINK_HAS_TEXT;
-        const conditional = linkTextLength === 0 ? "MISSING_ALT_LINK" : "MISSING_ALT_LINK_HAS_TEXT";
-        if (rule) {
-          results.push({
-            test: conditional,
-            element: $el,
-            type: rule.type || "error",
-            content: Lang.sprintf(rule.content || conditional),
-            dismiss: prepareDismissal(`${conditional + src + linkTextLength}`),
-            dismissAll: rule.dismissAll ? conditional : false,
-            developer: rule.developer || false
-          });
+        const hasAriaHiddenOrPresentationRole = linkTextLength > 0 && (ariaHidden || presentationRole);
+        if (!hasAriaHiddenOrPresentationRole) {
+          const rule = linkTextLength === 0 ? option.checks.MISSING_ALT_LINK : option.checks.MISSING_ALT_LINK_HAS_TEXT;
+          const conditional = linkTextLength === 0 ? "MISSING_ALT_LINK" : "MISSING_ALT_LINK_HAS_TEXT";
+          if (rule) {
+            results.push({
+              test: conditional,
+              element: $el,
+              type: rule.type || "error",
+              content: Lang.sprintf(rule.content || conditional),
+              dismiss: prepareDismissal(`${conditional + src + linkTextLength}`),
+              dismissAll: rule.dismissAll ? conditional : false,
+              developer: rule.developer || false
+            });
+          }
         }
       } else if (option.checks.MISSING_ALT) {
         results.push({
