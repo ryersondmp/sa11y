@@ -1,4 +1,4 @@
-![Sa11y, the accessibility quality assurance tool.](https://ryersondmp.github.io/sa11y/assets/github-banner.png)
+![Sa11y, the accessibility quality assurance tool.](https://ryersondmp.github.io/sa11y/github-banner.png)
 
 <div align="center">
 
