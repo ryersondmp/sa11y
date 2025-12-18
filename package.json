@@ -1,6 +1,6 @@
 {
   "name": "sa11y",
-  "version": "4.3.5",
+  "version": "4.4.0",
   "description": "Sa11y is an accessibility quality assurance tool that visually highlights common accessibility and usability issues. Geared towards content authors, Sa11y straightforwardly identifies errors or warnings at the source with a simple tooltip on how to fix them.",
   "main": "src/sa11y.js",
   "type": "module",
@@ -22,44 +22,26 @@
     "accessibility"
   ],
   "scripts": {
-    "build": "rimraf dist && node ./node_modules/rollup/dist/bin/rollup -c rollup.config.js",
-    "lint": "npm run lint:css && npm run lint:js",
-    "lint:js": "node ./node_modules/eslint/bin/eslint.js src",
-    "lint:css": "stylelint --config .stylelintrc.json -s scss \"src/scss/**/*.scss\"",
-    "serve": "npm run build && node ./docs.js && light-server -p 8080 -b localhost -s ./ -w \"src/**/* # npm run build && node ./docs.js # reload\"",
+    "docs": "node build/docs.js",
+    "build:css": "node build/build-css.js",
+    "build:js": "node build/build.js",
+    "build": "npm run lint:fix && rimraf dist && npm run build:css && npm run build:js",
+    "postbuild": "npm run docs",
+    "lint": "biome check src",
+    "lint:fix": "biome check --write src",
+    "serve": "vite",
+    "dev": "npm run serve",
     "test": "npx playwright test"
   },
   "devDependencies": {
-    "@babel/core": "^7.14.6",
-    "@babel/preset-env": "^7.14.7",
+    "@biomejs/biome": "^2.3.8",
     "@playwright/test": "^1.40.1",
-    "@rollup/plugin-babel": "^5.3.0",
-    "@rollup/plugin-node-resolve": "^13.0.0",
-    "@rollup/plugin-replace": "^3.0.0",
-    "@types/node": "^20.10.8",
-    "autoprefixer": "^10.2.6",
-    "caniuse-lite": "^1.0.30001418",
-    "cssnano": "^5.0.6",
-    "eslint": "^7.30.0",
-    "eslint-config-airbnb": "^18.2.1",
-    "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-plugin-import": "^2.23.4",
-    "light-server": "^2.9.1",
-    "postcss": "^8.3.10",
+    "browserslist": "^4.28.1",
+    "lightningcss": "^1.30.2",
     "rimraf": "^3.0.2",
-    "rollup": "^2.52.7",
-    "rollup-plugin-import-css": "^3.0.2",
-    "rollup-plugin-sass": "^1.2.9",
-    "rollup-plugin-scss": "^3.0.0",
-    "rollup-plugin-terser": "^7.0.2",
-    "sass": "^1.79.5",
-    "stylelint": "^15.9.0",
-    "stylelint-config-standard": "^33.0.0",
-    "stylelint-order": "^6.0.3",
-    "stylelint-scss": "^5.0.1"
+    "vite": "^7.2.6"
   },
   "dependencies": {
-    "apca-w3": "^0.1.9",
-    "tippy.js": "^6.3.7"
+    "tippy.js": "6.3.7"
   }
 }

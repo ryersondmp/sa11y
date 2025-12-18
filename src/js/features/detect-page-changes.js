@@ -1,4 +1,4 @@
-import { store, debounce } from '../utils/utils';
+import { debounce, store } from '../utils/utils';
 
 /* ******************************************************** */
 /*  Feature to detect if URL changed for bookmarklet/SPAs.  */

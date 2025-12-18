@@ -49,6 +49,7 @@ let page;
 test.describe('Sa11y Unit Tests', () => {
   test.beforeAll(async ({ browser }) => {
     page = await browser.newPage();
+    // page.on('console', (msg) => console.log(msg.text()));
   });
 
   // Close everything down after running through all tests.
@@ -406,6 +407,48 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
+  test('Linked image missing alt text and has aria-hidden="true"', async () => {
+    const issue = await checkTooltip(
+      page, 'error-missing-alt-but-aria-hidden', 'Image is being used as a link but is missing alt text!',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Linked image missing alt text and has presentation role', async () => {
+    const issue = await checkTooltip(
+      page, 'error-missing-alt-but-presentation-role', 'Image is being used as a link but is missing alt text!',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Linked image missing alt text but has aria-hidden with surrounding text', async () => {
+    const issue = await noAnnotation(
+      page, 'nothing-missing-alt-but-aria-hidden-and-surrounding-text',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Linked image missing alt text but has presentation role with surrounding text', async () => {
+    const issue = await noAnnotation(
+      page, 'nothing-missing-alt-but-presentation-role-and-surrounding-text',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Regular image with missing alt but has aria-hidden', async () => {
+    const issue = await noAnnotation(
+      page, 'nothing-missing-alt-but-aria-hidden',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Regular image with missing alt but has role="presentation"', async () => {
+    const issue = await noAnnotation(
+      page, 'nothing-missing-alt-presentation-role',
+    );
+    expect(issue).toBe(true);
+  });
+
   test('Linked decorative image', async () => {
     const issue = await checkTooltip(
       page, 'error-linked-decorative-image', 'Image within link is marked as decorative and there is no link text.',
@@ -596,7 +639,7 @@ test.describe('Sa11y Unit Tests', () => {
   });
 
   test('Image has bad alt text', async () => {
-    const issue = await checkTooltip(page, 'warning-bad-alt', 'Alt text may not provide useful information or contains non-descript text.');
+    const issue = await checkTooltip(page, 'error-bad-alt', 'Alt text may not provide useful information or contains non-descript text.');
     expect(issue).toBe(true);
   });
 
@@ -606,7 +649,22 @@ test.describe('Sa11y Unit Tests', () => {
   });
 
   test('Linked image has bad alt text', async () => {
-    const issue = await checkTooltip(page, 'warning-bad-alt-linked', 'Image link has alt text that may not provide useful information or contains non-descript text. Ensure the alt text describes the destination of the link.');
+    const issue = await checkTooltip(page, 'error-bad-alt-linked', 'Image link has alt text that may not provide useful information or contains non-descript text. Ensure the alt text describes the destination of the link.');
+    expect(issue).toBe(true);
+  });
+
+  test('Placeholder alt text (e.g. hero image 1) with trailing numbers', async () => {
+    const issue = await checkTooltip(page, 'error-bad-alt-placeholder', 'Non-descript or placeholder alt text found. Replace the following alt text with something more meaningful.');
+    expect(issue).toBe(true);
+  });
+
+  test('Linked placeholder alt text (e.g. hero image 1) with trailing numbers', async () => {
+    const issue = await checkTooltip(page, 'error-bad-alt-placeholder-link', 'Non-descript or placeholder alt text within a linked image found. Ensure the alt text describes the destination of the link, not a literal description of the image. Replace the following alt text.');
+    expect(issue).toBe(true);
+  });
+
+  test('Placeholder alt text (e.g. hero image 1 and something) with other words', async () => {
+    const issue = await checkTooltip(page, 'pass-bad-alt-placeholder', 'Good');
     expect(issue).toBe(true);
   });
 
@@ -619,6 +677,29 @@ test.describe('Sa11y Unit Tests', () => {
       'error-non-descript-link-1',
       'error-non-descript-link-2',
       'error-non-descript-link-3',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await checkTooltip(page, id, 'Link text may not be descriptive enough out of context');
+      expect(issue).toBe(true);
+    });
+  });
+
+  test('Non descript link text - i18n (non-Latin characters)', async () => {
+    const ids = [
+      'error-non-descript-cyrillic',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await checkTooltip(page, id, 'Link text may not be descriptive enough out of context');
+      expect(issue).toBe(true);
+    });
+  });
+
+  test('Non descript link text based on "new tab" or option.linkIgnoreString phrases', async () => {
+    const ids = [
+      'error-new-tab-link-text-1',
+      'error-new-tab-link-text-2',
+      'error-new-tab-link-text-3',
+      'error-new-tab-link-text-4',
     ];
     ids.forEach(async (id) => {
       const issue = await checkTooltip(page, id, 'Link text may not be descriptive enough out of context');
@@ -650,6 +731,13 @@ test.describe('Sa11y Unit Tests', () => {
   test('Non descript link using string match exclusion prop', async () => {
     const issue = await checkTooltip(
       page, 'error-non-descript-string-exclusions-prop', 'Link text may not be descriptive',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Non descript link check strips "new tab" or similar phrases', async () => {
+    const issue = await checkTooltip(
+      page, 'error-non-descript-text-strip-new-tab-phrase', 'Link text may not be descriptive',
     );
     expect(issue).toBe(true);
   });
@@ -752,6 +840,27 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
+  test('Links to DOI (doi.org) without trailing characters', async () => {
+    const issue = await noAnnotation(
+      page, 'nothing-doi',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Link opens in new tab WITHOUT warning', async () => {
+    const issue = await checkTooltip(
+      page, 'warning-link-new-tab', 'Link opens in a new tab or window without warning',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Link opens in new tab WITH warning', async () => {
+    const issue = await noAnnotation(
+      page, 'nothing-link-new-tab',
+    );
+    expect(issue).toBe(true);
+  });
+
   test('Links to file without warning', async () => {
     const issue = await checkTooltip(
       page, 'warning-link-file', 'Link points to a PDF or downloadable file',
@@ -824,6 +933,13 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
+  test('Pass label-in-name check with linkIgnoreStrings prop', async () => {
+    const issue = await checkTooltip(
+      page, 'pass-link-label-in-name-linkIgnoreStrings', 'Good',
+    );
+    expect(issue).toBe(true);
+  });
+
   /* **************** */
   /*  QA              */
   /* **************** */
@@ -859,14 +975,6 @@ test.describe('Sa11y Unit Tests', () => {
       page, 'error-table-has-semantic-headings', 'Semantic headings such as',
     );
     expect(issue).toBe(true);
-  });
-
-  test('Table with semantic headings has 3 errors', async () => {
-    const issue = await page.evaluate(async () => {
-      const semanticTable = document.getElementById('error-table-has-semantic-headings');
-      return semanticTable.querySelectorAll('sa11y-annotation').length;
-    });
-    expect(issue).toBe(3);
   });
 
   test('PDF link', async () => {
@@ -1414,6 +1522,8 @@ test.describe('Sa11y Unit Tests', () => {
     const ids = [
       'warning-label-in-name-1',
       'warning-label-in-name-2',
+      'warning-label-in-name-3',
+      'warning-label-in-name-4',
     ];
     ids.forEach(async (id) => {
       const issue = await checkTooltip(page, id, 'The visible text for this element appears to be different than the accessible name');

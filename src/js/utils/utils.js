@@ -1,5 +1,4 @@
 import find from './find';
-import { computeAccessibleName } from './computeAccessibleName';
 
 /**
  * Checks if the document has finished loading, and if so, immediately calls the provided callback function. Otherwise, waits for the 'load' event to fire and then calls the callback function.
@@ -22,23 +21,33 @@ export function isScreenReaderOnly(element) {
   const style = getComputedStyle(element);
 
   // Modern technique: clip-path inset(50%).
-  if (style.getPropertyValue('clip-path').startsWith('inset(50%)')) return true;
+  if (style.getPropertyValue('clip-path').startsWith('inset(50%)')) {
+    return true;
+  }
 
   // Legacy clipping.
-  if (style.clip === 'rect(1px, 1px, 1px, 1px)'
-    || style.clip === 'rect(0px, 0px, 0px, 0px)') return true;
+  if (style.clip === 'rect(1px, 1px, 1px, 1px)' || style.clip === 'rect(0px, 0px, 0px, 0px)') {
+    return true;
+  }
 
   // Large text-indent offscreen.
   const indent = parseInt(style.textIndent, 10);
-  if (!Number.isNaN(indent) && Math.abs(indent) > 5000) return true;
+  if (!Number.isNaN(indent) && Math.abs(indent) > 5000) {
+    return true;
+  }
 
   // Tiny box offscreen.
-  if (style.overflow === 'hidden'
-    && parseFloat(style.width) < 2 && parseFloat(style.height) < 2) return true;
+  if (style.overflow === 'hidden' && parseFloat(style.width) < 2 && parseFloat(style.height) < 2) {
+    return true;
+  }
 
   // Absolute positioned far offscreen.
-  if (style.position === 'absolute'
-    && ['left', 'right', 'top', 'bottom'].some((p) => Math.abs(parseInt(style[p], 10)) > 5000)) return true;
+  if (
+    style.position === 'absolute' &&
+    ['left', 'right', 'top', 'bottom'].some((p) => Math.abs(parseInt(style[p], 10)) > 5000)
+  ) {
+    return true;
+  }
 
   // Font size 1px or 0px.
   return parseFloat(style.fontSize) < 2;
@@ -59,8 +68,12 @@ export function isElementHidden(element) {
  * @returns {boolean} `true` if the element is visually hidden or hidden, `false` otherwise.
  */
 export function isElementVisuallyHiddenOrHidden(element) {
-  if ((element.offsetWidth === 0 && element.offsetHeight === 0)
-    || (element.clientHeight === 1 && element.clientWidth === 1)) return true;
+  if (
+    (element.offsetWidth === 0 && element.offsetHeight === 0) ||
+    (element.clientHeight === 1 && element.clientWidth === 1)
+  ) {
+    return true;
+  }
   return isElementHidden(element);
 }
 
@@ -72,7 +85,10 @@ export function isElementVisuallyHiddenOrHidden(element) {
 export function escapeHTML(string) {
   const div = document.createElement('div');
   div.textContent = string;
-  return div.innerHTML.replaceAll('"', '&quot;').replaceAll("'", '&#039;').replaceAll('`', '&#x60;');
+  return div.innerHTML
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;')
+    .replaceAll('`', '&#x60;');
 }
 
 /**
@@ -90,13 +106,17 @@ export function decodeHTML(string) {
       case 'gt':
         return '>';
       case 'quot':
-        return '\'';
+        return "'";
       case '#39':
         return "'"; // Convert single quotes to actual single quotes.
       default:
         // For numeric entities, convert them back to the corresponding character.
         if (entity.charAt(0) === '#') {
-          return String.fromCharCode(entity.charAt(1) === 'x' ? parseInt(entity.substr(2), 16) : parseInt(entity.substr(1), 10));
+          return String.fromCharCode(
+            entity.charAt(1) === 'x'
+              ? parseInt(entity.substr(2), 16)
+              : parseInt(entity.substr(1), 10),
+          );
         }
         return match;
     }
@@ -110,6 +130,18 @@ export function decodeHTML(string) {
  */
 export function stripHTMLtags(string) {
   return string.replace(/<[^>]*>/g, '');
+}
+
+/**
+ * Removes ALL non-alphanumeric characters and normalizes whitespace. Accounts for non-Latin characters.
+ * @param {string} string - The input text to be sanitized.
+ * @returns {string} The sanitized and trimmed string.
+ */
+export function stripAllSpecialCharacters(string) {
+  return string
+    .replace(/[^\p{L}\p{N}\s]/gu, '')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 /**
@@ -137,7 +169,9 @@ export function sanitizeURL(string) {
 
   // Ensure valid protocol.
   const protocols = ['http:', 'https:', 'mailto:', 'tel:', 'ftp:'];
-  const hasValidProtocol = protocols.some((protocol) => sanitizedInput.toLowerCase().startsWith(protocol));
+  const hasValidProtocol = protocols.some((protocol) =>
+    sanitizedInput.toLowerCase().startsWith(protocol),
+  );
 
   // Assume relative URLs.
   if (!hasValidProtocol && !sanitizedInput.startsWith('/') && !sanitizedInput.startsWith('#')) {
@@ -171,7 +205,9 @@ export function sanitizeHTMLBlock(html, allowStyles = false) {
   const allElements = Array.from(tempDiv.getElementsByTagName('*'));
   allElements.forEach((element) => {
     Array.from(element.attributes).forEach((attr) => {
-      if (attr.name.startsWith('on')) element.removeAttribute(attr.name);
+      if (attr.name.startsWith('on')) {
+        element.removeAttribute(attr.name);
+      }
     });
     if (!allowStyles) {
       element.removeAttribute('style');
@@ -187,14 +223,17 @@ export function sanitizeHTMLBlock(html, allowStyles = false) {
  * @param {Array[]} selectors The selector to match elements to be excluded from the clone. Optional.
  * @returns {Element} The cloned element with excluded elements removed.
  */
-export function fnIgnore(element, selectors = []) {
-  const defaultIgnored = ['noscript', 'script', 'style', 'audio', 'video', 'form', 'iframe'];
-  const ignore = [...defaultIgnored, ...selectors].join(', ');
+export function fnIgnore(element, selectors) {
+  let ignoreQuery = 'noscript,script,style,audio,video,form,iframe';
+  if (selectors && selectors.length > 0) {
+    ignoreQuery = `${ignoreQuery},${selectors.join(',')}`;
+  }
   const clone = element.cloneNode(true);
-  const exclude = Array.from(clone.querySelectorAll(ignore));
-  exclude.forEach(($el) => {
-    $el.parentElement.removeChild($el);
-  });
+  const toRemove = clone.querySelectorAll(ignoreQuery);
+  let i = toRemove.length;
+  while (i--) {
+    toRemove[i].remove();
+  }
   return clone;
 }
 
@@ -203,9 +242,18 @@ export function fnIgnore(element, selectors = []) {
  * @param {HTMLElement} element The HTML element to retrieve the text content from.
  * @returns {string} The text content of the HTML element with extra whitespaces and line breaks removed.
  */
+const gotText = new WeakMap();
 export function getText(element) {
+  if (gotText.has(element)) {
+    return gotText.get(element);
+  }
   const ignore = fnIgnore(element);
-  return ignore.textContent.replace(/[\r\n]+/g, '').replace(/\s+/g, ' ').trim();
+  const text = ignore.textContent
+    .replace(/[\r\n]+/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  gotText.set(element, text);
+  return text;
 }
 
 /**
@@ -214,7 +262,10 @@ export function getText(element) {
  * @returns {string} String with line breaks and extra white space removed.
  */
 export function removeWhitespace(string) {
-  return string.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
+  return string
+    .replace(/[\r\n]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 /**
@@ -258,7 +309,9 @@ export function findVisibleParent(element, property, value) {
   while ($el) {
     const style = window.getComputedStyle($el);
     const propValue = style.getPropertyValue(property);
-    if (propValue === value) return $el;
+    if (propValue === value) {
+      return $el;
+    }
     $el = $el.parentElement;
   }
   return null;
@@ -280,7 +333,7 @@ export function offsetTop(element) {
  * @param  {String} key
  * @param  {string} value
  * @return {String} Return key.
-*/
+ */
 export const store = {
   getItem(key) {
     try {
@@ -288,7 +341,7 @@ export const store = {
         return sessionStorage.getItem(key);
       }
       return localStorage.getItem(key);
-    } catch (error) {
+    } catch {
       // Cookies totally disabled.
       return false;
     }
@@ -296,7 +349,7 @@ export const store = {
   setItem(key, value) {
     try {
       localStorage.setItem(key, value);
-    } catch (error) {
+    } catch {
       sessionStorage.setItem(key, value);
     }
     return true;
@@ -304,7 +357,7 @@ export const store = {
   removeItem(key) {
     try {
       localStorage.removeItem(key);
-    } catch (error) {
+    } catch {
       sessionStorage.removeItem(key);
     }
     return true;
@@ -329,9 +382,13 @@ export function addPulse(element) {
  */
 export function getNextSibling(element, selector) {
   let sibling = element.nextElementSibling;
-  if (!selector) return sibling;
+  if (!selector) {
+    return sibling;
+  }
   while (sibling) {
-    if (sibling.matches(selector)) return sibling;
+    if (sibling.matches(selector)) {
+      return sibling;
+    }
     sibling = sibling.nextElementSibling;
   }
   return '';
@@ -343,7 +400,9 @@ export function getNextSibling(element, selector) {
  * @returns {string} The truncated string with a maximum of 256 characters.
  */
 export function prepareDismissal(string) {
-  return String(string).replace(/([^0-9a-zA-Z])/g, '').substring(0, 256);
+  return String(string)
+    .replace(/([^0-9a-zA-Z])/g, '')
+    .substring(0, 256);
 }
 
 /**
@@ -352,7 +411,7 @@ export function prepareDismissal(string) {
  * @returns {string} The selector path as a string.
  * @link https://www.geeksforgeeks.org/how-to-create-a-function-generateselector-to-generate-css-selector-path-of-a-dom-element/
  * @link https://dev.to/aniket_chauhan/generate-a-css-selector-path-of-a-dom-element-4aim
-*/
+ */
 export function generateSelectorPath(element) {
   const path = [];
   let currentElement = element;
@@ -362,9 +421,16 @@ export function generateSelectorPath(element) {
       selector += `#${currentElement.id}`;
       path.unshift(selector);
       break;
-    } else if (currentElement.className) {
-      selector += `.${currentElement.className.replace(/\s+/g, '.')}`;
+    } else {
+      const classAttr = currentElement.getAttribute ? currentElement.getAttribute('class') : null;
+      if (classAttr) {
+        const classSelector = classAttr.trim().replace(/\s+/g, '.');
+        if (classSelector) {
+          selector += `.${classSelector}`;
+        }
+      }
     }
+
     const parentElement = currentElement.parentNode;
     if (parentElement) {
       const siblings = parentElement.children;
@@ -387,18 +453,22 @@ export function generateSelectorPath(element) {
  * @param {Element} element The DOM element to trap focus within.
  * @author Hidde de Vries
  * @link https://hidde.blog/using-javascript-to-trap-focus-in-an-element/
-*/
+ */
 export function trapFocus(element) {
-  const focusable = element.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), input[type="color"]');
+  const focusable = element.querySelectorAll(
+    'a[href]:not([disabled]), button:not([disabled]), input[type="color"]',
+  );
   const firstFocusable = focusable[0];
   const lastFocusable = focusable[focusable.length - 1];
   element.addEventListener('keydown', (e) => {
-    const isTabPressed = (e.key === 'Tab' || e.keyCode === 9);
+    const isTabPressed = e.key === 'Tab' || e.keyCode === 9;
 
     // "document.activeElement" does not work within ShadowDOM.
     const root = element.getRootNode();
 
-    if (!isTabPressed) return;
+    if (!isTabPressed) {
+      return;
+    }
     if (e.shiftKey) {
       if (root.activeElement === firstFocusable) {
         lastFocusable.focus();
@@ -412,77 +482,6 @@ export function trapFocus(element) {
 }
 
 /**
- * Removes the alert from the Sa11y control panel by clearing its content and removing CSS classes.
- * This function clears the content of the alert element and removes CSS classes 'active' from the main alert element, and 'panel-alert-preview' from the alert preview element.
- * @returns {void}
- */
-export function removeAlert() {
-  const Sa11yPanel = document.querySelector('sa11y-control-panel').shadowRoot;
-  const alert = Sa11yPanel.getElementById('panel-alert');
-  const alertText = Sa11yPanel.getElementById('panel-alert-text');
-  const alertPreview = Sa11yPanel.getElementById('panel-alert-preview');
-
-  alert.classList.remove('active');
-  alertPreview.classList.remove('panel-alert-preview');
-  while (alertText.firstChild) alertText.removeChild(alertText.firstChild);
-  while (alertPreview.firstChild) alertPreview.removeChild(alertPreview.firstChild);
-}
-
-/**
- * Creates an alert in the Sa11y control panel with the given alert message and error preview.
- * @param {string} alertMessage The alert message.
- * @param {string} errorPreview The issue's tooltip message (optional).
- * @param {string} extendedPreview The issue's HTML or escaped HTML to be previewed (optional).
- * @returns {void}
- */
-export function createAlert(alertMessage, errorPreview, extendedPreview) {
-  // Clear alert first before creating new one.
-  removeAlert();
-
-  // Constants
-  const Sa11yPanel = document.querySelector('sa11y-control-panel').shadowRoot;
-  const alert = Sa11yPanel.getElementById('panel-alert');
-  const alertText = Sa11yPanel.getElementById('panel-alert-text');
-  const alertPreview = Sa11yPanel.getElementById('panel-alert-preview');
-  const alertClose = Sa11yPanel.getElementById('close-alert');
-  const skipButton = Sa11yPanel.getElementById('skip-button');
-
-  alert.classList.add('active');
-  alertText.innerHTML = alertMessage;
-
-  // If the issue's element is being previewed.
-  const elementPreview = (extendedPreview)
-    ? `<div class="element-preview">${extendedPreview}</div>` : '';
-
-  // Alert message or tooltip's message.
-  if (errorPreview) {
-    alertPreview.classList.add('panel-alert-preview');
-    alertPreview.innerHTML = `${elementPreview}<div class="preview-message">${errorPreview}</div>`;
-  }
-
-  // A little time before setting focus on the close button.
-  setTimeout(() => alertClose.focus(), 300);
-
-  // Closing alert sets focus back to Skip to Issue toggle.
-  function closeAlert() {
-    removeAlert();
-    const focusTarget = skipButton.hasAttribute('disabled')
-      ? Sa11yPanel.getElementById('toggle')
-      : skipButton;
-    focusTarget.focus();
-  }
-  alertClose.addEventListener('click', closeAlert);
-
-  // Escape key to close alert.
-  alert.onkeydown = (e) => {
-    const evt = e || window.event;
-    if (evt.key === 'Escape' && alert.classList.contains('active')) {
-      closeAlert();
-    }
-  };
-}
-
-/**
  * Finds all data-attributes specified in array, and removes them from the document.
  * @param {Array<string>} attributes The array of data-attributes to be reset.
  * @param {string} root The root element to search for elements (optional, defaults to 'document').
@@ -490,10 +489,7 @@ export function createAlert(alertMessage, errorPreview, extendedPreview) {
  */
 export function resetAttributes(attributes, root) {
   attributes.forEach((attr) => {
-    const reset = find(
-      `[${attr}]`,
-      `${root}`,
-    );
+    const reset = find(`[${attr}]`, `${root}`);
     reset.forEach(($el) => {
       $el.removeAttribute(attr);
     });
@@ -506,12 +502,9 @@ export function resetAttributes(attributes, root) {
  * @returns {void}
  */
 export function remove(elements, root) {
-  const allElements = find(
-    `${elements}`,
-    `${root}`,
-  );
+  const allElements = find(`${elements}`, `${root}`);
   allElements.forEach(($el) => {
-    $el.parentNode.removeChild($el);
+    $el?.parentNode?.removeChild($el);
   });
 }
 
@@ -548,12 +541,19 @@ export function getBestImageSource(element) {
   const resolveUrl = (src) => (src ? new URL(src, window.location.href).href : null);
 
   const dataSrc = getLastSrc(element.getAttribute('data-src') || element.getAttribute('srcset'));
-  if (dataSrc) return resolveUrl(dataSrc);
+  if (dataSrc) {
+    return resolveUrl(dataSrc);
+  }
 
-  const picture = element.closest('picture')?.querySelector('source[srcset]')?.getAttribute('srcset');
+  const picture = element
+    .closest('picture')
+    ?.querySelector('source[srcset]')
+    ?.getAttribute('srcset');
   const pictureSrc = getLastSrc(picture);
 
-  if (pictureSrc) return resolveUrl(pictureSrc);
+  if (pictureSrc) {
+    return resolveUrl(pictureSrc);
+  }
   return resolveUrl(element.getAttribute('src'));
 }
 
@@ -562,20 +562,21 @@ export function getBestImageSource(element) {
  * @param {Blob} blob - The Blob object to convert.
  * @returns {Promise<string>} A promise that resolves to a Base64 string representation of the Blob.
  */
-export const blobToBase64 = (blob) => new Promise((resolve, reject) => {
-  const reader = new FileReader();
-  reader.onloadend = () => {
-    let { result } = reader;
-    // Ensure the correct MIME type if it's missing or wrong. Necessary for uncommon image formats.
-    const detectedMime = blob.type && blob.type.startsWith('image/') ? blob.type : 'image/png'; // Default fallback
-    if (result.startsWith('data:application/octet-stream')) {
-      result = result.replace('data:application/octet-stream', `data:${detectedMime}`);
-    }
-    resolve(result);
-  };
-  reader.onerror = reject;
-  reader.readAsDataURL(blob);
-});
+export const blobToBase64 = (blob) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      let { result } = reader;
+      // Ensure the correct MIME type if it's missing or wrong. Necessary for uncommon image formats.
+      const detectedMime = blob?.type?.startsWith('image/') ? blob.type : 'image/png'; // Default fallback
+      if (result.startsWith('data:application/octet-stream')) {
+        result = result.replace('data:application/octet-stream', `data:${detectedMime}`);
+      }
+      resolve(result);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
 
 /**
  * Generate an HTML preview for an issue if it's an image, iframe, audio, or video element.
@@ -624,14 +625,16 @@ export function generateElementPreview(issueObject, convertBase64 = false) {
         return new Promise((resolve) => {
           if (source) {
             // Make sure we're only converting images from the same domain.
-            const isSameDomain = new URL(source, window.location.origin).origin === window.location.origin;
+            const isSameDomain =
+              new URL(source, window.location.origin).origin === window.location.origin;
             if (isSameDomain) {
               fetch(source)
                 .then((response) => response.blob())
                 .then((blob) => blobToBase64(blob))
                 .then((base64Source) => {
                   const imageSource = base64Source.startsWith('data:image/')
-                    ? base64Source : sanitizeURL(base64Source);
+                    ? base64Source
+                    : sanitizeURL(base64Source);
                   resolve(createImageElement(imageSource));
                 })
                 .catch(() => {
@@ -649,7 +652,9 @@ export function generateElementPreview(issueObject, convertBase64 = false) {
 
       // Synchronous handling for skip-to-issue.
       const sanitized = source.startsWith('data:image/') ? source : sanitizeURL(source);
-      if (source) return createImageElement(sanitized);
+      if (source) {
+        return createImageElement(sanitized);
+      }
       return htmlPath;
     },
     IFRAME: (element) => {
@@ -676,20 +681,38 @@ export function generateElementPreview(issueObject, convertBase64 = false) {
  * Check if an element's visible text is included in the accessible name.
  * To minimize false positives: iterate through all child nodes of the element, checking for visibility.
  * @param {element} $el The element to test.
+ * @param {string} accName The computed accessible name of the element.
+ * @param {Array} exclusions Array of exclusions.
+ * @param {Array} linkIgnoreStrings Array of string exclusions.
  * @returns {boolean}
  */
-export function isVisibleTextInAccessibleName($el) {
+export function isVisibleTextInAccName($el, accName, exclusions = [], linkIgnoreStrings) {
   let text = '';
-  const accName = computeAccessibleName($el).toLowerCase();
-  const nodes = $el.childNodes;
-  nodes.forEach((node) => {
+
+  // Prep exclusions.
+  const excludeSelector = exclusions?.length ? exclusions.join(',') : '';
+  const ignoreStrings = Array.isArray(linkIgnoreStrings) ? linkIgnoreStrings : null;
+  const stripIgnored = (value = '') =>
+    ignoreStrings ? ignoreStrings.reduce((result, str) => result.replace(str, ''), value) : value;
+
+  // Iterate though each child node.
+  $el.childNodes.forEach((node) => {
     if (node.nodeType === Node.TEXT_NODE) {
-      text += node.textContent;
-    } else if (node.nodeType === Node.ELEMENT_NODE) {
-      // Only return text content if it's not hidden.
-      if (!isElementVisuallyHiddenOrHidden(node)) {
-        text += node.textContent;
-      }
+      text += stripIgnored(node.textContent);
+    }
+
+    if (node.nodeType !== Node.ELEMENT_NODE) {
+      return;
+    }
+
+    // Exclusions based on matched selectors.
+    if (excludeSelector && node.matches(excludeSelector)) {
+      return;
+    }
+
+    // Only return text content if it's not hidden.
+    if (!isElementVisuallyHiddenOrHidden(node)) {
+      text += stripIgnored(getText(node));
     }
   });
 
@@ -706,7 +729,7 @@ export function isVisibleTextInAccessibleName($el) {
   }
 
   // Check if visible text is included in accessible name.
-  return visibleText.length !== 0 && !accName.includes(visibleText);
+  return visibleText.length !== 0 && !accName.toLowerCase().includes(visibleText);
 }
 
 /**
@@ -719,7 +742,9 @@ export function standardizeHref($el) {
   href = removeWhitespace(href).toLowerCase();
 
   // Remove trailing slash if it exists.
-  if (href.endsWith('/')) href = href.slice(0, -1);
+  if (href.endsWith('/')) {
+    href = href.slice(0, -1);
+  }
 
   // Remove protocol and www., without affecting subdomains.
   href = href.replace(/^https?:\/\/(www\.)?/, '');
@@ -735,11 +760,13 @@ export function standardizeHref($el) {
  * Thanks to Srijan for this snippet!
  * @param {HTMLElement} container - Parent element (e.g., ul, div).
  * @param {HTMLElement[]} children - Focusable child elements inside container.
-*/
+ */
 export function initRovingTabindex(container, children) {
   let current = 0;
   const handleKeyDown = (e) => {
-    if (!['ArrowUp', 'ArrowDown', 'Space'].includes(e.code)) return;
+    if (!['ArrowUp', 'ArrowDown', 'Space'].includes(e.code)) {
+      return;
+    }
     if (e.code === 'Space') {
       children[current].click();
       e.preventDefault();
@@ -753,7 +780,7 @@ export function initRovingTabindex(container, children) {
       if (current === children.length - 1) {
         next = 0;
       }
-    } else if ((e.code === 'ArrowUp')) {
+    } else if (e.code === 'ArrowUp') {
       next = current - 1;
       if (current === 0) {
         next = children.length - 1;
@@ -785,4 +812,45 @@ export function initRovingTabindex(container, children) {
  */
 export function supportsAnchorPositioning() {
   return CSS.supports('anchor-name: --sa11y') && CSS.supports('position-anchor: --sa11y');
+}
+
+/**
+ * Generates a Regex pattern from an array OR a comma-separated string. Safely escapes all special characters.
+ * @param {string[]|string} input - Array of strings (e.g. ['(External)']) OR string (e.g. "(External), [draft]").
+ * @param {boolean} [exactMatch=false] - If true, wraps each pattern in word boundaries (\b) for whole-word matching.
+ * @returns {RegExp|null} The compiled Regex object, or null if input is empty/invalid.
+ */
+export function generateRegexString(input, matchStart = false) {
+  if (!input) return null;
+
+  // Return RegExp directly.
+  if (input instanceof RegExp) return input;
+
+  // Normalize input.
+  let patterns = [];
+  if (Array.isArray(input)) {
+    patterns = input;
+  } else if (typeof input === 'string') {
+    patterns = input.split(',').map((s) => s.trim());
+  } else {
+    return null;
+  }
+
+  // Filter out empty entries to prevent matching 'everything' (empty regex issue).
+  patterns = patterns.filter((p) => p && p.length > 0);
+  if (patterns.length === 0) return null;
+
+  // Helper to escape special regex characters.
+  const escapeRegExp = (string) => {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  };
+
+  // Build the pattern string.
+  const joinedPatterns = patterns.map(escapeRegExp).join('|');
+
+  // If matchStart is true, wrap in ^(?: ... ) to anchor the entire group to the start.
+  const finalPattern = matchStart ? `^(?:${joinedPatterns})` : joinedPatterns;
+
+  // Compile final case-insensitive regex.
+  return new RegExp(finalPattern, 'gi');
 }

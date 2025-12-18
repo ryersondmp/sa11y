@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <link href="./assets/main.css" rel="stylesheet">
+  <title>Live Editing Tests</title>
+  <script src="./misc/script.js"></script>
+</head>
+
+<body>
+  <header>
+    <h1 id="editoria11y-demo">Live editing prototype</h1>
+    <p>Not supported! Check out <a href="https://editoria11y.princeton.edu/">Editoria11y!</a></p>
+  </header>
+  <main style="max-width: none;" id="h4-root">
+    <section id="editable-region" contenteditable="true">
+      <p>This is an editable region -- click in to see the TinyMCE toolbar appear with options for things like tagging
+        headings. Note that this toolbar has nothing to do with Editoria11y -- it is just providing this editable
+        container for testing.</p>
+
+      <p>Add and delete content, create and fix issues.The easiest ways new tips to appear are typing a sentence in caps
+        lock, adding a link with text like "learn more," and tagging a heading that skips a level.</p>
+      <p>Some things you might notice that I'd especially like thoughts on:</p>
+      <ul>
+        <li>Tips will fade out when you click into paragraphs, to prevent tips covering where you are typing.</li>
+        <li>There's a fairly long hesitation (~1s) between checks. This greatly helps with performance, but...is it a
+          good balance of performance and frequency?</li>
+      </ul>
+
+      <h3>Sample issues</h3>
+      <p>This is a big paragraph with one small link asking you to <a
+          href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">learn more,</a> which is flagged because it is not an
+        informative link name.</p>
+
+
+      <p>This is a big paragraph with several alerts that place their tips fairly close together:, <a
+          href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">learn more</a>, and <a href="#">https://princeton.edu,</a>
+        and <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">""</a></p>
+
+
+      <div class="posi">
+        <h4 id="a-very-long-heading">This is a suspiciously long heading with two alerts, one for skipping a level, and
+          one for its prodigious length that indicates an excessive verbosity that is not conducive to the brevity
+          expected from a heading</h4>
+      </div>
+      <h2>Images</h2>
+
+      <p style=""><img style="float: right; width: 50%;" class='click-in-css'
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120'%3E%3Crect width='240' height='120' fill='%23cccccc'%3E%3C/rect%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='26px' fill='%23333333'%3EImage%3C/text%3E%3C/svg%3E">An
+        image with no alt text</p>
+      <hr style="clear: both;">
+      <p style="clear:both;"><img style="float: right; width: 50%;" class='click-in-css'
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120'%3E%3Crect width='240' height='120' fill='%23cccccc'%3E%3C/rect%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='26px' fill='%23333333'%3EImage%3C/text%3E%3C/svg%3E">An
+        image with blank alt text</p>
+      <hr style="clear: both;">
+
+      <h2 id="tables">Tables</h2>
+
+      <h3 id="tables-without-valid-headers">Tables without valid headers</h3>
+      <!--
+            <table class="posi"><tbody><tr><td>A table without a TH header is invalid</td><td class="posi"><h4 >Outline headers do not count</h4></td><td class="negati"><p><strong>Disable should be content header test inside tables</strong></p></td></tr></tbody></table>-->
+      <!--<p>break</p>
+            <table class="negati" role="presentation"><tr><td>No table header, but table has role="presentation."</td></tr></table>-->
+
+      <table>
+        <tbody>
+          <tr>
+            <td>Tables without heading cells will be flagged</th>
+            <td>Cell</td>
+          </tr>
+        </tbody>
+        <tr>
+          <td>Cell</td>
+          <td>Cell</td>
+        </tr>
+      </table>
+      <h3 id="empty-table-header-cells">Empty table header cells</h3>
+      <h1>Test</h1>
+
+      <table>
+        <tbody>
+          <tr>
+            <th>Empty table heading cells will also be flagged</th>
+            <th></th>
+          </tr>
+        </tbody>
+        <tr>
+          <td>Cell</td>
+          <td>Cell</td>
+        </tr>
+      </table>
+
+    </section>
+    <script src=" https://cdn.jsdelivr.net/npm/tinymce@7.1.2/tinymce.min.js "></script>
+    <script>tinymce.init({
+        selector: '#editable-region',  // change this value according to your HTML
+        license_key: 'gpl',
+        plugins: 'image lists table',
+        toolbar: 'blocks bold italic underline strikethrough blockquote  image numlist indent outdent bullist table tabledelete',
+        inline: true,
+      });
+
+    </script>
+  </main>
+
+  <footer>
+
+  </footer>
+
+  <!-- Sa11y (UMD) -->
+  <link rel="stylesheet" href="../cc-dist/css/sa11y.css">
+  <script src="../cc-dist/js/sa11y.umd.js"></script>
+  <script src="../cc-dist/js/lang/en.umd.js"></script>
+  <script>
+    Sa11y.Lang.addI18n(Sa11yLangEn.strings);
+    setTimeout(() => {
+      const sa11y = new Sa11y.Sa11y({
+        checkRoot: '#editable-region',
+        ignoreAriaOnElements: 'h2',
+        containerIgnore: '.tox-editor-header *, .ed11y-ignore *',
+        // ignoreContentOutsideRoots: true,
+        initialHeadingLevel: [
+          {
+            selector: '#h4-root',
+            previousHeading: 2,
+          }
+        ],
+      });
+    }, 100);
+  </script>
+  <!-- End of Sa11y-->
+
+</body>
+
+</html>

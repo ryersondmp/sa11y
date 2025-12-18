@@ -1,0 +1,68 @@
+<nav>
+  <details class="nav-menu">
+    <summary>
+      Menu
+    </summary>
+
+    <ul class="nav-list">
+      <li><a href="./axe.html">Axe Integration Example</a></li>
+      <li><a href="./contrast.html">APCA Contrast</a></li>
+      <li><a href="./editable-iframe.html">Editable iFrame</a></li>
+      <li><a href="./iframes.html">iFrames</a></li>
+      <li><a href="./live-editable.html">Live Editable</a></li>
+      <li><a href="./multi-roots.html">Multiple Roots</a></li>
+      <li><a href="./performance.html">Performance</a></li>
+      <li><a href="./traveling-root.html">Traveling Root</a></li>
+      <li><a href="./rtl.html">RTL</a></li>
+    </ul>
+  </details>
+</nav>
+
+<style>
+  [aria-current="page"] {
+    font-weight: bold;
+  }
+
+  .nav-toggle {
+    list-style: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: none;
+    background: none;
+    padding: 0.5rem;
+  }
+
+  .nav-toggle::-webkit-details-marker {
+    display: none;
+  }
+
+  /* Optional label text */
+  .nav-toggle-label {
+    font-size: 0.95rem;
+  }
+
+  /* Menu list */
+  .nav-list {
+    list-style: none;
+    padding: 1rem 0 0;
+    margin: 0;
+  }
+
+  .nav-list a {
+    text-decoration: none;
+    color: #111;
+    white-space: nowrap;
+  }
+
+  .nav-list a:hover,
+  .nav-list a:focus-visible {
+    text-decoration: underline;
+  }
+
+  /* Small-screen friendly: full-width dropdown */
+  .nav-menu {
+    display: inline-block;
+  }
+</style>

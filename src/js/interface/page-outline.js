@@ -1,19 +1,24 @@
 /**
  * Create Page Outline.
-*/
-import * as Utils from '../utils/utils';
-import Lang from '../utils/lang';
+ */
+
 import Constants from '../utils/constants';
-import Elements from '../utils/elements';
 import find from '../utils/find';
+import Lang from '../utils/lang';
+import * as Utils from '../utils/utils';
+import { createAlert, removeAlert } from './alert';
 
 export default function generatePageOutline(dismissed, headingOutline, option) {
   const outlineHandler = () => {
     const outlineArray = [];
 
     // Find all dismissed headings and update headingOutline array.
-    const findDismissedHeadings = dismissed.map((e) => headingOutline.find((f) => e.dismiss === f.dismiss)).filter(Boolean);
-    findDismissedHeadings.forEach(($el) => Object.assign($el, { dismissedHeading: true }));
+    const findDismissedHeadings = dismissed
+      .map((e) => headingOutline.find((f) => e.dismiss === f.dismiss))
+      .filter(Boolean);
+    findDismissedHeadings.forEach(($el) => {
+      $el.dismissedHeading = true;
+    });
 
     // Show meta page title in Page Outline.
     let outlineItem;
@@ -29,22 +34,23 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
     }
 
     // Iterate through object that contains all headings (and error type).
-    headingOutline.forEach((heading) => {
-      const { element, headingLevel, text, index, type, dismissedHeading, isWithinRoot } = heading;
+    headingOutline.forEach((heading, i) => {
+      const { element, headingLevel, text, type, dismissedHeading, isWithinRoot } = heading;
 
       // Determine if heading is visually hidden or within hidden container.
       const hidden = Utils.isElementVisuallyHiddenOrHidden(element);
 
-      // Filter out specified headings in outlineIgnore and headerIgnore props.
-      if (!Elements.Found.OutlineIgnore.includes(element)) {
-        // Indicate if heading is totally hidden or visually hidden.
-        const visibleIcon = (hidden === true)
-          ? `<span class="hidden-icon"></span><span class="visually-hidden">${Lang._('HIDDEN')}</span>` : '';
-        const badgeH = (option.showHinPageOutline === true || option.showHinPageOutline === 1) ? 'H' : '';
+      // Indicate if heading is totally hidden or visually hidden.
+      const visibleIcon =
+        hidden === true
+          ? `<span class="hidden-icon"></span><span class="visually-hidden">${Lang._('HIDDEN')}</span>`
+          : '';
+      const badgeH =
+        option.showHinPageOutline === true || option.showHinPageOutline === 1 ? 'H' : '';
 
-        let append;
-        if (type === 'error' && isWithinRoot === true) {
-          append = `
+      let append;
+      if (type === 'error' && isWithinRoot === true) {
+        append = `
             <li class="outline-${headingLevel}">
               <button type="button" tabindex="-1">
                 <span class="badge error-badge">
@@ -55,9 +61,9 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
                 <strong class="outline-list-item red-text">${text}</strong>
               </button>
             </li>`;
-          outlineArray.push(append);
-        } else if (type === 'warning' && !dismissedHeading && isWithinRoot === true) {
-          append = `
+        outlineArray.push(append);
+      } else if (type === 'warning' && !dismissedHeading && isWithinRoot === true) {
+        append = `
             <li class="outline-${headingLevel}">
               <button type="button" tabindex="-1">
                 <span class="badge warning-badge">
@@ -66,34 +72,33 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
                 <strong class="outline-list-item yellow-text">${text}</strong>
               </button>
             </li>`;
-          outlineArray.push(append);
-        } else {
-          append = `
+        outlineArray.push(append);
+      } else {
+        append = `
             <li class="outline-${headingLevel}">
               <button type="button" tabindex="-1">
                 <span class="badge">${visibleIcon} ${badgeH + headingLevel}</span>
                 <span class="outline-list-item">${text}</span>
               </button>
             </li>`;
-          outlineArray.push(append);
-        }
+        outlineArray.push(append);
       }
 
       /**
        * Append heading labels.
-      */
+       */
       const label = document.createElement('sa11y-heading-label');
       label.hidden = true;
       element?.insertAdjacentElement('beforeend', label);
 
       // Create anchors to focus on if heading is not visible.
       const anchor = document.createElement('sa11y-heading-anchor');
-      anchor.id = `sa11y-h${index}`;
+      anchor.id = `sa11y-h${i}`;
       if (hidden) {
         const parent = Utils.findVisibleParent(element, 'display', 'none');
         const target = parent?.previousElementSibling || parent?.parentNode;
         target?.insertAdjacentElement('beforebegin', anchor);
-        target?.setAttribute('data-sa11y-parent', `h${index}`);
+        target?.setAttribute('data-sa11y-parent', `h${i}`);
       } else {
         label?.insertAdjacentElement('beforebegin', anchor);
       }
@@ -105,13 +110,16 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
       label.shadowRoot.appendChild(content);
 
       // Make heading labels visible when panel is open.
-      if (Utils.store.getItem('sa11y-outline') === 'Opened') label.hidden = false;
+      if (Utils.store.getItem('sa11y-outline') === 'Opened') {
+        label.hidden = false;
+      }
     });
 
     // Append headings to Page Outline.
-    Constants.Panel.outlineList.innerHTML = (headingOutline.length === 0)
-      ? `${outlineItem || ''} <li>${Lang._('PANEL_NO_HEADINGS')}</li>`
-      : outlineArray.join(' ');
+    Constants.Panel.outlineList.innerHTML =
+      headingOutline.length === 0
+        ? `${outlineItem || ''} <li>${Lang._('PANEL_NO_HEADINGS')}</li>`
+        : outlineArray.join(' ');
 
     // Make clickable!
     setTimeout(() => {
@@ -135,9 +143,9 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
           }
 
           // Alert if hidden or doesn't exist.
-          Utils.removeAlert();
+          removeAlert();
           if (!heading || heading.hasAttribute('data-sa11y-parent')) {
-            Utils.createAlert(Lang._('NOT_VISIBLE'));
+            createAlert(Lang._('NOT_VISIBLE'));
           }
         });
       });
@@ -150,6 +158,8 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
   };
 
   // Generate heading outline based on local storage or if "Outline" button is selected.
-  if (Utils.store.getItem('sa11y-outline') === 'Opened') outlineHandler();
+  if (Utils.store.getItem('sa11y-outline') === 'Opened') {
+    outlineHandler();
+  }
   document.addEventListener('sa11y-build-heading-outline', outlineHandler);
 }

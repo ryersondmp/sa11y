@@ -1,6 +1,6 @@
 import Constants from '../utils/constants';
-import { store } from '../utils/utils';
 import Lang from '../utils/lang';
+import { store } from '../utils/utils';
 
 /* ************************************************************ */
 /*  Update warning and error counts on panel.                   */
@@ -69,7 +69,7 @@ export function updateCount(results, error, warning) {
   let updatedErrorCount = error;
   let updatedWarningCount = warning;
 
-  results.forEach(($el, i) => {
+  results.forEach((_, i) => {
     const issue = results[i].type;
     if (issue === 'error') {
       updatedErrorCount += 1;

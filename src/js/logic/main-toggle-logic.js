@@ -1,5 +1,5 @@
 import Constants from '../utils/constants';
-import { store, isScrollable } from '../utils/utils';
+import { isScrollable, store } from '../utils/utils';
 
 /* ************************************** */
 /*  Initialize main toggle within panel.  */

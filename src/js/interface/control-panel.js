@@ -1,11 +1,8 @@
+import panelStyles from '../../css/control-panel.css?inline';
+import sharedStyles from '../../css/shared.css?inline';
+import Constants from '../utils/constants';
 import Lang from '../utils/lang';
 import { store } from '../utils/utils';
-import Constants from '../utils/constants';
-import version from '../../../version';
-
-// Import processed minified styles as a string.
-import panelStyles from '../../../dist/css/control-panel.min.css';
-import sharedStyles from '../../../dist/css/shared.min.css';
 
 export default class ControlPanel extends HTMLElement {
   connectedCallback() {
@@ -17,7 +14,8 @@ export default class ControlPanel extends HTMLElement {
     this.shadowRoot.appendChild(style);
 
     // Icon for the main toggle.
-    const MainToggleIcon = '<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 48c114.953 0 208 93.029 208 208 0 114.953-93.029 208-208 208-114.953 0-208-93.029-208-208 0-114.953 93.029-208 208-208m0-40C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 56C149.961 64 64 149.961 64 256s85.961 192 192 192 192-85.961 192-192S362.039 64 256 64zm0 44c19.882 0 36 16.118 36 36s-16.118 36-36 36-36-16.118-36-36 16.118-36 36-36zm117.741 98.023c-28.712 6.779-55.511 12.748-82.14 15.807.851 101.023 12.306 123.052 25.037 155.621 3.617 9.26-.957 19.698-10.217 23.315-9.261 3.617-19.699-.957-23.316-10.217-8.705-22.308-17.086-40.636-22.261-78.549h-9.686c-5.167 37.851-13.534 56.208-22.262 78.549-3.615 9.255-14.05 13.836-23.315 10.217-9.26-3.617-13.834-14.056-10.217-23.315 12.713-32.541 24.185-54.541 25.037-155.621-26.629-3.058-53.428-9.027-82.141-15.807-8.6-2.031-13.926-10.648-11.895-19.249s10.647-13.926 19.249-11.895c96.686 22.829 124.283 22.783 220.775 0 8.599-2.03 17.218 3.294 19.249 11.895 2.029 8.601-3.297 17.219-11.897 19.249z"/></svg>';
+    const MainToggleIcon =
+      '<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 48c114.953 0 208 93.029 208 208 0 114.953-93.029 208-208 208-114.953 0-208-93.029-208-208 0-114.953 93.029-208 208-208m0-40C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 56C149.961 64 64 149.961 64 256s85.961 192 192 192 192-85.961 192-192S362.039 64 256 64zm0 44c19.882 0 36 16.118 36 36s-16.118 36-36 36-36-16.118-36-36 16.118-36 36-36zm117.741 98.023c-28.712 6.779-55.511 12.748-82.14 15.807.851 101.023 12.306 123.052 25.037 155.621 3.617 9.26-.957 19.698-10.217 23.315-9.261 3.617-19.699-.957-23.316-10.217-8.705-22.308-17.086-40.636-22.261-78.549h-9.686c-5.167 37.851-13.534 56.208-22.262 78.549-3.615 9.255-14.05 13.836-23.315 10.217-9.26-3.617-13.834-14.056-10.217-23.315 12.713-32.541 24.185-54.541 25.037-155.621-26.629-3.058-53.428-9.027-82.141-15.807-8.6-2.031-13.926-10.648-11.895-19.249s10.647-13.926 19.249-11.895c96.686 22.829 124.283 22.783 220.775 0 8.599-2.03 17.218 3.294 19.249 11.895 2.029 8.601-3.297 17.219-11.897 19.249z"/></svg>';
 
     const rememberDeveloper = store.getItem('sa11y-developer') === 'On';
     const rememberReadability = store.getItem('sa11y-readability') === 'On';
@@ -28,7 +26,8 @@ export default class ControlPanel extends HTMLElement {
     const checkAll = Constants.Global.checkAllHideToggles;
 
     /* TOGGLEABLE PLUGINS */
-    const developerPlugin = Constants.Global.developerPlugin ? `
+    const developerPlugin = Constants.Global.developerPlugin
+      ? `
       <li id="developer-item" ${checkAll ? 'hidden' : ''}>
         <label id="check-developer" for="developer-toggle">
           ${Lang._('DEVELOPER_CHECKS')} <span class="info-icon"></span>
@@ -38,18 +37,22 @@ export default class ControlPanel extends HTMLElement {
           aria-pressed="${rememberDeveloper ? 'true' : 'false'}"
         >${rememberDeveloper ? Lang._('ON') : Lang._('OFF')}</button>
         <div id="check-developer-desc" hidden>${Lang._('DEVELOPER_DESC')}</div>
-      </li>` : '';
+      </li>`
+      : '';
 
-    const readabilityPlugin = Constants.Readability.Plugin ? `
+    const readabilityPlugin = Constants.Readability.Plugin
+      ? `
       <li id="readability-item">
         <label id="check-readability" for="readability-toggle">${Lang._('READABILITY')} <span class="info-icon"></span></label>
         <button type="button" id="readability-toggle" aria-labelledby="check-readability" class="switch"
           aria-pressed="${rememberReadability ? 'true' : 'false'}"
         >${rememberReadability ? Lang._('ON') : Lang._('OFF')}</button>
         <div id="check-readability-desc" hidden>${Lang._('READABILITY_DESC')}</div>
-      </li>` : '';
+      </li>`
+      : '';
 
-    const colourFilterPlugin = Constants.Global.colourFilterPlugin ? `
+    const colourFilterPlugin = Constants.Global.colourFilterPlugin
+      ? `
       <li id="colour-filter-item">
         <label id="colour-filter-mode" for="colour-filter">${Lang._('COLOUR_FILTER')}</label>
         <div class="select-dropdown">
@@ -61,15 +64,19 @@ export default class ControlPanel extends HTMLElement {
             <option value="4">${Lang._('MONOCHROMACY')}</option>
           </select>
         </div>
-      </li>` : '';
+      </li>`
+      : '';
 
-    const colourFilterPanel = Constants.Global.colourFilterPlugin ? `
+    const colourFilterPanel = Constants.Global.colourFilterPlugin
+      ? `
       <div id="panel-colour-filters" role="region" aria-labelledby="colour-filter-mode">
         <div id="filter-icon" class="panel-icon" role="img"></div>
         <p>${Lang._('COLOUR_FILTER_MESSAGE')}</p>
-      </div>` : '';
+      </div>`
+      : '';
 
-    const exportResultsPlugin = Constants.Global.exportResultsPlugin ? `
+    const exportResultsPlugin = Constants.Global.exportResultsPlugin
+      ? `
       <li id="export-results-item">
         <span id="export-results-mode">${Lang._('EXPORT_RESULTS')}</span>
         <div class="export-results-group">
@@ -80,11 +87,14 @@ export default class ControlPanel extends HTMLElement {
             <span class="text">HTML</span>
           </button>
         </div>
-      </li>` : '';
+      </li>`
+      : '';
 
     /* CUSTOMIZABLE ABOUT SECTION */
-    const aboutSection = Constants.Global.aboutContent ? `
-      <div id="about-content">${Constants.Global.aboutContent}</div>` : '';
+    const aboutSection = Constants.Global.aboutContent
+      ? `
+      <div id="about-content">${Constants.Global.aboutContent}</div>`
+      : '';
 
     /* MAIN TOGGLE */
     const mainToggle = `
@@ -126,7 +136,8 @@ export default class ControlPanel extends HTMLElement {
       </div>`;
 
     /* IMAGES OUTLINE */
-    const imagesOutline = Constants.Global.showImageOutline ? `
+    const imagesOutline = Constants.Global.showImageOutline
+      ? `
       <div id="images-panel" role="tabpanel" aria-labelledby="images-header">
         <div class="panel-header">
           <h2 id="images-header" tabindex="-1">${Lang._('IMAGES')}</h2>
@@ -134,7 +145,8 @@ export default class ControlPanel extends HTMLElement {
         <div id="images-content">
           <ul id="images-list" tabindex="0" role="list" aria-labelledby="images-header"></ul>
         </div>
-      </div>` : '';
+      </div>`
+      : '';
 
     /* PANEL POSITION TOGGLE */
     const leftPressed = rememberPanelPosition === 'left' || rememberPanelPosition === 'top-left';
@@ -210,8 +222,9 @@ export default class ControlPanel extends HTMLElement {
     /* OUTLINE & SETTING TAB TOGGLES. */
     const imageToggleButton = `<button type="button" role="tab" aria-expanded="false" id="images-toggle" aria-controls="images-panel">${Lang._('IMAGES')}</button>`;
 
+    const imagePanelEnabled = Constants.Global.showImageOutline ? 'data-image-panel' : '';
     const tabToggles = `
-      <div id="panel-controls" role="tablist" aria-orientation="horizontal">
+      <div id="panel-controls" role="tablist" aria-orientation="horizontal" ${imagePanelEnabled}>
         <button type="button" role="tab" aria-expanded="false" id="outline-toggle" aria-controls="outline-panel">${Lang._('OUTLINE')}</button>
         ${Constants.Global.showImageOutline ? imageToggleButton : ''}
         <button type="button" role="tab" aria-expanded="false" id="settings-toggle" aria-controls="settings-panel">${Lang._('SETTINGS')}</button>
@@ -221,7 +234,7 @@ export default class ControlPanel extends HTMLElement {
     const container = document.createElement('div');
     container.setAttribute('id', 'container');
     container.setAttribute('role', 'region');
-    container.setAttribute('data-sa11y-version', version);
+    container.setAttribute('data-sa11y-version', Sa11yVersion);
     container.setAttribute('lang', Lang._('LANG_CODE'));
     container.setAttribute('aria-label', Lang._('CONTAINER_LABEL'));
     container.setAttribute('dir', Constants.Global.langDirection);

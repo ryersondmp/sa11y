@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Multiple roots</title>
+  <link href="./assets/main.css" rel="stylesheet">
+  <script src="./misc/script.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+  <style>
+    #root1,
+    #root2 {
+      background: rgb(255, 230, 233);
+      border: 5px dashed red;
+      padding: 15px;
+    }
+
+    #ignoreMe2,
+    .ignore,
+    #ignored-section {
+      background: darkgrey;
+      padding: 15px;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="sa11y-active">
+    <h1>Multiple roots to check</h1>
+  </header>
+  <main>
+    <section id="root1">
+      <h2>Area A</h2>
+      <img src="./assets/placeholder.svg" style="float:right;">
+      <p><a href="https://www.example.com?" target="_blank">Flumble</a> the sprocket when the moon wiggles sideways, and
+        don’t forget to twirl the jelly knobs before the
+        snooze alarm
+        honks. In the land of Wizzleton, the air smells like blueberry socks and hums quietly when you blink too fast.
+      </p>
+      <div class="ignore">
+        <a href="#">click here</a>
+      </div>
+      <p>
+        Most
+        days, the clouds argue about who gets to wear the rain first, and the rivers giggle as they sneak through the
+        ticklish
+        grass. Everyone knows the golden rule: never feed your shadow after sunset unless it says please.</p>
+
+    </section>
+    <section id="ignored-section">
+      <h4>This area is not within root area to check</h4>
+      <p>This area is not within <kbd>checkRoot</kbd>, so nothing should get flagged <a href="#">here.</a></p>
+      <img src="./assets/placeholder.svg">
+    </section>
+    <section id="root2">
+      <h2>Area B</h2>
+      <img src="./assets/placeholder.svg" alt="placeholder" style="float:right;">
+      <p>UPON THE OSCILLATION OF THE LUNAR curvature, the sprocket must be flumbled with meticulous precision, lest the
+        jelly
+        knobs congeal into dissonant resonance. In the realm of Wizzleton, atmospheric densities emit olfactory traces
+        reminiscent of fermented azure hosiery, accompanied by a faint harmonic tremor perceptible only during
+        accelerated</p>
+      <div id="ignoreMe2">
+        <a href="#">click here</a>
+      </div>
+      <p>
+        ocular flutter. The cumuli, ever contentious, deliberate the prerogative of precipitation, while subterranean
+        rivulets
+        murmur conspiratorially beneath the chlorophyllic expanse. One must, of course, observe the cardinal dictum:
+        shadows,
+        once emancipated from solar custody, are to be nourished solely upon utterance of a civility.</p>
+
+    </section>
+  </main>
+  <footer>No automated unit tests are on this page. Blank slate for testing!</footer>
+
+  <!-- Sa11y (UMD) -->
+  <link rel="stylesheet" href="../cc-dist/css/sa11y.css">
+  <script src="../cc-dist/js/sa11y.umd.js"></script>
+  <script src="../cc-dist/js/lang/en.umd.js"></script>
+  <script>
+    Sa11y.Lang.addI18n(Sa11yLangEn.strings);
+    const sa11y = new Sa11y.Sa11y({
+      checkRoot: '#root1, #root2, #rootThatDoesNotExist',
+      ignoreContentOutsideRoots: true,
+      containerIgnore: '.ignore, #ignoreMe2',
+    });
+  </script>
+  <!-- End of Sa11y-->
+
+</body>
+
+</html>

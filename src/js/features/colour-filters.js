@@ -10,11 +10,10 @@ export function addColourFilters() {
     if (Constants.Global.headless === false) {
       const svg = document.createElement('div');
       svg.id = 'sa11y-colour-filters';
-      svg.setAttribute('aria-hidden', 'true');
       // Note: Do not set 'display: none;' on parent container, otherwise it won't render in Firefox.
       svg.innerHTML = `
         <!-- DaltonLens SVG filters to simulate color vision deficiencies -->
-        <svg id="sa11y-svg-filters" xmlns="http://www.w3.org/2000/svg">
+        <svg id="sa11y-svg-filters" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
           <filter id="sa11y-protanopia" color-interpolation-filters="linearRGB">
             <feColorMatrix type="matrix" in="SourceGraphic" values="
                 0.10889,0.89111,-0.00000,0,0

@@ -1,8 +1,8 @@
-import Elements from '../utils/elements';
-import Constants from '../utils/constants';
-import * as Utils from '../utils/utils';
-import Lang from '../utils/lang';
 import { computeAccessibleName } from '../utils/computeAccessibleName';
+import Constants from '../utils/constants';
+import Elements from '../utils/elements';
+import Lang from '../utils/lang';
+import * as Utils from '../utils/utils';
 
 export default function checkDeveloper(results, option) {
   /* *************************************************************** */
@@ -11,6 +11,7 @@ export default function checkDeveloper(results, option) {
   if (option.checks.META_LANG) {
     if (!Elements.Found.Language || Elements.Found.Language.length < 2) {
       results.push({
+        test: 'META_LANG',
         type: option.checks.META_LANG.type || 'error',
         content: Lang.sprintf(option.checks.META_LANG.content || 'META_LANG'),
         dismiss: Utils.prepareDismissal('LANG'),
@@ -26,6 +27,7 @@ export default function checkDeveloper(results, option) {
     const metaTitle = document.querySelector('title:not(svg title)');
     if (!metaTitle || metaTitle.textContent.trim().length === 0) {
       results.push({
+        test: 'META_TITLE',
         type: option.checks.META_TITLE.type || 'error',
         content: Lang.sprintf(option.checks.META_TITLE.content || 'META_TITLE'),
         dismiss: Utils.prepareDismissal('TITLE'),
@@ -50,8 +52,12 @@ export default function checkDeveloper(results, option) {
         }, {});
 
         // Check for user-scalable parameter.
-        if (option.checks.META_SCALABLE && (params['user-scalable'] === 'no' || params['user-scalable'] === '0')) {
+        if (
+          option.checks.META_SCALABLE &&
+          (params['user-scalable'] === 'no' || params['user-scalable'] === '0')
+        ) {
           results.push({
+            test: 'META_SCALABLE',
             type: option.checks.META_SCALABLE.type || 'error',
             content: Lang.sprintf(option.checks.META_SCALABLE.content || 'META_SCALABLE'),
             dismiss: Utils.prepareDismissal('SCALABLE'),
@@ -63,6 +69,7 @@ export default function checkDeveloper(results, option) {
         const maxScale = parseFloat(params['maximum-scale']);
         if (option.checks.META_MAX && !Number.isNaN(maxScale) && maxScale < 2) {
           results.push({
+            test: 'META_MAX',
             type: option.checks.META_MAX.type || 'error',
             content: Lang.sprintf(option.checks.META_MAX.content || 'META_MAX'),
             dismiss: Utils.prepareDismissal('MAXSCALE'),
@@ -80,6 +87,7 @@ export default function checkDeveloper(results, option) {
     const metaRefresh = document.querySelector('meta[http-equiv="refresh"]');
     if (metaRefresh) {
       results.push({
+        test: 'META_REFRESH',
         type: option.checks.META_REFRESH.type || 'error',
         content: Lang.sprintf(option.checks.META_REFRESH.content || 'META_REFRESH'),
         dismiss: Utils.prepareDismissal('REFRESH'),
@@ -120,6 +128,7 @@ export default function checkDeveloper(results, option) {
             );
             if (ariaReference.length > 0) {
               results.push({
+                test: 'DUPLICATE_ID',
                 element: $el,
                 type: option.checks.DUPLICATE_ID.type || 'error',
                 content: Lang.sprintf(option.checks.DUPLICATE_ID.content || 'DUPLICATE_ID', id),
@@ -151,7 +160,13 @@ export default function checkDeveloper(results, option) {
   /* ********************************************* */
   /*  Buttons must have an accessible name.        */
   /* ********************************************* */
-  if (option.checks.BTN_EMPTY || option.checks.BTN_EMPTY_LABELLEDBY || option.checks.BTN_LABEL || option.checks.HIDDEN_FOCUSABLE || option.checks.LABEL_IN_NAME) {
+  if (
+    option.checks.BTN_EMPTY ||
+    option.checks.BTN_EMPTY_LABELLEDBY ||
+    option.checks.BTN_LABEL ||
+    option.checks.HIDDEN_FOCUSABLE ||
+    option.checks.LABEL_IN_NAME
+  ) {
     Elements.Found.Buttons.forEach(($el) => {
       const accName = computeAccessibleName($el);
       const buttonText = accName.replace(/'|"|-|\.|\s+/g, '').toLowerCase();
@@ -160,8 +175,12 @@ export default function checkDeveloper(results, option) {
       const key = Utils.prepareDismissal(`BTN${$el.tagName + $el.id + $el.className + accName}`);
 
       // Has ARIA
-      const hasAria = $el.querySelector(':scope [aria-labelledby], :scope [aria-label]') || $el.getAttribute('aria-labelledby') || $el.getAttribute('aria-label');
-      const hasAriaLabelledby = $el.querySelector(':scope [aria-labelledby]') || $el.getAttribute('aria-labelledby');
+      const hasAria =
+        $el.querySelector(':scope [aria-labelledby], :scope [aria-label]') ||
+        $el.getAttribute('aria-labelledby') ||
+        $el.getAttribute('aria-label');
+      const hasAriaLabelledby =
+        $el.querySelector(':scope [aria-labelledby]') || $el.getAttribute('aria-labelledby');
       const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
       const negativeTabindex = $el.getAttribute('tabindex') === '-1';
 
@@ -170,11 +189,14 @@ export default function checkDeveloper(results, option) {
         if (!negativeTabindex) {
           if (option.checks.HIDDEN_FOCUSABLE) {
             results.push({
+              test: 'HIDDEN_FOCUSABLE',
               element: $el,
               type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
               content: Lang.sprintf(option.checks.HIDDEN_FOCUSABLE.content || 'HIDDEN_FOCUSABLE'),
               dismiss: key,
-              dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll ? 'BTN_HIDDEN_FOCUSABLE' : false,
+              dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll
+                ? 'BTN_HIDDEN_FOCUSABLE'
+                : false,
               developer: option.checks.HIDDEN_FOCUSABLE.developer || true,
             });
           }
@@ -186,17 +208,21 @@ export default function checkDeveloper(results, option) {
       if (buttonText.length === 0) {
         if (option.checks.BTN_EMPTY_LABELLEDBY && hasAriaLabelledby) {
           results.push({
+            test: 'BTN_EMPTY_LABELLEDBY',
             element: $el,
             type: option.checks.BTN_EMPTY_LABELLEDBY.type || 'error',
             content: option.checks.BTN_EMPTY_LABELLEDBY.content
               ? Lang.sprintf(option.checks.BTN_EMPTY_LABELLEDBY.content)
               : `${Lang.sprintf('BTN_EMPTY_LABELLEDBY')} ${Lang.sprintf('BTN_TIP')}`,
             dismiss: Utils.prepareDismissal(key),
-            dismissAll: option.checks.BTN_EMPTY_LABELLEDBY.dismissAll ? 'BTN_EMPTY_LABELLEDBY' : false,
+            dismissAll: option.checks.BTN_EMPTY_LABELLEDBY.dismissAll
+              ? 'BTN_EMPTY_LABELLEDBY'
+              : false,
             developer: option.checks.BTN_EMPTY_LABELLEDBY.developer || true,
           });
         } else if (option.checks.BTN_EMPTY) {
           results.push({
+            test: 'BTN_EMPTY',
             element: $el,
             type: option.checks.BTN_EMPTY.type || 'error',
             content: option.checks.BTN_EMPTY.content
@@ -210,11 +236,12 @@ export default function checkDeveloper(results, option) {
         return;
       }
 
-      // Button must have visible label as part of their accessible name.
-      const isVisibleTextInAccessibleName = Utils.isVisibleTextInAccessibleName($el);
-      if (option.checks.LABEL_IN_NAME && hasAria && isVisibleTextInAccessibleName) {
+      /* Button must have visible label as part of their accessible name. */
+      const isVisibleTextInAccName = Utils.isVisibleTextInAccName($el, accName);
+      if (option.checks.LABEL_IN_NAME && hasAria && isVisibleTextInAccName) {
         const sanitizedText = Utils.sanitizeHTML(accName);
         results.push({
+          test: 'LABEL_IN_NAME',
           element: $el,
           type: option.checks.LABEL_IN_NAME.type || 'warning',
           content: option.checks.LABEL_IN_NAME.content
@@ -230,6 +257,7 @@ export default function checkDeveloper(results, option) {
       // Has "button" in the accessible name.
       if (option.checks.BTN_ROLE_IN_NAME && accName.includes(Lang._('BTN'))) {
         results.push({
+          test: 'BTN_ROLE_IN_NAME',
           element: $el,
           type: option.checks.BTN_ROLE_IN_NAME.type || 'warning',
           content: option.checks.BTN_ROLE_IN_NAME.content
@@ -250,6 +278,7 @@ export default function checkDeveloper(results, option) {
     Elements.Found.Lists.forEach(($el) => {
       if (!$el.closest('ul, ol, menu')) {
         results.push({
+          test: 'UNCONTAINED_LI',
           element: $el,
           type: option.checks.UNCONTAINED_LI.type || 'error',
           content: Lang.sprintf(option.checks.UNCONTAINED_LI.content || 'UNCONTAINED_LI'),
@@ -267,6 +296,7 @@ export default function checkDeveloper(results, option) {
   if (option.checks.TABINDEX_ATTR) {
     Elements.Found.TabIndex.forEach(($el) => {
       results.push({
+        test: 'TABINDEX_ATTR',
         element: $el,
         type: option.checks.TABINDEX_ATTR.type || 'error',
         content: Lang.sprintf(option.checks.TABINDEX_ATTR.content || 'TABINDEX_ATTR'),

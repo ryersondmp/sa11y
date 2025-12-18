@@ -1,11 +1,9 @@
-import Lang from '../utils/lang';
+/** biome-ignore-all lint/correctness/noUndeclaredVariables: Sa11yVersion swapped on compilation. */
+import styles from '../../css/console-errors.css?inline';
+import sharedStyles from '../../css/shared.css?inline';
 import Constants from '../utils/constants';
+import Lang from '../utils/lang';
 import { escapeHTML } from '../utils/utils';
-import version from '../../../version';
-
-// Import processed minified styles as a string.
-import styles from '../../../dist/css/console-errors.min.css';
-import sharedStyles from '../../../dist/css/shared.min.css';
 
 export default class ConsoleErrors extends HTMLElement {
   constructor(error) {
@@ -38,7 +36,7 @@ ${this.error.stack}
 
 ## Details
 - **URL:** ${url}
-- **Version:** ${version}
+- **Version:** ${Sa11yVersion}
 
 ## Comments
 `;
@@ -50,7 +48,7 @@ ${this.error.stack}
       <button class="close-btn" aria-label="${Lang._('ALERT_CLOSE')}"></button>
       <h2>${Lang._('ERROR')}</h2>
       <p>${Lang.sprintf('CONSOLE_ERROR', google, github)}</p>
-      <p class="error">${escapeHTML(this.error.stack)}<br><br>Version: ${version} <br> URL: ${url}</p>
+      <p class="error">${escapeHTML(this.error.stack)}<br><br>Version: ${Sa11yVersion} <br> URL: ${url}</p>
     `;
     shadow.appendChild(content);
 
