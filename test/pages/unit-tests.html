@@ -441,7 +441,7 @@
 
     <h3>Alt text that may be bad</h3>
     <p>Basically an alt text that is a single word greater than 15 characters that contains non-alpha characters.</p>
-    <div id="warning-bad-alt">
+    <div id="error-bad-alt">
       <img src="../../docs/examples/assets/placeholder.svg" alt="~ai-3a3cb8f0-1554-4e2b-b159-77f7176853d0_"
         width="100" />
     </div>
@@ -452,7 +452,7 @@
     </div>
 
     <h3>Linked image that has potentially bad alt text</h3>
-    <div id="warning-bad-alt-linked">
+    <div id="error-bad-alt-linked">
       <a href="https://www.example.com/sdsad">
         <img src="../../docs/examples/assets/placeholder.svg" alt="~ai-3a3cb8f0-1554-4e2b-b159-77f7176853d0_"
           width="100" />
@@ -743,6 +743,13 @@
     <div id="warning-link-label-in-name">
       <a href="https://www.example.com/asdsffs" aria-label="Delete item">
         Remove <span class="visually-hidden">item</span>
+      </a>
+    </div>
+
+    <h4>Label in name with <code>linkIgnoreStrings</code></h4>
+    <div id="pass-link-label-in-name-linkIgnoreStrings">
+      <a href="https://www.example.com/asdsffs" aria-label="Delete item ">
+        (External link) Delete <span class="visually-hidden">item</span>
       </a>
     </div>
 

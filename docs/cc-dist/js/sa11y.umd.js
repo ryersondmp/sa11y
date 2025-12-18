@@ -6513,7 +6513,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
         results.push({
           test: conditional,
           element: $el,
-          type: maybeBadAlt.type || "warning",
+          type: maybeBadAlt.type || "error",
           content: Lang.sprintf(maybeBadAlt.content || conditional, altText),
           dismiss: prepareDismissal(`${conditional + src + altText}`),
           dismissAll: maybeBadAlt.dismissAll ? conditional : false,

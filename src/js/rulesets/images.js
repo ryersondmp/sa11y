@@ -367,7 +367,7 @@ export default function checkImages(results, option) {
       results.push({
         test: conditional,
         element: $el,
-        type: maybeBadAlt.type || 'warning',
+        type: maybeBadAlt.type || 'error',
         content: Lang.sprintf(maybeBadAlt.content || conditional, altText),
         dismiss: Utils.prepareDismissal(`${conditional + src + altText}`),
         dismissAll: maybeBadAlt.dismissAll ? conditional : false,

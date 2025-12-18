@@ -597,7 +597,7 @@ test.describe('Sa11y Unit Tests', () => {
   });
 
   test('Image has bad alt text', async () => {
-    const issue = await checkTooltip(page, 'warning-bad-alt', 'Alt text may not provide useful information or contains non-descript text.');
+    const issue = await checkTooltip(page, 'error-bad-alt', 'Alt text may not provide useful information or contains non-descript text.');
     expect(issue).toBe(true);
   });
 
@@ -607,7 +607,7 @@ test.describe('Sa11y Unit Tests', () => {
   });
 
   test('Linked image has bad alt text', async () => {
-    const issue = await checkTooltip(page, 'warning-bad-alt-linked', 'Image link has alt text that may not provide useful information or contains non-descript text. Ensure the alt text describes the destination of the link.');
+    const issue = await checkTooltip(page, 'error-bad-alt-linked', 'Image link has alt text that may not provide useful information or contains non-descript text. Ensure the alt text describes the destination of the link.');
     expect(issue).toBe(true);
   });
 
@@ -880,6 +880,13 @@ test.describe('Sa11y Unit Tests', () => {
   test('Link with aria-label that does not contain visible text', async () => {
     const issue = await checkTooltip(
       page, 'warning-link-label-in-name', 'The visible text for this element appears to be different than the accessible name',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Pass label-in-name check with linkIgnoreStrings prop', async () => {
+    const issue = await checkTooltip(
+      page, 'pass-link-label-in-name-linkIgnoreStrings', 'Good',
     );
     expect(issue).toBe(true);
   });
