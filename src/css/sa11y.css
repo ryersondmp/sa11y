@@ -149,7 +149,7 @@ html[data-sa11y-theme="dark"] {
   top: 0 !important;
   left: 0 !important;
   z-index: -99999 !important;
-  width: 100vh !important;
+  width: 100vw !important;
   height: 100vh !important;
   padding: 0 !important;
   margin: 0 !important;

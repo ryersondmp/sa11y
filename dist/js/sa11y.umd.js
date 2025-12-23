@@ -1,6 +1,6 @@
 /*!
       * Sa11y, the accessibility quality assurance assistant.
-      * @version 4.4.0
+      * @version 4.4.1
       * @author Adam Chaboryk
       * @license GPL-2.0-or-later
       * @copyright © 2020 - 2025 Toronto Metropolitan University.
@@ -1298,7 +1298,7 @@ ${this.error.stack}
 
 ## Details
 - **URL:** ${url2}
-- **Version:** ${"4.4.0"}
+- **Version:** ${"4.4.1"}
 
 ## Comments
 `;
@@ -1308,7 +1308,7 @@ ${this.error.stack}
       <button class="close-btn" aria-label="${Lang._("ALERT_CLOSE")}"></button>
       <h2>${Lang._("ERROR")}</h2>
       <p>${Lang.sprintf("CONSOLE_ERROR", google, github)}</p>
-      <p class="error">${escapeHTML(this.error.stack)}<br><br>Version: ${"4.4.0"} <br> URL: ${url2}</p>
+      <p class="error">${escapeHTML(this.error.stack)}<br><br>Version: ${"4.4.1"} <br> URL: ${url2}</p>
     `;
       shadow.appendChild(content);
       setTimeout(() => {
@@ -1458,22 +1458,12 @@ ${this.error.stack}
             />
           </filter>
           <filter id="sa11y-tritanopia" color-interpolation-filters="linearRGB">
-            <feColorMatrix type="matrix" in="SourceGraphic" result="ProjectionOnPlane1" values="
-                1.01354, 0.14268, -0.15622, 0, 0
-                -0.01181, 0.87561, 0.13619, 0, 0
-                0.07707, 0.81208, 0.11085, 0, 0
-                7.92482, -5.66475, -2.26007, 1, -0.2"
-            />
-            <feComponentTransfer in="ProjectionOnPlane1" result="ProjectionOnPlane1">
-                <feFuncA type="discrete" tableValues="0 0 0 0 1"/>
-            </feComponentTransfer>
-            <feColorMatrix type="matrix" in="SourceGraphic" result="ProjectionOnPlane2" values="
-                0.93337, 0.19999, -0.13336, 0, 0
-                0.05809, 0.82565, 0.11626, 0, 0
-                -0.37923, 1.13825, 0.24098, 0, 0
-                0,0,0,1,0"
-            />
-            <feBlend in="ProjectionOnPlane1" in2="ProjectionOnPlane2" mode="normal"/>
+            <feColorMatrix type="matrix" in="SourceGraphic" values="
+              0.950, 0.050, 0.000, 0, 0
+              0.000, 0.433, 0.567, 0, 0
+              0.000, 0.475, 0.525, 0, 0
+              0.000, 0.000, 0.000, 1, 0
+            "/>
           </filter>
           <filter id="sa11y-monochromacy">
             <feColorMatrix values="0.299,0.587,0.114,0,0,0.299,0.587,0.114,0,0,0.299,0.587,0.114,0,0,0,0,0,1,0"></feColorMatrix>
@@ -1485,10 +1475,14 @@ ${this.error.stack}
   }
   function resetColourFilters() {
     if (Constants.Global.colourFilterPlugin) {
+      document.body.removeAttribute("data-sa11y-filter");
+      Constants.Panel.settingsContent.classList.remove("hide-settings-border");
       Constants.Panel.colourFilterSelect.value = 0;
+      Constants.Panel.colourPanel.removeAttribute("data-colour");
       Constants.Panel.colourPanel.classList.remove("active");
       Constants.Panel.colourFilterSelect.classList.remove("active");
       Constants.Panel.content.hidden = false;
+      Constants.Panel.controls.hidden = false;
     }
   }
   const exportResultsStyles = `:root{--font-primary:system-ui,"Segoe UI",roboto,helvetica,arial,sans-serif;--font-secondary:consolas,monaco,"Ubuntu Mono","Liberation Mono","Courier New",courier,monospace;--body-text:#333;--bg-primary:#fff;--bg-secondary:#f6f8fa;--bg-tertiary:#d7d7d7;--link-primary:#004c9b;--red-text:#d30017;--warning-text:#966f0d;--hr:#d7d7d74d;--sa11y-link-icon-svg:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 512'%3E%3Cpath d='M579.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L422.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C206.5 251.2 213 330 263 380c56.5 56.5 148 56.5 204.5 0L579.8 267.7zM60.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C74 372 74 321 105.5 289.5L217.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C433.5 260.8 427 182 377 132c-56.5-56.5-148-56.5-204.5 0L60.2 244.3z'/%3E%3C/svg%3E")}@media (prefers-color-scheme:dark){:root{--body-text:#dde8ff;--bg-primary:#0a2051;--bg-secondary:#072c7c;--bg-tertiary:#0041c9;--link-primary:#64b2ff;--red-text:#ffa2a2;--warning-text:#ffdb59;--hr:#0041c94d}}*{margin:0;padding:0}article,aside,nav,ol,p,pre,section,ul{margin-bottom:1rem}body{max-width:70ch;font-family:var(--font-primary);color:var(--body-text);word-break:break-word;overflow-wrap:break-word;background:var(--bg-primary);margin:0 auto;padding:2rem;font-size:1rem;line-height:1.5;overflow-x:hidden}h1,h2,h3{color:var(--body-text);margin-bottom:8px;padding-top:.875rem;padding-bottom:2px;line-height:1}h1{font-size:2.25rem}h2{font-size:1.85rem}h3{font-size:1.55rem}a{color:var(--link-primary)}a:hover,a:focus{text-decoration:none}header,footer{background:var(--bg-secondary);padding:2rem calc(50vw - 50%)}header{border-bottom:1px solid var(--bg-tertiary);margin:-2rem calc(-50vw + 50%) 2rem}footer{text-align:center;border-top:1px solid var(--bg-tertiary);margin:3rem calc(-50vw + 50%) -2rem}header>:first-child{margin-top:0;padding-top:0}header>:last-child{margin-bottom:0}hr{background:var(--hr);opacity:1;border:none;height:1px;margin:10px 0;padding:0}code,samp,kbd,pre{font-family:var(--font-secondary);background:var(--bg-secondary);border:1px solid var(--bg-tertiary);border-radius:4px;padding:3px 6px;font-size:.9rem}pre{max-width:100%;padding:1rem 1.4rem;display:block;overflow:auto}pre code{font-size:inherit;color:inherit;background:inherit;border:0;margin:0;padding:0}code pre{font-size:inherit;color:inherit;background:inherit;border:0;margin:0;padding:0;display:inline}details{background:var(--bg-primary);border:2px solid var(--link-primary);border-radius:4px;padding:.6rem 1rem}summary{cursor:pointer;font-weight:700}details[open]{padding-bottom:.75rem}details[open] summary{margin-bottom:6px}details[open]>:last-child{margin-bottom:0}.two-columns{display:flex}.column{flex:1;margin-inline-end:20px}.count{max-width:220px}dl{padding-top:10px}.column dl{width:100%}dt{font-weight:700}dd{padding-bottom:10px}ul ul,ol ul,ul ol,ol ol{margin-bottom:0}ul li{margin-bottom:.5rem}ol,ul{padding-left:2rem}ol li:not(li li){margin-bottom:4rem}iframe,img{background:var(--bg-tertiary);border-radius:5px;max-width:50%;padding:5px;display:block}video,audio{border:0;display:block}.red-text{color:var(--red-text)}.visually-hidden{clip:rect(1px,1px,1px,1px);white-space:nowrap;clip-path:inset(50%);border:0;width:1px;height:1px;padding:0;display:block;position:absolute;overflow:hidden}.badge{color:#fff;text-align:center;white-space:nowrap;vertical-align:baseline;border-radius:10px;outline:1px solid #0000;min-width:10px;padding:1px 5px 1.75px;font-size:14px;line-height:1;display:inline;font-weight:700!important}.error .colour{color:var(--red-text)}.error .badge{color:#fff;background:#d30017}.warning .colour{color:var(--warning-text)}.warning .badge{color:#fff;background:#966f0d}.link-icon{width:16px;height:16px;-webkit-mask:var(--sa11y-link-icon-svg)center no-repeat;mask:var(--sa11y-link-icon-svg)center no-repeat;background:#fff;margin-bottom:-3.5px;display:inline-block}li pre,li li pre,li li img,li li iframe,li li video,li li audio{margin-top:1rem}li li{margin-top:1rem;list-style:none}`;
@@ -1881,7 +1875,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
       const container = document.createElement("div");
       container.setAttribute("id", "container");
       container.setAttribute("role", "region");
-      container.setAttribute("data-sa11y-version", "4.4.0");
+      container.setAttribute("data-sa11y-version", "4.4.1");
       container.setAttribute("lang", Lang._("LANG_CODE"));
       container.setAttribute("aria-label", Lang._("CONTAINER_LABEL"));
       container.setAttribute("dir", Constants.Global.langDirection);
@@ -2019,20 +2013,14 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
             Constants.Panel.skipButton.disabled = true;
             Constants.Panel.pageIssues.classList.remove("active");
             Constants.Panel.settingsContent.classList.add("hide-settings-border");
-            Constants.Panel.controls.setAttribute("hidden", "");
+            Constants.Panel.controls.hidden = true;
             Constants.Panel.colourFilterSelect.classList.add("active");
             Constants.Panel.colourPanel.classList.add("active");
             Constants.Panel.colourPanel.setAttribute("data-colour", filters[option - 1]);
             Constants.Panel.content.hidden = true;
           }
         } else {
-          document.body.removeAttribute("data-sa11y-filter");
-          Constants.Panel.settingsContent.classList.remove("hide-settings-border");
-          Constants.Panel.controls.removeAttribute("hidden");
-          Constants.Panel.colourFilterSelect.classList.remove("active");
-          Constants.Panel.colourPanel.classList.remove("active");
-          Constants.Panel.colourPanel.removeAttribute("data-colour");
-          Constants.Panel.content.hidden = false;
+          resetColourFilters();
           resetAll(false);
           await checkAll();
         }

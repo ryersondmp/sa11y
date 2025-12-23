@@ -186,7 +186,7 @@ html[data-sa11y-theme="dark"] {
 
 #sa11y-colour-filters, #sa11y-svg-filters {
   z-index: -99999 !important;
-  width: 100vh !important;
+  width: 100vw !important;
   height: 100vh !important;
   transform-style: preserve-3d !important;
   margin: 0 !important;

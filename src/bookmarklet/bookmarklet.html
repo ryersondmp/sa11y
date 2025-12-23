@@ -5,7 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bookmarklet testing</title>
-  <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'">-->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data:;
+               script-src 'self' 'unsafe-inline'">
 </head>
 
 <body>
@@ -13,8 +14,8 @@
   <a href="javascript:(function(){
       const sa11yDialog = document.getElementById(&quot;sa11y-csp&quot;);
       const sa11yScripts = document.querySelectorAll(&quot;script[src*='sa11y']&quot;);
-
       const createAlert = (message) => {
+        if (document.querySelector(&quot;#sa11y-csp&quot;)) return;
         const sa11yDialog = document.createElement(&quot;div&quot;);
         sa11yDialog.id = &quot;sa11y-csp&quot;;
         sa11yDialog.role = &quot;dialog&quot;;
@@ -38,7 +39,6 @@
         sa11yDialog.style.borderRadius = &quot;5px&quot;;
         sa11yDialog.setAttribute(&quot;role&quot;, &quot;alert&quot;);
         document.body.appendChild(sa11yDialog);
-
         const closeButton = document.createElement(&quot;button&quot;);
         closeButton.id = &quot;csp-close&quot;;
         closeButton.textContent = &quot;Close&quot;;
@@ -53,27 +53,22 @@
         closeButton.style.cursor = &quot;pointer&quot;;
         closeButton.style.fontSize = &quot;15px&quot;;
         sa11yDialog.appendChild(closeButton);
-
         closeButton.addEventListener(&quot;click&quot;, () => {
           sa11yDialog.remove();
         });
-
         const close = document.getElementById(&quot;csp-close&quot;);
         setTimeout(() => close.focus(), 300);
-
         document.addEventListener(&quot;keyup&quot;, (event) => {
           if (event.key === 'Escape') {
            sa11yDialog.remove();
           }
         });
       };
-
       const securityListener = () => {
         if (typeof sa11y === 'undefined') {
           createAlert('This website has a security policy that prevents Sa11y from working on its pages. Press Escape to dismiss this message.');
         }
       };
-
       const url = window.location.href;
       if (url.includes('bookmarklet') && url.includes('sa11y')) {
         createAlert('Drag the &quot;Sa11y&quot; button into your bookmarks bar. Then click the bookmark on any webpage.');
@@ -81,17 +76,15 @@
         const inject = document.createElement(&quot;script&quot;);
         inject.src = &quot;https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@latest/bookmarklet/v2.js&quot;;
         inject.onerror = () => {
-          createAlert('Sa11y script failed to load. This website may have a security policy that prevents Sa11y from working on its pages. Press Escape to dismiss this message.');
+          createAlert('This website has a security policy that prevents Sa11y from working on its pages. Press Escape to dismiss this message.');
         };
         document.body.appendChild(inject);
       } else {
         location.reload();
       }
-
       document.addEventListener(&quot;securitypolicyviolation&quot;, securityListener);
       setTimeout(() => document.removeEventListener(&quot;securitypolicyviolation&quot;, securityListener), 100);
-  	})();
-  	">Sa11y</a>
+  	})();">Sa11y</a>
 
 
   <h2>Old bookmarklet</h2>

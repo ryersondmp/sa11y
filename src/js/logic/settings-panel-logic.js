@@ -2,6 +2,7 @@ import { createAlert } from '../interface/alert';
 import Constants from '../utils/constants';
 import Lang from '../utils/lang';
 import { remove, resetAttributes, store } from '../utils/utils';
+import { resetColourFilters } from '../features/colour-filters';
 
 /* ************************************************************ */
 /*  Initialize all toggle switches within Settings panel.       */
@@ -155,7 +156,7 @@ export default function settingsPanelToggles(checkAll, resetAll) {
 
           // Hide all settings while Colour Filters are enabled.
           Constants.Panel.settingsContent.classList.add('hide-settings-border');
-          Constants.Panel.controls.setAttribute('hidden', '');
+          Constants.Panel.controls.hidden = true;
 
           // Make panel visible.
           Constants.Panel.colourFilterSelect.classList.add('active');
@@ -166,18 +167,8 @@ export default function settingsPanelToggles(checkAll, resetAll) {
           Constants.Panel.content.hidden = true;
         }
       } else {
-        // Restore panel.
-        document.body.removeAttribute('data-sa11y-filter');
-        Constants.Panel.settingsContent.classList.remove('hide-settings-border');
-        Constants.Panel.controls.removeAttribute('hidden');
-
-        // Hide colour filter panel.
-        Constants.Panel.colourFilterSelect.classList.remove('active');
-        Constants.Panel.colourPanel.classList.remove('active');
-        Constants.Panel.colourPanel.removeAttribute('data-colour');
-
-        // Show error/warning count.
-        Constants.Panel.content.hidden = false;
+        // Turn off colours filters and restore everything.
+        resetColourFilters();
         resetAll(false);
         await checkAll();
       }
