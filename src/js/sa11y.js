@@ -96,13 +96,11 @@ class Sa11y {
           } else {
             // Save panel position preference if not already set or if position changes via props.
             const rememberPosition = Utils.store.getItem('sa11y-position');
-            const { panelPosition } = option;
-            if (
-              option.showMovePanelToggle &&
-              (!rememberPosition ||
-                !rememberPosition.includes('top') !== !panelPosition.includes('top'))
-            ) {
-              Utils.store.setItem('sa11y-position', panelPosition);
+            const position = Constants.Global.panelPosition;
+            const isTop = (position) => position.includes('top');
+            if (option.showMovePanelToggle
+              && (!rememberPosition || isTop(rememberPosition) !== isTop(position))) {
+              Utils.store.setItem('sa11y-position', position);
             }
 
             // Build control panel.

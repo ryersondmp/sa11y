@@ -9,7 +9,6 @@ const Constants = (function myConstants() {
   function initializeGlobal(option) {
     Global.html = document.querySelector('html');
     Global.headless = option.headless;
-    Global.panelPosition = option.panelPosition;
     Global.dismissAnnotations = option.dismissAnnotations;
     Global.aboutContent = option.aboutContent;
     Global.shadowDetection =
@@ -17,6 +16,11 @@ const Constants = (function myConstants() {
     Global.fixedRoots = option.fixedRoots;
     Global.ignoreAriaOnElements = option.ignoreAriaOnElements;
     Global.ignoreTextInElements = option.ignoreTextInElements;
+
+    // Validate panel position.
+    const panelPositions = new Set(['top-left', 'top-right', 'left', 'right']);
+    const positionValue = option.panelPosition?.trim().toLowerCase();
+    Global.panelPosition = panelPositions.has(positionValue) ? positionValue : 'right';
 
     // Contrast
     Global.contrastSuggestions = option.contrastSuggestions;

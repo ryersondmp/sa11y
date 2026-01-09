@@ -40,7 +40,7 @@ const sa11y = new Sa11y({
 
   shadowComponents: '',
   autoDetectShadowComponents: true,
-  panelPosition: 'right',
+  panelPosition: 'bottom-left', // invalid value, should default to right.
 
   checks: {
     QA_BAD_LINK: {

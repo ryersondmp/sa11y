@@ -13,8 +13,30 @@
 <body>
   <header>
     <h2>Sandbox</h2>
+    <button id="clear-sa11y-storage" style="display: inline">
+      Clear Sa11y local storage for testing
+    </button>
+    <script>
+      document.getElementById('clear-sa11y-storage').addEventListener('click', () => {
+        Object.keys(localStorage)
+          .filter(key => key.startsWith('sa11y-'))
+          .forEach(key => localStorage.removeItem(key));
+      });
+    </script>
   </header>
   <main>
+
+    <p style="color:white;background-image: linear-gradient(160deg, rgb(0, 0, 214) 0%, rgb(0, 0, 47) 78.66%);">
+      Lorem ipsum something
+    </p>
+
+    <p style="color:white;background-image: linear-gradient(160deg, rgb(0, 0, 214) 0%, rgb(0, 0, 47) 78.66%);">
+      something else lorem
+    </p>
+
+    <p style="color:white;background-image: linear-gradient(160deg, rgb(0, 0, 214) 0%, rgb(0, 0, 47) 78.66%);">
+      something else lorem
+    </p>
 
     <h2>Testing non-descript text or link is only new window phrases</h2>
     <div id="error-new-tab-link-text-1">
