@@ -62,16 +62,34 @@ export default function checkContrast(results, option) {
         });
       } else if (background.type === 'image') {
         if (!isHidden) {
-          contrastResults.push({
-            $el,
-            type: 'background-image',
-            color,
-            isLargeText,
-            background,
-            fontSize,
-            fontWeight,
-            opacity,
-          });
+          // Extract all colour codes from background-image value and check contrast.
+          const extractColours = Contrast.extractColorFromString(background.value);
+          const hasFailure = !extractColours ||
+            extractColours.some(gradientStop =>
+              Contrast.checkElementContrast(
+                $el,
+                color,
+                gradientStop,
+                fontSize,
+                fontWeight,
+                opacity,
+                option.contrastAlgorithm,
+              )
+            );
+
+          // Push a warning if gradient stop fails contrast, or contains url().
+          if (hasFailure || background.value.includes('url(')) {
+            contrastResults.push({
+              $el,
+              type: 'background-image',
+              color,
+              isLargeText,
+              background,
+              fontSize,
+              fontWeight,
+              opacity,
+            });
+          }
         }
       } else if (!isHidden && Contrast.getHex(color) !== Contrast.getHex(background)) {
         const result = Contrast.checkElementContrast(

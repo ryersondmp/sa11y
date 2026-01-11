@@ -26,17 +26,71 @@
   </header>
   <main>
 
-    <p style="color:white;background-image: linear-gradient(160deg, rgb(0, 0, 214) 0%, rgb(0, 0, 47) 78.66%);">
-      Lorem ipsum something
-    </p>
+    <h2>Gradient backgrounds where all stops have sufficient contrast</h2>
+    <style>
+      .grd {
+        padding: 15px;
+      }
 
-    <p style="color:white;background-image: linear-gradient(160deg, rgb(0, 0, 214) 0%, rgb(0, 0, 47) 78.66%);">
-      something else lorem
-    </p>
+      .gradient-1 {
+        color: white;
+        background-image: linear-gradient(160deg, rebeccapurple 0%, purple 78.66%);
+      }
 
-    <p style="color:white;background-image: linear-gradient(160deg, rgb(0, 0, 214) 0%, rgb(0, 0, 47) 78.66%);">
-      something else lorem
-    </p>
+      .gradient-2 {
+        color: white;
+        background-image: linear-gradient(160deg, rgb(195, 195, 255) 0%, rgb(0, 0, 0) 78.66%);
+      }
+
+      .gradient-3 {
+        color: white;
+        background-image: linear-gradient(160deg, asdpojs 0%, rgb(0, 0, 0) 78.66%);
+      }
+
+      .gradient-4 {
+        color: white;
+        background-image: linear-gradient(160deg, green 0%, rgb(0, 0, 0) 25%, darkblue 50%, rgb(39, 39, 153) 100%);
+      }
+
+      .gradient-5 {
+        color: white;
+        background-image: linear-gradient(160deg, #3500c5 0%, hsl(305, 70%, 14%) 100%);
+      }
+    </style>
+
+    <div id="nothing-gradient">
+      <p class="gradient-1 grd">
+        Named colour codes that pass.
+      </p>
+    </div>
+
+    <div id="warning-gradient">
+      <p class="gradient-2 grd">
+        Failing contrast.
+      </p>
+    </div>
+
+    <div id="error">
+      <p class="gradient-3 grd">
+        Broken colour codes.
+      </p>
+    </div>
+
+    <div id="nothing-gradient">
+      <p class="gradient-4 grd">
+        Multiple gradient stops.
+      </p>
+    </div>
+
+    <div id="nothing-gradient">
+      <p class="gradient-5 grd">
+        Sufficient contrast.
+      </p>
+    </div>
+
+    <div id="warning-contrast">
+      <p class="background-image">Text on background image requires manual review!</p>
+    </div>
 
     <h2>Testing non-descript text or link is only new window phrases</h2>
     <div id="error-new-tab-link-text-1">

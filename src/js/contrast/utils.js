@@ -510,7 +510,7 @@ export function wcagAlgorithm(
   if (contrastAlgorithm === 'AAA') {
     hasLowContrast = isLargeText ? ratio < 4.5 : ratio < 7;
   } else {
-    const hasLowContrastNormalText = ratio > 1 && ratio < 4.5;
+    const hasLowContrastNormalText = ratio > 0 && ratio < 4.5;
     hasLowContrast = isLargeText ? ratio < 3 : hasLowContrastNormalText;
   }
 
@@ -596,4 +596,24 @@ export function checkElementContrast(
 ) {
   const algorithm = contrastAlgorithm === 'APCA' ? apcaAlgorithm : wcagAlgorithm;
   return algorithm($el, color, background, fontSize, fontWeight, opacity, contrastAlgorithm);
+}
+
+/**
+  * Extracts and normalizes all valid CSS color values found in a string.
+  * @param {String} cssValue Usually from `background-image:`
+  * @returns {Array} Returns array of RGB-converted colours.
+*/
+const colorTokenPattern =
+  /#(?:[\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})\b|\b(?:rgb|hsl|lab|lch|oklab|oklch)a?\([^)]+\)|\b[a-z]+\b/gi;
+export function extractColorFromString(cssValue) {
+  const tokens = cssValue.match(colorTokenPattern);
+  if (!tokens) return [];
+  const colors = [];
+  for (const token of tokens) {
+    // Reject non-color words like "linear" and "gradient".
+    if (/^[a-z]+$/i.test(token) && !CSS.supports('color', token)) continue;
+    const color = convertToRGBA(token);
+    if (color) colors.push(color);
+  }
+  return colors;
 }
