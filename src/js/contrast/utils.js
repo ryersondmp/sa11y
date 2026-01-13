@@ -599,10 +599,10 @@ export function checkElementContrast(
 }
 
 /**
-  * Extracts and normalizes all valid CSS color values found in a string.
-  * @param {String} cssValue Usually from `background-image:`
-  * @returns {Array} Returns array of RGB-converted colours.
-*/
+ * Extracts and normalizes all valid CSS color values found in a string.
+ * @param {String} cssValue Usually from `background-image:`
+ * @returns {Array} Returns array of RGB-converted colours.
+ */
 const colorTokenPattern =
   /#(?:[\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})\b|\b(?:rgb|hsl|lab|lch|oklab|oklch)a?\([^)]+\)|\b[a-z]+\b/gi;
 export function extractColorFromString(cssValue) {

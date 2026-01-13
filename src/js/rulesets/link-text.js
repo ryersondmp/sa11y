@@ -173,7 +173,7 @@ export default function checkLinkText(results, option) {
             content: option.checks.LINK_STOPWORD_ARIA.content
               ? Lang.sprintf(option.checks.LINK_STOPWORD_ARIA.content, stopword, sanitizedText)
               : Lang.sprintf('LINK_STOPWORD_ARIA', stopword, sanitizedText) +
-              Lang.sprintf('LINK_TIP'),
+                Lang.sprintf('LINK_TIP'),
             inline: true,
             dismiss: Utils.prepareDismissal(`LINK_STOPWORD_ARIA ${href + strippedLinkText}`),
             dismissAll: option.checks.LINK_STOPWORD_ARIA.dismissAll ? ' LINK_STOPWORD_ARIA' : false,

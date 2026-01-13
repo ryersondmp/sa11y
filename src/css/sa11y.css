@@ -75,8 +75,8 @@ html[data-sa11y-theme="light"] {
   --sa11y-shortcut-hover: #e8e8e8;
   --sa11y-button-outline: #595959;
   --sa11y-box-shadow:
-    0 0 20px 4px rgb(154 161 177 / 15%), 0 4px 80px -8px rgb(36 40 47 / 25%), 0 4px 4px -2px
-    rgb(91 94 105 / 15%);
+    0 0 20px 4px rgb(154 161 177 / 15%), 0 4px 80px -8px rgb(36 40 47 / 25%),
+    0 4px 4px -2px rgb(91 94 105 / 15%);
 }
 
 /* ************************************* */
@@ -104,8 +104,8 @@ html[data-sa11y-theme="dark"] {
   --sa11y-shortcut-hover: #093698;
   --sa11y-button-outline: #2169ff;
   --sa11y-box-shadow:
-    0 0 20px 4px rgb(34 0 255 / 20%), 0 4px 60px -8px rgb(45 31 245 / 40%), 0 4px 4px -2px
-    rgb(0 84 220 / 30%);
+    0 0 20px 4px rgb(34 0 255 / 20%), 0 4px 60px -8px rgb(45 31 245 / 40%),
+    0 4px 4px -2px rgb(0 84 220 / 30%);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -132,8 +132,8 @@ html[data-sa11y-theme="dark"] {
     --sa11y-shortcut-hover: #093698;
     --sa11y-button-outline: #2169ff;
     --sa11y-box-shadow:
-      0 0 20px 4px rgb(34 0 255 / 20%), 0 4px 60px -8px rgb(45 31 245 / 40%), 0 4px 4px -2px
-      rgb(0 84 220 / 30%);
+      0 0 20px 4px rgb(34 0 255 / 20%), 0 4px 60px -8px rgb(45 31 245 / 40%),
+      0 4px 4px -2px rgb(0 84 220 / 30%);
   }
 }
 

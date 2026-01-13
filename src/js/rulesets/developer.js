@@ -190,7 +190,9 @@ export default function checkDeveloper(results, option) {
               element: $el,
               type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
               content: Lang.sprintf(option.checks.HIDDEN_FOCUSABLE.content || 'HIDDEN_FOCUSABLE'),
-              dismiss: Utils.prepareDismissal(`HIDDEN_FOCUSABLE ${$el.tagName + $el.id + $el.className + accName}`),
+              dismiss: Utils.prepareDismissal(
+                `HIDDEN_FOCUSABLE ${$el.tagName + $el.id + $el.className + accName}`,
+              ),
               dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll
                 ? 'BTN_HIDDEN_FOCUSABLE'
                 : false,
@@ -211,7 +213,9 @@ export default function checkDeveloper(results, option) {
             content: option.checks.BTN_EMPTY_LABELLEDBY.content
               ? Lang.sprintf(option.checks.BTN_EMPTY_LABELLEDBY.content)
               : `${Lang.sprintf('BTN_EMPTY_LABELLEDBY')} ${Lang.sprintf('BTN_TIP')}`,
-            dismiss: Utils.prepareDismissal(`BTN_EMPTY_LABELLEDBY ${$el.tagName + $el.id + $el.className + accName}`),
+            dismiss: Utils.prepareDismissal(
+              `BTN_EMPTY_LABELLEDBY ${$el.tagName + $el.id + $el.className + accName}`,
+            ),
             dismissAll: option.checks.BTN_EMPTY_LABELLEDBY.dismissAll
               ? 'BTN_EMPTY_LABELLEDBY'
               : false,
@@ -225,7 +229,9 @@ export default function checkDeveloper(results, option) {
             content: option.checks.BTN_EMPTY.content
               ? Lang.sprintf(option.checks.BTN_EMPTY.content)
               : `${Lang.sprintf('BTN_EMPTY')} ${Lang.sprintf('BTN_TIP')}`,
-            dismiss: Utils.prepareDismissal(`BTN_EMPTY ${$el.tagName + $el.id + $el.className + accName}`),
+            dismiss: Utils.prepareDismissal(
+              `BTN_EMPTY ${$el.tagName + $el.id + $el.className + accName}`,
+            ),
             dismissAll: option.checks.BTN_EMPTY.dismissAll ? 'BTN_EMPTY' : false,
             developer: option.checks.BTN_EMPTY.developer || true,
           });
@@ -244,7 +250,9 @@ export default function checkDeveloper(results, option) {
           content: option.checks.LABEL_IN_NAME.content
             ? Lang.sprintf(option.checks.LABEL_IN_NAME.content, sanitizedText)
             : `${Lang.sprintf('LABEL_IN_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
-          dismiss: Utils.prepareDismissal(`LABEL_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`),
+          dismiss: Utils.prepareDismissal(
+            `LABEL_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`,
+          ),
           dismissAll: option.checks.LABEL_IN_NAME.dismissAll ? 'BTN_LABEL_IN_NAME' : false,
           developer: option.checks.LABEL_IN_NAME.developer || true,
         });
@@ -260,7 +268,9 @@ export default function checkDeveloper(results, option) {
           content: option.checks.BTN_ROLE_IN_NAME.content
             ? Lang.sprintf(option.checks.BTN_ROLE_IN_NAME.content)
             : `${Lang.sprintf('BTN_ROLE_IN_NAME')} ${Lang.sprintf('BTN_TIP')}`,
-          dismiss: Utils.prepareDismissal(`BTN_ROLE_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`),
+          dismiss: Utils.prepareDismissal(
+            `BTN_ROLE_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`,
+          ),
           dismissAll: option.checks.BTN_ROLE_IN_NAME.dismissAll ? 'BTN_ROLE_IN_NAME' : false,
           developer: option.checks.BTN_ROLE_IN_NAME.developer || true,
         });

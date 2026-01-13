@@ -15,7 +15,7 @@ import {
   dismissLogic,
   dismissButtons,
   removeDismissListeners,
-  upgradeSa11yDismissed
+  upgradeSa11yDismissed,
 } from './features/dismiss-annotations';
 import { addColourFilters, resetColourFilters } from './features/colour-filters';
 import { exportResults, removeExportListeners } from './features/export-results';
@@ -102,8 +102,10 @@ class Sa11y {
             const rememberPosition = Utils.store.getItem('sa11y-position');
             const position = Constants.Global.panelPosition;
             const isTop = (position) => position.includes('top');
-            if (option.showMovePanelToggle
-              && (!rememberPosition || isTop(rememberPosition) !== isTop(position))) {
+            if (
+              option.showMovePanelToggle &&
+              (!rememberPosition || isTop(rememberPosition) !== isTop(position))
+            ) {
               Utils.store.setItem('sa11y-position', position);
             }
 
@@ -246,15 +248,18 @@ class Sa11y {
 
       // Generate HTML path, and optionally CSS selector path of element.
       // @4.4.2 - Encrypt dismiss keys.
-      await Promise.all(this.results.map(async ($el, id) => Object.assign($el, {
-        id,
-        cssPath: option.selectorPath ? Utils.generateSelectorPath($el.element) : '',
-        htmlPath: $el.element?.outerHTML.replace(/\s{2,}/g, ' ').trim() || '',
-        ...($el.dismiss && { dismissDigest: await Utils.dismissDigest($el.dismiss) })
-      })));
+      await Promise.all(
+        this.results.map(async ($el, id) =>
+          Object.assign($el, {
+            id,
+            cssPath: option.selectorPath ? Utils.generateSelectorPath($el.element) : '',
+            htmlPath: $el.element?.outerHTML.replace(/\s{2,}/g, ' ').trim() || '',
+            ...($el.dismiss && { dismissDigest: await Utils.dismissDigest($el.dismiss) }),
+          }),
+        ),
+      );
 
       if (option.headless === false) {
-
         // Build array of images to be used for image panel.
         this.imageResults = Elements.Found.Images.map((image) => {
           const match = this.results.find((i) => i.element === image);

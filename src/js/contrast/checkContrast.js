@@ -64,8 +64,9 @@ export default function checkContrast(results, option) {
         if (!isHidden) {
           // Extract all colour codes from background-image value and check contrast.
           const extractColours = Contrast.extractColorFromString(background.value);
-          const hasFailure = !extractColours ||
-            extractColours.some(gradientStop =>
+          const hasFailure =
+            !extractColours ||
+            extractColours.some((gradientStop) =>
               Contrast.checkElementContrast(
                 $el,
                 color,
@@ -74,7 +75,7 @@ export default function checkContrast(results, option) {
                 fontWeight,
                 opacity,
                 option.contrastAlgorithm,
-              )
+              ),
             );
 
           // Push a warning if gradient stop fails contrast, or contains url().
@@ -435,7 +436,9 @@ export default function checkContrast(results, option) {
               ? Lang.sprintf(option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.content)
               : Lang.sprintf('CONTRAST_PLACEHOLDER_UNSUPPORTED') + ratioTip,
             position: 'afterend',
-            dismiss: Utils.prepareDismissal(`CONTRAST_PLACEHOLDER_UNSUPPORTED ${sanitizedPlaceholder}`),
+            dismiss: Utils.prepareDismissal(
+              `CONTRAST_PLACEHOLDER_UNSUPPORTED ${sanitizedPlaceholder}`,
+            ),
             dismissAll: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.dismissAll
               ? 'CONTRAST_PLACEHOLDER_UNSUPPORTED'
               : false,

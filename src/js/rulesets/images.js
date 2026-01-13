@@ -22,9 +22,9 @@ export default function checkImages(results, option) {
   // Generate suspicious alt stop words list.
   const susAltWords = option.susAltStopWords
     ? option.susAltStopWords
-      .split(',')
-      .map((word) => word.trim().toLowerCase())
-      .filter(Boolean)
+        .split(',')
+        .map((word) => word.trim().toLowerCase())
+        .filter(Boolean)
     : Lang._('SUS_ALT_STOPWORDS');
 
   // Generate placeholder stop words set.
@@ -111,7 +111,11 @@ export default function checkImages(results, option) {
 
     // Process link text exclusions.
     const linkText = link
-      ? Utils.fnIgnore(link, Constants.Exclusions.LinkSpan).textContent.replace(linkIgnoreStringPattern, '') : '';
+      ? Utils.fnIgnore(link, Constants.Exclusions.LinkSpan).textContent.replace(
+          linkIgnoreStringPattern,
+          '',
+        )
+      : '';
     const linkTextLength = Utils.removeWhitespace(linkText).length;
 
     /** ******************** */
