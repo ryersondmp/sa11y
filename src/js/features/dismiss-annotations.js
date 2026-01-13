@@ -2,19 +2,19 @@ import { createAlert } from '../interface/alert';
 import Constants from '../utils/constants';
 import find from '../utils/find';
 import Lang from '../utils/lang';
-import { store } from '../utils/utils';
+import { store, dismissDigest } from '../utils/utils';
 
 /* ************************************************************ */
 /*  Update results array before painting annotations to page.   */
 /* ************************************************************ */
 export function dismissLogic(results, dismissTooltip) {
   // Get dismissed items and re-parse back into object.
-  const dismissedIssues = JSON.parse(localStorage.getItem('sa11y-dismissed') || '[]');
+  const dismissedIssues = JSON.parse(store.getItem('sa11y-dismissed-digest') || '[]');
   const currentPath = window.location.pathname;
 
   // Helper function to check if an issue is individually dismissed.
   const isSoloDismissed = (issue, dismissed) =>
-    dismissed.key.includes(issue.dismiss) &&
+    dismissed.key.includes(issue.dismissDigest) &&
     dismissed.href === currentPath &&
     (issue.type === 'warning' || issue.type === 'good');
 
@@ -72,7 +72,7 @@ let dismissHandler;
 /* 1. Hide annotation upon click of dismiss button. */
 const dismissIssueButton = async (e, results, checkAll, resetAll) => {
   // Get dismissed array from localStorage.
-  let savedDismissKeys = JSON.parse(store.getItem('sa11y-dismissed'));
+  let savedDismissKeys = JSON.parse(store.getItem('sa11y-dismissed-digest'));
   const dismissButton = e.target;
   const dismissContainer = document.querySelector('sa11y-panel-tooltips');
   dismissContainer.hidden = false;
@@ -91,14 +91,14 @@ const dismissIssueButton = async (e, results, checkAll, resetAll) => {
     }
 
     // Update dismiss array.
-    if (issue.dismiss) {
+    if (issue.dismissDigest) {
       // If dismiss all selected, then indicate so within dismiss object.
       const dismissAllSelected = dismissButton.hasAttribute('data-sa11y-dismiss-all')
         ? issue.dismissAll
         : '';
       // Dismissal object.
       const dismissalDetails = {
-        key: issue.dismiss,
+        key: issue.dismissDigest,
         href: window.location.pathname,
         ...(dismissAllSelected ? { dismissAll: dismissAllSelected } : {}),
       };
@@ -111,7 +111,7 @@ const dismissIssueButton = async (e, results, checkAll, resetAll) => {
       // Add dismissed item to local storage object.
       store.setItem('sa11y-dismiss-item', JSON.stringify(dismissalDetails));
       savedDismissKeys.push(dismissalDetails);
-      store.setItem('sa11y-dismissed', JSON.stringify(savedDismissKeys));
+      store.setItem('sa11y-dismissed-digest', JSON.stringify(savedDismissKeys));
       store.removeItem('sa11y-dismiss-item'); // Remove temporary storage item.
 
       // Remove tooltip.
@@ -134,7 +134,7 @@ const restoreDismissButton = async (dismissed, checkAll, resetAll) => {
   const dismissContainer = document.querySelector('sa11y-panel-tooltips');
   dismissContainer.hidden = true; // Prevent flash of tooltip.
   const filtered = dismissed.filter((item) => item.href !== window.location.pathname);
-  store.setItem('sa11y-dismissed', JSON.stringify(filtered));
+  store.setItem('sa11y-dismissed-digest', JSON.stringify(filtered));
   Constants.Panel.dismissButton.classList.remove('active');
 
   // Reset & check.
@@ -163,4 +163,61 @@ export function dismissButtons(results, dismissed, checkAll, resetAll) {
 export function removeDismissListeners() {
   Constants.Panel.panel?.removeEventListener('click', dismissHandler);
   Constants.Panel.dismissButton?.removeEventListener('click', restoreDismissedHandler);
+}
+
+/**
+ * Migrates legacy 'sa11y-dismissed' storage keys to digested hashes. Uses an inline Web Worker to process large datasets without blocking the UI.
+ * @async
+ * @deprecated To be removed in the future!
+ * @returns {Promise<void>}
+ */
+export async function upgradeSa11yDismissed() {
+  const sa11yDismissed = store.getItem('sa11y-dismissed');
+  if (!sa11yDismissed) return;
+  try {
+    const parsed = JSON.parse(sa11yDismissed);
+    if (!Array.isArray(parsed) || parsed.length === 0) return;
+
+    // 1. Creater worker.
+    const workerCode = `
+      const dismissDigest = ${dismissDigest.toString().replace(/window\./g, 'self.')};
+      self.onmessage = async (e) => {
+        const items = e.data;
+        try {
+          const upgraded = await Promise.all(
+            items.map(async (pair) => ({
+              ...pair,
+              key: await dismissDigest(pair.key)
+            }))
+          );
+          self.postMessage({ success: true, data: upgraded });
+        } catch (err) {
+          self.postMessage({ success: false, error: err.message });
+        }
+      };
+    `;
+
+    // 2. Create a Blob and a URL for the worker
+    const blob = new Blob([workerCode], { type: 'application/javascript' });
+    const workerUrl = URL.createObjectURL(blob);
+    const worker = new Worker(workerUrl);
+
+    // 3. Wrap the worker communication in a Promise
+    const upgradedIssues = await new Promise((resolve, reject) => {
+      worker.onmessage = (e) => {
+        if (e.data.success) resolve(e.data.data);
+        else reject(new Error(e.data.error));
+      };
+      worker.onerror = (err) => reject(err);
+      worker.postMessage(parsed);
+    });
+
+    // 4. Save upgraded results.
+    store.setItem('sa11y-dismissed-digest', JSON.stringify(upgradedIssues));
+    store.removeItem('sa11y-dismissed');
+    worker.terminate();
+    URL.revokeObjectURL(workerUrl);
+  } catch (error) {
+    console.error('Sa11y:', error);
+  }
 }

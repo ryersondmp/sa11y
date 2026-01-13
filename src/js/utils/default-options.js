@@ -44,6 +44,7 @@ const defaultOptions = {
   selectorPath: false,
   shadowComponents: '',
   autoDetectShadowComponents: false,
+  pepper: window.location.hostname, // Provide a string to seed hashes.
 
   // Annotations
   showGoodImageButton: true,

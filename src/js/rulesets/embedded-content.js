@@ -20,7 +20,7 @@ export default function checkEmbeddedContent(results, option) {
         element: $el,
         type: option.checks.EMBED_AUDIO.type || 'warning',
         content: Lang.sprintf(option.checks.EMBED_AUDIO.content || 'EMBED_AUDIO'),
-        dismiss: Utils.prepareDismissal(`AUDIO${src($el)}`),
+        dismiss: Utils.prepareDismissal(`EMBED_AUDIO ${src($el)}`),
         dismissAll: option.checks.EMBED_AUDIO.dismissAll ? 'EMBED_AUDIO' : false,
         developer: option.checks.EMBED_AUDIO.developer || false,
       });
@@ -39,7 +39,7 @@ export default function checkEmbeddedContent(results, option) {
           element: $el,
           type: option.checks.EMBED_VIDEO.type || 'warning',
           content: Lang.sprintf(option.checks.EMBED_VIDEO.content || 'EMBED_VIDEO'),
-          dismiss: Utils.prepareDismissal(`VIDEO${src($el)}`),
+          dismiss: Utils.prepareDismissal(`EMBED_VIDEO ${src($el)}`),
           dismissAll: option.checks.EMBED_VIDEO.dismissAll ? 'EMBED_VIDEO' : false,
           developer: option.checks.EMBED_VIDEO.developer || false,
         });
@@ -56,7 +56,7 @@ export default function checkEmbeddedContent(results, option) {
         element: $el,
         type: option.checks.EMBED_DATA_VIZ.type || 'warning',
         content: Lang.sprintf(option.checks.EMBED_DATA_VIZ.content || 'EMBED_DATA_VIZ'),
-        dismiss: Utils.prepareDismissal(`DATAVIZ${src($el)}`),
+        dismiss: Utils.prepareDismissal(`EMBED_DATA_VIZ ${src($el)}`),
         dismissAll: option.checks.EMBED_DATA_VIZ.dismissAll ? 'EMBED_DATA_VIZ' : false,
         developer: option.checks.EMBED_DATA_VIZ.developer || false,
       });
@@ -83,7 +83,7 @@ export default function checkEmbeddedContent(results, option) {
           element: $el,
           type: option.checks.EMBED_UNFOCUSABLE.type || 'error',
           content: Lang.sprintf(option.checks.EMBED_UNFOCUSABLE.content || 'EMBED_UNFOCUSABLE'),
-          dismiss: Utils.prepareDismissal(`EMBEDUNFOCUSABLE${src($el)}`),
+          dismiss: Utils.prepareDismissal(`EMBED_UNFOCUSABLE ${src($el)}`),
           dismissAll: option.checks.EMBED_UNFOCUSABLE.dismissAll ? 'EMBED_UNFOCUSABLE' : false,
           developer: option.checks.EMBED_UNFOCUSABLE.developer || true,
         });
@@ -102,7 +102,7 @@ export default function checkEmbeddedContent(results, option) {
           element: $el,
           type: option.checks.EMBED_MISSING_TITLE.type || 'error',
           content: Lang.sprintf(option.checks.EMBED_MISSING_TITLE.content || 'EMBED_MISSING_TITLE'),
-          dismiss: Utils.prepareDismissal(`EMBEDMISSTITLE${src($el)}`),
+          dismiss: Utils.prepareDismissal(`EMBED_MISSING_TITLE ${src($el)}`),
           dismissAll: option.checks.EMBED_MISSING_TITLE.dismissAll ? 'EMBED_MISSING_TITLE' : false,
           developer: option.checks.EMBED_MISSING_TITLE.developer || true,
         });
@@ -132,7 +132,7 @@ export default function checkEmbeddedContent(results, option) {
         element: $el,
         type: option.checks.EMBED_GENERAL.type || 'warning',
         content: Lang.sprintf(option.checks.EMBED_GENERAL.content || 'EMBED_GENERAL'),
-        dismiss: Utils.prepareDismissal(`IFRAMEGENERAL${src($el)}`),
+        dismiss: Utils.prepareDismissal(`EMBED_GENERAL ${src($el)}`),
         dismissAll: option.checks.EMBED_GENERAL.dismissAll ? 'EMBED_GENERAL' : false,
         developer: option.checks.EMBED_GENERAL.developer || false,
       });

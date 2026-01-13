@@ -72,7 +72,7 @@ export default function generateImageOutline(dismissed, imageResults, option) {
     const imageArray = [];
     imageResults.forEach((image, i) => {
       // Match dismissed images.
-      const isDismissed = dismissed.some((key) => key.dismiss === image.dismiss);
+      const isDismissed = dismissed.some((key) => key.dismissDigest === image.dismissDigest);
       if (isDismissed) {
         Object.assign(image, { dismissedImage: true });
       }
@@ -163,7 +163,7 @@ export default function generateImageOutline(dismissed, imageResults, option) {
           <button type="button" tabindex="-1">
             <img src="${source}" alt/>
             <div class="alt"> ${visibleIcon} ${linked} ${decorative}
-              <div class="badge">${Lang._('ALT')}</div> ${altText}
+              <div class="badge">${Lang._('ALT')}</div> ${startsWithSpecificAlt ? '' : altText}
             </div>
           </button>
           ${edit}

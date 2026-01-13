@@ -117,7 +117,7 @@ export default function checkHeaders(results, option, headingOutline) {
         element: $el,
         type,
         content,
-        dismiss: Utils.prepareDismissal(`H${level + headingText}`),
+        dismiss: Utils.prepareDismissal(`${test + level + headingText}`),
         dismissAll,
         isWithinRoot,
         developer,
@@ -137,7 +137,7 @@ export default function checkHeaders(results, option, headingOutline) {
         headingLevel: level,
         text: headingText,
         type,
-        dismiss: Utils.prepareDismissal(`H${level + headingText}`),
+        dismiss: Utils.prepareDismissal(`${test + level + headingText}`),
         isWithinRoot,
       });
     }
@@ -149,7 +149,7 @@ export default function checkHeaders(results, option, headingOutline) {
       test: 'HEADING_MISSING_ONE',
       type: option.checks.HEADING_MISSING_ONE.type || 'warning',
       content: Lang.sprintf(option.checks.HEADING_MISSING_ONE.content || 'HEADING_MISSING_ONE'),
-      dismiss: 'MISSINGH1',
+      dismiss: 'HEADING_MISSING_ONE',
       developer: option.checks.HEADING_MISSING_ONE.developer || false,
     });
   }

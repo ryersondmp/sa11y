@@ -14,7 +14,7 @@ export default function checkDeveloper(results, option) {
         test: 'META_LANG',
         type: option.checks.META_LANG.type || 'error',
         content: Lang.sprintf(option.checks.META_LANG.content || 'META_LANG'),
-        dismiss: Utils.prepareDismissal('LANG'),
+        dismiss: Utils.prepareDismissal('META_LANG'),
         developer: option.checks.META_LANG.developer || true,
       });
     }
@@ -30,7 +30,7 @@ export default function checkDeveloper(results, option) {
         test: 'META_TITLE',
         type: option.checks.META_TITLE.type || 'error',
         content: Lang.sprintf(option.checks.META_TITLE.content || 'META_TITLE'),
-        dismiss: Utils.prepareDismissal('TITLE'),
+        dismiss: Utils.prepareDismissal('META_TITLE'),
         developer: option.checks.META_TITLE.developer || true,
       });
     }
@@ -60,7 +60,7 @@ export default function checkDeveloper(results, option) {
             test: 'META_SCALABLE',
             type: option.checks.META_SCALABLE.type || 'error',
             content: Lang.sprintf(option.checks.META_SCALABLE.content || 'META_SCALABLE'),
-            dismiss: Utils.prepareDismissal('SCALABLE'),
+            dismiss: Utils.prepareDismissal('META_SCALABLE'),
             developer: option.checks.META_SCALABLE.developer || true,
           });
         }
@@ -72,7 +72,7 @@ export default function checkDeveloper(results, option) {
             test: 'META_MAX',
             type: option.checks.META_MAX.type || 'error',
             content: Lang.sprintf(option.checks.META_MAX.content || 'META_MAX'),
-            dismiss: Utils.prepareDismissal('MAXSCALE'),
+            dismiss: Utils.prepareDismissal('META_MAX'),
             developer: option.checks.META_MAX.developer || true,
           });
         }
@@ -90,7 +90,7 @@ export default function checkDeveloper(results, option) {
         test: 'META_REFRESH',
         type: option.checks.META_REFRESH.type || 'error',
         content: Lang.sprintf(option.checks.META_REFRESH.content || 'META_REFRESH'),
-        dismiss: Utils.prepareDismissal('REFRESH'),
+        dismiss: Utils.prepareDismissal('META_REFRESH'),
         developer: option.checks.META_REFRESH.developer || true,
       });
     }
@@ -132,7 +132,7 @@ export default function checkDeveloper(results, option) {
                 element: $el,
                 type: option.checks.DUPLICATE_ID.type || 'error',
                 content: Lang.sprintf(option.checks.DUPLICATE_ID.content || 'DUPLICATE_ID', id),
-                dismiss: Utils.prepareDismissal(`DUPLICATEID${id}${$el.textContent}`),
+                dismiss: Utils.prepareDismissal(`DUPLICATE_ID ${id}${$el.textContent}`),
                 dismissAll: option.checks.DUPLICATE_ID.dismissAll ? 'DUPLICATE_ID' : false,
                 developer: option.checks.DUPLICATE_ID.developer || true,
               });
@@ -171,9 +171,6 @@ export default function checkDeveloper(results, option) {
       const accName = computeAccessibleName($el);
       const buttonText = accName.replace(/'|"|-|\.|\s+/g, '').toLowerCase();
 
-      // Dismissal key.
-      const key = Utils.prepareDismissal(`BTN${$el.tagName + $el.id + $el.className + accName}`);
-
       // Has ARIA
       const hasAria =
         $el.querySelector(':scope [aria-labelledby], :scope [aria-label]') ||
@@ -193,7 +190,7 @@ export default function checkDeveloper(results, option) {
               element: $el,
               type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
               content: Lang.sprintf(option.checks.HIDDEN_FOCUSABLE.content || 'HIDDEN_FOCUSABLE'),
-              dismiss: key,
+              dismiss: Utils.prepareDismissal(`HIDDEN_FOCUSABLE ${$el.tagName + $el.id + $el.className + accName}`),
               dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll
                 ? 'BTN_HIDDEN_FOCUSABLE'
                 : false,
@@ -214,7 +211,7 @@ export default function checkDeveloper(results, option) {
             content: option.checks.BTN_EMPTY_LABELLEDBY.content
               ? Lang.sprintf(option.checks.BTN_EMPTY_LABELLEDBY.content)
               : `${Lang.sprintf('BTN_EMPTY_LABELLEDBY')} ${Lang.sprintf('BTN_TIP')}`,
-            dismiss: Utils.prepareDismissal(key),
+            dismiss: Utils.prepareDismissal(`BTN_EMPTY_LABELLEDBY ${$el.tagName + $el.id + $el.className + accName}`),
             dismissAll: option.checks.BTN_EMPTY_LABELLEDBY.dismissAll
               ? 'BTN_EMPTY_LABELLEDBY'
               : false,
@@ -228,7 +225,7 @@ export default function checkDeveloper(results, option) {
             content: option.checks.BTN_EMPTY.content
               ? Lang.sprintf(option.checks.BTN_EMPTY.content)
               : `${Lang.sprintf('BTN_EMPTY')} ${Lang.sprintf('BTN_TIP')}`,
-            dismiss: key,
+            dismiss: Utils.prepareDismissal(`BTN_EMPTY ${$el.tagName + $el.id + $el.className + accName}`),
             dismissAll: option.checks.BTN_EMPTY.dismissAll ? 'BTN_EMPTY' : false,
             developer: option.checks.BTN_EMPTY.developer || true,
           });
@@ -247,7 +244,7 @@ export default function checkDeveloper(results, option) {
           content: option.checks.LABEL_IN_NAME.content
             ? Lang.sprintf(option.checks.LABEL_IN_NAME.content, sanitizedText)
             : `${Lang.sprintf('LABEL_IN_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
-          dismiss: key,
+          dismiss: Utils.prepareDismissal(`LABEL_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`),
           dismissAll: option.checks.LABEL_IN_NAME.dismissAll ? 'BTN_LABEL_IN_NAME' : false,
           developer: option.checks.LABEL_IN_NAME.developer || true,
         });
@@ -263,7 +260,7 @@ export default function checkDeveloper(results, option) {
           content: option.checks.BTN_ROLE_IN_NAME.content
             ? Lang.sprintf(option.checks.BTN_ROLE_IN_NAME.content)
             : `${Lang.sprintf('BTN_ROLE_IN_NAME')} ${Lang.sprintf('BTN_TIP')}`,
-          dismiss: key,
+          dismiss: Utils.prepareDismissal(`BTN_ROLE_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`),
           dismissAll: option.checks.BTN_ROLE_IN_NAME.dismissAll ? 'BTN_ROLE_IN_NAME' : false,
           developer: option.checks.BTN_ROLE_IN_NAME.developer || true,
         });
@@ -282,7 +279,7 @@ export default function checkDeveloper(results, option) {
           element: $el,
           type: option.checks.UNCONTAINED_LI.type || 'error',
           content: Lang.sprintf(option.checks.UNCONTAINED_LI.content || 'UNCONTAINED_LI'),
-          dismiss: Utils.prepareDismissal(`UNCONTAINEDLI${$el.textContent}`),
+          dismiss: Utils.prepareDismissal(`UNCONTAINED_LI ${$el.textContent}`),
           dismissAll: option.checks.UNCONTAINED_LI.dismissAll ? 'UNCONTAINED_LI' : false,
           developer: option.checks.UNCONTAINED_LI.developer || true,
         });
@@ -300,7 +297,7 @@ export default function checkDeveloper(results, option) {
         element: $el,
         type: option.checks.TABINDEX_ATTR.type || 'error',
         content: Lang.sprintf(option.checks.TABINDEX_ATTR.content || 'TABINDEX_ATTR'),
-        dismiss: Utils.prepareDismissal(`TABINDEX${$el.tagName + $el.id + $el.className}`),
+        dismiss: Utils.prepareDismissal(`TABINDEX_ATTR ${$el.tagName + $el.id + $el.className}`),
         dismissAll: option.checks.TABINDEX_ATTR.dismissAll ? 'TABINDEX_ATTR' : false,
         developer: option.checks.TABINDEX_ATTR.developer || true,
       });

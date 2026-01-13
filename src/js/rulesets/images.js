@@ -22,9 +22,9 @@ export default function checkImages(results, option) {
   // Generate suspicious alt stop words list.
   const susAltWords = option.susAltStopWords
     ? option.susAltStopWords
-        .split(',')
-        .map((word) => word.trim().toLowerCase())
-        .filter(Boolean)
+      .split(',')
+      .map((word) => word.trim().toLowerCase())
+      .filter(Boolean)
     : Lang._('SUS_ALT_STOPWORDS');
 
   // Generate placeholder stop words set.
@@ -111,11 +111,7 @@ export default function checkImages(results, option) {
 
     // Process link text exclusions.
     const linkText = link
-      ? Utils.fnIgnore(link, Constants.Exclusions.LinkSpan).textContent.replace(
-          linkIgnoreStringPattern,
-          '',
-        )
-      : '';
+      ? Utils.fnIgnore(link, Constants.Exclusions.LinkSpan).textContent.replace(linkIgnoreStringPattern, '') : '';
     const linkTextLength = Utils.removeWhitespace(linkText).length;
 
     /** ******************** */
@@ -130,7 +126,7 @@ export default function checkImages(results, option) {
           element: $el,
           type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
           content: Lang.sprintf(option.checks.HIDDEN_FOCUSABLE.content || 'HIDDEN_FOCUSABLE'),
-          dismiss: Utils.prepareDismissal(`IMGHIDDENFOCUSABLE${src}`),
+          dismiss: Utils.prepareDismissal(`HIDDEN_FOCUSABLE ${src}`),
           dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll ? 'LINK_HIDDEN_FOCUSABLE' : false,
           developer: option.checks.HIDDEN_FOCUSABLE.developer || true,
         });
@@ -171,7 +167,7 @@ export default function checkImages(results, option) {
           element: $el,
           type: option.checks.MISSING_ALT.type || 'error',
           content: Lang.sprintf(option.checks.MISSING_ALT.content || 'MISSING_ALT'),
-          dismiss: Utils.prepareDismissal(`IMGNOALT${src}`),
+          dismiss: Utils.prepareDismissal(`MISSING_ALT ${src}`),
           dismissAll: option.checks.MISSING_ALT.dismissAll ? 'MISSING_ALT' : false,
           developer: option.checks.MISSING_ALT.developer || false,
         });
@@ -194,7 +190,7 @@ export default function checkImages(results, option) {
           element: $el,
           type: option.checks.MISSING_ALT.type || 'error',
           content: Lang.sprintf(option.checks.MISSING_ALT.content || 'MISSING_ALT'),
-          dismiss: Utils.prepareDismissal(`IMGNOALTARIA${src}`),
+          dismiss: Utils.prepareDismissal(`MISSING_ALT ${hasAria + src}`),
           dismissAll: option.checks.MISSING_ALT.dismissAll ? 'MISSING_ALT' : false,
           developer: option.checks.MISSING_ALT.developer || false,
         });
@@ -283,7 +279,7 @@ export default function checkImages(results, option) {
           element: $el,
           type: option.checks.IMAGE_DECORATIVE.type || 'warning',
           content: Lang.sprintf(option.checks.IMAGE_DECORATIVE.content || 'IMAGE_DECORATIVE'),
-          dismiss: Utils.prepareDismissal(`DECIMAGE${src}`),
+          dismiss: Utils.prepareDismissal(`IMAGE_DECORATIVE ${src}`),
           dismissAll: option.checks.IMAGE_DECORATIVE.dismissAll ? 'IMAGE_DECORATIVE' : false,
           developer: option.checks.IMAGE_DECORATIVE.developer || false,
         });
@@ -305,7 +301,7 @@ export default function checkImages(results, option) {
           element: $el,
           type: unpronounceable.type || 'error',
           content: Lang.sprintf(unpronounceable.content || conditional, altText),
-          dismiss: Utils.prepareDismissal(`UNPRONOUNCEABLE${src}`),
+          dismiss: Utils.prepareDismissal(`${conditional + src}`),
           dismissAll: unpronounceable.dismissAll ? 'ALT_UNPRONOUNCEABLE' : false,
           developer: unpronounceable.developer || false,
         });
@@ -435,7 +431,7 @@ export default function checkImages(results, option) {
               option.checks.IMAGE_FIGURE_DUPLICATE_ALT.content || 'IMAGE_FIGURE_DUPLICATE_ALT',
               altText,
             ),
-            dismiss: Utils.prepareDismissal(`FIGDUPLICATE${src}`),
+            dismiss: Utils.prepareDismissal(`IMAGE_FIGURE_DUPLICATE_ALT ${src}`),
             dismissAll: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.dismissAll
               ? 'IMAGE_FIGURE_DUPLICATE_ALT'
               : false,
@@ -449,7 +445,7 @@ export default function checkImages(results, option) {
           element: $el,
           type: option.checks.IMAGE_PASS.type || 'good',
           content: Lang.sprintf(option.checks.IMAGE_PASS.content || 'IMAGE_PASS', altText),
-          dismiss: Utils.prepareDismissal(`FIGIMGPASS${src + altText}`),
+          dismiss: Utils.prepareDismissal(`IMAGE_PASS FIGURE ${src + altText}`),
           dismissAll: option.checks.IMAGE_PASS.dismissAll ? 'IMAGE_PASS' : false,
           developer: option.checks.IMAGE_PASS.developer || false,
         });
@@ -462,7 +458,7 @@ export default function checkImages(results, option) {
           element: $el,
           type: option.checks.IMAGE_PASS.type || 'good',
           content: Lang.sprintf(option.checks.IMAGE_PASS.content || 'IMAGE_PASS', altText),
-          dismiss: Utils.prepareDismissal(`IMAGEPASS${src + altText}`),
+          dismiss: Utils.prepareDismissal(`IMAGE_PASS ${src + altText}`),
           dismissAll: option.checks.IMAGE_PASS.dismissAll ? 'IMAGE_PASS' : false,
           developer: option.checks.IMAGE_PASS.developer || false,
         });
@@ -481,7 +477,7 @@ export default function checkImages(results, option) {
           type: option.checks.DUPLICATE_TITLE.type || 'warning',
           content: Lang.sprintf(option.checks.DUPLICATE_TITLE.content || 'DUPLICATE_TITLE'),
           inline: true,
-          dismiss: Utils.prepareDismissal(`ALTDUPLICATETITLE${altText}`),
+          dismiss: Utils.prepareDismissal(`DUPLICATE_TITLE ${altText}`),
           dismissAll: option.checks.DUPLICATE_TITLE.dismissAll ? 'DUPLICATE_TITLE' : false,
           developer: option.checks.DUPLICATE_TITLE.developer || false,
         });

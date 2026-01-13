@@ -854,3 +854,20 @@ export function generateRegexString(input, matchStart = false) {
   // Compile final case-insensitive regex.
   return new RegExp(finalPattern, 'gi');
 }
+
+/**
+ * Generates a SHA-256 hex digest from a pepper + message combination, used for dismiss keys within localstorage. Yoinked from Editoria11y!
+ * @async
+ * @param {string} pepper - A secret or application-specific salt.
+ * @param {string} message - The message or identifier to hash.
+ * @returns {Promise<string>} A lowercase hexadecimal SHA-256 digest.
+ */
+export async function dismissDigest(pepper, message) {
+  const msgUint8 = new TextEncoder().encode(pepper + message);
+  const hashBuffer = await window.crypto.subtle.digest('SHA-256', msgUint8);
+  if (Uint8Array.prototype.toHex) {
+    return new Uint8Array(hashBuffer).toHex();
+  }
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+}

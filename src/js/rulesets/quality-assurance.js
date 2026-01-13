@@ -15,7 +15,7 @@ export default function checkQA(results, option) {
         type: option.checks.QA_BAD_LINK.type || 'error',
         content: Lang.sprintf(option.checks.QA_BAD_LINK.content || 'QA_BAD_LINK', $el),
         inline: true,
-        dismiss: Utils.prepareDismissal($el.tagName + $el.textContent),
+        dismiss: Utils.prepareDismissal(`QA_BAD_LINK ${$el.tagName + $el.textContent}`),
         dismissAll: option.checks.QA_BAD_LINK.dismissAll ? 'QA_BAD_LINK' : false,
         developer: option.checks.QA_BAD_LINK.developer || false,
       });
@@ -34,7 +34,7 @@ export default function checkQA(results, option) {
           element: $el.parentNode,
           type: option.checks.QA_STRONG_ITALICS.type || 'warning',
           content: Lang.sprintf(option.checks.QA_STRONG_ITALICS.content || 'QA_STRONG_ITALICS'),
-          dismiss: Utils.prepareDismissal($el.tagName + $el.textContent),
+          dismiss: Utils.prepareDismissal(`QA_STRONG_ITALICS ${$el.tagName + $el.textContent}`),
           dismissAll: option.checks.QA_STRONG_ITALICS.dismissAll ? 'QA_STRONG_ITALICS' : false,
           developer: option.checks.QA_STRONG_ITALICS.developer || false,
         });
@@ -84,7 +84,7 @@ export default function checkQA(results, option) {
               type: option.checks.QA_IN_PAGE_LINK.type || 'error',
               content: Lang.sprintf(option.checks.QA_IN_PAGE_LINK.content || 'QA_IN_PAGE_LINK'),
               inline: true,
-              dismiss: Utils.prepareDismissal(`QAINPAGE${href}`),
+              dismiss: Utils.prepareDismissal(`QA_IN_PAGE_LINK ${href}`),
               dismissAll: option.checks.QA_IN_PAGE_LINK.dismissAll ? 'QA_IN_PAGE_LINK' : false,
               developer: option.checks.QA_IN_PAGE_LINK.developer || false,
             });
@@ -100,7 +100,7 @@ export default function checkQA(results, option) {
           type: option.checks.QA_DOCUMENT.type || 'warning',
           content: Lang.sprintf(option.checks.QA_DOCUMENT.content || 'QA_DOCUMENT'),
           inline: true,
-          dismiss: Utils.prepareDismissal(`DOC${href}`),
+          dismiss: Utils.prepareDismissal(`QA_DOCUMENT ${href}`),
           dismissAll: option.checks.QA_DOCUMENT.dismissAll ? 'QA_DOCUMENT' : false,
           developer: option.checks.QA_DOCUMENT.developer || false,
         });
@@ -111,7 +111,7 @@ export default function checkQA(results, option) {
           type: option.checks.QA_PDF.type || 'warning',
           content: Lang.sprintf(option.checks.QA_PDF.content || 'QA_PDF'),
           inline: true,
-          dismiss: Utils.prepareDismissal(`PDF${href}`),
+          dismiss: Utils.prepareDismissal(`QA_PDF ${href}`),
           dismissAll: option.checks.QA_PDF.dismissAll ? 'QA_PDF' : false,
           developer: option.checks.QA_PDF.developer || false,
         });
@@ -135,7 +135,7 @@ export default function checkQA(results, option) {
             option.checks.QA_BLOCKQUOTE.content || 'QA_BLOCKQUOTE',
             sanitizedText,
           ),
-          dismiss: Utils.prepareDismissal(`BLOCKQUOTE${sanitizedText}`),
+          dismiss: Utils.prepareDismissal(`QA_BLOCKQUOTE ${sanitizedText}`),
           dismissAll: option.checks.QA_BLOCKQUOTE.dismissAll ? 'QA_BLOCKQUOTE' : false,
           developer: option.checks.QA_BLOCKQUOTE.developer || false,
         });
@@ -150,7 +150,7 @@ export default function checkQA(results, option) {
     if (Utils.isElementHidden($el) === false) {
       const tableHeaders = $el.querySelectorAll('th');
       const semanticHeadings = $el.querySelectorAll('h1, h2, h3, h4, h5, h6');
-      const key = Utils.prepareDismissal(`TABLE${$el.textContent}`);
+
       if (option.checks.TABLES_MISSING_HEADINGS && tableHeaders.length === 0) {
         results.push({
           test: 'TABLES_MISSING_HEADINGS',
@@ -159,7 +159,7 @@ export default function checkQA(results, option) {
           content: Lang.sprintf(
             option.checks.TABLES_MISSING_HEADINGS.content || 'TABLES_MISSING_HEADINGS',
           ),
-          dismiss: key,
+          dismiss: Utils.prepareDismissal(`TABLES_MISSING_HEADINGS ${$el.textContent}`),
           dismissAll: option.checks.TABLES_MISSING_HEADINGS.dismissAll
             ? 'TABLES_MISSING_HEADINGS'
             : false,
@@ -175,7 +175,7 @@ export default function checkQA(results, option) {
             content: Lang.sprintf(
               option.checks.TABLES_SEMANTIC_HEADING.content || 'TABLES_SEMANTIC_HEADING',
             ),
-            dismiss: key,
+            dismiss: Utils.prepareDismissal(`TABLES_SEMANTIC_HEADING ${$el.textContent}`),
             dismissAll: option.checks.TABLES_SEMANTIC_HEADING.dismissAll
               ? 'TABLES_SEMANTIC_HEADING'
               : false,
@@ -193,7 +193,7 @@ export default function checkQA(results, option) {
               option.checks.TABLES_EMPTY_HEADING.content || 'TABLES_EMPTY_HEADING',
             ),
             position: 'afterbegin',
-            dismiss: key,
+            dismiss: Utils.prepareDismissal(`TABLES_EMPTY_HEADING ${$el.textContent}`),
             dismissAll: option.checks.TABLES_EMPTY_HEADING.dismissAll
               ? 'TABLES_EMPTY_HEADING'
               : false,
@@ -217,7 +217,7 @@ export default function checkQA(results, option) {
           option.checks.QA_FAKE_HEADING.content || 'QA_FAKE_HEADING',
           sanitizedText,
         ),
-        dismiss: Utils.prepareDismissal(`BOLD${sanitizedText}`),
+        dismiss: Utils.prepareDismissal(`QA_FAKE_HEADING ${sanitizedText}`),
         inline: true,
         dismissAll: option.checks.QA_FAKE_HEADING.dismissAll ? 'QA_FAKE_HEADING' : false,
         developer: option.checks.QA_FAKE_HEADING.developer || false,
@@ -227,9 +227,7 @@ export default function checkQA(results, option) {
     // To minimize false positives/number of warnings...
     const isPreviousElementAHeading = (p) => {
       const previousElement = p.previousElementSibling;
-      if (!previousElement) {
-        return false;
-      }
+      if (!previousElement) return false;
       const headingTags = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'];
       return headingTags.includes(previousElement.tagName);
     };
@@ -270,10 +268,7 @@ export default function checkQA(results, option) {
         if (typicalHeadingLength && notASentence) {
           // Be a little forgiving if it's a small paragraph.
           const nonHeadingTextLength = Utils.fnIgnore(p, ['strong', 'b']).textContent.trim().length;
-          if (nonHeadingTextLength !== 0 && nonHeadingTextLength <= 250) {
-            return;
-          }
-
+          if (nonHeadingTextLength !== 0 && nonHeadingTextLength <= 250) return;
           const sanitizedText = Utils.sanitizeHTML(possibleHeadingText);
           addResult(possibleHeading, sanitizedText);
         }
@@ -382,7 +377,7 @@ export default function checkQA(results, option) {
               option.checks.QA_FAKE_LIST.content || 'QA_FAKE_LIST',
               firstPrefix,
             ),
-            dismiss: Utils.prepareDismissal(`LIST${p.textContent}`),
+            dismiss: Utils.prepareDismissal(`QA_FAKE_LIST ${p.textContent}`),
             dismissAll: option.checks.QA_FAKE_LIST.dismissAll ? 'QA_FAKE_LIST' : false,
             developer: option.checks.QA_FAKE_LIST.developer || false,
           });
@@ -423,7 +418,7 @@ export default function checkQA(results, option) {
           element: $el,
           type: option.checks.QA_UPPERCASE.type || 'warning',
           content: Lang.sprintf(option.checks.QA_UPPERCASE.content || 'QA_UPPERCASE'),
-          dismiss: Utils.prepareDismissal(`UPPERCASE${thisText}`),
+          dismiss: Utils.prepareDismissal(`QA_UPPERCASE ${thisText}`),
           dismissAll: option.checks.QA_UPPERCASE.dismissAll ? 'QA_UPPERCASE' : false,
           developer: option.checks.QA_UPPERCASE.developer || false,
         });
@@ -454,7 +449,7 @@ export default function checkQA(results, option) {
       type: option.checks.QA_UNDERLINE.type || 'warning',
       content: Lang.sprintf(option.checks.QA_UNDERLINE.content || 'QA_UNDERLINE'),
       inline: true,
-      dismiss: Utils.prepareDismissal(`UNDERLINE${$el.textContent}`),
+      dismiss: Utils.prepareDismissal(`QA_UNDERLINE ${$el.textContent}`),
       dismissAll: option.checks.QA_UNDERLINE.dismissAll ? 'QA_UNDERLINE' : false,
       developer: option.checks.QA_UNDERLINE.developer || false,
     });
@@ -466,7 +461,7 @@ export default function checkQA(results, option) {
       element: $el,
       type: option.checks.QA_JUSTIFY.type || 'warning',
       content: Lang.sprintf(option.checks.QA_JUSTIFY.content || 'QA_JUSTIFY'),
-      dismiss: Utils.prepareDismissal(`JUSTIFIED${$el.textContent}`),
+      dismiss: Utils.prepareDismissal(`QA_JUSTIFY ${$el.textContent}`),
       dismissAll: option.checks.QA_JUSTIFY.dismissAll ? 'QA_JUSTIFY' : false,
       developer: option.checks.QA_JUSTIFY.developer || false,
     });
@@ -478,7 +473,7 @@ export default function checkQA(results, option) {
       element: $el,
       type: option.checks.QA_SMALL_TEXT.type || 'warning',
       content: Lang.sprintf(option.checks.QA_SMALL_TEXT.content || 'QA_SMALL_TEXT'),
-      dismiss: Utils.prepareDismissal(`SMALL${$el.textContent}`),
+      dismiss: Utils.prepareDismissal(`QA_SMALL_TEXT ${$el.textContent}`),
       dismissAll: option.checks.QA_SMALL_TEXT.dismissAll ? 'QA_SMALL_TEXT' : false,
       developer: option.checks.QA_SMALL_TEXT.developer || false,
     });
@@ -556,7 +551,7 @@ export default function checkQA(results, option) {
           type: option.checks.QA_SUBSCRIPT.type || 'warning',
           content: Lang.sprintf(option.checks.QA_SUBSCRIPT.content || 'QA_SUBSCRIPT'),
           inline: true,
-          dismiss: Utils.prepareDismissal($el.tagName + text),
+          dismiss: Utils.prepareDismissal(`QA_SUBSCRIPT ${$el.tagName + text}`),
           dismissAll: option.checks.QA_SUBSCRIPT.dismissAll ? 'QA_SUBSCRIPT' : false,
           developer: option.checks.QA_SUBSCRIPT.developer || false,
         });
@@ -579,7 +574,7 @@ export default function checkQA(results, option) {
           content: Lang.sprintf(
             option.checks.QA_NESTED_COMPONENTS.content || 'QA_NESTED_COMPONENTS',
           ),
-          dismiss: Utils.prepareDismissal(`NESTED${$el.textContent}`),
+          dismiss: Utils.prepareDismissal(`QA_NESTED_COMPONENTS ${$el.textContent}`),
           dismissAll: option.checks.QA_NESTED_COMPONENTS.dismissAll
             ? 'QA_NESTED_COMPONENTS'
             : false,
