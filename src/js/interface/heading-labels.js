@@ -1,14 +1,18 @@
 // Empty anchors appended to the hidden heading's visible parent.
 export class HeadingAnchor extends HTMLElement {
-  connectedCallback() {
-    this.attachShadow({ mode: 'open' });
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
   }
 }
 
 // Visible heading annotations.
 export class HeadingLabel extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+  }
   connectedCallback() {
-    const shadow = this.attachShadow({ mode: 'open' });
     const style = document.createElement('style');
     style.textContent = `
       span.heading-label {
@@ -36,6 +40,6 @@ export class HeadingLabel extends HTMLElement {
           border: 2px solid transparent;
         }
       }`;
-    shadow.appendChild(style);
+    this.shadowRoot.appendChild(style);
   }
 }
