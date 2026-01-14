@@ -107,7 +107,9 @@ export default function checkImages(results, option) {
     );
 
     // Image's source for key.
-    const src = $el.getAttribute('src') ? $el.getAttribute('src') : $el.getAttribute('srcset');
+    const src = $el.getAttribute('src')
+      ? $el.getAttribute('src').split('?')[0]
+      : $el.getAttribute('srcset');
 
     // Process link text exclusions.
     const linkText = link

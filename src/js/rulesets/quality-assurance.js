@@ -150,6 +150,7 @@ export default function checkQA(results, option) {
     if (Utils.isElementHidden($el) === false) {
       const tableHeaders = $el.querySelectorAll('th');
       const semanticHeadings = $el.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      const firstRow = $el.querySelector('tr') ? $el.querySelector('tr').innerHTML : $el.innerHTML;
 
       if (option.checks.TABLES_MISSING_HEADINGS && tableHeaders.length === 0) {
         results.push({
@@ -159,7 +160,7 @@ export default function checkQA(results, option) {
           content: Lang.sprintf(
             option.checks.TABLES_MISSING_HEADINGS.content || 'TABLES_MISSING_HEADINGS',
           ),
-          dismiss: Utils.prepareDismissal(`TABLES_MISSING_HEADINGS ${$el.textContent}`),
+          dismiss: Utils.prepareDismissal(`TABLES_MISSING_HEADINGS ${firstRow}`),
           dismissAll: option.checks.TABLES_MISSING_HEADINGS.dismissAll
             ? 'TABLES_MISSING_HEADINGS'
             : false,
@@ -175,7 +176,7 @@ export default function checkQA(results, option) {
             content: Lang.sprintf(
               option.checks.TABLES_SEMANTIC_HEADING.content || 'TABLES_SEMANTIC_HEADING',
             ),
-            dismiss: Utils.prepareDismissal(`TABLES_SEMANTIC_HEADING ${$el.textContent}`),
+            dismiss: Utils.prepareDismissal(`TABLES_SEMANTIC_HEADING ${firstRow}`),
             dismissAll: option.checks.TABLES_SEMANTIC_HEADING.dismissAll
               ? 'TABLES_SEMANTIC_HEADING'
               : false,
@@ -193,7 +194,7 @@ export default function checkQA(results, option) {
               option.checks.TABLES_EMPTY_HEADING.content || 'TABLES_EMPTY_HEADING',
             ),
             position: 'afterbegin',
-            dismiss: Utils.prepareDismissal(`TABLES_EMPTY_HEADING ${$el.textContent}`),
+            dismiss: Utils.prepareDismissal(`TABLES_EMPTY_HEADING ${firstRow}`),
             dismissAll: option.checks.TABLES_EMPTY_HEADING.dismissAll
               ? 'TABLES_EMPTY_HEADING'
               : false,

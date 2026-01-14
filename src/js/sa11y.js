@@ -362,9 +362,7 @@ class Sa11y {
 
     // Method: re-enable toggle.
     this.enabled = () => {
-      if (Constants.Panel.toggle) {
-        Constants.Panel.toggle.disabled = false;
-      }
+      if (Constants.Panel.toggle) Constants.Panel.toggle.disabled = false;
     };
 
     // Method: find utility.

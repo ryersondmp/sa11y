@@ -6440,7 +6440,7 @@ function checkImages(results, option) {
     const link = $el.closest(
       option.imageWithinLightbox ? `a[href]:not(${option.imageWithinLightbox})` : "a[href]"
     );
-    const src = $el.getAttribute("src") ? $el.getAttribute("src") : $el.getAttribute("srcset");
+    const src = $el.getAttribute("src") ? $el.getAttribute("src").split("?")[0] : $el.getAttribute("srcset");
     const linkText = link ? fnIgnore(link, Constants.Exclusions.LinkSpan).textContent.replace(
       linkIgnoreStringPattern,
       ""
@@ -8113,6 +8113,7 @@ function checkQA(results, option) {
     if (isElementHidden($el) === false) {
       const tableHeaders = $el.querySelectorAll("th");
       const semanticHeadings = $el.querySelectorAll("h1, h2, h3, h4, h5, h6");
+      const firstRow = $el.querySelector("tr") ? $el.querySelector("tr").innerHTML : $el.innerHTML;
       if (option.checks.TABLES_MISSING_HEADINGS && tableHeaders.length === 0) {
         results.push({
           test: "TABLES_MISSING_HEADINGS",
@@ -8121,7 +8122,7 @@ function checkQA(results, option) {
           content: Lang.sprintf(
             option.checks.TABLES_MISSING_HEADINGS.content || "TABLES_MISSING_HEADINGS"
           ),
-          dismiss: prepareDismissal(`TABLES_MISSING_HEADINGS ${$el.textContent}`),
+          dismiss: prepareDismissal(`TABLES_MISSING_HEADINGS ${firstRow}`),
           dismissAll: option.checks.TABLES_MISSING_HEADINGS.dismissAll ? "TABLES_MISSING_HEADINGS" : false,
           developer: option.checks.TABLES_MISSING_HEADINGS.developer || false
         });
@@ -8135,7 +8136,7 @@ function checkQA(results, option) {
             content: Lang.sprintf(
               option.checks.TABLES_SEMANTIC_HEADING.content || "TABLES_SEMANTIC_HEADING"
             ),
-            dismiss: prepareDismissal(`TABLES_SEMANTIC_HEADING ${$el.textContent}`),
+            dismiss: prepareDismissal(`TABLES_SEMANTIC_HEADING ${firstRow}`),
             dismissAll: option.checks.TABLES_SEMANTIC_HEADING.dismissAll ? "TABLES_SEMANTIC_HEADING" : false,
             developer: option.checks.TABLES_SEMANTIC_HEADING.developer || false
           });
@@ -8151,7 +8152,7 @@ function checkQA(results, option) {
               option.checks.TABLES_EMPTY_HEADING.content || "TABLES_EMPTY_HEADING"
             ),
             position: "afterbegin",
-            dismiss: prepareDismissal(`TABLES_EMPTY_HEADING ${$el.textContent}`),
+            dismiss: prepareDismissal(`TABLES_EMPTY_HEADING ${firstRow}`),
             dismissAll: option.checks.TABLES_EMPTY_HEADING.dismissAll ? "TABLES_EMPTY_HEADING" : false,
             developer: option.checks.TABLES_EMPTY_HEADING.developer || false
           });
@@ -8873,9 +8874,7 @@ class Sa11y {
       }, option.delayCheck + 10);
     };
     this.enabled = () => {
-      if (Constants.Panel.toggle) {
-        Constants.Panel.toggle.disabled = false;
-      }
+      if (Constants.Panel.toggle) Constants.Panel.toggle.disabled = false;
     };
     this.find = (selector, desiredRoot, exclude) => find(selector, desiredRoot, exclude);
     this.prepareDismissal = (string) => prepareDismissal(string);
